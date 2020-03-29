@@ -66,5 +66,5 @@ async function license(
   { id }: { id: number },
   { dataSources }: Context
 ) {
-  return dataSources.serlo.getLicense(id)
+  return dataSources.serlo.getLicense({ id })
 }

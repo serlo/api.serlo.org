@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { ApolloServer } from 'apollo-server-express'
+import * as dotenv from 'dotenv'
 import createApp, { Express } from 'express'
 import createPlayground from 'graphql-playground-middleware-express'
 
@@ -29,6 +30,7 @@ import { getGraphQLOptions } from './graphql'
 start()
 
 function start() {
+  dotenv.config()
   const app = createApp()
   const graphqlPath = applyGraphQLMiddleware(app)
 
@@ -39,7 +41,6 @@ function start() {
 
 function applyGraphQLMiddleware(app: Express) {
   const environment = {
-    // TODO: use Redis in production
     cache: createInMemoryCache(),
   }
   const server = new ApolloServer(getGraphQLOptions(environment))
