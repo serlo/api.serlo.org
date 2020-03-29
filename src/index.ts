@@ -19,18 +19,33 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ApolloServer } from 'apollo-server'
+import { ApolloServer } from 'apollo-server-express'
+import createApp, { Express } from 'express'
+import createPlayground from 'graphql-playground-middleware-express'
 
 import { createInMemoryCache } from './cache/in-memory-cache'
 import { getGraphQLOptions } from './graphql'
 
-const environment = {
-  // TODO: use Redis in production
-  cache: createInMemoryCache(),
+start()
+
+function start() {
+  const app = createApp()
+  const graphqlPath = applyGraphQLMiddleware(app)
+
+  app.listen({ port: 3000 }, () => {
+    console.log(`🚀 Server ready at http://localhost:3000${graphqlPath}`)
+  })
 }
 
-const server = new ApolloServer(getGraphQLOptions(environment))
+function applyGraphQLMiddleware(app: Express) {
+  const environment = {
+    // TODO: use Redis in production
+    cache: createInMemoryCache(),
+  }
+  const server = new ApolloServer(getGraphQLOptions(environment))
 
-server.listen({ port: 4000 }).then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`)
-})
+  app.use(server.getMiddleware({ path: '/graphql' }))
+  app.get('/___graphql', createPlayground({ endpoint: '/graphql' }))
+
+  return server.graphqlPath
+}

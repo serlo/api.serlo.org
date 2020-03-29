@@ -31,7 +31,10 @@ export function getGraphQLOptions(
   return {
     typeDefs,
     resolvers,
+    // Needed for playground
     introspection: true,
+    // We add the playground via express middleware in src/index.ts
+    playground: false,
     dataSources() {
       return {
         serlo: new SerloDataSource(environment),
