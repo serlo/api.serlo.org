@@ -32,6 +32,10 @@ export const uuidTypeDefs = gql`
     uuid(alias: AliasInput, id: Int): Uuid
   }
 
+  extend type Mutation {
+    updateUuidCache(id: Int): Uuid
+  }
+
   interface Uuid {
     id: Int!
     trashed: Boolean!
@@ -137,7 +141,16 @@ export const uuidResolvers: {
         alias?: AliasInput
         id?: number
       },
-      Uuid
+      Uuid | null
+    >
+  }
+  Mutation: {
+    updateUuidCache: Resolver<
+      undefined,
+      {
+        id: number
+      },
+      Uuid | null
     >
   }
   Uuid: {
@@ -174,6 +187,9 @@ export const uuidResolvers: {
 } = {
   Query: {
     uuid,
+  },
+  Mutation: {
+    updateUuidCache,
   },
   Uuid: {
     __resolveType(uuid) {
@@ -225,14 +241,14 @@ export const uuidResolvers: {
       if (requestsOnlyFields('User', ['id'], info)) {
         return partialUser
       }
-      return uuid(undefined, partialUser, context)
+      return uuid(undefined, partialUser, context) as Promise<User>
     },
     async article(articleRevision, _args, context, info) {
       const partialArticle = { id: articleRevision.repositoryId }
       if (requestsOnlyFields('Article', ['id'], info)) {
         return partialArticle
       }
-      return uuid(undefined, partialArticle, context)
+      return uuid(undefined, partialArticle, context) as Promise<Article>
     },
   },
   Page: {
@@ -242,7 +258,9 @@ export const uuidResolvers: {
       if (requestsOnlyFields('PageRevision', ['id'], info)) {
         return partialCurrentRevision
       }
-      return uuid(undefined, partialCurrentRevision, context)
+      return uuid(undefined, partialCurrentRevision, context) as Promise<
+        PageRevision
+      >
     },
     async taxonomyTerms(page, _args, context) {
       return Promise.all(
@@ -258,14 +276,14 @@ export const uuidResolvers: {
       if (requestsOnlyFields('User', ['id'], info)) {
         return partialUser
       }
-      return uuid(undefined, partialUser, context)
+      return uuid(undefined, partialUser, context) as Promise<User>
     },
     async page(pageRevision, _args, context, info) {
       const partialPage = { id: pageRevision.repositoryId }
       if (requestsOnlyFields('Page', ['id'], info)) {
         return partialPage
       }
-      return uuid(undefined, partialPage, context)
+      return uuid(undefined, partialPage, context) as Promise<Page>
     },
   },
   TaxonomyTerm: {
@@ -539,8 +557,21 @@ async function uuid(
   const id = args.alias
     ? (await dataSources.serlo.getAlias(args.alias)).id
     : (args.id as number)
-  const data = await dataSources.serlo.getUuid(id)
+  const data = await dataSources.serlo.getUuid({ id })
+  return resolveAbstractUuid(data)
+}
 
+async function updateUuidCache(
+  _parent: unknown,
+  { id }: { id: number },
+  { dataSources }: Context
+) {
+  const data = await dataSources.serlo.getUuid({ id, bypassCache: true })
+  return resolveAbstractUuid(data)
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function resolveAbstractUuid(data: any) {
   switch (data.discriminator) {
     case 'entity':
       switch (data.type) {

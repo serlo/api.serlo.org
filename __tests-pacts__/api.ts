@@ -41,9 +41,10 @@ const pact = new Pact({
   dir: pactDir,
 })
 
+const cache = createInMemoryCache()
 const server = new ApolloServer(
   getGraphQLOptions({
-    cache: createInMemoryCache(),
+    cache,
   })
 )
 const client = createTestClient(server)
@@ -51,6 +52,10 @@ const client = createTestClient(server)
 beforeAll(async () => {
   await rm(pactDir)
   await pact.setup()
+})
+
+beforeEach(() => {
+  cache.reset()
 })
 
 afterEach(async () => {

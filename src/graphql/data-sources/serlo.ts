@@ -29,32 +29,67 @@ export class SerloDataSource extends RESTDataSource {
     super()
   }
 
-  public async getAlias(alias: { path: string; instance: Instance }) {
-    return this.get(`/api/alias${alias.path}`, alias.instance)
+  public async getAlias({
+    path,
+    instance,
+    bypassCache = false,
+  }: {
+    path: string
+    instance: Instance
+    bypassCache?: boolean
+  }) {
+    return this.cacheAwareGet({
+      path: `/api/alias${path}`,
+      instance,
+      bypassCache,
+    })
   }
 
-  public async getLicense(id: number) {
-    return this.get(`/api/license/${id}`)
+  public async getLicense({
+    id,
+    bypassCache = false,
+  }: {
+    id: number
+    bypassCache?: boolean
+  }) {
+    return this.cacheAwareGet({ path: `/api/license/${id}`, bypassCache })
   }
 
-  public async getUuid(id: number) {
-    return this.get(`/api/uuid/${id}`)
+  public async getUuid({
+    id,
+    bypassCache = false,
+  }: {
+    id: number
+    bypassCache?: boolean
+  }) {
+    return this.cacheAwareGet({ path: `/api/uuid/${id}`, bypassCache })
   }
 
-  protected async get(path: string, instance: Instance = Instance.De) {
-    if (process.env.NODE_ENV === 'test') {
-      return super.get(`http://localhost:9009${path}`)
+  private async cacheAwareGet({
+    path,
+    instance = Instance.De,
+    bypassCache = false,
+  }: {
+    path: string
+    instance?: Instance
+    bypassCache?: boolean
+  }) {
+    const cacheKey = this.getCacheKey(path, instance)
+    if (!bypassCache) {
+      const cache = await this.environment.cache.get(cacheKey)
+      if (cache) return JSON.parse(cache)
     }
 
-    const cacheKey = `${instance}.serlo.org${path}`
-    const cache = await this.environment.cache.get(cacheKey)
-
-    if (cache) return JSON.parse(cache)
-
     // In Kubernetes, we need to handle that via https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/0
-    const data = await super.get(`http://de.${process.env.SERLO_HOST}${path}`)
+    const data = await (process.env.NODE_ENV === 'test'
+      ? super.get(`http://localhost:9009${path}`)
+      : super.get(`http://de.${process.env.SERLO_HOST}${path}`))
 
     await this.environment.cache.set(cacheKey, JSON.stringify(data))
     return data
+  }
+
+  private getCacheKey(path: string, instance: Instance = Instance.De) {
+    return `${instance}.serlo.org${path}`
   }
 }

@@ -21,8 +21,8 @@
  */
 import { Cache } from '../graphql/environment'
 
-export function createInMemoryCache(): Cache {
-  const cache: Record<string, string> = {}
+export function createInMemoryCache(): Cache & { reset(): void } {
+  let cache: Record<string, string> = {}
 
   return {
     // eslint-disable-next-line @typescript-eslint/require-await
@@ -32,6 +32,9 @@ export function createInMemoryCache(): Cache {
     // eslint-disable-next-line @typescript-eslint/require-await
     async set(key, value) {
       cache[key] = value
+    },
+    reset() {
+      cache = {}
     },
   }
 }
