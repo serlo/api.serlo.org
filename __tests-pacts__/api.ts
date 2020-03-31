@@ -20,14 +20,13 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Matchers, Pact } from '@pact-foundation/pact'
-import { ApolloServer, gql } from 'apollo-server'
-import { createTestClient } from 'apollo-server-testing'
+import { gql } from 'apollo-server'
 import * as path from 'path'
 import rimraf from 'rimraf'
 import * as util from 'util'
 
-import { createInMemoryCache } from '../src/cache/in-memory-cache'
-import { getGraphQLOptions } from '../src/graphql'
+import { Client, createTestClient } from '../__tests__/utils/test-client'
+import { Service } from '../src/graphql/schema/types'
 
 const rm = util.promisify(rimraf)
 
@@ -41,13 +40,7 @@ const pact = new Pact({
   dir: pactDir,
 })
 
-const cache = createInMemoryCache()
-const server = new ApolloServer(
-  getGraphQLOptions({
-    cache,
-  })
-)
-const client = createTestClient(server)
+let client: Client
 
 beforeAll(async () => {
   await rm(pactDir)
@@ -55,7 +48,7 @@ beforeAll(async () => {
 })
 
 beforeEach(() => {
-  cache.reset()
+  client = createTestClient({ service: Service.Playground }).client
 })
 
 afterEach(async () => {
@@ -997,11 +990,9 @@ function addArticleRevisionInteraction() {
       type: 'article',
       authorId: Matchers.integer(1),
       repositoryId: 1855,
-      fields: {
-        title: Matchers.string('title'),
-        content: Matchers.string('content'),
-        changes: Matchers.string('changes'),
-      },
+      title: Matchers.string('title'),
+      content: Matchers.string('content'),
+      changes: Matchers.string('changes'),
     },
   })
 }
