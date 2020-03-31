@@ -25,4 +25,5 @@ module.exports = {
   testEnvironment: 'node',
   testRegex: '/__tests-pacts__/.*\\.[jt]sx?$',
   watchPathIgnorePatterns: ['<rootDir>/pacts/'],
+  setupFiles: ['dotenv/config'],
 }

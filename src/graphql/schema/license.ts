@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
+import { gql, AuthenticationError, ForbiddenError } from 'apollo-server'
 
 import { Instance } from './instance'
 import { Context, Resolver } from './types'
@@ -27,6 +27,19 @@ import { Context, Resolver } from './types'
 export const licenseTypeDefs = gql`
   extend type Query {
     license(id: Int!): License
+  }
+
+  extend type Mutation {
+    _setLicense(
+      id: Int!
+      instance: Instance!
+      default: Boolean!
+      title: String!
+      url: String!
+      content: String!
+      agreement: String!
+      iconHref: String!
+    ): Boolean
   }
 
   type License {
@@ -55,9 +68,15 @@ export const licenseResolvers: {
   Query: {
     license: Resolver<undefined, { id: number }, License>
   }
+  Mutation: {
+    _setLicense: Resolver<undefined, License, null>
+  }
 } = {
   Query: {
     license,
+  },
+  Mutation: {
+    _setLicense,
   },
 }
 
@@ -67,4 +86,18 @@ async function license(
   { dataSources }: Context
 ) {
   return dataSources.serlo.getLicense({ id })
+}
+
+async function _setLicense(
+  _parent: unknown,
+  license: License,
+  { dataSources, service }: Context
+) {
+  if (service === null)
+    throw new AuthenticationError('You need to authenticate as a service')
+  if (service !== 'serlo.org')
+    throw new ForbiddenError(
+      'You do not have the permissions to set the license'
+    )
+  return dataSources.serlo.setLicense(license)
 }

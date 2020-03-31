@@ -20,12 +20,14 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { ApolloServer } from 'apollo-server-express'
-import * as dotenv from 'dotenv'
+import dotenv from 'dotenv'
 import createApp, { Express } from 'express'
 import createPlayground from 'graphql-playground-middleware-express'
+import jwt from 'jsonwebtoken'
 
 import { createInMemoryCache } from './cache/in-memory-cache'
 import { getGraphQLOptions } from './graphql'
+import { Service } from './graphql/schema/types'
 
 start()
 
@@ -45,8 +47,23 @@ function applyGraphQLMiddleware(app: Express) {
   }
   const server = new ApolloServer(getGraphQLOptions(environment))
 
+  const token = jwt.sign({}, process.env.PLAYGROUND_SECRET!, {
+    expiresIn: '2h',
+    audience: 'api.serlo.org',
+    issuer: Service.Playground,
+  })
+
   app.use(server.getMiddleware({ path: '/graphql' }))
-  app.get('/___graphql', createPlayground({ endpoint: '/graphql' }))
+  app.get(
+    '/___graphql',
+    createPlayground({
+      endpoint: '/graphql',
+      // @ts-ignore Not documented but we can pass custom headers
+      headers: {
+        Authorization: `Serlo Service=${token}`,
+      },
+    })
+  )
 
   return server.graphqlPath
 }

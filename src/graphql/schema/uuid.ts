@@ -32,10 +32,6 @@ export const uuidTypeDefs = gql`
     uuid(alias: AliasInput, id: Int): Uuid
   }
 
-  extend type Mutation {
-    updateUuidCache(id: Int): Uuid
-  }
-
   interface Uuid {
     id: Int!
     trashed: Boolean!
@@ -144,15 +140,6 @@ export const uuidResolvers: {
       Uuid | null
     >
   }
-  Mutation: {
-    updateUuidCache: Resolver<
-      undefined,
-      {
-        id: number
-      },
-      Uuid | null
-    >
-  }
   Uuid: {
     __resolveType(uuid: Uuid): UuidType
   }
@@ -187,9 +174,6 @@ export const uuidResolvers: {
 } = {
   Query: {
     uuid,
-  },
-  Mutation: {
-    updateUuidCache,
   },
   Uuid: {
     __resolveType(uuid) {
@@ -558,15 +542,6 @@ async function uuid(
     ? (await dataSources.serlo.getAlias(args.alias)).id
     : (args.id as number)
   const data = await dataSources.serlo.getUuid({ id })
-  return resolveAbstractUuid(data)
-}
-
-async function updateUuidCache(
-  _parent: unknown,
-  { id }: { id: number },
-  { dataSources }: Context
-) {
-  const data = await dataSources.serlo.getUuid({ id, bypassCache: true })
   return resolveAbstractUuid(data)
 }
 
