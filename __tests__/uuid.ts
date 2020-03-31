@@ -1,93 +1,443 @@
 import { gql } from 'apollo-server'
 
-import { Cache } from '../src/graphql/environment'
+import { Service } from '../src/graphql/schema/types'
 import { Client, createTestClient } from './utils/test-client'
 
-let mocks: Record<string, unknown> = {}
+describe('_setAlias', () => {
+  test('forbidden', async () => {
+    const { client } = createTestClient({ service: Service.Playground })
+    const response = await setAlias({ id: 1, client })
+    expect(response.errors?.[0].extensions?.code).toEqual('FORBIDDEN')
+  })
 
-jest.mock('apollo-datasource-rest', () => {
-  class MockRESTDataSource {
-    protected get(path: string) {
-      return mocks[path.replace('http://localhost:9009', '')]
-    }
-  }
-  return { RESTDataSource: MockRESTDataSource }
-})
+  test('authenticated', async () => {
+    const { client } = createTestClient({ service: Service.Serlo })
 
-let env: { cache: Cache; client: Client }
+    let response = await setUser({ id: 1, client })
+    expect(response.errors).toBeUndefined()
+    response = await setAlias({ id: 1, client })
+    expect(response.errors).toBeUndefined()
 
-beforeEach(() => {
-  env = createTestClient({ service: null })
-  mocks = {}
-})
-
-describe('Entity', () => {
-  describe('Article', () => {
-    test('by alias', async () => {
-      await env.cache.set(
-        'de.serlo.org/api/alias/mathe/funktionen/uebersicht-aller-artikel-zu-funktionen/parabel',
-        JSON.stringify({
-          id: 1855,
-          source: '/entity/view/1855',
-          timestamp: '2014-06-16T15:58:45Z',
-        })
-      )
-      await env.cache.set(
-        'de.serlo.org/api/uuid/1855',
-        JSON.stringify({
-          id: 1855,
-          trashed: false,
-          discriminator: 'entity',
-          type: 'article',
-          instance: 'de',
-          date: '2014-03-01T20:45:56Z',
-          currentRevisionId: 30674,
-          licenseId: 1,
-          taxonomyTermIds: 5,
-        })
-      )
-      const response = await env.client.query({
-        query: gql`
-          {
-            uuid(
-              alias: {
-                instance: de
-                path: "/mathe/funktionen/uebersicht-aller-artikel-zu-funktionen/parabel"
-              }
-            ) {
-              __typename
-              ... on Article {
-                id
-                trashed
-                instance
-                date
-                currentRevision {
-                  id
-                }
-                license {
-                  id
-                }
-              }
-            }
+    response = await client.query({
+      query: gql`
+        {
+          uuid(alias: { instance: de, path: "/source" }) {
+            id
           }
-        `,
-      })
-      expect(response.errors).toBe(undefined)
-      expect(response.data).toEqual({
-        uuid: {
-          __typename: 'Article',
-          trashed: false,
-          id: 1855,
-          instance: 'de',
-          date: '2014-03-01T20:45:56Z',
-          currentRevision: {
-            id: 30674,
-          },
-          license: {
-            id: 1,
-          },
-        },
-      })
+        }
+      `,
+    })
+    expect(response.errors).toBeUndefined()
+    expect(response.data).toEqual({
+      uuid: {
+        id: 1,
+      },
     })
   })
 })
+
+describe('_setArticle', () => {
+  test('forbidden', async () => {
+    const { client } = createTestClient({ service: Service.Playground })
+    const response = await setArticle({
+      id: 1,
+      currentRevisionId: 2,
+      licenseId: 3,
+      client,
+    })
+    expect(response.errors?.[0].extensions?.code).toEqual('FORBIDDEN')
+  })
+
+  test('authenticated', async () => {
+    const { client } = createTestClient({ service: Service.Serlo })
+
+    let response = await setArticle({
+      id: 1,
+      currentRevisionId: 2,
+      licenseId: 3,
+      client,
+    })
+    expect(response.errors).toBeUndefined()
+    response = await client.query({
+      query: gql`
+        {
+          uuid(id: 1) {
+            ... on Article {
+              id
+            }
+          }
+        }
+      `,
+    })
+    expect(response.errors).toBeUndefined()
+    expect(response.data).toEqual({
+      uuid: {
+        id: 1,
+      },
+    })
+  })
+})
+
+describe('_setArticleRevision', () => {
+  test('forbidden', async () => {
+    const { client } = createTestClient({ service: Service.Playground })
+    const response = await setArticleRevison({
+      id: 1,
+      repositoryId: 2,
+      authorId: 3,
+      client,
+    })
+    expect(response.errors?.[0].extensions?.code).toEqual('FORBIDDEN')
+  })
+
+  test('authenticated', async () => {
+    const { client } = createTestClient({ service: Service.Serlo })
+
+    let response = await setArticleRevison({
+      id: 1,
+      repositoryId: 2,
+      authorId: 3,
+      client,
+    })
+    expect(response.errors).toBeUndefined()
+    response = await client.query({
+      query: gql`
+        {
+          uuid(id: 1) {
+            ... on ArticleRevision {
+              id
+            }
+          }
+        }
+      `,
+    })
+    expect(response.errors).toBeUndefined()
+    expect(response.data).toEqual({
+      uuid: {
+        id: 1,
+      },
+    })
+  })
+})
+
+describe('_setPage', () => {
+  test('forbidden', async () => {
+    const { client } = createTestClient({ service: Service.Playground })
+    const response = await setPage({
+      id: 1,
+      currentRevisionId: 2,
+      client,
+    })
+    expect(response.errors?.[0].extensions?.code).toEqual('FORBIDDEN')
+  })
+
+  test('authenticated', async () => {
+    const { client } = createTestClient({ service: Service.Serlo })
+
+    let response = await setPage({
+      id: 1,
+      currentRevisionId: 2,
+      client,
+    })
+    expect(response.errors).toBeUndefined()
+    response = await client.query({
+      query: gql`
+        {
+          uuid(id: 1) {
+            ... on Page {
+              id
+            }
+          }
+        }
+      `,
+    })
+    expect(response.errors).toBeUndefined()
+    expect(response.data).toEqual({
+      uuid: {
+        id: 1,
+      },
+    })
+  })
+})
+
+describe('_setPageRevision', () => {
+  test('forbidden', async () => {
+    const { client } = createTestClient({ service: Service.Playground })
+    const response = await setPageRevison({
+      id: 1,
+      repositoryId: 2,
+      authorId: 3,
+      client,
+    })
+    expect(response.errors?.[0].extensions?.code).toEqual('FORBIDDEN')
+  })
+
+  test('authenticated', async () => {
+    const { client } = createTestClient({ service: Service.Serlo })
+
+    let response = await setPageRevison({
+      id: 1,
+      repositoryId: 2,
+      authorId: 3,
+      client,
+    })
+    expect(response.errors).toBeUndefined()
+    response = await client.query({
+      query: gql`
+        {
+          uuid(id: 1) {
+            ... on PageRevision {
+              id
+            }
+          }
+        }
+      `,
+    })
+    expect(response.errors).toBeUndefined()
+    expect(response.data).toEqual({
+      uuid: {
+        id: 1,
+      },
+    })
+  })
+})
+
+describe('_setTaxonomyTerm', () => {
+  test('forbidden', async () => {
+    const { client } = createTestClient({ service: Service.Playground })
+    const response = await setTaxonomyTerm({
+      id: 1,
+      parentId: 2,
+      client,
+    })
+    expect(response.errors?.[0].extensions?.code).toEqual('FORBIDDEN')
+  })
+
+  test('authenticated', async () => {
+    const { client } = createTestClient({ service: Service.Serlo })
+
+    let response = await setTaxonomyTerm({
+      id: 1,
+      parentId: 2,
+      client,
+    })
+    expect(response.errors).toBeUndefined()
+    response = await client.query({
+      query: gql`
+        {
+          uuid(id: 1) {
+            ... on TaxonomyTerm {
+              id
+            }
+          }
+        }
+      `,
+    })
+    expect(response.errors).toBeUndefined()
+    expect(response.data).toEqual({
+      uuid: {
+        id: 1,
+      },
+    })
+  })
+})
+
+describe('_setUser', () => {
+  test('forbidden', async () => {
+    const { client } = createTestClient({ service: Service.Playground })
+    const response = await setUser({ id: 1, client })
+    expect(response.errors?.[0].extensions?.code).toEqual('FORBIDDEN')
+  })
+
+  test('authenticated', async () => {
+    const { client } = createTestClient({ service: Service.Serlo })
+
+    let response = await setUser({ id: 1, client })
+    expect(response.errors).toBeUndefined()
+    response = await client.query({
+      query: gql`
+        {
+          uuid(id: 1) {
+            ... on User {
+              id
+            }
+          }
+        }
+      `,
+    })
+    expect(response.errors).toBeUndefined()
+    expect(response.data).toEqual({
+      uuid: {
+        id: 1,
+      },
+    })
+  })
+})
+
+function setAlias({ id, client }: { id: number; client: Client }) {
+  return client.mutate({
+    mutation: gql`
+        mutation {
+          _setAlias(
+            id: ${id}
+            instance: de
+            source: "/source"
+            timestamp: "timestamp"
+          )
+        }
+      `,
+  })
+}
+
+function setArticle({
+  id,
+  currentRevisionId,
+  licenseId,
+  client,
+}: {
+  id: number
+  currentRevisionId: number
+  licenseId: number
+  client: Client
+}) {
+  return client.mutate({
+    mutation: gql`
+        mutation {
+          _setArticle(
+            id: ${id}
+            trashed: false
+            instance: de
+            date: "date"
+            currentRevisionId: ${currentRevisionId}
+            licenseId: ${licenseId}
+            taxonomyTermIds: []
+          )
+        }
+      `,
+  })
+}
+
+function setArticleRevison({
+  id,
+  repositoryId,
+  authorId,
+  client,
+}: {
+  id: number
+  repositoryId: number
+  authorId: number
+  client: Client
+}) {
+  return client.mutate({
+    mutation: gql`
+        mutation {
+          _setArticleRevision(
+            id: ${id}
+            trashed: false
+            date: DateTime
+            authorId: ${authorId}
+            repositoryId: ${repositoryId}
+            title: "title"
+            content: "content"
+            changes: "changes"
+          )
+        }
+      `,
+  })
+}
+
+function setPage({
+  id,
+  currentRevisionId,
+  client,
+}: {
+  id: number
+  currentRevisionId: number
+  client: Client
+}) {
+  return client.mutate({
+    mutation: gql`
+        mutation {
+          _setPage(
+            id: ${id}
+            trashed: false
+            currentRevisionId: ${currentRevisionId}
+            taxonomyTermIds: []
+          )
+        }
+      `,
+  })
+}
+
+function setPageRevison({
+  id,
+  repositoryId,
+  authorId,
+  client,
+}: {
+  id: number
+  repositoryId: number
+  authorId: number
+  client: Client
+}) {
+  return client.mutate({
+    mutation: gql`
+        mutation {
+          _setPageRevision(
+            id: ${id}
+            trashed: false
+            title: "title"
+            content: "content"
+            date: DateTime
+            authorId: ${authorId}
+            repositoryId: ${repositoryId}
+          )
+        }
+      `,
+  })
+}
+
+function setUser({ id, client }: { id: number; client: Client }) {
+  return client.mutate({
+    mutation: gql`
+      mutation {
+        _setUser(
+          id: ${id}
+          trashed: false
+          username: "username"
+          date: "date"
+          lastLogin: "lastLogin"
+          description: "description"
+        )
+      }
+    `,
+  })
+}
+
+function setTaxonomyTerm({
+  id,
+  parentId,
+  client,
+}: {
+  id: number
+  parentId: number
+  client: Client
+}) {
+  return client.mutate({
+    mutation: gql`
+      mutation {
+        _setTaxonomyTerm(
+          id: ${id}
+          trashed: false
+          type: root
+          instance: de
+          name: "name"
+          description: "description"
+          weight: 0
+          parentId: ${parentId}
+          childrenIds: []
+        )
+      }
+    `,
+  })
+}

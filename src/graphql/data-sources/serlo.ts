@@ -24,6 +24,15 @@ import { RESTDataSource } from 'apollo-datasource-rest'
 import { Environment } from '../environment'
 import { Instance } from '../schema/instance'
 import { License } from '../schema/license'
+import {
+  AliasPayload,
+  ArticlePayload,
+  ArticleRevisionPayload,
+  PagePayload,
+  PageRevisionPayload,
+  TaxonomyTermPayload,
+  UserPayload,
+} from '../schema/uuid'
 
 export class SerloDataSource extends RESTDataSource {
   public constructor(private environment: Environment) {
@@ -44,6 +53,14 @@ export class SerloDataSource extends RESTDataSource {
       instance,
       bypassCache,
     })
+  }
+
+  public async setAlias(alias: AliasPayload) {
+    const cacheKey = this.getCacheKey(
+      `/api/alias${alias.source}`,
+      alias.instance
+    )
+    await this.environment.cache.set(cacheKey, JSON.stringify(alias))
   }
 
   public async getLicense({
@@ -69,6 +86,58 @@ export class SerloDataSource extends RESTDataSource {
     bypassCache?: boolean
   }) {
     return this.cacheAwareGet({ path: `/api/uuid/${id}`, bypassCache })
+  }
+
+  public async setArticle(article: ArticlePayload) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${article.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      JSON.stringify({ ...article, discriminator: 'entity', type: 'article' })
+    )
+  }
+
+  public async setArticleRevision(articleRevision: ArticleRevisionPayload) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${articleRevision.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      JSON.stringify({
+        ...articleRevision,
+        discriminator: 'entityRevision',
+        type: 'article',
+      })
+    )
+  }
+
+  public async setPage(page: PagePayload) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${page.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      JSON.stringify({ ...page, discriminator: 'page' })
+    )
+  }
+
+  public async setPageRevision(pageRevision: PageRevisionPayload) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${pageRevision.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      JSON.stringify({ ...pageRevision, discriminator: 'pageRevision' })
+    )
+  }
+
+  public async setTaxonomyTerm(taxonomyTerm: TaxonomyTermPayload) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${taxonomyTerm.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      JSON.stringify({ ...taxonomyTerm, discriminator: 'taxonomyTerm' })
+    )
+  }
+
+  public async setUser(user: UserPayload) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${user.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      JSON.stringify({ ...user, discriminator: 'user' })
+    )
   }
 
   private async cacheAwareGet({

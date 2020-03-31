@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql, AuthenticationError, ForbiddenError } from 'apollo-server'
+import { gql, ForbiddenError } from 'apollo-server'
 
 import { Instance } from './instance'
 import { Context, Resolver } from './types'
@@ -93,11 +93,10 @@ async function _setLicense(
   license: License,
   { dataSources, service }: Context
 ) {
-  if (service === null)
-    throw new AuthenticationError('You need to authenticate as a service')
-  if (service !== 'serlo.org')
+  if (service !== 'serlo.org') {
     throw new ForbiddenError(
       'You do not have the permissions to set the license'
     )
+  }
   return dataSources.serlo.setLicense(license)
 }

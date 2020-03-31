@@ -19,17 +19,86 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
+import { ForbiddenError, gql } from 'apollo-server'
 
+import { SerloDataSource } from '../data-sources/serlo'
 import { DateTime } from './date-time'
 import { Instance } from './instance'
 import { License, licenseResolvers } from './license'
-import { Context, Resolver } from './types'
+import { Context, Resolver, Service } from './types'
 import { requestsOnlyFields } from './utils'
 
 export const uuidTypeDefs = gql`
   extend type Query {
     uuid(alias: AliasInput, id: Int): Uuid
+  }
+
+  extend type Mutation {
+    _setAlias(
+      id: Int!
+      instance: Instance!
+      source: String!
+      timestamp: DateTime!
+    ): Boolean
+
+    _setArticle(
+      id: Int!
+      trashed: Boolean!
+      instance: Instance!
+      date: DateTime!
+      currentRevisionId: Int
+      licenseId: Int!
+      taxonomyTermIds: [Int!]!
+    ): Boolean
+
+    _setArticleRevision(
+      id: Int!
+      trashed: Boolean!
+      date: DateTime!
+      authorId: Int!
+      repositoryId: Int!
+      title: String!
+      content: String!
+      changes: String!
+    ): Boolean
+
+    _setPage(
+      id: Int!
+      trashed: Boolean!
+      currentRevisionId: Int
+      taxonomyTermIds: [Int!]!
+    ): Boolean
+
+    _setPageRevision(
+      id: Int!
+      trashed: Boolean!
+      title: String!
+      content: String!
+      date: DateTime!
+      authorId: Int!
+      repositoryId: Int!
+    ): Boolean
+
+    _setUser(
+      id: Int!
+      trashed: Boolean!
+      username: String!
+      date: DateTime!
+      lastLogin: DateTime
+      description: String
+    ): Boolean
+
+    _setTaxonomyTerm(
+      id: Int!
+      trashed: Boolean!
+      type: TaxonomyTermType!
+      instance: Instance!
+      name: String!
+      description: String
+      weight: Int!
+      parentId: Int
+      childrenIds: [Int!]!
+    ): Boolean
   }
 
   interface Uuid {
@@ -41,7 +110,7 @@ export const uuidTypeDefs = gql`
     date: DateTime!
     instance: Instance!
     license: License!
-    taxonomyTerms: [TaxonomyTerm]!
+    taxonomyTerms: [TaxonomyTerm!]!
   }
 
   type Article implements Uuid & Entity {
@@ -50,7 +119,7 @@ export const uuidTypeDefs = gql`
     instance: Instance!
     date: DateTime!
     license: License!
-    taxonomyTerms: [TaxonomyTerm]!
+    taxonomyTerms: [TaxonomyTerm!]!
     currentRevision: ArticleRevision
   }
 
@@ -105,7 +174,7 @@ export const uuidTypeDefs = gql`
     description: String
     weight: Int!
     parent: TaxonomyTerm
-    children: [Uuid]!
+    children: [Uuid!]!
     path: [TaxonomyTerm]!
   }
 
@@ -139,6 +208,15 @@ export const uuidResolvers: {
       },
       Uuid | null
     >
+  }
+  Mutation: {
+    _setAlias: Resolver<undefined, AliasPayload, null>
+    _setArticle: Resolver<undefined, ArticlePayload, null>
+    _setArticleRevision: Resolver<undefined, ArticleRevisionPayload, null>
+    _setPage: Resolver<undefined, PagePayload, null>
+    _setPageRevision: Resolver<undefined, PageRevisionPayload, null>
+    _setTaxonomyTerm: Resolver<undefined, TaxonomyTermPayload, null>
+    _setUser: Resolver<undefined, UserPayload, null>
   }
   Uuid: {
     __resolveType(uuid: Uuid): UuidType
@@ -174,6 +252,24 @@ export const uuidResolvers: {
 } = {
   Query: {
     uuid,
+  },
+  Mutation: {
+    _setAlias: createSetResolver({ name: 'alias', setter: 'setAlias' }),
+    _setArticle: createSetResolver({ name: 'article', setter: 'setArticle' }),
+    _setArticleRevision: createSetResolver({
+      name: 'article revision',
+      setter: 'setArticleRevision',
+    }),
+    _setPage: createSetResolver({ name: 'page', setter: 'setPage' }),
+    _setPageRevision: createSetResolver({
+      name: 'page revision',
+      setter: 'setPageRevision',
+    }),
+    _setTaxonomyTerm: createSetResolver({
+      name: 'taxonomy term',
+      setter: 'setTaxonomyTerm',
+    }),
+    _setUser: createSetResolver({ name: 'user', setter: 'setUser' }),
   },
   Uuid: {
     __resolveType(uuid) {
@@ -557,7 +653,7 @@ function resolveAbstractUuid(data: any) {
     case 'entityRevision':
       switch (data.type) {
         case 'article':
-          return new ArticleRevision({ ...data, ...data.fields })
+          return new ArticleRevision(data)
       }
       break
     case 'page':
@@ -569,4 +665,90 @@ function resolveAbstractUuid(data: any) {
     case 'taxonomyTerm':
       return new TaxonomyTerm(data)
   }
+}
+
+function createSetResolver<S extends keyof SerloDataSource>({
+  name,
+  setter,
+}: {
+  name: string
+  setter: S
+}) {
+  return function set(
+    _parent: unknown,
+    payload: Parameters<SerloDataSource[S]>[0],
+    { dataSources, service }: Context
+  ) {
+    if (service !== Service.Serlo) {
+      throw new ForbiddenError(
+        `You do not have the permissions to set the ${name}`
+      )
+    }
+    return dataSources.serlo[setter](payload)
+  }
+}
+
+export interface AliasPayload {
+  id: number
+  instance: Instance
+  source: string
+  timestamp: DateTime
+}
+
+export interface UserPayload {
+  id: number
+  trashed: boolean
+  username: string
+  date: DateTime
+  lastLogin?: DateTime
+  description?: string
+}
+
+export interface ArticlePayload {
+  id: number
+  trashed: boolean
+  date: DateTime
+  currentRevisionId?: number
+  licenseId: number
+  taxonomyTermIds: number[]
+}
+
+export interface ArticleRevisionPayload {
+  id: number
+  trashed: boolean
+  date: DateTime
+  authorId: number
+  repositoryId: number
+  title: string
+  content: string
+  changes: string
+}
+
+export interface PagePayload {
+  id: number
+  trashed: boolean
+  currentRevisionId: number
+  taxonomyTermIds: number[]
+}
+
+export interface PageRevisionPayload {
+  id: number
+  trashed: boolean
+  title: string
+  content: string
+  date: DateTime
+  authorId: number
+  repositoryId: number
+}
+
+export interface TaxonomyTermPayload {
+  id: number
+  trashed: boolean
+  type: TaxonomyTermType
+  instance: Instance
+  name: string
+  description?: string
+  weight: number
+  parentId?: number
+  childrenIds: number[]
 }
