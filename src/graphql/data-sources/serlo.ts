@@ -23,6 +23,7 @@ import { RESTDataSource } from 'apollo-datasource-rest'
 
 import { Environment } from '../environment'
 import { Instance } from '../schema/instance'
+import { License } from '../schema/license'
 
 export class SerloDataSource extends RESTDataSource {
   public constructor(private environment: Environment) {
@@ -55,6 +56,11 @@ export class SerloDataSource extends RESTDataSource {
     return this.cacheAwareGet({ path: `/api/license/${id}`, bypassCache })
   }
 
+  public async setLicense(license: License) {
+    const cacheKey = this.getCacheKey(`/api/license/${license.id}`)
+    await this.environment.cache.set(cacheKey, JSON.stringify(license))
+  }
+
   public async getUuid({
     id,
     bypassCache = false,
@@ -83,7 +89,7 @@ export class SerloDataSource extends RESTDataSource {
     // In Kubernetes, we need to handle that via https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/0
     const data = await (process.env.NODE_ENV === 'test'
       ? super.get(`http://localhost:9009${path}`)
-      : super.get(`http://de.${process.env.SERLO_HOST}${path}`))
+      : super.get(`http://${instance}.${process.env.SERLO_ORG_HOST}${path}`))
 
     await this.environment.cache.set(cacheKey, JSON.stringify(data))
     return data

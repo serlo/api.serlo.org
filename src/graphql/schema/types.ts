@@ -30,6 +30,13 @@ export type Resolver<P, A, T> = (
   info: GraphQLResolveInfo
 ) => Promise<T | void>
 
+export enum Service {
+  Playground = 'api.serlo.org-playground',
+  Serlo = 'serlo.org',
+  SerloCloudflareWorker = 'serlo.org-cloudflare-worker',
+}
+
 export interface Context {
   dataSources: DataSources
+  service: Service
 }
