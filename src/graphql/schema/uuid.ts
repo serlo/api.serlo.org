@@ -62,12 +62,7 @@ export const uuidTypeDefs = gql`
       changes: String!
     ): Boolean
 
-    _setPage(
-      id: Int!
-      trashed: Boolean!
-      currentRevisionId: Int
-      taxonomyTermIds: [Int!]!
-    ): Boolean
+    _setPage(id: Int!, trashed: Boolean!, currentRevisionId: Int): Boolean
 
     _setPageRevision(
       id: Int!
@@ -142,7 +137,6 @@ export const uuidTypeDefs = gql`
   type Page implements Uuid {
     id: Int!
     trashed: Boolean!
-    taxonomyTerms: [TaxonomyTerm]!
     currentRevision: PageRevision
   }
 
@@ -238,7 +232,6 @@ export const uuidResolvers: {
   }
   Page: {
     currentRevision: Resolver<Page, {}, Partial<PageRevision> | null>
-    taxonomyTerms: Resolver<Page, {}, TaxonomyTerm[]>
   }
   PageRevision: {
     author: Resolver<PageRevision, {}, Partial<User>>
@@ -341,13 +334,6 @@ export const uuidResolvers: {
       return uuid(undefined, partialCurrentRevision, context) as Promise<
         PageRevision
       >
-    },
-    async taxonomyTerms(page, _args, context) {
-      return Promise.all(
-        page.taxonomyTermIds.map((id) => {
-          return uuid(undefined, { id }, context) as Promise<TaxonomyTerm>
-        })
-      )
     },
   },
   PageRevision: {
@@ -517,7 +503,6 @@ class ArticleRevision extends EntityRevision {
 
 class Page extends Uuid {
   public __typename = DiscriminatorType.Page
-  public taxonomyTermIds: number[]
   public currentRevisionId?: number
 
   public constructor(payload: {
@@ -527,7 +512,6 @@ class Page extends Uuid {
     currentRevisionId?: number
   }) {
     super(payload)
-    this.taxonomyTermIds = payload.taxonomyTermIds
     this.currentRevisionId = payload.currentRevisionId
   }
 }
@@ -728,7 +712,6 @@ export interface PagePayload {
   id: number
   trashed: boolean
   currentRevisionId: number
-  taxonomyTermIds: number[]
 }
 
 export interface PageRevisionPayload {
