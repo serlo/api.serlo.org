@@ -542,37 +542,6 @@ describe('Uuid', () => {
       })
     })
 
-    test('by alias (w/ taxonomyTerms)', async () => {
-      await addPageAliasInteraction()
-      await addPageUuidInteraction()
-      await addTaxonomyTermSubjectInteraction()
-      const response = await client.query({
-        query: gql`
-          {
-            uuid(alias: { instance: de, path: "/mathe" }) {
-              __typename
-              ... on Page {
-                id
-                trashed
-                taxonomyTerms {
-                  id
-                }
-              }
-            }
-          }
-        `,
-      })
-      expect(response.errors).toBe(undefined)
-      expect(response.data).toEqual({
-        uuid: {
-          __typename: 'Page',
-          id: 19767,
-          trashed: false,
-          taxonomyTerms: [{ id: 5 }],
-        },
-      })
-    })
-
     test('by id', async () => {
       await addPageUuidInteraction()
       const response = await client.query({
@@ -1016,7 +985,6 @@ function addPageUuidInteraction() {
       trashed: Matchers.boolean(false),
       discriminator: 'page',
       currentRevisionId: Matchers.integer(35476),
-      taxonomyTermIds: Matchers.eachLike(Matchers.integer(5)),
     },
   })
 }
@@ -1101,7 +1069,7 @@ function addTaxonomyTermCurriculumTopicInteraction() {
       description: Matchers.string('description'),
       weight: Matchers.integer(1),
       parentId: 16043,
-      childrenIds: [],
+      childrenIds: Matchers.eachLike(1855),
     },
   })
 }

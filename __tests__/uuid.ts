@@ -362,7 +362,6 @@ function setPage({
             id: ${id}
             trashed: false
             currentRevisionId: ${currentRevisionId}
-            taxonomyTermIds: []
           )
         }
       `,
