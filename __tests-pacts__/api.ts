@@ -987,7 +987,7 @@ function addArticleUuidInteraction() {
     response: {
       id: 1855,
       trashed: Matchers.boolean(false),
-      alias: '/mathe/funktionen/uebersicht-aller-artikel-zu-funktionen/parabel',
+      alias: Matchers.string('/mathe/funktionen/uebersicht-aller-artikel-zu-funktionen/parabel'),
       discriminator: 'entity',
       type: 'article',
       instance: 'de',
