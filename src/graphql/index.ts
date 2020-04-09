@@ -46,7 +46,6 @@ export function getGraphQLOptions(
       }
     },
     context({ req }) {
-      console.log(req.headers)
       const authorizationHeader = req.headers.authorization
       if (!authorizationHeader) {
         throw new AuthenticationError('Invalid authorization header')
