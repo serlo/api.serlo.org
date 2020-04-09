@@ -41,7 +41,7 @@ async function run() {
     name: 'api',
     version,
     Dockerfile: path.join(root, 'Dockerfile'),
-    context: '../',
+    context: '.',
   })
 }
 
