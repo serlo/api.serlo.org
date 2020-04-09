@@ -30,6 +30,8 @@ export const licenseTypeDefs = gql`
   }
 
   extend type Mutation {
+    _removeLicense(id: Int!): Boolean
+
     _setLicense(
       id: Int!
       instance: Instance!
@@ -69,6 +71,7 @@ export const licenseResolvers: {
     license: Resolver<undefined, { id: number }, License>
   }
   Mutation: {
+    _removeLicense: Resolver<undefined, { id: number }, null>
     _setLicense: Resolver<undefined, License, null>
   }
 } = {
@@ -76,6 +79,7 @@ export const licenseResolvers: {
     license,
   },
   Mutation: {
+    _removeLicense,
     _setLicense,
   },
 }
@@ -86,6 +90,19 @@ async function license(
   { dataSources }: Context
 ) {
   return dataSources.serlo.getLicense({ id })
+}
+
+async function _removeLicense(
+  _parent: unknown,
+  { id }: { id: number },
+  { dataSources, service }: Context
+) {
+  if (service !== 'serlo.org') {
+    throw new ForbiddenError(
+      'You do not have the permissions to remove the license'
+    )
+  }
+  return dataSources.serlo.removeLicense({ id })
 }
 
 async function _setLicense(

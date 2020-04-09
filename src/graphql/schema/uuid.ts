@@ -37,14 +37,18 @@ export const uuidTypeDefs = gql`
     _setAlias(
       id: Int!
       instance: Instance!
+      path: String!
       source: String!
       timestamp: DateTime!
     ): Boolean
+
+    _removeUuid(id: Int!): Boolean
 
     _setArticle(
       id: Int!
       trashed: Boolean!
       instance: Instance!
+      alias: String
       date: DateTime!
       currentRevisionId: Int
       licenseId: Int!
@@ -62,7 +66,14 @@ export const uuidTypeDefs = gql`
       changes: String!
     ): Boolean
 
-    _setPage(id: Int!, trashed: Boolean!, currentRevisionId: Int): Boolean
+    _setPage(
+      id: Int!
+      trashed: Boolean!
+      instance: Instance!
+      alias: String
+      currentRevisionId: Int
+      licenseId: Int!
+    ): Boolean
 
     _setPageRevision(
       id: Int!
@@ -86,6 +97,7 @@ export const uuidTypeDefs = gql`
     _setTaxonomyTerm(
       id: Int!
       trashed: Boolean!
+      alias: String
       type: TaxonomyTermType!
       instance: Instance!
       name: String!
@@ -101,9 +113,16 @@ export const uuidTypeDefs = gql`
     trashed: Boolean!
   }
 
+  type UnsupportedUuid implements Uuid {
+    id: Int!
+    discriminator: String!
+    trashed: Boolean!
+  }
+
   interface Entity {
     date: DateTime!
     instance: Instance!
+    alias: String
     license: License!
     taxonomyTerms: [TaxonomyTerm!]!
   }
@@ -112,6 +131,7 @@ export const uuidTypeDefs = gql`
     id: Int!
     trashed: Boolean!
     instance: Instance!
+    alias: String
     date: DateTime!
     license: License!
     taxonomyTerms: [TaxonomyTerm!]!
@@ -137,6 +157,9 @@ export const uuidTypeDefs = gql`
   type Page implements Uuid {
     id: Int!
     trashed: Boolean!
+    instance: Instance!
+    alias: String
+    license: License!
     currentRevision: PageRevision
   }
 
@@ -164,6 +187,7 @@ export const uuidTypeDefs = gql`
     trashed: Boolean!
     type: TaxonomyTermType!
     instance: Instance!
+    alias: String
     name: String!
     description: String
     weight: Int!
@@ -204,6 +228,7 @@ export const uuidResolvers: {
     >
   }
   Mutation: {
+    _removeUuid: Resolver<undefined, { id: number }, null>
     _setAlias: Resolver<undefined, AliasPayload, null>
     _setArticle: Resolver<undefined, ArticlePayload, null>
     _setArticleRevision: Resolver<undefined, ArticleRevisionPayload, null>
@@ -232,6 +257,7 @@ export const uuidResolvers: {
   }
   Page: {
     currentRevision: Resolver<Page, {}, Partial<PageRevision> | null>
+    license: Resolver<Page, {}, Partial<License>>
   }
   PageRevision: {
     author: Resolver<PageRevision, {}, Partial<User>>
@@ -247,6 +273,7 @@ export const uuidResolvers: {
     uuid,
   },
   Mutation: {
+    _removeUuid: createSetResolver({ name: 'uuid', setter: 'removeUuid' }),
     _setAlias: createSetResolver({ name: 'alias', setter: 'setAlias' }),
     _setArticle: createSetResolver({ name: 'article', setter: 'setArticle' }),
     _setArticleRevision: createSetResolver({
@@ -335,6 +362,18 @@ export const uuidResolvers: {
         PageRevision
       >
     },
+    async license(page, _args, context, info) {
+      const partialLicense = { id: page.licenseId }
+      if (requestsOnlyFields('License', ['id'], info)) {
+        return partialLicense
+      }
+      return licenseResolvers.Query.license(
+        undefined,
+        partialLicense,
+        context,
+        info
+      )
+    },
   },
   PageRevision: {
     async author(pageRevision, _args, context, info) {
@@ -415,7 +454,11 @@ enum TaxonomyTermType {
   TopicFolder = 'topicFolder',
 }
 
-type UuidType = DiscriminatorType | EntityType | EntityRevisionType
+type UuidType =
+  | DiscriminatorType
+  | EntityType
+  | EntityRevisionType
+  | 'UnsupportedUuid'
 
 abstract class Uuid {
   public abstract __typename: UuidType
@@ -428,9 +471,24 @@ abstract class Uuid {
   }
 }
 
+class UnsupportedUuid extends Uuid {
+  public __typename: UuidType = 'UnsupportedUuid'
+  public discriminator: string
+
+  public constructor(payload: {
+    id: number
+    trashed: boolean
+    discriminator: string
+  }) {
+    super(payload)
+    this.discriminator = payload.discriminator
+  }
+}
+
 abstract class Entity extends Uuid {
   public abstract __typename: EntityType
   public instance: Instance
+  public alias?: string
   public date: string
   public licenseId: number
   public taxonomyTermIds: number[]
@@ -439,6 +497,7 @@ abstract class Entity extends Uuid {
   public constructor(payload: {
     id: number
     trashed: boolean
+    alias?: string
     date: DateTime
     instance: Instance
     licenseId: number
@@ -447,6 +506,7 @@ abstract class Entity extends Uuid {
   }) {
     super(payload)
     this.instance = payload.instance
+    this.alias = payload.alias
     this.date = payload.date
     this.licenseId = payload.licenseId
     this.taxonomyTermIds = payload.taxonomyTermIds
@@ -503,16 +563,25 @@ class ArticleRevision extends EntityRevision {
 
 class Page extends Uuid {
   public __typename = DiscriminatorType.Page
+  public instance: Instance
+  public alias?: string
   public currentRevisionId?: number
+  public licenseId: number
 
   public constructor(payload: {
     id: number
     trashed: boolean
+    instance: Instance
+    alias?: string
     taxonomyTermIds: number[]
     currentRevisionId?: number
+    licenseId: number
   }) {
     super(payload)
+    this.instance = payload.instance
+    this.alias = payload.alias
     this.currentRevisionId = payload.currentRevisionId
+    this.licenseId = payload.licenseId
   }
 }
 
@@ -569,6 +638,7 @@ class TaxonomyTerm extends Uuid {
   public __typename = DiscriminatorType.TaxonomyTerm
   public type: TaxonomyTermType
   public instance: Instance
+  public alias?: string
   public name: string
   public description?: string
   public weight: number
@@ -580,6 +650,7 @@ class TaxonomyTerm extends Uuid {
     type: string
     trashed: boolean
     instance: Instance
+    alias?: string
     name: string
     description?: string
     weight: number
@@ -589,6 +660,7 @@ class TaxonomyTerm extends Uuid {
     super(payload)
     this.type = toCamelCase(payload.type)
     this.instance = payload.instance
+    this.alias = payload.alias
     this.name = payload.name
     this.description = payload.description
     this.weight = payload.weight
@@ -626,20 +698,24 @@ async function uuid(
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function resolveAbstractUuid(data: any) {
+function resolveAbstractUuid(data?: any) {
+  if (!data) return null
+
   switch (data.discriminator) {
     case 'entity':
       switch (data.type) {
         case 'article':
           return new Article(data)
+        default:
+          return new UnsupportedUuid(data)
       }
-      break
     case 'entityRevision':
       switch (data.type) {
         case 'article':
           return new ArticleRevision(data)
+        default:
+          return new UnsupportedUuid(data)
       }
-      break
     case 'page':
       return new Page(data)
     case 'pageRevision':
@@ -648,6 +724,8 @@ function resolveAbstractUuid(data: any) {
       return new User(data)
     case 'taxonomyTerm':
       return new TaxonomyTerm(data)
+    default:
+      return new UnsupportedUuid(data)
   }
 }
 
@@ -675,6 +753,7 @@ function createSetResolver<S extends keyof SerloDataSource>({
 export interface AliasPayload {
   id: number
   instance: Instance
+  path: string
   source: string
   timestamp: DateTime
 }

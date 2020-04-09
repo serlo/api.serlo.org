@@ -21,7 +21,7 @@ describe('_setAlias', () => {
     response = await client.query({
       query: gql`
         {
-          uuid(alias: { instance: de, path: "/source" }) {
+          uuid(alias: { instance: de, path: "/path" }) {
             id
           }
         }
@@ -32,6 +32,35 @@ describe('_setAlias', () => {
       uuid: {
         id: 1,
       },
+    })
+  })
+})
+
+describe('_removeUuid', () => {
+  test('forbidden', async () => {
+    const { client } = createTestClient({ service: Service.Playground })
+    const response = await removeUuid({ id: 1, client })
+    expect(response.errors?.[0].extensions?.code).toEqual('FORBIDDEN')
+  })
+
+  test('authenticated', async () => {
+    const { client } = createTestClient({ service: Service.Serlo })
+
+    let response = await removeUuid({ id: 1, client })
+    expect(response.errors).toBeUndefined()
+
+    response = await client.query({
+      query: gql`
+        {
+          uuid(id: 1) {
+            id
+          }
+        }
+      `,
+    })
+    expect(response.errors).toBeUndefined()
+    expect(response.data).toEqual({
+      uuid: null,
     })
   })
 })
@@ -126,6 +155,7 @@ describe('_setPage', () => {
     const response = await setPage({
       id: 1,
       currentRevisionId: 2,
+      licenseId: 3,
       client,
     })
     expect(response.errors?.[0].extensions?.code).toEqual('FORBIDDEN')
@@ -137,6 +167,7 @@ describe('_setPage', () => {
     let response = await setPage({
       id: 1,
       currentRevisionId: 2,
+      licenseId: 3,
       client,
     })
     expect(response.errors).toBeUndefined()
@@ -281,8 +312,21 @@ function setAlias({ id, client }: { id: number; client: Client }) {
           _setAlias(
             id: ${id}
             instance: de
+            path: "/path"
             source: "/source"
             timestamp: "timestamp"
+          )
+        }
+      `,
+  })
+}
+
+function removeUuid({ id, client }: { id: number; client: Client }) {
+  return client.mutate({
+    mutation: gql`
+        mutation {
+          _removeUuid(
+            id: ${id}
           )
         }
       `,
@@ -349,10 +393,12 @@ function setArticleRevison({
 function setPage({
   id,
   currentRevisionId,
+  licenseId,
   client,
 }: {
   id: number
   currentRevisionId: number
+  licenseId: number
   client: Client
 }) {
   return client.mutate({
@@ -360,8 +406,11 @@ function setPage({
         mutation {
           _setPage(
             id: ${id}
+            instance: de
+            alias: "alias"
             trashed: false
             currentRevisionId: ${currentRevisionId}
+            licenseId: ${licenseId}
           )
         }
       `,
@@ -430,6 +479,7 @@ function setTaxonomyTerm({
           trashed: false
           type: root
           instance: de
+          alias: "alias"
           name: "name"
           description: "description"
           weight: 0

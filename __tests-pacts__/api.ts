@@ -290,6 +290,7 @@ describe('Uuid', () => {
                 ... on Article {
                   id
                   trashed
+                  alias
                   instance
                   date
                   currentRevision {
@@ -308,6 +309,8 @@ describe('Uuid', () => {
           uuid: {
             __typename: 'Article',
             trashed: false,
+            alias:
+              '/mathe/funktionen/uebersicht-aller-artikel-zu-funktionen/parabel',
             id: 1855,
             instance: 'de',
             date: '2014-03-01T20:45:56Z',
@@ -505,6 +508,41 @@ describe('Uuid', () => {
       })
     })
 
+    test('by alias (w/ license)', async () => {
+      await addPageAliasInteraction()
+      await addPageUuidInteraction()
+      await addLicenseInteraction()
+      const response = await client.query({
+        query: gql`
+          {
+            uuid(alias: { instance: de, path: "/mathe" }) {
+              __typename
+              ... on Page {
+                id
+                trashed
+                license {
+                  id
+                  title
+                }
+              }
+            }
+          }
+        `,
+      })
+      expect(response.errors).toBe(undefined)
+      expect(response.data).toEqual({
+        uuid: {
+          __typename: 'Page',
+          trashed: false,
+          id: 19767,
+          license: {
+            id: 1,
+            title: 'title',
+          },
+        },
+      })
+    })
+
     test('by alias (w/ currentRevision)', async () => {
       await addPageAliasInteraction()
       await addPageUuidInteraction()
@@ -552,6 +590,8 @@ describe('Uuid', () => {
               ... on Page {
                 id
                 trashed
+                instance
+                alias
                 currentRevision {
                   id
                 }
@@ -565,6 +605,8 @@ describe('Uuid', () => {
         uuid: {
           __typename: 'Page',
           trashed: false,
+          instance: 'de',
+          alias: '/mathe',
           id: 19767,
           currentRevision: {
             id: 35476,
@@ -742,8 +784,10 @@ describe('Uuid', () => {
       })
     })
   })
+
   describe('TaxonomyTerm', () => {
     test('by id (subject)', async () => {
+      await addTaxonomyTermRootInteraction()
       await addTaxonomyTermCurriculumTopicInteraction()
       await addTaxonomyTermSubjectInteraction()
       const response = await client.query({
@@ -756,12 +800,14 @@ describe('Uuid', () => {
                 type
                 trashed
                 instance
+                alias
                 name
                 description
                 weight
 
                 parent {
                   id
+                  alias
                 }
 
                 children {
@@ -780,11 +826,13 @@ describe('Uuid', () => {
           trashed: false,
           id: 5,
           instance: 'de',
+          alias: 'alias',
           name: 'mathe',
           description: null,
           weight: 16,
           parent: {
             id: 3,
+            alias: null,
           },
           children: [
             {
@@ -925,6 +973,8 @@ function addArticleAliasInteraction() {
     request: '/mathe/funktionen/uebersicht-aller-artikel-zu-funktionen/parabel',
     response: {
       id: 1855,
+      instance: 'de',
+      path: '/mathe/funktionen/uebersicht-aller-artikel-zu-funktionen/parabel',
       source: '/entity/view/1855',
       timestamp: Matchers.iso8601DateTime('2014-06-16T15:58:45Z'),
     },
@@ -937,6 +987,7 @@ function addArticleUuidInteraction() {
     response: {
       id: 1855,
       trashed: Matchers.boolean(false),
+      alias: '/mathe/funktionen/uebersicht-aller-artikel-zu-funktionen/parabel',
       discriminator: 'entity',
       type: 'article',
       instance: 'de',
@@ -971,6 +1022,8 @@ function addPageAliasInteraction() {
     request: '/mathe',
     response: {
       id: 19767,
+      instance: 'de',
+      path: '/mathe',
       source: '/page/view/19767',
       timestamp: Matchers.iso8601DateTime('2014-05-25T10:25:44Z'),
     },
@@ -983,8 +1036,11 @@ function addPageUuidInteraction() {
     response: {
       id: 19767,
       trashed: Matchers.boolean(false),
+      instance: 'de',
+      alias: '/mathe',
       discriminator: 'page',
       currentRevisionId: Matchers.integer(35476),
+      licenseId: Matchers.integer(1),
     },
   })
 }
@@ -1029,6 +1085,7 @@ async function addTaxonomyTermRootInteraction() {
       discriminator: 'taxonomyTerm',
       type: 'root',
       instance: 'de',
+      alias: null,
       name: Matchers.string('Root'),
       description: null,
       weight: Matchers.integer(1),
@@ -1047,6 +1104,7 @@ async function addTaxonomyTermSubjectInteraction() {
       discriminator: 'taxonomyTerm',
       type: 'subject',
       instance: 'de',
+      alias: Matchers.string('alias'),
       name: Matchers.string('mathe'),
       description: null,
       weight: Matchers.integer(16),
@@ -1065,6 +1123,7 @@ function addTaxonomyTermCurriculumTopicInteraction() {
       discriminator: 'taxonomyTerm',
       type: 'curriculum-topic',
       instance: 'de',
+      alias: Matchers.string('alias'),
       name: Matchers.string('Natürliche Zahlen'),
       description: Matchers.string('description'),
       weight: Matchers.integer(1),

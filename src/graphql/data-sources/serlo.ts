@@ -20,10 +20,12 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { RESTDataSource } from 'apollo-datasource-rest'
+import jwt from 'jsonwebtoken'
 
 import { Environment } from '../environment'
 import { Instance } from '../schema/instance'
 import { License } from '../schema/license'
+import { Service } from '../schema/types'
 import {
   AliasPayload,
   ArticlePayload,
@@ -56,10 +58,7 @@ export class SerloDataSource extends RESTDataSource {
   }
 
   public async setAlias(alias: AliasPayload) {
-    const cacheKey = this.getCacheKey(
-      `/api/alias${alias.source}`,
-      alias.instance
-    )
+    const cacheKey = this.getCacheKey(`/api/alias${alias.path}`, alias.instance)
     await this.environment.cache.set(cacheKey, JSON.stringify(alias))
   }
 
@@ -78,6 +77,11 @@ export class SerloDataSource extends RESTDataSource {
     await this.environment.cache.set(cacheKey, JSON.stringify(license))
   }
 
+  public async removeLicense({ id }: { id: number }) {
+    const cacheKey = this.getCacheKey(`/api/license/${id}`)
+    await this.environment.cache.set(cacheKey, JSON.stringify(null))
+  }
+
   public async getUuid({
     id,
     bypassCache = false,
@@ -86,6 +90,11 @@ export class SerloDataSource extends RESTDataSource {
     bypassCache?: boolean
   }) {
     return this.cacheAwareGet({ path: `/api/uuid/${id}`, bypassCache })
+  }
+
+  public async removeUuid({ id }: { id: number }) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${id}`)
+    await this.environment.cache.set(cacheKey, JSON.stringify(null))
   }
 
   public async setArticle(article: ArticlePayload) {
@@ -155,10 +164,24 @@ export class SerloDataSource extends RESTDataSource {
       if (cache) return JSON.parse(cache)
     }
 
+    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET!, {
+      expiresIn: '2h',
+      audience: Service.Serlo,
+      issuer: 'api.serlo.org',
+    })
+
     // In Kubernetes, we need to handle that via https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/0
     const data = await (process.env.NODE_ENV === 'test'
       ? super.get(`http://localhost:9009${path}`)
-      : super.get(`http://${instance}.${process.env.SERLO_ORG_HOST}${path}`))
+      : super.get(
+          `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
+          {},
+          {
+            headers: {
+              Authorization: `Serlo Service=${token}`,
+            },
+          }
+        ))
 
     await this.environment.cache.set(cacheKey, JSON.stringify(data))
     return data
