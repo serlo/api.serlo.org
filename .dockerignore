@@ -1,0 +1,6 @@
+**/.git
+**/.github
+**/node_modules
+**/.DS_store
+**/*.secret.*
+dist
