@@ -37,7 +37,9 @@ function start() {
   const graphqlPath = applyGraphQLMiddleware(app)
 
   app.listen({ port: 3000 }, () => {
-    console.log(`🚀 Server ready at http://localhost:3000${graphqlPath}`)
+    console.log('🚀 Server ready')
+    console.log('Playground:       http://localhost:3000/___graphql')
+    console.log(`GraphQL endpoint: http://localhost:3000${graphqlPath}`)
   })
 }
 
@@ -47,23 +49,26 @@ function applyGraphQLMiddleware(app: Express) {
   }
   const server = new ApolloServer(getGraphQLOptions(environment))
 
-  const token = jwt.sign({}, process.env.PLAYGROUND_SECRET!, {
-    expiresIn: '2h',
-    audience: 'api.serlo.org',
-    issuer: Service.Playground,
-  })
-
   app.use(server.getMiddleware({ path: '/graphql' }))
-  app.get(
-    '/___graphql',
-    createPlayground({
+  app.get('/___graphql', (...args) => {
+    const token = jwt.sign({}, process.env.PLAYGROUND_SECRET!, {
+      expiresIn: '2h',
+      audience: 'api.serlo.org',
+      issuer: Service.Playground,
+    })
+
+    return createPlayground({
       endpoint: '/graphql',
       // @ts-ignore Not documented but we can pass custom headers
       headers: {
         Authorization: `Serlo Service=${token}`,
       },
-    })
-  )
+    })(...args)
+  })
+
+  app.get('/', (_req, res) => {
+    res.status(200).send(`api@${require('../package.json').version}`)
+  })
 
   return server.graphqlPath
 }

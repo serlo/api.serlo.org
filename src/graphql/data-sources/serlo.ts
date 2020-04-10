@@ -170,7 +170,6 @@ export class SerloDataSource extends RESTDataSource {
       issuer: 'api.serlo.org',
     })
 
-    // In Kubernetes, we need to handle that via https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/0
     const data = await (process.env.NODE_ENV === 'test'
       ? super.get(`http://localhost:9009${path}`)
       : super.get(
