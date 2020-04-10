@@ -66,9 +66,5 @@ function applyGraphQLMiddleware(app: Express) {
     })(...args)
   })
 
-  app.get('/', (_req, res) => {
-    res.status(200).send(`api@${require('../package.json').version}`)
-  })
-
   return server.graphqlPath
 }
