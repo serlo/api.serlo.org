@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file.
 
 - Remove health check route `/`. Use Apollo's health check route `.well-known/apollo/server-health` instead.
 
+### Added
+
+- Add descriptions to the GraphQL schema.
+
 ## [0.1.1](https://github.com/serlo/api.serlo.org/compare/v0.1.0..v0.1.1) - April 11, 2020
 
 ### Added

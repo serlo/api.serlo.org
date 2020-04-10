@@ -33,6 +33,7 @@ async function exec(): Promise<void> {
       breakingChanges: [
         "Remove health check route `/`. Use Apollo's health check route `.well-known/apollo/server-health` instead.",
       ],
+      added: ['Add descriptions to the GraphQL schema.'],
     },
   ])
 

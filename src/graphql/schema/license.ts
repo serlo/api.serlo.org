@@ -26,32 +26,103 @@ import { Context, Resolver } from './types'
 
 export const licenseTypeDefs = gql`
   extend type Query {
-    license(id: Int!): License
+    """
+    Returns the \`License\` with the given ID.
+    """
+    license(
+      """
+      The ID of the license
+      """
+      id: Int!
+    ): License
   }
 
   extend type Mutation {
-    _removeLicense(id: Int!): Boolean
-
-    _setLicense(
+    """
+    Removes the \`License\` with the given ID from cache. May only be called by \`serlo.org\` when a license has been removed.
+    """
+    _removeLicense(
+      """
+      The ID of the license
+      """
       id: Int!
+    ): Boolean
+
+    """
+    Inserts the given \`License\` into the cache. May only be called by \`serlo.org\` when a license has been created or updated.
+    """
+    _setLicense(
+      """
+      The ID of the license
+      """
+      id: Int!
+      """
+      The \`Instance\` the license is tied to
+      """
       instance: Instance!
+      """
+      \`true\` iff this is the default license in the instance
+      """
       default: Boolean!
+      """
+      Title of the license
+      """
       title: String!
+      """
+      The URL the license should link to (e.g. to the license text or the copyright holder)
+      """
       url: String!
+      """
+      The license notice shown below content
+      """
       content: String!
+      """
+      The agreement that authors need to consent to
+      """
       agreement: String!
+      """
+      The URL of the icon (or \`""\` if there is no icon)
+      """
       iconHref: String!
     ): Boolean
   }
 
+  """
+  Represents a Serlo.org license, e.g. CC BY-SA 4.0. A license is tied to an \`Instance\` and can be uniquely
+  identified by its ID.
+  """
   type License {
+    """
+    ID of the license
+    """
     id: Int!
+    """
+    The \`Instance\` the license is tied to
+    """
     instance: Instance!
+    """
+    \`true\` iff this is the default license in the instance
+    """
     default: Boolean!
+    """
+    Title of the license
+    """
     title: String!
+    """
+    The URL the license should link to (e.g. to the license text or the copyright holder)
+    """
     url: String!
+    """
+    The license notice shown below content
+    """
     content: String!
+    """
+    The agreement that authors need to consent to
+    """
     agreement: String!
+    """
+    The URL of the icon (or \`""\` if there is no icon)
+    """
     iconHref: String!
   }
 `
