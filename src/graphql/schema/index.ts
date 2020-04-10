@@ -29,10 +29,16 @@ import { uuidResolvers, uuidTypeDefs } from './uuid'
 
 export const schemaTypeDefs = gql`
   type Query {
+    """
+    Fake field so that combineResolvers works, don't use
+    """
     _empty: String
   }
 
   type Mutation {
+    """
+    Fake field so that combineResolvers works, don't use
+    """
     _empty: String
   }
 `

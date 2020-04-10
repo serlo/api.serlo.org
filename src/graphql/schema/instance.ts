@@ -27,8 +27,33 @@ export enum Instance {
 }
 
 export const instanceTypeDefs = gql`
+  """
+  Represents a Serlo.org instance, e.g. \`de.serlo.org\`.
+  """
   enum Instance {
+    """
+    German (https://de.serlo.org)
+    """
     de
+    """
+    English (https://en.serlo.org)
+    """
     en
+    """
+    Spanish (https://es.serlo.org)
+    """
+    es
+    """
+    French (https://fr.serlo.org)
+    """
+    fr
+    """
+    Hindi (https://hi.serlo.org)
+    """
+    hi
+    """
+    Tamil (https://ta.serlo.org)
+    """
+    ta
   }
 `

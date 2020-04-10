@@ -30,172 +30,568 @@ import { requestsOnlyFields } from './utils'
 
 export const uuidTypeDefs = gql`
   extend type Query {
-    uuid(alias: AliasInput, id: Int): Uuid
+    """
+    Returns the \`Uuid\` with the given id or alias.
+    """
+    uuid(
+      """
+      The alias to look up
+      """
+      alias: AliasInput
+      """
+      The ID to look up
+      """
+      id: Int
+    ): Uuid
   }
 
   extend type Mutation {
+    """
+    Inserts the given \`Alias\` into the cache. May only be called by \`serlo.org\` when an alias has been created or updated.
+    """
     _setAlias(
+      """
+      The id the of \`Uuid\` the alias links to
+      """
       id: Int!
+      """
+      The \`Instance\` the alias is tied to
+      """
       instance: Instance!
+      """
+      The path of the alias
+      """
       path: String!
+      """
+      The path the alias links to
+      """
       source: String!
+      """
+      The \`DateTime\` the alias has been created
+      """
       timestamp: DateTime!
     ): Boolean
 
+    """
+    Removes the \`Uuid\` with the given ID from cache. May only be called by \`serlo.org\` when an Uuid has been removed.
+    """
     _removeUuid(id: Int!): Boolean
 
+    """
+    Inserts the given \`Article\` into the cache. May only be called by \`serlo.org\` when an article has been created or updated.
+    """
     _setArticle(
+      """
+      The ID of the article
+      """
       id: Int!
+      """
+      \`true\` iff the article has been trashed
+      """
       trashed: Boolean!
+      """
+      The \`Instance\` the article is tied to
+      """
       instance: Instance!
+      """
+      The current alias of the article
+      """
       alias: String
+      """
+      The \`DateTime\` the article has been created
+      """
       date: DateTime!
+      """
+      The ID of the current revision
+      """
       currentRevisionId: Int
+      """
+      The ID of the license
+      """
       licenseId: Int!
+      """
+      The IDs of \`TaxonomyTerm\`s that contain the article
+      """
       taxonomyTermIds: [Int!]!
     ): Boolean
 
+    """
+    Inserts the given \`ArticleRevision\` into the cache. May only be called by \`serlo.org\` when an article revision has been created.
+    """
     _setArticleRevision(
+      """
+      The ID of the article revision
+      """
       id: Int!
+      """
+      \`true\` iff the article revision has been trashed
+      """
       trashed: Boolean!
+      """
+      The \`DateTime\` the article revision has been created
+      """
       date: DateTime!
+      """
+      The ID of the \`User\` that created the revision
+      """
       authorId: Int!
+      """
+      The ID of the \`Article\`
+      """
       repositoryId: Int!
+      """
+      The value of the title field
+      """
       title: String!
+      """
+      The value of the content field
+      """
       content: String!
+      """
+      The value of the changes field
+      """
       changes: String!
     ): Boolean
 
+    """
+    Inserts the given \`Page\` into the cache. May only be called by \`serlo.org\` when a page has been created or updated.
+    """
     _setPage(
+      """
+      The ID of the page
+      """
       id: Int!
+      """
+      \`true\` iff the page has been trashed
+      """
       trashed: Boolean!
+      """
+      The \`Instance\` the page is tied to
+      """
       instance: Instance!
+      """
+      The current alias of the page
+      """
       alias: String
+      """
+      The ID of the current revision
+      """
       currentRevisionId: Int
+      """
+      The ID of the license
+      """
       licenseId: Int!
     ): Boolean
 
+    """
+    Inserts the given \`PageRevision\` into the cache. May only be called by \`serlo.org\` when a page revision has been created.
+    """
     _setPageRevision(
+      """
+      The ID of the page revision
+      """
       id: Int!
+      """
+      \`true\` iff the page revision has been trashed
+      """
       trashed: Boolean!
+      """
+      The value of the title field
+      """
       title: String!
+      """
+      The value of the content field
+      """
       content: String!
+      """
+      The \`DateTime\` the page revision has been created
+      """
       date: DateTime!
+      """
+      The ID of the \`User\` that created the page revision
+      """
       authorId: Int!
+      """
+      The ID of the \`Page\`
+      """
       repositoryId: Int!
     ): Boolean
 
+    """
+    Inserts the given \`User\` into the cache. May only be called by \`serlo.org\` when an user has been created or updated.
+    """
     _setUser(
+      """
+      The ID of the user
+      """
       id: Int!
+      """
+      \`true\` iff the user has been trashed
+      """
       trashed: Boolean!
+      """
+      The username of the user
+      """
       username: String!
+      """
+      The \`DateTime\` the user has registered on serlo.org
+      """
       date: DateTime!
+      """
+      The \`DateTime\` of the user's latest login
+      """
       lastLogin: DateTime
+      """
+      The profile of the user
+      """
       description: String
     ): Boolean
 
+    """
+    Inserts the given \`TaxonomyTerm\` into the cache. May only be called by \`serlo.org\` when a taxonomy term has been created or updated.
+    """
     _setTaxonomyTerm(
+      """
+      The ID of the taxonomy term
+      """
       id: Int!
+      """
+      \`true\` iff the taxonomy term has been trashed
+      """
       trashed: Boolean!
+      """
+      The current alias of the taxonomy term
+      """
       alias: String
+      """
+      The \`TaxonomyTermType\` of the taxonomy term
+      """
       type: TaxonomyTermType!
+      """
+      The \`Instance\` the taxonomy term is tied to
+      """
       instance: Instance!
+      """
+      The name of the taxonomy term
+      """
       name: String!
+      """
+      The description of the taxonomy term
+      """
       description: String
+      """
+      The weight of the taxonomy term compared to its siblings
+      """
       weight: Int!
+      """
+      The ID of the parent of the taxonomy term
+      """
       parentId: Int
+      """
+      The IDs of \`Uuid\`s that the taxonomy term contains
+      """
       childrenIds: [Int!]!
     ): Boolean
   }
 
+  """
+  Represents a Serlo.org data entity that can be uniquely identified by its ID and can be trashed.
+  """
   interface Uuid {
+    """
+    The ID
+    """
     id: Int!
+    """
+    \`true\` iff the data entity has been trashed
+    """
     trashed: Boolean!
   }
 
+  """
+  Represents an \`Uuid\` that isn't supported by the API, yet
+  """
   type UnsupportedUuid implements Uuid {
+    """
+    The ID
+    """
     id: Int!
+    """
+    \`true\` iff the data entity has been trashed
+    """
+    trashed: Boolean!
+    """
+    The discriminator
+    """
     discriminator: String!
-    trashed: Boolean!
   }
 
+  """
+  Represents a Serlo.org entity (e.g. an article). An \`Entity\` is tied to an \`Instance\`, has a \`License\`, might have an alias
+  and is the child of \`TaxonomyTerm\`s
+  """
   interface Entity {
+    """
+    The \`DateTime\` the entity has been created
+    """
     date: DateTime!
+    """
+    The \`Instance\` the entity is tied to
+    """
     instance: Instance!
+    """
+    The current alias of the entity
+    """
     alias: String
+    """
+    The \`License\` of the entity
+    """
     license: License!
+    """
+    The \`TaxonomyTerm\`s that the entity has been associated with
+    """
     taxonomyTerms: [TaxonomyTerm!]!
   }
 
+  """
+  Represents a Serlo.org article. An \`Article\` is a repository containing \`ArticleRevision\`s.
+  """
   type Article implements Uuid & Entity {
+    """
+    The ID of the article
+    """
     id: Int!
+    """
+    \`true\` iff the article has been trashed
+    """
     trashed: Boolean!
+    """
+    The \`Instance\` the article is tied to
+    """
     instance: Instance!
+    """
+    The current alias of the article
+    """
     alias: String
+    """
+    The \`DateTime\` the article has been created
+    """
     date: DateTime!
+    """
+    The \`License\` of the article
+    """
     license: License!
+    """
+    The \`TaxonomyTerm\`s that the article has been associated with
+    """
     taxonomyTerms: [TaxonomyTerm!]!
+    """
+    The \`ArticleRevision\` that is currently checked out
+    """
     currentRevision: ArticleRevision
   }
 
+  """
+  Represents a Serlo.org entity revision (e.g. a revision of an article). An \`EntityRevision\` is tied to an \`Entity\` and has an author.
+  """
   interface EntityRevision {
+    """
+    The \`User\` that created the entity revision
+    """
     author: User!
+    """
+    The \`DateTime\` the entity revision has been created
+    """
     date: DateTime!
   }
 
+  """
+  Represents a Serlo.org article revision. An \`ArticleRevision\` has fields title, content and changes.
+  """
   type ArticleRevision implements Uuid & EntityRevision {
+    """
+    The ID of the article revision
+    """
     id: Int!
+    """
+    The \`User\` that created the entity revision
+    """
     author: User!
+    """
+    \`true\` iff the article revision has been trashed
+    """
     trashed: Boolean!
+    """
+    The \`DateTime\` the article revision has been created
+    """
     date: DateTime!
+    """
+    The heading
+    """
     title: String!
+    """
+    The content
+    """
     content: String!
+    """
+    The changes submitted by the author
+    """
     changes: String!
+    """
+    The \`Article\` the article revision is tied to
+    """
     article: Article!
   }
 
+  """
+  Represents a Serlo.org page. A \`Page\` is a repository containing \`PageRevision\`s, is tied to an \`Instance\`,
+  has a \`License\`, and has an alias.
+  """
   type Page implements Uuid {
+    """
+    The ID of the page
+    """
     id: Int!
+    """
+    \`true\` iff the page has been trashed
+    """
     trashed: Boolean!
+    """
+    The \`Instance\` the page is tied to
+    """
     instance: Instance!
+    """
+    The alias of the page
+    """
     alias: String
+    """
+    The \`License\` of the page
+    """
     license: License!
+    """
+    The \`PageRevision\` that is currently checked out
+    """
     currentRevision: PageRevision
   }
 
+  """
+  Represents a Serlo.org page revision. A \`PageRevision\` has fields title and content.
+  """
   type PageRevision implements Uuid {
+    """
+    The ID of the page revision
+    """
     id: Int!
+    """
+    The \`User\` that created the page revision
+    """
     author: User!
+    """
+    \`true\` iff the page revision has been trashed
+    """
     trashed: Boolean!
+    """
+    The \`DateTime\` the page revision has been created
+    """
     date: DateTime!
+    """
+    The heading
+    """
     title: String!
+    """
+    The content
+    """
     content: String!
+    """
+    The \`Page\` the page revision is tied to
+    """
     page: Page!
   }
 
+  """
+  Represents a Serlo.org user account
+  """
   type User implements Uuid {
+    """
+    The ID of the user
+    """
     id: Int!
+    """
+    \`true\` iff the user has been trashed
+    """
     trashed: Boolean!
+    """
+    The (unique) \`username\` of the user
+    """
     username: String!
+    """
+    The \`DateTime\` the user account has been created
+    """
     date: DateTime!
+    """
+    The \`DateTime\` the user has last logged in
+    """
     lastLogin: DateTime
+    """
+    The profile of the user
+    """
     description: String
   }
 
+  """
+  Represents a Serlo.org taxonomy term. The taxonomy organizes entities into a tree-like structure, either by
+  topic or by curriculum. An entity can be child of multiple \`TaxonomyTerm\`s
+  """
   type TaxonomyTerm implements Uuid {
+    """
+    The ID of the taxonomy term
+    """
     id: Int!
+    """
+    \`true\` iff the taxonomy term has been trashed
+    """
     trashed: Boolean!
+    """
+    The \`TaxonomyTermType\` of the taxonomy term
+    """
     type: TaxonomyTermType!
+    """
+    The \`Instance\` the taxonomy term is tied to
+    """
     instance: Instance!
+    """
+    The current alias of the taxonomy term
+    """
     alias: String
+    """
+    The name of the taxonomy term
+    """
     name: String!
+    """
+    The description of the taxonomy term
+    """
     description: String
+    """
+    The weight of the taxonomy term compared to its siblings
+    """
     weight: Int!
+    """
+    The parent \`TaxonomyTerm\` of the taxonomy term
+    """
     parent: TaxonomyTerm
+    """
+    The children of the taxonomy term
+    """
     children: [Uuid!]!
+    """
+    The complete path from root to the taxonomy term
+    """
     path: [TaxonomyTerm]!
   }
 
+  """
+  Represents the type of a taxonomy term type.
+  """
   enum TaxonomyTermType {
     blog
     curriculum
@@ -210,8 +606,17 @@ export const uuidTypeDefs = gql`
     topicFolder
   }
 
+  """
+  Needed input to look up an Uuid by alias.
+  """
   input AliasInput {
+    """
+    The \`Instance\` the alias should be looked up in
+    """
     instance: Instance!
+    """
+    The path that should be looked up
+    """
     path: String!
   }
 `
