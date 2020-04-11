@@ -19,23 +19,24 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import * as jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 
 import { handleAuthentication } from '../src/graphql'
+import { Service } from '../src/graphql/schema/types'
 
 test('valid serlo.org token', () => {
   const token = jwt.sign({}, process.env.SERLO_ORG_SECRET!, {
     audience: 'api.serlo.org',
-    issuer: 'serlo.org',
+    issuer: Service.Serlo,
   })
   const header = `Serlo Service=${token}`
-  expect(handleAuthentication(header)).toEqual({ service: 'serlo.org' })
+  expect(handleAuthentication(header)).toEqual({ service: Service.Serlo })
 })
 
 test('wrong audience', () => {
   const token = jwt.sign({}, process.env.SERLO_ORG_SECRET!, {
-    audience: 'serlo.org',
-    issuer: 'serlo.org',
+    audience: Service.Serlo,
+    issuer: Service.Serlo,
   })
   const header = `Serlo Service=${token}`
   expect(() => {
@@ -46,7 +47,7 @@ test('wrong audience', () => {
 test('invalid signature', () => {
   const token = jwt.sign({}, `${process.env.SERLO_ORG_SECRET!}-wrong`, {
     audience: 'api.serlo.org',
-    issuer: 'serlo.org',
+    issuer: Service.Serlo,
   })
   const header = `Serlo Service=${token}`
   expect(() => {
@@ -62,7 +63,7 @@ test('expired token', () => {
     process.env.SERLO_ORG_SECRET!,
     {
       audience: 'api.serlo.org',
-      issuer: 'serlo.org',
+      issuer: Service.Serlo,
       expiresIn: '1h',
     }
   )
@@ -75,7 +76,7 @@ test('expired token', () => {
 test('wrong authentication type', () => {
   const token = jwt.sign({}, process.env.SERLO_ORG_SECRET!, {
     audience: 'api.serlo.org',
-    issuer: 'serlo.org',
+    issuer: Service.Serlo,
   })
   const header = `Bearer Service=${token}`
   expect(() => {

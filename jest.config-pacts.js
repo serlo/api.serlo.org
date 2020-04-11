@@ -23,7 +23,8 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  testRegex: '/__tests-pacts__/.*\\.[jt]sx?$',
+  testRegex: '/__tests-pacts__/index.ts',
   watchPathIgnorePatterns: ['<rootDir>/pacts/'],
   setupFiles: ['dotenv/config'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup-pacts.ts'],
 }

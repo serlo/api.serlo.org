@@ -22,24 +22,38 @@
 import { gql } from 'apollo-server'
 
 import { Service } from '../src/graphql/schema/types'
-import { Client, createTestClient } from './utils/test-client'
+import {
+  assertFailingGraphQLMutation,
+  assertSuccessfulGraphQLMutation,
+  assertSuccessfulGraphQLQuery,
+} from './__utils__/assertions'
+import { createTestClient } from './__utils__/test-client'
 
 describe('_setAlias', () => {
   test('forbidden', async () => {
     const { client } = createTestClient({ service: Service.Playground })
-    const response = await setAlias({ id: 1, client })
-    expect(response.errors?.[0].extensions?.code).toEqual('FORBIDDEN')
+    await assertFailingGraphQLMutation(
+      {
+        mutation: createSetAliasMutation({ id: 1 }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
   })
 
   test('authenticated', async () => {
     const { client } = createTestClient({ service: Service.Serlo })
-
-    let response = await setUser({ id: 1, client })
-    expect(response.errors).toBeUndefined()
-    response = await setAlias({ id: 1, client })
-    expect(response.errors).toBeUndefined()
-
-    response = await client.query({
+    await assertSuccessfulGraphQLMutation({
+      mutation: createSetUserMutation({ id: 1 }),
+      client,
+    })
+    await assertSuccessfulGraphQLMutation({
+      mutation: createSetAliasMutation({ id: 1 }),
+      client,
+    })
+    await assertSuccessfulGraphQLQuery({
       query: gql`
         {
           uuid(alias: { instance: de, path: "/path" }) {
@@ -47,12 +61,12 @@ describe('_setAlias', () => {
           }
         }
       `,
-    })
-    expect(response.errors).toBeUndefined()
-    expect(response.data).toEqual({
-      uuid: {
-        id: 1,
+      data: {
+        uuid: {
+          id: 1,
+        },
       },
+      client,
     })
   })
 })
@@ -60,17 +74,24 @@ describe('_setAlias', () => {
 describe('_removeUuid', () => {
   test('forbidden', async () => {
     const { client } = createTestClient({ service: Service.Playground })
-    const response = await removeUuid({ id: 1, client })
-    expect(response.errors?.[0].extensions?.code).toEqual('FORBIDDEN')
+    await assertFailingGraphQLMutation(
+      {
+        mutation: createRemoveUuidMutation({ id: 1 }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
   })
 
   test('authenticated', async () => {
     const { client } = createTestClient({ service: Service.Serlo })
-
-    let response = await removeUuid({ id: 1, client })
-    expect(response.errors).toBeUndefined()
-
-    response = await client.query({
+    await assertSuccessfulGraphQLMutation({
+      mutation: createRemoveUuidMutation({ id: 1 }),
+      client,
+    })
+    await assertSuccessfulGraphQLQuery({
       query: gql`
         {
           uuid(id: 1) {
@@ -78,10 +99,8 @@ describe('_removeUuid', () => {
           }
         }
       `,
-    })
-    expect(response.errors).toBeUndefined()
-    expect(response.data).toEqual({
-      uuid: null,
+      data: { uuid: null },
+      client,
     })
   })
 })
@@ -89,26 +108,32 @@ describe('_removeUuid', () => {
 describe('_setArticle', () => {
   test('forbidden', async () => {
     const { client } = createTestClient({ service: Service.Playground })
-    const response = await setArticle({
-      id: 1,
-      currentRevisionId: 2,
-      licenseId: 3,
-      client,
-    })
-    expect(response.errors?.[0].extensions?.code).toEqual('FORBIDDEN')
+    await assertFailingGraphQLMutation(
+      {
+        mutation: createSetArticleMutation({
+          id: 1,
+          currentRevisionId: 2,
+          licenseId: 3,
+        }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
   })
 
   test('authenticated', async () => {
     const { client } = createTestClient({ service: Service.Serlo })
-
-    let response = await setArticle({
-      id: 1,
-      currentRevisionId: 2,
-      licenseId: 3,
+    await assertSuccessfulGraphQLMutation({
+      mutation: createSetArticleMutation({
+        id: 1,
+        currentRevisionId: 2,
+        licenseId: 3,
+      }),
       client,
     })
-    expect(response.errors).toBeUndefined()
-    response = await client.query({
+    await assertSuccessfulGraphQLQuery({
       query: gql`
         {
           uuid(id: 1) {
@@ -118,12 +143,12 @@ describe('_setArticle', () => {
           }
         }
       `,
-    })
-    expect(response.errors).toBeUndefined()
-    expect(response.data).toEqual({
-      uuid: {
-        id: 1,
+      data: {
+        uuid: {
+          id: 1,
+        },
       },
+      client,
     })
   })
 })
@@ -131,26 +156,32 @@ describe('_setArticle', () => {
 describe('_setArticleRevision', () => {
   test('forbidden', async () => {
     const { client } = createTestClient({ service: Service.Playground })
-    const response = await setArticleRevison({
-      id: 1,
-      repositoryId: 2,
-      authorId: 3,
-      client,
-    })
-    expect(response.errors?.[0].extensions?.code).toEqual('FORBIDDEN')
+    await assertFailingGraphQLMutation(
+      {
+        mutation: createSetArticleRevisionMutation({
+          id: 1,
+          repositoryId: 2,
+          authorId: 3,
+        }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
   })
 
   test('authenticated', async () => {
     const { client } = createTestClient({ service: Service.Serlo })
-
-    let response = await setArticleRevison({
-      id: 1,
-      repositoryId: 2,
-      authorId: 3,
+    await assertSuccessfulGraphQLMutation({
+      mutation: createSetArticleRevisionMutation({
+        id: 1,
+        repositoryId: 2,
+        authorId: 3,
+      }),
       client,
     })
-    expect(response.errors).toBeUndefined()
-    response = await client.query({
+    await assertSuccessfulGraphQLQuery({
       query: gql`
         {
           uuid(id: 1) {
@@ -160,12 +191,12 @@ describe('_setArticleRevision', () => {
           }
         }
       `,
-    })
-    expect(response.errors).toBeUndefined()
-    expect(response.data).toEqual({
-      uuid: {
-        id: 1,
+      data: {
+        uuid: {
+          id: 1,
+        },
       },
+      client,
     })
   })
 })
@@ -173,26 +204,32 @@ describe('_setArticleRevision', () => {
 describe('_setPage', () => {
   test('forbidden', async () => {
     const { client } = createTestClient({ service: Service.Playground })
-    const response = await setPage({
-      id: 1,
-      currentRevisionId: 2,
-      licenseId: 3,
-      client,
-    })
-    expect(response.errors?.[0].extensions?.code).toEqual('FORBIDDEN')
+    await assertFailingGraphQLMutation(
+      {
+        mutation: createSetPageMutation({
+          id: 1,
+          currentRevisionId: 2,
+          licenseId: 3,
+        }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
   })
 
   test('authenticated', async () => {
     const { client } = createTestClient({ service: Service.Serlo })
-
-    let response = await setPage({
-      id: 1,
-      currentRevisionId: 2,
-      licenseId: 3,
+    await assertSuccessfulGraphQLMutation({
+      mutation: createSetPageMutation({
+        id: 1,
+        currentRevisionId: 2,
+        licenseId: 3,
+      }),
       client,
     })
-    expect(response.errors).toBeUndefined()
-    response = await client.query({
+    await assertSuccessfulGraphQLQuery({
       query: gql`
         {
           uuid(id: 1) {
@@ -202,12 +239,12 @@ describe('_setPage', () => {
           }
         }
       `,
-    })
-    expect(response.errors).toBeUndefined()
-    expect(response.data).toEqual({
-      uuid: {
-        id: 1,
+      data: {
+        uuid: {
+          id: 1,
+        },
       },
+      client,
     })
   })
 })
@@ -215,26 +252,32 @@ describe('_setPage', () => {
 describe('_setPageRevision', () => {
   test('forbidden', async () => {
     const { client } = createTestClient({ service: Service.Playground })
-    const response = await setPageRevison({
-      id: 1,
-      repositoryId: 2,
-      authorId: 3,
-      client,
-    })
-    expect(response.errors?.[0].extensions?.code).toEqual('FORBIDDEN')
+    await assertFailingGraphQLMutation(
+      {
+        mutation: createSetPageRevisonMutation({
+          id: 1,
+          repositoryId: 2,
+          authorId: 3,
+        }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
   })
 
   test('authenticated', async () => {
     const { client } = createTestClient({ service: Service.Serlo })
-
-    let response = await setPageRevison({
-      id: 1,
-      repositoryId: 2,
-      authorId: 3,
+    await assertSuccessfulGraphQLMutation({
+      mutation: createSetPageRevisonMutation({
+        id: 1,
+        repositoryId: 2,
+        authorId: 3,
+      }),
       client,
     })
-    expect(response.errors).toBeUndefined()
-    response = await client.query({
+    await assertSuccessfulGraphQLQuery({
       query: gql`
         {
           uuid(id: 1) {
@@ -244,12 +287,12 @@ describe('_setPageRevision', () => {
           }
         }
       `,
-    })
-    expect(response.errors).toBeUndefined()
-    expect(response.data).toEqual({
-      uuid: {
-        id: 1,
+      data: {
+        uuid: {
+          id: 1,
+        },
       },
+      client,
     })
   })
 })
@@ -257,24 +300,30 @@ describe('_setPageRevision', () => {
 describe('_setTaxonomyTerm', () => {
   test('forbidden', async () => {
     const { client } = createTestClient({ service: Service.Playground })
-    const response = await setTaxonomyTerm({
-      id: 1,
-      parentId: 2,
-      client,
-    })
-    expect(response.errors?.[0].extensions?.code).toEqual('FORBIDDEN')
+    await assertFailingGraphQLMutation(
+      {
+        mutation: createSetTaxonomyTermMutation({
+          id: 1,
+          parentId: 2,
+        }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
   })
 
   test('authenticated', async () => {
     const { client } = createTestClient({ service: Service.Serlo })
-
-    let response = await setTaxonomyTerm({
-      id: 1,
-      parentId: 2,
+    await assertSuccessfulGraphQLMutation({
+      mutation: createSetTaxonomyTermMutation({
+        id: 1,
+        parentId: 2,
+      }),
       client,
     })
-    expect(response.errors).toBeUndefined()
-    response = await client.query({
+    await assertSuccessfulGraphQLQuery({
       query: gql`
         {
           uuid(id: 1) {
@@ -284,12 +333,12 @@ describe('_setTaxonomyTerm', () => {
           }
         }
       `,
-    })
-    expect(response.errors).toBeUndefined()
-    expect(response.data).toEqual({
-      uuid: {
-        id: 1,
+      data: {
+        uuid: {
+          id: 1,
+        },
       },
+      client,
     })
   })
 })
@@ -297,16 +346,24 @@ describe('_setTaxonomyTerm', () => {
 describe('_setUser', () => {
   test('forbidden', async () => {
     const { client } = createTestClient({ service: Service.Playground })
-    const response = await setUser({ id: 1, client })
-    expect(response.errors?.[0].extensions?.code).toEqual('FORBIDDEN')
+    await assertFailingGraphQLMutation(
+      {
+        mutation: createSetUserMutation({ id: 1 }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
   })
 
   test('authenticated', async () => {
     const { client } = createTestClient({ service: Service.Serlo })
-
-    let response = await setUser({ id: 1, client })
-    expect(response.errors).toBeUndefined()
-    response = await client.query({
+    await assertSuccessfulGraphQLMutation({
+      mutation: createSetUserMutation({ id: 1 }),
+      client,
+    })
+    await assertSuccessfulGraphQLQuery({
       query: gql`
         {
           uuid(id: 1) {
@@ -316,19 +373,18 @@ describe('_setUser', () => {
           }
         }
       `,
-    })
-    expect(response.errors).toBeUndefined()
-    expect(response.data).toEqual({
-      uuid: {
-        id: 1,
+      data: {
+        uuid: {
+          id: 1,
+        },
       },
+      client,
     })
   })
 })
 
-function setAlias({ id, client }: { id: number; client: Client }) {
-  return client.mutate({
-    mutation: gql`
+function createSetAliasMutation({ id }: { id: number }) {
+  return gql`
         mutation {
           _setAlias(
             id: ${id}
@@ -338,35 +394,29 @@ function setAlias({ id, client }: { id: number; client: Client }) {
             timestamp: "timestamp"
           )
         }
-      `,
-  })
+      `
 }
 
-function removeUuid({ id, client }: { id: number; client: Client }) {
-  return client.mutate({
-    mutation: gql`
+export function createRemoveUuidMutation({ id }: { id: number }) {
+  return gql`
         mutation {
           _removeUuid(
             id: ${id}
           )
         }
-      `,
-  })
+      `
 }
 
-function setArticle({
+function createSetArticleMutation({
   id,
   currentRevisionId,
   licenseId,
-  client,
 }: {
   id: number
   currentRevisionId: number
   licenseId: number
-  client: Client
 }) {
-  return client.mutate({
-    mutation: gql`
+  return gql`
         mutation {
           _setArticle(
             id: ${id}
@@ -378,23 +428,19 @@ function setArticle({
             taxonomyTermIds: []
           )
         }
-      `,
-  })
+      `
 }
 
-function setArticleRevison({
+function createSetArticleRevisionMutation({
   id,
   repositoryId,
   authorId,
-  client,
 }: {
   id: number
   repositoryId: number
   authorId: number
-  client: Client
 }) {
-  return client.mutate({
-    mutation: gql`
+  return gql`
         mutation {
           _setArticleRevision(
             id: ${id}
@@ -407,23 +453,19 @@ function setArticleRevison({
             changes: "changes"
           )
         }
-      `,
-  })
+      `
 }
 
-function setPage({
+function createSetPageMutation({
   id,
   currentRevisionId,
   licenseId,
-  client,
 }: {
   id: number
   currentRevisionId: number
   licenseId: number
-  client: Client
 }) {
-  return client.mutate({
-    mutation: gql`
+  return gql`
         mutation {
           _setPage(
             id: ${id}
@@ -434,23 +476,19 @@ function setPage({
             licenseId: ${licenseId}
           )
         }
-      `,
-  })
+      `
 }
 
-function setPageRevison({
+function createSetPageRevisonMutation({
   id,
   repositoryId,
   authorId,
-  client,
 }: {
   id: number
   repositoryId: number
   authorId: number
-  client: Client
 }) {
-  return client.mutate({
-    mutation: gql`
+  return gql`
         mutation {
           _setPageRevision(
             id: ${id}
@@ -462,13 +500,11 @@ function setPageRevison({
             repositoryId: ${repositoryId}
           )
         }
-      `,
-  })
+      `
 }
 
-function setUser({ id, client }: { id: number; client: Client }) {
-  return client.mutate({
-    mutation: gql`
+function createSetUserMutation({ id }: { id: number }) {
+  return gql`
       mutation {
         _setUser(
           id: ${id}
@@ -479,21 +515,17 @@ function setUser({ id, client }: { id: number; client: Client }) {
           description: "description"
         )
       }
-    `,
-  })
+    `
 }
 
-function setTaxonomyTerm({
+function createSetTaxonomyTermMutation({
   id,
   parentId,
-  client,
 }: {
   id: number
   parentId: number
-  client: Client
 }) {
-  return client.mutate({
-    mutation: gql`
+  return gql`
       mutation {
         _setTaxonomyTerm(
           id: ${id}
@@ -508,6 +540,5 @@ function setTaxonomyTerm({
           childrenIds: []
         )
       }
-    `,
-  })
+    `
 }

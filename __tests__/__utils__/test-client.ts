@@ -30,6 +30,7 @@ import { getGraphQLOptions } from '../../src/graphql'
 import { Cache } from '../../src/graphql/environment'
 
 export type Client = ApolloServerTestClient
+
 export function createTestClient(context: {}): {
   cache: Cache
   client: Client
