@@ -75,7 +75,7 @@ export const taxonomyTermRoot: TaxonomyTermPayload = {
   type: TaxonomyTermType.Root,
   instance: Instance.De,
   name: 'name',
-  description: 'description',
+  description: null,
   weight: 1,
   parentId: null,
   childrenIds: [5],

@@ -59,7 +59,7 @@ export function addArticleInteraction(payload: ArticlePayload) {
     licenseId: Matchers.integer(payload.licenseId),
     taxonomyTermIds:
       payload.taxonomyTermIds.length > 0
-        ? Matchers.eachLike(Matchers.like(payload.taxonomyTermIds))
+        ? Matchers.eachLike(Matchers.like(payload.taxonomyTermIds[0]))
         : [],
   })
 }
