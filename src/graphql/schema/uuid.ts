@@ -845,7 +845,7 @@ enum DiscriminatorType {
   TaxonomyTerm = 'TaxonomyTerm',
 }
 
-enum TaxonomyTermType {
+export enum TaxonomyTermType {
   Blog = 'blog',
   Curriculum = 'curriculum',
   CurriculumTopic = 'curriculumTopic',
@@ -1175,8 +1175,10 @@ export interface UserPayload {
 export interface ArticlePayload {
   id: number
   trashed: boolean
+  instance: Instance
+  alias: string | null
   date: DateTime
-  currentRevisionId?: number
+  currentRevisionId: number | null
   licenseId: number
   taxonomyTermIds: number[]
 }
@@ -1195,7 +1197,10 @@ export interface ArticleRevisionPayload {
 export interface PagePayload {
   id: number
   trashed: boolean
-  currentRevisionId: number
+  instance: Instance
+  alias: string | null
+  currentRevisionId: number | null
+  licenseId: number
 }
 
 export interface PageRevisionPayload {
@@ -1211,11 +1216,12 @@ export interface PageRevisionPayload {
 export interface TaxonomyTermPayload {
   id: number
   trashed: boolean
+  alias: string | null
   type: TaxonomyTermType
   instance: Instance
   name: string
-  description?: string
+  description: string | null
   weight: number
-  parentId?: number
+  parentId: number | null
   childrenIds: number[]
 }

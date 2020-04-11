@@ -132,6 +132,7 @@ export interface License {
   instance: Instance
   default: boolean
   title: string
+  url: string
   content: string
   agreement: string
   iconHref: string

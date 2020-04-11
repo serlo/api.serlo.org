@@ -22,78 +22,82 @@
 import { gql } from 'apollo-server'
 
 import { Service } from '../src/graphql/schema/types'
-import { createTestClient } from './utils/test-client'
+import {
+  assertFailingGraphQLMutation,
+  assertSuccessfulGraphQLMutation,
+  assertSuccessfulGraphQLQuery,
+} from './__utils__/assertions'
+import { createTestClient } from './__utils__/test-client'
 
 test('_removeLicense (forbidden)', async () => {
   const { client } = createTestClient({ service: Service.Playground })
-  const response = await client.mutate({
-    mutation: gql`
-      mutation {
-        _removeLicense(id: 1)
-      }
-    `,
-  })
-  expect(response.errors?.[0].extensions?.code).toEqual('FORBIDDEN')
+  await assertFailingGraphQLMutation(
+    {
+      mutation: gql`
+        mutation {
+          _removeLicense(id: 1)
+        }
+      `,
+      client,
+    },
+    (errors) => {
+      expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+    }
+  )
 })
 
 test('_removeLicense (authenticated)', async () => {
   const { client } = createTestClient({ service: Service.Serlo })
-
-  let response = await client.mutate({
+  await assertSuccessfulGraphQLMutation({
     mutation: gql`
       mutation {
         _removeLicense(id: 1)
       }
     `,
+    client,
   })
-  expect(response.errors).toBeUndefined()
-  response = await client.query({
+  await assertSuccessfulGraphQLQuery({
     query: gql`
       {
         license(id: 1) {
           id
-          instance
-          default
-          title
-          url
-          content
-          agreement
-          iconHref
         }
       }
     `,
-  })
-  expect(response.errors).toBe(undefined)
-  expect(response.data).toEqual({
-    license: null,
+    data: { license: null },
+    client,
   })
 })
 
 test('_setLicense (forbidden)', async () => {
   const { client } = createTestClient({ service: Service.Playground })
-  const response = await client.mutate({
-    mutation: gql`
-      mutation {
-        _setLicense(
-          id: 1
-          instance: de
-          default: true
-          title: "title"
-          url: "url"
-          content: "content"
-          agreement: "agreement"
-          iconHref: "iconHref"
-        )
-      }
-    `,
-  })
-  expect(response.errors?.[0].extensions?.code).toEqual('FORBIDDEN')
+  await assertFailingGraphQLMutation(
+    {
+      mutation: gql`
+        mutation {
+          _setLicense(
+            id: 1
+            instance: de
+            default: true
+            title: "title"
+            url: "url"
+            content: "content"
+            agreement: "agreement"
+            iconHref: "iconHref"
+          )
+        }
+      `,
+      client,
+    },
+    (errors) => {
+      expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+    }
+  )
 })
 
 test('_setLicense (authenticated)', async () => {
   const { client } = createTestClient({ service: Service.Serlo })
-
-  let response = await client.mutate({
+  await assertSuccessfulGraphQLMutation({
     mutation: gql`
       mutation {
         _setLicense(
@@ -108,9 +112,9 @@ test('_setLicense (authenticated)', async () => {
         )
       }
     `,
+    client,
   })
-  expect(response.errors).toBeUndefined()
-  response = await client.query({
+  await assertSuccessfulGraphQLQuery({
     query: gql`
       {
         license(id: 1) {
@@ -125,18 +129,18 @@ test('_setLicense (authenticated)', async () => {
         }
       }
     `,
-  })
-  expect(response.errors).toBe(undefined)
-  expect(response.data).toEqual({
-    license: {
-      id: 1,
-      instance: 'de',
-      default: true,
-      title: 'title',
-      url: 'url',
-      content: 'content',
-      agreement: 'agreement',
-      iconHref: 'iconHref',
+    data: {
+      license: {
+        id: 1,
+        instance: 'de',
+        default: true,
+        title: 'title',
+        url: 'url',
+        content: 'content',
+        agreement: 'agreement',
+        iconHref: 'iconHref',
+      },
     },
+    client,
   })
 })
