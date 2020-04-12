@@ -20,12 +20,16 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
-import * as R from 'ramda'
+import { DocumentNode } from 'graphql'
 
 import { dateTimeTypeDefs } from './date-time'
 import { instanceTypeDefs } from './instance'
 import { licenseResolvers, licenseTypeDefs } from './license'
+import { combineResolvers } from './utils'
 import { uuidResolvers, uuidTypeDefs } from './uuid'
+
+export * from './license'
+export * from './uuid'
 
 export const schemaTypeDefs = gql`
   type Query {
@@ -43,16 +47,15 @@ export const schemaTypeDefs = gql`
   }
 `
 
-export const typeDefs = [
+export const typeDefs: DocumentNode[] = [
   schemaTypeDefs,
   dateTimeTypeDefs,
   instanceTypeDefs,
-  licenseTypeDefs,
-  uuidTypeDefs,
+  ...licenseTypeDefs.typeDefs,
+  ...uuidTypeDefs,
 ]
 
-export const resolvers = combineResolvers(licenseResolvers, uuidResolvers)
-
-function combineResolvers(...resolvers: {}[]) {
-  return R.reduce<{}, {}>(R.mergeDeepRight, {}, resolvers)
-}
+export const resolvers = combineResolvers(
+  licenseResolvers.resolvers,
+  uuidResolvers
+)
