@@ -30,6 +30,12 @@ export type Resolver<P, A, T> = (
   info: GraphQLResolveInfo
 ) => Promise<T | void>
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type LegacyResolvers = Record<
+  string,
+  Record<string, Resolver<any, any, any>>
+>
+
 export enum Service {
   Playground = 'api.serlo.org-playground',
   Serlo = 'serlo.org',

@@ -22,71 +22,25 @@
 import { gql, ForbiddenError } from 'apollo-server'
 
 import { Instance } from './instance'
-import { Context, Resolver } from './types'
+import { Resolvers, TypeDefs } from './utils'
 
-export const licenseTypeDefs = gql`
-  extend type Query {
-    """
-    Returns the \`License\` with the given ID.
-    """
-    license(
-      """
-      The ID of the license
-      """
-      id: Int!
-    ): License
-  }
+export const licenseResolvers = new Resolvers()
+export const licenseTypeDefs = new TypeDefs()
 
-  extend type Mutation {
-    """
-    Removes the \`License\` with the given ID from cache. May only be called by \`serlo.org\` when a license has been removed.
-    """
-    _removeLicense(
-      """
-      The ID of the license
-      """
-      id: Int!
-    ): Boolean
-
-    """
-    Inserts the given \`License\` into the cache. May only be called by \`serlo.org\` when a license has been created or updated.
-    """
-    _setLicense(
-      """
-      The ID of the license
-      """
-      id: Int!
-      """
-      The \`Instance\` the license is tied to
-      """
-      instance: Instance!
-      """
-      \`true\` iff this is the default license in the instance
-      """
-      default: Boolean!
-      """
-      Title of the license
-      """
-      title: String!
-      """
-      The URL the license should link to (e.g. to the license text or the copyright holder)
-      """
-      url: String!
-      """
-      The license notice shown below content
-      """
-      content: String!
-      """
-      The agreement that authors need to consent to
-      """
-      agreement: String!
-      """
-      The URL of the icon (or \`""\` if there is no icon)
-      """
-      iconHref: String!
-    ): Boolean
-  }
-
+/**
+ * type License
+ */
+export interface License {
+  id: number
+  instance: Instance
+  default: boolean
+  title: string
+  url: string
+  content: string
+  agreement: string
+  iconHref: string
+}
+licenseTypeDefs.add(gql`
   """
   Represents a Serlo.org license, e.g. CC BY-SA 4.0. A license is tied to an \`Instance\` and can be uniquely
   identified by its ID.
@@ -125,67 +79,111 @@ export const licenseTypeDefs = gql`
     """
     iconHref: String!
   }
-`
+`)
 
-export interface License {
-  id: number
-  instance: Instance
-  default: boolean
-  title: string
-  url: string
-  content: string
-  agreement: string
-  iconHref: string
-}
-
-export const licenseResolvers: {
-  Query: {
-    license: Resolver<undefined, { id: number }, License>
+/**
+ * query license
+ */
+licenseResolvers.addQuery<unknown, { id: number }, License>(
+  'license',
+  async (_parent, { id }, { dataSources }) => {
+    return dataSources.serlo.getLicense({ id })
   }
-  Mutation: {
-    _removeLicense: Resolver<undefined, { id: number }, null>
-    _setLicense: Resolver<undefined, License, null>
+)
+licenseTypeDefs.add(gql`
+  extend type Query {
+    """
+    Returns the \`License\` with the given ID.
+    """
+    license(
+      """
+      The ID of the license
+      """
+      id: Int!
+    ): License
   }
-} = {
-  Query: {
-    license,
-  },
-  Mutation: {
-    _removeLicense,
-    _setLicense,
-  },
-}
+`)
 
-async function license(
-  _parent: unknown,
-  { id }: { id: number },
-  { dataSources }: Context
-) {
-  return dataSources.serlo.getLicense({ id })
-}
-
-async function _removeLicense(
-  _parent: unknown,
-  { id }: { id: number },
-  { dataSources, service }: Context
-) {
-  if (service !== 'serlo.org') {
-    throw new ForbiddenError(
-      'You do not have the permissions to remove the license'
-    )
+/**
+ * mutation _removeLicense
+ */
+licenseResolvers.addMutation<unknown, { id: number }, null>(
+  '_removeLicense',
+  (_parent, { id }, { dataSources, service }) => {
+    if (service !== 'serlo.org') {
+      throw new ForbiddenError(
+        'You do not have the permissions to remove a license'
+      )
+    }
+    return dataSources.serlo.removeLicense({ id })
   }
-  return dataSources.serlo.removeLicense({ id })
-}
-
-async function _setLicense(
-  _parent: unknown,
-  license: License,
-  { dataSources, service }: Context
-) {
-  if (service !== 'serlo.org') {
-    throw new ForbiddenError(
-      'You do not have the permissions to set the license'
-    )
+)
+licenseTypeDefs.add(gql`
+  extend type Mutation {
+    """
+    Removes the \`License\` with the given ID from cache. May only be called by \`serlo.org\` when a license has been removed.
+    """
+    _removeLicense(
+      """
+      The ID of the license
+      """
+      id: Int!
+    ): Boolean
   }
-  return dataSources.serlo.setLicense(license)
-}
+`)
+
+/**
+ * mutation _setLicense
+ */
+licenseResolvers.addMutation<unknown, License, null>(
+  '_setLicense',
+  (_parent, license, { dataSources, service }) => {
+    if (service !== 'serlo.org') {
+      throw new ForbiddenError(
+        'You do not have the permissions to set a license'
+      )
+    }
+    return dataSources.serlo.setLicense(license)
+  }
+)
+licenseTypeDefs.add(gql`
+  extend type Mutation {
+    """
+    Inserts the given \`License\` into the cache. May only be called by \`serlo.org\` when a license has been created or updated.
+    """
+    _setLicense(
+      """
+      The ID of the license
+      """
+      id: Int!
+      """
+      The \`Instance\` the license is tied to
+      """
+      instance: Instance!
+      """
+      \`true\` iff this is the default license in the instance
+      """
+      default: Boolean!
+      """
+      Title of the license
+      """
+      title: String!
+      """
+      The URL the license should link to (e.g. to the license text or the copyright holder)
+      """
+      url: String!
+      """
+      The license notice shown below content
+      """
+      content: String!
+      """
+      The agreement that authors need to consent to
+      """
+      agreement: String!
+      """
+      The URL of the icon (or \`""\` if there is no icon)
+      """
+      iconHref: String!
+    ): Boolean
+  }
+`)
