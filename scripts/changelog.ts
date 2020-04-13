@@ -30,6 +30,9 @@ async function exec(): Promise<void> {
       fixed: ['Lazily create token for GraphQL playground.'],
     },
     {
+      tagName: 'v.0.2.0',
+      name: '0.2.0',
+      date: '2020-04-13',
       breakingChanges: [
         "Remove health check route `/`. Use Apollo's health check route `.well-known/apollo/server-health` instead.",
       ],
