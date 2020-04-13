@@ -23,7 +23,7 @@ import { DocumentNode, GraphQLResolveInfo } from 'graphql'
 import { parseResolveInfo } from 'graphql-parse-resolve-info'
 import * as R from 'ramda'
 
-import { Resolver, LegacyResolvers } from './types'
+import { Resolver } from './types'
 
 export function requestsOnlyFields(
   type: string,
@@ -34,20 +34,18 @@ export function requestsOnlyFields(
   return !res || R.isEmpty(R.omit(fields, res.fieldsByTypeName[type]))
 }
 
-export function combineResolvers(...resolvers: LegacyResolvers[]) {
-  return R.reduce<{}, {}>(R.mergeDeepRight, {}, resolvers)
-}
-
-export class Resolvers {
-  public resolvers: Record<
-    string,
-    Record<string, Resolver<any, any, any>> & {
-      __resolveType?(type: any): string
-    }
-  > = {
-    Query: {},
-    Mutation: {},
-  }
+export class Schema {
+  public constructor(
+    public resolvers: Record<
+      string,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      Record<string, Resolver<any, any, any>> & {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        __resolveType?(type: any): string
+      }
+    > = {},
+    public typeDefs: DocumentNode[] = []
+  ) {}
 
   public addTypeResolver<T>(type: string, resolver: (type: T) => string) {
     this.resolvers[type] = this.resolvers[type] || {}
@@ -55,23 +53,31 @@ export class Resolvers {
   }
 
   public addQuery<P, A, T>(name: string, resolver: Resolver<P, A, T>) {
-    this.resolvers.Query[name] = resolver
+    this.addResolver('Query', name, resolver)
   }
 
   public addMutation<P, A, T>(name: string, resolver: Resolver<P, A, T>) {
-    this.resolvers.Mutation[name] = resolver
+    this.addResolver('Mutation', name, resolver)
   }
 
-  public add<P, A, T>(type: string, name: string, resolver: Resolver<P, A, T>) {
+  public addResolver<P, A, T>(
+    type: string,
+    name: string,
+    resolver: Resolver<P, A, T>
+  ) {
     this.resolvers[type] = this.resolvers[type] || {}
     this.resolvers[type][name] = resolver
   }
-}
 
-export class TypeDefs {
-  public typeDefs: DocumentNode[] = []
-
-  public add(typeDef: DocumentNode) {
+  public addTypeDef(typeDef: DocumentNode) {
     this.typeDefs.push(typeDef)
+  }
+
+  public static merge(...schemas: Schema[]): Schema {
+    const subResolvers = R.map((schema) => schema.resolvers, schemas)
+    const resolvers = R.reduce<{}, {}>(R.mergeDeepRight, {}, subResolvers)
+    const subTypeDefs = R.map((schema) => schema.typeDefs, schemas)
+    const typeDefs = R.flatten(subTypeDefs)
+    return new Schema(resolvers, typeDefs)
   }
 }

@@ -21,12 +21,16 @@
  */
 import { gql } from 'apollo-server'
 
+import { Schema } from './utils'
+
+export const instanceSchema = new Schema()
+
 export enum Instance {
   De = 'de',
   En = 'en',
 }
 
-export const instanceTypeDefs = gql`
+instanceSchema.addTypeDef(gql`
   """
   Represents a Serlo.org instance, e.g. \`de.serlo.org\`.
   """
@@ -56,4 +60,4 @@ export const instanceTypeDefs = gql`
     """
     ta
   }
-`
+`)

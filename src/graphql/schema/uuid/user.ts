@@ -2,11 +2,10 @@ import { ForbiddenError, gql } from 'apollo-server'
 
 import { DateTime } from '../date-time'
 import { Service } from '../types'
-import { Resolvers, TypeDefs } from '../utils'
+import { Schema } from '../utils'
 import { DiscriminatorType, Uuid } from './abstract-uuid'
 
-export const userResolvers = new Resolvers()
-export const userTypeDefs = new TypeDefs()
+export const userSchema = new Schema()
 
 /**
  * type User
@@ -33,7 +32,7 @@ export class User extends Uuid {
     this.description = payload.description
   }
 }
-userTypeDefs.add(gql`
+userSchema.addTypeDef(gql`
   """
   Represents a Serlo.org user account
   """
@@ -68,7 +67,7 @@ userTypeDefs.add(gql`
 /**
  * mutation _setUser
  */
-userResolvers.addMutation<unknown, UserPayload, null>(
+userSchema.addMutation<unknown, UserPayload, null>(
   '_setUser',
   (_parent, payload, { dataSources, service }) => {
     if (service !== Service.Serlo) {
@@ -85,7 +84,7 @@ export interface UserPayload {
   lastLogin?: DateTime
   description?: string
 }
-userTypeDefs.add(gql`
+userSchema.addTypeDef(gql`
   extend type Mutation {
     """
     Inserts the given \`User\` into the cache. May only be called by \`serlo.org\` when an user has been created or updated.

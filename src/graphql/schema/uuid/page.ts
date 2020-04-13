@@ -2,14 +2,13 @@ import { ForbiddenError, gql } from 'apollo-server'
 
 import { DateTime } from '../date-time'
 import { Instance } from '../instance'
-import { License, licenseResolvers } from '../license'
+import { License, licenseSchema } from '../license'
 import { Service } from '../types'
-import { requestsOnlyFields, Resolvers, TypeDefs } from '../utils'
+import { requestsOnlyFields, Schema } from '../utils'
 import { DiscriminatorType, Uuid } from './abstract-uuid'
 import { User } from './user'
 
-export const pageResolvers = new Resolvers()
-export const pageTypeDefs = new TypeDefs()
+export const pageSchema = new Schema()
 
 /**
  * type Page
@@ -37,7 +36,7 @@ export class Page extends Uuid {
     this.licenseId = payload.licenseId
   }
 }
-pageResolvers.add<Page, unknown, Partial<PageRevision> | null>(
+pageSchema.addResolver<Page, unknown, Partial<PageRevision> | null>(
   'Page',
   'currentRevision',
   async (page, _args, { dataSources }, info) => {
@@ -50,7 +49,7 @@ pageResolvers.add<Page, unknown, Partial<PageRevision> | null>(
     return new PageRevision(data)
   }
 )
-pageResolvers.add<Page, unknown, Partial<License>>(
+pageSchema.addResolver<Page, unknown, Partial<License>>(
   'Page',
   'license',
   async (page, _args, context, info) => {
@@ -58,7 +57,7 @@ pageResolvers.add<Page, unknown, Partial<License>>(
     if (requestsOnlyFields('License', ['id'], info)) {
       return partialLicense
     }
-    return licenseResolvers.resolvers.Query.license(
+    return licenseSchema.resolvers.Query.license(
       undefined,
       partialLicense,
       context,
@@ -66,7 +65,7 @@ pageResolvers.add<Page, unknown, Partial<License>>(
     )
   }
 )
-pageTypeDefs.add(gql`
+pageSchema.addTypeDef(gql`
   """
   Represents a Serlo.org page. A \`Page\` is a repository containing \`PageRevision\`s, is tied to an \`Instance\`,
   has a \`License\`, and has an alias.
@@ -127,7 +126,7 @@ export class PageRevision extends Uuid {
     this.repositoryId = payload.repositoryId
   }
 }
-pageResolvers.add<PageRevision, unknown, Partial<User>>(
+pageSchema.addResolver<PageRevision, unknown, Partial<User>>(
   'PageRevision',
   'author',
   async (pageRevision, _args, { dataSources }, info) => {
@@ -139,7 +138,7 @@ pageResolvers.add<PageRevision, unknown, Partial<User>>(
     return new User(data)
   }
 )
-pageResolvers.add<PageRevision, unknown, Partial<Page>>(
+pageSchema.addResolver<PageRevision, unknown, Partial<Page>>(
   'PageRevision',
   'page',
   async (pageRevision, _args, { dataSources }, info) => {
@@ -151,7 +150,7 @@ pageResolvers.add<PageRevision, unknown, Partial<Page>>(
     return new Page(data)
   }
 )
-pageTypeDefs.add(gql`
+pageSchema.addTypeDef(gql`
   """
   Represents a Serlo.org page revision. A \`PageRevision\` has fields title and content.
   """
@@ -190,7 +189,7 @@ pageTypeDefs.add(gql`
 /**
  * mutation _setPage
  */
-pageResolvers.addMutation<unknown, PagePayload, null>(
+pageSchema.addMutation<unknown, PagePayload, null>(
   '_setPage',
   (_parent, payload, { dataSources, service }) => {
     if (service !== Service.Serlo) {
@@ -207,7 +206,7 @@ export interface PagePayload {
   currentRevisionId: number | null
   licenseId: number
 }
-pageTypeDefs.add(gql`
+pageSchema.addTypeDef(gql`
   extend type Mutation {
     """
     Inserts the given \`Page\` into the cache. May only be called by \`serlo.org\` when a page has been created or updated.
@@ -244,7 +243,7 @@ pageTypeDefs.add(gql`
 /**
  * mutation _setPageRevision
  */
-pageResolvers.addMutation<unknown, PageRevisionPayload, null>(
+pageSchema.addMutation<unknown, PageRevisionPayload, null>(
   '_setPageRevision',
   (_parent, payload, { dataSources, service }) => {
     if (service !== Service.Serlo) {
@@ -264,7 +263,7 @@ export interface PageRevisionPayload {
   authorId: number
   repositoryId: number
 }
-pageTypeDefs.add(gql`
+pageSchema.addTypeDef(gql`
   extend type Mutation {
     """
     Inserts the given \`PageRevision\` into the cache. May only be called by \`serlo.org\` when a page revision has been created.

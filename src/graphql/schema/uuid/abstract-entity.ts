@@ -2,11 +2,10 @@ import { gql } from 'apollo-server'
 
 import { DateTime } from '../date-time'
 import { Instance } from '../instance'
-import { Resolvers, TypeDefs } from '../utils'
+import { Schema } from '../utils'
 import { Uuid } from './abstract-uuid'
 
-export const abstractEntityResolvers = new Resolvers()
-export const abstractEntityTypeDefs = new TypeDefs()
+export const abstractEntitySchema = new Schema()
 
 export enum EntityType {
   Article = 'Article',
@@ -43,10 +42,10 @@ export abstract class Entity extends Uuid {
     this.currentRevisionId = payload.currentRevisionId
   }
 }
-abstractEntityResolvers.addTypeResolver<Entity>('Entity', (entity) => {
+abstractEntitySchema.addTypeResolver<Entity>('Entity', (entity) => {
   return entity.__typename
 })
-abstractEntityTypeDefs.add(gql`
+abstractEntitySchema.addTypeDef(gql`
   """
   Represents a Serlo.org entity (e.g. an article). An \`Entity\` is tied to an \`Instance\`, has a \`License\`, might have an alias
   and is the child of \`TaxonomyTerm\`s

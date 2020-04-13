@@ -2,13 +2,12 @@ import { ForbiddenError, gql } from 'apollo-server'
 
 import { resolveAbstractUuid } from '.'
 import { Service } from '../types'
-import { Resolvers, TypeDefs } from '../utils'
+import { Schema } from '../utils'
 import { EntityType } from './abstract-entity'
 import { EntityRevisionType } from './abstract-entity-revision'
 import { AliasInput } from './alias'
 
-export const abstractUuidResolvers = new Resolvers()
-export const abstractUuidTypeDefs = new TypeDefs()
+export const abstractUuidSchema = new Schema()
 
 export enum DiscriminatorType {
   Page = 'Page',
@@ -36,10 +35,10 @@ export abstract class Uuid {
     this.trashed = payload.trashed
   }
 }
-abstractUuidResolvers.addTypeResolver<Uuid>('Uuid', (uuid) => {
+abstractUuidSchema.addTypeResolver<Uuid>('Uuid', (uuid) => {
   return uuid.__typename
 })
-abstractUuidTypeDefs.add(gql`
+abstractUuidSchema.addTypeDef(gql`
   """
   Represents a Serlo.org data entity that can be uniquely identified by its ID and can be trashed.
   """
@@ -71,7 +70,7 @@ export class UnsupportedUuid extends Uuid {
     this.discriminator = payload.discriminator
   }
 }
-abstractUuidTypeDefs.add(gql`
+abstractUuidSchema.addTypeDef(gql`
   """
   Represents an \`Uuid\` that isn't supported by the API, yet
   """
@@ -94,7 +93,7 @@ abstractUuidTypeDefs.add(gql`
 /**
  * query uuid
  */
-abstractUuidResolvers.addQuery<
+abstractUuidSchema.addQuery<
   unknown,
   { id?: number; alias?: AliasInput },
   Uuid | null
@@ -105,8 +104,8 @@ abstractUuidResolvers.addQuery<
   const data = await dataSources.serlo.getUuid({ id })
   return resolveAbstractUuid(data)
 })
-abstractUuidTypeDefs.add(gql`
-  extend type Query {
+abstractUuidSchema.addTypeDef(gql`
+  type Query {
     """
     Returns the \`Uuid\` with the given id or alias.
     """
@@ -126,7 +125,7 @@ abstractUuidTypeDefs.add(gql`
 /**
  * mutation _removeUuid
  */
-abstractUuidResolvers.addMutation<unknown, { id: number }, null>(
+abstractUuidSchema.addMutation<unknown, { id: number }, null>(
   '_removeUuid',
   (_parent, payload, { dataSources, service }) => {
     if (service !== Service.Serlo) {
@@ -137,8 +136,8 @@ abstractUuidResolvers.addMutation<unknown, { id: number }, null>(
     return dataSources.serlo.removeUuid(payload)
   }
 )
-abstractUuidTypeDefs.add(gql`
-  extend type Mutation {
+abstractUuidSchema.addTypeDef(gql`
+  type Mutation {
     """
     Removes the \`Uuid\` with the given ID from cache. May only be called by \`serlo.org\` when an Uuid has been removed.
     """

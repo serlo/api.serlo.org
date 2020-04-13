@@ -3,11 +3,10 @@ import { ForbiddenError, gql } from 'apollo-server'
 import { resolveAbstractUuid } from '.'
 import { Instance } from '../instance'
 import { Service } from '../types'
-import { requestsOnlyFields, Resolvers, TypeDefs } from '../utils'
+import { requestsOnlyFields, Schema } from '../utils'
 import { DiscriminatorType, Uuid } from './abstract-uuid'
 
-export const taxonomyTermResolvers = new Resolvers()
-export const taxonomyTermTypeDefs = new TypeDefs()
+export const taxonomyTermSchema = new Schema()
 
 /**
  * enum TaxonomyTermType
@@ -25,7 +24,7 @@ export enum TaxonomyTermType {
   Topic = 'topic',
   TopicFolder = 'topicFolder',
 }
-taxonomyTermTypeDefs.add(gql`
+taxonomyTermSchema.addTypeDef(gql`
   """
   Represents the type of a taxonomy term type.
   """
@@ -60,7 +59,7 @@ export class TaxonomyTerm extends Uuid {
 
   public constructor(payload: {
     id: number
-    type: string
+    type: TaxonomyTermType
     trashed: boolean
     instance: Instance
     alias: string | null
@@ -71,7 +70,7 @@ export class TaxonomyTerm extends Uuid {
     childrenIds: number[]
   }) {
     super(payload)
-    this.type = toCamelCase(payload.type)
+    this.type = payload.type
     this.instance = payload.instance
     this.alias = payload.alias
     this.name = payload.name
@@ -79,20 +78,9 @@ export class TaxonomyTerm extends Uuid {
     this.weight = payload.weight
     this.parentId = payload.parentId
     this.childrenIds = payload.childrenIds
-
-    function toCamelCase(type: string) {
-      const segments = type.split('-')
-      const [firstSegment, ...remainingSegments] = segments
-      return [
-        firstSegment,
-        remainingSegments.map((segment) => {
-          return `${segment[0].toUpperCase()}${segment.substr(1)}`
-        }),
-      ].join('') as TaxonomyTermType
-    }
   }
 }
-taxonomyTermResolvers.add<
+taxonomyTermSchema.addResolver<
   TaxonomyTerm,
   undefined,
   Partial<TaxonomyTerm> | null
@@ -109,7 +97,7 @@ taxonomyTermResolvers.add<
     return new TaxonomyTerm(data)
   }
 )
-taxonomyTermResolvers.add<TaxonomyTerm, undefined, Uuid[]>(
+taxonomyTermSchema.addResolver<TaxonomyTerm, undefined, Uuid[]>(
   'TaxonomyTerm',
   'children',
   (taxonomyTerm, _args, { dataSources }) => {
@@ -122,7 +110,7 @@ taxonomyTermResolvers.add<TaxonomyTerm, undefined, Uuid[]>(
     )
   }
 )
-taxonomyTermResolvers.add<TaxonomyTerm, undefined, TaxonomyTerm[]>(
+taxonomyTermSchema.addResolver<TaxonomyTerm, undefined, TaxonomyTerm[]>(
   'TaxonomyTerm',
   'path',
   async (taxonomyTerm, _args, { dataSources }) => {
@@ -140,7 +128,7 @@ taxonomyTermResolvers.add<TaxonomyTerm, undefined, TaxonomyTerm[]>(
     return path
   }
 )
-taxonomyTermTypeDefs.add(gql`
+taxonomyTermSchema.addTypeDef(gql`
   """
   Represents a Serlo.org taxonomy term. The taxonomy organizes entities into a tree-like structure, either by
   topic or by curriculum. An entity can be child of multiple \`TaxonomyTerm\`s
@@ -196,7 +184,7 @@ taxonomyTermTypeDefs.add(gql`
 /**
  * mutation _setTaxonomyTerm
  */
-taxonomyTermResolvers.addMutation<unknown, TaxonomyTermPayload, null>(
+taxonomyTermSchema.addMutation<unknown, TaxonomyTermPayload, null>(
   '_setTaxonomyTerm',
   (_parent, payload, { dataSources, service }) => {
     if (service !== Service.Serlo) {
@@ -219,7 +207,7 @@ export interface TaxonomyTermPayload {
   parentId: number | null
   childrenIds: number[]
 }
-taxonomyTermTypeDefs.add(gql`
+taxonomyTermSchema.addTypeDef(gql`
   extend type Mutation {
     """
     Inserts the given \`TaxonomyTerm\` into the cache. May only be called by \`serlo.org\` when a taxonomy term has been created or updated.

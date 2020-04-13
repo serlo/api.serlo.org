@@ -2,16 +2,15 @@ import { ForbiddenError, gql } from 'apollo-server'
 
 import { DateTime } from '../date-time'
 import { Instance } from '../instance'
-import { License, licenseResolvers } from '../license'
+import { License, licenseSchema } from '../license'
 import { Service } from '../types'
-import { requestsOnlyFields, Resolvers, TypeDefs } from '../utils'
+import { requestsOnlyFields, Schema } from '../utils'
 import { Entity, EntityType } from './abstract-entity'
 import { EntityRevision, EntityRevisionType } from './abstract-entity-revision'
 import { TaxonomyTerm } from './taxonomy-term'
 import { User } from './user'
 
-export const articleResolvers = new Resolvers()
-export const articleTypeDefs = new TypeDefs()
+export const articleSchema = new Schema()
 
 /**
  * type Article
@@ -19,7 +18,7 @@ export const articleTypeDefs = new TypeDefs()
 export class Article extends Entity {
   public __typename = EntityType.Article
 }
-articleResolvers.add<Article, unknown, Partial<ArticleRevision> | null>(
+articleSchema.addResolver<Article, unknown, Partial<ArticleRevision> | null>(
   'Article',
   'currentRevision',
   async (article, _args, { dataSources }, info) => {
@@ -32,7 +31,7 @@ articleResolvers.add<Article, unknown, Partial<ArticleRevision> | null>(
     return new ArticleRevision(data)
   }
 )
-articleResolvers.add<Article, unknown, Partial<License>>(
+articleSchema.addResolver<Article, unknown, Partial<License>>(
   'Article',
   'license',
   async (article, _args, context, info) => {
@@ -40,7 +39,7 @@ articleResolvers.add<Article, unknown, Partial<License>>(
     if (requestsOnlyFields('License', ['id'], info)) {
       return partialLicense
     }
-    return licenseResolvers.resolvers.Query.license(
+    return licenseSchema.resolvers.Query.license(
       undefined,
       partialLicense,
       context,
@@ -48,7 +47,7 @@ articleResolvers.add<Article, unknown, Partial<License>>(
     )
   }
 )
-articleResolvers.add<Article, unknown, TaxonomyTerm[]>(
+articleSchema.addResolver<Article, unknown, TaxonomyTerm[]>(
   'Article',
   'taxonomyTerms',
   (entity, _args, { dataSources }) => {
@@ -61,7 +60,7 @@ articleResolvers.add<Article, unknown, TaxonomyTerm[]>(
     )
   }
 )
-articleTypeDefs.add(gql`
+articleSchema.addTypeDef(gql`
   """
   Represents a Serlo.org article. An \`Article\` is a repository containing \`ArticleRevision\`s.
   """
@@ -126,7 +125,7 @@ export class ArticleRevision extends EntityRevision {
     this.changes = payload.changes
   }
 }
-articleResolvers.add<ArticleRevision, unknown, Partial<User>>(
+articleSchema.addResolver<ArticleRevision, unknown, Partial<User>>(
   'ArticleRevision',
   'author',
   async (articleRevision, _args, { dataSources }, info) => {
@@ -138,7 +137,7 @@ articleResolvers.add<ArticleRevision, unknown, Partial<User>>(
     return new User(data)
   }
 )
-articleResolvers.add<ArticleRevision, unknown, Partial<Article>>(
+articleSchema.addResolver<ArticleRevision, unknown, Partial<Article>>(
   'ArticleRevision',
   'article',
   async (articleRevision, _args, { dataSources }, info) => {
@@ -150,7 +149,7 @@ articleResolvers.add<ArticleRevision, unknown, Partial<Article>>(
     return new Article(data)
   }
 )
-articleTypeDefs.add(gql`
+articleSchema.addTypeDef(gql`
   """
   Represents a Serlo.org article revision. An \`ArticleRevision\` has fields title, content and changes.
   """
@@ -193,7 +192,7 @@ articleTypeDefs.add(gql`
 /**
  * mutation _setArticle
  */
-articleResolvers.addMutation<unknown, ArticlePayload, null>(
+articleSchema.addMutation<unknown, ArticlePayload, null>(
   '_setArticle',
   (_parent, payload, { dataSources, service }) => {
     if (service !== Service.Serlo) {
@@ -214,7 +213,7 @@ export interface ArticlePayload {
   licenseId: number
   taxonomyTermIds: number[]
 }
-articleTypeDefs.add(gql`
+articleSchema.addTypeDef(gql`
   extend type Mutation {
     """
     Inserts the given \`Article\` into the cache. May only be called by \`serlo.org\` when an article has been created or updated.
@@ -259,7 +258,7 @@ articleTypeDefs.add(gql`
 /**
  * mutation _setArticleRevision
  */
-articleResolvers.addMutation<unknown, ArticleRevisionPayload, null>(
+articleSchema.addMutation<unknown, ArticleRevisionPayload, null>(
   '_setArticleRevision',
   (_parent, payload, { dataSources, service }) => {
     if (service !== Service.Serlo) {
@@ -280,7 +279,7 @@ export interface ArticleRevisionPayload {
   content: string
   changes: string
 }
-articleTypeDefs.add(gql`
+articleSchema.addTypeDef(gql`
   extend type Mutation {
     """
     Inserts the given \`ArticleRevision\` into the cache. May only be called by \`serlo.org\` when an article revision has been created.
