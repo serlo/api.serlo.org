@@ -81,8 +81,8 @@ export interface UserPayload {
   trashed: boolean
   username: string
   date: DateTime
-  lastLogin?: DateTime
-  description?: string
+  lastLogin: DateTime | null
+  description: string | null
 }
 userSchema.addTypeDef(gql`
   extend type Mutation {

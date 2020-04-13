@@ -88,7 +88,7 @@ export const taxonomyTermSubject: TaxonomyTermPayload = {
   type: TaxonomyTermType.Subject,
   instance: Instance.De,
   name: 'name',
-  description: 'description',
+  description: null,
   weight: 2,
   parentId: taxonomyTermRoot.id,
   childrenIds: [16048],
@@ -113,5 +113,5 @@ export const user: UserPayload = {
   username: 'username',
   date: '2014-03-01T20:36:21Z',
   lastLogin: '2020-03-24T09:40:55Z',
-  description: 'description',
+  description: null,
 }

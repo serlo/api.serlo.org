@@ -134,8 +134,12 @@ export function addUserInteraction(payload: UserPayload) {
     trashed: Matchers.boolean(payload.trashed),
     username: Matchers.string(payload.username),
     date: Matchers.iso8601DateTime(payload.date),
-    lastLogin: Matchers.iso8601DateTime(payload.lastLogin),
-    description: Matchers.string(payload.description),
+    lastLogin: payload.lastLogin
+      ? Matchers.iso8601DateTime(payload.lastLogin)
+      : null,
+    description: payload.description
+      ? Matchers.string(payload.description)
+      : null,
   })
 }
 
