@@ -3,10 +3,9 @@ import { ForbiddenError, gql } from 'apollo-server'
 import { DateTime } from '../date-time'
 import { Instance } from '../instance'
 import { Service } from '../types'
-import { Resolvers, TypeDefs } from '../utils'
+import { Schema } from '../utils'
 
-export const aliasResolvers = new Resolvers()
-export const aliasTypeDefs = new TypeDefs()
+export const aliasSchema = new Schema()
 
 /**
  * input AliasInput
@@ -15,7 +14,7 @@ export interface AliasInput {
   instance: Instance
   path: string
 }
-aliasTypeDefs.add(gql`
+aliasSchema.addTypeDef(gql`
   """
   Needed input to look up an Uuid by alias.
   """
@@ -34,7 +33,7 @@ aliasTypeDefs.add(gql`
 /**
  * mutation _setAlias
  */
-aliasResolvers.addMutation<unknown, AliasPayload, null>(
+aliasSchema.addMutation<unknown, AliasPayload, null>(
   '_setAlias',
   (_parent, payload, { dataSources, service }) => {
     if (service !== Service.Serlo) {
@@ -52,7 +51,7 @@ export interface AliasPayload {
   source: string
   timestamp: DateTime
 }
-aliasTypeDefs.add(gql`
+aliasSchema.addTypeDef(gql`
   extend type Mutation {
     """
     Inserts the given \`Alias\` into the cache. May only be called by \`serlo.org\` when an alias has been created or updated.

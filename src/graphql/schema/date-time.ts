@@ -21,12 +21,15 @@
  */
 import { gql } from 'apollo-server'
 
-export type DateTime = string
+import { Schema } from './utils'
 
-export const dateTimeTypeDefs = gql`
+export const dateTimeSchema = new Schema()
+
+export type DateTime = string
+dateTimeSchema.addTypeDef(gql`
   """
   The \`DateTime\` scalar type represents a date-time, represented as an ISO 8601-formatted \`String\`,
   e.g. \`2020-04-10T14:00:00+02:00\`.
   """
   scalar DateTime
-`
+`)

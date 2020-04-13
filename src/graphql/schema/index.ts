@@ -19,43 +19,18 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
-import { DocumentNode } from 'graphql'
-
-import { dateTimeTypeDefs } from './date-time'
-import { instanceTypeDefs } from './instance'
-import { licenseResolvers, licenseTypeDefs } from './license'
-import { combineResolvers } from './utils'
-import { uuidResolvers, uuidTypeDefs } from './uuid'
+import { dateTimeSchema } from './date-time'
+import { instanceSchema } from './instance'
+import { licenseSchema } from './license'
+import { Schema } from './utils'
+import { uuidSchema } from './uuid'
 
 export * from './license'
 export * from './uuid'
 
-export const schemaTypeDefs = gql`
-  type Query {
-    """
-    Fake field so that combineResolvers works, don't use
-    """
-    _empty: String
-  }
-
-  type Mutation {
-    """
-    Fake field so that combineResolvers works, don't use
-    """
-    _empty: String
-  }
-`
-
-export const typeDefs: DocumentNode[] = [
-  schemaTypeDefs,
-  dateTimeTypeDefs,
-  instanceTypeDefs,
-  ...licenseTypeDefs.typeDefs,
-  ...uuidTypeDefs,
-]
-
-export const resolvers = combineResolvers(
-  licenseResolvers.resolvers,
-  uuidResolvers
+export const schema = Schema.merge(
+  dateTimeSchema,
+  instanceSchema,
+  licenseSchema,
+  uuidSchema
 )

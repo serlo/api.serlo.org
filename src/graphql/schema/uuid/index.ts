@@ -19,36 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { DocumentNode } from 'graphql'
-
-import { combineResolvers } from '../utils'
-import {
-  abstractEntityResolvers,
-  abstractEntityTypeDefs,
-} from './abstract-entity'
-import {
-  abstractEntityRevisionResolvers,
-  abstractEntityRevisionTypeDefs,
-} from './abstract-entity-revision'
-import {
-  abstractUuidTypeDefs,
-  abstractUuidResolvers,
-  UnsupportedUuid,
-} from './abstract-uuid'
-import { aliasResolvers, aliasTypeDefs } from './alias'
-import {
-  Article,
-  articleResolvers,
-  ArticleRevision,
-  articleTypeDefs,
-} from './article'
-import { Page, pageResolvers, PageRevision, pageTypeDefs } from './page'
-import {
-  TaxonomyTerm,
-  taxonomyTermResolvers,
-  taxonomyTermTypeDefs,
-} from './taxonomy-term'
-import { User, userResolvers, userTypeDefs } from './user'
+import { Schema } from '../utils'
+import { abstractEntitySchema } from './abstract-entity'
+import { abstractEntityRevisionSchema } from './abstract-entity-revision'
+import { abstractUuidSchema, UnsupportedUuid } from './abstract-uuid'
+import { aliasSchema } from './alias'
+import { articleSchema, Article, ArticleRevision } from './article'
+import { pageSchema, Page, PageRevision } from './page'
+import { taxonomyTermSchema, TaxonomyTerm } from './taxonomy-term'
+import { userSchema, User } from './user'
 
 export * from './abstract-entity'
 export * from './abstract-entity-revision'
@@ -59,26 +38,15 @@ export * from './page'
 export * from './taxonomy-term'
 export * from './user'
 
-export const uuidTypeDefs: DocumentNode[] = [
-  ...abstractEntityTypeDefs.typeDefs,
-  ...abstractEntityRevisionTypeDefs.typeDefs,
-  ...abstractUuidTypeDefs.typeDefs,
-  ...aliasTypeDefs.typeDefs,
-  ...articleTypeDefs.typeDefs,
-  ...pageTypeDefs.typeDefs,
-  ...taxonomyTermTypeDefs.typeDefs,
-  ...userTypeDefs.typeDefs,
-]
-
-export const uuidResolvers = combineResolvers(
-  abstractEntityResolvers.resolvers,
-  abstractEntityRevisionResolvers.resolvers,
-  abstractUuidResolvers.resolvers,
-  aliasResolvers.resolvers,
-  articleResolvers.resolvers,
-  pageResolvers.resolvers,
-  taxonomyTermResolvers.resolvers,
-  userResolvers.resolvers
+export const uuidSchema = Schema.merge(
+  abstractEntitySchema,
+  abstractEntityRevisionSchema,
+  abstractUuidSchema,
+  aliasSchema,
+  articleSchema,
+  pageSchema,
+  taxonomyTermSchema,
+  userSchema
 )
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -27,15 +27,15 @@ import { decode, JsonWebTokenError, verify } from 'jsonwebtoken'
 
 import { SerloDataSource } from './data-sources/serlo'
 import { Environment } from './environment'
-import { resolvers, typeDefs } from './schema'
+import { schema } from './schema'
 import { Service } from './schema/types'
 
 export function getGraphQLOptions(
   environment: Environment
 ): ApolloServerExpressConfig {
   return {
-    typeDefs,
-    resolvers,
+    typeDefs: schema.typeDefs,
+    resolvers: schema.resolvers,
     // Needed for playground
     introspection: true,
     // We add the playground via express middleware in src/index.ts

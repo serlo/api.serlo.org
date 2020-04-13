@@ -22,10 +22,9 @@
 import { gql, ForbiddenError } from 'apollo-server'
 
 import { Instance } from './instance'
-import { Resolvers, TypeDefs } from './utils'
+import { Schema } from './utils'
 
-export const licenseResolvers = new Resolvers()
-export const licenseTypeDefs = new TypeDefs()
+export const licenseSchema = new Schema()
 
 /**
  * type License
@@ -40,7 +39,7 @@ export interface License {
   agreement: string
   iconHref: string
 }
-licenseTypeDefs.add(gql`
+licenseSchema.addTypeDef(gql`
   """
   Represents a Serlo.org license, e.g. CC BY-SA 4.0. A license is tied to an \`Instance\` and can be uniquely
   identified by its ID.
@@ -84,13 +83,13 @@ licenseTypeDefs.add(gql`
 /**
  * query license
  */
-licenseResolvers.addQuery<unknown, { id: number }, License>(
+licenseSchema.addQuery<unknown, { id: number }, License>(
   'license',
   async (_parent, { id }, { dataSources }) => {
     return dataSources.serlo.getLicense({ id })
   }
 )
-licenseTypeDefs.add(gql`
+licenseSchema.addTypeDef(gql`
   extend type Query {
     """
     Returns the \`License\` with the given ID.
@@ -107,7 +106,7 @@ licenseTypeDefs.add(gql`
 /**
  * mutation _removeLicense
  */
-licenseResolvers.addMutation<unknown, { id: number }, null>(
+licenseSchema.addMutation<unknown, { id: number }, null>(
   '_removeLicense',
   (_parent, { id }, { dataSources, service }) => {
     if (service !== 'serlo.org') {
@@ -118,7 +117,7 @@ licenseResolvers.addMutation<unknown, { id: number }, null>(
     return dataSources.serlo.removeLicense({ id })
   }
 )
-licenseTypeDefs.add(gql`
+licenseSchema.addTypeDef(gql`
   extend type Mutation {
     """
     Removes the \`License\` with the given ID from cache. May only be called by \`serlo.org\` when a license has been removed.
@@ -135,7 +134,7 @@ licenseTypeDefs.add(gql`
 /**
  * mutation _setLicense
  */
-licenseResolvers.addMutation<unknown, License, null>(
+licenseSchema.addMutation<unknown, License, null>(
   '_setLicense',
   (_parent, license, { dataSources, service }) => {
     if (service !== 'serlo.org') {
@@ -146,7 +145,7 @@ licenseResolvers.addMutation<unknown, License, null>(
     return dataSources.serlo.setLicense(license)
   }
 )
-licenseTypeDefs.add(gql`
+licenseSchema.addTypeDef(gql`
   extend type Mutation {
     """
     Inserts the given \`License\` into the cache. May only be called by \`serlo.org\` when a license has been created or updated.
