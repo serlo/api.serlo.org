@@ -26,6 +26,11 @@ import { abstractUuidSchema, UnsupportedUuid } from './abstract-uuid'
 import { aliasSchema } from './alias'
 import { articleSchema, Article, ArticleRevision } from './article'
 import { Exercise, ExerciseRevision, exerciseSchema } from './exercise'
+import {
+  GroupedExercise,
+  GroupedExerciseRevision,
+  groupedExerciseSchema,
+} from './grouped-exercise'
 import { pageSchema, Page, PageRevision } from './page'
 import { Solution, SolutionRevision, solutionSchema } from './solution'
 import { taxonomyTermSchema, TaxonomyTerm } from './taxonomy-term'
@@ -36,6 +41,7 @@ export * from './abstract-uuid'
 export * from './alias'
 export * from './article'
 export * from './exercise'
+export * from './grouped-exercise'
 export * from './page'
 export * from './taxonomy-term'
 export * from './user'
@@ -47,6 +53,7 @@ export const uuidSchema = Schema.merge(
   aliasSchema,
   articleSchema,
   exerciseSchema,
+  groupedExerciseSchema,
   pageSchema,
   solutionSchema,
   taxonomyTermSchema,
@@ -64,6 +71,8 @@ export function resolveAbstractUuid(data?: any) {
           return new Article(data)
         case 'exercise':
           return new Exercise(data)
+        case 'groupedExercise':
+          return new GroupedExercise(data)
         case 'solution':
           return new Solution(data)
         default:
@@ -75,6 +84,8 @@ export function resolveAbstractUuid(data?: any) {
           return new ArticleRevision(data)
         case 'exercise':
           return new ExerciseRevision(data)
+        case 'groupedExercise':
+          return new GroupedExerciseRevision(data)
         case 'solution':
           return new SolutionRevision(data)
         default:

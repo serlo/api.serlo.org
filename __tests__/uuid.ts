@@ -299,6 +299,104 @@ describe('_setExerciseRevision', () => {
   })
 })
 
+describe('_setGroupedExercise', () => {
+  test('forbidden', async () => {
+    const { client } = createTestClient({ service: Service.Playground })
+    await assertFailingGraphQLMutation(
+      {
+        mutation: createSetGroupedExerciseMutation({
+          id: 1,
+          currentRevisionId: 2,
+          licenseId: 3,
+          solutionId: 4,
+        }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
+  })
+
+  test('authenticated', async () => {
+    const { client } = createTestClient({ service: Service.Serlo })
+    await assertSuccessfulGraphQLMutation({
+      mutation: createSetGroupedExerciseMutation({
+        id: 1,
+        currentRevisionId: 2,
+        licenseId: 3,
+        solutionId: 4,
+      }),
+      client,
+    })
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        {
+          uuid(id: 1) {
+            ... on GroupedExercise {
+              id
+            }
+          }
+        }
+      `,
+      data: {
+        uuid: {
+          id: 1,
+        },
+      },
+      client,
+    })
+  })
+})
+
+describe('_setGroupedExerciseRevision', () => {
+  test('forbidden', async () => {
+    const { client } = createTestClient({ service: Service.Playground })
+    await assertFailingGraphQLMutation(
+      {
+        mutation: createSetGroupedExerciseRevisionMutation({
+          id: 1,
+          repositoryId: 2,
+          authorId: 3,
+        }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
+  })
+
+  test('authenticated', async () => {
+    const { client } = createTestClient({ service: Service.Serlo })
+    await assertSuccessfulGraphQLMutation({
+      mutation: createSetGroupedExerciseRevisionMutation({
+        id: 1,
+        repositoryId: 2,
+        authorId: 3,
+      }),
+      client,
+    })
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        {
+          uuid(id: 1) {
+            ... on GroupedExerciseRevision {
+              id
+            }
+          }
+        }
+      `,
+      data: {
+        uuid: {
+          id: 1,
+        },
+      },
+      client,
+    })
+  })
+})
+
 describe('_setPage', () => {
   test('forbidden', async () => {
     const { client } = createTestClient({ service: Service.Playground })
@@ -691,6 +789,56 @@ function createSetExerciseRevisionMutation({
   return gql`
         mutation {
           _setExerciseRevision(
+            id: ${id}
+            trashed: false
+            date: DateTime
+            authorId: ${authorId}
+            repositoryId: ${repositoryId}
+            content: "content"
+            changes: "changes"
+          )
+        }
+      `
+}
+
+function createSetGroupedExerciseMutation({
+  id,
+  currentRevisionId,
+  licenseId,
+  solutionId,
+}: {
+  id: number
+  currentRevisionId: number
+  licenseId: number
+  solutionId: number
+}) {
+  return gql`
+        mutation {
+          _setGroupedExercise(
+            id: ${id}
+            trashed: false
+            instance: de
+            date: "date"
+            currentRevisionId: ${currentRevisionId}
+            licenseId: ${licenseId}
+            solutionId: ${solutionId}
+          )
+        }
+      `
+}
+
+function createSetGroupedExerciseRevisionMutation({
+  id,
+  repositoryId,
+  authorId,
+}: {
+  id: number
+  repositoryId: number
+  authorId: number
+}) {
+  return gql`
+        mutation {
+          _setGroupedExerciseRevision(
             id: ${id}
             trashed: false
             date: DateTime

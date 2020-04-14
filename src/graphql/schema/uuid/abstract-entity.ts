@@ -14,12 +14,14 @@ export const abstractEntitySchema = new Schema()
 export enum EntityType {
   Article = 'Article',
   Exercise = 'Exercise',
+  GroupedExercise = 'GroupedExercise',
   Solution = 'Solution',
 }
 
 export enum EntityRevisionType {
   ArticleRevision = 'ArticleRevision',
   ExerciseRevision = 'ExerciseRevision',
+  GroupedExerciseRevision = 'GroupedExerciseRevision',
   SolutionRevision = 'SolutionRevision',
 }
 

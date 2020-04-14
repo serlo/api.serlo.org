@@ -5,6 +5,8 @@ import {
   ArticleRevisionPayload,
   ExercisePayload,
   ExerciseRevisionPayload,
+  GroupedExercisePayload,
+  GroupedExerciseRevisionPayload,
   PagePayload,
   PageRevisionPayload,
   TaxonomyTermPayload,
@@ -100,6 +102,35 @@ export const exerciseRevision: ExerciseRevisionPayload = {
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
   repositoryId: exercise.id,
+  content: 'content',
+  changes: 'changes',
+}
+
+export const groupedExerciseAlias: AliasPayload = {
+  id: 2219,
+  instance: Instance.De,
+  path: '/2219/2219',
+  source: '/entity/view/2219',
+  timestamp: '2014-05-25T10:25:44Z',
+}
+
+export const groupedExercise: GroupedExercisePayload = {
+  id: 2219,
+  trashed: false,
+  instance: Instance.De,
+  alias: '/2219/2219',
+  date: '2014-03-01T20:45:56Z',
+  currentRevisionId: 2220,
+  licenseId: license.id,
+  solutionId: 29648,
+}
+
+export const groupedExerciseRevision: GroupedExerciseRevisionPayload = {
+  id: 2220,
+  trashed: false,
+  date: '2014-09-15T15:28:35Z',
+  authorId: 1,
+  repositoryId: groupedExercise.id,
   content: 'content',
   changes: 'changes',
 }

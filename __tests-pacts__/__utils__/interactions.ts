@@ -7,6 +7,8 @@ import {
   ArticleRevisionPayload,
   ExercisePayload,
   ExerciseRevisionPayload,
+  GroupedExercisePayload,
+  GroupedExerciseRevisionPayload,
   PagePayload,
   PageRevisionPayload,
   TaxonomyTermPayload,
@@ -116,6 +118,41 @@ export function addExerciseRevisionInteraction(
     trashed: Matchers.boolean(payload.trashed),
     discriminator: 'entityRevision',
     type: 'exercise',
+    date: Matchers.iso8601DateTime(payload.date),
+    authorId: Matchers.integer(payload.authorId),
+    repositoryId: Matchers.integer(payload.repositoryId),
+    content: Matchers.string(payload.content),
+    changes: Matchers.string(payload.changes),
+  })
+}
+
+export function addGroupedExerciseInteraction(payload: GroupedExercisePayload) {
+  return addUuidInteraction({
+    id: payload.id,
+    trashed: Matchers.boolean(payload.trashed),
+    discriminator: 'entity',
+    type: 'groupedExercise',
+    instance: Matchers.string(payload.instance),
+    alias: payload.alias ? Matchers.string(payload.alias) : null,
+    date: Matchers.iso8601DateTime(payload.date),
+    currentRevisionId: payload.currentRevisionId
+      ? Matchers.integer(payload.currentRevisionId)
+      : null,
+    licenseId: Matchers.integer(payload.licenseId),
+    solutionId: payload.solutionId
+      ? Matchers.integer(payload.solutionId)
+      : null,
+  })
+}
+
+export function addGroupedExerciseRevisionInteraction(
+  payload: GroupedExerciseRevisionPayload
+) {
+  return addUuidInteraction({
+    id: payload.id,
+    trashed: Matchers.boolean(payload.trashed),
+    discriminator: 'entityRevision',
+    type: 'groupedExercise',
     date: Matchers.iso8601DateTime(payload.date),
     authorId: Matchers.integer(payload.authorId),
     repositoryId: Matchers.integer(payload.repositoryId),
