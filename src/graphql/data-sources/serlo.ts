@@ -35,6 +35,10 @@ import {
   TaxonomyTermPayload,
   UserPayload,
 } from '../schema/uuid'
+import {
+  SolutionPayload,
+  SolutionRevisionPayload,
+} from '../schema/uuid/solution'
 
 export class SerloDataSource extends RESTDataSource {
   public constructor(private environment: Environment) {
@@ -130,6 +134,26 @@ export class SerloDataSource extends RESTDataSource {
     await this.environment.cache.set(
       cacheKey,
       JSON.stringify({ ...pageRevision, discriminator: 'pageRevision' })
+    )
+  }
+
+  public async setSolution(solution: SolutionPayload) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${solution.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      JSON.stringify({ ...solution, discriminator: 'entity', type: 'solution' })
+    )
+  }
+
+  public async setSolutionRevision(solutionRevision: SolutionRevisionPayload) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${solutionRevision.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      JSON.stringify({
+        ...solutionRevision,
+        discriminator: 'entityRevision',
+        type: 'solution',
+      })
     )
   }
 

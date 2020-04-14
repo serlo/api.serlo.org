@@ -21,16 +21,16 @@
  */
 import { Schema } from '../utils'
 import { abstractEntitySchema } from './abstract-entity'
-import { abstractEntityRevisionSchema } from './abstract-entity-revision'
+import { abstractTaxonomyTermChildSchema } from './abstract-taxonomy-term-child'
 import { abstractUuidSchema, UnsupportedUuid } from './abstract-uuid'
 import { aliasSchema } from './alias'
 import { articleSchema, Article, ArticleRevision } from './article'
 import { pageSchema, Page, PageRevision } from './page'
+import { Solution, SolutionRevision, solutionSchema } from './solution'
 import { taxonomyTermSchema, TaxonomyTerm } from './taxonomy-term'
 import { userSchema, User } from './user'
 
 export * from './abstract-entity'
-export * from './abstract-entity-revision'
 export * from './abstract-uuid'
 export * from './alias'
 export * from './article'
@@ -40,11 +40,12 @@ export * from './user'
 
 export const uuidSchema = Schema.merge(
   abstractEntitySchema,
-  abstractEntityRevisionSchema,
+  abstractTaxonomyTermChildSchema,
   abstractUuidSchema,
   aliasSchema,
   articleSchema,
   pageSchema,
+  solutionSchema,
   taxonomyTermSchema,
   userSchema
 )
@@ -58,6 +59,8 @@ export function resolveAbstractUuid(data?: any) {
       switch (data.type) {
         case 'article':
           return new Article(data)
+        case 'solution':
+          return new Solution(data)
         default:
           return new UnsupportedUuid(data)
       }
@@ -65,6 +68,8 @@ export function resolveAbstractUuid(data?: any) {
       switch (data.type) {
         case 'article':
           return new ArticleRevision(data)
+        case 'solution':
+          return new SolutionRevision(data)
         default:
           return new UnsupportedUuid(data)
       }
