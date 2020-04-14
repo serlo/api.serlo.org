@@ -26,6 +26,8 @@ import { abstractUuidSchema, UnsupportedUuid } from './abstract-uuid'
 import { aliasSchema } from './alias'
 import { Applet, AppletRevision, appletSchema } from './applet'
 import { articleSchema, Article, ArticleRevision } from './article'
+import { Course, CourseRevision, courseSchema } from './course'
+import { CoursePage, CoursePageRevision, coursePageSchema } from './course-page'
 import { Event, EventRevision, eventSchema } from './event'
 import { Exercise, ExerciseRevision, exerciseSchema } from './exercise'
 import {
@@ -49,6 +51,8 @@ export * from './abstract-uuid'
 export * from './alias'
 export * from './applet'
 export * from './article'
+export * from './course'
+export * from './course-page'
 export * from './event'
 export * from './exercise'
 export * from './exercise-group'
@@ -66,6 +70,8 @@ export const uuidSchema = Schema.merge(
   aliasSchema,
   appletSchema,
   articleSchema,
+  courseSchema,
+  coursePageSchema,
   eventSchema,
   exerciseSchema,
   exerciseGroupSchema,
@@ -88,6 +94,10 @@ export function resolveAbstractUuid(data?: any) {
           return new Applet(data)
         case 'article':
           return new Article(data)
+        case 'course':
+          return new Course(data)
+        case 'coursePage':
+          return new CoursePage(data)
         case 'event':
           return new Event(data)
         case 'exercise':
@@ -109,6 +119,10 @@ export function resolveAbstractUuid(data?: any) {
           return new AppletRevision(data)
         case 'article':
           return new ArticleRevision(data)
+        case 'course':
+          return new CourseRevision(data)
+        case 'coursePage':
+          return new CoursePageRevision(data)
         case 'event':
           return new EventRevision(data)
         case 'exercise':

@@ -22,6 +22,10 @@ import {
   EventRevisionPayload,
   VideoPayload,
   VideoRevisionPayload,
+  CoursePayload,
+  CourseRevisionPayload,
+  CoursePagePayload,
+  CoursePageRevisionPayload,
 } from '../src/graphql/schema/uuid'
 import { license } from './license'
 
@@ -81,6 +85,69 @@ export const articleRevision: ArticleRevisionPayload = {
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
   repositoryId: article.id,
+  title: 'title',
+  content: 'content',
+  changes: 'changes',
+}
+
+export const course: CoursePayload = {
+  id: 18514,
+  trashed: false,
+  instance: Instance.De,
+  alias:
+    '/mathe/geometrie/satzgruppe-des-pythagoras/ueberblick-zum-satz-des-pythagoras',
+  date: '2014-03-01T20:45:56Z',
+  currentRevisionId: 30713,
+  licenseId: license.id,
+  taxonomyTermIds: [5],
+  pageIds: [18521],
+}
+
+export const courseAlias: AliasPayload = {
+  id: 18514,
+  instance: Instance.De,
+  path:
+    '/mathe/geometrie/satzgruppe-des-pythagoras/ueberblick-zum-satz-des-pythagoras',
+  source: '/entity/view/18514',
+  timestamp: '2014-06-16T15:58:45Z',
+}
+
+export const courseRevision: CourseRevisionPayload = {
+  id: 30713,
+  trashed: false,
+  date: '2014-09-15T15:28:35Z',
+  authorId: 1,
+  repositoryId: course.id,
+  title: 'title',
+  content: 'content',
+  changes: 'changes',
+}
+
+export const coursePage: CoursePagePayload = {
+  id: 18521,
+  trashed: false,
+  instance: Instance.De,
+  alias: '/18521/formel',
+  date: '2014-03-01T20:45:56Z',
+  currentRevisionId: 19277,
+  licenseId: license.id,
+  parentId: course.id,
+}
+
+export const coursePageAlias: AliasPayload = {
+  id: 18521,
+  instance: Instance.De,
+  path: '/18521/formel',
+  source: '/entity/view/18521',
+  timestamp: '2014-06-16T15:58:45Z',
+}
+
+export const coursePageRevision: CoursePageRevisionPayload = {
+  id: 19277,
+  trashed: false,
+  date: '2014-09-15T15:28:35Z',
+  authorId: 1,
+  repositoryId: coursePage.id,
   title: 'title',
   content: 'content',
   changes: 'changes',

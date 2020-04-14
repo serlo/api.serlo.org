@@ -297,6 +297,200 @@ describe('_setArticleRevision', () => {
   })
 })
 
+describe('_setCourse', () => {
+  test('forbidden', async () => {
+    const { client } = createTestClient({ service: Service.Playground })
+    await assertFailingGraphQLMutation(
+      {
+        mutation: createSetCourseMutation({
+          id: 1,
+          currentRevisionId: 2,
+          licenseId: 3,
+        }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
+  })
+
+  test('authenticated', async () => {
+    const { client } = createTestClient({ service: Service.Serlo })
+    await assertSuccessfulGraphQLMutation({
+      mutation: createSetCourseMutation({
+        id: 1,
+        currentRevisionId: 2,
+        licenseId: 3,
+      }),
+      client,
+    })
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        {
+          uuid(id: 1) {
+            ... on Course {
+              id
+            }
+          }
+        }
+      `,
+      data: {
+        uuid: {
+          id: 1,
+        },
+      },
+      client,
+    })
+  })
+})
+
+describe('_setCourseRevision', () => {
+  test('forbidden', async () => {
+    const { client } = createTestClient({ service: Service.Playground })
+    await assertFailingGraphQLMutation(
+      {
+        mutation: createSetCourseRevisionMutation({
+          id: 1,
+          repositoryId: 2,
+          authorId: 3,
+        }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
+  })
+
+  test('authenticated', async () => {
+    const { client } = createTestClient({ service: Service.Serlo })
+    await assertSuccessfulGraphQLMutation({
+      mutation: createSetCourseRevisionMutation({
+        id: 1,
+        repositoryId: 2,
+        authorId: 3,
+      }),
+      client,
+    })
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        {
+          uuid(id: 1) {
+            ... on CourseRevision {
+              id
+            }
+          }
+        }
+      `,
+      data: {
+        uuid: {
+          id: 1,
+        },
+      },
+      client,
+    })
+  })
+})
+
+describe('_setCoursePage', () => {
+  test('forbidden', async () => {
+    const { client } = createTestClient({ service: Service.Playground })
+    await assertFailingGraphQLMutation(
+      {
+        mutation: createSetCoursePageMutation({
+          id: 1,
+          currentRevisionId: 2,
+          licenseId: 3,
+          parentId: 4,
+        }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
+  })
+
+  test('authenticated', async () => {
+    const { client } = createTestClient({ service: Service.Serlo })
+    await assertSuccessfulGraphQLMutation({
+      mutation: createSetCoursePageMutation({
+        id: 1,
+        currentRevisionId: 2,
+        licenseId: 3,
+        parentId: 4,
+      }),
+      client,
+    })
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        {
+          uuid(id: 1) {
+            ... on CoursePage {
+              id
+            }
+          }
+        }
+      `,
+      data: {
+        uuid: {
+          id: 1,
+        },
+      },
+      client,
+    })
+  })
+})
+
+describe('_setCoursePageRevision', () => {
+  test('forbidden', async () => {
+    const { client } = createTestClient({ service: Service.Playground })
+    await assertFailingGraphQLMutation(
+      {
+        mutation: createSetCoursePageRevisionMutation({
+          id: 1,
+          repositoryId: 2,
+          authorId: 3,
+        }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
+  })
+
+  test('authenticated', async () => {
+    const { client } = createTestClient({ service: Service.Serlo })
+    await assertSuccessfulGraphQLMutation({
+      mutation: createSetCoursePageRevisionMutation({
+        id: 1,
+        repositoryId: 2,
+        authorId: 3,
+      }),
+      client,
+    })
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        {
+          uuid(id: 1) {
+            ... on CoursePageRevision {
+              id
+            }
+          }
+        }
+      `,
+      data: {
+        uuid: {
+          id: 1,
+        },
+      },
+      client,
+    })
+  })
+})
+
 describe('_setEvent', () => {
   test('forbidden', async () => {
     const { client } = createTestClient({ service: Service.Playground })
@@ -1173,6 +1367,107 @@ function createSetArticleRevisionMutation({
   return gql`
         mutation {
           _setArticleRevision(
+            id: ${id}
+            trashed: false
+            date: DateTime
+            authorId: ${authorId}
+            repositoryId: ${repositoryId}
+            title: "title"
+            content: "content"
+            changes: "changes"
+          )
+        }
+      `
+}
+
+function createSetCourseMutation({
+  id,
+  currentRevisionId,
+  licenseId,
+}: {
+  id: number
+  currentRevisionId: number
+  licenseId: number
+}) {
+  return gql`
+        mutation {
+          _setCourse(
+            id: ${id}
+            trashed: false
+            instance: de
+            date: "date"
+            currentRevisionId: ${currentRevisionId}
+            licenseId: ${licenseId}
+            taxonomyTermIds: []
+            pageIds: []
+          )
+        }
+      `
+}
+
+function createSetCourseRevisionMutation({
+  id,
+  repositoryId,
+  authorId,
+}: {
+  id: number
+  repositoryId: number
+  authorId: number
+}) {
+  return gql`
+        mutation {
+          _setCourseRevision(
+            id: ${id}
+            trashed: false
+            date: DateTime
+            authorId: ${authorId}
+            repositoryId: ${repositoryId}
+            title: "title"
+            content: "content"
+            changes: "changes"
+          )
+        }
+      `
+}
+
+function createSetCoursePageMutation({
+  id,
+  currentRevisionId,
+  licenseId,
+  parentId,
+}: {
+  id: number
+  currentRevisionId: number
+  licenseId: number
+  parentId: number
+}) {
+  return gql`
+        mutation {
+          _setCoursePage(
+            id: ${id}
+            trashed: false
+            instance: de
+            date: "date"
+            currentRevisionId: ${currentRevisionId}
+            licenseId: ${licenseId}
+            parentId: ${parentId}
+          )
+        }
+      `
+}
+
+function createSetCoursePageRevisionMutation({
+  id,
+  repositoryId,
+  authorId,
+}: {
+  id: number
+  repositoryId: number
+  authorId: number
+}) {
+  return gql`
+        mutation {
+          _setCoursePageRevision(
             id: ${id}
             trashed: false
             date: DateTime
