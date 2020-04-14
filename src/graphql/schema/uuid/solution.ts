@@ -1,4 +1,4 @@
-import { Schema } from '../utils'
+import { requestsOnlyFields, Schema } from '../utils'
 import {
   addEntityResolvers,
   Entity,
@@ -8,14 +8,34 @@ import {
   EntityRevisionPayload,
   EntityRevisionType,
 } from './abstract-entity'
+import { Exercise } from './exercise'
 
 export const solutionSchema = new Schema()
 
 export class Solution extends Entity {
   public __typename = EntityType.Solution
-}
+  public parentId: number
 
-export type SolutionPayload = EntityPayload
+  public constructor(payload: SolutionPayload) {
+    super(payload)
+    this.parentId = payload.parentId
+  }
+}
+export interface SolutionPayload extends EntityPayload {
+  parentId: number
+}
+solutionSchema.addResolver<Solution, unknown, Partial<Exercise>>(
+  'Solution',
+  'exercise',
+  async (entity, _args, { dataSources }, info) => {
+    const partialSolution = { id: entity.parentId }
+    if (requestsOnlyFields('Exercise', ['id'], info)) {
+      return partialSolution
+    }
+    const data = await dataSources.serlo.getUuid(partialSolution)
+    return new Exercise(data)
+  }
+)
 
 export class SolutionRevision extends EntityRevision {
   public __typename = EntityRevisionType.SolutionRevision
@@ -41,6 +61,12 @@ addEntityResolvers({
   repository: 'solution',
   Entity: Solution,
   EntityRevision: SolutionRevision,
+  entityPayloadFields: `
+    parentId: Int!
+  `,
+  entityFields: `
+    exercise: Exercise!
+  `,
   entityRevisionFields: `
     content: String!
     changes: String!

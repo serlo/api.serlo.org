@@ -404,6 +404,7 @@ describe('_setSolution', () => {
           id: 1,
           currentRevisionId: 2,
           licenseId: 3,
+          parentId: 4,
         }),
         client,
       },
@@ -420,6 +421,7 @@ describe('_setSolution', () => {
         id: 1,
         currentRevisionId: 2,
         licenseId: 3,
+        parentId: 4,
       }),
       client,
     })
@@ -752,10 +754,12 @@ function createSetSolutionMutation({
   id,
   currentRevisionId,
   licenseId,
+  parentId,
 }: {
   id: number
   currentRevisionId: number
   licenseId: number
+  parentId: number
 }) {
   return gql`
         mutation {
@@ -766,6 +770,7 @@ function createSetSolutionMutation({
             date: "date"
             currentRevisionId: ${currentRevisionId}
             licenseId: ${licenseId}
+            parentId: ${parentId}
           )
         }
       `
