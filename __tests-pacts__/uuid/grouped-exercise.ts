@@ -3,6 +3,8 @@ import * as R from 'ramda'
 
 import { license } from '../../__fixtures__/license'
 import {
+  exerciseGroup,
+  exerciseGroupRevision,
   groupedExercise,
   groupedExerciseAlias,
   groupedExerciseRevision,
@@ -13,6 +15,8 @@ import {
 import { assertSuccessfulGraphQLQuery } from '../__utils__/assertions'
 import {
   addAliasInteraction,
+  addExerciseGroupInteraction,
+  addExerciseGroupRevisionInteraction,
   addGroupedExerciseInteraction,
   addGroupedExerciseRevisionInteraction,
   addLicenseInteraction,
@@ -55,7 +59,7 @@ describe('GroupedExercise', () => {
         uuid: {
           __typename: 'GroupedExercise',
           ...R.omit(
-            ['currentRevisionId', 'licenseId', 'solutionId'],
+            ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
             groupedExercise
           ),
           currentRevision: {
@@ -104,7 +108,7 @@ describe('GroupedExercise', () => {
         uuid: {
           __typename: 'GroupedExercise',
           ...R.omit(
-            ['currentRevisionId', 'licenseId', 'solutionId'],
+            ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
             groupedExercise
           ),
           currentRevision: {
@@ -152,7 +156,7 @@ describe('GroupedExercise', () => {
         uuid: {
           __typename: 'GroupedExercise',
           ...R.omit(
-            ['currentRevisionId', 'licenseId', 'solutionId'],
+            ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
             groupedExercise
           ),
           currentRevision: {
@@ -202,13 +206,66 @@ describe('GroupedExercise', () => {
         uuid: {
           __typename: 'GroupedExercise',
           ...R.omit(
-            ['currentRevisionId', 'licenseId', 'solutionId'],
+            ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
             groupedExercise
           ),
           solution: {
             id: solution.id,
             currentRevision: {
               id: solutionRevision.id,
+              content: 'content',
+              changes: 'changes',
+            },
+          },
+        },
+      },
+    })
+  })
+
+  test('by alias (w/ exerciseGroup)', async () => {
+    await addGroupedExerciseInteraction(groupedExercise)
+    await addAliasInteraction(groupedExerciseAlias)
+    await addExerciseGroupRevisionInteraction(exerciseGroupRevision)
+    await addExerciseGroupInteraction(exerciseGroup)
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+          {
+            uuid(
+              alias: {
+                instance: de
+                path: "${groupedExerciseAlias.path}"
+              }
+            ) {
+              __typename
+              ... on GroupedExercise {
+                id
+                trashed
+                instance
+                alias
+                date
+                exerciseGroup {
+                  id
+                  currentRevision {
+                    id
+                    content
+                    changes
+                  }
+                }
+              }
+            }
+          }
+        `,
+      data: {
+        uuid: {
+          __typename: 'GroupedExercise',
+          ...R.omit(
+            ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
+            groupedExercise
+          ),
+          exerciseGroup: {
+            id: exerciseGroup.id,
+            currentRevision: {
+              id: exerciseGroupRevision.id,
               content: 'content',
               changes: 'changes',
             },
@@ -245,7 +302,7 @@ describe('GroupedExercise', () => {
         uuid: {
           __typename: 'GroupedExercise',
           ...R.omit(
-            ['currentRevisionId', 'licenseId', 'solutionId'],
+            ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
             groupedExercise
           ),
           currentRevision: {
