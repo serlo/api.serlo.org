@@ -27,6 +27,11 @@ import { aliasSchema } from './alias'
 import { articleSchema, Article, ArticleRevision } from './article'
 import { Exercise, ExerciseRevision, exerciseSchema } from './exercise'
 import {
+  ExerciseGroup,
+  ExerciseGroupRevision,
+  exerciseGroupSchema,
+} from './exercise-group'
+import {
   GroupedExercise,
   GroupedExerciseRevision,
   groupedExerciseSchema,
@@ -41,8 +46,10 @@ export * from './abstract-uuid'
 export * from './alias'
 export * from './article'
 export * from './exercise'
+export * from './exercise-group'
 export * from './grouped-exercise'
 export * from './page'
+export * from './solution'
 export * from './taxonomy-term'
 export * from './user'
 
@@ -53,6 +60,7 @@ export const uuidSchema = Schema.merge(
   aliasSchema,
   articleSchema,
   exerciseSchema,
+  exerciseGroupSchema,
   groupedExerciseSchema,
   pageSchema,
   solutionSchema,
@@ -71,6 +79,8 @@ export function resolveAbstractUuid(data?: any) {
           return new Article(data)
         case 'exercise':
           return new Exercise(data)
+        case 'exerciseGroup':
+          return new ExerciseGroup(data)
         case 'groupedExercise':
           return new GroupedExercise(data)
         case 'solution':
@@ -84,6 +94,8 @@ export function resolveAbstractUuid(data?: any) {
           return new ArticleRevision(data)
         case 'exercise':
           return new ExerciseRevision(data)
+        case 'exerciseGroup':
+          return new ExerciseGroupRevision(data)
         case 'groupedExercise':
           return new GroupedExerciseRevision(data)
         case 'solution':

@@ -32,17 +32,17 @@ import {
   ArticleRevisionPayload,
   ExercisePayload,
   ExerciseRevisionPayload,
+  ExerciseGroupPayload,
+  ExerciseGroupRevisionPayload,
   GroupedExercisePayload,
   GroupedExerciseRevisionPayload,
+  SolutionPayload,
+  SolutionRevisionPayload,
   PagePayload,
   PageRevisionPayload,
   TaxonomyTermPayload,
   UserPayload,
 } from '../schema/uuid'
-import {
-  SolutionPayload,
-  SolutionRevisionPayload,
-} from '../schema/uuid/solution'
 
 export class SerloDataSource extends RESTDataSource {
   public constructor(private environment: Environment) {
@@ -141,6 +141,32 @@ export class SerloDataSource extends RESTDataSource {
         ...exerciseRevision,
         discriminator: 'entityRevision',
         type: 'exercise',
+      })
+    )
+  }
+
+  public async setExerciseGroup(exerciseGroup: ExerciseGroupPayload) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${exerciseGroup.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      JSON.stringify({
+        ...exerciseGroup,
+        discriminator: 'entity',
+        type: 'exerciseGroup',
+      })
+    )
+  }
+
+  public async setExerciseGroupRevision(
+    exerciseGroupRevision: ExerciseGroupRevisionPayload
+  ) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${exerciseGroupRevision.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      JSON.stringify({
+        ...exerciseGroupRevision,
+        discriminator: 'entityRevision',
+        type: 'exerciseGroup',
       })
     )
   }

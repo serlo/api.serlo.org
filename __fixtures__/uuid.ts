@@ -3,10 +3,14 @@ import {
   AliasPayload,
   ArticlePayload,
   ArticleRevisionPayload,
+  ExerciseGroupPayload,
+  ExerciseGroupRevisionPayload,
   ExercisePayload,
   ExerciseRevisionPayload,
   GroupedExercisePayload,
   GroupedExerciseRevisionPayload,
+  SolutionPayload,
+  SolutionRevisionPayload,
   PagePayload,
   PageRevisionPayload,
   TaxonomyTermPayload,
@@ -14,10 +18,6 @@ import {
   UserPayload,
 } from '../src/graphql/schema/uuid'
 import { license } from './license'
-import {
-  SolutionPayload,
-  SolutionRevisionPayload,
-} from '../src/graphql/schema/uuid/solution'
 
 export const article: ArticlePayload = {
   id: 1855,
@@ -102,6 +102,36 @@ export const exerciseRevision: ExerciseRevisionPayload = {
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
   repositoryId: exercise.id,
+  content: 'content',
+  changes: 'changes',
+}
+
+export const exerciseGroupAlias: AliasPayload = {
+  id: 2217,
+  instance: Instance.De,
+  path: '/2217/2217',
+  source: '/entity/view/2217',
+  timestamp: '2014-05-25T10:25:44Z',
+}
+
+export const exerciseGroup: ExerciseGroupPayload = {
+  id: 2217,
+  trashed: false,
+  instance: Instance.De,
+  alias: '/2217/2217',
+  date: '2014-03-01T20:45:56Z',
+  currentRevisionId: 2218,
+  licenseId: license.id,
+  taxonomyTermIds: [5],
+  exerciseIds: [2219],
+}
+
+export const exerciseGroupRevision: ExerciseGroupRevisionPayload = {
+  id: 2218,
+  trashed: false,
+  date: '2014-09-15T15:28:35Z',
+  authorId: 1,
+  repositoryId: exerciseGroup.id,
   content: 'content',
   changes: 'changes',
 }
