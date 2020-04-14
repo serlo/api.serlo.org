@@ -299,6 +299,102 @@ describe('_setExerciseRevision', () => {
   })
 })
 
+describe('_setExerciseGroup', () => {
+  test('forbidden', async () => {
+    const { client } = createTestClient({ service: Service.Playground })
+    await assertFailingGraphQLMutation(
+      {
+        mutation: createSetExerciseGroupMutation({
+          id: 1,
+          currentRevisionId: 2,
+          licenseId: 3,
+        }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
+  })
+
+  test('authenticated', async () => {
+    const { client } = createTestClient({ service: Service.Serlo })
+    await assertSuccessfulGraphQLMutation({
+      mutation: createSetExerciseGroupMutation({
+        id: 1,
+        currentRevisionId: 2,
+        licenseId: 3,
+      }),
+      client,
+    })
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        {
+          uuid(id: 1) {
+            ... on ExerciseGroup {
+              id
+            }
+          }
+        }
+      `,
+      data: {
+        uuid: {
+          id: 1,
+        },
+      },
+      client,
+    })
+  })
+})
+
+describe('_setExerciseGroupRevision', () => {
+  test('forbidden', async () => {
+    const { client } = createTestClient({ service: Service.Playground })
+    await assertFailingGraphQLMutation(
+      {
+        mutation: createSetExerciseGroupRevisionMutation({
+          id: 1,
+          repositoryId: 2,
+          authorId: 3,
+        }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
+  })
+
+  test('authenticated', async () => {
+    const { client } = createTestClient({ service: Service.Serlo })
+    await assertSuccessfulGraphQLMutation({
+      mutation: createSetExerciseGroupRevisionMutation({
+        id: 1,
+        repositoryId: 2,
+        authorId: 3,
+      }),
+      client,
+    })
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        {
+          uuid(id: 1) {
+            ... on ExerciseGroupRevision {
+              id
+            }
+          }
+        }
+      `,
+      data: {
+        uuid: {
+          id: 1,
+        },
+      },
+      client,
+    })
+  })
+})
+
 describe('_setGroupedExercise', () => {
   test('forbidden', async () => {
     const { client } = createTestClient({ service: Service.Playground })
@@ -789,6 +885,55 @@ function createSetExerciseRevisionMutation({
   return gql`
         mutation {
           _setExerciseRevision(
+            id: ${id}
+            trashed: false
+            date: DateTime
+            authorId: ${authorId}
+            repositoryId: ${repositoryId}
+            content: "content"
+            changes: "changes"
+          )
+        }
+      `
+}
+
+function createSetExerciseGroupMutation({
+  id,
+  currentRevisionId,
+  licenseId,
+}: {
+  id: number
+  currentRevisionId: number
+  licenseId: number
+}) {
+  return gql`
+        mutation {
+          _setExerciseGroup(
+            id: ${id}
+            trashed: false
+            instance: de
+            date: "date"
+            currentRevisionId: ${currentRevisionId}
+            licenseId: ${licenseId}
+            exerciseIds: []
+            taxonomyTermIds: []
+          )
+        }
+      `
+}
+
+function createSetExerciseGroupRevisionMutation({
+  id,
+  repositoryId,
+  authorId,
+}: {
+  id: number
+  repositoryId: number
+  authorId: number
+}) {
+  return gql`
+        mutation {
+          _setExerciseGroupRevision(
             id: ${id}
             trashed: false
             date: DateTime

@@ -5,6 +5,9 @@ describe('Article', () => {
 describe('Exercise', () => {
   require('./exercise')
 })
+describe('Exercise Group', () => {
+  require('./exercise-group')
+})
 describe('Grouped Exercise', () => {
   require('./grouped-exercise')
 })
