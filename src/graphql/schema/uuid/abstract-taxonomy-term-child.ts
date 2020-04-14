@@ -1,13 +1,18 @@
 import { gql } from 'apollo-server'
 
+import { SerloDataSource } from '../../data-sources/serlo'
 import { Schema } from '../utils'
-import { Entity, EntityPayload } from './abstract-entity'
+import {
+  Entity,
+  EntityPayload,
+  EntityRevision,
+  addEntityResolvers,
+  EntityResolversPayload,
+} from './abstract-entity'
+import { TaxonomyTerm } from './taxonomy-term'
 
 export const abstractTaxonomyTermChildSchema = new Schema()
 
-/**
- * interface TaxonomyTermChild
- */
 export abstract class TaxonomyTermChild extends Entity {
   public taxonomyTermIds: number[]
 
@@ -36,3 +41,25 @@ abstractTaxonomyTermChildSchema.addTypeDef(gql`
     taxonomyTerms: [TaxonomyTerm!]!
   }
 `)
+
+export function addTaxonomyTermChildResolvers<
+  E extends TaxonomyTermChild,
+  R extends EntityRevision,
+  ESetter extends keyof SerloDataSource,
+  RSetter extends keyof SerloDataSource
+>(args: EntityResolversPayload<E, R, ESetter, RSetter>) {
+  addEntityResolvers(args)
+  args.schema.addResolver<E, unknown, TaxonomyTerm[]>(
+    args.entityType,
+    'taxonomyTerms',
+    (entity, _args, { dataSources }) => {
+      return Promise.all(
+        entity.taxonomyTermIds.map((id: number) => {
+          return dataSources.serlo.getUuid({ id }).then((data) => {
+            return new TaxonomyTerm(data)
+          })
+        })
+      )
+    }
+  )
+}

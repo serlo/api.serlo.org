@@ -1,15 +1,16 @@
 import { Schema } from '../utils'
 import {
-  addEntityResolvers,
   EntityPayload,
   EntityRevision,
   EntityRevisionPayload,
   EntityRevisionType,
   EntityType,
 } from './abstract-entity'
-import { TaxonomyTermChild } from './abstract-taxonomy-term-child'
+import {
+  addTaxonomyTermChildResolvers,
+  TaxonomyTermChild,
+} from './abstract-taxonomy-term-child'
 import { GroupedExercise } from './grouped-exercise'
-import { TaxonomyTerm } from './taxonomy-term'
 
 export const exerciseGroupSchema = new Schema()
 
@@ -26,19 +27,6 @@ export interface ExerciseGroupPayload extends EntityPayload {
   taxonomyTermIds: number[]
   exerciseIds: number[]
 }
-exerciseGroupSchema.addResolver<ExerciseGroup, unknown, TaxonomyTerm[]>(
-  'ExerciseGroup',
-  'taxonomyTerms',
-  (entity, _args, { dataSources }) => {
-    return Promise.all(
-      entity.taxonomyTermIds.map((id: number) => {
-        return dataSources.serlo.getUuid({ id }).then((data) => {
-          return new TaxonomyTerm(data)
-        })
-      })
-    )
-  }
-)
 exerciseGroupSchema.addResolver<ExerciseGroup, unknown, GroupedExercise[]>(
   'ExerciseGroup',
   'exercises',
@@ -70,7 +58,7 @@ export interface ExerciseGroupRevisionPayload extends EntityRevisionPayload {
   changes: string
 }
 
-addEntityResolvers({
+addTaxonomyTermChildResolvers({
   schema: exerciseGroupSchema,
   entityType: EntityType.ExerciseGroup,
   entityRevisionType: EntityRevisionType.ExerciseGroupRevision,

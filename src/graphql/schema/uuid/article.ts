@@ -1,14 +1,15 @@
 import { Schema } from '../utils'
 import {
-  addEntityResolvers,
   EntityPayload,
   EntityType,
   EntityRevision,
   EntityRevisionPayload,
   EntityRevisionType,
 } from './abstract-entity'
-import { TaxonomyTermChild } from './abstract-taxonomy-term-child'
-import { TaxonomyTerm } from './taxonomy-term'
+import {
+  addTaxonomyTermChildResolvers,
+  TaxonomyTermChild,
+} from './abstract-taxonomy-term-child'
 
 export const articleSchema = new Schema()
 
@@ -18,19 +19,6 @@ export class Article extends TaxonomyTermChild {
 export interface ArticlePayload extends EntityPayload {
   taxonomyTermIds: number[]
 }
-articleSchema.addResolver<Article, unknown, TaxonomyTerm[]>(
-  'Article',
-  'taxonomyTerms',
-  (entity, _args, { dataSources }) => {
-    return Promise.all(
-      entity.taxonomyTermIds.map((id: number) => {
-        return dataSources.serlo.getUuid({ id }).then((data) => {
-          return new TaxonomyTerm(data)
-        })
-      })
-    )
-  }
-)
 
 export class ArticleRevision extends EntityRevision {
   public __typename = EntityRevisionType.ArticleRevision
@@ -52,7 +40,7 @@ export interface ArticleRevisionPayload extends EntityRevisionPayload {
   changes: string
 }
 
-addEntityResolvers({
+addTaxonomyTermChildResolvers({
   schema: articleSchema,
   entityType: EntityType.Article,
   entityRevisionType: EntityRevisionType.ArticleRevision,
