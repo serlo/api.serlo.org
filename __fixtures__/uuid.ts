@@ -153,6 +153,7 @@ export const groupedExercise: GroupedExercisePayload = {
   currentRevisionId: 2220,
   licenseId: license.id,
   solutionId: 29648,
+  parentId: exerciseGroup.id,
 }
 
 export const groupedExerciseRevision: GroupedExerciseRevisionPayload = {

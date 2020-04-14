@@ -184,6 +184,7 @@ export function addGroupedExerciseInteraction(payload: GroupedExercisePayload) {
     solutionId: payload.solutionId
       ? Matchers.integer(payload.solutionId)
       : null,
+    parentId: payload.parentId,
   })
 }
 

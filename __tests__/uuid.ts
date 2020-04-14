@@ -405,6 +405,7 @@ describe('_setGroupedExercise', () => {
           currentRevisionId: 2,
           licenseId: 3,
           solutionId: 4,
+          parentId: 5,
         }),
         client,
       },
@@ -422,6 +423,7 @@ describe('_setGroupedExercise', () => {
         currentRevisionId: 2,
         licenseId: 3,
         solutionId: 4,
+        parentId: 5,
       }),
       client,
     })
@@ -951,11 +953,13 @@ function createSetGroupedExerciseMutation({
   currentRevisionId,
   licenseId,
   solutionId,
+  parentId,
 }: {
   id: number
   currentRevisionId: number
   licenseId: number
   solutionId: number
+  parentId: number
 }) {
   return gql`
         mutation {
@@ -967,6 +971,7 @@ function createSetGroupedExerciseMutation({
             currentRevisionId: ${currentRevisionId}
             licenseId: ${licenseId}
             solutionId: ${solutionId}
+            parentId: ${parentId}
           )
         }
       `
