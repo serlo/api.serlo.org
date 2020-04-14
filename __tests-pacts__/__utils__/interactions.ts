@@ -5,6 +5,8 @@ import {
   AliasPayload,
   ArticlePayload,
   ArticleRevisionPayload,
+  ExercisePayload,
+  ExerciseRevisionPayload,
   PagePayload,
   PageRevisionPayload,
   TaxonomyTermPayload,
@@ -78,6 +80,45 @@ export function addArticleRevisionInteraction(payload: ArticleRevisionPayload) {
     authorId: Matchers.integer(payload.authorId),
     repositoryId: Matchers.integer(payload.repositoryId),
     title: Matchers.string(payload.title),
+    content: Matchers.string(payload.content),
+    changes: Matchers.string(payload.changes),
+  })
+}
+
+export function addExerciseInteraction(payload: ExercisePayload) {
+  return addUuidInteraction({
+    id: payload.id,
+    trashed: Matchers.boolean(payload.trashed),
+    discriminator: 'entity',
+    type: 'exercise',
+    instance: Matchers.string(payload.instance),
+    alias: payload.alias ? Matchers.string(payload.alias) : null,
+    date: Matchers.iso8601DateTime(payload.date),
+    currentRevisionId: payload.currentRevisionId
+      ? Matchers.integer(payload.currentRevisionId)
+      : null,
+    licenseId: Matchers.integer(payload.licenseId),
+    solutionId: payload.solutionId
+      ? Matchers.integer(payload.solutionId)
+      : null,
+    taxonomyTermIds:
+      payload.taxonomyTermIds.length > 0
+        ? Matchers.eachLike(Matchers.like(payload.taxonomyTermIds[0]))
+        : [],
+  })
+}
+
+export function addExerciseRevisionInteraction(
+  payload: ExerciseRevisionPayload
+) {
+  return addUuidInteraction({
+    id: payload.id,
+    trashed: Matchers.boolean(payload.trashed),
+    discriminator: 'entityRevision',
+    type: 'exercise',
+    date: Matchers.iso8601DateTime(payload.date),
+    authorId: Matchers.integer(payload.authorId),
+    repositoryId: Matchers.integer(payload.repositoryId),
     content: Matchers.string(payload.content),
     changes: Matchers.string(payload.changes),
   })

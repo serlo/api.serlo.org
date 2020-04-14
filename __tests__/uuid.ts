@@ -201,6 +201,104 @@ describe('_setArticleRevision', () => {
   })
 })
 
+describe('_setExercise', () => {
+  test('forbidden', async () => {
+    const { client } = createTestClient({ service: Service.Playground })
+    await assertFailingGraphQLMutation(
+      {
+        mutation: createSetExerciseMutation({
+          id: 1,
+          currentRevisionId: 2,
+          licenseId: 3,
+          solutionId: 4,
+        }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
+  })
+
+  test('authenticated', async () => {
+    const { client } = createTestClient({ service: Service.Serlo })
+    await assertSuccessfulGraphQLMutation({
+      mutation: createSetExerciseMutation({
+        id: 1,
+        currentRevisionId: 2,
+        licenseId: 3,
+        solutionId: 4,
+      }),
+      client,
+    })
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        {
+          uuid(id: 1) {
+            ... on Exercise {
+              id
+            }
+          }
+        }
+      `,
+      data: {
+        uuid: {
+          id: 1,
+        },
+      },
+      client,
+    })
+  })
+})
+
+describe('_setExerciseRevision', () => {
+  test('forbidden', async () => {
+    const { client } = createTestClient({ service: Service.Playground })
+    await assertFailingGraphQLMutation(
+      {
+        mutation: createSetExerciseRevisionMutation({
+          id: 1,
+          repositoryId: 2,
+          authorId: 3,
+        }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
+  })
+
+  test('authenticated', async () => {
+    const { client } = createTestClient({ service: Service.Serlo })
+    await assertSuccessfulGraphQLMutation({
+      mutation: createSetExerciseRevisionMutation({
+        id: 1,
+        repositoryId: 2,
+        authorId: 3,
+      }),
+      client,
+    })
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        {
+          uuid(id: 1) {
+            ... on ExerciseRevision {
+              id
+            }
+          }
+        }
+      `,
+      data: {
+        uuid: {
+          id: 1,
+        },
+      },
+      client,
+    })
+  })
+})
+
 describe('_setPage', () => {
   test('forbidden', async () => {
     const { client } = createTestClient({ service: Service.Playground })
@@ -545,6 +643,57 @@ function createSetArticleRevisionMutation({
             authorId: ${authorId}
             repositoryId: ${repositoryId}
             title: "title"
+            content: "content"
+            changes: "changes"
+          )
+        }
+      `
+}
+
+function createSetExerciseMutation({
+  id,
+  currentRevisionId,
+  licenseId,
+  solutionId,
+}: {
+  id: number
+  currentRevisionId: number
+  licenseId: number
+  solutionId: number
+}) {
+  return gql`
+        mutation {
+          _setExercise(
+            id: ${id}
+            trashed: false
+            instance: de
+            date: "date"
+            currentRevisionId: ${currentRevisionId}
+            licenseId: ${licenseId}
+            solutionId: ${solutionId}
+            taxonomyTermIds: []
+          )
+        }
+      `
+}
+
+function createSetExerciseRevisionMutation({
+  id,
+  repositoryId,
+  authorId,
+}: {
+  id: number
+  repositoryId: number
+  authorId: number
+}) {
+  return gql`
+        mutation {
+          _setExerciseRevision(
+            id: ${id}
+            trashed: false
+            date: DateTime
+            authorId: ${authorId}
+            repositoryId: ${repositoryId}
             content: "content"
             changes: "changes"
           )

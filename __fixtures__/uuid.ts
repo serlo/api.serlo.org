@@ -3,6 +3,8 @@ import {
   AliasPayload,
   ArticlePayload,
   ArticleRevisionPayload,
+  ExercisePayload,
+  ExerciseRevisionPayload,
   PagePayload,
   PageRevisionPayload,
   TaxonomyTermPayload,
@@ -53,14 +55,6 @@ export const pageAlias: AliasPayload = {
   timestamp: '2014-05-25T10:25:44Z',
 }
 
-export const solutionAlias: AliasPayload = {
-  id: 29648,
-  instance: Instance.De,
-  path: '/29648/29648',
-  source: '/entity/view/29648',
-  timestamp: '2014-05-25T10:25:44Z',
-}
-
 export const page: PagePayload = {
   id: 19767,
   trashed: false,
@@ -80,6 +74,14 @@ export const pageRevision: PageRevisionPayload = {
   repositoryId: page.id,
 }
 
+export const solutionAlias: AliasPayload = {
+  id: 29648,
+  instance: Instance.De,
+  path: '/29648/29648',
+  source: '/entity/view/29648',
+  timestamp: '2014-05-25T10:25:44Z',
+}
+
 export const solution: SolutionPayload = {
   id: 29648,
   trashed: false,
@@ -96,6 +98,36 @@ export const solutionRevision: SolutionRevisionPayload = {
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
   repositoryId: solution.id,
+  content: 'content',
+  changes: 'changes',
+}
+
+export const exerciseAlias: AliasPayload = {
+  id: 29637,
+  instance: Instance.De,
+  path: '/29637/29637',
+  source: '/entity/view/29637',
+  timestamp: '2014-05-25T10:25:44Z',
+}
+
+export const exercise: ExercisePayload = {
+  id: 29637,
+  trashed: false,
+  instance: Instance.De,
+  alias: '/29637/29637',
+  date: '2014-03-01T20:45:56Z',
+  currentRevisionId: 29638,
+  licenseId: license.id,
+  solutionId: solution.id,
+  taxonomyTermIds: [5],
+}
+
+export const exerciseRevision: ExerciseRevisionPayload = {
+  id: 29638,
+  trashed: false,
+  date: '2014-09-15T15:28:35Z',
+  authorId: 1,
+  repositoryId: exercise.id,
   content: 'content',
   changes: 'changes',
 }

@@ -2,6 +2,9 @@
 describe('Article', () => {
   require('./article')
 })
+describe('Exercise', () => {
+  require('./exercise')
+})
 describe('Page', () => {
   require('./page')
 })

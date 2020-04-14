@@ -30,6 +30,8 @@ import {
   AliasPayload,
   ArticlePayload,
   ArticleRevisionPayload,
+  ExercisePayload,
+  ExerciseRevisionPayload,
   PagePayload,
   PageRevisionPayload,
   TaxonomyTermPayload,
@@ -117,6 +119,26 @@ export class SerloDataSource extends RESTDataSource {
         ...articleRevision,
         discriminator: 'entityRevision',
         type: 'article',
+      })
+    )
+  }
+
+  public async setExercise(exercise: ExercisePayload) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${exercise.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      JSON.stringify({ ...exercise, discriminator: 'entity', type: 'exercise' })
+    )
+  }
+
+  public async setExerciseRevision(exerciseRevision: ExerciseRevisionPayload) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${exerciseRevision.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      JSON.stringify({
+        ...exerciseRevision,
+        discriminator: 'entityRevision',
+        type: 'exercise',
       })
     )
   }
