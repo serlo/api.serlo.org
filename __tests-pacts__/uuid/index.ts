@@ -5,6 +5,12 @@ describe('Applet', () => {
 describe('Article', () => {
   require('./article')
 })
+describe('Course', () => {
+  require('./course')
+})
+describe('Course Page', () => {
+  require('./course-page')
+})
 describe('Event', () => {
   require('./event')
 })

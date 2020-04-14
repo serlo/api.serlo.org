@@ -48,6 +48,10 @@ import {
   EventRevisionPayload,
   VideoPayload,
   VideoRevisionPayload,
+  CoursePayload,
+  CourseRevisionPayload,
+  CoursePagePayload,
+  CoursePageRevisionPayload,
 } from '../schema/uuid'
 
 export class SerloDataSource extends RESTDataSource {
@@ -147,6 +151,52 @@ export class SerloDataSource extends RESTDataSource {
         ...articleRevision,
         discriminator: 'entityRevision',
         type: 'article',
+      })
+    )
+  }
+
+  public async setCourse(course: CoursePayload) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${course.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      JSON.stringify({ ...course, discriminator: 'entity', type: 'course' })
+    )
+  }
+
+  public async setCourseRevision(courseRevision: CourseRevisionPayload) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${courseRevision.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      JSON.stringify({
+        ...courseRevision,
+        discriminator: 'entityRevision',
+        type: 'course',
+      })
+    )
+  }
+
+  public async setCoursePage(coursePage: CoursePagePayload) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${coursePage.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      JSON.stringify({
+        ...coursePage,
+        discriminator: 'entity',
+        type: 'coursePage',
+      })
+    )
+  }
+
+  public async setCoursePageRevision(
+    coursePageRevision: CoursePageRevisionPayload
+  ) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${coursePageRevision.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      JSON.stringify({
+        ...coursePageRevision,
+        discriminator: 'entityRevision',
+        type: 'coursePage',
       })
     )
   }

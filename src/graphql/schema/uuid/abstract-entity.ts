@@ -14,6 +14,8 @@ export const abstractEntitySchema = new Schema()
 export enum EntityType {
   Applet = 'Applet',
   Article = 'Article',
+  Course = 'Course',
+  CoursePage = 'CoursePage',
   Event = 'Event',
   Exercise = 'Exercise',
   ExerciseGroup = 'ExerciseGroup',
@@ -25,6 +27,8 @@ export enum EntityType {
 export enum EntityRevisionType {
   ArticleRevision = 'ArticleRevision',
   AppletRevision = 'AppletRevision',
+  CourseRevision = 'CourseRevision',
+  CoursePageRevision = 'CoursePageRevision',
   EventRevision = 'EventRevision',
   ExerciseRevision = 'ExerciseRevision',
   ExerciseGroupRevision = 'ExerciseGroupRevision',
