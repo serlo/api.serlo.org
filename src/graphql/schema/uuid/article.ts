@@ -12,9 +12,6 @@ import { TaxonomyTerm } from './taxonomy-term'
 
 export const articleSchema = new Schema()
 
-/**
- * type Article
- */
 export class Article extends TaxonomyTermChild {
   public __typename = EntityType.Article
 }
