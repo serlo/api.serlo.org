@@ -164,6 +164,7 @@ export function addSolutionInteraction(payload: SolutionPayload) {
       ? Matchers.integer(payload.currentRevisionId)
       : null,
     licenseId: Matchers.integer(payload.licenseId),
+    parentId: Matchers.integer(payload.parentId),
   })
 }
 

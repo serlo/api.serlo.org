@@ -3,6 +3,8 @@ import * as R from 'ramda'
 
 import { license } from '../../__fixtures__/license'
 import {
+  exercise,
+  exerciseRevision,
   solution,
   solutionAlias,
   solutionRevision,
@@ -11,6 +13,8 @@ import {
 import { assertSuccessfulGraphQLQuery } from '../__utils__/assertions'
 import {
   addAliasInteraction,
+  addExerciseInteraction,
+  addExerciseRevisionInteraction,
   addLicenseInteraction,
   addSolutionInteraction,
   addSolutionRevisionInteraction,
@@ -50,7 +54,7 @@ describe('Solution', () => {
       data: {
         uuid: {
           __typename: 'Solution',
-          ...R.omit(['currentRevisionId', 'licenseId'], solution),
+          ...R.omit(['currentRevisionId', 'licenseId', 'parentId'], solution),
           currentRevision: {
             id: solution.currentRevisionId,
           },
@@ -96,7 +100,7 @@ describe('Solution', () => {
       data: {
         uuid: {
           __typename: 'Solution',
-          ...R.omit(['currentRevisionId', 'licenseId'], solution),
+          ...R.omit(['currentRevisionId', 'licenseId', 'parentId'], solution),
           currentRevision: {
             id: solution.currentRevisionId,
           },
@@ -141,11 +145,61 @@ describe('Solution', () => {
       data: {
         uuid: {
           __typename: 'Solution',
-          ...R.omit(['currentRevisionId', 'licenseId'], solution),
+          ...R.omit(['currentRevisionId', 'licenseId', 'parentId'], solution),
           currentRevision: {
             id: solutionRevision.id,
             content: solutionRevision.content,
             changes: solutionRevision.changes,
+          },
+        },
+      },
+    })
+  })
+
+  test('by alias (w/ exercise)', async () => {
+    await addSolutionInteraction(solution)
+    await addAliasInteraction(solutionAlias)
+    await addExerciseRevisionInteraction(exerciseRevision)
+    await addExerciseInteraction(exercise)
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+          {
+            uuid(
+              alias: {
+                instance: de
+                path: "${solutionAlias.path}"
+              }
+            ) {
+              __typename
+              ... on Solution {
+                id
+                trashed
+                instance
+                alias
+                date
+                exercise {
+                  id
+                  currentRevision {
+                    id
+                    content
+                    changes
+                  }
+                }
+              }
+            }
+          }
+        `,
+      data: {
+        uuid: {
+          __typename: 'Solution',
+          ...R.omit(['currentRevisionId', 'licenseId', 'parentId'], solution),
+          exercise: {
+            id: exercise.id,
+            currentRevision: {
+              id: exerciseRevision.id,
+              content: exerciseRevision.content,
+              changes: exerciseRevision.changes,
+            },
           },
         },
       },
@@ -178,7 +232,7 @@ describe('Solution', () => {
       data: {
         uuid: {
           __typename: 'Solution',
-          ...R.omit(['currentRevisionId', 'licenseId'], solution),
+          ...R.omit(['currentRevisionId', 'licenseId', 'parentId'], solution),
           currentRevision: {
             id: solutionRevision.id,
           },
