@@ -5,6 +5,9 @@ describe('Article', () => {
 describe('Page', () => {
   require('./page')
 })
+describe('Solution', () => {
+  require('./solution')
+})
 describe('Taxonomy Term', () => {
   require('./taxonomy-term')
 })

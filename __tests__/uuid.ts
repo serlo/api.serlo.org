@@ -297,6 +297,102 @@ describe('_setPageRevision', () => {
   })
 })
 
+describe('_setSolution', () => {
+  test('forbidden', async () => {
+    const { client } = createTestClient({ service: Service.Playground })
+    await assertFailingGraphQLMutation(
+      {
+        mutation: createSetSolutionMutation({
+          id: 1,
+          currentRevisionId: 2,
+          licenseId: 3,
+        }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
+  })
+
+  test('authenticated', async () => {
+    const { client } = createTestClient({ service: Service.Serlo })
+    await assertSuccessfulGraphQLMutation({
+      mutation: createSetSolutionMutation({
+        id: 1,
+        currentRevisionId: 2,
+        licenseId: 3,
+      }),
+      client,
+    })
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        {
+          uuid(id: 1) {
+            ... on Solution {
+              id
+            }
+          }
+        }
+      `,
+      data: {
+        uuid: {
+          id: 1,
+        },
+      },
+      client,
+    })
+  })
+})
+
+describe('_setSolutionRevision', () => {
+  test('forbidden', async () => {
+    const { client } = createTestClient({ service: Service.Playground })
+    await assertFailingGraphQLMutation(
+      {
+        mutation: createSetSolutionRevisionMutation({
+          id: 1,
+          repositoryId: 2,
+          authorId: 3,
+        }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
+  })
+
+  test('authenticated', async () => {
+    const { client } = createTestClient({ service: Service.Serlo })
+    await assertSuccessfulGraphQLMutation({
+      mutation: createSetSolutionRevisionMutation({
+        id: 1,
+        repositoryId: 2,
+        authorId: 3,
+      }),
+      client,
+    })
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        {
+          uuid(id: 1) {
+            ... on SolutionRevision {
+              id
+            }
+          }
+        }
+      `,
+      data: {
+        uuid: {
+          id: 1,
+        },
+      },
+      client,
+    })
+  })
+})
+
 describe('_setTaxonomyTerm', () => {
   test('forbidden', async () => {
     const { client } = createTestClient({ service: Service.Playground })
@@ -498,6 +594,53 @@ function createSetPageRevisonMutation({
             date: DateTime
             authorId: ${authorId}
             repositoryId: ${repositoryId}
+          )
+        }
+      `
+}
+
+function createSetSolutionMutation({
+  id,
+  currentRevisionId,
+  licenseId,
+}: {
+  id: number
+  currentRevisionId: number
+  licenseId: number
+}) {
+  return gql`
+        mutation {
+          _setSolution(
+            id: ${id}
+            trashed: false
+            instance: de
+            date: "date"
+            currentRevisionId: ${currentRevisionId}
+            licenseId: ${licenseId}
+          )
+        }
+      `
+}
+
+function createSetSolutionRevisionMutation({
+  id,
+  repositoryId,
+  authorId,
+}: {
+  id: number
+  repositoryId: number
+  authorId: number
+}) {
+  return gql`
+        mutation {
+          _setSolutionRevision(
+            id: ${id}
+            trashed: false
+            date: DateTime
+            authorId: ${authorId}
+            repositoryId: ${repositoryId}
+            content: "content"
+            changes: "changes"
           )
         }
       `

@@ -10,6 +10,10 @@ import {
   TaxonomyTermPayload,
   UserPayload,
 } from '../../src/graphql/schema/uuid'
+import {
+  SolutionPayload,
+  SolutionRevisionPayload,
+} from '../../src/graphql/schema/uuid/solution'
 
 export function addLicenseInteraction(payload: License) {
   return addJsonInteraction({
@@ -103,6 +107,38 @@ export function addPageRevisionInteraction(payload: PageRevisionPayload) {
     date: Matchers.iso8601DateTime(payload.date),
     authorId: Matchers.integer(payload.authorId),
     repositoryId: Matchers.integer(payload.repositoryId),
+  })
+}
+
+export function addSolutionInteraction(payload: SolutionPayload) {
+  return addUuidInteraction({
+    id: payload.id,
+    trashed: Matchers.boolean(payload.trashed),
+    discriminator: 'entity',
+    type: 'solution',
+    instance: Matchers.string(payload.instance),
+    alias: payload.alias ? Matchers.string(payload.alias) : null,
+    date: Matchers.iso8601DateTime(payload.date),
+    currentRevisionId: payload.currentRevisionId
+      ? Matchers.integer(payload.currentRevisionId)
+      : null,
+    licenseId: Matchers.integer(payload.licenseId),
+  })
+}
+
+export function addSolutionRevisionInteraction(
+  payload: SolutionRevisionPayload
+) {
+  return addUuidInteraction({
+    id: payload.id,
+    trashed: Matchers.boolean(payload.trashed),
+    discriminator: 'entityRevision',
+    type: 'solution',
+    date: Matchers.iso8601DateTime(payload.date),
+    authorId: Matchers.integer(payload.authorId),
+    repositoryId: Matchers.integer(payload.repositoryId),
+    content: Matchers.string(payload.content),
+    changes: Matchers.string(payload.changes),
   })
 }
 

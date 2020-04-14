@@ -3,8 +3,7 @@ import { ForbiddenError, gql } from 'apollo-server'
 import { resolveAbstractUuid } from '.'
 import { Service } from '../types'
 import { Schema } from '../utils'
-import { EntityType } from './abstract-entity'
-import { EntityRevisionType } from './abstract-entity-revision'
+import { EntityType, EntityRevisionType } from './abstract-entity'
 import { AliasInput } from './alias'
 
 export const abstractUuidSchema = new Schema()
