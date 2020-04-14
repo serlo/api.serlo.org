@@ -1,6 +1,12 @@
 /* eslint-disable import/no-unassigned-import */
+describe('Applet', () => {
+  require('./applet')
+})
 describe('Article', () => {
   require('./article')
+})
+describe('Event', () => {
+  require('./event')
 })
 describe('Exercise', () => {
   require('./exercise')
@@ -22,5 +28,8 @@ describe('Taxonomy Term', () => {
 })
 describe('User', () => {
   require('./user')
+})
+describe('Video', () => {
+  require('./video')
 })
 /* eslint-enable import/no-unassigned-import */

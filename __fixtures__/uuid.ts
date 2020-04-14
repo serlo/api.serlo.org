@@ -16,8 +16,45 @@ import {
   TaxonomyTermPayload,
   TaxonomyTermType,
   UserPayload,
+  AppletRevisionPayload,
+  AppletPayload,
+  EventPayload,
+  EventRevisionPayload,
+  VideoPayload,
+  VideoRevisionPayload,
 } from '../src/graphql/schema/uuid'
 import { license } from './license'
+
+export const applet: AppletPayload = {
+  id: 35596,
+  trashed: false,
+  instance: Instance.De,
+  alias: '/math/example-content/example-topic-1/example-applet',
+  date: '2014-03-01T20:45:56Z',
+  currentRevisionId: 35597,
+  licenseId: license.id,
+  taxonomyTermIds: [5],
+}
+
+export const appletAlias: AliasPayload = {
+  id: 35596,
+  instance: Instance.De,
+  path: '/math/example-content/example-topic-1/example-applet',
+  source: '/entity/view/35596',
+  timestamp: '2014-06-16T15:58:45Z',
+}
+
+export const appletRevision: AppletRevisionPayload = {
+  id: 35597,
+  trashed: false,
+  date: '2014-09-15T15:28:35Z',
+  authorId: 1,
+  repositoryId: applet.id,
+  url: 'url',
+  title: 'title',
+  content: 'content',
+  changes: 'changes',
+}
 
 export const article: ArticlePayload = {
   id: 1855,
@@ -44,6 +81,36 @@ export const articleRevision: ArticleRevisionPayload = {
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
   repositoryId: article.id,
+  title: 'title',
+  content: 'content',
+  changes: 'changes',
+}
+
+export const event: EventPayload = {
+  id: 35554,
+  trashed: false,
+  instance: Instance.De,
+  alias: '/mathe/beispielinhalte/beispielveranstaltung',
+  date: '2014-03-01T20:45:56Z',
+  currentRevisionId: 35555,
+  licenseId: license.id,
+  taxonomyTermIds: [5],
+}
+
+export const eventAlias: AliasPayload = {
+  id: 35554,
+  instance: Instance.De,
+  path: '/mathe/beispielinhalte/beispielveranstaltung',
+  source: '/entity/view/35554',
+  timestamp: '2014-06-16T15:58:45Z',
+}
+
+export const eventRevision: EventRevisionPayload = {
+  id: 35555,
+  trashed: false,
+  date: '2014-09-15T15:28:35Z',
+  authorId: 1,
+  repositoryId: event.id,
   title: 'title',
   content: 'content',
   changes: 'changes',
@@ -241,4 +308,35 @@ export const user: UserPayload = {
   date: '2014-03-01T20:36:21Z',
   lastLogin: '2020-03-24T09:40:55Z',
   description: null,
+}
+
+export const video: VideoPayload = {
+  id: 16078,
+  trashed: false,
+  instance: Instance.De,
+  alias:
+    '/mathe/artikel-und-videos-aus-serlo1/waagrechte-und-schiefe-asymptote',
+  date: '2014-03-01T20:45:56Z',
+  currentRevisionId: 16114,
+  licenseId: license.id,
+  taxonomyTermIds: [5],
+}
+
+export const videoAlias: AliasPayload = {
+  id: 16078,
+  instance: Instance.De,
+  path: '/mathe/artikel-und-videos-aus-serlo1/waagrechte-und-schiefe-asymptote',
+  source: '/entity/view/16078',
+  timestamp: '2014-06-16T15:58:45Z',
+}
+
+export const videoRevision: VideoRevisionPayload = {
+  id: 16114,
+  trashed: false,
+  date: '2014-09-15T15:28:35Z',
+  authorId: 1,
+  repositoryId: video.id,
+  title: 'title',
+  url: 'url',
+  changes: 'changes',
 }
