@@ -42,6 +42,12 @@ import {
   PageRevisionPayload,
   TaxonomyTermPayload,
   UserPayload,
+  AppletPayload,
+  AppletRevisionPayload,
+  EventPayload,
+  EventRevisionPayload,
+  VideoPayload,
+  VideoRevisionPayload,
 } from '../schema/uuid'
 
 export class SerloDataSource extends RESTDataSource {
@@ -105,6 +111,26 @@ export class SerloDataSource extends RESTDataSource {
     await this.environment.cache.set(cacheKey, JSON.stringify(null))
   }
 
+  public async setApplet(applet: AppletPayload) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${applet.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      JSON.stringify({ ...applet, discriminator: 'entity', type: 'applet' })
+    )
+  }
+
+  public async setAppletRevision(appletRevision: AppletRevisionPayload) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${appletRevision.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      JSON.stringify({
+        ...appletRevision,
+        discriminator: 'entityRevision',
+        type: 'applet',
+      })
+    )
+  }
+
   public async setArticle(article: ArticlePayload) {
     const cacheKey = this.getCacheKey(`/api/uuid/${article.id}`)
     await this.environment.cache.set(
@@ -121,6 +147,26 @@ export class SerloDataSource extends RESTDataSource {
         ...articleRevision,
         discriminator: 'entityRevision',
         type: 'article',
+      })
+    )
+  }
+
+  public async setEvent(event: EventPayload) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${event.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      JSON.stringify({ ...event, discriminator: 'entity', type: 'event' })
+    )
+  }
+
+  public async setEventRevision(eventRevision: EventRevisionPayload) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${eventRevision.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      JSON.stringify({
+        ...eventRevision,
+        discriminator: 'entityRevision',
+        type: 'event',
       })
     )
   }
@@ -246,6 +292,26 @@ export class SerloDataSource extends RESTDataSource {
     await this.environment.cache.set(
       cacheKey,
       JSON.stringify({ ...user, discriminator: 'user' })
+    )
+  }
+
+  public async setVideo(video: VideoPayload) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${video.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      JSON.stringify({ ...video, discriminator: 'entity', type: 'video' })
+    )
+  }
+
+  public async setVideoRevision(videoRevision: VideoRevisionPayload) {
+    const cacheKey = this.getCacheKey(`/api/uuid/${videoRevision.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      JSON.stringify({
+        ...videoRevision,
+        discriminator: 'entityRevision',
+        type: 'video',
+      })
     )
   }
 

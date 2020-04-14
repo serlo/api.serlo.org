@@ -24,7 +24,9 @@ import { abstractEntitySchema } from './abstract-entity'
 import { abstractTaxonomyTermChildSchema } from './abstract-taxonomy-term-child'
 import { abstractUuidSchema, UnsupportedUuid } from './abstract-uuid'
 import { aliasSchema } from './alias'
+import { Applet, AppletRevision, appletSchema } from './applet'
 import { articleSchema, Article, ArticleRevision } from './article'
+import { Event, EventRevision, eventSchema } from './event'
 import { Exercise, ExerciseRevision, exerciseSchema } from './exercise'
 import {
   ExerciseGroup,
@@ -40,11 +42,14 @@ import { pageSchema, Page, PageRevision } from './page'
 import { Solution, SolutionRevision, solutionSchema } from './solution'
 import { taxonomyTermSchema, TaxonomyTerm } from './taxonomy-term'
 import { userSchema, User } from './user'
+import { Video, VideoRevision, videoSchema } from './video'
 
 export * from './abstract-entity'
 export * from './abstract-uuid'
 export * from './alias'
+export * from './applet'
 export * from './article'
+export * from './event'
 export * from './exercise'
 export * from './exercise-group'
 export * from './grouped-exercise'
@@ -52,20 +57,24 @@ export * from './page'
 export * from './solution'
 export * from './taxonomy-term'
 export * from './user'
+export * from './video'
 
 export const uuidSchema = Schema.merge(
   abstractEntitySchema,
   abstractTaxonomyTermChildSchema,
   abstractUuidSchema,
   aliasSchema,
+  appletSchema,
   articleSchema,
+  eventSchema,
   exerciseSchema,
   exerciseGroupSchema,
   groupedExerciseSchema,
   pageSchema,
   solutionSchema,
   taxonomyTermSchema,
-  userSchema
+  userSchema,
+  videoSchema
 )
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -75,8 +84,12 @@ export function resolveAbstractUuid(data?: any) {
   switch (data.discriminator) {
     case 'entity':
       switch (data.type) {
+        case 'applet':
+          return new Applet(data)
         case 'article':
           return new Article(data)
+        case 'event':
+          return new Event(data)
         case 'exercise':
           return new Exercise(data)
         case 'exerciseGroup':
@@ -85,13 +98,19 @@ export function resolveAbstractUuid(data?: any) {
           return new GroupedExercise(data)
         case 'solution':
           return new Solution(data)
+        case 'video':
+          return new Video(data)
         default:
           return new UnsupportedUuid(data)
       }
     case 'entityRevision':
       switch (data.type) {
+        case 'applet':
+          return new AppletRevision(data)
         case 'article':
           return new ArticleRevision(data)
+        case 'event':
+          return new EventRevision(data)
         case 'exercise':
           return new ExerciseRevision(data)
         case 'exerciseGroup':
@@ -100,6 +119,8 @@ export function resolveAbstractUuid(data?: any) {
           return new GroupedExerciseRevision(data)
         case 'solution':
           return new SolutionRevision(data)
+        case 'video':
+          return new VideoRevision(data)
         default:
           return new UnsupportedUuid(data)
       }

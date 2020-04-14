@@ -12,19 +12,25 @@ import { User } from './user'
 export const abstractEntitySchema = new Schema()
 
 export enum EntityType {
+  Applet = 'Applet',
   Article = 'Article',
+  Event = 'Event',
   Exercise = 'Exercise',
   ExerciseGroup = 'ExerciseGroup',
   GroupedExercise = 'GroupedExercise',
   Solution = 'Solution',
+  Video = 'Video',
 }
 
 export enum EntityRevisionType {
   ArticleRevision = 'ArticleRevision',
+  AppletRevision = 'AppletRevision',
+  EventRevision = 'EventRevision',
   ExerciseRevision = 'ExerciseRevision',
   ExerciseGroupRevision = 'ExerciseGroupRevision',
   GroupedExerciseRevision = 'GroupedExerciseRevision',
   SolutionRevision = 'SolutionRevision',
+  VideoRevision = 'VideoRevision',
 }
 
 export abstract class Entity extends Uuid {

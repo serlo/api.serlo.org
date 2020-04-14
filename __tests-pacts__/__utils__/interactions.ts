@@ -3,8 +3,12 @@ import { Matchers } from '@pact-foundation/pact'
 import { License } from '../../src/graphql/schema/license'
 import {
   AliasPayload,
+  AppletPayload,
+  AppletRevisionPayload,
   ArticlePayload,
   ArticleRevisionPayload,
+  EventPayload,
+  EventRevisionPayload,
   ExerciseGroupPayload,
   ExerciseGroupRevisionPayload,
   ExercisePayload,
@@ -15,6 +19,8 @@ import {
   PageRevisionPayload,
   TaxonomyTermPayload,
   UserPayload,
+  VideoPayload,
+  VideoRevisionPayload,
 } from '../../src/graphql/schema/uuid'
 import {
   SolutionPayload,
@@ -54,6 +60,42 @@ export function addAliasInteraction(payload: AliasPayload) {
   })
 }
 
+export function addAppletInteraction(payload: AppletPayload) {
+  return addUuidInteraction({
+    id: payload.id,
+    trashed: Matchers.boolean(payload.trashed),
+    discriminator: 'entity',
+    type: 'applet',
+    instance: Matchers.string(payload.instance),
+    alias: payload.alias ? Matchers.string(payload.alias) : null,
+    date: Matchers.iso8601DateTime(payload.date),
+    currentRevisionId: payload.currentRevisionId
+      ? Matchers.integer(payload.currentRevisionId)
+      : null,
+    licenseId: Matchers.integer(payload.licenseId),
+    taxonomyTermIds:
+      payload.taxonomyTermIds.length > 0
+        ? Matchers.eachLike(Matchers.like(payload.taxonomyTermIds[0]))
+        : [],
+  })
+}
+
+export function addAppletRevisionInteraction(payload: AppletRevisionPayload) {
+  return addUuidInteraction({
+    id: payload.id,
+    trashed: Matchers.boolean(payload.trashed),
+    discriminator: 'entityRevision',
+    type: 'applet',
+    date: Matchers.iso8601DateTime(payload.date),
+    authorId: Matchers.integer(payload.authorId),
+    repositoryId: Matchers.integer(payload.repositoryId),
+    title: Matchers.string(payload.title),
+    url: Matchers.string(payload.url),
+    content: Matchers.string(payload.content),
+    changes: Matchers.string(payload.changes),
+  })
+}
+
 export function addArticleInteraction(payload: ArticlePayload) {
   return addUuidInteraction({
     id: payload.id,
@@ -80,6 +122,41 @@ export function addArticleRevisionInteraction(payload: ArticleRevisionPayload) {
     trashed: Matchers.boolean(payload.trashed),
     discriminator: 'entityRevision',
     type: 'article',
+    date: Matchers.iso8601DateTime(payload.date),
+    authorId: Matchers.integer(payload.authorId),
+    repositoryId: Matchers.integer(payload.repositoryId),
+    title: Matchers.string(payload.title),
+    content: Matchers.string(payload.content),
+    changes: Matchers.string(payload.changes),
+  })
+}
+
+export function addEventInteraction(payload: EventPayload) {
+  return addUuidInteraction({
+    id: payload.id,
+    trashed: Matchers.boolean(payload.trashed),
+    discriminator: 'entity',
+    type: 'event',
+    instance: Matchers.string(payload.instance),
+    alias: payload.alias ? Matchers.string(payload.alias) : null,
+    date: Matchers.iso8601DateTime(payload.date),
+    currentRevisionId: payload.currentRevisionId
+      ? Matchers.integer(payload.currentRevisionId)
+      : null,
+    licenseId: Matchers.integer(payload.licenseId),
+    taxonomyTermIds:
+      payload.taxonomyTermIds.length > 0
+        ? Matchers.eachLike(Matchers.like(payload.taxonomyTermIds[0]))
+        : [],
+  })
+}
+
+export function addEventRevisionInteraction(payload: EventRevisionPayload) {
+  return addUuidInteraction({
+    id: payload.id,
+    trashed: Matchers.boolean(payload.trashed),
+    discriminator: 'entityRevision',
+    type: 'event',
     date: Matchers.iso8601DateTime(payload.date),
     authorId: Matchers.integer(payload.authorId),
     repositoryId: Matchers.integer(payload.repositoryId),
@@ -298,6 +375,41 @@ export function addUserInteraction(payload: UserPayload) {
     description: payload.description
       ? Matchers.string(payload.description)
       : null,
+  })
+}
+
+export function addVideoInteraction(payload: VideoPayload) {
+  return addUuidInteraction({
+    id: payload.id,
+    trashed: Matchers.boolean(payload.trashed),
+    discriminator: 'entity',
+    type: 'video',
+    instance: Matchers.string(payload.instance),
+    alias: payload.alias ? Matchers.string(payload.alias) : null,
+    date: Matchers.iso8601DateTime(payload.date),
+    currentRevisionId: payload.currentRevisionId
+      ? Matchers.integer(payload.currentRevisionId)
+      : null,
+    licenseId: Matchers.integer(payload.licenseId),
+    taxonomyTermIds:
+      payload.taxonomyTermIds.length > 0
+        ? Matchers.eachLike(Matchers.like(payload.taxonomyTermIds[0]))
+        : [],
+  })
+}
+
+export function addVideoRevisionInteraction(payload: VideoRevisionPayload) {
+  return addUuidInteraction({
+    id: payload.id,
+    trashed: Matchers.boolean(payload.trashed),
+    discriminator: 'entityRevision',
+    type: 'video',
+    date: Matchers.iso8601DateTime(payload.date),
+    authorId: Matchers.integer(payload.authorId),
+    repositoryId: Matchers.integer(payload.repositoryId),
+    title: Matchers.string(payload.title),
+    url: Matchers.string(payload.url),
+    changes: Matchers.string(payload.changes),
   })
 }
 
