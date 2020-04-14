@@ -1,15 +1,16 @@
 import { requestsOnlyFields, Schema } from '../utils'
 import {
-  addEntityResolvers,
   EntityPayload,
   EntityType,
   EntityRevision,
   EntityRevisionPayload,
   EntityRevisionType,
 } from './abstract-entity'
-import { TaxonomyTermChild } from './abstract-taxonomy-term-child'
+import {
+  addTaxonomyTermChildResolvers,
+  TaxonomyTermChild,
+} from './abstract-taxonomy-term-child'
 import { Solution } from './solution'
-import { TaxonomyTerm } from './taxonomy-term'
 
 export const exerciseSchema = new Schema()
 
@@ -26,19 +27,6 @@ export interface ExercisePayload extends EntityPayload {
   taxonomyTermIds: number[]
   solutionId: number | null
 }
-exerciseSchema.addResolver<Exercise, unknown, TaxonomyTerm[]>(
-  'Exercise',
-  'taxonomyTerms',
-  (entity, _args, { dataSources }) => {
-    return Promise.all(
-      entity.taxonomyTermIds.map((id: number) => {
-        return dataSources.serlo.getUuid({ id }).then((data) => {
-          return new TaxonomyTerm(data)
-        })
-      })
-    )
-  }
-)
 exerciseSchema.addResolver<Exercise, unknown, Partial<Solution> | null>(
   'Exercise',
   'solution',
@@ -70,7 +58,7 @@ export interface ExerciseRevisionPayload extends EntityRevisionPayload {
   changes: string
 }
 
-addEntityResolvers({
+addTaxonomyTermChildResolvers({
   schema: exerciseSchema,
   entityType: EntityType.Exercise,
   entityRevisionType: EntityRevisionType.ExerciseRevision,

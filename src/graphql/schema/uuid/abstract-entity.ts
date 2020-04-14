@@ -142,21 +142,7 @@ export function addEntityResolvers<
   entityRevisionFields,
   entitySetter,
   entityRevisionSetter,
-}: {
-  schema: Schema
-  entityType: EntityType
-  entityRevisionType: EntityRevisionType
-  repository: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Entity: new (data: any) => E
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  EntityRevision: new (data: any) => R
-  entityFields?: string
-  entityPayloadFields?: string
-  entityRevisionFields: string
-  entitySetter: ESetter
-  entityRevisionSetter: RSetter
-}) {
+}: EntityResolversPayload<E, R, ESetter, RSetter>) {
   schema.addTypeDef(gql`
     type ${entityType} implements Uuid & Entity {
       id: Int!
@@ -285,4 +271,24 @@ export function addEntityResolvers<
         ): Boolean
      }
     `)
+}
+export interface EntityResolversPayload<
+  E extends Entity,
+  R extends EntityRevision,
+  ESetter extends keyof SerloDataSource,
+  RSetter extends keyof SerloDataSource
+> {
+  schema: Schema
+  entityType: EntityType
+  entityRevisionType: EntityRevisionType
+  repository: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Entity: new (data: any) => E
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  EntityRevision: new (data: any) => R
+  entityFields?: string
+  entityPayloadFields?: string
+  entityRevisionFields: string
+  entitySetter: ESetter
+  entityRevisionSetter: RSetter
 }
