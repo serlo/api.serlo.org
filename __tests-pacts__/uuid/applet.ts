@@ -4,14 +4,12 @@ import * as R from 'ramda'
 import { license } from '../../__fixtures__/license'
 import {
   applet,
-  appletAlias,
   appletRevision,
   taxonomyTermSubject,
   user,
 } from '../../__fixtures__/uuid'
 import { assertSuccessfulGraphQLQuery } from '../__utils__/assertions'
 import {
-  addAliasInteraction,
   addAppletInteraction,
   addAppletRevisionInteraction,
   addLicenseInteraction,
@@ -20,18 +18,12 @@ import {
 } from '../__utils__/interactions'
 
 describe('Applet', () => {
-  test('by alias', async () => {
+  test('by id', async () => {
     await addAppletInteraction(applet)
-    await addAliasInteraction(appletAlias)
     await assertSuccessfulGraphQLQuery({
       query: gql`
           {
-            uuid(
-              alias: {
-                instance: de
-                path: "${appletAlias.path}"
-              }
-            ) {
+            uuid(id: ${applet.id}) {
               __typename
               ... on Applet {
                 id
@@ -67,19 +59,13 @@ describe('Applet', () => {
     })
   })
 
-  test('by alias (w/ license)', async () => {
+  test('by id (w/ license)', async () => {
     await addAppletInteraction(applet)
-    await addAliasInteraction(appletAlias)
     await addLicenseInteraction(license)
     await assertSuccessfulGraphQLQuery({
       query: gql`
         {
-          uuid(
-            alias: {
-              instance: de
-              path: "${appletAlias.path}"
-            }
-          ) {
+          uuid(id: ${applet.id}) {
             __typename
             ... on Applet {
               id
@@ -117,19 +103,13 @@ describe('Applet', () => {
     })
   })
 
-  test('by alias (w/ currentRevision)', async () => {
+  test('by id (w/ currentRevision)', async () => {
     await addAppletInteraction(applet)
-    await addAliasInteraction(appletAlias)
     await addAppletRevisionInteraction(appletRevision)
     await assertSuccessfulGraphQLQuery({
       query: gql`
           {
-            uuid(
-              alias: {
-                instance: de
-                path: "${appletAlias.path}"
-              }
-            ) {
+            uuid(id: ${applet.id}) {
               __typename
               ... on Applet {
                 id
@@ -165,19 +145,13 @@ describe('Applet', () => {
     })
   })
 
-  test('by alias (w/ taxonomyTerms)', async () => {
+  test('by id (w/ taxonomyTerms)', async () => {
     await addAppletInteraction(applet)
-    await addAliasInteraction(appletAlias)
     await addTaxonomyTermInteraction(taxonomyTermSubject)
     await assertSuccessfulGraphQLQuery({
       query: gql`
         {
-          uuid(
-            alias: {
-              instance: de
-              path: "${appletAlias.path}"
-            }
-          ) {
+          uuid(id: ${applet.id}) {
             __typename
             ... on Applet {
               id
@@ -200,47 +174,6 @@ describe('Applet', () => {
             applet
           ),
           taxonomyTerms: [{ id: 5 }],
-        },
-      },
-    })
-  })
-
-  test('by id', async () => {
-    await addAppletInteraction(applet)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(id: ${applet.id}) {
-            __typename
-            ... on Applet {
-              id
-              trashed
-              alias
-              instance
-              date
-              currentRevision {
-                id
-              }
-              license {
-                id
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          __typename: 'Applet',
-          ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
-            applet
-          ),
-          currentRevision: {
-            id: appletRevision.id,
-          },
-          license: {
-            id: 1,
-          },
         },
       },
     })

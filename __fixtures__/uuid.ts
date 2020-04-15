@@ -32,20 +32,12 @@ import { license } from './license'
 export const applet: AppletPayload = {
   id: 35596,
   trashed: false,
-  instance: Instance.De,
+  instance: Instance.En,
   alias: '/math/example-content/example-topic-1/example-applet',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 35597,
   licenseId: license.id,
   taxonomyTermIds: [5],
-}
-
-export const appletAlias: AliasPayload = {
-  id: 35596,
-  instance: Instance.De,
-  path: '/math/example-content/example-topic-1/example-applet',
-  source: '/entity/view/35596',
-  timestamp: '2014-06-16T15:58:45Z',
 }
 
 export const appletRevision: AppletRevisionPayload = {
@@ -213,7 +205,7 @@ export const pageRevision: PageRevisionPayload = {
 export const exerciseAlias: AliasPayload = {
   id: 29637,
   instance: Instance.De,
-  path: '/29637/29637',
+  path: '/mathe/stochastik/grundbegriffe-und-methoden/baumdiagramm/29637',
   source: '/entity/view/29637',
   timestamp: '2014-05-25T10:25:44Z',
 }
@@ -222,7 +214,7 @@ export const exercise: ExercisePayload = {
   id: 29637,
   trashed: false,
   instance: Instance.De,
-  alias: '/29637/29637',
+  alias: '/mathe/stochastik/grundbegriffe-und-methoden/baumdiagramm/29637',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 29638,
   licenseId: license.id,
@@ -243,7 +235,7 @@ export const exerciseRevision: ExerciseRevisionPayload = {
 export const exerciseGroupAlias: AliasPayload = {
   id: 2217,
   instance: Instance.De,
-  path: '/2217/2217',
+  path: '/mathe/arithmetik-und-rechnen/grundrechenarten/sachaufgaben-zu-den-grundrechenarten/2217',
   source: '/entity/view/2217',
   timestamp: '2014-05-25T10:25:44Z',
 }
@@ -252,7 +244,7 @@ export const exerciseGroup: ExerciseGroupPayload = {
   id: 2217,
   trashed: false,
   instance: Instance.De,
-  alias: '/2217/2217',
+  alias: '/mathe/arithmetik-und-rechnen/grundrechenarten/sachaufgaben-zu-den-grundrechenarten/2217',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 2218,
   licenseId: license.id,
