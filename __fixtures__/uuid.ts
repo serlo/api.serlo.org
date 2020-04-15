@@ -235,7 +235,8 @@ export const exerciseRevision: ExerciseRevisionPayload = {
 export const exerciseGroupAlias: AliasPayload = {
   id: 2217,
   instance: Instance.De,
-  path: '/mathe/arithmetik-und-rechnen/grundrechenarten/sachaufgaben-zu-den-grundrechenarten/2217',
+  path:
+    '/mathe/arithmetik-und-rechnen/grundrechenarten/sachaufgaben-zu-den-grundrechenarten/2217',
   source: '/entity/view/2217',
   timestamp: '2014-05-25T10:25:44Z',
 }
@@ -244,7 +245,8 @@ export const exerciseGroup: ExerciseGroupPayload = {
   id: 2217,
   trashed: false,
   instance: Instance.De,
-  alias: '/mathe/arithmetik-und-rechnen/grundrechenarten/sachaufgaben-zu-den-grundrechenarten/2217',
+  alias:
+    '/mathe/arithmetik-und-rechnen/grundrechenarten/sachaufgaben-zu-den-grundrechenarten/2217',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 2218,
   licenseId: license.id,
