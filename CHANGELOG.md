@@ -2,7 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.2.0](https://github.com/serlo/api.serlo.org/compare/v0.1.1..v.0.2.0) - April 13, 2020
+## [0.3.0](https://github.com/serlo/api.serlo.org/compare/v0.2.0..v0.3.0) - April 15, 2020
+
+### Added
+
+- Add entity types `Course` and `CoursePage`.
+- Add entity types `ExerciseGroup`, `GroupedExercise`, `Exercise`, and `Solution`.
+- Add entity type `Applet`.
+- Add entity type `Event`.
+- Add entity type `Video`.
+
+## [0.2.0](https://github.com/serlo/api.serlo.org/compare/v0.1.1..v0.2.0) - April 13, 2020
 
 ### Breaking Changes
 
