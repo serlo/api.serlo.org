@@ -136,13 +136,13 @@ licenseSchema.addTypeDef(gql`
  */
 licenseSchema.addMutation<unknown, License, null>(
   '_setLicense',
-  (_parent, license, { dataSources, service }) => {
+  async (_parent, license, { dataSources, service }) => {
     if (service !== 'serlo.org') {
       throw new ForbiddenError(
         'You do not have the permissions to set a license'
       )
     }
-    return dataSources.serlo.setLicense(license)
+    await dataSources.serlo.setLicense(license)
   }
 )
 licenseSchema.addTypeDef(gql`

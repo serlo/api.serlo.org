@@ -26,10 +26,22 @@ import {
   VideoPayload,
   VideoRevisionPayload,
 } from '../../src/graphql/schema/uuid'
+import { NavigationPayload } from '../../src/graphql/schema/uuid/navigation'
 import {
   SolutionPayload,
   SolutionRevisionPayload,
 } from '../../src/graphql/schema/uuid/solution'
+
+export function addNavigationInteraction(payload: NavigationPayload) {
+  return addJsonInteraction({
+    name: `fetch data of navigation`,
+    given: '',
+    path: `/api/navigation`,
+    body: {
+      data: Matchers.string(payload.data),
+    },
+  })
+}
 
 export function addLicenseInteraction(payload: License) {
   return addJsonInteraction({

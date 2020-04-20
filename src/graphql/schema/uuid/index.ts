@@ -40,6 +40,7 @@ import {
   GroupedExerciseRevision,
   groupedExerciseSchema,
 } from './grouped-exercise'
+import { navigationSchema } from './navigation'
 import { pageSchema, Page, PageRevision } from './page'
 import { Solution, SolutionRevision, solutionSchema } from './solution'
 import { taxonomyTermSchema, TaxonomyTerm } from './taxonomy-term'
@@ -76,6 +77,7 @@ export const uuidSchema = Schema.merge(
   exerciseSchema,
   exerciseGroupSchema,
   groupedExerciseSchema,
+  navigationSchema,
   pageSchema,
   solutionSchema,
   taxonomyTermSchema,

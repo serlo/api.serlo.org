@@ -1,8 +1,9 @@
 import { ForbiddenError, gql } from 'apollo-server'
+import { GraphQLResolveInfo } from 'graphql'
 
-import { resolveAbstractUuid } from '.'
+import { resolveAbstractUuid, UuidPayload } from '.'
 import { Instance } from '../instance'
-import { Service } from '../types'
+import { Service, Context } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
 import { DiscriminatorType, Uuid } from './abstract-uuid'
 
@@ -79,43 +80,34 @@ export class TaxonomyTerm extends Uuid {
     this.parentId = payload.parentId
     this.childrenIds = payload.childrenIds
   }
-}
-taxonomyTermSchema.addResolver<
-  TaxonomyTerm,
-  undefined,
-  Partial<TaxonomyTerm> | null
->(
-  'TaxonomyTerm',
-  'parent',
-  async (taxonomyTerm, _args, { dataSources }, info) => {
-    if (!taxonomyTerm.parentId) return null
-    const partialParent = { id: taxonomyTerm.parentId }
+
+  public async parent(
+    _args: undefined,
+    { dataSources }: Context,
+    info: GraphQLResolveInfo
+  ) {
+    if (!this.parentId) return null
+    const partialParent = { id: this.parentId }
     if (requestsOnlyFields('TaxonomyTerm', ['id'], info)) {
       return partialParent
     }
     const data = await dataSources.serlo.getUuid(partialParent)
     return new TaxonomyTerm(data)
   }
-)
-taxonomyTermSchema.addResolver<TaxonomyTerm, undefined, Uuid[]>(
-  'TaxonomyTerm',
-  'children',
-  (taxonomyTerm, _args, { dataSources }) => {
+
+  public async children(_args: undefined, { dataSources }: Context) {
     return Promise.all(
-      taxonomyTerm.childrenIds.map((id) => {
+      this.childrenIds.map((id) => {
         return dataSources.serlo.getUuid({ id }).then((data) => {
           return resolveAbstractUuid(data) as Uuid
         })
       })
     )
   }
-)
-taxonomyTermSchema.addResolver<TaxonomyTerm, undefined, TaxonomyTerm[]>(
-  'TaxonomyTerm',
-  'path',
-  async (taxonomyTerm, _args, { dataSources }) => {
-    const path = [taxonomyTerm]
-    let current = taxonomyTerm
+
+  public async path(_args: undefined, { dataSources }: Context) {
+    const path: TaxonomyTerm[] = [this]
+    let current: TaxonomyTerm = this
 
     while (current.parentId !== null) {
       const data = await dataSources.serlo.getUuid({
@@ -127,7 +119,40 @@ taxonomyTermSchema.addResolver<TaxonomyTerm, undefined, TaxonomyTerm[]>(
 
     return path
   }
-)
+
+  public async navigation(_args: undefined, context: Context) {
+    const taxonomyPath = await this.path(undefined, context)
+
+    for (let i = 0; i < taxonomyPath.length; i++) {
+      const currentIndex = taxonomyPath.length - (i + 1)
+      const current = taxonomyPath[currentIndex]
+      const navigation = await context.dataSources.serlo.getNavigation({
+        instance: this.instance,
+        id: current.id,
+      })
+
+      if (navigation !== null) {
+        const { data, path } = navigation
+
+        return {
+          data,
+          path: [
+            ...path,
+            ...taxonomyPath.slice(currentIndex + 1).map((term) => {
+              return {
+                label: term.name,
+                url: term.alias,
+                id: term.id,
+              }
+            }),
+          ],
+        }
+      }
+    }
+
+    return null
+  }
+}
 taxonomyTermSchema.addTypeDef(gql`
   """
   Represents a Serlo.org taxonomy term. The taxonomy organizes entities into a tree-like structure, either by
@@ -174,10 +199,7 @@ taxonomyTermSchema.addTypeDef(gql`
     The children of the taxonomy term
     """
     children: [Uuid!]!
-    """
-    The complete path from root to the taxonomy term
-    """
-    path: [TaxonomyTerm]!
+    navigation: Navigation
   }
 `)
 
@@ -186,18 +208,16 @@ taxonomyTermSchema.addTypeDef(gql`
  */
 taxonomyTermSchema.addMutation<unknown, TaxonomyTermPayload, null>(
   '_setTaxonomyTerm',
-  (_parent, payload, { dataSources, service }) => {
+  async (_parent, payload, { dataSources, service }) => {
     if (service !== Service.Serlo) {
       throw new ForbiddenError(
         `You do not have the permissions to set a taxonomy term`
       )
     }
-    return dataSources.serlo.setTaxonomyTerm(payload)
+    await dataSources.serlo.setTaxonomyTerm(payload)
   }
 )
-export interface TaxonomyTermPayload {
-  id: number
-  trashed: boolean
+export interface TaxonomyTermPayload extends UuidPayload {
   alias: string | null
   type: TaxonomyTermType
   instance: Instance
@@ -256,3 +276,35 @@ taxonomyTermSchema.addTypeDef(gql`
     ): Boolean
   }
 `)
+export function setTaxonomyTerm(variables: TaxonomyTermPayload) {
+  return {
+    mutation: gql`
+      mutation setTaxonomyTerm(
+        $id: Int!
+        $trashed: Boolean!
+        $alias: String
+        $type: TaxonomyTermType!
+        $instance: Instance!
+        $name: String!
+        $description: String
+        $weight: Int!
+        $parentId: Int
+        $childrenIds: [Int!]!
+      ) {
+        _setTaxonomyTerm(
+          id: $id
+          trashed: $trashed
+          alias: $alias
+          type: $type
+          instance: $instance
+          name: $name
+          description: $description
+          weight: $weight
+          parentId: $parentId
+          childrenIds: $childrenIds
+        )
+      }
+    `,
+    variables,
+  }
+}

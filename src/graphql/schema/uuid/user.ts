@@ -3,7 +3,7 @@ import { ForbiddenError, gql } from 'apollo-server'
 import { DateTime } from '../date-time'
 import { Service } from '../types'
 import { Schema } from '../utils'
-import { DiscriminatorType, Uuid } from './abstract-uuid'
+import { DiscriminatorType, Uuid, UuidPayload } from './abstract-uuid'
 
 export const userSchema = new Schema()
 
@@ -69,16 +69,14 @@ userSchema.addTypeDef(gql`
  */
 userSchema.addMutation<unknown, UserPayload, null>(
   '_setUser',
-  (_parent, payload, { dataSources, service }) => {
+  async (_parent, payload, { dataSources, service }) => {
     if (service !== Service.Serlo) {
       throw new ForbiddenError(`You do not have the permissions to set an user`)
     }
-    return dataSources.serlo.setUser(payload)
+    await dataSources.serlo.setUser(payload)
   }
 )
-export interface UserPayload {
-  id: number
-  trashed: boolean
+export interface UserPayload extends UuidPayload {
   username: string
   date: DateTime
   lastLogin: DateTime | null
