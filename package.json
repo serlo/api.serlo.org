@@ -23,7 +23,7 @@
     "test": "jest",
     "pacts": "jest --config jest.config-pacts.js",
     "pacts:publish": "ts-node scripts/publish-pacts",
-    "_eslint": "eslint \"{{__tests-pacts__,__tests__,scripts,src}/**/*,*}.{js,jsx,ts,tsx}\"",
+    "_eslint": "eslint \"{{__fixtures__,__tests-pacts__,__tests__,scripts,src}/**/*,*}.{js,jsx,ts,tsx}\"",
     "_prettier": "prettier ."
   },
   "dependencies": {

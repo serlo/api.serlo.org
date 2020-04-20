@@ -2,12 +2,18 @@ import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
 import {
+  navigation,
+  page,
   taxonomyTermCurriculumTopic,
   taxonomyTermRoot,
   taxonomyTermSubject,
 } from '../../__fixtures__/uuid'
 import { assertSuccessfulGraphQLQuery } from '../__utils__/assertions'
-import { addTaxonomyTermInteraction } from '../__utils__/interactions'
+import {
+  addNavigationInteraction,
+  addPageInteraction,
+  addTaxonomyTermInteraction,
+} from '../__utils__/interactions'
 
 test('by id (subject)', async () => {
   await addTaxonomyTermInteraction(taxonomyTermRoot)
@@ -59,9 +65,11 @@ test('by id (subject)', async () => {
 })
 
 test('by id (subject, w/ path)', async () => {
+  await addPageInteraction(page)
   await addTaxonomyTermInteraction(taxonomyTermRoot)
   await addTaxonomyTermInteraction(taxonomyTermSubject)
   await addTaxonomyTermInteraction(taxonomyTermCurriculumTopic)
+  await addNavigationInteraction(navigation)
   await assertSuccessfulGraphQLQuery({
     query: gql`
       {
@@ -85,8 +93,12 @@ test('by id (subject, w/ path)', async () => {
               id
             }
 
-            path {
-              id
+            navigation {
+              path {
+                label
+                id
+                url
+              }
             }
           }
         }
@@ -107,7 +119,20 @@ test('by id (subject, w/ path)', async () => {
           },
         ],
 
-        path: [{ id: 3 }, { id: 5 }],
+        navigation: {
+          path: [
+            {
+              label: 'Mathematik',
+              id: page.id,
+              url: page.alias,
+            },
+            {
+              label: 'Alle Themen',
+              id: taxonomyTermSubject.id,
+              url: taxonomyTermSubject.alias,
+            },
+          ],
+        },
       },
     },
   })

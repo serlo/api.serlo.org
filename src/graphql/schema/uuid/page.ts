@@ -3,9 +3,9 @@ import { ForbiddenError, gql } from 'apollo-server'
 import { DateTime } from '../date-time'
 import { Instance } from '../instance'
 import { License, licenseSchema } from '../license'
-import { Service } from '../types'
+import { Service, Context } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
-import { DiscriminatorType, Uuid } from './abstract-uuid'
+import { DiscriminatorType, Uuid, UuidPayload } from './abstract-uuid'
 import { User } from './user'
 
 export const pageSchema = new Schema()
@@ -34,6 +34,13 @@ export class Page extends Uuid {
     this.alias = payload.alias
     this.currentRevisionId = payload.currentRevisionId
     this.licenseId = payload.licenseId
+  }
+
+  public async navigation(_args: undefined, { dataSources }: Context) {
+    return await dataSources.serlo.getNavigation({
+      instance: this.instance,
+      id: this.id,
+    })
   }
 }
 pageSchema.addResolver<Page, unknown, Partial<PageRevision> | null>(
@@ -95,6 +102,7 @@ pageSchema.addTypeDef(gql`
     The \`PageRevision\` that is currently checked out
     """
     currentRevision: PageRevision
+    navigation: Navigation
   }
 `)
 
@@ -191,16 +199,14 @@ pageSchema.addTypeDef(gql`
  */
 pageSchema.addMutation<unknown, PagePayload, null>(
   '_setPage',
-  (_parent, payload, { dataSources, service }) => {
+  async (_parent, payload, { dataSources, service }) => {
     if (service !== Service.Serlo) {
       throw new ForbiddenError(`You do not have the permissions to set a page`)
     }
-    return dataSources.serlo.setPage(payload)
+    await dataSources.serlo.setPage(payload)
   }
 )
-export interface PagePayload {
-  id: number
-  trashed: boolean
+export interface PagePayload extends UuidPayload {
   instance: Instance
   alias: string | null
   currentRevisionId: number | null
@@ -239,24 +245,46 @@ pageSchema.addTypeDef(gql`
     ): Boolean
   }
 `)
+export function setPage(variables: PagePayload) {
+  return {
+    mutation: gql`
+      mutation setPage(
+        $id: Int!
+        $trashed: Boolean!
+        $instance: Instance!
+        $alias: String
+        $currentRevisionId: Int
+        $licenseId: Int!
+      ) {
+        _setPage(
+          id: $id
+          trashed: $trashed
+          instance: $instance
+          alias: $alias
+          currentRevisionId: $currentRevisionId
+          licenseId: $licenseId
+        )
+      }
+    `,
+    variables,
+  }
+}
 
 /**
  * mutation _setPageRevision
  */
 pageSchema.addMutation<unknown, PageRevisionPayload, null>(
   '_setPageRevision',
-  (_parent, payload, { dataSources, service }) => {
+  async (_parent, payload, { dataSources, service }) => {
     if (service !== Service.Serlo) {
       throw new ForbiddenError(
         `You do not have the permissions to set a page revision`
       )
     }
-    return dataSources.serlo.setPageRevision(payload)
+    await dataSources.serlo.setPageRevision(payload)
   }
 )
-export interface PageRevisionPayload {
-  id: number
-  trashed: boolean
+export interface PageRevisionPayload extends UuidPayload {
   title: string
   content: string
   date: DateTime

@@ -6,7 +6,7 @@ import { Instance } from '../instance'
 import { License, licenseSchema } from '../license'
 import { Service } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
-import { Uuid } from './abstract-uuid'
+import { Uuid, UuidPayload } from './abstract-uuid'
 import { User } from './user'
 
 export const abstractEntitySchema = new Schema()
@@ -54,9 +54,7 @@ export abstract class Entity extends Uuid {
     this.currentRevisionId = payload.currentRevisionId
   }
 }
-export interface EntityPayload {
-  id: number
-  trashed: boolean
+export interface EntityPayload extends UuidPayload {
   instance: Instance
   alias: string | null
   date: DateTime
@@ -90,9 +88,7 @@ abstractEntitySchema.addTypeDef(gql`
     license: License!
   }
 `)
-export interface EntityRevisionPayload {
-  id: number
-  trashed: boolean
+export interface EntityRevisionPayload extends UuidPayload {
   date: DateTime
   authorId: number
   repositoryId: number
@@ -232,14 +228,14 @@ export function addEntityResolvers<
 
   schema.addMutation<unknown, EPayload, null>(
     `_set${entityType}`,
-    (_parent, payload, { dataSources, service }) => {
+    async (_parent, payload, { dataSources, service }) => {
       if (service !== Service.Serlo) {
         throw new ForbiddenError(
           `You do not have the permissions to set a ${entityType}`
         )
       }
 
-      return dataSources.serlo[entitySetter](payload)
+      await dataSources.serlo[entitySetter](payload)
     }
   )
   schema.addTypeDef(gql`
@@ -259,14 +255,14 @@ export function addEntityResolvers<
 
   schema.addMutation<unknown, RPayload, null>(
     `_set${entityRevisionType}`,
-    (_parent, payload, { dataSources, service }) => {
+    async (_parent, payload, { dataSources, service }) => {
       if (service !== Service.Serlo) {
         throw new ForbiddenError(
           `You do not have the permissions to set a ${entityRevisionType}`
         )
       }
 
-      return dataSources.serlo[entityRevisionSetter](payload)
+      await dataSources.serlo[entityRevisionSetter](payload)
     }
   )
   schema.addTypeDef(gql`

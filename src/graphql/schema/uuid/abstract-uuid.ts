@@ -29,10 +29,14 @@ export abstract class Uuid {
   public id: number
   public trashed: boolean
 
-  public constructor(payload: { id: number; trashed: boolean }) {
+  public constructor(payload: UuidPayload) {
     this.id = payload.id
     this.trashed = payload.trashed
   }
+}
+export interface UuidPayload {
+  id: number
+  trashed: boolean
 }
 abstractUuidSchema.addTypeResolver<Uuid>('Uuid', (uuid) => {
   return uuid.__typename

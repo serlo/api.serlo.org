@@ -27,7 +27,24 @@ import {
   CoursePagePayload,
   CoursePageRevisionPayload,
 } from '../src/graphql/schema/uuid'
+import { NavigationPayload } from '../src/graphql/schema/uuid/navigation'
 import { license } from './license'
+
+export const navigation: NavigationPayload = {
+  data: JSON.stringify([
+    {
+      label: 'Mathematik',
+      id: 19767,
+      children: [
+        {
+          label: 'Alle Themen',
+          id: 5,
+        },
+      ],
+    },
+  ]),
+  instance: Instance.De,
+}
 
 export const applet: AppletPayload = {
   id: 35596,

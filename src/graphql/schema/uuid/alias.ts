@@ -35,13 +35,13 @@ aliasSchema.addTypeDef(gql`
  */
 aliasSchema.addMutation<unknown, AliasPayload, null>(
   '_setAlias',
-  (_parent, payload, { dataSources, service }) => {
+  async (_parent, payload, { dataSources, service }) => {
     if (service !== Service.Serlo) {
       throw new ForbiddenError(
         `You do not have the permissions to set an alias`
       )
     }
-    return dataSources.serlo.setAlias(payload)
+    await dataSources.serlo.setAlias(payload)
   }
 )
 export interface AliasPayload {
