@@ -102,6 +102,23 @@ export class SerloDataSource extends RESTDataSource {
 
     if (treeIndex === undefined) return null
 
+    const findPathToLeaf = (node: NodeData, leaf: number): NodeData[] => {
+      if (node.id !== undefined && node.id === leaf) {
+        return [node]
+      }
+
+      if (node.children === undefined) return []
+
+      const childPaths = node.children.map((childNode) => {
+        return findPathToLeaf(childNode, leaf)
+      })
+      const goodPaths = childPaths.filter((path) => {
+        return path.length > 0
+      })
+      if (goodPaths.length === 0) return []
+      return [node, ...goodPaths[0]]
+    }
+
     const nodes = findPathToLeaf(data[treeIndex], id)
     const path = []
 
@@ -119,23 +136,6 @@ export class SerloDataSource extends RESTDataSource {
     return {
       data: data[treeIndex],
       path,
-    }
-
-    function findPathToLeaf(node: NodeData, leaf: number): NodeData[] {
-      if (node.id !== undefined && node.id === leaf) {
-        return [node]
-      }
-
-      if (node.children === undefined) return []
-
-      const childPaths = node.children.map((childNode) => {
-        return findPathToLeaf(childNode, leaf)
-      })
-      const goodPaths = childPaths.filter((path) => {
-        return path.length > 0
-      })
-      if (goodPaths.length === 0) return []
-      return [node, ...goodPaths[0]]
     }
   }
 
