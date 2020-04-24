@@ -29,31 +29,31 @@ import { License } from '../schema/license'
 import { Service } from '../schema/types'
 import {
   AliasPayload,
-  ArticlePayload,
-  ArticleRevisionPayload,
-  ExercisePayload,
-  ExerciseRevisionPayload,
-  ExerciseGroupPayload,
-  ExerciseGroupRevisionPayload,
-  GroupedExercisePayload,
-  GroupedExerciseRevisionPayload,
-  SolutionPayload,
-  SolutionRevisionPayload,
-  PagePayload,
-  PageRevisionPayload,
-  TaxonomyTermPayload,
-  UserPayload,
   AppletPayload,
   AppletRevisionPayload,
-  EventPayload,
-  EventRevisionPayload,
-  VideoPayload,
-  VideoRevisionPayload,
-  CoursePayload,
-  CourseRevisionPayload,
+  ArticlePayload,
+  ArticleRevisionPayload,
   CoursePagePayload,
   CoursePageRevisionPayload,
+  CoursePayload,
+  CourseRevisionPayload,
+  EventPayload,
+  EventRevisionPayload,
+  ExerciseGroupPayload,
+  ExerciseGroupRevisionPayload,
+  ExercisePayload,
+  ExerciseRevisionPayload,
+  GroupedExercisePayload,
+  GroupedExerciseRevisionPayload,
+  PagePayload,
+  PageRevisionPayload,
+  SolutionPayload,
+  SolutionRevisionPayload,
+  TaxonomyTermPayload,
+  UserPayload,
   UuidPayload,
+  VideoPayload,
+  VideoRevisionPayload,
 } from '../schema/uuid'
 import { Navigation, NavigationPayload } from '../schema/uuid/navigation'
 
@@ -92,12 +92,11 @@ export class SerloDataSource extends RESTDataSource {
     instance: Instance
     id: number
   }): Promise<Navigation | null> {
-    const foo = await this.cacheAwareGet({
+    const { data, leafs } = await this.cacheAwareGet({
       path: `/api/navigation`,
       instance,
       setter: 'setNavigation',
     })
-    const { data, leafs } = foo
 
     const treeIndex = leafs[id]
 
@@ -122,13 +121,6 @@ export class SerloDataSource extends RESTDataSource {
       path,
     }
 
-    interface NodeData {
-      label: string
-      id?: number
-      url?: string
-      children?: NodeData[]
-    }
-
     function findPathToLeaf(node: NodeData, leaf: number): NodeData[] {
       if (node.id !== undefined && node.id === leaf) {
         return [node]
@@ -147,8 +139,13 @@ export class SerloDataSource extends RESTDataSource {
     }
   }
 
-  public async setNavigation(payload: NavigationPayload) {
-    const data: N[] = JSON.parse(payload.data)
+  public async setNavigation(
+    payload: NavigationPayload
+  ): Promise<{
+    data: NodeData[]
+    leafs: Record<string, number>
+  }> {
+    const data: NodeData[] = JSON.parse(payload.data)
 
     const leafs: Record<string, number> = {}
     for (let i = 0; i < data.length; i++) {
@@ -166,18 +163,11 @@ export class SerloDataSource extends RESTDataSource {
     await this.environment.cache.set(cacheKey, JSON.stringify(value))
     return value
 
-    function findLeafs(node: N): number[] {
+    function findLeafs(node: NodeData): number[] {
       return [
         ...(node.id ? [node.id] : []),
         ...R.flatten(R.map(findLeafs, node.children || [])),
       ]
-    }
-
-    interface N {
-      label: string
-      id?: number
-      url?: string
-      children?: N[]
     }
   }
 
@@ -438,4 +428,11 @@ export class SerloDataSource extends RESTDataSource {
   private getCacheKey(path: string, instance: Instance = Instance.De) {
     return `${instance}.serlo.org${path}`
   }
+}
+
+interface NodeData {
+  label: string
+  id?: number
+  url?: string
+  children?: NodeData[]
 }
