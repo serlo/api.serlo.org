@@ -111,7 +111,7 @@ export class SerloDataSource extends RESTDataSource {
       const uuid = nodeData.id ? await this.getUuid({ id: nodeData.id }) : null
       const node = {
         label: nodeData.label,
-        url: uuid ? uuid.alias : null,
+        url: (uuid ? uuid.alias : null) || nodeData.url || null,
         id: uuid ? uuid.id : null,
       }
       path.push(node)

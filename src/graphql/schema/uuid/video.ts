@@ -24,12 +24,14 @@ export class VideoRevision extends EntityRevision {
   public __typename = EntityRevisionType.VideoRevision
   public url: string
   public title: string
+  public content: string
   public changes: string
 
   public constructor(payload: VideoRevisionPayload) {
     super(payload)
     this.url = payload.url
     this.title = payload.title
+    this.content = payload.content
     this.changes = payload.changes
   }
 }
@@ -37,6 +39,7 @@ export class VideoRevision extends EntityRevision {
 export interface VideoRevisionPayload extends EntityRevisionPayload {
   url: string
   title: string
+  content: string
   changes: string
 }
 
@@ -54,8 +57,9 @@ addTaxonomyTermChildResolvers({
     taxonomyTermIds: [Int!]!
   `,
   entityRevisionFields: `
-    title: String!
     url: String!
+    title: String!
+    content: String!
     changes: String!
   `,
   entitySetter: 'setVideo',

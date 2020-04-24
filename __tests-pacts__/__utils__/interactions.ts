@@ -109,6 +109,8 @@ export function addAppletRevisionInteraction(payload: AppletRevisionPayload) {
     url: Matchers.string(payload.url),
     content: Matchers.string(payload.content),
     changes: Matchers.string(payload.changes),
+    metaTitle: Matchers.string(payload.metaTitle),
+    metaDescription: Matchers.string(payload.metaDescription),
   })
 }
 
@@ -144,6 +146,8 @@ export function addArticleRevisionInteraction(payload: ArticleRevisionPayload) {
     title: Matchers.string(payload.title),
     content: Matchers.string(payload.content),
     changes: Matchers.string(payload.changes),
+    metaTitle: Matchers.string(payload.metaTitle),
+    metaDescription: Matchers.string(payload.metaDescription),
   })
 }
 
@@ -183,6 +187,7 @@ export function addCourseRevisionInteraction(payload: CourseRevisionPayload) {
     title: Matchers.string(payload.title),
     content: Matchers.string(payload.content),
     changes: Matchers.string(payload.changes),
+    metaDescription: Matchers.string(payload.metaDescription),
   })
 }
 
@@ -252,6 +257,8 @@ export function addEventRevisionInteraction(payload: EventRevisionPayload) {
     title: Matchers.string(payload.title),
     content: Matchers.string(payload.content),
     changes: Matchers.string(payload.changes),
+    metaTitle: Matchers.string(payload.metaTitle),
+    metaDescription: Matchers.string(payload.metaDescription),
   })
 }
 
@@ -497,6 +504,7 @@ export function addVideoRevisionInteraction(payload: VideoRevisionPayload) {
     authorId: Matchers.integer(payload.authorId),
     repositoryId: Matchers.integer(payload.repositoryId),
     title: Matchers.string(payload.title),
+    content: Matchers.string(payload.content),
     url: Matchers.string(payload.url),
     changes: Matchers.string(payload.changes),
   })

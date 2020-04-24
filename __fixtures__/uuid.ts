@@ -67,6 +67,8 @@ export const appletRevision: AppletRevisionPayload = {
   title: 'title',
   content: 'content',
   changes: 'changes',
+  metaDescription: 'metaDescription',
+  metaTitle: 'metaTitle',
 }
 
 export const article: ArticlePayload = {
@@ -97,6 +99,8 @@ export const articleRevision: ArticleRevisionPayload = {
   title: 'title',
   content: 'content',
   changes: 'changes',
+  metaDescription: 'metaDescription',
+  metaTitle: 'metaTitle',
 }
 
 export const course: CoursePayload = {
@@ -130,6 +134,7 @@ export const courseRevision: CourseRevisionPayload = {
   title: 'title',
   content: 'content',
   changes: 'changes',
+  metaDescription: 'metaDescription',
 }
 
 export const coursePage: CoursePagePayload = {
@@ -190,6 +195,8 @@ export const eventRevision: EventRevisionPayload = {
   title: 'title',
   content: 'content',
   changes: 'changes',
+  metaDescription: 'metaDescription',
+  metaTitle: 'metaTitle',
 }
 
 export const pageAlias: AliasPayload = {
@@ -415,6 +422,7 @@ export const videoRevision: VideoRevisionPayload = {
   authorId: 1,
   repositoryId: video.id,
   title: 'title',
+  content: 'content',
   url: 'url',
   changes: 'changes',
 }

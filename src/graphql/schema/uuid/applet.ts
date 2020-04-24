@@ -26,6 +26,8 @@ export class AppletRevision extends EntityRevision {
   public title: string
   public content: string
   public changes: string
+  public metaTitle: string
+  public metaDescription: string
 
   public constructor(payload: AppletRevisionPayload) {
     super(payload)
@@ -33,6 +35,8 @@ export class AppletRevision extends EntityRevision {
     this.title = payload.title
     this.content = payload.content
     this.changes = payload.changes
+    this.metaTitle = payload.metaTitle
+    this.metaDescription = payload.metaDescription
   }
 }
 
@@ -41,6 +45,8 @@ export interface AppletRevisionPayload extends EntityRevisionPayload {
   title: string
   content: string
   changes: string
+  metaTitle: string
+  metaDescription: string
 }
 
 addTaxonomyTermChildResolvers({
@@ -61,6 +67,8 @@ addTaxonomyTermChildResolvers({
     title: String!
     content: String!
     changes: String!
+    metaTitle: String!
+    metaDescription: String!
   `,
   entitySetter: 'setApplet',
   entityRevisionSetter: 'setAppletRevision',
