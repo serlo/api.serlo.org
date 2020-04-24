@@ -71,7 +71,7 @@ async function exec(): Promise<void> {
     },
     {
       tagName: 'v0.4.2',
-      name: '0.4.1',
+      name: '0.4.2',
       date: '2020-04-24',
       fixed: ['Fix build'],
     },
