@@ -262,6 +262,8 @@ describe('ArticleRevision', () => {
               title
               content
               changes
+              metaTitle
+              metaDescription
               author {
                 id
               }
@@ -302,6 +304,8 @@ describe('ArticleRevision', () => {
               title
               content
               changes
+              metaTitle
+              metaDescription
               author {
                 id
                 username
@@ -344,6 +348,8 @@ describe('ArticleRevision', () => {
               title
               content
               changes
+              metaTitle
+              metaDescription
               author {
                 id
               }

@@ -25,12 +25,16 @@ export class EventRevision extends EntityRevision {
   public title: string
   public content: string
   public changes: string
+  public metaTitle: string
+  public metaDescription: string
 
   public constructor(payload: EventRevisionPayload) {
     super(payload)
     this.title = payload.title
     this.content = payload.content
     this.changes = payload.changes
+    this.metaTitle = payload.metaTitle
+    this.metaDescription = payload.metaDescription
   }
 }
 
@@ -38,6 +42,8 @@ export interface EventRevisionPayload extends EntityRevisionPayload {
   title: string
   content: string
   changes: string
+  metaTitle: string
+  metaDescription: string
 }
 
 addTaxonomyTermChildResolvers({
@@ -57,6 +63,8 @@ addTaxonomyTermChildResolvers({
     title: String!
     content: String!
     changes: String!
+    metaTitle: String!
+    metaDescription: String!
   `,
   entitySetter: 'setEvent',
   entityRevisionSetter: 'setEventRevision',

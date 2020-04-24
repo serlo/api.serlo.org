@@ -260,6 +260,7 @@ describe('VideoRevision', () => {
               trashed
               date
               title
+              content
               url
               changes
               author {
@@ -300,6 +301,7 @@ describe('VideoRevision', () => {
               trashed
               date
               title
+              content
               url
               changes
               author {
@@ -342,6 +344,7 @@ describe('VideoRevision', () => {
               trashed
               date
               title
+              content
               url
               changes
               author {

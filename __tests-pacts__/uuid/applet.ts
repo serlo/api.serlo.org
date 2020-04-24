@@ -196,6 +196,8 @@ describe('AppletRevision', () => {
               content
               url
               changes
+              metaTitle
+              metaDescription
               author {
                 id
               }
@@ -237,6 +239,8 @@ describe('AppletRevision', () => {
               content
               url
               changes
+              metaTitle
+              metaDescription
               author {
                 id
                 username
@@ -280,6 +284,8 @@ describe('AppletRevision', () => {
               content
               url
               changes
+              metaTitle
+              metaDescription
               author {
                 id
               }

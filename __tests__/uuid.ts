@@ -1326,6 +1326,8 @@ function createSetAppletRevisionMutation({
             title: "title"
             content: "content"
             changes: "changes"
+            metaTitle: "metaTitle"
+            metaDescription: "metaDescription"
           )
         }
       `
@@ -1375,6 +1377,8 @@ function createSetArticleRevisionMutation({
             title: "title"
             content: "content"
             changes: "changes"
+            metaTitle: "metaTitle"
+            metaDescription: "metaDescription"
           )
         }
       `
@@ -1425,6 +1429,7 @@ function createSetCourseRevisionMutation({
             title: "title"
             content: "content"
             changes: "changes"
+            metaDescription: "metaDescription"
           )
         }
       `
@@ -1525,6 +1530,8 @@ function createSetEventRevisionMutation({
             title: "title"
             content: "content"
             changes: "changes"
+            metaTitle: "metaTitle"
+            metaDescription: "metaDescription"
           )
         }
       `
@@ -1861,6 +1868,7 @@ function createSetVideoRevisionMutation({
             authorId: ${authorId}
             repositoryId: ${repositoryId}
             title: "title"
+            content: "content"
             url: "url"
             changes: "changes"
           )

@@ -46,12 +46,14 @@ export class CourseRevision extends EntityRevision {
   public title: string
   public content: string
   public changes: string
+  public metaDescription: string
 
   public constructor(payload: CourseRevisionPayload) {
     super(payload)
     this.title = payload.title
     this.content = payload.content
     this.changes = payload.changes
+    this.metaDescription = payload.metaDescription
   }
 }
 
@@ -59,6 +61,7 @@ export interface CourseRevisionPayload extends EntityRevisionPayload {
   title: string
   content: string
   changes: string
+  metaDescription: string
 }
 
 addTaxonomyTermChildResolvers({
@@ -80,6 +83,7 @@ addTaxonomyTermChildResolvers({
     title: String!
     content: String!
     changes: String!
+    metaDescription: String!
   `,
   entitySetter: 'setCourse',
   entityRevisionSetter: 'setCourseRevision',
