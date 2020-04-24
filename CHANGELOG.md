@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.0](https://github.com/serlo/api.serlo.org/compare/v0.3.0..v0.4.0) - April 24, 2020
+
+### Breaking Changes
+
+- Remove path from `TaxonomyTerm`. Use `TaxonomyTerm.navigation.path` instead.
+
+### Added
+
+- Add `navigation` to `Page` and `TaxonomyTerm`
+- Add meta fields to `EntityRevision`
+- Add `content` to `VideoRevision`
+
 ## [0.3.0](https://github.com/serlo/api.serlo.org/compare/v0.2.0..v0.3.0) - April 15, 2020
 
 ### Added

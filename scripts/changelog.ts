@@ -50,6 +50,19 @@ async function exec(): Promise<void> {
         'Add entity type `Video`.',
       ],
     },
+    {
+      tagName: 'v0.4.0',
+      name: '0.4.0',
+      date: '2020-04-24',
+      breakingChanges: [
+        'Remove path from `TaxonomyTerm`. Use `TaxonomyTerm.navigation.path` instead.',
+      ],
+      added: [
+        'Add `navigation` to `Page` and `TaxonomyTerm`',
+        'Add meta fields to `EntityRevision`',
+        'Add `content` to `VideoRevision`',
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
