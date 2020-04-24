@@ -63,6 +63,12 @@ async function exec(): Promise<void> {
         'Add `content` to `VideoRevision`',
       ],
     },
+    {
+      tagName: 'v0.4.1',
+      name: '0.4.1',
+      date: '2020-04-24',
+      fixed: ['Fix build'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

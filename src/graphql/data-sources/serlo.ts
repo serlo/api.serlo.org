@@ -148,6 +148,14 @@ export class SerloDataSource extends RESTDataSource {
     const data: NodeData[] = JSON.parse(payload.data)
 
     const leafs: Record<string, number> = {}
+
+    const findLeafs = (node: NodeData): number[] => {
+      return [
+        ...(node.id ? [node.id] : []),
+        ...R.flatten(R.map(findLeafs, node.children || [])),
+      ]
+    }
+
     for (let i = 0; i < data.length; i++) {
       findLeafs(data[i]).forEach((id) => {
         leafs[id] = i
@@ -162,13 +170,6 @@ export class SerloDataSource extends RESTDataSource {
     const cacheKey = this.getCacheKey(`/api/navigation`, payload.instance)
     await this.environment.cache.set(cacheKey, JSON.stringify(value))
     return value
-
-    function findLeafs(node: NodeData): number[] {
-      return [
-        ...(node.id ? [node.id] : []),
-        ...R.flatten(R.map(findLeafs, node.children || [])),
-      ]
-    }
   }
 
   public async getLicense({
