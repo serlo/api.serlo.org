@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.5.0](https://github.com/serlo/api.serlo.org/compare/v0.4.3..v0.5.0)
+## [0.5.0](https://github.com/serlo/api.serlo.org/compare/v0.4.3..v0.5.0) - April 27, 2020
 
 ### Breaking Changes
 
