@@ -34,7 +34,7 @@ export function createRedisCache({ host }: { host: string }): Cache {
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const get = (util.promisify(client.get).bind(client) as unknown) as (
     key: string
-  ) => Promise<Buffer>
+  ) => Promise<Buffer | null>
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const set = (util.promisify(client.set).bind(client) as unknown) as (
     key: string,
@@ -43,7 +43,7 @@ export function createRedisCache({ host }: { host: string }): Cache {
 
   return {
     async get(key) {
-      return ((await get(key)) as unknown) as Buffer
+      return await get(key)
     },
     async set(key, value) {
       await set(key, value)
