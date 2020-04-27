@@ -38,6 +38,7 @@
     "graphql-playground-middleware-express": "^1.0.0",
     "jsonwebtoken": "^8.0.0",
     "msgpack": "^1.0.0",
+    "node-fetch": "^2.0.0",
     "ramda": "^0.27.0",
     "redis": "^3.0.0",
     "tslib": "^1.0.0"
@@ -51,6 +52,7 @@
     "@types/jsonwebtoken": "^8.0.0",
     "@types/msgpack": "^0.0.30",
     "@types/node": "^12.0.0",
+    "@types/node-fetch": "^2.0.0",
     "@types/ramda": "^0.27.0",
     "@types/redis": "^2.0.0",
     "@types/rimraf": "^3.0.0",

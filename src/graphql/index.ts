@@ -24,11 +24,13 @@ import {
   AuthenticationError,
 } from 'apollo-server-express'
 import { decode, JsonWebTokenError, verify } from 'jsonwebtoken'
+import fetch from 'node-fetch'
+import { URLSearchParams } from 'url'
 
 import { SerloDataSource } from './data-sources/serlo'
 import { Environment } from './environment'
 import { schema } from './schema'
-import { Service } from './schema/types'
+import { Context, Service } from './schema/types'
 
 export function getGraphQLOptions(
   environment: Environment
@@ -45,73 +47,117 @@ export function getGraphQLOptions(
         serlo: new SerloDataSource(environment),
       }
     },
-    context({ req }) {
+    context({ req }): Promise<Pick<Context, 'service' | 'user'>> {
       const authorizationHeader = req.headers.authorization
       if (!authorizationHeader) {
         throw new AuthenticationError('Invalid authorization header')
       }
-      return handleAuthentication(authorizationHeader)
+      return handleAuthentication(authorizationHeader, async (token) => {
+        if (process.env.HYDRA_HOST === undefined) return Promise.resolve(null)
+        const params = new URLSearchParams()
+        params.append('token', token)
+        const resp = await fetch(
+          `${process.env.HYDRA_HOST}/oauth2/introspect`,
+          {
+            method: 'post',
+            body: params,
+          }
+        )
+        const { active, sub } = await resp.json()
+        return active ? parseInt(sub, 10) : null
+      })
     },
   }
 }
 
-export function handleAuthentication(
-  authorizationHeader: string
-): { service: Service } {
+export async function handleAuthentication(
+  authorizationHeader: string,
+  userTokenValidator: (token: string) => Promise<number | null>
+): Promise<{ service: Service; user: number | null }> {
   const parts = authorizationHeader.split(' ')
   if (parts.length !== 2 || parts[0] !== 'Serlo') {
     throw invalid()
   }
-  const serviceTokenParts = parts[1].split('=')
-  if (serviceTokenParts.length !== 2 || serviceTokenParts[0] !== 'Service') {
+
+  const tokenParts = parts[1].split(';')
+  if (tokenParts.length === 1) {
+    const service = validateServiceToken(tokenParts[0])
+    return { service, user: null }
+  } else if (tokenParts.length === 2) {
+    const service = validateServiceToken(tokenParts[0])
+    const user = await validateUserToken(tokenParts[1], userTokenValidator)
+    return {
+      service,
+      user,
+    }
+  } else {
     throw invalid()
   }
-  const serviceToken = serviceTokenParts[1]
-  const { service, error } = validateToken(serviceToken)
-
-  if (error || service === null) {
-    throw new AuthenticationError(
-      `Invalid token${error ? `: ${error.message}` : ''}`
-    )
-  }
-  return { service }
 
   function invalid() {
     return new AuthenticationError('Invalid authorization header')
   }
 }
 
-export function validateToken(
-  token: string
-): { service: Service | null; error?: JsonWebTokenError } {
-  try {
-    const decoded = decode(token)
-    if (!decoded || typeof decoded !== 'object') return unauthenticated()
+function validateServiceToken(token: string): Service {
+  const serviceTokenParts = token.split('=')
+  if (serviceTokenParts.length !== 2 || serviceTokenParts[0] !== 'Service') {
+    throw new AuthenticationError('Invalid authorization header')
+  }
+  const serviceToken = serviceTokenParts[1]
+  const { service, error } = validateJwt(serviceToken)
 
-    const secret = getSecret(decoded.iss)
-    verify(token, secret, {
-      audience: 'api.serlo.org',
-    })
+  if (error || service === null) {
+    throw new AuthenticationError(
+      `Invalid service token${error ? `: ${error.message}` : ''}`
+    )
+  }
+  return service
 
-    return {
-      service: decoded.iss,
+  function validateJwt(
+    token: string
+  ): { service: Service | null; error?: JsonWebTokenError } {
+    try {
+      const decoded = decode(token)
+      if (!decoded || typeof decoded !== 'object') return unauthenticated()
+
+      const secret = getSecret(decoded.iss)
+      verify(token, secret, {
+        audience: 'api.serlo.org',
+      })
+
+      return {
+        service: decoded.iss,
+      }
+    } catch (e) {
+      return unauthenticated(e)
     }
-  } catch (e) {
-    return unauthenticated(e)
-  }
 
-  function unauthenticated(error?: JsonWebTokenError) {
-    return { service: null, error }
-  }
+    function unauthenticated(error?: JsonWebTokenError) {
+      return { service: null, error }
+    }
 
-  function getSecret(service: Service) {
-    switch (service) {
-      case Service.Playground:
-        return process.env.PLAYGROUND_SECRET!
-      case Service.Serlo:
-        return process.env.SERLO_ORG_SECRET!
-      case Service.SerloCloudflareWorker:
-        return process.env.SERLO_CLOUDFLARE_WORKER_SECRET!
+    function getSecret(service: Service) {
+      switch (service) {
+        case Service.Playground:
+          return process.env.PLAYGROUND_SECRET!
+        case Service.Serlo:
+          return process.env.SERLO_ORG_SECRET!
+        case Service.SerloCloudflareWorker:
+          return process.env.SERLO_CLOUDFLARE_WORKER_SECRET!
+      }
     }
   }
+}
+
+async function validateUserToken(
+  token: string,
+  validateToken: (token: string) => Promise<number | null>
+): Promise<number | null> {
+  const userTokenParts = token.split('=')
+  if (userTokenParts.length !== 2 || userTokenParts[0] !== 'User') {
+    throw new AuthenticationError('Invalid authorization header')
+  }
+  const userToken = userTokenParts[1]
+  return await validateToken(userToken)
 }

@@ -2,7 +2,7 @@ FROM node:12 as dev-dependencies
 WORKDIR /usr/src/app
 COPY package.json .
 COPY yarn.lock .
-RUN yarn --frozen-lockfile --production=false
+RUN yarn --frozen-lockfile --production=false --silent
 
 FROM node:12 as prod-dependencies
 WORKDIR /usr/src/app
