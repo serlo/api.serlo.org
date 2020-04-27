@@ -27,7 +27,8 @@ export function createInMemoryCache(): Cache & { reset(): void } {
   return {
     // eslint-disable-next-line @typescript-eslint/require-await
     async get(key) {
-      return Buffer.from(cache[key])
+      const serialized = cache[key]
+      return serialized === undefined ? null : Buffer.from(cache[key])
     },
     // eslint-disable-next-line @typescript-eslint/require-await
     async set(key, value) {
