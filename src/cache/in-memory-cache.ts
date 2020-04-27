@@ -27,11 +27,11 @@ export function createInMemoryCache(): Cache & { reset(): void } {
   return {
     // eslint-disable-next-line @typescript-eslint/require-await
     async get(key) {
-      return cache[key]
+      return Buffer.from(cache[key])
     },
     // eslint-disable-next-line @typescript-eslint/require-await
     async set(key, value) {
-      cache[key] = value
+      cache[key] = value.toString()
     },
     reset() {
       cache = {}

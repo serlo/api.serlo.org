@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0](https://github.com/serlo/api.serlo.org/compare/v0.4.3..v0.5.0)
+
+### Breaking Changes
+
+- Use Redis as cache
+- Use MessagePack as serializer
+
 ## [0.4.3](https://github.com/serlo/api.serlo.org/compare/v0.4.2..v0.4.3) - April 27, 2020
 
 ### Fixed

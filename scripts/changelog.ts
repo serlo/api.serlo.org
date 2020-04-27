@@ -81,6 +81,14 @@ async function exec(): Promise<void> {
       date: '2020-04-27',
       fixed: ['Fix `navigation.data`'],
     },
+    {
+      tagName: 'v0.5.0',
+      name: '0.5.0',
+      breakingChanges: [
+          'Use Redis as cache',
+          'Use MessagePack as serializer'
+      ]
+    }
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

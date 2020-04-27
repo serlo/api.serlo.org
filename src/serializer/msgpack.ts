@@ -19,32 +19,17 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ApolloServer } from 'apollo-server'
-import {
-  ApolloServerTestClient,
-  createTestClient as createApolloTestClient,
-} from 'apollo-server-testing'
+import msgpack from 'msgpack'
 
-import { createInMemoryCache } from '../../src/cache/in-memory-cache'
-import { getGraphQLOptions } from '../../src/graphql'
-import { Cache } from '../../src/graphql/environment'
-import { createJsonStringifySerializer } from '../../src/serializer/json-stringify'
+import { Serializer } from '../graphql/environment'
 
-export type Client = ApolloServerTestClient
-
-export function createTestClient(context: {}): {
-  cache: Cache
-  client: Client
-} {
-  const cache = createInMemoryCache()
-  const server = new ApolloServer({
-    ...getGraphQLOptions({
-      cache,
-      serializer: createJsonStringifySerializer(),
-    }),
-    context() {
-      return { ...context }
+export function createMsgpackSerializer(): Serializer {
+  return {
+    serialize(value) {
+      return msgpack.pack(value)
     },
-  })
-  return { cache, client: createApolloTestClient(server) }
+    deserialize(value) {
+      return msgpack.unpack(value)
+    },
+  }
 }
