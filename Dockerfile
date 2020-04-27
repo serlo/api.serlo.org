@@ -1,10 +1,10 @@
-FROM node:12-alpine as dev-dependencies
+FROM node:12 as dev-dependencies
 WORKDIR /usr/src/app
 COPY package.json .
 COPY yarn.lock .
-RUN yarn --frozen-lockfile --production=false --silent
+RUN yarn --frozen-lockfile --production=false
 
-FROM node:12-alpine as prod-dependencies
+FROM node:12 as prod-dependencies
 WORKDIR /usr/src/app
 ENV NODE_ENV production
 COPY package.json .
