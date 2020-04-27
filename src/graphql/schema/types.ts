@@ -39,4 +39,5 @@ export enum Service {
 export interface Context {
   dataSources: DataSources
   service: Service
+  user: number | null
 }
