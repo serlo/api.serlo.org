@@ -64,7 +64,7 @@ test('by id (subject)', async () => {
   })
 })
 
-test('by id (subject, w/ path)', async () => {
+test('by id (subject, w/ navigation)', async () => {
   await addPageInteraction(page)
   await addTaxonomyTermInteraction(taxonomyTermRoot)
   await addTaxonomyTermInteraction(taxonomyTermSubject)
@@ -94,6 +94,7 @@ test('by id (subject, w/ path)', async () => {
             }
 
             navigation {
+              data
               path {
                 label
                 id
@@ -120,6 +121,7 @@ test('by id (subject, w/ path)', async () => {
         ],
 
         navigation: {
+          data: JSON.stringify(JSON.parse(navigation.data)[0]),
           path: [
             {
               label: 'Mathematik',
