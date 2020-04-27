@@ -134,7 +134,7 @@ export class SerloDataSource extends RESTDataSource {
     }
 
     return {
-      data: data[treeIndex],
+      data: JSON.stringify(data[treeIndex]),
       path,
     }
   }
