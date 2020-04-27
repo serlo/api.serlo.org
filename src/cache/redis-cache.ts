@@ -19,32 +19,34 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ApolloServer } from 'apollo-server'
-import {
-  ApolloServerTestClient,
-  createTestClient as createApolloTestClient,
-} from 'apollo-server-testing'
+import redis from 'redis'
+import * as util from 'util'
 
-import { createInMemoryCache } from '../../src/cache/in-memory-cache'
-import { getGraphQLOptions } from '../../src/graphql'
-import { Cache } from '../../src/graphql/environment'
-import { createJsonStringifySerializer } from '../../src/serializer/json-stringify'
+import { Cache } from '../graphql/environment'
 
-export type Client = ApolloServerTestClient
-
-export function createTestClient(context: {}): {
-  cache: Cache
-  client: Client
-} {
-  const cache = createInMemoryCache()
-  const server = new ApolloServer({
-    ...getGraphQLOptions({
-      cache,
-      serializer: createJsonStringifySerializer(),
-    }),
-    context() {
-      return { ...context }
-    },
+export function createRedisCache({ host }: { host: string }): Cache {
+  const client = redis.createClient({
+    host,
+    port: 6379,
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    return_buffers: true,
   })
-  return { cache, client: createApolloTestClient(server) }
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  const get = (util.promisify(client.get).bind(client) as unknown) as (
+    key: string
+  ) => Promise<Buffer>
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  const set = (util.promisify(client.set).bind(client) as unknown) as (
+    key: string,
+    value: Buffer
+  ) => Promise<void>
+
+  return {
+    async get(key) {
+      return ((await get(key)) as unknown) as Buffer
+    },
+    async set(key, value) {
+      await set(key, value)
+    },
+  }
 }

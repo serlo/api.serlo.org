@@ -25,9 +25,10 @@ import createApp, { Express } from 'express'
 import createPlayground from 'graphql-playground-middleware-express'
 import jwt from 'jsonwebtoken'
 
-import { createInMemoryCache } from './cache/in-memory-cache'
+import { createRedisCache } from './cache/redis-cache'
 import { getGraphQLOptions } from './graphql'
 import { Service } from './graphql/schema/types'
+import { createMsgpackSerializer } from './serializer/msgpack'
 
 start()
 
@@ -45,7 +46,8 @@ function start() {
 
 function applyGraphQLMiddleware(app: Express) {
   const environment = {
-    cache: createInMemoryCache(),
+    cache: createRedisCache({ host: process.env.REDIS_HOST! }),
+    serializer: createMsgpackSerializer(),
   }
   const server = new ApolloServer(getGraphQLOptions(environment))
 

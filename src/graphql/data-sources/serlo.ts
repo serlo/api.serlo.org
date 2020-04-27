@@ -81,7 +81,10 @@ export class SerloDataSource extends RESTDataSource {
 
   public async setAlias(alias: AliasPayload) {
     const cacheKey = this.getCacheKey(`/api/alias${alias.path}`, alias.instance)
-    await this.environment.cache.set(cacheKey, JSON.stringify(alias))
+    await this.environment.cache.set(
+      cacheKey,
+      this.environment.serializer.serialize(alias)
+    )
     return alias
   }
 
@@ -168,7 +171,10 @@ export class SerloDataSource extends RESTDataSource {
     }
 
     const cacheKey = this.getCacheKey(`/api/navigation`, payload.instance)
-    await this.environment.cache.set(cacheKey, JSON.stringify(value))
+    await this.environment.cache.set(
+      cacheKey,
+      this.environment.serializer.serialize(value)
+    )
     return value
   }
 
@@ -188,13 +194,19 @@ export class SerloDataSource extends RESTDataSource {
 
   public async setLicense(license: License) {
     const cacheKey = this.getCacheKey(`/api/license/${license.id}`)
-    await this.environment.cache.set(cacheKey, JSON.stringify(license))
+    await this.environment.cache.set(
+      cacheKey,
+      this.environment.serializer.serialize(license)
+    )
     return license
   }
 
   public async removeLicense({ id }: { id: number }) {
     const cacheKey = this.getCacheKey(`/api/license/${id}`)
-    await this.environment.cache.set(cacheKey, JSON.stringify(null))
+    await this.environment.cache.set(
+      cacheKey,
+      this.environment.serializer.serialize(null)
+    )
   }
 
   public async getUuid({
@@ -213,13 +225,19 @@ export class SerloDataSource extends RESTDataSource {
 
   public async setUuid<T extends UuidPayload>(payload: T) {
     const cacheKey = this.getCacheKey(`/api/uuid/${payload.id}`)
-    await this.environment.cache.set(cacheKey, JSON.stringify(payload))
+    await this.environment.cache.set(
+      cacheKey,
+      this.environment.serializer.serialize(payload)
+    )
     return payload
   }
 
   public async removeUuid({ id }: { id: number }) {
     const cacheKey = this.getCacheKey(`/api/uuid/${id}`)
-    await this.environment.cache.set(cacheKey, JSON.stringify(null))
+    await this.environment.cache.set(
+      cacheKey,
+      this.environment.serializer.serialize(null)
+    )
   }
 
   public async setApplet(applet: AppletPayload) {
@@ -402,7 +420,7 @@ export class SerloDataSource extends RESTDataSource {
     const cacheKey = this.getCacheKey(path, instance)
     if (!bypassCache) {
       const cache = await this.environment.cache.get(cacheKey)
-      if (cache) return JSON.parse(cache)
+      if (cache) return this.environment.serializer.deserialize(cache)
     }
 
     const token = jwt.sign({}, process.env.SERLO_ORG_SECRET!, {

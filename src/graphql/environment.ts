@@ -21,9 +21,15 @@
  */
 export interface Environment {
   cache: Cache
+  serializer: Serializer
 }
 
 export interface Cache {
-  get(key: string): Promise<string | null>
-  set(key: string, value: string): Promise<void>
+  get(key: string): Promise<Buffer | null>
+  set(key: string, value: Buffer): Promise<void>
+}
+
+export interface Serializer {
+  serialize(value: any): Buffer
+  deserialize(value: Buffer): any
 }
