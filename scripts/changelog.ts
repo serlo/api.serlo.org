@@ -84,11 +84,9 @@ async function exec(): Promise<void> {
     {
       tagName: 'v0.5.0',
       name: '0.5.0',
-      breakingChanges: [
-          'Use Redis as cache',
-          'Use MessagePack as serializer'
-      ]
-    }
+      date: '2020-04-27',
+      breakingChanges: ['Use Redis as cache', 'Use MessagePack as serializer'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
