@@ -24,10 +24,10 @@ import { Serializer } from '../graphql/environment'
 export function createJsonStringifySerializer(): Serializer {
   return {
     serialize(value) {
-      return Buffer.from(JSON.stringify(value))
+      return Buffer.from(JSON.stringify(value), 'utf16le')
     },
     deserialize(value) {
-      return JSON.parse(value.toString())
+      return JSON.parse(value.toString('utf16le'))
     },
   }
 }
