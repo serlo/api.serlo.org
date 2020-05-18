@@ -4,7 +4,7 @@ import {
 } from '../src/graphql/schema/thread/schema'
 import { user } from './uuid'
 
-export const comment: CommentPayload = {
+export const comment: Omit<CommentPayload, 'parentId'> = {
   id: 'comment-id',
   authorId: user.id,
   content: 'content',

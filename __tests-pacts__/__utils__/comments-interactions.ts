@@ -5,9 +5,12 @@ import {
   ThreadPayload,
 } from '../../src/graphql/schema/thread/schema'
 
-export function addCommentInteraction(payload: CommentPayload) {
+export function addCommentInteraction(
+  id: string,
+  payload: Omit<CommentPayload, 'parentId'>
+) {
   return addJsonInteraction({
-    name: `fetch comment ${payload.id}`,
+    name: `fetch comment ${payload.id} of parent ${id}`,
     given: '',
     path: `/comment/${payload.id}`,
     body: {
@@ -16,6 +19,7 @@ export function addCommentInteraction(payload: CommentPayload) {
       createdAt: Matchers.iso8601DateTime(payload.createdAt),
       updatedAt: Matchers.iso8601DateTime(payload.updatedAt),
       authorId: Matchers.integer(payload.authorId),
+      parentId: Matchers.string(id),
     },
   })
 }

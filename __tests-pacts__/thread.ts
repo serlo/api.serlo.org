@@ -150,7 +150,7 @@ test.each([
   ],
 ])('%s has threads', async (type, { fixture, setup }) => {
   await addUserInteraction(user)
-  await addCommentInteraction(comment)
+  await addCommentInteraction(thread.id, comment)
   await addThreadInteraction(fixture.id, thread)
   await addThreadsInteraction(fixture.id, threads)
   await setup()
@@ -174,6 +174,9 @@ test.each([
                   id
                   username
                 }
+                thread {
+                  id
+                }
               }
               uuid {
                 ... on ${type} {
@@ -196,6 +199,9 @@ test.each([
                 author: {
                   id: user.id,
                   username: user.username,
+                },
+                thread: {
+                  id: thread.id,
                 },
               },
             ],

@@ -17,7 +17,7 @@ export class Comment {
   public createdAt: DateTime
   public updatedAt: DateTime
   public authorId: number
-  // public parentId: string
+  public parentId: string
 
   public constructor(payload: CommentPayload) {
     this.id = payload.id
@@ -25,6 +25,7 @@ export class Comment {
     this.createdAt = payload.createdAt
     this.updatedAt = payload.updatedAt
     this.authorId = payload.authorId
+    this.parentId = payload.parentId
   }
 
   public async author(
@@ -40,18 +41,18 @@ export class Comment {
     return new User(data)
   }
 
-  // public async thread(
-  //     _args: undefined,
-  //     { dataSources }: Context,
-  //     info: GraphQLResolveInfo
-  // ) {
-  //   const partialThread = { id: this.parentId }
-  //   if (requestsOnlyFields('Thread', ['id'], info)) {
-  //     return partialThread
-  //   }
-  //   const data = await dataSources.comments.getThread(this.parentId)
-  //   return new Thread(data)
-  // }
+  public async thread(
+    _args: undefined,
+    { dataSources }: Context,
+    info: GraphQLResolveInfo
+  ) {
+    const partialThread = { id: this.parentId }
+    if (requestsOnlyFields('Thread', ['id'], info)) {
+      return partialThread
+    }
+    const data = await dataSources.comments.getThread(this.parentId)
+    return new Thread(data)
+  }
 }
 export interface CommentPayload {
   id: string
@@ -59,6 +60,7 @@ export interface CommentPayload {
   createdAt: DateTime
   updatedAt: DateTime
   authorId: number
+  parentId: string
 }
 threadSchema.addTypeDef(gql`
   type Comment {
@@ -67,6 +69,7 @@ threadSchema.addTypeDef(gql`
     createdAt: DateTime!
     updatedAt: DateTime!
     author: User!
+    thread: Thread!
   }
 `)
 
