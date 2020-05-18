@@ -3,6 +3,7 @@ import { ForbiddenError, gql } from 'apollo-server'
 import { DateTime } from '../date-time'
 import { Instance } from '../instance'
 import { License, licenseSchema } from '../license'
+import { addThreadResolvers } from '../thread'
 import { Service, Context } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
 import { DiscriminatorType, Uuid, UuidPayload } from './abstract-uuid'
@@ -105,6 +106,11 @@ pageSchema.addTypeDef(gql`
     navigation: Navigation
   }
 `)
+
+addThreadResolvers<Page>({
+  schema: pageSchema,
+  type: DiscriminatorType.Page,
+})
 
 /**
  * type PageRevision

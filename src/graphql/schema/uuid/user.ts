@@ -1,6 +1,7 @@
 import { ForbiddenError, gql } from 'apollo-server'
 
 import { DateTime } from '../date-time'
+import { addThreadResolvers } from '../thread'
 import { Service } from '../types'
 import { Schema } from '../utils'
 import { DiscriminatorType, Uuid, UuidPayload } from './abstract-uuid'
@@ -115,3 +116,5 @@ userSchema.addTypeDef(gql`
     ): Boolean
   }
 `)
+
+addThreadResolvers({ schema: userSchema, type: DiscriminatorType.User })

@@ -4,6 +4,7 @@ import { SerloDataSource } from '../../data-sources/serlo'
 import { DateTime } from '../date-time'
 import { Instance } from '../instance'
 import { License, licenseSchema } from '../license'
+import { addThreadResolvers } from '../thread'
 import { Service } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
 import { Uuid, UuidPayload } from './abstract-uuid'
@@ -277,6 +278,11 @@ export function addEntityResolvers<
         ): Boolean
      }
     `)
+
+  addThreadResolvers<E>({
+    schema,
+    type: entityType,
+  })
 }
 export interface EntityResolversPayload<
   E extends Entity,

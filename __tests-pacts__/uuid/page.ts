@@ -117,6 +117,66 @@ describe('Page', () => {
     })
   })
 
+  // test('by alias (w/ threads)', async () => {
+  //   await addAliasInteraction(pageAlias)
+  //   await addUserInteraction(user)
+  //   await addThreadsInteraction(page.id, threads)
+  //   await addPageInteraction(page)
+  //   await assertSuccessfulGraphQLQuery({
+  //     query: gql`
+  //     {
+  //       uuid(alias: { instance: de, path: "${pageAlias.path}" }) {
+  //         __typename
+  //         ... on Page {
+  //           id
+  //           trashed
+  //           instance
+  //           alias
+  //           threads {
+  //             id
+  //             title
+  //             archived
+  //             trashed
+  //             createdAt
+  //             updatedAt
+  //             comments {
+  //               id
+  //               content
+  //               createdAt
+  //               updatedAt
+  //               author {
+  //                 id
+  //                 username
+  //               }
+  //             }
+  //           }
+  //         }
+  //       }
+  //     }
+  //   `,
+  //     data: {
+  //       uuid: {
+  //         __typename: 'Page',
+  //         ...R.omit(['currentRevisionId', 'licenseId'], page),
+  //         threads: [
+  //           {
+  //             ...threads[0],
+  //             comments: [
+  //               {
+  //                 ...R.omit(['authorId'], threads[0].comments[0]),
+  //                 author: {
+  //                   id: user.id,
+  //                   username: user.username,
+  //                 },
+  //               },
+  //             ],
+  //           },
+  //         ],
+  //       },
+  //     },
+  //   })
+  // })
+
   test('by id', async () => {
     await addPageInteraction(page)
     await assertSuccessfulGraphQLQuery({

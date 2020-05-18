@@ -27,6 +27,7 @@ import { decode, JsonWebTokenError, verify } from 'jsonwebtoken'
 import fetch from 'node-fetch'
 import { URLSearchParams } from 'url'
 
+import { CommentsDataSource } from './data-sources/comments'
 import { SerloDataSource } from './data-sources/serlo'
 import { Environment } from './environment'
 import { schema } from './schema'
@@ -44,6 +45,7 @@ export function getGraphQLOptions(
     playground: false,
     dataSources() {
       return {
+        comments: new CommentsDataSource(environment),
         serlo: new SerloDataSource(environment),
       }
     },

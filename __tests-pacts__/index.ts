@@ -32,6 +32,13 @@ const pactDir = path.join(root, 'pacts')
 
 const rm = util.promisify(rimraf)
 
+global.commentsPact = new Pact({
+  consumer: 'api.serlo.org',
+  provider: 'comments.serlo.org',
+  port: 9010,
+  dir: pactDir,
+})
+
 global.pact = new Pact({
   consumer: 'api.serlo.org',
   provider: 'serlo.org',
@@ -41,7 +48,7 @@ global.pact = new Pact({
 
 beforeAll(async () => {
   await rm(pactDir)
-  await global.pact.setup()
+  await Promise.all([global.commentsPact.setup(), global.pact.setup()])
 })
 
 beforeEach(() => {
@@ -49,16 +56,19 @@ beforeEach(() => {
 })
 
 afterEach(async () => {
-  await global.pact.verify()
+  await Promise.all([global.commentsPact.verify(), global.pact.verify()])
 })
 
 afterAll(async () => {
-  await global.pact.finalize()
+  await Promise.all([global.commentsPact.finalize(), global.pact.finalize()])
 })
 
 /* eslint-disable import/no-unassigned-import */
 describe('License', () => {
   require('./license')
+})
+describe('Thread', () => {
+  require('./thread')
 })
 describe('Uuid', () => {
   require('./uuid')
