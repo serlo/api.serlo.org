@@ -1,6 +1,5 @@
 import { Matchers } from '@pact-foundation/pact'
 
-import { License } from '../../src/graphql/schema/license'
 import {
   AliasPayload,
   AppletPayload,
@@ -25,12 +24,13 @@ import {
   UserPayload,
   VideoPayload,
   VideoRevisionPayload,
-} from '../../src/graphql/schema/uuid'
-import { NavigationPayload } from '../../src/graphql/schema/uuid/navigation'
+} from '../../src/graphql/schema/legacy-uuid'
+import { NavigationPayload } from '../../src/graphql/schema/legacy-uuid/navigation'
 import {
   SolutionPayload,
   SolutionRevisionPayload,
-} from '../../src/graphql/schema/uuid/solution'
+} from '../../src/graphql/schema/legacy-uuid/solution'
+import { License } from '../../src/graphql/schema/license'
 
 export function addNavigationInteraction(payload: NavigationPayload) {
   return addJsonInteraction({

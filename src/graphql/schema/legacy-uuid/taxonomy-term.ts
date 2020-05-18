@@ -1,11 +1,11 @@
 import { ForbiddenError, gql } from 'apollo-server'
 import { GraphQLResolveInfo } from 'graphql'
 
-import { resolveAbstractUuid, UuidPayload } from '.'
+import { resolveAbstractLegacyUuid, LegacyUuidPayload } from '.'
 import { Instance } from '../instance'
 import { Service, Context } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
-import { DiscriminatorType, Uuid } from './abstract-uuid'
+import { DiscriminatorType, LegacyUuid } from './abstract-legacy-uuid'
 
 export const taxonomyTermSchema = new Schema()
 
@@ -47,7 +47,7 @@ taxonomyTermSchema.addTypeDef(gql`
 /**
  * type TaxonomyTerm
  */
-export class TaxonomyTerm extends Uuid {
+export class TaxonomyTerm extends LegacyUuid {
   public __typename = DiscriminatorType.TaxonomyTerm
   public type: TaxonomyTermType
   public instance: Instance
@@ -99,7 +99,7 @@ export class TaxonomyTerm extends Uuid {
     return Promise.all(
       this.childrenIds.map((id) => {
         return dataSources.serlo.getUuid({ id }).then((data) => {
-          return resolveAbstractUuid(data) as Uuid
+          return resolveAbstractLegacyUuid(data) as LegacyUuid
         })
       })
     )
@@ -158,7 +158,7 @@ taxonomyTermSchema.addTypeDef(gql`
   Represents a Serlo.org taxonomy term. The taxonomy organizes entities into a tree-like structure, either by
   topic or by curriculum. An entity can be child of multiple \`TaxonomyTerm\`s
   """
-  type TaxonomyTerm implements Uuid {
+  type TaxonomyTerm implements LegacyUuid {
     """
     The ID of the taxonomy term
     """
@@ -198,7 +198,7 @@ taxonomyTermSchema.addTypeDef(gql`
     """
     The children of the taxonomy term
     """
-    children: [Uuid!]!
+    children: [LegacyUuid!]!
     navigation: Navigation
   }
 `)
@@ -217,7 +217,7 @@ taxonomyTermSchema.addMutation<unknown, TaxonomyTermPayload, null>(
     await dataSources.serlo.setTaxonomyTerm(payload)
   }
 )
-export interface TaxonomyTermPayload extends UuidPayload {
+export interface TaxonomyTermPayload extends LegacyUuidPayload {
   alias: string | null
   type: TaxonomyTermType
   instance: Instance

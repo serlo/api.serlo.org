@@ -26,8 +26,8 @@ import {
   CourseRevisionPayload,
   CoursePagePayload,
   CoursePageRevisionPayload,
-} from '../src/graphql/schema/uuid'
-import { NavigationPayload } from '../src/graphql/schema/uuid/navigation'
+} from '../src/graphql/schema/legacy-uuid'
+import { NavigationPayload } from '../src/graphql/schema/legacy-uuid/navigation'
 import { license } from './license'
 
 export const navigation: NavigationPayload = {

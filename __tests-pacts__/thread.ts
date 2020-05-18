@@ -16,7 +16,10 @@ import {
   user,
   video,
 } from '../__fixtures__/uuid'
-import { DiscriminatorType, EntityType } from '../src/graphql/schema/uuid'
+import {
+  DiscriminatorType,
+  EntityType,
+} from '../src/graphql/schema/legacy-uuid'
 import { assertSuccessfulGraphQLQuery } from './__utils__/assertions'
 import {
   addCommentInteraction,

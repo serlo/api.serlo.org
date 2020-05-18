@@ -21,8 +21,10 @@
  */
 import { CommentsDataSource } from './comments'
 import { SerloDataSource } from './serlo'
+import { UuidDataSource } from './uuid'
 
 export interface DataSources {
   serlo: SerloDataSource
   comments: CommentsDataSource
+  uuid: UuidDataSource
 }

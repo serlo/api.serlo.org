@@ -29,6 +29,7 @@ import { URLSearchParams } from 'url'
 
 import { CommentsDataSource } from './data-sources/comments'
 import { SerloDataSource } from './data-sources/serlo'
+import { UuidDataSource } from './data-sources/uuid'
 import { Environment } from './environment'
 import { schema } from './schema'
 import { Context, Service } from './schema/types'
@@ -47,6 +48,7 @@ export function getGraphQLOptions(
       return {
         comments: new CommentsDataSource(environment),
         serlo: new SerloDataSource(environment),
+        uuid: new UuidDataSource(environment),
       }
     },
     context({ req }): Promise<Pick<Context, 'service' | 'user'>> {

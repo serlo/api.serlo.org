@@ -6,7 +6,11 @@ import { License, licenseSchema } from '../license'
 import { addThreadResolvers } from '../thread'
 import { Service, Context } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
-import { DiscriminatorType, Uuid, UuidPayload } from './abstract-uuid'
+import {
+  DiscriminatorType,
+  LegacyUuid,
+  LegacyUuidPayload,
+} from './abstract-legacy-uuid'
 import { User } from './user'
 
 export const pageSchema = new Schema()
@@ -14,7 +18,7 @@ export const pageSchema = new Schema()
 /**
  * type Page
  */
-export class Page extends Uuid {
+export class Page extends LegacyUuid {
   public __typename = DiscriminatorType.Page
   public instance: Instance
   public alias?: string
@@ -78,7 +82,7 @@ pageSchema.addTypeDef(gql`
   Represents a Serlo.org page. A \`Page\` is a repository containing \`PageRevision\`s, is tied to an \`Instance\`,
   has a \`License\`, and has an alias.
   """
-  type Page implements Uuid {
+  type Page implements LegacyUuid {
     """
     The ID of the page
     """
@@ -115,7 +119,7 @@ addThreadResolvers<Page>({
 /**
  * type PageRevision
  */
-export class PageRevision extends Uuid {
+export class PageRevision extends LegacyUuid {
   public __typename = DiscriminatorType.PageRevision
   public title: string
   public content: string
@@ -168,7 +172,7 @@ pageSchema.addTypeDef(gql`
   """
   Represents a Serlo.org page revision. A \`PageRevision\` has fields title and content.
   """
-  type PageRevision implements Uuid {
+  type PageRevision implements LegacyUuid {
     """
     The ID of the page revision
     """
@@ -212,7 +216,7 @@ pageSchema.addMutation<unknown, PagePayload, null>(
     await dataSources.serlo.setPage(payload)
   }
 )
-export interface PagePayload extends UuidPayload {
+export interface PagePayload extends LegacyUuidPayload {
   instance: Instance
   alias: string | null
   currentRevisionId: number | null
@@ -290,7 +294,7 @@ pageSchema.addMutation<unknown, PageRevisionPayload, null>(
     await dataSources.serlo.setPageRevision(payload)
   }
 )
-export interface PageRevisionPayload extends UuidPayload {
+export interface PageRevisionPayload extends LegacyUuidPayload {
   title: string
   content: string
   date: DateTime

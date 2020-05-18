@@ -1,12 +1,12 @@
 import { ForbiddenError, gql } from 'apollo-server'
 
-import { resolveAbstractUuid } from '.'
+import { resolveAbstractLegacyUuid } from '.'
 import { Service } from '../types'
 import { Schema } from '../utils'
 import { EntityType, EntityRevisionType } from './abstract-entity'
 import { AliasInput } from './alias'
 
-export const abstractUuidSchema = new Schema()
+export const abstractLegacyUuidSchema = new Schema()
 
 export enum DiscriminatorType {
   Page = 'Page',
@@ -15,37 +15,34 @@ export enum DiscriminatorType {
   TaxonomyTerm = 'TaxonomyTerm',
 }
 
-export type UuidType =
+export type LegacyUuidType =
   | DiscriminatorType
   | EntityType
   | EntityRevisionType
   | 'UnsupportedUuid'
 
 /**
- * interface Uuid
+ * interface LegacyUuid
  */
-export abstract class Uuid {
-  public abstract __typename: UuidType
+export abstract class LegacyUuid {
+  public abstract __typename: LegacyUuidType
   public id: number
   public trashed: boolean
 
-  public constructor(payload: UuidPayload) {
+  public constructor(payload: LegacyUuidPayload) {
     this.id = payload.id
     this.trashed = payload.trashed
   }
 }
-export interface UuidPayload {
+export interface LegacyUuidPayload {
   id: number
   trashed: boolean
 }
-abstractUuidSchema.addTypeResolver<Uuid>('Uuid', (uuid) => {
+abstractLegacyUuidSchema.addTypeResolver<LegacyUuid>('LegacyUuid', (uuid) => {
   return uuid.__typename
 })
-abstractUuidSchema.addTypeDef(gql`
-  """
-  Represents a Serlo.org data entity that can be uniquely identified by its ID and can be trashed.
-  """
-  interface Uuid {
+abstractLegacyUuidSchema.addTypeDef(gql`
+  interface LegacyUuid {
     """
     The ID
     """
@@ -60,8 +57,8 @@ abstractUuidSchema.addTypeDef(gql`
 /**
  * type UnsupportedUuid
  */
-export class UnsupportedUuid extends Uuid {
-  public __typename: UuidType = 'UnsupportedUuid'
+export class UnsupportedLegacyUuid extends LegacyUuid {
+  public __typename: LegacyUuidType = 'UnsupportedUuid'
   public discriminator: string
 
   public constructor(payload: {
@@ -73,11 +70,8 @@ export class UnsupportedUuid extends Uuid {
     this.discriminator = payload.discriminator
   }
 }
-abstractUuidSchema.addTypeDef(gql`
-  """
-  Represents an \`Uuid\` that isn't supported by the API, yet
-  """
-  type UnsupportedUuid implements Uuid {
+abstractLegacyUuidSchema.addTypeDef(gql`
+  type UnsupportedLegacyUuid implements LegacyUuid {
     """
     The ID
     """
@@ -96,18 +90,18 @@ abstractUuidSchema.addTypeDef(gql`
 /**
  * query uuid
  */
-abstractUuidSchema.addQuery<
+abstractLegacyUuidSchema.addQuery<
   unknown,
   { id?: number; alias?: AliasInput },
-  Uuid | null
+  LegacyUuid | null
 >('uuid', async (_parent, payload, { dataSources }) => {
   const id = payload.alias
     ? (await dataSources.serlo.getAlias(payload.alias)).id
     : (payload.id as number)
   const data = await dataSources.serlo.getUuid({ id })
-  return resolveAbstractUuid(data)
+  return resolveAbstractLegacyUuid(data)
 })
-abstractUuidSchema.addTypeDef(gql`
+abstractLegacyUuidSchema.addTypeDef(gql`
   type Query {
     """
     Returns the \`Uuid\` with the given id or alias.
@@ -121,14 +115,14 @@ abstractUuidSchema.addTypeDef(gql`
       The ID to look up
       """
       id: Int
-    ): Uuid
+    ): LegacyUuid
   }
 `)
 
 /**
  * mutation _removeUuid
  */
-abstractUuidSchema.addMutation<unknown, { id: number }, null>(
+abstractLegacyUuidSchema.addMutation<unknown, { id: number }, null>(
   '_removeUuid',
   (_parent, payload, { dataSources, service }) => {
     if (service !== Service.Serlo) {
@@ -139,7 +133,7 @@ abstractUuidSchema.addMutation<unknown, { id: number }, null>(
     return dataSources.serlo.removeUuid(payload)
   }
 )
-abstractUuidSchema.addTypeDef(gql`
+abstractLegacyUuidSchema.addTypeDef(gql`
   type Mutation {
     """
     Removes the \`Uuid\` with the given ID from cache. May only be called by \`serlo.org\` when an Uuid has been removed.

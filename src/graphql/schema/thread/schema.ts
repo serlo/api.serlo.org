@@ -2,17 +2,18 @@ import { gql } from 'apollo-server'
 import { GraphQLResolveInfo } from 'graphql'
 
 import { DateTime } from '../date-time'
+import { resolveAbstractLegacyUuid, User, LegacyUuid } from '../legacy-uuid'
 import { Context } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
-import { resolveAbstractUuid, User, Uuid } from '../uuid'
+import { Uuid, UuidPayload, UuidType } from '../uuid'
 
 export const threadSchema = new Schema()
 
 /**
  * type Comment
  */
-export class Comment {
-  public id: string
+export class Comment extends Uuid {
+  public __typename = UuidType.Comment
   public content: string
   public createdAt: DateTime
   public updatedAt: DateTime
@@ -20,7 +21,7 @@ export class Comment {
   public parentId: string
 
   public constructor(payload: CommentPayload) {
-    this.id = payload.id
+    super(payload)
     this.content = payload.content
     this.createdAt = payload.createdAt
     this.updatedAt = payload.updatedAt
@@ -54,8 +55,7 @@ export class Comment {
     return new Thread(data)
   }
 }
-export interface CommentPayload {
-  id: string
+export interface CommentPayload extends UuidPayload {
   content: string
   createdAt: DateTime
   updatedAt: DateTime
@@ -76,8 +76,8 @@ threadSchema.addTypeDef(gql`
 /**
  * type Thread
  */
-export class Thread {
-  public id: string
+export class Thread extends Uuid {
+  public __typename = UuidType.Thread
   public title: string
   public archived: boolean
   public createdAt: DateTime
@@ -86,7 +86,7 @@ export class Thread {
   public parentId: number
 
   public constructor(payload: ThreadPayload) {
-    this.id = payload.id
+    super(payload)
     this.title = payload.title
     this.archived = payload.archived
     this.createdAt = payload.createdAt
@@ -107,11 +107,10 @@ export class Thread {
 
   public async uuid(_args: undefined, { dataSources }: Context) {
     const data = await dataSources.serlo.getUuid({ id: this.parentId })
-    return resolveAbstractUuid(data) as Uuid
+    return resolveAbstractLegacyUuid(data) as LegacyUuid
   }
 }
-export interface ThreadPayload {
-  id: string
+export interface ThreadPayload extends UuidPayload {
   title: string
   archived: boolean
   createdAt: DateTime
@@ -127,6 +126,6 @@ threadSchema.addTypeDef(gql`
     createdAt: DateTime!
     updatedAt: DateTime!
     comments: [Comment!]!
-    uuid: Uuid!
+    uuid: LegacyUuid!
   }
 `)

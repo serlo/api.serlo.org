@@ -7,7 +7,7 @@ import { License, licenseSchema } from '../license'
 import { addThreadResolvers } from '../thread'
 import { Service } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
-import { Uuid, UuidPayload } from './abstract-uuid'
+import { LegacyUuid, LegacyUuidPayload } from './abstract-legacy-uuid'
 import { User } from './user'
 
 export const abstractEntitySchema = new Schema()
@@ -38,7 +38,7 @@ export enum EntityRevisionType {
   VideoRevision = 'VideoRevision',
 }
 
-export abstract class Entity extends Uuid {
+export abstract class Entity extends LegacyUuid {
   public abstract __typename: EntityType
   public instance: Instance
   public alias: string | null
@@ -55,7 +55,7 @@ export abstract class Entity extends Uuid {
     this.currentRevisionId = payload.currentRevisionId
   }
 }
-export interface EntityPayload extends UuidPayload {
+export interface EntityPayload extends LegacyUuidPayload {
   instance: Instance
   alias: string | null
   date: DateTime
@@ -89,7 +89,7 @@ abstractEntitySchema.addTypeDef(gql`
     license: License!
   }
 `)
-export interface EntityRevisionPayload extends UuidPayload {
+export interface EntityRevisionPayload extends LegacyUuidPayload {
   date: DateTime
   authorId: number
   repositoryId: number
@@ -116,7 +116,7 @@ abstractEntitySchema.addTypeDef(gql`
   }
 `)
 
-export abstract class EntityRevision extends Uuid {
+export abstract class EntityRevision extends LegacyUuid {
   public abstract __typename: EntityRevisionType
   public date: string
   public authorId: number
@@ -151,7 +151,7 @@ export function addEntityResolvers<
   entityRevisionSetter,
 }: EntityResolversPayload<E, R, ESetter, RSetter>) {
   schema.addTypeDef(gql`
-    type ${entityType} implements Uuid & Entity {
+    type ${entityType} implements LegacyUuid & Entity {
       id: Int!
       trashed: Boolean!
       instance: Instance!
@@ -193,7 +193,7 @@ export function addEntityResolvers<
   )
 
   schema.addTypeDef(gql`
-    type ${entityRevisionType} implements Uuid & EntityRevision {
+    type ${entityRevisionType} implements LegacyUuid & EntityRevision {
       id: Int!
       author: User!
       trashed: Boolean!

@@ -1,10 +1,10 @@
 import { gql } from 'apollo-server'
 
+import { LegacyUuid } from '../legacy-uuid'
 import { Schema } from '../utils'
-import { Uuid } from '../uuid'
 import { Thread } from './schema'
 
-export function addThreadResolvers<E extends Uuid>({
+export function addThreadResolvers<E extends LegacyUuid>({
   schema,
   type,
 }: ThreadResolversPayload<E>) {
@@ -28,7 +28,7 @@ export function addThreadResolvers<E extends Uuid>({
     }
   )
 }
-export interface ThreadResolversPayload<E extends Uuid> {
+export interface ThreadResolversPayload<E extends LegacyUuid> {
   schema: Schema
   type: string
 }

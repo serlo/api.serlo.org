@@ -46,9 +46,20 @@ global.pact = new Pact({
   dir: pactDir,
 })
 
+global.uuidPact = new Pact({
+  consumer: 'api.serlo.org',
+  provider: 'uuid.serlo.org',
+  port: 9011,
+  dir: pactDir,
+})
+
 beforeAll(async () => {
   await rm(pactDir)
-  await Promise.all([global.commentsPact.setup(), global.pact.setup()])
+  await Promise.all([
+    global.commentsPact.setup(),
+    global.pact.setup(),
+    global.uuidPact.setup(),
+  ])
 })
 
 beforeEach(() => {
@@ -56,16 +67,27 @@ beforeEach(() => {
 })
 
 afterEach(async () => {
-  await Promise.all([global.commentsPact.verify(), global.pact.verify()])
+  await Promise.all([
+    global.commentsPact.verify(),
+    global.pact.verify(),
+    global.uuidPact.verify(),
+  ])
 })
 
 afterAll(async () => {
-  await Promise.all([global.commentsPact.finalize(), global.pact.finalize()])
+  await Promise.all([
+    global.commentsPact.finalize(),
+    global.pact.finalize(),
+    global.uuidPact.finalize(),
+  ])
 })
 
 /* eslint-disable import/no-unassigned-import */
 describe('License', () => {
   require('./license')
+})
+describe('Node', () => {
+  require('./node')
 })
 describe('Thread', () => {
   require('./thread')

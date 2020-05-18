@@ -4,14 +4,18 @@ import { DateTime } from '../date-time'
 import { addThreadResolvers } from '../thread'
 import { Service } from '../types'
 import { Schema } from '../utils'
-import { DiscriminatorType, Uuid, UuidPayload } from './abstract-uuid'
+import {
+  DiscriminatorType,
+  LegacyUuid,
+  LegacyUuidPayload,
+} from './abstract-legacy-uuid'
 
 export const userSchema = new Schema()
 
 /**
  * type User
  */
-export class User extends Uuid {
+export class User extends LegacyUuid {
   public __typename = DiscriminatorType.User
   public username: string
   public date: DateTime
@@ -37,7 +41,7 @@ userSchema.addTypeDef(gql`
   """
   Represents a Serlo.org user account
   """
-  type User implements Uuid {
+  type User implements LegacyUuid {
     """
     The ID of the user
     """
@@ -77,7 +81,7 @@ userSchema.addMutation<unknown, UserPayload, null>(
     await dataSources.serlo.setUser(payload)
   }
 )
-export interface UserPayload extends UuidPayload {
+export interface UserPayload extends LegacyUuidPayload {
   username: string
   date: DateTime
   lastLogin: DateTime | null

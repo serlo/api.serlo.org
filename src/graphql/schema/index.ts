@@ -21,20 +21,22 @@
  */
 import { dateTimeSchema } from './date-time'
 import { instanceSchema } from './instance'
+import { legacyUuidSchema } from './legacy-uuid'
 import { licenseSchema } from './license'
+import { nodeSchema } from './node'
 import { threadSchema } from './thread/schema'
 import { Schema } from './utils'
-import { uuidSchema } from './uuid'
 
 export * from './license'
 export * from './date-time'
 export * from './instance'
-export * from './uuid'
+export * from './legacy-uuid'
 
 export const schema = Schema.merge(
   dateTimeSchema,
   instanceSchema,
   licenseSchema,
+  nodeSchema,
   threadSchema,
-  uuidSchema
+  legacyUuidSchema
 )

@@ -29,9 +29,9 @@ import {
   taxonomyTermSubject,
 } from '../__fixtures__/uuid'
 import { Instance } from '../src/graphql/schema/instance'
+import { setPage, setTaxonomyTerm } from '../src/graphql/schema/legacy-uuid'
+import { setNavigation } from '../src/graphql/schema/legacy-uuid/navigation'
 import { Service } from '../src/graphql/schema/types'
-import { setPage, setTaxonomyTerm } from '../src/graphql/schema/uuid'
-import { setNavigation } from '../src/graphql/schema/uuid/navigation'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,

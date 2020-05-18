@@ -25,8 +25,6 @@ import * as R from 'ramda'
 
 import { Environment } from '../environment'
 import { Instance } from '../schema/instance'
-import { License } from '../schema/license'
-import { Service } from '../schema/types'
 import {
   AliasPayload,
   AppletPayload,
@@ -51,11 +49,13 @@ import {
   SolutionRevisionPayload,
   TaxonomyTermPayload,
   UserPayload,
-  UuidPayload,
+  LegacyUuidPayload,
   VideoPayload,
   VideoRevisionPayload,
-} from '../schema/uuid'
-import { Navigation, NavigationPayload } from '../schema/uuid/navigation'
+} from '../schema/legacy-uuid'
+import { Navigation, NavigationPayload } from '../schema/legacy-uuid/navigation'
+import { License } from '../schema/license'
+import { Service } from '../schema/types'
 
 export class SerloDataSource extends RESTDataSource {
   public constructor(private environment: Environment) {
@@ -223,7 +223,7 @@ export class SerloDataSource extends RESTDataSource {
     })
   }
 
-  public async setUuid<T extends UuidPayload>(payload: T) {
+  public async setUuid<T extends LegacyUuidPayload>(payload: T) {
     const cacheKey = this.getCacheKey(`/api/uuid/${payload.id}`)
     await this.environment.cache.set(
       cacheKey,

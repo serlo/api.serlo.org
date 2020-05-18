@@ -21,8 +21,11 @@
  */
 import { Schema } from '../utils'
 import { abstractEntitySchema } from './abstract-entity'
+import {
+  abstractLegacyUuidSchema,
+  UnsupportedLegacyUuid,
+} from './abstract-legacy-uuid'
 import { abstractTaxonomyTermChildSchema } from './abstract-taxonomy-term-child'
-import { abstractUuidSchema, UnsupportedUuid } from './abstract-uuid'
 import { aliasSchema } from './alias'
 import { Applet, AppletRevision, appletSchema } from './applet'
 import { articleSchema, Article, ArticleRevision } from './article'
@@ -48,7 +51,7 @@ import { userSchema, User } from './user'
 import { Video, VideoRevision, videoSchema } from './video'
 
 export * from './abstract-entity'
-export * from './abstract-uuid'
+export * from './abstract-legacy-uuid'
 export * from './alias'
 export * from './applet'
 export * from './article'
@@ -64,10 +67,10 @@ export * from './taxonomy-term'
 export * from './user'
 export * from './video'
 
-export const uuidSchema = Schema.merge(
+export const legacyUuidSchema = Schema.merge(
   abstractEntitySchema,
+  abstractLegacyUuidSchema,
   abstractTaxonomyTermChildSchema,
-  abstractUuidSchema,
   aliasSchema,
   appletSchema,
   articleSchema,
@@ -85,8 +88,12 @@ export const uuidSchema = Schema.merge(
   videoSchema
 )
 
+// uuid(id: number) -> SerloUuid
+// node(id: number | string) -> SerloUuid | NewUuid
+// alias(alias:....) -> SerloUuid | NewUuid
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function resolveAbstractUuid(data?: any) {
+export function resolveAbstractLegacyUuid(data?: any) {
   if (!data) return null
 
   switch (data.discriminator) {
@@ -113,7 +120,7 @@ export function resolveAbstractUuid(data?: any) {
         case 'video':
           return new Video(data)
         default:
-          return new UnsupportedUuid(data)
+          return new UnsupportedLegacyUuid(data)
       }
     case 'entityRevision':
       switch (data.type) {
@@ -138,7 +145,7 @@ export function resolveAbstractUuid(data?: any) {
         case 'video':
           return new VideoRevision(data)
         default:
-          return new UnsupportedUuid(data)
+          return new UnsupportedLegacyUuid(data)
       }
     case 'page':
       return new Page(data)
@@ -149,6 +156,6 @@ export function resolveAbstractUuid(data?: any) {
     case 'taxonomyTerm':
       return new TaxonomyTerm(data)
     default:
-      return new UnsupportedUuid(data)
+      return new UnsupportedLegacyUuid(data)
   }
 }
