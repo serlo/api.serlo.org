@@ -2,7 +2,7 @@ import { gql } from 'apollo-server'
 
 import { Schema } from '../utils'
 import { Uuid } from '../uuid'
-import { Thread, ThreadPayload } from './schema'
+import { Thread } from './schema'
 
 export function addThreadResolvers<E extends Uuid>({
   schema,
@@ -17,10 +17,14 @@ export function addThreadResolvers<E extends Uuid>({
     type,
     'threads',
     async (object, _args, { dataSources }) => {
-      const threadsData = await dataSources.comments.getThreads(object.id)
-      return threadsData.map((payload: ThreadPayload) => {
-        return new Thread(payload)
-      })
+      const threadIds = await dataSources.comments.getThreads(object.id)
+      return Promise.all(
+        threadIds.map((id) => {
+          return dataSources.comments.getThread(id).then((payload) => {
+            return new Thread(payload)
+          })
+        })
+      )
     }
   )
 }

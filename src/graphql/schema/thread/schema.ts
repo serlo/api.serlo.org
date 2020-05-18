@@ -4,7 +4,7 @@ import { GraphQLResolveInfo } from 'graphql'
 import { DateTime } from '../date-time'
 import { Context } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
-import { User } from '../uuid'
+import { resolveAbstractUuid, User, Uuid } from '../uuid'
 
 export const threadSchema = new Schema()
 
@@ -17,6 +17,7 @@ export class Comment {
   public createdAt: DateTime
   public updatedAt: DateTime
   public authorId: number
+  // public parentId: string
 
   public constructor(payload: CommentPayload) {
     this.id = payload.id
@@ -38,6 +39,19 @@ export class Comment {
     const data = await dataSources.serlo.getUuid(partialUser)
     return new User(data)
   }
+
+  // public async thread(
+  //     _args: undefined,
+  //     { dataSources }: Context,
+  //     info: GraphQLResolveInfo
+  // ) {
+  //   const partialThread = { id: this.parentId }
+  //   if (requestsOnlyFields('Thread', ['id'], info)) {
+  //     return partialThread
+  //   }
+  //   const data = await dataSources.comments.getThread(this.parentId)
+  //   return new Thread(data)
+  // }
 }
 export interface CommentPayload {
   id: string
@@ -63,40 +77,53 @@ export class Thread {
   public id: string
   public title: string
   public archived: boolean
-  public trashed: boolean
   public createdAt: DateTime
   public updatedAt: DateTime
-  public comments: CommentPayload[]
+  public commentIds: string[]
+  public parentId: number
 
   public constructor(payload: ThreadPayload) {
     this.id = payload.id
     this.title = payload.title
     this.archived = payload.archived
-    this.trashed = payload.trashed
     this.createdAt = payload.createdAt
     this.updatedAt = payload.updatedAt
-    this.comments = payload.comments.map((payload) => {
-      return new Comment(payload)
-    })
+    this.commentIds = payload.commentIds
+    this.parentId = payload.parentId
+  }
+
+  public async comments(_args: undefined, { dataSources }: Context) {
+    return Promise.all(
+      this.commentIds.map((id) => {
+        return dataSources.comments.getComment(id).then((payload) => {
+          return new Comment(payload)
+        })
+      })
+    )
+  }
+
+  public async uuid(_args: undefined, { dataSources }: Context) {
+    const data = await dataSources.serlo.getUuid({ id: this.parentId })
+    return resolveAbstractUuid(data) as Uuid
   }
 }
 export interface ThreadPayload {
   id: string
   title: string
   archived: boolean
-  trashed: boolean
   createdAt: DateTime
   updatedAt: DateTime
-  comments: CommentPayload[]
+  commentIds: string[]
+  parentId: number
 }
 threadSchema.addTypeDef(gql`
   type Thread {
     id: String!
     title: String!
     archived: Boolean!
-    trashed: Boolean!
     createdAt: DateTime!
     updatedAt: DateTime!
     comments: [Comment!]!
+    uuid: Uuid!
   }
 `)

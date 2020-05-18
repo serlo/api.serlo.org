@@ -1,7 +1,7 @@
 import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
-import { threads } from '../__fixtures__/threads'
+import { comment, thread, threads } from '../__fixtures__/threads'
 import {
   applet,
   article,
@@ -18,7 +18,11 @@ import {
 } from '../__fixtures__/uuid'
 import { DiscriminatorType, EntityType } from '../src/graphql/schema/uuid'
 import { assertSuccessfulGraphQLQuery } from './__utils__/assertions'
-import { addThreadsInteraction } from './__utils__/comments-interactions'
+import {
+  addCommentInteraction,
+  addThreadInteraction,
+  addThreadsInteraction,
+} from './__utils__/comments-interactions'
 import {
   addAppletInteraction,
   addArticleInteraction,
@@ -146,6 +150,8 @@ test.each([
   ],
 ])('%s has threads', async (type, { fixture, setup }) => {
   await addUserInteraction(user)
+  await addCommentInteraction(comment)
+  await addThreadInteraction(fixture.id, thread)
   await addThreadsInteraction(fixture.id, threads)
   await setup()
   await assertSuccessfulGraphQLQuery({
@@ -157,7 +163,6 @@ test.each([
               id
               title
               archived
-              trashed
               createdAt
               updatedAt
               comments {
@@ -170,6 +175,11 @@ test.each([
                   username
                 }
               }
+              uuid {
+                ... on ${type} {
+                  id
+                }
+              }
             }
           }
         }
@@ -179,16 +189,19 @@ test.each([
       uuid: {
         threads: [
           {
-            ...threads[0],
+            ...R.omit(['commentIds'], thread),
             comments: [
               {
-                ...R.omit(['authorId'], threads[0].comments[0]),
+                ...R.omit(['authorId'], comment),
                 author: {
                   id: user.id,
                   username: user.username,
                 },
               },
             ],
+            uuid: {
+              id: fixture.id,
+            },
           },
         ],
       },

@@ -65,6 +65,7 @@ addEntityResolvers({
     parentId: Int!
   `,
   entityFields: `
+    # FIXME: or GroupedExercise! 
     exercise: Exercise!
   `,
   entityRevisionFields: `

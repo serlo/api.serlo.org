@@ -1,8 +1,49 @@
 import { Matchers } from '@pact-foundation/pact'
 
-import { ThreadPayload } from '../../src/graphql/schema/thread/thread'
+import {
+  CommentPayload,
+  ThreadPayload,
+} from '../../src/graphql/schema/thread/schema'
 
-export function addThreadsInteraction(id: number, payload: ThreadPayload[]) {
+export function addCommentInteraction(payload: CommentPayload) {
+  return addJsonInteraction({
+    name: `fetch comment ${payload.id}`,
+    given: '',
+    path: `/comment/${payload.id}`,
+    body: {
+      id: payload.id,
+      content: Matchers.string(payload.content),
+      createdAt: Matchers.iso8601DateTime(payload.createdAt),
+      updatedAt: Matchers.iso8601DateTime(payload.updatedAt),
+      authorId: Matchers.integer(payload.authorId),
+    },
+  })
+}
+
+export function addThreadInteraction(
+  id: number,
+  payload: Omit<ThreadPayload, 'parentId'>
+) {
+  return addJsonInteraction({
+    name: `fetch thread ${payload.id} of parent ${id}`,
+    given: '',
+    path: `/thread/${payload.id}`,
+    body: {
+      id: payload.id,
+      title: Matchers.string(payload.title),
+      archived: Matchers.boolean(payload.archived),
+      createdAt: Matchers.iso8601DateTime(payload.createdAt),
+      updatedAt: Matchers.iso8601DateTime(payload.updatedAt),
+      commentIds:
+        payload.commentIds.length > 0
+          ? Matchers.eachLike(Matchers.like([payload.commentIds][0]))
+          : [],
+      parentId: Matchers.integer(id),
+    },
+  })
+}
+
+export function addThreadsInteraction(id: number, payload: string[]) {
   return addJsonInteraction({
     name: `fetch threads of uuid ${id}`,
     given: '',
