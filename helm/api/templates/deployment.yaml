@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: server
+  name: server
+  # namespace: api
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: server
+
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      containers:
+        - env:
+            - name: SERLO_ORG_HOST
+              value: serlo.localhost
+            - name: PLAYGROUND_SECRET
+              value: QY7e0XVw9J9uSa4A8P5CMyWTU5apZU7m
+            - name: SERLO_ORG_SECRET
+              value: 4RkP0diWbtinA9bZglwg5SO3oUIFUCTn
+            - name: SERLO_CLOUDFLARE_WORKER_SECRET
+              value: MhoGXiR8dQsDjcHYgE00OOL7LRhLZrjR
+          #            - name: REDIS_HOST
+          #              value: redis-master
+          name: server
+          image: eu.gcr.io/serlo-shared/api:0.5.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          livenessProbe:
+            httpGet:
+              path: /.well-known/apollo/server-health
+              port: 3000
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 30
+          resources:
+            limits:
+              cpu: 375m
+              memory: 150Mi
+            requests:
+              cpu: 250m
+              memory: 100Mi
+      hostAliases:
+        - hostnames:
+            - de.serlo.localhost
+            - en.serlo.localhost
+            - es.serlo.localhost
+            - fr.serlo.localhost
+            - hi.serlo.localhost
+            - ta.serlo.localhost
+          ip: 10.1.10.135
