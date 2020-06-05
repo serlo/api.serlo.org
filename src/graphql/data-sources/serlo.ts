@@ -54,6 +54,8 @@ import {
   UuidPayload,
   VideoPayload,
   VideoRevisionPayload,
+  encodePath,
+  decodePath,
 } from '../schema/uuid'
 import { Navigation, NavigationPayload } from '../schema/uuid/navigation'
 
@@ -71,8 +73,9 @@ export class SerloDataSource extends RESTDataSource {
     instance: Instance
     bypassCache?: boolean
   }) {
+    const cleanPath = encodePath(decodePath(path))
     return this.cacheAwareGet({
-      path: `/api/alias${path}`,
+      path: `/api/alias${cleanPath}`,
       instance,
       bypassCache,
       setter: 'setAlias',

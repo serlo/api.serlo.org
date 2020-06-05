@@ -94,6 +94,12 @@ async function exec(): Promise<void> {
       added: ['Handle user tokens'],
       fixed: ['Ouput url-encoded aliases'],
     },
+    {
+      tagName: 'v0.5.2',
+      name: '0.5.2',
+      date: '2020-06-05',
+      fixed: ['Handle url-encoded alias inputs correctly'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
