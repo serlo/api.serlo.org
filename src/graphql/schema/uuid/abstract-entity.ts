@@ -7,6 +7,7 @@ import { License, licenseSchema } from '../license'
 import { Service } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
 import { Uuid, UuidPayload } from './abstract-uuid'
+import { encodePath } from './alias'
 import { User } from './user'
 
 export const abstractEntitySchema = new Schema()
@@ -48,7 +49,7 @@ export abstract class Entity extends Uuid {
   public constructor(payload: EntityPayload) {
     super(payload)
     this.instance = payload.instance
-    this.alias = payload.alias
+    this.alias = payload.alias ? encodePath(payload.alias) : null
     this.date = payload.date
     this.licenseId = payload.licenseId
     this.currentRevisionId = payload.currentRevisionId

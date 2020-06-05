@@ -2,11 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.5.0](https://github.com/serlo/api.serlo.org/compare/v0.5.0..v0.5.1) - April 27, 2020
+## [0.5.0](https://github.com/serlo/api.serlo.org/compare/v0.5.0..v0.5.1) - June 5, 2020
 
 ### Added
 
 - Handle user tokens
+
+### Fixed
+
+- Ouput url-encoded aliases
 
 ## [0.5.0](https://github.com/serlo/api.serlo.org/compare/v0.4.3..v0.5.0) - April 27, 2020
 

@@ -6,6 +6,7 @@ import { Instance } from '../instance'
 import { Service, Context } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
 import { DiscriminatorType, Uuid } from './abstract-uuid'
+import { encodePath } from './alias'
 
 export const taxonomyTermSchema = new Schema()
 
@@ -73,7 +74,7 @@ export class TaxonomyTerm extends Uuid {
     super(payload)
     this.type = payload.type
     this.instance = payload.instance
-    this.alias = payload.alias
+    this.alias = payload.alias ? encodePath(payload.alias) : null
     this.name = payload.name
     this.description = payload.description
     this.weight = payload.weight

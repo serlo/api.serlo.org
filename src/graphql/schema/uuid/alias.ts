@@ -7,6 +7,14 @@ import { Schema } from '../utils'
 
 export const aliasSchema = new Schema()
 
+export function decodePath(path: string) {
+  return decodeURIComponent(path)
+}
+
+export function encodePath(path: string) {
+  return encodeURIComponent(path).replace(/%2F/g, '/')
+}
+
 /**
  * input AliasInput
  */

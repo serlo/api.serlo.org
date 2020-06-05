@@ -6,6 +6,7 @@ import { License, licenseSchema } from '../license'
 import { Service, Context } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
 import { DiscriminatorType, Uuid, UuidPayload } from './abstract-uuid'
+import { encodePath } from './alias'
 import { User } from './user'
 
 export const pageSchema = new Schema()
@@ -16,7 +17,7 @@ export const pageSchema = new Schema()
 export class Page extends Uuid {
   public __typename = DiscriminatorType.Page
   public instance: Instance
-  public alias?: string
+  public alias: string | null
   public currentRevisionId?: number
   public licenseId: number
 
@@ -31,7 +32,7 @@ export class Page extends Uuid {
   }) {
     super(payload)
     this.instance = payload.instance
-    this.alias = payload.alias
+    this.alias = payload.alias ? encodePath(payload.alias) : null
     this.currentRevisionId = payload.currentRevisionId
     this.licenseId = payload.licenseId
   }
