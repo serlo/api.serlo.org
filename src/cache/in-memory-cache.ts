@@ -28,13 +28,11 @@ export function createInMemoryCache(): Cache & { reset(): void } {
     // eslint-disable-next-line @typescript-eslint/require-await
     async get(key) {
       const serialized = cache[key]
-      return serialized === undefined
-        ? null
-        : Buffer.from(serialized, 'utf16le')
+      return serialized === undefined ? null : Buffer.from(serialized)
     },
     // eslint-disable-next-line @typescript-eslint/require-await
     async set(key, value) {
-      cache[key] = value.toString('utf16le')
+      cache[key] = value.toString()
     },
     reset() {
       cache = {}
