@@ -89,7 +89,7 @@ async function exec(): Promise<void> {
     },
     {
       tagName: 'v0.5.1',
-      name: '0.5.0',
+      name: '0.5.1',
       date: '2020-06-05',
       added: ['Handle user tokens'],
       fixed: ['Ouput url-encoded aliases'],
