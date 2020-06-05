@@ -75,7 +75,11 @@ export class Schema {
 
   public static merge(...schemas: Schema[]): Schema {
     const subResolvers = R.map((schema) => schema.resolvers, schemas)
-    const resolvers = R.reduce<{}, {}>(R.mergeDeepRight, {}, subResolvers)
+    const resolvers = R.reduce<Record<string, unknown>, Schema['resolvers']>(
+      R.mergeDeepRight,
+      {},
+      subResolvers
+    )
     const subTypeDefs = R.map((schema) => schema.typeDefs, schemas)
     const typeDefs = R.flatten(subTypeDefs)
     return new Schema(resolvers, typeDefs)

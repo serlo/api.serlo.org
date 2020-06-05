@@ -51,7 +51,7 @@ const lines = [
   '@link      https://github.com/serlo-org/api.serlo.org for the canonical source repository',
 ]
 
-g('**/*@(.js|.ts|.tsx)', {
+void g('**/*@(.js|.ts|.tsx)', {
   cwd: root,
   ignore: ['**/dist/**', '**/node_modules/**'],
 }).then((files) => {

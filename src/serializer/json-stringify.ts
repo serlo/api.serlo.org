@@ -27,7 +27,7 @@ export function createJsonStringifySerializer(): Serializer {
       return Buffer.from(JSON.stringify(value), 'utf16le')
     },
     deserialize(value) {
-      return JSON.parse(value.toString('utf16le'))
+      return JSON.parse(value.toString('utf16le')) as unknown
     },
   }
 }

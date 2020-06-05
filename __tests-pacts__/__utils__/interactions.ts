@@ -537,8 +537,7 @@ function addJsonInteraction({
   name: string
   given: string
   path: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  body: any
+  body: unknown
 }) {
   return global.pact.addInteraction({
     uponReceiving: name,

@@ -14,17 +14,10 @@ export class User extends Uuid {
   public __typename = DiscriminatorType.User
   public username: string
   public date: DateTime
-  public lastLogin?: DateTime
-  public description?: string
+  public lastLogin: DateTime | null
+  public description: string | null
 
-  public constructor(payload: {
-    id: number
-    trashed: boolean
-    username: string
-    date: DateTime
-    lastLogin?: DateTime
-    description?: string
-  }) {
+  public constructor(payload: UserPayload) {
     super(payload)
     this.username = payload.username
     this.date = payload.date

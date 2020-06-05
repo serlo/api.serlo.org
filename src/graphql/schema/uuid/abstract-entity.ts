@@ -3,12 +3,12 @@ import { ForbiddenError, gql } from 'apollo-server'
 import { SerloDataSource } from '../../data-sources/serlo'
 import { DateTime } from '../date-time'
 import { Instance } from '../instance'
-import { License, licenseSchema } from '../license'
+import { License } from '../license'
 import { Service } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
 import { Uuid, UuidPayload } from './abstract-uuid'
 import { encodePath } from './alias'
-import { User } from './user'
+import { User, UserPayload } from './user'
 
 export const abstractEntitySchema = new Schema()
 
@@ -178,17 +178,12 @@ export function addEntityResolvers<
   schema.addResolver<E, unknown, Partial<License>>(
     entityType,
     'license',
-    async (entity, _args, context, info) => {
+    async (entity, _args, { dataSources }, info) => {
       const partialLicense = { id: entity.licenseId }
       if (requestsOnlyFields('License', ['id'], info)) {
         return partialLicense
       }
-      return licenseSchema.resolvers.Query.license(
-        undefined,
-        partialLicense,
-        context,
-        info
-      )
+      return dataSources.serlo.getLicense(partialLicense)
     }
   )
 
@@ -210,7 +205,7 @@ export function addEntityResolvers<
       if (requestsOnlyFields('User', ['id'], info)) {
         return partialUser
       }
-      const data = await dataSources.serlo.getUuid(partialUser)
+      const data = await dataSources.serlo.getUuid<UserPayload>(partialUser)
       return new User(data)
     }
   )
@@ -235,8 +230,9 @@ export function addEntityResolvers<
           `You do not have the permissions to set a ${entityType}`
         )
       }
-
-      await dataSources.serlo[entitySetter](payload)
+      await (dataSources.serlo[entitySetter] as (
+        payload: EPayload
+      ) => Promise<void>)(payload)
     }
   )
   schema.addTypeDef(gql`
@@ -262,8 +258,9 @@ export function addEntityResolvers<
           `You do not have the permissions to set a ${entityRevisionType}`
         )
       }
-
-      await dataSources.serlo[entityRevisionSetter](payload)
+      await (dataSources.serlo[entityRevisionSetter] as (
+        payload: RPayload
+      ) => Promise<void>)(payload)
     }
   )
   schema.addTypeDef(gql`

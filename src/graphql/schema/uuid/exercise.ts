@@ -10,7 +10,7 @@ import {
   addTaxonomyTermChildResolvers,
   TaxonomyTermChild,
 } from './abstract-taxonomy-term-child'
-import { Solution } from './solution'
+import { Solution, SolutionPayload } from './solution'
 
 export const exerciseSchema = new Schema()
 
@@ -36,7 +36,9 @@ exerciseSchema.addResolver<Exercise, unknown, Partial<Solution> | null>(
     if (requestsOnlyFields('Solution', ['id'], info)) {
       return partialSolution
     }
-    const data = await dataSources.serlo.getUuid(partialSolution)
+    const data = await dataSources.serlo.getUuid<SolutionPayload>(
+      partialSolution
+    )
     return new Solution(data)
   }
 )

@@ -33,7 +33,7 @@ const fsOptions = { encoding: 'utf-8' }
 
 const readFile = util.promisify(fs.readFile)
 
-run().then(() => {})
+void run().then(() => {})
 
 async function run() {
   const { version } = await fetchPackageJSON()
@@ -45,8 +45,10 @@ async function run() {
   })
 }
 
-function fetchPackageJSON(): Promise<{ version: string }> {
-  return readFile(packageJsonPath, fsOptions).then(JSON.parse)
+function fetchPackageJSON() {
+  return readFile(packageJsonPath, fsOptions).then(JSON.parse) as Promise<{
+    version: string
+  }>
 }
 
 function buildDockerImage({
@@ -74,7 +76,7 @@ function buildDockerImage({
     ],
     { stdio: 'pipe' }
   )
-  const images = JSON.parse(String(result.stdout))
+  const images = JSON.parse(String(result.stdout)) as unknown[]
 
   if (images.length > 0) {
     console.log(

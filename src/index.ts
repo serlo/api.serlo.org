@@ -61,7 +61,7 @@ function applyGraphQLMiddleware(app: Express) {
 
   app.use(server.getMiddleware({ path: '/graphql' }))
   app.get('/___graphql', (...args) => {
-    const token = jwt.sign({}, process.env.PLAYGROUND_SECRET!, {
+    const token = jwt.sign({}, process.env.PLAYGROUND_SECRET, {
       expiresIn: '2h',
       audience: 'api.serlo.org',
       issuer: Service.Playground,
@@ -69,7 +69,7 @@ function applyGraphQLMiddleware(app: Express) {
 
     return createPlayground({
       endpoint: '/graphql',
-      // @ts-ignore Not documented but we can pass custom headers
+      // @ts-expect-error Not documented but we can pass custom headers
       headers: {
         Authorization: `Serlo Service=${token}`,
       },

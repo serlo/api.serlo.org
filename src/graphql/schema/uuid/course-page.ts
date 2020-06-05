@@ -32,7 +32,7 @@ coursePageSchema.addResolver<CoursePage, unknown, Partial<Course>>(
     if (requestsOnlyFields('Course', ['id'], info)) {
       return partialCourse
     }
-    const data = await dataSources.serlo.getUuid(partialCourse)
+    const data = await dataSources.serlo.getUuid<Course>(partialCourse)
     return new Course(data)
   }
 )

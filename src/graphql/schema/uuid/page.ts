@@ -2,12 +2,12 @@ import { ForbiddenError, gql } from 'apollo-server'
 
 import { DateTime } from '../date-time'
 import { Instance } from '../instance'
-import { License, licenseSchema } from '../license'
+import { License } from '../license'
 import { Service, Context } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
 import { DiscriminatorType, Uuid, UuidPayload } from './abstract-uuid'
 import { encodePath } from './alias'
-import { User } from './user'
+import { User, UserPayload } from './user'
 
 export const pageSchema = new Schema()
 
@@ -18,18 +18,10 @@ export class Page extends Uuid {
   public __typename = DiscriminatorType.Page
   public instance: Instance
   public alias: string | null
-  public currentRevisionId?: number
+  public currentRevisionId: number | null
   public licenseId: number
 
-  public constructor(payload: {
-    id: number
-    trashed: boolean
-    instance: Instance
-    alias?: string
-    taxonomyTermIds: number[]
-    currentRevisionId?: number
-    licenseId: number
-  }) {
+  public constructor(payload: PagePayload) {
     super(payload)
     this.instance = payload.instance
     this.alias = payload.alias ? encodePath(payload.alias) : null
@@ -53,24 +45,21 @@ pageSchema.addResolver<Page, unknown, Partial<PageRevision> | null>(
     if (requestsOnlyFields('PageRevision', ['id'], info)) {
       return partialCurrentRevision
     }
-    const data = await dataSources.serlo.getUuid(partialCurrentRevision)
+    const data = await dataSources.serlo.getUuid<PageRevisionPayload>(
+      partialCurrentRevision
+    )
     return new PageRevision(data)
   }
 )
 pageSchema.addResolver<Page, unknown, Partial<License>>(
   'Page',
   'license',
-  async (page, _args, context, info) => {
+  async (page, _args, { dataSources }, info) => {
     const partialLicense = { id: page.licenseId }
     if (requestsOnlyFields('License', ['id'], info)) {
       return partialLicense
     }
-    return licenseSchema.resolvers.Query.license(
-      undefined,
-      partialLicense,
-      context,
-      info
-    )
+    return dataSources.serlo.getLicense(partialLicense)
   }
 )
 pageSchema.addTypeDef(gql`
@@ -118,15 +107,7 @@ export class PageRevision extends Uuid {
   public authorId: number
   public repositoryId: number
 
-  public constructor(payload: {
-    id: number
-    trashed: boolean
-    date: DateTime
-    title: string
-    content: string
-    authorId: number
-    repositoryId: number
-  }) {
+  public constructor(payload: PageRevisionPayload) {
     super(payload)
     this.title = payload.title
     this.content = payload.content
@@ -143,7 +124,7 @@ pageSchema.addResolver<PageRevision, unknown, Partial<User>>(
     if (requestsOnlyFields('User', ['id'], info)) {
       return partialUser
     }
-    const data = await dataSources.serlo.getUuid(partialUser)
+    const data = await dataSources.serlo.getUuid<UserPayload>(partialUser)
     return new User(data)
   }
 )
@@ -155,7 +136,7 @@ pageSchema.addResolver<PageRevision, unknown, Partial<Page>>(
     if (requestsOnlyFields('Page', ['id'], info)) {
       return partialPage
     }
-    const data = await dataSources.serlo.getUuid(partialPage)
+    const data = await dataSources.serlo.getUuid<PagePayload>(partialPage)
     return new Page(data)
   }
 )

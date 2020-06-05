@@ -28,7 +28,6 @@ export function createRedisCache({ host }: { host: string }): Cache {
   const client = redis.createClient({
     host,
     port: 6379,
-    // eslint-disable-next-line @typescript-eslint/camelcase
     return_buffers: true,
   })
   // eslint-disable-next-line @typescript-eslint/unbound-method
