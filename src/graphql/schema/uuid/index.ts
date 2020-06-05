@@ -24,28 +24,90 @@ import { abstractEntitySchema } from './abstract-entity'
 import { abstractTaxonomyTermChildSchema } from './abstract-taxonomy-term-child'
 import { abstractUuidSchema, UnsupportedUuid } from './abstract-uuid'
 import { aliasSchema } from './alias'
-import { Applet, AppletRevision, appletSchema } from './applet'
-import { articleSchema, Article, ArticleRevision } from './article'
-import { Course, CourseRevision, courseSchema } from './course'
-import { CoursePage, CoursePageRevision, coursePageSchema } from './course-page'
-import { Event, EventRevision, eventSchema } from './event'
-import { Exercise, ExerciseRevision, exerciseSchema } from './exercise'
+import {
+  Applet,
+  AppletPayload,
+  AppletRevision,
+  AppletRevisionPayload,
+  appletSchema,
+} from './applet'
+import {
+  articleSchema,
+  Article,
+  ArticleRevision,
+  ArticlePayload,
+  ArticleRevisionPayload,
+} from './article'
+import {
+  Course,
+  CoursePayload,
+  CourseRevision,
+  CourseRevisionPayload,
+  courseSchema,
+} from './course'
+import {
+  CoursePage,
+  CoursePagePayload,
+  CoursePageRevision,
+  CoursePageRevisionPayload,
+  coursePageSchema,
+} from './course-page'
+import {
+  Event,
+  EventPayload,
+  EventRevision,
+  EventRevisionPayload,
+  eventSchema,
+} from './event'
+import {
+  Exercise,
+  ExercisePayload,
+  ExerciseRevision,
+  ExerciseRevisionPayload,
+  exerciseSchema,
+} from './exercise'
 import {
   ExerciseGroup,
+  ExerciseGroupPayload,
   ExerciseGroupRevision,
+  ExerciseGroupRevisionPayload,
   exerciseGroupSchema,
 } from './exercise-group'
 import {
   GroupedExercise,
+  GroupedExercisePayload,
   GroupedExerciseRevision,
+  GroupedExerciseRevisionPayload,
   groupedExerciseSchema,
 } from './grouped-exercise'
 import { navigationSchema } from './navigation'
-import { pageSchema, Page, PageRevision } from './page'
-import { Solution, SolutionRevision, solutionSchema } from './solution'
-import { taxonomyTermSchema, TaxonomyTerm } from './taxonomy-term'
-import { userSchema, User } from './user'
-import { Video, VideoRevision, videoSchema } from './video'
+import {
+  pageSchema,
+  Page,
+  PageRevision,
+  PagePayload,
+  PageRevisionPayload,
+} from './page'
+import {
+  Solution,
+  SolutionPayload,
+  SolutionRevision,
+  SolutionRevisionPayload,
+  solutionSchema,
+} from './solution'
+import {
+  taxonomyTermSchema,
+  TaxonomyTerm,
+  TaxonomyTermPayload,
+} from './taxonomy-term'
+import { userSchema, User, UserPayload } from './user'
+import {
+  Video,
+  VideoPayload,
+  VideoRevision,
+  VideoRevisionPayload,
+  videoSchema,
+} from './video'
 
 export * from './abstract-entity'
 export * from './abstract-uuid'
@@ -85,8 +147,61 @@ export const uuidSchema = Schema.merge(
   videoSchema
 )
 
+export type AbstractUuidPayload =
+  | ({ discriminator: 'entity'; type: 'applet' } & AppletPayload)
+  | ({ discriminator: 'entity'; type: 'article' } & ArticlePayload)
+  | ({ discriminator: 'entity'; type: 'course' } & CoursePayload)
+  | ({ discriminator: 'entity'; type: 'coursePage' } & CoursePagePayload)
+  | ({ discriminator: 'entity'; type: 'event' } & EventPayload)
+  | ({ discriminator: 'entity'; type: 'exercise' } & ExercisePayload)
+  | ({ discriminator: 'entity'; type: 'exerciseGroup' } & ExerciseGroupPayload)
+  | ({
+      discriminator: 'entity'
+      type: 'groupedExercise'
+    } & GroupedExercisePayload)
+  | ({ discriminator: 'entity'; type: 'solution' } & SolutionPayload)
+  | ({ discriminator: 'entity'; type: 'video' } & VideoPayload)
+  | ({
+      discriminator: 'entityRevision'
+      type: 'applet'
+    } & AppletRevisionPayload)
+  | ({
+      discriminator: 'entityRevision'
+      type: 'article'
+    } & ArticleRevisionPayload)
+  | ({
+      discriminator: 'entityRevision'
+      type: 'course'
+    } & CourseRevisionPayload)
+  | ({
+      discriminator: 'entityRevision'
+      type: 'coursePage'
+    } & CoursePageRevisionPayload)
+  | ({ discriminator: 'entityRevision'; type: 'event' } & EventRevisionPayload)
+  | ({
+      discriminator: 'entityRevision'
+      type: 'exercise'
+    } & ExerciseRevisionPayload)
+  | ({
+      discriminator: 'entityRevision'
+      type: 'exerciseGroup'
+    } & ExerciseGroupRevisionPayload)
+  | ({
+      discriminator: 'entityRevision'
+      type: 'groupedExercise'
+    } & GroupedExerciseRevisionPayload)
+  | ({
+      discriminator: 'entityRevision'
+      type: 'solution'
+    } & SolutionRevisionPayload)
+  | ({ discriminator: 'entityRevision'; type: 'video' } & VideoRevisionPayload)
+  | ({ discriminator: 'page' } & PagePayload)
+  | ({ discriminator: 'pageRevision' } & PageRevisionPayload)
+  | ({ discriminator: 'user' } & UserPayload)
+  | ({ discriminator: 'taxonomyTerm' } & TaxonomyTermPayload)
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function resolveAbstractUuid(data?: any) {
+export function resolveAbstractUuid(data?: AbstractUuidPayload) {
   if (!data) return null
 
   switch (data.discriminator) {

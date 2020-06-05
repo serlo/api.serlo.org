@@ -24,7 +24,7 @@ import { spawnSync } from 'child_process'
 import * as path from 'path'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires,import/no-commonjs
-const { version } = require('../package.json')
+const { version } = require('../package.json') as { version: string }
 
 const result = spawnSync('git', ['rev-parse', '--short', 'HEAD'], {
   stdio: 'pipe',
@@ -33,7 +33,7 @@ const hash = String(result.stdout).trim()
 
 const consumerVersion = `${version}-${hash}`
 
-pact
+void pact
   .publishPacts({
     pactFilesOrDirs: [path.join(__dirname, '..', 'pacts')],
     pactBroker: 'https://pact.serlo.org/',

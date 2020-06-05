@@ -37,6 +37,9 @@ import {
   CoursePageRevisionPayload,
   CoursePayload,
   CourseRevisionPayload,
+  decodePath,
+  encodePath,
+  EntityPayload,
   EventPayload,
   EventRevisionPayload,
   ExerciseGroupPayload,
@@ -54,8 +57,6 @@ import {
   UuidPayload,
   VideoPayload,
   VideoRevisionPayload,
-  encodePath,
-  decodePath,
 } from '../schema/uuid'
 import { Navigation, NavigationPayload } from '../schema/uuid/navigation'
 
@@ -74,7 +75,7 @@ export class SerloDataSource extends RESTDataSource {
     bypassCache?: boolean
   }) {
     const cleanPath = encodePath(decodePath(path))
-    return this.cacheAwareGet({
+    return this.cacheAwareGet<AliasPayload>({
       path: `/api/alias${cleanPath}`,
       instance,
       bypassCache,
@@ -98,7 +99,10 @@ export class SerloDataSource extends RESTDataSource {
     instance: Instance
     id: number
   }): Promise<Navigation | null> {
-    const { data, leafs } = await this.cacheAwareGet({
+    const { data, leafs } = await this.cacheAwareGet<{
+      data: NodeData[]
+      leafs: Record<string, number>
+    }>({
       path: `/api/navigation`,
       instance,
       setter: 'setNavigation',
@@ -130,7 +134,11 @@ export class SerloDataSource extends RESTDataSource {
 
     for (let i = 0; i < nodes.length; i++) {
       const nodeData = nodes[i]
-      const uuid = nodeData.id ? await this.getUuid({ id: nodeData.id }) : null
+      const uuid = nodeData.id
+        ? await this.getUuid<EntityPayload>({
+            id: nodeData.id,
+          })
+        : null
       const node = {
         label: nodeData.label,
         url: (uuid ? uuid.alias : null) || nodeData.url || null,
@@ -151,7 +159,7 @@ export class SerloDataSource extends RESTDataSource {
     data: NodeData[]
     leafs: Record<string, number>
   }> {
-    const data: NodeData[] = JSON.parse(payload.data)
+    const data = JSON.parse(payload.data) as NodeData[]
 
     const leafs: Record<string, number> = {}
 
@@ -187,7 +195,7 @@ export class SerloDataSource extends RESTDataSource {
   }: {
     id: number
     bypassCache?: boolean
-  }) {
+  }): Promise<License> {
     return this.cacheAwareGet({
       path: `/api/license/${id}`,
       bypassCache,
@@ -212,21 +220,21 @@ export class SerloDataSource extends RESTDataSource {
     )
   }
 
-  public async getUuid({
+  public async getUuid<T extends UuidPayload>({
     id,
     bypassCache = false,
   }: {
     id: number
     bypassCache?: boolean
-  }) {
-    return this.cacheAwareGet({
+  }): Promise<T> {
+    return this.cacheAwareGet<T>({
       path: `/api/uuid/${id}`,
       bypassCache,
       setter: 'setUuid',
     })
   }
 
-  public async setUuid<T extends UuidPayload>(payload: T) {
+  public async setUuid<T extends UuidPayload>(payload: T): Promise<T> {
     const cacheKey = this.getCacheKey(`/api/uuid/${payload.id}`)
     await this.environment.cache.set(
       cacheKey,
@@ -409,7 +417,10 @@ export class SerloDataSource extends RESTDataSource {
     })
   }
 
-  private async cacheAwareGet<K extends keyof SerloDataSource>({
+  private async cacheAwareGet<
+    T,
+    K extends keyof SerloDataSource = keyof SerloDataSource
+  >({
     path,
     instance = Instance.De,
     bypassCache = false,
@@ -419,20 +430,20 @@ export class SerloDataSource extends RESTDataSource {
     instance?: Instance
     bypassCache?: boolean
     setter: SerloDataSource[K]
-  }) {
+  }): Promise<T> {
     const cacheKey = this.getCacheKey(path, instance)
     if (!bypassCache) {
       const cache = await this.environment.cache.get(cacheKey)
-      if (cache) return this.environment.serializer.deserialize(cache)
+      if (cache) return this.environment.serializer.deserialize(cache) as T
     }
 
-    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET!, {
+    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
       expiresIn: '2h',
       audience: Service.Serlo,
       issuer: 'api.serlo.org',
     })
 
-    const data = await (process.env.NODE_ENV === 'test'
+    const data = (await (process.env.NODE_ENV === 'test'
       ? super.get(`http://localhost:9009${path}`)
       : super.get(
           `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
@@ -442,9 +453,8 @@ export class SerloDataSource extends RESTDataSource {
               Authorization: `Serlo Service=${token}`,
             },
           }
-        ))
-
-    return await this[setter](data)
+        ))) as unknown
+    return await (this[setter] as (data: unknown) => Promise<T>)(data)
   }
 
   private getCacheKey(path: string, instance: Instance = Instance.De) {

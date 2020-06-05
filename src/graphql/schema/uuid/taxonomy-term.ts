@@ -1,7 +1,7 @@
 import { ForbiddenError, gql } from 'apollo-server'
 import { GraphQLResolveInfo } from 'graphql'
 
-import { resolveAbstractUuid, UuidPayload } from '.'
+import { AbstractUuidPayload, resolveAbstractUuid, UuidPayload } from '.'
 import { Instance } from '../instance'
 import { Service, Context } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
@@ -54,23 +54,12 @@ export class TaxonomyTerm extends Uuid {
   public instance: Instance
   public alias: string | null
   public name: string
-  public description?: string
+  public description: string | null
   public weight: number
   public parentId: number | null
   public childrenIds: number[]
 
-  public constructor(payload: {
-    id: number
-    type: TaxonomyTermType
-    trashed: boolean
-    instance: Instance
-    alias: string | null
-    name: string
-    description?: string
-    weight: number
-    parentId: number | null
-    childrenIds: number[]
-  }) {
+  public constructor(payload: TaxonomyTermPayload) {
     super(payload)
     this.type = payload.type
     this.instance = payload.instance
@@ -92,26 +81,30 @@ export class TaxonomyTerm extends Uuid {
     if (requestsOnlyFields('TaxonomyTerm', ['id'], info)) {
       return partialParent
     }
-    const data = await dataSources.serlo.getUuid(partialParent)
+    const data = await dataSources.serlo.getUuid<TaxonomyTermPayload>(
+      partialParent
+    )
     return new TaxonomyTerm(data)
   }
 
   public async children(_args: undefined, { dataSources }: Context) {
     return Promise.all(
       this.childrenIds.map((id) => {
-        return dataSources.serlo.getUuid({ id }).then((data) => {
-          return resolveAbstractUuid(data) as Uuid
-        })
+        return dataSources.serlo
+          .getUuid<AbstractUuidPayload>({ id })
+          .then((data) => {
+            return resolveAbstractUuid(data) as Uuid
+          })
       })
     )
   }
 
   public async path(_args: undefined, { dataSources }: Context) {
     const path: TaxonomyTerm[] = [this]
-    let current: TaxonomyTerm = this
+    let current: TaxonomyTerm = path[0]
 
     while (current.parentId !== null) {
-      const data = await dataSources.serlo.getUuid({
+      const data = await dataSources.serlo.getUuid<TaxonomyTermPayload>({
         id: current.parentId,
       })
       current = new TaxonomyTerm(data)
@@ -228,6 +221,7 @@ export interface TaxonomyTermPayload extends UuidPayload {
   parentId: number | null
   childrenIds: number[]
 }
+
 taxonomyTermSchema.addTypeDef(gql`
   extend type Mutation {
     """

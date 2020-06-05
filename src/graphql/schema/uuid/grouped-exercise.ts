@@ -7,8 +7,8 @@ import {
   EntityPayload,
 } from './abstract-entity'
 import { ExerciseRevision, ExerciseRevisionPayload } from './exercise'
-import { ExerciseGroup } from './exercise-group'
-import { Solution } from './solution'
+import { ExerciseGroup, ExerciseGroupPayload } from './exercise-group'
+import { Solution, SolutionPayload } from './solution'
 
 export const groupedExerciseSchema = new Schema()
 
@@ -40,7 +40,9 @@ groupedExerciseSchema.addResolver<
     if (requestsOnlyFields('Solution', ['id'], info)) {
       return partialSolution
     }
-    const data = await dataSources.serlo.getUuid(partialSolution)
+    const data = await dataSources.serlo.getUuid<SolutionPayload>(
+      partialSolution
+    )
     return new Solution(data)
   }
 )
@@ -56,7 +58,9 @@ groupedExerciseSchema.addResolver<
     if (requestsOnlyFields('ExerciseGroup', ['id'], info)) {
       return partialExerciseGroup
     }
-    const data = await dataSources.serlo.getUuid(partialExerciseGroup)
+    const data = await dataSources.serlo.getUuid<ExerciseGroupPayload>(
+      partialExerciseGroup
+    )
     return new ExerciseGroup(data)
   }
 )

@@ -26,7 +26,7 @@ import { Service } from '../src/graphql/schema/types'
 
 describe('Service token only', () => {
   test('valid serlo.org token', async () => {
-    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET!, {
+    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
       audience: 'api.serlo.org',
       issuer: Service.Serlo,
     })
@@ -38,7 +38,7 @@ describe('Service token only', () => {
   })
 
   test('wrong audience', async () => {
-    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET!, {
+    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
       audience: Service.Serlo,
       issuer: Service.Serlo,
     })
@@ -48,14 +48,15 @@ describe('Service token only', () => {
       await handleAuthentication(header, fakeUserTokenValidator)
       throw new Error('Expected error')
     } catch (e) {
-      expect(e.message).toEqual(
+      const err = e as Error
+      expect(err.message).toEqual(
         'Invalid service token: jwt audience invalid. expected: api.serlo.org'
       )
     }
   })
 
   test('invalid signature', async () => {
-    const token = jwt.sign({}, `${process.env.SERLO_ORG_SECRET!}-wrong`, {
+    const token = jwt.sign({}, `${process.env.SERLO_ORG_SECRET}-wrong`, {
       audience: 'api.serlo.org',
       issuer: Service.Serlo,
     })
@@ -65,7 +66,8 @@ describe('Service token only', () => {
       await handleAuthentication(header, fakeUserTokenValidator)
       throw new Error('Expected error')
     } catch (e) {
-      expect(e.message).toEqual('Invalid service token: invalid signature')
+      const err = e as Error
+      expect(err.message).toEqual('Invalid service token: invalid signature')
     }
   })
 
@@ -74,7 +76,7 @@ describe('Service token only', () => {
       {
         iat: Math.floor(Date.now() / 1000) - 2 * 60 * 60, // 2 hours in past
       },
-      process.env.SERLO_ORG_SECRET!,
+      process.env.SERLO_ORG_SECRET,
       {
         audience: 'api.serlo.org',
         issuer: Service.Serlo,
@@ -87,12 +89,13 @@ describe('Service token only', () => {
       await handleAuthentication(header, fakeUserTokenValidator)
       throw new Error('Expected error')
     } catch (e) {
-      expect(e.message).toEqual('Invalid service token: jwt expired')
+      const err = e as Error
+      expect(err.message).toEqual('Invalid service token: jwt expired')
     }
   })
 
   test('wrong authentication type', async () => {
-    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET!, {
+    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
       audience: 'api.serlo.org',
       issuer: Service.Serlo,
     })
@@ -102,14 +105,15 @@ describe('Service token only', () => {
       await handleAuthentication(header, fakeUserTokenValidator)
       throw new Error('Expected error')
     } catch (e) {
-      expect(e.message).toEqual('Invalid authorization header')
+      const err = e as Error
+      expect(err.message).toEqual('Invalid authorization header')
     }
   })
 })
 
 describe('Service & User token', () => {
   test('valid serlo.org token & valid user token', async () => {
-    const serviceToken = jwt.sign({}, process.env.SERLO_ORG_SECRET!, {
+    const serviceToken = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
       audience: 'api.serlo.org',
       issuer: Service.Serlo,
     })
@@ -123,7 +127,7 @@ describe('Service & User token', () => {
   })
 
   test('valid serlo.org token & invalid user token', async () => {
-    const serviceToken = jwt.sign({}, process.env.SERLO_ORG_SECRET!, {
+    const serviceToken = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
       audience: 'api.serlo.org',
       issuer: Service.Serlo,
     })
@@ -145,7 +149,8 @@ describe('Service & User token', () => {
       await handleAuthentication(header, fakeUserTokenValidator)
       throw new Error('Expected error')
     } catch (e) {
-      expect(e.message).toEqual('Invalid service token')
+      const err = e as Error
+      expect(err.message).toEqual('Invalid service token')
     }
   })
 })

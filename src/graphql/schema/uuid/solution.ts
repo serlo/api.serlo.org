@@ -8,7 +8,7 @@ import {
   EntityRevisionPayload,
   EntityRevisionType,
 } from './abstract-entity'
-import { Exercise } from './exercise'
+import { Exercise, ExercisePayload } from './exercise'
 
 export const solutionSchema = new Schema()
 
@@ -32,7 +32,9 @@ solutionSchema.addResolver<Solution, unknown, Partial<Exercise>>(
     if (requestsOnlyFields('Exercise', ['id'], info)) {
       return partialSolution
     }
-    const data = await dataSources.serlo.getUuid(partialSolution)
+    const data = await dataSources.serlo.getUuid<ExercisePayload>(
+      partialSolution
+    )
     return new Exercise(data)
   }
 )

@@ -17,7 +17,7 @@ module.exports = {
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: ['tsconfig.json'],
+    project: ['tsconfig.json', 'tsconfig.eslint.json'],
   },
   plugins: ['@typescript-eslint', 'import', 'react'],
   rules: {
@@ -26,9 +26,10 @@ module.exports = {
     'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
 
     // @typescript-eslint/eslint-plugin
-    '@typescript-eslint/ban-ts-ignore': 'warn',
+    '@typescript-eslint/ban-ts-comment': 'warn',
     '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
     '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/no-extraneous-class': 'error',
     '@typescript-eslint/no-parameter-properties': 'off',
@@ -43,6 +44,7 @@ module.exports = {
       },
     ],
     '@typescript-eslint/no-useless-constructor': 'error',
+    '@typescript-eslint/prefer-ts-expect-error': 'error',
 
     // eslint-plugin-import
     'import/export': 'error',

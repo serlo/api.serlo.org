@@ -1,6 +1,6 @@
 import { ForbiddenError, gql } from 'apollo-server'
 
-import { resolveAbstractUuid } from '.'
+import { AbstractUuidPayload, resolveAbstractUuid } from '.'
 import { Service } from '../types'
 import { Schema } from '../utils'
 import { EntityType, EntityRevisionType } from './abstract-entity'
@@ -104,7 +104,7 @@ abstractUuidSchema.addQuery<
   const id = payload.alias
     ? (await dataSources.serlo.getAlias(payload.alias)).id
     : (payload.id as number)
-  const data = await dataSources.serlo.getUuid({ id })
+  const data = await dataSources.serlo.getUuid<AbstractUuidPayload>({ id })
   return resolveAbstractUuid(data)
 })
 abstractUuidSchema.addTypeDef(gql`

@@ -10,7 +10,7 @@ import {
   addTaxonomyTermChildResolvers,
   TaxonomyTermChild,
 } from './abstract-taxonomy-term-child'
-import { GroupedExercise } from './grouped-exercise'
+import { GroupedExercise, GroupedExercisePayload } from './grouped-exercise'
 
 export const exerciseGroupSchema = new Schema()
 
@@ -33,9 +33,11 @@ exerciseGroupSchema.addResolver<ExerciseGroup, unknown, GroupedExercise[]>(
   (entity, _args, { dataSources }) => {
     return Promise.all(
       entity.exerciseIds.map((id: number) => {
-        return dataSources.serlo.getUuid({ id }).then((data) => {
-          return new GroupedExercise(data)
-        })
+        return dataSources.serlo
+          .getUuid<GroupedExercisePayload>({ id })
+          .then((data) => {
+            return new GroupedExercise(data)
+          })
       })
     )
   }

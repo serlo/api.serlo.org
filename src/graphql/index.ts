@@ -63,7 +63,10 @@ export function getGraphQLOptions(
             body: params,
           }
         )
-        const { active, sub } = await resp.json()
+        const { active, sub } = (await resp.json()) as {
+          active: boolean
+          sub: string
+        }
         return active ? parseInt(sub, 10) : null
       })
     },
@@ -121,13 +124,14 @@ function validateServiceToken(token: string): Service {
       const decoded = decode(token)
       if (!decoded || typeof decoded !== 'object') return unauthenticated()
 
-      const secret = getSecret(decoded.iss)
+      const service = decoded.iss as Service
+      const secret = getSecret(service)
       verify(token, secret, {
         audience: 'api.serlo.org',
       })
 
       return {
-        service: decoded.iss,
+        service,
       }
     } catch (e) {
       return unauthenticated(e)
@@ -140,11 +144,11 @@ function validateServiceToken(token: string): Service {
     function getSecret(service: Service) {
       switch (service) {
         case Service.Playground:
-          return process.env.PLAYGROUND_SECRET!
+          return process.env.PLAYGROUND_SECRET
         case Service.Serlo:
-          return process.env.SERLO_ORG_SECRET!
+          return process.env.SERLO_ORG_SECRET
         case Service.SerloCloudflareWorker:
-          return process.env.SERLO_CLOUDFLARE_WORKER_SECRET!
+          return process.env.SERLO_CLOUDFLARE_WORKER_SECRET
       }
     }
   }

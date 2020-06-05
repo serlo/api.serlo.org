@@ -26,10 +26,10 @@ import { Serializer } from '../graphql/environment'
 export function createMsgpackSerializer(): Serializer {
   return {
     serialize(value) {
-      return msgpack.pack(value)
+      return msgpack.pack(value) as Buffer
     },
     deserialize(value) {
-      return msgpack.unpack(value)
+      return msgpack.unpack(value) as unknown
     },
   }
 }

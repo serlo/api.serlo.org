@@ -9,7 +9,7 @@ import {
   addEntityResolvers,
   EntityResolversPayload,
 } from './abstract-entity'
-import { TaxonomyTerm } from './taxonomy-term'
+import { TaxonomyTerm, TaxonomyTermPayload } from './taxonomy-term'
 
 export const abstractTaxonomyTermChildSchema = new Schema()
 
@@ -55,9 +55,11 @@ export function addTaxonomyTermChildResolvers<
     (entity, _args, { dataSources }) => {
       return Promise.all(
         entity.taxonomyTermIds.map((id: number) => {
-          return dataSources.serlo.getUuid({ id }).then((data) => {
-            return new TaxonomyTerm(data)
-          })
+          return dataSources.serlo
+            .getUuid<TaxonomyTermPayload>({ id })
+            .then((data) => {
+              return new TaxonomyTerm(data)
+            })
         })
       )
     }

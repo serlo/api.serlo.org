@@ -10,7 +10,7 @@ import {
   addTaxonomyTermChildResolvers,
   TaxonomyTermChild,
 } from './abstract-taxonomy-term-child'
-import { CoursePage } from './course-page'
+import { CoursePage, CoursePagePayload } from './course-page'
 
 export const courseSchema = new Schema()
 
@@ -33,9 +33,11 @@ courseSchema.addResolver<Course, unknown, CoursePage[]>(
   (entity, _args, { dataSources }) => {
     return Promise.all(
       entity.pageIds.map((id: number) => {
-        return dataSources.serlo.getUuid({ id }).then((data) => {
-          return new CoursePage(data)
-        })
+        return dataSources.serlo
+          .getUuid<CoursePagePayload>({ id })
+          .then((data) => {
+            return new CoursePage(data)
+          })
       })
     )
   }

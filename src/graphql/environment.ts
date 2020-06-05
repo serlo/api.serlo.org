@@ -30,6 +30,6 @@ export interface Cache {
 }
 
 export interface Serializer {
-  serialize(value: any): Buffer
-  deserialize(value: Buffer): any
+  serialize(value: unknown): Buffer
+  deserialize(value: Buffer): unknown
 }
