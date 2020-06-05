@@ -29,6 +29,7 @@ import { createInMemoryCache } from './cache/in-memory-cache'
 import { createRedisCache } from './cache/redis-cache'
 import { getGraphQLOptions } from './graphql'
 import { Service } from './graphql/schema/types'
+import { createJsonStringifySerializer } from './serializer/json-stringify'
 import { createMsgpackSerializer } from './serializer/msgpack'
 
 start()
@@ -51,7 +52,10 @@ function applyGraphQLMiddleware(app: Express) {
       process.env.REDIS_HOST === undefined
         ? createInMemoryCache()
         : createRedisCache({ host: process.env.REDIS_HOST }),
-    serializer: createMsgpackSerializer(),
+    serializer:
+      process.env.REDIS_HOST === undefined
+        ? createJsonStringifySerializer()
+        : createMsgpackSerializer(),
   }
   const server = new ApolloServer(getGraphQLOptions(environment))
 
