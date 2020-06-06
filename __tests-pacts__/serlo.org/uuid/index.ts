@@ -19,48 +19,44 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Pact } from '@pact-foundation/pact'
-import path from 'path'
-import rimraf from 'rimraf'
-import util from 'util'
-
-import { createTestClient } from '../__tests__/__utils__/test-client'
-import { Service } from '../src/graphql/schema/types'
-
-const root = path.join(__dirname, '..')
-const pactDir = path.join(root, 'pacts')
-
-const rm = util.promisify(rimraf)
-
-global.pact = new Pact({
-  consumer: 'api.serlo.org',
-  provider: 'serlo.org',
-  port: 9009,
-  dir: pactDir,
-})
-
-beforeAll(async () => {
-  await rm(pactDir)
-  await global.pact.setup()
-})
-
-beforeEach(() => {
-  global.client = createTestClient({ service: Service.Playground }).client
-})
-
-afterEach(async () => {
-  await global.pact.verify()
-})
-
-afterAll(async () => {
-  await global.pact.finalize()
-})
-
 /* eslint-disable import/no-unassigned-import */
-describe('License', () => {
-  require('./license')
+describe('Applet', () => {
+  require('./applet')
 })
-describe('Uuid', () => {
-  require('./uuid')
+describe('Article', () => {
+  require('./article')
+})
+describe('Course', () => {
+  require('./course')
+})
+describe('Course Page', () => {
+  require('./course-page')
+})
+describe('Event', () => {
+  require('./event')
+})
+describe('Exercise', () => {
+  require('./exercise')
+})
+describe('Exercise Group', () => {
+  require('./exercise-group')
+})
+describe('Grouped Exercise', () => {
+  require('./grouped-exercise')
+})
+describe('Page', () => {
+  require('./page')
+})
+describe('Solution', () => {
+  require('./solution')
+})
+describe('Taxonomy Term', () => {
+  require('./taxonomy-term')
+})
+describe('User', () => {
+  require('./user')
+})
+describe('Video', () => {
+  require('./video')
 })
 /* eslint-enable import/no-unassigned-import */

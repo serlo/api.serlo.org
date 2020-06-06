@@ -19,12 +19,35 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-/* eslint-disable @typescript-eslint/no-var-requires,import/no-commonjs */
-module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  testRegex: '/__tests-pacts__/serlo\\.org/index\\.ts',
-  watchPathIgnorePatterns: ['<rootDir>/pacts/'],
-  setupFiles: ['dotenv/config'],
-  setupFilesAfterEnv: ['<rootDir>/jest.setup-pacts.ts'],
-}
+import { gql } from 'apollo-server'
+
+export const typeDefs = gql`
+  type License {
+    id: Int!
+    instance: Instance!
+    default: Boolean!
+    title: String!
+    url: String!
+    content: String!
+    agreement: String!
+    iconHref: String!
+  }
+
+  extend type Query {
+    license(id: Int!): License
+  }
+
+  extend type Mutation {
+    _removeLicense(id: Int!): Boolean
+    _setLicense(
+      id: Int!
+      instance: Instance!
+      default: Boolean!
+      title: String!
+      url: String!
+      content: String!
+      agreement: String!
+      iconHref: String!
+    ): Boolean
+  }
+`

@@ -19,12 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-/* eslint-disable @typescript-eslint/no-var-requires,import/no-commonjs */
-module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  testRegex: '/__tests-pacts__/serlo\\.org/index\\.ts',
-  watchPathIgnorePatterns: ['<rootDir>/pacts/'],
-  setupFiles: ['dotenv/config'],
-  setupFilesAfterEnv: ['<rootDir>/jest.setup-pacts.ts'],
-}
+import { Schema } from '../utils'
+import { resolvers } from './resolvers'
+import { typeDefs } from './type-defs'
+
+export * from './types'
+
+// @ts-expect-error
+export const licenseSchema = new Schema(resolvers, typeDefs)

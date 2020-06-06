@@ -19,12 +19,16 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-/* eslint-disable @typescript-eslint/no-var-requires,import/no-commonjs */
-module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  testRegex: '/__tests-pacts__/serlo\\.org/index\\.ts',
-  watchPathIgnorePatterns: ['<rootDir>/pacts/'],
-  setupFiles: ['dotenv/config'],
-  setupFilesAfterEnv: ['<rootDir>/jest.setup-pacts.ts'],
-}
+import { license, createLicenseQuery } from '../../__fixtures__/license'
+import { assertSuccessfulGraphQLQuery } from '../__utils__/assertions'
+import { addLicenseInteraction } from '../__utils__/interactions'
+
+test('License', async () => {
+  await addLicenseInteraction(license)
+  await assertSuccessfulGraphQLQuery({
+    ...createLicenseQuery(license),
+    data: {
+      license,
+    },
+  })
+})

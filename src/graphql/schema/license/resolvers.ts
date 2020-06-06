@@ -19,12 +19,33 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-/* eslint-disable @typescript-eslint/no-var-requires,import/no-commonjs */
-module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  testRegex: '/__tests-pacts__/serlo\\.org/index\\.ts',
-  watchPathIgnorePatterns: ['<rootDir>/pacts/'],
-  setupFiles: ['dotenv/config'],
-  setupFilesAfterEnv: ['<rootDir>/jest.setup-pacts.ts'],
+import { ForbiddenError } from 'apollo-server'
+
+import { Service } from '../types'
+import { LicenseResolvers } from './types'
+
+export const resolvers: LicenseResolvers = {
+  Query: {
+    license(_parent, { id }, { dataSources }) {
+      return dataSources.serlo.getLicense({ id })
+    },
+  },
+  Mutation: {
+    async _removeLicense(_parent, { id }, { dataSources, service }) {
+      if (service !== Service.Serlo) {
+        throw new ForbiddenError(
+          'You do not have the permissions to remove a license'
+        )
+      }
+      await dataSources.serlo.removeLicense({ id })
+    },
+    async _setLicense(_parent, license, { dataSources, service }) {
+      if (service !== Service.Serlo) {
+        throw new ForbiddenError(
+          'You do not have the permissions to set a license'
+        )
+      }
+      await dataSources.serlo.setLicense(license)
+    },
+  },
 }

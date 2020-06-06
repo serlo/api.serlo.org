@@ -33,7 +33,7 @@ import { createJsonStringifySerializer } from '../../src/serializer/json-stringi
 export type Client = ApolloServerTestClient
 
 export function createTestClient(
-  context: Record<string, unknown>
+  context: Record<string, unknown> = {}
 ): {
   cache: Cache
   client: Client

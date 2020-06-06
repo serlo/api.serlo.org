@@ -1,31 +1,60 @@
+/**
+ * This file is part of Serlo.org API
+ *
+ * Copyright (c) 2020 Serlo Education e.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License")
+ * you may not use this file except in compliance with the License
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @copyright Copyright (c) 2020 Serlo Education e.V.
+ * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
+ * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
+ */
 import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
-import { license } from '../../__fixtures__/license'
+import { license } from '../../../__fixtures__/license'
 import {
-  applet,
-  appletRevision,
+  article,
+  articleAlias,
+  articleRevision,
   taxonomyTermSubject,
   user,
-} from '../../__fixtures__/uuid'
-import { assertSuccessfulGraphQLQuery } from '../__utils__/assertions'
+} from '../../../__fixtures__/uuid'
+import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
 import {
-  addAppletInteraction,
-  addAppletRevisionInteraction,
+  addAliasInteraction,
+  addArticleInteraction,
+  addArticleRevisionInteraction,
   addLicenseInteraction,
   addTaxonomyTermInteraction,
   addUserInteraction,
-} from '../__utils__/interactions'
+} from '../../__utils__/interactions'
 
-describe('Applet', () => {
-  test('by id', async () => {
-    await addAppletInteraction(applet)
+describe('Article', () => {
+  test('by alias', async () => {
+    await addArticleInteraction(article)
+    await addAliasInteraction(articleAlias)
     await assertSuccessfulGraphQLQuery({
       query: gql`
           {
-            uuid(id: ${applet.id}) {
+            uuid(
+              alias: {
+                instance: de
+                path: "${articleAlias.path}"
+              }
+            ) {
               __typename
-              ... on Applet {
+              ... on Article {
                 id
                 trashed
                 instance
@@ -43,13 +72,13 @@ describe('Applet', () => {
         `,
       data: {
         uuid: {
-          __typename: 'Applet',
+          __typename: 'Article',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
-            applet
+            article
           ),
           currentRevision: {
-            id: appletRevision.id,
+            id: 30674,
           },
           license: {
             id: 1,
@@ -59,15 +88,21 @@ describe('Applet', () => {
     })
   })
 
-  test('by id (w/ license)', async () => {
-    await addAppletInteraction(applet)
+  test('by alias (w/ license)', async () => {
+    await addArticleInteraction(article)
+    await addAliasInteraction(articleAlias)
     await addLicenseInteraction(license)
     await assertSuccessfulGraphQLQuery({
       query: gql`
         {
-          uuid(id: ${applet.id}) {
+          uuid(
+            alias: {
+              instance: de
+              path: "${articleAlias.path}"
+            }
+          ) {
             __typename
-            ... on Applet {
+            ... on Article {
               id
               trashed
               instance
@@ -86,13 +121,13 @@ describe('Applet', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Applet',
+          __typename: 'Article',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
-            applet
+            article
           ),
           currentRevision: {
-            id: appletRevision.id,
+            id: 30674,
           },
           license: {
             id: 1,
@@ -103,15 +138,21 @@ describe('Applet', () => {
     })
   })
 
-  test('by id (w/ currentRevision)', async () => {
-    await addAppletInteraction(applet)
-    await addAppletRevisionInteraction(appletRevision)
+  test('by alias (w/ currentRevision)', async () => {
+    await addArticleInteraction(article)
+    await addAliasInteraction(articleAlias)
+    await addArticleRevisionInteraction(articleRevision)
     await assertSuccessfulGraphQLQuery({
       query: gql`
           {
-            uuid(id: ${applet.id}) {
+            uuid(
+              alias: {
+                instance: de
+                path: "${articleAlias.path}"
+              }
+            ) {
               __typename
-              ... on Applet {
+              ... on Article {
                 id
                 trashed
                 instance
@@ -129,13 +170,13 @@ describe('Applet', () => {
         `,
       data: {
         uuid: {
-          __typename: 'Applet',
+          __typename: 'Article',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
-            applet
+            article
           ),
           currentRevision: {
-            id: appletRevision.id,
+            id: 30674,
             title: 'title',
             content: 'content',
             changes: 'changes',
@@ -145,15 +186,21 @@ describe('Applet', () => {
     })
   })
 
-  test('by id (w/ taxonomyTerms)', async () => {
-    await addAppletInteraction(applet)
+  test('by alias (w/ taxonomyTerms)', async () => {
+    await addArticleInteraction(article)
+    await addAliasInteraction(articleAlias)
     await addTaxonomyTermInteraction(taxonomyTermSubject)
     await assertSuccessfulGraphQLQuery({
       query: gql`
         {
-          uuid(id: ${applet.id}) {
+          uuid(
+            alias: {
+              instance: de
+              path: "/mathe/funktionen/uebersicht-aller-artikel-zu-funktionen/parabel"
+            }
+          ) {
             __typename
-            ... on Applet {
+            ... on Article {
               id
               trashed
               instance
@@ -168,40 +215,34 @@ describe('Applet', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Applet',
+          __typename: 'Article',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
-            applet
+            article
           ),
           taxonomyTerms: [{ id: 5 }],
         },
       },
     })
   })
-})
 
-describe('AppletRevision', () => {
   test('by id', async () => {
-    await addAppletRevisionInteraction(appletRevision)
+    await addArticleInteraction(article)
     await assertSuccessfulGraphQLQuery({
       query: gql`
         {
-          uuid(id: ${appletRevision.id}) {
+          uuid(id: 1855) {
             __typename
-            ... on AppletRevision {
+            ... on Article {
               id
               trashed
+              alias
+              instance
               date
-              title
-              content
-              url
-              changes
-              metaTitle
-              metaDescription
-              author {
+              currentRevision {
                 id
               }
-              applet {
+              license {
                 id
               }
             }
@@ -210,13 +251,59 @@ describe('AppletRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'AppletRevision',
-          ...R.omit(['authorId', 'repositoryId'], appletRevision),
+          __typename: 'Article',
+          ...R.omit(
+            ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
+            article
+          ),
+          currentRevision: {
+            id: 30674,
+          },
+          license: {
+            id: 1,
+          },
+        },
+      },
+    })
+  })
+})
+
+describe('ArticleRevision', () => {
+  test('by id', async () => {
+    await addArticleRevisionInteraction(articleRevision)
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        {
+          uuid(id: 30674) {
+            __typename
+            ... on ArticleRevision {
+              id
+              trashed
+              date
+              title
+              content
+              changes
+              metaTitle
+              metaDescription
+              author {
+                id
+              }
+              article {
+                id
+              }
+            }
+          }
+        }
+      `,
+      data: {
+        uuid: {
+          __typename: 'ArticleRevision',
+          ...R.omit(['authorId', 'repositoryId'], articleRevision),
           author: {
             id: 1,
           },
-          applet: {
-            id: applet.id,
+          article: {
+            id: 1855,
           },
         },
       },
@@ -224,20 +311,19 @@ describe('AppletRevision', () => {
   })
 
   test('by id (w/ author)', async () => {
-    await addAppletRevisionInteraction(appletRevision)
+    await addArticleRevisionInteraction(articleRevision)
     await addUserInteraction(user)
     await assertSuccessfulGraphQLQuery({
       query: gql`
         {
-          uuid(id: ${appletRevision.id}) {
+          uuid(id: 30674) {
             __typename
-            ... on AppletRevision {
+            ... on ArticleRevision {
               id
               trashed
               date
               title
               content
-              url
               changes
               metaTitle
               metaDescription
@@ -245,7 +331,7 @@ describe('AppletRevision', () => {
                 id
                 username
               }
-              applet {
+              article {
                 id
               }
             }
@@ -254,42 +340,41 @@ describe('AppletRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'AppletRevision',
-          ...R.omit(['authorId', 'repositoryId'], appletRevision),
+          __typename: 'ArticleRevision',
+          ...R.omit(['authorId', 'repositoryId'], articleRevision),
           author: {
             id: 1,
             username: user.username,
           },
-          applet: {
-            id: applet.id,
+          article: {
+            id: 1855,
           },
         },
       },
     })
   })
 
-  test('by id (w/ applet)', async () => {
-    await addAppletRevisionInteraction(appletRevision)
-    await addAppletInteraction(applet)
+  test('by id (w/ article)', async () => {
+    await addArticleRevisionInteraction(articleRevision)
+    await addArticleInteraction(article)
     await assertSuccessfulGraphQLQuery({
       query: gql`
         {
-          uuid(id: ${appletRevision.id}) {
+          uuid(id: 30674) {
             __typename
-            ... on AppletRevision {
+            ... on ArticleRevision {
               id
               trashed
               date
               title
               content
-              url
               changes
               metaTitle
               metaDescription
               author {
                 id
               }
-              applet {
+              article {
                 id
                 currentRevision {
                   id
@@ -301,15 +386,15 @@ describe('AppletRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'AppletRevision',
-          ...R.omit(['authorId', 'repositoryId'], appletRevision),
+          __typename: 'ArticleRevision',
+          ...R.omit(['authorId', 'repositoryId'], articleRevision),
           author: {
             id: 1,
           },
-          applet: {
-            id: applet.id,
+          article: {
+            id: 1855,
             currentRevision: {
-              id: appletRevision.id,
+              id: 30674,
             },
           },
         },
