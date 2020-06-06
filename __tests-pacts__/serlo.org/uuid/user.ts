@@ -19,12 +19,35 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-/* eslint-disable @typescript-eslint/no-var-requires,import/no-commonjs */
-module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  testRegex: '/__tests-pacts__/serlo\\.org/index\\.ts',
-  watchPathIgnorePatterns: ['<rootDir>/pacts/'],
-  setupFiles: ['dotenv/config'],
-  setupFilesAfterEnv: ['<rootDir>/jest.setup-pacts.ts'],
-}
+import { gql } from 'apollo-server'
+
+import { user } from '../../../__fixtures__/uuid'
+import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
+import { addUserInteraction } from '../../__utils__/interactions'
+
+test('by id', async () => {
+  await addUserInteraction(user)
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      {
+        uuid(id: 1) {
+          __typename
+          ... on User {
+            id
+            trashed
+            username
+            date
+            lastLogin
+            description
+          }
+        }
+      }
+    `,
+    data: {
+      uuid: {
+        __typename: 'User',
+        ...user,
+      },
+    },
+  })
+})

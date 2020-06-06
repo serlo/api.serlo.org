@@ -1,43 +1,62 @@
+/**
+ * This file is part of Serlo.org API
+ *
+ * Copyright (c) 2020 Serlo Education e.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License")
+ * you may not use this file except in compliance with the License
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @copyright Copyright (c) 2020 Serlo Education e.V.
+ * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
+ * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
+ */
 import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
-import { license } from '../../__fixtures__/license'
+import { license } from '../../../__fixtures__/license'
 import {
   course,
-  courseAlias,
-  coursePage,
-  coursePageRevision,
   courseRevision,
-  taxonomyTermSubject,
+  coursePage,
+  coursePageAlias,
+  coursePageRevision,
   user,
-} from '../../__fixtures__/uuid'
-import { assertSuccessfulGraphQLQuery } from '../__utils__/assertions'
+} from '../../../__fixtures__/uuid'
+import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
 import {
   addAliasInteraction,
-  addCourseInteraction,
   addCoursePageInteraction,
   addCoursePageRevisionInteraction,
-  addCourseRevisionInteraction,
   addLicenseInteraction,
-  addTaxonomyTermInteraction,
   addUserInteraction,
-} from '../__utils__/interactions'
+  addCourseRevisionInteraction,
+  addCourseInteraction,
+} from '../../__utils__/interactions'
 
-describe('Course', () => {
+describe('CoursePage', () => {
   test('by alias', async () => {
-    await addCourseInteraction(course)
-    await addAliasInteraction(courseAlias)
+    await addCoursePageInteraction(coursePage)
+    await addAliasInteraction(coursePageAlias)
     await assertSuccessfulGraphQLQuery({
       query: gql`
           {
             uuid(
               alias: {
                 instance: de
-                path: "${courseAlias.path}"
+                path: "${coursePageAlias.path}"
               }
             ) {
               __typename
-              ... on Course {
+              ... on CoursePage {
                 id
                 trashed
                 instance
@@ -55,13 +74,13 @@ describe('Course', () => {
         `,
       data: {
         uuid: {
-          __typename: 'Course',
+          __typename: 'CoursePage',
           ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'pageIds'],
-            course
+            ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
+            coursePage
           ),
           currentRevision: {
-            id: course.currentRevisionId,
+            id: coursePage.currentRevisionId,
           },
           license: {
             id: 1,
@@ -72,8 +91,8 @@ describe('Course', () => {
   })
 
   test('by alias (w/ license)', async () => {
-    await addCourseInteraction(course)
-    await addAliasInteraction(courseAlias)
+    await addCoursePageInteraction(coursePage)
+    await addAliasInteraction(coursePageAlias)
     await addLicenseInteraction(license)
     await assertSuccessfulGraphQLQuery({
       query: gql`
@@ -81,11 +100,11 @@ describe('Course', () => {
           uuid(
             alias: {
               instance: de
-              path: "${courseAlias.path}"
+              path: "${coursePageAlias.path}"
             }
           ) {
             __typename
-            ... on Course {
+            ... on CoursePage {
               id
               trashed
               instance
@@ -104,13 +123,13 @@ describe('Course', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Course',
+          __typename: 'CoursePage',
           ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'pageIds'],
-            course
+            ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
+            coursePage
           ),
           currentRevision: {
-            id: course.currentRevisionId,
+            id: coursePage.currentRevisionId,
           },
           license: {
             id: 1,
@@ -122,20 +141,20 @@ describe('Course', () => {
   })
 
   test('by alias (w/ currentRevision)', async () => {
-    await addCourseInteraction(course)
-    await addAliasInteraction(courseAlias)
-    await addCourseRevisionInteraction(courseRevision)
+    await addCoursePageInteraction(coursePage)
+    await addAliasInteraction(coursePageAlias)
+    await addCoursePageRevisionInteraction(coursePageRevision)
     await assertSuccessfulGraphQLQuery({
       query: gql`
           {
             uuid(
               alias: {
                 instance: de
-                path: "${courseAlias.path}"
+                path: "${coursePageAlias.path}"
               }
             ) {
               __typename
-              ... on Course {
+              ... on CoursePage {
                 id
                 trashed
                 instance
@@ -152,13 +171,13 @@ describe('Course', () => {
         `,
       data: {
         uuid: {
-          __typename: 'Course',
+          __typename: 'CoursePage',
           ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'pageIds'],
-            course
+            ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
+            coursePage
           ),
           currentRevision: {
-            id: course.currentRevisionId,
+            id: coursePage.currentRevisionId,
             content: 'content',
             changes: 'changes',
           },
@@ -167,109 +186,67 @@ describe('Course', () => {
     })
   })
 
-  test('by alias (w/ taxonomyTerms)', async () => {
-    await addCourseInteraction(course)
-    await addAliasInteraction(courseAlias)
-    await addTaxonomyTermInteraction(taxonomyTermSubject)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(
-            alias: {
-              instance: de
-              path: "${courseAlias.path}"
-            }
-          ) {
-            __typename
-            ... on Course {
-              id
-              trashed
-              instance
-              alias
-              date
-              taxonomyTerms {
-                id
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          __typename: 'Course',
-          ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'pageIds'],
-            course
-          ),
-          taxonomyTerms: [{ id: 5 }],
-        },
-      },
-    })
-  })
-
-  test('by alias (w/ pages)', async () => {
-    await addCourseInteraction(course)
-    await addAliasInteraction(courseAlias)
-    await addCoursePageRevisionInteraction(coursePageRevision)
+  test('by alias (w/ course)', async () => {
     await addCoursePageInteraction(coursePage)
+    await addAliasInteraction(coursePageAlias)
+    await addCourseRevisionInteraction(courseRevision)
+    await addCourseInteraction(course)
     await assertSuccessfulGraphQLQuery({
       query: gql`
-        {
-          uuid(
-            alias: {
-              instance: de
-              path: "${courseAlias.path}"
-            }
-          ) {
-            __typename
-            ... on Course {
-              id
-              trashed
-              instance
-              alias
-              date
-              pages {
+          {
+            uuid(
+              alias: {
+                instance: de
+                path: "${coursePageAlias.path}"
+              }
+            ) {
+              __typename
+              ... on CoursePage {
                 id
-                currentRevision {
+                trashed
+                instance
+                alias
+                date
+                course {
                   id
-                  content
-                  changes
+                  currentRevision {
+                    id
+                    content
+                    changes
+                  }
                 }
               }
             }
           }
-        }
-      `,
+        `,
       data: {
         uuid: {
-          __typename: 'Course',
+          __typename: 'CoursePage',
           ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'pageIds'],
-            course
+            ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
+            coursePage
           ),
-          pages: [
-            {
-              id: coursePage.id,
-              currentRevision: {
-                id: coursePageRevision.id,
-                content: coursePageRevision.content,
-                changes: coursePageRevision.changes,
-              },
+          course: {
+            id: course.id,
+            currentRevision: {
+              id: courseRevision.id,
+              content: 'content',
+              changes: 'changes',
             },
-          ],
+          },
         },
       },
     })
   })
 
   test('by id', async () => {
-    await addCourseInteraction(course)
+    await addCoursePageInteraction(coursePage)
     await assertSuccessfulGraphQLQuery({
       query: gql`
         {
-          uuid(id: ${course.id}) {
+          uuid(id: ${coursePage.id}) {
             __typename
-            ... on Course {
+            ... on CoursePage {
               id
               trashed
               alias
@@ -287,13 +264,13 @@ describe('Course', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Course',
+          __typename: 'CoursePage',
           ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'pageIds'],
-            course
+            ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
+            coursePage
           ),
           currentRevision: {
-            id: course.currentRevisionId,
+            id: coursePage.currentRevisionId,
           },
           license: {
             id: 1,
@@ -304,26 +281,25 @@ describe('Course', () => {
   })
 })
 
-describe('CourseRevision', () => {
+describe('CoursePageRevision', () => {
   test('by id', async () => {
-    await addCourseRevisionInteraction(courseRevision)
+    await addCoursePageRevisionInteraction(coursePageRevision)
     await assertSuccessfulGraphQLQuery({
       query: gql`
         {
-          uuid(id: ${course.currentRevisionId}) {
+          uuid(id: ${coursePage.currentRevisionId}) {
             __typename
-            ... on CourseRevision {
+            ... on CoursePageRevision {
               id
               trashed
               date
               title
               content
               changes
-              metaDescription
               author {
                 id
               }
-              course {
+              coursePage {
                 id
               }
             }
@@ -332,13 +308,13 @@ describe('CourseRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'CourseRevision',
-          ...R.omit(['authorId', 'repositoryId'], courseRevision),
+          __typename: 'CoursePageRevision',
+          ...R.omit(['authorId', 'repositoryId'], coursePageRevision),
           author: {
             id: 1,
           },
-          course: {
-            id: course.id,
+          coursePage: {
+            id: coursePage.id,
           },
         },
       },
@@ -346,26 +322,25 @@ describe('CourseRevision', () => {
   })
 
   test('by id (w/ author)', async () => {
-    await addCourseRevisionInteraction(courseRevision)
+    await addCoursePageRevisionInteraction(coursePageRevision)
     await addUserInteraction(user)
     await assertSuccessfulGraphQLQuery({
       query: gql`
         {
-          uuid(id: ${course.currentRevisionId}) {
+          uuid(id: ${coursePage.currentRevisionId}) {
             __typename
-            ... on CourseRevision {
+            ... on CoursePageRevision {
               id
               trashed
               date
               title
               content
               changes
-              metaDescription
               author {
                 id
                 username
               }
-              course {
+              coursePage {
                 id
               }
             }
@@ -374,40 +349,39 @@ describe('CourseRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'CourseRevision',
-          ...R.omit(['authorId', 'repositoryId'], courseRevision),
+          __typename: 'CoursePageRevision',
+          ...R.omit(['authorId', 'repositoryId'], coursePageRevision),
           author: {
             id: 1,
             username: user.username,
           },
-          course: {
-            id: course.id,
+          coursePage: {
+            id: coursePage.id,
           },
         },
       },
     })
   })
 
-  test('by id (w/ course)', async () => {
-    await addCourseRevisionInteraction(courseRevision)
-    await addCourseInteraction(course)
+  test('by id (w/ coursePage)', async () => {
+    await addCoursePageRevisionInteraction(coursePageRevision)
+    await addCoursePageInteraction(coursePage)
     await assertSuccessfulGraphQLQuery({
       query: gql`
         {
-          uuid(id: ${course.currentRevisionId}) {
+          uuid(id: ${coursePage.currentRevisionId}) {
             __typename
-            ... on CourseRevision {
+            ... on CoursePageRevision {
               id
               trashed
               date
               title
               content
               changes
-              metaDescription
               author {
                 id
               }
-              course {
+              coursePage {
                 id
                 currentRevision {
                   id
@@ -419,15 +393,15 @@ describe('CourseRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'CourseRevision',
-          ...R.omit(['authorId', 'repositoryId'], courseRevision),
+          __typename: 'CoursePageRevision',
+          ...R.omit(['authorId', 'repositoryId'], coursePageRevision),
           author: {
             id: 1,
           },
-          course: {
-            id: course.id,
+          coursePage: {
+            id: coursePage.id,
             currentRevision: {
-              id: course.currentRevisionId,
+              id: coursePage.currentRevisionId,
             },
           },
         },

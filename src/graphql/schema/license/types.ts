@@ -19,12 +19,28 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-/* eslint-disable @typescript-eslint/no-var-requires,import/no-commonjs */
-module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  testRegex: '/__tests-pacts__/serlo\\.org/index\\.ts',
-  watchPathIgnorePatterns: ['<rootDir>/pacts/'],
-  setupFiles: ['dotenv/config'],
-  setupFilesAfterEnv: ['<rootDir>/jest.setup-pacts.ts'],
+import { Instance } from '../instance'
+import { MutationResolver, QueryResolver } from '../types'
+
+export interface License {
+  id: number
+  instance: Instance
+  default: boolean
+  title: string
+  url: string
+  content: string
+  agreement: string
+  iconHref: string
+}
+
+export type LicensePayload = License
+
+export interface LicenseResolvers {
+  Query: {
+    license: QueryResolver<{ id: number }, License>
+  }
+  Mutation: {
+    _removeLicense: MutationResolver<{ id: number }>
+    _setLicense: MutationResolver<LicensePayload>
+  }
 }

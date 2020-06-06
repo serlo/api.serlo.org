@@ -19,25 +19,58 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
+import { rest } from 'msw'
+import { setupServer } from 'msw/node'
 
-import { Service } from '../src/graphql/schema/types'
+import {
+  license,
+  createLicenseQuery,
+  createRemoveLicenseMutation,
+  createSetLicenseMutation,
+} from '../../__fixtures__/license'
+import { Service } from '../../src/graphql/schema/types'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
-} from './__utils__/assertions'
-import { createTestClient } from './__utils__/test-client'
+} from '../__utils__/assertions'
+import { createTestClient } from '../__utils__/test-client'
+
+const server = setupServer(
+  rest.get(
+    `http://de.${process.env.SERLO_ORG_HOST}/api/license/1`,
+    (req, res, ctx) => {
+      return res(ctx.status(200), ctx.json(license))
+    }
+  )
+)
+
+beforeAll(() => {
+  // Enable the mocking before all tests
+  server.listen()
+})
+
+afterAll(() => {
+  // Clean up the mocking once done
+  server.close()
+})
+
+test('license', async () => {
+  const { client } = createTestClient()
+  await assertSuccessfulGraphQLQuery({
+    ...createLicenseQuery(license),
+    data: {
+      license,
+    },
+    client,
+  })
+})
 
 test('_removeLicense (forbidden)', async () => {
   const { client } = createTestClient({ service: Service.Playground })
   await assertFailingGraphQLMutation(
     {
-      mutation: gql`
-        mutation {
-          _removeLicense(id: 1)
-        }
-      `,
+      ...createRemoveLicenseMutation(license),
       client,
     },
     (errors) => {
@@ -49,21 +82,11 @@ test('_removeLicense (forbidden)', async () => {
 test('_removeLicense (authenticated)', async () => {
   const { client } = createTestClient({ service: Service.Serlo })
   await assertSuccessfulGraphQLMutation({
-    mutation: gql`
-      mutation {
-        _removeLicense(id: 1)
-      }
-    `,
+    ...createRemoveLicenseMutation(license),
     client,
   })
   await assertSuccessfulGraphQLQuery({
-    query: gql`
-      {
-        license(id: 1) {
-          id
-        }
-      }
-    `,
+    ...createLicenseQuery(license),
     data: { license: null },
     client,
   })
@@ -73,20 +96,7 @@ test('_setLicense (forbidden)', async () => {
   const { client } = createTestClient({ service: Service.Playground })
   await assertFailingGraphQLMutation(
     {
-      mutation: gql`
-        mutation {
-          _setLicense(
-            id: 1
-            instance: de
-            default: true
-            title: "title"
-            url: "url"
-            content: "content"
-            agreement: "agreement"
-            iconHref: "iconHref"
-          )
-        }
-      `,
+      ...createSetLicenseMutation(license),
       client,
     },
     (errors) => {
@@ -98,48 +108,13 @@ test('_setLicense (forbidden)', async () => {
 test('_setLicense (authenticated)', async () => {
   const { client } = createTestClient({ service: Service.Serlo })
   await assertSuccessfulGraphQLMutation({
-    mutation: gql`
-      mutation {
-        _setLicense(
-          id: 1
-          instance: de
-          default: true
-          title: "title"
-          url: "url"
-          content: "content"
-          agreement: "agreement"
-          iconHref: "iconHref"
-        )
-      }
-    `,
+    ...createSetLicenseMutation(license),
     client,
   })
   await assertSuccessfulGraphQLQuery({
-    query: gql`
-      {
-        license(id: 1) {
-          id
-          instance
-          default
-          title
-          url
-          content
-          agreement
-          iconHref
-        }
-      }
-    `,
+    ...createLicenseQuery(license),
     data: {
-      license: {
-        id: 1,
-        instance: 'de',
-        default: true,
-        title: 'title',
-        url: 'url',
-        content: 'content',
-        agreement: 'agreement',
-        iconHref: 'iconHref',
-      },
+      license,
     },
     client,
   })

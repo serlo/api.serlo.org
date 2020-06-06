@@ -1,39 +1,60 @@
+/**
+ * This file is part of Serlo.org API
+ *
+ * Copyright (c) 2020 Serlo Education e.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License")
+ * you may not use this file except in compliance with the License
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @copyright Copyright (c) 2020 Serlo Education e.V.
+ * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
+ * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
+ */
 import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
-import { license } from '../../__fixtures__/license'
+import { license } from '../../../__fixtures__/license'
 import {
-  video,
-  videoAlias,
-  videoRevision,
+  event,
+  eventAlias,
+  eventRevision,
   taxonomyTermSubject,
   user,
-} from '../../__fixtures__/uuid'
-import { assertSuccessfulGraphQLQuery } from '../__utils__/assertions'
+} from '../../../__fixtures__/uuid'
+import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
 import {
   addAliasInteraction,
-  addVideoInteraction,
-  addVideoRevisionInteraction,
+  addEventInteraction,
+  addEventRevisionInteraction,
   addLicenseInteraction,
   addTaxonomyTermInteraction,
   addUserInteraction,
-} from '../__utils__/interactions'
+} from '../../__utils__/interactions'
 
-describe('Video', () => {
+describe('Event', () => {
   test('by alias', async () => {
-    await addVideoInteraction(video)
-    await addAliasInteraction(videoAlias)
+    await addEventInteraction(event)
+    await addAliasInteraction(eventAlias)
     await assertSuccessfulGraphQLQuery({
       query: gql`
           {
             uuid(
               alias: {
                 instance: de
-                path: "${videoAlias.path}"
+                path: "${eventAlias.path}"
               }
             ) {
               __typename
-              ... on Video {
+              ... on Event {
                 id
                 trashed
                 instance
@@ -51,13 +72,13 @@ describe('Video', () => {
         `,
       data: {
         uuid: {
-          __typename: 'Video',
+          __typename: 'Event',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
-            video
+            event
           ),
           currentRevision: {
-            id: videoRevision.id,
+            id: eventRevision.id,
           },
           license: {
             id: 1,
@@ -68,8 +89,8 @@ describe('Video', () => {
   })
 
   test('by alias (w/ license)', async () => {
-    await addVideoInteraction(video)
-    await addAliasInteraction(videoAlias)
+    await addEventInteraction(event)
+    await addAliasInteraction(eventAlias)
     await addLicenseInteraction(license)
     await assertSuccessfulGraphQLQuery({
       query: gql`
@@ -77,11 +98,11 @@ describe('Video', () => {
           uuid(
             alias: {
               instance: de
-              path: "${videoAlias.path}"
+              path: "${eventAlias.path}"
             }
           ) {
             __typename
-            ... on Video {
+            ... on Event {
               id
               trashed
               instance
@@ -100,13 +121,13 @@ describe('Video', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Video',
+          __typename: 'Event',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
-            video
+            event
           ),
           currentRevision: {
-            id: videoRevision.id,
+            id: eventRevision.id,
           },
           license: {
             id: 1,
@@ -118,20 +139,20 @@ describe('Video', () => {
   })
 
   test('by alias (w/ currentRevision)', async () => {
-    await addVideoInteraction(video)
-    await addAliasInteraction(videoAlias)
-    await addVideoRevisionInteraction(videoRevision)
+    await addEventInteraction(event)
+    await addAliasInteraction(eventAlias)
+    await addEventRevisionInteraction(eventRevision)
     await assertSuccessfulGraphQLQuery({
       query: gql`
           {
             uuid(
               alias: {
                 instance: de
-                path: "${videoAlias.path}"
+                path: "${eventAlias.path}"
               }
             ) {
               __typename
-              ... on Video {
+              ... on Event {
                 id
                 trashed
                 instance
@@ -140,7 +161,7 @@ describe('Video', () => {
                 currentRevision {
                   id
                   title
-                  url
+                  content
                   changes
                 }
               }
@@ -149,15 +170,15 @@ describe('Video', () => {
         `,
       data: {
         uuid: {
-          __typename: 'Video',
+          __typename: 'Event',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
-            video
+            event
           ),
           currentRevision: {
-            id: videoRevision.id,
+            id: eventRevision.id,
             title: 'title',
-            url: 'url',
+            content: 'content',
             changes: 'changes',
           },
         },
@@ -166,8 +187,8 @@ describe('Video', () => {
   })
 
   test('by alias (w/ taxonomyTerms)', async () => {
-    await addVideoInteraction(video)
-    await addAliasInteraction(videoAlias)
+    await addEventInteraction(event)
+    await addAliasInteraction(eventAlias)
     await addTaxonomyTermInteraction(taxonomyTermSubject)
     await assertSuccessfulGraphQLQuery({
       query: gql`
@@ -175,11 +196,11 @@ describe('Video', () => {
           uuid(
             alias: {
               instance: de
-              path: "${videoAlias.path}"
+              path: "${eventAlias.path}"
             }
           ) {
             __typename
-            ... on Video {
+            ... on Event {
               id
               trashed
               instance
@@ -194,10 +215,10 @@ describe('Video', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Video',
+          __typename: 'Event',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
-            video
+            event
           ),
           taxonomyTerms: [{ id: 5 }],
         },
@@ -206,13 +227,13 @@ describe('Video', () => {
   })
 
   test('by id', async () => {
-    await addVideoInteraction(video)
+    await addEventInteraction(event)
     await assertSuccessfulGraphQLQuery({
       query: gql`
         {
-          uuid(id: ${video.id}) {
+          uuid(id: ${event.id}) {
             __typename
-            ... on Video {
+            ... on Event {
               id
               trashed
               alias
@@ -230,13 +251,13 @@ describe('Video', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Video',
+          __typename: 'Event',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
-            video
+            event
           ),
           currentRevision: {
-            id: videoRevision.id,
+            id: eventRevision.id,
           },
           license: {
             id: 1,
@@ -247,26 +268,27 @@ describe('Video', () => {
   })
 })
 
-describe('VideoRevision', () => {
+describe('EventRevision', () => {
   test('by id', async () => {
-    await addVideoRevisionInteraction(videoRevision)
+    await addEventRevisionInteraction(eventRevision)
     await assertSuccessfulGraphQLQuery({
       query: gql`
         {
-          uuid(id: ${videoRevision.id}) {
+          uuid(id: ${eventRevision.id}) {
             __typename
-            ... on VideoRevision {
+            ... on EventRevision {
               id
               trashed
               date
               title
               content
-              url
               changes
+              metaTitle
+              metaDescription
               author {
                 id
               }
-              video {
+              event {
                 id
               }
             }
@@ -275,13 +297,13 @@ describe('VideoRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'VideoRevision',
-          ...R.omit(['authorId', 'repositoryId'], videoRevision),
+          __typename: 'EventRevision',
+          ...R.omit(['authorId', 'repositoryId'], eventRevision),
           author: {
             id: 1,
           },
-          video: {
-            id: video.id,
+          event: {
+            id: event.id,
           },
         },
       },
@@ -289,26 +311,27 @@ describe('VideoRevision', () => {
   })
 
   test('by id (w/ author)', async () => {
-    await addVideoRevisionInteraction(videoRevision)
+    await addEventRevisionInteraction(eventRevision)
     await addUserInteraction(user)
     await assertSuccessfulGraphQLQuery({
       query: gql`
         {
-          uuid(id: ${videoRevision.id}) {
+          uuid(id: ${eventRevision.id}) {
             __typename
-            ... on VideoRevision {
+            ... on EventRevision {
               id
               trashed
               date
               title
               content
-              url
               changes
+              metaTitle
+              metaDescription
               author {
                 id
                 username
               }
-              video {
+              event {
                 id
               }
             }
@@ -317,40 +340,41 @@ describe('VideoRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'VideoRevision',
-          ...R.omit(['authorId', 'repositoryId'], videoRevision),
+          __typename: 'EventRevision',
+          ...R.omit(['authorId', 'repositoryId'], eventRevision),
           author: {
             id: 1,
             username: user.username,
           },
-          video: {
-            id: video.id,
+          event: {
+            id: event.id,
           },
         },
       },
     })
   })
 
-  test('by id (w/ video)', async () => {
-    await addVideoRevisionInteraction(videoRevision)
-    await addVideoInteraction(video)
+  test('by id (w/ event)', async () => {
+    await addEventRevisionInteraction(eventRevision)
+    await addEventInteraction(event)
     await assertSuccessfulGraphQLQuery({
       query: gql`
         {
-          uuid(id: ${videoRevision.id}) {
+          uuid(id: ${eventRevision.id}) {
             __typename
-            ... on VideoRevision {
+            ... on EventRevision {
               id
               trashed
               date
               title
               content
-              url
               changes
+              metaTitle
+              metaDescription
               author {
                 id
               }
-              video {
+              event {
                 id
                 currentRevision {
                   id
@@ -362,15 +386,15 @@ describe('VideoRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'VideoRevision',
-          ...R.omit(['authorId', 'repositoryId'], videoRevision),
+          __typename: 'EventRevision',
+          ...R.omit(['authorId', 'repositoryId'], eventRevision),
           author: {
             id: 1,
           },
-          video: {
-            id: video.id,
+          event: {
+            id: event.id,
             currentRevision: {
-              id: videoRevision.id,
+              id: eventRevision.id,
             },
           },
         },
