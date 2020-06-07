@@ -19,19 +19,20 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
+import { ForbiddenError } from 'apollo-server'
 
-export const typeDefs = gql`
-  interface Uuid {
-    id: Int!
-    trashed: Boolean!
-  }
+import { Service } from '../../types'
+import { UserResolvers } from './types'
 
-  type Query {
-    uuid(alias: AliasInput, id: Int): Uuid
-  }
-
-  type Mutation {
-    _removeUuid(id: Int!): Boolean
-  }
-`
+export const resolvers: UserResolvers = {
+  Mutation: {
+    async _setUser(_parent, payload, { dataSources, service }) {
+      if (service !== Service.Serlo) {
+        throw new ForbiddenError(
+          'You do not have the permissions to set an user'
+        )
+      }
+      await dataSources.serlo.setUser(payload)
+    },
+  },
+}

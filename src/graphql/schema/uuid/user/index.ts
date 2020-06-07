@@ -19,19 +19,14 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
+import { Schema } from '../../utils'
+import { resolvers } from './resolvers'
+import { typeDefs } from './type-defs'
 
-export const typeDefs = gql`
-  interface Uuid {
-    id: Int!
-    trashed: Boolean!
-  }
+export * from './types'
+export * from './utils'
 
-  type Query {
-    uuid(alias: AliasInput, id: Int): Uuid
-  }
-
-  type Mutation {
-    _removeUuid(id: Int!): Boolean
-  }
-`
+export const userSchema = new Schema(
+  (resolvers as unknown) as Schema['resolvers'],
+  [typeDefs]
+)

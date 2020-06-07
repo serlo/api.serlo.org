@@ -7,7 +7,7 @@ import { Service, Context } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
 import { DiscriminatorType, Uuid, UuidPayload } from './abstract-uuid'
 import { encodePath } from './alias'
-import { User, UserPayload } from './user'
+import { resolveUser, User, UserPayload } from './user'
 
 export const pageSchema = new Schema()
 
@@ -131,7 +131,7 @@ pageSchema.addResolver<PageRevision, unknown, Partial<User>>(
       return partialUser
     }
     const data = await dataSources.serlo.getUuid<UserPayload>(partialUser)
-    return new User(data)
+    return resolveUser(data)
   }
 )
 pageSchema.addResolver<PageRevision, unknown, Partial<Page>>(

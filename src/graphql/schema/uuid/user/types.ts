@@ -19,19 +19,27 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
+import { DateTime } from '../../date-time'
+import { MutationResolver } from '../../types'
+import { DiscriminatorType, Uuid, UuidPayload } from '../abstract-uuid'
 
-export const typeDefs = gql`
-  interface Uuid {
-    id: Int!
-    trashed: Boolean!
-  }
+export interface User extends Uuid {
+  __typename: DiscriminatorType.User
+  username: string
+  date: DateTime
+  lastLogin: DateTime | null
+  description: string | null
+}
 
-  type Query {
-    uuid(alias: AliasInput, id: Int): Uuid
-  }
+export interface UserPayload extends UuidPayload {
+  username: string
+  date: DateTime
+  lastLogin: DateTime | null
+  description: string | null
+}
 
-  type Mutation {
-    _removeUuid(id: Int!): Boolean
+export interface UserResolvers {
+  Mutation: {
+    _setUser: MutationResolver<UserPayload>
   }
-`
+}
