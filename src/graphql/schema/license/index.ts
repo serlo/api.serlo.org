@@ -25,5 +25,7 @@ import { typeDefs } from './type-defs'
 
 export * from './types'
 
-// @ts-expect-error
-export const licenseSchema = new Schema(resolvers, typeDefs)
+export const licenseSchema = new Schema(
+  (resolvers as unknown) as Schema['resolvers'],
+  [typeDefs]
+)
