@@ -26,6 +26,11 @@ import { Service } from '../../types'
 import { UuidResolvers } from './types'
 
 export const resolvers: UuidResolvers = {
+  Uuid: {
+    __resolveType(uuid) {
+      return uuid.__typename
+    },
+  },
   Query: {
     async uuid(_parent, payload, { dataSources }) {
       const id = payload.alias
@@ -43,11 +48,6 @@ export const resolvers: UuidResolvers = {
         )
       }
       return dataSources.serlo.removeUuid(payload)
-    },
-  },
-  Uuid: {
-    __resolveType(uuid) {
-      return uuid.__typename
     },
   },
 }
