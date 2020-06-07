@@ -19,20 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { dateTimeSchema } from './date-time'
-import { instanceSchema } from './instance'
-import { licenseSchema } from './license'
-import { Schema } from './utils'
-import { uuidSchema } from './uuid'
-
-export * from './date-time'
-export * from './instance'
-export * from './license'
-export * from './uuid'
-
-export const schema = Schema.merge(
-  dateTimeSchema,
-  instanceSchema,
-  licenseSchema,
-  uuidSchema
-)
+export enum Instance {
+  De = 'de',
+  En = 'en',
+  Es = 'es',
+  Fr = 'fr',
+  Hi = 'hi',
+  Ta = 'ta',
+}
