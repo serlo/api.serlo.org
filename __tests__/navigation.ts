@@ -22,6 +22,7 @@
 import { gql } from 'apollo-server'
 
 import {
+  createSetTaxonomyTermMutation,
   navigation,
   page as subjectHomepage,
   taxonomyTermCurriculumTopic,
@@ -30,7 +31,7 @@ import {
 } from '../__fixtures__/uuid'
 import { Instance } from '../src/graphql/schema/instance'
 import { Service } from '../src/graphql/schema/types'
-import { setPage, setTaxonomyTerm } from '../src/graphql/schema/uuid'
+import { setPage } from '../src/graphql/schema/uuid'
 import { setNavigation } from '../src/graphql/schema/uuid/navigation'
 import {
   assertFailingGraphQLMutation,
@@ -211,11 +212,11 @@ describe('Taxonomy Term', () => {
       service: Service.Serlo,
     })
     await assertSuccessfulGraphQLMutation({
-      ...setTaxonomyTerm(taxonomyTermRoot),
+      ...createSetTaxonomyTermMutation(taxonomyTermRoot),
       client,
     })
     await assertSuccessfulGraphQLMutation({
-      ...setTaxonomyTerm(taxonomyTermSubject),
+      ...createSetTaxonomyTermMutation(taxonomyTermSubject),
       client,
     })
     await assertSuccessfulGraphQLMutation({
@@ -259,11 +260,11 @@ describe('Taxonomy Term', () => {
       client,
     })
     await assertSuccessfulGraphQLMutation({
-      ...setTaxonomyTerm(taxonomyTermRoot),
+      ...createSetTaxonomyTermMutation(taxonomyTermRoot),
       client,
     })
     await assertSuccessfulGraphQLMutation({
-      ...setTaxonomyTerm(taxonomyTermSubject),
+      ...createSetTaxonomyTermMutation(taxonomyTermSubject),
       client,
     })
     await assertSuccessfulGraphQLMutation({
@@ -317,15 +318,15 @@ describe('Taxonomy Term', () => {
       client,
     })
     await assertSuccessfulGraphQLMutation({
-      ...setTaxonomyTerm(taxonomyTermRoot),
+      ...createSetTaxonomyTermMutation(taxonomyTermRoot),
       client,
     })
     await assertSuccessfulGraphQLMutation({
-      ...setTaxonomyTerm(taxonomyTermSubject),
+      ...createSetTaxonomyTermMutation(taxonomyTermSubject),
       client,
     })
     await assertSuccessfulGraphQLMutation({
-      ...setTaxonomyTerm(taxonomyTermCurriculumTopic),
+      ...createSetTaxonomyTermMutation(taxonomyTermCurriculumTopic),
       client,
     })
     await assertSuccessfulGraphQLMutation({

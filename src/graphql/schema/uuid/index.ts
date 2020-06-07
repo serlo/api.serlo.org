@@ -96,7 +96,7 @@ import {
   solutionSchema,
 } from './solution'
 import {
-  TaxonomyTerm,
+  resolveTaxonomyTerm,
   TaxonomyTermPayload,
   taxonomyTermSchema,
 } from './taxonomy-term'
@@ -269,7 +269,7 @@ export function resolveAbstractUuid(data?: AbstractUuidPayload): Uuid | void {
     case 'user':
       return resolveUser(data)
     case 'taxonomyTerm':
-      return new TaxonomyTerm(data)
+      return resolveTaxonomyTerm(data)
     default:
       return resolveUnsupportedUuid(data as UnsupportedUuidPayload)
   }

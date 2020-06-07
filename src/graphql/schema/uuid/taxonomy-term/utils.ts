@@ -19,42 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { MutationResolver, QueryResolver, TypeResolver } from '../../types'
-import { EntityRevisionType, EntityType } from '../abstract-entity'
-import { AliasInput } from '../alias'
+import { DiscriminatorType } from '../abstract-uuid'
+import { TaxonomyTerm, TaxonomyTermPayload } from './types'
 
-export enum DiscriminatorType {
-  Page = 'Page',
-  PageRevision = 'PageRevision',
-  User = 'User',
-  TaxonomyTerm = 'TaxonomyTerm',
-}
-
-export type UuidType =
-  | DiscriminatorType
-  | EntityType
-  | EntityRevisionType
-  | 'UnsupportedUuid'
-
-export interface Uuid {
-  __typename: UuidType
-  id: number
-  trashed: boolean
-}
-
-export interface UuidPayload {
-  id: number
-  trashed: boolean
-}
-
-export interface UuidResolvers {
-  Uuid: {
-    __resolveType: TypeResolver<Uuid>
-  }
-  Query: {
-    uuid: QueryResolver<{ alias?: AliasInput; id?: number }, Uuid>
-  }
-  Mutation: {
-    _removeUuid: MutationResolver<{ id: number }>
+export function resolveTaxonomyTerm(data: TaxonomyTermPayload): TaxonomyTerm {
+  return {
+    ...data,
+    __typename: DiscriminatorType.TaxonomyTerm,
   }
 }

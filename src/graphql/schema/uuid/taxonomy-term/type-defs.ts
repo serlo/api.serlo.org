@@ -19,42 +19,49 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { MutationResolver, QueryResolver, TypeResolver } from '../../types'
-import { EntityRevisionType, EntityType } from '../abstract-entity'
-import { AliasInput } from '../alias'
+import { gql } from 'apollo-server'
 
-export enum DiscriminatorType {
-  Page = 'Page',
-  PageRevision = 'PageRevision',
-  User = 'User',
-  TaxonomyTerm = 'TaxonomyTerm',
-}
-
-export type UuidType =
-  | DiscriminatorType
-  | EntityType
-  | EntityRevisionType
-  | 'UnsupportedUuid'
-
-export interface Uuid {
-  __typename: UuidType
-  id: number
-  trashed: boolean
-}
-
-export interface UuidPayload {
-  id: number
-  trashed: boolean
-}
-
-export interface UuidResolvers {
-  Uuid: {
-    __resolveType: TypeResolver<Uuid>
+export const typeDefs = gql`
+  enum TaxonomyTermType {
+    blog
+    curriculum
+    curriculumTopic
+    curriculumTopicFolder
+    forum
+    forumCategory
+    locale
+    root
+    subject
+    topic
+    topicFolder
   }
-  Query: {
-    uuid: QueryResolver<{ alias?: AliasInput; id?: number }, Uuid>
+
+  type TaxonomyTerm implements Uuid {
+    id: Int!
+    trashed: Boolean!
+    type: TaxonomyTermType!
+    instance: Instance!
+    alias: String
+    name: String!
+    description: String
+    weight: Int!
+    parent: TaxonomyTerm
+    children: [Uuid!]!
+    navigation: Navigation
   }
-  Mutation: {
-    _removeUuid: MutationResolver<{ id: number }>
+
+  extend type Mutation {
+    _setTaxonomyTerm(
+      id: Int!
+      trashed: Boolean!
+      alias: String
+      type: TaxonomyTermType!
+      instance: Instance!
+      name: String!
+      description: String
+      weight: Int!
+      parentId: Int
+      childrenIds: [Int!]!
+    ): Boolean
   }
-}
+`
