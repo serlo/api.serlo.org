@@ -19,17 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
+import { Schema } from '../utils'
+import { typeDefs } from './type-defs'
 
-import { Schema } from './utils'
+export * from './types'
 
-export const dateTimeSchema = new Schema()
-
-export type DateTime = string
-dateTimeSchema.addTypeDef(gql`
-  """
-  The \`DateTime\` scalar type represents a date-time, represented as an ISO 8601-formatted \`String\`,
-  e.g. \`2020-04-10T14:00:00+02:00\`.
-  """
-  scalar DateTime
-`)
+export const dateTimeSchema = new Schema({}, [typeDefs])
