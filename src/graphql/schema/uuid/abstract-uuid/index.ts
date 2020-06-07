@@ -19,29 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { GraphQLResolveInfo } from 'graphql'
+import { Schema } from '../../utils'
+import { resolvers } from './resolvers'
+import { typeDefs } from './type-defs'
 
-import { DataSources } from '../data-sources'
+export * from './types'
 
-export type Resolver<P, A, T> = (
-  parent: P,
-  args: A,
-  context: Context,
-  info: GraphQLResolveInfo
-) => Promise<T | void>
-
-export type QueryResolver<A, T> = Resolver<never, A, T>
-export type MutationResolver<A, T = null> = Resolver<never, A, T>
-export type TypeResolver<T> = (type: T) => string
-
-export enum Service {
-  Playground = 'api.serlo.org-playground',
-  Serlo = 'serlo.org',
-  SerloCloudflareWorker = 'serlo.org-cloudflare-worker',
-}
-
-export interface Context {
-  dataSources: DataSources
-  service: Service
-  user: number | null
-}
+export const abstractUuidSchema = new Schema(
+  (resolvers as unknown) as Schema['resolvers'],
+  [typeDefs]
+)

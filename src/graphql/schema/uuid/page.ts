@@ -14,15 +14,18 @@ export const pageSchema = new Schema()
 /**
  * type Page
  */
-export class Page extends Uuid {
+export class Page implements Uuid {
   public __typename = DiscriminatorType.Page
+  public id: number
+  public trashed: boolean
   public instance: Instance
   public alias: string | null
   public currentRevisionId: number | null
   public licenseId: number
 
   public constructor(payload: PagePayload) {
-    super(payload)
+    this.id = payload.id
+    this.trashed = payload.trashed
     this.instance = payload.instance
     this.alias = payload.alias ? encodePath(payload.alias) : null
     this.currentRevisionId = payload.currentRevisionId
@@ -99,8 +102,10 @@ pageSchema.addTypeDef(gql`
 /**
  * type PageRevision
  */
-export class PageRevision extends Uuid {
+export class PageRevision implements Uuid {
   public __typename = DiscriminatorType.PageRevision
+  public id: number
+  public trashed: boolean
   public title: string
   public content: string
   public date: DateTime
@@ -108,7 +113,8 @@ export class PageRevision extends Uuid {
   public repositoryId: number
 
   public constructor(payload: PageRevisionPayload) {
-    super(payload)
+    this.id = payload.id
+    this.trashed = payload.trashed
     this.title = payload.title
     this.content = payload.content
     this.date = payload.date

@@ -1,11 +1,11 @@
 import { ForbiddenError, gql } from 'apollo-server'
 import { GraphQLResolveInfo } from 'graphql'
 
-import { AbstractUuidPayload, resolveAbstractUuid, UuidPayload } from '.'
+import { AbstractUuidPayload, resolveAbstractUuid, Uuid, UuidPayload } from '.'
 import { Instance } from '../instance'
 import { Service, Context } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
-import { DiscriminatorType, Uuid } from './abstract-uuid'
+import { DiscriminatorType } from './abstract-uuid'
 import { encodePath } from './alias'
 
 export const taxonomyTermSchema = new Schema()
@@ -48,8 +48,10 @@ taxonomyTermSchema.addTypeDef(gql`
 /**
  * type TaxonomyTerm
  */
-export class TaxonomyTerm extends Uuid {
+export class TaxonomyTerm implements Uuid {
   public __typename = DiscriminatorType.TaxonomyTerm
+  public id: number
+  public trashed: boolean
   public type: TaxonomyTermType
   public instance: Instance
   public alias: string | null
@@ -60,7 +62,8 @@ export class TaxonomyTerm extends Uuid {
   public childrenIds: number[]
 
   public constructor(payload: TaxonomyTermPayload) {
-    super(payload)
+    this.id = payload.id
+    this.trashed = payload.trashed
     this.type = payload.type
     this.instance = payload.instance
     this.alias = payload.alias ? encodePath(payload.alias) : null
@@ -93,7 +96,7 @@ export class TaxonomyTerm extends Uuid {
         return dataSources.serlo
           .getUuid<AbstractUuidPayload>({ id })
           .then((data) => {
-            return resolveAbstractUuid(data) as Uuid
+            return resolveAbstractUuid(data)
           })
       })
     )
