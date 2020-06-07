@@ -10,15 +10,18 @@ export const userSchema = new Schema()
 /**
  * type User
  */
-export class User extends Uuid {
+export class User implements Uuid {
   public __typename = DiscriminatorType.User
+  public id: number
+  public trashed: boolean
   public username: string
   public date: DateTime
   public lastLogin: DateTime | null
   public description: string | null
 
   public constructor(payload: UserPayload) {
-    super(payload)
+    this.id = payload.id
+    this.trashed = payload.trashed
     this.username = payload.username
     this.date = payload.date
     this.lastLogin = payload.lastLogin

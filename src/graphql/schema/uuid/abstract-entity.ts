@@ -59,8 +59,10 @@ export enum EntityRevisionType {
   VideoRevision = 'VideoRevision',
 }
 
-export abstract class Entity extends Uuid {
+export abstract class Entity implements Uuid {
   public abstract __typename: EntityType
+  public id: number
+  public trashed: boolean
   public instance: Instance
   public alias: string | null
   public date: string
@@ -68,7 +70,8 @@ export abstract class Entity extends Uuid {
   public currentRevisionId: number | null
 
   public constructor(payload: EntityPayload) {
-    super(payload)
+    this.id = payload.id
+    this.trashed = payload.trashed
     this.instance = payload.instance
     this.alias = payload.alias ? encodePath(payload.alias) : null
     this.date = payload.date
@@ -137,14 +140,17 @@ abstractEntitySchema.addTypeDef(gql`
   }
 `)
 
-export abstract class EntityRevision extends Uuid {
+export abstract class EntityRevision implements Uuid {
   public abstract __typename: EntityRevisionType
+  public id: number
+  public trashed: boolean
   public date: string
   public authorId: number
   public repositoryId: number
 
   public constructor(payload: EntityRevisionPayload) {
-    super(payload)
+    this.id = payload.id
+    this.trashed = payload.trashed
     this.date = payload.date
     this.authorId = payload.authorId
     this.repositoryId = payload.repositoryId

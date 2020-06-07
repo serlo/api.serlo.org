@@ -19,29 +19,25 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { GraphQLResolveInfo } from 'graphql'
+import { gql } from 'apollo-server'
 
-import { DataSources } from '../data-sources'
+export const typeDefs = gql`
+  interface Uuid {
+    id: Int!
+    trashed: Boolean!
+  }
 
-export type Resolver<P, A, T> = (
-  parent: P,
-  args: A,
-  context: Context,
-  info: GraphQLResolveInfo
-) => Promise<T | void>
+  type UnsupportedUuid implements Uuid {
+    id: Int!
+    trashed: Boolean!
+    discriminator: String!
+  }
 
-export type QueryResolver<A, T> = Resolver<never, A, T>
-export type MutationResolver<A, T = null> = Resolver<never, A, T>
-export type TypeResolver<T> = (type: T) => string
+  type Query {
+    uuid(alias: AliasInput, id: Int): Uuid
+  }
 
-export enum Service {
-  Playground = 'api.serlo.org-playground',
-  Serlo = 'serlo.org',
-  SerloCloudflareWorker = 'serlo.org-cloudflare-worker',
-}
-
-export interface Context {
-  dataSources: DataSources
-  service: Service
-  user: number | null
-}
+  type Mutation {
+    _removeUuid(id: Int!): Boolean
+  }
+`

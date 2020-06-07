@@ -22,7 +22,12 @@
 import { Schema } from '../utils'
 import { abstractEntitySchema } from './abstract-entity'
 import { abstractTaxonomyTermChildSchema } from './abstract-taxonomy-term-child'
-import { abstractUuidSchema, UnsupportedUuid } from './abstract-uuid'
+import { abstractUuidSchema } from './abstract-uuid'
+import {
+  UnsupportedUuid,
+  UnsupportedUuidPayload,
+  Uuid,
+} from './abstract-uuid/types'
 import { aliasSchema } from './alias'
 import {
   Applet,
@@ -201,8 +206,10 @@ export type AbstractUuidPayload =
   | ({ discriminator: 'taxonomyTerm' } & TaxonomyTermPayload)
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function resolveAbstractUuid(data?: AbstractUuidPayload) {
-  if (!data) return null
+export function resolveAbstractUuid(
+  data?: AbstractUuidPayload
+): Uuid | UnsupportedUuid | void {
+  if (!data) return
 
   switch (data.discriminator) {
     case 'entity':
@@ -227,8 +234,15 @@ export function resolveAbstractUuid(data?: AbstractUuidPayload) {
           return new Solution(data)
         case 'video':
           return new Video(data)
-        default:
-          return new UnsupportedUuid(data)
+        default: {
+          const d = data as UnsupportedUuidPayload
+          return {
+            __typename: 'UnsupportedUuid',
+            discriminator: d.discriminator,
+            id: d.id,
+            trashed: d.trashed,
+          }
+        }
       }
     case 'entityRevision':
       switch (data.type) {
@@ -252,8 +266,15 @@ export function resolveAbstractUuid(data?: AbstractUuidPayload) {
           return new SolutionRevision(data)
         case 'video':
           return new VideoRevision(data)
-        default:
-          return new UnsupportedUuid(data)
+        default: {
+          const d = data as UnsupportedUuidPayload
+          return {
+            __typename: 'UnsupportedUuid',
+            discriminator: d.discriminator,
+            id: d.id,
+            trashed: d.trashed,
+          }
+        }
       }
     case 'page':
       return new Page(data)
@@ -263,7 +284,14 @@ export function resolveAbstractUuid(data?: AbstractUuidPayload) {
       return new User(data)
     case 'taxonomyTerm':
       return new TaxonomyTerm(data)
-    default:
-      return new UnsupportedUuid(data)
+    default: {
+      const d = data as UnsupportedUuidPayload
+      return {
+        __typename: 'UnsupportedUuid',
+        discriminator: d.discriminator,
+        id: d.id,
+        trashed: d.trashed,
+      }
+    }
   }
 }
