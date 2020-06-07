@@ -29,7 +29,7 @@ import { Service } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
 import { Uuid, UuidPayload } from './abstract-uuid'
 import { encodePath } from './alias'
-import { User, UserPayload } from './user'
+import { resolveUser, User, UserPayload } from './user'
 
 export const abstractEntitySchema = new Schema()
 
@@ -233,7 +233,7 @@ export function addEntityResolvers<
         return partialUser
       }
       const data = await dataSources.serlo.getUuid<UserPayload>(partialUser)
-      return new User(data)
+      return resolveUser(data)
     }
   )
   schema.addResolver<R, unknown, Partial<E>>(

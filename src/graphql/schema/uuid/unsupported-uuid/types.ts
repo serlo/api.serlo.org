@@ -19,19 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
+import { Uuid } from '../abstract-uuid'
 
-export const typeDefs = gql`
-  interface Uuid {
-    id: Int!
-    trashed: Boolean!
-  }
+export interface UnsupportedUuid extends Uuid {
+  __typename: 'UnsupportedUuid'
+  discriminator: string
+}
 
-  type Query {
-    uuid(alias: AliasInput, id: Int): Uuid
-  }
-
-  type Mutation {
-    _removeUuid(id: Int!): Boolean
-  }
-`
+export interface UnsupportedUuidPayload {
+  discriminator: string
+  id: number
+  trashed: boolean
+}

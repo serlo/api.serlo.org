@@ -22,16 +22,9 @@
 import { gql } from 'apollo-server'
 
 export const typeDefs = gql`
-  interface Uuid {
+  type UnsupportedUuid implements Uuid {
     id: Int!
     trashed: Boolean!
-  }
-
-  type Query {
-    uuid(alias: AliasInput, id: Int): Uuid
-  }
-
-  type Mutation {
-    _removeUuid(id: Int!): Boolean
+    discriminator: String!
   }
 `

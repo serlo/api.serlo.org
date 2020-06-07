@@ -47,23 +47,9 @@ export interface UuidPayload {
   trashed: boolean
 }
 
-export interface UnsupportedUuid extends Uuid {
-  __typename: 'UnsupportedUuid'
-  discriminator: string
-}
-
-export interface UnsupportedUuidPayload {
-  discriminator: string
-  id: number
-  trashed: boolean
-}
-
 export interface UuidResolvers {
   Query: {
-    uuid: QueryResolver<
-      { alias?: AliasInput; id?: number },
-      Uuid | UnsupportedUuid
-    >
+    uuid: QueryResolver<{ alias?: AliasInput; id?: number }, Uuid>
   }
   Mutation: {
     _removeUuid: MutationResolver<{ id: number }>
