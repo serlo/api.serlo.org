@@ -19,49 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
+import { Schema } from '../utils'
+import { typeDefs } from './type-defs'
 
-import { Schema } from './utils'
+export * from './types'
 
-export const instanceSchema = new Schema()
-
-export enum Instance {
-  De = 'de',
-  En = 'en',
-  Es = 'es',
-  Fr = 'fr',
-  Hi = 'hi',
-  Ta = 'ta',
-}
-
-instanceSchema.addTypeDef(gql`
-  """
-  Represents a Serlo.org instance, e.g. \`de.serlo.org\`.
-  """
-  enum Instance {
-    """
-    German (https://de.serlo.org)
-    """
-    de
-    """
-    English (https://en.serlo.org)
-    """
-    en
-    """
-    Spanish (https://es.serlo.org)
-    """
-    es
-    """
-    French (https://fr.serlo.org)
-    """
-    fr
-    """
-    Hindi (https://hi.serlo.org)
-    """
-    hi
-    """
-    Tamil (https://ta.serlo.org)
-    """
-    ta
-  }
-`)
+export const instanceSchema = new Schema({}, [typeDefs])
