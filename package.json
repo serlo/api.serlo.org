@@ -41,14 +41,14 @@
     "node-fetch": "^2.0.0",
     "ramda": "^0.27.0",
     "redis": "^3.0.0",
-    "tslib": "^1.0.0"
+    "tslib": "^2.0.0"
   },
   "devDependencies": {
     "@pact-foundation/pact": "^9.0.0",
     "@pact-foundation/pact-node": "^10.0.0",
     "@splish-me/changelog": "^0.1.0",
     "@splish-me/copyright-headers": "^0.0.2",
-    "@types/jest": "^25.0.0",
+    "@types/jest": "^26.0.0",
     "@types/jsonwebtoken": "^8.0.0",
     "@types/msgpack": "^0.0.30",
     "@types/node": "^12.0.0",
