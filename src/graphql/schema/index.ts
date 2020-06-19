@@ -25,6 +25,8 @@ import { licenseSchema } from './license'
 import { Schema } from './utils'
 import { uuidSchema } from './uuid'
 
+export * from './date-time'
+export * from './instance'
 export * from './license'
 export * from './uuid'
 

@@ -1,3 +1,24 @@
+/**
+ * This file is part of Serlo.org API
+ *
+ * Copyright (c) 2020 Serlo Education e.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License")
+ * you may not use this file except in compliance with the License
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @copyright Copyright (c) 2020 Serlo Education e.V.
+ * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
+ * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
+ */
 import { ForbiddenError, gql } from 'apollo-server'
 
 import { SerloDataSource } from '../../data-sources/serlo'
@@ -8,7 +29,7 @@ import { Service } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
 import { Uuid, UuidPayload } from './abstract-uuid'
 import { encodePath } from './alias'
-import { User, UserPayload } from './user'
+import { resolveUser, User, UserPayload } from './user'
 
 export const abstractEntitySchema = new Schema()
 
@@ -38,8 +59,10 @@ export enum EntityRevisionType {
   VideoRevision = 'VideoRevision',
 }
 
-export abstract class Entity extends Uuid {
+export abstract class Entity implements Uuid {
   public abstract __typename: EntityType
+  public id: number
+  public trashed: boolean
   public instance: Instance
   public alias: string | null
   public date: string
@@ -47,7 +70,8 @@ export abstract class Entity extends Uuid {
   public currentRevisionId: number | null
 
   public constructor(payload: EntityPayload) {
-    super(payload)
+    this.id = payload.id
+    this.trashed = payload.trashed
     this.instance = payload.instance
     this.alias = payload.alias ? encodePath(payload.alias) : null
     this.date = payload.date
@@ -116,14 +140,17 @@ abstractEntitySchema.addTypeDef(gql`
   }
 `)
 
-export abstract class EntityRevision extends Uuid {
+export abstract class EntityRevision implements Uuid {
   public abstract __typename: EntityRevisionType
+  public id: number
+  public trashed: boolean
   public date: string
   public authorId: number
   public repositoryId: number
 
   public constructor(payload: EntityRevisionPayload) {
-    super(payload)
+    this.id = payload.id
+    this.trashed = payload.trashed
     this.date = payload.date
     this.authorId = payload.authorId
     this.repositoryId = payload.repositoryId
@@ -206,7 +233,7 @@ export function addEntityResolvers<
         return partialUser
       }
       const data = await dataSources.serlo.getUuid<UserPayload>(partialUser)
-      return new User(data)
+      return resolveUser(data)
     }
   )
   schema.addResolver<R, unknown, Partial<E>>(
