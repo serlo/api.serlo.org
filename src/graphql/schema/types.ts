@@ -30,6 +30,10 @@ export type Resolver<P, A, T> = (
   info: GraphQLResolveInfo
 ) => Promise<T | void>
 
+export type QueryResolver<A, T> = Resolver<never, A, T>
+export type MutationResolver<A, T = null> = Resolver<never, A, T>
+export type TypeResolver<T> = (type: T) => string
+
 export enum Service {
   Playground = 'api.serlo.org-playground',
   Serlo = 'serlo.org',

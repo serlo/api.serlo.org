@@ -22,6 +22,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires,import/no-commonjs */
 module.exports = {
   preset: 'ts-jest',
+  testEnvironment: 'node',
   testPathIgnorePatterns: ['/node_modules/', '/__tests__\\/__utils__/'],
   setupFiles: ['dotenv/config'],
 }

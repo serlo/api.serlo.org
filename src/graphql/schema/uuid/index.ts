@@ -22,7 +22,7 @@
 import { Schema } from '../utils'
 import { abstractEntitySchema } from './abstract-entity'
 import { abstractTaxonomyTermChildSchema } from './abstract-taxonomy-term-child'
-import { abstractUuidSchema, UnsupportedUuid } from './abstract-uuid'
+import { abstractUuidSchema, Uuid } from './abstract-uuid'
 import { aliasSchema } from './alias'
 import {
   Applet,
@@ -32,11 +32,11 @@ import {
   appletSchema,
 } from './applet'
 import {
-  articleSchema,
   Article,
-  ArticleRevision,
   ArticlePayload,
+  ArticleRevision,
   ArticleRevisionPayload,
+  articleSchema,
 } from './article'
 import {
   Course,
@@ -82,11 +82,11 @@ import {
 } from './grouped-exercise'
 import { navigationSchema } from './navigation'
 import {
-  pageSchema,
   Page,
-  PageRevision,
   PagePayload,
+  PageRevision,
   PageRevisionPayload,
+  pageSchema,
 } from './page'
 import {
   Solution,
@@ -96,11 +96,16 @@ import {
   solutionSchema,
 } from './solution'
 import {
-  taxonomyTermSchema,
-  TaxonomyTerm,
+  resolveTaxonomyTerm,
   TaxonomyTermPayload,
+  taxonomyTermSchema,
 } from './taxonomy-term'
-import { userSchema, User, UserPayload } from './user'
+import {
+  resolveUnsupportedUuid,
+  UnsupportedUuidPayload,
+  unsupportedUuidSchema,
+} from './unsupported-uuid'
+import { resolveUser, UserPayload, userSchema } from './user'
 import {
   Video,
   VideoPayload,
@@ -123,6 +128,7 @@ export * from './grouped-exercise'
 export * from './page'
 export * from './solution'
 export * from './taxonomy-term'
+export * from './unsupported-uuid'
 export * from './user'
 export * from './video'
 
@@ -143,6 +149,7 @@ export const uuidSchema = Schema.merge(
   pageSchema,
   solutionSchema,
   taxonomyTermSchema,
+  unsupportedUuidSchema,
   userSchema,
   videoSchema
 )
@@ -201,8 +208,8 @@ export type AbstractUuidPayload =
   | ({ discriminator: 'taxonomyTerm' } & TaxonomyTermPayload)
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function resolveAbstractUuid(data?: AbstractUuidPayload) {
-  if (!data) return null
+export function resolveAbstractUuid(data?: AbstractUuidPayload): Uuid | void {
+  if (!data) return
 
   switch (data.discriminator) {
     case 'entity':
@@ -228,7 +235,7 @@ export function resolveAbstractUuid(data?: AbstractUuidPayload) {
         case 'video':
           return new Video(data)
         default:
-          return new UnsupportedUuid(data)
+          return resolveUnsupportedUuid(data as UnsupportedUuidPayload)
       }
     case 'entityRevision':
       switch (data.type) {
@@ -253,17 +260,17 @@ export function resolveAbstractUuid(data?: AbstractUuidPayload) {
         case 'video':
           return new VideoRevision(data)
         default:
-          return new UnsupportedUuid(data)
+          return resolveUnsupportedUuid(data as UnsupportedUuidPayload)
       }
     case 'page':
       return new Page(data)
     case 'pageRevision':
       return new PageRevision(data)
     case 'user':
-      return new User(data)
+      return resolveUser(data)
     case 'taxonomyTerm':
-      return new TaxonomyTerm(data)
+      return resolveTaxonomyTerm(data)
     default:
-      return new UnsupportedUuid(data)
+      return resolveUnsupportedUuid(data as UnsupportedUuidPayload)
   }
 }
