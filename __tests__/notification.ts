@@ -18,7 +18,7 @@ describe('Notifications', () => {
       {
         mutation: gql`
           mutation {
-            setNotificationState(id: 1, state: false)
+            setNotificationState(id: 1, unread: false)
           }
         `,
         client,
@@ -27,18 +27,14 @@ describe('Notifications', () => {
         expect(errors[0].extensions?.code).toEqual('UNAUTHENTICATED')
       }
     )
-    // TODO: similarly to _setLicense (forbidden)
   })
   /*
   test('setNotificationState (authenticated)', async () => {
-    // TODO:similarly to _setLicense (authenticated)
-    // 1. execute mutation setNotificationState
-    // 2. check that notification has now the correct state
     const { client } = createTestClient({ service: Service.Serlo, user: 1 })
     await assertSuccessfulGraphQLMutation({
       mutation: gql`
         mutation {
-          setNotificationState(id: 1, state: false)
+          setNotificationState(id: 1, unread: false)
         }
       `,
       client,
@@ -47,7 +43,7 @@ describe('Notifications', () => {
       query: gql`
         {
           notifications {
-            notifications {
+            nodes {
               id
               unread
             }
@@ -56,7 +52,7 @@ describe('Notifications', () => {
       `,
       data: {
         notifications: {
-          notifications: {
+          nodes: {
             id: 1,
             unread: false,
           },

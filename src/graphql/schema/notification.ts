@@ -1,10 +1,10 @@
-import { Service, Context } from './types'
+import { Context } from './types'
 import { Schema, requestsOnlyFields } from './utils'
-import { gql, AuthenticationError } from 'apollo-server'
+import { gql, AuthenticationError, ForbiddenError } from 'apollo-server'
 
 import { Instance } from './instance'
 import { User } from './uuid/user'
-import { GraphQLResolveInfo, print } from 'graphql'
+import { GraphQLResolveInfo } from 'graphql'
 import { resolveAbstractUuid } from './uuid'
 import { Uuid } from './uuid/abstract-uuid'
 
@@ -14,13 +14,11 @@ export const notificationSchema = new Schema()
  * type Notification
  */
 export class Notification {
-  // TODO: add relevant fields
   public id: number
   public unread: boolean
   public eventId: number
 
   public constructor(payload: NotificationPayload) {
-    // TODO: set fields
     this.id = payload.eventId
     this.unread = payload.unread
     this.eventId = payload.eventId
@@ -39,18 +37,14 @@ export class Notification {
     const data = await dataSources.serlo.getNotificationEvent(partialEvent)
     return new NotificationEvent(data)
   }
-
-  // TODO: probably needs a resolver for event that maps eventId to the actual event
-  // public async event(...) see e.g. taxonomy-term.ts # parent
 }
 
 export interface NotificationsPayload {
   notifications: NotificationPayload[]
-  userId: number
+  userId: number | null
 }
 
 export interface NotificationPayload {
-  // TODO: add fields, defined by the return stuff you expect from the legacy API
   id: number
   unread: boolean
   eventId: number
@@ -58,7 +52,6 @@ export interface NotificationPayload {
 
 notificationSchema.addTypeDef(gql`
   type Notification {
-    # TODO: actual type for the GraphQL schema
     id: Int!
     unread: Boolean
     event: NotificationEvent!
@@ -69,7 +62,6 @@ notificationSchema.addTypeDef(gql`
  * type NotificationEvent
  */
 export class NotificationEvent {
-  // TODO: similarly to Notification, needs resolvers for actor and object
   public id: number
   public type: string
   public instance: Instance
@@ -99,7 +91,6 @@ export class NotificationEvent {
       return partialActor
     }
     const data = await dataSources.serlo.getUuid(partialActor)
-    // TODO: why does new User(data) not work?
     return resolveAbstractUuid(data) as User
   }
 
@@ -109,17 +100,12 @@ export class NotificationEvent {
     info: GraphQLResolveInfo
   ) {
     if (!this.objectId) return null
-    const partialObject = { id: this.objectId }
-    if (requestsOnlyFields('Uuid', ['id'], info)) {
-      return partialObject
-    }
-    const data = await dataSources.serlo.getUuid(partialObject)
+    const data = await dataSources.serlo.getUuid({ id: this.objectId })
     return resolveAbstractUuid(data) as Uuid
   }
 }
 
 export interface NotificationEventPayload {
-  // TODO: add fields
   id: number
   type: string
   instance: Instance
@@ -131,7 +117,6 @@ export interface NotificationEventPayload {
 
 notificationSchema.addTypeDef(gql`
   type NotificationEvent {
-    # TODO: actual type for the GraphQL schema
     id: Int!
     type: String!
     instance: Instance!
@@ -145,56 +130,108 @@ notificationSchema.addTypeDef(gql`
 /**
  * query notifications
  */
-notificationSchema.addQuery<unknown, {}, Notification[]>(
-  'notifications',
-  async (_parent, _args, { dataSources, user }) => {
-    // TODO: return a list of notifications
-    // approach:
-    // 0. check if user logged in
-    if (user == null) {
-      throw new AuthenticationError('You are not logged in')
-    }
-    // 1. fetch notification payloads via data source
-    const payloads = await dataSources.serlo.getNotifications({ id: user })
-    // 2. map over the payloads and create notifications
-    // 3. return that...
-    return payloads.map((payload: NotificationPayload) => {
-      return new Notification(payload)
-    })
+notificationSchema.addQuery<
+  unknown,
+  {},
+  { totalCount: number; nodes: Notification[] }
+>('notifications', async (_parent, _args, { dataSources, user }) => {
+  if (user == null) {
+    throw new AuthenticationError('You are not logged in')
   }
-)
+  const payloads = await dataSources.serlo.getNotifications({ id: user })
+  return {
+    totalCount: payloads.length,
+    nodes: payloads.map((payload: NotificationPayload) => {
+      return new Notification(payload)
+    }),
+  }
+})
 
 notificationSchema.addTypeDef(gql`
+  type NotificationsResult {
+    totalCount: Int!
+    nodes: [Notification!]!
+  }
   extend type Query {
-    notifications: [Notification!]!
+    notifications: NotificationsResult!
   }
 `)
 
 /**
  * mutation setNotificationState
  */
-notificationSchema.addMutation<unknown, { id: number; state: boolean }, null>(
+notificationSchema.addMutation<unknown, { id: number; unread: boolean }, null>(
   'setNotificationState',
   async (_parent, payload, { dataSources, user }) => {
-    // TODO:
-    // 0. check if user logged in
     if (user == null) {
       throw new AuthenticationError('You are not logged in')
     }
-    // 1. call the corresponding function on data source
     await dataSources.serlo.setNotificationState({
       id: payload.id,
       userId: user,
-      state: payload.state,
+      unread: payload.unread,
     })
   }
 )
 
 notificationSchema.addTypeDef(gql`
   extend type Mutation {
-    setNotificationState(id: Int!, state: Boolean): Boolean
+    setNotificationState(id: Int!, unread: Boolean): Boolean
   }
 `)
 
-// TODO: Later: _setNotifications
-// TODO: Later: _setEvent
+/**
+ * mutation _setNotifications
+ */
+notificationSchema.addMutation<unknown, NotificationsPayload, null>(
+  '_setNotifications',
+  async (_parent, payload, { dataSources, service }) => {
+    if (service !== 'serlo.org') {
+      throw new ForbiddenError(
+        'You do not have the permissions to set notifications'
+      )
+    }
+    await dataSources.serlo.setNotifications(payload)
+  }
+)
+notificationSchema.addTypeDef(gql`
+  input NotificationInput {
+    id: Int!
+    unread: Boolean
+    eventId: Int!
+  }
+  extend type Mutation {
+    _setNotifications(
+      userId: Int!
+      notifications: [NotificationInput!]!
+    ): Boolean
+  }
+`)
+
+/**
+ * mutation _setNotificationEvent
+ */
+notificationSchema.addMutation<unknown, NotificationEvent, null>(
+  '_setNotificationEvent',
+  async (_parent, notificationEvent, { dataSources, service }) => {
+    if (service !== 'serlo.org') {
+      throw new ForbiddenError(
+        'You do not have the permissions to set notifications'
+      )
+    }
+    await dataSources.serlo.setNotificationEvent(notificationEvent)
+  }
+)
+notificationSchema.addTypeDef(gql`
+  extend type Mutation {
+    _setNotificationEvent(
+      id: Int!
+      type: String!
+      instance: Instance!
+      date: String!
+      actorId: Int!
+      objectId: Int!
+      payload: String!
+    ): Boolean
+  }
+`)
