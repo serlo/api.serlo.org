@@ -447,7 +447,6 @@ export class SerloDataSource extends RESTDataSource {
     return event
   }
 
-  // TODO:
   public async getNotifications({
     id,
     bypassCache = false,
@@ -462,7 +461,6 @@ export class SerloDataSource extends RESTDataSource {
     })
   }
 
-  // TODO:
   public async setNotifications(notifications: NotificationsPayload) {
     const cacheKey = this.getCacheKey(
       `/api/notification/${notifications.userId}`
@@ -474,34 +472,27 @@ export class SerloDataSource extends RESTDataSource {
     return notifications.notifications
   }
 
-  // TODO:
   public async setNotificationState(notificationState: {
     id: number
     userId: number
-    state: boolean
+    unread: boolean
   }) {
-    // TODO: similarly to cacheAwareGet
-    // 1. call this.post on /api/set-notification-state/:id
-    //     This responds with a NotificationPayload
-
     const body = {
       notificationId: notificationState.id,
       userId: notificationState.userId,
-      state: notificationState.state,
+      unread: notificationState.unread,
     }
     await this.customPost({
       path: `/api/set-notification-state/${notificationState.id}`,
       body: body,
     })
-    // 2. call setNotification (which sets the cache)
     const notifications = await this.getNotifications({
       id: notificationState.userId,
     })
-    console.log(notifications)
     const modifiedNotifications = notifications.map(
       (notification: NotificationPayload) => {
         if (notification.id == notificationState.id) {
-          return { unread: notificationState.state, ...notification }
+          return { ...notification, unread: notificationState.unread }
         }
       }
     )
@@ -513,7 +504,6 @@ export class SerloDataSource extends RESTDataSource {
     // TODO: later: handle auth
   }
 
-  // TODO: similarly to cacheAwareGet
   private async customPost<K extends keyof SerloDataSource>({
     path,
     instance = Instance.De,

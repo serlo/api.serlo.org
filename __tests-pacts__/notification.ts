@@ -10,11 +10,7 @@ import {
   addArticleInteraction,
 } from './__utils__/interactions'
 
-import {
-  event,
-  notification,
-  notifications,
-} from '../__fixtures__/notification'
+import { event, notifications } from '../__fixtures__/notification'
 
 import { user, article } from '../__fixtures__/uuid'
 
@@ -29,49 +25,59 @@ test('Notifications', async () => {
   await addNotificationsInteraction(notifications)
   await addNotificationEventInteraction(event)
   await addUserInteraction(user)
-  // await addArticleInteraction(article)
+  await addArticleInteraction(article)
 
   await assertSuccessfulGraphQLQuery({
     query: gql`
       {
         notifications {
-          id
-          unread
-          event {
+          totalCount
+          nodes {
             id
-            type
-            instance
-            date
-            actor {
+            unread
+            event {
               id
-              username
+              type
+              instance
+              date
+              actor {
+                id
+                username
+              }
+              object {
+                ... on Article {
+                  id
+                  trashed
+                }
+              }
+              payload
             }
-            payload
           }
         }
       }
     `,
     data: {
-      notifications: [
-        {
-          id: 1,
-          unread: true,
-          event: {
-            ...R.omit(['actorId', 'objectId'], event),
-            actor: {
-              id: 1,
-              username: 'username',
+      notifications: {
+        totalCount: 1,
+        nodes: [
+          {
+            id: 1,
+            unread: true,
+            event: {
+              ...R.omit(['actorId', 'objectId'], event),
+              actor: {
+                id: 1,
+                username: 'username',
+              },
+              object: {
+                id: 1855,
+                trashed: false,
+              },
+              payload: 'string',
             },
-            //object: {
-            //article: {
-            //id: 1855,
-            //trashed: false,
-            //},
-            //},
-            payload: 'string',
           },
-        },
-      ],
+        ],
+      },
     },
   })
 })
