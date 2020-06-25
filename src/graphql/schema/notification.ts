@@ -166,6 +166,7 @@ notificationSchema.addMutation<unknown, { id: number; unread: boolean }, null>(
     if (user == null) {
       throw new AuthenticationError('You are not logged in')
     }
+    // TODO: throw error if response fails
     await dataSources.serlo.setNotificationState({
       id: payload.id,
       userId: user,

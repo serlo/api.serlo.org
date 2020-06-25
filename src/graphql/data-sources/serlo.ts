@@ -482,10 +482,13 @@ export class SerloDataSource extends RESTDataSource {
       userId: notificationState.userId,
       unread: notificationState.unread,
     }
-    await this.customPost({
+    // TODO: Handle failing post request due to unauthorized user
+    // check with unit test how customPost can fail and pass response to higher function call => throw error
+    const response = await this.customPost({
       path: `/api/set-notification-state/${notificationState.id}`,
       body: body,
     })
+    console.log(response)
     const notifications = await this.getNotifications({
       id: notificationState.userId,
     })
@@ -500,8 +503,6 @@ export class SerloDataSource extends RESTDataSource {
       notifications: modifiedNotifications,
       userId: notificationState.userId,
     })
-
-    // TODO: later: handle auth
   }
 
   private async customPost<K extends keyof SerloDataSource>({
@@ -529,6 +530,7 @@ export class SerloDataSource extends RESTDataSource {
             },
           }
         ))
+    return data
   }
 
   private async cacheAwareGet<

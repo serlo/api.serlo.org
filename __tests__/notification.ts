@@ -62,4 +62,6 @@ describe('Notifications', () => {
     })
   })
   */
+
+  // TODO: add test to check that user has right to change notification state
 })
