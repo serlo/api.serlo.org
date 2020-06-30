@@ -30,6 +30,7 @@ import util from 'util'
 
 import { createTestClient } from '../../__tests__/__utils__/test-client'
 import { Service } from '../../src/graphql/schema/types'
+import pact from '@pact-foundation/pact-node'
 
 const root = path.join(__dirname, '..', '..')
 const pactDir = path.join(root, 'pacts')

@@ -59,6 +59,13 @@ import {
   VideoRevisionPayload,
 } from '../schema/uuid'
 import { Navigation, NavigationPayload } from '../schema/uuid/navigation'
+import {
+  NotificationEventPayload,
+  NotificationPayload,
+  NotificationsPayload,
+  Notification,
+} from '../schema/notification'
+import { notification } from '../../../__fixtures__/notification'
 
 export class SerloDataSource extends RESTDataSource {
   public constructor(private environment: Environment) {
@@ -417,23 +424,122 @@ export class SerloDataSource extends RESTDataSource {
     })
   }
 
-  // TODO:
-  public async getNotifications() {}
+  public async getNotificationEvent({
+    id,
+    bypassCache = false,
+  }: {
+    id: number
+    bypassCache?: boolean
+  }) {
+    return this.cacheAwareGet({
+      path: `/api/event/${id}`,
+      bypassCache,
+      setter: 'setNotificationEvent',
+    })
+  }
+
+  public async setNotificationEvent(event: NotificationEventPayload) {
+    const cacheKey = this.getCacheKey(`/api/event/${event.id}`)
+    await this.environment.cache.set(
+      cacheKey,
+      this.environment.serializer.serialize(event)
+    )
+    return event
+  }
 
   // TODO:
-  public async setNotifications() {}
+  public async getNotifications({
+    id,
+    bypassCache = false,
+  }: {
+    id: number
+    bypassCache?: boolean
+  }) {
+    return this.cacheAwareGet({
+      path: `/api/notifications/${id}`,
+      bypassCache,
+      setter: 'setNotifications',
+    })
+  }
 
   // TODO:
-  public async setNotificationState() {
+  public async setNotifications(notifications: NotificationsPayload) {
+    const cacheKey = this.getCacheKey(
+      `/api/notification/${notifications.userId}`
+    )
+    await this.environment.cache.set(
+      cacheKey,
+      this.environment.serializer.serialize(notifications)
+    )
+    return notifications.notifications
+  }
+
+  // TODO:
+  public async setNotificationState(notificationState: {
+    id: number
+    userId: number
+    state: boolean
+  }) {
     // TODO: similarly to cacheAwareGet
     // 1. call this.post on /api/set-notification-state/:id
     //     This responds with a NotificationPayload
+
+    const body = {
+      notificationId: notificationState.id,
+      userId: notificationState.userId,
+      state: notificationState.state,
+    }
+    await this.customPost({
+      path: `/api/set-notification-state/${notificationState.id}`,
+      body: body,
+    })
     // 2. call setNotification (which sets the cache)
+    const notifications = await this.getNotifications({
+      id: notificationState.userId,
+    })
+    console.log(notifications)
+    const modifiedNotifications = notifications.map(
+      (notification: NotificationPayload) => {
+        if (notification.id == notificationState.id) {
+          return { unread: notificationState.state, ...notification }
+        }
+      }
+    )
+    await this.setNotifications({
+      notifications: modifiedNotifications,
+      userId: notificationState.userId,
+    })
+
     // TODO: later: handle auth
   }
 
   // TODO: similarly to cacheAwareGet
-  private async customPost() {}
+  private async customPost<K extends keyof SerloDataSource>({
+    path,
+    instance = Instance.De,
+    body,
+  }: {
+    path: string
+    instance?: Instance
+    body: object
+  }) {
+    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET!, {
+      expiresIn: '2h',
+      audience: Service.Serlo,
+      issuer: 'api.serlo.org',
+    })
+    const data = await (process.env.NODE_ENV === 'test'
+      ? super.post(`http://localhost:9009${path}`, body)
+      : super.post(
+          `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
+          body,
+          {
+            headers: {
+              Authorization: `Serlo Service=${token}`,
+            },
+          }
+        ))
+  }
 
   private async cacheAwareGet<
     T,
