@@ -22,6 +22,7 @@
 import { dateTimeSchema } from './date-time'
 import { instanceSchema } from './instance'
 import { licenseSchema } from './license'
+import { notificationSchema } from './notification'
 import { Schema } from './utils'
 import { uuidSchema } from './uuid'
 
@@ -34,5 +35,6 @@ export const schema = Schema.merge(
   dateTimeSchema,
   instanceSchema,
   licenseSchema,
+  notificationSchema,
   uuidSchema
 )

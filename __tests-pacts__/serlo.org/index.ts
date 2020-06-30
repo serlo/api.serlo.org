@@ -79,6 +79,9 @@ afterAll(async () => {
 describe('License', () => {
   require('./license')
 })
+describe('Notification', () => {
+  require('./notification')
+})
 describe('Uuid', () => {
   require('./uuid')
 })
