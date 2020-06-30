@@ -23,6 +23,10 @@ import { Matchers } from '@pact-foundation/pact'
 
 import { License } from '../../src/graphql/schema/license'
 import {
+  NotificationsPayload,
+  NotificationEventPayload,
+} from '../../src/graphql/schema/notification'
+import {
   AliasPayload,
   AppletPayload,
   AppletRevisionPayload,
@@ -52,10 +56,6 @@ import {
   SolutionPayload,
   SolutionRevisionPayload,
 } from '../../src/graphql/schema/uuid/solution'
-import {
-  NotificationsPayload,
-  NotificationEventPayload,
-} from '../../src/graphql/schema/notification'
 
 export function addNavigationInteraction(payload: NavigationPayload) {
   return addJsonInteraction({

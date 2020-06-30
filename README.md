@@ -17,9 +17,11 @@
 ## Adding a new sub schema
 
 - Add a file for the sub schema somewhere in `schema/*`:
+
 ```typescript
 import { Schema } from './utils'
 
 export const fooSchema = new Schema()
 ```
+
 - This file should export a `Schema` that is merged with other in `schema/index.ts`

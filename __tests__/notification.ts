@@ -1,12 +1,8 @@
 import { gql } from 'apollo-server'
 
 import { Service } from '../src/graphql/schema/types'
+import { assertFailingGraphQLMutation } from './__utils__/assertions'
 import { createTestClient } from './__utils__/test-client'
-import {
-  assertFailingGraphQLMutation,
-  assertSuccessfulGraphQLMutation,
-  assertSuccessfulGraphQLQuery,
-} from './__utils__/assertions'
 
 describe('Notifications', () => {
   test('setNotificationState (forbidden)', async () => {

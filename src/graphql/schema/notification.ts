@@ -1,12 +1,12 @@
-import { Context } from './types'
-import { Schema, requestsOnlyFields } from './utils'
 import { gql, AuthenticationError, ForbiddenError } from 'apollo-server'
+import { GraphQLResolveInfo } from 'graphql'
 
 import { Instance } from './instance'
-import { User } from './uuid/user'
-import { GraphQLResolveInfo } from 'graphql'
-import { resolveAbstractUuid } from './uuid'
+import { Context } from './types'
+import { Schema, requestsOnlyFields } from './utils'
+import { AbstractUuidPayload, resolveAbstractUuid } from './uuid'
 import { Uuid } from './uuid/abstract-uuid'
+import { resolveUser, UserPayload } from './uuid/user'
 
 export const notificationSchema = new Schema()
 
@@ -41,7 +41,7 @@ export class Notification {
 
 export interface NotificationsPayload {
   notifications: NotificationPayload[]
-  userId: number | null
+  userId: number
 }
 
 export interface NotificationPayload {
@@ -90,18 +90,15 @@ export class NotificationEvent {
     if (requestsOnlyFields('User', ['id'], info)) {
       return partialActor
     }
-    const data = await dataSources.serlo.getUuid(partialActor)
-    return resolveAbstractUuid(data) as User
+    const data = await dataSources.serlo.getUuid<UserPayload>(partialActor)
+    return resolveUser(data)
   }
 
-  public async object(
-    _args: undefined,
-    { dataSources }: Context,
-    info: GraphQLResolveInfo
-  ) {
+  public async object(_args: undefined, { dataSources }: Context) {
     if (!this.objectId) return null
     const data = await dataSources.serlo.getUuid({ id: this.objectId })
-    return resolveAbstractUuid(data) as Uuid
+    // TODO: this type is still a little bit weird since the discriminator is not part of our Payload types
+    return resolveAbstractUuid(data as AbstractUuidPayload) as Uuid
   }
 }
 
@@ -132,16 +129,18 @@ notificationSchema.addTypeDef(gql`
  */
 notificationSchema.addQuery<
   unknown,
-  {},
+  never,
   { totalCount: number; nodes: Notification[] }
 >('notifications', async (_parent, _args, { dataSources, user }) => {
   if (user == null) {
     throw new AuthenticationError('You are not logged in')
   }
-  const payloads = await dataSources.serlo.getNotifications({ id: user })
+  const notifications = await dataSources.serlo.getNotifications({
+    id: user,
+  })
   return {
-    totalCount: payloads.length,
-    nodes: payloads.map((payload: NotificationPayload) => {
+    totalCount: notifications.length,
+    nodes: notifications.map((payload: NotificationPayload) => {
       return new Notification(payload)
     }),
   }
