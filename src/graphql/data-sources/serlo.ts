@@ -26,6 +26,11 @@ import * as R from 'ramda'
 import { Environment } from '../environment'
 import { Instance } from '../schema/instance'
 import { License } from '../schema/license'
+import {
+  NotificationEventPayload,
+  NotificationPayload,
+  NotificationsPayload,
+} from '../schema/notification'
 import { Service } from '../schema/types'
 import {
   AliasPayload,
@@ -59,13 +64,6 @@ import {
   VideoRevisionPayload,
 } from '../schema/uuid'
 import { Navigation, NavigationPayload } from '../schema/uuid/navigation'
-import {
-  NotificationEventPayload,
-  NotificationPayload,
-  NotificationsPayload,
-  Notification,
-} from '../schema/notification'
-import { notification } from '../../../__fixtures__/notification'
 
 export class SerloDataSource extends RESTDataSource {
   public constructor(private environment: Environment) {
@@ -430,7 +428,7 @@ export class SerloDataSource extends RESTDataSource {
   }: {
     id: number
     bypassCache?: boolean
-  }) {
+  }): Promise<NotificationEventPayload> {
     return this.cacheAwareGet({
       path: `/api/event/${id}`,
       bypassCache,
@@ -453,7 +451,7 @@ export class SerloDataSource extends RESTDataSource {
   }: {
     id: number
     bypassCache?: boolean
-  }) {
+  }): Promise<NotificationPayload[]> {
     return this.cacheAwareGet({
       path: `/api/notifications/${id}`,
       bypassCache,
@@ -484,11 +482,10 @@ export class SerloDataSource extends RESTDataSource {
     }
     // TODO: Handle failing post request due to unauthorized user
     // check with unit test how customPost can fail and pass response to higher function call => throw error
-    const response = await this.customPost({
+    await this.customPost({
       path: `/api/set-notification-state/${notificationState.id}`,
-      body: body,
+      body,
     })
-    console.log(response)
     const notifications = await this.getNotifications({
       id: notificationState.userId,
     })
@@ -497,6 +494,7 @@ export class SerloDataSource extends RESTDataSource {
         if (notification.id == notificationState.id) {
           return { ...notification, unread: notificationState.unread }
         }
+        return notification
       }
     )
     await this.setNotifications({
@@ -505,40 +503,39 @@ export class SerloDataSource extends RESTDataSource {
     })
   }
 
-  private async customPost<K extends keyof SerloDataSource>({
+  private async customPost<
+    T,
+    K extends keyof SerloDataSource = keyof SerloDataSource
+  >({
     path,
     instance = Instance.De,
     body,
   }: {
     path: string
     instance?: Instance
+    // eslint-disable-next-line @typescript-eslint/ban-types
     body: object
-  }) {
-    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET!, {
+  }): Promise<T> {
+    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
       expiresIn: '2h',
       audience: Service.Serlo,
       issuer: 'api.serlo.org',
     })
-    const data = await (process.env.NODE_ENV === 'test'
-      ? super.post(`http://localhost:9009${path}`, body)
-      : super.post(
-          `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
-          body,
-          {
-            headers: {
-              Authorization: `Serlo Service=${token}`,
-            },
-          }
-        ))
-    return data
+    return await super.post(
+      `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
+      body,
+      {
+        headers: {
+          Authorization: `Serlo Service=${token}`,
+        },
+      }
+    )
   }
 
   private async cacheAwareGet<
     T,
     K extends keyof SerloDataSource = keyof SerloDataSource
   >({
-
-  private async cacheAwareGet<K extends keyof SerloDataSource>({
     path,
     instance = Instance.De,
     bypassCache = false,
@@ -561,17 +558,6 @@ export class SerloDataSource extends RESTDataSource {
       issuer: 'api.serlo.org',
     })
 
-    // const data = (await (process.env.NODE_ENV === 'test'
-    //   ? super.get(`http://localhost:9009${path}`)
-    //   : super.get(
-    //       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
-    //       {},
-    //       {
-    //         headers: {
-    //           Authorization: `Serlo Service=${token}`,
-    //         },
-    //       }
-    //     ))) as unknown
     const data = (await super.get(
       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
       {},
