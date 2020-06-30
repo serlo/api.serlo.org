@@ -417,10 +417,30 @@ export class SerloDataSource extends RESTDataSource {
     })
   }
 
+  // TODO:
+  public async getNotifications() {}
+
+  // TODO:
+  public async setNotifications() {}
+
+  // TODO:
+  public async setNotificationState() {
+    // TODO: similarly to cacheAwareGet
+    // 1. call this.post on /api/set-notification-state/:id
+    //     This responds with a NotificationPayload
+    // 2. call setNotification (which sets the cache)
+    // TODO: later: handle auth
+  }
+
+  // TODO: similarly to cacheAwareGet
+  private async customPost() {}
+
   private async cacheAwareGet<
     T,
     K extends keyof SerloDataSource = keyof SerloDataSource
   >({
+
+  private async cacheAwareGet<K extends keyof SerloDataSource>({
     path,
     instance = Instance.De,
     bypassCache = false,
