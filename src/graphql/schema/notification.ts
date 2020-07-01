@@ -135,7 +135,7 @@ notificationSchema.addQuery<
   if (user == null) {
     throw new AuthenticationError('You are not logged in')
   }
-  const notifications = await dataSources.serlo.getNotifications({
+  const { notifications } = await dataSources.serlo.getNotifications({
     id: user,
   })
   return {
@@ -156,16 +156,20 @@ notificationSchema.addTypeDef(gql`
   }
 `)
 
+export interface SetNotificationStatePayload {
+  id: number
+  unread: boolean
+}
+
 /**
  * mutation setNotificationState
  */
-notificationSchema.addMutation<unknown, { id: number; unread: boolean }, null>(
+notificationSchema.addMutation<unknown, SetNotificationStatePayload, null>(
   'setNotificationState',
   async (_parent, payload, { dataSources, user }) => {
     if (user == null) {
       throw new AuthenticationError('You are not logged in')
     }
-    // TODO: throw error if response fails
     await dataSources.serlo.setNotificationState({
       id: payload.id,
       userId: user,
@@ -176,7 +180,7 @@ notificationSchema.addMutation<unknown, { id: number; unread: boolean }, null>(
 
 notificationSchema.addTypeDef(gql`
   extend type Mutation {
-    setNotificationState(id: Int!, unread: Boolean): Boolean
+    setNotificationState(id: Int!, unread: Boolean!): Boolean
   }
 `)
 
