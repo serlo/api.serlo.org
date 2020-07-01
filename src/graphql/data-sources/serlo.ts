@@ -451,7 +451,7 @@ export class SerloDataSource extends RESTDataSource {
   }: {
     id: number
     bypassCache?: boolean
-  }): Promise<NotificationPayload[]> {
+  }): Promise<NotificationsPayload> {
     return this.cacheAwareGet({
       path: `/api/notifications/${id}`,
       bypassCache,
@@ -461,13 +461,13 @@ export class SerloDataSource extends RESTDataSource {
 
   public async setNotifications(notifications: NotificationsPayload) {
     const cacheKey = this.getCacheKey(
-      `/api/notification/${notifications.userId}`
+      `/api/notifications/${notifications.userId}`
     )
     await this.environment.cache.set(
       cacheKey,
       this.environment.serializer.serialize(notifications)
     )
-    return notifications.notifications
+    return notifications
   }
 
   public async setNotificationState(notificationState: {
@@ -480,18 +480,16 @@ export class SerloDataSource extends RESTDataSource {
       userId: notificationState.userId,
       unread: notificationState.unread,
     }
-    // TODO: Handle failing post request due to unauthorized user
-    // check with unit test how customPost can fail and pass response to higher function call => throw error
     await this.customPost({
       path: `/api/set-notification-state/${notificationState.id}`,
       body,
     })
-    const notifications = await this.getNotifications({
+    const { notifications } = await this.getNotifications({
       id: notificationState.userId,
     })
     const modifiedNotifications = notifications.map(
       (notification: NotificationPayload) => {
-        if (notification.id == notificationState.id) {
+        if (notification.id === notificationState.id) {
           return { ...notification, unread: notificationState.unread }
         }
         return notification
