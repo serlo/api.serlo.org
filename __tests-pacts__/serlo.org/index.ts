@@ -63,7 +63,10 @@ beforeAll(async () => {
 })
 
 beforeEach(() => {
-  global.client = createTestClient({ service: Service.Playground }).client
+  global.client = createTestClient({
+    service: Service.Playground,
+    user: null,
+  }).client
 })
 
 afterEach(async () => {
