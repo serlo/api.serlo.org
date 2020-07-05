@@ -107,7 +107,6 @@ export class SerloDataSource extends RESTDataSource {
       instance,
       setter: 'setNavigation',
     })
-
     const treeIndex = leafs[id]
 
     if (treeIndex === undefined) return null
@@ -443,17 +442,6 @@ export class SerloDataSource extends RESTDataSource {
       issuer: 'api.serlo.org',
     })
 
-    // const data = (await (process.env.NODE_ENV === 'test'
-    //   ? super.get(`http://localhost:9009${path}`)
-    //   : super.get(
-    //       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
-    //       {},
-    //       {
-    //         headers: {
-    //           Authorization: `Serlo Service=${token}`,
-    //         },
-    //       }
-    //     ))) as unknown
     const data = (await super.get(
       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
       {},

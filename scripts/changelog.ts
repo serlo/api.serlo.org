@@ -113,13 +113,19 @@ async function exec(): Promise<void> {
       name: '0.5.1',
       date: '2020-06-05',
       added: ['Handle user tokens'],
-      fixed: ['Ouput url-encoded aliases'],
+      fixed: ['Output url-encoded aliases'],
     },
     {
       tagName: 'v0.5.2',
       name: '0.5.2',
       date: '2020-06-05',
       fixed: ['Handle url-encoded alias inputs correctly'],
+    },
+    {
+      tagName: 'v0.5.3',
+      name: '0.5.3',
+      date: '2020-07-06',
+      fixed: ['Fix navigation contract tests'],
     },
   ])
 
