@@ -21,6 +21,7 @@
  */
 declare namespace NodeJS {
   interface ProcessEnv {
+    GOOGLE_API_KEY: string
     SERLO_CLOUDFLARE_WORKER_SECRET: string
     SERLO_ORG_HOST: string
     SERLO_ORG_SECRET: string
