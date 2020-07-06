@@ -1,7 +1,29 @@
-import * as E from 'fp-ts/lib/Either'
+/**
+ * This file is part of Serlo.org API
+ *
+ * Copyright (c) 2020 Serlo Education e.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License")
+ * you may not use this file except in compliance with the License
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @copyright Copyright (c) 2020 Serlo Education e.V.
+ * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
+ * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
+ */
+import { either } from 'fp-ts'
+import { Response } from 'node-fetch'
+import { env } from 'process'
+
 import {
-  ValueRange,
-  CellValues,
   MajorDimension,
   GoogleSheetApi,
 } from '../../../src/graphql/data-sources/google-spreadsheet'
@@ -9,14 +31,15 @@ import {
   createJsonResponse,
   createFetchMock,
   initializeDataSource,
+  expectToBeLeftEventWith,
 } from '../../_helper'
 
 describe('GoogleSheetApi.getValues()', () => {
-  const commonUrl =
+  const url =
     'https://sheets.googleapis.com/v4/spreadsheets/my-spreadsheet-id' +
     '/values/sheet1!A:A?majorDimension=COLUMNS&key=my-secret'
 
-  const commonArgs = {
+  const args = {
     spreadsheetId: 'my-spreadsheet-id',
     range: 'sheet1!A:A',
     majorDimension: MajorDimension.Columns,
@@ -24,72 +47,123 @@ describe('GoogleSheetApi.getValues()', () => {
 
   test('fetches a range of a spreadsheet', async () => {
     const fetch = createFetchMock({
-      [commonUrl]: createJsonResponse({ values: [['1', '2'], ['3']] }),
+      [url]: createJsonResponse({
+        values: [['1', '2'], ['3']],
+        range: 'sheet1!A:A',
+        majorDimension: 'COLUMNS',
+      }),
     })
     const googleSheets = new GoogleSheetApi({ apiKey: 'my-secret', fetch })
     initializeDataSource(googleSheets)
 
-    const valueRange = await googleSheets.getValues(commonArgs)
+    const valueRange = await googleSheets.getValues(args)
 
-    expect(valueRange).toEqual(E.right([['1', '2'], ['3']]))
-    expect(fetch).toHaveExactlyOneRequestTo(commonUrl)
-  })
-})
-
-describe('ValueRange', () => {
-  describe('validate values which are a valid response of the spreadsheet api', () => {
-    test('matrix of cells is not empty', () => {
-      const value = { values: [['1', '2'], ['3']] }
-
-      expect(ValueRange.is(value)).toBe(true)
-    })
-
-    test('"values" property is undefined (when requested range is empty)', () => {
-      expect(ValueRange.is({})).toBe(true)
-    })
+    expect(valueRange).toEqual(either.right([['1', '2'], ['3']]))
+    expect(fetch).toHaveExactlyOneRequestTo(url)
   })
 
-  describe('refuse values which do not represent a valid response', () => {
-    test('value is not an object', () => {
-      expect(ValueRange.is(0)).toBe(false)
+  test('api key argument of constructor is optional', async () => {
+    env.GOOGLE_API_KEY = 'my-secret'
+    const fetch = createFetchMock({
+      [url]: createJsonResponse({
+        values: [['1', '2'], ['3']],
+        range: 'sheet1!A:A',
+        majorDimension: 'COLUMNS',
+      }),
     })
+    const googleSheets = new GoogleSheetApi({ fetch })
+    initializeDataSource(googleSheets)
 
-    test('value is null', () => {
-      expect(ValueRange.is(null)).toBe(false)
-    })
+    const valueRange = await googleSheets.getValues(args)
 
-    test('"values" property is not a matrix of cells', () => {
-      expect(ValueRange.is({ values: [['1'], 1] })).toBe(false)
-    })
-  })
-})
-
-describe('CellValues', () => {
-  describe('validates a non empty matrix of strings representing cells of a spreadsheet', () => {
-    test('example with two non empty rows / columns', () => {
-      expect(CellValues.is([['1', '2'], ['3']])).toBe(true)
-    })
-
-    test('a row / column is empty', () => {
-      expect(CellValues.is([['1', '2'], []])).toBe(true)
-    })
+    expect(valueRange).toEqual(either.right([['1', '2'], ['3']]))
   })
 
-  describe('refuses if value does not represent a cell range', () => {
-    test('value is not an array', () => {
-      expect(CellValues.is(0)).toBe(false)
+  test('argument "majorDimension" is optional', async () => {
+    const url =
+      'https://sheets.googleapis.com/v4/spreadsheets/my-spreadsheet-id' +
+      '/values/sheet1!A:A?majorDimension=ROWS&key=my-secret'
+    const fetch = createFetchMock({
+      [url]: createJsonResponse({
+        values: [['1', '2'], ['3']],
+        range: 'sheet1!A:A',
+        majorDimension: 'ROWS',
+      }),
+    })
+    const googleSheets = new GoogleSheetApi({ apiKey: 'my-secret', fetch })
+    initializeDataSource(googleSheets)
+
+    const valueRange = await googleSheets.getValues({
+      spreadsheetId: args.spreadsheetId,
+      range: args.range,
     })
 
-    test('outer array is empty', () => {
-      expect(CellValues.is([])).toBe(false)
+    expect(valueRange).toEqual(either.right([['1', '2'], ['3']]))
+  })
+
+  describe('returns an error', () => {
+    test('when there is an error with the api call', async () => {
+      const fetch = createFetchMock({
+        [url]: new Response('', { status: 403 }),
+      })
+      const googleSheets = new GoogleSheetApi({ apiKey: 'my-secret', fetch })
+      initializeDataSource(googleSheets)
+
+      const valueRange = await googleSheets.getValues(args)
+
+      expectToBeLeftEventWith(valueRange, {
+        message:
+          'an error occured while accessing spreadsheet "my-spreadsheet-id"',
+        contexts: { args: args },
+        exception: expect.any(Error) as Error,
+      })
     })
 
-    test('outer array contains an element which is not an array', () => {
-      expect(CellValues.is([['1'], true])).toBe(false)
+    test('when value range is empty', async () => {
+      const fetch = createFetchMock({
+        [url]: createJsonResponse({
+          range: 'sheet1!A:A',
+          majorDimension: 'COLUMNS',
+        }),
+      })
+      const googleSheets = new GoogleSheetApi({ apiKey: 'my-secret', fetch })
+      initializeDataSource(googleSheets)
+
+      const valueRange = await googleSheets.getValues(args)
+
+      expectToBeLeftEventWith(valueRange, {
+        message:
+          'range "sheet1!A:A" of spreadsheet "my-spreadsheet-id" is empty',
+        contexts: { args: args },
+      })
     })
 
-    test('an element of an inner array is not a string', () => {
-      expect(CellValues.is([['string'], [1]])).toBe(false)
+    describe('when server response is no valid value range', () => {
+      test.each([null, { values: [['1'], 1] }, { error: 'an error' }])(
+        'response = %p',
+        async (response) => {
+          const fetch = createFetchMock({
+            [url]: createJsonResponse(response),
+          })
+          const googleSheets = new GoogleSheetApi({
+            apiKey: 'my-secret',
+            fetch,
+          })
+          initializeDataSource(googleSheets)
+
+          const valueRange = await googleSheets.getValues(args)
+
+          expectToBeLeftEventWith(valueRange, {
+            message:
+              'invalid response while accessing spreadsheet "my-spreadsheet-id"',
+            contexts: {
+              args,
+              response,
+              validationErrors: expect.any(Array) as unknown,
+            },
+          })
+        }
+      )
     })
   })
 })

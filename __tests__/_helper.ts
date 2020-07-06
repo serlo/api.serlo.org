@@ -1,6 +1,40 @@
-import { RequestInfo, Response, Request } from 'node-fetch'
+/**
+ * This file is part of Serlo.org API
+ *
+ * Copyright (c) 2020 Serlo Education e.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License")
+ * you may not use this file except in compliance with the License
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @copyright Copyright (c) 2020 Serlo Education e.V.
+ * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
+ * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
+ */
 import { RESTDataSource } from 'apollo-datasource-rest'
 import { KeyValueCache } from 'apollo-server-caching'
+import { either } from 'fp-ts'
+import fetch, { RequestInfo, Response, Request } from 'node-fetch'
+
+import { ErrorEvent } from '../src/utils'
+
+export function expectToBeLeftEventWith<A>(
+  value: either.Either<ErrorEvent, A>,
+  expectedEvent: ErrorEvent
+) {
+  expect(either.isLeft(value)).toBe(true)
+
+  if (either.isLeft(value))
+    expect(value.left).toEqual(expect.objectContaining(expectedEvent))
+}
 
 type ResponseSpec = string | Response
 type FetchSpec = Record<string, ResponseSpec>
@@ -9,13 +43,13 @@ export function createFetchMock(
   specs: FetchSpec = {}
 ): typeof fetch & FetchMock {
   const mock = new Proxy(new FetchMock(specs), {
-    apply: (target, _, args) => target.fetch(args[0]),
+    apply: (target, _, args: [RequestInfo]) => target.fetch(args[0]),
   })
 
   return mock as typeof fetch & FetchMock
 }
 
-class FetchMock extends Function {
+export class FetchMock extends Function {
   private madeRequests: RequestInfo[] = []
 
   constructor(private specs: FetchSpec) {
@@ -72,7 +106,7 @@ class FetchMock extends Function {
   }
 }
 
-export function createJsonResponse(data: any): Response {
+export function createJsonResponse(data: unknown): Response {
   return new Response(JSON.stringify(data), {
     headers: { 'Content-Type': 'application/json' },
   })
@@ -83,11 +117,13 @@ export function initializeDataSource(dataSource: RESTDataSource) {
 }
 
 class EmptyCache implements KeyValueCache {
-  async get(): Promise<string | undefined> {
-    return undefined
+  get(): Promise<string | undefined> {
+    return Promise.resolve(undefined)
   }
-  async set(): Promise<void> {}
-  async delete(): Promise<boolean | void> {
-    return true
+  set(): Promise<void> {
+    return Promise.resolve(undefined)
+  }
+  delete(): Promise<boolean | void> {
+    return Promise.resolve(true)
   }
 }
