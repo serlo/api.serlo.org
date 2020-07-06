@@ -127,6 +127,12 @@ async function exec(): Promise<void> {
       date: '2020-07-06',
       fixed: ['Fix navigation contract tests'],
     },
+    {
+      tagName: 'v0.5.4',
+      name: '0.5.4',
+      date: '2020-07-06',
+      fixed: ['Fix build'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
