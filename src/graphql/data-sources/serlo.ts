@@ -68,17 +68,14 @@ export class SerloDataSource extends RESTDataSource {
   public async getAlias({
     path,
     instance,
-    bypassCache = false,
   }: {
     path: string
     instance: Instance
-    bypassCache?: boolean
   }) {
     const cleanPath = encodePath(decodePath(path))
     return this.cacheAwareGet<AliasPayload>({
       path: `/api/alias${cleanPath}`,
       instance,
-      bypassCache,
       setter: 'setAlias',
     })
   }
@@ -188,16 +185,9 @@ export class SerloDataSource extends RESTDataSource {
     return value
   }
 
-  public async getLicense({
-    id,
-    bypassCache = false,
-  }: {
-    id: number
-    bypassCache?: boolean
-  }): Promise<License> {
+  public async getLicense({ id }: { id: number }): Promise<License> {
     return this.cacheAwareGet({
       path: `/api/license/${id}`,
-      bypassCache,
       setter: 'setLicense',
     })
   }
@@ -221,14 +211,11 @@ export class SerloDataSource extends RESTDataSource {
 
   public async getUuid<T extends UuidPayload>({
     id,
-    bypassCache = false,
   }: {
     id: number
-    bypassCache?: boolean
   }): Promise<T> {
     return this.cacheAwareGet<T>({
       path: `/api/uuid/${id}`,
-      bypassCache,
       setter: 'setUuid',
     })
   }
@@ -422,20 +409,15 @@ export class SerloDataSource extends RESTDataSource {
   >({
     path,
     instance = Instance.De,
-    bypassCache = false,
     setter,
   }: {
     path: string
     instance?: Instance
-    bypassCache?: boolean
     setter: SerloDataSource[K]
   }): Promise<T> {
     const cacheKey = this.getCacheKey(path, instance)
-    if (!bypassCache) {
-      const cache = await this.environment.cache.get(cacheKey)
-      if (cache) return this.environment.serializer.deserialize(cache) as T
-    }
-
+    const cache = await this.environment.cache.get(cacheKey)
+    if (cache) return this.environment.serializer.deserialize(cache) as T
     const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
       expiresIn: '2h',
       audience: Service.Serlo,
