@@ -19,23 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { dateTimeSchema } from './date-time'
-import { instanceSchema } from './instance'
-import { licenseSchema } from './license'
-import { uuidSchema } from './uuid'
-import { cacheSchema } from './cache'
-import { Schema } from './utils'
 
-export * from './date-time'
-export * from './instance'
-export * from './license'
-export * from './uuid'
+import { gql } from 'apollo-server'
 
-
-export const schema = Schema.merge(
-  dateTimeSchema,
-  instanceSchema,
-  licenseSchema,
-  uuidSchema, 
-  cacheSchema
-)
+// See specification at issue #28
+export const typeDefs = gql`
+  extend type Mutation {
+    _setCache(key: String!, value: String!): Boolean,
+    _removeCache(key: String!, value: String!): Boolean
+  }
+`
