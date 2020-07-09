@@ -30,9 +30,39 @@ export * from './instance'
 export * from './license'
 export * from './uuid'
 
+/**
+ * Prototyping implementation of the setCache and removeCache
+ * mutations. Not supposed to be at this file.
+ * TODO: put into its own folder?
+ */
+import { gql } from 'apollo-server'
+
+// See specification at issue #28
+export const typeDefs = gql`
+  extend type Mutation {
+    _setCache(key: String!, value: String!): Boolean,
+    _removeCache(key: String!, value: String!): Boolean
+  }
+`
+// Mock resolvers for the *Cache mutations
+export const resolvers = {
+  Mutation: {
+    _setCache: () =>  {
+      return true
+    },
+    _removeCache: () =>  {
+      return true
+    }
+  }
+}
+
 export const schema = Schema.merge(
   dateTimeSchema,
   instanceSchema,
   licenseSchema,
-  uuidSchema
+  uuidSchema, 
+  new Schema( // TODO: get it imported from its own module
+    (resolvers as unknown) as Schema['resolvers'],
+    [typeDefs]
+  )
 )
