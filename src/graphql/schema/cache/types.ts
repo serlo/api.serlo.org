@@ -23,7 +23,7 @@ import { MutationResolver } from '../types'
 
 export interface CacheResolvers {
   Mutation: {
-    _removeCache: MutationResolver<{ key: string, value: string }>
-    _setCache: MutationResolver<{ key: string, value: string }>
+    _removeCache: MutationResolver<{ key: string; value: string }>
+    _setCache: MutationResolver<{ key: string; value: string }>
   }
 }
