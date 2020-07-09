@@ -21,14 +21,26 @@
  */
 import { ForbiddenError } from 'apollo-server'
 
-// Mock resolvers for the *Cache mutations
-export const resolvers = {
+import { Service } from '../types'
+import { CacheResolvers } from './types'
+
+export const resolvers: CacheResolvers = {
   Mutation: {
-    _setCache: () =>  {
-      return true
+    async _setCache(_parent, { key, value }, { dataSources, service }) {
+      if (service !== Service.Serlo) {
+        throw new ForbiddenError(
+          'You do not have the permissions to set the cache'
+        )
+      }
+      await dataSources.serlo.setCache({ key, value }) // method to be implemented
     },
-    _removeCache: () =>  {
-      return true
-    }
-  }
+    async _removeCache(_parent, { key, value }, { dataSources, service }) {
+      if (service !== Service.Serlo) {
+        throw new ForbiddenError(
+          'You do not have the permissions to remove the cache'
+        )
+      }
+      await dataSources.serlo.removeCache({ key, value }) // method to be implemented
+    },
+  },
 }
