@@ -32,7 +32,7 @@ export const resolvers: CacheResolvers = {
           'You do not have the permissions to set the cache'
         )
       }
-      await dataSources.serlo.setCache({ key, value }) // method to be implemented
+      await dataSources.serlo.setCache(key, JSON.stringify(value))
     },
     async _removeCache(_parent, { key, value }, { dataSources, service }) {
       if (service !== Service.Serlo) {
@@ -40,7 +40,7 @@ export const resolvers: CacheResolvers = {
           'You do not have the permissions to remove the cache'
         )
       }
-      await dataSources.serlo.removeCache({ key, value }) // method to be implemented
+      await dataSources.serlo.setCache(key, JSON.stringify(value))
     },
   },
 }
