@@ -34,13 +34,13 @@ export const resolvers: CacheResolvers = {
       }
       await dataSources.serlo.setCache(key, JSON.stringify(value))
     },
-    async _removeCache(_parent, { key, value }, { dataSources, service }) {
+    async _removeCache(_parent, { key }, { dataSources, service }) {
       if (service !== Service.Serlo) {
         throw new ForbiddenError(
           'You do not have the permissions to remove the cache'
         )
       }
-      await dataSources.serlo.setCache(key, JSON.stringify(value))
+      await dataSources.serlo.removeCache(key)
     },
   },
 }
