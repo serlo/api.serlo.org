@@ -64,6 +64,7 @@ export function addNavigationInteraction(payload: NavigationPayload) {
     path: `/api/navigation`,
     body: {
       data: Matchers.string(payload.data),
+      instance: Matchers.string(payload.instance),
     },
   })
 }
