@@ -19,22 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { dateTimeSchema } from './date-time'
-import { instanceSchema } from './instance'
-import { licenseSchema } from './license'
-import { notificationSchema } from './notification'
-import { Schema } from './utils'
-import { uuidSchema } from './uuid'
+import { Schema } from '../utils'
+import { resolvers } from './resolvers'
+import { typeDefs } from './type-defs'
 
-export * from './date-time'
-export * from './instance'
-export * from './license'
-export * from './uuid'
+export * from './types'
 
-export const schema = Schema.merge(
-  dateTimeSchema,
-  instanceSchema,
-  licenseSchema,
-  notificationSchema,
-  uuidSchema
+export const notificationSchema = new Schema(
+  (resolvers as unknown) as Schema['resolvers'],
+  [typeDefs]
 )
