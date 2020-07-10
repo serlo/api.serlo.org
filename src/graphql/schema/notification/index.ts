@@ -26,6 +26,6 @@ import { typeDefs } from './type-defs'
 export * from './types'
 
 export const notificationSchema = new Schema(
-    (resolvers as unknown) as Schema['resolvers'],
-    [typeDefs]
+  (resolvers as unknown) as Schema['resolvers'],
+  [typeDefs]
 )

@@ -1,9 +1,3 @@
-import { Instance } from '../instance'
-import { MutationResolver, QueryResolver, Resolver } from '../types'
-import { License, LicensePayload } from '../license'
-import { User } from '../uuid/user'
-import { Uuid } from '../uuid/abstract-uuid'
-
 /**
  * This file is part of Serlo.org API
  *
@@ -25,6 +19,11 @@ import { Uuid } from '../uuid/abstract-uuid'
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Instance } from '../instance'
+import { MutationResolver, QueryResolver, Resolver } from '../types'
+import { Uuid } from '../uuid/abstract-uuid'
+import { User } from '../uuid/user'
+
 export interface Notification {
   id: number
   unread: boolean
