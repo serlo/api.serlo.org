@@ -410,14 +410,11 @@ export class SerloDataSource extends RESTDataSource {
 
   public async getNotificationEvent({
     id,
-    bypassCache = false,
   }: {
     id: number
-    bypassCache?: boolean
   }): Promise<NotificationEventPayload> {
     return this.cacheAwareGet({
       path: `/api/event/${id}`,
-      bypassCache,
       setter: 'setNotificationEvent',
     })
   }
@@ -433,14 +430,12 @@ export class SerloDataSource extends RESTDataSource {
 
   public async getNotifications({
     id,
-    bypassCache = false,
   }: {
     id: number
     bypassCache?: boolean
   }): Promise<NotificationsPayload> {
     return this.cacheAwareGet({
       path: `/api/notifications/${id}`,
-      bypassCache,
       setter: 'setNotifications',
     })
   }
