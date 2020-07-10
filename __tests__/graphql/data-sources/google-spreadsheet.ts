@@ -21,7 +21,6 @@
  */
 import { either } from 'fp-ts'
 import { Response } from 'node-fetch'
-import { env } from 'process'
 
 import {
   MajorDimension,
@@ -61,24 +60,7 @@ describe('GoogleSheetApi.getValues()', () => {
     expect(valueRange).toEqual(either.right([['1', '2'], ['3']]))
     expect(fetch).toHaveExactlyOneRequestTo(url)
   })
-
-  test('api key argument of constructor is optional', async () => {
-    env.GOOGLE_API_KEY = 'my-secret'
-    const fetch = createFetchMock({
-      [url]: createJsonResponse({
-        values: [['1', '2'], ['3']],
-        range: 'sheet1!A:A',
-        majorDimension: 'COLUMNS',
-      }),
-    })
-    const googleSheets = new GoogleSheetApi({ fetch })
-    initializeDataSource(googleSheets)
-
-    const valueRange = await googleSheets.getValues(args)
-
-    expect(valueRange).toEqual(either.right([['1', '2'], ['3']]))
-  })
-
+  
   test('argument "majorDimension" is optional', async () => {
     const url =
       'https://sheets.googleapis.com/v4/spreadsheets/my-spreadsheet-id' +
