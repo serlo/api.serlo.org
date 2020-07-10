@@ -549,15 +549,14 @@ export class SerloDataSource extends RESTDataSource {
   }
 
   public async setCache(key: string, value: string) {
-    const cacheKey = this.getCacheKey(`${key}`)
-    return await this.environment.cache.set(
-      cacheKey,
+    return this.environment.cache.set(
+      key,
       this.environment.serializer.serialize(value)
     )
   }
 
   public async removeCache(key: string) {
-    const cacheKey = this.getCacheKey(`/api/${key}`)
+    const cacheKey = this.getCacheKey(`${key}`)
     return await this.environment.cache.set(
       cacheKey,
       this.environment.serializer.serialize(null)
