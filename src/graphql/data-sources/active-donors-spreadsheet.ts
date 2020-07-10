@@ -21,7 +21,7 @@
  */
 import { pipeable, either } from 'fp-ts'
 
-import { ErrorEvent } from '../../utils'
+import { ErrorEvent } from '../../error-event'
 import {
   CellValues,
   GoogleSheetApi,

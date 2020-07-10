@@ -20,11 +20,11 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { RESTDataSource } from 'apollo-datasource-rest'
-import { KeyValueCache } from 'apollo-server-caching'
+import { InMemoryLRUCache } from 'apollo-server-caching'
 import { either } from 'fp-ts'
 import fetch, { RequestInfo, Response, Request } from 'node-fetch'
 
-import { ErrorEvent } from '../src/utils'
+import { ErrorEvent } from '../src/error-event'
 
 export function expectToBeLeftEventWith<A>(
   value: either.Either<ErrorEvent, A>,
@@ -113,17 +113,5 @@ export function createJsonResponse(data: unknown): Response {
 }
 
 export function initializeDataSource(dataSource: RESTDataSource) {
-  dataSource.initialize({ context: {}, cache: new EmptyCache() })
-}
-
-class EmptyCache implements KeyValueCache {
-  get(): Promise<string | undefined> {
-    return Promise.resolve(undefined)
-  }
-  set(): Promise<void> {
-    return Promise.resolve(undefined)
-  }
-  delete(): Promise<boolean | void> {
-    return Promise.resolve(true)
-  }
+  dataSource.initialize({ context: {}, cache: new InMemoryLRUCache() })
 }

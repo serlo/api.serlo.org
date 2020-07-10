@@ -26,10 +26,9 @@ import * as t from 'io-ts'
 import { nonEmptyArray } from 'io-ts-types/lib/nonEmptyArray'
 import { failure } from 'io-ts/lib/PathReporter'
 import fetchNode from 'node-fetch'
-import { env } from 'process'
 import * as R from 'ramda'
 
-import { ErrorEvent } from '../../utils'
+import { ErrorEvent } from '../../error-event'
 
 export enum MajorDimension {
   Rows = 'ROWS',
@@ -55,10 +54,10 @@ export class GoogleSheetApi extends RESTDataSource {
   private apiKey: string
 
   constructor({
-    apiKey = env.GOOGLE_API_KEY,
+    apiKey,
     fetch,
   }: {
-    apiKey?: string
+    apiKey: string
     fetch: typeof fetchNode
   }) {
     super(fetch as typeof fetchApollo)
