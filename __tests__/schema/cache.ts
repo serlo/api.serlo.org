@@ -22,11 +22,39 @@
 import { gql } from 'apollo-server'
 
 import { Service } from '../../src/graphql/schema/types'
-import { assertSuccessfulGraphQLMutation } from '../__utils__/assertions'
+import {
+  assertSuccessfulGraphQLMutation,
+  assertFailingGraphQLMutation,
+} from '../__utils__/assertions'
 import { createTestClient } from '../__utils__/test-client'
 
-// We should add a test that checks that any other service than Serlo leads to a FORBIDDEN error
-test.todo('_setCache (forbidden)')
+test('_setCache (forbidden)', async () => {
+  const { client } = createTestClient({
+    service: Service.Playground,
+    user: null,
+  })
+
+  const key = 'foo'
+  const value = { foo: 'bar' }
+
+  await assertFailingGraphQLMutation(
+    {
+      mutation: gql`
+        mutation setCache($key: String!, $value: String!) {
+          _setCache(key: $key, value: $value)
+        }
+      `,
+      variables: {
+        key,
+        value: JSON.stringify(value),
+      },
+      client,
+    },
+    (errors) => {
+      expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+    }
+  )
+})
 
 test('_setCache (authenticated)', async () => {
   const { client, cache, serializer } = createTestClient({
@@ -34,10 +62,8 @@ test('_setCache (authenticated)', async () => {
     user: null,
   })
   const key = 'foo'
-  // The value to cache
   const value = { foo: 'bar' }
 
-  // Do the mutation
   await assertSuccessfulGraphQLMutation({
     mutation: gql`
       mutation setCache($key: String!, $value: String!) {
@@ -52,11 +78,51 @@ test('_setCache (authenticated)', async () => {
     client,
   })
 
-  // Assert that the cache got changed successfully.
   const serializedCachedValue = await cache.get(key)
   const cachedValue = await serializer.deserialize(serializedCachedValue!)
   expect(cachedValue).toEqual(value)
 })
 
-test.todo('_removeCache (forbidden)')
-test.todo('_removeCache (authenticated)')
+test('_removeCache (forbidden)', async () => {
+  const { client } = createTestClient({
+    service: Service.Playground,
+    user: null,
+  })
+  await assertFailingGraphQLMutation(
+    {
+      mutation: gql`
+        mutation {
+          _removeCache(key: "foo")
+        }
+      `,
+      client,
+    },
+    (errors) => {
+      expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+    }
+  )
+})
+
+test('_removeCache (authenticated)', async () => {
+  const { client, cache, serializer } = createTestClient({
+    service: Service.Serlo,
+    user: null,
+  })
+  const key = 'foo'
+
+  await assertSuccessfulGraphQLMutation({
+    mutation: gql`
+      mutation removeCache($key: String!) {
+        _removeCache(key: $key)
+      }
+    `,
+    variables: {
+      key,
+    },
+    client,
+  })
+
+  const serializedCachedValue = await cache.get(key)
+  const cachedValue = await serializer.deserialize(serializedCachedValue!)
+  expect(cachedValue).toEqual(null)
+})
