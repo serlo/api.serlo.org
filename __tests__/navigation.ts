@@ -44,6 +44,7 @@ describe('Page', () => {
   test('Without navigation', async () => {
     const { client } = createTestClient({
       service: Service.Serlo,
+      user: null,
     })
     await assertSuccessfulGraphQLMutation({
       ...setPage(subjectHomepage),
@@ -82,7 +83,7 @@ describe('Page', () => {
   })
 
   test('Subject Homepage', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       ...setPage(subjectHomepage),
       client,
@@ -125,7 +126,7 @@ describe('Page', () => {
   })
 
   test('Dropdown', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       ...setPage(subjectHomepage),
       client,
@@ -210,6 +211,7 @@ describe('Taxonomy Term', () => {
   test('Without navigation', async () => {
     const { client } = createTestClient({
       service: Service.Serlo,
+      user: null,
     })
     await assertSuccessfulGraphQLMutation({
       ...createSetTaxonomyTermMutation(taxonomyTermRoot),
@@ -254,6 +256,7 @@ describe('Taxonomy Term', () => {
   test('Subject', async () => {
     const { client } = createTestClient({
       service: Service.Serlo,
+      user: null,
     })
     await assertSuccessfulGraphQLMutation({
       ...setPage(subjectHomepage),
@@ -312,6 +315,7 @@ describe('Taxonomy Term', () => {
   test('Curriculum Topic', async () => {
     const { client } = createTestClient({
       service: Service.Serlo,
+      user: null,
     })
     await assertSuccessfulGraphQLMutation({
       ...setPage(subjectHomepage),
@@ -379,7 +383,10 @@ describe('Taxonomy Term', () => {
 
 describe('_setNavigation', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         ...setNavigation(navigation),
