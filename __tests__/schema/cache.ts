@@ -19,8 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
-
+import {
+  variables,
+  createSetCacheMutation,
+  createRemoveCacheMutation,
+} from '../../__fixtures__/cache'
 import { Service } from '../../src/graphql/schema/types'
 import {
   assertSuccessfulGraphQLMutation,
@@ -34,20 +37,9 @@ test('_setCache (forbidden)', async () => {
     user: null,
   })
 
-  const key = 'foo'
-  const value = { foo: 'bar' }
-
   await assertFailingGraphQLMutation(
     {
-      mutation: gql`
-        mutation setCache($key: String!, $value: String!) {
-          _setCache(key: $key, value: $value)
-        }
-      `,
-      variables: {
-        key,
-        value: JSON.stringify(value),
-      },
+      ...createSetCacheMutation(variables),
       client,
     },
     (errors) => {
@@ -61,26 +53,15 @@ test('_setCache (authenticated)', async () => {
     service: Service.Serlo,
     user: null,
   })
-  const key = 'foo'
-  const value = { foo: 'bar' }
 
   await assertSuccessfulGraphQLMutation({
-    mutation: gql`
-      mutation setCache($key: String!, $value: String!) {
-        _setCache(key: $key, value: $value)
-      }
-    `,
-    variables: {
-      key,
-      // The consumer of the API should pass the value as a JSON-stringified string
-      value: JSON.stringify(value),
-    },
+    ...createSetCacheMutation(variables),
     client,
   })
 
-  const serializedCachedValue = await cache.get(key)
+  const serializedCachedValue = await cache.get(variables.key)
   const cachedValue = await serializer.deserialize(serializedCachedValue!)
-  expect(cachedValue).toEqual(value)
+  expect(cachedValue).toEqual(variables.value)
 })
 
 test('_removeCache (forbidden)', async () => {
@@ -90,11 +71,7 @@ test('_removeCache (forbidden)', async () => {
   })
   await assertFailingGraphQLMutation(
     {
-      mutation: gql`
-        mutation {
-          _removeCache(key: "foo")
-        }
-      `,
+      ...createRemoveCacheMutation(variables),
       client,
     },
     (errors) => {
@@ -108,21 +85,13 @@ test('_removeCache (authenticated)', async () => {
     service: Service.Serlo,
     user: null,
   })
-  const key = 'foo'
 
   await assertSuccessfulGraphQLMutation({
-    mutation: gql`
-      mutation removeCache($key: String!) {
-        _removeCache(key: $key)
-      }
-    `,
-    variables: {
-      key,
-    },
+    ...createRemoveCacheMutation(variables),
     client,
   })
 
-  const serializedCachedValue = await cache.get(key)
+  const serializedCachedValue = await cache.get(variables.key)
   const cachedValue = await serializer.deserialize(serializedCachedValue!)
   expect(cachedValue).toEqual(null)
 })
