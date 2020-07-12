@@ -19,24 +19,38 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { cacheSchema } from './cache'
-import { dateTimeSchema } from './date-time'
-import { instanceSchema } from './instance'
-import { licenseSchema } from './license'
-import { notificationSchema } from './notification'
-import { Schema } from './utils'
-import { uuidSchema } from './uuid'
+import { gql } from 'apollo-server'
 
-export * from './date-time'
-export * from './instance'
-export * from './license'
-export * from './uuid'
+export const variables = {
+  key: 'foo',
+  value: { foo: 'bar' },
+}
 
-export const schema = Schema.merge(
-  cacheSchema,
-  dateTimeSchema,
-  instanceSchema,
-  licenseSchema,
-  notificationSchema,
-  uuidSchema
-)
+export function createSetCacheMutation(variables: {
+  key: string
+  value: unknown
+}) {
+  return {
+    mutation: gql`
+      mutation setCache($key: String!, $value: String!) {
+        _setCache(key: $key, value: $value)
+      }
+    `,
+    variables: {
+      key: variables.key,
+      // The consumer of the API should pass the value as a JSON-stringified string
+      value: JSON.stringify(variables.value),
+    },
+  }
+}
+
+export function createRemoveCacheMutation(variables: { key: string }) {
+  return {
+    mutation: gql`
+      mutation removeCache($key: String!) {
+        _removeCache(key: $key)
+      }
+    `,
+    variables,
+  }
+}
