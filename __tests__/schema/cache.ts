@@ -19,6 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { isSome } from 'fp-ts/lib/Option'
+
 import {
   variables,
   createSetCacheMutation,
@@ -49,7 +51,7 @@ test('_setCache (forbidden)', async () => {
 })
 
 test('_setCache (authenticated)', async () => {
-  const { client, cache, serializer } = createTestClient({
+  const { client, cache } = createTestClient({
     service: Service.Serlo,
     user: null,
   })
@@ -59,9 +61,8 @@ test('_setCache (authenticated)', async () => {
     client,
   })
 
-  const serializedCachedValue = await cache.get(variables.key)
-  const cachedValue = await serializer.deserialize(serializedCachedValue!)
-  expect(cachedValue).toEqual(variables.value)
+  const cachedValue = await cache.get(variables.key)
+  expect(isSome(cachedValue) && cachedValue.value).toEqual(variables.value)
 })
 
 test('_removeCache (forbidden)', async () => {
@@ -81,7 +82,7 @@ test('_removeCache (forbidden)', async () => {
 })
 
 test('_removeCache (authenticated)', async () => {
-  const { client, cache, serializer } = createTestClient({
+  const { client, cache } = createTestClient({
     service: Service.Serlo,
     user: null,
   })
@@ -91,7 +92,6 @@ test('_removeCache (authenticated)', async () => {
     client,
   })
 
-  const serializedCachedValue = await cache.get(variables.key)
-  const cachedValue = await serializer.deserialize(serializedCachedValue!)
-  expect(cachedValue).toEqual(null)
+  const cachedValue = await cache.get(variables.key)
+  expect(isSome(cachedValue) && cachedValue.value).toEqual(null)
 })

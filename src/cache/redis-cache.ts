@@ -19,6 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { none, some } from 'fp-ts/lib/Option'
+import msgpack from 'msgpack'
 import redis from 'redis'
 import * as util from 'util'
 
@@ -42,10 +44,11 @@ export function createRedisCache({ host }: { host: string }): Cache {
 
   return {
     async get(key) {
-      return await get(key)
+      const serialized = await get(key)
+      return serialized === null ? none : some(msgpack.unpack(serialized))
     },
     async set(key, value) {
-      await set(key, value)
+      await set(key, msgpack.pack(value))
     },
   }
 }

@@ -73,7 +73,7 @@ module.exports = {
     'import/no-internal-modules': [
       'error',
       {
-        allow: ['msw/node'],
+        allow: ['msw/node', 'fp-ts/lib/*'],
       },
     ],
     'import/no-mutable-exports': 'error',

@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { RESTDataSource } from 'apollo-datasource-rest'
+import { isSome } from 'fp-ts/lib/Option'
 import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
 
@@ -87,10 +88,7 @@ export class SerloDataSource extends RESTDataSource {
 
   public async setAlias(alias: AliasPayload) {
     const cacheKey = this.getCacheKey(`/api/alias${alias.path}`, alias.instance)
-    await this.environment.cache.set(
-      cacheKey,
-      this.environment.serializer.serialize(alias)
-    )
+    await this.environment.cache.set(cacheKey, alias)
     return alias
   }
 
@@ -183,10 +181,7 @@ export class SerloDataSource extends RESTDataSource {
     }
 
     const cacheKey = this.getCacheKey(`/api/navigation`, payload.instance)
-    await this.environment.cache.set(
-      cacheKey,
-      this.environment.serializer.serialize(value)
-    )
+    await this.environment.cache.set(cacheKey, value)
     return value
   }
 
@@ -199,19 +194,13 @@ export class SerloDataSource extends RESTDataSource {
 
   public async setLicense(license: License) {
     const cacheKey = this.getCacheKey(`/api/license/${license.id}`)
-    await this.environment.cache.set(
-      cacheKey,
-      this.environment.serializer.serialize(license)
-    )
+    await this.environment.cache.set(cacheKey, license)
     return license
   }
 
   public async removeLicense({ id }: { id: number }) {
     const cacheKey = this.getCacheKey(`/api/license/${id}`)
-    await this.environment.cache.set(
-      cacheKey,
-      this.environment.serializer.serialize(null)
-    )
+    await this.environment.cache.set(cacheKey, null)
   }
 
   public async getUuid<T extends UuidPayload>({
@@ -227,19 +216,13 @@ export class SerloDataSource extends RESTDataSource {
 
   public async setUuid<T extends UuidPayload>(payload: T): Promise<T> {
     const cacheKey = this.getCacheKey(`/api/uuid/${payload.id}`)
-    await this.environment.cache.set(
-      cacheKey,
-      this.environment.serializer.serialize(payload)
-    )
+    await this.environment.cache.set(cacheKey, payload)
     return payload
   }
 
   public async removeUuid({ id }: { id: number }) {
     const cacheKey = this.getCacheKey(`/api/uuid/${id}`)
-    await this.environment.cache.set(
-      cacheKey,
-      this.environment.serializer.serialize(null)
-    )
+    await this.environment.cache.set(cacheKey, null)
   }
 
   public async setApplet(applet: AppletPayload) {
@@ -421,10 +404,7 @@ export class SerloDataSource extends RESTDataSource {
 
   public async setNotificationEvent(event: NotificationEventPayload) {
     const cacheKey = this.getCacheKey(`/api/event/${event.id}`)
-    await this.environment.cache.set(
-      cacheKey,
-      this.environment.serializer.serialize(event)
-    )
+    await this.environment.cache.set(cacheKey, event)
     return event
   }
 
@@ -444,10 +424,7 @@ export class SerloDataSource extends RESTDataSource {
     const cacheKey = this.getCacheKey(
       `/api/notifications/${notifications.userId}`
     )
-    await this.environment.cache.set(
-      cacheKey,
-      this.environment.serializer.serialize(notifications)
-    )
+    await this.environment.cache.set(cacheKey, notifications)
     return notifications
   }
 
@@ -524,14 +501,14 @@ export class SerloDataSource extends RESTDataSource {
     setter: SerloDataSource[K]
   }): Promise<T> {
     const cacheKey = this.getCacheKey(path, instance)
-    const cache = await this.environment.cache.get(cacheKey)
-    if (cache) return this.environment.serializer.deserialize(cache) as T
+    const cache = await this.environment.cache.get<T>(cacheKey)
+    if (isSome(cache)) return cache.value
+
     const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
       expiresIn: '2h',
       audience: Service.Serlo,
       issuer: 'api.serlo.org',
     })
-
     const data = (await super.get(
       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
       {},
@@ -549,18 +526,12 @@ export class SerloDataSource extends RESTDataSource {
   }
 
   public async setCache(key: string, value: string) {
-    await this.environment.cache.set(
-      key,
-      this.environment.serializer.serialize(value)
-    )
+    await this.environment.cache.set(key, value)
     return value
   }
 
   public async removeCache(key: string) {
-    await this.environment.cache.set(
-      key,
-      this.environment.serializer.serialize(null)
-    )
+    await this.environment.cache.set(key, null)
   }
 }
 
