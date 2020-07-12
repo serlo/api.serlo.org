@@ -69,6 +69,7 @@ function applyGraphQLMiddleware(app: Express) {
 
     return createPlayground({
       endpoint: '/graphql',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error Not documented but we can pass custom headers
       headers: {
         Authorization: `Serlo Service=${token}`,
