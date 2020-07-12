@@ -547,6 +547,21 @@ export class SerloDataSource extends RESTDataSource {
   private getCacheKey(path: string, instance: Instance = Instance.De) {
     return `${instance}.serlo.org${path}`
   }
+
+  public async setCache(key: string, value: string) {
+    await this.environment.cache.set(
+      key,
+      this.environment.serializer.serialize(value)
+    )
+    return value
+  }
+
+  public async removeCache(key: string) {
+    await this.environment.cache.set(
+      key,
+      this.environment.serializer.serialize(null)
+    )
+  }
 }
 
 interface NodeData {
