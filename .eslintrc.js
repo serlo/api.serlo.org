@@ -110,4 +110,12 @@ module.exports = {
       version: '16.8',
     },
   },
+  overrides: [
+    {
+      files: ['__tests-pacts__/**/*', '__tests__/**/*'],
+      rules: {
+        '@typescript-eslint/no-non-null-assertion': 'off',
+      },
+    },
+  ],
 }
