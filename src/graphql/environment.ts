@@ -19,17 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Option } from 'fp-ts/lib/Option'
+
 export interface Environment {
   cache: Cache
-  serializer: Serializer
 }
 
 export interface Cache {
-  get(key: string): Promise<Buffer | null>
-  set(key: string, value: Buffer): Promise<void>
-}
-
-export interface Serializer {
-  serialize(value: unknown): Buffer
-  deserialize(value: Buffer): unknown
+  get<T>(key: string): Promise<Option<T>>
+  set(key: string, value: unknown): Promise<void>
 }
