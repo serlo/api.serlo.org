@@ -434,7 +434,6 @@ export class SerloDataSource extends RESTDataSource {
     unread: boolean
   }) {
     const body = {
-      notificationId: notificationState.id,
       userId: notificationState.userId,
       unread: notificationState.unread,
     }
