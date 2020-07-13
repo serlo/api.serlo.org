@@ -2,58 +2,64 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.5](https://github.com/serlo/api.serlo.org/compare/v0.5.4..v0.5.5) - July 13, 2020
+
+### Added
+
+- Add `notifications`.
+
 ## [0.5.4](https://github.com/serlo/api.serlo.org/compare/v0.5.3..v0.5.4) - July 6, 2020
 
 ### Fixed
 
-- Fix build
+- Fix build.
 
 ## [0.5.3](https://github.com/serlo/api.serlo.org/compare/v0.5.2..v0.5.3) - July 6, 2020
 
 ### Fixed
 
-- Fix navigation contract tests
+- Fix navigation contract tests.
 
 ## [0.5.2](https://github.com/serlo/api.serlo.org/compare/v0.5.1..v0.5.2) - June 5, 2020
 
 ### Fixed
 
-- Handle url-encoded alias inputs correctly
+- Handle url-encoded alias inputs correctly.
 
 ## [0.5.1](https://github.com/serlo/api.serlo.org/compare/v0.5.0..v0.5.1) - June 5, 2020
 
 ### Added
 
-- Handle user tokens
+- Handle user tokens.
 
 ### Fixed
 
-- Output url-encoded aliases
+- Output url-encoded aliases.
 
 ## [0.5.0](https://github.com/serlo/api.serlo.org/compare/v0.4.3..v0.5.0) - April 27, 2020
 
 ### Breaking Changes
 
-- Use Redis as cache
-- Use MessagePack as serializer
+- Use Redis as cache.
+- Use MessagePack as serializer.
 
 ## [0.4.3](https://github.com/serlo/api.serlo.org/compare/v0.4.2..v0.4.3) - April 27, 2020
 
 ### Fixed
 
-- Fix `navigation.data`
+- Fix `navigation.data`.
 
 ## [0.4.2](https://github.com/serlo/api.serlo.org/compare/v0.4.1..v0.4.2) - April 24, 2020
 
 ### Fixed
 
-- Fix build
+- Fix build.
 
 ## [0.4.1](https://github.com/serlo/api.serlo.org/compare/v0.4.0..v0.4.1) - April 24, 2020
 
 ### Fixed
 
-- Fix build
+- Fix build.
 
 ## [0.4.0](https://github.com/serlo/api.serlo.org/compare/v0.3.0..v0.4.0) - April 24, 2020
 
@@ -63,9 +69,9 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Add `navigation` to `Page` and `TaxonomyTerm`
-- Add meta fields to `EntityRevision`
-- Add `content` to `VideoRevision`
+- Add `navigation` to `Page` and `TaxonomyTerm`.
+- Add meta fields to `EntityRevision`.
+- Add `content` to `VideoRevision`.
 
 ## [0.3.0](https://github.com/serlo/api.serlo.org/compare/v0.2.0..v0.3.0) - April 15, 2020
 
