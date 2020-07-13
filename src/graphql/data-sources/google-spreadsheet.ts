@@ -55,10 +55,10 @@ export class GoogleSheetApi extends RESTDataSource {
 
   constructor({
     apiKey,
-    fetch,
+    fetch = fetchNode,
   }: {
     apiKey: string
-    fetch: typeof fetchNode
+    fetch?: typeof fetchNode
   }) {
     super(fetch as typeof fetchApollo)
 
