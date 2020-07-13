@@ -22,18 +22,19 @@
 import { ForbiddenError } from 'apollo-server'
 
 import { Service } from '../../types'
-import { UserResolvers, UserPayload } from './types'
+import { UserResolvers, isUserPayload } from './types'
 
 export const resolvers: UserResolvers = {
   Query: {
     async activeDonors(_parent, _args, { dataSources }) {
       const ids = await dataSources.activeDonorSheet.getActiveDonorIds()
 
-      const uuids = await Promise.all(ids.map(
-        (id) => dataSources.serlo.getUuid({ id })
-      ))
+      const uuids = await Promise.all(
+        ids.map((id) => dataSources.serlo.getUuid({ id }))
+      )
 
-      return uuids.map(x => x as UserPayload)
+      // TODO: Report uuids which are not users to sentry
+      return uuids.filter(isUserPayload)
     },
   },
   Mutation: {

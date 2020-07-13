@@ -60,7 +60,7 @@ describe('GoogleSheetApi.getValues()', () => {
     expect(valueRange).toEqual(either.right([['1', '2'], ['3']]))
     expect(fetch).toHaveExactlyOneRequestTo(url)
   })
-  
+
   test('argument "majorDimension" is optional', async () => {
     const url =
       'https://sheets.googleapis.com/v4/spreadsheets/my-spreadsheet-id' +

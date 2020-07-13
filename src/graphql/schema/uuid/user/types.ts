@@ -46,3 +46,7 @@ export interface UserResolvers {
     _setUser: MutationResolver<UserPayload>
   }
 }
+
+export function isUserPayload(payload: any): payload is UserPayload {
+  return payload.username !== undefined
+}

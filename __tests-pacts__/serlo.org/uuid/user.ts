@@ -22,14 +22,13 @@
 import { gql } from 'apollo-server'
 import { env } from 'process'
 
-import { user, user2 } from '../../../__fixtures__/uuid'
+import { user, user2, article } from '../../../__fixtures__/uuid'
 import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
 import {
   addUserInteraction,
   addActiveDonorIds,
+  addArticleInteraction,
 } from '../../__utils__/interactions'
-
-const user1 = user
 
 test('by id', async () => {
   await addUserInteraction(user)
@@ -58,32 +57,62 @@ test('by id', async () => {
   })
 })
 
-test('query active donors', async () => {
-  await addUserInteraction(user1)
-  await addUserInteraction(user2)
-  addActiveDonorIds({
-    ids: [user1.id, user2.id],
-    spreadsheetId: 'active-donors',
-    apiKey: 'my-secret',
+describe('endpoint activeDonors', () => {
+  beforeEach(() => {
+    env.GOOGLE_API_KEY = 'my-secret'
+    env.ACTIVE_DONORS_SPREADSHEET_ID = 'active-donors'
   })
 
-  env.GOOGLE_API_KEY = 'my-secret'
-  env.ACTIVE_DONORS_SPREADSHEET_ID = 'active-donors'
+  test('returns a list of active donors', async () => {
+    const user1 = user
 
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      {
-        activeDonors {
-          id
-          username
+    await addUserInteraction(user1)
+    await addUserInteraction(user2)
+    addActiveDonorIds({
+      ids: [user1.id, user2.id],
+      spreadsheetId: 'active-donors',
+      apiKey: 'my-secret',
+    })
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        {
+          activeDonors {
+            id
+            username
+          }
         }
-      }
-    `,
-    data: {
-      activeDonors: [
-        { id: user1.id, username: user1.username },
-        { id: user2.id, username: user2.username },
-      ],
-    },
+      `,
+      data: {
+        activeDonors: [
+          { id: user1.id, username: user1.username },
+          { id: user2.id, username: user2.username },
+        ],
+      },
+    })
+  })
+
+  test('filter all uuids which are not users', async () => {
+    await addUserInteraction(user)
+    await addArticleInteraction(article)
+    addActiveDonorIds({
+      ids: [user.id, article.id],
+      spreadsheetId: 'active-donors',
+      apiKey: 'my-secret',
+    })
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        {
+          activeDonors {
+            id
+            username
+          }
+        }
+      `,
+      data: {
+        activeDonors: [{ id: user.id, username: user.username }],
+      },
+    })
   })
 })
