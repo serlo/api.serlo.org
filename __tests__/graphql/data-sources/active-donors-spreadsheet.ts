@@ -25,14 +25,10 @@ import {
   ActiveDonorsSpreadsheet,
   extractUserIds,
 } from '../../../src/graphql/data-sources/active-donors-spreadsheet'
-import {
-  GoogleSheetApi,
-  MajorDimension,
-} from '../../../src/graphql/data-sources/google-spreadsheet'
+import { MajorDimension } from '../../../src/graphql/data-sources/google-spreadsheet'
 
 describe('ActiveDonorsSpreadsheet', () => {
-  const getValues = jest.fn()
-  const googleSheetApi = ({ getValues } as unknown) as GoogleSheetApi
+  const googleSheetApi = { getValues: jest.fn(), initialize: jest.fn() }
   const donorsSheet = new ActiveDonorsSpreadsheet(
     googleSheetApi,
     'active-donors',
@@ -41,12 +37,14 @@ describe('ActiveDonorsSpreadsheet', () => {
 
   describe('getActiveDonorIds()', () => {
     test('returns user ids from spreadsheet with active donors', async () => {
-      getValues.mockReturnValueOnce(either.right([['Header', '1', '2']]))
+      googleSheetApi.getValues.mockResolvedValueOnce(
+        either.right([['Header', '1', '2']])
+      )
 
       const ids = await donorsSheet.getActiveDonorIds()
 
       expect(ids).toEqual([1, 2])
-      expect(getValues).toHaveBeenCalledWith({
+      expect(googleSheetApi.getValues).toHaveBeenCalledWith({
         spreadsheetId: 'active-donors',
         range: 'sheet1!A:A',
         majorDimension: MajorDimension.Columns,
@@ -54,7 +52,7 @@ describe('ActiveDonorsSpreadsheet', () => {
     })
 
     test('returns empty list when an error occured', async () => {
-      getValues.mockReturnValueOnce(either.left({}))
+      googleSheetApi.getValues.mockResolvedValueOnce(either.left({}))
 
       expect(await donorsSheet.getActiveDonorIds()).toEqual([])
     })
