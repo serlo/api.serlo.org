@@ -21,10 +21,11 @@
  */
 import { AuthenticationError, ForbiddenError } from 'apollo-server'
 
+import { resolveConnection } from '../../connection'
 import { requestsOnlyFields } from '../utils'
 import { AbstractUuidPayload, resolveAbstractUuid } from '../uuid'
 import { resolveUser, UserPayload } from '../uuid/user'
-import { NotificationResolvers } from './types'
+import { Notification, NotificationResolvers } from './types'
 
 export const resolvers: NotificationResolvers = {
   Notification: {
@@ -53,17 +54,20 @@ export const resolvers: NotificationResolvers = {
     },
   },
   Query: {
-    async notifications(_parent, _args, { dataSources, user }) {
+    async notifications(_parent, payload, { dataSources, user }) {
       if (user == null) {
         throw new AuthenticationError('You are not logged in')
       }
       const { notifications } = await dataSources.serlo.getNotifications({
         id: user,
       })
-      return {
-        totalCount: notifications.length,
+      return resolveConnection<Notification>({
         nodes: notifications,
-      }
+        payload,
+        createCursor(node) {
+          return `${node.id}`
+        },
+      })
     },
   },
   Mutation: {
