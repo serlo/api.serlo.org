@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Connection, ConnectionPayload } from '../../connection'
 import { Instance } from '../instance'
 import { MutationResolver, QueryResolver, Resolver } from '../types'
 import { Uuid } from '../uuid/abstract-uuid'
@@ -63,10 +64,7 @@ export interface NotificationResolvers {
     object: Resolver<NotificationEvent, never, Uuid>
   }
   Query: {
-    notifications: QueryResolver<
-      never,
-      { totalCount: number; nodes: Notification[] }
-    >
+    notifications: QueryResolver<ConnectionPayload, Connection<Notification>>
   }
   Mutation: {
     setNotificationState: MutationResolver<SetNotificationStatePayload>
