@@ -20,10 +20,16 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import { env } from 'process'
 
-import { user } from '../../../__fixtures__/uuid'
+import { user, user2 } from '../../../__fixtures__/uuid'
 import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
-import { addUserInteraction } from '../../__utils__/interactions'
+import {
+  addUserInteraction,
+  addActiveDonorIds,
+} from '../../__utils__/interactions'
+
+const user1 = user
 
 test('by id', async () => {
   await addUserInteraction(user)
@@ -48,6 +54,36 @@ test('by id', async () => {
         __typename: 'User',
         ...user,
       },
+    },
+  })
+})
+
+test('query active donors', async () => {
+  await addUserInteraction(user1)
+  await addUserInteraction(user2)
+  addActiveDonorIds({
+    ids: [user1.id, user2.id],
+    spreadsheetId: 'active-donors',
+    apiKey: 'my-secret',
+  })
+
+  env.GOOGLE_API_KEY = 'my-secret'
+  env.ACTIVE_DONORS_SPREADSHEET_ID = 'active-donors'
+
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      {
+        activeDonors {
+          id
+          username
+        }
+      }
+    `,
+    data: {
+      activeDonors: [
+        { id: user1.id, username: user1.username },
+        { id: user2.id, username: user2.username },
+      ],
     },
   })
 })

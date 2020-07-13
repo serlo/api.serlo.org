@@ -31,6 +31,10 @@ export const typeDefs = gql`
     description: String
   }
 
+  extend type Query {
+    activeDonors: [User!]!
+  }
+
   extend type Mutation {
     _setUser(
       id: Int!

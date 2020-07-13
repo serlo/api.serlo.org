@@ -19,21 +19,29 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { DataSource, DataSourceConfig } from 'apollo-datasource'
 import { pipeable, either } from 'fp-ts'
 
-import { ErrorEvent } from '../../error-event'
 import {
   CellValues,
   GoogleSheetApi,
   MajorDimension,
 } from './google-spreadsheet'
+import {Context} from '../schema/types'
+import { ErrorEvent } from '../../error-event'
 
-export class ActiveDonorsSpreadsheet {
+export class ActiveDonorsSpreadsheet extends DataSource {
   constructor(
     private googleSheetApi: GoogleSheetApi,
     private spreadsheetId: string,
     private tableName: string
-  ) {}
+  ) {
+    super()
+  }
+
+  initialize(config: DataSourceConfig<Context>) {
+    this.googleSheetApi.initialize(config)
+  }
 
   async getActiveDonorIds(): Promise<number[]> {
     return pipeable.pipe(
