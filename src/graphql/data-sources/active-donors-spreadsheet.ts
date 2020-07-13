@@ -22,17 +22,17 @@
 import { DataSource, DataSourceConfig } from 'apollo-datasource'
 import { pipeable, either } from 'fp-ts'
 
+import { ErrorEvent } from '../../error-event'
+import { Context } from '../schema/types'
 import {
   CellValues,
-  GoogleSheetApi,
   MajorDimension,
+  GoogleSheetApi,
 } from './google-spreadsheet'
-import {Context} from '../schema/types'
-import { ErrorEvent } from '../../error-event'
 
-export class ActiveDonorsSpreadsheet extends DataSource {
+export class ActiveDonorsSpreadsheet extends DataSource<Context> {
   constructor(
-    private googleSheetApi: GoogleSheetApi,
+    private googleSheetApi: Pick<GoogleSheetApi, 'getValues' | 'initialize'>,
     private spreadsheetId: string,
     private tableName: string
   ) {
@@ -40,7 +40,7 @@ export class ActiveDonorsSpreadsheet extends DataSource {
   }
 
   initialize(config: DataSourceConfig<Context>) {
-    this.googleSheetApi.initialize(config)
+    this.googleSheetApi.initialize?.(config)
   }
 
   async getActiveDonorIds(): Promise<number[]> {
