@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Matchers } from '@pact-foundation/pact'
-import { rest } from 'msw'
 
 import { License } from '../../src/graphql/schema/license'
 import {
@@ -548,33 +547,6 @@ export function addUuidInteraction<
       ...data,
     },
   })
-}
-
-export function addActiveDonorIds({
-  ids,
-  spreadsheetId,
-  apiKey,
-}: {
-  ids: number[]
-  spreadsheetId: string
-  apiKey: string
-}) {
-  const url =
-    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}` +
-    `/values/Tabellenblatt1!A:A?majorDimension=COLUMNS&key=${apiKey}`
-
-  global.server.use(
-    rest.get(url, (_req, res, ctx) => {
-      return res.once(
-        ctx.status(200),
-        ctx.json({
-          range: 'Tabellenblatt1!A:A',
-          majorDimension: 'COLUMNS',
-          values: [['Header', ...ids.map((x) => String(x))]],
-        })
-      )
-    })
-  )
 }
 
 function addJsonInteraction({
