@@ -39,7 +39,7 @@ import { createTestClient } from '../__utils__/test-client'
 const server = setupServer(
   rest.get(
     `http://de.${process.env.SERLO_ORG_HOST}/api/license/1`,
-    (req, res, ctx) => {
+    (_req, res, ctx) => {
       return res(ctx.status(200), ctx.json(license))
     }
   )
