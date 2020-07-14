@@ -34,12 +34,12 @@ export function resolveConnection<T>({
   createCursor(node: T): string
 }): Connection<T> {
   const { before, after, first, last } = payload
-  const allEdges = R.map<T, Cursor<T>>((node) => {
+  const allEdges = nodes.map((node) => {
     return {
       cursor: Buffer.from(createCursor(node)).toString('base64'),
       node,
     }
-  }, nodes)
+  })
   const applyCursorToEdgesResult = applyCursorToEdges()
   const edges = R.pipe(handleFirst, handleLast)(applyCursorToEdgesResult)
 

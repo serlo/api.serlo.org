@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.8](https://github.com/serlo/api.serlo.org/compare/v0.5.7..v0.5.8) - July 14, 2020
+
+### Fixed
+
+- **notifications**. Process object response as an array.
+
 ## [0.5.7](https://github.com/serlo/api.serlo.org/compare/v0.5.6..v0.5.7) - July 14, 2020
 
 ### Fixed
