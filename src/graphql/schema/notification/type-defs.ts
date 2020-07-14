@@ -39,7 +39,13 @@ export const typeDefs = gql`
   }
 
   extend type Query {
-    notifications: NotificationsResult!
+    notifications(
+      after: String
+      before: String
+      first: Int
+      last: Int
+      unread: Boolean
+    ): NotificationsResult!
   }
 
   extend type Mutation {
@@ -66,7 +72,14 @@ export const typeDefs = gql`
   }
 
   type NotificationsResult {
-    totalCount: Int!
+    edges: [NotificationCursor!]!
     nodes: [Notification!]!
+    totalCount: Int!
+    pageInfo: PageInfo!
+  }
+
+  type NotificationCursor {
+    cursor: String!
+    node: Notification!
   }
 `
