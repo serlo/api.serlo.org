@@ -30,14 +30,10 @@ import { assertSuccessfulGraphQLQuery } from './__utils__/assertions'
 import { createTestClient } from './__utils__/test-client'
 
 const server = setupServer()
+const { client } = createTestClient()
 
 beforeAll(() => {
   server.listen()
-})
-
-beforeEach(() => {
-  env.GOOGLE_API_KEY = 'my-secret'
-  env.ACTIVE_DONORS_SPREADSHEET_ID = 'active-donors'
 })
 
 afterEach(() => {
@@ -53,8 +49,6 @@ describe('endpoint activeDonors', () => {
     addUuid(user)
     addUuid(user2)
     addActiveDonorIds([user.id, user2.id])
-
-    const { client } = createTestClient()
 
     await assertSuccessfulGraphQLQuery({
       query: gql`
@@ -80,8 +74,6 @@ describe('endpoint activeDonors', () => {
     addUuid(article)
     addActiveDonorIds([user.id, article.id])
 
-    const { client } = createTestClient()
-
     await assertSuccessfulGraphQLQuery({
       query: gql`
         {
@@ -100,7 +92,7 @@ describe('endpoint activeDonors', () => {
 function addUuid(payload: UuidPayload) {
   server.use(
     rest.get(
-      `http://de.${process.env.SERLO_ORG_HOST}/api/uuid/${payload.id}`,
+      `http://de.${env.SERLO_ORG_HOST}/api/uuid/${payload.id}`,
       (_req, res, ctx) => {
         return res.once(ctx.status(200), ctx.json(payload))
       }
