@@ -19,12 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { env } from 'process'
-
 import { extendExpect } from './__tests__/_extend-jest'
 
 extendExpect()
-
-beforeEach(() => {
-  env.GOOGLE_API_KEY = ''
-})
