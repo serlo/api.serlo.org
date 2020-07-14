@@ -40,7 +40,7 @@ export interface UserPayload extends UuidPayload {
 
 export interface UserResolvers {
   Query: {
-    activeDonors: QueryResolver<{}, UserPayload[]>
+    activeDonors: QueryResolver<never, UserPayload[]>
   }
   Mutation: {
     _setUser: MutationResolver<UserPayload>
