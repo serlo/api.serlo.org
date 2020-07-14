@@ -38,7 +38,7 @@ const rm = util.promisify(rimraf)
 
 const port = 9009
 
-global.server = setupServer(
+const server = setupServer(
   rest.get(
     new RegExp(process.env.SERLO_ORG_HOST.replace('.', '\\.')),
     async (req, res, ctx) => {
@@ -59,8 +59,7 @@ global.pact = new Pact({
 beforeAll(async () => {
   await rm(pactDir)
   await global.pact.setup()
-
-  global.server.listen()
+  server.listen()
 })
 
 beforeEach(() => {
@@ -72,7 +71,7 @@ afterEach(async () => {
 })
 
 afterAll(async () => {
-  global.server.close()
+  server.close()
   await global.pact.finalize()
 })
 

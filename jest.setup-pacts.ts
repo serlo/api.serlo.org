@@ -19,8 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { setupServer } from 'msw/node'
-
 export const foo = 'bar'
 
 /* eslint-disable @typescript-eslint/no-namespace */
@@ -28,7 +26,6 @@ declare global {
   namespace NodeJS {
     interface Global {
       pact: import('@pact-foundation/pact').Pact
-      server: ReturnType<typeof setupServer>
       client: import('./__tests__/__utils__/test-client').Client
     }
   }
