@@ -414,10 +414,15 @@ export class SerloDataSource extends RESTDataSource {
     id: number
     bypassCache?: boolean
   }): Promise<NotificationsPayload> {
-    return this.cacheAwareGet({
+    const response = await this.cacheAwareGet<NotificationsPayload>({
       path: `/api/notifications/${id}`,
       setter: 'setNotifications',
     })
+    return {
+      ...response,
+      // Sometimes, Zend serializes an array as an object... This line ensures that we have an array.
+      notifications: Object.values(response.notifications),
+    }
   }
 
   public async setNotifications(notifications: NotificationsPayload) {

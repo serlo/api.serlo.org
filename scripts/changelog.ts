@@ -157,6 +157,12 @@ async function exec(): Promise<void> {
       date: '2020-07-14',
       fixed: [['auth', 'Add X-Forwarded-Proto header to Hydra request.']],
     },
+    {
+      tagName: 'v0.5.8',
+      name: '0.5.8',
+      date: '2020-07-14',
+      fixed: [['notifications', 'Process object response as an array.']],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
