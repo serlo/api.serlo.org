@@ -151,6 +151,12 @@ async function exec(): Promise<void> {
         ['notifications', 'Add optional `unread` filter.'],
       ],
     },
+    {
+      tagName: 'v0.5.7',
+      name: '0.5.7',
+      date: '2020-07-14',
+      fixed: [['auth', 'Add X-Forwarded-Proto header to Hydra request.']],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

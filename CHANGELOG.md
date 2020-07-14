@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.7](https://github.com/serlo/api.serlo.org/compare/v0.5.6..v0.5.7) - July 14, 2020
+
+### Fixed
+
+- **auth**. Add X-Forwarded-Proto header to Hydra request.
+
 ## [0.5.6](https://github.com/serlo/api.serlo.org/compare/v0.5.5..v0.5.6) - July 14, 2020
 
 ### Added
