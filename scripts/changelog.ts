@@ -142,6 +142,15 @@ async function exec(): Promise<void> {
       date: '2020-07-13',
       added: ['Add `notifications`.'],
     },
+    {
+      tagName: 'v0.5.6',
+      name: '0.5.6',
+      date: '2020-07-14',
+      added: [
+        ['notifications', 'Implement GraphQL Cursor Connection specification.'],
+        ['notifications', 'Add optional `unread` filter.'],
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.6](https://github.com/serlo/api.serlo.org/compare/v0.5.5..v0.5.6) - July 14, 2020
+
+### Added
+
+- **notifications**. Implement GraphQL Cursor Connection specification.
+- **notifications**. Add optional `unread` filter.
+
 ## [0.5.5](https://github.com/serlo/api.serlo.org/compare/v0.5.4..v0.5.5) - July 13, 2020
 
 ### Added

@@ -21,7 +21,7 @@
  */
 import { AuthenticationError, ForbiddenError } from 'apollo-server'
 
-import { resolveConnection } from '../../connection'
+import { resolveConnection } from '../connection'
 import { requestsOnlyFields } from '../utils'
 import { AbstractUuidPayload, resolveAbstractUuid } from '../uuid'
 import { resolveUser, UserPayload } from '../uuid/user'
@@ -54,16 +54,23 @@ export const resolvers: NotificationResolvers = {
     },
   },
   Query: {
-    async notifications(_parent, payload, { dataSources, user }) {
-      if (user == null) {
-        throw new AuthenticationError('You are not logged in')
-      }
+    async notifications(
+      _parent,
+      { unread, ...cursorPayload },
+      { dataSources, user }
+    ) {
+      if (user === null) throw new AuthenticationError('You are not logged in')
       const { notifications } = await dataSources.serlo.getNotifications({
         id: user,
       })
       return resolveConnection<Notification>({
-        nodes: notifications,
-        payload,
+        nodes:
+          unread == null
+            ? notifications
+            : notifications.filter((notification) => {
+                return notification.unread === unread
+              }),
+        payload: cursorPayload,
         createCursor(node) {
           return `${node.id}`
         },
@@ -72,7 +79,7 @@ export const resolvers: NotificationResolvers = {
   },
   Mutation: {
     async setNotificationState(_parent, payload, { dataSources, user }) {
-      if (user == null) throw new AuthenticationError('You are not logged in')
+      if (user === null) throw new AuthenticationError('You are not logged in')
       await dataSources.serlo.setNotificationState({
         id: payload.id,
         userId: user,
