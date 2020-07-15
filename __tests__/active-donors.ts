@@ -25,7 +25,11 @@ import { setupServer } from 'msw/node'
 import { env } from 'process'
 
 import { user, user2, article } from '../__fixtures__/uuid'
-import { UuidPayload } from '../src/graphql/schema/uuid'
+import {
+  UuidPayload,
+  ArticlePayload,
+  UserPayload,
+} from '../src/graphql/schema/uuid'
 import { assertSuccessfulGraphQLQuery } from './__utils__/assertions'
 import { createTestClient } from './__utils__/test-client'
 
@@ -44,10 +48,47 @@ afterAll(() => {
   server.close()
 })
 
+describe('property activeDonor', () => {
+  beforeEach(() => {
+    addUser(user)
+  })
+
+  test('when user is an active donor', async () => {
+    addActiveDonorIds([user.id])
+
+    await expectActiveDonorPropertyToBe(true)
+  })
+
+  test('when user is not an active donor', async () => {
+    addActiveDonorIds([])
+
+    await expectActiveDonorPropertyToBe(false)
+  })
+
+  async function expectActiveDonorPropertyToBe(activeDonor: boolean) {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        {
+          uuid(id: ${user.id}) {
+            ...on User {
+              username
+              activeDonor
+            }
+          }
+        }
+      `,
+      data: {
+        uuid: { username: user.username, activeDonor },
+      },
+      client,
+    })
+  }
+})
+
 describe('endpoint activeDonors', () => {
   test('returns a list of active donors', async () => {
-    addUuid(user)
-    addUuid(user2)
+    addUser(user)
+    addUser(user2)
     addActiveDonorIds([user.id, user2.id])
 
     await assertSuccessfulGraphQLQuery({
@@ -70,8 +111,8 @@ describe('endpoint activeDonors', () => {
   })
 
   test('filter all uuids which are not users', async () => {
-    addUuid(user)
-    addUuid(article)
+    addUser(user)
+    addArticle(article)
     addActiveDonorIds([user.id, article.id])
 
     await assertSuccessfulGraphQLQuery({
@@ -125,15 +166,26 @@ describe('endpoint activeDonors', () => {
 })
 
 function addUserWithIDs(ids: number[]) {
-  ids.map((id) => addUuid({ ...user, id }))
+  ids.map((id) => addUser({ ...user, id }))
 }
 
-function addUuid(payload: UuidPayload) {
+function addUser(user: UserPayload) {
+  addUuid(user, 'user')
+}
+
+function addArticle(article: ArticlePayload) {
+  addUuid(article, 'entity')
+}
+
+function addUuid(payload: UuidPayload, discriminator: string) {
   server.use(
     rest.get(
       `http://de.${env.SERLO_ORG_HOST}/api/uuid/${payload.id}`,
       (_req, res, ctx) => {
-        return res.once(ctx.status(200), ctx.json(payload))
+        return res.once(
+          ctx.status(200),
+          ctx.json({ discriminator, ...payload })
+        )
       }
     )
   )
