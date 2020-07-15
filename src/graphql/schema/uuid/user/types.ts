@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { AbstractUuidPayload } from '..'
 import { DateTime } from '../../date-time'
 import { MutationResolver, QueryResolver, Resolver } from '../../types'
 import { DiscriminatorType, Uuid, UuidPayload } from '../abstract-uuid'
@@ -40,7 +41,7 @@ export interface UserPayload extends UuidPayload {
 
 export interface UserResolvers {
   Query: {
-    activeDonors: QueryResolver<never, UserPayload[]>
+    activeDonors: QueryResolver<never, User[]>
   }
   Mutation: {
     _setUser: MutationResolver<UserPayload>
@@ -50,6 +51,8 @@ export interface UserResolvers {
   }
 }
 
-export function isUserPayload(payload: any): payload is UserPayload {
-  return payload.username !== undefined
+export function isUserPayload(
+  payload: AbstractUuidPayload
+): payload is UserPayload & { discriminator: 'user' } {
+  return payload.discriminator === 'user'
 }

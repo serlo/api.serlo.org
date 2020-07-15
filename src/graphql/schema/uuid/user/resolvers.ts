@@ -23,6 +23,7 @@ import { ForbiddenError } from 'apollo-server'
 import { pipeable, either } from 'fp-ts'
 import { env } from 'process'
 
+import { AbstractUuidPayload, resolveUser } from '..'
 import { ErrorEvent } from '../../../../error-event'
 import {
   MajorDimension,
@@ -38,11 +39,11 @@ export const resolvers: UserResolvers = {
       const ids = await activeDonorIDs(dataSources.googleSheetApi)
 
       const uuids = await Promise.all(
-        ids.map((id) => dataSources.serlo.getUuid({ id }))
+        ids.map((id) => dataSources.serlo.getUuid<AbstractUuidPayload>({ id }))
       )
 
       // TODO: Report uuids which are not users to sentry
-      return uuids.filter(isUserPayload)
+      return uuids.filter(isUserPayload).map(resolveUser)
     },
   },
   Mutation: {
