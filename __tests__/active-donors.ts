@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
-import { either } from 'fp-ts'
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 import { env } from 'process'
@@ -29,7 +28,6 @@ import { user, user2, article } from '../__fixtures__/uuid'
 import { UuidPayload } from '../src/graphql/schema/uuid'
 import { assertSuccessfulGraphQLQuery } from './__utils__/assertions'
 import { createTestClient } from './__utils__/test-client'
-import { extractIDsFromFirstColumn } from '../src/graphql/schema/uuid/user/resolvers'
 
 const server = setupServer()
 const { client } = createTestClient()
@@ -89,43 +87,46 @@ describe('endpoint activeDonors', () => {
       client,
     })
   })
+
+  describe('parsing of spreadsheet with active donor ids', () => {
+    test('extract user ids from first column with omitting the header', async () => {
+      addUserWithIDs([1, 2, 3])
+      addActiveDonorSheet([['Header', '1', '2', '3']])
+
+      await expectActiveDonorIds([1, 2, 3])
+    })
+
+    test('removes entries which are no valid uuids', async () => {
+      addUserWithIDs([23])
+      addActiveDonorSheet([['Header', '23', 'foo', '-1', '', '1.5']])
+
+      await expectActiveDonorIds([23])
+    })
+
+    test('cell entries are trimmed of leading and trailing whitespaces', async () => {
+      addUserWithIDs([10, 20])
+      addActiveDonorSheet([['Header', ' 10 ', '  20']])
+
+      await expectActiveDonorIds([10, 20])
+    })
+
+    test('returns empty list when spreadsheet is empty', async () => {
+      addActiveDonorSheet([[]])
+
+      await expectActiveDonorIds([])
+    })
+
+    test('returns empty list when an error occured while accessing the spreadsheet', async () => {
+      addActiveDonorSheetResponse({})
+
+      await expectActiveDonorIds([])
+    })
+  })
 })
 
-describe('extractIDsFromFirstColumn()', () => {
-  const readCells = jest.fn()
-
-  test('extract user ids from first column', async () => {
-    readCells.mockResolvedValueOnce(either.right([['Header', '1', '2', '3']]))
-
-    expect(await extractIDsFromFirstColumn(readCells)).toEqual([1, 2, 3])
-  })
-
-  test('removes entries which are no valid uuids', async () => {
-    readCells.mockResolvedValueOnce(
-      either.right([['Header', '23', 'foo', '-1', '', '1.5']])
-    )
-
-    expect(await extractIDsFromFirstColumn(readCells)).toEqual([23])
-  })
-
-  test('cell entries are trimmed of leading and trailing whitespaces', async () => {
-    readCells.mockResolvedValueOnce(either.right([['Header', ' 10 ', '  20']]))
-
-    expect(await extractIDsFromFirstColumn(readCells)).toEqual([10, 20])
-  })
-
-  test('returns empty list when an empty range is given', async () => {
-    readCells.mockResolvedValueOnce(either.right([[]]))
-
-    expect(await extractIDsFromFirstColumn(readCells)).toEqual([])
-  })
-
-  test('returns empty list when an error occured', async () => {
-    readCells.mockResolvedValueOnce(either.left({}))
-
-    expect(await extractIDsFromFirstColumn(readCells)).toEqual([])
-  })
-})
+function addUserWithIDs(ids: number[]) {
+  ids.map((id) => addUuid({ ...user, id }))
+}
 
 function addUuid(payload: UuidPayload) {
   server.use(
@@ -139,6 +140,18 @@ function addUuid(payload: UuidPayload) {
 }
 
 function addActiveDonorIds(ids: number[]) {
+  addActiveDonorSheet([['Header', ...ids.map(String)]])
+}
+
+function addActiveDonorSheet(values: string[][]) {
+  addActiveDonorSheetResponse({
+    range: 'Tabellenblatt1!A:A',
+    majorDimension: 'COLUMNS',
+    values,
+  })
+}
+
+function addActiveDonorSheetResponse(response: object) {
   const url =
     `https://sheets.googleapis.com/v4/spreadsheets/` +
     `${env.ACTIVE_DONORS_SPREADSHEET_ID}/values/Tabellenblatt1!A:A` +
@@ -146,14 +159,21 @@ function addActiveDonorIds(ids: number[]) {
 
   server.use(
     rest.get(url, (_req, res, ctx) => {
-      return res.once(
-        ctx.status(200),
-        ctx.json({
-          range: 'Tabellenblatt1!A:A',
-          majorDimension: 'COLUMNS',
-          values: [['Header', ...ids.map(String)]],
-        })
-      )
+      return res.once(ctx.status(200), ctx.json(response))
     })
   )
+}
+
+async function expectActiveDonorIds(ids: number[]) {
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      {
+        activeDonors {
+          id
+        }
+      }
+    `,
+    data: { activeDonors: ids.map((id) => ({ id })) },
+    client,
+  })
 }
