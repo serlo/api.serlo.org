@@ -49,17 +49,15 @@ afterAll(() => {
 })
 
 describe('property activeDonor', () => {
-  beforeEach(() => {
-    addUser(user)
-  })
-
   test('when user is an active donor', async () => {
+    addUser(user)
     addActiveDonorIds([user.id])
 
     await expectActiveDonorPropertyToBe(true)
   })
 
   test('when user is not an active donor', async () => {
+    addUser(user)
     addActiveDonorIds([])
 
     await expectActiveDonorPropertyToBe(false)
@@ -91,6 +89,18 @@ describe('endpoint activeDonors', () => {
     addUser(user2)
     addActiveDonorIds([user.id, user2.id])
 
+    await expectActiveDonors([user, user2])
+  })
+
+  test('filter all uuids which are not users', async () => {
+    addUser(user)
+    addArticle(article)
+    addActiveDonorIds([user.id, article.id])
+
+    await expectActiveDonors([user])
+  })
+
+  async function expectActiveDonors(users: UserPayload[]) {
     await assertSuccessfulGraphQLQuery({
       query: gql`
         {
@@ -101,68 +111,63 @@ describe('endpoint activeDonors', () => {
         }
       `,
       data: {
-        activeDonors: [
-          { id: user.id, username: user.username },
-          { id: user2.id, username: user2.username },
-        ],
+        activeDonors: users.map((user) => ({
+          id: user.id,
+          username: user.username,
+        })),
       },
       client,
     })
+  }
+})
+
+describe('parsing of spreadsheet with active donor ids', () => {
+  test('extract user ids from first column with omitting the header', async () => {
+    addUserWithIDs([1, 2, 3])
+    addActiveDonorSheet([['Header', '1', '2', '3']])
+
+    await expectActiveDonorIds([1, 2, 3])
   })
 
-  test('filter all uuids which are not users', async () => {
-    addUser(user)
-    addArticle(article)
-    addActiveDonorIds([user.id, article.id])
+  test('removes entries which are no valid uuids', async () => {
+    addUserWithIDs([23])
+    addActiveDonorSheet([['Header', '23', 'foo', '-1', '', '1.5']])
 
+    await expectActiveDonorIds([23])
+  })
+
+  test('cell entries are trimmed of leading and trailing whitespaces', async () => {
+    addUserWithIDs([10, 20])
+    addActiveDonorSheet([['Header', ' 10 ', '  20']])
+
+    await expectActiveDonorIds([10, 20])
+  })
+
+  test('returns empty list when spreadsheet is empty', async () => {
+    addActiveDonorSheet([[]])
+
+    await expectActiveDonorIds([])
+  })
+
+  test('returns empty list when an error occured while accessing the spreadsheet', async () => {
+    addActiveDonorSheetResponse({})
+
+    await expectActiveDonorIds([])
+  })
+
+  async function expectActiveDonorIds(ids: number[]) {
     await assertSuccessfulGraphQLQuery({
       query: gql`
         {
           activeDonors {
             id
-            username
           }
         }
       `,
-      data: { activeDonors: [{ id: user.id, username: user.username }] },
+      data: { activeDonors: ids.map((id) => ({ id })) },
       client,
     })
-  })
-
-  describe('parsing of spreadsheet with active donor ids', () => {
-    test('extract user ids from first column with omitting the header', async () => {
-      addUserWithIDs([1, 2, 3])
-      addActiveDonorSheet([['Header', '1', '2', '3']])
-
-      await expectActiveDonorIds([1, 2, 3])
-    })
-
-    test('removes entries which are no valid uuids', async () => {
-      addUserWithIDs([23])
-      addActiveDonorSheet([['Header', '23', 'foo', '-1', '', '1.5']])
-
-      await expectActiveDonorIds([23])
-    })
-
-    test('cell entries are trimmed of leading and trailing whitespaces', async () => {
-      addUserWithIDs([10, 20])
-      addActiveDonorSheet([['Header', ' 10 ', '  20']])
-
-      await expectActiveDonorIds([10, 20])
-    })
-
-    test('returns empty list when spreadsheet is empty', async () => {
-      addActiveDonorSheet([[]])
-
-      await expectActiveDonorIds([])
-    })
-
-    test('returns empty list when an error occured while accessing the spreadsheet', async () => {
-      addActiveDonorSheetResponse({})
-
-      await expectActiveDonorIds([])
-    })
-  })
+  }
 })
 
 function addUserWithIDs(ids: number[]) {
@@ -214,18 +219,4 @@ function addActiveDonorSheetResponse(response: object) {
       return res.once(ctx.status(200), ctx.json(response))
     })
   )
-}
-
-async function expectActiveDonorIds(ids: number[]) {
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      {
-        activeDonors {
-          id
-        }
-      }
-    `,
-    data: { activeDonors: ids.map((id) => ({ id })) },
-    client,
-  })
 }
