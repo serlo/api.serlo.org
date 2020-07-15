@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import { either } from 'fp-ts'
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 import { env } from 'process'
@@ -28,6 +29,7 @@ import { user, user2, article } from '../__fixtures__/uuid'
 import { UuidPayload } from '../src/graphql/schema/uuid'
 import { assertSuccessfulGraphQLQuery } from './__utils__/assertions'
 import { createTestClient } from './__utils__/test-client'
+import { extractIDsFromFirstColumn } from '../src/graphql/schema/uuid/user/resolvers'
 
 const server = setupServer()
 const { client } = createTestClient()
@@ -86,6 +88,42 @@ describe('endpoint activeDonors', () => {
       data: { activeDonors: [{ id: user.id, username: user.username }] },
       client,
     })
+  })
+})
+
+describe('extractIDsFromFirstColumn()', () => {
+  const readCells = jest.fn()
+
+  test('extract user ids from first column', async () => {
+    readCells.mockResolvedValueOnce(either.right([['Header', '1', '2', '3']]))
+
+    expect(await extractIDsFromFirstColumn(readCells)).toEqual([1, 2, 3])
+  })
+
+  test('removes entries which are no valid uuids', async () => {
+    readCells.mockResolvedValueOnce(
+      either.right([['Header', '23', 'foo', '-1', '', '1.5']])
+    )
+
+    expect(await extractIDsFromFirstColumn(readCells)).toEqual([23])
+  })
+
+  test('cell entries are trimmed of leading and trailing whitespaces', async () => {
+    readCells.mockResolvedValueOnce(either.right([['Header', ' 10 ', '  20']]))
+
+    expect(await extractIDsFromFirstColumn(readCells)).toEqual([10, 20])
+  })
+
+  test('returns empty list when an empty range is given', async () => {
+    readCells.mockResolvedValueOnce(either.right([[]]))
+
+    expect(await extractIDsFromFirstColumn(readCells)).toEqual([])
+  })
+
+  test('returns empty list when an error occured', async () => {
+    readCells.mockResolvedValueOnce(either.left({}))
+
+    expect(await extractIDsFromFirstColumn(readCells)).toEqual([])
   })
 })
 
