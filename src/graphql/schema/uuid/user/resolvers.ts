@@ -20,17 +20,17 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { ForbiddenError } from 'apollo-server'
-import { env } from 'process'
 import { pipeable, either } from 'fp-ts'
+import { env } from 'process'
 
-import { UserResolvers, isUserPayload } from './types'
-import { Service } from '../../types'
+import { ErrorEvent } from '../../../../error-event'
 import {
   MajorDimension,
   GoogleSheetApi,
   CellValues,
 } from '../../../data-sources/google-spreadsheet'
-import { ErrorEvent } from '../../../../error-event'
+import { Service } from '../../types'
+import { UserResolvers, isUserPayload } from './types'
 
 export const resolvers: UserResolvers = {
   Query: {
@@ -53,6 +53,13 @@ export const resolvers: UserResolvers = {
         )
       }
       await dataSources.serlo.setUser(payload)
+    },
+  },
+  User: {
+    async activeDonor(user, _args, { dataSources }) {
+      const ids = await activeDonorIDs(dataSources.googleSheetApi)
+
+      return ids.includes(user.id)
     },
   },
 }

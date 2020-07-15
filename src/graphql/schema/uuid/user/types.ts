@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { DateTime } from '../../date-time'
-import { MutationResolver, QueryResolver } from '../../types'
+import { MutationResolver, QueryResolver, Resolver } from '../../types'
 import { DiscriminatorType, Uuid, UuidPayload } from '../abstract-uuid'
 
 export interface User extends Uuid {
@@ -44,6 +44,9 @@ export interface UserResolvers {
   }
   Mutation: {
     _setUser: MutationResolver<UserPayload>
+  }
+  User: {
+    activeDonor: Resolver<User, never, boolean>
   }
 }
 
