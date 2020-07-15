@@ -28,7 +28,6 @@ import fetch from 'node-fetch'
 import { env } from 'process'
 import { URLSearchParams } from 'url'
 
-import { ActiveDonorsSpreadsheet } from './data-sources/active-donors-spreadsheet'
 import { GoogleSheetApi } from './data-sources/google-spreadsheet'
 import { SerloDataSource } from './data-sources/serlo'
 import { Environment } from './environment'
@@ -46,15 +45,9 @@ export function getGraphQLOptions(
     // We add the playground via express middleware in src/index.ts
     playground: false,
     dataSources() {
-      const googleSheetApi = new GoogleSheetApi({ apiKey: env.GOOGLE_API_KEY })
-
       return {
         serlo: new SerloDataSource(environment),
-        activeDonorSheet: new ActiveDonorsSpreadsheet(
-          googleSheetApi,
-          env.ACTIVE_DONORS_SPREADSHEET_ID,
-          'Tabellenblatt1'
-        ),
+        googleSheetApi: new GoogleSheetApi({ apiKey: env.GOOGLE_API_KEY }),
       }
     },
     context({ req }): Promise<Pick<Context, 'service' | 'user'>> {

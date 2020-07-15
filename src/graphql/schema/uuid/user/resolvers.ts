@@ -20,14 +20,22 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { ForbiddenError } from 'apollo-server'
+import { env } from 'process'
+import { pipeable, either } from 'fp-ts'
 
-import { Service } from '../../types'
 import { UserResolvers, isUserPayload } from './types'
+import { Service } from '../../types'
+import {
+  MajorDimension,
+  GoogleSheetApi,
+  CellValues,
+} from '../../../data-sources/google-spreadsheet'
+import {ErrorEvent} from '../../../../error-event'
 
 export const resolvers: UserResolvers = {
   Query: {
     async activeDonors(_parent, _args, { dataSources }) {
-      const ids = await dataSources.activeDonorSheet.getActiveDonorIds()
+      const ids = await activeDonors(dataSources.googleSheetApi)
 
       const uuids = await Promise.all(
         ids.map((id) => dataSources.serlo.getUuid({ id }))
@@ -47,4 +55,32 @@ export const resolvers: UserResolvers = {
       await dataSources.serlo.setUser(payload)
     },
   },
+}
+
+function activeDonors(googleSheetApi: GoogleSheetApi) {
+  return extractIDsFromFirstColumn(() =>
+    googleSheetApi.getValues({
+      spreadsheetId: env.ACTIVE_DONORS_SPREADSHEET_ID,
+      range: 'Tabellenblatt1!A:A',
+      majorDimension: MajorDimension.Columns,
+    })
+  )
+}
+
+export async function extractIDsFromFirstColumn(
+  readCells: () => Promise<either.Either<ErrorEvent, CellValues>>
+): Promise<number[]> {
+  return pipeable.pipe(
+    await readCells(),
+    either.map((cells) =>
+      cells[0]
+        .slice(1)
+        .map((c) => c.trim())
+        // TODO: Report those invalid values to sentry
+        .filter((x) => /^\d+$/.test(x))
+        .map((x) => Number(x))
+    ),
+    // TODO: Report error to sentry
+    either.getOrElse<ErrorEvent, number[]>((_) => [])
+  )
 }

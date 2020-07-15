@@ -19,10 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ActiveDonorsSpreadsheet } from './active-donors-spreadsheet'
+import { GoogleSheetApi } from './google-spreadsheet'
 import { SerloDataSource } from './serlo'
 
 export interface DataSources {
   serlo: SerloDataSource
-  activeDonorSheet: ActiveDonorsSpreadsheet
+  googleSheetApi: GoogleSheetApi
 }
