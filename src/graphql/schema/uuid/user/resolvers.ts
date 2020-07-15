@@ -30,12 +30,12 @@ import {
   GoogleSheetApi,
   CellValues,
 } from '../../../data-sources/google-spreadsheet'
-import {ErrorEvent} from '../../../../error-event'
+import { ErrorEvent } from '../../../../error-event'
 
 export const resolvers: UserResolvers = {
   Query: {
     async activeDonors(_parent, _args, { dataSources }) {
-      const ids = await activeDonors(dataSources.googleSheetApi)
+      const ids = await activeDonorIDs(dataSources.googleSheetApi)
 
       const uuids = await Promise.all(
         ids.map((id) => dataSources.serlo.getUuid({ id }))
@@ -57,7 +57,7 @@ export const resolvers: UserResolvers = {
   },
 }
 
-function activeDonors(googleSheetApi: GoogleSheetApi) {
+function activeDonorIDs(googleSheetApi: GoogleSheetApi) {
   return extractIDsFromFirstColumn(() =>
     googleSheetApi.getValues({
       spreadsheetId: env.ACTIVE_DONORS_SPREADSHEET_ID,
@@ -67,7 +67,7 @@ function activeDonors(googleSheetApi: GoogleSheetApi) {
   )
 }
 
-export async function extractIDsFromFirstColumn(
+async function extractIDsFromFirstColumn(
   readCells: () => Promise<either.Either<ErrorEvent, CellValues>>
 ): Promise<number[]> {
   return pipeable.pipe(
