@@ -63,7 +63,10 @@ beforeAll(async () => {
 })
 
 beforeEach(() => {
-  global.client = createTestClient({ service: Service.Playground }).client
+  global.client = createTestClient({
+    service: Service.Playground,
+    user: null,
+  }).client
 })
 
 afterEach(async () => {
@@ -78,6 +81,9 @@ afterAll(async () => {
 /* eslint-disable import/no-unassigned-import */
 describe('License', () => {
   require('./license')
+})
+describe('Notification', () => {
+  require('./notification')
 })
 describe('Uuid', () => {
   require('./uuid')

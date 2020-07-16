@@ -19,15 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Serializer } from '../graphql/environment'
+import { Schema } from '../utils'
+import { resolvers } from './resolvers'
+import { typeDefs } from './type-defs'
 
-export function createJsonStringifySerializer(): Serializer {
-  return {
-    serialize(value) {
-      return Buffer.from(JSON.stringify(value), 'utf16le')
-    },
-    deserialize(value) {
-      return JSON.parse(value.toString('utf16le')) as unknown
-    },
-  }
-}
+export * from './types'
+
+export const cacheSchema = new Schema(
+  (resolvers as unknown) as Schema['resolvers'],
+  [typeDefs]
+)

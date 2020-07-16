@@ -56,7 +56,7 @@ export function getGraphQLOptions(
         throw new AuthenticationError('Invalid authorization header')
       }
       return handleAuthentication(authorizationHeader, async (token) => {
-        if (process.env.HYDRA_HOST === undefined) return Promise.resolve(null)
+        if (process.env.HYDRA_HOST === undefined) return null
         const params = new URLSearchParams()
         params.append('token', token)
         const resp = await fetch(
@@ -64,6 +64,9 @@ export function getGraphQLOptions(
           {
             method: 'post',
             body: params,
+            headers: {
+              'X-Forwarded-Proto': 'https',
+            },
           }
         )
         const { active, sub } = (await resp.json()) as {
@@ -108,7 +111,9 @@ export async function handleAuthentication(
 function validateServiceToken(token: string): Service {
   const serviceTokenParts = token.split('=')
   if (serviceTokenParts.length !== 2 || serviceTokenParts[0] !== 'Service') {
-    throw new AuthenticationError('Invalid authorization header')
+    throw new AuthenticationError(
+      'Invalid authorization header: invalid service token part'
+    )
   }
   const serviceToken = serviceTokenParts[1]
   const { service, error } = validateJwt(serviceToken)

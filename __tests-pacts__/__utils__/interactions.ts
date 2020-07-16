@@ -23,6 +23,10 @@ import { Matchers } from '@pact-foundation/pact'
 
 import { License } from '../../src/graphql/schema/license'
 import {
+  NotificationsPayload,
+  NotificationEventPayload,
+} from '../../src/graphql/schema/notification'
+import {
   AliasPayload,
   AppletPayload,
   AppletRevisionPayload,
@@ -60,6 +64,7 @@ export function addNavigationInteraction(payload: NavigationPayload) {
     path: `/api/navigation`,
     body: {
       data: Matchers.string(payload.data),
+      instance: Matchers.string(payload.instance),
     },
   })
 }
@@ -78,6 +83,39 @@ export function addLicenseInteraction(payload: License) {
       content: Matchers.string(payload.content),
       agreement: Matchers.string(payload.agreement),
       iconHref: Matchers.string(payload.iconHref),
+    },
+  })
+}
+export function addNotificationEventInteraction(
+  payload: NotificationEventPayload
+) {
+  return addJsonInteraction({
+    name: `fetch data of event with id ${payload.id}`,
+    given: `there exists a notification event with id ${payload.id}`,
+    path: `/api/event/${payload.id}`,
+    body: {
+      id: 1,
+      type: Matchers.string(payload.type),
+      instance: Matchers.string(payload.instance),
+      date: Matchers.string(payload.date),
+      actorId: Matchers.integer(payload.actorId),
+      objectId: Matchers.integer(payload.objectId),
+      payload: Matchers.string(payload.payload),
+    },
+  })
+}
+
+export function addNotificationsInteraction(payload: NotificationsPayload) {
+  return addJsonInteraction({
+    name: `fetch data of all notifications for user with id ${payload.userId}`,
+    given: `there exists a notification for user with id ${payload.userId}`,
+    path: `/api/notifications/${payload.userId}`,
+    body: {
+      userId: 2,
+      notifications:
+        payload.notifications.length > 0
+          ? Matchers.eachLike(Matchers.like(payload.notifications[0]))
+          : [],
     },
   })
 }

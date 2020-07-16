@@ -19,62 +19,29 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { rest } from 'msw'
-import { setupServer } from 'msw/node'
+import { isSome } from 'fp-ts/lib/Option'
 
 import {
-  license,
-  createLicenseQuery,
-  createRemoveLicenseMutation,
-  createSetLicenseMutation,
-} from '../../__fixtures__/license'
+  variables,
+  createSetCacheMutation,
+  createRemoveCacheMutation,
+} from '../../__fixtures__/cache'
 import { Service } from '../../src/graphql/schema/types'
 import {
-  assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
-  assertSuccessfulGraphQLQuery,
+  assertFailingGraphQLMutation,
 } from '../__utils__/assertions'
 import { createTestClient } from '../__utils__/test-client'
 
-const server = setupServer(
-  rest.get(
-    `http://de.${process.env.SERLO_ORG_HOST}/api/license/1`,
-    (_req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(license))
-    }
-  )
-)
-
-beforeAll(() => {
-  server.listen()
-})
-
-afterAll(() => {
-  server.close()
-})
-
-test('license', async () => {
+test('_setCache (forbidden)', async () => {
   const { client } = createTestClient({
     service: Service.Playground,
     user: null,
   })
-  await assertSuccessfulGraphQLQuery({
-    ...createLicenseQuery(license),
-    data: {
-      license,
-    },
-    client,
-  })
-})
 
-test('_removeLicense (forbidden)', async () => {
-  const { client } = createTestClient({
-    service: Service.Playground,
-    user: null,
-  })
   await assertFailingGraphQLMutation(
     {
-      ...createRemoveLicenseMutation(license),
+      ...createSetCacheMutation(variables),
       client,
     },
     (errors) => {
@@ -83,27 +50,29 @@ test('_removeLicense (forbidden)', async () => {
   )
 })
 
-test('_removeLicense (authenticated)', async () => {
-  const { client } = createTestClient({ service: Service.Serlo, user: null })
+test('_setCache (authenticated)', async () => {
+  const { client, cache } = createTestClient({
+    service: Service.Serlo,
+    user: null,
+  })
+
   await assertSuccessfulGraphQLMutation({
-    ...createRemoveLicenseMutation(license),
+    ...createSetCacheMutation(variables),
     client,
   })
-  await assertSuccessfulGraphQLQuery({
-    ...createLicenseQuery(license),
-    data: { license: null },
-    client,
-  })
+
+  const cachedValue = await cache.get(variables.key)
+  expect(isSome(cachedValue) && cachedValue.value).toEqual(variables.value)
 })
 
-test('_setLicense (forbidden)', async () => {
+test('_removeCache (forbidden)', async () => {
   const { client } = createTestClient({
     service: Service.Playground,
     user: null,
   })
   await assertFailingGraphQLMutation(
     {
-      ...createSetLicenseMutation(license),
+      ...createRemoveCacheMutation(variables),
       client,
     },
     (errors) => {
@@ -112,17 +81,17 @@ test('_setLicense (forbidden)', async () => {
   )
 })
 
-test('_setLicense (authenticated)', async () => {
-  const { client } = createTestClient({ service: Service.Serlo, user: null })
+test('_removeCache (authenticated)', async () => {
+  const { client, cache } = createTestClient({
+    service: Service.Serlo,
+    user: null,
+  })
+
   await assertSuccessfulGraphQLMutation({
-    ...createSetLicenseMutation(license),
+    ...createRemoveCacheMutation(variables),
     client,
   })
-  await assertSuccessfulGraphQLQuery({
-    ...createLicenseQuery(license),
-    data: {
-      license,
-    },
-    client,
-  })
+
+  const cachedValue = await cache.get(variables.key)
+  expect(isSome(cachedValue) && cachedValue.value).toEqual(null)
 })

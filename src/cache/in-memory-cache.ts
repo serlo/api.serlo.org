@@ -19,6 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { none, some } from 'fp-ts/lib/Option'
+
 import { Cache } from '../graphql/environment'
 
 export function createInMemoryCache(): Cache & { reset(): void } {
@@ -28,11 +30,11 @@ export function createInMemoryCache(): Cache & { reset(): void } {
     // eslint-disable-next-line @typescript-eslint/require-await
     async get(key) {
       const serialized = cache[key]
-      return serialized === undefined ? null : Buffer.from(serialized)
+      return serialized === undefined ? none : some(JSON.parse(serialized))
     },
     // eslint-disable-next-line @typescript-eslint/require-await
     async set(key, value) {
-      cache[key] = value.toString()
+      cache[key] = JSON.stringify(value)
     },
     reset() {
       cache = {}
