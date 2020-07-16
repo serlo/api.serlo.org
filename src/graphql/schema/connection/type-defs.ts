@@ -19,27 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { cacheSchema } from './cache'
-import { connectionSchema } from './connection'
-import { dateTimeSchema } from './date-time'
-import { instanceSchema } from './instance'
-import { licenseSchema } from './license'
-import { notificationSchema } from './notification'
-import { Schema } from './utils'
-import { uuidSchema } from './uuid'
+import { gql } from 'apollo-server'
 
-export * from './connection'
-export * from './date-time'
-export * from './instance'
-export * from './license'
-export * from './uuid'
-
-export const schema = Schema.merge(
-  connectionSchema,
-  cacheSchema,
-  dateTimeSchema,
-  instanceSchema,
-  licenseSchema,
-  notificationSchema,
-  uuidSchema
-)
+export const typeDefs = gql`
+  type PageInfo {
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+    startCursor: String
+    endCursor: String
+  }
+`

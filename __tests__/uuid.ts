@@ -31,7 +31,10 @@ import { createTestClient } from './__utils__/test-client'
 
 describe('_setAlias', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetAliasMutation({ id: 1 }),
@@ -44,7 +47,7 @@ describe('_setAlias', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetUserMutation({ id: 1 }),
       client,
@@ -73,7 +76,10 @@ describe('_setAlias', () => {
 
 describe('_removeUuid', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createRemoveUuidMutation({ id: 1 }),
@@ -86,7 +92,7 @@ describe('_removeUuid', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createRemoveUuidMutation({ id: 1 }),
       client,
@@ -107,7 +113,10 @@ describe('_removeUuid', () => {
 
 describe('_setApplet', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetAppletMutation({
@@ -124,7 +133,7 @@ describe('_setApplet', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetAppletMutation({
         id: 1,
@@ -155,7 +164,10 @@ describe('_setApplet', () => {
 
 describe('_setAppletRevision', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetAppletRevisionMutation({
@@ -172,7 +184,7 @@ describe('_setAppletRevision', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetAppletRevisionMutation({
         id: 1,
@@ -203,7 +215,10 @@ describe('_setAppletRevision', () => {
 
 describe('_setArticle', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetArticleMutation({
@@ -220,7 +235,7 @@ describe('_setArticle', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetArticleMutation({
         id: 1,
@@ -251,7 +266,10 @@ describe('_setArticle', () => {
 
 describe('_setArticleRevision', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetArticleRevisionMutation({
@@ -268,7 +286,7 @@ describe('_setArticleRevision', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetArticleRevisionMutation({
         id: 1,
@@ -299,7 +317,10 @@ describe('_setArticleRevision', () => {
 
 describe('_setCourse', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetCourseMutation({
@@ -316,7 +337,7 @@ describe('_setCourse', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetCourseMutation({
         id: 1,
@@ -347,7 +368,10 @@ describe('_setCourse', () => {
 
 describe('_setCourseRevision', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetCourseRevisionMutation({
@@ -364,7 +388,7 @@ describe('_setCourseRevision', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetCourseRevisionMutation({
         id: 1,
@@ -395,7 +419,10 @@ describe('_setCourseRevision', () => {
 
 describe('_setCoursePage', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetCoursePageMutation({
@@ -413,7 +440,7 @@ describe('_setCoursePage', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetCoursePageMutation({
         id: 1,
@@ -445,7 +472,10 @@ describe('_setCoursePage', () => {
 
 describe('_setCoursePageRevision', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetCoursePageRevisionMutation({
@@ -462,7 +492,7 @@ describe('_setCoursePageRevision', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetCoursePageRevisionMutation({
         id: 1,
@@ -493,7 +523,10 @@ describe('_setCoursePageRevision', () => {
 
 describe('_setEvent', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetEventMutation({
@@ -510,7 +543,7 @@ describe('_setEvent', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetEventMutation({
         id: 1,
@@ -541,7 +574,10 @@ describe('_setEvent', () => {
 
 describe('_setEventRevision', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetEventRevisionMutation({
@@ -558,7 +594,7 @@ describe('_setEventRevision', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetEventRevisionMutation({
         id: 1,
@@ -589,7 +625,10 @@ describe('_setEventRevision', () => {
 
 describe('_setExercise', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetExerciseMutation({
@@ -607,7 +646,7 @@ describe('_setExercise', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetExerciseMutation({
         id: 1,
@@ -639,7 +678,10 @@ describe('_setExercise', () => {
 
 describe('_setExerciseRevision', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetExerciseRevisionMutation({
@@ -656,7 +698,7 @@ describe('_setExerciseRevision', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetExerciseRevisionMutation({
         id: 1,
@@ -687,7 +729,10 @@ describe('_setExerciseRevision', () => {
 
 describe('_setExerciseGroup', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetExerciseGroupMutation({
@@ -704,7 +749,7 @@ describe('_setExerciseGroup', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetExerciseGroupMutation({
         id: 1,
@@ -735,7 +780,10 @@ describe('_setExerciseGroup', () => {
 
 describe('_setExerciseGroupRevision', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetExerciseGroupRevisionMutation({
@@ -752,7 +800,7 @@ describe('_setExerciseGroupRevision', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetExerciseGroupRevisionMutation({
         id: 1,
@@ -783,7 +831,10 @@ describe('_setExerciseGroupRevision', () => {
 
 describe('_setGroupedExercise', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetGroupedExerciseMutation({
@@ -802,7 +853,7 @@ describe('_setGroupedExercise', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetGroupedExerciseMutation({
         id: 1,
@@ -835,7 +886,10 @@ describe('_setGroupedExercise', () => {
 
 describe('_setGroupedExerciseRevision', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetGroupedExerciseRevisionMutation({
@@ -852,7 +906,7 @@ describe('_setGroupedExerciseRevision', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetGroupedExerciseRevisionMutation({
         id: 1,
@@ -883,7 +937,10 @@ describe('_setGroupedExerciseRevision', () => {
 
 describe('_setPage', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetPageMutation({
@@ -900,7 +957,7 @@ describe('_setPage', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetPageMutation({
         id: 1,
@@ -931,7 +988,10 @@ describe('_setPage', () => {
 
 describe('_setPageRevision', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetPageRevisonMutation({
@@ -948,7 +1008,7 @@ describe('_setPageRevision', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetPageRevisonMutation({
         id: 1,
@@ -979,7 +1039,10 @@ describe('_setPageRevision', () => {
 
 describe('_setSolution', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetSolutionMutation({
@@ -997,7 +1060,7 @@ describe('_setSolution', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetSolutionMutation({
         id: 1,
@@ -1029,7 +1092,10 @@ describe('_setSolution', () => {
 
 describe('_setSolutionRevision', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetSolutionRevisionMutation({
@@ -1046,7 +1112,7 @@ describe('_setSolutionRevision', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetSolutionRevisionMutation({
         id: 1,
@@ -1077,7 +1143,10 @@ describe('_setSolutionRevision', () => {
 
 describe('_setTaxonomyTerm', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetTaxonomyTermMutation({
@@ -1093,7 +1162,7 @@ describe('_setTaxonomyTerm', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetTaxonomyTermMutation({
         id: 1,
@@ -1123,7 +1192,10 @@ describe('_setTaxonomyTerm', () => {
 
 describe('_setUser', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetUserMutation({ id: 1 }),
@@ -1136,7 +1208,7 @@ describe('_setUser', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetUserMutation({ id: 1 }),
       client,
@@ -1163,7 +1235,10 @@ describe('_setUser', () => {
 
 describe('_setVideo', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetVideoMutation({
@@ -1180,7 +1255,7 @@ describe('_setVideo', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetVideoMutation({
         id: 1,
@@ -1211,7 +1286,10 @@ describe('_setVideo', () => {
 
 describe('_setVideoRevision', () => {
   test('forbidden', async () => {
-    const { client } = createTestClient({ service: Service.Playground })
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
     await assertFailingGraphQLMutation(
       {
         mutation: createSetVideoRevisionMutation({
@@ -1228,7 +1306,7 @@ describe('_setVideoRevision', () => {
   })
 
   test('authenticated', async () => {
-    const { client } = createTestClient({ service: Service.Serlo })
+    const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       mutation: createSetVideoRevisionMutation({
         id: 1,

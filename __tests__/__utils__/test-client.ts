@@ -28,25 +28,24 @@ import {
 import { createInMemoryCache } from '../../src/cache/in-memory-cache'
 import { getGraphQLOptions } from '../../src/graphql'
 import { Cache } from '../../src/graphql/environment'
-import { createJsonStringifySerializer } from '../../src/serializer/json-stringify'
+import { Context } from '../../src/graphql/schema/types'
 
 export type Client = ApolloServerTestClient
 
 export function createTestClient(
-  context: Record<string, unknown> = {}
+  context: Pick<Context, 'service' | 'user'>
 ): {
-  cache: Cache
   client: Client
+  cache: Cache
 } {
   const cache = createInMemoryCache()
   const server = new ApolloServer({
     ...getGraphQLOptions({
       cache,
-      serializer: createJsonStringifySerializer(),
     }),
-    context() {
-      return { ...context }
+    context(): Pick<Context, 'service' | 'user'> {
+      return context
     },
   })
-  return { cache, client: createApolloTestClient(server) }
+  return { client: createApolloTestClient(server), cache }
 }

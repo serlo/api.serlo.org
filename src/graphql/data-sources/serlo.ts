@@ -20,12 +20,18 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { RESTDataSource } from 'apollo-datasource-rest'
+import { isSome } from 'fp-ts/lib/Option'
 import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
 
 import { Environment } from '../environment'
 import { Instance } from '../schema/instance'
 import { License } from '../schema/license'
+import {
+  NotificationEventPayload,
+  NotificationPayload,
+  NotificationsPayload,
+} from '../schema/notification'
 import { Service } from '../schema/types'
 import {
   AliasPayload,
@@ -68,27 +74,21 @@ export class SerloDataSource extends RESTDataSource {
   public async getAlias({
     path,
     instance,
-    bypassCache = false,
   }: {
     path: string
     instance: Instance
-    bypassCache?: boolean
   }) {
     const cleanPath = encodePath(decodePath(path))
     return this.cacheAwareGet<AliasPayload>({
       path: `/api/alias${cleanPath}`,
       instance,
-      bypassCache,
       setter: 'setAlias',
     })
   }
 
   public async setAlias(alias: AliasPayload) {
     const cacheKey = this.getCacheKey(`/api/alias${alias.path}`, alias.instance)
-    await this.environment.cache.set(
-      cacheKey,
-      this.environment.serializer.serialize(alias)
-    )
+    await this.environment.cache.set(cacheKey, alias)
     return alias
   }
 
@@ -107,7 +107,6 @@ export class SerloDataSource extends RESTDataSource {
       instance,
       setter: 'setNavigation',
     })
-
     const treeIndex = leafs[id]
 
     if (treeIndex === undefined) return null
@@ -182,73 +181,48 @@ export class SerloDataSource extends RESTDataSource {
     }
 
     const cacheKey = this.getCacheKey(`/api/navigation`, payload.instance)
-    await this.environment.cache.set(
-      cacheKey,
-      this.environment.serializer.serialize(value)
-    )
+    await this.environment.cache.set(cacheKey, value)
     return value
   }
 
-  public async getLicense({
-    id,
-    bypassCache = false,
-  }: {
-    id: number
-    bypassCache?: boolean
-  }): Promise<License> {
+  public async getLicense({ id }: { id: number }): Promise<License> {
     return this.cacheAwareGet({
       path: `/api/license/${id}`,
-      bypassCache,
       setter: 'setLicense',
     })
   }
 
   public async setLicense(license: License) {
     const cacheKey = this.getCacheKey(`/api/license/${license.id}`)
-    await this.environment.cache.set(
-      cacheKey,
-      this.environment.serializer.serialize(license)
-    )
+    await this.environment.cache.set(cacheKey, license)
     return license
   }
 
   public async removeLicense({ id }: { id: number }) {
     const cacheKey = this.getCacheKey(`/api/license/${id}`)
-    await this.environment.cache.set(
-      cacheKey,
-      this.environment.serializer.serialize(null)
-    )
+    await this.environment.cache.set(cacheKey, null)
   }
 
   public async getUuid<T extends UuidPayload>({
     id,
-    bypassCache = false,
   }: {
     id: number
-    bypassCache?: boolean
   }): Promise<T> {
     return this.cacheAwareGet<T>({
       path: `/api/uuid/${id}`,
-      bypassCache,
       setter: 'setUuid',
     })
   }
 
   public async setUuid<T extends UuidPayload>(payload: T): Promise<T> {
     const cacheKey = this.getCacheKey(`/api/uuid/${payload.id}`)
-    await this.environment.cache.set(
-      cacheKey,
-      this.environment.serializer.serialize(payload)
-    )
+    await this.environment.cache.set(cacheKey, payload)
     return payload
   }
 
   public async removeUuid({ id }: { id: number }) {
     const cacheKey = this.getCacheKey(`/api/uuid/${id}`)
-    await this.environment.cache.set(
-      cacheKey,
-      this.environment.serializer.serialize(null)
-    )
+    await this.environment.cache.set(cacheKey, null)
   }
 
   public async setApplet(applet: AppletPayload) {
@@ -417,43 +391,128 @@ export class SerloDataSource extends RESTDataSource {
     })
   }
 
+  public async getNotificationEvent({
+    id,
+  }: {
+    id: number
+  }): Promise<NotificationEventPayload> {
+    return this.cacheAwareGet({
+      path: `/api/event/${id}`,
+      setter: 'setNotificationEvent',
+    })
+  }
+
+  public async setNotificationEvent(event: NotificationEventPayload) {
+    const cacheKey = this.getCacheKey(`/api/event/${event.id}`)
+    await this.environment.cache.set(cacheKey, event)
+    return event
+  }
+
+  public async getNotifications({
+    id,
+  }: {
+    id: number
+    bypassCache?: boolean
+  }): Promise<NotificationsPayload> {
+    const response = await this.cacheAwareGet<NotificationsPayload>({
+      path: `/api/notifications/${id}`,
+      setter: 'setNotifications',
+    })
+    return {
+      ...response,
+      // Sometimes, Zend serializes an array as an object... This line ensures that we have an array.
+      notifications: Object.values(response.notifications),
+    }
+  }
+
+  public async setNotifications(notifications: NotificationsPayload) {
+    const cacheKey = this.getCacheKey(
+      `/api/notifications/${notifications.userId}`
+    )
+    await this.environment.cache.set(cacheKey, notifications)
+    return notifications
+  }
+
+  public async setNotificationState(notificationState: {
+    id: number
+    userId: number
+    unread: boolean
+  }) {
+    const body = {
+      userId: notificationState.userId,
+      unread: notificationState.unread,
+    }
+    await this.customPost({
+      path: `/api/set-notification-state/${notificationState.id}`,
+      body,
+    })
+    const { notifications } = await this.getNotifications({
+      id: notificationState.userId,
+    })
+    const modifiedNotifications = notifications.map(
+      (notification: NotificationPayload) => {
+        if (notification.id === notificationState.id) {
+          return { ...notification, unread: notificationState.unread }
+        }
+        return notification
+      }
+    )
+    await this.setNotifications({
+      notifications: modifiedNotifications,
+      userId: notificationState.userId,
+    })
+  }
+
+  private async customPost<
+    T,
+    K extends keyof SerloDataSource = keyof SerloDataSource
+  >({
+    path,
+    instance = Instance.De,
+    body,
+  }: {
+    path: string
+    instance?: Instance
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    body: object
+  }): Promise<T> {
+    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
+      expiresIn: '2h',
+      audience: Service.Serlo,
+      issuer: 'api.serlo.org',
+    })
+    return await super.post(
+      `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
+      body,
+      {
+        headers: {
+          Authorization: `Serlo Service=${token}`,
+        },
+      }
+    )
+  }
+
   private async cacheAwareGet<
     T,
     K extends keyof SerloDataSource = keyof SerloDataSource
   >({
     path,
     instance = Instance.De,
-    bypassCache = false,
     setter,
   }: {
     path: string
     instance?: Instance
-    bypassCache?: boolean
     setter: SerloDataSource[K]
   }): Promise<T> {
     const cacheKey = this.getCacheKey(path, instance)
-    if (!bypassCache) {
-      const cache = await this.environment.cache.get(cacheKey)
-      if (cache) return this.environment.serializer.deserialize(cache) as T
-    }
+    const cache = await this.environment.cache.get<T>(cacheKey)
+    if (isSome(cache)) return cache.value
 
     const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
       expiresIn: '2h',
       audience: Service.Serlo,
       issuer: 'api.serlo.org',
     })
-
-    // const data = (await (process.env.NODE_ENV === 'test'
-    //   ? super.get(`http://localhost:9009${path}`)
-    //   : super.get(
-    //       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
-    //       {},
-    //       {
-    //         headers: {
-    //           Authorization: `Serlo Service=${token}`,
-    //         },
-    //       }
-    //     ))) as unknown
     const data = (await super.get(
       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
       {},
@@ -468,6 +527,15 @@ export class SerloDataSource extends RESTDataSource {
 
   private getCacheKey(path: string, instance: Instance = Instance.De) {
     return `${instance}.serlo.org${path}`
+  }
+
+  public async setCache(key: string, value: string) {
+    await this.environment.cache.set(key, value)
+    return value
+  }
+
+  public async removeCache(key: string) {
+    await this.environment.cache.set(key, null)
   }
 }
 

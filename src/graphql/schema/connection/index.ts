@@ -19,17 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import msgpack from 'msgpack'
+import { Schema } from '../utils'
+import { typeDefs } from './type-defs'
 
-import { Serializer } from '../graphql/environment'
+export * from './types'
+export * from './utils'
 
-export function createMsgpackSerializer(): Serializer {
-  return {
-    serialize(value) {
-      return msgpack.pack(value) as Buffer
-    },
-    deserialize(value) {
-      return msgpack.unpack(value) as unknown
-    },
-  }
-}
+export const connectionSchema = new Schema({}, [typeDefs])

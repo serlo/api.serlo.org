@@ -1,6 +1,6 @@
 {
   "name": "@serlo/api.serlo.org",
-  "version": "0.5.2",
+  "version": "0.5.8",
   "bugs": {
     "url": "https://github.com/serlo/api.serlo.org/issues"
   },
@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsdx build --target node --format cjs --tsconfig tsconfig.prod.json",
     "deploy:image": "ts-node scripts/deploy",
-    "start": "ts-node-dev src/index.ts",
+    "start": "tsdx watch  --target node --format cjs --tsconfig tsconfig.prod.json --onSuccess \"node dist\"",
     "format": "npm-run-all -c format:*",
     "format:eslint": "yarn _eslint --fix",
     "format:prettier": "yarn _prettier --write",
@@ -78,7 +78,6 @@
     "semver": "^7.0.0",
     "ts-jest": "^26.0.0",
     "ts-node": "^8.0.0",
-    "ts-node-dev": "^1.0.0-0",
     "tsdx": "^0.13.0",
     "typescript": "^3.9.0"
   },

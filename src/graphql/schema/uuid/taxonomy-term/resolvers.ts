@@ -80,24 +80,6 @@ export const resolvers: TaxonomyTermResolvers = {
           }
         }
       }
-
-      async function resolveTaxonomyTermPath(
-        parent: TaxonomyTerm,
-        { dataSources }: Context
-      ) {
-        const path: TaxonomyTerm[] = [parent]
-        let current: TaxonomyTerm = parent
-
-        while (current.parentId !== null) {
-          const data = await dataSources.serlo.getUuid<TaxonomyTermPayload>({
-            id: current.parentId,
-          })
-          current = resolveTaxonomyTerm(data)
-          path.unshift(current)
-        }
-
-        return path
-      }
     },
   },
   Mutation: {
@@ -110,4 +92,22 @@ export const resolvers: TaxonomyTermResolvers = {
       await dataSources.serlo.setTaxonomyTerm(payload)
     },
   },
+}
+
+async function resolveTaxonomyTermPath(
+  parent: TaxonomyTerm,
+  { dataSources }: Context
+) {
+  const path: TaxonomyTerm[] = [parent]
+  let current: TaxonomyTerm = parent
+
+  while (current.parentId !== null) {
+    const data = await dataSources.serlo.getUuid<TaxonomyTermPayload>({
+      id: current.parentId,
+    })
+    current = resolveTaxonomyTerm(data)
+    path.unshift(current)
+  }
+
+  return path
 }
