@@ -171,7 +171,7 @@ describe('parsing of spreadsheet with active donor ids', () => {
 })
 
 function addUserWithIDs(ids: number[]) {
-  ids.map((id) => addUser({ ...user, id }))
+  ids.forEach((id) => addUser({ ...user, id }))
 }
 
 function addUser(user: UserPayload) {
