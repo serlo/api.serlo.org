@@ -21,13 +21,12 @@
  */
 import { gql } from 'apollo-server'
 
-import { Instance } from '../src/graphql/schema/instance'
 import {
   NotificationEventPayload,
   NotificationPayload,
   NotificationsPayload,
-  SetNotificationStatePayload,
 } from '../src/graphql/schema/notification'
+import { Instance, MutationSetNotificationStateArgs } from '../src/types'
 
 export const event: NotificationEventPayload = {
   id: 1,
@@ -51,7 +50,7 @@ export const notifications: NotificationsPayload = {
 }
 
 export function createSetNotificationStateMutation(
-  variables: SetNotificationStatePayload
+  variables: MutationSetNotificationStateArgs
 ) {
   return {
     mutation: gql`

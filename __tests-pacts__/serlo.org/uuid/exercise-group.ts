@@ -76,7 +76,6 @@ describe('ExerciseGroup', () => {
         `,
       data: {
         uuid: {
-          __typename: 'ExerciseGroup',
           ...R.omit(
             [
               'currentRevisionId',
@@ -130,7 +129,6 @@ describe('ExerciseGroup', () => {
       `,
       data: {
         uuid: {
-          __typename: 'ExerciseGroup',
           ...R.omit(
             [
               'currentRevisionId',
@@ -183,7 +181,6 @@ describe('ExerciseGroup', () => {
         `,
       data: {
         uuid: {
-          __typename: 'ExerciseGroup',
           ...R.omit(
             [
               'currentRevisionId',
@@ -232,7 +229,6 @@ describe('ExerciseGroup', () => {
       `,
       data: {
         uuid: {
-          __typename: 'ExerciseGroup',
           ...R.omit(
             [
               'currentRevisionId',
@@ -283,7 +279,6 @@ describe('ExerciseGroup', () => {
       `,
       data: {
         uuid: {
-          __typename: 'ExerciseGroup',
           ...R.omit(
             [
               'currentRevisionId',
@@ -333,7 +328,6 @@ describe('ExerciseGroup', () => {
       `,
       data: {
         uuid: {
-          __typename: 'ExerciseGroup',
           ...R.omit(
             [
               'currentRevisionId',
@@ -381,7 +375,6 @@ describe('ExerciseGroupRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'ExerciseGroupRevision',
           ...R.omit(['authorId', 'repositoryId'], exerciseGroupRevision),
           author: {
             id: 1,
@@ -421,7 +414,6 @@ describe('ExerciseGroupRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'ExerciseGroupRevision',
           ...R.omit(['authorId', 'repositoryId'], exerciseGroupRevision),
           author: {
             id: 1,
@@ -464,7 +456,6 @@ describe('ExerciseGroupRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'ExerciseGroupRevision',
           ...R.omit(['authorId', 'repositoryId'], exerciseGroupRevision),
           author: {
             id: 1,

@@ -43,6 +43,7 @@ export class Solution extends Entity {
   }
 }
 export interface SolutionPayload extends EntityPayload {
+  __typename: EntityType.Solution
   parentId: number
 }
 solutionSchema.addResolver<Solution, unknown, Partial<Exercise>>(
@@ -73,6 +74,7 @@ export class SolutionRevision extends EntityRevision {
 }
 
 export interface SolutionRevisionPayload extends EntityRevisionPayload {
+  __typename: EntityRevisionType.SolutionRevision
   content: string
   changes: string
 }

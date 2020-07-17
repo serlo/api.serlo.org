@@ -1,0 +1,42 @@
+enum TaxonomyTermType {
+  blog
+  curriculum
+  curriculumTopic
+  curriculumTopicFolder
+  forum
+  forumCategory
+  locale
+  root
+  subject
+  topic
+  topicFolder
+}
+
+type TaxonomyTerm implements Uuid {
+  id: Int!
+  trashed: Boolean!
+  type: TaxonomyTermType!
+  instance: Instance!
+  alias: String
+  name: String!
+  description: String
+  weight: Int!
+  parent: TaxonomyTerm
+  children: [Uuid!]!
+  navigation: Navigation
+}
+
+extend type Mutation {
+  _setTaxonomyTerm(
+    id: Int!
+    trashed: Boolean!
+    alias: String
+    type: TaxonomyTermType!
+    instance: Instance!
+    name: String!
+    description: String
+    weight: Int!
+    parentId: Int
+    childrenIds: [Int!]!
+  ): Boolean
+}

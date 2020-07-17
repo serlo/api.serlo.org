@@ -38,6 +38,7 @@ export class Applet extends TaxonomyTermChild {
   public __typename = EntityType.Applet
 }
 export interface AppletPayload extends EntityPayload {
+  __typename: EntityType.Applet
   taxonomyTermIds: number[]
 }
 
@@ -62,6 +63,7 @@ export class AppletRevision extends EntityRevision {
 }
 
 export interface AppletRevisionPayload extends EntityRevisionPayload {
+  __typename: EntityRevisionType.AppletRevision
   url: string
   title: string
   content: string

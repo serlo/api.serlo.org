@@ -32,7 +32,7 @@ import {
 } from './abstract-entity'
 import {
   resolveTaxonomyTerm,
-  TaxonomyTerm,
+  TaxonomyTermPreResolver,
   TaxonomyTermPayload,
 } from './taxonomy-term'
 
@@ -74,7 +74,7 @@ export function addTaxonomyTermChildResolvers<
   RSetter extends keyof SerloDataSource
 >(args: EntityResolversPayload<E, R, ESetter, RSetter>) {
   addEntityResolvers(args)
-  args.schema.addResolver<E, unknown, TaxonomyTerm[]>(
+  args.schema.addResolver<E, unknown, TaxonomyTermPreResolver[]>(
     args.entityType,
     'taxonomyTerms',
     (entity, _args, { dataSources }) => {

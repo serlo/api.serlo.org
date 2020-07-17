@@ -21,7 +21,7 @@
  */
 import { ForbiddenError } from 'apollo-server'
 
-import { AbstractUuidPayload, resolveAbstractUuid } from '..'
+import { resolveAbstractUuid, UuidPayload } from '..'
 import { Service } from '../../types'
 import { UuidResolvers } from './types'
 
@@ -36,7 +36,7 @@ export const resolvers: UuidResolvers = {
       const id = payload.alias
         ? (await dataSources.serlo.getAlias(payload.alias)).id
         : (payload.id as number)
-      const data = await dataSources.serlo.getUuid<AbstractUuidPayload>({ id })
+      const data = await dataSources.serlo.getUuid<UuidPayload>({ id })
       return resolveAbstractUuid(data)
     },
   },

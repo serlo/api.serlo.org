@@ -78,7 +78,6 @@ describe('GroupedExercise', () => {
         `,
       data: {
         uuid: {
-          __typename: 'GroupedExercise',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
             groupedExercise
@@ -127,7 +126,6 @@ describe('GroupedExercise', () => {
       `,
       data: {
         uuid: {
-          __typename: 'GroupedExercise',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
             groupedExercise
@@ -175,7 +173,6 @@ describe('GroupedExercise', () => {
         `,
       data: {
         uuid: {
-          __typename: 'GroupedExercise',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
             groupedExercise
@@ -225,7 +222,6 @@ describe('GroupedExercise', () => {
         `,
       data: {
         uuid: {
-          __typename: 'GroupedExercise',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
             groupedExercise
@@ -278,7 +274,6 @@ describe('GroupedExercise', () => {
         `,
       data: {
         uuid: {
-          __typename: 'GroupedExercise',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
             groupedExercise
@@ -321,7 +316,6 @@ describe('GroupedExercise', () => {
       `,
       data: {
         uuid: {
-          __typename: 'GroupedExercise',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
             groupedExercise
@@ -364,7 +358,6 @@ describe('GroupedExerciseRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'GroupedExerciseRevision',
           ...R.omit(['authorId', 'repositoryId'], groupedExerciseRevision),
           author: {
             id: 1,
@@ -404,7 +397,6 @@ describe('GroupedExerciseRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'GroupedExerciseRevision',
           ...R.omit(['authorId', 'repositoryId'], groupedExerciseRevision),
           author: {
             id: 1,
@@ -447,7 +439,6 @@ describe('GroupedExerciseRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'GroupedExerciseRevision',
           ...R.omit(['authorId', 'repositoryId'], groupedExerciseRevision),
           author: {
             id: 1,

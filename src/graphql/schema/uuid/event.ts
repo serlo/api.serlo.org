@@ -38,6 +38,7 @@ export class Event extends TaxonomyTermChild {
   public __typename = EntityType.Event
 }
 export interface EventPayload extends EntityPayload {
+  __typename: EntityType.Event
   taxonomyTermIds: number[]
 }
 
@@ -60,6 +61,7 @@ export class EventRevision extends EntityRevision {
 }
 
 export interface EventRevisionPayload extends EntityRevisionPayload {
+  __typename: EntityRevisionType.EventRevision
   title: string
   content: string
   changes: string

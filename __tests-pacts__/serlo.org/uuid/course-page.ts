@@ -74,7 +74,6 @@ describe('CoursePage', () => {
         `,
       data: {
         uuid: {
-          __typename: 'CoursePage',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
             coursePage
@@ -123,7 +122,6 @@ describe('CoursePage', () => {
       `,
       data: {
         uuid: {
-          __typename: 'CoursePage',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
             coursePage
@@ -171,7 +169,6 @@ describe('CoursePage', () => {
         `,
       data: {
         uuid: {
-          __typename: 'CoursePage',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
             coursePage
@@ -221,7 +218,6 @@ describe('CoursePage', () => {
         `,
       data: {
         uuid: {
-          __typename: 'CoursePage',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
             coursePage
@@ -264,7 +260,6 @@ describe('CoursePage', () => {
       `,
       data: {
         uuid: {
-          __typename: 'CoursePage',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
             coursePage
@@ -308,7 +303,6 @@ describe('CoursePageRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'CoursePageRevision',
           ...R.omit(['authorId', 'repositoryId'], coursePageRevision),
           author: {
             id: 1,
@@ -349,7 +343,6 @@ describe('CoursePageRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'CoursePageRevision',
           ...R.omit(['authorId', 'repositoryId'], coursePageRevision),
           author: {
             id: 1,
@@ -393,7 +386,6 @@ describe('CoursePageRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'CoursePageRevision',
           ...R.omit(['authorId', 'repositoryId'], coursePageRevision),
           author: {
             id: 1,

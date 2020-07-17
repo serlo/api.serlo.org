@@ -45,6 +45,7 @@ export class Course extends TaxonomyTermChild {
   }
 }
 export interface CoursePayload extends EntityPayload {
+  __typename: EntityType.Course
   taxonomyTermIds: number[]
   pageIds: number[]
 }
@@ -81,6 +82,7 @@ export class CourseRevision extends EntityRevision {
 }
 
 export interface CourseRevisionPayload extends EntityRevisionPayload {
+  __typename: EntityRevisionType.CourseRevision
   title: string
   content: string
   changes: string

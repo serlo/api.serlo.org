@@ -76,7 +76,6 @@ describe('Exercise', () => {
         `,
       data: {
         uuid: {
-          __typename: 'Exercise',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'solutionId'],
             exercise
@@ -125,7 +124,6 @@ describe('Exercise', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Exercise',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'solutionId'],
             exercise
@@ -173,7 +171,6 @@ describe('Exercise', () => {
         `,
       data: {
         uuid: {
-          __typename: 'Exercise',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'solutionId'],
             exercise
@@ -217,7 +214,6 @@ describe('Exercise', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Exercise',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'solutionId'],
             exercise
@@ -263,7 +259,6 @@ describe('Exercise', () => {
         `,
       data: {
         uuid: {
-          __typename: 'Exercise',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'solutionId'],
             exercise
@@ -306,7 +301,6 @@ describe('Exercise', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Exercise',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'solutionId'],
             exercise
@@ -349,7 +343,6 @@ describe('ExerciseRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'ExerciseRevision',
           ...R.omit(['authorId', 'repositoryId'], exerciseRevision),
           author: {
             id: 1,
@@ -389,7 +382,6 @@ describe('ExerciseRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'ExerciseRevision',
           ...R.omit(['authorId', 'repositoryId'], exerciseRevision),
           author: {
             id: 1,
@@ -432,7 +424,6 @@ describe('ExerciseRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'ExerciseRevision',
           ...R.omit(['authorId', 'repositoryId'], exerciseRevision),
           author: {
             id: 1,

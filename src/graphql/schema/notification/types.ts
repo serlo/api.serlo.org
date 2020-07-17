@@ -19,59 +19,71 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Connection, ConnectionPayload } from '../connection'
-import { Instance } from '../instance'
+import {
+  Mutation_SetNotificationEventArgs,
+  Mutation_SetNotificationsArgs,
+  MutationSetNotificationStateArgs,
+  Notification,
+  NotificationEvent,
+  QueryNotificationsArgs,
+} from '../../../types'
+import { Connection } from '../connection'
 import { MutationResolver, QueryResolver, Resolver } from '../types'
-import { Uuid } from '../uuid/abstract-uuid'
-import { User } from '../uuid/user'
+import { AbstractUuidPreResolver } from '../uuid/abstract-uuid'
+import { UserPreResolver } from '../uuid/user'
 
-export interface Notification {
-  id: number
-  unread: boolean
+export interface NotificationPreResolver
+  extends Omit<Notification, keyof NotificationResolvers['Notification']> {
   eventId: number
 }
 
-export type NotificationPayload = Notification
+export type NotificationPayload = NotificationPreResolver
 
 export interface NotificationsPayload {
   notifications: NotificationPayload[]
   userId: number
 }
 
-export interface NotificationEvent {
-  id: number
-  type: string
-  instance: Instance
-  date: string
+export interface NotificationEventPreResolver
+  extends Omit<
+    NotificationEvent,
+    keyof NotificationResolvers['NotificationEvent']
+  > {
   actorId: number
   objectId: number
-  payload: string
 }
 
-export type NotificationEventPayload = NotificationEvent
-
-export interface SetNotificationStatePayload {
-  id: number
-  unread: boolean
-}
+export type NotificationEventPayload = NotificationEventPreResolver
 
 export interface NotificationResolvers {
   Notification: {
-    event: Resolver<Notification, never, Partial<NotificationEvent>>
+    event: Resolver<
+      NotificationPreResolver,
+      never,
+      Partial<NotificationEventPreResolver>
+    >
   }
   NotificationEvent: {
-    actor: Resolver<NotificationEvent, never, Partial<User>>
-    object: Resolver<NotificationEvent, never, Uuid>
+    actor: Resolver<
+      NotificationEventPreResolver,
+      never,
+      Partial<UserPreResolver>
+    >
+    object: Resolver<
+      NotificationEventPreResolver,
+      never,
+      AbstractUuidPreResolver
+    >
   }
   Query: {
     notifications: QueryResolver<
-      ConnectionPayload & { unread?: boolean | null },
-      Connection<Notification>
+      QueryNotificationsArgs,
+      Connection<NotificationPreResolver>
     >
   }
   Mutation: {
-    setNotificationState: MutationResolver<SetNotificationStatePayload>
-    _setNotifications: MutationResolver<NotificationsPayload>
-    _setNotificationEvent: MutationResolver<NotificationEventPayload>
+    setNotificationState: MutationResolver<MutationSetNotificationStateArgs>
+    _setNotifications: MutationResolver<Mutation_SetNotificationsArgs>
+    _setNotificationEvent: MutationResolver<Mutation_SetNotificationEventArgs>
   }
 }
