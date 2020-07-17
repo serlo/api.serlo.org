@@ -27,8 +27,8 @@ import { createInMemoryCache } from '../../../src/cache/in-memory-cache'
 import {
   MajorDimension,
   GoogleSheetApi,
-} from '../../../src/graphql/data-sources/google-spreadsheet'
-import { initializeDataSource, expectToBeLeftEventWith } from '../../_helper'
+} from '../../../src/graphql/data-sources/google-spreadsheet-api'
+import { initializeDataSource, expectToBeLeftEventWith } from '../../__utils__'
 
 const server = setupServer()
 const cache = createInMemoryCache()

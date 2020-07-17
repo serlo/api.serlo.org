@@ -28,7 +28,7 @@ import fetch from 'node-fetch'
 import { env } from 'process'
 import { URLSearchParams } from 'url'
 
-import { GoogleSheetApi } from './data-sources/google-spreadsheet'
+import { GoogleSheetApi } from './data-sources/google-spreadsheet-api'
 import { SerloDataSource } from './data-sources/serlo'
 import { Environment } from './environment'
 import { schema } from './schema'
