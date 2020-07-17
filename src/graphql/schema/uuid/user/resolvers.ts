@@ -21,7 +21,6 @@
  */
 import { ForbiddenError } from 'apollo-server'
 import { pipeable, either } from 'fp-ts'
-import { env } from 'process'
 
 import { AbstractUuidPayload, resolveUser } from '..'
 import { ErrorEvent } from '../../../../error-event'
@@ -68,7 +67,7 @@ export const resolvers: UserResolvers = {
 function activeDonorIDs(googleSheetApi: GoogleSheetApi) {
   return extractIDsFromFirstColumn(() =>
     googleSheetApi.getValues({
-      spreadsheetId: env.ACTIVE_DONORS_SPREADSHEET_ID,
+      spreadsheetId: process.env.ACTIVE_DONORS_SPREADSHEET_ID,
       range: 'Tabellenblatt1!A:A',
       majorDimension: MajorDimension.Columns,
     })

@@ -25,7 +25,6 @@ import {
 } from 'apollo-server-express'
 import { decode, JsonWebTokenError, verify } from 'jsonwebtoken'
 import fetch from 'node-fetch'
-import { env } from 'process'
 import { URLSearchParams } from 'url'
 
 import { GoogleSheetApi } from './data-sources/google-spreadsheet-api'
@@ -48,7 +47,7 @@ export function getGraphQLOptions(
       return {
         serlo: new SerloDataSource(environment),
         googleSheetApi: new GoogleSheetApi({
-          apiKey: env.GOOGLE_API_KEY,
+          apiKey: process.env.GOOGLE_API_KEY,
           environment,
         }),
       }
