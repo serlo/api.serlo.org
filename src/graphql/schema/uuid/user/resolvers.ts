@@ -29,7 +29,7 @@ import {
   MajorDimension,
   GoogleSheetApi,
   CellValues,
-} from '../../../data-sources/google-spreadsheet'
+} from '../../../data-sources/google-spreadsheet-api'
 import { Service } from '../../types'
 import { UserResolvers, isUserPayload } from './types'
 

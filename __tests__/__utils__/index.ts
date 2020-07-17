@@ -23,7 +23,7 @@ import { RESTDataSource } from 'apollo-datasource-rest'
 import { InMemoryLRUCache } from 'apollo-server-caching'
 import { either } from 'fp-ts'
 
-import { ErrorEvent } from '../src/error-event'
+import { ErrorEvent } from '../../src/error-event'
 
 export function expectToBeLeftEventWith<A>(
   value: either.Either<ErrorEvent, A>,
