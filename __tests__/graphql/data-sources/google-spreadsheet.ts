@@ -20,85 +20,72 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { either, option } from 'fp-ts'
-import { Response } from 'node-fetch'
+import { rest } from 'msw'
+import { setupServer } from 'msw/node'
 
 import { createInMemoryCache } from '../../../src/cache/in-memory-cache'
 import {
   MajorDimension,
   GoogleSheetApi,
 } from '../../../src/graphql/data-sources/google-spreadsheet'
-import {
-  createJsonResponse,
-  createFetchMock,
-  initializeDataSource,
-  expectToBeLeftEventWith,
-} from '../../_helper'
+import { initializeDataSource, expectToBeLeftEventWith } from '../../_helper'
+
+const server = setupServer()
+const cache = createInMemoryCache()
+const environment = { cache }
+const apiKey = 'my-secret'
+const common = {
+  apiKey: 'my-secret',
+  spreadsheetId: 'my-spreadsheet-id',
+  range: 'sheet1!A:A',
+  majorDimension: MajorDimension.Columns,
+}
+
+beforeAll(() => {
+  server.listen()
+})
+
+afterEach(async () => {
+  server.resetHandlers()
+  await cache.flush()
+})
+
+afterAll(() => {
+  server.close()
+})
 
 describe('GoogleSheetApi.getValues()', () => {
-  const url =
-    'https://sheets.googleapis.com/v4/spreadsheets/my-spreadsheet-id' +
-    '/values/sheet1!A:A?majorDimension=COLUMNS&key=my-secret'
-
-  const args = {
-    spreadsheetId: 'my-spreadsheet-id',
-    range: 'sheet1!A:A',
-    majorDimension: MajorDimension.Columns,
-  }
-
   test('fetches a range of a spreadsheet', async () => {
-    const fetch = createFetchMock({
-      [url]: createJsonResponse({
-        values: [['1', '2'], ['3']],
-        range: 'sheet1!A:A',
-        majorDimension: 'COLUMNS',
-      }),
-    })
-    const googleSheets = new GoogleSheetApi({
-      apiKey: 'my-secret',
-      fetch,
-      environment: { cache: createInMemoryCache() },
-    })
+    mockSpreadsheet({ ...common, values: [['1', '2'], ['3']] })
+
+    const googleSheets = new GoogleSheetApi({ apiKey, environment })
     initializeDataSource(googleSheets)
 
-    const valueRange = await googleSheets.getValues(args)
+    const valueRange = await googleSheets.getValues(common)
 
     expect(valueRange).toEqual(either.right([['1', '2'], ['3']]))
-    expect(fetch).toHaveExactlyOneRequestTo(url)
   })
 
   describe('uses a cache', () => {
     test('results are cached for an hour', async () => {
-      const cache = createInMemoryCache()
       const cacheKey = 'spreadsheet-my-spreadsheet-id-sheet1!A:A-COLUMNS'
       await cache.set(cacheKey, [['1', '2']])
-      const googleSheets = new GoogleSheetApi({
-        apiKey: 'my-secret',
-        environment: { cache },
-      })
+
+      const googleSheets = new GoogleSheetApi({ apiKey, environment })
       initializeDataSource(googleSheets)
 
-      const valueRange = await googleSheets.getValues(args)
+      const valueRange = await googleSheets.getValues(common)
 
       expect(valueRange).toEqual(either.right([['1', '2']]))
     })
 
     test('results are cached for an hour', async () => {
-      const fetch = createFetchMock({
-        [url]: createJsonResponse({
-          values: [['1', '2'], ['3']],
-          range: 'sheet1!A:A',
-          majorDimension: 'COLUMNS',
-        }),
-      })
-      const cache = createInMemoryCache()
-      const googleSheets = new GoogleSheetApi({
-        apiKey: 'my-secret',
-        fetch,
-        environment: { cache },
-      })
+      mockSpreadsheet({ ...common, values: [['1', '2'], ['3']] })
+
+      const googleSheets = new GoogleSheetApi({ apiKey, environment })
       initializeDataSource(googleSheets)
 
-      await googleSheets.getValues(args)
+      await googleSheets.getValues(common)
 
       expect(
         await cache.get('spreadsheet-my-spreadsheet-id-sheet1!A:A-COLUMNS')
@@ -107,97 +94,73 @@ describe('GoogleSheetApi.getValues()', () => {
   })
 
   test('argument "majorDimension" is optional', async () => {
-    const url =
-      'https://sheets.googleapis.com/v4/spreadsheets/my-spreadsheet-id' +
-      '/values/sheet1!A:A?majorDimension=ROWS&key=my-secret'
-    const fetch = createFetchMock({
-      [url]: createJsonResponse({
-        values: [['1', '2'], ['3']],
-        range: 'sheet1!A:A',
-        majorDimension: 'ROWS',
-      }),
-    })
-    const googleSheets = new GoogleSheetApi({
-      apiKey: 'my-secret',
-      fetch,
-      environment: { cache: createInMemoryCache() },
-    })
+    mockSpreadsheet({ ...common, majorDimension: 'ROWS', values: [['1']] })
+
+    const googleSheets = new GoogleSheetApi({ apiKey, environment })
     initializeDataSource(googleSheets)
 
     const valueRange = await googleSheets.getValues({
-      spreadsheetId: args.spreadsheetId,
-      range: args.range,
+      spreadsheetId: common.spreadsheetId,
+      range: common.range,
     })
 
-    expect(valueRange).toEqual(either.right([['1', '2'], ['3']]))
+    expect(valueRange).toEqual(either.right([['1']]))
   })
 
   describe('returns an error', () => {
     test('when there is an error with the api call', async () => {
-      const fetch = createFetchMock({
-        [url]: new Response('', { status: 403 }),
-      })
-      const googleSheets = new GoogleSheetApi({
-        apiKey: 'my-secret',
-        fetch,
-        environment: { cache: createInMemoryCache() },
-      })
+      mockSpreadsheetResponse({ ...common, status: 403 })
+
+      const googleSheets = new GoogleSheetApi({ apiKey, environment })
       initializeDataSource(googleSheets)
 
-      const valueRange = await googleSheets.getValues(args)
+      const valueRange = await googleSheets.getValues(common)
 
       expectToBeLeftEventWith(valueRange, {
         message:
           'an error occured while accessing spreadsheet "my-spreadsheet-id"',
-        contexts: { args: args },
+        contexts: { args: common },
         exception: expect.any(Error) as Error,
       })
     })
 
     test('when value range is empty', async () => {
-      const fetch = createFetchMock({
-        [url]: createJsonResponse({
-          range: 'sheet1!A:A',
-          majorDimension: 'COLUMNS',
-        }),
+      mockSpreadsheetResponse({
+        ...common,
+        response: {
+          majorDimension: common.majorDimension,
+          range: common.range,
+        },
       })
-      const googleSheets = new GoogleSheetApi({
-        apiKey: 'my-secret',
-        fetch,
-        environment: { cache: createInMemoryCache() },
-      })
+
+      const googleSheets = new GoogleSheetApi({ apiKey, environment })
       initializeDataSource(googleSheets)
 
-      const valueRange = await googleSheets.getValues(args)
+      const valueRange = await googleSheets.getValues(common)
 
       expectToBeLeftEventWith(valueRange, {
         message:
           'range "sheet1!A:A" of spreadsheet "my-spreadsheet-id" is empty',
-        contexts: { args: args },
+        contexts: { args: common },
       })
     })
 
     describe('when server response is no valid value range', () => {
-      test.each([null, { values: [['1'], 1] }, { error: 'an error' }])(
+      test.each([{ values: [['1'], 1] }, { error: 'an error' }])(
         'response = %p',
         async (response) => {
-          const fetch = createFetchMock({
-            [url]: createJsonResponse(response),
-          })
-          const googleSheets = new GoogleSheetApi({
-            apiKey: 'my-secret',
-            fetch,
-            environment: { cache: createInMemoryCache() },
-          })
+          mockSpreadsheetResponse({ ...common, response })
+
+          const googleSheets = new GoogleSheetApi({ apiKey, environment })
           initializeDataSource(googleSheets)
 
-          const valueRange = await googleSheets.getValues(args)
+          const valueRange = await googleSheets.getValues(common)
 
           expectToBeLeftEventWith(valueRange, {
             message:
               'invalid response while accessing spreadsheet "my-spreadsheet-id"',
             contexts: {
-              args,
+              args: common,
               response,
               validationErrors: expect.any(Array) as unknown,
             },
@@ -207,3 +170,55 @@ describe('GoogleSheetApi.getValues()', () => {
     })
   })
 })
+
+function mockSpreadsheet({
+  apiKey,
+  spreadsheetId,
+  range,
+  majorDimension,
+  values,
+}: {
+  apiKey: string
+  spreadsheetId: string
+  range: string
+  majorDimension: string
+  values: string[][]
+}) {
+  mockSpreadsheetResponse({
+    apiKey,
+    spreadsheetId,
+    range,
+    majorDimension,
+    response: {
+      range,
+      majorDimension,
+      values,
+    },
+  })
+}
+
+function mockSpreadsheetResponse({
+  apiKey,
+  spreadsheetId,
+  range,
+  majorDimension,
+  status = 200,
+  response = {},
+}: {
+  apiKey: string
+  spreadsheetId: string
+  range: string
+  majorDimension: string
+  status?: number
+  response?: object
+}) {
+  const url =
+    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}` +
+    `/values/${range}?majorDimension=${majorDimension}&key=${apiKey}`
+
+  server.use(
+    rest.get(url, (_req, res, ctx) =>
+      res.once(ctx.status(status), ctx.json(response))
+    )
+  )
+}

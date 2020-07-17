@@ -25,5 +25,4 @@ module.exports = {
   testEnvironment: 'node',
   testPathIgnorePatterns: ['/node_modules/', '/__tests__\\/_.*'],
   setupFiles: ['dotenv/config'],
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 }

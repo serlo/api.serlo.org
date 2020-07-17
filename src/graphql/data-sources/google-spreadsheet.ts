@@ -20,12 +20,10 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { RESTDataSource } from 'apollo-datasource-rest'
-import { fetch as fetchApollo } from 'apollo-server-env'
 import { either, option, pipeable } from 'fp-ts'
 import * as t from 'io-ts'
 import { nonEmptyArray } from 'io-ts-types/lib/nonEmptyArray'
 import { failure } from 'io-ts/lib/PathReporter'
-import fetchNode from 'node-fetch'
 import * as R from 'ramda'
 
 import { ErrorEvent } from '../../error-event'
@@ -58,13 +56,11 @@ export class GoogleSheetApi extends RESTDataSource {
   constructor({
     apiKey,
     environment,
-    fetch = fetchNode,
   }: {
     apiKey: string
     environment: Environment
-    fetch?: typeof fetchNode
   }) {
-    super(fetch as typeof fetchApollo)
+    super()
 
     this.apiKey = apiKey
     this.environment = environment
