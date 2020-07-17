@@ -23,6 +23,7 @@
     "test": "jest",
     "pacts": "jest --config jest.config-pacts.js",
     "pacts:publish": "ts-node scripts/publish-pacts",
+    "regenerate-types-package": "ts-node scripts/regenerate-types-package",
     "regenerate-types": "graphql-codegen --config codegen.yml",
     "_eslint": "eslint \"{{__fixtures__,__tests-pacts__,__tests__,scripts,src}/**/*,*}.{js,jsx,ts,tsx}\"",
     "_prettier": "prettier ."
@@ -48,6 +49,7 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^1.0.0",
     "@graphql-codegen/typescript": "^1.0.0",
+    "@microsoft/api-extractor": "^7.0.0",
     "@pact-foundation/pact": "^9.0.0",
     "@pact-foundation/pact-node": "^10.0.0",
     "@splish-me/changelog": "^0.1.0",
