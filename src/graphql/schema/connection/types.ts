@@ -19,6 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Maybe, Scalars } from '../../../types'
+
 export interface Connection<T> {
   edges: Cursor<T>[]
   nodes: T[]
@@ -27,10 +29,10 @@ export interface Connection<T> {
 }
 
 export interface ConnectionPayload {
-  after?: string
-  before?: string
-  first?: number
-  last?: number
+  after?: Maybe<Scalars['String']>
+  before?: Maybe<Scalars['String']>
+  first?: Maybe<Scalars['Int']>
+  last?: Maybe<Scalars['Int']>
 }
 
 export interface Cursor<T> {

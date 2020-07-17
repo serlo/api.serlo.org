@@ -72,7 +72,6 @@ describe('Event', () => {
         `,
       data: {
         uuid: {
-          __typename: 'Event',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
             event
@@ -121,7 +120,6 @@ describe('Event', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Event',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
             event
@@ -170,7 +168,6 @@ describe('Event', () => {
         `,
       data: {
         uuid: {
-          __typename: 'Event',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
             event
@@ -215,7 +212,6 @@ describe('Event', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Event',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
             event
@@ -251,7 +247,6 @@ describe('Event', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Event',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
             event
@@ -297,7 +292,6 @@ describe('EventRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'EventRevision',
           ...R.omit(['authorId', 'repositoryId'], eventRevision),
           author: {
             id: 1,
@@ -340,7 +334,6 @@ describe('EventRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'EventRevision',
           ...R.omit(['authorId', 'repositoryId'], eventRevision),
           author: {
             id: 1,
@@ -386,7 +379,6 @@ describe('EventRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'EventRevision',
           ...R.omit(['authorId', 'repositoryId'], eventRevision),
           author: {
             id: 1,

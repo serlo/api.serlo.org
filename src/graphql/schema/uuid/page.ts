@@ -21,21 +21,23 @@
  */
 import { ForbiddenError, gql } from 'apollo-server'
 
-import { DateTime } from '../date-time'
-import { Instance } from '../instance'
-import { License } from '../license'
-import { Service, Context } from '../types'
+import { Instance, License, Scalars } from '../../../types'
+import { Context, Service } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
-import { DiscriminatorType, Uuid, UuidPayload } from './abstract-uuid'
+import {
+  DiscriminatorType,
+  AbstractUuidPreResolver,
+  AbstractUuidPayload,
+} from './abstract-uuid'
 import { encodePath } from './alias'
-import { resolveUser, User, UserPayload } from './user'
+import { resolveUser, UserPreResolver, UserPayload } from './user'
 
 export const pageSchema = new Schema()
 
 /**
  * type Page
  */
-export class Page implements Uuid {
+export class Page implements AbstractUuidPreResolver {
   public __typename = DiscriminatorType.Page
   public id: number
   public trashed: boolean
@@ -123,13 +125,13 @@ pageSchema.addTypeDef(gql`
 /**
  * type PageRevision
  */
-export class PageRevision implements Uuid {
+export class PageRevision implements AbstractUuidPreResolver {
   public __typename = DiscriminatorType.PageRevision
   public id: number
   public trashed: boolean
   public title: string
   public content: string
-  public date: DateTime
+  public date: Scalars['DateTime']
   public authorId: number
   public repositoryId: number
 
@@ -143,7 +145,7 @@ export class PageRevision implements Uuid {
     this.repositoryId = payload.repositoryId
   }
 }
-pageSchema.addResolver<PageRevision, unknown, Partial<User>>(
+pageSchema.addResolver<PageRevision, unknown, Partial<UserPreResolver>>(
   'PageRevision',
   'author',
   async (pageRevision, _args, { dataSources }, info) => {
@@ -215,7 +217,8 @@ pageSchema.addMutation<unknown, PagePayload, null>(
     await dataSources.serlo.setPage(payload)
   }
 )
-export interface PagePayload extends UuidPayload {
+export interface PagePayload extends AbstractUuidPayload {
+  __typename: DiscriminatorType.Page
   instance: Instance
   alias: string | null
   currentRevisionId: number | null
@@ -293,10 +296,11 @@ pageSchema.addMutation<unknown, PageRevisionPayload, null>(
     await dataSources.serlo.setPageRevision(payload)
   }
 )
-export interface PageRevisionPayload extends UuidPayload {
+export interface PageRevisionPayload extends AbstractUuidPayload {
+  __typename: DiscriminatorType.PageRevision
   title: string
   content: string
-  date: DateTime
+  date: Scalars['DateTime']
   authorId: number
   repositoryId: number
 }

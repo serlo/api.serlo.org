@@ -76,7 +76,6 @@ describe('Course', () => {
         `,
       data: {
         uuid: {
-          __typename: 'Course',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'pageIds'],
             course
@@ -125,7 +124,6 @@ describe('Course', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Course',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'pageIds'],
             course
@@ -173,7 +171,6 @@ describe('Course', () => {
         `,
       data: {
         uuid: {
-          __typename: 'Course',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'pageIds'],
             course
@@ -217,7 +214,6 @@ describe('Course', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Course',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'pageIds'],
             course
@@ -263,7 +259,6 @@ describe('Course', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Course',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'pageIds'],
             course
@@ -308,7 +303,6 @@ describe('Course', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Course',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'pageIds'],
             course
@@ -353,7 +347,6 @@ describe('CourseRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'CourseRevision',
           ...R.omit(['authorId', 'repositoryId'], courseRevision),
           author: {
             id: 1,
@@ -395,7 +388,6 @@ describe('CourseRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'CourseRevision',
           ...R.omit(['authorId', 'repositoryId'], courseRevision),
           author: {
             id: 1,
@@ -440,7 +432,6 @@ describe('CourseRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'CourseRevision',
           ...R.omit(['authorId', 'repositoryId'], courseRevision),
           author: {
             id: 1,

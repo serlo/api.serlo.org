@@ -1,5 +1,5 @@
 {
-  "include": ["src"],
+  "include": ["src", "graphql.d.ts"],
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "declaration": true,

@@ -1,0 +1,57 @@
+type Notification {
+  id: Int!
+  unread: Boolean!
+  event: NotificationEvent!
+}
+
+type NotificationEvent {
+  id: Int!
+  type: String!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  object: Uuid!
+  payload: String!
+}
+
+extend type Query {
+  notifications(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    unread: Boolean
+  ): QueryNotificationsResult!
+}
+
+extend type Mutation {
+  setNotificationState(id: Int!, unread: Boolean!): Boolean
+  _setNotifications(userId: Int!, notifications: [NotificationInput!]!): Boolean
+  _setNotificationEvent(
+    id: Int!
+    type: String!
+    instance: Instance!
+    date: String!
+    actorId: Int!
+    objectId: Int!
+    payload: String!
+  ): Boolean
+}
+
+input NotificationInput {
+  id: Int!
+  unread: Boolean
+  eventId: Int!
+}
+
+type QueryNotificationsResult {
+  edges: [NotificationCursor!]!
+  nodes: [Notification!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type NotificationCursor {
+  cursor: String!
+  node: Notification!
+}

@@ -21,36 +21,38 @@
  */
 import { gql } from 'apollo-server'
 
-import { Instance } from '../src/graphql/schema/instance'
 import {
   AliasPayload,
+  AppletPayload,
+  AppletRevisionPayload,
   ArticlePayload,
   ArticleRevisionPayload,
+  CoursePagePayload,
+  CoursePageRevisionPayload,
+  CoursePayload,
+  CourseRevisionPayload,
+  DiscriminatorType,
+  EntityRevisionType,
+  EntityType,
+  EventPayload,
+  EventRevisionPayload,
   ExerciseGroupPayload,
   ExerciseGroupRevisionPayload,
   ExercisePayload,
   ExerciseRevisionPayload,
   GroupedExercisePayload,
   GroupedExerciseRevisionPayload,
-  SolutionPayload,
-  SolutionRevisionPayload,
   PagePayload,
   PageRevisionPayload,
+  SolutionPayload,
+  SolutionRevisionPayload,
   TaxonomyTermPayload,
-  TaxonomyTermType,
   UserPayload,
-  AppletRevisionPayload,
-  AppletPayload,
-  EventPayload,
-  EventRevisionPayload,
   VideoPayload,
   VideoRevisionPayload,
-  CoursePayload,
-  CourseRevisionPayload,
-  CoursePagePayload,
-  CoursePageRevisionPayload,
 } from '../src/graphql/schema/uuid'
 import { NavigationPayload } from '../src/graphql/schema/uuid/navigation'
+import { Instance, TaxonomyTermType } from '../src/types'
 import { license } from './license'
 
 export function createSetTaxonomyTermMutation(variables: TaxonomyTermPayload) {
@@ -103,6 +105,7 @@ export const navigation: NavigationPayload = {
 }
 
 export const applet: AppletPayload = {
+  __typename: EntityType.Applet,
   id: 35596,
   trashed: false,
   instance: Instance.En,
@@ -114,6 +117,7 @@ export const applet: AppletPayload = {
 }
 
 export const appletRevision: AppletRevisionPayload = {
+  __typename: EntityRevisionType.AppletRevision,
   id: 35597,
   trashed: false,
   date: '2014-09-15T15:28:35Z',
@@ -128,6 +132,7 @@ export const appletRevision: AppletRevisionPayload = {
 }
 
 export const article: ArticlePayload = {
+  __typename: EntityType.Article,
   id: 1855,
   trashed: false,
   instance: Instance.De,
@@ -147,6 +152,7 @@ export const articleAlias: AliasPayload = {
 }
 
 export const articleRevision: ArticleRevisionPayload = {
+  __typename: EntityRevisionType.ArticleRevision,
   id: 30674,
   trashed: false,
   date: '2014-09-15T15:28:35Z',
@@ -160,6 +166,7 @@ export const articleRevision: ArticleRevisionPayload = {
 }
 
 export const course: CoursePayload = {
+  __typename: EntityType.Course,
   id: 18514,
   trashed: false,
   instance: Instance.De,
@@ -182,6 +189,7 @@ export const courseAlias: AliasPayload = {
 }
 
 export const courseRevision: CourseRevisionPayload = {
+  __typename: EntityRevisionType.CourseRevision,
   id: 30713,
   trashed: false,
   date: '2014-09-15T15:28:35Z',
@@ -194,6 +202,7 @@ export const courseRevision: CourseRevisionPayload = {
 }
 
 export const coursePage: CoursePagePayload = {
+  __typename: EntityType.CoursePage,
   id: 18521,
   trashed: false,
   instance: Instance.De,
@@ -213,6 +222,7 @@ export const coursePageAlias: AliasPayload = {
 }
 
 export const coursePageRevision: CoursePageRevisionPayload = {
+  __typename: EntityRevisionType.CoursePageRevision,
   id: 19277,
   trashed: false,
   date: '2014-09-15T15:28:35Z',
@@ -224,6 +234,7 @@ export const coursePageRevision: CoursePageRevisionPayload = {
 }
 
 export const event: EventPayload = {
+  __typename: EntityType.Event,
   id: 35554,
   trashed: false,
   instance: Instance.De,
@@ -243,6 +254,7 @@ export const eventAlias: AliasPayload = {
 }
 
 export const eventRevision: EventRevisionPayload = {
+  __typename: EntityRevisionType.EventRevision,
   id: 35555,
   trashed: false,
   date: '2014-09-15T15:28:35Z',
@@ -264,6 +276,7 @@ export const pageAlias: AliasPayload = {
 }
 
 export const page: PagePayload = {
+  __typename: DiscriminatorType.Page,
   id: 19767,
   trashed: false,
   instance: Instance.De,
@@ -273,6 +286,7 @@ export const page: PagePayload = {
 }
 
 export const pageRevision: PageRevisionPayload = {
+  __typename: DiscriminatorType.PageRevision,
   id: 35476,
   trashed: false,
   title: 'title',
@@ -291,6 +305,7 @@ export const exerciseAlias: AliasPayload = {
 }
 
 export const exercise: ExercisePayload = {
+  __typename: EntityType.Exercise,
   id: 29637,
   trashed: false,
   instance: Instance.De,
@@ -303,6 +318,7 @@ export const exercise: ExercisePayload = {
 }
 
 export const exerciseRevision: ExerciseRevisionPayload = {
+  __typename: EntityRevisionType.ExerciseRevision,
   id: 29638,
   trashed: false,
   date: '2014-09-15T15:28:35Z',
@@ -322,6 +338,7 @@ export const exerciseGroupAlias: AliasPayload = {
 }
 
 export const exerciseGroup: ExerciseGroupPayload = {
+  __typename: EntityType.ExerciseGroup,
   id: 2217,
   trashed: false,
   instance: Instance.De,
@@ -335,6 +352,7 @@ export const exerciseGroup: ExerciseGroupPayload = {
 }
 
 export const exerciseGroupRevision: ExerciseGroupRevisionPayload = {
+  __typename: EntityRevisionType.ExerciseGroupRevision,
   id: 2218,
   trashed: false,
   date: '2014-09-15T15:28:35Z',
@@ -353,6 +371,7 @@ export const groupedExerciseAlias: AliasPayload = {
 }
 
 export const groupedExercise: GroupedExercisePayload = {
+  __typename: EntityType.GroupedExercise,
   id: 2219,
   trashed: false,
   instance: Instance.De,
@@ -365,6 +384,7 @@ export const groupedExercise: GroupedExercisePayload = {
 }
 
 export const groupedExerciseRevision: GroupedExerciseRevisionPayload = {
+  __typename: EntityRevisionType.GroupedExerciseRevision,
   id: 2220,
   trashed: false,
   date: '2014-09-15T15:28:35Z',
@@ -383,6 +403,7 @@ export const solutionAlias: AliasPayload = {
 }
 
 export const solution: SolutionPayload = {
+  __typename: EntityType.Solution,
   id: 29648,
   trashed: false,
   instance: Instance.De,
@@ -394,6 +415,7 @@ export const solution: SolutionPayload = {
 }
 
 export const solutionRevision: SolutionRevisionPayload = {
+  __typename: EntityRevisionType.SolutionRevision,
   id: 29652,
   trashed: false,
   date: '2014-09-15T15:28:35Z',
@@ -404,6 +426,7 @@ export const solutionRevision: SolutionRevisionPayload = {
 }
 
 export const taxonomyTermRoot: TaxonomyTermPayload = {
+  __typename: DiscriminatorType.TaxonomyTerm,
   id: 3,
   trashed: false,
   alias: null,
@@ -417,6 +440,7 @@ export const taxonomyTermRoot: TaxonomyTermPayload = {
 }
 
 export const taxonomyTermSubject: TaxonomyTermPayload = {
+  __typename: DiscriminatorType.TaxonomyTerm,
   id: 5,
   trashed: false,
   alias: 'alias',
@@ -430,6 +454,7 @@ export const taxonomyTermSubject: TaxonomyTermPayload = {
 }
 
 export const taxonomyTermCurriculumTopic: TaxonomyTermPayload = {
+  __typename: DiscriminatorType.TaxonomyTerm,
   id: 16048,
   trashed: false,
   alias: 'alias',
@@ -443,6 +468,7 @@ export const taxonomyTermCurriculumTopic: TaxonomyTermPayload = {
 }
 
 export const user: UserPayload = {
+  __typename: DiscriminatorType.User,
   id: 1,
   trashed: false,
   username: 'username',
@@ -452,6 +478,7 @@ export const user: UserPayload = {
 }
 
 export const video: VideoPayload = {
+  __typename: EntityType.Video,
   id: 16078,
   trashed: false,
   instance: Instance.De,
@@ -472,6 +499,7 @@ export const videoAlias: AliasPayload = {
 }
 
 export const videoRevision: VideoRevisionPayload = {
+  __typename: EntityRevisionType.VideoRevision,
   id: 16114,
   trashed: false,
   date: '2014-09-15T15:28:35Z',

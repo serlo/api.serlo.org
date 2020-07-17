@@ -1,0 +1,12 @@
+interface Uuid {
+  id: Int!
+  trashed: Boolean!
+}
+
+type Query {
+  uuid(alias: AliasInput, id: Int): Uuid
+}
+
+type Mutation {
+  _removeUuid(id: Int!): Boolean
+}

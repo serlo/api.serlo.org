@@ -45,6 +45,7 @@ export class ExerciseGroup extends TaxonomyTermChild {
   }
 }
 export interface ExerciseGroupPayload extends EntityPayload {
+  __typename: EntityType.ExerciseGroup
   taxonomyTermIds: number[]
   exerciseIds: number[]
 }
@@ -77,6 +78,7 @@ export class ExerciseGroupRevision extends EntityRevision {
 }
 
 export interface ExerciseGroupRevisionPayload extends EntityRevisionPayload {
+  __typename: EntityRevisionType.ExerciseGroupRevision
   content: string
   changes: string
 }

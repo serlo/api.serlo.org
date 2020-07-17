@@ -21,7 +21,7 @@
  */
 import { ForbiddenError, gql } from 'apollo-server'
 
-import { Instance } from '../instance'
+import { Instance } from '../../../types'
 import { Service } from '../types'
 import { Schema } from '../utils'
 

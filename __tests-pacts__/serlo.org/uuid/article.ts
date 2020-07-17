@@ -72,7 +72,6 @@ describe('Article', () => {
         `,
       data: {
         uuid: {
-          __typename: 'Article',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
             article
@@ -121,7 +120,6 @@ describe('Article', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Article',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
             article
@@ -170,7 +168,6 @@ describe('Article', () => {
         `,
       data: {
         uuid: {
-          __typename: 'Article',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
             article
@@ -215,7 +212,6 @@ describe('Article', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Article',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
             article
@@ -251,7 +247,6 @@ describe('Article', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Article',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
             article
@@ -297,7 +292,6 @@ describe('ArticleRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'ArticleRevision',
           ...R.omit(['authorId', 'repositoryId'], articleRevision),
           author: {
             id: 1,
@@ -340,7 +334,6 @@ describe('ArticleRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'ArticleRevision',
           ...R.omit(['authorId', 'repositoryId'], articleRevision),
           author: {
             id: 1,
@@ -386,7 +379,6 @@ describe('ArticleRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'ArticleRevision',
           ...R.omit(['authorId', 'repositoryId'], articleRevision),
           author: {
             id: 1,

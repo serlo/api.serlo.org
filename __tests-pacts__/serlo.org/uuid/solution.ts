@@ -74,7 +74,6 @@ describe('Solution', () => {
         `,
       data: {
         uuid: {
-          __typename: 'Solution',
           ...R.omit(['currentRevisionId', 'licenseId', 'parentId'], solution),
           currentRevision: {
             id: solution.currentRevisionId,
@@ -120,7 +119,6 @@ describe('Solution', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Solution',
           ...R.omit(['currentRevisionId', 'licenseId', 'parentId'], solution),
           currentRevision: {
             id: solution.currentRevisionId,
@@ -165,7 +163,6 @@ describe('Solution', () => {
         `,
       data: {
         uuid: {
-          __typename: 'Solution',
           ...R.omit(['currentRevisionId', 'licenseId', 'parentId'], solution),
           currentRevision: {
             id: solutionRevision.id,
@@ -212,7 +209,6 @@ describe('Solution', () => {
         `,
       data: {
         uuid: {
-          __typename: 'Solution',
           ...R.omit(['currentRevisionId', 'licenseId', 'parentId'], solution),
           exercise: {
             id: exercise.id,
@@ -252,7 +248,6 @@ describe('Solution', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Solution',
           ...R.omit(['currentRevisionId', 'licenseId', 'parentId'], solution),
           currentRevision: {
             id: solutionRevision.id,
@@ -292,7 +287,6 @@ describe('SolutionRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'SolutionRevision',
           ...R.omit(['authorId', 'repositoryId'], solutionRevision),
           author: {
             id: solutionRevision.authorId,
@@ -332,7 +326,6 @@ describe('SolutionRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'SolutionRevision',
           ...R.omit(['authorId', 'repositoryId'], solutionRevision),
           author: {
             id: user.id,
@@ -375,7 +368,6 @@ describe('SolutionRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'SolutionRevision',
           ...R.omit(['authorId', 'repositoryId'], solutionRevision),
           author: {
             id: solutionRevision.authorId,

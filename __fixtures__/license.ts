@@ -21,8 +21,8 @@
  */
 import { gql } from 'apollo-server'
 
-import { Instance } from '../src/graphql/schema/instance'
-import { License, LicensePayload } from '../src/graphql/schema/license'
+import { LicensePayload } from '../src/graphql/schema/license'
+import { Instance, License } from '../src/types'
 
 export const license: License = {
   id: 1,

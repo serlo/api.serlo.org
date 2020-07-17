@@ -24,16 +24,22 @@ import { isSome } from 'fp-ts/lib/Option'
 import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
 
+import {
+  Instance,
+  License,
+  Mutation_SetNotificationEventArgs,
+  Mutation_SetNotificationsArgs,
+  Mutation_SetTaxonomyTermArgs,
+  Mutation_SetUserArgs,
+} from '../../types'
 import { Environment } from '../environment'
-import { Instance } from '../schema/instance'
-import { License } from '../schema/license'
 import {
   NotificationEventPayload,
-  NotificationPayload,
   NotificationsPayload,
 } from '../schema/notification'
 import { Service } from '../schema/types'
 import {
+  AbstractUuidPayload,
   AliasPayload,
   AppletPayload,
   AppletRevisionPayload,
@@ -44,8 +50,11 @@ import {
   CoursePayload,
   CourseRevisionPayload,
   decodePath,
+  DiscriminatorType,
   encodePath,
   EntityPayload,
+  EntityRevisionType,
+  EntityType,
   EventPayload,
   EventRevisionPayload,
   ExerciseGroupPayload,
@@ -58,9 +67,6 @@ import {
   PageRevisionPayload,
   SolutionPayload,
   SolutionRevisionPayload,
-  TaxonomyTermPayload,
-  UserPayload,
-  UuidPayload,
   VideoPayload,
   VideoRevisionPayload,
 } from '../schema/uuid'
@@ -203,7 +209,7 @@ export class SerloDataSource extends RESTDataSource {
     await this.environment.cache.set(cacheKey, null)
   }
 
-  public async getUuid<T extends UuidPayload>({
+  public async getUuid<T extends AbstractUuidPayload>({
     id,
   }: {
     id: number
@@ -214,7 +220,7 @@ export class SerloDataSource extends RESTDataSource {
     })
   }
 
-  public async setUuid<T extends UuidPayload>(payload: T): Promise<T> {
+  public async setUuid<T extends AbstractUuidPayload>(payload: T): Promise<T> {
     const cacheKey = this.getCacheKey(`/api/uuid/${payload.id}`)
     await this.environment.cache.set(cacheKey, payload)
     return payload
@@ -226,50 +232,45 @@ export class SerloDataSource extends RESTDataSource {
   }
 
   public async setApplet(applet: AppletPayload) {
-    return this.setUuid({ ...applet, discriminator: 'entity', type: 'applet' })
+    return this.setUuid({ ...applet, __typename: EntityType.Applet })
   }
 
   public async setAppletRevision(appletRevision: AppletRevisionPayload) {
     return this.setUuid({
       ...appletRevision,
-      discriminator: 'entityRevision',
-      type: 'applet',
+      __typename: EntityRevisionType.AppletRevision,
     })
   }
 
   public async setArticle(article: ArticlePayload) {
     return this.setUuid({
       ...article,
-      discriminator: 'entity',
-      type: 'article',
+      __typename: EntityType.Article,
     })
   }
 
   public async setArticleRevision(articleRevision: ArticleRevisionPayload) {
     return this.setUuid({
       ...articleRevision,
-      discriminator: 'entityRevision',
-      type: 'article',
+      __typename: EntityRevisionType.ArticleRevision,
     })
   }
 
   public async setCourse(course: CoursePayload) {
-    return this.setUuid({ ...course, discriminator: 'entity', type: 'course' })
+    return this.setUuid({ ...course, __typename: EntityType.Course })
   }
 
   public async setCourseRevision(courseRevision: CourseRevisionPayload) {
     return this.setUuid({
       ...courseRevision,
-      discriminator: 'entityRevision',
-      type: 'course',
+      __typename: EntityRevisionType.CourseRevision,
     })
   }
 
   public async setCoursePage(coursePage: CoursePagePayload) {
     return this.setUuid({
       ...coursePage,
-      discriminator: 'entity',
-      type: 'coursePage',
+      __typename: EntityType.CoursePage,
     })
   }
 
@@ -278,44 +279,39 @@ export class SerloDataSource extends RESTDataSource {
   ) {
     return this.setUuid({
       ...coursePageRevision,
-      discriminator: 'entityRevision',
-      type: 'coursePage',
+      __typename: EntityRevisionType.CoursePageRevision,
     })
   }
 
   public async setEvent(event: EventPayload) {
-    return this.setUuid({ ...event, discriminator: 'entity', type: 'event' })
+    return this.setUuid({ ...event, __typename: EntityType.Event })
   }
 
   public async setEventRevision(eventRevision: EventRevisionPayload) {
     return this.setUuid({
       ...eventRevision,
-      discriminator: 'entityRevision',
-      type: 'event',
+      __typename: EntityRevisionType.EventRevision,
     })
   }
 
   public async setExercise(exercise: ExercisePayload) {
     return this.setUuid({
       ...exercise,
-      discriminator: 'entity',
-      type: 'exercise',
+      __typename: EntityType.Exercise,
     })
   }
 
   public async setExerciseRevision(exerciseRevision: ExerciseRevisionPayload) {
     return this.setUuid({
       ...exerciseRevision,
-      discriminator: 'entityRevision',
-      type: 'exercise',
+      __typename: EntityRevisionType.ExerciseRevision,
     })
   }
 
   public async setExerciseGroup(exerciseGroup: ExerciseGroupPayload) {
     return this.setUuid({
       ...exerciseGroup,
-      discriminator: 'entity',
-      type: 'exerciseGroup',
+      __typename: EntityType.ExerciseGroup,
     })
   }
 
@@ -324,16 +320,14 @@ export class SerloDataSource extends RESTDataSource {
   ) {
     return this.setUuid({
       ...exerciseGroupRevision,
-      discriminator: 'entityRevision',
-      type: 'exerciseGroup',
+      __typename: EntityRevisionType.ExerciseGroupRevision,
     })
   }
 
   public async setGroupedExercise(groupedExercise: GroupedExercisePayload) {
     return this.setUuid({
       ...groupedExercise,
-      discriminator: 'entity',
-      type: 'groupedExercise',
+      __typename: EntityType.GroupedExercise,
     })
   }
 
@@ -342,52 +336,54 @@ export class SerloDataSource extends RESTDataSource {
   ) {
     return this.setUuid({
       ...groupedExerciseRevision,
-      discriminator: 'entityRevision',
-      type: 'groupedExercise',
+      __typename: EntityRevisionType.GroupedExerciseRevision,
     })
   }
 
   public async setPage(page: PagePayload) {
-    return this.setUuid({ ...page, discriminator: 'page' })
+    return this.setUuid({ ...page, __typename: DiscriminatorType.Page })
   }
 
   public async setPageRevision(pageRevision: PageRevisionPayload) {
-    return this.setUuid({ ...pageRevision, discriminator: 'pageRevision' })
+    return this.setUuid({
+      ...pageRevision,
+      __typename: DiscriminatorType.PageRevision,
+    })
   }
 
   public async setSolution(solution: SolutionPayload) {
     return this.setUuid({
       ...solution,
-      discriminator: 'entity',
-      type: 'solution',
+      __typename: EntityType.Solution,
     })
   }
 
   public async setSolutionRevision(solutionRevision: SolutionRevisionPayload) {
     return this.setUuid({
       ...solutionRevision,
-      discriminator: 'entityRevision',
-      type: 'solution',
+      __typename: EntityRevisionType.SolutionRevision,
     })
   }
 
-  public async setTaxonomyTerm(taxonomyTerm: TaxonomyTermPayload) {
-    return this.setUuid({ ...taxonomyTerm, discriminator: 'taxonomyTerm' })
+  public async setTaxonomyTerm(taxonomyTerm: Mutation_SetTaxonomyTermArgs) {
+    return this.setUuid({
+      ...taxonomyTerm,
+      __typename: DiscriminatorType.TaxonomyTerm,
+    })
   }
 
-  public async setUser(user: UserPayload) {
-    return this.setUuid({ ...user, discriminator: 'user' })
+  public async setUser(user: Mutation_SetUserArgs) {
+    return this.setUuid({ ...user, __typename: DiscriminatorType.User })
   }
 
   public async setVideo(video: VideoPayload) {
-    return this.setUuid({ ...video, discriminator: 'entity', type: 'video' })
+    return this.setUuid({ ...video, __typename: EntityType.Video })
   }
 
   public async setVideoRevision(videoRevision: VideoRevisionPayload) {
     return this.setUuid({
       ...videoRevision,
-      discriminator: 'entityRevision',
-      type: 'video',
+      __typename: EntityRevisionType.VideoRevision,
     })
   }
 
@@ -402,7 +398,7 @@ export class SerloDataSource extends RESTDataSource {
     })
   }
 
-  public async setNotificationEvent(event: NotificationEventPayload) {
+  public async setNotificationEvent(event: Mutation_SetNotificationEventArgs) {
     const cacheKey = this.getCacheKey(`/api/event/${event.id}`)
     await this.environment.cache.set(cacheKey, event)
     return event
@@ -425,7 +421,7 @@ export class SerloDataSource extends RESTDataSource {
     }
   }
 
-  public async setNotifications(notifications: NotificationsPayload) {
+  public async setNotifications(notifications: Mutation_SetNotificationsArgs) {
     const cacheKey = this.getCacheKey(
       `/api/notifications/${notifications.userId}`
     )
@@ -449,14 +445,12 @@ export class SerloDataSource extends RESTDataSource {
     const { notifications } = await this.getNotifications({
       id: notificationState.userId,
     })
-    const modifiedNotifications = notifications.map(
-      (notification: NotificationPayload) => {
-        if (notification.id === notificationState.id) {
-          return { ...notification, unread: notificationState.unread }
-        }
-        return notification
+    const modifiedNotifications = notifications.map((notification) => {
+      if (notification.id === notificationState.id) {
+        return { ...notification, unread: notificationState.unread }
       }
-    )
+      return notification
+    })
     await this.setNotifications({
       notifications: modifiedNotifications,
       userId: notificationState.userId,

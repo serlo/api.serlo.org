@@ -21,15 +21,29 @@
  */
 import { ForbiddenError, gql } from 'apollo-server'
 
+import { Instance, License, Scalars } from '../../../types'
 import { SerloDataSource } from '../../data-sources/serlo'
-import { DateTime } from '../date-time'
-import { Instance } from '../instance'
-import { License } from '../license'
 import { Service } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
-import { Uuid, UuidPayload } from './abstract-uuid'
+import { AbstractUuidPreResolver, AbstractUuidPayload } from './abstract-uuid'
 import { encodePath } from './alias'
-import { resolveUser, User, UserPayload } from './user'
+import { AppletPayload, AppletRevisionPayload } from './applet'
+import { ArticlePayload, ArticleRevisionPayload } from './article'
+import { CoursePayload, CourseRevisionPayload } from './course'
+import { CoursePagePayload, CoursePageRevisionPayload } from './course-page'
+import { EventPayload, EventRevisionPayload } from './event'
+import { ExercisePayload, ExerciseRevisionPayload } from './exercise'
+import {
+  ExerciseGroupPayload,
+  ExerciseGroupRevisionPayload,
+} from './exercise-group'
+import {
+  GroupedExercisePayload,
+  GroupedExerciseRevisionPayload,
+} from './grouped-exercise'
+import { SolutionPayload, SolutionRevisionPayload } from './solution'
+import { resolveUser, UserPreResolver, UserPayload } from './user'
+import { VideoPayload, VideoRevisionPayload } from './video'
 
 export const abstractEntitySchema = new Schema()
 
@@ -46,6 +60,18 @@ export enum EntityType {
   Video = 'Video',
 }
 
+export type EntityPreResolver =
+  | AppletPayload
+  | ArticlePayload
+  | CoursePayload
+  | CoursePagePayload
+  | EventPayload
+  | ExercisePayload
+  | ExerciseGroupPayload
+  | GroupedExercisePayload
+  | SolutionPayload
+  | VideoPayload
+
 export enum EntityRevisionType {
   ArticleRevision = 'ArticleRevision',
   AppletRevision = 'AppletRevision',
@@ -59,7 +85,19 @@ export enum EntityRevisionType {
   VideoRevision = 'VideoRevision',
 }
 
-export abstract class Entity implements Uuid {
+export type EntityRevisionPreResolver =
+  | AppletRevisionPayload
+  | ArticleRevisionPayload
+  | CourseRevisionPayload
+  | CoursePageRevisionPayload
+  | EventRevisionPayload
+  | ExerciseRevisionPayload
+  | ExerciseGroupRevisionPayload
+  | GroupedExerciseRevisionPayload
+  | SolutionRevisionPayload
+  | VideoRevisionPayload
+
+export abstract class Entity implements AbstractUuidPreResolver {
   public abstract __typename: EntityType
   public id: number
   public trashed: boolean
@@ -79,10 +117,11 @@ export abstract class Entity implements Uuid {
     this.currentRevisionId = payload.currentRevisionId
   }
 }
-export interface EntityPayload extends UuidPayload {
+export interface EntityPayload extends AbstractUuidPayload {
+  __typename: EntityType
   instance: Instance
   alias: string | null
-  date: DateTime
+  date: Scalars['DateTime']
   licenseId: number
   currentRevisionId: number | null
 }
@@ -113,8 +152,9 @@ abstractEntitySchema.addTypeDef(gql`
     license: License!
   }
 `)
-export interface EntityRevisionPayload extends UuidPayload {
-  date: DateTime
+export interface EntityRevisionPayload extends AbstractUuidPayload {
+  __typename: EntityRevisionType
+  date: Scalars['DateTime']
   authorId: number
   repositoryId: number
 }
@@ -140,7 +180,7 @@ abstractEntitySchema.addTypeDef(gql`
   }
 `)
 
-export abstract class EntityRevision implements Uuid {
+export abstract class EntityRevision implements AbstractUuidPreResolver {
   public abstract __typename: EntityRevisionType
   public id: number
   public trashed: boolean
@@ -224,7 +264,7 @@ export function addEntityResolvers<
       ${entityRevisionFields}
     }
   `)
-  schema.addResolver<R, unknown, Partial<User>>(
+  schema.addResolver<R, unknown, Partial<UserPreResolver>>(
     entityRevisionType,
     'author',
     async (entityRevision, _args, { dataSources }, info) => {

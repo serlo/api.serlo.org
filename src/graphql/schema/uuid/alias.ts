@@ -21,8 +21,7 @@
  */
 import { ForbiddenError, gql } from 'apollo-server'
 
-import { DateTime } from '../date-time'
-import { Instance } from '../instance'
+import { Instance, Scalars } from '../../../types'
 import { Service } from '../types'
 import { Schema } from '../utils'
 
@@ -78,7 +77,7 @@ export interface AliasPayload {
   instance: Instance
   path: string
   source: string
-  timestamp: DateTime
+  timestamp: Scalars['DateTime']
 }
 aliasSchema.addTypeDef(gql`
   extend type Mutation {

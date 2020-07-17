@@ -19,9 +19,17 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Mutation_RemoveUuidArgs, QueryUuidArgs, Uuid } from '../../../../types'
 import { MutationResolver, QueryResolver, TypeResolver } from '../../types'
-import { EntityRevisionType, EntityType } from '../abstract-entity'
-import { AliasInput } from '../alias'
+import {
+  EntityPreResolver,
+  EntityRevisionPreResolver,
+  EntityRevisionType,
+  EntityType,
+} from '../abstract-entity'
+import { PagePayload, PageRevisionPayload } from '../page'
+import { TaxonomyTermPayload } from '../taxonomy-term'
+import { UserPayload } from '../user'
 
 export enum DiscriminatorType {
   Page = 'Page',
@@ -30,31 +38,32 @@ export enum DiscriminatorType {
   TaxonomyTerm = 'TaxonomyTerm',
 }
 
-export type UuidType =
-  | DiscriminatorType
-  | EntityType
-  | EntityRevisionType
-  | 'UnsupportedUuid'
+export type UuidType = DiscriminatorType | EntityType | EntityRevisionType
 
-export interface Uuid {
+export type UuidPreResolver =
+  | EntityPreResolver
+  | EntityRevisionPreResolver
+  | PagePayload
+  | PageRevisionPayload
+  | UserPayload
+  | TaxonomyTermPayload
+export interface AbstractUuidPreResolver extends Uuid {
   __typename: UuidType
-  id: number
-  trashed: boolean
 }
 
-export interface UuidPayload {
-  id: number
-  trashed: boolean
-}
+export type UuidPayload = UuidPreResolver
+export type AbstractUuidPayload = AbstractUuidPreResolver
 
 export interface UuidResolvers {
   Uuid: {
-    __resolveType: TypeResolver<Uuid>
+    // FIXME: this should be UuidPreResolver when refactoring is done
+    __resolveType: TypeResolver<AbstractUuidPreResolver>
   }
   Query: {
-    uuid: QueryResolver<{ alias?: AliasInput; id?: number }, Uuid>
+    // FIXME: this should be UuidPreResolver when refactoring is done
+    uuid: QueryResolver<QueryUuidArgs, AbstractUuidPreResolver>
   }
   Mutation: {
-    _removeUuid: MutationResolver<{ id: number }>
+    _removeUuid: MutationResolver<Mutation_RemoveUuidArgs>
   }
 }

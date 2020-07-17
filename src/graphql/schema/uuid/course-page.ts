@@ -29,7 +29,7 @@ import {
   EntityRevision,
   EntityRevisionPayload,
 } from './abstract-entity'
-import { Course } from './course'
+import { Course, CoursePayload } from './course'
 
 export const coursePageSchema = new Schema()
 
@@ -43,6 +43,7 @@ export class CoursePage extends Entity {
   }
 }
 export interface CoursePagePayload extends EntityPayload {
+  __typename: EntityType.CoursePage
   parentId: number
 }
 coursePageSchema.addResolver<CoursePage, unknown, Partial<Course>>(
@@ -53,7 +54,7 @@ coursePageSchema.addResolver<CoursePage, unknown, Partial<Course>>(
     if (requestsOnlyFields('Course', ['id'], info)) {
       return partialCourse
     }
-    const data = await dataSources.serlo.getUuid<Course>(partialCourse)
+    const data = await dataSources.serlo.getUuid<CoursePayload>(partialCourse)
     return new Course(data)
   }
 )
@@ -72,6 +73,7 @@ export class CoursePageRevision extends EntityRevision {
   }
 }
 export interface CoursePageRevisionPayload extends EntityRevisionPayload {
+  __typename: EntityRevisionType.CoursePageRevision
   title: string
   content: string
   changes: string

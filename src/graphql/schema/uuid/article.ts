@@ -38,6 +38,7 @@ export class Article extends TaxonomyTermChild {
   public __typename = EntityType.Article
 }
 export interface ArticlePayload extends EntityPayload {
+  __typename: EntityType.Article
   taxonomyTermIds: number[]
 }
 
@@ -60,6 +61,7 @@ export class ArticleRevision extends EntityRevision {
 }
 
 export interface ArticleRevisionPayload extends EntityRevisionPayload {
+  __typename: EntityRevisionType.ArticleRevision
   title: string
   content: string
   changes: string

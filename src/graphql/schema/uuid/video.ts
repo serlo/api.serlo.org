@@ -38,6 +38,7 @@ export class Video extends TaxonomyTermChild {
   public __typename = EntityType.Video
 }
 export interface VideoPayload extends EntityPayload {
+  __typename: EntityType.Video
   taxonomyTermIds: number[]
 }
 
@@ -58,6 +59,7 @@ export class VideoRevision extends EntityRevision {
 }
 
 export interface VideoRevisionPayload extends EntityRevisionPayload {
+  __typename: EntityRevisionType.VideoRevision
   url: string
   title: string
   content: string

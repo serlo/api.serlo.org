@@ -45,6 +45,7 @@ export class GroupedExercise extends Entity {
   }
 }
 export interface GroupedExercisePayload extends EntityPayload {
+  __typename: EntityType.GroupedExercise
   solutionId: number | null
   parentId: number
 }
@@ -87,9 +88,15 @@ groupedExerciseSchema.addResolver<
 )
 
 export class GroupedExerciseRevision extends ExerciseRevision {
-  public __typename = EntityRevisionType.GroupedExerciseRevision
+  public constructor(payload: GroupedExerciseRevisionPayload) {
+    super({ ...payload, __typename: EntityRevisionType.ExerciseRevision })
+    this.__typename = EntityRevisionType.GroupedExerciseRevision
+  }
 }
-export type GroupedExerciseRevisionPayload = ExerciseRevisionPayload
+export interface GroupedExerciseRevisionPayload
+  extends Omit<ExerciseRevisionPayload, '__typename'> {
+  __typename: EntityRevisionType.GroupedExerciseRevision
+}
 
 addEntityResolvers({
   schema: groupedExerciseSchema,

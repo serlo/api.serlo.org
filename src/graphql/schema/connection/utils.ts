@@ -75,26 +75,26 @@ export function resolveConnection<T>({
   }
 
   function handleFirst(xs: Cursor<T>[]): Cursor<T>[] {
-    if (first === undefined) return xs
+    if (first == null) return xs
     if (first < 0) throw new Error('`first` cannot be negative')
     return R.take(first, xs)
   }
 
   function handleLast(xs: Cursor<T>[]): Cursor<T>[] {
-    if (last === undefined) return xs
+    if (last == null) return xs
     if (last < 0) throw new Error('`last` cannot be negative')
     return R.takeLast(last, xs)
   }
 
   function hasPreviousPage() {
-    if (last !== undefined) return applyCursorToEdgesResult.length > last
-    if (after !== undefined) return getAfterIndex() > 0
+    if (last != null) return applyCursorToEdgesResult.length > last
+    if (after != null) return getAfterIndex() > 0
     return false
   }
 
   function hasNextPage() {
-    if (first !== undefined) return applyCursorToEdgesResult.length > first
-    if (before !== undefined) return getBeforeIndex() + 1 < allEdges.length
+    if (first != null) return applyCursorToEdgesResult.length > first
+    if (before != null) return getBeforeIndex() + 1 < allEdges.length
     return false
   }
 }

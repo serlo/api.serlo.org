@@ -29,10 +29,10 @@ import {
   taxonomyTermRoot,
   taxonomyTermSubject,
 } from '../__fixtures__/uuid'
-import { Instance } from '../src/graphql/schema/instance'
 import { Service } from '../src/graphql/schema/types'
 import { setPage } from '../src/graphql/schema/uuid'
 import { setNavigation } from '../src/graphql/schema/uuid/navigation'
+import { Instance } from '../src/types'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
