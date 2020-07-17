@@ -22,7 +22,6 @@
 import { gql } from 'apollo-server'
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
-import { env } from 'process'
 
 import { user, user2, article } from '../__fixtures__/uuid'
 import {
@@ -186,7 +185,7 @@ function addArticle(article: ArticlePayload) {
 function addUuid(payload: UuidPayload, discriminator: string) {
   server.use(
     rest.get(
-      `http://de.${env.SERLO_ORG_HOST}/api/uuid/${payload.id}`,
+      `http://de.${process.env.SERLO_ORG_HOST}/api/uuid/${payload.id}`,
       (_req, res, ctx) => {
         return res.once(
           ctx.status(200),
@@ -212,8 +211,8 @@ function addActiveDonorSheet(values: string[][]) {
 function addActiveDonorSheetResponse(response: object) {
   const url =
     `https://sheets.googleapis.com/v4/spreadsheets/` +
-    `${env.ACTIVE_DONORS_SPREADSHEET_ID}/values/Tabellenblatt1!A:A` +
-    `?majorDimension=COLUMNS&key=${env.GOOGLE_API_KEY}`
+    `${process.env.ACTIVE_DONORS_SPREADSHEET_ID}/values/Tabellenblatt1!A:A` +
+    `?majorDimension=COLUMNS&key=${process.env.GOOGLE_API_KEY}`
 
   server.use(
     rest.get(url, (_req, res, ctx) => {
