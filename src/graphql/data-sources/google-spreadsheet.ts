@@ -21,7 +21,7 @@
  */
 import { RESTDataSource } from 'apollo-datasource-rest'
 import { fetch as fetchApollo } from 'apollo-server-env'
-import { either, pipeable } from 'fp-ts'
+import { either, option, pipeable } from 'fp-ts'
 import * as t from 'io-ts'
 import { nonEmptyArray } from 'io-ts-types/lib/nonEmptyArray'
 import { failure } from 'io-ts/lib/PathReporter'
@@ -29,6 +29,7 @@ import fetchNode from 'node-fetch'
 import * as R from 'ramda'
 
 import { ErrorEvent } from '../../error-event'
+import { Environment } from '../environment'
 
 export enum MajorDimension {
   Rows = 'ROWS',
@@ -52,17 +53,21 @@ const { decode } = ValueRange
 
 export class GoogleSheetApi extends RESTDataSource {
   private apiKey: string
+  private environment: Environment
 
   constructor({
     apiKey,
+    environment,
     fetch = fetchNode,
   }: {
     apiKey: string
+    environment: Environment
     fetch?: typeof fetchNode
   }) {
     super(fetch as typeof fetchApollo)
 
     this.apiKey = apiKey
+    this.environment = environment
     this.baseURL = 'https://sheets.googleapis.com/v4/spreadsheets/'
   }
 
@@ -73,6 +78,13 @@ export class GoogleSheetApi extends RESTDataSource {
   }): Promise<either.Either<ErrorEvent, CellValues>> {
     const { spreadsheetId, range } = args
     const majorDimension = args.majorDimension ?? MajorDimension.Rows
+    const cacheKey = this.getCacheKey({ spreadsheetId, range, majorDimension })
+
+    const cachedResult = await this.environment.cache.get<CellValues>(cacheKey)
+    if (option.isSome(cachedResult)) {
+      return either.right(cachedResult.value)
+    }
+
     let result: either.Either<ErrorEvent, CellValues>
 
     try {
@@ -97,6 +109,10 @@ export class GoogleSheetApi extends RESTDataSource {
           })
         )
       )
+
+      if (either.isRight(result)) {
+        this.environment.cache.set(cacheKey, result.right, { ttl: 60 * 60 })
+      }
     } catch (error) {
       const exception =
         error instanceof Error ? error : new Error(JSON.stringify(error))
@@ -110,5 +126,17 @@ export class GoogleSheetApi extends RESTDataSource {
     return either.mapLeft((event: ErrorEvent) =>
       R.mergeDeepRight({ contexts: { args } }, event)
     )(result)
+  }
+
+  private getCacheKey({
+    spreadsheetId,
+    range,
+    majorDimension,
+  }: {
+    spreadsheetId: string
+    range: string
+    majorDimension: MajorDimension
+  }): string {
+    return `spreadsheet-${spreadsheetId}-${range}-${majorDimension}`
   }
 }

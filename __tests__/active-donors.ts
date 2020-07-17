@@ -34,14 +34,15 @@ import { assertSuccessfulGraphQLQuery } from './__utils__/assertions'
 import { createTestClient } from './__utils__/test-client'
 
 const server = setupServer()
-const { client } = createTestClient()
+const { client, cache } = createTestClient()
 
 beforeAll(() => {
   server.listen()
 })
 
-afterEach(() => {
+afterEach(async () => {
   server.resetHandlers()
+  await cache.flush()
 })
 
 afterAll(() => {

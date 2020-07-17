@@ -19,9 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { either } from 'fp-ts'
+import { either, option } from 'fp-ts'
 import { Response } from 'node-fetch'
 
+import { createInMemoryCache } from '../../../src/cache/in-memory-cache'
 import {
   MajorDimension,
   GoogleSheetApi,
@@ -52,13 +53,57 @@ describe('GoogleSheetApi.getValues()', () => {
         majorDimension: 'COLUMNS',
       }),
     })
-    const googleSheets = new GoogleSheetApi({ apiKey: 'my-secret', fetch })
+    const googleSheets = new GoogleSheetApi({
+      apiKey: 'my-secret',
+      fetch,
+      environment: { cache: createInMemoryCache() },
+    })
     initializeDataSource(googleSheets)
 
     const valueRange = await googleSheets.getValues(args)
 
     expect(valueRange).toEqual(either.right([['1', '2'], ['3']]))
     expect(fetch).toHaveExactlyOneRequestTo(url)
+  })
+
+  describe('uses a cache', () => {
+    test('results are cached for an hour', async () => {
+      const cache = createInMemoryCache()
+      const cacheKey = 'spreadsheet-my-spreadsheet-id-sheet1!A:A-COLUMNS'
+      await cache.set(cacheKey, [['1', '2']])
+      const googleSheets = new GoogleSheetApi({
+        apiKey: 'my-secret',
+        environment: { cache },
+      })
+      initializeDataSource(googleSheets)
+
+      const valueRange = await googleSheets.getValues(args)
+
+      expect(valueRange).toEqual(either.right([['1', '2']]))
+    })
+
+    test('results are cached for an hour', async () => {
+      const fetch = createFetchMock({
+        [url]: createJsonResponse({
+          values: [['1', '2'], ['3']],
+          range: 'sheet1!A:A',
+          majorDimension: 'COLUMNS',
+        }),
+      })
+      const cache = createInMemoryCache()
+      const googleSheets = new GoogleSheetApi({
+        apiKey: 'my-secret',
+        fetch,
+        environment: { cache },
+      })
+      initializeDataSource(googleSheets)
+
+      await googleSheets.getValues(args)
+
+      expect(
+        await cache.get('spreadsheet-my-spreadsheet-id-sheet1!A:A-COLUMNS')
+      ).toEqual(option.some([['1', '2'], ['3']]))
+    })
   })
 
   test('argument "majorDimension" is optional', async () => {
@@ -72,7 +117,11 @@ describe('GoogleSheetApi.getValues()', () => {
         majorDimension: 'ROWS',
       }),
     })
-    const googleSheets = new GoogleSheetApi({ apiKey: 'my-secret', fetch })
+    const googleSheets = new GoogleSheetApi({
+      apiKey: 'my-secret',
+      fetch,
+      environment: { cache: createInMemoryCache() },
+    })
     initializeDataSource(googleSheets)
 
     const valueRange = await googleSheets.getValues({
@@ -88,7 +137,11 @@ describe('GoogleSheetApi.getValues()', () => {
       const fetch = createFetchMock({
         [url]: new Response('', { status: 403 }),
       })
-      const googleSheets = new GoogleSheetApi({ apiKey: 'my-secret', fetch })
+      const googleSheets = new GoogleSheetApi({
+        apiKey: 'my-secret',
+        fetch,
+        environment: { cache: createInMemoryCache() },
+      })
       initializeDataSource(googleSheets)
 
       const valueRange = await googleSheets.getValues(args)
@@ -108,7 +161,11 @@ describe('GoogleSheetApi.getValues()', () => {
           majorDimension: 'COLUMNS',
         }),
       })
-      const googleSheets = new GoogleSheetApi({ apiKey: 'my-secret', fetch })
+      const googleSheets = new GoogleSheetApi({
+        apiKey: 'my-secret',
+        fetch,
+        environment: { cache: createInMemoryCache() },
+      })
       initializeDataSource(googleSheets)
 
       const valueRange = await googleSheets.getValues(args)
@@ -130,6 +187,7 @@ describe('GoogleSheetApi.getValues()', () => {
           const googleSheets = new GoogleSheetApi({
             apiKey: 'my-secret',
             fetch,
+            environment: { cache: createInMemoryCache() },
           })
           initializeDataSource(googleSheets)
 
