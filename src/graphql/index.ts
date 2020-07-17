@@ -47,7 +47,10 @@ export function getGraphQLOptions(
     dataSources() {
       return {
         serlo: new SerloDataSource(environment),
-        googleSheetApi: new GoogleSheetApi({ apiKey: env.GOOGLE_API_KEY }),
+        googleSheetApi: new GoogleSheetApi({
+          apiKey: env.GOOGLE_API_KEY,
+          environment,
+        }),
       }
     },
     context({ req }): Promise<Pick<Context, 'service' | 'user'>> {
