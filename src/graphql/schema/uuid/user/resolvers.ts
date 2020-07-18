@@ -24,15 +24,5 @@ import { ForbiddenError } from 'apollo-server'
 import { Service } from '../../types'
 import { UserResolvers } from './types'
 
-export const resolvers: UserResolvers = {
-  Mutation: {
-    async _setUser(_parent, payload, { dataSources, service }) {
-      if (service !== Service.Serlo) {
-        throw new ForbiddenError(
-          'You do not have the permissions to set an user'
-        )
-      }
-      await dataSources.serlo.setUser(payload)
-    },
-  },
-}
+
+

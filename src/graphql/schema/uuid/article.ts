@@ -86,7 +86,5 @@ addTaxonomyTermChildResolvers({
     changes: String!
     metaTitle: String!
     metaDescription: String!
-  `,
-  entitySetter: 'setArticle',
-  entityRevisionSetter: 'setArticleRevision',
+  `
 })

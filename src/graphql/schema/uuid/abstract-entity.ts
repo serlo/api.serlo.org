@@ -174,8 +174,6 @@ export function addEntityResolvers<
   entityFields = '',
   entityPayloadFields = '',
   entityRevisionFields,
-  entitySetter,
-  entityRevisionSetter,
 }: EntityResolversPayload<E, R, ESetter, RSetter>) {
   schema.addTypeDef(gql`
     type ${entityType} implements Uuid & Entity {
@@ -249,19 +247,6 @@ export function addEntityResolvers<
     }
   )
 
-  schema.addMutation<unknown, EPayload, null>(
-    `_set${entityType}`,
-    async (_parent, payload, { dataSources, service }) => {
-      if (service !== Service.Serlo) {
-        throw new ForbiddenError(
-          `You do not have the permissions to set a ${entityType}`
-        )
-      }
-      await (dataSources.serlo[entitySetter] as (
-        payload: EPayload
-      ) => Promise<void>)(payload)
-    }
-  )
   schema.addTypeDef(gql`
       extend type Mutation {
         _set${entityType}(
@@ -277,19 +262,6 @@ export function addEntityResolvers<
       }
     `)
 
-  schema.addMutation<unknown, RPayload, null>(
-    `_set${entityRevisionType}`,
-    async (_parent, payload, { dataSources, service }) => {
-      if (service !== Service.Serlo) {
-        throw new ForbiddenError(
-          `You do not have the permissions to set a ${entityRevisionType}`
-        )
-      }
-      await (dataSources.serlo[entityRevisionSetter] as (
-        payload: RPayload
-      ) => Promise<void>)(payload)
-    }
-  )
   schema.addTypeDef(gql`
       extend type Mutation {
         _set${entityRevisionType}(
@@ -320,6 +292,4 @@ export interface EntityResolversPayload<
   entityFields?: string
   entityPayloadFields?: string
   entityRevisionFields: string
-  entitySetter: ESetter
-  entityRevisionSetter: RSetter
 }

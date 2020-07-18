@@ -91,6 +91,4 @@ addTaxonomyTermChildResolvers({
     metaTitle: String!
     metaDescription: String!
   `,
-  entitySetter: 'setApplet',
-  entityRevisionSetter: 'setAppletRevision',
 })
