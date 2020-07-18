@@ -39,15 +39,5 @@ export const resolvers: UuidResolvers = {
       const data = await dataSources.serlo.getUuid<AbstractUuidPayload>({ id })
       return resolveAbstractUuid(data)
     },
-  },
-  Mutation: {
-    _removeUuid(_parent, payload, { dataSources, service }) {
-      if (service !== Service.Serlo) {
-        throw new ForbiddenError(
-          'You do not have the permissions to remove an uuid'
-        )
-      }
-      return dataSources.serlo.removeUuid(payload)
-    },
-  },
+  }
 }

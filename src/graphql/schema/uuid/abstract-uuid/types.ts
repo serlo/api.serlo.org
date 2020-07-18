@@ -54,7 +54,4 @@ export interface UuidResolvers {
   Query: {
     uuid: QueryResolver<{ alias?: AliasInput; id?: number }, Uuid>
   }
-  Mutation: {
-    _removeUuid: MutationResolver<{ id: number }>
-  }
 }

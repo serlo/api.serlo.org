@@ -31,7 +31,4 @@ export const typeDefs = gql`
     uuid(alias: AliasInput, id: Int): Uuid
   }
 
-  type Mutation {
-    _removeUuid(id: Int!): Boolean
-  }
 `
