@@ -45,17 +45,15 @@ import {
   GroupedExerciseRevisionPayload,
   PagePayload,
   PageRevisionPayload,
+  SolutionPayload,
+  SolutionRevisionPayload,
   TaxonomyTermPayload,
   UserPayload,
   UuidType,
   VideoPayload,
   VideoRevisionPayload,
+  NavigationPayload,
 } from '../../src/graphql/schema/uuid'
-import { NavigationPayload } from '../../src/graphql/schema/uuid/navigation'
-import {
-  SolutionPayload,
-  SolutionRevisionPayload,
-} from '../../src/graphql/schema/uuid/solution'
 import { License } from '../../src/types'
 
 export function addNavigationInteraction(payload: NavigationPayload) {
