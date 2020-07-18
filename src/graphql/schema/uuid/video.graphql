@@ -1,0 +1,47 @@
+type Video implements Uuid & Entity {
+  id: Int!
+  trashed: Boolean!
+  instance: Instance!
+  alias: String
+  date: DateTime!
+  license: License!
+  currentRevision: VideoRevision
+  taxonomyTerms: [TaxonomyTerm!]!
+}
+
+type VideoRevision implements Uuid & EntityRevision {
+  id: Int!
+  author: User!
+  trashed: Boolean!
+  date: DateTime!
+  video: Video!
+  url: String!
+  title: String!
+  content: String!
+  changes: String!
+}
+
+extend type Mutation {
+  _setVideo(
+    id: Int!
+    trashed: Boolean!
+    instance: Instance!
+    alias: String
+    date: DateTime!
+    currentRevisionId: Int
+    licenseId: Int!
+    taxonomyTermIds: [Int!]!
+  ): Boolean
+
+  _setVideoRevision(
+    id: Int!
+    trashed: Boolean!
+    date: DateTime!
+    authorId: Int!
+    repositoryId: Int!
+    url: String!
+    title: String!
+    content: String!
+    changes: String!
+  ): Boolean
+}

@@ -30,8 +30,9 @@ import {
   EntityRevisionPayload,
 } from './abstract-entity'
 import { Course, CoursePayload } from './course'
+import typeDefs from './course-page.graphql'
 
-export const coursePageSchema = new Schema()
+export const coursePageSchema = new Schema({}, [typeDefs])
 
 export class CoursePage extends Entity {
   public __typename = EntityType.CoursePage
@@ -86,17 +87,6 @@ addEntityResolvers({
   repository: 'coursePage',
   Entity: CoursePage,
   EntityRevision: CoursePageRevision,
-  entityFields: `
-    course: Course!
-  `,
-  entityPayloadFields: `
-    parentId: Int!
-  `,
-  entityRevisionFields: `
-    title: String!
-    content: String!
-    changes: String!
-  `,
   entitySetter: 'setCoursePage',
   entityRevisionSetter: 'setCoursePageRevision',
 })

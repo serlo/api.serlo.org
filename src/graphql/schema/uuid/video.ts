@@ -31,8 +31,9 @@ import {
   addTaxonomyTermChildResolvers,
   TaxonomyTermChild,
 } from './abstract-taxonomy-term-child'
+import typeDefs from './video.graphql'
 
-export const videoSchema = new Schema()
+export const videoSchema = new Schema({}, [typeDefs])
 
 export class Video extends TaxonomyTermChild {
   public __typename = EntityType.Video
@@ -73,18 +74,6 @@ addTaxonomyTermChildResolvers({
   repository: 'video',
   Entity: Video,
   EntityRevision: VideoRevision,
-  entityFields: `
-    taxonomyTerms: [TaxonomyTerm!]!
-  `,
-  entityPayloadFields: `
-    taxonomyTermIds: [Int!]!
-  `,
-  entityRevisionFields: `
-    url: String!
-    title: String!
-    content: String!
-    changes: String!
-  `,
   entitySetter: 'setVideo',
   entityRevisionSetter: 'setVideoRevision',
 })

@@ -31,8 +31,9 @@ import {
   addTaxonomyTermChildResolvers,
   TaxonomyTermChild,
 } from './abstract-taxonomy-term-child'
+import typeDefs from './article.graphql'
 
-export const articleSchema = new Schema()
+export const articleSchema = new Schema({}, [typeDefs])
 
 export class Article extends TaxonomyTermChild {
   public __typename = EntityType.Article
@@ -76,19 +77,6 @@ addTaxonomyTermChildResolvers({
   repository: 'article',
   Entity: Article,
   EntityRevision: ArticleRevision,
-  entityFields: `
-    taxonomyTerms: [TaxonomyTerm!]!
-  `,
-  entityPayloadFields: `
-    taxonomyTermIds: [Int!]!
-  `,
-  entityRevisionFields: `
-    title: String!
-    content: String!
-    changes: String!
-    metaTitle: String!
-    metaDescription: String!
-  `,
   entitySetter: 'setArticle',
   entityRevisionSetter: 'setArticleRevision',
 })

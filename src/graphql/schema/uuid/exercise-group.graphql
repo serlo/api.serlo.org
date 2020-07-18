@@ -1,0 +1,45 @@
+type ExerciseGroup implements Uuid & Entity {
+  id: Int!
+  trashed: Boolean!
+  instance: Instance!
+  alias: String
+  date: DateTime!
+  license: License!
+  currentRevision: ExerciseGroupRevision
+  taxonomyTerms: [TaxonomyTerm!]!
+  exercises: [GroupedExercise!]!
+}
+
+type ExerciseGroupRevision implements Uuid & EntityRevision {
+  id: Int!
+  author: User!
+  trashed: Boolean!
+  date: DateTime!
+  exerciseGroup: ExerciseGroup!
+  content: String!
+  changes: String!
+}
+
+extend type Mutation {
+  _setExerciseGroup(
+    id: Int!
+    trashed: Boolean!
+    instance: Instance!
+    alias: String
+    date: DateTime!
+    currentRevisionId: Int
+    licenseId: Int!
+    taxonomyTermIds: [Int!]!
+    exerciseIds: [Int!]!
+  ): Boolean
+
+  _setExerciseGroupRevision(
+    id: Int!
+    trashed: Boolean!
+    date: DateTime!
+    authorId: Int!
+    repositoryId: Int!
+    content: String!
+    changes: String!
+  ): Boolean
+}

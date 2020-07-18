@@ -31,9 +31,10 @@ import {
   addTaxonomyTermChildResolvers,
   TaxonomyTermChild,
 } from './abstract-taxonomy-term-child'
+import typeDefs from './exercise.graphql'
 import { Solution, SolutionPayload } from './solution'
 
-export const exerciseSchema = new Schema()
+export const exerciseSchema = new Schema({}, [typeDefs])
 
 export class Exercise extends TaxonomyTermChild {
   public __typename = EntityType.Exercise
@@ -90,18 +91,6 @@ addTaxonomyTermChildResolvers({
   repository: 'exercise',
   Entity: Exercise,
   EntityRevision: ExerciseRevision,
-  entityFields: `
-    taxonomyTerms: [TaxonomyTerm!]!
-    solution: Solution
-  `,
-  entityPayloadFields: `
-    taxonomyTermIds: [Int!]!
-    solutionId: Int
-  `,
-  entityRevisionFields: `
-    content: String!
-    changes: String!
-  `,
   entitySetter: 'setExercise',
   entityRevisionSetter: 'setExerciseRevision',
 })

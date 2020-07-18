@@ -31,9 +31,10 @@ import {
   addTaxonomyTermChildResolvers,
   TaxonomyTermChild,
 } from './abstract-taxonomy-term-child'
+import typeDefs from './exercise-group.graphql'
 import { GroupedExercise, GroupedExercisePayload } from './grouped-exercise'
 
-export const exerciseGroupSchema = new Schema()
+export const exerciseGroupSchema = new Schema({}, [typeDefs])
 
 export class ExerciseGroup extends TaxonomyTermChild {
   public __typename = EntityType.ExerciseGroup
@@ -90,18 +91,6 @@ addTaxonomyTermChildResolvers({
   repository: 'exerciseGroup',
   Entity: ExerciseGroup,
   EntityRevision: ExerciseGroupRevision,
-  entityFields: `
-    taxonomyTerms: [TaxonomyTerm!]!
-    exercises: [GroupedExercise!]!
-  `,
-  entityPayloadFields: `
-    taxonomyTermIds: [Int!]!
-    exerciseIds: [Int!]!
-  `,
-  entityRevisionFields: `
-    content: String!
-    changes: String!
-  `,
   entitySetter: 'setExerciseGroup',
   entityRevisionSetter: 'setExerciseGroupRevision',
 })

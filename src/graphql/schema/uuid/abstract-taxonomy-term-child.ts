@@ -19,8 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
-
 import { SerloDataSource } from '../../data-sources/serlo'
 import { Schema } from '../utils'
 import {
@@ -30,13 +28,14 @@ import {
   addEntityResolvers,
   EntityResolversPayload,
 } from './abstract-entity'
+import typeDefs from './abstract-taxonomy-term-child.graphql'
 import {
   resolveTaxonomyTerm,
   TaxonomyTermPreResolver,
   TaxonomyTermPayload,
 } from './taxonomy-term'
 
-export const abstractTaxonomyTermChildSchema = new Schema()
+export const abstractTaxonomyTermChildSchema = new Schema({}, [typeDefs])
 
 export abstract class TaxonomyTermChild extends Entity {
   public taxonomyTermIds: number[]
@@ -55,17 +54,6 @@ abstractTaxonomyTermChildSchema.addTypeResolver<TaxonomyTermChild>(
     return entity.__typename
   }
 )
-abstractTaxonomyTermChildSchema.addTypeDef(gql`
-  """
-  Represents a Serlo.org entity (e.g. an article) that is the child of \`TaxonomyTerm\`s
-  """
-  interface TaxonomyTermChild {
-    """
-    The \`TaxonomyTerm\`s that the entity has been associated with
-    """
-    taxonomyTerms: [TaxonomyTerm!]!
-  }
-`)
 
 export function addTaxonomyTermChildResolvers<
   E extends TaxonomyTermChild,

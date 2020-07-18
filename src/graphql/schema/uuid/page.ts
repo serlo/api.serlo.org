@@ -30,9 +30,10 @@ import {
   AbstractUuidPayload,
 } from './abstract-uuid'
 import { encodePath } from './alias'
+import typeDefs from './page.graphql'
 import { resolveUser, UserPreResolver, UserPayload } from './user'
 
-export const pageSchema = new Schema()
+export const pageSchema = new Schema({}, [typeDefs])
 
 /**
  * type Page
@@ -88,39 +89,6 @@ pageSchema.addResolver<Page, unknown, Partial<License>>(
     return dataSources.serlo.getLicense(partialLicense)
   }
 )
-pageSchema.addTypeDef(gql`
-  """
-  Represents a Serlo.org page. A \`Page\` is a repository containing \`PageRevision\`s, is tied to an \`Instance\`,
-  has a \`License\`, and has an alias.
-  """
-  type Page implements Uuid {
-    """
-    The ID of the page
-    """
-    id: Int!
-    """
-    \`true\` iff the page has been trashed
-    """
-    trashed: Boolean!
-    """
-    The \`Instance\` the page is tied to
-    """
-    instance: Instance!
-    """
-    The alias of the page
-    """
-    alias: String
-    """
-    The \`License\` of the page
-    """
-    license: License!
-    """
-    The \`PageRevision\` that is currently checked out
-    """
-    currentRevision: PageRevision
-    navigation: Navigation
-  }
-`)
 
 /**
  * type PageRevision
@@ -169,41 +137,6 @@ pageSchema.addResolver<PageRevision, unknown, Partial<Page>>(
     return new Page(data)
   }
 )
-pageSchema.addTypeDef(gql`
-  """
-  Represents a Serlo.org page revision. A \`PageRevision\` has fields title and content.
-  """
-  type PageRevision implements Uuid {
-    """
-    The ID of the page revision
-    """
-    id: Int!
-    """
-    The \`User\` that created the page revision
-    """
-    author: User!
-    """
-    \`true\` iff the page revision has been trashed
-    """
-    trashed: Boolean!
-    """
-    The \`DateTime\` the page revision has been created
-    """
-    date: DateTime!
-    """
-    The heading
-    """
-    title: String!
-    """
-    The content
-    """
-    content: String!
-    """
-    The \`Page\` the page revision is tied to
-    """
-    page: Page!
-  }
-`)
 
 /**
  * mutation _setPage
@@ -224,39 +157,7 @@ export interface PagePayload extends AbstractUuidPayload {
   currentRevisionId: number | null
   licenseId: number
 }
-pageSchema.addTypeDef(gql`
-  extend type Mutation {
-    """
-    Inserts the given \`Page\` into the cache. May only be called by \`serlo.org\` when a page has been created or updated.
-    """
-    _setPage(
-      """
-      The ID of the page
-      """
-      id: Int!
-      """
-      \`true\` iff the page has been trashed
-      """
-      trashed: Boolean!
-      """
-      The \`Instance\` the page is tied to
-      """
-      instance: Instance!
-      """
-      The current alias of the page
-      """
-      alias: String
-      """
-      The ID of the current revision
-      """
-      currentRevisionId: Int
-      """
-      The ID of the license
-      """
-      licenseId: Int!
-    ): Boolean
-  }
-`)
+
 export function setPage(variables: PagePayload) {
   return {
     mutation: gql`
@@ -304,40 +205,3 @@ export interface PageRevisionPayload extends AbstractUuidPayload {
   authorId: number
   repositoryId: number
 }
-pageSchema.addTypeDef(gql`
-  extend type Mutation {
-    """
-    Inserts the given \`PageRevision\` into the cache. May only be called by \`serlo.org\` when a page revision has been created.
-    """
-    _setPageRevision(
-      """
-      The ID of the page revision
-      """
-      id: Int!
-      """
-      \`true\` iff the page revision has been trashed
-      """
-      trashed: Boolean!
-      """
-      The value of the title field
-      """
-      title: String!
-      """
-      The value of the content field
-      """
-      content: String!
-      """
-      The \`DateTime\` the page revision has been created
-      """
-      date: DateTime!
-      """
-      The ID of the \`User\` that created the page revision
-      """
-      authorId: Int!
-      """
-      The ID of the \`Page\`
-      """
-      repositoryId: Int!
-    ): Boolean
-  }
-`)

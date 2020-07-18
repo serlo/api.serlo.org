@@ -1,0 +1,9 @@
+"""
+Represents a Serlo.org entity (e.g. an article) that is the child of `TaxonomyTerm`s
+"""
+interface TaxonomyTermChild {
+  """
+  The `TaxonomyTerm`s that the entity has been associated with
+  """
+  taxonomyTerms: [TaxonomyTerm!]!
+}

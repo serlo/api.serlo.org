@@ -1,0 +1,49 @@
+type Article implements Uuid & Entity {
+  id: Int!
+  trashed: Boolean!
+  instance: Instance!
+  alias: String
+  date: DateTime!
+  license: License!
+  currentRevision: ArticleRevision
+  taxonomyTerms: [TaxonomyTerm!]!
+}
+
+type ArticleRevision implements Uuid & EntityRevision {
+  id: Int!
+  author: User!
+  trashed: Boolean!
+  date: DateTime!
+  article: Article!
+  title: String!
+  content: String!
+  changes: String!
+  metaTitle: String!
+  metaDescription: String!
+}
+
+extend type Mutation {
+  _setArticle(
+    id: Int!
+    trashed: Boolean!
+    instance: Instance!
+    alias: String
+    date: DateTime!
+    currentRevisionId: Int
+    licenseId: Int!
+    taxonomyTermIds: [Int!]!
+  ): Boolean
+
+  _setArticleRevision(
+    id: Int!
+    trashed: Boolean!
+    date: DateTime!
+    authorId: Int!
+    repositoryId: Int!
+    title: String!
+    content: String!
+    changes: String!
+    metaTitle: String!
+    metaDescription: String!
+  ): Boolean
+}
