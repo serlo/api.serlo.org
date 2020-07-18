@@ -8,3 +8,5 @@ generates:
     config:
       scalars:
         DateTime: string
+        JSON: unknown
+        JSONObject: 'Record<string, unknown>'

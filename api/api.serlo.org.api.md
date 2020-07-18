@@ -405,7 +405,7 @@ export type Mutation_SetArticleRevisionArgs = {
 // @public (undocumented)
 export type Mutation_SetCacheArgs = {
     key: Scalars['String'];
-    value: Scalars['String'];
+    value: Scalars['JSON'];
 };
 
 // @public (undocumented)
@@ -570,7 +570,7 @@ export type Mutation_SetLicenseArgs = {
 
 // @public (undocumented)
 export type Mutation_SetNavigationArgs = {
-    data: Scalars['String'];
+    data: Scalars['JSON'];
     instance: Instance;
 };
 
@@ -693,7 +693,7 @@ export type MutationSetNotificationStateArgs = {
 // @public (undocumented)
 export type Navigation = {
     __typename?: 'Navigation';
-    data: Scalars['String'];
+    data: Scalars['JSON'];
     path: Array<NavigationNode>;
 };
 
@@ -817,6 +817,8 @@ export type Scalars = {
     Int: number;
     Float: number;
     DateTime: string;
+    JSON: unknown;
+    JSONObject: Record<string, unknown>;
 };
 
 // @public (undocumented)

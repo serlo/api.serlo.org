@@ -39,6 +39,7 @@
     "graphql": "^15.0.0",
     "graphql-parse-resolve-info": "^4.0.0",
     "graphql-playground-middleware-express": "^1.0.0",
+    "graphql-type-json": "^0.3.0",
     "jsonwebtoken": "^8.0.0",
     "msgpack": "^1.0.0",
     "node-fetch": "^2.0.0",

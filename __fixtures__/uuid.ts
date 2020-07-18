@@ -89,7 +89,7 @@ export function createSetTaxonomyTermMutation(variables: TaxonomyTermPayload) {
 }
 
 export const navigation: NavigationPayload = {
-  data: JSON.stringify([
+  data: [
     {
       label: 'Mathematik',
       id: 19767,
@@ -100,7 +100,7 @@ export const navigation: NavigationPayload = {
         },
       ],
     },
-  ]),
+  ],
   instance: Instance.De,
 }
 

@@ -23,6 +23,7 @@ import { cacheSchema } from './cache'
 import { connectionSchema } from './connection'
 import { dateTimeSchema } from './date-time'
 import { instanceSchema } from './instance'
+import { jsonSchema } from './json'
 import { licenseSchema } from './license'
 import { notificationSchema } from './notification'
 import { Schema } from './utils'
@@ -31,6 +32,7 @@ import { uuidSchema } from './uuid'
 export * from './connection'
 export * from './date-time'
 export * from './instance'
+export * from './json'
 export * from './license'
 export * from './uuid'
 
@@ -39,6 +41,7 @@ export const schema = Schema.merge(
   cacheSchema,
   dateTimeSchema,
   instanceSchema,
+  jsonSchema,
   licenseSchema,
   notificationSchema,
   uuidSchema
