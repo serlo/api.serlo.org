@@ -1,4 +1,4 @@
-type User implements Uuid {
+type User implements AbstractUuid {
   id: Int!
   trashed: Boolean!
   username: String!

@@ -1,4 +1,4 @@
-type Video implements Uuid & Entity {
+type Video implements AbstractUuid & AbstractEntity {
   id: Int!
   trashed: Boolean!
   instance: Instance!
@@ -9,7 +9,7 @@ type Video implements Uuid & Entity {
   taxonomyTerms: [TaxonomyTerm!]!
 }
 
-type VideoRevision implements Uuid & EntityRevision {
+type VideoRevision implements AbstractUuid & AbstractEntityRevision {
   id: Int!
   author: User!
   trashed: Boolean!

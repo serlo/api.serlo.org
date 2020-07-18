@@ -2,7 +2,7 @@
 Represents a Serlo.org page. A `Page` is a repository containing `PageRevision`s, is tied to an `Instance`,
 has a `License`, and has an alias.
 """
-type Page implements Uuid {
+type Page implements AbstractUuid {
   """
   The ID of the page
   """
@@ -33,7 +33,7 @@ type Page implements Uuid {
 """
 Represents a Serlo.org page revision. A `PageRevision` has fields title and content.
 """
-type PageRevision implements Uuid {
+type PageRevision implements AbstractUuid {
   """
   The ID of the page revision
   """

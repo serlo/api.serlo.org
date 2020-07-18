@@ -4,6 +4,26 @@
 
 ```ts
 
+// @public
+export type AbstractEntity = {
+    date: Scalars['DateTime'];
+    instance: Instance;
+    alias?: Maybe<Scalars['String']>;
+    license: License;
+};
+
+// @public
+export type AbstractEntityRevision = {
+    author: User;
+    date: Scalars['DateTime'];
+};
+
+// @public (undocumented)
+export type AbstractUuid = {
+    id: Scalars['Int'];
+    trashed: Scalars['Boolean'];
+};
+
 // @public (undocumented)
 export type AliasInput = {
     instance: Instance;
@@ -11,7 +31,7 @@ export type AliasInput = {
 };
 
 // @public (undocumented)
-export type Applet = Uuid & Entity & {
+export type Applet = AbstractUuid & AbstractEntity & {
     __typename?: 'Applet';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -24,7 +44,7 @@ export type Applet = Uuid & Entity & {
 };
 
 // @public (undocumented)
-export type AppletRevision = Uuid & EntityRevision & {
+export type AppletRevision = AbstractUuid & AbstractEntityRevision & {
     __typename?: 'AppletRevision';
     id: Scalars['Int'];
     author: User;
@@ -40,7 +60,7 @@ export type AppletRevision = Uuid & EntityRevision & {
 };
 
 // @public (undocumented)
-export type Article = Uuid & Entity & {
+export type Article = AbstractUuid & AbstractEntity & {
     __typename?: 'Article';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -53,7 +73,7 @@ export type Article = Uuid & Entity & {
 };
 
 // @public (undocumented)
-export type ArticleRevision = Uuid & EntityRevision & {
+export type ArticleRevision = AbstractUuid & AbstractEntityRevision & {
     __typename?: 'ArticleRevision';
     id: Scalars['Int'];
     author: User;
@@ -68,7 +88,7 @@ export type ArticleRevision = Uuid & EntityRevision & {
 };
 
 // @public (undocumented)
-export type Course = Uuid & Entity & {
+export type Course = AbstractUuid & AbstractEntity & {
     __typename?: 'Course';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -82,7 +102,7 @@ export type Course = Uuid & Entity & {
 };
 
 // @public (undocumented)
-export type CoursePage = Uuid & Entity & {
+export type CoursePage = AbstractUuid & AbstractEntity & {
     __typename?: 'CoursePage';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -95,7 +115,7 @@ export type CoursePage = Uuid & Entity & {
 };
 
 // @public (undocumented)
-export type CoursePageRevision = Uuid & EntityRevision & {
+export type CoursePageRevision = AbstractUuid & AbstractEntityRevision & {
     __typename?: 'CoursePageRevision';
     id: Scalars['Int'];
     author: User;
@@ -108,7 +128,7 @@ export type CoursePageRevision = Uuid & EntityRevision & {
 };
 
 // @public (undocumented)
-export type CourseRevision = Uuid & EntityRevision & {
+export type CourseRevision = AbstractUuid & AbstractEntityRevision & {
     __typename?: 'CourseRevision';
     id: Scalars['Int'];
     author: User;
@@ -121,22 +141,8 @@ export type CourseRevision = Uuid & EntityRevision & {
     metaDescription: Scalars['String'];
 };
 
-// @public
-export type Entity = {
-    date: Scalars['DateTime'];
-    instance: Instance;
-    alias?: Maybe<Scalars['String']>;
-    license: License;
-};
-
-// @public
-export type EntityRevision = {
-    author: User;
-    date: Scalars['DateTime'];
-};
-
 // @public (undocumented)
-export type Event = Uuid & Entity & {
+export type Event = AbstractUuid & AbstractEntity & {
     __typename?: 'Event';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -149,7 +155,7 @@ export type Event = Uuid & Entity & {
 };
 
 // @public (undocumented)
-export type EventRevision = Uuid & EntityRevision & {
+export type EventRevision = AbstractUuid & AbstractEntityRevision & {
     __typename?: 'EventRevision';
     id: Scalars['Int'];
     author: User;
@@ -171,7 +177,7 @@ export type Exact<T extends {
 };
 
 // @public (undocumented)
-export type Exercise = Uuid & Entity & {
+export type Exercise = AbstractUuid & AbstractEntity & {
     __typename?: 'Exercise';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -185,7 +191,7 @@ export type Exercise = Uuid & Entity & {
 };
 
 // @public (undocumented)
-export type ExerciseGroup = Uuid & Entity & {
+export type ExerciseGroup = AbstractUuid & AbstractEntity & {
     __typename?: 'ExerciseGroup';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -199,7 +205,7 @@ export type ExerciseGroup = Uuid & Entity & {
 };
 
 // @public (undocumented)
-export type ExerciseGroupRevision = Uuid & EntityRevision & {
+export type ExerciseGroupRevision = AbstractUuid & AbstractEntityRevision & {
     __typename?: 'ExerciseGroupRevision';
     id: Scalars['Int'];
     author: User;
@@ -211,7 +217,7 @@ export type ExerciseGroupRevision = Uuid & EntityRevision & {
 };
 
 // @public (undocumented)
-export type ExerciseRevision = Uuid & EntityRevision & {
+export type ExerciseRevision = AbstractUuid & AbstractEntityRevision & {
     __typename?: 'ExerciseRevision';
     id: Scalars['Int'];
     author: User;
@@ -223,7 +229,7 @@ export type ExerciseRevision = Uuid & EntityRevision & {
 };
 
 // @public (undocumented)
-export type GroupedExercise = Uuid & Entity & {
+export type GroupedExercise = AbstractUuid & AbstractEntity & {
     __typename?: 'GroupedExercise';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -237,7 +243,7 @@ export type GroupedExercise = Uuid & Entity & {
 };
 
 // @public (undocumented)
-export type GroupedExerciseRevision = Uuid & EntityRevision & {
+export type GroupedExerciseRevision = AbstractUuid & AbstractEntityRevision & {
     __typename?: 'GroupedExerciseRevision';
     id: Scalars['Int'];
     author: User;
@@ -722,7 +728,7 @@ export type NotificationEvent = {
     instance: Instance;
     date: Scalars['DateTime'];
     actor: User;
-    object: Uuid;
+    object: AbstractUuid;
     payload: Scalars['String'];
 };
 
@@ -734,7 +740,7 @@ export type NotificationInput = {
 };
 
 // @public
-export type Page = Uuid & {
+export type Page = AbstractUuid & {
     __typename?: 'Page';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -755,7 +761,7 @@ export type PageInfo = {
 };
 
 // @public
-export type PageRevision = Uuid & {
+export type PageRevision = AbstractUuid & {
     __typename?: 'PageRevision';
     id: Scalars['Int'];
     author: User;
@@ -771,7 +777,7 @@ export type Query = {
     __typename?: 'Query';
     license?: Maybe<License>;
     notifications: QueryNotificationsResult;
-    uuid?: Maybe<Uuid>;
+    uuid?: Maybe<AbstractUuid>;
 };
 
 // @public (undocumented)
@@ -814,7 +820,7 @@ export type Scalars = {
 };
 
 // @public (undocumented)
-export type Solution = Uuid & Entity & {
+export type Solution = AbstractUuid & AbstractEntity & {
     __typename?: 'Solution';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -827,7 +833,7 @@ export type Solution = Uuid & Entity & {
 };
 
 // @public (undocumented)
-export type SolutionRevision = Uuid & EntityRevision & {
+export type SolutionRevision = AbstractUuid & AbstractEntityRevision & {
     __typename?: 'SolutionRevision';
     id: Scalars['Int'];
     author: User;
@@ -839,7 +845,7 @@ export type SolutionRevision = Uuid & EntityRevision & {
 };
 
 // @public (undocumented)
-export type TaxonomyTerm = Uuid & {
+export type TaxonomyTerm = AbstractUuid & {
     __typename?: 'TaxonomyTerm';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -850,7 +856,7 @@ export type TaxonomyTerm = Uuid & {
     description?: Maybe<Scalars['String']>;
     weight: Scalars['Int'];
     parent?: Maybe<TaxonomyTerm>;
-    children: Array<Uuid>;
+    children: Array<AbstractUuid>;
     navigation?: Maybe<Navigation>;
 };
 
@@ -881,7 +887,7 @@ export enum TaxonomyTermType {
 }
 
 // @public (undocumented)
-export type User = Uuid & {
+export type User = AbstractUuid & {
     __typename?: 'User';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -892,13 +898,7 @@ export type User = Uuid & {
 };
 
 // @public (undocumented)
-export type Uuid = {
-    id: Scalars['Int'];
-    trashed: Scalars['Boolean'];
-};
-
-// @public (undocumented)
-export type Video = Uuid & Entity & {
+export type Video = AbstractUuid & AbstractEntity & {
     __typename?: 'Video';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -911,7 +911,7 @@ export type Video = Uuid & Entity & {
 };
 
 // @public (undocumented)
-export type VideoRevision = Uuid & EntityRevision & {
+export type VideoRevision = AbstractUuid & AbstractEntityRevision & {
     __typename?: 'VideoRevision';
     id: Scalars['Int'];
     author: User;

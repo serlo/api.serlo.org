@@ -1,4 +1,4 @@
-type Solution implements Uuid & Entity {
+type Solution implements AbstractUuid & AbstractEntity {
   id: Int!
   trashed: Boolean!
   instance: Instance!
@@ -9,7 +9,7 @@ type Solution implements Uuid & Entity {
   exercise: Exercise!
 }
 
-type SolutionRevision implements Uuid & EntityRevision {
+type SolutionRevision implements AbstractUuid & AbstractEntityRevision {
   id: Int!
   author: User!
   trashed: Boolean!

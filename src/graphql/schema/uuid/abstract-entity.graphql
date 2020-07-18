@@ -2,7 +2,7 @@
 Represents a Serlo.org entity (e.g. an article). An `Entity` is tied to an `Instance`, has a `License`, might have an alias
 and is the child of `TaxonomyTerm`s
 """
-interface Entity {
+interface AbstractEntity {
   """
   The `DateTime` the entity has been created
   """
@@ -24,7 +24,7 @@ interface Entity {
 """
 Represents a Serlo.org entity revision (e.g. a revision of an article). An `EntityRevision` is tied to an `Entity` and has an author.
 """
-interface EntityRevision {
+interface AbstractEntityRevision {
   """
   The `User` that created the entity revision
   """

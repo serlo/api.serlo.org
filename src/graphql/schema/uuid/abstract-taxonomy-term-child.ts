@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { SerloDataSource } from '../../data-sources/serlo'
-import { Schema } from '../utils'
 import {
   Entity,
   EntityPayload,
@@ -28,14 +27,11 @@ import {
   addEntityResolvers,
   EntityResolversPayload,
 } from './abstract-entity'
-import typeDefs from './abstract-taxonomy-term-child.graphql'
 import {
   resolveTaxonomyTerm,
   TaxonomyTermPreResolver,
   TaxonomyTermPayload,
 } from './taxonomy-term'
-
-export const abstractTaxonomyTermChildSchema = new Schema({}, [typeDefs])
 
 export abstract class TaxonomyTermChild extends Entity {
   public taxonomyTermIds: number[]
@@ -48,12 +44,6 @@ export abstract class TaxonomyTermChild extends Entity {
 export interface TaxonomyTermChildPayload extends EntityPayload {
   taxonomyTermIds: number[]
 }
-abstractTaxonomyTermChildSchema.addTypeResolver<TaxonomyTermChild>(
-  'TaxonomyTermChild',
-  (entity) => {
-    return entity.__typename
-  }
-)
 
 export function addTaxonomyTermChildResolvers<
   E extends TaxonomyTermChild,

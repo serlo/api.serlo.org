@@ -1,4 +1,4 @@
-type Article implements Uuid & Entity {
+type Article implements AbstractUuid & AbstractEntity {
   id: Int!
   trashed: Boolean!
   instance: Instance!
@@ -9,7 +9,7 @@ type Article implements Uuid & Entity {
   taxonomyTerms: [TaxonomyTerm!]!
 }
 
-type ArticleRevision implements Uuid & EntityRevision {
+type ArticleRevision implements AbstractUuid & AbstractEntityRevision {
   id: Int!
   author: User!
   trashed: Boolean!
