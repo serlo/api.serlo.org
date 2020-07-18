@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { DateTime } from '../../date-time'
-import { MutationResolver } from '../../types'
 import { DiscriminatorType, Uuid, UuidPayload } from '../abstract-uuid'
 
 export interface User extends Uuid {
@@ -38,8 +37,3 @@ export interface UserPayload extends UuidPayload {
   description: string | null
 }
 
-export interface UserResolvers {
-  Mutation: {
-    _setUser: MutationResolver<UserPayload>
-  }
-}
