@@ -12,7 +12,7 @@ enum TaxonomyTermType {
   topicFolder
 }
 
-type TaxonomyTerm implements Uuid {
+type TaxonomyTerm implements AbstractUuid {
   id: Int!
   trashed: Boolean!
   type: TaxonomyTermType!
@@ -22,7 +22,7 @@ type TaxonomyTerm implements Uuid {
   description: String
   weight: Int!
   parent: TaxonomyTerm
-  children: [Uuid!]!
+  children: [AbstractUuid!]!
   navigation: Navigation
 }
 

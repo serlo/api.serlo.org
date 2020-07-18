@@ -450,7 +450,7 @@ export type Query = {
   __typename?: 'Query';
   license?: Maybe<License>;
   notifications: QueryNotificationsResult;
-  uuid?: Maybe<Uuid>;
+  uuid?: Maybe<AbstractUuid>;
 };
 
 
@@ -487,7 +487,7 @@ export type NotificationEvent = {
   instance: Instance;
   date: Scalars['DateTime'];
   actor: User;
-  object: Uuid;
+  object: AbstractUuid;
   payload: Scalars['String'];
 };
 
@@ -515,7 +515,7 @@ export type NotificationCursor = {
  * Represents a Serlo.org entity (e.g. an article). An `Entity` is tied to an `Instance`, has a `License`, might have an alias
  * and is the child of `TaxonomyTerm`s
  */
-export type Entity = {
+export type AbstractEntity = {
   /** The `DateTime` the entity has been created */
   date: Scalars['DateTime'];
   /** The `Instance` the entity is tied to */
@@ -527,14 +527,14 @@ export type Entity = {
 };
 
 /** Represents a Serlo.org entity revision (e.g. a revision of an article). An `EntityRevision` is tied to an `Entity` and has an author. */
-export type EntityRevision = {
+export type AbstractEntityRevision = {
   /** The `User` that created the entity revision */
   author: User;
   /** The `DateTime` the entity revision has been created */
   date: Scalars['DateTime'];
 };
 
-export type Uuid = {
+export type AbstractUuid = {
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
 };
@@ -544,7 +544,7 @@ export type AliasInput = {
   path: Scalars['String'];
 };
 
-export type Applet = Uuid & Entity & {
+export type Applet = AbstractUuid & AbstractEntity & {
   __typename?: 'Applet';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -556,7 +556,7 @@ export type Applet = Uuid & Entity & {
   taxonomyTerms: Array<TaxonomyTerm>;
 };
 
-export type AppletRevision = Uuid & EntityRevision & {
+export type AppletRevision = AbstractUuid & AbstractEntityRevision & {
   __typename?: 'AppletRevision';
   id: Scalars['Int'];
   author: User;
@@ -571,7 +571,7 @@ export type AppletRevision = Uuid & EntityRevision & {
   metaDescription: Scalars['String'];
 };
 
-export type Article = Uuid & Entity & {
+export type Article = AbstractUuid & AbstractEntity & {
   __typename?: 'Article';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -583,7 +583,7 @@ export type Article = Uuid & Entity & {
   taxonomyTerms: Array<TaxonomyTerm>;
 };
 
-export type ArticleRevision = Uuid & EntityRevision & {
+export type ArticleRevision = AbstractUuid & AbstractEntityRevision & {
   __typename?: 'ArticleRevision';
   id: Scalars['Int'];
   author: User;
@@ -597,7 +597,7 @@ export type ArticleRevision = Uuid & EntityRevision & {
   metaDescription: Scalars['String'];
 };
 
-export type CoursePage = Uuid & Entity & {
+export type CoursePage = AbstractUuid & AbstractEntity & {
   __typename?: 'CoursePage';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -609,7 +609,7 @@ export type CoursePage = Uuid & Entity & {
   course: Course;
 };
 
-export type CoursePageRevision = Uuid & EntityRevision & {
+export type CoursePageRevision = AbstractUuid & AbstractEntityRevision & {
   __typename?: 'CoursePageRevision';
   id: Scalars['Int'];
   author: User;
@@ -621,7 +621,7 @@ export type CoursePageRevision = Uuid & EntityRevision & {
   changes: Scalars['String'];
 };
 
-export type Course = Uuid & Entity & {
+export type Course = AbstractUuid & AbstractEntity & {
   __typename?: 'Course';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -634,7 +634,7 @@ export type Course = Uuid & Entity & {
   pages: Array<CoursePage>;
 };
 
-export type CourseRevision = Uuid & EntityRevision & {
+export type CourseRevision = AbstractUuid & AbstractEntityRevision & {
   __typename?: 'CourseRevision';
   id: Scalars['Int'];
   author: User;
@@ -647,7 +647,7 @@ export type CourseRevision = Uuid & EntityRevision & {
   metaDescription: Scalars['String'];
 };
 
-export type Event = Uuid & Entity & {
+export type Event = AbstractUuid & AbstractEntity & {
   __typename?: 'Event';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -659,7 +659,7 @@ export type Event = Uuid & Entity & {
   taxonomyTerms: Array<TaxonomyTerm>;
 };
 
-export type EventRevision = Uuid & EntityRevision & {
+export type EventRevision = AbstractUuid & AbstractEntityRevision & {
   __typename?: 'EventRevision';
   id: Scalars['Int'];
   author: User;
@@ -673,7 +673,7 @@ export type EventRevision = Uuid & EntityRevision & {
   metaDescription: Scalars['String'];
 };
 
-export type ExerciseGroup = Uuid & Entity & {
+export type ExerciseGroup = AbstractUuid & AbstractEntity & {
   __typename?: 'ExerciseGroup';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -686,7 +686,7 @@ export type ExerciseGroup = Uuid & Entity & {
   exercises: Array<GroupedExercise>;
 };
 
-export type ExerciseGroupRevision = Uuid & EntityRevision & {
+export type ExerciseGroupRevision = AbstractUuid & AbstractEntityRevision & {
   __typename?: 'ExerciseGroupRevision';
   id: Scalars['Int'];
   author: User;
@@ -697,7 +697,7 @@ export type ExerciseGroupRevision = Uuid & EntityRevision & {
   changes: Scalars['String'];
 };
 
-export type Exercise = Uuid & Entity & {
+export type Exercise = AbstractUuid & AbstractEntity & {
   __typename?: 'Exercise';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -710,7 +710,7 @@ export type Exercise = Uuid & Entity & {
   solution?: Maybe<Solution>;
 };
 
-export type ExerciseRevision = Uuid & EntityRevision & {
+export type ExerciseRevision = AbstractUuid & AbstractEntityRevision & {
   __typename?: 'ExerciseRevision';
   id: Scalars['Int'];
   author: User;
@@ -721,7 +721,7 @@ export type ExerciseRevision = Uuid & EntityRevision & {
   changes: Scalars['String'];
 };
 
-export type GroupedExercise = Uuid & Entity & {
+export type GroupedExercise = AbstractUuid & AbstractEntity & {
   __typename?: 'GroupedExercise';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -734,7 +734,7 @@ export type GroupedExercise = Uuid & Entity & {
   exerciseGroup: ExerciseGroup;
 };
 
-export type GroupedExerciseRevision = Uuid & EntityRevision & {
+export type GroupedExerciseRevision = AbstractUuid & AbstractEntityRevision & {
   __typename?: 'GroupedExerciseRevision';
   id: Scalars['Int'];
   author: User;
@@ -762,7 +762,7 @@ export type NavigationNode = {
  * Represents a Serlo.org page. A `Page` is a repository containing `PageRevision`s, is tied to an `Instance`,
  * has a `License`, and has an alias.
  */
-export type Page = Uuid & {
+export type Page = AbstractUuid & {
   __typename?: 'Page';
   /** The ID of the page */
   id: Scalars['Int'];
@@ -780,7 +780,7 @@ export type Page = Uuid & {
 };
 
 /** Represents a Serlo.org page revision. A `PageRevision` has fields title and content. */
-export type PageRevision = Uuid & {
+export type PageRevision = AbstractUuid & {
   __typename?: 'PageRevision';
   /** The ID of the page revision */
   id: Scalars['Int'];
@@ -798,7 +798,7 @@ export type PageRevision = Uuid & {
   page: Page;
 };
 
-export type Solution = Uuid & Entity & {
+export type Solution = AbstractUuid & AbstractEntity & {
   __typename?: 'Solution';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -810,7 +810,7 @@ export type Solution = Uuid & Entity & {
   exercise: Exercise;
 };
 
-export type SolutionRevision = Uuid & EntityRevision & {
+export type SolutionRevision = AbstractUuid & AbstractEntityRevision & {
   __typename?: 'SolutionRevision';
   id: Scalars['Int'];
   author: User;
@@ -835,7 +835,7 @@ export enum TaxonomyTermType {
   TopicFolder = 'topicFolder'
 }
 
-export type TaxonomyTerm = Uuid & {
+export type TaxonomyTerm = AbstractUuid & {
   __typename?: 'TaxonomyTerm';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -846,11 +846,11 @@ export type TaxonomyTerm = Uuid & {
   description?: Maybe<Scalars['String']>;
   weight: Scalars['Int'];
   parent?: Maybe<TaxonomyTerm>;
-  children: Array<Uuid>;
+  children: Array<AbstractUuid>;
   navigation?: Maybe<Navigation>;
 };
 
-export type User = Uuid & {
+export type User = AbstractUuid & {
   __typename?: 'User';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -860,7 +860,7 @@ export type User = Uuid & {
   description?: Maybe<Scalars['String']>;
 };
 
-export type Video = Uuid & Entity & {
+export type Video = AbstractUuid & AbstractEntity & {
   __typename?: 'Video';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -872,7 +872,7 @@ export type Video = Uuid & Entity & {
   taxonomyTerms: Array<TaxonomyTerm>;
 };
 
-export type VideoRevision = Uuid & EntityRevision & {
+export type VideoRevision = AbstractUuid & AbstractEntityRevision & {
   __typename?: 'VideoRevision';
   id: Scalars['Int'];
   author: User;

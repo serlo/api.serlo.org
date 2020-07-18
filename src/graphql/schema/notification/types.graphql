@@ -10,7 +10,7 @@ type NotificationEvent {
   instance: Instance!
   date: DateTime!
   actor: User!
-  object: Uuid!
+  object: AbstractUuid!
   payload: String!
 }
 

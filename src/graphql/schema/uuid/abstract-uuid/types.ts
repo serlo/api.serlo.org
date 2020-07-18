@@ -19,7 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Mutation_RemoveUuidArgs, QueryUuidArgs, Uuid } from '../../../../types'
+import {
+  Mutation_RemoveUuidArgs,
+  QueryUuidArgs,
+  AbstractUuid,
+} from '../../../../types'
 import { MutationResolver, QueryResolver, TypeResolver } from '../../types'
 import {
   EntityPreResolver,
@@ -47,7 +51,7 @@ export type UuidPreResolver =
   | PageRevisionPayload
   | UserPayload
   | TaxonomyTermPayload
-export interface AbstractUuidPreResolver extends Uuid {
+export interface AbstractUuidPreResolver extends AbstractUuid {
   __typename: UuidType
 }
 
@@ -55,7 +59,7 @@ export type UuidPayload = UuidPreResolver
 export type AbstractUuidPayload = AbstractUuidPreResolver
 
 export interface UuidResolvers {
-  Uuid: {
+  AbstractUuid: {
     // FIXME: this should be UuidPreResolver when refactoring is done
     __resolveType: TypeResolver<AbstractUuidPreResolver>
   }

@@ -126,7 +126,7 @@ export interface EntityPayload extends AbstractUuidPayload {
   licenseId: number
   currentRevisionId: number | null
 }
-abstractEntitySchema.addTypeResolver<Entity>('Entity', (entity) => {
+abstractEntitySchema.addTypeResolver<Entity>('AbstractEntity', (entity) => {
   return entity.__typename
 })
 export interface EntityRevisionPayload extends AbstractUuidPayload {
@@ -136,7 +136,7 @@ export interface EntityRevisionPayload extends AbstractUuidPayload {
   repositoryId: number
 }
 abstractEntitySchema.addTypeResolver<EntityRevision>(
-  'EntityRevision',
+  'AbstractEntityRevision',
   (revision) => {
     return revision.__typename
   }

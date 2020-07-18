@@ -1,10 +1,10 @@
-interface Uuid {
+interface AbstractUuid {
   id: Int!
   trashed: Boolean!
 }
 
 type Query {
-  uuid(alias: AliasInput, id: Int): Uuid
+  uuid(alias: AliasInput, id: Int): AbstractUuid
 }
 
 type Mutation {

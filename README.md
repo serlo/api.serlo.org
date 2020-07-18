@@ -22,4 +22,5 @@
 - Types that don't match the correspondent GraphQL types (e.g. because their types still have to be processed by their resolver chain) should be named `*PreResolver`.
 - Types that specify the return type of another service, should be named `*Payload`.
 - GraphQL types that specify the return type of a query should be named `Query*Result`.
-- GraphQL types that specify the type of a query parameter should be named `*Input`.
+- GraphQL types that specify the type of a parameter should be named `*Input`.
+- GraphQL interface types should be named `Abstract*` and have a matching union type `*`.

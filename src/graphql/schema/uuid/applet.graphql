@@ -1,4 +1,4 @@
-type Applet implements Uuid & Entity {
+type Applet implements AbstractUuid & AbstractEntity {
   id: Int!
   trashed: Boolean!
   instance: Instance!
@@ -9,7 +9,7 @@ type Applet implements Uuid & Entity {
   taxonomyTerms: [TaxonomyTerm!]!
 }
 
-type AppletRevision implements Uuid & EntityRevision {
+type AppletRevision implements AbstractUuid & AbstractEntityRevision {
   id: Int!
   author: User!
   trashed: Boolean!

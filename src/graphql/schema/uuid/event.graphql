@@ -1,4 +1,4 @@
-type Event implements Uuid & Entity {
+type Event implements AbstractUuid & AbstractEntity {
   id: Int!
   trashed: Boolean!
   instance: Instance!
@@ -9,7 +9,7 @@ type Event implements Uuid & Entity {
   taxonomyTerms: [TaxonomyTerm!]!
 }
 
-type EventRevision implements Uuid & EntityRevision {
+type EventRevision implements AbstractUuid & AbstractEntityRevision {
   id: Int!
   author: User!
   trashed: Boolean!

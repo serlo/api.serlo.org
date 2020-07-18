@@ -26,7 +26,7 @@ import { Service } from '../../types'
 import { UuidResolvers } from './types'
 
 export const resolvers: UuidResolvers = {
-  Uuid: {
+  AbstractUuid: {
     __resolveType(uuid) {
       return uuid.__typename
     },

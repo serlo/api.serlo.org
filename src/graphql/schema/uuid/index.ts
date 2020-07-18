@@ -25,7 +25,6 @@ import {
   EntityRevisionType,
   EntityType,
 } from './abstract-entity'
-import { abstractTaxonomyTermChildSchema } from './abstract-taxonomy-term-child'
 import {
   AbstractUuidPreResolver,
   abstractUuidSchema,
@@ -75,7 +74,6 @@ export * from './video'
 
 export const uuidSchema = Schema.merge(
   abstractEntitySchema,
-  abstractTaxonomyTermChildSchema,
   abstractUuidSchema,
   aliasSchema,
   appletSchema,

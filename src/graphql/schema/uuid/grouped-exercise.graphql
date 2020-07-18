@@ -1,4 +1,4 @@
-type GroupedExercise implements Uuid & Entity {
+type GroupedExercise implements AbstractUuid & AbstractEntity {
   id: Int!
   trashed: Boolean!
   instance: Instance!
@@ -10,7 +10,7 @@ type GroupedExercise implements Uuid & Entity {
   exerciseGroup: ExerciseGroup!
 }
 
-type GroupedExerciseRevision implements Uuid & EntityRevision {
+type GroupedExerciseRevision implements AbstractUuid & AbstractEntityRevision {
   id: Int!
   author: User!
   trashed: Boolean!

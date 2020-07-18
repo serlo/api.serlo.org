@@ -1,4 +1,4 @@
-type Course implements Uuid & Entity {
+type Course implements AbstractUuid & AbstractEntity {
   id: Int!
   trashed: Boolean!
   instance: Instance!
@@ -10,7 +10,7 @@ type Course implements Uuid & Entity {
   pages: [CoursePage!]!
 }
 
-type CourseRevision implements Uuid & EntityRevision {
+type CourseRevision implements AbstractUuid & AbstractEntityRevision {
   id: Int!
   author: User!
   trashed: Boolean!
