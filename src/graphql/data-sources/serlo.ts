@@ -283,15 +283,15 @@ export class SerloDataSource extends RESTDataSource {
           Authorization: `Serlo Service=${token}`,
         },
       }
-    )) as unknown
-    return await (this[setter] as (data: unknown) => Promise<T>)(data)
+    ))
+    return this.setCache(cacheKey, data)
   }
 
   private getCacheKey(path: string, instance: Instance = Instance.De) {
     return `${instance}.serlo.org${path}`
   }
 
-  public async setCache(key: string, value: string) {
+  public async setCache<T>(key: string, value: T) {
     await this.environment.cache.set(key, value)
     return value
   }
