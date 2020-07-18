@@ -4,7 +4,7 @@
 
 ```ts
 
-// @public
+// @public (undocumented)
 export type AliasInput = {
     instance: Instance;
     path: Scalars['String'];
@@ -66,14 +66,6 @@ export type ArticleRevision = Uuid & EntityRevision & {
     metaTitle: Scalars['String'];
     metaDescription: Scalars['String'];
 };
-
-// @public (undocumented)
-export enum CacheControlScope {
-    // (undocumented)
-    Private = "PRIVATE",
-    // (undocumented)
-    Public = "PUBLIC"
-}
 
 // @public (undocumented)
 export type Course = Uuid & Entity & {
@@ -291,32 +283,31 @@ export type Maybe<T> = T | null;
 // @public (undocumented)
 export type Mutation = {
     __typename?: 'Mutation';
-    _removeUuid?: Maybe<Scalars['Boolean']>;
-    _setCache?: Maybe<Scalars['Boolean']>;
     _removeCache?: Maybe<Scalars['Boolean']>;
     _removeLicense?: Maybe<Scalars['Boolean']>;
-    _setLicense?: Maybe<Scalars['Boolean']>;
-    setNotificationState?: Maybe<Scalars['Boolean']>;
-    _setNotifications?: Maybe<Scalars['Boolean']>;
-    _setNotificationEvent?: Maybe<Scalars['Boolean']>;
+    _removeUuid?: Maybe<Scalars['Boolean']>;
     _setAlias?: Maybe<Scalars['Boolean']>;
     _setApplet?: Maybe<Scalars['Boolean']>;
     _setAppletRevision?: Maybe<Scalars['Boolean']>;
     _setArticle?: Maybe<Scalars['Boolean']>;
     _setArticleRevision?: Maybe<Scalars['Boolean']>;
+    _setCache?: Maybe<Scalars['Boolean']>;
     _setCourse?: Maybe<Scalars['Boolean']>;
-    _setCourseRevision?: Maybe<Scalars['Boolean']>;
     _setCoursePage?: Maybe<Scalars['Boolean']>;
     _setCoursePageRevision?: Maybe<Scalars['Boolean']>;
+    _setCourseRevision?: Maybe<Scalars['Boolean']>;
     _setEvent?: Maybe<Scalars['Boolean']>;
     _setEventRevision?: Maybe<Scalars['Boolean']>;
     _setExercise?: Maybe<Scalars['Boolean']>;
-    _setExerciseRevision?: Maybe<Scalars['Boolean']>;
     _setExerciseGroup?: Maybe<Scalars['Boolean']>;
     _setExerciseGroupRevision?: Maybe<Scalars['Boolean']>;
+    _setExerciseRevision?: Maybe<Scalars['Boolean']>;
     _setGroupedExercise?: Maybe<Scalars['Boolean']>;
     _setGroupedExerciseRevision?: Maybe<Scalars['Boolean']>;
+    _setLicense?: Maybe<Scalars['Boolean']>;
     _setNavigation?: Maybe<Scalars['Boolean']>;
+    _setNotificationEvent?: Maybe<Scalars['Boolean']>;
+    _setNotifications?: Maybe<Scalars['Boolean']>;
     _setPage?: Maybe<Scalars['Boolean']>;
     _setPageRevision?: Maybe<Scalars['Boolean']>;
     _setSolution?: Maybe<Scalars['Boolean']>;
@@ -325,6 +316,7 @@ export type Mutation = {
     _setUser?: Maybe<Scalars['Boolean']>;
     _setVideo?: Maybe<Scalars['Boolean']>;
     _setVideoRevision?: Maybe<Scalars['Boolean']>;
+    setNotificationState?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -777,9 +769,9 @@ export type PageRevision = Uuid & {
 // @public (undocumented)
 export type Query = {
     __typename?: 'Query';
-    uuid?: Maybe<Uuid>;
     license?: Maybe<License>;
     notifications: QueryNotificationsResult;
+    uuid?: Maybe<Uuid>;
 };
 
 // @public (undocumented)
@@ -819,7 +811,6 @@ export type Scalars = {
     Int: number;
     Float: number;
     DateTime: string;
-    Upload: any;
 };
 
 // @public (undocumented)

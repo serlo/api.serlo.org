@@ -30,8 +30,9 @@ import {
   EntityRevisionType,
 } from './abstract-entity'
 import { Exercise, ExercisePayload } from './exercise'
+import typeDefs from './solution.graphql'
 
-export const solutionSchema = new Schema()
+export const solutionSchema = new Schema({}, [typeDefs])
 
 export class Solution extends Entity {
   public __typename = EntityType.Solution
@@ -86,16 +87,6 @@ addEntityResolvers({
   repository: 'solution',
   Entity: Solution,
   EntityRevision: SolutionRevision,
-  entityPayloadFields: `
-    parentId: Int!
-  `,
-  entityFields: `
-    exercise: Exercise!
-  `,
-  entityRevisionFields: `
-    content: String!
-    changes: String!
-  `,
   entitySetter: 'setSolution',
   entityRevisionSetter: 'setSolutionRevision',
 })

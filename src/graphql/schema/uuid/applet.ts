@@ -31,8 +31,9 @@ import {
   addTaxonomyTermChildResolvers,
   TaxonomyTermChild,
 } from './abstract-taxonomy-term-child'
+import typeDefs from './applet.graphql'
 
-export const appletSchema = new Schema()
+export const appletSchema = new Schema({}, [typeDefs])
 
 export class Applet extends TaxonomyTermChild {
   public __typename = EntityType.Applet
@@ -79,20 +80,6 @@ addTaxonomyTermChildResolvers({
   repository: 'applet',
   Entity: Applet,
   EntityRevision: AppletRevision,
-  entityFields: `
-    taxonomyTerms: [TaxonomyTerm!]!
-  `,
-  entityPayloadFields: `
-    taxonomyTermIds: [Int!]!
-  `,
-  entityRevisionFields: `
-    url: String!
-    title: String!
-    content: String!
-    changes: String!
-    metaTitle: String!
-    metaDescription: String!
-  `,
   entitySetter: 'setApplet',
   entityRevisionSetter: 'setAppletRevision',
 })

@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Maybe, Scalars } from '../../../types'
+import { Maybe, Scalars, PageInfo } from '../../../types'
 
 export interface Connection<T> {
   edges: Cursor<T>[]
@@ -38,11 +38,4 @@ export interface ConnectionPayload {
 export interface Cursor<T> {
   cursor: string
   node: T
-}
-
-export interface PageInfo {
-  hasNextPage: boolean
-  hasPreviousPage: boolean
-  startCursor: string | null
-  endCursor: string | null
 }

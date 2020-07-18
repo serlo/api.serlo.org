@@ -1,6 +1,6 @@
 overwrite: true
 # FIXME: this should using our *.graphql files after refactoring is done
-schema: http://localhost:3000/graphql
+schema: src/**/*.graphql
 generates:
   src/types.ts:
     plugins:

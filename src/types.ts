@@ -8,162 +8,36 @@ export type Scalars = {
   Int: number;
   Float: number;
   DateTime: string;
-  /** The `Upload` scalar type represents a file upload. */
-  Upload: any;
-};
-
-export type PageInfo = {
-  __typename?: 'PageInfo';
-  hasNextPage: Scalars['Boolean'];
-  hasPreviousPage: Scalars['Boolean'];
-  startCursor?: Maybe<Scalars['String']>;
-  endCursor?: Maybe<Scalars['String']>;
-};
-
-
-export enum Instance {
-  De = 'de',
-  En = 'en',
-  Es = 'es',
-  Fr = 'fr',
-  Hi = 'hi',
-  Ta = 'ta'
-}
-
-export type License = {
-  __typename?: 'License';
-  id: Scalars['Int'];
-  instance: Instance;
-  default: Scalars['Boolean'];
-  title: Scalars['String'];
-  url: Scalars['String'];
-  content: Scalars['String'];
-  agreement: Scalars['String'];
-  iconHref: Scalars['String'];
-};
-
-export type Notification = {
-  __typename?: 'Notification';
-  id: Scalars['Int'];
-  unread: Scalars['Boolean'];
-  event: NotificationEvent;
-};
-
-export type NotificationEvent = {
-  __typename?: 'NotificationEvent';
-  id: Scalars['Int'];
-  type: Scalars['String'];
-  instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
-  object: Uuid;
-  payload: Scalars['String'];
-};
-
-export type NotificationInput = {
-  id: Scalars['Int'];
-  unread?: Maybe<Scalars['Boolean']>;
-  eventId: Scalars['Int'];
-};
-
-export type QueryNotificationsResult = {
-  __typename?: 'QueryNotificationsResult';
-  edges: Array<NotificationCursor>;
-  nodes: Array<Notification>;
-  totalCount: Scalars['Int'];
-  pageInfo: PageInfo;
-};
-
-export type NotificationCursor = {
-  __typename?: 'NotificationCursor';
-  cursor: Scalars['String'];
-  node: Notification;
-};
-
-/**
- * Represents a Serlo.org entity (e.g. an article). An `Entity` is tied to an `Instance`, has a `License`, might have an alias
- * and is the child of `TaxonomyTerm`s
- */
-export type Entity = {
-  /** The `DateTime` the entity has been created */
-  date: Scalars['DateTime'];
-  /** The `Instance` the entity is tied to */
-  instance: Instance;
-  /** The current alias of the entity */
-  alias?: Maybe<Scalars['String']>;
-  /** The `License` of the entity */
-  license: License;
-};
-
-/** Represents a Serlo.org entity revision (e.g. a revision of an article). An `EntityRevision` is tied to an `Entity` and has an author. */
-export type EntityRevision = {
-  /** The `User` that created the entity revision */
-  author: User;
-  /** The `DateTime` the entity revision has been created */
-  date: Scalars['DateTime'];
-};
-
-export type Uuid = {
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
-};
-
-export type Query = {
-  __typename?: 'Query';
-  uuid?: Maybe<Uuid>;
-  license?: Maybe<License>;
-  notifications: QueryNotificationsResult;
-};
-
-
-export type QueryUuidArgs = {
-  alias?: Maybe<AliasInput>;
-  id?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryLicenseArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type QueryNotificationsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  unread?: Maybe<Scalars['Boolean']>;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  _removeUuid?: Maybe<Scalars['Boolean']>;
-  _setCache?: Maybe<Scalars['Boolean']>;
   _removeCache?: Maybe<Scalars['Boolean']>;
   _removeLicense?: Maybe<Scalars['Boolean']>;
-  _setLicense?: Maybe<Scalars['Boolean']>;
-  setNotificationState?: Maybe<Scalars['Boolean']>;
-  _setNotifications?: Maybe<Scalars['Boolean']>;
-  _setNotificationEvent?: Maybe<Scalars['Boolean']>;
+  _removeUuid?: Maybe<Scalars['Boolean']>;
   /** Inserts the given `Alias` into the cache. May only be called by `serlo.org` when an alias has been created or updated. */
   _setAlias?: Maybe<Scalars['Boolean']>;
   _setApplet?: Maybe<Scalars['Boolean']>;
   _setAppletRevision?: Maybe<Scalars['Boolean']>;
   _setArticle?: Maybe<Scalars['Boolean']>;
   _setArticleRevision?: Maybe<Scalars['Boolean']>;
+  _setCache?: Maybe<Scalars['Boolean']>;
   _setCourse?: Maybe<Scalars['Boolean']>;
-  _setCourseRevision?: Maybe<Scalars['Boolean']>;
   _setCoursePage?: Maybe<Scalars['Boolean']>;
   _setCoursePageRevision?: Maybe<Scalars['Boolean']>;
+  _setCourseRevision?: Maybe<Scalars['Boolean']>;
   _setEvent?: Maybe<Scalars['Boolean']>;
   _setEventRevision?: Maybe<Scalars['Boolean']>;
   _setExercise?: Maybe<Scalars['Boolean']>;
-  _setExerciseRevision?: Maybe<Scalars['Boolean']>;
   _setExerciseGroup?: Maybe<Scalars['Boolean']>;
   _setExerciseGroupRevision?: Maybe<Scalars['Boolean']>;
+  _setExerciseRevision?: Maybe<Scalars['Boolean']>;
   _setGroupedExercise?: Maybe<Scalars['Boolean']>;
   _setGroupedExerciseRevision?: Maybe<Scalars['Boolean']>;
+  _setLicense?: Maybe<Scalars['Boolean']>;
   _setNavigation?: Maybe<Scalars['Boolean']>;
+  _setNotificationEvent?: Maybe<Scalars['Boolean']>;
+  _setNotifications?: Maybe<Scalars['Boolean']>;
   /** Inserts the given `Page` into the cache. May only be called by `serlo.org` when a page has been created or updated. */
   _setPage?: Maybe<Scalars['Boolean']>;
   /** Inserts the given `PageRevision` into the cache. May only be called by `serlo.org` when a page revision has been created. */
@@ -174,17 +48,7 @@ export type Mutation = {
   _setUser?: Maybe<Scalars['Boolean']>;
   _setVideo?: Maybe<Scalars['Boolean']>;
   _setVideoRevision?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type Mutation_RemoveUuidArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type Mutation_SetCacheArgs = {
-  key: Scalars['String'];
-  value: Scalars['String'];
+  setNotificationState?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -198,38 +62,8 @@ export type Mutation_RemoveLicenseArgs = {
 };
 
 
-export type Mutation_SetLicenseArgs = {
+export type Mutation_RemoveUuidArgs = {
   id: Scalars['Int'];
-  instance: Instance;
-  default: Scalars['Boolean'];
-  title: Scalars['String'];
-  url: Scalars['String'];
-  content: Scalars['String'];
-  agreement: Scalars['String'];
-  iconHref: Scalars['String'];
-};
-
-
-export type MutationSetNotificationStateArgs = {
-  id: Scalars['Int'];
-  unread: Scalars['Boolean'];
-};
-
-
-export type Mutation_SetNotificationsArgs = {
-  userId: Scalars['Int'];
-  notifications: Array<NotificationInput>;
-};
-
-
-export type Mutation_SetNotificationEventArgs = {
-  id: Scalars['Int'];
-  type: Scalars['String'];
-  instance: Instance;
-  date: Scalars['String'];
-  actorId: Scalars['Int'];
-  objectId: Scalars['Int'];
-  payload: Scalars['String'];
 };
 
 
@@ -295,6 +129,12 @@ export type Mutation_SetArticleRevisionArgs = {
 };
 
 
+export type Mutation_SetCacheArgs = {
+  key: Scalars['String'];
+  value: Scalars['String'];
+};
+
+
 export type Mutation_SetCourseArgs = {
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -305,19 +145,6 @@ export type Mutation_SetCourseArgs = {
   licenseId: Scalars['Int'];
   taxonomyTermIds: Array<Scalars['Int']>;
   pageIds: Array<Scalars['Int']>;
-};
-
-
-export type Mutation_SetCourseRevisionArgs = {
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
-  date: Scalars['DateTime'];
-  authorId: Scalars['Int'];
-  repositoryId: Scalars['Int'];
-  title: Scalars['String'];
-  content: Scalars['String'];
-  changes: Scalars['String'];
-  metaDescription: Scalars['String'];
 };
 
 
@@ -342,6 +169,19 @@ export type Mutation_SetCoursePageRevisionArgs = {
   title: Scalars['String'];
   content: Scalars['String'];
   changes: Scalars['String'];
+};
+
+
+export type Mutation_SetCourseRevisionArgs = {
+  id: Scalars['Int'];
+  trashed: Scalars['Boolean'];
+  date: Scalars['DateTime'];
+  authorId: Scalars['Int'];
+  repositoryId: Scalars['Int'];
+  title: Scalars['String'];
+  content: Scalars['String'];
+  changes: Scalars['String'];
+  metaDescription: Scalars['String'];
 };
 
 
@@ -384,17 +224,6 @@ export type Mutation_SetExerciseArgs = {
 };
 
 
-export type Mutation_SetExerciseRevisionArgs = {
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
-  date: Scalars['DateTime'];
-  authorId: Scalars['Int'];
-  repositoryId: Scalars['Int'];
-  content: Scalars['String'];
-  changes: Scalars['String'];
-};
-
-
 export type Mutation_SetExerciseGroupArgs = {
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -409,6 +238,17 @@ export type Mutation_SetExerciseGroupArgs = {
 
 
 export type Mutation_SetExerciseGroupRevisionArgs = {
+  id: Scalars['Int'];
+  trashed: Scalars['Boolean'];
+  date: Scalars['DateTime'];
+  authorId: Scalars['Int'];
+  repositoryId: Scalars['Int'];
+  content: Scalars['String'];
+  changes: Scalars['String'];
+};
+
+
+export type Mutation_SetExerciseRevisionArgs = {
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
   date: Scalars['DateTime'];
@@ -443,9 +283,38 @@ export type Mutation_SetGroupedExerciseRevisionArgs = {
 };
 
 
+export type Mutation_SetLicenseArgs = {
+  id: Scalars['Int'];
+  instance: Instance;
+  default: Scalars['Boolean'];
+  title: Scalars['String'];
+  url: Scalars['String'];
+  content: Scalars['String'];
+  agreement: Scalars['String'];
+  iconHref: Scalars['String'];
+};
+
+
 export type Mutation_SetNavigationArgs = {
   data: Scalars['String'];
   instance: Instance;
+};
+
+
+export type Mutation_SetNotificationEventArgs = {
+  id: Scalars['Int'];
+  type: Scalars['String'];
+  instance: Instance;
+  date: Scalars['String'];
+  actorId: Scalars['Int'];
+  objectId: Scalars['Int'];
+  payload: Scalars['String'];
+};
+
+
+export type Mutation_SetNotificationsArgs = {
+  userId: Scalars['Int'];
+  notifications: Array<NotificationInput>;
 };
 
 
@@ -541,11 +410,137 @@ export type Mutation_SetVideoRevisionArgs = {
   changes: Scalars['String'];
 };
 
-/** Needed input to look up an Uuid by alias. */
-export type AliasInput = {
-  /** The `Instance` the alias should be looked up in */
+
+export type MutationSetNotificationStateArgs = {
+  id: Scalars['Int'];
+  unread: Scalars['Boolean'];
+};
+
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  hasNextPage: Scalars['Boolean'];
+  hasPreviousPage: Scalars['Boolean'];
+  startCursor?: Maybe<Scalars['String']>;
+  endCursor?: Maybe<Scalars['String']>;
+};
+
+
+export enum Instance {
+  De = 'de',
+  En = 'en',
+  Es = 'es',
+  Fr = 'fr',
+  Hi = 'hi',
+  Ta = 'ta'
+}
+
+export type License = {
+  __typename?: 'License';
+  id: Scalars['Int'];
   instance: Instance;
-  /** The path that should be looked up */
+  default: Scalars['Boolean'];
+  title: Scalars['String'];
+  url: Scalars['String'];
+  content: Scalars['String'];
+  agreement: Scalars['String'];
+  iconHref: Scalars['String'];
+};
+
+export type Query = {
+  __typename?: 'Query';
+  license?: Maybe<License>;
+  notifications: QueryNotificationsResult;
+  uuid?: Maybe<Uuid>;
+};
+
+
+export type QueryLicenseArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryNotificationsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  unread?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type QueryUuidArgs = {
+  alias?: Maybe<AliasInput>;
+  id?: Maybe<Scalars['Int']>;
+};
+
+export type Notification = {
+  __typename?: 'Notification';
+  id: Scalars['Int'];
+  unread: Scalars['Boolean'];
+  event: NotificationEvent;
+};
+
+export type NotificationEvent = {
+  __typename?: 'NotificationEvent';
+  id: Scalars['Int'];
+  type: Scalars['String'];
+  instance: Instance;
+  date: Scalars['DateTime'];
+  actor: User;
+  object: Uuid;
+  payload: Scalars['String'];
+};
+
+export type NotificationInput = {
+  id: Scalars['Int'];
+  unread?: Maybe<Scalars['Boolean']>;
+  eventId: Scalars['Int'];
+};
+
+export type QueryNotificationsResult = {
+  __typename?: 'QueryNotificationsResult';
+  edges: Array<NotificationCursor>;
+  nodes: Array<Notification>;
+  totalCount: Scalars['Int'];
+  pageInfo: PageInfo;
+};
+
+export type NotificationCursor = {
+  __typename?: 'NotificationCursor';
+  cursor: Scalars['String'];
+  node: Notification;
+};
+
+/**
+ * Represents a Serlo.org entity (e.g. an article). An `Entity` is tied to an `Instance`, has a `License`, might have an alias
+ * and is the child of `TaxonomyTerm`s
+ */
+export type Entity = {
+  /** The `DateTime` the entity has been created */
+  date: Scalars['DateTime'];
+  /** The `Instance` the entity is tied to */
+  instance: Instance;
+  /** The current alias of the entity */
+  alias?: Maybe<Scalars['String']>;
+  /** The `License` of the entity */
+  license: License;
+};
+
+/** Represents a Serlo.org entity revision (e.g. a revision of an article). An `EntityRevision` is tied to an `Entity` and has an author. */
+export type EntityRevision = {
+  /** The `User` that created the entity revision */
+  author: User;
+  /** The `DateTime` the entity revision has been created */
+  date: Scalars['DateTime'];
+};
+
+export type Uuid = {
+  id: Scalars['Int'];
+  trashed: Scalars['Boolean'];
+};
+
+export type AliasInput = {
+  instance: Instance;
   path: Scalars['String'];
 };
 
@@ -602,6 +597,30 @@ export type ArticleRevision = Uuid & EntityRevision & {
   metaDescription: Scalars['String'];
 };
 
+export type CoursePage = Uuid & Entity & {
+  __typename?: 'CoursePage';
+  id: Scalars['Int'];
+  trashed: Scalars['Boolean'];
+  instance: Instance;
+  alias?: Maybe<Scalars['String']>;
+  date: Scalars['DateTime'];
+  license: License;
+  currentRevision?: Maybe<CoursePageRevision>;
+  course: Course;
+};
+
+export type CoursePageRevision = Uuid & EntityRevision & {
+  __typename?: 'CoursePageRevision';
+  id: Scalars['Int'];
+  author: User;
+  trashed: Scalars['Boolean'];
+  date: Scalars['DateTime'];
+  coursePage: CoursePage;
+  title: Scalars['String'];
+  content: Scalars['String'];
+  changes: Scalars['String'];
+};
+
 export type Course = Uuid & Entity & {
   __typename?: 'Course';
   id: Scalars['Int'];
@@ -626,30 +645,6 @@ export type CourseRevision = Uuid & EntityRevision & {
   content: Scalars['String'];
   changes: Scalars['String'];
   metaDescription: Scalars['String'];
-};
-
-export type CoursePage = Uuid & Entity & {
-  __typename?: 'CoursePage';
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
-  instance: Instance;
-  alias?: Maybe<Scalars['String']>;
-  date: Scalars['DateTime'];
-  license: License;
-  currentRevision?: Maybe<CoursePageRevision>;
-  course: Course;
-};
-
-export type CoursePageRevision = Uuid & EntityRevision & {
-  __typename?: 'CoursePageRevision';
-  id: Scalars['Int'];
-  author: User;
-  trashed: Scalars['Boolean'];
-  date: Scalars['DateTime'];
-  coursePage: CoursePage;
-  title: Scalars['String'];
-  content: Scalars['String'];
-  changes: Scalars['String'];
 };
 
 export type Event = Uuid & Entity & {
@@ -678,30 +673,6 @@ export type EventRevision = Uuid & EntityRevision & {
   metaDescription: Scalars['String'];
 };
 
-export type Exercise = Uuid & Entity & {
-  __typename?: 'Exercise';
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
-  instance: Instance;
-  alias?: Maybe<Scalars['String']>;
-  date: Scalars['DateTime'];
-  license: License;
-  currentRevision?: Maybe<ExerciseRevision>;
-  taxonomyTerms: Array<TaxonomyTerm>;
-  solution?: Maybe<Solution>;
-};
-
-export type ExerciseRevision = Uuid & EntityRevision & {
-  __typename?: 'ExerciseRevision';
-  id: Scalars['Int'];
-  author: User;
-  trashed: Scalars['Boolean'];
-  date: Scalars['DateTime'];
-  exercise: Exercise;
-  content: Scalars['String'];
-  changes: Scalars['String'];
-};
-
 export type ExerciseGroup = Uuid & Entity & {
   __typename?: 'ExerciseGroup';
   id: Scalars['Int'];
@@ -722,6 +693,30 @@ export type ExerciseGroupRevision = Uuid & EntityRevision & {
   trashed: Scalars['Boolean'];
   date: Scalars['DateTime'];
   exerciseGroup: ExerciseGroup;
+  content: Scalars['String'];
+  changes: Scalars['String'];
+};
+
+export type Exercise = Uuid & Entity & {
+  __typename?: 'Exercise';
+  id: Scalars['Int'];
+  trashed: Scalars['Boolean'];
+  instance: Instance;
+  alias?: Maybe<Scalars['String']>;
+  date: Scalars['DateTime'];
+  license: License;
+  currentRevision?: Maybe<ExerciseRevision>;
+  taxonomyTerms: Array<TaxonomyTerm>;
+  solution?: Maybe<Solution>;
+};
+
+export type ExerciseRevision = Uuid & EntityRevision & {
+  __typename?: 'ExerciseRevision';
+  id: Scalars['Int'];
+  author: User;
+  trashed: Scalars['Boolean'];
+  date: Scalars['DateTime'];
+  exercise: Exercise;
   content: Scalars['String'];
   changes: Scalars['String'];
 };
@@ -889,9 +884,3 @@ export type VideoRevision = Uuid & EntityRevision & {
   content: Scalars['String'];
   changes: Scalars['String'];
 };
-
-export enum CacheControlScope {
-  Public = 'PUBLIC',
-  Private = 'PRIVATE'
-}
-

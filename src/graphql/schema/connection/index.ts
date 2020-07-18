@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Schema } from '../utils'
-import { typeDefs } from './type-defs'
+import typeDefs from './types.graphql'
 
 export * from './types'
 export * from './utils'

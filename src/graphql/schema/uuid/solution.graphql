@@ -1,0 +1,43 @@
+type Solution implements Uuid & Entity {
+  id: Int!
+  trashed: Boolean!
+  instance: Instance!
+  alias: String
+  date: DateTime!
+  license: License!
+  currentRevision: SolutionRevision
+  exercise: Exercise!
+}
+
+type SolutionRevision implements Uuid & EntityRevision {
+  id: Int!
+  author: User!
+  trashed: Boolean!
+  date: DateTime!
+  solution: Solution!
+  content: String!
+  changes: String!
+}
+
+extend type Mutation {
+  _setSolution(
+    id: Int!
+    trashed: Boolean!
+    instance: Instance!
+    alias: String
+    date: DateTime!
+    currentRevisionId: Int
+    licenseId: Int!
+    parentId: Int!
+  ): Boolean
+
+  _setSolutionRevision(
+    id: Int!
+    trashed: Boolean!
+    date: DateTime!
+    authorId: Int!
+    repositoryId: Int!
+    content: String!
+    changes: String!
+  ): Boolean
+}

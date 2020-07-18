@@ -19,13 +19,14 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ForbiddenError, gql } from 'apollo-server'
+import { ForbiddenError } from 'apollo-server'
 
 import { Instance, Scalars } from '../../../types'
 import { Service } from '../types'
 import { Schema } from '../utils'
+import typeDefs from './alias.graphql'
 
-export const aliasSchema = new Schema()
+export const aliasSchema = new Schema({}, [typeDefs])
 
 export function decodePath(path: string) {
   return decodeURIComponent(path)
@@ -42,21 +43,6 @@ export interface AliasInput {
   instance: Instance
   path: string
 }
-aliasSchema.addTypeDef(gql`
-  """
-  Needed input to look up an Uuid by alias.
-  """
-  input AliasInput {
-    """
-    The \`Instance\` the alias should be looked up in
-    """
-    instance: Instance!
-    """
-    The path that should be looked up
-    """
-    path: String!
-  }
-`)
 
 /**
  * mutation _setAlias
@@ -79,32 +65,3 @@ export interface AliasPayload {
   source: string
   timestamp: Scalars['DateTime']
 }
-aliasSchema.addTypeDef(gql`
-  extend type Mutation {
-    """
-    Inserts the given \`Alias\` into the cache. May only be called by \`serlo.org\` when an alias has been created or updated.
-    """
-    _setAlias(
-      """
-      The id the of \`Uuid\` the alias links to
-      """
-      id: Int!
-      """
-      The \`Instance\` the alias is tied to
-      """
-      instance: Instance!
-      """
-      The path of the alias
-      """
-      path: String!
-      """
-      The path the alias links to
-      """
-      source: String!
-      """
-      The \`DateTime\` the alias has been created
-      """
-      timestamp: DateTime!
-    ): Boolean
-  }
-`)

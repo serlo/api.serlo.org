@@ -1,0 +1,14 @@
+type Navigation {
+  data: String!
+  path: [NavigationNode!]!
+}
+
+type NavigationNode {
+  label: String!
+  url: String
+  id: Int
+}
+
+extend type Mutation {
+  _setNavigation(data: String!, instance: Instance!): Boolean
+}
