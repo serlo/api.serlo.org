@@ -36,18 +36,4 @@ export const typeDefs = gql`
   extend type Query {
     license(id: Int!): License
   }
-
-  extend type Mutation {
-    _removeLicense(id: Int!): Boolean
-    _setLicense(
-      id: Int!
-      instance: Instance!
-      default: Boolean!
-      title: String!
-      url: String!
-      content: String!
-      agreement: String!
-      iconHref: String!
-    ): Boolean
-  }
 `

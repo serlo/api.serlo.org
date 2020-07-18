@@ -77,34 +77,4 @@ export const resolvers: NotificationResolvers = {
       })
     },
   },
-  Mutation: {
-    async setNotificationState(_parent, payload, { dataSources, user }) {
-      if (user === null) throw new AuthenticationError('You are not logged in')
-      await dataSources.serlo.setNotificationState({
-        id: payload.id,
-        userId: user,
-        unread: payload.unread,
-      })
-    },
-    async _setNotifications(_parent, payload, { dataSources, service }) {
-      if (service !== 'serlo.org') {
-        throw new ForbiddenError(
-          'You do not have the permissions to set notifications'
-        )
-      }
-      await dataSources.serlo.setNotifications(payload)
-    },
-    async _setNotificationEvent(
-      _parent,
-      notificationEvent,
-      { dataSources, service }
-    ) {
-      if (service !== 'serlo.org') {
-        throw new ForbiddenError(
-          'You do not have the permissions to set notifications'
-        )
-      }
-      await dataSources.serlo.setNotificationEvent(notificationEvent)
-    },
-  },
 }

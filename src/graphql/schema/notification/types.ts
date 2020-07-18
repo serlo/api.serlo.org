@@ -69,9 +69,4 @@ export interface NotificationResolvers {
       Connection<Notification>
     >
   }
-  Mutation: {
-    setNotificationState: MutationResolver<SetNotificationStatePayload>
-    _setNotifications: MutationResolver<NotificationsPayload>
-    _setNotificationEvent: MutationResolver<NotificationEventPayload>
-  }
 }

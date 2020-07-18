@@ -66,7 +66,4 @@ export interface TaxonomyTermResolvers {
     children: Resolver<TaxonomyTerm, never, Uuid[]>
     navigation: Resolver<TaxonomyTerm, never, Navigation>
   }
-  Mutation: {
-    _setTaxonomyTerm: MutationResolver<TaxonomyTermPayload>
-  }
 }

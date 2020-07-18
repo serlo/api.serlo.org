@@ -48,29 +48,6 @@ export const typeDefs = gql`
     ): NotificationsResult!
   }
 
-  extend type Mutation {
-    setNotificationState(id: Int!, unread: Boolean!): Boolean
-    _setNotifications(
-      userId: Int!
-      notifications: [NotificationInput!]!
-    ): Boolean
-    _setNotificationEvent(
-      id: Int!
-      type: String!
-      instance: Instance!
-      date: String!
-      actorId: Int!
-      objectId: Int!
-      payload: String!
-    ): Boolean
-  }
-
-  input NotificationInput {
-    id: Int!
-    unread: Boolean
-    eventId: Int!
-  }
-
   type NotificationsResult {
     edges: [NotificationCursor!]!
     nodes: [Notification!]!

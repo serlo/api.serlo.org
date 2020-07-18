@@ -30,22 +30,4 @@ export const resolvers: LicenseResolvers = {
       return dataSources.serlo.getLicense({ id })
     },
   },
-  Mutation: {
-    async _removeLicense(_parent, { id }, { dataSources, service }) {
-      if (service !== Service.Serlo) {
-        throw new ForbiddenError(
-          'You do not have the permissions to remove a license'
-        )
-      }
-      await dataSources.serlo.removeLicense({ id })
-    },
-    async _setLicense(_parent, license, { dataSources, service }) {
-      if (service !== Service.Serlo) {
-        throw new ForbiddenError(
-          'You do not have the permissions to set a license'
-        )
-      }
-      await dataSources.serlo.setLicense(license)
-    },
-  },
 }
