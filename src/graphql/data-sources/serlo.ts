@@ -70,7 +70,11 @@ import {
   VideoPayload,
   VideoRevisionPayload,
 } from '../schema/uuid'
-import { Navigation, NavigationPayload } from '../schema/uuid/navigation'
+import {
+  Navigation,
+  NavigationPayload,
+  NodeData,
+} from '../schema/uuid/navigation'
 
 export class SerloDataSource extends RESTDataSource {
   public constructor(private environment: Environment) {
@@ -153,19 +157,18 @@ export class SerloDataSource extends RESTDataSource {
     }
 
     return {
-      data: JSON.stringify(data[treeIndex]),
+      data: data[treeIndex],
       path,
     }
   }
 
-  public async setNavigation(
-    payload: NavigationPayload
-  ): Promise<{
+  public async setNavigation({
+    data,
+    instance,
+  }: NavigationPayload): Promise<{
     data: NodeData[]
     leafs: Record<string, number>
   }> {
-    const data = JSON.parse(payload.data) as NodeData[]
-
     const leafs: Record<string, number> = {}
 
     const findLeafs = (node: NodeData): number[] => {
@@ -186,7 +189,7 @@ export class SerloDataSource extends RESTDataSource {
       leafs,
     }
 
-    const cacheKey = this.getCacheKey(`/api/navigation`, payload.instance)
+    const cacheKey = this.getCacheKey(`/api/navigation`, instance)
     await this.environment.cache.set(cacheKey, value)
     return value
   }
@@ -523,7 +526,7 @@ export class SerloDataSource extends RESTDataSource {
     return `${instance}.serlo.org${path}`
   }
 
-  public async setCache(key: string, value: string) {
+  public async setCache<T>(key: string, value: T) {
     await this.environment.cache.set(key, value)
     return value
   }
@@ -531,11 +534,4 @@ export class SerloDataSource extends RESTDataSource {
   public async removeCache(key: string) {
     await this.environment.cache.set(key, null)
   }
-}
-
-interface NodeData {
-  label: string
-  id?: number
-  url?: string
-  children?: NodeData[]
 }

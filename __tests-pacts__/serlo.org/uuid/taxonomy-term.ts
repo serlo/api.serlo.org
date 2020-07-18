@@ -140,7 +140,7 @@ test('by id (subject, w/ navigation)', async () => {
         ],
 
         navigation: {
-          data: JSON.stringify((JSON.parse(navigation.data) as unknown[])[0]),
+          data: navigation.data[0],
           path: [
             {
               label: 'Mathematik',

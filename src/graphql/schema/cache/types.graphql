@@ -1,4 +1,4 @@
 extend type Mutation {
-  _setCache(key: String!, value: String!): Boolean
+  _setCache(key: String!, value: JSON!): Boolean
   _removeCache(key: String!): Boolean
 }

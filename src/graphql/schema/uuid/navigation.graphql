@@ -1,5 +1,5 @@
 type Navigation {
-  data: String!
+  data: JSON!
   path: [NavigationNode!]!
 }
 
@@ -10,5 +10,5 @@ type NavigationNode {
 }
 
 extend type Mutation {
-  _setNavigation(data: String!, instance: Instance!): Boolean
+  _setNavigation(data: JSON!, instance: Instance!): Boolean
 }

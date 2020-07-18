@@ -32,14 +32,14 @@ export function createSetCacheMutation(variables: {
 }) {
   return {
     mutation: gql`
-      mutation setCache($key: String!, $value: String!) {
+      mutation setCache($key: String!, $value: JSON!) {
         _setCache(key: $key, value: $value)
       }
     `,
     variables: {
       key: variables.key,
       // The consumer of the API should pass the value as a JSON-stringified string
-      value: JSON.stringify(variables.value),
+      value: variables.value,
     },
   }
 }

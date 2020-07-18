@@ -29,7 +29,7 @@ import typeDefs from './navigation.graphql'
 export const navigationSchema = new Schema({}, [typeDefs])
 
 export interface Navigation {
-  data: string
+  data: NodeData
   path: NavigationNode[]
 }
 
@@ -54,13 +54,21 @@ navigationSchema.addMutation<unknown, NavigationPayload, null>(
   }
 )
 export interface NavigationPayload {
-  data: string
+  data: NodeData[]
   instance: Instance
 }
+
+export interface NodeData {
+  label: string
+  id?: number
+  url?: string
+  children?: NodeData[]
+}
+
 export function setNavigation(variables: NavigationPayload) {
   return {
     mutation: gql`
-      mutation setNavigation($data: String!, $instance: Instance!) {
+      mutation setNavigation($data: JSON!, $instance: Instance!) {
         _setNavigation(data: $data, instance: $instance)
       }
     `,

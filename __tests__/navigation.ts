@@ -53,7 +53,7 @@ describe('Page', () => {
     await assertSuccessfulGraphQLMutation({
       ...setNavigation({
         instance: Instance.De,
-        data: JSON.stringify([]),
+        data: [],
       }),
       client,
     })
@@ -143,7 +143,7 @@ describe('Page', () => {
     await assertSuccessfulGraphQLMutation({
       ...setNavigation({
         instance: Instance.De,
-        data: JSON.stringify([
+        data: [
           {
             label: 'Mathematik',
             id: subjectHomepage.id,
@@ -159,7 +159,7 @@ describe('Page', () => {
               },
             ],
           },
-        ]),
+        ],
       }),
       client,
     })
@@ -224,7 +224,7 @@ describe('Taxonomy Term', () => {
     await assertSuccessfulGraphQLMutation({
       ...setNavigation({
         instance: Instance.De,
-        data: JSON.stringify([]),
+        data: [],
       }),
       client,
     })
