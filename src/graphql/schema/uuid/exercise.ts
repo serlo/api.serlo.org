@@ -99,7 +99,5 @@ addTaxonomyTermChildResolvers({
   entityRevisionFields: `
     content: String!
     changes: String!
-  `,
-  entitySetter: 'setExercise',
-  entityRevisionSetter: 'setExerciseRevision',
+  `
 })

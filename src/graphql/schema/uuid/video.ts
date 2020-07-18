@@ -82,7 +82,5 @@ addTaxonomyTermChildResolvers({
     title: String!
     content: String!
     changes: String!
-  `,
-  entitySetter: 'setVideo',
-  entityRevisionSetter: 'setVideoRevision',
+  `
 })

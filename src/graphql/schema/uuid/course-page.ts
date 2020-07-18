@@ -94,7 +94,5 @@ addEntityResolvers({
     title: String!
     content: String!
     changes: String!
-  `,
-  entitySetter: 'setCoursePage',
-  entityRevisionSetter: 'setCoursePageRevision',
+  `
 })

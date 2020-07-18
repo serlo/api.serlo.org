@@ -93,7 +93,5 @@ addEntityResolvers({
   entityRevisionFields: `
     content: String!
     changes: String!
-  `,
-  entitySetter: 'setSolution',
-  entityRevisionSetter: 'setSolutionRevision',
+  `
 })

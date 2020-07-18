@@ -109,7 +109,5 @@ addEntityResolvers({
   entityRevisionFields: `
     content: String!
     changes: String!
-  `,
-  entitySetter: 'setGroupedExercise',
-  entityRevisionSetter: 'setGroupedExerciseRevision',
+  `
 })

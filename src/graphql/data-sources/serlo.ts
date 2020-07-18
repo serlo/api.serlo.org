@@ -67,6 +67,7 @@ import {
 import { Navigation, NavigationPayload } from '../schema/uuid/navigation'
 
 export class SerloDataSource extends RESTDataSource {
+
   public constructor(private environment: Environment) {
     super()
   }
@@ -84,12 +85,6 @@ export class SerloDataSource extends RESTDataSource {
       instance,
       setter: 'setAlias',
     })
-  }
-
-  public async setAlias(alias: AliasPayload) {
-    const cacheKey = this.getCacheKey(`/api/alias${alias.path}`, alias.instance)
-    await this.environment.cache.set(cacheKey, alias)
-    return alias
   }
 
   public async getNavigation({
@@ -192,17 +187,6 @@ export class SerloDataSource extends RESTDataSource {
     })
   }
 
-  public async setLicense(license: License) {
-    const cacheKey = this.getCacheKey(`/api/license/${license.id}`)
-    await this.environment.cache.set(cacheKey, license)
-    return license
-  }
-
-  public async removeLicense({ id }: { id: number }) {
-    const cacheKey = this.getCacheKey(`/api/license/${id}`)
-    await this.environment.cache.set(cacheKey, null)
-  }
-
   public async getUuid<T extends UuidPayload>({
     id,
   }: {
@@ -213,184 +197,6 @@ export class SerloDataSource extends RESTDataSource {
       setter: 'setUuid',
     })
   }
-
-  public async setUuid<T extends UuidPayload>(payload: T): Promise<T> {
-    const cacheKey = this.getCacheKey(`/api/uuid/${payload.id}`)
-    await this.environment.cache.set(cacheKey, payload)
-    return payload
-  }
-
-  public async removeUuid({ id }: { id: number }) {
-    const cacheKey = this.getCacheKey(`/api/uuid/${id}`)
-    await this.environment.cache.set(cacheKey, null)
-  }
-
-  public async setApplet(applet: AppletPayload) {
-    return this.setUuid({ ...applet, discriminator: 'entity', type: 'applet' })
-  }
-
-  public async setAppletRevision(appletRevision: AppletRevisionPayload) {
-    return this.setUuid({
-      ...appletRevision,
-      discriminator: 'entityRevision',
-      type: 'applet',
-    })
-  }
-
-  public async setArticle(article: ArticlePayload) {
-    return this.setUuid({
-      ...article,
-      discriminator: 'entity',
-      type: 'article',
-    })
-  }
-
-  public async setArticleRevision(articleRevision: ArticleRevisionPayload) {
-    return this.setUuid({
-      ...articleRevision,
-      discriminator: 'entityRevision',
-      type: 'article',
-    })
-  }
-
-  public async setCourse(course: CoursePayload) {
-    return this.setUuid({ ...course, discriminator: 'entity', type: 'course' })
-  }
-
-  public async setCourseRevision(courseRevision: CourseRevisionPayload) {
-    return this.setUuid({
-      ...courseRevision,
-      discriminator: 'entityRevision',
-      type: 'course',
-    })
-  }
-
-  public async setCoursePage(coursePage: CoursePagePayload) {
-    return this.setUuid({
-      ...coursePage,
-      discriminator: 'entity',
-      type: 'coursePage',
-    })
-  }
-
-  public async setCoursePageRevision(
-    coursePageRevision: CoursePageRevisionPayload
-  ) {
-    return this.setUuid({
-      ...coursePageRevision,
-      discriminator: 'entityRevision',
-      type: 'coursePage',
-    })
-  }
-
-  public async setEvent(event: EventPayload) {
-    return this.setUuid({ ...event, discriminator: 'entity', type: 'event' })
-  }
-
-  public async setEventRevision(eventRevision: EventRevisionPayload) {
-    return this.setUuid({
-      ...eventRevision,
-      discriminator: 'entityRevision',
-      type: 'event',
-    })
-  }
-
-  public async setExercise(exercise: ExercisePayload) {
-    return this.setUuid({
-      ...exercise,
-      discriminator: 'entity',
-      type: 'exercise',
-    })
-  }
-
-  public async setExerciseRevision(exerciseRevision: ExerciseRevisionPayload) {
-    return this.setUuid({
-      ...exerciseRevision,
-      discriminator: 'entityRevision',
-      type: 'exercise',
-    })
-  }
-
-  public async setExerciseGroup(exerciseGroup: ExerciseGroupPayload) {
-    return this.setUuid({
-      ...exerciseGroup,
-      discriminator: 'entity',
-      type: 'exerciseGroup',
-    })
-  }
-
-  public async setExerciseGroupRevision(
-    exerciseGroupRevision: ExerciseGroupRevisionPayload
-  ) {
-    return this.setUuid({
-      ...exerciseGroupRevision,
-      discriminator: 'entityRevision',
-      type: 'exerciseGroup',
-    })
-  }
-
-  public async setGroupedExercise(groupedExercise: GroupedExercisePayload) {
-    return this.setUuid({
-      ...groupedExercise,
-      discriminator: 'entity',
-      type: 'groupedExercise',
-    })
-  }
-
-  public async setGroupedExerciseRevision(
-    groupedExerciseRevision: GroupedExerciseRevisionPayload
-  ) {
-    return this.setUuid({
-      ...groupedExerciseRevision,
-      discriminator: 'entityRevision',
-      type: 'groupedExercise',
-    })
-  }
-
-  public async setPage(page: PagePayload) {
-    return this.setUuid({ ...page, discriminator: 'page' })
-  }
-
-  public async setPageRevision(pageRevision: PageRevisionPayload) {
-    return this.setUuid({ ...pageRevision, discriminator: 'pageRevision' })
-  }
-
-  public async setSolution(solution: SolutionPayload) {
-    return this.setUuid({
-      ...solution,
-      discriminator: 'entity',
-      type: 'solution',
-    })
-  }
-
-  public async setSolutionRevision(solutionRevision: SolutionRevisionPayload) {
-    return this.setUuid({
-      ...solutionRevision,
-      discriminator: 'entityRevision',
-      type: 'solution',
-    })
-  }
-
-  public async setTaxonomyTerm(taxonomyTerm: TaxonomyTermPayload) {
-    return this.setUuid({ ...taxonomyTerm, discriminator: 'taxonomyTerm' })
-  }
-
-  public async setUser(user: UserPayload) {
-    return this.setUuid({ ...user, discriminator: 'user' })
-  }
-
-  public async setVideo(video: VideoPayload) {
-    return this.setUuid({ ...video, discriminator: 'entity', type: 'video' })
-  }
-
-  public async setVideoRevision(videoRevision: VideoRevisionPayload) {
-    return this.setUuid({
-      ...videoRevision,
-      discriminator: 'entityRevision',
-      type: 'video',
-    })
-  }
-
   public async getNotificationEvent({
     id,
   }: {
@@ -400,12 +206,6 @@ export class SerloDataSource extends RESTDataSource {
       path: `/api/event/${id}`,
       setter: 'setNotificationEvent',
     })
-  }
-
-  public async setNotificationEvent(event: NotificationEventPayload) {
-    const cacheKey = this.getCacheKey(`/api/event/${event.id}`)
-    await this.environment.cache.set(cacheKey, event)
-    return event
   }
 
   public async getNotifications({
@@ -423,44 +223,6 @@ export class SerloDataSource extends RESTDataSource {
       // Sometimes, Zend serializes an array as an object... This line ensures that we have an array.
       notifications: Object.values(response.notifications),
     }
-  }
-
-  public async setNotifications(notifications: NotificationsPayload) {
-    const cacheKey = this.getCacheKey(
-      `/api/notifications/${notifications.userId}`
-    )
-    await this.environment.cache.set(cacheKey, notifications)
-    return notifications
-  }
-
-  public async setNotificationState(notificationState: {
-    id: number
-    userId: number
-    unread: boolean
-  }) {
-    const body = {
-      userId: notificationState.userId,
-      unread: notificationState.unread,
-    }
-    await this.customPost({
-      path: `/api/set-notification-state/${notificationState.id}`,
-      body,
-    })
-    const { notifications } = await this.getNotifications({
-      id: notificationState.userId,
-    })
-    const modifiedNotifications = notifications.map(
-      (notification: NotificationPayload) => {
-        if (notification.id === notificationState.id) {
-          return { ...notification, unread: notificationState.unread }
-        }
-        return notification
-      }
-    )
-    await this.setNotifications({
-      notifications: modifiedNotifications,
-      userId: notificationState.userId,
-    })
   }
 
   private async customPost<

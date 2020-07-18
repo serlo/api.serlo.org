@@ -23,9 +23,7 @@ import { gql } from 'apollo-server'
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 
-import {
-  notifications,
-} from '../../__fixtures__/notification'
+import { notifications } from '../../__fixtures__/notification'
 import { user } from '../../__fixtures__/uuid'
 import { Service } from '../../src/graphql/schema/types'
 import {
