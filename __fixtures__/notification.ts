@@ -49,16 +49,3 @@ export const notifications: NotificationsPayload = {
   notifications: [notification],
   userId: 2,
 }
-
-export function createSetNotificationStateMutation(
-  variables: SetNotificationStatePayload
-) {
-  return {
-    mutation: gql`
-      mutation setNotificationState($id: Int!, $unread: Boolean!) {
-        setNotificationState(id: $id, unread: $unread)
-      }
-    `,
-    variables,
-  }
-}

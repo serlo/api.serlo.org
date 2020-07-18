@@ -82,16 +82,6 @@ export const resolvers: TaxonomyTermResolvers = {
       }
     },
   },
-  Mutation: {
-    async _setTaxonomyTerm(_parent, payload, { dataSources, service }) {
-      if (service !== Service.Serlo) {
-        throw new ForbiddenError(
-          `You do not have the permissions to set a taxonomy term`
-        )
-      }
-      await dataSources.serlo.setTaxonomyTerm(payload)
-    },
-  },
 }
 
 async function resolveTaxonomyTermPath(

@@ -203,96 +203,13 @@ pageSchema.addTypeDef(gql`
   }
 `)
 
-/**
- * mutation _setPage
- */
-pageSchema.addMutation<unknown, PagePayload, null>(
-  '_setPage',
-  async (_parent, payload, { dataSources, service }) => {
-    if (service !== Service.Serlo) {
-      throw new ForbiddenError(`You do not have the permissions to set a page`)
-    }
-    await dataSources.serlo.setPage(payload)
-  }
-)
 export interface PagePayload extends UuidPayload {
   instance: Instance
   alias: string | null
   currentRevisionId: number | null
   licenseId: number
 }
-pageSchema.addTypeDef(gql`
-  extend type Mutation {
-    """
-    Inserts the given \`Page\` into the cache. May only be called by \`serlo.org\` when a page has been created or updated.
-    """
-    _setPage(
-      """
-      The ID of the page
-      """
-      id: Int!
-      """
-      \`true\` iff the page has been trashed
-      """
-      trashed: Boolean!
-      """
-      The \`Instance\` the page is tied to
-      """
-      instance: Instance!
-      """
-      The current alias of the page
-      """
-      alias: String
-      """
-      The ID of the current revision
-      """
-      currentRevisionId: Int
-      """
-      The ID of the license
-      """
-      licenseId: Int!
-    ): Boolean
-  }
-`)
-export function setPage(variables: PagePayload) {
-  return {
-    mutation: gql`
-      mutation setPage(
-        $id: Int!
-        $trashed: Boolean!
-        $instance: Instance!
-        $alias: String
-        $currentRevisionId: Int
-        $licenseId: Int!
-      ) {
-        _setPage(
-          id: $id
-          trashed: $trashed
-          instance: $instance
-          alias: $alias
-          currentRevisionId: $currentRevisionId
-          licenseId: $licenseId
-        )
-      }
-    `,
-    variables,
-  }
-}
 
-/**
- * mutation _setPageRevision
- */
-pageSchema.addMutation<unknown, PageRevisionPayload, null>(
-  '_setPageRevision',
-  async (_parent, payload, { dataSources, service }) => {
-    if (service !== Service.Serlo) {
-      throw new ForbiddenError(
-        `You do not have the permissions to set a page revision`
-      )
-    }
-    await dataSources.serlo.setPageRevision(payload)
-  }
-)
 export interface PageRevisionPayload extends UuidPayload {
   title: string
   content: string
@@ -300,40 +217,3 @@ export interface PageRevisionPayload extends UuidPayload {
   authorId: number
   repositoryId: number
 }
-pageSchema.addTypeDef(gql`
-  extend type Mutation {
-    """
-    Inserts the given \`PageRevision\` into the cache. May only be called by \`serlo.org\` when a page revision has been created.
-    """
-    _setPageRevision(
-      """
-      The ID of the page revision
-      """
-      id: Int!
-      """
-      \`true\` iff the page revision has been trashed
-      """
-      trashed: Boolean!
-      """
-      The value of the title field
-      """
-      title: String!
-      """
-      The value of the content field
-      """
-      content: String!
-      """
-      The \`DateTime\` the page revision has been created
-      """
-      date: DateTime!
-      """
-      The ID of the \`User\` that created the page revision
-      """
-      authorId: Int!
-      """
-      The ID of the \`Page\`
-      """
-      repositoryId: Int!
-    ): Boolean
-  }
-`)

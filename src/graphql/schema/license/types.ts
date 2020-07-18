@@ -39,8 +39,4 @@ export interface LicenseResolvers {
   Query: {
     license: QueryResolver<{ id: number }, License>
   }
-  Mutation: {
-    _removeLicense: MutationResolver<{ id: number }>
-    _setLicense: MutationResolver<LicensePayload>
-  }
 }
