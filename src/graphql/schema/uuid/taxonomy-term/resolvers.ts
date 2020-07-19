@@ -19,10 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ForbiddenError } from 'apollo-server'
-
 import { AbstractUuidPayload, resolveAbstractUuid } from '..'
-import { Context, Service } from '../../types'
+import { Context } from '../../types'
 import { Uuid } from '../abstract-uuid'
 import {
   TaxonomyTerm,

@@ -94,5 +94,5 @@ addEntityResolvers({
     title: String!
     content: String!
     changes: String!
-  `
+  `,
 })

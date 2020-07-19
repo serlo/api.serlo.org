@@ -29,45 +29,19 @@ import { Instance } from '../schema/instance'
 import { License } from '../schema/license'
 import {
   NotificationEventPayload,
-  NotificationPayload,
   NotificationsPayload,
 } from '../schema/notification'
 import { Service } from '../schema/types'
 import {
   AliasPayload,
-  AppletPayload,
-  AppletRevisionPayload,
-  ArticlePayload,
-  ArticleRevisionPayload,
-  CoursePagePayload,
-  CoursePageRevisionPayload,
-  CoursePayload,
-  CourseRevisionPayload,
   decodePath,
   encodePath,
   EntityPayload,
-  EventPayload,
-  EventRevisionPayload,
-  ExerciseGroupPayload,
-  ExerciseGroupRevisionPayload,
-  ExercisePayload,
-  ExerciseRevisionPayload,
-  GroupedExercisePayload,
-  GroupedExerciseRevisionPayload,
-  PagePayload,
-  PageRevisionPayload,
-  SolutionPayload,
-  SolutionRevisionPayload,
-  TaxonomyTermPayload,
-  UserPayload,
   UuidPayload,
-  VideoPayload,
-  VideoRevisionPayload,
 } from '../schema/uuid'
 import { Navigation, NavigationPayload } from '../schema/uuid/navigation'
 
 export class SerloDataSource extends RESTDataSource {
-
   public constructor(private environment: Environment) {
     super()
   }
@@ -83,7 +57,6 @@ export class SerloDataSource extends RESTDataSource {
     return this.cacheAwareGet<AliasPayload>({
       path: `/api/alias${cleanPath}`,
       instance,
-      setter: 'setAlias',
     })
   }
 
@@ -100,7 +73,6 @@ export class SerloDataSource extends RESTDataSource {
     }>({
       path: `/api/navigation`,
       instance,
-      setter: 'setNavigation',
     })
     const treeIndex = leafs[id]
 
@@ -181,10 +153,7 @@ export class SerloDataSource extends RESTDataSource {
   }
 
   public async getLicense({ id }: { id: number }): Promise<License> {
-    return this.cacheAwareGet({
-      path: `/api/license/${id}`,
-      setter: 'setLicense',
-    })
+    return this.cacheAwareGet({ path: `/api/license/${id}` })
   }
 
   public async getUuid<T extends UuidPayload>({
@@ -192,20 +161,14 @@ export class SerloDataSource extends RESTDataSource {
   }: {
     id: number
   }): Promise<T> {
-    return this.cacheAwareGet<T>({
-      path: `/api/uuid/${id}`,
-      setter: 'setUuid',
-    })
+    return this.cacheAwareGet<T>({ path: `/api/uuid/${id}` })
   }
   public async getNotificationEvent({
     id,
   }: {
     id: number
   }): Promise<NotificationEventPayload> {
-    return this.cacheAwareGet({
-      path: `/api/event/${id}`,
-      setter: 'setNotificationEvent',
-    })
+    return this.cacheAwareGet({ path: `/api/event/${id}` })
   }
 
   public async getNotifications({
@@ -216,7 +179,6 @@ export class SerloDataSource extends RESTDataSource {
   }): Promise<NotificationsPayload> {
     const response = await this.cacheAwareGet<NotificationsPayload>({
       path: `/api/notifications/${id}`,
-      setter: 'setNotifications',
     })
     return {
       ...response,
@@ -260,11 +222,9 @@ export class SerloDataSource extends RESTDataSource {
   >({
     path,
     instance = Instance.De,
-    setter,
   }: {
     path: string
     instance?: Instance
-    setter: SerloDataSource[K]
   }): Promise<T> {
     const cacheKey = this.getCacheKey(path, instance)
     const cache = await this.environment.cache.get<T>(cacheKey)
@@ -275,7 +235,7 @@ export class SerloDataSource extends RESTDataSource {
       audience: Service.Serlo,
       issuer: 'api.serlo.org',
     })
-    const data = (await super.get(
+    const data = await super.get(
       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
       {},
       {
@@ -283,7 +243,7 @@ export class SerloDataSource extends RESTDataSource {
           Authorization: `Serlo Service=${token}`,
         },
       }
-    ))
+    )
     return this.setCache(cacheKey, data)
   }
 

@@ -19,12 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ForbiddenError, gql } from 'apollo-server'
+import { gql } from 'apollo-server'
 
 import { DateTime } from '../date-time'
 import { Instance } from '../instance'
 import { License } from '../license'
-import { Service, Context } from '../types'
+import { Context } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
 import { DiscriminatorType, Uuid, UuidPayload } from './abstract-uuid'
 import { encodePath } from './alias'

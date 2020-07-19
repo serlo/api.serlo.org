@@ -99,5 +99,5 @@ addTaxonomyTermChildResolvers({
   entityRevisionFields: `
     content: String!
     changes: String!
-  `
+  `,
 })

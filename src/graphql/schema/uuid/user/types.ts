@@ -36,4 +36,3 @@ export interface UserPayload extends UuidPayload {
   lastLogin: DateTime | null
   description: string | null
 }
-

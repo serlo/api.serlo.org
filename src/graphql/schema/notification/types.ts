@@ -21,7 +21,7 @@
  */
 import { Connection, ConnectionPayload } from '../connection'
 import { Instance } from '../instance'
-import { MutationResolver, QueryResolver, Resolver } from '../types'
+import { QueryResolver, Resolver } from '../types'
 import { Uuid } from '../uuid/abstract-uuid'
 import { User } from '../uuid/user'
 
