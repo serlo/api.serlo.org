@@ -210,7 +210,7 @@ function mockSpreadsheetResponse({
   range: string
   majorDimension: string
   status?: number
-  response?: object
+  response?: Record<string, unknown>
 }) {
   const url =
     `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}` +
