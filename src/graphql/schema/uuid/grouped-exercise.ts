@@ -109,5 +109,5 @@ addEntityResolvers({
   entityRevisionFields: `
     content: String!
     changes: String!
-  `
+  `,
 })

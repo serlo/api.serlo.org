@@ -25,7 +25,4 @@ import { typeDefs } from './type-defs'
 export * from './types'
 export * from './utils'
 
-export const userSchema = new Schema(
-  undefined,
-  [typeDefs]
-)
+export const userSchema = new Schema(undefined, [typeDefs])

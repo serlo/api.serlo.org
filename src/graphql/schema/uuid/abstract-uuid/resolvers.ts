@@ -19,10 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ForbiddenError } from 'apollo-server'
-
 import { AbstractUuidPayload, resolveAbstractUuid } from '..'
-import { Service } from '../../types'
 import { UuidResolvers } from './types'
 
 export const resolvers: UuidResolvers = {
@@ -39,5 +36,5 @@ export const resolvers: UuidResolvers = {
       const data = await dataSources.serlo.getUuid<AbstractUuidPayload>({ id })
       return resolveAbstractUuid(data)
     },
-  }
+  },
 }

@@ -82,5 +82,5 @@ addTaxonomyTermChildResolvers({
     title: String!
     content: String!
     changes: String!
-  `
+  `,
 })

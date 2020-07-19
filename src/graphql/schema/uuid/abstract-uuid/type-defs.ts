@@ -30,5 +30,4 @@ export const typeDefs = gql`
   type Query {
     uuid(alias: AliasInput, id: Int): Uuid
   }
-
 `

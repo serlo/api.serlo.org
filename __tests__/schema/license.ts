@@ -22,18 +22,9 @@
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 
-import {
-  license,
-  createLicenseQuery,
-  createRemoveLicenseMutation,
-  createSetLicenseMutation,
-} from '../../__fixtures__/license'
+import { license, createLicenseQuery } from '../../__fixtures__/license'
 import { Service } from '../../src/graphql/schema/types'
-import {
-  assertFailingGraphQLMutation,
-  assertSuccessfulGraphQLMutation,
-  assertSuccessfulGraphQLQuery,
-} from '../__utils__/assertions'
+import { assertSuccessfulGraphQLQuery } from '../__utils__/assertions'
 import { createTestClient } from '../__utils__/test-client'
 
 const server = setupServer(
