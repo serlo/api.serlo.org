@@ -208,7 +208,7 @@ function addActiveDonorSheet(values: string[][]) {
   })
 }
 
-function addActiveDonorSheetResponse(response: object) {
+function addActiveDonorSheetResponse(response: Record<string, unknown>) {
   const url =
     `https://sheets.googleapis.com/v4/spreadsheets/` +
     `${process.env.ACTIVE_DONORS_SPREADSHEET_ID}/values/Tabellenblatt1!A:A` +

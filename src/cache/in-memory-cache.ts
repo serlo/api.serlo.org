@@ -40,9 +40,11 @@ export function createInMemoryCache(): Cache {
     async set(key, value, options) {
       cache[key] = JSON.stringify({ value, ttl: options?.ttl })
     },
+    // eslint-disable-next-line @typescript-eslint/require-await
     async flush() {
       cache = {}
     },
+    // eslint-disable-next-line @typescript-eslint/require-await
     async getTtl(key: string): Promise<O.Option<number>> {
       return pipeable.pipe(
         cache[key],

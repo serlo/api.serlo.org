@@ -43,7 +43,9 @@ export function createRedisCache({ host }: { host: string }): Cache {
     flags?: string,
     ttl?: number
   ) => Promise<void>
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const flushdb = util.promisify(client.flushdb).bind(client)
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const ttl = (util.promisify(client.ttl).bind(client) as unknown) as (
     key: string
   ) => Promise<number | undefined>
@@ -53,7 +55,7 @@ export function createRedisCache({ host }: { host: string }): Cache {
       return pipeable.pipe(
         await get(key),
         O.fromNullable,
-        O.map(msgpack.unpack)
+        O.map(v => msgpack.unpack(v))
       )
     },
     async getTtl(key) {

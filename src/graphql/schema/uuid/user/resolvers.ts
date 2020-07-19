@@ -64,21 +64,22 @@ export const resolvers: UserResolvers = {
   },
 }
 
-function activeDonorIDs(googleSheetApi: GoogleSheetApi) {
-  return extractIDsFromFirstColumn(() =>
-    googleSheetApi.getValues({
+async function activeDonorIDs(googleSheetApi: GoogleSheetApi) {
+  return pipeable.pipe(
+    await googleSheetApi.getValues({
       spreadsheetId: process.env.ACTIVE_DONORS_SPREADSHEET_ID,
       range: 'Tabellenblatt1!A:A',
       majorDimension: MajorDimension.Columns,
-    })
+    }),
+    extractIDsFromFirstColumn
   )
 }
 
-async function extractIDsFromFirstColumn(
-  readCells: () => Promise<either.Either<ErrorEvent, CellValues>>
-): Promise<number[]> {
+function extractIDsFromFirstColumn(
+  cells: either.Either<ErrorEvent, CellValues>
+): number[] {
   return pipeable.pipe(
-    await readCells(),
+    cells,
     either.map((cells) =>
       cells[0]
         .slice(1)

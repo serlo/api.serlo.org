@@ -47,7 +47,6 @@ const ValueRange = t.intersection([
   }),
 ])
 type ValueRange = t.TypeOf<typeof ValueRange>
-const { decode } = ValueRange
 
 export class GoogleSheetApi extends RESTDataSource {
   private apiKey: string
@@ -91,7 +90,7 @@ export class GoogleSheetApi extends RESTDataSource {
 
       result = pipeable.pipe(
         response,
-        decode,
+        res => ValueRange.decode(res),
         either.mapLeft((errors) => {
           return {
             message: `invalid response while accessing spreadsheet "${spreadsheetId}"`,
@@ -107,7 +106,7 @@ export class GoogleSheetApi extends RESTDataSource {
       )
 
       if (either.isRight(result)) {
-        this.environment.cache.set(cacheKey, result.right, { ttl: 60 * 60 })
+        await this.environment.cache.set(cacheKey, result.right, { ttl: 60 * 60 })
       }
     } catch (error) {
       const exception =
