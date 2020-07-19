@@ -19,6 +19,36 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+
+import { navigation } from '../__fixtures__/uuid'
+import { Service } from '../src/graphql/schema/types'
+import { setNavigation } from '../src/graphql/schema/uuid/navigation'
+import { assertFailingGraphQLMutation } from './__utils__/assertions'
+import { createTestClient } from './__utils__/test-client'
+
+describe('_setNavigation', () => {
+  test('forbidden', async () => {
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
+    await assertFailingGraphQLMutation(
+      {
+        ...setNavigation(navigation),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
+  })
+})
+
+// TODO: This whole block depends on setPage (originally imported from
+// src/graphql/schema/uuid/page), that was deleted as part of refactoring.
+// Unless setPage gets back, this test has to be modified or complete deleted
+
+/*
 import { gql } from 'apollo-server'
 
 import {
@@ -39,7 +69,6 @@ import {
 } from './__utils__/assertions'
 import { createTestClient } from './__utils__/test-client'
 
-/* TODO: uncomment when setPage is changed to setCache 
 describe('Page', () => {
   test('Without navigation', async () => {
     const { client } = createTestClient({
@@ -205,9 +234,9 @@ describe('Page', () => {
       client,
     })
   })
-}) */
+})
 
-/* TODO: uncomment when setTaxonomyTerm is properly changed to setCache
+
 describe('Taxonomy Term', () => {
   test('Without navigation', async () => {
     const { client } = createTestClient({
@@ -380,22 +409,6 @@ describe('Taxonomy Term', () => {
       client,
     })
   })
-}) */
+}) 
 
-describe('_setNavigation', () => {
-  test('forbidden', async () => {
-    const { client } = createTestClient({
-      service: Service.Playground,
-      user: null,
-    })
-    await assertFailingGraphQLMutation(
-      {
-        ...setNavigation(navigation),
-        client,
-      },
-      (errors) => {
-        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
-      }
-    )
-  })
-})
+*/

@@ -67,13 +67,28 @@ export class SerloDataSource extends RESTDataSource {
     instance: Instance
     id: number
   }): Promise<Navigation | null> {
-    const { data, leafs } = await this.cacheAwareGet<{
-      data: NodeData[]
-      leafs: Record<string, number>
-    }>({
+    const payload = await this.cacheAwareGet<NavigationPayload>({
       path: `/api/navigation`,
       instance,
     })
+
+    const data = JSON.parse(payload.data) as NodeData[]
+
+    const leafs: Record<string, number> = {} //
+
+    const findLeafs = (node: NodeData): number[] => {
+      return [
+        ...(node.id ? [node.id] : []),
+        ...R.flatten(R.map(findLeafs, node.children || [])),
+      ]
+    }
+
+    for (let i = 0; i < data.length; i++) {
+      findLeafs(data[i]).forEach((id) => {
+        leafs[id] = i
+      })
+    }
+
     const treeIndex = leafs[id]
 
     if (treeIndex === undefined) return null
@@ -119,37 +134,10 @@ export class SerloDataSource extends RESTDataSource {
     }
   }
 
-  public async setNavigation(
-    payload: NavigationPayload
-  ): Promise<{
-    data: NodeData[]
-    leafs: Record<string, number>
-  }> {
-    const data = JSON.parse(payload.data) as NodeData[]
-
-    const leafs: Record<string, number> = {}
-
-    const findLeafs = (node: NodeData): number[] => {
-      return [
-        ...(node.id ? [node.id] : []),
-        ...R.flatten(R.map(findLeafs, node.children || [])),
-      ]
-    }
-
-    for (let i = 0; i < data.length; i++) {
-      findLeafs(data[i]).forEach((id) => {
-        leafs[id] = i
-      })
-    }
-
-    const value = {
-      data,
-      leafs,
-    }
-
+  public async setNavigation(payload: NavigationPayload): Promise<NavigationPayload> {
     const cacheKey = this.getCacheKey(`/api/navigation`, payload.instance)
-    await this.environment.cache.set(cacheKey, value)
-    return value
+    await this.environment.cache.set(cacheKey, payload)
+    return payload
   }
 
   public async getLicense({ id }: { id: number }): Promise<License> {
