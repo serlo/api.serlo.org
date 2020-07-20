@@ -102,14 +102,8 @@ addEntityResolvers({
     solution: Solution
     exerciseGroup: ExerciseGroup!
   `,
-  entityPayloadFields: `
-    solutionId: Int
-    parentId: Int!
-  `,
   entityRevisionFields: `
     content: String!
     changes: String!
   `,
-  entitySetter: 'setGroupedExercise',
-  entityRevisionSetter: 'setGroupedExerciseRevision',
 })

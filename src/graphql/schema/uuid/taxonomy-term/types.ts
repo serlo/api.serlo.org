@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Instance } from '../../instance'
-import { MutationResolver, Resolver } from '../../types'
+import { Resolver } from '../../types'
 import { Uuid, UuidPayload } from '../abstract-uuid'
 import { Navigation } from '../navigation'
 
@@ -65,8 +65,5 @@ export interface TaxonomyTermResolvers {
     parent: Resolver<TaxonomyTerm, never, TaxonomyTerm>
     children: Resolver<TaxonomyTerm, never, Uuid[]>
     navigation: Resolver<TaxonomyTerm, never, Navigation>
-  }
-  Mutation: {
-    _setTaxonomyTerm: MutationResolver<TaxonomyTermPayload>
   }
 }

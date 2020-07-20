@@ -49,19 +49,4 @@ export const typeDefs = gql`
     children: [Uuid!]!
     navigation: Navigation
   }
-
-  extend type Mutation {
-    _setTaxonomyTerm(
-      id: Int!
-      trashed: Boolean!
-      alias: String
-      type: TaxonomyTermType!
-      instance: Instance!
-      name: String!
-      description: String
-      weight: Int!
-      parentId: Int
-      childrenIds: [Int!]!
-    ): Boolean
-  }
 `

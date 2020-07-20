@@ -30,15 +30,4 @@ export const typeDefs = gql`
     lastLogin: DateTime
     description: String
   }
-
-  extend type Mutation {
-    _setUser(
-      id: Int!
-      trashed: Boolean!
-      username: String!
-      date: DateTime!
-      lastLogin: DateTime
-      description: String
-    ): Boolean
-  }
 `

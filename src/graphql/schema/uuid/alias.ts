@@ -19,11 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ForbiddenError, gql } from 'apollo-server'
+import { gql } from 'apollo-server'
 
 import { DateTime } from '../date-time'
 import { Instance } from '../instance'
-import { Service } from '../types'
 import { Schema } from '../utils'
 
 export const aliasSchema = new Schema()
@@ -59,20 +58,6 @@ aliasSchema.addTypeDef(gql`
   }
 `)
 
-/**
- * mutation _setAlias
- */
-aliasSchema.addMutation<unknown, AliasPayload, null>(
-  '_setAlias',
-  async (_parent, payload, { dataSources, service }) => {
-    if (service !== Service.Serlo) {
-      throw new ForbiddenError(
-        `You do not have the permissions to set an alias`
-      )
-    }
-    await dataSources.serlo.setAlias(payload)
-  }
-)
 export interface AliasPayload {
   id: number
   instance: Instance
@@ -80,32 +65,3 @@ export interface AliasPayload {
   source: string
   timestamp: DateTime
 }
-aliasSchema.addTypeDef(gql`
-  extend type Mutation {
-    """
-    Inserts the given \`Alias\` into the cache. May only be called by \`serlo.org\` when an alias has been created or updated.
-    """
-    _setAlias(
-      """
-      The id the of \`Uuid\` the alias links to
-      """
-      id: Int!
-      """
-      The \`Instance\` the alias is tied to
-      """
-      instance: Instance!
-      """
-      The path of the alias
-      """
-      path: String!
-      """
-      The path the alias links to
-      """
-      source: String!
-      """
-      The \`DateTime\` the alias has been created
-      """
-      timestamp: DateTime!
-    ): Boolean
-  }
-`)

@@ -77,9 +77,6 @@ addTaxonomyTermChildResolvers({
   entityFields: `
     taxonomyTerms: [TaxonomyTerm!]!
   `,
-  entityPayloadFields: `
-    taxonomyTermIds: [Int!]!
-  `,
   entityRevisionFields: `
     title: String!
     content: String!
@@ -87,6 +84,4 @@ addTaxonomyTermChildResolvers({
     metaTitle: String!
     metaDescription: String!
   `,
-  entitySetter: 'setArticle',
-  entityRevisionSetter: 'setArticleRevision',
 })

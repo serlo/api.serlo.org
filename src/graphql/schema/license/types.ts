@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Instance } from '../instance'
-import { MutationResolver, QueryResolver } from '../types'
+import { QueryResolver } from '../types'
 
 export interface License {
   id: number
@@ -38,9 +38,5 @@ export type LicensePayload = License
 export interface LicenseResolvers {
   Query: {
     license: QueryResolver<{ id: number }, License>
-  }
-  Mutation: {
-    _removeLicense: MutationResolver<{ id: number }>
-    _setLicense: MutationResolver<LicensePayload>
   }
 }

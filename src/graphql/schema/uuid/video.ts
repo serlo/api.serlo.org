@@ -74,15 +74,10 @@ addTaxonomyTermChildResolvers({
   entityFields: `
     taxonomyTerms: [TaxonomyTerm!]!
   `,
-  entityPayloadFields: `
-    taxonomyTermIds: [Int!]!
-  `,
   entityRevisionFields: `
     url: String!
     title: String!
     content: String!
     changes: String!
   `,
-  entitySetter: 'setVideo',
-  entityRevisionSetter: 'setVideoRevision',
 })
