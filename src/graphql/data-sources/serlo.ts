@@ -134,7 +134,9 @@ export class SerloDataSource extends RESTDataSource {
     }
   }
 
-  public async setNavigation(payload: NavigationPayload): Promise<NavigationPayload> {
+  public async setNavigation(
+    payload: NavigationPayload
+  ): Promise<NavigationPayload> {
     const cacheKey = this.getCacheKey(`/api/navigation`, payload.instance)
     await this.environment.cache.set(cacheKey, payload)
     return payload
@@ -223,7 +225,7 @@ export class SerloDataSource extends RESTDataSource {
       audience: Service.Serlo,
       issuer: 'api.serlo.org',
     })
-    const data = await super.get(
+    const data = await super.get<T>(
       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
       {},
       {
