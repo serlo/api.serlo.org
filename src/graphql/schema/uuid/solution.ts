@@ -84,9 +84,6 @@ addEntityResolvers({
   repository: 'solution',
   Entity: Solution,
   EntityRevision: SolutionRevision,
-  entityPayloadFields: `
-    parentId: Int!
-  `,
   entityFields: `
     exercise: Exercise!
   `,
