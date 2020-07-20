@@ -55,7 +55,7 @@ export function createRedisCache({ host }: { host: string }): Cache {
       return pipeable.pipe(
         await get(key),
         O.fromNullable,
-        O.map(v => msgpack.unpack(v))
+        O.map((v) => msgpack.unpack(v))
       )
     },
     async getTtl(key) {

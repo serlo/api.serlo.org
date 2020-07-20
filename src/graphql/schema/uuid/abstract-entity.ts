@@ -19,13 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ForbiddenError, gql } from 'apollo-server'
+import { gql } from 'apollo-server'
 
 import { SerloDataSource } from '../../data-sources/serlo'
 import { DateTime } from '../date-time'
 import { Instance } from '../instance'
 import { License } from '../license'
-import { Service } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
 import { Uuid, UuidPayload } from './abstract-uuid'
 import { encodePath } from './alias'
@@ -172,10 +171,7 @@ export function addEntityResolvers<
   Entity,
   EntityRevision,
   entityFields = '',
-  entityPayloadFields = '',
   entityRevisionFields,
-  entitySetter,
-  entityRevisionSetter,
 }: EntityResolversPayload<E, R, ESetter, RSetter>) {
   schema.addTypeDef(gql`
     type ${entityType} implements Uuid & Entity {
@@ -248,60 +244,6 @@ export function addEntityResolvers<
       return new Entity(data)
     }
   )
-
-  schema.addMutation<unknown, EPayload, null>(
-    `_set${entityType}`,
-    async (_parent, payload, { dataSources, service }) => {
-      if (service !== Service.Serlo) {
-        throw new ForbiddenError(
-          `You do not have the permissions to set a ${entityType}`
-        )
-      }
-      await (dataSources.serlo[entitySetter] as (
-        payload: EPayload
-      ) => Promise<void>)(payload)
-    }
-  )
-  schema.addTypeDef(gql`
-      extend type Mutation {
-        _set${entityType}(
-          id: Int!
-          trashed: Boolean!
-          instance: Instance!
-          alias: String
-          date: DateTime!
-          currentRevisionId: Int
-          licenseId: Int!
-          ${entityPayloadFields}
-        ): Boolean
-      }
-    `)
-
-  schema.addMutation<unknown, RPayload, null>(
-    `_set${entityRevisionType}`,
-    async (_parent, payload, { dataSources, service }) => {
-      if (service !== Service.Serlo) {
-        throw new ForbiddenError(
-          `You do not have the permissions to set a ${entityRevisionType}`
-        )
-      }
-      await (dataSources.serlo[entityRevisionSetter] as (
-        payload: RPayload
-      ) => Promise<void>)(payload)
-    }
-  )
-  schema.addTypeDef(gql`
-      extend type Mutation {
-        _set${entityRevisionType}(
-          id: Int!
-          trashed: Boolean!
-          date: DateTime!
-          authorId: Int!
-          repositoryId: Int!
-          ${entityRevisionFields}
-        ): Boolean
-     }
-    `)
 }
 export interface EntityResolversPayload<
   E extends Entity,
@@ -318,8 +260,5 @@ export interface EntityResolversPayload<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   EntityRevision: new (data: any) => R
   entityFields?: string
-  entityPayloadFields?: string
   entityRevisionFields: string
-  entitySetter: ESetter
-  entityRevisionSetter: RSetter
 }

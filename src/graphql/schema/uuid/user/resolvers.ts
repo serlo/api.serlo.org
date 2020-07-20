@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ForbiddenError } from 'apollo-server'
 import { pipeable, either } from 'fp-ts'
 
 import { AbstractUuidPayload, resolveUser } from '..'
@@ -29,7 +28,6 @@ import {
   GoogleSheetApi,
   CellValues,
 } from '../../../data-sources/google-spreadsheet-api'
-import { Service } from '../../types'
 import { UserResolvers, isUserPayload } from './types'
 
 export const resolvers: UserResolvers = {
@@ -45,18 +43,9 @@ export const resolvers: UserResolvers = {
       return uuids.filter(isUserPayload).map(resolveUser)
     },
   },
-  Mutation: {
-    async _setUser(_parent, payload, { dataSources, service }) {
-      if (service !== Service.Serlo) {
-        throw new ForbiddenError(
-          'You do not have the permissions to set an user'
-        )
-      }
-      await dataSources.serlo.setUser(payload)
-    },
-  },
   User: {
     async activeDonor(user, _args, { dataSources }) {
+      console.log('active Donor')
       const ids = await activeDonorIDs(dataSources.googleSheetApi)
 
       return ids.includes(user.id)

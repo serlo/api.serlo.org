@@ -22,18 +22,9 @@
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 
-import {
-  license,
-  createLicenseQuery,
-  createRemoveLicenseMutation,
-  createSetLicenseMutation,
-} from '../../__fixtures__/license'
+import { license, createLicenseQuery } from '../../__fixtures__/license'
 import { Service } from '../../src/graphql/schema/types'
-import {
-  assertFailingGraphQLMutation,
-  assertSuccessfulGraphQLMutation,
-  assertSuccessfulGraphQLQuery,
-} from '../__utils__/assertions'
+import { assertSuccessfulGraphQLQuery } from '../__utils__/assertions'
 import { createTestClient } from '../__utils__/test-client'
 
 const server = setupServer(
@@ -57,66 +48,6 @@ test('license', async () => {
   const { client } = createTestClient({
     service: Service.Playground,
     user: null,
-  })
-  await assertSuccessfulGraphQLQuery({
-    ...createLicenseQuery(license),
-    data: {
-      license,
-    },
-    client,
-  })
-})
-
-test('_removeLicense (forbidden)', async () => {
-  const { client } = createTestClient({
-    service: Service.Playground,
-    user: null,
-  })
-  await assertFailingGraphQLMutation(
-    {
-      ...createRemoveLicenseMutation(license),
-      client,
-    },
-    (errors) => {
-      expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
-    }
-  )
-})
-
-test('_removeLicense (authenticated)', async () => {
-  const { client } = createTestClient({ service: Service.Serlo, user: null })
-  await assertSuccessfulGraphQLMutation({
-    ...createRemoveLicenseMutation(license),
-    client,
-  })
-  await assertSuccessfulGraphQLQuery({
-    ...createLicenseQuery(license),
-    data: { license: null },
-    client,
-  })
-})
-
-test('_setLicense (forbidden)', async () => {
-  const { client } = createTestClient({
-    service: Service.Playground,
-    user: null,
-  })
-  await assertFailingGraphQLMutation(
-    {
-      ...createSetLicenseMutation(license),
-      client,
-    },
-    (errors) => {
-      expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
-    }
-  )
-})
-
-test('_setLicense (authenticated)', async () => {
-  const { client } = createTestClient({ service: Service.Serlo, user: null })
-  await assertSuccessfulGraphQLMutation({
-    ...createSetLicenseMutation(license),
-    client,
   })
   await assertSuccessfulGraphQLQuery({
     ...createLicenseQuery(license),

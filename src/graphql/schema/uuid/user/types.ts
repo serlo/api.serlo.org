@@ -21,7 +21,7 @@
  */
 import { AbstractUuidPayload } from '..'
 import { DateTime } from '../../date-time'
-import { MutationResolver, QueryResolver, Resolver } from '../../types'
+import { QueryResolver, Resolver } from '../../types'
 import { DiscriminatorType, Uuid, UuidPayload } from '../abstract-uuid'
 
 export interface User extends Uuid {
@@ -42,9 +42,6 @@ export interface UserPayload extends UuidPayload {
 export interface UserResolvers {
   Query: {
     activeDonors: QueryResolver<never, User[]>
-  }
-  Mutation: {
-    _setUser: MutationResolver<UserPayload>
   }
   User: {
     activeDonor: Resolver<User, never, boolean>
