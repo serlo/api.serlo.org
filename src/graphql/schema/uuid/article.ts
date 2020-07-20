@@ -77,9 +77,6 @@ addTaxonomyTermChildResolvers({
   entityFields: `
     taxonomyTerms: [TaxonomyTerm!]!
   `,
-  entityPayloadFields: `
-    taxonomyTermIds: [Int!]!
-  `,
   entityRevisionFields: `
     title: String!
     content: String!

@@ -171,7 +171,6 @@ export function addEntityResolvers<
   Entity,
   EntityRevision,
   entityFields = '',
-  entityPayloadFields = '',
   entityRevisionFields,
 }: EntityResolversPayload<E, R, ESetter, RSetter>) {
   schema.addTypeDef(gql`
@@ -245,34 +244,6 @@ export function addEntityResolvers<
       return new Entity(data)
     }
   )
-
-  schema.addTypeDef(gql`
-      extend type Mutation {
-        _set${entityType}(
-          id: Int!
-          trashed: Boolean!
-          instance: Instance!
-          alias: String
-          date: DateTime!
-          currentRevisionId: Int
-          licenseId: Int!
-          ${entityPayloadFields}
-        ): Boolean
-      }
-    `)
-
-  schema.addTypeDef(gql`
-      extend type Mutation {
-        _set${entityRevisionType}(
-          id: Int!
-          trashed: Boolean!
-          date: DateTime!
-          authorId: Int!
-          repositoryId: Int!
-          ${entityRevisionFields}
-        ): Boolean
-     }
-    `)
 }
 export interface EntityResolversPayload<
   E extends Entity,
@@ -289,6 +260,5 @@ export interface EntityResolversPayload<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   EntityRevision: new (data: any) => R
   entityFields?: string
-  entityPayloadFields?: string
   entityRevisionFields: string
 }

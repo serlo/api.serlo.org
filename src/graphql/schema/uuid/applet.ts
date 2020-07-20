@@ -80,9 +80,6 @@ addTaxonomyTermChildResolvers({
   entityFields: `
     taxonomyTerms: [TaxonomyTerm!]!
   `,
-  entityPayloadFields: `
-    taxonomyTermIds: [Int!]!
-  `,
   entityRevisionFields: `
     url: String!
     title: String!

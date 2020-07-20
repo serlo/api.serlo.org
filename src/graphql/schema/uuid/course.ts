@@ -98,10 +98,6 @@ addTaxonomyTermChildResolvers({
     taxonomyTerms: [TaxonomyTerm!]!
     pages: [CoursePage!]!
   `,
-  entityPayloadFields: `
-    taxonomyTermIds: [Int!]!
-    pageIds: [Int!]!
-  `,
   entityRevisionFields: `
     title: String!
     content: String!
