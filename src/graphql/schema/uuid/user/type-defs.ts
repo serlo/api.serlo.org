@@ -29,5 +29,10 @@ export const typeDefs = gql`
     date: DateTime!
     lastLogin: DateTime
     description: String
+    activeDonor: Boolean!
+  }
+
+  extend type Query {
+    activeDonors: [User!]!
   }
 `

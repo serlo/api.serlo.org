@@ -19,41 +19,22 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { rest } from 'msw'
-import { setupServer } from 'msw/node'
+import { RESTDataSource } from 'apollo-datasource-rest'
+import { InMemoryLRUCache } from 'apollo-server-caching'
+import { either } from 'fp-ts'
 
-import { license, createLicenseQuery } from '../../__fixtures__/license'
-import { Service } from '../../src/graphql/schema/types'
-import { assertSuccessfulGraphQLQuery } from '../__utils__/assertions'
-import { createTestClient } from '../__utils__/test-client'
+import { ErrorEvent } from '../../src/error-event'
 
-const server = setupServer(
-  rest.get(
-    `http://de.${process.env.SERLO_ORG_HOST}/api/license/1`,
-    (_req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(license))
-    }
-  )
-)
+export function expectToBeLeftEventWith<A>(
+  value: either.Either<ErrorEvent, A>,
+  expectedEvent: ErrorEvent
+) {
+  expect(either.isLeft(value)).toBe(true)
 
-beforeAll(() => {
-  server.listen()
-})
+  if (either.isLeft(value))
+    expect(value.left).toEqual(expect.objectContaining(expectedEvent))
+}
 
-afterAll(() => {
-  server.close()
-})
-
-test('license', async () => {
-  const { client } = createTestClient({
-    service: Service.Playground,
-    user: null,
-  })
-  await assertSuccessfulGraphQLQuery({
-    ...createLicenseQuery(license),
-    data: {
-      license,
-    },
-    client,
-  })
-})
+export function initializeDataSource(dataSource: RESTDataSource) {
+  dataSource.initialize({ context: {}, cache: new InMemoryLRUCache() })
+}
