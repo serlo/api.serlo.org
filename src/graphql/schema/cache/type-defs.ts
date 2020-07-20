@@ -22,8 +22,6 @@
 
 import { gql } from 'apollo-server'
 
-// TODO: Mutation is defined here (not 'extend Mutation')
-// Consider to put it in another place
 export const typeDefs = gql`
   type Mutation {
     _setCache(key: String!, value: String!): Boolean
