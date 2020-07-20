@@ -19,13 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Option } from 'fp-ts/lib/Option'
+import { option as O } from 'fp-ts'
 
 export interface Environment {
   cache: Cache
 }
 
 export interface Cache {
-  get<T>(key: string): Promise<Option<T>>
-  set(key: string, value: unknown): Promise<void>
+  get<T>(key: string): Promise<O.Option<T>>
+  set(key: string, value: unknown, options?: { ttl?: number }): Promise<void>
+  flush(): Promise<void>
+  getTtl(key: string): Promise<O.Option<number>>
 }

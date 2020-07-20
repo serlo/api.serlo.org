@@ -416,6 +416,15 @@ export const user: UserPayload = {
   description: null,
 }
 
+export const user2: UserPayload = {
+  id: 23,
+  trashed: false,
+  username: 'second user',
+  date: '2015-02-01T20:35:21Z',
+  lastLogin: '2019-03-23T09:20:55Z',
+  description: null,
+}
+
 export const video: VideoPayload = {
   id: 16078,
   trashed: false,
