@@ -51,18 +51,18 @@ export function createRedisCache({ host }: { host: string }): Cache {
   ) => Promise<number | undefined>
 
   return {
-    async get(key) {
+    get: async <T>(key: string) => {
       return pipeable.pipe(
         await get(key),
         O.fromNullable,
-        O.map((v) => msgpack.unpack(v))
+        O.map((v) => msgpack.unpack(v) as T)
       )
     },
     async getTtl(key) {
       return O.fromNullable(await ttl(key))
     },
     async set(key, value, options) {
-      const packedValue = msgpack.pack(value)
+      const packedValue = msgpack.pack(value) as Buffer
       const ttl = options?.ttl
 
       if (ttl === undefined) {

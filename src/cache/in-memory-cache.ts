@@ -24,21 +24,25 @@ import { option as O, pipeable } from 'fp-ts'
 import { Cache } from '../graphql/environment'
 
 export function createInMemoryCache(): Cache {
-  let cache: Record<string, string> = {}
+  let cache: Record<
+    string,
+    {
+      value: unknown
+      ttl?: number
+    } | null
+  > = {}
 
   return {
     // eslint-disable-next-line @typescript-eslint/require-await
-    async get(key) {
+    get: async <T>(key: string) => {
       return pipeable.pipe(
-        cache[key],
-        O.fromNullable,
-        O.map(JSON.parse),
-        O.map((x) => x.value)
+        O.fromNullable(cache[key]),
+        O.map((x) => x.value as T)
       )
     },
     // eslint-disable-next-line @typescript-eslint/require-await
     async set(key, value, options) {
-      cache[key] = JSON.stringify({ value, ttl: options?.ttl })
+      cache[key] = { value, ttl: options?.ttl }
     },
     // eslint-disable-next-line @typescript-eslint/require-await
     async flush() {
@@ -46,10 +50,9 @@ export function createInMemoryCache(): Cache {
     },
     // eslint-disable-next-line @typescript-eslint/require-await
     async getTtl(key: string): Promise<O.Option<number>> {
+      const value = cache[key]
       return pipeable.pipe(
-        cache[key],
-        O.fromNullable,
-        O.map(JSON.parse),
+        O.fromNullable(value),
         O.chain((x) => O.fromNullable(x.ttl))
       )
     },
