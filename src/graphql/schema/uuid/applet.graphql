@@ -1,0 +1,24 @@
+type Applet implements AbstractUuid & AbstractEntity {
+  id: Int!
+  trashed: Boolean!
+  instance: Instance!
+  alias: String
+  date: DateTime!
+  license: License!
+  currentRevision: AppletRevision
+  taxonomyTerms: [TaxonomyTerm!]!
+}
+
+type AppletRevision implements AbstractUuid & AbstractEntityRevision {
+  id: Int!
+  author: User!
+  trashed: Boolean!
+  date: DateTime!
+  applet: Applet!
+  url: String!
+  title: String!
+  content: String!
+  changes: String!
+  metaTitle: String!
+  metaDescription: String!
+}

@@ -31,13 +31,15 @@ import {
   addTaxonomyTermChildResolvers,
   TaxonomyTermChild,
 } from './abstract-taxonomy-term-child'
+import typeDefs from './event.graphql'
 
-export const eventSchema = new Schema()
+export const eventSchema = new Schema({}, [typeDefs])
 
 export class Event extends TaxonomyTermChild {
   public __typename = EntityType.Event
 }
 export interface EventPayload extends EntityPayload {
+  __typename: EntityType.Event
   taxonomyTermIds: number[]
 }
 
@@ -60,6 +62,7 @@ export class EventRevision extends EntityRevision {
 }
 
 export interface EventRevisionPayload extends EntityRevisionPayload {
+  __typename: EntityRevisionType.EventRevision
   title: string
   content: string
   changes: string
@@ -74,14 +77,4 @@ addTaxonomyTermChildResolvers({
   repository: 'event',
   Entity: Event,
   EntityRevision: EventRevision,
-  entityFields: `
-    taxonomyTerms: [TaxonomyTerm!]!
-  `,
-  entityRevisionFields: `
-    title: String!
-    content: String!
-    changes: String!
-    metaTitle: String!
-    metaDescription: String!
-  `,
 })

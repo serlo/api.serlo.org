@@ -13,6 +13,9 @@ RUN yarn --frozen-lockfile --production=true --silent
 
 FROM dev-dependencies as build
 COPY src src
+COPY .babelrc .
+COPY graphql.d.ts .
+COPY tsconfig.json .
 COPY tsconfig.prod.json .
 RUN yarn build
 

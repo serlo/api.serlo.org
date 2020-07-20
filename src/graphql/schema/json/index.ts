@@ -19,12 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import GraphQLJSON, { GraphQLJSONObject } from 'graphql-type-json'
 
-import { gql } from 'apollo-server'
+import { Schema } from '../utils'
+import typeDefs from './types.graphql'
 
-export const typeDefs = gql`
-  type Mutation {
-    _setCache(key: String!, value: String!): Boolean
-    _removeCache(key: String!): Boolean
-  }
-`
+export const jsonSchema = new Schema(
+  ({
+    JSON: GraphQLJSON,
+    JSONObject: GraphQLJSONObject,
+  } as unknown) as Schema['resolvers'],
+  [typeDefs]
+)

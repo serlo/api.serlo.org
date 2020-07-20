@@ -72,7 +72,6 @@ describe('Video', () => {
         `,
       data: {
         uuid: {
-          __typename: 'Video',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
             video
@@ -121,7 +120,6 @@ describe('Video', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Video',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
             video
@@ -170,7 +168,6 @@ describe('Video', () => {
         `,
       data: {
         uuid: {
-          __typename: 'Video',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
             video
@@ -215,7 +212,6 @@ describe('Video', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Video',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
             video
@@ -251,7 +247,6 @@ describe('Video', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Video',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
             video
@@ -296,7 +291,6 @@ describe('VideoRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'VideoRevision',
           ...R.omit(['authorId', 'repositoryId'], videoRevision),
           author: {
             id: 1,
@@ -338,7 +332,6 @@ describe('VideoRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'VideoRevision',
           ...R.omit(['authorId', 'repositoryId'], videoRevision),
           author: {
             id: 1,
@@ -383,7 +376,6 @@ describe('VideoRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'VideoRevision',
           ...R.omit(['authorId', 'repositoryId'], videoRevision),
           author: {
             id: 1,

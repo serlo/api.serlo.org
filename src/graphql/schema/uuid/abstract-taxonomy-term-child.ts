@@ -19,10 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
-
 import { SerloDataSource } from '../../data-sources/serlo'
-import { Schema } from '../utils'
 import {
   Entity,
   EntityPayload,
@@ -32,11 +29,9 @@ import {
 } from './abstract-entity'
 import {
   resolveTaxonomyTerm,
-  TaxonomyTerm,
+  TaxonomyTermPreResolver,
   TaxonomyTermPayload,
 } from './taxonomy-term'
-
-export const abstractTaxonomyTermChildSchema = new Schema()
 
 export abstract class TaxonomyTermChild extends Entity {
   public taxonomyTermIds: number[]
@@ -49,23 +44,6 @@ export abstract class TaxonomyTermChild extends Entity {
 export interface TaxonomyTermChildPayload extends EntityPayload {
   taxonomyTermIds: number[]
 }
-abstractTaxonomyTermChildSchema.addTypeResolver<TaxonomyTermChild>(
-  'TaxonomyTermChild',
-  (entity) => {
-    return entity.__typename
-  }
-)
-abstractTaxonomyTermChildSchema.addTypeDef(gql`
-  """
-  Represents a Serlo.org entity (e.g. an article) that is the child of \`TaxonomyTerm\`s
-  """
-  interface TaxonomyTermChild {
-    """
-    The \`TaxonomyTerm\`s that the entity has been associated with
-    """
-    taxonomyTerms: [TaxonomyTerm!]!
-  }
-`)
 
 export function addTaxonomyTermChildResolvers<
   E extends TaxonomyTermChild,
@@ -74,7 +52,7 @@ export function addTaxonomyTermChildResolvers<
   RSetter extends keyof SerloDataSource
 >(args: EntityResolversPayload<E, R, ESetter, RSetter>) {
   addEntityResolvers(args)
-  args.schema.addResolver<E, unknown, TaxonomyTerm[]>(
+  args.schema.addResolver<E, unknown, TaxonomyTermPreResolver[]>(
     args.entityType,
     'taxonomyTerms',
     (entity, _args, { dataSources }) => {

@@ -19,23 +19,24 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
-
-import { DateTime } from '../date-time'
-import { Instance } from '../instance'
-import { License } from '../license'
+import { Instance, License, Scalars } from '../../../types'
 import { Context } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
-import { DiscriminatorType, Uuid, UuidPayload } from './abstract-uuid'
+import {
+  DiscriminatorType,
+  AbstractUuidPreResolver,
+  AbstractUuidPayload,
+} from './abstract-uuid'
 import { encodePath } from './alias'
-import { resolveUser, User, UserPayload } from './user'
+import typeDefs from './page.graphql'
+import { resolveUser, UserPreResolver, UserPayload } from './user'
 
-export const pageSchema = new Schema()
+export const pageSchema = new Schema({}, [typeDefs])
 
 /**
  * type Page
  */
-export class Page implements Uuid {
+export class Page implements AbstractUuidPreResolver {
   public __typename = DiscriminatorType.Page
   public id: number
   public trashed: boolean
@@ -86,50 +87,17 @@ pageSchema.addResolver<Page, unknown, Partial<License>>(
     return dataSources.serlo.getLicense(partialLicense)
   }
 )
-pageSchema.addTypeDef(gql`
-  """
-  Represents a Serlo.org page. A \`Page\` is a repository containing \`PageRevision\`s, is tied to an \`Instance\`,
-  has a \`License\`, and has an alias.
-  """
-  type Page implements Uuid {
-    """
-    The ID of the page
-    """
-    id: Int!
-    """
-    \`true\` iff the page has been trashed
-    """
-    trashed: Boolean!
-    """
-    The \`Instance\` the page is tied to
-    """
-    instance: Instance!
-    """
-    The alias of the page
-    """
-    alias: String
-    """
-    The \`License\` of the page
-    """
-    license: License!
-    """
-    The \`PageRevision\` that is currently checked out
-    """
-    currentRevision: PageRevision
-    navigation: Navigation
-  }
-`)
 
 /**
  * type PageRevision
  */
-export class PageRevision implements Uuid {
+export class PageRevision implements AbstractUuidPreResolver {
   public __typename = DiscriminatorType.PageRevision
   public id: number
   public trashed: boolean
   public title: string
   public content: string
-  public date: DateTime
+  public date: Scalars['DateTime']
   public authorId: number
   public repositoryId: number
 
@@ -143,7 +111,7 @@ export class PageRevision implements Uuid {
     this.repositoryId = payload.repositoryId
   }
 }
-pageSchema.addResolver<PageRevision, unknown, Partial<User>>(
+pageSchema.addResolver<PageRevision, unknown, Partial<UserPreResolver>>(
   'PageRevision',
   'author',
   async (pageRevision, _args, { dataSources }, info) => {
@@ -167,53 +135,20 @@ pageSchema.addResolver<PageRevision, unknown, Partial<Page>>(
     return new Page(data)
   }
 )
-pageSchema.addTypeDef(gql`
-  """
-  Represents a Serlo.org page revision. A \`PageRevision\` has fields title and content.
-  """
-  type PageRevision implements Uuid {
-    """
-    The ID of the page revision
-    """
-    id: Int!
-    """
-    The \`User\` that created the page revision
-    """
-    author: User!
-    """
-    \`true\` iff the page revision has been trashed
-    """
-    trashed: Boolean!
-    """
-    The \`DateTime\` the page revision has been created
-    """
-    date: DateTime!
-    """
-    The heading
-    """
-    title: String!
-    """
-    The content
-    """
-    content: String!
-    """
-    The \`Page\` the page revision is tied to
-    """
-    page: Page!
-  }
-`)
 
-export interface PagePayload extends UuidPayload {
+export interface PagePayload extends AbstractUuidPayload {
+  __typename: DiscriminatorType.Page
   instance: Instance
   alias: string | null
   currentRevisionId: number | null
   licenseId: number
 }
 
-export interface PageRevisionPayload extends UuidPayload {
+export interface PageRevisionPayload extends AbstractUuidPayload {
+  __typename: DiscriminatorType.PageRevision
   title: string
   content: string
-  date: DateTime
+  date: Scalars['DateTime']
   authorId: number
   repositoryId: number
 }

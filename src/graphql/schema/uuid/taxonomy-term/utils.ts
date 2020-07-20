@@ -20,9 +20,11 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { DiscriminatorType } from '../abstract-uuid'
-import { TaxonomyTerm, TaxonomyTermPayload } from './types'
+import { TaxonomyTermPreResolver, TaxonomyTermPayload } from './types'
 
-export function resolveTaxonomyTerm(data: TaxonomyTermPayload): TaxonomyTerm {
+export function resolveTaxonomyTerm(
+  data: TaxonomyTermPayload
+): TaxonomyTermPreResolver {
   return {
     ...data,
     __typename: DiscriminatorType.TaxonomyTerm,

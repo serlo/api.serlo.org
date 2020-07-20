@@ -45,7 +45,6 @@ export const resolvers: UserResolvers = {
   },
   User: {
     async activeDonor(user, _args, { dataSources }) {
-      console.log('active Donor')
       const ids = await activeDonorIDs(dataSources.googleSheetApi)
 
       return ids.includes(user.id)

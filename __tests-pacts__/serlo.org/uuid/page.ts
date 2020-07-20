@@ -56,7 +56,6 @@ describe('Page', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Page',
           ...R.omit(['currentRevisionId', 'licenseId'], page),
           currentRevision: {
             id: 35476,
@@ -90,7 +89,6 @@ describe('Page', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Page',
           ...R.omit(['currentRevisionId', 'licenseId'], page),
           license: {
             id: 1,
@@ -126,7 +124,6 @@ describe('Page', () => {
     `,
       data: {
         uuid: {
-          __typename: 'Page',
           ...R.omit(['currentRevisionId', 'licenseId'], page),
           currentRevision: {
             id: 35476,
@@ -159,7 +156,6 @@ describe('Page', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Page',
           ...R.omit(['currentRevisionId', 'licenseId'], page),
           currentRevision: {
             id: 35476,
@@ -196,7 +192,6 @@ describe('PageRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'PageRevision',
           ...R.omit(['authorId', 'repositoryId'], pageRevision),
           author: {
             id: 1,
@@ -236,7 +231,6 @@ describe('PageRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'PageRevision',
           ...R.omit(['authorId', 'repositoryId'], pageRevision),
           author: { id: 1, username: user.username },
           page: {
@@ -276,7 +270,6 @@ describe('PageRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'PageRevision',
           ...R.omit(['authorId', 'repositoryId'], pageRevision),
           author: { id: 1 },
           page: {

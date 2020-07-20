@@ -19,12 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { AbstractUuidPayload, resolveAbstractUuid } from '..'
+import { resolveAbstractUuid, UuidPayload } from '..'
 import { Context } from '../../types'
-import { Uuid } from '../abstract-uuid'
+import { AbstractUuidPreResolver } from '../abstract-uuid'
 import {
-  TaxonomyTerm,
   TaxonomyTermPayload,
+  TaxonomyTermPreResolver,
   TaxonomyTermResolvers,
 } from './types'
 import { resolveTaxonomyTerm } from './utils'
@@ -42,9 +42,9 @@ export const resolvers: TaxonomyTermResolvers = {
       return Promise.all(
         parent.childrenIds.map((id) => {
           return dataSources.serlo
-            .getUuid<AbstractUuidPayload>({ id })
+            .getUuid<UuidPayload>({ id })
             .then((data) => {
-              return resolveAbstractUuid(data) as Uuid
+              return resolveAbstractUuid(data) as AbstractUuidPreResolver
             })
         })
       )
@@ -70,7 +70,7 @@ export const resolvers: TaxonomyTermResolvers = {
               ...taxonomyPath.slice(currentIndex + 1).map((term) => {
                 return {
                   label: term.name,
-                  url: term.alias,
+                  url: term.alias ?? null,
                   id: term.id,
                 }
               }),
@@ -83,11 +83,11 @@ export const resolvers: TaxonomyTermResolvers = {
 }
 
 async function resolveTaxonomyTermPath(
-  parent: TaxonomyTerm,
+  parent: TaxonomyTermPreResolver,
   { dataSources }: Context
 ) {
-  const path: TaxonomyTerm[] = [parent]
-  let current: TaxonomyTerm = parent
+  const path: TaxonomyTermPreResolver[] = [parent]
+  let current: TaxonomyTermPreResolver = parent
 
   while (current.parentId !== null) {
     const data = await dataSources.serlo.getUuid<TaxonomyTermPayload>({

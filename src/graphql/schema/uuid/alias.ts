@@ -19,13 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
-
-import { DateTime } from '../date-time'
-import { Instance } from '../instance'
+import { Instance, Scalars } from '../../../types'
 import { Schema } from '../utils'
+import typeDefs from './alias.graphql'
 
-export const aliasSchema = new Schema()
+export const aliasSchema = new Schema({}, [typeDefs])
 
 export function decodePath(path: string) {
   return decodeURIComponent(path)
@@ -35,33 +33,10 @@ export function encodePath(path: string) {
   return encodeURIComponent(path).replace(/%2F/g, '/')
 }
 
-/**
- * input AliasInput
- */
-export interface AliasInput {
-  instance: Instance
-  path: string
-}
-aliasSchema.addTypeDef(gql`
-  """
-  Needed input to look up an Uuid by alias.
-  """
-  input AliasInput {
-    """
-    The \`Instance\` the alias should be looked up in
-    """
-    instance: Instance!
-    """
-    The path that should be looked up
-    """
-    path: String!
-  }
-`)
-
 export interface AliasPayload {
   id: number
   instance: Instance
   path: string
   source: string
-  timestamp: DateTime
+  timestamp: Scalars['DateTime']
 }

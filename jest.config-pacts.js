@@ -22,9 +22,12 @@
 /* eslint-disable @typescript-eslint/no-var-requires,import/no-commonjs */
 module.exports = {
   preset: 'ts-jest',
-  testEnvironment: 'node',
-  testRegex: '/__tests-pacts__/serlo\\.org/index\\.ts',
-  watchPathIgnorePatterns: ['<rootDir>/pacts/'],
   setupFiles: ['dotenv/config'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup-pacts.ts'],
+  testEnvironment: 'node',
+  testRegex: '/__tests-pacts__/serlo\\.org/index\\.ts',
+  transform: {
+    '^.+\\.graphql$': 'jest-transform-graphql',
+  },
+  watchPathIgnorePatterns: ['<rootDir>/pacts/'],
 }

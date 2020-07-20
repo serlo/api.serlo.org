@@ -20,99 +20,40 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Schema } from '../utils'
-import { abstractEntitySchema } from './abstract-entity'
-import { abstractTaxonomyTermChildSchema } from './abstract-taxonomy-term-child'
-import { abstractUuidSchema, Uuid } from './abstract-uuid'
+import {
+  abstractEntitySchema,
+  EntityRevisionType,
+  EntityType,
+} from './abstract-entity'
+import {
+  AbstractUuidPreResolver,
+  abstractUuidSchema,
+  DiscriminatorType,
+  UuidPayload,
+} from './abstract-uuid'
 import { aliasSchema } from './alias'
-import {
-  Applet,
-  AppletPayload,
-  AppletRevision,
-  AppletRevisionPayload,
-  appletSchema,
-} from './applet'
-import {
-  Article,
-  ArticlePayload,
-  ArticleRevision,
-  ArticleRevisionPayload,
-  articleSchema,
-} from './article'
-import {
-  Course,
-  CoursePayload,
-  CourseRevision,
-  CourseRevisionPayload,
-  courseSchema,
-} from './course'
-import {
-  CoursePage,
-  CoursePagePayload,
-  CoursePageRevision,
-  CoursePageRevisionPayload,
-  coursePageSchema,
-} from './course-page'
-import {
-  Event,
-  EventPayload,
-  EventRevision,
-  EventRevisionPayload,
-  eventSchema,
-} from './event'
-import {
-  Exercise,
-  ExercisePayload,
-  ExerciseRevision,
-  ExerciseRevisionPayload,
-  exerciseSchema,
-} from './exercise'
+import { Applet, AppletRevision, appletSchema } from './applet'
+import { Article, ArticleRevision, articleSchema } from './article'
+import { Course, CourseRevision, courseSchema } from './course'
+import { CoursePage, CoursePageRevision, coursePageSchema } from './course-page'
+import { Event, EventRevision, eventSchema } from './event'
+import { Exercise, ExerciseRevision, exerciseSchema } from './exercise'
 import {
   ExerciseGroup,
-  ExerciseGroupPayload,
   ExerciseGroupRevision,
-  ExerciseGroupRevisionPayload,
   exerciseGroupSchema,
 } from './exercise-group'
 import {
   GroupedExercise,
-  GroupedExercisePayload,
   GroupedExerciseRevision,
-  GroupedExerciseRevisionPayload,
   groupedExerciseSchema,
 } from './grouped-exercise'
 import { navigationSchema } from './navigation'
-import {
-  Page,
-  PagePayload,
-  PageRevision,
-  PageRevisionPayload,
-  pageSchema,
-} from './page'
-import {
-  Solution,
-  SolutionPayload,
-  SolutionRevision,
-  SolutionRevisionPayload,
-  solutionSchema,
-} from './solution'
-import {
-  resolveTaxonomyTerm,
-  TaxonomyTermPayload,
-  taxonomyTermSchema,
-} from './taxonomy-term'
-import {
-  resolveUnsupportedUuid,
-  UnsupportedUuidPayload,
-  unsupportedUuidSchema,
-} from './unsupported-uuid'
-import { resolveUser, UserPayload, userSchema } from './user'
-import {
-  Video,
-  VideoPayload,
-  VideoRevision,
-  VideoRevisionPayload,
-  videoSchema,
-} from './video'
+import { Page, PageRevision, pageSchema } from './page'
+import { Solution, SolutionRevision, solutionSchema } from './solution'
+import { resolveTaxonomyTerm, taxonomyTermSchema } from './taxonomy-term'
+import { resolveUser, userSchema } from './user'
+import { Video, VideoRevision, videoSchema } from './video'
 
 export * from './abstract-entity'
 export * from './abstract-uuid'
@@ -125,16 +66,15 @@ export * from './event'
 export * from './exercise'
 export * from './exercise-group'
 export * from './grouped-exercise'
+export * from './navigation'
 export * from './page'
 export * from './solution'
 export * from './taxonomy-term'
-export * from './unsupported-uuid'
 export * from './user'
 export * from './video'
 
 export const uuidSchema = Schema.merge(
   abstractEntitySchema,
-  abstractTaxonomyTermChildSchema,
   abstractUuidSchema,
   aliasSchema,
   appletSchema,
@@ -149,128 +89,65 @@ export const uuidSchema = Schema.merge(
   pageSchema,
   solutionSchema,
   taxonomyTermSchema,
-  unsupportedUuidSchema,
   userSchema,
   videoSchema
 )
 
-export type AbstractUuidPayload =
-  | ({ discriminator: 'entity'; type: 'applet' } & AppletPayload)
-  | ({ discriminator: 'entity'; type: 'article' } & ArticlePayload)
-  | ({ discriminator: 'entity'; type: 'course' } & CoursePayload)
-  | ({ discriminator: 'entity'; type: 'coursePage' } & CoursePagePayload)
-  | ({ discriminator: 'entity'; type: 'event' } & EventPayload)
-  | ({ discriminator: 'entity'; type: 'exercise' } & ExercisePayload)
-  | ({ discriminator: 'entity'; type: 'exerciseGroup' } & ExerciseGroupPayload)
-  | ({
-      discriminator: 'entity'
-      type: 'groupedExercise'
-    } & GroupedExercisePayload)
-  | ({ discriminator: 'entity'; type: 'solution' } & SolutionPayload)
-  | ({ discriminator: 'entity'; type: 'video' } & VideoPayload)
-  | ({
-      discriminator: 'entityRevision'
-      type: 'applet'
-    } & AppletRevisionPayload)
-  | ({
-      discriminator: 'entityRevision'
-      type: 'article'
-    } & ArticleRevisionPayload)
-  | ({
-      discriminator: 'entityRevision'
-      type: 'course'
-    } & CourseRevisionPayload)
-  | ({
-      discriminator: 'entityRevision'
-      type: 'coursePage'
-    } & CoursePageRevisionPayload)
-  | ({ discriminator: 'entityRevision'; type: 'event' } & EventRevisionPayload)
-  | ({
-      discriminator: 'entityRevision'
-      type: 'exercise'
-    } & ExerciseRevisionPayload)
-  | ({
-      discriminator: 'entityRevision'
-      type: 'exerciseGroup'
-    } & ExerciseGroupRevisionPayload)
-  | ({
-      discriminator: 'entityRevision'
-      type: 'groupedExercise'
-    } & GroupedExerciseRevisionPayload)
-  | ({
-      discriminator: 'entityRevision'
-      type: 'solution'
-    } & SolutionRevisionPayload)
-  | ({ discriminator: 'entityRevision'; type: 'video' } & VideoRevisionPayload)
-  | ({ discriminator: 'page' } & PagePayload)
-  | ({ discriminator: 'pageRevision' } & PageRevisionPayload)
-  | ({ discriminator: 'user' } & UserPayload)
-  | ({ discriminator: 'taxonomyTerm' } & TaxonomyTermPayload)
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function resolveAbstractUuid(data?: AbstractUuidPayload): Uuid | void {
+export function resolveAbstractUuid(
+  data?: UuidPayload
+  // FIXME: this should be UuidPreResolver when refactoring is done
+): AbstractUuidPreResolver | void {
   if (!data) return
 
-  switch (data.discriminator) {
-    case 'entity':
-      switch (data.type) {
-        case 'applet':
-          return new Applet(data)
-        case 'article':
-          return new Article(data)
-        case 'course':
-          return new Course(data)
-        case 'coursePage':
-          return new CoursePage(data)
-        case 'event':
-          return new Event(data)
-        case 'exercise':
-          return new Exercise(data)
-        case 'exerciseGroup':
-          return new ExerciseGroup(data)
-        case 'groupedExercise':
-          return new GroupedExercise(data)
-        case 'solution':
-          return new Solution(data)
-        case 'video':
-          return new Video(data)
-        default:
-          return resolveUnsupportedUuid(data as UnsupportedUuidPayload)
-      }
-    case 'entityRevision':
-      switch (data.type) {
-        case 'applet':
-          return new AppletRevision(data)
-        case 'article':
-          return new ArticleRevision(data)
-        case 'course':
-          return new CourseRevision(data)
-        case 'coursePage':
-          return new CoursePageRevision(data)
-        case 'event':
-          return new EventRevision(data)
-        case 'exercise':
-          return new ExerciseRevision(data)
-        case 'exerciseGroup':
-          return new ExerciseGroupRevision(data)
-        case 'groupedExercise':
-          return new GroupedExerciseRevision(data)
-        case 'solution':
-          return new SolutionRevision(data)
-        case 'video':
-          return new VideoRevision(data)
-        default:
-          return resolveUnsupportedUuid(data as UnsupportedUuidPayload)
-      }
-    case 'page':
+  switch (data.__typename) {
+    case EntityType.Applet:
+      return new Applet(data)
+    case EntityType.Article:
+      return new Article(data)
+    case EntityType.Course:
+      return new Course(data)
+    case EntityType.CoursePage:
+      return new CoursePage(data)
+    case EntityType.Event:
+      return new Event(data)
+    case EntityType.Exercise:
+      return new Exercise(data)
+    case EntityType.ExerciseGroup:
+      return new ExerciseGroup(data)
+    case EntityType.GroupedExercise:
+      return new GroupedExercise(data)
+    case EntityType.Solution:
+      return new Solution(data)
+    case EntityType.Video:
+      return new Video(data)
+    case EntityRevisionType.AppletRevision:
+      return new AppletRevision(data)
+    case EntityRevisionType.ArticleRevision:
+      return new ArticleRevision(data)
+    case EntityRevisionType.CourseRevision:
+      return new CourseRevision(data)
+    case EntityRevisionType.CoursePageRevision:
+      return new CoursePageRevision(data)
+    case EntityRevisionType.EventRevision:
+      return new EventRevision(data)
+    case EntityRevisionType.ExerciseRevision:
+      return new ExerciseRevision(data)
+    case EntityRevisionType.ExerciseGroupRevision:
+      return new ExerciseGroupRevision(data)
+    case EntityRevisionType.GroupedExerciseRevision:
+      return new GroupedExerciseRevision(data)
+    case EntityRevisionType.SolutionRevision:
+      return new SolutionRevision(data)
+    case EntityRevisionType.VideoRevision:
+      return new VideoRevision(data)
+    case DiscriminatorType.Page:
       return new Page(data)
-    case 'pageRevision':
+    case DiscriminatorType.PageRevision:
       return new PageRevision(data)
-    case 'user':
+    case DiscriminatorType.User:
       return resolveUser(data)
-    case 'taxonomyTerm':
+    case DiscriminatorType.TaxonomyTerm:
       return resolveTaxonomyTerm(data)
-    default:
-      return resolveUnsupportedUuid(data as UnsupportedUuidPayload)
   }
 }

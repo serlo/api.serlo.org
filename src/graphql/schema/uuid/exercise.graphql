@@ -1,0 +1,21 @@
+type Exercise implements AbstractUuid & AbstractEntity {
+  id: Int!
+  trashed: Boolean!
+  instance: Instance!
+  alias: String
+  date: DateTime!
+  license: License!
+  currentRevision: ExerciseRevision
+  taxonomyTerms: [TaxonomyTerm!]!
+  solution: Solution
+}
+
+type ExerciseRevision implements AbstractUuid & AbstractEntityRevision {
+  id: Int!
+  author: User!
+  trashed: Boolean!
+  date: DateTime!
+  exercise: Exercise!
+  content: String!
+  changes: String!
+}

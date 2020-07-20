@@ -19,18 +19,31 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
-
+import { Instance, License, Scalars } from '../../../types'
 import { SerloDataSource } from '../../data-sources/serlo'
-import { DateTime } from '../date-time'
-import { Instance } from '../instance'
-import { License } from '../license'
 import { requestsOnlyFields, Schema } from '../utils'
-import { Uuid, UuidPayload } from './abstract-uuid'
+import typeDefs from './abstract-entity.graphql'
+import { AbstractUuidPreResolver, AbstractUuidPayload } from './abstract-uuid'
 import { encodePath } from './alias'
-import { resolveUser, User, UserPayload } from './user'
+import { AppletPayload, AppletRevisionPayload } from './applet'
+import { ArticlePayload, ArticleRevisionPayload } from './article'
+import { CoursePayload, CourseRevisionPayload } from './course'
+import { CoursePagePayload, CoursePageRevisionPayload } from './course-page'
+import { EventPayload, EventRevisionPayload } from './event'
+import { ExercisePayload, ExerciseRevisionPayload } from './exercise'
+import {
+  ExerciseGroupPayload,
+  ExerciseGroupRevisionPayload,
+} from './exercise-group'
+import {
+  GroupedExercisePayload,
+  GroupedExerciseRevisionPayload,
+} from './grouped-exercise'
+import { SolutionPayload, SolutionRevisionPayload } from './solution'
+import { resolveUser, UserPreResolver, UserPayload } from './user'
+import { VideoPayload, VideoRevisionPayload } from './video'
 
-export const abstractEntitySchema = new Schema()
+export const abstractEntitySchema = new Schema({}, [typeDefs])
 
 export enum EntityType {
   Applet = 'Applet',
@@ -45,6 +58,18 @@ export enum EntityType {
   Video = 'Video',
 }
 
+export type EntityPreResolver =
+  | AppletPayload
+  | ArticlePayload
+  | CoursePayload
+  | CoursePagePayload
+  | EventPayload
+  | ExercisePayload
+  | ExerciseGroupPayload
+  | GroupedExercisePayload
+  | SolutionPayload
+  | VideoPayload
+
 export enum EntityRevisionType {
   ArticleRevision = 'ArticleRevision',
   AppletRevision = 'AppletRevision',
@@ -58,7 +83,19 @@ export enum EntityRevisionType {
   VideoRevision = 'VideoRevision',
 }
 
-export abstract class Entity implements Uuid {
+export type EntityRevisionPreResolver =
+  | AppletRevisionPayload
+  | ArticleRevisionPayload
+  | CourseRevisionPayload
+  | CoursePageRevisionPayload
+  | EventRevisionPayload
+  | ExerciseRevisionPayload
+  | ExerciseGroupRevisionPayload
+  | GroupedExerciseRevisionPayload
+  | SolutionRevisionPayload
+  | VideoRevisionPayload
+
+export abstract class Entity implements AbstractUuidPreResolver {
   public abstract __typename: EntityType
   public id: number
   public trashed: boolean
@@ -78,68 +115,31 @@ export abstract class Entity implements Uuid {
     this.currentRevisionId = payload.currentRevisionId
   }
 }
-export interface EntityPayload extends UuidPayload {
+export interface EntityPayload extends AbstractUuidPayload {
+  __typename: EntityType
   instance: Instance
   alias: string | null
-  date: DateTime
+  date: Scalars['DateTime']
   licenseId: number
   currentRevisionId: number | null
 }
-abstractEntitySchema.addTypeResolver<Entity>('Entity', (entity) => {
+abstractEntitySchema.addTypeResolver<Entity>('AbstractEntity', (entity) => {
   return entity.__typename
 })
-abstractEntitySchema.addTypeDef(gql`
-  """
-  Represents a Serlo.org entity (e.g. an article). An \`Entity\` is tied to an \`Instance\`, has a \`License\`, might have an alias
-  and is the child of \`TaxonomyTerm\`s
-  """
-  interface Entity {
-    """
-    The \`DateTime\` the entity has been created
-    """
-    date: DateTime!
-    """
-    The \`Instance\` the entity is tied to
-    """
-    instance: Instance!
-    """
-    The current alias of the entity
-    """
-    alias: String
-    """
-    The \`License\` of the entity
-    """
-    license: License!
-  }
-`)
-export interface EntityRevisionPayload extends UuidPayload {
-  date: DateTime
+export interface EntityRevisionPayload extends AbstractUuidPayload {
+  __typename: EntityRevisionType
+  date: Scalars['DateTime']
   authorId: number
   repositoryId: number
 }
 abstractEntitySchema.addTypeResolver<EntityRevision>(
-  'EntityRevision',
+  'AbstractEntityRevision',
   (revision) => {
     return revision.__typename
   }
 )
-abstractEntitySchema.addTypeDef(gql`
-  """
-  Represents a Serlo.org entity revision (e.g. a revision of an article). An \`EntityRevision\` is tied to an \`Entity\` and has an author.
-  """
-  interface EntityRevision {
-    """
-    The \`User\` that created the entity revision
-    """
-    author: User!
-    """
-    The \`DateTime\` the entity revision has been created
-    """
-    date: DateTime!
-  }
-`)
 
-export abstract class EntityRevision implements Uuid {
+export abstract class EntityRevision implements AbstractUuidPreResolver {
   public abstract __typename: EntityRevisionType
   public id: number
   public trashed: boolean
@@ -170,27 +170,15 @@ export function addEntityResolvers<
   repository,
   Entity,
   EntityRevision,
-  entityFields = '',
-  entityRevisionFields,
 }: EntityResolversPayload<E, R, ESetter, RSetter>) {
-  schema.addTypeDef(gql`
-    type ${entityType} implements Uuid & Entity {
-      id: Int!
-      trashed: Boolean!
-      instance: Instance!
-      alias: String
-      date: DateTime!
-      license: License!
-      currentRevision: ${entityRevisionType}
-      ${entityFields}
-    }
-  `)
   schema.addResolver<E, unknown, Partial<R> | null>(
     entityType,
     'currentRevision',
     async (entity, _args, { dataSources }, info) => {
       if (!entity.currentRevisionId) return null
-      const partialRevision = { id: entity.currentRevisionId }
+      const partialRevision = {
+        id: entity.currentRevisionId,
+      }
       if (requestsOnlyFields(entityRevisionType, ['id'], info)) {
         return partialRevision as Partial<R>
       }
@@ -202,7 +190,9 @@ export function addEntityResolvers<
     entityType,
     'license',
     async (entity, _args, { dataSources }, info) => {
-      const partialLicense = { id: entity.licenseId }
+      const partialLicense = {
+        id: entity.licenseId,
+      }
       if (requestsOnlyFields('License', ['id'], info)) {
         return partialLicense
       }
@@ -210,21 +200,13 @@ export function addEntityResolvers<
     }
   )
 
-  schema.addTypeDef(gql`
-    type ${entityRevisionType} implements Uuid & EntityRevision {
-      id: Int!
-      author: User!
-      trashed: Boolean!
-      date: DateTime!
-      ${repository}: ${entityType}!
-      ${entityRevisionFields}
-    }
-  `)
-  schema.addResolver<R, unknown, Partial<User>>(
+  schema.addResolver<R, unknown, Partial<UserPreResolver>>(
     entityRevisionType,
     'author',
     async (entityRevision, _args, { dataSources }, info) => {
-      const partialUser = { id: entityRevision.authorId }
+      const partialUser = {
+        id: entityRevision.authorId,
+      }
       if (requestsOnlyFields('User', ['id'], info)) {
         return partialUser
       }
@@ -236,7 +218,9 @@ export function addEntityResolvers<
     entityRevisionType,
     repository,
     async (entityRevision, _args, { dataSources }, info) => {
-      const partialEntity = { id: entityRevision.repositoryId }
+      const partialEntity = {
+        id: entityRevision.repositoryId,
+      }
       if (requestsOnlyFields(entityType, ['id'], info)) {
         return partialEntity as Partial<E>
       }
@@ -259,6 +243,4 @@ export interface EntityResolversPayload<
   Entity: new (data: any) => E
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   EntityRevision: new (data: any) => R
-  entityFields?: string
-  entityRevisionFields: string
 }

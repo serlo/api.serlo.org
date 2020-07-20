@@ -19,11 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Mutation_RemoveCacheArgs, Mutation_SetCacheArgs } from '../../../types'
 import { MutationResolver } from '../types'
 
 export interface CacheResolvers {
   Mutation: {
-    _setCache: MutationResolver<{ key: string; value: string }>
-    _removeCache: MutationResolver<{ key: string }>
+    _setCache: MutationResolver<Mutation_SetCacheArgs>
+    _removeCache: MutationResolver<Mutation_RemoveCacheArgs>
   }
 }

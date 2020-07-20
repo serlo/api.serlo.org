@@ -55,7 +55,8 @@ export function getGraphQLOptions(
     context({ req }): Promise<Pick<Context, 'service' | 'user'>> {
       const authorizationHeader = req.headers.authorization
       if (!authorizationHeader) {
-        throw new AuthenticationError('Invalid authorization header')
+        return Promise.resolve({ service: Service.Playground, user: null })
+        // throw new AuthenticationError('Invalid authorization header')
       }
       return handleAuthentication(authorizationHeader, async (token) => {
         if (process.env.HYDRA_HOST === undefined) return null

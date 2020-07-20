@@ -20,9 +20,9 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { DiscriminatorType } from '../abstract-uuid'
-import { User, UserPayload } from './types'
+import { UserPreResolver, UserPayload } from './types'
 
-export function resolveUser(data: UserPayload): User {
+export function resolveUser(data: UserPayload): UserPreResolver {
   return {
     ...data,
     __typename: DiscriminatorType.User,

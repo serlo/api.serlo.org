@@ -45,7 +45,6 @@ test('by id', async () => {
     `,
     data: {
       uuid: {
-        __typename: 'User',
         ...user,
       },
     },

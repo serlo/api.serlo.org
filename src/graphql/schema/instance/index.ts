@@ -20,8 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Schema } from '../utils'
-import { typeDefs } from './type-defs'
-
-export * from './types'
+import typeDefs from './types.graphql'
 
 export const instanceSchema = new Schema({}, [typeDefs])

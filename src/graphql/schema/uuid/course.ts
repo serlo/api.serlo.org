@@ -32,8 +32,9 @@ import {
   TaxonomyTermChild,
 } from './abstract-taxonomy-term-child'
 import { CoursePage, CoursePagePayload } from './course-page'
+import typeDefs from './course.graphql'
 
-export const courseSchema = new Schema()
+export const courseSchema = new Schema({}, [typeDefs])
 
 export class Course extends TaxonomyTermChild {
   public __typename = EntityType.Course
@@ -45,6 +46,7 @@ export class Course extends TaxonomyTermChild {
   }
 }
 export interface CoursePayload extends EntityPayload {
+  __typename: EntityType.Course
   taxonomyTermIds: number[]
   pageIds: number[]
 }
@@ -81,6 +83,7 @@ export class CourseRevision extends EntityRevision {
 }
 
 export interface CourseRevisionPayload extends EntityRevisionPayload {
+  __typename: EntityRevisionType.CourseRevision
   title: string
   content: string
   changes: string
@@ -94,14 +97,4 @@ addTaxonomyTermChildResolvers({
   repository: 'course',
   Entity: Course,
   EntityRevision: CourseRevision,
-  entityFields: `
-    taxonomyTerms: [TaxonomyTerm!]!
-    pages: [CoursePage!]!
-  `,
-  entityRevisionFields: `
-    title: String!
-    content: String!
-    changes: String!
-    metaDescription: String!
-  `,
 })

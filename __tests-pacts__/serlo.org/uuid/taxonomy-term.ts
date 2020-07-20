@@ -69,7 +69,6 @@ test('by id (subject)', async () => {
     `,
     data: {
       uuid: {
-        __typename: 'TaxonomyTerm',
         ...R.omit(['parentId', 'childrenIds'], taxonomyTermSubject),
         parent: {
           id: 3,
@@ -128,7 +127,6 @@ test('by id (subject, w/ navigation)', async () => {
     `,
     data: {
       uuid: {
-        __typename: 'TaxonomyTerm',
         ...R.omit(['parentId', 'childrenIds'], taxonomyTermSubject),
 
         parent: {
@@ -142,7 +140,7 @@ test('by id (subject, w/ navigation)', async () => {
         ],
 
         navigation: {
-          data: JSON.stringify((JSON.parse(navigation.data) as unknown[])[0]),
+          data: navigation.data[0],
           path: [
             {
               label: 'Mathematik',
@@ -183,7 +181,6 @@ test('by id (curriculum-topic)', async () => {
     `,
     data: {
       uuid: {
-        __typename: 'TaxonomyTerm',
         ...R.omit(['parentId', 'childrenIds'], taxonomyTermCurriculumTopic),
       },
     },
