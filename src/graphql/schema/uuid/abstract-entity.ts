@@ -19,11 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ForbiddenError } from 'apollo-server'
-
 import { Instance, License, Scalars } from '../../../types'
 import { SerloDataSource } from '../../data-sources/serlo'
-import { Service } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
 import typeDefs from './abstract-entity.graphql'
 import { AbstractUuidPreResolver, AbstractUuidPayload } from './abstract-uuid'
@@ -173,8 +170,6 @@ export function addEntityResolvers<
   repository,
   Entity,
   EntityRevision,
-  entitySetter,
-  entityRevisionSetter,
 }: EntityResolversPayload<E, R, ESetter, RSetter>) {
   schema.addResolver<E, unknown, Partial<R> | null>(
     entityType,
@@ -233,33 +228,6 @@ export function addEntityResolvers<
       return new Entity(data)
     }
   )
-
-  schema.addMutation<unknown, EPayload, null>(
-    `_set${entityType}`,
-    async (_parent, payload, { dataSources, service }) => {
-      if (service !== Service.Serlo) {
-        throw new ForbiddenError(
-          `You do not have the permissions to set a ${entityType}`
-        )
-      }
-      await (dataSources.serlo[entitySetter] as (
-        payload: EPayload
-      ) => Promise<void>)(payload)
-    }
-  )
-  schema.addMutation<unknown, RPayload, null>(
-    `_set${entityRevisionType}`,
-    async (_parent, payload, { dataSources, service }) => {
-      if (service !== Service.Serlo) {
-        throw new ForbiddenError(
-          `You do not have the permissions to set a ${entityRevisionType}`
-        )
-      }
-      await (dataSources.serlo[entityRevisionSetter] as (
-        payload: RPayload
-      ) => Promise<void>)(payload)
-    }
-  )
 }
 export interface EntityResolversPayload<
   E extends Entity,
@@ -275,6 +243,4 @@ export interface EntityResolversPayload<
   Entity: new (data: any) => E
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   EntityRevision: new (data: any) => R
-  entitySetter: ESetter
-  entityRevisionSetter: RSetter
 }

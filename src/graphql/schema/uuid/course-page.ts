@@ -87,6 +87,4 @@ addEntityResolvers({
   repository: 'coursePage',
   Entity: CoursePage,
   EntityRevision: CoursePageRevision,
-  entitySetter: 'setCoursePage',
-  entityRevisionSetter: 'setCoursePageRevision',
 })

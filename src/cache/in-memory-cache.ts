@@ -19,25 +19,42 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { none, some } from 'fp-ts/lib/Option'
+import { option as O, pipeable } from 'fp-ts'
 
 import { Cache } from '../graphql/environment'
 
-export function createInMemoryCache(): Cache & { reset(): void } {
-  let cache: Record<string, string> = {}
+export function createInMemoryCache(): Cache {
+  let cache: Record<
+    string,
+    {
+      value: unknown
+      ttl?: number
+    } | null
+  > = {}
 
   return {
     // eslint-disable-next-line @typescript-eslint/require-await
-    async get(key) {
-      const serialized = cache[key]
-      return serialized === undefined ? none : some(JSON.parse(serialized))
+    get: async <T>(key: string) => {
+      return pipeable.pipe(
+        O.fromNullable(cache[key]),
+        O.map((x) => x.value as T)
+      )
     },
     // eslint-disable-next-line @typescript-eslint/require-await
-    async set(key, value) {
-      cache[key] = JSON.stringify(value)
+    async set(key, value, options) {
+      cache[key] = { value, ttl: options?.ttl }
     },
-    reset() {
+    // eslint-disable-next-line @typescript-eslint/require-await
+    async flush() {
       cache = {}
+    },
+    // eslint-disable-next-line @typescript-eslint/require-await
+    async getTtl(key: string): Promise<O.Option<number>> {
+      const value = cache[key]
+      return pipeable.pipe(
+        O.fromNullable(value),
+        O.chain((x) => O.fromNullable(x.ttl))
+      )
     },
   }
 }

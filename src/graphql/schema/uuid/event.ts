@@ -77,6 +77,4 @@ addTaxonomyTermChildResolvers({
   repository: 'event',
   Entity: Event,
   EntityRevision: EventRevision,
-  entitySetter: 'setEvent',
-  entityRevisionSetter: 'setEventRevision',
 })

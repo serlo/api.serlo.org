@@ -87,6 +87,4 @@ addEntityResolvers({
   repository: 'solution',
   Entity: Solution,
   EntityRevision: SolutionRevision,
-  entitySetter: 'setSolution',
-  entityRevisionSetter: 'setSolutionRevision',
 })

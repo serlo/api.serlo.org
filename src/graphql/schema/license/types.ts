@@ -19,22 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import {
-  License,
-  Mutation_RemoveLicenseArgs,
-  Mutation_SetLicenseArgs,
-  QueryLicenseArgs,
-} from '../../../types'
-import { MutationResolver, QueryResolver } from '../types'
+import { License, QueryLicenseArgs } from '../../../types'
+import { QueryResolver } from '../types'
 
 export type LicensePayload = License
 
 export interface LicenseResolvers {
   Query: {
     license: QueryResolver<QueryLicenseArgs, License>
-  }
-  Mutation: {
-    _removeLicense: MutationResolver<Mutation_RemoveLicenseArgs>
-    _setLicense: MutationResolver<Mutation_SetLicenseArgs>
   }
 }

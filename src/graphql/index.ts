@@ -27,6 +27,7 @@ import { decode, JsonWebTokenError, verify } from 'jsonwebtoken'
 import fetch from 'node-fetch'
 import { URLSearchParams } from 'url'
 
+import { GoogleSheetApi } from './data-sources/google-spreadsheet-api'
 import { SerloDataSource } from './data-sources/serlo'
 import { Environment } from './environment'
 import { schema } from './schema'
@@ -45,6 +46,10 @@ export function getGraphQLOptions(
     dataSources() {
       return {
         serlo: new SerloDataSource(environment),
+        googleSheetApi: new GoogleSheetApi({
+          apiKey: process.env.GOOGLE_API_KEY,
+          environment,
+        }),
       }
     },
     context({ req }): Promise<Pick<Context, 'service' | 'user'>> {

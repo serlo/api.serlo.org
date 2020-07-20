@@ -77,6 +77,4 @@ addTaxonomyTermChildResolvers({
   repository: 'article',
   Entity: Article,
   EntityRevision: ArticleRevision,
-  entitySetter: 'setArticle',
-  entityRevisionSetter: 'setArticleRevision',
 })

@@ -21,29 +21,3 @@ type ArticleRevision implements AbstractUuid & AbstractEntityRevision {
   metaTitle: String!
   metaDescription: String!
 }
-
-extend type Mutation {
-  _setArticle(
-    id: Int!
-    trashed: Boolean!
-    instance: Instance!
-    alias: String
-    date: DateTime!
-    currentRevisionId: Int
-    licenseId: Int!
-    taxonomyTermIds: [Int!]!
-  ): Boolean
-
-  _setArticleRevision(
-    id: Int!
-    trashed: Boolean!
-    date: DateTime!
-    authorId: Int!
-    repositoryId: Int!
-    title: String!
-    content: String!
-    changes: String!
-    metaTitle: String!
-    metaDescription: String!
-  ): Boolean
-}

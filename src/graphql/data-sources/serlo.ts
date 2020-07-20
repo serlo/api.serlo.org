@@ -24,14 +24,7 @@ import { isSome } from 'fp-ts/lib/Option'
 import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
 
-import {
-  Instance,
-  License,
-  Mutation_SetNotificationEventArgs,
-  Mutation_SetNotificationsArgs,
-  Mutation_SetTaxonomyTermArgs,
-  Mutation_SetUserArgs,
-} from '../../types'
+import { Instance, License } from '../../types'
 import { Environment } from '../environment'
 import {
   NotificationEventPayload,
@@ -41,34 +34,9 @@ import { Service } from '../schema/types'
 import {
   AbstractUuidPayload,
   AliasPayload,
-  AppletPayload,
-  AppletRevisionPayload,
-  ArticlePayload,
-  ArticleRevisionPayload,
-  CoursePagePayload,
-  CoursePageRevisionPayload,
-  CoursePayload,
-  CourseRevisionPayload,
   decodePath,
-  DiscriminatorType,
   encodePath,
   EntityPayload,
-  EntityRevisionType,
-  EntityType,
-  EventPayload,
-  EventRevisionPayload,
-  ExerciseGroupPayload,
-  ExerciseGroupRevisionPayload,
-  ExercisePayload,
-  ExerciseRevisionPayload,
-  GroupedExercisePayload,
-  GroupedExerciseRevisionPayload,
-  PagePayload,
-  PageRevisionPayload,
-  SolutionPayload,
-  SolutionRevisionPayload,
-  VideoPayload,
-  VideoRevisionPayload,
 } from '../schema/uuid'
 import {
   Navigation,
@@ -92,14 +60,7 @@ export class SerloDataSource extends RESTDataSource {
     return this.cacheAwareGet<AliasPayload>({
       path: `/api/alias${cleanPath}`,
       instance,
-      setter: 'setAlias',
     })
-  }
-
-  public async setAlias(alias: AliasPayload) {
-    const cacheKey = this.getCacheKey(`/api/alias${alias.path}`, alias.instance)
-    await this.environment.cache.set(cacheKey, alias)
-    return alias
   }
 
   public async getNavigation({
@@ -109,14 +70,27 @@ export class SerloDataSource extends RESTDataSource {
     instance: Instance
     id: number
   }): Promise<Navigation | null> {
-    const { data, leafs } = await this.cacheAwareGet<{
-      data: NodeData[]
-      leafs: Record<string, number>
-    }>({
+    const payload = await this.cacheAwareGet<NavigationPayload>({
       path: `/api/navigation`,
       instance,
-      setter: 'setNavigation',
     })
+    const { data } = payload
+
+    const leafs: Record<string, number> = {}
+
+    const findLeafs = (node: NodeData): number[] => {
+      return [
+        ...(node.id ? [node.id] : []),
+        ...R.flatten(R.map(findLeafs, node.children || [])),
+      ]
+    }
+
+    for (let i = 0; i < data.length; i++) {
+      findLeafs(data[i]).forEach((id) => {
+        leafs[id] = i
+      })
+    }
+
     const treeIndex = leafs[id]
 
     if (treeIndex === undefined) return null
@@ -162,54 +136,8 @@ export class SerloDataSource extends RESTDataSource {
     }
   }
 
-  public async setNavigation({
-    data,
-    instance,
-  }: NavigationPayload): Promise<{
-    data: NodeData[]
-    leafs: Record<string, number>
-  }> {
-    const leafs: Record<string, number> = {}
-
-    const findLeafs = (node: NodeData): number[] => {
-      return [
-        ...(node.id ? [node.id] : []),
-        ...R.flatten(R.map(findLeafs, node.children || [])),
-      ]
-    }
-
-    for (let i = 0; i < data.length; i++) {
-      findLeafs(data[i]).forEach((id) => {
-        leafs[id] = i
-      })
-    }
-
-    const value = {
-      data,
-      leafs,
-    }
-
-    const cacheKey = this.getCacheKey(`/api/navigation`, instance)
-    await this.environment.cache.set(cacheKey, value)
-    return value
-  }
-
   public async getLicense({ id }: { id: number }): Promise<License> {
-    return this.cacheAwareGet({
-      path: `/api/license/${id}`,
-      setter: 'setLicense',
-    })
-  }
-
-  public async setLicense(license: License) {
-    const cacheKey = this.getCacheKey(`/api/license/${license.id}`)
-    await this.environment.cache.set(cacheKey, license)
-    return license
-  }
-
-  public async removeLicense({ id }: { id: number }) {
-    const cacheKey = this.getCacheKey(`/api/license/${id}`)
-    await this.environment.cache.set(cacheKey, null)
+    return this.cacheAwareGet({ path: `/api/license/${id}` })
   }
 
   public async getUuid<T extends AbstractUuidPayload>({
@@ -217,177 +145,7 @@ export class SerloDataSource extends RESTDataSource {
   }: {
     id: number
   }): Promise<T> {
-    return this.cacheAwareGet<T>({
-      path: `/api/uuid/${id}`,
-      setter: 'setUuid',
-    })
-  }
-
-  public async setUuid<T extends AbstractUuidPayload>(payload: T): Promise<T> {
-    const cacheKey = this.getCacheKey(`/api/uuid/${payload.id}`)
-    await this.environment.cache.set(cacheKey, payload)
-    return payload
-  }
-
-  public async removeUuid({ id }: { id: number }) {
-    const cacheKey = this.getCacheKey(`/api/uuid/${id}`)
-    await this.environment.cache.set(cacheKey, null)
-  }
-
-  public async setApplet(applet: AppletPayload) {
-    return this.setUuid({ ...applet, __typename: EntityType.Applet })
-  }
-
-  public async setAppletRevision(appletRevision: AppletRevisionPayload) {
-    return this.setUuid({
-      ...appletRevision,
-      __typename: EntityRevisionType.AppletRevision,
-    })
-  }
-
-  public async setArticle(article: ArticlePayload) {
-    return this.setUuid({
-      ...article,
-      __typename: EntityType.Article,
-    })
-  }
-
-  public async setArticleRevision(articleRevision: ArticleRevisionPayload) {
-    return this.setUuid({
-      ...articleRevision,
-      __typename: EntityRevisionType.ArticleRevision,
-    })
-  }
-
-  public async setCourse(course: CoursePayload) {
-    return this.setUuid({ ...course, __typename: EntityType.Course })
-  }
-
-  public async setCourseRevision(courseRevision: CourseRevisionPayload) {
-    return this.setUuid({
-      ...courseRevision,
-      __typename: EntityRevisionType.CourseRevision,
-    })
-  }
-
-  public async setCoursePage(coursePage: CoursePagePayload) {
-    return this.setUuid({
-      ...coursePage,
-      __typename: EntityType.CoursePage,
-    })
-  }
-
-  public async setCoursePageRevision(
-    coursePageRevision: CoursePageRevisionPayload
-  ) {
-    return this.setUuid({
-      ...coursePageRevision,
-      __typename: EntityRevisionType.CoursePageRevision,
-    })
-  }
-
-  public async setEvent(event: EventPayload) {
-    return this.setUuid({ ...event, __typename: EntityType.Event })
-  }
-
-  public async setEventRevision(eventRevision: EventRevisionPayload) {
-    return this.setUuid({
-      ...eventRevision,
-      __typename: EntityRevisionType.EventRevision,
-    })
-  }
-
-  public async setExercise(exercise: ExercisePayload) {
-    return this.setUuid({
-      ...exercise,
-      __typename: EntityType.Exercise,
-    })
-  }
-
-  public async setExerciseRevision(exerciseRevision: ExerciseRevisionPayload) {
-    return this.setUuid({
-      ...exerciseRevision,
-      __typename: EntityRevisionType.ExerciseRevision,
-    })
-  }
-
-  public async setExerciseGroup(exerciseGroup: ExerciseGroupPayload) {
-    return this.setUuid({
-      ...exerciseGroup,
-      __typename: EntityType.ExerciseGroup,
-    })
-  }
-
-  public async setExerciseGroupRevision(
-    exerciseGroupRevision: ExerciseGroupRevisionPayload
-  ) {
-    return this.setUuid({
-      ...exerciseGroupRevision,
-      __typename: EntityRevisionType.ExerciseGroupRevision,
-    })
-  }
-
-  public async setGroupedExercise(groupedExercise: GroupedExercisePayload) {
-    return this.setUuid({
-      ...groupedExercise,
-      __typename: EntityType.GroupedExercise,
-    })
-  }
-
-  public async setGroupedExerciseRevision(
-    groupedExerciseRevision: GroupedExerciseRevisionPayload
-  ) {
-    return this.setUuid({
-      ...groupedExerciseRevision,
-      __typename: EntityRevisionType.GroupedExerciseRevision,
-    })
-  }
-
-  public async setPage(page: PagePayload) {
-    return this.setUuid({ ...page, __typename: DiscriminatorType.Page })
-  }
-
-  public async setPageRevision(pageRevision: PageRevisionPayload) {
-    return this.setUuid({
-      ...pageRevision,
-      __typename: DiscriminatorType.PageRevision,
-    })
-  }
-
-  public async setSolution(solution: SolutionPayload) {
-    return this.setUuid({
-      ...solution,
-      __typename: EntityType.Solution,
-    })
-  }
-
-  public async setSolutionRevision(solutionRevision: SolutionRevisionPayload) {
-    return this.setUuid({
-      ...solutionRevision,
-      __typename: EntityRevisionType.SolutionRevision,
-    })
-  }
-
-  public async setTaxonomyTerm(taxonomyTerm: Mutation_SetTaxonomyTermArgs) {
-    return this.setUuid({
-      ...taxonomyTerm,
-      __typename: DiscriminatorType.TaxonomyTerm,
-    })
-  }
-
-  public async setUser(user: Mutation_SetUserArgs) {
-    return this.setUuid({ ...user, __typename: DiscriminatorType.User })
-  }
-
-  public async setVideo(video: VideoPayload) {
-    return this.setUuid({ ...video, __typename: EntityType.Video })
-  }
-
-  public async setVideoRevision(videoRevision: VideoRevisionPayload) {
-    return this.setUuid({
-      ...videoRevision,
-      __typename: EntityRevisionType.VideoRevision,
-    })
+    return this.cacheAwareGet<T>({ path: `/api/uuid/${id}` })
   }
 
   public async getNotificationEvent({
@@ -395,16 +153,7 @@ export class SerloDataSource extends RESTDataSource {
   }: {
     id: number
   }): Promise<NotificationEventPayload> {
-    return this.cacheAwareGet({
-      path: `/api/event/${id}`,
-      setter: 'setNotificationEvent',
-    })
-  }
-
-  public async setNotificationEvent(event: Mutation_SetNotificationEventArgs) {
-    const cacheKey = this.getCacheKey(`/api/event/${event.id}`)
-    await this.environment.cache.set(cacheKey, event)
-    return event
+    return this.cacheAwareGet({ path: `/api/event/${id}` })
   }
 
   public async getNotifications({
@@ -415,21 +164,12 @@ export class SerloDataSource extends RESTDataSource {
   }): Promise<NotificationsPayload> {
     const response = await this.cacheAwareGet<NotificationsPayload>({
       path: `/api/notifications/${id}`,
-      setter: 'setNotifications',
     })
     return {
       ...response,
       // Sometimes, Zend serializes an array as an object... This line ensures that we have an array.
       notifications: Object.values(response.notifications),
     }
-  }
-
-  public async setNotifications(notifications: Mutation_SetNotificationsArgs) {
-    const cacheKey = this.getCacheKey(
-      `/api/notifications/${notifications.userId}`
-    )
-    await this.environment.cache.set(cacheKey, notifications)
-    return notifications
   }
 
   public async setNotificationState(notificationState: {
@@ -454,9 +194,12 @@ export class SerloDataSource extends RESTDataSource {
       }
       return notification
     })
-    await this.setNotifications({
-      notifications: modifiedNotifications,
+    const cacheKey = this.getCacheKey(
+      `/api/notifications/${notificationState.userId}`
+    )
+    await this.environment.cache.set(cacheKey, {
       userId: notificationState.userId,
+      notifications: modifiedNotifications,
     })
   }
 
@@ -495,11 +238,9 @@ export class SerloDataSource extends RESTDataSource {
   >({
     path,
     instance = Instance.De,
-    setter,
   }: {
     path: string
     instance?: Instance
-    setter: SerloDataSource[K]
   }): Promise<T> {
     const cacheKey = this.getCacheKey(path, instance)
     const cache = await this.environment.cache.get<T>(cacheKey)
@@ -510,7 +251,7 @@ export class SerloDataSource extends RESTDataSource {
       audience: Service.Serlo,
       issuer: 'api.serlo.org',
     })
-    const data = (await super.get(
+    const data = await super.get<T>(
       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
       {},
       {
@@ -518,8 +259,8 @@ export class SerloDataSource extends RESTDataSource {
           Authorization: `Serlo Service=${token}`,
         },
       }
-    )) as unknown
-    return await (this[setter] as (data: unknown) => Promise<T>)(data)
+    )
+    return this.setCache(cacheKey, data)
   }
 
   private getCacheKey(path: string, instance: Instance = Instance.De) {

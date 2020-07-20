@@ -6,7 +6,3 @@ interface AbstractUuid {
 type Query {
   uuid(alias: AliasInput, id: Int): AbstractUuid
 }
-
-type Mutation {
-  _removeUuid(id: Int!): Boolean
-}

@@ -20,8 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import {
-  Mutation_SetNotificationEventArgs,
-  Mutation_SetNotificationsArgs,
   MutationSetNotificationStateArgs,
   Notification,
   NotificationEvent,
@@ -83,7 +81,5 @@ export interface NotificationResolvers {
   }
   Mutation: {
     setNotificationState: MutationResolver<MutationSetNotificationStateArgs>
-    _setNotifications: MutationResolver<Mutation_SetNotificationsArgs>
-    _setNotificationEvent: MutationResolver<Mutation_SetNotificationEventArgs>
   }
 }
