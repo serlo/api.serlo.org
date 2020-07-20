@@ -20,39 +20,9 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
-import { navigation } from '../__fixtures__/uuid'
-import { Service } from '../src/graphql/schema/types'
-import { setNavigation } from '../src/graphql/schema/uuid/navigation'
-import { assertFailingGraphQLMutation } from './__utils__/assertions'
-import { createTestClient } from './__utils__/test-client'
-
-describe('_setNavigation', () => {
-  test('forbidden', async () => {
-    const { client } = createTestClient({
-      service: Service.Playground,
-      user: null,
-    })
-    await assertFailingGraphQLMutation(
-      {
-        ...setNavigation(navigation),
-        client,
-      },
-      (errors) => {
-        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
-      }
-    )
-  })
-})
-
-// TODO: This whole block depends on setPage (originally imported from
-// src/graphql/schema/uuid/page), that was deleted as part of refactoring.
-// Unless setPage gets back, this test has to be modified or complete deleted
-
-/*
 import { gql } from 'apollo-server'
 
 import {
-  createSetTaxonomyTermMutation,
   navigation,
   page as subjectHomepage,
   taxonomyTermCurriculumTopic,
@@ -61,13 +31,55 @@ import {
 } from '../__fixtures__/uuid'
 import { Instance } from '../src/graphql/schema/instance'
 import { Service } from '../src/graphql/schema/types'
-import { setNavigation } from '../src/graphql/schema/uuid/navigation'
+import { PagePayload, TaxonomyTermPayload } from '../src/graphql/schema/uuid'
+import { NavigationPayload } from '../src/graphql/schema/uuid/navigation'
 import {
-  assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
 } from './__utils__/assertions'
 import { createTestClient } from './__utils__/test-client'
+
+function createSetNavigationMutation(navigation: NavigationPayload) {
+  return {
+    mutation: gql`
+      mutation _setCache($key: String!, $value: String!) {
+        _setCache(key: $key, value: $value)
+      }
+    `,
+    variables: {
+      key: `${navigation.instance}.serlo.org/api/navigation`,
+      value: JSON.stringify(navigation),
+    },
+  }
+}
+
+function createSetPageMutation(page: PagePayload) {
+  return {
+    mutation: gql`
+      mutation _setCache($key: String!, $value: String!) {
+        _setCache(key: $key, value: $value)
+      }
+    `,
+    variables: {
+      key: `de.serlo.org/api/uuid/${page.id}`,
+      value: JSON.stringify({ ...page, discriminator: 'page' }),
+    },
+  }
+}
+
+function createSetTaxonomyTermMutation(taxonomyTerm: TaxonomyTermPayload) {
+  return {
+    mutation: gql`
+      mutation _setCache($key: String!, $value: String!) {
+        _setCache(key: $key, value: $value)
+      }
+    `,
+    variables: {
+      key: `de.serlo.org/api/uuid/${taxonomyTerm.id}`,
+      value: JSON.stringify({ ...taxonomyTerm, discriminator: 'taxonomyTerm' }),
+    },
+  }
+}
 
 describe('Page', () => {
   test('Without navigation', async () => {
@@ -76,11 +88,11 @@ describe('Page', () => {
       user: null,
     })
     await assertSuccessfulGraphQLMutation({
-      ...setPage(subjectHomepage),
+      ...createSetPageMutation(subjectHomepage),
       client,
     })
     await assertSuccessfulGraphQLMutation({
-      ...setNavigation({
+      ...createSetNavigationMutation({
         instance: Instance.De,
         data: JSON.stringify([]),
       }),
@@ -114,11 +126,11 @@ describe('Page', () => {
   test('Subject Homepage', async () => {
     const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
-      ...setPage(subjectHomepage),
+      ...createSetPageMutation(subjectHomepage),
       client,
     })
     await assertSuccessfulGraphQLMutation({
-      ...setNavigation(navigation),
+      ...createSetNavigationMutation(navigation),
       client,
     })
     await assertSuccessfulGraphQLQuery({
@@ -157,7 +169,7 @@ describe('Page', () => {
   test('Dropdown', async () => {
     const { client } = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
-      ...setPage(subjectHomepage),
+      ...createSetPageMutation(subjectHomepage),
       client,
     })
     const page = {
@@ -166,11 +178,11 @@ describe('Page', () => {
       alias: '/page',
     }
     await assertSuccessfulGraphQLMutation({
-      ...setPage(page),
+      ...createSetPageMutation(page),
       client,
     })
     await assertSuccessfulGraphQLMutation({
-      ...setNavigation({
+      ...createSetNavigationMutation({
         instance: Instance.De,
         data: JSON.stringify([
           {
@@ -236,7 +248,6 @@ describe('Page', () => {
   })
 })
 
-
 describe('Taxonomy Term', () => {
   test('Without navigation', async () => {
     const { client } = createTestClient({
@@ -252,7 +263,7 @@ describe('Taxonomy Term', () => {
       client,
     })
     await assertSuccessfulGraphQLMutation({
-      ...setNavigation({
+      ...createSetNavigationMutation({
         instance: Instance.De,
         data: JSON.stringify([]),
       }),
@@ -289,7 +300,7 @@ describe('Taxonomy Term', () => {
       user: null,
     })
     await assertSuccessfulGraphQLMutation({
-      ...setPage(subjectHomepage),
+      ...createSetPageMutation(subjectHomepage),
       client,
     })
     await assertSuccessfulGraphQLMutation({
@@ -301,7 +312,7 @@ describe('Taxonomy Term', () => {
       client,
     })
     await assertSuccessfulGraphQLMutation({
-      ...setNavigation(navigation),
+      ...createSetNavigationMutation(navigation),
       client,
     })
     await assertSuccessfulGraphQLQuery({
@@ -348,7 +359,7 @@ describe('Taxonomy Term', () => {
       user: null,
     })
     await assertSuccessfulGraphQLMutation({
-      ...setPage(subjectHomepage),
+      ...createSetPageMutation(subjectHomepage),
       client,
     })
     await assertSuccessfulGraphQLMutation({
@@ -364,7 +375,7 @@ describe('Taxonomy Term', () => {
       client,
     })
     await assertSuccessfulGraphQLMutation({
-      ...setNavigation(navigation),
+      ...createSetNavigationMutation(navigation),
       client,
     })
     await assertSuccessfulGraphQLQuery({
@@ -409,6 +420,4 @@ describe('Taxonomy Term', () => {
       client,
     })
   })
-}) 
-
-*/
+})

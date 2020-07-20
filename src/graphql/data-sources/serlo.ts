@@ -135,14 +135,6 @@ export class SerloDataSource extends RESTDataSource {
     }
   }
 
-  public async setNavigation(
-    payload: NavigationPayload
-  ): Promise<NavigationPayload> {
-    const cacheKey = this.getCacheKey(`/api/navigation`, payload.instance)
-    await this.environment.cache.set(cacheKey, payload)
-    return payload
-  }
-
   public async getLicense({ id }: { id: number }): Promise<License> {
     return this.cacheAwareGet({ path: `/api/license/${id}` })
   }
