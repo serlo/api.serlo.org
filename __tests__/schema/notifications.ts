@@ -28,140 +28,138 @@ import { Service } from '../../src/graphql/schema/types'
 import { assertSuccessfulGraphQLQuery } from '../__utils__/assertions'
 import { createTestClient } from '../__utils__/test-client'
 
-describe('notifications', () => {
-  const server = setupServer(
-    rest.get(
-      `http://de.${process.env.SERLO_ORG_HOST}/api/notifications/${user.id}`,
-      (req, res, ctx) => {
-        return res(
-          ctx.status(200),
-          ctx.json({
-            userId: user.id,
-            notifications: [
-              {
-                id: 3,
-                unread: true,
-                eventId: 3,
-              },
-              {
-                id: 2,
-                unread: false,
-                eventId: 2,
-              },
-              {
-                id: 1,
-                unread: false,
-                eventId: 1,
-              },
-            ],
-          })
-        )
-      }
-    )
+const server = setupServer(
+  rest.get(
+    `http://de.${process.env.SERLO_ORG_HOST}/api/notifications/${user.id}`,
+    (req, res, ctx) => {
+      return res(
+        ctx.status(200),
+        ctx.json({
+          userId: user.id,
+          notifications: [
+            {
+              id: 3,
+              unread: true,
+              eventId: 3,
+            },
+            {
+              id: 2,
+              unread: false,
+              eventId: 2,
+            },
+            {
+              id: 1,
+              unread: false,
+              eventId: 1,
+            },
+          ],
+        })
+      )
+    }
   )
+)
 
-  function createQuery(unread?: boolean) {
-    return {
-      query: gql`
-        query notifications($unread: Boolean) {
-          notifications(unread: $unread) {
-            totalCount
-            nodes {
-              id
-              unread
-            }
+function createNotificationsQuery(unread?: boolean) {
+  return {
+    query: gql`
+      query notifications($unread: Boolean) {
+        notifications(unread: $unread) {
+          totalCount
+          nodes {
+            id
+            unread
           }
         }
-      `,
-      variables: {
-        unread,
-      },
-    }
+      }
+    `,
+    variables: {
+      unread,
+    },
   }
+}
 
-  beforeAll(() => {
-    server.listen()
+beforeAll(() => {
+  server.listen()
+})
+
+afterAll(() => {
+  server.close()
+})
+
+test('notifications without filter', async () => {
+  const { client } = createTestClient({
+    service: Service.Playground,
+    user: 1,
   })
-
-  afterAll(() => {
-    server.close()
-  })
-
-  test('without filter', async () => {
-    const { client } = createTestClient({
-      service: Service.Playground,
-      user: 1,
-    })
-    await assertSuccessfulGraphQLQuery({
-      ...createQuery(),
-      data: {
-        notifications: {
-          totalCount: 3,
-          nodes: [
-            {
-              id: 3,
-              unread: true,
-            },
-            {
-              id: 2,
-              unread: false,
-            },
-            {
-              id: 1,
-              unread: false,
-            },
-          ],
-        },
+  await assertSuccessfulGraphQLQuery({
+    ...createNotificationsQuery(),
+    data: {
+      notifications: {
+        totalCount: 3,
+        nodes: [
+          {
+            id: 3,
+            unread: true,
+          },
+          {
+            id: 2,
+            unread: false,
+          },
+          {
+            id: 1,
+            unread: false,
+          },
+        ],
       },
-      client,
-    })
+    },
+    client,
   })
+})
 
-  test('only unread', async () => {
-    const { client } = createTestClient({
-      service: Service.Playground,
-      user: 1,
-    })
-    await assertSuccessfulGraphQLQuery({
-      ...createQuery(false),
-      data: {
-        notifications: {
-          totalCount: 2,
-          nodes: [
-            {
-              id: 2,
-              unread: false,
-            },
-            {
-              id: 1,
-              unread: false,
-            },
-          ],
-        },
-      },
-      client,
-    })
+test('notifications (only unread)', async () => {
+  const { client } = createTestClient({
+    service: Service.Playground,
+    user: 1,
   })
-
-  test('only read', async () => {
-    const { client } = createTestClient({
-      service: Service.Playground,
-      user: 1,
-    })
-    await assertSuccessfulGraphQLQuery({
-      ...createQuery(true),
-      data: {
-        notifications: {
-          totalCount: 1,
-          nodes: [
-            {
-              id: 3,
-              unread: true,
-            },
-          ],
-        },
+  await assertSuccessfulGraphQLQuery({
+    ...createNotificationsQuery(false),
+    data: {
+      notifications: {
+        totalCount: 2,
+        nodes: [
+          {
+            id: 2,
+            unread: false,
+          },
+          {
+            id: 1,
+            unread: false,
+          },
+        ],
       },
-      client,
-    })
+    },
+    client,
+  })
+})
+
+test('notifications (only read)', async () => {
+  const { client } = createTestClient({
+    service: Service.Playground,
+    user: 1,
+  })
+  await assertSuccessfulGraphQLQuery({
+    ...createNotificationsQuery(true),
+    data: {
+      notifications: {
+        totalCount: 1,
+        nodes: [
+          {
+            id: 3,
+            unread: true,
+          },
+        ],
+      },
+    },
+    client,
   })
 })
