@@ -29,6 +29,7 @@ import { Instance } from '../schema/instance'
 import { License } from '../schema/license'
 import {
   NotificationEventPayload,
+  NotificationPayload,
   NotificationsPayload,
 } from '../schema/notification'
 import { Service } from '../schema/types'
@@ -175,6 +176,39 @@ export class SerloDataSource extends RESTDataSource {
       // Sometimes, Zend serializes an array as an object... This line ensures that we have an array.
       notifications: Object.values(response.notifications),
     }
+  }
+
+  public async setNotificationState(notificationState: {
+    id: number
+    userId: number
+    unread: boolean
+  }) {
+    const body = {
+      userId: notificationState.userId,
+      unread: notificationState.unread,
+    }
+    await this.customPost({
+      path: `/api/set-notification-state/${notificationState.id}`,
+      body,
+    })
+    const { notifications } = await this.getNotifications({
+      id: notificationState.userId,
+    })
+    const modifiedNotifications = notifications.map(
+      (notification: NotificationPayload) => {
+        if (notification.id === notificationState.id) {
+          return { ...notification, unread: notificationState.unread }
+        }
+        return notification
+      }
+    )
+    const cacheKey = this.getCacheKey(
+      `/api/notifications/${notificationState.userId}`
+    )
+    await this.environment.cache.set(cacheKey, {
+      userId: notificationState.userId,
+      notifications: modifiedNotifications,
+    })
   }
 
   private async customPost<
