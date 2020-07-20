@@ -87,14 +87,9 @@ addEntityResolvers({
   entityFields: `
     course: Course!
   `,
-  entityPayloadFields: `
-    parentId: Int!
-  `,
   entityRevisionFields: `
     title: String!
     content: String!
     changes: String!
   `,
-  entitySetter: 'setCoursePage',
-  entityRevisionSetter: 'setCoursePageRevision',
 })
