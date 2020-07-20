@@ -92,14 +92,8 @@ addTaxonomyTermChildResolvers({
     taxonomyTerms: [TaxonomyTerm!]!
     exercises: [GroupedExercise!]!
   `,
-  entityPayloadFields: `
-    taxonomyTermIds: [Int!]!
-    exerciseIds: [Int!]!
-  `,
   entityRevisionFields: `
     content: String!
     changes: String!
   `,
-  entitySetter: 'setExerciseGroup',
-  entityRevisionSetter: 'setExerciseGroupRevision',
 })

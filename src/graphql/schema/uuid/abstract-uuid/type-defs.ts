@@ -30,8 +30,4 @@ export const typeDefs = gql`
   type Query {
     uuid(alias: AliasInput, id: Int): Uuid
   }
-
-  type Mutation {
-    _removeUuid(id: Int!): Boolean
-  }
 `

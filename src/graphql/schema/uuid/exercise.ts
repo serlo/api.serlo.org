@@ -92,14 +92,8 @@ addTaxonomyTermChildResolvers({
     taxonomyTerms: [TaxonomyTerm!]!
     solution: Solution
   `,
-  entityPayloadFields: `
-    taxonomyTermIds: [Int!]!
-    solutionId: Int
-  `,
   entityRevisionFields: `
     content: String!
     changes: String!
   `,
-  entitySetter: 'setExercise',
-  entityRevisionSetter: 'setExerciseRevision',
 })
