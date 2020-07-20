@@ -19,10 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ForbiddenError, gql } from 'apollo-server'
-
 import { Instance, License, Scalars } from '../../../types'
-import { Context, Service } from '../types'
+import { Context } from '../types'
 import { requestsOnlyFields, Schema } from '../utils'
 import {
   DiscriminatorType,
@@ -138,18 +136,6 @@ pageSchema.addResolver<PageRevision, unknown, Partial<Page>>(
   }
 )
 
-/**
- * mutation _setPage
- */
-pageSchema.addMutation<unknown, PagePayload, null>(
-  '_setPage',
-  async (_parent, payload, { dataSources, service }) => {
-    if (service !== Service.Serlo) {
-      throw new ForbiddenError(`You do not have the permissions to set a page`)
-    }
-    await dataSources.serlo.setPage(payload)
-  }
-)
 export interface PagePayload extends AbstractUuidPayload {
   __typename: DiscriminatorType.Page
   instance: Instance
@@ -158,45 +144,6 @@ export interface PagePayload extends AbstractUuidPayload {
   licenseId: number
 }
 
-export function setPage(variables: PagePayload) {
-  return {
-    mutation: gql`
-      mutation setPage(
-        $id: Int!
-        $trashed: Boolean!
-        $instance: Instance!
-        $alias: String
-        $currentRevisionId: Int
-        $licenseId: Int!
-      ) {
-        _setPage(
-          id: $id
-          trashed: $trashed
-          instance: $instance
-          alias: $alias
-          currentRevisionId: $currentRevisionId
-          licenseId: $licenseId
-        )
-      }
-    `,
-    variables,
-  }
-}
-
-/**
- * mutation _setPageRevision
- */
-pageSchema.addMutation<unknown, PageRevisionPayload, null>(
-  '_setPageRevision',
-  async (_parent, payload, { dataSources, service }) => {
-    if (service !== Service.Serlo) {
-      throw new ForbiddenError(
-        `You do not have the permissions to set a page revision`
-      )
-    }
-    await dataSources.serlo.setPageRevision(payload)
-  }
-)
 export interface PageRevisionPayload extends AbstractUuidPayload {
   __typename: DiscriminatorType.PageRevision
   title: string

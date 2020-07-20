@@ -19,8 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
-
 import {
   AliasPayload,
   AppletPayload,
@@ -54,39 +52,6 @@ import {
 import { NavigationPayload } from '../src/graphql/schema/uuid/navigation'
 import { Instance, TaxonomyTermType } from '../src/types'
 import { license } from './license'
-
-export function createSetTaxonomyTermMutation(variables: TaxonomyTermPayload) {
-  return {
-    mutation: gql`
-      mutation setTaxonomyTerm(
-        $id: Int!
-        $trashed: Boolean!
-        $alias: String
-        $type: TaxonomyTermType!
-        $instance: Instance!
-        $name: String!
-        $description: String
-        $weight: Int!
-        $parentId: Int
-        $childrenIds: [Int!]!
-      ) {
-        _setTaxonomyTerm(
-          id: $id
-          trashed: $trashed
-          alias: $alias
-          type: $type
-          instance: $instance
-          name: $name
-          description: $description
-          weight: $weight
-          parentId: $parentId
-          childrenIds: $childrenIds
-        )
-      }
-    `,
-    variables,
-  }
-}
 
 export const navigation: NavigationPayload = {
   data: [
@@ -474,6 +439,16 @@ export const user: UserPayload = {
   username: 'username',
   date: '2014-03-01T20:36:21Z',
   lastLogin: '2020-03-24T09:40:55Z',
+  description: null,
+}
+
+export const user2: UserPayload = {
+  __typename: DiscriminatorType.User,
+  id: 23,
+  trashed: false,
+  username: 'second user',
+  date: '2015-02-01T20:35:21Z',
+  lastLogin: '2019-03-23T09:20:55Z',
   description: null,
 }
 

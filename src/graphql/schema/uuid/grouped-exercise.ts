@@ -106,6 +106,4 @@ addEntityResolvers({
   repository: 'groupedExercise',
   Entity: GroupedExercise,
   EntityRevision: GroupedExerciseRevision,
-  entitySetter: 'setGroupedExercise',
-  entityRevisionSetter: 'setGroupedExerciseRevision',
 })

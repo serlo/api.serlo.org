@@ -91,6 +91,4 @@ addTaxonomyTermChildResolvers({
   repository: 'exercise',
   Entity: Exercise,
   EntityRevision: ExerciseRevision,
-  entitySetter: 'setExercise',
-  entityRevisionSetter: 'setExerciseRevision',
 })

@@ -21,29 +21,3 @@ type CourseRevision implements AbstractUuid & AbstractEntityRevision {
   changes: String!
   metaDescription: String!
 }
-
-extend type Mutation {
-  _setCourse(
-    id: Int!
-    trashed: Boolean!
-    instance: Instance!
-    alias: String
-    date: DateTime!
-    currentRevisionId: Int
-    licenseId: Int!
-    taxonomyTermIds: [Int!]!
-    pageIds: [Int!]!
-  ): Boolean
-
-  _setCourseRevision(
-    id: Int!
-    trashed: Boolean!
-    date: DateTime!
-    authorId: Int!
-    repositoryId: Int!
-    title: String!
-    content: String!
-    changes: String!
-    metaDescription: String!
-  ): Boolean
-}

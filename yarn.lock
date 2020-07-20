@@ -2781,7 +2781,7 @@ apollo-link@^1.2.14:
     tslib "^1.9.3"
     zen-observable-ts "^0.8.21"
 
-apollo-server-caching@^0.5.2:
+apollo-server-caching@^0.5.0, apollo-server-caching@^0.5.2:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/apollo-server-caching/-/apollo-server-caching-0.5.2.tgz#bef5d5e0d48473a454927a66b7bb947a0b6eb13e"
   integrity sha512-HUcP3TlgRsuGgeTOn8QMbkdx0hLPXyEJehZIPrcof0ATz7j7aTPA4at7gaiFHCo8gk07DaWYGB3PFgjboXRcWQ==
@@ -6079,6 +6079,16 @@ invariant@^2.2.2, invariant@^2.2.4:
   integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
   dependencies:
     loose-envify "^1.0.0"
+
+io-ts-types@^0.5.0:
+  version "0.5.8"
+  resolved "https://registry.yarnpkg.com/io-ts-types/-/io-ts-types-0.5.8.tgz#b08b6a730fde67fac93f7e511c7e6c479bfbd5e1"
+  integrity sha512-l4ffAX6AskEqoC/KnL+f2aczstbKumi/GBTxcaerBLjzoeZ24og0Xe/aUT9SdfKnJcz7sZlhmGWl2F7A0imOnw==
+
+io-ts@^2.0.0:
+  version "2.2.8"
+  resolved "https://registry.yarnpkg.com/io-ts/-/io-ts-2.2.8.tgz#119a9ac5f2dcc000826084f440f37e255a10ae6e"
+  integrity sha512-kMpEM7iqomjg3DkpMrdXEhhiL/67oxtMH5185AVGyja0MQP3JONw/w4/51RHZuHaYu3gsWM2zAFzkHETy5eyGw==
 
 ip-regex@^2.1.0:
   version "2.1.0"

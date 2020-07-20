@@ -28,12 +28,12 @@ import {
 import { createInMemoryCache } from '../../src/cache/in-memory-cache'
 import { getGraphQLOptions } from '../../src/graphql'
 import { Cache } from '../../src/graphql/environment'
-import { Context } from '../../src/graphql/schema/types'
+import { Context, Service } from '../../src/graphql/schema/types'
 
 export type Client = ApolloServerTestClient
 
 export function createTestClient(
-  context: Pick<Context, 'service' | 'user'>
+  context?: Partial<Pick<Context, 'service' | 'user'>>
 ): {
   client: Client
   cache: Cache
@@ -44,7 +44,10 @@ export function createTestClient(
       cache,
     }),
     context(): Pick<Context, 'service' | 'user'> {
-      return context
+      return {
+        service: context?.service ?? Service.Playground,
+        user: context?.user ?? null,
+      }
     },
   })
   return { client: createApolloTestClient(server), cache }

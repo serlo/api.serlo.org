@@ -19,10 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ForbiddenError, gql } from 'apollo-server'
-
 import { Instance } from '../../../types'
-import { Service } from '../types'
 import { Schema } from '../utils'
 import typeDefs from './navigation.graphql'
 
@@ -39,20 +36,6 @@ export interface NavigationNode {
   id: number | null
 }
 
-/**
- * mutation _setNavigation
- */
-navigationSchema.addMutation<unknown, NavigationPayload, null>(
-  '_setNavigation',
-  async (_parent, payload, { dataSources, service }) => {
-    if (service !== Service.Serlo) {
-      throw new ForbiddenError(
-        `You do not have the permissions to set the navigation`
-      )
-    }
-    await dataSources.serlo.setNavigation(payload)
-  }
-)
 export interface NavigationPayload {
   data: NodeData[]
   instance: Instance
@@ -63,15 +46,4 @@ export interface NodeData {
   id?: number
   url?: string
   children?: NodeData[]
-}
-
-export function setNavigation(variables: NavigationPayload) {
-  return {
-    mutation: gql`
-      mutation setNavigation($data: JSON!, $instance: Instance!) {
-        _setNavigation(data: $data, instance: $instance)
-      }
-    `,
-    variables,
-  }
 }

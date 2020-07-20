@@ -74,6 +74,4 @@ addTaxonomyTermChildResolvers({
   repository: 'video',
   Entity: Video,
   EntityRevision: VideoRevision,
-  entitySetter: 'setVideo',
-  entityRevisionSetter: 'setVideoRevision',
 })

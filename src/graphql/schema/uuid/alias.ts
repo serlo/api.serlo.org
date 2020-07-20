@@ -19,10 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ForbiddenError } from 'apollo-server'
-
 import { Instance, Scalars } from '../../../types'
-import { Service } from '../types'
 import { Schema } from '../utils'
 import typeDefs from './alias.graphql'
 
@@ -36,28 +33,6 @@ export function encodePath(path: string) {
   return encodeURIComponent(path).replace(/%2F/g, '/')
 }
 
-/**
- * input AliasInput
- */
-export interface AliasInput {
-  instance: Instance
-  path: string
-}
-
-/**
- * mutation _setAlias
- */
-aliasSchema.addMutation<unknown, AliasPayload, null>(
-  '_setAlias',
-  async (_parent, payload, { dataSources, service }) => {
-    if (service !== Service.Serlo) {
-      throw new ForbiddenError(
-        `You do not have the permissions to set an alias`
-      )
-    }
-    await dataSources.serlo.setAlias(payload)
-  }
-)
 export interface AliasPayload {
   id: number
   instance: Instance

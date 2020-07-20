@@ -21,29 +21,3 @@ type EventRevision implements AbstractUuid & AbstractEntityRevision {
   metaTitle: String!
   metaDescription: String!
 }
-
-extend type Mutation {
-  _setEvent(
-    id: Int!
-    trashed: Boolean!
-    instance: Instance!
-    alias: String
-    date: DateTime!
-    currentRevisionId: Int
-    licenseId: Int!
-    taxonomyTermIds: [Int!]!
-  ): Boolean
-
-  _setEventRevision(
-    id: Int!
-    trashed: Boolean!
-    date: DateTime!
-    authorId: Int!
-    repositoryId: Int!
-    title: String!
-    content: String!
-    changes: String!
-    metaTitle: String!
-    metaDescription: String!
-  ): Boolean
-}

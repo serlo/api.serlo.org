@@ -18,26 +18,3 @@ type SolutionRevision implements AbstractUuid & AbstractEntityRevision {
   content: String!
   changes: String!
 }
-
-extend type Mutation {
-  _setSolution(
-    id: Int!
-    trashed: Boolean!
-    instance: Instance!
-    alias: String
-    date: DateTime!
-    currentRevisionId: Int
-    licenseId: Int!
-    parentId: Int!
-  ): Boolean
-
-  _setSolutionRevision(
-    id: Int!
-    trashed: Boolean!
-    date: DateTime!
-    authorId: Int!
-    repositoryId: Int!
-    content: String!
-    changes: String!
-  ): Boolean
-}

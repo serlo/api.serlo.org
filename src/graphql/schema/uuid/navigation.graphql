@@ -8,7 +8,3 @@ type NavigationNode {
   url: String
   id: Int
 }
-
-extend type Mutation {
-  _setNavigation(data: JSON!, instance: Instance!): Boolean
-}

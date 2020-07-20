@@ -19,10 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ForbiddenError } from 'apollo-server'
-
 import { resolveAbstractUuid, UuidPayload } from '..'
-import { Service } from '../../types'
 import { UuidResolvers } from './types'
 
 export const resolvers: UuidResolvers = {
@@ -38,16 +35,6 @@ export const resolvers: UuidResolvers = {
         : (payload.id as number)
       const data = await dataSources.serlo.getUuid<UuidPayload>({ id })
       return resolveAbstractUuid(data)
-    },
-  },
-  Mutation: {
-    _removeUuid(_parent, payload, { dataSources, service }) {
-      if (service !== Service.Serlo) {
-        throw new ForbiddenError(
-          'You do not have the permissions to remove an uuid'
-        )
-      }
-      return dataSources.serlo.removeUuid(payload)
     },
   },
 }

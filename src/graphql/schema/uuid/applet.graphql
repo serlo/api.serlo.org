@@ -22,30 +22,3 @@ type AppletRevision implements AbstractUuid & AbstractEntityRevision {
   metaTitle: String!
   metaDescription: String!
 }
-
-extend type Mutation {
-  _setApplet(
-    id: Int!
-    trashed: Boolean!
-    instance: Instance!
-    alias: String
-    date: DateTime!
-    currentRevisionId: Int
-    licenseId: Int!
-    taxonomyTermIds: [Int!]!
-  ): Boolean
-
-  _setAppletRevision(
-    id: Int!
-    trashed: Boolean!
-    date: DateTime!
-    authorId: Int!
-    repositoryId: Int!
-    url: String!
-    title: String!
-    content: String!
-    changes: String!
-    metaTitle: String!
-    metaDescription: String!
-  ): Boolean
-}

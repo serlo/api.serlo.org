@@ -19,8 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Mutation_SetTaxonomyTermArgs, TaxonomyTerm } from '../../../../types'
-import { MutationResolver, Resolver } from '../../types'
+import { TaxonomyTerm } from '../../../../types'
+import { Resolver } from '../../types'
 import { AbstractUuidPreResolver, DiscriminatorType } from '../abstract-uuid'
 import { Navigation } from '../navigation'
 
@@ -43,8 +43,5 @@ export interface TaxonomyTermResolvers {
       AbstractUuidPreResolver[]
     >
     navigation: Resolver<TaxonomyTermPreResolver, never, Navigation>
-  }
-  Mutation: {
-    _setTaxonomyTerm: MutationResolver<Mutation_SetTaxonomyTermArgs>
   }
 }

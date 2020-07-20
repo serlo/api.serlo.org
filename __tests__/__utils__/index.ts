@@ -19,28 +19,22 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { User } from '../../../../types'
-import { QueryResolver, Resolver } from '../../types'
-import { AbstractUuidPayload, DiscriminatorType } from '../abstract-uuid'
+import { RESTDataSource } from 'apollo-datasource-rest'
+import { InMemoryLRUCache } from 'apollo-server-caching'
+import { either } from 'fp-ts'
 
-export interface UserPreResolver
-  extends Omit<User, keyof UserResolvers['User']> {
-  __typename: DiscriminatorType.User
+import { ErrorEvent } from '../../src/error-event'
+
+export function expectToBeLeftEventWith<A>(
+  value: either.Either<ErrorEvent, A>,
+  expectedEvent: ErrorEvent
+) {
+  expect(either.isLeft(value)).toBe(true)
+
+  if (either.isLeft(value))
+    expect(value.left).toEqual(expect.objectContaining(expectedEvent))
 }
 
-export type UserPayload = UserPreResolver
-
-export interface UserResolvers {
-  Query: {
-    activeDonors: QueryResolver<never, UserPreResolver[]>
-  }
-  User: {
-    activeDonor: Resolver<UserPreResolver, never, boolean>
-  }
-}
-
-export function isUserPayload(
-  payload: AbstractUuidPayload
-): payload is UserPayload {
-  return payload.__typename === DiscriminatorType.User
+export function initializeDataSource(dataSource: RESTDataSource) {
+  dataSource.initialize({ context: {}, cache: new InMemoryLRUCache() })
 }

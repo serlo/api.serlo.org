@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { none, some } from 'fp-ts/lib/Option'
+import { option as O, pipeable } from 'fp-ts'
 import msgpack from 'msgpack'
 import redis from 'redis'
 import * as util from 'util'
@@ -39,16 +39,40 @@ export function createRedisCache({ host }: { host: string }): Cache {
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const set = (util.promisify(client.set).bind(client) as unknown) as (
     key: string,
-    value: Buffer
+    value: Buffer,
+    flags?: string,
+    ttl?: number
   ) => Promise<void>
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  const flushdb = util.promisify(client.flushdb).bind(client)
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  const ttl = (util.promisify(client.ttl).bind(client) as unknown) as (
+    key: string
+  ) => Promise<number | undefined>
 
   return {
-    async get(key) {
-      const serialized = await get(key)
-      return serialized === null ? none : some(msgpack.unpack(serialized))
+    get: async <T>(key: string) => {
+      return pipeable.pipe(
+        await get(key),
+        O.fromNullable,
+        O.map((v) => msgpack.unpack(v) as T)
+      )
     },
-    async set(key, value) {
-      await set(key, msgpack.pack(value))
+    async getTtl(key) {
+      return O.fromNullable(await ttl(key))
+    },
+    async set(key, value, options) {
+      const packedValue = msgpack.pack(value) as Buffer
+      const ttl = options?.ttl
+
+      if (ttl === undefined) {
+        await set(key, packedValue)
+      } else {
+        await set(key, packedValue, 'EX', ttl)
+      }
+    },
+    async flush() {
+      await flushdb()
     },
   }
 }

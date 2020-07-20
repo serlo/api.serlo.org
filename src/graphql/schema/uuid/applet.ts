@@ -80,6 +80,4 @@ addTaxonomyTermChildResolvers({
   repository: 'applet',
   Entity: Applet,
   EntityRevision: AppletRevision,
-  entitySetter: 'setApplet',
-  entityRevisionSetter: 'setAppletRevision',
 })

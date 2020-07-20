@@ -19,27 +19,3 @@ type CoursePageRevision implements AbstractUuid & AbstractEntityRevision {
   content: String!
   changes: String!
 }
-
-extend type Mutation {
-  _setCoursePage(
-    id: Int!
-    trashed: Boolean!
-    instance: Instance!
-    alias: String
-    date: DateTime!
-    currentRevisionId: Int
-    licenseId: Int!
-    parentId: Int!
-  ): Boolean
-
-  _setCoursePageRevision(
-    id: Int!
-    trashed: Boolean!
-    date: DateTime!
-    authorId: Int!
-    repositoryId: Int!
-    title: String!
-    content: String!
-    changes: String!
-  ): Boolean
-}

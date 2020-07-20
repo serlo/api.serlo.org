@@ -19,27 +19,3 @@ type GroupedExerciseRevision implements AbstractUuid & AbstractEntityRevision {
   content: String!
   changes: String!
 }
-
-extend type Mutation {
-  _setGroupedExercise(
-    id: Int!
-    trashed: Boolean!
-    instance: Instance!
-    alias: String
-    date: DateTime!
-    currentRevisionId: Int
-    licenseId: Int!
-    solutionId: Int
-    parentId: Int!
-  ): Boolean
-
-  _setGroupedExerciseRevision(
-    id: Int!
-    trashed: Boolean!
-    date: DateTime!
-    authorId: Int!
-    repositoryId: Int!
-    content: String!
-    changes: String!
-  ): Boolean
-}

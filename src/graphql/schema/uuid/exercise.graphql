@@ -19,27 +19,3 @@ type ExerciseRevision implements AbstractUuid & AbstractEntityRevision {
   content: String!
   changes: String!
 }
-
-extend type Mutation {
-  _setExercise(
-    id: Int!
-    trashed: Boolean!
-    instance: Instance!
-    alias: String
-    date: DateTime!
-    currentRevisionId: Int
-    licenseId: Int!
-    taxonomyTermIds: [Int!]!
-    solutionId: Int
-  ): Boolean
-
-  _setExerciseRevision(
-    id: Int!
-    trashed: Boolean!
-    date: DateTime!
-    authorId: Int!
-    repositoryId: Int!
-    content: String!
-    changes: String!
-  ): Boolean
-}
