@@ -1,0 +1,23 @@
+type Event implements AbstractUuid & AbstractEntity {
+  id: Int!
+  trashed: Boolean!
+  instance: Instance!
+  alias: String
+  date: DateTime!
+  license: License!
+  currentRevision: EventRevision
+  taxonomyTerms: [TaxonomyTerm!]!
+}
+
+type EventRevision implements AbstractUuid & AbstractEntityRevision {
+  id: Int!
+  author: User!
+  trashed: Boolean!
+  date: DateTime!
+  event: Event!
+  title: String!
+  content: String!
+  changes: String!
+  metaTitle: String!
+  metaDescription: String!
+}

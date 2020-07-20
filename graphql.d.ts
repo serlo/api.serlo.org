@@ -19,13 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { UnsupportedUuid, UnsupportedUuidPayload } from './types'
+declare module '*.graphql' {
+  import { DocumentNode } from 'graphql'
 
-export function resolveUnsupportedUuid(
-  data: UnsupportedUuidPayload
-): UnsupportedUuid {
-  return {
-    ...data,
-    __typename: 'UnsupportedUuid',
-  }
+  const node: DocumentNode
+  // eslint-disable-next-line import/no-default-export
+  export default node
 }

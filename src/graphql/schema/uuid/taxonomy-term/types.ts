@@ -19,51 +19,29 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Instance } from '../../instance'
+import { TaxonomyTerm } from '../../../../types'
 import { Resolver } from '../../types'
-import { Uuid, UuidPayload } from '../abstract-uuid'
+import { AbstractUuidPreResolver, DiscriminatorType } from '../abstract-uuid'
 import { Navigation } from '../navigation'
 
-export enum TaxonomyTermType {
-  Blog = 'blog',
-  Curriculum = 'curriculum',
-  CurriculumTopic = 'curriculumTopic',
-  CurriculumTopicFolder = 'curriculumTopicFolder',
-  Forum = 'forum',
-  ForumCategory = 'forumCategory',
-  Locale = 'locale',
-  Root = 'root',
-  Subject = 'subject',
-  Topic = 'topic',
-  TopicFolder = 'topicFolder',
-}
-
-export interface TaxonomyTerm extends Uuid {
-  type: TaxonomyTermType
-  instance: Instance
-  alias: string | null
-  name: string
-  description: string | null
-  weight: number
+export interface TaxonomyTermPreResolver
+  extends Omit<TaxonomyTerm, keyof TaxonomyTermResolvers['TaxonomyTerm']> {
+  __typename: DiscriminatorType.TaxonomyTerm
   parentId: number | null
   childrenIds: number[]
 }
 
-export interface TaxonomyTermPayload extends UuidPayload {
-  alias: string | null
-  type: TaxonomyTermType
-  instance: Instance
-  name: string
-  description: string | null
-  weight: number
-  parentId: number | null
-  childrenIds: number[]
-}
+export type TaxonomyTermPayload = TaxonomyTermPreResolver
 
 export interface TaxonomyTermResolvers {
   TaxonomyTerm: {
-    parent: Resolver<TaxonomyTerm, never, TaxonomyTerm>
-    children: Resolver<TaxonomyTerm, never, Uuid[]>
-    navigation: Resolver<TaxonomyTerm, never, Navigation>
+    parent: Resolver<TaxonomyTermPreResolver, never, TaxonomyTermPreResolver>
+    children: Resolver<
+      TaxonomyTermPreResolver,
+      never,
+      // FIXME: this should be UuidPreResolver when refactoring is done
+      AbstractUuidPreResolver[]
+    >
+    navigation: Resolver<TaxonomyTermPreResolver, never, Navigation>
   }
 }

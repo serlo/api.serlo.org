@@ -23,9 +23,9 @@ import { AuthenticationError } from 'apollo-server'
 
 import { resolveConnection } from '../connection'
 import { requestsOnlyFields } from '../utils'
-import { AbstractUuidPayload, resolveAbstractUuid } from '../uuid'
+import { resolveAbstractUuid, UuidPayload } from '../uuid'
 import { resolveUser, UserPayload } from '../uuid/user'
-import { Notification, NotificationResolvers } from './types'
+import { NotificationPreResolver, NotificationResolvers } from './types'
 
 export const resolvers: NotificationResolvers = {
   Notification: {
@@ -47,7 +47,7 @@ export const resolvers: NotificationResolvers = {
       return resolveUser(data)
     },
     async object(parent, _args, { dataSources }) {
-      const data = await dataSources.serlo.getUuid<AbstractUuidPayload>({
+      const data = await dataSources.serlo.getUuid<UuidPayload>({
         id: parent.objectId,
       })
       return resolveAbstractUuid(data)
@@ -63,7 +63,7 @@ export const resolvers: NotificationResolvers = {
       const { notifications } = await dataSources.serlo.getNotifications({
         id: user,
       })
-      return resolveConnection<Notification>({
+      return resolveConnection<NotificationPreResolver>({
         nodes:
           unread == null
             ? notifications

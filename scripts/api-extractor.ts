@@ -19,11 +19,27 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-export enum Instance {
-  De = 'de',
-  En = 'en',
-  Es = 'es',
-  Fr = 'fr',
-  Hi = 'hi',
-  Ta = 'ta',
+import {
+  Extractor,
+  ExtractorConfig,
+  ExtractorResult,
+  IExtractorInvokeOptions,
+} from '@microsoft/api-extractor'
+import * as path from 'path'
+
+export function invoke(options?: IExtractorInvokeOptions) {
+  const extractorConfig = ExtractorConfig.loadFileAndPrepare(
+    path.join(process.cwd(), 'api-extractor.json')
+  )
+
+  const extractorResult: ExtractorResult = Extractor.invoke(
+    extractorConfig,
+    options
+  )
+
+  if (!extractorResult.succeeded) {
+    throw new Error(
+      `API Extractor completed with ${extractorResult.errorCount} errors and ${extractorResult.warningCount} warnings`
+    )
+  }
 }

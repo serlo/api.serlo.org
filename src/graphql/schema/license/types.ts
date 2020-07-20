@@ -19,24 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Instance } from '../instance'
+import { License, QueryLicenseArgs } from '../../../types'
 import { QueryResolver } from '../types'
-
-export interface License {
-  id: number
-  instance: Instance
-  default: boolean
-  title: string
-  url: string
-  content: string
-  agreement: string
-  iconHref: string
-}
 
 export type LicensePayload = License
 
 export interface LicenseResolvers {
   Query: {
-    license: QueryResolver<{ id: number }, License>
+    license: QueryResolver<QueryLicenseArgs, License>
   }
 }

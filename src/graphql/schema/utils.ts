@@ -52,10 +52,6 @@ export class Schema {
     this.resolvers[type]['__resolveType'] = resolver
   }
 
-  public addQuery<P, A, T>(name: string, resolver: Resolver<P, A, T>) {
-    this.addResolver('Query', name, resolver)
-  }
-
   public addMutation<P, A, T>(name: string, resolver: Resolver<P, A, T>) {
     this.addResolver('Mutation', name, resolver)
   }
@@ -67,10 +63,6 @@ export class Schema {
   ) {
     this.resolvers[type] = this.resolvers[type] || {}
     this.resolvers[type][name] = resolver
-  }
-
-  public addTypeDef(typeDef: DocumentNode) {
-    this.typeDefs.push(typeDef)
   }
 
   public static merge(...schemas: Schema[]): Schema {

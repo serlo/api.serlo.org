@@ -1,0 +1,8 @@
+interface AbstractUuid {
+  id: Int!
+  trashed: Boolean!
+}
+
+type Query {
+  uuid(alias: AliasInput, id: Int): AbstractUuid
+}

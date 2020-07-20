@@ -1,0 +1,20 @@
+type Solution implements AbstractUuid & AbstractEntity {
+  id: Int!
+  trashed: Boolean!
+  instance: Instance!
+  alias: String
+  date: DateTime!
+  license: License!
+  currentRevision: SolutionRevision
+  exercise: Exercise!
+}
+
+type SolutionRevision implements AbstractUuid & AbstractEntityRevision {
+  id: Int!
+  author: User!
+  trashed: Boolean!
+  date: DateTime!
+  solution: Solution!
+  content: String!
+  changes: String!
+}

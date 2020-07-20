@@ -1,0 +1,10 @@
+type Navigation {
+  data: JSON!
+  path: [NavigationNode!]!
+}
+
+type NavigationNode {
+  label: String!
+  url: String
+  id: Int
+}

@@ -19,37 +19,28 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { AbstractUuidPayload } from '..'
-import { DateTime } from '../../date-time'
+import { User } from '../../../../types'
 import { QueryResolver, Resolver } from '../../types'
-import { DiscriminatorType, Uuid, UuidPayload } from '../abstract-uuid'
+import { AbstractUuidPayload, DiscriminatorType } from '../abstract-uuid'
 
-export interface User extends Uuid {
+export interface UserPreResolver
+  extends Omit<User, keyof UserResolvers['User']> {
   __typename: DiscriminatorType.User
-  username: string
-  date: DateTime
-  lastLogin: DateTime | null
-  description: string | null
 }
 
-export interface UserPayload extends UuidPayload {
-  username: string
-  date: DateTime
-  lastLogin: DateTime | null
-  description: string | null
-}
+export type UserPayload = UserPreResolver
 
 export interface UserResolvers {
   Query: {
-    activeDonors: QueryResolver<never, User[]>
+    activeDonors: QueryResolver<never, UserPreResolver[]>
   }
   User: {
-    activeDonor: Resolver<User, never, boolean>
+    activeDonor: Resolver<UserPreResolver, never, boolean>
   }
 }
 
 export function isUserPayload(
   payload: AbstractUuidPayload
-): payload is UserPayload & { discriminator: 'user' } {
-  return payload.discriminator === 'user'
+): payload is UserPayload {
+  return payload.__typename === DiscriminatorType.User
 }

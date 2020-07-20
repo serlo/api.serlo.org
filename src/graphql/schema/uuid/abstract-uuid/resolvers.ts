@@ -19,11 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { AbstractUuidPayload, resolveAbstractUuid } from '..'
+import { resolveAbstractUuid, UuidPayload } from '..'
 import { UuidResolvers } from './types'
 
 export const resolvers: UuidResolvers = {
-  Uuid: {
+  AbstractUuid: {
     __resolveType(uuid) {
       return uuid.__typename
     },
@@ -33,7 +33,7 @@ export const resolvers: UuidResolvers = {
       const id = payload.alias
         ? (await dataSources.serlo.getAlias(payload.alias)).id
         : (payload.id as number)
-      const data = await dataSources.serlo.getUuid<AbstractUuidPayload>({ id })
+      const data = await dataSources.serlo.getUuid<UuidPayload>({ id })
       return resolveAbstractUuid(data)
     },
   },

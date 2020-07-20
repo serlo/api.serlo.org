@@ -24,23 +24,25 @@ import { isSome } from 'fp-ts/lib/Option'
 import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
 
+import { Instance, License } from '../../types'
 import { Environment } from '../environment'
-import { Instance } from '../schema/instance'
-import { License } from '../schema/license'
 import {
   NotificationEventPayload,
-  NotificationPayload,
   NotificationsPayload,
 } from '../schema/notification'
 import { Service } from '../schema/types'
 import {
+  AbstractUuidPayload,
   AliasPayload,
   decodePath,
   encodePath,
   EntityPayload,
-  UuidPayload,
 } from '../schema/uuid'
-import { Navigation, NavigationPayload } from '../schema/uuid/navigation'
+import {
+  Navigation,
+  NavigationPayload,
+  NodeData,
+} from '../schema/uuid/navigation'
 
 export class SerloDataSource extends RESTDataSource {
   public constructor(private environment: Environment) {
@@ -72,10 +74,9 @@ export class SerloDataSource extends RESTDataSource {
       path: `/api/navigation`,
       instance,
     })
+    const { data } = payload
 
-    const data = JSON.parse(payload.data) as NodeData[]
-
-    const leafs: Record<string, number> = {} //
+    const leafs: Record<string, number> = {}
 
     const findLeafs = (node: NodeData): number[] => {
       return [
@@ -130,7 +131,7 @@ export class SerloDataSource extends RESTDataSource {
     }
 
     return {
-      data: JSON.stringify(data[treeIndex]),
+      data: data[treeIndex],
       path,
     }
   }
@@ -139,13 +140,14 @@ export class SerloDataSource extends RESTDataSource {
     return this.cacheAwareGet({ path: `/api/license/${id}` })
   }
 
-  public async getUuid<T extends UuidPayload>({
+  public async getUuid<T extends AbstractUuidPayload>({
     id,
   }: {
     id: number
   }): Promise<T> {
     return this.cacheAwareGet<T>({ path: `/api/uuid/${id}` })
   }
+
   public async getNotificationEvent({
     id,
   }: {
@@ -186,14 +188,12 @@ export class SerloDataSource extends RESTDataSource {
     const { notifications } = await this.getNotifications({
       id: notificationState.userId,
     })
-    const modifiedNotifications = notifications.map(
-      (notification: NotificationPayload) => {
-        if (notification.id === notificationState.id) {
-          return { ...notification, unread: notificationState.unread }
-        }
-        return notification
+    const modifiedNotifications = notifications.map((notification) => {
+      if (notification.id === notificationState.id) {
+        return { ...notification, unread: notificationState.unread }
       }
-    )
+      return notification
+    })
     const cacheKey = this.getCacheKey(
       `/api/notifications/${notificationState.userId}`
     )
@@ -275,11 +275,4 @@ export class SerloDataSource extends RESTDataSource {
   public async removeCache(key: string) {
     await this.environment.cache.set(key, null)
   }
-}
-
-interface NodeData {
-  label: string
-  id?: number
-  url?: string
-  children?: NodeData[]
 }

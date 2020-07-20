@@ -1,0 +1,65 @@
+"""
+Represents a Serlo.org page. A `Page` is a repository containing `PageRevision`s, is tied to an `Instance`,
+has a `License`, and has an alias.
+"""
+type Page implements AbstractUuid {
+  """
+  The ID of the page
+  """
+  id: Int!
+  """
+  `true` iff the page has been trashed
+  """
+  trashed: Boolean!
+  """
+  The `Instance` the page is tied to
+  """
+  instance: Instance!
+  """
+  The alias of the page
+  """
+  alias: String
+  """
+  The `License` of the page
+  """
+  license: License!
+  """
+  The `PageRevision` that is currently checked out
+  """
+  currentRevision: PageRevision
+  navigation: Navigation
+}
+
+"""
+Represents a Serlo.org page revision. A `PageRevision` has fields title and content.
+"""
+type PageRevision implements AbstractUuid {
+  """
+  The ID of the page revision
+  """
+  id: Int!
+  """
+  The `User` that created the page revision
+  """
+  author: User!
+  """
+  `true` iff the page revision has been trashed
+  """
+  trashed: Boolean!
+  """
+  The `DateTime` the page revision has been created
+  """
+  date: DateTime!
+  """
+  The heading
+  """
+  title: String!
+  """
+  The content
+  """
+  content: String!
+  """
+  The `Page` the page revision is tied to
+  """
+  page: Page!
+}

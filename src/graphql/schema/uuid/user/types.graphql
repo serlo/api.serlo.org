@@ -1,0 +1,13 @@
+type User implements AbstractUuid {
+  id: Int!
+  trashed: Boolean!
+  username: String!
+  date: DateTime!
+  lastLogin: DateTime
+  description: String
+  activeDonor: Boolean!
+}
+
+extend type Query {
+  activeDonors: [User!]!
+}

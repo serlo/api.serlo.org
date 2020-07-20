@@ -64,7 +64,6 @@ describe('Applet', () => {
         `,
       data: {
         uuid: {
-          __typename: 'Applet',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
             applet
@@ -107,7 +106,6 @@ describe('Applet', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Applet',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
             applet
@@ -150,7 +148,6 @@ describe('Applet', () => {
         `,
       data: {
         uuid: {
-          __typename: 'Applet',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
             applet
@@ -189,7 +186,6 @@ describe('Applet', () => {
       `,
       data: {
         uuid: {
-          __typename: 'Applet',
           ...R.omit(
             ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
             applet
@@ -231,7 +227,6 @@ describe('AppletRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'AppletRevision',
           ...R.omit(['authorId', 'repositoryId'], appletRevision),
           author: {
             id: 1,
@@ -275,7 +270,6 @@ describe('AppletRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'AppletRevision',
           ...R.omit(['authorId', 'repositoryId'], appletRevision),
           author: {
             id: 1,
@@ -322,7 +316,6 @@ describe('AppletRevision', () => {
       `,
       data: {
         uuid: {
-          __typename: 'AppletRevision',
           ...R.omit(['authorId', 'repositoryId'], appletRevision),
           author: {
             id: 1,

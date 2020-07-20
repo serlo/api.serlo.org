@@ -29,9 +29,10 @@ import {
 } from './abstract-entity'
 import { ExerciseRevision, ExerciseRevisionPayload } from './exercise'
 import { ExerciseGroup, ExerciseGroupPayload } from './exercise-group'
+import typeDefs from './grouped-exercise.graphql'
 import { Solution, SolutionPayload } from './solution'
 
-export const groupedExerciseSchema = new Schema()
+export const groupedExerciseSchema = new Schema({}, [typeDefs])
 
 export class GroupedExercise extends Entity {
   public __typename = EntityType.GroupedExercise
@@ -45,6 +46,7 @@ export class GroupedExercise extends Entity {
   }
 }
 export interface GroupedExercisePayload extends EntityPayload {
+  __typename: EntityType.GroupedExercise
   solutionId: number | null
   parentId: number
 }
@@ -87,9 +89,15 @@ groupedExerciseSchema.addResolver<
 )
 
 export class GroupedExerciseRevision extends ExerciseRevision {
-  public __typename = EntityRevisionType.GroupedExerciseRevision
+  public constructor(payload: GroupedExerciseRevisionPayload) {
+    super({ ...payload, __typename: EntityRevisionType.ExerciseRevision })
+    this.__typename = EntityRevisionType.GroupedExerciseRevision
+  }
 }
-export type GroupedExerciseRevisionPayload = ExerciseRevisionPayload
+export interface GroupedExerciseRevisionPayload
+  extends Omit<ExerciseRevisionPayload, '__typename'> {
+  __typename: EntityRevisionType.GroupedExerciseRevision
+}
 
 addEntityResolvers({
   schema: groupedExerciseSchema,
@@ -98,12 +106,4 @@ addEntityResolvers({
   repository: 'groupedExercise',
   Entity: GroupedExercise,
   EntityRevision: GroupedExerciseRevision,
-  entityFields: `
-    solution: Solution
-    exerciseGroup: ExerciseGroup!
-  `,
-  entityRevisionFields: `
-    content: String!
-    changes: String!
-  `,
 })

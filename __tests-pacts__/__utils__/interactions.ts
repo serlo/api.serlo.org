@@ -21,10 +21,9 @@
  */
 import { Matchers } from '@pact-foundation/pact'
 
-import { License } from '../../src/graphql/schema/license'
 import {
-  NotificationsPayload,
   NotificationEventPayload,
+  NotificationsPayload,
 } from '../../src/graphql/schema/notification'
 import {
   AliasPayload,
@@ -46,16 +45,16 @@ import {
   GroupedExerciseRevisionPayload,
   PagePayload,
   PageRevisionPayload,
-  TaxonomyTermPayload,
-  UserPayload,
-  VideoPayload,
-  VideoRevisionPayload,
-} from '../../src/graphql/schema/uuid'
-import { NavigationPayload } from '../../src/graphql/schema/uuid/navigation'
-import {
   SolutionPayload,
   SolutionRevisionPayload,
-} from '../../src/graphql/schema/uuid/solution'
+  TaxonomyTermPayload,
+  UserPayload,
+  UuidType,
+  VideoPayload,
+  VideoRevisionPayload,
+  NavigationPayload,
+} from '../../src/graphql/schema/uuid'
+import { License } from '../../src/types'
 
 export function addNavigationInteraction(payload: NavigationPayload) {
   return addJsonInteraction({
@@ -63,7 +62,10 @@ export function addNavigationInteraction(payload: NavigationPayload) {
     given: '',
     path: `/api/navigation`,
     body: {
-      data: Matchers.string(payload.data),
+      data:
+        payload.data.length > 0
+          ? Matchers.eachLike(Matchers.like(payload.data[0]))
+          : [],
       instance: Matchers.string(payload.instance),
     },
   })
@@ -137,10 +139,9 @@ export function addAliasInteraction(payload: AliasPayload) {
 
 export function addAppletInteraction(payload: AppletPayload) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'entity',
-    type: 'applet',
     instance: Matchers.string(payload.instance),
     alias: payload.alias ? Matchers.string(payload.alias) : null,
     date: Matchers.iso8601DateTime(payload.date),
@@ -157,10 +158,9 @@ export function addAppletInteraction(payload: AppletPayload) {
 
 export function addAppletRevisionInteraction(payload: AppletRevisionPayload) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'entityRevision',
-    type: 'applet',
     date: Matchers.iso8601DateTime(payload.date),
     authorId: Matchers.integer(payload.authorId),
     repositoryId: Matchers.integer(payload.repositoryId),
@@ -175,10 +175,9 @@ export function addAppletRevisionInteraction(payload: AppletRevisionPayload) {
 
 export function addArticleInteraction(payload: ArticlePayload) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'entity',
-    type: 'article',
     instance: Matchers.string(payload.instance),
     alias: payload.alias ? Matchers.string(payload.alias) : null,
     date: Matchers.iso8601DateTime(payload.date),
@@ -195,10 +194,9 @@ export function addArticleInteraction(payload: ArticlePayload) {
 
 export function addArticleRevisionInteraction(payload: ArticleRevisionPayload) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'entityRevision',
-    type: 'article',
     date: Matchers.iso8601DateTime(payload.date),
     authorId: Matchers.integer(payload.authorId),
     repositoryId: Matchers.integer(payload.repositoryId),
@@ -212,10 +210,9 @@ export function addArticleRevisionInteraction(payload: ArticleRevisionPayload) {
 
 export function addCourseInteraction(payload: CoursePayload) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'entity',
-    type: 'course',
     instance: Matchers.string(payload.instance),
     alias: payload.alias ? Matchers.string(payload.alias) : null,
     date: Matchers.iso8601DateTime(payload.date),
@@ -236,10 +233,9 @@ export function addCourseInteraction(payload: CoursePayload) {
 
 export function addCourseRevisionInteraction(payload: CourseRevisionPayload) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'entityRevision',
-    type: 'course',
     date: Matchers.iso8601DateTime(payload.date),
     authorId: Matchers.integer(payload.authorId),
     repositoryId: Matchers.integer(payload.repositoryId),
@@ -252,10 +248,9 @@ export function addCourseRevisionInteraction(payload: CourseRevisionPayload) {
 
 export function addCoursePageInteraction(payload: CoursePagePayload) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'entity',
-    type: 'coursePage',
     instance: Matchers.string(payload.instance),
     alias: payload.alias ? Matchers.string(payload.alias) : null,
     date: Matchers.iso8601DateTime(payload.date),
@@ -271,10 +266,9 @@ export function addCoursePageRevisionInteraction(
   payload: CoursePageRevisionPayload
 ) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'entityRevision',
-    type: 'coursePage',
     date: Matchers.iso8601DateTime(payload.date),
     authorId: Matchers.integer(payload.authorId),
     repositoryId: Matchers.integer(payload.repositoryId),
@@ -286,10 +280,9 @@ export function addCoursePageRevisionInteraction(
 
 export function addEventInteraction(payload: EventPayload) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'entity',
-    type: 'event',
     instance: Matchers.string(payload.instance),
     alias: payload.alias ? Matchers.string(payload.alias) : null,
     date: Matchers.iso8601DateTime(payload.date),
@@ -306,10 +299,9 @@ export function addEventInteraction(payload: EventPayload) {
 
 export function addEventRevisionInteraction(payload: EventRevisionPayload) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'entityRevision',
-    type: 'event',
     date: Matchers.iso8601DateTime(payload.date),
     authorId: Matchers.integer(payload.authorId),
     repositoryId: Matchers.integer(payload.repositoryId),
@@ -323,10 +315,9 @@ export function addEventRevisionInteraction(payload: EventRevisionPayload) {
 
 export function addExerciseInteraction(payload: ExercisePayload) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'entity',
-    type: 'exercise',
     instance: Matchers.string(payload.instance),
     alias: payload.alias ? Matchers.string(payload.alias) : null,
     date: Matchers.iso8601DateTime(payload.date),
@@ -348,10 +339,9 @@ export function addExerciseRevisionInteraction(
   payload: ExerciseRevisionPayload
 ) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'entityRevision',
-    type: 'exercise',
     date: Matchers.iso8601DateTime(payload.date),
     authorId: Matchers.integer(payload.authorId),
     repositoryId: Matchers.integer(payload.repositoryId),
@@ -362,10 +352,9 @@ export function addExerciseRevisionInteraction(
 
 export function addExerciseGroupInteraction(payload: ExerciseGroupPayload) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'entity',
-    type: 'exerciseGroup',
     instance: Matchers.string(payload.instance),
     alias: payload.alias ? Matchers.string(payload.alias) : null,
     date: Matchers.iso8601DateTime(payload.date),
@@ -388,10 +377,9 @@ export function addExerciseGroupRevisionInteraction(
   payload: ExerciseGroupRevisionPayload
 ) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'entityRevision',
-    type: 'exerciseGroup',
     date: Matchers.iso8601DateTime(payload.date),
     authorId: Matchers.integer(payload.authorId),
     repositoryId: Matchers.integer(payload.repositoryId),
@@ -402,10 +390,9 @@ export function addExerciseGroupRevisionInteraction(
 
 export function addGroupedExerciseInteraction(payload: GroupedExercisePayload) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'entity',
-    type: 'groupedExercise',
     instance: Matchers.string(payload.instance),
     alias: payload.alias ? Matchers.string(payload.alias) : null,
     date: Matchers.iso8601DateTime(payload.date),
@@ -424,10 +411,9 @@ export function addGroupedExerciseRevisionInteraction(
   payload: GroupedExerciseRevisionPayload
 ) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'entityRevision',
-    type: 'groupedExercise',
     date: Matchers.iso8601DateTime(payload.date),
     authorId: Matchers.integer(payload.authorId),
     repositoryId: Matchers.integer(payload.repositoryId),
@@ -438,9 +424,9 @@ export function addGroupedExerciseRevisionInteraction(
 
 export function addPageInteraction(payload: PagePayload) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'page',
     instance: Matchers.string(payload.instance),
     alias: payload.alias ? Matchers.string(payload.alias) : null,
     currentRevisionId: payload.currentRevisionId
@@ -452,9 +438,9 @@ export function addPageInteraction(payload: PagePayload) {
 
 export function addPageRevisionInteraction(payload: PageRevisionPayload) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: 35476,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'pageRevision',
     title: Matchers.string(payload.title),
     content: Matchers.string(payload.content),
     date: Matchers.iso8601DateTime(payload.date),
@@ -465,10 +451,9 @@ export function addPageRevisionInteraction(payload: PageRevisionPayload) {
 
 export function addSolutionInteraction(payload: SolutionPayload) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'entity',
-    type: 'solution',
     instance: Matchers.string(payload.instance),
     alias: payload.alias ? Matchers.string(payload.alias) : null,
     date: Matchers.iso8601DateTime(payload.date),
@@ -484,10 +469,9 @@ export function addSolutionRevisionInteraction(
   payload: SolutionRevisionPayload
 ) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'entityRevision',
-    type: 'solution',
     date: Matchers.iso8601DateTime(payload.date),
     authorId: Matchers.integer(payload.authorId),
     repositoryId: Matchers.integer(payload.repositoryId),
@@ -498,9 +482,9 @@ export function addSolutionRevisionInteraction(
 
 export function addTaxonomyTermInteraction(payload: TaxonomyTermPayload) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'taxonomyTerm',
     alias: payload.alias ? Matchers.string(payload.alias) : null,
     type: Matchers.string(payload.type),
     instance: Matchers.string(payload.instance),
@@ -519,8 +503,8 @@ export function addTaxonomyTermInteraction(payload: TaxonomyTermPayload) {
 
 export function addUserInteraction(payload: UserPayload) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
-    discriminator: 'user',
     trashed: Matchers.boolean(payload.trashed),
     username: Matchers.string(payload.username),
     date: Matchers.iso8601DateTime(payload.date),
@@ -535,10 +519,9 @@ export function addUserInteraction(payload: UserPayload) {
 
 export function addVideoInteraction(payload: VideoPayload) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'entity',
-    type: 'video',
     instance: Matchers.string(payload.instance),
     alias: payload.alias ? Matchers.string(payload.alias) : null,
     date: Matchers.iso8601DateTime(payload.date),
@@ -555,10 +538,9 @@ export function addVideoInteraction(payload: VideoPayload) {
 
 export function addVideoRevisionInteraction(payload: VideoRevisionPayload) {
   return addUuidInteraction({
+    __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    discriminator: 'entityRevision',
-    type: 'video',
     date: Matchers.iso8601DateTime(payload.date),
     authorId: Matchers.integer(payload.authorId),
     repositoryId: Matchers.integer(payload.repositoryId),
@@ -571,19 +553,15 @@ export function addVideoRevisionInteraction(payload: VideoRevisionPayload) {
 
 export function addUuidInteraction<
   T extends {
+    __typename: UuidType
     id: number
-    discriminator: string
   }
->({ id, discriminator, ...data }: T) {
+>(data: T) {
   return addJsonInteraction({
-    name: `fetch data of uuid ${id}`,
-    given: `uuid ${id} is of discriminator ${discriminator}`,
-    path: `/api/uuid/${id}`,
-    body: {
-      id,
-      discriminator,
-      ...data,
-    },
+    name: `fetch data of uuid ${data.id}`,
+    given: `uuid ${data.id} is of type ${data.__typename}`,
+    path: `/api/uuid/${data.id}`,
+    body: data,
   })
 }
 

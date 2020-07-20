@@ -29,10 +29,10 @@ import {
   taxonomyTermRoot,
   taxonomyTermSubject,
 } from '../__fixtures__/uuid'
-import { Instance } from '../src/graphql/schema/instance'
 import { Service } from '../src/graphql/schema/types'
 import { PagePayload, TaxonomyTermPayload } from '../src/graphql/schema/uuid'
 import { NavigationPayload } from '../src/graphql/schema/uuid/navigation'
+import { Instance } from '../src/types'
 import {
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
@@ -42,13 +42,13 @@ import { createTestClient } from './__utils__/test-client'
 function createSetNavigationMutation(navigation: NavigationPayload) {
   return {
     mutation: gql`
-      mutation _setCache($key: String!, $value: String!) {
+      mutation _setCache($key: String!, $value: JSON!) {
         _setCache(key: $key, value: $value)
       }
     `,
     variables: {
       key: `${navigation.instance}.serlo.org/api/navigation`,
-      value: JSON.stringify(navigation),
+      value: navigation,
     },
   }
 }
@@ -56,13 +56,13 @@ function createSetNavigationMutation(navigation: NavigationPayload) {
 function createSetPageMutation(page: PagePayload) {
   return {
     mutation: gql`
-      mutation _setCache($key: String!, $value: String!) {
+      mutation _setCache($key: String!, $value: JSON!) {
         _setCache(key: $key, value: $value)
       }
     `,
     variables: {
       key: `de.serlo.org/api/uuid/${page.id}`,
-      value: JSON.stringify({ ...page, discriminator: 'page' }),
+      value: page,
     },
   }
 }
@@ -70,13 +70,13 @@ function createSetPageMutation(page: PagePayload) {
 function createSetTaxonomyTermMutation(taxonomyTerm: TaxonomyTermPayload) {
   return {
     mutation: gql`
-      mutation _setCache($key: String!, $value: String!) {
+      mutation _setCache($key: String!, $value: JSON!) {
         _setCache(key: $key, value: $value)
       }
     `,
     variables: {
       key: `de.serlo.org/api/uuid/${taxonomyTerm.id}`,
-      value: JSON.stringify({ ...taxonomyTerm, discriminator: 'taxonomyTerm' }),
+      value: taxonomyTerm,
     },
   }
 }
@@ -94,7 +94,7 @@ describe('Page', () => {
     await assertSuccessfulGraphQLMutation({
       ...createSetNavigationMutation({
         instance: Instance.De,
-        data: JSON.stringify([]),
+        data: [],
       }),
       client,
     })
@@ -184,7 +184,7 @@ describe('Page', () => {
     await assertSuccessfulGraphQLMutation({
       ...createSetNavigationMutation({
         instance: Instance.De,
-        data: JSON.stringify([
+        data: [
           {
             label: 'Mathematik',
             id: subjectHomepage.id,
@@ -200,7 +200,7 @@ describe('Page', () => {
               },
             ],
           },
-        ]),
+        ],
       }),
       client,
     })
@@ -265,7 +265,7 @@ describe('Taxonomy Term', () => {
     await assertSuccessfulGraphQLMutation({
       ...createSetNavigationMutation({
         instance: Instance.De,
-        data: JSON.stringify([]),
+        data: [],
       }),
       client,
     })
