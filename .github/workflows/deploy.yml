@@ -14,13 +14,10 @@ jobs:
           fetch-depth: 2
       - id: version
         uses: salsify/action-detect-and-tag-new-version@v2
-        with:
-          version-command: |
-            cat package.json | jq --raw-output ".version"
   docker-image:
     runs-on: ubuntu-latest
     needs: update-version
-    if: needs.update-version.outputs.changed
+    if: needs.update-version.outputs.changed == true
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -36,7 +33,7 @@ jobs:
   npm-package:
     runs-on: ubuntu-latest
     needs: update-version
-    if: needs.update-version.outputs.changed
+    if: needs.update-version.outputs.changed == true
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
