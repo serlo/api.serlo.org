@@ -163,6 +163,43 @@ async function exec(): Promise<void> {
       date: '2020-07-14',
       fixed: [['notifications', 'Process object response as an array.']],
     },
+    {
+      tagName: 'v0.6.0',
+      name: '0.6.0',
+      date: '2020-07-21',
+      breakingChanges: [
+        [
+          'navigation',
+          '`Navigation["data"]` is now returned directly as JSON.',
+        ],
+        ['uuid', 'Removed `UnsupportedUuid`.'],
+      ],
+      changed: [
+        [
+          'navigation',
+          '`Navigation["data"]` is now returned directly as JSON.',
+        ],
+      ],
+      added: [
+        'Add `JSON` & `JSONObject` GraphQL scalars.',
+        'Publish types as npm package `@serlo/api`.',
+        'Add `activeDonors`.',
+        ['user', 'Add `activeDonor`.'],
+      ],
+      removed: [['uuid', 'Removed `UnsupportedUuid`.']],
+      internal: [
+        'Generate TypeScript types from GraphQL schema.',
+        "Previous `de.serlo.org/api/uuid/*`, `*.serlo.org/api/navigation` cache values won't work anymore.",
+        [
+          'uuid',
+          'Consistently require `__typename` instead of `discriminator` + optional `type`.',
+        ],
+        [
+          'cache',
+          'Deprecated all `_set*` / `_remove*` mutations in favor of `_setCache` / `_removeCache`.',
+        ],
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
