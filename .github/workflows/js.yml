@@ -50,3 +50,16 @@ jobs:
           node-version: 12.x
       - run: yarn
       - run: yarn test
+  types:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - run: yarn
+      - run: yarn regenerate-types
+      - id: changes
+        uses: UnicornGlobal/has-changes-action@v1.0.11
+      - run: echo "Outdated types" && exit 1
+        if: steps.changes.outputs.changed == 1
