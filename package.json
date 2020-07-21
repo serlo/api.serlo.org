@@ -23,8 +23,8 @@
     "test": "jest",
     "pacts": "jest --config jest.config-pacts.js",
     "pacts:publish": "ts-node scripts/publish-pacts",
-    "regenerate-types": "graphql-codegen --config codegen.yml",
-    "regenerate-types-package": "ts-node scripts/regenerate-types-package",
+    "preregenerate-types": "graphql-codegen --config codegen.yml",
+    "regenerate-types": "ts-node scripts/regenerate-types-package",
     "_eslint": "eslint \"{{__fixtures__,__tests-pacts__,__tests__,scripts,src}/**/*,*}.{js,jsx,ts,tsx}\"",
     "_prettier": "prettier ."
   },
