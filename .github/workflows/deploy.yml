@@ -1,0 +1,50 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - master
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.version.outputs.previous-version == steps.version.outputs.current-version }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - id: version
+        uses: salsify/action-detect-and-tag-new-version@v2
+        with:
+          version-command: |
+            cat package.json | jq ".version"
+  docker-image:
+    runs-on: ubuntu-latest
+    needs: update-version
+    if: needs.update-version.changed
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '274.0.0'
+          service_account_key: ${{ secrets.GCP_KEY_SERLO_SHARED }}
+      - run: gcloud auth configure-docker
+      - run: yarn
+      - run: yarn deploy:image
+  npm-package:
+    runs-on: ubuntu-latest
+    needs: update-version
+    if: needs.update-version.changed
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+          registry-url: 'https://registry.npmjs.org'
+      - run: yarn
+      - run: yarn regenerate-types
+      - run: (cd dist-types && npm publish)
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
