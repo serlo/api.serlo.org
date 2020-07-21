@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.0](https://github.com/serlo/api.serlo.org/compare/v0.5.8..v0.6.0) - July 21, 2020
+
+### Breaking Changes
+
+- **navigation**. `Navigation["data"]` is now returned directly as JSON.
+- **uuid**. Removed `UnsupportedUuid`.
+
+### Added
+
+- Add `JSON` & `JSONObject` GraphQL scalars.
+- Publish types as npm package `@serlo/api`.
+- Add `activeDonors`.
+- **user**. Add `activeDonor`.
+
+### Changed
+
+- **navigation**. `Navigation["data"]` is now returned directly as JSON.
+
+### Removed
+
+- **uuid**. Removed `UnsupportedUuid`.
+
+### Internal
+
+- Generate TypeScript types from GraphQL schema.
+- Previous `de.serlo.org/api/uuid/*`, `*.serlo.org/api/navigation` cache values won't work anymore.
+- **uuid**. Consistently require `__typename` instead of `discriminator` + optional `type`.
+- **cache**. Deprecated all `_set*` / `_remove*` mutations in favor of `_setCache` / `_removeCache`.
+
 ## [0.5.8](https://github.com/serlo/api.serlo.org/compare/v0.5.7..v0.5.8) - July 14, 2020
 
 ### Fixed
