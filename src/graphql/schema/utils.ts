@@ -23,8 +23,6 @@ import { DocumentNode, GraphQLResolveInfo } from 'graphql'
 import { parseResolveInfo } from 'graphql-parse-resolve-info'
 import * as R from 'ramda'
 
-import { Resolver } from './types'
-
 export function requestsOnlyFields(
   type: string,
   fields: string[],
@@ -36,34 +34,9 @@ export function requestsOnlyFields(
 
 export class Schema {
   public constructor(
-    public resolvers: Record<
-      string,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      Record<string, Resolver<any, any, any>> & {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        __resolveType?(type: any): string
-      }
-    > = {},
+    public resolvers = {},
     public typeDefs: DocumentNode[] = []
   ) {}
-
-  public addTypeResolver<T>(type: string, resolver: (type: T) => string) {
-    this.resolvers[type] = this.resolvers[type] || {}
-    this.resolvers[type]['__resolveType'] = resolver
-  }
-
-  public addMutation<P, A, T>(name: string, resolver: Resolver<P, A, T>) {
-    this.addResolver('Mutation', name, resolver)
-  }
-
-  public addResolver<P, A, T>(
-    type: string,
-    name: string,
-    resolver: Resolver<P, A, T>
-  ) {
-    this.resolvers[type] = this.resolvers[type] || {}
-    this.resolvers[type][name] = resolver
-  }
 
   public static merge(...schemas: Schema[]): Schema {
     const subResolvers = R.map((schema) => schema.resolvers, schemas)

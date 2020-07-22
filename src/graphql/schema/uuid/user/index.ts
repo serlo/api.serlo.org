@@ -25,7 +25,4 @@ import typeDefs from './types.graphql'
 
 export * from './types'
 
-export const userSchema = new Schema(
-  (resolvers as unknown) as Schema['resolvers'],
-  [typeDefs]
-)
+export const userSchema = new Schema(resolvers, [typeDefs])
