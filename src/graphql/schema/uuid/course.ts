@@ -21,9 +21,9 @@
  */
 import { Schema } from '../utils'
 import {
-  EntityPayload,
+  AbstractEntityPayload,
+  AbstractEntityRevisionPayload,
   EntityRevision,
-  EntityRevisionPayload,
   EntityRevisionType,
   EntityType,
 } from './abstract-entity'
@@ -45,7 +45,7 @@ export class Course extends TaxonomyTermChild {
     this.pageIds = payload.pageIds
   }
 }
-export interface CoursePayload extends EntityPayload {
+export interface CoursePayload extends AbstractEntityPayload {
   __typename: EntityType.Course
   taxonomyTermIds: number[]
   pageIds: number[]
@@ -82,7 +82,7 @@ export class CourseRevision extends EntityRevision {
   }
 }
 
-export interface CourseRevisionPayload extends EntityRevisionPayload {
+export interface CourseRevisionPayload extends AbstractEntityRevisionPayload {
   __typename: EntityRevisionType.CourseRevision
   title: string
   content: string
@@ -95,6 +95,4 @@ addTaxonomyTermChildResolvers({
   entityType: EntityType.Course,
   entityRevisionType: EntityRevisionType.CourseRevision,
   repository: 'course',
-  Entity: Course,
-  EntityRevision: CourseRevision,
 })

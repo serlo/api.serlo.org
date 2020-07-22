@@ -21,11 +21,11 @@
  */
 import { Schema } from '../utils'
 import {
-  EntityPayload,
-  EntityType,
+  AbstractEntityPayload,
+  AbstractEntityRevisionPayload,
   EntityRevision,
-  EntityRevisionPayload,
   EntityRevisionType,
+  EntityType,
 } from './abstract-entity'
 import {
   addTaxonomyTermChildResolvers,
@@ -38,7 +38,7 @@ export const appletSchema = new Schema({}, [typeDefs])
 export class Applet extends TaxonomyTermChild {
   public __typename = EntityType.Applet
 }
-export interface AppletPayload extends EntityPayload {
+export interface AppletPayload extends AbstractEntityPayload {
   __typename: EntityType.Applet
   taxonomyTermIds: number[]
 }
@@ -63,7 +63,7 @@ export class AppletRevision extends EntityRevision {
   }
 }
 
-export interface AppletRevisionPayload extends EntityRevisionPayload {
+export interface AppletRevisionPayload extends AbstractEntityRevisionPayload {
   __typename: EntityRevisionType.AppletRevision
   url: string
   title: string
@@ -78,6 +78,4 @@ addTaxonomyTermChildResolvers({
   entityType: EntityType.Applet,
   entityRevisionType: EntityRevisionType.AppletRevision,
   repository: 'applet',
-  Entity: Applet,
-  EntityRevision: AppletRevision,
 })

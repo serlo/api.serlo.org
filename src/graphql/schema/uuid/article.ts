@@ -21,11 +21,11 @@
  */
 import { Schema } from '../utils'
 import {
-  EntityPayload,
-  EntityType,
+  AbstractEntityPayload,
+  AbstractEntityRevisionPayload,
   EntityRevision,
-  EntityRevisionPayload,
   EntityRevisionType,
+  EntityType,
 } from './abstract-entity'
 import {
   addTaxonomyTermChildResolvers,
@@ -38,7 +38,7 @@ export const articleSchema = new Schema({}, [typeDefs])
 export class Article extends TaxonomyTermChild {
   public __typename = EntityType.Article
 }
-export interface ArticlePayload extends EntityPayload {
+export interface ArticlePayload extends AbstractEntityPayload {
   __typename: EntityType.Article
   taxonomyTermIds: number[]
 }
@@ -61,7 +61,7 @@ export class ArticleRevision extends EntityRevision {
   }
 }
 
-export interface ArticleRevisionPayload extends EntityRevisionPayload {
+export interface ArticleRevisionPayload extends AbstractEntityRevisionPayload {
   __typename: EntityRevisionType.ArticleRevision
   title: string
   content: string
@@ -75,6 +75,4 @@ addTaxonomyTermChildResolvers({
   entityType: EntityType.Article,
   entityRevisionType: EntityRevisionType.ArticleRevision,
   repository: 'article',
-  Entity: Article,
-  EntityRevision: ArticleRevision,
 })

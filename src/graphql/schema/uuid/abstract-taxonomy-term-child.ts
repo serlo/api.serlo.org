@@ -19,13 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { SerloDataSource } from '../../data-sources/serlo'
 import {
-  Entity,
-  EntityPayload,
-  EntityRevision,
+  AbstractEntityPayload,
   addEntityResolvers,
+  Entity,
   EntityResolversPayload,
+  EntityRevision,
 } from './abstract-entity'
 import { TaxonomyTermPreResolver, TaxonomyTermPayload } from './taxonomy-term'
 
@@ -37,16 +36,14 @@ export abstract class TaxonomyTermChild extends Entity {
     this.taxonomyTermIds = payload.taxonomyTermIds
   }
 }
-export interface TaxonomyTermChildPayload extends EntityPayload {
+export interface TaxonomyTermChildPayload extends AbstractEntityPayload {
   taxonomyTermIds: number[]
 }
 
 export function addTaxonomyTermChildResolvers<
   E extends TaxonomyTermChild,
-  R extends EntityRevision,
-  ESetter extends keyof SerloDataSource,
-  RSetter extends keyof SerloDataSource
->(args: EntityResolversPayload<E, R, ESetter, RSetter>) {
+  R extends EntityRevision
+>(args: EntityResolversPayload) {
   addEntityResolvers(args)
   args.schema.addResolver<E, unknown, TaxonomyTermPreResolver[]>(
     args.entityType,

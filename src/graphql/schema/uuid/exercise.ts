@@ -21,11 +21,11 @@
  */
 import { requestsOnlyFields, Schema } from '../utils'
 import {
-  EntityPayload,
-  EntityType,
+  AbstractEntityPayload,
+  AbstractEntityRevisionPayload,
   EntityRevision,
-  EntityRevisionPayload,
   EntityRevisionType,
+  EntityType,
 } from './abstract-entity'
 import {
   addTaxonomyTermChildResolvers,
@@ -45,7 +45,7 @@ export class Exercise extends TaxonomyTermChild {
     this.solutionId = payload.solutionId
   }
 }
-export interface ExercisePayload extends EntityPayload {
+export interface ExercisePayload extends AbstractEntityPayload {
   __typename: EntityType.Exercise
   taxonomyTermIds: number[]
   solutionId: number | null
@@ -78,7 +78,7 @@ export class ExerciseRevision extends EntityRevision {
   }
 }
 
-export interface ExerciseRevisionPayload extends EntityRevisionPayload {
+export interface ExerciseRevisionPayload extends AbstractEntityRevisionPayload {
   __typename: EntityRevisionType.ExerciseRevision
   content: string
   changes: string
@@ -89,6 +89,4 @@ addTaxonomyTermChildResolvers({
   entityType: EntityType.Exercise,
   entityRevisionType: EntityRevisionType.ExerciseRevision,
   repository: 'exercise',
-  Entity: Exercise,
-  EntityRevision: ExerciseRevision,
 })

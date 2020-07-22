@@ -21,11 +21,11 @@
  */
 import { requestsOnlyFields, Schema } from '../utils'
 import {
+  AbstractEntityPayload,
   addEntityResolvers,
-  EntityType,
-  EntityRevisionType,
   Entity,
-  EntityPayload,
+  EntityRevisionType,
+  EntityType,
 } from './abstract-entity'
 import { ExerciseRevision, ExerciseRevisionPayload } from './exercise'
 import { ExerciseGroup, ExerciseGroupPayload } from './exercise-group'
@@ -45,7 +45,7 @@ export class GroupedExercise extends Entity {
     this.parentId = payload.parentId
   }
 }
-export interface GroupedExercisePayload extends EntityPayload {
+export interface GroupedExercisePayload extends AbstractEntityPayload {
   __typename: EntityType.GroupedExercise
   solutionId: number | null
   parentId: number
@@ -104,6 +104,4 @@ addEntityResolvers({
   entityType: EntityType.GroupedExercise,
   entityRevisionType: EntityRevisionType.GroupedExerciseRevision,
   repository: 'groupedExercise',
-  Entity: GroupedExercise,
-  EntityRevision: GroupedExerciseRevision,
 })

@@ -21,9 +21,9 @@
  */
 import { Schema } from '../utils'
 import {
-  EntityPayload,
+  AbstractEntityPayload,
+  AbstractEntityRevisionPayload,
   EntityRevision,
-  EntityRevisionPayload,
   EntityRevisionType,
   EntityType,
 } from './abstract-entity'
@@ -45,7 +45,7 @@ export class ExerciseGroup extends TaxonomyTermChild {
     this.exerciseIds = payload.exerciseIds
   }
 }
-export interface ExerciseGroupPayload extends EntityPayload {
+export interface ExerciseGroupPayload extends AbstractEntityPayload {
   __typename: EntityType.ExerciseGroup
   taxonomyTermIds: number[]
   exerciseIds: number[]
@@ -78,7 +78,8 @@ export class ExerciseGroupRevision extends EntityRevision {
   }
 }
 
-export interface ExerciseGroupRevisionPayload extends EntityRevisionPayload {
+export interface ExerciseGroupRevisionPayload
+  extends AbstractEntityRevisionPayload {
   __typename: EntityRevisionType.ExerciseGroupRevision
   content: string
   changes: string
@@ -89,6 +90,4 @@ addTaxonomyTermChildResolvers({
   entityType: EntityType.ExerciseGroup,
   entityRevisionType: EntityRevisionType.ExerciseGroupRevision,
   repository: 'exerciseGroup',
-  Entity: ExerciseGroup,
-  EntityRevision: ExerciseGroupRevision,
 })

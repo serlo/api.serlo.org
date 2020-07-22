@@ -21,13 +21,13 @@
  */
 import { requestsOnlyFields, Schema } from '../utils'
 import {
+  AbstractEntityPayload,
+  AbstractEntityRevisionPayload,
   addEntityResolvers,
   Entity,
-  EntityPayload,
-  EntityType,
   EntityRevision,
-  EntityRevisionPayload,
   EntityRevisionType,
+  EntityType,
 } from './abstract-entity'
 import { Exercise, ExercisePayload } from './exercise'
 import typeDefs from './solution.graphql'
@@ -43,7 +43,7 @@ export class Solution extends Entity {
     this.parentId = payload.parentId
   }
 }
-export interface SolutionPayload extends EntityPayload {
+export interface SolutionPayload extends AbstractEntityPayload {
   __typename: EntityType.Solution
   parentId: number
 }
@@ -74,7 +74,7 @@ export class SolutionRevision extends EntityRevision {
   }
 }
 
-export interface SolutionRevisionPayload extends EntityRevisionPayload {
+export interface SolutionRevisionPayload extends AbstractEntityRevisionPayload {
   __typename: EntityRevisionType.SolutionRevision
   content: string
   changes: string
@@ -85,6 +85,4 @@ addEntityResolvers({
   entityType: EntityType.Solution,
   entityRevisionType: EntityRevisionType.SolutionRevision,
   repository: 'solution',
-  Entity: Solution,
-  EntityRevision: SolutionRevision,
 })

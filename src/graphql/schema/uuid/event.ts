@@ -21,11 +21,11 @@
  */
 import { Schema } from '../utils'
 import {
-  EntityPayload,
-  EntityType,
+  AbstractEntityPayload,
+  AbstractEntityRevisionPayload,
   EntityRevision,
-  EntityRevisionPayload,
   EntityRevisionType,
+  EntityType,
 } from './abstract-entity'
 import {
   addTaxonomyTermChildResolvers,
@@ -38,7 +38,7 @@ export const eventSchema = new Schema({}, [typeDefs])
 export class Event extends TaxonomyTermChild {
   public __typename = EntityType.Event
 }
-export interface EventPayload extends EntityPayload {
+export interface EventPayload extends AbstractEntityPayload {
   __typename: EntityType.Event
   taxonomyTermIds: number[]
 }
@@ -61,7 +61,7 @@ export class EventRevision extends EntityRevision {
   }
 }
 
-export interface EventRevisionPayload extends EntityRevisionPayload {
+export interface EventRevisionPayload extends AbstractEntityRevisionPayload {
   __typename: EntityRevisionType.EventRevision
   title: string
   content: string
@@ -75,6 +75,4 @@ addTaxonomyTermChildResolvers({
   entityType: EntityType.Event,
   entityRevisionType: EntityRevisionType.EventRevision,
   repository: 'event',
-  Entity: Event,
-  EntityRevision: EventRevision,
 })
