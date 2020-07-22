@@ -19,9 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { decodePath, resolveAbstractUuid, UuidPayload } from '..'
+import { decodePath, UuidPayload } from '..'
 import { Context } from '../../types'
-import { AbstractUuidPreResolver } from '../abstract-uuid'
 import {
   TaxonomyTermPayload,
   TaxonomyTermPreResolver,
@@ -44,11 +43,7 @@ export const resolvers: TaxonomyTermResolvers = {
     children(taxonomyTerm, _args, { dataSources }) {
       return Promise.all(
         taxonomyTerm.childrenIds.map((id) => {
-          return dataSources.serlo
-            .getUuid<UuidPayload>({ id })
-            .then((data) => {
-              return resolveAbstractUuid(data) as AbstractUuidPreResolver
-            })
+          return dataSources.serlo.getUuid<UuidPayload>({ id })
         })
       )
     },
