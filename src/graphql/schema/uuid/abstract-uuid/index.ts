@@ -25,7 +25,4 @@ import typeDefs from './types.graphql'
 
 export * from './types'
 
-export const abstractUuidSchema = new Schema(
-  (resolvers as unknown) as Schema['resolvers'],
-  [typeDefs]
-)
+export const abstractUuidSchema = new Schema(resolvers, [typeDefs])
