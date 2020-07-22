@@ -24,7 +24,6 @@ import { resolvers } from './resolvers'
 import typeDefs from './types.graphql'
 
 export * from './types'
-export * from './utils'
 
 export const taxonomyTermSchema = new Schema(
   (resolvers as unknown) as Schema['resolvers'],

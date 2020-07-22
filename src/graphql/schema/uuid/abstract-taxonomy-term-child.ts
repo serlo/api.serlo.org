@@ -27,11 +27,7 @@ import {
   addEntityResolvers,
   EntityResolversPayload,
 } from './abstract-entity'
-import {
-  resolveTaxonomyTerm,
-  TaxonomyTermPreResolver,
-  TaxonomyTermPayload,
-} from './taxonomy-term'
+import { TaxonomyTermPreResolver, TaxonomyTermPayload } from './taxonomy-term'
 
 export abstract class TaxonomyTermChild extends Entity {
   public taxonomyTermIds: number[]
@@ -58,11 +54,7 @@ export function addTaxonomyTermChildResolvers<
     (entity, _args, { dataSources }) => {
       return Promise.all(
         entity.taxonomyTermIds.map((id: number) => {
-          return dataSources.serlo
-            .getUuid<TaxonomyTermPayload>({ id })
-            .then((data) => {
-              return resolveTaxonomyTerm(data)
-            })
+          return dataSources.serlo.getUuid<TaxonomyTermPayload>({ id })
         })
       )
     }

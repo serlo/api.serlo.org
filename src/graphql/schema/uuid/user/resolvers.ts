@@ -21,7 +21,7 @@
  */
 import { pipeable, either } from 'fp-ts'
 
-import { AbstractUuidPayload, resolveUser } from '..'
+import { AbstractUuidPayload } from '..'
 import { ErrorEvent } from '../../../../error-event'
 import {
   MajorDimension,
@@ -40,7 +40,7 @@ export const resolvers: UserResolvers = {
       )
 
       // TODO: Report uuids which are not users to sentry
-      return uuids.filter(isUserPayload).map(resolveUser)
+      return uuids.filter(isUserPayload)
     },
   },
   User: {

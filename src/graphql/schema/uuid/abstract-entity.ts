@@ -40,7 +40,7 @@ import {
   GroupedExerciseRevisionPayload,
 } from './grouped-exercise'
 import { SolutionPayload, SolutionRevisionPayload } from './solution'
-import { resolveUser, UserPreResolver, UserPayload } from './user'
+import { UserPreResolver, UserPayload } from './user'
 import { VideoPayload, VideoRevisionPayload } from './video'
 
 export const abstractEntitySchema = new Schema({}, [typeDefs])
@@ -210,8 +210,7 @@ export function addEntityResolvers<
       if (requestsOnlyFields('User', ['id'], info)) {
         return partialUser
       }
-      const data = await dataSources.serlo.getUuid<UserPayload>(partialUser)
-      return resolveUser(data)
+      return dataSources.serlo.getUuid<UserPayload>(partialUser)
     }
   )
   schema.addResolver<R, unknown, Partial<E>>(
