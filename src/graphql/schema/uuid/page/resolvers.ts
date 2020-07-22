@@ -1,10 +1,14 @@
 import { PagePayload } from '.'
 import { requestsOnlyFields } from '../../utils'
+import { decodePath } from '../alias'
 import { UserPayload } from '../user'
 import { PageResolvers, PageRevisionPayload } from './types'
 
 export const resolvers: PageResolvers = {
   Page: {
+    alias(page) {
+      return Promise.resolve(page.alias ? decodePath(page.alias) : null)
+    },
     async navigation(page, _args, { dataSources }) {
       return dataSources.serlo.getNavigation({
         instance: page.instance,

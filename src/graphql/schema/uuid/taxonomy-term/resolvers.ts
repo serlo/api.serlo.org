@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { resolveAbstractUuid, UuidPayload } from '..'
+import { decodePath, resolveAbstractUuid, UuidPayload } from '..'
 import { Context } from '../../types'
 import { AbstractUuidPreResolver } from '../abstract-uuid'
 import {
@@ -30,15 +30,20 @@ import {
 
 export const resolvers: TaxonomyTermResolvers = {
   TaxonomyTerm: {
-    async parent(parent, _args, { dataSources }) {
-      if (!parent.parentId) return
+    alias(taxonomyTerm) {
+      return Promise.resolve(
+        taxonomyTerm.alias ? decodePath(taxonomyTerm.alias) : null
+      )
+    },
+    async parent(taxonomyTerm, _args, { dataSources }) {
+      if (!taxonomyTerm.parentId) return
       return dataSources.serlo.getUuid<TaxonomyTermPayload>({
-        id: parent.parentId,
+        id: taxonomyTerm.parentId,
       })
     },
-    children(parent, _args, { dataSources }) {
+    children(taxonomyTerm, _args, { dataSources }) {
       return Promise.all(
-        parent.childrenIds.map((id) => {
+        taxonomyTerm.childrenIds.map((id) => {
           return dataSources.serlo
             .getUuid<UuidPayload>({ id })
             .then((data) => {
@@ -47,14 +52,14 @@ export const resolvers: TaxonomyTermResolvers = {
         })
       )
     },
-    async navigation(parent, _args: undefined, context: Context) {
-      const taxonomyPath = await resolveTaxonomyTermPath(parent, context)
+    async navigation(taxonomyTerm, _args: undefined, context: Context) {
+      const taxonomyPath = await resolveTaxonomyTermPath(taxonomyTerm, context)
 
       for (let i = 0; i < taxonomyPath.length; i++) {
         const currentIndex = taxonomyPath.length - (i + 1)
         const current = taxonomyPath[currentIndex]
         const navigation = await context.dataSources.serlo.getNavigation({
-          instance: parent.instance,
+          instance: taxonomyTerm.instance,
           id: current.id,
         })
 

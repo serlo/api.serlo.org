@@ -7,6 +7,7 @@ import { UserPreResolver } from '../user'
 export interface PagePreResolver
   extends Omit<Page, keyof PageResolvers['Page']> {
   __typename: DiscriminatorType.Page
+  alias: string | null
   currentRevisionId: number | null
   licenseId: number
 }
@@ -24,6 +25,7 @@ export type PageRevisionPayload = PageRevisionPreResolver
 
 export interface PageResolvers {
   Page: {
+    alias: Resolver<PagePreResolver, never, string | null>
     navigation: Resolver<PagePreResolver, never, Navigation | null>
     currentRevision: Resolver<
       PagePreResolver,

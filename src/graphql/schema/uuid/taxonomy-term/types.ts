@@ -27,6 +27,7 @@ import { Navigation } from '../navigation'
 export interface TaxonomyTermPreResolver
   extends Omit<TaxonomyTerm, keyof TaxonomyTermResolvers['TaxonomyTerm']> {
   __typename: DiscriminatorType.TaxonomyTerm
+  alias: string | null
   parentId: number | null
   childrenIds: number[]
 }
@@ -35,6 +36,7 @@ export type TaxonomyTermPayload = TaxonomyTermPreResolver
 
 export interface TaxonomyTermResolvers {
   TaxonomyTerm: {
+    alias: Resolver<TaxonomyTermPreResolver, never, string | null>
     parent: Resolver<TaxonomyTermPreResolver, never, TaxonomyTermPreResolver>
     children: Resolver<
       TaxonomyTermPreResolver,
