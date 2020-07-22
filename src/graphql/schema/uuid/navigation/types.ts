@@ -19,21 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Instance } from '../../../types'
-import { Schema } from '../utils'
-import typeDefs from './navigation.graphql'
-
-export const navigationSchema = new Schema({}, [typeDefs])
+import { Instance, NavigationNode } from '../../../../types'
 
 export interface Navigation {
   data: NodeData
   path: NavigationNode[]
-}
-
-export interface NavigationNode {
-  label: string
-  url: string | null
-  id: number | null
 }
 
 export interface NavigationPayload {
