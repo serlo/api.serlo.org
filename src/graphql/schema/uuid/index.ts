@@ -20,40 +20,23 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Schema } from '../utils'
-import {
-  abstractEntitySchema,
-  EntityRevisionType,
-  EntityType,
-} from './abstract-entity'
-import {
-  AbstractUuidPreResolver,
-  abstractUuidSchema,
-  DiscriminatorType,
-  UuidPayload,
-} from './abstract-uuid'
+import { abstractEntitySchema } from './abstract-entity'
+import { abstractUuidSchema } from './abstract-uuid'
 import { aliasSchema } from './alias'
 import { appletSchema } from './applet'
-import { Article, ArticleRevision, articleSchema } from './article'
-import { Course, CourseRevision, courseSchema } from './course'
-import { CoursePage, CoursePageRevision, coursePageSchema } from './course-page'
-import { Event, EventRevision, eventSchema } from './event'
-import { Exercise, ExerciseRevision, exerciseSchema } from './exercise'
-import {
-  ExerciseGroup,
-  ExerciseGroupRevision,
-  exerciseGroupSchema,
-} from './exercise-group'
-import {
-  GroupedExercise,
-  GroupedExerciseRevision,
-  groupedExerciseSchema,
-} from './grouped-exercise'
+import { articleSchema } from './article'
+import { courseSchema } from './course'
+import { coursePageSchema } from './course-page'
+import { eventSchema } from './event'
+import { exerciseSchema } from './exercise'
+import { exerciseGroupSchema } from './exercise-group'
+import { groupedExerciseSchema } from './grouped-exercise'
 import { navigationSchema } from './navigation'
 import { pageSchema } from './page'
-import { Solution, SolutionRevision, solutionSchema } from './solution'
+import { solutionSchema } from './solution'
 import { taxonomyTermSchema } from './taxonomy-term'
 import { userSchema } from './user'
-import { Video, VideoRevision, videoSchema } from './video'
+import { videoSchema } from './video'
 
 export * from './abstract-entity'
 export * from './abstract-taxonomy-term-child'
@@ -93,62 +76,3 @@ export const uuidSchema = Schema.merge(
   userSchema,
   videoSchema
 )
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function resolveAbstractUuid(
-  data?: UuidPayload
-  // FIXME: this should be UuidPreResolver when refactoring is done
-): AbstractUuidPreResolver | void {
-  if (!data) return
-
-  switch (data.__typename) {
-    case EntityType.Applet:
-      return data
-    case EntityType.Article:
-      return new Article(data)
-    case EntityType.Course:
-      return new Course(data)
-    case EntityType.CoursePage:
-      return new CoursePage(data)
-    case EntityType.Event:
-      return new Event(data)
-    case EntityType.Exercise:
-      return new Exercise(data)
-    case EntityType.ExerciseGroup:
-      return new ExerciseGroup(data)
-    case EntityType.GroupedExercise:
-      return new GroupedExercise(data)
-    case EntityType.Solution:
-      return new Solution(data)
-    case EntityType.Video:
-      return new Video(data)
-    case EntityRevisionType.AppletRevision:
-      return data
-    case EntityRevisionType.ArticleRevision:
-      return new ArticleRevision(data)
-    case EntityRevisionType.CourseRevision:
-      return new CourseRevision(data)
-    case EntityRevisionType.CoursePageRevision:
-      return new CoursePageRevision(data)
-    case EntityRevisionType.EventRevision:
-      return new EventRevision(data)
-    case EntityRevisionType.ExerciseRevision:
-      return new ExerciseRevision(data)
-    case EntityRevisionType.ExerciseGroupRevision:
-      return new ExerciseGroupRevision(data)
-    case EntityRevisionType.GroupedExerciseRevision:
-      return new GroupedExerciseRevision(data)
-    case EntityRevisionType.SolutionRevision:
-      return new SolutionRevision(data)
-    case EntityRevisionType.VideoRevision:
-      return new VideoRevision(data)
-    case DiscriminatorType.Page:
-      return data
-    case DiscriminatorType.PageRevision:
-      return data
-    case DiscriminatorType.User:
-      return data
-    case DiscriminatorType.TaxonomyTerm:
-      return data
-  }
-}

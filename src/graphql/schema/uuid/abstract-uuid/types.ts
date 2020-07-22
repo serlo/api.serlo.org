@@ -56,11 +56,9 @@ export type AbstractUuidPayload = AbstractUuidPreResolver
 
 export interface UuidResolvers {
   AbstractUuid: {
-    // FIXME: this should be UuidPreResolver when refactoring is done
-    __resolveType: TypeResolver<AbstractUuidPreResolver>
+    __resolveType: TypeResolver<UuidPreResolver>
   }
   Query: {
-    // FIXME: this should be UuidPreResolver when refactoring is done
-    uuid: QueryResolver<QueryUuidArgs, AbstractUuidPreResolver>
+    uuid: QueryResolver<QueryUuidArgs, UuidPreResolver>
   }
 }
