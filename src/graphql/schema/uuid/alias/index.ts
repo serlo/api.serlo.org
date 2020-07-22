@@ -19,24 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Instance, Scalars } from '../../../types'
-import { Schema } from '../utils'
-import typeDefs from './alias.graphql'
+import { Schema } from '../../utils'
+import typeDefs from './types.graphql'
+
+export * from './types'
+export * from './utils'
 
 export const aliasSchema = new Schema({}, [typeDefs])
-
-export function decodePath(path: string) {
-  return decodeURIComponent(path)
-}
-
-export function encodePath(path: string) {
-  return encodeURIComponent(path).replace(/%2F/g, '/')
-}
-
-export interface AliasPayload {
-  id: number
-  instance: Instance
-  path: string
-  source: string
-  timestamp: Scalars['DateTime']
-}
