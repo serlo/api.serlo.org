@@ -21,13 +21,13 @@
  */
 import { requestsOnlyFields, Schema } from '../utils'
 import {
+  AbstractEntityPayload,
+  AbstractEntityRevisionPayload,
   addEntityResolvers,
-  EntityType,
-  EntityRevisionType,
   Entity,
-  EntityPayload,
   EntityRevision,
-  EntityRevisionPayload,
+  EntityRevisionType,
+  EntityType,
 } from './abstract-entity'
 import { Course, CoursePayload } from './course'
 import typeDefs from './course-page.graphql'
@@ -43,7 +43,7 @@ export class CoursePage extends Entity {
     this.parentId = payload.parentId
   }
 }
-export interface CoursePagePayload extends EntityPayload {
+export interface CoursePagePayload extends AbstractEntityPayload {
   __typename: EntityType.CoursePage
   parentId: number
 }
@@ -73,7 +73,8 @@ export class CoursePageRevision extends EntityRevision {
     this.changes = payload.changes
   }
 }
-export interface CoursePageRevisionPayload extends EntityRevisionPayload {
+export interface CoursePageRevisionPayload
+  extends AbstractEntityRevisionPayload {
   __typename: EntityRevisionType.CoursePageRevision
   title: string
   content: string
@@ -85,6 +86,4 @@ addEntityResolvers({
   entityType: EntityType.CoursePage,
   entityRevisionType: EntityRevisionType.CoursePageRevision,
   repository: 'coursePage',
-  Entity: CoursePage,
-  EntityRevision: CoursePageRevision,
 })

@@ -21,11 +21,11 @@
  */
 import { Schema } from '../utils'
 import {
-  EntityPayload,
-  EntityType,
+  AbstractEntityPayload,
+  AbstractEntityRevisionPayload,
   EntityRevision,
-  EntityRevisionPayload,
   EntityRevisionType,
+  EntityType,
 } from './abstract-entity'
 import {
   addTaxonomyTermChildResolvers,
@@ -38,7 +38,7 @@ export const videoSchema = new Schema({}, [typeDefs])
 export class Video extends TaxonomyTermChild {
   public __typename = EntityType.Video
 }
-export interface VideoPayload extends EntityPayload {
+export interface VideoPayload extends AbstractEntityPayload {
   __typename: EntityType.Video
   taxonomyTermIds: number[]
 }
@@ -59,7 +59,7 @@ export class VideoRevision extends EntityRevision {
   }
 }
 
-export interface VideoRevisionPayload extends EntityRevisionPayload {
+export interface VideoRevisionPayload extends AbstractEntityRevisionPayload {
   __typename: EntityRevisionType.VideoRevision
   url: string
   title: string
@@ -72,6 +72,4 @@ addTaxonomyTermChildResolvers({
   entityType: EntityType.Video,
   entityRevisionType: EntityRevisionType.VideoRevision,
   repository: 'video',
-  Entity: Video,
-  EntityRevision: VideoRevision,
 })
