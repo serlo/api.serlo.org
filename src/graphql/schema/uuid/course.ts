@@ -28,8 +28,8 @@ import {
   EntityType,
 } from './abstract-entity'
 import {
-  addTaxonomyTermChildResolvers,
   TaxonomyTermChild,
+  addTaxonomyTermChildResolvers,
 } from './abstract-taxonomy-term-child'
 import { CoursePage, CoursePagePayload } from './course-page'
 import typeDefs from './course.graphql'
