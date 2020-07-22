@@ -38,7 +38,6 @@ export function createSetCacheMutation(variables: {
     `,
     variables: {
       key: variables.key,
-      // The consumer of the API should pass the value as a JSON-stringified string
       value: variables.value,
     },
   }
