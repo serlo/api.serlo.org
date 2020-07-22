@@ -19,14 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { DiscriminatorType } from '../abstract-uuid'
-import { TaxonomyTermPreResolver, TaxonomyTermPayload } from './types'
+import { Schema } from '../../utils'
+import { resolvers } from './resolvers'
+import typeDefs from './types.graphql'
 
-export function resolveTaxonomyTerm(
-  data: TaxonomyTermPayload
-): TaxonomyTermPreResolver {
-  return {
-    ...data,
-    __typename: DiscriminatorType.TaxonomyTerm,
-  }
-}
+export * from './types'
+
+export const pageSchema = new Schema(
+  (resolvers as unknown) as Schema['resolvers'],
+  [typeDefs]
+)

@@ -27,16 +27,14 @@ import {
   TaxonomyTermPreResolver,
   TaxonomyTermResolvers,
 } from './types'
-import { resolveTaxonomyTerm } from './utils'
 
 export const resolvers: TaxonomyTermResolvers = {
   TaxonomyTerm: {
     async parent(parent, _args, { dataSources }) {
       if (!parent.parentId) return
-      const data = await dataSources.serlo.getUuid<TaxonomyTermPayload>({
+      return dataSources.serlo.getUuid<TaxonomyTermPayload>({
         id: parent.parentId,
       })
-      return resolveTaxonomyTerm(data)
     },
     children(parent, _args, { dataSources }) {
       return Promise.all(
@@ -90,10 +88,9 @@ async function resolveTaxonomyTermPath(
   let current: TaxonomyTermPreResolver = parent
 
   while (current.parentId !== null) {
-    const data = await dataSources.serlo.getUuid<TaxonomyTermPayload>({
+    current = await dataSources.serlo.getUuid<TaxonomyTermPayload>({
       id: current.parentId,
     })
-    current = resolveTaxonomyTerm(data)
     path.unshift(current)
   }
 

@@ -49,10 +49,10 @@ import {
   groupedExerciseSchema,
 } from './grouped-exercise'
 import { navigationSchema } from './navigation'
-import { Page, PageRevision, pageSchema } from './page'
+import { pageSchema } from './page'
 import { Solution, SolutionRevision, solutionSchema } from './solution'
-import { resolveTaxonomyTerm, taxonomyTermSchema } from './taxonomy-term'
-import { resolveUser, userSchema } from './user'
+import { taxonomyTermSchema } from './taxonomy-term'
+import { userSchema } from './user'
 import { Video, VideoRevision, videoSchema } from './video'
 
 export * from './abstract-entity'
@@ -142,12 +142,12 @@ export function resolveAbstractUuid(
     case EntityRevisionType.VideoRevision:
       return new VideoRevision(data)
     case DiscriminatorType.Page:
-      return new Page(data)
+      return data
     case DiscriminatorType.PageRevision:
-      return new PageRevision(data)
+      return data
     case DiscriminatorType.User:
-      return resolveUser(data)
+      return data
     case DiscriminatorType.TaxonomyTerm:
-      return resolveTaxonomyTerm(data)
+      return data
   }
 }
