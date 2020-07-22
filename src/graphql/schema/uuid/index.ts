@@ -32,7 +32,7 @@ import {
   UuidPayload,
 } from './abstract-uuid'
 import { aliasSchema } from './alias'
-import { Applet, AppletRevision, appletSchema } from './applet'
+import { appletSchema } from './applet'
 import { Article, ArticleRevision, articleSchema } from './article'
 import { Course, CourseRevision, courseSchema } from './course'
 import { CoursePage, CoursePageRevision, coursePageSchema } from './course-page'
@@ -56,6 +56,7 @@ import { userSchema } from './user'
 import { Video, VideoRevision, videoSchema } from './video'
 
 export * from './abstract-entity'
+export * from './abstract-taxonomy-term-child'
 export * from './abstract-uuid'
 export * from './alias'
 export * from './applet'
@@ -102,7 +103,7 @@ export function resolveAbstractUuid(
 
   switch (data.__typename) {
     case EntityType.Applet:
-      return new Applet(data)
+      return data
     case EntityType.Article:
       return new Article(data)
     case EntityType.Course:
@@ -122,7 +123,7 @@ export function resolveAbstractUuid(
     case EntityType.Video:
       return new Video(data)
     case EntityRevisionType.AppletRevision:
-      return new AppletRevision(data)
+      return data
     case EntityRevisionType.ArticleRevision:
       return new ArticleRevision(data)
     case EntityRevisionType.CourseRevision:

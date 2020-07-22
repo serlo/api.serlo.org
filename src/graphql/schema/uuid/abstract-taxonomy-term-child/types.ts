@@ -6,7 +6,7 @@ export interface AbstractTaxonomyTermChild extends AbstractEntity {
 }
 
 export interface AbstractTaxonomyTermChildPreResolver
-  extends Omit<AbstractEntityPreResolver, 'taxonomyTerm'> {
+  extends AbstractEntityPreResolver {
   taxonomyTermIds: number[]
 }
 
