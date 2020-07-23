@@ -31,7 +31,7 @@ import {
 import {
   AppletPayload,
   AppletRevisionPayload,
-} from '../../../src/graphql/schema/uuid/applet'
+} from '../../../src/graphql/schema'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,

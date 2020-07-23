@@ -19,7 +19,39 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-export * from './cache'
-export * from './license'
-export * from './notification'
-export * from './uuid'
+import { gql } from 'apollo-server'
+import * as R from 'ramda'
+
+import { EntityPayload } from '../../src/graphql/schema/uuid/abstract-entity'
+import { getUuidDataWithoutSubResolvers } from './abstract-uuid'
+
+export function createEntityLicenseQuery(variables: EntityPayload) {
+  return {
+    query: gql`
+      query license($id: Int!) {
+        uuid(id: $id) {
+          ... on AbstractEntity {
+            license {
+              id
+              instance
+              default
+              title
+              url
+              content
+              agreement
+              iconHref
+            }
+          }
+        }
+      }
+    `,
+    variables,
+  }
+}
+
+export function getEntityDataWithoutSubResolvers(entity: EntityPayload) {
+  return {
+    ...getUuidDataWithoutSubResolvers(entity),
+    ...R.pick(['date', 'instance', 'alias'], entity),
+  }
+}

@@ -29,17 +29,14 @@ import {
   solution,
   solutionAlias,
   solutionRevision,
-  user,
 } from '../../../__fixtures__'
 import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
 import {
   addAliasInteraction,
   addExerciseInteraction,
   addExerciseRevisionInteraction,
-  addLicenseInteraction,
   addSolutionInteraction,
   addSolutionRevisionInteraction,
-  addUserInteraction,
 } from '../../__utils__/interactions'
 
 describe('Solution', () => {
@@ -80,52 +77,6 @@ describe('Solution', () => {
           },
           license: {
             id: solution.licenseId,
-          },
-        },
-      },
-    })
-  })
-
-  test('by alias (w/ license)', async () => {
-    await addSolutionInteraction(solution)
-    await addAliasInteraction(solutionAlias)
-    await addLicenseInteraction(license)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(
-            alias: {
-              instance: de
-              path: "${solutionAlias.path}"
-            }
-          ) {
-            __typename
-            ... on Solution {
-              id
-              trashed
-              instance
-              alias
-              date
-              currentRevision {
-                id
-              }
-              license {
-                id
-                title
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(['currentRevisionId', 'licenseId', 'parentId'], solution),
-          currentRevision: {
-            id: solution.currentRevisionId,
-          },
-          license: {
-            id: license.id,
-            title: license.title,
           },
         },
       },
@@ -290,46 +241,6 @@ describe('SolutionRevision', () => {
           ...R.omit(['authorId', 'repositoryId'], solutionRevision),
           author: {
             id: solutionRevision.authorId,
-          },
-          solution: {
-            id: solutionRevision.repositoryId,
-          },
-        },
-      },
-    })
-  })
-
-  test('by id (w/ author)', async () => {
-    await addSolutionRevisionInteraction(solutionRevision)
-    await addUserInteraction(user)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(id: ${solutionRevision.id}) {
-            __typename
-            ... on SolutionRevision {
-              id
-              trashed
-              date
-              content
-              changes
-              author {
-                id
-                username
-              }
-              solution {
-                id
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(['authorId', 'repositoryId'], solutionRevision),
-          author: {
-            id: user.id,
-            username: user.username,
           },
           solution: {
             id: solutionRevision.repositoryId,

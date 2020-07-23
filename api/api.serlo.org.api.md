@@ -19,6 +19,11 @@ export type AbstractEntityRevision = {
 };
 
 // @public (undocumented)
+export type AbstractTaxonomyTermChild = {
+    taxonomyTerms: Array<TaxonomyTerm>;
+};
+
+// @public (undocumented)
 export type AbstractUuid = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -31,7 +36,7 @@ export type AliasInput = {
 };
 
 // @public (undocumented)
-export type Applet = AbstractUuid & AbstractEntity & {
+export type Applet = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & {
     __typename?: 'Applet';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -60,7 +65,7 @@ export type AppletRevision = AbstractUuid & AbstractEntityRevision & {
 };
 
 // @public (undocumented)
-export type Article = AbstractUuid & AbstractEntity & {
+export type Article = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & {
     __typename?: 'Article';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -88,7 +93,7 @@ export type ArticleRevision = AbstractUuid & AbstractEntityRevision & {
 };
 
 // @public (undocumented)
-export type Course = AbstractUuid & AbstractEntity & {
+export type Course = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & {
     __typename?: 'Course';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -142,7 +147,7 @@ export type CourseRevision = AbstractUuid & AbstractEntityRevision & {
 };
 
 // @public (undocumented)
-export type Event = AbstractUuid & AbstractEntity & {
+export type Event = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & {
     __typename?: 'Event';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -177,7 +182,7 @@ export type Exact<T extends {
 };
 
 // @public (undocumented)
-export type Exercise = AbstractUuid & AbstractEntity & {
+export type Exercise = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & {
     __typename?: 'Exercise';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -191,7 +196,7 @@ export type Exercise = AbstractUuid & AbstractEntity & {
 };
 
 // @public (undocumented)
-export type ExerciseGroup = AbstractUuid & AbstractEntity & {
+export type ExerciseGroup = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & {
     __typename?: 'ExerciseGroup';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -516,7 +521,7 @@ export type User = AbstractUuid & {
 };
 
 // @public (undocumented)
-export type Video = AbstractUuid & AbstractEntity & {
+export type Video = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & {
     __typename?: 'Video';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];

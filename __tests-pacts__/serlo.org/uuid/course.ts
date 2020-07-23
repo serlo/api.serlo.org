@@ -28,9 +28,6 @@ import {
   coursePage,
   coursePageRevision,
   courseRevision,
-  license,
-  taxonomyTermSubject,
-  user,
 } from '../../../__fixtures__'
 import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
 import {
@@ -39,9 +36,6 @@ import {
   addCoursePageInteraction,
   addCoursePageRevisionInteraction,
   addCourseRevisionInteraction,
-  addLicenseInteraction,
-  addTaxonomyTermInteraction,
-  addUserInteraction,
 } from '../../__utils__/interactions'
 
 describe('Course', () => {
@@ -91,55 +85,6 @@ describe('Course', () => {
     })
   })
 
-  test('by alias (w/ license)', async () => {
-    await addCourseInteraction(course)
-    await addAliasInteraction(courseAlias)
-    await addLicenseInteraction(license)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(
-            alias: {
-              instance: de
-              path: "${courseAlias.path}"
-            }
-          ) {
-            __typename
-            ... on Course {
-              id
-              trashed
-              instance
-              alias
-              date
-              currentRevision {
-                id
-              }
-              license {
-                id
-                title
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'pageIds'],
-            course
-          ),
-          currentRevision: {
-            id: course.currentRevisionId,
-          },
-          license: {
-            id: 1,
-            title: 'title',
-          },
-        },
-      },
-    })
-  })
-
   test('by alias (w/ currentRevision)', async () => {
     await addCourseInteraction(course)
     await addAliasInteraction(courseAlias)
@@ -180,45 +125,6 @@ describe('Course', () => {
             content: 'content',
             changes: 'changes',
           },
-        },
-      },
-    })
-  })
-
-  test('by alias (w/ taxonomyTerms)', async () => {
-    await addCourseInteraction(course)
-    await addAliasInteraction(courseAlias)
-    await addTaxonomyTermInteraction(taxonomyTermSubject)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(
-            alias: {
-              instance: de
-              path: "${courseAlias.path}"
-            }
-          ) {
-            __typename
-            ... on Course {
-              id
-              trashed
-              instance
-              alias
-              date
-              taxonomyTerms {
-                id
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'pageIds'],
-            course
-          ),
-          taxonomyTerms: [{ id: 5 }],
         },
       },
     })
@@ -350,48 +256,6 @@ describe('CourseRevision', () => {
           ...R.omit(['authorId', 'repositoryId'], courseRevision),
           author: {
             id: 1,
-          },
-          course: {
-            id: course.id,
-          },
-        },
-      },
-    })
-  })
-
-  test('by id (w/ author)', async () => {
-    await addCourseRevisionInteraction(courseRevision)
-    await addUserInteraction(user)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(id: ${course.currentRevisionId}) {
-            __typename
-            ... on CourseRevision {
-              id
-              trashed
-              date
-              title
-              content
-              changes
-              metaDescription
-              author {
-                id
-                username
-              }
-              course {
-                id
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(['authorId', 'repositoryId'], courseRevision),
-          author: {
-            id: 1,
-            username: user.username,
           },
           course: {
             id: course.id,

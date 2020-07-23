@@ -22,34 +22,35 @@
 import * as R from 'ramda'
 
 import {
-  AppletPayload,
-  AppletRevisionPayload,
   EntityRevisionType,
   EntityType,
-} from '../../src/graphql/schema'
+} from '../../src/graphql/schema/uuid/abstract-entity'
+import {
+  ArticlePayload,
+  ArticleRevisionPayload,
+} from '../../src/graphql/schema/uuid/article'
 import { Instance } from '../../src/types'
 import { license } from '../license'
 
-export const applet: AppletPayload = {
-  __typename: EntityType.Applet,
-  id: 35596,
+export const article: ArticlePayload = {
+  __typename: EntityType.Article,
+  id: 1855,
   trashed: false,
-  instance: Instance.En,
-  alias: '/math/example-content/example-topic-1/example-applet',
+  instance: Instance.De,
+  alias: '/mathe/funktionen/uebersicht-aller-artikel-zu-funktionen/parabel',
   date: '2014-03-01T20:45:56Z',
-  currentRevisionId: 35597,
+  currentRevisionId: 30674,
   licenseId: license.id,
   taxonomyTermIds: [5],
 }
 
-export const appletRevision: AppletRevisionPayload = {
-  __typename: EntityRevisionType.AppletRevision,
-  id: 35597,
+export const articleRevision: ArticleRevisionPayload = {
+  __typename: EntityRevisionType.ArticleRevision,
+  id: 30674,
   trashed: false,
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
-  repositoryId: applet.id,
-  url: 'url',
+  repositoryId: article.id,
   title: 'title',
   content: 'content',
   changes: 'changes',
@@ -57,12 +58,12 @@ export const appletRevision: AppletRevisionPayload = {
   metaTitle: 'metaTitle',
 }
 
-export function getAppletDataWithoutSubResolvers(applet: AppletPayload) {
-  return R.omit(['currentRevisionId', 'licenseId', 'taxonomyTermIds'], applet)
+export function getArticleDataWithoutSubResolvers(article: ArticlePayload) {
+  return R.omit(['currentRevisionId', 'licenseId', 'taxonomyTermIds'], article)
 }
 
-export function getAppletRevisionDataWithoutSubResolvers(
-  appletRevision: AppletRevisionPayload
+export function getArticleRevisionDataWithoutSubResolvers(
+  articleRevision: ArticleRevisionPayload
 ) {
-  return R.omit(['authorId', 'repositoryId'], appletRevision)
+  return R.omit(['authorId', 'repositoryId'], articleRevision)
 }

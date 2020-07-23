@@ -22,10 +22,10 @@
 import { gql } from 'apollo-server'
 
 import {
-  applet,
-  appletRevision,
-  getAppletDataWithoutSubResolvers,
-  getAppletRevisionDataWithoutSubResolvers,
+  article,
+  articleRevision,
+  getArticleDataWithoutSubResolvers,
+  getArticleRevisionDataWithoutSubResolvers,
 } from '../../../__fixtures__'
 import { Service } from '../../../src/graphql/schema/types'
 import {
@@ -44,48 +44,47 @@ beforeEach(() => {
   }).client
 })
 
-describe('Applet', () => {
+describe('Article', () => {
   beforeEach(() => {
-    global.server.use(createUuidHandler(applet))
+    global.server.use(createUuidHandler(article))
   })
 
   test('by id', async () => {
     await assertSuccessfulGraphQLQuery({
       query: gql`
-        query applet($id: Int!) {
+        query article($id: Int!) {
           uuid(id: $id) {
             __typename
-            ... on Applet {
+            ... on Article {
               id
               trashed
-              instance
               alias
+              instance
               date
             }
           }
         }
       `,
-      variables: applet,
+      variables: article,
       data: {
-        uuid: getAppletDataWithoutSubResolvers(applet),
+        uuid: getArticleDataWithoutSubResolvers(article),
       },
       client,
     })
   })
 
   test('by id (w/ currentRevision)', async () => {
-    global.server.use(createUuidHandler(appletRevision))
+    global.server.use(createUuidHandler(articleRevision))
     await assertSuccessfulGraphQLQuery({
       query: gql`
-        query applet($id: Int!) {
+        query article($id: Int!) {
           uuid(id: $id) {
-            ... on Applet {
+            ... on Article {
               currentRevision {
                 __typename
                 id
                 trashed
                 date
-                url
                 title
                 content
                 changes
@@ -96,11 +95,11 @@ describe('Applet', () => {
           }
         }
       `,
-      variables: applet,
+      variables: article,
       data: {
         uuid: {
-          currentRevision: getAppletRevisionDataWithoutSubResolvers(
-            appletRevision
+          currentRevision: getArticleRevisionDataWithoutSubResolvers(
+            articleRevision
           ),
         },
       },
@@ -109,22 +108,21 @@ describe('Applet', () => {
   })
 })
 
-describe('AppletRevision', () => {
+describe('ArticleRevision', () => {
   beforeEach(() => {
-    global.server.use(createUuidHandler(appletRevision))
+    global.server.use(createUuidHandler(articleRevision))
   })
 
   test('by id', async () => {
     await assertSuccessfulGraphQLQuery({
       query: gql`
-        query appletRevision($id: Int!) {
+        query articleRevision($id: Int!) {
           uuid(id: $id) {
             __typename
-            ... on AppletRevision {
+            ... on ArticleRevision {
               id
               trashed
               date
-              url
               title
               content
               changes
@@ -134,37 +132,37 @@ describe('AppletRevision', () => {
           }
         }
       `,
-      variables: appletRevision,
+      variables: articleRevision,
       data: {
-        uuid: getAppletRevisionDataWithoutSubResolvers(appletRevision),
+        uuid: getArticleRevisionDataWithoutSubResolvers(articleRevision),
       },
       client,
     })
   })
 
-  test('by id (w/ applet)', async () => {
-    global.server.use(createUuidHandler(applet))
+  test('by id (w/ article)', async () => {
+    global.server.use(createUuidHandler(article))
     await assertSuccessfulGraphQLQuery({
       query: gql`
-        query appletRevision($id: Int!) {
+        query applet($id: Int!) {
           uuid(id: $id) {
-            ... on AppletRevision {
-              applet {
+            ... on ArticleRevision {
+              article {
                 __typename
                 id
                 trashed
-                instance
                 alias
+                instance
                 date
               }
             }
           }
         }
       `,
-      variables: appletRevision,
+      variables: articleRevision,
       data: {
         uuid: {
-          applet: getAppletDataWithoutSubResolvers(applet),
+          article: getArticleDataWithoutSubResolvers(article),
         },
       },
       client,

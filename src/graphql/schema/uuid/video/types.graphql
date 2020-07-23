@@ -1,4 +1,4 @@
-type Video implements AbstractUuid & AbstractEntity {
+type Video implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild {
   id: Int!
   trashed: Boolean!
   instance: Instance!

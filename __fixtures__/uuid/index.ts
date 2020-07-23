@@ -21,8 +21,6 @@
  */
 import {
   AliasPayload,
-  ArticlePayload,
-  ArticleRevisionPayload,
   CoursePagePayload,
   CoursePageRevisionPayload,
   CoursePayload,
@@ -51,7 +49,11 @@ import {
 import { Instance, TaxonomyTermType } from '../../src/types'
 import { license } from '../license'
 
+export * from './abstract-entity'
+export * from './abstract-taxonomy-term-child'
+export * from './abstract-uuid'
 export * from './applet'
+export * from './article'
 export * from './taxonomy-term'
 
 export const navigation: NavigationPayload = {
@@ -68,40 +70,6 @@ export const navigation: NavigationPayload = {
     },
   ],
   instance: Instance.De,
-}
-
-export const article: ArticlePayload = {
-  __typename: EntityType.Article,
-  id: 1855,
-  trashed: false,
-  instance: Instance.De,
-  alias: '/mathe/funktionen/uebersicht-aller-artikel-zu-funktionen/parabel',
-  date: '2014-03-01T20:45:56Z',
-  currentRevisionId: 30674,
-  licenseId: license.id,
-  taxonomyTermIds: [5],
-}
-
-export const articleAlias: AliasPayload = {
-  id: 1855,
-  instance: Instance.De,
-  path: '/mathe/funktionen/uebersicht-aller-artikel-zu-funktionen/parabel',
-  source: '/entity/view/1855',
-  timestamp: '2014-06-16T15:58:45Z',
-}
-
-export const articleRevision: ArticleRevisionPayload = {
-  __typename: EntityRevisionType.ArticleRevision,
-  id: 30674,
-  trashed: false,
-  date: '2014-09-15T15:28:35Z',
-  authorId: 1,
-  repositoryId: article.id,
-  title: 'title',
-  content: 'content',
-  changes: 'changes',
-  metaDescription: 'metaDescription',
-  metaTitle: 'metaTitle',
 }
 
 export const course: CoursePayload = {

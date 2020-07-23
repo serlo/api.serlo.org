@@ -19,7 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-export * from './cache'
-export * from './license'
-export * from './notification'
-export * from './uuid'
+import { TaxonomyTermChildResolvers } from './types'
+
+export const resolvers: TaxonomyTermChildResolvers = {
+  AbstractTaxonomyTermChild: {
+    __resolveType(entity) {
+      return entity.__typename
+    },
+  },
+}

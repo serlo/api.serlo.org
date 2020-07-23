@@ -28,9 +28,6 @@ import {
   exerciseGroupRevision,
   groupedExercise,
   groupedExerciseRevision,
-  license,
-  taxonomyTermSubject,
-  user,
 } from '../../../__fixtures__'
 import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
 import {
@@ -39,9 +36,6 @@ import {
   addExerciseGroupRevisionInteraction,
   addGroupedExerciseInteraction,
   addGroupedExerciseRevisionInteraction,
-  addLicenseInteraction,
-  addTaxonomyTermInteraction,
-  addUserInteraction,
 } from '../../__utils__/interactions'
 
 describe('ExerciseGroup', () => {
@@ -96,60 +90,6 @@ describe('ExerciseGroup', () => {
     })
   })
 
-  test('by alias (w/ license)', async () => {
-    await addExerciseGroupInteraction(exerciseGroup)
-    await addAliasInteraction(exerciseGroupAlias)
-    await addLicenseInteraction(license)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(
-            alias: {
-              instance: de
-              path: "${exerciseGroupAlias.path}"
-            }
-          ) {
-            __typename
-            ... on ExerciseGroup {
-              id
-              trashed
-              instance
-              alias
-              date
-              currentRevision {
-                id
-              }
-              license {
-                id
-                title
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(
-            [
-              'currentRevisionId',
-              'licenseId',
-              'taxonomyTermIds',
-              'exerciseIds',
-            ],
-            exerciseGroup
-          ),
-          currentRevision: {
-            id: exerciseGroup.currentRevisionId,
-          },
-          license: {
-            id: 1,
-            title: 'title',
-          },
-        },
-      },
-    })
-  })
-
   test('by alias (w/ currentRevision)', async () => {
     await addExerciseGroupInteraction(exerciseGroup)
     await addAliasInteraction(exerciseGroupAlias)
@@ -195,50 +135,6 @@ describe('ExerciseGroup', () => {
             content: 'content',
             changes: 'changes',
           },
-        },
-      },
-    })
-  })
-
-  test('by alias (w/ taxonomyTerms)', async () => {
-    await addExerciseGroupInteraction(exerciseGroup)
-    await addAliasInteraction(exerciseGroupAlias)
-    await addTaxonomyTermInteraction(taxonomyTermSubject)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(
-            alias: {
-              instance: de
-              path: "${exerciseGroupAlias.path}"
-            }
-          ) {
-            __typename
-            ... on ExerciseGroup {
-              id
-              trashed
-              instance
-              alias
-              date
-              taxonomyTerms {
-                id
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(
-            [
-              'currentRevisionId',
-              'licenseId',
-              'taxonomyTermIds',
-              'exerciseIds',
-            ],
-            exerciseGroup
-          ),
-          taxonomyTerms: [{ id: 5 }],
         },
       },
     })
@@ -378,46 +274,6 @@ describe('ExerciseGroupRevision', () => {
           ...R.omit(['authorId', 'repositoryId'], exerciseGroupRevision),
           author: {
             id: 1,
-          },
-          exerciseGroup: {
-            id: exerciseGroup.id,
-          },
-        },
-      },
-    })
-  })
-
-  test('by id (w/ author)', async () => {
-    await addExerciseGroupRevisionInteraction(exerciseGroupRevision)
-    await addUserInteraction(user)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(id: ${exerciseGroup.currentRevisionId}) {
-            __typename
-            ... on ExerciseGroupRevision {
-              id
-              trashed
-              date
-              content
-              changes
-              author {
-                id
-                username
-              }
-              exerciseGroup {
-                id
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(['authorId', 'repositoryId'], exerciseGroupRevision),
-          author: {
-            id: 1,
-            username: user.username,
           },
           exerciseGroup: {
             id: exerciseGroup.id,

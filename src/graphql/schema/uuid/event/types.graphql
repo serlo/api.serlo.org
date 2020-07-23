@@ -1,4 +1,4 @@
-type Event implements AbstractUuid & AbstractEntity {
+type Event implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild {
   id: Int!
   trashed: Boolean!
   instance: Instance!
