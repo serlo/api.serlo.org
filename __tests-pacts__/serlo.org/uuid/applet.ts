@@ -19,188 +19,100 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
-import * as R from 'ramda'
 
-import { applet, appletRevision, user } from '../../../__fixtures__'
-import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
 import {
-  addAppletInteraction,
-  addAppletRevisionInteraction,
-  addUserInteraction,
-} from '../../__utils__/interactions'
+  applet,
+  appletRevision,
+  getAppletDataWithoutSubResolvers,
+  getAppletRevisionDataWithoutSubResolvers,
+} from '../../../__fixtures__'
+import {
+  AppletPayload,
+  AppletRevisionPayload,
+} from '../../../src/graphql/schema/uuid/applet'
+import {
+  addUuidInteraction,
+  assertSuccessfulGraphQLQuery,
+} from '../../__utils__'
 
 test('Applet', async () => {
-  await addAppletInteraction(applet)
+  await addUuidInteraction<AppletPayload>({
+    __typename: applet.__typename,
+    id: applet.id,
+    trashed: Matchers.boolean(applet.trashed),
+    instance: Matchers.string(applet.instance),
+    alias: applet.alias ? Matchers.string(applet.alias) : null,
+    date: Matchers.iso8601DateTime(applet.date),
+    currentRevisionId: applet.currentRevisionId
+      ? Matchers.integer(applet.currentRevisionId)
+      : null,
+    licenseId: Matchers.integer(applet.licenseId),
+    taxonomyTermIds:
+      applet.taxonomyTermIds.length > 0
+        ? Matchers.eachLike(Matchers.like(applet.taxonomyTermIds[0]))
+        : [],
+  })
   await assertSuccessfulGraphQLQuery({
     query: gql`
-          {
-            uuid(id: ${applet.id}) {
-              __typename
-              ... on Applet {
-                id
-                trashed
-                instance
-                alias
-                date
-                currentRevision {
-                  id
-                }
-                license {
-                  id
-                }
-              }
-            }
+      query applet($id: Int!) {
+        uuid(id: $id) {
+          __typename
+          ... on Applet {
+            id
+            trashed
+            instance
+            alias
+            date
           }
-        `,
+        }
+      }
+    `,
+    variables: applet,
     data: {
-      uuid: {
-        ...R.omit(
-          ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
-          applet
-        ),
-        currentRevision: {
-          id: appletRevision.id,
-        },
-        license: {
-          id: 1,
-        },
-      },
+      uuid: getAppletDataWithoutSubResolvers(applet),
     },
   })
 })
 
-describe('AppletRevision', () => {
-  test('by id', async () => {
-    await addAppletRevisionInteraction(appletRevision)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(id: ${appletRevision.id}) {
-            __typename
-            ... on AppletRevision {
-              id
-              trashed
-              date
-              title
-              content
-              url
-              changes
-              metaTitle
-              metaDescription
-              author {
-                id
-              }
-              applet {
-                id
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(['authorId', 'repositoryId'], appletRevision),
-          author: {
-            id: 1,
-          },
-          applet: {
-            id: applet.id,
-          },
-        },
-      },
-    })
+test('AppletRevision', async () => {
+  await addUuidInteraction<AppletRevisionPayload>({
+    __typename: appletRevision.__typename,
+    id: appletRevision.id,
+    trashed: Matchers.boolean(appletRevision.trashed),
+    date: Matchers.iso8601DateTime(appletRevision.date),
+    authorId: Matchers.integer(appletRevision.authorId),
+    repositoryId: Matchers.integer(appletRevision.repositoryId),
+    title: Matchers.string(appletRevision.title),
+    url: Matchers.string(appletRevision.url),
+    content: Matchers.string(appletRevision.content),
+    changes: Matchers.string(appletRevision.changes),
+    metaTitle: Matchers.string(appletRevision.metaTitle),
+    metaDescription: Matchers.string(appletRevision.metaDescription),
   })
-
-  test('by id (w/ author)', async () => {
-    await addAppletRevisionInteraction(appletRevision)
-    await addUserInteraction(user)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(id: ${appletRevision.id}) {
-            __typename
-            ... on AppletRevision {
-              id
-              trashed
-              date
-              title
-              content
-              url
-              changes
-              metaTitle
-              metaDescription
-              author {
-                id
-                username
-              }
-              applet {
-                id
-              }
-            }
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query appletRevision($id: Int!) {
+        uuid(id: $id) {
+          __typename
+          ... on AppletRevision {
+            id
+            trashed
+            date
+            url
+            title
+            content
+            changes
+            metaTitle
+            metaDescription
           }
         }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(['authorId', 'repositoryId'], appletRevision),
-          author: {
-            id: 1,
-            username: user.username,
-          },
-          applet: {
-            id: applet.id,
-          },
-        },
-      },
-    })
-  })
-
-  test('by id (w/ applet)', async () => {
-    await addAppletRevisionInteraction(appletRevision)
-    await addAppletInteraction(applet)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(id: ${appletRevision.id}) {
-            __typename
-            ... on AppletRevision {
-              id
-              trashed
-              date
-              title
-              content
-              url
-              changes
-              metaTitle
-              metaDescription
-              author {
-                id
-              }
-              applet {
-                id
-                currentRevision {
-                  id
-                }
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(['authorId', 'repositoryId'], appletRevision),
-          author: {
-            id: 1,
-          },
-          applet: {
-            id: applet.id,
-            currentRevision: {
-              id: appletRevision.id,
-            },
-          },
-        },
-      },
-    })
+      }
+    `,
+    variables: appletRevision,
+    data: {
+      uuid: getAppletRevisionDataWithoutSubResolvers(appletRevision),
+    },
   })
 })

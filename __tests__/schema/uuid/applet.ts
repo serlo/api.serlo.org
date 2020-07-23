@@ -1,22 +1,23 @@
 import { gql } from 'apollo-server'
-import { setupServer } from 'msw/node'
 
 import {
   applet,
   appletRevision,
-  license,
-  taxonomyTermSubject,
   getAppletDataWithoutSubResolvers,
   getAppletRevisionDataWithoutSubResolvers,
   getTaxonomyTermDataWithoutSubResolvers,
+  license,
+  taxonomyTermSubject,
+  user,
 } from '../../../__fixtures__'
 import { Service } from '../../../src/graphql/schema/types'
-import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
 import {
+  assertSuccessfulGraphQLQuery,
+  Client,
   createLicenseHandler,
+  createTestClient,
   createUuidHandler,
-} from '../../__utils__/handlers'
-import { Client, createTestClient } from '../../__utils__/test-client'
+} from '../../__utils__'
 
 let client: Client
 
@@ -28,18 +29,8 @@ beforeEach(() => {
 })
 
 describe('Applet', () => {
-  const server = setupServer(createUuidHandler(applet))
-
-  beforeAll(() => {
-    server.listen()
-  })
-
-  afterEach(() => {
-    server.resetHandlers()
-  })
-
-  afterAll(() => {
-    server.close()
+  beforeEach(() => {
+    global.server.use(createUuidHandler(applet))
   })
 
   test('by id', async () => {
@@ -67,7 +58,7 @@ describe('Applet', () => {
   })
 
   test('by id (w/ license)', async () => {
-    server.use(createLicenseHandler(license))
+    global.server.use(createLicenseHandler(license))
     await assertSuccessfulGraphQLQuery({
       query: gql`
         query applet($id: Int!) {
@@ -98,7 +89,7 @@ describe('Applet', () => {
   })
 
   test('by id (w/ currentRevision)', async () => {
-    server.use(createUuidHandler(appletRevision))
+    global.server.use(createUuidHandler(appletRevision))
     await assertSuccessfulGraphQLQuery({
       query: gql`
         query applet($id: Int!) {
@@ -133,7 +124,7 @@ describe('Applet', () => {
   })
 
   test('by id (w/ taxonomyTerms)', async () => {
-    server.use(createUuidHandler(taxonomyTermSubject))
+    global.server.use(createUuidHandler(taxonomyTermSubject))
     await assertSuccessfulGraphQLQuery({
       query: gql`
         query applet($id: Int!) {
@@ -160,6 +151,99 @@ describe('Applet', () => {
           taxonomyTerms: [
             getTaxonomyTermDataWithoutSubResolvers(taxonomyTermSubject),
           ],
+        },
+      },
+      client,
+    })
+  })
+})
+
+describe('AppletRevision', () => {
+  beforeEach(() => {
+    global.server.use(createUuidHandler(appletRevision))
+  })
+
+  test('by id', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query appletRevision($id: Int!) {
+          uuid(id: $id) {
+            __typename
+            ... on AppletRevision {
+              id
+              trashed
+              date
+              url
+              title
+              content
+              changes
+              metaTitle
+              metaDescription
+            }
+          }
+        }
+      `,
+      variables: appletRevision,
+      data: {
+        uuid: getAppletRevisionDataWithoutSubResolvers(appletRevision),
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ author)', async () => {
+    global.server.use(createUuidHandler(user))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query applet($id: Int!) {
+          uuid(id: $id) {
+            ... on AppletRevision {
+              author {
+                __typename
+                id
+                trashed
+                username
+                date
+                lastLogin
+                description
+              }
+            }
+          }
+        }
+      `,
+      variables: appletRevision,
+      data: {
+        uuid: {
+          author: user,
+        },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ applet)', async () => {
+    global.server.use(createUuidHandler(applet))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query applet($id: Int!) {
+          uuid(id: $id) {
+            ... on AppletRevision {
+              applet {
+                __typename
+                id
+                trashed
+                instance
+                alias
+                date
+              }
+            }
+          }
+        }
+      `,
+      variables: appletRevision,
+      data: {
+        uuid: {
+          applet: getAppletDataWithoutSubResolvers(applet),
         },
       },
       client,
