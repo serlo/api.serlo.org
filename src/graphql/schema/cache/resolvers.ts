@@ -27,8 +27,7 @@ import { CacheResolvers } from './types'
 
 export const resolvers: CacheResolvers = {
   Query: {
-    async _getCacheKeys(_parent, { ...cursorPayload }, { dataSources, user }) {
-      if (user === null) throw new AuthenticationError('You are not logged in')
+    async _getCacheKeys(_parent, { ...cursorPayload }, { dataSources }) {
       const cacheKeys = await dataSources.serlo.getAllCacheKeys()
       return resolveConnection<string>({
         nodes: cacheKeys,
