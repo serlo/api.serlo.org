@@ -24,12 +24,13 @@ import { isSome } from 'fp-ts/lib/Option'
 import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
 
-import { Instance, License } from '../../types'
+import { Instance, License, MutationCreateThreadArgs } from '../../types'
 import { Environment } from '../environment'
 import {
   NotificationEventPayload,
   NotificationsPayload,
 } from '../schema/notification'
+import { ThreadsPayload, ThreadPayload } from '../schema/threads'
 import { Service } from '../schema/types'
 import {
   AbstractUuidPayload,
@@ -202,6 +203,16 @@ export class SerloDataSource extends RESTDataSource {
       notifications: modifiedNotifications,
     })
   }
+
+  public async getThreads({ id }: { id: number }): Promise<ThreadsPayload> {
+    return this.cacheAwareGet({ path: `/api/threads/${id}` })
+  }
+
+  public async getThread({ id }: { id: number }): Promise<ThreadPayload> {
+    return this.cacheAwareGet({ path: `/api/thread/${id}` })
+  }
+
+  public async createThread(_payload: MutationCreateThreadArgs) {}
 
   private async customPost<
     T,

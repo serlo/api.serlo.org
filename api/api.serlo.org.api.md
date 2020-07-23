@@ -88,6 +88,23 @@ export type ArticleRevision = AbstractUuid & AbstractEntityRevision & {
 };
 
 // @public (undocumented)
+export type Comment = {
+    __typename?: 'Comment';
+    id: Scalars['Int'];
+    content: Scalars['String'];
+    createdAt: Scalars['DateTime'];
+    updatedAt: Scalars['DateTime'];
+    author: User;
+};
+
+// @public (undocumented)
+export type CommentsResult = {
+    __typename?: 'CommentsResult';
+    totalCount: Scalars['Int'];
+    nodes: Array<Comment>;
+};
+
+// @public (undocumented)
 export type Course = AbstractUuid & AbstractEntity & {
     __typename?: 'Course';
     id: Scalars['Int'];
@@ -291,6 +308,7 @@ export type Mutation = {
     __typename?: 'Mutation';
     _removeCache?: Maybe<Scalars['Boolean']>;
     _setCache?: Maybe<Scalars['Boolean']>;
+    createThread?: Maybe<Thread>;
     setNotificationState?: Maybe<Scalars['Boolean']>;
 };
 
@@ -303,6 +321,16 @@ export type Mutation_RemoveCacheArgs = {
 export type Mutation_SetCacheArgs = {
     key: Scalars['String'];
     value: Scalars['JSON'];
+};
+
+// @public (undocumented)
+export type MutationCreateThreadArgs = {
+    createdAt: Scalars['String'];
+    updatedAt: Scalars['String'];
+    title: Scalars['String'];
+    authorId: Scalars['Int'];
+    objectId: Scalars['Int'];
+    content: Scalars['String'];
 };
 
 // @public (undocumented)
@@ -419,6 +447,15 @@ export type QueryNotificationsResult = {
 };
 
 // @public (undocumented)
+export type QueryThreadsResult = {
+    __typename?: 'QueryThreadsResult';
+    edges: Array<ThreadsCursor>;
+    nodes: Array<Thread>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
 export type QueryUuidArgs = {
     alias?: Maybe<AliasInput>;
     id?: Maybe<Scalars['Int']>;
@@ -504,6 +541,33 @@ export enum TaxonomyTermType {
 }
 
 // @public (undocumented)
+export type Thread = {
+    __typename?: 'Thread';
+    id: Scalars['Int'];
+    createdAt: Scalars['DateTime'];
+    updatedAt: Scalars['DateTime'];
+    title: Scalars['String'];
+    archived: Scalars['Boolean'];
+    trashed: Scalars['Boolean'];
+    object: AbstractUuid;
+    comments: CommentsResult;
+};
+
+// @public (undocumented)
+export type ThreadsCursor = {
+    __typename?: 'ThreadsCursor';
+    cursor: Scalars['String'];
+    node: Thread;
+};
+
+// @public (undocumented)
+export type ThreadsResult = {
+    __typename?: 'ThreadsResult';
+    totalCount: Scalars['Int'];
+    nodes: Array<Thread>;
+};
+
+// @public (undocumented)
 export type User = AbstractUuid & {
     __typename?: 'User';
     id: Scalars['Int'];
@@ -513,6 +577,15 @@ export type User = AbstractUuid & {
     lastLogin?: Maybe<Scalars['DateTime']>;
     description?: Maybe<Scalars['String']>;
     activeDonor: Scalars['Boolean'];
+    threads: QueryThreadsResult;
+};
+
+// @public (undocumented)
+export type UserThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)

@@ -16,6 +16,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   _removeCache?: Maybe<Scalars['Boolean']>;
   _setCache?: Maybe<Scalars['Boolean']>;
+  createThread?: Maybe<Thread>;
   setNotificationState?: Maybe<Scalars['Boolean']>;
 };
 
@@ -28,6 +29,16 @@ export type Mutation_RemoveCacheArgs = {
 export type Mutation_SetCacheArgs = {
   key: Scalars['String'];
   value: Scalars['JSON'];
+};
+
+
+export type MutationCreateThreadArgs = {
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
+  title: Scalars['String'];
+  authorId: Scalars['Int'];
+  objectId: Scalars['Int'];
+  content: Scalars['String'];
 };
 
 
@@ -126,6 +137,53 @@ export type NotificationCursor = {
   __typename?: 'NotificationCursor';
   cursor: Scalars['String'];
   node: Notification;
+};
+
+export type ThreadsResult = {
+  __typename?: 'ThreadsResult';
+  totalCount: Scalars['Int'];
+  nodes: Array<Thread>;
+};
+
+export type Thread = {
+  __typename?: 'Thread';
+  id: Scalars['Int'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  title: Scalars['String'];
+  archived: Scalars['Boolean'];
+  trashed: Scalars['Boolean'];
+  object: AbstractUuid;
+  comments: CommentsResult;
+};
+
+export type CommentsResult = {
+  __typename?: 'CommentsResult';
+  totalCount: Scalars['Int'];
+  nodes: Array<Comment>;
+};
+
+export type Comment = {
+  __typename?: 'Comment';
+  id: Scalars['Int'];
+  content: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  author: User;
+};
+
+export type QueryThreadsResult = {
+  __typename?: 'QueryThreadsResult';
+  edges: Array<ThreadsCursor>;
+  nodes: Array<Thread>;
+  totalCount: Scalars['Int'];
+  pageInfo: PageInfo;
+};
+
+export type ThreadsCursor = {
+  __typename?: 'ThreadsCursor';
+  cursor: Scalars['String'];
+  node: Thread;
 };
 
 /**
@@ -476,6 +534,15 @@ export type User = AbstractUuid & {
   lastLogin?: Maybe<Scalars['DateTime']>;
   description?: Maybe<Scalars['String']>;
   activeDonor: Scalars['Boolean'];
+  threads: QueryThreadsResult;
+};
+
+
+export type UserThreadsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type Video = AbstractUuid & AbstractEntity & {

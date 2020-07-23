@@ -1,0 +1,51 @@
+type ThreadsResult {
+  totalCount: Int!
+  nodes: [Thread!]!
+}
+
+type Thread {
+  id: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  title: String!
+  archived: Boolean!
+  trashed: Boolean!
+  object: AbstractUuid!
+  comments: CommentsResult!
+}
+
+type CommentsResult {
+  totalCount: Int!
+  nodes: [Comment!]!
+}
+
+type Comment {
+  id: Int!
+  content: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  author: User!
+}
+
+extend type Mutation {
+  createThread(
+    createdAt: String!
+    updatedAt: String!
+    title: String!
+    authorId: Int!
+    objectId: Int!
+    content: String!
+  ): Thread
+}
+
+type QueryThreadsResult {
+  edges: [ThreadsCursor!]!
+  nodes: [Thread!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type ThreadsCursor {
+  cursor: String!
+  node: Thread!
+}

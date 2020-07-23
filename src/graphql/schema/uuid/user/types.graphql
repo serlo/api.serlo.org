@@ -6,6 +6,12 @@ type User implements AbstractUuid {
   lastLogin: DateTime
   description: String
   activeDonor: Boolean!
+  threads(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): QueryThreadsResult!
 }
 
 extend type Query {

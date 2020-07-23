@@ -28,6 +28,7 @@ import {
   GoogleSheetApi,
   CellValues,
 } from '../../../data-sources/google-spreadsheet-api'
+import { createThreadsResolver } from '../../threads'
 import { UserResolvers, isUserPayload } from './types'
 
 export const resolvers: UserResolvers = {
@@ -49,6 +50,7 @@ export const resolvers: UserResolvers = {
 
       return ids.includes(user.id)
     },
+    threads: createThreadsResolver(),
   },
 }
 

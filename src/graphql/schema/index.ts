@@ -26,6 +26,7 @@ import { instanceSchema } from './instance'
 import { jsonSchema } from './json'
 import { licenseSchema } from './license'
 import { notificationSchema } from './notification'
+import { threadsSchema } from './threads'
 import { Schema } from './utils'
 import { uuidSchema } from './uuid'
 
@@ -34,6 +35,7 @@ export * from './date-time'
 export * from './instance'
 export * from './json'
 export * from './license'
+export * from './threads'
 export * from './uuid'
 
 export const schema = Schema.merge(
@@ -44,5 +46,6 @@ export const schema = Schema.merge(
   jsonSchema,
   licenseSchema,
   notificationSchema,
+  threadsSchema,
   uuidSchema
 )
