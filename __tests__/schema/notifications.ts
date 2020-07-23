@@ -26,8 +26,8 @@ import { setupServer } from 'msw/node'
 import {
   createSetNotificationStateMutation,
   notifications,
-} from '../../__fixtures__/notification'
-import { user } from '../../__fixtures__/uuid'
+  user,
+} from '../../__fixtures__'
 import { Service } from '../../src/graphql/schema/types'
 import {
   assertFailingGraphQLMutation,

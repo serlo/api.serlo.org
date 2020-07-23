@@ -22,22 +22,22 @@
 import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
-import { license } from '../../../__fixtures__/license'
 import {
+  license,
+  taxonomyTermSubject,
+  user,
   video,
   videoAlias,
   videoRevision,
-  taxonomyTermSubject,
-  user,
-} from '../../../__fixtures__/uuid'
+} from '../../../__fixtures__'
 import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
 import {
   addAliasInteraction,
-  addVideoInteraction,
-  addVideoRevisionInteraction,
   addLicenseInteraction,
   addTaxonomyTermInteraction,
   addUserInteraction,
+  addVideoInteraction,
+  addVideoRevisionInteraction,
 } from '../../__utils__/interactions'
 
 describe('Video', () => {

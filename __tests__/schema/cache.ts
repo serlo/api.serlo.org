@@ -22,14 +22,14 @@
 import { isSome } from 'fp-ts/lib/Option'
 
 import {
-  variables,
-  createSetCacheMutation,
   createRemoveCacheMutation,
-} from '../../__fixtures__/cache'
+  createSetCacheMutation,
+  variables,
+} from '../../__fixtures__'
 import { Service } from '../../src/graphql/schema/types'
 import {
-  assertSuccessfulGraphQLMutation,
   assertFailingGraphQLMutation,
+  assertSuccessfulGraphQLMutation,
 } from '../__utils__/assertions'
 import { createTestClient } from '../__utils__/test-client'
 

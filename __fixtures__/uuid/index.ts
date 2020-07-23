@@ -21,8 +21,6 @@
  */
 import {
   AliasPayload,
-  AppletPayload,
-  AppletRevisionPayload,
   ArticlePayload,
   ArticleRevisionPayload,
   CoursePagePayload,
@@ -48,10 +46,13 @@ import {
   UserPayload,
   VideoPayload,
   VideoRevisionPayload,
-} from '../src/graphql/schema/uuid'
-import { NavigationPayload } from '../src/graphql/schema/uuid/navigation'
-import { Instance, TaxonomyTermType } from '../src/types'
-import { license } from './license'
+  NavigationPayload,
+} from '../../src/graphql/schema'
+import { Instance, TaxonomyTermType } from '../../src/types'
+import { license } from '../license'
+
+export * from './applet'
+export * from './taxonomy-term'
 
 export const navigation: NavigationPayload = {
   data: [
@@ -67,33 +68,6 @@ export const navigation: NavigationPayload = {
     },
   ],
   instance: Instance.De,
-}
-
-export const applet: AppletPayload = {
-  __typename: EntityType.Applet,
-  id: 35596,
-  trashed: false,
-  instance: Instance.En,
-  alias: '/math/example-content/example-topic-1/example-applet',
-  date: '2014-03-01T20:45:56Z',
-  currentRevisionId: 35597,
-  licenseId: license.id,
-  taxonomyTermIds: [5],
-}
-
-export const appletRevision: AppletRevisionPayload = {
-  __typename: EntityRevisionType.AppletRevision,
-  id: 35597,
-  trashed: false,
-  date: '2014-09-15T15:28:35Z',
-  authorId: 1,
-  repositoryId: applet.id,
-  url: 'url',
-  title: 'title',
-  content: 'content',
-  changes: 'changes',
-  metaDescription: 'metaDescription',
-  metaTitle: 'metaTitle',
 }
 
 export const article: ArticlePayload = {
@@ -416,20 +390,6 @@ export const taxonomyTermSubject: TaxonomyTermPayload = {
   weight: 2,
   parentId: taxonomyTermRoot.id,
   childrenIds: [16048],
-}
-
-export const taxonomyTermCurriculumTopic: TaxonomyTermPayload = {
-  __typename: DiscriminatorType.TaxonomyTerm,
-  id: 16048,
-  trashed: false,
-  alias: 'alias',
-  type: TaxonomyTermType.CurriculumTopic,
-  instance: Instance.De,
-  name: 'name',
-  description: 'description',
-  weight: 3,
-  parentId: taxonomyTermSubject.id,
-  childrenIds: [1855],
 }
 
 export const user: UserPayload = {

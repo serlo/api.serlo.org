@@ -21,7 +21,7 @@
  */
 import { gql } from 'apollo-server'
 
-import { user } from '../../../__fixtures__/uuid'
+import { user } from '../../../__fixtures__'
 import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
 import { addUserInteraction } from '../../__utils__/interactions'
 

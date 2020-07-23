@@ -28,7 +28,7 @@ import {
 } from '../src/graphql/schema/notification'
 import { Instance, MutationSetNotificationStateArgs } from '../src/types'
 
-export const event: NotificationEventPayload = {
+export const notificationEvent: NotificationEventPayload = {
   id: 1,
   type: 'string',
   instance: Instance.De,
@@ -41,7 +41,7 @@ export const event: NotificationEventPayload = {
 export const notification: NotificationPayload = {
   id: 1,
   unread: true,
-  eventId: event.id,
+  eventId: notificationEvent.id,
 }
 
 export const notifications: NotificationsPayload = {

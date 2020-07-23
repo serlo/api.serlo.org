@@ -21,7 +21,6 @@
  */
 import { gql } from 'apollo-server'
 
-import { LicensePayload } from '../src/graphql/schema/license'
 import { Instance, License } from '../src/types'
 
 export const license: License = {
@@ -49,46 +48,6 @@ export function createLicenseQuery(variables: { id: number }) {
           agreement
           iconHref
         }
-      }
-    `,
-    variables,
-  }
-}
-
-export function createRemoveLicenseMutation(variables: { id: number }) {
-  return {
-    mutation: gql`
-      mutation removeLicense($id: Int!) {
-        _removeLicense(id: $id)
-      }
-    `,
-    variables,
-  }
-}
-
-export function createSetLicenseMutation(variables: LicensePayload) {
-  return {
-    mutation: gql`
-      mutation setLicense(
-        $id: Int!
-        $instance: Instance!
-        $default: Boolean!
-        $title: String!
-        $url: String!
-        $content: String!
-        $agreement: String!
-        $iconHref: String!
-      ) {
-        _setLicense(
-          id: $id
-          instance: $instance
-          default: $default
-          title: $title
-          url: $url
-          content: $content
-          agreement: $agreement
-          iconHref: $iconHref
-        )
       }
     `,
     variables,
