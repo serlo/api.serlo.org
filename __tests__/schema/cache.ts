@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { gql } from 'apollo-server'
 import { isSome } from 'fp-ts/lib/Option'
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
@@ -35,16 +36,12 @@ import {
   assertSuccessfulGraphQLQuery,
 } from '../__utils__/assertions'
 import { createTestClient } from '../__utils__/test-client'
-import { gql } from 'apollo-server'
 
 const server = setupServer(
   rest.get(
     `http://de.${process.env.SERLO_ORG_HOST}/api/cache-keys`,
     (req, res, ctx) => {
-      return res(
-        ctx.status(200),
-        ctx.json(["foo", "bar", "boo"])
-      )
+      return res(ctx.status(200), ctx.json(['foo', 'bar', 'boo']))
     }
   )
 )
@@ -118,18 +115,17 @@ function createCacheKeysQuery() {
       query {
         _getCacheKeys {
           totalCount
-          nodes 
+          nodes
         }
       }
     `,
-    variables: { },
   }
 }
 
-test('_getCacheKeys' , async () =>{
+test('_getCacheKeys', async () => {
   const { client } = createTestClient({
     service: Service.Serlo,
-    user: null
+    user: null,
   })
 
   server.listen()
@@ -138,15 +134,11 @@ test('_getCacheKeys' , async () =>{
     ...createCacheKeysQuery(),
     data: {
       _getCacheKeys: {
-        nodes: [
-          "foo",
-          "bar",
-          "boo"
-        ],
-        totalCount: 3
-      }
+        nodes: ['foo', 'bar', 'boo'],
+        totalCount: 3,
+      },
     },
-    client
+    client,
   })
 
   server.close()
