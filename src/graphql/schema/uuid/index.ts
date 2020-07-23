@@ -21,6 +21,7 @@
  */
 import { Schema } from '../utils'
 import { abstractEntitySchema } from './abstract-entity'
+import { abstractTaxonomyTermChildSchema } from './abstract-taxonomy-term-child'
 import { abstractUuidSchema } from './abstract-uuid'
 import { aliasSchema } from './alias'
 import { appletSchema } from './applet'
@@ -59,6 +60,7 @@ export * from './video'
 
 export const uuidSchema = Schema.merge(
   abstractEntitySchema,
+  abstractTaxonomyTermChildSchema,
   abstractUuidSchema,
   aliasSchema,
   appletSchema,

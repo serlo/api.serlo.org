@@ -1,4 +1,4 @@
-type Applet implements AbstractUuid & AbstractEntity {
+type Applet implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild {
   id: Int!
   trashed: Boolean!
   instance: Instance!

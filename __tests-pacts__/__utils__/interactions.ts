@@ -28,7 +28,6 @@ import {
 import {
   AliasPayload,
   ArticlePayload,
-  ArticleRevisionPayload,
   CoursePagePayload,
   CoursePageRevisionPayload,
   CoursePayload,
@@ -154,22 +153,6 @@ export function addArticleInteraction(payload: ArticlePayload) {
       payload.taxonomyTermIds.length > 0
         ? Matchers.eachLike(Matchers.like(payload.taxonomyTermIds[0]))
         : [],
-  })
-}
-
-export function addArticleRevisionInteraction(payload: ArticleRevisionPayload) {
-  return addUuidInteraction<ArticleRevisionPayload>({
-    __typename: payload.__typename,
-    id: payload.id,
-    trashed: Matchers.boolean(payload.trashed),
-    date: Matchers.iso8601DateTime(payload.date),
-    authorId: Matchers.integer(payload.authorId),
-    repositoryId: Matchers.integer(payload.repositoryId),
-    title: Matchers.string(payload.title),
-    content: Matchers.string(payload.content),
-    changes: Matchers.string(payload.changes),
-    metaTitle: Matchers.string(payload.metaTitle),
-    metaDescription: Matchers.string(payload.metaDescription),
   })
 }
 

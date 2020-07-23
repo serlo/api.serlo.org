@@ -1,4 +1,4 @@
-type Exercise implements AbstractUuid & AbstractEntity {
+type Exercise implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild {
   id: Int!
   trashed: Boolean!
   instance: Instance!

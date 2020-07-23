@@ -22,20 +22,10 @@
 import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
-import {
-  license,
-  taxonomyTermSubject,
-  user,
-  video,
-  videoAlias,
-  videoRevision,
-} from '../../../__fixtures__'
+import { video, videoAlias, videoRevision } from '../../../__fixtures__'
 import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
 import {
   addAliasInteraction,
-  addLicenseInteraction,
-  addTaxonomyTermInteraction,
-  addUserInteraction,
   addVideoInteraction,
   addVideoRevisionInteraction,
 } from '../../__utils__/interactions'
@@ -87,55 +77,6 @@ describe('Video', () => {
     })
   })
 
-  test('by alias (w/ license)', async () => {
-    await addVideoInteraction(video)
-    await addAliasInteraction(videoAlias)
-    await addLicenseInteraction(license)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(
-            alias: {
-              instance: de
-              path: "${videoAlias.path}"
-            }
-          ) {
-            __typename
-            ... on Video {
-              id
-              trashed
-              instance
-              alias
-              date
-              currentRevision {
-                id
-              }
-              license {
-                id
-                title
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
-            video
-          ),
-          currentRevision: {
-            id: videoRevision.id,
-          },
-          license: {
-            id: 1,
-            title: 'title',
-          },
-        },
-      },
-    })
-  })
-
   test('by alias (w/ currentRevision)', async () => {
     await addVideoInteraction(video)
     await addAliasInteraction(videoAlias)
@@ -178,45 +119,6 @@ describe('Video', () => {
             url: 'url',
             changes: 'changes',
           },
-        },
-      },
-    })
-  })
-
-  test('by alias (w/ taxonomyTerms)', async () => {
-    await addVideoInteraction(video)
-    await addAliasInteraction(videoAlias)
-    await addTaxonomyTermInteraction(taxonomyTermSubject)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(
-            alias: {
-              instance: de
-              path: "${videoAlias.path}"
-            }
-          ) {
-            __typename
-            ... on Video {
-              id
-              trashed
-              instance
-              alias
-              date
-              taxonomyTerms {
-                id
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
-            video
-          ),
-          taxonomyTerms: [{ id: 5 }],
         },
       },
     })
@@ -294,48 +196,6 @@ describe('VideoRevision', () => {
           ...R.omit(['authorId', 'repositoryId'], videoRevision),
           author: {
             id: 1,
-          },
-          video: {
-            id: video.id,
-          },
-        },
-      },
-    })
-  })
-
-  test('by id (w/ author)', async () => {
-    await addVideoRevisionInteraction(videoRevision)
-    await addUserInteraction(user)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(id: ${videoRevision.id}) {
-            __typename
-            ... on VideoRevision {
-              id
-              trashed
-              date
-              title
-              content
-              url
-              changes
-              author {
-                id
-                username
-              }
-              video {
-                id
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(['authorId', 'repositoryId'], videoRevision),
-          author: {
-            id: 1,
-            username: user.username,
           },
           video: {
             id: video.id,

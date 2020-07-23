@@ -113,7 +113,12 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['__tests-pacts__/**/*', '__tests__/**/*'],
+      files: [
+        '__tests-pacts__/**/*',
+        '__tests__/**/*',
+        'jest.setup.ts',
+        'jest.setup-pacts.ts',
+      ],
       rules: {
         '@typescript-eslint/no-non-null-assertion': 'off',
       },

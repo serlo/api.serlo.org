@@ -19,7 +19,33 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-export * from './cache'
-export * from './license'
-export * from './notification'
-export * from './uuid'
+import { gql } from 'apollo-server'
+
+import { TaxonomyTermChildPayload } from '../../src/graphql/schema/uuid/abstract-taxonomy-term-child'
+
+export function createEntityTaxonomyTermsQuery(
+  variables: TaxonomyTermChildPayload
+) {
+  return {
+    query: gql`
+      query taxonomyTerms($id: Int!) {
+        uuid(id: $id) {
+          ... on AbstractTaxonomyTermChild {
+            taxonomyTerms {
+              __typename
+              id
+              trashed
+              type
+              instance
+              alias
+              name
+              description
+              weight
+            }
+          }
+        }
+      }
+    `,
+    variables,
+  }
+}

@@ -26,22 +26,16 @@ import {
   exercise,
   exerciseAlias,
   exerciseRevision,
-  license,
   solution,
   solutionRevision,
-  taxonomyTermSubject,
-  user,
 } from '../../../__fixtures__'
 import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
 import {
   addAliasInteraction,
   addExerciseInteraction,
   addExerciseRevisionInteraction,
-  addLicenseInteraction,
   addSolutionInteraction,
   addSolutionRevisionInteraction,
-  addTaxonomyTermInteraction,
-  addUserInteraction,
 } from '../../__utils__/interactions'
 
 describe('Exercise', () => {
@@ -91,55 +85,6 @@ describe('Exercise', () => {
     })
   })
 
-  test('by alias (w/ license)', async () => {
-    await addExerciseInteraction(exercise)
-    await addAliasInteraction(exerciseAlias)
-    await addLicenseInteraction(license)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(
-            alias: {
-              instance: de
-              path: "${exerciseAlias.path}"
-            }
-          ) {
-            __typename
-            ... on Exercise {
-              id
-              trashed
-              instance
-              alias
-              date
-              currentRevision {
-                id
-              }
-              license {
-                id
-                title
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'solutionId'],
-            exercise
-          ),
-          currentRevision: {
-            id: exercise.currentRevisionId,
-          },
-          license: {
-            id: 1,
-            title: 'title',
-          },
-        },
-      },
-    })
-  })
-
   test('by alias (w/ currentRevision)', async () => {
     await addExerciseInteraction(exercise)
     await addAliasInteraction(exerciseAlias)
@@ -180,45 +125,6 @@ describe('Exercise', () => {
             content: 'content',
             changes: 'changes',
           },
-        },
-      },
-    })
-  })
-
-  test('by alias (w/ taxonomyTerms)', async () => {
-    await addExerciseInteraction(exercise)
-    await addAliasInteraction(exerciseAlias)
-    await addTaxonomyTermInteraction(taxonomyTermSubject)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(
-            alias: {
-              instance: de
-              path: "${exerciseAlias.path}"
-            }
-          ) {
-            __typename
-            ... on Exercise {
-              id
-              trashed
-              instance
-              alias
-              date
-              taxonomyTerms {
-                id
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'solutionId'],
-            exercise
-          ),
-          taxonomyTerms: [{ id: 5 }],
         },
       },
     })
@@ -346,46 +252,6 @@ describe('ExerciseRevision', () => {
           ...R.omit(['authorId', 'repositoryId'], exerciseRevision),
           author: {
             id: 1,
-          },
-          exercise: {
-            id: exercise.id,
-          },
-        },
-      },
-    })
-  })
-
-  test('by id (w/ author)', async () => {
-    await addExerciseRevisionInteraction(exerciseRevision)
-    await addUserInteraction(user)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(id: ${exercise.currentRevisionId}) {
-            __typename
-            ... on ExerciseRevision {
-              id
-              trashed
-              date
-              content
-              changes
-              author {
-                id
-                username
-              }
-              exercise {
-                id
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(['authorId', 'repositoryId'], exerciseRevision),
-          author: {
-            id: 1,
-            username: user.username,
           },
           exercise: {
             id: exercise.id,

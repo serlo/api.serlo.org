@@ -22,20 +22,12 @@
 import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
-import {
-  license,
-  page,
-  pageAlias,
-  pageRevision,
-  user,
-} from '../../../__fixtures__'
+import { page, pageAlias, pageRevision } from '../../../__fixtures__'
 import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
 import {
   addAliasInteraction,
-  addLicenseInteraction,
   addPageInteraction,
   addPageRevisionInteraction,
-  addUserInteraction,
 } from '../../__utils__/interactions'
 
 describe('Page', () => {
@@ -64,40 +56,6 @@ describe('Page', () => {
           ...R.omit(['currentRevisionId', 'licenseId'], page),
           currentRevision: {
             id: 35476,
-          },
-        },
-      },
-    })
-  })
-
-  test('by alias (w/ license)', async () => {
-    await addAliasInteraction(pageAlias)
-    await addLicenseInteraction(license)
-    await addPageInteraction(page)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(alias: { instance: de, path: "${pageAlias.path}" }) {
-            __typename
-            ... on Page {
-              id
-              trashed
-              instance
-              alias
-              license {
-                id
-                title
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(['currentRevisionId', 'licenseId'], page),
-          license: {
-            id: 1,
-            title: license.title,
           },
         },
       },
@@ -201,43 +159,6 @@ describe('PageRevision', () => {
           author: {
             id: 1,
           },
-          page: {
-            id: 19767,
-          },
-        },
-      },
-    })
-  })
-
-  test('by id (w/ author)', async () => {
-    await addUserInteraction(user)
-    await addPageRevisionInteraction(pageRevision)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(id: 35476) {
-            __typename
-            ... on PageRevision {
-              id
-              trashed
-              title
-              content
-              date
-              author {
-                id
-                username
-              }
-              page {
-                id
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(['authorId', 'repositoryId'], pageRevision),
-          author: { id: 1, username: user.username },
           page: {
             id: 19767,
           },

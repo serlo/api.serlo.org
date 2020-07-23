@@ -24,22 +24,18 @@ import * as R from 'ramda'
 
 import {
   course,
-  courseRevision,
   coursePage,
   coursePageAlias,
   coursePageRevision,
-  license,
-  user,
+  courseRevision,
 } from '../../../__fixtures__'
 import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
 import {
   addAliasInteraction,
+  addCourseInteraction,
   addCoursePageInteraction,
   addCoursePageRevisionInteraction,
-  addLicenseInteraction,
-  addUserInteraction,
   addCourseRevisionInteraction,
-  addCourseInteraction,
 } from '../../__utils__/interactions'
 
 describe('CoursePage', () => {
@@ -83,55 +79,6 @@ describe('CoursePage', () => {
           },
           license: {
             id: 1,
-          },
-        },
-      },
-    })
-  })
-
-  test('by alias (w/ license)', async () => {
-    await addCoursePageInteraction(coursePage)
-    await addAliasInteraction(coursePageAlias)
-    await addLicenseInteraction(license)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(
-            alias: {
-              instance: de
-              path: "${coursePageAlias.path}"
-            }
-          ) {
-            __typename
-            ... on CoursePage {
-              id
-              trashed
-              instance
-              alias
-              date
-              currentRevision {
-                id
-              }
-              license {
-                id
-                title
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(
-            ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
-            coursePage
-          ),
-          currentRevision: {
-            id: coursePage.currentRevisionId,
-          },
-          license: {
-            id: 1,
-            title: 'title',
           },
         },
       },
@@ -306,47 +253,6 @@ describe('CoursePageRevision', () => {
           ...R.omit(['authorId', 'repositoryId'], coursePageRevision),
           author: {
             id: 1,
-          },
-          coursePage: {
-            id: coursePage.id,
-          },
-        },
-      },
-    })
-  })
-
-  test('by id (w/ author)', async () => {
-    await addCoursePageRevisionInteraction(coursePageRevision)
-    await addUserInteraction(user)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(id: ${coursePage.currentRevisionId}) {
-            __typename
-            ... on CoursePageRevision {
-              id
-              trashed
-              date
-              title
-              content
-              changes
-              author {
-                id
-                username
-              }
-              coursePage {
-                id
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(['authorId', 'repositoryId'], coursePageRevision),
-          author: {
-            id: 1,
-            username: user.username,
           },
           coursePage: {
             id: coursePage.id,

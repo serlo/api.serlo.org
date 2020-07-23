@@ -19,7 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-export * from './cache'
-export * from './license'
-export * from './notification'
-export * from './uuid'
+import * as R from 'ramda'
+
+import { UuidPayload } from '../../src/graphql/schema/uuid/abstract-uuid'
+
+export function getUuidDataWithoutSubResolvers(uuid: UuidPayload) {
+  return R.pick(['__typename', 'id', 'trashed'], uuid)
+}

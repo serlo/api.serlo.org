@@ -19,16 +19,34 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { AbstractEntity, TaxonomyTerm } from '../../../../types'
+import { TypeResolver } from '../../types'
 import { AbstractEntityPreResolver } from '../abstract-entity'
+import { AppletPayload } from '../applet'
+import { ArticlePayload } from '../article'
+import { CoursePayload } from '../course'
+import { EventPayload } from '../event'
+import { ExercisePayload } from '../exercise'
+import { ExerciseGroupPayload } from '../exercise-group'
+import { VideoPayload } from '../video'
 
-export interface AbstractTaxonomyTermChild extends AbstractEntity {
-  taxonomyTerm: TaxonomyTerm[]
-}
-
+export type TaxonomyTermChildPreResolver =
+  | AppletPayload
+  | ArticlePayload
+  | CoursePayload
+  | EventPayload
+  | ExercisePayload
+  | ExerciseGroupPayload
+  | VideoPayload
 export interface AbstractTaxonomyTermChildPreResolver
   extends AbstractEntityPreResolver {
   taxonomyTermIds: number[]
 }
 
+export type TaxonomyTermChildPayload = TaxonomyTermChildPreResolver
 export type AbstractTaxonomyTermChildPayload = AbstractTaxonomyTermChildPreResolver
+
+export interface TaxonomyTermChildResolvers {
+  AbstractTaxonomyTermChild: {
+    __resolveType: TypeResolver<TaxonomyTermChildPreResolver>
+  }
+}

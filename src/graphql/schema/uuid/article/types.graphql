@@ -1,4 +1,4 @@
-type Article implements AbstractUuid & AbstractEntity {
+type Article implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild {
   id: Int!
   trashed: Boolean!
   instance: Instance!
