@@ -267,6 +267,10 @@ export class SerloDataSource extends RESTDataSource {
     return `${instance}.serlo.org${path}`
   }
 
+  public async getAllCacheKeys(): Promise<string[]> {
+    return this.cacheAwareGet<string[]>({ path: '/api/cache-keys' })
+  }
+
   public async setCache<T>(key: string, value: T) {
     await this.environment.cache.set(key, value)
     return value
