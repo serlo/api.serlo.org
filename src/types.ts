@@ -33,10 +33,9 @@ export type Mutation_SetCacheArgs = {
 
 
 export type MutationCreateThreadArgs = {
-  createdAt: Scalars['String'];
-  updatedAt: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
   title: Scalars['String'];
-  authorId: Scalars['Int'];
   objectId: Scalars['Int'];
   content: Scalars['String'];
 };

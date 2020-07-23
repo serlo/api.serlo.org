@@ -26,20 +26,7 @@ export function createThreadsResolver<
     const data = await dataSources.serlo.getThreads({ id: object.id })
     const threads = await Promise.all(
       data.threadIds.map((id) => {
-        return dataSources.serlo.getThread({ id }).then((data) => {
-          // resolve Thread
-          // TODO: comments result
-          const { comments, ...rest } = data
-          return {
-            ...rest,
-            object,
-            // TODO: resolve connection
-            comments: {
-              totalCount: comments.length,
-              nodes: comments,
-            },
-          }
-        })
+        return dataSources.serlo.getThread({ id })
       })
     )
     return resolveConnection<ThreadPreResolver>({

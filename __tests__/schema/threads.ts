@@ -23,10 +23,15 @@ import { gql } from 'apollo-server'
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 
-import { threads, thread } from '../../../__fixtures__/threads'
-import { user } from '../../../__fixtures__/uuid'
-import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
-import { createTestClient } from '../../__utils__/test-client'
+import { thread } from '../../__fixtures__/threads'
+import { user } from '../../__fixtures__/uuid'
+import { ThreadsPayload } from '../../src/graphql/schema'
+import { MutationCreateThreadArgs } from '../../src/types'
+import {
+  assertSuccessfulGraphQLQuery,
+  assertSuccessfulGraphQLMutation,
+} from '../__utils__/assertions'
+import { createTestClient } from '../__utils__/test-client'
 
 const server = setupServer(
   rest.get(
@@ -38,11 +43,17 @@ const server = setupServer(
   rest.get(
     `http://de.${process.env.SERLO_ORG_HOST}/api/threads/${user.id}`,
     (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(threads))
+      return res(
+        ctx.status(200),
+        ctx.json({
+          objectId: user.id,
+          threadIds: [],
+        } as ThreadsPayload)
+      )
     }
   ),
-  rest.get(
-    `http://de.${process.env.SERLO_ORG_HOST}/api/thread/1`,
+  rest.post(
+    `http://de.${process.env.SERLO_ORG_HOST}/api/create-thread`,
     (req, res, ctx) => {
       return res(ctx.status(200), ctx.json(thread))
     }
@@ -59,33 +70,42 @@ afterAll(() => {
   server.close()
 })
 
-test('user', async () => {
-  const { client } = createTestClient()
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      {
-        uuid(id: 1) {
-          __typename
-          ... on User {
-            id
-            trashed
-            username
-            date
-            lastLogin
-            description
-          }
+test('createThread', async () => {
+  const { client } = createTestClient({ user: user.id })
+  await assertSuccessfulGraphQLMutation({
+    mutation: gql`
+      mutation createThread(
+        $createdAt: DateTime!
+        $updatedAt: DateTime!
+        $title: String!
+        $objectId: Int!
+        $content: String!
+      ) {
+        createThread(
+          createdAt: $createdAt
+          updatedAt: $updatedAt
+          title: $title
+          objectId: $objectId
+          content: $content
+        ) {
+          id
         }
       }
     `,
-    client,
+    variables: {
+      createdAt: thread.createdAt,
+      updatedAt: thread.updatedAt,
+      title: thread.title,
+      objectId: user.id,
+      content: thread.comments[0].content,
+    } as MutationCreateThreadArgs,
     data: {
-      uuid: user,
+      createThread: {
+        id: thread.id,
+      },
     },
+    client,
   })
-})
-
-test('user (w/ threads)', async () => {
-  const { client } = createTestClient()
   await assertSuccessfulGraphQLQuery({
     query: gql`
       {

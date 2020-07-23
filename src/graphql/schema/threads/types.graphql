@@ -29,10 +29,9 @@ type Comment {
 
 extend type Mutation {
   createThread(
-    createdAt: String!
-    updatedAt: String!
+    createdAt: DateTime!
+    updatedAt: DateTime!
     title: String!
-    authorId: Int!
     objectId: Int!
     content: String!
   ): Thread

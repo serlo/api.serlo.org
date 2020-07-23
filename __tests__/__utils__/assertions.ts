@@ -47,11 +47,13 @@ export async function assertSuccessfulGraphQLQuery({
 export async function assertSuccessfulGraphQLMutation({
   mutation,
   variables,
+  data,
   client,
 }: {
   mutation: DocumentNode
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   variables?: Record<string, any>
+  data?: GraphQLResponse['data']
   client: Client
 }) {
   const response = await client.mutate({
@@ -59,6 +61,9 @@ export async function assertSuccessfulGraphQLMutation({
     variables,
   })
   expect(response.errors).toBeUndefined()
+  if (data !== undefined) {
+    expect(response.data).toEqual(data)
+  }
 }
 
 export async function assertFailingGraphQLMutation(

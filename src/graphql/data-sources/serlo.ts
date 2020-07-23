@@ -212,12 +212,23 @@ export class SerloDataSource extends RESTDataSource {
     return this.cacheAwareGet({ path: `/api/thread/${id}` })
   }
 
-  public async createThread(_payload: MutationCreateThreadArgs) {}
+  public async createThread(
+    payload: MutationCreateThreadArgs & { userId: number }
+  ): Promise<ThreadPayload> {
+    const thread = await this.customPost<ThreadPayload>({
+      path: `/api/create-thread/`,
+      body: payload,
+    })
+    const threads = await this.getThreads({ id: payload.userId })
+    threads.threadIds.push(thread.id)
+    await this.setCache(
+      this.getCacheKey(`/api/threads/${payload.userId}`),
+      threads
+    )
+    return this.setCache(this.getCacheKey(`/api/thread/${thread.id}`), thread)
+  }
 
-  private async customPost<
-    T,
-    K extends keyof SerloDataSource = keyof SerloDataSource
-  >({
+  private async customPost<T>({
     path,
     instance = Instance.De,
     body,
@@ -243,10 +254,7 @@ export class SerloDataSource extends RESTDataSource {
     )
   }
 
-  private async cacheAwareGet<
-    T,
-    K extends keyof SerloDataSource = keyof SerloDataSource
-  >({
+  private async cacheAwareGet<T>({
     path,
     instance = Instance.De,
   }: {
