@@ -19,12 +19,26 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ForbiddenError } from 'apollo-server'
+import { ForbiddenError, AuthenticationError } from 'apollo-server'
 
+import { resolveConnection } from '../connection'
 import { Service } from '../types'
 import { CacheResolvers } from './types'
 
 export const resolvers: CacheResolvers = {
+  Query: {
+    async _getCacheKeys(_parent, { ...cursorPayload }, { dataSources, user }) {
+      if (user === null) throw new AuthenticationError('You are not logged in')
+      const cacheKeys = await dataSources.serlo.getAllCacheKeys()
+      return resolveConnection<string>({
+        nodes: cacheKeys,
+        payload: cursorPayload,
+        createCursor(node) {
+          return `${node}`
+        },
+      })
+    },
+  },
   Mutation: {
     async _setCache(_parent, { key, value }, { dataSources, service }) {
       if (service !== Service.Serlo) {
