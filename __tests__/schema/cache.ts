@@ -20,6 +20,8 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { isSome } from 'fp-ts/lib/Option'
+import { rest } from 'msw'
+import { setupServer } from 'msw/node'
 
 import {
   createRemoveCacheMutation,
@@ -30,8 +32,22 @@ import { Service } from '../../src/graphql/schema/types'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
+  assertSuccessfulGraphQLQuery,
 } from '../__utils__/assertions'
 import { createTestClient } from '../__utils__/test-client'
+import { gql } from 'apollo-server'
+
+const server = setupServer(
+  rest.get(
+    `http://de.${process.env.SERLO_ORG_HOST}/api/cache-keys`,
+    (req, res, ctx) => {
+      return res(
+        ctx.status(200),
+        ctx.json(["foo", "bar", "boo"])
+      )
+    }
+  )
+)
 
 test('_setCache (forbidden)', async () => {
   const { client } = createTestClient({
@@ -94,4 +110,44 @@ test('_removeCache (authenticated)', async () => {
 
   const cachedValue = await cache.get(variables.key)
   expect(isSome(cachedValue) && cachedValue.value).toEqual(null)
+})
+
+function createCacheKeysQuery() {
+  return {
+    query: gql`
+      query {
+        _getCacheKeys {
+          totalCount
+          nodes 
+        }
+      }
+    `,
+    variables: { },
+  }
+}
+
+test('_getCacheKeys' , async () =>{
+  const { client } = createTestClient({
+    service: Service.Serlo,
+    user: null
+  })
+
+  server.listen()
+
+  await assertSuccessfulGraphQLQuery({
+    ...createCacheKeysQuery(),
+    data: {
+      _getCacheKeys: {
+        nodes: [
+          "foo",
+          "bar",
+          "boo"
+        ],
+        totalCount: 3
+      }
+    },
+    client
+  })
+
+  server.close()
 })
