@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ForbiddenError, AuthenticationError } from 'apollo-server'
+import { ForbiddenError } from 'apollo-server'
 
 import { resolveConnection } from '../connection'
 import { Service } from '../types'
@@ -33,7 +33,7 @@ export const resolvers: CacheResolvers = {
         nodes: cacheKeys,
         payload: cursorPayload,
         createCursor(node) {
-          return `${node}`
+          return node
         },
       })
     },
