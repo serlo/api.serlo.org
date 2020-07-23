@@ -20,28 +20,21 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { rest } from 'msw'
-import { setupServer } from 'msw/node'
 
 import { createLicenseQuery, license } from '../../__fixtures__'
 import { Service } from '../../src/graphql/schema/types'
 import { assertSuccessfulGraphQLQuery } from '../__utils__/assertions'
 import { createTestClient } from '../__utils__/test-client'
 
-const server = setupServer(
-  rest.get(
-    `http://de.${process.env.SERLO_ORG_HOST}/api/license/1`,
-    (_req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(license))
-    }
+beforeEach(() => {
+  global.server.use(
+    rest.get(
+      `http://de.${process.env.SERLO_ORG_HOST}/api/license/1`,
+      (_req, res, ctx) => {
+        return res(ctx.status(200), ctx.json(license))
+      }
+    )
   )
-)
-
-beforeAll(() => {
-  server.listen()
-})
-
-afterAll(() => {
-  server.close()
 })
 
 test('license', async () => {

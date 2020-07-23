@@ -21,7 +21,6 @@
  */
 import { gql } from 'apollo-server'
 import { rest } from 'msw'
-import { setupServer } from 'msw/node'
 
 import { user, user2, article } from '../__fixtures__'
 import {
@@ -32,20 +31,10 @@ import {
 import { assertSuccessfulGraphQLQuery } from './__utils__/assertions'
 import { createTestClient } from './__utils__/test-client'
 
-const server = setupServer()
 const { client, cache } = createTestClient()
 
-beforeAll(() => {
-  server.listen()
-})
-
 afterEach(async () => {
-  server.resetHandlers()
   await cache.flush()
-})
-
-afterAll(() => {
-  server.close()
 })
 
 describe('property activeDonor', () => {
@@ -183,7 +172,7 @@ function addArticle(article: ArticlePayload) {
 }
 
 function addUuid(payload: UuidPayload, discriminator: string) {
-  server.use(
+  global.server.use(
     rest.get(
       `http://de.${process.env.SERLO_ORG_HOST}/api/uuid/${payload.id}`,
       (_req, res, ctx) => {
@@ -214,7 +203,7 @@ function addActiveDonorSheetResponse(response: Record<string, unknown>) {
     `${process.env.ACTIVE_DONORS_SPREADSHEET_ID}/values/Tabellenblatt1!A:A` +
     `?majorDimension=COLUMNS&key=${process.env.GOOGLE_API_KEY}`
 
-  server.use(
+  global.server.use(
     rest.get(url, (_req, res, ctx) => {
       return res.once(ctx.status(200), ctx.json(response))
     })

@@ -27,8 +27,6 @@ import {
 } from '../../src/graphql/schema/notification'
 import {
   AliasPayload,
-  AppletPayload,
-  AppletRevisionPayload,
   ArticlePayload,
   ArticleRevisionPayload,
   CoursePagePayload,
@@ -49,10 +47,10 @@ import {
   SolutionRevisionPayload,
   TaxonomyTermPayload,
   UserPayload,
-  UuidType,
   VideoPayload,
   VideoRevisionPayload,
   NavigationPayload,
+  UuidPayload,
 } from '../../src/graphql/schema/uuid'
 import { License } from '../../src/types'
 
@@ -140,44 +138,8 @@ export function addAliasInteraction(payload: AliasPayload) {
   })
 }
 
-export function addAppletInteraction(payload: AppletPayload) {
-  return addUuidInteraction({
-    __typename: payload.__typename,
-    id: payload.id,
-    trashed: Matchers.boolean(payload.trashed),
-    instance: Matchers.string(payload.instance),
-    alias: payload.alias ? Matchers.string(payload.alias) : null,
-    date: Matchers.iso8601DateTime(payload.date),
-    currentRevisionId: payload.currentRevisionId
-      ? Matchers.integer(payload.currentRevisionId)
-      : null,
-    licenseId: Matchers.integer(payload.licenseId),
-    taxonomyTermIds:
-      payload.taxonomyTermIds.length > 0
-        ? Matchers.eachLike(Matchers.like(payload.taxonomyTermIds[0]))
-        : [],
-  })
-}
-
-export function addAppletRevisionInteraction(payload: AppletRevisionPayload) {
-  return addUuidInteraction({
-    __typename: payload.__typename,
-    id: payload.id,
-    trashed: Matchers.boolean(payload.trashed),
-    date: Matchers.iso8601DateTime(payload.date),
-    authorId: Matchers.integer(payload.authorId),
-    repositoryId: Matchers.integer(payload.repositoryId),
-    title: Matchers.string(payload.title),
-    url: Matchers.string(payload.url),
-    content: Matchers.string(payload.content),
-    changes: Matchers.string(payload.changes),
-    metaTitle: Matchers.string(payload.metaTitle),
-    metaDescription: Matchers.string(payload.metaDescription),
-  })
-}
-
 export function addArticleInteraction(payload: ArticlePayload) {
-  return addUuidInteraction({
+  return addUuidInteraction<ArticlePayload>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
@@ -196,7 +158,7 @@ export function addArticleInteraction(payload: ArticlePayload) {
 }
 
 export function addArticleRevisionInteraction(payload: ArticleRevisionPayload) {
-  return addUuidInteraction({
+  return addUuidInteraction<ArticleRevisionPayload>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
@@ -212,7 +174,7 @@ export function addArticleRevisionInteraction(payload: ArticleRevisionPayload) {
 }
 
 export function addCourseInteraction(payload: CoursePayload) {
-  return addUuidInteraction({
+  return addUuidInteraction<CoursePayload>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
@@ -235,7 +197,7 @@ export function addCourseInteraction(payload: CoursePayload) {
 }
 
 export function addCourseRevisionInteraction(payload: CourseRevisionPayload) {
-  return addUuidInteraction({
+  return addUuidInteraction<CourseRevisionPayload>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
@@ -250,7 +212,7 @@ export function addCourseRevisionInteraction(payload: CourseRevisionPayload) {
 }
 
 export function addCoursePageInteraction(payload: CoursePagePayload) {
-  return addUuidInteraction({
+  return addUuidInteraction<CoursePagePayload>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
@@ -268,7 +230,7 @@ export function addCoursePageInteraction(payload: CoursePagePayload) {
 export function addCoursePageRevisionInteraction(
   payload: CoursePageRevisionPayload
 ) {
-  return addUuidInteraction({
+  return addUuidInteraction<CoursePageRevisionPayload>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
@@ -282,7 +244,7 @@ export function addCoursePageRevisionInteraction(
 }
 
 export function addEventInteraction(payload: EventPayload) {
-  return addUuidInteraction({
+  return addUuidInteraction<EventPayload>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
@@ -301,7 +263,7 @@ export function addEventInteraction(payload: EventPayload) {
 }
 
 export function addEventRevisionInteraction(payload: EventRevisionPayload) {
-  return addUuidInteraction({
+  return addUuidInteraction<EventRevisionPayload>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
@@ -317,7 +279,7 @@ export function addEventRevisionInteraction(payload: EventRevisionPayload) {
 }
 
 export function addExerciseInteraction(payload: ExercisePayload) {
-  return addUuidInteraction({
+  return addUuidInteraction<ExercisePayload>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
@@ -341,7 +303,7 @@ export function addExerciseInteraction(payload: ExercisePayload) {
 export function addExerciseRevisionInteraction(
   payload: ExerciseRevisionPayload
 ) {
-  return addUuidInteraction({
+  return addUuidInteraction<ExerciseRevisionPayload>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
@@ -354,7 +316,7 @@ export function addExerciseRevisionInteraction(
 }
 
 export function addExerciseGroupInteraction(payload: ExerciseGroupPayload) {
-  return addUuidInteraction({
+  return addUuidInteraction<ExerciseGroupPayload>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
@@ -379,7 +341,7 @@ export function addExerciseGroupInteraction(payload: ExerciseGroupPayload) {
 export function addExerciseGroupRevisionInteraction(
   payload: ExerciseGroupRevisionPayload
 ) {
-  return addUuidInteraction({
+  return addUuidInteraction<ExerciseGroupRevisionPayload>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
@@ -392,7 +354,7 @@ export function addExerciseGroupRevisionInteraction(
 }
 
 export function addGroupedExerciseInteraction(payload: GroupedExercisePayload) {
-  return addUuidInteraction({
+  return addUuidInteraction<GroupedExercisePayload>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
@@ -413,7 +375,7 @@ export function addGroupedExerciseInteraction(payload: GroupedExercisePayload) {
 export function addGroupedExerciseRevisionInteraction(
   payload: GroupedExerciseRevisionPayload
 ) {
-  return addUuidInteraction({
+  return addUuidInteraction<GroupedExerciseRevisionPayload>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
@@ -426,7 +388,7 @@ export function addGroupedExerciseRevisionInteraction(
 }
 
 export function addPageInteraction(payload: PagePayload) {
-  return addUuidInteraction({
+  return addUuidInteraction<PagePayload>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
@@ -440,7 +402,7 @@ export function addPageInteraction(payload: PagePayload) {
 }
 
 export function addPageRevisionInteraction(payload: PageRevisionPayload) {
-  return addUuidInteraction({
+  return addUuidInteraction<PageRevisionPayload>({
     __typename: payload.__typename,
     id: 35476,
     trashed: Matchers.boolean(payload.trashed),
@@ -453,7 +415,7 @@ export function addPageRevisionInteraction(payload: PageRevisionPayload) {
 }
 
 export function addSolutionInteraction(payload: SolutionPayload) {
-  return addUuidInteraction({
+  return addUuidInteraction<SolutionPayload>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
@@ -471,7 +433,7 @@ export function addSolutionInteraction(payload: SolutionPayload) {
 export function addSolutionRevisionInteraction(
   payload: SolutionRevisionPayload
 ) {
-  return addUuidInteraction({
+  return addUuidInteraction<SolutionRevisionPayload>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
@@ -484,7 +446,7 @@ export function addSolutionRevisionInteraction(
 }
 
 export function addTaxonomyTermInteraction(payload: TaxonomyTermPayload) {
-  return addUuidInteraction({
+  return addUuidInteraction<TaxonomyTermPayload>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
@@ -505,7 +467,7 @@ export function addTaxonomyTermInteraction(payload: TaxonomyTermPayload) {
 }
 
 export function addUserInteraction(payload: UserPayload) {
-  return addUuidInteraction({
+  return addUuidInteraction<UserPayload>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
@@ -521,7 +483,7 @@ export function addUserInteraction(payload: UserPayload) {
 }
 
 export function addVideoInteraction(payload: VideoPayload) {
-  return addUuidInteraction({
+  return addUuidInteraction<VideoPayload>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
@@ -540,7 +502,7 @@ export function addVideoInteraction(payload: VideoPayload) {
 }
 
 export function addVideoRevisionInteraction(payload: VideoRevisionPayload) {
-  return addUuidInteraction({
+  return addUuidInteraction<VideoRevisionPayload>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
@@ -554,12 +516,9 @@ export function addVideoRevisionInteraction(payload: VideoRevisionPayload) {
   })
 }
 
-export function addUuidInteraction<
-  T extends {
-    __typename: UuidType
-    id: number
-  }
->(data: T) {
+export function addUuidInteraction<T extends UuidPayload>(
+  data: Record<keyof T, unknown> & { __typename: string; id: number }
+) {
   return addJsonInteraction({
     name: `fetch data of uuid ${data.id}`,
     given: `uuid ${data.id} is of type ${data.__typename}`,

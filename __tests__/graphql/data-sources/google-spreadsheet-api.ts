@@ -21,7 +21,6 @@
  */
 import { either, option } from 'fp-ts'
 import { rest } from 'msw'
-import { setupServer } from 'msw/node'
 
 import { createInMemoryCache } from '../../../src/cache/in-memory-cache'
 import {
@@ -30,7 +29,6 @@ import {
 } from '../../../src/graphql/data-sources/google-spreadsheet-api'
 import { initializeDataSource, expectToBeLeftEventWith } from '../../__utils__'
 
-const server = setupServer()
 const cache = createInMemoryCache()
 const environment = { cache }
 const apiKey = 'my-secret'
@@ -41,17 +39,8 @@ const common = {
   majorDimension: MajorDimension.Columns,
 }
 
-beforeAll(() => {
-  server.listen()
-})
-
 afterEach(async () => {
-  server.resetHandlers()
   await cache.flush()
-})
-
-afterAll(() => {
-  server.close()
 })
 
 describe('GoogleSheetApi.getValues()', () => {
@@ -216,7 +205,7 @@ function mockSpreadsheetResponse({
     `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}` +
     `/values/${range}?majorDimension=${majorDimension}&key=${apiKey}`
 
-  server.use(
+  global.server.use(
     rest.get(url, (_req, res, ctx) =>
       res.once(ctx.status(status), ctx.json(response))
     )

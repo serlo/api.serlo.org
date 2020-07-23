@@ -19,65 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Pact } from '@pact-foundation/pact'
-import { rest } from 'msw'
-import { setupServer } from 'msw/node'
-import fetch from 'node-fetch'
-import path from 'path'
-import rimraf from 'rimraf'
-import { Url } from 'url'
-import util from 'util'
-
-import { createTestClient } from '../../__tests__/__utils__/test-client'
-import { Service } from '../../src/graphql/schema/types'
-
-const root = path.join(__dirname, '..', '..')
-const pactDir = path.join(root, 'pacts')
-
-const rm = util.promisify(rimraf)
-
-const port = 9009
-
-const server = setupServer(
-  rest.get(
-    new RegExp(process.env.SERLO_ORG_HOST.replace('.', '\\.')),
-    async (req, res, ctx) => {
-      const url = req.url as Url
-      const pactRes = await fetch(`http://localhost:${port}/${url.pathname!}`)
-      return res(ctx.status(pactRes.status), ctx.json(await pactRes.json()))
-    }
-  )
-)
-
-global.pact = new Pact({
-  consumer: 'api.serlo.org',
-  provider: 'serlo.org',
-  port,
-  dir: pactDir,
-})
-
-beforeAll(async () => {
-  await rm(pactDir)
-  await global.pact.setup()
-  server.listen()
-})
-
-beforeEach(() => {
-  global.client = createTestClient({
-    service: Service.Playground,
-    user: null,
-  }).client
-})
-
-afterEach(async () => {
-  await global.pact.verify()
-})
-
-afterAll(async () => {
-  server.close()
-  await global.pact.finalize()
-})
-
 /* eslint-disable import/no-unassigned-import */
 describe('License', () => {
   require('./license')

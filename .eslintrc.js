@@ -65,6 +65,7 @@ module.exports = {
           '__tests__/**/*',
           'scripts/**/*',
           'jest.setup.ts',
+          'jest.setup-pacts.ts',
           'webpack.config.js',
         ],
         optionalDependencies: false,

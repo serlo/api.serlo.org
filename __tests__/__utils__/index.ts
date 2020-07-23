@@ -25,6 +25,10 @@ import { either } from 'fp-ts'
 
 import { ErrorEvent } from '../../src/error-event'
 
+export * from './assertions'
+export * from './handlers'
+export * from './test-client'
+
 export function expectToBeLeftEventWith<A>(
   value: either.Either<ErrorEvent, A>,
   expectedEvent: ErrorEvent

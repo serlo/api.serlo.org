@@ -21,7 +21,6 @@
  */
 import { gql } from 'apollo-server'
 import { rest } from 'msw'
-import { setupServer } from 'msw/node'
 
 import {
   createSetNotificationStateMutation,
@@ -37,36 +36,38 @@ import {
 import { createTestClient } from '../__utils__/test-client'
 
 describe('notifications', () => {
-  const server = setupServer(
-    rest.get(
-      `http://de.${process.env.SERLO_ORG_HOST}/api/notifications/${user.id}`,
-      (req, res, ctx) => {
-        return res(
-          ctx.status(200),
-          ctx.json({
-            userId: user.id,
-            notifications: [
-              {
-                id: 3,
-                unread: true,
-                eventId: 3,
-              },
-              {
-                id: 2,
-                unread: false,
-                eventId: 2,
-              },
-              {
-                id: 1,
-                unread: false,
-                eventId: 1,
-              },
-            ],
-          })
-        )
-      }
+  beforeEach(() => {
+    global.server.use(
+      rest.get(
+        `http://de.${process.env.SERLO_ORG_HOST}/api/notifications/${user.id}`,
+        (req, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.json({
+              userId: user.id,
+              notifications: [
+                {
+                  id: 3,
+                  unread: true,
+                  eventId: 3,
+                },
+                {
+                  id: 2,
+                  unread: false,
+                  eventId: 2,
+                },
+                {
+                  id: 1,
+                  unread: false,
+                  eventId: 1,
+                },
+              ],
+            })
+          )
+        }
+      )
     )
-  )
+  })
 
   function createNotificationsQuery(unread?: boolean) {
     return {
@@ -86,14 +87,6 @@ describe('notifications', () => {
       },
     }
   }
-
-  beforeAll(() => {
-    server.listen()
-  })
-
-  afterAll(() => {
-    server.close()
-  })
 
   test('notifications without filter', async () => {
     const { client } = createTestClient({
@@ -192,7 +185,7 @@ describe('setNotificationState', () => {
   })
 
   test('wrong user id', async () => {
-    const server = setupServer(
+    global.server.use(
       rest.post(
         `http://de.${process.env.SERLO_ORG_HOST}/api/set-notification-state/1`,
         (req, res, ctx) => {
@@ -200,7 +193,6 @@ describe('setNotificationState', () => {
         }
       )
     )
-    server.listen()
     const { client } = createTestClient({
       service: Service.Playground,
       user: 1,
@@ -214,11 +206,10 @@ describe('setNotificationState', () => {
         expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
       }
     )
-    server.close()
   })
 
   test('authenticated', async () => {
-    const server = setupServer(
+    global.server.use(
       rest.get(
         `http://de.${process.env.SERLO_ORG_HOST}/api/notifications/${notifications.userId}`,
         (req, res, ctx) => {
@@ -232,7 +223,6 @@ describe('setNotificationState', () => {
         }
       )
     )
-    server.listen()
     const { client } = createTestClient({
       service: Service.Serlo,
       user: notifications.userId,
@@ -267,6 +257,5 @@ describe('setNotificationState', () => {
       },
       client,
     })
-    server.close()
   })
 })
