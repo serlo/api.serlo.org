@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { license, createLicenseQuery } from '../../__fixtures__/license'
+import { license, createLicenseQuery } from '../../__fixtures__'
 import { assertSuccessfulGraphQLQuery } from '../__utils__/assertions'
 import { addLicenseInteraction } from '../__utils__/interactions'
 

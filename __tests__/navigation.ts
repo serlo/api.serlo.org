@@ -28,7 +28,7 @@ import {
   taxonomyTermCurriculumTopic,
   taxonomyTermRoot,
   taxonomyTermSubject,
-} from '../__fixtures__/uuid'
+} from '../__fixtures__'
 import { Service } from '../src/graphql/schema/types'
 import { PagePayload, TaxonomyTermPayload } from '../src/graphql/schema/uuid'
 import { NavigationPayload } from '../src/graphql/schema/uuid/navigation'

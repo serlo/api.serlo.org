@@ -22,15 +22,15 @@
 import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
-import { license } from '../../../__fixtures__/license'
 import {
   course,
   courseRevision,
   coursePage,
   coursePageAlias,
   coursePageRevision,
+  license,
   user,
-} from '../../../__fixtures__/uuid'
+} from '../../../__fixtures__'
 import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
 import {
   addAliasInteraction,

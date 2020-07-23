@@ -22,8 +22,12 @@
 import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
-import { event, notifications } from '../../__fixtures__/notification'
-import { user, article } from '../../__fixtures__/uuid'
+import {
+  article,
+  notificationEvent,
+  notifications,
+  user,
+} from '../../__fixtures__'
 import { createTestClient } from '../../__tests__/__utils__/test-client'
 import { Service } from '../../src/graphql/schema/types'
 import { assertSuccessfulGraphQLQuery } from '../__utils__/assertions'
@@ -41,7 +45,7 @@ test('Notifications', async () => {
   }).client
 
   await addNotificationsInteraction(notifications)
-  await addNotificationEventInteraction(event)
+  await addNotificationEventInteraction(notificationEvent)
   await addUserInteraction(user)
   await addArticleInteraction(article)
 
@@ -82,7 +86,7 @@ test('Notifications', async () => {
             id: 1,
             unread: true,
             event: {
-              ...R.omit(['actorId', 'objectId'], event),
+              ...R.omit(['actorId', 'objectId'], notificationEvent),
               actor: {
                 id: 1,
                 username: 'username',

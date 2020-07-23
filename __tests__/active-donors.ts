@@ -23,7 +23,7 @@ import { gql } from 'apollo-server'
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 
-import { user, user2, article } from '../__fixtures__/uuid'
+import { user, user2, article } from '../__fixtures__'
 import {
   UuidPayload,
   ArticlePayload,
