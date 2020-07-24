@@ -53,3 +53,16 @@ export function createRemoveCacheMutation(variables: { key: string }) {
     variables,
   }
 }
+
+export function createCacheKeysQuery() {
+  return {
+    query: gql`
+      query {
+        _cacheKeys {
+          totalCount
+          nodes
+        }
+      }
+    `,
+  }
+}
