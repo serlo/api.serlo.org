@@ -24,8 +24,6 @@ import {
   DiscriminatorType,
   EntityRevisionType,
   EntityType,
-  EventPayload,
-  EventRevisionPayload,
   ExerciseGroupPayload,
   ExerciseGroupRevisionPayload,
   ExercisePayload,
@@ -52,6 +50,7 @@ export * from './applet'
 export * from './article'
 export * from './course'
 export * from './course-page'
+export * from './event'
 export * from './taxonomy-term'
 
 export const navigation: NavigationPayload = {
@@ -68,40 +67,6 @@ export const navigation: NavigationPayload = {
     },
   ],
   instance: Instance.De,
-}
-
-export const event: EventPayload = {
-  __typename: EntityType.Event,
-  id: 35554,
-  trashed: false,
-  instance: Instance.De,
-  alias: '/mathe/beispielinhalte/beispielveranstaltung',
-  date: '2014-03-01T20:45:56Z',
-  currentRevisionId: 35555,
-  licenseId: license.id,
-  taxonomyTermIds: [5],
-}
-
-export const eventAlias: AliasPayload = {
-  id: 35554,
-  instance: Instance.De,
-  path: '/mathe/beispielinhalte/beispielveranstaltung',
-  source: '/entity/view/35554',
-  timestamp: '2014-06-16T15:58:45Z',
-}
-
-export const eventRevision: EventRevisionPayload = {
-  __typename: EntityRevisionType.EventRevision,
-  id: 35555,
-  trashed: false,
-  date: '2014-09-15T15:28:35Z',
-  authorId: 1,
-  repositoryId: event.id,
-  title: 'title',
-  content: 'content',
-  changes: 'changes',
-  metaDescription: 'metaDescription',
-  metaTitle: 'metaTitle',
 }
 
 export const pageAlias: AliasPayload = {

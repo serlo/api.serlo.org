@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
 import {
@@ -28,13 +29,28 @@ import {
   getCoursePageRevisionDataWithoutSubResolvers,
 } from '../../../__fixtures__'
 import {
-  addCoursePageInteraction,
-  addCoursePageRevisionInteraction,
+  CoursePagePayload,
+  CoursePageRevisionPayload,
+} from '../../../src/graphql/schema/uuid/course-page'
+import {
+  addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
 
 test('CoursePage', async () => {
-  await addCoursePageInteraction(coursePage)
+  await addUuidInteraction<CoursePagePayload>({
+    __typename: coursePage.__typename,
+    id: coursePage.id,
+    trashed: Matchers.boolean(coursePage.trashed),
+    instance: Matchers.string(coursePage.instance),
+    alias: coursePage.alias ? Matchers.string(coursePage.alias) : null,
+    date: Matchers.iso8601DateTime(coursePage.date),
+    currentRevisionId: coursePage.currentRevisionId
+      ? Matchers.integer(coursePage.currentRevisionId)
+      : null,
+    licenseId: Matchers.integer(coursePage.licenseId),
+    parentId: Matchers.integer(coursePage.parentId),
+  })
   await assertSuccessfulGraphQLQuery({
     query: gql`
         {
@@ -57,7 +73,17 @@ test('CoursePage', async () => {
 })
 
 test('CoursePageRevision', async () => {
-  await addCoursePageRevisionInteraction(coursePageRevision)
+  await addUuidInteraction<CoursePageRevisionPayload>({
+    __typename: coursePageRevision.__typename,
+    id: coursePageRevision.id,
+    trashed: Matchers.boolean(coursePageRevision.trashed),
+    date: Matchers.iso8601DateTime(coursePageRevision.date),
+    authorId: Matchers.integer(coursePageRevision.authorId),
+    repositoryId: Matchers.integer(coursePageRevision.repositoryId),
+    title: Matchers.string(coursePageRevision.title),
+    content: Matchers.string(coursePageRevision.content),
+    changes: Matchers.string(coursePageRevision.changes),
+  })
   await assertSuccessfulGraphQLQuery({
     query: gql`
         {

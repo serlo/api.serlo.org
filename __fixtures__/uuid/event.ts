@@ -22,47 +22,46 @@
 import * as R from 'ramda'
 
 import {
-  CoursePagePayload,
-  CoursePageRevisionPayload,
   EntityRevisionType,
   EntityType,
+  EventPayload,
+  EventRevisionPayload,
 } from '../../src/graphql/schema'
 import { Instance } from '../../src/types'
 import { license } from '../license'
-import { course } from './course'
 
-export const coursePage: CoursePagePayload = {
-  __typename: EntityType.CoursePage,
-  id: 18521,
+export const event: EventPayload = {
+  __typename: EntityType.Event,
+  id: 35554,
   trashed: false,
   instance: Instance.De,
-  alias: '/18521/formel',
+  alias: '/mathe/beispielinhalte/beispielveranstaltung',
   date: '2014-03-01T20:45:56Z',
-  currentRevisionId: 19277,
+  currentRevisionId: 35555,
   licenseId: license.id,
-  parentId: course.id,
+  taxonomyTermIds: [5],
 }
 
-export const coursePageRevision: CoursePageRevisionPayload = {
-  __typename: EntityRevisionType.CoursePageRevision,
-  id: 19277,
+export const eventRevision: EventRevisionPayload = {
+  __typename: EntityRevisionType.EventRevision,
+  id: 35555,
   trashed: false,
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
-  repositoryId: coursePage.id,
+  repositoryId: event.id,
   title: 'title',
   content: 'content',
   changes: 'changes',
+  metaDescription: 'metaDescription',
+  metaTitle: 'metaTitle',
 }
 
-export function getCoursePageDataWithoutSubResolvers(
-  coursePage: CoursePagePayload
-) {
-  return R.omit(['currentRevisionId', 'licenseId', 'parentId'], coursePage)
+export function getEventDataWithoutSubResolvers(event: EventPayload) {
+  return R.omit(['currentRevisionId', 'licenseId', 'taxonomyTermIds'], event)
 }
 
-export function getCoursePageRevisionDataWithoutSubResolvers(
-  coursePageRevision: CoursePageRevisionPayload
+export function getEventRevisionDataWithoutSubResolvers(
+  eventRevision: EventRevisionPayload
 ) {
-  return R.omit(['authorId', 'repositoryId'], coursePageRevision)
+  return R.omit(['authorId', 'repositoryId'], eventRevision)
 }

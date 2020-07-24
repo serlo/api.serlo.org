@@ -24,10 +24,6 @@ import { Matchers } from '@pact-foundation/pact'
 import {
   AliasPayload,
   ArticlePayload,
-  CoursePagePayload,
-  CoursePageRevisionPayload,
-  EventPayload,
-  EventRevisionPayload,
   ExerciseGroupPayload,
   ExerciseGroupRevisionPayload,
   ExercisePayload,
@@ -149,73 +145,6 @@ export function addArticleInteraction(payload: ArticlePayload) {
       payload.taxonomyTermIds.length > 0
         ? Matchers.eachLike(Matchers.like(payload.taxonomyTermIds[0]))
         : [],
-  })
-}
-
-export function addCoursePageInteraction(payload: CoursePagePayload) {
-  return addUuidInteraction<CoursePagePayload>({
-    __typename: payload.__typename,
-    id: payload.id,
-    trashed: Matchers.boolean(payload.trashed),
-    instance: Matchers.string(payload.instance),
-    alias: payload.alias ? Matchers.string(payload.alias) : null,
-    date: Matchers.iso8601DateTime(payload.date),
-    currentRevisionId: payload.currentRevisionId
-      ? Matchers.integer(payload.currentRevisionId)
-      : null,
-    licenseId: Matchers.integer(payload.licenseId),
-    parentId: Matchers.integer(payload.parentId),
-  })
-}
-
-export function addCoursePageRevisionInteraction(
-  payload: CoursePageRevisionPayload
-) {
-  return addUuidInteraction<CoursePageRevisionPayload>({
-    __typename: payload.__typename,
-    id: payload.id,
-    trashed: Matchers.boolean(payload.trashed),
-    date: Matchers.iso8601DateTime(payload.date),
-    authorId: Matchers.integer(payload.authorId),
-    repositoryId: Matchers.integer(payload.repositoryId),
-    title: Matchers.string(payload.title),
-    content: Matchers.string(payload.content),
-    changes: Matchers.string(payload.changes),
-  })
-}
-
-export function addEventInteraction(payload: EventPayload) {
-  return addUuidInteraction<EventPayload>({
-    __typename: payload.__typename,
-    id: payload.id,
-    trashed: Matchers.boolean(payload.trashed),
-    instance: Matchers.string(payload.instance),
-    alias: payload.alias ? Matchers.string(payload.alias) : null,
-    date: Matchers.iso8601DateTime(payload.date),
-    currentRevisionId: payload.currentRevisionId
-      ? Matchers.integer(payload.currentRevisionId)
-      : null,
-    licenseId: Matchers.integer(payload.licenseId),
-    taxonomyTermIds:
-      payload.taxonomyTermIds.length > 0
-        ? Matchers.eachLike(Matchers.like(payload.taxonomyTermIds[0]))
-        : [],
-  })
-}
-
-export function addEventRevisionInteraction(payload: EventRevisionPayload) {
-  return addUuidInteraction<EventRevisionPayload>({
-    __typename: payload.__typename,
-    id: payload.id,
-    trashed: Matchers.boolean(payload.trashed),
-    date: Matchers.iso8601DateTime(payload.date),
-    authorId: Matchers.integer(payload.authorId),
-    repositoryId: Matchers.integer(payload.repositoryId),
-    title: Matchers.string(payload.title),
-    content: Matchers.string(payload.content),
-    changes: Matchers.string(payload.changes),
-    metaTitle: Matchers.string(payload.metaTitle),
-    metaDescription: Matchers.string(payload.metaDescription),
   })
 }
 
