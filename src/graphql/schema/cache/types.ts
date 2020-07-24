@@ -22,14 +22,14 @@
 import {
   Mutation_RemoveCacheArgs,
   Mutation_SetCacheArgs,
-  Query_GetCacheKeysArgs,
+  Query_CacheKeysArgs,
 } from '../../../types'
 import { Connection } from '../connection'
 import { MutationResolver, QueryResolver } from '../types'
 
 export interface CacheResolvers {
   Query: {
-    _getCacheKeys: QueryResolver<Query_GetCacheKeysArgs, Connection<string>>
+    _cacheKeys: QueryResolver<Query_CacheKeysArgs, Connection<string>>
   }
   Mutation: {
     _setCache: MutationResolver<Mutation_SetCacheArgs>

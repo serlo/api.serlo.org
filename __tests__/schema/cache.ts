@@ -113,7 +113,7 @@ function createCacheKeysQuery() {
   return {
     query: gql`
       query {
-        _getCacheKeys {
+        _cacheKeys {
           totalCount
           nodes
         }
@@ -122,7 +122,7 @@ function createCacheKeysQuery() {
   }
 }
 
-test('_getCacheKeys', async () => {
+test('_cacheKeys', async () => {
   const { client } = createTestClient({
     service: Service.Serlo,
     user: null,
@@ -133,7 +133,7 @@ test('_getCacheKeys', async () => {
   await assertSuccessfulGraphQLQuery({
     ...createCacheKeysQuery(),
     data: {
-      _getCacheKeys: {
+      _cacheKeys: {
         nodes: ['foo', 'bar', 'boo'],
         totalCount: 3,
       },
