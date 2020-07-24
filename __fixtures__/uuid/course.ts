@@ -22,7 +22,6 @@
 import * as R from 'ramda'
 
 import {
-  AliasPayload,
   CoursePayload,
   CourseRevisionPayload,
   EntityRevisionType,
@@ -43,15 +42,6 @@ export const course: CoursePayload = {
   licenseId: license.id,
   taxonomyTermIds: [5],
   pageIds: [18521],
-}
-
-export const courseAlias: AliasPayload = {
-  id: 18514,
-  instance: Instance.De,
-  path:
-    '/mathe/geometrie/satzgruppe-des-pythagoras/ueberblick-zum-satz-des-pythagoras',
-  source: '/entity/view/18514',
-  timestamp: '2014-06-16T15:58:45Z',
 }
 
 export const courseRevision: CourseRevisionPayload = {

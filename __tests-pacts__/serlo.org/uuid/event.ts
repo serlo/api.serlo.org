@@ -19,115 +19,43 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
-import * as R from 'ramda'
 
-import { event, eventAlias, eventRevision } from '../../../__fixtures__'
-import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
 import {
-  addAliasInteraction,
-  addEventInteraction,
-  addEventRevisionInteraction,
-} from '../../__utils__/interactions'
+  event,
+  eventRevision,
+  getEventDataWithoutSubResolvers,
+  getEventRevisionDataWithoutSubResolvers,
+} from '../../../__fixtures__'
+import {
+  EventPayload,
+  EventRevisionPayload,
+} from '../../../src/graphql/schema/uuid/event'
+import {
+  addUuidInteraction,
+  assertSuccessfulGraphQLQuery,
+} from '../../__utils__'
 
-describe('Event', () => {
-  test('by alias', async () => {
-    await addEventInteraction(event)
-    await addAliasInteraction(eventAlias)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-          {
-            uuid(
-              alias: {
-                instance: de
-                path: "${eventAlias.path}"
-              }
-            ) {
-              __typename
-              ... on Event {
-                id
-                trashed
-                instance
-                alias
-                date
-                currentRevision {
-                  id
-                }
-                license {
-                  id
-                }
-              }
-            }
-          }
-        `,
-      data: {
-        uuid: {
-          ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
-            event
-          ),
-          currentRevision: {
-            id: eventRevision.id,
-          },
-          license: {
-            id: 1,
-          },
-        },
-      },
-    })
+test('Event', async () => {
+  await addUuidInteraction<EventPayload>({
+    __typename: event.__typename,
+    id: event.id,
+    trashed: Matchers.boolean(event.trashed),
+    instance: Matchers.string(event.instance),
+    alias: event.alias ? Matchers.string(event.alias) : null,
+    date: Matchers.iso8601DateTime(event.date),
+    currentRevisionId: event.currentRevisionId
+      ? Matchers.integer(event.currentRevisionId)
+      : null,
+    licenseId: Matchers.integer(event.licenseId),
+    taxonomyTermIds:
+      event.taxonomyTermIds.length > 0
+        ? Matchers.eachLike(Matchers.like(event.taxonomyTermIds[0]))
+        : [],
   })
-
-  test('by alias (w/ currentRevision)', async () => {
-    await addEventInteraction(event)
-    await addAliasInteraction(eventAlias)
-    await addEventRevisionInteraction(eventRevision)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-          {
-            uuid(
-              alias: {
-                instance: de
-                path: "${eventAlias.path}"
-              }
-            ) {
-              __typename
-              ... on Event {
-                id
-                trashed
-                instance
-                alias
-                date
-                currentRevision {
-                  id
-                  title
-                  content
-                  changes
-                }
-              }
-            }
-          }
-        `,
-      data: {
-        uuid: {
-          ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
-            event
-          ),
-          currentRevision: {
-            id: eventRevision.id,
-            title: 'title',
-            content: 'content',
-            changes: 'changes',
-          },
-        },
-      },
-    })
-  })
-
-  test('by id', async () => {
-    await addEventInteraction(event)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
         {
           uuid(id: ${event.id}) {
             __typename
@@ -137,80 +65,32 @@ describe('Event', () => {
               alias
               instance
               date
-              currentRevision {
-                id
-              }
-              license {
-                id
-              }
             }
           }
         }
       `,
-      data: {
-        uuid: {
-          ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
-            event
-          ),
-          currentRevision: {
-            id: eventRevision.id,
-          },
-          license: {
-            id: 1,
-          },
-        },
-      },
-    })
+    data: {
+      uuid: getEventDataWithoutSubResolvers(event),
+    },
   })
 })
 
-describe('EventRevision', () => {
-  test('by id', async () => {
-    await addEventRevisionInteraction(eventRevision)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(id: ${eventRevision.id}) {
-            __typename
-            ... on EventRevision {
-              id
-              trashed
-              date
-              title
-              content
-              changes
-              metaTitle
-              metaDescription
-              author {
-                id
-              }
-              event {
-                id
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(['authorId', 'repositoryId'], eventRevision),
-          author: {
-            id: 1,
-          },
-          event: {
-            id: event.id,
-          },
-        },
-      },
-    })
+test('EventRevision', async () => {
+  await addUuidInteraction<EventRevisionPayload>({
+    __typename: eventRevision.__typename,
+    id: eventRevision.id,
+    trashed: Matchers.boolean(eventRevision.trashed),
+    date: Matchers.iso8601DateTime(eventRevision.date),
+    authorId: Matchers.integer(eventRevision.authorId),
+    repositoryId: Matchers.integer(eventRevision.repositoryId),
+    title: Matchers.string(eventRevision.title),
+    content: Matchers.string(eventRevision.content),
+    changes: Matchers.string(eventRevision.changes),
+    metaTitle: Matchers.string(eventRevision.metaTitle),
+    metaDescription: Matchers.string(eventRevision.metaDescription),
   })
-
-  test('by id (w/ event)', async () => {
-    await addEventRevisionInteraction(eventRevision)
-    await addEventInteraction(event)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
         {
           uuid(id: ${eventRevision.id}) {
             __typename
@@ -223,33 +103,12 @@ describe('EventRevision', () => {
               changes
               metaTitle
               metaDescription
-              author {
-                id
-              }
-              event {
-                id
-                currentRevision {
-                  id
-                }
-              }
             }
           }
         }
       `,
-      data: {
-        uuid: {
-          ...R.omit(['authorId', 'repositoryId'], eventRevision),
-          author: {
-            id: 1,
-          },
-          event: {
-            id: event.id,
-            currentRevision: {
-              id: eventRevision.id,
-            },
-          },
-        },
-      },
-    })
+    data: {
+      uuid: getEventRevisionDataWithoutSubResolvers(eventRevision),
+    },
   })
 })
