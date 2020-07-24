@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
@@ -29,14 +30,17 @@ import {
   coursePageRevision,
   courseRevision,
 } from '../../../__fixtures__'
-import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
+import {
+  CoursePayload,
+  CourseRevisionPayload,
+} from '../../../src/graphql/schema/uuid/course'
 import {
   addAliasInteraction,
-  addCourseInteraction,
   addCoursePageInteraction,
   addCoursePageRevisionInteraction,
-  addCourseRevisionInteraction,
-} from '../../__utils__/interactions'
+  addUuidInteraction,
+  assertSuccessfulGraphQLQuery,
+} from '../../__utils__'
 
 describe('CoursePage', () => {
   test('by alias', async () => {
@@ -133,8 +137,38 @@ describe('CoursePage', () => {
   test('by alias (w/ course)', async () => {
     await addCoursePageInteraction(coursePage)
     await addAliasInteraction(coursePageAlias)
-    await addCourseRevisionInteraction(courseRevision)
-    await addCourseInteraction(course)
+    await addUuidInteraction<CourseRevisionPayload>({
+      __typename: courseRevision.__typename,
+      id: courseRevision.id,
+      trashed: Matchers.boolean(courseRevision.trashed),
+      date: Matchers.iso8601DateTime(courseRevision.date),
+      authorId: Matchers.integer(courseRevision.authorId),
+      repositoryId: Matchers.integer(courseRevision.repositoryId),
+      title: Matchers.string(courseRevision.title),
+      content: Matchers.string(courseRevision.content),
+      changes: Matchers.string(courseRevision.changes),
+      metaDescription: Matchers.string(courseRevision.metaDescription),
+    })
+    await addUuidInteraction<CoursePayload>({
+      __typename: course.__typename,
+      id: course.id,
+      trashed: Matchers.boolean(course.trashed),
+      instance: Matchers.string(course.instance),
+      alias: course.alias ? Matchers.string(course.alias) : null,
+      date: Matchers.iso8601DateTime(course.date),
+      currentRevisionId: course.currentRevisionId
+        ? Matchers.integer(course.currentRevisionId)
+        : null,
+      licenseId: Matchers.integer(course.licenseId),
+      taxonomyTermIds:
+        course.taxonomyTermIds.length > 0
+          ? Matchers.eachLike(Matchers.like(course.taxonomyTermIds[0]))
+          : [],
+      pageIds:
+        course.pageIds.length > 0
+          ? Matchers.eachLike(Matchers.like(course.pageIds[0]))
+          : [],
+    })
     await assertSuccessfulGraphQLQuery({
       query: gql`
           {

@@ -34,6 +34,7 @@ export * from './date-time'
 export * from './instance'
 export * from './json'
 export * from './license'
+export * from './notification'
 export * from './uuid'
 
 export const schema = Schema.merge(
