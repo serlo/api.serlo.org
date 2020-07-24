@@ -14,7 +14,7 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
-  _getCacheKeys: Query_GetCacheResult;
+  _cacheKeys: Query_CacheKeysResult;
   activeDonors: Array<User>;
   license?: Maybe<License>;
   notifications: QueryNotificationsResult;
@@ -22,7 +22,7 @@ export type Query = {
 };
 
 
-export type Query_GetCacheKeysArgs = {
+export type Query_CacheKeysArgs = {
   after?: Maybe<Scalars['String']>;
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
@@ -49,8 +49,8 @@ export type QueryUuidArgs = {
   id?: Maybe<Scalars['Int']>;
 };
 
-export type Query_GetCacheResult = {
-  __typename?: 'Query_GetCacheResult';
+export type Query_CacheKeysResult = {
+  __typename?: 'Query_CacheKeysResult';
   edges: Array<CacheKeyCursor>;
   nodes: Array<Scalars['String']>;
   totalCount: Scalars['Int'];

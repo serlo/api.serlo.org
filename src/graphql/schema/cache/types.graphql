@@ -1,13 +1,13 @@
 extend type Query {
-  _getCacheKeys(
+  _cacheKeys(
     after: String
     before: String
     first: Int
     last: Int
-  ): Query_GetCacheResult!
+  ): Query_CacheKeysResult!
 }
 
-type Query_GetCacheResult {
+type Query_CacheKeysResult {
   edges: [CacheKeyCursor!]!
   nodes: [String!]!
   totalCount: Int!

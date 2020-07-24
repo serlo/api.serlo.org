@@ -27,7 +27,7 @@ import { CacheResolvers } from './types'
 
 export const resolvers: CacheResolvers = {
   Query: {
-    async _getCacheKeys(_parent, { ...cursorPayload }, { dataSources }) {
+    async _cacheKeys(_parent, { ...cursorPayload }, { dataSources }) {
       const cacheKeys = await dataSources.serlo.getAllCacheKeys()
       return resolveConnection<string>({
         nodes: cacheKeys,
