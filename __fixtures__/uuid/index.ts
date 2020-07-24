@@ -21,10 +21,6 @@
  */
 import {
   AliasPayload,
-  CoursePagePayload,
-  CoursePageRevisionPayload,
-  CoursePayload,
-  CourseRevisionPayload,
   DiscriminatorType,
   EntityRevisionType,
   EntityType,
@@ -36,6 +32,7 @@ import {
   ExerciseRevisionPayload,
   GroupedExercisePayload,
   GroupedExerciseRevisionPayload,
+  NavigationPayload,
   PagePayload,
   PageRevisionPayload,
   SolutionPayload,
@@ -44,7 +41,6 @@ import {
   UserPayload,
   VideoPayload,
   VideoRevisionPayload,
-  NavigationPayload,
 } from '../../src/graphql/schema'
 import { Instance, TaxonomyTermType } from '../../src/types'
 import { license } from '../license'
@@ -54,6 +50,8 @@ export * from './abstract-taxonomy-term-child'
 export * from './abstract-uuid'
 export * from './applet'
 export * from './article'
+export * from './course'
+export * from './course-page'
 export * from './taxonomy-term'
 
 export const navigation: NavigationPayload = {
@@ -70,74 +68,6 @@ export const navigation: NavigationPayload = {
     },
   ],
   instance: Instance.De,
-}
-
-export const course: CoursePayload = {
-  __typename: EntityType.Course,
-  id: 18514,
-  trashed: false,
-  instance: Instance.De,
-  alias:
-    '/mathe/geometrie/satzgruppe-des-pythagoras/ueberblick-zum-satz-des-pythagoras',
-  date: '2014-03-01T20:45:56Z',
-  currentRevisionId: 30713,
-  licenseId: license.id,
-  taxonomyTermIds: [5],
-  pageIds: [18521],
-}
-
-export const courseAlias: AliasPayload = {
-  id: 18514,
-  instance: Instance.De,
-  path:
-    '/mathe/geometrie/satzgruppe-des-pythagoras/ueberblick-zum-satz-des-pythagoras',
-  source: '/entity/view/18514',
-  timestamp: '2014-06-16T15:58:45Z',
-}
-
-export const courseRevision: CourseRevisionPayload = {
-  __typename: EntityRevisionType.CourseRevision,
-  id: 30713,
-  trashed: false,
-  date: '2014-09-15T15:28:35Z',
-  authorId: 1,
-  repositoryId: course.id,
-  title: 'title',
-  content: 'content',
-  changes: 'changes',
-  metaDescription: 'metaDescription',
-}
-
-export const coursePage: CoursePagePayload = {
-  __typename: EntityType.CoursePage,
-  id: 18521,
-  trashed: false,
-  instance: Instance.De,
-  alias: '/18521/formel',
-  date: '2014-03-01T20:45:56Z',
-  currentRevisionId: 19277,
-  licenseId: license.id,
-  parentId: course.id,
-}
-
-export const coursePageAlias: AliasPayload = {
-  id: 18521,
-  instance: Instance.De,
-  path: '/18521/formel',
-  source: '/entity/view/18521',
-  timestamp: '2014-06-16T15:58:45Z',
-}
-
-export const coursePageRevision: CoursePageRevisionPayload = {
-  __typename: EntityRevisionType.CoursePageRevision,
-  id: 19277,
-  trashed: false,
-  date: '2014-09-15T15:28:35Z',
-  authorId: 1,
-  repositoryId: coursePage.id,
-  title: 'title',
-  content: 'content',
-  changes: 'changes',
 }
 
 export const event: EventPayload = {
