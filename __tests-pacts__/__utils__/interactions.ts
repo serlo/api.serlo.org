@@ -424,3 +424,12 @@ function addJsonInteraction({
     },
   })
 }
+
+export function addCacheKeysInteraction(payload: string[]) {
+  return addJsonInteraction({
+    name: `fetch data of cache keys`,
+    given: '',
+    path: `/api/cache-keys`,
+    body: payload,
+  })
+}
