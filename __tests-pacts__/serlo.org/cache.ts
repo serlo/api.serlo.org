@@ -19,17 +19,28 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-/* eslint-disable import/no-unassigned-import */
-describe('License', () => {
-  require('./license')
+import { gql } from 'apollo-server'
+
+import { assertSuccessfulGraphQLQuery } from '../__utils__/assertions'
+import { addCacheKeysInteraction } from '../__utils__/interactions'
+
+test('CacheKeys', async () => {
+  await addCacheKeysInteraction(['foo', 'bar', 'boo'])
+
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query {
+        _cacheKeys {
+          nodes
+          totalCount
+        }
+      }
+    `,
+    data: {
+      _cacheKeys: {
+        nodes: ['foo', 'bar', 'boo'],
+        totalCount: 3,
+      },
+    },
+  })
 })
-describe('Notification', () => {
-  require('./notification')
-})
-describe('Uuid', () => {
-  require('./uuid')
-})
-describe('Cache', () => {
-  require('./cache')
-})
-/* eslint-enable import/no-unassigned-import */
