@@ -28,10 +28,7 @@ import {
   page,
   pageRevision,
 } from '../../../__fixtures__'
-import {
-  PagePayload,
-  PageRevisionPayload,
-} from '../../../src/graphql/schema/uuid/page'
+import { PagePayload, PageRevisionPayload } from '../../../src/graphql/schema'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,

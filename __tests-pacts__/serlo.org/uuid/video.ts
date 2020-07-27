@@ -24,10 +24,7 @@ import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
 import { video, videoRevision } from '../../../__fixtures__'
-import {
-  VideoPayload,
-  VideoRevisionPayload,
-} from '../../../src/graphql/schema/uuid/video'
+import { VideoPayload, VideoRevisionPayload } from '../../../src/graphql/schema'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,

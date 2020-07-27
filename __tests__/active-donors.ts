@@ -22,14 +22,9 @@
 import { gql } from 'apollo-server'
 import { rest } from 'msw'
 
-import { user, user2, article } from '../__fixtures__'
-import {
-  UuidPayload,
-  ArticlePayload,
-  UserPayload,
-} from '../src/graphql/schema/uuid'
-import { assertSuccessfulGraphQLQuery } from './__utils__/assertions'
-import { createTestClient } from './__utils__/test-client'
+import { article, user, user2 } from '../__fixtures__'
+import { ArticlePayload, UserPayload, UuidPayload } from '../src/graphql/schema'
+import { assertSuccessfulGraphQLQuery, createTestClient } from './__utils__'
 
 const { client, cache } = createTestClient()
 

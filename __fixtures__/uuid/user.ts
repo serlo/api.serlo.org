@@ -1,5 +1,4 @@
-import { DiscriminatorType } from '../../src/graphql/schema/uuid/abstract-uuid'
-import { UserPayload } from '../../src/graphql/schema/uuid/user'
+import { DiscriminatorType, UserPayload } from '../../src/graphql/schema'
 
 export const user: UserPayload = {
   __typename: DiscriminatorType.User,

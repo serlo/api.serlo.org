@@ -3,11 +3,9 @@ import * as R from 'ramda'
 import {
   EntityRevisionType,
   EntityType,
-} from '../../src/graphql/schema/uuid/abstract-entity'
-import {
   VideoPayload,
   VideoRevisionPayload,
-} from '../../src/graphql/schema/uuid/video'
+} from '../../src/graphql/schema'
 import { Instance } from '../../src/types'
 import { license } from '../license'
 

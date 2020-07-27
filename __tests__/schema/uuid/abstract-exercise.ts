@@ -22,12 +22,12 @@
 import * as R from 'ramda'
 
 import {
+  createExerciseSolutionQuery,
   exercise,
   getSolutionDataWithoutSubResolvers,
   groupedExercise,
   solution,
 } from '../../../__fixtures__'
-import { createExerciseSolutionQuery } from '../../../__fixtures__/uuid/abstract-exercise'
 import {
   AbstractExercisePayload,
   EntityType,

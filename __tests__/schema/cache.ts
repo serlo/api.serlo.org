@@ -23,18 +23,18 @@ import { isSome } from 'fp-ts/lib/Option'
 import { rest } from 'msw'
 
 import {
+  createCacheKeysQuery,
   createRemoveCacheMutation,
   createSetCacheMutation,
   variables,
-  createCacheKeysQuery,
 } from '../../__fixtures__'
 import { Service } from '../../src/graphql/schema/types'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
-} from '../__utils__/assertions'
-import { createTestClient } from '../__utils__/test-client'
+  createTestClient,
+} from '../__utils__'
 
 describe('cache', () => {
   beforeEach(() => {

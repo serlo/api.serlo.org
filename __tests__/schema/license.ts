@@ -23,8 +23,7 @@ import { rest } from 'msw'
 
 import { createLicenseQuery, license } from '../../__fixtures__'
 import { Service } from '../../src/graphql/schema/types'
-import { assertSuccessfulGraphQLQuery } from '../__utils__/assertions'
-import { createTestClient } from '../__utils__/test-client'
+import { assertSuccessfulGraphQLQuery, createTestClient } from '../__utils__'
 
 beforeEach(() => {
   global.server.use(
