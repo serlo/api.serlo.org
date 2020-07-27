@@ -93,9 +93,6 @@ export type ArticleRevision = AbstractUuid & AbstractEntityRevision & {
 };
 
 // @public (undocumented)
-<<<<<<< HEAD
-export type Course = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & {
-=======
 export type CacheKeyCursor = {
     __typename?: 'CacheKeyCursor';
     cursor: Scalars['String'];
@@ -103,8 +100,7 @@ export type CacheKeyCursor = {
 };
 
 // @public (undocumented)
-export type Course = AbstractUuid & AbstractEntity & {
->>>>>>> 70f7604... Add _getCacheKeys, Query_GetCacheResult and CacheKeyCursor
+export type Course = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & {
     __typename?: 'Course';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];

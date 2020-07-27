@@ -21,12 +21,13 @@
  */
 import { gql } from 'apollo-server'
 
-import { assertSuccessfulGraphQLQuery } from '../__utils__/assertions'
-import { addCacheKeysInteraction } from '../__utils__/interactions'
+import {
+  addCacheKeysInteraction,
+  assertSuccessfulGraphQLQuery,
+} from '../__utils__'
 
 test('CacheKeys', async () => {
-  await addCacheKeysInteraction(['foo', 'bar', 'boo'])
-
+  await addCacheKeysInteraction(['foo'])
   await assertSuccessfulGraphQLQuery({
     query: gql`
       query {
@@ -38,8 +39,8 @@ test('CacheKeys', async () => {
     `,
     data: {
       _cacheKeys: {
-        nodes: ['foo', 'bar', 'boo'],
-        totalCount: 3,
+        nodes: ['foo'],
+        totalCount: 1,
       },
     },
   })
