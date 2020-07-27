@@ -22,13 +22,25 @@
 import { gql } from 'apollo-server'
 
 import { user } from '../../../__fixtures__'
+import { Service } from '../../../src/graphql/schema/types'
 import {
-  addUserInteraction,
   assertSuccessfulGraphQLQuery,
+  Client,
+  createTestClient,
+  createUuidHandler,
 } from '../../__utils__'
 
+let client: Client
+
+beforeEach(() => {
+  client = createTestClient({
+    service: Service.Playground,
+    user: null,
+  }).client
+  global.server.use(createUuidHandler(user))
+})
+
 test('by id', async () => {
-  await addUserInteraction(user)
   await assertSuccessfulGraphQLQuery({
     query: gql`
       query article($id: Int!) {
@@ -49,5 +61,6 @@ test('by id', async () => {
     data: {
       uuid: user,
     },
+    client,
   })
 })
