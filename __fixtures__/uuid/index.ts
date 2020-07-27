@@ -24,17 +24,9 @@ import {
   DiscriminatorType,
   EntityRevisionType,
   EntityType,
-  ExerciseGroupPayload,
-  ExerciseGroupRevisionPayload,
-  ExercisePayload,
-  ExerciseRevisionPayload,
-  GroupedExercisePayload,
-  GroupedExerciseRevisionPayload,
   NavigationPayload,
   PagePayload,
   PageRevisionPayload,
-  SolutionPayload,
-  SolutionRevisionPayload,
   TaxonomyTermPayload,
   UserPayload,
   VideoPayload,
@@ -50,7 +42,11 @@ export * from './applet'
 export * from './article'
 export * from './course'
 export * from './course-page'
+export * from './exercise'
+export * from './exercise-group'
 export * from './event'
+export * from './grouped-exercise'
+export * from './solution'
 export * from './taxonomy-term'
 
 export const navigation: NavigationPayload = {
@@ -96,135 +92,6 @@ export const pageRevision: PageRevisionPayload = {
   date: '2015-02-28T02:06:40Z',
   authorId: 1,
   repositoryId: page.id,
-}
-
-export const exerciseAlias: AliasPayload = {
-  id: 29637,
-  instance: Instance.De,
-  path: '/mathe/stochastik/grundbegriffe-und-methoden/baumdiagramm/29637',
-  source: '/entity/view/29637',
-  timestamp: '2014-05-25T10:25:44Z',
-}
-
-export const exercise: ExercisePayload = {
-  __typename: EntityType.Exercise,
-  id: 29637,
-  trashed: false,
-  instance: Instance.De,
-  alias: '/mathe/stochastik/grundbegriffe-und-methoden/baumdiagramm/29637',
-  date: '2014-03-01T20:45:56Z',
-  currentRevisionId: 29638,
-  licenseId: license.id,
-  solutionId: 29648,
-  taxonomyTermIds: [5],
-}
-
-export const exerciseRevision: ExerciseRevisionPayload = {
-  __typename: EntityRevisionType.ExerciseRevision,
-  id: 29638,
-  trashed: false,
-  date: '2014-09-15T15:28:35Z',
-  authorId: 1,
-  repositoryId: exercise.id,
-  content: 'content',
-  changes: 'changes',
-}
-
-export const exerciseGroupAlias: AliasPayload = {
-  id: 2217,
-  instance: Instance.De,
-  path:
-    '/mathe/arithmetik-und-rechnen/grundrechenarten/sachaufgaben-zu-den-grundrechenarten/2217',
-  source: '/entity/view/2217',
-  timestamp: '2014-05-25T10:25:44Z',
-}
-
-export const exerciseGroup: ExerciseGroupPayload = {
-  __typename: EntityType.ExerciseGroup,
-  id: 2217,
-  trashed: false,
-  instance: Instance.De,
-  alias:
-    '/mathe/arithmetik-und-rechnen/grundrechenarten/sachaufgaben-zu-den-grundrechenarten/2217',
-  date: '2014-03-01T20:45:56Z',
-  currentRevisionId: 2218,
-  licenseId: license.id,
-  taxonomyTermIds: [5],
-  exerciseIds: [2219],
-}
-
-export const exerciseGroupRevision: ExerciseGroupRevisionPayload = {
-  __typename: EntityRevisionType.ExerciseGroupRevision,
-  id: 2218,
-  trashed: false,
-  date: '2014-09-15T15:28:35Z',
-  authorId: 1,
-  repositoryId: exerciseGroup.id,
-  content: 'content',
-  changes: 'changes',
-}
-
-export const groupedExerciseAlias: AliasPayload = {
-  id: 2219,
-  instance: Instance.De,
-  path: '/2219/2219',
-  source: '/entity/view/2219',
-  timestamp: '2014-05-25T10:25:44Z',
-}
-
-export const groupedExercise: GroupedExercisePayload = {
-  __typename: EntityType.GroupedExercise,
-  id: 2219,
-  trashed: false,
-  instance: Instance.De,
-  alias: '/2219/2219',
-  date: '2014-03-01T20:45:56Z',
-  currentRevisionId: 2220,
-  licenseId: license.id,
-  solutionId: 29648,
-  parentId: exerciseGroup.id,
-}
-
-export const groupedExerciseRevision: GroupedExerciseRevisionPayload = {
-  __typename: EntityRevisionType.GroupedExerciseRevision,
-  id: 2220,
-  trashed: false,
-  date: '2014-09-15T15:28:35Z',
-  authorId: 1,
-  repositoryId: groupedExercise.id,
-  content: 'content',
-  changes: 'changes',
-}
-
-export const solutionAlias: AliasPayload = {
-  id: 29648,
-  instance: Instance.De,
-  path: '/29648/29648',
-  source: '/entity/view/29648',
-  timestamp: '2014-05-25T10:25:44Z',
-}
-
-export const solution: SolutionPayload = {
-  __typename: EntityType.Solution,
-  id: 29648,
-  trashed: false,
-  instance: Instance.De,
-  alias: '/29648/29648',
-  date: '2014-03-01T20:45:56Z',
-  currentRevisionId: 29652,
-  licenseId: license.id,
-  parentId: exercise.id,
-}
-
-export const solutionRevision: SolutionRevisionPayload = {
-  __typename: EntityRevisionType.SolutionRevision,
-  id: 29652,
-  trashed: false,
-  date: '2014-09-15T15:28:35Z',
-  authorId: 1,
-  repositoryId: solution.id,
-  content: 'content',
-  changes: 'changes',
 }
 
 export const taxonomyTermRoot: TaxonomyTermPayload = {
