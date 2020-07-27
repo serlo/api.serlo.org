@@ -1,0 +1,23 @@
+interface AbstractExercise {
+  # extends AbstractEntity
+  id: Int!
+  trashed: Boolean!
+  date: DateTime!
+  instance: Instance!
+  alias: String
+  license: License!
+
+  currentRevision: AbstractExerciseRevision
+  solution: Solution
+}
+
+interface AbstractExerciseRevision {
+  # extends AbstractEntityRevision
+  id: Int!
+  trashed: Boolean!
+  author: User!
+  date: DateTime!
+
+  content: String!
+  changes: String!
+}

@@ -19,29 +19,26 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import {
-  createEntityResolvers,
-  createEntityRevisionResolvers,
-  EntityRevisionType,
-  EntityType,
-} from '../abstract-entity'
-import { createExerciseResolvers } from '../abstract-exercise/utils'
-import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
-import { ExercisePreResolver, ExerciseRevisionPreResolver } from './types'
+import { Resolver } from '../../types'
+import { requestsOnlyFields } from '../../utils'
+import { SolutionPayload, SolutionPreResolver } from '../solution'
+import { AbstractExercisePreResolver } from './types'
 
-export const resolvers = {
-  Exercise: {
-    ...createTaxonomyTermChildResolvers<ExercisePreResolver>(),
-    ...createEntityResolvers<ExercisePreResolver, ExerciseRevisionPreResolver>({
-      entityRevisionType: EntityRevisionType.ExerciseRevision,
-    }),
-    ...createExerciseResolvers<ExercisePreResolver>(),
-  },
-  ExerciseRevision: createEntityRevisionResolvers<
-    ExercisePreResolver,
-    ExerciseRevisionPreResolver
-  >({
-    entityType: EntityType.Exercise,
-    repository: 'exercise',
-  }),
+export interface ExerciseResolvers<E extends AbstractExercisePreResolver> {
+  solution: Resolver<E, never, Partial<SolutionPreResolver> | null>
+}
+
+export function createExerciseResolvers<
+  E extends AbstractExercisePreResolver
+>(): ExerciseResolvers<E> {
+  return {
+    async solution(exercise, _args, { dataSources }, info) {
+      if (!exercise.solutionId) return null
+      const partialSolution = { id: exercise.solutionId }
+      if (requestsOnlyFields('Solution', ['id'], info)) {
+        return partialSolution
+      }
+      return dataSources.serlo.getUuid<SolutionPayload>(partialSolution)
+    },
+  }
 }

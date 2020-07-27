@@ -21,7 +21,6 @@
  */
 import { AbstractEntity, AbstractEntityRevision } from '../../../../types'
 import { TypeResolver } from '../../types'
-import { AbstractUuidPreResolver } from '../abstract-uuid'
 import { AppletPayload, AppletRevisionPayload } from '../applet'
 import { ArticlePayload, ArticleRevisionPayload } from '../article'
 import { CoursePayload, CourseRevisionPayload } from '../course'
@@ -64,8 +63,7 @@ export type EntityPreResolver =
   | SolutionPayload
   | VideoPayload
 export interface AbstractEntityPreResolver
-  extends AbstractUuidPreResolver,
-    Omit<AbstractEntity, 'alias' | 'currentRevision' | 'license'> {
+  extends Omit<AbstractEntity, 'alias' | 'currentRevision' | 'license'> {
   __typename: EntityType
   alias: string | null
   currentRevisionId: number | null
@@ -100,8 +98,7 @@ export type EntityRevisionPreResolver =
   | SolutionRevisionPayload
   | VideoRevisionPayload
 export interface AbstractEntityRevisionPreResolver
-  extends AbstractUuidPreResolver,
-    Omit<AbstractEntityRevision, 'author' | 'repository'> {
+  extends Omit<AbstractEntityRevision, 'author' | 'repository'> {
   __typename: EntityRevisionType
   authorId: number
   repositoryId: number

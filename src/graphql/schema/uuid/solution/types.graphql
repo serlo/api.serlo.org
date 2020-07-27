@@ -6,7 +6,7 @@ type Solution implements AbstractUuid & AbstractEntity {
   date: DateTime!
   license: License!
   currentRevision: SolutionRevision
-  exercise: Exercise!
+  exercise: AbstractExercise!
 }
 
 type SolutionRevision implements AbstractUuid & AbstractEntityRevision {

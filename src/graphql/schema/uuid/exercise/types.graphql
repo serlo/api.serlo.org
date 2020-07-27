@@ -1,4 +1,4 @@
-type Exercise implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild {
+type Exercise implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & AbstractExercise {
   id: Int!
   trashed: Boolean!
   instance: Instance!
@@ -10,7 +10,7 @@ type Exercise implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChi
   solution: Solution
 }
 
-type ExerciseRevision implements AbstractUuid & AbstractEntityRevision {
+type ExerciseRevision implements AbstractUuid & AbstractEntityRevision & AbstractExerciseRevision {
   id: Int!
   author: User!
   trashed: Boolean!
