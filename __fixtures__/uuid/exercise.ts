@@ -22,7 +22,6 @@
 import * as R from 'ramda'
 
 import {
-  AliasPayload,
   EntityRevisionType,
   EntityType,
   ExercisePayload,
@@ -30,14 +29,6 @@ import {
 } from '../../src/graphql/schema'
 import { Instance } from '../../src/types'
 import { license } from '../license'
-
-export const exerciseAlias: AliasPayload = {
-  id: 29637,
-  instance: Instance.De,
-  path: '/mathe/stochastik/grundbegriffe-und-methoden/baumdiagramm/29637',
-  source: '/entity/view/29637',
-  timestamp: '2014-05-25T10:25:44Z',
-}
 
 export const exercise: ExercisePayload = {
   __typename: EntityType.Exercise,

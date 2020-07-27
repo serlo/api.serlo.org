@@ -19,8 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import * as R from 'ramda'
+
 import {
-  AliasPayload,
   EntityRevisionType,
   EntityType,
   ExerciseGroupPayload,
@@ -28,15 +29,6 @@ import {
 } from '../../src/graphql/schema'
 import { Instance } from '../../src/types'
 import { license } from '../license'
-
-export const exerciseGroupAlias: AliasPayload = {
-  id: 2217,
-  instance: Instance.De,
-  path:
-    '/mathe/arithmetik-und-rechnen/grundrechenarten/sachaufgaben-zu-den-grundrechenarten/2217',
-  source: '/entity/view/2217',
-  timestamp: '2014-05-25T10:25:44Z',
-}
 
 export const exerciseGroup: ExerciseGroupPayload = {
   __typename: EntityType.ExerciseGroup,
@@ -61,4 +53,19 @@ export const exerciseGroupRevision: ExerciseGroupRevisionPayload = {
   repositoryId: exerciseGroup.id,
   content: 'content',
   changes: 'changes',
+}
+
+export function getExerciseGroupDataWithoutSubResolvers(
+  exerciseGroup: ExerciseGroupPayload
+) {
+  return R.omit(
+    ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'exerciseIds'],
+    exerciseGroup
+  )
+}
+
+export function getExerciseGroupRevisionDataWithoutSubResolvers(
+  exerciseGroupRevision: ExerciseGroupRevisionPayload
+) {
+  return R.omit(['authorId', 'repositoryId'], exerciseGroupRevision)
 }

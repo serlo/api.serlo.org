@@ -19,311 +19,98 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
-import * as R from 'ramda'
 
 import {
   exerciseGroup,
-  exerciseGroupAlias,
   exerciseGroupRevision,
-  groupedExercise,
-  groupedExerciseRevision,
+  getExerciseGroupDataWithoutSubResolvers,
+  getExerciseGroupRevisionDataWithoutSubResolvers,
 } from '../../../__fixtures__'
-import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
 import {
-  addAliasInteraction,
-  addExerciseGroupInteraction,
-  addExerciseGroupRevisionInteraction,
-  addGroupedExerciseInteraction,
-  addGroupedExerciseRevisionInteraction,
-} from '../../__utils__/interactions'
+  ExerciseGroupPayload,
+  ExerciseGroupRevisionPayload,
+} from '../../../src/graphql/schema/uuid/exercise-group'
+import {
+  addUuidInteraction,
+  assertSuccessfulGraphQLQuery,
+} from '../../__utils__'
 
-describe('ExerciseGroup', () => {
-  test('by alias', async () => {
-    await addExerciseGroupInteraction(exerciseGroup)
-    await addAliasInteraction(exerciseGroupAlias)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-          {
-            uuid(
-              alias: {
-                instance: de
-                path: "${exerciseGroupAlias.path}"
-              }
-            ) {
-              __typename
-              ... on ExerciseGroup {
-                id
-                trashed
-                instance
-                alias
-                date
-                currentRevision {
-                  id
-                }
-                license {
-                  id
-                }
-              }
-            }
-          }
-        `,
-      data: {
-        uuid: {
-          ...R.omit(
-            [
-              'currentRevisionId',
-              'licenseId',
-              'taxonomyTermIds',
-              'exerciseIds',
-            ],
-            exerciseGroup
-          ),
-          currentRevision: {
-            id: exerciseGroup.currentRevisionId,
-          },
-          license: {
-            id: 1,
-          },
-        },
-      },
-    })
+test('ExerciseGroup', async () => {
+  await addUuidInteraction<ExerciseGroupPayload>({
+    __typename: exerciseGroup.__typename,
+    id: exerciseGroup.id,
+    trashed: Matchers.boolean(exerciseGroup.trashed),
+    instance: Matchers.string(exerciseGroup.instance),
+    alias: exerciseGroup.alias ? Matchers.string(exerciseGroup.alias) : null,
+    date: Matchers.iso8601DateTime(exerciseGroup.date),
+    currentRevisionId: exerciseGroup.currentRevisionId
+      ? Matchers.integer(exerciseGroup.currentRevisionId)
+      : null,
+    licenseId: Matchers.integer(exerciseGroup.licenseId),
+    exerciseIds:
+      exerciseGroup.exerciseIds.length > 0
+        ? Matchers.eachLike(Matchers.like(exerciseGroup.exerciseIds[0]))
+        : [],
+    taxonomyTermIds:
+      exerciseGroup.taxonomyTermIds.length > 0
+        ? Matchers.eachLike(Matchers.like(exerciseGroup.taxonomyTermIds[0]))
+        : [],
   })
-
-  test('by alias (w/ currentRevision)', async () => {
-    await addExerciseGroupInteraction(exerciseGroup)
-    await addAliasInteraction(exerciseGroupAlias)
-    await addExerciseGroupRevisionInteraction(exerciseGroupRevision)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-          {
-            uuid(
-              alias: {
-                instance: de
-                path: "${exerciseGroupAlias.path}"
-              }
-            ) {
-              __typename
-              ... on ExerciseGroup {
-                id
-                trashed
-                instance
-                alias
-                date
-                currentRevision {
-                  id
-                  content
-                  changes
-                }
-              }
-            }
-          }
-        `,
-      data: {
-        uuid: {
-          ...R.omit(
-            [
-              'currentRevisionId',
-              'licenseId',
-              'taxonomyTermIds',
-              'exerciseIds',
-            ],
-            exerciseGroup
-          ),
-          currentRevision: {
-            id: exerciseGroup.currentRevisionId,
-            content: 'content',
-            changes: 'changes',
-          },
-        },
-      },
-    })
-  })
-
-  test('by alias (w/ exercises)', async () => {
-    await addExerciseGroupInteraction(exerciseGroup)
-    await addAliasInteraction(exerciseGroupAlias)
-    await addGroupedExerciseRevisionInteraction(groupedExerciseRevision)
-    await addGroupedExerciseInteraction(groupedExercise)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(
-            alias: {
-              instance: de
-              path: "${exerciseGroupAlias.path}"
-            }
-          ) {
-            __typename
-            ... on ExerciseGroup {
-              id
-              trashed
-              instance
-              alias
-              date
-              exercises {
-                id
-                currentRevision {
-                  id
-                  content
-                  changes
-                }
-              }
-            }
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query exerciseGroup($id: Int!) {
+        uuid(id: $id) {
+          __typename
+          ... on ExerciseGroup {
+            id
+            trashed
+            instance
+            alias
+            date
           }
         }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(
-            [
-              'currentRevisionId',
-              'licenseId',
-              'taxonomyTermIds',
-              'exerciseIds',
-            ],
-            exerciseGroup
-          ),
-          exercises: [
-            {
-              id: groupedExercise.id,
-              currentRevision: {
-                id: groupedExerciseRevision.id,
-                content: groupedExerciseRevision.content,
-                changes: groupedExerciseRevision.changes,
-              },
-            },
-          ],
-        },
-      },
-    })
-  })
-
-  test('by id', async () => {
-    await addExerciseGroupInteraction(exerciseGroup)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(id: ${exerciseGroup.id}) {
-            __typename
-            ... on ExerciseGroup {
-              id
-              trashed
-              alias
-              instance
-              date
-              currentRevision {
-                id
-              }
-              license {
-                id
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(
-            [
-              'currentRevisionId',
-              'licenseId',
-              'taxonomyTermIds',
-              'exerciseIds',
-            ],
-            exerciseGroup
-          ),
-          currentRevision: {
-            id: exerciseGroup.currentRevisionId,
-          },
-          license: {
-            id: 1,
-          },
-        },
-      },
-    })
+      }
+    `,
+    variables: exerciseGroup,
+    data: {
+      uuid: getExerciseGroupDataWithoutSubResolvers(exerciseGroup),
+    },
   })
 })
 
-describe('ExerciseGroupRevision', () => {
-  test('by id', async () => {
-    await addExerciseGroupRevisionInteraction(exerciseGroupRevision)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(id: ${exerciseGroup.currentRevisionId}) {
-            __typename
-            ... on ExerciseGroupRevision {
-              id
-              trashed
-              date
-              content
-              changes
-              author {
-                id
-              }
-              exerciseGroup {
-                id
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(['authorId', 'repositoryId'], exerciseGroupRevision),
-          author: {
-            id: 1,
-          },
-          exerciseGroup: {
-            id: exerciseGroup.id,
-          },
-        },
-      },
-    })
+test('ExerciseGroupRevision', async () => {
+  await addUuidInteraction<ExerciseGroupRevisionPayload>({
+    __typename: exerciseGroupRevision.__typename,
+    id: exerciseGroupRevision.id,
+    trashed: Matchers.boolean(exerciseGroupRevision.trashed),
+    date: Matchers.iso8601DateTime(exerciseGroupRevision.date),
+    authorId: Matchers.integer(exerciseGroupRevision.authorId),
+    repositoryId: Matchers.integer(exerciseGroupRevision.repositoryId),
+    content: Matchers.string(exerciseGroupRevision.content),
+    changes: Matchers.string(exerciseGroupRevision.changes),
   })
-
-  test('by id (w/ exerciseGroup)', async () => {
-    await addExerciseGroupRevisionInteraction(exerciseGroupRevision)
-    await addExerciseGroupInteraction(exerciseGroup)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(id: ${exerciseGroup.currentRevisionId}) {
-            __typename
-            ... on ExerciseGroupRevision {
-              id
-              trashed
-              date
-              content
-              changes
-              author {
-                id
-              }
-              exerciseGroup {
-                id
-                currentRevision {
-                  id
-                }
-              }
-            }
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query exerciseGroupRevision($id: Int!) {
+        uuid(id: $id) {
+          __typename
+          ... on ExerciseGroupRevision {
+            id
+            trashed
+            date
+            content
+            changes
           }
         }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(['authorId', 'repositoryId'], exerciseGroupRevision),
-          author: {
-            id: 1,
-          },
-          exerciseGroup: {
-            id: exerciseGroup.id,
-            currentRevision: {
-              id: exerciseGroup.currentRevisionId,
-            },
-          },
-        },
-      },
-    })
+      }
+    `,
+    variables: exerciseGroupRevision,
+    data: {
+      uuid: getExerciseGroupRevisionDataWithoutSubResolvers(
+        exerciseGroupRevision
+      ),
+    },
   })
 })
