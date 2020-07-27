@@ -27,7 +27,6 @@ import {
   NavigationPayload,
   NotificationEventPayload,
   NotificationsPayload,
-  TaxonomyTermPayload,
   UserPayload,
   UuidPayload,
   VideoPayload,
@@ -39,7 +38,7 @@ export function addNavigationInteraction(payload: NavigationPayload) {
   return addJsonInteraction({
     name: `fetch data of navigation`,
     given: '',
-    path: `/api/navigation`,
+    path: '/api/navigation',
     body: {
       data: Matchers.eachLike({
         label: Matchers.string(payload.data[0].label),
@@ -134,27 +133,6 @@ export function addArticleInteraction(payload: ArticlePayload) {
     taxonomyTermIds:
       payload.taxonomyTermIds.length > 0
         ? Matchers.eachLike(Matchers.like(payload.taxonomyTermIds[0]))
-        : [],
-  })
-}
-
-export function addTaxonomyTermInteraction(payload: TaxonomyTermPayload) {
-  return addUuidInteraction<TaxonomyTermPayload>({
-    __typename: payload.__typename,
-    id: payload.id,
-    trashed: Matchers.boolean(payload.trashed),
-    alias: payload.alias ? Matchers.string(payload.alias) : null,
-    type: Matchers.string(payload.type),
-    instance: Matchers.string(payload.instance),
-    name: Matchers.string(payload.name),
-    description: payload.description
-      ? Matchers.string(payload.description)
-      : null,
-    weight: Matchers.integer(payload.weight),
-    parentId: payload.parentId ? Matchers.integer(payload.parentId) : null,
-    childrenIds:
-      payload.childrenIds.length > 0
-        ? Matchers.eachLike(Matchers.integer(payload.childrenIds[0]))
         : [],
   })
 }

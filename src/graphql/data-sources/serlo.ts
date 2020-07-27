@@ -67,7 +67,7 @@ export class SerloDataSource extends RESTDataSource {
     id: number
   }): Promise<Navigation | null> {
     const payload = await this.cacheAwareGet<NavigationPayload>({
-      path: `/api/navigation`,
+      path: '/api/navigation',
       instance,
     })
     const { data } = payload

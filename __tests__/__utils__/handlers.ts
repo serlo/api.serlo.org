@@ -22,7 +22,11 @@
 import { rest } from 'msw'
 
 import { LicensePayload } from '../../src/graphql/schema/license'
-import { AliasPayload, UuidPayload } from '../../src/graphql/schema/uuid'
+import {
+  AliasPayload,
+  NavigationPayload,
+  UuidPayload,
+} from '../../src/graphql/schema/uuid'
 import { Instance } from '../../src/types'
 
 export function createAliasHandler(alias: AliasPayload) {
@@ -38,6 +42,14 @@ export function createLicenseHandler(license: LicensePayload) {
     instance: license.instance,
     path: `/api/license/${license.id}`,
     body: license,
+  })
+}
+
+export function createNavigationHandler(navigation: NavigationPayload) {
+  return createJsonHandler({
+    instance: navigation.instance,
+    path: '/api/navigation',
+    body: navigation,
   })
 }
 
