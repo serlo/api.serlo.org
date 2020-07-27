@@ -19,6 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import * as R from 'ramda'
+
 import {
   AliasPayload,
   EntityRevisionType,
@@ -59,4 +61,17 @@ export const exerciseRevision: ExerciseRevisionPayload = {
   repositoryId: exercise.id,
   content: 'content',
   changes: 'changes',
+}
+
+export function getExerciseDataWithoutSubResolvers(exercise: ExercisePayload) {
+  return R.omit(
+    ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'solutionId'],
+    exercise
+  )
+}
+
+export function getExerciseRevisionDataWithoutSubResolvers(
+  exerciseRevision: ExerciseRevisionPayload
+) {
+  return R.omit(['authorId', 'repositoryId'], exerciseRevision)
 }
