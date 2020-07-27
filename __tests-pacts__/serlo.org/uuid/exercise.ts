@@ -19,289 +19,96 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
-import * as R from 'ramda'
 
 import {
   exercise,
-  exerciseAlias,
   exerciseRevision,
-  solution,
-  solutionRevision,
+  getExerciseDataWithoutSubResolvers,
+  getExerciseRevisionDataWithoutSubResolvers,
 } from '../../../__fixtures__'
-import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
 import {
-  addAliasInteraction,
-  addExerciseInteraction,
-  addExerciseRevisionInteraction,
-  addSolutionInteraction,
-  addSolutionRevisionInteraction,
-} from '../../__utils__/interactions'
+  ExercisePayload,
+  ExerciseRevisionPayload,
+} from '../../../src/graphql/schema/uuid/exercise'
+import {
+  addUuidInteraction,
+  assertSuccessfulGraphQLQuery,
+} from '../../__utils__'
 
-describe('Exercise', () => {
-  test('by alias', async () => {
-    await addExerciseInteraction(exercise)
-    await addAliasInteraction(exerciseAlias)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-          {
-            uuid(
-              alias: {
-                instance: de
-                path: "${exerciseAlias.path}"
-              }
-            ) {
-              __typename
-              ... on Exercise {
-                id
-                trashed
-                instance
-                alias
-                date
-                currentRevision {
-                  id
-                }
-                license {
-                  id
-                }
-              }
-            }
-          }
-        `,
-      data: {
-        uuid: {
-          ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'solutionId'],
-            exercise
-          ),
-          currentRevision: {
-            id: exercise.currentRevisionId,
-          },
-          license: {
-            id: 1,
-          },
-        },
-      },
-    })
+test('Exercise', async () => {
+  await addUuidInteraction<ExercisePayload>({
+    __typename: exercise.__typename,
+    id: exercise.id,
+    trashed: Matchers.boolean(exercise.trashed),
+    instance: Matchers.string(exercise.instance),
+    alias: exercise.alias ? Matchers.string(exercise.alias) : null,
+    date: Matchers.iso8601DateTime(exercise.date),
+    currentRevisionId: exercise.currentRevisionId
+      ? Matchers.integer(exercise.currentRevisionId)
+      : null,
+    licenseId: Matchers.integer(exercise.licenseId),
+    solutionId: exercise.solutionId
+      ? Matchers.integer(exercise.solutionId)
+      : null,
+    taxonomyTermIds:
+      exercise.taxonomyTermIds.length > 0
+        ? Matchers.eachLike(Matchers.like(exercise.taxonomyTermIds[0]))
+        : [],
   })
-
-  test('by alias (w/ currentRevision)', async () => {
-    await addExerciseInteraction(exercise)
-    await addAliasInteraction(exerciseAlias)
-    await addExerciseRevisionInteraction(exerciseRevision)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-          {
-            uuid(
-              alias: {
-                instance: de
-                path: "${exerciseAlias.path}"
-              }
-            ) {
-              __typename
-              ... on Exercise {
-                id
-                trashed
-                instance
-                alias
-                date
-                currentRevision {
-                  id
-                  content
-                  changes
-                }
-              }
-            }
-          }
-        `,
-      data: {
-        uuid: {
-          ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'solutionId'],
-            exercise
-          ),
-          currentRevision: {
-            id: exercise.currentRevisionId,
-            content: 'content',
-            changes: 'changes',
-          },
-        },
-      },
-    })
-  })
-
-  test('by alias (w/ solution)', async () => {
-    await addExerciseInteraction(exercise)
-    await addAliasInteraction(exerciseAlias)
-    await addSolutionRevisionInteraction(solutionRevision)
-    await addSolutionInteraction(solution)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-          {
-            uuid(
-              alias: {
-                instance: de
-                path: "${exerciseAlias.path}"
-              }
-            ) {
-              __typename
-              ... on Exercise {
-                id
-                trashed
-                instance
-                alias
-                date
-                solution {
-                  id
-                  currentRevision {
-                    id
-                    content
-                    changes
-                  }
-                }
-              }
-            }
-          }
-        `,
-      data: {
-        uuid: {
-          ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'solutionId'],
-            exercise
-          ),
-          solution: {
-            id: solution.id,
-            currentRevision: {
-              id: solutionRevision.id,
-              content: 'content',
-              changes: 'changes',
-            },
-          },
-        },
-      },
-    })
-  })
-
-  test('by id', async () => {
-    await addExerciseInteraction(exercise)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(id: ${exercise.id}) {
-            __typename
-            ... on Exercise {
-              id
-              trashed
-              alias
-              instance
-              date
-              currentRevision {
-                id
-              }
-              license {
-                id
-              }
-            }
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query exercise($id: Int!) {
+        uuid(id: $id) {
+          __typename
+          ... on Exercise {
+            id
+            trashed
+            alias
+            instance
+            date
           }
         }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'solutionId'],
-            exercise
-          ),
-          currentRevision: {
-            id: exercise.currentRevisionId,
-          },
-          license: {
-            id: 1,
-          },
-        },
-      },
-    })
+      }
+    `,
+    variables: exercise,
+    data: {
+      uuid: getExerciseDataWithoutSubResolvers(exercise),
+    },
   })
 })
 
-describe('ExerciseRevision', () => {
-  test('by id', async () => {
-    await addExerciseRevisionInteraction(exerciseRevision)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(id: ${exercise.currentRevisionId}) {
-            __typename
-            ... on ExerciseRevision {
-              id
-              trashed
-              date
-              content
-              changes
-              author {
-                id
-              }
-              exercise {
-                id
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(['authorId', 'repositoryId'], exerciseRevision),
-          author: {
-            id: 1,
-          },
-          exercise: {
-            id: exercise.id,
-          },
-        },
-      },
-    })
+test('ExerciseRevision', async () => {
+  await addUuidInteraction<ExerciseRevisionPayload>({
+    __typename: exerciseRevision.__typename,
+    id: exerciseRevision.id,
+    trashed: Matchers.boolean(exerciseRevision.trashed),
+    date: Matchers.iso8601DateTime(exerciseRevision.date),
+    authorId: Matchers.integer(exerciseRevision.authorId),
+    repositoryId: Matchers.integer(exerciseRevision.repositoryId),
+    content: Matchers.string(exerciseRevision.content),
+    changes: Matchers.string(exerciseRevision.changes),
   })
 
-  test('by id (w/ exercise)', async () => {
-    await addExerciseRevisionInteraction(exerciseRevision)
-    await addExerciseInteraction(exercise)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(id: ${exercise.currentRevisionId}) {
-            __typename
-            ... on ExerciseRevision {
-              id
-              trashed
-              date
-              content
-              changes
-              author {
-                id
-              }
-              exercise {
-                id
-                currentRevision {
-                  id
-                }
-              }
-            }
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query exerciseRevision($id: Int!) {
+        uuid(id: $id) {
+          __typename
+          ... on ExerciseRevision {
+            id
+            trashed
+            date
+            content
+            changes
           }
         }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(['authorId', 'repositoryId'], exerciseRevision),
-          author: {
-            id: 1,
-          },
-          exercise: {
-            id: exercise.id,
-            currentRevision: {
-              id: exercise.currentRevisionId,
-            },
-          },
-        },
-      },
-    })
+      }
+    `,
+    variables: exerciseRevision,
+    data: {
+      uuid: getExerciseRevisionDataWithoutSubResolvers(exerciseRevision),
+    },
   })
 })
