@@ -397,6 +397,15 @@ export function addUuidInteraction<T extends UuidPayload>(
   })
 }
 
+export function addCacheKeysInteraction(payload: string[]) {
+  return addJsonInteraction({
+    name: `fetch data of cache keys`,
+    given: '',
+    path: '/api/cache-keys',
+    body: Matchers.eachLike(payload[0]),
+  })
+}
+
 function addJsonInteraction({
   name,
   given,
@@ -422,14 +431,5 @@ function addJsonInteraction({
       },
       body,
     },
-  })
-}
-
-export function addCacheKeysInteraction(payload: string[]) {
-  return addJsonInteraction({
-    name: `fetch data of cache keys`,
-    given: '',
-    path: `/api/cache-keys`,
-    body: payload,
   })
 }
