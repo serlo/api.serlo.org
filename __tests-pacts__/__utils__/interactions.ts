@@ -29,8 +29,6 @@ import {
   NotificationsPayload,
   UserPayload,
   UuidPayload,
-  VideoPayload,
-  VideoRevisionPayload,
 } from '../../src/graphql/schema'
 import { License } from '../../src/types'
 
@@ -150,40 +148,6 @@ export function addUserInteraction(payload: UserPayload) {
     description: payload.description
       ? Matchers.string(payload.description)
       : null,
-  })
-}
-
-export function addVideoInteraction(payload: VideoPayload) {
-  return addUuidInteraction<VideoPayload>({
-    __typename: payload.__typename,
-    id: payload.id,
-    trashed: Matchers.boolean(payload.trashed),
-    instance: Matchers.string(payload.instance),
-    alias: payload.alias ? Matchers.string(payload.alias) : null,
-    date: Matchers.iso8601DateTime(payload.date),
-    currentRevisionId: payload.currentRevisionId
-      ? Matchers.integer(payload.currentRevisionId)
-      : null,
-    licenseId: Matchers.integer(payload.licenseId),
-    taxonomyTermIds:
-      payload.taxonomyTermIds.length > 0
-        ? Matchers.eachLike(Matchers.like(payload.taxonomyTermIds[0]))
-        : [],
-  })
-}
-
-export function addVideoRevisionInteraction(payload: VideoRevisionPayload) {
-  return addUuidInteraction<VideoRevisionPayload>({
-    __typename: payload.__typename,
-    id: payload.id,
-    trashed: Matchers.boolean(payload.trashed),
-    date: Matchers.iso8601DateTime(payload.date),
-    authorId: Matchers.integer(payload.authorId),
-    repositoryId: Matchers.integer(payload.repositoryId),
-    title: Matchers.string(payload.title),
-    content: Matchers.string(payload.content),
-    url: Matchers.string(payload.url),
-    changes: Matchers.string(payload.changes),
   })
 }
 

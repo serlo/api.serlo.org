@@ -19,115 +19,39 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
-import { video, videoAlias, videoRevision } from '../../../__fixtures__'
-import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
+import { video, videoRevision } from '../../../__fixtures__'
 import {
-  addAliasInteraction,
-  addVideoInteraction,
-  addVideoRevisionInteraction,
-} from '../../__utils__/interactions'
+  VideoPayload,
+  VideoRevisionPayload,
+} from '../../../src/graphql/schema/uuid/video'
+import {
+  addUuidInteraction,
+  assertSuccessfulGraphQLQuery,
+} from '../../__utils__'
 
-describe('Video', () => {
-  test('by alias', async () => {
-    await addVideoInteraction(video)
-    await addAliasInteraction(videoAlias)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-          {
-            uuid(
-              alias: {
-                instance: de
-                path: "${videoAlias.path}"
-              }
-            ) {
-              __typename
-              ... on Video {
-                id
-                trashed
-                instance
-                alias
-                date
-                currentRevision {
-                  id
-                }
-                license {
-                  id
-                }
-              }
-            }
-          }
-        `,
-      data: {
-        uuid: {
-          ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
-            video
-          ),
-          currentRevision: {
-            id: videoRevision.id,
-          },
-          license: {
-            id: 1,
-          },
-        },
-      },
-    })
+test('Video', async () => {
+  await addUuidInteraction<VideoPayload>({
+    __typename: video.__typename,
+    id: video.id,
+    trashed: Matchers.boolean(video.trashed),
+    instance: Matchers.string(video.instance),
+    alias: video.alias ? Matchers.string(video.alias) : null,
+    date: Matchers.iso8601DateTime(video.date),
+    currentRevisionId: video.currentRevisionId
+      ? Matchers.integer(video.currentRevisionId)
+      : null,
+    licenseId: Matchers.integer(video.licenseId),
+    taxonomyTermIds:
+      video.taxonomyTermIds.length > 0
+        ? Matchers.eachLike(Matchers.like(video.taxonomyTermIds[0]))
+        : [],
   })
-
-  test('by alias (w/ currentRevision)', async () => {
-    await addVideoInteraction(video)
-    await addAliasInteraction(videoAlias)
-    await addVideoRevisionInteraction(videoRevision)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-          {
-            uuid(
-              alias: {
-                instance: de
-                path: "${videoAlias.path}"
-              }
-            ) {
-              __typename
-              ... on Video {
-                id
-                trashed
-                instance
-                alias
-                date
-                currentRevision {
-                  id
-                  title
-                  url
-                  changes
-                }
-              }
-            }
-          }
-        `,
-      data: {
-        uuid: {
-          ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
-            video
-          ),
-          currentRevision: {
-            id: videoRevision.id,
-            title: 'title',
-            url: 'url',
-            changes: 'changes',
-          },
-        },
-      },
-    })
-  })
-
-  test('by id', async () => {
-    await addVideoInteraction(video)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
         {
           uuid(id: ${video.id}) {
             __typename
@@ -147,69 +71,35 @@ describe('Video', () => {
           }
         }
       `,
-      data: {
-        uuid: {
-          ...R.omit(
-            ['currentRevisionId', 'licenseId', 'taxonomyTermIds'],
-            video
-          ),
-          currentRevision: {
-            id: videoRevision.id,
-          },
-          license: {
-            id: 1,
-          },
+    data: {
+      uuid: {
+        ...R.omit(['currentRevisionId', 'licenseId', 'taxonomyTermIds'], video),
+        currentRevision: {
+          id: videoRevision.id,
+        },
+        license: {
+          id: 1,
         },
       },
-    })
+    },
   })
 })
 
-describe('VideoRevision', () => {
-  test('by id', async () => {
-    await addVideoRevisionInteraction(videoRevision)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(id: ${videoRevision.id}) {
-            __typename
-            ... on VideoRevision {
-              id
-              trashed
-              date
-              title
-              content
-              url
-              changes
-              author {
-                id
-              }
-              video {
-                id
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(['authorId', 'repositoryId'], videoRevision),
-          author: {
-            id: 1,
-          },
-          video: {
-            id: video.id,
-          },
-        },
-      },
-    })
+test('VideoRevision', async () => {
+  await addUuidInteraction<VideoRevisionPayload>({
+    __typename: videoRevision.__typename,
+    id: videoRevision.id,
+    trashed: Matchers.boolean(videoRevision.trashed),
+    date: Matchers.iso8601DateTime(videoRevision.date),
+    authorId: Matchers.integer(videoRevision.authorId),
+    repositoryId: Matchers.integer(videoRevision.repositoryId),
+    title: Matchers.string(videoRevision.title),
+    content: Matchers.string(videoRevision.content),
+    url: Matchers.string(videoRevision.url),
+    changes: Matchers.string(videoRevision.changes),
   })
-
-  test('by id (w/ video)', async () => {
-    await addVideoRevisionInteraction(videoRevision)
-    await addVideoInteraction(video)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
         {
           uuid(id: ${videoRevision.id}) {
             __typename
@@ -226,28 +116,21 @@ describe('VideoRevision', () => {
               }
               video {
                 id
-                currentRevision {
-                  id
-                }
               }
             }
           }
         }
       `,
-      data: {
-        uuid: {
-          ...R.omit(['authorId', 'repositoryId'], videoRevision),
-          author: {
-            id: 1,
-          },
-          video: {
-            id: video.id,
-            currentRevision: {
-              id: videoRevision.id,
-            },
-          },
+    data: {
+      uuid: {
+        ...R.omit(['authorId', 'repositoryId'], videoRevision),
+        author: {
+          id: 1,
+        },
+        video: {
+          id: video.id,
         },
       },
-    })
+    },
   })
 })
