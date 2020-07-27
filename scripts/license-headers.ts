@@ -53,7 +53,12 @@ const lines = [
 
 void g('**/*@(.js|.ts|.tsx)', {
   cwd: root,
-  ignore: ['**/dist/**', '**/node_modules/**'],
+  ignore: [
+    '**/dist/**',
+    '**/dist-types/**',
+    '**/node_modules/**',
+    'src/types.ts',
+  ],
 }).then((files) => {
   return files.map((file) => {
     const filePath = path.join(root, file)

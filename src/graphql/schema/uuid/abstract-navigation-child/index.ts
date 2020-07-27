@@ -19,26 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Context, Resolver } from '../../types'
-import { TaxonomyTermPayload, TaxonomyTermPreResolver } from '../taxonomy-term'
-import { AbstractTaxonomyTermChildPreResolver } from './types'
+import { Schema } from '../../utils'
+import { resolvers } from './resolvers'
+import typeDefs from './types.graphql'
 
-export interface TaxonomyTermChildResolvers<
-  E extends AbstractTaxonomyTermChildPreResolver
-> {
-  taxonomyTerms: Resolver<E, never, TaxonomyTermPreResolver[]>
-}
+export * from './types'
+export * from './utils'
 
-export function createTaxonomyTermChildResolvers<
-  E extends AbstractTaxonomyTermChildPreResolver
->(): TaxonomyTermChildResolvers<E> {
-  return {
-    taxonomyTerms(entity: E, _args: never, { dataSources }: Context) {
-      return Promise.all(
-        entity.taxonomyTermIds.map((id: number) => {
-          return dataSources.serlo.getUuid<TaxonomyTermPayload>({ id })
-        })
-      )
-    },
-  }
-}
+export const abstractNavigationChildSchema = new Schema(resolvers, [typeDefs])

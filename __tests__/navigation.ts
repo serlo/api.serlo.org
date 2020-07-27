@@ -29,15 +29,18 @@ import {
   taxonomyTermRoot,
   taxonomyTermSubject,
 } from '../__fixtures__'
+import {
+  NavigationPayload,
+  PagePayload,
+  TaxonomyTermPayload,
+} from '../src/graphql/schema'
 import { Service } from '../src/graphql/schema/types'
-import { PagePayload, TaxonomyTermPayload } from '../src/graphql/schema/uuid'
-import { NavigationPayload } from '../src/graphql/schema/uuid/navigation'
 import { Instance } from '../src/types'
 import {
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
-} from './__utils__/assertions'
-import { createTestClient } from './__utils__/test-client'
+  createTestClient,
+} from './__utils__'
 
 function createSetNavigationMutation(navigation: NavigationPayload) {
   return {

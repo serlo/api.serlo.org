@@ -21,8 +21,8 @@
  */
 import { License, Page, PageRevision } from '../../../../types'
 import { Resolver } from '../../types'
+import { NavigationChildResolvers } from '../abstract-navigation-child'
 import { DiscriminatorType } from '../abstract-uuid'
-import { Navigation } from '../navigation'
 import { UserPreResolver } from '../user'
 
 export interface PagePreResolver
@@ -47,14 +47,13 @@ export type PageRevisionPayload = PageRevisionPreResolver
 export interface PageResolvers {
   Page: {
     alias: Resolver<PagePreResolver, never, string | null>
-    navigation: Resolver<PagePreResolver, never, Navigation | null>
     currentRevision: Resolver<
       PagePreResolver,
       never,
       Partial<PageRevisionPreResolver> | null
     >
     license: Resolver<PagePreResolver, never, Partial<License>>
-  }
+  } & NavigationChildResolvers<PagePreResolver>
   PageRevision: {
     author: Resolver<PageRevisionPreResolver, never, Partial<UserPreResolver>>
     page: Resolver<PageRevisionPreResolver, never, Partial<PagePreResolver>>

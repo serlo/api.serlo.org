@@ -19,6 +19,11 @@ export type AbstractEntityRevision = {
 };
 
 // @public (undocumented)
+export type AbstractNavigationChild = {
+    navigation?: Maybe<Navigation>;
+};
+
+// @public (undocumented)
 export type AbstractTaxonomyTermChild = {
     taxonomyTerms: Array<TaxonomyTerm>;
 };
@@ -366,7 +371,7 @@ export type NotificationEvent = {
 };
 
 // @public
-export type Page = AbstractUuid & {
+export type Page = AbstractUuid & AbstractNavigationChild & {
     __typename?: 'Page';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -492,7 +497,7 @@ export type SolutionRevision = AbstractUuid & AbstractEntityRevision & {
 };
 
 // @public (undocumented)
-export type TaxonomyTerm = AbstractUuid & {
+export type TaxonomyTerm = AbstractUuid & AbstractNavigationChild & {
     __typename?: 'TaxonomyTerm';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];

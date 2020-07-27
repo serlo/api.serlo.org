@@ -19,9 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Schema } from '../../utils'
-import typeDefs from './types.graphql'
+import { AbstractNavigationChildResolvers } from './types'
 
-export * from './types'
-
-export const navigationSchema = new Schema({}, [typeDefs])
+export const resolvers: AbstractNavigationChildResolvers = {
+  AbstractNavigationChild: {
+    __resolveType(entity) {
+      return entity.__typename
+    },
+  },
+}

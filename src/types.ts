@@ -174,6 +174,23 @@ export type AbstractEntityRevision = {
   date: Scalars['DateTime'];
 };
 
+export type AbstractNavigationChild = {
+  navigation?: Maybe<Navigation>;
+};
+
+export type Navigation = {
+  __typename?: 'Navigation';
+  data: Scalars['JSON'];
+  path: Array<NavigationNode>;
+};
+
+export type NavigationNode = {
+  __typename?: 'NavigationNode';
+  label: Scalars['String'];
+  url?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['Int']>;
+};
+
 export type AbstractTaxonomyTermChild = {
   taxonomyTerms: Array<TaxonomyTerm>;
 };
@@ -389,24 +406,11 @@ export type GroupedExerciseRevision = AbstractUuid & AbstractEntityRevision & {
   changes: Scalars['String'];
 };
 
-export type Navigation = {
-  __typename?: 'Navigation';
-  data: Scalars['JSON'];
-  path: Array<NavigationNode>;
-};
-
-export type NavigationNode = {
-  __typename?: 'NavigationNode';
-  label: Scalars['String'];
-  url?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['Int']>;
-};
-
 /**
  * Represents a Serlo.org page. A `Page` is a repository containing `PageRevision`s, is tied to an `Instance`,
  * has a `License`, and has an alias.
  */
-export type Page = AbstractUuid & {
+export type Page = AbstractUuid & AbstractNavigationChild & {
   __typename?: 'Page';
   /** The ID of the page */
   id: Scalars['Int'];
@@ -479,7 +483,7 @@ export enum TaxonomyTermType {
   TopicFolder = 'topicFolder'
 }
 
-export type TaxonomyTerm = AbstractUuid & {
+export type TaxonomyTerm = AbstractUuid & AbstractNavigationChild & {
   __typename?: 'TaxonomyTerm';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];

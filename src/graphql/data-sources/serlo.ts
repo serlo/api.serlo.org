@@ -27,22 +27,18 @@ import * as R from 'ramda'
 import { Instance, License } from '../../types'
 import { Environment } from '../environment'
 import {
-  NotificationEventPayload,
-  NotificationsPayload,
-} from '../schema/notification'
-import { Service } from '../schema/types'
-import {
   AbstractUuidPayload,
   AliasPayload,
   decodePath,
   encodePath,
   EntityPayload,
-} from '../schema/uuid'
-import {
   Navigation,
   NavigationPayload,
   NodeData,
-} from '../schema/uuid/navigation'
+  NotificationEventPayload,
+  NotificationsPayload,
+} from '../schema'
+import { Service } from '../schema/types'
 
 export class SerloDataSource extends RESTDataSource {
   public constructor(private environment: Environment) {

@@ -12,7 +12,7 @@ enum TaxonomyTermType {
   topicFolder
 }
 
-type TaxonomyTerm implements AbstractUuid {
+type TaxonomyTerm implements AbstractUuid & AbstractNavigationChild {
   id: Int!
   trashed: Boolean!
   type: TaxonomyTermType!
