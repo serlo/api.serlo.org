@@ -93,6 +93,13 @@ export type ArticleRevision = AbstractUuid & AbstractEntityRevision & {
 };
 
 // @public (undocumented)
+export type CacheKeyCursor = {
+    __typename?: 'CacheKeyCursor';
+    cursor: Scalars['String'];
+    node: Scalars['String'];
+};
+
+// @public (undocumented)
 export type Course = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & {
     __typename?: 'Course';
     id: Scalars['Int'];
@@ -394,10 +401,28 @@ export type PageRevision = AbstractUuid & {
 // @public (undocumented)
 export type Query = {
     __typename?: 'Query';
+    _cacheKeys: Query_CacheKeysResult;
     activeDonors: Array<User>;
     license?: Maybe<License>;
     notifications: QueryNotificationsResult;
     uuid?: Maybe<AbstractUuid>;
+};
+
+// @public (undocumented)
+export type Query_CacheKeysArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
+export type Query_CacheKeysResult = {
+    __typename?: 'Query_CacheKeysResult';
+    edges: Array<CacheKeyCursor>;
+    nodes: Array<Scalars['String']>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
 };
 
 // @public (undocumented)

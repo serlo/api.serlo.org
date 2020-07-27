@@ -61,5 +61,5 @@ jobs:
       - run: yarn regenerate-types
       - id: changes
         uses: UnicornGlobal/has-changes-action@v1.0.11
-      - run: echo "Outdated types" && exit 1
+      - run: echo "Outdated types. Please run `yarn regenerate-types` and commit your changes." && exit 1
         if: steps.changes.outputs.changed == 1

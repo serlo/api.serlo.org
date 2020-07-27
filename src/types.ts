@@ -12,6 +12,57 @@ export type Scalars = {
   JSONObject: Record<string, unknown>;
 };
 
+export type Query = {
+  __typename?: 'Query';
+  _cacheKeys: Query_CacheKeysResult;
+  activeDonors: Array<User>;
+  license?: Maybe<License>;
+  notifications: QueryNotificationsResult;
+  uuid?: Maybe<AbstractUuid>;
+};
+
+
+export type Query_CacheKeysArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryLicenseArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryNotificationsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  unread?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type QueryUuidArgs = {
+  alias?: Maybe<AliasInput>;
+  id?: Maybe<Scalars['Int']>;
+};
+
+export type Query_CacheKeysResult = {
+  __typename?: 'Query_CacheKeysResult';
+  edges: Array<CacheKeyCursor>;
+  nodes: Array<Scalars['String']>;
+  totalCount: Scalars['Int'];
+  pageInfo: PageInfo;
+};
+
+export type CacheKeyCursor = {
+  __typename?: 'CacheKeyCursor';
+  cursor: Scalars['String'];
+  node: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   _removeCache?: Maybe<Scalars['Boolean']>;
@@ -66,34 +117,6 @@ export type License = {
   content: Scalars['String'];
   agreement: Scalars['String'];
   iconHref: Scalars['String'];
-};
-
-export type Query = {
-  __typename?: 'Query';
-  activeDonors: Array<User>;
-  license?: Maybe<License>;
-  notifications: QueryNotificationsResult;
-  uuid?: Maybe<AbstractUuid>;
-};
-
-
-export type QueryLicenseArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type QueryNotificationsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  unread?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type QueryUuidArgs = {
-  alias?: Maybe<AliasInput>;
-  id?: Maybe<Scalars['Int']>;
 };
 
 export type Notification = {

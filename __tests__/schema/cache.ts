@@ -20,78 +20,111 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { isSome } from 'fp-ts/lib/Option'
+import { rest } from 'msw'
 
 import {
   createRemoveCacheMutation,
   createSetCacheMutation,
   variables,
+  createCacheKeysQuery,
 } from '../../__fixtures__'
 import { Service } from '../../src/graphql/schema/types'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
+  assertSuccessfulGraphQLQuery,
 } from '../__utils__/assertions'
 import { createTestClient } from '../__utils__/test-client'
 
-test('_setCache (forbidden)', async () => {
-  const { client } = createTestClient({
-    service: Service.Playground,
-    user: null,
+describe('cache', () => {
+  beforeEach(() => {
+    global.server.use(
+      rest.get(
+        `http://de.${process.env.SERLO_ORG_HOST}/api/cache-keys`,
+        (req, res, ctx) => {
+          return res(ctx.status(200), ctx.json(['foo', 'bar', 'boo']))
+        }
+      )
+    )
   })
 
-  await assertFailingGraphQLMutation(
-    {
+  test('_setCache (forbidden)', async () => {
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
+
+    await assertFailingGraphQLMutation(
+      {
+        ...createSetCacheMutation(variables),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
+  })
+
+  test('_setCache (authenticated)', async () => {
+    const { client, cache } = createTestClient({
+      service: Service.Serlo,
+      user: null,
+    })
+
+    await assertSuccessfulGraphQLMutation({
       ...createSetCacheMutation(variables),
       client,
-    },
-    (errors) => {
-      expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
-    }
-  )
-})
+    })
 
-test('_setCache (authenticated)', async () => {
-  const { client, cache } = createTestClient({
-    service: Service.Serlo,
-    user: null,
+    const cachedValue = await cache.get(variables.key)
+    expect(isSome(cachedValue) && cachedValue.value).toEqual(variables.value)
   })
 
-  await assertSuccessfulGraphQLMutation({
-    ...createSetCacheMutation(variables),
-    client,
+  test('_removeCache (forbidden)', async () => {
+    const { client } = createTestClient({
+      service: Service.Playground,
+      user: null,
+    })
+    await assertFailingGraphQLMutation(
+      {
+        ...createRemoveCacheMutation(variables),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
   })
 
-  const cachedValue = await cache.get(variables.key)
-  expect(isSome(cachedValue) && cachedValue.value).toEqual(variables.value)
-})
+  test('_removeCache (authenticated)', async () => {
+    const { client, cache } = createTestClient({
+      service: Service.Serlo,
+      user: null,
+    })
 
-test('_removeCache (forbidden)', async () => {
-  const { client } = createTestClient({
-    service: Service.Playground,
-    user: null,
-  })
-  await assertFailingGraphQLMutation(
-    {
+    await assertSuccessfulGraphQLMutation({
       ...createRemoveCacheMutation(variables),
       client,
-    },
-    (errors) => {
-      expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
-    }
-  )
-})
+    })
 
-test('_removeCache (authenticated)', async () => {
-  const { client, cache } = createTestClient({
-    service: Service.Serlo,
-    user: null,
+    const cachedValue = await cache.get(variables.key)
+    expect(isSome(cachedValue) && cachedValue.value).toEqual(null)
   })
 
-  await assertSuccessfulGraphQLMutation({
-    ...createRemoveCacheMutation(variables),
-    client,
+  test('_cacheKeys', async () => {
+    const { client } = createTestClient({
+      service: Service.Serlo,
+      user: null,
+    })
+    await assertSuccessfulGraphQLQuery({
+      ...createCacheKeysQuery(),
+      data: {
+        _cacheKeys: {
+          nodes: ['foo', 'bar', 'boo'],
+          totalCount: 3,
+        },
+      },
+      client,
+    })
   })
-
-  const cachedValue = await cache.get(variables.key)
-  expect(isSome(cachedValue) && cachedValue.value).toEqual(null)
 })

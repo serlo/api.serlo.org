@@ -21,10 +21,23 @@
  */
 import { ForbiddenError } from 'apollo-server'
 
+import { resolveConnection } from '../connection'
 import { Service } from '../types'
 import { CacheResolvers } from './types'
 
 export const resolvers: CacheResolvers = {
+  Query: {
+    async _cacheKeys(_parent, { ...cursorPayload }, { dataSources }) {
+      const cacheKeys = await dataSources.serlo.getAllCacheKeys()
+      return resolveConnection<string>({
+        nodes: cacheKeys,
+        payload: cursorPayload,
+        createCursor(node) {
+          return node
+        },
+      })
+    },
+  },
   Mutation: {
     async _setCache(_parent, { key, value }, { dataSources, service }) {
       if (service !== Service.Serlo) {

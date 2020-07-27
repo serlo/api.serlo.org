@@ -29,4 +29,7 @@ describe('Notification', () => {
 describe('Uuid', () => {
   require('./uuid')
 })
+describe('Cache', () => {
+  require('./cache')
+})
 /* eslint-enable import/no-unassigned-import */
