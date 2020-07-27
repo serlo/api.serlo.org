@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
@@ -31,15 +32,18 @@ import {
   solution,
   solutionRevision,
 } from '../../../__fixtures__'
+import {
+  ExerciseGroupPayload,
+  ExerciseGroupRevisionPayload,
+} from '../../../src/graphql/schema/uuid/exercise-group'
 import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
 import {
   addAliasInteraction,
-  addExerciseGroupInteraction,
-  addExerciseGroupRevisionInteraction,
   addGroupedExerciseInteraction,
   addGroupedExerciseRevisionInteraction,
   addSolutionInteraction,
   addSolutionRevisionInteraction,
+  addUuidInteraction,
 } from '../../__utils__/interactions'
 
 describe('GroupedExercise', () => {
@@ -189,8 +193,36 @@ describe('GroupedExercise', () => {
   test('by alias (w/ exerciseGroup)', async () => {
     await addGroupedExerciseInteraction(groupedExercise)
     await addAliasInteraction(groupedExerciseAlias)
-    await addExerciseGroupRevisionInteraction(exerciseGroupRevision)
-    await addExerciseGroupInteraction(exerciseGroup)
+    await addUuidInteraction<ExerciseGroupRevisionPayload>({
+      __typename: exerciseGroupRevision.__typename,
+      id: exerciseGroupRevision.id,
+      trashed: Matchers.boolean(exerciseGroupRevision.trashed),
+      date: Matchers.iso8601DateTime(exerciseGroupRevision.date),
+      authorId: Matchers.integer(exerciseGroupRevision.authorId),
+      repositoryId: Matchers.integer(exerciseGroupRevision.repositoryId),
+      content: Matchers.string(exerciseGroupRevision.content),
+      changes: Matchers.string(exerciseGroupRevision.changes),
+    })
+    await addUuidInteraction<ExerciseGroupPayload>({
+      __typename: exerciseGroup.__typename,
+      id: exerciseGroup.id,
+      trashed: Matchers.boolean(exerciseGroup.trashed),
+      instance: Matchers.string(exerciseGroup.instance),
+      alias: exerciseGroup.alias ? Matchers.string(exerciseGroup.alias) : null,
+      date: Matchers.iso8601DateTime(exerciseGroup.date),
+      currentRevisionId: exerciseGroup.currentRevisionId
+        ? Matchers.integer(exerciseGroup.currentRevisionId)
+        : null,
+      licenseId: Matchers.integer(exerciseGroup.licenseId),
+      exerciseIds:
+        exerciseGroup.exerciseIds.length > 0
+          ? Matchers.eachLike(Matchers.like(exerciseGroup.exerciseIds[0]))
+          : [],
+      taxonomyTermIds:
+        exerciseGroup.taxonomyTermIds.length > 0
+          ? Matchers.eachLike(Matchers.like(exerciseGroup.taxonomyTermIds[0]))
+          : [],
+    })
     await assertSuccessfulGraphQLQuery({
       query: gql`
           {

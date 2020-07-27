@@ -24,8 +24,6 @@ import { Matchers } from '@pact-foundation/pact'
 import {
   AliasPayload,
   ArticlePayload,
-  ExerciseGroupPayload,
-  ExerciseGroupRevisionPayload,
   GroupedExercisePayload,
   GroupedExerciseRevisionPayload,
   NavigationPayload,
@@ -143,44 +141,6 @@ export function addArticleInteraction(payload: ArticlePayload) {
       payload.taxonomyTermIds.length > 0
         ? Matchers.eachLike(Matchers.like(payload.taxonomyTermIds[0]))
         : [],
-  })
-}
-
-export function addExerciseGroupInteraction(payload: ExerciseGroupPayload) {
-  return addUuidInteraction<ExerciseGroupPayload>({
-    __typename: payload.__typename,
-    id: payload.id,
-    trashed: Matchers.boolean(payload.trashed),
-    instance: Matchers.string(payload.instance),
-    alias: payload.alias ? Matchers.string(payload.alias) : null,
-    date: Matchers.iso8601DateTime(payload.date),
-    currentRevisionId: payload.currentRevisionId
-      ? Matchers.integer(payload.currentRevisionId)
-      : null,
-    licenseId: Matchers.integer(payload.licenseId),
-    exerciseIds:
-      payload.exerciseIds.length > 0
-        ? Matchers.eachLike(Matchers.like(payload.exerciseIds[0]))
-        : [],
-    taxonomyTermIds:
-      payload.taxonomyTermIds.length > 0
-        ? Matchers.eachLike(Matchers.like(payload.taxonomyTermIds[0]))
-        : [],
-  })
-}
-
-export function addExerciseGroupRevisionInteraction(
-  payload: ExerciseGroupRevisionPayload
-) {
-  return addUuidInteraction<ExerciseGroupRevisionPayload>({
-    __typename: payload.__typename,
-    id: payload.id,
-    trashed: Matchers.boolean(payload.trashed),
-    date: Matchers.iso8601DateTime(payload.date),
-    authorId: Matchers.integer(payload.authorId),
-    repositoryId: Matchers.integer(payload.repositoryId),
-    content: Matchers.string(payload.content),
-    changes: Matchers.string(payload.changes),
   })
 }
 
