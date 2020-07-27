@@ -4,18 +4,44 @@
 
 ```ts
 
-// @public
+// @public (undocumented)
 export type AbstractEntity = {
+    id: Scalars['Int'];
+    trashed: Scalars['Boolean'];
     date: Scalars['DateTime'];
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     license: License;
 };
 
-// @public
+// @public (undocumented)
 export type AbstractEntityRevision = {
+    id: Scalars['Int'];
+    trashed: Scalars['Boolean'];
     author: User;
     date: Scalars['DateTime'];
+};
+
+// @public (undocumented)
+export type AbstractExercise = {
+    id: Scalars['Int'];
+    trashed: Scalars['Boolean'];
+    date: Scalars['DateTime'];
+    instance: Instance;
+    alias?: Maybe<Scalars['String']>;
+    license: License;
+    currentRevision?: Maybe<AbstractExerciseRevision>;
+    solution?: Maybe<Solution>;
+};
+
+// @public (undocumented)
+export type AbstractExerciseRevision = {
+    id: Scalars['Int'];
+    trashed: Scalars['Boolean'];
+    author: User;
+    date: Scalars['DateTime'];
+    content: Scalars['String'];
+    changes: Scalars['String'];
 };
 
 // @public (undocumented)
@@ -25,6 +51,12 @@ export type AbstractNavigationChild = {
 
 // @public (undocumented)
 export type AbstractTaxonomyTermChild = {
+    id: Scalars['Int'];
+    trashed: Scalars['Boolean'];
+    date: Scalars['DateTime'];
+    instance: Instance;
+    alias?: Maybe<Scalars['String']>;
+    license: License;
     taxonomyTerms: Array<TaxonomyTerm>;
 };
 
@@ -194,7 +226,7 @@ export type Exact<T extends {
 };
 
 // @public (undocumented)
-export type Exercise = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & {
+export type Exercise = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & AbstractExercise & {
     __typename?: 'Exercise';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -234,7 +266,7 @@ export type ExerciseGroupRevision = AbstractUuid & AbstractEntityRevision & {
 };
 
 // @public (undocumented)
-export type ExerciseRevision = AbstractUuid & AbstractEntityRevision & {
+export type ExerciseRevision = AbstractUuid & AbstractEntityRevision & AbstractExerciseRevision & {
     __typename?: 'ExerciseRevision';
     id: Scalars['Int'];
     author: User;
@@ -246,7 +278,7 @@ export type ExerciseRevision = AbstractUuid & AbstractEntityRevision & {
 };
 
 // @public (undocumented)
-export type GroupedExercise = AbstractUuid & AbstractEntity & {
+export type GroupedExercise = AbstractUuid & AbstractEntity & AbstractExercise & {
     __typename?: 'GroupedExercise';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -260,7 +292,7 @@ export type GroupedExercise = AbstractUuid & AbstractEntity & {
 };
 
 // @public (undocumented)
-export type GroupedExerciseRevision = AbstractUuid & AbstractEntityRevision & {
+export type GroupedExerciseRevision = AbstractUuid & AbstractEntityRevision & AbstractExerciseRevision & {
     __typename?: 'GroupedExerciseRevision';
     id: Scalars['Int'];
     author: User;
@@ -481,7 +513,7 @@ export type Solution = AbstractUuid & AbstractEntity & {
     date: Scalars['DateTime'];
     license: License;
     currentRevision?: Maybe<SolutionRevision>;
-    exercise: Exercise;
+    exercise: AbstractExercise;
 };
 
 // @public (undocumented)

@@ -151,27 +151,40 @@ export type NotificationCursor = {
   node: Notification;
 };
 
-/**
- * Represents a Serlo.org entity (e.g. an article). An `Entity` is tied to an `Instance`, has a `License`, might have an alias
- * and is the child of `TaxonomyTerm`s
- */
 export type AbstractEntity = {
-  /** The `DateTime` the entity has been created */
+  id: Scalars['Int'];
+  trashed: Scalars['Boolean'];
   date: Scalars['DateTime'];
-  /** The `Instance` the entity is tied to */
   instance: Instance;
-  /** The current alias of the entity */
   alias?: Maybe<Scalars['String']>;
-  /** The `License` of the entity */
   license: License;
 };
 
-/** Represents a Serlo.org entity revision (e.g. a revision of an article). An `EntityRevision` is tied to an `Entity` and has an author. */
 export type AbstractEntityRevision = {
-  /** The `User` that created the entity revision */
+  id: Scalars['Int'];
+  trashed: Scalars['Boolean'];
   author: User;
-  /** The `DateTime` the entity revision has been created */
   date: Scalars['DateTime'];
+};
+
+export type AbstractExercise = {
+  id: Scalars['Int'];
+  trashed: Scalars['Boolean'];
+  date: Scalars['DateTime'];
+  instance: Instance;
+  alias?: Maybe<Scalars['String']>;
+  license: License;
+  currentRevision?: Maybe<AbstractExerciseRevision>;
+  solution?: Maybe<Solution>;
+};
+
+export type AbstractExerciseRevision = {
+  id: Scalars['Int'];
+  trashed: Scalars['Boolean'];
+  author: User;
+  date: Scalars['DateTime'];
+  content: Scalars['String'];
+  changes: Scalars['String'];
 };
 
 export type AbstractNavigationChild = {
@@ -192,6 +205,12 @@ export type NavigationNode = {
 };
 
 export type AbstractTaxonomyTermChild = {
+  id: Scalars['Int'];
+  trashed: Scalars['Boolean'];
+  date: Scalars['DateTime'];
+  instance: Instance;
+  alias?: Maybe<Scalars['String']>;
+  license: License;
   taxonomyTerms: Array<TaxonomyTerm>;
 };
 
@@ -358,7 +377,7 @@ export type ExerciseGroupRevision = AbstractUuid & AbstractEntityRevision & {
   changes: Scalars['String'];
 };
 
-export type Exercise = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & {
+export type Exercise = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & AbstractExercise & {
   __typename?: 'Exercise';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -371,7 +390,7 @@ export type Exercise = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild
   solution?: Maybe<Solution>;
 };
 
-export type ExerciseRevision = AbstractUuid & AbstractEntityRevision & {
+export type ExerciseRevision = AbstractUuid & AbstractEntityRevision & AbstractExerciseRevision & {
   __typename?: 'ExerciseRevision';
   id: Scalars['Int'];
   author: User;
@@ -382,7 +401,7 @@ export type ExerciseRevision = AbstractUuid & AbstractEntityRevision & {
   changes: Scalars['String'];
 };
 
-export type GroupedExercise = AbstractUuid & AbstractEntity & {
+export type GroupedExercise = AbstractUuid & AbstractEntity & AbstractExercise & {
   __typename?: 'GroupedExercise';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -395,7 +414,7 @@ export type GroupedExercise = AbstractUuid & AbstractEntity & {
   exerciseGroup: ExerciseGroup;
 };
 
-export type GroupedExerciseRevision = AbstractUuid & AbstractEntityRevision & {
+export type GroupedExerciseRevision = AbstractUuid & AbstractEntityRevision & AbstractExerciseRevision & {
   __typename?: 'GroupedExerciseRevision';
   id: Scalars['Int'];
   author: User;
@@ -455,7 +474,7 @@ export type Solution = AbstractUuid & AbstractEntity & {
   date: Scalars['DateTime'];
   license: License;
   currentRevision?: Maybe<SolutionRevision>;
-  exercise: Exercise;
+  exercise: AbstractExercise;
 };
 
 export type SolutionRevision = AbstractUuid & AbstractEntityRevision & {

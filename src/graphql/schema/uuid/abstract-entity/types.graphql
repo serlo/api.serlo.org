@@ -1,36 +1,19 @@
-"""
-Represents a Serlo.org entity (e.g. an article). An `Entity` is tied to an `Instance`, has a `License`, might have an alias
-and is the child of `TaxonomyTerm`s
-"""
 interface AbstractEntity {
-  """
-  The `DateTime` the entity has been created
-  """
+  # extends AbstractUuid
+  id: Int!
+  trashed: Boolean!
+
   date: DateTime!
-  """
-  The `Instance` the entity is tied to
-  """
   instance: Instance!
-  """
-  The current alias of the entity
-  """
   alias: String
-  """
-  The `License` of the entity
-  """
   license: License!
 }
 
-"""
-Represents a Serlo.org entity revision (e.g. a revision of an article). An `EntityRevision` is tied to an `Entity` and has an author.
-"""
 interface AbstractEntityRevision {
-  """
-  The `User` that created the entity revision
-  """
+  # extends AbstractUuid
+  id: Int!
+  trashed: Boolean!
+
   author: User!
-  """
-  The `DateTime` the entity revision has been created
-  """
   date: DateTime!
 }

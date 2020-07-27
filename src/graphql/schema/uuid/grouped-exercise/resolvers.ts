@@ -29,8 +29,8 @@ import {
   EntityRevisionType,
   EntityType,
 } from '../abstract-entity'
+import { createExerciseResolvers } from '../abstract-exercise/utils'
 import { ExerciseGroupPayload } from '../exercise-group'
-import { SolutionPayload } from '../solution'
 import {
   GroupedExercisePreResolver,
   GroupedExerciseRevisionPreResolver,
@@ -44,19 +44,7 @@ export const resolvers = {
     >({
       entityRevisionType: EntityRevisionType.GroupedExerciseRevision,
     }),
-    async solution(
-      groupedExercise: GroupedExercisePreResolver,
-      _args: never,
-      { dataSources }: Context,
-      info: GraphQLResolveInfo
-    ) {
-      if (!groupedExercise.solutionId) return null
-      const partialSolution = { id: groupedExercise.solutionId }
-      if (requestsOnlyFields('Solution', ['id'], info)) {
-        return partialSolution
-      }
-      return dataSources.serlo.getUuid<SolutionPayload>(partialSolution)
-    },
+    ...createExerciseResolvers<GroupedExercisePreResolver>(),
     async exerciseGroup(
       groupedExercise: GroupedExercisePreResolver,
       _args: never,

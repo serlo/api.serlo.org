@@ -19,17 +19,14 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { GraphQLResolveInfo } from 'graphql'
-
 import { Context } from '../../types'
-import { requestsOnlyFields } from '../../utils'
 import {
   createEntityResolvers,
   createEntityRevisionResolvers,
   EntityRevisionType,
   EntityType,
 } from '../abstract-entity'
-import { ExercisePayload } from '../exercise'
+import { AbstractExercisePayload } from '../abstract-exercise'
 import { SolutionPreResolver, SolutionRevisionPreResolver } from './types'
 
 export const resolvers = {
@@ -40,14 +37,11 @@ export const resolvers = {
     async exercise(
       solution: SolutionPreResolver,
       _args: never,
-      { dataSources }: Context,
-      info: GraphQLResolveInfo
+      { dataSources }: Context
     ) {
-      const partialExercise = { id: solution.parentId }
-      if (requestsOnlyFields('Exercise', ['id'], info)) {
-        return partialExercise
-      }
-      return dataSources.serlo.getUuid<ExercisePayload>(partialExercise)
+      return dataSources.serlo.getUuid<AbstractExercisePayload>({
+        id: solution.parentId,
+      })
     },
   },
   SolutionRevision: createEntityRevisionResolvers<

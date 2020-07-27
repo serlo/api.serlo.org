@@ -19,29 +19,31 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { TypeResolver } from '../../types'
 import {
-  createEntityResolvers,
-  createEntityRevisionResolvers,
-  EntityRevisionType,
-  EntityType,
+  AbstractEntityPreResolver,
+  AbstractEntityRevisionPreResolver,
 } from '../abstract-entity'
-import { createExerciseResolvers } from '../abstract-exercise/utils'
-import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
-import { ExercisePreResolver, ExerciseRevisionPreResolver } from './types'
 
-export const resolvers = {
-  Exercise: {
-    ...createTaxonomyTermChildResolvers<ExercisePreResolver>(),
-    ...createEntityResolvers<ExercisePreResolver, ExerciseRevisionPreResolver>({
-      entityRevisionType: EntityRevisionType.ExerciseRevision,
-    }),
-    ...createExerciseResolvers<ExercisePreResolver>(),
-  },
-  ExerciseRevision: createEntityRevisionResolvers<
-    ExercisePreResolver,
-    ExerciseRevisionPreResolver
-  >({
-    entityType: EntityType.Exercise,
-    repository: 'exercise',
-  }),
+export interface AbstractExercisePreResolver extends AbstractEntityPreResolver {
+  solutionId: number | null
+}
+
+export type AbstractExercisePayload = AbstractExercisePreResolver
+
+export interface AbstractExerciseRevisionPreResolver
+  extends AbstractEntityRevisionPreResolver {
+  content: string
+  changes: string
+}
+
+export type AbstractExerciseRevisionPayload = AbstractExerciseRevisionPreResolver
+
+export interface AbstractExerciseResolvers {
+  AbstractExercise: {
+    __resolveType: TypeResolver<AbstractExercisePreResolver>
+  }
+  AbstractExerciseRevision: {
+    __resolveType: TypeResolver<AbstractExerciseRevisionPreResolver>
+  }
 }

@@ -19,26 +19,23 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { EntityRevisionType, EntityType } from '../abstract-entity'
 import {
-  AbstractEntityPreResolver,
-  AbstractEntityRevisionPreResolver,
-  EntityRevisionType,
-  EntityType,
-} from '../abstract-entity'
+  AbstractExercisePreResolver,
+  AbstractExerciseRevisionPreResolver,
+} from '../abstract-exercise'
 
-export interface GroupedExercisePreResolver extends AbstractEntityPreResolver {
+export interface GroupedExercisePreResolver
+  extends AbstractExercisePreResolver {
   __typename: EntityType.GroupedExercise
-  solutionId: number | null
   parentId: number
 }
 
 export type GroupedExercisePayload = GroupedExercisePreResolver
 
 export interface GroupedExerciseRevisionPreResolver
-  extends AbstractEntityRevisionPreResolver {
+  extends AbstractExerciseRevisionPreResolver {
   __typename: EntityRevisionType.GroupedExerciseRevision
-  content: string
-  changes: string
 }
 
 export type GroupedExerciseRevisionPayload = GroupedExerciseRevisionPreResolver
