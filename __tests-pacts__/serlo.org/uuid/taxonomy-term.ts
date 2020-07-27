@@ -55,7 +55,7 @@ function addTaxonomyTermInteraction(payload: TaxonomyTermPayload) {
   })
 }
 
-test('root', async () => {
+test('TaxonomyTerm root', async () => {
   await addTaxonomyTermInteraction(taxonomyTermRoot)
   await assertSuccessfulGraphQLQuery({
     query: gql`
@@ -82,7 +82,7 @@ test('root', async () => {
   })
 })
 
-test('subject', async () => {
+test('TaxonomyTerm subject', async () => {
   await addTaxonomyTermInteraction(taxonomyTermSubject)
   await assertSuccessfulGraphQLQuery({
     query: gql`
@@ -109,7 +109,7 @@ test('subject', async () => {
   })
 })
 
-test('curriculumTopic', async () => {
+test('TaxonomyTerm curriculumTopic', async () => {
   await addTaxonomyTermInteraction(taxonomyTermCurriculumTopic)
   await assertSuccessfulGraphQLQuery({
     query: gql`

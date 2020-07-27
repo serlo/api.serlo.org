@@ -20,13 +20,12 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 /* eslint-disable import/no-unassigned-import */
-describe('License', () => {
+describe('GET /api/cache-keys', () => {
+  require('./cache-keys')
+})
+describe('GET /api/license/:id', () => {
   require('./license')
 })
-describe('Uuid', () => {
+describe('GET /api/uuid/:id', () => {
   require('./uuid')
 })
-describe('Cache', () => {
-  require('./cache')
-})
-/* eslint-enable import/no-unassigned-import */

@@ -29,7 +29,7 @@ import {
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
 
-test('by id', async () => {
+test('User', async () => {
   await addUuidInteraction<UserPayload>({
     __typename: user.__typename,
     id: user.id,
