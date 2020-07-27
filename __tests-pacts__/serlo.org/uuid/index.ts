@@ -20,43 +20,16 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 /* eslint-disable import/no-unassigned-import */
-describe('Applet', () => {
-  require('./applet')
-})
-describe('Article', () => {
-  require('./article')
-})
-describe('Course', () => {
-  require('./course')
-})
-describe('Course Page', () => {
-  require('./course-page')
-})
-describe('Event', () => {
-  require('./event')
-})
-describe('Exercise', () => {
-  require('./exercise')
-})
-describe('Exercise Group', () => {
-  require('./exercise-group')
-})
-describe('Grouped Exercise', () => {
-  require('./grouped-exercise')
-})
-describe('Page', () => {
-  require('./page')
-})
-describe('Solution', () => {
-  require('./solution')
-})
-describe('Taxonomy Term', () => {
-  require('./taxonomy-term')
-})
-describe('User', () => {
-  require('./user')
-})
-describe('Video', () => {
-  require('./video')
-})
-/* eslint-enable import/no-unassigned-import */
+import './applet'
+import './article'
+import './course'
+import './course-page'
+import './event'
+import './exercise'
+import './exercise-group'
+import './grouped-exercise'
+import './page'
+import './solution'
+import './taxonomy-term'
+import './user'
+import './video'

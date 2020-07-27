@@ -24,7 +24,7 @@ import { gql } from 'apollo-server'
 
 import { addJsonInteraction, assertSuccessfulGraphQLQuery } from '../__utils__'
 
-test('CacheKeys', async () => {
+test('CacheKey', async () => {
   await addJsonInteraction({
     name: `fetch data of cache keys`,
     given: '',
