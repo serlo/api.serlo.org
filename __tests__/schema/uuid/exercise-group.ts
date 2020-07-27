@@ -26,6 +26,8 @@ import {
   exerciseGroupRevision,
   getExerciseGroupDataWithoutSubResolvers,
   getExerciseGroupRevisionDataWithoutSubResolvers,
+  getGroupedExerciseDataWithoutSubResolvers,
+  groupedExercise,
 } from '../../../__fixtures__'
 import { Service } from '../../../src/graphql/schema/types'
 import {
@@ -98,6 +100,37 @@ describe('ExerciseGroup', () => {
           currentRevision: getExerciseGroupRevisionDataWithoutSubResolvers(
             exerciseGroupRevision
           ),
+        },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ exercises)', async () => {
+    global.server.use(createUuidHandler(groupedExercise))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query exerciseGroup($id: Int!) {
+          uuid(id: $id) {
+            ... on ExerciseGroup {
+              exercises {
+                __typename
+                id
+                trashed
+                instance
+                alias
+                date
+              }
+            }
+          }
+        }
+      `,
+      variables: exerciseGroup,
+      data: {
+        uuid: {
+          exercises: [
+            getGroupedExerciseDataWithoutSubResolvers(groupedExercise),
+          ],
         },
       },
       client,

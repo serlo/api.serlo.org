@@ -68,3 +68,9 @@ export const solutionRevision: SolutionRevisionPayload = {
 export function getSolutionDataWithoutSubResolvers(solution: SolutionPayload) {
   return R.omit(['currentRevisionId', 'licenseId', 'parentId'], solution)
 }
+
+export function getSolutionRevisionDataWithoutSubResolvers(
+  solutionRevision: SolutionRevisionPayload
+) {
+  return R.omit(['authorId', 'repositoryId'], solutionRevision)
+}

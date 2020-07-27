@@ -29,8 +29,6 @@ import {
   NotificationsPayload,
   PagePayload,
   PageRevisionPayload,
-  SolutionPayload,
-  SolutionRevisionPayload,
   TaxonomyTermPayload,
   UserPayload,
   UuidPayload,
@@ -166,37 +164,6 @@ export function addPageRevisionInteraction(payload: PageRevisionPayload) {
     date: Matchers.iso8601DateTime(payload.date),
     authorId: Matchers.integer(payload.authorId),
     repositoryId: Matchers.integer(payload.repositoryId),
-  })
-}
-
-export function addSolutionInteraction(payload: SolutionPayload) {
-  return addUuidInteraction<SolutionPayload>({
-    __typename: payload.__typename,
-    id: payload.id,
-    trashed: Matchers.boolean(payload.trashed),
-    instance: Matchers.string(payload.instance),
-    alias: payload.alias ? Matchers.string(payload.alias) : null,
-    date: Matchers.iso8601DateTime(payload.date),
-    currentRevisionId: payload.currentRevisionId
-      ? Matchers.integer(payload.currentRevisionId)
-      : null,
-    licenseId: Matchers.integer(payload.licenseId),
-    parentId: Matchers.integer(payload.parentId),
-  })
-}
-
-export function addSolutionRevisionInteraction(
-  payload: SolutionRevisionPayload
-) {
-  return addUuidInteraction<SolutionRevisionPayload>({
-    __typename: payload.__typename,
-    id: payload.id,
-    trashed: Matchers.boolean(payload.trashed),
-    date: Matchers.iso8601DateTime(payload.date),
-    authorId: Matchers.integer(payload.authorId),
-    repositoryId: Matchers.integer(payload.repositoryId),
-    content: Matchers.string(payload.content),
-    changes: Matchers.string(payload.changes),
   })
 }
 
