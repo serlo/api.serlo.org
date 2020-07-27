@@ -21,6 +21,7 @@
  */
 import { Schema } from '../utils'
 import { abstractEntitySchema } from './abstract-entity'
+import { abstractNavigationChildSchema } from './abstract-navigation-child'
 import { abstractTaxonomyTermChildSchema } from './abstract-taxonomy-term-child'
 import { abstractUuidSchema } from './abstract-uuid'
 import { aliasSchema } from './alias'
@@ -32,7 +33,6 @@ import { eventSchema } from './event'
 import { exerciseSchema } from './exercise'
 import { exerciseGroupSchema } from './exercise-group'
 import { groupedExerciseSchema } from './grouped-exercise'
-import { navigationSchema } from './navigation'
 import { pageSchema } from './page'
 import { solutionSchema } from './solution'
 import { taxonomyTermSchema } from './taxonomy-term'
@@ -40,6 +40,7 @@ import { userSchema } from './user'
 import { videoSchema } from './video'
 
 export * from './abstract-entity'
+export * from './abstract-navigation-child'
 export * from './abstract-taxonomy-term-child'
 export * from './abstract-uuid'
 export * from './alias'
@@ -51,7 +52,6 @@ export * from './event'
 export * from './exercise'
 export * from './exercise-group'
 export * from './grouped-exercise'
-export * from './navigation'
 export * from './page'
 export * from './solution'
 export * from './taxonomy-term'
@@ -60,6 +60,7 @@ export * from './video'
 
 export const uuidSchema = Schema.merge(
   abstractEntitySchema,
+  abstractNavigationChildSchema,
   abstractTaxonomyTermChildSchema,
   abstractUuidSchema,
   aliasSchema,
@@ -71,7 +72,6 @@ export const uuidSchema = Schema.merge(
   exerciseSchema,
   exerciseGroupSchema,
   groupedExerciseSchema,
-  navigationSchema,
   pageSchema,
   solutionSchema,
   taxonomyTermSchema,

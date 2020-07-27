@@ -110,7 +110,7 @@ export interface AbstractEntityRevisionPreResolver
 export type EntityRevisionPayload = EntityRevisionPreResolver
 export type AbstractEntityRevisionPayload = AbstractEntityRevisionPreResolver
 
-export interface EntityResolvers {
+export interface AbstractEntityResolvers {
   AbstractEntity: {
     __resolveType: TypeResolver<EntityPreResolver>
   }

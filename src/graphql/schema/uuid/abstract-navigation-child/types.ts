@@ -20,6 +20,13 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Instance, NavigationNode } from '../../../../types'
+import { TypeResolver } from '../../types'
+import { PagePayload } from '../page'
+import { TaxonomyTermPayload } from '../taxonomy-term'
+
+export type NavigationChildPreResolver = TaxonomyTermPayload | PagePayload
+
+export type NavigationChildPayload = NavigationChildPreResolver
 
 export interface Navigation {
   data: NodeData
@@ -36,4 +43,10 @@ export interface NodeData {
   id?: number
   url?: string
   children?: NodeData[]
+}
+
+export interface AbstractNavigationChildResolvers {
+  AbstractNavigationChild: {
+    __resolveType: TypeResolver<NavigationChildPreResolver>
+  }
 }

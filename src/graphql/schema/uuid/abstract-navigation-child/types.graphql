@@ -1,3 +1,7 @@
+interface AbstractNavigationChild {
+  navigation: Navigation
+}
+
 type Navigation {
   data: JSON!
   path: [NavigationNode!]!

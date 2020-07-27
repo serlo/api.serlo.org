@@ -19,26 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Context, Resolver } from '../../types'
-import { TaxonomyTermPayload, TaxonomyTermPreResolver } from '../taxonomy-term'
-import { AbstractTaxonomyTermChildPreResolver } from './types'
+import { Resolver } from '../../types'
+import { Navigation, NavigationChildPayload } from './types'
 
-export interface TaxonomyTermChildResolvers<
-  E extends AbstractTaxonomyTermChildPreResolver
-> {
-  taxonomyTerms: Resolver<E, never, TaxonomyTermPreResolver[]>
-}
-
-export function createTaxonomyTermChildResolvers<
-  E extends AbstractTaxonomyTermChildPreResolver
->(): TaxonomyTermChildResolvers<E> {
-  return {
-    taxonomyTerms(entity: E, _args: never, { dataSources }: Context) {
-      return Promise.all(
-        entity.taxonomyTermIds.map((id: number) => {
-          return dataSources.serlo.getUuid<TaxonomyTermPayload>({ id })
-        })
-      )
-    },
-  }
+export interface NavigationChildResolvers<E extends NavigationChildPayload> {
+  navigation: Resolver<E, never, Navigation | null>
 }

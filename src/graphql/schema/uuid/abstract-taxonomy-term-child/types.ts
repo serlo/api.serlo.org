@@ -45,7 +45,7 @@ export interface AbstractTaxonomyTermChildPreResolver
 export type TaxonomyTermChildPayload = TaxonomyTermChildPreResolver
 export type AbstractTaxonomyTermChildPayload = AbstractTaxonomyTermChildPreResolver
 
-export interface TaxonomyTermChildResolvers {
+export interface AbstractTaxonomyTermChildResolvers {
   AbstractTaxonomyTermChild: {
     __resolveType: TypeResolver<TaxonomyTermChildPreResolver>
   }

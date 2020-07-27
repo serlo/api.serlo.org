@@ -47,7 +47,7 @@ export const resolvers: TaxonomyTermResolvers = {
         })
       )
     },
-    async navigation(taxonomyTerm, _args: undefined, context: Context) {
+    async navigation(taxonomyTerm, _args, context) {
       const taxonomyPath = await resolveTaxonomyTermPath(taxonomyTerm, context)
 
       for (let i = 0; i < taxonomyPath.length; i++) {
