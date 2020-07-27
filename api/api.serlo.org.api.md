@@ -93,7 +93,18 @@ export type ArticleRevision = AbstractUuid & AbstractEntityRevision & {
 };
 
 // @public (undocumented)
+<<<<<<< HEAD
 export type Course = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & {
+=======
+export type CacheKeyCursor = {
+    __typename?: 'CacheKeyCursor';
+    cursor: Scalars['String'];
+    node: Scalars['String'];
+};
+
+// @public (undocumented)
+export type Course = AbstractUuid & AbstractEntity & {
+>>>>>>> 70f7604... Add _getCacheKeys, Query_GetCacheResult and CacheKeyCursor
     __typename?: 'Course';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -394,10 +405,28 @@ export type PageRevision = AbstractUuid & {
 // @public (undocumented)
 export type Query = {
     __typename?: 'Query';
+    _getCacheKeys: Query_GetCacheResult;
     activeDonors: Array<User>;
     license?: Maybe<License>;
     notifications: QueryNotificationsResult;
     uuid?: Maybe<AbstractUuid>;
+};
+
+// @public (undocumented)
+export type Query_GetCacheKeysArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
+export type Query_GetCacheResult = {
+    __typename?: 'Query_GetCacheResult';
+    edges: Array<CacheKeyCursor>;
+    nodes: Array<Scalars['String']>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
 };
 
 // @public (undocumented)
