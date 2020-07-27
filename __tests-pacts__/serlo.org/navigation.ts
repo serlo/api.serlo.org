@@ -45,7 +45,9 @@ test('Navigation', async () => {
       instance: Matchers.string(navigation.instance),
       data: Matchers.eachLike({
         label: Matchers.string(navigation.data[0].label),
-        children: Matchers.eachLike(navigation.data[0].children),
+        children: Matchers.eachLike({
+          label: Matchers.string(navigation.data[0].children?.[0].label),
+        }),
       }),
     },
   })
