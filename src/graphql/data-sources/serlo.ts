@@ -273,6 +273,6 @@ export class SerloDataSource extends RESTDataSource {
   }
 
   public async removeCache(key: string) {
-    await this.environment.cache.set(key, null)
+    await this.environment.cache.remove(key)
   }
 }

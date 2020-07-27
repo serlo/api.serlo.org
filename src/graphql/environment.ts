@@ -28,6 +28,7 @@ export interface Environment {
 export interface Cache {
   get<T>(key: string): Promise<O.Option<T>>
   set(key: string, value: unknown, options?: { ttl?: number }): Promise<void>
+  remove(key: string): Promise<void>
   flush(): Promise<void>
   getTtl(key: string): Promise<O.Option<number>>
 }
