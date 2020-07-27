@@ -21,162 +21,73 @@
  */
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
-import * as R from 'ramda'
 
 import {
-  navigation,
-  page,
+  getTaxonomyTermDataWithoutSubResolvers,
   taxonomyTermCurriculumTopic,
   taxonomyTermRoot,
   taxonomyTermSubject,
 } from '../../../__fixtures__'
-import { PagePayload } from '../../../src/graphql/schema/uuid/page'
+import { TaxonomyTermPayload } from '../../../src/graphql/schema/uuid/taxonomy-term'
 import {
-  addNavigationInteraction,
-  addTaxonomyTermInteraction,
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
 
-test('by id (subject)', async () => {
-  await addTaxonomyTermInteraction(taxonomyTermRoot)
-  await addTaxonomyTermInteraction(taxonomyTermSubject)
-  await addTaxonomyTermInteraction(taxonomyTermCurriculumTopic)
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      {
-        uuid(id: 5) {
-          __typename
-          ... on TaxonomyTerm {
-            id
-            type
-            trashed
-            instance
-            alias
-            name
-            description
-            weight
-
-            parent {
-              id
-              alias
-            }
-
-            children {
-              id
-            }
-          }
-        }
-      }
-    `,
-    data: {
-      uuid: {
-        ...R.omit(['parentId', 'childrenIds'], taxonomyTermSubject),
-        parent: {
-          id: 3,
-          alias: null,
-        },
-        children: [
-          {
-            id: 16048,
-          },
-        ],
-      },
-    },
-  })
-})
-
-test('by id (subject, w/ navigation)', async () => {
-  await addUuidInteraction<PagePayload>({
-    __typename: page.__typename,
-    id: page.id,
-    trashed: Matchers.boolean(page.trashed),
-    instance: Matchers.string(page.instance),
-    alias: page.alias ? Matchers.string(page.alias) : null,
-    currentRevisionId: page.currentRevisionId
-      ? Matchers.integer(page.currentRevisionId)
+function addTaxonomyTermInteraction(payload: TaxonomyTermPayload) {
+  return addUuidInteraction<TaxonomyTermPayload>({
+    __typename: payload.__typename,
+    id: payload.id,
+    trashed: Matchers.boolean(payload.trashed),
+    alias: payload.alias ? Matchers.string(payload.alias) : null,
+    type: Matchers.string(payload.type),
+    instance: Matchers.string(payload.instance),
+    name: Matchers.string(payload.name),
+    description: payload.description
+      ? Matchers.string(payload.description)
       : null,
-    licenseId: Matchers.integer(page.licenseId),
+    weight: Matchers.integer(payload.weight),
+    parentId: payload.parentId ? Matchers.integer(payload.parentId) : null,
+    childrenIds:
+      payload.childrenIds.length > 0
+        ? Matchers.eachLike(Matchers.integer(payload.childrenIds[0]))
+        : [],
   })
+}
+
+test('root', async () => {
   await addTaxonomyTermInteraction(taxonomyTermRoot)
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query taxonomyTerm($id: Int!) {
+        uuid(id: $id) {
+          __typename
+          ... on TaxonomyTerm {
+            id
+            type
+            trashed
+            instance
+            alias
+            name
+            description
+            weight
+          }
+        }
+      }
+    `,
+    variables: taxonomyTermRoot,
+    data: {
+      uuid: getTaxonomyTermDataWithoutSubResolvers(taxonomyTermRoot),
+    },
+  })
+})
+
+test('subject', async () => {
   await addTaxonomyTermInteraction(taxonomyTermSubject)
-  await addTaxonomyTermInteraction(taxonomyTermCurriculumTopic)
-  await addNavigationInteraction(navigation)
   await assertSuccessfulGraphQLQuery({
     query: gql`
-      {
-        uuid(id: 5) {
-          __typename
-          ... on TaxonomyTerm {
-            id
-            type
-            trashed
-            instance
-            alias
-            name
-            description
-            weight
-
-            parent {
-              id
-            }
-
-            children {
-              id
-            }
-
-            navigation {
-              data
-              path {
-                label
-                id
-                url
-              }
-            }
-          }
-        }
-      }
-    `,
-    data: {
-      uuid: {
-        ...R.omit(['parentId', 'childrenIds'], taxonomyTermSubject),
-
-        parent: {
-          id: 3,
-        },
-
-        children: [
-          {
-            id: 16048,
-          },
-        ],
-
-        navigation: {
-          data: navigation.data[0],
-          path: [
-            {
-              label: 'Mathematik',
-              id: page.id,
-              url: page.alias,
-            },
-            {
-              label: 'Alle Themen',
-              id: taxonomyTermSubject.id,
-              url: taxonomyTermSubject.alias,
-            },
-          ],
-        },
-      },
-    },
-  })
-})
-
-test('by id (curriculum-topic)', async () => {
-  await addTaxonomyTermInteraction(taxonomyTermCurriculumTopic)
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      {
-        uuid(id: 16048) {
+      query taxonomyTerm($id: Int!) {
+        uuid(id: $id) {
           __typename
           ... on TaxonomyTerm {
             id
@@ -191,10 +102,198 @@ test('by id (curriculum-topic)', async () => {
         }
       }
     `,
+    variables: taxonomyTermSubject,
     data: {
-      uuid: {
-        ...R.omit(['parentId', 'childrenIds'], taxonomyTermCurriculumTopic),
-      },
+      uuid: getTaxonomyTermDataWithoutSubResolvers(taxonomyTermSubject),
     },
   })
 })
+
+test('curriculumTopic', async () => {
+  await addTaxonomyTermInteraction(taxonomyTermCurriculumTopic)
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query taxonomyTerm($id: Int!) {
+        uuid(id: $id) {
+          __typename
+          ... on TaxonomyTerm {
+            id
+            type
+            trashed
+            instance
+            alias
+            name
+            description
+            weight
+          }
+        }
+      }
+    `,
+    variables: taxonomyTermCurriculumTopic,
+    data: {
+      uuid: getTaxonomyTermDataWithoutSubResolvers(taxonomyTermCurriculumTopic),
+    },
+  })
+})
+
+//
+// test('by id (subject)', async () => {
+//   await addTaxonomyTermInteraction(taxonomyTermRoot)
+//   await addTaxonomyTermInteraction(taxonomyTermSubject)
+//   await addTaxonomyTermInteraction(taxonomyTermCurriculumTopic)
+//   await assertSuccessfulGraphQLQuery({
+//     query: gql`
+//       {
+//         uuid(id: 5) {
+//           __typename
+//           ... on TaxonomyTerm {
+//             id
+//             type
+//             trashed
+//             instance
+//             alias
+//             name
+//             description
+//             weight
+//
+//             parent {
+//               id
+//               alias
+//             }
+//
+//             children {
+//               id
+//             }
+//           }
+//         }
+//       }
+//     `,
+//     data: {
+//       uuid: {
+//         ...R.omit(['parentId', 'childrenIds'], taxonomyTermSubject),
+//         parent: {
+//           id: 3,
+//           alias: null,
+//         },
+//         children: [
+//           {
+//             id: 16048,
+//           },
+//         ],
+//       },
+//     },
+//   })
+// })
+//
+// test('by id (subject, w/ navigation)', async () => {
+//   await addUuidInteraction<PagePayload>({
+//     __typename: page.__typename,
+//     id: page.id,
+//     trashed: Matchers.boolean(page.trashed),
+//     instance: Matchers.string(page.instance),
+//     alias: page.alias ? Matchers.string(page.alias) : null,
+//     currentRevisionId: page.currentRevisionId
+//       ? Matchers.integer(page.currentRevisionId)
+//       : null,
+//     licenseId: Matchers.integer(page.licenseId),
+//   })
+//   await addTaxonomyTermInteraction(taxonomyTermRoot)
+//   await addTaxonomyTermInteraction(taxonomyTermSubject)
+//   await addTaxonomyTermInteraction(taxonomyTermCurriculumTopic)
+//   await addNavigationInteraction(navigation)
+//   await assertSuccessfulGraphQLQuery({
+//     query: gql`
+//       {
+//         uuid(id: 5) {
+//           __typename
+//           ... on TaxonomyTerm {
+//             id
+//             type
+//             trashed
+//             instance
+//             alias
+//             name
+//             description
+//             weight
+//
+//             parent {
+//               id
+//             }
+//
+//             children {
+//               id
+//             }
+//
+//             navigation {
+//               data
+//               path {
+//                 label
+//                 id
+//                 url
+//               }
+//             }
+//           }
+//         }
+//       }
+//     `,
+//     data: {
+//       uuid: {
+//         ...R.omit(['parentId', 'childrenIds'], taxonomyTermSubject),
+//
+//         parent: {
+//           id: 3,
+//         },
+//
+//         children: [
+//           {
+//             id: 16048,
+//           },
+//         ],
+//
+//         navigation: {
+//           data: navigation.data[0],
+//           path: [
+//             {
+//               label: 'Mathematik',
+//               id: page.id,
+//               url: page.alias,
+//             },
+//             {
+//               label: 'Alle Themen',
+//               id: taxonomyTermSubject.id,
+//               url: taxonomyTermSubject.alias,
+//             },
+//           ],
+//         },
+//       },
+//     },
+//   })
+// })
+//
+// test('by id (curriculum-topic)', async () => {
+//   await addTaxonomyTermInteraction(taxonomyTermCurriculumTopic)
+//   await assertSuccessfulGraphQLQuery({
+//     query: gql`
+//       {
+//         uuid(id: 16048) {
+//           __typename
+//           ... on TaxonomyTerm {
+//             id
+//             type
+//             trashed
+//             instance
+//             alias
+//             name
+//             description
+//             weight
+//           }
+//         }
+//       }
+//     `,
+//     data: {
+//       uuid: {
+//         ...R.omit(['parentId', 'childrenIds'], taxonomyTermCurriculumTopic),
+//       },
+//     },
+//   })
+// })
