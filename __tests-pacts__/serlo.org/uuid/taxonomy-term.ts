@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
@@ -29,12 +30,13 @@ import {
   taxonomyTermRoot,
   taxonomyTermSubject,
 } from '../../../__fixtures__'
-import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
+import { PagePayload } from '../../../src/graphql/schema/uuid/page'
 import {
   addNavigationInteraction,
-  addPageInteraction,
   addTaxonomyTermInteraction,
-} from '../../__utils__/interactions'
+  addUuidInteraction,
+  assertSuccessfulGraphQLQuery,
+} from '../../__utils__'
 
 test('by id (subject)', async () => {
   await addTaxonomyTermInteraction(taxonomyTermRoot)
@@ -85,7 +87,17 @@ test('by id (subject)', async () => {
 })
 
 test('by id (subject, w/ navigation)', async () => {
-  await addPageInteraction(page)
+  await addUuidInteraction<PagePayload>({
+    __typename: page.__typename,
+    id: page.id,
+    trashed: Matchers.boolean(page.trashed),
+    instance: Matchers.string(page.instance),
+    alias: page.alias ? Matchers.string(page.alias) : null,
+    currentRevisionId: page.currentRevisionId
+      ? Matchers.integer(page.currentRevisionId)
+      : null,
+    licenseId: Matchers.integer(page.licenseId),
+  })
   await addTaxonomyTermInteraction(taxonomyTermRoot)
   await addTaxonomyTermInteraction(taxonomyTermSubject)
   await addTaxonomyTermInteraction(taxonomyTermCurriculumTopic)

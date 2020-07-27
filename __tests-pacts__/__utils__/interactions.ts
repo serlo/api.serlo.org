@@ -27,8 +27,6 @@ import {
   NavigationPayload,
   NotificationEventPayload,
   NotificationsPayload,
-  PagePayload,
-  PageRevisionPayload,
   TaxonomyTermPayload,
   UserPayload,
   UuidPayload,
@@ -137,33 +135,6 @@ export function addArticleInteraction(payload: ArticlePayload) {
       payload.taxonomyTermIds.length > 0
         ? Matchers.eachLike(Matchers.like(payload.taxonomyTermIds[0]))
         : [],
-  })
-}
-
-export function addPageInteraction(payload: PagePayload) {
-  return addUuidInteraction<PagePayload>({
-    __typename: payload.__typename,
-    id: payload.id,
-    trashed: Matchers.boolean(payload.trashed),
-    instance: Matchers.string(payload.instance),
-    alias: payload.alias ? Matchers.string(payload.alias) : null,
-    currentRevisionId: payload.currentRevisionId
-      ? Matchers.integer(payload.currentRevisionId)
-      : null,
-    licenseId: Matchers.integer(payload.licenseId),
-  })
-}
-
-export function addPageRevisionInteraction(payload: PageRevisionPayload) {
-  return addUuidInteraction<PageRevisionPayload>({
-    __typename: payload.__typename,
-    id: 35476,
-    trashed: Matchers.boolean(payload.trashed),
-    title: Matchers.string(payload.title),
-    content: Matchers.string(payload.content),
-    date: Matchers.iso8601DateTime(payload.date),
-    authorId: Matchers.integer(payload.authorId),
-    repositoryId: Matchers.integer(payload.repositoryId),
   })
 }
 

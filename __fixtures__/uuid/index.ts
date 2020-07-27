@@ -25,8 +25,6 @@ import {
   EntityRevisionType,
   EntityType,
   NavigationPayload,
-  PagePayload,
-  PageRevisionPayload,
   TaxonomyTermPayload,
   UserPayload,
   VideoPayload,
@@ -46,6 +44,7 @@ export * from './exercise'
 export * from './exercise-group'
 export * from './event'
 export * from './grouped-exercise'
+export * from './page'
 export * from './solution'
 export * from './taxonomy-term'
 
@@ -63,35 +62,6 @@ export const navigation: NavigationPayload = {
     },
   ],
   instance: Instance.De,
-}
-
-export const pageAlias: AliasPayload = {
-  id: 19767,
-  instance: Instance.De,
-  path: '/mathe',
-  source: '/page/view/19767',
-  timestamp: '2014-05-25T10:25:44Z',
-}
-
-export const page: PagePayload = {
-  __typename: DiscriminatorType.Page,
-  id: 19767,
-  trashed: false,
-  instance: Instance.De,
-  alias: '/mathe',
-  currentRevisionId: 35476,
-  licenseId: license.id,
-}
-
-export const pageRevision: PageRevisionPayload = {
-  __typename: DiscriminatorType.PageRevision,
-  id: 35476,
-  trashed: false,
-  title: 'title',
-  content: 'content',
-  date: '2015-02-28T02:06:40Z',
-  authorId: 1,
-  repositoryId: page.id,
 }
 
 export const taxonomyTermRoot: TaxonomyTermPayload = {
