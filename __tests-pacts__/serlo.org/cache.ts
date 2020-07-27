@@ -21,48 +21,27 @@
  */
 import { gql } from 'apollo-server'
 
-export const variables = {
-  key: 'foo',
-  value: { foo: 'bar' },
-}
+import {
+  addCacheKeysInteraction,
+  assertSuccessfulGraphQLQuery,
+} from '../__utils__'
 
-export function createSetCacheMutation(variables: {
-  key: string
-  value: unknown
-}) {
-  return {
-    mutation: gql`
-      mutation setCache($key: String!, $value: JSON!) {
-        _setCache(key: $key, value: $value)
-      }
-    `,
-    variables: {
-      key: variables.key,
-      value: variables.value,
-    },
-  }
-}
-
-export function createRemoveCacheMutation(variables: { key: string }) {
-  return {
-    mutation: gql`
-      mutation removeCache($key: String!) {
-        _removeCache(key: $key)
-      }
-    `,
-    variables,
-  }
-}
-
-export function createCacheKeysQuery() {
-  return {
+test('CacheKeys', async () => {
+  await addCacheKeysInteraction(['foo'])
+  await assertSuccessfulGraphQLQuery({
     query: gql`
       query {
         _cacheKeys {
-          totalCount
           nodes
+          totalCount
         }
       }
     `,
-  }
-}
+    data: {
+      _cacheKeys: {
+        nodes: ['foo'],
+        totalCount: 1,
+      },
+    },
+  })
+})
