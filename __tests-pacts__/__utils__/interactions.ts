@@ -23,11 +23,9 @@ import { Matchers } from '@pact-foundation/pact'
 
 import {
   AliasPayload,
-  ArticlePayload,
   NavigationPayload,
   NotificationEventPayload,
   NotificationsPayload,
-  UserPayload,
   UuidPayload,
 } from '../../src/graphql/schema'
 
@@ -98,41 +96,6 @@ export function addAliasInteraction(payload: AliasPayload) {
   })
 }
 
-export function addArticleInteraction(payload: ArticlePayload) {
-  return addUuidInteraction<ArticlePayload>({
-    __typename: payload.__typename,
-    id: payload.id,
-    trashed: Matchers.boolean(payload.trashed),
-    instance: Matchers.string(payload.instance),
-    alias: payload.alias ? Matchers.string(payload.alias) : null,
-    date: Matchers.iso8601DateTime(payload.date),
-    currentRevisionId: payload.currentRevisionId
-      ? Matchers.integer(payload.currentRevisionId)
-      : null,
-    licenseId: Matchers.integer(payload.licenseId),
-    taxonomyTermIds:
-      payload.taxonomyTermIds.length > 0
-        ? Matchers.eachLike(Matchers.like(payload.taxonomyTermIds[0]))
-        : [],
-  })
-}
-
-export function addUserInteraction(payload: UserPayload) {
-  return addUuidInteraction<UserPayload>({
-    __typename: payload.__typename,
-    id: payload.id,
-    trashed: Matchers.boolean(payload.trashed),
-    username: Matchers.string(payload.username),
-    date: Matchers.iso8601DateTime(payload.date),
-    lastLogin: payload.lastLogin
-      ? Matchers.iso8601DateTime(payload.lastLogin)
-      : null,
-    description: payload.description
-      ? Matchers.string(payload.description)
-      : null,
-  })
-}
-
 export function addUuidInteraction<T extends UuidPayload>(
   data: Record<keyof T, unknown> & { __typename: string; id: number }
 ) {
@@ -141,15 +104,6 @@ export function addUuidInteraction<T extends UuidPayload>(
     given: `uuid ${data.id} is of type ${data.__typename}`,
     path: `/api/uuid/${data.id}`,
     body: data,
-  })
-}
-
-export function addCacheKeysInteraction(payload: string[]) {
-  return addJsonInteraction({
-    name: `fetch data of cache keys`,
-    given: '',
-    path: '/api/cache-keys',
-    body: Matchers.eachLike(payload[0]),
   })
 }
 
