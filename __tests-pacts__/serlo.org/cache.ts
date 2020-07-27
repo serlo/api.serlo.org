@@ -19,15 +19,18 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
-import {
-  addCacheKeysInteraction,
-  assertSuccessfulGraphQLQuery,
-} from '../__utils__'
+import { addJsonInteraction, assertSuccessfulGraphQLQuery } from '../__utils__'
 
 test('CacheKeys', async () => {
-  await addCacheKeysInteraction(['foo'])
+  await addJsonInteraction({
+    name: `fetch data of cache keys`,
+    given: '',
+    path: '/api/cache-keys',
+    body: Matchers.eachLike(['foo'][0]),
+  })
   await assertSuccessfulGraphQLQuery({
     query: gql`
       query {

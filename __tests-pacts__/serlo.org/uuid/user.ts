@@ -19,16 +19,26 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
 import { user } from '../../../__fixtures__'
+import { UserPayload } from '../../../src/graphql/schema/uuid/user'
 import {
-  addUserInteraction,
+  addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
 
 test('by id', async () => {
-  await addUserInteraction(user)
+  await addUuidInteraction<UserPayload>({
+    __typename: user.__typename,
+    id: user.id,
+    trashed: Matchers.boolean(user.trashed),
+    username: Matchers.string(user.username),
+    date: Matchers.iso8601DateTime(user.date),
+    lastLogin: user.lastLogin ? Matchers.iso8601DateTime(user.lastLogin) : null,
+    description: user.description ? Matchers.string(user.description) : null,
+  })
   await assertSuccessfulGraphQLQuery({
     query: gql`
       query article($id: Int!) {
