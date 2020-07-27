@@ -19,191 +19,86 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
-import * as R from 'ramda'
 
-import { page, pageAlias, pageRevision } from '../../../__fixtures__'
-import { assertSuccessfulGraphQLQuery } from '../../__utils__/assertions'
 import {
-  addAliasInteraction,
-  addPageInteraction,
-  addPageRevisionInteraction,
-} from '../../__utils__/interactions'
+  getPageDataWithoutSubResolvers,
+  getPageRevisionDataWithoutSubResolvers,
+  page,
+  pageRevision,
+} from '../../../__fixtures__'
+import {
+  PagePayload,
+  PageRevisionPayload,
+} from '../../../src/graphql/schema/uuid/page'
+import {
+  addUuidInteraction,
+  assertSuccessfulGraphQLQuery,
+} from '../../__utils__'
 
-describe('Page', () => {
-  test('by alias', async () => {
-    await addAliasInteraction(pageAlias)
-    await addPageInteraction(page)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(alias: { instance: de, path: "${pageAlias.path}" }) {
-            __typename
-            ... on Page {
-              id
-              trashed
-              instance
-              alias
-              currentRevision {
-                id
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(['currentRevisionId', 'licenseId'], page),
-          currentRevision: {
-            id: 35476,
-          },
-        },
-      },
-    })
+test('Page', async () => {
+  await addUuidInteraction<PagePayload>({
+    __typename: page.__typename,
+    id: page.id,
+    trashed: Matchers.boolean(page.trashed),
+    instance: Matchers.string(page.instance),
+    alias: page.alias ? Matchers.string(page.alias) : null,
+    currentRevisionId: page.currentRevisionId
+      ? Matchers.integer(page.currentRevisionId)
+      : null,
+    licenseId: Matchers.integer(page.licenseId),
   })
-
-  test('by alias (w/ currentRevision)', async () => {
-    await addAliasInteraction(pageAlias)
-    await addPageRevisionInteraction(pageRevision)
-    await addPageInteraction(page)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-      {
-        uuid(alias: { instance: de, path: "${pageAlias.path}" }) {
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query page($id: Int!) {
+        uuid(id: $id) {
           __typename
           ... on Page {
             id
             trashed
             instance
             alias
-            currentRevision {
-              id
-              title
-              content
-            }
           }
         }
       }
     `,
-      data: {
-        uuid: {
-          ...R.omit(['currentRevisionId', 'licenseId'], page),
-          currentRevision: {
-            id: 35476,
-            title: 'title',
-            content: 'content',
-          },
-        },
-      },
-    })
-  })
-
-  test('by id', async () => {
-    await addPageInteraction(page)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(id: 19767) {
-            __typename
-            ... on Page {
-              id
-              trashed
-              instance
-              alias
-              currentRevision {
-                id
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(['currentRevisionId', 'licenseId'], page),
-          currentRevision: {
-            id: 35476,
-          },
-        },
-      },
-    })
+    variables: page,
+    data: {
+      uuid: getPageDataWithoutSubResolvers(page),
+    },
   })
 })
 
-describe('PageRevision', () => {
-  test('by id', async () => {
-    await addPageRevisionInteraction(pageRevision)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(id: 35476) {
-            __typename
-            ... on PageRevision {
-              id
-              trashed
-              title
-              content
-              date
-              author {
-                id
-              }
-              page {
-                id
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(['authorId', 'repositoryId'], pageRevision),
-          author: {
-            id: 1,
-          },
-          page: {
-            id: 19767,
-          },
-        },
-      },
-    })
+test('PageRevision', async () => {
+  await addUuidInteraction<PageRevisionPayload>({
+    __typename: pageRevision.__typename,
+    id: 35476,
+    trashed: Matchers.boolean(pageRevision.trashed),
+    title: Matchers.string(pageRevision.title),
+    content: Matchers.string(pageRevision.content),
+    date: Matchers.iso8601DateTime(pageRevision.date),
+    authorId: Matchers.integer(pageRevision.authorId),
+    repositoryId: Matchers.integer(pageRevision.repositoryId),
   })
-
-  test('by id (w/ page)', async () => {
-    await addPageInteraction(page)
-    await addPageRevisionInteraction(pageRevision)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          uuid(id: 35476) {
-            __typename
-            ... on PageRevision {
-              id
-              trashed
-              title
-              content
-              date
-              author {
-                id
-              }
-              page {
-                id
-                currentRevision {
-                  id
-                }
-              }
-            }
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query pageRevision($id: Int!) {
+        uuid(id: $id) {
+          __typename
+          ... on PageRevision {
+            id
+            trashed
+            title
+            content
+            date
           }
         }
-      `,
-      data: {
-        uuid: {
-          ...R.omit(['authorId', 'repositoryId'], pageRevision),
-          author: { id: 1 },
-          page: {
-            id: 19767,
-            currentRevision: { id: 35476 },
-          },
-        },
-      },
-    })
+      }
+    `,
+    variables: pageRevision,
+    data: {
+      uuid: getPageRevisionDataWithoutSubResolvers(pageRevision),
+    },
   })
 })
