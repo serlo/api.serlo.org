@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 export * from './abstract-entity'
+export * from './abstract-exercise'
 export * from './abstract-navigation-node'
 export * from './abstract-taxonomy-term-child'
 export * from './abstract-uuid'

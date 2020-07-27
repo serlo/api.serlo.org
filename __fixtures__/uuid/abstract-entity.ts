@@ -22,7 +22,7 @@
 import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
-import { EntityPayload } from '../../src/graphql/schema/uuid/abstract-entity'
+import { EntityPayload } from '../../src/graphql/schema'
 import { getUuidDataWithoutSubResolvers } from './abstract-uuid'
 
 export function createEntityLicenseQuery(variables: EntityPayload) {

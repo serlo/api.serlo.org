@@ -25,7 +25,7 @@ import {
   NotificationEventPayload,
   NotificationPayload,
   NotificationsPayload,
-} from '../src/graphql/schema/notification'
+} from '../src/graphql/schema'
 import { Instance, MutationSetNotificationStateArgs } from '../src/types'
 
 export const notificationEvent: NotificationEventPayload = {

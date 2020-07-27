@@ -31,7 +31,7 @@ import {
 import {
   ExercisePayload,
   ExerciseRevisionPayload,
-} from '../../../src/graphql/schema/uuid/exercise'
+} from '../../../src/graphql/schema'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,

@@ -31,7 +31,7 @@ import {
 import {
   ExerciseGroupPayload,
   ExerciseGroupRevisionPayload,
-} from '../../../src/graphql/schema/uuid/exercise-group'
+} from '../../../src/graphql/schema'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,

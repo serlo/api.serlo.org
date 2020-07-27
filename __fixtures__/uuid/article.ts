@@ -22,13 +22,11 @@
 import * as R from 'ramda'
 
 import {
-  EntityRevisionType,
-  EntityType,
-} from '../../src/graphql/schema/uuid/abstract-entity'
-import {
   ArticlePayload,
   ArticleRevisionPayload,
-} from '../../src/graphql/schema/uuid/article'
+  EntityRevisionType,
+  EntityType,
+} from '../../src/graphql/schema'
 import { Instance } from '../../src/types'
 import { license } from '../license'
 

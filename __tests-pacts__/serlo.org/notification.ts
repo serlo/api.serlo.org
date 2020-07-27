@@ -28,15 +28,15 @@ import {
   notifications,
   user,
 } from '../../__fixtures__'
-import { createTestClient } from '../../__tests__/__utils__/test-client'
+import { createTestClient } from '../../__tests__/__utils__'
 import { Service } from '../../src/graphql/schema/types'
-import { assertSuccessfulGraphQLQuery } from '../__utils__/assertions'
 import {
-  addNotificationsInteraction,
-  addNotificationEventInteraction,
-  addUserInteraction,
   addArticleInteraction,
-} from '../__utils__/interactions'
+  addNotificationEventInteraction,
+  addNotificationsInteraction,
+  addUserInteraction,
+  assertSuccessfulGraphQLQuery,
+} from '../__utils__'
 
 test('Notifications', async () => {
   global.client = createTestClient({

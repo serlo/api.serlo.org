@@ -1,4 +1,4 @@
-import { NavigationPayload } from '../../src/graphql/schema/uuid/abstract-navigation-child'
+import { NavigationPayload } from '../../src/graphql/schema'
 import { Instance } from '../../src/types'
 
 export const navigation: NavigationPayload = {

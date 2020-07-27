@@ -19,12 +19,27 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { license, createLicenseQuery } from '../../__fixtures__'
-import { assertSuccessfulGraphQLQuery } from '../__utils__/assertions'
-import { addLicenseInteraction } from '../__utils__/interactions'
+import { Matchers } from '@pact-foundation/pact'
+
+import { createLicenseQuery, license } from '../../__fixtures__'
+import { addJsonInteraction, assertSuccessfulGraphQLQuery } from '../__utils__'
 
 test('License', async () => {
-  await addLicenseInteraction(license)
+  await addJsonInteraction({
+    name: `fetch data of license with id ${license.id}`,
+    given: `there exists an license with id ${license.id}`,
+    path: `/api/license/${license.id}`,
+    body: {
+      id: 1,
+      instance: Matchers.string(license.instance),
+      default: Matchers.boolean(license.default),
+      title: Matchers.string(license.title),
+      url: Matchers.string(license.url),
+      content: Matchers.string(license.content),
+      agreement: Matchers.string(license.agreement),
+      iconHref: Matchers.string(license.iconHref),
+    },
+  })
   await assertSuccessfulGraphQLQuery({
     ...createLicenseQuery(license),
     data: {

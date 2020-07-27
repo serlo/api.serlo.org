@@ -31,7 +31,7 @@ import {
 import {
   CoursePagePayload,
   CoursePageRevisionPayload,
-} from '../../../src/graphql/schema/uuid/course-page'
+} from '../../../src/graphql/schema'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,

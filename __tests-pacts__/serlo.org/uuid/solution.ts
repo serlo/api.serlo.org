@@ -31,7 +31,7 @@ import {
 import {
   SolutionPayload,
   SolutionRevisionPayload,
-} from '../../../src/graphql/schema/uuid/solution'
+} from '../../../src/graphql/schema'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,

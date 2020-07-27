@@ -21,10 +21,7 @@
  */
 import * as R from 'ramda'
 
-import {
-  ConnectionPayload,
-  resolveConnection,
-} from '../src/graphql/schema/connection'
+import { ConnectionPayload, resolveConnection } from '../src/graphql/schema'
 
 describe('resolveConnection', () => {
   const nodes = R.range(1, 10)

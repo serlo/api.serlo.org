@@ -28,7 +28,7 @@ import rimraf from 'rimraf'
 import { Url } from 'url'
 import util from 'util'
 
-import { createTestClient } from './__tests__/__utils__/test-client'
+import { createTestClient } from './__tests__/__utils__'
 import { Service } from './src/graphql/schema/types'
 
 const pactDir = path.join(__dirname, 'pacts')
@@ -82,7 +82,7 @@ declare global {
   namespace NodeJS {
     interface Global {
       pact: import('@pact-foundation/pact').Pact
-      client: import('./__tests__/__utils__/test-client').Client
+      client: import('./__tests__/__utils__').Client
     }
   }
 }

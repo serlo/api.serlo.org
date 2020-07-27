@@ -28,10 +28,7 @@ import {
   getEventDataWithoutSubResolvers,
   getEventRevisionDataWithoutSubResolvers,
 } from '../../../__fixtures__'
-import {
-  EventPayload,
-  EventRevisionPayload,
-} from '../../../src/graphql/schema/uuid/event'
+import { EventPayload, EventRevisionPayload } from '../../../src/graphql/schema'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,

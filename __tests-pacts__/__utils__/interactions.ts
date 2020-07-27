@@ -30,7 +30,6 @@ import {
   UserPayload,
   UuidPayload,
 } from '../../src/graphql/schema'
-import { License } from '../../src/types'
 
 export function addNavigationInteraction(payload: NavigationPayload) {
   return addJsonInteraction({
@@ -50,23 +49,6 @@ export function addNavigationInteraction(payload: NavigationPayload) {
   })
 }
 
-export function addLicenseInteraction(payload: License) {
-  return addJsonInteraction({
-    name: `fetch data of license with id ${payload.id}`,
-    given: `there exists an license with id ${payload.id}`,
-    path: `/api/license/${payload.id}`,
-    body: {
-      id: 1,
-      instance: Matchers.string(payload.instance),
-      default: Matchers.boolean(payload.default),
-      title: Matchers.string(payload.title),
-      url: Matchers.string(payload.url),
-      content: Matchers.string(payload.content),
-      agreement: Matchers.string(payload.agreement),
-      iconHref: Matchers.string(payload.iconHref),
-    },
-  })
-}
 export function addNotificationEventInteraction(
   payload: NotificationEventPayload
 ) {
@@ -171,7 +153,7 @@ export function addCacheKeysInteraction(payload: string[]) {
   })
 }
 
-function addJsonInteraction({
+export function addJsonInteraction({
   name,
   given,
   path,
