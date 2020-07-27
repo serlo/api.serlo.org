@@ -45,6 +45,10 @@ export function createInMemoryCache(): Cache {
       cache[key] = { value, ttl: options?.ttl }
     },
     // eslint-disable-next-line @typescript-eslint/require-await
+    async remove(key: string) {
+      cache[key] = null
+    },
+    // eslint-disable-next-line @typescript-eslint/require-await
     async flush() {
       cache = {}
     },
