@@ -19,7 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { either, option } from 'fp-ts'
+import { InMemoryLRUCache } from 'apollo-server-caching'
+import { either as E, option as O } from 'fp-ts'
 import { rest } from 'msw'
 
 import { createInMemoryCache } from '../../src/cache/in-memory-cache'
@@ -27,19 +28,21 @@ import {
   GoogleSheetApi,
   MajorDimension,
 } from '../../src/graphql/data-sources/google-spreadsheet-api'
-import { expectToBeLeftEventWith, initializeDataSource } from '../__utils__'
+import { expectToBeLeftEventWith } from '../__utils__'
 
 const cache = createInMemoryCache()
-const environment = { cache }
 const apiKey = 'my-secret'
 const common = {
-  apiKey: 'my-secret',
   spreadsheetId: 'my-spreadsheet-id',
   range: 'sheet1!A:A',
   majorDimension: MajorDimension.Columns,
 }
+let googleSheetApi!: GoogleSheetApi
 
 beforeEach(async () => {
+  googleSheetApi = new GoogleSheetApi({ apiKey, environment: { cache } })
+  googleSheetApi.initialize({ context: {}, cache: new InMemoryLRUCache() })
+
   await cache.flush()
 })
 
@@ -47,63 +50,48 @@ describe('GoogleSheetApi.getValues()', () => {
   test('fetches a range of a spreadsheet', async () => {
     mockSpreadsheet({ ...common, values: [['1', '2'], ['3']] })
 
-    const googleSheets = new GoogleSheetApi({ apiKey, environment })
-    initializeDataSource(googleSheets)
+    const valueRange = await googleSheetApi.getValues(common)
 
-    const valueRange = await googleSheets.getValues(common)
-
-    expect(valueRange).toEqual(either.right([['1', '2'], ['3']]))
+    expect(valueRange).toEqual(E.right([['1', '2'], ['3']]))
   })
 
   describe('uses a cache', () => {
-    test('results are cached for an hour', async () => {
-      const cacheKey = 'spreadsheet-my-spreadsheet-id-sheet1!A:A-COLUMNS'
+    const cacheKey = 'spreadsheet-my-spreadsheet-id-sheet1!A:A-COLUMNS'
+
+    test('cached results are returned', async () => {
       await cache.set(cacheKey, [['1', '2']])
 
-      const googleSheets = new GoogleSheetApi({ apiKey, environment })
-      initializeDataSource(googleSheets)
+      const valueRange = await googleSheetApi.getValues(common)
 
-      const valueRange = await googleSheets.getValues(common)
-
-      expect(valueRange).toEqual(either.right([['1', '2']]))
+      expect(valueRange).toEqual(E.right([['1', '2']]))
     })
 
     test('results are cached for an hour', async () => {
       mockSpreadsheet({ ...common, values: [['1', '2'], ['3']] })
 
-      const googleSheets = new GoogleSheetApi({ apiKey, environment })
-      initializeDataSource(googleSheets)
+      await googleSheetApi.getValues(common)
 
-      await googleSheets.getValues(common)
-
-      expect(
-        await cache.get('spreadsheet-my-spreadsheet-id-sheet1!A:A-COLUMNS')
-      ).toEqual(option.some([['1', '2'], ['3']]))
+      expect(await cache.get(cacheKey)).toEqual(O.some([['1', '2'], ['3']]))
+      expect(await cache.getTtl(cacheKey)).toEqual(O.some(3600))
     })
   })
 
   test('argument "majorDimension" is optional', async () => {
     mockSpreadsheet({ ...common, majorDimension: 'ROWS', values: [['1']] })
 
-    const googleSheets = new GoogleSheetApi({ apiKey, environment })
-    initializeDataSource(googleSheets)
-
-    const valueRange = await googleSheets.getValues({
+    const valueRange = await googleSheetApi.getValues({
       spreadsheetId: common.spreadsheetId,
       range: common.range,
     })
 
-    expect(valueRange).toEqual(either.right([['1']]))
+    expect(valueRange).toEqual(E.right([['1']]))
   })
 
   describe('returns an error', () => {
     test('when there is an error with the api call', async () => {
       global.server.use(createSpreadsheetHandler({ ...common, status: 403 }))
 
-      const googleSheets = new GoogleSheetApi({ apiKey, environment })
-      initializeDataSource(googleSheets)
-
-      const valueRange = await googleSheets.getValues(common)
+      const valueRange = await googleSheetApi.getValues(common)
 
       expectToBeLeftEventWith(valueRange, {
         message:
@@ -124,10 +112,7 @@ describe('GoogleSheetApi.getValues()', () => {
         })
       )
 
-      const googleSheets = new GoogleSheetApi({ apiKey, environment })
-      initializeDataSource(googleSheets)
-
-      const valueRange = await googleSheets.getValues(common)
+      const valueRange = await googleSheetApi.getValues(common)
 
       expectToBeLeftEventWith(valueRange, {
         message:
@@ -144,10 +129,7 @@ describe('GoogleSheetApi.getValues()', () => {
             createSpreadsheetHandler({ ...common, body: response })
           )
 
-          const googleSheets = new GoogleSheetApi({ apiKey, environment })
-          initializeDataSource(googleSheets)
-
-          const valueRange = await googleSheets.getValues(common)
+          const valueRange = await googleSheetApi.getValues(common)
 
           expectToBeLeftEventWith(valueRange, {
             message:
@@ -165,13 +147,11 @@ describe('GoogleSheetApi.getValues()', () => {
 })
 
 function mockSpreadsheet({
-  apiKey,
   spreadsheetId,
   range,
   majorDimension,
   values,
 }: {
-  apiKey: string
   spreadsheetId: string
   range: string
   majorDimension: string
@@ -179,7 +159,6 @@ function mockSpreadsheet({
 }) {
   global.server.use(
     createSpreadsheetHandler({
-      apiKey,
       spreadsheetId,
       range,
       majorDimension,
@@ -193,14 +172,12 @@ function mockSpreadsheet({
 }
 
 function createSpreadsheetHandler({
-  apiKey,
   spreadsheetId,
   range,
   majorDimension,
   status = 200,
   body = {},
 }: {
-  apiKey: string
   spreadsheetId: string
   range: string
   majorDimension: string
