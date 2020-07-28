@@ -26,6 +26,7 @@ import { instanceSchema } from './instance'
 import { jsonSchema } from './json'
 import { legacyNotificationSchema } from './legacy-notification'
 import { licenseSchema } from './license'
+import { notificationSchema } from './notification'
 import { Schema } from './utils'
 import { uuidSchema } from './uuid'
 
@@ -33,8 +34,9 @@ export * from './connection'
 export * from './date-time'
 export * from './instance'
 export * from './json'
-export * from './license'
 export * from './legacy-notification'
+export * from './license'
+export * from './notification'
 export * from './uuid'
 
 export const schema = Schema.merge(
@@ -45,5 +47,6 @@ export const schema = Schema.merge(
   jsonSchema,
   licenseSchema,
   legacyNotificationSchema,
+  notificationSchema,
   uuidSchema
 )

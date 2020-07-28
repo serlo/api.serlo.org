@@ -1,0 +1,171 @@
+interface AbstractNotificationEvent {
+  date: DateTime!
+}
+
+# TODO: add unit test
+# TODO: add contract test
+type CreateThreadNotificationEvent implements AbstractNotificationEvent {
+  date: DateTime!
+  author: User!
+  object: AbstractUuid!
+  thread: UnsupportedThread!
+}
+
+# TODO: add unit test
+# TODO: add contract test
+type CreateCommentNotificationEvent implements AbstractNotificationEvent {
+  date: DateTime!
+  author: User!
+  thread: UnsupportedThread!
+  comment: UnsupportedComment!
+}
+
+# TODO: add unit test
+# TODO: add contract test
+type SetThreadStateNotificationEvent implements AbstractNotificationEvent {
+  date: DateTime!
+  actor: User!
+  thread: UnsupportedThread!
+  archived: Boolean!
+}
+
+# TODO: add unit test
+# TODO: add contract test
+type CreateEntityNotificationEvent implements AbstractNotificationEvent {
+  date: DateTime!
+  author: User!
+  # TODO: is this really an entity?
+  entity: AbstractEntity!
+}
+
+# TODO: add unit test
+# TODO: add contract test
+type CreateEntityRevisionNotificationEvent implements AbstractNotificationEvent {
+  date: DateTime!
+  author: User!
+  # TODO: is this really an entity?
+  entity: AbstractEntity!
+  # TODO: is this really an entity revision?
+  entityRevision: AbstractEntityRevision!
+}
+
+# TODO: add unit test
+# TODO: add contract test
+type CheckoutRevisionNotificationEvent implements AbstractNotificationEvent {
+  date: DateTime!
+  reviewer: User!
+  # TODO: is this really an entity?
+  entity: AbstractEntity!
+  # TODO: is this really an entity revision?
+  entityRevision: AbstractEntityRevision!
+  reason: String!
+}
+
+# TODO: add unit test
+# TODO: add contract test
+type RejectRevisionNotificationEvent implements AbstractNotificationEvent {
+  date: DateTime!
+  reviewer: User!
+  # TODO: is this really an entity?
+  entity: AbstractEntity!
+  # TODO: is this really an entity revision?
+  entityRevision: AbstractEntityRevision!
+  reason: String!
+}
+
+# TODO: add unit test
+# TODO: add contract test
+type SetLicenseNotificationEvent implements AbstractNotificationEvent {
+  date: DateTime!
+  actor: User!
+  # TODO: an interface here would be helpful (also for tests) since this probably can be a Page, too
+  object: AbstractUuid!
+}
+
+# TODO: add unit test
+# TODO: add contract test
+type CreateLinkNotificationEvent implements AbstractNotificationEvent {
+  date: DateTime!
+  actor: User!
+  # TODO: an interface here would be helpful since this probably can be taxonomy term or entity
+  parent: AbstractUuid!
+  # TODO: is this really an entity?
+  entity: AbstractEntity!
+}
+
+# TODO: add unit test
+# TODO: add contract test
+type RemoveLinkNotificationEvent implements AbstractNotificationEvent {
+  date: DateTime!
+  actor: User!
+  # TODO: an interface here would be helpful since this probably can be taxonomy term or entity
+  parent: AbstractUuid!
+  # TODO: is this really an entity?
+  entity: AbstractEntity!
+}
+
+# TODO: add unit test
+# TODO: add contract test
+type CreateTaxonomyAssociationNotificationEvent implements AbstractNotificationEvent {
+  date: DateTime!
+  actor: User!
+  taxonomyTerm: TaxonomyTerm!
+  # TODO: is this really an entity?
+  entity: AbstractEntity!
+}
+
+# TODO: add unit test
+# TODO: add contract test
+type CreateTaxonomyTermNotificationEvent implements AbstractNotificationEvent {
+  date: DateTime!
+  actor: User!
+  taxonomyTerm: TaxonomyTerm!
+}
+
+# TODO: add unit test
+# TODO: add contract test
+type SetTaxonomyTermNotificationEvent implements AbstractNotificationEvent {
+  date: DateTime!
+  actor: User!
+  taxonomyTerm: TaxonomyTerm!
+}
+
+# TODO: add unit test
+# TODO: add contract test
+type SetTaxonomyParentNotificationEvent implements AbstractNotificationEvent {
+  date: DateTime!
+  actor: User!
+  taxonomyTerm: TaxonomyTerm!
+  # TODO: this might be optional I guess?
+  previousParent: TaxonomyTerm!
+  parent: TaxonomyTerm!
+}
+
+# TODO: add unit test
+# TODO: add contract test
+type RemoveTaxonomyAssociationNotificationEvent implements AbstractNotificationEvent {
+  date: DateTime!
+  actor: User!
+  taxonomyTerm: TaxonomyTerm!
+  # TODO: is this really an entity?
+  entity: AbstractEntity!
+}
+
+# TODO: add unit test
+# TODO: add contract test
+type SetUuidStateNotificationEvent implements AbstractNotificationEvent {
+  date: DateTime!
+  actor: User!
+  object: AbstractUuid!
+  trashed: Boolean!
+}
+
+# TODO: this should be a real thread in the future
+type UnsupportedThread {
+  id: Int!
+}
+
+# TODO: this should be a real comment in the future
+type UnsupportedComment {
+  id: Int!
+}
