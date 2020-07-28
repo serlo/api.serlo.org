@@ -22,6 +22,7 @@
 import { rest } from 'msw'
 
 import { LicensePayload } from '../../src/graphql/schema/license'
+import { NotificationEventPayload } from '../../src/graphql/schema/notification'
 import {
   AliasPayload,
   NavigationPayload,
@@ -50,6 +51,15 @@ export function createNavigationHandler(navigation: NavigationPayload) {
     instance: navigation.instance,
     path: '/api/navigation',
     body: navigation,
+  })
+}
+
+export function createNotificationEventHandler(
+  notificationEvent: NotificationEventPayload
+) {
+  return createJsonHandler({
+    path: `/api/event/${notificationEvent.id}`,
+    body: notificationEvent,
   })
 }
 

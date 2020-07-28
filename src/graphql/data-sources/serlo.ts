@@ -37,6 +37,7 @@ import {
   NodeData,
   LegacyNotificationEventPayload,
   LegacyNotificationsPayload,
+  AbstractNotificationEventPayload,
 } from '../schema'
 import { Service } from '../schema/types'
 
@@ -144,11 +145,9 @@ export class SerloDataSource extends RESTDataSource {
     return this.cacheAwareGet<T>({ path: `/api/uuid/${id}` })
   }
 
-  public async getNotificationEvent({
-    id,
-  }: {
-    id: number
-  }): Promise<LegacyNotificationEventPayload> {
+  public async getNotificationEvent<
+    T extends AbstractNotificationEventPayload
+  >({ id }: { id: number }): Promise<LegacyNotificationEventPayload & T> {
     return this.cacheAwareGet({ path: `/api/event/${id}` })
   }
 

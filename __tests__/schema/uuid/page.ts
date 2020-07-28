@@ -1,4 +1,3 @@
-// TODO: continue here
 /**
  * This file is part of Serlo.org API
  *
