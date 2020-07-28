@@ -6,17 +6,6 @@ interface AbstractNotificationEvent {
 
 # TODO: add unit test
 # TODO: add contract test
-type SetThreadStateNotificationEvent implements AbstractNotificationEvent {
-  id: Int!
-  instance: Instance!
-  date: DateTime!
-  actor: User!
-  thread: UnsupportedThread!
-  archived: Boolean!
-}
-
-# TODO: add unit test
-# TODO: add contract test
 type CreateEntityNotificationEvent implements AbstractNotificationEvent {
   id: Int!
   instance: Instance!
