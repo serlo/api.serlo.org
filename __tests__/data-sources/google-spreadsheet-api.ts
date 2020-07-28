@@ -22,12 +22,12 @@
 import { either, option } from 'fp-ts'
 import { rest } from 'msw'
 
-import { createInMemoryCache } from '../../../src/cache/in-memory-cache'
+import { createInMemoryCache } from '../../src/cache/in-memory-cache'
 import {
-  MajorDimension,
   GoogleSheetApi,
-} from '../../../src/graphql/data-sources/google-spreadsheet-api'
-import { initializeDataSource, expectToBeLeftEventWith } from '../../__utils__'
+  MajorDimension,
+} from '../../src/graphql/data-sources/google-spreadsheet-api'
+import { expectToBeLeftEventWith, initializeDataSource } from '../__utils__'
 
 const cache = createInMemoryCache()
 const environment = { cache }
@@ -39,7 +39,7 @@ const common = {
   majorDimension: MajorDimension.Columns,
 }
 
-afterEach(async () => {
+beforeEach(async () => {
   await cache.flush()
 })
 
@@ -98,7 +98,7 @@ describe('GoogleSheetApi.getValues()', () => {
 
   describe('returns an error', () => {
     test('when there is an error with the api call', async () => {
-      mockSpreadsheetResponse({ ...common, status: 403 })
+      global.server.use(createSpreadsheetHandler({ ...common, status: 403 }))
 
       const googleSheets = new GoogleSheetApi({ apiKey, environment })
       initializeDataSource(googleSheets)
@@ -114,13 +114,15 @@ describe('GoogleSheetApi.getValues()', () => {
     })
 
     test('when value range is empty', async () => {
-      mockSpreadsheetResponse({
-        ...common,
-        response: {
-          majorDimension: common.majorDimension,
-          range: common.range,
-        },
-      })
+      global.server.use(
+        createSpreadsheetHandler({
+          ...common,
+          body: {
+            majorDimension: common.majorDimension,
+            range: common.range,
+          },
+        })
+      )
 
       const googleSheets = new GoogleSheetApi({ apiKey, environment })
       initializeDataSource(googleSheets)
@@ -138,7 +140,9 @@ describe('GoogleSheetApi.getValues()', () => {
       test.each([{ values: [['1'], 1] }, { error: 'an error' }])(
         'response = %p',
         async (response) => {
-          mockSpreadsheetResponse({ ...common, response })
+          global.server.use(
+            createSpreadsheetHandler({ ...common, body: response })
+          )
 
           const googleSheets = new GoogleSheetApi({ apiKey, environment })
           initializeDataSource(googleSheets)
@@ -173,41 +177,40 @@ function mockSpreadsheet({
   majorDimension: string
   values: string[][]
 }) {
-  mockSpreadsheetResponse({
-    apiKey,
-    spreadsheetId,
-    range,
-    majorDimension,
-    response: {
+  global.server.use(
+    createSpreadsheetHandler({
+      apiKey,
+      spreadsheetId,
       range,
       majorDimension,
-      values,
-    },
-  })
+      body: {
+        range,
+        majorDimension,
+        values,
+      },
+    })
+  )
 }
 
-function mockSpreadsheetResponse({
+function createSpreadsheetHandler({
   apiKey,
   spreadsheetId,
   range,
   majorDimension,
   status = 200,
-  response = {},
+  body = {},
 }: {
   apiKey: string
   spreadsheetId: string
   range: string
   majorDimension: string
   status?: number
-  response?: Record<string, unknown>
+  body?: Record<string, unknown>
 }) {
   const url =
     `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}` +
     `/values/${range}?majorDimension=${majorDimension}&key=${apiKey}`
-
-  global.server.use(
-    rest.get(url, (_req, res, ctx) =>
-      res.once(ctx.status(status), ctx.json(response))
-    )
+  return rest.get(url, (_req, res, ctx) =>
+    res.once(ctx.status(status), ctx.json(body))
   )
 }
