@@ -1,3 +1,5 @@
+import { gql } from 'apollo-server'
+
 import { DiscriminatorType, UserPayload } from '../../src/graphql/schema'
 
 export const user: UserPayload = {
@@ -18,4 +20,19 @@ export const user2: UserPayload = {
   date: '2015-02-01T20:35:21Z',
   lastLogin: '2019-03-23T09:20:55Z',
   description: null,
+}
+
+export function createUserActiveDonorQuery(variables: UserPayload) {
+  return {
+    query: gql`
+      query taxonomyTerms($id: Int!) {
+        uuid(id: $id) {
+          ... on User {
+            activeDonor
+          }
+        }
+      }
+    `,
+    variables,
+  }
 }
