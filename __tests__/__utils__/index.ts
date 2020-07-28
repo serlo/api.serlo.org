@@ -19,9 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { RESTDataSource } from 'apollo-datasource-rest'
-import { InMemoryLRUCache } from 'apollo-server-caching'
-import { either } from 'fp-ts'
+import { either as E } from 'fp-ts'
 
 import { ErrorEvent } from '../../src/error-event'
 
@@ -30,15 +28,11 @@ export * from './handlers'
 export * from './test-client'
 
 export function expectToBeLeftEventWith<A>(
-  value: either.Either<ErrorEvent, A>,
+  value: E.Either<ErrorEvent, A>,
   expectedEvent: ErrorEvent
 ) {
-  expect(either.isLeft(value)).toBe(true)
+  expect(E.isLeft(value)).toBe(true)
 
-  if (either.isLeft(value))
+  if (E.isLeft(value))
     expect(value.left).toEqual(expect.objectContaining(expectedEvent))
-}
-
-export function initializeDataSource(dataSource: RESTDataSource) {
-  dataSource.initialize({ context: {}, cache: new InMemoryLRUCache() })
 }
