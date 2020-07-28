@@ -157,6 +157,16 @@ export type License = {
   iconHref: Scalars['String'];
 };
 
+export type CreateCommentNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'CreateCommentNotificationEvent';
+  id: Scalars['Int'];
+  instance: Instance;
+  date: Scalars['DateTime'];
+  author: User;
+  thread: UnsupportedThread;
+  comment: UnsupportedComment;
+};
+
 export type CreateThreadNotificationEvent = AbstractNotificationEvent & {
   __typename?: 'CreateThreadNotificationEvent';
   id: Scalars['Int'];
@@ -171,16 +181,6 @@ export type AbstractNotificationEvent = {
   id: Scalars['Int'];
   instance: Instance;
   date: Scalars['DateTime'];
-};
-
-export type CreateCommentNotificationEvent = AbstractNotificationEvent & {
-  __typename?: 'CreateCommentNotificationEvent';
-  id: Scalars['Int'];
-  instance: Instance;
-  date: Scalars['DateTime'];
-  author: User;
-  thread: UnsupportedThread;
-  comment: UnsupportedComment;
 };
 
 export type SetThreadStateNotificationEvent = AbstractNotificationEvent & {
