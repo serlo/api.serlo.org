@@ -23,8 +23,8 @@ import { gql } from 'apollo-server'
 import { rest } from 'msw'
 
 import {
-  createSetNotificationStateMutation,
-  notifications,
+  createSetLegacyNotificationStateMutation,
+  legacyNotifications,
   user,
 } from '../../__fixtures__'
 import { Service } from '../../src/graphql/schema/types'
@@ -73,7 +73,7 @@ describe('notifications', () => {
     return {
       query: gql`
         query notifications($unread: Boolean) {
-          notifications(unread: $unread) {
+          legacyNotifications(unread: $unread) {
             totalCount
             nodes {
               id
@@ -96,7 +96,7 @@ describe('notifications', () => {
     await assertSuccessfulGraphQLQuery({
       ...createNotificationsQuery(),
       data: {
-        notifications: {
+        legacyNotifications: {
           totalCount: 3,
           nodes: [
             {
@@ -126,7 +126,7 @@ describe('notifications', () => {
     await assertSuccessfulGraphQLQuery({
       ...createNotificationsQuery(false),
       data: {
-        notifications: {
+        legacyNotifications: {
           totalCount: 2,
           nodes: [
             {
@@ -152,7 +152,7 @@ describe('notifications', () => {
     await assertSuccessfulGraphQLQuery({
       ...createNotificationsQuery(true),
       data: {
-        notifications: {
+        legacyNotifications: {
           totalCount: 1,
           nodes: [
             {
@@ -175,7 +175,7 @@ describe('setNotificationState', () => {
     })
     await assertFailingGraphQLMutation(
       {
-        ...createSetNotificationStateMutation({ id: 1, unread: false }),
+        ...createSetLegacyNotificationStateMutation({ id: 1, unread: false }),
         client,
       },
       (errors) => {
@@ -199,7 +199,7 @@ describe('setNotificationState', () => {
     })
     await assertFailingGraphQLMutation(
       {
-        ...createSetNotificationStateMutation({ id: 1, unread: false }),
+        ...createSetLegacyNotificationStateMutation({ id: 1, unread: false }),
         client,
       },
       (errors) => {
@@ -211,13 +211,13 @@ describe('setNotificationState', () => {
   test('authenticated', async () => {
     global.server.use(
       rest.get(
-        `http://de.${process.env.SERLO_ORG_HOST}/api/notifications/${notifications.userId}`,
+        `http://de.${process.env.SERLO_ORG_HOST}/api/notifications/${legacyNotifications.userId}`,
         (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(notifications))
+          return res(ctx.status(200), ctx.json(legacyNotifications))
         }
       ),
       rest.post(
-        `http://de.${process.env.SERLO_ORG_HOST}/api/set-notification-state/${notifications.notifications[0].id}`,
+        `http://de.${process.env.SERLO_ORG_HOST}/api/set-notification-state/${legacyNotifications.notifications[0].id}`,
         (req, res, ctx) => {
           return res(ctx.status(200), ctx.json({}))
         }
@@ -225,11 +225,11 @@ describe('setNotificationState', () => {
     )
     const { client } = createTestClient({
       service: Service.Serlo,
-      user: notifications.userId,
+      user: legacyNotifications.userId,
     })
     await assertSuccessfulGraphQLMutation({
-      ...createSetNotificationStateMutation({
-        id: notifications.notifications[0].id,
+      ...createSetLegacyNotificationStateMutation({
+        id: legacyNotifications.notifications[0].id,
         unread: false,
       }),
       client,
@@ -237,7 +237,7 @@ describe('setNotificationState', () => {
     await assertSuccessfulGraphQLQuery({
       query: gql`
         {
-          notifications {
+          legacyNotifications {
             nodes {
               id
               unread
@@ -246,7 +246,7 @@ describe('setNotificationState', () => {
         }
       `,
       data: {
-        notifications: {
+        legacyNotifications: {
           nodes: [
             {
               id: 1,

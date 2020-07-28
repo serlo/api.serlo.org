@@ -22,13 +22,13 @@
 import { gql } from 'apollo-server'
 
 import {
-  NotificationEventPayload,
-  NotificationPayload,
-  NotificationsPayload,
+  LegacyNotificationEventPayload,
+  LegacyNotificationPayload,
+  LegacyNotificationsPayload,
 } from '../src/graphql/schema'
-import { Instance, MutationSetNotificationStateArgs } from '../src/types'
+import { Instance, MutationSetLegacyNotificationStateArgs } from '../src/types'
 
-export const notificationEvent: NotificationEventPayload = {
+export const legacyNotificationEvent: LegacyNotificationEventPayload = {
   id: 1,
   type: 'string',
   instance: Instance.De,
@@ -38,24 +38,24 @@ export const notificationEvent: NotificationEventPayload = {
   payload: 'string',
 }
 
-export const notification: NotificationPayload = {
+export const legacyNotification: LegacyNotificationPayload = {
   id: 1,
   unread: true,
-  eventId: notificationEvent.id,
+  eventId: legacyNotificationEvent.id,
 }
 
-export const notifications: NotificationsPayload = {
-  notifications: [notification],
+export const legacyNotifications: LegacyNotificationsPayload = {
+  notifications: [legacyNotification],
   userId: 2,
 }
 
-export function createSetNotificationStateMutation(
-  variables: MutationSetNotificationStateArgs
+export function createSetLegacyNotificationStateMutation(
+  variables: MutationSetLegacyNotificationStateArgs
 ) {
   return {
     mutation: gql`
       mutation setNotificationState($id: Int!, $unread: Boolean!) {
-        setNotificationState(id: $id, unread: $unread)
+        setLegacyNotificationState(id: $id, unread: $unread)
       }
     `,
     variables,

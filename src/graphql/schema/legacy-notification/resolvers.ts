@@ -25,10 +25,13 @@ import { resolveConnection } from '../connection'
 import { requestsOnlyFields } from '../utils'
 import { UuidPayload } from '../uuid'
 import { UserPayload } from '../uuid/user'
-import { NotificationPreResolver, NotificationResolvers } from './types'
+import {
+  LegacyNotificationPreResolver,
+  LegacyNotificationResolvers,
+} from './types'
 
-export const resolvers: NotificationResolvers = {
-  Notification: {
+export const resolvers: LegacyNotificationResolvers = {
+  LegacyNotification: {
     async event(parent, _args, { dataSources }, info) {
       const partialEvent = { id: parent.eventId }
       if (requestsOnlyFields('NotificationEvent', ['id'], info)) {
@@ -37,7 +40,7 @@ export const resolvers: NotificationResolvers = {
       return await dataSources.serlo.getNotificationEvent(partialEvent)
     },
   },
-  NotificationEvent: {
+  LegacyNotificationEvent: {
     async actor(parent, _args, { dataSources }, info) {
       const partialActor = { id: parent.actorId }
       if (requestsOnlyFields('User', ['id'], info)) {
@@ -52,7 +55,7 @@ export const resolvers: NotificationResolvers = {
     },
   },
   Query: {
-    async notifications(
+    async legacyNotifications(
       _parent,
       { unread, ...cursorPayload },
       { dataSources, user }
@@ -61,7 +64,7 @@ export const resolvers: NotificationResolvers = {
       const { notifications } = await dataSources.serlo.getNotifications({
         id: user,
       })
-      return resolveConnection<NotificationPreResolver>({
+      return resolveConnection<LegacyNotificationPreResolver>({
         nodes:
           unread == null
             ? notifications
@@ -76,7 +79,7 @@ export const resolvers: NotificationResolvers = {
     },
   },
   Mutation: {
-    async setNotificationState(_parent, payload, { dataSources, user }) {
+    async setLegacyNotificationState(_parent, payload, { dataSources, user }) {
       if (user === null) throw new AuthenticationError('You are not logged in')
       await dataSources.serlo.setNotificationState({
         id: payload.id,

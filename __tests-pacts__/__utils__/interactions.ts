@@ -24,8 +24,8 @@ import { Matchers } from '@pact-foundation/pact'
 import {
   AliasPayload,
   NavigationPayload,
-  NotificationEventPayload,
-  NotificationsPayload,
+  LegacyNotificationEventPayload,
+  LegacyNotificationsPayload,
   UuidPayload,
 } from '../../src/graphql/schema'
 
@@ -48,7 +48,7 @@ export function addNavigationInteraction(payload: NavigationPayload) {
 }
 
 export function addNotificationEventInteraction(
-  payload: NotificationEventPayload
+  payload: LegacyNotificationEventPayload
 ) {
   return addJsonInteraction({
     name: `fetch data of event with id ${payload.id}`,
@@ -66,7 +66,9 @@ export function addNotificationEventInteraction(
   })
 }
 
-export function addNotificationsInteraction(payload: NotificationsPayload) {
+export function addNotificationsInteraction(
+  payload: LegacyNotificationsPayload
+) {
   return addJsonInteraction({
     name: `fetch data of all notifications for user with id ${payload.userId}`,
     given: `there exists a notification for user with id ${payload.userId}`,

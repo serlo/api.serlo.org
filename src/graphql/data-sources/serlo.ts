@@ -35,8 +35,8 @@ import {
   Navigation,
   NavigationPayload,
   NodeData,
-  NotificationEventPayload,
-  NotificationsPayload,
+  LegacyNotificationEventPayload,
+  LegacyNotificationsPayload,
 } from '../schema'
 import { Service } from '../schema/types'
 
@@ -148,7 +148,7 @@ export class SerloDataSource extends RESTDataSource {
     id,
   }: {
     id: number
-  }): Promise<NotificationEventPayload> {
+  }): Promise<LegacyNotificationEventPayload> {
     return this.cacheAwareGet({ path: `/api/event/${id}` })
   }
 
@@ -157,8 +157,8 @@ export class SerloDataSource extends RESTDataSource {
   }: {
     id: number
     bypassCache?: boolean
-  }): Promise<NotificationsPayload> {
-    const response = await this.cacheAwareGet<NotificationsPayload>({
+  }): Promise<LegacyNotificationsPayload> {
+    const response = await this.cacheAwareGet<LegacyNotificationsPayload>({
       path: `/api/notifications/${id}`,
     })
     return {

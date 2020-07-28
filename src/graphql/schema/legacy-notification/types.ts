@@ -20,66 +20,71 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import {
-  MutationSetNotificationStateArgs,
-  Notification,
-  NotificationEvent,
-  QueryNotificationsArgs,
+  MutationSetLegacyNotificationStateArgs,
+  LegacyNotification,
+  LegacyNotificationEvent,
+  QueryLegacyNotificationsArgs,
 } from '../../../types'
 import { Connection } from '../connection'
 import { MutationResolver, QueryResolver, Resolver } from '../types'
 import { AbstractUuidPreResolver } from '../uuid/abstract-uuid'
 import { UserPreResolver } from '../uuid/user'
 
-export interface NotificationPreResolver
-  extends Omit<Notification, keyof NotificationResolvers['Notification']> {
+export interface LegacyNotificationPreResolver
+  extends Omit<
+    LegacyNotification,
+    keyof LegacyNotificationResolvers['LegacyNotification']
+  > {
   eventId: number
 }
 
-export type NotificationPayload = NotificationPreResolver
+export type LegacyNotificationPayload = LegacyNotificationPreResolver
 
-export interface NotificationsPayload {
-  notifications: NotificationPayload[]
+export interface LegacyNotificationsPayload {
+  notifications: LegacyNotificationPayload[]
   userId: number
 }
 
-export interface NotificationEventPreResolver
+export interface LegacyNotificationEventPreResolver
   extends Omit<
-    NotificationEvent,
-    keyof NotificationResolvers['NotificationEvent']
+    LegacyNotificationEvent,
+    keyof LegacyNotificationResolvers['LegacyNotificationEvent']
   > {
   actorId: number
   objectId: number
 }
 
-export type NotificationEventPayload = NotificationEventPreResolver
+export type LegacyNotificationEventPayload = LegacyNotificationEventPreResolver
 
-export interface NotificationResolvers {
-  Notification: {
+export interface LegacyNotificationResolvers {
+  LegacyNotification: {
     event: Resolver<
-      NotificationPreResolver,
+      LegacyNotificationPreResolver,
       never,
-      Partial<NotificationEventPreResolver>
+      Partial<LegacyNotificationEventPreResolver>
     >
   }
-  NotificationEvent: {
+  LegacyNotificationEvent: {
     actor: Resolver<
-      NotificationEventPreResolver,
+      LegacyNotificationEventPreResolver,
       never,
       Partial<UserPreResolver>
     >
     object: Resolver<
-      NotificationEventPreResolver,
+      LegacyNotificationEventPreResolver,
       never,
       AbstractUuidPreResolver
     >
   }
   Query: {
-    notifications: QueryResolver<
-      QueryNotificationsArgs,
-      Connection<NotificationPreResolver>
+    legacyNotifications: QueryResolver<
+      QueryLegacyNotificationsArgs,
+      Connection<LegacyNotificationPreResolver>
     >
   }
   Mutation: {
-    setNotificationState: MutationResolver<MutationSetNotificationStateArgs>
+    setLegacyNotificationState: MutationResolver<
+      MutationSetLegacyNotificationStateArgs
+    >
   }
 }

@@ -16,8 +16,8 @@ export type Query = {
   __typename?: 'Query';
   _cacheKeys: Query_CacheKeysResult;
   activeDonors: Array<User>;
+  legacyNotifications: QueryLegacyNotificationsResult;
   license?: Maybe<License>;
-  notifications: QueryNotificationsResult;
   uuid?: Maybe<AbstractUuid>;
 };
 
@@ -30,17 +30,17 @@ export type Query_CacheKeysArgs = {
 };
 
 
-export type QueryLicenseArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type QueryNotificationsArgs = {
+export type QueryLegacyNotificationsArgs = {
   after?: Maybe<Scalars['String']>;
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
   unread?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type QueryLicenseArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -67,7 +67,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   _removeCache?: Maybe<Scalars['Boolean']>;
   _setCache?: Maybe<Scalars['Boolean']>;
-  setNotificationState?: Maybe<Scalars['Boolean']>;
+  setLegacyNotificationState?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -82,7 +82,7 @@ export type Mutation_SetCacheArgs = {
 };
 
 
-export type MutationSetNotificationStateArgs = {
+export type MutationSetLegacyNotificationStateArgs = {
   id: Scalars['Int'];
   unread: Scalars['Boolean'];
 };
@@ -107,6 +107,38 @@ export enum Instance {
 
 
 
+export type LegacyNotification = {
+  __typename?: 'LegacyNotification';
+  id: Scalars['Int'];
+  unread: Scalars['Boolean'];
+  event: LegacyNotificationEvent;
+};
+
+export type LegacyNotificationEvent = {
+  __typename?: 'LegacyNotificationEvent';
+  id: Scalars['Int'];
+  type: Scalars['String'];
+  instance: Instance;
+  date: Scalars['DateTime'];
+  actor: User;
+  object: AbstractUuid;
+  payload: Scalars['String'];
+};
+
+export type QueryLegacyNotificationsResult = {
+  __typename?: 'QueryLegacyNotificationsResult';
+  edges: Array<LegacyNotificationCursor>;
+  nodes: Array<LegacyNotification>;
+  totalCount: Scalars['Int'];
+  pageInfo: PageInfo;
+};
+
+export type LegacyNotificationCursor = {
+  __typename?: 'LegacyNotificationCursor';
+  cursor: Scalars['String'];
+  node: LegacyNotification;
+};
+
 export type License = {
   __typename?: 'License';
   id: Scalars['Int'];
@@ -117,38 +149,6 @@ export type License = {
   content: Scalars['String'];
   agreement: Scalars['String'];
   iconHref: Scalars['String'];
-};
-
-export type Notification = {
-  __typename?: 'Notification';
-  id: Scalars['Int'];
-  unread: Scalars['Boolean'];
-  event: NotificationEvent;
-};
-
-export type NotificationEvent = {
-  __typename?: 'NotificationEvent';
-  id: Scalars['Int'];
-  type: Scalars['String'];
-  instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
-  object: AbstractUuid;
-  payload: Scalars['String'];
-};
-
-export type QueryNotificationsResult = {
-  __typename?: 'QueryNotificationsResult';
-  edges: Array<NotificationCursor>;
-  nodes: Array<Notification>;
-  totalCount: Scalars['Int'];
-  pageInfo: PageInfo;
-};
-
-export type NotificationCursor = {
-  __typename?: 'NotificationCursor';
-  cursor: Scalars['String'];
-  node: Notification;
 };
 
 export type AbstractEntity = {
