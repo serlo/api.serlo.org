@@ -3,13 +3,17 @@ import {
   QueryNotificationEventArgs,
 } from '../../../types'
 import { QueryResolver, TypeResolver } from '../types'
+import { CreateCommentNotificationEventPreResolver } from './create-comment-notification-event'
 import { CreateThreadNotificationEventPreResolver } from './create-thread-notification-event'
 
 export enum NotificationEventType {
+  CreateComment = 'CreateCommentNotificationEvent',
   CreateThread = 'CreateThreadNotificationEvent',
 }
 
-export type NotificationEventPreResolver = CreateThreadNotificationEventPreResolver
+export type NotificationEventPreResolver =
+  | CreateCommentNotificationEventPreResolver
+  | CreateThreadNotificationEventPreResolver
 export interface AbstractNotificationEventPreResolver
   extends AbstractNotificationEvent {
   __typename: NotificationEventType

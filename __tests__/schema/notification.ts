@@ -23,8 +23,11 @@ import { gql } from 'apollo-server'
 
 import {
   article,
+  comment,
+  createCommentNotificationEvent,
   createThreadNotificationEvent,
   getArticleDataWithoutSubResolvers,
+  getCreateCommentNotificationEventDataWithoutSubResolvers,
   getCreateThreadNotificationEventDataWithoutSubResolvers,
   thread,
   user,
@@ -45,6 +48,114 @@ beforeEach(() => {
     service: Service.Playground,
     user: null,
   }).client
+})
+
+describe('CreateCommentNotificationEvent', () => {
+  beforeEach(() => {
+    global.server.use(
+      createNotificationEventHandler(createCommentNotificationEvent)
+    )
+  })
+
+  test('by id', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            __typename
+            ... on CreateCommentNotificationEvent {
+              id
+              instance
+              date
+            }
+          }
+        }
+      `,
+      variables: createCommentNotificationEvent,
+      data: {
+        notificationEvent: getCreateCommentNotificationEventDataWithoutSubResolvers(
+          createCommentNotificationEvent
+        ),
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ author)', async () => {
+    global.server.use(createUuidHandler(user))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on CreateCommentNotificationEvent {
+              author {
+                __typename
+                id
+                trashed
+                username
+                date
+                lastLogin
+                description
+              }
+            }
+          }
+        }
+      `,
+      variables: createCommentNotificationEvent,
+      data: {
+        notificationEvent: {
+          author: user,
+        },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ thread)', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on CreateCommentNotificationEvent {
+              thread {
+                id
+              }
+            }
+          }
+        }
+      `,
+      variables: createCommentNotificationEvent,
+      data: {
+        notificationEvent: {
+          thread,
+        },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ comment)', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on CreateCommentNotificationEvent {
+              comment {
+                id
+              }
+            }
+          }
+        }
+      `,
+      variables: createCommentNotificationEvent,
+      data: {
+        notificationEvent: {
+          comment,
+        },
+      },
+      client,
+    })
+  })
 })
 
 describe('CreateThreadNotificationEvent', () => {

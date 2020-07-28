@@ -23,35 +23,67 @@ import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
 import {
+  createCommentNotificationEvent,
   createThreadNotificationEvent,
+  getCreateCommentNotificationEventDataWithoutSubResolvers,
   getCreateThreadNotificationEventDataWithoutSubResolvers,
 } from '../../__fixtures__'
-import { CreateThreadNotificationEventPayload } from '../../src/graphql/schema/notification'
+import { AbstractNotificationEventPayload } from '../../src/graphql/schema/notification'
 import { addJsonInteraction, assertSuccessfulGraphQLQuery } from '../__utils__'
 
-function addCreateThreadNotificationEventInteraction(
-  payload: CreateThreadNotificationEventPayload
-) {
-  return addJsonInteraction({
-    name: `fetch data of event with id ${payload.id}`,
-    given: `event ${payload.id} is of type ${payload.__typename}`,
-    path: `/api/event/${payload.id}`,
-    body: {
-      __typename: payload.__typename,
-      id: payload.id,
-      instance: Matchers.string(payload.instance),
-      date: Matchers.iso8601DateTime(payload.date),
-      authorId: Matchers.integer(payload.authorId),
-      objectId: Matchers.integer(payload.objectId),
-      threadId: Matchers.integer(payload.threadId),
-    },
+async function addNotificationEventInteraction<
+  T extends Pick<AbstractNotificationEventPayload, '__typename' | 'id'>
+>(body: T) {
+  await addJsonInteraction({
+    name: `fetch data of event with id ${body.id}`,
+    given: `event ${body.id} is of type ${body.__typename}`,
+    path: `/api/event/${body.id}`,
+    body,
   })
 }
 
+test('CreateCommentNotificationEvent', async () => {
+  await addNotificationEventInteraction({
+    __typename: createCommentNotificationEvent.__typename,
+    id: createCommentNotificationEvent.id,
+    instance: Matchers.string(createCommentNotificationEvent.instance),
+    date: Matchers.iso8601DateTime(createCommentNotificationEvent.date),
+    authorId: Matchers.integer(createCommentNotificationEvent.authorId),
+    threadId: Matchers.integer(createCommentNotificationEvent.threadId),
+    commentId: Matchers.integer(createCommentNotificationEvent.commentId),
+  })
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query notificationEvent($id: Int!) {
+        notificationEvent(id: $id) {
+          __typename
+          ... on CreateCommentNotificationEvent {
+            id
+            instance
+            date
+          }
+        }
+      }
+    `,
+    variables: createCommentNotificationEvent,
+    data: {
+      notificationEvent: getCreateCommentNotificationEventDataWithoutSubResolvers(
+        createCommentNotificationEvent
+      ),
+    },
+  })
+})
+
 test('CreateThreadNotificationEvent', async () => {
-  await addCreateThreadNotificationEventInteraction(
-    createThreadNotificationEvent
-  )
+  await addNotificationEventInteraction({
+    __typename: createThreadNotificationEvent.__typename,
+    id: createThreadNotificationEvent.id,
+    instance: Matchers.string(createThreadNotificationEvent.instance),
+    date: Matchers.iso8601DateTime(createThreadNotificationEvent.date),
+    authorId: Matchers.integer(createThreadNotificationEvent.authorId),
+    objectId: Matchers.integer(createThreadNotificationEvent.objectId),
+    threadId: Matchers.integer(createThreadNotificationEvent.threadId),
+  })
   await assertSuccessfulGraphQLQuery({
     query: gql`
       query notificationEvent($id: Int!) {
