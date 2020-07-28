@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-
 import { gql } from 'apollo-server'
 
 import {
@@ -28,19 +27,19 @@ import {
   taxonomyTermCurriculumTopic,
   taxonomyTermRoot,
   taxonomyTermSubject,
-} from '../__fixtures__'
+} from '../../../__fixtures__'
 import {
   NavigationPayload,
   PagePayload,
   TaxonomyTermPayload,
-} from '../src/graphql/schema'
-import { Service } from '../src/graphql/schema/types'
-import { Instance } from '../src/types'
+} from '../../../src/graphql/schema'
+import { Service } from '../../../src/graphql/schema/types'
+import { Instance } from '../../../src/types'
 import {
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   createTestClient,
-} from './__utils__'
+} from '../../__utils__'
 
 function createSetNavigationMutation(navigation: NavigationPayload) {
   return {
