@@ -151,6 +151,147 @@ export type License = {
   iconHref: Scalars['String'];
 };
 
+export type AbstractNotificationEvent = {
+  date: Scalars['DateTime'];
+};
+
+export type CreateThreadNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'CreateThreadNotificationEvent';
+  date: Scalars['DateTime'];
+  author: User;
+  object: AbstractUuid;
+  thread: UnsupportedThread;
+};
+
+export type CreateCommentNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'CreateCommentNotificationEvent';
+  date: Scalars['DateTime'];
+  author: User;
+  thread: UnsupportedThread;
+  comment: UnsupportedComment;
+};
+
+export type SetThreadStateNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'SetThreadStateNotificationEvent';
+  date: Scalars['DateTime'];
+  actor: User;
+  thread: UnsupportedThread;
+  archived: Scalars['Boolean'];
+};
+
+export type CreateEntityNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'CreateEntityNotificationEvent';
+  date: Scalars['DateTime'];
+  author: User;
+  entity: AbstractEntity;
+};
+
+export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'CreateEntityRevisionNotificationEvent';
+  date: Scalars['DateTime'];
+  author: User;
+  entity: AbstractEntity;
+  entityRevision: AbstractEntityRevision;
+};
+
+export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'CheckoutRevisionNotificationEvent';
+  date: Scalars['DateTime'];
+  reviewer: User;
+  entity: AbstractEntity;
+  entityRevision: AbstractEntityRevision;
+  reason: Scalars['String'];
+};
+
+export type RejectRevisionNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'RejectRevisionNotificationEvent';
+  date: Scalars['DateTime'];
+  reviewer: User;
+  entity: AbstractEntity;
+  entityRevision: AbstractEntityRevision;
+  reason: Scalars['String'];
+};
+
+export type SetLicenseNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'SetLicenseNotificationEvent';
+  date: Scalars['DateTime'];
+  actor: User;
+  object: AbstractUuid;
+};
+
+export type CreateLinkNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'CreateLinkNotificationEvent';
+  date: Scalars['DateTime'];
+  actor: User;
+  parent: AbstractUuid;
+  entity: AbstractEntity;
+};
+
+export type RemoveLinkNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'RemoveLinkNotificationEvent';
+  date: Scalars['DateTime'];
+  actor: User;
+  parent: AbstractUuid;
+  entity: AbstractEntity;
+};
+
+export type CreateTaxonomyAssociationNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'CreateTaxonomyAssociationNotificationEvent';
+  date: Scalars['DateTime'];
+  actor: User;
+  taxonomyTerm: TaxonomyTerm;
+  entity: AbstractEntity;
+};
+
+export type CreateTaxonomyTermNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'CreateTaxonomyTermNotificationEvent';
+  date: Scalars['DateTime'];
+  actor: User;
+  taxonomyTerm: TaxonomyTerm;
+};
+
+export type SetTaxonomyTermNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'SetTaxonomyTermNotificationEvent';
+  date: Scalars['DateTime'];
+  actor: User;
+  taxonomyTerm: TaxonomyTerm;
+};
+
+export type SetTaxonomyParentNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'SetTaxonomyParentNotificationEvent';
+  date: Scalars['DateTime'];
+  actor: User;
+  taxonomyTerm: TaxonomyTerm;
+  previousParent: TaxonomyTerm;
+  parent: TaxonomyTerm;
+};
+
+export type RemoveTaxonomyAssociationNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'RemoveTaxonomyAssociationNotificationEvent';
+  date: Scalars['DateTime'];
+  actor: User;
+  taxonomyTerm: TaxonomyTerm;
+  entity: AbstractEntity;
+};
+
+export type SetUuidStateNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'SetUuidStateNotificationEvent';
+  date: Scalars['DateTime'];
+  actor: User;
+  object: AbstractUuid;
+  trashed: Scalars['Boolean'];
+};
+
+export type UnsupportedThread = {
+  __typename?: 'UnsupportedThread';
+  id: Scalars['Int'];
+};
+
+export type UnsupportedComment = {
+  __typename?: 'UnsupportedComment';
+  id: Scalars['Int'];
+};
+
 export type AbstractEntity = {
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];

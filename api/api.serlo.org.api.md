@@ -50,6 +50,11 @@ export type AbstractNavigationChild = {
 };
 
 // @public (undocumented)
+export type AbstractNotificationEvent = {
+    date: Scalars['DateTime'];
+};
+
+// @public (undocumented)
 export type AbstractTaxonomyTermChild = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -137,6 +142,16 @@ export type CacheKeyCursor = {
 };
 
 // @public (undocumented)
+export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & {
+    __typename?: 'CheckoutRevisionNotificationEvent';
+    date: Scalars['DateTime'];
+    reviewer: User;
+    entity: AbstractEntity;
+    entityRevision: AbstractEntityRevision;
+    reason: Scalars['String'];
+};
+
+// @public (undocumented)
 export type Course = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & {
     __typename?: 'Course';
     id: Scalars['Int'];
@@ -188,6 +203,67 @@ export type CourseRevision = AbstractUuid & AbstractEntityRevision & {
     content: Scalars['String'];
     changes: Scalars['String'];
     metaDescription: Scalars['String'];
+};
+
+// @public (undocumented)
+export type CreateCommentNotificationEvent = AbstractNotificationEvent & {
+    __typename?: 'CreateCommentNotificationEvent';
+    date: Scalars['DateTime'];
+    author: User;
+    thread: UnsupportedThread;
+    comment: UnsupportedComment;
+};
+
+// @public (undocumented)
+export type CreateEntityNotificationEvent = AbstractNotificationEvent & {
+    __typename?: 'CreateEntityNotificationEvent';
+    date: Scalars['DateTime'];
+    author: User;
+    entity: AbstractEntity;
+};
+
+// @public (undocumented)
+export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & {
+    __typename?: 'CreateEntityRevisionNotificationEvent';
+    date: Scalars['DateTime'];
+    author: User;
+    entity: AbstractEntity;
+    entityRevision: AbstractEntityRevision;
+};
+
+// @public (undocumented)
+export type CreateLinkNotificationEvent = AbstractNotificationEvent & {
+    __typename?: 'CreateLinkNotificationEvent';
+    date: Scalars['DateTime'];
+    actor: User;
+    parent: AbstractUuid;
+    entity: AbstractEntity;
+};
+
+// @public (undocumented)
+export type CreateTaxonomyAssociationNotificationEvent = AbstractNotificationEvent & {
+    __typename?: 'CreateTaxonomyAssociationNotificationEvent';
+    date: Scalars['DateTime'];
+    actor: User;
+    taxonomyTerm: TaxonomyTerm;
+    entity: AbstractEntity;
+};
+
+// @public (undocumented)
+export type CreateTaxonomyTermNotificationEvent = AbstractNotificationEvent & {
+    __typename?: 'CreateTaxonomyTermNotificationEvent';
+    date: Scalars['DateTime'];
+    actor: User;
+    taxonomyTerm: TaxonomyTerm;
+};
+
+// @public (undocumented)
+export type CreateThreadNotificationEvent = AbstractNotificationEvent & {
+    __typename?: 'CreateThreadNotificationEvent';
+    date: Scalars['DateTime'];
+    author: User;
+    object: AbstractUuid;
+    thread: UnsupportedThread;
 };
 
 // @public (undocumented)
@@ -491,6 +567,34 @@ export type QueryUuidArgs = {
     id?: Maybe<Scalars['Int']>;
 };
 
+// @public (undocumented)
+export type RejectRevisionNotificationEvent = AbstractNotificationEvent & {
+    __typename?: 'RejectRevisionNotificationEvent';
+    date: Scalars['DateTime'];
+    reviewer: User;
+    entity: AbstractEntity;
+    entityRevision: AbstractEntityRevision;
+    reason: Scalars['String'];
+};
+
+// @public (undocumented)
+export type RemoveLinkNotificationEvent = AbstractNotificationEvent & {
+    __typename?: 'RemoveLinkNotificationEvent';
+    date: Scalars['DateTime'];
+    actor: User;
+    parent: AbstractUuid;
+    entity: AbstractEntity;
+};
+
+// @public (undocumented)
+export type RemoveTaxonomyAssociationNotificationEvent = AbstractNotificationEvent & {
+    __typename?: 'RemoveTaxonomyAssociationNotificationEvent';
+    date: Scalars['DateTime'];
+    actor: User;
+    taxonomyTerm: TaxonomyTerm;
+    entity: AbstractEntity;
+};
+
 // @public
 export type Scalars = {
     ID: string;
@@ -501,6 +605,50 @@ export type Scalars = {
     DateTime: string;
     JSON: unknown;
     JSONObject: Record<string, unknown>;
+};
+
+// @public (undocumented)
+export type SetLicenseNotificationEvent = AbstractNotificationEvent & {
+    __typename?: 'SetLicenseNotificationEvent';
+    date: Scalars['DateTime'];
+    actor: User;
+    object: AbstractUuid;
+};
+
+// @public (undocumented)
+export type SetTaxonomyParentNotificationEvent = AbstractNotificationEvent & {
+    __typename?: 'SetTaxonomyParentNotificationEvent';
+    date: Scalars['DateTime'];
+    actor: User;
+    taxonomyTerm: TaxonomyTerm;
+    previousParent: TaxonomyTerm;
+    parent: TaxonomyTerm;
+};
+
+// @public (undocumented)
+export type SetTaxonomyTermNotificationEvent = AbstractNotificationEvent & {
+    __typename?: 'SetTaxonomyTermNotificationEvent';
+    date: Scalars['DateTime'];
+    actor: User;
+    taxonomyTerm: TaxonomyTerm;
+};
+
+// @public (undocumented)
+export type SetThreadStateNotificationEvent = AbstractNotificationEvent & {
+    __typename?: 'SetThreadStateNotificationEvent';
+    date: Scalars['DateTime'];
+    actor: User;
+    thread: UnsupportedThread;
+    archived: Scalars['Boolean'];
+};
+
+// @public (undocumented)
+export type SetUuidStateNotificationEvent = AbstractNotificationEvent & {
+    __typename?: 'SetUuidStateNotificationEvent';
+    date: Scalars['DateTime'];
+    actor: User;
+    object: AbstractUuid;
+    trashed: Scalars['Boolean'];
 };
 
 // @public (undocumented)
@@ -569,6 +717,18 @@ export enum TaxonomyTermType {
     // (undocumented)
     TopicFolder = "topicFolder"
 }
+
+// @public (undocumented)
+export type UnsupportedComment = {
+    __typename?: 'UnsupportedComment';
+    id: Scalars['Int'];
+};
+
+// @public (undocumented)
+export type UnsupportedThread = {
+    __typename?: 'UnsupportedThread';
+    id: Scalars['Int'];
+};
 
 // @public (undocumented)
 export type User = AbstractUuid & {
