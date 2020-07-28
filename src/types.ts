@@ -176,6 +176,16 @@ export type CreateEntityNotificationEvent = AbstractNotificationEvent & {
   entity: AbstractEntity;
 };
 
+export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'CreateEntityRevisionNotificationEvent';
+  id: Scalars['Int'];
+  instance: Instance;
+  date: Scalars['DateTime'];
+  author: User;
+  entity: AbstractEntity;
+  entityRevision: AbstractEntityRevision;
+};
+
 export type CreateThreadNotificationEvent = AbstractNotificationEvent & {
   __typename?: 'CreateThreadNotificationEvent';
   id: Scalars['Int'];
@@ -200,16 +210,6 @@ export type AbstractNotificationEvent = {
   id: Scalars['Int'];
   instance: Instance;
   date: Scalars['DateTime'];
-};
-
-export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & {
-  __typename?: 'CreateEntityRevisionNotificationEvent';
-  id: Scalars['Int'];
-  instance: Instance;
-  date: Scalars['DateTime'];
-  author: User;
-  entity: AbstractEntity;
-  entityRevision: AbstractEntityRevision;
 };
 
 export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & {

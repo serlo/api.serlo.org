@@ -23,13 +23,17 @@ import { gql } from 'apollo-server'
 
 import {
   article,
+  articleRevision,
   comment,
   createCommentNotificationEvent,
   createEntityNotificationEvent,
+  createEntityRevisionNotificationEvent,
   createThreadNotificationEvent,
   getArticleDataWithoutSubResolvers,
+  getArticleRevisionDataWithoutSubResolvers,
   getCreateCommentNotificationEventDataWithoutSubResolvers,
   getCreateEntityNotificationEventDataWithoutSubResolvers,
+  getCreateEntityRevisionNotificationEventDataWithoutSubResolvers,
   getCreateThreadNotificationEventDataWithoutSubResolvers,
   getSetThreadStateNotificationEventDataWithoutSubResolvers,
   setThreadStateNotificationEvent,
@@ -248,6 +252,135 @@ describe('CreateEntityNotificationEvent', () => {
       data: {
         notificationEvent: {
           entity: getArticleDataWithoutSubResolvers(article),
+        },
+      },
+      client,
+    })
+  })
+})
+
+describe('CreateEntityRevisionNotificationEvent', () => {
+  beforeEach(() => {
+    global.server.use(
+      createNotificationEventHandler(createEntityRevisionNotificationEvent)
+    )
+  })
+
+  test('by id', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            __typename
+            ... on CreateEntityRevisionNotificationEvent {
+              id
+              instance
+              date
+            }
+          }
+        }
+      `,
+      variables: createEntityRevisionNotificationEvent,
+      data: {
+        notificationEvent: getCreateEntityRevisionNotificationEventDataWithoutSubResolvers(
+          createEntityRevisionNotificationEvent
+        ),
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ author)', async () => {
+    global.server.use(createUuidHandler(user))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on CreateEntityRevisionNotificationEvent {
+              author {
+                __typename
+                id
+                trashed
+                username
+                date
+                lastLogin
+                description
+              }
+            }
+          }
+        }
+      `,
+      variables: createEntityRevisionNotificationEvent,
+      data: {
+        notificationEvent: {
+          author: user,
+        },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ entity)', async () => {
+    global.server.use(createUuidHandler(article))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on CreateEntityRevisionNotificationEvent {
+              entity {
+                __typename
+                ... on Article {
+                  id
+                  trashed
+                  alias
+                  instance
+                  date
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: createEntityRevisionNotificationEvent,
+      data: {
+        notificationEvent: {
+          entity: getArticleDataWithoutSubResolvers(article),
+        },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ entityRevision)', async () => {
+    global.server.use(createUuidHandler(articleRevision))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on CreateEntityRevisionNotificationEvent {
+              entityRevision {
+                __typename
+                ... on ArticleRevision {
+                  id
+                  trashed
+                  date
+                  title
+                  content
+                  changes
+                  metaTitle
+                  metaDescription
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: createEntityRevisionNotificationEvent,
+      data: {
+        notificationEvent: {
+          entityRevision: getArticleRevisionDataWithoutSubResolvers(
+            articleRevision
+          ),
         },
       },
       client,
