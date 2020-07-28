@@ -1,19 +1,15 @@
+# TODO: add instance
 interface AbstractNotificationEvent {
+  id: Int!
+  instance: Instance!
   date: DateTime!
-}
-
-# TODO: add unit test
-# TODO: add contract test
-type CreateThreadNotificationEvent implements AbstractNotificationEvent {
-  date: DateTime!
-  author: User!
-  object: AbstractUuid!
-  thread: UnsupportedThread!
 }
 
 # TODO: add unit test
 # TODO: add contract test
 type CreateCommentNotificationEvent implements AbstractNotificationEvent {
+  id: Int!
+  instance: Instance!
   date: DateTime!
   author: User!
   thread: UnsupportedThread!
@@ -23,6 +19,8 @@ type CreateCommentNotificationEvent implements AbstractNotificationEvent {
 # TODO: add unit test
 # TODO: add contract test
 type SetThreadStateNotificationEvent implements AbstractNotificationEvent {
+  id: Int!
+  instance: Instance!
   date: DateTime!
   actor: User!
   thread: UnsupportedThread!
@@ -32,6 +30,8 @@ type SetThreadStateNotificationEvent implements AbstractNotificationEvent {
 # TODO: add unit test
 # TODO: add contract test
 type CreateEntityNotificationEvent implements AbstractNotificationEvent {
+  id: Int!
+  instance: Instance!
   date: DateTime!
   author: User!
   # TODO: is this really an entity?
@@ -41,6 +41,8 @@ type CreateEntityNotificationEvent implements AbstractNotificationEvent {
 # TODO: add unit test
 # TODO: add contract test
 type CreateEntityRevisionNotificationEvent implements AbstractNotificationEvent {
+  id: Int!
+  instance: Instance!
   date: DateTime!
   author: User!
   # TODO: is this really an entity?
@@ -52,6 +54,8 @@ type CreateEntityRevisionNotificationEvent implements AbstractNotificationEvent 
 # TODO: add unit test
 # TODO: add contract test
 type CheckoutRevisionNotificationEvent implements AbstractNotificationEvent {
+  id: Int!
+  instance: Instance!
   date: DateTime!
   reviewer: User!
   # TODO: is this really an entity?
@@ -64,6 +68,8 @@ type CheckoutRevisionNotificationEvent implements AbstractNotificationEvent {
 # TODO: add unit test
 # TODO: add contract test
 type RejectRevisionNotificationEvent implements AbstractNotificationEvent {
+  id: Int!
+  instance: Instance!
   date: DateTime!
   reviewer: User!
   # TODO: is this really an entity?
@@ -76,6 +82,8 @@ type RejectRevisionNotificationEvent implements AbstractNotificationEvent {
 # TODO: add unit test
 # TODO: add contract test
 type SetLicenseNotificationEvent implements AbstractNotificationEvent {
+  id: Int!
+  instance: Instance!
   date: DateTime!
   actor: User!
   # TODO: an interface here would be helpful (also for tests) since this probably can be a Page, too
@@ -85,6 +93,8 @@ type SetLicenseNotificationEvent implements AbstractNotificationEvent {
 # TODO: add unit test
 # TODO: add contract test
 type CreateLinkNotificationEvent implements AbstractNotificationEvent {
+  id: Int!
+  instance: Instance!
   date: DateTime!
   actor: User!
   # TODO: an interface here would be helpful since this probably can be taxonomy term or entity
@@ -96,6 +106,8 @@ type CreateLinkNotificationEvent implements AbstractNotificationEvent {
 # TODO: add unit test
 # TODO: add contract test
 type RemoveLinkNotificationEvent implements AbstractNotificationEvent {
+  id: Int!
+  instance: Instance!
   date: DateTime!
   actor: User!
   # TODO: an interface here would be helpful since this probably can be taxonomy term or entity
@@ -107,6 +119,8 @@ type RemoveLinkNotificationEvent implements AbstractNotificationEvent {
 # TODO: add unit test
 # TODO: add contract test
 type CreateTaxonomyAssociationNotificationEvent implements AbstractNotificationEvent {
+  id: Int!
+  instance: Instance!
   date: DateTime!
   actor: User!
   taxonomyTerm: TaxonomyTerm!
@@ -117,6 +131,8 @@ type CreateTaxonomyAssociationNotificationEvent implements AbstractNotificationE
 # TODO: add unit test
 # TODO: add contract test
 type CreateTaxonomyTermNotificationEvent implements AbstractNotificationEvent {
+  id: Int!
+  instance: Instance!
   date: DateTime!
   actor: User!
   taxonomyTerm: TaxonomyTerm!
@@ -125,6 +141,8 @@ type CreateTaxonomyTermNotificationEvent implements AbstractNotificationEvent {
 # TODO: add unit test
 # TODO: add contract test
 type SetTaxonomyTermNotificationEvent implements AbstractNotificationEvent {
+  id: Int!
+  instance: Instance!
   date: DateTime!
   actor: User!
   taxonomyTerm: TaxonomyTerm!
@@ -133,6 +151,8 @@ type SetTaxonomyTermNotificationEvent implements AbstractNotificationEvent {
 # TODO: add unit test
 # TODO: add contract test
 type SetTaxonomyParentNotificationEvent implements AbstractNotificationEvent {
+  id: Int!
+  instance: Instance!
   date: DateTime!
   actor: User!
   taxonomyTerm: TaxonomyTerm!
@@ -144,6 +164,8 @@ type SetTaxonomyParentNotificationEvent implements AbstractNotificationEvent {
 # TODO: add unit test
 # TODO: add contract test
 type RemoveTaxonomyAssociationNotificationEvent implements AbstractNotificationEvent {
+  id: Int!
+  instance: Instance!
   date: DateTime!
   actor: User!
   taxonomyTerm: TaxonomyTerm!
@@ -154,18 +176,14 @@ type RemoveTaxonomyAssociationNotificationEvent implements AbstractNotificationE
 # TODO: add unit test
 # TODO: add contract test
 type SetUuidStateNotificationEvent implements AbstractNotificationEvent {
+  id: Int!
+  instance: Instance!
   date: DateTime!
   actor: User!
   object: AbstractUuid!
   trashed: Boolean!
 }
 
-# TODO: this should be a real thread in the future
-type UnsupportedThread {
-  id: Int!
-}
-
-# TODO: this should be a real comment in the future
-type UnsupportedComment {
-  id: Int!
+extend type Query {
+  notificationEvent(id: Int!): AbstractNotificationEvent
 }

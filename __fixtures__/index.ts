@@ -22,4 +22,5 @@
 export * from './cache'
 export * from './license'
 export * from './legacy-notification'
+export * from './notification'
 export * from './uuid'
