@@ -6,17 +6,6 @@ interface AbstractNotificationEvent {
 
 # TODO: add unit test
 # TODO: add contract test
-type CreateEntityNotificationEvent implements AbstractNotificationEvent {
-  id: Int!
-  instance: Instance!
-  date: DateTime!
-  author: User!
-  # TODO: is this really an entity?
-  entity: AbstractEntity!
-}
-
-# TODO: add unit test
-# TODO: add contract test
 type CreateEntityRevisionNotificationEvent implements AbstractNotificationEvent {
   id: Int!
   instance: Instance!

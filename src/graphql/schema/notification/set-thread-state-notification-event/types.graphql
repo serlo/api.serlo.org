@@ -1,5 +1,3 @@
-# TODO: add unit test
-# TODO: add contract test
 type SetThreadStateNotificationEvent implements AbstractNotificationEvent {
   id: Int!
   instance: Instance!

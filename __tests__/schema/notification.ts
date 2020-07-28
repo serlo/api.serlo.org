@@ -25,9 +25,11 @@ import {
   article,
   comment,
   createCommentNotificationEvent,
+  createEntityNotificationEvent,
   createThreadNotificationEvent,
   getArticleDataWithoutSubResolvers,
   getCreateCommentNotificationEventDataWithoutSubResolvers,
+  getCreateEntityNotificationEventDataWithoutSubResolvers,
   getCreateThreadNotificationEventDataWithoutSubResolvers,
   getSetThreadStateNotificationEventDataWithoutSubResolvers,
   setThreadStateNotificationEvent,
@@ -153,6 +155,99 @@ describe('CreateCommentNotificationEvent', () => {
       data: {
         notificationEvent: {
           comment,
+        },
+      },
+      client,
+    })
+  })
+})
+
+describe('CreateEntityNotificationEvent', () => {
+  beforeEach(() => {
+    global.server.use(
+      createNotificationEventHandler(createEntityNotificationEvent)
+    )
+  })
+
+  test('by id', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            __typename
+            ... on CreateEntityNotificationEvent {
+              id
+              instance
+              date
+            }
+          }
+        }
+      `,
+      variables: createEntityNotificationEvent,
+      data: {
+        notificationEvent: getCreateEntityNotificationEventDataWithoutSubResolvers(
+          createEntityNotificationEvent
+        ),
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ author)', async () => {
+    global.server.use(createUuidHandler(user))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on CreateEntityNotificationEvent {
+              author {
+                __typename
+                id
+                trashed
+                username
+                date
+                lastLogin
+                description
+              }
+            }
+          }
+        }
+      `,
+      variables: createEntityNotificationEvent,
+      data: {
+        notificationEvent: {
+          author: user,
+        },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ entity)', async () => {
+    global.server.use(createUuidHandler(article))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on CreateEntityNotificationEvent {
+              entity {
+                __typename
+                ... on Article {
+                  id
+                  trashed
+                  alias
+                  instance
+                  date
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: createEntityNotificationEvent,
+      data: {
+        notificationEvent: {
+          entity: getArticleDataWithoutSubResolvers(article),
         },
       },
       client,
