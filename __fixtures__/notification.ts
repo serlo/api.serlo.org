@@ -4,6 +4,7 @@ import {
   CreateCommentNotificationEventPayload,
   CreateThreadNotificationEventPayload,
   NotificationEventType,
+  SetThreadStateNotificationEventPayload,
 } from '../src/graphql/schema'
 import { Instance } from '../src/types'
 import { article, comment, thread, user } from './uuid'
@@ -38,4 +39,20 @@ export function getCreateThreadNotificationEventDataWithoutSubResolvers(
   notificationEvent: CreateThreadNotificationEventPayload
 ) {
   return R.omit(['authorId', 'objectId', 'threadId'], notificationEvent)
+}
+
+export const setThreadStateNotificationEvent: SetThreadStateNotificationEventPayload = {
+  __typename: NotificationEventType.SetThreadState,
+  id: 40750,
+  instance: Instance.De,
+  date: '2014-03-01T20:45:56Z',
+  actorId: user.id,
+  threadId: thread.id,
+  archived: true,
+}
+
+export function getSetThreadStateNotificationEventDataWithoutSubResolvers(
+  notificationEvent: SetThreadStateNotificationEventPayload
+) {
+  return R.omit(['actorId', 'threadId'], notificationEvent)
 }

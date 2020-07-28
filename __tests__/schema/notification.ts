@@ -29,6 +29,8 @@ import {
   getArticleDataWithoutSubResolvers,
   getCreateCommentNotificationEventDataWithoutSubResolvers,
   getCreateThreadNotificationEventDataWithoutSubResolvers,
+  getSetThreadStateNotificationEventDataWithoutSubResolvers,
+  setThreadStateNotificationEvent,
   thread,
   user,
 } from '../../__fixtures__'
@@ -264,6 +266,92 @@ describe('CreateThreadNotificationEvent', () => {
         }
       `,
       variables: createThreadNotificationEvent,
+      data: {
+        notificationEvent: {
+          thread,
+        },
+      },
+      client,
+    })
+  })
+})
+
+describe('SetThreadStateNotificationEvent', () => {
+  beforeEach(() => {
+    global.server.use(
+      createNotificationEventHandler(setThreadStateNotificationEvent)
+    )
+  })
+
+  test('by id', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            __typename
+            ... on SetThreadStateNotificationEvent {
+              id
+              instance
+              date
+              archived
+            }
+          }
+        }
+      `,
+      variables: setThreadStateNotificationEvent,
+      data: {
+        notificationEvent: getSetThreadStateNotificationEventDataWithoutSubResolvers(
+          setThreadStateNotificationEvent
+        ),
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ actor)', async () => {
+    global.server.use(createUuidHandler(user))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on SetThreadStateNotificationEvent {
+              actor {
+                __typename
+                id
+                trashed
+                username
+                date
+                lastLogin
+                description
+              }
+            }
+          }
+        }
+      `,
+      variables: setThreadStateNotificationEvent,
+      data: {
+        notificationEvent: {
+          actor: user,
+        },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ thread)', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on SetThreadStateNotificationEvent {
+              thread {
+                id
+              }
+            }
+          }
+        }
+      `,
+      variables: setThreadStateNotificationEvent,
       data: {
         notificationEvent: {
           thread,

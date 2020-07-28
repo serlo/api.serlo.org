@@ -177,12 +177,6 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & {
   thread: UnsupportedThread;
 };
 
-export type AbstractNotificationEvent = {
-  id: Scalars['Int'];
-  instance: Instance;
-  date: Scalars['DateTime'];
-};
-
 export type SetThreadStateNotificationEvent = AbstractNotificationEvent & {
   __typename?: 'SetThreadStateNotificationEvent';
   id: Scalars['Int'];
@@ -191,6 +185,12 @@ export type SetThreadStateNotificationEvent = AbstractNotificationEvent & {
   actor: User;
   thread: UnsupportedThread;
   archived: Scalars['Boolean'];
+};
+
+export type AbstractNotificationEvent = {
+  id: Scalars['Int'];
+  instance: Instance;
+  date: Scalars['DateTime'];
 };
 
 export type CreateEntityNotificationEvent = AbstractNotificationEvent & {

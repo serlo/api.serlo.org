@@ -27,6 +27,8 @@ import {
   createThreadNotificationEvent,
   getCreateCommentNotificationEventDataWithoutSubResolvers,
   getCreateThreadNotificationEventDataWithoutSubResolvers,
+  getSetThreadStateNotificationEventDataWithoutSubResolvers,
+  setThreadStateNotificationEvent,
 } from '../../__fixtures__'
 import { AbstractNotificationEventPayload } from '../../src/graphql/schema/notification'
 import { addJsonInteraction, assertSuccessfulGraphQLQuery } from '../__utils__'
@@ -101,6 +103,39 @@ test('CreateThreadNotificationEvent', async () => {
     data: {
       notificationEvent: getCreateThreadNotificationEventDataWithoutSubResolvers(
         createThreadNotificationEvent
+      ),
+    },
+  })
+})
+
+test('SetThreadStateNotificationEvent', async () => {
+  await addNotificationEventInteraction({
+    __typename: setThreadStateNotificationEvent.__typename,
+    id: setThreadStateNotificationEvent.id,
+    instance: Matchers.string(setThreadStateNotificationEvent.instance),
+    date: Matchers.iso8601DateTime(setThreadStateNotificationEvent.date),
+    actorId: Matchers.integer(setThreadStateNotificationEvent.actorId),
+    threadId: Matchers.integer(setThreadStateNotificationEvent.threadId),
+    archived: Matchers.boolean(setThreadStateNotificationEvent.archived),
+  })
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query notificationEvent($id: Int!) {
+        notificationEvent(id: $id) {
+          __typename
+          ... on SetThreadStateNotificationEvent {
+            id
+            instance
+            date
+            archived
+          }
+        }
+      }
+    `,
+    variables: setThreadStateNotificationEvent,
+    data: {
+      notificationEvent: getSetThreadStateNotificationEventDataWithoutSubResolvers(
+        setThreadStateNotificationEvent
       ),
     },
   })
