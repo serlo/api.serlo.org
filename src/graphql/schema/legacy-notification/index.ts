@@ -25,4 +25,4 @@ import typeDefs from './types.graphql'
 
 export * from './types'
 
-export const notificationSchema = new Schema(resolvers, [typeDefs])
+export const legacyNotificationSchema = new Schema(resolvers, [typeDefs])

@@ -1,0 +1,41 @@
+type LegacyNotification {
+  id: Int!
+  unread: Boolean!
+  event: LegacyNotificationEvent!
+}
+
+type LegacyNotificationEvent {
+  id: Int!
+  type: String!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  object: AbstractUuid!
+  payload: String!
+}
+
+extend type Query {
+  legacyNotifications(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    unread: Boolean
+  ): QueryLegacyNotificationsResult!
+}
+
+extend type Mutation {
+  setLegacyNotificationState(id: Int!, unread: Boolean!): Boolean
+}
+
+type QueryLegacyNotificationsResult {
+  edges: [LegacyNotificationCursor!]!
+  nodes: [LegacyNotification!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type LegacyNotificationCursor {
+  cursor: String!
+  node: LegacyNotification!
+}
