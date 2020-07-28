@@ -24,8 +24,12 @@ import { gql } from 'apollo-server'
 
 import {
   createCommentNotificationEvent,
+  createEntityNotificationEvent,
+  createEntityRevisionNotificationEvent,
   createThreadNotificationEvent,
   getCreateCommentNotificationEventDataWithoutSubResolvers,
+  getCreateEntityNotificationEventDataWithoutSubResolvers,
+  getCreateEntityRevisionNotificationEventDataWithoutSubResolvers,
   getCreateThreadNotificationEventDataWithoutSubResolvers,
   getSetThreadStateNotificationEventDataWithoutSubResolvers,
   setThreadStateNotificationEvent,
@@ -71,6 +75,71 @@ test('CreateCommentNotificationEvent', async () => {
     data: {
       notificationEvent: getCreateCommentNotificationEventDataWithoutSubResolvers(
         createCommentNotificationEvent
+      ),
+    },
+  })
+})
+
+test('CreateEntityNotificationEvent', async () => {
+  await addNotificationEventInteraction({
+    __typename: createEntityNotificationEvent.__typename,
+    id: createEntityNotificationEvent.id,
+    instance: Matchers.string(createEntityNotificationEvent.instance),
+    date: Matchers.iso8601DateTime(createEntityNotificationEvent.date),
+    authorId: Matchers.integer(createEntityNotificationEvent.authorId),
+    entityId: Matchers.integer(createEntityNotificationEvent.entityId),
+  })
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query notificationEvent($id: Int!) {
+        notificationEvent(id: $id) {
+          __typename
+          ... on CreateEntityNotificationEvent {
+            id
+            instance
+            date
+          }
+        }
+      }
+    `,
+    variables: createEntityNotificationEvent,
+    data: {
+      notificationEvent: getCreateEntityNotificationEventDataWithoutSubResolvers(
+        createEntityNotificationEvent
+      ),
+    },
+  })
+})
+
+test('CreateEntityRevisionNotificationEvent', async () => {
+  await addNotificationEventInteraction({
+    __typename: createEntityRevisionNotificationEvent.__typename,
+    id: createEntityRevisionNotificationEvent.id,
+    instance: Matchers.string(createEntityRevisionNotificationEvent.instance),
+    date: Matchers.iso8601DateTime(createEntityRevisionNotificationEvent.date),
+    authorId: Matchers.integer(createEntityRevisionNotificationEvent.authorId),
+    entityId: Matchers.integer(createEntityRevisionNotificationEvent.entityId),
+    entityRevisionId: Matchers.integer(
+      createEntityRevisionNotificationEvent.entityRevisionId
+    ),
+  })
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query notificationEvent($id: Int!) {
+        notificationEvent(id: $id) {
+          __typename
+          ... on CreateEntityRevisionNotificationEvent {
+            id
+            instance
+            date
+          }
+        }
+      }
+    `,
+    variables: createEntityRevisionNotificationEvent,
+    data: {
+      notificationEvent: getCreateEntityRevisionNotificationEventDataWithoutSubResolvers(
+        createEntityRevisionNotificationEvent
       ),
     },
   })

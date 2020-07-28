@@ -6,9 +6,10 @@ import {
   CreateThreadNotificationEventPayload,
   NotificationEventType,
   SetThreadStateNotificationEventPayload,
+  CreateEntityRevisionNotificationEventPayload,
 } from '../src/graphql/schema'
 import { Instance } from '../src/types'
-import { article, comment, thread, user } from './uuid'
+import { article, articleRevision, comment, thread, user } from './uuid'
 
 export const createCommentNotificationEvent: CreateCommentNotificationEventPayload = {
   __typename: NotificationEventType.CreateComment,
@@ -39,6 +40,22 @@ export function getCreateEntityNotificationEventDataWithoutSubResolvers(
   notificationEvent: CreateEntityNotificationEventPayload
 ) {
   return R.omit(['authorId', 'entityId'], notificationEvent)
+}
+
+export const createEntityRevisionNotificationEvent: CreateEntityRevisionNotificationEventPayload = {
+  __typename: NotificationEventType.CreateEntityRevision,
+  id: 300,
+  instance: Instance.De,
+  date: '2014-03-01T20:45:56Z',
+  authorId: user.id,
+  entityId: article.id,
+  entityRevisionId: articleRevision.id,
+}
+
+export function getCreateEntityRevisionNotificationEventDataWithoutSubResolvers(
+  notificationEvent: CreateEntityRevisionNotificationEventPayload
+) {
+  return R.omit(['authorId', 'entityId', 'entityRevisionId'], notificationEvent)
 }
 
 export const createThreadNotificationEvent: CreateThreadNotificationEventPayload = {
