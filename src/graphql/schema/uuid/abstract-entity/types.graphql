@@ -2,7 +2,6 @@ interface AbstractEntity {
   # extends AbstractRepository
   id: Int!
   trashed: Boolean!
-
   date: DateTime!
   instance: Instance!
   alias: String

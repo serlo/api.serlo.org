@@ -35,6 +35,7 @@ export const page: PagePayload = {
   trashed: false,
   instance: Instance.De,
   alias: '/mathe',
+  date: '2015-02-28T02:06:40Z',
   currentRevisionId: 35476,
   licenseId: license.id,
 }

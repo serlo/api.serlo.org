@@ -19,7 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { AbstractRepository, AbstractRevision } from '../../../../types'
+import {
+  AbstractRepository,
+  AbstractRevision,
+  License,
+} from '../../../../types'
 import { Resolver, TypeResolver } from '../../types'
 import {
   EntityPayload,
@@ -35,9 +39,11 @@ export type RepositoryType = EntityType | DiscriminatorType.Page
 
 export type RepositoryPayload = EntityPayload | PagePayload
 export interface AbstractRepositoryPayload
-  extends Omit<AbstractRepository, 'currentRevision'> {
+  extends Omit<AbstractRepository, 'alias' | 'currentRevision' | 'license'> {
   __typename: RepositoryType
+  alias: string | null
   currentRevisionId: number | null
+  licenseId: number
 }
 
 export type RevisionType = EntityRevisionType | DiscriminatorType.PageRevision
@@ -63,7 +69,9 @@ export interface RepositoryResolvers<
   E extends AbstractRepositoryPayload,
   R extends AbstractRevisionPayload
 > {
+  alias: Resolver<E, never, string | null>
   currentRevision: Resolver<E, never, R | null>
+  license: Resolver<E, never, Partial<License>>
 }
 
 export interface RevisionResolvers<

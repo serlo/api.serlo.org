@@ -11,8 +11,7 @@ type SetLicenseNotificationEvent implements AbstractNotificationEvent {
   instance: Instance!
   date: DateTime!
   actor: User!
-  # TODO: an interface here would be helpful (also for tests) since this probably can be a Page, too
-  object: AbstractUuid!
+  repository: AbstractRepository!
 }
 
 # TODO: add unit test

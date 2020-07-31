@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-export * from './abstract-entity'
 export * from './abstract-exercise'
 export * from './abstract-navigation-node'
 export * from './abstract-repository'

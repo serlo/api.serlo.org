@@ -1,6 +1,7 @@
 type Page implements AbstractUuid & AbstractRepository & AbstractNavigationChild {
   id: Int!
   trashed: Boolean!
+  date: DateTime!
   instance: Instance!
   alias: String
   license: License!

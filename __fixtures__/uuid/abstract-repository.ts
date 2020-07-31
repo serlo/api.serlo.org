@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
 import {
@@ -27,10 +28,37 @@ import {
 } from '../../src/graphql/schema/uuid/abstract-repository'
 import { getUuidDataWithoutSubResolvers } from './abstract-uuid'
 
+export function createRepositoryLicenseQuery(variables: RepositoryPayload) {
+  return {
+    query: gql`
+      query license($id: Int!) {
+        uuid(id: $id) {
+          ... on AbstractRepository {
+            license {
+              id
+              instance
+              default
+              title
+              url
+              content
+              agreement
+              iconHref
+            }
+          }
+        }
+      }
+    `,
+    variables,
+  }
+}
+
 export function getRepositoryDataWithoutSubResolvers(
   repository: RepositoryPayload
 ) {
-  return getUuidDataWithoutSubResolvers(repository)
+  return {
+    ...getUuidDataWithoutSubResolvers(repository),
+    ...R.pick(['alias', 'date'], repository),
+  }
 }
 
 export function getRevisionDataWithoutSubResolvers(revision: RevisionPayload) {

@@ -31,6 +31,7 @@ import {
   coursePage,
   coursePageRevision,
   courseRevision,
+  createRepositoryLicenseQuery,
   event,
   eventRevision,
   exercise,
@@ -41,6 +42,7 @@ import {
   getRevisionDataWithoutSubResolvers,
   groupedExercise,
   groupedExerciseRevision,
+  license,
   page,
   pageRevision,
   solution,
@@ -62,6 +64,8 @@ import { Service } from '../../../src/graphql/schema/types'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
+  createAliasHandler,
+  createLicenseHandler,
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
@@ -158,8 +162,45 @@ describe('Repository', () => {
         query repository($id: Int!) {
           uuid(id: $id) {
             __typename
-            id
-            trashed
+            ... on AbstractRepository {
+              id
+              trashed
+              alias
+              date
+            }
+          }
+        }
+      `,
+      variables: repository,
+      data: {
+        uuid: getRepositoryDataWithoutSubResolvers(repository),
+      },
+      client,
+    })
+  })
+
+  test.each(repositoryCases)('%s by alias', async (type, { repository }) => {
+    global.server.use(
+      createUuidHandler(repository),
+      createAliasHandler({
+        id: repository.id,
+        instance: repository.instance,
+        path: 'path',
+        source: `source`,
+        timestamp: 'timestamp',
+      })
+    )
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query repository($id: Int!) {
+          uuid(id: $id) {
+            __typename
+            ... on AbstractRepository {
+              id
+              trashed
+              alias
+              date
+            }
           }
         }
       `,
@@ -197,6 +238,25 @@ describe('Repository', () => {
         data: {
           uuid: {
             currentRevision: getRevisionDataWithoutSubResolvers(revision),
+          },
+        },
+        client,
+      })
+    }
+  )
+
+  test.each(repositoryCases)(
+    '%s by id (w/ license)',
+    async (type, { repository }) => {
+      global.server.use(
+        createUuidHandler(repository),
+        createLicenseHandler(license)
+      )
+      await assertSuccessfulGraphQLQuery({
+        ...createRepositoryLicenseQuery(repository),
+        data: {
+          uuid: {
+            license,
           },
         },
         client,
@@ -255,6 +315,8 @@ describe('Revision', () => {
                     __typename
                     id
                     trashed
+                    alias
+                    date
                   }
                 }
               }
