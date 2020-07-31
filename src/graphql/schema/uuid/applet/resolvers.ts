@@ -19,12 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import {
-  createEntityResolvers,
-  createEntityRevisionResolvers,
-  EntityRevisionType,
-  EntityType,
-} from '../abstract-entity'
+import { createEntityResolvers } from '../abstract-entity'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
@@ -38,19 +33,11 @@ export const resolvers = {
       AppletPreResolver,
       AppletRevisionPreResolver
     >(),
-    ...createEntityResolvers<AppletPreResolver, AppletRevisionPreResolver>({
-      entityRevisionType: EntityRevisionType.AppletRevision,
-    }),
+    ...createEntityResolvers<AppletPreResolver, AppletRevisionPreResolver>(),
     ...createTaxonomyTermChildResolvers<AppletPreResolver>(),
   },
-  AppletRevision: {
-    ...createRevisionResolvers<AppletPreResolver, AppletRevisionPreResolver>(),
-    ...createEntityRevisionResolvers<
-      AppletPreResolver,
-      AppletRevisionPreResolver
-    >({
-      entityType: EntityType.Applet,
-      repository: 'applet',
-    }),
-  },
+  AppletRevision: createRevisionResolvers<
+    AppletPreResolver,
+    AppletRevisionPreResolver
+  >(),
 }

@@ -75,38 +75,6 @@ describe('CoursePage', () => {
     })
   })
 
-  test('by id (w/ currentRevision)', async () => {
-    global.server.use(createUuidHandler(coursePageRevision))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query coursePage($id: Int!) {
-          uuid(id: $id) {
-            ... on CoursePage {
-              currentRevision {
-                __typename
-                id
-                trashed
-                date
-                title
-                content
-                changes
-              }
-            }
-          }
-        }
-      `,
-      variables: coursePage,
-      data: {
-        uuid: {
-          currentRevision: getCoursePageRevisionDataWithoutSubResolvers(
-            coursePageRevision
-          ),
-        },
-      },
-      client,
-    })
-  })
-
   test('by id (w/ course)', async () => {
     global.server.use(createUuidHandler(course))
     await assertSuccessfulGraphQLQuery({
@@ -137,62 +105,28 @@ describe('CoursePage', () => {
   })
 })
 
-describe('CoursePageRevision', () => {
-  beforeEach(() => {
-    global.server.use(createUuidHandler(coursePageRevision))
-  })
-
-  test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query coursePageRevision($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on CoursePageRevision {
-              id
-              trashed
-              date
-              title
-              content
-              changes
-            }
+test('CoursePageRevision', async () => {
+  global.server.use(createUuidHandler(coursePageRevision))
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query coursePageRevision($id: Int!) {
+        uuid(id: $id) {
+          __typename
+          ... on CoursePageRevision {
+            id
+            trashed
+            date
+            title
+            content
+            changes
           }
         }
-      `,
-      variables: coursePageRevision,
-      data: {
-        uuid: getCoursePageRevisionDataWithoutSubResolvers(coursePageRevision),
-      },
-      client,
-    })
-  })
-
-  test('by id (w/ coursePage)', async () => {
-    global.server.use(createUuidHandler(coursePage))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query coursePageRevision($id: Int!) {
-          uuid(id: $id) {
-            ... on CoursePageRevision {
-              coursePage {
-                __typename
-                id
-                trashed
-                alias
-                instance
-                date
-              }
-            }
-          }
-        }
-      `,
-      variables: coursePageRevision,
-      data: {
-        uuid: {
-          coursePage: getCoursePageDataWithoutSubResolvers(coursePage),
-        },
-      },
-      client,
-    })
+      }
+    `,
+    variables: coursePageRevision,
+    data: {
+      uuid: getCoursePageRevisionDataWithoutSubResolvers(coursePageRevision),
+    },
+    client,
   })
 })

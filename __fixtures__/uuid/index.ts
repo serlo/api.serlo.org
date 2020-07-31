@@ -22,6 +22,7 @@
 export * from './abstract-entity'
 export * from './abstract-exercise'
 export * from './abstract-navigation-node'
+export * from './abstract-repository'
 export * from './abstract-taxonomy-term-child'
 export * from './abstract-uuid'
 export * from './applet'

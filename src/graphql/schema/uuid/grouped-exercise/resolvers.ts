@@ -23,13 +23,8 @@ import { GraphQLResolveInfo } from 'graphql'
 
 import { Context } from '../../types'
 import { requestsOnlyFields } from '../../utils'
-import {
-  createEntityResolvers,
-  createEntityRevisionResolvers,
-  EntityRevisionType,
-  EntityType,
-} from '../abstract-entity'
-import { createExerciseResolvers } from '../abstract-exercise/utils'
+import { createEntityResolvers } from '../abstract-entity'
+import { createExerciseResolvers } from '../abstract-exercise'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
@@ -49,9 +44,7 @@ export const resolvers = {
     ...createEntityResolvers<
       GroupedExercisePreResolver,
       GroupedExerciseRevisionPreResolver
-    >({
-      entityRevisionType: EntityRevisionType.GroupedExerciseRevision,
-    }),
+    >(),
     ...createExerciseResolvers<GroupedExercisePreResolver>(),
     async exerciseGroup(
       groupedExercise: GroupedExercisePreResolver,
@@ -68,17 +61,8 @@ export const resolvers = {
       )
     },
   },
-  GroupedExerciseRevision: {
-    ...createRevisionResolvers<
-      GroupedExercisePreResolver,
-      GroupedExerciseRevisionPreResolver
-    >(),
-    ...createEntityRevisionResolvers<
-      GroupedExercisePreResolver,
-      GroupedExerciseRevisionPreResolver
-    >({
-      entityType: EntityType.GroupedExercise,
-      repository: 'groupedExercise',
-    }),
-  },
+  GroupedExerciseRevision: createRevisionResolvers<
+    GroupedExercisePreResolver,
+    GroupedExerciseRevisionPreResolver
+  >(),
 }

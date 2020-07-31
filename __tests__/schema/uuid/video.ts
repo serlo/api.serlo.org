@@ -44,126 +44,54 @@ beforeEach(() => {
   }).client
 })
 
-describe('Video', () => {
-  beforeEach(() => {
-    global.server.use(createUuidHandler(video))
-  })
-
-  test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query video($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on Video {
-              id
-              trashed
-              alias
-              instance
-              date
-            }
+test('Video', async () => {
+  global.server.use(createUuidHandler(video))
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query video($id: Int!) {
+        uuid(id: $id) {
+          __typename
+          ... on Video {
+            id
+            trashed
+            alias
+            instance
+            date
           }
         }
-      `,
-      variables: video,
-      data: {
-        uuid: getVideoDataWithoutSubResolvers(video),
-      },
-      client,
-    })
-  })
-
-  test('by id (w/ currentRevision)', async () => {
-    global.server.use(createUuidHandler(videoRevision))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query video($id: Int!) {
-          uuid(id: $id) {
-            ... on Video {
-              currentRevision {
-                __typename
-                id
-                trashed
-                date
-                title
-                content
-                url
-                changes
-              }
-            }
-          }
-        }
-      `,
-      variables: video,
-      data: {
-        uuid: {
-          currentRevision: getVideoRevisionDataWithoutSubResolvers(
-            videoRevision
-          ),
-        },
-      },
-      client,
-    })
+      }
+    `,
+    variables: video,
+    data: {
+      uuid: getVideoDataWithoutSubResolvers(video),
+    },
+    client,
   })
 })
 
-describe('VideoRevision', () => {
-  beforeEach(() => {
-    global.server.use(createUuidHandler(videoRevision))
-  })
-
-  test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query videoRevision($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on VideoRevision {
-              id
-              trashed
-              date
-              title
-              content
-              url
-              changes
-            }
+test('VideoRevision', async () => {
+  global.server.use(createUuidHandler(videoRevision))
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query videoRevision($id: Int!) {
+        uuid(id: $id) {
+          __typename
+          ... on VideoRevision {
+            id
+            trashed
+            date
+            title
+            content
+            url
+            changes
           }
         }
-      `,
-      variables: videoRevision,
-      data: {
-        uuid: getVideoRevisionDataWithoutSubResolvers(videoRevision),
-      },
-      client,
-    })
-  })
-
-  test('by id (w/ video)', async () => {
-    global.server.use(createUuidHandler(video))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query applet($id: Int!) {
-          uuid(id: $id) {
-            ... on VideoRevision {
-              video {
-                __typename
-                id
-                trashed
-                alias
-                instance
-                date
-              }
-            }
-          }
-        }
-      `,
-      variables: videoRevision,
-      data: {
-        uuid: {
-          video: getVideoDataWithoutSubResolvers(video),
-        },
-      },
-      client,
-    })
+      }
+    `,
+    variables: videoRevision,
+    data: {
+      uuid: getVideoRevisionDataWithoutSubResolvers(videoRevision),
+    },
+    client,
   })
 })

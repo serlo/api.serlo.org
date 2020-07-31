@@ -113,7 +113,6 @@ export type AppletRevision = AbstractUuid & AbstractRevision & AbstractEntityRev
     author: User;
     trashed: Scalars['Boolean'];
     date: Scalars['DateTime'];
-    applet: Applet;
     repository: Applet;
     url: Scalars['String'];
     title: Scalars['String'];
@@ -143,7 +142,6 @@ export type ArticleRevision = AbstractUuid & AbstractRevision & AbstractEntityRe
     author: User;
     trashed: Scalars['Boolean'];
     date: Scalars['DateTime'];
-    article: Article;
     repository: Article;
     title: Scalars['String'];
     content: Scalars['String'];
@@ -205,7 +203,6 @@ export type CoursePageRevision = AbstractUuid & AbstractRevision & AbstractEntit
     author: User;
     trashed: Scalars['Boolean'];
     date: Scalars['DateTime'];
-    coursePage: CoursePage;
     repository: CoursePage;
     title: Scalars['String'];
     content: Scalars['String'];
@@ -219,7 +216,6 @@ export type CourseRevision = AbstractUuid & AbstractRevision & AbstractEntityRev
     author: User;
     trashed: Scalars['Boolean'];
     date: Scalars['DateTime'];
-    course: Course;
     repository: Course;
     title: Scalars['String'];
     content: Scalars['String'];
@@ -322,7 +318,6 @@ export type EventRevision = AbstractUuid & AbstractRevision & AbstractEntityRevi
     author: User;
     trashed: Scalars['Boolean'];
     date: Scalars['DateTime'];
-    event: Event;
     repository: Event;
     title: Scalars['String'];
     content: Scalars['String'];
@@ -373,7 +368,6 @@ export type ExerciseGroupRevision = AbstractUuid & AbstractRevision & AbstractEn
     author: User;
     trashed: Scalars['Boolean'];
     date: Scalars['DateTime'];
-    exerciseGroup: ExerciseGroup;
     repository: ExerciseGroup;
     content: Scalars['String'];
     changes: Scalars['String'];
@@ -386,7 +380,6 @@ export type ExerciseRevision = AbstractUuid & AbstractRevision & AbstractEntityR
     author: User;
     trashed: Scalars['Boolean'];
     date: Scalars['DateTime'];
-    exercise: Exercise;
     repository: Exercise;
     content: Scalars['String'];
     changes: Scalars['String'];
@@ -413,7 +406,6 @@ export type GroupedExerciseRevision = AbstractUuid & AbstractRevision & Abstract
     author: User;
     trashed: Scalars['Boolean'];
     date: Scalars['DateTime'];
-    groupedExercise: GroupedExercise;
     repository: GroupedExercise;
     content: Scalars['String'];
     changes: Scalars['String'];
@@ -548,7 +540,6 @@ export type PageRevision = AbstractUuid & AbstractRevision & {
     date: Scalars['DateTime'];
     title: Scalars['String'];
     content: Scalars['String'];
-    page: Page;
     repository: Page;
 };
 
@@ -734,7 +725,6 @@ export type SolutionRevision = AbstractUuid & AbstractRevision & AbstractEntityR
     author: User;
     trashed: Scalars['Boolean'];
     date: Scalars['DateTime'];
-    solution: Solution;
     repository: Solution;
     content: Scalars['String'];
     changes: Scalars['String'];
@@ -826,7 +816,6 @@ export type VideoRevision = AbstractUuid & AbstractRevision & AbstractEntityRevi
     author: User;
     trashed: Scalars['Boolean'];
     date: Scalars['DateTime'];
-    video: Video;
     repository: Video;
     url: Scalars['String'];
     title: Scalars['String'];

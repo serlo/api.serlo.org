@@ -44,130 +44,56 @@ beforeEach(() => {
   }).client
 })
 
-describe('Applet', () => {
-  beforeEach(() => {
-    global.server.use(createUuidHandler(applet))
-  })
-
-  test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query applet($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on Applet {
-              id
-              trashed
-              instance
-              alias
-              date
-            }
+test('Applet', async () => {
+  global.server.use(createUuidHandler(applet))
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query applet($id: Int!) {
+        uuid(id: $id) {
+          __typename
+          ... on Applet {
+            id
+            trashed
+            instance
+            alias
+            date
           }
         }
-      `,
-      variables: applet,
-      data: {
-        uuid: getAppletDataWithoutSubResolvers(applet),
-      },
-      client,
-    })
-  })
-
-  test('by id (w/ currentRevision)', async () => {
-    global.server.use(createUuidHandler(appletRevision))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query applet($id: Int!) {
-          uuid(id: $id) {
-            ... on Applet {
-              currentRevision {
-                __typename
-                id
-                trashed
-                date
-                url
-                title
-                content
-                changes
-                metaTitle
-                metaDescription
-              }
-            }
-          }
-        }
-      `,
-      variables: applet,
-      data: {
-        uuid: {
-          currentRevision: getAppletRevisionDataWithoutSubResolvers(
-            appletRevision
-          ),
-        },
-      },
-      client,
-    })
+      }
+    `,
+    variables: applet,
+    data: {
+      uuid: getAppletDataWithoutSubResolvers(applet),
+    },
+    client,
   })
 })
 
-describe('AppletRevision', () => {
-  beforeEach(() => {
-    global.server.use(createUuidHandler(appletRevision))
-  })
-
-  test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query appletRevision($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on AppletRevision {
-              id
-              trashed
-              date
-              url
-              title
-              content
-              changes
-              metaTitle
-              metaDescription
-            }
+test('AppletRevision', async () => {
+  global.server.use(createUuidHandler(appletRevision))
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query appletRevision($id: Int!) {
+        uuid(id: $id) {
+          __typename
+          ... on AppletRevision {
+            id
+            trashed
+            date
+            url
+            title
+            content
+            changes
+            metaTitle
+            metaDescription
           }
         }
-      `,
-      variables: appletRevision,
-      data: {
-        uuid: getAppletRevisionDataWithoutSubResolvers(appletRevision),
-      },
-      client,
-    })
-  })
-
-  test('by id (w/ applet)', async () => {
-    global.server.use(createUuidHandler(applet))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query appletRevision($id: Int!) {
-          uuid(id: $id) {
-            ... on AppletRevision {
-              applet {
-                __typename
-                id
-                trashed
-                instance
-                alias
-                date
-              }
-            }
-          }
-        }
-      `,
-      variables: appletRevision,
-      data: {
-        uuid: {
-          applet: getAppletDataWithoutSubResolvers(applet),
-        },
-      },
-      client,
-    })
+      }
+    `,
+    variables: appletRevision,
+    data: {
+      uuid: getAppletRevisionDataWithoutSubResolvers(appletRevision),
+    },
+    client,
   })
 })

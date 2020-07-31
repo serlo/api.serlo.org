@@ -15,6 +15,5 @@ type PageRevision implements AbstractUuid & AbstractRevision {
   date: DateTime!
   title: String!
   content: String!
-  page: Page!
   repository: Page!
 }

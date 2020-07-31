@@ -50,7 +50,5 @@ export interface PageResolvers {
     license: Resolver<PagePreResolver, never, Partial<License>>
   } & RepositoryResolvers<PagePreResolver, PageRevisionPreResolver> &
     NavigationChildResolvers<PagePreResolver>
-  PageRevision: {
-    page: Resolver<PageRevisionPreResolver, never, Partial<PagePreResolver>>
-  } & RevisionResolvers<PagePreResolver, PageRevisionPreResolver>
+  PageRevision: RevisionResolvers<PagePreResolver, PageRevisionPreResolver>
 }

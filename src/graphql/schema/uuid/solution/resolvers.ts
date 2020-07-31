@@ -20,12 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Context } from '../../types'
-import {
-  createEntityResolvers,
-  createEntityRevisionResolvers,
-  EntityRevisionType,
-  EntityType,
-} from '../abstract-entity'
+import { createEntityResolvers } from '../abstract-entity'
 import { AbstractExercisePayload } from '../abstract-exercise'
 import {
   createRepositoryResolvers,
@@ -39,9 +34,10 @@ export const resolvers = {
       SolutionPreResolver,
       SolutionRevisionPreResolver
     >(),
-    ...createEntityResolvers<SolutionPreResolver, SolutionRevisionPreResolver>({
-      entityRevisionType: EntityRevisionType.SolutionRevision,
-    }),
+    ...createEntityResolvers<
+      SolutionPreResolver,
+      SolutionRevisionPreResolver
+    >(),
     async exercise(
       solution: SolutionPreResolver,
       _args: never,
@@ -52,17 +48,8 @@ export const resolvers = {
       })
     },
   },
-  SolutionRevision: {
-    ...createRevisionResolvers<
-      SolutionPreResolver,
-      SolutionRevisionPreResolver
-    >(),
-    ...createEntityRevisionResolvers<
-      SolutionPreResolver,
-      SolutionRevisionPreResolver
-    >({
-      entityType: EntityType.Solution,
-      repository: 'solution',
-    }),
-  },
+  SolutionRevision: createRevisionResolvers<
+    SolutionPreResolver,
+    SolutionRevisionPreResolver
+  >(),
 }

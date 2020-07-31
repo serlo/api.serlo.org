@@ -14,7 +14,6 @@ type ArticleRevision implements AbstractUuid & AbstractRevision & AbstractEntity
   author: User!
   trashed: Boolean!
   date: DateTime!
-  article: Article!
   repository: Article!
   title: String!
   content: String!

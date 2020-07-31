@@ -14,7 +14,6 @@ type CoursePageRevision implements AbstractUuid & AbstractRevision & AbstractEnt
   author: User!
   trashed: Boolean!
   date: DateTime!
-  coursePage: CoursePage!
   repository: CoursePage!
   title: String!
   content: String!

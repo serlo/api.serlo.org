@@ -14,7 +14,6 @@ type SolutionRevision implements AbstractUuid & AbstractRevision & AbstractEntit
   author: User!
   trashed: Boolean!
   date: DateTime!
-  solution: Solution!
   repository: Solution!
   content: String!
   changes: String!

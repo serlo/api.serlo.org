@@ -19,12 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import {
-  createEntityResolvers,
-  createEntityRevisionResolvers,
-  EntityRevisionType,
-  EntityType,
-} from '../abstract-entity'
+import { createEntityResolvers } from '../abstract-entity'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
@@ -35,19 +30,11 @@ import { EventPreResolver, EventRevisionPreResolver } from './types'
 export const resolvers = {
   Event: {
     ...createRepositoryResolvers<EventPreResolver, EventRevisionPreResolver>(),
-    ...createEntityResolvers<EventPreResolver, EventRevisionPreResolver>({
-      entityRevisionType: EntityRevisionType.EventRevision,
-    }),
+    ...createEntityResolvers<EventPreResolver, EventRevisionPreResolver>(),
     ...createTaxonomyTermChildResolvers<EventPreResolver>(),
   },
-  EventRevision: {
-    ...createRevisionResolvers<EventPreResolver, EventRevisionPreResolver>(),
-    ...createEntityRevisionResolvers<
-      EventPreResolver,
-      EventRevisionPreResolver
-    >({
-      entityType: EntityType.Event,
-      repository: 'event',
-    }),
-  },
+  EventRevision: createRevisionResolvers<
+    EventPreResolver,
+    EventRevisionPreResolver
+  >(),
 }

@@ -19,12 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import {
-  createEntityResolvers,
-  createEntityRevisionResolvers,
-  EntityRevisionType,
-  EntityType,
-} from '../abstract-entity'
+import { createEntityResolvers } from '../abstract-entity'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
@@ -35,19 +30,11 @@ import { VideoPreResolver, VideoRevisionPreResolver } from './types'
 export const resolvers = {
   Video: {
     ...createRepositoryResolvers<VideoPreResolver, VideoRevisionPreResolver>(),
-    ...createEntityResolvers<VideoPreResolver, VideoRevisionPreResolver>({
-      entityRevisionType: EntityRevisionType.VideoRevision,
-    }),
+    ...createEntityResolvers<VideoPreResolver, VideoRevisionPreResolver>(),
     ...createTaxonomyTermChildResolvers<VideoPreResolver>(),
   },
-  VideoRevision: {
-    ...createRevisionResolvers<VideoPreResolver, VideoRevisionPreResolver>(),
-    ...createEntityRevisionResolvers<
-      VideoPreResolver,
-      VideoRevisionPreResolver
-    >({
-      entityType: EntityType.Video,
-      repository: 'video',
-    }),
-  },
+  VideoRevision: createRevisionResolvers<
+    VideoPreResolver,
+    VideoRevisionPreResolver
+  >(),
 }
