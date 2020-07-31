@@ -24,6 +24,7 @@ import { gql } from 'apollo-server'
 import {
   article,
   articleRevision,
+  checkoutRevisionNotificationEvent,
   comment,
   createCommentNotificationEvent,
   createEntityNotificationEvent,
@@ -31,6 +32,7 @@ import {
   createThreadNotificationEvent,
   getArticleDataWithoutSubResolvers,
   getArticleRevisionDataWithoutSubResolvers,
+  getCheckoutRevisionNotificationEventDataWithoutSubResolvers,
   getCreateCommentNotificationEventDataWithoutSubResolvers,
   getCreateEntityNotificationEventDataWithoutSubResolvers,
   getCreateEntityRevisionNotificationEventDataWithoutSubResolvers,
@@ -56,6 +58,134 @@ beforeEach(() => {
     service: Service.Playground,
     user: null,
   }).client
+})
+
+describe('CheckoutRevisionNotification', () => {
+  beforeEach(() => {
+    global.server.use(
+      createNotificationEventHandler(checkoutRevisionNotificationEvent)
+    )
+  })
+
+  test('by id', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            __typename
+            ... on CheckoutRevisionNotificationEvent {
+              id
+              instance
+              date
+              reason
+            }
+          }
+        }
+      `,
+      variables: checkoutRevisionNotificationEvent,
+      data: {
+        notificationEvent: getCheckoutRevisionNotificationEventDataWithoutSubResolvers(
+          checkoutRevisionNotificationEvent
+        ),
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ reviewer)', async () => {
+    global.server.use(createUuidHandler(user))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on CheckoutRevisionNotificationEvent {
+              reviewer {
+                __typename
+                id
+                trashed
+                username
+                date
+                lastLogin
+                description
+              }
+            }
+          }
+        }
+      `,
+      variables: checkoutRevisionNotificationEvent,
+      data: {
+        notificationEvent: {
+          reviewer: user,
+        },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ repository)', async () => {
+    global.server.use(createUuidHandler(article))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on CheckoutRevisionNotificationEvent {
+              repository {
+                __typename
+                ... on Article {
+                  id
+                  trashed
+                  alias
+                  instance
+                  date
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: checkoutRevisionNotificationEvent,
+      data: {
+        notificationEvent: {
+          repository: getArticleDataWithoutSubResolvers(article),
+        },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ revision)', async () => {
+    global.server.use(createUuidHandler(articleRevision))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on CheckoutRevisionNotificationEvent {
+              revision {
+                __typename
+                ... on ArticleRevision {
+                  id
+                  trashed
+                  date
+                  title
+                  content
+                  changes
+                  metaTitle
+                  metaDescription
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: checkoutRevisionNotificationEvent,
+      data: {
+        notificationEvent: {
+          revision: getArticleRevisionDataWithoutSubResolvers(articleRevision),
+        },
+      },
+      client,
+    })
+  })
 })
 
 describe('CreateCommentNotificationEvent', () => {

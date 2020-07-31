@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Schema } from '../utils'
+import { checkoutRevisionNotificationSchema } from './checkout-revision-notification-event'
 import { createCommentNotificationEventSchema } from './create-comment-notification-event'
 import { createEntityNotificationSchema } from './create-entity-notification-event'
 import { createEntityRevisionNotificationSchema } from './create-entity-revision-notification-event'
@@ -28,6 +29,7 @@ import { resolvers } from './resolvers'
 import { setThreadStateNotificationEventSchema } from './set-thread-state-notification-event'
 import typeDefs from './types.graphql'
 
+export * from './checkout-revision-notification-event'
 export * from './create-comment-notification-event'
 export * from './create-entity-notification-event'
 export * from './create-entity-revision-notification-event'
@@ -39,6 +41,7 @@ const baseSchema = new Schema(resolvers, [typeDefs])
 
 export const notificationSchema = Schema.merge(
   baseSchema,
+  checkoutRevisionNotificationSchema,
   createCommentNotificationEventSchema,
   createEntityNotificationSchema,
   createEntityRevisionNotificationSchema,

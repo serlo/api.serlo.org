@@ -157,6 +157,17 @@ export type License = {
   iconHref: Scalars['String'];
 };
 
+export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'CheckoutRevisionNotificationEvent';
+  id: Scalars['Int'];
+  instance: Instance;
+  date: Scalars['DateTime'];
+  reviewer: User;
+  repository: AbstractRepository;
+  revision: AbstractRevision;
+  reason: Scalars['String'];
+};
+
 export type CreateCommentNotificationEvent = AbstractNotificationEvent & {
   __typename?: 'CreateCommentNotificationEvent';
   id: Scalars['Int'];
@@ -210,17 +221,6 @@ export type AbstractNotificationEvent = {
   id: Scalars['Int'];
   instance: Instance;
   date: Scalars['DateTime'];
-};
-
-export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & {
-  __typename?: 'CheckoutRevisionNotificationEvent';
-  id: Scalars['Int'];
-  instance: Instance;
-  date: Scalars['DateTime'];
-  reviewer: User;
-  entity: AbstractEntity;
-  entityRevision: AbstractEntityRevision;
-  reason: Scalars['String'];
 };
 
 export type RejectRevisionNotificationEvent = AbstractNotificationEvent & {

@@ -6,20 +6,6 @@ interface AbstractNotificationEvent {
 
 # TODO: add unit test
 # TODO: add contract test
-type CheckoutRevisionNotificationEvent implements AbstractNotificationEvent {
-  id: Int!
-  instance: Instance!
-  date: DateTime!
-  reviewer: User!
-  # TODO: is this really an entity?
-  entity: AbstractEntity!
-  # TODO: is this really an entity revision?
-  entityRevision: AbstractEntityRevision!
-  reason: String!
-}
-
-# TODO: add unit test
-# TODO: add contract test
 type RejectRevisionNotificationEvent implements AbstractNotificationEvent {
   id: Int!
   instance: Instance!

@@ -23,10 +23,12 @@ import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
 import {
+  checkoutRevisionNotificationEvent,
   createCommentNotificationEvent,
   createEntityNotificationEvent,
   createEntityRevisionNotificationEvent,
   createThreadNotificationEvent,
+  getCheckoutRevisionNotificationEventDataWithoutSubResolvers,
   getCreateCommentNotificationEventDataWithoutSubResolvers,
   getCreateEntityNotificationEventDataWithoutSubResolvers,
   getCreateEntityRevisionNotificationEventDataWithoutSubResolvers,
@@ -47,6 +49,42 @@ async function addNotificationEventInteraction<
     body,
   })
 }
+
+test('CheckoutRevisionNotificationEvent', async () => {
+  await addNotificationEventInteraction({
+    __typename: checkoutRevisionNotificationEvent.__typename,
+    id: checkoutRevisionNotificationEvent.id,
+    instance: Matchers.string(checkoutRevisionNotificationEvent.instance),
+    date: Matchers.iso8601DateTime(checkoutRevisionNotificationEvent.date),
+    reviewerId: Matchers.integer(checkoutRevisionNotificationEvent.reviewerId),
+    repositoryId: Matchers.integer(
+      checkoutRevisionNotificationEvent.repositoryId
+    ),
+    revisionId: Matchers.integer(checkoutRevisionNotificationEvent.revisionId),
+    reason: Matchers.string(checkoutRevisionNotificationEvent.reason),
+  })
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query notificationEvent($id: Int!) {
+        notificationEvent(id: $id) {
+          __typename
+          ... on CheckoutRevisionNotificationEvent {
+            id
+            instance
+            date
+            reason
+          }
+        }
+      }
+    `,
+    variables: checkoutRevisionNotificationEvent,
+    data: {
+      notificationEvent: getCheckoutRevisionNotificationEventDataWithoutSubResolvers(
+        checkoutRevisionNotificationEvent
+      ),
+    },
+  })
+})
 
 test('CreateCommentNotificationEvent', async () => {
   await addNotificationEventInteraction({

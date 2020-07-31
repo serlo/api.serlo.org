@@ -28,9 +28,27 @@ import {
   NotificationEventType,
   SetThreadStateNotificationEventPayload,
   CreateEntityRevisionNotificationEventPayload,
+  CheckoutRevisionNotificationEventPayload,
 } from '../src/graphql/schema'
 import { Instance } from '../src/types'
 import { article, articleRevision, comment, thread, user } from './uuid'
+
+export const checkoutRevisionNotificationEvent: CheckoutRevisionNotificationEventPayload = {
+  __typename: NotificationEventType.CheckoutRevision,
+  id: 301,
+  instance: Instance.De,
+  date: '2014-03-01T20:45:56Z',
+  reviewerId: user.id,
+  repositoryId: article.id,
+  revisionId: articleRevision.id,
+  reason: 'reason',
+}
+
+export function getCheckoutRevisionNotificationEventDataWithoutSubResolvers(
+  notificationEvent: CheckoutRevisionNotificationEventPayload
+) {
+  return R.omit(['reviewerId', 'repositoryId', 'revisionId'], notificationEvent)
+}
 
 export const createCommentNotificationEvent: CreateCommentNotificationEventPayload = {
   __typename: NotificationEventType.CreateComment,
