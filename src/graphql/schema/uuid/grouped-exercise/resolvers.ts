@@ -30,6 +30,10 @@ import {
   EntityType,
 } from '../abstract-entity'
 import { createExerciseResolvers } from '../abstract-exercise/utils'
+import {
+  createRepositoryResolvers,
+  createRevisionResolvers,
+} from '../abstract-repository'
 import { ExerciseGroupPayload } from '../exercise-group'
 import {
   GroupedExercisePreResolver,
@@ -38,6 +42,10 @@ import {
 
 export const resolvers = {
   GroupedExercise: {
+    ...createRepositoryResolvers<
+      GroupedExercisePreResolver,
+      GroupedExerciseRevisionPreResolver
+    >(),
     ...createEntityResolvers<
       GroupedExercisePreResolver,
       GroupedExerciseRevisionPreResolver
@@ -60,11 +68,17 @@ export const resolvers = {
       )
     },
   },
-  GroupedExerciseRevision: createEntityRevisionResolvers<
-    GroupedExercisePreResolver,
-    GroupedExerciseRevisionPreResolver
-  >({
-    entityType: EntityType.GroupedExercise,
-    repository: 'groupedExercise',
-  }),
+  GroupedExerciseRevision: {
+    ...createRevisionResolvers<
+      GroupedExercisePreResolver,
+      GroupedExerciseRevisionPreResolver
+    >(),
+    ...createEntityRevisionResolvers<
+      GroupedExercisePreResolver,
+      GroupedExerciseRevisionPreResolver
+    >({
+      entityType: EntityType.GroupedExercise,
+      repository: 'groupedExercise',
+    }),
+  },
 }

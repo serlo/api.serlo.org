@@ -24,7 +24,6 @@ import { resolvers } from './resolvers'
 import typeDefs from './types.graphql'
 
 export * from './types'
+export * from './utils'
 
-export const createCommentNotificationEventSchema = new Schema(resolvers, [
-  typeDefs,
-])
+export const abstractRepositorySchema = new Schema(resolvers, [typeDefs])

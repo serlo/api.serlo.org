@@ -26,6 +26,10 @@ import {
   EntityRevisionType,
   EntityType,
 } from '../abstract-entity'
+import {
+  createRepositoryResolvers,
+  createRevisionResolvers,
+} from '../abstract-repository'
 import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
 import { GroupedExercisePayload } from '../grouped-exercise'
 import {
@@ -35,6 +39,10 @@ import {
 
 export const resolvers = {
   ExerciseGroup: {
+    ...createRepositoryResolvers<
+      ExerciseGroupPreResolver,
+      ExerciseGroupRevisionPreResolver
+    >(),
     ...createEntityResolvers<
       ExerciseGroupPreResolver,
       ExerciseGroupRevisionPreResolver
@@ -54,11 +62,17 @@ export const resolvers = {
       )
     },
   },
-  ExerciseGroupRevision: createEntityRevisionResolvers<
-    ExerciseGroupPreResolver,
-    ExerciseGroupRevisionPreResolver
-  >({
-    entityType: EntityType.ExerciseGroup,
-    repository: 'exerciseGroup',
-  }),
+  ExerciseGroupRevision: {
+    ...createRevisionResolvers<
+      ExerciseGroupPreResolver,
+      ExerciseGroupRevisionPreResolver
+    >(),
+    ...createEntityRevisionResolvers<
+      ExerciseGroupPreResolver,
+      ExerciseGroupRevisionPreResolver
+    >({
+      entityType: EntityType.ExerciseGroup,
+      repository: 'exerciseGroup',
+    }),
+  },
 }

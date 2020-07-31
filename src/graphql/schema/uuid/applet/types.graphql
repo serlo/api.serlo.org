@@ -1,4 +1,4 @@
-type Applet implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild {
+type Applet implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild {
   id: Int!
   trashed: Boolean!
   instance: Instance!
@@ -9,12 +9,13 @@ type Applet implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild
   taxonomyTerms: [TaxonomyTerm!]!
 }
 
-type AppletRevision implements AbstractUuid & AbstractEntityRevision {
+type AppletRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision {
   id: Int!
   author: User!
   trashed: Boolean!
   date: DateTime!
   applet: Applet!
+  repository: Applet!
   url: String!
   title: String!
   content: String!

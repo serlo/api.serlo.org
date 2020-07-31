@@ -29,11 +29,19 @@ import {
   EntityRevisionType,
   EntityType,
 } from '../abstract-entity'
+import {
+  createRepositoryResolvers,
+  createRevisionResolvers,
+} from '../abstract-repository'
 import { CoursePayload } from '../course'
 import { CoursePagePreResolver, CoursePageRevisionPreResolver } from './types'
 
 export const resolvers = {
   CoursePage: {
+    ...createRepositoryResolvers<
+      CoursePagePreResolver,
+      CoursePageRevisionPreResolver
+    >(),
     ...createEntityResolvers<
       CoursePagePreResolver,
       CoursePageRevisionPreResolver
@@ -53,11 +61,17 @@ export const resolvers = {
       return dataSources.serlo.getUuid<CoursePayload>(partialCourse)
     },
   },
-  CoursePageRevision: createEntityRevisionResolvers<
-    CoursePagePreResolver,
-    CoursePageRevisionPreResolver
-  >({
-    entityType: EntityType.CoursePage,
-    repository: 'coursePage',
-  }),
+  CoursePageRevision: {
+    ...createRevisionResolvers<
+      CoursePagePreResolver,
+      CoursePageRevisionPreResolver
+    >(),
+    ...createEntityRevisionResolvers<
+      CoursePagePreResolver,
+      CoursePageRevisionPreResolver
+    >({
+      entityType: EntityType.CoursePage,
+      repository: 'coursePage',
+    }),
+  },
 }

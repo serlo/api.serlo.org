@@ -20,31 +20,40 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { requestsOnlyFields } from '../../utils'
+import { UserPayload } from '../user'
 import {
-  EntityPayload,
-  EntityRevisionPayload,
-} from '../../uuid/abstract-entity'
-import { UserPayload } from '../../uuid/user'
-import { CreateEntityRevisionNotificationEventResolvers } from './types'
+  AbstractRepositoryPreResolver,
+  AbstractRevisionPreResolver,
+  RepositoryResolvers,
+  RevisionResolvers,
+} from './types'
 
-export const resolvers: CreateEntityRevisionNotificationEventResolvers = {
-  CreateEntityRevisionNotificationEvent: {
-    async author(notificationEvent, _args, { dataSources }, info) {
-      const partialUser = { id: notificationEvent.authorId }
+export function createRepositoryResolvers<
+  E extends AbstractRepositoryPreResolver,
+  R extends AbstractRevisionPreResolver
+>(): RepositoryResolvers<E, R> {
+  return {
+    async currentRevision(entity, _args, { dataSources }) {
+      if (!entity.currentRevisionId) return null
+      return dataSources.serlo.getUuid<R>({ id: entity.currentRevisionId })
+    },
+  }
+}
+
+export function createRevisionResolvers<
+  E extends AbstractRepositoryPreResolver,
+  R extends AbstractRevisionPreResolver
+>(): RevisionResolvers<E, R> {
+  return {
+    async author(entityRevision, _args, { dataSources }, info) {
+      const partialUser = { id: entityRevision.authorId }
       if (requestsOnlyFields('User', ['id'], info)) {
         return partialUser
       }
       return dataSources.serlo.getUuid<UserPayload>(partialUser)
     },
-    async entity(notificationEvent, _args, { dataSources }) {
-      return dataSources.serlo.getUuid<EntityPayload>({
-        id: notificationEvent.entityId,
-      })
+    repository: async (entityRevision, _args, { dataSources }) => {
+      return dataSources.serlo.getUuid<E>({ id: entityRevision.repositoryId })
     },
-    async entityRevision(notificationEvent, _args, { dataSources }) {
-      return dataSources.serlo.getUuid<EntityRevisionPayload>({
-        id: notificationEvent.entityRevisionId,
-      })
-    },
-  },
+  }
 }

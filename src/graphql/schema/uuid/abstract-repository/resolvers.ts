@@ -19,12 +19,17 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Schema } from '../../utils'
-import { resolvers } from './resolvers'
-import typeDefs from './types.graphql'
+import { AbstractRepositoryResolvers } from './types'
 
-export * from './types'
-
-export const createCommentNotificationEventSchema = new Schema(resolvers, [
-  typeDefs,
-])
+export const resolvers: AbstractRepositoryResolvers = {
+  AbstractRepository: {
+    __resolveType(repository) {
+      return repository.__typename
+    },
+  },
+  AbstractRevision: {
+    __resolveType(revision) {
+      return revision.__typename
+    },
+  },
+}

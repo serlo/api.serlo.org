@@ -1,0 +1,19 @@
+interface AbstractRepository {
+  # extends AbstractUuid
+  id: Int!
+  trashed: Boolean!
+
+  # Implicitly has the following field
+  # currentRevision: AbstractRevision
+}
+
+interface AbstractRevision {
+  # extends AbstractUuid
+  id: Int!
+  trashed: Boolean!
+
+  # Implicitly has the following field
+  # repository: AbstractRepository!
+  author: User!
+  date: DateTime!
+}

@@ -26,22 +26,36 @@ import {
   EntityType,
 } from '../abstract-entity'
 import { createExerciseResolvers } from '../abstract-exercise/utils'
+import {
+  createRepositoryResolvers,
+  createRevisionResolvers,
+} from '../abstract-repository'
 import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
 import { ExercisePreResolver, ExerciseRevisionPreResolver } from './types'
 
 export const resolvers = {
   Exercise: {
+    ...createRepositoryResolvers<
+      ExercisePreResolver,
+      ExerciseRevisionPreResolver
+    >(),
     ...createTaxonomyTermChildResolvers<ExercisePreResolver>(),
     ...createEntityResolvers<ExercisePreResolver, ExerciseRevisionPreResolver>({
       entityRevisionType: EntityRevisionType.ExerciseRevision,
     }),
     ...createExerciseResolvers<ExercisePreResolver>(),
   },
-  ExerciseRevision: createEntityRevisionResolvers<
-    ExercisePreResolver,
-    ExerciseRevisionPreResolver
-  >({
-    entityType: EntityType.Exercise,
-    repository: 'exercise',
-  }),
+  ExerciseRevision: {
+    ...createRevisionResolvers<
+      ExercisePreResolver,
+      ExerciseRevisionPreResolver
+    >(),
+    ...createEntityRevisionResolvers<
+      ExercisePreResolver,
+      ExerciseRevisionPreResolver
+    >({
+      entityType: EntityType.Exercise,
+      repository: 'exercise',
+    }),
+  },
 }

@@ -25,21 +25,29 @@ import {
   EntityRevisionType,
   EntityType,
 } from '../abstract-entity'
+import {
+  createRepositoryResolvers,
+  createRevisionResolvers,
+} from '../abstract-repository'
 import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
 import { VideoPreResolver, VideoRevisionPreResolver } from './types'
 
 export const resolvers = {
   Video: {
+    ...createRepositoryResolvers<VideoPreResolver, VideoRevisionPreResolver>(),
     ...createEntityResolvers<VideoPreResolver, VideoRevisionPreResolver>({
       entityRevisionType: EntityRevisionType.VideoRevision,
     }),
     ...createTaxonomyTermChildResolvers<VideoPreResolver>(),
   },
-  VideoRevision: createEntityRevisionResolvers<
-    VideoPreResolver,
-    VideoRevisionPreResolver
-  >({
-    entityType: EntityType.Video,
-    repository: 'video',
-  }),
+  VideoRevision: {
+    ...createRevisionResolvers<VideoPreResolver, VideoRevisionPreResolver>(),
+    ...createEntityRevisionResolvers<
+      VideoPreResolver,
+      VideoRevisionPreResolver
+    >({
+      entityType: EntityType.Video,
+      repository: 'video',
+    }),
+  },
 }

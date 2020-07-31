@@ -375,6 +375,18 @@ export type NavigationNode = {
   id?: Maybe<Scalars['Int']>;
 };
 
+export type AbstractRepository = {
+  id: Scalars['Int'];
+  trashed: Scalars['Boolean'];
+};
+
+export type AbstractRevision = {
+  id: Scalars['Int'];
+  trashed: Scalars['Boolean'];
+  author: User;
+  date: Scalars['DateTime'];
+};
+
 export type AbstractTaxonomyTermChild = {
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -395,7 +407,7 @@ export type AliasInput = {
   path: Scalars['String'];
 };
 
-export type Applet = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & {
+export type Applet = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
   __typename?: 'Applet';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -407,13 +419,14 @@ export type Applet = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild &
   taxonomyTerms: Array<TaxonomyTerm>;
 };
 
-export type AppletRevision = AbstractUuid & AbstractEntityRevision & {
+export type AppletRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
   __typename?: 'AppletRevision';
   id: Scalars['Int'];
   author: User;
   trashed: Scalars['Boolean'];
   date: Scalars['DateTime'];
   applet: Applet;
+  repository: Applet;
   url: Scalars['String'];
   title: Scalars['String'];
   content: Scalars['String'];
@@ -422,7 +435,7 @@ export type AppletRevision = AbstractUuid & AbstractEntityRevision & {
   metaDescription: Scalars['String'];
 };
 
-export type Article = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & {
+export type Article = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
   __typename?: 'Article';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -434,13 +447,14 @@ export type Article = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild 
   taxonomyTerms: Array<TaxonomyTerm>;
 };
 
-export type ArticleRevision = AbstractUuid & AbstractEntityRevision & {
+export type ArticleRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
   __typename?: 'ArticleRevision';
   id: Scalars['Int'];
   author: User;
   trashed: Scalars['Boolean'];
   date: Scalars['DateTime'];
   article: Article;
+  repository: Article;
   title: Scalars['String'];
   content: Scalars['String'];
   changes: Scalars['String'];
@@ -448,7 +462,7 @@ export type ArticleRevision = AbstractUuid & AbstractEntityRevision & {
   metaDescription: Scalars['String'];
 };
 
-export type CoursePage = AbstractUuid & AbstractEntity & {
+export type CoursePage = AbstractUuid & AbstractRepository & AbstractEntity & {
   __typename?: 'CoursePage';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -460,19 +474,20 @@ export type CoursePage = AbstractUuid & AbstractEntity & {
   course: Course;
 };
 
-export type CoursePageRevision = AbstractUuid & AbstractEntityRevision & {
+export type CoursePageRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
   __typename?: 'CoursePageRevision';
   id: Scalars['Int'];
   author: User;
   trashed: Scalars['Boolean'];
   date: Scalars['DateTime'];
   coursePage: CoursePage;
+  repository: CoursePage;
   title: Scalars['String'];
   content: Scalars['String'];
   changes: Scalars['String'];
 };
 
-export type Course = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & {
+export type Course = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
   __typename?: 'Course';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -485,20 +500,21 @@ export type Course = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild &
   pages: Array<CoursePage>;
 };
 
-export type CourseRevision = AbstractUuid & AbstractEntityRevision & {
+export type CourseRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
   __typename?: 'CourseRevision';
   id: Scalars['Int'];
   author: User;
   trashed: Scalars['Boolean'];
   date: Scalars['DateTime'];
   course: Course;
+  repository: Course;
   title: Scalars['String'];
   content: Scalars['String'];
   changes: Scalars['String'];
   metaDescription: Scalars['String'];
 };
 
-export type Event = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & {
+export type Event = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
   __typename?: 'Event';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -510,13 +526,14 @@ export type Event = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & 
   taxonomyTerms: Array<TaxonomyTerm>;
 };
 
-export type EventRevision = AbstractUuid & AbstractEntityRevision & {
+export type EventRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
   __typename?: 'EventRevision';
   id: Scalars['Int'];
   author: User;
   trashed: Scalars['Boolean'];
   date: Scalars['DateTime'];
   event: Event;
+  repository: Event;
   title: Scalars['String'];
   content: Scalars['String'];
   changes: Scalars['String'];
@@ -524,7 +541,7 @@ export type EventRevision = AbstractUuid & AbstractEntityRevision & {
   metaDescription: Scalars['String'];
 };
 
-export type ExerciseGroup = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & {
+export type ExerciseGroup = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
   __typename?: 'ExerciseGroup';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -537,18 +554,19 @@ export type ExerciseGroup = AbstractUuid & AbstractEntity & AbstractTaxonomyTerm
   exercises: Array<GroupedExercise>;
 };
 
-export type ExerciseGroupRevision = AbstractUuid & AbstractEntityRevision & {
+export type ExerciseGroupRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
   __typename?: 'ExerciseGroupRevision';
   id: Scalars['Int'];
   author: User;
   trashed: Scalars['Boolean'];
   date: Scalars['DateTime'];
   exerciseGroup: ExerciseGroup;
+  repository: ExerciseGroup;
   content: Scalars['String'];
   changes: Scalars['String'];
 };
 
-export type Exercise = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & AbstractExercise & {
+export type Exercise = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & AbstractExercise & {
   __typename?: 'Exercise';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -561,18 +579,19 @@ export type Exercise = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild
   solution?: Maybe<Solution>;
 };
 
-export type ExerciseRevision = AbstractUuid & AbstractEntityRevision & AbstractExerciseRevision & {
+export type ExerciseRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & AbstractExerciseRevision & {
   __typename?: 'ExerciseRevision';
   id: Scalars['Int'];
   author: User;
   trashed: Scalars['Boolean'];
   date: Scalars['DateTime'];
   exercise: Exercise;
+  repository: Exercise;
   content: Scalars['String'];
   changes: Scalars['String'];
 };
 
-export type GroupedExercise = AbstractUuid & AbstractEntity & AbstractExercise & {
+export type GroupedExercise = AbstractUuid & AbstractRepository & AbstractEntity & AbstractExercise & {
   __typename?: 'GroupedExercise';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -585,58 +604,42 @@ export type GroupedExercise = AbstractUuid & AbstractEntity & AbstractExercise &
   exerciseGroup: ExerciseGroup;
 };
 
-export type GroupedExerciseRevision = AbstractUuid & AbstractEntityRevision & AbstractExerciseRevision & {
+export type GroupedExerciseRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & AbstractExerciseRevision & {
   __typename?: 'GroupedExerciseRevision';
   id: Scalars['Int'];
   author: User;
   trashed: Scalars['Boolean'];
   date: Scalars['DateTime'];
   groupedExercise: GroupedExercise;
+  repository: GroupedExercise;
   content: Scalars['String'];
   changes: Scalars['String'];
 };
 
-/**
- * Represents a Serlo.org page. A `Page` is a repository containing `PageRevision`s, is tied to an `Instance`,
- * has a `License`, and has an alias.
- */
-export type Page = AbstractUuid & AbstractNavigationChild & {
+export type Page = AbstractUuid & AbstractRepository & AbstractNavigationChild & {
   __typename?: 'Page';
-  /** The ID of the page */
   id: Scalars['Int'];
-  /** `true` iff the page has been trashed */
   trashed: Scalars['Boolean'];
-  /** The `Instance` the page is tied to */
   instance: Instance;
-  /** The alias of the page */
   alias?: Maybe<Scalars['String']>;
-  /** The `License` of the page */
   license: License;
-  /** The `PageRevision` that is currently checked out */
   currentRevision?: Maybe<PageRevision>;
   navigation?: Maybe<Navigation>;
 };
 
-/** Represents a Serlo.org page revision. A `PageRevision` has fields title and content. */
-export type PageRevision = AbstractUuid & {
+export type PageRevision = AbstractUuid & AbstractRevision & {
   __typename?: 'PageRevision';
-  /** The ID of the page revision */
   id: Scalars['Int'];
-  /** The `User` that created the page revision */
   author: User;
-  /** `true` iff the page revision has been trashed */
   trashed: Scalars['Boolean'];
-  /** The `DateTime` the page revision has been created */
   date: Scalars['DateTime'];
-  /** The heading */
   title: Scalars['String'];
-  /** The content */
   content: Scalars['String'];
-  /** The `Page` the page revision is tied to */
   page: Page;
+  repository: Page;
 };
 
-export type Solution = AbstractUuid & AbstractEntity & {
+export type Solution = AbstractUuid & AbstractRepository & AbstractEntity & {
   __typename?: 'Solution';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -648,13 +651,14 @@ export type Solution = AbstractUuid & AbstractEntity & {
   exercise: AbstractExercise;
 };
 
-export type SolutionRevision = AbstractUuid & AbstractEntityRevision & {
+export type SolutionRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
   __typename?: 'SolutionRevision';
   id: Scalars['Int'];
   author: User;
   trashed: Scalars['Boolean'];
   date: Scalars['DateTime'];
   solution: Solution;
+  repository: Solution;
   content: Scalars['String'];
   changes: Scalars['String'];
 };
@@ -709,7 +713,7 @@ export type User = AbstractUuid & {
   activeDonor: Scalars['Boolean'];
 };
 
-export type Video = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & {
+export type Video = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
   __typename?: 'Video';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -721,13 +725,14 @@ export type Video = AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & 
   taxonomyTerms: Array<TaxonomyTerm>;
 };
 
-export type VideoRevision = AbstractUuid & AbstractEntityRevision & {
+export type VideoRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
   __typename?: 'VideoRevision';
   id: Scalars['Int'];
   author: User;
   trashed: Scalars['Boolean'];
   date: Scalars['DateTime'];
   video: Video;
+  repository: Video;
   url: Scalars['String'];
   title: Scalars['String'];
   content: Scalars['String'];

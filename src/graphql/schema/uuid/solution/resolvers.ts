@@ -27,10 +27,18 @@ import {
   EntityType,
 } from '../abstract-entity'
 import { AbstractExercisePayload } from '../abstract-exercise'
+import {
+  createRepositoryResolvers,
+  createRevisionResolvers,
+} from '../abstract-repository'
 import { SolutionPreResolver, SolutionRevisionPreResolver } from './types'
 
 export const resolvers = {
   Solution: {
+    ...createRepositoryResolvers<
+      SolutionPreResolver,
+      SolutionRevisionPreResolver
+    >(),
     ...createEntityResolvers<SolutionPreResolver, SolutionRevisionPreResolver>({
       entityRevisionType: EntityRevisionType.SolutionRevision,
     }),
@@ -44,11 +52,17 @@ export const resolvers = {
       })
     },
   },
-  SolutionRevision: createEntityRevisionResolvers<
-    SolutionPreResolver,
-    SolutionRevisionPreResolver
-  >({
-    entityType: EntityType.Solution,
-    repository: 'solution',
-  }),
+  SolutionRevision: {
+    ...createRevisionResolvers<
+      SolutionPreResolver,
+      SolutionRevisionPreResolver
+    >(),
+    ...createEntityRevisionResolvers<
+      SolutionPreResolver,
+      SolutionRevisionPreResolver
+    >({
+      entityType: EntityType.Solution,
+      repository: 'solution',
+    }),
+  },
 }

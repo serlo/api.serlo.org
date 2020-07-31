@@ -25,21 +25,35 @@ import {
   EntityRevisionType,
   EntityType,
 } from '../abstract-entity'
+import {
+  createRepositoryResolvers,
+  createRevisionResolvers,
+} from '../abstract-repository'
 import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
 import { ArticlePreResolver, ArticleRevisionPreResolver } from './types'
 
 export const resolvers = {
   Article: {
+    ...createRepositoryResolvers<
+      ArticlePreResolver,
+      ArticleRevisionPreResolver
+    >(),
     ...createEntityResolvers<ArticlePreResolver, ArticleRevisionPreResolver>({
       entityRevisionType: EntityRevisionType.ArticleRevision,
     }),
     ...createTaxonomyTermChildResolvers<ArticlePreResolver>(),
   },
-  ArticleRevision: createEntityRevisionResolvers<
-    ArticlePreResolver,
-    ArticleRevisionPreResolver
-  >({
-    entityType: EntityType.Article,
-    repository: 'article',
-  }),
+  ArticleRevision: {
+    ...createRevisionResolvers<
+      ArticlePreResolver,
+      ArticleRevisionPreResolver
+    >(),
+    ...createEntityRevisionResolvers<
+      ArticlePreResolver,
+      ArticleRevisionPreResolver
+    >({
+      entityType: EntityType.Article,
+      repository: 'article',
+    }),
+  },
 }
