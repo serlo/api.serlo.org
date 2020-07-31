@@ -25,30 +25,25 @@ import { NavigationChildResolvers } from '../abstract-navigation-child'
 import { RepositoryResolvers, RevisionResolvers } from '../abstract-repository'
 import { DiscriminatorType } from '../abstract-uuid'
 
-export interface PagePreResolver
-  extends Omit<Page, keyof PageResolvers['Page']> {
+export interface PagePayload extends Omit<Page, keyof PageResolvers['Page']> {
   __typename: DiscriminatorType.Page
   alias: string | null
   currentRevisionId: number | null
   licenseId: number
 }
 
-export type PagePayload = PagePreResolver
-
-export interface PageRevisionPreResolver
+export interface PageRevisionPayload
   extends Omit<PageRevision, keyof PageResolvers['PageRevision']> {
   __typename: DiscriminatorType.PageRevision
   authorId: number
   repositoryId: number
 }
 
-export type PageRevisionPayload = PageRevisionPreResolver
-
 export interface PageResolvers {
   Page: {
-    alias: Resolver<PagePreResolver, never, string | null>
-    license: Resolver<PagePreResolver, never, Partial<License>>
-  } & RepositoryResolvers<PagePreResolver, PageRevisionPreResolver> &
-    NavigationChildResolvers<PagePreResolver>
-  PageRevision: RevisionResolvers<PagePreResolver, PageRevisionPreResolver>
+    alias: Resolver<PagePayload, never, string | null>
+    license: Resolver<PagePayload, never, Partial<License>>
+  } & RepositoryResolvers<PagePayload, PageRevisionPayload> &
+    NavigationChildResolvers<PagePayload>
+  PageRevision: RevisionResolvers<PagePayload, PageRevisionPayload>
 }

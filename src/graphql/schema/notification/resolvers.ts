@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { NotificationEventPreResolver, NotificationResolvers } from './types'
+import { NotificationEventPayload, NotificationResolvers } from './types'
 
 export const resolvers: NotificationResolvers = {
   AbstractNotificationEvent: {
@@ -29,9 +29,9 @@ export const resolvers: NotificationResolvers = {
   },
   Query: {
     async notificationEvent(_parent, payload, { dataSources }) {
-      return dataSources.serlo.getNotificationEvent<
-        NotificationEventPreResolver
-      >(payload)
+      return dataSources.serlo.getNotificationEvent<NotificationEventPayload>(
+        payload
+      )
     },
   },
 }

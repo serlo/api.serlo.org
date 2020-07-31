@@ -23,19 +23,16 @@ import { User } from '../../../../types'
 import { QueryResolver, Resolver } from '../../types'
 import { AbstractUuidPayload, DiscriminatorType } from '../abstract-uuid'
 
-export interface UserPreResolver
-  extends Omit<User, keyof UserResolvers['User']> {
+export interface UserPayload extends Omit<User, keyof UserResolvers['User']> {
   __typename: DiscriminatorType.User
 }
 
-export type UserPayload = UserPreResolver
-
 export interface UserResolvers {
   Query: {
-    activeDonors: QueryResolver<never, UserPreResolver[]>
+    activeDonors: QueryResolver<never, UserPayload[]>
   }
   User: {
-    activeDonor: Resolver<UserPreResolver, never, boolean>
+    activeDonor: Resolver<UserPayload, never, boolean>
   }
 }
 

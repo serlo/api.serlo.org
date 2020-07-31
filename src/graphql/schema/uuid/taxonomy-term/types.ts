@@ -22,9 +22,9 @@
 import { TaxonomyTerm } from '../../../../types'
 import { Resolver } from '../../types'
 import { NavigationChildResolvers } from '../abstract-navigation-child'
-import { DiscriminatorType, UuidPreResolver } from '../abstract-uuid'
+import { DiscriminatorType, UuidPayload } from '../abstract-uuid'
 
-export interface TaxonomyTermPreResolver
+export interface TaxonomyTermPayload
   extends Omit<TaxonomyTerm, keyof TaxonomyTermResolvers['TaxonomyTerm']> {
   __typename: DiscriminatorType.TaxonomyTerm
   alias: string | null
@@ -32,12 +32,10 @@ export interface TaxonomyTermPreResolver
   childrenIds: number[]
 }
 
-export type TaxonomyTermPayload = TaxonomyTermPreResolver
-
 export interface TaxonomyTermResolvers {
   TaxonomyTerm: {
-    alias: Resolver<TaxonomyTermPreResolver, never, string | null>
-    parent: Resolver<TaxonomyTermPreResolver, never, TaxonomyTermPreResolver>
-    children: Resolver<TaxonomyTermPreResolver, never, UuidPreResolver[]>
-  } & NavigationChildResolvers<TaxonomyTermPreResolver>
+    alias: Resolver<TaxonomyTermPayload, never, string | null>
+    parent: Resolver<TaxonomyTermPayload, never, TaxonomyTermPayload>
+    children: Resolver<TaxonomyTermPayload, never, UuidPayload[]>
+  } & NavigationChildResolvers<TaxonomyTermPayload>
 }

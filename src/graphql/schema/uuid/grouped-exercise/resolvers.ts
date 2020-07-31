@@ -30,24 +30,21 @@ import {
   createRevisionResolvers,
 } from '../abstract-repository'
 import { ExerciseGroupPayload } from '../exercise-group'
-import {
-  GroupedExercisePreResolver,
-  GroupedExerciseRevisionPreResolver,
-} from './types'
+import { GroupedExercisePayload, GroupedExerciseRevisionPayload } from './types'
 
 export const resolvers = {
   GroupedExercise: {
     ...createRepositoryResolvers<
-      GroupedExercisePreResolver,
-      GroupedExerciseRevisionPreResolver
+      GroupedExercisePayload,
+      GroupedExerciseRevisionPayload
     >(),
     ...createEntityResolvers<
-      GroupedExercisePreResolver,
-      GroupedExerciseRevisionPreResolver
+      GroupedExercisePayload,
+      GroupedExerciseRevisionPayload
     >(),
-    ...createExerciseResolvers<GroupedExercisePreResolver>(),
+    ...createExerciseResolvers<GroupedExercisePayload>(),
     async exerciseGroup(
-      groupedExercise: GroupedExercisePreResolver,
+      groupedExercise: GroupedExercisePayload,
       _args: never,
       { dataSources }: Context,
       info: GraphQLResolveInfo
@@ -62,7 +59,7 @@ export const resolvers = {
     },
   },
   GroupedExerciseRevision: createRevisionResolvers<
-    GroupedExercisePreResolver,
-    GroupedExerciseRevisionPreResolver
+    GroupedExercisePayload,
+    GroupedExerciseRevisionPayload
   >(),
 }

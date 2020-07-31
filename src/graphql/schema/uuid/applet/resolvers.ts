@@ -25,19 +25,16 @@ import {
   createRevisionResolvers,
 } from '../abstract-repository'
 import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
-import { AppletPreResolver, AppletRevisionPreResolver } from './types'
+import { AppletPayload, AppletRevisionPayload } from './types'
 
 export const resolvers = {
   Applet: {
-    ...createRepositoryResolvers<
-      AppletPreResolver,
-      AppletRevisionPreResolver
-    >(),
-    ...createEntityResolvers<AppletPreResolver, AppletRevisionPreResolver>(),
-    ...createTaxonomyTermChildResolvers<AppletPreResolver>(),
+    ...createRepositoryResolvers<AppletPayload, AppletRevisionPayload>(),
+    ...createEntityResolvers<AppletPayload, AppletRevisionPayload>(),
+    ...createTaxonomyTermChildResolvers<AppletPayload>(),
   },
   AppletRevision: createRevisionResolvers<
-    AppletPreResolver,
-    AppletRevisionPreResolver
+    AppletPayload,
+    AppletRevisionPayload
   >(),
 }

@@ -22,62 +22,54 @@
 import { AbstractRepository, AbstractRevision } from '../../../../types'
 import { Resolver, TypeResolver } from '../../types'
 import {
-  EntityPreResolver,
-  EntityRevisionPreResolver,
+  EntityPayload,
+  EntityRevisionPayload,
   EntityRevisionType,
   EntityType,
 } from '../abstract-entity'
 import { DiscriminatorType } from '../abstract-uuid'
-import { PagePreResolver, PageRevisionPreResolver } from '../page'
-import { UserPreResolver } from '../user'
+import { PagePayload, PageRevisionPayload } from '../page'
+import { UserPayload } from '../user'
 
 export type RepositoryType = EntityType | DiscriminatorType.Page
 
-export type RepositoryPreResolver = EntityPreResolver | PagePreResolver
-export interface AbstractRepositoryPreResolver
+export type RepositoryPayload = EntityPayload | PagePayload
+export interface AbstractRepositoryPayload
   extends Omit<AbstractRepository, 'currentRevision'> {
   __typename: RepositoryType
   currentRevisionId: number | null
 }
 
-export type RepositoryPayload = RepositoryPreResolver
-export type AbstractRepositoryPayload = AbstractRepositoryPreResolver
-
 export type RevisionType = EntityRevisionType | DiscriminatorType.PageRevision
 
-export type RevisionPreResolver =
-  | EntityRevisionPreResolver
-  | PageRevisionPreResolver
-export interface AbstractRevisionPreResolver
+export type RevisionPayload = EntityRevisionPayload | PageRevisionPayload
+export interface AbstractRevisionPayload
   extends Omit<AbstractRevision, 'author' | 'repository'> {
   __typename: RevisionType
   authorId: number
   repositoryId: number
 }
 
-export type RevisionPayload = RevisionPreResolver
-export type AbstractRevisionPayload = AbstractRepositoryPreResolver
-
 export interface AbstractRepositoryResolvers {
   AbstractRepository: {
-    __resolveType: TypeResolver<RepositoryPreResolver>
+    __resolveType: TypeResolver<RepositoryPayload>
   }
   AbstractRevision: {
-    __resolveType: TypeResolver<RevisionPreResolver>
+    __resolveType: TypeResolver<RevisionPayload>
   }
 }
 
 export interface RepositoryResolvers<
-  E extends AbstractRepositoryPreResolver,
-  R extends AbstractRevisionPreResolver
+  E extends AbstractRepositoryPayload,
+  R extends AbstractRevisionPayload
 > {
   currentRevision: Resolver<E, never, R | null>
 }
 
 export interface RevisionResolvers<
-  E extends AbstractRepositoryPreResolver,
-  R extends AbstractRevisionPreResolver
+  E extends AbstractRepositoryPayload,
+  R extends AbstractRevisionPayload
 > {
-  author: Resolver<R, never, Partial<UserPreResolver>>
+  author: Resolver<R, never, Partial<UserPayload>>
   repository: Resolver<R, never, E>
 }

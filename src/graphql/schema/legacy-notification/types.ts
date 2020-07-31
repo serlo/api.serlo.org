@@ -27,10 +27,10 @@ import {
 } from '../../../types'
 import { Connection } from '../connection'
 import { MutationResolver, QueryResolver, Resolver } from '../types'
-import { AbstractUuidPreResolver } from '../uuid/abstract-uuid'
-import { UserPreResolver } from '../uuid/user'
+import { AbstractUuidPayload } from '../uuid/abstract-uuid'
+import { UserPayload } from '../uuid/user'
 
-export interface LegacyNotificationPreResolver
+export interface LegacyNotificationPayload
   extends Omit<
     LegacyNotification,
     keyof LegacyNotificationResolvers['LegacyNotification']
@@ -38,14 +38,12 @@ export interface LegacyNotificationPreResolver
   eventId: number
 }
 
-export type LegacyNotificationPayload = LegacyNotificationPreResolver
-
 export interface LegacyNotificationsPayload {
   notifications: LegacyNotificationPayload[]
   userId: number
 }
 
-export interface LegacyNotificationEventPreResolver
+export interface LegacyNotificationEventPayload
   extends Omit<
     LegacyNotificationEvent,
     keyof LegacyNotificationResolvers['LegacyNotificationEvent']
@@ -54,32 +52,22 @@ export interface LegacyNotificationEventPreResolver
   objectId: number
 }
 
-export type LegacyNotificationEventPayload = LegacyNotificationEventPreResolver
-
 export interface LegacyNotificationResolvers {
   LegacyNotification: {
     event: Resolver<
-      LegacyNotificationPreResolver,
+      LegacyNotificationPayload,
       never,
-      Partial<LegacyNotificationEventPreResolver>
+      Partial<LegacyNotificationEventPayload>
     >
   }
   LegacyNotificationEvent: {
-    actor: Resolver<
-      LegacyNotificationEventPreResolver,
-      never,
-      Partial<UserPreResolver>
-    >
-    object: Resolver<
-      LegacyNotificationEventPreResolver,
-      never,
-      AbstractUuidPreResolver
-    >
+    actor: Resolver<LegacyNotificationEventPayload, never, Partial<UserPayload>>
+    object: Resolver<LegacyNotificationEventPayload, never, AbstractUuidPayload>
   }
   Query: {
     legacyNotifications: QueryResolver<
       QueryLegacyNotificationsArgs,
-      Connection<LegacyNotificationPreResolver>
+      Connection<LegacyNotificationPayload>
     >
   }
   Mutation: {

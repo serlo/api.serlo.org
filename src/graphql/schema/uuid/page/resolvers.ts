@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { PagePreResolver, PageRevisionPreResolver } from '.'
+import { PagePayload, PageRevisionPayload } from '.'
 import { requestsOnlyFields } from '../../utils'
 import {
   createRepositoryResolvers,
@@ -30,7 +30,7 @@ import { PageResolvers } from './types'
 
 export const resolvers: PageResolvers = {
   Page: {
-    ...createRepositoryResolvers<PagePreResolver, PageRevisionPreResolver>(),
+    ...createRepositoryResolvers<PagePayload, PageRevisionPayload>(),
     alias(page) {
       return Promise.resolve(page.alias ? decodePath(page.alias) : null)
     },
@@ -48,8 +48,5 @@ export const resolvers: PageResolvers = {
       return dataSources.serlo.getLicense(partialLicense)
     },
   },
-  PageRevision: createRevisionResolvers<
-    PagePreResolver,
-    PageRevisionPreResolver
-  >(),
+  PageRevision: createRevisionResolvers<PagePayload, PageRevisionPayload>(),
 }

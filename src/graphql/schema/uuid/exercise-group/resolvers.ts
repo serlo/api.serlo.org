@@ -27,24 +27,21 @@ import {
 } from '../abstract-repository'
 import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
 import { GroupedExercisePayload } from '../grouped-exercise'
-import {
-  ExerciseGroupPreResolver,
-  ExerciseGroupRevisionPreResolver,
-} from './types'
+import { ExerciseGroupPayload, ExerciseGroupRevisionPayload } from './types'
 
 export const resolvers = {
   ExerciseGroup: {
     ...createRepositoryResolvers<
-      ExerciseGroupPreResolver,
-      ExerciseGroupRevisionPreResolver
+      ExerciseGroupPayload,
+      ExerciseGroupRevisionPayload
     >(),
     ...createEntityResolvers<
-      ExerciseGroupPreResolver,
-      ExerciseGroupRevisionPreResolver
+      ExerciseGroupPayload,
+      ExerciseGroupRevisionPayload
     >(),
-    ...createTaxonomyTermChildResolvers<ExerciseGroupPreResolver>(),
+    ...createTaxonomyTermChildResolvers<ExerciseGroupPayload>(),
     exercises(
-      exerciseGroup: ExerciseGroupPreResolver,
+      exerciseGroup: ExerciseGroupPayload,
       _args: never,
       { dataSources }: Context
     ) {
@@ -56,7 +53,7 @@ export const resolvers = {
     },
   },
   ExerciseGroupRevision: createRevisionResolvers<
-    ExerciseGroupPreResolver,
-    ExerciseGroupRevisionPreResolver
+    ExerciseGroupPayload,
+    ExerciseGroupRevisionPayload
   >(),
 }

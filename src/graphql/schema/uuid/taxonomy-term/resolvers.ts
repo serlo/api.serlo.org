@@ -21,11 +21,7 @@
  */
 import { decodePath, UuidPayload } from '..'
 import { Context } from '../../types'
-import {
-  TaxonomyTermPayload,
-  TaxonomyTermPreResolver,
-  TaxonomyTermResolvers,
-} from './types'
+import { TaxonomyTermPayload, TaxonomyTermResolvers } from './types'
 
 export const resolvers: TaxonomyTermResolvers = {
   TaxonomyTerm: {
@@ -81,11 +77,11 @@ export const resolvers: TaxonomyTermResolvers = {
 }
 
 async function resolveTaxonomyTermPath(
-  parent: TaxonomyTermPreResolver,
+  parent: TaxonomyTermPayload,
   { dataSources }: Context
 ) {
-  const path: TaxonomyTermPreResolver[] = [parent]
-  let current: TaxonomyTermPreResolver = parent
+  const path: TaxonomyTermPayload[] = [parent]
+  let current: TaxonomyTermPayload = parent
 
   while (current.parentId !== null) {
     current = await dataSources.serlo.getUuid<TaxonomyTermPayload>({

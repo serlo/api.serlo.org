@@ -22,15 +22,15 @@
 import { requestsOnlyFields } from '../../utils'
 import { UserPayload } from '../user'
 import {
-  AbstractRepositoryPreResolver,
-  AbstractRevisionPreResolver,
+  AbstractRepositoryPayload,
+  AbstractRevisionPayload,
   RepositoryResolvers,
   RevisionResolvers,
 } from './types'
 
 export function createRepositoryResolvers<
-  E extends AbstractRepositoryPreResolver,
-  R extends AbstractRevisionPreResolver
+  E extends AbstractRepositoryPayload,
+  R extends AbstractRevisionPayload
 >(): RepositoryResolvers<E, R> {
   return {
     async currentRevision(entity, _args, { dataSources }) {
@@ -41,8 +41,8 @@ export function createRepositoryResolvers<
 }
 
 export function createRevisionResolvers<
-  E extends AbstractRepositoryPreResolver,
-  R extends AbstractRevisionPreResolver
+  E extends AbstractRepositoryPayload,
+  R extends AbstractRevisionPayload
 >(): RevisionResolvers<E, R> {
   return {
     async author(entityRevision, _args, { dataSources }, info) {

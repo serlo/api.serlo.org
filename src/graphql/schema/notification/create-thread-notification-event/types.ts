@@ -24,11 +24,11 @@ import {
   UnsupportedThread,
 } from '../../../../types'
 import { Resolver } from '../../types'
-import { UuidPreResolver } from '../../uuid/abstract-uuid'
-import { UserPreResolver } from '../../uuid/user'
+import { UuidPayload } from '../../uuid/abstract-uuid'
+import { UserPayload } from '../../uuid/user'
 import { NotificationEventType } from '../types'
 
-export interface CreateThreadNotificationEventPreResolver
+export interface CreateThreadNotificationEventPayload
   extends Omit<
     CreateThreadNotificationEvent,
     keyof CreateThreadNotificationEventResolvers['CreateThreadNotificationEvent']
@@ -39,22 +39,16 @@ export interface CreateThreadNotificationEventPreResolver
   threadId: number
 }
 
-export type CreateThreadNotificationEventPayload = CreateThreadNotificationEventPreResolver
-
 export interface CreateThreadNotificationEventResolvers {
   CreateThreadNotificationEvent: {
     author: Resolver<
-      CreateThreadNotificationEventPreResolver,
+      CreateThreadNotificationEventPayload,
       never,
-      Partial<UserPreResolver>
+      Partial<UserPayload>
     >
-    object: Resolver<
-      CreateThreadNotificationEventPreResolver,
-      never,
-      UuidPreResolver
-    >
+    object: Resolver<CreateThreadNotificationEventPayload, never, UuidPayload>
     thread: Resolver<
-      CreateThreadNotificationEventPreResolver,
+      CreateThreadNotificationEventPayload,
       never,
       UnsupportedThread
     >

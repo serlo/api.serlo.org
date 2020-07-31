@@ -26,20 +26,14 @@ import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '../abstract-repository'
-import { SolutionPreResolver, SolutionRevisionPreResolver } from './types'
+import { SolutionPayload, SolutionRevisionPayload } from './types'
 
 export const resolvers = {
   Solution: {
-    ...createRepositoryResolvers<
-      SolutionPreResolver,
-      SolutionRevisionPreResolver
-    >(),
-    ...createEntityResolvers<
-      SolutionPreResolver,
-      SolutionRevisionPreResolver
-    >(),
+    ...createRepositoryResolvers<SolutionPayload, SolutionRevisionPayload>(),
+    ...createEntityResolvers<SolutionPayload, SolutionRevisionPayload>(),
     async exercise(
-      solution: SolutionPreResolver,
+      solution: SolutionPayload,
       _args: never,
       { dataSources }: Context
     ) {
@@ -49,7 +43,7 @@ export const resolvers = {
     },
   },
   SolutionRevision: createRevisionResolvers<
-    SolutionPreResolver,
-    SolutionRevisionPreResolver
+    SolutionPayload,
+    SolutionRevisionPayload
   >(),
 }

@@ -20,17 +20,17 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Context, Resolver } from '../../types'
-import { TaxonomyTermPayload, TaxonomyTermPreResolver } from '../taxonomy-term'
-import { AbstractTaxonomyTermChildPreResolver } from './types'
+import { TaxonomyTermPayload } from '../taxonomy-term'
+import { AbstractTaxonomyTermChildPayload } from './types'
 
 export interface TaxonomyTermChildResolvers<
-  E extends AbstractTaxonomyTermChildPreResolver
+  E extends AbstractTaxonomyTermChildPayload
 > {
-  taxonomyTerms: Resolver<E, never, TaxonomyTermPreResolver[]>
+  taxonomyTerms: Resolver<E, never, TaxonomyTermPayload[]>
 }
 
 export function createTaxonomyTermChildResolvers<
-  E extends AbstractTaxonomyTermChildPreResolver
+  E extends AbstractTaxonomyTermChildPayload
 >(): TaxonomyTermChildResolvers<E> {
   return {
     taxonomyTerms(entity: E, _args: never, { dataSources }: Context) {
