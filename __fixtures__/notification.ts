@@ -29,6 +29,7 @@ import {
   SetThreadStateNotificationEventPayload,
   CreateEntityRevisionNotificationEventPayload,
   CheckoutRevisionNotificationEventPayload,
+  RejectRevisionNotificationEventPayload,
 } from '../src/graphql/schema'
 import { Instance } from '../src/types'
 import { article, articleRevision, comment, thread, user } from './uuid'
@@ -46,6 +47,23 @@ export const checkoutRevisionNotificationEvent: CheckoutRevisionNotificationEven
 
 export function getCheckoutRevisionNotificationEventDataWithoutSubResolvers(
   notificationEvent: CheckoutRevisionNotificationEventPayload
+) {
+  return R.omit(['reviewerId', 'repositoryId', 'revisionId'], notificationEvent)
+}
+
+export const rejectRevisionNotificationEvent: RejectRevisionNotificationEventPayload = {
+  __typename: NotificationEventType.RejectRevision,
+  id: 301,
+  instance: Instance.De,
+  date: '2014-03-01T20:45:56Z',
+  reviewerId: user.id,
+  repositoryId: article.id,
+  revisionId: articleRevision.id,
+  reason: 'reason',
+}
+
+export function getRejectRevisionNotificationEventDataWithoutSubResolvers(
+  notificationEvent: RejectRevisionNotificationEventPayload
 ) {
   return R.omit(['reviewerId', 'repositoryId', 'revisionId'], notificationEvent)
 }

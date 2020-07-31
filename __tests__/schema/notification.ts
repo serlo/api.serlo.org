@@ -37,7 +37,9 @@ import {
   getCreateEntityNotificationEventDataWithoutSubResolvers,
   getCreateEntityRevisionNotificationEventDataWithoutSubResolvers,
   getCreateThreadNotificationEventDataWithoutSubResolvers,
+  getRejectRevisionNotificationEventDataWithoutSubResolvers,
   getSetThreadStateNotificationEventDataWithoutSubResolvers,
+  rejectRevisionNotificationEvent,
   setThreadStateNotificationEvent,
   thread,
   user,
@@ -178,6 +180,134 @@ describe('CheckoutRevisionNotification', () => {
         }
       `,
       variables: checkoutRevisionNotificationEvent,
+      data: {
+        notificationEvent: {
+          revision: getArticleRevisionDataWithoutSubResolvers(articleRevision),
+        },
+      },
+      client,
+    })
+  })
+})
+
+describe('RejectRevisionNotification', () => {
+  beforeEach(() => {
+    global.server.use(
+      createNotificationEventHandler(rejectRevisionNotificationEvent)
+    )
+  })
+
+  test('by id', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            __typename
+            ... on RejectRevisionNotificationEvent {
+              id
+              instance
+              date
+              reason
+            }
+          }
+        }
+      `,
+      variables: rejectRevisionNotificationEvent,
+      data: {
+        notificationEvent: getRejectRevisionNotificationEventDataWithoutSubResolvers(
+          rejectRevisionNotificationEvent
+        ),
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ reviewer)', async () => {
+    global.server.use(createUuidHandler(user))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on RejectRevisionNotificationEvent {
+              reviewer {
+                __typename
+                id
+                trashed
+                username
+                date
+                lastLogin
+                description
+              }
+            }
+          }
+        }
+      `,
+      variables: rejectRevisionNotificationEvent,
+      data: {
+        notificationEvent: {
+          reviewer: user,
+        },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ repository)', async () => {
+    global.server.use(createUuidHandler(article))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on RejectRevisionNotificationEvent {
+              repository {
+                __typename
+                ... on Article {
+                  id
+                  trashed
+                  alias
+                  instance
+                  date
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: rejectRevisionNotificationEvent,
+      data: {
+        notificationEvent: {
+          repository: getArticleDataWithoutSubResolvers(article),
+        },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ revision)', async () => {
+    global.server.use(createUuidHandler(articleRevision))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on RejectRevisionNotificationEvent {
+              revision {
+                __typename
+                ... on ArticleRevision {
+                  id
+                  trashed
+                  date
+                  title
+                  content
+                  changes
+                  metaTitle
+                  metaDescription
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: rejectRevisionNotificationEvent,
       data: {
         notificationEvent: {
           revision: getArticleRevisionDataWithoutSubResolvers(articleRevision),

@@ -207,6 +207,17 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & {
   thread: UnsupportedThread;
 };
 
+export type RejectRevisionNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'RejectRevisionNotificationEvent';
+  id: Scalars['Int'];
+  instance: Instance;
+  date: Scalars['DateTime'];
+  reviewer: User;
+  repository: AbstractRepository;
+  revision: AbstractRevision;
+  reason: Scalars['String'];
+};
+
 export type SetThreadStateNotificationEvent = AbstractNotificationEvent & {
   __typename?: 'SetThreadStateNotificationEvent';
   id: Scalars['Int'];
@@ -221,17 +232,6 @@ export type AbstractNotificationEvent = {
   id: Scalars['Int'];
   instance: Instance;
   date: Scalars['DateTime'];
-};
-
-export type RejectRevisionNotificationEvent = AbstractNotificationEvent & {
-  __typename?: 'RejectRevisionNotificationEvent';
-  id: Scalars['Int'];
-  instance: Instance;
-  date: Scalars['DateTime'];
-  reviewer: User;
-  entity: AbstractEntity;
-  entityRevision: AbstractEntityRevision;
-  reason: Scalars['String'];
 };
 
 export type SetLicenseNotificationEvent = AbstractNotificationEvent & {
