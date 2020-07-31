@@ -20,32 +20,20 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { PagePayload, PageRevisionPayload } from '.'
-import { requestsOnlyFields } from '../../utils'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '../abstract-repository'
-import { decodePath } from '../alias'
 import { PageResolvers } from './types'
 
 export const resolvers: PageResolvers = {
   Page: {
     ...createRepositoryResolvers<PagePayload, PageRevisionPayload>(),
-    alias(page) {
-      return Promise.resolve(page.alias ? decodePath(page.alias) : null)
-    },
     async navigation(page, _args, { dataSources }) {
       return dataSources.serlo.getNavigation({
         instance: page.instance,
         id: page.id,
       })
-    },
-    async license(page, _args, { dataSources }, info) {
-      const partialLicense = { id: page.licenseId }
-      if (requestsOnlyFields('License', ['id'], info)) {
-        return partialLicense
-      }
-      return dataSources.serlo.getLicense(partialLicense)
     },
   },
   PageRevision: createRevisionResolvers<PagePayload, PageRevisionPayload>(),

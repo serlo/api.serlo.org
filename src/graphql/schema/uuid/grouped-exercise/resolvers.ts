@@ -23,7 +23,6 @@ import { GraphQLResolveInfo } from 'graphql'
 
 import { Context } from '../../types'
 import { requestsOnlyFields } from '../../utils'
-import { createEntityResolvers } from '../abstract-entity'
 import { createExerciseResolvers } from '../abstract-exercise'
 import {
   createRepositoryResolvers,
@@ -35,10 +34,6 @@ import { GroupedExercisePayload, GroupedExerciseRevisionPayload } from './types'
 export const resolvers = {
   GroupedExercise: {
     ...createRepositoryResolvers<
-      GroupedExercisePayload,
-      GroupedExerciseRevisionPayload
-    >(),
-    ...createEntityResolvers<
       GroupedExercisePayload,
       GroupedExerciseRevisionPayload
     >(),

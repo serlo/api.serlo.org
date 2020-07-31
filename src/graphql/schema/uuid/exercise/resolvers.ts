@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { createEntityResolvers } from '../abstract-entity'
 import { createExerciseResolvers } from '../abstract-exercise'
 import {
   createRepositoryResolvers,
@@ -31,7 +30,6 @@ import { ExercisePayload, ExerciseRevisionPayload } from './types'
 export const resolvers = {
   Exercise: {
     ...createRepositoryResolvers<ExercisePayload, ExerciseRevisionPayload>(),
-    ...createEntityResolvers<ExercisePayload, ExerciseRevisionPayload>(),
     ...createTaxonomyTermChildResolvers<ExercisePayload>(),
     ...createExerciseResolvers<ExercisePayload>(),
   },

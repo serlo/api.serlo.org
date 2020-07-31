@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { requestsOnlyFields } from '../../utils'
+import { decodePath } from '../alias'
 import { UserPayload } from '../user'
 import {
   AbstractRepositoryPayload,
@@ -33,9 +34,21 @@ export function createRepositoryResolvers<
   R extends AbstractRevisionPayload
 >(): RepositoryResolvers<E, R> {
   return {
+    alias(repository) {
+      return Promise.resolve(
+        repository.alias ? decodePath(repository.alias) : null
+      )
+    },
     async currentRevision(entity, _args, { dataSources }) {
       if (!entity.currentRevisionId) return null
       return dataSources.serlo.getUuid<R>({ id: entity.currentRevisionId })
+    },
+    async license(repository, _args, { dataSources }, info) {
+      const partialLicense = { id: repository.licenseId }
+      if (requestsOnlyFields('License', ['id'], info)) {
+        return partialLicense
+      }
+      return dataSources.serlo.getLicense(partialLicense)
     },
   }
 }

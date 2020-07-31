@@ -41,6 +41,7 @@ test('Page', async () => {
     trashed: Matchers.boolean(page.trashed),
     instance: Matchers.string(page.instance),
     alias: page.alias ? Matchers.string(page.alias) : null,
+    date: Matchers.iso8601DateTime(page.date),
     currentRevisionId: page.currentRevisionId
       ? Matchers.integer(page.currentRevisionId)
       : null,
@@ -56,6 +57,7 @@ test('Page', async () => {
             trashed
             instance
             alias
+            date
           }
         }
       }

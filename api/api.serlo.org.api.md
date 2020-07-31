@@ -60,6 +60,10 @@ export type AbstractNotificationEvent = {
 export type AbstractRepository = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    date: Scalars['DateTime'];
+    instance: Instance;
+    alias?: Maybe<Scalars['String']>;
+    license: License;
 };
 
 // @public (undocumented)
@@ -515,6 +519,7 @@ export type Page = AbstractUuid & AbstractRepository & AbstractNavigationChild &
     __typename?: 'Page';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    date: Scalars['DateTime'];
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     license: License;
@@ -658,7 +663,7 @@ export type SetLicenseNotificationEvent = AbstractNotificationEvent & {
     instance: Instance;
     date: Scalars['DateTime'];
     actor: User;
-    object: AbstractUuid;
+    repository: AbstractRepository;
 };
 
 // @public (undocumented)

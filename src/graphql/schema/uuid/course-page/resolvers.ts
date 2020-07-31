@@ -23,7 +23,6 @@ import { GraphQLResolveInfo } from 'graphql'
 
 import { Context } from '../../types'
 import { requestsOnlyFields } from '../../utils'
-import { createEntityResolvers } from '../abstract-entity'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
@@ -37,7 +36,6 @@ export const resolvers = {
       CoursePagePayload,
       CoursePageRevisionPayload
     >(),
-    ...createEntityResolvers<CoursePagePayload, CoursePageRevisionPayload>(),
     async course(
       coursePage: CoursePagePayload,
       _args: never,

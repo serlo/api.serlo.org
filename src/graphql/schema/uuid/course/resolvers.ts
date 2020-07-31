@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Context } from '../../types'
-import { createEntityResolvers } from '../abstract-entity'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
@@ -32,7 +31,6 @@ import { CoursePayload, CourseRevisionPayload } from './types'
 export const resolvers = {
   Course: {
     ...createRepositoryResolvers<CoursePayload, CourseRevisionPayload>(),
-    ...createEntityResolvers<CoursePayload, CourseRevisionPayload>(),
     ...createTaxonomyTermChildResolvers<CoursePayload>(),
     pages(course: CoursePayload, _args: never, { dataSources }: Context) {
       return Promise.all(

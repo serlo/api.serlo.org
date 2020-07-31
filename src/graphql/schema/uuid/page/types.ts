@@ -19,8 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { License, Page, PageRevision } from '../../../../types'
-import { Resolver } from '../../types'
+import { Page, PageRevision } from '../../../../types'
 import { NavigationChildResolvers } from '../abstract-navigation-child'
 import { RepositoryResolvers, RevisionResolvers } from '../abstract-repository'
 import { DiscriminatorType } from '../abstract-uuid'
@@ -40,10 +39,7 @@ export interface PageRevisionPayload
 }
 
 export interface PageResolvers {
-  Page: {
-    alias: Resolver<PagePayload, never, string | null>
-    license: Resolver<PagePayload, never, Partial<License>>
-  } & RepositoryResolvers<PagePayload, PageRevisionPayload> &
+  Page: RepositoryResolvers<PagePayload, PageRevisionPayload> &
     NavigationChildResolvers<PagePayload>
   PageRevision: RevisionResolvers<PagePayload, PageRevisionPayload>
 }
