@@ -25,6 +25,7 @@ import { createCommentNotificationEventSchema } from './create-comment-notificat
 import { createEntityNotificationSchema } from './create-entity-notification-event'
 import { createEntityRevisionNotificationSchema } from './create-entity-revision-notification-event'
 import { createThreadNotificationEventSchema } from './create-thread-notification-event'
+import { rejectRevisionNotificationSchema } from './reject-revision-notification-event'
 import { resolvers } from './resolvers'
 import { setThreadStateNotificationEventSchema } from './set-thread-state-notification-event'
 import typeDefs from './types.graphql'
@@ -34,6 +35,7 @@ export * from './create-comment-notification-event'
 export * from './create-entity-notification-event'
 export * from './create-entity-revision-notification-event'
 export * from './create-thread-notification-event'
+export * from './reject-revision-notification-event'
 export * from './set-thread-state-notification-event'
 export * from './types'
 
@@ -46,5 +48,6 @@ export const notificationSchema = Schema.merge(
   createEntityNotificationSchema,
   createEntityRevisionNotificationSchema,
   createThreadNotificationEventSchema,
+  rejectRevisionNotificationSchema,
   setThreadStateNotificationEventSchema
 )

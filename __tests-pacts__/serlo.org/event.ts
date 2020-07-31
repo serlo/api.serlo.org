@@ -33,7 +33,9 @@ import {
   getCreateEntityNotificationEventDataWithoutSubResolvers,
   getCreateEntityRevisionNotificationEventDataWithoutSubResolvers,
   getCreateThreadNotificationEventDataWithoutSubResolvers,
+  getRejectRevisionNotificationEventDataWithoutSubResolvers,
   getSetThreadStateNotificationEventDataWithoutSubResolvers,
+  rejectRevisionNotificationEvent,
   setThreadStateNotificationEvent,
 } from '../../__fixtures__'
 import { AbstractNotificationEventPayload } from '../../src/graphql/schema/notification'
@@ -81,6 +83,42 @@ test('CheckoutRevisionNotificationEvent', async () => {
     data: {
       notificationEvent: getCheckoutRevisionNotificationEventDataWithoutSubResolvers(
         checkoutRevisionNotificationEvent
+      ),
+    },
+  })
+})
+
+test('RejectRevisionNotificationEvent', async () => {
+  await addNotificationEventInteraction({
+    __typename: rejectRevisionNotificationEvent.__typename,
+    id: rejectRevisionNotificationEvent.id,
+    instance: Matchers.string(rejectRevisionNotificationEvent.instance),
+    date: Matchers.iso8601DateTime(rejectRevisionNotificationEvent.date),
+    reviewerId: Matchers.integer(rejectRevisionNotificationEvent.reviewerId),
+    repositoryId: Matchers.integer(
+      rejectRevisionNotificationEvent.repositoryId
+    ),
+    revisionId: Matchers.integer(rejectRevisionNotificationEvent.revisionId),
+    reason: Matchers.string(rejectRevisionNotificationEvent.reason),
+  })
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query notificationEvent($id: Int!) {
+        notificationEvent(id: $id) {
+          __typename
+          ... on RejectRevisionNotificationEvent {
+            id
+            instance
+            date
+            reason
+          }
+        }
+      }
+    `,
+    variables: rejectRevisionNotificationEvent,
+    data: {
+      notificationEvent: getRejectRevisionNotificationEventDataWithoutSubResolvers(
+        rejectRevisionNotificationEvent
       ),
     },
   })

@@ -29,6 +29,7 @@ import { CreateCommentNotificationEventPayload } from './create-comment-notifica
 import { CreateEntityNotificationEventPayload } from './create-entity-notification-event'
 import { CreateEntityRevisionNotificationEventPayload } from './create-entity-revision-notification-event'
 import { CreateThreadNotificationEventPayload } from './create-thread-notification-event'
+import { RejectRevisionNotificationEventPayload } from './reject-revision-notification-event'
 import { SetThreadStateNotificationEventPayload } from './set-thread-state-notification-event'
 
 export enum NotificationEventType {
@@ -37,6 +38,7 @@ export enum NotificationEventType {
   CreateEntity = 'CreateEntityNotificationEvent',
   CreateEntityRevision = 'CreateEntityRevisionNotificationEvent',
   CreateThread = 'CreateThreadNotificationEvent',
+  RejectRevision = 'RejectRevisionNotificationEvent',
   SetThreadState = 'SetThreadStateNotificationEvent',
 }
 
@@ -46,6 +48,7 @@ export type NotificationEventPayload =
   | CreateEntityNotificationEventPayload
   | CreateEntityRevisionNotificationEventPayload
   | CreateThreadNotificationEventPayload
+  | RejectRevisionNotificationEventPayload
   | SetThreadStateNotificationEventPayload
 export interface AbstractNotificationEventPayload
   extends AbstractNotificationEvent {
