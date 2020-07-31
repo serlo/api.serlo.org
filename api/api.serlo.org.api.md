@@ -164,8 +164,8 @@ export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & {
     instance: Instance;
     date: Scalars['DateTime'];
     reviewer: User;
-    entity: AbstractEntity;
-    entityRevision: AbstractEntityRevision;
+    repository: AbstractRepository;
+    revision: AbstractRevision;
     reason: Scalars['String'];
 };
 

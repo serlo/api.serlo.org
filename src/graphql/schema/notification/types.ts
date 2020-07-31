@@ -24,6 +24,7 @@ import {
   QueryNotificationEventArgs,
 } from '../../../types'
 import { QueryResolver, TypeResolver } from '../types'
+import { CheckoutRevisionNotificationEventPayload } from './checkout-revision-notification-event'
 import { CreateCommentNotificationEventPayload } from './create-comment-notification-event'
 import { CreateEntityNotificationEventPayload } from './create-entity-notification-event'
 import { CreateEntityRevisionNotificationEventPayload } from './create-entity-revision-notification-event'
@@ -31,6 +32,7 @@ import { CreateThreadNotificationEventPayload } from './create-thread-notificati
 import { SetThreadStateNotificationEventPayload } from './set-thread-state-notification-event'
 
 export enum NotificationEventType {
+  CheckoutRevision = 'CheckoutRevisionNotificationEvent',
   CreateComment = 'CreateCommentNotificationEvent',
   CreateEntity = 'CreateEntityNotificationEvent',
   CreateEntityRevision = 'CreateEntityRevisionNotificationEvent',
@@ -39,6 +41,7 @@ export enum NotificationEventType {
 }
 
 export type NotificationEventPayload =
+  | CheckoutRevisionNotificationEventPayload
   | CreateCommentNotificationEventPayload
   | CreateEntityNotificationEventPayload
   | CreateEntityRevisionNotificationEventPayload
