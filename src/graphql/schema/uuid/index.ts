@@ -23,6 +23,7 @@ import { Schema } from '../utils'
 import { abstractEntitySchema } from './abstract-entity'
 import { abstractExerciseSchema } from './abstract-exercise'
 import { abstractNavigationChildSchema } from './abstract-navigation-child'
+import { abstractRepositorySchema } from './abstract-repository'
 import { abstractTaxonomyTermChildSchema } from './abstract-taxonomy-term-child'
 import { abstractUuidSchema } from './abstract-uuid'
 import { aliasSchema } from './alias'
@@ -44,6 +45,7 @@ import { videoSchema } from './video'
 export * from './abstract-entity'
 export * from './abstract-exercise'
 export * from './abstract-navigation-child'
+export * from './abstract-repository'
 export * from './abstract-taxonomy-term-child'
 export * from './abstract-uuid'
 export * from './alias'
@@ -66,6 +68,7 @@ export const uuidSchema = Schema.merge(
   abstractEntitySchema,
   abstractExerciseSchema,
   abstractNavigationChildSchema,
+  abstractRepositorySchema,
   abstractTaxonomyTermChildSchema,
   abstractUuidSchema,
   aliasSchema,

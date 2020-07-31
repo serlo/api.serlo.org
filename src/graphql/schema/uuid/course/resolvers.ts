@@ -26,12 +26,20 @@ import {
   EntityRevisionType,
   EntityType,
 } from '../abstract-entity'
+import {
+  createRepositoryResolvers,
+  createRevisionResolvers,
+} from '../abstract-repository'
 import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
 import { CoursePagePayload } from '../course-page'
 import { CoursePreResolver, CourseRevisionPreResolver } from './types'
 
 export const resolvers = {
   Course: {
+    ...createRepositoryResolvers<
+      CoursePreResolver,
+      CourseRevisionPreResolver
+    >(),
     ...createEntityResolvers<CoursePreResolver, CourseRevisionPreResolver>({
       entityRevisionType: EntityRevisionType.CourseRevision,
     }),
@@ -44,11 +52,14 @@ export const resolvers = {
       )
     },
   },
-  CourseRevision: createEntityRevisionResolvers<
-    CoursePreResolver,
-    CourseRevisionPreResolver
-  >({
-    entityType: EntityType.Course,
-    repository: 'course',
-  }),
+  CourseRevision: {
+    ...createRevisionResolvers<CoursePreResolver, CourseRevisionPreResolver>(),
+    ...createEntityRevisionResolvers<
+      CoursePreResolver,
+      CourseRevisionPreResolver
+    >({
+      entityType: EntityType.Course,
+      repository: 'course',
+    }),
+  },
 }

@@ -1,5 +1,5 @@
 interface AbstractEntity {
-  # extends AbstractUuid
+  # extends AbstractRepository
   id: Int!
   trashed: Boolean!
 
@@ -10,10 +10,9 @@ interface AbstractEntity {
 }
 
 interface AbstractEntityRevision {
-  # extends AbstractUuid
+  # extends AbstractRevision
   id: Int!
   trashed: Boolean!
-
   author: User!
   date: DateTime!
 }
