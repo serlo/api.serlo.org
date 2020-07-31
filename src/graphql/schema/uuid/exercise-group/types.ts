@@ -20,25 +20,20 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import {
-  AbstractEntityRevisionPreResolver,
+  AbstractEntityRevisionPayload,
   EntityRevisionType,
   EntityType,
 } from '../abstract-entity'
-import { AbstractTaxonomyTermChildPreResolver } from '../abstract-taxonomy-term-child'
+import { AbstractTaxonomyTermChildPayload } from '../abstract-taxonomy-term-child'
 
-export interface ExerciseGroupPreResolver
-  extends AbstractTaxonomyTermChildPreResolver {
+export interface ExerciseGroupPayload extends AbstractTaxonomyTermChildPayload {
   __typename: EntityType.ExerciseGroup
   exerciseIds: number[]
 }
 
-export type ExerciseGroupPayload = ExerciseGroupPreResolver
-
-export interface ExerciseGroupRevisionPreResolver
-  extends AbstractEntityRevisionPreResolver {
+export interface ExerciseGroupRevisionPayload
+  extends AbstractEntityRevisionPayload {
   __typename: EntityRevisionType.ExerciseGroupRevision
   content: string
   changes: string
 }
-
-export type ExerciseGroupRevisionPayload = ExerciseGroupRevisionPreResolver

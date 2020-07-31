@@ -22,13 +22,13 @@
 import { CreateEntityRevisionNotificationEvent } from '../../../../types'
 import { Resolver } from '../../types'
 import {
-  EntityPreResolver,
-  EntityRevisionPreResolver,
+  EntityPayload,
+  EntityRevisionPayload,
 } from '../../uuid/abstract-entity'
-import { UserPreResolver } from '../../uuid/user'
+import { UserPayload } from '../../uuid/user'
 import { NotificationEventType } from '../types'
 
-export interface CreateEntityRevisionNotificationEventPreResolver
+export interface CreateEntityRevisionNotificationEventPayload
   extends Omit<
     CreateEntityRevisionNotificationEvent,
     keyof CreateEntityRevisionNotificationEventResolvers['CreateEntityRevisionNotificationEvent']
@@ -39,24 +39,22 @@ export interface CreateEntityRevisionNotificationEventPreResolver
   entityRevisionId: number
 }
 
-export type CreateEntityRevisionNotificationEventPayload = CreateEntityRevisionNotificationEventPreResolver
-
 export interface CreateEntityRevisionNotificationEventResolvers {
   CreateEntityRevisionNotificationEvent: {
     author: Resolver<
-      CreateEntityRevisionNotificationEventPreResolver,
+      CreateEntityRevisionNotificationEventPayload,
       never,
-      Partial<UserPreResolver>
+      Partial<UserPayload>
     >
     entity: Resolver<
-      CreateEntityRevisionNotificationEventPreResolver,
+      CreateEntityRevisionNotificationEventPayload,
       never,
-      EntityPreResolver
+      EntityPayload
     >
     entityRevision: Resolver<
-      CreateEntityRevisionNotificationEventPreResolver,
+      CreateEntityRevisionNotificationEventPayload,
       never,
-      EntityRevisionPreResolver
+      EntityRevisionPayload
     >
   }
 }

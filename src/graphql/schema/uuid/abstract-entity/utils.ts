@@ -24,14 +24,11 @@ import { GraphQLResolveInfo } from 'graphql'
 import { Context } from '../../types'
 import { requestsOnlyFields } from '../../utils'
 import { decodePath } from '../alias'
-import {
-  AbstractEntityPreResolver,
-  AbstractEntityRevisionPreResolver,
-} from './types'
+import { AbstractEntityPayload, AbstractEntityRevisionPayload } from './types'
 
 export function createEntityResolvers<
-  E extends AbstractEntityPreResolver,
-  R extends AbstractEntityRevisionPreResolver
+  E extends AbstractEntityPayload,
+  R extends AbstractEntityRevisionPayload
 >() {
   return {
     alias(entity: E) {

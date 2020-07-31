@@ -22,8 +22,8 @@
 import { QueryUuidArgs, AbstractUuid } from '../../../../types'
 import { QueryResolver, TypeResolver } from '../../types'
 import {
-  EntityPreResolver,
-  EntityRevisionPreResolver,
+  EntityPayload,
+  EntityRevisionPayload,
   EntityRevisionType,
   EntityType,
 } from '../abstract-entity'
@@ -40,25 +40,22 @@ export enum DiscriminatorType {
 
 export type UuidType = DiscriminatorType | EntityType | EntityRevisionType
 
-export type UuidPreResolver =
-  | EntityPreResolver
-  | EntityRevisionPreResolver
+export type UuidPayload =
+  | EntityPayload
+  | EntityRevisionPayload
   | PagePayload
   | PageRevisionPayload
   | UserPayload
   | TaxonomyTermPayload
-export interface AbstractUuidPreResolver extends AbstractUuid {
+export interface AbstractUuidPayload extends AbstractUuid {
   __typename: UuidType
 }
 
-export type UuidPayload = UuidPreResolver
-export type AbstractUuidPayload = AbstractUuidPreResolver
-
 export interface UuidResolvers {
   AbstractUuid: {
-    __resolveType: TypeResolver<UuidPreResolver>
+    __resolveType: TypeResolver<UuidPayload>
   }
   Query: {
-    uuid: QueryResolver<QueryUuidArgs, UuidPreResolver>
+    uuid: QueryResolver<QueryUuidArgs, UuidPayload>
   }
 }

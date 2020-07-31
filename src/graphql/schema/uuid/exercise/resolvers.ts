@@ -26,23 +26,17 @@ import {
   createRevisionResolvers,
 } from '../abstract-repository'
 import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
-import { ExercisePreResolver, ExerciseRevisionPreResolver } from './types'
+import { ExercisePayload, ExerciseRevisionPayload } from './types'
 
 export const resolvers = {
   Exercise: {
-    ...createRepositoryResolvers<
-      ExercisePreResolver,
-      ExerciseRevisionPreResolver
-    >(),
-    ...createEntityResolvers<
-      ExercisePreResolver,
-      ExerciseRevisionPreResolver
-    >(),
-    ...createTaxonomyTermChildResolvers<ExercisePreResolver>(),
-    ...createExerciseResolvers<ExercisePreResolver>(),
+    ...createRepositoryResolvers<ExercisePayload, ExerciseRevisionPayload>(),
+    ...createEntityResolvers<ExercisePayload, ExerciseRevisionPayload>(),
+    ...createTaxonomyTermChildResolvers<ExercisePayload>(),
+    ...createExerciseResolvers<ExercisePayload>(),
   },
   ExerciseRevision: createRevisionResolvers<
-    ExercisePreResolver,
-    ExerciseRevisionPreResolver
+    ExercisePayload,
+    ExerciseRevisionPayload
   >(),
 }

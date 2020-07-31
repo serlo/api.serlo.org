@@ -27,17 +27,14 @@ import {
 } from '../abstract-repository'
 import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
 import { CoursePagePayload } from '../course-page'
-import { CoursePreResolver, CourseRevisionPreResolver } from './types'
+import { CoursePayload, CourseRevisionPayload } from './types'
 
 export const resolvers = {
   Course: {
-    ...createRepositoryResolvers<
-      CoursePreResolver,
-      CourseRevisionPreResolver
-    >(),
-    ...createEntityResolvers<CoursePreResolver, CourseRevisionPreResolver>(),
-    ...createTaxonomyTermChildResolvers<CoursePreResolver>(),
-    pages(course: CoursePreResolver, _args: never, { dataSources }: Context) {
+    ...createRepositoryResolvers<CoursePayload, CourseRevisionPayload>(),
+    ...createEntityResolvers<CoursePayload, CourseRevisionPayload>(),
+    ...createTaxonomyTermChildResolvers<CoursePayload>(),
+    pages(course: CoursePayload, _args: never, { dataSources }: Context) {
       return Promise.all(
         course.pageIds.map((id: number) => {
           return dataSources.serlo.getUuid<CoursePagePayload>({ id })
@@ -46,7 +43,7 @@ export const resolvers = {
     },
   },
   CourseRevision: createRevisionResolvers<
-    CoursePreResolver,
-    CourseRevisionPreResolver
+    CoursePayload,
+    CourseRevisionPayload
   >(),
 }

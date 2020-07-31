@@ -29,20 +29,17 @@ import {
   createRevisionResolvers,
 } from '../abstract-repository'
 import { CoursePayload } from '../course'
-import { CoursePagePreResolver, CoursePageRevisionPreResolver } from './types'
+import { CoursePagePayload, CoursePageRevisionPayload } from './types'
 
 export const resolvers = {
   CoursePage: {
     ...createRepositoryResolvers<
-      CoursePagePreResolver,
-      CoursePageRevisionPreResolver
+      CoursePagePayload,
+      CoursePageRevisionPayload
     >(),
-    ...createEntityResolvers<
-      CoursePagePreResolver,
-      CoursePageRevisionPreResolver
-    >(),
+    ...createEntityResolvers<CoursePagePayload, CoursePageRevisionPayload>(),
     async course(
-      coursePage: CoursePagePreResolver,
+      coursePage: CoursePagePayload,
       _args: never,
       { dataSources }: Context,
       info: GraphQLResolveInfo
@@ -55,7 +52,7 @@ export const resolvers = {
     },
   },
   CoursePageRevision: createRevisionResolvers<
-    CoursePagePreResolver,
-    CoursePageRevisionPreResolver
+    CoursePagePayload,
+    CoursePageRevisionPayload
   >(),
 }

@@ -24,11 +24,11 @@ import {
   QueryNotificationEventArgs,
 } from '../../../types'
 import { QueryResolver, TypeResolver } from '../types'
-import { CreateCommentNotificationEventPreResolver } from './create-comment-notification-event'
-import { CreateEntityNotificationEventPreResolver } from './create-entity-notification-event'
-import { CreateEntityRevisionNotificationEventPreResolver } from './create-entity-revision-notification-event'
-import { CreateThreadNotificationEventPreResolver } from './create-thread-notification-event'
-import { SetThreadStateNotificationEventPreResolver } from './set-thread-state-notification-event'
+import { CreateCommentNotificationEventPayload } from './create-comment-notification-event'
+import { CreateEntityNotificationEventPayload } from './create-entity-notification-event'
+import { CreateEntityRevisionNotificationEventPayload } from './create-entity-revision-notification-event'
+import { CreateThreadNotificationEventPayload } from './create-thread-notification-event'
+import { SetThreadStateNotificationEventPayload } from './set-thread-state-notification-event'
 
 export enum NotificationEventType {
   CreateComment = 'CreateCommentNotificationEvent',
@@ -38,28 +38,25 @@ export enum NotificationEventType {
   SetThreadState = 'SetThreadStateNotificationEvent',
 }
 
-export type NotificationEventPreResolver =
-  | CreateCommentNotificationEventPreResolver
-  | CreateEntityNotificationEventPreResolver
-  | CreateEntityRevisionNotificationEventPreResolver
-  | CreateThreadNotificationEventPreResolver
-  | SetThreadStateNotificationEventPreResolver
-export interface AbstractNotificationEventPreResolver
+export type NotificationEventPayload =
+  | CreateCommentNotificationEventPayload
+  | CreateEntityNotificationEventPayload
+  | CreateEntityRevisionNotificationEventPayload
+  | CreateThreadNotificationEventPayload
+  | SetThreadStateNotificationEventPayload
+export interface AbstractNotificationEventPayload
   extends AbstractNotificationEvent {
   __typename: NotificationEventType
 }
 
-export type NotificationEventPayload = NotificationEventPreResolver
-export type AbstractNotificationEventPayload = AbstractNotificationEventPreResolver
-
 export interface NotificationResolvers {
   AbstractNotificationEvent: {
-    __resolveType: TypeResolver<NotificationEventPreResolver>
+    __resolveType: TypeResolver<NotificationEventPayload>
   }
   Query: {
     notificationEvent: QueryResolver<
       QueryNotificationEventArgs,
-      NotificationEventPreResolver
+      NotificationEventPayload
     >
   }
 }

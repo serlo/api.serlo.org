@@ -25,10 +25,7 @@ import { resolveConnection } from '../connection'
 import { requestsOnlyFields } from '../utils'
 import { UuidPayload } from '../uuid'
 import { UserPayload } from '../uuid/user'
-import {
-  LegacyNotificationPreResolver,
-  LegacyNotificationResolvers,
-} from './types'
+import { LegacyNotificationPayload, LegacyNotificationResolvers } from './types'
 
 export const resolvers: LegacyNotificationResolvers = {
   LegacyNotification: {
@@ -64,7 +61,7 @@ export const resolvers: LegacyNotificationResolvers = {
       const { notifications } = await dataSources.serlo.getNotifications({
         id: user,
       })
-      return resolveConnection<LegacyNotificationPreResolver>({
+      return resolveConnection<LegacyNotificationPayload>({
         nodes:
           unread == null
             ? notifications

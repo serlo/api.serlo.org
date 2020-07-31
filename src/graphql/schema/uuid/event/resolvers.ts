@@ -25,16 +25,13 @@ import {
   createRevisionResolvers,
 } from '../abstract-repository'
 import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
-import { EventPreResolver, EventRevisionPreResolver } from './types'
+import { EventPayload, EventRevisionPayload } from './types'
 
 export const resolvers = {
   Event: {
-    ...createRepositoryResolvers<EventPreResolver, EventRevisionPreResolver>(),
-    ...createEntityResolvers<EventPreResolver, EventRevisionPreResolver>(),
-    ...createTaxonomyTermChildResolvers<EventPreResolver>(),
+    ...createRepositoryResolvers<EventPayload, EventRevisionPayload>(),
+    ...createEntityResolvers<EventPayload, EventRevisionPayload>(),
+    ...createTaxonomyTermChildResolvers<EventPayload>(),
   },
-  EventRevision: createRevisionResolvers<
-    EventPreResolver,
-    EventRevisionPreResolver
-  >(),
+  EventRevision: createRevisionResolvers<EventPayload, EventRevisionPayload>(),
 }
