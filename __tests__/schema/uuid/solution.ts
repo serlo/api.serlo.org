@@ -75,37 +75,6 @@ describe('Solution', () => {
     })
   })
 
-  test('by id (w/ currentRevision)', async () => {
-    global.server.use(createUuidHandler(solutionRevision))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query solution($id: Int!) {
-          uuid(id: $id) {
-            ... on Solution {
-              currentRevision {
-                __typename
-                id
-                trashed
-                date
-                content
-                changes
-              }
-            }
-          }
-        }
-      `,
-      variables: solution,
-      data: {
-        uuid: {
-          currentRevision: getSolutionRevisionDataWithoutSubResolvers(
-            solutionRevision
-          ),
-        },
-      },
-      client,
-    })
-  })
-
   test('by id (w/ exercise)', async () => {
     global.server.use(createUuidHandler(exercise))
     await assertSuccessfulGraphQLQuery({
@@ -136,61 +105,27 @@ describe('Solution', () => {
   })
 })
 
-describe('SolutionRevision', () => {
-  beforeEach(() => {
-    global.server.use(createUuidHandler(solutionRevision))
-  })
-
-  test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query solutionRevision($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on SolutionRevision {
-              id
-              trashed
-              date
-              content
-              changes
-            }
+test('SolutionRevision', async () => {
+  global.server.use(createUuidHandler(solutionRevision))
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query solutionRevision($id: Int!) {
+        uuid(id: $id) {
+          __typename
+          ... on SolutionRevision {
+            id
+            trashed
+            date
+            content
+            changes
           }
         }
-      `,
-      variables: solutionRevision,
-      data: {
-        uuid: getSolutionRevisionDataWithoutSubResolvers(solutionRevision),
-      },
-      client,
-    })
-  })
-
-  test('by id (w/ solution)', async () => {
-    global.server.use(createUuidHandler(solution))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query applet($id: Int!) {
-          uuid(id: $id) {
-            ... on SolutionRevision {
-              solution {
-                __typename
-                id
-                trashed
-                instance
-                alias
-                date
-              }
-            }
-          }
-        }
-      `,
-      variables: solutionRevision,
-      data: {
-        uuid: {
-          solution: getSolutionDataWithoutSubResolvers(solution),
-        },
-      },
-      client,
-    })
+      }
+    `,
+    variables: solutionRevision,
+    data: {
+      uuid: getSolutionRevisionDataWithoutSubResolvers(solutionRevision),
+    },
+    client,
   })
 })

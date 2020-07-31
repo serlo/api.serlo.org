@@ -14,7 +14,6 @@ type VideoRevision implements AbstractUuid & AbstractRevision & AbstractEntityRe
   author: User!
   trashed: Boolean!
   date: DateTime!
-  video: Video!
   repository: Video!
   url: String!
   title: String!

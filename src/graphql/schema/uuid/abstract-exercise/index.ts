@@ -1,5 +1,4 @@
-import {
-  /**
+/**
  * This file is part of Serlo.org API
  *
  * Copyright (c) 2020 Serlo Education e.V.
@@ -20,12 +19,11 @@ import {
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-  Schema,
-} from '../../utils'
+import { Schema } from '../../utils'
 import { resolvers } from './resolvers'
 import typeDefs from './types.graphql'
 
 export * from './types'
-// export * from './utils'
+export * from './utils'
 
 export const abstractExerciseSchema = new Schema(resolvers, [typeDefs])

@@ -15,7 +15,6 @@ type ExerciseRevision implements AbstractUuid & AbstractRevision & AbstractEntit
   author: User!
   trashed: Boolean!
   date: DateTime!
-  exercise: Exercise!
   repository: Exercise!
   content: String!
   changes: String!

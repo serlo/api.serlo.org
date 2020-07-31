@@ -24,36 +24,20 @@ import * as R from 'ramda'
 
 import {
   applet,
-  appletRevision,
   article,
-  articleRevision,
   course,
   coursePage,
-  coursePageRevision,
-  courseRevision,
   createEntityLicenseQuery,
   event,
-  eventRevision,
   exercise,
   exerciseGroup,
-  exerciseGroupRevision,
-  exerciseRevision,
   getEntityDataWithoutSubResolvers,
   groupedExercise,
-  groupedExerciseRevision,
   license,
   solution,
-  solutionRevision,
-  user,
   video,
-  videoRevision,
 } from '../../../__fixtures__'
-import {
-  EntityPayload,
-  EntityRevisionPayload,
-  EntityRevisionType,
-  EntityType,
-} from '../../../src/graphql/schema'
+import { EntityPayload, EntityType } from '../../../src/graphql/schema'
 import { Service } from '../../../src/graphql/schema/types'
 import {
   assertSuccessfulGraphQLQuery,
@@ -167,61 +151,4 @@ describe('Entity', () => {
       client,
     })
   })
-})
-
-describe('EntityRevision', () => {
-  const entityRevisionFixtures: Record<
-    EntityRevisionType,
-    EntityRevisionPayload
-  > = {
-    [EntityRevisionType.AppletRevision]: appletRevision,
-    [EntityRevisionType.ArticleRevision]: articleRevision,
-    [EntityRevisionType.CourseRevision]: courseRevision,
-    [EntityRevisionType.CoursePageRevision]: coursePageRevision,
-    [EntityRevisionType.EventRevision]: eventRevision,
-    [EntityRevisionType.ExerciseRevision]: exerciseRevision,
-    [EntityRevisionType.ExerciseGroupRevision]: exerciseGroupRevision,
-    [EntityRevisionType.GroupedExerciseRevision]: groupedExerciseRevision,
-    [EntityRevisionType.SolutionRevision]: solutionRevision,
-    [EntityRevisionType.VideoRevision]: videoRevision,
-  }
-  const entityRevisionCases = R.toPairs(entityRevisionFixtures) as Array<
-    [EntityRevisionType, EntityRevisionPayload]
-  >
-
-  test.each(entityRevisionCases)(
-    '%s by id (w/ author)',
-    async (type, entityRevision) => {
-      global.server.use(
-        createUuidHandler(entityRevision),
-        createUuidHandler(user)
-      )
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query entityRevision($id: Int!) {
-            uuid(id: $id) {
-              ... on AbstractEntityRevision {
-                author {
-                  __typename
-                  id
-                  trashed
-                  username
-                  date
-                  lastLogin
-                  description
-                }
-              }
-            }
-          }
-        `,
-        variables: entityRevision,
-        data: {
-          uuid: {
-            author: user,
-          },
-        },
-        client,
-      })
-    }
-  )
 })

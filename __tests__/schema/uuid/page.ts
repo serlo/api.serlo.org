@@ -74,35 +74,6 @@ describe('Page', () => {
     })
   })
 
-  test('by id (w/ currentRevision)', async () => {
-    global.server.use(createUuidHandler(pageRevision))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query page($id: Int!) {
-          uuid(id: $id) {
-            ... on Page {
-              currentRevision {
-                __typename
-                id
-                trashed
-                title
-                content
-                date
-              }
-            }
-          }
-        }
-      `,
-      variables: page,
-      data: {
-        uuid: {
-          currentRevision: getPageRevisionDataWithoutSubResolvers(pageRevision),
-        },
-      },
-      client,
-    })
-  })
-
   test('by id (w/ license)', async () => {
     global.server.use(createLicenseHandler(license))
     await assertSuccessfulGraphQLQuery({
@@ -135,60 +106,27 @@ describe('Page', () => {
   })
 })
 
-describe('PageRevision', () => {
-  beforeEach(() => {
-    global.server.use(createUuidHandler(pageRevision))
-  })
-
-  test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query pageRevision($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on PageRevision {
-              id
-              trashed
-              title
-              content
-              date
-            }
+test('PageRevision', async () => {
+  global.server.use(createUuidHandler(pageRevision))
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query pageRevision($id: Int!) {
+        uuid(id: $id) {
+          __typename
+          ... on PageRevision {
+            id
+            trashed
+            title
+            content
+            date
           }
         }
-      `,
-      variables: pageRevision,
-      data: {
-        uuid: getPageRevisionDataWithoutSubResolvers(pageRevision),
-      },
-      client,
-    })
-  })
-
-  test('by id (w/ page)', async () => {
-    global.server.use(createUuidHandler(page))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query applet($id: Int!) {
-          uuid(id: $id) {
-            ... on PageRevision {
-              page {
-                __typename
-                id
-                trashed
-                instance
-                alias
-              }
-            }
-          }
-        }
-      `,
-      variables: pageRevision,
-      data: {
-        uuid: {
-          page: getPageDataWithoutSubResolvers(page),
-        },
-      },
-      client,
-    })
+      }
+    `,
+    variables: pageRevision,
+    data: {
+      uuid: getPageRevisionDataWithoutSubResolvers(pageRevision),
+    },
+    client,
   })
 })

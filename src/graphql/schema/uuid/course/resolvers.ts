@@ -20,12 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Context } from '../../types'
-import {
-  createEntityResolvers,
-  createEntityRevisionResolvers,
-  EntityRevisionType,
-  EntityType,
-} from '../abstract-entity'
+import { createEntityResolvers } from '../abstract-entity'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
@@ -40,9 +35,7 @@ export const resolvers = {
       CoursePreResolver,
       CourseRevisionPreResolver
     >(),
-    ...createEntityResolvers<CoursePreResolver, CourseRevisionPreResolver>({
-      entityRevisionType: EntityRevisionType.CourseRevision,
-    }),
+    ...createEntityResolvers<CoursePreResolver, CourseRevisionPreResolver>(),
     ...createTaxonomyTermChildResolvers<CoursePreResolver>(),
     pages(course: CoursePreResolver, _args: never, { dataSources }: Context) {
       return Promise.all(
@@ -52,14 +45,8 @@ export const resolvers = {
       )
     },
   },
-  CourseRevision: {
-    ...createRevisionResolvers<CoursePreResolver, CourseRevisionPreResolver>(),
-    ...createEntityRevisionResolvers<
-      CoursePreResolver,
-      CourseRevisionPreResolver
-    >({
-      entityType: EntityType.Course,
-      repository: 'course',
-    }),
-  },
+  CourseRevision: createRevisionResolvers<
+    CoursePreResolver,
+    CourseRevisionPreResolver
+  >(),
 }

@@ -15,7 +15,6 @@ type GroupedExerciseRevision implements AbstractUuid & AbstractRevision & Abstra
   author: User!
   trashed: Boolean!
   date: DateTime!
-  groupedExercise: GroupedExercise!
   repository: GroupedExercise!
   content: String!
   changes: String!

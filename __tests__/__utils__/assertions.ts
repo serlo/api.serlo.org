@@ -30,7 +30,7 @@ export async function assertSuccessfulGraphQLQuery({
   data,
   client,
 }: {
-  query: DocumentNode
+  query: string | DocumentNode
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   variables?: Record<string, any>
   data: GraphQLResponse['data']

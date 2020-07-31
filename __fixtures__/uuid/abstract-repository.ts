@@ -19,30 +19,23 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { createEntityResolvers } from '../abstract-entity'
-import { createExerciseResolvers } from '../abstract-exercise'
-import {
-  createRepositoryResolvers,
-  createRevisionResolvers,
-} from '../abstract-repository'
-import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
-import { ExercisePreResolver, ExerciseRevisionPreResolver } from './types'
+import * as R from 'ramda'
 
-export const resolvers = {
-  Exercise: {
-    ...createRepositoryResolvers<
-      ExercisePreResolver,
-      ExerciseRevisionPreResolver
-    >(),
-    ...createEntityResolvers<
-      ExercisePreResolver,
-      ExerciseRevisionPreResolver
-    >(),
-    ...createTaxonomyTermChildResolvers<ExercisePreResolver>(),
-    ...createExerciseResolvers<ExercisePreResolver>(),
-  },
-  ExerciseRevision: createRevisionResolvers<
-    ExercisePreResolver,
-    ExerciseRevisionPreResolver
-  >(),
+import {
+  RepositoryPayload,
+  RevisionPayload,
+} from '../../src/graphql/schema/uuid/abstract-repository'
+import { getUuidDataWithoutSubResolvers } from './abstract-uuid'
+
+export function getRepositoryDataWithoutSubResolvers(
+  repository: RepositoryPayload
+) {
+  return getUuidDataWithoutSubResolvers(repository)
+}
+
+export function getRevisionDataWithoutSubResolvers(revision: RevisionPayload) {
+  return {
+    ...getUuidDataWithoutSubResolvers(revision),
+    ...R.pick(['date'], revision),
+  }
 }
