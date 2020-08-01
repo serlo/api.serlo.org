@@ -6,19 +6,6 @@ interface AbstractNotificationEvent {
 
 # TODO: add unit test
 # TODO: add contract test
-type SetTaxonomyParentNotificationEvent implements AbstractNotificationEvent {
-  id: Int!
-  instance: Instance!
-  date: DateTime!
-  actor: User!
-  taxonomyTerm: TaxonomyTerm!
-  # TODO: this might be optional I guess?
-  previousParent: TaxonomyTerm!
-  parent: TaxonomyTerm!
-}
-
-# TODO: add unit test
-# TODO: add contract test
 type SetUuidStateNotificationEvent implements AbstractNotificationEvent {
   id: Int!
   instance: Instance!

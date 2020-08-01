@@ -1,0 +1,9 @@
+type SetTaxonomyParentNotificationEvent implements AbstractNotificationEvent {
+  id: Int!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  previousParent: TaxonomyTerm
+  parent: TaxonomyTerm
+  child: TaxonomyTerm!
+}

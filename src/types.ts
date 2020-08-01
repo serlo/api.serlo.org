@@ -276,6 +276,17 @@ export type SetLicenseNotificationEvent = AbstractNotificationEvent & {
   repository: AbstractRepository;
 };
 
+export type SetTaxonomyParentNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'SetTaxonomyParentNotificationEvent';
+  id: Scalars['Int'];
+  instance: Instance;
+  date: Scalars['DateTime'];
+  actor: User;
+  previousParent?: Maybe<TaxonomyTerm>;
+  parent?: Maybe<TaxonomyTerm>;
+  child: TaxonomyTerm;
+};
+
 export type SetTaxonomyTermNotificationEvent = AbstractNotificationEvent & {
   __typename?: 'SetTaxonomyTermNotificationEvent';
   id: Scalars['Int'];
@@ -299,17 +310,6 @@ export type AbstractNotificationEvent = {
   id: Scalars['Int'];
   instance: Instance;
   date: Scalars['DateTime'];
-};
-
-export type SetTaxonomyParentNotificationEvent = AbstractNotificationEvent & {
-  __typename?: 'SetTaxonomyParentNotificationEvent';
-  id: Scalars['Int'];
-  instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
-  taxonomyTerm: TaxonomyTerm;
-  previousParent: TaxonomyTerm;
-  parent: TaxonomyTerm;
 };
 
 export type SetUuidStateNotificationEvent = AbstractNotificationEvent & {

@@ -43,12 +43,14 @@ import {
   getRemoveEntityLinkNotificationEventDataWithoutSubResolvers,
   getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers,
   getSetLicenseNotificationEventDataWithoutSubResolvers,
+  getSetTaxonomyParentNotificationEventDataWithoutSubResolvers,
   getSetTaxonomyTermNotificationEventDataWithoutSubResolvers,
   getSetThreadStateNotificationEventDataWithoutSubResolvers,
   rejectRevisionNotificationEvent,
   removeEntityLinkNotificationEvent,
   removeTaxonomyLinkNotificationEvent,
   setLicenseNotificationEvent,
+  setTaxonomyParentNotificationEvent,
   setTaxonomyTermNotificationEvent,
   setThreadStateNotificationEvent,
 } from '../../__fixtures__'
@@ -424,6 +426,45 @@ test('RemoveTaxonomyLinkNotificationEvent', async () => {
     data: {
       notificationEvent: getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers(
         removeTaxonomyLinkNotificationEvent
+      ),
+    },
+  })
+})
+
+test('SetTaxonomyParentNotificationEvent', async () => {
+  await addNotificationEventInteraction({
+    __typename: setTaxonomyParentNotificationEvent.__typename,
+    id: setTaxonomyParentNotificationEvent.id,
+    instance: Matchers.string(setTaxonomyParentNotificationEvent.instance),
+    date: Matchers.iso8601DateTime(setTaxonomyParentNotificationEvent.date),
+    actorId: Matchers.integer(setTaxonomyParentNotificationEvent.actorId),
+    previousParentId:
+      setTaxonomyParentNotificationEvent.previousParentId === null
+        ? null
+        : Matchers.integer(setTaxonomyParentNotificationEvent.previousParentId),
+    parentId:
+      setTaxonomyParentNotificationEvent.parentId === null
+        ? null
+        : Matchers.integer(setTaxonomyParentNotificationEvent.parentId),
+    childId: Matchers.integer(setTaxonomyParentNotificationEvent.childId),
+  })
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query notificationEvent($id: Int!) {
+        notificationEvent(id: $id) {
+          __typename
+          ... on SetTaxonomyParentNotificationEvent {
+            id
+            instance
+            date
+          }
+        }
+      }
+    `,
+    variables: setTaxonomyParentNotificationEvent,
+    data: {
+      notificationEvent: getSetTaxonomyParentNotificationEventDataWithoutSubResolvers(
+        setTaxonomyParentNotificationEvent
       ),
     },
   })
