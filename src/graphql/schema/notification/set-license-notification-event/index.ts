@@ -25,6 +25,6 @@ import typeDefs from './types.graphql'
 
 export * from './types'
 
-export const checkoutRevisionNotificationEventSchema = new Schema(resolvers, [
+export const setLicenseNotificationEventSchema = new Schema(resolvers, [
   typeDefs,
 ])

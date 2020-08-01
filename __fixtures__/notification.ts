@@ -22,14 +22,15 @@
 import * as R from 'ramda'
 
 import {
+  CheckoutRevisionNotificationEventPayload,
   CreateCommentNotificationEventPayload,
   CreateEntityNotificationEventPayload,
+  CreateEntityRevisionNotificationEventPayload,
   CreateThreadNotificationEventPayload,
   NotificationEventType,
-  SetThreadStateNotificationEventPayload,
-  CreateEntityRevisionNotificationEventPayload,
-  CheckoutRevisionNotificationEventPayload,
   RejectRevisionNotificationEventPayload,
+  SetLicenseNotificationEventPayload,
+  SetThreadStateNotificationEventPayload,
 } from '../src/graphql/schema'
 import { Instance } from '../src/types'
 import { article, articleRevision, comment, thread, user } from './uuid'
@@ -129,6 +130,21 @@ export function getCreateThreadNotificationEventDataWithoutSubResolvers(
   notificationEvent: CreateThreadNotificationEventPayload
 ) {
   return R.omit(['authorId', 'objectId', 'threadId'], notificationEvent)
+}
+
+export const setLicenseNotificationEvent: SetLicenseNotificationEventPayload = {
+  __typename: NotificationEventType.SetLicense,
+  id: 297,
+  instance: Instance.De,
+  date: '2014-03-01T20:45:56Z',
+  actorId: user.id,
+  repositoryId: article.id,
+}
+
+export function getSetLicenseNotificationEventDataWithoutSubResolvers(
+  notificationEvent: SetLicenseNotificationEventPayload
+) {
+  return R.omit(['actorId', 'repositoryId'], notificationEvent)
 }
 
 export const setThreadStateNotificationEvent: SetThreadStateNotificationEventPayload = {

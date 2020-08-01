@@ -43,6 +43,8 @@ import {
   setThreadStateNotificationEvent,
   thread,
   user,
+  setLicenseNotificationEvent,
+  getSetLicenseNotificationEventDataWithoutSubResolvers,
 } from '../../__fixtures__'
 import { Service } from '../../src/graphql/schema/types'
 import {
@@ -757,6 +759,99 @@ describe('CreateThreadNotificationEvent', () => {
       data: {
         notificationEvent: {
           thread,
+        },
+      },
+      client,
+    })
+  })
+})
+
+describe('SetLicenseNotification', () => {
+  beforeEach(() => {
+    global.server.use(
+      createNotificationEventHandler(setLicenseNotificationEvent)
+    )
+  })
+
+  test('by id', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            __typename
+            ... on SetLicenseNotificationEvent {
+              id
+              instance
+              date
+            }
+          }
+        }
+      `,
+      variables: setLicenseNotificationEvent,
+      data: {
+        notificationEvent: getSetLicenseNotificationEventDataWithoutSubResolvers(
+          setLicenseNotificationEvent
+        ),
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ actor)', async () => {
+    global.server.use(createUuidHandler(user))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on SetLicenseNotificationEvent {
+              actor {
+                __typename
+                id
+                trashed
+                username
+                date
+                lastLogin
+                description
+              }
+            }
+          }
+        }
+      `,
+      variables: setLicenseNotificationEvent,
+      data: {
+        notificationEvent: {
+          actor: user,
+        },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ repository)', async () => {
+    global.server.use(createUuidHandler(article))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on SetLicenseNotificationEvent {
+              repository {
+                __typename
+                ... on Article {
+                  id
+                  trashed
+                  alias
+                  instance
+                  date
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: setLicenseNotificationEvent,
+      data: {
+        notificationEvent: {
+          repository: getArticleDataWithoutSubResolvers(article),
         },
       },
       client,

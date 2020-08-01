@@ -218,6 +218,15 @@ export type RejectRevisionNotificationEvent = AbstractNotificationEvent & {
   reason: Scalars['String'];
 };
 
+export type SetLicenseNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'SetLicenseNotificationEvent';
+  id: Scalars['Int'];
+  instance: Instance;
+  date: Scalars['DateTime'];
+  actor: User;
+  repository: AbstractRepository;
+};
+
 export type SetThreadStateNotificationEvent = AbstractNotificationEvent & {
   __typename?: 'SetThreadStateNotificationEvent';
   id: Scalars['Int'];
@@ -232,15 +241,6 @@ export type AbstractNotificationEvent = {
   id: Scalars['Int'];
   instance: Instance;
   date: Scalars['DateTime'];
-};
-
-export type SetLicenseNotificationEvent = AbstractNotificationEvent & {
-  __typename?: 'SetLicenseNotificationEvent';
-  id: Scalars['Int'];
-  instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
-  repository: AbstractRepository;
 };
 
 export type CreateLinkNotificationEvent = AbstractNotificationEvent & {

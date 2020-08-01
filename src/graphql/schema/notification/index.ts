@@ -20,13 +20,14 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Schema } from '../utils'
-import { checkoutRevisionNotificationSchema } from './checkout-revision-notification-event'
+import { checkoutRevisionNotificationEventSchema } from './checkout-revision-notification-event'
 import { createCommentNotificationEventSchema } from './create-comment-notification-event'
-import { createEntityNotificationSchema } from './create-entity-notification-event'
-import { createEntityRevisionNotificationSchema } from './create-entity-revision-notification-event'
+import { createEntityNotificationEventSchema } from './create-entity-notification-event'
+import { createEntityRevisionNotificationEventSchema } from './create-entity-revision-notification-event'
 import { createThreadNotificationEventSchema } from './create-thread-notification-event'
-import { rejectRevisionNotificationSchema } from './reject-revision-notification-event'
+import { rejectRevisionNotificationEventSchema } from './reject-revision-notification-event'
 import { resolvers } from './resolvers'
+import { setLicenseNotificationEventSchema } from './set-license-notification-event'
 import { setThreadStateNotificationEventSchema } from './set-thread-state-notification-event'
 import typeDefs from './types.graphql'
 
@@ -36,6 +37,7 @@ export * from './create-entity-notification-event'
 export * from './create-entity-revision-notification-event'
 export * from './create-thread-notification-event'
 export * from './reject-revision-notification-event'
+export * from './set-license-notification-event'
 export * from './set-thread-state-notification-event'
 export * from './types'
 
@@ -43,11 +45,12 @@ const baseSchema = new Schema(resolvers, [typeDefs])
 
 export const notificationSchema = Schema.merge(
   baseSchema,
-  checkoutRevisionNotificationSchema,
+  checkoutRevisionNotificationEventSchema,
   createCommentNotificationEventSchema,
-  createEntityNotificationSchema,
-  createEntityRevisionNotificationSchema,
+  createEntityNotificationEventSchema,
+  createEntityRevisionNotificationEventSchema,
   createThreadNotificationEventSchema,
-  rejectRevisionNotificationSchema,
+  rejectRevisionNotificationEventSchema,
+  setLicenseNotificationEventSchema,
   setThreadStateNotificationEventSchema
 )

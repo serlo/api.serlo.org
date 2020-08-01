@@ -19,12 +19,24 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Schema } from '../../utils'
-import { resolvers } from './resolvers'
-import typeDefs from './types.graphql'
+import { requestsOnlyFields } from '../../utils'
+import { RepositoryPayload } from '../../uuid/abstract-repository'
+import { UserPayload } from '../../uuid/user'
+import { SetLicenseNotificationEventResolvers } from './types'
 
-export * from './types'
-
-export const checkoutRevisionNotificationEventSchema = new Schema(resolvers, [
-  typeDefs,
-])
+export const resolvers: SetLicenseNotificationEventResolvers = {
+  SetLicenseNotificationEvent: {
+    async actor(notificationEvent, _args, { dataSources }, info) {
+      const partialUser = { id: notificationEvent.actorId }
+      if (requestsOnlyFields('User', ['id'], info)) {
+        return partialUser
+      }
+      return dataSources.serlo.getUuid<UserPayload>(partialUser)
+    },
+    async repository(notificationEvent, _args, { dataSources }) {
+      return dataSources.serlo.getUuid<RepositoryPayload>({
+        id: notificationEvent.repositoryId,
+      })
+    },
+  },
+}

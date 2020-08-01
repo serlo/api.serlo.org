@@ -34,8 +34,10 @@ import {
   getCreateEntityRevisionNotificationEventDataWithoutSubResolvers,
   getCreateThreadNotificationEventDataWithoutSubResolvers,
   getRejectRevisionNotificationEventDataWithoutSubResolvers,
+  getSetLicenseNotificationEventDataWithoutSubResolvers,
   getSetThreadStateNotificationEventDataWithoutSubResolvers,
   rejectRevisionNotificationEvent,
+  setLicenseNotificationEvent,
   setThreadStateNotificationEvent,
 } from '../../__fixtures__'
 import { AbstractNotificationEventPayload } from '../../src/graphql/schema/notification'
@@ -248,6 +250,37 @@ test('CreateThreadNotificationEvent', async () => {
     data: {
       notificationEvent: getCreateThreadNotificationEventDataWithoutSubResolvers(
         createThreadNotificationEvent
+      ),
+    },
+  })
+})
+
+test('SetLicenseNotificationEvent', async () => {
+  await addNotificationEventInteraction({
+    __typename: setLicenseNotificationEvent.__typename,
+    id: setLicenseNotificationEvent.id,
+    instance: Matchers.string(setLicenseNotificationEvent.instance),
+    date: Matchers.iso8601DateTime(setLicenseNotificationEvent.date),
+    actorId: Matchers.integer(setLicenseNotificationEvent.actorId),
+    repositoryId: Matchers.integer(setLicenseNotificationEvent.repositoryId),
+  })
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query notificationEvent($id: Int!) {
+        notificationEvent(id: $id) {
+          __typename
+          ... on SetLicenseNotificationEvent {
+            id
+            instance
+            date
+          }
+        }
+      }
+    `,
+    variables: setLicenseNotificationEvent,
+    data: {
+      notificationEvent: getSetLicenseNotificationEventDataWithoutSubResolvers(
+        setLicenseNotificationEvent
       ),
     },
   })
