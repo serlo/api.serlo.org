@@ -27,46 +27,48 @@ import {
   checkoutRevisionNotificationEvent,
   comment,
   createCommentNotificationEvent,
+  createEntityLinkNotificationEvent,
   createEntityNotificationEvent,
   createEntityRevisionNotificationEvent,
+  createTaxonomyLinkNotificationEvent,
+  createTaxonomyTermNotificationEvent,
   createThreadNotificationEvent,
+  exercise,
   getArticleDataWithoutSubResolvers,
   getArticleRevisionDataWithoutSubResolvers,
   getCheckoutRevisionNotificationEventDataWithoutSubResolvers,
   getCreateCommentNotificationEventDataWithoutSubResolvers,
+  getCreateEntityLinkNotificationEventDataWithoutSubResolvers,
   getCreateEntityNotificationEventDataWithoutSubResolvers,
   getCreateEntityRevisionNotificationEventDataWithoutSubResolvers,
-  getCreateThreadNotificationEventDataWithoutSubResolvers,
-  getRejectRevisionNotificationEventDataWithoutSubResolvers,
-  getSetThreadStateNotificationEventDataWithoutSubResolvers,
-  rejectRevisionNotificationEvent,
-  setThreadStateNotificationEvent,
-  thread,
-  user,
-  setLicenseNotificationEvent,
-  getSetLicenseNotificationEventDataWithoutSubResolvers,
-  createEntityLinkNotificationEvent,
-  getCreateEntityLinkNotificationEventDataWithoutSubResolvers,
-  exercise,
-  getExerciseDataWithoutSubResolvers,
-  solution,
-  getSolutionDataWithoutSubResolvers,
-  removeEntityLinkNotificationEvent,
-  getRemoveEntityLinkNotificationEventDataWithoutSubResolvers,
-  createTaxonomyLinkNotificationEvent,
   getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers,
-  taxonomyTermCurriculumTopic,
-  getTaxonomyTermDataWithoutSubResolvers,
-  removeTaxonomyLinkNotificationEvent,
-  getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers,
-  createTaxonomyTermNotificationEvent,
   getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers,
-  setTaxonomyTermNotificationEvent,
-  getSetTaxonomyTermNotificationEventDataWithoutSubResolvers,
-  setTaxonomyParentNotificationEvent,
+  getCreateThreadNotificationEventDataWithoutSubResolvers,
+  getExerciseDataWithoutSubResolvers,
+  getRejectRevisionNotificationEventDataWithoutSubResolvers,
+  getRemoveEntityLinkNotificationEventDataWithoutSubResolvers,
+  getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers,
+  getSetLicenseNotificationEventDataWithoutSubResolvers,
   getSetTaxonomyParentNotificationEventDataWithoutSubResolvers,
+  getSetTaxonomyTermNotificationEventDataWithoutSubResolvers,
+  getSetThreadStateNotificationEventDataWithoutSubResolvers,
+  getSetUuidStateNotificationEventDataWithoutSubResolvers,
+  getSolutionDataWithoutSubResolvers,
+  getTaxonomyTermDataWithoutSubResolvers,
+  rejectRevisionNotificationEvent,
+  removeEntityLinkNotificationEvent,
+  removeTaxonomyLinkNotificationEvent,
+  setLicenseNotificationEvent,
+  setTaxonomyParentNotificationEvent,
+  setTaxonomyTermNotificationEvent,
+  setThreadStateNotificationEvent,
+  setUuidStateNotificationEvent,
+  solution,
+  taxonomyTermCurriculumTopic,
   taxonomyTermRoot,
   taxonomyTermSubject,
+  thread,
+  user,
 } from '../../__fixtures__'
 import { Service } from '../../src/graphql/schema/types'
 import {
@@ -1816,6 +1818,100 @@ describe('SetThreadStateNotificationEvent', () => {
       data: {
         notificationEvent: {
           thread,
+        },
+      },
+      client,
+    })
+  })
+})
+
+describe('SetUuidStateNotificationEvent', () => {
+  beforeEach(() => {
+    global.server.use(
+      createNotificationEventHandler(setUuidStateNotificationEvent)
+    )
+  })
+
+  test('by id', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            __typename
+            ... on SetUuidStateNotificationEvent {
+              id
+              instance
+              date
+              trashed
+            }
+          }
+        }
+      `,
+      variables: setUuidStateNotificationEvent,
+      data: {
+        notificationEvent: getSetUuidStateNotificationEventDataWithoutSubResolvers(
+          setUuidStateNotificationEvent
+        ),
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ actor)', async () => {
+    global.server.use(createUuidHandler(user))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on SetUuidStateNotificationEvent {
+              actor {
+                __typename
+                id
+                trashed
+                username
+                date
+                lastLogin
+                description
+              }
+            }
+          }
+        }
+      `,
+      variables: setUuidStateNotificationEvent,
+      data: {
+        notificationEvent: {
+          actor: user,
+        },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ object)', async () => {
+    global.server.use(createUuidHandler(article))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on SetUuidStateNotificationEvent {
+              object {
+                __typename
+                ... on Article {
+                  id
+                  trashed
+                  alias
+                  instance
+                  date
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: setUuidStateNotificationEvent,
+      data: {
+        notificationEvent: {
+          object: getArticleDataWithoutSubResolvers(article),
         },
       },
       client,

@@ -306,12 +306,6 @@ export type SetThreadStateNotificationEvent = AbstractNotificationEvent & {
   archived: Scalars['Boolean'];
 };
 
-export type AbstractNotificationEvent = {
-  id: Scalars['Int'];
-  instance: Instance;
-  date: Scalars['DateTime'];
-};
-
 export type SetUuidStateNotificationEvent = AbstractNotificationEvent & {
   __typename?: 'SetUuidStateNotificationEvent';
   id: Scalars['Int'];
@@ -320,6 +314,12 @@ export type SetUuidStateNotificationEvent = AbstractNotificationEvent & {
   actor: User;
   object: AbstractUuid;
   trashed: Scalars['Boolean'];
+};
+
+export type AbstractNotificationEvent = {
+  id: Scalars['Int'];
+  instance: Instance;
+  date: Scalars['DateTime'];
 };
 
 export type AbstractEntity = {
