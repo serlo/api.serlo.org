@@ -28,6 +28,7 @@ import {
   CreateEntityNotificationEventPayload,
   CreateEntityRevisionNotificationEventPayload,
   CreateTaxonomyLinkNotificationEventPayload,
+  CreateTaxonomyTermNotificationEventPayload,
   CreateThreadNotificationEventPayload,
   NotificationEventType,
   RejectRevisionNotificationEventPayload,
@@ -159,6 +160,21 @@ export function getCreateEntityRevisionNotificationEventDataWithoutSubResolvers(
   notificationEvent: CreateEntityRevisionNotificationEventPayload
 ) {
   return R.omit(['authorId', 'entityId', 'entityRevisionId'], notificationEvent)
+}
+
+export const createTaxonomyTermNotificationEvent: CreateTaxonomyTermNotificationEventPayload = {
+  __typename: NotificationEventType.CreateTaxonomyTerm,
+  id: 298,
+  instance: Instance.De,
+  date: '2014-03-01T20:45:56Z',
+  authorId: user.id,
+  taxonomyTermId: taxonomyTermCurriculumTopic.id,
+}
+
+export function getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers(
+  notificationEvent: CreateTaxonomyTermNotificationEventPayload
+) {
+  return R.omit(['authorId', 'taxonomyTermId'], notificationEvent)
 }
 
 export const createTaxonomyLinkNotificationEvent: CreateTaxonomyLinkNotificationEventPayload = {

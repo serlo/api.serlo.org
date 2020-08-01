@@ -30,6 +30,7 @@ import { CreateEntityLinkNotificationEventPayload } from './create-entity-link-n
 import { CreateEntityNotificationEventPayload } from './create-entity-notification-event'
 import { CreateEntityRevisionNotificationEventPayload } from './create-entity-revision-notification-event'
 import { CreateTaxonomyLinkNotificationEventPayload } from './create-taxonomy-link-notification-event'
+import { CreateTaxonomyTermNotificationEventPayload } from './create-taxonomy-term-notification-event'
 import { CreateThreadNotificationEventPayload } from './create-thread-notification-event'
 import { RejectRevisionNotificationEventPayload } from './reject-revision-notification-event'
 import { RemoveEntityLinkNotificationEventPayload } from './remove-entity-link-notification-event'
@@ -43,6 +44,7 @@ export enum NotificationEventType {
   CreateEntity = 'CreateEntityNotificationEvent',
   CreateEntityRevision = 'CreateEntityRevisionNotificationEvent',
   CreateEntityLink = 'CreateEntityLinkNotificationEvent',
+  CreateTaxonomyTerm = 'CreateTaxonomyTermNotificationEvent',
   CreateTaxonomyLink = 'CreateTaxonomyLinkNotificationEvent',
   CreateThread = 'CreateThreadNotificationEvent',
   RejectRevision = 'RejectRevisionNotificationEvent',
@@ -59,6 +61,7 @@ export type NotificationEventPayload =
   | CreateEntityLinkNotificationEventPayload
   | RemoveEntityLinkNotificationEventPayload
   | CreateEntityRevisionNotificationEventPayload
+  | CreateTaxonomyTermNotificationEventPayload
   | CreateTaxonomyLinkNotificationEventPayload
   | RemoveTaxonomyLinkNotificationEventPayload
   | CreateThreadNotificationEventPayload

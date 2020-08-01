@@ -29,6 +29,7 @@ import {
   createEntityNotificationEvent,
   createEntityRevisionNotificationEvent,
   createTaxonomyLinkNotificationEvent,
+  createTaxonomyTermNotificationEvent,
   createThreadNotificationEvent,
   getCheckoutRevisionNotificationEventDataWithoutSubResolvers,
   getCreateCommentNotificationEventDataWithoutSubResolvers,
@@ -36,6 +37,7 @@ import {
   getCreateEntityNotificationEventDataWithoutSubResolvers,
   getCreateEntityRevisionNotificationEventDataWithoutSubResolvers,
   getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers,
+  getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers,
   getCreateThreadNotificationEventDataWithoutSubResolvers,
   getRejectRevisionNotificationEventDataWithoutSubResolvers,
   getRemoveEntityLinkNotificationEventDataWithoutSubResolvers,
@@ -290,6 +292,39 @@ test('CreateEntityRevisionNotificationEvent', async () => {
     data: {
       notificationEvent: getCreateEntityRevisionNotificationEventDataWithoutSubResolvers(
         createEntityRevisionNotificationEvent
+      ),
+    },
+  })
+})
+
+test('CreateTaxonomyTermNotificationEvent', async () => {
+  await addNotificationEventInteraction({
+    __typename: createTaxonomyTermNotificationEvent.__typename,
+    id: createTaxonomyTermNotificationEvent.id,
+    instance: Matchers.string(createTaxonomyTermNotificationEvent.instance),
+    date: Matchers.iso8601DateTime(createTaxonomyTermNotificationEvent.date),
+    authorId: Matchers.integer(createTaxonomyTermNotificationEvent.authorId),
+    taxonomyTermId: Matchers.integer(
+      createTaxonomyTermNotificationEvent.taxonomyTermId
+    ),
+  })
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query notificationEvent($id: Int!) {
+        notificationEvent(id: $id) {
+          __typename
+          ... on CreateTaxonomyTermNotificationEvent {
+            id
+            instance
+            date
+          }
+        }
+      }
+    `,
+    variables: createTaxonomyTermNotificationEvent,
+    data: {
+      notificationEvent: getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers(
+        createTaxonomyTermNotificationEvent
       ),
     },
   })
