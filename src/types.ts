@@ -214,7 +214,7 @@ export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & {
   date: Scalars['DateTime'];
   actor: User;
   parent: TaxonomyTerm;
-  child: AbstractTaxonomyTermChild;
+  child: AbstractUuid;
 };
 
 export type CreateThreadNotificationEvent = AbstractNotificationEvent & {
@@ -246,6 +246,16 @@ export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & {
   actor: User;
   parent: AbstractEntity;
   child: AbstractEntity;
+};
+
+export type RemoveTaxonomyLinkNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'RemoveTaxonomyLinkNotificationEvent';
+  id: Scalars['Int'];
+  instance: Instance;
+  date: Scalars['DateTime'];
+  actor: User;
+  parent: TaxonomyTerm;
+  child: AbstractUuid;
 };
 
 export type SetLicenseNotificationEvent = AbstractNotificationEvent & {
@@ -300,16 +310,6 @@ export type SetTaxonomyParentNotificationEvent = AbstractNotificationEvent & {
   taxonomyTerm: TaxonomyTerm;
   previousParent: TaxonomyTerm;
   parent: TaxonomyTerm;
-};
-
-export type RemoveTaxonomyAssociationNotificationEvent = AbstractNotificationEvent & {
-  __typename?: 'RemoveTaxonomyAssociationNotificationEvent';
-  id: Scalars['Int'];
-  instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
-  taxonomyTerm: TaxonomyTerm;
-  entity: AbstractEntity;
 };
 
 export type SetUuidStateNotificationEvent = AbstractNotificationEvent & {

@@ -1,4 +1,4 @@
-type CreateTaxonomyLinkNotificationEvent implements AbstractNotificationEvent {
+type RemoveTaxonomyLinkNotificationEvent implements AbstractNotificationEvent {
   id: Int!
   instance: Instance!
   date: DateTime!

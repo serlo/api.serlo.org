@@ -19,40 +19,30 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { CreateTaxonomyLinkNotificationEvent } from '../../../../types'
-import { Resolver } from '../../types'
+import { requestsOnlyFields } from '../../utils'
 import { UuidPayload } from '../../uuid/abstract-uuid'
 import { TaxonomyTermPayload } from '../../uuid/taxonomy-term'
 import { UserPayload } from '../../uuid/user'
-import { NotificationEventType } from '../types'
+import { RemoveTaxonomyLinkNotificationEventResolvers } from './types'
 
-export interface CreateTaxonomyLinkNotificationEventPayload
-  extends Omit<
-    CreateTaxonomyLinkNotificationEvent,
-    keyof CreateTaxonomyLinkNotificationEventResolvers['CreateTaxonomyLinkNotificationEvent']
-  > {
-  __typename: NotificationEventType.CreateTaxonomyLink
-  actorId: number
-  parentId: number
-  childId: number
-}
-
-export interface CreateTaxonomyLinkNotificationEventResolvers {
-  CreateTaxonomyLinkNotificationEvent: {
-    actor: Resolver<
-      CreateTaxonomyLinkNotificationEventPayload,
-      never,
-      Partial<UserPayload>
-    >
-    parent: Resolver<
-      CreateTaxonomyLinkNotificationEventPayload,
-      never,
-      TaxonomyTermPayload
-    >
-    child: Resolver<
-      CreateTaxonomyLinkNotificationEventPayload,
-      never,
-      UuidPayload
-    >
-  }
+export const resolvers: RemoveTaxonomyLinkNotificationEventResolvers = {
+  RemoveTaxonomyLinkNotificationEvent: {
+    async actor(notificationEvent, _args, { dataSources }, info) {
+      const partialUser = { id: notificationEvent.actorId }
+      if (requestsOnlyFields('User', ['id'], info)) {
+        return partialUser
+      }
+      return dataSources.serlo.getUuid<UserPayload>(partialUser)
+    },
+    async parent(notificationEvent, _args, { dataSources }) {
+      return dataSources.serlo.getUuid<TaxonomyTermPayload>({
+        id: notificationEvent.parentId,
+      })
+    },
+    async child(notificationEvent, _args, { dataSources }) {
+      return dataSources.serlo.getUuid<UuidPayload>({
+        id: notificationEvent.childId,
+      })
+    },
+  },
 }

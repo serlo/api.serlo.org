@@ -39,10 +39,12 @@ import {
   getCreateThreadNotificationEventDataWithoutSubResolvers,
   getRejectRevisionNotificationEventDataWithoutSubResolvers,
   getRemoveEntityLinkNotificationEventDataWithoutSubResolvers,
+  getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers,
   getSetLicenseNotificationEventDataWithoutSubResolvers,
   getSetThreadStateNotificationEventDataWithoutSubResolvers,
   rejectRevisionNotificationEvent,
   removeEntityLinkNotificationEvent,
+  removeTaxonomyLinkNotificationEvent,
   setLicenseNotificationEvent,
   setThreadStateNotificationEvent,
 } from '../../__fixtures__'
@@ -320,6 +322,38 @@ test('CreateTaxonomyLinkNotificationEvent', async () => {
     data: {
       notificationEvent: getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers(
         createTaxonomyLinkNotificationEvent
+      ),
+    },
+  })
+})
+
+test('RemoveTaxonomyLinkNotificationEvent', async () => {
+  await addNotificationEventInteraction({
+    __typename: removeTaxonomyLinkNotificationEvent.__typename,
+    id: removeTaxonomyLinkNotificationEvent.id,
+    instance: Matchers.string(removeTaxonomyLinkNotificationEvent.instance),
+    date: Matchers.iso8601DateTime(removeTaxonomyLinkNotificationEvent.date),
+    actorId: Matchers.integer(removeTaxonomyLinkNotificationEvent.actorId),
+    parentId: Matchers.integer(removeTaxonomyLinkNotificationEvent.parentId),
+    childId: Matchers.integer(removeTaxonomyLinkNotificationEvent.childId),
+  })
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query notificationEvent($id: Int!) {
+        notificationEvent(id: $id) {
+          __typename
+          ... on RemoveTaxonomyLinkNotificationEvent {
+            id
+            instance
+            date
+          }
+        }
+      }
+    `,
+    variables: removeTaxonomyLinkNotificationEvent,
+    data: {
+      notificationEvent: getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers(
+        removeTaxonomyLinkNotificationEvent
       ),
     },
   })

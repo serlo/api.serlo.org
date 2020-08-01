@@ -33,6 +33,7 @@ import { CreateTaxonomyLinkNotificationEventPayload } from './create-taxonomy-li
 import { CreateThreadNotificationEventPayload } from './create-thread-notification-event'
 import { RejectRevisionNotificationEventPayload } from './reject-revision-notification-event'
 import { RemoveEntityLinkNotificationEventPayload } from './remove-entity-link-notification-event'
+import { RemoveTaxonomyLinkNotificationEventPayload } from './remove-taxonomy-link-notification-event'
 import { SetLicenseNotificationEventPayload } from './set-license-notification-event'
 import { SetThreadStateNotificationEventPayload } from './set-thread-state-notification-event'
 
@@ -46,6 +47,7 @@ export enum NotificationEventType {
   CreateThread = 'CreateThreadNotificationEvent',
   RejectRevision = 'RejectRevisionNotificationEvent',
   RemoveEntityLink = 'RemoveEntityLinkNotificationEvent',
+  RemoveTaxonomyLink = 'RemoveTaxonomyLinkNotificationEvent',
   SetLicense = 'SetLicenseNotificationEvent',
   SetThreadState = 'SetThreadStateNotificationEvent',
 }
@@ -58,6 +60,7 @@ export type NotificationEventPayload =
   | RemoveEntityLinkNotificationEventPayload
   | CreateEntityRevisionNotificationEventPayload
   | CreateTaxonomyLinkNotificationEventPayload
+  | RemoveTaxonomyLinkNotificationEventPayload
   | CreateThreadNotificationEventPayload
   | CreateCommentNotificationEventPayload
   | SetLicenseNotificationEventPayload

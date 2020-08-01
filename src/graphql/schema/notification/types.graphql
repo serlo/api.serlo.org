@@ -26,6 +26,7 @@ type SetTaxonomyTermNotificationEvent implements AbstractNotificationEvent {
 
 # TODO: add unit test
 # TODO: add contract test
+# TODO: isn't this also a term assoc? Confused
 type SetTaxonomyParentNotificationEvent implements AbstractNotificationEvent {
   id: Int!
   instance: Instance!
@@ -35,18 +36,6 @@ type SetTaxonomyParentNotificationEvent implements AbstractNotificationEvent {
   # TODO: this might be optional I guess?
   previousParent: TaxonomyTerm!
   parent: TaxonomyTerm!
-}
-
-# TODO: add unit test
-# TODO: add contract test
-type RemoveTaxonomyAssociationNotificationEvent implements AbstractNotificationEvent {
-  id: Int!
-  instance: Instance!
-  date: DateTime!
-  actor: User!
-  taxonomyTerm: TaxonomyTerm!
-  # TODO: is this really an entity?
-  entity: AbstractEntity!
 }
 
 # TODO: add unit test

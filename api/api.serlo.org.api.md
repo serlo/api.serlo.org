@@ -278,7 +278,7 @@ export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & {
     date: Scalars['DateTime'];
     actor: User;
     parent: TaxonomyTerm;
-    child: AbstractTaxonomyTermChild;
+    child: AbstractUuid;
 };
 
 // @public (undocumented)
@@ -634,14 +634,14 @@ export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type RemoveTaxonomyAssociationNotificationEvent = AbstractNotificationEvent & {
-    __typename?: 'RemoveTaxonomyAssociationNotificationEvent';
+export type RemoveTaxonomyLinkNotificationEvent = AbstractNotificationEvent & {
+    __typename?: 'RemoveTaxonomyLinkNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
     date: Scalars['DateTime'];
     actor: User;
-    taxonomyTerm: TaxonomyTerm;
-    entity: AbstractEntity;
+    parent: TaxonomyTerm;
+    child: AbstractUuid;
 };
 
 // @public
