@@ -22,6 +22,7 @@
 import { Schema } from '../utils'
 import { checkoutRevisionNotificationEventSchema } from './checkout-revision-notification-event'
 import { createCommentNotificationEventSchema } from './create-comment-notification-event'
+import { createEntityLinkNotificationSchema } from './create-entity-link-notification-event'
 import { createEntityNotificationEventSchema } from './create-entity-notification-event'
 import { createEntityRevisionNotificationEventSchema } from './create-entity-revision-notification-event'
 import { createThreadNotificationEventSchema } from './create-thread-notification-event'
@@ -34,6 +35,7 @@ import typeDefs from './types.graphql'
 export * from './checkout-revision-notification-event'
 export * from './create-comment-notification-event'
 export * from './create-entity-notification-event'
+export * from './create-entity-link-notification-event'
 export * from './create-entity-revision-notification-event'
 export * from './create-thread-notification-event'
 export * from './reject-revision-notification-event'
@@ -48,6 +50,7 @@ export const notificationSchema = Schema.merge(
   checkoutRevisionNotificationEventSchema,
   createCommentNotificationEventSchema,
   createEntityNotificationEventSchema,
+  createEntityLinkNotificationSchema,
   createEntityRevisionNotificationEventSchema,
   createThreadNotificationEventSchema,
   rejectRevisionNotificationEventSchema,

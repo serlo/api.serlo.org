@@ -178,6 +178,16 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & {
   comment: UnsupportedComment;
 };
 
+export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'CreateEntityLinkNotificationEvent';
+  id: Scalars['Int'];
+  instance: Instance;
+  date: Scalars['DateTime'];
+  actor: User;
+  parent: AbstractEntity;
+  child: AbstractEntity;
+};
+
 export type CreateEntityNotificationEvent = AbstractNotificationEvent & {
   __typename?: 'CreateEntityNotificationEvent';
   id: Scalars['Int'];
@@ -241,16 +251,6 @@ export type AbstractNotificationEvent = {
   id: Scalars['Int'];
   instance: Instance;
   date: Scalars['DateTime'];
-};
-
-export type CreateLinkNotificationEvent = AbstractNotificationEvent & {
-  __typename?: 'CreateLinkNotificationEvent';
-  id: Scalars['Int'];
-  instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
-  parent: AbstractUuid;
-  entity: AbstractEntity;
 };
 
 export type RemoveLinkNotificationEvent = AbstractNotificationEvent & {
