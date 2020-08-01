@@ -36,6 +36,7 @@ import { RejectRevisionNotificationEventPayload } from './reject-revision-notifi
 import { RemoveEntityLinkNotificationEventPayload } from './remove-entity-link-notification-event'
 import { RemoveTaxonomyLinkNotificationEventPayload } from './remove-taxonomy-link-notification-event'
 import { SetLicenseNotificationEventPayload } from './set-license-notification-event'
+import { SetTaxonomyTermNotificationEventPayload } from './set-taxonomy-term-notification-event'
 import { SetThreadStateNotificationEventPayload } from './set-thread-state-notification-event'
 
 export enum NotificationEventType {
@@ -51,6 +52,7 @@ export enum NotificationEventType {
   RemoveEntityLink = 'RemoveEntityLinkNotificationEvent',
   RemoveTaxonomyLink = 'RemoveTaxonomyLinkNotificationEvent',
   SetLicense = 'SetLicenseNotificationEvent',
+  SetTaxonomyTerm = 'SetTaxonomyTermNotificationEvent',
   SetThreadState = 'SetThreadStateNotificationEvent',
 }
 
@@ -67,6 +69,7 @@ export type NotificationEventPayload =
   | CreateThreadNotificationEventPayload
   | CreateCommentNotificationEventPayload
   | SetLicenseNotificationEventPayload
+  | SetTaxonomyTermNotificationEventPayload
   | SetThreadStateNotificationEventPayload
 export interface AbstractNotificationEventPayload
   extends AbstractNotificationEvent {

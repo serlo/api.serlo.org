@@ -33,6 +33,7 @@ import { removeEntityLinkNotificationSchema } from './remove-entity-link-notific
 import { removeTaxonomyLinkNotificationSchema } from './remove-taxonomy-link-notification-event'
 import { resolvers } from './resolvers'
 import { setLicenseNotificationEventSchema } from './set-license-notification-event'
+import { setTaxonomyTermNotificationEventSchema } from './set-taxonomy-term-notification-event'
 import { setThreadStateNotificationEventSchema } from './set-thread-state-notification-event'
 import typeDefs from './types.graphql'
 
@@ -48,6 +49,7 @@ export * from './reject-revision-notification-event'
 export * from './remove-entity-link-notification-event'
 export * from './remove-taxonomy-link-notification-event'
 export * from './set-license-notification-event'
+export * from './set-taxonomy-term-notification-event'
 export * from './set-thread-state-notification-event'
 export * from './types'
 
@@ -61,6 +63,7 @@ export const notificationSchema = Schema.merge(
   createEntityLinkNotificationSchema,
   createEntityRevisionNotificationEventSchema,
   createTaxonomyTermNotificationEventSchema,
+  setTaxonomyTermNotificationEventSchema,
   createTaxonomyLinkNotificationSchema,
   createThreadNotificationEventSchema,
   rejectRevisionNotificationEventSchema,

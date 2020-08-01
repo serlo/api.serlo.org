@@ -43,11 +43,13 @@ import {
   getRemoveEntityLinkNotificationEventDataWithoutSubResolvers,
   getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers,
   getSetLicenseNotificationEventDataWithoutSubResolvers,
+  getSetTaxonomyTermNotificationEventDataWithoutSubResolvers,
   getSetThreadStateNotificationEventDataWithoutSubResolvers,
   rejectRevisionNotificationEvent,
   removeEntityLinkNotificationEvent,
   removeTaxonomyLinkNotificationEvent,
   setLicenseNotificationEvent,
+  setTaxonomyTermNotificationEvent,
   setThreadStateNotificationEvent,
 } from '../../__fixtures__'
 import { AbstractNotificationEventPayload } from '../../src/graphql/schema/notification'
@@ -325,6 +327,39 @@ test('CreateTaxonomyTermNotificationEvent', async () => {
     data: {
       notificationEvent: getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers(
         createTaxonomyTermNotificationEvent
+      ),
+    },
+  })
+})
+
+test('SetTaxonomyTermNotificationEvent', async () => {
+  await addNotificationEventInteraction({
+    __typename: setTaxonomyTermNotificationEvent.__typename,
+    id: setTaxonomyTermNotificationEvent.id,
+    instance: Matchers.string(setTaxonomyTermNotificationEvent.instance),
+    date: Matchers.iso8601DateTime(setTaxonomyTermNotificationEvent.date),
+    authorId: Matchers.integer(setTaxonomyTermNotificationEvent.authorId),
+    taxonomyTermId: Matchers.integer(
+      setTaxonomyTermNotificationEvent.taxonomyTermId
+    ),
+  })
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query notificationEvent($id: Int!) {
+        notificationEvent(id: $id) {
+          __typename
+          ... on SetTaxonomyTermNotificationEvent {
+            id
+            instance
+            date
+          }
+        }
+      }
+    `,
+    variables: setTaxonomyTermNotificationEvent,
+    data: {
+      notificationEvent: getSetTaxonomyTermNotificationEventDataWithoutSubResolvers(
+        setTaxonomyTermNotificationEvent
       ),
     },
   })

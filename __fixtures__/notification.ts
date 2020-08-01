@@ -35,6 +35,7 @@ import {
   RemoveEntityLinkNotificationEventPayload,
   RemoveTaxonomyLinkNotificationEventPayload,
   SetLicenseNotificationEventPayload,
+  SetTaxonomyTermNotificationEventPayload,
   SetThreadStateNotificationEventPayload,
 } from '../src/graphql/schema'
 import { Instance } from '../src/types'
@@ -173,6 +174,21 @@ export const createTaxonomyTermNotificationEvent: CreateTaxonomyTermNotification
 
 export function getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers(
   notificationEvent: CreateTaxonomyTermNotificationEventPayload
+) {
+  return R.omit(['authorId', 'taxonomyTermId'], notificationEvent)
+}
+
+export const setTaxonomyTermNotificationEvent: SetTaxonomyTermNotificationEventPayload = {
+  __typename: NotificationEventType.SetTaxonomyTerm,
+  id: 38405,
+  instance: Instance.De,
+  date: '2014-03-01T20:45:56Z',
+  authorId: user.id,
+  taxonomyTermId: taxonomyTermCurriculumTopic.id,
+}
+
+export function getSetTaxonomyTermNotificationEventDataWithoutSubResolvers(
+  notificationEvent: SetTaxonomyTermNotificationEventPayload
 ) {
   return R.omit(['authorId', 'taxonomyTermId'], notificationEvent)
 }
