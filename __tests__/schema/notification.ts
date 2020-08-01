@@ -63,6 +63,10 @@ import {
   getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers,
   setTaxonomyTermNotificationEvent,
   getSetTaxonomyTermNotificationEventDataWithoutSubResolvers,
+  setTaxonomyParentNotificationEvent,
+  getSetTaxonomyParentNotificationEventDataWithoutSubResolvers,
+  taxonomyTermRoot,
+  taxonomyTermSubject,
 } from '../../__fixtures__'
 import { Service } from '../../src/graphql/schema/types'
 import {
@@ -1178,16 +1182,14 @@ describe('CreateTaxonomyLinkNotificationEvent', () => {
             ... on CreateTaxonomyLinkNotificationEvent {
               parent {
                 __typename
-                ... on TaxonomyTerm {
-                  id
-                  type
-                  trashed
-                  instance
-                  alias
-                  name
-                  description
-                  weight
-                }
+                id
+                type
+                trashed
+                instance
+                alias
+                name
+                description
+                weight
               }
             }
           }
@@ -1307,16 +1309,14 @@ describe('RemoveTaxonomyLinkNotificationEvent', () => {
             ... on RemoveTaxonomyLinkNotificationEvent {
               parent {
                 __typename
-                ... on TaxonomyTerm {
-                  id
-                  type
-                  trashed
-                  instance
-                  alias
-                  name
-                  description
-                  weight
-                }
+                id
+                type
+                trashed
+                instance
+                alias
+                name
+                description
+                weight
               }
             }
           }
@@ -1359,6 +1359,168 @@ describe('RemoveTaxonomyLinkNotificationEvent', () => {
       data: {
         notificationEvent: {
           child: getArticleDataWithoutSubResolvers(article),
+        },
+      },
+      client,
+    })
+  })
+})
+
+describe('SetTaxonomyParentNotificationEvent', () => {
+  beforeEach(() => {
+    global.server.use(
+      createNotificationEventHandler(setTaxonomyParentNotificationEvent)
+    )
+  })
+
+  test('by id', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            __typename
+            ... on SetTaxonomyParentNotificationEvent {
+              id
+              instance
+              date
+            }
+          }
+        }
+      `,
+      variables: setTaxonomyParentNotificationEvent,
+      data: {
+        notificationEvent: getSetTaxonomyParentNotificationEventDataWithoutSubResolvers(
+          setTaxonomyParentNotificationEvent
+        ),
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ actor)', async () => {
+    global.server.use(createUuidHandler(user))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on SetTaxonomyParentNotificationEvent {
+              actor {
+                __typename
+                id
+                trashed
+                username
+                date
+                lastLogin
+                description
+              }
+            }
+          }
+        }
+      `,
+      variables: setTaxonomyParentNotificationEvent,
+      data: {
+        notificationEvent: {
+          actor: user,
+        },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ previousParent)', async () => {
+    global.server.use(createUuidHandler(taxonomyTermRoot))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on SetTaxonomyParentNotificationEvent {
+              previousParent {
+                __typename
+                id
+                type
+                trashed
+                instance
+                alias
+                name
+                description
+                weight
+              }
+            }
+          }
+        }
+      `,
+      variables: setTaxonomyParentNotificationEvent,
+      data: {
+        notificationEvent: {
+          previousParent: getTaxonomyTermDataWithoutSubResolvers(
+            taxonomyTermRoot
+          ),
+        },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ parent)', async () => {
+    global.server.use(createUuidHandler(taxonomyTermSubject))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on SetTaxonomyParentNotificationEvent {
+              parent {
+                __typename
+                id
+                type
+                trashed
+                instance
+                alias
+                name
+                description
+                weight
+              }
+            }
+          }
+        }
+      `,
+      variables: setTaxonomyParentNotificationEvent,
+      data: {
+        notificationEvent: {
+          parent: getTaxonomyTermDataWithoutSubResolvers(taxonomyTermSubject),
+        },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ child)', async () => {
+    global.server.use(createUuidHandler(taxonomyTermCurriculumTopic))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on SetTaxonomyParentNotificationEvent {
+              child {
+                __typename
+                id
+                type
+                trashed
+                instance
+                alias
+                name
+                description
+                weight
+              }
+            }
+          }
+        }
+      `,
+      variables: setTaxonomyParentNotificationEvent,
+      data: {
+        notificationEvent: {
+          child: getTaxonomyTermDataWithoutSubResolvers(
+            taxonomyTermCurriculumTopic
+          ),
         },
       },
       client,

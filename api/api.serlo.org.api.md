@@ -673,9 +673,9 @@ export type SetTaxonomyParentNotificationEvent = AbstractNotificationEvent & {
     instance: Instance;
     date: Scalars['DateTime'];
     actor: User;
-    taxonomyTerm: TaxonomyTerm;
-    previousParent: TaxonomyTerm;
-    parent: TaxonomyTerm;
+    previousParent?: Maybe<TaxonomyTerm>;
+    parent?: Maybe<TaxonomyTerm>;
+    child: TaxonomyTerm;
 };
 
 // @public (undocumented)

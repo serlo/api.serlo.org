@@ -35,6 +35,7 @@ import {
   RemoveEntityLinkNotificationEventPayload,
   RemoveTaxonomyLinkNotificationEventPayload,
   SetLicenseNotificationEventPayload,
+  SetTaxonomyParentNotificationEventPayload,
   SetTaxonomyTermNotificationEventPayload,
   SetThreadStateNotificationEventPayload,
 } from '../src/graphql/schema'
@@ -46,6 +47,8 @@ import {
   exercise,
   solution,
   taxonomyTermCurriculumTopic,
+  taxonomyTermRoot,
+  taxonomyTermSubject,
   thread,
   user,
 } from './uuid'
@@ -223,6 +226,26 @@ export function getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers(
   notificationEvent: RemoveTaxonomyLinkNotificationEventPayload
 ) {
   return R.omit(['actorId', 'parentId', 'childId'], notificationEvent)
+}
+
+export const setTaxonomyParentNotificationEvent: SetTaxonomyParentNotificationEventPayload = {
+  __typename: NotificationEventType.SetTaxonomyParent,
+  id: 47414,
+  instance: Instance.De,
+  date: '2014-03-01T20:45:56Z',
+  actorId: user.id,
+  previousParentId: taxonomyTermRoot.id,
+  parentId: taxonomyTermSubject.id,
+  childId: taxonomyTermCurriculumTopic.id,
+}
+
+export function getSetTaxonomyParentNotificationEventDataWithoutSubResolvers(
+  notificationEvent: SetTaxonomyParentNotificationEventPayload
+) {
+  return R.omit(
+    ['actorId', 'previousParentId', 'parentId', 'childId'],
+    notificationEvent
+  )
 }
 
 export const createThreadNotificationEvent: CreateThreadNotificationEventPayload = {
