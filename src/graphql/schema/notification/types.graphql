@@ -6,18 +6,6 @@ interface AbstractNotificationEvent {
 
 # TODO: add unit test
 # TODO: add contract test
-type CreateTaxonomyAssociationNotificationEvent implements AbstractNotificationEvent {
-  id: Int!
-  instance: Instance!
-  date: DateTime!
-  actor: User!
-  taxonomyTerm: TaxonomyTerm!
-  # TODO: is this really an entity?
-  entity: AbstractEntity!
-}
-
-# TODO: add unit test
-# TODO: add contract test
 type CreateTaxonomyTermNotificationEvent implements AbstractNotificationEvent {
   id: Int!
   instance: Instance!

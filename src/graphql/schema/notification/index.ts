@@ -25,6 +25,7 @@ import { createCommentNotificationEventSchema } from './create-comment-notificat
 import { createEntityLinkNotificationSchema } from './create-entity-link-notification-event'
 import { createEntityNotificationEventSchema } from './create-entity-notification-event'
 import { createEntityRevisionNotificationEventSchema } from './create-entity-revision-notification-event'
+import { createTaxonomyLinkNotificationSchema } from './create-taxonomy-link-notification-event'
 import { createThreadNotificationEventSchema } from './create-thread-notification-event'
 import { rejectRevisionNotificationEventSchema } from './reject-revision-notification-event'
 import { removeEntityLinkNotificationSchema } from './remove-entity-link-notification-event'
@@ -38,6 +39,7 @@ export * from './create-comment-notification-event'
 export * from './create-entity-notification-event'
 export * from './create-entity-link-notification-event'
 export * from './create-entity-revision-notification-event'
+export * from './create-taxonomy-link-notification-event'
 export * from './create-thread-notification-event'
 export * from './reject-revision-notification-event'
 export * from './remove-entity-link-notification-event'
@@ -54,6 +56,7 @@ export const notificationSchema = Schema.merge(
   createEntityNotificationEventSchema,
   createEntityLinkNotificationSchema,
   createEntityRevisionNotificationEventSchema,
+  createTaxonomyLinkNotificationSchema,
   createThreadNotificationEventSchema,
   rejectRevisionNotificationEventSchema,
   removeEntityLinkNotificationSchema,

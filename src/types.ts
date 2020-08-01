@@ -207,6 +207,16 @@ export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & 
   entityRevision: AbstractEntityRevision;
 };
 
+export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'CreateTaxonomyLinkNotificationEvent';
+  id: Scalars['Int'];
+  instance: Instance;
+  date: Scalars['DateTime'];
+  actor: User;
+  parent: TaxonomyTerm;
+  child: AbstractTaxonomyTermChild;
+};
+
 export type CreateThreadNotificationEvent = AbstractNotificationEvent & {
   __typename?: 'CreateThreadNotificationEvent';
   id: Scalars['Int'];
@@ -261,16 +271,6 @@ export type AbstractNotificationEvent = {
   id: Scalars['Int'];
   instance: Instance;
   date: Scalars['DateTime'];
-};
-
-export type CreateTaxonomyAssociationNotificationEvent = AbstractNotificationEvent & {
-  __typename?: 'CreateTaxonomyAssociationNotificationEvent';
-  id: Scalars['Int'];
-  instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
-  taxonomyTerm: TaxonomyTerm;
-  entity: AbstractEntity;
 };
 
 export type CreateTaxonomyTermNotificationEvent = AbstractNotificationEvent & {

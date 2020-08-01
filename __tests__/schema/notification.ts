@@ -53,6 +53,10 @@ import {
   getSolutionDataWithoutSubResolvers,
   removeEntityLinkNotificationEvent,
   getRemoveEntityLinkNotificationEventDataWithoutSubResolvers,
+  createTaxonomyLinkNotificationEvent,
+  getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers,
+  taxonomyTermCurriculumTopic,
+  getTaxonomyTermDataWithoutSubResolvers,
 } from '../../__fixtures__'
 import { Service } from '../../src/graphql/schema/types'
 import {
@@ -899,6 +903,135 @@ describe('CreateEntityRevisionNotificationEvent', () => {
           entityRevision: getArticleRevisionDataWithoutSubResolvers(
             articleRevision
           ),
+        },
+      },
+      client,
+    })
+  })
+})
+
+describe('CreateTaxonomyLinkNotificationEvent', () => {
+  beforeEach(() => {
+    global.server.use(
+      createNotificationEventHandler(createTaxonomyLinkNotificationEvent)
+    )
+  })
+
+  test('by id', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            __typename
+            ... on CreateTaxonomyLinkNotificationEvent {
+              id
+              instance
+              date
+            }
+          }
+        }
+      `,
+      variables: createTaxonomyLinkNotificationEvent,
+      data: {
+        notificationEvent: getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers(
+          createTaxonomyLinkNotificationEvent
+        ),
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ actor)', async () => {
+    global.server.use(createUuidHandler(user))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on CreateTaxonomyLinkNotificationEvent {
+              actor {
+                __typename
+                id
+                trashed
+                username
+                date
+                lastLogin
+                description
+              }
+            }
+          }
+        }
+      `,
+      variables: createTaxonomyLinkNotificationEvent,
+      data: {
+        notificationEvent: {
+          actor: user,
+        },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ parent)', async () => {
+    global.server.use(createUuidHandler(taxonomyTermCurriculumTopic))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on CreateTaxonomyLinkNotificationEvent {
+              parent {
+                __typename
+                ... on TaxonomyTerm {
+                  id
+                  type
+                  trashed
+                  instance
+                  alias
+                  name
+                  description
+                  weight
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: createTaxonomyLinkNotificationEvent,
+      data: {
+        notificationEvent: {
+          parent: getTaxonomyTermDataWithoutSubResolvers(
+            taxonomyTermCurriculumTopic
+          ),
+        },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ child)', async () => {
+    global.server.use(createUuidHandler(article))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on CreateTaxonomyLinkNotificationEvent {
+              child {
+                __typename
+                ... on Article {
+                  id
+                  trashed
+                  instance
+                  alias
+                  date
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: createTaxonomyLinkNotificationEvent,
+      data: {
+        notificationEvent: {
+          child: getArticleDataWithoutSubResolvers(article),
         },
       },
       client,
