@@ -20,7 +20,8 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { requestsOnlyFields } from '../../utils'
-import { EntityPayload } from '../../uuid/abstract-entity'
+import { UuidPayload } from '../../uuid/abstract-uuid'
+import { TaxonomyTermPayload } from '../../uuid/taxonomy-term'
 import { UserPayload } from '../../uuid/user'
 import { CreateTaxonomyLinkNotificationEventResolvers } from './types'
 
@@ -34,12 +35,12 @@ export const resolvers: CreateTaxonomyLinkNotificationEventResolvers = {
       return dataSources.serlo.getUuid<UserPayload>(partialUser)
     },
     async parent(notificationEvent, _args, { dataSources }) {
-      return dataSources.serlo.getUuid<EntityPayload>({
+      return dataSources.serlo.getUuid<TaxonomyTermPayload>({
         id: notificationEvent.parentId,
       })
     },
     async child(notificationEvent, _args, { dataSources }) {
-      return dataSources.serlo.getUuid<EntityPayload>({
+      return dataSources.serlo.getUuid<UuidPayload>({
         id: notificationEvent.childId,
       })
     },

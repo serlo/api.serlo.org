@@ -19,38 +19,38 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { CreateTaxonomyLinkNotificationEvent } from '../../../../types'
+import { RemoveTaxonomyLinkNotificationEvent } from '../../../../types'
 import { Resolver } from '../../types'
 import { UuidPayload } from '../../uuid/abstract-uuid'
 import { TaxonomyTermPayload } from '../../uuid/taxonomy-term'
 import { UserPayload } from '../../uuid/user'
 import { NotificationEventType } from '../types'
 
-export interface CreateTaxonomyLinkNotificationEventPayload
+export interface RemoveTaxonomyLinkNotificationEventPayload
   extends Omit<
-    CreateTaxonomyLinkNotificationEvent,
-    keyof CreateTaxonomyLinkNotificationEventResolvers['CreateTaxonomyLinkNotificationEvent']
+    RemoveTaxonomyLinkNotificationEvent,
+    keyof RemoveTaxonomyLinkNotificationEventResolvers['RemoveTaxonomyLinkNotificationEvent']
   > {
-  __typename: NotificationEventType.CreateTaxonomyLink
+  __typename: NotificationEventType.RemoveTaxonomyLink
   actorId: number
   parentId: number
   childId: number
 }
 
-export interface CreateTaxonomyLinkNotificationEventResolvers {
-  CreateTaxonomyLinkNotificationEvent: {
+export interface RemoveTaxonomyLinkNotificationEventResolvers {
+  RemoveTaxonomyLinkNotificationEvent: {
     actor: Resolver<
-      CreateTaxonomyLinkNotificationEventPayload,
+      RemoveTaxonomyLinkNotificationEventPayload,
       never,
       Partial<UserPayload>
     >
     parent: Resolver<
-      CreateTaxonomyLinkNotificationEventPayload,
+      RemoveTaxonomyLinkNotificationEventPayload,
       never,
       TaxonomyTermPayload
     >
     child: Resolver<
-      CreateTaxonomyLinkNotificationEventPayload,
+      RemoveTaxonomyLinkNotificationEventPayload,
       never,
       UuidPayload
     >

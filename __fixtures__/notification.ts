@@ -32,6 +32,7 @@ import {
   NotificationEventType,
   RejectRevisionNotificationEventPayload,
   RemoveEntityLinkNotificationEventPayload,
+  RemoveTaxonomyLinkNotificationEventPayload,
   SetLicenseNotificationEventPayload,
   SetThreadStateNotificationEventPayload,
 } from '../src/graphql/schema'
@@ -172,6 +173,22 @@ export const createTaxonomyLinkNotificationEvent: CreateTaxonomyLinkNotification
 
 export function getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers(
   notificationEvent: CreateTaxonomyLinkNotificationEventPayload
+) {
+  return R.omit(['actorId', 'parentId', 'childId'], notificationEvent)
+}
+
+export const removeTaxonomyLinkNotificationEvent: RemoveTaxonomyLinkNotificationEventPayload = {
+  __typename: NotificationEventType.RemoveTaxonomyLink,
+  id: 48077,
+  instance: Instance.De,
+  date: '2014-03-01T20:45:56Z',
+  actorId: user.id,
+  parentId: taxonomyTermCurriculumTopic.id,
+  childId: article.id,
+}
+
+export function getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers(
+  notificationEvent: RemoveTaxonomyLinkNotificationEventPayload
 ) {
   return R.omit(['actorId', 'parentId', 'childId'], notificationEvent)
 }
