@@ -25,4 +25,6 @@ import typeDefs from './types.graphql'
 
 export * from './types'
 
-export const createEntityNotificationSchema = new Schema(resolvers, [typeDefs])
+export const createEntityNotificationEventSchema = new Schema(resolvers, [
+  typeDefs,
+])
