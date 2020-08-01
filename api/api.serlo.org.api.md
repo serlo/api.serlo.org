@@ -623,14 +623,14 @@ export type RejectRevisionNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type RemoveLinkNotificationEvent = AbstractNotificationEvent & {
-    __typename?: 'RemoveLinkNotificationEvent';
+export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & {
+    __typename?: 'RemoveEntityLinkNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
     date: Scalars['DateTime'];
     actor: User;
-    parent: AbstractUuid;
-    entity: AbstractEntity;
+    parent: AbstractEntity;
+    child: AbstractEntity;
 };
 
 // @public (undocumented)

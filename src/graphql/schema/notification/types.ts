@@ -31,6 +31,7 @@ import { CreateEntityNotificationEventPayload } from './create-entity-notificati
 import { CreateEntityRevisionNotificationEventPayload } from './create-entity-revision-notification-event'
 import { CreateThreadNotificationEventPayload } from './create-thread-notification-event'
 import { RejectRevisionNotificationEventPayload } from './reject-revision-notification-event'
+import { RemoveEntityLinkNotificationEventPayload } from './remove-entity-link-notification-event'
 import { SetLicenseNotificationEventPayload } from './set-license-notification-event'
 import { SetThreadStateNotificationEventPayload } from './set-thread-state-notification-event'
 
@@ -42,6 +43,7 @@ export enum NotificationEventType {
   CreateEntityLink = 'CreateEntityLinkNotificationEvent',
   CreateThread = 'CreateThreadNotificationEvent',
   RejectRevision = 'RejectRevisionNotificationEvent',
+  RemoveEntityLink = 'RemoveEntityLinkNotificationEvent',
   SetLicense = 'SetLicenseNotificationEvent',
   SetThreadState = 'SetThreadStateNotificationEvent',
 }
@@ -54,6 +56,7 @@ export type NotificationEventPayload =
   | CreateEntityRevisionNotificationEventPayload
   | CreateThreadNotificationEventPayload
   | RejectRevisionNotificationEventPayload
+  | RemoveEntityLinkNotificationEventPayload
   | SetLicenseNotificationEventPayload
   | SetThreadStateNotificationEventPayload
 export interface AbstractNotificationEventPayload
