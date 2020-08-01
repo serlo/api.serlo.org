@@ -684,7 +684,7 @@ export type SetTaxonomyTermNotificationEvent = AbstractNotificationEvent & {
     id: Scalars['Int'];
     instance: Instance;
     date: Scalars['DateTime'];
-    actor: User;
+    author: User;
     taxonomyTerm: TaxonomyTerm;
 };
 
