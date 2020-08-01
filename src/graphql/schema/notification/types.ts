@@ -29,6 +29,7 @@ import { CreateCommentNotificationEventPayload } from './create-comment-notifica
 import { CreateEntityLinkNotificationEventPayload } from './create-entity-link-notification-event'
 import { CreateEntityNotificationEventPayload } from './create-entity-notification-event'
 import { CreateEntityRevisionNotificationEventPayload } from './create-entity-revision-notification-event'
+import { CreateTaxonomyLinkNotificationEventPayload } from './create-taxonomy-link-notification-event'
 import { CreateThreadNotificationEventPayload } from './create-thread-notification-event'
 import { RejectRevisionNotificationEventPayload } from './reject-revision-notification-event'
 import { RemoveEntityLinkNotificationEventPayload } from './remove-entity-link-notification-event'
@@ -41,6 +42,7 @@ export enum NotificationEventType {
   CreateEntity = 'CreateEntityNotificationEvent',
   CreateEntityRevision = 'CreateEntityRevisionNotificationEvent',
   CreateEntityLink = 'CreateEntityLinkNotificationEvent',
+  CreateTaxonomyLink = 'CreateTaxonomyLinkNotificationEvent',
   CreateThread = 'CreateThreadNotificationEvent',
   RejectRevision = 'RejectRevisionNotificationEvent',
   RemoveEntityLink = 'RemoveEntityLinkNotificationEvent',
@@ -50,13 +52,14 @@ export enum NotificationEventType {
 
 export type NotificationEventPayload =
   | CheckoutRevisionNotificationEventPayload
-  | CreateCommentNotificationEventPayload
+  | RejectRevisionNotificationEventPayload
   | CreateEntityNotificationEventPayload
   | CreateEntityLinkNotificationEventPayload
-  | CreateEntityRevisionNotificationEventPayload
-  | CreateThreadNotificationEventPayload
-  | RejectRevisionNotificationEventPayload
   | RemoveEntityLinkNotificationEventPayload
+  | CreateEntityRevisionNotificationEventPayload
+  | CreateTaxonomyLinkNotificationEventPayload
+  | CreateThreadNotificationEventPayload
+  | CreateCommentNotificationEventPayload
   | SetLicenseNotificationEventPayload
   | SetThreadStateNotificationEventPayload
 export interface AbstractNotificationEventPayload

@@ -28,12 +28,14 @@ import {
   createEntityLinkNotificationEvent,
   createEntityNotificationEvent,
   createEntityRevisionNotificationEvent,
+  createTaxonomyLinkNotificationEvent,
   createThreadNotificationEvent,
   getCheckoutRevisionNotificationEventDataWithoutSubResolvers,
   getCreateCommentNotificationEventDataWithoutSubResolvers,
   getCreateEntityLinkNotificationEventDataWithoutSubResolvers,
   getCreateEntityNotificationEventDataWithoutSubResolvers,
   getCreateEntityRevisionNotificationEventDataWithoutSubResolvers,
+  getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers,
   getCreateThreadNotificationEventDataWithoutSubResolvers,
   getRejectRevisionNotificationEventDataWithoutSubResolvers,
   getRemoveEntityLinkNotificationEventDataWithoutSubResolvers,
@@ -286,6 +288,38 @@ test('CreateEntityRevisionNotificationEvent', async () => {
     data: {
       notificationEvent: getCreateEntityRevisionNotificationEventDataWithoutSubResolvers(
         createEntityRevisionNotificationEvent
+      ),
+    },
+  })
+})
+
+test('CreateTaxonomyLinkNotificationEvent', async () => {
+  await addNotificationEventInteraction({
+    __typename: createTaxonomyLinkNotificationEvent.__typename,
+    id: createTaxonomyLinkNotificationEvent.id,
+    instance: Matchers.string(createTaxonomyLinkNotificationEvent.instance),
+    date: Matchers.iso8601DateTime(createTaxonomyLinkNotificationEvent.date),
+    actorId: Matchers.integer(createTaxonomyLinkNotificationEvent.actorId),
+    parentId: Matchers.integer(createTaxonomyLinkNotificationEvent.parentId),
+    childId: Matchers.integer(createTaxonomyLinkNotificationEvent.childId),
+  })
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query notificationEvent($id: Int!) {
+        notificationEvent(id: $id) {
+          __typename
+          ... on CreateTaxonomyLinkNotificationEvent {
+            id
+            instance
+            date
+          }
+        }
+      }
+    `,
+    variables: createTaxonomyLinkNotificationEvent,
+    data: {
+      notificationEvent: getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers(
+        createTaxonomyLinkNotificationEvent
       ),
     },
   })

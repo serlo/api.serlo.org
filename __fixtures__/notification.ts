@@ -27,6 +27,7 @@ import {
   CreateEntityLinkNotificationEventPayload,
   CreateEntityNotificationEventPayload,
   CreateEntityRevisionNotificationEventPayload,
+  CreateTaxonomyLinkNotificationEventPayload,
   CreateThreadNotificationEventPayload,
   NotificationEventType,
   RejectRevisionNotificationEventPayload,
@@ -41,6 +42,7 @@ import {
   comment,
   exercise,
   solution,
+  taxonomyTermCurriculumTopic,
   thread,
   user,
 } from './uuid'
@@ -156,6 +158,22 @@ export function getCreateEntityRevisionNotificationEventDataWithoutSubResolvers(
   notificationEvent: CreateEntityRevisionNotificationEventPayload
 ) {
   return R.omit(['authorId', 'entityId', 'entityRevisionId'], notificationEvent)
+}
+
+export const createTaxonomyLinkNotificationEvent: CreateTaxonomyLinkNotificationEventPayload = {
+  __typename: NotificationEventType.CreateTaxonomyLink,
+  id: 674,
+  instance: Instance.De,
+  date: '2014-03-01T20:45:56Z',
+  actorId: user.id,
+  parentId: taxonomyTermCurriculumTopic.id,
+  childId: article.id,
+}
+
+export function getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers(
+  notificationEvent: CreateTaxonomyLinkNotificationEventPayload
+) {
+  return R.omit(['actorId', 'parentId', 'childId'], notificationEvent)
 }
 
 export const createThreadNotificationEvent: CreateThreadNotificationEventPayload = {

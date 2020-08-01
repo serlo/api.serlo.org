@@ -1,0 +1,10 @@
+# TODO: add unit test
+# TODO: add contract test
+type CreateTaxonomyLinkNotificationEvent implements AbstractNotificationEvent {
+  id: Int!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  parent: TaxonomyTerm!
+  child: AbstractTaxonomyTermChild!
+}

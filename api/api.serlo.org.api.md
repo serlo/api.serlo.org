@@ -271,14 +271,14 @@ export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & 
 };
 
 // @public (undocumented)
-export type CreateTaxonomyAssociationNotificationEvent = AbstractNotificationEvent & {
-    __typename?: 'CreateTaxonomyAssociationNotificationEvent';
+export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & {
+    __typename?: 'CreateTaxonomyLinkNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
     date: Scalars['DateTime'];
     actor: User;
-    taxonomyTerm: TaxonomyTerm;
-    entity: AbstractEntity;
+    parent: TaxonomyTerm;
+    child: AbstractTaxonomyTermChild;
 };
 
 // @public (undocumented)
