@@ -36,9 +36,11 @@ import {
   getCreateEntityRevisionNotificationEventDataWithoutSubResolvers,
   getCreateThreadNotificationEventDataWithoutSubResolvers,
   getRejectRevisionNotificationEventDataWithoutSubResolvers,
+  getRemoveEntityLinkNotificationEventDataWithoutSubResolvers,
   getSetLicenseNotificationEventDataWithoutSubResolvers,
   getSetThreadStateNotificationEventDataWithoutSubResolvers,
   rejectRevisionNotificationEvent,
+  removeEntityLinkNotificationEvent,
   setLicenseNotificationEvent,
   setThreadStateNotificationEvent,
 } from '../../__fixtures__'
@@ -218,6 +220,38 @@ test('CreateEntityLinkNotificationEvent', async () => {
     data: {
       notificationEvent: getCreateEntityLinkNotificationEventDataWithoutSubResolvers(
         createEntityLinkNotificationEvent
+      ),
+    },
+  })
+})
+
+test('RemoveEntityLinkNotificationEvent', async () => {
+  await addNotificationEventInteraction({
+    __typename: removeEntityLinkNotificationEvent.__typename,
+    id: removeEntityLinkNotificationEvent.id,
+    instance: Matchers.string(removeEntityLinkNotificationEvent.instance),
+    date: Matchers.iso8601DateTime(removeEntityLinkNotificationEvent.date),
+    actorId: Matchers.integer(removeEntityLinkNotificationEvent.actorId),
+    parentId: Matchers.integer(removeEntityLinkNotificationEvent.parentId),
+    childId: Matchers.integer(removeEntityLinkNotificationEvent.childId),
+  })
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query notificationEvent($id: Int!) {
+        notificationEvent(id: $id) {
+          __typename
+          ... on RemoveEntityLinkNotificationEvent {
+            id
+            instance
+            date
+          }
+        }
+      }
+    `,
+    variables: removeEntityLinkNotificationEvent,
+    data: {
+      notificationEvent: getRemoveEntityLinkNotificationEventDataWithoutSubResolvers(
+        removeEntityLinkNotificationEvent
       ),
     },
   })

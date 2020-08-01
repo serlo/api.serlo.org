@@ -51,6 +51,8 @@ import {
   getExerciseDataWithoutSubResolvers,
   solution,
   getSolutionDataWithoutSubResolvers,
+  removeEntityLinkNotificationEvent,
+  getRemoveEntityLinkNotificationEventDataWithoutSubResolvers,
 } from '../../__fixtures__'
 import { Service } from '../../src/graphql/schema/types'
 import {
@@ -641,6 +643,130 @@ describe('CreateEntityLinkNotificationEvent', () => {
         }
       `,
       variables: createEntityLinkNotificationEvent,
+      data: {
+        notificationEvent: {
+          child: getSolutionDataWithoutSubResolvers(solution),
+        },
+      },
+      client,
+    })
+  })
+})
+
+describe('RemoveEntityLinkNotificationEvent', () => {
+  beforeEach(() => {
+    global.server.use(
+      createNotificationEventHandler(removeEntityLinkNotificationEvent)
+    )
+  })
+
+  test('by id', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            __typename
+            ... on RemoveEntityLinkNotificationEvent {
+              id
+              instance
+              date
+            }
+          }
+        }
+      `,
+      variables: removeEntityLinkNotificationEvent,
+      data: {
+        notificationEvent: getRemoveEntityLinkNotificationEventDataWithoutSubResolvers(
+          removeEntityLinkNotificationEvent
+        ),
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ actor)', async () => {
+    global.server.use(createUuidHandler(user))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on RemoveEntityLinkNotificationEvent {
+              actor {
+                __typename
+                id
+                trashed
+                username
+                date
+                lastLogin
+                description
+              }
+            }
+          }
+        }
+      `,
+      variables: removeEntityLinkNotificationEvent,
+      data: {
+        notificationEvent: {
+          actor: user,
+        },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ parent)', async () => {
+    global.server.use(createUuidHandler(exercise))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on RemoveEntityLinkNotificationEvent {
+              parent {
+                __typename
+                ... on Exercise {
+                  id
+                  trashed
+                  alias
+                  instance
+                  date
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: removeEntityLinkNotificationEvent,
+      data: {
+        notificationEvent: {
+          parent: getExerciseDataWithoutSubResolvers(exercise),
+        },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ child)', async () => {
+    global.server.use(createUuidHandler(solution))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on RemoveEntityLinkNotificationEvent {
+              child {
+                __typename
+                ... on Solution {
+                  id
+                  trashed
+                  instance
+                  alias
+                  date
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: removeEntityLinkNotificationEvent,
       data: {
         notificationEvent: {
           child: getSolutionDataWithoutSubResolvers(solution),

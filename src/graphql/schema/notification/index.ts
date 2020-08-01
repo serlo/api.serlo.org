@@ -27,6 +27,7 @@ import { createEntityNotificationEventSchema } from './create-entity-notificatio
 import { createEntityRevisionNotificationEventSchema } from './create-entity-revision-notification-event'
 import { createThreadNotificationEventSchema } from './create-thread-notification-event'
 import { rejectRevisionNotificationEventSchema } from './reject-revision-notification-event'
+import { removeEntityLinkNotificationSchema } from './remove-entity-link-notification-event'
 import { resolvers } from './resolvers'
 import { setLicenseNotificationEventSchema } from './set-license-notification-event'
 import { setThreadStateNotificationEventSchema } from './set-thread-state-notification-event'
@@ -39,6 +40,7 @@ export * from './create-entity-link-notification-event'
 export * from './create-entity-revision-notification-event'
 export * from './create-thread-notification-event'
 export * from './reject-revision-notification-event'
+export * from './remove-entity-link-notification-event'
 export * from './set-license-notification-event'
 export * from './set-thread-state-notification-event'
 export * from './types'
@@ -54,6 +56,7 @@ export const notificationSchema = Schema.merge(
   createEntityRevisionNotificationEventSchema,
   createThreadNotificationEventSchema,
   rejectRevisionNotificationEventSchema,
+  removeEntityLinkNotificationSchema,
   setLicenseNotificationEventSchema,
   setThreadStateNotificationEventSchema
 )

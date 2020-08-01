@@ -228,6 +228,16 @@ export type RejectRevisionNotificationEvent = AbstractNotificationEvent & {
   reason: Scalars['String'];
 };
 
+export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'RemoveEntityLinkNotificationEvent';
+  id: Scalars['Int'];
+  instance: Instance;
+  date: Scalars['DateTime'];
+  actor: User;
+  parent: AbstractEntity;
+  child: AbstractEntity;
+};
+
 export type SetLicenseNotificationEvent = AbstractNotificationEvent & {
   __typename?: 'SetLicenseNotificationEvent';
   id: Scalars['Int'];
@@ -251,16 +261,6 @@ export type AbstractNotificationEvent = {
   id: Scalars['Int'];
   instance: Instance;
   date: Scalars['DateTime'];
-};
-
-export type RemoveLinkNotificationEvent = AbstractNotificationEvent & {
-  __typename?: 'RemoveLinkNotificationEvent';
-  id: Scalars['Int'];
-  instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
-  parent: AbstractUuid;
-  entity: AbstractEntity;
 };
 
 export type CreateTaxonomyAssociationNotificationEvent = AbstractNotificationEvent & {

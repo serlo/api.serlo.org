@@ -6,19 +6,6 @@ interface AbstractNotificationEvent {
 
 # TODO: add unit test
 # TODO: add contract test
-type RemoveLinkNotificationEvent implements AbstractNotificationEvent {
-  id: Int!
-  instance: Instance!
-  date: DateTime!
-  actor: User!
-  # TODO: an interface here would be helpful since this probably can be taxonomy term or entity
-  parent: AbstractUuid!
-  # TODO: is this really an entity?
-  entity: AbstractEntity!
-}
-
-# TODO: add unit test
-# TODO: add contract test
 type CreateTaxonomyAssociationNotificationEvent implements AbstractNotificationEvent {
   id: Int!
   instance: Instance!

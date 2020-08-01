@@ -30,6 +30,7 @@ import {
   CreateThreadNotificationEventPayload,
   NotificationEventType,
   RejectRevisionNotificationEventPayload,
+  RemoveEntityLinkNotificationEventPayload,
   SetLicenseNotificationEventPayload,
   SetThreadStateNotificationEventPayload,
 } from '../src/graphql/schema'
@@ -121,6 +122,22 @@ export const createEntityLinkNotificationEvent: CreateEntityLinkNotificationEven
 
 export function getCreateEntityLinkNotificationEventDataWithoutSubResolvers(
   notificationEvent: CreateEntityLinkNotificationEventPayload
+) {
+  return R.omit(['actorId', 'parentId', 'childId'], notificationEvent)
+}
+
+export const removeEntityLinkNotificationEvent: RemoveEntityLinkNotificationEventPayload = {
+  __typename: NotificationEventType.RemoveEntityLink,
+  id: 55273,
+  instance: Instance.De,
+  date: '2014-03-01T20:45:56Z',
+  actorId: user.id,
+  parentId: exercise.id,
+  childId: solution.id,
+}
+
+export function getRemoveEntityLinkNotificationEventDataWithoutSubResolvers(
+  notificationEvent: RemoveEntityLinkNotificationEventPayload
 ) {
   return R.omit(['actorId', 'parentId', 'childId'], notificationEvent)
 }
