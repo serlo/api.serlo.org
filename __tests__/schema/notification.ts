@@ -59,6 +59,8 @@ import {
   getTaxonomyTermDataWithoutSubResolvers,
   removeTaxonomyLinkNotificationEvent,
   getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers,
+  createTaxonomyTermNotificationEvent,
+  getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers,
 } from '../../__fixtures__'
 import { Service } from '../../src/graphql/schema/types'
 import {
@@ -904,6 +906,102 @@ describe('CreateEntityRevisionNotificationEvent', () => {
         notificationEvent: {
           entityRevision: getArticleRevisionDataWithoutSubResolvers(
             articleRevision
+          ),
+        },
+      },
+      client,
+    })
+  })
+})
+
+describe('CreateTaxonomyTermNotificationEvent', () => {
+  beforeEach(() => {
+    global.server.use(
+      createNotificationEventHandler(createTaxonomyTermNotificationEvent)
+    )
+  })
+
+  test('by id', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            __typename
+            ... on CreateTaxonomyTermNotificationEvent {
+              id
+              instance
+              date
+            }
+          }
+        }
+      `,
+      variables: createTaxonomyTermNotificationEvent,
+      data: {
+        notificationEvent: getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers(
+          createTaxonomyTermNotificationEvent
+        ),
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ author)', async () => {
+    global.server.use(createUuidHandler(user))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on CreateTaxonomyTermNotificationEvent {
+              author {
+                __typename
+                id
+                trashed
+                username
+                date
+                lastLogin
+                description
+              }
+            }
+          }
+        }
+      `,
+      variables: createTaxonomyTermNotificationEvent,
+      data: {
+        notificationEvent: {
+          author: user,
+        },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ taxonomyTerm)', async () => {
+    global.server.use(createUuidHandler(taxonomyTermCurriculumTopic))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            ... on CreateTaxonomyTermNotificationEvent {
+              taxonomyTerm {
+                __typename
+                id
+                type
+                trashed
+                instance
+                alias
+                name
+                description
+                weight
+              }
+            }
+          }
+        }
+      `,
+      variables: createTaxonomyTermNotificationEvent,
+      data: {
+        notificationEvent: {
+          taxonomyTerm: getTaxonomyTermDataWithoutSubResolvers(
+            taxonomyTermCurriculumTopic
           ),
         },
       },

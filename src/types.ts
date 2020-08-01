@@ -217,6 +217,15 @@ export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & {
   child: AbstractUuid;
 };
 
+export type CreateTaxonomyTermNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'CreateTaxonomyTermNotificationEvent';
+  id: Scalars['Int'];
+  instance: Instance;
+  date: Scalars['DateTime'];
+  author: User;
+  taxonomyTerm: TaxonomyTerm;
+};
+
 export type CreateThreadNotificationEvent = AbstractNotificationEvent & {
   __typename?: 'CreateThreadNotificationEvent';
   id: Scalars['Int'];
@@ -281,15 +290,6 @@ export type AbstractNotificationEvent = {
   id: Scalars['Int'];
   instance: Instance;
   date: Scalars['DateTime'];
-};
-
-export type CreateTaxonomyTermNotificationEvent = AbstractNotificationEvent & {
-  __typename?: 'CreateTaxonomyTermNotificationEvent';
-  id: Scalars['Int'];
-  instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
-  taxonomyTerm: TaxonomyTerm;
 };
 
 export type SetTaxonomyTermNotificationEvent = AbstractNotificationEvent & {
