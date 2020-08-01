@@ -24,6 +24,7 @@ import * as R from 'ramda'
 import {
   CheckoutRevisionNotificationEventPayload,
   CreateCommentNotificationEventPayload,
+  CreateEntityLinkNotificationEventPayload,
   CreateEntityNotificationEventPayload,
   CreateEntityRevisionNotificationEventPayload,
   CreateThreadNotificationEventPayload,
@@ -33,7 +34,15 @@ import {
   SetThreadStateNotificationEventPayload,
 } from '../src/graphql/schema'
 import { Instance } from '../src/types'
-import { article, articleRevision, comment, thread, user } from './uuid'
+import {
+  article,
+  articleRevision,
+  comment,
+  exercise,
+  solution,
+  thread,
+  user,
+} from './uuid'
 
 export const checkoutRevisionNotificationEvent: CheckoutRevisionNotificationEventPayload = {
   __typename: NotificationEventType.CheckoutRevision,
@@ -98,6 +107,22 @@ export function getCreateEntityNotificationEventDataWithoutSubResolvers(
   notificationEvent: CreateEntityNotificationEventPayload
 ) {
   return R.omit(['authorId', 'entityId'], notificationEvent)
+}
+
+export const createEntityLinkNotificationEvent: CreateEntityLinkNotificationEventPayload = {
+  __typename: NotificationEventType.CreateEntityLink,
+  id: 2115,
+  instance: Instance.De,
+  date: '2014-03-01T20:45:56Z',
+  actorId: user.id,
+  parentId: exercise.id,
+  childId: solution.id,
+}
+
+export function getCreateEntityLinkNotificationEventDataWithoutSubResolvers(
+  notificationEvent: CreateEntityLinkNotificationEventPayload
+) {
+  return R.omit(['actorId', 'parentId', 'childId'], notificationEvent)
 }
 
 export const createEntityRevisionNotificationEvent: CreateEntityRevisionNotificationEventPayload = {

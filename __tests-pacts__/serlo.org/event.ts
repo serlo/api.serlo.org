@@ -25,11 +25,13 @@ import { gql } from 'apollo-server'
 import {
   checkoutRevisionNotificationEvent,
   createCommentNotificationEvent,
+  createEntityLinkNotificationEvent,
   createEntityNotificationEvent,
   createEntityRevisionNotificationEvent,
   createThreadNotificationEvent,
   getCheckoutRevisionNotificationEventDataWithoutSubResolvers,
   getCreateCommentNotificationEventDataWithoutSubResolvers,
+  getCreateEntityLinkNotificationEventDataWithoutSubResolvers,
   getCreateEntityNotificationEventDataWithoutSubResolvers,
   getCreateEntityRevisionNotificationEventDataWithoutSubResolvers,
   getCreateThreadNotificationEventDataWithoutSubResolvers,
@@ -184,6 +186,38 @@ test('CreateEntityNotificationEvent', async () => {
     data: {
       notificationEvent: getCreateEntityNotificationEventDataWithoutSubResolvers(
         createEntityNotificationEvent
+      ),
+    },
+  })
+})
+
+test('CreateEntityLinkNotificationEvent', async () => {
+  await addNotificationEventInteraction({
+    __typename: createEntityLinkNotificationEvent.__typename,
+    id: createEntityLinkNotificationEvent.id,
+    instance: Matchers.string(createEntityLinkNotificationEvent.instance),
+    date: Matchers.iso8601DateTime(createEntityLinkNotificationEvent.date),
+    actorId: Matchers.integer(createEntityLinkNotificationEvent.actorId),
+    parentId: Matchers.integer(createEntityLinkNotificationEvent.parentId),
+    childId: Matchers.integer(createEntityLinkNotificationEvent.childId),
+  })
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query notificationEvent($id: Int!) {
+        notificationEvent(id: $id) {
+          __typename
+          ... on CreateEntityLinkNotificationEvent {
+            id
+            instance
+            date
+          }
+        }
+      }
+    `,
+    variables: createEntityLinkNotificationEvent,
+    data: {
+      notificationEvent: getCreateEntityLinkNotificationEventDataWithoutSubResolvers(
+        createEntityLinkNotificationEvent
       ),
     },
   })

@@ -239,6 +239,17 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
+export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & {
+    __typename?: 'CreateEntityLinkNotificationEvent';
+    id: Scalars['Int'];
+    instance: Instance;
+    date: Scalars['DateTime'];
+    actor: User;
+    parent: AbstractEntity;
+    child: AbstractEntity;
+};
+
+// @public (undocumented)
 export type CreateEntityNotificationEvent = AbstractNotificationEvent & {
     __typename?: 'CreateEntityNotificationEvent';
     id: Scalars['Int'];
@@ -257,17 +268,6 @@ export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & 
     author: User;
     entity: AbstractEntity;
     entityRevision: AbstractEntityRevision;
-};
-
-// @public (undocumented)
-export type CreateLinkNotificationEvent = AbstractNotificationEvent & {
-    __typename?: 'CreateLinkNotificationEvent';
-    id: Scalars['Int'];
-    instance: Instance;
-    date: Scalars['DateTime'];
-    actor: User;
-    parent: AbstractUuid;
-    entity: AbstractEntity;
 };
 
 // @public (undocumented)
