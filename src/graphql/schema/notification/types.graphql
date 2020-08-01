@@ -4,17 +4,6 @@ interface AbstractNotificationEvent {
   date: DateTime!
 }
 
-# TODO: add unit test
-# TODO: add contract test
-type SetUuidStateNotificationEvent implements AbstractNotificationEvent {
-  id: Int!
-  instance: Instance!
-  date: DateTime!
-  actor: User!
-  object: AbstractUuid!
-  trashed: Boolean!
-}
-
 extend type Query {
   notificationEvent(id: Int!): AbstractNotificationEvent
 }

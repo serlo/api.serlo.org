@@ -36,6 +36,7 @@ import { setLicenseNotificationEventSchema } from './set-license-notification-ev
 import { setTaxonomyParentNotificationSchema } from './set-taxonomy-parent-notification-event'
 import { setTaxonomyTermNotificationEventSchema } from './set-taxonomy-term-notification-event'
 import { setThreadStateNotificationEventSchema } from './set-thread-state-notification-event'
+import { setUuidStateNotificationEventSchema } from './set-uuid-state-notification-event'
 import typeDefs from './types.graphql'
 
 export * from './checkout-revision-notification-event'
@@ -53,6 +54,7 @@ export * from './set-license-notification-event'
 export * from './set-taxonomy-parent-notification-event'
 export * from './set-taxonomy-term-notification-event'
 export * from './set-thread-state-notification-event'
+export * from './set-uuid-state-notification-event'
 export * from './types'
 
 const baseSchema = new Schema(resolvers, [typeDefs])
@@ -73,5 +75,6 @@ export const notificationSchema = Schema.merge(
   setLicenseNotificationEventSchema,
   setTaxonomyParentNotificationSchema,
   setTaxonomyTermNotificationEventSchema,
-  setThreadStateNotificationEventSchema
+  setThreadStateNotificationEventSchema,
+  setUuidStateNotificationEventSchema
 )

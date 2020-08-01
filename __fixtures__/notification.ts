@@ -38,6 +38,7 @@ import {
   SetTaxonomyParentNotificationEventPayload,
   SetTaxonomyTermNotificationEventPayload,
   SetThreadStateNotificationEventPayload,
+  SetUuidStateNotificationEventPayload,
 } from '../src/graphql/schema'
 import { Instance } from '../src/types'
 import {
@@ -293,4 +294,20 @@ export function getSetThreadStateNotificationEventDataWithoutSubResolvers(
   notificationEvent: SetThreadStateNotificationEventPayload
 ) {
   return R.omit(['actorId', 'threadId'], notificationEvent)
+}
+
+export const setUuidStateNotificationEvent: SetUuidStateNotificationEventPayload = {
+  __typename: NotificationEventType.SetUuidState,
+  id: 40750,
+  instance: Instance.De,
+  date: '2014-03-01T20:45:56Z',
+  actorId: user.id,
+  objectId: article.id,
+  trashed: true,
+}
+
+export function getSetUuidStateNotificationEventDataWithoutSubResolvers(
+  notificationEvent: SetUuidStateNotificationEventPayload
+) {
+  return R.omit(['actorId', 'objectId'], notificationEvent)
 }

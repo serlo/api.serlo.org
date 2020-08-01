@@ -46,6 +46,7 @@ import {
   getSetTaxonomyParentNotificationEventDataWithoutSubResolvers,
   getSetTaxonomyTermNotificationEventDataWithoutSubResolvers,
   getSetThreadStateNotificationEventDataWithoutSubResolvers,
+  getSetUuidStateNotificationEventDataWithoutSubResolvers,
   rejectRevisionNotificationEvent,
   removeEntityLinkNotificationEvent,
   removeTaxonomyLinkNotificationEvent,
@@ -53,6 +54,7 @@ import {
   setTaxonomyParentNotificationEvent,
   setTaxonomyTermNotificationEvent,
   setThreadStateNotificationEvent,
+  setUuidStateNotificationEvent,
 } from '../../__fixtures__'
 import { AbstractNotificationEventPayload } from '../../src/graphql/schema/notification'
 import { addJsonInteraction, assertSuccessfulGraphQLQuery } from '../__utils__'
@@ -561,6 +563,39 @@ test('SetThreadStateNotificationEvent', async () => {
     data: {
       notificationEvent: getSetThreadStateNotificationEventDataWithoutSubResolvers(
         setThreadStateNotificationEvent
+      ),
+    },
+  })
+})
+
+test('SetUuidStateNotificationEvent', async () => {
+  await addNotificationEventInteraction({
+    __typename: setUuidStateNotificationEvent.__typename,
+    id: setUuidStateNotificationEvent.id,
+    instance: Matchers.string(setUuidStateNotificationEvent.instance),
+    date: Matchers.iso8601DateTime(setUuidStateNotificationEvent.date),
+    actorId: Matchers.integer(setUuidStateNotificationEvent.actorId),
+    objectId: Matchers.integer(setUuidStateNotificationEvent.objectId),
+    trashed: Matchers.boolean(setUuidStateNotificationEvent.trashed),
+  })
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query notificationEvent($id: Int!) {
+        notificationEvent(id: $id) {
+          __typename
+          ... on SetUuidStateNotificationEvent {
+            id
+            instance
+            date
+            trashed
+          }
+        }
+      }
+    `,
+    variables: setUuidStateNotificationEvent,
+    data: {
+      notificationEvent: getSetUuidStateNotificationEventDataWithoutSubResolvers(
+        setUuidStateNotificationEvent
       ),
     },
   })

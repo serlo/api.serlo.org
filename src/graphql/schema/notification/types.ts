@@ -39,6 +39,7 @@ import { SetLicenseNotificationEventPayload } from './set-license-notification-e
 import { SetTaxonomyParentNotificationEventPayload } from './set-taxonomy-parent-notification-event'
 import { SetTaxonomyTermNotificationEventPayload } from './set-taxonomy-term-notification-event'
 import { SetThreadStateNotificationEventPayload } from './set-thread-state-notification-event'
+import { SetUuidStateNotificationEventPayload } from './set-uuid-state-notification-event'
 
 export enum NotificationEventType {
   CheckoutRevision = 'CheckoutRevisionNotificationEvent',
@@ -56,6 +57,7 @@ export enum NotificationEventType {
   SetTaxonomyTerm = 'SetTaxonomyTermNotificationEvent',
   SetTaxonomyParent = 'SetTaxonomyParentNotificationEvent',
   SetThreadState = 'SetThreadStateNotificationEvent',
+  SetUuidState = 'SetUuidStateNotificationEvent',
 }
 
 export type NotificationEventPayload =
@@ -74,6 +76,7 @@ export type NotificationEventPayload =
   | SetTaxonomyParentNotificationEventPayload
   | SetTaxonomyTermNotificationEventPayload
   | SetThreadStateNotificationEventPayload
+  | SetUuidStateNotificationEventPayload
 export interface AbstractNotificationEventPayload
   extends AbstractNotificationEvent {
   __typename: NotificationEventType
