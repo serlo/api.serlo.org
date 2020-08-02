@@ -432,33 +432,6 @@ export enum Instance {
 }
 
 // @public (undocumented)
-export type LegacyNotification = {
-    __typename?: 'LegacyNotification';
-    id: Scalars['Int'];
-    unread: Scalars['Boolean'];
-    event: LegacyNotificationEvent;
-};
-
-// @public (undocumented)
-export type LegacyNotificationCursor = {
-    __typename?: 'LegacyNotificationCursor';
-    cursor: Scalars['String'];
-    node: LegacyNotification;
-};
-
-// @public (undocumented)
-export type LegacyNotificationEvent = {
-    __typename?: 'LegacyNotificationEvent';
-    id: Scalars['Int'];
-    type: Scalars['String'];
-    instance: Instance;
-    date: Scalars['DateTime'];
-    actor: User;
-    object: AbstractUuid;
-    payload: Scalars['String'];
-};
-
-// @public (undocumented)
 export type License = {
     __typename?: 'License';
     id: Scalars['Int'];
@@ -479,7 +452,7 @@ export type Mutation = {
     __typename?: 'Mutation';
     _removeCache?: Maybe<Scalars['Boolean']>;
     _setCache?: Maybe<Scalars['Boolean']>;
-    setLegacyNotificationState?: Maybe<Scalars['Boolean']>;
+    setNotificationState?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -494,7 +467,7 @@ export type Mutation_SetCacheArgs = {
 };
 
 // @public (undocumented)
-export type MutationSetLegacyNotificationStateArgs = {
+export type MutationSetNotificationStateArgs = {
     id: Scalars['Int'];
     unread: Scalars['Boolean'];
 };
@@ -512,6 +485,21 @@ export type NavigationNode = {
     label: Scalars['String'];
     url?: Maybe<Scalars['String']>;
     id?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
+export type Notification = {
+    __typename?: 'Notification';
+    id: Scalars['Int'];
+    unread: Scalars['Boolean'];
+    event: AbstractNotificationEvent;
+};
+
+// @public (undocumented)
+export type NotificationCursor = {
+    __typename?: 'NotificationCursor';
+    cursor: Scalars['String'];
+    node: Notification;
 };
 
 // @public (undocumented)
@@ -553,9 +541,9 @@ export type Query = {
     __typename?: 'Query';
     _cacheKeys: Query_CacheKeysResult;
     activeDonors: Array<User>;
-    legacyNotifications: QueryLegacyNotificationsResult;
     license?: Maybe<License>;
     notificationEvent?: Maybe<AbstractNotificationEvent>;
+    notifications: QueryNotificationsResult;
     uuid?: Maybe<AbstractUuid>;
 };
 
@@ -577,7 +565,17 @@ export type Query_CacheKeysResult = {
 };
 
 // @public (undocumented)
-export type QueryLegacyNotificationsArgs = {
+export type QueryLicenseArgs = {
+    id: Scalars['Int'];
+};
+
+// @public (undocumented)
+export type QueryNotificationEventArgs = {
+    id: Scalars['Int'];
+};
+
+// @public (undocumented)
+export type QueryNotificationsArgs = {
     after?: Maybe<Scalars['String']>;
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
@@ -586,22 +584,12 @@ export type QueryLegacyNotificationsArgs = {
 };
 
 // @public (undocumented)
-export type QueryLegacyNotificationsResult = {
-    __typename?: 'QueryLegacyNotificationsResult';
-    edges: Array<LegacyNotificationCursor>;
-    nodes: Array<LegacyNotification>;
+export type QueryNotificationsResult = {
+    __typename?: 'QueryNotificationsResult';
+    edges: Array<NotificationCursor>;
+    nodes: Array<Notification>;
     totalCount: Scalars['Int'];
     pageInfo: PageInfo;
-};
-
-// @public (undocumented)
-export type QueryLicenseArgs = {
-    id: Scalars['Int'];
-};
-
-// @public (undocumented)
-export type QueryNotificationEventArgs = {
-    id: Scalars['Int'];
 };
 
 // @public (undocumented)

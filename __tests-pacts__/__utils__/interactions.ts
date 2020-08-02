@@ -21,13 +21,7 @@
  */
 import { Matchers } from '@pact-foundation/pact'
 
-import {
-  AliasPayload,
-  NavigationPayload,
-  LegacyNotificationEventPayload,
-  LegacyNotificationsPayload,
-  UuidPayload,
-} from '../../src/graphql/schema'
+import { NavigationPayload, UuidPayload } from '../../src/graphql/schema'
 
 export function addNavigationInteraction(payload: NavigationPayload) {
   return addJsonInteraction({
@@ -43,57 +37,6 @@ export function addNavigationInteraction(payload: NavigationPayload) {
           id: Matchers.integer(payload.data[0].children?.[0].id),
         }),
       }),
-    },
-  })
-}
-
-export function addNotificationEventInteraction(
-  payload: LegacyNotificationEventPayload
-) {
-  return addJsonInteraction({
-    name: `fetch data of event with id ${payload.id}`,
-    given: `there exists a notification event with id ${payload.id}`,
-    path: `/api/event/${payload.id}`,
-    body: {
-      id: 1,
-      type: Matchers.string(payload.type),
-      instance: Matchers.string(payload.instance),
-      date: Matchers.string(payload.date),
-      actorId: Matchers.integer(payload.actorId),
-      objectId: Matchers.integer(payload.objectId),
-      payload: Matchers.string(payload.payload),
-    },
-  })
-}
-
-export function addNotificationsInteraction(
-  payload: LegacyNotificationsPayload
-) {
-  return addJsonInteraction({
-    name: `fetch data of all notifications for user with id ${payload.userId}`,
-    given: `there exists a notification for user with id ${payload.userId}`,
-    path: `/api/notifications/${payload.userId}`,
-    body: {
-      userId: 2,
-      notifications:
-        payload.notifications.length > 0
-          ? Matchers.eachLike(Matchers.like(payload.notifications[0]))
-          : [],
-    },
-  })
-}
-
-export function addAliasInteraction(payload: AliasPayload) {
-  return addJsonInteraction({
-    name: `fetch data of alias ${payload.path}`,
-    given: `${payload.path} is alias of ${payload.source}`,
-    path: `/api/alias${payload.path}`,
-    body: {
-      id: payload.id,
-      instance: Matchers.string(payload.instance),
-      path: payload.path,
-      source: payload.source,
-      timestamp: Matchers.iso8601DateTime(payload.timestamp),
     },
   })
 }
