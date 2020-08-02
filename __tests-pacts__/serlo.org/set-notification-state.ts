@@ -37,11 +37,11 @@ test('setNotificationState', async () => {
     user: user.id,
   }).client
   await global.pact.addInteraction({
-    uponReceiving: `set state of notification with id 1`,
-    state: `there exists a notification with id 1 for user with id ${user.id}`,
+    uponReceiving: `set state of notification with id 9`,
+    state: `there exists a notification with id 9 for user with id ${user.id}`,
     withRequest: {
       method: 'POST',
-      path: '/api/set-notification-state/1',
+      path: '/api/set-notification-state/9',
       body: {
         userId: user.id,
         unread: Matchers.boolean(true),
@@ -58,7 +58,7 @@ test('setNotificationState', async () => {
       body: {
         user: user.id,
         notifications: Matchers.eachLike({
-          id: Matchers.integer(1),
+          id: Matchers.integer(9),
           unread: Matchers.boolean(true),
           eventId: Matchers.integer(checkoutRevisionNotificationEvent.id),
         }),
@@ -72,7 +72,7 @@ test('setNotificationState', async () => {
       }
     `,
     variables: {
-      id: user.id,
+      id: 9,
       unread: true,
     },
   })
@@ -92,7 +92,7 @@ test('setNotificationState', async () => {
       notifications: {
         nodes: [
           {
-            id: 1,
+            id: 9,
             unread: true,
           },
         ],
