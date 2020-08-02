@@ -56,7 +56,7 @@ test('setNotificationState', async () => {
         'Content-Type': 'application/json; charset=utf-8',
       },
       body: {
-        user: user.id,
+        userId: user.id,
         notifications: Matchers.eachLike({
           id: Matchers.integer(9),
           unread: Matchers.boolean(true),
