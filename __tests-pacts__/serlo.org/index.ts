@@ -26,11 +26,20 @@ describe('GET /api/alias/:alias', () => {
 describe('GET /api/cache-keys', () => {
   require('./cache-keys')
 })
+describe('GET /api/event/:id', () => {
+  require('./event')
+})
 describe('GET /api/license/:id', () => {
   require('./license')
 })
 describe('GET /api/navigation', () => {
   require('./navigation')
+})
+describe('GET /api/notifications/:id', () => {
+  require('./notifications')
+})
+describe('POST /api/set-notification-state/:id', () => {
+  require('./set-notification-state')
 })
 describe('GET /api/uuid/:id', () => {
   require('./uuid')

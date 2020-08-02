@@ -24,24 +24,20 @@ import { GraphQLResolveInfo } from 'graphql'
 import { Context } from '../../types'
 import { requestsOnlyFields } from '../../utils'
 import {
-  createEntityResolvers,
-  createEntityRevisionResolvers,
-  EntityRevisionType,
-  EntityType,
-} from '../abstract-entity'
+  createRepositoryResolvers,
+  createRevisionResolvers,
+} from '../abstract-repository'
 import { CoursePayload } from '../course'
-import { CoursePagePreResolver, CoursePageRevisionPreResolver } from './types'
+import { CoursePagePayload, CoursePageRevisionPayload } from './types'
 
 export const resolvers = {
   CoursePage: {
-    ...createEntityResolvers<
-      CoursePagePreResolver,
-      CoursePageRevisionPreResolver
-    >({
-      entityRevisionType: EntityRevisionType.CoursePageRevision,
-    }),
+    ...createRepositoryResolvers<
+      CoursePagePayload,
+      CoursePageRevisionPayload
+    >(),
     async course(
-      coursePage: CoursePagePreResolver,
+      coursePage: CoursePagePayload,
       _args: never,
       { dataSources }: Context,
       info: GraphQLResolveInfo
@@ -53,11 +49,8 @@ export const resolvers = {
       return dataSources.serlo.getUuid<CoursePayload>(partialCourse)
     },
   },
-  CoursePageRevision: createEntityRevisionResolvers<
-    CoursePagePreResolver,
-    CoursePageRevisionPreResolver
-  >({
-    entityType: EntityType.CoursePage,
-    repository: 'coursePage',
-  }),
+  CoursePageRevision: createRevisionResolvers<
+    CoursePagePayload,
+    CoursePageRevisionPayload
+  >(),
 }

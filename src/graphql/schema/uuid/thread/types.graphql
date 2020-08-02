@@ -1,0 +1,9 @@
+# TODO: this should be a real thread in the future
+type UnsupportedThread {
+  id: Int!
+}
+
+# TODO: this should be a real comment in the future
+type UnsupportedComment {
+  id: Int!
+}

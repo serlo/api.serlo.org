@@ -1,17 +1,13 @@
 type Notification {
   id: Int!
   unread: Boolean!
-  event: NotificationEvent!
+  event: AbstractNotificationEvent!
 }
 
-type NotificationEvent {
+interface AbstractNotificationEvent {
   id: Int!
-  type: String!
   instance: Instance!
   date: DateTime!
-  actor: User!
-  object: AbstractUuid!
-  payload: String!
 }
 
 extend type Query {
@@ -22,6 +18,7 @@ extend type Query {
     last: Int
     unread: Boolean
   ): QueryNotificationsResult!
+  notificationEvent(id: Int!): AbstractNotificationEvent
 }
 
 extend type Mutation {

@@ -20,26 +20,16 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import {
-  createEntityResolvers,
-  createEntityRevisionResolvers,
-  EntityRevisionType,
-  EntityType,
-} from '../abstract-entity'
+  createRepositoryResolvers,
+  createRevisionResolvers,
+} from '../abstract-repository'
 import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
-import { VideoPreResolver, VideoRevisionPreResolver } from './types'
+import { VideoPayload, VideoRevisionPayload } from './types'
 
 export const resolvers = {
   Video: {
-    ...createEntityResolvers<VideoPreResolver, VideoRevisionPreResolver>({
-      entityRevisionType: EntityRevisionType.VideoRevision,
-    }),
-    ...createTaxonomyTermChildResolvers<VideoPreResolver>(),
+    ...createRepositoryResolvers<VideoPayload, VideoRevisionPayload>(),
+    ...createTaxonomyTermChildResolvers<VideoPayload>(),
   },
-  VideoRevision: createEntityRevisionResolvers<
-    VideoPreResolver,
-    VideoRevisionPreResolver
-  >({
-    entityType: EntityType.Video,
-    repository: 'video',
-  }),
+  VideoRevision: createRevisionResolvers<VideoPayload, VideoRevisionPayload>(),
 }

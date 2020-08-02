@@ -21,21 +21,16 @@
  */
 import { EntityRevisionType, EntityType } from '../abstract-entity'
 import {
-  AbstractExercisePreResolver,
-  AbstractExerciseRevisionPreResolver,
+  AbstractExercisePayload,
+  AbstractExerciseRevisionPayload,
 } from '../abstract-exercise'
 
-export interface GroupedExercisePreResolver
-  extends AbstractExercisePreResolver {
+export interface GroupedExercisePayload extends AbstractExercisePayload {
   __typename: EntityType.GroupedExercise
   parentId: number
 }
 
-export type GroupedExercisePayload = GroupedExercisePreResolver
-
-export interface GroupedExerciseRevisionPreResolver
-  extends AbstractExerciseRevisionPreResolver {
+export interface GroupedExerciseRevisionPayload
+  extends AbstractExerciseRevisionPayload {
   __typename: EntityRevisionType.GroupedExerciseRevision
 }
-
-export type GroupedExerciseRevisionPayload = GroupedExerciseRevisionPreResolver

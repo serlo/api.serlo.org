@@ -20,25 +20,21 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import {
-  AbstractEntityPreResolver,
-  AbstractEntityRevisionPreResolver,
+  AbstractEntityPayload,
+  AbstractEntityRevisionPayload,
   EntityRevisionType,
   EntityType,
 } from '../abstract-entity'
 
-export interface CoursePagePreResolver extends AbstractEntityPreResolver {
+export interface CoursePagePayload extends AbstractEntityPayload {
   __typename: EntityType.CoursePage
   parentId: number
 }
 
-export type CoursePagePayload = CoursePagePreResolver
-
-export interface CoursePageRevisionPreResolver
-  extends AbstractEntityRevisionPreResolver {
+export interface CoursePageRevisionPayload
+  extends AbstractEntityRevisionPayload {
   __typename: EntityRevisionType.CoursePageRevision
   title: string
   content: string
   changes: string
 }
-
-export type CoursePageRevisionPayload = CoursePageRevisionPreResolver

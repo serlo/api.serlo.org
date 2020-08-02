@@ -75,37 +75,6 @@ describe('ExerciseGroup', () => {
     })
   })
 
-  test('by id (w/ currentRevision)', async () => {
-    global.server.use(createUuidHandler(exerciseGroupRevision))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query exerciseGroup($id: Int!) {
-          uuid(id: $id) {
-            ... on ExerciseGroup {
-              currentRevision {
-                __typename
-                id
-                trashed
-                date
-                content
-                changes
-              }
-            }
-          }
-        }
-      `,
-      variables: exerciseGroup,
-      data: {
-        uuid: {
-          currentRevision: getExerciseGroupRevisionDataWithoutSubResolvers(
-            exerciseGroupRevision
-          ),
-        },
-      },
-      client,
-    })
-  })
-
   test('by id (w/ exercises)', async () => {
     global.server.use(createUuidHandler(groupedExercise))
     await assertSuccessfulGraphQLQuery({
@@ -138,63 +107,29 @@ describe('ExerciseGroup', () => {
   })
 })
 
-describe('ExerciseGroupRevision', () => {
-  beforeEach(() => {
-    global.server.use(createUuidHandler(exerciseGroupRevision))
-  })
-
-  test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query exerciseGroupRevision($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on ExerciseGroupRevision {
-              id
-              trashed
-              date
-              content
-              changes
-            }
+test('ExerciseGroupRevision', async () => {
+  global.server.use(createUuidHandler(exerciseGroupRevision))
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query exerciseGroupRevision($id: Int!) {
+        uuid(id: $id) {
+          __typename
+          ... on ExerciseGroupRevision {
+            id
+            trashed
+            date
+            content
+            changes
           }
         }
-      `,
-      variables: exerciseGroupRevision,
-      data: {
-        uuid: getExerciseGroupRevisionDataWithoutSubResolvers(
-          exerciseGroupRevision
-        ),
-      },
-      client,
-    })
-  })
-
-  test('by id (w/ exerciseGroup)', async () => {
-    global.server.use(createUuidHandler(exerciseGroup))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query applet($id: Int!) {
-          uuid(id: $id) {
-            ... on ExerciseGroupRevision {
-              exerciseGroup {
-                __typename
-                id
-                trashed
-                instance
-                alias
-                date
-              }
-            }
-          }
-        }
-      `,
-      variables: exerciseGroupRevision,
-      data: {
-        uuid: {
-          exerciseGroup: getExerciseGroupDataWithoutSubResolvers(exerciseGroup),
-        },
-      },
-      client,
-    })
+      }
+    `,
+    variables: exerciseGroupRevision,
+    data: {
+      uuid: getExerciseGroupRevisionDataWithoutSubResolvers(
+        exerciseGroupRevision
+      ),
+    },
+    client,
   })
 })

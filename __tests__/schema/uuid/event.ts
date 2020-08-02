@@ -44,128 +44,55 @@ beforeEach(() => {
   }).client
 })
 
-describe('Event', () => {
-  beforeEach(() => {
-    global.server.use(createUuidHandler(event))
-  })
-
-  test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query event($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on Event {
-              id
-              trashed
-              alias
-              instance
-              date
-            }
+test('Event', async () => {
+  global.server.use(createUuidHandler(event))
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query event($id: Int!) {
+        uuid(id: $id) {
+          __typename
+          ... on Event {
+            id
+            trashed
+            alias
+            instance
+            date
           }
         }
-      `,
-      variables: event,
-      data: {
-        uuid: getEventDataWithoutSubResolvers(event),
-      },
-      client,
-    })
-  })
-
-  test('by id (w/ currentRevision)', async () => {
-    global.server.use(createUuidHandler(eventRevision))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query event($id: Int!) {
-          uuid(id: $id) {
-            ... on Event {
-              currentRevision {
-                __typename
-                id
-                trashed
-                date
-                title
-                content
-                changes
-                metaTitle
-                metaDescription
-              }
-            }
-          }
-        }
-      `,
-      variables: event,
-      data: {
-        uuid: {
-          currentRevision: getEventRevisionDataWithoutSubResolvers(
-            eventRevision
-          ),
-        },
-      },
-      client,
-    })
+      }
+    `,
+    variables: event,
+    data: {
+      uuid: getEventDataWithoutSubResolvers(event),
+    },
+    client,
   })
 })
 
-describe('EventRevision', () => {
-  beforeEach(() => {
-    global.server.use(createUuidHandler(eventRevision))
-  })
-
-  test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query eventRevision($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on EventRevision {
-              id
-              trashed
-              date
-              title
-              content
-              changes
-              metaTitle
-              metaDescription
-            }
+test('EventRevision', async () => {
+  global.server.use(createUuidHandler(eventRevision))
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query eventRevision($id: Int!) {
+        uuid(id: $id) {
+          __typename
+          ... on EventRevision {
+            id
+            trashed
+            date
+            title
+            content
+            changes
+            metaTitle
+            metaDescription
           }
         }
-      `,
-      variables: eventRevision,
-      data: {
-        uuid: getEventRevisionDataWithoutSubResolvers(eventRevision),
-      },
-      client,
-    })
-  })
-
-  test('by id (w/ event)', async () => {
-    global.server.use(createUuidHandler(event))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query applet($id: Int!) {
-          uuid(id: $id) {
-            ... on EventRevision {
-              event {
-                __typename
-                id
-                trashed
-                alias
-                instance
-                date
-              }
-            }
-          }
-        }
-      `,
-      variables: eventRevision,
-      data: {
-        uuid: {
-          event: getEventDataWithoutSubResolvers(event),
-        },
-      },
-      client,
-    })
+      }
+    `,
+    variables: eventRevision,
+    data: {
+      uuid: getEventRevisionDataWithoutSubResolvers(eventRevision),
+    },
+    client,
   })
 })

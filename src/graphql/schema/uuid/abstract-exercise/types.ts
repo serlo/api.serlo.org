@@ -21,29 +21,25 @@
  */
 import { TypeResolver } from '../../types'
 import {
-  AbstractEntityPreResolver,
-  AbstractEntityRevisionPreResolver,
+  AbstractEntityPayload,
+  AbstractEntityRevisionPayload,
 } from '../abstract-entity'
 
-export interface AbstractExercisePreResolver extends AbstractEntityPreResolver {
+export interface AbstractExercisePayload extends AbstractEntityPayload {
   solutionId: number | null
 }
 
-export type AbstractExercisePayload = AbstractExercisePreResolver
-
-export interface AbstractExerciseRevisionPreResolver
-  extends AbstractEntityRevisionPreResolver {
+export interface AbstractExerciseRevisionPayload
+  extends AbstractEntityRevisionPayload {
   content: string
   changes: string
 }
 
-export type AbstractExerciseRevisionPayload = AbstractExerciseRevisionPreResolver
-
 export interface AbstractExerciseResolvers {
   AbstractExercise: {
-    __resolveType: TypeResolver<AbstractExercisePreResolver>
+    __resolveType: TypeResolver<AbstractExercisePayload>
   }
   AbstractExerciseRevision: {
-    __resolveType: TypeResolver<AbstractExerciseRevisionPreResolver>
+    __resolveType: TypeResolver<AbstractExerciseRevisionPayload>
   }
 }

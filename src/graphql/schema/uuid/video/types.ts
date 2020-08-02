@@ -20,25 +20,20 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import {
-  AbstractEntityRevisionPreResolver,
+  AbstractEntityRevisionPayload,
   EntityRevisionType,
   EntityType,
 } from '../abstract-entity'
-import { AbstractTaxonomyTermChildPreResolver } from '../abstract-taxonomy-term-child'
+import { AbstractTaxonomyTermChildPayload } from '../abstract-taxonomy-term-child'
 
-export interface VideoPreResolver extends AbstractTaxonomyTermChildPreResolver {
+export interface VideoPayload extends AbstractTaxonomyTermChildPayload {
   __typename: EntityType.Video
 }
 
-export type VideoPayload = VideoPreResolver
-
-export interface VideoRevisionPreResolver
-  extends AbstractEntityRevisionPreResolver {
+export interface VideoRevisionPayload extends AbstractEntityRevisionPayload {
   __typename: EntityRevisionType.VideoRevision
   url: string
   title: string
   content: string
   changes: string
 }
-
-export type VideoRevisionPayload = VideoRevisionPreResolver

@@ -51,7 +51,7 @@ export enum EntityType {
   Video = 'Video',
 }
 
-export type EntityPreResolver =
+export type EntityPayload =
   | AppletPayload
   | ArticlePayload
   | CoursePayload
@@ -62,16 +62,13 @@ export type EntityPreResolver =
   | GroupedExercisePayload
   | SolutionPayload
   | VideoPayload
-export interface AbstractEntityPreResolver
+export interface AbstractEntityPayload
   extends Omit<AbstractEntity, 'alias' | 'currentRevision' | 'license'> {
   __typename: EntityType
   alias: string | null
   currentRevisionId: number | null
   licenseId: number
 }
-
-export type EntityPayload = EntityPreResolver
-export type AbstractEntityPayload = AbstractEntityPreResolver
 
 export enum EntityRevisionType {
   ArticleRevision = 'ArticleRevision',
@@ -86,7 +83,7 @@ export enum EntityRevisionType {
   VideoRevision = 'VideoRevision',
 }
 
-export type EntityRevisionPreResolver =
+export type EntityRevisionPayload =
   | AppletRevisionPayload
   | ArticleRevisionPayload
   | CourseRevisionPayload
@@ -97,21 +94,18 @@ export type EntityRevisionPreResolver =
   | GroupedExerciseRevisionPayload
   | SolutionRevisionPayload
   | VideoRevisionPayload
-export interface AbstractEntityRevisionPreResolver
+export interface AbstractEntityRevisionPayload
   extends Omit<AbstractEntityRevision, 'author' | 'repository'> {
   __typename: EntityRevisionType
   authorId: number
   repositoryId: number
 }
 
-export type EntityRevisionPayload = EntityRevisionPreResolver
-export type AbstractEntityRevisionPayload = AbstractEntityRevisionPreResolver
-
 export interface AbstractEntityResolvers {
   AbstractEntity: {
-    __resolveType: TypeResolver<EntityPreResolver>
+    __resolveType: TypeResolver<EntityPayload>
   }
   AbstractEntityRevision: {
-    __resolveType: TypeResolver<EntityRevisionPreResolver>
+    __resolveType: TypeResolver<EntityRevisionPayload>
   }
 }

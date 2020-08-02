@@ -22,32 +22,24 @@
 import { AuthenticationError } from 'apollo-server'
 
 import { resolveConnection } from '../connection'
-import { requestsOnlyFields } from '../utils'
-import { UuidPayload } from '../uuid'
-import { UserPayload } from '../uuid/user'
-import { NotificationPreResolver, NotificationResolvers } from './types'
+import {
+  NotificationEventPayload,
+  NotificationPayload,
+  NotificationResolvers,
+} from './types'
 
 export const resolvers: NotificationResolvers = {
-  Notification: {
-    async event(parent, _args, { dataSources }, info) {
-      const partialEvent = { id: parent.eventId }
-      if (requestsOnlyFields('NotificationEvent', ['id'], info)) {
-        return partialEvent
-      }
-      return await dataSources.serlo.getNotificationEvent(partialEvent)
+  AbstractNotificationEvent: {
+    __resolveType(notificationEvent) {
+      return notificationEvent.__typename
     },
   },
-  NotificationEvent: {
-    async actor(parent, _args, { dataSources }, info) {
-      const partialActor = { id: parent.actorId }
-      if (requestsOnlyFields('User', ['id'], info)) {
-        return partialActor
-      }
-      return dataSources.serlo.getUuid<UserPayload>(partialActor)
-    },
-    async object(parent, _args, { dataSources }) {
-      return dataSources.serlo.getUuid<UuidPayload>({
-        id: parent.objectId,
+  Notification: {
+    async event(parent, _args, { dataSources }) {
+      return await dataSources.serlo.getNotificationEvent<
+        NotificationEventPayload
+      >({
+        id: parent.eventId,
       })
     },
   },
@@ -61,7 +53,7 @@ export const resolvers: NotificationResolvers = {
       const { notifications } = await dataSources.serlo.getNotifications({
         id: user,
       })
-      return resolveConnection<NotificationPreResolver>({
+      return resolveConnection<NotificationPayload>({
         nodes:
           unread == null
             ? notifications
@@ -73,6 +65,11 @@ export const resolvers: NotificationResolvers = {
           return `${node.id}`
         },
       })
+    },
+    async notificationEvent(_parent, payload, { dataSources }) {
+      return dataSources.serlo.getNotificationEvent<NotificationEventPayload>(
+        payload
+      )
     },
   },
   Mutation: {

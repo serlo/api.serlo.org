@@ -21,29 +21,22 @@
  */
 import { Context } from '../../types'
 import {
-  createEntityResolvers,
-  createEntityRevisionResolvers,
-  EntityRevisionType,
-  EntityType,
-} from '../abstract-entity'
+  createRepositoryResolvers,
+  createRevisionResolvers,
+} from '../abstract-repository'
 import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
 import { GroupedExercisePayload } from '../grouped-exercise'
-import {
-  ExerciseGroupPreResolver,
-  ExerciseGroupRevisionPreResolver,
-} from './types'
+import { ExerciseGroupPayload, ExerciseGroupRevisionPayload } from './types'
 
 export const resolvers = {
   ExerciseGroup: {
-    ...createEntityResolvers<
-      ExerciseGroupPreResolver,
-      ExerciseGroupRevisionPreResolver
-    >({
-      entityRevisionType: EntityRevisionType.ExerciseGroupRevision,
-    }),
-    ...createTaxonomyTermChildResolvers<ExerciseGroupPreResolver>(),
+    ...createRepositoryResolvers<
+      ExerciseGroupPayload,
+      ExerciseGroupRevisionPayload
+    >(),
+    ...createTaxonomyTermChildResolvers<ExerciseGroupPayload>(),
     exercises(
-      exerciseGroup: ExerciseGroupPreResolver,
+      exerciseGroup: ExerciseGroupPayload,
       _args: never,
       { dataSources }: Context
     ) {
@@ -54,11 +47,8 @@ export const resolvers = {
       )
     },
   },
-  ExerciseGroupRevision: createEntityRevisionResolvers<
-    ExerciseGroupPreResolver,
-    ExerciseGroupRevisionPreResolver
-  >({
-    entityType: EntityType.ExerciseGroup,
-    repository: 'exerciseGroup',
-  }),
+  ExerciseGroupRevision: createRevisionResolvers<
+    ExerciseGroupPayload,
+    ExerciseGroupRevisionPayload
+  >(),
 }

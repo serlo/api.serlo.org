@@ -1,0 +1,7 @@
+type SetLicenseNotificationEvent implements AbstractNotificationEvent {
+  id: Int!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  repository: AbstractRepository!
+}

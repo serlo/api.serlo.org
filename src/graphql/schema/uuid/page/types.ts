@@ -19,43 +19,27 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { License, Page, PageRevision } from '../../../../types'
-import { Resolver } from '../../types'
+import { Page, PageRevision } from '../../../../types'
 import { NavigationChildResolvers } from '../abstract-navigation-child'
+import { RepositoryResolvers, RevisionResolvers } from '../abstract-repository'
 import { DiscriminatorType } from '../abstract-uuid'
-import { UserPreResolver } from '../user'
 
-export interface PagePreResolver
-  extends Omit<Page, keyof PageResolvers['Page']> {
+export interface PagePayload extends Omit<Page, keyof PageResolvers['Page']> {
   __typename: DiscriminatorType.Page
   alias: string | null
   currentRevisionId: number | null
   licenseId: number
 }
 
-export type PagePayload = PagePreResolver
-
-export interface PageRevisionPreResolver
+export interface PageRevisionPayload
   extends Omit<PageRevision, keyof PageResolvers['PageRevision']> {
   __typename: DiscriminatorType.PageRevision
   authorId: number
   repositoryId: number
 }
 
-export type PageRevisionPayload = PageRevisionPreResolver
-
 export interface PageResolvers {
-  Page: {
-    alias: Resolver<PagePreResolver, never, string | null>
-    currentRevision: Resolver<
-      PagePreResolver,
-      never,
-      Partial<PageRevisionPreResolver> | null
-    >
-    license: Resolver<PagePreResolver, never, Partial<License>>
-  } & NavigationChildResolvers<PagePreResolver>
-  PageRevision: {
-    author: Resolver<PageRevisionPreResolver, never, Partial<UserPreResolver>>
-    page: Resolver<PageRevisionPreResolver, never, Partial<PagePreResolver>>
-  }
+  Page: RepositoryResolvers<PagePayload, PageRevisionPayload> &
+    NavigationChildResolvers<PagePayload>
+  PageRevision: RevisionResolvers<PagePayload, PageRevisionPayload>
 }

@@ -24,6 +24,5 @@ import { resolvers } from './resolvers'
 import typeDefs from './types.graphql'
 
 export * from './types'
-export * from './utils'
 
 export const abstractEntitySchema = new Schema(resolvers, [typeDefs])

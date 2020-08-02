@@ -44,128 +44,55 @@ beforeEach(() => {
   }).client
 })
 
-describe('Article', () => {
-  beforeEach(() => {
-    global.server.use(createUuidHandler(article))
-  })
-
-  test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query article($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on Article {
-              id
-              trashed
-              alias
-              instance
-              date
-            }
+test('Article', async () => {
+  global.server.use(createUuidHandler(article))
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query article($id: Int!) {
+        uuid(id: $id) {
+          __typename
+          ... on Article {
+            id
+            trashed
+            alias
+            instance
+            date
           }
         }
-      `,
-      variables: article,
-      data: {
-        uuid: getArticleDataWithoutSubResolvers(article),
-      },
-      client,
-    })
-  })
-
-  test('by id (w/ currentRevision)', async () => {
-    global.server.use(createUuidHandler(articleRevision))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query article($id: Int!) {
-          uuid(id: $id) {
-            ... on Article {
-              currentRevision {
-                __typename
-                id
-                trashed
-                date
-                title
-                content
-                changes
-                metaTitle
-                metaDescription
-              }
-            }
-          }
-        }
-      `,
-      variables: article,
-      data: {
-        uuid: {
-          currentRevision: getArticleRevisionDataWithoutSubResolvers(
-            articleRevision
-          ),
-        },
-      },
-      client,
-    })
+      }
+    `,
+    variables: article,
+    data: {
+      uuid: getArticleDataWithoutSubResolvers(article),
+    },
+    client,
   })
 })
 
-describe('ArticleRevision', () => {
-  beforeEach(() => {
-    global.server.use(createUuidHandler(articleRevision))
-  })
-
-  test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query articleRevision($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on ArticleRevision {
-              id
-              trashed
-              date
-              title
-              content
-              changes
-              metaTitle
-              metaDescription
-            }
+test('ArticleRevision', async () => {
+  global.server.use(createUuidHandler(articleRevision))
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query articleRevision($id: Int!) {
+        uuid(id: $id) {
+          __typename
+          ... on ArticleRevision {
+            id
+            trashed
+            date
+            title
+            content
+            changes
+            metaTitle
+            metaDescription
           }
         }
-      `,
-      variables: articleRevision,
-      data: {
-        uuid: getArticleRevisionDataWithoutSubResolvers(articleRevision),
-      },
-      client,
-    })
-  })
-
-  test('by id (w/ article)', async () => {
-    global.server.use(createUuidHandler(article))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query applet($id: Int!) {
-          uuid(id: $id) {
-            ... on ArticleRevision {
-              article {
-                __typename
-                id
-                trashed
-                alias
-                instance
-                date
-              }
-            }
-          }
-        }
-      `,
-      variables: articleRevision,
-      data: {
-        uuid: {
-          article: getArticleDataWithoutSubResolvers(article),
-        },
-      },
-      client,
-    })
+      }
+    `,
+    variables: articleRevision,
+    data: {
+      uuid: getArticleRevisionDataWithoutSubResolvers(articleRevision),
+    },
+    client,
   })
 })
