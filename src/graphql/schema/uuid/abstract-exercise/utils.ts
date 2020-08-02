@@ -21,15 +21,15 @@
  */
 import { Resolver } from '../../types'
 import { requestsOnlyFields } from '../../utils'
-import { SolutionPayload, SolutionPreResolver } from '../solution'
-import { AbstractExercisePreResolver } from './types'
+import { SolutionPayload } from '../solution'
+import { AbstractExercisePayload } from './types'
 
-export interface ExerciseResolvers<E extends AbstractExercisePreResolver> {
-  solution: Resolver<E, never, Partial<SolutionPreResolver> | null>
+export interface ExerciseResolvers<E extends AbstractExercisePayload> {
+  solution: Resolver<E, never, Partial<SolutionPayload> | null>
 }
 
 export function createExerciseResolvers<
-  E extends AbstractExercisePreResolver
+  E extends AbstractExercisePayload
 >(): ExerciseResolvers<E> {
   return {
     async solution(exercise, _args, { dataSources }, info) {

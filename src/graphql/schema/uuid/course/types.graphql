@@ -1,4 +1,4 @@
-type Course implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild {
+type Course implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild {
   id: Int!
   trashed: Boolean!
   instance: Instance!
@@ -10,12 +10,12 @@ type Course implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild
   pages: [CoursePage!]!
 }
 
-type CourseRevision implements AbstractUuid & AbstractEntityRevision {
+type CourseRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision {
   id: Int!
   author: User!
   trashed: Boolean!
   date: DateTime!
-  course: Course!
+  repository: Course!
   title: String!
   content: String!
   changes: String!

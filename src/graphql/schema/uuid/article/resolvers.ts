@@ -20,26 +20,19 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import {
-  createEntityResolvers,
-  createEntityRevisionResolvers,
-  EntityRevisionType,
-  EntityType,
-} from '../abstract-entity'
+  createRepositoryResolvers,
+  createRevisionResolvers,
+} from '../abstract-repository'
 import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
-import { ArticlePreResolver, ArticleRevisionPreResolver } from './types'
+import { ArticlePayload, ArticleRevisionPayload } from './types'
 
 export const resolvers = {
   Article: {
-    ...createEntityResolvers<ArticlePreResolver, ArticleRevisionPreResolver>({
-      entityRevisionType: EntityRevisionType.ArticleRevision,
-    }),
-    ...createTaxonomyTermChildResolvers<ArticlePreResolver>(),
+    ...createRepositoryResolvers<ArticlePayload, ArticleRevisionPayload>(),
+    ...createTaxonomyTermChildResolvers<ArticlePayload>(),
   },
-  ArticleRevision: createEntityRevisionResolvers<
-    ArticlePreResolver,
-    ArticleRevisionPreResolver
-  >({
-    entityType: EntityType.Article,
-    repository: 'article',
-  }),
+  ArticleRevision: createRevisionResolvers<
+    ArticlePayload,
+    ArticleRevisionPayload
+  >(),
 }

@@ -1,4 +1,4 @@
-type Article implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild {
+type Article implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild {
   id: Int!
   trashed: Boolean!
   instance: Instance!
@@ -9,12 +9,12 @@ type Article implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChil
   taxonomyTerms: [TaxonomyTerm!]!
 }
 
-type ArticleRevision implements AbstractUuid & AbstractEntityRevision {
+type ArticleRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision {
   id: Int!
   author: User!
   trashed: Boolean!
   date: DateTime!
-  article: Article!
+  repository: Article!
   title: String!
   content: String!
   changes: String!

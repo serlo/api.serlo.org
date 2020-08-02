@@ -20,26 +20,19 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import {
-  createEntityResolvers,
-  createEntityRevisionResolvers,
-  EntityRevisionType,
-  EntityType,
-} from '../abstract-entity'
+  createRepositoryResolvers,
+  createRevisionResolvers,
+} from '../abstract-repository'
 import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
-import { AppletPreResolver, AppletRevisionPreResolver } from './types'
+import { AppletPayload, AppletRevisionPayload } from './types'
 
 export const resolvers = {
   Applet: {
-    ...createEntityResolvers<AppletPreResolver, AppletRevisionPreResolver>({
-      entityRevisionType: EntityRevisionType.AppletRevision,
-    }),
-    ...createTaxonomyTermChildResolvers<AppletPreResolver>(),
+    ...createRepositoryResolvers<AppletPayload, AppletRevisionPayload>(),
+    ...createTaxonomyTermChildResolvers<AppletPayload>(),
   },
-  AppletRevision: createEntityRevisionResolvers<
-    AppletPreResolver,
-    AppletRevisionPreResolver
-  >({
-    entityType: EntityType.Applet,
-    repository: 'applet',
-  }),
+  AppletRevision: createRevisionResolvers<
+    AppletPayload,
+    AppletRevisionPayload
+  >(),
 }

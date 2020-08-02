@@ -19,29 +19,22 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { createExerciseResolvers } from '../abstract-exercise'
 import {
-  createEntityResolvers,
-  createEntityRevisionResolvers,
-  EntityRevisionType,
-  EntityType,
-} from '../abstract-entity'
-import { createExerciseResolvers } from '../abstract-exercise/utils'
+  createRepositoryResolvers,
+  createRevisionResolvers,
+} from '../abstract-repository'
 import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
-import { ExercisePreResolver, ExerciseRevisionPreResolver } from './types'
+import { ExercisePayload, ExerciseRevisionPayload } from './types'
 
 export const resolvers = {
   Exercise: {
-    ...createTaxonomyTermChildResolvers<ExercisePreResolver>(),
-    ...createEntityResolvers<ExercisePreResolver, ExerciseRevisionPreResolver>({
-      entityRevisionType: EntityRevisionType.ExerciseRevision,
-    }),
-    ...createExerciseResolvers<ExercisePreResolver>(),
+    ...createRepositoryResolvers<ExercisePayload, ExerciseRevisionPayload>(),
+    ...createTaxonomyTermChildResolvers<ExercisePayload>(),
+    ...createExerciseResolvers<ExercisePayload>(),
   },
-  ExerciseRevision: createEntityRevisionResolvers<
-    ExercisePreResolver,
-    ExerciseRevisionPreResolver
-  >({
-    entityType: EntityType.Exercise,
-    repository: 'exercise',
-  }),
+  ExerciseRevision: createRevisionResolvers<
+    ExercisePayload,
+    ExerciseRevisionPayload
+  >(),
 }

@@ -37,7 +37,6 @@ import {
   EntityPayload,
   EntityType,
   TaxonomyTermChildPayload,
-  TaxonomyTermChildPreResolver,
 } from '../../../src/graphql/schema'
 import { Service } from '../../../src/graphql/schema/types'
 import {
@@ -56,7 +55,7 @@ beforeEach(() => {
   }).client
 })
 
-type TaxonomyTermChildType = TaxonomyTermChildPreResolver['__typename']
+type TaxonomyTermChildType = TaxonomyTermChildPayload['__typename']
 
 const taxonomyTermChildFixtures: Record<
   TaxonomyTermChildType,

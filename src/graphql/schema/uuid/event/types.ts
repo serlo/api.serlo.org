@@ -20,20 +20,17 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import {
-  AbstractEntityRevisionPreResolver,
+  AbstractEntityRevisionPayload,
   EntityRevisionType,
   EntityType,
 } from '../abstract-entity'
-import { AbstractTaxonomyTermChildPreResolver } from '../abstract-taxonomy-term-child'
+import { AbstractTaxonomyTermChildPayload } from '../abstract-taxonomy-term-child'
 
-export interface EventPreResolver extends AbstractTaxonomyTermChildPreResolver {
+export interface EventPayload extends AbstractTaxonomyTermChildPayload {
   __typename: EntityType.Event
 }
 
-export type EventPayload = EventPreResolver
-
-export interface EventRevisionPreResolver
-  extends AbstractEntityRevisionPreResolver {
+export interface EventRevisionPayload extends AbstractEntityRevisionPayload {
   __typename: EntityRevisionType.EventRevision
   title: string
   content: string
@@ -41,5 +38,3 @@ export interface EventRevisionPreResolver
   metaTitle: string
   metaDescription: string
 }
-
-export type EventRevisionPayload = EventRevisionPreResolver

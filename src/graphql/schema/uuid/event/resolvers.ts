@@ -20,26 +20,16 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import {
-  createEntityResolvers,
-  createEntityRevisionResolvers,
-  EntityRevisionType,
-  EntityType,
-} from '../abstract-entity'
+  createRepositoryResolvers,
+  createRevisionResolvers,
+} from '../abstract-repository'
 import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
-import { EventPreResolver, EventRevisionPreResolver } from './types'
+import { EventPayload, EventRevisionPayload } from './types'
 
 export const resolvers = {
   Event: {
-    ...createEntityResolvers<EventPreResolver, EventRevisionPreResolver>({
-      entityRevisionType: EntityRevisionType.EventRevision,
-    }),
-    ...createTaxonomyTermChildResolvers<EventPreResolver>(),
+    ...createRepositoryResolvers<EventPayload, EventRevisionPayload>(),
+    ...createTaxonomyTermChildResolvers<EventPayload>(),
   },
-  EventRevision: createEntityRevisionResolvers<
-    EventPreResolver,
-    EventRevisionPreResolver
-  >({
-    entityType: EntityType.Event,
-    repository: 'event',
-  }),
+  EventRevision: createRevisionResolvers<EventPayload, EventRevisionPayload>(),
 }

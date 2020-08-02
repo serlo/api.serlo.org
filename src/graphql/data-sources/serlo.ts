@@ -27,6 +27,7 @@ import * as R from 'ramda'
 import { Instance, License } from '../../types'
 import { Environment } from '../environment'
 import {
+  AbstractNotificationEventPayload,
   AbstractUuidPayload,
   AliasPayload,
   decodePath,
@@ -35,7 +36,6 @@ import {
   Navigation,
   NavigationPayload,
   NodeData,
-  NotificationEventPayload,
   NotificationsPayload,
 } from '../schema'
 import { Service } from '../schema/types'
@@ -144,11 +144,9 @@ export class SerloDataSource extends RESTDataSource {
     return this.cacheAwareGet<T>({ path: `/api/uuid/${id}` })
   }
 
-  public async getNotificationEvent({
-    id,
-  }: {
-    id: number
-  }): Promise<NotificationEventPayload> {
+  public async getNotificationEvent<
+    T extends AbstractNotificationEventPayload
+  >({ id }: { id: number }): Promise<T> {
     return this.cacheAwareGet({ path: `/api/event/${id}` })
   }
 
@@ -173,30 +171,17 @@ export class SerloDataSource extends RESTDataSource {
     userId: number
     unread: boolean
   }) {
-    const body = {
-      userId: notificationState.userId,
-      unread: notificationState.unread,
-    }
-    await this.customPost({
+    const response = await this.customPost<NotificationsPayload>({
       path: `/api/set-notification-state/${notificationState.id}`,
-      body,
-    })
-    const { notifications } = await this.getNotifications({
-      id: notificationState.userId,
-    })
-    const modifiedNotifications = notifications.map((notification) => {
-      if (notification.id === notificationState.id) {
-        return { ...notification, unread: notificationState.unread }
-      }
-      return notification
+      body: {
+        userId: notificationState.userId,
+        unread: notificationState.unread,
+      },
     })
     const cacheKey = this.getCacheKey(
       `/api/notifications/${notificationState.userId}`
     )
-    await this.environment.cache.set(cacheKey, {
-      userId: notificationState.userId,
-      notifications: modifiedNotifications,
-    })
+    await this.environment.cache.set(cacheKey, response)
   }
 
   private async customPost<
@@ -223,6 +208,7 @@ export class SerloDataSource extends RESTDataSource {
       {
         headers: {
           Authorization: `Serlo Service=${token}`,
+          'Content-Type': 'application/json; charset=utf-8',
         },
       }
     )

@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { TypeResolver } from '../../types'
-import { AbstractEntityPreResolver } from '../abstract-entity'
+import { AbstractEntityPayload } from '../abstract-entity'
 import { AppletPayload } from '../applet'
 import { ArticlePayload } from '../article'
 import { CoursePayload } from '../course'
@@ -29,7 +29,7 @@ import { ExercisePayload } from '../exercise'
 import { ExerciseGroupPayload } from '../exercise-group'
 import { VideoPayload } from '../video'
 
-export type TaxonomyTermChildPreResolver =
+export type TaxonomyTermChildPayload =
   | AppletPayload
   | ArticlePayload
   | CoursePayload
@@ -37,16 +37,13 @@ export type TaxonomyTermChildPreResolver =
   | ExercisePayload
   | ExerciseGroupPayload
   | VideoPayload
-export interface AbstractTaxonomyTermChildPreResolver
-  extends AbstractEntityPreResolver {
+export interface AbstractTaxonomyTermChildPayload
+  extends AbstractEntityPayload {
   taxonomyTermIds: number[]
 }
 
-export type TaxonomyTermChildPayload = TaxonomyTermChildPreResolver
-export type AbstractTaxonomyTermChildPayload = AbstractTaxonomyTermChildPreResolver
-
 export interface AbstractTaxonomyTermChildResolvers {
   AbstractTaxonomyTermChild: {
-    __resolveType: TypeResolver<TaxonomyTermChildPreResolver>
+    __resolveType: TypeResolver<TaxonomyTermChildPayload>
   }
 }

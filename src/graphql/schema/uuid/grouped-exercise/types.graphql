@@ -1,4 +1,4 @@
-type GroupedExercise implements AbstractUuid & AbstractEntity & AbstractExercise {
+type GroupedExercise implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractExercise {
   id: Int!
   trashed: Boolean!
   instance: Instance!
@@ -10,12 +10,12 @@ type GroupedExercise implements AbstractUuid & AbstractEntity & AbstractExercise
   exerciseGroup: ExerciseGroup!
 }
 
-type GroupedExerciseRevision implements AbstractUuid & AbstractEntityRevision & AbstractExerciseRevision {
+type GroupedExerciseRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & AbstractExerciseRevision {
   id: Int!
   author: User!
   trashed: Boolean!
   date: DateTime!
-  groupedExercise: GroupedExercise!
+  repository: GroupedExercise!
   content: String!
   changes: String!
 }

@@ -1,4 +1,4 @@
-type Event implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild {
+type Event implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild {
   id: Int!
   trashed: Boolean!
   instance: Instance!
@@ -9,12 +9,12 @@ type Event implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild 
   taxonomyTerms: [TaxonomyTerm!]!
 }
 
-type EventRevision implements AbstractUuid & AbstractEntityRevision {
+type EventRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision {
   id: Int!
   author: User!
   trashed: Boolean!
   date: DateTime!
-  event: Event!
+  repository: Event!
   title: String!
   content: String!
   changes: String!

@@ -21,22 +21,18 @@
  */
 import { EntityRevisionType, EntityType } from '../abstract-entity'
 import {
-  AbstractExercisePreResolver,
-  AbstractExerciseRevisionPreResolver,
+  AbstractExercisePayload,
+  AbstractExerciseRevisionPayload,
 } from '../abstract-exercise'
-import { AbstractTaxonomyTermChildPreResolver } from '../abstract-taxonomy-term-child'
+import { AbstractTaxonomyTermChildPayload } from '../abstract-taxonomy-term-child'
 
-export interface ExercisePreResolver
-  extends AbstractTaxonomyTermChildPreResolver,
-    AbstractExercisePreResolver {
+export interface ExercisePayload
+  extends AbstractTaxonomyTermChildPayload,
+    AbstractExercisePayload {
   __typename: EntityType.Exercise
 }
 
-export type ExercisePayload = ExercisePreResolver
-
-export interface ExerciseRevisionPreResolver
-  extends AbstractExerciseRevisionPreResolver {
+export interface ExerciseRevisionPayload
+  extends AbstractExerciseRevisionPayload {
   __typename: EntityRevisionType.ExerciseRevision
 }
-
-export type ExerciseRevisionPayload = ExerciseRevisionPreResolver

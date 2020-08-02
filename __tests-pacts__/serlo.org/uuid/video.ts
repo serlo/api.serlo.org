@@ -21,9 +21,13 @@
  */
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
-import * as R from 'ramda'
 
-import { video, videoRevision } from '../../../__fixtures__'
+import {
+  getVideoDataWithoutSubResolvers,
+  getVideoRevisionDataWithoutSubResolvers,
+  video,
+  videoRevision,
+} from '../../../__fixtures__'
 import { VideoPayload, VideoRevisionPayload } from '../../../src/graphql/schema'
 import {
   addUuidInteraction,
@@ -58,26 +62,12 @@ test('Video', async () => {
               alias
               instance
               date
-              currentRevision {
-                id
-              }
-              license {
-                id
-              }
             }
           }
         }
       `,
     data: {
-      uuid: {
-        ...R.omit(['currentRevisionId', 'licenseId', 'taxonomyTermIds'], video),
-        currentRevision: {
-          id: videoRevision.id,
-        },
-        license: {
-          id: 1,
-        },
-      },
+      uuid: getVideoDataWithoutSubResolvers(video),
     },
   })
 })
@@ -108,26 +98,12 @@ test('VideoRevision', async () => {
               content
               url
               changes
-              author {
-                id
-              }
-              video {
-                id
-              }
             }
           }
         }
       `,
     data: {
-      uuid: {
-        ...R.omit(['authorId', 'repositoryId'], videoRevision),
-        author: {
-          id: 1,
-        },
-        video: {
-          id: video.id,
-        },
-      },
+      uuid: getVideoRevisionDataWithoutSubResolvers(videoRevision),
     },
   })
 })

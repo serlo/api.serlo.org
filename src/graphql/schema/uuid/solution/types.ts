@@ -20,24 +20,19 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import {
-  AbstractEntityPreResolver,
-  AbstractEntityRevisionPreResolver,
+  AbstractEntityPayload,
+  AbstractEntityRevisionPayload,
   EntityRevisionType,
   EntityType,
 } from '../abstract-entity'
 
-export interface SolutionPreResolver extends AbstractEntityPreResolver {
+export interface SolutionPayload extends AbstractEntityPayload {
   __typename: EntityType.Solution
   parentId: number
 }
 
-export type SolutionPayload = SolutionPreResolver
-
-export interface SolutionRevisionPreResolver
-  extends AbstractEntityRevisionPreResolver {
+export interface SolutionRevisionPayload extends AbstractEntityRevisionPayload {
   __typename: EntityRevisionType.SolutionRevision
   content: string
   changes: string
 }
-
-export type SolutionRevisionPayload = SolutionRevisionPreResolver

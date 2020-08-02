@@ -23,30 +23,23 @@ import { GraphQLResolveInfo } from 'graphql'
 
 import { Context } from '../../types'
 import { requestsOnlyFields } from '../../utils'
+import { createExerciseResolvers } from '../abstract-exercise'
 import {
-  createEntityResolvers,
-  createEntityRevisionResolvers,
-  EntityRevisionType,
-  EntityType,
-} from '../abstract-entity'
-import { createExerciseResolvers } from '../abstract-exercise/utils'
+  createRepositoryResolvers,
+  createRevisionResolvers,
+} from '../abstract-repository'
 import { ExerciseGroupPayload } from '../exercise-group'
-import {
-  GroupedExercisePreResolver,
-  GroupedExerciseRevisionPreResolver,
-} from './types'
+import { GroupedExercisePayload, GroupedExerciseRevisionPayload } from './types'
 
 export const resolvers = {
   GroupedExercise: {
-    ...createEntityResolvers<
-      GroupedExercisePreResolver,
-      GroupedExerciseRevisionPreResolver
-    >({
-      entityRevisionType: EntityRevisionType.GroupedExerciseRevision,
-    }),
-    ...createExerciseResolvers<GroupedExercisePreResolver>(),
+    ...createRepositoryResolvers<
+      GroupedExercisePayload,
+      GroupedExerciseRevisionPayload
+    >(),
+    ...createExerciseResolvers<GroupedExercisePayload>(),
     async exerciseGroup(
-      groupedExercise: GroupedExercisePreResolver,
+      groupedExercise: GroupedExercisePayload,
       _args: never,
       { dataSources }: Context,
       info: GraphQLResolveInfo
@@ -60,11 +53,8 @@ export const resolvers = {
       )
     },
   },
-  GroupedExerciseRevision: createEntityRevisionResolvers<
-    GroupedExercisePreResolver,
-    GroupedExerciseRevisionPreResolver
-  >({
-    entityType: EntityType.GroupedExercise,
-    repository: 'groupedExercise',
-  }),
+  GroupedExerciseRevision: createRevisionResolvers<
+    GroupedExercisePayload,
+    GroupedExerciseRevisionPayload
+  >(),
 }

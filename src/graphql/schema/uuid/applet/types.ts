@@ -19,23 +19,18 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Applet, AppletRevision } from '../../../../types'
 import {
-  AbstractEntityRevisionPreResolver,
+  AbstractEntityRevisionPayload,
   EntityRevisionType,
   EntityType,
 } from '../abstract-entity'
-import { AbstractTaxonomyTermChildPreResolver } from '../abstract-taxonomy-term-child'
+import { AbstractTaxonomyTermChildPayload } from '../abstract-taxonomy-term-child'
 
-export interface AppletPreResolver
-  extends AbstractTaxonomyTermChildPreResolver {
+export interface AppletPayload extends AbstractTaxonomyTermChildPayload {
   __typename: EntityType.Applet
 }
 
-export type AppletPayload = AppletPreResolver
-
-export interface AppletRevisionPreResolver
-  extends AbstractEntityRevisionPreResolver {
+export interface AppletRevisionPayload extends AbstractEntityRevisionPayload {
   __typename: EntityRevisionType.AppletRevision
   url: string
   title: string
@@ -44,5 +39,3 @@ export interface AppletRevisionPreResolver
   metaTitle: string
   metaDescription: string
 }
-
-export type AppletRevisionPayload = AppletRevisionPreResolver
