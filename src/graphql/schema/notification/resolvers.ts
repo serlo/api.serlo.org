@@ -19,7 +19,14 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { NotificationEventPayload, NotificationResolvers } from './types'
+import { AuthenticationError } from 'apollo-server'
+
+import { resolveConnection } from '../connection'
+import {
+  NotificationEventPayload,
+  NotificationPayload,
+  NotificationResolvers,
+} from './types'
 
 export const resolvers: NotificationResolvers = {
   AbstractNotificationEvent: {
@@ -27,11 +34,52 @@ export const resolvers: NotificationResolvers = {
       return notificationEvent.__typename
     },
   },
+  Notification: {
+    async event(parent, _args, { dataSources }) {
+      return await dataSources.serlo.getNotificationEvent<
+        NotificationEventPayload
+      >({
+        id: parent.eventId,
+      })
+    },
+  },
   Query: {
+    async notifications(
+      _parent,
+      { unread, ...cursorPayload },
+      { dataSources, user }
+    ) {
+      if (user === null) throw new AuthenticationError('You are not logged in')
+      const { notifications } = await dataSources.serlo.getNotifications({
+        id: user,
+      })
+      return resolveConnection<NotificationPayload>({
+        nodes:
+          unread == null
+            ? notifications
+            : notifications.filter((notification) => {
+                return notification.unread === unread
+              }),
+        payload: cursorPayload,
+        createCursor(node) {
+          return `${node.id}`
+        },
+      })
+    },
     async notificationEvent(_parent, payload, { dataSources }) {
       return dataSources.serlo.getNotificationEvent<NotificationEventPayload>(
         payload
       )
+    },
+  },
+  Mutation: {
+    async setNotificationState(_parent, payload, { dataSources, user }) {
+      if (user === null) throw new AuthenticationError('You are not logged in')
+      await dataSources.serlo.setNotificationState({
+        id: payload.id,
+        userId: user,
+        unread: payload.unread,
+      })
     },
   },
 }

@@ -35,6 +35,12 @@ describe('GET /api/license/:id', () => {
 describe('GET /api/navigation', () => {
   require('./navigation')
 })
+describe('GET /api/notifications/:id', () => {
+  require('./notifications')
+})
+describe('POST /api/set-notification-state/:id', () => {
+  require('./set-notification-state')
+})
 describe('GET /api/uuid/:id', () => {
   require('./uuid')
 })

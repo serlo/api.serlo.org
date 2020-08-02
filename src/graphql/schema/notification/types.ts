@@ -21,9 +21,18 @@
  */
 import {
   AbstractNotificationEvent,
+  MutationSetNotificationStateArgs,
+  Notification,
   QueryNotificationEventArgs,
+  QueryNotificationsArgs,
 } from '../../../types'
-import { QueryResolver, TypeResolver } from '../types'
+import { Connection } from '../connection'
+import {
+  MutationResolver,
+  QueryResolver,
+  Resolver,
+  TypeResolver,
+} from '../types'
 import { CheckoutRevisionNotificationEventPayload } from './checkout-revision-notification-event'
 import { CreateCommentNotificationEventPayload } from './create-comment-notification-event'
 import { CreateEntityLinkNotificationEventPayload } from './create-entity-link-notification-event'
@@ -40,6 +49,16 @@ import { SetTaxonomyParentNotificationEventPayload } from './set-taxonomy-parent
 import { SetTaxonomyTermNotificationEventPayload } from './set-taxonomy-term-notification-event'
 import { SetThreadStateNotificationEventPayload } from './set-thread-state-notification-event'
 import { SetUuidStateNotificationEventPayload } from './set-uuid-state-notification-event'
+
+export interface NotificationPayload
+  extends Omit<Notification, keyof NotificationResolvers['Notification']> {
+  eventId: number
+}
+
+export interface NotificationsPayload {
+  notifications: NotificationPayload[]
+  userId: number
+}
 
 export enum NotificationEventType {
   CheckoutRevision = 'CheckoutRevisionNotificationEvent',
@@ -86,10 +105,20 @@ export interface NotificationResolvers {
   AbstractNotificationEvent: {
     __resolveType: TypeResolver<NotificationEventPayload>
   }
+  Notification: {
+    event: Resolver<NotificationPayload, never, NotificationEventPayload>
+  }
   Query: {
+    notifications: QueryResolver<
+      QueryNotificationsArgs,
+      Connection<NotificationPayload>
+    >
     notificationEvent: QueryResolver<
       QueryNotificationEventArgs,
       NotificationEventPayload
     >
+  }
+  Mutation: {
+    setNotificationState: MutationResolver<MutationSetNotificationStateArgs>
   }
 }

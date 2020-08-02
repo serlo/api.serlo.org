@@ -32,3 +32,15 @@ export async function assertSuccessfulGraphQLQuery(
     client: global.client,
   })
 }
+
+export async function assertSuccessfulGraphQLMutation(
+  args: Omit<
+    Parameters<typeof assertions.assertSuccessfulGraphQLMutation>[0],
+    'client'
+  >
+) {
+  return assertions.assertSuccessfulGraphQLMutation({
+    ...args,
+    client: global.client,
+  })
+}
