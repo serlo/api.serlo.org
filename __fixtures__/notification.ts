@@ -73,7 +73,7 @@ export function getCheckoutRevisionNotificationEventDataWithoutSubResolvers(
 
 export const rejectRevisionNotificationEvent: RejectRevisionNotificationEventPayload = {
   __typename: NotificationEventType.RejectRevision,
-  id: 301,
+  id: 38035,
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
   reviewerId: user.id,
@@ -90,7 +90,7 @@ export function getRejectRevisionNotificationEventDataWithoutSubResolvers(
 
 export const createCommentNotificationEvent: CreateCommentNotificationEventPayload = {
   __typename: NotificationEventType.CreateComment,
-  id: 37374,
+  id: 37375,
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
   authorId: user.id,
@@ -169,7 +169,7 @@ export function getCreateEntityRevisionNotificationEventDataWithoutSubResolvers(
 
 export const createTaxonomyTermNotificationEvent: CreateTaxonomyTermNotificationEventPayload = {
   __typename: NotificationEventType.CreateTaxonomyTerm,
-  id: 298,
+  id: 90,
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
   authorId: user.id,
@@ -298,7 +298,7 @@ export function getSetThreadStateNotificationEventDataWithoutSubResolvers(
 
 export const setUuidStateNotificationEvent: SetUuidStateNotificationEventPayload = {
   __typename: NotificationEventType.SetUuidState,
-  id: 40750,
+  id: 38513,
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
   actorId: user.id,
