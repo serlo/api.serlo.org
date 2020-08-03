@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.0](https://github.com/serlo/api.serlo.org/compare/v0.6.0..v0.7.0) - August 4, 2020
+
+### Breaking Changes
+
+- **notification**. Completely new implementation. We now basically resolve the different event types in the API directly. See `AbstractNotificationEvent`.
+- **uuid**. Rename `article` to `repository` in `ArticleRevision` (and similarly for all other types that implement `AbstractRevision`.
+
+### Added
+
+- **uuid**. Add various base types that expose common properties. More specifically:
+
+  - Add base type `AbstractExercise` for `Exercise` and `GroupedExercise`.
+  - Add base type `AbstractExerciseRevision` for `ExerciseRevision` and `GroupedExerciseRevision`.
+  - Add base type `AbstractNavigationChild` for `Page` and `TaxonomyTerm`.
+  - Add base type `AbstractRepository` for `AbstractEntity` and `Page`.
+  - Add base type `AbstractRepositoryRevision` for `AbstractEntityRevision` and `PageRevision`.
+  - Add base type `AbstractTaxonomyTermChild` for entity types that appear as children of taxonomy terms.
+
+- **uuid**. Add field `date` to `Page`.
+
+### Changed
+
+- **uuid**. `AbstractEntity`, `AbstractEntityRevision` inherit the properties of `AbstractUuid` explicitly
+
 ## [0.6.0](https://github.com/serlo/api.serlo.org/compare/v0.5.8..v0.6.0) - July 21, 2020
 
 ### Breaking Changes
