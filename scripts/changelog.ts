@@ -201,8 +201,8 @@ async function exec(): Promise<void> {
       ],
     },
     {
-      tagName: 'v0.7.0',
-      name: '0.7.0',
+      tagName: 'v0.7.2',
+      name: '0.7.2',
       date: '2020-08-04',
       breakingChanges: [
         [
