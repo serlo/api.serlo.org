@@ -778,6 +778,14 @@ export type UnsupportedThread = {
 };
 
 // @public (undocumented)
+export type UnsupportedUuid = AbstractUuid & {
+    __typename?: 'UnsupportedUuid';
+    id: Scalars['Int'];
+    trashed: Scalars['Boolean'];
+    type: Scalars['String'];
+};
+
+// @public (undocumented)
 export type User = AbstractUuid & {
     __typename?: 'User';
     id: Scalars['Int'];

@@ -19,33 +19,17 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { DiscriminatorType, UuidPayload } from '..'
-import { UuidResolvers } from './types'
-import { isUnsupportedUuid } from './utils'
+import * as R from 'ramda'
 
-export const resolvers: UuidResolvers = {
-  AbstractUuid: {
-    __resolveType(uuid) {
-      return uuid.__typename
-    },
-  },
-  Query: {
-    async uuid(_parent, payload, { dataSources }) {
-      const id = payload.alias
-        ? (await dataSources.serlo.getAlias(payload.alias)).id
-        : (payload.id as number)
-      const uuid = await dataSources.serlo.getUuid<UuidPayload>({ id })
+import { EntityRevisionType, EntityType } from '../abstract-entity'
+import { AbstractUuidPayload, DiscriminatorType } from './types'
 
-      if (isUnsupportedUuid(uuid)) {
-        return {
-          __typename: DiscriminatorType.UnsupportedUuid,
-          type: uuid.__typename,
-          id: uuid.id,
-          trashed: uuid.trashed,
-        }
-      }
+const validTypes = [
+  ...Object.values(DiscriminatorType),
+  ...Object.values(EntityType),
+  ...Object.values(EntityRevisionType),
+]
 
-      return uuid
-    },
-  },
+export function isUnsupportedUuid(payload: AbstractUuidPayload) {
+  return !R.includes(payload.__typename, validTypes)
 }
