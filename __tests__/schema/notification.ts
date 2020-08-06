@@ -72,8 +72,9 @@ import {
   user,
   user2,
 } from '../../__fixtures__'
+import { NotificationEventType } from '../../src/graphql/schema'
 import { Service } from '../../src/graphql/schema/types'
-import { MutationSetNotificationStateArgs } from '../../src/types'
+import { Instance, MutationSetNotificationStateArgs } from '../../src/types'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
@@ -2121,6 +2122,50 @@ describe('notificationEvent', () => {
         data: {
           notificationEvent: {
             object: getArticleDataWithoutSubResolvers(article),
+          },
+        },
+        client,
+      })
+    })
+  })
+
+  describe('UnsupportedNotificationEvent', () => {
+    beforeEach(() => {
+      global.server.use(
+        createNotificationEventHandler({
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error We assume here that we get an invalid type name
+          __typename: 'SomeFancyNotificationEvent',
+          id: 1337,
+          instance: Instance.De,
+          date: '2014-03-01T20:45:56Z',
+        })
+      )
+    })
+
+    test('by id', async () => {
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query notificationEvent($id: Int!) {
+            notificationEvent(id: $id) {
+              __typename
+              ... on UnsupportedNotificationEvent {
+                type
+                id
+                instance
+                date
+              }
+            }
+          }
+        `,
+        variables: { id: 1337 },
+        data: {
+          notificationEvent: {
+            __typename: NotificationEventType.Unsupported,
+            type: 'SomeFancyNotificationEvent',
+            id: 1337,
+            instance: Instance.De,
+            date: '2014-03-01T20:45:56Z',
           },
         },
         client,

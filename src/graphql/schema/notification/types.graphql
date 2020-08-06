@@ -10,6 +10,13 @@ interface AbstractNotificationEvent {
   date: DateTime!
 }
 
+type UnsupportedNotificationEvent implements AbstractNotificationEvent {
+  id: Int!
+  instance: Instance!
+  date: DateTime!
+  type: String!
+}
+
 extend type Query {
   notifications(
     after: String

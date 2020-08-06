@@ -22,11 +22,15 @@
 import { AuthenticationError } from 'apollo-server'
 
 import { resolveConnection } from '../connection'
+import { Context } from '../types'
 import {
   NotificationEventPayload,
+  NotificationEventType,
   NotificationPayload,
   NotificationResolvers,
+  UnsupportedNotificationEventPayload,
 } from './types'
+import { isUnsupportedNotificationEvent } from './utils'
 
 export const resolvers: NotificationResolvers = {
   AbstractNotificationEvent: {
@@ -35,12 +39,8 @@ export const resolvers: NotificationResolvers = {
     },
   },
   Notification: {
-    async event(parent, _args, { dataSources }) {
-      return await dataSources.serlo.getNotificationEvent<
-        NotificationEventPayload
-      >({
-        id: parent.eventId,
-      })
+    event(parent, _args, context) {
+      return resolveNotificationEvent({ id: parent.eventId }, context)
     },
   },
   Query: {
@@ -66,10 +66,8 @@ export const resolvers: NotificationResolvers = {
         },
       })
     },
-    async notificationEvent(_parent, payload, { dataSources }) {
-      return dataSources.serlo.getNotificationEvent<NotificationEventPayload>(
-        payload
-      )
+    async notificationEvent(_parent, payload, context) {
+      return await resolveNotificationEvent(payload, context)
     },
   },
   Mutation: {
@@ -82,4 +80,25 @@ export const resolvers: NotificationResolvers = {
       })
     },
   },
+}
+
+async function resolveNotificationEvent(
+  payload: { id: number },
+  { dataSources }: Context
+): Promise<NotificationEventPayload | UnsupportedNotificationEventPayload> {
+  const notificationEvent = await dataSources.serlo.getNotificationEvent<
+    NotificationEventPayload
+  >(payload)
+
+  if (isUnsupportedNotificationEvent(notificationEvent)) {
+    return {
+      __typename: NotificationEventType.Unsupported,
+      type: notificationEvent.__typename,
+      id: notificationEvent.id,
+      instance: notificationEvent.instance,
+      date: notificationEvent.date,
+    }
+  }
+
+  return notificationEvent
 }

@@ -56,6 +56,7 @@ export * from './set-taxonomy-term-notification-event'
 export * from './set-thread-state-notification-event'
 export * from './set-uuid-state-notification-event'
 export * from './types'
+export * from './utils'
 
 const baseSchema = new Schema(resolvers, [typeDefs])
 

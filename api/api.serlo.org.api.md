@@ -772,6 +772,15 @@ export type UnsupportedComment = {
 };
 
 // @public (undocumented)
+export type UnsupportedNotificationEvent = AbstractNotificationEvent & {
+    __typename?: 'UnsupportedNotificationEvent';
+    id: Scalars['Int'];
+    instance: Instance;
+    date: Scalars['DateTime'];
+    type: Scalars['String'];
+};
+
+// @public (undocumented)
 export type UnsupportedThread = {
     __typename?: 'UnsupportedThread';
     id: Scalars['Int'];
