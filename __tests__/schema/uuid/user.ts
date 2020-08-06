@@ -96,26 +96,8 @@ describe('User', () => {
   })
 })
 
-describe('activeDonors', () => {
-  function createActiveDonorsQuery() {
-    return {
-      query: gql`
-        {
-          activeDonors {
-            __typename
-            id
-            trashed
-            username
-            date
-            lastLogin
-            description
-          }
-        }
-      `,
-    }
-  }
-
-  test('activeDonors', async () => {
+describe('endpoint activeDonors', () => {
+  test('returns list of users', async () => {
     global.server.use(
       createUuidHandler(user2),
       createActiveDonorsHandler([user, user2])
@@ -129,7 +111,7 @@ describe('activeDonors', () => {
     })
   })
 
-  test('activeDonors (only returns users)', async () => {
+  test('returned list only contains user', async () => {
     global.server.use(
       createUuidHandler(article),
       createActiveDonorsHandler([user, article])
@@ -144,29 +126,6 @@ describe('activeDonors', () => {
   })
 
   describe('parser', () => {
-    function createActiveDonorsQueryExpectingIds(ids: number[]) {
-      return {
-        query: gql`
-          {
-            activeDonors {
-              id
-            }
-          }
-        `,
-        data: {
-          activeDonors: ids.map((id) => {
-            return { id }
-          }),
-        },
-      }
-    }
-
-    function createUsersHandler(ids: number[]) {
-      return ids.map((id) => {
-        return createUuidHandler({ ...user, id })
-      })
-    }
-
     test('extract user ids from first column with omitting the header', async () => {
       global.server.use(
         ...createUsersHandler([1, 2, 3]),
@@ -217,7 +176,48 @@ describe('activeDonors', () => {
         client,
       })
     })
+
+    function createActiveDonorsQueryExpectingIds(ids: number[]) {
+      return {
+        query: gql`
+          {
+            activeDonors {
+              id
+            }
+          }
+        `,
+        data: {
+          activeDonors: ids.map((id) => {
+            return { id }
+          }),
+        },
+      }
+    }
+
+    function createUsersHandler(ids: number[]) {
+      return ids.map((id) => {
+        return createUuidHandler({ ...user, id })
+      })
+    }
   })
+
+  function createActiveDonorsQuery() {
+    return {
+      query: gql`
+        {
+          activeDonors {
+            __typename
+            id
+            trashed
+            username
+            date
+            lastLogin
+            description
+          }
+        }
+      `,
+    }
+  }
 })
 
 function createActiveDonorsHandler(users: UuidPayload[]) {
