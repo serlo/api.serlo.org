@@ -235,6 +235,21 @@ async function exec(): Promise<void> {
         ],
       ],
     },
+    {
+      tagName: 'v0.7.4',
+      name: '0.7.4',
+      date: '2020-08-06',
+      added: [
+        ['notification', 'Add `UnsupportedNotificationEvent`.'],
+        ['uuid', 'Add `UnsupportedUuid`.'],
+      ],
+      fixed: [
+        [
+          'uuid',
+          'GraphQL no longer fails when it encounters an unsupported entity.',
+        ],
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

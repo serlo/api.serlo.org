@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.4](https://github.com/serlo/api.serlo.org/compare/v0.7.2..v0.7.4) - August 6, 2020
+
+### Added
+
+- **notification**. Add `UnsupportedNotificationEvent`.
+- **uuid**. Add `UnsupportedUuid`.
+
+### Fixed
+
+- **uuid**. GraphQL no longer fails when it encounters an unsupported entity.
+
 ## [0.7.2](https://github.com/serlo/api.serlo.org/compare/v0.6.0..v0.7.2) - August 4, 2020
 
 ### Breaking Changes
