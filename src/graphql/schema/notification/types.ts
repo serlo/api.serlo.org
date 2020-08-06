@@ -34,6 +34,7 @@ import {
   Resolver,
   TypeResolver,
 } from '../types'
+import { UserPayload } from '../uuid/user'
 import { CheckoutRevisionNotificationEventPayload } from './checkout-revision-notification-event'
 import { CreateCommentNotificationEventPayload } from './create-comment-notification-event'
 import { CreateEntityLinkNotificationEventPayload } from './create-entity-link-notification-event'
@@ -99,12 +100,17 @@ export type NotificationEventPayload =
   | SetThreadStateNotificationEventPayload
   | SetUuidStateNotificationEventPayload
 export interface AbstractNotificationEventPayload
-  extends AbstractNotificationEvent {
+  extends Omit<AbstractNotificationEvent, 'actor'> {
   __typename: NotificationEventType
+  actorId: number
 }
 
 export interface UnsupportedNotificationEventPayload
-  extends UnsupportedNotificationEvent {
+  extends AbstractNotificationEventPayload,
+    Omit<
+      UnsupportedNotificationEvent,
+      keyof NotificationResolvers['UnsupportedNotificationEvent']
+    > {
   __typename: NotificationEventType.Unsupported
 }
 
@@ -114,6 +120,9 @@ export interface NotificationResolvers {
       NotificationEventPayload | UnsupportedNotificationEventPayload
     >
   }
+  UnsupportedNotificationEvent: NotificationEventResolvers<
+    UnsupportedNotificationEventPayload
+  >
   Notification: {
     event: Resolver<
       NotificationPayload,
@@ -134,4 +143,10 @@ export interface NotificationResolvers {
   Mutation: {
     setNotificationState: MutationResolver<MutationSetNotificationStateArgs>
   }
+}
+
+export interface NotificationEventResolvers<
+  T extends AbstractNotificationEventPayload
+> {
+  actor: Resolver<T, never, Partial<UserPayload>>
 }

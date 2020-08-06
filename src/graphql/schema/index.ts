@@ -26,7 +26,7 @@ import { instanceSchema } from './instance'
 import { jsonSchema } from './json'
 import { licenseSchema } from './license'
 import { notificationSchema } from './notification'
-import { Schema } from './utils'
+import { mergeSchemas } from './utils'
 import { uuidSchema } from './uuid'
 
 export * from './connection'
@@ -37,7 +37,7 @@ export * from './license'
 export * from './notification'
 export * from './uuid'
 
-export const schema = Schema.merge(
+export const schema = mergeSchemas(
   connectionSchema,
   cacheSchema,
   dateTimeSchema,

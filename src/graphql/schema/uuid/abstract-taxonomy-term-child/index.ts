@@ -26,4 +26,7 @@ import typeDefs from './types.graphql'
 export * from './types'
 export * from './utils'
 
-export const abstractTaxonomyTermChildSchema = new Schema(resolvers, [typeDefs])
+export const abstractTaxonomyTermChildSchema: Schema = {
+  resolvers,
+  typeDefs: [typeDefs],
+}

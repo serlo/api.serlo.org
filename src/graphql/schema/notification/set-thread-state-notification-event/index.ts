@@ -25,6 +25,7 @@ import typeDefs from './types.graphql'
 
 export * from './types'
 
-export const setThreadStateNotificationEventSchema = new Schema(resolvers, [
-  typeDefs,
-])
+export const setThreadStateNotificationEventSchema: Schema = {
+  resolvers,
+  typeDefs: [typeDefs],
+}

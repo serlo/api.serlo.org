@@ -25,32 +25,30 @@ import {
 } from '../../../../types'
 import { Resolver } from '../../types'
 import { UuidPayload } from '../../uuid/abstract-uuid'
-import { UserPayload } from '../../uuid/user'
-import { NotificationEventType } from '../types'
+import {
+  AbstractNotificationEventPayload,
+  NotificationEventResolvers,
+  NotificationEventType,
+} from '../types'
 
 export interface CreateThreadNotificationEventPayload
-  extends Omit<
-    CreateThreadNotificationEvent,
-    keyof CreateThreadNotificationEventResolvers['CreateThreadNotificationEvent']
-  > {
+  extends AbstractNotificationEventPayload,
+    Omit<
+      CreateThreadNotificationEvent,
+      keyof CreateThreadNotificationEventResolvers['CreateThreadNotificationEvent']
+    > {
   __typename: NotificationEventType.CreateThread
-  authorId: number
   objectId: number
   threadId: number
 }
 
 export interface CreateThreadNotificationEventResolvers {
   CreateThreadNotificationEvent: {
-    author: Resolver<
-      CreateThreadNotificationEventPayload,
-      never,
-      Partial<UserPayload>
-    >
     object: Resolver<CreateThreadNotificationEventPayload, never, UuidPayload>
     thread: Resolver<
       CreateThreadNotificationEventPayload,
       never,
       UnsupportedThread
     >
-  }
+  } & NotificationEventResolvers<CreateThreadNotificationEventPayload>
 }

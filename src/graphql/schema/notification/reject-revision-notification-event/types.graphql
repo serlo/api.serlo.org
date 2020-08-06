@@ -2,7 +2,7 @@ type RejectRevisionNotificationEvent implements AbstractNotificationEvent {
   id: Int!
   instance: Instance!
   date: DateTime!
-  reviewer: User!
+  actor: User!
   repository: AbstractRepository!
   revision: AbstractRevision!
   reason: String!

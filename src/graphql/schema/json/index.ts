@@ -24,10 +24,10 @@ import GraphQLJSON, { GraphQLJSONObject } from 'graphql-type-json'
 import { Schema } from '../utils'
 import typeDefs from './types.graphql'
 
-export const jsonSchema = new Schema(
-  {
+export const jsonSchema: Schema = {
+  resolvers: {
     JSON: GraphQLJSON,
     JSONObject: GraphQLJSONObject,
   },
-  [typeDefs]
-)
+  typeDefs: [typeDefs],
+}

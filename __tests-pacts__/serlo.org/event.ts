@@ -76,7 +76,7 @@ test('CheckoutRevisionNotificationEvent', async () => {
     id: checkoutRevisionNotificationEvent.id,
     instance: Matchers.string(checkoutRevisionNotificationEvent.instance),
     date: Matchers.iso8601DateTime(checkoutRevisionNotificationEvent.date),
-    reviewerId: Matchers.integer(checkoutRevisionNotificationEvent.reviewerId),
+    actorId: Matchers.integer(checkoutRevisionNotificationEvent.actorId),
     repositoryId: Matchers.integer(
       checkoutRevisionNotificationEvent.repositoryId
     ),
@@ -112,7 +112,7 @@ test('RejectRevisionNotificationEvent', async () => {
     id: rejectRevisionNotificationEvent.id,
     instance: Matchers.string(rejectRevisionNotificationEvent.instance),
     date: Matchers.iso8601DateTime(rejectRevisionNotificationEvent.date),
-    reviewerId: Matchers.integer(rejectRevisionNotificationEvent.reviewerId),
+    actorId: Matchers.integer(rejectRevisionNotificationEvent.actorId),
     repositoryId: Matchers.integer(
       rejectRevisionNotificationEvent.repositoryId
     ),
@@ -148,7 +148,7 @@ test('CreateCommentNotificationEvent', async () => {
     id: createCommentNotificationEvent.id,
     instance: Matchers.string(createCommentNotificationEvent.instance),
     date: Matchers.iso8601DateTime(createCommentNotificationEvent.date),
-    authorId: Matchers.integer(createCommentNotificationEvent.authorId),
+    actorId: Matchers.integer(createCommentNotificationEvent.actorId),
     threadId: Matchers.integer(createCommentNotificationEvent.threadId),
     commentId: Matchers.integer(createCommentNotificationEvent.commentId),
   })
@@ -180,7 +180,7 @@ test('CreateEntityNotificationEvent', async () => {
     id: createEntityNotificationEvent.id,
     instance: Matchers.string(createEntityNotificationEvent.instance),
     date: Matchers.iso8601DateTime(createEntityNotificationEvent.date),
-    authorId: Matchers.integer(createEntityNotificationEvent.authorId),
+    actorId: Matchers.integer(createEntityNotificationEvent.actorId),
     entityId: Matchers.integer(createEntityNotificationEvent.entityId),
   })
   await assertSuccessfulGraphQLQuery({
@@ -275,7 +275,7 @@ test('CreateEntityRevisionNotificationEvent', async () => {
     id: createEntityRevisionNotificationEvent.id,
     instance: Matchers.string(createEntityRevisionNotificationEvent.instance),
     date: Matchers.iso8601DateTime(createEntityRevisionNotificationEvent.date),
-    authorId: Matchers.integer(createEntityRevisionNotificationEvent.authorId),
+    actorId: Matchers.integer(createEntityRevisionNotificationEvent.actorId),
     entityId: Matchers.integer(createEntityRevisionNotificationEvent.entityId),
     entityRevisionId: Matchers.integer(
       createEntityRevisionNotificationEvent.entityRevisionId
@@ -309,7 +309,7 @@ test('CreateTaxonomyTermNotificationEvent', async () => {
     id: createTaxonomyTermNotificationEvent.id,
     instance: Matchers.string(createTaxonomyTermNotificationEvent.instance),
     date: Matchers.iso8601DateTime(createTaxonomyTermNotificationEvent.date),
-    authorId: Matchers.integer(createTaxonomyTermNotificationEvent.authorId),
+    actorId: Matchers.integer(createTaxonomyTermNotificationEvent.actorId),
     taxonomyTermId: Matchers.integer(
       createTaxonomyTermNotificationEvent.taxonomyTermId
     ),
@@ -342,7 +342,7 @@ test('SetTaxonomyTermNotificationEvent', async () => {
     id: setTaxonomyTermNotificationEvent.id,
     instance: Matchers.string(setTaxonomyTermNotificationEvent.instance),
     date: Matchers.iso8601DateTime(setTaxonomyTermNotificationEvent.date),
-    authorId: Matchers.integer(setTaxonomyTermNotificationEvent.authorId),
+    actorId: Matchers.integer(setTaxonomyTermNotificationEvent.actorId),
     taxonomyTermId: Matchers.integer(
       setTaxonomyTermNotificationEvent.taxonomyTermId
     ),
@@ -478,7 +478,7 @@ test('CreateThreadNotificationEvent', async () => {
     id: createThreadNotificationEvent.id,
     instance: Matchers.string(createThreadNotificationEvent.instance),
     date: Matchers.iso8601DateTime(createThreadNotificationEvent.date),
-    authorId: Matchers.integer(createThreadNotificationEvent.authorId),
+    actorId: Matchers.integer(createThreadNotificationEvent.actorId),
     objectId: Matchers.integer(createThreadNotificationEvent.objectId),
     threadId: Matchers.integer(createThreadNotificationEvent.threadId),
   })

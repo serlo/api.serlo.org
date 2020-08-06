@@ -25,4 +25,4 @@ import typeDefs from './types.graphql'
 
 export * from './types'
 
-export const videoSchema = new Schema(resolvers, [typeDefs])
+export const videoSchema: Schema = { resolvers, typeDefs: [typeDefs] }

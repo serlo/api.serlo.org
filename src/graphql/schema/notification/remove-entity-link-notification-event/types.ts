@@ -22,27 +22,25 @@
 import { RemoveEntityLinkNotificationEvent } from '../../../../types'
 import { Resolver } from '../../types'
 import { EntityPayload } from '../../uuid/abstract-entity'
-import { UserPayload } from '../../uuid/user'
-import { NotificationEventType } from '../types'
+import {
+  AbstractNotificationEventPayload,
+  NotificationEventResolvers,
+  NotificationEventType,
+} from '../types'
 
 export interface RemoveEntityLinkNotificationEventPayload
-  extends Omit<
-    RemoveEntityLinkNotificationEvent,
-    keyof RemoveEntityLinkNotificationEventResolvers['RemoveEntityLinkNotificationEvent']
-  > {
+  extends AbstractNotificationEventPayload,
+    Omit<
+      RemoveEntityLinkNotificationEvent,
+      keyof RemoveEntityLinkNotificationEventResolvers['RemoveEntityLinkNotificationEvent']
+    > {
   __typename: NotificationEventType.RemoveEntityLink
-  actorId: number
   parentId: number
   childId: number
 }
 
 export interface RemoveEntityLinkNotificationEventResolvers {
   RemoveEntityLinkNotificationEvent: {
-    actor: Resolver<
-      RemoveEntityLinkNotificationEventPayload,
-      never,
-      Partial<UserPayload>
-    >
     parent: Resolver<
       RemoveEntityLinkNotificationEventPayload,
       never,
@@ -53,5 +51,5 @@ export interface RemoveEntityLinkNotificationEventResolvers {
       never,
       EntityPayload
     >
-  }
+  } & NotificationEventResolvers<RemoveEntityLinkNotificationEventPayload>
 }

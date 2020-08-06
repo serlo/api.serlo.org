@@ -32,21 +32,27 @@ export function requestsOnlyFields(
   return !res || R.isEmpty(R.omit(fields, res.fieldsByTypeName[type]))
 }
 
-export class Schema {
+export class LegacySchema {
   public constructor(
     public resolvers = {},
     public typeDefs: DocumentNode[] = []
   ) {}
+}
 
-  public static merge(...schemas: Schema[]): Schema {
-    const subResolvers = R.map((schema) => schema.resolvers, schemas)
-    const resolvers = R.reduce<Record<string, unknown>, Schema['resolvers']>(
-      R.mergeDeepRight,
-      {},
-      subResolvers
-    )
-    const subTypeDefs = R.map((schema) => schema.typeDefs, schemas)
-    const typeDefs = R.flatten(subTypeDefs)
-    return new Schema(resolvers, typeDefs)
-  }
+export interface Schema {
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  resolvers: {}
+  typeDefs: DocumentNode[]
+}
+
+export function mergeSchemas(...schemas: Schema[]): Schema {
+  const subResolvers = R.map((schema) => schema.resolvers, schemas)
+  const resolvers = R.reduce<Record<string, unknown>, Schema['resolvers']>(
+    R.mergeDeepRight,
+    {},
+    subResolvers
+  )
+  const subTypeDefs = R.map((schema) => schema.typeDefs, schemas)
+  const typeDefs = R.flatten(subTypeDefs)
+  return { resolvers, typeDefs }
 }

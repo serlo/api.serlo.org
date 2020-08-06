@@ -25,6 +25,7 @@ import typeDefs from './types.graphql'
 
 export * from './types'
 
-export const setTaxonomyParentNotificationSchema = new Schema(resolvers, [
-  typeDefs,
-])
+export const setTaxonomyParentNotificationSchema: Schema = {
+  resolvers,
+  typeDefs: [typeDefs],
+}

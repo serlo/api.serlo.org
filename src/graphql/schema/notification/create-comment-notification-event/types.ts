@@ -25,27 +25,25 @@ import {
   UnsupportedThread,
 } from '../../../../types'
 import { Resolver } from '../../types'
-import { UserPayload } from '../../uuid/user'
-import { NotificationEventType } from '../types'
+import {
+  AbstractNotificationEventPayload,
+  NotificationEventResolvers,
+  NotificationEventType,
+} from '../types'
 
 export interface CreateCommentNotificationEventPayload
-  extends Omit<
-    CreateCommentNotificationEvent,
-    keyof CreateCommentNotificationEventResolvers['CreateCommentNotificationEvent']
-  > {
+  extends AbstractNotificationEventPayload,
+    Omit<
+      CreateCommentNotificationEvent,
+      keyof CreateCommentNotificationEventResolvers['CreateCommentNotificationEvent']
+    > {
   __typename: NotificationEventType.CreateComment
-  authorId: number
   threadId: number
   commentId: number
 }
 
 export interface CreateCommentNotificationEventResolvers {
   CreateCommentNotificationEvent: {
-    author: Resolver<
-      CreateCommentNotificationEventPayload,
-      never,
-      Partial<UserPayload>
-    >
     thread: Resolver<
       CreateCommentNotificationEventPayload,
       never,
@@ -56,5 +54,5 @@ export interface CreateCommentNotificationEventResolvers {
       never,
       UnsupportedComment
     >
-  }
+  } & NotificationEventResolvers<CreateCommentNotificationEventPayload>
 }

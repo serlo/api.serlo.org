@@ -26,4 +26,7 @@ import typeDefs from './types.graphql'
 export * from './types'
 export * from './utils'
 
-export const abstractNavigationChildSchema = new Schema(resolvers, [typeDefs])
+export const abstractNavigationChildSchema: Schema = {
+  resolvers,
+  typeDefs: [typeDefs],
+}

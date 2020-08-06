@@ -25,4 +25,4 @@ import typeDefs from './types.graphql'
 
 export * from './types'
 
-export const pageSchema = new Schema(resolvers, [typeDefs])
+export const pageSchema: Schema = { resolvers, typeDefs: [typeDefs] }

@@ -25,4 +25,4 @@ import typeDefs from './types.graphql'
 
 export * from './types'
 
-export const taxonomyTermSchema = new Schema(resolvers, [typeDefs])
+export const taxonomyTermSchema: Schema = { resolvers, typeDefs: [typeDefs] }
