@@ -22,30 +22,28 @@
 import { SetLicenseNotificationEvent } from '../../../../types'
 import { Resolver } from '../../types'
 import { RepositoryPayload } from '../../uuid/abstract-repository'
-import { UserPayload } from '../../uuid/user'
-import { NotificationEventType } from '../types'
+import {
+  AbstractNotificationEventPayload,
+  NotificationEventResolvers,
+  NotificationEventType,
+} from '../types'
 
 export interface SetLicenseNotificationEventPayload
-  extends Omit<
-    SetLicenseNotificationEvent,
-    keyof SetLicenseNotificationEventResolvers['SetLicenseNotificationEvent']
-  > {
+  extends AbstractNotificationEventPayload,
+    Omit<
+      SetLicenseNotificationEvent,
+      keyof SetLicenseNotificationEventResolvers['SetLicenseNotificationEvent']
+    > {
   __typename: NotificationEventType.SetLicense
-  actorId: number
   repositoryId: number
 }
 
 export interface SetLicenseNotificationEventResolvers {
   SetLicenseNotificationEvent: {
-    actor: Resolver<
-      SetLicenseNotificationEventPayload,
-      never,
-      Partial<UserPayload>
-    >
     repository: Resolver<
       SetLicenseNotificationEventPayload,
       never,
       RepositoryPayload
     >
-  }
+  } & NotificationEventResolvers<SetLicenseNotificationEventPayload>
 }

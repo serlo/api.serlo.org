@@ -326,14 +326,14 @@ describe('notificationEvent', () => {
       })
     })
 
-    test('by id (w/ reviewer)', async () => {
+    test('by id (w/ actor)', async () => {
       global.server.use(createUuidHandler(user))
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query notificationEvent($id: Int!) {
             notificationEvent(id: $id) {
               ... on CheckoutRevisionNotificationEvent {
-                reviewer {
+                actor {
                   __typename
                   id
                   trashed
@@ -349,7 +349,7 @@ describe('notificationEvent', () => {
         variables: checkoutRevisionNotificationEvent,
         data: {
           notificationEvent: {
-            reviewer: user,
+            actor: user,
           },
         },
         client,
@@ -456,14 +456,14 @@ describe('notificationEvent', () => {
       })
     })
 
-    test('by id (w/ reviewer)', async () => {
+    test('by id (w/ actor)', async () => {
       global.server.use(createUuidHandler(user))
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query notificationEvent($id: Int!) {
             notificationEvent(id: $id) {
               ... on RejectRevisionNotificationEvent {
-                reviewer {
+                actor {
                   __typename
                   id
                   trashed
@@ -479,7 +479,7 @@ describe('notificationEvent', () => {
         variables: rejectRevisionNotificationEvent,
         data: {
           notificationEvent: {
-            reviewer: user,
+            actor: user,
           },
         },
         client,
@@ -585,14 +585,14 @@ describe('notificationEvent', () => {
       })
     })
 
-    test('by id (w/ author)', async () => {
+    test('by id (w/ actor)', async () => {
       global.server.use(createUuidHandler(user))
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query notificationEvent($id: Int!) {
             notificationEvent(id: $id) {
               ... on CreateCommentNotificationEvent {
-                author {
+                actor {
                   __typename
                   id
                   trashed
@@ -608,7 +608,7 @@ describe('notificationEvent', () => {
         variables: createCommentNotificationEvent,
         data: {
           notificationEvent: {
-            author: user,
+            actor: user,
           },
         },
         client,
@@ -693,14 +693,14 @@ describe('notificationEvent', () => {
       })
     })
 
-    test('by id (w/ author)', async () => {
+    test('by id (w/ actor)', async () => {
       global.server.use(createUuidHandler(user))
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query notificationEvent($id: Int!) {
             notificationEvent(id: $id) {
               ... on CreateEntityNotificationEvent {
-                author {
+                actor {
                   __typename
                   id
                   trashed
@@ -716,7 +716,7 @@ describe('notificationEvent', () => {
         variables: createEntityNotificationEvent,
         data: {
           notificationEvent: {
-            author: user,
+            actor: user,
           },
         },
         client,
@@ -1034,14 +1034,14 @@ describe('notificationEvent', () => {
       })
     })
 
-    test('by id (w/ author)', async () => {
+    test('by id (w/ actor)', async () => {
       global.server.use(createUuidHandler(user))
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query notificationEvent($id: Int!) {
             notificationEvent(id: $id) {
               ... on CreateEntityRevisionNotificationEvent {
-                author {
+                actor {
                   __typename
                   id
                   trashed
@@ -1057,7 +1057,7 @@ describe('notificationEvent', () => {
         variables: createEntityRevisionNotificationEvent,
         data: {
           notificationEvent: {
-            author: user,
+            actor: user,
           },
         },
         client,
@@ -1163,14 +1163,14 @@ describe('notificationEvent', () => {
       })
     })
 
-    test('by id (w/ author)', async () => {
+    test('by id (w/ actor)', async () => {
       global.server.use(createUuidHandler(user))
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query notificationEvent($id: Int!) {
             notificationEvent(id: $id) {
               ... on CreateTaxonomyTermNotificationEvent {
-                author {
+                actor {
                   __typename
                   id
                   trashed
@@ -1186,7 +1186,7 @@ describe('notificationEvent', () => {
         variables: createTaxonomyTermNotificationEvent,
         data: {
           notificationEvent: {
-            author: user,
+            actor: user,
           },
         },
         client,
@@ -1259,14 +1259,14 @@ describe('notificationEvent', () => {
       })
     })
 
-    test('by id (w/ author)', async () => {
+    test('by id (w/ actor)', async () => {
       global.server.use(createUuidHandler(user))
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query notificationEvent($id: Int!) {
             notificationEvent(id: $id) {
               ... on SetTaxonomyTermNotificationEvent {
-                author {
+                actor {
                   __typename
                   id
                   trashed
@@ -1282,7 +1282,7 @@ describe('notificationEvent', () => {
         variables: setTaxonomyTermNotificationEvent,
         data: {
           notificationEvent: {
-            author: user,
+            actor: user,
           },
         },
         client,
@@ -1771,14 +1771,14 @@ describe('notificationEvent', () => {
       })
     })
 
-    test('by id (w/ author)', async () => {
+    test('by id (w/ actor)', async () => {
       global.server.use(createUuidHandler(user))
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query notificationEvent($id: Int!) {
             notificationEvent(id: $id) {
               ... on CreateThreadNotificationEvent {
-                author {
+                actor {
                   __typename
                   id
                   trashed
@@ -1794,7 +1794,7 @@ describe('notificationEvent', () => {
         variables: createThreadNotificationEvent,
         data: {
           notificationEvent: {
-            author: user,
+            actor: user,
           },
         },
         client,

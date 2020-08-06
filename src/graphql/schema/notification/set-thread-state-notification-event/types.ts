@@ -24,30 +24,28 @@ import {
   UnsupportedThread,
 } from '../../../../types'
 import { Resolver } from '../../types'
-import { UserPayload } from '../../uuid/user'
-import { NotificationEventType } from '../types'
+import {
+  AbstractNotificationEventPayload,
+  NotificationEventResolvers,
+  NotificationEventType,
+} from '../types'
 
 export interface SetThreadStateNotificationEventPayload
-  extends Omit<
-    SetThreadStateNotificationEvent,
-    keyof SetThreadStateNotificationEventResolvers['SetThreadStateNotificationEvent']
-  > {
+  extends AbstractNotificationEventPayload,
+    Omit<
+      SetThreadStateNotificationEvent,
+      keyof SetThreadStateNotificationEventResolvers['SetThreadStateNotificationEvent']
+    > {
   __typename: NotificationEventType.SetThreadState
-  actorId: number
   threadId: number
 }
 
 export interface SetThreadStateNotificationEventResolvers {
   SetThreadStateNotificationEvent: {
-    actor: Resolver<
-      SetThreadStateNotificationEventPayload,
-      never,
-      Partial<UserPayload>
-    >
     thread: Resolver<
       SetThreadStateNotificationEventPayload,
       never,
       UnsupportedThread
     >
-  }
+  } & NotificationEventResolvers<SetThreadStateNotificationEventPayload>
 }

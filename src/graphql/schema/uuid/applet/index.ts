@@ -25,4 +25,4 @@ import typeDefs from './types.graphql'
 
 export * from './types'
 
-export const appletSchema = new Schema(resolvers, [typeDefs])
+export const appletSchema: Schema = { resolvers, typeDefs: [typeDefs] }

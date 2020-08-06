@@ -22,4 +22,4 @@
 import { Schema } from '../utils'
 import typeDefs from './types.graphql'
 
-export const instanceSchema = new Schema({}, [typeDefs])
+export const instanceSchema: Schema = { resolvers: {}, typeDefs: [typeDefs] }

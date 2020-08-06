@@ -21,7 +21,7 @@
  */
 import { requestsOnlyFields } from '../../utils'
 import { decodePath } from '../alias'
-import { UserPayload } from '../user'
+import { resolveUser } from '../user'
 import {
   AbstractRepositoryPayload,
   AbstractRevisionPayload,
@@ -58,12 +58,8 @@ export function createRevisionResolvers<
   R extends AbstractRevisionPayload
 >(): RevisionResolvers<E, R> {
   return {
-    async author(entityRevision, _args, { dataSources }, info) {
-      const partialUser = { id: entityRevision.authorId }
-      if (requestsOnlyFields('User', ['id'], info)) {
-        return partialUser
-      }
-      return dataSources.serlo.getUuid<UserPayload>(partialUser)
+    author(entityRevision, _args, context, info) {
+      return resolveUser({ id: entityRevision.authorId }, context, info)
     },
     repository: async (entityRevision, _args, { dataSources }) => {
       return dataSources.serlo.getUuid<E>({ id: entityRevision.repositoryId })

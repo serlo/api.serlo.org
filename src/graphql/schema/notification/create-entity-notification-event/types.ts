@@ -22,26 +22,24 @@
 import { CreateEntityNotificationEvent } from '../../../../types'
 import { Resolver } from '../../types'
 import { EntityPayload } from '../../uuid/abstract-entity'
-import { UserPayload } from '../../uuid/user'
-import { NotificationEventType } from '../types'
+import {
+  AbstractNotificationEventPayload,
+  NotificationEventResolvers,
+  NotificationEventType,
+} from '../types'
 
 export interface CreateEntityNotificationEventPayload
-  extends Omit<
-    CreateEntityNotificationEvent,
-    keyof CreateEntityNotificationEventResolvers['CreateEntityNotificationEvent']
-  > {
+  extends AbstractNotificationEventPayload,
+    Omit<
+      CreateEntityNotificationEvent,
+      keyof CreateEntityNotificationEventResolvers['CreateEntityNotificationEvent']
+    > {
   __typename: NotificationEventType.CreateEntity
-  authorId: number
   entityId: number
 }
 
 export interface CreateEntityNotificationEventResolvers {
   CreateEntityNotificationEvent: {
-    author: Resolver<
-      CreateEntityNotificationEventPayload,
-      never,
-      Partial<UserPayload>
-    >
     entity: Resolver<CreateEntityNotificationEventPayload, never, EntityPayload>
-  }
+  } & NotificationEventResolvers<CreateEntityNotificationEventPayload>
 }

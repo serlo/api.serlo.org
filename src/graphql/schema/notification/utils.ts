@@ -21,8 +21,10 @@
  */
 import * as R from 'ramda'
 
+import { resolveUser } from '../uuid'
 import {
   AbstractNotificationEventPayload,
+  NotificationEventResolvers,
   NotificationEventType,
 } from './types'
 
@@ -32,4 +34,14 @@ export function isUnsupportedNotificationEvent(
   payload: AbstractNotificationEventPayload
 ) {
   return !R.includes(payload.__typename, validTypes)
+}
+
+export function createNotificationEventResolvers<
+  T extends AbstractNotificationEventPayload
+>(): NotificationEventResolvers<T> {
+  return {
+    actor(notificationEvent, _args, context, info) {
+      return resolveUser({ id: notificationEvent.actorId }, context, info)
+    },
+  }
 }

@@ -25,4 +25,4 @@ import typeDefs from './types.graphql'
 
 export * from './types'
 
-export const cacheSchema = new Schema(resolvers, [typeDefs])
+export const cacheSchema: Schema = { resolvers, typeDefs: [typeDefs] }

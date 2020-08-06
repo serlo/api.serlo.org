@@ -24,5 +24,6 @@ import { resolvers } from './resolvers'
 import typeDefs from './types.graphql'
 
 export * from './types'
+export * from './utils'
 
-export const userSchema = new Schema(resolvers, [typeDefs])
+export const userSchema: Schema = { resolvers, typeDefs: [typeDefs] }

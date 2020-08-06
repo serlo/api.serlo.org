@@ -25,27 +25,25 @@ import {
   RepositoryPayload,
   RevisionPayload,
 } from '../../uuid/abstract-repository'
-import { UserPayload } from '../../uuid/user'
-import { NotificationEventType } from '../types'
+import {
+  AbstractNotificationEventPayload,
+  NotificationEventResolvers,
+  NotificationEventType,
+} from '../types'
 
 export interface RejectRevisionNotificationEventPayload
-  extends Omit<
-    RejectRevisionNotificationEvent,
-    keyof RejectRevisionNotificationEventResolvers['RejectRevisionNotificationEvent']
-  > {
+  extends AbstractNotificationEventPayload,
+    Omit<
+      RejectRevisionNotificationEvent,
+      keyof RejectRevisionNotificationEventResolvers['RejectRevisionNotificationEvent']
+    > {
   __typename: NotificationEventType.RejectRevision
-  reviewerId: number
   repositoryId: number
   revisionId: number
 }
 
 export interface RejectRevisionNotificationEventResolvers {
   RejectRevisionNotificationEvent: {
-    reviewer: Resolver<
-      RejectRevisionNotificationEventPayload,
-      never,
-      Partial<UserPayload>
-    >
     repository: Resolver<
       RejectRevisionNotificationEventPayload,
       never,
@@ -56,5 +54,5 @@ export interface RejectRevisionNotificationEventResolvers {
       never,
       RevisionPayload
     >
-  }
+  } & NotificationEventResolvers<RejectRevisionNotificationEventPayload>
 }

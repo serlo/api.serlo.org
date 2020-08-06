@@ -30,7 +30,10 @@ import {
   NotificationResolvers,
   UnsupportedNotificationEventPayload,
 } from './types'
-import { isUnsupportedNotificationEvent } from './utils'
+import {
+  createNotificationEventResolvers,
+  isUnsupportedNotificationEvent,
+} from './utils'
 
 export const resolvers: NotificationResolvers = {
   AbstractNotificationEvent: {
@@ -38,6 +41,7 @@ export const resolvers: NotificationResolvers = {
       return notificationEvent.__typename
     },
   },
+  UnsupportedNotificationEvent: createNotificationEventResolvers(),
   Notification: {
     event(parent, _args, context) {
       return resolveNotificationEvent({ id: parent.eventId }, context)
@@ -97,6 +101,7 @@ async function resolveNotificationEvent(
       id: notificationEvent.id,
       instance: notificationEvent.instance,
       date: notificationEvent.date,
+      actorId: notificationEvent.actorId,
     }
   }
 

@@ -26,4 +26,7 @@ import typeDefs from './types.graphql'
 export * from './types'
 export * from './utils'
 
-export const abstractRepositorySchema = new Schema(resolvers, [typeDefs])
+export const abstractRepositorySchema: Schema = {
+  resolvers,
+  typeDefs: [typeDefs],
+}
