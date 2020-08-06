@@ -395,6 +395,13 @@ export type AbstractUuid = {
   trashed: Scalars['Boolean'];
 };
 
+export type UnsupportedUuid = AbstractUuid & {
+  __typename?: 'UnsupportedUuid';
+  id: Scalars['Int'];
+  trashed: Scalars['Boolean'];
+  type: Scalars['String'];
+};
+
 export type AliasInput = {
   instance: Instance;
   path: Scalars['String'];
