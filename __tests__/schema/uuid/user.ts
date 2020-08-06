@@ -35,6 +35,7 @@ import {
   Client,
   createTestClient,
   createUuidHandler,
+  createJsonHandler,
 } from '../../__utils__'
 
 let client: Client
@@ -44,6 +45,7 @@ beforeEach(() => {
     service: Service.Playground,
     user: null,
   }).client
+
   global.server.use(createUuidHandler(user))
 })
 
@@ -75,6 +77,7 @@ describe('User', () => {
 
   test('by id (w/ activeDonor when user is an active donor)', async () => {
     global.server.use(createActiveDonorsHandler([user]))
+
     await assertSuccessfulGraphQLQuery({
       ...createUserActiveDonorQuery(user),
       data: {
@@ -86,10 +89,43 @@ describe('User', () => {
 
   test('by id (w/ activeDonor when user is not an active donor', async () => {
     global.server.use(createActiveDonorsHandler([]))
+
     await assertSuccessfulGraphQLQuery({
       ...createUserActiveDonorQuery(user),
       data: {
         uuid: { activeDonor: false },
+      },
+      client,
+    })
+  })
+})
+
+describe('endpoint activeAuthors', () => {
+  test('returns list of active authors', async () => {
+    global.server.use(
+      createUuidHandler(user2),
+      createActiveAuthorsHandler([user, user2])
+    )
+
+    await assertSuccessfulGraphQLQuery({
+      ...createUserListQuery('activeAuthors'),
+      data: {
+        activeAuthors: [user, user2],
+      },
+      client,
+    })
+  })
+
+  test('returned list does only contain users', async () => {
+    global.server.use(
+      createUuidHandler(article),
+      createActiveAuthorsHandler([user, article])
+    )
+
+    await assertSuccessfulGraphQLQuery({
+      ...createUserListQuery('activeAuthors'),
+      data: {
+        activeAuthors: [user],
       },
       client,
     })
@@ -103,7 +139,7 @@ describe('endpoint activeDonors', () => {
       createActiveDonorsHandler([user, user2])
     )
     await assertSuccessfulGraphQLQuery({
-      ...createActiveDonorsQuery(),
+      ...createUserListQuery('activeDonors'),
       data: {
         activeDonors: [user, user2],
       },
@@ -117,7 +153,7 @@ describe('endpoint activeDonors', () => {
       createActiveDonorsHandler([user, article])
     )
     await assertSuccessfulGraphQLQuery({
-      ...createActiveDonorsQuery(),
+      ...createUserListQuery('activeDonors'),
       data: {
         activeDonors: [user],
       },
@@ -200,12 +236,13 @@ describe('endpoint activeDonors', () => {
       })
     }
   })
+})
 
-  function createActiveDonorsQuery() {
-    return {
-      query: gql`
+function createUserListQuery(endpoint: string) {
+  return {
+    query: gql`
         {
-          activeDonors {
+          ${endpoint} {
             __typename
             id
             trashed
@@ -216,9 +253,18 @@ describe('endpoint activeDonors', () => {
           }
         }
       `,
-    }
   }
-})
+}
+
+function createActiveAuthorsHandler(users: UuidPayload[]) {
+  return createActiveAuthorsResponseHandler(
+    users.map((user) => user.id.toString())
+  )
+}
+
+function createActiveAuthorsResponseHandler(body: unknown) {
+  return createJsonHandler({ path: '/api/user/active-authors', body })
+}
 
 function createActiveDonorsHandler(users: UuidPayload[]) {
   return createActiveDonorsSpreadsheetHandler([
