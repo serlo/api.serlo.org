@@ -9,5 +9,6 @@ type User implements AbstractUuid {
 }
 
 extend type Query {
+  activeAuthors: [User!]!
   activeDonors: [User!]!
 }

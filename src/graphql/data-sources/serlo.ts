@@ -45,6 +45,10 @@ export class SerloDataSource extends RESTDataSource {
     super()
   }
 
+  public async getActiveAuthorIds(): Promise<number[]> {
+    return await this.cacheAwareGet({ path: '/api/user/active-authors' })
+  }
+
   public async getAlias({
     path,
     instance,

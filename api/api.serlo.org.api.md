@@ -540,6 +540,7 @@ export type PageRevision = AbstractUuid & AbstractRevision & {
 export type Query = {
     __typename?: 'Query';
     _cacheKeys: Query_CacheKeysResult;
+    activeAuthors: Array<User>;
     activeDonors: Array<User>;
     license?: Maybe<License>;
     notificationEvent?: Maybe<AbstractNotificationEvent>;

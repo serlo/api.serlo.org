@@ -29,6 +29,7 @@ export interface UserPayload extends Omit<User, keyof UserResolvers['User']> {
 
 export interface UserResolvers {
   Query: {
+    activeAuthors: QueryResolver<never, UserPayload[]>
     activeDonors: QueryResolver<never, UserPayload[]>
   }
   User: {
