@@ -25,6 +25,7 @@ import {
   Notification,
   QueryNotificationEventArgs,
   QueryNotificationsArgs,
+  UnsupportedNotificationEvent,
 } from '../../../types'
 import { Connection } from '../connection'
 import {
@@ -77,6 +78,7 @@ export enum NotificationEventType {
   SetTaxonomyParent = 'SetTaxonomyParentNotificationEvent',
   SetThreadState = 'SetThreadStateNotificationEvent',
   SetUuidState = 'SetUuidStateNotificationEvent',
+  Unsupported = 'UnsupportedNotificationEvent',
 }
 
 export type NotificationEventPayload =
@@ -101,12 +103,23 @@ export interface AbstractNotificationEventPayload
   __typename: NotificationEventType
 }
 
+export interface UnsupportedNotificationEventPayload
+  extends UnsupportedNotificationEvent {
+  __typename: NotificationEventType.Unsupported
+}
+
 export interface NotificationResolvers {
   AbstractNotificationEvent: {
-    __resolveType: TypeResolver<NotificationEventPayload>
+    __resolveType: TypeResolver<
+      NotificationEventPayload | UnsupportedNotificationEventPayload
+    >
   }
   Notification: {
-    event: Resolver<NotificationPayload, never, NotificationEventPayload>
+    event: Resolver<
+      NotificationPayload,
+      never,
+      NotificationEventPayload | UnsupportedNotificationEventPayload
+    >
   }
   Query: {
     notifications: QueryResolver<
@@ -115,7 +128,7 @@ export interface NotificationResolvers {
     >
     notificationEvent: QueryResolver<
       QueryNotificationEventArgs,
-      NotificationEventPayload
+      NotificationEventPayload | UnsupportedNotificationEventPayload
     >
   }
   Mutation: {

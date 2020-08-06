@@ -297,6 +297,14 @@ export type AbstractNotificationEvent = {
   date: Scalars['DateTime'];
 };
 
+export type UnsupportedNotificationEvent = AbstractNotificationEvent & {
+  __typename?: 'UnsupportedNotificationEvent';
+  id: Scalars['Int'];
+  instance: Instance;
+  date: Scalars['DateTime'];
+  type: Scalars['String'];
+};
+
 export type QueryNotificationsResult = {
   __typename?: 'QueryNotificationsResult';
   edges: Array<NotificationCursor>;
