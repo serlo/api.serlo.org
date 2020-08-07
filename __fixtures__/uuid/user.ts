@@ -43,13 +43,13 @@ export const user2: UserPayload = {
   description: null,
 }
 
-export function createUserActiveDonorQuery(variables: UserPayload) {
+export function createUserQueryFor(property: string, variables: UserPayload) {
   return {
     query: gql`
       query taxonomyTerms($id: Int!) {
         uuid(id: $id) {
           ... on User {
-            activeDonor
+            ${property}
           }
         }
       }

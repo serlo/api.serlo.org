@@ -696,6 +696,7 @@ export type User = AbstractUuid & {
   lastLogin?: Maybe<Scalars['DateTime']>;
   description?: Maybe<Scalars['String']>;
   activeDonor: Scalars['Boolean'];
+  activeAuthor: Scalars['Boolean'];
 };
 
 export type Video = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {

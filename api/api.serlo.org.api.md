@@ -788,6 +788,7 @@ export type User = AbstractUuid & {
     lastLogin?: Maybe<Scalars['DateTime']>;
     description?: Maybe<Scalars['String']>;
     activeDonor: Scalars['Boolean'];
+    activeAuthor: Scalars['Boolean'];
 };
 
 // @public (undocumented)

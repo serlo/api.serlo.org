@@ -6,6 +6,7 @@ type User implements AbstractUuid {
   lastLogin: DateTime
   description: String
   activeDonor: Boolean!
+  activeAuthor: Boolean!
 }
 
 extend type Query {
