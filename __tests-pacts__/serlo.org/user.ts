@@ -34,3 +34,16 @@ test('list of active author ids', async () => {
 
   await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/user/active-authors`)
 })
+
+test('list of active reviewer ids', async () => {
+  await addJsonInteraction({
+    name: 'fetch list of active reviewer ids',
+    given: 'users with ids 1 and 10 are active reviewers',
+    path: '/api/user/active-reviewers',
+    body: Matchers.like([1, 10]),
+  })
+
+  await fetch(
+    `http://de.${process.env.SERLO_ORG_HOST}/api/user/active-reviewers`
+  )
+})
