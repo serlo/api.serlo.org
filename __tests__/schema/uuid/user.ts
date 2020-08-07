@@ -23,12 +23,7 @@ import { gql } from 'apollo-server'
 import { option as O } from 'fp-ts'
 import { rest } from 'msw'
 
-import {
-  article,
-  createUserActiveDonorQuery,
-  user,
-  user2,
-} from '../../../__fixtures__'
+import { article, createUserQueryFor, user, user2 } from '../../../__fixtures__'
 import { Cache } from '../../../src/graphql/environment'
 import { Service } from '../../../src/graphql/schema/types'
 import { UuidPayload } from '../../../src/graphql/schema/uuid/abstract-uuid'
@@ -78,11 +73,35 @@ describe('User', () => {
     })
   })
 
+  test('by id (w/ activeAuthor when user is an active author)', async () => {
+    global.server.use(createActiveAuthorsHandler([user]))
+
+    await assertSuccessfulGraphQLQuery({
+      ...createUserQueryFor('activeAuthor', user),
+      data: {
+        uuid: { activeAuthor: true },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ activeAuthor when user is not an active author', async () => {
+    global.server.use(createActiveAuthorsHandler([]))
+
+    await assertSuccessfulGraphQLQuery({
+      ...createUserQueryFor('activeAuthor', user),
+      data: {
+        uuid: { activeAuthor: false },
+      },
+      client,
+    })
+  })
+
   test('by id (w/ activeDonor when user is an active donor)', async () => {
     global.server.use(createActiveDonorsHandler([user]))
 
     await assertSuccessfulGraphQLQuery({
-      ...createUserActiveDonorQuery(user),
+      ...createUserQueryFor('activeDonor', user),
       data: {
         uuid: { activeDonor: true },
       },
@@ -94,7 +113,7 @@ describe('User', () => {
     global.server.use(createActiveDonorsHandler([]))
 
     await assertSuccessfulGraphQLQuery({
-      ...createUserActiveDonorQuery(user),
+      ...createUserQueryFor('activeDonor', user),
       data: {
         uuid: { activeDonor: false },
       },
@@ -146,7 +165,7 @@ describe('endpoint activeAuthors', () => {
     })
 
     expect(await cache.get('de.serlo.org/api/user/active-authors')).toEqual(
-      O.some([user.id.toString()])
+      O.some([user.id])
     )
     expect(await cache.getTtl('de.serlo.org/api/user/active-authors')).toEqual(
       O.some(3600)
@@ -291,9 +310,7 @@ function createUserListQuery(endpoint: string) {
 }
 
 function createActiveAuthorsHandler(users: UuidPayload[]) {
-  return createActiveAuthorsResponseHandler(
-    users.map((user) => user.id.toString())
-  )
+  return createActiveAuthorsResponseHandler(users.map((user) => user.id))
 }
 
 function createActiveAuthorsResponseHandler(body: unknown) {
