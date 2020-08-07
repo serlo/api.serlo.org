@@ -120,6 +120,30 @@ describe('User', () => {
       client,
     })
   })
+
+  test('by id (w/ activeReviewer when user is an active reviewer)', async () => {
+    global.server.use(createActiveReviewersHandler([user]))
+
+    await assertSuccessfulGraphQLQuery({
+      ...createUserQueryFor('activeReviewer', user),
+      data: {
+        uuid: { activeReviewer: true },
+      },
+      client,
+    })
+  })
+
+  test('by id (w/ activeReviewer when user is not an active reviewer', async () => {
+    global.server.use(createActiveReviewersHandler([]))
+
+    await assertSuccessfulGraphQLQuery({
+      ...createUserQueryFor('activeReviewer', user),
+      data: {
+        uuid: { activeReviewer: false },
+      },
+      client,
+    })
+  })
 })
 
 describe('endpoint activeAuthors', () => {
@@ -291,6 +315,69 @@ describe('endpoint activeDonors', () => {
   })
 })
 
+describe('endpoint activeReviewers', () => {
+  test('returns list of active reviewers', async () => {
+    global.server.use(
+      createUuidHandler(user2),
+      createActiveReviewersHandler([user, user2])
+    )
+
+    await assertSuccessfulGraphQLQuery({
+      ...createUserListQuery('activeReviewers'),
+      data: {
+        activeReviewers: [user, user2],
+      },
+      client,
+    })
+  })
+
+  test('returned list does only contain users', async () => {
+    global.server.use(
+      createUuidHandler(article),
+      createActiveReviewersHandler([user, article])
+    )
+
+    await assertSuccessfulGraphQLQuery({
+      ...createUserListQuery('activeReviewers'),
+      data: {
+        activeReviewers: [user],
+      },
+      client,
+    })
+  })
+
+  test('list of active authors is cached for 1 hour', async () => {
+    global.server.use(createActiveReviewersHandler([user]))
+
+    await assertSuccessfulGraphQLQuery({
+      ...createUserListQuery('activeReviewers'),
+      data: {
+        activeReviewers: [user],
+      },
+      client,
+    })
+
+    expect(await cache.get('de.serlo.org/api/user/active-reviewers')).toEqual(
+      O.some([user.id])
+    )
+    expect(
+      await cache.getTtl('de.serlo.org/api/user/active-reviewers')
+    ).toEqual(O.some(3600))
+  })
+
+  test('uses cached value for active reviewers', async () => {
+    await cache.set('de.serlo.org/api/user/active-reviewers', [user.id])
+
+    await assertSuccessfulGraphQLQuery({
+      ...createUserListQuery('activeReviewers'),
+      data: {
+        activeReviewers: [user],
+      },
+      client,
+    })
+  })
+})
+
 function createUserListQuery(endpoint: string) {
   return {
     query: gql`
@@ -315,6 +402,16 @@ function createActiveAuthorsHandler(users: UuidPayload[]) {
 
 function createActiveAuthorsResponseHandler(body: unknown) {
   return createJsonHandler({ path: '/api/user/active-authors', body })
+}
+
+function createActiveReviewersHandler(users: UuidPayload[]) {
+  return createActiveReviewersHandlersResponseHandler(
+    users.map((user) => user.id)
+  )
+}
+
+function createActiveReviewersHandlersResponseHandler(body: unknown) {
+  return createJsonHandler({ path: '/api/user/active-reviewers', body })
 }
 
 function createActiveDonorsHandler(users: UuidPayload[]) {

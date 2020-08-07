@@ -45,6 +45,12 @@ export const resolvers: UserResolvers = {
         await activeDonorIDs(dataSources.googleSheetApi)
       )
     },
+    async activeReviewers(_parent, _args, { dataSources }) {
+      return getUsersFromIds(
+        dataSources.serlo,
+        await dataSources.serlo.getActiveReviewerIds()
+      )
+    },
   },
   User: {
     async activeAuthor(user, _args, { dataSources }) {
@@ -54,6 +60,9 @@ export const resolvers: UserResolvers = {
       const ids = await activeDonorIDs(dataSources.googleSheetApi)
 
       return ids.includes(user.id)
+    },
+    async activeReviewer(user, _args, { dataSources }) {
+      return (await dataSources.serlo.getActiveReviewerIds()).includes(user.id)
     },
   },
 }

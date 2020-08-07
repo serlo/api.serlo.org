@@ -31,10 +31,12 @@ export interface UserResolvers {
   Query: {
     activeAuthors: QueryResolver<never, UserPayload[]>
     activeDonors: QueryResolver<never, UserPayload[]>
+    activeReviewers: QueryResolver<never, UserPayload[]>
   }
   User: {
     activeAuthor: Resolver<UserPayload, never, boolean>
     activeDonor: Resolver<UserPayload, never, boolean>
+    activeReviewer: Resolver<UserPayload, never, boolean>
   }
 }
 
