@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import { option as O } from 'fp-ts'
 import { rest } from 'msw'
 
 import {
@@ -28,6 +29,7 @@ import {
   user,
   user2,
 } from '../../../__fixtures__'
+import { Cache } from '../../../src/graphql/environment'
 import { Service } from '../../../src/graphql/schema/types'
 import { UuidPayload } from '../../../src/graphql/schema/uuid/abstract-uuid'
 import {
@@ -39,12 +41,13 @@ import {
 } from '../../__utils__'
 
 let client: Client
+let cache: Cache
 
 beforeEach(() => {
-  client = createTestClient({
+  ;({ client, cache } = createTestClient({
     service: Service.Playground,
     user: null,
-  }).client
+  }))
 
   global.server.use(createUuidHandler(user))
 })
@@ -121,6 +124,37 @@ describe('endpoint activeAuthors', () => {
       createUuidHandler(article),
       createActiveAuthorsHandler([user, article])
     )
+
+    await assertSuccessfulGraphQLQuery({
+      ...createUserListQuery('activeAuthors'),
+      data: {
+        activeAuthors: [user],
+      },
+      client,
+    })
+  })
+
+  test('list of active authors is cached for 1 hour', async () => {
+    global.server.use(createActiveAuthorsHandler([user]))
+
+    await assertSuccessfulGraphQLQuery({
+      ...createUserListQuery('activeAuthors'),
+      data: {
+        activeAuthors: [user],
+      },
+      client,
+    })
+
+    expect(await cache.get('de.serlo.org/api/user/active-authors')).toEqual(
+      O.some([user.id.toString()])
+    )
+    expect(await cache.getTtl('de.serlo.org/api/user/active-authors')).toEqual(
+      O.some(3600)
+    )
+  })
+
+  test('uses cached value for active authors', async () => {
+    await cache.set('de.serlo.org/api/user/active-authors', [user.id])
 
     await assertSuccessfulGraphQLQuery({
       ...createUserListQuery('activeAuthors'),
