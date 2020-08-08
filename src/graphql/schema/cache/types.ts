@@ -23,6 +23,7 @@ import {
   Mutation_RemoveCacheArgs,
   Mutation_SetCacheArgs,
   Query_CacheKeysArgs,
+  Mutation_UpdateCacheArgs,
 } from '../../../types'
 import { Connection } from '../connection'
 import { MutationResolver, QueryResolver } from '../types'
@@ -34,5 +35,6 @@ export interface CacheResolvers {
   Mutation: {
     _setCache: MutationResolver<Mutation_SetCacheArgs>
     _removeCache: MutationResolver<Mutation_RemoveCacheArgs>
+    _updateCache: MutationResolver<Mutation_UpdateCacheArgs>
   }
 }
