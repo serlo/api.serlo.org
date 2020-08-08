@@ -27,6 +27,7 @@ import {
   createRemoveCacheMutation,
   createSetCacheMutation,
   variables,
+  createUpdateCacheMutation,
 } from '../../__fixtures__'
 import { Service } from '../../src/graphql/schema/types'
 import {
@@ -42,6 +43,18 @@ beforeEach(() => {
       `http://de.${process.env.SERLO_ORG_HOST}/api/cache-keys`,
       (req, res, ctx) => {
         return res(ctx.status(200), ctx.json(['foo', 'bar', 'boo']))
+      }
+    ),
+    rest.get(
+      `http://de.${process.env.SERLO_ORG_HOST}/api/foo`,
+      (req, res, ctx) => {
+        return res(ctx.status(200), ctx.json(['bla']))
+      }
+    ),
+    rest.get(
+      `http://en.${process.env.SERLO_ORG_HOST}/api/bar`,
+      (req, res, ctx) => {
+        return res(ctx.status(200), ctx.json(['ble']))
       }
     )
   )
@@ -126,3 +139,39 @@ test('_removeCache (authenticated)', async () => {
   const cachedValue = await cache.get(variables.key)
   expect(isNone(cachedValue)).toBe(true)
 })
+
+test('_updateCache (forbidden)', async () => {
+  const { client } = createTestClient({
+    service: Service.Playground,
+    user: null,
+  })
+  await assertFailingGraphQLMutation(
+    {
+      ...createUpdateCacheMutation(['I', 'will', 'fail']),
+      client,
+    },
+    (errors) => {
+      expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+    }
+  )
+})
+
+test('_updateCache *serlo.org* (authenticated)', async () => {
+  const { client, cache } = createTestClient({
+    service: Service.Serlo,
+    user: null,
+  })
+
+  const keys = ['de.serlo.org/api/foo', 'en.serlo.org/api/bar']
+
+  const cachedValueBeforeUpdate = await cache.get(keys[0])
+
+  await assertSuccessfulGraphQLMutation({
+    ...createUpdateCacheMutation(keys),
+    client,
+  })
+  const cachedValueAfterUpdate = await cache.get(keys[0])
+  expect(cachedValueBeforeUpdate).not.toBe(cachedValueAfterUpdate)
+})
+
+

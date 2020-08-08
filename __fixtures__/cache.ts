@@ -66,3 +66,14 @@ export function createCacheKeysQuery() {
     `,
   }
 }
+
+export function createUpdateCacheMutation(keys: string[]) {
+  return {
+    mutation: gql`
+      mutation _updateCache($keys: [String!]!) {
+        _updateCache(keys: $keys)
+      }
+    `,
+    variables: { keys },
+  }
+}
