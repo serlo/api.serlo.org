@@ -21,6 +21,7 @@
  */
 import { ForbiddenError } from 'apollo-server'
 
+import { MajorDimension } from '../../data-sources/google-spreadsheet-api'
 import { resolveConnection } from '../connection'
 import { Service } from '../types'
 import { CacheResolvers } from './types'
@@ -56,6 +57,20 @@ export const resolvers: CacheResolvers = {
       }
       await dataSources.serlo.removeCache(key)
       return null
+    },
+    async _updateCache(_parent, { keys }, { dataSources, service }) {
+      if (service !== Service.Serlo) {
+        throw new ForbiddenError(
+          'You do not have the permissions to update the cache'
+        )
+      }
+      for (const key of keys) {
+        if (key.includes('serlo.org')) {
+          const [instance, , orgAndPath] = key.split('.')
+          const path = orgAndPath.slice('org'.length)
+          await dataSources.serlo.updateCache({ path, instance, cacheKey: key })
+        } 
+      }
     },
   },
 }
