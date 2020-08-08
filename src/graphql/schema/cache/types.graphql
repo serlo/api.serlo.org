@@ -22,4 +22,5 @@ type CacheKeyCursor {
 type Mutation {
   _setCache(key: String!, value: JSON!): Boolean
   _removeCache(key: String!): Boolean
+  _updateCache(keys: [String!]!): Boolean
 }
