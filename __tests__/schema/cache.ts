@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+
 import { isNone, isSome } from 'fp-ts/lib/Option'
 import { rest } from 'msw'
 
@@ -29,13 +30,23 @@ import {
   variables,
   createUpdateCacheMutation,
 } from '../../__fixtures__'
+import { MajorDimension } from '../../src/graphql/data-sources/google-spreadsheet-api'
 import { Service } from '../../src/graphql/schema/types'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   createTestClient,
+  createSpreadsheetHandler,
 } from '../__utils__'
+
+const mockSpreadSheetData = {
+  spreadsheetId: '541516561464',
+  range: 'sheet1!A:A',
+  majorDimension: MajorDimension.Columns,
+  apiKey: 'very-secure-secret',
+  body: { values: [['1'], 1] },
+}
 
 beforeEach(() => {
   global.server.use(
@@ -56,7 +67,8 @@ beforeEach(() => {
       (req, res, ctx) => {
         return res(ctx.status(200), ctx.json(['ble']))
       }
-    )
+    ),
+    createSpreadsheetHandler(mockSpreadSheetData)
   )
 })
 
@@ -171,7 +183,26 @@ test('_updateCache *serlo.org* (authenticated)', async () => {
     client,
   })
   const cachedValueAfterUpdate = await cache.get(keys[0])
-  expect(cachedValueBeforeUpdate).not.toBe(cachedValueAfterUpdate)
+  expect(cachedValueBeforeUpdate).not.toEqual(cachedValueAfterUpdate)
 })
 
+test('_updateCache spreadsheet-* (authenticated)', async () => {
+  const { client, cache } = createTestClient({
+    service: Service.Serlo,
+    user: null,
+  })
 
+  const keys = [
+    'spreadsheet-541516561464-sheet1!A:A-COLUMNS',
+    'spreadsheet-541516561464-sheet1!A:A-COLUMNS',
+  ]
+
+  const cachedValueBeforeUpdate = await cache.get(keys[0])
+
+  await assertSuccessfulGraphQLMutation({
+    ...createUpdateCacheMutation(keys),
+    client,
+  })
+  const cachedValueAfterUpdate = await cache.get(keys[0])
+  expect(cachedValueBeforeUpdate).not.toEqual(cachedValueAfterUpdate)
+})
