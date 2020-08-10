@@ -54,12 +54,12 @@ export const resolvers: NotificationResolvers = {
         id: user,
       })
       return resolveConnection<NotificationPayload>({
-        nodes:
-          unread == null
-            ? notifications
-            : notifications.filter((notification) => {
-                return notification.unread === unread
-              }),
+        nodes: notifications.filter((notification) => {
+          return (
+            notification !== null &&
+            (unread == null || notification.unread === unread)
+          )
+        }),
         payload: cursorPayload,
         createCursor(node) {
           return `${node.id}`
