@@ -19,8 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
-
 import { DiscriminatorType, UserPayload } from '../../src/graphql/schema'
 
 export const user: UserPayload = {
@@ -41,19 +39,4 @@ export const user2: UserPayload = {
   date: '2015-02-01T20:35:21Z',
   lastLogin: '2019-03-23T09:20:55Z',
   description: null,
-}
-
-export function createUserQueryFor(property: string, variables: UserPayload) {
-  return {
-    query: gql`
-      query taxonomyTerms($id: Int!) {
-        uuid(id: $id) {
-          ... on User {
-            ${property}
-          }
-        }
-      }
-    `,
-    variables,
-  }
 }
