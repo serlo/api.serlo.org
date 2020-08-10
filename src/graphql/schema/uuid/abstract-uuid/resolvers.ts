@@ -19,9 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { DiscriminatorType, UuidPayload } from '..'
+import { UuidPayload } from '..'
 import { UuidResolvers } from './types'
-import { isUnsupportedUuid } from './utils'
 
 export const resolvers: UuidResolvers = {
   AbstractUuid: {
@@ -34,18 +33,7 @@ export const resolvers: UuidResolvers = {
       const id = payload.alias
         ? (await dataSources.serlo.getAlias(payload.alias)).id
         : (payload.id as number)
-      const uuid = await dataSources.serlo.getUuid<UuidPayload>({ id })
-
-      if (isUnsupportedUuid(uuid)) {
-        return {
-          __typename: DiscriminatorType.UnsupportedUuid,
-          type: uuid.__typename,
-          id: uuid.id,
-          trashed: uuid.trashed,
-        }
-      }
-
-      return uuid
+      return dataSources.serlo.getUuid<UuidPayload>({ id })
     },
   },
 }

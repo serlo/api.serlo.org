@@ -47,12 +47,12 @@ export interface CheckoutRevisionNotificationEventResolvers {
     repository: Resolver<
       CheckoutRevisionNotificationEventPayload,
       never,
-      RepositoryPayload
+      RepositoryPayload | null
     >
     revision: Resolver<
       CheckoutRevisionNotificationEventPayload,
       never,
-      RevisionPayload
+      RevisionPayload | null
     >
   } & NotificationEventResolvers<CheckoutRevisionNotificationEventPayload>
 }

@@ -43,7 +43,7 @@ export interface SetLicenseNotificationEventResolvers {
     repository: Resolver<
       SetLicenseNotificationEventPayload,
       never,
-      RepositoryPayload
+      RepositoryPayload | null
     >
   } & NotificationEventResolvers<SetLicenseNotificationEventPayload>
 }

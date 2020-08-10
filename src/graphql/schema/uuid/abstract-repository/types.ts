@@ -78,6 +78,6 @@ export interface RevisionResolvers<
   E extends AbstractRepositoryPayload,
   R extends AbstractRevisionPayload
 > {
-  author: Resolver<R, never, Partial<UserPayload>>
-  repository: Resolver<R, never, E>
+  author: Resolver<R, never, Partial<UserPayload> | null>
+  repository: Resolver<R, never, E | null>
 }

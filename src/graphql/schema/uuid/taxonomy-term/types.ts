@@ -35,7 +35,7 @@ export interface TaxonomyTermPayload
 export interface TaxonomyTermResolvers {
   TaxonomyTerm: {
     alias: Resolver<TaxonomyTermPayload, never, string | null>
-    parent: Resolver<TaxonomyTermPayload, never, TaxonomyTermPayload>
+    parent: Resolver<TaxonomyTermPayload, never, TaxonomyTermPayload | null>
     children: Resolver<TaxonomyTermPayload, never, UuidPayload[]>
   } & NavigationChildResolvers<TaxonomyTermPayload>
 }

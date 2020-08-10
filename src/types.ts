@@ -298,15 +298,6 @@ export type AbstractNotificationEvent = {
   actor: User;
 };
 
-export type UnsupportedNotificationEvent = AbstractNotificationEvent & {
-  __typename?: 'UnsupportedNotificationEvent';
-  id: Scalars['Int'];
-  instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
-  type: Scalars['String'];
-};
-
 export type QueryNotificationsResult = {
   __typename?: 'QueryNotificationsResult';
   edges: Array<NotificationCursor>;
@@ -403,13 +394,6 @@ export type AbstractTaxonomyTermChild = {
 export type AbstractUuid = {
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
-};
-
-export type UnsupportedUuid = AbstractUuid & {
-  __typename?: 'UnsupportedUuid';
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
-  type: Scalars['String'];
 };
 
 export type AliasInput = {

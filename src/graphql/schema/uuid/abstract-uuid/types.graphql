@@ -3,12 +3,6 @@ interface AbstractUuid {
   trashed: Boolean!
 }
 
-type UnsupportedUuid implements AbstractUuid {
-  id: Int!
-  trashed: Boolean!
-  type: String!
-}
-
 type Query {
   uuid(alias: AliasInput, id: Int): AbstractUuid
 }
