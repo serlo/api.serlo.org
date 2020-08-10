@@ -47,12 +47,12 @@ export interface RejectRevisionNotificationEventResolvers {
     repository: Resolver<
       RejectRevisionNotificationEventPayload,
       never,
-      RepositoryPayload
+      RepositoryPayload | null
     >
     revision: Resolver<
       RejectRevisionNotificationEventPayload,
       never,
-      RevisionPayload
+      RevisionPayload | null
     >
   } & NotificationEventResolvers<RejectRevisionNotificationEventPayload>
 }

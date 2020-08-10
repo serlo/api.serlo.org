@@ -37,7 +37,7 @@ export interface UserResolvers {
 }
 
 export function isUserPayload(
-  payload: AbstractUuidPayload
+  payload: AbstractUuidPayload | null
 ): payload is UserPayload {
-  return payload.__typename === DiscriminatorType.User
+  return payload !== null && payload.__typename === DiscriminatorType.User
 }

@@ -44,12 +44,12 @@ export interface RemoveEntityLinkNotificationEventResolvers {
     parent: Resolver<
       RemoveEntityLinkNotificationEventPayload,
       never,
-      EntityPayload
+      EntityPayload | null
     >
     child: Resolver<
       RemoveEntityLinkNotificationEventPayload,
       never,
-      EntityPayload
+      EntityPayload | null
     >
   } & NotificationEventResolvers<RemoveEntityLinkNotificationEventPayload>
 }

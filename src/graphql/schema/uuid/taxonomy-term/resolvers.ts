@@ -31,17 +31,18 @@ export const resolvers: TaxonomyTermResolvers = {
       )
     },
     async parent(taxonomyTerm, _args, { dataSources }) {
-      if (!taxonomyTerm.parentId) return
+      if (!taxonomyTerm.parentId) return null
       return dataSources.serlo.getUuid<TaxonomyTermPayload>({
         id: taxonomyTerm.parentId,
       })
     },
-    children(taxonomyTerm, _args, { dataSources }) {
-      return Promise.all(
+    async children(taxonomyTerm, _args, { dataSources }) {
+      const children = await Promise.all(
         taxonomyTerm.childrenIds.map((id) => {
           return dataSources.serlo.getUuid<UuidPayload>({ id })
         })
       )
+      return children.filter((payload) => payload !== null) as UuidPayload[]
     },
     async navigation(taxonomyTerm, _args, context) {
       const taxonomyPath = await resolveTaxonomyTermPath(taxonomyTerm, context)
@@ -72,6 +73,8 @@ export const resolvers: TaxonomyTermResolvers = {
           }
         }
       }
+
+      return null
     },
   },
 }
@@ -84,10 +87,12 @@ async function resolveTaxonomyTermPath(
   let current: TaxonomyTermPayload = parent
 
   while (current.parentId !== null) {
-    current = await dataSources.serlo.getUuid<TaxonomyTermPayload>({
+    const next = await dataSources.serlo.getUuid<TaxonomyTermPayload>({
       id: current.parentId,
     })
-    path.unshift(current)
+    if (next === null) break
+    path.unshift(next)
+    current = next
   }
 
   return path

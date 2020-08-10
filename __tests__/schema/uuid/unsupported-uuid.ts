@@ -21,7 +21,6 @@
  */
 import { gql } from 'apollo-server'
 
-import { DiscriminatorType } from '../../../src/graphql/schema'
 import { Service } from '../../../src/graphql/schema/types'
 import {
   assertSuccessfulGraphQLQuery,
@@ -55,22 +54,14 @@ describe('Unsupported UUID', () => {
         query unsupported($id: Int!) {
           uuid(id: $id) {
             __typename
-            ... on UnsupportedUuid {
-              type
-              id
-              trashed
-            }
+            id
+            trashed
           }
         }
       `,
       variables: { id: 146944 },
       data: {
-        uuid: {
-          __typename: DiscriminatorType.UnsupportedUuid,
-          type: 'MathPuzzle',
-          id: 146944,
-          trashed: false,
-        },
+        uuid: null,
       },
       client,
     })

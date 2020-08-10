@@ -44,7 +44,11 @@ export interface CreateThreadNotificationEventPayload
 
 export interface CreateThreadNotificationEventResolvers {
   CreateThreadNotificationEvent: {
-    object: Resolver<CreateThreadNotificationEventPayload, never, UuidPayload>
+    object: Resolver<
+      CreateThreadNotificationEventPayload,
+      never,
+      UuidPayload | null
+    >
     thread: Resolver<
       CreateThreadNotificationEventPayload,
       never,

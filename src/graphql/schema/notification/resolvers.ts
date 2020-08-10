@@ -25,15 +25,9 @@ import { resolveConnection } from '../connection'
 import { Context } from '../types'
 import {
   NotificationEventPayload,
-  NotificationEventType,
   NotificationPayload,
   NotificationResolvers,
-  UnsupportedNotificationEventPayload,
 } from './types'
-import {
-  createNotificationEventResolvers,
-  isUnsupportedNotificationEvent,
-} from './utils'
 
 export const resolvers: NotificationResolvers = {
   AbstractNotificationEvent: {
@@ -41,10 +35,12 @@ export const resolvers: NotificationResolvers = {
       return notificationEvent.__typename
     },
   },
-  UnsupportedNotificationEvent: createNotificationEventResolvers(),
   Notification: {
     event(parent, _args, context) {
-      return resolveNotificationEvent({ id: parent.eventId }, context)
+      const { dataSources }: Context = context
+      return dataSources.serlo.getNotificationEvent<NotificationEventPayload>({
+        id: parent.eventId,
+      })
     },
   },
   Query: {
@@ -71,7 +67,10 @@ export const resolvers: NotificationResolvers = {
       })
     },
     async notificationEvent(_parent, payload, context) {
-      return await resolveNotificationEvent(payload, context)
+      const { dataSources }: Context = context
+      return dataSources.serlo.getNotificationEvent<NotificationEventPayload>(
+        payload
+      )
     },
   },
   Mutation: {
@@ -82,28 +81,7 @@ export const resolvers: NotificationResolvers = {
         userId: user,
         unread: payload.unread,
       })
+      return null
     },
   },
-}
-
-async function resolveNotificationEvent(
-  payload: { id: number },
-  { dataSources }: Context
-): Promise<NotificationEventPayload | UnsupportedNotificationEventPayload> {
-  const notificationEvent = await dataSources.serlo.getNotificationEvent<
-    NotificationEventPayload
-  >(payload)
-
-  if (isUnsupportedNotificationEvent(notificationEvent)) {
-    return {
-      __typename: NotificationEventType.Unsupported,
-      type: notificationEvent.__typename,
-      id: notificationEvent.id,
-      instance: notificationEvent.instance,
-      date: notificationEvent.date,
-      actorId: notificationEvent.actorId,
-    }
-  }
-
-  return notificationEvent
 }

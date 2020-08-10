@@ -28,7 +28,7 @@ export type Resolver<P, A, T> = (
   args: A,
   context: Context,
   info: GraphQLResolveInfo
-) => Promise<T | void>
+) => Promise<T>
 
 export type QueryResolver<A, T> = Resolver<never, A, T>
 export type MutationResolver<A, T = null> = Resolver<never, A, T>

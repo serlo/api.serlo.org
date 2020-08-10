@@ -40,6 +40,10 @@ export interface SetUuidStateNotificationEventPayload
 
 export interface SetUuidStateNotificationEventResolvers {
   SetUuidStateNotificationEvent: {
-    object: Resolver<SetUuidStateNotificationEventPayload, never, UuidPayload>
+    object: Resolver<
+      SetUuidStateNotificationEventPayload,
+      never,
+      UuidPayload | null
+    >
   } & NotificationEventResolvers<SetUuidStateNotificationEventPayload>
 }

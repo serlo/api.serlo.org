@@ -29,7 +29,7 @@ export async function resolveUser(
   { id }: { id: number },
   { dataSources }: Context,
   info: GraphQLResolveInfo
-): Promise<Partial<UserPayload>> {
+): Promise<Partial<UserPayload> | null> {
   const partialUser = { id }
   if (requestsOnlyFields('User', ['id'], info)) {
     return partialUser

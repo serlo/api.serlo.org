@@ -55,7 +55,7 @@ export interface SetTaxonomyParentNotificationEventResolvers {
     child: Resolver<
       SetTaxonomyParentNotificationEventPayload,
       never,
-      TaxonomyTermPayload
+      TaxonomyTermPayload | null
     >
   } & NotificationEventResolvers<SetTaxonomyParentNotificationEventPayload>
 }

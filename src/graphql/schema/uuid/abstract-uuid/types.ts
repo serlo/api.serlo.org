@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { QueryUuidArgs, AbstractUuid, UnsupportedUuid } from '../../../../types'
+import { AbstractUuid, QueryUuidArgs } from '../../../../types'
 import { QueryResolver, TypeResolver } from '../../types'
 import {
   EntityPayload,
@@ -36,7 +36,6 @@ export enum DiscriminatorType {
   PageRevision = 'PageRevision',
   User = 'User',
   TaxonomyTerm = 'TaxonomyTerm',
-  UnsupportedUuid = 'UnsupportedUuid',
 }
 
 export type UuidType = DiscriminatorType | EntityType | EntityRevisionType
@@ -52,15 +51,11 @@ export interface AbstractUuidPayload extends AbstractUuid {
   __typename: UuidType
 }
 
-export interface UnsupportedUuidPayload extends UnsupportedUuid {
-  __typename: DiscriminatorType.UnsupportedUuid
-}
-
 export interface UuidResolvers {
   AbstractUuid: {
-    __resolveType: TypeResolver<UuidPayload | UnsupportedUuidPayload>
+    __resolveType: TypeResolver<UuidPayload>
   }
   Query: {
-    uuid: QueryResolver<QueryUuidArgs, UuidPayload | UnsupportedUuidPayload>
+    uuid: QueryResolver<QueryUuidArgs, UuidPayload | null>
   }
 }

@@ -47,12 +47,12 @@ export interface CreateEntityRevisionNotificationEventResolvers {
     entity: Resolver<
       CreateEntityRevisionNotificationEventPayload,
       never,
-      EntityPayload
+      EntityPayload | null
     >
     entityRevision: Resolver<
       CreateEntityRevisionNotificationEventPayload,
       never,
-      EntityRevisionPayload
+      EntityRevisionPayload | null
     >
   } & NotificationEventResolvers<CreateEntityRevisionNotificationEventPayload>
 }

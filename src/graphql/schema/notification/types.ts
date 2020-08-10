@@ -25,7 +25,6 @@ import {
   Notification,
   QueryNotificationEventArgs,
   QueryNotificationsArgs,
-  UnsupportedNotificationEvent,
 } from '../../../types'
 import { Connection } from '../connection'
 import {
@@ -79,7 +78,6 @@ export enum NotificationEventType {
   SetTaxonomyParent = 'SetTaxonomyParentNotificationEvent',
   SetThreadState = 'SetThreadStateNotificationEvent',
   SetUuidState = 'SetUuidStateNotificationEvent',
-  Unsupported = 'UnsupportedNotificationEvent',
 }
 
 export type NotificationEventPayload =
@@ -105,30 +103,12 @@ export interface AbstractNotificationEventPayload
   actorId: number
 }
 
-export interface UnsupportedNotificationEventPayload
-  extends AbstractNotificationEventPayload,
-    Omit<
-      UnsupportedNotificationEvent,
-      keyof NotificationResolvers['UnsupportedNotificationEvent']
-    > {
-  __typename: NotificationEventType.Unsupported
-}
-
 export interface NotificationResolvers {
   AbstractNotificationEvent: {
-    __resolveType: TypeResolver<
-      NotificationEventPayload | UnsupportedNotificationEventPayload
-    >
+    __resolveType: TypeResolver<NotificationEventPayload>
   }
-  UnsupportedNotificationEvent: NotificationEventResolvers<
-    UnsupportedNotificationEventPayload
-  >
   Notification: {
-    event: Resolver<
-      NotificationPayload,
-      never,
-      NotificationEventPayload | UnsupportedNotificationEventPayload
-    >
+    event: Resolver<NotificationPayload, never, NotificationEventPayload | null>
   }
   Query: {
     notifications: QueryResolver<
@@ -137,7 +117,7 @@ export interface NotificationResolvers {
     >
     notificationEvent: QueryResolver<
       QueryNotificationEventArgs,
-      NotificationEventPayload | UnsupportedNotificationEventPayload
+      NotificationEventPayload | null
     >
   }
   Mutation: {
@@ -148,5 +128,5 @@ export interface NotificationResolvers {
 export interface NotificationEventResolvers<
   T extends AbstractNotificationEventPayload
 > {
-  actor: Resolver<T, never, Partial<UserPayload>>
+  actor: Resolver<T, never, Partial<UserPayload> | null>
 }

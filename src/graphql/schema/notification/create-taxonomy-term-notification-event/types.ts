@@ -43,7 +43,7 @@ export interface CreateTaxonomyTermNotificationEventResolvers {
     taxonomyTerm: Resolver<
       CreateTaxonomyTermNotificationEventPayload,
       never,
-      TaxonomyTermPayload
+      TaxonomyTermPayload | null
     >
   } & NotificationEventResolvers<CreateTaxonomyTermNotificationEventPayload>
 }

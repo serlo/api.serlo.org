@@ -45,12 +45,12 @@ export interface CreateTaxonomyLinkNotificationEventResolvers {
     parent: Resolver<
       CreateTaxonomyLinkNotificationEventPayload,
       never,
-      TaxonomyTermPayload
+      TaxonomyTermPayload | null
     >
     child: Resolver<
       CreateTaxonomyLinkNotificationEventPayload,
       never,
-      UuidPayload
+      UuidPayload | null
     >
   } & NotificationEventResolvers<CreateTaxonomyLinkNotificationEventPayload>
 }

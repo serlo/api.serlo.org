@@ -11,14 +11,6 @@ interface AbstractNotificationEvent {
   actor: User!
 }
 
-type UnsupportedNotificationEvent implements AbstractNotificationEvent {
-  id: Int!
-  instance: Instance!
-  date: DateTime!
-  actor: User!
-  type: String!
-}
-
 extend type Query {
   notifications(
     after: String

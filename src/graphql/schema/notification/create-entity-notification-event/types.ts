@@ -40,6 +40,10 @@ export interface CreateEntityNotificationEventPayload
 
 export interface CreateEntityNotificationEventResolvers {
   CreateEntityNotificationEvent: {
-    entity: Resolver<CreateEntityNotificationEventPayload, never, EntityPayload>
+    entity: Resolver<
+      CreateEntityNotificationEventPayload,
+      never,
+      EntityPayload | null
+    >
   } & NotificationEventResolvers<CreateEntityNotificationEventPayload>
 }
