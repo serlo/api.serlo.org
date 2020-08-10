@@ -41,11 +41,15 @@ import {
 } from '../__utils__'
 
 const mockSpreadSheetData = {
-  spreadsheetId: '541516561464',
+  spreadsheetId: '1qpyC0XzvTcKT6EISywvqESX3A0MwQoFDE8p_Bll4hps',
   range: 'sheet1!A:A',
   majorDimension: MajorDimension.Columns,
   apiKey: 'very-secure-secret',
-  body: { values: [['1'], 1] },
+  body: {
+    values: [['1', '2']],
+    majorDimension: MajorDimension.Columns,
+    range: 'sheet1!A:A',
+  },
 }
 
 beforeEach(() => {
@@ -176,14 +180,17 @@ test('_updateCache *serlo.org* (authenticated)', async () => {
 
   const keys = ['de.serlo.org/api/foo', 'en.serlo.org/api/bar']
 
-  const cachedValueBeforeUpdate = await cache.get(keys[0])
+  const cachedValueBeforeUpdate1 = await cache.get(keys[0])
+  const cachedValueBeforeUpdate2 = await cache.get(keys[1])
 
   await assertSuccessfulGraphQLMutation({
     ...createUpdateCacheMutation(keys),
     client,
   })
-  const cachedValueAfterUpdate = await cache.get(keys[0])
-  expect(cachedValueBeforeUpdate).not.toEqual(cachedValueAfterUpdate)
+  const cachedValueAfterUpdate1 = await cache.get(keys[0])
+  expect(cachedValueBeforeUpdate1).not.toEqual(cachedValueAfterUpdate1)
+  const cachedValueAfterUpdate2 = await cache.get(keys[1])
+  expect(cachedValueBeforeUpdate2).not.toEqual(cachedValueAfterUpdate2)
 })
 
 test('_updateCache spreadsheet-* (authenticated)', async () => {
@@ -193,8 +200,7 @@ test('_updateCache spreadsheet-* (authenticated)', async () => {
   })
 
   const keys = [
-    'spreadsheet-541516561464-sheet1!A:A-COLUMNS',
-    'spreadsheet-541516561464-sheet1!A:A-COLUMNS',
+    'spreadsheet-1qpyC0XzvTcKT6EISywvqESX3A0MwQoFDE8p_Bll4hps-sheet1!A:A-COLUMNS',
   ]
 
   const cachedValueBeforeUpdate = await cache.get(keys[0])
