@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.8.0](https://github.com/serlo/api.serlo.org/compare/v0.7.4..v0.8.0) - August 10, 2020
+
+### Breaking Changes
+
+- **notification**. generalize actor / author / reviewer into actor and move into `AbstractNotificationEvent`
+- **notification**. Remove `UnsupportedNotificationEvent`.
+- **uuid**. Remove `UnsupportedUuid`.
+
+### Changed
+
+- **notification**. generalize actor / author / reviewer into actor and move into `AbstractNotificationEvent`
+
+### Removed
+
+- **notification**. Remove `UnsupportedNotificationEvent`.
+- **uuid**. Remove `UnsupportedUuid`.
+
+### Fixed
+
+- **uuid**. GraphQL no longer fails when it encounters an unsupported entity.
+
 ## [0.7.4](https://github.com/serlo/api.serlo.org/compare/v0.7.2..v0.7.4) - August 6, 2020
 
 ### Added
