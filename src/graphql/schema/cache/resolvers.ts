@@ -69,7 +69,24 @@ export const resolvers: CacheResolvers = {
           const [instance, , orgAndPath] = key.split('.')
           const path = orgAndPath.slice('org'.length)
           await dataSources.serlo.updateCache({ path, instance, cacheKey: key })
-        } 
+        } else if (key.includes('spreadsheet')) {
+          const [, spreadsheetId, range, majorDimension] = key.split('-')
+          if (majorDimension == 'ROWS') {
+            await dataSources.googleSheetApi.getValues({
+              spreadsheetId,
+              range,
+              majorDimension: MajorDimension.Rows,
+              ignoreCache: true,
+            })
+          } else if (majorDimension == 'COLUMNS') {
+            await dataSources.googleSheetApi.getValues({
+              spreadsheetId,
+              range,
+              majorDimension: MajorDimension.Columns,
+              ignoreCache: true,
+            })
+          }
+        }
       }
     },
   },
