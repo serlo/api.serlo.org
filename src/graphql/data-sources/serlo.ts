@@ -48,14 +48,14 @@ export class SerloDataSource extends RESTDataSource {
   public async getActiveAuthorIds(): Promise<number[]> {
     return await this.cacheAwareGet<number[]>({
       path: '/api/user/active-authors',
-      ttl: 60 * 60,
+      ttl: 60 * 60 * 24,
     })
   }
 
   public async getActiveReviewerIds(): Promise<number[]> {
     return await this.cacheAwareGet<number[]>({
       path: '/api/user/active-reviewers',
-      ttl: 60 * 60,
+      ttl: 60 * 60 * 24,
     })
   }
 

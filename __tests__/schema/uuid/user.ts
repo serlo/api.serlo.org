@@ -192,7 +192,7 @@ describe('endpoint activeAuthors', () => {
       O.some([user.id])
     )
     expect(await cache.getTtl('de.serlo.org/api/user/active-authors')).toEqual(
-      O.some(3600)
+      O.some(60 * 60 * 24)
     )
   })
 
@@ -362,7 +362,7 @@ describe('endpoint activeReviewers', () => {
     )
     expect(
       await cache.getTtl('de.serlo.org/api/user/active-reviewers')
-    ).toEqual(O.some(3600))
+    ).toEqual(O.some(60 * 60 * 24))
   })
 
   test('uses cached value for active reviewers', async () => {
