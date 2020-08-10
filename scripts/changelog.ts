@@ -250,6 +250,35 @@ async function exec(): Promise<void> {
         ],
       ],
     },
+    {
+      tagName: 'v0.8.0',
+      name: '0.8.0',
+      date: '2020-08-10',
+      breakingChanges: [
+        [
+          'notification',
+          'generalize actor / author / reviewer into actor and move into `AbstractNotificationEvent`',
+        ],
+        ['notification', 'Remove `UnsupportedNotificationEvent`.'],
+        ['uuid', 'Remove `UnsupportedUuid`.'],
+      ],
+      changed: [
+        [
+          'notification',
+          'generalize actor / author / reviewer into actor and move into `AbstractNotificationEvent`',
+        ],
+      ],
+      removed: [
+        ['notification', 'Remove `UnsupportedNotificationEvent`.'],
+        ['uuid', 'Remove `UnsupportedUuid`.'],
+      ],
+      fixed: [
+        [
+          'uuid',
+          'GraphQL no longer fails when it encounters an unsupported entity.',
+        ],
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
