@@ -279,6 +279,18 @@ async function exec(): Promise<void> {
         ],
       ],
     },
+    {
+      tagName: 'v0.8.1',
+      name: '0.8.1',
+      date: '2020-08-11',
+      fixed: [
+        [
+          'notification',
+          'GraphQL no longer fails when it encounters an unsupported notification event.',
+        ],
+      ],
+      internal: ['Add Sentry.', 'Remove Playground service.'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
