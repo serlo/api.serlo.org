@@ -19,15 +19,14 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-declare namespace NodeJS {
-  interface ProcessEnv {
-    SENTRY_DSN: string | undefined
-    ACTIVE_DONORS_SPREADSHEET_ID: string
-    GOOGLE_API_KEY: string
-    SERLO_CLOUDFLARE_WORKER_SECRET: string
-    SERLO_ORG_HOST: string
-    SERLO_ORG_SECRET: string
-    PLAYGROUND_SECRET: string
-    HYDRA_HOST: string
-  }
-}
+import * as Sentry from '@sentry/node'
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires,import/no-commonjs
+const { version } = require('../package.json') as { version: string }
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  release: `api.serlo.org${version}`,
+})
+
+export { Sentry }
