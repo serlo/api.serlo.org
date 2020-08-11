@@ -24,6 +24,7 @@ import { ForbiddenError } from 'apollo-server'
 import { MajorDimension } from '../../data-sources/google-spreadsheet-api'
 import { resolveConnection } from '../connection'
 import { Service } from '../types'
+import { reverseMapStrEnum } from '../utils'
 import { CacheResolvers } from './types'
 
 export const resolvers: CacheResolvers = {
@@ -70,22 +71,16 @@ export const resolvers: CacheResolvers = {
           const path = orgAndPath.slice('org'.length)
           await dataSources.serlo.updateCache({ path, instance, cacheKey: key })
         } else if (key.includes('spreadsheet')) {
-          const [, spreadsheetId, range, majorDimension] = key.split('-')
-          if (majorDimension == 'ROWS') {
-            await dataSources.googleSheetApi.getValues({
-              spreadsheetId,
-              range,
-              majorDimension: MajorDimension.Rows,
-              ignoreCache: true,
-            })
-          } else if (majorDimension == 'COLUMNS') {
-            await dataSources.googleSheetApi.getValues({
-              spreadsheetId,
-              range,
-              majorDimension: MajorDimension.Columns,
-              ignoreCache: true,
-            })
-          }
+          const [, spreadsheetId, range, majorDimensionStr] = key.split('-') //FIXME
+          await dataSources.googleSheetApi.getValues({
+            spreadsheetId,
+            range,
+            majorDimension: reverseMapStrEnum(
+              majorDimensionStr,
+              MajorDimension
+            ),
+            ignoreCache: true,
+          })
         }
       }
       return null
