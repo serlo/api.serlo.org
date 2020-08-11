@@ -70,7 +70,7 @@ export function createUuidHandler(uuid: UuidPayload) {
   })
 }
 
-function createJsonHandler({
+export function createJsonHandler({
   instance = Instance.De,
   path,
   body,
