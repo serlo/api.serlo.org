@@ -88,6 +88,7 @@ export const resolvers: CacheResolvers = {
           }
         }
       }
+      return null
     },
   },
 }
