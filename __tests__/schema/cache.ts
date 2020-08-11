@@ -158,7 +158,7 @@ test('_removeCache (authenticated)', async () => {
 
 test('_updateCache (forbidden)', async () => {
   const { client } = createTestClient({
-    service: Service.Playground,
+    service: Service.SerloCloudflareWorker,
     user: null,
   })
   await assertFailingGraphQLMutation(
