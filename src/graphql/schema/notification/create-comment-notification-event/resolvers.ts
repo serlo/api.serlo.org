@@ -19,19 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { requestsOnlyFields } from '../../utils'
-import { UserPayload } from '../../uuid/user'
+import { createNotificationEventResolvers } from '../utils'
 import { CreateCommentNotificationEventResolvers } from './types'
 
 export const resolvers: CreateCommentNotificationEventResolvers = {
   CreateCommentNotificationEvent: {
-    async author(notificationEvent, _args, { dataSources }, info) {
-      const partialUser = { id: notificationEvent.authorId }
-      if (requestsOnlyFields('User', ['id'], info)) {
-        return partialUser
-      }
-      return dataSources.serlo.getUuid<UserPayload>(partialUser)
-    },
+    ...createNotificationEventResolvers(),
     thread(notificationEvent) {
       return Promise.resolve({ id: notificationEvent.threadId })
     },

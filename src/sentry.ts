@@ -19,22 +19,14 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { EntityPayload } from '../../uuid/abstract-entity'
-import { createNotificationEventResolvers } from '../utils'
-import { CreateEntityLinkNotificationEventResolvers } from './types'
+import * as Sentry from '@sentry/node'
 
-export const resolvers: CreateEntityLinkNotificationEventResolvers = {
-  CreateEntityLinkNotificationEvent: {
-    ...createNotificationEventResolvers(),
-    async parent(notificationEvent, _args, { dataSources }) {
-      return dataSources.serlo.getUuid<EntityPayload>({
-        id: notificationEvent.parentId,
-      })
-    },
-    async child(notificationEvent, _args, { dataSources }) {
-      return dataSources.serlo.getUuid<EntityPayload>({
-        id: notificationEvent.childId,
-      })
-    },
-  },
-}
+// eslint-disable-next-line @typescript-eslint/no-var-requires,import/no-commonjs
+const { version } = require('../package.json') as { version: string }
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  release: `api.serlo.org${version}`,
+})
+
+export { Sentry }

@@ -38,7 +38,7 @@ beforeEach(() => {
 
 test('license', async () => {
   const { client } = createTestClient({
-    service: Service.Playground,
+    service: Service.SerloCloudflareWorker,
     user: null,
   })
   await assertSuccessfulGraphQLQuery({

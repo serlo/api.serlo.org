@@ -33,6 +33,7 @@ import {
   Resolver,
   TypeResolver,
 } from '../types'
+import { UserPayload } from '../uuid/user'
 import { CheckoutRevisionNotificationEventPayload } from './checkout-revision-notification-event'
 import { CreateCommentNotificationEventPayload } from './create-comment-notification-event'
 import { CreateEntityLinkNotificationEventPayload } from './create-entity-link-notification-event'
@@ -97,8 +98,9 @@ export type NotificationEventPayload =
   | SetThreadStateNotificationEventPayload
   | SetUuidStateNotificationEventPayload
 export interface AbstractNotificationEventPayload
-  extends AbstractNotificationEvent {
+  extends Omit<AbstractNotificationEvent, 'actor'> {
   __typename: NotificationEventType
+  actorId: number
 }
 
 export interface NotificationResolvers {
@@ -106,7 +108,7 @@ export interface NotificationResolvers {
     __resolveType: TypeResolver<NotificationEventPayload>
   }
   Notification: {
-    event: Resolver<NotificationPayload, never, NotificationEventPayload>
+    event: Resolver<NotificationPayload, never, NotificationEventPayload | null>
   }
   Query: {
     notifications: QueryResolver<
@@ -115,10 +117,16 @@ export interface NotificationResolvers {
     >
     notificationEvent: QueryResolver<
       QueryNotificationEventArgs,
-      NotificationEventPayload
+      NotificationEventPayload | null
     >
   }
   Mutation: {
     setNotificationState: MutationResolver<MutationSetNotificationStateArgs>
   }
+}
+
+export interface NotificationEventResolvers<
+  T extends AbstractNotificationEventPayload
+> {
+  actor: Resolver<T, never, Partial<UserPayload> | null>
 }

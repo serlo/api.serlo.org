@@ -29,6 +29,8 @@ import { createInMemoryCache } from './cache/in-memory-cache'
 import { createRedisCache } from './cache/redis-cache'
 import { getGraphQLOptions } from './graphql'
 import { Service } from './graphql/schema/types'
+// eslint-disable-next-line import/no-unassigned-import
+import './sentry'
 
 start()
 
@@ -55,19 +57,23 @@ function applyGraphQLMiddleware(app: Express) {
 
   app.use(server.getMiddleware({ path: '/graphql' }))
   app.get('/___graphql', (...args) => {
-    const token = jwt.sign({}, process.env.PLAYGROUND_SECRET, {
-      expiresIn: '2h',
-      audience: 'api.serlo.org',
-      issuer: Service.Playground,
-    })
-
     return createPlayground({
       endpoint: '/graphql',
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error Not documented but we can pass custom headers
-      headers: {
-        Authorization: `Serlo Service=${token}`,
-      },
+      ...(process.env.NODE_ENV === 'production'
+        ? {}
+        : {
+            headers: {
+              Authorization: `Serlo Service=${jwt.sign(
+                {},
+                process.env.SERLO_CLOUDFLARE_WORKER_SECRET,
+                {
+                  expiresIn: '2h',
+                  audience: 'api.serlo.org',
+                  issuer: Service.SerloCloudflareWorker,
+                }
+              )}`,
+            },
+          }),
     })(...args)
   })
 

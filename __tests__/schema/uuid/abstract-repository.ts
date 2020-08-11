@@ -74,7 +74,7 @@ let client: Client
 
 beforeEach(() => {
   client = createTestClient({
-    service: Service.Playground,
+    service: Service.SerloCloudflareWorker,
     user: null,
   }).client
 })

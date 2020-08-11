@@ -25,36 +25,34 @@ import {
   RepositoryPayload,
   RevisionPayload,
 } from '../../uuid/abstract-repository'
-import { UserPayload } from '../../uuid/user'
-import { NotificationEventType } from '../types'
+import {
+  AbstractNotificationEventPayload,
+  NotificationEventResolvers,
+  NotificationEventType,
+} from '../types'
 
 export interface CheckoutRevisionNotificationEventPayload
-  extends Omit<
-    CheckoutRevisionNotificationEvent,
-    keyof CheckoutRevisionNotificationEventResolvers['CheckoutRevisionNotificationEvent']
-  > {
+  extends AbstractNotificationEventPayload,
+    Omit<
+      CheckoutRevisionNotificationEvent,
+      keyof CheckoutRevisionNotificationEventResolvers['CheckoutRevisionNotificationEvent']
+    > {
   __typename: NotificationEventType.CheckoutRevision
-  reviewerId: number
   repositoryId: number
   revisionId: number
 }
 
 export interface CheckoutRevisionNotificationEventResolvers {
   CheckoutRevisionNotificationEvent: {
-    reviewer: Resolver<
-      CheckoutRevisionNotificationEventPayload,
-      never,
-      Partial<UserPayload>
-    >
     repository: Resolver<
       CheckoutRevisionNotificationEventPayload,
       never,
-      RepositoryPayload
+      RepositoryPayload | null
     >
     revision: Resolver<
       CheckoutRevisionNotificationEventPayload,
       never,
-      RevisionPayload
+      RevisionPayload | null
     >
-  }
+  } & NotificationEventResolvers<CheckoutRevisionNotificationEventPayload>
 }

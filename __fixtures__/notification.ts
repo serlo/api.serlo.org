@@ -59,7 +59,7 @@ export const checkoutRevisionNotificationEvent: CheckoutRevisionNotificationEven
   id: 301,
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
-  reviewerId: user.id,
+  actorId: user.id,
   repositoryId: article.id,
   revisionId: articleRevision.id,
   reason: 'reason',
@@ -68,7 +68,7 @@ export const checkoutRevisionNotificationEvent: CheckoutRevisionNotificationEven
 export function getCheckoutRevisionNotificationEventDataWithoutSubResolvers(
   notificationEvent: CheckoutRevisionNotificationEventPayload
 ) {
-  return R.omit(['reviewerId', 'repositoryId', 'revisionId'], notificationEvent)
+  return R.omit(['actorId', 'repositoryId', 'revisionId'], notificationEvent)
 }
 
 export const rejectRevisionNotificationEvent: RejectRevisionNotificationEventPayload = {
@@ -76,7 +76,7 @@ export const rejectRevisionNotificationEvent: RejectRevisionNotificationEventPay
   id: 38035,
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
-  reviewerId: user.id,
+  actorId: user.id,
   repositoryId: article.id,
   revisionId: articleRevision.id,
   reason: 'reason',
@@ -85,7 +85,7 @@ export const rejectRevisionNotificationEvent: RejectRevisionNotificationEventPay
 export function getRejectRevisionNotificationEventDataWithoutSubResolvers(
   notificationEvent: RejectRevisionNotificationEventPayload
 ) {
-  return R.omit(['reviewerId', 'repositoryId', 'revisionId'], notificationEvent)
+  return R.omit(['actorId', 'repositoryId', 'revisionId'], notificationEvent)
 }
 
 export const createCommentNotificationEvent: CreateCommentNotificationEventPayload = {
@@ -93,7 +93,7 @@ export const createCommentNotificationEvent: CreateCommentNotificationEventPaylo
   id: 37375,
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
-  authorId: user.id,
+  actorId: user.id,
   threadId: thread.id,
   commentId: comment.id,
 }
@@ -101,7 +101,7 @@ export const createCommentNotificationEvent: CreateCommentNotificationEventPaylo
 export function getCreateCommentNotificationEventDataWithoutSubResolvers(
   notificationEvent: CreateCommentNotificationEventPayload
 ) {
-  return R.omit(['authorId', 'threadId', 'commentId'], notificationEvent)
+  return R.omit(['actorId', 'threadId', 'commentId'], notificationEvent)
 }
 
 export const createEntityNotificationEvent: CreateEntityNotificationEventPayload = {
@@ -109,14 +109,14 @@ export const createEntityNotificationEvent: CreateEntityNotificationEventPayload
   id: 298,
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
-  authorId: user.id,
+  actorId: user.id,
   entityId: article.id,
 }
 
 export function getCreateEntityNotificationEventDataWithoutSubResolvers(
   notificationEvent: CreateEntityNotificationEventPayload
 ) {
-  return R.omit(['authorId', 'entityId'], notificationEvent)
+  return R.omit(['actorId', 'entityId'], notificationEvent)
 }
 
 export const createEntityLinkNotificationEvent: CreateEntityLinkNotificationEventPayload = {
@@ -156,7 +156,7 @@ export const createEntityRevisionNotificationEvent: CreateEntityRevisionNotifica
   id: 300,
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
-  authorId: user.id,
+  actorId: user.id,
   entityId: article.id,
   entityRevisionId: articleRevision.id,
 }
@@ -164,7 +164,7 @@ export const createEntityRevisionNotificationEvent: CreateEntityRevisionNotifica
 export function getCreateEntityRevisionNotificationEventDataWithoutSubResolvers(
   notificationEvent: CreateEntityRevisionNotificationEventPayload
 ) {
-  return R.omit(['authorId', 'entityId', 'entityRevisionId'], notificationEvent)
+  return R.omit(['actorId', 'entityId', 'entityRevisionId'], notificationEvent)
 }
 
 export const createTaxonomyTermNotificationEvent: CreateTaxonomyTermNotificationEventPayload = {
@@ -172,14 +172,14 @@ export const createTaxonomyTermNotificationEvent: CreateTaxonomyTermNotification
   id: 90,
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
-  authorId: user.id,
+  actorId: user.id,
   taxonomyTermId: taxonomyTermCurriculumTopic.id,
 }
 
 export function getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers(
   notificationEvent: CreateTaxonomyTermNotificationEventPayload
 ) {
-  return R.omit(['authorId', 'taxonomyTermId'], notificationEvent)
+  return R.omit(['actorId', 'taxonomyTermId'], notificationEvent)
 }
 
 export const setTaxonomyTermNotificationEvent: SetTaxonomyTermNotificationEventPayload = {
@@ -187,14 +187,14 @@ export const setTaxonomyTermNotificationEvent: SetTaxonomyTermNotificationEventP
   id: 38405,
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
-  authorId: user.id,
+  actorId: user.id,
   taxonomyTermId: taxonomyTermCurriculumTopic.id,
 }
 
 export function getSetTaxonomyTermNotificationEventDataWithoutSubResolvers(
   notificationEvent: SetTaxonomyTermNotificationEventPayload
 ) {
-  return R.omit(['authorId', 'taxonomyTermId'], notificationEvent)
+  return R.omit(['actorId', 'taxonomyTermId'], notificationEvent)
 }
 
 export const createTaxonomyLinkNotificationEvent: CreateTaxonomyLinkNotificationEventPayload = {
@@ -254,7 +254,7 @@ export const createThreadNotificationEvent: CreateThreadNotificationEventPayload
   id: 37374,
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
-  authorId: user.id,
+  actorId: user.id,
   objectId: article.id,
   threadId: thread.id,
 }
@@ -262,7 +262,7 @@ export const createThreadNotificationEvent: CreateThreadNotificationEventPayload
 export function getCreateThreadNotificationEventDataWithoutSubResolvers(
   notificationEvent: CreateThreadNotificationEventPayload
 ) {
-  return R.omit(['authorId', 'objectId', 'threadId'], notificationEvent)
+  return R.omit(['actorId', 'objectId', 'threadId'], notificationEvent)
 }
 
 export const setLicenseNotificationEvent: SetLicenseNotificationEventPayload = {

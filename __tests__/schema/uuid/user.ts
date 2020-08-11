@@ -40,7 +40,7 @@ let cache: Cache
 
 beforeEach(() => {
   ;({ client, cache } = createTestClient({
-    service: Service.Playground,
+    service: Service.SerloCloudflareWorker,
     user: null,
   }))
 

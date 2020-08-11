@@ -21,12 +21,12 @@
  */
 declare namespace NodeJS {
   interface ProcessEnv {
+    SENTRY_DSN: string | undefined
     ACTIVE_DONORS_SPREADSHEET_ID: string
     GOOGLE_API_KEY: string
     SERLO_CLOUDFLARE_WORKER_SECRET: string
     SERLO_ORG_HOST: string
     SERLO_ORG_SECRET: string
-    PLAYGROUND_SECRET: string
     HYDRA_HOST: string
   }
 }

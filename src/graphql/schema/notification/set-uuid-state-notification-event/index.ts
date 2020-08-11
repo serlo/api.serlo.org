@@ -25,6 +25,7 @@ import typeDefs from './types.graphql'
 
 export * from './types'
 
-export const setUuidStateNotificationEventSchema = new Schema(resolvers, [
-  typeDefs,
-])
+export const setUuidStateNotificationEventSchema: Schema = {
+  resolvers,
+  typeDefs: [typeDefs],
+}

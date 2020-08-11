@@ -25,36 +25,34 @@ import {
   EntityPayload,
   EntityRevisionPayload,
 } from '../../uuid/abstract-entity'
-import { UserPayload } from '../../uuid/user'
-import { NotificationEventType } from '../types'
+import {
+  AbstractNotificationEventPayload,
+  NotificationEventResolvers,
+  NotificationEventType,
+} from '../types'
 
 export interface CreateEntityRevisionNotificationEventPayload
-  extends Omit<
-    CreateEntityRevisionNotificationEvent,
-    keyof CreateEntityRevisionNotificationEventResolvers['CreateEntityRevisionNotificationEvent']
-  > {
+  extends AbstractNotificationEventPayload,
+    Omit<
+      CreateEntityRevisionNotificationEvent,
+      keyof CreateEntityRevisionNotificationEventResolvers['CreateEntityRevisionNotificationEvent']
+    > {
   __typename: NotificationEventType.CreateEntityRevision
-  authorId: number
   entityId: number
   entityRevisionId: number
 }
 
 export interface CreateEntityRevisionNotificationEventResolvers {
   CreateEntityRevisionNotificationEvent: {
-    author: Resolver<
-      CreateEntityRevisionNotificationEventPayload,
-      never,
-      Partial<UserPayload>
-    >
     entity: Resolver<
       CreateEntityRevisionNotificationEventPayload,
       never,
-      EntityPayload
+      EntityPayload | null
     >
     entityRevision: Resolver<
       CreateEntityRevisionNotificationEventPayload,
       never,
-      EntityRevisionPayload
+      EntityRevisionPayload | null
     >
-  }
+  } & NotificationEventResolvers<CreateEntityRevisionNotificationEventPayload>
 }

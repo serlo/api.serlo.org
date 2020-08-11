@@ -19,22 +19,20 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { EntityPayload } from '../../uuid/abstract-entity'
-import { createNotificationEventResolvers } from '../utils'
-import { CreateEntityLinkNotificationEventResolvers } from './types'
+import { GraphQLResolveInfo } from 'graphql'
 
-export const resolvers: CreateEntityLinkNotificationEventResolvers = {
-  CreateEntityLinkNotificationEvent: {
-    ...createNotificationEventResolvers(),
-    async parent(notificationEvent, _args, { dataSources }) {
-      return dataSources.serlo.getUuid<EntityPayload>({
-        id: notificationEvent.parentId,
-      })
-    },
-    async child(notificationEvent, _args, { dataSources }) {
-      return dataSources.serlo.getUuid<EntityPayload>({
-        id: notificationEvent.childId,
-      })
-    },
-  },
+import { Context } from '../../types'
+import { requestsOnlyFields } from '../../utils'
+import { UserPayload } from './types'
+
+export async function resolveUser(
+  { id }: { id: number },
+  { dataSources }: Context,
+  info: GraphQLResolveInfo
+): Promise<Partial<UserPayload> | null> {
+  const partialUser = { id }
+  if (requestsOnlyFields('User', ['id'], info)) {
+    return partialUser
+  }
+  return dataSources.serlo.getUuid<UserPayload>(partialUser)
 }

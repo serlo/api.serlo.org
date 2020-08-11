@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Schema } from '../utils'
+import { mergeSchemas } from '../utils'
 import { abstractEntitySchema } from './abstract-entity'
 import { abstractExerciseSchema } from './abstract-exercise'
 import { abstractNavigationChildSchema } from './abstract-navigation-child'
@@ -64,7 +64,7 @@ export * from './thread'
 export * from './user'
 export * from './video'
 
-export const uuidSchema = Schema.merge(
+export const uuidSchema = mergeSchemas(
   abstractEntitySchema,
   abstractExerciseSchema,
   abstractNavigationChildSchema,

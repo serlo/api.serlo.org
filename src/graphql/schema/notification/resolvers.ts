@@ -22,6 +22,7 @@
 import { AuthenticationError } from 'apollo-server'
 
 import { resolveConnection } from '../connection'
+import { Context } from '../types'
 import {
   NotificationEventPayload,
   NotificationPayload,
@@ -35,10 +36,9 @@ export const resolvers: NotificationResolvers = {
     },
   },
   Notification: {
-    async event(parent, _args, { dataSources }) {
-      return await dataSources.serlo.getNotificationEvent<
-        NotificationEventPayload
-      >({
+    event(parent, _args, context) {
+      const { dataSources }: Context = context
+      return dataSources.serlo.getNotificationEvent<NotificationEventPayload>({
         id: parent.eventId,
       })
     },
@@ -54,19 +54,20 @@ export const resolvers: NotificationResolvers = {
         id: user,
       })
       return resolveConnection<NotificationPayload>({
-        nodes:
-          unread == null
-            ? notifications
-            : notifications.filter((notification) => {
-                return notification.unread === unread
-              }),
+        nodes: notifications.filter((notification) => {
+          return (
+            notification !== null &&
+            (unread == null || notification.unread === unread)
+          )
+        }),
         payload: cursorPayload,
         createCursor(node) {
           return `${node.id}`
         },
       })
     },
-    async notificationEvent(_parent, payload, { dataSources }) {
+    async notificationEvent(_parent, payload, context) {
+      const { dataSources }: Context = context
       return dataSources.serlo.getNotificationEvent<NotificationEventPayload>(
         payload
       )
@@ -80,6 +81,7 @@ export const resolvers: NotificationResolvers = {
         userId: user,
         unread: payload.unread,
       })
+      return null
     },
   },
 }

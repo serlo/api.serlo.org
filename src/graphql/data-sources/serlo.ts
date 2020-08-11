@@ -33,6 +33,8 @@ import {
   decodePath,
   encodePath,
   EntityPayload,
+  isUnsupportedNotificationEvent,
+  isUnsupportedUuid,
   Navigation,
   NavigationPayload,
   NodeData,
@@ -154,14 +156,20 @@ export class SerloDataSource extends RESTDataSource {
     id,
   }: {
     id: number
-  }): Promise<T> {
-    return this.cacheAwareGet<T>({ path: `/api/uuid/${id}` })
+  }): Promise<T | null> {
+    const uuid = await this.cacheAwareGet<T>({ path: `/api/uuid/${id}` })
+    return isUnsupportedUuid(uuid) ? null : uuid
   }
 
   public async getNotificationEvent<
     T extends AbstractNotificationEventPayload
-  >({ id }: { id: number }): Promise<T> {
-    return this.cacheAwareGet({ path: `/api/event/${id}` })
+  >({ id }: { id: number }): Promise<T | null> {
+    const notificationEvent = await this.cacheAwareGet<T>({
+      path: `/api/event/${id}`,
+    })
+    return isUnsupportedNotificationEvent(notificationEvent)
+      ? null
+      : notificationEvent
   }
 
   public async getNotifications({
