@@ -22,30 +22,28 @@
 import { SetTaxonomyTermNotificationEvent } from '../../../../types'
 import { Resolver } from '../../types'
 import { TaxonomyTermPayload } from '../../uuid/taxonomy-term'
-import { UserPayload } from '../../uuid/user'
-import { NotificationEventType } from '../types'
+import {
+  AbstractNotificationEventPayload,
+  NotificationEventResolvers,
+  NotificationEventType,
+} from '../types'
 
 export interface SetTaxonomyTermNotificationEventPayload
-  extends Omit<
-    SetTaxonomyTermNotificationEvent,
-    keyof SetTaxonomyTermNotificationEventResolvers['SetTaxonomyTermNotificationEvent']
-  > {
+  extends AbstractNotificationEventPayload,
+    Omit<
+      SetTaxonomyTermNotificationEvent,
+      keyof SetTaxonomyTermNotificationEventResolvers['SetTaxonomyTermNotificationEvent']
+    > {
   __typename: NotificationEventType.SetTaxonomyTerm
-  authorId: number
   taxonomyTermId: number
 }
 
 export interface SetTaxonomyTermNotificationEventResolvers {
   SetTaxonomyTermNotificationEvent: {
-    author: Resolver<
-      SetTaxonomyTermNotificationEventPayload,
-      never,
-      Partial<UserPayload>
-    >
     taxonomyTerm: Resolver<
       SetTaxonomyTermNotificationEventPayload,
       never,
-      TaxonomyTermPayload
+      TaxonomyTermPayload | null
     >
-  }
+  } & NotificationEventResolvers<SetTaxonomyTermNotificationEventPayload>
 }

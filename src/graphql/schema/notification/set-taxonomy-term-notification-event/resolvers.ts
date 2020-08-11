@@ -19,20 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { requestsOnlyFields } from '../../utils'
 import { TaxonomyTermPayload } from '../../uuid/taxonomy-term'
-import { UserPayload } from '../../uuid/user'
+import { createNotificationEventResolvers } from '../utils'
 import { SetTaxonomyTermNotificationEventResolvers } from './types'
 
 export const resolvers: SetTaxonomyTermNotificationEventResolvers = {
   SetTaxonomyTermNotificationEvent: {
-    async author(notificationEvent, _args, { dataSources }, info) {
-      const partialUser = { id: notificationEvent.authorId }
-      if (requestsOnlyFields('User', ['id'], info)) {
-        return partialUser
-      }
-      return dataSources.serlo.getUuid<UserPayload>(partialUser)
-    },
+    ...createNotificationEventResolvers(),
     async taxonomyTerm(notificationEvent, _args, { dataSources }) {
       return dataSources.serlo.getUuid<TaxonomyTermPayload>({
         id: notificationEvent.taxonomyTermId,

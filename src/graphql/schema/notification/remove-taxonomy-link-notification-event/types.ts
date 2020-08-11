@@ -23,36 +23,34 @@ import { RemoveTaxonomyLinkNotificationEvent } from '../../../../types'
 import { Resolver } from '../../types'
 import { UuidPayload } from '../../uuid/abstract-uuid'
 import { TaxonomyTermPayload } from '../../uuid/taxonomy-term'
-import { UserPayload } from '../../uuid/user'
-import { NotificationEventType } from '../types'
+import {
+  AbstractNotificationEventPayload,
+  NotificationEventResolvers,
+  NotificationEventType,
+} from '../types'
 
 export interface RemoveTaxonomyLinkNotificationEventPayload
-  extends Omit<
-    RemoveTaxonomyLinkNotificationEvent,
-    keyof RemoveTaxonomyLinkNotificationEventResolvers['RemoveTaxonomyLinkNotificationEvent']
-  > {
+  extends AbstractNotificationEventPayload,
+    Omit<
+      RemoveTaxonomyLinkNotificationEvent,
+      keyof RemoveTaxonomyLinkNotificationEventResolvers['RemoveTaxonomyLinkNotificationEvent']
+    > {
   __typename: NotificationEventType.RemoveTaxonomyLink
-  actorId: number
   parentId: number
   childId: number
 }
 
 export interface RemoveTaxonomyLinkNotificationEventResolvers {
   RemoveTaxonomyLinkNotificationEvent: {
-    actor: Resolver<
-      RemoveTaxonomyLinkNotificationEventPayload,
-      never,
-      Partial<UserPayload>
-    >
     parent: Resolver<
       RemoveTaxonomyLinkNotificationEventPayload,
       never,
-      TaxonomyTermPayload
+      TaxonomyTermPayload | null
     >
     child: Resolver<
       RemoveTaxonomyLinkNotificationEventPayload,
       never,
-      UuidPayload
+      UuidPayload | null
     >
-  }
+  } & NotificationEventResolvers<RemoveTaxonomyLinkNotificationEventPayload>
 }

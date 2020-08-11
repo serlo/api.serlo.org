@@ -33,12 +33,15 @@ export function createTaxonomyTermChildResolvers<
   E extends AbstractTaxonomyTermChildPayload
 >(): TaxonomyTermChildResolvers<E> {
   return {
-    taxonomyTerms(entity: E, _args: never, { dataSources }: Context) {
-      return Promise.all(
+    async taxonomyTerms(entity: E, _args: never, { dataSources }: Context) {
+      const taxonomyTerms = await Promise.all(
         entity.taxonomyTermIds.map((id: number) => {
           return dataSources.serlo.getUuid<TaxonomyTermPayload>({ id })
         })
       )
+      return taxonomyTerms.filter(
+        (payload) => payload !== null
+      ) as TaxonomyTermPayload[]
     },
   }
 }

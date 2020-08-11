@@ -22,16 +22,19 @@
 import { SetTaxonomyParentNotificationEvent } from '../../../../types'
 import { Resolver } from '../../types'
 import { TaxonomyTermPayload } from '../../uuid/taxonomy-term'
-import { UserPayload } from '../../uuid/user'
-import { NotificationEventType } from '../types'
+import {
+  AbstractNotificationEventPayload,
+  NotificationEventResolvers,
+  NotificationEventType,
+} from '../types'
 
 export interface SetTaxonomyParentNotificationEventPayload
-  extends Omit<
-    SetTaxonomyParentNotificationEvent,
-    keyof SetTaxonomyParentNotificationEventResolvers['SetTaxonomyParentNotificationEvent']
-  > {
+  extends AbstractNotificationEventPayload,
+    Omit<
+      SetTaxonomyParentNotificationEvent,
+      keyof SetTaxonomyParentNotificationEventResolvers['SetTaxonomyParentNotificationEvent']
+    > {
   __typename: NotificationEventType.SetTaxonomyParent
-  actorId: number
   previousParentId: number | null
   parentId: number | null
   childId: number
@@ -39,11 +42,6 @@ export interface SetTaxonomyParentNotificationEventPayload
 
 export interface SetTaxonomyParentNotificationEventResolvers {
   SetTaxonomyParentNotificationEvent: {
-    actor: Resolver<
-      SetTaxonomyParentNotificationEventPayload,
-      never,
-      Partial<UserPayload>
-    >
     previousParent: Resolver<
       SetTaxonomyParentNotificationEventPayload,
       never,
@@ -57,7 +55,7 @@ export interface SetTaxonomyParentNotificationEventResolvers {
     child: Resolver<
       SetTaxonomyParentNotificationEventPayload,
       never,
-      TaxonomyTermPayload
+      TaxonomyTermPayload | null
     >
-  }
+  } & NotificationEventResolvers<SetTaxonomyParentNotificationEventPayload>
 }

@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Schema } from '../utils'
+import { mergeSchemas, Schema } from '../utils'
 import { checkoutRevisionNotificationEventSchema } from './checkout-revision-notification-event'
 import { createCommentNotificationEventSchema } from './create-comment-notification-event'
 import { createEntityLinkNotificationSchema } from './create-entity-link-notification-event'
@@ -56,10 +56,11 @@ export * from './set-taxonomy-term-notification-event'
 export * from './set-thread-state-notification-event'
 export * from './set-uuid-state-notification-event'
 export * from './types'
+export * from './utils'
 
-const baseSchema = new Schema(resolvers, [typeDefs])
+const baseSchema: Schema = { resolvers, typeDefs: [typeDefs] }
 
-export const notificationSchema = Schema.merge(
+export const notificationSchema = mergeSchemas(
   baseSchema,
   checkoutRevisionNotificationEventSchema,
   createCommentNotificationEventSchema,

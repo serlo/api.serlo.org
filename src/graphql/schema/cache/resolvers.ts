@@ -46,6 +46,7 @@ export const resolvers: CacheResolvers = {
         )
       }
       await dataSources.serlo.setCache(key, value)
+      return null
     },
     async _removeCache(_parent, { key }, { dataSources, service }) {
       if (service !== Service.Serlo) {
@@ -54,6 +55,7 @@ export const resolvers: CacheResolvers = {
         )
       }
       await dataSources.serlo.removeCache(key)
+      return null
     },
   },
 }

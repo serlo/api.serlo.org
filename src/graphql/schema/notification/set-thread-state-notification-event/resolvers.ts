@@ -19,19 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { requestsOnlyFields } from '../../utils'
-import { UserPayload } from '../../uuid/user'
+import { createNotificationEventResolvers } from '../utils'
 import { SetThreadStateNotificationEventResolvers } from './types'
 
 export const resolvers: SetThreadStateNotificationEventResolvers = {
   SetThreadStateNotificationEvent: {
-    async actor(notificationEvent, _args, { dataSources }, info) {
-      const partialUser = { id: notificationEvent.actorId }
-      if (requestsOnlyFields('User', ['id'], info)) {
-        return partialUser
-      }
-      return dataSources.serlo.getUuid<UserPayload>(partialUser)
-    },
+    ...createNotificationEventResolvers(),
     thread(notificationEvent) {
       return Promise.resolve({ id: notificationEvent.threadId })
     },

@@ -21,12 +21,6 @@
  */
 import { gql } from 'apollo-server'
 
-import {
-  exercise,
-  exerciseRevision,
-  getExerciseDataWithoutSubResolvers,
-  getExerciseRevisionDataWithoutSubResolvers,
-} from '../../../__fixtures__'
 import { Service } from '../../../src/graphql/schema/types'
 import {
   assertSuccessfulGraphQLQuery,
@@ -42,54 +36,34 @@ beforeEach(() => {
     service: Service.SerloCloudflareWorker,
     user: null,
   }).client
+  global.server.use(
+    createUuidHandler({
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error We assume here that we get an invalid type name
+      __typename: 'MathPuzzle',
+      id: 146944,
+      trashed: false,
+    })
+  )
 })
 
-test('Exercise', async () => {
-  global.server.use(createUuidHandler(exercise))
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query exercise($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          ... on Exercise {
+describe('Unsupported UUID', () => {
+  test('by id', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query unsupported($id: Int!) {
+          uuid(id: $id) {
+            __typename
             id
             trashed
-            instance
-            alias
-            date
           }
         }
-      }
-    `,
-    variables: exercise,
-    data: {
-      uuid: getExerciseDataWithoutSubResolvers(exercise),
-    },
-    client,
-  })
-})
-
-test('ExerciseRevision', async () => {
-  global.server.use(createUuidHandler(exerciseRevision))
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query exerciseRevision($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          ... on ExerciseRevision {
-            id
-            trashed
-            date
-            content
-            changes
-          }
-        }
-      }
-    `,
-    variables: exerciseRevision,
-    data: {
-      uuid: getExerciseRevisionDataWithoutSubResolvers(exerciseRevision),
-    },
-    client,
+      `,
+      variables: { id: 146944 },
+      data: {
+        uuid: null,
+      },
+      client,
+    })
   })
 })

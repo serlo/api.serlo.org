@@ -19,22 +19,17 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { EntityPayload } from '../../uuid/abstract-entity'
-import { createNotificationEventResolvers } from '../utils'
-import { CreateEntityLinkNotificationEventResolvers } from './types'
+import * as R from 'ramda'
 
-export const resolvers: CreateEntityLinkNotificationEventResolvers = {
-  CreateEntityLinkNotificationEvent: {
-    ...createNotificationEventResolvers(),
-    async parent(notificationEvent, _args, { dataSources }) {
-      return dataSources.serlo.getUuid<EntityPayload>({
-        id: notificationEvent.parentId,
-      })
-    },
-    async child(notificationEvent, _args, { dataSources }) {
-      return dataSources.serlo.getUuid<EntityPayload>({
-        id: notificationEvent.childId,
-      })
-    },
-  },
+import { EntityRevisionType, EntityType } from '../abstract-entity'
+import { AbstractUuidPayload, DiscriminatorType } from './types'
+
+const validTypes = [
+  ...Object.values(DiscriminatorType),
+  ...Object.values(EntityType),
+  ...Object.values(EntityRevisionType),
+]
+
+export function isUnsupportedUuid(payload: AbstractUuidPayload) {
+  return !R.includes(payload.__typename, validTypes)
 }

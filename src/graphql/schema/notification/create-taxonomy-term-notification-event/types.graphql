@@ -2,6 +2,6 @@ type CreateTaxonomyTermNotificationEvent implements AbstractNotificationEvent {
   id: Int!
   instance: Instance!
   date: DateTime!
-  author: User!
+  actor: User!
   taxonomyTerm: TaxonomyTerm!
 }

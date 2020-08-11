@@ -25,6 +25,7 @@ import typeDefs from './types.graphql'
 
 export * from './types'
 
-export const removeTaxonomyLinkNotificationSchema = new Schema(resolvers, [
-  typeDefs,
-])
+export const removeTaxonomyLinkNotificationSchema: Schema = {
+  resolvers,
+  typeDefs: [typeDefs],
+}

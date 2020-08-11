@@ -23,36 +23,34 @@ import { CreateTaxonomyLinkNotificationEvent } from '../../../../types'
 import { Resolver } from '../../types'
 import { UuidPayload } from '../../uuid/abstract-uuid'
 import { TaxonomyTermPayload } from '../../uuid/taxonomy-term'
-import { UserPayload } from '../../uuid/user'
-import { NotificationEventType } from '../types'
+import {
+  AbstractNotificationEventPayload,
+  NotificationEventResolvers,
+  NotificationEventType,
+} from '../types'
 
 export interface CreateTaxonomyLinkNotificationEventPayload
-  extends Omit<
-    CreateTaxonomyLinkNotificationEvent,
-    keyof CreateTaxonomyLinkNotificationEventResolvers['CreateTaxonomyLinkNotificationEvent']
-  > {
+  extends AbstractNotificationEventPayload,
+    Omit<
+      CreateTaxonomyLinkNotificationEvent,
+      keyof CreateTaxonomyLinkNotificationEventResolvers['CreateTaxonomyLinkNotificationEvent']
+    > {
   __typename: NotificationEventType.CreateTaxonomyLink
-  actorId: number
   parentId: number
   childId: number
 }
 
 export interface CreateTaxonomyLinkNotificationEventResolvers {
   CreateTaxonomyLinkNotificationEvent: {
-    actor: Resolver<
-      CreateTaxonomyLinkNotificationEventPayload,
-      never,
-      Partial<UserPayload>
-    >
     parent: Resolver<
       CreateTaxonomyLinkNotificationEventPayload,
       never,
-      TaxonomyTermPayload
+      TaxonomyTermPayload | null
     >
     child: Resolver<
       CreateTaxonomyLinkNotificationEventPayload,
       never,
-      UuidPayload
+      UuidPayload | null
     >
-  }
+  } & NotificationEventResolvers<CreateTaxonomyLinkNotificationEventPayload>
 }

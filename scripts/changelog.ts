@@ -235,6 +235,62 @@ async function exec(): Promise<void> {
         ],
       ],
     },
+    {
+      tagName: 'v0.7.4',
+      name: '0.7.4',
+      date: '2020-08-06',
+      added: [
+        ['notification', 'Add `UnsupportedNotificationEvent`.'],
+        ['uuid', 'Add `UnsupportedUuid`.'],
+      ],
+      fixed: [
+        [
+          'uuid',
+          'GraphQL no longer fails when it encounters an unsupported entity.',
+        ],
+      ],
+    },
+    {
+      tagName: 'v0.8.0',
+      name: '0.8.0',
+      date: '2020-08-10',
+      breakingChanges: [
+        [
+          'notification',
+          'generalize actor / author / reviewer into actor and move into `AbstractNotificationEvent`',
+        ],
+        ['notification', 'Remove `UnsupportedNotificationEvent`.'],
+        ['uuid', 'Remove `UnsupportedUuid`.'],
+      ],
+      changed: [
+        [
+          'notification',
+          'generalize actor / author / reviewer into actor and move into `AbstractNotificationEvent`',
+        ],
+      ],
+      removed: [
+        ['notification', 'Remove `UnsupportedNotificationEvent`.'],
+        ['uuid', 'Remove `UnsupportedUuid`.'],
+      ],
+      fixed: [
+        [
+          'uuid',
+          'GraphQL no longer fails when it encounters an unsupported entity.',
+        ],
+      ],
+    },
+    {
+      tagName: 'v0.8.1',
+      name: '0.8.1',
+      date: '2020-08-11',
+      fixed: [
+        [
+          'notification',
+          'GraphQL no longer fails when it encounters an unsupported notification event.',
+        ],
+      ],
+      internal: ['Add Sentry.', 'Remove Playground service.'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

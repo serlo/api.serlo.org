@@ -22,26 +22,28 @@
 import { SetUuidStateNotificationEvent } from '../../../../types'
 import { Resolver } from '../../types'
 import { UuidPayload } from '../../uuid/abstract-uuid'
-import { UserPayload } from '../../uuid/user'
-import { NotificationEventType } from '../types'
+import {
+  AbstractNotificationEventPayload,
+  NotificationEventResolvers,
+  NotificationEventType,
+} from '../types'
 
 export interface SetUuidStateNotificationEventPayload
-  extends Omit<
-    SetUuidStateNotificationEvent,
-    keyof SetUuidStateNotificationEventResolvers['SetUuidStateNotificationEvent']
-  > {
+  extends AbstractNotificationEventPayload,
+    Omit<
+      SetUuidStateNotificationEvent,
+      keyof SetUuidStateNotificationEventResolvers['SetUuidStateNotificationEvent']
+    > {
   __typename: NotificationEventType.SetUuidState
-  actorId: number
   objectId: number
 }
 
 export interface SetUuidStateNotificationEventResolvers {
   SetUuidStateNotificationEvent: {
-    actor: Resolver<
+    object: Resolver<
       SetUuidStateNotificationEventPayload,
       never,
-      Partial<UserPayload>
+      UuidPayload | null
     >
-    object: Resolver<SetUuidStateNotificationEventPayload, never, UuidPayload>
-  }
+  } & NotificationEventResolvers<SetUuidStateNotificationEventPayload>
 }

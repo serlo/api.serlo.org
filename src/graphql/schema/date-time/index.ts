@@ -22,4 +22,4 @@
 import { Schema } from '../utils'
 import typeDefs from './types.graphql'
 
-export const dateTimeSchema = new Schema({}, [typeDefs])
+export const dateTimeSchema: Schema = { resolvers: {}, typeDefs: [typeDefs] }

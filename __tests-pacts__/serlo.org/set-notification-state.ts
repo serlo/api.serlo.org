@@ -33,7 +33,7 @@ import {
 
 test('setNotificationState', async () => {
   global.client = createTestClient({
-    service: Service.Playground,
+    service: Service.SerloCloudflareWorker,
     user: user.id,
   }).client
   await global.pact.addInteraction({

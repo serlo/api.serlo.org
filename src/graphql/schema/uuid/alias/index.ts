@@ -25,4 +25,4 @@ import typeDefs from './types.graphql'
 export * from './types'
 export * from './utils'
 
-export const aliasSchema = new Schema({}, [typeDefs])
+export const aliasSchema: Schema = { resolvers: {}, typeDefs: [typeDefs] }
