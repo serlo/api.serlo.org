@@ -35,7 +35,6 @@ export type MutationResolver<A, T = null> = Resolver<never, A, T>
 export type TypeResolver<T> = (type: T) => string
 
 export enum Service {
-  Playground = 'api.serlo.org-playground',
   Serlo = 'serlo.org',
   SerloCloudflareWorker = 'serlo.org-cloudflare-worker',
 }

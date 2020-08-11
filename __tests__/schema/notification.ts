@@ -89,7 +89,7 @@ describe('notifications', () => {
 
   beforeEach(() => {
     client = createTestClient({
-      service: Service.Playground,
+      service: Service.SerloCloudflareWorker,
       user: user.id,
     }).client
     global.server.use(
@@ -145,7 +145,7 @@ describe('notifications', () => {
 
   test('notifications without filter', async () => {
     const { client } = createTestClient({
-      service: Service.Playground,
+      service: Service.SerloCloudflareWorker,
       user: 1,
     })
     await assertSuccessfulGraphQLQuery({
@@ -175,7 +175,7 @@ describe('notifications', () => {
 
   test('notifications (only unread)', async () => {
     const { client } = createTestClient({
-      service: Service.Playground,
+      service: Service.SerloCloudflareWorker,
       user: 1,
     })
     await assertSuccessfulGraphQLQuery({
@@ -201,7 +201,7 @@ describe('notifications', () => {
 
   test('notifications (only read)', async () => {
     const { client } = createTestClient({
-      service: Service.Playground,
+      service: Service.SerloCloudflareWorker,
       user: 1,
     })
     await assertSuccessfulGraphQLQuery({
@@ -288,7 +288,7 @@ describe('notificationEvent', () => {
 
   beforeEach(() => {
     client = createTestClient({
-      service: Service.Playground,
+      service: Service.SerloCloudflareWorker,
       user: null,
     }).client
   })
@@ -2180,7 +2180,7 @@ describe('setNotificationState', () => {
 
   test('unauthenticated', async () => {
     const { client } = createTestClient({
-      service: Service.Playground,
+      service: Service.SerloCloudflareWorker,
       user: null,
     })
     await assertFailingGraphQLMutation(
@@ -2204,7 +2204,7 @@ describe('setNotificationState', () => {
       )
     )
     const { client } = createTestClient({
-      service: Service.Playground,
+      service: Service.SerloCloudflareWorker,
       user: user2.id,
     })
     await assertFailingGraphQLMutation(
