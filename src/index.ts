@@ -29,6 +29,8 @@ import { createInMemoryCache } from './cache/in-memory-cache'
 import { createRedisCache } from './cache/redis-cache'
 import { getGraphQLOptions } from './graphql'
 import { Service } from './graphql/schema/types'
+// eslint-disable-next-line import/no-unassigned-import
+import './sentry'
 
 start()
 
