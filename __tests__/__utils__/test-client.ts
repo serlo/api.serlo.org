@@ -45,7 +45,7 @@ export function createTestClient(
     }),
     context(): Pick<Context, 'service' | 'user'> {
       return {
-        service: context?.service ?? Service.Playground,
+        service: context?.service ?? Service.SerloCloudflareWorker,
         user: context?.user ?? null,
       }
     },

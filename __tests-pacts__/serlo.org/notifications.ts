@@ -30,7 +30,7 @@ import { addJsonInteraction, assertSuccessfulGraphQLQuery } from '../__utils__'
 
 test('Notifications', async () => {
   global.client = createTestClient({
-    service: Service.Playground,
+    service: Service.SerloCloudflareWorker,
     user: user.id,
   }).client
   await addJsonInteraction({

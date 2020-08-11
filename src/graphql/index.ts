@@ -55,7 +55,10 @@ export function getGraphQLOptions(
     context({ req }): Promise<Pick<Context, 'service' | 'user'>> {
       const authorizationHeader = req.headers.authorization
       if (!authorizationHeader) {
-        return Promise.resolve({ service: Service.Playground, user: null })
+        return Promise.resolve({
+          service: Service.SerloCloudflareWorker,
+          user: null,
+        })
         // throw new AuthenticationError('Invalid authorization header')
       }
       return handleAuthentication(authorizationHeader, async (token) => {
@@ -154,8 +157,6 @@ function validateServiceToken(token: string): Service {
 
     function getSecret(service: Service) {
       switch (service) {
-        case Service.Playground:
-          return process.env.PLAYGROUND_SECRET
         case Service.Serlo:
           return process.env.SERLO_ORG_SECRET
         case Service.SerloCloudflareWorker:
