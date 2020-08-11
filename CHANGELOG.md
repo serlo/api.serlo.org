@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.8.1](https://github.com/serlo/api.serlo.org/compare/v0.8.0..v0.8.1) - August 11, 2020
+
+### Fixed
+
+- **notification**. GraphQL no longer fails when it encounters an unsupported notification event.
+
+### Internal
+
+- Add Sentry.
+- Remove Playground service.
+
 ## [0.8.0](https://github.com/serlo/api.serlo.org/compare/v0.7.4..v0.8.0) - August 10, 2020
 
 ### Breaking Changes
