@@ -102,13 +102,16 @@ describe('activeDonors', () => {
       query: gql`
         {
           activeDonors {
-            __typename
-            id
-            trashed
-            username
-            date
-            lastLogin
-            description
+            nodes{
+              __typename
+              id
+              trashed
+              username
+              date
+              lastLogin
+              description
+            }
+            totalCount
           }
         }
       `,
@@ -123,7 +126,7 @@ describe('activeDonors', () => {
     await assertSuccessfulGraphQLQuery({
       ...createActiveDonorsQuery(),
       data: {
-        activeDonors: [user, user2],
+        activeDonors: {nodes: [user, user2], totalCount: 2},
       },
       client,
     })
@@ -137,7 +140,7 @@ describe('activeDonors', () => {
     await assertSuccessfulGraphQLQuery({
       ...createActiveDonorsQuery(),
       data: {
-        activeDonors: [user],
+        activeDonors: {nodes:[user], totalCount: 1},
       },
       client,
     })
@@ -149,14 +152,16 @@ describe('activeDonors', () => {
         query: gql`
           {
             activeDonors {
-              id
+              nodes{
+                id
+              }
             }
           }
         `,
         data: {
-          activeDonors: ids.map((id) => {
+          activeDonors: {nodes:ids.map((id) => {
             return { id }
-          }),
+          })},
         },
       }
     }
