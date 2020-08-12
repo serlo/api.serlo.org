@@ -21,11 +21,6 @@
  */
 import { gql } from 'apollo-server'
 
-export const variables = {
-  key: 'foo',
-  value: { foo: 'bar' },
-}
-
 export function createSetCacheMutation(variables: {
   key: string
   value: unknown
