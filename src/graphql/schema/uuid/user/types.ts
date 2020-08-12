@@ -19,9 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { User } from '../../../../types'
+
+import {QueryActiveDonorsArgs, User} from '../../../../types'
+import {Connection} from "../../connection";
 import { QueryResolver, Resolver } from '../../types'
 import { AbstractUuidPayload, DiscriminatorType } from '../abstract-uuid'
+
 
 export interface UserPayload extends Omit<User, keyof UserResolvers['User']> {
   __typename: DiscriminatorType.User
@@ -29,7 +32,7 @@ export interface UserPayload extends Omit<User, keyof UserResolvers['User']> {
 
 export interface UserResolvers {
   Query: {
-    activeDonors: QueryResolver<never, UserPayload[]>
+    activeDonors: QueryResolver<QueryActiveDonorsArgs, Connection<UserPayload>>
   }
   User: {
     activeDonor: Resolver<UserPayload, never, boolean>

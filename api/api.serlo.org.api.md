@@ -93,6 +93,13 @@ export type AbstractUuid = {
 };
 
 // @public (undocumented)
+export type ActiveDonorsCursor = {
+    __typename?: 'ActiveDonorsCursor';
+    cursor: Scalars['String'];
+    node: User;
+};
+
+// @public (undocumented)
 export type AliasInput = {
     instance: Instance;
     path: Scalars['String'];
@@ -172,6 +179,13 @@ export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & {
     repository: AbstractRepository;
     revision: AbstractRevision;
     reason: Scalars['String'];
+};
+
+// @public (undocumented)
+export type ChildrenCursor = {
+    __typename?: 'ChildrenCursor';
+    cursor: Scalars['String'];
+    node: AbstractUuid;
 };
 
 // @public (undocumented)
@@ -541,11 +555,20 @@ export type PageRevision = AbstractUuid & AbstractRevision & {
 export type Query = {
     __typename?: 'Query';
     _cacheKeys: Query_CacheKeysResult;
-    activeDonors: Array<User>;
+    activeDonors: Query_ActiveDonorsResult;
     license?: Maybe<License>;
     notificationEvent?: Maybe<AbstractNotificationEvent>;
     notifications: QueryNotificationsResult;
     uuid?: Maybe<AbstractUuid>;
+};
+
+// @public (undocumented)
+export type Query_ActiveDonorsResult = {
+    __typename?: 'Query_ActiveDonorsResult';
+    edges: Array<ActiveDonorsCursor>;
+    nodes: Array<User>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
 };
 
 // @public (undocumented)
@@ -563,6 +586,23 @@ export type Query_CacheKeysResult = {
     nodes: Array<Scalars['String']>;
     totalCount: Scalars['Int'];
     pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type Query_ChildrenResult = {
+    __typename?: 'Query_ChildrenResult';
+    edges: Array<ChildrenCursor>;
+    nodes: Array<AbstractUuid>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type QueryActiveDonorsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)
@@ -736,8 +776,16 @@ export type TaxonomyTerm = AbstractUuid & AbstractNavigationChild & {
     description?: Maybe<Scalars['String']>;
     weight: Scalars['Int'];
     parent?: Maybe<TaxonomyTerm>;
-    children: Array<AbstractUuid>;
+    children: Query_ChildrenResult;
     navigation?: Maybe<Navigation>;
+};
+
+// @public (undocumented)
+export type TaxonomyTermChildrenArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)

@@ -15,7 +15,7 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   _cacheKeys: Query_CacheKeysResult;
-  activeDonors: Array<User>;
+  activeDonors: Query_ActiveDonorsResult;
   license?: Maybe<License>;
   notificationEvent?: Maybe<AbstractNotificationEvent>;
   notifications: QueryNotificationsResult;
@@ -24,6 +24,14 @@ export type Query = {
 
 
 export type Query_CacheKeysArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryActiveDonorsArgs = {
   after?: Maybe<Scalars['String']>;
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
@@ -673,8 +681,30 @@ export type TaxonomyTerm = AbstractUuid & AbstractNavigationChild & {
   description?: Maybe<Scalars['String']>;
   weight: Scalars['Int'];
   parent?: Maybe<TaxonomyTerm>;
-  children: Array<AbstractUuid>;
+  children: Query_ChildrenResult;
   navigation?: Maybe<Navigation>;
+};
+
+
+export type TaxonomyTermChildrenArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+};
+
+export type Query_ChildrenResult = {
+  __typename?: 'Query_ChildrenResult';
+  edges: Array<ChildrenCursor>;
+  nodes: Array<AbstractUuid>;
+  totalCount: Scalars['Int'];
+  pageInfo: PageInfo;
+};
+
+export type ChildrenCursor = {
+  __typename?: 'ChildrenCursor';
+  cursor: Scalars['String'];
+  node: AbstractUuid;
 };
 
 export type UnsupportedThread = {
@@ -696,6 +726,20 @@ export type User = AbstractUuid & {
   lastLogin?: Maybe<Scalars['DateTime']>;
   description?: Maybe<Scalars['String']>;
   activeDonor: Scalars['Boolean'];
+};
+
+export type Query_ActiveDonorsResult = {
+  __typename?: 'Query_ActiveDonorsResult';
+  edges: Array<ActiveDonorsCursor>;
+  nodes: Array<User>;
+  totalCount: Scalars['Int'];
+  pageInfo: PageInfo;
+};
+
+export type ActiveDonorsCursor = {
+  __typename?: 'ActiveDonorsCursor';
+  cursor: Scalars['String'];
+  node: User;
 };
 
 export type Video = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {

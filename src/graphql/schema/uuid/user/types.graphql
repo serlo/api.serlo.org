@@ -9,5 +9,22 @@ type User implements AbstractUuid {
 }
 
 extend type Query {
-  activeDonors: [User!]!
+  activeDonors(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): Query_ActiveDonorsResult!
+}
+
+type Query_ActiveDonorsResult {
+  edges: [ActiveDonorsCursor!]!
+  nodes: [User!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type ActiveDonorsCursor {
+  cursor: String!
+  node: User!
 }

@@ -21,18 +21,19 @@
  */
 import { pipeable, either } from 'fp-ts'
 
-import { AbstractUuidPayload } from '..'
+import {AbstractUuidPayload, UserPayload} from '..'
 import { ErrorEvent } from '../../../../error-event'
 import {
   MajorDimension,
   GoogleSheetApi,
   CellValues,
 } from '../../../data-sources/google-spreadsheet-api'
+import {resolveConnection} from "../../connection";
 import { UserResolvers, isUserPayload } from './types'
 
 export const resolvers: UserResolvers = {
   Query: {
-    async activeDonors(_parent, _args, { dataSources }) {
+    async activeDonors(_parent, { ...cursorPayload }, { dataSources }) {
       const ids = await activeDonorIDs(dataSources.googleSheetApi)
 
       const uuids = await Promise.all(
@@ -40,7 +41,13 @@ export const resolvers: UserResolvers = {
       )
 
       // TODO: Report uuids which are not users to sentry
-      return uuids.filter(isUserPayload)
+      return resolveConnection<UserPayload>({
+        nodes: uuids.filter(isUserPayload),
+        payload: cursorPayload,
+        createCursor(node) {
+          return node.id.toString()
+        },
+      })
     },
   },
   User: {
