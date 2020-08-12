@@ -120,17 +120,20 @@ describe('TaxonomyTerm root', () => {
           uuid(id: $id) {
             ... on TaxonomyTerm {
               children {
-                __typename
-                ... on TaxonomyTerm {
-                  id
-                  type
-                  trashed
-                  instance
-                  alias
-                  name
-                  description
-                  weight
+                nodes{
+                  __typename
+                  ... on TaxonomyTerm{
+                    id
+                    type
+                    trashed
+                    instance
+                    alias
+                    name
+                    description
+                    weight
+                  }
                 }
+                totalCount
               }
             }
           }
@@ -139,9 +142,9 @@ describe('TaxonomyTerm root', () => {
       variables: taxonomyTermRoot,
       data: {
         uuid: {
-          children: [
+          children: {nodes: [
             getTaxonomyTermDataWithoutSubResolvers(taxonomyTermSubject),
-          ],
+          ], totalCount: 1},
         },
       },
       client,
@@ -250,17 +253,20 @@ describe('TaxonomyTerm subject', () => {
           uuid(id: $id) {
             ... on TaxonomyTerm {
               children {
-                __typename
-                ... on TaxonomyTerm {
-                  id
-                  type
-                  trashed
-                  instance
-                  alias
-                  name
-                  description
-                  weight
+                nodes {
+                  __typename
+                  ... on TaxonomyTerm {
+                    id
+                    type
+                    trashed
+                    instance
+                    alias
+                    name
+                    description
+                    weight
+                  }
                 }
+                totalCount
               }
             }
           }
@@ -269,9 +275,9 @@ describe('TaxonomyTerm subject', () => {
       variables: taxonomyTermSubject,
       data: {
         uuid: {
-          children: [
+          children: {nodes: [
             getTaxonomyTermDataWithoutSubResolvers(taxonomyTermCurriculumTopic),
-          ],
+          ], totalCount: 1},
         },
       },
       client,
@@ -409,14 +415,17 @@ describe('TaxonomyTerm curriculumTopic', () => {
           uuid(id: $id) {
             ... on TaxonomyTerm {
               children {
-                __typename
-                ... on Article {
-                  id
-                  trashed
-                  alias
-                  instance
-                  date
+                nodes{
+                  __typename
+                  ... on Article {
+                    id
+                    trashed
+                    alias
+                    instance
+                    date
+                  }
                 }
+              totalCount
               }
             }
           }
@@ -425,7 +434,9 @@ describe('TaxonomyTerm curriculumTopic', () => {
       variables: taxonomyTermCurriculumTopic,
       data: {
         uuid: {
-          children: [getArticleDataWithoutSubResolvers(article)],
+            children:{ nodes:[getArticleDataWithoutSubResolvers(article)],
+
+          totalCount: 1}
         },
       },
       client,
