@@ -56,23 +56,3 @@ export function mergeSchemas(...schemas: Schema[]): Schema {
   const typeDefs = R.flatten(subTypeDefs)
   return { resolvers, typeDefs }
 }
-
-/**
- * Function for finding the key of a string Enum by its value.
- * TypeScript doesn't support natively reverse mapping of string enums,
- * with this function you can find its key by its value. If it is not
- * found, function returns undefined
- * @param value The value of a key to be searched at the string Enum
- * @param strEnum A reference to the string Enum
- */
-export function reverseMapStrEnum<E, K extends keyof E>(
-  value: string,
-  strEnum: any
-): E | undefined {
-  const enumKeys = Object.keys(strEnum).filter((k) => Number.isNaN(+k)) as K[]
-  for (const key of enumKeys) {
-    if (value === strEnum[key]) {
-      return strEnum[key]
-    }
-  }
-}

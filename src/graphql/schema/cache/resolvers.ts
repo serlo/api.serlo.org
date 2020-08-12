@@ -24,7 +24,6 @@ import { ForbiddenError } from 'apollo-server'
 import { MajorDimension } from '../../data-sources/google-spreadsheet-api'
 import { resolveConnection } from '../connection'
 import { Service } from '../types'
-import { reverseMapStrEnum } from '../utils'
 import { CacheResolvers } from './types'
 
 export const resolvers: CacheResolvers = {
@@ -74,16 +73,13 @@ export const resolvers: CacheResolvers = {
           const sslen = 'spreadsheet-'.length
           const googleIdLength = 44
           const spreadsheetId = key.slice(sslen, sslen + googleIdLength)
-          const [, range, majorDimensionStr] = key
+          const [, range, majorDimension] = key
             .slice(sslen + googleIdLength)
             .split('-')
           await dataSources.googleSheetApi.getValues({
             spreadsheetId,
             range,
-            majorDimension: reverseMapStrEnum(
-              majorDimensionStr,
-              MajorDimension
-            ),
+            majorDimension: majorDimension as MajorDimension,
             ignoreCache: true,
           })
         }
