@@ -19,24 +19,31 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { DiscriminatorType, UserPayload } from '../../src/graphql/schema'
+import { Matchers } from '@pact-foundation/pact'
+import fetch from 'node-fetch'
 
-export const user: UserPayload = {
-  __typename: DiscriminatorType.User,
-  id: 1,
-  trashed: false,
-  username: 'username',
-  date: '2014-03-01T20:36:21Z',
-  lastLogin: '2020-03-24T09:40:55Z',
-  description: null,
-}
+import { addJsonInteraction } from '../__utils__'
 
-export const user2: UserPayload = {
-  __typename: DiscriminatorType.User,
-  id: 23,
-  trashed: false,
-  username: 'second user',
-  date: '2015-02-01T20:35:21Z',
-  lastLogin: '2019-03-23T09:20:55Z',
-  description: null,
-}
+test('GET /api/user/active-authors', async () => {
+  await addJsonInteraction({
+    name: 'fetch list of active author ids',
+    given: 'users with ids 1 and 10 are active authors',
+    path: '/api/user/active-authors',
+    body: Matchers.eachLike(1),
+  })
+
+  await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/user/active-authors`)
+})
+
+test('GET /api/user/active-reviewers', async () => {
+  await addJsonInteraction({
+    name: 'fetch list of active reviewer ids',
+    given: 'users with ids 1 and 10 are active reviewers',
+    path: '/api/user/active-reviewers',
+    body: Matchers.eachLike(1),
+  })
+
+  await fetch(
+    `http://de.${process.env.SERLO_ORG_HOST}/api/user/active-reviewers`
+  )
+})

@@ -47,6 +47,20 @@ export class SerloDataSource extends RESTDataSource {
     super()
   }
 
+  public async getActiveAuthorIds(): Promise<number[]> {
+    return await this.cacheAwareGet<number[]>({
+      path: '/api/user/active-authors',
+      ttl: 60 * 60 * 24,
+    })
+  }
+
+  public async getActiveReviewerIds(): Promise<number[]> {
+    return await this.cacheAwareGet<number[]>({
+      path: '/api/user/active-reviewers',
+      ttl: 60 * 60 * 24,
+    })
+  }
+
   public async getAlias({
     path,
     instance,
@@ -228,15 +242,17 @@ export class SerloDataSource extends RESTDataSource {
   >({
     path,
     instance = Instance.De,
+    ttl,
   }: {
     path: string
     instance?: Instance
+    ttl?: number
   }): Promise<T> {
     const cacheKey = this.getCacheKey(path, instance)
     const cache = await this.environment.cache.get<T>(cacheKey)
     if (isSome(cache)) return cache.value
 
-    return this.updateCache({ path, instance, cacheKey })
+    return this.updateCache({ path, instance, cacheKey, ttl })
   }
 
   private getCacheKey(path: string, instance: Instance = Instance.De) {
@@ -247,8 +263,8 @@ export class SerloDataSource extends RESTDataSource {
     return this.cacheAwareGet<string[]>({ path: '/api/cache-keys' })
   }
 
-  public async setCache<T>(key: string, value: T) {
-    await this.environment.cache.set(key, value)
+  public async setCache<T>(key: string, value: T, options?: { ttl?: number }) {
+    await this.environment.cache.set(key, value, options)
     return value
   }
 
@@ -260,10 +276,12 @@ export class SerloDataSource extends RESTDataSource {
     path,
     instance,
     cacheKey,
+    ttl,
   }: {
     path: string
     instance: string
     cacheKey: string
+    ttl?: number
   }) {
     const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
       expiresIn: '2h',
@@ -279,6 +297,6 @@ export class SerloDataSource extends RESTDataSource {
         },
       }
     )
-    return this.setCache(cacheKey, data)
+    return this.setCache(cacheKey, data, { ttl })
   }
 }
