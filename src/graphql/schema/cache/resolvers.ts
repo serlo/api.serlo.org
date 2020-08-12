@@ -67,11 +67,16 @@ export const resolvers: CacheResolvers = {
       }
       for (const key of keys) {
         if (key.includes('serlo.org')) {
-          const [instance, , orgAndPath] = key.split('.')
-          const path = orgAndPath.slice('org'.length)
+          const instance = key.slice(0, 2)
+          const path = key.slice('xx.serlo.org'.length)
           await dataSources.serlo.updateCache({ path, instance, cacheKey: key })
-        } else if (key.includes('spreadsheet')) {
-          const [, spreadsheetId, range, majorDimensionStr] = key.split('-') //FIXME
+        } else if (key.includes('spreadsheet-')) {
+          const sslen = 'spreadsheet-'.length
+          const googleIdLength = 44
+          const spreadsheetId = key.slice(sslen, sslen + googleIdLength)
+          const [, range, majorDimensionStr] = key
+            .slice(sslen + googleIdLength)
+            .split('-')
           await dataSources.googleSheetApi.getValues({
             spreadsheetId,
             range,

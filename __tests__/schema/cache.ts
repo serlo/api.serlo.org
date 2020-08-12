@@ -41,7 +41,7 @@ import {
 } from '../__utils__'
 
 const mockSpreadSheetData = {
-  spreadsheetId: '1qpyC0XzvTcKT6EISywvqESX3A0MwQoFDE8p_Bll4hps',
+  spreadsheetId: '1qpyC0XzvTcKT6EISywvqESX3A0MwQoFDE8p-Bll4hps',
   range: 'sheet1!A:A',
   majorDimension: MajorDimension.Columns,
   apiKey: 'very-secure-secret',
@@ -67,7 +67,7 @@ beforeEach(() => {
       }
     ),
     rest.get(
-      `http://en.${process.env.SERLO_ORG_HOST}/api/bar`,
+      `http://en.${process.env.SERLO_ORG_HOST}/api/bar.fuss`,
       (req, res, ctx) => {
         return res(ctx.status(200), ctx.json(['ble']))
       }
@@ -178,7 +178,7 @@ test('_updateCache *serlo.org* (authenticated)', async () => {
     user: null,
   })
 
-  const keys = ['de.serlo.org/api/foo', 'en.serlo.org/api/bar']
+  const keys = ['de.serlo.org/api/foo', 'en.serlo.org/api/bar.fuss']
 
   const cachedValueBeforeUpdate1 = await cache.get(keys[0])
   const cachedValueBeforeUpdate2 = await cache.get(keys[1])
@@ -200,7 +200,7 @@ test('_updateCache spreadsheet-* (authenticated)', async () => {
   })
 
   const keys = [
-    'spreadsheet-1qpyC0XzvTcKT6EISywvqESX3A0MwQoFDE8p_Bll4hps-sheet1!A:A-COLUMNS',
+    'spreadsheet-1qpyC0XzvTcKT6EISywvqESX3A0MwQoFDE8p-Bll4hps-sheet1!A:A-COLUMNS',
   ]
 
   const cachedValueBeforeUpdate = await cache.get(keys[0])
