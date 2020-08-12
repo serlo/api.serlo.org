@@ -5,9 +5,13 @@ type User implements AbstractUuid {
   date: DateTime!
   lastLogin: DateTime
   description: String
+  activeAuthor: Boolean!
   activeDonor: Boolean!
+  activeReviewer: Boolean!
 }
 
 extend type Query {
+  activeAuthors: [User!]!
   activeDonors: [User!]!
+  activeReviewers: [User!]!
 }
