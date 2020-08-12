@@ -84,9 +84,9 @@ test.each(taxonomyTermChildCases)(
       ...createEntityTaxonomyTermsQuery(entity),
       data: {
         uuid: {
-          taxonomyTerms: [
+          taxonomyTerms: {nodes: [
             getTaxonomyTermDataWithoutSubResolvers(taxonomyTermSubject),
-          ],
+          ],},
         },
       },
       client,
