@@ -6,6 +6,24 @@ interface AbstractTaxonomyTermChild {
   instance: Instance!
   alias: String
   license: License!
+  taxonomyTerms(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): Query_TaxonomyTermsResult!
 
-  taxonomyTerms: [TaxonomyTerm!]!
 }
+
+type Query_TaxonomyTermsResult{
+  edges:[TaxonomyTermsCursor]
+  nodes: [TaxonomyTerm!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type TaxonomyTermsCursor {
+  cursor: String!
+  node: TaxonomyTerm!
+}
+
