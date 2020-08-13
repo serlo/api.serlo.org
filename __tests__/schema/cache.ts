@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
-import { isNone, isSome } from 'fp-ts/lib/Option'
+import { option } from 'fp-ts'
 import { rest } from 'msw'
 
 import {
@@ -51,12 +51,18 @@ const mockSpreadSheetData = {
   },
 }
 
-const testVars = {
-  key: 'foo',
-  value: { foo: 'bar' },
-}
+const testVars = [
+  {
+    key: 'foo',
+    value: { anything: 'bar' },
+  },
+  {
+    key: 'bar.fuss',
+    value: ['whatever'],
+  },
+]
 
-const fakeCacheKeys = ['foo', 'bar.fuss', 'boo']
+const fakeCacheKeys = [testVars[0].key, testVars[1].key, 'uuid']
 
 beforeEach(() => {
   global.server.use(
@@ -67,15 +73,15 @@ beforeEach(() => {
       }
     ),
     rest.get(
-      `http://de.${process.env.SERLO_ORG_HOST}/api/${fakeCacheKeys[0]}`,
+      `http://de.${process.env.SERLO_ORG_HOST}/api/${testVars[0].key}`,
       (req, res, ctx) => {
-        return res(ctx.status(200), ctx.json({ anything: 'bla' }))
+        return res(ctx.status(200), ctx.json(testVars[0].value))
       }
     ),
     rest.get(
-      `http://en.${process.env.SERLO_ORG_HOST}/api/${fakeCacheKeys[1]}`,
+      `http://en.${process.env.SERLO_ORG_HOST}/api/${testVars[1].key}`,
       (req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(['whatever']))
+        return res(ctx.status(200), ctx.json(testVars[1].value))
       }
     ),
     createSpreadsheetHandler(mockSpreadSheetData)
@@ -107,7 +113,7 @@ test('_setCache (forbidden)', async () => {
 
   await assertFailingGraphQLMutation(
     {
-      ...createSetCacheMutation(testVars),
+      ...createSetCacheMutation(testVars[0]),
       client,
     },
     (errors) => {
@@ -123,12 +129,14 @@ test('_setCache (authenticated)', async () => {
   })
 
   await assertSuccessfulGraphQLMutation({
-    ...createSetCacheMutation(testVars),
+    ...createSetCacheMutation(testVars[0]),
     client,
   })
 
-  const cachedValue = await cache.get(testVars.key)
-  expect(isSome(cachedValue) && cachedValue.value).toEqual(testVars.value)
+  const cachedValue = await cache.get(testVars[0].key)
+  expect(option.isSome(cachedValue) && cachedValue.value).toEqual(
+    testVars[0].value
+  )
 })
 
 test('_removeCache (forbidden)', async () => {
@@ -138,7 +146,7 @@ test('_removeCache (forbidden)', async () => {
   })
   await assertFailingGraphQLMutation(
     {
-      ...createRemoveCacheMutation(testVars),
+      ...createRemoveCacheMutation(testVars[0]),
       client,
     },
     (errors) => {
@@ -154,12 +162,12 @@ test('_removeCache (authenticated)', async () => {
   })
 
   await assertSuccessfulGraphQLMutation({
-    ...createRemoveCacheMutation(testVars),
+    ...createRemoveCacheMutation(testVars[0]),
     client,
   })
 
-  const cachedValue = await cache.get(testVars.key)
-  expect(isNone(cachedValue)).toBe(true)
+  const cachedValue = await cache.get(testVars[0].key)
+  expect(option.isNone(cachedValue)).toBe(true)
 })
 
 test('_updateCache (forbidden)', async () => {
@@ -185,8 +193,8 @@ test('_updateCache *serlo.org* (authenticated)', async () => {
   })
 
   const keys = [
-    `de.serlo.org/api/${fakeCacheKeys[0]}`,
-    `en.serlo.org/api/${fakeCacheKeys[1]}`,
+    `de.serlo.org/api/${testVars[0].key}`,
+    `en.serlo.org/api/${testVars[1].key}`,
   ]
 
   const cachedValueBeforeUpdate1 = await cache.get(keys[0])
@@ -198,8 +206,10 @@ test('_updateCache *serlo.org* (authenticated)', async () => {
   })
   const cachedValueAfterUpdate1 = await cache.get(keys[0])
   expect(cachedValueBeforeUpdate1).not.toEqual(cachedValueAfterUpdate1)
+  expect(cachedValueAfterUpdate1).toEqual(option.some(testVars[0].value))
   const cachedValueAfterUpdate2 = await cache.get(keys[1])
   expect(cachedValueBeforeUpdate2).not.toEqual(cachedValueAfterUpdate2)
+  expect(cachedValueAfterUpdate2).toEqual(option.some(testVars[1].value))
 })
 
 test('_updateCache spreadsheet-* (authenticated)', async () => {
@@ -221,4 +231,5 @@ test('_updateCache spreadsheet-* (authenticated)', async () => {
   })
   const cachedValueAfterUpdate = await cache.get(keys[0])
   expect(cachedValueBeforeUpdate).not.toEqual(cachedValueAfterUpdate)
+  expect(cachedValueAfterUpdate).toEqual(option.some(mock.body.values))
 })
