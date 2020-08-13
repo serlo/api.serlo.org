@@ -41,6 +41,9 @@ describe('GET /api/notifications/:id', () => {
 describe('POST /api/set-notification-state/:id', () => {
   require('./set-notification-state')
 })
+describe('GET /api/user/*', () => {
+  require('./user')
+})
 describe('GET /api/uuid/:id', () => {
   require('./uuid')
 })

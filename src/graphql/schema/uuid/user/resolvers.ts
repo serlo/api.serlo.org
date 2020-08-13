@@ -28,11 +28,18 @@ import {
   GoogleSheetApi,
   CellValues,
 } from '../../../data-sources/google-spreadsheet-api'
+import { SerloDataSource } from '../../../data-sources/serlo'
 import { resolveConnection } from '../../connection'
 import { UserResolvers, isUserPayload } from './types'
 
 export const resolvers: UserResolvers = {
   Query: {
+    async activeAuthors(_parent, _args, { dataSources }) {
+      return getUsersFromIds(
+        dataSources.serlo,
+        await dataSources.serlo.getActiveAuthorIds()
+      )
+    },
     async activeDonors(_parent, { ...cursorPayload }, { dataSources }) {
       const ids = await activeDonorIDs(dataSources.googleSheetApi)
 
@@ -49,14 +56,35 @@ export const resolvers: UserResolvers = {
         },
       })
     },
+    async activeReviewers(_parent, _args, { dataSources }) {
+      return getUsersFromIds(
+        dataSources.serlo,
+        await dataSources.serlo.getActiveReviewerIds()
+      )
+    },
   },
   User: {
+    async activeAuthor(user, _args, { dataSources }) {
+      return (await dataSources.serlo.getActiveAuthorIds()).includes(user.id)
+    },
     async activeDonor(user, _args, { dataSources }) {
       const ids = await activeDonorIDs(dataSources.googleSheetApi)
 
       return ids.includes(user.id)
     },
+    async activeReviewer(user, _args, { dataSources }) {
+      return (await dataSources.serlo.getActiveReviewerIds()).includes(user.id)
+    },
   },
+}
+
+async function getUsersFromIds(serlo: SerloDataSource, ids: number[]) {
+  const uuids = await Promise.all(
+    ids.map((id) => serlo.getUuid<AbstractUuidPayload>({ id }))
+  )
+
+  // TODO: Report uuids which are not users to sentry
+  return uuids.filter(isUserPayload)
 }
 
 async function activeDonorIDs(googleSheetApi: GoogleSheetApi) {
