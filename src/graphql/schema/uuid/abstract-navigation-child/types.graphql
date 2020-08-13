@@ -4,7 +4,22 @@ interface AbstractNavigationChild {
 
 type Navigation {
   data: JSON!
-  path: [NavigationNode!]!
+  path(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): Query_NavigationResult!
+}
+
+type Query_NavigationResult {
+  edges: [NavigationCursor]
+  nodes: [NavigationNode!]!
+}
+
+type NavigationCursor {
+  cursor: String!
+  node: NavigationNode!
 }
 
 type NavigationNode {

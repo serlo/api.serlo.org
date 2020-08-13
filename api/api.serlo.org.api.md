@@ -547,7 +547,14 @@ export type MutationSetNotificationStateArgs = {
 export type Navigation = {
     __typename?: 'Navigation';
     data: Scalars['JSON'];
-    path: Array<NavigationNode>;
+    path: Query_NavigationResult;
+};
+
+// @public (undocumented)
+export type NavigationCursor = {
+    __typename?: 'NavigationCursor';
+    cursor: Scalars['String'];
+    node: NavigationNode;
 };
 
 // @public (undocumented)
@@ -556,6 +563,14 @@ export type NavigationNode = {
     label: Scalars['String'];
     url?: Maybe<Scalars['String']>;
     id?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
+export type NavigationPathArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)
@@ -651,6 +666,13 @@ export type Query_ChildrenResult = {
     nodes: Array<AbstractUuid>;
     totalCount: Scalars['Int'];
     pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type Query_NavigationResult = {
+    __typename?: 'Query_NavigationResult';
+    edges?: Maybe<Array<Maybe<NavigationCursor>>>;
+    nodes?: Maybe<Array<Maybe<NavigationNode>>>;
 };
 
 // @public (undocumented)

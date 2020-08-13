@@ -31,14 +31,14 @@ type TaxonomyTerm implements AbstractUuid & AbstractNavigationChild {
   navigation: Navigation
 }
 
-type Query_ChildrenResult{
+type Query_ChildrenResult {
   edges: [ChildrenCursor!]!
   nodes: [AbstractUuid!]!
   totalCount: Int!
   pageInfo: PageInfo!
 }
 
-type ChildrenCursor{
+type ChildrenCursor {
   cursor: String!
   node: AbstractUuid!
 }

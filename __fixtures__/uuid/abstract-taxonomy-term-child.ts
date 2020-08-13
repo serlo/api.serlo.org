@@ -32,7 +32,7 @@ export function createEntityTaxonomyTermsQuery(
         uuid(id: $id) {
           ... on AbstractTaxonomyTermChild {
             taxonomyTerms {
-              nodes{
+              nodes {
                 __typename
                 id
                 trashed
@@ -42,7 +42,7 @@ export function createEntityTaxonomyTermsQuery(
                 name
                 description
                 weight
-                }
+              }
             }
           }
         }

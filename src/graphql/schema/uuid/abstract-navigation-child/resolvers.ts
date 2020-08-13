@@ -19,12 +19,33 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { NavigationNode } from '../../../../types'
+import { resolveConnection } from '../../connection'
 import { AbstractNavigationChildResolvers } from './types'
 
 export const resolvers: AbstractNavigationChildResolvers = {
   AbstractNavigationChild: {
     __resolveType(entity) {
       return entity.__typename
+    },
+  },
+  Navigation: {
+    path(navigationChild, cursorPayload) {
+      const nodesWithIndex = navigationChild.path.map((node, index) => {
+        return {
+          ...node,
+          index: index,
+        }
+      })
+      return Promise.resolve(
+        resolveConnection<NavigationNode & { index: number }>({
+          nodes: nodesWithIndex,
+          payload: cursorPayload,
+          createCursor(node) {
+            return node.index.toString()
+          },
+        })
+      )
     },
   },
 }

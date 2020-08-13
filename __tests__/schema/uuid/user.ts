@@ -102,7 +102,7 @@ describe('activeDonors', () => {
       query: gql`
         {
           activeDonors {
-            nodes{
+            nodes {
               __typename
               id
               trashed
@@ -126,7 +126,7 @@ describe('activeDonors', () => {
     await assertSuccessfulGraphQLQuery({
       ...createActiveDonorsQuery(),
       data: {
-        activeDonors: {nodes: [user, user2], totalCount: 2},
+        activeDonors: { nodes: [user, user2], totalCount: 2 },
       },
       client,
     })
@@ -140,7 +140,7 @@ describe('activeDonors', () => {
     await assertSuccessfulGraphQLQuery({
       ...createActiveDonorsQuery(),
       data: {
-        activeDonors: {nodes:[user], totalCount: 1},
+        activeDonors: { nodes: [user], totalCount: 1 },
       },
       client,
     })
@@ -152,16 +152,18 @@ describe('activeDonors', () => {
         query: gql`
           {
             activeDonors {
-              nodes{
+              nodes {
                 id
               }
             }
           }
         `,
         data: {
-          activeDonors: {nodes:ids.map((id) => {
-            return { id }
-          })},
+          activeDonors: {
+            nodes: ids.map((id) => {
+              return { id }
+            }),
+          },
         },
       }
     }
