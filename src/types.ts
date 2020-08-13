@@ -363,7 +363,27 @@ export type AbstractNavigationChild = {
 export type Navigation = {
   __typename?: 'Navigation';
   data: Scalars['JSON'];
-  path: Array<NavigationNode>;
+  path: Query_NavigationResult;
+};
+
+
+export type NavigationPathArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+};
+
+export type Query_NavigationResult = {
+  __typename?: 'Query_NavigationResult';
+  edges?: Maybe<Array<Maybe<NavigationCursor>>>;
+  nodes?: Maybe<Array<Maybe<NavigationNode>>>;
+};
+
+export type NavigationCursor = {
+  __typename?: 'NavigationCursor';
+  cursor: Scalars['String'];
+  node: NavigationNode;
 };
 
 export type NavigationNode = {

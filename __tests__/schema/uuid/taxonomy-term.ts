@@ -120,9 +120,9 @@ describe('TaxonomyTerm root', () => {
           uuid(id: $id) {
             ... on TaxonomyTerm {
               children {
-                nodes{
+                nodes {
                   __typename
-                  ... on TaxonomyTerm{
+                  ... on TaxonomyTerm {
                     id
                     type
                     trashed
@@ -142,9 +142,12 @@ describe('TaxonomyTerm root', () => {
       variables: taxonomyTermRoot,
       data: {
         uuid: {
-          children: {nodes: [
-            getTaxonomyTermDataWithoutSubResolvers(taxonomyTermSubject),
-          ], totalCount: 1},
+          children: {
+            nodes: [
+              getTaxonomyTermDataWithoutSubResolvers(taxonomyTermSubject),
+            ],
+            totalCount: 1,
+          },
         },
       },
       client,
@@ -161,9 +164,11 @@ describe('TaxonomyTerm root', () => {
               navigation {
                 data
                 path {
-                  id
-                  label
-                  url
+                  nodes {
+                    id
+                    label
+                    url
+                  }
                 }
               }
             }
@@ -275,9 +280,14 @@ describe('TaxonomyTerm subject', () => {
       variables: taxonomyTermSubject,
       data: {
         uuid: {
-          children: {nodes: [
-            getTaxonomyTermDataWithoutSubResolvers(taxonomyTermCurriculumTopic),
-          ], totalCount: 1},
+          children: {
+            nodes: [
+              getTaxonomyTermDataWithoutSubResolvers(
+                taxonomyTermCurriculumTopic
+              ),
+            ],
+            totalCount: 1,
+          },
         },
       },
       client,
@@ -298,9 +308,11 @@ describe('TaxonomyTerm subject', () => {
               navigation {
                 data
                 path {
-                  id
-                  label
-                  url
+                  nodes {
+                    id
+                    label
+                    url
+                  }
                 }
               }
             }
@@ -321,18 +333,20 @@ describe('TaxonomyTerm subject', () => {
                 },
               ],
             },
-            path: [
-              {
-                id: page.id,
-                label: navigation.data[0].label,
-                url: page.alias,
-              },
-              {
-                id: taxonomyTermSubject.id,
-                label: navigation.data[0].children?.[0].label,
-                url: taxonomyTermSubject.alias,
-              },
-            ],
+            path: {
+              nodes: [
+                {
+                  id: page.id,
+                  label: navigation.data[0].label,
+                  url: page.alias,
+                },
+                {
+                  id: taxonomyTermSubject.id,
+                  label: navigation.data[0].children?.[0].label,
+                  url: taxonomyTermSubject.alias,
+                },
+              ],
+            },
           },
         },
       },
@@ -415,7 +429,7 @@ describe('TaxonomyTerm curriculumTopic', () => {
           uuid(id: $id) {
             ... on TaxonomyTerm {
               children {
-                nodes{
+                nodes {
                   __typename
                   ... on Article {
                     id
@@ -425,7 +439,7 @@ describe('TaxonomyTerm curriculumTopic', () => {
                     date
                   }
                 }
-              totalCount
+                totalCount
               }
             }
           }
@@ -434,9 +448,11 @@ describe('TaxonomyTerm curriculumTopic', () => {
       variables: taxonomyTermCurriculumTopic,
       data: {
         uuid: {
-            children:{ nodes:[getArticleDataWithoutSubResolvers(article)],
+          children: {
+            nodes: [getArticleDataWithoutSubResolvers(article)],
 
-          totalCount: 1}
+            totalCount: 1,
+          },
         },
       },
       client,
@@ -458,9 +474,11 @@ describe('TaxonomyTerm curriculumTopic', () => {
               navigation {
                 data
                 path {
-                  id
-                  label
-                  url
+                  nodes {
+                    id
+                    label
+                    url
+                  }
                 }
               }
             }
@@ -481,23 +499,25 @@ describe('TaxonomyTerm curriculumTopic', () => {
                 },
               ],
             },
-            path: [
-              {
-                id: page.id,
-                label: navigation.data[0].label,
-                url: page.alias,
-              },
-              {
-                id: taxonomyTermSubject.id,
-                label: navigation.data[0].children?.[0].label,
-                url: taxonomyTermSubject.alias,
-              },
-              {
-                id: taxonomyTermCurriculumTopic.id,
-                label: taxonomyTermCurriculumTopic.name,
-                url: taxonomyTermCurriculumTopic.alias,
-              },
-            ],
+            path: {
+              nodes: [
+                {
+                  id: page.id,
+                  label: navigation.data[0].label,
+                  url: page.alias,
+                },
+                {
+                  id: taxonomyTermSubject.id,
+                  label: navigation.data[0].children?.[0].label,
+                  url: taxonomyTermSubject.alias,
+                },
+                {
+                  id: taxonomyTermCurriculumTopic.id,
+                  label: taxonomyTermCurriculumTopic.name,
+                  url: taxonomyTermCurriculumTopic.alias,
+                },
+              ],
+            },
           },
         },
       },

@@ -20,12 +20,10 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { TaxonomyTermChildrenArgs, TaxonomyTerm } from '../../../../types'
-import {Connection} from "../../connection";
+import { Connection } from '../../connection'
 import { Resolver } from '../../types'
 import { NavigationChildResolvers } from '../abstract-navigation-child'
-import {AbstractUuidPayload, DiscriminatorType} from '../abstract-uuid'
-
-
+import { AbstractUuidPayload, DiscriminatorType } from '../abstract-uuid'
 
 export interface TaxonomyTermPayload
   extends Omit<TaxonomyTerm, keyof TaxonomyTermResolvers['TaxonomyTerm']> {
@@ -39,6 +37,10 @@ export interface TaxonomyTermResolvers {
   TaxonomyTerm: {
     alias: Resolver<TaxonomyTermPayload, never, string | null>
     parent: Resolver<TaxonomyTermPayload, never, TaxonomyTermPayload | null>
-    children: Resolver<TaxonomyTermPayload,TaxonomyTermChildrenArgs, Connection<AbstractUuidPayload>>
+    children: Resolver<
+      TaxonomyTermPayload,
+      TaxonomyTermChildrenArgs,
+      Connection<AbstractUuidPayload>
+    >
   } & NavigationChildResolvers<TaxonomyTermPayload>
 }

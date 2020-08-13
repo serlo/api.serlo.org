@@ -21,14 +21,14 @@
  */
 import { pipeable, either } from 'fp-ts'
 
-import {AbstractUuidPayload, UserPayload} from '..'
+import { AbstractUuidPayload, UserPayload } from '..'
 import { ErrorEvent } from '../../../../error-event'
 import {
   MajorDimension,
   GoogleSheetApi,
   CellValues,
 } from '../../../data-sources/google-spreadsheet-api'
-import {resolveConnection} from "../../connection";
+import { resolveConnection } from '../../connection'
 import { UserResolvers, isUserPayload } from './types'
 
 export const resolvers: UserResolvers = {
