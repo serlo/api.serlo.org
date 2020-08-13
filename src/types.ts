@@ -15,7 +15,9 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   _cacheKeys: Query_CacheKeysResult;
+  activeAuthors: Array<User>;
   activeDonors: Query_ActiveDonorsResult;
+  activeReviewers: Array<User>;
   license?: Maybe<License>;
   notificationEvent?: Maybe<AbstractNotificationEvent>;
   notifications: QueryNotificationsResult;
@@ -377,7 +379,7 @@ export type NavigationPathArgs = {
 export type Query_NavigationResult = {
   __typename?: 'Query_NavigationResult';
   edges?: Maybe<Array<Maybe<NavigationCursor>>>;
-  nodes?: Maybe<Array<Maybe<NavigationNode>>>;
+  nodes: Array<NavigationNode>;
 };
 
 export type NavigationCursor = {
@@ -815,7 +817,9 @@ export type User = AbstractUuid & {
   date: Scalars['DateTime'];
   lastLogin?: Maybe<Scalars['DateTime']>;
   description?: Maybe<Scalars['String']>;
+  activeAuthor: Scalars['Boolean'];
   activeDonor: Scalars['Boolean'];
+  activeReviewer: Scalars['Boolean'];
 };
 
 export type Query_ActiveDonorsResult = {
