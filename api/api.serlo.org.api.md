@@ -387,7 +387,7 @@ export type EventTaxonomyTermsArgs = {
 
 // @public (undocumented)
 export type Exact<T extends {
-    [key: string]: unknown;
+    [key: string]: any;
 }> = {
     [K in keyof T]: T[K];
 };
