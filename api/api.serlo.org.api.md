@@ -387,7 +387,7 @@ export type EventTaxonomyTermsArgs = {
 
 // @public (undocumented)
 export type Exact<T extends {
-    [key: string]: any;
+    [key: string]: unknown;
 }> = {
     [K in keyof T]: T[K];
 };
@@ -675,6 +675,8 @@ export type Query_NavigationResult = {
     __typename?: 'Query_NavigationResult';
     edges?: Maybe<Array<Maybe<NavigationCursor>>>;
     nodes: Array<NavigationNode>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
 };
 
 // @public (undocumented)

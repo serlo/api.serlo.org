@@ -1,5 +1,5 @@
 export type Maybe<T> = T | null;
-export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -380,6 +380,8 @@ export type Query_NavigationResult = {
   __typename?: 'Query_NavigationResult';
   edges?: Maybe<Array<Maybe<NavigationCursor>>>;
   nodes: Array<NavigationNode>;
+  totalCount: Scalars['Int'];
+  pageInfo: PageInfo;
 };
 
 export type NavigationCursor = {

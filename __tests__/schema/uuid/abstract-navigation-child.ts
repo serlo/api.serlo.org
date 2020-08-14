@@ -112,6 +112,7 @@ describe('Page', () => {
                     url
                     id
                   }
+                  totalCount
                 }
               }
             }
@@ -149,6 +150,7 @@ describe('Page', () => {
                     url
                     id
                   }
+                  totalCount
                 }
               }
             }
@@ -166,6 +168,7 @@ describe('Page', () => {
                   id: subjectHomepage.id,
                 },
               ],
+              totalCount: 1,
             },
           },
         },
@@ -223,6 +226,7 @@ describe('Page', () => {
                   url
                   id
                 }
+                  totalCount
                 }
               }
             }
@@ -250,6 +254,7 @@ describe('Page', () => {
                   id: page.id,
                 },
               ],
+              totalCount: 3,
             },
           },
         },
@@ -291,6 +296,7 @@ describe('Taxonomy Term', () => {
                   url
                   id
                 }
+                  totalCount
                 }
               }
             }
@@ -338,6 +344,7 @@ describe('Taxonomy Term', () => {
                   url
                   id
                 }
+                  totalCount
                 }
               }
             }
@@ -360,6 +367,7 @@ describe('Taxonomy Term', () => {
                   id: taxonomyTermSubject.id,
                 },
               ],
+              totalCount: 2,
             },
           },
         },
@@ -404,6 +412,7 @@ describe('Taxonomy Term', () => {
                   url
                   id
                 }
+                  totalCount
                 }
               }
             }
@@ -431,6 +440,7 @@ describe('Taxonomy Term', () => {
                   id: taxonomyTermCurriculumTopic.id,
                 },
               ],
+              totalCount: 3,
             },
           },
         },

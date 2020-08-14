@@ -37,7 +37,7 @@ export const resolvers: TaxonomyTermResolvers = {
         id: taxonomyTerm.parentId,
       })
     },
-    async children(taxonomyTerm, { ...cursorPayload }, { dataSources }) {
+    async children(taxonomyTerm, cursorPayload, { dataSources }) {
       const children = await Promise.all(
         taxonomyTerm.childrenIds.map((id) => {
           return dataSources.serlo.getUuid<UuidPayload>({ id })
