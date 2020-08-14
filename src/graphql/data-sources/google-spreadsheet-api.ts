@@ -70,16 +70,20 @@ export class GoogleSheetApi extends RESTDataSource {
     spreadsheetId: string
     range: string
     majorDimension?: MajorDimension
+    ignoreCache?: boolean
   }): Promise<either.Either<ErrorEvent, CellValues>> {
-    const { spreadsheetId, range } = args
+    const { spreadsheetId, range, ignoreCache } = args
     const majorDimension = args.majorDimension ?? MajorDimension.Rows
     const cacheKey = this.getCacheKey({ spreadsheetId, range, majorDimension })
 
-    const cachedResult = await this.environment.cache.get<CellValues>(cacheKey)
-    if (option.isSome(cachedResult)) {
-      return either.right(cachedResult.value)
+    if (!ignoreCache) {
+      const cachedResult = await this.environment.cache.get<CellValues>(
+        cacheKey
+      )
+      if (option.isSome(cachedResult)) {
+        return either.right(cachedResult.value)
+      }
     }
-
     let result: either.Either<ErrorEvent, CellValues>
 
     try {

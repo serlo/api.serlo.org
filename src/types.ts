@@ -75,6 +75,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   _removeCache?: Maybe<Scalars['Boolean']>;
   _setCache?: Maybe<Scalars['Boolean']>;
+  _updateCache?: Maybe<Scalars['Boolean']>;
   setNotificationState?: Maybe<Scalars['Boolean']>;
 };
 
@@ -87,6 +88,11 @@ export type Mutation_RemoveCacheArgs = {
 export type Mutation_SetCacheArgs = {
   key: Scalars['String'];
   value: Scalars['JSON'];
+};
+
+
+export type Mutation_UpdateCacheArgs = {
+  keys: Array<Scalars['String']>;
 };
 
 

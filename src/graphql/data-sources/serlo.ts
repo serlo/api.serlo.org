@@ -252,21 +252,7 @@ export class SerloDataSource extends RESTDataSource {
     const cache = await this.environment.cache.get<T>(cacheKey)
     if (isSome(cache)) return cache.value
 
-    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
-      expiresIn: '2h',
-      audience: Service.Serlo,
-      issuer: 'api.serlo.org',
-    })
-    const data = await super.get<T>(
-      `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
-      {},
-      {
-        headers: {
-          Authorization: `Serlo Service=${token}`,
-        },
-      }
-    )
-    return this.setCache(cacheKey, data, { ttl })
+    return this.updateCache({ path, instance, cacheKey, ttl })
   }
 
   private getCacheKey(path: string, instance: Instance = Instance.De) {
@@ -284,5 +270,33 @@ export class SerloDataSource extends RESTDataSource {
 
   public async removeCache(key: string) {
     await this.environment.cache.remove(key)
+  }
+
+  public async updateCache<T>({
+    path,
+    instance,
+    cacheKey,
+    ttl,
+  }: {
+    path: string
+    instance: string
+    cacheKey: string
+    ttl?: number
+  }) {
+    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
+      expiresIn: '2h',
+      audience: Service.Serlo,
+      issuer: 'api.serlo.org',
+    })
+    const data = await super.get<T>(
+      `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
+      {},
+      {
+        headers: {
+          Authorization: `Serlo Service=${token}`,
+        },
+      }
+    )
+    return this.setCache(cacheKey, data, { ttl })
   }
 }

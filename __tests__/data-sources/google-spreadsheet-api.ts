@@ -21,14 +21,13 @@
  */
 import { InMemoryLRUCache } from 'apollo-server-caching'
 import { either as E, option as O } from 'fp-ts'
-import { rest } from 'msw'
 
 import { createInMemoryCache } from '../../src/cache/in-memory-cache'
 import {
   GoogleSheetApi,
   MajorDimension,
 } from '../../src/graphql/data-sources/google-spreadsheet-api'
-import { expectToBeLeftEventWith } from '../__utils__'
+import { expectToBeLeftEventWith, createSpreadsheetHandler } from '../__utils__'
 
 const cache = createInMemoryCache()
 const apiKey = 'my-secret'
@@ -36,6 +35,7 @@ const common = {
   spreadsheetId: 'my-spreadsheet-id',
   range: 'sheet1!A:A',
   majorDimension: MajorDimension.Columns,
+  apiKey,
 }
 let googleSheetApi!: GoogleSheetApi
 
@@ -162,32 +162,12 @@ function mockSpreadsheet({
       spreadsheetId,
       range,
       majorDimension,
+      apiKey,
       body: {
         range,
         majorDimension,
         values,
       },
     })
-  )
-}
-
-function createSpreadsheetHandler({
-  spreadsheetId,
-  range,
-  majorDimension,
-  status = 200,
-  body = {},
-}: {
-  spreadsheetId: string
-  range: string
-  majorDimension: string
-  status?: number
-  body?: Record<string, unknown>
-}) {
-  const url =
-    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}` +
-    `/values/${range}?majorDimension=${majorDimension}&key=${apiKey}`
-  return rest.get(url, (_req, res, ctx) =>
-    res.once(ctx.status(status), ctx.json(body))
   )
 }
