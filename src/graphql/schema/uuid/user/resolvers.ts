@@ -40,7 +40,7 @@ export const resolvers: UserResolvers = {
         await dataSources.serlo.getActiveAuthorIds()
       )
     },
-    async activeDonors(_parent, { ...cursorPayload }, { dataSources }) {
+    async activeDonors(_parent, cursorPayload, { dataSources }) {
       const ids = await activeDonorIDs(dataSources.googleSheetApi)
 
       const uuids = await Promise.all(

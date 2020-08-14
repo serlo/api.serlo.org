@@ -43,6 +43,7 @@ export function createEntityTaxonomyTermsQuery(
                 description
                 weight
               }
+              totalCount
             }
           }
         }

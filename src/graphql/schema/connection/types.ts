@@ -28,8 +28,6 @@ export interface Connection<T> {
   pageInfo: PageInfo
 }
 
-type List<T> = T[]
-
 export interface ConnectionPayload {
   after?: Maybe<Scalars['String']>
   before?: Maybe<Scalars['String']>
