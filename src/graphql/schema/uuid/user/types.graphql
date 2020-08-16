@@ -11,24 +11,34 @@ type User implements AbstractUuid {
 }
 
 extend type Query {
-  activeAuthors: [User!]!
-  activeReviewers: [User!]!
+  activeAuthors(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): UserConnection!
   activeDonors(
     after: String
     before: String
     first: Int
     last: Int
-  ): Query_ActiveDonorsResult!
+  ): UserConnection!
+  activeReviewers(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): UserConnection!
 }
 
-type Query_ActiveDonorsResult {
-  edges: [ActiveDonorsCursor!]!
+type UserConnection {
+  edges: [UserEdge!]!
   nodes: [User!]!
   totalCount: Int!
   pageInfo: PageInfo!
 }
 
-type ActiveDonorsCursor {
+type UserEdge {
   cursor: String!
   node: User!
 }

@@ -11,7 +11,7 @@ type Course implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
     before: String
     first: Int
     last: Int
-  ): Query_TaxonomyTermsResult!
+  ): TaxonomyTermConnection!
   pages: [CoursePage!]!
 }
 

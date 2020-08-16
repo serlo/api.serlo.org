@@ -11,7 +11,7 @@ type Video implements AbstractUuid & AbstractRepository & AbstractEntity & Abstr
     before: String
     first: Int
     last: Int
-  ): Query_TaxonomyTermsResult!
+  ): TaxonomyTermConnection!
 }
 
 type VideoRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision {

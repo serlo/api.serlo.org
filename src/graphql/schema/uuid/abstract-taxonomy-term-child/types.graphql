@@ -11,17 +11,17 @@ interface AbstractTaxonomyTermChild {
     before: String
     first: Int
     last: Int
-  ): Query_TaxonomyTermsResult!
+  ): TaxonomyTermConnection!
 }
 
-type Query_TaxonomyTermsResult {
-  edges: [TaxonomyTermsCursor]
+type TaxonomyTermConnection {
+  edges: [TaxonomyTermEdge]
   nodes: [TaxonomyTerm!]!
   totalCount: Int!
   pageInfo: PageInfo!
 }
 
-type TaxonomyTermsCursor {
+type TaxonomyTermEdge {
   cursor: String!
   node: TaxonomyTerm!
 }
