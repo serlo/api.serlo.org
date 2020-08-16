@@ -14,7 +14,7 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
-  _cacheKeys: Query_CacheKeysResult;
+  _cacheKeys: StringConnection;
   activeAuthors: Array<User>;
   activeDonors: Query_ActiveDonorsResult;
   activeReviewers: Array<User>;
@@ -65,16 +65,16 @@ export type QueryUuidArgs = {
   id?: Maybe<Scalars['Int']>;
 };
 
-export type Query_CacheKeysResult = {
-  __typename?: 'Query_CacheKeysResult';
-  edges: Array<CacheKeyCursor>;
+export type StringConnection = {
+  __typename?: 'StringConnection';
+  edges: Array<StringEdge>;
   nodes: Array<Scalars['String']>;
   totalCount: Scalars['Int'];
   pageInfo: PageInfo;
 };
 
-export type CacheKeyCursor = {
-  __typename?: 'CacheKeyCursor';
+export type StringEdge = {
+  __typename?: 'StringEdge';
   cursor: Scalars['String'];
   node: Scalars['String'];
 };

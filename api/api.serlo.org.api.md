@@ -187,13 +187,6 @@ export type ArticleTaxonomyTermsArgs = {
 };
 
 // @public (undocumented)
-export type CacheKeyCursor = {
-    __typename?: 'CacheKeyCursor';
-    cursor: Scalars['String'];
-    node: Scalars['String'];
-};
-
-// @public (undocumented)
 export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & {
     __typename?: 'CheckoutRevisionNotificationEvent';
     id: Scalars['Int'];
@@ -625,7 +618,7 @@ export type PageRevision = AbstractUuid & AbstractRevision & {
 // @public (undocumented)
 export type Query = {
     __typename?: 'Query';
-    _cacheKeys: Query_CacheKeysResult;
+    _cacheKeys: StringConnection;
     activeAuthors: Array<User>;
     activeDonors: Query_ActiveDonorsResult;
     activeReviewers: Array<User>;
@@ -650,15 +643,6 @@ export type Query_CacheKeysArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
-};
-
-// @public (undocumented)
-export type Query_CacheKeysResult = {
-    __typename?: 'Query_CacheKeysResult';
-    edges: Array<CacheKeyCursor>;
-    nodes: Array<Scalars['String']>;
-    totalCount: Scalars['Int'];
-    pageInfo: PageInfo;
 };
 
 // @public (undocumented)
@@ -853,6 +837,22 @@ export type SolutionRevision = AbstractUuid & AbstractRevision & AbstractEntityR
     repository: Solution;
     content: Scalars['String'];
     changes: Scalars['String'];
+};
+
+// @public (undocumented)
+export type StringConnection = {
+    __typename?: 'StringConnection';
+    edges: Array<StringEdge>;
+    nodes: Array<Scalars['String']>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type StringEdge = {
+    __typename?: 'StringEdge';
+    cursor: Scalars['String'];
+    node: Scalars['String'];
 };
 
 // @public (undocumented)
