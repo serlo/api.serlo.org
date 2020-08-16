@@ -6,7 +6,12 @@ type Event implements AbstractUuid & AbstractRepository & AbstractEntity & Abstr
   date: DateTime!
   license: License!
   currentRevision: EventRevision
-  taxonomyTerms: [TaxonomyTerm!]!
+  taxonomyTerms(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): TaxonomyTermConnection!
 }
 
 type EventRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision {

@@ -87,3 +87,6 @@ dist-types/
 # API Extractor
 .api-extractor
 tsdoc-metadata.json
+
+# WebStorm
+.idea

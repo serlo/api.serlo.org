@@ -6,7 +6,12 @@ type Exercise implements AbstractUuid & AbstractRepository & AbstractEntity & Ab
   date: DateTime!
   license: License!
   currentRevision: ExerciseRevision
-  taxonomyTerms: [TaxonomyTerm!]!
+  taxonomyTerms(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): TaxonomyTermConnection!
   solution: Solution
 }
 

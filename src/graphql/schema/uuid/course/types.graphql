@@ -6,7 +6,12 @@ type Course implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
   date: DateTime!
   license: License!
   currentRevision: CourseRevision
-  taxonomyTerms: [TaxonomyTerm!]!
+  taxonomyTerms(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): TaxonomyTermConnection!
   pages: [CoursePage!]!
 }
 

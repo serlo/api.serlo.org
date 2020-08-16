@@ -19,8 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Instance, NavigationNode } from '../../../../types'
-import { TypeResolver } from '../../types'
+import { Instance, NavigationNode, NavigationPathArgs } from '../../../../types'
+import { Connection } from '../../connection'
+import { Resolver, TypeResolver } from '../../types'
 import { PagePayload } from '../page'
 import { TaxonomyTermPayload } from '../taxonomy-term'
 
@@ -46,5 +47,8 @@ export interface NodeData {
 export interface AbstractNavigationChildResolvers {
   AbstractNavigationChild: {
     __resolveType: TypeResolver<NavigationChildPayload>
+  }
+  Navigation: {
+    path: Resolver<Navigation, NavigationPathArgs, Connection<NavigationNode>>
   }
 }

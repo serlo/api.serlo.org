@@ -107,9 +107,12 @@ describe('Page', () => {
             ... on Page {
               navigation {
                 path {
-                  label
-                  url
-                  id
+                  nodes{
+                    label
+                    url
+                    id
+                  }
+                  totalCount
                 }
               }
             }
@@ -142,9 +145,12 @@ describe('Page', () => {
             ... on Page {
               navigation {
                 path {
-                  label
-                  url
-                  id
+                  nodes{
+                    label
+                    url
+                    id
+                  }
+                  totalCount
                 }
               }
             }
@@ -154,13 +160,16 @@ describe('Page', () => {
       data: {
         uuid: {
           navigation: {
-            path: [
-              {
-                label: 'Mathematik',
-                url: subjectHomepage.alias,
-                id: subjectHomepage.id,
-              },
-            ],
+            path: {
+              nodes: [
+                {
+                  label: 'Mathematik',
+                  url: subjectHomepage.alias,
+                  id: subjectHomepage.id,
+                },
+              ],
+              totalCount: 1,
+            },
           },
         },
       },
@@ -212,10 +221,12 @@ describe('Page', () => {
           uuid(id: ${page.id}) {
             ... on Page {
               navigation {
-                path {
+                path {nodes{
                   label
                   url
                   id
+                }
+                  totalCount
                 }
               }
             }
@@ -225,23 +236,26 @@ describe('Page', () => {
       data: {
         uuid: {
           navigation: {
-            path: [
-              {
-                label: 'Mathematik',
-                url: subjectHomepage.alias,
-                id: subjectHomepage.id,
-              },
-              {
-                label: 'Dropdown',
-                url: null,
-                id: null,
-              },
-              {
-                label: 'Page',
-                url: page.alias,
-                id: page.id,
-              },
-            ],
+            path: {
+              nodes: [
+                {
+                  label: 'Mathematik',
+                  url: subjectHomepage.alias,
+                  id: subjectHomepage.id,
+                },
+                {
+                  label: 'Dropdown',
+                  url: null,
+                  id: null,
+                },
+                {
+                  label: 'Page',
+                  url: page.alias,
+                  id: page.id,
+                },
+              ],
+              totalCount: 3,
+            },
           },
         },
       },
@@ -277,10 +291,12 @@ describe('Taxonomy Term', () => {
           uuid(id: ${taxonomyTermSubject.id}) {
             ... on TaxonomyTerm {
               navigation {
-                path {
+                path {nodes{
                   label
                   url
                   id
+                }
+                  totalCount
                 }
               }
             }
@@ -323,10 +339,12 @@ describe('Taxonomy Term', () => {
           uuid(id: ${taxonomyTermSubject.id}) {
             ... on TaxonomyTerm {
               navigation {
-                path {
+                path {nodes{
                   label
                   url
                   id
+                }
+                  totalCount
                 }
               }
             }
@@ -336,18 +354,21 @@ describe('Taxonomy Term', () => {
       data: {
         uuid: {
           navigation: {
-            path: [
-              {
-                label: 'Mathematik',
-                url: subjectHomepage.alias,
-                id: subjectHomepage.id,
-              },
-              {
-                label: 'Alle Themen',
-                url: taxonomyTermSubject.alias,
-                id: taxonomyTermSubject.id,
-              },
-            ],
+            path: {
+              nodes: [
+                {
+                  label: 'Mathematik',
+                  url: subjectHomepage.alias,
+                  id: subjectHomepage.id,
+                },
+                {
+                  label: 'Alle Themen',
+                  url: taxonomyTermSubject.alias,
+                  id: taxonomyTermSubject.id,
+                },
+              ],
+              totalCount: 2,
+            },
           },
         },
       },
@@ -386,10 +407,12 @@ describe('Taxonomy Term', () => {
           uuid(id: ${taxonomyTermCurriculumTopic.id}) {
             ... on TaxonomyTerm {
               navigation {
-                path {
+                path {nodes{
                   label
                   url
                   id
+                }
+                  totalCount
                 }
               }
             }
@@ -399,23 +422,26 @@ describe('Taxonomy Term', () => {
       data: {
         uuid: {
           navigation: {
-            path: [
-              {
-                label: 'Mathematik',
-                url: subjectHomepage.alias,
-                id: subjectHomepage.id,
-              },
-              {
-                label: 'Alle Themen',
-                url: taxonomyTermSubject.alias,
-                id: taxonomyTermSubject.id,
-              },
-              {
-                label: taxonomyTermCurriculumTopic.name,
-                url: taxonomyTermCurriculumTopic.alias,
-                id: taxonomyTermCurriculumTopic.id,
-              },
-            ],
+            path: {
+              nodes: [
+                {
+                  label: 'Mathematik',
+                  url: subjectHomepage.alias,
+                  id: subjectHomepage.id,
+                },
+                {
+                  label: 'Alle Themen',
+                  url: taxonomyTermSubject.alias,
+                  id: taxonomyTermSubject.id,
+                },
+                {
+                  label: taxonomyTermCurriculumTopic.name,
+                  url: taxonomyTermCurriculumTopic.alias,
+                  id: taxonomyTermCurriculumTopic.id,
+                },
+              ],
+              totalCount: 3,
+            },
           },
         },
       },

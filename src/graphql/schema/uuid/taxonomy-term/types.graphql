@@ -22,6 +22,23 @@ type TaxonomyTerm implements AbstractUuid & AbstractNavigationChild {
   description: String
   weight: Int!
   parent: TaxonomyTerm
-  children: [AbstractUuid!]!
+  children(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): AbstractUuidConnection!
   navigation: Navigation
+}
+
+type AbstractUuidConnection {
+  edges: [AbstractUuidCursor!]!
+  nodes: [AbstractUuid!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type AbstractUuidCursor {
+  cursor: String!
+  node: AbstractUuid!
 }

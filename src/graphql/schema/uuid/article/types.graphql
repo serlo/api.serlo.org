@@ -6,7 +6,12 @@ type Article implements AbstractUuid & AbstractRepository & AbstractEntity & Abs
   date: DateTime!
   license: License!
   currentRevision: ArticleRevision
-  taxonomyTerms: [TaxonomyTerm!]!
+  taxonomyTerms(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): TaxonomyTermConnection!
 }
 
 type ArticleRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision {

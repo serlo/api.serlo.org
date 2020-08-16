@@ -6,7 +6,12 @@ type Video implements AbstractUuid & AbstractRepository & AbstractEntity & Abstr
   date: DateTime!
   license: License!
   currentRevision: VideoRevision
-  taxonomyTerms: [TaxonomyTerm!]!
+  taxonomyTerms(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): TaxonomyTermConnection!
 }
 
 type VideoRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision {

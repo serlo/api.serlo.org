@@ -19,10 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { TaxonomyTerm } from '../../../../types'
+import { TaxonomyTermChildrenArgs, TaxonomyTerm } from '../../../../types'
+import { Connection } from '../../connection'
 import { Resolver } from '../../types'
 import { NavigationChildResolvers } from '../abstract-navigation-child'
-import { DiscriminatorType, UuidPayload } from '../abstract-uuid'
+import { AbstractUuidPayload, DiscriminatorType } from '../abstract-uuid'
 
 export interface TaxonomyTermPayload
   extends Omit<TaxonomyTerm, keyof TaxonomyTermResolvers['TaxonomyTerm']> {
@@ -36,6 +37,10 @@ export interface TaxonomyTermResolvers {
   TaxonomyTerm: {
     alias: Resolver<TaxonomyTermPayload, never, string | null>
     parent: Resolver<TaxonomyTermPayload, never, TaxonomyTermPayload | null>
-    children: Resolver<TaxonomyTermPayload, never, UuidPayload[]>
+    children: Resolver<
+      TaxonomyTermPayload,
+      TaxonomyTermChildrenArgs,
+      Connection<AbstractUuidPayload>
+    >
   } & NavigationChildResolvers<TaxonomyTermPayload>
 }
