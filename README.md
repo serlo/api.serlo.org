@@ -20,6 +20,9 @@
 
 - `src/types.ts` is an auto-generated mapping from GraphQL types to TypeScript types. Run `yarn regenerate-types` to regenerate them.
 - Types that specify the return type of another service should be named `*Payload`. These are usually also the types that are passed to a sub resolver.
+- GraphQL types for connections should be named:
+  - `FooConnection` for a connection with items of type `Foo`.
+  - `FooEdge` for an edge with an item of type `Foo`.
 - GraphQL types that specify the return type of a query should be named `Query*Result`.
 - GraphQL types that specify the type of a parameter should be named `*Input`.
 - GraphQL interface types should be named `Abstract*` and have a matching union type `*`.
