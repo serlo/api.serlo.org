@@ -6,7 +6,12 @@ type Applet implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
   date: DateTime!
   license: License!
   currentRevision: AppletRevision
-  taxonomyTerms: [TaxonomyTerm!]!
+  taxonomyTerms(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): TaxonomyTermConnection!
 }
 
 type AppletRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision {

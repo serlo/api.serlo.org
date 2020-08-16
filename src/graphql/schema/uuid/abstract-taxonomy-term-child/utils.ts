@@ -19,29 +19,42 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { TaxonomyTermChildrenArgs } from '../../../../types'
+import { Connection, resolveConnection } from '../../connection'
 import { Context, Resolver } from '../../types'
-import { TaxonomyTermPayload } from '../taxonomy-term'
 import { AbstractTaxonomyTermChildPayload } from './types'
 
 export interface TaxonomyTermChildResolvers<
   E extends AbstractTaxonomyTermChildPayload
 > {
-  taxonomyTerms: Resolver<E, never, TaxonomyTermPayload[]>
+  taxonomyTerms: Resolver<
+    E,
+    TaxonomyTermChildrenArgs,
+    Connection<AbstractTaxonomyTermChildPayload>
+  >
 }
 
 export function createTaxonomyTermChildResolvers<
   E extends AbstractTaxonomyTermChildPayload
 >(): TaxonomyTermChildResolvers<E> {
   return {
-    async taxonomyTerms(entity: E, _args: never, { dataSources }: Context) {
+    async taxonomyTerms(entity: E, cursorPayload, { dataSources }: Context) {
       const taxonomyTerms = await Promise.all(
         entity.taxonomyTermIds.map((id: number) => {
-          return dataSources.serlo.getUuid<TaxonomyTermPayload>({ id })
+          return dataSources.serlo.getUuid<AbstractTaxonomyTermChildPayload>({
+            id,
+          })
         })
       )
-      return taxonomyTerms.filter(
-        (payload) => payload !== null
-      ) as TaxonomyTermPayload[]
+      return resolveConnection<AbstractTaxonomyTermChildPayload>({
+        nodes: taxonomyTerms.filter(
+          (payload) => payload !== null
+        ) as AbstractTaxonomyTermChildPayload[],
+        payload: cursorPayload,
+        createCursor(node) {
+          return node.id.toString()
+        },
+      })
     },
   }
 }

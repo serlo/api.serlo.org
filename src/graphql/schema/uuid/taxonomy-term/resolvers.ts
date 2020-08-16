@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { decodePath, UuidPayload } from '..'
+import { resolveConnection } from '../../connection'
 import { Context } from '../../types'
 import { TaxonomyTermPayload, TaxonomyTermResolvers } from './types'
 
@@ -36,13 +37,21 @@ export const resolvers: TaxonomyTermResolvers = {
         id: taxonomyTerm.parentId,
       })
     },
-    async children(taxonomyTerm, _args, { dataSources }) {
+    async children(taxonomyTerm, cursorPayload, { dataSources }) {
       const children = await Promise.all(
         taxonomyTerm.childrenIds.map((id) => {
           return dataSources.serlo.getUuid<UuidPayload>({ id })
         })
       )
-      return children.filter((payload) => payload !== null) as UuidPayload[]
+      return resolveConnection<TaxonomyTermPayload>({
+        nodes: children.filter(
+          (payload) => payload !== null
+        ) as TaxonomyTermPayload[],
+        payload: cursorPayload,
+        createCursor(node) {
+          return node.id.toString()
+        },
+      })
     },
     async navigation(taxonomyTerm, _args, context) {
       const taxonomyPath = await resolveTaxonomyTermPath(taxonomyTerm, context)
@@ -73,7 +82,6 @@ export const resolvers: TaxonomyTermResolvers = {
           }
         }
       }
-
       return null
     },
   },

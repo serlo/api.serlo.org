@@ -32,15 +32,18 @@ export function createEntityTaxonomyTermsQuery(
         uuid(id: $id) {
           ... on AbstractTaxonomyTermChild {
             taxonomyTerms {
-              __typename
-              id
-              trashed
-              type
-              instance
-              alias
-              name
-              description
-              weight
+              nodes {
+                __typename
+                id
+                trashed
+                type
+                instance
+                alias
+                name
+                description
+                weight
+              }
+              totalCount
             }
           }
         }
