@@ -21,7 +21,10 @@
  */
 declare namespace NodeJS {
   interface ProcessEnv {
+    npm_package_version: string
+
     SENTRY_DSN: string | undefined
+    ENVIRONMENT: string
     ACTIVE_DONORS_SPREADSHEET_ID: string
     GOOGLE_API_KEY: string
     SERLO_CLOUDFLARE_WORKER_SECRET: string
