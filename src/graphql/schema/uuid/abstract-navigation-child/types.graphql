@@ -9,17 +9,17 @@ type Navigation {
     before: String
     first: Int
     last: Int
-  ): Query_NavigationResult!
+  ): NavigationNodeConnection!
 }
 
-type Query_NavigationResult {
-  edges: [NavigationCursor]
+type NavigationNodeConnection {
+  edges: [NavigationNodeEdge]
   nodes: [NavigationNode!]!
   totalCount: Int!
   pageInfo: PageInfo!
 }
 
-type NavigationCursor {
+type NavigationNodeEdge {
   cursor: String!
   node: NavigationNode!
 }

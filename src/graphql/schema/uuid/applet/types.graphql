@@ -11,7 +11,7 @@ type Applet implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
     before: String
     first: Int
     last: Int
-  ): Query_TaxonomyTermsResult!
+  ): TaxonomyTermConnection!
 }
 
 type AppletRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision {
