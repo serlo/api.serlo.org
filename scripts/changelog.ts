@@ -291,6 +291,41 @@ async function exec(): Promise<void> {
       ],
       internal: ['Add Sentry.', 'Remove Playground service.'],
     },
+    {
+      tagName: 'v0.9.0',
+      breakingChanges: [
+        'Consistently name GraphQL connection types `*Connection` and `*Edge`.',
+        [
+          'abstract-taxonomy-term-child',
+          '`AbstractTaxonomyTermChild.taxonomyTerms` now returns a GraphQL Connection.',
+        ],
+        ['navigation', '`Navigation.path` now returns a GraphQL connection.'],
+        [
+          'taxonomy-term',
+          '`TaxonomyTerm.children` now returns a GraphQL connection.',
+        ],
+        ['user', '`activeDonors` now returns a GraphQL connection.'],
+      ],
+      added: [
+        ['user', 'Add `activeAuthors` and `activeReviewers`.'],
+        ['user', 'Add `activeAuthor` and `activeReviewer` to `User`.'],
+      ],
+      changed: [
+        [
+          'abstract-taxonomy-term-child',
+          '`AbstractTaxonomyTermChild.taxonomyTerms` now returns a GraphQL connection.',
+        ],
+        ['navigation', '`Navigation.path` now returns a GraphQL connection.'],
+        [
+          'taxonomy-term',
+          '`TaxonomyTerm.children` now returns a GraphQL connection.',
+        ],
+        ['user', '`activeDonors` now returns a GraphQL connection.'],
+      ],
+      internal: [
+        'Sentry now expects the environment via the `ENVIRONMENT` environment variable.',
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
