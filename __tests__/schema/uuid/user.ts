@@ -32,6 +32,7 @@ import {
 import { Cache } from '../../../src/graphql/environment'
 import { Service } from '../../../src/graphql/schema/types'
 import { UuidPayload } from '../../../src/graphql/schema/uuid/abstract-uuid'
+import { Instance } from '../../../src/types'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
@@ -53,10 +54,41 @@ beforeEach(() => {
 })
 
 describe('User', () => {
+  test('by alias (/user/profile/:id)', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query user($alias: AliasInput!) {
+          uuid(alias: $alias) {
+            __typename
+            ... on User {
+              id
+              trashed
+              alias
+              username
+              date
+              lastLogin
+              description
+            }
+          }
+        }
+      `,
+      variables: {
+        alias: {
+          instance: Instance.De,
+          path: `/user/profile/${user.id}`,
+        },
+      },
+      data: {
+        uuid: getUserDataWithoutSubResolver(user),
+      },
+      client,
+    })
+  })
+
   test('by id', async () => {
     await assertSuccessfulGraphQLQuery({
       query: gql`
-        query article($id: Int!) {
+        query user($id: Int!) {
           uuid(id: $id) {
             __typename
             ... on User {
