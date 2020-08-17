@@ -40,6 +40,7 @@ import {
   exerciseRevision,
   getRepositoryDataWithoutSubResolvers,
   getRevisionDataWithoutSubResolvers,
+  getUserDataWithoutSubResolver,
   groupedExercise,
   groupedExerciseRevision,
   license,
@@ -279,6 +280,7 @@ describe('Revision', () => {
                   __typename
                   id
                   trashed
+                  alias
                   username
                   date
                   lastLogin
@@ -291,7 +293,7 @@ describe('Revision', () => {
         variables: revision,
         data: {
           uuid: {
-            author: user,
+            author: getUserDataWithoutSubResolver(user),
           },
         },
         client,
