@@ -20,8 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { decodePath, UuidPayload } from '..'
-import { QueryUuidArgs } from '../../../../types'
-import { Context } from '../../types'
 import { UuidResolvers } from './types'
 
 export const resolvers: UuidResolvers = {
@@ -32,28 +30,31 @@ export const resolvers: UuidResolvers = {
   },
   Query: {
     async uuid(_parent, payload, { dataSources }) {
-      const id = payload.alias
-        ? await getIdFromAlias(payload, dataSources)
-        : (payload.id as number)
+      if (payload.alias) {
+        const cleanPath = decodePath(payload.alias.path)
+        const match = /^\/(\d+)$/.exec(cleanPath)
+        if (match) {
+          const id = parseInt(match[1], 10)
+          return dataSources.serlo.getUuid<UuidPayload>({ id })
+        }
+
+        if (cleanPath.startsWith('/user/profile/')) {
+          const match = /^\/user\/profile\/(\d+)$/.exec(cleanPath)
+          if (match) {
+            const id = parseInt(match[1], 10)
+            const uuid = await dataSources.serlo.getUuid<UuidPayload>({ id })
+            return uuid && uuid.__typename === 'User' ? uuid : null
+          }
+        }
+        const alias = await dataSources.serlo.getAlias(payload.alias)
+        return alias
+          ? dataSources.serlo.getUuid<UuidPayload>({ id: alias.id })
+          : null
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const id = payload.id!
       return dataSources.serlo.getUuid<UuidPayload>({ id })
     },
   },
-}
-
-async function getIdFromAlias(
-  payload: QueryUuidArgs,
-  dataSources: Context['dataSources']
-): Promise<number> {
-  if (payload.alias) {
-    const cleanPath = decodePath(payload.alias.path)
-    if (cleanPath.startsWith('/user/profile/')) {
-      const match = /^\/user\/profile\/(\d+)$/.exec(cleanPath)
-      if (match) {
-        return parseInt(match[1], 10)
-      }
-    }
-    return (await dataSources.serlo.getAlias(payload.alias)).id
-  }
-
-  return payload.id as number
 }

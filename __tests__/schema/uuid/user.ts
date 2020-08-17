@@ -85,6 +85,37 @@ describe('User', () => {
     })
   })
 
+  test('by alias (/:id)', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query user($alias: AliasInput!) {
+          uuid(alias: $alias) {
+            __typename
+            ... on User {
+              id
+              trashed
+              alias
+              username
+              date
+              lastLogin
+              description
+            }
+          }
+        }
+      `,
+      variables: {
+        alias: {
+          instance: Instance.De,
+          path: `/${user.id}`,
+        },
+      },
+      data: {
+        uuid: getUserDataWithoutSubResolver(user),
+      },
+      client,
+    })
+  })
+
   test('by id', async () => {
     await assertSuccessfulGraphQLQuery({
       query: gql`
