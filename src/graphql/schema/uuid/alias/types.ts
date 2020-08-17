@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Instance, Scalars } from '../../../../types'
+import { Resolver } from '../../types'
 
 export interface AliasPayload {
   id: number
@@ -27,4 +28,8 @@ export interface AliasPayload {
   path: string
   source: string
   timestamp: Scalars['DateTime']
+}
+
+export interface AliasResolvers<T extends { alias: string | null }> {
+  alias: Resolver<T, never, string | null>
 }
