@@ -23,7 +23,12 @@ import { gql } from 'apollo-server'
 import { option as O } from 'fp-ts'
 import { rest } from 'msw'
 
-import { article, user, user2 } from '../../../__fixtures__'
+import {
+  article,
+  getUserDataWithoutSubResolver,
+  user,
+  user2,
+} from '../../../__fixtures__'
 import { Cache } from '../../../src/graphql/environment'
 import { Service } from '../../../src/graphql/schema/types'
 import { UuidPayload } from '../../../src/graphql/schema/uuid/abstract-uuid'
@@ -57,6 +62,7 @@ describe('User', () => {
             ... on User {
               id
               trashed
+              alias
               username
               date
               lastLogin
@@ -67,7 +73,7 @@ describe('User', () => {
       `,
       variables: user,
       data: {
-        uuid: user,
+        uuid: getUserDataWithoutSubResolver(user),
       },
       client,
     })
@@ -196,6 +202,7 @@ describe('endpoint activeAuthors', () => {
           __typename
           id
           trashed
+          alias
           username
           date
           lastLogin
@@ -215,7 +222,13 @@ describe('endpoint activeAuthors', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeAuthorsQuery,
       data: {
-        activeAuthors: { nodes: [user, user2], totalCount: 2 },
+        activeAuthors: {
+          nodes: [
+            getUserDataWithoutSubResolver(user),
+            getUserDataWithoutSubResolver(user2),
+          ],
+          totalCount: 2,
+        },
       },
       client,
     })
@@ -230,7 +243,10 @@ describe('endpoint activeAuthors', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeAuthorsQuery,
       data: {
-        activeAuthors: { nodes: [user], totalCount: 1 },
+        activeAuthors: {
+          nodes: [getUserDataWithoutSubResolver(user)],
+          totalCount: 1,
+        },
       },
       client,
     })
@@ -242,7 +258,10 @@ describe('endpoint activeAuthors', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeAuthorsQuery,
       data: {
-        activeAuthors: { nodes: [user], totalCount: 1 },
+        activeAuthors: {
+          nodes: [getUserDataWithoutSubResolver(user)],
+          totalCount: 1,
+        },
       },
       client,
     })
@@ -261,7 +280,10 @@ describe('endpoint activeAuthors', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeAuthorsQuery,
       data: {
-        activeAuthors: { nodes: [user], totalCount: 1 },
+        activeAuthors: {
+          nodes: [getUserDataWithoutSubResolver(user)],
+          totalCount: 1,
+        },
       },
       client,
     })
@@ -276,6 +298,7 @@ describe('endpoint activeDonors', () => {
           __typename
           id
           trashed
+          alias
           username
           date
           lastLogin
@@ -294,7 +317,13 @@ describe('endpoint activeDonors', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeDonorsQuery,
       data: {
-        activeDonors: { nodes: [user, user2], totalCount: 2 },
+        activeDonors: {
+          nodes: [
+            getUserDataWithoutSubResolver(user),
+            getUserDataWithoutSubResolver(user2),
+          ],
+          totalCount: 2,
+        },
       },
       client,
     })
@@ -308,7 +337,10 @@ describe('endpoint activeDonors', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeDonorsQuery,
       data: {
-        activeDonors: { nodes: [user], totalCount: 1 },
+        activeDonors: {
+          nodes: [getUserDataWithoutSubResolver(user)],
+          totalCount: 1,
+        },
       },
       client,
     })
@@ -403,6 +435,7 @@ describe('endpoint activeReviewers', () => {
           __typename
           id
           trashed
+          alias
           username
           date
           lastLogin
@@ -422,7 +455,13 @@ describe('endpoint activeReviewers', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeReviewersQuery,
       data: {
-        activeReviewers: { nodes: [user, user2], totalCount: 2 },
+        activeReviewers: {
+          nodes: [
+            getUserDataWithoutSubResolver(user),
+            getUserDataWithoutSubResolver(user2),
+          ],
+          totalCount: 2,
+        },
       },
       client,
     })
@@ -437,7 +476,10 @@ describe('endpoint activeReviewers', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeReviewersQuery,
       data: {
-        activeReviewers: { nodes: [user], totalCount: 1 },
+        activeReviewers: {
+          nodes: [getUserDataWithoutSubResolver(user)],
+          totalCount: 1,
+        },
       },
       client,
     })
@@ -449,7 +491,10 @@ describe('endpoint activeReviewers', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeReviewersQuery,
       data: {
-        activeReviewers: { nodes: [user], totalCount: 1 },
+        activeReviewers: {
+          nodes: [getUserDataWithoutSubResolver(user)],
+          totalCount: 1,
+        },
       },
       client,
     })
@@ -468,7 +513,10 @@ describe('endpoint activeReviewers', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeReviewersQuery,
       data: {
-        activeReviewers: { nodes: [user], totalCount: 1 },
+        activeReviewers: {
+          nodes: [getUserDataWithoutSubResolver(user)],
+          totalCount: 1,
+        },
       },
       client,
     })
