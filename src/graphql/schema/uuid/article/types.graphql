@@ -11,7 +11,7 @@ type Article implements AbstractUuid & AbstractRepository & AbstractEntity & Abs
     before: String
     first: Int
     last: Int
-  ): Query_TaxonomyTermsResult!
+  ): TaxonomyTermConnection!
 }
 
 type ArticleRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision {

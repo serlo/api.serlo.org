@@ -21,12 +21,10 @@
  */
 import * as Sentry from '@sentry/node'
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires,import/no-commonjs
-const { version } = require('../package.json') as { version: string }
-
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
-  release: `api.serlo.org${version}`,
+  environment: process.env.ENVIRONMENT,
+  release: `api.serlo.org@${process.env.npm_package_version}`,
 })
 
 export { Sentry }

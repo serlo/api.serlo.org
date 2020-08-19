@@ -18,7 +18,7 @@ extend type Query {
     first: Int
     last: Int
     unread: Boolean
-  ): QueryNotificationsResult!
+  ): NotificationConnection!
   notificationEvent(id: Int!): AbstractNotificationEvent
 }
 
@@ -26,14 +26,14 @@ extend type Mutation {
   setNotificationState(id: Int!, unread: Boolean!): Boolean
 }
 
-type QueryNotificationsResult {
-  edges: [NotificationCursor!]!
+type NotificationConnection {
+  edges: [NotificationEdge!]!
   nodes: [Notification!]!
   totalCount: Int!
   pageInfo: PageInfo!
 }
 
-type NotificationCursor {
+type NotificationEdge {
   cursor: String!
   node: Notification!
 }

@@ -83,7 +83,7 @@ export type AbstractTaxonomyTermChild = {
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     license: License;
-    taxonomyTerms: Query_TaxonomyTermsResult;
+    taxonomyTerms: TaxonomyTermConnection;
 };
 
 // @public (undocumented)
@@ -101,10 +101,19 @@ export type AbstractUuid = {
 };
 
 // @public (undocumented)
-export type ActiveDonorsCursor = {
-    __typename?: 'ActiveDonorsCursor';
+export type AbstractUuidConnection = {
+    __typename?: 'AbstractUuidConnection';
+    edges: Array<AbstractUuidCursor>;
+    nodes: Array<AbstractUuid>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type AbstractUuidCursor = {
+    __typename?: 'AbstractUuidCursor';
     cursor: Scalars['String'];
-    node: User;
+    node: AbstractUuid;
 };
 
 // @public (undocumented)
@@ -123,7 +132,7 @@ export type Applet = AbstractUuid & AbstractRepository & AbstractEntity & Abstra
     date: Scalars['DateTime'];
     license: License;
     currentRevision?: Maybe<AppletRevision>;
-    taxonomyTerms: Query_TaxonomyTermsResult;
+    taxonomyTerms: TaxonomyTermConnection;
 };
 
 // @public (undocumented)
@@ -160,7 +169,7 @@ export type Article = AbstractUuid & AbstractRepository & AbstractEntity & Abstr
     date: Scalars['DateTime'];
     license: License;
     currentRevision?: Maybe<ArticleRevision>;
-    taxonomyTerms: Query_TaxonomyTermsResult;
+    taxonomyTerms: TaxonomyTermConnection;
 };
 
 // @public (undocumented)
@@ -187,13 +196,6 @@ export type ArticleTaxonomyTermsArgs = {
 };
 
 // @public (undocumented)
-export type CacheKeyCursor = {
-    __typename?: 'CacheKeyCursor';
-    cursor: Scalars['String'];
-    node: Scalars['String'];
-};
-
-// @public (undocumented)
 export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & {
     __typename?: 'CheckoutRevisionNotificationEvent';
     id: Scalars['Int'];
@@ -206,13 +208,6 @@ export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type ChildrenCursor = {
-    __typename?: 'ChildrenCursor';
-    cursor: Scalars['String'];
-    node: AbstractUuid;
-};
-
-// @public (undocumented)
 export type Course = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
     __typename?: 'Course';
     id: Scalars['Int'];
@@ -222,7 +217,7 @@ export type Course = AbstractUuid & AbstractRepository & AbstractEntity & Abstra
     date: Scalars['DateTime'];
     license: License;
     currentRevision?: Maybe<CourseRevision>;
-    taxonomyTerms: Query_TaxonomyTermsResult;
+    taxonomyTerms: TaxonomyTermConnection;
     pages: Array<CoursePage>;
 };
 
@@ -359,7 +354,7 @@ export type Event = AbstractUuid & AbstractRepository & AbstractEntity & Abstrac
     date: Scalars['DateTime'];
     license: License;
     currentRevision?: Maybe<EventRevision>;
-    taxonomyTerms: Query_TaxonomyTermsResult;
+    taxonomyTerms: TaxonomyTermConnection;
 };
 
 // @public (undocumented)
@@ -402,7 +397,7 @@ export type Exercise = AbstractUuid & AbstractRepository & AbstractEntity & Abst
     date: Scalars['DateTime'];
     license: License;
     currentRevision?: Maybe<ExerciseRevision>;
-    taxonomyTerms: Query_TaxonomyTermsResult;
+    taxonomyTerms: TaxonomyTermConnection;
     solution?: Maybe<Solution>;
 };
 
@@ -416,7 +411,7 @@ export type ExerciseGroup = AbstractUuid & AbstractRepository & AbstractEntity &
     date: Scalars['DateTime'];
     license: License;
     currentRevision?: Maybe<ExerciseGroupRevision>;
-    taxonomyTerms: Query_TaxonomyTermsResult;
+    taxonomyTerms: TaxonomyTermConnection;
     exercises: Array<GroupedExercise>;
 };
 
@@ -523,6 +518,7 @@ export type Mutation = {
     __typename?: 'Mutation';
     _removeCache?: Maybe<Scalars['Boolean']>;
     _setCache?: Maybe<Scalars['Boolean']>;
+    _updateCache?: Maybe<Scalars['Boolean']>;
     setNotificationState?: Maybe<Scalars['Boolean']>;
 };
 
@@ -538,6 +534,11 @@ export type Mutation_SetCacheArgs = {
 };
 
 // @public (undocumented)
+export type Mutation_UpdateCacheArgs = {
+    keys: Array<Scalars['String']>;
+};
+
+// @public (undocumented)
 export type MutationSetNotificationStateArgs = {
     id: Scalars['Int'];
     unread: Scalars['Boolean'];
@@ -547,14 +548,7 @@ export type MutationSetNotificationStateArgs = {
 export type Navigation = {
     __typename?: 'Navigation';
     data: Scalars['JSON'];
-    path: Query_NavigationResult;
-};
-
-// @public (undocumented)
-export type NavigationCursor = {
-    __typename?: 'NavigationCursor';
-    cursor: Scalars['String'];
-    node: NavigationNode;
+    path: NavigationNodeConnection;
 };
 
 // @public (undocumented)
@@ -563,6 +557,22 @@ export type NavigationNode = {
     label: Scalars['String'];
     url?: Maybe<Scalars['String']>;
     id?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
+export type NavigationNodeConnection = {
+    __typename?: 'NavigationNodeConnection';
+    edges?: Maybe<Array<Maybe<NavigationNodeEdge>>>;
+    nodes: Array<NavigationNode>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type NavigationNodeEdge = {
+    __typename?: 'NavigationNodeEdge';
+    cursor: Scalars['String'];
+    node: NavigationNode;
 };
 
 // @public (undocumented)
@@ -582,8 +592,17 @@ export type Notification = {
 };
 
 // @public (undocumented)
-export type NotificationCursor = {
-    __typename?: 'NotificationCursor';
+export type NotificationConnection = {
+    __typename?: 'NotificationConnection';
+    edges: Array<NotificationEdge>;
+    nodes: Array<Notification>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type NotificationEdge = {
+    __typename?: 'NotificationEdge';
     cursor: Scalars['String'];
     node: Notification;
 };
@@ -625,24 +644,15 @@ export type PageRevision = AbstractUuid & AbstractRevision & {
 // @public (undocumented)
 export type Query = {
     __typename?: 'Query';
-    _cacheKeys: Query_CacheKeysResult;
-    activeAuthors: Array<User>;
-    activeDonors: Query_ActiveDonorsResult;
-    activeReviewers: Array<User>;
+    _cacheKeys: StringConnection;
+    activeAuthors: UserConnection;
+    activeDonors: UserConnection;
+    activeReviewers: UserConnection;
     license?: Maybe<License>;
     notificationEvent?: Maybe<AbstractNotificationEvent>;
-    notifications: QueryNotificationsResult;
+    notifications: NotificationConnection;
     subscriptions: QuerySubscriptionResult;
     uuid?: Maybe<AbstractUuid>;
-};
-
-// @public (undocumented)
-export type Query_ActiveDonorsResult = {
-    __typename?: 'Query_ActiveDonorsResult';
-    edges: Array<ActiveDonorsCursor>;
-    nodes: Array<User>;
-    totalCount: Scalars['Int'];
-    pageInfo: PageInfo;
 };
 
 // @public (undocumented)
@@ -654,41 +664,23 @@ export type Query_CacheKeysArgs = {
 };
 
 // @public (undocumented)
-export type Query_CacheKeysResult = {
-    __typename?: 'Query_CacheKeysResult';
-    edges: Array<CacheKeyCursor>;
-    nodes: Array<Scalars['String']>;
-    totalCount: Scalars['Int'];
-    pageInfo: PageInfo;
-};
-
-// @public (undocumented)
-export type Query_ChildrenResult = {
-    __typename?: 'Query_ChildrenResult';
-    edges: Array<ChildrenCursor>;
-    nodes: Array<AbstractUuid>;
-    totalCount: Scalars['Int'];
-    pageInfo: PageInfo;
-};
-
-// @public (undocumented)
-export type Query_NavigationResult = {
-    __typename?: 'Query_NavigationResult';
-    edges?: Maybe<Array<Maybe<NavigationCursor>>>;
-    nodes: Array<NavigationNode>;
-};
-
-// @public (undocumented)
-export type Query_TaxonomyTermsResult = {
-    __typename?: 'Query_TaxonomyTermsResult';
-    edges?: Maybe<Array<Maybe<TaxonomyTermsCursor>>>;
-    nodes: Array<TaxonomyTerm>;
-    totalCount: Scalars['Int'];
-    pageInfo: PageInfo;
+export type QueryActiveAuthorsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)
 export type QueryActiveDonorsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
+export type QueryActiveReviewersArgs = {
     after?: Maybe<Scalars['String']>;
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
@@ -712,15 +704,6 @@ export type QueryNotificationsArgs = {
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
     unread?: Maybe<Scalars['Boolean']>;
-};
-
-// @public (undocumented)
-export type QueryNotificationsResult = {
-    __typename?: 'QueryNotificationsResult';
-    edges: Array<NotificationCursor>;
-    nodes: Array<Notification>;
-    totalCount: Scalars['Int'];
-    pageInfo: PageInfo;
 };
 
 // @public (undocumented)
@@ -872,6 +855,22 @@ export type SolutionRevision = AbstractUuid & AbstractRevision & AbstractEntityR
 };
 
 // @public (undocumented)
+export type StringConnection = {
+    __typename?: 'StringConnection';
+    edges: Array<StringEdge>;
+    nodes: Array<Scalars['String']>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type StringEdge = {
+    __typename?: 'StringEdge';
+    cursor: Scalars['String'];
+    node: Scalars['String'];
+};
+
+// @public (undocumented)
 export type SubscriptionCursor = {
     __typename?: 'SubscriptionCursor';
     cursor: Scalars['String'];
@@ -890,7 +889,7 @@ export type TaxonomyTerm = AbstractUuid & AbstractNavigationChild & {
     description?: Maybe<Scalars['String']>;
     weight: Scalars['Int'];
     parent?: Maybe<TaxonomyTerm>;
-    children: Query_ChildrenResult;
+    children: AbstractUuidConnection;
     navigation?: Maybe<Navigation>;
 };
 
@@ -903,8 +902,17 @@ export type TaxonomyTermChildrenArgs = {
 };
 
 // @public (undocumented)
-export type TaxonomyTermsCursor = {
-    __typename?: 'TaxonomyTermsCursor';
+export type TaxonomyTermConnection = {
+    __typename?: 'TaxonomyTermConnection';
+    edges?: Maybe<Array<Maybe<TaxonomyTermEdge>>>;
+    nodes: Array<TaxonomyTerm>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type TaxonomyTermEdge = {
+    __typename?: 'TaxonomyTermEdge';
     cursor: Scalars['String'];
     node: TaxonomyTerm;
 };
@@ -962,6 +970,22 @@ export type User = AbstractUuid & {
 };
 
 // @public (undocumented)
+export type UserConnection = {
+    __typename?: 'UserConnection';
+    edges: Array<UserEdge>;
+    nodes: Array<User>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type UserEdge = {
+    __typename?: 'UserEdge';
+    cursor: Scalars['String'];
+    node: User;
+};
+
+// @public (undocumented)
 export type Video = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
     __typename?: 'Video';
     id: Scalars['Int'];
@@ -971,7 +995,7 @@ export type Video = AbstractUuid & AbstractRepository & AbstractEntity & Abstrac
     date: Scalars['DateTime'];
     license: License;
     currentRevision?: Maybe<VideoRevision>;
-    taxonomyTerms: Query_TaxonomyTermsResult;
+    taxonomyTerms: TaxonomyTermConnection;
 };
 
 // @public (undocumented)

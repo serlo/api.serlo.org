@@ -11,7 +11,7 @@ type Exercise implements AbstractUuid & AbstractRepository & AbstractEntity & Ab
     before: String
     first: Int
     last: Int
-  ): Query_TaxonomyTermsResult!
+  ): TaxonomyTermConnection!
   solution: Solution
 }
 

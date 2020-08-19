@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.9.0](https://github.com/serlo/api.serlo.org/compare/v0.8.1..v0.9.0)
+
+### Breaking Changes
+
+- Consistently name GraphQL connection types `*Connection` and `*Edge`.
+- **abstract-taxonomy-term-child**. `AbstractTaxonomyTermChild.taxonomyTerms` now returns a GraphQL Connection.
+- **navigation**. `Navigation.path` now returns a GraphQL connection.
+- **taxonomy-term**. `TaxonomyTerm.children` now returns a GraphQL connection.
+- **user**. `activeDonors` now returns a GraphQL connection.
+
+### Added
+
+- **user**. Add `activeAuthors` and `activeReviewers`.
+- **user**. Add `activeAuthor` and `activeReviewer` to `User`.
+
+### Changed
+
+- **abstract-taxonomy-term-child**. `AbstractTaxonomyTermChild.taxonomyTerms` now returns a GraphQL connection.
+- **navigation**. `Navigation.path` now returns a GraphQL connection.
+- **taxonomy-term**. `TaxonomyTerm.children` now returns a GraphQL connection.
+- **user**. `activeDonors` now returns a GraphQL connection.
+
+### Internal
+
+- Sentry now expects the environment via the `ENVIRONMENT` environment variable.
+
 ## [0.8.1](https://github.com/serlo/api.serlo.org/compare/v0.8.0..v0.8.1) - August 11, 2020
 
 ### Fixed

@@ -88,6 +88,7 @@ test.each(taxonomyTermChildCases)(
             nodes: [
               getTaxonomyTermDataWithoutSubResolvers(taxonomyTermSubject),
             ],
+            totalCount: 1,
           },
         },
       },
