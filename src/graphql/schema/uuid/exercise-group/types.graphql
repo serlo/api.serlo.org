@@ -11,7 +11,7 @@ type ExerciseGroup implements AbstractUuid & AbstractRepository & AbstractEntity
     before: String
     first: Int
     last: Int
-  ): Query_TaxonomyTermsResult!
+  ): TaxonomyTermConnection!
   exercises: [GroupedExercise!]!
 }
 

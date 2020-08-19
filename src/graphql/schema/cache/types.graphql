@@ -4,17 +4,17 @@ extend type Query {
     before: String
     first: Int
     last: Int
-  ): Query_CacheKeysResult!
+  ): StringConnection!
 }
 
-type Query_CacheKeysResult {
-  edges: [CacheKeyCursor!]!
+type StringConnection {
+  edges: [StringEdge!]!
   nodes: [String!]!
   totalCount: Int!
   pageInfo: PageInfo!
 }
 
-type CacheKeyCursor {
+type StringEdge {
   cursor: String!
   node: String!
 }
@@ -22,4 +22,5 @@ type CacheKeyCursor {
 type Mutation {
   _setCache(key: String!, value: JSON!): Boolean
   _removeCache(key: String!): Boolean
+  _updateCache(keys: [String!]!): Boolean
 }

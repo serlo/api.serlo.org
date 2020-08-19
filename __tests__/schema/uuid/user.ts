@@ -192,13 +192,16 @@ describe('endpoint activeAuthors', () => {
   const activeAuthorsQuery = gql`
     {
       activeAuthors {
-        __typename
-        id
-        trashed
-        username
-        date
-        lastLogin
-        description
+        nodes {
+          __typename
+          id
+          trashed
+          username
+          date
+          lastLogin
+          description
+        }
+        totalCount
       }
     }
   `
@@ -212,7 +215,7 @@ describe('endpoint activeAuthors', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeAuthorsQuery,
       data: {
-        activeAuthors: [user, user2],
+        activeAuthors: { nodes: [user, user2], totalCount: 2 },
       },
       client,
     })
@@ -227,7 +230,7 @@ describe('endpoint activeAuthors', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeAuthorsQuery,
       data: {
-        activeAuthors: [user],
+        activeAuthors: { nodes: [user], totalCount: 1 },
       },
       client,
     })
@@ -239,7 +242,7 @@ describe('endpoint activeAuthors', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeAuthorsQuery,
       data: {
-        activeAuthors: [user],
+        activeAuthors: { nodes: [user], totalCount: 1 },
       },
       client,
     })
@@ -258,7 +261,7 @@ describe('endpoint activeAuthors', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeAuthorsQuery,
       data: {
-        activeAuthors: [user],
+        activeAuthors: { nodes: [user], totalCount: 1 },
       },
       client,
     })
@@ -396,13 +399,16 @@ describe('endpoint activeReviewers', () => {
   const activeReviewersQuery = gql`
     {
       activeReviewers {
-        __typename
-        id
-        trashed
-        username
-        date
-        lastLogin
-        description
+        nodes {
+          __typename
+          id
+          trashed
+          username
+          date
+          lastLogin
+          description
+        }
+        totalCount
       }
     }
   `
@@ -416,7 +422,7 @@ describe('endpoint activeReviewers', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeReviewersQuery,
       data: {
-        activeReviewers: [user, user2],
+        activeReviewers: { nodes: [user, user2], totalCount: 2 },
       },
       client,
     })
@@ -431,7 +437,7 @@ describe('endpoint activeReviewers', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeReviewersQuery,
       data: {
-        activeReviewers: [user],
+        activeReviewers: { nodes: [user], totalCount: 1 },
       },
       client,
     })
@@ -443,7 +449,7 @@ describe('endpoint activeReviewers', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeReviewersQuery,
       data: {
-        activeReviewers: [user],
+        activeReviewers: { nodes: [user], totalCount: 1 },
       },
       client,
     })
@@ -462,7 +468,7 @@ describe('endpoint activeReviewers', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeReviewersQuery,
       data: {
-        activeReviewers: [user],
+        activeReviewers: { nodes: [user], totalCount: 1 },
       },
       client,
     })
