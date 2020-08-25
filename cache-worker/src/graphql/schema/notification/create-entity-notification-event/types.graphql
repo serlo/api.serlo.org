@@ -1,0 +1,7 @@
+type CreateEntityNotificationEvent implements AbstractNotificationEvent {
+  id: Int!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  entity: AbstractEntity!
+}

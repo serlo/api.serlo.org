@@ -1,4 +1,5 @@
 import { GraphQLClient, gql } from 'graphql-request'
+import jwt from 'jsonwebtoken'
 
 import { Service } from './graphql/schema/types'
 import { Connection } from './graphql/schema'
@@ -13,19 +14,27 @@ export class CacheWorker {
 
   public constructor({
     apiEndpoint,
-  }: //service,
-  //secret
-  // TODO: make a token out of secret and service
-  {
+    service,
+    secret,
+  }: {
     apiEndpoint: string
     service?: Service
     secret?: string
   }) {
-    this.grahQLClient = new GraphQLClient(apiEndpoint, {
-      headers: {
-        authorization: `Bearer ...`,
-      },
-    })
+    this.grahQLClient = new GraphQLClient(
+      apiEndpoint,
+      secret === undefined
+        ? {}
+        : {
+            headers: {
+              Authorization: `Serlo Service=${jwt.sign({}, secret, {
+                expiresIn: '2h',
+                audience: 'api.serlo.org',
+                issuer: service,
+              })}`,
+            },
+          }
+    )
   }
 
   public getQueryRequest(): string {

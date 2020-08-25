@@ -1,0 +1,27 @@
+type Video implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild {
+  id: Int!
+  trashed: Boolean!
+  instance: Instance!
+  alias: String
+  date: DateTime!
+  license: License!
+  currentRevision: VideoRevision
+  taxonomyTerms(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): TaxonomyTermConnection!
+}
+
+type VideoRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision {
+  id: Int!
+  author: User!
+  trashed: Boolean!
+  date: DateTime!
+  repository: Video!
+  url: String!
+  title: String!
+  content: String!
+  changes: String!
+}

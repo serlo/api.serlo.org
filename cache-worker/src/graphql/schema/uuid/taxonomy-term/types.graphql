@@ -1,0 +1,44 @@
+enum TaxonomyTermType {
+  blog
+  curriculum
+  curriculumTopic
+  curriculumTopicFolder
+  forum
+  forumCategory
+  locale
+  root
+  subject
+  topic
+  topicFolder
+}
+
+type TaxonomyTerm implements AbstractUuid & AbstractNavigationChild {
+  id: Int!
+  trashed: Boolean!
+  type: TaxonomyTermType!
+  instance: Instance!
+  alias: String
+  name: String!
+  description: String
+  weight: Int!
+  parent: TaxonomyTerm
+  children(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): AbstractUuidConnection!
+  navigation: Navigation
+}
+
+type AbstractUuidConnection {
+  edges: [AbstractUuidCursor!]!
+  nodes: [AbstractUuid!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type AbstractUuidCursor {
+  cursor: String!
+  node: AbstractUuid!
+}

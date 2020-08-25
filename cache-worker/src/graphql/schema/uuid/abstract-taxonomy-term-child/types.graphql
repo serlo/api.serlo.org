@@ -1,0 +1,27 @@
+interface AbstractTaxonomyTermChild {
+  # extends AbstractEntity
+  id: Int!
+  trashed: Boolean!
+  date: DateTime!
+  instance: Instance!
+  alias: String
+  license: License!
+  taxonomyTerms(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): TaxonomyTermConnection!
+}
+
+type TaxonomyTermConnection {
+  edges: [TaxonomyTermEdge]
+  nodes: [TaxonomyTerm!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type TaxonomyTermEdge {
+  cursor: String!
+  node: TaxonomyTerm!
+}

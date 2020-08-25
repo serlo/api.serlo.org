@@ -1,0 +1,21 @@
+type CoursePage implements AbstractUuid & AbstractRepository & AbstractEntity {
+  id: Int!
+  trashed: Boolean!
+  instance: Instance!
+  alias: String
+  date: DateTime!
+  license: License!
+  currentRevision: CoursePageRevision
+  course: Course!
+}
+
+type CoursePageRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision {
+  id: Int!
+  author: User!
+  trashed: Boolean!
+  date: DateTime!
+  repository: CoursePage!
+  title: String!
+  content: String!
+  changes: String!
+}
