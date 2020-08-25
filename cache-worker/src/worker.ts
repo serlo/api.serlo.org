@@ -1,9 +1,6 @@
 import { GraphQLClient, gql } from 'graphql-request'
 import jwt from 'jsonwebtoken'
 
-import { Service } from './graphql/schema/types'
-import { Connection } from './graphql/schema'
-
 export class CacheWorker {
   private grahQLClient: GraphQLClient
 
@@ -92,4 +89,53 @@ interface cacheKeysResponse {
   data: {
     _cacheKeys: Connection<string>
   }
+}
+
+/*
+ * The following types were extracted from their original places
+ * and brought to this file in order to make the the cache worker
+ * independet from the repo api.serlo.org, since the cache worker
+ * may go to another place afterwards.
+ * The api.serlo.org were at version 0.9.0 at the time of extraction.
+ */
+
+//originally in api.serlo.org/src/graphql/schema/types.ts
+export enum Service {
+  Serlo = 'serlo.org',
+  SerloCloudflareWorker = 'serlo.org-cloudflare-worker',
+}
+
+//originally in api.serlo.org/src/graphql/schema/connection/types.ts
+interface Connection<T> {
+  edges: Cursor<T>[]
+  nodes: T[]
+  totalCount: number
+  pageInfo: PageInfo
+}
+
+//originally in api.serlo.org/src/types.ts
+export type PageInfo = {
+  __typename?: 'PageInfo'
+  hasNextPage: Scalars['Boolean']
+  hasPreviousPage: Scalars['Boolean']
+  startCursor?: Maybe<Scalars['String']>
+  endCursor?: Maybe<Scalars['String']>
+}
+
+interface Cursor<T> {
+  cursor: string
+  node: T
+}
+
+type Maybe<T> = T | null
+
+type Scalars = {
+  ID: string
+  String: string
+  Boolean: boolean
+  Int: number
+  Float: number
+  DateTime: string
+  JSON: unknown
+  JSONObject: Record<string, unknown>
 }

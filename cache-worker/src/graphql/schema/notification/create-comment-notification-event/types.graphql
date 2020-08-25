@@ -1,8 +1,0 @@
-type CreateCommentNotificationEvent implements AbstractNotificationEvent {
-  id: Int!
-  instance: Instance!
-  date: DateTime!
-  actor: User!
-  thread: UnsupportedThread!
-  comment: UnsupportedComment!
-}

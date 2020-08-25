@@ -1,8 +1,0 @@
-enum Instance {
-  de
-  en
-  es
-  fr
-  hi
-  ta
-}

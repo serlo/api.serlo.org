@@ -1,7 +1,0 @@
-type SetTaxonomyTermNotificationEvent implements AbstractNotificationEvent {
-  id: Int!
-  instance: Instance!
-  date: DateTime!
-  actor: User!
-  taxonomyTerm: TaxonomyTerm!
-}

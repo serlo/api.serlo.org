@@ -1,5 +1,4 @@
-import { Service } from './src/graphql/schema/types'
-import { CacheWorker } from './src/worker'
+import { CacheWorker, Service } from './src/worker'
 
 const apiEndpoint = process.env.SERLO_ORG_HOST
 const secret = process.env.SERLO_ORG_SECRET

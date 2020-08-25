@@ -1,4 +1,0 @@
-input AliasInput {
-  instance: Instance!
-  path: String!
-}
