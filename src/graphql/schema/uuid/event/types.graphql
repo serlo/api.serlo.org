@@ -1,6 +1,12 @@
 type Event implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild {
   id: Int!
   trashed: Boolean!
+  threads(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ThreadsConnection!
   instance: Instance!
   alias: String
   date: DateTime!
@@ -18,6 +24,12 @@ type EventRevision implements AbstractUuid & AbstractRevision & AbstractEntityRe
   id: Int!
   author: User!
   trashed: Boolean!
+  threads(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ThreadsConnection!
   date: DateTime!
   repository: Event!
   title: String!
