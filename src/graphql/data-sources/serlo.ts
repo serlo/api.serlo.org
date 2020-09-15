@@ -41,6 +41,7 @@ import {
 } from '../schema'
 import { Service } from '../schema/types'
 import { CacheableDataSource } from './cacheable-data-source'
+import { ThreadsPayload } from '../schema/threads/types'
 
 export class SerloDataSource extends CacheableDataSource {
   public constructor(private environment: Environment) {
@@ -235,6 +236,28 @@ export class SerloDataSource extends CacheableDataSource {
       }
     )
   }
+
+  public async getThreadIds({ id }: { id: number }): Promise<ThreadsPayload> {
+    return this.cacheAwareGet({ path: `/api/threads/${id}` })
+  }
+
+  // TODO: Add Mutation for Threads
+  /*
+  public async createThread(
+    payload: MutationCreateThreadArgs & { userId: number }
+  ): Promise<ThreadPayload> {
+    const thread = await this.customPost<ThreadPayload>({
+      path: `/api/create-thread/`,
+      body: payload,
+    })
+    const threads = await this.getThreads({ id: payload.userId })
+    threads.threadIds.push(thread.id)
+    await this.setCache(
+      this.getCacheKey(`/api/threads/${payload.userId}`),
+      threads
+    )
+    return this.setCache(this.getCacheKey(`/api/thread/${thread.id}`), thread)
+  }*/
 
   private async cacheAwareGet<
     T,

@@ -19,8 +19,14 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { AbstractUuid, QueryUuidArgs } from '../../../../types'
-import { QueryResolver, TypeResolver } from '../../types'
+import {
+  AbstractUuid,
+  QueryUuidArgs,
+  ThreadCommentsArgs,
+} from '../../../../types'
+import { Connection } from '../../connection'
+import { ThreadPayload } from '../../threads'
+import { QueryResolver, Resolver, TypeResolver } from '../../types'
 import {
   EntityPayload,
   EntityRevisionPayload,
@@ -36,6 +42,7 @@ export enum DiscriminatorType {
   PageRevision = 'PageRevision',
   User = 'User',
   TaxonomyTerm = 'TaxonomyTerm',
+  Thread = 'Thread',
 }
 
 export type UuidType = DiscriminatorType | EntityType | EntityRevisionType
@@ -47,13 +54,18 @@ export type UuidPayload =
   | PageRevisionPayload
   | UserPayload
   | TaxonomyTermPayload
-export interface AbstractUuidPayload extends AbstractUuid {
+export interface AbstractUuidPayload extends Omit<AbstractUuid, 'threads'> {
   __typename: UuidType
 }
 
 export interface UuidResolvers {
   AbstractUuid: {
     __resolveType: TypeResolver<UuidPayload>
+    threads: Resolver<
+      AbstractUuidPayload,
+      ThreadCommentsArgs,
+      Connection<ThreadPayload>
+    >
   }
   Query: {
     uuid: QueryResolver<QueryUuidArgs, UuidPayload | null>

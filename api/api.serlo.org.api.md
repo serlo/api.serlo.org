@@ -98,6 +98,7 @@ export type AbstractTaxonomyTermChildTaxonomyTermsArgs = {
 export type AbstractUuid = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
 };
 
 // @public (undocumented)
@@ -117,6 +118,14 @@ export type AbstractUuidCursor = {
 };
 
 // @public (undocumented)
+export type AbstractUuidThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type AliasInput = {
     instance: Instance;
     path: Scalars['String'];
@@ -127,6 +136,7 @@ export type Applet = AbstractUuid & AbstractRepository & AbstractEntity & Abstra
     __typename?: 'Applet';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
@@ -141,6 +151,7 @@ export type AppletRevision = AbstractUuid & AbstractRevision & AbstractEntityRev
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: Applet;
     url: Scalars['String'];
@@ -152,7 +163,23 @@ export type AppletRevision = AbstractUuid & AbstractRevision & AbstractEntityRev
 };
 
 // @public (undocumented)
+export type AppletRevisionThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type AppletTaxonomyTermsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
+export type AppletThreadsArgs = {
     after?: Maybe<Scalars['String']>;
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
@@ -164,6 +191,7 @@ export type Article = AbstractUuid & AbstractRepository & AbstractEntity & Abstr
     __typename?: 'Article';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
@@ -178,6 +206,7 @@ export type ArticleRevision = AbstractUuid & AbstractRevision & AbstractEntityRe
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: Article;
     title: Scalars['String'];
@@ -188,7 +217,23 @@ export type ArticleRevision = AbstractUuid & AbstractRevision & AbstractEntityRe
 };
 
 // @public (undocumented)
+export type ArticleRevisionThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type ArticleTaxonomyTermsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
+export type ArticleThreadsArgs = {
     after?: Maybe<Scalars['String']>;
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
@@ -208,10 +253,36 @@ export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
+export type Comment = {
+    __typename?: 'Comment';
+    id: Scalars['Int'];
+    content: Scalars['String'];
+    createdAt: Scalars['DateTime'];
+    author: User;
+};
+
+// @public (undocumented)
+export type CommentConnection = {
+    __typename?: 'CommentConnection';
+    edges: Array<CommentEdge>;
+    nodes: Array<Comment>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type CommentEdge = {
+    __typename?: 'CommentEdge';
+    cursor: Scalars['String'];
+    node: Comment;
+};
+
+// @public (undocumented)
 export type Course = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
     __typename?: 'Course';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
@@ -226,6 +297,7 @@ export type CoursePage = AbstractUuid & AbstractRepository & AbstractEntity & {
     __typename?: 'CoursePage';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
@@ -240,6 +312,7 @@ export type CoursePageRevision = AbstractUuid & AbstractRevision & AbstractEntit
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: CoursePage;
     title: Scalars['String'];
@@ -248,11 +321,28 @@ export type CoursePageRevision = AbstractUuid & AbstractRevision & AbstractEntit
 };
 
 // @public (undocumented)
+export type CoursePageRevisionThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
+export type CoursePageThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type CourseRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
     __typename?: 'CourseRevision';
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: Course;
     title: Scalars['String'];
@@ -262,7 +352,23 @@ export type CourseRevision = AbstractUuid & AbstractRevision & AbstractEntityRev
 };
 
 // @public (undocumented)
+export type CourseRevisionThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type CourseTaxonomyTermsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
+export type CourseThreadsArgs = {
     after?: Maybe<Scalars['String']>;
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
@@ -349,6 +455,7 @@ export type Event = AbstractUuid & AbstractRepository & AbstractEntity & Abstrac
     __typename?: 'Event';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
@@ -363,6 +470,7 @@ export type EventRevision = AbstractUuid & AbstractRevision & AbstractEntityRevi
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: Event;
     title: Scalars['String'];
@@ -373,7 +481,23 @@ export type EventRevision = AbstractUuid & AbstractRevision & AbstractEntityRevi
 };
 
 // @public (undocumented)
+export type EventRevisionThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type EventTaxonomyTermsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
+export type EventThreadsArgs = {
     after?: Maybe<Scalars['String']>;
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
@@ -392,6 +516,7 @@ export type Exercise = AbstractUuid & AbstractRepository & AbstractEntity & Abst
     __typename?: 'Exercise';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
@@ -406,6 +531,7 @@ export type ExerciseGroup = AbstractUuid & AbstractRepository & AbstractEntity &
     __typename?: 'ExerciseGroup';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
@@ -421,6 +547,7 @@ export type ExerciseGroupRevision = AbstractUuid & AbstractRevision & AbstractEn
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: ExerciseGroup;
     content: Scalars['String'];
@@ -428,7 +555,23 @@ export type ExerciseGroupRevision = AbstractUuid & AbstractRevision & AbstractEn
 };
 
 // @public (undocumented)
+export type ExerciseGroupRevisionThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type ExerciseGroupTaxonomyTermsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
+export type ExerciseGroupThreadsArgs = {
     after?: Maybe<Scalars['String']>;
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
@@ -441,10 +584,19 @@ export type ExerciseRevision = AbstractUuid & AbstractRevision & AbstractEntityR
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: Exercise;
     content: Scalars['String'];
     changes: Scalars['String'];
+};
+
+// @public (undocumented)
+export type ExerciseRevisionThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)
@@ -456,10 +608,19 @@ export type ExerciseTaxonomyTermsArgs = {
 };
 
 // @public (undocumented)
+export type ExerciseThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type GroupedExercise = AbstractUuid & AbstractRepository & AbstractEntity & AbstractExercise & {
     __typename?: 'GroupedExercise';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
@@ -475,10 +636,27 @@ export type GroupedExerciseRevision = AbstractUuid & AbstractRevision & Abstract
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: GroupedExercise;
     content: Scalars['String'];
     changes: Scalars['String'];
+};
+
+// @public (undocumented)
+export type GroupedExerciseRevisionThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
+export type GroupedExerciseThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)
@@ -612,6 +790,7 @@ export type Page = AbstractUuid & AbstractRepository & AbstractNavigationChild &
     __typename?: 'Page';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     date: Scalars['DateTime'];
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
@@ -635,10 +814,27 @@ export type PageRevision = AbstractUuid & AbstractRevision & {
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     date: Scalars['DateTime'];
     title: Scalars['String'];
     content: Scalars['String'];
     repository: Page;
+};
+
+// @public (undocumented)
+export type PageRevisionThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
+export type PageThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)
@@ -816,6 +1012,7 @@ export type Solution = AbstractUuid & AbstractRepository & AbstractEntity & {
     __typename?: 'Solution';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
@@ -830,10 +1027,27 @@ export type SolutionRevision = AbstractUuid & AbstractRevision & AbstractEntityR
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: Solution;
     content: Scalars['String'];
     changes: Scalars['String'];
+};
+
+// @public (undocumented)
+export type SolutionRevisionThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
+export type SolutionThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)
@@ -857,6 +1071,7 @@ export type TaxonomyTerm = AbstractUuid & AbstractNavigationChild & {
     __typename?: 'TaxonomyTerm';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     type: TaxonomyTermType;
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
@@ -893,6 +1108,14 @@ export type TaxonomyTermEdge = {
 };
 
 // @public (undocumented)
+export type TaxonomyTermThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export enum TaxonomyTermType {
     // (undocumented)
     Blog = "blog",
@@ -919,6 +1142,43 @@ export enum TaxonomyTermType {
 }
 
 // @public (undocumented)
+export type Thread = {
+    __typename?: 'Thread';
+    id: Scalars['Int'];
+    createdAt: Scalars['DateTime'];
+    updatedAt: Scalars['DateTime'];
+    title: Scalars['String'];
+    archived: Scalars['Boolean'];
+    trashed: Scalars['Boolean'];
+    object: AbstractUuid;
+    comments: CommentConnection;
+};
+
+// @public (undocumented)
+export type ThreadCommentsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
+export type ThreadsConnection = {
+    __typename?: 'ThreadsConnection';
+    edges: Array<ThreadsCursor>;
+    nodes: Array<Thread>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type ThreadsCursor = {
+    __typename?: 'ThreadsCursor';
+    cursor: Scalars['String'];
+    node: Thread;
+};
+
+// @public (undocumented)
 export type UnsupportedComment = {
     __typename?: 'UnsupportedComment';
     id: Scalars['Int'];
@@ -935,6 +1195,7 @@ export type User = AbstractUuid & {
     __typename?: 'User';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     username: Scalars['String'];
     date: Scalars['DateTime'];
     lastLogin?: Maybe<Scalars['DateTime']>;
@@ -961,10 +1222,19 @@ export type UserEdge = {
 };
 
 // @public (undocumented)
+export type UserThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type Video = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
     __typename?: 'Video';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
@@ -979,6 +1249,7 @@ export type VideoRevision = AbstractUuid & AbstractRevision & AbstractEntityRevi
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: Video;
     url: Scalars['String'];
@@ -988,7 +1259,23 @@ export type VideoRevision = AbstractUuid & AbstractRevision & AbstractEntityRevi
 };
 
 // @public (undocumented)
+export type VideoRevisionThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type VideoTaxonomyTermsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
+export type VideoThreadsArgs = {
     after?: Maybe<Scalars['String']>;
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;

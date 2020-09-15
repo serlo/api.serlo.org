@@ -20,12 +20,31 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { UuidPayload } from '..'
+import { resolveConnection } from '../../connection'
+import { ThreadPayload } from '../../threads'
 import { UuidResolvers } from './types'
 
 export const resolvers: UuidResolvers = {
   AbstractUuid: {
     __resolveType(uuid) {
       return uuid.__typename
+    },
+    async threads(parent, cursorPayload, { dataSources }) {
+      const threadslist = await Promise.resolve(
+        dataSources.serlo.getThreadIds({ id: parent.id })
+      )
+      const thread = await Promise.all(
+        threadslist.threadIds.map((id) => {
+          return dataSources.serlo.getUuid<ThreadPayload>({ id })
+        })
+      )
+      return resolveConnection<ThreadPayload>({
+        nodes: thread.filter((payload) => payload !== null) as ThreadPayload[],
+        payload: cursorPayload,
+        createCursor(node) {
+          return node.id.toString()
+        },
+      })
     },
   },
   Query: {
