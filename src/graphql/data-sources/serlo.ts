@@ -157,8 +157,8 @@ export class SerloDataSource extends RESTDataSource {
   }: {
     id: number
   }): Promise<T | null> {
-    const uuid = await this.cacheAwareGet<T>({ path: `/api/uuid/${id}` })
-    return isUnsupportedUuid(uuid) ? null : uuid
+    const uuid = await this.cacheAwareGet<T | null>({ path: `/api/uuid/${id}` })
+    return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
   }
 
   public async getNotificationEvent<

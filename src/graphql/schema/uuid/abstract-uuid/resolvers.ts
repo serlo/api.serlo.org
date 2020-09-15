@@ -33,6 +33,7 @@ export const resolvers: UuidResolvers = {
       const id = payload.alias
         ? (await dataSources.serlo.getAlias(payload.alias)).id
         : (payload.id as number)
+
       return dataSources.serlo.getUuid<UuidPayload>({ id })
     },
   },

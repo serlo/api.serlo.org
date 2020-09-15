@@ -21,14 +21,15 @@
  */
 import { gql } from 'apollo-server'
 
-import { taxonomyTermRoot } from '../../__fixtures__'
-import { Service } from '../../src/graphql/schema/types'
+import { taxonomyTermRoot } from '../../../__fixtures__'
+import { Service } from '../../../src/graphql/schema/types'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
   createTestClient,
   createUuidHandler,
-} from '../__utils__'
+  createJsonHandler,
+} from '../../__utils__'
 
 let client: Client
 
@@ -39,27 +40,48 @@ beforeEach(() => {
   }).client
 })
 
-test('api can handle decoded alias with percent signs', async () => {
-  global.server.use(
-    createUuidHandler({ ...taxonomyTermRoot, alias: '/math/%%x%%' })
-  )
+describe('endpoint uuid()', () => {
+  test('can handle decoded alias with percent signs', async () => {
+    global.server.use(
+      createUuidHandler({ ...taxonomyTermRoot, alias: '/math/%%x%%' })
+    )
 
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query aliasOfTaxonomyTerm($id: Int!) {
-        uuid(id: $id) {
-          ... on TaxonomyTerm {
-            alias
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query aliasOfTaxonomyTerm($id: Int!) {
+          uuid(id: $id) {
+            ... on TaxonomyTerm {
+              alias
+            }
           }
         }
-      }
-    `,
-    variables: { id: taxonomyTermRoot.id },
-    data: {
-      uuid: {
-        alias: '/math/%%x%%',
+      `,
+      variables: { id: taxonomyTermRoot.id },
+      data: {
+        uuid: {
+          alias: '/math/%%x%%',
+        },
       },
-    },
-    client,
+      client,
+    })
+  })
+
+  test('returns null when uuid does not exist', async () => {
+    global.server.use(createJsonHandler({ path: '/api/uuid/666', body: null }))
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query requestNonExistingUuid($id: Int!) {
+          uuid(id: $id) {
+            __typename
+          }
+        }
+      `,
+      variables: { id: 666 },
+      data: {
+        uuid: null,
+      },
+      client,
+    })
   })
 })
