@@ -40,7 +40,7 @@ beforeEach(() => {
   }).client
 })
 
-describe('endpoint uuid()', () => {
+describe('uuid', () => {
   test('can handle decoded alias with percent signs', async () => {
     global.server.use(
       createUuidHandler({ ...taxonomyTermRoot, alias: '/math/%%x%%' })
