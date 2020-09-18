@@ -50,11 +50,11 @@ export const resolvers: UuidResolvers = {
         return alias
           ? dataSources.serlo.getUuid<UuidPayload>({ id: alias.id })
           : null
+      } else if (payload.id) {
+        return dataSources.serlo.getUuid<UuidPayload>({ id: payload.id })
+      } else {
+        return null
       }
-
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const id = payload.id!
-      return dataSources.serlo.getUuid<UuidPayload>({ id })
     },
   },
 }
