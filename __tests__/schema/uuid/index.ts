@@ -21,7 +21,7 @@
  */
 import { gql } from 'apollo-server'
 
-import { taxonomyTermRoot } from '../../../__fixtures__'
+import { taxonomyTermRoot, article } from '../../../__fixtures__'
 import { Service } from '../../../src/graphql/schema/types'
 import {
   assertSuccessfulGraphQLQuery,
@@ -41,6 +41,45 @@ beforeEach(() => {
 })
 
 describe('uuid', () => {
+  describe('returns alias encoded', () => {
+    test('TaxonomyTerm', async () => {
+      await doTestWithUuid(taxonomyTermRoot)
+    })
+
+    test('AbstractRepository', async () => {
+      await doTestWithUuid(article)
+    })
+
+    // TODO: I need to fix the type of uuid here
+    async function doTestWithUuid(
+      uuid: typeof article | typeof taxonomyTermRoot
+    ) {
+      global.server.use(createUuidHandler({ ...uuid, alias: '/ü/ä' }))
+
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query getAliasOf($id: Int!) {
+            uuid(id: $id) {
+              ... on AbstractRepository {
+                alias
+              }
+              ... on TaxonomyTerm {
+                alias
+              }
+            }
+          }
+        `,
+        variables: { id: uuid.id },
+        data: {
+          uuid: {
+            alias: '/%C3%BC/%C3%A4',
+          },
+        },
+        client,
+      })
+    }
+  })
+
   test('can handle decoded alias with percent signs', async () => {
     global.server.use(
       createUuidHandler({ ...taxonomyTermRoot, alias: '/math/%%x%%' })
