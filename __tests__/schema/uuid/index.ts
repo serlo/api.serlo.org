@@ -123,4 +123,20 @@ describe('uuid', () => {
       client,
     })
   })
+
+  test('returns null when no arguments are given', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query emptyUuidRequest {
+          uuid {
+            __typename
+          }
+        }
+      `,
+      data: {
+        uuid: null,
+      },
+      client,
+    })
+  })
 })
