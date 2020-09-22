@@ -19,12 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { RESTDataSource } from 'apollo-datasource-rest'
 import { isSome } from 'fp-ts/lib/Option'
 import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
 
 import { Instance, License } from '../../types'
+import { CacheableDataSource } from './cacheable-data-source'
 import { Environment } from '../environment'
 import {
   AbstractNotificationEventPayload,
@@ -42,9 +42,22 @@ import {
 } from '../schema'
 import { Service } from '../schema/types'
 
-export class SerloDataSource extends RESTDataSource {
+export class SerloDataSource extends CacheableDataSource {
   public constructor(private environment: Environment) {
     super()
+  }
+
+  public async updateCacheNew(key: string) {
+    const instance = key.slice(0, 2)
+    if (!Object.values(Instance).includes(instance as Instance)) {
+      throw new Error(`"${instance}" is not a valid instance`)
+    }
+    const path = key.slice('xx.serlo.org'.length)
+    await this.updateCache({
+      path,
+      instance,
+      cacheKey: key,
+    })
   }
 
   public async getActiveAuthorIds(): Promise<number[]> {
@@ -252,6 +265,7 @@ export class SerloDataSource extends RESTDataSource {
     const cache = await this.environment.cache.get<T>(cacheKey)
     if (isSome(cache)) return cache.value
 
+    // TODO: inline this.updateCache and use same pattern as in GoogleSpreadSheetApi
     return this.updateCache({ path, instance, cacheKey, ttl })
   }
 

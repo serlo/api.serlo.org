@@ -19,19 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { GoogleSheetApi } from './google-spreadsheet-api'
-import { SerloDataSource } from './serlo'
+import { RESTDataSource } from 'apollo-datasource-rest'
 
-export interface DataSources {
-  serlo: SerloDataSource
-  googleSheetApi: GoogleSheetApi
-}
-
-export const dataSourceToCacheKeys = {
-  serlo: (key: string) => {
-    return key.includes('serlo.org') // FIXME: what if  www.serlo.org/spreadsheet- happens?
-  },
-  googleSheetApi: (key: string) => {
-    return key.includes('spreadsheet-')
-  },
+export abstract class CacheableDataSource extends RESTDataSource {
+  // TODO: this should be renamed later to updateCache
+  public abstract updateCacheNew(key: string): Promise<void>
 }

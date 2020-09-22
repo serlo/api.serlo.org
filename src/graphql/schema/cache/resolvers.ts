@@ -21,8 +21,7 @@
  */
 import { ForbiddenError } from 'apollo-server'
 
-import { Instance } from '../../../types'
-import { MajorDimension } from '../../data-sources/google-spreadsheet-api'
+import { dataSourceToCacheKeys } from '../../data-sources'
 import { resolveConnection } from '../connection'
 import { Service } from '../types'
 import { CacheResolvers } from './types'
@@ -67,33 +66,14 @@ export const resolvers: CacheResolvers = {
       }
       await Promise.all(
         keys.map(async (key) => {
-          if (key.includes('serlo.org')) {
-            const instance = key.slice(0, 2)
-            if (!Object.values(Instance).includes(instance as Instance)) {
-              throw new Error(`"${instance}" is not a valid instance`)
+          let dataSource: keyof typeof dataSourceToCacheKeys
+          for (dataSource in dataSourceToCacheKeys) {
+            if (dataSourceToCacheKeys[dataSource](key)) {
+              await dataSources[dataSource].updateCacheNew(key)
+              return
             }
-            const path = key.slice('xx.serlo.org'.length)
-            await dataSources.serlo.updateCache({
-              path,
-              instance,
-              cacheKey: key,
-            })
-          } else if (key.includes('spreadsheet-')) {
-            const sslen = 'spreadsheet-'.length
-            const googleIdLength = 44
-            const spreadsheetId = key.slice(sslen, sslen + googleIdLength)
-            const [, range, majorDimension] = key
-              .slice(sslen + googleIdLength)
-              .split('-')
-            await dataSources.googleSheetApi.getValues({
-              spreadsheetId,
-              range,
-              majorDimension: majorDimension as MajorDimension,
-              ignoreCache: true,
-            })
-          } else {
-            throw new Error(`"${key}" is not a valid key`)
           }
+          throw new Error(`"${key}" is not a valid key`)
         })
       )
       return null
