@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { RESTDataSource } from 'apollo-datasource-rest'
+
 import { either, option, pipeable } from 'fp-ts'
 import * as t from 'io-ts'
 import { nonEmptyArray } from 'io-ts-types/lib/nonEmptyArray'
@@ -28,6 +28,7 @@ import * as R from 'ramda'
 
 import { ErrorEvent } from '../../error-event'
 import { Environment } from '../environment'
+import { CacheableDataSource } from './cacheable-data-source'
 
 export enum MajorDimension {
   Rows = 'ROWS',
@@ -48,9 +49,24 @@ const ValueRange = t.intersection([
 ])
 type ValueRange = t.TypeOf<typeof ValueRange>
 
-export class GoogleSheetApi extends RESTDataSource {
+export class GoogleSheetApi extends CacheableDataSource {
   private apiKey: string
   private environment: Environment
+
+  public async updateCacheNew(key: string) {
+    const sslen = 'spreadsheet-'.length
+    const googleIdLength = 44
+    const spreadsheetId = key.slice(sslen, sslen + googleIdLength)
+    const [, range, majorDimension] = key
+      .slice(sslen + googleIdLength)
+      .split('-')
+    await this.getValues({
+      spreadsheetId,
+      range,
+      majorDimension: majorDimension as MajorDimension,
+      ignoreCache: true,
+    })
+  }
 
   constructor({
     apiKey,
