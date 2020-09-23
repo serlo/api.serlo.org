@@ -66,6 +66,28 @@ describe('uuid', () => {
     })
   })
 
+  test('returns null when alias cannot be found', async () => {
+    global.server.use(
+      createJsonHandler({
+        path: '/api/alias/not-existing',
+        body: null,
+      })
+    )
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notExistingUuid($alias: AliasInput) {
+          uuid(alias: $alias) {
+            __typename
+          }
+        }
+      `,
+      variables: { alias: { instance: 'de', path: '/not-existing' } },
+      data: { uuid: null },
+      client,
+    })
+  })
+
   test('returns null when uuid does not exist', async () => {
     global.server.use(createJsonHandler({ path: '/api/uuid/666', body: null }))
 
