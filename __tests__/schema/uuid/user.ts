@@ -85,6 +85,55 @@ describe('User', () => {
     })
   })
 
+  test('by alias /user/profile/:id returns null when user does not exist', async () => {
+    global.server.use(
+      createJsonHandler({
+        path: `/api/uuid/${user.id}`,
+        body: null,
+      })
+    )
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query user($alias: AliasInput!) {
+          uuid(alias: $alias) {
+            __typename
+          }
+        }
+      `,
+      variables: {
+        alias: {
+          instance: Instance.De,
+          path: `/user/profile/${user.id}`,
+        },
+      },
+      data: { uuid: null },
+      client,
+    })
+  })
+
+  test('by alias /user/profile/:id returns null when uuid :id is no user', async () => {
+    global.server.use(createUuidHandler(article))
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query user($alias: AliasInput!) {
+          uuid(alias: $alias) {
+            __typename
+          }
+        }
+      `,
+      variables: {
+        alias: {
+          instance: Instance.De,
+          path: `/user/profile/${article.id}`,
+        },
+      },
+      data: { uuid: null },
+      client,
+    })
+  })
+
   test('by alias (/:id)', async () => {
     await assertSuccessfulGraphQLQuery({
       query: gql`
