@@ -24,7 +24,6 @@ import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
 
 import { Instance, License } from '../../types'
-import { CacheableDataSource } from './cacheable-data-source'
 import { Environment } from '../environment'
 import {
   AbstractNotificationEventPayload,
@@ -41,23 +40,11 @@ import {
   NotificationsPayload,
 } from '../schema'
 import { Service } from '../schema/types'
+import { CacheableDataSource } from './cacheable-data-source'
 
 export class SerloDataSource extends CacheableDataSource {
   public constructor(private environment: Environment) {
     super()
-  }
-
-  public async updateCacheNew(key: string) {
-    const instance = key.slice(0, 2)
-    if (!Object.values(Instance).includes(instance as Instance)) {
-      throw new Error(`"${instance}" is not a valid instance`)
-    }
-    const path = key.slice('xx.serlo.org'.length)
-    await this.updateCache({
-      path,
-      instance,
-      cacheKey: key,
-    })
   }
 
   public async getActiveAuthorIds(): Promise<number[]> {
@@ -256,17 +243,35 @@ export class SerloDataSource extends CacheableDataSource {
     path,
     instance = Instance.De,
     ttl,
+    ignoreCache,
   }: {
     path: string
     instance?: Instance
     ttl?: number
+    ignoreCache?: boolean
   }): Promise<T> {
     const cacheKey = this.getCacheKey(path, instance)
-    const cache = await this.environment.cache.get<T>(cacheKey)
-    if (isSome(cache)) return cache.value
 
-    // TODO: inline this.updateCache and use same pattern as in GoogleSpreadSheetApi
-    return this.updateCache({ path, instance, cacheKey, ttl })
+    if (!ignoreCache) {
+      const cache = await this.environment.cache.get<T>(cacheKey)
+      if (isSome(cache)) return cache.value
+    }
+
+    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
+      expiresIn: '2h',
+      audience: Service.Serlo,
+      issuer: 'api.serlo.org',
+    })
+    const data = await super.get<T>(
+      `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
+      {},
+      {
+        headers: {
+          Authorization: `Serlo Service=${token}`,
+        },
+      }
+    )
+    return this.setCache(cacheKey, data, { ttl })
   }
 
   private getCacheKey(path: string, instance: Instance = Instance.De) {
@@ -286,31 +291,17 @@ export class SerloDataSource extends CacheableDataSource {
     await this.environment.cache.remove(key)
   }
 
-  public async updateCache<T>({
-    path,
-    instance,
-    cacheKey,
-    ttl,
-  }: {
-    path: string
-    instance: string
-    cacheKey: string
-    ttl?: number
-  }) {
-    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
-      expiresIn: '2h',
-      audience: Service.Serlo,
-      issuer: 'api.serlo.org',
+  public async updateCache(key: string) {
+    const instanceStr = key.slice(0, 2)
+    if (!Object.values(Instance).includes(instanceStr as Instance)) {
+      throw new Error(`"${instanceStr}" is not a valid instance`)
+    }
+    const instance = instanceStr as Instance
+    const path = key.slice('xx.serlo.org'.length)
+    await this.cacheAwareGet({
+      path,
+      instance,
+      ignoreCache: true,
     })
-    const data = await super.get<T>(
-      `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
-      {},
-      {
-        headers: {
-          Authorization: `Serlo Service=${token}`,
-        },
-      }
-    )
-    return this.setCache(cacheKey, data, { ttl })
   }
 }

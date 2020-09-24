@@ -22,6 +22,5 @@
 import { RESTDataSource } from 'apollo-datasource-rest'
 
 export abstract class CacheableDataSource extends RESTDataSource {
-  // TODO: this should be renamed later to updateCache
-  public abstract updateCacheNew(key: string): Promise<void>
+  public abstract updateCache(key: string): Promise<void>
 }

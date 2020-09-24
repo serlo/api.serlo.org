@@ -69,7 +69,7 @@ export const resolvers: CacheResolvers = {
           let dataSource: keyof typeof dataSourceToCacheKeys
           for (dataSource in dataSourceToCacheKeys) {
             if (dataSourceToCacheKeys[dataSource](key)) {
-              await dataSources[dataSource].updateCacheNew(key)
+              await dataSources[dataSource].updateCache(key)
               return
             }
           }

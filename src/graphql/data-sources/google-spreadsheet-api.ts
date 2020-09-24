@@ -53,7 +53,7 @@ export class GoogleSheetApi extends CacheableDataSource {
   private apiKey: string
   private environment: Environment
 
-  public async updateCacheNew(key: string) {
+  public async updateCache(key: string) {
     const sslen = 'spreadsheet-'.length
     const googleIdLength = 44
     const spreadsheetId = key.slice(sslen, sslen + googleIdLength)
