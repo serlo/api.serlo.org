@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { RESTDataSource } from 'apollo-datasource-rest'
 import { isSome } from 'fp-ts/lib/Option'
 import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
@@ -41,8 +40,9 @@ import {
   NotificationsPayload,
 } from '../schema'
 import { Service } from '../schema/types'
+import { CacheableDataSource } from './cacheable-data-source'
 
-export class SerloDataSource extends RESTDataSource {
+export class SerloDataSource extends CacheableDataSource {
   public constructor(private environment: Environment) {
     super()
   }
@@ -243,16 +243,35 @@ export class SerloDataSource extends RESTDataSource {
     path,
     instance = Instance.De,
     ttl,
+    ignoreCache,
   }: {
     path: string
     instance?: Instance
     ttl?: number
+    ignoreCache?: boolean
   }): Promise<T> {
     const cacheKey = this.getCacheKey(path, instance)
-    const cache = await this.environment.cache.get<T>(cacheKey)
-    if (isSome(cache)) return cache.value
 
-    return this.updateCache({ path, instance, cacheKey, ttl })
+    if (!ignoreCache) {
+      const cache = await this.environment.cache.get<T>(cacheKey)
+      if (isSome(cache)) return cache.value
+    }
+
+    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
+      expiresIn: '2h',
+      audience: Service.Serlo,
+      issuer: 'api.serlo.org',
+    })
+    const data = await super.get<T>(
+      `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
+      {},
+      {
+        headers: {
+          Authorization: `Serlo Service=${token}`,
+        },
+      }
+    )
+    return this.setCache(cacheKey, data, { ttl })
   }
 
   private getCacheKey(path: string, instance: Instance = Instance.De) {
@@ -272,31 +291,17 @@ export class SerloDataSource extends RESTDataSource {
     await this.environment.cache.remove(key)
   }
 
-  public async updateCache<T>({
-    path,
-    instance,
-    cacheKey,
-    ttl,
-  }: {
-    path: string
-    instance: string
-    cacheKey: string
-    ttl?: number
-  }) {
-    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
-      expiresIn: '2h',
-      audience: Service.Serlo,
-      issuer: 'api.serlo.org',
+  public async updateCache(key: string) {
+    const instanceStr = key.slice(0, 2)
+    if (!Object.values(Instance).includes(instanceStr as Instance)) {
+      throw new Error(`"${instanceStr}" is not a valid instance`)
+    }
+    const instance = instanceStr as Instance
+    const path = key.slice('xx.serlo.org'.length)
+    await this.cacheAwareGet({
+      path,
+      instance,
+      ignoreCache: true,
     })
-    const data = await super.get<T>(
-      `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
-      {},
-      {
-        headers: {
-          Authorization: `Serlo Service=${token}`,
-        },
-      }
-    )
-    return this.setCache(cacheKey, data, { ttl })
   }
 }
