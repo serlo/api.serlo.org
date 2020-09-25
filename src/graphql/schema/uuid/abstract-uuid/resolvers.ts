@@ -19,6 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { UserInputError } from 'apollo-server'
+
 import { decodePath, UuidPayload } from '..'
 import { UuidResolvers } from './types'
 
@@ -53,7 +55,7 @@ export const resolvers: UuidResolvers = {
       } else if (payload.id) {
         return dataSources.serlo.getUuid<UuidPayload>({ id: payload.id })
       } else {
-        return null
+        throw new UserInputError('You need to provide an id or an alias')
       }
     },
   },

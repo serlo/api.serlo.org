@@ -24,6 +24,7 @@ import { gql } from 'apollo-server'
 import { taxonomyTermRoot } from '../../../__fixtures__'
 import { Service } from '../../../src/graphql/schema/types'
 import {
+  assertFailingGraphQLQuery,
   assertSuccessfulGraphQLQuery,
   Client,
   createTestClient,
@@ -107,8 +108,8 @@ describe('uuid', () => {
     })
   })
 
-  test('returns null when no arguments are given', async () => {
-    await assertSuccessfulGraphQLQuery({
+  test('returns an error when no arguments are given', async () => {
+    await assertFailingGraphQLQuery({
       query: gql`
         query emptyUuidRequest {
           uuid {
@@ -116,9 +117,6 @@ describe('uuid', () => {
           }
         }
       `,
-      data: {
-        uuid: null,
-      },
       client,
     })
   })
