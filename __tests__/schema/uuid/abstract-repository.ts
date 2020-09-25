@@ -155,7 +155,7 @@ const repositoryCases = R.toPairs(repositoryFixtures) as Array<
 >
 
 describe('Repository', () => {
-  test.each(repositoryCases)('%s by id', async (type, { repository }) => {
+  test.each(repositoryCases)('%s by id', async (_type, { repository }) => {
     global.server.use(createUuidHandler(repository))
     await assertSuccessfulGraphQLQuery({
       query: gql`
@@ -179,7 +179,7 @@ describe('Repository', () => {
     })
   })
 
-  test.each(repositoryCases)('%s by alias', async (type, { repository }) => {
+  test.each(repositoryCases)('%s by alias', async (_type, { repository }) => {
     global.server.use(
       createUuidHandler(repository),
       createAliasHandler({
@@ -247,7 +247,7 @@ describe('Repository', () => {
 
   test.each(repositoryCases)(
     '%s by id (w/ license)',
-    async (type, { repository }) => {
+    async (_type, { repository }) => {
       global.server.use(
         createUuidHandler(repository),
         createLicenseHandler(license)
@@ -268,7 +268,7 @@ describe('Repository', () => {
 describe('Revision', () => {
   test.each(repositoryCases)(
     '%s by id (w/ author)',
-    async (type, { revision }) => {
+    async (_type, { revision }) => {
       global.server.use(createUuidHandler(revision), createUuidHandler(user))
       await assertSuccessfulGraphQLQuery({
         query: gql`
@@ -301,7 +301,7 @@ describe('Revision', () => {
 
   test.each(repositoryCases)(
     '%s by id (w/ repository)',
-    async (type, { repository, revision, revisionType }) => {
+    async (_type, { repository, revision, revisionType }) => {
       global.server.use(
         createUuidHandler(repository),
         createUuidHandler(revision)
