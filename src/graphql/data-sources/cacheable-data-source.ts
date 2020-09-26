@@ -19,19 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-export function decodePath(path: string) {
-  try {
-    return decodeURIComponent(path)
-  } catch (error) {
-    if (error instanceof URIError) {
-      // path is probably already decoded
-      return path
-    } else {
-      throw error
-    }
-  }
-}
+import { RESTDataSource } from 'apollo-datasource-rest'
 
-export function encodePath(path: string) {
-  return encodeURIComponent(path).replace(/%2F/g, '/')
+export abstract class CacheableDataSource extends RESTDataSource {
+  public abstract updateCache(key: string): Promise<void>
 }

@@ -26,3 +26,12 @@ export interface DataSources {
   serlo: SerloDataSource
   googleSheetApi: GoogleSheetApi
 }
+
+export const dataSourceToCacheKeys = {
+  serlo: (key: string) => {
+    return key.includes('serlo.org') // FIXME: what if  www.serlo.org/spreadsheet- happens?
+  },
+  googleSheetApi: (key: string) => {
+    return key.includes('spreadsheet-')
+  },
+}
