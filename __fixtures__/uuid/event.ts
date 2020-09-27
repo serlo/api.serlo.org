@@ -38,6 +38,7 @@ export const event: EventPayload = {
   alias: '/mathe/beispielinhalte/beispielveranstaltung',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 35555,
+  revisionIds: [35555],
   licenseId: license.id,
   taxonomyTermIds: [5],
 }
@@ -57,7 +58,10 @@ export const eventRevision: EventRevisionPayload = {
 }
 
 export function getEventDataWithoutSubResolvers(event: EventPayload) {
-  return R.omit(['currentRevisionId', 'licenseId', 'taxonomyTermIds'], event)
+  return R.omit(
+    ['currentRevisionId', 'revisionIds', 'licenseId', 'taxonomyTermIds'],
+    event
+  )
 }
 
 export function getEventRevisionDataWithoutSubResolvers(

@@ -39,6 +39,7 @@ export const exerciseGroup: ExerciseGroupPayload = {
     '/mathe/arithmetik-und-rechnen/grundrechenarten/sachaufgaben-zu-den-grundrechenarten/2217',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 2218,
+  revisionIds: [2218],
   licenseId: license.id,
   taxonomyTermIds: [5],
   exerciseIds: [2219],
@@ -59,7 +60,13 @@ export function getExerciseGroupDataWithoutSubResolvers(
   exerciseGroup: ExerciseGroupPayload
 ) {
   return R.omit(
-    ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'exerciseIds'],
+    [
+      'currentRevisionId',
+      'revisionIds',
+      'licenseId',
+      'taxonomyTermIds',
+      'exerciseIds',
+    ],
     exerciseGroup
   )
 }

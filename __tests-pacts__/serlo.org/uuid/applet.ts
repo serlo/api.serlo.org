@@ -48,6 +48,7 @@ test('Applet', async () => {
     currentRevisionId: applet.currentRevisionId
       ? Matchers.integer(applet.currentRevisionId)
       : null,
+    revisionIds: Matchers.eachLike(applet.revisionIds[0]),
     licenseId: Matchers.integer(applet.licenseId),
     taxonomyTermIds:
       applet.taxonomyTermIds.length > 0

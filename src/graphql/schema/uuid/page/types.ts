@@ -28,6 +28,7 @@ export interface PagePayload extends Omit<Page, keyof PageResolvers['Page']> {
   __typename: DiscriminatorType.Page
   alias: string | null
   currentRevisionId: number | null
+  revisionIds: number[]
   licenseId: number
 }
 

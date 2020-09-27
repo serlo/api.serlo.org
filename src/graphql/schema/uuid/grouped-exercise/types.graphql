@@ -6,6 +6,12 @@ type GroupedExercise implements AbstractUuid & AbstractRepository & AbstractEnti
   date: DateTime!
   license: License!
   currentRevision: GroupedExerciseRevision
+  revisions(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): GroupedExerciseRevisionConnection!
   solution: Solution
   exerciseGroup: ExerciseGroup!
 }
@@ -18,4 +24,16 @@ type GroupedExerciseRevision implements AbstractUuid & AbstractRevision & Abstra
   repository: GroupedExercise!
   content: String!
   changes: String!
+}
+
+type GroupedExerciseRevisionConnection {
+  edges: [GroupedExerciseRevisionCursor!]!
+  nodes: [GroupedExerciseRevision!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type GroupedExerciseRevisionCursor {
+  cursor: String!
+  node: GroupedExerciseRevision!
 }

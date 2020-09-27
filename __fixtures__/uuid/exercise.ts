@@ -38,6 +38,7 @@ export const exercise: ExercisePayload = {
   alias: '/mathe/stochastik/grundbegriffe-und-methoden/baumdiagramm/29637',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 29638,
+  revisionIds: [29638],
   licenseId: license.id,
   solutionId: 29648,
   taxonomyTermIds: [5],
@@ -56,7 +57,13 @@ export const exerciseRevision: ExerciseRevisionPayload = {
 
 export function getExerciseDataWithoutSubResolvers(exercise: ExercisePayload) {
   return R.omit(
-    ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'solutionId'],
+    [
+      'currentRevisionId',
+      'revisionIds',
+      'licenseId',
+      'taxonomyTermIds',
+      'solutionId',
+    ],
     exercise
   )
 }

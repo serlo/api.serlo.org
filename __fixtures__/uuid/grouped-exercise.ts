@@ -48,6 +48,7 @@ export const groupedExercise: GroupedExercisePayload = {
   alias: '/2219/2219',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 2220,
+  revisionIds: [2220],
   licenseId: license.id,
   solutionId: 29648,
   parentId: exerciseGroup.id,
@@ -68,7 +69,7 @@ export function getGroupedExerciseDataWithoutSubResolvers(
   groupedExercise: GroupedExercisePayload
 ) {
   return R.omit(
-    ['currentRevisionId', 'licenseId', 'solutionId', 'parentId'],
+    ['currentRevisionId', 'revisionIds', 'licenseId', 'solutionId', 'parentId'],
     groupedExercise
   )
 }
