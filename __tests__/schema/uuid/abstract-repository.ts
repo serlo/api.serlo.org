@@ -263,6 +263,45 @@ describe('Repository', () => {
       })
     }
   )
+
+  test.each(repositoryCases)(
+    '%s by id (w/ revisions)',
+    async (type, { repository, revision }) => {
+      global.server.use(
+        createUuidHandler(repository),
+        createUuidHandler(revision)
+      )
+      await assertSuccessfulGraphQLQuery({
+        query: `
+          query revisionsOfRepository($id: Int!) {
+            uuid(id: $id) {
+              ... on ${type} {
+                revisions {
+                  totalCount
+                  nodes {
+                    __typename
+                    id
+                    trashed
+                    date
+                  }
+                }
+              }
+            }
+          }
+        `,
+        variables: { id: repository.id },
+        data: {
+          uuid: {
+            revisions: {
+              nodes: [getRevisionDataWithoutSubResolvers(revision)],
+              totalCount: 1,
+            },
+          },
+        },
+        client,
+      })
+    }
+  )
 })
 
 describe('Revision', () => {

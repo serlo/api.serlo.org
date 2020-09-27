@@ -6,6 +6,12 @@ type Article implements AbstractUuid & AbstractRepository & AbstractEntity & Abs
   date: DateTime!
   license: License!
   currentRevision: ArticleRevision
+  revisions(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ArticleRevisionConnection!
   taxonomyTerms(
     after: String
     before: String
@@ -25,4 +31,16 @@ type ArticleRevision implements AbstractUuid & AbstractRevision & AbstractEntity
   changes: String!
   metaTitle: String!
   metaDescription: String!
+}
+
+type ArticleRevisionConnection {
+  edges: [ArticleRevisionCursor!]!
+  nodes: [ArticleRevision!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type ArticleRevisionCursor {
+  cursor: String!
+  node: ArticleRevision!
 }

@@ -6,6 +6,12 @@ type Applet implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
   date: DateTime!
   license: License!
   currentRevision: AppletRevision
+  revisions(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): AppletRevisionConnection!
   taxonomyTerms(
     after: String
     before: String
@@ -26,4 +32,16 @@ type AppletRevision implements AbstractUuid & AbstractRevision & AbstractEntityR
   changes: String!
   metaTitle: String!
   metaDescription: String!
+}
+
+type AppletRevisionConnection {
+  edges: [AppletRevisionCursor!]!
+  nodes: [AppletRevision!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type AppletRevisionCursor {
+  cursor: String!
+  node: AppletRevision!
 }

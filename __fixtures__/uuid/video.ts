@@ -39,6 +39,7 @@ export const video: VideoPayload = {
     '/mathe/artikel-und-videos-aus-serlo1/waagrechte-und-schiefe-asymptote',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 16114,
+  revisionIds: [16114],
   licenseId: license.id,
   taxonomyTermIds: [5],
 }
@@ -57,7 +58,10 @@ export const videoRevision: VideoRevisionPayload = {
 }
 
 export function getVideoDataWithoutSubResolvers(video: VideoPayload) {
-  return R.omit(['currentRevisionId', 'licenseId', 'taxonomyTermIds'], video)
+  return R.omit(
+    ['currentRevisionId', 'revisionIds', 'licenseId', 'taxonomyTermIds'],
+    video
+  )
 }
 
 export function getVideoRevisionDataWithoutSubResolvers(
