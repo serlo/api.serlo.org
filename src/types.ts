@@ -496,6 +496,7 @@ export type AppletRevisionsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -554,6 +555,7 @@ export type ArticleRevisionsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -611,6 +613,7 @@ export type CoursePageRevisionsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 export type CoursePageRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
@@ -659,6 +662,7 @@ export type CourseRevisionsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -715,6 +719,7 @@ export type EventRevisionsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -773,6 +778,7 @@ export type ExerciseGroupRevisionsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -828,6 +834,7 @@ export type ExerciseRevisionsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -883,6 +890,7 @@ export type GroupedExerciseRevisionsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 export type GroupedExerciseRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & AbstractExerciseRevision & {
@@ -929,6 +937,7 @@ export type PageRevisionsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 export type PageRevision = AbstractUuid & AbstractRevision & {
@@ -975,6 +984,7 @@ export type SolutionRevisionsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 export type SolutionRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
@@ -1109,6 +1119,7 @@ export type VideoRevisionsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 

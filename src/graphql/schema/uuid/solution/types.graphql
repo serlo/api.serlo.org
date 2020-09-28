@@ -11,6 +11,7 @@ type Solution implements AbstractUuid & AbstractRepository & AbstractEntity {
     before: String
     first: Int
     last: Int
+    unrevised: Boolean
   ): SolutionRevisionConnection
   exercise: AbstractExercise!
 }

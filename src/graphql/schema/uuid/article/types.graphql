@@ -11,6 +11,7 @@ type Article implements AbstractUuid & AbstractRepository & AbstractEntity & Abs
     before: String
     first: Int
     last: Int
+    unrevised: Boolean
   ): ArticleRevisionConnection!
   taxonomyTerms(
     after: String

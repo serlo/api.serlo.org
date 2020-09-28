@@ -11,6 +11,7 @@ type GroupedExercise implements AbstractUuid & AbstractRepository & AbstractEnti
     before: String
     first: Int
     last: Int
+    unrevised: Boolean
   ): GroupedExerciseRevisionConnection!
   solution: Solution
   exerciseGroup: ExerciseGroup!

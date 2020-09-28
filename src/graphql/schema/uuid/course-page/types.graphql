@@ -11,6 +11,7 @@ type CoursePage implements AbstractUuid & AbstractRepository & AbstractEntity {
     before: String
     first: Int
     last: Int
+    unrevised: Boolean
   ): CoursePageRevisionConnection!
   course: Course!
 }

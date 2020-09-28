@@ -45,13 +45,21 @@ export function createRepositoryResolvers<
       return dataSources.serlo.getUuid<R>({ id: entity.currentRevisionId })
     },
     async revisions(entity, cursorPayload, { dataSources }) {
-      const revisions = await Promise.all(
+      const revsFromSerlo = await Promise.all(
         entity.revisionIds.map((id) => {
           return dataSources.serlo.getUuid<R>({ id })
         })
       )
+      const revs = revsFromSerlo.filter(isNotNil)
+      const filteredRevs = cursorPayload.unrevised
+        ? revs.filter(
+            (rev) =>
+              entity.currentRevisionId === null ||
+              rev.id > entity.currentRevisionId
+          )
+        : revs
       return resolveConnection<R>({
-        nodes: revisions.filter(isNotNil),
+        nodes: filteredRevs,
         payload: cursorPayload,
         createCursor(node) {
           return node.id.toString()

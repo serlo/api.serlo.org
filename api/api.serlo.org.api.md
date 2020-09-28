@@ -174,6 +174,7 @@ export type AppletRevisionsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -235,6 +236,7 @@ export type ArticleRevisionsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -321,6 +323,7 @@ export type CoursePageRevisionsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -359,6 +362,7 @@ export type CourseRevisionsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -495,6 +499,7 @@ export type EventRevisionsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -576,6 +581,7 @@ export type ExerciseGroupRevisionsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -620,6 +626,7 @@ export type ExerciseRevisionsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -679,6 +686,7 @@ export type GroupedExerciseRevisionsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -864,6 +872,7 @@ export type PageRevisionsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -1084,6 +1093,7 @@ export type SolutionRevisionsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -1260,6 +1270,7 @@ export type VideoRevisionsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)

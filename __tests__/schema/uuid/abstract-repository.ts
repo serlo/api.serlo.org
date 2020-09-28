@@ -302,6 +302,51 @@ describe('Repository', () => {
       })
     }
   )
+
+  test.each(repositoryCases)(
+    '%s by id (w/ revisions and filter unrevised)',
+    async (type, { repository, revision }) => {
+      const unrevisedRevision = { ...revision, id: revision.id + 1 }
+      global.server.use(
+        createUuidHandler({
+          ...repository,
+          revisionIds: [unrevisedRevision.id, revision.id],
+        }),
+        createUuidHandler(revision),
+        createUuidHandler(unrevisedRevision)
+      )
+
+      await assertSuccessfulGraphQLQuery({
+        query: `
+          query unrevisedRevisionsOfRepository($id: Int!) {
+            uuid(id: $id) {
+              ... on ${type} {
+                revisions (unrevised: true) {
+                  totalCount
+                  nodes {
+                    __typename
+                    id
+                    trashed
+                    date
+                  }
+                }
+              }
+            }
+          }
+        `,
+        variables: { id: repository.id },
+        data: {
+          uuid: {
+            revisions: {
+              nodes: [getRevisionDataWithoutSubResolvers(unrevisedRevision)],
+              totalCount: 1,
+            },
+          },
+        },
+        client,
+      })
+    }
+  )
 })
 
 describe('Revision', () => {
