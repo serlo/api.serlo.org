@@ -22,8 +22,8 @@
 import { decodePath } from '..'
 import { resolveConnection } from '../../connection'
 import { Context } from '../../types'
-import { TaxonomyTermPayload, TaxonomyTermResolvers } from './types'
 import { isNotNil } from '../../utils'
+import { TaxonomyTermPayload, TaxonomyTermResolvers } from './types'
 
 export const resolvers: TaxonomyTermResolvers = {
   TaxonomyTerm: {

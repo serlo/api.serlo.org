@@ -11,6 +11,7 @@ type Exercise implements AbstractUuid & AbstractRepository & AbstractEntity & Ab
     before: String
     first: Int
     last: Int
+    unrevised: Boolean
   ): ExerciseRevisionConnection!
   taxonomyTerms(
     after: String

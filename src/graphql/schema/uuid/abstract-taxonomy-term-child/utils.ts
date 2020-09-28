@@ -22,8 +22,8 @@
 import { TaxonomyTermChildrenArgs } from '../../../../types'
 import { Connection, resolveConnection } from '../../connection'
 import { Context, Resolver } from '../../types'
-import { AbstractTaxonomyTermChildPayload } from './types'
 import { isNotNil } from '../../utils'
+import { AbstractTaxonomyTermChildPayload } from './types'
 
 export interface TaxonomyTermChildResolvers<
   E extends AbstractTaxonomyTermChildPayload

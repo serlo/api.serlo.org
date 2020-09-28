@@ -11,6 +11,7 @@ type Page implements AbstractUuid & AbstractRepository & AbstractNavigationChild
     before: String
     first: Int
     last: Int
+    unrevised: Boolean
   ): PageRevisionConnection!
   navigation: Navigation
 }

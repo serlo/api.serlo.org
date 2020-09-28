@@ -11,6 +11,7 @@ type Applet implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
     before: String
     first: Int
     last: Int
+    unrevised: Boolean
   ): AppletRevisionConnection!
   taxonomyTerms(
     after: String

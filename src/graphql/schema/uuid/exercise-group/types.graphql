@@ -11,6 +11,7 @@ type ExerciseGroup implements AbstractUuid & AbstractRepository & AbstractEntity
     before: String
     first: Int
     last: Int
+    unrevised: Boolean
   ): ExerciseGroupRevisionConnection!
   taxonomyTerms(
     after: String

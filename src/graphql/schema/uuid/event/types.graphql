@@ -11,6 +11,7 @@ type Event implements AbstractUuid & AbstractRepository & AbstractEntity & Abstr
     before: String
     first: Int
     last: Int
+    unrevised: Boolean
   ): EventRevisionConnection!
   taxonomyTerms(
     after: String
