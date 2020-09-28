@@ -19,10 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { decodePath, UuidPayload } from '..'
+import { decodePath } from '..'
 import { resolveConnection } from '../../connection'
 import { Context } from '../../types'
 import { TaxonomyTermPayload, TaxonomyTermResolvers } from './types'
+import { isNotNil } from '../../utils'
 
 export const resolvers: TaxonomyTermResolvers = {
   TaxonomyTerm: {
@@ -40,13 +41,11 @@ export const resolvers: TaxonomyTermResolvers = {
     async children(taxonomyTerm, cursorPayload, { dataSources }) {
       const children = await Promise.all(
         taxonomyTerm.childrenIds.map((id) => {
-          return dataSources.serlo.getUuid<UuidPayload>({ id })
+          return dataSources.serlo.getUuid<TaxonomyTermPayload>({ id })
         })
       )
       return resolveConnection<TaxonomyTermPayload>({
-        nodes: children.filter(
-          (payload) => payload !== null
-        ) as TaxonomyTermPayload[],
+        nodes: children.filter(isNotNil),
         payload: cursorPayload,
         createCursor(node) {
           return node.id.toString()
