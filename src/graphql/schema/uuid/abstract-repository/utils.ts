@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { resolveConnection } from '../..'
-import { requestsOnlyFields } from '../../utils'
+import { requestsOnlyFields, isNotNil } from '../../utils'
 import { decodePath } from '../alias'
 import { resolveUser } from '../user'
 import {
@@ -51,7 +51,7 @@ export function createRepositoryResolvers<
         })
       )
       return resolveConnection<R>({
-        nodes: revisions.filter((revision) => revision !== null) as R[],
+        nodes: revisions.filter(isNotNil),
         payload: cursorPayload,
         createCursor(node) {
           return node.id.toString()

@@ -23,6 +23,7 @@ import { TaxonomyTermChildrenArgs } from '../../../../types'
 import { Connection, resolveConnection } from '../../connection'
 import { Context, Resolver } from '../../types'
 import { AbstractTaxonomyTermChildPayload } from './types'
+import { isNotNil } from '../../utils'
 
 export interface TaxonomyTermChildResolvers<
   E extends AbstractTaxonomyTermChildPayload
@@ -47,9 +48,7 @@ export function createTaxonomyTermChildResolvers<
         })
       )
       return resolveConnection<AbstractTaxonomyTermChildPayload>({
-        nodes: taxonomyTerms.filter(
-          (payload) => payload !== null
-        ) as AbstractTaxonomyTermChildPayload[],
+        nodes: taxonomyTerms.filter(isNotNil),
         payload: cursorPayload,
         createCursor(node) {
           return node.id.toString()
