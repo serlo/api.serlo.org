@@ -47,10 +47,21 @@ export const resolvers: NotificationResolvers = {
   },
   Query: {
     async events(_parent, cursorPayload, { dataSources }) {
+      const maxNumberOfEvents = 100
       const { currentEventId } = await dataSources.serlo.getCurrentEventId()
       const eventIdConnection = resolveConnection<number>({
         nodes: R.range(1, currentEventId + 1).reverse(),
-        payload: cursorPayload,
+        payload: {
+          ...cursorPayload,
+          first: cursorPayload.first
+            ? Math.min(cursorPayload.first, maxNumberOfEvents)
+            : cursorPayload.last
+            ? undefined
+            : maxNumberOfEvents,
+          last: cursorPayload.last
+            ? Math.min(cursorPayload.last, maxNumberOfEvents)
+            : undefined,
+        },
         createCursor: (id: number) => id.toString(),
       })
 

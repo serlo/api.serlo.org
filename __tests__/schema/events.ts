@@ -1,4 +1,5 @@
 import { gql } from 'apollo-server'
+import * as R from 'ramda'
 
 import {
   user,
@@ -6,7 +7,6 @@ import {
   createTaxonomyTermNotificationEvent,
   getAbstractNotificationEventDataWithoutSubResolvers,
 } from '../../__fixtures__'
-import { NotificationEventPayload } from '../../src/graphql/schema'
 import { Service } from '../../src/graphql/schema/types'
 import {
   createTestClient,
@@ -58,6 +58,111 @@ describe('events', () => {
             getAbstractNotificationEventDataWithoutSubResolvers(event2),
             getAbstractNotificationEventDataWithoutSubResolvers(event1),
           ],
+        },
+      },
+      client,
+    })
+  })
+
+  test('argument "first" is maximal 100', async () => {
+    const ids = R.range(101, 201).reverse()
+
+    ids.forEach((id) =>
+      global.server.use(
+        createNotificationEventHandler({ ...createEntityNotificationEvent, id })
+      )
+    )
+    global.server.use(createCurrentEventIdHandler(200))
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query events {
+          events(first: 150) {
+            totalCount
+            nodes {
+              ... on AbstractNotificationEvent {
+                id
+              }
+            }
+          }
+        }
+      `,
+      data: {
+        events: {
+          totalCount: 200,
+          nodes: ids.map((id) => {
+            return { id }
+          }),
+        },
+      },
+      client,
+    })
+  })
+
+  test('argument "last" is maximal 100', async () => {
+    const ids = R.range(1, 101).reverse()
+
+    ids.forEach((id) =>
+      global.server.use(
+        createNotificationEventHandler({ ...createEntityNotificationEvent, id })
+      )
+    )
+    global.server.use(createCurrentEventIdHandler(200))
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query events {
+          events(last: 150) {
+            totalCount
+            nodes {
+              ... on AbstractNotificationEvent {
+                id
+              }
+            }
+          }
+        }
+      `,
+      data: {
+        events: {
+          totalCount: 200,
+          nodes: ids.map((id) => {
+            return { id }
+          }),
+        },
+      },
+      client,
+    })
+  })
+
+  test('maximal 100 events are returned', async () => {
+    const ids = R.range(101, 201).reverse()
+
+    ids.forEach((id) =>
+      global.server.use(
+        createNotificationEventHandler({ ...createEntityNotificationEvent, id })
+      )
+    )
+    global.server.use(createCurrentEventIdHandler(200))
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query events {
+          events {
+            totalCount
+            nodes {
+              ... on AbstractNotificationEvent {
+                id
+              }
+            }
+          }
+        }
+      `,
+      data: {
+        events: {
+          totalCount: 200,
+          nodes: ids.map((id) => {
+            return { id }
+          }),
         },
       },
       client,
