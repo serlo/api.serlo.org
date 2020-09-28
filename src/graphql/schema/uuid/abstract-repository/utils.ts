@@ -54,8 +54,9 @@ export function createRepositoryResolvers<
       const filteredRevs = cursorPayload.unrevised
         ? revs.filter(
             (rev) =>
-              entity.currentRevisionId === null ||
-              rev.id > entity.currentRevisionId
+              (entity.currentRevisionId === null ||
+                rev.id > entity.currentRevisionId) &&
+              !rev.trashed
           )
         : revs
       return resolveConnection<R>({
