@@ -28,12 +28,28 @@ export function resolveConnection<T>({
   nodes,
   payload,
   createCursor,
+  maxNumberOfNodes,
 }: {
   nodes: T[]
   payload: ConnectionPayload
   createCursor(node: T): string
+  maxNumberOfNodes?: number
 }): Connection<T> {
-  const { before, after, first, last } = payload
+  const { before, after } = payload
+  let { first, last } = payload
+
+  if (maxNumberOfNodes) {
+    if (first) {
+      first = Math.min(first, maxNumberOfNodes)
+    } else if (!last) {
+      first = maxNumberOfNodes
+    }
+
+    if (last) {
+      last = Math.min(last, maxNumberOfNodes)
+    }
+  }
+
   const allEdges = nodes.map((node) => {
     return {
       cursor: Buffer.from(createCursor(node)).toString('base64'),
