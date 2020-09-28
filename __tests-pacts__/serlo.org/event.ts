@@ -21,6 +21,7 @@
  */
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
+import fetch from 'node-fetch'
 
 import {
   checkoutRevisionNotificationEvent,
@@ -599,4 +600,16 @@ test('SetUuidStateNotificationEvent', async () => {
       ),
     },
   })
+})
+
+test('/api/current-event-id', async () => {
+  await addJsonInteraction({
+    name: 'fetch current event id',
+    given: 'current event id is 100',
+    path: '/api/current-event-id',
+    body: {
+      currentEventId: Matchers.integer(100),
+    },
+  })
+  await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/current-event-id`)
 })

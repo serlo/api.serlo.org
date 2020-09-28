@@ -39,6 +39,7 @@ import {
   SetTaxonomyTermNotificationEventPayload,
   SetThreadStateNotificationEventPayload,
   SetUuidStateNotificationEventPayload,
+  NotificationEventPayload,
 } from '../src/graphql/schema'
 import { Instance } from '../src/types'
 import {
@@ -53,6 +54,12 @@ import {
   thread,
   user,
 } from './uuid'
+
+export function getAbstractNotificationEventDataWithoutSubResolvers(
+  event: NotificationEventPayload
+) {
+  return R.pick(['__typename', 'id', 'date', 'instance'], event)
+}
 
 export const checkoutRevisionNotificationEvent: CheckoutRevisionNotificationEventPayload = {
   __typename: NotificationEventType.CheckoutRevision,

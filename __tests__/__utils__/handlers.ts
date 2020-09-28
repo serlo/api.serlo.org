@@ -63,6 +63,13 @@ export function createNotificationEventHandler(
   })
 }
 
+export function createCurrentEventIdHandler(currentEventId: number) {
+  return createJsonHandler({
+    path: '/api/current-event-id',
+    body: { currentEventId },
+  })
+}
+
 export function createUuidHandler(uuid: UuidPayload) {
   return createJsonHandler({
     path: `/api/uuid/${uuid.id}`,

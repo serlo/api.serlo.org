@@ -18,6 +18,7 @@ export type Query = {
   activeAuthors: UserConnection;
   activeDonors: UserConnection;
   activeReviewers: UserConnection;
+  events: AbstractNotificationEventConnection;
   license?: Maybe<License>;
   notificationEvent?: Maybe<AbstractNotificationEvent>;
   notifications: NotificationConnection;
@@ -50,6 +51,14 @@ export type QueryActiveDonorsArgs = {
 
 
 export type QueryActiveReviewersArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryEventsArgs = {
   after?: Maybe<Scalars['String']>;
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
@@ -342,6 +351,20 @@ export type NotificationEdge = {
   __typename?: 'NotificationEdge';
   cursor: Scalars['String'];
   node: Notification;
+};
+
+export type AbstractNotificationEventConnection = {
+  __typename?: 'AbstractNotificationEventConnection';
+  edges: Array<AbstractNotificationEventEdge>;
+  nodes: Array<AbstractNotificationEvent>;
+  totalCount: Scalars['Int'];
+  pageInfo: PageInfo;
+};
+
+export type AbstractNotificationEventEdge = {
+  __typename?: 'AbstractNotificationEventEdge';
+  cursor: Scalars['String'];
+  node: AbstractNotificationEvent;
 };
 
 export type AbstractEntity = {

@@ -98,3 +98,16 @@ export function resolveConnection<T>({
     return false
   }
 }
+
+export async function mapConnectionAsync<A, B>(
+  mapFunc: (a: A) => Promise<B>,
+  connection: Connection<A>
+): Promise<Connection<B>> {
+  const edges = await Promise.all(
+    connection.edges.map(async (edge) => {
+      return { node: await mapFunc(edge.node), cursor: edge.cursor }
+    })
+  )
+
+  return { ...connection, edges, nodes: edges.map((edge) => edge.node) }
+}

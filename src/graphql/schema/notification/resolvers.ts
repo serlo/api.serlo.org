@@ -20,13 +20,15 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { AuthenticationError } from 'apollo-server'
+import * as R from 'ramda'
 
-import { resolveConnection } from '../connection'
+import { resolveConnection, mapConnectionAsync } from '../connection'
 import { Context } from '../types'
 import {
   NotificationEventPayload,
   NotificationPayload,
   NotificationResolvers,
+  AbstractNotificationEventPayload,
 } from './types'
 
 export const resolvers: NotificationResolvers = {
@@ -44,6 +46,23 @@ export const resolvers: NotificationResolvers = {
     },
   },
   Query: {
+    async events(_parent, cursorPayload, { dataSources }) {
+      const { currentEventId } = await dataSources.serlo.getCurrentEventId()
+      const eventIdConnection = resolveConnection<number>({
+        nodes: R.range(1, currentEventId + 1).reverse(),
+        payload: cursorPayload,
+        createCursor: (id: number) => id.toString(),
+      })
+
+      return await mapConnectionAsync(
+        (eventId: number) =>
+          // Todo: Filter non existing events out
+          dataSources.serlo.getNotificationEvent({ id: eventId }) as Promise<
+            AbstractNotificationEventPayload
+          >,
+        eventIdConnection
+      )
+    },
     async notifications(
       _parent,
       { unread, ...cursorPayload },
