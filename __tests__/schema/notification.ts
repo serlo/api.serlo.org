@@ -95,7 +95,7 @@ describe('notifications', () => {
     global.server.use(
       rest.get(
         `http://de.${process.env.SERLO_ORG_HOST}/api/notifications/${user.id}`,
-        (req, res, ctx) => {
+        (_req, res, ctx) => {
           return res(
             ctx.status(200),
             ctx.json({
@@ -225,7 +225,7 @@ describe('notifications', () => {
     global.server.use(
       rest.get(
         `http://de.${process.env.SERLO_ORG_HOST}/api/notifications/${user.id}`,
-        (req, res, ctx) => {
+        (_req, res, ctx) => {
           return res(
             ctx.status(200),
             ctx.json({
@@ -2198,7 +2198,7 @@ describe('setNotificationState', () => {
     global.server.use(
       rest.post(
         `http://de.${process.env.SERLO_ORG_HOST}/api/set-notification-state/1`,
-        (req, res, ctx) => {
+        (_req, res, ctx) => {
           return res(ctx.status(403), ctx.json({}))
         }
       )
@@ -2222,7 +2222,7 @@ describe('setNotificationState', () => {
     global.server.use(
       rest.get(
         `http://de.${process.env.SERLO_ORG_HOST}/api/notifications/${user.id}`,
-        (req, res, ctx) => {
+        (_req, res, ctx) => {
           return res(
             ctx.status(200),
             ctx.json({
@@ -2240,7 +2240,7 @@ describe('setNotificationState', () => {
       ),
       rest.post(
         `http://de.${process.env.SERLO_ORG_HOST}/api/set-notification-state/1`,
-        (req, res, ctx) => {
+        (_req, res, ctx) => {
           return res(
             ctx.status(200),
             ctx.json({
