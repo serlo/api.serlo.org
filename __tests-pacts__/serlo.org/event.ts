@@ -639,6 +639,13 @@ describe('/api/events', async () => {
       query,
       body: {
         eventIds: Matchers.eachLike(1),
+        totalCount: Matchers.integer(1),
+        pageInfo: {
+          hasNextPage: Matchers.boolean(false),
+          hasPreviousPage: Matchers.boolean(false),
+          startCursor: Matchers.integer(1),
+          endCursor: Matchers.integer(1),
+        },
       },
     })
   }

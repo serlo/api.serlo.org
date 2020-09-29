@@ -38,6 +38,7 @@ import {
   NavigationPayload,
   NodeData,
   NotificationsPayload,
+  EventsPayload,
 } from '../schema'
 import { Service } from '../schema/types'
 import { CacheableDataSource } from './cacheable-data-source'
@@ -168,7 +169,7 @@ export class SerloDataSource extends CacheableDataSource {
     first?: number
     last?: number
   }) {
-    return await this.cacheAwareGet<{ eventIds: number[] }>({
+    return await this.cacheAwareGet<EventsPayload>({
       path: '/api/events',
       ttl: 5 * 60,
       query,

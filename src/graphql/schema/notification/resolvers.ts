@@ -21,7 +21,7 @@
  */
 import { AuthenticationError } from 'apollo-server'
 
-import { resolveConnection } from '../connection'
+import { resolveConnection, encodeCursor } from '../connection'
 import { Context } from '../types'
 import { isNotNil } from '../utils'
 import {
@@ -46,21 +46,37 @@ export const resolvers: NotificationResolvers = {
   },
   Query: {
     async events(_parent, cursorPayload, { dataSources }) {
-      const { eventIds } = await dataSources.serlo.getEventIds({
+      const {
+        eventIds,
+        totalCount,
+        pageInfo,
+      } = await dataSources.serlo.getEventIds({
         after: cursorPayload.after ?? undefined,
         before: cursorPayload.before ?? undefined,
         first: cursorPayload.first ?? undefined,
         last: cursorPayload.last ?? undefined,
       })
-      const events = await Promise.all(
+      const eventsFromSerlo = await Promise.all(
         eventIds.map((id) => dataSources.serlo.getNotificationEvent({ id }))
       )
-      const result = resolveConnection({
-        nodes: events.filter(isNotNil),
-        payload: {},
-        createCursor: (event) => event.id.toString(),
-      })
-      return result
+      const events = eventsFromSerlo.filter(isNotNil)
+
+      return {
+        edges: events.map((event) => {
+          return { node: event, cursor: encodeCursor(event.id.toString()) }
+        }),
+        nodes: events,
+        totalCount,
+        pageInfo: {
+          ...pageInfo,
+          startCursor: encodePageInfoCursor(pageInfo.startCursor),
+          endCursor: encodePageInfoCursor(pageInfo.endCursor),
+        },
+      }
+
+      function encodePageInfoCursor(value: number | null) {
+        return value !== null ? encodeCursor(value.toString()) : null
+      }
     },
     async notifications(
       _parent,

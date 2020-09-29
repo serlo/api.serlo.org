@@ -52,6 +52,17 @@ import { SetTaxonomyTermNotificationEventPayload } from './set-taxonomy-term-not
 import { SetThreadStateNotificationEventPayload } from './set-thread-state-notification-event'
 import { SetUuidStateNotificationEventPayload } from './set-uuid-state-notification-event'
 
+export interface EventsPayload {
+  eventIds: number[]
+  totalCount: number
+  pageInfo: {
+    hasNextPage: boolean
+    hasPreviousPage: boolean
+    startCursor: number | null
+    endCursor: number | null
+  }
+}
+
 export interface NotificationPayload
   extends Omit<Notification, keyof NotificationResolvers['Notification']> {
   eventId: number

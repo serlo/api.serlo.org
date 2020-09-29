@@ -37,10 +37,7 @@ export function resolveConnection<T>({
   const { first, last } = payload
 
   const allEdges = nodes.map((node) => {
-    return {
-      cursor: Buffer.from(createCursor(node)).toString('base64'),
-      node,
-    }
+    return { cursor: encodeCursor(createCursor(node)), node }
   })
   const applyCursorToEdgesResult = applyCursorToEdges()
   const edges = R.pipe(handleFirst, handleLast)(applyCursorToEdgesResult)
@@ -99,4 +96,8 @@ export function resolveConnection<T>({
     if (before != null) return getBeforeIndex() + 1 < allEdges.length
     return false
   }
+}
+
+export function encodeCursor(cursor: string): string {
+  return Buffer.from(cursor).toString('base64')
 }

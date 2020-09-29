@@ -23,7 +23,10 @@ import { rest } from 'msw'
 import * as R from 'ramda'
 
 import { LicensePayload } from '../../src/graphql/schema/license'
-import { NotificationEventPayload } from '../../src/graphql/schema/notification'
+import {
+  NotificationEventPayload,
+  EventsPayload,
+} from '../../src/graphql/schema/notification'
 import {
   AliasPayload,
   NavigationPayload,
@@ -64,11 +67,11 @@ export function createNotificationEventHandler(
   })
 }
 
-export function createEventIdsHandler(
-  eventIds: number[],
+export function createEventsHandler(
+  body: EventsPayload,
   query?: Record<string, string>
 ) {
-  return createJsonHandler({ path: '/api/events', query, body: { eventIds } })
+  return createJsonHandler({ path: '/api/events', query, body })
 }
 
 export function createUuidHandler(uuid: UuidPayload) {
