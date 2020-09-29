@@ -129,14 +129,7 @@ describe('events', () => {
 
   test('forwards results of serlo.org (start and end cursor is null)', async () => {
     global.server.use(
-      createEventsHandler({
-        pageInfo: {
-          hasPreviousPage: false,
-          hasNextPage: false,
-          startCursor: null,
-          endCursor: null,
-        },
-      })
+      createEventsHandler({ pageInfo: { startCursor: null, endCursor: null } })
     )
 
     await assertSuccessfulGraphQLQuery({

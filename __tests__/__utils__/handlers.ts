@@ -21,6 +21,7 @@
  */
 import { rest, MockedRequest } from 'msw'
 import * as R from 'ramda'
+import { DeepPartial } from 'ts-essentials'
 
 import { LicensePayload } from '../../src/graphql/schema/license'
 import {
@@ -68,7 +69,7 @@ export function createNotificationEventHandler(
 }
 
 export function createEventsHandler(
-  { eventIds = [], totalCount, pageInfo }: Partial<EventsPayload>,
+  { eventIds = [], totalCount, pageInfo }: DeepPartial<EventsPayload>,
   query?: Record<string, string>
 ) {
   return createJsonHandler({

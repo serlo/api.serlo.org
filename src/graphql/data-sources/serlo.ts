@@ -22,8 +22,9 @@
 import { isSome } from 'fp-ts/lib/Option'
 import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
+import { DeepNonNullable } from 'ts-essentials'
 
-import { Instance, License } from '../../types'
+import { Instance, License, QueryEventsArgs } from '../../types'
 import { Environment } from '../environment'
 import {
   AbstractNotificationEventPayload,
@@ -163,14 +164,7 @@ export class SerloDataSource extends CacheableDataSource {
   }
 
   // Todo: string => number
-  public async getEventIds(query?: {
-    after?: string
-    before?: string
-    first?: number
-    last?: number
-    userId?: number
-    entityId?: number
-  }) {
+  public async getEventIds(query?: Partial<DeepNonNullable<QueryEventsArgs>>) {
     return await this.cacheAwareGet<EventsPayload>({
       path: '/api/events',
       ttl: 5 * 60,
