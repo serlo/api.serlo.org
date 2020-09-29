@@ -943,6 +943,8 @@ export type QueryEventsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    userId?: Maybe<Scalars['Int']>;
+    entityId?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)

@@ -621,6 +621,20 @@ describe('/api/events', () => {
     })
   })
 
+  test('with userId', async () => {
+    await addEventsInteraction({
+      name: 'fetch all events of user with id 10',
+      query: { useId: Matchers.integer(10) },
+    })
+  })
+
+  test('with entityId', async () => {
+    await addEventsInteraction({
+      name: 'fetch all events of entity with id 10',
+      query: { entityId: Matchers.integer(10) },
+    })
+  })
+
   afterEach(async () => {
     await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/events`)
   })

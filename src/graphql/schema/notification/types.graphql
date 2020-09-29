@@ -17,6 +17,8 @@ extend type Query {
     before: String
     first: Int
     last: Int
+    userId: Int
+    entityId: Int
   ): AbstractNotificationEventConnection!
   notifications(
     after: String

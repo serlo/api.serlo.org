@@ -168,6 +168,8 @@ export class SerloDataSource extends CacheableDataSource {
     before?: string
     first?: number
     last?: number
+    userId?: number
+    entityId?: number
   }) {
     return await this.cacheAwareGet<EventsPayload>({
       path: '/api/events',

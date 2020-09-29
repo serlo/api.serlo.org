@@ -163,6 +163,8 @@ describe('events', () => {
       ['before', '"10"'],
       ['first', '10'],
       ['last', '10'],
+      ['userId', '10'],
+      ['entityId', '10'],
     ])('query parameter = %s', async (filterName, filterValue) => {
       global.server.use(
         createNotificationEventHandler(event1),
