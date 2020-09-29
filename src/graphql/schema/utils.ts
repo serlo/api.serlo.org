@@ -56,3 +56,7 @@ export function mergeSchemas(...schemas: Schema[]): Schema {
   const typeDefs = R.flatten(subTypeDefs)
   return { resolvers, typeDefs }
 }
+
+export function isNotNil<A>(value: A | null | undefined): value is A {
+  return value !== null && value !== undefined
+}

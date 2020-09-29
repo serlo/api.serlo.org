@@ -38,6 +38,7 @@ export const applet: AppletPayload = {
   alias: '/math/example-content/example-topic-1/example-applet',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 35597,
+  revisionIds: [35597],
   licenseId: license.id,
   taxonomyTermIds: [5],
 }
@@ -58,7 +59,10 @@ export const appletRevision: AppletRevisionPayload = {
 }
 
 export function getAppletDataWithoutSubResolvers(applet: AppletPayload) {
-  return R.omit(['currentRevisionId', 'licenseId', 'taxonomyTermIds'], applet)
+  return R.omit(
+    ['currentRevisionId', 'revisionIds', 'licenseId', 'taxonomyTermIds'],
+    applet
+  )
 }
 
 export function getAppletRevisionDataWithoutSubResolvers(

@@ -155,7 +155,7 @@ const repositoryCases = R.toPairs(repositoryFixtures) as Array<
 >
 
 describe('Repository', () => {
-  test.each(repositoryCases)('%s by id', async (type, { repository }) => {
+  test.each(repositoryCases)('%s by id', async (_type, { repository }) => {
     global.server.use(createUuidHandler(repository))
     await assertSuccessfulGraphQLQuery({
       query: gql`
@@ -179,7 +179,7 @@ describe('Repository', () => {
     })
   })
 
-  test.each(repositoryCases)('%s by alias', async (type, { repository }) => {
+  test.each(repositoryCases)('%s by alias', async (_type, { repository }) => {
     global.server.use(
       createUuidHandler(repository),
       createAliasHandler({
@@ -247,7 +247,7 @@ describe('Repository', () => {
 
   test.each(repositoryCases)(
     '%s by id (w/ license)',
-    async (type, { repository }) => {
+    async (_type, { repository }) => {
       global.server.use(
         createUuidHandler(repository),
         createLicenseHandler(license)
@@ -263,12 +263,143 @@ describe('Repository', () => {
       })
     }
   )
+
+  describe('property "revisions"', () => {
+    test.each(repositoryCases)(
+      '%s by id (w/ revisions)',
+      async (type, { repository, revision }) => {
+        global.server.use(
+          createUuidHandler(repository),
+          createUuidHandler(revision)
+        )
+        await assertSuccessfulGraphQLQuery({
+          query: `
+          query revisionsOfRepository($id: Int!) {
+            uuid(id: $id) {
+              ... on ${type} {
+                revisions {
+                  totalCount
+                  nodes {
+                    __typename
+                    id
+                    trashed
+                    date
+                  }
+                }
+              }
+            }
+          }
+        `,
+          variables: { id: repository.id },
+          data: {
+            uuid: {
+              revisions: {
+                nodes: [getRevisionDataWithoutSubResolvers(revision)],
+                totalCount: 1,
+              },
+            },
+          },
+          client,
+        })
+      }
+    )
+
+    describe('filter "unrevised" filters for unrevised revisions', () => {
+      test.each(repositoryCases)(
+        'type %s',
+        async (type, { repository, revision }) => {
+          const unrevisedRevision = { ...revision, id: revision.id + 1 }
+          global.server.use(
+            createUuidHandler({
+              ...repository,
+              revisionIds: [unrevisedRevision.id, revision.id],
+            }),
+            createUuidHandler(revision),
+            createUuidHandler(unrevisedRevision)
+          )
+
+          await assertSuccessfulGraphQLQuery({
+            query: `
+              query unrevisedRevisionsOfRepository($id: Int!) {
+                uuid(id: $id) {
+                  ... on ${type} {
+                    revisions (unrevised: true) {
+                      totalCount
+                      nodes {
+                        __typename
+                        id
+                        trashed
+                        date
+                      }
+                    }
+                  }
+                }
+              }
+            `,
+            variables: { id: repository.id },
+            data: {
+              uuid: {
+                revisions: {
+                  nodes: [
+                    getRevisionDataWithoutSubResolvers(unrevisedRevision),
+                  ],
+                  totalCount: 1,
+                },
+              },
+            },
+            client,
+          })
+        }
+      )
+    })
+
+    describe('filter unrevised does not include trashed revisions', () => {
+      test.each(repositoryCases)(
+        'type %s',
+        async (type, { repository, revision }) => {
+          const unrevisedRevision = {
+            ...revision,
+            id: revision.id + 1,
+            trashed: true,
+          }
+          global.server.use(
+            createUuidHandler({
+              ...repository,
+              revisionIds: [unrevisedRevision.id, revision.id],
+            }),
+            createUuidHandler(revision),
+            createUuidHandler(unrevisedRevision)
+          )
+
+          await assertSuccessfulGraphQLQuery({
+            query: `
+              query unrevisedRevisionsOfRepository($id: Int!) {
+                uuid(id: $id) {
+                  ... on ${type} {
+                    revisions (unrevised: true) {
+                      totalCount
+                      nodes {
+                        __typename
+                      }
+                    }
+                  }
+                }
+              }
+            `,
+            variables: { id: repository.id },
+            data: { uuid: { revisions: { nodes: [], totalCount: 0 } } },
+            client,
+          })
+        }
+      )
+    })
+  })
 })
 
 describe('Revision', () => {
   test.each(repositoryCases)(
     '%s by id (w/ author)',
-    async (type, { revision }) => {
+    async (_type, { revision }) => {
       global.server.use(createUuidHandler(revision), createUuidHandler(user))
       await assertSuccessfulGraphQLQuery({
         query: gql`
@@ -301,7 +432,7 @@ describe('Revision', () => {
 
   test.each(repositoryCases)(
     '%s by id (w/ repository)',
-    async (type, { repository, revision, revisionType }) => {
+    async (_type, { repository, revision, revisionType }) => {
       global.server.use(
         createUuidHandler(repository),
         createUuidHandler(revision)

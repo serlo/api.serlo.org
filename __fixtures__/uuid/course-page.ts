@@ -39,6 +39,7 @@ export const coursePage: CoursePagePayload = {
   alias: '/18521/formel',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 19277,
+  revisionIds: [19277],
   licenseId: license.id,
   parentId: course.id,
 }
@@ -58,7 +59,10 @@ export const coursePageRevision: CoursePageRevisionPayload = {
 export function getCoursePageDataWithoutSubResolvers(
   coursePage: CoursePagePayload
 ) {
-  return R.omit(['currentRevisionId', 'licenseId', 'parentId'], coursePage)
+  return R.omit(
+    ['currentRevisionId', 'revisionIds', 'licenseId', 'parentId'],
+    coursePage
+  )
 }
 
 export function getCoursePageRevisionDataWithoutSubResolvers(

@@ -48,6 +48,7 @@ export const solution: SolutionPayload = {
   alias: '/29648/29648',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 29652,
+  revisionIds: [29652],
   licenseId: license.id,
   parentId: exercise.id,
 }
@@ -64,7 +65,10 @@ export const solutionRevision: SolutionRevisionPayload = {
 }
 
 export function getSolutionDataWithoutSubResolvers(solution: SolutionPayload) {
-  return R.omit(['currentRevisionId', 'licenseId', 'parentId'], solution)
+  return R.omit(
+    ['currentRevisionId', 'revisionIds', 'licenseId', 'parentId'],
+    solution
+  )
 }
 
 export function getSolutionRevisionDataWithoutSubResolvers(

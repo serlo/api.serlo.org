@@ -39,6 +39,7 @@ export const course: CoursePayload = {
     '/mathe/geometrie/satzgruppe-des-pythagoras/ueberblick-zum-satz-des-pythagoras',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 30713,
+  revisionIds: [30713],
   licenseId: license.id,
   taxonomyTermIds: [5],
   pageIds: [18521],
@@ -59,7 +60,13 @@ export const courseRevision: CourseRevisionPayload = {
 
 export function getCourseDataWithoutSubResolvers(course: CoursePayload) {
   return R.omit(
-    ['currentRevisionId', 'licenseId', 'taxonomyTermIds', 'pageIds'],
+    [
+      'currentRevisionId',
+      'revisionIds',
+      'licenseId',
+      'taxonomyTermIds',
+      'pageIds',
+    ],
     course
   )
 }

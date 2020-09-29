@@ -19,7 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { requestsOnlyFields } from '../../utils'
+import { resolveConnection } from '../..'
+import { requestsOnlyFields, isNotNil } from '../../utils'
 import { decodePath } from '../alias'
 import { resolveUser } from '../user'
 import {
@@ -42,6 +43,29 @@ export function createRepositoryResolvers<
     async currentRevision(entity, _args, { dataSources }) {
       if (!entity.currentRevisionId) return null
       return dataSources.serlo.getUuid<R>({ id: entity.currentRevisionId })
+    },
+    async revisions(entity, cursorPayload, { dataSources }) {
+      const revsFromSerlo = await Promise.all(
+        entity.revisionIds.map((id) => {
+          return dataSources.serlo.getUuid<R>({ id })
+        })
+      )
+      const revs = revsFromSerlo.filter(isNotNil)
+      const filteredRevs = cursorPayload.unrevised
+        ? revs.filter(
+            (rev) =>
+              (entity.currentRevisionId === null ||
+                rev.id > entity.currentRevisionId) &&
+              !rev.trashed
+          )
+        : revs
+      return resolveConnection<R>({
+        nodes: filteredRevs,
+        payload: cursorPayload,
+        createCursor(node) {
+          return node.id.toString()
+        },
+      })
     },
     async license(repository, _args, { dataSources }, info) {
       const partialLicense = { id: repository.licenseId }

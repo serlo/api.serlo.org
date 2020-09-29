@@ -40,6 +40,7 @@ export const article: ArticlePayload = {
   currentRevisionId: 30674,
   licenseId: license.id,
   taxonomyTermIds: [5],
+  revisionIds: [30674],
 }
 
 export const articleRevision: ArticleRevisionPayload = {
@@ -57,7 +58,10 @@ export const articleRevision: ArticleRevisionPayload = {
 }
 
 export function getArticleDataWithoutSubResolvers(article: ArticlePayload) {
-  return R.omit(['currentRevisionId', 'licenseId', 'taxonomyTermIds'], article)
+  return R.omit(
+    ['currentRevisionId', 'revisionIds', 'licenseId', 'taxonomyTermIds'],
+    article
+  )
 }
 
 export function getArticleRevisionDataWithoutSubResolvers(

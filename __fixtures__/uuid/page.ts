@@ -37,6 +37,7 @@ export const page: PagePayload = {
   alias: '/mathe',
   date: '2015-02-28T02:06:40Z',
   currentRevisionId: 35476,
+  revisionIds: [35476],
   licenseId: license.id,
 }
 
@@ -52,7 +53,10 @@ export const pageRevision: PageRevisionPayload = {
 }
 
 export function getPageDataWithoutSubResolvers(page: PagePayload) {
-  return R.omit(['currentRevisionId', 'licenseId', 'taxonomyTermIds'], page)
+  return R.omit(
+    ['currentRevisionId', 'revisionIds', 'licenseId', 'taxonomyTermIds'],
+    page
+  )
 }
 
 export function getPageRevisionDataWithoutSubResolvers(
