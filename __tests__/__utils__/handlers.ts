@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { rest } from 'msw'
+import { rest, MockedRequest } from 'msw'
 import * as R from 'ramda'
 
 import { LicensePayload } from '../../src/graphql/schema/license'
@@ -107,7 +107,7 @@ export function createJsonHandler({
 }) {
   return rest.get(
     `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
-    (req, res, ctx) => {
+    (req: MockedRequest, res, ctx) => {
       return R.toPairs(query).every(([key, value]) => {
         return req.url.searchParams.get(key) === value
       })

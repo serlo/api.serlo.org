@@ -602,7 +602,7 @@ test('SetUuidStateNotificationEvent', async () => {
   })
 })
 
-describe('/api/events', async () => {
+describe('/api/events', () => {
   test('without a query string', async () => {
     await addEventsInteraction({ name: 'fetch all event ids' })
   })
