@@ -68,10 +68,23 @@ export function createNotificationEventHandler(
 }
 
 export function createEventsHandler(
-  body: EventsPayload,
+  { eventIds = [], totalCount, pageInfo }: Partial<EventsPayload>,
   query?: Record<string, string>
 ) {
-  return createJsonHandler({ path: '/api/events', query, body })
+  return createJsonHandler({
+    path: '/api/events',
+    query,
+    body: {
+      eventIds,
+      totalCount: totalCount ?? eventIds.length,
+      pageInfo: {
+        hasNextPage: pageInfo?.hasNextPage ?? false,
+        hasPreviousPage: pageInfo?.hasPreviousPage ?? false,
+        startCursor: pageInfo?.startCursor ?? eventIds[0] ?? null,
+        endCursor: pageInfo?.endCursor ?? R.last(eventIds) ?? null,
+      },
+    },
+  })
 }
 
 export function createUuidHandler(uuid: UuidPayload) {

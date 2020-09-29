@@ -32,16 +32,7 @@ describe('events', () => {
     global.server.use(
       createNotificationEventHandler(event1),
       createNotificationEventHandler(event2),
-      createEventsHandler({
-        eventIds: [2, 1],
-        totalCount: 2,
-        pageInfo: {
-          hasNextPage: false,
-          hasPreviousPage: false,
-          startCursor: 1,
-          endCursor: 2,
-        },
-      })
+      createEventsHandler({ eventIds: [2, 1] })
     )
 
     await assertSuccessfulGraphQLQuery({
@@ -76,7 +67,6 @@ describe('events', () => {
   test('forwards results of serlo.org', async () => {
     global.server.use(
       createEventsHandler({
-        eventIds: [],
         totalCount: 100,
         pageInfo: {
           hasNextPage: true,
@@ -119,11 +109,9 @@ describe('events', () => {
   test('forwards results of serlo.org (start and end cursor is null)', async () => {
     global.server.use(
       createEventsHandler({
-        eventIds: [],
-        totalCount: 100,
         pageInfo: {
-          hasNextPage: true,
-          hasPreviousPage: true,
+          hasPreviousPage: false,
+          hasNextPage: false,
           startCursor: null,
           endCursor: null,
         },
