@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Matchers } from '@pact-foundation/pact'
+import { Matchers, Query } from '@pact-foundation/pact'
 
 import { NavigationPayload, UuidPayload } from '../../src/graphql/schema'
 
@@ -57,10 +57,12 @@ export function addJsonInteraction({
   given,
   path,
   body,
+  query,
 }: {
   name: string
   given: string
   path: string
+  query?: Query
   body: unknown
 }) {
   return global.pact.addInteraction({
@@ -69,6 +71,7 @@ export function addJsonInteraction({
     withRequest: {
       method: 'GET',
       path,
+      query,
     },
     willRespondWith: {
       status: 200,

@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Matchers } from '@pact-foundation/pact'
+import { Matchers, Query } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 import fetch from 'node-fetch'
 
@@ -602,14 +602,44 @@ test('SetUuidStateNotificationEvent', async () => {
   })
 })
 
-test('/api/current-event-id', async () => {
-  await addJsonInteraction({
-    name: 'fetch current event id',
-    given: 'current event id is 100',
-    path: '/api/current-event-id',
-    body: {
-      currentEventId: Matchers.integer(100),
-    },
+describe('/api/events', async () => {
+  test('without a query string', async () => {
+    await addEventsInteraction({ name: 'fetch all event ids' })
   })
-  await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/current-event-id`)
+
+  test('with after and first', async () => {
+    await addEventsInteraction({
+      name: 'fetch first 10 event ids after event with id 100',
+      query: { after: Matchers.integer(100), first: Matchers.integer(10) },
+    })
+  })
+
+  test('with before and last', async () => {
+    await addEventsInteraction({
+      name: 'fetch last 10 event ids before event with id 100',
+      query: { before: Matchers.integer(100), last: Matchers.integer(10) },
+    })
+  })
+
+  afterEach(async () => {
+    await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/events`)
+  })
+
+  async function addEventsInteraction({
+    name,
+    query,
+  }: {
+    name: string
+    query?: Query
+  }) {
+    await addJsonInteraction({
+      name,
+      given: 'there is one matching event',
+      path: '/api/events',
+      query,
+      body: {
+        eventIds: Matchers.eachLike(1),
+      },
+    })
+  }
 })

@@ -161,10 +161,17 @@ export class SerloDataSource extends CacheableDataSource {
     return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
   }
 
-  public async getCurrentEventId(): Promise<{ currentEventId: number }> {
-    return await this.cacheAwareGet<{ currentEventId: number }>({
-      path: '/api/current-event-id',
-      ttl: 60 * 60 * 24,
+  // Todo: string => number
+  public async getEventIds(query?: {
+    after?: string
+    before?: string
+    first?: number
+    last?: number
+  }) {
+    return await this.cacheAwareGet<{ eventIds: number[] }>({
+      path: '/api/events',
+      ttl: 5 * 60,
+      query,
     })
   }
 
@@ -251,11 +258,13 @@ export class SerloDataSource extends CacheableDataSource {
     instance = Instance.De,
     ttl,
     ignoreCache,
+    query = {},
   }: {
     path: string
     instance?: Instance
     ttl?: number
     ignoreCache?: boolean
+    query?: Record<string, string | number | undefined>
   }): Promise<T> {
     const cacheKey = this.getCacheKey(path, instance)
 
@@ -271,7 +280,7 @@ export class SerloDataSource extends CacheableDataSource {
     })
     const data = await super.get<T>(
       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
-      {},
+      query,
       {
         headers: {
           Authorization: `Serlo Service=${token}`,

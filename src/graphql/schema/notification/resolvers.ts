@@ -20,15 +20,14 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { AuthenticationError } from 'apollo-server'
-import * as R from 'ramda'
 
-import { resolveConnection, mapConnectionAsync } from '../connection'
+import { resolveConnection } from '../connection'
 import { Context } from '../types'
+import { isNotNil } from '../utils'
 import {
   NotificationEventPayload,
   NotificationPayload,
   NotificationResolvers,
-  AbstractNotificationEventPayload,
 } from './types'
 
 export const resolvers: NotificationResolvers = {
@@ -47,22 +46,21 @@ export const resolvers: NotificationResolvers = {
   },
   Query: {
     async events(_parent, cursorPayload, { dataSources }) {
-      const { currentEventId } = await dataSources.serlo.getCurrentEventId()
-      const eventIdConnection = resolveConnection<number>({
-        nodes: R.range(1, currentEventId + 1).reverse(),
-        payload: cursorPayload,
-        createCursor: (id: number) => id.toString(),
-        maxNumberOfNodes: 100
+      const { eventIds } = await dataSources.serlo.getEventIds({
+        after: cursorPayload.after ?? undefined,
+        before: cursorPayload.before ?? undefined,
+        first: cursorPayload.first ?? undefined,
+        last: cursorPayload.last ?? undefined,
       })
-
-      return await mapConnectionAsync(
-        (eventId: number) =>
-          // Todo: Filter non existing events out
-          dataSources.serlo.getNotificationEvent({ id: eventId }) as Promise<
-            AbstractNotificationEventPayload
-          >,
-        eventIdConnection
+      const events = await Promise.all(
+        eventIds.map((id) => dataSources.serlo.getNotificationEvent({ id }))
       )
+      const result = resolveConnection({
+        nodes: events.filter(isNotNil),
+        payload: {},
+        createCursor: (event) => event.id.toString(),
+      })
+      return result
     },
     async notifications(
       _parent,

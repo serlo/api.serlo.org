@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { rest } from 'msw'
+import * as R from 'ramda'
 
 import { LicensePayload } from '../../src/graphql/schema/license'
 import { NotificationEventPayload } from '../../src/graphql/schema/notification'
@@ -63,11 +64,11 @@ export function createNotificationEventHandler(
   })
 }
 
-export function createCurrentEventIdHandler(currentEventId: number) {
-  return createJsonHandler({
-    path: '/api/current-event-id',
-    body: { currentEventId },
-  })
+export function createEventIdsHandler(
+  eventIds: number[],
+  query?: Record<string, string>
+) {
+  return createJsonHandler({ path: '/api/events', query, body: { eventIds } })
 }
 
 export function createUuidHandler(uuid: UuidPayload) {
@@ -80,16 +81,22 @@ export function createUuidHandler(uuid: UuidPayload) {
 export function createJsonHandler({
   instance = Instance.De,
   path,
+  query = {},
   body,
 }: {
   instance?: Instance
   path: string
+  query?: Record<string, string>
   body: unknown
 }) {
   return rest.get(
     `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
-    (_req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(body as Record<string, unknown>))
+    (req, res, ctx) => {
+      return R.toPairs(query).every(([key, value]) => {
+        return req.url.searchParams.get(key) === value
+      })
+        ? res(ctx.status(200), ctx.json(body as Record<string, unknown>))
+        : res(ctx.status(400))
     }
   )
 }

@@ -28,27 +28,13 @@ export function resolveConnection<T>({
   nodes,
   payload,
   createCursor,
-  maxNumberOfNodes,
 }: {
   nodes: T[]
   payload: ConnectionPayload
   createCursor(node: T): string
-  maxNumberOfNodes?: number
 }): Connection<T> {
   const { before, after } = payload
-  let { first, last } = payload
-
-  if (maxNumberOfNodes) {
-    if (first) {
-      first = Math.min(first, maxNumberOfNodes)
-    } else if (!last) {
-      first = maxNumberOfNodes
-    }
-
-    if (last) {
-      last = Math.min(last, maxNumberOfNodes)
-    }
-  }
+  const { first, last } = payload
 
   const allEdges = nodes.map((node) => {
     return {
@@ -113,17 +99,4 @@ export function resolveConnection<T>({
     if (before != null) return getBeforeIndex() + 1 < allEdges.length
     return false
   }
-}
-
-export async function mapConnectionAsync<A, B>(
-  mapFunc: (a: A) => Promise<B>,
-  connection: Connection<A>
-): Promise<Connection<B>> {
-  const edges = await Promise.all(
-    connection.edges.map(async (edge) => {
-      return { node: await mapFunc(edge.node), cursor: edge.cursor }
-    })
-  )
-
-  return { ...connection, edges, nodes: edges.map((edge) => edge.node) }
 }
