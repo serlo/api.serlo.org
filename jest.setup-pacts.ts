@@ -40,23 +40,26 @@ const server = setupServer(
   rest.get(
     new RegExp(process.env.SERLO_ORG_HOST.replace('.', '\\.')),
     async (req, res, ctx) => {
-      const url = req.url
-      const pactRes = await fetch(`http://localhost:${port}/${url.pathname}`)
+      const pactRes = await fetch(
+        `http://localhost:${port}/${req.url.pathname}${req.url.search}`
+      )
       return res(ctx.status(pactRes.status), ctx.json(await pactRes.json()))
     }
   ),
   rest.post(
     new RegExp(process.env.SERLO_ORG_HOST.replace('.', '\\.')),
     async (req, res, ctx) => {
-      const url = req.url
-      const pactRes = await fetch(`http://localhost:${port}/${url.pathname}`, {
-        method: 'POST',
-        body:
-          typeof req.body === 'object' ? JSON.stringify(req.body) : req.body,
-        headers: {
-          'Content-Type': req.headers.get('Content-Type')!,
-        },
-      })
+      const pactRes = await fetch(
+        `http://localhost:${port}/${req.url.pathname}${req.url.search}`,
+        {
+          method: 'POST',
+          body:
+            typeof req.body === 'object' ? JSON.stringify(req.body) : req.body,
+          headers: {
+            'Content-Type': req.headers.get('Content-Type')!,
+          },
+        }
+      )
       return res(ctx.status(pactRes.status), ctx.json(await pactRes.json()))
     }
   )

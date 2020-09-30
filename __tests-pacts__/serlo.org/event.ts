@@ -19,9 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Matchers, Query } from '@pact-foundation/pact'
+import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 import fetch from 'node-fetch'
+import * as R from 'ramda'
 
 import {
   checkoutRevisionNotificationEvent,
@@ -607,36 +608,46 @@ describe('/api/events', () => {
     await addEventsInteraction({ name: 'fetch all event ids' })
   })
 
-  test('with after and first', async () => {
+  test('with after', async () => {
     await addEventsInteraction({
       name: 'fetch first 10 event ids after event with id 100',
-      query: { after: Matchers.integer(100), first: Matchers.integer(10) },
+      query: { after: '10' },
     })
   })
 
-  test('with before and last', async () => {
+  test('with first', async () => {
     await addEventsInteraction({
-      name: 'fetch last 10 event ids before event with id 100',
-      query: { before: Matchers.integer(100), last: Matchers.integer(10) },
+      name: 'fetch first 10 event',
+      query: { first: '10' },
+    })
+  })
+
+  test('with before', async () => {
+    await addEventsInteraction({
+      name: 'fetch before event with id 100',
+      query: { before: '100' },
+    })
+  })
+
+  test('with last', async () => {
+    await addEventsInteraction({
+      name: 'fetch last 10 event ids',
+      query: { last: '10' },
     })
   })
 
   test('with userId', async () => {
     await addEventsInteraction({
       name: 'fetch all events of user with id 10',
-      query: { useId: Matchers.integer(10) },
+      query: { useId: '10' },
     })
   })
 
   test('with entityId', async () => {
     await addEventsInteraction({
       name: 'fetch all events of entity with id 10',
-      query: { entityId: Matchers.integer(10) },
+      query: { entityId: '10' },
     })
-  })
-
-  afterEach(async () => {
-    await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/events`)
   })
 
   async function addEventsInteraction({
@@ -644,7 +655,7 @@ describe('/api/events', () => {
     query,
   }: {
     name: string
-    query?: Query
+    query?: Record<string, string>
   }) {
     await addJsonInteraction({
       name,
@@ -662,5 +673,16 @@ describe('/api/events', () => {
         },
       },
     })
+
+    const queryString = query
+      ? '?' +
+        R.toPairs(query)
+          .map(([key, value]) => `${key}=${value}`)
+          .join('&')
+      : ''
+
+    await fetch(
+      `http://de.${process.env.SERLO_ORG_HOST}/api/events${queryString}`
+    )
   }
 })
