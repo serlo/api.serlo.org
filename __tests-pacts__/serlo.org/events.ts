@@ -28,7 +28,7 @@ test('without a query string', async () => {
   await addEventsInteraction({ name: 'fetch all event ids' })
 })
 
-test.each(['after', 'before', 'first', 'last', 'userId', 'entityId'])(
+test.each(['after', 'before', 'first', 'last', 'userId', 'uuid'])(
   'query parameter = %s',
   async (parameter) => {
     await addEventsInteraction({

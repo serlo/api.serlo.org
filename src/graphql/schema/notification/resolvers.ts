@@ -56,7 +56,7 @@ export const resolvers: NotificationResolvers = {
         first: cursorPayload.first ?? undefined,
         last: cursorPayload.last ?? undefined,
         userId: cursorPayload.userId ?? undefined,
-        entityId: cursorPayload.entityId ?? undefined,
+        uuid: cursorPayload.uuid ?? undefined,
       })
       const eventsFromSerlo = await Promise.all(
         eventIds.map((id) => dataSources.serlo.getNotificationEvent({ id }))
