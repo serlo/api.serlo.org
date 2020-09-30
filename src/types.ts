@@ -174,8 +174,8 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & {
   instance: Instance;
   date: Scalars['DateTime'];
   actor: User;
-  thread: UnsupportedThread;
-  comment: UnsupportedComment;
+  thread: Thread;
+  comment: Comment;
 };
 
 export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & {
@@ -233,7 +233,7 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & {
   date: Scalars['DateTime'];
   actor: User;
   object: AbstractUuid;
-  thread: UnsupportedThread;
+  thread: Thread;
 };
 
 export type RejectRevisionNotificationEvent = AbstractNotificationEvent & {
@@ -302,7 +302,7 @@ export type SetThreadStateNotificationEvent = AbstractNotificationEvent & {
   instance: Instance;
   date: Scalars['DateTime'];
   actor: User;
-  thread: UnsupportedThread;
+  thread: Thread;
   archived: Scalars['Boolean'];
 };
 
@@ -362,28 +362,6 @@ export type ThreadCommentsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
-};
-
-export type CommentConnection = {
-  __typename?: 'CommentConnection';
-  edges: Array<CommentEdge>;
-  nodes: Array<Comment>;
-  totalCount: Scalars['Int'];
-  pageInfo: PageInfo;
-};
-
-export type CommentEdge = {
-  __typename?: 'CommentEdge';
-  cursor: Scalars['String'];
-  node: Comment;
-};
-
-export type Comment = {
-  __typename?: 'Comment';
-  id: Scalars['Int'];
-  content: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  author: User;
 };
 
 export type ThreadsConnection = {
@@ -645,6 +623,28 @@ export type ArticleRevisionThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+};
+
+export type CommentConnection = {
+  __typename?: 'CommentConnection';
+  edges: Array<CommentEdge>;
+  nodes: Array<Comment>;
+  totalCount: Scalars['Int'];
+  pageInfo: PageInfo;
+};
+
+export type CommentEdge = {
+  __typename?: 'CommentEdge';
+  cursor: Scalars['String'];
+  node: Comment;
+};
+
+export type Comment = {
+  __typename?: 'Comment';
+  id: Scalars['Int'];
+  content: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  author: User;
 };
 
 export type CoursePage = AbstractUuid & AbstractRepository & AbstractEntity & {
@@ -1075,16 +1075,6 @@ export type AbstractUuidCursor = {
   __typename?: 'AbstractUuidCursor';
   cursor: Scalars['String'];
   node: AbstractUuid;
-};
-
-export type UnsupportedThread = {
-  __typename?: 'UnsupportedThread';
-  id: Scalars['Int'];
-};
-
-export type UnsupportedComment = {
-  __typename?: 'UnsupportedComment';
-  id: Scalars['Int'];
 };
 
 export type User = AbstractUuid & {

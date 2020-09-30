@@ -39,9 +39,9 @@ import {
   NodeData,
   NotificationsPayload,
 } from '../schema'
+import { ThreadsPayload } from '../schema/threads/types'
 import { Service } from '../schema/types'
 import { CacheableDataSource } from './cacheable-data-source'
-import { ThreadsPayload } from '../schema/threads/types'
 
 export class SerloDataSource extends CacheableDataSource {
   public constructor(private environment: Environment) {

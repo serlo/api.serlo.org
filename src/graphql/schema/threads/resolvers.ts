@@ -2,7 +2,7 @@ import * as R from 'ramda'
 
 import { resolveConnection } from '../connection'
 import { UuidPayload } from '../uuid'
-import { CommentPayload } from '../uuid/thread/types'
+import { CommentPayload } from '../uuid/comment/types'
 import { ThreadResolvers } from './types'
 
 export const resolvers: ThreadResolvers = {

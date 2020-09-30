@@ -29,6 +29,7 @@ import { abstractUuidSchema } from './abstract-uuid'
 import { aliasSchema } from './alias'
 import { appletSchema } from './applet'
 import { articleSchema } from './article'
+import { commentSchema } from './comment'
 import { courseSchema } from './course'
 import { coursePageSchema } from './course-page'
 import { eventSchema } from './event'
@@ -38,7 +39,6 @@ import { groupedExerciseSchema } from './grouped-exercise'
 import { pageSchema } from './page'
 import { solutionSchema } from './solution'
 import { taxonomyTermSchema } from './taxonomy-term'
-import { threadSchema } from './thread'
 import { userSchema } from './user'
 import { videoSchema } from './video'
 
@@ -60,7 +60,7 @@ export * from './grouped-exercise'
 export * from './page'
 export * from './solution'
 export * from './taxonomy-term'
-export * from './thread'
+export * from './comment'
 export * from './user'
 export * from './video'
 
@@ -83,7 +83,7 @@ export const uuidSchema = mergeSchemas(
   pageSchema,
   solutionSchema,
   taxonomyTermSchema,
-  threadSchema,
+  commentSchema,
   userSchema,
   videoSchema
 )

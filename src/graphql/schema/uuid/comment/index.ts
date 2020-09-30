@@ -22,4 +22,4 @@
 import { Schema } from '../../utils'
 import typeDefs from './types.graphql'
 
-export const threadSchema: Schema = { resolvers: {}, typeDefs: [typeDefs] }
+export const commentSchema: Schema = { resolvers: {}, typeDefs: [typeDefs] }

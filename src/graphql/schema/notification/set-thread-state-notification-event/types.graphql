@@ -3,6 +3,6 @@ type SetThreadStateNotificationEvent implements AbstractNotificationEvent {
   instance: Instance!
   date: DateTime!
   actor: User!
-  thread: UnsupportedThread!
+  thread: Thread!
   archived: Boolean!
 }

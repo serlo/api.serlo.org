@@ -1,0 +1,18 @@
+type CommentConnection {
+  edges: [CommentEdge!]!
+  nodes: [Comment!]! # List of comments
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type CommentEdge {
+  cursor: String!
+  node: Comment!
+}
+
+type Comment {
+  id: Int!
+  content: String!
+  createdAt: DateTime!
+  author: User!
+}
