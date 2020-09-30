@@ -1,48 +1,29 @@
 type Thread {
-    id: Int!
-    createdAt: DateTime!
-    updatedAt: DateTime!
-    title: String!
-    archived: Boolean!
-    trashed: Boolean!
-    object: AbstractUuid! # Shouldn't that be named author?
-    comments (
-        after: String
-        before: String
-        first: Int
-        last: Int
-    ): CommentConnection!
-}
-
-type CommentConnection {
-    edges: [CommentEdge!]!
-    nodes: [Comment!]!  # List of comments
-    totalCount: Int!
-    pageInfo: PageInfo!
-}
-
-type CommentEdge {
-    cursor: String!
-    node: Comment!
-}
-
-type Comment {
-    id: Int!
-    content: String!
-    createdAt: DateTime!
-    author: User!
+  id: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  title: String!
+  archived: Boolean!
+  trashed: Boolean!
+  object: AbstractUuid! # Shouldn't that be named author?
+  comments(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CommentConnection!
 }
 
 type ThreadsConnection {
-    edges: [ThreadsCursor!]!
-    nodes: [Thread!]!
-    totalCount: Int!
-    pageInfo: PageInfo!
+  edges: [ThreadsCursor!]!
+  nodes: [Thread!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
 }
 
 type ThreadsCursor {
-    cursor: String!
-    node: Thread!
+  cursor: String!
+  node: Thread!
 }
 
 # TODO: Mutation ergänzen

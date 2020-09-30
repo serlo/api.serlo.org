@@ -2,7 +2,7 @@ import { Scalars, Thread, ThreadCommentsArgs } from '../../../types'
 import { Connection } from '../connection'
 import { Resolver } from '../types'
 import { DiscriminatorType, UuidPayload } from '../uuid'
-import { CommentPayload } from '../uuid/thread/types'
+import { CommentPayload } from '../uuid/comment/types'
 
 export interface ThreadsPayload {
   threadIds: number[]

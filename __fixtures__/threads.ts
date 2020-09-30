@@ -1,6 +1,9 @@
 import { user } from '.'
-import { DiscriminatorType, ThreadsPayload } from '../src/graphql/schema'
-import { ThreadPayload } from '../src/graphql/schema/uuid/thread/types'
+import {
+  DiscriminatorType,
+  ThreadPayload,
+  ThreadsPayload,
+} from '../src/graphql/schema'
 
 // TODO: Hier muss die wirkliche Serverantwort stehen (kein Thread!)
 export const thread: ThreadPayload = {

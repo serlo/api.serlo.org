@@ -382,8 +382,8 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & {
     instance: Instance;
     date: Scalars['DateTime'];
     actor: User;
-    thread: UnsupportedThread;
-    comment: UnsupportedComment;
+    thread: Thread;
+    comment: Comment;
 };
 
 // @public (undocumented)
@@ -447,7 +447,7 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & {
     date: Scalars['DateTime'];
     actor: User;
     object: AbstractUuid;
-    thread: UnsupportedThread;
+    thread: Thread;
 };
 
 // @public (undocumented)
@@ -992,7 +992,7 @@ export type SetThreadStateNotificationEvent = AbstractNotificationEvent & {
     instance: Instance;
     date: Scalars['DateTime'];
     actor: User;
-    thread: UnsupportedThread;
+    thread: Thread;
     archived: Scalars['Boolean'];
 };
 
@@ -1176,18 +1176,6 @@ export type ThreadsCursor = {
     __typename?: 'ThreadsCursor';
     cursor: Scalars['String'];
     node: Thread;
-};
-
-// @public (undocumented)
-export type UnsupportedComment = {
-    __typename?: 'UnsupportedComment';
-    id: Scalars['Int'];
-};
-
-// @public (undocumented)
-export type UnsupportedThread = {
-    __typename?: 'UnsupportedThread';
-    id: Scalars['Int'];
 };
 
 // @public (undocumented)
