@@ -29,6 +29,9 @@ describe('GET /api/cache-keys', () => {
 describe('GET /api/event/:id', () => {
   require('./event')
 })
+describe('GET /api/events', () => {
+  require('./events')
+})
 describe('GET /api/license/:id', () => {
   require('./license')
 })

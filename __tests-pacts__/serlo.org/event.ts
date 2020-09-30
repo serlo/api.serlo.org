@@ -21,8 +21,6 @@
  */
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
-import fetch from 'node-fetch'
-import * as R from 'ramda'
 
 import {
   checkoutRevisionNotificationEvent,
@@ -601,88 +599,4 @@ test('SetUuidStateNotificationEvent', async () => {
       ),
     },
   })
-})
-
-describe('/api/events', () => {
-  test('without a query string', async () => {
-    await addEventsInteraction({ name: 'fetch all event ids' })
-  })
-
-  test('with after', async () => {
-    await addEventsInteraction({
-      name: 'fetch first 10 event ids after event with id 100',
-      query: { after: '10' },
-    })
-  })
-
-  test('with first', async () => {
-    await addEventsInteraction({
-      name: 'fetch first 10 event',
-      query: { first: '10' },
-    })
-  })
-
-  test('with before', async () => {
-    await addEventsInteraction({
-      name: 'fetch before event with id 100',
-      query: { before: '100' },
-    })
-  })
-
-  test('with last', async () => {
-    await addEventsInteraction({
-      name: 'fetch last 10 event ids',
-      query: { last: '10' },
-    })
-  })
-
-  test('with userId', async () => {
-    await addEventsInteraction({
-      name: 'fetch all events of user with id 10',
-      query: { useId: '10' },
-    })
-  })
-
-  test('with entityId', async () => {
-    await addEventsInteraction({
-      name: 'fetch all events of entity with id 10',
-      query: { entityId: '10' },
-    })
-  })
-
-  async function addEventsInteraction({
-    name,
-    query,
-  }: {
-    name: string
-    query?: Record<string, string>
-  }) {
-    await addJsonInteraction({
-      name,
-      given: 'there is one matching event',
-      path: '/api/events',
-      query,
-      body: {
-        eventIds: Matchers.eachLike(1),
-        totalCount: Matchers.integer(1),
-        pageInfo: {
-          hasNextPage: Matchers.boolean(false),
-          hasPreviousPage: Matchers.boolean(false),
-          startCursor: Matchers.integer(1),
-          endCursor: Matchers.integer(1),
-        },
-      },
-    })
-
-    const queryString = query
-      ? '?' +
-        R.toPairs(query)
-          .map(([key, value]) => `${key}=${value}`)
-          .join('&')
-      : ''
-
-    await fetch(
-      `http://de.${process.env.SERLO_ORG_HOST}/api/events${queryString}`
-    )
-  }
 })
