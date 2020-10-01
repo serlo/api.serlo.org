@@ -37,7 +37,6 @@ export const resolvers: SubscriptionResolvers = {
           return dataSources.serlo.getUuid<UuidPayload>({ id: id.id })
         })
       )
-      console.log(subscriptions)
       return resolveConnection<AbstractUuidPayload>({
         nodes: result.filter(
           (payload) => payload !== null

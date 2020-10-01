@@ -44,7 +44,7 @@ test('Subscriptions', async () => {
   await assertSuccessfulGraphQLQuery({
     query: gql`
       query {
-        notifications {
+        subscriptions {
           nodes {
             id
           }
@@ -53,7 +53,7 @@ test('Subscriptions', async () => {
       }
     `,
     data: {
-      notifications: {
+      subscriptions: {
         nodes: [
           {
             id: 1,

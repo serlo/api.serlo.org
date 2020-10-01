@@ -40,7 +40,7 @@ import {
   NodeData,
   NotificationsPayload,
 } from '../schema'
-import { SubscriptionsPayload } from '../schema/subscriptions'
+import { SubscriptionsPayload } from '../schema/subscription'
 import { Service } from '../schema/types'
 
 export class SerloDataSource extends RESTDataSource {
@@ -207,12 +207,12 @@ export class SerloDataSource extends RESTDataSource {
     await this.environment.cache.set(cacheKey, response)
   }
 
-  public async getSubscription({
-    userid,
+  public async getSubscriptions({
+    id,
   }: {
-    userid: number
+    id: number
   }): Promise<SubscriptionsPayload> {
-    return this.cacheAwareGet({ path: `/api/subscriptions/${userid}` })
+    return this.cacheAwareGet({ path: `/api/subscriptions/${id}` })
   }
 
   private async customPost<
