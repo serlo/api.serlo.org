@@ -26,6 +26,7 @@ import {
   RepositoryPayload,
   RevisionPayload,
 } from '../../src/graphql/schema/uuid/abstract-repository'
+import { encodePath } from '../../src/graphql/schema/uuid/alias'
 import { getUuidDataWithoutSubResolvers } from './abstract-uuid'
 
 export function createRepositoryLicenseQuery(variables: RepositoryPayload) {
@@ -57,7 +58,8 @@ export function getRepositoryDataWithoutSubResolvers(
 ) {
   return {
     ...getUuidDataWithoutSubResolvers(repository),
-    ...R.pick(['alias', 'date'], repository),
+    ...R.pick(['date'], repository),
+    alias: repository['alias'] ? encodePath(repository['alias']) : null,
   }
 }
 

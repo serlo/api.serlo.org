@@ -23,10 +23,16 @@ import { gql } from 'apollo-server'
 import { option as O } from 'fp-ts'
 import { rest } from 'msw'
 
-import { article, user, user2 } from '../../../__fixtures__'
+import {
+  article,
+  getUserDataWithoutSubResolver,
+  user,
+  user2,
+} from '../../../__fixtures__'
 import { Cache } from '../../../src/graphql/environment'
 import { Service } from '../../../src/graphql/schema/types'
 import { UuidPayload } from '../../../src/graphql/schema/uuid/abstract-uuid'
+import { Instance } from '../../../src/types'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
@@ -48,15 +54,127 @@ beforeEach(() => {
 })
 
 describe('User', () => {
+  test('by alias (/user/profile/:id)', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query user($alias: AliasInput!) {
+          uuid(alias: $alias) {
+            __typename
+            ... on User {
+              id
+              trashed
+              alias
+              username
+              date
+              lastLogin
+              description
+            }
+          }
+        }
+      `,
+      variables: {
+        alias: {
+          instance: Instance.De,
+          path: `/user/profile/${user.id}`,
+        },
+      },
+      data: {
+        uuid: getUserDataWithoutSubResolver(user),
+      },
+      client,
+    })
+  })
+
+  test('by alias /user/profile/:id returns null when user does not exist', async () => {
+    global.server.use(
+      createJsonHandler({
+        path: `/api/uuid/${user.id}`,
+        body: null,
+      })
+    )
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query user($alias: AliasInput!) {
+          uuid(alias: $alias) {
+            __typename
+          }
+        }
+      `,
+      variables: {
+        alias: {
+          instance: Instance.De,
+          path: `/user/profile/${user.id}`,
+        },
+      },
+      data: { uuid: null },
+      client,
+    })
+  })
+
+  test('by alias /user/profile/:id returns null when uuid :id is no user', async () => {
+    global.server.use(createUuidHandler(article))
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query user($alias: AliasInput!) {
+          uuid(alias: $alias) {
+            __typename
+          }
+        }
+      `,
+      variables: {
+        alias: {
+          instance: Instance.De,
+          path: `/user/profile/${article.id}`,
+        },
+      },
+      data: { uuid: null },
+      client,
+    })
+  })
+
+  test('by alias (/:id)', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query user($alias: AliasInput!) {
+          uuid(alias: $alias) {
+            __typename
+            ... on User {
+              id
+              trashed
+              alias
+              username
+              date
+              lastLogin
+              description
+            }
+          }
+        }
+      `,
+      variables: {
+        alias: {
+          instance: Instance.De,
+          path: `/${user.id}`,
+        },
+      },
+      data: {
+        uuid: getUserDataWithoutSubResolver(user),
+      },
+      client,
+    })
+  })
+
   test('by id', async () => {
     await assertSuccessfulGraphQLQuery({
       query: gql`
-        query article($id: Int!) {
+        query user($id: Int!) {
           uuid(id: $id) {
             __typename
             ... on User {
               id
               trashed
+              alias
               username
               date
               lastLogin
@@ -67,7 +185,28 @@ describe('User', () => {
       `,
       variables: user,
       data: {
-        uuid: user,
+        uuid: getUserDataWithoutSubResolver(user),
+      },
+      client,
+    })
+  })
+
+  test('alias property is encoded', async () => {
+    global.server.use(createUuidHandler({ ...user, username: 'Günther' }))
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query userAlias($id: Int!) {
+          uuid(id: $id) {
+            ... on User {
+              alias
+            }
+          }
+        }
+      `,
+      variables: { id: user.id },
+      data: {
+        uuid: { alias: '/user/profile/G%C3%BCnther' },
       },
       client,
     })
@@ -196,6 +335,7 @@ describe('endpoint activeAuthors', () => {
           __typename
           id
           trashed
+          alias
           username
           date
           lastLogin
@@ -215,7 +355,13 @@ describe('endpoint activeAuthors', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeAuthorsQuery,
       data: {
-        activeAuthors: { nodes: [user, user2], totalCount: 2 },
+        activeAuthors: {
+          nodes: [
+            getUserDataWithoutSubResolver(user),
+            getUserDataWithoutSubResolver(user2),
+          ],
+          totalCount: 2,
+        },
       },
       client,
     })
@@ -230,7 +376,10 @@ describe('endpoint activeAuthors', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeAuthorsQuery,
       data: {
-        activeAuthors: { nodes: [user], totalCount: 1 },
+        activeAuthors: {
+          nodes: [getUserDataWithoutSubResolver(user)],
+          totalCount: 1,
+        },
       },
       client,
     })
@@ -242,7 +391,10 @@ describe('endpoint activeAuthors', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeAuthorsQuery,
       data: {
-        activeAuthors: { nodes: [user], totalCount: 1 },
+        activeAuthors: {
+          nodes: [getUserDataWithoutSubResolver(user)],
+          totalCount: 1,
+        },
       },
       client,
     })
@@ -261,7 +413,10 @@ describe('endpoint activeAuthors', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeAuthorsQuery,
       data: {
-        activeAuthors: { nodes: [user], totalCount: 1 },
+        activeAuthors: {
+          nodes: [getUserDataWithoutSubResolver(user)],
+          totalCount: 1,
+        },
       },
       client,
     })
@@ -276,6 +431,7 @@ describe('endpoint activeDonors', () => {
           __typename
           id
           trashed
+          alias
           username
           date
           lastLogin
@@ -294,7 +450,13 @@ describe('endpoint activeDonors', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeDonorsQuery,
       data: {
-        activeDonors: { nodes: [user, user2], totalCount: 2 },
+        activeDonors: {
+          nodes: [
+            getUserDataWithoutSubResolver(user),
+            getUserDataWithoutSubResolver(user2),
+          ],
+          totalCount: 2,
+        },
       },
       client,
     })
@@ -308,7 +470,10 @@ describe('endpoint activeDonors', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeDonorsQuery,
       data: {
-        activeDonors: { nodes: [user], totalCount: 1 },
+        activeDonors: {
+          nodes: [getUserDataWithoutSubResolver(user)],
+          totalCount: 1,
+        },
       },
       client,
     })
@@ -403,6 +568,7 @@ describe('endpoint activeReviewers', () => {
           __typename
           id
           trashed
+          alias
           username
           date
           lastLogin
@@ -422,7 +588,13 @@ describe('endpoint activeReviewers', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeReviewersQuery,
       data: {
-        activeReviewers: { nodes: [user, user2], totalCount: 2 },
+        activeReviewers: {
+          nodes: [
+            getUserDataWithoutSubResolver(user),
+            getUserDataWithoutSubResolver(user2),
+          ],
+          totalCount: 2,
+        },
       },
       client,
     })
@@ -437,7 +609,10 @@ describe('endpoint activeReviewers', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeReviewersQuery,
       data: {
-        activeReviewers: { nodes: [user], totalCount: 1 },
+        activeReviewers: {
+          nodes: [getUserDataWithoutSubResolver(user)],
+          totalCount: 1,
+        },
       },
       client,
     })
@@ -449,7 +624,10 @@ describe('endpoint activeReviewers', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeReviewersQuery,
       data: {
-        activeReviewers: { nodes: [user], totalCount: 1 },
+        activeReviewers: {
+          nodes: [getUserDataWithoutSubResolver(user)],
+          totalCount: 1,
+        },
       },
       client,
     })
@@ -468,7 +646,10 @@ describe('endpoint activeReviewers', () => {
     await assertSuccessfulGraphQLQuery({
       query: activeReviewersQuery,
       data: {
-        activeReviewers: { nodes: [user], totalCount: 1 },
+        activeReviewers: {
+          nodes: [getUserDataWithoutSubResolver(user)],
+          totalCount: 1,
+        },
       },
       client,
     })

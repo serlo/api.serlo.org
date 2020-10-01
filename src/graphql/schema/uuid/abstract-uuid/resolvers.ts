@@ -19,7 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { UuidPayload } from '..'
+import { UserInputError } from 'apollo-server'
+
+import { decodePath, UuidPayload } from '..'
 import { UuidResolvers } from './types'
 
 export const resolvers: UuidResolvers = {
@@ -30,11 +32,31 @@ export const resolvers: UuidResolvers = {
   },
   Query: {
     async uuid(_parent, payload, { dataSources }) {
-      const id = payload.alias
-        ? (await dataSources.serlo.getAlias(payload.alias)).id
-        : (payload.id as number)
+      if (payload.alias) {
+        const cleanPath = decodePath(payload.alias.path)
+        const match = /^\/(\d+)$/.exec(cleanPath)
+        if (match) {
+          const id = parseInt(match[1], 10)
+          return dataSources.serlo.getUuid<UuidPayload>({ id })
+        }
 
-      return dataSources.serlo.getUuid<UuidPayload>({ id })
+        if (cleanPath.startsWith('/user/profile/')) {
+          const match = /^\/user\/profile\/(\d+)$/.exec(cleanPath)
+          if (match) {
+            const id = parseInt(match[1], 10)
+            const uuid = await dataSources.serlo.getUuid<UuidPayload>({ id })
+            return uuid && uuid.__typename === 'User' ? uuid : null
+          }
+        }
+        const alias = await dataSources.serlo.getAlias(payload.alias)
+        return alias
+          ? dataSources.serlo.getUuid<UuidPayload>({ id: alias.id })
+          : null
+      } else if (payload.id) {
+        return dataSources.serlo.getUuid<UuidPayload>({ id: payload.id })
+      } else {
+        throw new UserInputError('You need to provide an id or an alias')
+      }
     },
   },
 }

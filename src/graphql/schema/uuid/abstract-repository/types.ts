@@ -44,6 +44,7 @@ import {
   EntityType,
 } from '../abstract-entity'
 import { DiscriminatorType } from '../abstract-uuid'
+import { AliasResolvers } from '../alias'
 import { PagePayload, PageRevisionPayload } from '../page'
 import { UserPayload } from '../user'
 
@@ -94,8 +95,7 @@ type RevisionsConnectionArgs =
 export interface RepositoryResolvers<
   E extends AbstractRepositoryPayload,
   R extends AbstractRevisionPayload
-> {
-  alias: Resolver<E, never, string | null>
+> extends AliasResolvers<E> {
   currentRevision: Resolver<E, never, R | null>
   revisions: Resolver<E, RevisionsConnectionArgs, Connection<R>>
   license: Resolver<E, never, Partial<License>>

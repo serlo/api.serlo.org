@@ -24,6 +24,7 @@ import { gql } from 'apollo-server'
 import { taxonomyTermRoot } from '../../../__fixtures__'
 import { Service } from '../../../src/graphql/schema/types'
 import {
+  assertFailingGraphQLQuery,
   assertSuccessfulGraphQLQuery,
   Client,
   createTestClient,
@@ -59,9 +60,31 @@ describe('uuid', () => {
       variables: { id: taxonomyTermRoot.id },
       data: {
         uuid: {
-          alias: '/math/%%x%%',
+          alias: '/math/%25%25x%25%25',
         },
       },
+      client,
+    })
+  })
+
+  test('returns null when alias cannot be found', async () => {
+    global.server.use(
+      createJsonHandler({
+        path: '/api/alias/not-existing',
+        body: null,
+      })
+    )
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notExistingUuid($alias: AliasInput) {
+          uuid(alias: $alias) {
+            __typename
+          }
+        }
+      `,
+      variables: { alias: { instance: 'de', path: '/not-existing' } },
+      data: { uuid: null },
       client,
     })
   })
@@ -81,6 +104,19 @@ describe('uuid', () => {
       data: {
         uuid: null,
       },
+      client,
+    })
+  })
+
+  test('returns an error when no arguments are given', async () => {
+    await assertFailingGraphQLQuery({
+      query: gql`
+        query emptyUuidRequest {
+          uuid {
+            __typename
+          }
+        }
+      `,
       client,
     })
   })

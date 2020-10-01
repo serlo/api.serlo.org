@@ -1102,6 +1102,7 @@ export type User = AbstractUuid & {
   __typename?: 'User';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
+  alias: Scalars['String'];
   username: Scalars['String'];
   date: Scalars['DateTime'];
   lastLogin?: Maybe<Scalars['DateTime']>;
