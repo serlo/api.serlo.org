@@ -22,7 +22,11 @@
 import { gql } from 'apollo-server'
 import { rest } from 'msw'
 
-import { article, user } from '../../__fixtures__/uuid'
+import {
+  article,
+  getArticleDataWithoutSubResolvers,
+  user,
+} from '../../__fixtures__/uuid'
 import { Service } from '../../src/graphql/schema/types'
 import {
   assertSuccessfulGraphQLQuery,
@@ -81,17 +85,7 @@ describe('subscriptions', () => {
       data: {
         subscriptions: {
           totalCount: 1,
-          nodes: [
-            {
-              __typename: 'Article',
-              alias:
-                '/mathe/funktionen/uebersicht-aller-artikel-zu-funktionen/parabel',
-              date: '2014-03-01T20:45:56Z',
-              id: 1855,
-              instance: 'de',
-              trashed: false,
-            },
-          ],
+          nodes: [getArticleDataWithoutSubResolvers(article)],
         },
       },
       client,
