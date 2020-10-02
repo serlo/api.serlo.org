@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { AuthenticationError } from 'apollo-server'
+import { AuthenticationError, UserInputError } from 'apollo-server'
 
 import { resolveConnection, encodeCursor } from '../connection'
 import { Context } from '../types'
@@ -51,8 +51,8 @@ export const resolvers: NotificationResolvers = {
         totalCount,
         pageInfo,
       } = await dataSources.serlo.getEventIds({
-        after: cursorPayload.after ?? undefined,
-        before: cursorPayload.before ?? undefined,
+        after: parseId(cursorPayload.after),
+        before: parseId(cursorPayload.before),
         first: cursorPayload.first ?? undefined,
         last: cursorPayload.last ?? undefined,
         userId: cursorPayload.userId ?? undefined,
@@ -78,6 +78,17 @@ export const resolvers: NotificationResolvers = {
 
       function encodePageInfoCursor(value: number | null) {
         return value !== null ? encodeCursor(value.toString()) : null
+      }
+
+      function parseId(value?: string | null): number | undefined {
+        if (value == null) return undefined
+
+        const result = parseInt(Buffer.from(value, 'base64').toString('utf-8'))
+
+        if (isNaN(result))
+          throw new UserInputError(`cannot parse "${value}" to an id`)
+
+        return result
       }
     },
     async notifications(

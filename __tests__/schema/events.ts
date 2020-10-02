@@ -34,6 +34,7 @@ import {
   createNotificationEventHandler,
   createEventsHandler,
   assertSuccessfulGraphQLQuery,
+  assertFailingGraphQLQuery,
 } from '../__utils__'
 
 let client: Client
@@ -152,8 +153,8 @@ describe('events', () => {
 
   describe('forward query arguments to serlo.org', () => {
     test.each([
-      ['after', '"10"'],
-      ['before', '"10"'],
+      ['after', `"MTA="`],
+      ['before', '"MTA="'],
       ['first', '10'],
       ['last', '10'],
       ['userId', '10'],
@@ -202,6 +203,22 @@ describe('events', () => {
             ],
           },
         },
+        client,
+      })
+    })
+  })
+
+  describe('returns an error when "after" or "before" is not an id.', () => {
+    test.each(['after', 'before'])('parameter = %s', async (parameter) => {
+      await assertFailingGraphQLQuery({
+        message: 'cannot parse "not-a-number" to an id',
+        query: gql`
+          query events {
+            events(${parameter}: "not-a-number") {
+              totalCount
+            }
+          }
+        `,
         client,
       })
     })
