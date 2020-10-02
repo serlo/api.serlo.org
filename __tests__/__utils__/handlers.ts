@@ -113,7 +113,7 @@ export function createJsonHandler({
         return req.url.searchParams.get(key) === value
       })
         ? res(ctx.status(200), ctx.json(body as Record<string, unknown>))
-        : res(ctx.status(400))
+        : res(ctx.status(400, `Bad Request: ${req.url.toString()}`))
     }
   )
 }
