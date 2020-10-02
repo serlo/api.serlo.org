@@ -48,17 +48,24 @@ export async function assertFailingGraphQLQuery({
   query,
   variables,
   client,
+  message,
 }: {
   query: string | DocumentNode
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   variables?: Record<string, any>
   client: Client
+  message?: unknown
 }) {
   const response = await client.query({
     query,
     variables,
   })
   expect(response.errors).toBeDefined()
+
+  if (message)
+    expect(response.errors?.map((error) => error.message)).toContainEqual(
+      message
+    )
 }
 
 export async function assertSuccessfulGraphQLMutation({
