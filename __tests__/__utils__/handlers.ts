@@ -109,9 +109,9 @@ export function createJsonHandler({
   return rest.get(
     `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
     (req: MockedRequest, res, ctx) => {
-      return R.toPairs(query).every(([key, value]) => {
-        return req.url.searchParams.get(key) === value
-      })
+      const queryDict = R.fromPairs(Array.from(req.url.searchParams.entries()))
+
+      return R.equals(query, queryDict)
         ? res(ctx.status(200), ctx.json(body as Record<string, unknown>))
         : res(ctx.status(400, `Bad Request: ${req.url.toString()}`))
     }

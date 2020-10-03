@@ -23,6 +23,6 @@ interface URL {
   readonly pathname: string
   readonly search: string
   readonly searchParams: {
-    get(key: string): string | null
+    entries(): [string, string][]
   }
 }

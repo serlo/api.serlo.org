@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { AuthenticationError, UserInputError } from 'apollo-server'
+import * as R from 'ramda'
 
 import { resolveConnection, encodeCursor } from '../connection'
 import { Context } from '../types'
@@ -50,14 +51,13 @@ export const resolvers: NotificationResolvers = {
         eventIds,
         totalCount,
         pageInfo,
-      } = await dataSources.serlo.getEventIds({
-        after: parseId(cursorPayload.after),
-        before: parseId(cursorPayload.before),
-        first: cursorPayload.first ?? undefined,
-        last: cursorPayload.last ?? undefined,
-        userId: cursorPayload.userId ?? undefined,
-        uuid: cursorPayload.uuid ?? undefined,
-      })
+      } = await dataSources.serlo.getEventIds(
+        R.filter((value) => !R.isNil(value), {
+          ...cursorPayload,
+          after: parseId(cursorPayload.after),
+          before: parseId(cursorPayload.before),
+        })
+      )
       const eventsFromSerlo = await Promise.all(
         eventIds.map((id) => dataSources.serlo.getNotificationEvent({ id }))
       )
