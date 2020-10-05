@@ -63,6 +63,9 @@ export const resolvers: NotificationResolvers = {
       )
       const events = eventsFromSerlo.filter(isNotNil)
 
+      const firstId = R.head(eventIds)
+      const lastId = R.last(eventIds)
+
       return {
         edges: events.map((event) => {
           return { node: event, cursor: encodeCursor(event.id.toString()) }
@@ -71,13 +74,11 @@ export const resolvers: NotificationResolvers = {
         totalCount,
         pageInfo: {
           ...pageInfo,
-          startCursor: encodePageInfoCursor(pageInfo.startCursor),
-          endCursor: encodePageInfoCursor(pageInfo.endCursor),
+          startCursor:
+            firstId === undefined ? null : encodeCursor(firstId.toString()),
+          endCursor:
+            lastId === undefined ? null : encodeCursor(lastId.toString()),
         },
-      }
-
-      function encodePageInfoCursor(value: number | null) {
-        return value !== null ? encodeCursor(value.toString()) : null
       }
     },
     async notifications(

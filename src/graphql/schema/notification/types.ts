@@ -58,8 +58,6 @@ export interface EventsPayload {
   pageInfo: {
     hasNextPage: boolean
     hasPreviousPage: boolean
-    startCursor: number | null
-    endCursor: number | null
   }
 }
 

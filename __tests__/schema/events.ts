@@ -86,16 +86,36 @@ describe('events', () => {
     })
   })
 
+  test('sets startCursor to first id and endCursor to last id', async () => {
+    global.server.use(
+      createNotificationEventHandler(event1),
+      createNotificationEventHandler(event2),
+      createEventsHandler({ eventIds: [2, 1] })
+    )
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query events {
+          events {
+            pageInfo {
+              startCursor
+              endCursor
+            }
+          }
+        }
+      `,
+      data: {
+        events: { pageInfo: { startCursor: 'Mg==', endCursor: 'MQ==' } },
+      },
+      client,
+    })
+  })
+
   test('forwards results of serlo.org', async () => {
     global.server.use(
       createEventsHandler({
         totalCount: 100,
-        pageInfo: {
-          hasNextPage: true,
-          hasPreviousPage: true,
-          startCursor: 10,
-          endCursor: 10,
-        },
+        pageInfo: { hasNextPage: true, hasPreviousPage: true },
       })
     )
 
@@ -107,8 +127,6 @@ describe('events', () => {
             pageInfo {
               hasPreviousPage
               hasNextPage
-              startCursor
-              endCursor
             }
           }
         }
@@ -119,8 +137,6 @@ describe('events', () => {
           pageInfo: {
             hasNextPage: true,
             hasPreviousPage: true,
-            startCursor: 'MTA=',
-            endCursor: 'MTA=',
           },
         },
       },
@@ -128,10 +144,8 @@ describe('events', () => {
     })
   })
 
-  test('forwards results of serlo.org (start and end cursor is null)', async () => {
-    global.server.use(
-      createEventsHandler({ pageInfo: { startCursor: null, endCursor: null } })
-    )
+  test('set startCursor and endCursor to null for empty results', async () => {
+    global.server.use(createEventsHandler({ eventIds: [] }))
 
     await assertSuccessfulGraphQLQuery({
       query: gql`
@@ -167,12 +181,7 @@ describe('events', () => {
           {
             eventIds: [2, 1],
             totalCount: 2,
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: 1,
-              endCursor: 2,
-            },
+            pageInfo: { hasNextPage: false, hasPreviousPage: false },
           },
           { [filterName]: '10' }
         )

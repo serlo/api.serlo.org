@@ -56,8 +56,6 @@ async function addEventsInteraction({
       pageInfo: {
         hasNextPage: Matchers.boolean(false),
         hasPreviousPage: Matchers.boolean(false),
-        startCursor: Matchers.integer(1),
-        endCursor: Matchers.integer(1),
       },
     },
   })

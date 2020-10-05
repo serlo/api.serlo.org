@@ -81,8 +81,6 @@ export function createEventsHandler(
       pageInfo: {
         hasNextPage: pageInfo?.hasNextPage ?? false,
         hasPreviousPage: pageInfo?.hasPreviousPage ?? false,
-        startCursor: pageInfo?.startCursor ?? eventIds[0] ?? null,
-        endCursor: pageInfo?.endCursor ?? R.last(eventIds) ?? null,
       },
     },
   })
