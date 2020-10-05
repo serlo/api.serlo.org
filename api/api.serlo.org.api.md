@@ -1230,6 +1230,7 @@ export type User = AbstractUuid & {
     activeAuthor: Scalars['Boolean'];
     activeDonor: Scalars['Boolean'];
     activeReviewer: Scalars['Boolean'];
+    events: AbstractNotificationEventConnection;
 };
 
 // @public (undocumented)
@@ -1246,6 +1247,14 @@ export type UserEdge = {
     __typename?: 'UserEdge';
     cursor: Scalars['String'];
     node: User;
+};
+
+// @public (undocumented)
+export type UserEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)

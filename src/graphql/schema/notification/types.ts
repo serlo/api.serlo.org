@@ -121,7 +121,8 @@ export interface NotificationResolvers {
     event: Resolver<NotificationPayload, never, NotificationEventPayload | null>
   }
   Query: {
-    events: QueryResolver<
+    events: Resolver<
+      undefined,
       QueryEventsArgs,
       Connection<AbstractNotificationEventPayload>
     >

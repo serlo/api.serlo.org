@@ -9,6 +9,12 @@ type User implements AbstractUuid {
   activeAuthor: Boolean!
   activeDonor: Boolean!
   activeReviewer: Boolean!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): AbstractNotificationEventConnection!
 }
 
 extend type Query {

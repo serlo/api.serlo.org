@@ -20,11 +20,13 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
+import { AbstractNotificationEventPayload } from '../..'
 import {
   QueryActiveDonorsArgs,
   User,
   QueryActiveReviewersArgs,
   QueryActiveAuthorsArgs,
+  UserEventsArgs,
 } from '../../../../types'
 import { Connection } from '../../connection'
 import { QueryResolver, Resolver } from '../../types'
@@ -51,6 +53,11 @@ export interface UserResolvers {
     activeAuthor: Resolver<UserPayload, never, boolean>
     activeDonor: Resolver<UserPayload, never, boolean>
     activeReviewer: Resolver<UserPayload, never, boolean>
+    events: Resolver<
+      UserPayload,
+      UserEventsArgs,
+      Connection<AbstractNotificationEventPayload>
+    >
   }
 }
 
