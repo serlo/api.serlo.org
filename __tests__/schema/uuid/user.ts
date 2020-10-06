@@ -331,75 +331,76 @@ describe('User', () => {
     })
   })
 
-  test('property "events"', async () => {
+  describe('property "events"', () => {
     const event1 = { ...createEntityNotificationEvent, id: 1 }
     const event2 = { ...createTaxonomyTermNotificationEvent, id: 2 }
 
-    global.server.use(
-      createNotificationEventHandler(event1),
-      createNotificationEventHandler(event2),
-      createEventsHandler(
-        { eventIds: [2, 1], totalCount: 2 },
-        { userId: user.id.toString() }
+    beforeEach(() => {
+      global.server.use(
+        createNotificationEventHandler(event1),
+        createNotificationEventHandler(event2)
       )
-    )
+    })
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query events($id: Int) {
-          uuid(id: $id) {
-            ... on User {
-              events {
-                totalCount
-                nodes {
-                  ... on AbstractNotificationEvent {
-                    __typename
-                    id
-                    instance
-                    date
+    test('without arguments', async () => {
+      global.server.use(
+        createEventsHandler(
+          { eventIds: [2, 1], totalCount: 2 },
+          { userId: user.id.toString() }
+        )
+      )
+
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query events($id: Int) {
+            uuid(id: $id) {
+              ... on User {
+                events {
+                  totalCount
+                  nodes {
+                    ... on AbstractNotificationEvent {
+                      __typename
+                      id
+                      instance
+                      date
+                    }
                   }
                 }
               }
             }
           }
-        }
-      `,
-      data: {
-        uuid: {
-          events: {
-            totalCount: 2,
-            nodes: [
-              getAbstractNotificationEventDataWithoutSubResolvers(event2),
-              getAbstractNotificationEventDataWithoutSubResolvers(event1),
-            ],
+        `,
+        data: {
+          uuid: {
+            events: {
+              totalCount: 2,
+              nodes: [
+                getAbstractNotificationEventDataWithoutSubResolvers(event2),
+                getAbstractNotificationEventDataWithoutSubResolvers(event1),
+              ],
+            },
           },
         },
-      },
-      variables: { id: user.id },
-      client,
+        variables: { id: user.id },
+        client,
+      })
     })
-  })
 
-  test.each([
-    ['after', `"MTA="`],
-    ['before', '"MTA="'],
-    ['first', '10'],
-    ['last', '10'],
-  ])('property "events" with property %s', async (filterName, filterValue) => {
-    const event1 = { ...createEntityNotificationEvent, id: 1 }
-    const event2 = { ...createTaxonomyTermNotificationEvent, id: 2 }
-
-    global.server.use(
-      createNotificationEventHandler(event1),
-      createNotificationEventHandler(event2),
-      createEventsHandler(
-        { eventIds: [2, 1], totalCount: 2 },
-        { userId: user.id.toString(), [filterName]: '10' }
+    test.each([
+      ['after', `"MTA="`],
+      ['before', '"MTA="'],
+      ['first', '10'],
+      ['last', '10'],
+    ])('with argument %s', async (filterName, filterValue) => {
+      global.server.use(
+        createEventsHandler(
+          { eventIds: [2, 1], totalCount: 2 },
+          { userId: user.id.toString(), [filterName]: '10' }
+        )
       )
-    )
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
         query events($id: Int) {
           uuid(id: $id) {
             ... on User {
@@ -418,19 +419,20 @@ describe('User', () => {
           }
         }
       `,
-      data: {
-        uuid: {
-          events: {
-            totalCount: 2,
-            nodes: [
-              getAbstractNotificationEventDataWithoutSubResolvers(event2),
-              getAbstractNotificationEventDataWithoutSubResolvers(event1),
-            ],
+        data: {
+          uuid: {
+            events: {
+              totalCount: 2,
+              nodes: [
+                getAbstractNotificationEventDataWithoutSubResolvers(event2),
+                getAbstractNotificationEventDataWithoutSubResolvers(event1),
+              ],
+            },
           },
         },
-      },
-      variables: { id: user.id },
-      client,
+        variables: { id: user.id },
+        client,
+      })
     })
   })
 })
