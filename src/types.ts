@@ -472,6 +472,20 @@ export type AbstractUuid = {
   trashed: Scalars['Boolean'];
 };
 
+export type AbstractUuidConnection = {
+  __typename?: 'AbstractUuidConnection';
+  edges: Array<AbstractUuidCursor>;
+  nodes: Array<AbstractUuid>;
+  totalCount: Scalars['Int'];
+  pageInfo: PageInfo;
+};
+
+export type AbstractUuidCursor = {
+  __typename?: 'AbstractUuidCursor';
+  cursor: Scalars['String'];
+  node: AbstractUuid;
+};
+
 export type AliasInput = {
   instance: Instance;
   path: Scalars['String'];
@@ -807,20 +821,6 @@ export type TaxonomyTermChildrenArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
-};
-
-export type AbstractUuidConnection = {
-  __typename?: 'AbstractUuidConnection';
-  edges: Array<AbstractUuidCursor>;
-  nodes: Array<AbstractUuid>;
-  totalCount: Scalars['Int'];
-  pageInfo: PageInfo;
-};
-
-export type AbstractUuidCursor = {
-  __typename?: 'AbstractUuidCursor';
-  cursor: Scalars['String'];
-  node: AbstractUuid;
 };
 
 export type UnsupportedThread = {
