@@ -23,7 +23,7 @@ import { setupServer } from 'msw/node'
 
 global.server = setupServer()
 
-beforeAll(() => global.server.listen())
+beforeAll(() => global.server.listen({ onUnhandledRequest: 'error' }))
 
 afterEach(() => global.server.resetHandlers())
 
