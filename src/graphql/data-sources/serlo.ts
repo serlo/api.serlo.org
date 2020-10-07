@@ -22,6 +22,12 @@
 import { isSome } from 'fp-ts/lib/Option'
 import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
+import {
+  array as A,
+  record as Record,
+  semigroup as Semigroup,
+  pipeable,
+} from 'fp-ts'
 
 import { Instance, License, QueryEventsArgs } from '../../types'
 import { Environment } from '../environment'
@@ -42,6 +48,7 @@ import {
 } from '../schema'
 import { Service } from '../schema/types'
 import { CacheableDataSource } from './cacheable-data-source'
+import { isNotNil } from '../schema/utils'
 
 export class SerloDataSource extends CacheableDataSource {
   public constructor(private environment: Environment) {
@@ -162,11 +169,21 @@ export class SerloDataSource extends CacheableDataSource {
     return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
   }
 
-  public async getEventIds(query?: { [P in keyof QueryEventsArgs]?: number }) {
+  public async getEventIds(
+    query: { [P in keyof QueryEventsArgs]?: number | null } = {}
+  ) {
     return await this.cacheAwareGet<EventsPayload>({
       path: '/api/events',
       ttl: 5 * 60,
-      query,
+      query: pipeable.pipe(
+        R.toPairs(query),
+        Record.fromFoldable(
+          Semigroup.getLastSemigroup<number | undefined | null>(),
+          A.array
+        ),
+        Record.filter(isNotNil),
+        Record.map((value) => value.toString())
+      ),
     })
   }
 
@@ -259,9 +276,9 @@ export class SerloDataSource extends CacheableDataSource {
     instance?: Instance
     ttl?: number
     ignoreCache?: boolean
-    query?: Record<string, string | number | undefined>
+    query?: Record<string, string>
   }): Promise<T> {
-    const cacheKey = this.getCacheKey(path, instance)
+    const cacheKey = this.getCacheKey(path, instance, query)
 
     if (!ignoreCache) {
       const cache = await this.environment.cache.get<T>(cacheKey)
@@ -285,8 +302,20 @@ export class SerloDataSource extends CacheableDataSource {
     return this.setCache(cacheKey, data, { ttl })
   }
 
-  private getCacheKey(path: string, instance: Instance = Instance.De) {
-    return `${instance}.serlo.org${path}`
+  private getCacheKey(
+    path: string,
+    instance: Instance = Instance.De,
+    query: Record<string, string> = {}
+  ) {
+    const queryPrefix = Record.isEmpty(query) ? '' : '?'
+    const queryString = pipeable.pipe(
+      query,
+      Record.toArray,
+      A.map(([key, value]) => `${key}=${value}`),
+      (params) => params.join('&')
+    )
+
+    return `${instance}.serlo.org${path}${queryPrefix}${queryString}`
   }
 
   public async getAllCacheKeys(): Promise<string[]> {

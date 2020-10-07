@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import { option as O } from 'fp-ts'
 
 import {
   user,
@@ -36,14 +37,16 @@ import {
   assertSuccessfulGraphQLQuery,
   assertFailingGraphQLQuery,
 } from '../__utils__'
+import { Cache } from '../../src/graphql/environment'
 
 let client: Client
+let cache: Cache
 
 beforeEach(() => {
-  client = createTestClient({
+  ;({ client, cache } = createTestClient({
     service: Service.SerloCloudflareWorker,
     user: user.id,
-  }).client
+  }))
 })
 
 describe('events', () => {
@@ -215,6 +218,32 @@ describe('events', () => {
         client,
       })
     })
+  })
+
+  test('cache key works also for query arguments', async () => {
+    global.server.use(
+      createEventsHandler({ eventIds: [2, 1] }, { first: '10' })
+    )
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query events {
+          events(first: 10) {
+            totalCount
+          }
+        }
+      `,
+      data: { events: { totalCount: 2 } },
+      client,
+    })
+
+    expect(await cache.get('de.serlo.org/api/events?first=10')).toEqual(
+      O.some({
+        eventIds: [2, 1],
+        totalCount: 2,
+        pageInfo: { hasPreviousPage: false, hasNextPage: false },
+      })
+    )
   })
 
   describe('returns an error when "after" or "before" is not an id.', () => {

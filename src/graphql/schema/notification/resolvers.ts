@@ -51,13 +51,11 @@ export const resolvers: NotificationResolvers = {
         eventIds,
         totalCount,
         pageInfo,
-      } = await dataSources.serlo.getEventIds(
-        R.filter((value) => !R.isNil(value), {
+      } = await dataSources.serlo.getEventIds({
           ...cursorPayload,
           after: parseId(cursorPayload.after),
           before: parseId(cursorPayload.before),
-        })
-      )
+      })
       const eventsFromSerlo = await Promise.all(
         eventIds.map((id) => dataSources.serlo.getNotificationEvent({ id }))
       )
