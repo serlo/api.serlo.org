@@ -74,7 +74,10 @@ export class CacheWorker {
         await this.grahQLClient
           .request(this.query)
           .then(async (res) => {
-            const { nodes, pageInfo } = (res as cacheKeysResponse).data._cacheKeys
+            const {
+              nodes,
+              pageInfo,
+            } = (res as cacheKeysResponse).data._cacheKeys
             this.setCursorIn_cacheKeys(pageInfo.endCursor!)
             cacheKeys = nodes.map((e) => `"${e}"`)
             this.setCacheKeysIn_updateCache(cacheKeys)
@@ -86,9 +89,13 @@ export class CacheWorker {
           .catch((err) => this.errLog.push(err))
       } while (thereIsNextPage)
     } else {
-      cacheKeys = keys.split(',')
+      cacheKeys = keys.split(',').map(k => k.trim())
+      this.setCacheKeysIn_updateCache(cacheKeys)
+      await this.grahQLClient
+        .request(this.mutation)
+        .catch((err) => this.errLog.push(err))
+      console.log('bla', this.errLog)
     }
-
   }
 }
 

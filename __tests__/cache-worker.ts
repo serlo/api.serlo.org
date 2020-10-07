@@ -73,7 +73,7 @@ beforeEach(async () => {
 })
 
 describe('Update-cache worker', () => {
-  test('successfuly calls _cacheKeys and _updateCache', async () => {
+  test('successfully calls _cacheKeys and _updateCache', async () => {
     await worker.updateCache('all')
     expect(worker.errLog).toEqual([])
   })
@@ -105,5 +105,9 @@ describe('Update-cache worker', () => {
     )
     await worker.updateCache('all')
     expect(worker.errLog).not.toEqual([])
+  })
+  test('successfully updates only some values', async () => {
+    await worker.updateCache('key0,key5,key10,key20')
+    expect(worker.errLog).toEqual([])
   })
 })
