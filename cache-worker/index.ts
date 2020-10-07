@@ -5,10 +5,9 @@ const secret = process.env.SERLO_ORG_SECRET
 const service = process.env.SERLO_SERVICE as Service
 
 const cacheKeys = process.env.CACHE_KEYS
-console.log(cacheKeys)
 
 const cw = new CacheWorker({ apiEndpoint, secret, service })
-cw.updateWholeCache().then(() => {
+cw.updateCache(cacheKeys!).then(() => {
   if (cw.errLog.length) {
     console.warn(
       'Cache update was run but the following errors were found',

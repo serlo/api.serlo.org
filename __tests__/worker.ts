@@ -74,7 +74,7 @@ beforeEach(async () => {
 
 describe('Update-cache worker', () => {
   test('successfuly calls _cacheKeys and _updateCache', async () => {
-    await worker.updateWholeCache()
+    await worker.updateCache('all')
     // TODO double check if the cache was indeed updated
   })
   test('does not fail if _updateCache does not work', async () => {
@@ -83,7 +83,7 @@ describe('Update-cache worker', () => {
         throw new Error('Something went wrong at _updateCache, but be cool')
       })
     )
-    await worker.updateWholeCache()
+    await worker.updateCache('all')
   })
   test('does not fail if a cache key does not get updated for some reason', async () => {
     global.server.use(
@@ -102,6 +102,6 @@ describe('Update-cache worker', () => {
         )
       })
     )
-    await worker.updateWholeCache()
+    await worker.updateCache('all')
   })
 })

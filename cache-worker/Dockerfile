@@ -1,5 +1,5 @@
 FROM node:12
-ENV CACHE_KEYS None
+ENV CACHE_KEYS all
 WORKDIR /app
 COPY package.json .
 COPY yarn.lock .

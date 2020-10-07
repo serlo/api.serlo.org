@@ -66,29 +66,29 @@ export class CacheWorker {
 
   public async updateCache(keys: string): Promise<void> {
     console.log('Updating cache values of the following keys:', keys)
-    let cacheKeys: string[] 
+    let cacheKeys: string[]
     if (keys == 'all') {
+      let thereIsNextPage = false
+      this.setCursorIn_cacheKeys()
+      do {
+        await this.grahQLClient
+          .request(this.query)
+          .then(async (res) => {
+            const { nodes, pageInfo } = (res as cacheKeysResponse).data._cacheKeys
+            this.setCursorIn_cacheKeys(pageInfo.endCursor!)
+            cacheKeys = nodes.map((e) => `"${e}"`)
+            this.setCacheKeysIn_updateCache(cacheKeys)
+            await this.grahQLClient
+              .request(this.mutation)
+              .catch((err) => this.errLog.push(err))
+            thereIsNextPage = pageInfo.hasNextPage
+          })
+          .catch((err) => this.errLog.push(err))
+      } while (thereIsNextPage)
     } else {
       cacheKeys = keys.split(',')
-
     }
-    let thereIsNextPage = false
-    this.setCursorIn_cacheKeys()
-    do {
-      await this.grahQLClient
-        .request(this.query)
-        .then(async (res) => {
-          const { nodes, pageInfo } = (res as cacheKeysResponse).data._cacheKeys
-          this.setCursorIn_cacheKeys(pageInfo.endCursor!)
-          // const cacheKeys = nodes.map((e) => `"${e}"`)
-          this.setCacheKeysIn_updateCache(cacheKeys)
-          await this.grahQLClient
-            .request(this.mutation)
-            .catch((err) => this.errLog.push(err))
-          thereIsNextPage = pageInfo.hasNextPage
-        })
-        .catch((err) => this.errLog.push(err))
-    } while (thereIsNextPage)
+
   }
 }
 
