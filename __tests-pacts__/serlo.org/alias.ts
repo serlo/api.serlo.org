@@ -58,13 +58,10 @@ test('Alias (URL /user/profile/:username)', async () => {
     body: {
       id: Matchers.integer(1),
       instance: Matchers.string('de'),
-      path: Matchers.term({
-        matcher: '\\/user\\/profile\\/.*',
-        generate: '/user/profile/admin',
-      }),
+      path: '/user/profile/admin',
       source: Matchers.term({
-        matcher: '\\/user\\/profile\\/.*',
-        generate: '/user/profile/admin',
+        matcher: '\\/user\\/profile\\/\\d+',
+        generate: '/user/profile/1',
       }),
       timestamp: Matchers.iso8601DateTime('2014-03-01T20:36:21+01:00'),
     },

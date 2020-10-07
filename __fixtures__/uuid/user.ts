@@ -42,7 +42,7 @@ export const user2: UserPayload = {
   description: null,
 }
 
-export function getUserDataWithoutSubResolver(user: UserPayload) {
+export function getUserDataWithoutSubResolvers(user: UserPayload) {
   return {
     ...user,
     ...getAliasDataWithoutSubResolvers(user),

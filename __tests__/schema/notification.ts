@@ -56,7 +56,7 @@ import {
   getSetUuidStateNotificationEventDataWithoutSubResolvers,
   getSolutionDataWithoutSubResolvers,
   getTaxonomyTermDataWithoutSubResolvers,
-  getUserDataWithoutSubResolver,
+  getUserDataWithoutSubResolvers,
   rejectRevisionNotificationEvent,
   removeEntityLinkNotificationEvent,
   removeTaxonomyLinkNotificationEvent,
@@ -350,7 +350,7 @@ describe('notificationEvent', () => {
         variables: checkoutRevisionNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolver(user),
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -481,7 +481,7 @@ describe('notificationEvent', () => {
         variables: rejectRevisionNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolver(user),
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -611,7 +611,7 @@ describe('notificationEvent', () => {
         variables: createCommentNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolver(user),
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -720,7 +720,7 @@ describe('notificationEvent', () => {
         variables: createEntityNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolver(user),
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -814,7 +814,7 @@ describe('notificationEvent', () => {
         variables: createEntityLinkNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolver(user),
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -939,7 +939,7 @@ describe('notificationEvent', () => {
         variables: removeEntityLinkNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolver(user),
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -1064,7 +1064,7 @@ describe('notificationEvent', () => {
         variables: createEntityRevisionNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolver(user),
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -1194,7 +1194,7 @@ describe('notificationEvent', () => {
         variables: createTaxonomyTermNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolver(user),
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -1291,7 +1291,7 @@ describe('notificationEvent', () => {
         variables: setTaxonomyTermNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolver(user),
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -1388,7 +1388,7 @@ describe('notificationEvent', () => {
         variables: createTaxonomyLinkNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolver(user),
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -1516,7 +1516,7 @@ describe('notificationEvent', () => {
         variables: removeTaxonomyLinkNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolver(user),
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -1644,7 +1644,7 @@ describe('notificationEvent', () => {
         variables: setTaxonomyParentNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolver(user),
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -1807,7 +1807,7 @@ describe('notificationEvent', () => {
         variables: createThreadNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolver(user),
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -1924,7 +1924,7 @@ describe('notificationEvent', () => {
         variables: setLicenseNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolver(user),
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -2019,7 +2019,7 @@ describe('notificationEvent', () => {
         variables: setThreadStateNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolver(user),
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -2106,7 +2106,7 @@ describe('notificationEvent', () => {
         variables: setUuidStateNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolver(user),
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,

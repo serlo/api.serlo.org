@@ -40,7 +40,7 @@ import {
   exerciseRevision,
   getRepositoryDataWithoutSubResolvers,
   getRevisionDataWithoutSubResolvers,
-  getUserDataWithoutSubResolver,
+  getUserDataWithoutSubResolvers,
   groupedExercise,
   groupedExerciseRevision,
   license,
@@ -180,44 +180,6 @@ describe('Repository', () => {
     })
   })
 
-  test.each(repositoryCases)('%s by alias', async (type, { repository }) => {
-    global.server.use(
-      createUuidHandler(repository),
-      createAliasHandler({
-        id: repository.id,
-        instance: repository.instance,
-        path: '/path',
-        source: `source`,
-        timestamp: 'timestamp',
-      })
-    )
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query repository($alias: AliasInput!) {
-          uuid(alias: $alias) {
-            __typename
-            ... on AbstractRepository {
-              id
-              trashed
-              alias
-              date
-            }
-          }
-        }
-      `,
-      variables: {
-        alias: {
-          instance: repository.instance,
-          path: '/path',
-        },
-      },
-      data: {
-        uuid: getRepositoryDataWithoutSubResolvers(repository),
-      },
-      client,
-    })
-  })
-
   test.each(repositoryCases)(
     '%s by alias (url-encoded)',
     async (type, { repository }) => {
@@ -227,7 +189,7 @@ describe('Repository', () => {
           id: repository.id,
           instance: repository.instance,
           path: '/ü',
-          source: `source`,
+          source: `/source`,
           timestamp: 'timestamp',
         })
       )
@@ -267,8 +229,8 @@ describe('Repository', () => {
         createAliasHandler({
           id: repository.id,
           instance: repository.instance,
-          path: 'path',
-          source: `source`,
+          path: '/path',
+          source: `/source`,
           timestamp: 'timestamp',
         })
       )
@@ -380,7 +342,7 @@ describe('Revision', () => {
         variables: revision,
         data: {
           uuid: {
-            author: getUserDataWithoutSubResolver(user),
+            author: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
