@@ -4,6 +4,9 @@ const apiEndpoint = process.env.SERLO_ORG_HOST
 const secret = process.env.SERLO_ORG_SECRET
 const service = process.env.SERLO_SERVICE as Service
 
+const cacheKeys = process.env.CACHE_KEYS
+console.log(cacheKeys)
+
 const cw = new CacheWorker({ apiEndpoint, secret, service })
 cw.updateWholeCache().then(() => {
   if (cw.errLog.length) {
@@ -13,5 +16,5 @@ cw.updateWholeCache().then(() => {
     )
     return
   }
-  console.log('Cache successfuly updated')
+  console.log('Cache successfully updated')
 })
