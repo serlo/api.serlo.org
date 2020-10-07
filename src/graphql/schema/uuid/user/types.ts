@@ -26,7 +26,7 @@ import {
   User,
   QueryActiveReviewersArgs,
   QueryActiveAuthorsArgs,
-  UserEventsArgs,
+  UserUserEventsArgs,
 } from '../../../../types'
 import { Connection } from '../../connection'
 import { QueryResolver, Resolver } from '../../types'
@@ -53,9 +53,9 @@ export interface UserResolvers {
     activeAuthor: Resolver<UserPayload, never, boolean>
     activeDonor: Resolver<UserPayload, never, boolean>
     activeReviewer: Resolver<UserPayload, never, boolean>
-    events: Resolver<
+    userEvents: Resolver<
       UserPayload,
-      UserEventsArgs,
+      UserUserEventsArgs,
       Connection<AbstractNotificationEventPayload>
     >
   }

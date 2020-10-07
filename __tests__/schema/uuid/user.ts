@@ -331,7 +331,7 @@ describe('User', () => {
     })
   })
 
-  describe('property "events"', () => {
+  describe('by id (w/ property "userEvents")', () => {
     const event1 = { ...createEntityNotificationEvent, id: 1 }
     const event2 = { ...createTaxonomyTermNotificationEvent, id: 2 }
 
@@ -352,10 +352,10 @@ describe('User', () => {
 
       await assertSuccessfulGraphQLQuery({
         query: gql`
-          query events($id: Int) {
+          query userEvents($id: Int) {
             uuid(id: $id) {
               ... on User {
-                events {
+                userEvents {
                   totalCount
                   nodes {
                     ... on AbstractNotificationEvent {
@@ -372,7 +372,7 @@ describe('User', () => {
         `,
         data: {
           uuid: {
-            events: {
+            userEvents: {
               totalCount: 2,
               nodes: [
                 getAbstractNotificationEventDataWithoutSubResolvers(event2),
@@ -401,10 +401,10 @@ describe('User', () => {
 
       await assertSuccessfulGraphQLQuery({
         query: gql`
-        query events($id: Int) {
+        query userEvents($id: Int) {
           uuid(id: $id) {
             ... on User {
-              events(${filterName}: ${filterValue}) {
+              userEvents(${filterName}: ${filterValue}) {
                 totalCount
                 nodes {
                   ... on AbstractNotificationEvent {
@@ -421,7 +421,7 @@ describe('User', () => {
       `,
         data: {
           uuid: {
-            events: {
+            userEvents: {
               totalCount: 2,
               nodes: [
                 getAbstractNotificationEventDataWithoutSubResolvers(event2),

@@ -72,7 +72,7 @@ export const resolvers: UserResolvers = {
     async activeReviewer(user, _args, { dataSources }) {
       return (await dataSources.serlo.getActiveReviewerIds()).includes(user.id)
     },
-    async events(user, payload, context, info) {
+    async userEvents(user, payload, context, info) {
       return notificationResolvers.Query.events(
         undefined,
         { ...payload, userId: user.id },
