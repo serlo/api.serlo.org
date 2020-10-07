@@ -19,8 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { AbstractUuid, QueryUuidArgs } from '../../../../types'
-import { QueryResolver, TypeResolver } from '../../types'
+import { Connection, AbstractNotificationEventPayload } from '../..'
+import {
+  AbstractUuid,
+  QueryUuidArgs,
+  AbstractUuidUuidEventsArgs,
+} from '../../../../types'
+import { QueryResolver, TypeResolver, Resolver } from '../../types'
 import {
   EntityPayload,
   EntityRevisionPayload,
@@ -47,8 +52,16 @@ export type UuidPayload =
   | PageRevisionPayload
   | UserPayload
   | TaxonomyTermPayload
-export interface AbstractUuidPayload extends AbstractUuid {
+export interface AbstractUuidPayload extends Omit<AbstractUuid, 'uuidEvents'> {
   __typename: UuidType
+}
+
+export interface AbstractUuidResolvers<Payload extends AbstractUuidPayload> {
+  uuidEvents: Resolver<
+    Payload,
+    AbstractUuidUuidEventsArgs,
+    Connection<AbstractNotificationEventPayload>
+  >
 }
 
 export interface UuidResolvers {

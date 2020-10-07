@@ -19,10 +19,18 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { GraphQLResolveInfo } from 'graphql'
 import * as R from 'ramda'
 
+import { AbstractUuidUuidEventsArgs } from '../../../../types'
+import { resolvers as notificationResolvers } from '../../notification/resolvers'
+import { Context } from '../../types'
 import { EntityRevisionType, EntityType } from '../abstract-entity'
-import { AbstractUuidPayload, DiscriminatorType } from './types'
+import {
+  AbstractUuidPayload,
+  DiscriminatorType,
+  AbstractUuidResolvers,
+} from './types'
 
 const validTypes = [
   ...Object.values(DiscriminatorType),
@@ -32,4 +40,24 @@ const validTypes = [
 
 export function isUnsupportedUuid(payload: AbstractUuidPayload) {
   return !R.includes(payload.__typename, validTypes)
+}
+
+export function createAbstractUuidResolvers<
+  Payload extends AbstractUuidPayload
+>(): AbstractUuidResolvers<Payload> {
+  return {
+    async uuidEvents(
+      uuid: AbstractUuidPayload,
+      payload: AbstractUuidUuidEventsArgs,
+      context: Context,
+      info: GraphQLResolveInfo
+    ) {
+      return notificationResolvers.Query.events(
+        undefined,
+        { ...payload, uuid: uuid.id },
+        context,
+        info
+      )
+    },
+  }
 }

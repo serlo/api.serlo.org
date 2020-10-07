@@ -495,6 +495,15 @@ export type TaxonomyTermEdge = {
 export type AbstractUuid = {
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
+  uuidEvents: AbstractNotificationEventConnection;
+};
+
+
+export type AbstractUuidUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type AliasInput = {
@@ -512,6 +521,7 @@ export type Applet = AbstractUuid & AbstractRepository & AbstractEntity & Abstra
   license: License;
   currentRevision?: Maybe<AppletRevision>;
   revisions: AppletRevisionConnection;
+  uuidEvents: AbstractNotificationEventConnection;
   taxonomyTerms: TaxonomyTermConnection;
 };
 
@@ -522,6 +532,14 @@ export type AppletRevisionsArgs = {
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
   unrevised?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type AppletUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 
@@ -537,6 +555,7 @@ export type AppletRevision = AbstractUuid & AbstractRevision & AbstractEntityRev
   id: Scalars['Int'];
   author: User;
   trashed: Scalars['Boolean'];
+  uuidEvents: AbstractNotificationEventConnection;
   date: Scalars['DateTime'];
   repository: Applet;
   url: Scalars['String'];
@@ -545,6 +564,14 @@ export type AppletRevision = AbstractUuid & AbstractRevision & AbstractEntityRev
   changes: Scalars['String'];
   metaTitle: Scalars['String'];
   metaDescription: Scalars['String'];
+};
+
+
+export type AppletRevisionUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type AppletRevisionConnection = {
@@ -571,6 +598,7 @@ export type Article = AbstractUuid & AbstractRepository & AbstractEntity & Abstr
   license: License;
   currentRevision?: Maybe<ArticleRevision>;
   revisions: ArticleRevisionConnection;
+  uuidEvents: AbstractNotificationEventConnection;
   taxonomyTerms: TaxonomyTermConnection;
 };
 
@@ -581,6 +609,14 @@ export type ArticleRevisionsArgs = {
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
   unrevised?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type ArticleUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 
@@ -596,6 +632,7 @@ export type ArticleRevision = AbstractUuid & AbstractRevision & AbstractEntityRe
   id: Scalars['Int'];
   author: User;
   trashed: Scalars['Boolean'];
+  uuidEvents: AbstractNotificationEventConnection;
   date: Scalars['DateTime'];
   repository: Article;
   title: Scalars['String'];
@@ -603,6 +640,14 @@ export type ArticleRevision = AbstractUuid & AbstractRevision & AbstractEntityRe
   changes: Scalars['String'];
   metaTitle: Scalars['String'];
   metaDescription: Scalars['String'];
+};
+
+
+export type ArticleRevisionUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type ArticleRevisionConnection = {
@@ -629,6 +674,7 @@ export type CoursePage = AbstractUuid & AbstractRepository & AbstractEntity & {
   license: License;
   currentRevision?: Maybe<CoursePageRevision>;
   revisions: CoursePageRevisionConnection;
+  uuidEvents: AbstractNotificationEventConnection;
   course: Course;
 };
 
@@ -641,16 +687,33 @@ export type CoursePageRevisionsArgs = {
   unrevised?: Maybe<Scalars['Boolean']>;
 };
 
+
+export type CoursePageUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+};
+
 export type CoursePageRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
   __typename?: 'CoursePageRevision';
   id: Scalars['Int'];
   author: User;
   trashed: Scalars['Boolean'];
+  uuidEvents: AbstractNotificationEventConnection;
   date: Scalars['DateTime'];
   repository: CoursePage;
   title: Scalars['String'];
   content: Scalars['String'];
   changes: Scalars['String'];
+};
+
+
+export type CoursePageRevisionUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type CoursePageRevisionConnection = {
@@ -677,6 +740,7 @@ export type Course = AbstractUuid & AbstractRepository & AbstractEntity & Abstra
   license: License;
   currentRevision?: Maybe<CourseRevision>;
   revisions: CourseRevisionConnection;
+  uuidEvents: AbstractNotificationEventConnection;
   taxonomyTerms: TaxonomyTermConnection;
   pages: Array<CoursePage>;
 };
@@ -688,6 +752,14 @@ export type CourseRevisionsArgs = {
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
   unrevised?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type CourseUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 
@@ -703,12 +775,21 @@ export type CourseRevision = AbstractUuid & AbstractRevision & AbstractEntityRev
   id: Scalars['Int'];
   author: User;
   trashed: Scalars['Boolean'];
+  uuidEvents: AbstractNotificationEventConnection;
   date: Scalars['DateTime'];
   repository: Course;
   title: Scalars['String'];
   content: Scalars['String'];
   changes: Scalars['String'];
   metaDescription: Scalars['String'];
+};
+
+
+export type CourseRevisionUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type CourseRevisionConnection = {
@@ -735,6 +816,7 @@ export type Event = AbstractUuid & AbstractRepository & AbstractEntity & Abstrac
   license: License;
   currentRevision?: Maybe<EventRevision>;
   revisions: EventRevisionConnection;
+  uuidEvents: AbstractNotificationEventConnection;
   taxonomyTerms: TaxonomyTermConnection;
 };
 
@@ -745,6 +827,14 @@ export type EventRevisionsArgs = {
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
   unrevised?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type EventUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 
@@ -760,6 +850,7 @@ export type EventRevision = AbstractUuid & AbstractRevision & AbstractEntityRevi
   id: Scalars['Int'];
   author: User;
   trashed: Scalars['Boolean'];
+  uuidEvents: AbstractNotificationEventConnection;
   date: Scalars['DateTime'];
   repository: Event;
   title: Scalars['String'];
@@ -767,6 +858,14 @@ export type EventRevision = AbstractUuid & AbstractRevision & AbstractEntityRevi
   changes: Scalars['String'];
   metaTitle: Scalars['String'];
   metaDescription: Scalars['String'];
+};
+
+
+export type EventRevisionUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type EventRevisionConnection = {
@@ -793,6 +892,7 @@ export type ExerciseGroup = AbstractUuid & AbstractRepository & AbstractEntity &
   license: License;
   currentRevision?: Maybe<ExerciseGroupRevision>;
   revisions: ExerciseGroupRevisionConnection;
+  uuidEvents: AbstractNotificationEventConnection;
   taxonomyTerms: TaxonomyTermConnection;
   exercises: Array<GroupedExercise>;
 };
@@ -804,6 +904,14 @@ export type ExerciseGroupRevisionsArgs = {
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
   unrevised?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type ExerciseGroupUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 
@@ -819,10 +927,19 @@ export type ExerciseGroupRevision = AbstractUuid & AbstractRevision & AbstractEn
   id: Scalars['Int'];
   author: User;
   trashed: Scalars['Boolean'];
+  uuidEvents: AbstractNotificationEventConnection;
   date: Scalars['DateTime'];
   repository: ExerciseGroup;
   content: Scalars['String'];
   changes: Scalars['String'];
+};
+
+
+export type ExerciseGroupRevisionUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type ExerciseGroupRevisionConnection = {
@@ -849,6 +966,7 @@ export type Exercise = AbstractUuid & AbstractRepository & AbstractEntity & Abst
   license: License;
   currentRevision?: Maybe<ExerciseRevision>;
   revisions: ExerciseRevisionConnection;
+  uuidEvents: AbstractNotificationEventConnection;
   taxonomyTerms: TaxonomyTermConnection;
   solution?: Maybe<Solution>;
 };
@@ -860,6 +978,14 @@ export type ExerciseRevisionsArgs = {
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
   unrevised?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type ExerciseUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 
@@ -875,10 +1001,19 @@ export type ExerciseRevision = AbstractUuid & AbstractRevision & AbstractEntityR
   id: Scalars['Int'];
   author: User;
   trashed: Scalars['Boolean'];
+  uuidEvents: AbstractNotificationEventConnection;
   date: Scalars['DateTime'];
   repository: Exercise;
   content: Scalars['String'];
   changes: Scalars['String'];
+};
+
+
+export type ExerciseRevisionUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type ExerciseRevisionConnection = {
@@ -905,6 +1040,7 @@ export type GroupedExercise = AbstractUuid & AbstractRepository & AbstractEntity
   license: License;
   currentRevision?: Maybe<GroupedExerciseRevision>;
   revisions: GroupedExerciseRevisionConnection;
+  uuidEvents: AbstractNotificationEventConnection;
   solution?: Maybe<Solution>;
   exerciseGroup: ExerciseGroup;
 };
@@ -918,15 +1054,32 @@ export type GroupedExerciseRevisionsArgs = {
   unrevised?: Maybe<Scalars['Boolean']>;
 };
 
+
+export type GroupedExerciseUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+};
+
 export type GroupedExerciseRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & AbstractExerciseRevision & {
   __typename?: 'GroupedExerciseRevision';
   id: Scalars['Int'];
   author: User;
   trashed: Scalars['Boolean'];
+  uuidEvents: AbstractNotificationEventConnection;
   date: Scalars['DateTime'];
   repository: GroupedExercise;
   content: Scalars['String'];
   changes: Scalars['String'];
+};
+
+
+export type GroupedExerciseRevisionUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type GroupedExerciseRevisionConnection = {
@@ -953,6 +1106,7 @@ export type Page = AbstractUuid & AbstractRepository & AbstractNavigationChild &
   license: License;
   currentRevision?: Maybe<PageRevision>;
   revisions: PageRevisionConnection;
+  uuidEvents: AbstractNotificationEventConnection;
   navigation?: Maybe<Navigation>;
 };
 
@@ -965,15 +1119,32 @@ export type PageRevisionsArgs = {
   unrevised?: Maybe<Scalars['Boolean']>;
 };
 
+
+export type PageUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+};
+
 export type PageRevision = AbstractUuid & AbstractRevision & {
   __typename?: 'PageRevision';
   id: Scalars['Int'];
   author: User;
   trashed: Scalars['Boolean'];
+  uuidEvents: AbstractNotificationEventConnection;
   date: Scalars['DateTime'];
   title: Scalars['String'];
   content: Scalars['String'];
   repository: Page;
+};
+
+
+export type PageRevisionUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type PageRevisionConnection = {
@@ -1000,6 +1171,7 @@ export type Solution = AbstractUuid & AbstractRepository & AbstractEntity & {
   license: License;
   currentRevision?: Maybe<SolutionRevision>;
   revisions?: Maybe<SolutionRevisionConnection>;
+  uuidEvents: AbstractNotificationEventConnection;
   exercise: AbstractExercise;
 };
 
@@ -1012,15 +1184,32 @@ export type SolutionRevisionsArgs = {
   unrevised?: Maybe<Scalars['Boolean']>;
 };
 
+
+export type SolutionUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+};
+
 export type SolutionRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
   __typename?: 'SolutionRevision';
   id: Scalars['Int'];
   author: User;
   trashed: Scalars['Boolean'];
+  uuidEvents: AbstractNotificationEventConnection;
   date: Scalars['DateTime'];
   repository: Solution;
   content: Scalars['String'];
   changes: Scalars['String'];
+};
+
+
+export type SolutionRevisionUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type SolutionRevisionConnection = {
@@ -1058,12 +1247,21 @@ export type TaxonomyTerm = AbstractUuid & AbstractNavigationChild & {
   type: TaxonomyTermType;
   instance: Instance;
   alias?: Maybe<Scalars['String']>;
+  uuidEvents: AbstractNotificationEventConnection;
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   weight: Scalars['Int'];
   parent?: Maybe<TaxonomyTerm>;
   children: AbstractUuidConnection;
   navigation?: Maybe<Navigation>;
+};
+
+
+export type TaxonomyTermUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 
@@ -1104,6 +1302,7 @@ export type User = AbstractUuid & {
   trashed: Scalars['Boolean'];
   alias: Scalars['String'];
   userEvents: AbstractNotificationEventConnection;
+  uuidEvents: AbstractNotificationEventConnection;
   username: Scalars['String'];
   date: Scalars['DateTime'];
   lastLogin?: Maybe<Scalars['DateTime']>;
@@ -1115,6 +1314,14 @@ export type User = AbstractUuid & {
 
 
 export type UserUserEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+};
+
+
+export type UserUuidEventsArgs = {
   after?: Maybe<Scalars['String']>;
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
@@ -1145,6 +1352,7 @@ export type Video = AbstractUuid & AbstractRepository & AbstractEntity & Abstrac
   license: License;
   currentRevision?: Maybe<VideoRevision>;
   revisions: VideoRevisionConnection;
+  uuidEvents: AbstractNotificationEventConnection;
   taxonomyTerms: TaxonomyTermConnection;
 };
 
@@ -1155,6 +1363,14 @@ export type VideoRevisionsArgs = {
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
   unrevised?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type VideoUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 
@@ -1170,12 +1386,21 @@ export type VideoRevision = AbstractUuid & AbstractRevision & AbstractEntityRevi
   id: Scalars['Int'];
   author: User;
   trashed: Scalars['Boolean'];
+  uuidEvents: AbstractNotificationEventConnection;
   date: Scalars['DateTime'];
   repository: Video;
   url: Scalars['String'];
   title: Scalars['String'];
   content: Scalars['String'];
   changes: Scalars['String'];
+};
+
+
+export type VideoRevisionUuidEventsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type VideoRevisionConnection = {

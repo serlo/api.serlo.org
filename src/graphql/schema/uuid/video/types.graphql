@@ -13,6 +13,12 @@ type Video implements AbstractUuid & AbstractRepository & AbstractEntity & Abstr
     last: Int
     unrevised: Boolean
   ): VideoRevisionConnection!
+  uuidEvents(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): AbstractNotificationEventConnection!
   taxonomyTerms(
     after: String
     before: String
@@ -25,6 +31,12 @@ type VideoRevision implements AbstractUuid & AbstractRevision & AbstractEntityRe
   id: Int!
   author: User!
   trashed: Boolean!
+  uuidEvents(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): AbstractNotificationEventConnection!
   date: DateTime!
   repository: Video!
   url: String!

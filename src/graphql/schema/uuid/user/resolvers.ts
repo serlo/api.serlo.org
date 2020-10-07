@@ -31,6 +31,7 @@ import {
 import { ConnectionPayload, resolveConnection } from '../../connection'
 import { resolvers as notificationResolvers } from '../../notification/resolvers'
 import { Context } from '../../types'
+import { createAbstractUuidResolvers } from '../abstract-uuid'
 import { UserResolvers, isUserPayload } from './types'
 
 export const resolvers: UserResolvers = {
@@ -58,6 +59,7 @@ export const resolvers: UserResolvers = {
     },
   },
   User: {
+    ...createAbstractUuidResolvers<UserPayload>(),
     alias(user) {
       return Promise.resolve(encodePath(`/user/profile/${user.username}`))
     },

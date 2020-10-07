@@ -13,6 +13,12 @@ type CoursePage implements AbstractUuid & AbstractRepository & AbstractEntity {
     last: Int
     unrevised: Boolean
   ): CoursePageRevisionConnection!
+  uuidEvents(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): AbstractNotificationEventConnection!
   course: Course!
 }
 
@@ -20,6 +26,12 @@ type CoursePageRevision implements AbstractUuid & AbstractRevision & AbstractEnt
   id: Int!
   author: User!
   trashed: Boolean!
+  uuidEvents(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): AbstractNotificationEventConnection!
   date: DateTime!
   repository: CoursePage!
   title: String!

@@ -13,6 +13,12 @@ type Applet implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
     last: Int
     unrevised: Boolean
   ): AppletRevisionConnection!
+  uuidEvents(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): AbstractNotificationEventConnection!
   taxonomyTerms(
     after: String
     before: String
@@ -25,6 +31,12 @@ type AppletRevision implements AbstractUuid & AbstractRevision & AbstractEntityR
   id: Int!
   author: User!
   trashed: Boolean!
+  uuidEvents(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): AbstractNotificationEventConnection!
   date: DateTime!
   repository: Applet!
   url: String!

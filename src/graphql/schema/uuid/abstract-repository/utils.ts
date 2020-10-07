@@ -21,6 +21,7 @@
  */
 import { resolveConnection } from '../..'
 import { requestsOnlyFields, isNotNil } from '../../utils'
+import { createAbstractUuidResolvers } from '../abstract-uuid'
 import { createAliasResolvers } from '../alias'
 import { resolveUser } from '../user'
 import {
@@ -35,6 +36,7 @@ export function createRepositoryResolvers<
   R extends AbstractRevisionPayload
 >(): RepositoryResolvers<E, R> {
   return {
+    ...createAbstractUuidResolvers<E>(),
     ...createAliasResolvers<E>(),
     async currentRevision(entity, _args, { dataSources }) {
       if (!entity.currentRevisionId) return null
@@ -78,6 +80,7 @@ export function createRevisionResolvers<
   R extends AbstractRevisionPayload
 >(): RevisionResolvers<E, R> {
   return {
+    ...createAbstractUuidResolvers<E>(),
     author(entityRevision, _args, context, info) {
       return resolveUser({ id: entityRevision.authorId }, context, info)
     },

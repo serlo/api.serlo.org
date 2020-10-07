@@ -18,6 +18,12 @@ type TaxonomyTerm implements AbstractUuid & AbstractNavigationChild {
   type: TaxonomyTermType!
   instance: Instance!
   alias: String
+  uuidEvents(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): AbstractNotificationEventConnection!
   name: String!
   description: String
   weight: Int!

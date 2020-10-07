@@ -8,6 +8,12 @@ type User implements AbstractUuid {
     first: Int
     last: Int
   ): AbstractNotificationEventConnection!
+  uuidEvents(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): AbstractNotificationEventConnection!
   username: String!
   date: DateTime!
   lastLogin: DateTime

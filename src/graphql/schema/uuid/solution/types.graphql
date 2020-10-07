@@ -13,6 +13,12 @@ type Solution implements AbstractUuid & AbstractRepository & AbstractEntity {
     last: Int
     unrevised: Boolean
   ): SolutionRevisionConnection
+  uuidEvents(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): AbstractNotificationEventConnection!
   exercise: AbstractExercise!
 }
 
@@ -20,6 +26,12 @@ type SolutionRevision implements AbstractUuid & AbstractRevision & AbstractEntit
   id: Int!
   author: User!
   trashed: Boolean!
+  uuidEvents(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): AbstractNotificationEventConnection!
   date: DateTime!
   repository: Solution!
   content: String!

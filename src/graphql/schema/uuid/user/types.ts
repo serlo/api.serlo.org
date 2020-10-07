@@ -30,7 +30,11 @@ import {
 } from '../../../../types'
 import { Connection } from '../../connection'
 import { QueryResolver, Resolver } from '../../types'
-import { AbstractUuidPayload, DiscriminatorType } from '../abstract-uuid'
+import {
+  AbstractUuidPayload,
+  DiscriminatorType,
+  AbstractUuidResolvers,
+} from '../abstract-uuid'
 
 export interface UserPayload extends Omit<User, keyof UserResolvers['User']> {
   __typename: DiscriminatorType.User
@@ -58,7 +62,7 @@ export interface UserResolvers {
       UserUserEventsArgs,
       Connection<AbstractNotificationEventPayload>
     >
-  }
+  } & AbstractUuidResolvers<UserPayload>
 }
 
 export function isUserPayload(

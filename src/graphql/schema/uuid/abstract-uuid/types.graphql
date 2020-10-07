@@ -1,6 +1,12 @@
 interface AbstractUuid {
   id: Int!
   trashed: Boolean!
+  uuidEvents(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): AbstractNotificationEventConnection!
 }
 
 type Query {
