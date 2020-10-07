@@ -2,7 +2,7 @@ import { ApolloServer } from 'apollo-server-express'
 import { GraphQLRequest } from 'apollo-server-types'
 import { graphql, rest } from 'msw'
 
-import { CacheWorker } from '../cache-worker/src/worker'
+import { CacheWorker } from '../cache-worker/src/cache-worker'
 import { createInMemoryCache } from '../src/cache/in-memory-cache'
 import { getGraphQLOptions } from '../src/graphql'
 import { Service } from '../src/graphql/schema/types'
@@ -75,7 +75,7 @@ beforeEach(async () => {
 describe('Update-cache worker', () => {
   test('successfuly calls _cacheKeys and _updateCache', async () => {
     await worker.updateCache('all')
-    // TODO double check if the cache was indeed updated
+    expect(worker.errLog).toEqual([])
   })
   test('does not fail if _updateCache does not work', async () => {
     global.server.use(
@@ -84,8 +84,9 @@ describe('Update-cache worker', () => {
       })
     )
     await worker.updateCache('all')
+    expect(worker.errLog).not.toEqual([])
   })
-  test('does not fail if a cache key does not get updated for some reason', async () => {
+  test('does not fail if a cache value does not get updated for some reason', async () => {
     global.server.use(
       serloApi.mutation('_updateCache', async (req, res, ctx) => {
         if (req.body?.query.includes('key20')) {
@@ -103,5 +104,6 @@ describe('Update-cache worker', () => {
       })
     )
     await worker.updateCache('all')
+    expect(worker.errLog).not.toEqual([])
   })
 })

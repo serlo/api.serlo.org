@@ -1,4 +1,4 @@
-import { CacheWorker, Service } from './src/worker'
+import { CacheWorker, Service } from './src/cache-worker'
 
 const apiEndpoint = process.env.SERLO_ORG_HOST
 const secret = process.env.SERLO_ORG_SECRET
