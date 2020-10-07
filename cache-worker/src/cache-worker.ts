@@ -65,7 +65,6 @@ export class CacheWorker {
   }
 
   public async updateCache(keys: string): Promise<void> {
-    console.log('Updating cache values of the following keys:', keys)
     let cacheKeys: string[]
     if (keys == 'all') {
       let thereIsNextPage = false
@@ -89,7 +88,7 @@ export class CacheWorker {
           .catch((err) => this.errLog.push(err))
       } while (thereIsNextPage)
     } else {
-      cacheKeys = keys.split(',').map(k => k.trim())
+      cacheKeys = keys.split(',').map((k) => k.trim())
       this.setCacheKeysIn_updateCache(cacheKeys)
       await this.grahQLClient
         .request(this.mutation)
