@@ -19,9 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { UuidPayload } from '..'
+import { DiscriminatorType, UuidPayload } from '..'
+import { SerloDataSource } from '../../../data-sources/serlo'
 import { resolveConnection } from '../../connection'
 import { ThreadPayload } from '../../threads'
+import { CommentPayload } from '../comment/types'
 import { UuidResolvers } from './types'
 
 export const resolvers: UuidResolvers = {
@@ -33,16 +35,16 @@ export const resolvers: UuidResolvers = {
       const threadslist = await Promise.resolve(
         dataSources.serlo.getThreadIds({ id: parent.id })
       )
-      const thread = await Promise.all(
-        threadslist.threadIds.map((id) => {
-          return dataSources.serlo.getUuid<ThreadPayload>({ id })
-        })
-      )
-      return resolveConnection<ThreadPayload>({
-        nodes: thread.filter((payload) => payload !== null) as ThreadPayload[],
+
+      return resolveConnection({
+        nodes: await Promise.all(
+          threadslist.threadIds.map((id) =>
+            toThreadPayload(dataSources.serlo, id)
+          )
+        ),
         payload: cursorPayload,
         createCursor(node) {
-          return node.id.toString()
+          return node.commentPayloads[0].id.toString()
         },
       })
     },
@@ -56,4 +58,20 @@ export const resolvers: UuidResolvers = {
       return dataSources.serlo.getUuid<UuidPayload>({ id })
     },
   },
+}
+
+export async function toThreadPayload(
+  serlo: SerloDataSource,
+  firstCommentId: number
+): Promise<ThreadPayload> {
+  const firstComment = (await serlo.getUuid<CommentPayload>({
+    id: firstCommentId,
+  })) as CommentPayload
+  const remainingComments = Promise.all(
+    firstComment.childrenIds.map((id) => serlo.getUuid<CommentPayload>({ id }))
+  )
+  return {
+    __typename: DiscriminatorType.Thread,
+    commentPayloads: [firstComment, remainingComments],
+  } as ThreadPayload
 }

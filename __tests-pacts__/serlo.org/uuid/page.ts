@@ -35,6 +35,7 @@ import {
 } from '../../__utils__'
 
 test('Page', async () => {
+  // TODO: Property Threads missing
   await addUuidInteraction<PagePayload>({
     __typename: page.__typename,
     id: page.id,

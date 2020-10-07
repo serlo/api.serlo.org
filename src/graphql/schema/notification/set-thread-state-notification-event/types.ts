@@ -19,10 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import {
-  SetThreadStateNotificationEvent,
-  UnsupportedThread,
-} from '../../../../types'
+import { SetThreadStateNotificationEvent } from '../../../../types'
+import { ThreadPayload } from '../../threads'
 import { Resolver } from '../../types'
 import {
   AbstractNotificationEventPayload,
@@ -45,7 +43,7 @@ export interface SetThreadStateNotificationEventResolvers {
     thread: Resolver<
       SetThreadStateNotificationEventPayload,
       never,
-      UnsupportedThread
+      ThreadPayload
     >
   } & NotificationEventResolvers<SetThreadStateNotificationEventPayload>
 }

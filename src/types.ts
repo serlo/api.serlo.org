@@ -346,7 +346,6 @@ export type NotificationEdge = {
 
 export type Thread = {
   __typename?: 'Thread';
-  id: Scalars['Int'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   title: Scalars['String'];
@@ -376,6 +375,11 @@ export type ThreadsCursor = {
   __typename?: 'ThreadsCursor';
   cursor: Scalars['String'];
   node: Thread;
+};
+
+export type UnsupportedThread = {
+  __typename?: 'UnsupportedThread';
+  id: Scalars['Int'];
 };
 
 export type AbstractEntity = {
@@ -645,6 +649,11 @@ export type Comment = {
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
   author: User;
+};
+
+export type UnsupportedComment = {
+  __typename?: 'UnsupportedComment';
+  id: Scalars['Int'];
 };
 
 export type CoursePage = AbstractUuid & AbstractRepository & AbstractEntity & {

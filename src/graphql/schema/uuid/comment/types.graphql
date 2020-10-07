@@ -16,3 +16,8 @@ type Comment {
   createdAt: DateTime!
   author: User!
 }
+
+# TODO: this should be deleted and replaced with the real Comment
+type UnsupportedComment {
+  id: Int!
+}

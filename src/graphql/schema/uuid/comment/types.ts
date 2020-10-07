@@ -1,18 +1,19 @@
 import { Scalars } from '../../../../types'
 import { Resolver } from '../../types'
+import { DiscriminatorType } from '../abstract-uuid'
 import { UserPayload } from '../user'
 
 export interface CommentPayload {
-  // Server answer. !Does not coincide with what the query will give back as a comment
   id: number
   trashed: boolean
   alias: null
-  __typename: 'Comment'
+  __typename: DiscriminatorType.Comment
   authorId: number
   title: string
   date: string
   archived: boolean
   content: string
+  parentId: number
   childrenIds: number[]
 }
 
