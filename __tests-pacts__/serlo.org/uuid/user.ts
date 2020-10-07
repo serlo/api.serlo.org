@@ -22,7 +22,7 @@
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
-import { getUserDataWithoutSubResolver, user } from '../../../__fixtures__'
+import { getUserDataWithoutSubResolvers, user } from '../../../__fixtures__'
 import { UserPayload } from '../../../src/graphql/schema/uuid/user'
 import {
   addUuidInteraction,
@@ -58,7 +58,7 @@ test('User', async () => {
     `,
     variables: user,
     data: {
-      uuid: getUserDataWithoutSubResolver(user),
+      uuid: getUserDataWithoutSubResolvers(user),
     },
   })
 })
