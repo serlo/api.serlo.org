@@ -44,6 +44,7 @@ export interface CreateCommentNotificationEventPayload
 
 export interface CreateCommentNotificationEventResolvers {
   CreateCommentNotificationEvent: {
+    //TODO: insert correct Thread and Comment Resolver types
     thread: Resolver<
       CreateCommentNotificationEventPayload,
       never,

@@ -1144,7 +1144,6 @@ export enum TaxonomyTermType {
 // @public (undocumented)
 export type Thread = {
     __typename?: 'Thread';
-    id: Scalars['Int'];
     createdAt: Scalars['DateTime'];
     updatedAt: Scalars['DateTime'];
     title: Scalars['String'];
@@ -1176,6 +1175,18 @@ export type ThreadsCursor = {
     __typename?: 'ThreadsCursor';
     cursor: Scalars['String'];
     node: Thread;
+};
+
+// @public (undocumented)
+export type UnsupportedComment = {
+    __typename?: 'UnsupportedComment';
+    id: Scalars['Int'];
+};
+
+// @public (undocumented)
+export type UnsupportedThread = {
+    __typename?: 'UnsupportedThread';
+    id: Scalars['Int'];
 };
 
 // @public (undocumented)

@@ -43,6 +43,7 @@ export enum DiscriminatorType {
   User = 'User',
   TaxonomyTerm = 'TaxonomyTerm',
   Thread = 'Thread',
+  Comment = 'Comment',
 }
 
 export type UuidType = DiscriminatorType | EntityType | EntityRevisionType

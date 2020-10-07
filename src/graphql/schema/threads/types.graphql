@@ -1,11 +1,10 @@
 type Thread {
-  id: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
   title: String!
   archived: Boolean!
   trashed: Boolean!
-  object: AbstractUuid! # Shouldn't that be named author?
+  object: AbstractUuid!
   comments(
     after: String
     before: String
@@ -26,13 +25,7 @@ type ThreadsCursor {
   node: Thread!
 }
 
-# TODO: Mutation ergänzen
-#extend type Mutation {
-#    createThread(
-#        createdAt: DateTime!
-#        updatedAt: DateTime!
-#        title: String!
-#        objectId: Int!
-#        content: String!
-#    ): Thread
-#}
+# TODO: this should be deleted and replaced with the real Thread
+type UnsupportedThread {
+  id: Int!
+}
