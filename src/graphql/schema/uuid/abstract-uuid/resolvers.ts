@@ -55,7 +55,7 @@ export const resolvers: UuidResolvers = {
       } else if (payload.id) {
         return dataSources.serlo.getUuid<UuidPayload>({ id: payload.id })
       } else {
-        throw new UserInputError('uuid: you need to provide an id or an alias')
+        throw new UserInputError('you need to provide an id or an alias')
       }
     },
   },
