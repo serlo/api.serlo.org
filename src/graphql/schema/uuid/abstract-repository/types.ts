@@ -78,7 +78,7 @@ export interface AbstractRepositoryResolvers {
   }
 }
 
-type RevisionsConnectionArgs =
+type AbstractRepositoryRevisionsArgs =
   | AppletRevisionsArgs
   | ArticleRevisionsArgs
   | CoursePageRevisionsArgs
@@ -97,7 +97,7 @@ export interface RepositoryResolvers<
 > {
   alias: Resolver<E, never, string | null>
   currentRevision: Resolver<E, never, R | null>
-  revisions: Resolver<E, RevisionsConnectionArgs, Connection<R>>
+  revisions: Resolver<E, AbstractRepositoryRevisionsArgs, Connection<R>>
   license: Resolver<E, never, Partial<License>>
 }
 
