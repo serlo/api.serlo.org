@@ -55,13 +55,14 @@ export function createRepositoryResolvers<
         ),
         A.filter(isDefined),
         A.filter((revision) => {
-          if (!cursorPayload.unrevised) return true
+          if (cursorPayload.unrevised === null) return true
 
-          return (
-            (entity.currentRevisionId === null ||
-              revision.id > entity.currentRevisionId) &&
-            !revision.trashed
-          )
+          if (revision.trashed) return false
+
+          const isUnrevised =
+            entity.currentRevisionId === null ||
+            revision.id > entity.currentRevisionId
+          return cursorPayload.unrevised ? isUnrevised : !isUnrevised
         })
       )
       return resolveConnection<R>({
