@@ -7,6 +7,7 @@ export class CacheWorker {
   private query = ''
   private mutation = ''
 
+  public okLog: { data: any; http: any }[] = []
   public errLog: Error[] = []
 
   public constructor({
@@ -64,6 +65,22 @@ export class CacheWorker {
     `
   }
 
+  private async call_updateCache() {
+    await this.grahQLClient
+      .request(this.mutation)
+      .then((res) => {
+        console.log('res', res)
+        if (res.errors) {
+          this.errLog.push(res.errors)
+        } else {
+          this.okLog.push(res)
+        }
+      })
+      .catch((err) => {
+        this.errLog.push(err)
+      })
+  }
+
   public async updateCache(keys: string): Promise<void> {
     let cacheKeys: string[]
     if (keys == 'all') {
@@ -80,20 +97,18 @@ export class CacheWorker {
             this.setCursorIn_cacheKeys(pageInfo.endCursor!)
             cacheKeys = nodes.map((e) => `"${e}"`)
             this.setCacheKeysIn_updateCache(cacheKeys)
-            await this.grahQLClient
-              .request(this.mutation)
-              .catch((err) => this.errLog.push(err))
+            await this.call_updateCache()
             thereIsNextPage = pageInfo.hasNextPage
           })
           .catch((err) => this.errLog.push(err))
       } while (thereIsNextPage)
     } else {
-      cacheKeys = keys.split(',').map((k) => k.trim())
+      cacheKeys = keys
+        .split(',')
+        .map((k) => k.trim())
+        .map((e) => `"${e}"`)
       this.setCacheKeysIn_updateCache(cacheKeys)
-      await this.grahQLClient
-        .request(this.mutation)
-        .catch((err) => this.errLog.push(err))
-      console.log('bla', this.errLog)
+      await this.call_updateCache()
     }
   }
 }
