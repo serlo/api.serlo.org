@@ -47,6 +47,7 @@ export interface UserResolvers {
     >
   }
   User: {
+    alias: Resolver<UserPayload, never, string>
     activeAuthor: Resolver<UserPayload, never, boolean>
     activeDonor: Resolver<UserPayload, never, boolean>
     activeReviewer: Resolver<UserPayload, never, boolean>

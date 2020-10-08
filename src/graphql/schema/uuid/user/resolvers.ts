@@ -21,7 +21,7 @@
  */
 import { pipeable, either } from 'fp-ts'
 
-import { AbstractUuidPayload, UserPayload } from '..'
+import { AbstractUuidPayload, encodePath, UserPayload } from '..'
 import { ErrorEvent } from '../../../../error-event'
 import {
   MajorDimension,
@@ -57,6 +57,9 @@ export const resolvers: UserResolvers = {
     },
   },
   User: {
+    alias(user) {
+      return Promise.resolve(encodePath(`/user/profile/${user.username}`))
+    },
     async activeAuthor(user, _args, { dataSources }) {
       return (await dataSources.serlo.getActiveAuthorIds()).includes(user.id)
     },

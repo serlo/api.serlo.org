@@ -19,18 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { decodePath, UuidPayload } from '..'
 import { resolveConnection } from '../../connection'
 import { Context } from '../../types'
+import { UuidPayload } from '../abstract-uuid'
+import { createAliasResolvers } from '../alias'
 import { TaxonomyTermPayload, TaxonomyTermResolvers } from './types'
 
 export const resolvers: TaxonomyTermResolvers = {
   TaxonomyTerm: {
-    alias(taxonomyTerm) {
-      return Promise.resolve(
-        taxonomyTerm.alias ? decodePath(taxonomyTerm.alias) : null
-      )
-    },
+    ...createAliasResolvers<TaxonomyTermPayload>(),
     async parent(taxonomyTerm, _args, { dataSources }) {
       if (!taxonomyTerm.parentId) return null
       return dataSources.serlo.getUuid<TaxonomyTermPayload>({

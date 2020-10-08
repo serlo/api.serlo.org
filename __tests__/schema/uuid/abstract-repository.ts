@@ -40,6 +40,7 @@ import {
   exerciseRevision,
   getRepositoryDataWithoutSubResolvers,
   getRevisionDataWithoutSubResolvers,
+  getUserDataWithoutSubResolvers,
   groupedExercise,
   groupedExerciseRevision,
   license,
@@ -179,38 +180,87 @@ describe('Repository', () => {
     })
   })
 
-  test.each(repositoryCases)('%s by alias', async (type, { repository }) => {
-    global.server.use(
-      createUuidHandler(repository),
-      createAliasHandler({
-        id: repository.id,
-        instance: repository.instance,
-        path: 'path',
-        source: `source`,
-        timestamp: 'timestamp',
-      })
-    )
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query repository($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on AbstractRepository {
-              id
-              trashed
-              alias
-              date
+  test.each(repositoryCases)(
+    '%s by alias (url-encoded)',
+    async (type, { repository }) => {
+      global.server.use(
+        createUuidHandler(repository),
+        createAliasHandler({
+          id: repository.id,
+          instance: repository.instance,
+          path: '/ü',
+          source: `/source`,
+          timestamp: 'timestamp',
+        })
+      )
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query repository($alias: AliasInput!) {
+            uuid(alias: $alias) {
+              __typename
+              ... on AbstractRepository {
+                id
+                trashed
+                alias
+                date
+              }
             }
           }
-        }
-      `,
-      variables: repository,
-      data: {
-        uuid: getRepositoryDataWithoutSubResolvers(repository),
-      },
-      client,
-    })
-  })
+        `,
+        variables: {
+          alias: {
+            instance: repository.instance,
+            path: '/%C3%BC',
+          },
+        },
+        data: {
+          uuid: getRepositoryDataWithoutSubResolvers(repository),
+        },
+        client,
+      })
+    }
+  )
+
+  test.each(repositoryCases)(
+    '%s by alias (/:id)',
+    async (type, { repository }) => {
+      global.server.use(
+        createUuidHandler(repository),
+        createAliasHandler({
+          id: repository.id,
+          instance: repository.instance,
+          path: '/path',
+          source: `/source`,
+          timestamp: 'timestamp',
+        })
+      )
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query repository($alias: AliasInput!) {
+            uuid(alias: $alias) {
+              __typename
+              ... on AbstractRepository {
+                id
+                trashed
+                alias
+                date
+              }
+            }
+          }
+        `,
+        variables: {
+          alias: {
+            instance: repository.instance,
+            path: `/${repository.id}`,
+          },
+        },
+        data: {
+          uuid: getRepositoryDataWithoutSubResolvers(repository),
+        },
+        client,
+      })
+    }
+  )
 
   test.each(repositoryCases)(
     '%s by id (w/ currentRevision)',
@@ -279,6 +329,7 @@ describe('Revision', () => {
                   __typename
                   id
                   trashed
+                  alias
                   username
                   date
                   lastLogin
@@ -291,7 +342,7 @@ describe('Revision', () => {
         variables: revision,
         data: {
           uuid: {
-            author: user,
+            author: getUserDataWithoutSubResolvers(user),
           },
         },
         client,

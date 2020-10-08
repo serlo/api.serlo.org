@@ -29,13 +29,14 @@ import {
 } from '../../src/graphql/schema'
 import { Instance } from '../../src/types'
 import { license } from '../license'
+import { getRepositoryDataWithoutSubResolvers } from './abstract-repository'
 
 export const article: ArticlePayload = {
   __typename: EntityType.Article,
   id: 1855,
   trashed: false,
   instance: Instance.De,
-  alias: '/mathe/funktionen/uebersicht-aller-artikel-zu-funktionen/parabel',
+  alias: '/mathe/funktionen/übersicht-aller-artikel-zu-funktionen/parabel',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 30674,
   licenseId: license.id,
@@ -57,7 +58,10 @@ export const articleRevision: ArticleRevisionPayload = {
 }
 
 export function getArticleDataWithoutSubResolvers(article: ArticlePayload) {
-  return R.omit(['currentRevisionId', 'licenseId', 'taxonomyTermIds'], article)
+  return {
+    ...R.omit(['currentRevisionId', 'licenseId', 'taxonomyTermIds'], article),
+    ...getRepositoryDataWithoutSubResolvers(article),
+  }
 }
 
 export function getArticleRevisionDataWithoutSubResolvers(

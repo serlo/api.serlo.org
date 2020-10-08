@@ -49,3 +49,24 @@ test('Alias', async () => {
   })
   await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/alias/mathe`)
 })
+
+test('Alias (URL /user/profile/:username)', async () => {
+  await addJsonInteraction({
+    name: 'fetch data of alias /user/profile/admin',
+    given: 'user "admin" has id 1',
+    path: '/api/alias/user/profile/admin',
+    body: {
+      id: Matchers.integer(1),
+      instance: Matchers.string('de'),
+      path: '/user/profile/admin',
+      source: Matchers.term({
+        matcher: '\\/user\\/profile\\/\\d+',
+        generate: '/user/profile/1',
+      }),
+      timestamp: Matchers.iso8601DateTime('2014-03-01T20:36:21+01:00'),
+    },
+  })
+  await fetch(
+    `http://de.${process.env.SERLO_ORG_HOST}/api/alias/user/profile/admin`
+  )
+})
