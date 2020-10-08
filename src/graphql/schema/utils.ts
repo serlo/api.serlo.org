@@ -57,6 +57,6 @@ export function mergeSchemas(...schemas: Schema[]): Schema {
   return { resolvers, typeDefs }
 }
 
-export function isNotNil<A>(value: A | null | undefined): value is A {
+export function isDefined<A>(value?: A | null): value is A {
   return value !== null && value !== undefined
 }
