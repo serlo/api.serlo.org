@@ -388,6 +388,7 @@ describe('Repository', () => {
               revisedRevision.id,
             ],
           }),
+          createUuidHandler(unrevisedRevision),
           createUuidHandler(revision),
           createUuidHandler(revisedRevision)
         )
@@ -436,6 +437,7 @@ describe('Repository', () => {
               revisedRevision.id,
             ],
           }),
+          createUuidHandler(unrevisedRevision),
           createUuidHandler(revision),
           createUuidHandler(trashed(revisedRevision))
         )
