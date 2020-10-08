@@ -20,12 +20,12 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Matchers } from '@pact-foundation/pact'
-import { gql } from 'apollo-server'
+import fetch from 'node-fetch'
 
 import { user } from '../../__fixtures__/uuid'
 import { createTestClient } from '../../__tests__/__utils__'
 import { Service } from '../../src/graphql/schema/types'
-import { addJsonInteraction, assertSuccessfulGraphQLQuery } from '../__utils__'
+import { addJsonInteraction } from '../__utils__'
 
 test('Subscriptions', async () => {
   global.client = createTestClient({
@@ -41,26 +41,7 @@ test('Subscriptions', async () => {
       subscriptions: Matchers.eachLike({ id: Matchers.integer(1) }),
     },
   })
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query {
-        subscriptions {
-          nodes {
-            id
-          }
-          totalCount
-        }
-      }
-    `,
-    data: {
-      subscriptions: {
-        nodes: [
-          {
-            id: 1,
-          },
-        ],
-        totalCount: 1,
-      },
-    },
-  })
+  await fetch(
+    `http://de.${process.env.SERLO_ORG_HOST}/api/subscriptions/${user.id}`
+  )
 })
