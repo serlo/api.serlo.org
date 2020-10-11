@@ -65,49 +65,55 @@ export class CacheWorker {
     `
   }
 
-  private async call_updateCache() {
+  private async call_updateCache(): Promise<void> {
     await this.grahQLClient
       .request(this.mutation)
-      .then((res) => {
-        console.log('res', res)
-        if (res.errors) {
-          this.errLog.push(res.errors)
-        } else {
-          this.okLog.push(res)
-        }
-      })
-      .catch((err) => {
-        this.errLog.push(err)
-      })
+      .then((res) => this.fillLogs(res))
+      .catch((err) => this.fillLogs(err))
   }
 
-  public async updateCache(keys: string): Promise<void> {
-    let cacheKeys: string[]
-    if (keys == 'all') {
+  private fillLogs(response: any): void {
+    if (response instanceof Error) {
+      this.errLog.push(response)
+      return
+    } else if (response.errors) {
+      this.errLog.push(response.errors)
+    }
+    this.okLog.push(response)
+  }
+
+  private stringifyKeys(keysArr: string[]): string[] {
+    // GraphQL doesn't recognize JS strings as strings,
+    // that is why it is necessary to put them
+    // explicitly between double quotes
+    return keysArr.map((e) => `"${e}"`)
+  }
+
+  private setRequests(response: cacheKeysResponse): boolean {
+    const { nodes, pageInfo } = response.data._cacheKeys
+    this.setCursorIn_cacheKeys(pageInfo.endCursor!)
+    const cacheKeys = this.stringifyKeys(nodes)
+    this.setCacheKeysIn_updateCache(cacheKeys)
+    return pageInfo.hasNextPage
+  }
+
+  public async updateCache(keysEnv: string): Promise<void> {
+    if (keysEnv == 'all') {
       let thereIsNextPage = false
       this.setCursorIn_cacheKeys()
       do {
         await this.grahQLClient
           .request(this.query)
           .then(async (res) => {
-            const {
-              nodes,
-              pageInfo,
-            } = (res as cacheKeysResponse).data._cacheKeys
-            this.setCursorIn_cacheKeys(pageInfo.endCursor!)
-            cacheKeys = nodes.map((e) => `"${e}"`)
-            this.setCacheKeysIn_updateCache(cacheKeys)
+            thereIsNextPage = this.setRequests(res)
             await this.call_updateCache()
-            thereIsNextPage = pageInfo.hasNextPage
           })
-          .catch((err) => this.errLog.push(err))
+          .catch((err) => this.fillLogs(err))
       } while (thereIsNextPage)
     } else {
-      cacheKeys = keys
-        .split(',')
-        .map((k) => k.trim())
-        .map((e) => `"${e}"`)
-      this.setCacheKeysIn_updateCache(cacheKeys)
+      let keys = keysEnv.split(',').map((k) => k.trim())
+      keys = this.stringifyKeys(keys)
+      this.setCacheKeysIn_updateCache(keys)
       await this.call_updateCache()
     }
   }
