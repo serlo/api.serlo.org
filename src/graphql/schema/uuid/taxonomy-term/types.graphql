@@ -30,15 +30,3 @@ type TaxonomyTerm implements AbstractUuid & AbstractNavigationChild {
   ): AbstractUuidConnection!
   navigation: Navigation
 }
-
-type AbstractUuidConnection {
-  edges: [AbstractUuidCursor!]!
-  nodes: [AbstractUuid!]!
-  totalCount: Int!
-  pageInfo: PageInfo!
-}
-
-type AbstractUuidCursor {
-  cursor: String!
-  node: AbstractUuid!
-}
