@@ -51,7 +51,7 @@ export function createRepositoryResolvers<
         ),
         A.filter(isDefined),
         A.filter((revision) => {
-          if (cursorPayload.unrevised === null) return true
+          if (!isDefined(cursorPayload.unrevised)) return true
 
           if (revision.trashed) return false
 
