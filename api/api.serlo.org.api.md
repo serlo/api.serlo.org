@@ -885,6 +885,7 @@ export type Query = {
     license?: Maybe<License>;
     notificationEvent?: Maybe<AbstractNotificationEvent>;
     notifications: NotificationConnection;
+    subscriptions: QuerySubscriptionResult;
     uuid?: Maybe<AbstractUuid>;
 };
 
@@ -937,6 +938,23 @@ export type QueryNotificationsArgs = {
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
     unread?: Maybe<Scalars['Boolean']>;
+};
+
+// @public (undocumented)
+export type QuerySubscriptionResult = {
+    __typename?: 'QuerySubscriptionResult';
+    edges: Array<SubscriptionCursor>;
+    nodes: Array<AbstractUuid>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type QuerySubscriptionsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)
@@ -1113,6 +1131,13 @@ export type StringEdge = {
 };
 
 // @public (undocumented)
+export type SubscriptionCursor = {
+    __typename?: 'SubscriptionCursor';
+    cursor: Scalars['String'];
+    node: AbstractUuid;
+};
+
+// @public (undocumented)
 export type TaxonomyTerm = AbstractUuid & AbstractNavigationChild & {
     __typename?: 'TaxonomyTerm';
     id: Scalars['Int'];
@@ -1195,6 +1220,7 @@ export type User = AbstractUuid & {
     __typename?: 'User';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    alias: Scalars['String'];
     username: Scalars['String'];
     date: Scalars['DateTime'];
     lastLogin?: Maybe<Scalars['DateTime']>;

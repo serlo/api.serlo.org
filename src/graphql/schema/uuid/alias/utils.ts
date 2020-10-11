@@ -1,3 +1,5 @@
+import { AliasResolvers } from './types'
+
 /**
  * This file is part of Serlo.org API
  *
@@ -34,4 +36,14 @@ export function decodePath(path: string) {
 
 export function encodePath(path: string) {
   return encodeURIComponent(path).replace(/%2F/g, '/')
+}
+
+export function createAliasResolvers<
+  T extends { alias: string | null }
+>(): AliasResolvers<T> {
+  return {
+    alias(entity) {
+      return Promise.resolve(entity.alias ? encodePath(entity.alias) : null)
+    },
+  }
 }

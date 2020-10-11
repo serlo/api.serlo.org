@@ -19,34 +19,21 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-/* eslint-disable import/no-unassigned-import */
-describe('GET /api/alias/:alias', () => {
-  require('./alias')
-})
-describe('GET /api/cache-keys', () => {
-  require('./cache-keys')
-})
-describe('GET /api/event/:id', () => {
-  require('./event')
-})
-describe('GET /api/license/:id', () => {
-  require('./license')
-})
-describe('GET /api/navigation', () => {
-  require('./navigation')
-})
-describe('GET /api/notifications/:id', () => {
-  require('./notifications')
-})
-describe('POST /api/set-notification-state/:id', () => {
-  require('./set-notification-state')
-})
-describe('GET /api/subscriptions', () => {
-  require('./subscriptions')
-})
-describe('GET /api/user/*', () => {
-  require('./user')
-})
-describe('GET /api/uuid/:id', () => {
-  require('./uuid')
-})
+import { QuerySubscriptionsArgs } from '../../../types'
+import { Connection } from '../connection'
+import { QueryResolver } from '../types'
+import { AbstractUuidPayload } from '../uuid/abstract-uuid'
+
+export interface SubscriptionsPayload {
+  subscriptions: { id: number }[]
+  userId: number
+}
+
+export interface SubscriptionResolvers {
+  Query: {
+    subscriptions: QueryResolver<
+      QuerySubscriptionsArgs,
+      Connection<AbstractUuidPayload>
+    >
+  }
+}

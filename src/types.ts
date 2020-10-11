@@ -21,6 +21,7 @@ export type Query = {
   license?: Maybe<License>;
   notificationEvent?: Maybe<AbstractNotificationEvent>;
   notifications: NotificationConnection;
+  subscriptions: QuerySubscriptionResult;
   uuid?: Maybe<AbstractUuid>;
 };
 
@@ -73,6 +74,14 @@ export type QueryNotificationsArgs = {
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
   unread?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type QuerySubscriptionsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 
@@ -344,6 +353,20 @@ export type NotificationEdge = {
   node: Notification;
 };
 
+export type QuerySubscriptionResult = {
+  __typename?: 'QuerySubscriptionResult';
+  edges: Array<SubscriptionCursor>;
+  nodes: Array<AbstractUuid>;
+  totalCount: Scalars['Int'];
+  pageInfo: PageInfo;
+};
+
+export type SubscriptionCursor = {
+  __typename?: 'SubscriptionCursor';
+  cursor: Scalars['String'];
+  node: AbstractUuid;
+};
+
 export type AbstractEntity = {
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -470,6 +493,20 @@ export type TaxonomyTermEdge = {
 export type AbstractUuid = {
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
+};
+
+export type AbstractUuidConnection = {
+  __typename?: 'AbstractUuidConnection';
+  edges: Array<AbstractUuidCursor>;
+  nodes: Array<AbstractUuid>;
+  totalCount: Scalars['Int'];
+  pageInfo: PageInfo;
+};
+
+export type AbstractUuidCursor = {
+  __typename?: 'AbstractUuidCursor';
+  cursor: Scalars['String'];
+  node: AbstractUuid;
 };
 
 export type AliasInput = {
@@ -1049,20 +1086,6 @@ export type TaxonomyTermChildrenArgs = {
   last?: Maybe<Scalars['Int']>;
 };
 
-export type AbstractUuidConnection = {
-  __typename?: 'AbstractUuidConnection';
-  edges: Array<AbstractUuidCursor>;
-  nodes: Array<AbstractUuid>;
-  totalCount: Scalars['Int'];
-  pageInfo: PageInfo;
-};
-
-export type AbstractUuidCursor = {
-  __typename?: 'AbstractUuidCursor';
-  cursor: Scalars['String'];
-  node: AbstractUuid;
-};
-
 export type UnsupportedThread = {
   __typename?: 'UnsupportedThread';
   id: Scalars['Int'];
@@ -1077,6 +1100,7 @@ export type User = AbstractUuid & {
   __typename?: 'User';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
+  alias: Scalars['String'];
   username: Scalars['String'];
   date: Scalars['DateTime'];
   lastLogin?: Maybe<Scalars['DateTime']>;

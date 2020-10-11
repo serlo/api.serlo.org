@@ -1,6 +1,7 @@
 type User implements AbstractUuid {
   id: Int!
   trashed: Boolean!
+  alias: String!
   username: String!
   date: DateTime!
   lastLogin: DateTime
