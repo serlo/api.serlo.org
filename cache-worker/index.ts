@@ -32,23 +32,33 @@ const cw = new CacheWorker({ apiEndpoint, secret, service })
 let tries = 0
 const MAX_TRIES = 3
 
-async function tryUpdate() {
-  while (tries < MAX_TRIES) {
-    cw.errLog = []
-    console.log('Updating cache values of the following keys:', cacheKeys)
-    await cw.updateCache(cacheKeys!)
-    if (cw.errLog == []) break
-    tries++
-  }
+async function start() {
+  console.log('Updating cache values of the following keys:', cacheKeys)
+  run()
 }
 
-tryUpdate().then(() => {
-  if (cw.errLog.length) {
-    console.warn(
-      'Cache update was run but the following errors were found',
-      cw.errLog
-    )
-  } else {
-    console.log('Cache successfully updated')
+async function run() {
+  tries++
+  await cw.updateCache(cacheKeys!)
+  if (cw.errLog == []) success()
+  if (cw.errLog != [] && tries < MAX_TRIES) {
+    cw.errLog = []
+    console.log('Retrying to update cache')
+    setTimeout(async () => await run(), 5000)
+    return
   }
-})
+  failure()
+}
+
+function failure() {
+  console.warn(
+    'Cache update was run but the following errors were found',
+    cw.errLog
+  )
+}
+
+function success() {
+  console.log('Cache successfully updated')
+}
+
+start()
