@@ -29,22 +29,20 @@ const cacheKeys = process.env.CACHE_KEYS
 
 const cw = new CacheWorker({ apiEndpoint, secret, service })
 
-let tries = 0
-const MAX_TRIES = 3
+const MAX_RETRIES = (process.env.CACHE_KEYS_RETRIES as unknown) as number
 
 async function start() {
   console.log('Updating cache values of the following keys:', cacheKeys)
-  run()
+  run(0)
 }
 
-async function run() {
-  tries++
+async function run(tries: number) {
   await cw.updateCache(cacheKeys!)
   if (cw.errLog == []) success()
-  if (cw.errLog != [] && tries < MAX_TRIES) {
+  if (cw.errLog != [] && tries < MAX_RETRIES) {
     cw.errLog = []
     console.log('Retrying to update cache')
-    setTimeout(async () => await run(), 5000)
+    setTimeout(async () => await run(++tries), 5000)
     return
   }
   failure()
