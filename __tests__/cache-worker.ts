@@ -54,7 +54,7 @@ beforeEach(async () => {
       return res(
         ctx.data(
           await server.executeOperation({
-            query: worker.getQueryRequest(),
+            query: worker.getCacheKeysLiteral(),
           } as GraphQLRequest)
         )
       )
@@ -63,7 +63,7 @@ beforeEach(async () => {
       return res(
         ctx.data(
           await server.executeOperation({
-            query: worker.getMutationRequest(),
+            query: worker.getUpdateCacheLiteral(),
           } as GraphQLRequest)
         )
       )
@@ -101,7 +101,7 @@ describe('Update-cache worker', () => {
         return res(
           ctx.data(
             await server.executeOperation({
-              query: worker.getMutationRequest(),
+              query: worker.getUpdateCacheLiteral(),
             } as GraphQLRequest)
           )
         )
