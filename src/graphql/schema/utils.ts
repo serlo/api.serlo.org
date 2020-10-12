@@ -56,3 +56,7 @@ export function mergeSchemas(...schemas: Schema[]): Schema {
   const typeDefs = R.flatten(subTypeDefs)
   return { resolvers, typeDefs }
 }
+
+export function isDefined<A>(value?: A | null): value is A {
+  return value !== null && value !== undefined
+}

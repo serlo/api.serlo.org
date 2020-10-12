@@ -132,6 +132,7 @@ export type Applet = AbstractUuid & AbstractRepository & AbstractEntity & Abstra
     date: Scalars['DateTime'];
     license: License;
     currentRevision?: Maybe<AppletRevision>;
+    revisions: AppletRevisionConnection;
     taxonomyTerms: TaxonomyTermConnection;
 };
 
@@ -152,6 +153,31 @@ export type AppletRevision = AbstractUuid & AbstractRevision & AbstractEntityRev
 };
 
 // @public (undocumented)
+export type AppletRevisionConnection = {
+    __typename?: 'AppletRevisionConnection';
+    edges: Array<AppletRevisionCursor>;
+    nodes: Array<AppletRevision>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type AppletRevisionCursor = {
+    __typename?: 'AppletRevisionCursor';
+    cursor: Scalars['String'];
+    node: AppletRevision;
+};
+
+// @public (undocumented)
+export type AppletRevisionsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    unrevised?: Maybe<Scalars['Boolean']>;
+};
+
+// @public (undocumented)
 export type AppletTaxonomyTermsArgs = {
     after?: Maybe<Scalars['String']>;
     before?: Maybe<Scalars['String']>;
@@ -169,6 +195,7 @@ export type Article = AbstractUuid & AbstractRepository & AbstractEntity & Abstr
     date: Scalars['DateTime'];
     license: License;
     currentRevision?: Maybe<ArticleRevision>;
+    revisions: ArticleRevisionConnection;
     taxonomyTerms: TaxonomyTermConnection;
 };
 
@@ -185,6 +212,31 @@ export type ArticleRevision = AbstractUuid & AbstractRevision & AbstractEntityRe
     changes: Scalars['String'];
     metaTitle: Scalars['String'];
     metaDescription: Scalars['String'];
+};
+
+// @public (undocumented)
+export type ArticleRevisionConnection = {
+    __typename?: 'ArticleRevisionConnection';
+    edges: Array<ArticleRevisionCursor>;
+    nodes: Array<ArticleRevision>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type ArticleRevisionCursor = {
+    __typename?: 'ArticleRevisionCursor';
+    cursor: Scalars['String'];
+    node: ArticleRevision;
+};
+
+// @public (undocumented)
+export type ArticleRevisionsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -217,6 +269,7 @@ export type Course = AbstractUuid & AbstractRepository & AbstractEntity & Abstra
     date: Scalars['DateTime'];
     license: License;
     currentRevision?: Maybe<CourseRevision>;
+    revisions: CourseRevisionConnection;
     taxonomyTerms: TaxonomyTermConnection;
     pages: Array<CoursePage>;
 };
@@ -231,6 +284,7 @@ export type CoursePage = AbstractUuid & AbstractRepository & AbstractEntity & {
     date: Scalars['DateTime'];
     license: License;
     currentRevision?: Maybe<CoursePageRevision>;
+    revisions: CoursePageRevisionConnection;
     course: Course;
 };
 
@@ -248,6 +302,31 @@ export type CoursePageRevision = AbstractUuid & AbstractRevision & AbstractEntit
 };
 
 // @public (undocumented)
+export type CoursePageRevisionConnection = {
+    __typename?: 'CoursePageRevisionConnection';
+    edges: Array<CoursePageRevisionCursor>;
+    nodes: Array<CoursePageRevision>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type CoursePageRevisionCursor = {
+    __typename?: 'CoursePageRevisionCursor';
+    cursor: Scalars['String'];
+    node: CoursePageRevision;
+};
+
+// @public (undocumented)
+export type CoursePageRevisionsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    unrevised?: Maybe<Scalars['Boolean']>;
+};
+
+// @public (undocumented)
 export type CourseRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
     __typename?: 'CourseRevision';
     id: Scalars['Int'];
@@ -259,6 +338,31 @@ export type CourseRevision = AbstractUuid & AbstractRevision & AbstractEntityRev
     content: Scalars['String'];
     changes: Scalars['String'];
     metaDescription: Scalars['String'];
+};
+
+// @public (undocumented)
+export type CourseRevisionConnection = {
+    __typename?: 'CourseRevisionConnection';
+    edges: Array<CourseRevisionCursor>;
+    nodes: Array<CourseRevision>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type CourseRevisionCursor = {
+    __typename?: 'CourseRevisionCursor';
+    cursor: Scalars['String'];
+    node: CourseRevision;
+};
+
+// @public (undocumented)
+export type CourseRevisionsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -354,6 +458,7 @@ export type Event = AbstractUuid & AbstractRepository & AbstractEntity & Abstrac
     date: Scalars['DateTime'];
     license: License;
     currentRevision?: Maybe<EventRevision>;
+    revisions: EventRevisionConnection;
     taxonomyTerms: TaxonomyTermConnection;
 };
 
@@ -370,6 +475,31 @@ export type EventRevision = AbstractUuid & AbstractRevision & AbstractEntityRevi
     changes: Scalars['String'];
     metaTitle: Scalars['String'];
     metaDescription: Scalars['String'];
+};
+
+// @public (undocumented)
+export type EventRevisionConnection = {
+    __typename?: 'EventRevisionConnection';
+    edges: Array<EventRevisionCursor>;
+    nodes: Array<EventRevision>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type EventRevisionCursor = {
+    __typename?: 'EventRevisionCursor';
+    cursor: Scalars['String'];
+    node: EventRevision;
+};
+
+// @public (undocumented)
+export type EventRevisionsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -397,6 +527,7 @@ export type Exercise = AbstractUuid & AbstractRepository & AbstractEntity & Abst
     date: Scalars['DateTime'];
     license: License;
     currentRevision?: Maybe<ExerciseRevision>;
+    revisions: ExerciseRevisionConnection;
     taxonomyTerms: TaxonomyTermConnection;
     solution?: Maybe<Solution>;
 };
@@ -411,6 +542,7 @@ export type ExerciseGroup = AbstractUuid & AbstractRepository & AbstractEntity &
     date: Scalars['DateTime'];
     license: License;
     currentRevision?: Maybe<ExerciseGroupRevision>;
+    revisions: ExerciseGroupRevisionConnection;
     taxonomyTerms: TaxonomyTermConnection;
     exercises: Array<GroupedExercise>;
 };
@@ -425,6 +557,31 @@ export type ExerciseGroupRevision = AbstractUuid & AbstractRevision & AbstractEn
     repository: ExerciseGroup;
     content: Scalars['String'];
     changes: Scalars['String'];
+};
+
+// @public (undocumented)
+export type ExerciseGroupRevisionConnection = {
+    __typename?: 'ExerciseGroupRevisionConnection';
+    edges: Array<ExerciseGroupRevisionCursor>;
+    nodes: Array<ExerciseGroupRevision>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type ExerciseGroupRevisionCursor = {
+    __typename?: 'ExerciseGroupRevisionCursor';
+    cursor: Scalars['String'];
+    node: ExerciseGroupRevision;
+};
+
+// @public (undocumented)
+export type ExerciseGroupRevisionsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -448,6 +605,31 @@ export type ExerciseRevision = AbstractUuid & AbstractRevision & AbstractEntityR
 };
 
 // @public (undocumented)
+export type ExerciseRevisionConnection = {
+    __typename?: 'ExerciseRevisionConnection';
+    edges: Array<ExerciseRevisionCursor>;
+    nodes: Array<ExerciseRevision>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type ExerciseRevisionCursor = {
+    __typename?: 'ExerciseRevisionCursor';
+    cursor: Scalars['String'];
+    node: ExerciseRevision;
+};
+
+// @public (undocumented)
+export type ExerciseRevisionsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    unrevised?: Maybe<Scalars['Boolean']>;
+};
+
+// @public (undocumented)
 export type ExerciseTaxonomyTermsArgs = {
     after?: Maybe<Scalars['String']>;
     before?: Maybe<Scalars['String']>;
@@ -465,6 +647,7 @@ export type GroupedExercise = AbstractUuid & AbstractRepository & AbstractEntity
     date: Scalars['DateTime'];
     license: License;
     currentRevision?: Maybe<GroupedExerciseRevision>;
+    revisions: GroupedExerciseRevisionConnection;
     solution?: Maybe<Solution>;
     exerciseGroup: ExerciseGroup;
 };
@@ -479,6 +662,31 @@ export type GroupedExerciseRevision = AbstractUuid & AbstractRevision & Abstract
     repository: GroupedExercise;
     content: Scalars['String'];
     changes: Scalars['String'];
+};
+
+// @public (undocumented)
+export type GroupedExerciseRevisionConnection = {
+    __typename?: 'GroupedExerciseRevisionConnection';
+    edges: Array<GroupedExerciseRevisionCursor>;
+    nodes: Array<GroupedExerciseRevision>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type GroupedExerciseRevisionCursor = {
+    __typename?: 'GroupedExerciseRevisionCursor';
+    cursor: Scalars['String'];
+    node: GroupedExerciseRevision;
+};
+
+// @public (undocumented)
+export type GroupedExerciseRevisionsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -617,6 +825,7 @@ export type Page = AbstractUuid & AbstractRepository & AbstractNavigationChild &
     alias?: Maybe<Scalars['String']>;
     license: License;
     currentRevision?: Maybe<PageRevision>;
+    revisions: PageRevisionConnection;
     navigation?: Maybe<Navigation>;
 };
 
@@ -639,6 +848,31 @@ export type PageRevision = AbstractUuid & AbstractRevision & {
     title: Scalars['String'];
     content: Scalars['String'];
     repository: Page;
+};
+
+// @public (undocumented)
+export type PageRevisionConnection = {
+    __typename?: 'PageRevisionConnection';
+    edges: Array<PageRevisionCursor>;
+    nodes: Array<PageRevision>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type PageRevisionCursor = {
+    __typename?: 'PageRevisionCursor';
+    cursor: Scalars['String'];
+    node: PageRevision;
+};
+
+// @public (undocumented)
+export type PageRevisionsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -839,6 +1073,7 @@ export type Solution = AbstractUuid & AbstractRepository & AbstractEntity & {
     date: Scalars['DateTime'];
     license: License;
     currentRevision?: Maybe<SolutionRevision>;
+    revisions?: Maybe<SolutionRevisionConnection>;
     exercise: AbstractExercise;
 };
 
@@ -852,6 +1087,31 @@ export type SolutionRevision = AbstractUuid & AbstractRevision & AbstractEntityR
     repository: Solution;
     content: Scalars['String'];
     changes: Scalars['String'];
+};
+
+// @public (undocumented)
+export type SolutionRevisionConnection = {
+    __typename?: 'SolutionRevisionConnection';
+    edges: Array<SolutionRevisionCursor>;
+    nodes: Array<SolutionRevision>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type SolutionRevisionCursor = {
+    __typename?: 'SolutionRevisionCursor';
+    cursor: Scalars['String'];
+    node: SolutionRevision;
+};
+
+// @public (undocumented)
+export type SolutionRevisionsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -996,6 +1256,7 @@ export type Video = AbstractUuid & AbstractRepository & AbstractEntity & Abstrac
     date: Scalars['DateTime'];
     license: License;
     currentRevision?: Maybe<VideoRevision>;
+    revisions: VideoRevisionConnection;
     taxonomyTerms: TaxonomyTermConnection;
 };
 
@@ -1011,6 +1272,31 @@ export type VideoRevision = AbstractUuid & AbstractRevision & AbstractEntityRevi
     title: Scalars['String'];
     content: Scalars['String'];
     changes: Scalars['String'];
+};
+
+// @public (undocumented)
+export type VideoRevisionConnection = {
+    __typename?: 'VideoRevisionConnection';
+    edges: Array<VideoRevisionCursor>;
+    nodes: Array<VideoRevision>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type VideoRevisionCursor = {
+    __typename?: 'VideoRevisionCursor';
+    cursor: Scalars['String'];
+    node: VideoRevision;
+};
+
+// @public (undocumented)
+export type VideoRevisionsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    unrevised?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)

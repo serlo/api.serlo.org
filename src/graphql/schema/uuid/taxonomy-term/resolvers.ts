@@ -21,6 +21,7 @@
  */
 import { resolveConnection } from '../../connection'
 import { Context } from '../../types'
+import { isDefined } from '../../utils'
 import { UuidPayload } from '../abstract-uuid'
 import { createAliasResolvers } from '../alias'
 import { TaxonomyTermPayload, TaxonomyTermResolvers } from './types'
@@ -40,10 +41,8 @@ export const resolvers: TaxonomyTermResolvers = {
           return dataSources.serlo.getUuid<UuidPayload>({ id })
         })
       )
-      return resolveConnection<TaxonomyTermPayload>({
-        nodes: children.filter(
-          (payload) => payload !== null
-        ) as TaxonomyTermPayload[],
+      return resolveConnection({
+        nodes: children.filter(isDefined),
         payload: cursorPayload,
         createCursor(node) {
           return node.id.toString()
