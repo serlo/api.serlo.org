@@ -22,41 +22,64 @@
 import { CacheWorker } from './src/cache-worker'
 import { Service } from './src/lib'
 
-const apiEndpoint = process.env.SERLO_ORG_HOST
-const secret = process.env.SERLO_ORG_SECRET
-const service = process.env.SERLO_SERVICE as Service
-const cacheKeys = process.env.CACHE_KEYS
-
-const cw = new CacheWorker({ apiEndpoint, secret, service })
-
-const MAX_RETRIES = (process.env.CACHE_KEYS_RETRIES as unknown) as number
+start()
 
 async function start() {
+  const cacheWorker = new CacheWorker({
+    apiEndpoint: process.env.SERLO_ORG_HOST as string,
+    secret: process.env.SERLO_ORG_SECRET,
+    service: process.env.SERLO_SERVICE as Service,
+  })
+
+  const cacheKeys = process.env.CACHE_KEYS as string
+  const MAX_RETRIES = parseInt(process.env.CACHE_KEYS_RETRIES!)
+
   console.log('Updating cache values of the following keys:', cacheKeys)
-  run(0)
-}
 
-async function run(tries: number) {
-  await cw.updateCache(cacheKeys!)
-  if (cw.errLog == []) success()
-  if (cw.errLog != [] && tries < MAX_RETRIES) {
-    cw.errLog = []
-    console.log('Retrying to update cache')
-    setTimeout(async () => await run(++tries), 5000)
-    return
-  }
-  failure()
-}
-
-function failure() {
-  console.warn(
-    'Cache update was run but the following errors were found',
-    cw.errLog
+  run(
+    {
+      cacheWorker,
+      cacheKeys,
+      MAX_RETRIES,
+    },
+    0
   )
 }
 
-function success() {
-  console.log('Cache successfully updated')
+type Config = {
+  cacheWorker: CacheWorker
+  cacheKeys: string
+  MAX_RETRIES: number
 }
 
-start()
+async function run(config: Config, retries: number = 2) {
+  const { cacheWorker, cacheKeys, MAX_RETRIES } = config
+  await cacheWorker.updateCache(cacheKeys!)
+  const IsSuccessful = checkSuccess(cacheWorker.errLog)
+  if (!IsSuccessful && retries < MAX_RETRIES) {
+    retry(config, retries)
+    return
+  }
+  declareFailure(cacheWorker.errLog)
+}
+
+function retry(config: Config, retries: number) {
+    config.cacheWorker.errLog = []
+    console.log('Retrying to update cache')
+    setTimeout(async () => await run(config, ++retries), 5000)
+}
+
+function declareFailure(errors: Error[]) {
+  console.warn(
+    'Cache update was run but the following errors were found',
+    errors
+  )
+}
+
+function checkSuccess(errLog: Error[]) {
+  if(errLog == []) {
+    console.log('Cache successfully updated')
+    return true
+  }
+  return false
+}
