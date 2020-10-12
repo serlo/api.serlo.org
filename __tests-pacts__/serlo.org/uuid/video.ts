@@ -45,6 +45,7 @@ test('Video', async () => {
     currentRevisionId: video.currentRevisionId
       ? Matchers.integer(video.currentRevisionId)
       : null,
+    revisionIds: Matchers.eachLike(video.revisionIds[0]),
     licenseId: Matchers.integer(video.licenseId),
     taxonomyTermIds:
       video.taxonomyTermIds.length > 0

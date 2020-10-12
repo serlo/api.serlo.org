@@ -6,6 +6,13 @@ type Video implements AbstractUuid & AbstractRepository & AbstractEntity & Abstr
   date: DateTime!
   license: License!
   currentRevision: VideoRevision
+  revisions(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    unrevised: Boolean
+  ): VideoRevisionConnection!
   taxonomyTerms(
     after: String
     before: String
@@ -24,4 +31,16 @@ type VideoRevision implements AbstractUuid & AbstractRevision & AbstractEntityRe
   title: String!
   content: String!
   changes: String!
+}
+
+type VideoRevisionConnection {
+  edges: [VideoRevisionCursor!]!
+  nodes: [VideoRevision!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type VideoRevisionCursor {
+  cursor: String!
+  node: VideoRevision!
 }

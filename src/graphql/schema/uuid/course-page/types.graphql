@@ -6,6 +6,13 @@ type CoursePage implements AbstractUuid & AbstractRepository & AbstractEntity {
   date: DateTime!
   license: License!
   currentRevision: CoursePageRevision
+  revisions(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    unrevised: Boolean
+  ): CoursePageRevisionConnection!
   course: Course!
 }
 
@@ -18,4 +25,16 @@ type CoursePageRevision implements AbstractUuid & AbstractRevision & AbstractEnt
   title: String!
   content: String!
   changes: String!
+}
+
+type CoursePageRevisionConnection {
+  edges: [CoursePageRevisionCursor!]!
+  nodes: [CoursePageRevision!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type CoursePageRevisionCursor {
+  cursor: String!
+  node: CoursePageRevision!
 }

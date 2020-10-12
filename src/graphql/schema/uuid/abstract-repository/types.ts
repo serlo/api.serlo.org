@@ -23,7 +23,19 @@ import {
   AbstractRepository,
   AbstractRevision,
   License,
+  VideoRevisionsArgs,
+  AppletRevisionsArgs,
+  ArticleRevisionsArgs,
+  CoursePageRevisionsArgs,
+  CourseRevisionsArgs,
+  EventRevisionsArgs,
+  ExerciseGroupRevisionsArgs,
+  ExerciseRevisionsArgs,
+  GroupedExerciseRevisionsArgs,
+  PageRevisionsArgs,
+  SolutionRevisionsArgs,
 } from '../../../../types'
+import { Connection } from '../../connection'
 import { Resolver, TypeResolver } from '../../types'
 import {
   EntityPayload,
@@ -44,6 +56,7 @@ export interface AbstractRepositoryPayload
   __typename: RepositoryType
   alias: string | null
   currentRevisionId: number | null
+  revisionIds: number[]
   licenseId: number
 }
 
@@ -66,11 +79,25 @@ export interface AbstractRepositoryResolvers {
   }
 }
 
+type AbstractRepositoryRevisionsArgs =
+  | AppletRevisionsArgs
+  | ArticleRevisionsArgs
+  | CoursePageRevisionsArgs
+  | CourseRevisionsArgs
+  | EventRevisionsArgs
+  | ExerciseGroupRevisionsArgs
+  | ExerciseRevisionsArgs
+  | GroupedExerciseRevisionsArgs
+  | PageRevisionsArgs
+  | SolutionRevisionsArgs
+  | VideoRevisionsArgs
+
 export interface RepositoryResolvers<
   E extends AbstractRepositoryPayload,
   R extends AbstractRevisionPayload
 > extends AliasResolvers<E> {
   currentRevision: Resolver<E, never, R | null>
+  revisions: Resolver<E, AbstractRepositoryRevisionsArgs, Connection<R>>
   license: Resolver<E, never, Partial<License>>
 }
 

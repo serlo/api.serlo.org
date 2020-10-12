@@ -48,6 +48,7 @@ test('Course', async () => {
     currentRevisionId: course.currentRevisionId
       ? Matchers.integer(course.currentRevisionId)
       : null,
+    revisionIds: Matchers.eachLike(course.revisionIds[0]),
     licenseId: Matchers.integer(course.licenseId),
     taxonomyTermIds:
       course.taxonomyTermIds.length > 0
