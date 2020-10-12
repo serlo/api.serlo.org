@@ -19,34 +19,29 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { cacheSchema } from './cache'
-import { connectionSchema } from './connection'
-import { dateTimeSchema } from './date-time'
-import { instanceSchema } from './instance'
-import { jsonSchema } from './json'
-import { licenseSchema } from './license'
-import { notificationSchema } from './notification'
-import { subscriptionSchema } from './subscription'
-import { mergeSchemas } from './utils'
-import { uuidSchema } from './uuid'
+import { Matchers } from '@pact-foundation/pact'
+import fetch from 'node-fetch'
 
-export * from './connection'
-export * from './date-time'
-export * from './instance'
-export * from './json'
-export * from './license'
-export * from './notification'
-export * from './subscription'
-export * from './uuid'
+import { user } from '../../__fixtures__/uuid'
+import { createTestClient } from '../../__tests__/__utils__'
+import { Service } from '../../src/graphql/schema/types'
+import { addJsonInteraction } from '../__utils__'
 
-export const schema = mergeSchemas(
-  connectionSchema,
-  cacheSchema,
-  dateTimeSchema,
-  instanceSchema,
-  jsonSchema,
-  licenseSchema,
-  notificationSchema,
-  subscriptionSchema,
-  uuidSchema
-)
+test('Subscriptions', async () => {
+  global.client = createTestClient({
+    service: Service.SerloCloudflareWorker,
+    user: user.id,
+  }).client
+  await addJsonInteraction({
+    name: `fetch data of all subscriptions for user with id ${user.id}`,
+    given: `there exists a subscription for user with id ${user.id}`,
+    path: `/api/subscriptions/${user.id}`,
+    body: {
+      userId: user.id,
+      subscriptions: Matchers.eachLike({ id: Matchers.integer(1) }),
+    },
+  })
+  await fetch(
+    `http://de.${process.env.SERLO_ORG_HOST}/api/subscriptions/${user.id}`
+  )
+})

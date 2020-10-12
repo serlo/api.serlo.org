@@ -19,34 +19,17 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { cacheSchema } from './cache'
-import { connectionSchema } from './connection'
-import { dateTimeSchema } from './date-time'
-import { instanceSchema } from './instance'
-import { jsonSchema } from './json'
-import { licenseSchema } from './license'
-import { notificationSchema } from './notification'
-import { subscriptionSchema } from './subscription'
-import { mergeSchemas } from './utils'
-import { uuidSchema } from './uuid'
+import { UserPayload, isUserPayload } from '../../src/graphql/schema'
+import { RepositoryPayload } from '../../src/graphql/schema/uuid/abstract-repository'
+import { encodePath } from '../../src/graphql/schema/uuid/alias'
 
-export * from './connection'
-export * from './date-time'
-export * from './instance'
-export * from './json'
-export * from './license'
-export * from './notification'
-export * from './subscription'
-export * from './uuid'
+export function getAliasDataWithoutSubResolvers(
+  payload: RepositoryPayload | UserPayload
+) {
+  const decodedAlias = isUserPayload(payload)
+    ? `/user/profile/${payload.username}`
+    : payload.alias
+  const alias = decodedAlias === null ? null : encodePath(decodedAlias)
 
-export const schema = mergeSchemas(
-  connectionSchema,
-  cacheSchema,
-  dateTimeSchema,
-  instanceSchema,
-  jsonSchema,
-  licenseSchema,
-  notificationSchema,
-  subscriptionSchema,
-  uuidSchema
-)
+  return { alias }
+}

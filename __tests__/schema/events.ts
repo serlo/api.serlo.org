@@ -28,6 +28,7 @@ import {
   createTaxonomyTermNotificationEvent,
   getAbstractNotificationEventDataWithoutSubResolvers,
 } from '../../__fixtures__'
+import { Cache } from '../../src/graphql/environment'
 import { Service } from '../../src/graphql/schema/types'
 import {
   createTestClient,
@@ -37,7 +38,6 @@ import {
   assertSuccessfulGraphQLQuery,
   assertFailingGraphQLQuery,
 } from '../__utils__'
-import { Cache } from '../../src/graphql/environment'
 
 let client: Client
 let cache: Cache
@@ -222,6 +222,8 @@ describe('events', () => {
 
   test('cache key works also for query arguments', async () => {
     global.server.use(
+      createNotificationEventHandler(event1),
+      createNotificationEventHandler(event2),
       createEventsHandler({ eventIds: [2, 1] }, { first: '10' })
     )
 

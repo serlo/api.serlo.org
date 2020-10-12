@@ -25,7 +25,7 @@ import { rest } from 'msw'
 
 import {
   article,
-  getUserDataWithoutSubResolver,
+  getUserDataWithoutSubResolvers,
   user,
   user2,
   getAbstractNotificationEventDataWithoutSubResolvers,
@@ -84,7 +84,7 @@ describe('User', () => {
         },
       },
       data: {
-        uuid: getUserDataWithoutSubResolver(user),
+        uuid: getUserDataWithoutSubResolvers(user),
       },
       client,
     })
@@ -164,7 +164,7 @@ describe('User', () => {
         },
       },
       data: {
-        uuid: getUserDataWithoutSubResolver(user),
+        uuid: getUserDataWithoutSubResolvers(user),
       },
       client,
     })
@@ -190,7 +190,7 @@ describe('User', () => {
       `,
       variables: user,
       data: {
-        uuid: getUserDataWithoutSubResolver(user),
+        uuid: getUserDataWithoutSubResolvers(user),
       },
       client,
     })
@@ -467,8 +467,8 @@ describe('endpoint activeAuthors', () => {
       data: {
         activeAuthors: {
           nodes: [
-            getUserDataWithoutSubResolver(user),
-            getUserDataWithoutSubResolver(user2),
+            getUserDataWithoutSubResolvers(user),
+            getUserDataWithoutSubResolvers(user2),
           ],
           totalCount: 2,
         },
@@ -487,7 +487,7 @@ describe('endpoint activeAuthors', () => {
       query: activeAuthorsQuery,
       data: {
         activeAuthors: {
-          nodes: [getUserDataWithoutSubResolver(user)],
+          nodes: [getUserDataWithoutSubResolvers(user)],
           totalCount: 1,
         },
       },
@@ -502,7 +502,7 @@ describe('endpoint activeAuthors', () => {
       query: activeAuthorsQuery,
       data: {
         activeAuthors: {
-          nodes: [getUserDataWithoutSubResolver(user)],
+          nodes: [getUserDataWithoutSubResolvers(user)],
           totalCount: 1,
         },
       },
@@ -524,7 +524,7 @@ describe('endpoint activeAuthors', () => {
       query: activeAuthorsQuery,
       data: {
         activeAuthors: {
-          nodes: [getUserDataWithoutSubResolver(user)],
+          nodes: [getUserDataWithoutSubResolvers(user)],
           totalCount: 1,
         },
       },
@@ -562,8 +562,8 @@ describe('endpoint activeDonors', () => {
       data: {
         activeDonors: {
           nodes: [
-            getUserDataWithoutSubResolver(user),
-            getUserDataWithoutSubResolver(user2),
+            getUserDataWithoutSubResolvers(user),
+            getUserDataWithoutSubResolvers(user2),
           ],
           totalCount: 2,
         },
@@ -581,7 +581,7 @@ describe('endpoint activeDonors', () => {
       query: activeDonorsQuery,
       data: {
         activeDonors: {
-          nodes: [getUserDataWithoutSubResolver(user)],
+          nodes: [getUserDataWithoutSubResolvers(user)],
           totalCount: 1,
         },
       },
@@ -700,8 +700,8 @@ describe('endpoint activeReviewers', () => {
       data: {
         activeReviewers: {
           nodes: [
-            getUserDataWithoutSubResolver(user),
-            getUserDataWithoutSubResolver(user2),
+            getUserDataWithoutSubResolvers(user),
+            getUserDataWithoutSubResolvers(user2),
           ],
           totalCount: 2,
         },
@@ -720,7 +720,7 @@ describe('endpoint activeReviewers', () => {
       query: activeReviewersQuery,
       data: {
         activeReviewers: {
-          nodes: [getUserDataWithoutSubResolver(user)],
+          nodes: [getUserDataWithoutSubResolvers(user)],
           totalCount: 1,
         },
       },
@@ -735,7 +735,7 @@ describe('endpoint activeReviewers', () => {
       query: activeReviewersQuery,
       data: {
         activeReviewers: {
-          nodes: [getUserDataWithoutSubResolver(user)],
+          nodes: [getUserDataWithoutSubResolvers(user)],
           totalCount: 1,
         },
       },
@@ -757,7 +757,7 @@ describe('endpoint activeReviewers', () => {
       query: activeReviewersQuery,
       data: {
         activeReviewers: {
-          nodes: [getUserDataWithoutSubResolver(user)],
+          nodes: [getUserDataWithoutSubResolvers(user)],
           totalCount: 1,
         },
       },

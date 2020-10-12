@@ -24,7 +24,7 @@ import * as R from 'ramda'
 
 import { resolveConnection, encodeCursor } from '../connection'
 import { Context } from '../types'
-import { isNotNil } from '../utils'
+import { isDefined } from '../utils'
 import {
   NotificationEventPayload,
   NotificationPayload,
@@ -52,14 +52,14 @@ export const resolvers: NotificationResolvers = {
         totalCount,
         pageInfo,
       } = await dataSources.serlo.getEventIds({
-          ...cursorPayload,
-          after: parseId(cursorPayload.after),
-          before: parseId(cursorPayload.before),
+        ...cursorPayload,
+        after: parseId(cursorPayload.after),
+        before: parseId(cursorPayload.before),
       })
       const eventsFromSerlo = await Promise.all(
         eventIds.map((id) => dataSources.serlo.getNotificationEvent({ id }))
       )
-      const events = eventsFromSerlo.filter(isNotNil)
+      const events = eventsFromSerlo.filter(isDefined)
 
       const firstId = R.head(eventIds)
       const lastId = R.last(eventIds)

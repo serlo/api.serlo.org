@@ -117,6 +117,7 @@ describe('uuid', () => {
           }
         }
       `,
+      message: 'you need to provide an id or an alias',
       client,
     })
   })

@@ -19,8 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { array as A, pipeable } from 'fp-ts'
+
 import { resolveConnection } from '../..'
-import { requestsOnlyFields, isNotNil } from '../../utils'
+import { requestsOnlyFields, isDefined } from '../../utils'
 import { createAbstractUuidResolvers } from '../abstract-uuid'
 import { createAliasResolvers } from '../alias'
 import { resolveUser } from '../user'
@@ -43,22 +45,26 @@ export function createRepositoryResolvers<
       return dataSources.serlo.getUuid<R>({ id: entity.currentRevisionId })
     },
     async revisions(entity, cursorPayload, { dataSources }) {
-      const revsFromSerlo = await Promise.all(
-        entity.revisionIds.map((id) => {
-          return dataSources.serlo.getUuid<R>({ id })
+      const revisions = pipeable.pipe(
+        await Promise.all(
+          entity.revisionIds.map((id) => {
+            return dataSources.serlo.getUuid<R>({ id })
+          })
+        ),
+        A.filter(isDefined),
+        A.filter((revision) => {
+          if (!isDefined(cursorPayload.unrevised)) return true
+
+          if (revision.trashed) return false
+
+          const isUnrevised =
+            entity.currentRevisionId === null ||
+            revision.id > entity.currentRevisionId
+          return cursorPayload.unrevised ? isUnrevised : !isUnrevised
         })
       )
-      const revs = revsFromSerlo.filter(isNotNil)
-      const filteredRevs = cursorPayload.unrevised
-        ? revs.filter(
-            (rev) =>
-              (entity.currentRevisionId === null ||
-                rev.id > entity.currentRevisionId) &&
-              !rev.trashed
-          )
-        : revs
       return resolveConnection<R>({
-        nodes: filteredRevs,
+        nodes: revisions,
         payload: cursorPayload,
         createCursor(node) {
           return node.id.toString()

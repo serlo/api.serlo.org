@@ -19,15 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { isSome } from 'fp-ts/lib/Option'
-import jwt from 'jsonwebtoken'
-import * as R from 'ramda'
 import {
   array as A,
   record as Record,
   semigroup as Semigroup,
   pipeable,
 } from 'fp-ts'
+import { isSome } from 'fp-ts/lib/Option'
+import jwt from 'jsonwebtoken'
+import * as R from 'ramda'
 
 import { Instance, License, QueryEventsArgs } from '../../types'
 import { Environment } from '../environment'
@@ -46,9 +46,10 @@ import {
   NotificationsPayload,
   EventsPayload,
 } from '../schema'
+import { SubscriptionsPayload } from '../schema/subscription'
 import { Service } from '../schema/types'
+import { isDefined } from '../schema/utils'
 import { CacheableDataSource } from './cacheable-data-source'
-import { isNotNil } from '../schema/utils'
 
 export class SerloDataSource extends CacheableDataSource {
   public constructor(private environment: Environment) {
@@ -181,7 +182,7 @@ export class SerloDataSource extends CacheableDataSource {
           Semigroup.getLastSemigroup<number | undefined | null>(),
           A.array
         ),
-        Record.filter(isNotNil),
+        Record.filter(isDefined),
         Record.map((value) => value.toString())
       ),
     })
@@ -230,6 +231,14 @@ export class SerloDataSource extends CacheableDataSource {
       `/api/notifications/${notificationState.userId}`
     )
     await this.environment.cache.set(cacheKey, response)
+  }
+
+  public async getSubscriptions({
+    id,
+  }: {
+    id: number
+  }): Promise<SubscriptionsPayload> {
+    return this.cacheAwareGet({ path: `/api/subscriptions/${id}` })
   }
 
   private async customPost<

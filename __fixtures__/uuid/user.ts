@@ -19,11 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import {
-  DiscriminatorType,
-  encodePath,
-  UserPayload,
-} from '../../src/graphql/schema'
+import { DiscriminatorType, UserPayload } from '../../src/graphql/schema'
+import { getAliasDataWithoutSubResolvers } from './alias'
 
 export const user: UserPayload = {
   __typename: DiscriminatorType.User,
@@ -45,9 +42,9 @@ export const user2: UserPayload = {
   description: null,
 }
 
-export function getUserDataWithoutSubResolver(user: UserPayload) {
+export function getUserDataWithoutSubResolvers(user: UserPayload) {
   return {
     ...user,
-    alias: encodePath(`/user/profile/${user.username}`),
+    ...getAliasDataWithoutSubResolvers(user),
   }
 }

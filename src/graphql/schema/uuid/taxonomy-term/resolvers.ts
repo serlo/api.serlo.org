@@ -21,8 +21,8 @@
  */
 import { resolveConnection } from '../../connection'
 import { Context } from '../../types'
-import { isNotNil } from '../../utils'
-import { createAbstractUuidResolvers } from '../abstract-uuid'
+import { isDefined } from '../../utils'
+import { createAbstractUuidResolvers, UuidPayload } from '../abstract-uuid'
 import { createAliasResolvers } from '../alias'
 import { TaxonomyTermPayload, TaxonomyTermResolvers } from './types'
 
@@ -39,11 +39,11 @@ export const resolvers: TaxonomyTermResolvers = {
     async children(taxonomyTerm, cursorPayload, { dataSources }) {
       const children = await Promise.all(
         taxonomyTerm.childrenIds.map((id) => {
-          return dataSources.serlo.getUuid<TaxonomyTermPayload>({ id })
+          return dataSources.serlo.getUuid<UuidPayload>({ id })
         })
       )
-      return resolveConnection<TaxonomyTermPayload>({
-        nodes: children.filter(isNotNil),
+      return resolveConnection({
+        nodes: children.filter(isDefined),
         payload: cursorPayload,
         createCursor(node) {
           return node.id.toString()
