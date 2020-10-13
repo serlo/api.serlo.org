@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-## [v0.10.0](https://github.com/serlo/api.serlo.org/compare/v0.9.0..v0.10.0)
+## [v0.10.1](https://github.com/serlo/api.serlo.org/compare/v0.10.0..v0.10.1) - October 14, 2020
+
+### Fixed
+
+- Update dependencies.
+
+## [v0.10.0](https://github.com/serlo/api.serlo.org/compare/v0.9.0..v0.10.0) - October 14, 2020
 
 ### Added
 
@@ -21,7 +27,7 @@ All notable changes to this project will be documented in this file.
 - **alias**. Output URL-encoded paths.
 - **uuid**. Return `null` when the UUID does not exist.
 
-## [v0.9.0](https://github.com/serlo/api.serlo.org/compare/v0.8.1..v0.9.0)
+## [v0.9.0](https://github.com/serlo/api.serlo.org/compare/v0.8.1..v0.9.0) - August 16, 2020
 
 ### Breaking Changes
 
