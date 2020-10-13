@@ -21,6 +21,7 @@
  */
 import { CacheWorker } from './src/cache-worker'
 import { Service } from './src/lib'
+import { cacheKeys } from './cache-keys'
 
 start()
 
@@ -31,7 +32,6 @@ async function start() {
     service: process.env.SERLO_SERVICE as Service,
   })
 
-  const cacheKeys = process.env.CACHE_KEYS as string
   const MAX_RETRIES = parseInt(process.env.CACHE_KEYS_RETRIES!)
 
   console.log('Updating cache values of the following keys:', cacheKeys)
@@ -48,7 +48,7 @@ async function start() {
 
 type Config = {
   cacheWorker: CacheWorker
-  cacheKeys: string
+  cacheKeys: string[]
   MAX_RETRIES: number
 }
 
@@ -64,9 +64,9 @@ async function run(config: Config, retries: number = 2) {
 }
 
 function retry(config: Config, retries: number) {
-    config.cacheWorker.errLog = []
-    console.log('Retrying to update cache')
-    setTimeout(async () => await run(config, ++retries), 5000)
+  config.cacheWorker.errLog = []
+  console.log('Retrying to update cache')
+  setTimeout(async () => await run(config, ++retries), 5000)
 }
 
 function declareFailure(errors: Error[]) {
@@ -77,7 +77,7 @@ function declareFailure(errors: Error[]) {
 }
 
 function checkSuccess(errLog: Error[]) {
-  if(errLog == []) {
+  if (errLog == []) {
     console.log('Cache successfully updated')
     return true
   }

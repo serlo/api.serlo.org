@@ -74,9 +74,8 @@ beforeEach(async () => {
 
 describe('Update-cache worker', () => {
   test('successfully calls _cacheKeys and _updateCache', async () => {
-    await worker.updateCache('all')
+    await worker.updateCache([...mockKeysValues.keys()])
     expect(worker.errLog).toEqual([])
-    expect(worker.okLog.length).toEqual(3) // Three rounds are needed to update 25 keys, 10 each time
   })
   test('does not fail if _updateCache does not work', async () => {
     global.server.use(
@@ -84,7 +83,7 @@ describe('Update-cache worker', () => {
         throw new Error('Something went wrong at _updateCache, but be cool')
       })
     )
-    await worker.updateCache('all')
+    await worker.updateCache([...mockKeysValues.keys()])
     expect(worker.errLog[0].message).toContain(
       'Something went wrong at _updateCache, but be cool'
     )
@@ -107,21 +106,27 @@ describe('Update-cache worker', () => {
         )
       })
     )
-    await worker.updateCache('all')
+    await worker.updateCache([...mockKeysValues.keys()])
     expect(worker.errLog[0].message).toContain(
       'Something went wrong while updating value of "de.serlo.org/api/key20", but keep calm'
     )
   })
   test('successfully updates only some values', async () => {
-    await worker.updateCache(
-      'de.serlo.org/api/key0,de.serlo.org/api/key7,de.serlo.org/api/key10,de.serlo.org/api/key20'
-    )
+    await worker.updateCache([
+      'de.serlo.org/api/key0',
+      'de.serlo.org/api/key7',
+      'de.serlo.org/api/key10',
+      'de.serlo.org/api/key20',
+    ])
     expect(worker.errLog).toEqual([])
   })
   test('does not crash even though it had a problem with some values', async () => {
-    await worker.updateCache(
-      'de.serlo.org/api/key0,de.serlo.org/api/keyInexistent,de.serlo.org/api/key10,de.serlo.org/api/keyWrong'
-    )
+    await worker.updateCache([
+      'de.serlo.org/api/key0',
+      'de.serlo.org/api/keyInexistent',
+      'de.serlo.org/api/key10',
+      'de.serlo.org/api/keyWrong',
+    ])
     expect(worker.errLog).not.toEqual([])
   })
 })
