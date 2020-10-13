@@ -1,10 +1,23 @@
-FROM node:12
-ENV CACHE_KEYS all
-ENV CACHE_KEYS_RETRIES 2
-WORKDIR /app
+FROM node:12 as dev-dependencies
+WORKDIR /usr/src/app
 COPY package.json .
 COPY yarn.lock .
-COPY src/ ./src
+RUN yarn --frozen-lockfile --production=false --silent
+
+FROM node:12 as prod-dependencies
+WORKDIR /usr/src/app
+ENV NODE_ENV production
+COPY package.json .
+COPY yarn.lock .
+RUN yarn --frozen-lockfile --production=true --silent
+
+FROM dev-dependencies as build
+COPY src src
 COPY index.ts .
-RUN yarn install --frozen-lockfile
-CMD ["yarn", "updatecache"]
+RUN yarn build
+
+FROM prod-dependencies as release
+ENV CACHE_KEYS all
+ENV CACHE_KEYS_RETRIES 2
+COPY --from=build /usr/src/app/dist dist
+ENTRYPOINT ["node", "dist"]
