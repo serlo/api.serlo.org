@@ -382,7 +382,7 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & {
     instance: Instance;
     date: Scalars['DateTime'];
     actor: User;
-    thread: Thread;
+    thread: UnsupportedThread;
     comment: Comment;
 };
 
@@ -992,7 +992,7 @@ export type SetThreadStateNotificationEvent = AbstractNotificationEvent & {
     instance: Instance;
     date: Scalars['DateTime'];
     actor: User;
-    thread: Thread;
+    thread: UnsupportedThread;
     archived: Scalars['Boolean'];
 };
 

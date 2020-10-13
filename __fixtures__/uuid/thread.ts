@@ -21,10 +21,10 @@
  */
 import { UnsupportedComment, UnsupportedThread } from '../../src/types'
 
-export const thread: UnsupportedThread = {
+export const unsupportedThread: UnsupportedThread = {
   id: 15468,
 }
 
-export const comment: UnsupportedComment = {
+export const unsupportedcomment: UnsupportedComment = {
   id: 15469,
 }
