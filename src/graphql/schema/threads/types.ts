@@ -6,7 +6,6 @@ import { CommentPayload } from '../uuid/comment/types'
 
 export interface ThreadsPayload {
   threadIds: number[]
-  objectId: number
 }
 
 export interface ThreadPayload {

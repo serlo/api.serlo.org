@@ -26,7 +26,7 @@ import {
   article,
   articleRevision,
   checkoutRevisionNotificationEvent,
-  comment,
+  unsupportedcomment,
   createCommentNotificationEvent,
   createEntityLinkNotificationEvent,
   createEntityNotificationEvent,
@@ -68,7 +68,7 @@ import {
   taxonomyTermCurriculumTopic,
   taxonomyTermRoot,
   taxonomyTermSubject,
-  thread,
+  unsupportedThread,
   user,
   user2,
 } from '../../__fixtures__'
@@ -630,7 +630,7 @@ describe('notificationEvent', () => {
         variables: createCommentNotificationEvent,
         data: {
           notificationEvent: {
-            thread,
+            thread: unsupportedThread,
           },
         },
         client,

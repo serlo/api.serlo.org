@@ -19,15 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { toThreadPayload } from '../../uuid/abstract-uuid/resolvers'
 import { createNotificationEventResolvers } from '../utils'
 import { SetThreadStateNotificationEventResolvers } from './types'
 
 export const resolvers: SetThreadStateNotificationEventResolvers = {
   SetThreadStateNotificationEvent: {
     ...createNotificationEventResolvers(),
-    async thread(parent, payload, { dataSources }) {
-      return await toThreadPayload(dataSources.serlo, parent.threadId)
+    //TODO: Replace with real Thread Resolver
+    thread(notificationEvent) {
+      return Promise.resolve({ id: notificationEvent.threadId })
     },
   },
 }

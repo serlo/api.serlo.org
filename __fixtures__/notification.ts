@@ -44,13 +44,13 @@ import { Instance } from '../src/types'
 import {
   article,
   articleRevision,
-  comment,
+  unsupportedcomment,
   exercise,
   solution,
   taxonomyTermCurriculumTopic,
   taxonomyTermRoot,
   taxonomyTermSubject,
-  thread,
+  unsupportedThread,
   user,
 } from './uuid'
 
@@ -94,8 +94,8 @@ export const createCommentNotificationEvent: CreateCommentNotificationEventPaylo
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
   actorId: user.id,
-  threadId: thread.id,
-  commentId: comment.id,
+  threadId: unsupportedThread.id,
+  commentId: unsupportedcomment.id,
 }
 
 export function getCreateCommentNotificationEventDataWithoutSubResolvers(
@@ -256,7 +256,7 @@ export const createThreadNotificationEvent: CreateThreadNotificationEventPayload
   date: '2014-03-01T20:45:56Z',
   actorId: user.id,
   objectId: article.id,
-  threadId: thread.id,
+  threadId: unsupportedThread.id,
 }
 
 export function getCreateThreadNotificationEventDataWithoutSubResolvers(
@@ -286,7 +286,7 @@ export const setThreadStateNotificationEvent: SetThreadStateNotificationEventPay
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
   actorId: user.id,
-  threadId: thread.id,
+  threadId: unsupportedThread.id,
   archived: true,
 }
 
