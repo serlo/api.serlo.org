@@ -19,34 +19,17 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-/* eslint-disable import/no-unassigned-import */
-describe('GET /api/alias/:alias', () => {
-  require('./alias')
-})
-describe('GET /api/cache-keys', () => {
-  require('./cache-keys')
-})
-describe('GET /api/event/:id', () => {
-  require('./event')
-})
-describe('GET /api/license/:id', () => {
-  require('./license')
-})
-describe('GET /api/navigation', () => {
-  require('./navigation')
-})
-describe('GET /api/notifications/:id', () => {
-  require('./notifications')
-})
-describe('POST /api/set-notification-state/:id', () => {
-  require('./set-notification-state')
-})
-describe('GET /api/subscriptions', () => {
-  require('./subscriptions')
-})
-describe('GET /api/user/*', () => {
-  require('./user')
-})
-describe('GET /api/uuid/:id', () => {
-  require('./uuid')
-})
+import { UserPayload, isUserPayload } from '../../src/graphql/schema'
+import { RepositoryPayload } from '../../src/graphql/schema/uuid/abstract-repository'
+import { encodePath } from '../../src/graphql/schema/uuid/alias'
+
+export function getAliasDataWithoutSubResolvers(
+  payload: RepositoryPayload | UserPayload
+) {
+  const decodedAlias = isUserPayload(payload)
+    ? `/user/profile/${payload.username}`
+    : payload.alias
+  const alias = decodedAlias === null ? null : encodePath(decodedAlias)
+
+  return { alias }
+}

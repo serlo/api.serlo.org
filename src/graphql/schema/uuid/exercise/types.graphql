@@ -12,6 +12,13 @@ type Exercise implements AbstractUuid & AbstractRepository & AbstractEntity & Ab
   date: DateTime!
   license: License!
   currentRevision: ExerciseRevision
+  revisions(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    unrevised: Boolean
+  ): ExerciseRevisionConnection!
   taxonomyTerms(
     after: String
     before: String
@@ -35,4 +42,16 @@ type ExerciseRevision implements AbstractUuid & AbstractRevision & AbstractEntit
   repository: Exercise!
   content: String!
   changes: String!
+}
+
+type ExerciseRevisionConnection {
+  edges: [ExerciseRevisionCursor!]!
+  nodes: [ExerciseRevision!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type ExerciseRevisionCursor {
+  cursor: String!
+  node: ExerciseRevision!
 }

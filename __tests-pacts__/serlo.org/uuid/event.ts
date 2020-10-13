@@ -45,6 +45,7 @@ test('Event', async () => {
     currentRevisionId: event.currentRevisionId
       ? Matchers.integer(event.currentRevisionId)
       : null,
+    revisionIds: Matchers.eachLike(event.revisionIds[0]),
     licenseId: Matchers.integer(event.licenseId),
     taxonomyTermIds:
       event.taxonomyTermIds.length > 0

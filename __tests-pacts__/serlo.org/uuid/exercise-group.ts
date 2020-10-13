@@ -48,6 +48,7 @@ test('ExerciseGroup', async () => {
     currentRevisionId: exerciseGroup.currentRevisionId
       ? Matchers.integer(exerciseGroup.currentRevisionId)
       : null,
+    revisionIds: Matchers.eachLike(exerciseGroup.revisionIds[0]),
     licenseId: Matchers.integer(exerciseGroup.licenseId),
     exerciseIds:
       exerciseGroup.exerciseIds.length > 0

@@ -9,6 +9,18 @@ interface AbstractUuid {
   ): ThreadsConnection!
 }
 
+type AbstractUuidConnection {
+  edges: [AbstractUuidCursor!]!
+  nodes: [AbstractUuid!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type AbstractUuidCursor {
+  cursor: String!
+  node: AbstractUuid!
+}
+
 type Query {
   uuid(alias: AliasInput, id: Int): AbstractUuid
 }

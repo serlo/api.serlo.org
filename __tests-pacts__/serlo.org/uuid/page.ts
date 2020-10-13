@@ -46,6 +46,7 @@ test('Page', async () => {
     currentRevisionId: page.currentRevisionId
       ? Matchers.integer(page.currentRevisionId)
       : null,
+    revisionIds: Matchers.eachLike(page.revisionIds[0]),
     licenseId: Matchers.integer(page.licenseId),
   })
   await assertSuccessfulGraphQLQuery({

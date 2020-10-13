@@ -48,6 +48,7 @@ test('CoursePage', async () => {
     currentRevisionId: coursePage.currentRevisionId
       ? Matchers.integer(coursePage.currentRevisionId)
       : null,
+    revisionIds: Matchers.eachLike(coursePage.revisionIds[0]),
     licenseId: Matchers.integer(coursePage.licenseId),
     parentId: Matchers.integer(coursePage.parentId),
   })

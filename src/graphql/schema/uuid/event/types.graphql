@@ -12,6 +12,13 @@ type Event implements AbstractUuid & AbstractRepository & AbstractEntity & Abstr
   date: DateTime!
   license: License!
   currentRevision: EventRevision
+  revisions(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    unrevised: Boolean
+  ): EventRevisionConnection!
   taxonomyTerms(
     after: String
     before: String
@@ -37,4 +44,16 @@ type EventRevision implements AbstractUuid & AbstractRevision & AbstractEntityRe
   changes: String!
   metaTitle: String!
   metaDescription: String!
+}
+
+type EventRevisionConnection {
+  edges: [EventRevisionCursor!]!
+  nodes: [EventRevision!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type EventRevisionCursor {
+  cursor: String!
+  node: EventRevision!
 }

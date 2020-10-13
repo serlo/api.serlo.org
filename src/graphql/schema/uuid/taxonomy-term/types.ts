@@ -24,6 +24,7 @@ import { Connection } from '../../connection'
 import { Resolver } from '../../types'
 import { NavigationChildResolvers } from '../abstract-navigation-child'
 import { AbstractUuidPayload, DiscriminatorType } from '../abstract-uuid'
+import { AliasResolvers } from '../alias'
 
 export interface TaxonomyTermPayload
   extends Omit<TaxonomyTerm, keyof TaxonomyTermResolvers['TaxonomyTerm']> {
@@ -35,12 +36,12 @@ export interface TaxonomyTermPayload
 
 export interface TaxonomyTermResolvers {
   TaxonomyTerm: {
-    alias: Resolver<TaxonomyTermPayload, never, string | null>
     parent: Resolver<TaxonomyTermPayload, never, TaxonomyTermPayload | null>
     children: Resolver<
       TaxonomyTermPayload,
       TaxonomyTermChildrenArgs,
       Connection<AbstractUuidPayload>
     >
-  } & NavigationChildResolvers<TaxonomyTermPayload>
+  } & AliasResolvers<TaxonomyTermPayload> &
+    NavigationChildResolvers<TaxonomyTermPayload>
 }

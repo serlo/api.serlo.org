@@ -67,6 +67,7 @@ export interface AbstractEntityPayload
   __typename: EntityType
   alias: string | null
   currentRevisionId: number | null
+  revisionIds: number[]
   licenseId: number
 }
 
