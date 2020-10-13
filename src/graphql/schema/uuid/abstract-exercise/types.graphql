@@ -6,7 +6,6 @@ interface AbstractExercise {
   instance: Instance!
   alias: String
   license: License!
-
   currentRevision: AbstractExerciseRevision
   solution: Solution
 }

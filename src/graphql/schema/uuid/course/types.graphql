@@ -12,6 +12,13 @@ type Course implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
   date: DateTime!
   license: License!
   currentRevision: CourseRevision
+  revisions(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    unrevised: Boolean
+  ): CourseRevisionConnection!
   taxonomyTerms(
     after: String
     before: String
@@ -37,4 +44,16 @@ type CourseRevision implements AbstractUuid & AbstractRevision & AbstractEntityR
   content: String!
   changes: String!
   metaDescription: String!
+}
+
+type CourseRevisionConnection {
+  edges: [CourseRevisionCursor!]!
+  nodes: [CourseRevision!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type CourseRevisionCursor {
+  cursor: String!
+  node: CourseRevision!
 }

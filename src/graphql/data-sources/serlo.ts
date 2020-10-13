@@ -39,7 +39,8 @@ import {
   NodeData,
   NotificationsPayload,
 } from '../schema'
-import { ThreadsPayload } from '../schema/threads/types'
+import { SubscriptionsPayload } from '../schema/subscription'
+import { ThreadsPayload } from '../schema/threads'
 import { Service } from '../schema/types'
 import { CacheableDataSource } from './cacheable-data-source'
 
@@ -205,6 +206,14 @@ export class SerloDataSource extends CacheableDataSource {
       `/api/notifications/${notificationState.userId}`
     )
     await this.environment.cache.set(cacheKey, response)
+  }
+
+  public async getSubscriptions({
+    id,
+  }: {
+    id: number
+  }): Promise<SubscriptionsPayload> {
+    return this.cacheAwareGet({ path: `/api/subscriptions/${id}` })
   }
 
   private async customPost<

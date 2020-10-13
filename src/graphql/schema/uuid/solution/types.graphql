@@ -12,6 +12,13 @@ type Solution implements AbstractUuid & AbstractRepository & AbstractEntity {
   date: DateTime!
   license: License!
   currentRevision: SolutionRevision
+  revisions(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    unrevised: Boolean
+  ): SolutionRevisionConnection
   exercise: AbstractExercise!
 }
 
@@ -29,4 +36,16 @@ type SolutionRevision implements AbstractUuid & AbstractRevision & AbstractEntit
   repository: Solution!
   content: String!
   changes: String!
+}
+
+type SolutionRevisionConnection {
+  edges: [SolutionRevisionCursor!]!
+  nodes: [SolutionRevision!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type SolutionRevisionCursor {
+  cursor: String!
+  node: SolutionRevision!
 }

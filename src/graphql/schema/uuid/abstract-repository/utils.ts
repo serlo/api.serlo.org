@@ -19,8 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { requestsOnlyFields } from '../../utils'
-import { decodePath } from '../alias'
+import { array as A, pipeable } from 'fp-ts'
+
+import { resolveConnection } from '../..'
+import { requestsOnlyFields, isDefined } from '../../utils'
+import { createAliasResolvers } from '../alias'
 import { resolveUser } from '../user'
 import {
   AbstractRepositoryPayload,
@@ -34,14 +37,37 @@ export function createRepositoryResolvers<
   R extends AbstractRevisionPayload
 >(): RepositoryResolvers<E, R> {
   return {
-    alias(repository) {
-      return Promise.resolve(
-        repository.alias ? decodePath(repository.alias) : null
-      )
-    },
+    ...createAliasResolvers<E>(),
     async currentRevision(entity, _args, { dataSources }) {
       if (!entity.currentRevisionId) return null
       return dataSources.serlo.getUuid<R>({ id: entity.currentRevisionId })
+    },
+    async revisions(entity, cursorPayload, { dataSources }) {
+      const revisions = pipeable.pipe(
+        await Promise.all(
+          entity.revisionIds.map((id) => {
+            return dataSources.serlo.getUuid<R>({ id })
+          })
+        ),
+        A.filter(isDefined),
+        A.filter((revision) => {
+          if (!isDefined(cursorPayload.unrevised)) return true
+
+          if (revision.trashed) return false
+
+          const isUnrevised =
+            entity.currentRevisionId === null ||
+            revision.id > entity.currentRevisionId
+          return cursorPayload.unrevised ? isUnrevised : !isUnrevised
+        })
+      )
+      return resolveConnection<R>({
+        nodes: revisions,
+        payload: cursorPayload,
+        createCursor(node) {
+          return node.id.toString()
+        },
+      })
     },
     async license(repository, _args, { dataSources }, info) {
       const partialLicense = { id: repository.licenseId }

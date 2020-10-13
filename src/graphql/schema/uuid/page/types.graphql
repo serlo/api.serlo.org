@@ -12,6 +12,13 @@ type Page implements AbstractUuid & AbstractRepository & AbstractNavigationChild
   alias: String
   license: License!
   currentRevision: PageRevision
+  revisions(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    unrevised: Boolean
+  ): PageRevisionConnection!
   navigation: Navigation
 }
 
@@ -29,4 +36,16 @@ type PageRevision implements AbstractUuid & AbstractRevision {
   title: String!
   content: String!
   repository: Page!
+}
+
+type PageRevisionConnection {
+  edges: [PageRevisionCursor!]!
+  nodes: [PageRevision!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type PageRevisionCursor {
+  cursor: String!
+  node: PageRevision!
 }
