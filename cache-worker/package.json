@@ -6,12 +6,12 @@
   "author": "Serlo Education e.V.",
   "main": "index.ts",
   "scripts": {
-    "updatecache": "ts-node index.ts",
-    "build": "tsdx build --target node -i index.ts"
+    "build": "tsdx build --target node -i index.ts",
+    "updatecache": "ts-node index.ts"
   },
   "dependencies": {
     "graphql": "^15.0.0",
-    "graphql-request": "^3.0.0",
+    "graphql-request": "~3.0.0",
     "jsonwebtoken": "^8.0.0",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.0"
