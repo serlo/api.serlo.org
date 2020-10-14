@@ -27,8 +27,8 @@ import { Service, cacheKeysResponse } from './lib'
 export class CacheWorker {
   private grahQLClient: GraphQLClient
 
-  private cacheKeysLiteral = ''
-  private updateCacheLiteral = ''
+  private cacheKeysRequest = ''
+  private updateCacheRequest = ''
 
   public okLog: { data: any; http: any }[] = []
   public errLog: Error[] = []
@@ -58,41 +58,60 @@ export class CacheWorker {
     )
   }
 
-  public getCacheKeysLiteral(): string {
-    return this.cacheKeysLiteral
+  public getUpdateCacheRequest(): string {
+    return this.updateCacheRequest
   }
 
-  public getUpdateCacheLiteral(): string {
-    return this.updateCacheLiteral
+  public async updateCache(keys: string[]): Promise<void> {
+    const cacheKeys = this.doubleQuote(keys)
+    const keysBlocks = this.splitKeysIntoBlocks(cacheKeys)
+    await this.updateBlocksOfKeys(keysBlocks)
   }
 
-  private setCursorIn_cacheKeys(cursor = ''): void {
-    this.cacheKeysLiteral = gql`
-      query _cacheKeys {
-        _cacheKeys (first: 10, after: "${cursor}") {
-          nodes
-          pageInfo { 
-            hasNextPage 
-            endCursor 
-          } 
-        } 
-      }
-    `
+  /**
+   * doubleQuote puts items of string array between double quotes
+   *
+   * It seems GraphQL doesn't recognize JS strings as strings,
+   * that is why it is necessary to put them
+   * explicitly between double quotes
+   */
+  private doubleQuote(arr: string[]): string[] {
+    return arr.map((e) => `"${e}"`)
   }
 
-  private setCacheKeysIn_updateCache(cacheKeys: string[]) {
-    this.updateCacheLiteral = gql`
+  private splitKeysIntoBlocks(keys: string[]): string[][] {
+    let blocks: string[][] = []
+    while (keys.length) {
+      const temp = keys.splice(0, 10)
+      blocks.push(temp) // TODO: change to 100
+    }
+    return blocks
+  }
+
+  private async updateBlocksOfKeys(keysBlocks: string[][]) {
+    for (let block of keysBlocks) {
+      this.setUpdateCacheRequest(block)
+      await this.requestUpdateCache()
+    }
+  }
+
+  private setUpdateCacheRequest(cacheKeys: string[]) {
+    this.updateCacheRequest = gql`
       mutation _updateCache {
         _updateCache(keys: [${cacheKeys}])
       }
     `
   }
 
-  private async call_updateCache(): Promise<void> {
+  private async requestUpdateCache(): Promise<void> {
     await this.grahQLClient
-      .request(this.updateCacheLiteral)
-      .then((res) => this.fillLogs(res))
-      .catch((err) => this.fillLogs(err))
+      .request(this.updateCacheRequest)
+      .then((res) => {
+        this.fillLogs(res)
+      })
+      .catch((err) => {
+        this.fillLogs(err)
+      })
   }
 
   private fillLogs(response: any): void {
@@ -101,41 +120,5 @@ export class CacheWorker {
       return
     }
     this.okLog.push(response)
-  }
-
-  private stringifyKeys(keysArr: string[]): string[] {
-    // GraphQL doesn't recognize JS strings as strings,
-    // that is why it is necessary to put them
-    // explicitly between double quotes
-    return keysArr.map((e) => `"${e}"`)
-  }
-
-  private setRequests(response: cacheKeysResponse): boolean {
-    const { nodes, pageInfo } = response.data._cacheKeys
-    this.setCursorIn_cacheKeys(pageInfo.endCursor!)
-    const cacheKeys = this.stringifyKeys(nodes)
-    this.setCacheKeysIn_updateCache(cacheKeys)
-    return pageInfo.hasNextPage
-  }
-
-  public async updateCache(keysFromEnv: string): Promise<void> {
-    if (keysFromEnv == 'all') {
-      let thereIsNextPage = false
-      this.setCursorIn_cacheKeys()
-      do {
-        await this.grahQLClient
-          .request(this.cacheKeysLiteral)
-          .then(async (res) => {
-            thereIsNextPage = this.setRequests(res)
-            await this.call_updateCache()
-          })
-          .catch((err) => this.fillLogs(err))
-      } while (thereIsNextPage)
-    } else {
-      let keys = keysFromEnv.split(',').map((k) => k.trim())
-      keys = this.stringifyKeys(keys)
-      this.setCacheKeysIn_updateCache(keys)
-      await this.call_updateCache()
-    }
   }
 }
