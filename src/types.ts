@@ -728,12 +728,22 @@ export type CommentEdge = {
   node: Comment;
 };
 
-export type Comment = {
+export type Comment = AbstractUuid & {
   __typename?: 'Comment';
   id: Scalars['Int'];
+  trashed: Scalars['Boolean'];
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
   author: User;
+  threads: ThreadsConnection;
+};
+
+
+export type CommentThreadsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type UnsupportedComment = {

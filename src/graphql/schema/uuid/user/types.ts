@@ -51,6 +51,7 @@ export interface UserResolvers {
     activeAuthor: Resolver<UserPayload, never, boolean>
     activeDonor: Resolver<UserPayload, never, boolean>
     activeReviewer: Resolver<UserPayload, never, boolean>
+    threads: Resolver<UserPayload, never, never>
   }
 }
 

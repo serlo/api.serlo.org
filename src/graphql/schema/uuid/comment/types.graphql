@@ -10,11 +10,19 @@ type CommentEdge {
   node: Comment!
 }
 
-type Comment {
+type Comment implements AbstractUuid {
   id: Int!
+  trashed: Boolean!
   content: String!
   createdAt: DateTime!
   author: User!
+  #TODO: this should be taken out (into AbstractCommentable Type)
+  threads (
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ThreadsConnection!
 }
 
 # TODO: this should be deleted and replaced with the real Comment
