@@ -26,7 +26,7 @@ import {
   article,
   articleRevision,
   checkoutRevisionNotificationEvent,
-  unsupportedcomment,
+  unsupportedComment,
   createCommentNotificationEvent,
   createEntityLinkNotificationEvent,
   createEntityNotificationEvent,
@@ -657,7 +657,7 @@ describe('notificationEvent', () => {
         variables: createCommentNotificationEvent,
         data: {
           notificationEvent: {
-            comment,
+            unsupportedComment,
           },
         },
         client,
@@ -1861,7 +1861,7 @@ describe('notificationEvent', () => {
         variables: createThreadNotificationEvent,
         data: {
           notificationEvent: {
-            thread,
+            unsupportedThread,
           },
         },
         client,
@@ -2042,7 +2042,7 @@ describe('notificationEvent', () => {
         variables: setThreadStateNotificationEvent,
         data: {
           notificationEvent: {
-            thread,
+            unsupportedThread,
           },
         },
         client,

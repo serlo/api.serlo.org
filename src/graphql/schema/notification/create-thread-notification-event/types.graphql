@@ -4,5 +4,5 @@ type CreateThreadNotificationEvent implements AbstractNotificationEvent {
   date: DateTime!
   actor: User!
   object: AbstractUuid!
-  thread: Thread!
+  thread: UnsupportedThread!
 }

@@ -2,99 +2,45 @@ import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
 import {
-  applet,
-  appletRevision,
-  comment,
-  getAppletDataWithoutSubResolvers,
-  getAppletRevisionDataWithoutSubResolvers,
-} from '../../../__fixtures__'
-import {
-  AppletPayload,
-  AppletRevisionPayload,
-} from '../../../src/graphql/schema'
+  comment1,
+  getCommentDataWithoutSubresolvers,
+} from '../../../__fixtures__/uuid/comment'
+import { CommentPayload } from '../../../src/graphql/schema/uuid/comment/types'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
-import { CommentPayload } from '../../../src/graphql/schema/uuid/comment/types'
 
 test('Comment', async () => {
   await addUuidInteraction<CommentPayload>({
-    __typename: comment.__typename,
-    id: comment.id,
-    trashed: Matchers.boolean(comment.trashed),
-    alias: Matchers.string(applet.instance),
-    authorId: applet.alias ? Matchers.string(applet.alias) : null,
-    date: Matchers.iso8601DateTime(applet.date),
-    archived: applet.currentRevisionId
-      ? Matchers.integer(applet.currentRevisionId)
-      : null,
-    content: Matchers.eachLike(applet.revisionIds[0]),
-    parentId: Matchers.integer(applet.licenseId),
-    childrenIds:
-      applet.taxonomyTermIds.length > 0
-        ? Matchers.eachLike(Matchers.like(applet.taxonomyTermIds[0]))
-        : [],
+    __typename: comment1.__typename,
+    id: comment1.id,
+    trashed: Matchers.boolean(comment1.trashed),
+    alias: comment1.alias ? Matchers.string(comment1.alias) : null,
+    authorId: Matchers.integer(comment1.authorId),
+    title: Matchers.string(comment1.title),
+    date: Matchers.iso8601DateTime(comment1.date),
+    archived: Matchers.boolean(comment1.archived),
+    content: Matchers.string(),
+    parentId: Matchers.integer(comment1.parentId),
+    childrenIds: Matchers.eachLike(Matchers.integer(1)),
   })
   await assertSuccessfulGraphQLQuery({
     query: gql`
-      query applet($id: Int!) {
+      query comments($id: Int!) {
         uuid(id: $id) {
           __typename
-          ... on Applet {
-            id
+          ... on Comment {
             trashed
-            instance
-            alias
-            date
-          }
-        }
-      }
-    `,
-    variables: applet,
-    data: {
-      uuid: getAppletDataWithoutSubResolvers(applet),
-    },
-  })
-})
-
-test('AppletRevision', async () => {
-  await addUuidInteraction<AppletRevisionPayload>({
-    __typename: appletRevision.__typename,
-    id: appletRevision.id,
-    trashed: Matchers.boolean(appletRevision.trashed),
-    date: Matchers.iso8601DateTime(appletRevision.date),
-    authorId: Matchers.integer(appletRevision.authorId),
-    repositoryId: Matchers.integer(appletRevision.repositoryId),
-    title: Matchers.string(appletRevision.title),
-    url: Matchers.string(appletRevision.url),
-    content: Matchers.string(appletRevision.content),
-    changes: Matchers.string(appletRevision.changes),
-    metaTitle: Matchers.string(appletRevision.metaTitle),
-    metaDescription: Matchers.string(appletRevision.metaDescription),
-  })
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query appletRevision($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          ... on AppletRevision {
             id
-            trashed
-            date
-            url
-            title
             content
-            changes
-            metaTitle
-            metaDescription
           }
         }
       }
     `,
-    variables: appletRevision,
+    variables: comment1,
     data: {
-      uuid: getAppletRevisionDataWithoutSubResolvers(appletRevision),
+      uuid: getCommentDataWithoutSubresolvers(comment1),
     },
   })
 })

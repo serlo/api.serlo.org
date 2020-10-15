@@ -44,7 +44,7 @@ import { Instance } from '../src/types'
 import {
   article,
   articleRevision,
-  unsupportedcomment,
+  unsupportedComment,
   exercise,
   solution,
   taxonomyTermCurriculumTopic,
@@ -95,7 +95,7 @@ export const createCommentNotificationEvent: CreateCommentNotificationEventPaylo
   date: '2014-03-01T20:45:56Z',
   actorId: user.id,
   threadId: unsupportedThread.id,
-  commentId: unsupportedcomment.id,
+  commentId: unsupportedComment.id,
 }
 
 export function getCreateCommentNotificationEventDataWithoutSubResolvers(

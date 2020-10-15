@@ -305,12 +305,14 @@ export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type Comment = {
+export type Comment = AbstractUuid & {
     __typename?: 'Comment';
     id: Scalars['Int'];
+    trashed: Scalars['Boolean'];
     content: Scalars['String'];
     createdAt: Scalars['DateTime'];
     author: User;
+    threads: ThreadsConnection;
 };
 
 // @public (undocumented)
@@ -327,6 +329,14 @@ export type CommentEdge = {
     __typename?: 'CommentEdge';
     cursor: Scalars['String'];
     node: Comment;
+};
+
+// @public (undocumented)
+export type CommentThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)

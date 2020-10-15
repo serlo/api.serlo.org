@@ -36,6 +36,7 @@ import {
 import { PagePayload, PageRevisionPayload } from '../page'
 import { TaxonomyTermPayload } from '../taxonomy-term'
 import { UserPayload } from '../user'
+import { CommentPayload } from '../comment/types'
 
 export enum DiscriminatorType {
   Page = 'Page',
@@ -55,6 +56,7 @@ export type UuidPayload =
   | PageRevisionPayload
   | UserPayload
   | TaxonomyTermPayload
+  | CommentPayload
 export interface AbstractUuidPayload extends Omit<AbstractUuid, 'threads'> {
   __typename: UuidType
 }
