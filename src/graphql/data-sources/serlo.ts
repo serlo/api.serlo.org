@@ -39,6 +39,7 @@ import {
   NodeData,
   NotificationsPayload,
 } from '../schema'
+import { SubscriptionsPayload } from '../schema/subscription'
 import { Service } from '../schema/types'
 import { CacheableDataSource } from './cacheable-data-source'
 
@@ -206,10 +207,15 @@ export class SerloDataSource extends CacheableDataSource {
     await this.environment.cache.set(cacheKey, response)
   }
 
-  private async customPost<
-    T,
-    K extends keyof SerloDataSource = keyof SerloDataSource
-  >({
+  public async getSubscriptions({
+    id,
+  }: {
+    id: number
+  }): Promise<SubscriptionsPayload> {
+    return this.cacheAwareGet({ path: `/api/subscriptions/${id}` })
+  }
+
+  private async customPost<T>({
     path,
     instance = Instance.De,
     body,
@@ -236,10 +242,7 @@ export class SerloDataSource extends CacheableDataSource {
     )
   }
 
-  private async cacheAwareGet<
-    T,
-    K extends keyof SerloDataSource = keyof SerloDataSource
-  >({
+  private async cacheAwareGet<T>({
     path,
     instance = Instance.De,
     ttl,

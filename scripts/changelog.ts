@@ -293,6 +293,7 @@ async function exec(): Promise<void> {
     },
     {
       tagName: 'v0.9.0',
+      date: '2020-08-16',
       breakingChanges: [
         'Consistently name GraphQL connection types `*Connection` and `*Edge`.',
         [
@@ -325,6 +326,32 @@ async function exec(): Promise<void> {
       internal: [
         'Sentry now expects the environment via the `ENVIRONMENT` environment variable.',
       ],
+    },
+    {
+      tagName: 'v0.10.0',
+      date: '2020-10-14',
+      added: [
+        'Add `subscriptions`.',
+        [
+          'alias',
+          `Hide certain implementation details of our alias system by adding polyfills for typical use cases:
+- Resolve \`/:id\` to the given UUID.
+- Users now have \`/user/profile/:username\` as their alias.
+- Resolve \`/user/profile/:id\` and \`/user/profile/:username\` to the given user.
+          `,
+        ],
+        ['abstract-repository', 'Add `revisions` to `Page` and all entities.'],
+      ],
+      fixed: [
+        ['alias', 'Handle paths that are already URL-decoded correctly.'],
+        ['alias', 'Output URL-encoded paths.'],
+        ['uuid', 'Return `null` when the UUID does not exist.'],
+      ],
+    },
+    {
+      tagName: 'v0.10.1',
+      date: '2020-10-14',
+      fixed: ['Update dependencies.'],
     },
   ])
 

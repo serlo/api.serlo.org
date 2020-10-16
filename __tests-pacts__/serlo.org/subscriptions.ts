@@ -19,34 +19,23 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-/* eslint-disable import/no-unassigned-import */
-describe('GET /api/alias/:alias', () => {
-  require('./alias')
-})
-describe('GET /api/cache-keys', () => {
-  require('./cache-keys')
-})
-describe('GET /api/event/:id', () => {
-  require('./event')
-})
-describe('GET /api/license/:id', () => {
-  require('./license')
-})
-describe('GET /api/navigation', () => {
-  require('./navigation')
-})
-describe('GET /api/notifications/:id', () => {
-  require('./notifications')
-})
-describe('POST /api/set-notification-state/:id', () => {
-  require('./set-notification-state')
-})
-describe('GET /api/subscriptions', () => {
-  require('./subscriptions')
-})
-describe('GET /api/user/*', () => {
-  require('./user')
-})
-describe('GET /api/uuid/:id', () => {
-  require('./uuid')
+import { Matchers } from '@pact-foundation/pact'
+import fetch from 'node-fetch'
+
+import { user } from '../../__fixtures__/uuid'
+import { addJsonInteraction } from '../__utils__'
+
+test('Subscriptions', async () => {
+  await addJsonInteraction({
+    name: `fetch data of all subscriptions for user with id ${user.id}`,
+    given: `there exists a subscription for user with id ${user.id}`,
+    path: `/api/subscriptions/${user.id}`,
+    body: {
+      userId: user.id,
+      subscriptions: Matchers.eachLike({ id: Matchers.integer(1) }),
+    },
+  })
+  await fetch(
+    `http://de.${process.env.SERLO_ORG_HOST}/api/subscriptions/${user.id}`
+  )
 })

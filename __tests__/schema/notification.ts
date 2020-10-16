@@ -56,6 +56,7 @@ import {
   getSetUuidStateNotificationEventDataWithoutSubResolvers,
   getSolutionDataWithoutSubResolvers,
   getTaxonomyTermDataWithoutSubResolvers,
+  getUserDataWithoutSubResolvers,
   rejectRevisionNotificationEvent,
   removeEntityLinkNotificationEvent,
   removeTaxonomyLinkNotificationEvent,
@@ -336,6 +337,7 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
+                  alias
                   username
                   date
                   lastLogin
@@ -348,7 +350,7 @@ describe('notificationEvent', () => {
         variables: checkoutRevisionNotificationEvent,
         data: {
           notificationEvent: {
-            actor: user,
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -466,6 +468,7 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
+                  alias
                   username
                   date
                   lastLogin
@@ -478,7 +481,7 @@ describe('notificationEvent', () => {
         variables: rejectRevisionNotificationEvent,
         data: {
           notificationEvent: {
-            actor: user,
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -595,6 +598,7 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
+                  alias
                   username
                   date
                   lastLogin
@@ -607,7 +611,7 @@ describe('notificationEvent', () => {
         variables: createCommentNotificationEvent,
         data: {
           notificationEvent: {
-            actor: user,
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -703,6 +707,7 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
+                  alias
                   username
                   date
                   lastLogin
@@ -715,7 +720,7 @@ describe('notificationEvent', () => {
         variables: createEntityNotificationEvent,
         data: {
           notificationEvent: {
-            actor: user,
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -796,6 +801,7 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
+                  alias
                   username
                   date
                   lastLogin
@@ -808,7 +814,7 @@ describe('notificationEvent', () => {
         variables: createEntityLinkNotificationEvent,
         data: {
           notificationEvent: {
-            actor: user,
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -920,6 +926,7 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
+                  alias
                   username
                   date
                   lastLogin
@@ -932,7 +939,7 @@ describe('notificationEvent', () => {
         variables: removeEntityLinkNotificationEvent,
         data: {
           notificationEvent: {
-            actor: user,
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -1044,6 +1051,7 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
+                  alias
                   username
                   date
                   lastLogin
@@ -1056,7 +1064,7 @@ describe('notificationEvent', () => {
         variables: createEntityRevisionNotificationEvent,
         data: {
           notificationEvent: {
-            actor: user,
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -1173,6 +1181,7 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
+                  alias
                   username
                   date
                   lastLogin
@@ -1185,7 +1194,7 @@ describe('notificationEvent', () => {
         variables: createTaxonomyTermNotificationEvent,
         data: {
           notificationEvent: {
-            actor: user,
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -1269,6 +1278,7 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
+                  alias
                   username
                   date
                   lastLogin
@@ -1281,7 +1291,7 @@ describe('notificationEvent', () => {
         variables: setTaxonomyTermNotificationEvent,
         data: {
           notificationEvent: {
-            actor: user,
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -1365,6 +1375,7 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
+                  alias
                   username
                   date
                   lastLogin
@@ -1377,7 +1388,7 @@ describe('notificationEvent', () => {
         variables: createTaxonomyLinkNotificationEvent,
         data: {
           notificationEvent: {
-            actor: user,
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -1492,6 +1503,7 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
+                  alias
                   username
                   date
                   lastLogin
@@ -1504,7 +1516,7 @@ describe('notificationEvent', () => {
         variables: removeTaxonomyLinkNotificationEvent,
         data: {
           notificationEvent: {
-            actor: user,
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -1619,6 +1631,7 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
+                  alias
                   username
                   date
                   lastLogin
@@ -1631,7 +1644,7 @@ describe('notificationEvent', () => {
         variables: setTaxonomyParentNotificationEvent,
         data: {
           notificationEvent: {
-            actor: user,
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -1781,6 +1794,7 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
+                  alias
                   username
                   date
                   lastLogin
@@ -1793,7 +1807,7 @@ describe('notificationEvent', () => {
         variables: createThreadNotificationEvent,
         data: {
           notificationEvent: {
-            actor: user,
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -1897,6 +1911,7 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
+                  alias
                   username
                   date
                   lastLogin
@@ -1909,7 +1924,7 @@ describe('notificationEvent', () => {
         variables: setLicenseNotificationEvent,
         data: {
           notificationEvent: {
-            actor: user,
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -1991,6 +2006,7 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
+                  alias
                   username
                   date
                   lastLogin
@@ -2003,7 +2019,7 @@ describe('notificationEvent', () => {
         variables: setThreadStateNotificationEvent,
         data: {
           notificationEvent: {
-            actor: user,
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
@@ -2077,6 +2093,7 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
+                  alias
                   username
                   date
                   lastLogin
@@ -2089,7 +2106,7 @@ describe('notificationEvent', () => {
         variables: setUuidStateNotificationEvent,
         data: {
           notificationEvent: {
-            actor: user,
+            actor: getUserDataWithoutSubResolvers(user),
           },
         },
         client,
