@@ -1,3 +1,24 @@
+/**
+ * This file is part of Serlo.org API
+ *
+ * Copyright (c) 2020 Serlo Education e.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License")
+ * you may not use this file except in compliance with the License
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @copyright Copyright (c) 2020 Serlo Education e.V.
+ * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
+ * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
+ */
 import { ApolloServer } from 'apollo-server-express'
 import { GraphQLRequest } from 'apollo-server-types'
 import { graphql, rest } from 'msw'
@@ -65,7 +86,7 @@ beforeEach(async () => {
 
 describe('Update-cache worker', () => {
   test('successfully calls _updateCache', async () => {
-    await cacheWorker.updateCache([...mockKeysValues.keys()])
+    await cacheWorker.update([...mockKeysValues.keys()])
     expect(cacheWorker.errLog).toEqual([])
   })
   test('does not fail if _updateCache does not work', async () => {
@@ -74,7 +95,7 @@ describe('Update-cache worker', () => {
         throw new Error('Something went wrong at _updateCache, but be cool')
       })
     )
-    await cacheWorker.updateCache([...mockKeysValues.keys()])
+    await cacheWorker.update([...mockKeysValues.keys()])
     expect(cacheWorker.errLog[0].message).toContain(
       'Something went wrong at _updateCache, but be cool'
     )
@@ -97,13 +118,13 @@ describe('Update-cache worker', () => {
         )
       })
     )
-    await cacheWorker.updateCache([...mockKeysValues.keys()])
+    await cacheWorker.update([...mockKeysValues.keys()])
     expect(cacheWorker.errLog[0].message).toContain(
       'Something went wrong while updating value of "de.serlo.org/api/key20", but keep calm'
     )
   })
   test('successfully updates only some values', async () => {
-    await cacheWorker.updateCache([
+    await cacheWorker.update([
       'de.serlo.org/api/key0',
       'de.serlo.org/api/key7',
       'de.serlo.org/api/key10',
@@ -112,7 +133,7 @@ describe('Update-cache worker', () => {
     expect(cacheWorker.errLog).toEqual([])
   })
   test('does not crash even though it had a problem with some values', async () => {
-    await cacheWorker.updateCache([
+    await cacheWorker.update([
       'de.serlo.org/api/key0',
       'de.serlo.org/api/keyInexistent',
       'de.serlo.org/api/key10',

@@ -21,7 +21,7 @@
  */
 import { CacheWorker } from './src/cache-worker'
 import { Service } from './src/lib'
-import { cacheKeys } from './cache-keys'
+import { cacheKeys } from './config'
 
 start()
 
@@ -50,7 +50,7 @@ type Config = {
 
 async function run(config: Config, retries: number = 2) {
   const { cacheWorker, cacheKeys } = config
-  await cacheWorker.updateCache(cacheKeys!)
+  await cacheWorker.update(cacheKeys!)
   const IsSuccessful = checkSuccess(cacheWorker.errLog)
   if (!IsSuccessful) {
     declareFailure(cacheWorker.errLog)

@@ -61,7 +61,7 @@ export class CacheWorker {
     return this.updateCacheRequest
   }
 
-  public async updateCache(keys: string[]): Promise<void> {
+  public async update(keys: string[]): Promise<void> {
     const cacheKeys = this.putInDoubleQuotes(keys)
     const keysBlocks = this.splitKeysIntoBlocks(cacheKeys)
     await this.requestUpdateByBlocksOfKeys(keysBlocks)
