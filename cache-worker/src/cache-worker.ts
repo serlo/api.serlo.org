@@ -22,7 +22,7 @@
 
 import { GraphQLClient, gql } from 'graphql-request'
 import jwt from 'jsonwebtoken'
-import { Service } from './lib'
+import { Service, wait } from './lib'
 
 export class CacheWorker {
   private grahQLClient: GraphQLClient
@@ -107,10 +107,10 @@ export class CacheWorker {
     return this.grahQLClient.request(this.updateCacheRequest)
   }
 
-  private async handleError(updateCachePromise: any) {
+  private async handleError(updateCachePromise: Promise<any>) {
     await updateCachePromise
       .then(async (res: any) => {
-        if(res.errors) {
+        if (res.errors) {
           await this.retry()
         }
         this.fillLogs(res)
@@ -122,15 +122,24 @@ export class CacheWorker {
   }
 
   private async retry() {
-    console.log('retrying')
-    for(let i = 0; i <= 5; i++) {
-      await this.requestUpdateCache()
-      .then(res => {})
-      .catch(e => {})
-      setTimeout(() => {}, 10000)
+    let keepTrying = true
+    const MAX_RETRIES = 4
+    for (let i = 0; keepTrying; i++) {
+      try {
+        const res = await this.requestUpdateCache()
+        if (!res.errors || i === MAX_RETRIES) {
+          keepTrying = false
+        }
+      } catch (e) {
+        if (i === MAX_RETRIES) {
+          keepTrying = false
+        }
+      }
+      // TODO: uncomment when timeout of jest is configured 
+      // to be longer than 5000 ms for the tests of this module
+      // await wait(1) 
     }
   }
-
 
   private fillLogs(response: any): void {
     if (response instanceof Error || response.errors) {

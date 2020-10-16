@@ -18,6 +18,5 @@ COPY cache-keys.ts .
 RUN yarn build
 
 FROM prod-dependencies as release
-ENV CACHE_KEYS_RETRIES 2
 COPY --from=build /usr/src/app/dist dist
 ENTRYPOINT ["node", "dist"]

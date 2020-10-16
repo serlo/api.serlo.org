@@ -20,6 +20,14 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
+export async function wait(seconds = 1) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve()
+    }, seconds * 1000)
+  })
+}
+
 export interface cacheKeysResponse {
   data: {
     _cacheKeys: Connection<string>

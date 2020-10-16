@@ -32,15 +32,12 @@ async function start() {
     service: process.env.SERLO_SERVICE as Service,
   })
 
-  const MAX_RETRIES = parseInt(process.env.CACHE_KEYS_RETRIES!)
-
   console.log('Updating cache values of the following keys:', cacheKeys)
 
   run(
     {
       cacheWorker,
-      cacheKeys,
-      MAX_RETRIES,
+      cacheKeys
     },
     0
   )
@@ -49,24 +46,15 @@ async function start() {
 type Config = {
   cacheWorker: CacheWorker
   cacheKeys: string[]
-  MAX_RETRIES: number
 }
 
 async function run(config: Config, retries: number = 2) {
-  const { cacheWorker, cacheKeys, MAX_RETRIES } = config
+  const { cacheWorker, cacheKeys } = config
   await cacheWorker.updateCache(cacheKeys!)
   const IsSuccessful = checkSuccess(cacheWorker.errLog)
-  if (!IsSuccessful && retries < MAX_RETRIES) {
-    retry(config, retries)
-    return
+  if (!IsSuccessful) {
+    declareFailure(cacheWorker.errLog)
   }
-  declareFailure(cacheWorker.errLog)
-}
-
-function retry(config: Config, retries: number) {
-  config.cacheWorker.errLog = []
-  console.log('Retrying to update cache')
-  setTimeout(async () => await run(config, ++retries), 5000)
 }
 
 function declareFailure(errors: Error[]) {
