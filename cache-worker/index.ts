@@ -30,7 +30,7 @@ async function start() {
     apiEndpoint: process.env.SERLO_ORG_HOST as string,
     secret: process.env.SERLO_ORG_SECRET,
     service: process.env.SERLO_SERVICE as Service,
-    pagination
+    pagination,
   })
 
   console.log('Updating cache values of the following keys:', cacheKeys)

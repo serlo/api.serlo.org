@@ -33,17 +33,20 @@ export class CacheWorker {
   public errLog: Error[] = []
 
   private pagination: number
+  private shouldBisect: boolean
 
   public constructor({
     apiEndpoint,
     service,
     secret,
     pagination = 100,
+    shouldBisect = false, //
   }: {
     apiEndpoint: string
     service?: Service
     secret?: string
     pagination?: number
+    shouldBisect?: boolean
   }) {
     this.grahQLClient = new GraphQLClient(
       apiEndpoint,
@@ -60,10 +63,18 @@ export class CacheWorker {
           }
     )
     this.pagination = pagination
+    this.shouldBisect = shouldBisect
   }
 
   public getUpdateCacheRequest(): string {
     return this.updateCacheRequest
+  }
+
+  public getShouldBisect(): boolean {
+    return this.shouldBisect
+  }
+  public setShouldBisect(value: boolean) {
+    this.shouldBisect = value
   }
 
   public async update(keys: string[]): Promise<void> {
@@ -153,4 +164,6 @@ export class CacheWorker {
     }
     this.okLog.push(response)
   }
+
+  private bisect() {}
 }
