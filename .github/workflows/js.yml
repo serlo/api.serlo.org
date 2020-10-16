@@ -14,7 +14,7 @@ jobs:
           node-version: 12.x
       - run: yarn
       - run: yarn build
-      - run: (cd cache-worker && pwd && yarn)
+      - run: yarn cache-worker:install
   eslint:
     runs-on: ubuntu-latest
     steps:

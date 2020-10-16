@@ -12,6 +12,7 @@
     "_eslint": "eslint \"{{__fixtures__,__tests-pacts__,__tests__,scripts,src}/**/*,*}.{js,jsx,ts,tsx}\"",
     "_prettier": "prettier .",
     "build": "tsdx build --target node --format cjs --tsconfig tsconfig.prod.json",
+    "cache-worker:install": "cd cache-worker && yarn install",
     "changelog": "ts-node scripts/changelog",
     "deploy:image": "ts-node scripts/deploy",
     "format": "npm-run-all -c format:*",
