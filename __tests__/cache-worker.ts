@@ -68,6 +68,7 @@ beforeEach(async () => {
     apiEndpoint: apiEndpoint,
     service: Service.Serlo,
     secret: 'blllkjadf',
+    pagination: 10, // default is 100, 10 is just for making less overhead by testing
   })
 
   global.server.use(
@@ -89,7 +90,7 @@ describe('Update-cache worker', () => {
     await cacheWorker.update([...mockKeysValues.keys()])
     expect(cacheWorker.errLog).toEqual([])
   })
-  test('does not fail if _updateCache does not work', async () => {
+  test('does not crash if _updateCache does not work', async () => {
     global.server.use(
       serloApi.mutation('_updateCache', () => {
         throw new Error('Something went wrong at _updateCache, but be cool')
@@ -101,7 +102,7 @@ describe('Update-cache worker', () => {
     )
     expect(cacheWorker.okLog.length).toEqual(0)
   })
-  test('does not fail if a cache value does not get updated for some reason', async () => {
+  test('does not crash if a cache value does not get updated for some reason', async () => {
     global.server.use(
       serloApi.mutation('_updateCache', async (req, res, ctx) => {
         if (req.body?.query.includes('key20')) {
