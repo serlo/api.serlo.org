@@ -32,14 +32,18 @@ export class CacheWorker {
   public okLog: { data: any; http: any }[] = []
   public errLog: Error[] = []
 
+  private pagination: number
+
   public constructor({
     apiEndpoint,
     service,
     secret,
+    pagination = 100,
   }: {
     apiEndpoint: string
     service?: Service
     secret?: string
+    pagination?: number
   }) {
     this.grahQLClient = new GraphQLClient(
       apiEndpoint,
@@ -55,6 +59,7 @@ export class CacheWorker {
             },
           }
     )
+    this.pagination = pagination
   }
 
   public getUpdateCacheRequest(): string {
@@ -81,8 +86,7 @@ export class CacheWorker {
   private splitKeysIntoBlocks(keys: string[]): string[][] {
     let blocksOfKeys: string[][] = []
     while (keys.length) {
-      // TODO: change to 100
-      const temp = keys.splice(0, 10)
+      const temp = keys.splice(0, this.pagination)
       blocksOfKeys.push(temp)
     }
     return blocksOfKeys
