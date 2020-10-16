@@ -81,8 +81,9 @@ export class CacheWorker {
   private splitKeysIntoBlocks(keys: string[]): string[][] {
     let blocksOfKeys: string[][] = []
     while (keys.length) {
+      // TODO: change to 100
       const temp = keys.splice(0, 10)
-      blocksOfKeys.push(temp) // TODO: change to 100
+      blocksOfKeys.push(temp)
     }
     return blocksOfKeys
   }
@@ -135,9 +136,9 @@ export class CacheWorker {
           keepTrying = false
         }
       }
-      // TODO: uncomment when timeout of jest is configured 
+      // TODO: uncomment when timeout of jest is configured
       // to be longer than 5000 ms for the tests of this module
-      // await wait(1) 
+      // await wait(1)
     }
   }
 

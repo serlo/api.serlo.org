@@ -37,7 +37,7 @@ async function start() {
   run(
     {
       cacheWorker,
-      cacheKeys
+      cacheKeys,
     },
     0
   )
