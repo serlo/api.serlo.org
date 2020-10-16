@@ -22,12 +22,11 @@
 
 import { GraphQLClient, gql } from 'graphql-request'
 import jwt from 'jsonwebtoken'
-import { Service, cacheKeysResponse } from './lib'
+import { Service } from './lib'
 
 export class CacheWorker {
   private grahQLClient: GraphQLClient
 
-  private cacheKeysRequest = ''
   private updateCacheRequest = ''
 
   public okLog: { data: any; http: any }[] = []
@@ -63,35 +62,36 @@ export class CacheWorker {
   }
 
   public async updateCache(keys: string[]): Promise<void> {
-    const cacheKeys = this.doubleQuote(keys)
+    const cacheKeys = this.putInDoubleQuotes(keys)
     const keysBlocks = this.splitKeysIntoBlocks(cacheKeys)
-    await this.updateBlocksOfKeys(keysBlocks)
+    await this.requestUpdateByBlocksOfKeys(keysBlocks)
   }
 
   /**
-   * doubleQuote puts items of string array between double quotes
+   * putInDoubleQuotes puts items of a string array between double quotes
    *
    * It seems GraphQL doesn't recognize JS strings as strings,
    * that is why it is necessary to put them
    * explicitly between double quotes
    */
-  private doubleQuote(arr: string[]): string[] {
+  private putInDoubleQuotes(arr: string[]): string[] {
     return arr.map((e) => `"${e}"`)
   }
 
   private splitKeysIntoBlocks(keys: string[]): string[][] {
-    let blocks: string[][] = []
+    let blocksOfKeys: string[][] = []
     while (keys.length) {
       const temp = keys.splice(0, 10)
-      blocks.push(temp) // TODO: change to 100
+      blocksOfKeys.push(temp) // TODO: change to 100
     }
-    return blocks
+    return blocksOfKeys
   }
 
-  private async updateBlocksOfKeys(keysBlocks: string[][]) {
+  private async requestUpdateByBlocksOfKeys(keysBlocks: string[][]) {
     for (let block of keysBlocks) {
       this.setUpdateCacheRequest(block)
-      await this.requestUpdateCache()
+      const updateCachePromise = this.requestUpdateCache()
+      await this.handleError(updateCachePromise)
     }
   }
 
@@ -103,16 +103,34 @@ export class CacheWorker {
     `
   }
 
-  private async requestUpdateCache(): Promise<void> {
-    await this.grahQLClient
-      .request(this.updateCacheRequest)
-      .then((res) => {
+  private async requestUpdateCache(): Promise<any> {
+    return this.grahQLClient.request(this.updateCacheRequest)
+  }
+
+  private async handleError(updateCachePromise: any) {
+    await updateCachePromise
+      .then(async (res: any) => {
+        if(res.errors) {
+          await this.retry()
+        }
         this.fillLogs(res)
       })
-      .catch((err) => {
+      .catch(async (err: any) => {
+        await this.retry()
         this.fillLogs(err)
       })
   }
+
+  private async retry() {
+    console.log('retrying')
+    for(let i = 0; i <= 5; i++) {
+      await this.requestUpdateCache()
+      .then(res => {})
+      .catch(e => {})
+      setTimeout(() => {}, 10000)
+    }
+  }
+
 
   private fillLogs(response: any): void {
     if (response instanceof Error || response.errors) {
