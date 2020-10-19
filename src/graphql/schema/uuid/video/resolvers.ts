@@ -24,12 +24,14 @@ import {
   createRevisionResolvers,
 } from '../abstract-repository'
 import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
+import { createUuidResolvers } from '../abstract-uuid'
 import { VideoPayload, VideoRevisionPayload } from './types'
 
 export const resolvers = {
   Video: {
     ...createRepositoryResolvers<VideoPayload, VideoRevisionPayload>(),
     ...createTaxonomyTermChildResolvers<VideoPayload>(),
+    ...createUuidResolvers(),
   },
   VideoRevision: createRevisionResolvers<VideoPayload, VideoRevisionPayload>(),
 }

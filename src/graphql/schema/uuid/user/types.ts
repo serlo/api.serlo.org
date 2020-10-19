@@ -28,7 +28,11 @@ import {
 } from '../../../../types'
 import { Connection } from '../../connection'
 import { QueryResolver, Resolver } from '../../types'
-import { AbstractUuidPayload, DiscriminatorType } from '../abstract-uuid'
+import {
+  AbstractUuidPayload,
+  DiscriminatorType,
+  UuidResolvers,
+} from '../abstract-uuid'
 
 export interface UserPayload extends Omit<User, keyof UserResolvers['User']> {
   __typename: DiscriminatorType.User
@@ -51,8 +55,7 @@ export interface UserResolvers {
     activeAuthor: Resolver<UserPayload, never, boolean>
     activeDonor: Resolver<UserPayload, never, boolean>
     activeReviewer: Resolver<UserPayload, never, boolean>
-    threads: Resolver<UserPayload, never, never>
-  }
+  } & UuidResolvers
 }
 
 export function isUserPayload(
