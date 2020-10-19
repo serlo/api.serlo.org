@@ -21,34 +21,12 @@
  */
 import { UserInputError } from 'apollo-server'
 
-import { decodePath, DiscriminatorType, UuidPayload } from '..'
-import { SerloDataSource } from '../../../data-sources/serlo'
-import { resolveConnection } from '../../connection'
-import { ThreadPayload } from '../../threads'
-import { CommentPayload } from '../comment/types'
-import { UuidResolvers } from './types'
+import { AbstractUuidResolvers, decodePath, UuidPayload } from '..'
 
-export const resolvers: UuidResolvers = {
+export const resolvers: AbstractUuidResolvers = {
   AbstractUuid: {
     __resolveType(uuid) {
       return uuid.__typename
-    },
-    async threads(parent, cursorPayload, { dataSources }) {
-      const threadslist = await Promise.resolve(
-        dataSources.serlo.getThreadIds({ id: parent.id })
-      )
-
-      return resolveConnection({
-        nodes: await Promise.all(
-          threadslist.threadIds.map((id) =>
-            toThreadPayload(dataSources.serlo, id)
-          )
-        ),
-        payload: cursorPayload,
-        createCursor(node) {
-          return node.commentPayloads[0].id.toString()
-        },
-      })
     },
   },
   Query: {
@@ -80,20 +58,4 @@ export const resolvers: UuidResolvers = {
       }
     },
   },
-}
-
-export async function toThreadPayload(
-  serlo: SerloDataSource,
-  firstCommentId: number
-): Promise<ThreadPayload> {
-  const firstComment = (await serlo.getUuid<CommentPayload>({
-    id: firstCommentId,
-  })) as CommentPayload
-  const remainingComments = Promise.all(
-    firstComment.childrenIds.map((id) => serlo.getUuid<CommentPayload>({ id }))
-  )
-  return {
-    __typename: DiscriminatorType.Thread,
-    commentPayloads: [firstComment, remainingComments],
-  } as ThreadPayload
 }

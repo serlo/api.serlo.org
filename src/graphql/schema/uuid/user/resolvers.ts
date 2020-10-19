@@ -21,7 +21,12 @@
  */
 import { pipeable, either } from 'fp-ts'
 
-import { AbstractUuidPayload, encodePath, UserPayload } from '..'
+import {
+  AbstractUuidPayload,
+  createUuidResolvers,
+  encodePath,
+  UserPayload,
+} from '..'
 import { ErrorEvent } from '../../../../error-event'
 import {
   MajorDimension,
@@ -57,6 +62,7 @@ export const resolvers: UserResolvers = {
     },
   },
   User: {
+    ...createUuidResolvers(),
     alias(user) {
       return Promise.resolve(encodePath(`/user/profile/${user.username}`))
     },

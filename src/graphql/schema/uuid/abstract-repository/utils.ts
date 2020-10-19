@@ -21,7 +21,7 @@
  */
 import { array as A, pipeable } from 'fp-ts'
 
-import { resolveConnection } from '../..'
+import { createUuidResolvers, resolveConnection } from '../..'
 import { requestsOnlyFields, isDefined } from '../../utils'
 import { createAliasResolvers } from '../alias'
 import { resolveUser } from '../user'
@@ -37,6 +37,7 @@ export function createRepositoryResolvers<
   R extends AbstractRevisionPayload
 >(): RepositoryResolvers<E, R> {
   return {
+    ...createUuidResolvers(),
     ...createAliasResolvers<E>(),
     async currentRevision(entity, _args, { dataSources }) {
       if (!entity.currentRevisionId) return null
@@ -84,6 +85,7 @@ export function createRevisionResolvers<
   R extends AbstractRevisionPayload
 >(): RevisionResolvers<E, R> {
   return {
+    ...createUuidResolvers(),
     author(entityRevision, _args, context, info) {
       return resolveUser({ id: entityRevision.authorId }, context, info)
     },

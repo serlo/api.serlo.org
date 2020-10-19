@@ -21,8 +21,12 @@
  */
 import * as R from 'ramda'
 
+import { SerloDataSource } from '../../../data-sources/serlo'
+import { resolveConnection } from '../../connection'
+import { ThreadPayload } from '../../threads'
 import { EntityRevisionType, EntityType } from '../abstract-entity'
-import { AbstractUuidPayload, DiscriminatorType } from './types'
+import { CommentPayload } from '../comment/types'
+import { AbstractUuidPayload, DiscriminatorType, UuidResolvers } from './types'
 
 const validTypes = [
   ...Object.values(DiscriminatorType),
@@ -32,4 +36,42 @@ const validTypes = [
 
 export function isUnsupportedUuid(payload: AbstractUuidPayload) {
   return !R.includes(payload.__typename, validTypes)
+}
+
+export function createUuidResolvers(): UuidResolvers {
+  return {
+    async threads(parent, cursorPayload, { dataSources }) {
+      const threadslist = await Promise.resolve(
+        dataSources.serlo.getThreadIds({ id: parent.id })
+      )
+
+      return resolveConnection({
+        nodes: await Promise.all(
+          threadslist.threadIds.map((id) =>
+            toThreadPayload(dataSources.serlo, id)
+          )
+        ),
+        payload: cursorPayload,
+        createCursor(node) {
+          return node.commentPayloads[0].id.toString()
+        },
+      })
+    },
+  }
+}
+
+export async function toThreadPayload(
+  serlo: SerloDataSource,
+  firstCommentId: number
+): Promise<ThreadPayload> {
+  const firstComment = (await serlo.getUuid<CommentPayload>({
+    id: firstCommentId,
+  })) as CommentPayload
+  const remainingComments = Promise.all(
+    firstComment.childrenIds.map((id) => serlo.getUuid<CommentPayload>({ id }))
+  )
+  return {
+    __typename: DiscriminatorType.Thread,
+    commentPayloads: [firstComment, remainingComments],
+  } as ThreadPayload
 }

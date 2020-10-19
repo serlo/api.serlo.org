@@ -21,8 +21,8 @@
  */
 import {
   AbstractUuid,
+  AbstractUuidThreadsArgs,
   QueryUuidArgs,
-  ThreadCommentsArgs,
 } from '../../../../types'
 import { Connection } from '../../connection'
 import { ThreadPayload } from '../../threads'
@@ -33,10 +33,10 @@ import {
   EntityRevisionType,
   EntityType,
 } from '../abstract-entity'
+import { CommentPayload } from '../comment/types'
 import { PagePayload, PageRevisionPayload } from '../page'
 import { TaxonomyTermPayload } from '../taxonomy-term'
 import { UserPayload } from '../user'
-import { CommentPayload } from '../comment/types'
 
 export enum DiscriminatorType {
   Page = 'Page',
@@ -62,13 +62,15 @@ export interface AbstractUuidPayload extends Omit<AbstractUuid, 'threads'> {
 }
 
 export interface UuidResolvers {
+  threads: Resolver<
+    AbstractUuidPayload,
+    AbstractUuidThreadsArgs,
+    Connection<ThreadPayload>
+  >
+}
+export interface AbstractUuidResolvers {
   AbstractUuid: {
     __resolveType: TypeResolver<UuidPayload>
-    threads: Resolver<
-      AbstractUuidPayload,
-      ThreadCommentsArgs,
-      Connection<ThreadPayload>
-    >
   }
   Query: {
     uuid: QueryResolver<QueryUuidArgs, UuidPayload | null>
