@@ -19,37 +19,19 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-/* eslint-disable import/no-unassigned-import */
-describe('GET /api/alias/:alias', () => {
-  require('./alias')
-})
-describe('GET /api/cache-keys', () => {
-  require('./cache-keys')
-})
-describe('GET /api/current-event-id', () => {
-  require('./current-event')
-})
-describe('GET /api/event/:id', () => {
-  require('./event')
-})
-describe('GET /api/license/:id', () => {
-  require('./license')
-})
-describe('GET /api/navigation', () => {
-  require('./navigation')
-})
-describe('GET /api/notifications/:id', () => {
-  require('./notifications')
-})
-describe('POST /api/set-notification-state/:id', () => {
-  require('./set-notification-state')
-})
-describe('GET /api/subscriptions', () => {
-  require('./subscriptions')
-})
-describe('GET /api/user/*', () => {
-  require('./user')
-})
-describe('GET /api/uuid/:id', () => {
-  require('./uuid')
+import { Matchers } from '@pact-foundation/pact'
+import fetch from 'node-fetch'
+
+import { addJsonInteraction } from '../__utils__'
+
+test('/api/current-event-id', async () => {
+  await addJsonInteraction({
+    name: 'fetch current event id',
+    given: 'current event id is 100',
+    path: '/api/current-event-id',
+    body: {
+      currentEventId: Matchers.integer(100),
+    },
+  })
+  await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/current-event-id`)
 })

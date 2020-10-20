@@ -162,6 +162,10 @@ export class SerloDataSource extends CacheableDataSource {
     return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
   }
 
+  public async getCurrentEventId(): Promise<{ currentEventId: number }> {
+    return this.cacheAwareGet({ path: `/api/current-event-id`, ttl: 30 })
+  }
+
   public async getNotificationEvent<
     T extends AbstractNotificationEventPayload
   >({ id }: { id: number }): Promise<T | null> {
