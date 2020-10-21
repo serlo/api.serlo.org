@@ -98,3 +98,19 @@ export function resolveConnection<T>({
     return false
   }
 }
+
+export async function mapConnection<A, B>(
+  fetcher: (node: A) => Promise<B>,
+  connection: Connection<A>
+): Promise<Connection<B>> {
+  const newNodes = await Promise.all(connection.nodes.map(fetcher))
+  console.log(newNodes.findIndex(node => node === null))
+
+  return {
+    ...connection,
+    edges: newNodes.map((node, i) => {
+      return { node, cursor: connection.edges[i].cursor }
+    }),
+    nodes: newNodes,
+  }
+}

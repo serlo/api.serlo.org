@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { isSome } from 'fp-ts/lib/Option'
+import { isSome, getOrElse } from 'fp-ts/lib/Option'
 import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
 
@@ -162,8 +162,36 @@ export class SerloDataSource extends CacheableDataSource {
     return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
   }
 
-  public async getCurrentEventId(): Promise<{ currentEventId: number }> {
-    return this.cacheAwareGet({ path: `/api/current-event-id`, ttl: 30 })
+  public async getEventIds(): Promise<number[]> {
+    const that = this
+    let eventIds: number[]
+
+    async function updateEventIds() {
+      // TODO: new function
+      const update = await that.cacheAwareGet<{ eventIds: number[], hasNext: boolean }>({
+        path: '/api/event-ids',
+        query: { after: (R.last(eventIds) ?? 0).toString() },
+        ttl: 60,
+      })
+
+      console.log(R.last(eventIds))
+
+      eventIds = [...eventIds, ...update.eventIds]
+
+      // In if: Also invalidate cache key
+      if (update.hasNext) await updateEventIds()
+    }
+
+    const cacheKey = this.getCacheKey('/api/event-ids')
+    const cachedValue = await this.environment.cache.get<number[]>(cacheKey)
+    eventIds = getOrElse<number[]>(() => [])(cachedValue)
+
+    await updateEventIds()
+
+    await this.setCache(cacheKey, eventIds)
+
+    return eventIds
+
   }
 
   public async getNotificationEvent<
@@ -249,15 +277,17 @@ export class SerloDataSource extends CacheableDataSource {
   private async cacheAwareGet<T>({
     path,
     instance = Instance.De,
+    query = {},
     ttl,
     ignoreCache,
   }: {
     path: string
-    instance?: Instance
+    instance?: Instance,
+    query?: Record<string, string>,
     ttl?: number
     ignoreCache?: boolean
   }): Promise<T> {
-    const cacheKey = this.getCacheKey(path, instance)
+    const cacheKey = this.getCacheKey(path, instance, query)
 
     if (!ignoreCache) {
       const cache = await this.environment.cache.get<T>(cacheKey)
@@ -271,7 +301,7 @@ export class SerloDataSource extends CacheableDataSource {
     })
     const data = await super.get<T>(
       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
-      {},
+      query,
       {
         headers: {
           Authorization: `Serlo Service=${token}`,
@@ -281,8 +311,9 @@ export class SerloDataSource extends CacheableDataSource {
     return this.setCache(cacheKey, data, { ttl })
   }
 
-  private getCacheKey(path: string, instance: Instance = Instance.De) {
-    return `${instance}.serlo.org${path}`
+  private getCacheKey(path: string, instance: Instance = Instance.De, query: Record<string, string> = {}) {
+    const queryString = R.toPairs(query).map(([value, key]) => `${value}=${key}`).join("&")
+    return `${instance}.serlo.org${path}${queryString}`
   }
 
   public async getAllCacheKeys(): Promise<string[]> {

@@ -22,13 +22,13 @@
 import { AuthenticationError } from 'apollo-server'
 import * as R from 'ramda'
 
-import { resolveConnection } from '../connection'
+import { resolveConnection, mapConnection } from '../connection'
 import { Context } from '../types'
-import { isDefined } from '../utils'
 import {
   NotificationEventPayload,
   NotificationPayload,
   NotificationResolvers,
+  AbstractNotificationEventPayload,
 } from './types'
 
 export const resolvers: NotificationResolvers = {
@@ -47,20 +47,25 @@ export const resolvers: NotificationResolvers = {
   },
   Query: {
     async events(_parent, payload, { dataSources }) {
-      const { currentEventId } = await dataSources.serlo.getCurrentEventId()
-      const events = (
-        await Promise.all(
-          R.range(1, currentEventId + 1).map((id) =>
-            dataSources.serlo.getNotificationEvent({ id })
-          )
-        )
-      ).filter(isDefined)
-
-      return resolveConnection({
-        nodes: events,
-        createCursor: (event) => event.id.toString(),
+      const eventIds = await dataSources.serlo.getEventIds()
+      if (R.isNil(payload.first) && R.isNil(payload.last)) {
+        payload.first = 100
+      }
+      const connection = resolveConnection({
+        nodes: eventIds,
+        createCursor: (id) => id.toString(),
         payload,
       })
+
+      const result = await mapConnection(
+        (id) =>
+          dataSources.serlo.getNotificationEvent({
+            id,
+          }) as unknown as Promise<AbstractNotificationEventPayload>,
+        connection
+      )
+
+      return result
     },
     async notifications(
       _parent,
