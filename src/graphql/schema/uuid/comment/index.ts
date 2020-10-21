@@ -20,6 +20,9 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Schema } from '../../utils'
+import { resolvers } from './resolvers'
 import typeDefs from './types.graphql'
 
-export const commentSchema: Schema = { resolvers: {}, typeDefs: [typeDefs] }
+export * from './types'
+
+export const commentSchema: Schema = { resolvers, typeDefs: [typeDefs] }

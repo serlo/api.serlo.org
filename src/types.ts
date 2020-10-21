@@ -242,7 +242,7 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & {
   date: Scalars['DateTime'];
   actor: User;
   object: AbstractUuid;
-  thread: Thread;
+  thread: UnsupportedThread;
 };
 
 export type RejectRevisionNotificationEvent = AbstractNotificationEvent & {
