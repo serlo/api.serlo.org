@@ -46,6 +46,7 @@ export interface Schema {
 }
 
 export function mergeSchemas(...schemas: Schema[]): Schema {
+  console.log(schemas)
   const subResolvers = R.map((schema) => schema.resolvers, schemas)
   const resolvers = R.reduce<Record<string, unknown>, Schema['resolvers']>(
     R.mergeDeepRight,

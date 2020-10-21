@@ -19,14 +19,17 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { ForbiddenError } from 'apollo-server'
 import * as R from 'ramda'
 
 import { SerloDataSource } from '../../../data-sources/serlo'
 import { resolveConnection } from '../../connection'
 import { ThreadPayload } from '../../threads'
+import { isDefined } from '../../utils'
 import { EntityRevisionType, EntityType } from '../abstract-entity'
-import { CommentPayload } from '../comment/types'
-import { AbstractUuidPayload, DiscriminatorType, UuidResolvers } from './types'
+import { AbstractUuidPayload, UuidResolvers } from '../abstract-uuid'
+import { CommentPayload } from '../comment'
+import { DiscriminatorType } from './types'
 
 const validTypes = [
   ...Object.values(DiscriminatorType),
@@ -41,15 +44,13 @@ export function isUnsupportedUuid(payload: AbstractUuidPayload) {
 export function createUuidResolvers(): UuidResolvers {
   return {
     async threads(parent, cursorPayload, { dataSources }) {
-      const threadslist = await Promise.resolve(
+      const { threadIds } = await Promise.resolve(
         dataSources.serlo.getThreadIds({ id: parent.id })
       )
 
       return resolveConnection({
         nodes: await Promise.all(
-          threadslist.threadIds.map((id) =>
-            toThreadPayload(dataSources.serlo, id)
-          )
+          threadIds.map((id) => toThreadPayload(dataSources.serlo, id))
         ),
         payload: cursorPayload,
         createCursor(node) {
@@ -67,11 +68,14 @@ export async function toThreadPayload(
   const firstComment = (await serlo.getUuid<CommentPayload>({
     id: firstCommentId,
   })) as CommentPayload
-  const remainingComments = Promise.all(
+  if (firstComment === null) {
+    throw new ForbiddenError('There are no comments yet')
+  }
+  const remainingComments = await Promise.all(
     firstComment.childrenIds.map((id) => serlo.getUuid<CommentPayload>({ id }))
   )
   return {
     __typename: DiscriminatorType.Thread,
-    commentPayloads: [firstComment, remainingComments],
-  } as ThreadPayload
+    commentPayloads: [firstComment, ...remainingComments.filter(isDefined)],
+  }
 }

@@ -16,7 +16,7 @@ test('Comment', async () => {
     __typename: comment1.__typename,
     id: comment1.id,
     trashed: Matchers.boolean(comment1.trashed),
-    alias: comment1.alias ? Matchers.string(comment1.alias) : null,
+    alias: comment1.alias,
     authorId: Matchers.integer(comment1.authorId),
     title: Matchers.string(comment1.title),
     date: Matchers.iso8601DateTime(comment1.date),

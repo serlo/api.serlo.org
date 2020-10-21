@@ -657,7 +657,7 @@ describe('notificationEvent', () => {
         variables: createCommentNotificationEvent,
         data: {
           notificationEvent: {
-            unsupportedComment,
+            comment: unsupportedComment,
           },
         },
         client,

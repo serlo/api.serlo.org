@@ -29,7 +29,7 @@ import { notificationSchema } from './notification'
 import { subscriptionSchema } from './subscription'
 import { threadsSchema } from './threads'
 import { mergeSchemas } from './utils'
-import { commentSchema, uuidSchema } from './uuid'
+import { uuidSchema } from './uuid'
 
 export * from './connection'
 export * from './date-time'
@@ -50,7 +50,6 @@ export const schema = mergeSchemas(
   licenseSchema,
   notificationSchema,
   uuidSchema,
-  commentSchema,
   threadsSchema,
   subscriptionSchema
 )

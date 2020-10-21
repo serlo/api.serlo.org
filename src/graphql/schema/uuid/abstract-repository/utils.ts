@@ -21,8 +21,9 @@
  */
 import { array as A, pipeable } from 'fp-ts'
 
-import { createUuidResolvers, resolveConnection } from '../..'
+import { resolveConnection } from '../..'
 import { requestsOnlyFields, isDefined } from '../../utils'
+import { createUuidResolvers } from '../abstract-uuid'
 import { createAliasResolvers } from '../alias'
 import { resolveUser } from '../user'
 import {

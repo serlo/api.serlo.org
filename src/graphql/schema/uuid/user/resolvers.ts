@@ -21,12 +21,7 @@
  */
 import { pipeable, either } from 'fp-ts'
 
-import {
-  AbstractUuidPayload,
-  createUuidResolvers,
-  encodePath,
-  UserPayload,
-} from '..'
+import { encodePath, UserPayload } from '..'
 import { ErrorEvent } from '../../../../error-event'
 import {
   MajorDimension,
@@ -35,6 +30,7 @@ import {
 } from '../../../data-sources/google-spreadsheet-api'
 import { ConnectionPayload, resolveConnection } from '../../connection'
 import { Context } from '../../types'
+import { AbstractUuidPayload, createUuidResolvers } from '../abstract-uuid'
 import { UserResolvers, isUserPayload } from './types'
 
 export const resolvers: UserResolvers = {

@@ -3,7 +3,7 @@ import * as R from 'ramda'
 
 import { resolveConnection } from '../connection'
 import { UuidPayload } from '../uuid'
-import { CommentPayload } from '../uuid/comment/types'
+import { CommentPayload } from '../uuid/comment'
 import { ThreadResolvers } from './types'
 
 export const resolvers: ThreadResolvers = {
@@ -30,13 +30,13 @@ export const resolvers: ThreadResolvers = {
       return thread.commentPayloads[0].trashed
     },
     async object(thread, _args, { dataSources }) {
-      const objectIds = await dataSources.serlo.getUuid<UuidPayload>({
-        id: thread.commentPayloads[0].id,
+      const object = await dataSources.serlo.getUuid<UuidPayload>({
+        id: thread.commentPayloads[0].parentId,
       })
-      if (objectIds === null) {
+      if (object === null) {
         throw new ForbiddenError('There are no comments yet')
       }
-      return objectIds
+      return object
     },
     comments(thread, cursorPayload) {
       return resolveConnection<CommentPayload>({

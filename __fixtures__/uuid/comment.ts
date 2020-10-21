@@ -35,6 +35,21 @@ export const comment2: CommentPayload = {
   childrenIds: [],
 }
 
+export const comment3: CommentPayload = {
+  id: 49238,
+  trashed: false,
+  alias: null,
+  __typename: DiscriminatorType.Comment,
+  authorId: user2.id,
+  parentId: article.id,
+  title: 'Parabeln besser darstellen',
+  date: '2020-01-02T09:00:31+02:00',
+  archived: false,
+  content:
+    'Das Parabeldesign ist nicht schön genug, da müssen wir uns noch etwas mehr Mühe geben',
+  childrenIds: [],
+}
+
 export function getCommentDataWithoutSubresolvers(comment: CommentPayload) {
-  return R.omit(['createdAt', 'author'], comment)
+  return R.omit(['createdAt', 'author', 'threads'], comment)
 }
