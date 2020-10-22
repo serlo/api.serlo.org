@@ -21,7 +21,6 @@
  */
 import { pipeable, either } from 'fp-ts'
 
-import { encodePath, UserPayload } from '..'
 import { ErrorEvent } from '../../../../error-event'
 import {
   MajorDimension,
@@ -31,7 +30,8 @@ import {
 import { ConnectionPayload, resolveConnection } from '../../connection'
 import { Context } from '../../types'
 import { AbstractUuidPayload, createUuidResolvers } from '../abstract-uuid'
-import { UserResolvers, isUserPayload } from './types'
+import { encodePath } from '../alias'
+import { UserResolvers, isUserPayload, UserPayload } from './types'
 
 export const resolvers: UserResolvers = {
   Query: {
