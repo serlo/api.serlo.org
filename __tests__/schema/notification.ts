@@ -1861,7 +1861,7 @@ describe('notificationEvent', () => {
         variables: createThreadNotificationEvent,
         data: {
           notificationEvent: {
-            unsupportedThread,
+            thread: unsupportedThread,
           },
         },
         client,
@@ -2042,7 +2042,7 @@ describe('notificationEvent', () => {
         variables: setThreadStateNotificationEvent,
         data: {
           notificationEvent: {
-            unsupportedThread,
+            thread: unsupportedThread,
           },
         },
         client,

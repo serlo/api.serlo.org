@@ -70,6 +70,13 @@ export function createUuidHandler(uuid: UuidPayload) {
   })
 }
 
+export function createThreadsHandler(id: number, firstCommentIds: number[]) {
+  return createJsonHandler({
+    path: `/api/threads/${id}`,
+    body: firstCommentIds,
+  })
+}
+
 export function createJsonHandler({
   instance = Instance.De,
   path,

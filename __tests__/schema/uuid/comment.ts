@@ -1,5 +1,6 @@
 import { gql } from 'apollo-server'
 
+import { user } from '../../../__fixtures__/uuid'
 import {
   comment1,
   getCommentDataWithoutSubresolvers,
@@ -11,7 +12,6 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
-import { user } from '../../../__fixtures__/uuid'
 
 let client: Client
 
@@ -29,13 +29,74 @@ test('Comment', async () => {
       query comment($id: Int!) {
         uuid(id: $id) {
           __typename
+          ... on Comment {
+            alias
+            archived
+            title
+            content
+            id
+            trashed
+            parentId
+            childrenIds
+          }
         }
       }
     `,
-    variables: comment1,
+    variables: { id: comment1.id },
     data: {
       uuid: getCommentDataWithoutSubresolvers(comment1),
     },
     client,
+  })
+})
+
+describe('property "createdAt"', () => {
+  const query = gql`
+    query propertyCreatedAt($id: Int!) {
+      uuid(id: $id) {
+        ... on Comment {
+          createdAt
+        }
+      }
+    }
+  `
+
+  test('Test property "createdAt"', async () => {
+    global.server.use(createUuidHandler(comment1))
+
+    await assertSuccessfulGraphQLQuery({
+      query,
+      variables: { id: comment1.id },
+      data: {
+        uuid: { createdAt: '2015-07-07T09:00:31+02:00' },
+      },
+      client,
+    })
+  })
+})
+
+describe('property "author"', () => {
+  const query = gql`
+    query propertyCreatedAt($id: Int!) {
+      uuid(id: $id) {
+        ... on Comment {
+          author {
+            username
+          }
+        }
+      }
+    }
+  `
+  test('Test property "author"', async () => {
+    global.server.use(createUuidHandler(comment1))
+
+    await assertSuccessfulGraphQLQuery({
+      query,
+      variables: { id: comment1.id },
+      data: {
+        uuid: { author: 1 },
+      },
+      client,
+    })
   })
 })
