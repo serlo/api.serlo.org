@@ -51,5 +51,5 @@ export const comment3: CommentPayload = {
 }
 
 export function getCommentDataWithoutSubresolvers(comment: CommentPayload) {
-  return R.omit(['createdAt', 'author', 'threads'], comment)
+  return R.omit(['authorId', 'threads', 'date'], comment)
 }

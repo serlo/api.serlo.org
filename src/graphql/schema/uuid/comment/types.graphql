@@ -13,9 +13,14 @@ type CommentEdge {
 type Comment implements AbstractUuid {
   id: Int!
   trashed: Boolean!
+  alias: String
+  title: String!
   content: String!
+  parentId: Int!
+  archived: Boolean!
   createdAt: DateTime!
   author: User!
+  childrenIds: [Int]!
   #TODO: this should be taken out (into AbstractCommentable Type)
   threads (
     after: String
