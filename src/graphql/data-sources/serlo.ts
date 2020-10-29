@@ -45,7 +45,7 @@ import { CacheableDataSource } from './cacheable-data-source'
 
 export class SerloDataSource extends CacheableDataSource {
   public constructor(private environment: Environment) {
-    super()
+    super(environment.cache)
   }
 
   public async getActiveAuthorIds(): Promise<number[]> {
@@ -274,7 +274,7 @@ export class SerloDataSource extends CacheableDataSource {
         },
       }
     )
-    return this.setCache(cacheKey, data, { ttl })
+    return this.setCacheLegacy(cacheKey, data, { ttl })
   }
 
   private getCacheKey(path: string, instance: Instance = Instance.De) {
@@ -285,7 +285,11 @@ export class SerloDataSource extends CacheableDataSource {
     return this.cacheAwareGet<string[]>({ path: '/api/cache-keys' })
   }
 
-  public async setCache<T>(key: string, value: T, options?: { ttl?: number }) {
+  public async setCacheLegacy<T>(
+    key: string,
+    value: T,
+    options?: { ttl?: number }
+  ) {
     await this.environment.cache.set(key, value, options)
     return value
   }
