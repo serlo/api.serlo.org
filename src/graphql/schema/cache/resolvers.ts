@@ -46,7 +46,7 @@ export const resolvers: CacheResolvers = {
           'You do not have the permissions to set the cache'
         )
       }
-      await dataSources.serlo.setCache(key, value)
+      await dataSources.serlo.setCacheLegacy(key, value)
       return null
     },
     async _removeCache(_parent, { key }, { dataSources, service }) {

@@ -75,7 +75,7 @@ export class GoogleSheetApi extends CacheableDataSource {
     apiKey: string
     environment: Environment
   }) {
-    super()
+    super(environment.cache)
 
     this.apiKey = apiKey
     this.environment = environment
