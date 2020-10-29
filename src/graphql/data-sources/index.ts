@@ -27,6 +27,8 @@ export interface DataSources {
   googleSheetApi: GoogleSheetApi
 }
 
+export * from './cacheable-data-source'
+
 export const dataSourceToCacheKeys = {
   serlo: (key: string) => {
     return key.includes('serlo.org') // FIXME: what if  www.serlo.org/spreadsheet- happens?

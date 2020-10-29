@@ -23,26 +23,33 @@ import { option as O, pipeable } from 'fp-ts'
 
 import { Cache } from '../graphql/environment'
 
+interface Entry {
+  value: unknown
+  lastModified: number
+  ttl?: number
+}
+
 export function createInMemoryCache(): Cache {
-  let cache: Record<
-    string,
-    {
-      value: unknown
-      ttl?: number
-    } | null
-  > = {}
+  let cache: Record<string, Entry | null> = {}
 
   return {
     // eslint-disable-next-line @typescript-eslint/require-await
     get: async <T>(key: string) => {
+      const isAlive = (x: Entry) => {
+        const ttl = (x.ttl ?? Number.POSITIVE_INFINITY) * 1000
+
+        return Date.now() - x.lastModified < ttl
+      }
+
       return pipeable.pipe(
         O.fromNullable(cache[key]),
+        O.chain(O.fromPredicate(isAlive)),
         O.map((x) => x.value as T)
       )
     },
     // eslint-disable-next-line @typescript-eslint/require-await
     async set(key, value, options) {
-      cache[key] = { value, ttl: options?.ttl }
+      cache[key] = { value, ttl: options?.ttl, lastModified: Date.now() }
     },
     // eslint-disable-next-line @typescript-eslint/require-await
     async remove(key: string) {
