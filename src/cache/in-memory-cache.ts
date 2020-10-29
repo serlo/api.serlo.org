@@ -30,7 +30,7 @@ interface Entry {
 }
 
 export function createInMemoryCache(): Cache {
-  let cache: Record<string, Entry | null> = {}
+  let cache: Record<string, Entry> = {}
 
   return {
     // eslint-disable-next-line @typescript-eslint/require-await
@@ -53,7 +53,7 @@ export function createInMemoryCache(): Cache {
     },
     // eslint-disable-next-line @typescript-eslint/require-await
     async remove(key: string) {
-      cache[key] = null
+      delete cache[key]
     },
     // eslint-disable-next-line @typescript-eslint/require-await
     async flush() {
