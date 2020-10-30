@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { InMemoryLRUCache } from 'apollo-server-caching'
-import { either as E, option as O } from 'fp-ts'
+import { either as E } from 'fp-ts'
 
 import { createInMemoryCache } from '../../src/cache/in-memory-cache'
 import {
@@ -55,25 +55,14 @@ describe('GoogleSheetApi.getValues()', () => {
     expect(valueRange).toEqual(E.right([['1', '2'], ['3']]))
   })
 
-  describe('uses a cache', () => {
-    const cacheKey = 'spreadsheet-my-spreadsheet-id-sheet1!A:A-COLUMNS'
+  test('uses a cache', async () => {
+    mockSpreadsheet({ ...common, values: [['1', '2'], ['3']] })
+    await googleSheetApi.getValues(common)
+    mockSpreadsheet({ ...common, values: [] })
 
-    test('cached results are returned', async () => {
-      await cache.set(cacheKey, [['1', '2']])
+    const valueRange = await googleSheetApi.getValues(common)
 
-      const valueRange = await googleSheetApi.getValues(common)
-
-      expect(valueRange).toEqual(E.right([['1', '2']]))
-    })
-
-    test('results are cached for an hour', async () => {
-      mockSpreadsheet({ ...common, values: [['1', '2'], ['3']] })
-
-      await googleSheetApi.getValues(common)
-
-      expect(await cache.get(cacheKey)).toEqual(O.some([['1', '2'], ['3']]))
-      expect(await cache.getTtl(cacheKey)).toEqual(O.some(3600))
-    })
+    expect(valueRange).toEqual(E.right([['1', '2'], ['3']]))
   })
 
   test('argument "majorDimension" is optional', async () => {

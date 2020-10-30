@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
+import { gql } from 'apollo-server'
 import { option } from 'fp-ts'
 import { rest } from 'msw'
 
@@ -28,6 +29,9 @@ import {
   createRemoveCacheMutation,
   createSetCacheMutation,
   createUpdateCacheMutation,
+  user,
+  user2,
+  getUserDataWithoutSubResolvers,
 } from '../../__fixtures__'
 import { MajorDimension } from '../../src/graphql/data-sources/google-spreadsheet-api'
 import { Service } from '../../src/graphql/schema/types'
@@ -37,17 +41,18 @@ import {
   assertSuccessfulGraphQLQuery,
   createTestClient,
   createSpreadsheetHandler,
+  createUuidHandler,
 } from '../__utils__'
 
 const mockSpreadSheetData = {
-  spreadsheetId: '1qpyC0XzvTcKT6EISywvqESX3A0MwQoFDE8p-Bll4hps',
-  range: 'sheet1!A:A',
+  spreadsheetId: process.env.ACTIVE_DONORS_SPREADSHEET_ID,
+  range: 'Tabellenblatt1!A:A',
   majorDimension: MajorDimension.Columns,
   apiKey: 'very-secure-secret',
   body: {
-    values: [['1', '2']],
+    values: [['Ids', user.id.toString(), user2.id.toString()]],
     majorDimension: MajorDimension.Columns,
-    range: 'sheet1!A:A',
+    range: 'Tabellenblatt1!A:A',
   },
 }
 
@@ -213,7 +218,8 @@ test('_updateCache *serlo.org* (authenticated)', async () => {
 })
 
 test('_updateCache spreadsheet-* (authenticated)', async () => {
-  const { client, cache } = createTestClient({
+  global.server.use(createUuidHandler(user), createUuidHandler(user2))
+  const { client } = createTestClient({
     service: Service.Serlo,
     user: null,
   })
@@ -223,13 +229,36 @@ test('_updateCache spreadsheet-* (authenticated)', async () => {
     `spreadsheet-${mock.spreadsheetId}-${mock.range}-${mock.majorDimension}`,
   ]
 
-  const cachedValueBeforeUpdate = await cache.get(keys[0])
-
   await assertSuccessfulGraphQLMutation({
     ...createUpdateCacheMutation(keys),
     client,
   })
-  const cachedValueAfterUpdate = await cache.get(keys[0])
-  expect(cachedValueBeforeUpdate).not.toEqual(cachedValueAfterUpdate)
-  expect(cachedValueAfterUpdate).toEqual(option.some(mock.body.values))
+
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      {
+        activeDonors {
+          nodes {
+            __typename
+            id
+            trashed
+            alias
+            username
+            date
+            lastLogin
+            description
+          }
+        }
+      }
+    `,
+    data: {
+      activeDonors: {
+        nodes: [
+          getUserDataWithoutSubResolvers(user),
+          getUserDataWithoutSubResolvers(user2),
+        ],
+      },
+    },
+    client,
+  })
 })
