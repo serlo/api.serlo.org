@@ -44,6 +44,8 @@ import {
   createUuidHandler,
 } from '../__utils__'
 
+const now = jest.fn()
+const nowCopy = Date.now
 const mockSpreadSheetData = {
   spreadsheetId: process.env.ACTIVE_DONORS_SPREADSHEET_ID,
   range: 'Tabellenblatt1!A:A',
@@ -70,6 +72,7 @@ const testVars = [
 const fakeCacheKeys = [testVars[0].key, testVars[1].key, 'uuid']
 
 beforeEach(() => {
+  Date.now = now
   global.server.use(
     rest.get(
       `http://de.${process.env.SERLO_ORG_HOST}/api/cache-keys`,
@@ -91,6 +94,10 @@ beforeEach(() => {
     ),
     createSpreadsheetHandler(mockSpreadSheetData)
   )
+})
+
+afterEach(() => {
+  Date.now = nowCopy
 })
 
 test('_cacheKeys', async () => {
@@ -132,6 +139,7 @@ test('_setCache (authenticated)', async () => {
     service: Service.Serlo,
     user: null,
   })
+  now.mockReturnValue(1000)
 
   await assertSuccessfulGraphQLMutation({
     ...createSetCacheMutation(testVars[0]),
@@ -139,9 +147,10 @@ test('_setCache (authenticated)', async () => {
   })
 
   const cachedValue = await cache.get(testVars[0].key)
-  expect(option.isSome(cachedValue) && cachedValue.value).toEqual(
-    testVars[0].value
-  )
+  expect(option.isSome(cachedValue) && cachedValue.value).toEqual({
+    lastModified: 1000,
+    value: testVars[0].value,
+  })
 })
 
 test('_removeCache (forbidden)', async () => {
@@ -196,6 +205,7 @@ test('_updateCache *serlo.org* (authenticated)', async () => {
     service: Service.Serlo,
     user: null,
   })
+  now.mockReturnValue(1000)
 
   const keys = [
     `de.serlo.org/api/${testVars[0].key}`,
@@ -211,10 +221,14 @@ test('_updateCache *serlo.org* (authenticated)', async () => {
   })
   const cachedValueAfterUpdate1 = await cache.get(keys[0])
   expect(cachedValueBeforeUpdate1).not.toEqual(cachedValueAfterUpdate1)
-  expect(cachedValueAfterUpdate1).toEqual(option.some(testVars[0].value))
+  expect(cachedValueAfterUpdate1).toEqual(
+    option.some({ lastModified: 1000, value: testVars[0].value })
+  )
   const cachedValueAfterUpdate2 = await cache.get(keys[1])
   expect(cachedValueBeforeUpdate2).not.toEqual(cachedValueAfterUpdate2)
-  expect(cachedValueAfterUpdate2).toEqual(option.some(testVars[1].value))
+  expect(cachedValueAfterUpdate2).toEqual(
+    option.some({ lastModified: 1000, value: testVars[1].value })
+  )
 })
 
 test('_updateCache spreadsheet-* (authenticated)', async () => {

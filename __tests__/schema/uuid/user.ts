@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
-import { option as O } from 'fp-ts'
 import { rest } from 'msw'
 
 import {
@@ -385,9 +384,8 @@ describe('endpoint activeAuthors', () => {
     })
   })
 
-  test('list of active authors is cached for 1 hour', async () => {
+  test('list of active authors is cached', async () => {
     global.server.use(createActiveAuthorsHandler([user]))
-
     await assertSuccessfulGraphQLQuery({
       query: activeAuthorsQuery,
       data: {
@@ -398,17 +396,7 @@ describe('endpoint activeAuthors', () => {
       },
       client,
     })
-
-    expect(await cache.get('de.serlo.org/api/user/active-authors')).toEqual(
-      O.some([user.id])
-    )
-    expect(await cache.getTtl('de.serlo.org/api/user/active-authors')).toEqual(
-      O.some(60 * 60 * 24)
-    )
-  })
-
-  test('uses cached value for active authors', async () => {
-    await cache.set('de.serlo.org/api/user/active-authors', [user.id])
+    global.server.use(createActiveAuthorsHandler([user, user2]))
 
     await assertSuccessfulGraphQLQuery({
       query: activeAuthorsQuery,
@@ -620,6 +608,17 @@ describe('endpoint activeReviewers', () => {
 
   test('list of active authors is cached for 1 hour', async () => {
     global.server.use(createActiveReviewersHandler([user]))
+    await assertSuccessfulGraphQLQuery({
+      query: activeReviewersQuery,
+      data: {
+        activeReviewers: {
+          nodes: [getUserDataWithoutSubResolvers(user)],
+          totalCount: 1,
+        },
+      },
+      client,
+    })
+    global.server.use(createActiveReviewersHandler([user, user2]))
 
     await assertSuccessfulGraphQLQuery({
       query: activeReviewersQuery,
@@ -631,13 +630,6 @@ describe('endpoint activeReviewers', () => {
       },
       client,
     })
-
-    expect(await cache.get('de.serlo.org/api/user/active-reviewers')).toEqual(
-      O.some([user.id])
-    )
-    expect(
-      await cache.getTtl('de.serlo.org/api/user/active-reviewers')
-    ).toEqual(O.some(60 * 60 * 24))
   })
 
   test('uses cached value for active reviewers', async () => {

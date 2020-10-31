@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { isSome } from 'fp-ts/lib/Option'
 import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
 
@@ -51,14 +50,14 @@ export class SerloDataSource extends CacheableDataSource {
   public async getActiveAuthorIds(): Promise<number[]> {
     return await this.cacheAwareGet<number[]>({
       path: '/api/user/active-authors',
-      ttl: 60 * 60 * 24,
+      maxAge: 60 * 60 * 24,
     })
   }
 
   public async getActiveReviewerIds(): Promise<number[]> {
     return await this.cacheAwareGet<number[]>({
       path: '/api/user/active-reviewers',
-      ttl: 60 * 60 * 24,
+      maxAge: 60 * 60 * 24,
     })
   }
 
@@ -194,17 +193,17 @@ export class SerloDataSource extends CacheableDataSource {
     userId: number
     unread: boolean
   }) {
-    const response = await this.customPost<NotificationsPayload>({
-      path: `/api/set-notification-state/${notificationState.id}`,
-      body: {
-        userId: notificationState.userId,
-        unread: notificationState.unread,
-      },
+    await this.setCache({
+      key: this.getCacheKey(`/api/notifications/${notificationState.userId}`),
+      update: () =>
+        this.customPost<NotificationsPayload>({
+          path: `/api/set-notification-state/${notificationState.id}`,
+          body: {
+            userId: notificationState.userId,
+            unread: notificationState.unread,
+          },
+        }),
     })
-    const cacheKey = this.getCacheKey(
-      `/api/notifications/${notificationState.userId}`
-    )
-    await this.environment.cache.set(cacheKey, response)
   }
 
   public async getSubscriptions({
@@ -244,28 +243,33 @@ export class SerloDataSource extends CacheableDataSource {
 
   private async cacheAwareGet<T>({
     path,
-    instance = Instance.De,
-    ttl,
-    ignoreCache,
+    instance,
+    maxAge,
   }: {
     path: string
     instance?: Instance
-    ttl?: number
-    ignoreCache?: boolean
+    maxAge?: number
   }): Promise<T> {
-    const cacheKey = this.getCacheKey(path, instance)
+    return this.getFromCache({
+      key: this.getCacheKey(path, instance),
+      update: () => this.getFromSerlo({ path, instance }),
+      maxAge,
+    })
+  }
 
-    if (!ignoreCache) {
-      const cache = await this.environment.cache.get<T>(cacheKey)
-      if (isSome(cache)) return cache.value
-    }
-
+  private async getFromSerlo<T>({
+    path,
+    instance = Instance.De,
+  }: {
+    path: string
+    instance?: Instance
+  }): Promise<T> {
     const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
       expiresIn: '2h',
       audience: Service.Serlo,
       issuer: 'api.serlo.org',
     })
-    const data = await super.get<T>(
+    return await super.get<T>(
       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
       {},
       {
@@ -274,7 +278,6 @@ export class SerloDataSource extends CacheableDataSource {
         },
       }
     )
-    return this.setCacheLegacy(cacheKey, data, { ttl })
   }
 
   private getCacheKey(path: string, instance: Instance = Instance.De) {
@@ -283,15 +286,6 @@ export class SerloDataSource extends CacheableDataSource {
 
   public async getAllCacheKeys(): Promise<string[]> {
     return this.cacheAwareGet<string[]>({ path: '/api/cache-keys' })
-  }
-
-  public async setCacheLegacy<T>(
-    key: string,
-    value: T,
-    options?: { ttl?: number }
-  ) {
-    await this.environment.cache.set(key, value, options)
-    return value
   }
 
   public async removeCache(key: string) {
@@ -305,10 +299,9 @@ export class SerloDataSource extends CacheableDataSource {
     }
     const instance = instanceStr as Instance
     const path = key.slice('xx.serlo.org'.length)
-    await this.cacheAwareGet({
-      path,
-      instance,
-      ignoreCache: true,
+    await this.setCache({
+      key: this.getCacheKey(path, instance),
+      update: () => this.getFromSerlo({ path, instance }),
     })
   }
 }
