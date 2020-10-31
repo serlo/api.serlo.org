@@ -49,30 +49,16 @@ export abstract class CacheableDataSource extends RESTDataSource {
     key,
     update,
     maxAge,
-    maxStale,
   }: {
     key: string
     update: UpdateFunction<Value>
     maxAge?: number
-    maxStale?: number
   }): Promise<Value> {
-    if (maxAge === undefined) {
-      if (maxStale === undefined) maxAge = maxStale = Number.POSITIVE_INFINITY
-      else maxAge = 0
-    } else if (maxStale === undefined) {
-      maxStale = maxAge
-    }
+    if (maxAge === undefined) maxAge = Number.POSITIVE_INFINITY
 
     if (maxAge < 0) throw new Error('maxAge is negative')
-    if (maxStale < 0) throw new Error('maxStale is negative')
-    if (maxStale < maxAge) throw new Error('maxStale is smaller than maxAge')
 
-    // After maxStale the cache entry can be removed. In order to have a change
-    // in maxStale to take effect immediately we need to check for maxAge
-    // and maxStale separately. This has the downside that a cache entry might
-    // be already removed when maxStale is increased in the code.
-    const ttl = maxStale === Number.POSITIVE_INFINITY ? undefined : maxStale
-    const updateCacheEntry = () => this.setCache({ key, update, ttl })
+    const updateCacheEntry = () => this.setCache({ key, update })
     const cacheEntry = await this.cache.get<unknown>(key)
 
     if (O.isNone(cacheEntry)) return await updateCacheEntry()
@@ -85,14 +71,12 @@ export abstract class CacheableDataSource extends RESTDataSource {
     const age = Date.now() - entry.lastModified
 
     if (age <= maxAge * 1000) return entry.value
-    if (age <= maxStale * 1000) {
-      // update cache in the background -> thus we do not use "await" here
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      updateCacheEntry()
 
-      return entry.value
-    }
-    return await updateCacheEntry()
+    // update cache in the background -> thus we do not use "await" here
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    updateCacheEntry()
+
+    return entry.value
   }
 
   private async setValue<Value>({

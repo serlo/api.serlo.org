@@ -80,7 +80,6 @@ export class GoogleSheetApi extends CacheableDataSource {
       key,
       update: () => this.getValuesWithoutCache({ ...args, majorDimension }),
       maxAge: 60 * 60,
-      maxStale: 24 * 60 * 60,
     })
   }
 
