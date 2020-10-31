@@ -42,7 +42,6 @@ afterEach(() => {
 
 class ExampleServer extends CacheableDataSource {
   public maxAge?: number
-  public maxStale?: number
 
   constructor(cache: Cache, private content: string) {
     super(cache)
@@ -57,7 +56,6 @@ class ExampleServer extends CacheableDataSource {
       key: 'content',
       update: () => Promise.resolve(this.content),
       maxAge: this.maxAge,
-      maxStale: this.maxStale,
     })
   }
 
@@ -76,10 +74,9 @@ describe('getFromCache()', () => {
       await server.getContent()
     })
 
-    describe('when maxAge = maxStale = undefined', () => {
+    describe('when maxAge = undefined', () => {
       beforeEach(() => {
         server.maxAge = undefined
-        server.maxStale = undefined
 
         waitFor(5)
       })
@@ -93,10 +90,9 @@ describe('getFromCache()', () => {
       })
     })
 
-    describe('when 0 < maxAge and maxStale = undefined', () => {
+    describe('when 0 < maxAge', () => {
       beforeEach(() => {
         server.maxAge = 10
-        server.maxStale = undefined
       })
 
       describe('when 0 < passed time < maxAge', () => {
@@ -113,61 +109,7 @@ describe('getFromCache()', () => {
         })
       })
 
-      test('returns current value when maxAge < passed time', async () => {
-        waitFor(15)
-
-        await assertReturnsCurrentValue()
-      })
-    })
-
-    describe('when maxAge = undefined and 0 < maxStale', () => {
-      beforeEach(() => {
-        server.maxAge = undefined
-        server.maxStale = 10
-      })
-
-      describe('when 0 < passed time < maxStale', () => {
-        beforeEach(() => {
-          waitFor(5)
-        })
-
-        test('returns cached value', async () => {
-          await assertReturnsCachedValue()
-        })
-
-        test('updates cached value in background', async () => {
-          await assertCacheIsUpdatedInBackground()
-        })
-      })
-
-      test('when maxStale < passed time', async () => {
-        waitFor(15)
-
-        await assertReturnsCurrentValue()
-      })
-    })
-
-    describe('when 0 < maxAge < maxStale < 0', () => {
-      beforeEach(() => {
-        server.maxAge = 10
-        server.maxStale = 20
-      })
-
-      describe('when 0 < passed time < maxAge', () => {
-        beforeEach(() => {
-          waitFor(5)
-        })
-
-        test('returns cached value', async () => {
-          await assertReturnsCachedValue()
-        })
-
-        test('does not update cached value in background', async () => {
-          await assertCacheIsNotUpdatedInBackground()
-        })
-      })
-
-      describe('when maxAge < passed time < maxStale', () => {
+      describe('when maxAge < passed time', () => {
         beforeEach(() => {
           waitFor(15)
         })
@@ -177,35 +119,19 @@ describe('getFromCache()', () => {
         })
 
         test('updates cached value in background', async () => {
-          await assertCacheIsUpdatedInBackground()
+          server.updateContent('Second version')
+          await server.getContent()
+          server.updateContent('Third version')
+
+          expect(await server.getContent()).toBe('Second version')
         })
       })
-
-      test('returns current value when maxStale < passed time', async () => {
-        waitFor(25)
-
-        await assertReturnsCurrentValue()
-      })
     })
-
-    async function assertReturnsCurrentValue() {
-      server.updateContent('Second version')
-
-      expect(await server.getContent()).toBe('Second version')
-    }
 
     async function assertReturnsCachedValue() {
       server.updateContent('Second version')
 
       expect(await server.getContent()).toBe('First version')
-    }
-
-    async function assertCacheIsUpdatedInBackground() {
-      server.updateContent('Second version')
-      await server.getContent()
-      server.updateContent('Third version')
-
-      expect(await server.getContent()).toBe('Second version')
     }
 
     async function assertCacheIsNotUpdatedInBackground() {
@@ -223,25 +149,10 @@ describe('getFromCache()', () => {
     expect(await server.getContent()).toBe('Old version')
   })
 
-  describe('throws error', () => {
-    const expectError = () =>
-      expect(() => server.getContent()).rejects.toBeTruthy()
+  test('throws error when maxAge < 0', async () => {
+    server.maxAge = -10
 
-    test('when maxAge < 0', async () => {
-      server.maxAge = -10
-      await expectError()
-    })
-
-    test('when maxStale < 0', async () => {
-      server.maxStale = -10
-      await expectError()
-    })
-
-    test('when maxStale < maxAge', async () => {
-      server.maxAge = 20
-      server.maxStale = 10
-      await expectError()
-    })
+    await expect(() => server.getContent()).rejects.toBeTruthy()
   })
 })
 
