@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { pipeable, either } from 'fp-ts'
+import { pipeable, either as E } from 'fp-ts'
 
 import { AbstractUuidPayload, encodePath, UserPayload } from '..'
 import { ErrorEvent } from '../../../../error-event'
@@ -108,11 +108,11 @@ async function activeDonorIDs(googleSheetApi: GoogleSheetApi) {
 }
 
 function extractIDsFromFirstColumn(
-  cells: either.Either<ErrorEvent, CellValues>
+  cells: E.Either<ErrorEvent, CellValues>
 ): number[] {
   return pipeable.pipe(
     cells,
-    either.map((cells) =>
+    E.map((cells) =>
       cells[0]
         .slice(1)
         .map((c) => c.trim())
@@ -121,6 +121,6 @@ function extractIDsFromFirstColumn(
         .map((x) => Number(x))
     ),
     // TODO: Report error to sentry
-    either.getOrElse<ErrorEvent, number[]>((_) => [])
+    E.getOrElse<ErrorEvent, number[]>(() => [])
   )
 }
