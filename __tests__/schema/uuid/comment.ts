@@ -1,10 +1,7 @@
 import { gql } from 'apollo-server'
 
 import { user } from '../../../__fixtures__/uuid'
-import {
-  comment1,
-  getCommentDataWithoutSubresolvers,
-} from '../../../__fixtures__/uuid/comment'
+import { comment1 } from '../../../__fixtures__/uuid/comment'
 import { Service } from '../../../src/graphql/schema/types'
 import {
   assertSuccessfulGraphQLQuery,
@@ -22,56 +19,23 @@ beforeEach(() => {
   }).client
 })
 
-test('Comment', async () => {
+test('property "createdAt"', async () => {
   global.server.use(createUuidHandler(comment1))
   await assertSuccessfulGraphQLQuery({
     query: gql`
-      query comment($id: Int!) {
+      query propertyCreatedAt($id: Int!) {
         uuid(id: $id) {
-          __typename
           ... on Comment {
-            alias
-            archived
-            title
-            content
-            id
-            trashed
-            parentId
-            childrenIds
+            createdAt
           }
         }
       }
     `,
     variables: { id: comment1.id },
     data: {
-      uuid: getCommentDataWithoutSubresolvers(comment1),
+      uuid: { createdAt: comment1.date },
     },
     client,
-  })
-})
-
-describe('property "createdAt"', () => {
-  const query = gql`
-    query propertyCreatedAt($id: Int!) {
-      uuid(id: $id) {
-        ... on Comment {
-          createdAt
-        }
-      }
-    }
-  `
-
-  test('Test property "createdAt"', async () => {
-    global.server.use(createUuidHandler(comment1))
-
-    await assertSuccessfulGraphQLQuery({
-      query,
-      variables: { id: comment1.id },
-      data: {
-        uuid: { createdAt: '2015-07-07T09:00:31+02:00' },
-      },
-      client,
-    })
   })
 })
 
@@ -89,12 +53,13 @@ describe('property "author"', () => {
   `
   test('Test property "author"', async () => {
     global.server.use(createUuidHandler(comment1))
+    global.server.use(createUuidHandler(user))
 
     await assertSuccessfulGraphQLQuery({
       query,
       variables: { id: comment1.id },
       data: {
-        uuid: { author: 1 },
+        uuid: { author: { username: user.username } },
       },
       client,
     })

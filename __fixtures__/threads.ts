@@ -1,5 +1,3 @@
-import * as R from 'ramda'
-
 import {
   DiscriminatorType,
   ThreadPayload,
@@ -9,7 +7,7 @@ import { comment1, comment2, comment3 } from './uuid/comment'
 
 export const threads: ThreadsPayload = {
   //TODO? threadIds umbenennen
-  threadIds: [comment1.id, comment3.id],
+  firstCommentIds: [comment1.id, comment3.id],
 }
 
 export const thread1: ThreadPayload = {
@@ -20,8 +18,4 @@ export const thread1: ThreadPayload = {
 export const thread2: ThreadPayload = {
   __typename: DiscriminatorType.Thread,
   commentPayloads: [comment3],
-}
-
-export function getThreadDataWithoutSubresolvers(thread: ThreadPayload) {
-  return R.omit(['commentPayloads'], thread)
 }

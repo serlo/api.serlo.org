@@ -5,7 +5,7 @@ import { DiscriminatorType, UuidPayload } from '../uuid'
 import { CommentPayload } from '../uuid/comment/types'
 
 export interface ThreadsPayload {
-  threadIds: number[]
+  firstCommentIds: number[]
 }
 
 export interface ThreadPayload {
