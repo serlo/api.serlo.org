@@ -54,9 +54,8 @@ export abstract class CacheableDataSource extends RESTDataSource {
     update: UpdateFunction<Value>
     maxAge?: number
   }): Promise<Value> {
-    if (maxAge === undefined) maxAge = Number.POSITIVE_INFINITY
-
-    if (maxAge < 0) throw new Error('maxAge is negative')
+    if (maxAge !== undefined && maxAge < 0)
+      throw new Error('maxAge is negative')
 
     const updateCacheEntry = () => this.setCache({ key, update })
     const cacheEntry = await this.cache.get<unknown>(key)
@@ -70,7 +69,7 @@ export abstract class CacheableDataSource extends RESTDataSource {
 
     const age = Date.now() - entry.lastModified
 
-    if (age <= maxAge * 1000) return entry.value
+    if (maxAge === undefined || age <= maxAge * 1000) return entry.value
 
     // update cache in the background -> thus we do not use "await" here
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
