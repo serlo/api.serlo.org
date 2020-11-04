@@ -16,12 +16,12 @@ test('Comment', async () => {
     __typename: comment1.__typename,
     id: comment1.id,
     trashed: Matchers.boolean(comment1.trashed),
-    alias: comment1.alias,
+    alias: null,
     authorId: Matchers.integer(comment1.authorId),
     title: Matchers.string(comment1.title),
     date: Matchers.iso8601DateTime(comment1.date),
     archived: Matchers.boolean(comment1.archived),
-    content: Matchers.string(),
+    content: Matchers.string(comment1.content),
     parentId: Matchers.integer(comment1.parentId),
     childrenIds: Matchers.eachLike(Matchers.integer(1)),
   })
@@ -31,9 +31,13 @@ test('Comment', async () => {
         uuid(id: $id) {
           __typename
           ... on Comment {
+            __typename
             trashed
             id
             content
+            alias
+            title
+            archived
           }
         }
       }

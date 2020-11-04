@@ -44,13 +44,13 @@ export function isUnsupportedUuid(payload: AbstractUuidPayload) {
 export function createUuidResolvers(): UuidResolvers {
   return {
     async threads(parent, cursorPayload, { dataSources }) {
-      const { threadIds } = await Promise.resolve(
+      const { firstCommentIds } = await Promise.resolve(
         dataSources.serlo.getThreadIds({ id: parent.id })
       )
 
       return resolveConnection({
         nodes: await Promise.all(
-          threadIds.map((id) => toThreadPayload(dataSources.serlo, id))
+          firstCommentIds.map((id) => toThreadPayload(dataSources.serlo, id))
         ),
         payload: cursorPayload,
         createCursor(node) {
