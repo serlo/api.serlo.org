@@ -24,7 +24,7 @@ import { CacheableDataSource } from '../../src/graphql/data-sources'
 import { Cache } from '../../src/graphql/environment'
 
 let cache: Cache
-let server: ExampleServer
+let dataSource: ExampleDataSource
 const nowCopy = Date.now
 const now = jest.fn<number, never>()
 
@@ -33,29 +33,29 @@ beforeEach(() => {
   Date.now = now
 
   cache = createInMemoryCache()
-  server = new ExampleServer(cache, 'First version')
+  dataSource = new ExampleDataSource(cache)
 })
 
 afterEach(() => {
   Date.now = nowCopy
 })
 
-class ExampleServer extends CacheableDataSource {
-  public maxAge?: number
+interface Options {
+  maxAge?: number
+}
 
-  constructor(cache: Cache, private content: string) {
-    super(cache)
-  }
+class ExampleDataSource extends CacheableDataSource {
+  private content = ''
 
-  public updateContent(content: string) {
+  public setContent(content: string) {
     this.content = content
   }
 
-  public async getContent() {
+  public async getContent(args?: Options) {
     return await this.getFromCache({
       key: 'content',
       update: () => Promise.resolve(this.content),
-      maxAge: this.maxAge,
+      maxAge: args?.maxAge,
     })
   }
 
@@ -66,140 +66,123 @@ class ExampleServer extends CacheableDataSource {
 
 describe('getFromCache()', () => {
   test('returns current value when cache is empty', async () => {
-    expect(await server.getContent()).toBe('First version')
+    dataSource.setContent('First version')
+
+    expect(await dataSource.getContent()).toBe('First version')
   })
 
   describe('when cache is not empty', () => {
-    beforeEach(async () => {
-      await server.getContent()
-    })
+    test('when maxAge = undefined: returns cached value without background update', async () => {
+      await initializeCache()
 
-    describe('when maxAge = undefined', () => {
-      beforeEach(() => {
-        server.maxAge = undefined
+      waitFor(5)
 
-        waitFor(5)
-      })
-
-      test('returns cached value', async () => {
-        await assertReturnsCachedValue()
-      })
-
-      test('does not update cached value', async () => {
-        await assertCacheIsNotUpdatedInBackground()
-      })
+      await assertReturnsCachedValue({ maxAge: undefined })
+      await assertCacheIsNotUpdatedInBackground({ maxAge: undefined })
     })
 
     describe('when 0 < maxAge', () => {
-      beforeEach(() => {
-        server.maxAge = 10
+      test('when 0 < passed time < maxAge: returns cached value without background update', async () => {
+        await initializeCache()
+
+        waitFor(5)
+
+        await assertReturnsCachedValue({ maxAge: 10 })
+        await assertCacheIsNotUpdatedInBackground({ maxAge: 10 })
       })
 
-      describe('when 0 < passed time < maxAge', () => {
-        beforeEach(() => {
-          waitFor(5)
-        })
+      test('when maxAge < passed time: returns cached value with background update', async () => {
+        await initializeCache()
 
-        test('returns cached value', async () => {
-          await assertReturnsCachedValue()
-        })
+        waitFor(15)
 
-        test('does not update cached value', async () => {
-          await assertCacheIsNotUpdatedInBackground()
-        })
-      })
-
-      describe('when maxAge < passed time', () => {
-        beforeEach(() => {
-          waitFor(15)
-        })
-
-        test('returns cached value', async () => {
-          await assertReturnsCachedValue()
-        })
-
-        test('updates cached value in background', async () => {
-          server.updateContent('Second version')
-          await server.getContent()
-          server.updateContent('Third version')
-
-          expect(await server.getContent()).toBe('Second version')
-        })
+        await assertReturnsCachedValue({ maxAge: 10 })
+        await assertCacheIsUpdatedInBackground({ maxAge: 10 })
       })
     })
 
-    async function assertReturnsCachedValue() {
-      server.updateContent('Second version')
+    async function assertReturnsCachedValue({ maxAge }: Options) {
+      dataSource.setContent('Second version')
 
-      expect(await server.getContent()).toBe('First version')
+      expect(await dataSource.getContent({ maxAge })).toBe('First version')
     }
 
-    async function assertCacheIsNotUpdatedInBackground() {
-      server.updateContent('Second version')
-      await server.getContent()
-      server.updateContent('Third version')
+    async function assertCacheIsNotUpdatedInBackground({ maxAge }: Options) {
+      dataSource.setContent('Third version')
 
-      expect(await server.getContent()).toBe('First version')
+      expect(await dataSource.getContent({ maxAge })).toBe('First version')
+    }
+
+    async function assertCacheIsUpdatedInBackground({ maxAge }: Options) {
+      dataSource.setContent('Third version')
+
+      expect(await dataSource.getContent({ maxAge })).toBe('Second version')
+    }
+
+    async function initializeCache() {
+      dataSource.setContent('First version')
+      await dataSource.getContent()
     }
   })
 
   test('uses predefined cache entries', async () => {
     await cache.set('content', 'Old version')
 
-    expect(await server.getContent()).toBe('Old version')
+    expect(await dataSource.getContent()).toBe('Old version')
   })
 
   test('throws error when maxAge < 0', async () => {
-    server.maxAge = -10
-
-    await expect(() => server.getContent()).rejects.toBeTruthy()
+    await expect(() =>
+      dataSource.getContent({ maxAge: -10 })
+    ).rejects.toBeTruthy()
   })
 })
 
 describe('setCache()', () => {
   test('updates cached value', async () => {
-    await server.setCache({
+    await dataSource.setCache({
       key: 'content',
       update: () => Promise.resolve('Updated version'),
     })
 
-    expect(await server.getContent()).toBe('Updated version')
+    expect(await dataSource.getContent()).toBe('Updated version')
   })
 
   describe('when ttl is passed', () => {
     test('returns cached value when passed time < ttl', async () => {
-      await server.setCache({
+      await dataSource.setCache({
         key: 'content',
         update: () => Promise.resolve('Updated version'),
         ttl: 10,
       })
       waitFor(5)
 
-      expect(await server.getContent()).toBe('Updated version')
+      expect(await dataSource.getContent()).toBe('Updated version')
     })
 
     test('returns current value when ttl < passed time', async () => {
-      await server.setCache({
+      dataSource.setContent('First version')
+      await dataSource.setCache({
         key: 'content',
         update: () => Promise.resolve('Updated version'),
         ttl: 10,
       })
       waitFor(15)
 
-      expect(await server.getContent()).toBe('First version')
+      expect(await dataSource.getContent()).toBe('First version')
     })
 
     test('does not use predefined ttl in cache', async () => {
       await cache.set('content', 'Old version', { ttl: 10 })
 
-      await server.setCache({
+      await dataSource.setCache({
         key: 'content',
         update: () => Promise.resolve('Updated version'),
         ttl: 20,
       })
       waitFor(15)
 
-      expect(await server.getContent()).toBe('Updated version')
+      expect(await dataSource.getContent()).toBe('Updated version')
     })
   })
 
@@ -207,25 +190,26 @@ describe('setCache()', () => {
     test('returns cached value when passed time < ttl', async () => {
       await cache.set('content', 'Old version', { ttl: 10 })
 
-      await server.setCache({
+      await dataSource.setCache({
         key: 'content',
         update: () => Promise.resolve('Updated version'),
       })
       waitFor(5)
 
-      expect(await server.getContent()).toBe('Updated version')
+      expect(await dataSource.getContent()).toBe('Updated version')
     })
 
     test('returns current value when ttl < passed time', async () => {
       await cache.set('content', 'Old version', { ttl: 10 })
+      dataSource.setContent('First version')
 
-      await server.setCache({
+      await dataSource.setCache({
         key: 'content',
         update: () => Promise.resolve('Updated version'),
       })
       waitFor(15)
 
-      expect(await server.getContent()).toBe('First version')
+      expect(await dataSource.getContent()).toBe('First version')
     })
   })
 })

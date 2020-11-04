@@ -36,9 +36,9 @@ export function createInMemoryCache(): Cache {
     // eslint-disable-next-line @typescript-eslint/require-await
     get: async <T>(key: string) => {
       const isAlive = (x: Entry) => {
-        const ttl = (x.ttl ?? Number.POSITIVE_INFINITY) * 1000
+        if (x.ttl === undefined) return true
 
-        return Date.now() - x.lastModified < ttl
+        return Date.now() - x.lastModified < x.ttl * 1000
       }
 
       return pipeable.pipe(
