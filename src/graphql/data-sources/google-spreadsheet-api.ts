@@ -65,7 +65,7 @@ export class GoogleSheetApi extends CacheableDataSource {
     apiKey: string
     environment: Environment
   }) {
-    super(environment.cache)
+    super(environment)
 
     this.apiKey = apiKey
     this.baseURL = 'https://sheets.googleapis.com/v4/spreadsheets/'

@@ -23,7 +23,6 @@ import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
 
 import { Instance, License } from '../../types'
-import { Environment } from '../environment'
 import {
   AbstractNotificationEventPayload,
   AbstractUuidPayload,
@@ -43,10 +42,6 @@ import { Service } from '../schema/types'
 import { CacheableDataSource } from './cacheable-data-source'
 
 export class SerloDataSource extends CacheableDataSource {
-  public constructor(private environment: Environment) {
-    super(environment.cache)
-  }
-
   public async getActiveAuthorIds(): Promise<number[]> {
     return await this.cacheAwareGet<number[]>({
       path: '/api/user/active-authors',

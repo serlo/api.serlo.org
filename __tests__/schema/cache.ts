@@ -44,8 +44,6 @@ import {
   createUuidHandler,
 } from '../__utils__'
 
-const now = jest.fn()
-const nowCopy = Date.now
 const mockSpreadSheetData = {
   spreadsheetId: process.env.ACTIVE_DONORS_SPREADSHEET_ID,
   range: 'Tabellenblatt1!A:A',
@@ -72,7 +70,6 @@ const testVars = [
 const fakeCacheKeys = [testVars[0].key, testVars[1].key, 'uuid']
 
 beforeEach(() => {
-  Date.now = now
   global.server.use(
     rest.get(
       `http://de.${process.env.SERLO_ORG_HOST}/api/cache-keys`,
@@ -94,10 +91,6 @@ beforeEach(() => {
     ),
     createSpreadsheetHandler(mockSpreadSheetData)
   )
-})
-
-afterEach(() => {
-  Date.now = nowCopy
 })
 
 test('_cacheKeys', async () => {
@@ -135,9 +128,11 @@ test('_setCache (forbidden)', async () => {
 })
 
 test('_setCache (authenticated)', async () => {
+  const now = jest.fn()
   const { client, cache } = createTestClient({
     service: Service.Serlo,
     user: null,
+    timer: { now },
   })
   now.mockReturnValue(1000)
 
@@ -201,9 +196,11 @@ test('_updateCache (forbidden)', async () => {
 })
 
 test('_updateCache *serlo.org* (authenticated)', async () => {
+  const now = jest.fn()
   const { client, cache } = createTestClient({
     service: Service.Serlo,
     user: null,
+    timer: { now },
   })
   now.mockReturnValue(1000)
 

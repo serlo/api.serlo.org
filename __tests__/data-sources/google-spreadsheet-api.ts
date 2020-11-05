@@ -27,6 +27,7 @@ import {
   GoogleSheetApi,
   MajorDimension,
 } from '../../src/graphql/data-sources/google-spreadsheet-api'
+import { createTimer } from '../../src/graphql/environment'
 import { expectToBeLeftEventWith, createSpreadsheetHandler } from '../__utils__'
 
 const cache = createInMemoryCache()
@@ -40,7 +41,10 @@ const common = {
 let googleSheetApi!: GoogleSheetApi
 
 beforeEach(async () => {
-  googleSheetApi = new GoogleSheetApi({ apiKey, environment: { cache } })
+  googleSheetApi = new GoogleSheetApi({
+    apiKey,
+    environment: { cache, timer: createTimer() },
+  })
   googleSheetApi.initialize({ context: {}, cache: new InMemoryLRUCache() })
 
   await cache.flush()
