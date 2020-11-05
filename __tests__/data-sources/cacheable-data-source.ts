@@ -25,19 +25,13 @@ import { Cache } from '../../src/graphql/environment'
 
 let cache: Cache
 let dataSource: ExampleDataSource
-const nowCopy = Date.now
 const now = jest.fn<number, never>()
 
 beforeEach(() => {
   now.mockReturnValue(Date.now())
-  Date.now = now
 
-  cache = createInMemoryCache()
-  dataSource = new ExampleDataSource(cache)
-})
-
-afterEach(() => {
-  Date.now = nowCopy
+  cache = createInMemoryCache({ now })
+  dataSource = new ExampleDataSource({ cache, timer: { now } })
 })
 
 interface Options {

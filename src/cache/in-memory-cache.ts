@@ -21,7 +21,7 @@
  */
 import { option as O, pipeable } from 'fp-ts'
 
-import { Cache } from '../graphql/environment'
+import { Cache, createTimer } from '../graphql/environment'
 
 interface Entry {
   value: unknown
@@ -29,7 +29,7 @@ interface Entry {
   ttl?: number
 }
 
-export function createInMemoryCache(): Cache {
+export function createInMemoryCache(timer = createTimer()): Cache {
   let cache: Record<string, Entry> = {}
 
   return {
@@ -38,7 +38,7 @@ export function createInMemoryCache(): Cache {
       const isAlive = (x: Entry) => {
         if (x.ttl === undefined) return true
 
-        return Date.now() - x.lastModified < x.ttl * 1000
+        return timer.now() - x.lastModified < x.ttl * 1000
       }
 
       return pipeable.pipe(

@@ -23,10 +23,10 @@ import { RESTDataSource } from 'apollo-datasource-rest'
 import { option as O } from 'fp-ts'
 import * as R from 'ramda'
 
-import { Cache } from '../environment'
+import { Environment } from '../environment'
 
 export abstract class CacheableDataSource extends RESTDataSource {
-  constructor(private cache: Cache) {
+  constructor(protected environment: Environment) {
     super()
   }
 
@@ -39,7 +39,7 @@ export abstract class CacheableDataSource extends RESTDataSource {
     update: UpdateFunction<Value>
     ttl?: number
   }): Promise<Value> {
-    ttl = ttl ?? O.toUndefined(await this.cache.getTtl(key))
+    ttl = ttl ?? O.toUndefined(await this.environment.cache.getTtl(key))
     const newEntry = await this.setValue({ key, value: await update(), ttl })
 
     return newEntry.value
@@ -58,7 +58,7 @@ export abstract class CacheableDataSource extends RESTDataSource {
       throw new Error('maxAge is negative')
 
     const updateCacheEntry = () => this.setCache({ key, update })
-    const cacheEntry = await this.cache.get<unknown>(key)
+    const cacheEntry = await this.environment.cache.get<unknown>(key)
 
     if (O.isNone(cacheEntry)) return await updateCacheEntry()
 
@@ -67,7 +67,7 @@ export abstract class CacheableDataSource extends RESTDataSource {
       ? cacheValue
       : await this.setValue({ key, value: cacheValue as Value })
 
-    const age = Date.now() - entry.lastModified
+    const age = this.environment.timer.now() - entry.lastModified
 
     if (maxAge === undefined || age <= maxAge * 1000) return entry.value
 
@@ -87,9 +87,9 @@ export abstract class CacheableDataSource extends RESTDataSource {
     value: Value
     ttl?: number
   }): Promise<Entry<Value>> {
-    const newEntry = { value, lastModified: Date.now() }
+    const newEntry = { value, lastModified: this.environment.timer.now() }
 
-    await this.cache.set(key, newEntry, { ttl })
+    await this.environment.cache.set(key, newEntry, { ttl })
 
     return newEntry
   }
