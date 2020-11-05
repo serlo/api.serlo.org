@@ -1,5 +1,27 @@
+/**
+ * This file is part of Serlo.org API
+ *
+ * Copyright (c) 2020 Serlo Education e.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License")
+ * you may not use this file except in compliance with the License
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @copyright Copyright (c) 2020 Serlo Education e.V.
+ * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
+ * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
+ */
 import { gql } from 'apollo-server'
 import { rest } from 'msw'
+import * as R from 'ramda'
 
 import { article, user } from '../../__fixtures__/uuid'
 import { comment1, comment2, comment3 } from '../../__fixtures__/uuid/comment'
@@ -29,7 +51,6 @@ test('Threads, 3 Comments', async () => {
     query: gql`
       query threads($id: Int!) {
         uuid(id: $id) {
-          __typename
           threads {
             totalCount
             nodes {
@@ -47,7 +68,6 @@ test('Threads, 3 Comments', async () => {
     variables: { id: article.id },
     data: {
       uuid: {
-        __typename: 'Article',
         threads: {
           totalCount: 2,
           nodes: [
@@ -289,31 +309,32 @@ function setupThreads(uuidPayload: UuidPayload, threads: CommentPayload[][]) {
       `http://${Instance.De}.${process.env.SERLO_ORG_HOST}/api/uuid/:id`,
       (req, res, ctx) => {
         const id = Number(req.params.id)
+
         if (id === uuidPayload.id) return res(ctx.json(uuidPayload))
+
         const thread = threads.find((thread) =>
           thread.some((comment) => comment.id === id)
         )
-        if (thread === undefined) {
-          return res(ctx.status(404))
-        }
+
+        if (R.isNil(thread)) return res(ctx.status(404))
+
         const comment = thread.find((comment) => comment.id === id)
-        if (comment === null || comment === undefined) {
-          return res(ctx.status(404))
-        }
-        let payload = {}
-        if (comment.id === thread[0].id) {
-          payload = {
-            ...comment,
-            parentId: uuidPayload.id,
-            childrenIds: thread.slice(1).map((comment) => comment.id),
-          }
-        } else {
-          payload = {
-            ...comment,
-            parentId: thread[0].id,
-            childrenIds: [],
-          }
-        }
+
+        if (R.isNil(comment)) return res(ctx.status(404))
+
+        const payload =
+          comment.id === thread[0].id
+            ? {
+                ...comment,
+                parentId: uuidPayload.id,
+                childrenIds: thread.slice(1).map((comment) => comment.id),
+              }
+            : {
+                ...comment,
+                parentId: thread[0].id,
+                childrenIds: [],
+              }
+
         return res(ctx.json(payload))
       }
     )

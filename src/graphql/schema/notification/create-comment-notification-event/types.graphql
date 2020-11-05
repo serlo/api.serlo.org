@@ -3,6 +3,6 @@ type CreateCommentNotificationEvent implements AbstractNotificationEvent {
   instance: Instance!
   date: DateTime!
   actor: User!
-  thread: UnsupportedThread! #TODO: Align with real Thread
-  comment: UnsupportedComment! #TODO: Align with real Comment
+  thread: UnsupportedThread!
+  comment: UnsupportedComment!
 }

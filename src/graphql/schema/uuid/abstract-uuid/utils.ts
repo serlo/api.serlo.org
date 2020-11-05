@@ -65,9 +65,9 @@ export async function toThreadPayload(
   serlo: SerloDataSource,
   firstCommentId: number
 ): Promise<ThreadPayload> {
-  const firstComment = (await serlo.getUuid<CommentPayload>({
+  const firstComment = await serlo.getUuid<CommentPayload>({
     id: firstCommentId,
-  })) as CommentPayload
+  })
   if (firstComment === null) {
     throw new ForbiddenError('There are no comments yet')
   }

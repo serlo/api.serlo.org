@@ -25,7 +25,6 @@ type ThreadsCursor {
   node: Thread!
 }
 
-# TODO: this should be deleted and replaced with the real Thread
 type UnsupportedThread {
   id: Int!
 }

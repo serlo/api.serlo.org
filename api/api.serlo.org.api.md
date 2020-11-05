@@ -312,9 +312,9 @@ export type Comment = AbstractUuid & {
     alias?: Maybe<Scalars['String']>;
     title: Scalars['String'];
     content: Scalars['String'];
+    archived: Scalars['Boolean'];
     createdAt: Scalars['DateTime'];
     author: User;
-    childrenIds: Array<Maybe<Scalars['Int']>>;
     threads: ThreadsConnection;
 };
 

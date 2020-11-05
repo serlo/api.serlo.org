@@ -714,20 +714,6 @@ export type ArticleRevisionCursor = {
   node: ArticleRevision;
 };
 
-export type CommentConnection = {
-  __typename?: 'CommentConnection';
-  edges: Array<CommentEdge>;
-  nodes: Array<Comment>;
-  totalCount: Scalars['Int'];
-  pageInfo: PageInfo;
-};
-
-export type CommentEdge = {
-  __typename?: 'CommentEdge';
-  cursor: Scalars['String'];
-  node: Comment;
-};
-
 export type Comment = AbstractUuid & {
   __typename?: 'Comment';
   id: Scalars['Int'];
@@ -735,9 +721,9 @@ export type Comment = AbstractUuid & {
   alias?: Maybe<Scalars['String']>;
   title: Scalars['String'];
   content: Scalars['String'];
+  archived: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
   author: User;
-  childrenIds: Array<Maybe<Scalars['Int']>>;
   threads: ThreadsConnection;
 };
 
@@ -752,6 +738,20 @@ export type CommentThreadsArgs = {
 export type UnsupportedComment = {
   __typename?: 'UnsupportedComment';
   id: Scalars['Int'];
+};
+
+export type CommentConnection = {
+  __typename?: 'CommentConnection';
+  edges: Array<CommentEdge>;
+  nodes: Array<Comment>;
+  totalCount: Scalars['Int'];
+  pageInfo: PageInfo;
+};
+
+export type CommentEdge = {
+  __typename?: 'CommentEdge';
+  cursor: Scalars['String'];
+  node: Comment;
 };
 
 export type CoursePage = AbstractUuid & AbstractRepository & AbstractEntity & {

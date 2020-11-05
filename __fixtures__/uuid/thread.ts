@@ -19,21 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ThreadPayload } from '../../src/graphql/schema/threads'
-import { DiscriminatorType } from '../../src/graphql/schema/uuid/abstract-uuid'
 import { UnsupportedComment, UnsupportedThread } from '../../src/types'
-import { comment1, comment2 } from './comment'
 
-//TODO: substitute with real thread and comment fixtures
 export const unsupportedThread: UnsupportedThread = {
   id: 15468,
 }
 
 export const unsupportedComment: UnsupportedComment = {
   id: 15469,
-}
-
-export const thread: ThreadPayload = {
-  __typename: DiscriminatorType.Thread,
-  commentPayloads: [comment1, comment2],
 }
