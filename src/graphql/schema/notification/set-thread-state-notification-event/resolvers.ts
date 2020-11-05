@@ -25,7 +25,6 @@ import { SetThreadStateNotificationEventResolvers } from './types'
 export const resolvers: SetThreadStateNotificationEventResolvers = {
   SetThreadStateNotificationEvent: {
     ...createNotificationEventResolvers(),
-    //TODO: Replace with real Thread Resolver
     thread(notificationEvent) {
       return Promise.resolve({ id: notificationEvent.threadId })
     },

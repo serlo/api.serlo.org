@@ -19,11 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-
 import { createNotificationEventResolvers } from '../utils'
 import { CreateCommentNotificationEventResolvers } from './types'
 
-//TODO: insert correct Thread and Comment Resolvers
 export const resolvers: CreateCommentNotificationEventResolvers = {
   CreateCommentNotificationEvent: {
     ...createNotificationEventResolvers(),

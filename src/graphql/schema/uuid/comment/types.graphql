@@ -1,28 +1,13 @@
-type CommentConnection {
-  edges: [CommentEdge!]!
-  nodes: [Comment!]! # List of comments
-  totalCount: Int!
-  pageInfo: PageInfo!
-}
-
-type CommentEdge {
-  cursor: String!
-  node: Comment!
-}
-
 type Comment implements AbstractUuid {
   id: Int!
   trashed: Boolean!
   alias: String
   title: String!
   content: String!
-  parentId: Int!
   archived: Boolean!
   createdAt: DateTime!
   author: User!
-  childrenIds: [Int]!
-  #TODO: this should be taken out (into AbstractCommentable Type)
-  threads (
+  threads(
     after: String
     before: String
     first: Int
@@ -30,7 +15,18 @@ type Comment implements AbstractUuid {
   ): ThreadsConnection!
 }
 
-# TODO: this should be deleted and replaced with the real Comment
 type UnsupportedComment {
   id: Int!
+}
+
+type CommentConnection {
+  edges: [CommentEdge!]!
+  nodes: [Comment!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type CommentEdge {
+  cursor: String!
+  node: Comment!
 }
