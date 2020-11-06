@@ -33,16 +33,11 @@ export abstract class CacheableDataSource extends RESTDataSource {
   public async setCache<Value>({
     key,
     update,
-    ttl,
   }: {
     key: string
     update: UpdateFunction<Value>
-    ttl?: number
   }): Promise<Value> {
-    ttl = ttl ?? O.toUndefined(await this.environment.cache.getTtl(key))
-    const newEntry = await this.setValue({ key, value: await update(), ttl })
-
-    return newEntry.value
+    return (await this.setValue({ key, value: await update() })).value
   }
 
   protected async getFromCache<Value>({
@@ -81,15 +76,13 @@ export abstract class CacheableDataSource extends RESTDataSource {
   private async setValue<Value>({
     key,
     value,
-    ttl,
   }: {
     key: string
     value: Value
-    ttl?: number
   }): Promise<Entry<Value>> {
     const newEntry = { value, lastModified: this.environment.timer.now() }
 
-    await this.environment.cache.set(key, newEntry, { ttl })
+    await this.environment.cache.set(key, newEntry)
 
     return newEntry
   }
