@@ -80,6 +80,7 @@ export class SerloDataSource extends CacheableDataSource {
     const payload = await this.cacheAwareGet<NavigationPayload>({
       path: '/api/navigation',
       instance,
+      maxAge: 60 * 60,
     })
     const { data } = payload
 
