@@ -124,12 +124,6 @@ describe('getFromCache()', () => {
 
     expect(await dataSource.getContent()).toBe('Old version')
   })
-
-  test('throws error when maxAge < 0', async () => {
-    await expect(() =>
-      dataSource.getContent({ maxAge: -10 })
-    ).rejects.toBeTruthy()
-  })
 })
 
 test('setCache() updates cached value', async () => {

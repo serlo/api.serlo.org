@@ -49,9 +49,6 @@ export abstract class CacheableDataSource extends RESTDataSource {
     update: UpdateFunction<Value>
     maxAge?: number
   }): Promise<Value> {
-    if (maxAge !== undefined && maxAge < 0)
-      throw new Error('maxAge is negative')
-
     const updateCacheEntry = () => this.setCache({ key, update })
     const cacheEntry = await this.environment.cache.get<unknown>(key)
 
