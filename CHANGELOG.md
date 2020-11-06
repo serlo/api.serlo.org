@@ -2,7 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
-## [v0.9.0](https://github.com/serlo/api.serlo.org/compare/v0.8.1..v0.9.0)
+## [v0.10.1](https://github.com/serlo/api.serlo.org/compare/v0.10.0..v0.10.1) - October 14, 2020
+
+### Fixed
+
+- Update dependencies.
+
+## [v0.10.0](https://github.com/serlo/api.serlo.org/compare/v0.9.0..v0.10.0) - October 14, 2020
+
+### Added
+
+- Add `subscriptions`.
+- **alias**. Hide certain implementation details of our alias system by adding polyfills for typical use cases:
+
+  - Resolve `/:id` to the given UUID.
+  - Users now have `/user/profile/:username` as their alias.
+  - Resolve `/user/profile/:id` and `/user/profile/:username` to the given user.
+
+- **abstract-repository**. Add `revisions` to `Page` and all entities.
+
+### Fixed
+
+- **alias**. Handle paths that are already URL-decoded correctly.
+- **alias**. Output URL-encoded paths.
+- **uuid**. Return `null` when the UUID does not exist.
+
+## [v0.9.0](https://github.com/serlo/api.serlo.org/compare/v0.8.1..v0.9.0) - August 16, 2020
 
 ### Breaking Changes
 

@@ -216,10 +216,7 @@ export class SerloDataSource extends CacheableDataSource {
     return this.cacheAwareGet({ path: `/api/subscriptions/${id}` })
   }
 
-  private async customPost<
-    T,
-    K extends keyof SerloDataSource = keyof SerloDataSource
-  >({
+  private async customPost<T>({
     path,
     instance = Instance.De,
     body,
@@ -250,10 +247,7 @@ export class SerloDataSource extends CacheableDataSource {
     return this.cacheAwareGet({ path: `/api/threads/${id}` })
   }
 
-  private async cacheAwareGet<
-    T,
-    K extends keyof SerloDataSource = keyof SerloDataSource
-  >({
+  private async cacheAwareGet<T>({
     path,
     instance = Instance.De,
     ttl,
