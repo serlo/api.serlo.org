@@ -23,15 +23,9 @@ import { Matchers } from '@pact-foundation/pact'
 import fetch from 'node-fetch'
 
 import { user } from '../../__fixtures__/uuid'
-import { createTestClient } from '../../__tests__/__utils__'
-import { Service } from '../../src/graphql/schema/types'
 import { addJsonInteraction } from '../__utils__'
 
 test('Subscriptions', async () => {
-  global.client = createTestClient({
-    service: Service.SerloCloudflareWorker,
-    user: user.id,
-  }).client
   await addJsonInteraction({
     name: `fetch data of all subscriptions for user with id ${user.id}`,
     given: `there exists a subscription for user with id ${user.id}`,

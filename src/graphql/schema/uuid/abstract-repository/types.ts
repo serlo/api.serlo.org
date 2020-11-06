@@ -95,7 +95,8 @@ type AbstractRepositoryRevisionsArgs =
 export interface RepositoryResolvers<
   E extends AbstractRepositoryPayload,
   R extends AbstractRevisionPayload
-> extends AliasResolvers<E>, UuidResolvers {
+> extends AliasResolvers<E>,
+    UuidResolvers {
   currentRevision: Resolver<E, never, R | null>
   revisions: Resolver<E, AbstractRepositoryRevisionsArgs, Connection<R>>
   license: Resolver<E, never, Partial<License>>
