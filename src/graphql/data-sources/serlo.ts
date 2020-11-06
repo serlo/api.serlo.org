@@ -45,14 +45,14 @@ export class SerloDataSource extends CacheableDataSource {
   public async getActiveAuthorIds(): Promise<number[]> {
     return await this.cacheAwareGet<number[]>({
       path: '/api/user/active-authors',
-      maxAge: 60 * 60 * 24,
+      maxAge: 60 * 60,
     })
   }
 
   public async getActiveReviewerIds(): Promise<number[]> {
     return await this.cacheAwareGet<number[]>({
       path: '/api/user/active-reviewers',
-      maxAge: 60 * 60 * 24,
+      maxAge: 60 * 60,
     })
   }
 
@@ -145,7 +145,10 @@ export class SerloDataSource extends CacheableDataSource {
   }
 
   public async getLicense({ id }: { id: number }): Promise<License> {
-    return this.cacheAwareGet({ path: `/api/license/${id}` })
+    return this.cacheAwareGet({
+      path: `/api/license/${id}`,
+      maxAge: 24 * 60 * 60,
+    })
   }
 
   public async getUuid<T extends AbstractUuidPayload>({
@@ -176,6 +179,7 @@ export class SerloDataSource extends CacheableDataSource {
   }): Promise<NotificationsPayload> {
     const response = await this.cacheAwareGet<NotificationsPayload>({
       path: `/api/notifications/${id}`,
+      maxAge: 60 * 60,
     })
     return {
       ...response,
@@ -207,7 +211,10 @@ export class SerloDataSource extends CacheableDataSource {
   }: {
     id: number
   }): Promise<SubscriptionsPayload> {
-    return this.cacheAwareGet({ path: `/api/subscriptions/${id}` })
+    return this.cacheAwareGet({
+      path: `/api/subscriptions/${id}`,
+      maxAge: 60 * 60,
+    })
   }
 
   private async customPost<T>({
