@@ -217,8 +217,7 @@ export class SerloDataSource extends CacheableDataSource {
   }: {
     path: string
     instance?: Instance
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    body: object
+    body: Record<string, unknown>
   }): Promise<T> {
     return await super.post(
       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
