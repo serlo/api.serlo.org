@@ -30,7 +30,7 @@ const now = jest.fn<number, never>()
 beforeEach(() => {
   now.mockReturnValue(Date.now())
 
-  cache = createInMemoryCache({ now })
+  cache = createInMemoryCache()
   dataSource = new ExampleDataSource({ cache, timer: { now } })
 })
 
@@ -132,80 +132,13 @@ describe('getFromCache()', () => {
   })
 })
 
-describe('setCache()', () => {
-  test('updates cached value', async () => {
-    await dataSource.setCache({
-      key: 'content',
-      update: () => Promise.resolve('Updated version'),
-    })
-
-    expect(await dataSource.getContent()).toBe('Updated version')
+test('setCache() updates cached value', async () => {
+  await dataSource.setCache({
+    key: 'content',
+    update: () => Promise.resolve('Updated version'),
   })
 
-  describe('when ttl is passed', () => {
-    test('returns cached value when passed time < ttl', async () => {
-      await dataSource.setCache({
-        key: 'content',
-        update: () => Promise.resolve('Updated version'),
-        ttl: 10,
-      })
-      waitFor(5)
-
-      expect(await dataSource.getContent()).toBe('Updated version')
-    })
-
-    test('returns current value when ttl < passed time', async () => {
-      dataSource.setContent('First version')
-      await dataSource.setCache({
-        key: 'content',
-        update: () => Promise.resolve('Updated version'),
-        ttl: 10,
-      })
-      waitFor(15)
-
-      expect(await dataSource.getContent()).toBe('First version')
-    })
-
-    test('does not use predefined ttl in cache', async () => {
-      await cache.set('content', 'Old version', { ttl: 10 })
-
-      await dataSource.setCache({
-        key: 'content',
-        update: () => Promise.resolve('Updated version'),
-        ttl: 20,
-      })
-      waitFor(15)
-
-      expect(await dataSource.getContent()).toBe('Updated version')
-    })
-  })
-
-  describe('when ttl is already stored in cache', () => {
-    test('returns cached value when passed time < ttl', async () => {
-      await cache.set('content', 'Old version', { ttl: 10 })
-
-      await dataSource.setCache({
-        key: 'content',
-        update: () => Promise.resolve('Updated version'),
-      })
-      waitFor(5)
-
-      expect(await dataSource.getContent()).toBe('Updated version')
-    })
-
-    test('returns current value when ttl < passed time', async () => {
-      await cache.set('content', 'Old version', { ttl: 10 })
-      dataSource.setContent('First version')
-
-      await dataSource.setCache({
-        key: 'content',
-        update: () => Promise.resolve('Updated version'),
-      })
-      waitFor(15)
-
-      expect(await dataSource.getContent()).toBe('First version')
-    })
-  })
+  expect(await dataSource.getContent()).toBe('Updated version')
 })
 
 function waitFor(seconds: number) {
