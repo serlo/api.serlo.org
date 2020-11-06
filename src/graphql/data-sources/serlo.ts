@@ -39,20 +39,20 @@ import {
 } from '../schema'
 import { SubscriptionsPayload } from '../schema/subscription'
 import { Service } from '../schema/types'
-import { CacheableDataSource } from './cacheable-data-source'
+import { CacheableDataSource, DAY, HOUR } from './cacheable-data-source'
 
 export class SerloDataSource extends CacheableDataSource {
   public async getActiveAuthorIds(): Promise<number[]> {
     return await this.cacheAwareGet<number[]>({
       path: '/api/user/active-authors',
-      maxAge: 60 * 60,
+      maxAge: 1 * HOUR,
     })
   }
 
   public async getActiveReviewerIds(): Promise<number[]> {
     return await this.cacheAwareGet<number[]>({
       path: '/api/user/active-reviewers',
-      maxAge: 60 * 60,
+      maxAge: 1 * HOUR,
     })
   }
 
@@ -80,7 +80,7 @@ export class SerloDataSource extends CacheableDataSource {
     const payload = await this.cacheAwareGet<NavigationPayload>({
       path: '/api/navigation',
       instance,
-      maxAge: 60 * 60,
+      maxAge: 1 * HOUR,
     })
     const { data } = payload
 
@@ -147,7 +147,7 @@ export class SerloDataSource extends CacheableDataSource {
   public async getLicense({ id }: { id: number }): Promise<License> {
     return this.cacheAwareGet({
       path: `/api/license/${id}`,
-      maxAge: 24 * 60 * 60,
+      maxAge: 1 * DAY,
     })
   }
 
@@ -179,7 +179,7 @@ export class SerloDataSource extends CacheableDataSource {
   }): Promise<NotificationsPayload> {
     const response = await this.cacheAwareGet<NotificationsPayload>({
       path: `/api/notifications/${id}`,
-      maxAge: 60 * 60,
+      maxAge: 1 * HOUR,
     })
     return {
       ...response,
@@ -213,7 +213,7 @@ export class SerloDataSource extends CacheableDataSource {
   }): Promise<SubscriptionsPayload> {
     return this.cacheAwareGet({
       path: `/api/subscriptions/${id}`,
-      maxAge: 60 * 60,
+      maxAge: 1 * HOUR,
     })
   }
 
