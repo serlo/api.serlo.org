@@ -25,7 +25,7 @@ import {
   createTestClient as createApolloTestClient,
 } from 'apollo-server-testing'
 
-import { createInMemoryCache } from '../../src/cache/in-memory-cache'
+import { createInMemoryCache } from '../../src/cache'
 import { getGraphQLOptions } from '../../src/graphql'
 import { Cache, createTimer, Timer } from '../../src/graphql/environment'
 import { Context, Service } from '../../src/graphql/schema/types'

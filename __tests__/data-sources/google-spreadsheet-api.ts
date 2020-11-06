@@ -22,7 +22,7 @@
 import { InMemoryLRUCache } from 'apollo-server-caching'
 import { either as E } from 'fp-ts'
 
-import { createInMemoryCache } from '../../src/cache/in-memory-cache'
+import { createInMemoryCache } from '../../src/cache'
 import {
   GoogleSheetApi,
   MajorDimension,
