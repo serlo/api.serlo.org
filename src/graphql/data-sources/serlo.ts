@@ -220,17 +220,12 @@ export class SerloDataSource extends CacheableDataSource {
     // eslint-disable-next-line @typescript-eslint/ban-types
     body: object
   }): Promise<T> {
-    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
-      expiresIn: '2h',
-      audience: Service.Serlo,
-      issuer: 'api.serlo.org',
-    })
     return await super.post(
       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
       body,
       {
         headers: {
-          Authorization: `Serlo Service=${token}`,
+          Authorization: `Serlo Service=${getToken()}`,
           'Content-Type': 'application/json; charset=utf-8',
         },
       }
@@ -260,17 +255,12 @@ export class SerloDataSource extends CacheableDataSource {
     path: string
     instance?: Instance
   }): Promise<T> {
-    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
-      expiresIn: '2h',
-      audience: Service.Serlo,
-      issuer: 'api.serlo.org',
-    })
     return await super.get<T>(
       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
       {},
       {
         headers: {
-          Authorization: `Serlo Service=${token}`,
+          Authorization: `Serlo Service=${getToken()}`,
         },
       }
     )
@@ -300,4 +290,12 @@ export class SerloDataSource extends CacheableDataSource {
       update: () => this.getFromSerlo({ path, instance }),
     })
   }
+}
+
+function getToken() {
+  return jwt.sign({}, process.env.SERLO_ORG_SECRET, {
+    expiresIn: '2h',
+    audience: Service.Serlo,
+    issuer: 'api.serlo.org',
+  })
 }
