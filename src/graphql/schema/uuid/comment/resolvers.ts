@@ -29,7 +29,7 @@ export const resolvers: CommentResolvers = {
   Comment: {
     ...createUuidResolvers(),
     createdAt(comment) {
-      return comment.date.toString()
+      return comment.date
     },
     async author(comment, _args, { dataSources }) {
       const author = dataSources.serlo.getUuid<UserPayload>({

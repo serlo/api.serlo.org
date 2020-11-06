@@ -92,7 +92,6 @@ test('Threads, 1 Comment', async () => {
     query: gql`
       query threads($id: Int!) {
         uuid(id: $id) {
-          __typename
           threads {
             totalCount
             nodes {
@@ -110,7 +109,6 @@ test('Threads, 1 Comment', async () => {
     variables: { id: article.id },
     data: {
       uuid: {
-        __typename: 'Article',
         threads: {
           totalCount: 1,
           nodes: [
@@ -134,7 +132,6 @@ test('Threads, 0 Comments', async () => {
     query: gql`
       query threads($id: Int!) {
         uuid(id: $id) {
-          __typename
           threads {
             totalCount
             nodes {
@@ -150,15 +147,7 @@ test('Threads, 0 Comments', async () => {
       }
     `,
     variables: { id: article.id },
-    data: {
-      uuid: {
-        __typename: 'Article',
-        threads: {
-          totalCount: 0,
-          nodes: [],
-        },
-      },
-    },
+    data: { uuid: { threads: { totalCount: 0, nodes: [] } } },
     client,
   })
 })
