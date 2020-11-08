@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
-import { option as O } from 'fp-ts'
 
 import {
   user,
@@ -28,7 +27,6 @@ import {
   createTaxonomyTermNotificationEvent,
   getAbstractNotificationEventDataWithoutSubResolvers,
 } from '../../__fixtures__'
-import { Cache } from '../../src/graphql/environment'
 import { Service } from '../../src/graphql/schema/types'
 import {
   createTestClient,
@@ -40,13 +38,12 @@ import {
 } from '../__utils__'
 
 let client: Client
-let cache: Cache
 
 beforeEach(() => {
-  ;({ client, cache } = createTestClient({
+  client = createTestClient({
     service: Service.SerloCloudflareWorker,
     user: user.id,
-  }))
+  }).client
 })
 
 describe('events', () => {
@@ -239,13 +236,19 @@ describe('events', () => {
       client,
     })
 
-    expect(await cache.get('de.serlo.org/api/events?first=10')).toEqual(
-      O.some({
-        eventIds: [2, 1],
-        totalCount: 2,
-        pageInfo: { hasPreviousPage: false, hasNextPage: false },
-      })
-    )
+    global.server.use(createEventsHandler({ eventIds: [1] }, { first: "10" }))
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query events {
+          events(first: 10) {
+            totalCount
+          }
+        }
+      `,
+      data: { events: { totalCount: 2 } },
+      client,
+    })
   })
 
   describe('returns an error when "after" or "before" is not an id.', () => {
