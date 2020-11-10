@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ForbiddenError } from 'apollo-server'
+import { ApolloError } from 'apollo-server'
 
 import { createUuidResolvers } from '../abstract-uuid'
 import { UserPayload } from '../user'
@@ -32,11 +32,11 @@ export const resolvers: CommentResolvers = {
       return comment.date
     },
     async author(comment, _args, { dataSources }) {
-      const author = dataSources.serlo.getUuid<UserPayload>({
+      const author = await dataSources.serlo.getUuid<UserPayload>({
         id: comment.authorId,
       })
       if (author === null) {
-        throw new ForbiddenError('There is no author with this id')
+        throw new ApolloError('There is no author with this id')
       }
       return author
     },

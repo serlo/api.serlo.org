@@ -19,12 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ForbiddenError } from 'apollo-server'
+import { ApolloError } from 'apollo-server'
 import * as R from 'ramda'
 
 import { resolveConnection } from '../connection'
 import { UuidPayload } from '../uuid'
-import { CommentPayload } from '../uuid/comment'
+import { CommentPayload } from '../uuid/thread'
 import { ThreadResolvers } from './types'
 
 export const resolvers: ThreadResolvers = {
@@ -49,7 +49,7 @@ export const resolvers: ThreadResolvers = {
         id: thread.commentPayloads[0].parentId,
       })
       if (object === null) {
-        throw new ForbiddenError('Thread points to non-existent uuid')
+        throw new ApolloError('Thread points to non-existent uuid')
       }
       return object
     },

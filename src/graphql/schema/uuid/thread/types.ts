@@ -41,6 +41,6 @@ export interface CommentPayload {
 export interface CommentResolvers {
   Comment: {
     createdAt: Resolver<CommentPayload, never, Scalars['DateTime']>
-    author: Resolver<CommentPayload, never, UserPayload | null>
+    author: Resolver<CommentPayload, never, UserPayload>
   }
 }

@@ -22,7 +22,7 @@
 import { UserInputError } from 'apollo-server'
 
 import { decodePath } from '../alias'
-import { AbstractUuidResolvers, UuidPayload } from './types'
+import { AbstractUuidResolvers, DiscriminatorType, UuidPayload } from './types'
 
 export const resolvers: AbstractUuidResolvers = {
   AbstractUuid: {
@@ -53,7 +53,12 @@ export const resolvers: AbstractUuidResolvers = {
           ? dataSources.serlo.getUuid<UuidPayload>({ id: alias.id })
           : null
       } else if (payload.id) {
-        return dataSources.serlo.getUuid<UuidPayload>({ id: payload.id })
+        const uuid = await dataSources.serlo.getUuid<UuidPayload>({
+          id: payload.id,
+        })
+        if (uuid && uuid.__typename === DiscriminatorType.Comment) {
+          return null
+        } else return uuid
       } else {
         throw new UserInputError('you need to provide an id or an alias')
       }

@@ -32,7 +32,7 @@ test('Threads', async () => {
     given: `article ${article.id} has threads`,
     path: `/api/threads/${article.id}`,
     body: {
-      threadIds: Matchers.eachLike(Matchers.integer(1)),
+      firstCommentIds: Matchers.eachLike(Matchers.integer(1)),
     },
   })
   await fetch(
