@@ -25,28 +25,26 @@ import {
   createTestClient as createApolloTestClient,
 } from 'apollo-server-testing'
 
-import { createInMemoryCache } from '../../src/cache/in-memory-cache'
+import { createInMemoryCache } from '../../src/cache'
 import { getGraphQLOptions } from '../../src/graphql'
-import { Cache } from '../../src/graphql/environment'
+import { Cache, createTimer, Timer } from '../../src/graphql/environment'
 import { Context, Service } from '../../src/graphql/schema/types'
 
 export type Client = ApolloServerTestClient
 
 export function createTestClient(
-  context?: Partial<Pick<Context, 'service' | 'user'>>
+  args?: Partial<Pick<Context, 'service' | 'user'>> & { timer?: Timer }
 ): {
   client: Client
   cache: Cache
 } {
   const cache = createInMemoryCache()
   const server = new ApolloServer({
-    ...getGraphQLOptions({
-      cache,
-    }),
+    ...getGraphQLOptions({ cache, timer: args?.timer ?? createTimer() }),
     context(): Pick<Context, 'service' | 'user'> {
       return {
-        service: context?.service ?? Service.SerloCloudflareWorker,
-        user: context?.user ?? null,
+        service: args?.service ?? Service.SerloCloudflareWorker,
+        user: args?.user ?? null,
       }
     },
   })
