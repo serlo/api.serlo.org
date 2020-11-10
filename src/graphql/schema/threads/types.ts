@@ -23,27 +23,27 @@ import { Scalars, ThreadCommentsArgs } from '../../../types'
 import { Connection } from '../connection'
 import { Resolver } from '../types'
 import { DiscriminatorType, UuidPayload } from '../uuid'
-import { CommentPayload } from '../uuid/comment/types'
+import { CommentPayload } from '../uuid/thread/types'
 
 export interface ThreadsPayload {
   firstCommentIds: number[]
 }
 
-export interface ThreadPayload {
+export interface ThreadData {
   __typename: DiscriminatorType.Thread
   commentPayloads: CommentPayload[]
 }
 
 export interface ThreadResolvers {
   Thread: {
-    createdAt: Resolver<ThreadPayload, never, Scalars['DateTime']>
-    updatedAt: Resolver<ThreadPayload, never, Scalars['DateTime']>
-    title: Resolver<ThreadPayload, never, string>
-    archived: Resolver<ThreadPayload, never, boolean>
-    trashed: Resolver<ThreadPayload, never, boolean>
-    object: Resolver<ThreadPayload, never, UuidPayload>
+    createdAt: Resolver<ThreadData, never, Scalars['DateTime']>
+    updatedAt: Resolver<ThreadData, never, Scalars['DateTime']>
+    title: Resolver<ThreadData, never, string>
+    archived: Resolver<ThreadData, never, boolean>
+    trashed: Resolver<ThreadData, never, boolean>
+    object: Resolver<ThreadData, never, UuidPayload>
     comments: Resolver<
-      ThreadPayload,
+      ThreadData,
       ThreadCommentsArgs,
       Connection<CommentPayload>
     >

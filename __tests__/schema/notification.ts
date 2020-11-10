@@ -26,7 +26,6 @@ import {
   article,
   articleRevision,
   checkoutRevisionNotificationEvent,
-  unsupportedComment,
   createCommentNotificationEvent,
   createEntityLinkNotificationEvent,
   createEntityNotificationEvent,
@@ -69,6 +68,7 @@ import {
   taxonomyTermCurriculumTopic,
   taxonomyTermRoot,
   taxonomyTermSubject,
+  unsupportedComment,
   unsupportedThread,
   user,
   user2,
@@ -641,7 +641,7 @@ describe('notificationEvent', () => {
       })
     })
 
-    test('by id (w/ comment)', async () => {
+    test('by id (w/ thread)', async () => {
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query notificationEvent($id: Int!) {
@@ -2149,7 +2149,7 @@ describe('notificationEvent', () => {
     beforeEach(() => {
       global.server.use(
         createNotificationEventHandler({
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // eslint-disable-next-line @typescript-eslint/ban-ts-thread
           // @ts-expect-error We assume here that we get an invalid type name
           __typename: 'SomeFancyNotificationEvent',
           id: 1337,

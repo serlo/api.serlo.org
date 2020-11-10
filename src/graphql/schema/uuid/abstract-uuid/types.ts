@@ -25,7 +25,7 @@ import {
   QueryUuidArgs,
 } from '../../../../types'
 import { Connection } from '../../connection'
-import { ThreadPayload } from '../../threads'
+import { ThreadData } from '../../threads'
 import { QueryResolver, Resolver, TypeResolver } from '../../types'
 import {
   EntityPayload,
@@ -33,7 +33,7 @@ import {
   EntityRevisionType,
   EntityType,
 } from '../abstract-entity'
-import { CommentPayload } from '../comment/types'
+import { CommentPayload } from '../thread/types'
 import { PagePayload, PageRevisionPayload } from '../page'
 import { TaxonomyTermPayload } from '../taxonomy-term'
 import { UserPayload } from '../user'
@@ -57,7 +57,8 @@ export type UuidPayload =
   | UserPayload
   | TaxonomyTermPayload
   | CommentPayload
-export interface AbstractUuidPayload extends Omit<AbstractUuid, 'threads'> {
+export interface AbstractUuidPayload
+  extends Omit<AbstractUuid, keyof UuidResolvers> {
   __typename: UuidType
 }
 
@@ -65,7 +66,7 @@ export interface UuidResolvers {
   threads: Resolver<
     AbstractUuidPayload,
     AbstractUuidThreadsArgs,
-    Connection<ThreadPayload>
+    Connection<ThreadData>
   >
 }
 export interface AbstractUuidResolvers {

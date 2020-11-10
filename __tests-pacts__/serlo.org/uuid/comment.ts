@@ -26,7 +26,7 @@ import {
   comment1,
   getCommentDataWithoutSubresolvers,
 } from '../../../__fixtures__/uuid/comment'
-import { CommentPayload } from '../../../src/graphql/schema/uuid/comment/types'
+import { CommentPayload } from '../../../src/graphql/schema/uuid/thread/types'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,

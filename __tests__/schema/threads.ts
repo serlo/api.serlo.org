@@ -27,13 +27,13 @@ import { article, user } from '../../__fixtures__/uuid'
 import { comment1, comment2, comment3 } from '../../__fixtures__/uuid/comment'
 import { Service } from '../../src/graphql/schema/types'
 import { UuidPayload } from '../../src/graphql/schema/uuid/abstract-uuid'
-import { CommentPayload } from '../../src/graphql/schema/uuid/comment'
+import { CommentPayload } from '../../src/graphql/schema/uuid/thread'
 import { Instance } from '../../src/types'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
+  createJsonHandler,
   createTestClient,
-  createThreadsHandler,
 } from '../__utils__'
 
 let client: Client
@@ -287,11 +287,12 @@ test('property object', async () => {
 })
 
 function setupThreads(uuidPayload: UuidPayload, threads: CommentPayload[][]) {
+  const firstCommentIds = threads.map((thread) => thread[0].id)
   global.server.use(
-    createThreadsHandler(
-      uuidPayload.id,
-      threads.map((thread) => thread[0].id)
-    )
+    createJsonHandler({
+      path: `/api/threads/${uuidPayload.id}`,
+      body: { firstCommentIds },
+    })
   )
   global.server.use(
     rest.get(

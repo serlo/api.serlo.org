@@ -22,7 +22,7 @@
 import * as R from 'ramda'
 
 import { DiscriminatorType } from '../../src/graphql/schema/uuid/abstract-uuid'
-import { CommentPayload } from '../../src/graphql/schema/uuid/comment/types'
+import { CommentPayload } from '../../src/graphql/schema/uuid/thread/types'
 import { article } from './article'
 import { user, user2 } from './user'
 

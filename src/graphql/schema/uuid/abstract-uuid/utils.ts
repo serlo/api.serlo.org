@@ -19,16 +19,16 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ForbiddenError } from 'apollo-server'
+import { ApolloError } from 'apollo-server'
 import * as R from 'ramda'
 
 import { SerloDataSource } from '../../../data-sources/serlo'
 import { resolveConnection } from '../../connection'
-import { ThreadPayload } from '../../threads'
+import { ThreadData } from '../../threads'
 import { isDefined } from '../../utils'
 import { EntityRevisionType, EntityType } from '../abstract-entity'
 import { AbstractUuidPayload, UuidResolvers } from '../abstract-uuid'
-import { CommentPayload } from '../comment'
+import { CommentPayload } from '../thread'
 import { DiscriminatorType } from './types'
 
 const validTypes = [
@@ -64,12 +64,12 @@ export function createUuidResolvers(): UuidResolvers {
 export async function toThreadPayload(
   serlo: SerloDataSource,
   firstCommentId: number
-): Promise<ThreadPayload> {
+): Promise<ThreadData> {
   const firstComment = await serlo.getUuid<CommentPayload>({
     id: firstCommentId,
   })
   if (firstComment === null) {
-    throw new ForbiddenError('There are no comments yet')
+    throw new ApolloError('There are no comments yet')
   }
   const remainingComments = await Promise.all(
     firstComment.childrenIds.map((id) => serlo.getUuid<CommentPayload>({ id }))
