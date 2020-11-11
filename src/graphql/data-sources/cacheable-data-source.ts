@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { RESTDataSource } from 'apollo-datasource-rest'
-import { option as O } from 'fp-ts'
+import { option as O, pipeable } from 'fp-ts'
 import * as R from 'ramda'
 
 import { Environment } from '../environment'
@@ -37,7 +37,18 @@ export abstract class CacheableDataSource extends RESTDataSource {
     key: string
     update: UpdateFunction<Value>
   }): Promise<Value> {
-    return (await this.setValue({ key, value: await update() })).value
+    const currentValue = pipeable.pipe(
+      await this.environment.cache.get<unknown>(key),
+      O.chain(O.fromPredicate(isEntry)),
+      O.map((entry) => entry.value as Value),
+      O.toUndefined
+    )
+    const updatedEntry = await this.setValue({
+      key,
+      value: await update(currentValue),
+    })
+
+    return updatedEntry.value
   }
 
   protected async getFromCache<Value>({
@@ -96,4 +107,4 @@ function isEntry<Value>(entry: unknown): entry is Entry<Value> {
   return R.has('lastModified', entry) && R.has('value', entry)
 }
 
-type UpdateFunction<Value> = () => Promise<Value>
+type UpdateFunction<Value> = (current?: Value) => Promise<Value>

@@ -126,13 +126,28 @@ describe('getFromCache()', () => {
   })
 })
 
-test('setCache() updates cached value', async () => {
-  await dataSource.setCache({
-    key: 'content',
-    update: () => Promise.resolve('Updated version'),
+describe('setCache()', () => {
+  test('updates cached value', async () => {
+    await dataSource.setCache({
+      key: 'content',
+      update: () => Promise.resolve('Updated version'),
+    })
+
+    expect(await dataSource.getContent()).toBe('Updated version')
   })
 
-  expect(await dataSource.getContent()).toBe('Updated version')
+  test('update function can use current cache value', async () => {
+    await dataSource.setCache({
+      key: 'content',
+      update: () => Promise.resolve('First version.'),
+    })
+    await dataSource.setCache<string>({
+      key: 'content',
+      update: (content = '') => Promise.resolve(content + ' Update.'),
+    })
+
+    expect(await dataSource.getContent()).toBe('First version. Update.')
+  })
 })
 
 function waitFor(seconds: number) {
