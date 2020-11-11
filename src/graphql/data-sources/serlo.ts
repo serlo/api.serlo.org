@@ -67,6 +67,7 @@ export class SerloDataSource extends CacheableDataSource {
     return this.cacheAwareGet<AliasPayload>({
       path: `/api/alias${cleanPath}`,
       instance,
+      maxAge: 1 * HOUR,
     })
   }
 
@@ -156,7 +157,10 @@ export class SerloDataSource extends CacheableDataSource {
   }: {
     id: number
   }): Promise<T | null> {
-    const uuid = await this.cacheAwareGet<T | null>({ path: `/api/uuid/${id}` })
+    const uuid = await this.cacheAwareGet<T | null>({
+      path: `/api/uuid/${id}`,
+      maxAge: 1 * DAY,
+    })
     return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
   }
 
@@ -165,6 +169,7 @@ export class SerloDataSource extends CacheableDataSource {
   >({ id }: { id: number }): Promise<T | null> {
     const notificationEvent = await this.cacheAwareGet<T>({
       path: `/api/event/${id}`,
+      maxAge: 1 * DAY,
     })
     return isUnsupportedNotificationEvent(notificationEvent)
       ? null
@@ -288,7 +293,10 @@ export class SerloDataSource extends CacheableDataSource {
   }
 
   public async getAllCacheKeys(): Promise<string[]> {
-    return this.cacheAwareGet<string[]>({ path: '/api/cache-keys' })
+    return this.cacheAwareGet<string[]>({
+      path: '/api/cache-keys',
+      maxAge: 1 * HOUR,
+    })
   }
 
   public async removeCache(key: string) {
