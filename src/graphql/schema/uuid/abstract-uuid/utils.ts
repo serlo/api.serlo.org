@@ -24,11 +24,10 @@ import * as R from 'ramda'
 
 import { SerloDataSource } from '../../../data-sources/serlo'
 import { resolveConnection } from '../../connection'
-import { ThreadData } from '../../threads'
 import { isDefined } from '../../utils'
 import { EntityRevisionType, EntityType } from '../abstract-entity'
 import { AbstractUuidPayload, UuidResolvers } from '../abstract-uuid'
-import { CommentPayload } from '../thread'
+import { CommentPayload, ThreadData, ThreadDataType } from '../thread'
 import { DiscriminatorType } from './types'
 
 const validTypes = [

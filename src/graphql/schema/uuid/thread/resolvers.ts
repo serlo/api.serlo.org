@@ -20,12 +20,49 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { ApolloError } from 'apollo-server'
+import * as R from 'ramda'
 
-import { createUuidResolvers } from '../abstract-uuid'
+import { resolveConnection } from '../../connection'
+import { createUuidResolvers, UuidPayload } from '../abstract-uuid'
 import { UserPayload } from '../user'
-import { CommentResolvers } from './types'
+import { CommentPayload, ThreadResolvers } from './types'
 
-export const resolvers: CommentResolvers = {
+export const resolvers: ThreadResolvers = {
+  Thread: {
+    createdAt(thread, _args) {
+      return thread.commentPayloads.map((comment) => comment.date).reduce(R.min)
+    },
+    updatedAt(thread, _args) {
+      return thread.commentPayloads.map((comment) => comment.date).reduce(R.max)
+    },
+    title(thread, _args) {
+      return thread.commentPayloads[0].title
+    },
+    archived(thread, _args) {
+      return thread.commentPayloads[0].archived
+    },
+    trashed(thread, _args) {
+      return thread.commentPayloads[0].trashed
+    },
+    async object(thread, _args, { dataSources }) {
+      const object = await dataSources.serlo.getUuid<UuidPayload>({
+        id: thread.commentPayloads[0].parentId,
+      })
+      if (object === null) {
+        throw new ApolloError('Thread points to non-existent uuid')
+      }
+      return object
+    },
+    comments(thread, cursorPayload) {
+      return resolveConnection<CommentPayload>({
+        nodes: thread.commentPayloads,
+        payload: cursorPayload,
+        createCursor(node) {
+          return node.id.toString()
+        },
+      })
+    },
+  },
   Comment: {
     ...createUuidResolvers(),
     createdAt(comment) {
