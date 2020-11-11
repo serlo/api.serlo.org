@@ -39,20 +39,20 @@ import {
 } from '../schema'
 import { SubscriptionsPayload } from '../schema/subscription'
 import { Service } from '../schema/types'
-import { CacheableDataSource } from './cacheable-data-source'
+import { CacheableDataSource, DAY, HOUR } from './cacheable-data-source'
 
 export class SerloDataSource extends CacheableDataSource {
   public async getActiveAuthorIds(): Promise<number[]> {
     return await this.cacheAwareGet<number[]>({
       path: '/api/user/active-authors',
-      maxAge: 60 * 60 * 24,
+      maxAge: 1 * HOUR,
     })
   }
 
   public async getActiveReviewerIds(): Promise<number[]> {
     return await this.cacheAwareGet<number[]>({
       path: '/api/user/active-reviewers',
-      maxAge: 60 * 60 * 24,
+      maxAge: 1 * HOUR,
     })
   }
 
@@ -67,6 +67,7 @@ export class SerloDataSource extends CacheableDataSource {
     return this.cacheAwareGet<AliasPayload>({
       path: `/api/alias${cleanPath}`,
       instance,
+      maxAge: 1 * HOUR,
     })
   }
 
@@ -80,7 +81,7 @@ export class SerloDataSource extends CacheableDataSource {
     const payload = await this.cacheAwareGet<NavigationPayload>({
       path: '/api/navigation',
       instance,
-      maxAge: 60 * 60,
+      maxAge: 1 * HOUR,
     })
     const { data } = payload
 
@@ -145,7 +146,10 @@ export class SerloDataSource extends CacheableDataSource {
   }
 
   public async getLicense({ id }: { id: number }): Promise<License> {
-    return this.cacheAwareGet({ path: `/api/license/${id}` })
+    return this.cacheAwareGet({
+      path: `/api/license/${id}`,
+      maxAge: 1 * DAY,
+    })
   }
 
   public async getUuid<T extends AbstractUuidPayload>({
@@ -153,7 +157,10 @@ export class SerloDataSource extends CacheableDataSource {
   }: {
     id: number
   }): Promise<T | null> {
-    const uuid = await this.cacheAwareGet<T | null>({ path: `/api/uuid/${id}` })
+    const uuid = await this.cacheAwareGet<T | null>({
+      path: `/api/uuid/${id}`,
+      maxAge: 1 * DAY,
+    })
     return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
   }
 
@@ -162,6 +169,7 @@ export class SerloDataSource extends CacheableDataSource {
   >({ id }: { id: number }): Promise<T | null> {
     const notificationEvent = await this.cacheAwareGet<T>({
       path: `/api/event/${id}`,
+      maxAge: 1 * DAY,
     })
     return isUnsupportedNotificationEvent(notificationEvent)
       ? null
@@ -176,6 +184,7 @@ export class SerloDataSource extends CacheableDataSource {
   }): Promise<NotificationsPayload> {
     const response = await this.cacheAwareGet<NotificationsPayload>({
       path: `/api/notifications/${id}`,
+      maxAge: 1 * HOUR,
     })
     return {
       ...response,
@@ -207,7 +216,10 @@ export class SerloDataSource extends CacheableDataSource {
   }: {
     id: number
   }): Promise<SubscriptionsPayload> {
-    return this.cacheAwareGet({ path: `/api/subscriptions/${id}` })
+    return this.cacheAwareGet({
+      path: `/api/subscriptions/${id}`,
+      maxAge: 1 * HOUR,
+    })
   }
 
   private async customPost<T>({
@@ -270,7 +282,10 @@ export class SerloDataSource extends CacheableDataSource {
   }
 
   public async getAllCacheKeys(): Promise<string[]> {
-    return this.cacheAwareGet<string[]>({ path: '/api/cache-keys' })
+    return this.cacheAwareGet<string[]>({
+      path: '/api/cache-keys',
+      maxAge: 1 * HOUR,
+    })
   }
 
   public async removeCache(key: string) {
