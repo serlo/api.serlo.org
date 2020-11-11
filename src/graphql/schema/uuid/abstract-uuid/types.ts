@@ -25,7 +25,6 @@ import {
   QueryUuidArgs,
 } from '../../../../types'
 import { Connection } from '../../connection'
-import { ThreadData } from '../../threads'
 import { QueryResolver, Resolver, TypeResolver } from '../../types'
 import {
   EntityPayload,
@@ -33,9 +32,9 @@ import {
   EntityRevisionType,
   EntityType,
 } from '../abstract-entity'
-import { CommentPayload } from '../thread/types'
 import { PagePayload, PageRevisionPayload } from '../page'
 import { TaxonomyTermPayload } from '../taxonomy-term'
+import { CommentPayload, ThreadData } from '../thread/types'
 import { UserPayload } from '../user'
 
 export enum DiscriminatorType {

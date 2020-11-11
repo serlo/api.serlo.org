@@ -367,44 +367,6 @@ export type SubscriptionCursor = {
   node: AbstractUuid;
 };
 
-export type Thread = {
-  __typename?: 'Thread';
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  title: Scalars['String'];
-  archived: Scalars['Boolean'];
-  trashed: Scalars['Boolean'];
-  object: AbstractUuid;
-  comments: CommentConnection;
-};
-
-
-export type ThreadCommentsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-};
-
-export type ThreadsConnection = {
-  __typename?: 'ThreadsConnection';
-  edges: Array<ThreadsCursor>;
-  nodes: Array<Thread>;
-  totalCount: Scalars['Int'];
-  pageInfo: PageInfo;
-};
-
-export type ThreadsCursor = {
-  __typename?: 'ThreadsCursor';
-  cursor: Scalars['String'];
-  node: Thread;
-};
-
-export type UnsupportedThread = {
-  __typename?: 'UnsupportedThread';
-  id: Scalars['Int'];
-};
-
 export type AbstractEntity = {
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -712,46 +674,6 @@ export type ArticleRevisionCursor = {
   __typename?: 'ArticleRevisionCursor';
   cursor: Scalars['String'];
   node: ArticleRevision;
-};
-
-export type Comment = AbstractUuid & {
-  __typename?: 'Comment';
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
-  alias?: Maybe<Scalars['String']>;
-  title: Scalars['String'];
-  content: Scalars['String'];
-  archived: Scalars['Boolean'];
-  createdAt: Scalars['DateTime'];
-  author: User;
-  threads: ThreadsConnection;
-};
-
-
-export type CommentThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-};
-
-export type UnsupportedComment = {
-  __typename?: 'UnsupportedComment';
-  id: Scalars['Int'];
-};
-
-export type CommentConnection = {
-  __typename?: 'CommentConnection';
-  edges: Array<CommentEdge>;
-  nodes: Array<Comment>;
-  totalCount: Scalars['Int'];
-  pageInfo: PageInfo;
-};
-
-export type CommentEdge = {
-  __typename?: 'CommentEdge';
-  cursor: Scalars['String'];
-  node: Comment;
 };
 
 export type CoursePage = AbstractUuid & AbstractRepository & AbstractEntity & {
@@ -1360,6 +1282,84 @@ export type TaxonomyTermChildrenArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+};
+
+export type Thread = {
+  __typename?: 'Thread';
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  title: Scalars['String'];
+  archived: Scalars['Boolean'];
+  trashed: Scalars['Boolean'];
+  object: AbstractUuid;
+  comments: CommentConnection;
+};
+
+
+export type ThreadCommentsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+};
+
+export type Comment = AbstractUuid & {
+  __typename?: 'Comment';
+  id: Scalars['Int'];
+  trashed: Scalars['Boolean'];
+  alias?: Maybe<Scalars['String']>;
+  title: Scalars['String'];
+  content: Scalars['String'];
+  archived: Scalars['Boolean'];
+  createdAt: Scalars['DateTime'];
+  author: User;
+  threads: ThreadsConnection;
+};
+
+
+export type CommentThreadsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+};
+
+export type ThreadsConnection = {
+  __typename?: 'ThreadsConnection';
+  edges: Array<ThreadsCursor>;
+  nodes: Array<Thread>;
+  totalCount: Scalars['Int'];
+  pageInfo: PageInfo;
+};
+
+export type ThreadsCursor = {
+  __typename?: 'ThreadsCursor';
+  cursor: Scalars['String'];
+  node: Thread;
+};
+
+export type UnsupportedThread = {
+  __typename?: 'UnsupportedThread';
+  id: Scalars['Int'];
+};
+
+export type UnsupportedComment = {
+  __typename?: 'UnsupportedComment';
+  id: Scalars['Int'];
+};
+
+export type CommentConnection = {
+  __typename?: 'CommentConnection';
+  edges: Array<CommentEdge>;
+  nodes: Array<Comment>;
+  totalCount: Scalars['Int'];
+  pageInfo: PageInfo;
+};
+
+export type CommentEdge = {
+  __typename?: 'CommentEdge';
+  cursor: Scalars['String'];
+  node: Comment;
 };
 
 export type User = AbstractUuid & {

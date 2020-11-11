@@ -19,10 +19,42 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Scalars } from '../../../../types'
+import { Scalars, ThreadCommentsArgs } from '../../../../types'
+import { Connection } from '../../connection'
 import { Resolver } from '../../types'
-import { DiscriminatorType } from '../abstract-uuid'
+import { DiscriminatorType, UuidPayload } from '../abstract-uuid'
 import { UserPayload } from '../user'
+
+export interface ThreadsPayload {
+  firstCommentIds: number[]
+}
+
+export const ThreadDataType = 'Thread'
+
+export interface ThreadData {
+  __typename: DiscriminatorType.Thread
+  commentPayloads: CommentPayload[]
+}
+
+export interface ThreadResolvers {
+  Thread: {
+    createdAt: Resolver<ThreadData, never, Scalars['DateTime']>
+    updatedAt: Resolver<ThreadData, never, Scalars['DateTime']>
+    title: Resolver<ThreadData, never, string>
+    archived: Resolver<ThreadData, never, boolean>
+    trashed: Resolver<ThreadData, never, boolean>
+    object: Resolver<ThreadData, never, UuidPayload>
+    comments: Resolver<
+      ThreadData,
+      ThreadCommentsArgs,
+      Connection<CommentPayload>
+    >
+  }
+  Comment: {
+    createdAt: Resolver<CommentPayload, never, Scalars['DateTime']>
+    author: Resolver<CommentPayload, never, UserPayload>
+  }
+}
 
 export interface CommentPayload {
   id: number
@@ -36,11 +68,4 @@ export interface CommentPayload {
   content: string
   parentId: number
   childrenIds: number[]
-}
-
-export interface CommentResolvers {
-  Comment: {
-    createdAt: Resolver<CommentPayload, never, Scalars['DateTime']>
-    author: Resolver<CommentPayload, never, UserPayload>
-  }
 }

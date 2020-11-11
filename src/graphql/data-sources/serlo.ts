@@ -38,9 +38,9 @@ import {
   NavigationPayload,
   NodeData,
   NotificationsPayload,
+  ThreadsPayload,
 } from '../schema'
 import { SubscriptionsPayload } from '../schema/subscription'
-import { ThreadsPayload } from '../schema/threads'
 import { Service } from '../schema/types'
 import { CacheableDataSource } from './cacheable-data-source'
 

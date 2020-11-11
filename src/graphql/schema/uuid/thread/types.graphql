@@ -1,3 +1,18 @@
+type Thread {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  title: String!
+  archived: Boolean!
+  trashed: Boolean!
+  object: AbstractUuid!
+  comments(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CommentConnection!
+}
+
 type Comment implements AbstractUuid {
   id: Int!
   trashed: Boolean!
@@ -13,6 +28,23 @@ type Comment implements AbstractUuid {
     first: Int
     last: Int
   ): ThreadsConnection!
+}
+
+
+type ThreadsConnection {
+  edges: [ThreadsCursor!]!
+  nodes: [Thread!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type ThreadsCursor {
+  cursor: String!
+  node: Thread!
+}
+
+type UnsupportedThread {
+  id: Int!
 }
 
 type UnsupportedComment {
