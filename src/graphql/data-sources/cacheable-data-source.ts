@@ -25,6 +25,9 @@ import * as R from 'ramda'
 
 import { Environment } from '../environment'
 
+export const HOUR = 60 * 60
+export const DAY = 24 * HOUR
+
 export abstract class CacheableDataSource extends RESTDataSource {
   constructor(protected environment: Environment) {
     super()

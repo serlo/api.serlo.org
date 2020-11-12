@@ -28,7 +28,7 @@ import * as R from 'ramda'
 
 import { ErrorEvent } from '../../error-event'
 import { Environment } from '../environment'
-import { CacheableDataSource } from './cacheable-data-source'
+import { CacheableDataSource, HOUR } from './cacheable-data-source'
 
 export enum MajorDimension {
   Rows = 'ROWS',
@@ -79,7 +79,7 @@ export class GoogleSheetApi extends CacheableDataSource {
     return await this.getFromCache({
       key,
       update: () => this.getValuesWithoutCache({ ...args, majorDimension }),
-      maxAge: 60 * 60,
+      maxAge: 1 * HOUR,
     })
   }
 
