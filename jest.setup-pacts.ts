@@ -99,8 +99,4 @@ declare global {
       client: import('./__tests__/__utils__').Client
     }
   }
-
-  interface URL {
-    readonly pathname: string
-  }
 }
