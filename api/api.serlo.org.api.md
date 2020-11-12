@@ -449,7 +449,7 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type Event = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
+type Event_2 = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
     __typename?: 'Event';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -462,6 +462,8 @@ export type Event = AbstractUuid & AbstractRepository & AbstractEntity & Abstrac
     taxonomyTerms: TaxonomyTermConnection;
 };
 
+export { Event_2 as Event }
+
 // @public (undocumented)
 export type EventRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
     __typename?: 'EventRevision';
@@ -469,7 +471,7 @@ export type EventRevision = AbstractUuid & AbstractRevision & AbstractEntityRevi
     author: User;
     trashed: Scalars['Boolean'];
     date: Scalars['DateTime'];
-    repository: Event;
+    repository: Event_2;
     title: Scalars['String'];
     content: Scalars['String'];
     changes: Scalars['String'];
@@ -792,18 +794,20 @@ export type NavigationPathArgs = {
 };
 
 // @public (undocumented)
-export type Notification = {
+type Notification_2 = {
     __typename?: 'Notification';
     id: Scalars['Int'];
     unread: Scalars['Boolean'];
     event: AbstractNotificationEvent;
 };
 
+export { Notification_2 as Notification }
+
 // @public (undocumented)
 export type NotificationConnection = {
     __typename?: 'NotificationConnection';
     edges: Array<NotificationEdge>;
-    nodes: Array<Notification>;
+    nodes: Array<Notification_2>;
     totalCount: Scalars['Int'];
     pageInfo: PageInfo;
 };
@@ -812,7 +816,7 @@ export type NotificationConnection = {
 export type NotificationEdge = {
     __typename?: 'NotificationEdge';
     cursor: Scalars['String'];
-    node: Notification;
+    node: Notification_2;
 };
 
 // @public (undocumented)
