@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { rest } from 'msw'
+import { MockedRequest, ResponseResolver, rest, restContext } from 'msw'
 
 import { LicensePayload } from '../../src/graphql/schema/license'
 import { NotificationEventPayload } from '../../src/graphql/schema/notification'
@@ -71,7 +71,7 @@ export function createUuidHandler(uuid: UuidPayload) {
 }
 
 export function createJsonHandler({
-  instance = Instance.De,
+  instance,
   path,
   body,
 }: {
@@ -79,12 +79,27 @@ export function createJsonHandler({
   path: string
   body: unknown
 }) {
-  return rest.get(
-    `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
-    (_req, res, ctx) => {
+  return createApiHandler({
+    instance,
+    path,
+    resolver(_req, res, ctx) {
       return res(ctx.status(200), ctx.json(body as Record<string, unknown>))
-    }
-  )
+    },
+  })
+}
+
+// TODO: Use this function in #umbrella-threads
+export function createApiHandler({
+  instance = Instance.De,
+  path,
+  resolver,
+}: {
+  instance?: Instance
+  path: string
+  resolver: ResponseResolver<MockedRequest, typeof restContext>
+}) {
+  const url = `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`
+  return rest.get(url, resolver)
 }
 
 export function createSpreadsheetHandler({

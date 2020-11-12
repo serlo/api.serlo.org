@@ -35,11 +35,12 @@ import {
   Navigation,
   NavigationPayload,
   NodeData,
+  NotificationEventPayload,
   NotificationsPayload,
 } from '../schema'
 import { SubscriptionsPayload } from '../schema/subscription'
 import { Service } from '../schema/types'
-import { CacheableDataSource, DAY, HOUR } from './cacheable-data-source'
+import { CacheableDataSource, DAY, HOUR, MINUTE } from './cacheable-data-source'
 
 export class SerloDataSource extends CacheableDataSource {
   public async getActiveAuthorIds(): Promise<number[]> {
@@ -68,6 +69,13 @@ export class SerloDataSource extends CacheableDataSource {
       path: `/api/alias${cleanPath}`,
       instance,
       maxAge: 1 * HOUR,
+    })
+  }
+
+  public async getEvents() {
+    return this.cacheAwareGetList<NotificationEventPayload>({
+      path: '/api/events',
+      maxAge: 2 * MINUTE,
     })
   }
 
@@ -243,6 +251,22 @@ export class SerloDataSource extends CacheableDataSource {
     )
   }
 
+  private async cacheAwareGetList<T extends { id: number }>({
+    path,
+    instance,
+    maxAge,
+  }: {
+    path: string
+    instance?: Instance
+    maxAge?: number
+  }): Promise<T[]> {
+    return this.getFromCache({
+      key: this.getCacheKey(path, instance, 'list'),
+      update: (current) => this.getFromSerloList({ path, instance, current }),
+      maxAge,
+    })
+  }
+
   private async cacheAwareGet<T>({
     path,
     instance,
@@ -259,16 +283,49 @@ export class SerloDataSource extends CacheableDataSource {
     })
   }
 
+  private async getFromSerloList<T extends { id: number }>({
+    path,
+    instance,
+    current = [],
+  }: {
+    current?: T[]
+    path: string
+    instance?: Instance
+  }): Promise<T[]> {
+    const lastElement = R.last(current)
+    const query =
+      lastElement === undefined
+        ? ({} as Record<string, string>)
+        : { after: lastElement.id.toString() }
+    const update = await this.getFromSerlo<ListPayload<T>>({
+      path,
+      instance,
+      query,
+    })
+
+    if (update.nodes.length === 0) {
+      return current
+    } else {
+      return this.getFromSerloList({
+        path,
+        instance,
+        current: current.concat(update.nodes),
+      })
+    }
+  }
+
   private async getFromSerlo<T>({
     path,
     instance = Instance.De,
+    query = {},
   }: {
     path: string
     instance?: Instance
+    query?: Record<string, string>
   }): Promise<T> {
     return await super.get<T>(
       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
-      {},
+      query,
       {
         headers: {
           Authorization: `Serlo Service=${getToken()}`,
@@ -277,8 +334,13 @@ export class SerloDataSource extends CacheableDataSource {
     )
   }
 
-  private getCacheKey(path: string, instance: Instance = Instance.De) {
-    return `${instance}.serlo.org${path}`
+  private getCacheKey(
+    path: string,
+    instance: Instance = Instance.De,
+    prefix = ''
+  ) {
+    const delim = prefix.length === 0 ? '' : ':'
+    return `${prefix}${delim}${instance}.serlo.org${path}`
   }
 
   public async getAllCacheKeys(): Promise<string[]> {
@@ -312,4 +374,8 @@ function getToken() {
     audience: Service.Serlo,
     issuer: 'api.serlo.org',
   })
+}
+
+interface ListPayload<T> {
+  nodes: T[]
 }

@@ -25,6 +25,7 @@ import {
   Notification,
   QueryNotificationEventArgs,
   QueryNotificationsArgs,
+  QueryEventsArgs,
 } from '../../../types'
 import { Connection } from '../connection'
 import {
@@ -111,6 +112,7 @@ export interface NotificationResolvers {
     event: Resolver<NotificationPayload, never, NotificationEventPayload | null>
   }
   Query: {
+    events: QueryResolver<QueryEventsArgs, Connection<NotificationEventPayload>>
     notifications: QueryResolver<
       QueryNotificationsArgs,
       Connection<NotificationPayload>

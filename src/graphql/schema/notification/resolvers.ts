@@ -44,6 +44,13 @@ export const resolvers: NotificationResolvers = {
     },
   },
   Query: {
+    async events(_parent, payload, { dataSources }) {
+      return resolveConnection({
+        nodes: await dataSources.serlo.getEvents(),
+        payload,
+        createCursor: (event) => event.id.toString(),
+      })
+    },
     async notifications(
       _parent,
       { unread, ...cursorPayload },

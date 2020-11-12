@@ -36,4 +36,10 @@ declare global {
       server: ReturnType<typeof import('msw/node').setupServer>
     }
   }
+
+  interface URL {
+    readonly searchParams: {
+      get(key: string): string | null
+    }
+  }
 }

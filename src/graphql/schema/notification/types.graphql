@@ -12,6 +12,12 @@ interface AbstractNotificationEvent {
 }
 
 extend type Query {
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): AbstractNotificationEventConnection!
   notifications(
     after: String
     before: String
@@ -36,4 +42,16 @@ type NotificationConnection {
 type NotificationEdge {
   cursor: String!
   node: Notification!
+}
+
+type AbstractNotificationEventConnection {
+  edges: [AbstractNotificationEventEdge!]!
+  nodes: [AbstractNotificationEvent!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type AbstractNotificationEventEdge {
+  cursor: String!
+  node: AbstractNotificationEvent!
 }
