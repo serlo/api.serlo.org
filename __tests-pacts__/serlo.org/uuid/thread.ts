@@ -20,20 +20,12 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Matchers } from '@pact-foundation/pact'
-import { gql } from 'apollo-server'
 import fetch from 'node-fetch'
 
 import { article } from '../../../__fixtures__/uuid'
-import {
-  comment1,
-  getCommentDataWithoutSubresolvers,
-} from '../../../__fixtures__/uuid/thread'
+import { comment1 } from '../../../__fixtures__/uuid/thread'
 import { CommentPayload } from '../../../src/graphql/schema/uuid/thread/types'
-import {
-  addJsonInteraction,
-  addUuidInteraction,
-  assertSuccessfulGraphQLQuery,
-} from '../../__utils__'
+import { addJsonInteraction, addUuidInteraction } from '../../__utils__'
 
 test('Threads', async () => {
   // This is a noop test that just adds the interaction to the contract
@@ -51,6 +43,7 @@ test('Threads', async () => {
 })
 
 test('Comment', async () => {
+  // This is a noop test that just adds the interaction to the contract
   await addUuidInteraction<CommentPayload>({
     __typename: comment1.__typename,
     id: comment1.id,
@@ -64,26 +57,5 @@ test('Comment', async () => {
     parentId: Matchers.integer(comment1.parentId),
     childrenIds: Matchers.eachLike(Matchers.integer(1)),
   })
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query comments($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          ... on Comment {
-            __typename
-            trashed
-            id
-            content
-            alias
-            title
-            archived
-          }
-        }
-      }
-    `,
-    variables: comment1,
-    data: {
-      uuid: getCommentDataWithoutSubresolvers(comment1),
-    },
-  })
+  await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/uuid/${comment1.id}`)
 })

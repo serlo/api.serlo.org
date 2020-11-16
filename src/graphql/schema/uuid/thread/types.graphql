@@ -30,7 +30,6 @@ type Comment implements AbstractUuid {
   ): ThreadsConnection!
 }
 
-
 type ThreadsConnection {
   edges: [ThreadsCursor!]!
   nodes: [Thread!]!

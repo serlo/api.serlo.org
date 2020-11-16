@@ -32,7 +32,7 @@ export interface ThreadsPayload {
 export const ThreadDataType = 'Thread'
 
 export interface ThreadData {
-  __typename: DiscriminatorType.Thread
+  __typename: typeof ThreadDataType
   commentPayloads: CommentPayload[]
 }
 
