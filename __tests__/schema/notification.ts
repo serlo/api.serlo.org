@@ -641,7 +641,7 @@ describe('notificationEvent', () => {
       })
     })
 
-    test('by id (w/ thread)', async () => {
+    test('by id (w/ comment)', async () => {
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query notificationEvent($id: Int!) {
