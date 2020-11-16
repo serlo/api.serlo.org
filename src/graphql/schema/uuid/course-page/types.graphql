@@ -1,6 +1,12 @@
 type CoursePage implements AbstractUuid & AbstractRepository & AbstractEntity {
   id: Int!
   trashed: Boolean!
+  threads(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ThreadsConnection!
   instance: Instance!
   alias: String
   date: DateTime!
@@ -20,6 +26,12 @@ type CoursePageRevision implements AbstractUuid & AbstractRevision & AbstractEnt
   id: Int!
   author: User!
   trashed: Boolean!
+  threads(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ThreadsConnection!
   date: DateTime!
   repository: CoursePage!
   title: String!

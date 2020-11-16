@@ -1,6 +1,12 @@
 type Applet implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild {
   id: Int!
   trashed: Boolean!
+  threads(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ThreadsConnection!
   instance: Instance!
   alias: String
   date: DateTime!
@@ -25,6 +31,12 @@ type AppletRevision implements AbstractUuid & AbstractRevision & AbstractEntityR
   id: Int!
   author: User!
   trashed: Boolean!
+  threads(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ThreadsConnection!
   date: DateTime!
   repository: Applet!
   url: String!

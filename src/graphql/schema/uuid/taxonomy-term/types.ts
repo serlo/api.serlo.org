@@ -23,7 +23,11 @@ import { TaxonomyTermChildrenArgs, TaxonomyTerm } from '../../../../types'
 import { Connection } from '../../connection'
 import { Resolver } from '../../types'
 import { NavigationChildResolvers } from '../abstract-navigation-child'
-import { AbstractUuidPayload, DiscriminatorType } from '../abstract-uuid'
+import {
+  AbstractUuidPayload,
+  DiscriminatorType,
+  UuidResolvers,
+} from '../abstract-uuid'
 import { AliasResolvers } from '../alias'
 
 export interface TaxonomyTermPayload
@@ -43,5 +47,6 @@ export interface TaxonomyTermResolvers {
       Connection<AbstractUuidPayload>
     >
   } & AliasResolvers<TaxonomyTermPayload> &
-    NavigationChildResolvers<TaxonomyTermPayload>
+    NavigationChildResolvers<TaxonomyTermPayload> &
+    UuidResolvers
 }
