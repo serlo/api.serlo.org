@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { AuthenticationError } from 'apollo-server'
+import * as R from 'ramda'
 
 import { resolveConnection } from '../connection'
 import { Context } from '../types'
@@ -45,9 +46,20 @@ export const resolvers: NotificationResolvers = {
   },
   Query: {
     async events(_parent, payload, { dataSources }) {
+      const maxReturn = 100
+      let { first, last } = payload
+
+      if (!R.isNil(first)) {
+        first = Math.min(maxReturn, first)
+      } else if (!R.isNil(last)) {
+        last = Math.min(maxReturn, last)
+      } else {
+        first = maxReturn
+      }
+
       return resolveConnection({
         nodes: await dataSources.serlo.getEvents(),
-        payload,
+        payload: { ...payload, first, last },
         createCursor: (event) => event.id.toString(),
       })
     },

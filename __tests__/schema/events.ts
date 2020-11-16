@@ -82,36 +82,97 @@ const eventRepository: Record<
   [NotificationEventType.SetTaxonomyParent]: setTaxonomyTermNotificationEvent,
   [NotificationEventType.SetThreadState]: setThreadStateNotificationEvent,
 }
-const events = R.values(eventRepository).map((event, id) => {
-  return { ...event, id }
-})
+const allEvents = updateIds(R.values(eventRepository))
 
-test('without filter', async () => {
-  setupEvents({ events, maxReturn: 5 })
+describe('endpoint "events"', () => {
+  test('returns connection of events', async () => {
+    setupEvents(allEvents, { maxReturn: 5 })
 
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query events {
-        events {
-          nodes {
-            __typename
-            id
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query events {
+          events {
+            nodes {
+              __typename
+              id
+            }
           }
         }
-      }
-    `,
-    client,
-    data: { events: { nodes: events.map(getTypenameAndId) } },
+      `,
+      client,
+      data: { events: { nodes: allEvents.map(getTypenameAndId) } },
+    })
+  })
+
+  describe('number of returned events is bounded to 100', () => {
+    let events: NotificationEventPayload[]
+
+    beforeEach(() => {
+      events = updateIds(R.range(0, 10).flatMap(() => allEvents))
+      setupEvents(events)
+    })
+
+    test('when first is defined', async () => {
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query events {
+            events(first: 150) {
+              nodes {
+                __typename
+                id
+              }
+            }
+          }
+        `,
+        client,
+        data: { events: { nodes: events.slice(0, 100).map(getTypenameAndId) } },
+      })
+    })
+
+    test('when last is defined', async () => {
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query events {
+            events(last: 150) {
+              nodes {
+                __typename
+                id
+              }
+            }
+          }
+        `,
+        client,
+        data: { events: { nodes: events.slice(-100).map(getTypenameAndId) } },
+      })
+    })
+
+    test('when first and last is not defined', async () => {
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query events {
+            events {
+              nodes {
+                __typename
+                id
+              }
+            }
+          }
+        `,
+        client,
+        data: { events: { nodes: events.slice(0, 100).map(getTypenameAndId) } },
+      })
+    })
   })
 })
 
-function setupEvents({
-  events,
-  maxReturn,
-}: {
-  events: NotificationEventPayload[]
-  maxReturn: number
-}) {
+function setupEvents(
+  events: NotificationEventPayload[],
+  options?: {
+    maxReturn?: number
+  }
+) {
+  const maxReturn = options?.maxReturn ?? events.length / 2 + 1
+
   global.server.use(
     createApiHandler({
       path: '/api/events',
@@ -136,4 +197,8 @@ function setupEvents({
 
 function getTypenameAndId(event: NotificationEventPayload) {
   return R.pick(['__typename', 'id'], event)
+}
+
+function updateIds(events: NotificationEventPayload[]) {
+  return events.map((event, id) => R.assoc('id', id, event))
 }
