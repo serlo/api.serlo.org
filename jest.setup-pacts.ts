@@ -25,7 +25,6 @@ import { setupServer } from 'msw/node'
 import fetch from 'node-fetch'
 import path from 'path'
 import rimraf from 'rimraf'
-import { Url } from 'url'
 import util from 'util'
 
 import { createTestClient } from './__tests__/__utils__'
@@ -41,16 +40,16 @@ const server = setupServer(
   rest.get(
     new RegExp(process.env.SERLO_ORG_HOST.replace('.', '\\.')),
     async (req, res, ctx) => {
-      const url = req.url as Url
-      const pactRes = await fetch(`http://localhost:${port}/${url.pathname!}`)
+      const url = req.url
+      const pactRes = await fetch(`http://localhost:${port}/${url.pathname}`)
       return res(ctx.status(pactRes.status), ctx.json(await pactRes.json()))
     }
   ),
   rest.post(
     new RegExp(process.env.SERLO_ORG_HOST.replace('.', '\\.')),
     async (req, res, ctx) => {
-      const url = req.url as Url
-      const pactRes = await fetch(`http://localhost:${port}/${url.pathname!}`, {
+      const url = req.url
+      const pactRes = await fetch(`http://localhost:${port}/${url.pathname}`, {
         method: 'POST',
         body:
           typeof req.body === 'object' ? JSON.stringify(req.body) : req.body,
