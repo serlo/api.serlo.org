@@ -1,9 +1,63 @@
-# TODO: this should be a real thread in the future
+type Thread {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  title: String!
+  archived: Boolean!
+  trashed: Boolean!
+  object: AbstractUuid!
+  comments(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CommentConnection!
+}
+
+type Comment implements AbstractUuid {
+  id: Int!
+  trashed: Boolean!
+  alias: String
+  title: String!
+  content: String!
+  archived: Boolean!
+  createdAt: DateTime!
+  author: User!
+  threads(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ThreadsConnection!
+}
+
+type ThreadsConnection {
+  edges: [ThreadsCursor!]!
+  nodes: [Thread!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type ThreadsCursor {
+  cursor: String!
+  node: Thread!
+}
+
 type UnsupportedThread {
   id: Int!
 }
 
-# TODO: this should be a real comment in the future
 type UnsupportedComment {
   id: Int!
+}
+
+type CommentConnection {
+  edges: [CommentEdge!]!
+  nodes: [Comment!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type CommentEdge {
+  cursor: String!
+  node: Comment!
 }

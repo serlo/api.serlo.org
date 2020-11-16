@@ -22,7 +22,7 @@
 import { Page, PageRevision } from '../../../../types'
 import { NavigationChildResolvers } from '../abstract-navigation-child'
 import { RepositoryResolvers, RevisionResolvers } from '../abstract-repository'
-import { DiscriminatorType } from '../abstract-uuid'
+import { DiscriminatorType, UuidResolvers } from '../abstract-uuid'
 
 export interface PagePayload extends Omit<Page, keyof PageResolvers['Page']> {
   __typename: DiscriminatorType.Page
@@ -41,6 +41,8 @@ export interface PageRevisionPayload
 
 export interface PageResolvers {
   Page: RepositoryResolvers<PagePayload, PageRevisionPayload> &
-    NavigationChildResolvers<PagePayload>
-  PageRevision: RevisionResolvers<PagePayload, PageRevisionPayload>
+    NavigationChildResolvers<PagePayload> &
+    UuidResolvers
+  PageRevision: RevisionResolvers<PagePayload, PageRevisionPayload> &
+    UuidResolvers
 }

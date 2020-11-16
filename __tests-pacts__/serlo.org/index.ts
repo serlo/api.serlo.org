@@ -50,3 +50,6 @@ describe('GET /api/user/*', () => {
 describe('GET /api/uuid/:id', () => {
   require('./uuid')
 })
+describe('GET /api/threads/:id', () => {
+  require('./threads')
+})

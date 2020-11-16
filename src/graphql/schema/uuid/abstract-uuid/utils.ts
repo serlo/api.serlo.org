@@ -22,7 +22,9 @@
 import * as R from 'ramda'
 
 import { EntityRevisionType, EntityType } from '../abstract-entity'
-import { AbstractUuidPayload, DiscriminatorType } from './types'
+import { AbstractUuidPayload, UuidResolvers } from '../abstract-uuid'
+import { createThreadResolvers } from '../thread/utils'
+import { DiscriminatorType } from './types'
 
 const validTypes = [
   ...Object.values(DiscriminatorType),
@@ -32,4 +34,8 @@ const validTypes = [
 
 export function isUnsupportedUuid(payload: AbstractUuidPayload) {
   return !R.includes(payload.__typename, validTypes)
+}
+
+export function createUuidResolvers(): UuidResolvers {
+  return createThreadResolvers()
 }

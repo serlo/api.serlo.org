@@ -1,6 +1,12 @@
 type User implements AbstractUuid {
   id: Int!
   trashed: Boolean!
+  threads(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ThreadsConnection!
   alias: String!
   username: String!
   date: DateTime!
