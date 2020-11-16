@@ -20,10 +20,25 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { DiscriminatorType } from '../../src/graphql/schema/uuid/abstract-uuid'
-import { CommentPayload } from '../../src/graphql/schema/uuid/thread/types'
+import { CommentPayload } from '../../src/graphql/schema/uuid/thread'
 import { UnsupportedComment, UnsupportedThread } from '../../src/types'
 import { article } from './article'
 import { user, user2 } from './user'
+
+export const comment: CommentPayload = {
+  id: 27778,
+  trashed: false,
+  alias: null,
+  __typename: DiscriminatorType.Comment,
+  authorId: user.id,
+  title: 'Applets vertauscht?',
+  date: '2014-08-25T12:51:02+02:00',
+  archived: false,
+  content:
+    'Ich glaube die Applets zur allgemeinen und Scheitelpunktform müssen die Plätze tauschen ;)',
+  parentId: article.id,
+  childrenIds: [],
+}
 
 export const comment1: CommentPayload = {
   id: 41443,
