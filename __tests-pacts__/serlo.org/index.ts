@@ -51,5 +51,5 @@ describe('GET /api/uuid/:id', () => {
   require('./uuid')
 })
 describe('GET /api/threads/:id', () => {
-  require('./uuid/thread')
+  require('./threads')
 })
