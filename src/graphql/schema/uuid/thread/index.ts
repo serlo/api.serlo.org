@@ -26,4 +26,3 @@ import typeDefs from './types.graphql'
 export * from './types'
 
 export const threadSchema: Schema = { resolvers, typeDefs: [typeDefs] }
-export const commentSchema: Schema = { resolvers, typeDefs: [typeDefs] }

@@ -38,7 +38,7 @@ import { groupedExerciseSchema } from './grouped-exercise'
 import { pageSchema } from './page'
 import { solutionSchema } from './solution'
 import { taxonomyTermSchema } from './taxonomy-term'
-import { commentSchema, threadSchema } from './thread'
+import { threadSchema } from './thread'
 import { userSchema } from './user'
 import { videoSchema } from './video'
 
@@ -74,7 +74,6 @@ export const uuidSchema = mergeSchemas(
   aliasSchema,
   appletSchema,
   articleSchema,
-  commentSchema,
   courseSchema,
   coursePageSchema,
   eventSchema,
