@@ -86,7 +86,7 @@ const allEvents = updateIds(R.values(eventRepository))
 
 describe('endpoint "events"', () => {
   test('returns connection of events', async () => {
-    setupEvents(allEvents, { maxReturn: 5 })
+    setupEvents(allEvents, { maxReturn: allEvents.length / 4 })
 
     await assertSuccessfulGraphQLQuery({
       query: gql`
@@ -101,6 +101,35 @@ describe('endpoint "events"', () => {
       `,
       client,
       data: { events: { nodes: allEvents.map(getTypenameAndId) } },
+    })
+  })
+
+  test('with filter "user"', async () => {
+    const events = updateIds(
+      R.concat(
+        allEvents.map(R.assoc('actorId', 42)),
+        allEvents.map(R.assoc('actorId', 23))
+      )
+    )
+    setupEvents(events)
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query events {
+          events(userId: 42) {
+            nodes {
+              __typename
+              id
+            }
+          }
+        }
+      `,
+      client,
+      data: {
+        events: {
+          nodes: events.slice(0, allEvents.length).map(getTypenameAndId),
+        },
+      },
     })
   })
 

@@ -24,6 +24,7 @@ import * as R from 'ramda'
 
 import { resolveConnection } from '../connection'
 import { Context } from '../types'
+import { isDefined } from '../utils'
 import {
   NotificationEventPayload,
   NotificationPayload,
@@ -57,8 +58,16 @@ export const resolvers: NotificationResolvers = {
         first = maxReturn
       }
 
+      const unfilteredEvents = await dataSources.serlo.getEvents()
+      const events = unfilteredEvents.filter((event) => {
+        if (isDefined(payload.userId) && payload.userId !== event.actorId)
+          return false
+
+        return true
+      })
+
       return resolveConnection({
-        nodes: await dataSources.serlo.getEvents(),
+        nodes: events,
         payload: { ...payload, first, last },
         createCursor: (event) => event.id.toString(),
       })
