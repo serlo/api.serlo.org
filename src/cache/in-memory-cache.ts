@@ -35,6 +35,11 @@ export function createInMemoryCache(): Cache {
     async set(key, value) {
       cache[key] = value
     },
+    async setAndReturnPreviousValue<T>(key: string, value: T) {
+      const previousValue = await this.get<T>(key)
+      await this.set(key, value)
+      return previousValue
+    },
     // eslint-disable-next-line @typescript-eslint/require-await
     async remove(key: string) {
       delete cache[key]

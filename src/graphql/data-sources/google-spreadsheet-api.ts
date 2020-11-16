@@ -76,7 +76,7 @@ export class GoogleSheetApi extends CacheableDataSource {
     const majorDimension = args.majorDimension ?? MajorDimension.Rows
     const key = `spreadsheet-${spreadsheetId}-${range}-${majorDimension}`
 
-    return await this.getFromCache({
+    return await this.getCacheValue({
       key,
       update: () => this.getValuesWithoutCache({ ...args, majorDimension }),
       maxAge: 1 * HOUR,
@@ -126,7 +126,7 @@ export class GoogleSheetApi extends CacheableDataSource {
     )(result)
   }
 
-  public async updateCache(key: string) {
+  public async updateCacheValue(key: string) {
     const sslen = 'spreadsheet-'.length
     const googleIdLength = 44
     const spreadsheetId = key.slice(sslen, sslen + googleIdLength)
@@ -134,7 +134,7 @@ export class GoogleSheetApi extends CacheableDataSource {
       .slice(sslen + googleIdLength)
       .split('-')
 
-    await this.setCache({
+    await this.setCacheValue({
       key,
       update: () =>
         this.getValuesWithoutCache({
