@@ -2149,7 +2149,7 @@ describe('notificationEvent', () => {
     beforeEach(() => {
       global.server.use(
         createNotificationEventHandler({
-          // eslint-disable-next-line @typescript-eslint/ban-ts-thread
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-expect-error We assume here that we get an invalid type name
           __typename: 'SomeFancyNotificationEvent',
           id: 1337,
