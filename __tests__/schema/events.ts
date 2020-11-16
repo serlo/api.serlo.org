@@ -51,6 +51,7 @@ import {
   assertSuccessfulGraphQLQuery,
   createApiHandler,
 } from '../__utils__'
+import {Instance} from '../../src/types'
 
 let client: Client
 
@@ -104,7 +105,36 @@ describe('endpoint "events"', () => {
     })
   })
 
-  test('with filter "user"', async () => {
+  test('with filter "instance"', async () => {
+    const events = updateIds(
+      R.concat(
+        allEvents.map(R.assoc('instance', Instance.En)),
+        allEvents.map(R.assoc('instance', Instance.De))
+      )
+    )
+    setupEvents(events)
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query events {
+          events(instance: en) {
+            nodes {
+              __typename
+              id
+            }
+          }
+        }
+      `,
+      client,
+      data: {
+        events: {
+          nodes: events.slice(0, allEvents.length).map(getTypenameAndId),
+        },
+      },
+    })
+  })
+
+  test('with filter "userId"', async () => {
     const events = updateIds(
       R.concat(
         allEvents.map(R.assoc('actorId', 42)),
