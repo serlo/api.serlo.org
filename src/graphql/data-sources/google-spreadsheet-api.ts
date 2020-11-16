@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
-import { either, option, pipeable } from 'fp-ts'
+import { either as E, pipeable } from 'fp-ts'
 import * as t from 'io-ts'
 import { nonEmptyArray } from 'io-ts-types/lib/nonEmptyArray'
 import { failure } from 'io-ts/lib/PathReporter'
@@ -28,7 +28,7 @@ import * as R from 'ramda'
 
 import { ErrorEvent } from '../../error-event'
 import { Environment } from '../environment'
-import { CacheableDataSource } from './cacheable-data-source'
+import { CacheableDataSource, HOUR } from './cacheable-data-source'
 
 export enum MajorDimension {
   Rows = 'ROWS',
@@ -49,24 +49,14 @@ const ValueRange = t.intersection([
 ])
 type ValueRange = t.TypeOf<typeof ValueRange>
 
+interface Arguments {
+  spreadsheetId: string
+  range: string
+  majorDimension?: MajorDimension
+}
+
 export class GoogleSheetApi extends CacheableDataSource {
   private apiKey: string
-  private environment: Environment
-
-  public async updateCache(key: string) {
-    const sslen = 'spreadsheet-'.length
-    const googleIdLength = 44
-    const spreadsheetId = key.slice(sslen, sslen + googleIdLength)
-    const [, range, majorDimension] = key
-      .slice(sslen + googleIdLength)
-      .split('-')
-    await this.getValues({
-      spreadsheetId,
-      range,
-      majorDimension: majorDimension as MajorDimension,
-      ignoreCache: true,
-    })
-  }
 
   constructor({
     apiKey,
@@ -75,32 +65,29 @@ export class GoogleSheetApi extends CacheableDataSource {
     apiKey: string
     environment: Environment
   }) {
-    super()
+    super(environment)
 
     this.apiKey = apiKey
-    this.environment = environment
     this.baseURL = 'https://sheets.googleapis.com/v4/spreadsheets/'
   }
 
-  async getValues(args: {
-    spreadsheetId: string
-    range: string
-    majorDimension?: MajorDimension
-    ignoreCache?: boolean
-  }): Promise<either.Either<ErrorEvent, CellValues>> {
-    const { spreadsheetId, range, ignoreCache } = args
+  async getValues(args: Arguments): Promise<E.Either<ErrorEvent, CellValues>> {
+    const { spreadsheetId, range } = args
     const majorDimension = args.majorDimension ?? MajorDimension.Rows
-    const cacheKey = this.getCacheKey({ spreadsheetId, range, majorDimension })
+    const key = `spreadsheet-${spreadsheetId}-${range}-${majorDimension}`
 
-    if (!ignoreCache) {
-      const cachedResult = await this.environment.cache.get<CellValues>(
-        cacheKey
-      )
-      if (option.isSome(cachedResult)) {
-        return either.right(cachedResult.value)
-      }
-    }
-    let result: either.Either<ErrorEvent, CellValues>
+    return await this.getFromCache({
+      key,
+      update: () => this.getValuesWithoutCache({ ...args, majorDimension }),
+      maxAge: 1 * HOUR,
+    })
+  }
+
+  private async getValuesWithoutCache(
+    args: Required<Arguments>
+  ): Promise<E.Either<ErrorEvent, CellValues>> {
+    const { spreadsheetId, range, majorDimension } = args
+    let result: E.Either<ErrorEvent, CellValues>
 
     try {
       const response = (await this.get(`${spreadsheetId}/values/${range}`, {
@@ -111,49 +98,50 @@ export class GoogleSheetApi extends CacheableDataSource {
       result = pipeable.pipe(
         response,
         (res) => ValueRange.decode(res),
-        either.mapLeft((errors) => {
+        E.mapLeft((errors) => {
           return {
             message: `invalid response while accessing spreadsheet "${spreadsheetId}"`,
             contexts: { response, validationErrors: failure(errors) },
           }
         }),
-        either.map((v) => v.values),
-        either.chain(
-          either.fromNullable({
+        E.map((v) => v.values),
+        E.chain(
+          E.fromNullable({
             message: `range "${range}" of spreadsheet "${spreadsheetId}" is empty`,
           })
         )
       )
-
-      if (either.isRight(result)) {
-        await this.environment.cache.set(cacheKey, result.right, {
-          ttl: 60 * 60,
-        })
-      }
     } catch (error) {
       const exception =
         error instanceof Error ? error : new Error(JSON.stringify(error))
 
-      result = either.left({
+      result = E.left({
         message: `an error occured while accessing spreadsheet "${spreadsheetId}"`,
         exception,
       })
     }
 
-    return either.mapLeft((event: ErrorEvent) =>
+    return E.mapLeft((event: ErrorEvent) =>
       R.mergeDeepRight({ contexts: { args } }, event)
     )(result)
   }
 
-  private getCacheKey({
-    spreadsheetId,
-    range,
-    majorDimension,
-  }: {
-    spreadsheetId: string
-    range: string
-    majorDimension: MajorDimension
-  }): string {
-    return `spreadsheet-${spreadsheetId}-${range}-${majorDimension}`
+  public async updateCache(key: string) {
+    const sslen = 'spreadsheet-'.length
+    const googleIdLength = 44
+    const spreadsheetId = key.slice(sslen, sslen + googleIdLength)
+    const [, range, majorDimension] = key
+      .slice(sslen + googleIdLength)
+      .split('-')
+
+    await this.setCache({
+      key,
+      update: () =>
+        this.getValuesWithoutCache({
+          spreadsheetId,
+          range,
+          majorDimension: majorDimension as MajorDimension,
+        }),
+    })
   }
 }
