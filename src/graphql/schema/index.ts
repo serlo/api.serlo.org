@@ -47,6 +47,6 @@ export const schema = mergeSchemas(
   jsonSchema,
   licenseSchema,
   notificationSchema,
-  subscriptionSchema,
-  uuidSchema
+  uuidSchema,
+  subscriptionSchema
 )

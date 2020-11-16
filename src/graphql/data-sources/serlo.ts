@@ -37,6 +37,7 @@ import {
   NodeData,
   NotificationEventPayload,
   NotificationsPayload,
+  ThreadsPayload,
 } from '../schema'
 import { SubscriptionsPayload } from '../schema/subscription'
 import { Service } from '../schema/types'
@@ -249,6 +250,10 @@ export class SerloDataSource extends CacheableDataSource {
         },
       }
     )
+  }
+
+  public async getThreadIds({ id }: { id: number }): Promise<ThreadsPayload> {
+    return this.cacheAwareGet({ path: `/api/threads/${id}` })
   }
 
   private async cacheAwareGetList<T extends { id: number }>({

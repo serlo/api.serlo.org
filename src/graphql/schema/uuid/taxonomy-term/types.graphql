@@ -15,6 +15,12 @@ enum TaxonomyTermType {
 type TaxonomyTerm implements AbstractUuid & AbstractNavigationChild {
   id: Int!
   trashed: Boolean!
+  threads(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ThreadsConnection!
   type: TaxonomyTermType!
   instance: Instance!
   alias: String

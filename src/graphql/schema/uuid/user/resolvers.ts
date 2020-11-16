@@ -19,9 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { pipeable, either } from 'fp-ts'
+import { pipeable, either as E } from 'fp-ts'
 
-import { AbstractUuidPayload, encodePath, UserPayload } from '..'
 import { ErrorEvent } from '../../../../error-event'
 import {
   MajorDimension,
@@ -30,7 +29,9 @@ import {
 } from '../../../data-sources/google-spreadsheet-api'
 import { ConnectionPayload, resolveConnection } from '../../connection'
 import { Context } from '../../types'
-import { UserResolvers, isUserPayload } from './types'
+import { AbstractUuidPayload, createUuidResolvers } from '../abstract-uuid'
+import { encodePath } from '../alias'
+import { UserResolvers, isUserPayload, UserPayload } from './types'
 
 export const resolvers: UserResolvers = {
   Query: {
@@ -57,6 +58,7 @@ export const resolvers: UserResolvers = {
     },
   },
   User: {
+    ...createUuidResolvers(),
     alias(user) {
       return Promise.resolve(encodePath(`/user/profile/${user.username}`))
     },
@@ -108,11 +110,11 @@ async function activeDonorIDs(googleSheetApi: GoogleSheetApi) {
 }
 
 function extractIDsFromFirstColumn(
-  cells: either.Either<ErrorEvent, CellValues>
+  cells: E.Either<ErrorEvent, CellValues>
 ): number[] {
   return pipeable.pipe(
     cells,
-    either.map((cells) =>
+    E.map((cells) =>
       cells[0]
         .slice(1)
         .map((c) => c.trim())
@@ -121,6 +123,6 @@ function extractIDsFromFirstColumn(
         .map((x) => Number(x))
     ),
     // TODO: Report error to sentry
-    either.getOrElse<ErrorEvent, number[]>((_) => [])
+    E.getOrElse<ErrorEvent, number[]>(() => [])
   )
 }
