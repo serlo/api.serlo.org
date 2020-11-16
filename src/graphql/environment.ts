@@ -29,6 +29,7 @@ export interface Environment {
 export interface Cache {
   get<T>(key: string): Promise<O.Option<T>>
   set(key: string, value: unknown): Promise<void>
+  setAndReturnPreviousValue<T>(key: string, value: T): Promise<O.Option<T>>
   remove(key: string): Promise<void>
   flush(): Promise<void>
 }

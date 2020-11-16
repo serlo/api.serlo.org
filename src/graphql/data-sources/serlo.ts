@@ -199,7 +199,7 @@ export class SerloDataSource extends CacheableDataSource {
     userId: number
     unread: boolean
   }) {
-    await this.setCache({
+    await this.setCacheValue({
       key: this.getCacheKey(`/api/notifications/${notificationState.userId}`),
       update: () =>
         this.customPost<NotificationsPayload>({
@@ -257,7 +257,7 @@ export class SerloDataSource extends CacheableDataSource {
     instance?: Instance
     maxAge?: number
   }): Promise<T> {
-    return this.getFromCache({
+    return this.getCacheValue({
       key: this.getCacheKey(path, instance),
       update: () => this.getFromSerlo({ path, instance }),
       maxAge,
@@ -297,14 +297,14 @@ export class SerloDataSource extends CacheableDataSource {
     await this.environment.cache.remove(key)
   }
 
-  public async updateCache(key: string) {
+  public async updateCacheValue(key: string) {
     const instanceStr = key.slice(0, 2)
     if (!Object.values(Instance).includes(instanceStr as Instance)) {
       throw new Error(`"${instanceStr}" is not a valid instance`)
     }
     const instance = instanceStr as Instance
     const path = key.slice('xx.serlo.org'.length)
-    await this.setCache({
+    await this.setCacheValue({
       key: this.getCacheKey(path, instance),
       update: () => this.getFromSerlo({ path, instance }),
     })

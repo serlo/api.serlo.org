@@ -46,14 +46,14 @@ class ExampleDataSource extends CacheableDataSource {
   }
 
   public async getContent(args?: Options) {
-    return await this.getFromCache({
+    return await this.getCacheValue({
       key: 'content',
       update: () => Promise.resolve(this.content),
       maxAge: args?.maxAge,
     })
   }
 
-  public updateCache(_key: string): Promise<void> {
+  public updateCacheValue(_key: string): Promise<void> {
     throw new Error('Method not implemented.')
   }
 }
@@ -91,6 +91,7 @@ describe('getFromCache()', () => {
         waitFor(15)
 
         await assertReturnsCachedValue({ maxAge: 10 })
+        // TODO: rewrite tests for lock. Running into a race condition here.
         await assertCacheIsUpdatedInBackground({ maxAge: 10 })
       })
     })
@@ -127,7 +128,7 @@ describe('getFromCache()', () => {
 })
 
 test('setCache() updates cached value', async () => {
-  await dataSource.setCache({
+  await dataSource.setCacheValue({
     key: 'content',
     update: () => Promise.resolve('Updated version'),
   })

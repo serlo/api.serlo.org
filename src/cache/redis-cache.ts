@@ -45,6 +45,11 @@ export function createRedisCache({ host }: { host: string }): Cache {
     value: Buffer
   ) => Promise<void>
   // eslint-disable-next-line @typescript-eslint/unbound-method
+  const getset = (util.promisify(client.getset).bind(client) as unknown) as (
+    key: string,
+    value: Buffer
+  ) => Promise<Buffer | null>
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const flushdb = util.promisify(client.flushdb).bind(client)
 
   return {
@@ -57,8 +62,15 @@ export function createRedisCache({ host }: { host: string }): Cache {
     },
     async set(key, value) {
       const packedValue = msgpack.pack(value) as Buffer
-
       await set(key, packedValue)
+    },
+    async setAndReturnPreviousValue<T>(key: string, value: T) {
+      const packedValue = msgpack.pack(value) as Buffer
+      return pipeable.pipe(
+        await getset(key, packedValue),
+        O.fromNullable,
+        O.map((v) => msgpack.unpack(v) as T)
+      )
     },
     async remove(key: string) {
       await del(key)
