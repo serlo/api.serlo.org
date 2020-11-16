@@ -22,7 +22,7 @@
 import { Matchers } from '@pact-foundation/pact'
 import fetch from 'node-fetch'
 
-import { article, comment1 } from '../../__fixtures__/uuid'
+import { article, comment } from '../../__fixtures__/uuid'
 import { CommentPayload } from '../../src/graphql/schema/uuid/thread'
 import { addJsonInteraction, addUuidInteraction } from '../__utils__'
 
@@ -44,17 +44,17 @@ test('Threads', async () => {
 test('Comment', async () => {
   // This is a noop test that just adds the interaction to the contract
   await addUuidInteraction<CommentPayload>({
-    __typename: comment1.__typename,
-    id: comment1.id,
-    trashed: Matchers.boolean(comment1.trashed),
+    __typename: comment.__typename,
+    id: comment.id,
+    trashed: Matchers.boolean(comment.trashed),
     alias: null,
-    authorId: Matchers.integer(comment1.authorId),
-    title: Matchers.string(comment1.title),
-    date: Matchers.iso8601DateTime(comment1.date),
-    archived: Matchers.boolean(comment1.archived),
-    content: Matchers.string(comment1.content),
-    parentId: Matchers.integer(comment1.parentId),
-    childrenIds: Matchers.eachLike(Matchers.integer(1)),
+    authorId: Matchers.integer(comment.authorId),
+    title: Matchers.string(comment.title),
+    date: Matchers.iso8601DateTime(comment.date),
+    archived: Matchers.boolean(comment.archived),
+    content: Matchers.string(comment.content),
+    parentId: Matchers.integer(comment.parentId),
+    childrenIds: comment.childrenIds,
   })
-  await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/uuid/${comment1.id}`)
+  await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/uuid/${comment.id}`)
 })
