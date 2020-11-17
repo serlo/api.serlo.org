@@ -1167,6 +1167,7 @@ export type QueryEventsArgs = {
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
     instance?: Maybe<Instance>;
+    objectId?: Maybe<Scalars['Int']>;
     userId?: Maybe<Scalars['Int']>;
 };
 

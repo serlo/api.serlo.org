@@ -63,6 +63,9 @@ export const resolvers: NotificationResolvers = {
         if (isDefined(payload.instance) && payload.instance !== event.instance)
           return false
 
+        if (isDefined(payload.objectId) && payload.objectId !== event.objectId)
+          return false
+
         if (isDefined(payload.userId) && payload.userId !== event.actorId)
           return false
 

@@ -45,13 +45,13 @@ import {
   NotificationEventPayload,
 } from '../../src/graphql/schema'
 import { Service } from '../../src/graphql/schema/types'
+import { Instance } from '../../src/types'
 import {
   Client,
   createTestClient,
   assertSuccessfulGraphQLQuery,
   createApiHandler,
 } from '../__utils__'
-import {Instance} from '../../src/types'
 
 let client: Client
 
@@ -118,6 +118,35 @@ describe('endpoint "events"', () => {
       query: gql`
         query events {
           events(instance: en) {
+            nodes {
+              __typename
+              id
+            }
+          }
+        }
+      `,
+      client,
+      data: {
+        events: {
+          nodes: events.slice(0, allEvents.length).map(getTypenameAndId),
+        },
+      },
+    })
+  })
+
+  test('with filter "objectId"', async () => {
+    const events = updateIds(
+      R.concat(
+        allEvents.map(R.assoc('objectId', 42)),
+        allEvents.map(R.assoc('objectId', 23))
+      )
+    )
+    setupEvents(events)
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query events {
+          events(objectId: 42) {
             nodes {
               __typename
               id
