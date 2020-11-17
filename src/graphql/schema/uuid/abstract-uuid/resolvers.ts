@@ -34,6 +34,11 @@ export const resolvers: UuidResolvers = {
     async uuid(_parent, payload, { dataSources }) {
       if (payload.alias) {
         const cleanPath = decodePath(payload.alias.path)
+        if (!cleanPath.startsWith('/')) {
+          throw new UserInputError(
+            "First is the worst, please add a '/' at the beginning of your path"
+          )
+        }
         const match = /^\/(\d+)$/.exec(cleanPath)
         if (match) {
           const id = parseInt(match[1], 10)
