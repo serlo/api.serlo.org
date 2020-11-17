@@ -9,6 +9,7 @@ interface AbstractNotificationEvent {
   instance: Instance!
   date: DateTime!
   actor: User!
+  objectId: Int!
 }
 
 extend type Query {

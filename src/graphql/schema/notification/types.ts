@@ -101,6 +101,7 @@ export interface AbstractNotificationEventPayload
   extends Omit<AbstractNotificationEvent, 'actor'> {
   __typename: NotificationEventType
   actorId: number
+  objectId: number
 }
 
 export interface NotificationResolvers {

@@ -258,6 +258,7 @@ describe('notifications', () => {
                   id
                   instance
                   date
+                  objectId
                   reason
                 }
               }
@@ -311,6 +312,7 @@ describe('notificationEvent', () => {
                 id
                 instance
                 date
+                objectId
                 reason
               }
             }
@@ -443,6 +445,7 @@ describe('notificationEvent', () => {
                 instance
                 date
                 reason
+                objectId
               }
             }
           }
@@ -573,6 +576,7 @@ describe('notificationEvent', () => {
                 id
                 instance
                 date
+                objectId
               }
             }
           }
@@ -682,6 +686,7 @@ describe('notificationEvent', () => {
                 id
                 instance
                 date
+                objectId
               }
             }
           }
@@ -776,6 +781,7 @@ describe('notificationEvent', () => {
                 id
                 instance
                 date
+                objectId
               }
             }
           }
@@ -901,6 +907,7 @@ describe('notificationEvent', () => {
                 id
                 instance
                 date
+                objectId
               }
             }
           }
@@ -1026,6 +1033,7 @@ describe('notificationEvent', () => {
                 id
                 instance
                 date
+                objectId
               }
             }
           }
@@ -1156,6 +1164,7 @@ describe('notificationEvent', () => {
                 id
                 instance
                 date
+                objectId
               }
             }
           }
@@ -1253,6 +1262,7 @@ describe('notificationEvent', () => {
                 id
                 instance
                 date
+                objectId
               }
             }
           }
@@ -1350,6 +1360,7 @@ describe('notificationEvent', () => {
                 id
                 instance
                 date
+                objectId
               }
             }
           }
@@ -1477,6 +1488,7 @@ describe('notificationEvent', () => {
               ... on RemoveTaxonomyLinkNotificationEvent {
                 id
                 instance
+                objectId
                 date
               }
             }
@@ -1605,6 +1617,7 @@ describe('notificationEvent', () => {
               ... on SetTaxonomyParentNotificationEvent {
                 id
                 instance
+                objectId
                 date
               }
             }
@@ -1885,6 +1898,7 @@ describe('notificationEvent', () => {
               ... on SetLicenseNotificationEvent {
                 id
                 instance
+                objectId
                 date
               }
             }
@@ -1980,6 +1994,7 @@ describe('notificationEvent', () => {
                 id
                 instance
                 date
+                objectId
                 archived
               }
             }
