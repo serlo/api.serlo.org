@@ -199,16 +199,16 @@ export class SerloDataSource extends CacheableDataSource {
     userId: number
     unread: boolean
   }) {
+    const value = await this.customPost<NotificationsPayload>({
+      path: `/api/set-notification-state/${notificationState.id}`,
+      body: {
+        userId: notificationState.userId,
+        unread: notificationState.unread,
+      },
+    })
     await this.setCacheValue({
       key: this.getCacheKey(`/api/notifications/${notificationState.userId}`),
-      update: () =>
-        this.customPost<NotificationsPayload>({
-          path: `/api/set-notification-state/${notificationState.id}`,
-          body: {
-            userId: notificationState.userId,
-            unread: notificationState.unread,
-          },
-        }),
+      update: () => Promise.resolve(value),
     })
   }
 
@@ -304,9 +304,10 @@ export class SerloDataSource extends CacheableDataSource {
     }
     const instance = instanceStr as Instance
     const path = key.slice('xx.serlo.org'.length)
+    const value = await this.getFromSerlo({ path, instance })
     await this.setCacheValue({
       key: this.getCacheKey(path, instance),
-      update: () => this.getFromSerlo({ path, instance }),
+      update: () => Promise.resolve(value),
     })
   }
 }

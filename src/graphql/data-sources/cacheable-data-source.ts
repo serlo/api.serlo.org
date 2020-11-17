@@ -104,7 +104,7 @@ export abstract class CacheableDataSource extends RESTDataSource {
   private async lock(key: string): Promise<boolean> {
     const lock = await this.environment.cache.setAndReturnPreviousValue<
       boolean
-    >(this.getLockKey(key), true)
+    >(this.getLockKey(key), true, { ttl: 10 })
     return O.isNone(lock) || lock.value === false
   }
 
