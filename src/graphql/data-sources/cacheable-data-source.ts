@@ -81,8 +81,11 @@ export abstract class CacheableDataSource extends RESTDataSource {
         O.map((entry) => entry.value as Value),
         O.toNullable
       )
-      await this.setValue({ key, value: await update(currentValue) })
-      await this.unlock(key)
+      try {
+        await this.setValue({ key, value: await update(currentValue) })
+      } catch (e) {
+        await this.unlock(key)
+      }
     }
   }
 
