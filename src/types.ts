@@ -172,6 +172,7 @@ export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & {
   instance: Instance;
   date: Scalars['DateTime'];
   actor: User;
+  objectId: Scalars['Int'];
   repository: AbstractRepository;
   revision: AbstractRevision;
   reason: Scalars['String'];
@@ -183,6 +184,7 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & {
   instance: Instance;
   date: Scalars['DateTime'];
   actor: User;
+  objectId: Scalars['Int'];
   thread: UnsupportedThread;
   comment: UnsupportedComment;
 };
@@ -193,6 +195,7 @@ export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & {
   instance: Instance;
   date: Scalars['DateTime'];
   actor: User;
+  objectId: Scalars['Int'];
   parent: AbstractEntity;
   child: AbstractEntity;
 };
@@ -203,6 +206,7 @@ export type CreateEntityNotificationEvent = AbstractNotificationEvent & {
   instance: Instance;
   date: Scalars['DateTime'];
   actor: User;
+  objectId: Scalars['Int'];
   entity: AbstractEntity;
 };
 
@@ -212,6 +216,7 @@ export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & 
   instance: Instance;
   date: Scalars['DateTime'];
   actor: User;
+  objectId: Scalars['Int'];
   entity: AbstractEntity;
   entityRevision: AbstractEntityRevision;
 };
@@ -222,6 +227,7 @@ export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & {
   instance: Instance;
   date: Scalars['DateTime'];
   actor: User;
+  objectId: Scalars['Int'];
   parent: TaxonomyTerm;
   child: AbstractUuid;
 };
@@ -232,6 +238,7 @@ export type CreateTaxonomyTermNotificationEvent = AbstractNotificationEvent & {
   instance: Instance;
   date: Scalars['DateTime'];
   actor: User;
+  objectId: Scalars['Int'];
   taxonomyTerm: TaxonomyTerm;
 };
 
@@ -241,6 +248,7 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & {
   instance: Instance;
   date: Scalars['DateTime'];
   actor: User;
+  objectId: Scalars['Int'];
   object: AbstractUuid;
   thread: UnsupportedThread;
 };
@@ -251,6 +259,7 @@ export type RejectRevisionNotificationEvent = AbstractNotificationEvent & {
   instance: Instance;
   date: Scalars['DateTime'];
   actor: User;
+  objectId: Scalars['Int'];
   repository: AbstractRepository;
   revision: AbstractRevision;
   reason: Scalars['String'];
@@ -262,6 +271,7 @@ export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & {
   instance: Instance;
   date: Scalars['DateTime'];
   actor: User;
+  objectId: Scalars['Int'];
   parent: AbstractEntity;
   child: AbstractEntity;
 };
@@ -272,6 +282,7 @@ export type RemoveTaxonomyLinkNotificationEvent = AbstractNotificationEvent & {
   instance: Instance;
   date: Scalars['DateTime'];
   actor: User;
+  objectId: Scalars['Int'];
   parent: TaxonomyTerm;
   child: AbstractUuid;
 };
@@ -282,6 +293,7 @@ export type SetLicenseNotificationEvent = AbstractNotificationEvent & {
   instance: Instance;
   date: Scalars['DateTime'];
   actor: User;
+  objectId: Scalars['Int'];
   repository: AbstractRepository;
 };
 
@@ -291,6 +303,7 @@ export type SetTaxonomyParentNotificationEvent = AbstractNotificationEvent & {
   instance: Instance;
   date: Scalars['DateTime'];
   actor: User;
+  objectId: Scalars['Int'];
   previousParent?: Maybe<TaxonomyTerm>;
   parent?: Maybe<TaxonomyTerm>;
   child: TaxonomyTerm;
@@ -302,6 +315,7 @@ export type SetTaxonomyTermNotificationEvent = AbstractNotificationEvent & {
   instance: Instance;
   date: Scalars['DateTime'];
   actor: User;
+  objectId: Scalars['Int'];
   taxonomyTerm: TaxonomyTerm;
 };
 
@@ -311,6 +325,7 @@ export type SetThreadStateNotificationEvent = AbstractNotificationEvent & {
   instance: Instance;
   date: Scalars['DateTime'];
   actor: User;
+  objectId: Scalars['Int'];
   thread: UnsupportedThread;
   archived: Scalars['Boolean'];
 };
@@ -321,6 +336,7 @@ export type SetUuidStateNotificationEvent = AbstractNotificationEvent & {
   instance: Instance;
   date: Scalars['DateTime'];
   actor: User;
+  objectId: Scalars['Int'];
   object: AbstractUuid;
   trashed: Scalars['Boolean'];
 };
@@ -337,6 +353,7 @@ export type AbstractNotificationEvent = {
   instance: Instance;
   date: Scalars['DateTime'];
   actor: User;
+  objectId: Scalars['Int'];
 };
 
 export type NotificationConnection = {
