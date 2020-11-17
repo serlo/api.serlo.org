@@ -77,6 +77,7 @@ test('CheckoutRevisionNotificationEvent', async () => {
     instance: Matchers.string(checkoutRevisionNotificationEvent.instance),
     date: Matchers.iso8601DateTime(checkoutRevisionNotificationEvent.date),
     actorId: Matchers.integer(checkoutRevisionNotificationEvent.actorId),
+    objectId: Matchers.integer(checkoutRevisionNotificationEvent.objectId),
     repositoryId: Matchers.integer(
       checkoutRevisionNotificationEvent.repositoryId
     ),
@@ -92,6 +93,7 @@ test('CheckoutRevisionNotificationEvent', async () => {
             id
             instance
             date
+            objectId
             reason
           }
         }
@@ -113,6 +115,7 @@ test('RejectRevisionNotificationEvent', async () => {
     instance: Matchers.string(rejectRevisionNotificationEvent.instance),
     date: Matchers.iso8601DateTime(rejectRevisionNotificationEvent.date),
     actorId: Matchers.integer(rejectRevisionNotificationEvent.actorId),
+    objectId: Matchers.integer(rejectRevisionNotificationEvent.objectId),
     repositoryId: Matchers.integer(
       rejectRevisionNotificationEvent.repositoryId
     ),
@@ -128,6 +131,7 @@ test('RejectRevisionNotificationEvent', async () => {
             id
             instance
             date
+            objectId
             reason
           }
         }
@@ -149,6 +153,7 @@ test('CreateCommentNotificationEvent', async () => {
     instance: Matchers.string(createCommentNotificationEvent.instance),
     date: Matchers.iso8601DateTime(createCommentNotificationEvent.date),
     actorId: Matchers.integer(createCommentNotificationEvent.actorId),
+    objectId: Matchers.integer(createCommentNotificationEvent.objectId),
     threadId: Matchers.integer(createCommentNotificationEvent.threadId),
     commentId: Matchers.integer(createCommentNotificationEvent.commentId),
   })
@@ -161,6 +166,7 @@ test('CreateCommentNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -181,6 +187,7 @@ test('CreateEntityNotificationEvent', async () => {
     instance: Matchers.string(createEntityNotificationEvent.instance),
     date: Matchers.iso8601DateTime(createEntityNotificationEvent.date),
     actorId: Matchers.integer(createEntityNotificationEvent.actorId),
+    objectId: Matchers.integer(createEntityNotificationEvent.objectId),
     entityId: Matchers.integer(createEntityNotificationEvent.entityId),
   })
   await assertSuccessfulGraphQLQuery({
@@ -192,6 +199,7 @@ test('CreateEntityNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -212,6 +220,7 @@ test('CreateEntityLinkNotificationEvent', async () => {
     instance: Matchers.string(createEntityLinkNotificationEvent.instance),
     date: Matchers.iso8601DateTime(createEntityLinkNotificationEvent.date),
     actorId: Matchers.integer(createEntityLinkNotificationEvent.actorId),
+    objectId: Matchers.integer(createEntityLinkNotificationEvent.objectId),
     parentId: Matchers.integer(createEntityLinkNotificationEvent.parentId),
     childId: Matchers.integer(createEntityLinkNotificationEvent.childId),
   })
@@ -224,6 +233,7 @@ test('CreateEntityLinkNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -244,7 +254,7 @@ test('RemoveEntityLinkNotificationEvent', async () => {
     instance: Matchers.string(removeEntityLinkNotificationEvent.instance),
     date: Matchers.iso8601DateTime(removeEntityLinkNotificationEvent.date),
     actorId: Matchers.integer(removeEntityLinkNotificationEvent.actorId),
-    parentId: Matchers.integer(removeEntityLinkNotificationEvent.parentId),
+    objectId: Matchers.integer(removeEntityLinkNotificationEvent.objectId),
     childId: Matchers.integer(removeEntityLinkNotificationEvent.childId),
   })
   await assertSuccessfulGraphQLQuery({
@@ -256,6 +266,7 @@ test('RemoveEntityLinkNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -276,6 +287,7 @@ test('CreateEntityRevisionNotificationEvent', async () => {
     instance: Matchers.string(createEntityRevisionNotificationEvent.instance),
     date: Matchers.iso8601DateTime(createEntityRevisionNotificationEvent.date),
     actorId: Matchers.integer(createEntityRevisionNotificationEvent.actorId),
+    objectId: Matchers.integer(createEntityRevisionNotificationEvent.objectId),
     entityId: Matchers.integer(createEntityRevisionNotificationEvent.entityId),
     entityRevisionId: Matchers.integer(
       createEntityRevisionNotificationEvent.entityRevisionId
@@ -290,6 +302,7 @@ test('CreateEntityRevisionNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -310,6 +323,7 @@ test('CreateTaxonomyTermNotificationEvent', async () => {
     instance: Matchers.string(createTaxonomyTermNotificationEvent.instance),
     date: Matchers.iso8601DateTime(createTaxonomyTermNotificationEvent.date),
     actorId: Matchers.integer(createTaxonomyTermNotificationEvent.actorId),
+    objectId: Matchers.integer(createTaxonomyTermNotificationEvent.objectId),
     taxonomyTermId: Matchers.integer(
       createTaxonomyTermNotificationEvent.taxonomyTermId
     ),
@@ -323,6 +337,7 @@ test('CreateTaxonomyTermNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -343,6 +358,7 @@ test('SetTaxonomyTermNotificationEvent', async () => {
     instance: Matchers.string(setTaxonomyTermNotificationEvent.instance),
     date: Matchers.iso8601DateTime(setTaxonomyTermNotificationEvent.date),
     actorId: Matchers.integer(setTaxonomyTermNotificationEvent.actorId),
+    objectId: Matchers.integer(setTaxonomyTermNotificationEvent.objectId),
     taxonomyTermId: Matchers.integer(
       setTaxonomyTermNotificationEvent.taxonomyTermId
     ),
@@ -356,6 +372,7 @@ test('SetTaxonomyTermNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -376,6 +393,7 @@ test('CreateTaxonomyLinkNotificationEvent', async () => {
     instance: Matchers.string(createTaxonomyLinkNotificationEvent.instance),
     date: Matchers.iso8601DateTime(createTaxonomyLinkNotificationEvent.date),
     actorId: Matchers.integer(createTaxonomyLinkNotificationEvent.actorId),
+    objectId: Matchers.integer(createTaxonomyLinkNotificationEvent.objectId),
     parentId: Matchers.integer(createTaxonomyLinkNotificationEvent.parentId),
     childId: Matchers.integer(createTaxonomyLinkNotificationEvent.childId),
   })
@@ -388,6 +406,7 @@ test('CreateTaxonomyLinkNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -408,6 +427,7 @@ test('RemoveTaxonomyLinkNotificationEvent', async () => {
     instance: Matchers.string(removeTaxonomyLinkNotificationEvent.instance),
     date: Matchers.iso8601DateTime(removeTaxonomyLinkNotificationEvent.date),
     actorId: Matchers.integer(removeTaxonomyLinkNotificationEvent.actorId),
+    objectId: Matchers.integer(removeTaxonomyLinkNotificationEvent.objectId),
     parentId: Matchers.integer(removeTaxonomyLinkNotificationEvent.parentId),
     childId: Matchers.integer(removeTaxonomyLinkNotificationEvent.childId),
   })
@@ -420,6 +440,7 @@ test('RemoveTaxonomyLinkNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -440,6 +461,7 @@ test('SetTaxonomyParentNotificationEvent', async () => {
     instance: Matchers.string(setTaxonomyParentNotificationEvent.instance),
     date: Matchers.iso8601DateTime(setTaxonomyParentNotificationEvent.date),
     actorId: Matchers.integer(setTaxonomyParentNotificationEvent.actorId),
+    objectId: Matchers.integer(setTaxonomyParentNotificationEvent.objectId),
     previousParentId:
       setTaxonomyParentNotificationEvent.previousParentId === null
         ? null
@@ -459,6 +481,7 @@ test('SetTaxonomyParentNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -491,6 +514,7 @@ test('CreateThreadNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -511,6 +535,7 @@ test('SetLicenseNotificationEvent', async () => {
     instance: Matchers.string(setLicenseNotificationEvent.instance),
     date: Matchers.iso8601DateTime(setLicenseNotificationEvent.date),
     actorId: Matchers.integer(setLicenseNotificationEvent.actorId),
+    objectId: Matchers.integer(setLicenseNotificationEvent.objectId),
     repositoryId: Matchers.integer(setLicenseNotificationEvent.repositoryId),
   })
   await assertSuccessfulGraphQLQuery({
@@ -522,6 +547,7 @@ test('SetLicenseNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -542,6 +568,7 @@ test('SetThreadStateNotificationEvent', async () => {
     instance: Matchers.string(setThreadStateNotificationEvent.instance),
     date: Matchers.iso8601DateTime(setThreadStateNotificationEvent.date),
     actorId: Matchers.integer(setThreadStateNotificationEvent.actorId),
+    objectId: Matchers.integer(setThreadStateNotificationEvent.objectId),
     threadId: Matchers.integer(setThreadStateNotificationEvent.threadId),
     archived: Matchers.boolean(setThreadStateNotificationEvent.archived),
   })
@@ -554,6 +581,7 @@ test('SetThreadStateNotificationEvent', async () => {
             id
             instance
             date
+            objectId
             archived
           }
         }
@@ -587,6 +615,7 @@ test('SetUuidStateNotificationEvent', async () => {
             id
             instance
             date
+            objectId
             trashed
           }
         }
