@@ -19,21 +19,46 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { option as O } from 'fp-ts'
+import { option as O, pipeable } from 'fp-ts'
 
-import { Cache } from '../graphql/environment'
+import { Cache, createTimer, SetCacheOptions } from '../graphql/environment'
 
-export function createInMemoryCache(): Cache {
-  let cache: Record<string, unknown> = {}
+interface Entry {
+  value: unknown
+  lastModified: number
+  ttl?: number
+}
+
+export function createInMemoryCache(timer = createTimer()): Cache {
+  let cache: Record<string, Entry> = {}
 
   return {
     // eslint-disable-next-line @typescript-eslint/require-await
     async get<T>(key: string) {
-      return O.fromNullable(cache[key] as T)
+      const isAlive = (x: Entry) => {
+        if (x.ttl === undefined) return true
+        return timer.now() - x.lastModified < x.ttl * 1000
+      }
+
+      return pipeable.pipe(
+        O.fromNullable(cache[key]),
+        O.chain(O.fromPredicate(isAlive)),
+        O.chain(O.fromPredicate(isAlive)),
+        O.map((x) => x.value as T)
+      )
     },
     // eslint-disable-next-line @typescript-eslint/require-await
-    async set(key, value) {
-      cache[key] = value
+    async set(key, value, options) {
+      cache[key] = { value, ttl: options?.ttl, lastModified: timer.now() }
+    },
+    async setAndReturnPreviousValue<T>(
+      key: string,
+      value: T,
+      options?: SetCacheOptions
+    ) {
+      const previousValue = await this.get<T>(key)
+      await this.set(key, value, options)
+      return previousValue
     },
     // eslint-disable-next-line @typescript-eslint/require-await
     async remove(key: string) {
@@ -42,6 +67,14 @@ export function createInMemoryCache(): Cache {
     // eslint-disable-next-line @typescript-eslint/require-await
     async flush() {
       cache = {}
+    },
+    // eslint-disable-next-line @typescript-eslint/require-await
+    async getTtl(key: string): Promise<O.Option<number>> {
+      const value = cache[key]
+      return pipeable.pipe(
+        O.fromNullable(value),
+        O.chain((x) => O.fromNullable(x.ttl))
+      )
     },
   }
 }

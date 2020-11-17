@@ -21,120 +21,221 @@
  */
 import { createInMemoryCache } from '../../src/cache'
 import { CacheableDataSource } from '../../src/graphql/data-sources'
-import { Cache } from '../../src/graphql/environment'
-
-let cache: Cache
-let dataSource: ExampleDataSource
-const now = jest.fn<number, never>()
-
-beforeEach(() => {
-  now.mockReturnValue(Date.now())
-
-  cache = createInMemoryCache()
-  dataSource = new ExampleDataSource({ cache, timer: { now } })
-})
-
-interface Options {
-  maxAge?: number
-}
+import { Cache, Timer } from '../../src/graphql/environment'
 
 class ExampleDataSource extends CacheableDataSource {
-  private content = ''
-
-  public setContent(content: string) {
-    this.content = content
-  }
-
-  public async getContent(args?: Options) {
-    return await this.getFromCache({
-      key: 'content',
-      update: () => Promise.resolve(this.content),
-      maxAge: args?.maxAge,
+  public async getContent({ key = 'key', current, maxAge }: CachePayload) {
+    return await this.getCacheValue({
+      key,
+      update: () => Promise.resolve(current),
+      maxAge,
     })
   }
 
-  public updateCache(_key: string): Promise<void> {
+  public updateCacheValue(_key: string): Promise<void> {
     throw new Error('Method not implemented.')
   }
 }
 
-describe('getFromCache()', () => {
-  test('returns current value when cache is empty', async () => {
-    dataSource.setContent('First version')
+interface CachePayload {
+  key?: string
+  current: number
+  maxAge?: number
+}
 
-    expect(await dataSource.getContent()).toBe('First version')
-  })
+let cache: Cache
+let dataSource: ExampleDataSource
+const now = jest.fn<number, never>()
+const timer: Timer = { now }
 
-  describe('when cache is not empty', () => {
-    test('when maxAge = undefined: returns cached value without background update', async () => {
-      await initializeCache()
-
-      waitFor(5)
-
-      await assertReturnsCachedValue({ maxAge: undefined })
-      await assertCacheIsNotUpdatedInBackground({ maxAge: undefined })
-    })
-
-    describe('when 0 < maxAge', () => {
-      test('when 0 < passed time < maxAge: returns cached value without background update', async () => {
-        await initializeCache()
-
-        waitFor(5)
-
-        await assertReturnsCachedValue({ maxAge: 10 })
-        await assertCacheIsNotUpdatedInBackground({ maxAge: 10 })
-      })
-
-      test('when maxAge < passed time: returns cached value with background update', async () => {
-        await initializeCache()
-
-        waitFor(15)
-
-        await assertReturnsCachedValue({ maxAge: 10 })
-        await assertCacheIsUpdatedInBackground({ maxAge: 10 })
-      })
-    })
-
-    async function assertReturnsCachedValue({ maxAge }: Options) {
-      dataSource.setContent('Second version')
-
-      expect(await dataSource.getContent({ maxAge })).toBe('First version')
-    }
-
-    async function assertCacheIsNotUpdatedInBackground({ maxAge }: Options) {
-      dataSource.setContent('Third version')
-
-      expect(await dataSource.getContent({ maxAge })).toBe('First version')
-    }
-
-    async function assertCacheIsUpdatedInBackground({ maxAge }: Options) {
-      dataSource.setContent('Third version')
-
-      expect(await dataSource.getContent({ maxAge })).toBe('Second version')
-    }
-
-    async function initializeCache() {
-      dataSource.setContent('First version')
-      await dataSource.getContent()
-    }
-  })
-
-  test('uses predefined cache entries', async () => {
-    await cache.set('content', 'Old version')
-
-    expect(await dataSource.getContent()).toBe('Old version')
+beforeEach(() => {
+  now.mockReturnValue(Date.now())
+  cache = createInMemoryCache(timer)
+  dataSource = new ExampleDataSource({
+    cache,
+    timer,
   })
 })
 
-test('setCache() updates cached value', async () => {
-  await dataSource.setCache({
-    key: 'content',
-    update: () => Promise.resolve('Updated version'),
+describe('getCacheValue', () => {
+  describe('cold cache', () => {
+    test('fills cache and returns current value', async () => {
+      expect(await dataSource.getContent({ current: 0 })).toEqual(0)
+    })
   })
 
-  expect(await dataSource.getContent()).toBe('Updated version')
+  describe('warm cache', () => {
+    describe('maxAge = undefined', () => {
+      test('returns cached value without background update', async () => {
+        await initCache({ current: 0 })
+        await waitFor(10)
+        await execInParallelAndWaitForBackgroundTasks(async () => {
+          expect(await dataSource.getContent({ current: 1 })).toEqual(0)
+        })
+        await execInParallelAndWaitForBackgroundTasks(async () => {
+          expect(await dataSource.getContent({ current: 2 })).toEqual(0)
+        })
+      })
+    })
+
+    describe('maxAge > 0', () => {
+      test('passed time < maxAge: returns cached value without background update', async () => {
+        const maxAge = 10
+        await initCache({ current: 0, maxAge })
+        await waitFor(5)
+        await execInParallelAndWaitForBackgroundTasks(async () => {
+          expect(await dataSource.getContent({ current: 1, maxAge })).toEqual(0)
+        })
+        await execInParallelAndWaitForBackgroundTasks(async () => {
+          expect(await dataSource.getContent({ current: 2, maxAge })).toEqual(0)
+        })
+      })
+
+      test('maxAge < passed time: returns cached value with background update', async () => {
+        const maxAge = 10
+        await initCache({ current: 0, maxAge })
+        await waitFor(20)
+        await execInParallelAndWaitForBackgroundTasks(async () => {
+          expect(await dataSource.getContent({ current: 1, maxAge })).toEqual(0)
+        })
+        await execInParallelAndWaitForBackgroundTasks(async () => {
+          expect(await dataSource.getContent({ current: 2, maxAge })).toEqual(1)
+        })
+      })
+    })
+  })
+
+  describe('lock', () => {
+    test('is acquired by first update and unlocked when background task is done', async () => {
+      const maxAge = 10
+      await initCache({ current: 0, maxAge })
+      await waitFor(20)
+      await execInParallelAndWaitForBackgroundTasks(async () => {
+        expect(await dataSource.getContent({ current: 1, maxAge })).toEqual(0)
+        expect(await dataSource.getContent({ current: 2, maxAge })).toEqual(0)
+      })
+      await execInParallelAndWaitForBackgroundTasks(async () => {
+        expect(await dataSource.getContent({ current: 3, maxAge })).toEqual(1)
+      })
+    })
+
+    test('only affects the same key', async () => {
+      const maxAge = 10
+      await initCache({ key: 'a', current: 0, maxAge })
+      await initCache({ key: 'b', current: 5, maxAge })
+      await waitFor(20)
+      await execInParallelAndWaitForBackgroundTasks(async () => {
+        expect(
+          await dataSource.getContent({ key: 'a', current: 1, maxAge })
+        ).toEqual(0)
+        expect(
+          await dataSource.getContent({ key: 'b', current: 6, maxAge })
+        ).toEqual(5)
+      })
+      await execInParallelAndWaitForBackgroundTasks(async () => {
+        expect(
+          await dataSource.getContent({ key: 'a', current: 2, maxAge })
+        ).toEqual(1)
+        expect(
+          await dataSource.getContent({ key: 'b', current: 7, maxAge })
+        ).toEqual(6)
+      })
+    })
+
+    test('is unlocked when update fails', async () => {
+      const maxAge = 10
+      await initCache({ key: 'key', current: 0, maxAge })
+      await waitFor(20)
+      await execInParallelAndWaitForBackgroundTasks(async () => {
+        await dataSource.setCacheValue({
+          key: 'key',
+          update: () => {
+            throw new Error('Update fails')
+          },
+        })
+      })
+      await execInParallelAndWaitForBackgroundTasks(async () => {
+        expect(await dataSource.getContent({ current: 1, maxAge })).toEqual(0)
+      })
+      await execInParallelAndWaitForBackgroundTasks(async () => {
+        expect(await dataSource.getContent({ current: 2, maxAge })).toEqual(1)
+      })
+    })
+
+    test('is unlocked after 10 seconds', async () => {
+      const maxAge = 20
+      await initCache({ current: 0, maxAge })
+      await waitFor(40)
+      await execInParallelAndWaitForBackgroundTasks(async () => {
+        expect(await dataSource.getContent({ current: 1, maxAge })).toEqual(0)
+        await waitFor(10)
+        expect(await dataSource.getContent({ current: 2, maxAge })).toEqual(0)
+      })
+      await execInParallelAndWaitForBackgroundTasks(async () => {
+        expect(await dataSource.getContent({ current: 3, maxAge })).toEqual(2)
+      })
+    })
+  })
+
+  describe('legacy cache values', () => {
+    test('passed time < maxAge: returns legacy value without background update', async () => {
+      await cache.set('key', 0)
+      await execInParallelAndWaitForBackgroundTasks(async () => {
+        expect(await dataSource.getContent({ current: 1 })).toEqual(0)
+      })
+      expect(await dataSource.getContent({ current: 2 })).toEqual(0)
+    })
+
+    test('maxAge < passed time: returns legacy value with background update', async () => {
+      const maxAge = 10
+      await cache.set('key', 0)
+      await execInParallelAndWaitForBackgroundTasks(async () => {
+        expect(await dataSource.getContent({ current: 1, maxAge })).toEqual(0)
+      })
+      await waitFor(20)
+      await execInParallelAndWaitForBackgroundTasks(async () => {
+        expect(await dataSource.getContent({ current: 2, maxAge })).toEqual(0)
+      })
+      expect(await dataSource.getContent({ current: 3 })).toEqual(2)
+    })
+  })
 })
 
-function waitFor(seconds: number) {
+describe('setCacheValue', () => {
+  test('updates cached value', async () => {
+    await dataSource.setCacheValue({
+      key: 'key',
+      update: () => Promise.resolve(0),
+    })
+    expect(await dataSource.getContent({ current: 1 })).toEqual(0)
+  })
+  test('update function can use current value', async () => {
+    await initCache({ current: 5 })
+    await dataSource.setCacheValue<number>({
+      key: 'key',
+      update: (current) => Promise.resolve((current || 0) + 1),
+    })
+    expect(await dataSource.getContent({ current: 10 })).toEqual(6)
+  })
+})
+
+async function initCache(payload: CachePayload) {
+  await dataSource.getContent(payload)
+}
+
+// We make this synchronous function asynchronous just to make clear that this would be asynchronous in production.
+// eslint-disable-next-line @typescript-eslint/require-await
+async function waitFor(seconds: number) {
   now.mockReturnValue(now() + seconds * 1000)
+}
+
+async function execInParallelAndWaitForBackgroundTasks(
+  exec: () => Promise<void>
+) {
+  await exec()
+  await new Promise((resolve) => {
+    process.nextTick(() => {
+      resolve()
+    })
+  })
 }
