@@ -1782,6 +1782,7 @@ describe('notificationEvent', () => {
                 id
                 instance
                 date
+                objectId
               }
             }
           }
@@ -2082,6 +2083,7 @@ describe('notificationEvent', () => {
                 id
                 instance
                 date
+                objectId
                 trashed
               }
             }
