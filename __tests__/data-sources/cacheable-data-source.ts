@@ -21,7 +21,7 @@
  */
 import { createInMemoryCache } from '../../src/cache'
 import { CacheableDataSource } from '../../src/graphql/data-sources'
-import { Cache } from '../../src/graphql/environment'
+import { Cache, Timer } from '../../src/graphql/environment'
 
 class ExampleDataSource extends CacheableDataSource {
   public async getContent({ key = 'key', current, maxAge }: CachePayload) {
@@ -46,13 +46,14 @@ interface CachePayload {
 let cache: Cache
 let dataSource: ExampleDataSource
 const now = jest.fn<number, never>()
+const timer: Timer = { now }
 
 beforeEach(() => {
   now.mockReturnValue(Date.now())
-  cache = createInMemoryCache()
+  cache = createInMemoryCache(timer)
   dataSource = new ExampleDataSource({
     cache,
-    timer: { now },
+    timer,
   })
 })
 
@@ -158,6 +159,20 @@ describe('getCacheValue', () => {
       })
       await execInParallelAndWaitForBackgroundTasks(async () => {
         expect(await dataSource.getContent({ current: 2, maxAge })).toEqual(1)
+      })
+    })
+
+    test('is unlocked after 10 seconds', async () => {
+      const maxAge = 20
+      await initCache({ current: 0, maxAge })
+      await waitFor(40)
+      await execInParallelAndWaitForBackgroundTasks(async () => {
+        expect(await dataSource.getContent({ current: 1, maxAge })).toEqual(0)
+        await waitFor(10)
+        expect(await dataSource.getContent({ current: 2, maxAge })).toEqual(0)
+      })
+      await execInParallelAndWaitForBackgroundTasks(async () => {
+        expect(await dataSource.getContent({ current: 3, maxAge })).toEqual(2)
       })
     })
   })

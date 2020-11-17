@@ -134,14 +134,14 @@ export class GoogleSheetApi extends CacheableDataSource {
       .slice(sslen + googleIdLength)
       .split('-')
 
+    const value = await this.getValuesWithoutCache({
+      spreadsheetId,
+      range,
+      majorDimension: majorDimension as MajorDimension,
+    })
     await this.setCacheValue({
       key,
-      update: () =>
-        this.getValuesWithoutCache({
-          spreadsheetId,
-          range,
-          majorDimension: majorDimension as MajorDimension,
-        }),
+      update: () => Promise.resolve(value),
     })
   }
 }
