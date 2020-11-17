@@ -60,6 +60,7 @@ export const checkoutRevisionNotificationEvent: CheckoutRevisionNotificationEven
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
   actorId: user.id,
+  objectId: articleRevision.id,
   repositoryId: article.id,
   revisionId: articleRevision.id,
   reason: 'reason',
@@ -77,6 +78,7 @@ export const rejectRevisionNotificationEvent: RejectRevisionNotificationEventPay
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
   actorId: user.id,
+  objectId: articleRevision.id,
   repositoryId: article.id,
   revisionId: articleRevision.id,
   reason: 'reason',
@@ -94,6 +96,7 @@ export const createCommentNotificationEvent: CreateCommentNotificationEventPaylo
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
   actorId: user.id,
+  objectId: unsupportedComment.id,
   threadId: unsupportedThread.id,
   commentId: unsupportedComment.id,
 }
@@ -110,6 +113,7 @@ export const createEntityNotificationEvent: CreateEntityNotificationEventPayload
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
   actorId: user.id,
+  objectId: article.id,
   entityId: article.id,
 }
 
@@ -125,6 +129,7 @@ export const createEntityLinkNotificationEvent: CreateEntityLinkNotificationEven
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
   actorId: user.id,
+  objectId: solution.id,
   parentId: exercise.id,
   childId: solution.id,
 }
@@ -141,6 +146,7 @@ export const removeEntityLinkNotificationEvent: RemoveEntityLinkNotificationEven
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
   actorId: user.id,
+  objectId: solution.id,
   parentId: exercise.id,
   childId: solution.id,
 }
@@ -157,6 +163,7 @@ export const createEntityRevisionNotificationEvent: CreateEntityRevisionNotifica
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
   actorId: user.id,
+  objectId: articleRevision.id,
   entityId: article.id,
   entityRevisionId: articleRevision.id,
 }
@@ -173,6 +180,7 @@ export const createTaxonomyTermNotificationEvent: CreateTaxonomyTermNotification
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
   actorId: user.id,
+  objectId: taxonomyTermCurriculumTopic.id,
   taxonomyTermId: taxonomyTermCurriculumTopic.id,
 }
 
@@ -188,6 +196,7 @@ export const setTaxonomyTermNotificationEvent: SetTaxonomyTermNotificationEventP
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
   actorId: user.id,
+  objectId: taxonomyTermCurriculumTopic.id,
   taxonomyTermId: taxonomyTermCurriculumTopic.id,
 }
 
@@ -203,6 +212,7 @@ export const createTaxonomyLinkNotificationEvent: CreateTaxonomyLinkNotification
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
   actorId: user.id,
+  objectId: taxonomyTermCurriculumTopic.id,
   parentId: taxonomyTermCurriculumTopic.id,
   childId: article.id,
 }
@@ -219,6 +229,7 @@ export const removeTaxonomyLinkNotificationEvent: RemoveTaxonomyLinkNotification
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
   actorId: user.id,
+  objectId: taxonomyTermCurriculumTopic.id,
   parentId: taxonomyTermCurriculumTopic.id,
   childId: article.id,
 }
@@ -235,6 +246,7 @@ export const setTaxonomyParentNotificationEvent: SetTaxonomyParentNotificationEv
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
   actorId: user.id,
+  objectId: taxonomyTermCurriculumTopic.id,
   previousParentId: taxonomyTermRoot.id,
   parentId: taxonomyTermSubject.id,
   childId: taxonomyTermCurriculumTopic.id,
@@ -271,6 +283,7 @@ export const setLicenseNotificationEvent: SetLicenseNotificationEventPayload = {
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
   actorId: user.id,
+  objectId: article.id,
   repositoryId: article.id,
 }
 
@@ -286,6 +299,7 @@ export const setThreadStateNotificationEvent: SetThreadStateNotificationEventPay
   instance: Instance.De,
   date: '2014-03-01T20:45:56Z',
   actorId: user.id,
+  objectId: unsupportedThread.id,
   threadId: unsupportedThread.id,
   archived: true,
 }

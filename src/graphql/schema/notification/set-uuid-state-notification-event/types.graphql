@@ -3,6 +3,7 @@ type SetUuidStateNotificationEvent implements AbstractNotificationEvent {
   instance: Instance!
   date: DateTime!
   actor: User!
+  objectId: Int!
   object: AbstractUuid!
   trashed: Boolean!
 }
