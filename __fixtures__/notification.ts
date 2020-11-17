@@ -274,7 +274,7 @@ export const createThreadNotificationEvent: CreateThreadNotificationEventPayload
 export function getCreateThreadNotificationEventDataWithoutSubResolvers(
   notificationEvent: CreateThreadNotificationEventPayload
 ) {
-  return R.omit(['actorId', 'objectId', 'threadId'], notificationEvent)
+  return R.omit(['actorId', 'threadId'], notificationEvent)
 }
 
 export const setLicenseNotificationEvent: SetLicenseNotificationEventPayload = {
@@ -323,5 +323,5 @@ export const setUuidStateNotificationEvent: SetUuidStateNotificationEventPayload
 export function getSetUuidStateNotificationEventDataWithoutSubResolvers(
   notificationEvent: SetUuidStateNotificationEventPayload
 ) {
-  return R.omit(['actorId', 'objectId'], notificationEvent)
+  return R.omit(['actorId'], notificationEvent)
 }

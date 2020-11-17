@@ -93,6 +93,7 @@ test('CheckoutRevisionNotificationEvent', async () => {
             id
             instance
             date
+            objectId
             reason
           }
         }
@@ -130,6 +131,7 @@ test('RejectRevisionNotificationEvent', async () => {
             id
             instance
             date
+            objectId
             reason
           }
         }
@@ -164,6 +166,7 @@ test('CreateCommentNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -196,6 +199,7 @@ test('CreateEntityNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -229,6 +233,7 @@ test('CreateEntityLinkNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -261,6 +266,7 @@ test('RemoveEntityLinkNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -296,6 +302,7 @@ test('CreateEntityRevisionNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -330,6 +337,7 @@ test('CreateTaxonomyTermNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -364,6 +372,7 @@ test('SetTaxonomyTermNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -397,6 +406,7 @@ test('CreateTaxonomyLinkNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -430,6 +440,7 @@ test('RemoveTaxonomyLinkNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -470,6 +481,7 @@ test('SetTaxonomyParentNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -502,6 +514,7 @@ test('CreateThreadNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -534,6 +547,7 @@ test('SetLicenseNotificationEvent', async () => {
             id
             instance
             date
+            objectId
           }
         }
       }
@@ -567,6 +581,7 @@ test('SetThreadStateNotificationEvent', async () => {
             id
             instance
             date
+            objectId
             archived
           }
         }
@@ -600,6 +615,7 @@ test('SetUuidStateNotificationEvent', async () => {
             id
             instance
             date
+            objectId
             trashed
           }
         }
