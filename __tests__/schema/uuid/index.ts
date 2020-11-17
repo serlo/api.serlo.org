@@ -121,4 +121,19 @@ describe('uuid', () => {
       client,
     })
   })
+
+  test("returns an error when the path does not start with '/'", async () => {
+    await assertFailingGraphQLQuery({
+      query: gql`
+        query emptyUuidRequest {
+          uuid(alias: { instance: de, path: "mathe" }) {
+            __typename
+          }
+        }
+      `,
+      message:
+        "First is the worst, please add a '/' at the beginning of your path",
+      client,
+    })
+  })
 })
