@@ -47,13 +47,6 @@ export function createRedisCache({ host }: { host: string }): Cache {
     ttl?: number
   ) => Promise<void>
   // eslint-disable-next-line @typescript-eslint/unbound-method
-  const getset = (util.promisify(client.getset).bind(client) as unknown) as (
-    key: string,
-    value: Buffer,
-    flags?: 'EX',
-    ttl?: number
-  ) => Promise<Buffer | null>
-  // eslint-disable-next-line @typescript-eslint/unbound-method
   const ttl = (util.promisify(client.ttl).bind(client) as unknown) as (
     key: string
   ) => Promise<number | undefined>
@@ -82,15 +75,9 @@ export function createRedisCache({ host }: { host: string }): Cache {
       value: T,
       options?: SetCacheOptions
     ) {
-      const packedValue = msgpack.pack(value) as Buffer
-      const ttl = options?.ttl
-      return pipeable.pipe(
-        await (ttl === undefined
-          ? getset(key, packedValue)
-          : getset(key, packedValue, 'EX', ttl)),
-        O.fromNullable,
-        O.map((v) => msgpack.unpack(v) as T)
-      )
+      const previousValue = await this.get<T>(key)
+      await this.set(key, value, options)
+      return previousValue
     },
     async remove(key: string) {
       await del(key)
