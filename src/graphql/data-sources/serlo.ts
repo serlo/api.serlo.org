@@ -206,7 +206,7 @@ export class SerloDataSource extends CacheableDataSource {
         unread: notificationState.unread,
       },
     })
-    await this.setCacheValue({
+    await this.UNSAFE_setCacheValueWithoutLock({
       key: this.getCacheKey(`/api/notifications/${notificationState.userId}`),
       update: () => Promise.resolve(value),
     })
@@ -305,7 +305,7 @@ export class SerloDataSource extends CacheableDataSource {
     const instance = instanceStr as Instance
     const path = key.slice('xx.serlo.org'.length)
     const value = await this.getFromSerlo({ path, instance })
-    await this.setCacheValue({
+    await this.UNSAFE_setCacheValueWithoutLock({
       key: this.getCacheKey(path, instance),
       update: () => Promise.resolve(value),
     })

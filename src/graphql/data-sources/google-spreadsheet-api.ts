@@ -139,7 +139,7 @@ export class GoogleSheetApi extends CacheableDataSource {
       range,
       majorDimension: majorDimension as MajorDimension,
     })
-    await this.setCacheValue({
+    await this.UNSAFE_setCacheValueWithoutLock({
       key,
       update: () => Promise.resolve(value),
     })
