@@ -353,6 +353,18 @@ async function exec(): Promise<void> {
       date: '2020-10-14',
       fixed: ['Update dependencies.'],
     },
+    {
+      tagName: 'v0.11.0',
+      date: '2020-11-18',
+      added: [
+        'We now have a stale-while-revalidate caching approach in place. This should lead to more correct behavior even when our listeners fail.',
+        [
+          'notification',
+          'Add `objectId` to `AbstractNotificationEvent` which reports the ID of the object that triggered the event (and can be used to unsubscribe).',
+        ],
+        ['uuid', 'Add `threads`.'],
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
