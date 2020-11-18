@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.11.0](https://github.com/serlo/api.serlo.org/compare/v0.10.1..v0.11.0) - November 18, 2020
+
+### Added
+
+- We now have a stale-while-revalidate caching approach in place. This should lead to more correct behavior even when our listeners fail.
+- **notification**. Add `objectId` to `AbstractNotificationEvent` which reports the ID of the object that triggered the event (and can be used to unsubscribe).
+- **uuid**. Add `threads`.
+
 ## [v0.10.1](https://github.com/serlo/api.serlo.org/compare/v0.10.0..v0.10.1) - October 14, 2020
 
 ### Fixed
