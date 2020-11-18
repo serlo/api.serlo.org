@@ -84,8 +84,34 @@ export abstract class CacheableDataSource extends RESTDataSource {
       try {
         await this.setValue({ key, value: await update(currentValue) })
       } catch (e) {
+        // Ignore exceptions
+      } finally {
         await this.unlock(key)
       }
+    }
+  }
+
+  public async UNSAFE_setCacheValueWithoutLock<Value>({
+    key,
+    update,
+  }: {
+    key: string
+    update: UpdateFunction<Value>
+  }): Promise<void> {
+    // Do update even when resource is locked.
+    await this.lock(key)
+    const currentValue = pipeable.pipe(
+      await this.environment.cache.get<unknown>(key),
+      O.chain(O.fromPredicate(isEntry)),
+      O.map((entry) => entry.value as Value),
+      O.toNullable
+    )
+    try {
+      await this.setValue({ key, value: await update(currentValue) })
+    } catch (e) {
+      // Ignore exceptions
+    } finally {
+      await this.unlock(key)
     }
   }
 

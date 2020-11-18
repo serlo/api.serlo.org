@@ -46,7 +46,7 @@ export const resolvers: CacheResolvers = {
           'You do not have the permissions to set the cache'
         )
       }
-      await dataSources.serlo.setCacheValue({
+      await dataSources.serlo.UNSAFE_setCacheValueWithoutLock({
         key,
         update: () => Promise.resolve(value),
       })
