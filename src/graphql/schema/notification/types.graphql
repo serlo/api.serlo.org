@@ -20,7 +20,7 @@ extend type Query {
     last: Int
     instance: Instance
     objectId: Int
-    userId: Int
+    actorId: Int
   ): AbstractNotificationEventConnection!
   notifications(
     after: String

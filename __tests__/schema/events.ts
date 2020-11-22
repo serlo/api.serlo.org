@@ -163,7 +163,7 @@ describe('endpoint "events"', () => {
     })
   })
 
-  test('with filter "userId"', async () => {
+  test('with filter "actorId"', async () => {
     const events = updateIds(
       R.concat(
         allEvents.map(R.assoc('actorId', 42)),
@@ -175,7 +175,7 @@ describe('endpoint "events"', () => {
     await assertSuccessfulGraphQLQuery({
       query: gql`
         query events {
-          events(userId: 42) {
+          events(actorId: 42) {
             nodes {
               __typename
               id
