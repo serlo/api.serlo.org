@@ -9,6 +9,14 @@ type User implements AbstractUuid {
     instance: Instance
     objectId: Int
   ): AbstractNotificationEventConnection!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
   threads(
     after: String
     before: String

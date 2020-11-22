@@ -7,6 +7,14 @@ type Solution implements AbstractUuid & AbstractRepository & AbstractEntity {
     first: Int
     last: Int
   ): ThreadsConnection!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
   instance: Instance!
   alias: String
   date: DateTime!
@@ -32,6 +40,14 @@ type SolutionRevision implements AbstractUuid & AbstractRevision & AbstractEntit
     first: Int
     last: Int
   ): ThreadsConnection!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
   date: DateTime!
   repository: Solution!
   content: String!

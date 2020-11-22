@@ -7,6 +7,14 @@ type Video implements AbstractUuid & AbstractRepository & AbstractEntity & Abstr
     first: Int
     last: Int
   ): ThreadsConnection!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
   instance: Instance!
   alias: String
   date: DateTime!
@@ -37,6 +45,14 @@ type VideoRevision implements AbstractUuid & AbstractRevision & AbstractEntityRe
     first: Int
     last: Int
   ): ThreadsConnection!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
   date: DateTime!
   repository: Video!
   url: String!

@@ -21,6 +21,7 @@
  */
 import * as R from 'ramda'
 
+import { resolveEvents } from '../../notification/utils'
 import { EntityRevisionType, EntityType } from '../abstract-entity'
 import { AbstractUuidPayload, UuidResolvers } from '../abstract-uuid'
 import { createThreadResolvers } from '../thread/utils'
@@ -37,5 +38,10 @@ export function isUnsupportedUuid(payload: AbstractUuidPayload) {
 }
 
 export function createUuidResolvers(): UuidResolvers {
-  return createThreadResolvers()
+  return {
+    ...createThreadResolvers(),
+    async events(parent, payload, { dataSources }) {
+      return resolveEvents(dataSources, { ...payload, objectId: parent.id })
+    },
+  }
 }

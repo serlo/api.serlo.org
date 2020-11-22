@@ -28,6 +28,14 @@ type Comment implements AbstractUuid {
     first: Int
     last: Int
   ): ThreadsConnection!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
 }
 
 type ThreadsConnection {

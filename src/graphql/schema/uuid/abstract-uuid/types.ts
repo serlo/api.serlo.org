@@ -21,10 +21,12 @@
  */
 import {
   AbstractUuid,
+  AbstractUuidEventsArgs,
   AbstractUuidThreadsArgs,
   QueryUuidArgs,
 } from '../../../../types'
 import { Connection } from '../../connection'
+import { NotificationEventPayload } from '../../notification/types'
 import { QueryResolver, Resolver, TypeResolver } from '../../types'
 import {
   EntityPayload,
@@ -62,6 +64,11 @@ export interface AbstractUuidPayload
 }
 
 export interface UuidResolvers {
+  events: Resolver<
+    AbstractUuidPayload,
+    AbstractUuidEventsArgs,
+    Connection<NotificationEventPayload>
+  >
   threads: Resolver<
     AbstractUuidPayload,
     AbstractUuidThreadsArgs,

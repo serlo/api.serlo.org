@@ -7,6 +7,14 @@ type Page implements AbstractUuid & AbstractRepository & AbstractNavigationChild
     first: Int
     last: Int
   ): ThreadsConnection!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
   date: DateTime!
   instance: Instance!
   alias: String
@@ -32,6 +40,14 @@ type PageRevision implements AbstractUuid & AbstractRevision {
     first: Int
     last: Int
   ): ThreadsConnection!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
   date: DateTime!
   title: String!
   content: String!
