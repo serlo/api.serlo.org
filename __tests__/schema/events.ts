@@ -51,6 +51,7 @@ import {
   createTestClient,
   assertSuccessfulGraphQLQuery,
   createApiHandler,
+  assertFailingGraphQLQuery,
 } from '../__utils__'
 
 let client: Client
@@ -192,63 +193,55 @@ describe('endpoint "events"', () => {
     })
   })
 
-  describe('number of returned events is bounded to 100', () => {
-    let events: NotificationEventPayload[]
+  test('returns maximal 100 events when first = last = undefined', async () => {
+    const events = updateIds(R.range(0, 10).flatMap(() => allEvents))
+    setupEvents(events)
 
-    beforeEach(() => {
-      events = updateIds(R.range(0, 10).flatMap(() => allEvents))
-      setupEvents(events)
-    })
-
-    test('when first is defined', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query events {
-            events(first: 150) {
-              nodes {
-                __typename
-                id
-              }
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query events {
+          events {
+            nodes {
+              __typename
+              id
             }
           }
-        `,
-        client,
-        data: { events: { nodes: events.slice(0, 100).map(getTypenameAndId) } },
-      })
+        }
+      `,
+      client,
+      data: { events: { nodes: events.slice(0, 100).map(getTypenameAndId) } },
     })
+  })
 
-    test('when last is defined', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query events {
-            events(last: 150) {
-              nodes {
-                __typename
-                id
-              }
+  test('throws error when first > 100', async () => {
+    await assertFailingGraphQLQuery({
+      query: gql`
+        query events {
+          events(first: 150) {
+            nodes {
+              __typename
             }
           }
-        `,
-        client,
-        data: { events: { nodes: events.slice(-100).map(getTypenameAndId) } },
-      })
+        }
+      `,
+      message: 'first must be smaller or equal 100',
+      client,
     })
+  })
 
-    test('when first and last is not defined', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query events {
-            events {
-              nodes {
-                __typename
-                id
-              }
+  test('throws error when last > 100', async () => {
+    await assertFailingGraphQLQuery({
+      query: gql`
+        query events {
+          events(last: 150) {
+            nodes {
+              __typename
             }
           }
-        `,
-        client,
-        data: { events: { nodes: events.slice(0, 100).map(getTypenameAndId) } },
-      })
+        }
+      `,
+      message: 'last must be smaller or equal 100',
+      client,
     })
   })
 })

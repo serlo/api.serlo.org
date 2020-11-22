@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { AuthenticationError } from 'apollo-server'
+import { AuthenticationError, UserInputError } from 'apollo-server'
 import * as R from 'ramda'
 
 import { resolveConnection } from '../connection'
@@ -47,16 +47,11 @@ export const resolvers: NotificationResolvers = {
   },
   Query: {
     async events(_parent, payload, { dataSources }) {
-      const maxReturn = 100
-      let { first, last } = payload
+      if (isDefined(payload.first) && payload.first > 100)
+        throw new UserInputError('first must be smaller or equal 100')
 
-      if (!R.isNil(first)) {
-        first = Math.min(maxReturn, first)
-      } else if (!R.isNil(last)) {
-        last = Math.min(maxReturn, last)
-      } else {
-        first = maxReturn
-      }
+      if (isDefined(payload.last) && payload.last > 100)
+        throw new UserInputError('last must be smaller or equal 100')
 
       const unfilteredEvents = await dataSources.serlo.getEvents()
       const events = unfilteredEvents.filter((event) => {
@@ -74,7 +69,13 @@ export const resolvers: NotificationResolvers = {
 
       return resolveConnection({
         nodes: events,
-        payload: { ...payload, first, last },
+        payload: {
+          ...payload,
+          first:
+            R.isNil(payload.first) && R.isNil(payload.last)
+              ? 100
+              : payload.first,
+        },
         createCursor: (event) => event.id.toString(),
       })
     },
