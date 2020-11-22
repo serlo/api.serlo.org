@@ -25,8 +25,10 @@ import {
   User,
   QueryActiveReviewersArgs,
   QueryActiveAuthorsArgs,
+  UserEventsByUserArgs,
 } from '../../../../types'
 import { Connection } from '../../connection'
+import { NotificationEventPayload } from '../../notification/types'
 import { QueryResolver, Resolver } from '../../types'
 import {
   AbstractUuidPayload,
@@ -52,6 +54,11 @@ export interface UserResolvers {
   }
   User: {
     alias: Resolver<UserPayload, never, string>
+    eventsByUser: Resolver<
+      UserPayload,
+      UserEventsByUserArgs,
+      Connection<NotificationEventPayload>
+    >
     activeAuthor: Resolver<UserPayload, never, boolean>
     activeDonor: Resolver<UserPayload, never, boolean>
     activeReviewer: Resolver<UserPayload, never, boolean>

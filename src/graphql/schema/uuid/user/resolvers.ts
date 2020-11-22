@@ -28,6 +28,7 @@ import {
   CellValues,
 } from '../../../data-sources/google-spreadsheet-api'
 import { ConnectionPayload, resolveConnection } from '../../connection'
+import { resolveEvents } from '../../notification/utils'
 import { Context } from '../../types'
 import { AbstractUuidPayload, createUuidResolvers } from '../abstract-uuid'
 import { encodePath } from '../alias'
@@ -72,6 +73,9 @@ export const resolvers: UserResolvers = {
     },
     async activeReviewer(user, _args, { dataSources }) {
       return (await dataSources.serlo.getActiveReviewerIds()).includes(user.id)
+    },
+    async eventsByUser(parent, payload, { dataSources }) {
+      return resolveEvents(dataSources, { ...payload, actorId: parent.id })
     },
   },
 }

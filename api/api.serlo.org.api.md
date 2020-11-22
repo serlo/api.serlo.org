@@ -1541,6 +1541,7 @@ export type User = AbstractUuid & {
     __typename?: 'User';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    eventsByUser: AbstractNotificationEventConnection;
     threads: ThreadsConnection;
     alias: Scalars['String'];
     username: Scalars['String'];
@@ -1566,6 +1567,16 @@ export type UserEdge = {
     __typename?: 'UserEdge';
     cursor: Scalars['String'];
     node: User;
+};
+
+// @public (undocumented)
+export type UserEventsByUserArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    objectId?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)

@@ -1409,6 +1409,7 @@ export type User = AbstractUuid & {
   __typename?: 'User';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
+  eventsByUser: AbstractNotificationEventConnection;
   threads: ThreadsConnection;
   alias: Scalars['String'];
   username: Scalars['String'];
@@ -1418,6 +1419,16 @@ export type User = AbstractUuid & {
   activeAuthor: Scalars['Boolean'];
   activeDonor: Scalars['Boolean'];
   activeReviewer: Scalars['Boolean'];
+};
+
+
+export type UserEventsByUserArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  instance?: Maybe<Instance>;
+  objectId?: Maybe<Scalars['Int']>;
 };
 
 

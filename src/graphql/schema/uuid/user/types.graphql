@@ -1,6 +1,14 @@
 type User implements AbstractUuid {
   id: Int!
   trashed: Boolean!
+  eventsByUser(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    objectId: Int
+  ): AbstractNotificationEventConnection!
   threads(
     after: String
     before: String

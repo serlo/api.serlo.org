@@ -19,8 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { UserInputError } from 'apollo-server'
 import * as R from 'ramda'
 
+import { QueryEventsArgs } from '../../../types'
+import { resolveConnection } from '../connection'
+import { Context } from '../types'
+import { isDefined } from '../utils'
 import { resolveUser } from '../uuid/user/utils'
 import {
   AbstractNotificationEventPayload,
@@ -44,4 +49,39 @@ export function createNotificationEventResolvers<
       return resolveUser({ id: notificationEvent.actorId }, context, info)
     },
   }
+}
+
+export async function resolveEvents(
+  dataSources: Context['dataSources'],
+  payload: QueryEventsArgs
+) {
+  if (isDefined(payload.first) && payload.first > 100)
+    throw new UserInputError('first must be smaller or equal 100')
+
+  if (isDefined(payload.last) && payload.last > 100)
+    throw new UserInputError('last must be smaller or equal 100')
+
+  const unfilteredEvents = await dataSources.serlo.getEvents()
+  const events = unfilteredEvents.filter((event) => {
+    if (isDefined(payload.instance) && payload.instance !== event.instance)
+      return false
+
+    if (isDefined(payload.objectId) && payload.objectId !== event.objectId)
+      return false
+
+    if (isDefined(payload.actorId) && payload.actorId !== event.actorId)
+      return false
+
+    return true
+  })
+
+  return resolveConnection({
+    nodes: events,
+    payload: {
+      ...payload,
+      first:
+        R.isNil(payload.first) && R.isNil(payload.last) ? 100 : payload.first,
+    },
+    createCursor: (event) => event.id.toString(),
+  })
 }
