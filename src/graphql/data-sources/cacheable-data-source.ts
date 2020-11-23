@@ -34,28 +34,9 @@ export abstract class CacheableDataSource extends RESTDataSource {
     super()
   }
 
-  public async setCache<Value>({
-    key,
-    update,
-  }: {
-    key: string
-    update: UpdateFunction<Value>
-  }): Promise<Value> {
-    const currentValue = pipeable.pipe(
-      await this.environment.cache.get<unknown>(key),
-      O.chain(O.fromPredicate(isEntry)),
-      O.map((entry) => entry.value as Value),
-      O.toUndefined
-    )
-    const updatedEntry = await this.setValue({
-      key,
-      value: await update(currentValue),
-    })
+  public abstract updateCacheValue(key: string): Promise<void>
 
-    return updatedEntry.value
-  }
-
-  protected async getFromCache<Value>({
+  public async getCacheValue<Value>({
     key,
     update,
     maxAge,
@@ -64,10 +45,13 @@ export abstract class CacheableDataSource extends RESTDataSource {
     update: UpdateFunction<Value>
     maxAge?: number
   }): Promise<Value> {
-    const updateCacheEntry = () => this.setCache({ key, update })
     const cacheEntry = await this.environment.cache.get<unknown>(key)
 
-    if (O.isNone(cacheEntry)) return await updateCacheEntry()
+    if (O.isNone(cacheEntry)) {
+      const initialValue = await update(null)
+      await this.setValue({ key, value: initialValue })
+      return initialValue
+    }
 
     const cacheValue = cacheEntry.value
     const entry = isEntry<Value>(cacheValue)
@@ -79,10 +63,57 @@ export abstract class CacheableDataSource extends RESTDataSource {
     if (maxAge === undefined || age <= maxAge * 1000) return entry.value
 
     // update cache in the background -> thus we do not use "await" here
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    updateCacheEntry()
+    void this.setCacheValue({ key, update })
 
     return entry.value
+  }
+
+  public async setCacheValue<Value>({
+    key,
+    update,
+  }: {
+    key: string
+    update: UpdateFunction<Value>
+  }): Promise<void> {
+    if (await this.lock(key)) {
+      const currentValue = pipeable.pipe(
+        await this.environment.cache.get<unknown>(key),
+        O.chain(O.fromPredicate(isEntry)),
+        O.map((entry) => entry.value as Value),
+        O.toNullable
+      )
+      try {
+        await this.setValue({ key, value: await update(currentValue) })
+      } catch (e) {
+        // Ignore exceptions
+      } finally {
+        await this.unlock(key)
+      }
+    }
+  }
+
+  public async UNSAFE_setCacheValueWithoutLock<Value>({
+    key,
+    update,
+  }: {
+    key: string
+    update: UpdateFunction<Value>
+  }): Promise<void> {
+    // Do update even when resource is locked.
+    await this.lock(key)
+    const currentValue = pipeable.pipe(
+      await this.environment.cache.get<unknown>(key),
+      O.chain(O.fromPredicate(isEntry)),
+      O.map((entry) => entry.value as Value),
+      O.toNullable
+    )
+    try {
+      await this.setValue({ key, value: await update(currentValue) })
+    } catch (e) {
+      // Ignore exceptions
+    } finally {
+      await this.unlock(key)
+    }
   }
 
   private async setValue<Value>({
@@ -93,13 +124,24 @@ export abstract class CacheableDataSource extends RESTDataSource {
     value: Value
   }): Promise<Entry<Value>> {
     const newEntry = { value, lastModified: this.environment.timer.now() }
-
     await this.environment.cache.set(key, newEntry)
-
     return newEntry
   }
 
-  public abstract updateCache(key: string): Promise<void>
+  private async lock(key: string): Promise<boolean> {
+    const lock = await this.environment.cache.setAndReturnPreviousValue<
+      boolean
+    >(this.getLockKey(key), true, { ttl: 10 })
+    return O.isNone(lock) || lock.value === false
+  }
+
+  private async unlock(key: string): Promise<void> {
+    return this.environment.cache.remove(this.getLockKey(key))
+  }
+
+  private getLockKey(key: string): string {
+    return `lock:${key}`
+  }
 }
 
 interface Entry<Value> {
@@ -111,4 +153,4 @@ function isEntry<Value>(entry: unknown): entry is Entry<Value> {
   return R.has('lastModified', entry) && R.has('value', entry)
 }
 
-type UpdateFunction<Value> = (current?: Value) => Promise<Value>
+type UpdateFunction<Value> = (current: Value | null) => Promise<Value>

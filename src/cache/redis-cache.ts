@@ -24,7 +24,7 @@ import msgpack from 'msgpack'
 import redis from 'redis'
 import * as util from 'util'
 
-import { Cache } from '../graphql/environment'
+import { Cache, SetCacheOptions } from '../graphql/environment'
 
 export function createRedisCache({ host }: { host: string }): Cache {
   const client = redis.createClient({
@@ -42,8 +42,14 @@ export function createRedisCache({ host }: { host: string }): Cache {
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const set = (util.promisify(client.set).bind(client) as unknown) as (
     key: string,
-    value: Buffer
+    value: Buffer,
+    flags?: 'EX',
+    ttl?: number
   ) => Promise<void>
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  const ttl = (util.promisify(client.ttl).bind(client) as unknown) as (
+    key: string
+  ) => Promise<number | undefined>
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const flushdb = util.promisify(client.flushdb).bind(client)
 
@@ -55,16 +61,32 @@ export function createRedisCache({ host }: { host: string }): Cache {
         O.map((v) => msgpack.unpack(v) as T)
       )
     },
-    async set(key, value) {
+    async set(key, value, options) {
       const packedValue = msgpack.pack(value) as Buffer
-
-      await set(key, packedValue)
+      const ttl = options?.ttl
+      if (ttl === undefined) {
+        await set(key, packedValue)
+      } else {
+        await set(key, packedValue, 'EX', ttl)
+      }
+    },
+    async setAndReturnPreviousValue<T>(
+      key: string,
+      value: T,
+      options?: SetCacheOptions
+    ) {
+      const previousValue = await this.get<T>(key)
+      await this.set(key, value, options)
+      return previousValue
     },
     async remove(key: string) {
       await del(key)
     },
     async flush() {
       await flushdb()
+    },
+    async getTtl(key) {
+      return O.fromNullable(await ttl(key))
     },
   }
 }
