@@ -19,9 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Scalars, ThreadCommentsArgs } from '../../../../types'
+import {
+  MutationCreateThreadArgs,
+  Scalars,
+  ThreadCommentsArgs,
+} from '../../../../types'
 import { Connection } from '../../connection'
-import { Resolver } from '../../types'
+import { MutationResolver, Resolver } from '../../types'
 import { DiscriminatorType, UuidPayload } from '../abstract-uuid'
 import { UserPayload } from '../user'
 
@@ -53,6 +57,9 @@ export interface ThreadResolvers {
   Comment: {
     createdAt: Resolver<CommentPayload, never, Scalars['DateTime']>
     author: Resolver<CommentPayload, never, UserPayload>
+  }
+  Mutation: {
+    createThread: MutationResolver<MutationCreateThreadArgs, ThreadsPayload>
   }
 }
 

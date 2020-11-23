@@ -61,3 +61,15 @@ type CommentEdge {
   cursor: String!
   node: Comment!
 }
+
+extend type Mutation {
+  createThread(
+    createdAt: String!
+    updatedAt: String!
+    title: String!
+    archived: Boolean!
+    trashed: Boolean!
+    object: Int!
+    comments: [Int]
+  ): Thread!
+}

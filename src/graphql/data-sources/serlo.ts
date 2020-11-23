@@ -22,7 +22,7 @@
 import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
 
-import { Instance, License } from '../../types'
+import { Instance, License, MutationCreateThreadArgs } from '../../types'
 import {
   AbstractNotificationEventPayload,
   AbstractUuidPayload,
@@ -246,6 +246,27 @@ export class SerloDataSource extends CacheableDataSource {
 
   public async getThreadIds({ id }: { id: number }): Promise<ThreadsPayload> {
     return this.cacheAwareGet({ path: `/api/threads/${id}` })
+  }
+
+  public async createThread(
+    payload: MutationCreateThreadArgs
+  ): Promise<ThreadsPayload> {
+    const firstCommentId = await this.customPost<number>({
+      path: `/api/create-thread/`,
+      body: payload,
+    })
+    const threads = await this.getThreadIds({ id: payload.object })
+    threads.firstCommentIds.push(firstCommentId)
+    return await this.setCache({
+      key: this.getCacheKey(`/api/threads/${payload.object}`),
+      update: () =>
+        this.customPost<ThreadsPayload>({
+          path: `/api/threads/${payload.object}`,
+          body: {
+            firstCommentIds: [threads],
+          },
+        }),
+    })
   }
 
   private async cacheAwareGet<T>({

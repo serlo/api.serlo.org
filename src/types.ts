@@ -109,6 +109,7 @@ export type Mutation = {
   _removeCache?: Maybe<Scalars['Boolean']>;
   _setCache?: Maybe<Scalars['Boolean']>;
   _updateCache?: Maybe<Scalars['Boolean']>;
+  createThread: Thread;
   setNotificationState?: Maybe<Scalars['Boolean']>;
 };
 
@@ -126,6 +127,17 @@ export type Mutation_SetCacheArgs = {
 
 export type Mutation_UpdateCacheArgs = {
   keys: Array<Scalars['String']>;
+};
+
+
+export type MutationCreateThreadArgs = {
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
+  title: Scalars['String'];
+  archived: Scalars['Boolean'];
+  trashed: Scalars['Boolean'];
+  object: Scalars['Int'];
+  comments?: Maybe<Array<Maybe<Scalars['Int']>>>;
 };
 
 
