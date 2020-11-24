@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [v0.11.3](https://github.com/serlo/api.serlo.org/compare/v0.11.2..v0.11.3) - November 24, 2020
 
+### Fixed
+
+- Tweak `max-age`s of stale-while-revalidate caching.
+
 ### Internal
 
 - **alias**. Remove `source` and `timestamp` from `AliasPayload`.

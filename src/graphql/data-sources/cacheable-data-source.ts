@@ -25,7 +25,8 @@ import * as R from 'ramda'
 
 import { Environment } from '../environment'
 
-export const HOUR = 60 * 60
+export const MINUTE = 60
+export const HOUR = 60 * MINUTE
 export const DAY = 24 * HOUR
 
 export abstract class CacheableDataSource extends RESTDataSource {
