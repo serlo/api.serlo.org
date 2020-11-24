@@ -19,15 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Instance, Scalars } from '../../../../types'
+import { Instance } from '../../../../types'
 import { Resolver } from '../../types'
 
 export interface AliasPayload {
   id: number
   instance: Instance
   path: string
-  source: string
-  timestamp: Scalars['DateTime']
 }
 
 export interface AliasResolvers<T extends { alias: string | null }> {
