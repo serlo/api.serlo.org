@@ -189,8 +189,6 @@ describe('Repository', () => {
           id: repository.id,
           instance: repository.instance,
           path: '/ü',
-          source: `/source`,
-          timestamp: 'timestamp',
         })
       )
       await assertSuccessfulGraphQLQuery({
@@ -230,8 +228,6 @@ describe('Repository', () => {
           id: repository.id,
           instance: repository.instance,
           path: '/path',
-          source: `/source`,
-          timestamp: 'timestamp',
         })
       )
       await assertSuccessfulGraphQLQuery({
