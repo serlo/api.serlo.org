@@ -36,8 +36,6 @@ export const groupedExerciseAlias: AliasPayload = {
   id: 2219,
   instance: Instance.De,
   path: '/2219/2219',
-  source: '/entity/view/2219',
-  timestamp: '2014-05-25T10:25:44Z',
 }
 
 export const groupedExercise: GroupedExercisePayload = {
