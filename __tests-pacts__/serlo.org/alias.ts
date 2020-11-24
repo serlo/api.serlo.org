@@ -32,8 +32,6 @@ test('Alias', async () => {
     id: 19767,
     instance: Instance.De,
     path: '/mathe',
-    source: '/page/view/19767',
-    timestamp: '2014-05-25T10:25:44+02:00',
   }
   await addJsonInteraction({
     name: 'fetch data of alias /mathe',
@@ -43,8 +41,6 @@ test('Alias', async () => {
       id: alias.id,
       instance: Matchers.string(alias.instance),
       path: Matchers.string(alias.path),
-      source: Matchers.string(alias.source),
-      timestamp: Matchers.iso8601DateTime(alias.timestamp),
     },
   })
   await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/alias/mathe`)

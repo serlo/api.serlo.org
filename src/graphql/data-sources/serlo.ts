@@ -40,7 +40,7 @@ import {
 } from '../schema'
 import { SubscriptionsPayload } from '../schema/subscription'
 import { Service } from '../schema/types'
-import { CacheableDataSource, DAY, HOUR } from './cacheable-data-source'
+import { CacheableDataSource, DAY, HOUR, MINUTE } from './cacheable-data-source'
 
 export class SerloDataSource extends CacheableDataSource {
   public async getActiveAuthorIds(): Promise<number[]> {
@@ -68,7 +68,7 @@ export class SerloDataSource extends CacheableDataSource {
     return this.cacheAwareGet<AliasPayload>({
       path: `/api/alias${cleanPath}`,
       instance,
-      maxAge: 1 * HOUR,
+      maxAge: 5 * MINUTE,
     })
   }
 
@@ -160,7 +160,7 @@ export class SerloDataSource extends CacheableDataSource {
   }): Promise<T | null> {
     const uuid = await this.cacheAwareGet<T | null>({
       path: `/api/uuid/${id}`,
-      maxAge: 1 * DAY,
+      maxAge: 5 * MINUTE,
     })
     return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
   }
@@ -245,7 +245,10 @@ export class SerloDataSource extends CacheableDataSource {
   }
 
   public async getThreadIds({ id }: { id: number }): Promise<ThreadsPayload> {
-    return this.cacheAwareGet({ path: `/api/threads/${id}` })
+    return this.cacheAwareGet({
+      path: `/api/threads/${id}`,
+      maxAge: 5 * MINUTE,
+    })
   }
 
   private async cacheAwareGet<T>({
