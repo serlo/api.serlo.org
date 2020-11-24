@@ -378,6 +378,7 @@ async function exec(): Promise<void> {
     {
       tagName: 'v0.11.3',
       date: '2020-11-24',
+      fixed: ['Tweak `max-age`s of stale-while-revalidate caching.'],
       internal: [
         ['alias', 'Remove `source` and `timestamp` from `AliasPayload`.'],
       ],
