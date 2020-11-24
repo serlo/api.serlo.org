@@ -356,6 +356,16 @@ async function exec(): Promise<void> {
     {
       tagName: 'v0.11.0',
       date: '2020-11-18',
+      yanked: true,
+    },
+    {
+      tagName: 'v0.11.1',
+      date: '2020-11-18',
+      yanked: true,
+    },
+    {
+      tagName: 'v0.11.2',
+      date: '2020-11-18',
       added: [
         'We now have a stale-while-revalidate caching approach in place. This should lead to more correct behavior even when our listeners fail.',
         [
@@ -363,6 +373,14 @@ async function exec(): Promise<void> {
           'Add `objectId` to `AbstractNotificationEvent` which reports the ID of the object that triggered the event (and can be used to unsubscribe).',
         ],
         ['uuid', 'Add `threads`.'],
+      ],
+    },
+    {
+      tagName: 'v0.11.3',
+      date: '2020-11-24',
+      fixed: ['Tweak `max-age`s of stale-while-revalidate caching.'],
+      internal: [
+        ['alias', 'Remove `source` and `timestamp` from `AliasPayload`.'],
       ],
     },
   ])

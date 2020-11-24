@@ -36,8 +36,6 @@ export const solutionAlias: AliasPayload = {
   id: 29648,
   instance: Instance.De,
   path: '/29648/29648',
-  source: '/entity/view/29648',
-  timestamp: '2014-05-25T10:25:44Z',
 }
 
 export const solution: SolutionPayload = {
