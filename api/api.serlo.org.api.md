@@ -1514,7 +1514,7 @@ export type User = AbstractUuid & {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
     threads: ThreadsConnection;
-    alias: Scalars['String'];
+    alias?: Maybe<Scalars['String']>;
     username: Scalars['String'];
     date: Scalars['DateTime'];
     lastLogin?: Maybe<Scalars['DateTime']>;

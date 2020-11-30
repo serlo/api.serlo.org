@@ -7,7 +7,7 @@ type User implements AbstractUuid {
     first: Int
     last: Int
   ): ThreadsConnection!
-  alias: String!
+  alias: String
   username: String!
   date: DateTime!
   lastLogin: DateTime
