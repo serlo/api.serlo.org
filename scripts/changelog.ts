@@ -383,6 +383,15 @@ async function exec(): Promise<void> {
         ['alias', 'Remove `source` and `timestamp` from `AliasPayload`.'],
       ],
     },
+    {
+      tagName: 'v0.11.4',
+      date: '2020-11-30',
+      fixed: [['uuid', 'Unify alias type.']],
+      internal: [
+        ['cacheable-data-source', 'Use in-memory lock.'],
+        ['cacheable-data-source', 'Add logs.'],
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

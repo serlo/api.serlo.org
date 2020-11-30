@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.11.4](https://github.com/serlo/api.serlo.org/compare/v0.11.3..v0.11.4) - November 30, 2020
+
+### Fixed
+
+- **uuid**. Unify alias type.
+
+### Internal
+
+- **cacheable-data-source**. Use in-memory lock.
+- **cacheable-data-source**. Add logs.
+
 ## [v0.11.3](https://github.com/serlo/api.serlo.org/compare/v0.11.2..v0.11.3) - November 24, 2020
 
 ### Fixed
