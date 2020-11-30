@@ -26,6 +26,7 @@ type SolutionRevision implements AbstractUuid & AbstractRevision & AbstractEntit
   id: Int!
   author: User!
   trashed: Boolean!
+  alias: String
   threads(
     after: String
     before: String
