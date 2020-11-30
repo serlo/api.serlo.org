@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { RESTDataSource } from 'apollo-datasource-rest'
+import { randomBytes } from 'crypto'
 import { option as O, pipeable } from 'fp-ts'
 import * as R from 'ramda'
 
@@ -28,6 +29,8 @@ import { Environment } from '../environment'
 export const MINUTE = 60
 export const HOUR = 60 * MINUTE
 export const DAY = 24 * HOUR
+
+const inMemoryLock: Record<string, string> = {}
 
 export abstract class CacheableDataSource extends RESTDataSource {
   constructor(protected environment: Environment) {
@@ -48,6 +51,7 @@ export abstract class CacheableDataSource extends RESTDataSource {
     const cacheEntry = await this.environment.cache.get<unknown>(key)
 
     if (O.isNone(cacheEntry)) {
+      console.log('MISS', key)
       const initialValue = await update(null)
       await this.setValue({ key, value: initialValue })
       return initialValue
@@ -63,6 +67,7 @@ export abstract class CacheableDataSource extends RESTDataSource {
     if (maxAge === undefined || age <= maxAge * 1000) return entry.value
 
     // update cache in the background -> thus we do not use "await" here
+    console.log('HIT', key)
     void this.setCacheValue({ key, update })
 
     return entry.value
@@ -75,21 +80,19 @@ export abstract class CacheableDataSource extends RESTDataSource {
     key: string
     update: UpdateFunction<Value>
   }): Promise<void> {
-    if (await this.lock(key)) {
-      const currentValue = pipeable.pipe(
-        await this.environment.cache.get<unknown>(key),
-        O.chain(O.fromPredicate(isEntry)),
-        O.map((entry) => entry.value as Value),
-        O.toNullable
+    await pipeable.pipe(
+      this.lock(key),
+      O.fold(
+        async () => {},
+        async (lock) => {
+          await this.updateValue({
+            key,
+            update,
+            lock,
+          })
+        }
       )
-      try {
-        await this.setValue({ key, value: await update(currentValue) })
-      } catch (e) {
-        // Ignore exceptions
-      } finally {
-        await this.unlock(key)
-      }
-    }
+    )
   }
 
   public async UNSAFE_setCacheValueWithoutLock<Value>({
@@ -99,21 +102,13 @@ export abstract class CacheableDataSource extends RESTDataSource {
     key: string
     update: UpdateFunction<Value>
   }): Promise<void> {
-    // Do update even when resource is locked.
-    await this.lock(key)
-    const currentValue = pipeable.pipe(
-      await this.environment.cache.get<unknown>(key),
-      O.chain(O.fromPredicate(isEntry)),
-      O.map((entry) => entry.value as Value),
-      O.toNullable
-    )
-    try {
-      await this.setValue({ key, value: await update(currentValue) })
-    } catch (e) {
-      // Ignore exceptions
-    } finally {
-      await this.unlock(key)
-    }
+    // Update even when resource is locked.
+    const lock = this.UNSAFE_lock(key)
+    await this.updateValue({
+      key,
+      update,
+      lock,
+    })
   }
 
   private async setValue<Value>({
@@ -128,20 +123,52 @@ export abstract class CacheableDataSource extends RESTDataSource {
     return newEntry
   }
 
-  private async lock(key: string): Promise<boolean> {
-    const lock = await this.environment.cache.setAndReturnPreviousValue<
-      boolean
-    >(this.getLockKey(key), true, { ttl: 10 })
-    return O.isNone(lock) || lock.value === false
+  private async updateValue<Value>({
+    key,
+    update,
+    lock,
+  }: {
+    key: string
+    update: UpdateFunction<Value>
+    lock: Lock
+  }) {
+    console.log('SWR Background update:', key)
+    const currentValue = pipeable.pipe(
+      await this.environment.cache.get<unknown>(key),
+      O.chain(O.fromPredicate(isEntry)),
+      O.map((entry) => entry.value as Value),
+      O.toNullable
+    )
+    try {
+      await this.setValue({ key, value: await update(currentValue) })
+    } catch (e) {
+      // Ignore exceptions
+    } finally {
+      lock.unlock()
+    }
   }
 
-  private async unlock(key: string): Promise<void> {
-    return this.environment.cache.remove(this.getLockKey(key))
+  private lock(key: string): O.Option<Lock> {
+    const isLocked = inMemoryLock[key] !== undefined
+    return isLocked ? O.none : O.some(this.UNSAFE_lock(key))
   }
 
-  private getLockKey(key: string): string {
-    return `lock:${key}`
+  private UNSAFE_lock(key: string): Lock {
+    const lockId = randomBytes(8).toString('hex')
+    inMemoryLock[key] = lockId
+    return {
+      unlock,
+    }
+
+    function unlock() {
+      if (inMemoryLock[key] !== lockId) return
+      delete inMemoryLock[key]
+    }
   }
+}
+
+interface Lock {
+  unlock(): void
 }
 
 interface Entry<Value> {
