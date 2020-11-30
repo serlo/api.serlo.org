@@ -51,6 +51,7 @@ export abstract class CacheableDataSource extends RESTDataSource {
     const cacheEntry = await this.environment.cache.get<unknown>(key)
 
     if (O.isNone(cacheEntry)) {
+      console.log('MISS', key)
       const initialValue = await update(null)
       await this.setValue({ key, value: initialValue })
       return initialValue
@@ -66,6 +67,7 @@ export abstract class CacheableDataSource extends RESTDataSource {
     if (maxAge === undefined || age <= maxAge * 1000) return entry.value
 
     // update cache in the background -> thus we do not use "await" here
+    console.log('HIT', key)
     void this.setCacheValue({ key, update })
 
     return entry.value
@@ -100,7 +102,7 @@ export abstract class CacheableDataSource extends RESTDataSource {
     key: string
     update: UpdateFunction<Value>
   }): Promise<void> {
-    // Do update even when resource is locked.
+    // Update even when resource is locked.
     const lock = this.UNSAFE_lock(key)
     await this.updateValue({
       key,
@@ -130,6 +132,7 @@ export abstract class CacheableDataSource extends RESTDataSource {
     update: UpdateFunction<Value>
     lock: Lock
   }) {
+    console.log('SWR Background update:', key)
     const currentValue = pipeable.pipe(
       await this.environment.cache.get<unknown>(key),
       O.chain(O.fromPredicate(isEntry)),
