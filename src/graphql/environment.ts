@@ -22,8 +22,18 @@
 import { option as O } from 'fp-ts'
 
 export interface Environment {
+  backgroundTasks: BackgroundTasks
   cache: Cache
   timer: Timer
+}
+
+export interface BackgroundTasks {
+  schedule(task: BackgroundTask): Promise<void>
+}
+
+export interface BackgroundTask {
+  key: string
+  maxAge?: number
 }
 
 export interface Cache {

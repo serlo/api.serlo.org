@@ -19,9 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { createInMemoryBackgroundTasks } from '../../src/background-tasks'
 import { createInMemoryCache } from '../../src/cache'
 import { CacheableDataSource } from '../../src/graphql/data-sources'
-import { Cache, Timer } from '../../src/graphql/environment'
+import { BackgroundTasks, Cache, Timer } from '../../src/graphql/environment'
 
 class ExampleDataSource extends CacheableDataSource {
   public async getContent({ key = 'key', current, maxAge }: CachePayload) {
@@ -43,6 +44,7 @@ interface CachePayload {
   maxAge?: number
 }
 
+let backgroundTasks: BackgroundTasks
 let cache: Cache
 let dataSource: ExampleDataSource
 const now = jest.fn<number, never>()
@@ -50,8 +52,10 @@ const timer: Timer = { now }
 
 beforeEach(() => {
   now.mockReturnValue(Date.now())
+  backgroundTasks = createInMemoryBackgroundTasks()
   cache = createInMemoryCache(timer)
   dataSource = new ExampleDataSource({
+    backgroundTasks,
     cache,
     timer,
   })

@@ -51,7 +51,6 @@ export abstract class CacheableDataSource extends RESTDataSource {
     const cacheEntry = await this.environment.cache.get<unknown>(key)
 
     if (O.isNone(cacheEntry)) {
-      console.log('MISS', key)
       const initialValue = await update(null)
       await this.setValue({ key, value: initialValue })
       return initialValue
@@ -62,13 +61,30 @@ export abstract class CacheableDataSource extends RESTDataSource {
       ? cacheValue
       : await this.setValue({ key, value: cacheValue as Value })
 
-    const age = this.environment.timer.now() - entry.lastModified
-
-    if (maxAge === undefined || age <= maxAge * 1000) return entry.value
-
-    // update cache in the background -> thus we do not use "await" here
     console.log('HIT', key)
-    void this.setCacheValue({ key, update })
+    await this.environment.backgroundTasks.schedule({
+      key,
+      maxAge,
+      // exec: async () => {
+      //   // console.log('exec', key)
+      //   // const cacheEntry = await this.environment.cache.get<unknown>(key)
+      //   //
+      //   // if (O.isNone(cacheEntry)) return
+      //   //
+      //   // const cacheValue = cacheEntry.value
+      //   // const entry = isEntry<Value>(cacheValue)
+      //   //   ? cacheValue
+      //   //   : await this.setValue({ key, value: cacheValue as Value })
+      //   //
+      //   // const age = this.environment.timer.now() - entry.lastModified
+      //   //
+      //   // if (maxAge === undefined || age <= maxAge * 1000) return
+      //
+      //   // await this.setCacheValue({ key, update })
+      //
+      //
+      // },
+    })
 
     return entry.value
   }
@@ -80,11 +96,13 @@ export abstract class CacheableDataSource extends RESTDataSource {
     key: string
     update: UpdateFunction<Value>
   }): Promise<void> {
+    console.log('setting cache value')
     await pipeable.pipe(
       this.lock(key),
       O.fold(
         async () => {},
         async (lock) => {
+          console.log('SWR Background update:', key)
           await this.updateValue({
             key,
             update,
@@ -104,6 +122,7 @@ export abstract class CacheableDataSource extends RESTDataSource {
   }): Promise<void> {
     // Update even when resource is locked.
     const lock = this.UNSAFE_lock(key)
+    console.log('Update from mutations:', key)
     await this.updateValue({
       key,
       update,
@@ -132,7 +151,6 @@ export abstract class CacheableDataSource extends RESTDataSource {
     update: UpdateFunction<Value>
     lock: Lock
   }) {
-    console.log('SWR Background update:', key)
     const currentValue = pipeable.pipe(
       await this.environment.cache.get<unknown>(key),
       O.chain(O.fromPredicate(isEntry)),

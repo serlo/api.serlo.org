@@ -22,6 +22,7 @@
 import { InMemoryLRUCache } from 'apollo-server-caching'
 import { either as E } from 'fp-ts'
 
+import { createInMemoryBackgroundTasks } from '../../src/background-tasks'
 import { createInMemoryCache } from '../../src/cache'
 import {
   GoogleSheetApi,
@@ -30,6 +31,7 @@ import {
 import { createTimer } from '../../src/graphql/environment'
 import { expectToBeLeftEventWith, createSpreadsheetHandler } from '../__utils__'
 
+const backgroundTasks = createInMemoryBackgroundTasks()
 const cache = createInMemoryCache()
 const apiKey = 'my-secret'
 const common = {
@@ -43,7 +45,11 @@ let googleSheetApi!: GoogleSheetApi
 beforeEach(async () => {
   googleSheetApi = new GoogleSheetApi({
     apiKey,
-    environment: { cache, timer: createTimer() },
+    environment: {
+      backgroundTasks,
+      cache,
+      timer: createTimer(),
+    },
   })
   googleSheetApi.initialize({ context: {}, cache: new InMemoryLRUCache() })
 

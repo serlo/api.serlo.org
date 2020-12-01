@@ -25,6 +25,7 @@ import {
   createTestClient as createApolloTestClient,
 } from 'apollo-server-testing'
 
+import { createInMemoryBackgroundTasks } from '../../src/background-tasks'
 import { createInMemoryCache } from '../../src/cache'
 import { getGraphQLOptions } from '../../src/graphql'
 import { Cache, createTimer, Timer } from '../../src/graphql/environment'
@@ -38,9 +39,14 @@ export function createTestClient(
   client: Client
   cache: Cache
 } {
+  const backgroundTasks = createInMemoryBackgroundTasks()
   const cache = createInMemoryCache()
   const server = new ApolloServer({
-    ...getGraphQLOptions({ cache, timer: args?.timer ?? createTimer() }),
+    ...getGraphQLOptions({
+      backgroundTasks,
+      cache,
+      timer: args?.timer ?? createTimer(),
+    }),
     context(): Pick<Context, 'service' | 'user'> {
       return {
         service: args?.service ?? Service.SerloCloudflareWorker,

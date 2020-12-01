@@ -160,7 +160,7 @@ export class SerloDataSource extends CacheableDataSource {
   }): Promise<T | null> {
     const uuid = await this.cacheAwareGet<T | null>({
       path: `/api/uuid/${id}`,
-      maxAge: 5 * MINUTE,
+      maxAge: 1,
     })
     return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
   }
