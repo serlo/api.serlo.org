@@ -60,7 +60,13 @@ export const appletRevision: AppletRevisionPayload = {
 
 export function getAppletDataWithoutSubResolvers(applet: AppletPayload) {
   return R.omit(
-    ['currentRevisionId', 'revisionIds', 'licenseId', 'taxonomyTermIds'],
+    [
+      'currentRevisionId',
+      'revisionIds',
+      'licenseId',
+      'taxonomyTermIds',
+      'alias',
+    ],
     applet
   )
 }
@@ -68,5 +74,5 @@ export function getAppletDataWithoutSubResolvers(applet: AppletPayload) {
 export function getAppletRevisionDataWithoutSubResolvers(
   appletRevision: AppletRevisionPayload
 ) {
-  return R.omit(['authorId', 'repositoryId'], appletRevision)
+  return R.omit(['authorId', 'repositoryId', 'alias'], appletRevision)
 }

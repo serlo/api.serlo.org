@@ -64,7 +64,6 @@ describe('subscriptions', () => {
               id
               trashed
               ... on Article {
-                alias
                 instance
                 date
               }

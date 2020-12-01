@@ -67,7 +67,14 @@ export function getGroupedExerciseDataWithoutSubResolvers(
   groupedExercise: GroupedExercisePayload
 ) {
   return R.omit(
-    ['currentRevisionId', 'revisionIds', 'licenseId', 'solutionId', 'parentId'],
+    [
+      'alias',
+      'currentRevisionId',
+      'revisionIds',
+      'licenseId',
+      'solutionId',
+      'parentId',
+    ],
     groupedExercise
   )
 }
@@ -75,5 +82,5 @@ export function getGroupedExerciseDataWithoutSubResolvers(
 export function getGroupedExerciseRevisionDataWithoutSubResolvers(
   groupedExerciseRevision: GroupedExerciseRevisionPayload
 ) {
-  return R.omit(['authorId', 'repositoryId'], groupedExerciseRevision)
+  return R.omit(['alias', 'authorId', 'repositoryId'], groupedExerciseRevision)
 }

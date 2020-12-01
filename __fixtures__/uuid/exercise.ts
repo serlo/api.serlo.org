@@ -63,6 +63,7 @@ export function getExerciseDataWithoutSubResolvers(exercise: ExercisePayload) {
       'licenseId',
       'taxonomyTermIds',
       'solutionId',
+      'alias',
     ],
     exercise
   )
@@ -71,5 +72,5 @@ export function getExerciseDataWithoutSubResolvers(exercise: ExercisePayload) {
 export function getExerciseRevisionDataWithoutSubResolvers(
   exerciseRevision: ExerciseRevisionPayload
 ) {
-  return R.omit(['authorId', 'repositoryId'], exerciseRevision)
+  return R.omit(['alias', 'authorId', 'repositoryId'], exerciseRevision)
 }

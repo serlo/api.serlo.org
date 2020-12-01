@@ -66,6 +66,7 @@ export function getCourseDataWithoutSubResolvers(course: CoursePayload) {
       'licenseId',
       'taxonomyTermIds',
       'pageIds',
+      'alias',
     ],
     course
   )
@@ -74,5 +75,5 @@ export function getCourseDataWithoutSubResolvers(course: CoursePayload) {
 export function getCourseRevisionDataWithoutSubResolvers(
   courseRevision: CourseRevisionPayload
 ) {
-  return R.omit(['authorId', 'repositoryId'], courseRevision)
+  return R.omit(['alias', 'authorId', 'repositoryId'], courseRevision)
 }

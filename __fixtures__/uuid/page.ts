@@ -54,7 +54,13 @@ export const pageRevision: PageRevisionPayload = {
 
 export function getPageDataWithoutSubResolvers(page: PagePayload) {
   return R.omit(
-    ['currentRevisionId', 'revisionIds', 'licenseId', 'taxonomyTermIds'],
+    [
+      'alias',
+      'currentRevisionId',
+      'revisionIds',
+      'licenseId',
+      'taxonomyTermIds',
+    ],
     page
   )
 }
@@ -62,5 +68,5 @@ export function getPageDataWithoutSubResolvers(page: PagePayload) {
 export function getPageRevisionDataWithoutSubResolvers(
   pageRevision: PageRevisionPayload
 ) {
-  return R.omit(['authorId', 'repositoryId'], pageRevision)
+  return R.omit(['alias', 'authorId', 'repositoryId'], pageRevision)
 }

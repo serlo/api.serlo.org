@@ -55,7 +55,6 @@ test('Exercise', async () => {
             id
             trashed
             instance
-            alias
             date
           }
         }

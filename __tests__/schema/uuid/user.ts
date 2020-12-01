@@ -62,7 +62,6 @@ describe('User', () => {
             ... on User {
               id
               trashed
-              alias
               username
               date
               lastLogin
@@ -142,7 +141,6 @@ describe('User', () => {
             ... on User {
               id
               trashed
-              alias
               username
               date
               lastLogin
@@ -173,7 +171,6 @@ describe('User', () => {
             ... on User {
               id
               trashed
-              alias
               username
               date
               lastLogin
@@ -185,27 +182,6 @@ describe('User', () => {
       variables: user,
       data: {
         uuid: getUserDataWithoutSubResolvers(user),
-      },
-      client,
-    })
-  })
-
-  test('alias property is encoded', async () => {
-    global.server.use(createUuidHandler({ ...user, username: 'Günther' }))
-
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query userAlias($id: Int!) {
-          uuid(id: $id) {
-            ... on User {
-              alias
-            }
-          }
-        }
-      `,
-      variables: { id: user.id },
-      data: {
-        uuid: { alias: '/user/profile/G%C3%BCnther' },
       },
       client,
     })
@@ -334,7 +310,6 @@ describe('endpoint activeAuthors', () => {
           __typename
           id
           trashed
-          alias
           username
           date
           lastLogin
@@ -419,7 +394,6 @@ describe('endpoint activeDonors', () => {
           __typename
           id
           trashed
-          alias
           username
           date
           lastLogin
@@ -556,7 +530,6 @@ describe('endpoint activeReviewers', () => {
           __typename
           id
           trashed
-          alias
           username
           date
           lastLogin

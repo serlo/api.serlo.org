@@ -23,8 +23,14 @@ import { gql } from 'apollo-server'
 import { rest } from 'msw'
 import * as R from 'ramda'
 
-import { article, comment2, comment3, user } from '../../../__fixtures__/uuid'
-import { comment1 } from '../../../__fixtures__/uuid/thread'
+import {
+  article,
+  comment1,
+  comment2,
+  comment3,
+  getCommentDataWithoutSubresolvers,
+  user,
+} from '../../../__fixtures__/uuid'
 import { Service } from '../../../src/graphql/schema/types'
 import { UuidPayload } from '../../../src/graphql/schema/uuid/abstract-uuid'
 import { CommentPayload } from '../../../src/graphql/schema/uuid/thread'
@@ -299,14 +305,13 @@ test('endpoint /uuid/:id will not give back comment on its own', async () => {
             trashed
             id
             content
-            alias
             title
             archived
           }
         }
       }
     `,
-    variables: comment1,
+    variables: getCommentDataWithoutSubresolvers(comment1),
     data: {
       uuid: null,
     },

@@ -61,7 +61,6 @@ describe('GroupedExercise', () => {
               id
               trashed
               instance
-              alias
               date
             }
           }
@@ -87,7 +86,6 @@ describe('GroupedExercise', () => {
                 id
                 trashed
                 instance
-                alias
                 date
               }
             }

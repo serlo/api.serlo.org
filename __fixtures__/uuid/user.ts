@@ -19,8 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import * as R from 'ramda'
+
 import { DiscriminatorType, UserPayload } from '../../src/graphql/schema'
-import { getAliasDataWithoutSubResolvers } from './alias'
 
 export const user: UserPayload = {
   __typename: DiscriminatorType.User,
@@ -43,8 +44,5 @@ export const user2: UserPayload = {
 }
 
 export function getUserDataWithoutSubResolvers(user: UserPayload) {
-  return {
-    ...user,
-    ...getAliasDataWithoutSubResolvers(user),
-  }
+  return R.omit(["alias"], user)
 }

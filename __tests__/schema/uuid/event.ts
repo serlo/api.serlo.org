@@ -54,7 +54,6 @@ test('Event', async () => {
           ... on Event {
             id
             trashed
-            alias
             instance
             date
           }

@@ -61,7 +61,13 @@ export const articleRevision: ArticleRevisionPayload = {
 export function getArticleDataWithoutSubResolvers(article: ArticlePayload) {
   return {
     ...R.omit(
-      ['currentRevisionId', 'revisionIds', 'licenseId', 'taxonomyTermIds'],
+      [
+        'currentRevisionId',
+        'revisionIds',
+        'licenseId',
+        'taxonomyTermIds',
+        'alias',
+      ],
       article
     ),
     ...getRepositoryDataWithoutSubResolvers(article),
@@ -71,5 +77,5 @@ export function getArticleDataWithoutSubResolvers(article: ArticlePayload) {
 export function getArticleRevisionDataWithoutSubResolvers(
   articleRevision: ArticleRevisionPayload
 ) {
-  return R.omit(['authorId', 'repositoryId'], articleRevision)
+  return R.omit(['authorId', 'repositoryId', 'alias'], articleRevision)
 }

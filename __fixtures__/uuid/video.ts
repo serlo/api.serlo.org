@@ -59,7 +59,13 @@ export const videoRevision: VideoRevisionPayload = {
 
 export function getVideoDataWithoutSubResolvers(video: VideoPayload) {
   return R.omit(
-    ['currentRevisionId', 'revisionIds', 'licenseId', 'taxonomyTermIds'],
+    [
+      'alias',
+      'currentRevisionId',
+      'revisionIds',
+      'licenseId',
+      'taxonomyTermIds',
+    ],
     video
   )
 }
@@ -67,5 +73,5 @@ export function getVideoDataWithoutSubResolvers(video: VideoPayload) {
 export function getVideoRevisionDataWithoutSubResolvers(
   videoRevision: VideoRevisionPayload
 ) {
-  return R.omit(['authorId', 'repositoryId'], videoRevision)
+  return R.omit(['alias', 'authorId', 'repositoryId'], videoRevision)
 }

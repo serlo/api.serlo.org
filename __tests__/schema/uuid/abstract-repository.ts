@@ -166,7 +166,6 @@ describe('Repository', () => {
             ... on AbstractRepository {
               id
               trashed
-              alias
               date
             }
           }
@@ -199,7 +198,6 @@ describe('Repository', () => {
               ... on AbstractRepository {
                 id
                 trashed
-                alias
                 date
               }
             }
@@ -238,7 +236,6 @@ describe('Repository', () => {
               ... on AbstractRepository {
                 id
                 trashed
-                alias
                 date
               }
             }
@@ -511,7 +508,6 @@ describe('Revision', () => {
                   __typename
                   id
                   trashed
-                  alias
                   username
                   date
                   lastLogin
@@ -548,7 +544,6 @@ describe('Revision', () => {
                     __typename
                     id
                     trashed
-                    alias
                     date
                   }
                 }

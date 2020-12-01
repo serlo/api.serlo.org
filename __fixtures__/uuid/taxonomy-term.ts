@@ -72,5 +72,5 @@ export const taxonomyTermCurriculumTopic: TaxonomyTermPayload = {
 export function getTaxonomyTermDataWithoutSubResolvers(
   taxonomyTerm: TaxonomyTermPayload
 ) {
-  return R.omit(['parentId', 'childrenIds'], taxonomyTerm)
+  return R.omit(['parentId', 'childrenIds', 'alias'], taxonomyTerm)
 }

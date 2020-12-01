@@ -253,7 +253,6 @@ test('_updateCache spreadsheet-* (authenticated)', async () => {
             __typename
             id
             trashed
-            alias
             username
             date
             lastLogin

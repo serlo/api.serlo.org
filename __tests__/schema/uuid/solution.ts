@@ -61,7 +61,6 @@ describe('Solution', () => {
               id
               trashed
               instance
-              alias
               date
             }
           }
@@ -87,7 +86,6 @@ describe('Solution', () => {
                 id
                 trashed
                 instance
-                alias
                 date
               }
             }

@@ -59,7 +59,13 @@ export const eventRevision: EventRevisionPayload = {
 
 export function getEventDataWithoutSubResolvers(event: EventPayload) {
   return R.omit(
-    ['currentRevisionId', 'revisionIds', 'licenseId', 'taxonomyTermIds'],
+    [
+      'alias',
+      'currentRevisionId',
+      'revisionIds',
+      'licenseId',
+      'taxonomyTermIds',
+    ],
     event
   )
 }
@@ -67,5 +73,5 @@ export function getEventDataWithoutSubResolvers(event: EventPayload) {
 export function getEventRevisionDataWithoutSubResolvers(
   eventRevision: EventRevisionPayload
 ) {
-  return R.omit(['authorId', 'repositoryId'], eventRevision)
+  return R.omit(['alias', 'authorId', 'repositoryId'], eventRevision)
 }

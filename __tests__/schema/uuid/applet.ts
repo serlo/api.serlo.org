@@ -55,7 +55,6 @@ test('Applet', async () => {
             id
             trashed
             instance
-            alias
             date
           }
         }
