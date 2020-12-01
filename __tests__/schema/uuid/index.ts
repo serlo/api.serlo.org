@@ -21,14 +21,12 @@
  */
 import { gql } from 'apollo-server'
 
-import { taxonomyTermRoot } from '../../../__fixtures__'
 import { Service } from '../../../src/graphql/schema/types'
 import {
   assertFailingGraphQLQuery,
   assertSuccessfulGraphQLQuery,
   Client,
   createTestClient,
-  createUuidHandler,
   createJsonHandler,
 } from '../../__utils__'
 
@@ -42,32 +40,6 @@ beforeEach(() => {
 })
 
 describe('uuid', () => {
-  // TODO: verschieben in abstract-uuid
-  test('can handle decoded alias with percent signs', async () => {
-    global.server.use(
-      createUuidHandler({ ...taxonomyTermRoot, alias: '/math/%%x%%' })
-    )
-
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query aliasOfTaxonomyTerm($id: Int!) {
-          uuid(id: $id) {
-            ... on TaxonomyTerm {
-              alias
-            }
-          }
-        }
-      `,
-      variables: { id: taxonomyTermRoot.id },
-      data: {
-        uuid: {
-          alias: '/math/%25%25x%25%25',
-        },
-      },
-      client,
-    })
-  })
-
   test('returns null when alias cannot be found', async () => {
     global.server.use(
       createJsonHandler({

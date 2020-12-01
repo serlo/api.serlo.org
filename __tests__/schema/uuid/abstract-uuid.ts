@@ -104,6 +104,28 @@ const abstractUuidFixtures: Record<
 const abstractUuidRepository = R.toPairs(abstractUuidFixtures)
 
 describe('property "alias"', () => {
+  describe('returns encoded alias when alias of payloads is a string', () => {
+    test.each(abstractUuidRepository.filter(aliasIsString))(
+      'type = %s',
+      async (_type, payload) => {
+        global.server.use(createUuidHandler({ ...payload, alias: '/%%/größe' }))
+
+        await assertSuccessfulGraphQLQuery({
+          query: gql`
+            query($id: Int) {
+              uuid(id: $id) {
+                alias
+              }
+            }
+          `,
+          variables: { id: payload.id },
+          data: { uuid: { alias: '/%25%25/gr%C3%B6%C3%9Fe' } },
+          client,
+        })
+      }
+    )
+  })
+
   describe('returns null when alias of payload = null', () => {
     test.each(abstractUuidRepository.filter(aliasIsNull))(
       'type = %s',
@@ -120,30 +142,6 @@ describe('property "alias"', () => {
           `,
           variables: { id: payload.id },
           data: { uuid: { alias: null } },
-          client,
-        })
-      }
-    )
-  })
-
-  describe('returns encoded alias when alias of payloads is a string', () => {
-    test.each(abstractUuidRepository.filter(aliasIsString))(
-      'type = %s',
-      async (_type, payload) => {
-        global.server.use(
-          createUuidHandler({ ...payload, alias: '/example/größe' })
-        )
-
-        await assertSuccessfulGraphQLQuery({
-          query: gql`
-            query($id: Int) {
-              uuid(id: $id) {
-                alias
-              }
-            }
-          `,
-          variables: { id: payload.id },
-          data: { uuid: { alias: '/example/gr%C3%B6%C3%9Fe' } },
           client,
         })
       }
