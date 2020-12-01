@@ -28,8 +28,9 @@ import { comment1 } from '../../../__fixtures__/uuid/thread'
 import { Service } from '../../../src/graphql/schema/types'
 import { UuidPayload } from '../../../src/graphql/schema/uuid/abstract-uuid'
 import { CommentPayload } from '../../../src/graphql/schema/uuid/thread'
-import { Instance } from '../../../src/types'
+import { Instance, MutationCreateThreadArgs } from '../../../src/types'
 import {
+  assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   Client,
   createJsonHandler,
@@ -150,6 +151,60 @@ test('Thread with 0 Comments', async () => {
     variables: { id: article.id },
     data: { uuid: { threads: { totalCount: 0, nodes: [] } } },
     client,
+  })
+})
+
+describe('Thread Mutation', () => {
+  function createCreateThreadMutation(variables: MutationCreateThreadArgs) {
+    return {
+      mutation: gql`
+        mutation createThread(
+          $title: String!
+          $content: String!
+          $objectId: Int!
+          $authorId: Int!
+        ) {
+          createThread(
+            title: $title
+            content: $content
+            objectId: $objectId
+            authorId: $authorId
+          ) {
+            title
+            archived
+            trashed
+          }
+        }
+      `,
+      variables,
+    }
+  }
+
+  test('thread mutation', async () => {
+    global.server.use(
+      rest.post(
+        `http://de.${process.env.SERLO_ORG_HOST}/api/create-comment`,
+        (req, res, ctx) => {
+          const body = ctx.json({
+            title: 'Neuer Kommentar',
+            archived: false,
+            trashed: false,
+          })
+          console.log(res(ctx.status(200), body))
+          return res(ctx.status(200), body)
+        }
+      )
+    )
+
+    await assertSuccessfulGraphQLMutation({
+      ...createCreateThreadMutation({
+        title: 'Neuer Kommentar',
+        content: 'Text zum neuen Kommentar',
+        objectId: article.id,
+        authorId: user.id,
+      }),
+      client,
+    })
   })
 })
 

@@ -131,13 +131,10 @@ export type Mutation_UpdateCacheArgs = {
 
 
 export type MutationCreateThreadArgs = {
-  createdAt: Scalars['String'];
-  updatedAt: Scalars['String'];
   title: Scalars['String'];
-  archived: Scalars['Boolean'];
-  trashed: Scalars['Boolean'];
-  object: Scalars['Int'];
-  comments?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  content: Scalars['String'];
+  objectId: Scalars['Int'];
+  authorId: Scalars['Int'];
 };
 
 

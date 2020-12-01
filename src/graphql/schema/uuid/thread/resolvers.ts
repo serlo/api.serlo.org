@@ -25,7 +25,7 @@ import * as R from 'ramda'
 import { resolveConnection } from '../../connection'
 import { createUuidResolvers, UuidPayload } from '../abstract-uuid'
 import { UserPayload } from '../user'
-import { CommentPayload, ThreadResolvers } from './types'
+import { CommentPayload, ThreadDataType, ThreadResolvers } from './types'
 
 export const resolvers: ThreadResolvers = {
   Thread: {
@@ -81,7 +81,14 @@ export const resolvers: ThreadResolvers = {
   Mutation: {
     async createThread(_parent, payload, { dataSources, user }) {
       if (user === null) throw new AuthenticationError('You are not logged in')
-      return await dataSources.serlo.createThread(payload)
+      const commentPayload = await dataSources.serlo.createThread({
+        ...payload,
+        userId: user,
+      })
+      return {
+        __typename: ThreadDataType,
+        commentPayloads: [commentPayload],
+      }
     },
   },
 }

@@ -27,6 +27,7 @@ import {
   AbstractNotificationEventPayload,
   AbstractUuidPayload,
   AliasPayload,
+  CommentPayload,
   decodePath,
   encodePath,
   EntityPayload,
@@ -249,23 +250,11 @@ export class SerloDataSource extends CacheableDataSource {
   }
 
   public async createThread(
-    payload: MutationCreateThreadArgs
-  ): Promise<ThreadsPayload> {
-    const firstCommentId = await this.customPost<number>({
-      path: `/api/create-thread/`,
+    payload: MutationCreateThreadArgs & { userId: number }
+  ): Promise<CommentPayload> {
+    return await this.customPost<CommentPayload>({
+      path: `/api/create-comment/`,
       body: payload,
-    })
-    const threads = await this.getThreadIds({ id: payload.object })
-    threads.firstCommentIds.push(firstCommentId)
-    return await this.setCache({
-      key: this.getCacheKey(`/api/threads/${payload.object}`),
-      update: () =>
-        this.customPost<ThreadsPayload>({
-          path: `/api/threads/${payload.object}`,
-          body: {
-            firstCommentIds: [threads],
-          },
-        }),
     })
   }
 

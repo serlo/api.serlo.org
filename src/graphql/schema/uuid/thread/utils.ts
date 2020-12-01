@@ -15,7 +15,7 @@ export function createThreadResolvers(): UuidResolvers {
 
       return resolveConnection({
         nodes: await Promise.all(
-          firstCommentIds.map((id) => toThreadPayload(dataSources.serlo, id))
+          firstCommentIds.map((id) => toThreadData(dataSources.serlo, id))
         ),
         payload: cursorPayload,
         createCursor(node) {
@@ -26,7 +26,7 @@ export function createThreadResolvers(): UuidResolvers {
   }
 }
 
-export async function toThreadPayload(
+export async function toThreadData(
   serlo: SerloDataSource,
   firstCommentId: number
 ): Promise<ThreadData> {
