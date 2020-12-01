@@ -42,7 +42,6 @@ export enum DiscriminatorType {
   PageRevision = 'PageRevision',
   User = 'User',
   TaxonomyTerm = 'TaxonomyTerm',
-  Thread = 'Thread',
   Comment = 'Comment',
 }
 
