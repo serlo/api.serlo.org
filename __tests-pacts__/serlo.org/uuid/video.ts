@@ -60,7 +60,6 @@ test('Video', async () => {
             ... on Video {
               id
               trashed
-              alias
               instance
               date
             }
@@ -78,6 +77,7 @@ test('VideoRevision', async () => {
     __typename: videoRevision.__typename,
     id: videoRevision.id,
     trashed: Matchers.boolean(videoRevision.trashed),
+    alias: null,
     date: Matchers.iso8601DateTime(videoRevision.date),
     authorId: Matchers.integer(videoRevision.authorId),
     repositoryId: Matchers.integer(videoRevision.repositoryId),

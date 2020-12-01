@@ -28,6 +28,7 @@ export const user: UserPayload = {
   id: 1,
   trashed: false,
   username: 'username',
+  alias: '/user/profile/username',
   date: '2014-03-01T20:36:21Z',
   lastLogin: '2020-03-24T09:40:55Z',
   description: null,
@@ -37,12 +38,13 @@ export const user2: UserPayload = {
   __typename: DiscriminatorType.User,
   id: 23,
   trashed: false,
-  username: 'second user',
+  username: 'sandra',
+  alias: '/user/profile/sandra',
   date: '2015-02-01T20:35:21Z',
   lastLogin: '2019-03-23T09:20:55Z',
   description: null,
 }
 
 export function getUserDataWithoutSubResolvers(user: UserPayload) {
-  return R.omit(["alias"], user)
+  return R.omit(['alias'], user)
 }

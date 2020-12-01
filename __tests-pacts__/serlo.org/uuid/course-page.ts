@@ -60,7 +60,6 @@ test('CoursePage', async () => {
             ... on CoursePage {
               id
               trashed
-              alias
               instance
               date
             }
@@ -78,6 +77,7 @@ test('CoursePageRevision', async () => {
     __typename: coursePageRevision.__typename,
     id: coursePageRevision.id,
     trashed: Matchers.boolean(coursePageRevision.trashed),
+    alias: null,
     date: Matchers.iso8601DateTime(coursePageRevision.date),
     authorId: Matchers.integer(coursePageRevision.authorId),
     repositoryId: Matchers.integer(coursePageRevision.repositoryId),

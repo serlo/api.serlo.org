@@ -47,6 +47,7 @@ export const appletRevision: AppletRevisionPayload = {
   __typename: EntityRevisionType.AppletRevision,
   id: 35597,
   trashed: false,
+  alias: null,
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
   repositoryId: applet.id,

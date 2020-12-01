@@ -56,6 +56,7 @@ export const groupedExerciseRevision: GroupedExerciseRevisionPayload = {
   __typename: EntityRevisionType.GroupedExerciseRevision,
   id: 2220,
   trashed: false,
+  alias: null,
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
   repositoryId: groupedExercise.id,

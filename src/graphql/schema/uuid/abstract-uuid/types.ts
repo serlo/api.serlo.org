@@ -62,7 +62,7 @@ export interface AbstractUuidPayload
 }
 
 export interface UuidResolvers {
-  alias: Resolver<AbstractUuidPayload, never, string|null>
+  alias: Resolver<AbstractUuidPayload, never, string | null>
   threads: Resolver<
     AbstractUuidPayload,
     AbstractUuidThreadsArgs,

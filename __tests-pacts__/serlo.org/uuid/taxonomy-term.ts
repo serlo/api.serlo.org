@@ -67,7 +67,6 @@ test('TaxonomyTerm root', async () => {
             type
             trashed
             instance
-            alias
             name
             description
             weight
@@ -94,7 +93,6 @@ test('TaxonomyTerm subject', async () => {
             type
             trashed
             instance
-            alias
             name
             description
             weight
@@ -121,7 +119,6 @@ test('TaxonomyTerm curriculumTopic', async () => {
             type
             trashed
             instance
-            alias
             name
             description
             weight

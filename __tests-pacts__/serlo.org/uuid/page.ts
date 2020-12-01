@@ -57,7 +57,6 @@ test('Page', async () => {
             id
             trashed
             instance
-            alias
             date
           }
         }
@@ -75,6 +74,7 @@ test('PageRevision', async () => {
     __typename: pageRevision.__typename,
     id: 35476,
     trashed: Matchers.boolean(pageRevision.trashed),
+    alias: null,
     title: Matchers.string(pageRevision.title),
     content: Matchers.string(pageRevision.content),
     date: Matchers.iso8601DateTime(pageRevision.date),

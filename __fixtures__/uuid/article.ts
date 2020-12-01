@@ -48,6 +48,7 @@ export const articleRevision: ArticleRevisionPayload = {
   __typename: EntityRevisionType.ArticleRevision,
   id: 30674,
   trashed: false,
+  alias: null,
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
   repositoryId: article.id,

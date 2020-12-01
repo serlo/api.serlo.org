@@ -61,7 +61,6 @@ test('Solution', async () => {
             id
             trashed
             instance
-            alias
             date
           }
         }
@@ -79,6 +78,7 @@ test('SolutionRevision', async () => {
     __typename: solutionRevision.__typename,
     id: solutionRevision.id,
     trashed: Matchers.boolean(solutionRevision.trashed),
+    alias: null,
     date: Matchers.iso8601DateTime(solutionRevision.date),
     authorId: Matchers.integer(solutionRevision.authorId),
     repositoryId: Matchers.integer(solutionRevision.repositoryId),

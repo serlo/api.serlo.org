@@ -45,6 +45,7 @@ export const pageRevision: PageRevisionPayload = {
   __typename: DiscriminatorType.PageRevision,
   id: 35476,
   trashed: false,
+  alias: null,
   title: 'title',
   content: 'content',
   date: '2015-02-28T02:06:40Z',

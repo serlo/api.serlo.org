@@ -143,7 +143,7 @@ describe('property "alias"', () => {
             }
           `,
           variables: { id: payload.id },
-          data: { uuid: { alias: "/example/gr%C3%B6%C3%9Fe" } },
+          data: { uuid: { alias: '/example/gr%C3%B6%C3%9Fe' } },
           client,
         })
       }
