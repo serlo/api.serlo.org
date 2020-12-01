@@ -21,6 +21,8 @@
  */
 import { UserInputError } from 'apollo-server'
 
+import { QueryUuidArgs } from '../../../../types'
+import { Context } from '../../types'
 import { decodePath } from '../alias'
 import { AbstractUuidResolvers, DiscriminatorType, UuidPayload } from './types'
 
@@ -32,42 +34,55 @@ export const resolvers: AbstractUuidResolvers = {
   },
   Query: {
     async uuid(_parent, payload, { dataSources }) {
-      if (payload.alias) {
-        const cleanPath = decodePath(payload.alias.path)
-        if (!cleanPath.startsWith('/')) {
-          throw new UserInputError(
-            "First is the worst, please add a '/' at the beginning of your path"
-          )
-        }
-        const match = /^\/(\d+)$/.exec(cleanPath)
-        if (match) {
-          const id = parseInt(match[1], 10)
-          return dataSources.serlo.getUuid<UuidPayload>({ id })
-        }
+      const args = await resolveArgsFromPayload(dataSources, payload)
 
-        if (cleanPath.startsWith('/user/profile/')) {
-          const match = /^\/user\/profile\/(\d+)$/.exec(cleanPath)
-          if (match) {
-            const id = parseInt(match[1], 10)
-            const uuid = await dataSources.serlo.getUuid<UuidPayload>({ id })
-            return uuid && uuid.__typename === 'User' ? uuid : null
-          }
-        }
-        const alias = await dataSources.serlo.getAlias(payload.alias)
-        return alias
-          ? dataSources.serlo.getUuid<UuidPayload>({ id: alias.id })
-          : null
-      } else if (payload.id) {
-        const uuid = await dataSources.serlo.getUuid<UuidPayload>({
-          id: payload.id,
-        })
-        if (uuid && uuid.__typename === DiscriminatorType.Comment) {
-          return null
-        }
-        return uuid
-      } else {
-        throw new UserInputError('you need to provide an id or an alias')
-      }
+      if (args === null) return null
+
+      const uuid = await dataSources.serlo.getUuid<UuidPayload>(args)
+
+      if (uuid && uuid.__typename === DiscriminatorType.Comment) return null
+      if (uuid && args.typename && uuid.__typename !== args.typename)
+        return null
+
+      return uuid
     },
   },
+}
+
+async function resolveArgsFromPayload(
+  dataSources: Context['dataSources'],
+  payload: QueryUuidArgs
+) {
+  if (payload.alias) {
+    return await resolveArgsFromAlias(dataSources, payload.alias)
+  } else if (payload.id) {
+    return { id: payload.id }
+  } else {
+    throw new UserInputError('you need to provide an id or an alias')
+  }
+}
+
+async function resolveArgsFromAlias(
+  dataSources: Context['dataSources'],
+  alias: NonNullable<QueryUuidArgs['alias']>
+): Promise<{ id: number; typename?: DiscriminatorType } | null> {
+  const cleanPath = decodePath(alias.path)
+
+  if (!cleanPath.startsWith('/')) {
+    throw new UserInputError(
+      "First is the worst, please add a '/' at the beginning of your path"
+    )
+  }
+
+  const match = /^\/(\d+)$/.exec(cleanPath)
+  if (match) return { id: parseInt(match[1]) }
+
+  const matchUser = /^\/user\/profile\/(\d+)$/.exec(cleanPath)
+  if (matchUser)
+    return {
+      id: parseInt(matchUser[1]),
+      typename: DiscriminatorType.User,
+    }
+
+  return await dataSources.serlo.getAlias(alias)
 }

@@ -65,7 +65,7 @@ export class SerloDataSource extends CacheableDataSource {
     instance: Instance
   }) {
     const cleanPath = encodePath(decodePath(path))
-    return this.cacheAwareGet<AliasPayload>({
+    return this.cacheAwareGet<AliasPayload | null>({
       path: `/api/alias${cleanPath}`,
       instance,
       maxAge: 5 * MINUTE,
