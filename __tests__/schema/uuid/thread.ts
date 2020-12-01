@@ -300,14 +300,6 @@ test('endpoint /uuid/:id will not give back comment on its own', async () => {
       query comments($id: Int!) {
         uuid(id: $id) {
           __typename
-          ... on Comment {
-            __typename
-            trashed
-            id
-            content
-            title
-            archived
-          }
         }
       }
     `,

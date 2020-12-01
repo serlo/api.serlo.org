@@ -65,6 +65,10 @@ export const resolvers: ThreadResolvers = {
   },
   Comment: {
     ...createUuidResolvers(),
+    alias(entity) {
+      console.log(entity.alias)
+      return entity.alias
+    },
     createdAt(comment) {
       return comment.date
     },

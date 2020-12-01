@@ -23,6 +23,7 @@ import * as R from 'ramda'
 
 import { EntityRevisionType, EntityType } from '../abstract-entity'
 import { AbstractUuidPayload, UuidResolvers } from '../abstract-uuid'
+import { createAliasResolvers } from '../alias/utils'
 import { createThreadResolvers } from '../thread/utils'
 import { DiscriminatorType } from './types'
 
@@ -37,5 +38,5 @@ export function isUnsupportedUuid(payload: AbstractUuidPayload) {
 }
 
 export function createUuidResolvers(): UuidResolvers {
-  return createThreadResolvers()
+  return { ...createAliasResolvers(), ...createThreadResolvers() }
 }

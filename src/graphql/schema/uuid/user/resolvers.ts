@@ -30,7 +30,6 @@ import {
 import { ConnectionPayload, resolveConnection } from '../../connection'
 import { Context } from '../../types'
 import { AbstractUuidPayload, createUuidResolvers } from '../abstract-uuid'
-import { encodePath } from '../alias'
 import { UserResolvers, isUserPayload, UserPayload } from './types'
 
 export const resolvers: UserResolvers = {
@@ -59,9 +58,6 @@ export const resolvers: UserResolvers = {
   },
   User: {
     ...createUuidResolvers(),
-    alias(user) {
-      return Promise.resolve(encodePath(`/user/profile/${user.username}`))
-    },
     async activeAuthor(user, _args, { dataSources }) {
       return (await dataSources.serlo.getActiveAuthorIds()).includes(user.id)
     },

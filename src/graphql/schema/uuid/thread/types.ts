@@ -22,7 +22,11 @@
 import { Scalars, ThreadCommentsArgs } from '../../../../types'
 import { Connection } from '../../connection'
 import { Resolver } from '../../types'
-import { DiscriminatorType, UuidPayload } from '../abstract-uuid'
+import {
+  DiscriminatorType,
+  UuidPayload,
+  UuidResolvers,
+} from '../abstract-uuid/types'
 import { UserPayload } from '../user'
 
 export interface ThreadsPayload {
@@ -53,7 +57,7 @@ export interface ThreadResolvers {
   Comment: {
     createdAt: Resolver<CommentPayload, never, Scalars['DateTime']>
     author: Resolver<CommentPayload, never, UserPayload>
-  }
+  } & UuidResolvers
 }
 
 export interface CommentPayload {

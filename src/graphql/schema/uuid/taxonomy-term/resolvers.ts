@@ -23,13 +23,11 @@ import { resolveConnection } from '../../connection'
 import { Context } from '../../types'
 import { isDefined } from '../../utils'
 import { createUuidResolvers, UuidPayload } from '../abstract-uuid'
-import { createAliasResolvers } from '../alias'
 import { TaxonomyTermPayload, TaxonomyTermResolvers } from './types'
 
 export const resolvers: TaxonomyTermResolvers = {
   TaxonomyTerm: {
     ...createUuidResolvers(),
-    ...createAliasResolvers<TaxonomyTermPayload>(),
     async parent(taxonomyTerm, _args, { dataSources }) {
       if (!taxonomyTerm.parentId) return null
       return dataSources.serlo.getUuid<TaxonomyTermPayload>({

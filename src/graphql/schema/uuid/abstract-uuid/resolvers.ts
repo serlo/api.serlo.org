@@ -58,7 +58,8 @@ export const resolvers: AbstractUuidResolvers = {
         })
         if (uuid && uuid.__typename === DiscriminatorType.Comment) {
           return null
-        } else return uuid
+        }
+        return uuid
       } else {
         throw new UserInputError('you need to provide an id or an alias')
       }

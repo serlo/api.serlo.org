@@ -44,7 +44,6 @@ import {
   EntityType,
 } from '../abstract-entity'
 import { DiscriminatorType, UuidResolvers } from '../abstract-uuid'
-import { AliasResolvers } from '../alias'
 import { PagePayload, PageRevisionPayload } from '../page'
 import { UserPayload } from '../user'
 
@@ -66,6 +65,7 @@ export type RevisionPayload = EntityRevisionPayload | PageRevisionPayload
 export interface AbstractRevisionPayload
   extends Omit<AbstractRevision, 'author' | 'repository'> {
   __typename: RevisionType
+  alias: null
   authorId: number
   repositoryId: number
 }
@@ -95,8 +95,7 @@ type AbstractRepositoryRevisionsArgs =
 export interface RepositoryResolvers<
   E extends AbstractRepositoryPayload,
   R extends AbstractRevisionPayload
-> extends AliasResolvers<E>,
-    UuidResolvers {
+> extends UuidResolvers {
   currentRevision: Resolver<E, never, R | null>
   revisions: Resolver<E, AbstractRepositoryRevisionsArgs, Connection<R>>
   license: Resolver<E, never, Partial<License>>

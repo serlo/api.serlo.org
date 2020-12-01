@@ -20,14 +20,9 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Instance } from '../../../../types'
-import { Resolver } from '../../types'
 
 export interface AliasPayload {
   id: number
   instance: Instance
   path: string
-}
-
-export interface AliasResolvers<T extends { alias: string | null }> {
-  alias: Resolver<T, never, string | null>
 }

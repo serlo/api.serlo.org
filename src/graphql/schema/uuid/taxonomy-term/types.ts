@@ -28,7 +28,6 @@ import {
   DiscriminatorType,
   UuidResolvers,
 } from '../abstract-uuid'
-import { AliasResolvers } from '../alias'
 
 export interface TaxonomyTermPayload
   extends Omit<TaxonomyTerm, keyof TaxonomyTermResolvers['TaxonomyTerm']> {
@@ -46,7 +45,6 @@ export interface TaxonomyTermResolvers {
       TaxonomyTermChildrenArgs,
       Connection<AbstractUuidPayload>
     >
-  } & AliasResolvers<TaxonomyTermPayload> &
-    NavigationChildResolvers<TaxonomyTermPayload> &
+  } & NavigationChildResolvers<TaxonomyTermPayload> &
     UuidResolvers
 }
