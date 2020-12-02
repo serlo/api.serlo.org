@@ -63,26 +63,35 @@ export function createNotificationEventHandler(
   })
 }
 
-export function createUuidHandler(uuid: UuidPayload) {
-  return createJsonHandler({
-    path: `/api/uuid/${uuid.id}`,
-    body: uuid,
-  })
+export function createUuidHandler(uuid: UuidPayload, once?: boolean) {
+  return createJsonHandler(
+    {
+      path: `/api/uuid/${uuid.id}`,
+      body: uuid,
+    },
+    once
+  )
 }
 
-export function createJsonHandler({
-  instance = Instance.De,
-  path,
-  body,
-}: {
-  instance?: Instance
-  path: string
-  body: unknown
-}) {
+export function createJsonHandler(
+  {
+    instance = Instance.De,
+    path,
+    body,
+  }: {
+    instance?: Instance
+    path: string
+    body: unknown
+  },
+  once?: boolean
+) {
   return rest.get(
     `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
     (_req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(body as Record<string, unknown>))
+      return (once ? res.once : res)(
+        ctx.status(200),
+        ctx.json(body as Record<string, unknown>)
+      )
     }
   )
 }
