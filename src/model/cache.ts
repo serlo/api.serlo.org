@@ -21,48 +21,77 @@
  */
 import { option as O, pipeable } from 'fp-ts'
 import msgpack from 'msgpack'
+import * as R from 'ramda'
 import redis from 'redis'
 import * as util from 'util'
 
-import { Cache } from '../graphql/environment'
+import { Timer } from '../graphql/environment'
 
-export function createRedisCache({ host }: { host: string }): Cache {
+export interface Cache {
+  get<T>(key: string): Promise<O.Option<CacheEntry<T>>>
+  set(key: string, value: unknown, options?: SetCacheOptions): Promise<void>
+  remove(key: string): Promise<void>
+  flush(): Promise<void>
+  getTtl(key: string): Promise<O.Option<number>>
+  quit(): Promise<void>
+}
+
+export interface SetCacheOptions {
+  ttl?: number
+}
+
+export function createCache({
+  timer,
+  host,
+}: {
+  timer: Timer
+  host: string
+}): Cache {
   const client = redis.createClient({
     host,
     port: 6379,
     return_buffers: true,
   })
-  // eslint-disable-next-line @typescript-eslint/unbound-method
+
+  /* eslint-disable @typescript-eslint/unbound-method */
   const get = (util.promisify(client.get).bind(client) as unknown) as (
     key: string
   ) => Promise<Buffer | null>
   const del = (util.promisify(client.del).bind(client) as unknown) as (
     key: string
   ) => Promise<void>
-  // eslint-disable-next-line @typescript-eslint/unbound-method
   const set = (util.promisify(client.set).bind(client) as unknown) as (
     key: string,
     value: Buffer,
     flags?: 'EX',
     ttl?: number
   ) => Promise<void>
-  // eslint-disable-next-line @typescript-eslint/unbound-method
   const ttl = (util.promisify(client.ttl).bind(client) as unknown) as (
     key: string
   ) => Promise<number | undefined>
-  // eslint-disable-next-line @typescript-eslint/unbound-method
   const flushdb = util.promisify(client.flushdb).bind(client)
+  const quit = util.promisify(client.quit).bind(client)
+  /* eslint-enable @typescript-eslint/unbound-method */
 
   return {
     get: async <T>(key: string) => {
       return pipeable.pipe(
         await get(key),
         O.fromNullable,
-        O.map((v) => msgpack.unpack(v) as T)
+        O.map((value) => msgpack.unpack(value) as T),
+        O.map((value) => {
+          return isCacheEntryWithTimestamp<T>(value)
+            ? value
+            : { value, lastModified: timer.now() }
+        })
       )
     },
     async set(key, value, options) {
-      const packedValue = msgpack.pack(value) as Buffer
+      const valueWithTimestamp = {
+        value,
+        lastModified: timer.now(),
+      }
+      const packedValue = msgpack.pack(valueWithTimestamp) as Buffer
       const ttl = options?.ttl
       if (ttl === undefined) {
         await set(key, packedValue)
@@ -79,5 +108,19 @@ export function createRedisCache({ host }: { host: string }): Cache {
     async getTtl(key) {
       return O.fromNullable(await ttl(key))
     },
+    async quit() {
+      await quit()
+    },
   }
+}
+
+export interface CacheEntry<Value> {
+  value: Value
+  lastModified: number
+}
+
+function isCacheEntryWithTimestamp<Value>(
+  entry: unknown
+): entry is CacheEntry<Value> {
+  return R.has('lastModified', entry) && R.has('value', entry)
 }

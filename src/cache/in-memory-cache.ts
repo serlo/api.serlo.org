@@ -21,7 +21,7 @@
  */
 import { option as O, pipeable } from 'fp-ts'
 
-import { Cache, createTimer, SetCacheOptions } from '../graphql/environment'
+import { Cache, createTimer } from '../graphql/environment'
 
 interface Entry {
   value: unknown
@@ -50,15 +50,6 @@ export function createInMemoryCache(timer = createTimer()): Cache {
     // eslint-disable-next-line @typescript-eslint/require-await
     async set(key, value, options) {
       cache[key] = { value, ttl: options?.ttl, lastModified: timer.now() }
-    },
-    async setAndReturnPreviousValue<T>(
-      key: string,
-      value: T,
-      options?: SetCacheOptions
-    ) {
-      const previousValue = await this.get<T>(key)
-      await this.set(key, value, options)
-      return previousValue
     },
     // eslint-disable-next-line @typescript-eslint/require-await
     async remove(key: string) {

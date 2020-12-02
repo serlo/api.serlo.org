@@ -19,35 +19,42 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { option as O } from 'fp-ts'
+import redis from 'redis'
+import Redlock from 'redlock'
 
-export interface Environment {
-  cache: Cache
-  timer: Timer
+export interface LockManager {
+  lock(key: string): Promise<Lock>
+  quit(): Promise<void>
 }
 
-export interface Cache {
-  get<T>(key: string): Promise<O.Option<T>>
-  set(
-    key: string,
-    value: unknown,
-    options?: {
-      ttl?: number
-    }
-  ): Promise<void>
-  remove(key: string): Promise<void>
-  flush(): Promise<void>
-  getTtl(key: string): Promise<O.Option<number>>
+export interface Lock {
+  unlock(): Promise<void>
 }
 
-export interface Timer {
-  now(): number
-}
+export function createLockManager({
+  host,
+  retryCount,
+}: {
+  host: string
+  retryCount: number
+}): LockManager {
+  const client = redis.createClient({
+    host,
+    port: 6379,
+    return_buffers: true,
+  })
+  const redlock = new Redlock([client], { retryCount })
 
-export function createTimer(): Timer {
   return {
-    now() {
-      return Date.now()
+    async lock(key: string) {
+      return await redlock.lock(`locks:${key}`, 10000)
+    },
+    async quit() {
+      await new Promise((resolve) => {
+        client.quit(() => {
+          resolve()
+        })
+      })
     },
   }
 }
