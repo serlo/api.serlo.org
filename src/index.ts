@@ -25,12 +25,12 @@ import createApp, { Express } from 'express'
 import createPlayground from 'graphql-playground-middleware-express'
 import jwt from 'jsonwebtoken'
 
+import { createCache } from './cache'
 import { getGraphQLOptions } from './graphql'
-import { createTimer } from './graphql/environment'
 import { Service } from './graphql/schema/types'
-import { createInMemoryCache, createRedisCache } from './legacy-cache'
 // eslint-disable-next-line import/no-unassigned-import
 import './sentry'
+import { createTimer } from './timer'
 
 start()
 
@@ -47,12 +47,10 @@ function start() {
 }
 
 function applyGraphQLMiddleware(app: Express) {
+  const timer = createTimer()
   const environment = {
-    cache:
-      process.env.REDIS_HOST === undefined
-        ? createInMemoryCache()
-        : createRedisCache({ host: process.env.REDIS_HOST }),
-    timer: createTimer(),
+    cache: createCache({ host: process.env.REDIS_HOST, timer }),
+    timer,
   }
   const server = new ApolloServer(getGraphQLOptions(environment))
 

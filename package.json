@@ -22,12 +22,12 @@
     "lint:eslint": "yarn _eslint",
     "lint:prettier": "yarn _prettier --check",
     "lint:tsc": "tsc --noEmit",
-    "pacts": "jest --config jest.config-pacts.js",
+    "pacts": "jest --config jest.config-pacts.js --runInBand",
     "pacts:publish": "ts-node scripts/publish-pacts",
     "preregenerate-types": "graphql-codegen --config codegen.yml",
     "regenerate-types": "ts-node scripts/regenerate-types-package",
     "start": "tsdx watch  --target node --format cjs --tsconfig tsconfig.prod.json --onSuccess \"node dist\"",
-    "test": "jest --runInBand"
+    "test": "jest --config jest.config.js --runInBand"
   },
   "dependencies": {
     "@sentry/node": "^5.0.0",

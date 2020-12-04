@@ -26,21 +26,19 @@ import {
 } from 'apollo-server-testing'
 
 import { getGraphQLOptions } from '../../src/graphql'
-import { Cache, createTimer, Timer } from '../../src/graphql/environment'
 import { Context, Service } from '../../src/graphql/schema/types'
-import { createInMemoryCache } from '../../src/legacy-cache'
 
 export type Client = ApolloServerTestClient
 
+// TODO: here we should use Redis instead. For that, we also need to do the setup in jest.setup-pacts
 export function createTestClient(
-  args?: Partial<Pick<Context, 'service' | 'user'>> & { timer?: Timer }
-): {
-  client: Client
-  cache: Cache
-} {
-  const cache = createInMemoryCache()
+  args?: Partial<Pick<Context, 'service' | 'user'>>
+): Client {
   const server = new ApolloServer({
-    ...getGraphQLOptions({ cache, timer: args?.timer ?? createTimer() }),
+    ...getGraphQLOptions({
+      cache: global.cache,
+      timer: global.timer,
+    }),
     context(): Pick<Context, 'service' | 'user'> {
       return {
         service: args?.service ?? Service.SerloCloudflareWorker,
@@ -48,5 +46,5 @@ export function createTestClient(
       }
     },
   })
-  return { client: createApolloTestClient(server), cache }
+  return createApolloTestClient(server)
 }

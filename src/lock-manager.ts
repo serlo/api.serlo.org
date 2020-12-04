@@ -48,8 +48,8 @@ export function createLockManager({
     async lock(key: string) {
       return await redlock.lock(`locks:${key}`, 10000)
     },
-    quit() {
-      return new Promise((resolve) => {
+    async quit() {
+      await new Promise((resolve) => {
         client.quit(() => {
           resolve()
         })

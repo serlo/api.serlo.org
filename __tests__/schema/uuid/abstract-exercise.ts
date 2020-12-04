@@ -47,7 +47,7 @@ beforeEach(() => {
   client = createTestClient({
     service: Service.SerloCloudflareWorker,
     user: null,
-  }).client
+  })
 })
 
 const exerciseFixtures: Record<string, AbstractExercisePayload> = {

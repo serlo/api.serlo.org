@@ -43,7 +43,7 @@ beforeEach(() => {
   client = createTestClient({
     service: Service.SerloCloudflareWorker,
     user: user.id,
-  }).client
+  })
 })
 
 test('Threads with 3 Comments', async () => {

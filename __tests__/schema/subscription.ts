@@ -76,7 +76,7 @@ describe('subscriptions', () => {
   }
 
   test('Article', async () => {
-    const { client } = createTestClient({
+    const client = createTestClient({
       service: Service.SerloCloudflareWorker,
       user: 1,
     })

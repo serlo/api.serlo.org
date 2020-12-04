@@ -92,7 +92,7 @@ describe('notifications', () => {
     client = createTestClient({
       service: Service.SerloCloudflareWorker,
       user: user.id,
-    }).client
+    })
     global.server.use(
       rest.get(
         `http://de.${process.env.SERLO_ORG_HOST}/api/notifications/${user.id}`,
@@ -145,7 +145,7 @@ describe('notifications', () => {
   }
 
   test('notifications without filter', async () => {
-    const { client } = createTestClient({
+    const client = createTestClient({
       service: Service.SerloCloudflareWorker,
       user: 1,
     })
@@ -175,7 +175,7 @@ describe('notifications', () => {
   })
 
   test('notifications (only unread)', async () => {
-    const { client } = createTestClient({
+    const client = createTestClient({
       service: Service.SerloCloudflareWorker,
       user: 1,
     })
@@ -201,7 +201,7 @@ describe('notifications', () => {
   })
 
   test('notifications (only read)', async () => {
-    const { client } = createTestClient({
+    const client = createTestClient({
       service: Service.SerloCloudflareWorker,
       user: 1,
     })
@@ -292,7 +292,7 @@ describe('notificationEvent', () => {
     client = createTestClient({
       service: Service.SerloCloudflareWorker,
       user: null,
-    }).client
+    })
   })
 
   describe('CheckoutRevisionNotification', () => {
@@ -2213,7 +2213,7 @@ describe('setNotificationState', () => {
   }
 
   test('unauthenticated', async () => {
-    const { client } = createTestClient({
+    const client = createTestClient({
       service: Service.SerloCloudflareWorker,
       user: null,
     })
@@ -2237,7 +2237,7 @@ describe('setNotificationState', () => {
         }
       )
     )
-    const { client } = createTestClient({
+    const client = createTestClient({
       service: Service.SerloCloudflareWorker,
       user: user2.id,
     })
@@ -2291,7 +2291,7 @@ describe('setNotificationState', () => {
         }
       )
     )
-    const { client } = createTestClient({
+    const client = createTestClient({
       service: Service.Serlo,
       user: user.id,
     })

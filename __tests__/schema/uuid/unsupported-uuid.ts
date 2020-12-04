@@ -35,7 +35,7 @@ beforeEach(() => {
   client = createTestClient({
     service: Service.SerloCloudflareWorker,
     user: null,
-  }).client
+  })
   global.server.use(
     createUuidHandler({
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

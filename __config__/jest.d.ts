@@ -19,5 +19,16 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-export * from './in-memory-cache'
-export * from './redis-cache'
+/* eslint-disable @typescript-eslint/no-namespace */
+import { Cache } from '../src/cache'
+import { Timer as T } from '../src/timer'
+
+declare global {
+  namespace NodeJS {
+    interface Global {
+      cache: Cache
+      server: ReturnType<typeof import('msw/node').setupServer>
+      timer: T & { now: jest.Mock<number, never> }
+    }
+  }
+}

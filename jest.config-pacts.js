@@ -23,7 +23,7 @@
 module.exports = {
   preset: 'ts-jest',
   setupFiles: ['dotenv/config'],
-  setupFilesAfterEnv: ['<rootDir>/jest.setup-pacts.ts'],
+  setupFilesAfterEnv: ['<rootDir>/__config__/jest.setup-pacts.ts'],
   testEnvironment: 'node',
   testRegex: '/__tests-pacts__/serlo\\.org/index\\.ts',
   transform: {
