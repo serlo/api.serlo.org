@@ -23,11 +23,12 @@ import { option as O } from 'fp-ts'
 import fetch from 'node-fetch'
 
 import { user } from '../../__fixtures__'
+import { createCache } from '../../src/cache'
+import { createConnection } from '../../src/connection'
 import { Timer } from '../../src/graphql/environment'
+import { createLockManager } from '../../src/lock-manager'
 import { createModel } from '../../src/model'
-import { createCache } from '../../src/model/cache'
-import { createLockManager } from '../../src/model/lock-manager'
-import { createSwrQueue } from '../../src/model/swr-queue'
+import { createSwrQueue } from '../../src/swr-queue'
 import { createUuidHandler } from '../__utils__'
 
 const host = process.env.REDIS_HOST!
@@ -37,10 +38,11 @@ const host = process.env.REDIS_HOST!
 // TODO: these should probably global
 const now = jest.fn<number, never>()
 const timer: Timer = { now }
-const cache = createCache({ host, timer })
+const connection = createConnection({ host })
+const cache = createCache({ connection, timer })
 // For background updates, we just skip the update when the resource is already locked.
 // The resolvers with important updates should instead use a high retryCount
-const lockManager = createLockManager({ host, retryCount: 0 })
+const lockManager = createLockManager({ connection, retryCount: 0 })
 const model = createModel({
   cache,
   lockManager,
@@ -61,9 +63,8 @@ beforeEach(async () => {
 })
 
 afterAll(async () => {
-  await cache.quit()
-  await lockManager.quit()
   await swrQueue.quit()
+  await connection.quit()
 })
 
 test('serlo.org', async () => {

@@ -22,37 +22,26 @@
 import { option as O, pipeable } from 'fp-ts'
 import msgpack from 'msgpack'
 import * as R from 'ramda'
-import redis from 'redis'
 import * as util from 'util'
 
-import { Timer } from '../graphql/environment'
+import { Connection } from './connection'
+import { Timer } from './timer'
 
 export interface Cache {
   get<T>(key: string): Promise<O.Option<CacheEntry<T>>>
-  set(key: string, value: unknown, options?: SetCacheOptions): Promise<void>
+  set(key: string, value: unknown): Promise<void>
   remove(key: string): Promise<void>
   flush(): Promise<void>
-  getTtl(key: string): Promise<O.Option<number>>
-  quit(): Promise<void>
-}
-
-export interface SetCacheOptions {
-  ttl?: number
 }
 
 export function createCache({
+  connection,
   timer,
-  host,
 }: {
+  connection: Connection
   timer: Timer
-  host: string
 }): Cache {
-  const client = redis.createClient({
-    host,
-    port: 6379,
-    return_buffers: true,
-  })
-
+  const { client } = connection
   /* eslint-disable @typescript-eslint/unbound-method */
   const get = (util.promisify(client.get).bind(client) as unknown) as (
     key: string
@@ -62,15 +51,9 @@ export function createCache({
   ) => Promise<void>
   const set = (util.promisify(client.set).bind(client) as unknown) as (
     key: string,
-    value: Buffer,
-    flags?: 'EX',
-    ttl?: number
+    value: Buffer
   ) => Promise<void>
-  const ttl = (util.promisify(client.ttl).bind(client) as unknown) as (
-    key: string
-  ) => Promise<number | undefined>
   const flushdb = util.promisify(client.flushdb).bind(client)
-  const quit = util.promisify(client.quit).bind(client)
   /* eslint-enable @typescript-eslint/unbound-method */
 
   return {
@@ -86,30 +69,19 @@ export function createCache({
         })
       )
     },
-    async set(key, value, options) {
+    async set(key, value) {
       const valueWithTimestamp = {
         value,
         lastModified: timer.now(),
       }
       const packedValue = msgpack.pack(valueWithTimestamp) as Buffer
-      const ttl = options?.ttl
-      if (ttl === undefined) {
-        await set(key, packedValue)
-      } else {
-        await set(key, packedValue, 'EX', ttl)
-      }
+      await set(key, packedValue)
     },
     async remove(key: string) {
       await del(key)
     },
     async flush() {
       await flushdb()
-    },
-    async getTtl(key) {
-      return O.fromNullable(await ttl(key))
-    },
-    async quit() {
-      await quit()
     },
   }
 }

@@ -19,12 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import redis from 'redis'
 import Redlock from 'redlock'
+
+import { Connection } from './connection'
 
 export interface LockManager {
   lock(key: string): Promise<Lock>
-  quit(): Promise<void>
 }
 
 export interface Lock {
@@ -32,29 +32,17 @@ export interface Lock {
 }
 
 export function createLockManager({
-  host,
+  connection,
   retryCount,
 }: {
-  host: string
+  connection: Connection
   retryCount: number
 }): LockManager {
-  const client = redis.createClient({
-    host,
-    port: 6379,
-    return_buffers: true,
-  })
-  const redlock = new Redlock([client], { retryCount })
+  const redlock = new Redlock([connection.client], { retryCount })
 
   return {
     async lock(key: string) {
       return await redlock.lock(`locks:${key}`, 10000)
-    },
-    async quit() {
-      await new Promise((resolve) => {
-        client.quit(() => {
-          resolve()
-        })
-      })
     },
   }
 }
