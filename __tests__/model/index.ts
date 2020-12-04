@@ -23,28 +23,23 @@ import { option as O } from 'fp-ts'
 import fetch from 'node-fetch'
 
 import { user } from '../../__fixtures__'
-import { createCache } from '../../src/cache'
-import { createConnection } from '../../src/connection'
-import { Timer } from '../../src/graphql/environment'
 import { createLockManager } from '../../src/lock-manager'
 import { createModel } from '../../src/model'
 import { createSwrQueue } from '../../src/swr-queue'
-import { createUuidHandler } from '../__utils__'
+import { createUuidHandler, waitFor } from '../__utils__'
 
-const host = process.env.REDIS_HOST!
+const host = process.env.REDIS_HOST
 
 // TODO: change CI so that redis is started beforehand
 
-// TODO: these should probably global
-const now = jest.fn<number, never>()
-const timer: Timer = { now }
-const connection = createConnection({ host })
-const cache = createCache({ connection, timer })
 // For background updates, we just skip the update when the resource is already locked.
 // The resolvers with important updates should instead use a high retryCount
-const lockManager = createLockManager({ connection, retryCount: 0 })
+const lockManager = createLockManager({
+  host,
+  retryCount: 0,
+})
 const model = createModel({
-  cache,
+  cache: global.cache,
   lockManager,
   fetch: async ({ path, ...init }) => {
     try {
@@ -55,23 +50,23 @@ const model = createModel({
     }
   },
 })
-const swrQueue = createSwrQueue({ cache, model, timer, host })
-
-beforeEach(async () => {
-  now.mockReturnValue(Date.now())
-  await cache.flush()
+const swrQueue = createSwrQueue({
+  cache: global.cache,
+  model,
+  timer: global.timer,
+  host,
 })
 
 afterAll(async () => {
+  await lockManager.quit()
   await swrQueue.quit()
-  await connection.quit()
 })
 
 test('serlo.org', async () => {
   global.server.use(createUuidHandler(user))
   await model.update('de.serlo.org/api/uuid/1')
   const { lastModified, value } = O.toNullable(
-    await cache.get('de.serlo.org/api/uuid/1')
+    await global.cache.get('de.serlo.org/api/uuid/1')
   )!
   expect(lastModified).toBeDefined()
   expect(value).toEqual(user)
@@ -85,7 +80,7 @@ test("Skips update when lock couldn't be acquired", async () => {
     model.update('de.serlo.org/api/uuid/1'),
   ])
   const { lastModified, value } = O.toNullable(
-    await cache.get('de.serlo.org/api/uuid/1')
+    await global.cache.get('de.serlo.org/api/uuid/1')
   )!
   expect(lastModified).toBeDefined()
   expect(value).toEqual(user)
@@ -96,12 +91,12 @@ describe('Background Queue', () => {
   test('Stale', async () => {
     global.server.use(createUuidHandler(user))
     const key = 'de.serlo.org/api/uuid/1'
-    await cache.set(key, 'Stale value')
+    await global.cache.set(key, 'Stale value')
     await waitFor(20)
     const job = await swrQueue.queue({ key, maxAge: 10 })
     await new Promise((resolve) => {
       job.on('succeeded', () => {
-        void cache.get('de.serlo.org/api/uuid/1').then((v) => {
+        void global.cache.get('de.serlo.org/api/uuid/1').then((v) => {
           const { lastModified, value } = O.toNullable(v)!
           expect(lastModified).toBeDefined()
           expect(value).toEqual(user)
@@ -113,12 +108,12 @@ describe('Background Queue', () => {
 
   test('Non-stale', async () => {
     const key = 'de.serlo.org/api/uuid/1'
-    await cache.set(key, user)
+    await global.cache.set(key, user)
     await waitFor(5)
     const job = await swrQueue.queue({ key, maxAge: 10 })
     await new Promise((resolve) => {
       job.on('succeeded', () => {
-        void cache.get('de.serlo.org/api/uuid/1').then((v) => {
+        void global.cache.get('de.serlo.org/api/uuid/1').then((v) => {
           const { lastModified, value } = O.toNullable(v)!
           expect(lastModified).toBeDefined()
           expect(value).toEqual(user)
@@ -130,12 +125,12 @@ describe('Background Queue', () => {
 
   test('MaxAge = undefined', async () => {
     const key = 'de.serlo.org/api/uuid/1'
-    await cache.set(key, user)
+    await global.cache.set(key, user)
     await waitFor(9999999999999)
     const job = await swrQueue.queue({ key })
     await new Promise((resolve) => {
       job.on('succeeded', () => {
-        void cache.get('de.serlo.org/api/uuid/1').then((v) => {
+        void global.cache.get('de.serlo.org/api/uuid/1').then((v) => {
           const { lastModified, value } = O.toNullable(v)!
           expect(lastModified).toBeDefined()
           expect(value).toEqual(user)
@@ -145,9 +140,3 @@ describe('Background Queue', () => {
     })
   })
 })
-
-// We make this synchronous function asynchronous just to make clear that this would be asynchronous in production.
-// eslint-disable-next-line @typescript-eslint/require-await
-async function waitFor(seconds: number) {
-  now.mockReturnValue(now() + seconds * 1000)
-}

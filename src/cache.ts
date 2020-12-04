@@ -22,9 +22,9 @@
 import { option as O, pipeable } from 'fp-ts'
 import msgpack from 'msgpack'
 import * as R from 'ramda'
+import redis from 'redis'
 import * as util from 'util'
 
-import { Connection } from './connection'
 import { Timer } from './timer'
 
 export interface Cache {
@@ -32,16 +32,22 @@ export interface Cache {
   set(key: string, value: unknown): Promise<void>
   remove(key: string): Promise<void>
   flush(): Promise<void>
+  quit(): Promise<void>
 }
 
 export function createCache({
-  connection,
+  host,
   timer,
 }: {
-  connection: Connection
+  host: string
   timer: Timer
 }): Cache {
-  const { client } = connection
+  const client = redis.createClient({
+    host,
+    port: 6379,
+    return_buffers: true,
+  })
+
   /* eslint-disable @typescript-eslint/unbound-method */
   const get = (util.promisify(client.get).bind(client) as unknown) as (
     key: string
@@ -53,7 +59,6 @@ export function createCache({
     key: string,
     value: Buffer
   ) => Promise<void>
-  const flushdb = util.promisify(client.flushdb).bind(client)
   /* eslint-enable @typescript-eslint/unbound-method */
 
   return {
@@ -81,7 +86,18 @@ export function createCache({
       await del(key)
     },
     async flush() {
-      await flushdb()
+      return new Promise((resolve) => {
+        client.flushdb(() => {
+          resolve()
+        })
+      })
+    },
+    quit() {
+      return new Promise((resolve) => {
+        client.quit(() => {
+          resolve()
+        })
+      })
     },
   }
 }

@@ -47,7 +47,6 @@ export function createSwrQueue({
   timer: Timer
   host: string
 }): SwrQueue {
-  // Queue needs its own connection because it needs the blocking commands for PubSub subscriptions.
   const queue = new Queue<UpdateJob>('swr', {
     redis: {
       host,
