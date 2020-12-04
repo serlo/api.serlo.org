@@ -21,19 +21,42 @@
  */
 import { setupServer } from 'msw/node'
 
-global.server = setupServer()
+import { Cache, createCache } from './src/cache'
+import { Timer as T } from './src/timer'
 
-beforeAll(() => global.server.listen({ onUnhandledRequest: 'error' }))
+const timer = { now: jest.fn<number, never>() }
+const cache = createCache({ host: process.env.REDIS_HOST, timer })
+const server = setupServer()
 
-afterEach(() => global.server.resetHandlers())
+global.cache = cache
+global.server = server
+global.timer = timer
 
-afterAll(() => global.server.close())
+beforeAll(() => {
+  global.server.listen({ onUnhandledRequest: 'error' })
+})
+
+beforeEach(async () => {
+  await cache.flush()
+  global.timer.now.mockReturnValue(Date.now())
+})
+
+afterEach(() => {
+  global.server.resetHandlers()
+})
+
+afterAll(async () => {
+  server.close()
+  await cache.quit()
+})
 
 /* eslint-disable @typescript-eslint/no-namespace */
 declare global {
   namespace NodeJS {
     interface Global {
+      cache: Cache
       server: ReturnType<typeof import('msw/node').setupServer>
+      timer: T & { now: jest.Mock<number, never> }
     }
   }
 }

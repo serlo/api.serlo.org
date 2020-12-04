@@ -27,7 +27,7 @@
     "preregenerate-types": "graphql-codegen --config codegen.yml",
     "regenerate-types": "ts-node scripts/regenerate-types-package",
     "start": "tsdx watch  --target node --format cjs --tsconfig tsconfig.prod.json --onSuccess \"node dist\"",
-    "test": "jest"
+    "test": "jest --runInBand"
   },
   "dependencies": {
     "@sentry/node": "^5.0.0",

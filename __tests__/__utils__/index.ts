@@ -19,20 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { either as E } from 'fp-ts'
-
-import { ErrorEvent } from '../../src/error-event'
-
 export * from './assertions'
 export * from './handlers'
+export * from './error-event'
 export * from './test-client'
-
-export function expectToBeLeftEventWith<A>(
-  value: E.Either<ErrorEvent, A>,
-  expectedEvent: ErrorEvent
-) {
-  expect(E.isLeft(value)).toBe(true)
-
-  if (E.isLeft(value))
-    expect(value.left).toEqual(expect.objectContaining(expectedEvent))
-}
+export * from './timer'

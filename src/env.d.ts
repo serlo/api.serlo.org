@@ -27,6 +27,7 @@ declare namespace NodeJS {
     ENVIRONMENT: string
     ACTIVE_DONORS_SPREADSHEET_ID: string
     GOOGLE_API_KEY: string
+    REDIS_HOST: string
     SERLO_CLOUDFLARE_WORKER_SECRET: string
     SERLO_ORG_HOST: string
     SERLO_ORG_SECRET: string
