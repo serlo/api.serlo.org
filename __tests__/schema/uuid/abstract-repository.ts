@@ -77,7 +77,7 @@ beforeEach(() => {
   client = createTestClient({
     service: Service.SerloCloudflareWorker,
     user: null,
-  }).client
+  })
 })
 
 const repositoryFixtures: Record<

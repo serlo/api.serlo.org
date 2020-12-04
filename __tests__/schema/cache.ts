@@ -94,7 +94,7 @@ beforeEach(() => {
 })
 
 test('_cacheKeys', async () => {
-  const { client } = createTestClient({
+  const client = createTestClient({
     service: Service.Serlo,
     user: null,
   })
@@ -111,7 +111,7 @@ test('_cacheKeys', async () => {
 })
 
 test('_setCache (forbidden)', async () => {
-  const { client } = createTestClient({
+  const client = createTestClient({
     service: Service.SerloCloudflareWorker,
     user: null,
   })
@@ -128,20 +128,18 @@ test('_setCache (forbidden)', async () => {
 })
 
 test('_setCache (authenticated)', async () => {
-  const now = jest.fn()
-  const { client, cache } = createTestClient({
+  const client = createTestClient({
     service: Service.Serlo,
     user: null,
-    timer: { now },
   })
-  now.mockReturnValue(1000)
+  global.timer.now.mockReturnValue(1000)
 
   await assertSuccessfulGraphQLMutation({
     ...createSetCacheMutation(testVars[0]),
     client,
   })
 
-  const cachedValue = await cache.get(testVars[0].key)
+  const cachedValue = await global.cache.get(testVars[0].key)
   expect(option.isSome(cachedValue) && cachedValue.value).toEqual({
     lastModified: 1000,
     value: testVars[0].value,
@@ -149,7 +147,7 @@ test('_setCache (authenticated)', async () => {
 })
 
 test('_removeCache (forbidden)', async () => {
-  const { client } = createTestClient({
+  const client = createTestClient({
     service: Service.SerloCloudflareWorker,
     user: null,
   })
@@ -165,7 +163,7 @@ test('_removeCache (forbidden)', async () => {
 })
 
 test('_removeCache (authenticated)', async () => {
-  const { client, cache } = createTestClient({
+  const client = createTestClient({
     service: Service.Serlo,
     user: null,
   })
@@ -175,12 +173,12 @@ test('_removeCache (authenticated)', async () => {
     client,
   })
 
-  const cachedValue = await cache.get(testVars[0].key)
+  const cachedValue = await global.cache.get(testVars[0].key)
   expect(option.isNone(cachedValue)).toBe(true)
 })
 
 test('_updateCache (forbidden)', async () => {
-  const { client } = createTestClient({
+  const client = createTestClient({
     service: Service.SerloCloudflareWorker,
     user: null,
   })
@@ -196,32 +194,30 @@ test('_updateCache (forbidden)', async () => {
 })
 
 test('_updateCache *serlo.org* (authenticated)', async () => {
-  const now = jest.fn()
-  const { client, cache } = createTestClient({
+  const client = createTestClient({
     service: Service.Serlo,
     user: null,
-    timer: { now },
   })
-  now.mockReturnValue(1000)
+  global.timer.now.mockReturnValue(1000)
 
   const keys = [
     `de.serlo.org/api/${testVars[0].key}`,
     `en.serlo.org/api/${testVars[1].key}`,
   ]
 
-  const cachedValueBeforeUpdate1 = await cache.get(keys[0])
-  const cachedValueBeforeUpdate2 = await cache.get(keys[1])
+  const cachedValueBeforeUpdate1 = await global.cache.get(keys[0])
+  const cachedValueBeforeUpdate2 = await global.cache.get(keys[1])
 
   await assertSuccessfulGraphQLMutation({
     ...createUpdateCacheMutation(keys),
     client,
   })
-  const cachedValueAfterUpdate1 = await cache.get(keys[0])
+  const cachedValueAfterUpdate1 = await global.cache.get(keys[0])
   expect(cachedValueBeforeUpdate1).not.toEqual(cachedValueAfterUpdate1)
   expect(cachedValueAfterUpdate1).toEqual(
     option.some({ lastModified: 1000, value: testVars[0].value })
   )
-  const cachedValueAfterUpdate2 = await cache.get(keys[1])
+  const cachedValueAfterUpdate2 = await global.cache.get(keys[1])
   expect(cachedValueBeforeUpdate2).not.toEqual(cachedValueAfterUpdate2)
   expect(cachedValueAfterUpdate2).toEqual(
     option.some({ lastModified: 1000, value: testVars[1].value })
@@ -230,7 +226,7 @@ test('_updateCache *serlo.org* (authenticated)', async () => {
 
 test('_updateCache spreadsheet-* (authenticated)', async () => {
   global.server.use(createUuidHandler(user), createUuidHandler(user2))
-  const { client } = createTestClient({
+  const client = createTestClient({
     service: Service.Serlo,
     user: null,
   })

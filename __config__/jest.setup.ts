@@ -19,44 +19,22 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { setupServer } from 'msw/node'
+import {
+  createAfterAll,
+  createAfterEach,
+  createBeforeAll,
+  createBeforeEach,
+  setup,
+} from './setup'
 
-import { Cache, createCache } from './src/cache'
-import { Timer as T } from './src/timer'
-
-const timer = { now: jest.fn<number, never>() }
-const cache = createCache({ host: process.env.REDIS_HOST, timer })
-const server = setupServer()
-
-global.cache = cache
-global.server = server
-global.timer = timer
+setup()
 
 beforeAll(() => {
-  global.server.listen({ onUnhandledRequest: 'error' })
+  createBeforeAll({ onUnhandledRequest: 'error' })
 })
 
-beforeEach(async () => {
-  await cache.flush()
-  global.timer.now.mockReturnValue(Date.now())
-})
+beforeEach(createBeforeEach)
 
-afterEach(() => {
-  global.server.resetHandlers()
-})
+afterEach(createAfterEach)
 
-afterAll(async () => {
-  server.close()
-  await cache.quit()
-})
-
-/* eslint-disable @typescript-eslint/no-namespace */
-declare global {
-  namespace NodeJS {
-    interface Global {
-      cache: Cache
-      server: ReturnType<typeof import('msw/node').setupServer>
-      timer: T & { now: jest.Mock<number, never> }
-    }
-  }
-}
+afterAll(createAfterAll)

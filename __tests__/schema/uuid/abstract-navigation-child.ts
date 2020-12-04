@@ -85,7 +85,7 @@ function createSetTaxonomyTermMutation(taxonomyTerm: TaxonomyTermPayload) {
 
 describe('Page', () => {
   test('Without navigation', async () => {
-    const { client } = createTestClient({
+    const client = createTestClient({
       service: Service.Serlo,
       user: null,
     })
@@ -129,7 +129,7 @@ describe('Page', () => {
   })
 
   test('Subject Homepage', async () => {
-    const { client } = createTestClient({ service: Service.Serlo, user: null })
+    const client = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       ...createSetPageMutation(subjectHomepage),
       client,
@@ -178,7 +178,7 @@ describe('Page', () => {
   })
 
   test('Dropdown', async () => {
-    const { client } = createTestClient({ service: Service.Serlo, user: null })
+    const client = createTestClient({ service: Service.Serlo, user: null })
     await assertSuccessfulGraphQLMutation({
       ...createSetPageMutation(subjectHomepage),
       client,
@@ -266,7 +266,7 @@ describe('Page', () => {
 
 describe('Taxonomy Term', () => {
   test('Without navigation', async () => {
-    const { client } = createTestClient({
+    const client = createTestClient({
       service: Service.Serlo,
       user: null,
     })
@@ -313,7 +313,7 @@ describe('Taxonomy Term', () => {
   })
 
   test('Subject', async () => {
-    const { client } = createTestClient({
+    const client = createTestClient({
       service: Service.Serlo,
       user: null,
     })
@@ -377,7 +377,7 @@ describe('Taxonomy Term', () => {
   })
 
   test('Curriculum Topic', async () => {
-    const { client } = createTestClient({
+    const client = createTestClient({
       service: Service.Serlo,
       user: null,
     })

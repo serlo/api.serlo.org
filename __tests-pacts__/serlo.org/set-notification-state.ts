@@ -35,7 +35,7 @@ test('setNotificationState', async () => {
   global.client = createTestClient({
     service: Service.SerloCloudflareWorker,
     user: user.id,
-  }).client
+  })
   await global.pact.addInteraction({
     uponReceiving: `set state of notification with id 9`,
     state: `there exists a notification with id 9 for user with id ${user.id}`,

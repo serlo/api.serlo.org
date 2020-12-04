@@ -92,8 +92,8 @@ export function createCache({
         })
       })
     },
-    quit() {
-      return new Promise((resolve) => {
+    async quit() {
+      await new Promise((resolve) => {
         client.quit(() => {
           resolve()
         })
