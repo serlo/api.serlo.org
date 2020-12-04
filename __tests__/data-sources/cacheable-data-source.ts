@@ -19,9 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { createInMemoryCache } from '../../src/cache'
 import { CacheableDataSource } from '../../src/graphql/data-sources'
 import { Cache, Timer } from '../../src/graphql/environment'
+import { createInMemoryCache } from '../../src/legacy-cache'
 
 class ExampleDataSource extends CacheableDataSource {
   public async getContent({ key = 'key', current, maxAge }: CachePayload) {

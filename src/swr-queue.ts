@@ -22,9 +22,9 @@
 import Queue from 'bee-queue'
 import { option as O } from 'fp-ts'
 
-import { Model } from '.'
-import { Timer } from '../graphql/environment'
 import { Cache } from './cache'
+import { Model } from './model'
+import { Timer } from './timer'
 
 export interface SwrQueue {
   queue(updateJob: UpdateJob): Promise<Queue.Job<UpdateJob>>
@@ -47,6 +47,7 @@ export function createSwrQueue({
   timer: Timer
   host: string
 }): SwrQueue {
+  // Queue needs its own connection because it needs the blocking commands for PubSub subscriptions.
   const queue = new Queue<UpdateJob>('swr', {
     redis: {
       host,

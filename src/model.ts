@@ -21,9 +21,9 @@
  */
 import { RequestInit } from 'node-fetch'
 
-import { Instance } from '../types'
 import { Cache } from './cache'
 import { LockManager } from './lock-manager'
+import { Instance } from './types'
 
 type Fetch<Result = unknown> = (
   init: RequestInit & { path: string }

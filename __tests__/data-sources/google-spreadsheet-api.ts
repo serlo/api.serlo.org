@@ -22,12 +22,12 @@
 import { InMemoryLRUCache } from 'apollo-server-caching'
 import { either as E } from 'fp-ts'
 
-import { createInMemoryCache } from '../../src/cache'
 import {
   GoogleSheetApi,
   MajorDimension,
 } from '../../src/graphql/data-sources/google-spreadsheet-api'
 import { createTimer } from '../../src/graphql/environment'
+import { createInMemoryCache } from '../../src/legacy-cache'
 import { expectToBeLeftEventWith, createSpreadsheetHandler } from '../__utils__'
 
 const cache = createInMemoryCache()

@@ -25,10 +25,10 @@ import createApp, { Express } from 'express'
 import createPlayground from 'graphql-playground-middleware-express'
 import jwt from 'jsonwebtoken'
 
-import { createInMemoryCache, createRedisCache } from './cache'
 import { getGraphQLOptions } from './graphql'
 import { createTimer } from './graphql/environment'
 import { Service } from './graphql/schema/types'
+import { createInMemoryCache, createRedisCache } from './legacy-cache'
 // eslint-disable-next-line import/no-unassigned-import
 import './sentry'
 
