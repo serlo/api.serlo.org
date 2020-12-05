@@ -72,13 +72,13 @@ test('Threads with 3 Comments', async () => {
         threads: {
           totalCount: 2,
           nodes: [
+            { comments: { totalCount: 1, nodes: [{ id: comment3.id }] } },
             {
               comments: {
                 totalCount: 2,
                 nodes: [{ id: comment1.id }, { id: comment2.id }],
               },
             },
-            { comments: { totalCount: 1, nodes: [{ id: comment3.id }] } },
           ],
         },
       },
