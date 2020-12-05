@@ -13,10 +13,12 @@ export function createThreadResolvers(): UuidResolvers {
         dataSources.serlo.getThreadIds({ id: parent.id })
       )
 
+      const threads = await Promise.all(
+        firstCommentIds.map((id) => toThreadPayload(dataSources.serlo, id))
+      )
+
       return resolveConnection({
-        nodes: await Promise.all(
-          firstCommentIds.map((id) => toThreadPayload(dataSources.serlo, id))
-        ),
+        nodes: threads.reverse(),
         payload: cursorPayload,
         createCursor(node) {
           return node.commentPayloads[0].id.toString()
