@@ -392,6 +392,16 @@ async function exec(): Promise<void> {
         ['cacheable-data-source', 'Add logs.'],
       ],
     },
+    {
+      tagName: 'v0.12.0',
+      date: '2020-12-09',
+      fixed: [['uuid', 'Throw `UserInputError` for malformed paths.']],
+      changed: [['uuid', 'Sort `threads` by `createdAt` in descending order.']],
+      internal: [
+        'Implement SWR Background updates using Bee-Queue.',
+        'Implement Locks using Redlock.',
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

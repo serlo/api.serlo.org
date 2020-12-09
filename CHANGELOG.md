@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.12.0](https://github.com/serlo/api.serlo.org/compare/v0.11.4..v0.12.0) - December 9, 2020
+
+### Changed
+
+- **uuid**. Sort `threads` by `createdAt` in descending order.
+
+### Fixed
+
+- **uuid**. Throw `UserInputError` for malformed paths.
+
+### Internal
+
+- Implement SWR Background updates using Bee-Queue.
+- Implement Locks using Redlock.
+
 ## [v0.11.4](https://github.com/serlo/api.serlo.org/compare/v0.11.3..v0.11.4) - November 30, 2020
 
 ### Fixed
