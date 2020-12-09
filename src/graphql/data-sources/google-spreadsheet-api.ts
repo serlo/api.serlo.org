@@ -56,7 +56,7 @@ interface Arguments {
 }
 
 export class GoogleSheetApi extends CacheableDataSource {
-  private apiKey: string
+  private readonly apiKey: string
 
   constructor({
     apiKey,
@@ -116,7 +116,7 @@ export class GoogleSheetApi extends CacheableDataSource {
         error instanceof Error ? error : new Error(JSON.stringify(error))
 
       result = E.left({
-        message: `an error occured while accessing spreadsheet "${spreadsheetId}"`,
+        message: `An error occurred while accessing spreadsheet "${spreadsheetId}"`,
         exception,
       })
     }
@@ -124,24 +124,5 @@ export class GoogleSheetApi extends CacheableDataSource {
     return E.mapLeft((event: ErrorEvent) =>
       R.mergeDeepRight({ contexts: { args } }, event)
     )(result)
-  }
-
-  public async updateCacheValue(key: string) {
-    const sslen = 'spreadsheet-'.length
-    const googleIdLength = 44
-    const spreadsheetId = key.slice(sslen, sslen + googleIdLength)
-    const [, range, majorDimension] = key
-      .slice(sslen + googleIdLength)
-      .split('-')
-
-    const value = await this.getValuesWithoutCache({
-      spreadsheetId,
-      range,
-      majorDimension: majorDimension as MajorDimension,
-    })
-    await this.UNSAFE_setCacheValueWithoutLock({
-      key,
-      update: () => Promise.resolve(value),
-    })
   }
 }

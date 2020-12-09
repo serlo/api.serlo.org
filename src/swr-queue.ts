@@ -28,6 +28,7 @@ import { Timer } from './timer'
 
 export interface SwrQueue {
   queue(updateJob: UpdateJob): Promise<Queue.Job<UpdateJob>>
+  ready(): Promise<void>
   quit(): Promise<void>
 }
 
@@ -67,6 +68,9 @@ export function createSwrQueue({
       // By setting the job's ID, we make sure that there will be only one update job for the same key
       // See also https://github.com/bee-queue/bee-queue#jobsetidid
       return await queue.createJob(updateJob).setId(updateJob.key).save()
+    },
+    async ready() {
+      await queue.ready()
     },
     async quit() {
       await queue.close()

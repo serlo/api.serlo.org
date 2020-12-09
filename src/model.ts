@@ -49,14 +49,15 @@ export function createModel({
       const lock = await lockManager.lock(key)
       try {
         const value = await f()
-        // TODO: here we probably also persist the last update or something
         await cache.set(key, value)
       } catch (e) {
+        console.log('error', e)
         // Ignore exceptions
       } finally {
         await lock.unlock()
       }
     } catch (e) {
+      console.log('locked', e)
       // Resource already locked, skip update
     }
   }
