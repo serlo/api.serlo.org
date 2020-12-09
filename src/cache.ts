@@ -26,6 +26,7 @@ import redis from 'redis'
 import * as util from 'util'
 
 import { log } from './log'
+import { redisUrl } from './redis-url'
 import { Timer } from './timer'
 
 export interface Cache {
@@ -36,16 +37,9 @@ export interface Cache {
   quit(): Promise<void>
 }
 
-export function createCache({
-  host,
-  timer,
-}: {
-  host: string
-  timer: Timer
-}): Cache {
+export function createCache({ timer }: { timer: Timer }): Cache {
   const client = redis.createClient({
-    host,
-    port: 6379,
+    url: redisUrl,
     return_buffers: true,
   })
 

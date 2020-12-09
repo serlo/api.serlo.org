@@ -31,7 +31,8 @@ declare namespace NodeJS {
     ACTIVE_DONORS_SPREADSHEET_ID: string
     GOOGLE_API_KEY: string
     LOG_LEVEL: LogLevelDesc | undefined
-    REDIS_HOST: string
+    REDIS_URL: string
+    REDIS_URL_TEST: string | undefined
     SERLO_CLOUDFLARE_WORKER_SECRET: string
     SERLO_ORG_HOST: string
     SERLO_ORG_SECRET: string

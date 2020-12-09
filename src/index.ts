@@ -36,17 +36,15 @@ import { createModel } from './model'
 import { createSwrQueue, SwrQueue } from './swr-queue'
 import { createTimer } from './timer'
 
-const host = process.env.REDIS_HOST
-
 start()
 
 function start() {
   dotenv.config()
   const timer = createTimer()
-  const cache = createCache({ host, timer })
+  const cache = createCache({ timer })
   const model = createModel({
     cache,
-    lockManager: createLockManager({ host, retryCount: 0 }),
+    lockManager: createLockManager({ retryCount: 0 }),
     async fetch({ path, ...init }) {
       const response = await fetch(path, init)
       return (await response.json()) as unknown
@@ -56,7 +54,6 @@ function start() {
     cache,
     model,
     timer,
-    host: process.env.REDIS_HOST,
   })
   const app = createApp()
   const graphqlPath = applyGraphQLMiddleware({ app, cache, swrQueue })
@@ -79,7 +76,7 @@ function applyGraphQLMiddleware({
 }) {
   const environment = {
     cache,
-    lockManager: createLockManager({ host, retryCount: 5 }),
+    lockManager: createLockManager({ retryCount: 5 }),
     swrQueue,
   }
   const server = new ApolloServer(getGraphQLOptions(environment))
