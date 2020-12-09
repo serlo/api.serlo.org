@@ -48,7 +48,7 @@ export function createTestClient(
     },
   }
   const mockSwrQueue: SwrQueue = {
-    // @ts-expect-error
+    // @ts-expect-error We don't rely on the return value in production code (but need it for tests).
     queue(_updateJob) {
       return Promise.resolve(undefined)
     },

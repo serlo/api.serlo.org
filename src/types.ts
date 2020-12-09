@@ -152,6 +152,8 @@ export enum Instance {
   Ta = 'ta'
 }
 
+
+
 export type License = {
   __typename?: 'License';
   id: Scalars['Int'];
