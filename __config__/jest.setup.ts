@@ -19,5 +19,22 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-export * from './in-memory-cache'
-export * from './redis-cache'
+import {
+  createAfterAll,
+  createAfterEach,
+  createBeforeAll,
+  createBeforeEach,
+  setup,
+} from './setup'
+
+setup()
+
+beforeAll(async () => {
+  await createBeforeAll({ onUnhandledRequest: 'error' })
+})
+
+beforeEach(createBeforeEach)
+
+afterEach(createAfterEach)
+
+afterAll(createAfterAll)

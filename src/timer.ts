@@ -19,21 +19,14 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { setupServer } from 'msw/node'
+export interface Timer {
+  now: typeof Date.now
+}
 
-global.server = setupServer()
-
-beforeAll(() => global.server.listen({ onUnhandledRequest: 'error' }))
-
-afterEach(() => global.server.resetHandlers())
-
-afterAll(() => global.server.close())
-
-/* eslint-disable @typescript-eslint/no-namespace */
-declare global {
-  namespace NodeJS {
-    interface Global {
-      server: ReturnType<typeof import('msw/node').setupServer>
-    }
+export function createTimer(): Timer {
+  return {
+    now() {
+      return Date.now()
+    },
   }
 }

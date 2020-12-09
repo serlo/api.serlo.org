@@ -20,25 +20,32 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { RESTDataSource } from 'apollo-datasource-rest'
-import { randomBytes } from 'crypto'
 import { option as O, pipeable } from 'fp-ts'
-import * as R from 'ramda'
 
+import { createModel, Model } from '../../model'
 import { Environment } from '../environment'
 
 export const MINUTE = 60
 export const HOUR = 60 * MINUTE
 export const DAY = 24 * HOUR
 
-const inMemoryLock: Record<string, string> = {}
-
 export abstract class CacheableDataSource extends RESTDataSource {
+  protected model: Model
+
   constructor(protected environment: Environment) {
     super()
+    this.model = createModel({
+      ...this.environment,
+      // TODO: seems like fetch isn't exposed. So we either need to focus on GET or don't use the model here
+      fetch: ({ path, ...init }) => {
+        // @ts-expect-error This is still Hacky and WIP, ignore the type mismatch for now
+        return this.get(path, {}, init)
+      },
+    })
   }
 
-  public abstract updateCacheValue(key: string): Promise<void>
-
+  // TODO: here we probably shouldn't need `update` since the model already
+  // encapsulates all the relevant information
   public async getCacheValue<Value>({
     key,
     update,
@@ -48,31 +55,30 @@ export abstract class CacheableDataSource extends RESTDataSource {
     update: UpdateFunction<Value>
     maxAge?: number
   }): Promise<Value> {
-    const cacheEntry = await this.environment.cache.get<unknown>(key)
-
-    if (O.isNone(cacheEntry)) {
-      console.log('MISS', key)
-      const initialValue = await update(null)
-      await this.setValue({ key, value: initialValue })
-      return initialValue
-    }
-
-    const cacheValue = cacheEntry.value
-    const entry = isEntry<Value>(cacheValue)
-      ? cacheValue
-      : await this.setValue({ key, value: cacheValue as Value })
-
-    const age = this.environment.timer.now() - entry.lastModified
-
-    if (maxAge === undefined || age <= maxAge * 1000) return entry.value
-
-    // update cache in the background -> thus we do not use "await" here
-    console.log('HIT', key)
-    void this.setCacheValue({ key, update })
-
-    return entry.value
+    return await pipeable.pipe(
+      await this.environment.cache.get<Value>(key),
+      O.fold(
+        async () => {
+          const initialValue = await update(null)
+          await this.environment.cache.set(key, initialValue)
+          return initialValue
+        },
+        async (cacheEntry) => {
+          await this.environment.swrQueue.queue({
+            key,
+            maxAge,
+          })
+          return cacheEntry.value
+        }
+      )
+    )
   }
 
+  public async updateCacheValue({ key }: { key: string }): Promise<void> {
+    await this.model.update(key)
+  }
+
+  // TODO: do we need update here? This is the entry for mutations btw.
   public async setCacheValue<Value>({
     key,
     update,
@@ -80,104 +86,25 @@ export abstract class CacheableDataSource extends RESTDataSource {
     key: string
     update: UpdateFunction<Value>
   }): Promise<void> {
-    await pipeable.pipe(
-      this.lock(key),
-      O.fold(
-        async () => {},
-        async (lock) => {
-          await this.updateValue({
-            key,
-            update,
-            lock,
-          })
-        }
-      )
-    )
-  }
-
-  public async UNSAFE_setCacheValueWithoutLock<Value>({
-    key,
-    update,
-  }: {
-    key: string
-    update: UpdateFunction<Value>
-  }): Promise<void> {
-    // Update even when resource is locked.
-    const lock = this.UNSAFE_lock(key)
-    await this.updateValue({
-      key,
-      update,
-      lock,
-    })
-  }
-
-  private async setValue<Value>({
-    key,
-    value,
-  }: {
-    key: string
-    value: Value
-  }): Promise<Entry<Value>> {
-    const newEntry = { value, lastModified: this.environment.timer.now() }
-    await this.environment.cache.set(key, newEntry)
-    return newEntry
-  }
-
-  private async updateValue<Value>({
-    key,
-    update,
-    lock,
-  }: {
-    key: string
-    update: UpdateFunction<Value>
-    lock: Lock
-  }) {
-    console.log('SWR Background update:', key)
-    const currentValue = pipeable.pipe(
-      await this.environment.cache.get<unknown>(key),
-      O.chain(O.fromPredicate(isEntry)),
-      O.map((entry) => entry.value as Value),
-      O.toNullable
-    )
     try {
-      await this.setValue({ key, value: await update(currentValue) })
+      const lock = await this.environment.lockManager.lock(key)
+      try {
+        const currentValue = pipeable.pipe(
+          await this.environment.cache.get<Value>(key),
+          O.map((entry) => entry.value),
+          O.toNullable
+        )
+        const value = await update(currentValue)
+        await this.environment.cache.set(key, value)
+      } catch (e) {
+        // Ignore exceptions
+      } finally {
+        await lock.unlock()
+      }
     } catch (e) {
-      // Ignore exceptions
-    } finally {
-      lock.unlock()
+      // Resource already locked, skip update
     }
   }
-
-  private lock(key: string): O.Option<Lock> {
-    const isLocked = inMemoryLock[key] !== undefined
-    return isLocked ? O.none : O.some(this.UNSAFE_lock(key))
-  }
-
-  private UNSAFE_lock(key: string): Lock {
-    const lockId = randomBytes(8).toString('hex')
-    inMemoryLock[key] = lockId
-    return {
-      unlock,
-    }
-
-    function unlock() {
-      if (inMemoryLock[key] !== lockId) return
-      delete inMemoryLock[key]
-    }
-  }
-}
-
-interface Lock {
-  unlock(): void
-}
-
-interface Entry<Value> {
-  value: Value
-  lastModified: number
-}
-
-function isEntry<Value>(entry: unknown): entry is Entry<Value> {
-  return R.has('lastModified', entry) && R.has('value', entry)
 }
 
 type UpdateFunction<Value> = (current: Value | null) => Promise<Value>

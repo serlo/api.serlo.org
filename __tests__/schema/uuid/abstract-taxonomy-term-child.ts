@@ -52,7 +52,7 @@ beforeEach(() => {
   client = createTestClient({
     service: Service.SerloCloudflareWorker,
     user: null,
-  }).client
+  })
 })
 
 type TaxonomyTermChildType = TaxonomyTermChildPayload['__typename']

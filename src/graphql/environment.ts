@@ -19,38 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { option as O } from 'fp-ts'
+import { Cache } from '../cache'
+import { LockManager } from '../lock-manager'
+import { SwrQueue } from '../swr-queue'
 
 export interface Environment {
   cache: Cache
-  timer: Timer
-}
-
-export interface Cache {
-  get<T>(key: string): Promise<O.Option<T>>
-  set(key: string, value: unknown, options?: SetCacheOptions): Promise<void>
-  setAndReturnPreviousValue<T>(
-    key: string,
-    value: T,
-    options?: SetCacheOptions
-  ): Promise<O.Option<T>>
-  remove(key: string): Promise<void>
-  flush(): Promise<void>
-  getTtl(key: string): Promise<O.Option<number>>
-}
-
-export interface SetCacheOptions {
-  ttl?: number
-}
-
-export interface Timer {
-  now(): number
-}
-
-export function createTimer(): Timer {
-  return {
-    now() {
-      return Date.now()
-    },
-  }
+  lockManager: LockManager
+  swrQueue: SwrQueue
 }

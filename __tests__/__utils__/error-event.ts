@@ -19,14 +19,16 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-/* eslint-disable @typescript-eslint/no-var-requires,import/no-commonjs */
-module.exports = {
-  preset: 'ts-jest',
-  setupFiles: ['dotenv/config'],
-  setupFilesAfterEnv: ['<rootDir>/__config__/jest.setup.ts'],
-  testEnvironment: 'node',
-  testPathIgnorePatterns: ['/node_modules/', '/__tests__\\/__utils__/'],
-  transform: {
-    '^.+\\.graphql$': 'jest-transform-graphql',
-  },
+import { either as E } from 'fp-ts'
+
+import { ErrorEvent } from '../../src/error-event'
+
+export function expectToBeLeftEventWith<A>(
+  value: E.Either<ErrorEvent, A>,
+  expectedEvent: ErrorEvent
+) {
+  expect(E.isLeft(value)).toBe(true)
+
+  if (E.isLeft(value))
+    expect(value.left).toEqual(expect.objectContaining(expectedEvent))
 }
