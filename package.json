@@ -26,7 +26,10 @@
     "pacts:publish": "ts-node scripts/publish-pacts",
     "preregenerate-types": "graphql-codegen --config codegen.yml",
     "regenerate-types": "ts-node scripts/regenerate-types-package",
-    "start": "tsdx watch  --target node --format cjs --tsconfig tsconfig.prod.json --onSuccess \"node dist\"",
+    "start": "npm-run-all start:redis start:server",
+    "start:redis": "docker-compose up --build --detach",
+    "start:server": "tsdx watch  --target node --format cjs --tsconfig tsconfig.prod.json --onSuccess \"node dist\"",
+    "stop:redis": "docker-compose stop",
     "test": "jest --config jest.config.js --runInBand"
   },
   "dependencies": {

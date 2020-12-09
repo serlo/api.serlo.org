@@ -28,8 +28,6 @@ import { createModel } from '../../src/model'
 import { createSwrQueue } from '../../src/swr-queue'
 import { createUuidHandler } from '../__utils__'
 
-// TODO: change CI so that redis is started beforehand
-
 // For background updates, we just skip the update when the resource is already locked.
 // The resolvers with important updates should instead use a high retryCount
 const lockManager = createLockManager({
