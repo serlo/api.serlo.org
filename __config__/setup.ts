@@ -53,12 +53,12 @@ export function setup() {
   global.timer = timer
 }
 
-export function createBeforeAll(options: SharedOptions) {
+export async function createBeforeAll(options: SharedOptions) {
+  await global.cache.ready()
   global.server.listen(options)
 }
 
 export async function createBeforeEach() {
-  await global.cache.ready()
   await global.cache.flush()
   global.timer.flush()
 }

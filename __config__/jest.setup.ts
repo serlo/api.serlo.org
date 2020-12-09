@@ -29,8 +29,8 @@ import {
 
 setup()
 
-beforeAll(() => {
-  createBeforeAll({ onUnhandledRequest: 'error' })
+beforeAll(async () => {
+  await createBeforeAll({ onUnhandledRequest: 'error' })
 })
 
 beforeEach(createBeforeEach)

@@ -51,11 +51,10 @@ global.pact = new Pact({
   provider: 'serlo.org',
   port,
   dir: pactDir,
-  logLevel: 'debug',
 })
 
 beforeAll(async () => {
-  createBeforeAll({ onUnhandledRequest: 'bypass' })
+  await createBeforeAll({ onUnhandledRequest: 'bypass' })
   await rm(pactDir)
   await global.pact.setup()
 })
