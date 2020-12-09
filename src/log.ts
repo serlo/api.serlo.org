@@ -19,14 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-/* eslint-disable @typescript-eslint/no-var-requires,import/no-commonjs */
-module.exports = {
-  preset: 'ts-jest',
-  setupFiles: ['dotenv/config'],
-  setupFilesAfterEnv: ['<rootDir>/__config__/jest.setup.ts'],
-  testEnvironment: 'node',
-  testPathIgnorePatterns: ['/node_modules/', '/__tests__\\/__utils__/'],
-  transform: {
-    '^.+\\.graphql$': 'jest-transform-graphql',
-  },
-}
+import log, { LogLevelDesc } from 'loglevel'
+
+log.setLevel((process.env.LOG_LEVEL as LogLevelDesc) ?? 'ERROR')
+
+export { log }

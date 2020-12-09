@@ -58,7 +58,7 @@ module.exports = {
       'error',
       {
         devDependencies: [
-          '__stories__/**/*',
+          '__config__/**/*',
           '__tests-pacts__/**/*',
           '__tests__/**/*',
           'scripts/**/*',

@@ -43,7 +43,7 @@ beforeEach(() => {
   client = createTestClient({
     service: Service.SerloCloudflareWorker,
     user: null,
-  }).client
+  })
 })
 
 describe('Page', () => {

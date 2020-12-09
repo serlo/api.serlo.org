@@ -37,7 +37,7 @@ beforeEach(() => {
 })
 
 test('license', async () => {
-  const { client } = createTestClient({
+  const client = createTestClient({
     service: Service.SerloCloudflareWorker,
     user: null,
   })

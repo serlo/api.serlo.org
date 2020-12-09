@@ -32,7 +32,7 @@ test('Notifications', async () => {
   global.client = createTestClient({
     service: Service.SerloCloudflareWorker,
     user: user.id,
-  }).client
+  })
   await addJsonInteraction({
     name: `fetch data of all notifications for user with id ${user.id}`,
     given: `there exists a notification for user with id ${user.id}`,

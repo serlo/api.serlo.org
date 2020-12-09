@@ -86,22 +86,22 @@ export class SerloDataSource extends CacheableDataSource {
     })
     const { data } = payload
 
-    const leafs: Record<string, number> = {}
+    const leaves: Record<string, number> = {}
 
-    const findLeafs = (node: NodeData): number[] => {
+    const findLeaves = (node: NodeData): number[] => {
       return [
         ...(node.id ? [node.id] : []),
-        ...R.flatten(R.map(findLeafs, node.children || [])),
+        ...R.flatten(R.map(findLeaves, node.children || [])),
       ]
     }
 
     for (let i = 0; i < data.length; i++) {
-      findLeafs(data[i]).forEach((id) => {
-        leafs[id] = i
+      findLeaves(data[i]).forEach((id) => {
+        leaves[id] = i
       })
     }
 
-    const treeIndex = leafs[id]
+    const treeIndex = leaves[id]
 
     if (treeIndex === undefined) return null
 
@@ -206,7 +206,7 @@ export class SerloDataSource extends CacheableDataSource {
         unread: notificationState.unread,
       },
     })
-    await this.UNSAFE_setCacheValueWithoutLock({
+    await this.setCacheValue({
       key: this.getCacheKey(`/api/notifications/${notificationState.userId}`),
       update: () => Promise.resolve(value),
     })
@@ -298,20 +298,6 @@ export class SerloDataSource extends CacheableDataSource {
 
   public async removeCache(key: string) {
     await this.environment.cache.remove(key)
-  }
-
-  public async updateCacheValue(key: string) {
-    const instanceStr = key.slice(0, 2)
-    if (!Object.values(Instance).includes(instanceStr as Instance)) {
-      throw new Error(`"${instanceStr}" is not a valid instance`)
-    }
-    const instance = instanceStr as Instance
-    const path = key.slice('xx.serlo.org'.length)
-    const value = await this.getFromSerlo({ path, instance })
-    await this.UNSAFE_setCacheValueWithoutLock({
-      key: this.getCacheKey(path, instance),
-      update: () => Promise.resolve(value),
-    })
   }
 }
 

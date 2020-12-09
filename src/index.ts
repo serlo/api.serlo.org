@@ -24,20 +24,39 @@ import dotenv from 'dotenv'
 import createApp, { Express } from 'express'
 import createPlayground from 'graphql-playground-middleware-express'
 import jwt from 'jsonwebtoken'
+import fetch from 'node-fetch'
 
-import { createInMemoryCache, createRedisCache } from './cache'
+import { Cache, createCache } from './cache'
 import { getGraphQLOptions } from './graphql'
-import { createTimer } from './graphql/environment'
 import { Service } from './graphql/schema/types'
 // eslint-disable-next-line import/no-unassigned-import
 import './sentry'
+import { createLockManager } from './lock-manager'
+import { createModel } from './model'
+import { createSwrQueue, SwrQueue } from './swr-queue'
+import { createTimer } from './timer'
 
 start()
 
 function start() {
   dotenv.config()
+  const timer = createTimer()
+  const cache = createCache({ timer })
+  const model = createModel({
+    cache,
+    lockManager: createLockManager({ retryCount: 0 }),
+    async fetch({ path, ...init }) {
+      const response = await fetch(path, init)
+      return (await response.json()) as unknown
+    },
+  })
+  const swrQueue = createSwrQueue({
+    cache,
+    model,
+    timer,
+  })
   const app = createApp()
-  const graphqlPath = applyGraphQLMiddleware(app)
+  const graphqlPath = applyGraphQLMiddleware({ app, cache, swrQueue })
 
   app.listen({ port: 3000 }, () => {
     console.log('🚀 Server ready')
@@ -46,13 +65,19 @@ function start() {
   })
 }
 
-function applyGraphQLMiddleware(app: Express) {
+function applyGraphQLMiddleware({
+  app,
+  cache,
+  swrQueue,
+}: {
+  app: Express
+  cache: Cache
+  swrQueue: SwrQueue
+}) {
   const environment = {
-    cache:
-      process.env.REDIS_HOST === undefined
-        ? createInMemoryCache()
-        : createRedisCache({ host: process.env.REDIS_HOST }),
-    timer: createTimer(),
+    cache,
+    lockManager: createLockManager({ retryCount: 5 }),
+    swrQueue,
   }
   const server = new ApolloServer(getGraphQLOptions(environment))
 

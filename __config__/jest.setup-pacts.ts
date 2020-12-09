@@ -21,46 +21,30 @@
  */
 import { Pact } from '@pact-foundation/pact'
 import { rest } from 'msw'
-import { setupServer } from 'msw/node'
 import fetch from 'node-fetch'
 import path from 'path'
 import rimraf from 'rimraf'
 import util from 'util'
 
-import { createTestClient } from './__tests__/__utils__'
-import { Service } from './src/graphql/schema/types'
+import { createTestClient } from '../__tests__/__utils__'
+import { Service } from '../src/graphql/schema/types'
+import {
+  createAfterAll,
+  createAfterEach,
+  createBeforeAll,
+  createBeforeEach,
+  setup,
+} from './setup'
 
-const pactDir = path.join(__dirname, 'pacts')
+const pactDir = path.join(__dirname, '..', 'pacts')
 
 const rm = util.promisify(rimraf)
 
 const port = 9009
 
-const server = setupServer(
-  rest.get(
-    new RegExp(process.env.SERLO_ORG_HOST.replace('.', '\\.')),
-    async (req, res, ctx) => {
-      const url = req.url
-      const pactRes = await fetch(`http://localhost:${port}/${url.pathname}`)
-      return res(ctx.status(pactRes.status), ctx.json(await pactRes.json()))
-    }
-  ),
-  rest.post(
-    new RegExp(process.env.SERLO_ORG_HOST.replace('.', '\\.')),
-    async (req, res, ctx) => {
-      const url = req.url
-      const pactRes = await fetch(`http://localhost:${port}/${url.pathname}`, {
-        method: 'POST',
-        body:
-          typeof req.body === 'object' ? JSON.stringify(req.body) : req.body,
-        headers: {
-          'Content-Type': req.headers.get('Content-Type')!,
-        },
-      })
-      return res(ctx.status(pactRes.status), ctx.json(await pactRes.json()))
-    }
-  )
-)
+setup()
+
+jest.setTimeout(60 * 1000)
 
 global.pact = new Pact({
   consumer: 'api.serlo.org',
@@ -70,25 +54,63 @@ global.pact = new Pact({
 })
 
 beforeAll(async () => {
+  await createBeforeAll({ onUnhandledRequest: 'bypass' })
   await rm(pactDir)
   await global.pact.setup()
-  server.listen()
 })
 
-beforeEach(() => {
+beforeEach(async () => {
+  await createBeforeEach()
+  global.server.use(
+    rest.get(
+      new RegExp(process.env.SERLO_ORG_HOST.replace('.', '\\.')),
+      async (req, res, ctx) => {
+        const url = req.url
+        const pactRes = await fetch(`http://localhost:${port}/${url.pathname}`)
+        return res(ctx.status(pactRes.status), ctx.json(await pactRes.json()))
+      }
+    ),
+    rest.post(
+      new RegExp(process.env.SERLO_ORG_HOST.replace('.', '\\.')),
+      async (req, res, ctx) => {
+        const url = req.url
+        const pactRes = await fetch(
+          `http://localhost:${port}/${url.pathname}`,
+          {
+            method: 'POST',
+            body:
+              typeof req.body === 'object'
+                ? JSON.stringify(req.body)
+                : req.body,
+            headers: {
+              'Content-Type': req.headers.get('Content-Type')!,
+            },
+          }
+        )
+        return res(ctx.status(pactRes.status), ctx.json(await pactRes.json()))
+      }
+    )
+  )
   global.client = createTestClient({
     service: Service.SerloCloudflareWorker,
     user: null,
-  }).client
+  })
 })
 
 afterEach(async () => {
-  await global.pact.verify()
+  try {
+    await global.pact.verify()
+  } finally {
+    createAfterEach()
+  }
 })
 
 afterAll(async () => {
-  server.close()
-  await global.pact.finalize()
+  try {
+    await global.pact.finalize()
+  } finally {
+    await createAfterAll()
+  }
 })
 
 /* eslint-disable @typescript-eslint/no-namespace */
@@ -96,7 +118,7 @@ declare global {
   namespace NodeJS {
     interface Global {
       pact: import('@pact-foundation/pact').Pact
-      client: import('./__tests__/__utils__').Client
+      client: import('../__tests__/__utils__').Client
     }
   }
 }

@@ -25,22 +25,44 @@ import {
   createTestClient as createApolloTestClient,
 } from 'apollo-server-testing'
 
-import { createInMemoryCache } from '../../src/cache'
 import { getGraphQLOptions } from '../../src/graphql'
-import { Cache, createTimer, Timer } from '../../src/graphql/environment'
 import { Context, Service } from '../../src/graphql/schema/types'
+import { LockManager } from '../../src/lock-manager'
+import { SwrQueue } from '../../src/swr-queue'
 
 export type Client = ApolloServerTestClient
 
 export function createTestClient(
-  args?: Partial<Pick<Context, 'service' | 'user'>> & { timer?: Timer }
-): {
-  client: Client
-  cache: Cache
-} {
-  const cache = createInMemoryCache()
+  args?: Partial<Pick<Context, 'service' | 'user'>>
+): Client {
+  const mockLockManager: LockManager = {
+    lock(_key) {
+      return Promise.resolve({
+        unlock() {
+          return Promise.resolve()
+        },
+      })
+    },
+    quit() {
+      return Promise.resolve()
+    },
+  }
+  const mockSwrQueue: SwrQueue = {
+    // @ts-expect-error We don't rely on the return value in production code (but need it for tests).
+    queue(_updateJob) {
+      return Promise.resolve(undefined)
+    },
+    quit() {
+      return Promise.resolve()
+    },
+  }
+
   const server = new ApolloServer({
-    ...getGraphQLOptions({ cache, timer: args?.timer ?? createTimer() }),
+    ...getGraphQLOptions({
+      cache: global.cache,
+      lockManager: mockLockManager,
+      swrQueue: mockSwrQueue,
+    }),
     context(): Pick<Context, 'service' | 'user'> {
       return {
         service: args?.service ?? Service.SerloCloudflareWorker,
@@ -48,5 +70,5 @@ export function createTestClient(
       }
     },
   })
-  return { client: createApolloTestClient(server), cache }
+  return createApolloTestClient(server)
 }

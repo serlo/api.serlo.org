@@ -28,7 +28,6 @@ import {
   user,
   user2,
 } from '../../../__fixtures__'
-import { Cache } from '../../../src/graphql/environment'
 import { Service } from '../../../src/graphql/schema/types'
 import { UuidPayload } from '../../../src/graphql/schema/uuid/abstract-uuid'
 import { Instance } from '../../../src/types'
@@ -41,13 +40,12 @@ import {
 } from '../../__utils__'
 
 let client: Client
-let cache: Cache
 
 beforeEach(() => {
-  ;({ client, cache } = createTestClient({
+  client = createTestClient({
     service: Service.SerloCloudflareWorker,
     user: null,
-  }))
+  })
 
   global.server.use(createUuidHandler(user))
 })
@@ -633,7 +631,7 @@ describe('endpoint activeReviewers', () => {
   })
 
   test('uses cached value for active reviewers', async () => {
-    await cache.set('de.serlo.org/api/user/active-reviewers', [user.id])
+    await global.cache.set('de.serlo.org/api/user/active-reviewers', [user.id])
 
     await assertSuccessfulGraphQLQuery({
       query: activeReviewersQuery,
