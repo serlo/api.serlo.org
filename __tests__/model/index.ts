@@ -26,7 +26,7 @@ import { user } from '../../__fixtures__'
 import { createLockManager } from '../../src/lock-manager'
 import { createModel } from '../../src/model'
 import { createSwrQueue } from '../../src/swr-queue'
-import { createUuidHandler, waitFor } from '../__utils__'
+import { createUuidHandler } from '../__utils__'
 
 const host = process.env.REDIS_HOST
 
@@ -58,6 +58,7 @@ const swrQueue = createSwrQueue({
 })
 
 beforeEach(async () => {
+  await swrQueue.flush()
   await swrQueue.ready()
 })
 
@@ -92,12 +93,11 @@ test("Skips update when lock couldn't be acquired", async () => {
 
 // TODO: This is still a bit hacky, re-implement tests from CacheableDataSource
 describe('Background Queue', () => {
-  // TODO: this test is still flaky because the resource is often still locked.
   test('Stale', async () => {
     global.server.use(createUuidHandler(user))
     const key = 'de.serlo.org/api/uuid/1'
     await global.cache.set(key, 'Stale value')
-    await waitFor(20)
+    await global.timer.waitFor(20)
     const job = await swrQueue.queue({ key, maxAge: 10 })
     await new Promise((resolve) => {
       job.on('succeeded', () => {
@@ -114,7 +114,7 @@ describe('Background Queue', () => {
   test('Non-stale', async () => {
     const key = 'de.serlo.org/api/uuid/1'
     await global.cache.set(key, user)
-    await waitFor(5)
+    await global.timer.waitFor(5)
     const job = await swrQueue.queue({ key, maxAge: 10 })
     await new Promise((resolve) => {
       job.on('succeeded', () => {
@@ -131,7 +131,7 @@ describe('Background Queue', () => {
   test('MaxAge = undefined', async () => {
     const key = 'de.serlo.org/api/uuid/1'
     await global.cache.set(key, user)
-    await waitFor(9999999999999)
+    await global.timer.waitFor(9999999999999)
     const job = await swrQueue.queue({ key })
     await new Promise((resolve) => {
       job.on('succeeded', () => {

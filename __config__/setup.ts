@@ -23,9 +23,28 @@ import { SharedOptions } from 'msw/lib/types/sharedOptions'
 import { setupServer } from 'msw/node'
 
 import { createCache } from '../src/cache'
+import { Timer } from '../src/timer'
+
+export class MockTimer implements Timer {
+  private currentTime = 0
+
+  public now() {
+    return this.currentTime
+  }
+
+  public flush() {
+    this.currentTime = Date.now()
+  }
+
+  // We make this synchronous function asynchronous just to make clear that this would be asynchronous in production.
+  // eslint-disable-next-line @typescript-eslint/require-await
+  public async waitFor(seconds: number) {
+    this.currentTime += seconds * 1000
+  }
+}
 
 export function setup() {
-  const timer = { now: jest.fn<number, never>() }
+  const timer = new MockTimer()
   const cache = createCache({ host: process.env.REDIS_HOST, timer })
   const server = setupServer()
 
@@ -40,7 +59,7 @@ export function createBeforeAll(options: SharedOptions) {
 
 export async function createBeforeEach() {
   await global.cache.flush()
-  global.timer.now.mockReturnValue(Date.now())
+  global.timer.flush()
 }
 
 export function createAfterEach() {

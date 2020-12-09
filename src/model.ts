@@ -23,6 +23,7 @@ import { RequestInit } from 'node-fetch'
 
 import { Cache } from './cache'
 import { LockManager } from './lock-manager'
+import { log } from './log'
 import { Instance } from './types'
 
 type Fetch<Result = unknown> = (
@@ -51,14 +52,12 @@ export function createModel({
         const value = await f()
         await cache.set(key, value)
       } catch (e) {
-        console.log('error', e)
-        // Ignore exceptions
+        log.error('Error while trying to update key', key, ':', e)
       } finally {
         await lock.unlock()
       }
     } catch (e) {
-      console.log('locked', e)
-      // Resource already locked, skip update
+      log.debug('Key', key, 'already locked:', e)
     }
   }
 

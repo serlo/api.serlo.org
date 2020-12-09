@@ -19,7 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+
 declare namespace NodeJS {
+  import { LogLevelDesc } from 'loglevel'
+
   interface ProcessEnv {
     npm_package_version: string
 
@@ -27,6 +30,7 @@ declare namespace NodeJS {
     ENVIRONMENT: string
     ACTIVE_DONORS_SPREADSHEET_ID: string
     GOOGLE_API_KEY: string
+    LOG_LEVEL: LogLevelDesc | undefined
     REDIS_HOST: string
     SERLO_CLOUDFLARE_WORKER_SECRET: string
     SERLO_ORG_HOST: string
