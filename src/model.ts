@@ -26,6 +26,7 @@ import { failure } from 'io-ts/lib/PathReporter'
 import jwt from 'jsonwebtoken'
 import fetch, { RequestInit } from 'node-fetch'
 import * as R from 'ramda'
+import { URL } from 'url'
 
 import { Cache } from './cache'
 import { ErrorEvent } from './error-event'
