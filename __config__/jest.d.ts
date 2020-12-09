@@ -21,14 +21,14 @@
  */
 /* eslint-disable @typescript-eslint/no-namespace */
 import { Cache } from '../src/cache'
-import { Timer as T } from '../src/timer'
+import { MockTimer } from './setup'
 
 declare global {
   namespace NodeJS {
     interface Global {
       cache: Cache
       server: ReturnType<typeof import('msw/node').setupServer>
-      timer: T & { now: jest.Mock<number, never> }
+      timer: MockTimer
     }
   }
 }

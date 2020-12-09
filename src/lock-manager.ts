@@ -22,6 +22,8 @@
 import redis from 'redis'
 import Redlock from 'redlock'
 
+import { log } from './log'
+
 export interface LockManager {
   lock(key: string): Promise<Lock>
   quit(): Promise<void>
@@ -44,9 +46,20 @@ export function createLockManager({
   })
   const redlock = new Redlock([client], { retryCount })
 
+  redlock.on('clientError', function (err) {
+    log.error('A redis error has occurred:', err)
+  })
+
   return {
     async lock(key: string) {
-      return await redlock.lock(`locks:${key}`, 10000)
+      log.debug('Locking key', key)
+      const lock = await redlock.lock(`locks:${key}`, 10000)
+      return {
+        unlock() {
+          log.debug('Unlocking key', key)
+          return lock.unlock()
+        },
+      }
     },
     async quit() {
       await new Promise((resolve) => {

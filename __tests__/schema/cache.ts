@@ -132,7 +132,7 @@ test('_setCache (authenticated)', async () => {
     service: Service.Serlo,
     user: null,
   })
-  global.timer.now.mockReturnValue(1000)
+  const now = global.timer.now()
 
   await assertSuccessfulGraphQLMutation({
     ...createSetCacheMutation(testVars[0]),
@@ -141,7 +141,7 @@ test('_setCache (authenticated)', async () => {
 
   const cachedValue = await global.cache.get(testVars[0].key)
   expect(option.isSome(cachedValue) && cachedValue.value).toEqual({
-    lastModified: 1000,
+    lastModified: now,
     value: testVars[0].value,
   })
 })
@@ -198,7 +198,7 @@ test('_updateCache *serlo.org* (authenticated)', async () => {
     service: Service.Serlo,
     user: null,
   })
-  global.timer.now.mockReturnValue(1000)
+  const now = global.timer.now()
 
   const keys = [
     `de.serlo.org/api/${testVars[0].key}`,
@@ -215,12 +215,12 @@ test('_updateCache *serlo.org* (authenticated)', async () => {
   const cachedValueAfterUpdate1 = await global.cache.get(keys[0])
   expect(cachedValueBeforeUpdate1).not.toEqual(cachedValueAfterUpdate1)
   expect(cachedValueAfterUpdate1).toEqual(
-    option.some({ lastModified: 1000, value: testVars[0].value })
+    option.some({ lastModified: now, value: testVars[0].value })
   )
   const cachedValueAfterUpdate2 = await global.cache.get(keys[1])
   expect(cachedValueBeforeUpdate2).not.toEqual(cachedValueAfterUpdate2)
   expect(cachedValueAfterUpdate2).toEqual(
-    option.some({ lastModified: 1000, value: testVars[1].value })
+    option.some({ lastModified: now, value: testVars[1].value })
   )
 })
 

@@ -25,6 +25,7 @@ import * as R from 'ramda'
 import redis from 'redis'
 import * as util from 'util'
 
+import { log } from './log'
 import { Timer } from './timer'
 
 export interface Cache {
@@ -75,6 +76,7 @@ export function createCache({
       )
     },
     async set(key, value) {
+      log.debug('Cache now', new Date(timer.now()))
       const valueWithTimestamp = {
         value,
         lastModified: timer.now(),

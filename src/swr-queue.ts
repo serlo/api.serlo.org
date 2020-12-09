@@ -23,12 +23,14 @@ import Queue from 'bee-queue'
 import { option as O } from 'fp-ts'
 
 import { Cache } from './cache'
+import { log } from './log'
 import { Model } from './model'
 import { Timer } from './timer'
 
 export interface SwrQueue {
   queue(updateJob: UpdateJob): Promise<Queue.Job<UpdateJob>>
   ready(): Promise<void>
+  flush(): Promise<void>
   quit(): Promise<void>
 }
 
@@ -54,20 +56,47 @@ export function createSwrQueue({
     },
   })
 
-  queue.process(async (job) => {
-    const { key, maxAge } = job.data
-    const cacheEntry = await cache.get<unknown>(key)
-    if (O.isNone(cacheEntry)) return
-    const age = timer.now() - cacheEntry.value.lastModified
-    if (maxAge === undefined || age <= maxAge * 1000) return
-    await model.update(key)
-  })
+  queue.process(
+    async (job): Promise<string> => {
+      const { key, maxAge } = job.data
+      const cacheEntry = await cache.get<unknown>(key)
+      if (O.isNone(cacheEntry)) {
+        return 'Skipped update because cache empty.'
+      }
+      const age = timer.now() - cacheEntry.value.lastModified
+      if (maxAge === undefined || age <= maxAge * 1000) {
+        return `Skipped update because cache non-stale.`
+      }
+      await model.update(key)
+      return 'Updated because stale'
+    }
+  )
 
   return {
     async queue(updateJob) {
+      log.debug('Queuing job', updateJob.key)
       // By setting the job's ID, we make sure that there will be only one update job for the same key
       // See also https://github.com/bee-queue/bee-queue#jobsetidid
-      return await queue.createJob(updateJob).setId(updateJob.key).save()
+      const job = await queue.createJob(updateJob).setId(updateJob.key).save()
+
+      job.on('failed', (err) => {
+        log.error(`Job ${job.id} failed with error ${err.message}`)
+      })
+
+      job.on('retrying', (err) => {
+        log.debug(
+          `Job ${job.id} failed with error ${err.message} but is being retried!`
+        )
+      })
+
+      job.on('succeeded', (result: string) => {
+        log.debug(`Job ${job.id} succeeded with result: ${result}`)
+      })
+
+      return job
+    },
+    async flush() {
+      await queue.destroy()
     },
     async ready() {
       await queue.ready()
