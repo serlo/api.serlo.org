@@ -400,6 +400,11 @@ async function exec(): Promise<void> {
     {
       tagName: 'v0.12.1',
       date: '2020-12-09',
+      yanked: true,
+    },
+    {
+      tagName: 'v0.12.2',
+      date: '2020-12-09',
       fixed: [['uuid', 'Throw `UserInputError` for malformed paths.']],
       changed: [['uuid', 'Sort `threads` by `createdAt` in descending order.']],
       internal: [
