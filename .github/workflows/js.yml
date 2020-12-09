@@ -49,6 +49,7 @@ jobs:
         with:
           node-version: 12.x
       - run: yarn
+      - run: yarn start:redis
       - run: yarn test
   types:
     runs-on: ubuntu-latest
