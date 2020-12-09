@@ -24,3 +24,7 @@ type AbstractUuidCursor {
 type Query {
   uuid(alias: AliasInput, id: Int): AbstractUuid
 }
+
+extend type Mutation {
+  setUuidState(id: Int!, trashed: Boolean!): AbstractUuid
+}

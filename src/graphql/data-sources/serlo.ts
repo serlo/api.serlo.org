@@ -165,6 +165,29 @@ export class SerloDataSource extends CacheableDataSource {
     return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
   }
 
+  // TODO: discuss in pair programming session:
+  // basically the same as getUuid but with different endpoint(mutation)
+  // or should we only do the mutation and then use a new call to getUuid to actually return the Payload?
+
+  public async setUuidState<T extends AbstractUuidPayload>(mutationData: {
+    id: number
+    userId: number
+    trashed: boolean
+  }): Promise<T | null> {
+    const uuid = await this.customPost<T | null>({
+      path: `/api/set-uuid-state/${mutationData.id}`,
+      body: {
+        userId: mutationData.userId,
+        trashed: mutationData.trashed,
+      },
+    })
+    await this.setCacheValue({
+      key: this.getCacheKey(`/api/uuid/${mutationData.userId}`),
+      update: () => Promise.resolve(uuid),
+    })
+    return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
+  }
+
   public async getNotificationEvent<
     T extends AbstractNotificationEventPayload
   >({ id }: { id: number }): Promise<T | null> {

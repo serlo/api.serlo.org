@@ -22,10 +22,16 @@
 import {
   AbstractUuid,
   AbstractUuidThreadsArgs,
+  MutationSetUuidStateArgs,
   QueryUuidArgs,
 } from '../../../../types'
 import { Connection } from '../../connection'
-import { QueryResolver, Resolver, TypeResolver } from '../../types'
+import {
+  MutationResolver,
+  QueryResolver,
+  Resolver,
+  TypeResolver,
+} from '../../types'
 import {
   EntityPayload,
   EntityRevisionPayload,
@@ -74,5 +80,8 @@ export interface AbstractUuidResolvers {
   }
   Query: {
     uuid: QueryResolver<QueryUuidArgs, UuidPayload | null>
+  }
+  Mutation: {
+    setUuidState: MutationResolver<MutationSetUuidStateArgs, UuidPayload | null>
   }
 }

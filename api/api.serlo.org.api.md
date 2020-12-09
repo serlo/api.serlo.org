@@ -930,6 +930,7 @@ export type Mutation = {
     _setCache?: Maybe<Scalars['Boolean']>;
     _updateCache?: Maybe<Scalars['Boolean']>;
     setNotificationState?: Maybe<Scalars['Boolean']>;
+    setUuidState?: Maybe<AbstractUuid>;
 };
 
 // @public (undocumented)
@@ -952,6 +953,12 @@ export type Mutation_UpdateCacheArgs = {
 export type MutationSetNotificationStateArgs = {
     id: Scalars['Int'];
     unread: Scalars['Boolean'];
+};
+
+// @public (undocumented)
+export type MutationSetUuidStateArgs = {
+    id: Scalars['Int'];
+    trashed: Scalars['Boolean'];
 };
 
 // @public (undocumented)
