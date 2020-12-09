@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { UserInputError } from 'apollo-server'
+import { AuthenticationError, UserInputError } from 'apollo-server'
 
 import { decodePath } from '../alias'
 import { AbstractUuidResolvers, DiscriminatorType, UuidPayload } from './types'
@@ -81,6 +81,29 @@ export const resolvers: AbstractUuidResolvers = {
       } else {
         throw new UserInputError('you need to provide an id or an alias')
       }
+    },
+  },
+  Mutation: {
+    //TODO: discuss:
+    //if we want to return a useful uuid to the frontend we would actually have to query all the data we need to rebuild the current page
+    // `mutation {setUuidState(id: 22, trashed:true){ __typename, … }}`
+    // this seems a bit off, since a reload would do the same without any additional code.
+
+    async setUuidState(_parent, payload, { dataSources, user }) {
+      //debug
+      console.log('Hello setUuidState')
+      console.log(user)
+      const _user = 18981
+      //
+
+      if (_user === null) throw new AuthenticationError('You are not logged in')
+
+      const uuidValue = await dataSources.serlo.setUuidState<UuidPayload>({
+        id: payload.id,
+        userId: _user,
+        trashed: payload.trashed,
+      })
+      return uuidValue
     },
   },
 }
