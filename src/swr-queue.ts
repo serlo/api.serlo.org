@@ -25,12 +25,12 @@ import { option as O } from 'fp-ts'
 import { Cache } from './cache'
 import { log } from './log'
 import { Model } from './model'
+import { redisUrl } from './redis-url'
 import { Timer } from './timer'
 
 export interface SwrQueue {
   queue(updateJob: UpdateJob): Promise<Queue.Job<UpdateJob>>
   ready(): Promise<void>
-  flush(): Promise<void>
   quit(): Promise<void>
 }
 
@@ -43,16 +43,14 @@ export function createSwrQueue({
   cache,
   model,
   timer,
-  host,
 }: {
   cache: Cache
   model: Model
   timer: Timer
-  host: string
 }): SwrQueue {
   const queue = new Queue<UpdateJob>('swr', {
     redis: {
-      host,
+      url: redisUrl,
     },
   })
 
@@ -94,9 +92,6 @@ export function createSwrQueue({
       })
 
       return job
-    },
-    async flush() {
-      await queue.destroy()
     },
     async ready() {
       await queue.ready()

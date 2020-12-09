@@ -28,14 +28,11 @@ import { createModel } from '../../src/model'
 import { createSwrQueue } from '../../src/swr-queue'
 import { createUuidHandler } from '../__utils__'
 
-const host = process.env.REDIS_HOST
-
 // TODO: change CI so that redis is started beforehand
 
 // For background updates, we just skip the update when the resource is already locked.
 // The resolvers with important updates should instead use a high retryCount
 const lockManager = createLockManager({
-  host,
   retryCount: 0,
 })
 const model = createModel({
@@ -54,11 +51,9 @@ const swrQueue = createSwrQueue({
   cache: global.cache,
   model,
   timer: global.timer,
-  host,
 })
 
 beforeEach(async () => {
-  await swrQueue.flush()
   await swrQueue.ready()
 })
 

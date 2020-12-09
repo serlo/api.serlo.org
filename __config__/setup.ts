@@ -45,7 +45,7 @@ export class MockTimer implements Timer {
 
 export function setup() {
   const timer = new MockTimer()
-  const cache = createCache({ host: process.env.REDIS_HOST, timer })
+  const cache = createCache({ timer })
   const server = setupServer()
 
   global.cache = cache

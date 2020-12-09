@@ -23,6 +23,7 @@ import redis from 'redis'
 import Redlock from 'redlock'
 
 import { log } from './log'
+import { redisUrl } from './redis-url'
 
 export interface LockManager {
   lock(key: string): Promise<Lock>
@@ -34,15 +35,12 @@ export interface Lock {
 }
 
 export function createLockManager({
-  host,
   retryCount,
 }: {
-  host: string
   retryCount: number
 }): LockManager {
   const client = redis.createClient({
-    host,
-    port: 6379,
+    url: redisUrl,
   })
   const redlock = new Redlock([client], { retryCount })
 
