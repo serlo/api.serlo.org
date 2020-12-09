@@ -27,7 +27,6 @@ import {
 
 import { getGraphQLOptions } from '../../src/graphql'
 import { Context, Service } from '../../src/graphql/schema/types'
-import { LockManager } from '../../src/lock-manager'
 import { SwrQueue } from '../../src/swr-queue'
 
 export type Client = ApolloServerTestClient
@@ -35,22 +34,12 @@ export type Client = ApolloServerTestClient
 export function createTestClient(
   args?: Partial<Pick<Context, 'service' | 'user'>>
 ): Client {
-  const mockLockManager: LockManager = {
-    lock(_key) {
-      return Promise.resolve({
-        unlock() {
-          return Promise.resolve()
-        },
-      })
-    },
-    quit() {
-      return Promise.resolve()
-    },
-  }
   const mockSwrQueue: SwrQueue = {
-    // @ts-expect-error We don't rely on the return value in production code (but need it for tests).
     queue(_updateJob) {
-      return Promise.resolve(undefined)
+      return Promise.resolve(undefined as never)
+    },
+    ready() {
+      return Promise.resolve()
     },
     quit() {
       return Promise.resolve()
@@ -60,7 +49,6 @@ export function createTestClient(
   const server = new ApolloServer({
     ...getGraphQLOptions({
       cache: global.cache,
-      lockManager: mockLockManager,
       swrQueue: mockSwrQueue,
     }),
     context(): Pick<Context, 'service' | 'user'> {

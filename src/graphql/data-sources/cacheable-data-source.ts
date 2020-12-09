@@ -22,6 +22,7 @@
 import { RESTDataSource } from 'apollo-datasource-rest'
 import { option as O, pipeable } from 'fp-ts'
 
+import { Priority } from '../../cache'
 import { createModel, Model } from '../../model'
 import { Environment } from '../environment'
 
@@ -35,7 +36,8 @@ export abstract class CacheableDataSource extends RESTDataSource {
   constructor(protected environment: Environment) {
     super()
     this.model = createModel({
-      ...this.environment,
+      cache: this.environment.cache,
+      priority: Priority.High,
       // TODO: seems like fetch isn't exposed. So we either need to focus on GET or don't use the model here
       fetch: ({ path, params, ...init }) => {
         // @ts-expect-error This is still Hacky and WIP, ignore the type mismatch for now
@@ -56,12 +58,15 @@ export abstract class CacheableDataSource extends RESTDataSource {
     maxAge?: number
   }): Promise<Value> {
     return await pipeable.pipe(
-      await this.environment.cache.get<Value>(key),
+      await this.environment.cache.get<Value>({ key }),
       O.fold(
         async () => {
-          const initialValue = await update(null)
-          await this.environment.cache.set(key, initialValue)
-          return initialValue
+          const value = await update(null)
+          await this.environment.cache.set({
+            key,
+            value,
+          })
+          return value
         },
         async (cacheEntry) => {
           await this.environment.swrQueue.queue({
@@ -86,24 +91,17 @@ export abstract class CacheableDataSource extends RESTDataSource {
     key: string
     update: UpdateFunction<Value>
   }): Promise<void> {
-    try {
-      const lock = await this.environment.lockManager.lock(key)
-      try {
-        const currentValue = pipeable.pipe(
-          await this.environment.cache.get<Value>(key),
+    await this.environment.cache.set({
+      key,
+      getValue: async () => {
+        return await pipeable.pipe(
+          await this.environment.cache.get<Value>({ key }),
           O.map((entry) => entry.value),
-          O.toNullable
+          O.toNullable,
+          update
         )
-        const value = await update(currentValue)
-        await this.environment.cache.set(key, value)
-      } catch (e) {
-        // Ignore exceptions
-      } finally {
-        await lock.unlock()
-      }
-    } catch (e) {
-      // Resource already locked, skip update
-    }
+      },
+    })
   }
 }
 

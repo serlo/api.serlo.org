@@ -25,14 +25,27 @@ import * as R from 'ramda'
 import redis from 'redis'
 import * as util from 'util'
 
+import { createLockManager, LockManager } from './lock-manager'
 import { log } from './log'
 import { redisUrl } from './redis-url'
 import { Timer } from './timer'
 
+export enum Priority {
+  Low,
+  High,
+}
+
+export type FunctionOrValue<T> = { getValue: () => Promise<T> } | { value: T }
+
 export interface Cache {
-  get<T>(key: string): Promise<O.Option<CacheEntry<T>>>
-  set(key: string, value: unknown): Promise<void>
-  remove(key: string): Promise<void>
+  get<T>({ key }: { key: string }): Promise<O.Option<CacheEntry<T>>>
+  set<T>(
+    payload: {
+      key: string
+      priority?: Priority
+    } & FunctionOrValue<T>
+  ): Promise<void>
+  remove({ key }: { key: string }): Promise<void>
   ready(): Promise<void>
   flush(): Promise<void>
   quit(): Promise<void>
@@ -43,6 +56,14 @@ export function createCache({ timer }: { timer: Timer }): Cache {
     url: redisUrl,
     return_buffers: true,
   })
+  const lockManagers: Record<Priority, LockManager> = {
+    [Priority.Low]: createLockManager({
+      retryCount: 0,
+    }),
+    [Priority.High]: createLockManager({
+      retryCount: 10,
+    }),
+  }
 
   /* eslint-disable @typescript-eslint/unbound-method */
   const get = (util.promisify(client.get).bind(client) as unknown) as (
@@ -60,7 +81,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
   let ready = false
 
   return {
-    get: async <T>(key: string) => {
+    get: async <T>({ key }: { key: string }) => {
       return pipeable.pipe(
         await get(key),
         O.fromNullable,
@@ -72,16 +93,36 @@ export function createCache({ timer }: { timer: Timer }): Cache {
         })
       )
     },
-    async set(key, value) {
-      log.debug('Cache now', new Date(timer.now()))
-      const valueWithTimestamp = {
-        value,
-        lastModified: timer.now(),
+    set: async <T>(
+      payload: {
+        key: string
+        priority?: Priority
+      } & FunctionOrValue<T>
+    ) => {
+      const { key, priority = Priority.High } = payload
+      const lockManager = lockManagers[priority]
+      try {
+        const lock = await lockManager.lock(key)
+        try {
+          const value = isFunction(payload)
+            ? await payload.getValue()
+            : payload.value
+          const valueWithTimestamp = {
+            value,
+            lastModified: timer.now(),
+          }
+          const packedValue = msgpack.pack(valueWithTimestamp) as Buffer
+          await set(key, packedValue)
+        } catch (e) {
+          log.error(`Failed to set key "${key}":`, e)
+        } finally {
+          await lock.unlock()
+        }
+      } catch (e) {
+        log.debug(`Failed to acquire lock for key "${key}":`, e)
       }
-      const packedValue = msgpack.pack(valueWithTimestamp) as Buffer
-      await set(key, packedValue)
     },
-    async remove(key: string) {
+    async remove({ key }) {
       await del(key)
     },
     async ready() {
@@ -101,11 +142,14 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       })
     },
     async quit() {
-      await new Promise((resolve) => {
-        client.quit(() => {
-          resolve()
-        })
-      })
+      await Promise.all([
+        new Promise((resolve) => {
+          client.quit(() => {
+            resolve()
+          })
+        }),
+        ...Object.values(lockManagers).map((lockManager) => lockManager.quit()),
+      ])
     },
   }
 }
@@ -119,4 +163,12 @@ function isCacheEntryWithTimestamp<Value>(
   entry: unknown
 ): entry is CacheEntry<Value> {
   return R.has('lastModified', entry) && R.has('value', entry)
+}
+
+function isFunction<T>(
+  payload: FunctionOrValue<T>
+): payload is { getValue: () => Promise<T> } {
+  return (
+    typeof (payload as { getValue: () => Promise<T> }).getValue === 'function'
+  )
 }

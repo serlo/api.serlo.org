@@ -28,28 +28,45 @@ import jwt from 'jsonwebtoken'
 import { Cache, createCache } from './cache'
 import { getGraphQLOptions } from './graphql'
 import { Service } from './graphql/schema/types'
-// eslint-disable-next-line import/no-unassigned-import
-import './sentry'
-import { createLockManager } from './lock-manager'
-import { createModel } from './model'
+import { initializeSentry } from './sentry'
 import { createSwrQueue, SwrQueue } from './swr-queue'
-import { createTimer } from './timer'
+import { createTimer, Timer } from './timer'
 
 start()
 
 function start() {
   dotenv.config()
+  initializeSentry()
   const timer = createTimer()
-  const cache = createCache({ timer })
-  const model = createModel({
+  const cache = initializeCache({ timer })
+  const swrQueue = initializeSwrQueue({ cache, timer })
+  initializeGraphQLServer({ cache, swrQueue })
+}
+
+function initializeCache({ timer }: { timer: Timer }): Cache {
+  return createCache({ timer })
+}
+
+function initializeSwrQueue({
+  cache,
+  timer,
+}: {
+  cache: Cache
+  timer: Timer
+}): SwrQueue {
+  return createSwrQueue({
     cache,
-    lockManager: createLockManager({ retryCount: 0 }),
-  })
-  const swrQueue = createSwrQueue({
-    cache,
-    model,
     timer,
   })
+}
+
+function initializeGraphQLServer({
+  cache,
+  swrQueue,
+}: {
+  cache: Cache
+  swrQueue: SwrQueue
+}) {
   const app = createApp()
   const graphqlPath = applyGraphQLMiddleware({ app, cache, swrQueue })
 
@@ -71,7 +88,6 @@ function applyGraphQLMiddleware({
 }) {
   const environment = {
     cache,
-    lockManager: createLockManager({ retryCount: 5 }),
     swrQueue,
   }
   const server = new ApolloServer(getGraphQLOptions(environment))

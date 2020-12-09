@@ -28,11 +28,9 @@ import fetch, { RequestInit } from 'node-fetch'
 import * as R from 'ramda'
 import { URL } from 'url'
 
-import { Cache } from './cache'
+import { Cache, Priority } from './cache'
 import { ErrorEvent } from './error-event'
 import { Service } from './graphql/schema/types'
-import { LockManager } from './lock-manager'
-import { log } from './log'
 import { Instance } from './types'
 
 type Fetch<Result = unknown> = (
@@ -57,30 +55,13 @@ const defaultFetch: Fetch = async ({ path, params, ...init }) => {
 // Decouple our business logic from the actual used fetch. This way, we can use Apollo's internals, too.
 export function createModel({
   cache,
-  lockManager,
+  priority,
   fetch = defaultFetch,
 }: {
   cache: Cache
-  lockManager: LockManager
+  priority: Priority
   fetch?: Fetch
 }) {
-  // TODO: might move that into cache itself?
-  async function setCacheWithLock(key: string, f: () => Promise<unknown>) {
-    try {
-      const lock = await lockManager.lock(key)
-      try {
-        const value = await f()
-        await cache.set(key, value)
-      } catch (e) {
-        log.error('Error while trying to update key', key, ':', e)
-      } finally {
-        await lock.unlock()
-      }
-    } catch (e) {
-      log.debug('Key', key, 'already locked:', e)
-    }
-  }
-
   enum MajorDimension {
     Rows = 'ROWS',
     Columns = 'COLUMNS',
@@ -140,7 +121,7 @@ export function createModel({
         error instanceof Error ? error : new Error(JSON.stringify(error))
 
       result = E.left({
-        message: `an error occured while accessing spreadsheet "${spreadsheetId}"`,
+        message: `An error occurred while accessing spreadsheet "${spreadsheetId}"`,
         exception,
       })
     }
@@ -158,18 +139,22 @@ export function createModel({
           throw new Error(`"${instance} is not a valid instance.`)
         }
         const path = key.slice(`${instance}.serlo.org`.length)
-        await setCacheWithLock(key, async () => {
-          const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
-            expiresIn: '2h',
-            audience: Service.Serlo,
-            issuer: 'api.serlo.org',
-          })
-          return await fetch({
-            path: `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
-            headers: {
-              Authorization: `Serlo Service=${token}`,
-            },
-          })
+        await cache.set({
+          key,
+          priority,
+          getValue: async () => {
+            const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
+              expiresIn: '2h',
+              audience: Service.Serlo,
+              issuer: 'api.serlo.org',
+            })
+            return await fetch({
+              path: `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
+              headers: {
+                Authorization: `Serlo Service=${token}`,
+              },
+            })
+          },
         })
       } else if (key.includes('spreadsheet-')) {
         const sslen = 'spreadsheet-'.length
@@ -179,12 +164,16 @@ export function createModel({
           .slice(sslen + googleIdLength)
           .split('-')
 
-        await setCacheWithLock(key, async () => {
-          return await getSpreadValuesWithoutCache({
-            spreadsheetId,
-            range,
-            majorDimension: majorDimension as MajorDimension,
-          })
+        await cache.set({
+          key,
+          priority,
+          getValue: async () => {
+            return await getSpreadValuesWithoutCache({
+              spreadsheetId,
+              range,
+              majorDimension: majorDimension as MajorDimension,
+            })
+          },
         })
       }
     },
