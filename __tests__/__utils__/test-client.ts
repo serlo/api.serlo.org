@@ -27,17 +27,41 @@ import {
 
 import { getGraphQLOptions } from '../../src/graphql'
 import { Context, Service } from '../../src/graphql/schema/types'
+import { LockManager } from '../../src/lock-manager'
+import { SwrQueue } from '../../src/swr-queue'
 
 export type Client = ApolloServerTestClient
 
-// TODO: here we should use Redis instead. For that, we also need to do the setup in jest.setup-pacts
 export function createTestClient(
   args?: Partial<Pick<Context, 'service' | 'user'>>
 ): Client {
+  const mockLockManager: LockManager = {
+    lock(_key) {
+      return Promise.resolve({
+        unlock() {
+          return Promise.resolve()
+        },
+      })
+    },
+    quit() {
+      return Promise.resolve()
+    },
+  }
+  const mockSwrQueue: SwrQueue = {
+    // @ts-expect-error
+    queue(_updateJob) {
+      return Promise.resolve(undefined)
+    },
+    quit() {
+      return Promise.resolve()
+    },
+  }
+
   const server = new ApolloServer({
     ...getGraphQLOptions({
       cache: global.cache,
-      timer: global.timer,
+      lockManager: mockLockManager,
+      swrQueue: mockSwrQueue,
     }),
     context(): Pick<Context, 'service' | 'user'> {
       return {

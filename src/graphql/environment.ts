@@ -20,10 +20,11 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Cache } from '../cache'
-import { Timer } from '../timer'
+import { LockManager } from '../lock-manager'
+import { SwrQueue } from '../swr-queue'
 
 export interface Environment {
   cache: Cache
-  // TODO: this might not be needed on `Environment` anymore since we moved this into `Cache`.
-  timer: Timer
+  lockManager: LockManager
+  swrQueue: SwrQueue
 }

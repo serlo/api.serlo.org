@@ -57,6 +57,10 @@ const swrQueue = createSwrQueue({
   host,
 })
 
+beforeEach(async () => {
+  await swrQueue.ready()
+})
+
 afterAll(async () => {
   await lockManager.quit()
   await swrQueue.quit()
@@ -88,6 +92,7 @@ test("Skips update when lock couldn't be acquired", async () => {
 
 // TODO: This is still a bit hacky, re-implement tests from CacheableDataSource
 describe('Background Queue', () => {
+  // TODO: this test is still flaky because the resource is often still locked.
   test('Stale', async () => {
     global.server.use(createUuidHandler(user))
     const key = 'de.serlo.org/api/uuid/1'
