@@ -297,7 +297,7 @@ export class SerloDataSource extends CacheableDataSource {
   }
 
   public async removeCache(key: string) {
-    await this.environment.cache.remove(key)
+    await this.environment.cache.remove({ key })
   }
 }
 

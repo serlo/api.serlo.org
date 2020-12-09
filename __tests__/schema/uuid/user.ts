@@ -631,7 +631,10 @@ describe('endpoint activeReviewers', () => {
   })
 
   test('uses cached value for active reviewers', async () => {
-    await global.cache.set('de.serlo.org/api/user/active-reviewers', [user.id])
+    await global.cache.set({
+      key: 'de.serlo.org/api/user/active-reviewers',
+      value: [user.id],
+    })
 
     await assertSuccessfulGraphQLQuery({
       query: activeReviewersQuery,

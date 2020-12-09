@@ -22,14 +22,14 @@
 import Queue from 'bee-queue'
 import { option as O } from 'fp-ts'
 
-import { Cache } from './cache'
+import { Cache, Priority } from './cache'
 import { log } from './log'
-import { Model } from './model'
+import { createModel } from './model'
 import { redisUrl } from './redis-url'
 import { Timer } from './timer'
 
 export interface SwrQueue {
-  queue(updateJob: UpdateJob): Promise<Queue.Job<UpdateJob>>
+  queue(updateJob: UpdateJob): Promise<never>
   ready(): Promise<void>
   quit(): Promise<void>
 }
@@ -41,13 +41,15 @@ export interface UpdateJob {
 
 export function createSwrQueue({
   cache,
-  model,
   timer,
 }: {
   cache: Cache
-  model: Model
   timer: Timer
 }): SwrQueue {
+  const model = createModel({
+    cache,
+    priority: Priority.Low,
+  })
   const queue = new Queue<UpdateJob>('swr', {
     redis: {
       url: redisUrl,
@@ -57,7 +59,7 @@ export function createSwrQueue({
   queue.process(
     async (job): Promise<string> => {
       const { key, maxAge } = job.data
-      const cacheEntry = await cache.get<unknown>(key)
+      const cacheEntry = await cache.get<unknown>({ key })
       if (O.isNone(cacheEntry)) {
         return 'Skipped update because cache empty.'
       }
@@ -91,7 +93,7 @@ export function createSwrQueue({
         log.debug(`Job ${job.id} succeeded with result: ${result}`)
       })
 
-      return job
+      return job as never
     },
     async ready() {
       await queue.ready()

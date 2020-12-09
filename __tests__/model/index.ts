@@ -19,26 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import Queue from 'bee-queue'
 import { option as O } from 'fp-ts'
 
 import { user } from '../../__fixtures__'
-import { createLockManager } from '../../src/lock-manager'
-import { createModel } from '../../src/model'
-import { createSwrQueue } from '../../src/swr-queue'
+import { createSwrQueue, UpdateJob } from '../../src/swr-queue'
 import { createUuidHandler } from '../__utils__'
 
-// For background updates, we just skip the update when the resource is already locked.
-// The resolvers with important updates should instead use a high retryCount
-const lockManager = createLockManager({
-  retryCount: 0,
-})
-const model = createModel({
-  cache: global.cache,
-  lockManager,
-})
 const swrQueue = createSwrQueue({
   cache: global.cache,
-  model,
   timer: global.timer,
 })
 
@@ -47,32 +36,7 @@ beforeEach(async () => {
 })
 
 afterAll(async () => {
-  await lockManager.quit()
   await swrQueue.quit()
-})
-
-test('serlo.org', async () => {
-  global.server.use(createUuidHandler(user))
-  await model.update('de.serlo.org/api/uuid/1')
-  const { lastModified, value } = O.toNullable(
-    await global.cache.get('de.serlo.org/api/uuid/1')
-  )!
-  expect(lastModified).toBeDefined()
-  expect(value).toEqual(user)
-})
-
-test("Skips update when lock couldn't be acquired", async () => {
-  // TODO: Hacky flag since we really only want to allow one request here.
-  global.server.use(createUuidHandler(user, true))
-  await Promise.all([
-    model.update('de.serlo.org/api/uuid/1'),
-    model.update('de.serlo.org/api/uuid/1'),
-  ])
-  const { lastModified, value } = O.toNullable(
-    await global.cache.get('de.serlo.org/api/uuid/1')
-  )!
-  expect(lastModified).toBeDefined()
-  expect(value).toEqual(user)
 })
 
 // TODO: This is still a bit hacky, re-implement tests from CacheableDataSource
@@ -80,12 +44,14 @@ describe('Background Queue', () => {
   test('Stale', async () => {
     global.server.use(createUuidHandler(user))
     const key = 'de.serlo.org/api/uuid/1'
-    await global.cache.set(key, 'Stale value')
+    await global.cache.set({ key, value: 'Stale value' })
     await global.timer.waitFor(20)
-    const job = await swrQueue.queue({ key, maxAge: 10 })
+    const job = (await swrQueue.queue({ key, maxAge: 10 })) as Queue.Job<
+      UpdateJob
+    >
     await new Promise((resolve) => {
       job.on('succeeded', () => {
-        void global.cache.get('de.serlo.org/api/uuid/1').then((v) => {
+        void global.cache.get({ key: 'de.serlo.org/api/uuid/1' }).then((v) => {
           const { lastModified, value } = O.toNullable(v)!
           expect(lastModified).toBeDefined()
           expect(value).toEqual(user)
@@ -97,12 +63,14 @@ describe('Background Queue', () => {
 
   test('Non-stale', async () => {
     const key = 'de.serlo.org/api/uuid/1'
-    await global.cache.set(key, user)
+    await global.cache.set({ key, value: user })
     await global.timer.waitFor(5)
-    const job = await swrQueue.queue({ key, maxAge: 10 })
+    const job = (await swrQueue.queue({ key, maxAge: 10 })) as Queue.Job<
+      UpdateJob
+    >
     await new Promise((resolve) => {
       job.on('succeeded', () => {
-        void global.cache.get('de.serlo.org/api/uuid/1').then((v) => {
+        void global.cache.get({ key: 'de.serlo.org/api/uuid/1' }).then((v) => {
           const { lastModified, value } = O.toNullable(v)!
           expect(lastModified).toBeDefined()
           expect(value).toEqual(user)
@@ -114,12 +82,12 @@ describe('Background Queue', () => {
 
   test('MaxAge = undefined', async () => {
     const key = 'de.serlo.org/api/uuid/1'
-    await global.cache.set(key, user)
+    await global.cache.set({ key, value: user })
     await global.timer.waitFor(9999999999999)
-    const job = await swrQueue.queue({ key })
+    const job = (await swrQueue.queue({ key })) as Queue.Job<UpdateJob>
     await new Promise((resolve) => {
       job.on('succeeded', () => {
-        void global.cache.get('de.serlo.org/api/uuid/1').then((v) => {
+        void global.cache.get({ key: 'de.serlo.org/api/uuid/1' }).then((v) => {
           const { lastModified, value } = O.toNullable(v)!
           expect(lastModified).toBeDefined()
           expect(value).toEqual(user)
