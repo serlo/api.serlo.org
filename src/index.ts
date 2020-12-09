@@ -24,7 +24,6 @@ import dotenv from 'dotenv'
 import createApp, { Express } from 'express'
 import createPlayground from 'graphql-playground-middleware-express'
 import jwt from 'jsonwebtoken'
-import fetch from 'node-fetch'
 
 import { Cache, createCache } from './cache'
 import { getGraphQLOptions } from './graphql'
@@ -45,10 +44,6 @@ function start() {
   const model = createModel({
     cache,
     lockManager: createLockManager({ retryCount: 0 }),
-    async fetch({ path, ...init }) {
-      const response = await fetch(path, init)
-      return (await response.json()) as unknown
-    },
   })
   const swrQueue = createSwrQueue({
     cache,

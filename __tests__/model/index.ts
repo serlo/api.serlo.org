@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { option as O } from 'fp-ts'
-import fetch from 'node-fetch'
 
 import { user } from '../../__fixtures__'
 import { createLockManager } from '../../src/lock-manager'
@@ -36,14 +35,6 @@ const lockManager = createLockManager({
 const model = createModel({
   cache: global.cache,
   lockManager,
-  fetch: async ({ path, ...init }) => {
-    try {
-      const response = await fetch(path, init)
-      return (await response.json()) as unknown
-    } catch (e) {
-      console.log(e)
-    }
-  },
 })
 const swrQueue = createSwrQueue({
   cache: global.cache,
