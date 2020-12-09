@@ -37,9 +37,9 @@ export abstract class CacheableDataSource extends RESTDataSource {
     this.model = createModel({
       ...this.environment,
       // TODO: seems like fetch isn't exposed. So we either need to focus on GET or don't use the model here
-      fetch: ({ path, ...init }) => {
+      fetch: ({ path, params, ...init }) => {
         // @ts-expect-error This is still Hacky and WIP, ignore the type mismatch for now
-        return this.get(path, {}, init)
+        return this.get(path, params, init)
       },
     })
   }
