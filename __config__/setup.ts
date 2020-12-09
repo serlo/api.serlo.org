@@ -58,6 +58,7 @@ export function createBeforeAll(options: SharedOptions) {
 }
 
 export async function createBeforeEach() {
+  await global.cache.ready()
   await global.cache.flush()
   global.timer.flush()
 }
