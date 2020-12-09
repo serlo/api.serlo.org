@@ -33,6 +33,7 @@ export interface Cache {
   get<T>(key: string): Promise<O.Option<CacheEntry<T>>>
   set(key: string, value: unknown): Promise<void>
   remove(key: string): Promise<void>
+  ready(): Promise<void>
   flush(): Promise<void>
   quit(): Promise<void>
 }
@@ -55,6 +56,8 @@ export function createCache({ timer }: { timer: Timer }): Cache {
     value: Buffer
   ) => Promise<void>
   /* eslint-enable @typescript-eslint/unbound-method */
+
+  let ready = false
 
   return {
     get: async <T>(key: string) => {
@@ -80,6 +83,15 @@ export function createCache({ timer }: { timer: Timer }): Cache {
     },
     async remove(key: string) {
       await del(key)
+    },
+    async ready() {
+      if (ready) return
+      await new Promise((resolve) => {
+        client.on('ready', () => {
+          ready = true
+          resolve()
+        })
+      })
     },
     async flush() {
       return new Promise((resolve) => {
