@@ -21,7 +21,7 @@
  */
 import {
   AbstractNotificationEvent,
-  MutationSetNotificationStateArgs,
+  MutationSetNotificationsStateArgs,
   Notification,
   QueryNotificationEventArgs,
   QueryNotificationsArgs,
@@ -122,7 +122,10 @@ export interface NotificationResolvers {
     >
   }
   Mutation: {
-    setNotificationState: MutationResolver<MutationSetNotificationStateArgs>
+    setNotificationsState: MutationResolver<
+      MutationSetNotificationsStateArgs,
+      boolean
+    >
   }
 }
 

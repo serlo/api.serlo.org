@@ -194,22 +194,34 @@ export class SerloDataSource extends CacheableDataSource {
     }
   }
 
-  public async setNotificationState(notificationState: {
-    id: number
+  public async setNotificationsState(notificationState: {
+    ids: number[]
     userId: number
     unread: boolean
   }) {
-    const value = await this.customPost<NotificationsPayload>({
-      path: `/api/set-notification-state/${notificationState.id}`,
-      body: {
-        userId: notificationState.userId,
-        unread: notificationState.unread,
-      },
-    })
-    await this.setCacheValue({
-      key: this.getCacheKey(`/api/notifications/${notificationState.userId}`),
-      update: () => Promise.resolve(value),
-    })
+    const values: boolean[] = await Promise.all(
+      //TODO: rewrite legacy endpoint so that it accepts an array directly
+      notificationState.ids.map(
+        async (notificationId): Promise<boolean> => {
+          const value = await this.customPost<NotificationsPayload>({
+            path: `/api/set-notification-state/${notificationId}`,
+            body: {
+              userId: notificationState.userId,
+              unread: notificationState.unread,
+            },
+          })
+          await this.setCacheValue({
+            key: this.getCacheKey(
+              `/api/notifications/${notificationState.userId}`
+            ),
+            update: () => Promise.resolve(value),
+          })
+          //TODO: check what /api/set-… returns if it's not successful
+          return !!value
+        }
+      )
+    )
+    return values.every(Boolean)
   }
 
   public async getSubscriptions({

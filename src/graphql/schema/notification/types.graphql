@@ -24,7 +24,7 @@ extend type Query {
 }
 
 extend type Mutation {
-  setNotificationState(id: Int!, unread: Boolean!): Boolean
+  setNotificationsState(ids: [Int!]!, unread: Boolean!): Boolean
 }
 
 type NotificationConnection {

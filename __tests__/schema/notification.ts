@@ -74,7 +74,7 @@ import {
   user2,
 } from '../../__fixtures__'
 import { Service } from '../../src/graphql/schema/types'
-import { Instance, MutationSetNotificationStateArgs } from '../../src/types'
+import { Instance, MutationSetNotificationsStateArgs } from '../../src/types'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
@@ -2198,14 +2198,14 @@ describe('notificationEvent', () => {
   })
 })
 
-describe('setNotificationState', () => {
-  function createSetNotificationStateMutation(
-    variables: MutationSetNotificationStateArgs
+describe('setNotificationsState', () => {
+  function createSetNotificationsStateMutation(
+    variables: MutationSetNotificationsStateArgs
   ) {
     return {
       mutation: gql`
-        mutation setNotificationState($id: Int!, $unread: Boolean!) {
-          setNotificationState(id: $id, unread: $unread)
+        mutation setNotificationsState($ids: [Int!]!, $unread: Boolean!) {
+          setNotificationsState(ids: $ids, unread: $unread)
         }
       `,
       variables,
@@ -2219,7 +2219,10 @@ describe('setNotificationState', () => {
     })
     await assertFailingGraphQLMutation(
       {
-        ...createSetNotificationStateMutation({ id: 1, unread: false }),
+        ...createSetNotificationsStateMutation({
+          ids: [1, 2, 6],
+          unread: false,
+        }),
         client,
       },
       (errors) => {
@@ -2243,7 +2246,7 @@ describe('setNotificationState', () => {
     })
     await assertFailingGraphQLMutation(
       {
-        ...createSetNotificationStateMutation({ id: 1, unread: false }),
+        ...createSetNotificationsStateMutation({ ids: [1], unread: false }),
         client,
       },
       (errors) => {
@@ -2296,8 +2299,8 @@ describe('setNotificationState', () => {
       user: user.id,
     })
     await assertSuccessfulGraphQLMutation({
-      ...createSetNotificationStateMutation({
-        id: 1,
+      ...createSetNotificationsStateMutation({
+        ids: [1],
         unread: false,
       }),
       client,

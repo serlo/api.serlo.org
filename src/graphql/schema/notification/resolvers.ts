@@ -74,14 +74,14 @@ export const resolvers: NotificationResolvers = {
     },
   },
   Mutation: {
-    async setNotificationState(_parent, payload, { dataSources, user }) {
+    async setNotificationsState(_parent, payload, { dataSources, user }) {
       if (user === null) throw new AuthenticationError('You are not logged in')
-      await dataSources.serlo.setNotificationState({
-        id: payload.id,
+      const result = await dataSources.serlo.setNotificationsState({
+        ids: payload.ids,
         userId: user,
         unread: payload.unread,
       })
-      return null
+      return result
     },
   },
 }
