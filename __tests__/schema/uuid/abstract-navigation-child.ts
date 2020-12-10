@@ -102,12 +102,12 @@ describe('Page', () => {
     })
     await assertSuccessfulGraphQLQuery({
       query: gql`
-        {
-          uuid(id: ${subjectHomepage.id}) {
+        query uuid($id: Int!) {
+          uuid(id: $id) {
             ... on Page {
               navigation {
                 path {
-                  nodes{
+                  nodes {
                     label
                     url
                     id
@@ -119,6 +119,7 @@ describe('Page', () => {
           }
         }
       `,
+      variables: { id: subjectHomepage.id },
       data: {
         uuid: {
           navigation: null,
@@ -140,12 +141,12 @@ describe('Page', () => {
     })
     await assertSuccessfulGraphQLQuery({
       query: gql`
-        {
-          uuid(id: ${subjectHomepage.id}) {
+        query uuid($id: Int!) {
+          uuid(id: $id) {
             ... on Page {
               navigation {
                 path {
-                  nodes{
+                  nodes {
                     label
                     url
                     id
@@ -157,6 +158,7 @@ describe('Page', () => {
           }
         }
       `,
+      variables: { id: subjectHomepage.id },
       data: {
         uuid: {
           navigation: {
@@ -217,15 +219,16 @@ describe('Page', () => {
     })
     await assertSuccessfulGraphQLQuery({
       query: gql`
-        {
-          uuid(id: ${page.id}) {
+        query uuid($id: Int!) {
+          uuid(id: $id) {
             ... on Page {
               navigation {
-                path {nodes{
-                  label
-                  url
-                  id
-                }
+                path {
+                  nodes {
+                    label
+                    url
+                    id
+                  }
                   totalCount
                 }
               }
@@ -233,6 +236,7 @@ describe('Page', () => {
           }
         }
       `,
+      variables: { id: page.id },
       data: {
         uuid: {
           navigation: {
@@ -287,15 +291,16 @@ describe('Taxonomy Term', () => {
     })
     await assertSuccessfulGraphQLQuery({
       query: gql`
-        {
-          uuid(id: ${taxonomyTermSubject.id}) {
+        query uuid($id: Int!) {
+          uuid(id: $id) {
             ... on TaxonomyTerm {
               navigation {
-                path {nodes{
-                  label
-                  url
-                  id
-                }
+                path {
+                  nodes {
+                    label
+                    url
+                    id
+                  }
                   totalCount
                 }
               }
@@ -303,6 +308,7 @@ describe('Taxonomy Term', () => {
           }
         }
       `,
+      variables: { id: taxonomyTermSubject.id },
       data: {
         uuid: {
           navigation: null,
@@ -335,15 +341,16 @@ describe('Taxonomy Term', () => {
     })
     await assertSuccessfulGraphQLQuery({
       query: gql`
-        {
-          uuid(id: ${taxonomyTermSubject.id}) {
+        query uuid($id: Int!) {
+          uuid(id: $id) {
             ... on TaxonomyTerm {
               navigation {
-                path {nodes{
-                  label
-                  url
-                  id
-                }
+                path {
+                  nodes {
+                    label
+                    url
+                    id
+                  }
                   totalCount
                 }
               }
@@ -351,6 +358,7 @@ describe('Taxonomy Term', () => {
           }
         }
       `,
+      variables: { id: taxonomyTermSubject.id },
       data: {
         uuid: {
           navigation: {
@@ -403,15 +411,16 @@ describe('Taxonomy Term', () => {
     })
     await assertSuccessfulGraphQLQuery({
       query: gql`
-        {
-          uuid(id: ${taxonomyTermCurriculumTopic.id}) {
+        query uuid($id: Int!) {
+          uuid(id: $id) {
             ... on TaxonomyTerm {
               navigation {
-                path {nodes{
-                  label
-                  url
-                  id
-                }
+                path {
+                  nodes {
+                    label
+                    url
+                    id
+                  }
                   totalCount
                 }
               }
@@ -419,6 +428,7 @@ describe('Taxonomy Term', () => {
           }
         }
       `,
+      variables: { id: taxonomyTermCurriculumTopic.id },
       data: {
         uuid: {
           navigation: {
