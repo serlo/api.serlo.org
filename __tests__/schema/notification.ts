@@ -2198,6 +2198,139 @@ describe('notificationEvent', () => {
   })
 })
 
+describe('setNotificationState', () => {
+  function createSetNotificationStateMutation(
+    variables: MutationSetNotificationsStateArgs
+  ) {
+    return {
+      mutation: gql`
+        mutation setNotificationState($id: Int!, $unread: Boolean!) {
+          setNotificationState(id: $id, unread: $unread)
+        }
+      `,
+      variables,
+    }
+  }
+
+  test('unauthenticated', async () => {
+    const client = createTestClient({
+      service: Service.SerloCloudflareWorker,
+      user: null,
+    })
+    await assertFailingGraphQLMutation(
+      {
+        ...createSetNotificationStateMutation({
+          id: 1,
+          unread: false,
+        }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('UNAUTHENTICATED')
+      }
+    )
+  })
+
+  test('wrong user id', async () => {
+    global.server.use(
+      rest.post(
+        `http://de.${process.env.SERLO_ORG_HOST}/api/set-notification-state/1`,
+        (req, res, ctx) => {
+          return res(ctx.status(403), ctx.json({}))
+        }
+      )
+    )
+    const client = createTestClient({
+      service: Service.SerloCloudflareWorker,
+      user: user2.id,
+    })
+    await assertFailingGraphQLMutation(
+      {
+        ...createSetNotificationStateMutation({ id: 1, unread: false }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
+  })
+
+  test('authenticated', async () => {
+    global.server.use(
+      rest.get(
+        `http://de.${process.env.SERLO_ORG_HOST}/api/notifications/${user.id}`,
+        (req, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.json({
+              notifications: [
+                {
+                  id: 1,
+                  unread: true,
+                  eventId: 1,
+                },
+              ],
+              userId: user.id,
+            })
+          )
+        }
+      ),
+      rest.post(
+        `http://de.${process.env.SERLO_ORG_HOST}/api/set-notification-state/1`,
+        (req, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.json({
+              notifications: [
+                {
+                  id: 1,
+                  unread: false,
+                  eventId: 1,
+                },
+              ],
+              userId: user.id,
+            })
+          )
+        }
+      )
+    )
+    const client = createTestClient({
+      service: Service.Serlo,
+      user: user.id,
+    })
+    await assertSuccessfulGraphQLMutation({
+      ...createSetNotificationStateMutation({
+        id: 1,
+        unread: false,
+      }),
+      client,
+    })
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        {
+          notifications {
+            nodes {
+              id
+              unread
+            }
+          }
+        }
+      `,
+      data: {
+        notifications: {
+          nodes: [
+            {
+              id: 1,
+              unread: false,
+            },
+          ],
+        },
+      },
+      client,
+    })
+  })
+})
+
 describe('setNotificationsState', () => {
   function createSetNotificationsStateMutation(
     variables: MutationSetNotificationsStateArgs
