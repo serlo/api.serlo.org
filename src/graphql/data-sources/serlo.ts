@@ -172,7 +172,8 @@ export class SerloDataSource extends CacheableDataSource {
       path: `/api/event/${id}`,
       maxAge: 1 * DAY,
     })
-    return isUnsupportedNotificationEvent(notificationEvent)
+    return notificationEvent === null ||
+      isUnsupportedNotificationEvent(notificationEvent)
       ? null
       : notificationEvent
   }
