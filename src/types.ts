@@ -111,7 +111,7 @@ export type Mutation = {
   _removeCache?: Maybe<Scalars['Boolean']>;
   _setCache?: Maybe<Scalars['Boolean']>;
   _updateCache?: Maybe<Scalars['Boolean']>;
-  setNotificationState?: Maybe<Scalars['Boolean']>;
+  setNotificationsState?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -131,8 +131,8 @@ export type Mutation_UpdateCacheArgs = {
 };
 
 
-export type MutationSetNotificationStateArgs = {
-  id: Scalars['Int'];
+export type MutationSetNotificationsStateArgs = {
+  ids: Array<Scalars['Int']>;
   unread: Scalars['Boolean'];
 };
 

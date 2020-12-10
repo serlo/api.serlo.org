@@ -30,7 +30,7 @@ import {
 } from '../__utils__'
 import { Service } from '~/internals/auth'
 
-test('setNotificationState', async () => {
+test('setNotificationsState', async () => {
   global.client = createTestClient({
     service: Service.SerloCloudflareWorker,
     user: user.id,
@@ -66,12 +66,12 @@ test('setNotificationState', async () => {
   })
   await assertSuccessfulGraphQLMutation({
     mutation: gql`
-      mutation setNotificationState($id: Int!, $unread: Boolean!) {
-        setNotificationState(id: $id, unread: $unread)
+      mutation setNotificationsState($ids: [Int!]!, $unread: Boolean!) {
+        setNotificationsState(ids: $ids, unread: $unread)
       }
     `,
     variables: {
-      id: 9,
+      ids: [9],
       unread: true,
     },
   })
