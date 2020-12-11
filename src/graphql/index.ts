@@ -27,6 +27,7 @@ import { decode, JsonWebTokenError, verify } from 'jsonwebtoken'
 import fetch from 'node-fetch'
 import { URLSearchParams } from 'url'
 
+import { ModelDataSource } from '../internals/model'
 import { GoogleSheetApi } from './data-sources/google-spreadsheet-api'
 import { SerloDataSource } from './data-sources/serlo'
 import { Environment } from './environment'
@@ -45,6 +46,7 @@ export function getGraphQLOptions(
     playground: false,
     dataSources() {
       return {
+        model: new ModelDataSource(environment),
         serlo: new SerloDataSource(environment),
         googleSheetApi: new GoogleSheetApi({
           apiKey: process.env.GOOGLE_API_KEY,
@@ -59,7 +61,6 @@ export function getGraphQLOptions(
           service: Service.SerloCloudflareWorker,
           user: null,
         })
-        // throw new AuthenticationError('Invalid authorization header')
       }
       return handleAuthentication(authorizationHeader, async (token) => {
         if (process.env.HYDRA_HOST === undefined) return null

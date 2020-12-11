@@ -27,29 +27,17 @@ import {
 
 import { getGraphQLOptions } from '../../src/graphql'
 import { Context, Service } from '../../src/graphql/schema/types'
-import { SwrQueue } from '../../src/swr-queue'
+import { emptySwrQueue } from '../../src/swr-queue'
 
 export type Client = ApolloServerTestClient
 
 export function createTestClient(
   args?: Partial<Pick<Context, 'service' | 'user'>>
 ): Client {
-  const mockSwrQueue: SwrQueue = {
-    queue(_updateJob) {
-      return Promise.resolve(undefined as never)
-    },
-    ready() {
-      return Promise.resolve()
-    },
-    quit() {
-      return Promise.resolve()
-    },
-  }
-
   const server = new ApolloServer({
     ...getGraphQLOptions({
       cache: global.cache,
-      swrQueue: mockSwrQueue,
+      swrQueue: emptySwrQueue,
     }),
     context(): Pick<Context, 'service' | 'user'> {
       return {

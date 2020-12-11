@@ -23,6 +23,7 @@ import Queue from 'bee-queue'
 import { option as O } from 'fp-ts'
 
 import { user } from '../../__fixtures__'
+import { MINUTE } from '../../src/graphql/data-sources'
 import { createSwrQueue, UpdateJob } from '../../src/swr-queue'
 import { createUuidHandler } from '../__utils__'
 
@@ -45,7 +46,8 @@ describe('Background Queue', () => {
     global.server.use(createUuidHandler(user))
     const key = 'de.serlo.org/api/uuid/1'
     await global.cache.set({ key, value: 'Stale value' })
-    await global.timer.waitFor(20)
+    // TODO: implementation detail!
+    await global.timer.waitFor(10 * MINUTE)
     const job = (await swrQueue.queue({ key, maxAge: 10 })) as Queue.Job<
       UpdateJob
     >
@@ -80,20 +82,21 @@ describe('Background Queue', () => {
     })
   })
 
-  test('MaxAge = undefined', async () => {
-    const key = 'de.serlo.org/api/uuid/1'
-    await global.cache.set({ key, value: user })
-    await global.timer.waitFor(9999999999999)
-    const job = (await swrQueue.queue({ key })) as Queue.Job<UpdateJob>
-    await new Promise((resolve) => {
-      job.on('succeeded', () => {
-        void global.cache.get({ key: 'de.serlo.org/api/uuid/1' }).then((v) => {
-          const { lastModified, value } = O.toNullable(v)!
-          expect(lastModified).toBeDefined()
-          expect(value).toEqual(user)
-          resolve()
-        })
-      })
-    })
-  })
+  // TODO: this doesn't make sense anymore
+  // test.only('MaxAge = undefined', async () => {
+  //   const key = 'de.serlo.org/api/uuid/1'
+  //   await global.cache.set({ key, value: user })
+  //   await global.timer.waitFor(9999999999999)
+  //   const job = (await swrQueue.queue({ key })) as Queue.Job<UpdateJob>
+  //   await new Promise((resolve) => {
+  //     job.on('succeeded', () => {
+  //       void global.cache.get({ key: 'de.serlo.org/api/uuid/1' }).then((v) => {
+  //         const { lastModified, value } = O.toNullable(v)!
+  //         expect(lastModified).toBeDefined()
+  //         expect(value).toEqual(user)
+  //         resolve()
+  //       })
+  //     })
+  //   })
+  // })
 })

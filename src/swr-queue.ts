@@ -23,8 +23,13 @@ import Queue from 'bee-queue'
 import { option as O } from 'fp-ts'
 
 import { Cache, Priority } from './cache'
+import {
+  createFetchHelpersFromNodeFetch,
+  isQuery,
+  QuerySpec,
+} from './internals/model'
 import { log } from './log'
-import { createModel } from './model'
+import { createSerloModel } from './model/serlo'
 import { redisUrl } from './redis-url'
 import { Timer } from './timer'
 
@@ -39,6 +44,18 @@ export interface UpdateJob {
   maxAge?: number
 }
 
+export const emptySwrQueue: SwrQueue = {
+  queue(_updateJob) {
+    return Promise.resolve(undefined as never)
+  },
+  ready() {
+    return Promise.resolve()
+  },
+  quit() {
+    return Promise.resolve()
+  },
+}
+
 export function createSwrQueue({
   cache,
   timer,
@@ -46,10 +63,28 @@ export function createSwrQueue({
   cache: Cache
   timer: Timer
 }): SwrQueue {
-  const model = createModel({
-    cache,
-    priority: Priority.Low,
-  })
+  // TODO: this should probably be somewhere else
+  const models = [
+    createSerloModel({
+      environment: {
+        cache,
+        swrQueue: emptySwrQueue,
+      },
+      fetchHelpers: createFetchHelpersFromNodeFetch(),
+    }),
+  ]
+
+  function getSpec(key: string): QuerySpec<unknown, unknown> | null {
+    for (const model of models) {
+      for (const prop of Object.values(model)) {
+        if (isQuery(prop) && O.isSome(prop._spec.getPayload(key))) {
+          return prop._spec
+        }
+      }
+    }
+    return null
+  }
+
   const queue = new Queue<UpdateJob>('swr', {
     redis: {
       url: redisUrl,
@@ -58,16 +93,38 @@ export function createSwrQueue({
 
   queue.process(
     async (job): Promise<string> => {
-      const { key, maxAge } = job.data
+      const { key } = job.data
       const cacheEntry = await cache.get<unknown>({ key })
       if (O.isNone(cacheEntry)) {
         return 'Skipped update because cache empty.'
       }
+      const spec = getSpec(key)
+      if (spec === null) {
+        return 'Skipped update because invalid key'
+      }
+      const maxAge = spec.maxAge
       const age = timer.now() - cacheEntry.value.lastModified
       if (maxAge === undefined || age <= maxAge * 1000) {
         return `Skipped update because cache non-stale.`
       }
-      await model.update(key)
+      const payload = spec.getPayload(key)
+      if (O.isNone(payload)) {
+        return 'Skipped updated because invalid key'
+      }
+      await cache.set({
+        key,
+        priority: Priority.Low,
+        getValue: async () => {
+          // TODO: here we should probably again get the cache entry so it's still up-to-date
+          const cacheEntry = await cache.get<unknown>({ key })
+
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+          return await spec.getCurrentValue(
+            payload.value,
+            O.isSome(cacheEntry) ? cacheEntry.value.value : null
+          )
+        },
+      })
       return 'Updated because stale'
     }
   )
