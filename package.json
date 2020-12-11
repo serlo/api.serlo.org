@@ -27,7 +27,7 @@
     "preregenerate-types": "graphql-codegen --config codegen.yml",
     "regenerate-types": "ts-node scripts/regenerate-types-package",
     "start": "npm-run-all start:redis start:server",
-    "start:redis": "docker-compose up --build --detach",
+    "start:redis": "docker-compose up --detach",
     "start:server": "tsdx watch  --target node --format cjs --tsconfig tsconfig.prod.json --onSuccess \"node dist\"",
     "stop:redis": "docker-compose stop",
     "test": "jest --config jest.config.js --runInBand"
@@ -90,7 +90,7 @@
     "glob": "^7.0.0",
     "jest": "^26.0.0",
     "jest-transform-graphql": "^2.0.0",
-    "msw": "^0.21.0",
+    "msw": "^0.24.0",
     "npm-run-all": "^4.0.0",
     "prettier": "^2.0.0",
     "prettier-plugin-packagejson": "^2.0.0",

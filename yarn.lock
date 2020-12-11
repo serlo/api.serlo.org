@@ -3845,10 +3845,10 @@ cliui@^6.0.0:
     strip-ansi "^6.0.0"
     wrap-ansi "^6.2.0"
 
-cliui@^7.0.0:
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/cliui/-/cliui-7.0.1.tgz#a4cb67aad45cd83d8d05128fc9f4d8fbb887e6b3"
-  integrity sha512-rcvHOWyGyid6I1WjT/3NatKj2kDt9OdSHSXpyLXaMWFbKpGACNW8pRhhdPUq9MWUOdwn8Rz9AVETjF4105rZZQ==
+cliui@^7.0.2:
+  version "7.0.4"
+  resolved "https://registry.yarnpkg.com/cliui/-/cliui-7.0.4.tgz#a0265ee655476fc807aea9df3df8df7783808b4f"
+  integrity sha512-OcRE68cOsVMXp1Yvonl/fzkQOyjLSu/8bhPDfQt0e0/Eb283TKP20Fs2MqoPsr9SwA595rRCA+QMzYc9nBP+JQ==
   dependencies:
     string-width "^4.2.0"
     strip-ansi "^6.0.0"
@@ -4206,6 +4206,13 @@ debug@^3.2.6:
   integrity sha512-mel+jf7nrtEl5Pn1Qx46zARXKDpBbvzezse7p7LqINmdoIk8PYP5SySaxEmYv6TZ0JyEKA1hsCId6DIhgITtWQ==
   dependencies:
     ms "^2.1.1"
+
+debug@^4.3.0:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.1.tgz#f0d229c505e0c6d8c49ac553d1b13dc183f6b2ee"
+  integrity sha512-doEwdvm4PCeK4K3RQN2ZC2BYUBaxwLARCqZmMjtF8a51J2Rb0xpVloFRnCODwqjpwnAoao4pelN8l3RJdv3gRQ==
+  dependencies:
+    ms "2.1.2"
 
 decamelize@^1.2.0:
   version "1.2.0"
@@ -4593,7 +4600,7 @@ es6-weak-map@^2.0.2:
     es6-iterator "^2.0.3"
     es6-symbol "^3.1.1"
 
-escalade@^3.0.2, escalade@^3.1.0:
+escalade@^3.1.0, escalade@^3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/escalade/-/escalade-3.1.1.tgz#d8cfdc7000965c5a0174b4a82eaa5c0552742e40"
   integrity sha512-k0er2gUkLf8O0zKJiAhmkTnJlTvINGv7ygDNPbeIsX/TJjGJZHuh9B2UxbsaEkmlEo9MfhrSzmhIlhRlI2GXnw==
@@ -5688,6 +5695,11 @@ graphql@^15.0.0, graphql@^15.3.0:
   version "15.3.0"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-15.3.0.tgz#3ad2b0caab0d110e3be4a5a9b2aa281e362b5278"
   integrity sha512-GTCJtzJmkFLWRfFJuoo9RWWa/FfamUHgiFosxi/X1Ani4AVWbeyBenZTNX6dM+7WSbbFfTo/25eh0LLkwHMw2w==
+
+graphql@^15.4.0:
+  version "15.4.0"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-15.4.0.tgz#e459dea1150da5a106486ba7276518b5295a4347"
+  integrity sha512-EB3zgGchcabbsU9cFe1j+yxdzKQKAbGUWRb13DsrsMN1yyfmmIq+2+L5MqVWcDCE4V89R5AyUOi7sMOGxdsYtA==
 
 growly@^1.3.0:
   version "1.3.0"
@@ -8066,23 +8078,23 @@ msgpack@^1.0.0:
   dependencies:
     nan "^2.14.0"
 
-msw@^0.21.0:
-  version "0.21.2"
-  resolved "https://registry.yarnpkg.com/msw/-/msw-0.21.2.tgz#74ed10b8eb224325652a3c3812b5460dac297bd8"
-  integrity sha512-XOJehxtJThNFdMJdVjxDAbZ8KuC3UltOlO5nQDks0Q1yzSUqqKcVUjbKrH7T+K2hckBr0KEY2fwJHv21R4BV2A==
+msw@^0.24.0:
+  version "0.24.2"
+  resolved "https://registry.yarnpkg.com/msw/-/msw-0.24.2.tgz#6c630400e0be7f5ea5ad6334af5806bac4d82977"
+  integrity sha512-lQubV+wer9Wa08sTxzEEzyxew+f8vQiOtXIKvy+hvrK+pD/G55NSqzzs6wkY3mHcsCVcPuac8Zssg2uvkvyREQ==
   dependencies:
     "@open-draft/until" "^1.0.3"
     "@types/cookie" "^0.4.0"
     chalk "^4.1.0"
     chokidar "^3.4.2"
     cookie "^0.4.1"
-    graphql "^15.3.0"
+    graphql "^15.4.0"
     headers-utils "^1.2.0"
     node-fetch "^2.6.1"
-    node-match-path "^0.4.4"
-    node-request-interceptor "^0.5.1"
+    node-match-path "^0.6.0"
+    node-request-interceptor "^0.5.3"
     statuses "^2.0.0"
-    yargs "^16.0.3"
+    yargs "^16.1.1"
 
 mute-stream@0.0.8:
   version "0.0.8"
@@ -8212,10 +8224,10 @@ node-int64@^0.4.0:
   resolved "https://registry.yarnpkg.com/node-int64/-/node-int64-0.4.0.tgz#87a9065cdb355d3182d8f94ce11188b825c68a3b"
   integrity sha1-h6kGXNs1XTGC2PlM4RGIuCXGijs=
 
-node-match-path@^0.4.4:
-  version "0.4.4"
-  resolved "https://registry.yarnpkg.com/node-match-path/-/node-match-path-0.4.4.tgz#516a10926093c0cc6f237d020685b593b19baebb"
-  integrity sha512-pBq9gp7TG0r0VXuy/oeZmQsjBSnYQo7G886Ly/B3azRwZuEtHCY155dzmfoKWcDPGgyfIGD8WKVC7h3+6y7yTg==
+node-match-path@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/node-match-path/-/node-match-path-0.6.0.tgz#4674742f4e15854045198ebc40d8b9b2d64aa2f6"
+  integrity sha512-mld1LbiLaufULAYFPAWgNEG4P0ccL49otlL/nbF5VBQLATuzfS1BGYV1rjRMsxbc0vcnasikFqGHoKDFMQylMw==
 
 node-modules-regexp@^1.0.0:
   version "1.0.0"
@@ -8266,13 +8278,13 @@ node-releases@^1.1.61:
   resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-1.1.61.tgz#707b0fca9ce4e11783612ba4a2fcba09047af16e"
   integrity sha512-DD5vebQLg8jLCOzwupn954fbIiZht05DAZs0k2u8NStSe6h9XdsuIQL8hSRKYiU8WUQRznmSDrKGbv3ObOmC7g==
 
-node-request-interceptor@^0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/node-request-interceptor/-/node-request-interceptor-0.5.1.tgz#b4757a033bde4412d9ffc4503804abb28ed962d2"
-  integrity sha512-ex5mlI5nGokxocomS2Rj2r1aspmt7qZoI8OvKLt24ylp1bYCzGQ+0XD911guCNDb/kKLMIGC67HHyeFrJCz7jA==
+node-request-interceptor@^0.5.3:
+  version "0.5.9"
+  resolved "https://registry.yarnpkg.com/node-request-interceptor/-/node-request-interceptor-0.5.9.tgz#f0498ae2889162523f58c1e1b4adc39f26e47163"
+  integrity sha512-M1a3aulCW/kqajDn/w+qBX86G4So7utJGlrODAjQ1piz/kR8ZaDfd/wrJnsuPtUM12F0YxsnXG8qRKFkIEIxsw==
   dependencies:
     "@open-draft/until" "^1.0.3"
-    debug "^4.1.1"
+    debug "^4.3.0"
     headers-utils "^1.2.0"
 
 nodegit-promise@~4.0.0:
@@ -11372,10 +11384,10 @@ y18n@^4.0.0:
   resolved "https://registry.yarnpkg.com/y18n/-/y18n-4.0.0.tgz#95ef94f85ecc81d007c264e190a120f0a3c8566b"
   integrity sha512-r9S/ZyXu/Xu9q1tYlpsLIsa3EeLXXk0VwlxqTcFRfg9EhMW+17kbt9G0NrgCmhGb5vT2hyhJZLfDGx+7+5Uj/w==
 
-y18n@^5.0.1:
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/y18n/-/y18n-5.0.2.tgz#48218df5da2731b4403115c39a1af709c873f829"
-  integrity sha512-CkwaeZw6dQgqgPGeTWKMXCRmMcBgETFlTml1+ZOO+q7kGst8NREJ+eWwFNPVUQ4QGdAaklbqCZHH6Zuep1RjiA==
+y18n@^5.0.5:
+  version "5.0.5"
+  resolved "https://registry.yarnpkg.com/y18n/-/y18n-5.0.5.tgz#8769ec08d03b1ea2df2500acef561743bbb9ab18"
+  integrity sha512-hsRUr4FFrvhhRH12wOdfs38Gy7k2FFzB9qgN9v3aLykRq0dRcdcpz5C9FxdS2NuhOrI/628b/KSTJ3rwHysYSg==
 
 yaeti@^0.0.6:
   version "0.0.6"
@@ -11405,10 +11417,15 @@ yargs-parser@18.x, yargs-parser@^18.1.2:
     camelcase "^5.0.0"
     decamelize "^1.2.0"
 
-yargs-parser@20.x, yargs-parser@^20.0.0:
+yargs-parser@20.x:
   version "20.2.1"
   resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-20.2.1.tgz#28f3773c546cdd8a69ddae68116b48a5da328e77"
   integrity sha512-yYsjuSkjbLMBp16eaOt7/siKTjNVjMm3SoJnIg3sEh/JsvqVVDyjRKmaJV4cl+lNIgq6QEco2i3gDebJl7/vLA==
+
+yargs-parser@^20.2.2:
+  version "20.2.4"
+  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-20.2.4.tgz#b42890f14566796f85ae8e3a25290d205f154a54"
+  integrity sha512-WOkpgNhPTlE73h4VFAFsOnomJVaovO8VqLDzy5saChRBFQFBoMYirowyW+Q9HB4HFF4Z7VZTiG3iSzJJA29yRA==
 
 yargs@^15.3.1, yargs@^15.4.1:
   version "15.4.1"
@@ -11427,18 +11444,18 @@ yargs@^15.3.1, yargs@^15.4.1:
     y18n "^4.0.0"
     yargs-parser "^18.1.2"
 
-yargs@^16.0.3:
-  version "16.0.3"
-  resolved "https://registry.yarnpkg.com/yargs/-/yargs-16.0.3.tgz#7a919b9e43c90f80d4a142a89795e85399a7e54c"
-  integrity sha512-6+nLw8xa9uK1BOEOykaiYAJVh6/CjxWXK/q9b5FpRgNslt8s22F2xMBqVIKgCRjNgGvGPBy8Vog7WN7yh4amtA==
+yargs@^16.1.1:
+  version "16.2.0"
+  resolved "https://registry.yarnpkg.com/yargs/-/yargs-16.2.0.tgz#1c82bf0f6b6a66eafce7ef30e376f49a12477f66"
+  integrity sha512-D1mvvtDG0L5ft/jGWkLpG1+m0eQxOfaBvTNELraWj22wSVUMWxZUvYgJYcKh6jGGIkJFhH4IZPQhR4TKpc8mBw==
   dependencies:
-    cliui "^7.0.0"
-    escalade "^3.0.2"
+    cliui "^7.0.2"
+    escalade "^3.1.1"
     get-caller-file "^2.0.5"
     require-directory "^2.1.1"
     string-width "^4.2.0"
-    y18n "^5.0.1"
-    yargs-parser "^20.0.0"
+    y18n "^5.0.5"
+    yargs-parser "^20.2.2"
 
 yn@3.1.1:
   version "3.1.1"
