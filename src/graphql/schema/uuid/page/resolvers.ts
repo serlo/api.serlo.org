@@ -30,7 +30,7 @@ export const resolvers: PageResolvers = {
   Page: {
     ...createRepositoryResolvers<PagePayload, PageRevisionPayload>(),
     async navigation(page, _args, { dataSources }) {
-      return dataSources.serlo.getNavigation({
+      return dataSources.model.serlo.getNavigation({
         instance: page.instance,
         id: page.id,
       })

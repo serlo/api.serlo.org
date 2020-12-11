@@ -22,7 +22,6 @@
 import { UserInputError } from 'apollo-server'
 
 import { decodePath } from '../alias'
-import { UserPayload } from '../user'
 import { AbstractUuidResolvers, DiscriminatorType, UuidPayload } from './types'
 
 export const resolvers: AbstractUuidResolvers = {

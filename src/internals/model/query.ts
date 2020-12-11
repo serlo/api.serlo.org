@@ -12,7 +12,7 @@ export interface QuerySpec<P, R> {
 export type Query<P, R> = (P extends undefined
   ? () => Promise<R>
   : (payload: P) => Promise<R>) & {
-  _spec: QuerySpec<P, R>
+  _querySpec: QuerySpec<P, R>
 }
 
 export function createQuery<P, R>(
@@ -43,10 +43,10 @@ export function createQuery<P, R>(
       )
     )
   }
-  query._spec = spec
+  query._querySpec = spec
   return (query as unknown) as Query<P, R>
 }
 
 export function isQuery(query: unknown): query is Query<unknown, unknown> {
-  return (query as Query<unknown, unknown>)?._spec !== undefined
+  return (query as Query<unknown, unknown>)?._querySpec !== undefined
 }

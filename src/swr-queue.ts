@@ -77,8 +77,8 @@ export function createSwrQueue({
   function getSpec(key: string): QuerySpec<unknown, unknown> | null {
     for (const model of models) {
       for (const prop of Object.values(model)) {
-        if (isQuery(prop) && O.isSome(prop._spec.getPayload(key))) {
-          return prop._spec
+        if (isQuery(prop) && O.isSome(prop._querySpec.getPayload(key))) {
+          return prop._querySpec
         }
       }
     }

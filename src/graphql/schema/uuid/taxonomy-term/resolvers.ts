@@ -56,7 +56,7 @@ export const resolvers: TaxonomyTermResolvers = {
       for (let i = 0; i < taxonomyPath.length; i++) {
         const currentIndex = taxonomyPath.length - (i + 1)
         const current = taxonomyPath[currentIndex]
-        const navigation = await context.dataSources.serlo.getNavigation({
+        const navigation = await context.dataSources.model.serlo.getNavigation({
           instance: taxonomyTerm.instance,
           id: current.id,
         })
