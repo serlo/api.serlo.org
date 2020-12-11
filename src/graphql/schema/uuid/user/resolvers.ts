@@ -19,19 +19,19 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { pipeable, either as E } from 'fp-ts'
+import { either as E, pipeable } from 'fp-ts'
 
 import { ErrorEvent } from '../../../../error-event'
 import {
-  MajorDimension,
-  GoogleSheetApi,
   CellValues,
+  GoogleSheetApi,
+  MajorDimension,
 } from '../../../data-sources/google-spreadsheet-api'
 import { ConnectionPayload, resolveConnection } from '../../connection'
 import { Context } from '../../types'
-import { AbstractUuidPayload, createUuidResolvers } from '../abstract-uuid'
+import { createUuidResolvers } from '../abstract-uuid'
 import { encodePath } from '../alias'
-import { UserResolvers, isUserPayload, UserPayload } from './types'
+import { isUserPayload, UserPayload, UserResolvers } from './types'
 
 export const resolvers: UserResolvers = {
   Query: {
@@ -88,7 +88,7 @@ async function resolveUserConnectionFromIds({
   dataSources: Context['dataSources']
 }) {
   const uuids = await Promise.all(
-    ids.map((id) => dataSources.serlo.getUuid<AbstractUuidPayload>({ id }))
+    ids.map((id) => dataSources.model.serlo.getUuid({ id }))
   )
   return resolveConnection<UserPayload>({
     // TODO: Report uuids which are not users to sentry

@@ -27,9 +27,9 @@ export const resolvers: CreateEntityNotificationEventResolvers = {
   CreateEntityNotificationEvent: {
     ...createNotificationEventResolvers(),
     async entity(notificationEvent, _args, { dataSources }) {
-      return dataSources.serlo.getUuid<EntityPayload>({
+      return (await dataSources.model.serlo.getUuid({
         id: notificationEvent.entityId,
-      })
+      })) as EntityPayload | null
     },
   },
 }

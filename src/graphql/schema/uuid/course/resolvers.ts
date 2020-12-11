@@ -25,7 +25,6 @@ import {
   createRevisionResolvers,
 } from '../abstract-repository'
 import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
-import { CoursePagePayload } from '../course-page'
 import { CoursePayload, CourseRevisionPayload } from './types'
 
 export const resolvers = {
@@ -35,7 +34,7 @@ export const resolvers = {
     pages(course: CoursePayload, _args: never, { dataSources }: Context) {
       return Promise.all(
         course.pageIds.map((id: number) => {
-          return dataSources.serlo.getUuid<CoursePagePayload>({ id })
+          return dataSources.model.serlo.getUuid({ id })
         })
       )
     },

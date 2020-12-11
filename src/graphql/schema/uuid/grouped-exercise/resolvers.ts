@@ -28,7 +28,6 @@ import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '../abstract-repository'
-import { ExerciseGroupPayload } from '../exercise-group'
 import { GroupedExercisePayload, GroupedExerciseRevisionPayload } from './types'
 
 export const resolvers = {
@@ -48,9 +47,7 @@ export const resolvers = {
       if (requestsOnlyFields('ExerciseGroup', ['id'], info)) {
         return partialExerciseGroup
       }
-      return dataSources.serlo.getUuid<ExerciseGroupPayload>(
-        partialExerciseGroup
-      )
+      return dataSources.model.serlo.getUuid(partialExerciseGroup)
     },
   },
   GroupedExerciseRevision: createRevisionResolvers<

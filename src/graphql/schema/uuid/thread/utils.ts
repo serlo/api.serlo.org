@@ -21,7 +21,6 @@
  */
 import { ApolloError } from 'apollo-server'
 
-import { SerloDataSource } from '../../../data-sources/serlo'
 import { resolveConnection } from '../../connection'
 import { isDefined } from '../../utils'
 import { UuidResolvers } from '../abstract-uuid'
@@ -35,7 +34,30 @@ export function createThreadResolvers(): UuidResolvers {
       )
 
       const threads = await Promise.all(
-        firstCommentIds.map((id) => toThreadPayload(dataSources.serlo, id))
+        firstCommentIds.map(
+          async (firstCommentId): Promise<ThreadData> => {
+            const firstComment = (await dataSources.model.serlo.getUuid({
+              id: firstCommentId,
+            })) as CommentPayload | null
+            if (firstComment === null) {
+              throw new ApolloError('There are no comments yet')
+            }
+            const remainingComments = await Promise.all(
+              firstComment.childrenIds.map(async (id) => {
+                return (await dataSources.model.serlo.getUuid({
+                  id,
+                })) as CommentPayload | null
+              })
+            )
+            return {
+              __typename: ThreadDataType,
+              commentPayloads: [
+                firstComment,
+                ...remainingComments.filter(isDefined),
+              ],
+            }
+          }
+        )
       )
 
       return resolveConnection({
@@ -46,24 +68,5 @@ export function createThreadResolvers(): UuidResolvers {
         },
       })
     },
-  }
-}
-
-export async function toThreadPayload(
-  serlo: SerloDataSource,
-  firstCommentId: number
-): Promise<ThreadData> {
-  const firstComment = await serlo.getUuid<CommentPayload>({
-    id: firstCommentId,
-  })
-  if (firstComment === null) {
-    throw new ApolloError('There are no comments yet')
-  }
-  const remainingComments = await Promise.all(
-    firstComment.childrenIds.map((id) => serlo.getUuid<CommentPayload>({ id }))
-  )
-  return {
-    __typename: ThreadDataType,
-    commentPayloads: [firstComment, ...remainingComments.filter(isDefined)],
   }
 }

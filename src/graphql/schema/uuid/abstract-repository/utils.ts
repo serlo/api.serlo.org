@@ -42,13 +42,15 @@ export function createRepositoryResolvers<
     ...createAliasResolvers<E>(),
     async currentRevision(entity, _args, { dataSources }) {
       if (!entity.currentRevisionId) return null
-      return dataSources.serlo.getUuid<R>({ id: entity.currentRevisionId })
+      return (await dataSources.model.serlo.getUuid({
+        id: entity.currentRevisionId,
+      })) as R | null
     },
     async revisions(entity, cursorPayload, { dataSources }) {
       const revisions = pipeable.pipe(
         await Promise.all(
-          entity.revisionIds.map((id) => {
-            return dataSources.serlo.getUuid<R>({ id })
+          entity.revisionIds.map(async (id) => {
+            return (await dataSources.model.serlo.getUuid({ id })) as R | null
           })
         ),
         A.filter(isDefined),
@@ -91,7 +93,9 @@ export function createRevisionResolvers<
       return resolveUser({ id: entityRevision.authorId }, context, info)
     },
     repository: async (entityRevision, _args, { dataSources }) => {
-      return dataSources.serlo.getUuid<E>({ id: entityRevision.repositoryId })
+      return (await dataSources.model.serlo.getUuid({
+        id: entityRevision.repositoryId,
+      })) as E | null
     },
   }
 }

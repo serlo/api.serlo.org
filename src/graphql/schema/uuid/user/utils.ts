@@ -34,5 +34,7 @@ export async function resolveUser(
   if (requestsOnlyFields('User', ['id'], info)) {
     return partialUser
   }
-  return dataSources.serlo.getUuid<UserPayload>(partialUser)
+  return (await dataSources.model.serlo.getUuid(
+    partialUser
+  )) as UserPayload | null
 }

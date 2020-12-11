@@ -27,9 +27,9 @@ export const resolvers: CreateTaxonomyTermNotificationEventResolvers = {
   CreateTaxonomyTermNotificationEvent: {
     ...createNotificationEventResolvers(),
     async taxonomyTerm(notificationEvent, _args, { dataSources }) {
-      return dataSources.serlo.getUuid<TaxonomyTermPayload>({
+      return (await dataSources.model.serlo.getUuid({
         id: notificationEvent.taxonomyTermId,
-      })
+      })) as TaxonomyTermPayload | null
     },
   },
 }

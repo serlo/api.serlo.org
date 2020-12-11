@@ -38,7 +38,7 @@ export function createExerciseResolvers<
       if (requestsOnlyFields('Solution', ['id'], info)) {
         return partialSolution
       }
-      return dataSources.serlo.getUuid<SolutionPayload>(partialSolution)
+      return await dataSources.model.serlo.getUuid(partialSolution)
     },
   }
 }
