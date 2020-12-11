@@ -2,7 +2,7 @@ import { option as O } from 'fp-ts'
 import jwt from 'jsonwebtoken'
 
 // TODO: review, might want to move some stuff
-import { MINUTE } from '../graphql/data-sources'
+import { HOUR, MINUTE } from '../graphql/data-sources'
 import { AbstractUuidPayload, isUnsupportedUuid } from '../graphql/schema'
 import { Service } from '../graphql/schema/types'
 import { Environment } from '../internals/environment'
@@ -60,7 +60,27 @@ export function createSerloModel({
     environment
   )
 
+  const getActiveAuthorIds = createQuery<undefined, number[]>(
+    {
+      getCurrentValue: async () => {
+        return await get<number[]>({
+          path: '/api/user/active-authors',
+        })
+      },
+      maxAge: 1 * HOUR,
+      getKey: () => {
+        return 'de.serlo.org/api/user/active-authors'
+      },
+      getPayload: (key: string) => {
+        if (key !== 'de.serlo.org/api/user/active-authors') return O.none
+        return O.some(undefined)
+      },
+    },
+    environment
+  )
+
   return {
+    getActiveAuthorIds,
     getUuid,
   }
 }
