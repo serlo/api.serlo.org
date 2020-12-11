@@ -27,14 +27,14 @@ export const resolvers: RemoveEntityLinkNotificationEventResolvers = {
   RemoveEntityLinkNotificationEvent: {
     ...createNotificationEventResolvers(),
     async parent(notificationEvent, _args, { dataSources }) {
-      return dataSources.serlo.getUuid<EntityPayload>({
+      return (await dataSources.model.serlo.getUuid({
         id: notificationEvent.parentId,
-      })
+      })) as EntityPayload | null
     },
     async child(notificationEvent, _args, { dataSources }) {
-      return dataSources.serlo.getUuid<EntityPayload>({
+      return (await dataSources.model.serlo.getUuid({
         id: notificationEvent.childId,
-      })
+      })) as EntityPayload | null
     },
   },
 }

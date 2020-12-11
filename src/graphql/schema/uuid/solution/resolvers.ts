@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Context } from '../../types'
-import { AbstractExercisePayload } from '../abstract-exercise'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
@@ -35,7 +34,7 @@ export const resolvers = {
       _args: never,
       { dataSources }: Context
     ) {
-      return dataSources.serlo.getUuid<AbstractExercisePayload>({
+      return dataSources.model.serlo.getUuid({
         id: solution.parentId,
       })
     },

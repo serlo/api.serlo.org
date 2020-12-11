@@ -51,18 +51,22 @@ export const resolvers: AbstractUuidResolvers = {
           const match = /^\/user\/profile\/(\d+)$/.exec(cleanPath)
           if (match) {
             const id = parseInt(match[1], 10)
-            const uuid = await dataSources.serlo.getUuid<UuidPayload>({ id })
+            const uuid = (await dataSources.model.serlo.getUuid({
+              id,
+            })) as UuidPayload | null
             return uuid && uuid.__typename === 'User' ? uuid : null
           }
         }
         const alias = await dataSources.serlo.getAlias(payload.alias)
         return alias
-          ? dataSources.serlo.getUuid<UuidPayload>({ id: alias.id })
+          ? ((await dataSources.model.serlo.getUuid({
+              id: alias.id,
+            })) as UuidPayload | null)
           : null
       } else if (payload.id) {
-        const uuid = await dataSources.serlo.getUuid<UuidPayload>({
+        const uuid = (await dataSources.model.serlo.getUuid({
           id: payload.id,
-        })
+        })) as UuidPayload | null
         if (uuid && uuid.__typename === DiscriminatorType.Comment) {
           return null
         } else return uuid

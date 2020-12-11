@@ -28,20 +28,20 @@ export const resolvers: SetTaxonomyParentNotificationEventResolvers = {
     ...createNotificationEventResolvers(),
     async previousParent(notificationEvent, _args, { dataSources }) {
       if (notificationEvent.previousParentId === null) return null
-      return dataSources.serlo.getUuid<TaxonomyTermPayload>({
+      return (await dataSources.model.serlo.getUuid({
         id: notificationEvent.previousParentId,
-      })
+      })) as TaxonomyTermPayload | null
     },
     async parent(notificationEvent, _args, { dataSources }) {
       if (notificationEvent.parentId === null) return null
-      return dataSources.serlo.getUuid<TaxonomyTermPayload>({
+      return (await dataSources.model.serlo.getUuid({
         id: notificationEvent.parentId,
-      })
+      })) as TaxonomyTermPayload | null
     },
     async child(notificationEvent, _args, { dataSources }) {
-      return dataSources.serlo.getUuid<TaxonomyTermPayload>({
+      return (await dataSources.model.serlo.getUuid({
         id: notificationEvent.childId,
-      })
+      })) as TaxonomyTermPayload | null
     },
   },
 }

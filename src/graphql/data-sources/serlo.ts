@@ -24,12 +24,10 @@ import jwt from 'jsonwebtoken'
 import { Instance, License } from '../../types'
 import {
   AbstractNotificationEventPayload,
-  AbstractUuidPayload,
   AliasPayload,
   decodePath,
   encodePath,
   isUnsupportedNotificationEvent,
-  isUnsupportedUuid,
   NotificationsPayload,
   ThreadsPayload,
 } from '../schema'
@@ -65,18 +63,6 @@ export class SerloDataSource extends CacheableDataSource {
       path: `/api/license/${id}`,
       maxAge: 1 * DAY,
     })
-  }
-
-  public async getUuid<T extends AbstractUuidPayload>({
-    id,
-  }: {
-    id: number
-  }): Promise<T | null> {
-    const uuid = await this.cacheAwareGet<T | null>({
-      path: `/api/uuid/${id}`,
-      maxAge: 5 * MINUTE,
-    })
-    return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
   }
 
   public async getNotificationEvent<

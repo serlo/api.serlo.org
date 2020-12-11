@@ -27,9 +27,9 @@ export const resolvers: CreateThreadNotificationEventResolvers = {
   CreateThreadNotificationEvent: {
     ...createNotificationEventResolvers(),
     async object(notificationEvent, _args, { dataSources }) {
-      return dataSources.serlo.getUuid<UuidPayload>({
+      return (await dataSources.model.serlo.getUuid({
         id: notificationEvent.objectId,
-      })
+      })) as UuidPayload | null
     },
     thread(notificationEvent) {
       return Promise.resolve({ id: notificationEvent.threadId })

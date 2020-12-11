@@ -22,7 +22,7 @@
 import { resolveConnection } from '../../connection'
 import { Context } from '../../types'
 import { isDefined } from '../../utils'
-import { createUuidResolvers, UuidPayload } from '../abstract-uuid'
+import { createUuidResolvers } from '../abstract-uuid'
 import { createAliasResolvers } from '../alias'
 import { TaxonomyTermPayload, TaxonomyTermResolvers } from './types'
 
@@ -32,14 +32,14 @@ export const resolvers: TaxonomyTermResolvers = {
     ...createAliasResolvers<TaxonomyTermPayload>(),
     async parent(taxonomyTerm, _args, { dataSources }) {
       if (!taxonomyTerm.parentId) return null
-      return dataSources.serlo.getUuid<TaxonomyTermPayload>({
+      return (await dataSources.model.serlo.getUuid({
         id: taxonomyTerm.parentId,
-      })
+      })) as TaxonomyTermPayload | null
     },
     async children(taxonomyTerm, cursorPayload, { dataSources }) {
       const children = await Promise.all(
         taxonomyTerm.childrenIds.map((id) => {
-          return dataSources.serlo.getUuid<UuidPayload>({ id })
+          return dataSources.model.serlo.getUuid({ id })
         })
       )
       return resolveConnection({
@@ -92,9 +92,9 @@ async function resolveTaxonomyTermPath(
   let current: TaxonomyTermPayload = parent
 
   while (current.parentId !== null) {
-    const next = await dataSources.serlo.getUuid<TaxonomyTermPayload>({
+    const next = (await dataSources.model.serlo.getUuid({
       id: current.parentId,
-    })
+    })) as TaxonomyTermPayload | null
     if (next === null) break
     path.unshift(next)
     current = next

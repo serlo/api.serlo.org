@@ -27,9 +27,9 @@ export const resolvers: SetLicenseNotificationEventResolvers = {
   SetLicenseNotificationEvent: {
     ...createNotificationEventResolvers(),
     async repository(notificationEvent, _args, { dataSources }) {
-      return dataSources.serlo.getUuid<RepositoryPayload>({
+      return (await dataSources.model.serlo.getUuid({
         id: notificationEvent.repositoryId,
-      })
+      })) as RepositoryPayload | null
     },
   },
 }

@@ -27,7 +27,6 @@ import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '../abstract-repository'
-import { CoursePayload } from '../course'
 import { CoursePagePayload, CoursePageRevisionPayload } from './types'
 
 export const resolvers = {
@@ -46,7 +45,7 @@ export const resolvers = {
       if (requestsOnlyFields('Course', ['id'], info)) {
         return partialCourse
       }
-      return dataSources.serlo.getUuid<CoursePayload>(partialCourse)
+      return dataSources.model.serlo.getUuid(partialCourse)
     },
   },
   CoursePageRevision: createRevisionResolvers<

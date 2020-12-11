@@ -45,9 +45,9 @@ export const resolvers: ThreadResolvers = {
       return thread.commentPayloads[0].trashed
     },
     async object(thread, _args, { dataSources }) {
-      const object = await dataSources.serlo.getUuid<UuidPayload>({
+      const object = (await dataSources.model.serlo.getUuid({
         id: thread.commentPayloads[0].parentId,
-      })
+      })) as UuidPayload | null
       if (object === null) {
         throw new ApolloError('Thread points to non-existent uuid')
       }
@@ -69,9 +69,9 @@ export const resolvers: ThreadResolvers = {
       return comment.date
     },
     async author(comment, _args, { dataSources }) {
-      const author = await dataSources.serlo.getUuid<UserPayload>({
+      const author = (await dataSources.model.serlo.getUuid({
         id: comment.authorId,
-      })
+      })) as UserPayload | null
       if (author === null) {
         throw new ApolloError('There is no author with this id')
       }

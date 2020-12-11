@@ -25,7 +25,6 @@ import {
   createRevisionResolvers,
 } from '../abstract-repository'
 import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
-import { GroupedExercisePayload } from '../grouped-exercise'
 import { ExerciseGroupPayload, ExerciseGroupRevisionPayload } from './types'
 
 export const resolvers = {
@@ -42,7 +41,7 @@ export const resolvers = {
     ) {
       return Promise.all(
         exerciseGroup.exerciseIds.map((id: number) => {
-          return dataSources.serlo.getUuid<GroupedExercisePayload>({ id })
+          return dataSources.model.serlo.getUuid({ id })
         })
       )
     },

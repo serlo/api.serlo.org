@@ -28,14 +28,14 @@ export const resolvers: RemoveTaxonomyLinkNotificationEventResolvers = {
   RemoveTaxonomyLinkNotificationEvent: {
     ...createNotificationEventResolvers(),
     async parent(notificationEvent, _args, { dataSources }) {
-      return dataSources.serlo.getUuid<TaxonomyTermPayload>({
+      return (await dataSources.model.serlo.getUuid({
         id: notificationEvent.parentId,
-      })
+      })) as TaxonomyTermPayload | null
     },
     async child(notificationEvent, _args, { dataSources }) {
-      return dataSources.serlo.getUuid<UuidPayload>({
+      return (await dataSources.model.serlo.getUuid({
         id: notificationEvent.childId,
-      })
+      })) as UuidPayload | null
     },
   },
 }

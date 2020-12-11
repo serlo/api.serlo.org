@@ -22,7 +22,7 @@
 import { AuthenticationError } from 'apollo-server'
 
 import { resolveConnection } from '../connection'
-import { AbstractUuidPayload, UuidPayload } from '../uuid/abstract-uuid'
+import { AbstractUuidPayload } from '../uuid/abstract-uuid'
 import { SubscriptionResolvers } from './types'
 
 export const resolvers: SubscriptionResolvers = {
@@ -34,7 +34,7 @@ export const resolvers: SubscriptionResolvers = {
       })
       const result = await Promise.all(
         subscriptions.subscriptions.map((id) => {
-          return dataSources.serlo.getUuid<UuidPayload>({ id: id.id })
+          return dataSources.model.serlo.getUuid({ id: id.id })
         })
       )
       return resolveConnection<AbstractUuidPayload>({
