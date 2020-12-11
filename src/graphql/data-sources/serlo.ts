@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import jwt from 'jsonwebtoken'
-import * as R from 'ramda'
 
 import { Instance, License } from '../../types'
 import {
@@ -29,12 +28,8 @@ import {
   AliasPayload,
   decodePath,
   encodePath,
-  EntityPayload,
   isUnsupportedNotificationEvent,
   isUnsupportedUuid,
-  Navigation,
-  NavigationPayload,
-  NodeData,
   NotificationsPayload,
   ThreadsPayload,
 } from '../schema'
@@ -63,80 +58,6 @@ export class SerloDataSource extends CacheableDataSource {
       instance,
       maxAge: 5 * MINUTE,
     })
-  }
-
-  public async getNavigation({
-    instance,
-    id,
-  }: {
-    instance: Instance
-    id: number
-  }): Promise<Navigation | null> {
-    const payload = await this.cacheAwareGet<NavigationPayload>({
-      path: '/api/navigation',
-      instance,
-      maxAge: 1 * HOUR,
-    })
-    const { data } = payload
-
-    const leaves: Record<string, number> = {}
-
-    const findLeaves = (node: NodeData): number[] => {
-      return [
-        ...(node.id ? [node.id] : []),
-        ...R.flatten(R.map(findLeaves, node.children || [])),
-      ]
-    }
-
-    for (let i = 0; i < data.length; i++) {
-      findLeaves(data[i]).forEach((id) => {
-        leaves[id] = i
-      })
-    }
-
-    const treeIndex = leaves[id]
-
-    if (treeIndex === undefined) return null
-
-    const findPathToLeaf = (node: NodeData, leaf: number): NodeData[] => {
-      if (node.id !== undefined && node.id === leaf) {
-        return [node]
-      }
-
-      if (node.children === undefined) return []
-
-      const childPaths = node.children.map((childNode) => {
-        return findPathToLeaf(childNode, leaf)
-      })
-      const goodPaths = childPaths.filter((path) => {
-        return path.length > 0
-      })
-      if (goodPaths.length === 0) return []
-      return [node, ...goodPaths[0]]
-    }
-
-    const nodes = findPathToLeaf(data[treeIndex], id)
-    const path = []
-
-    for (let i = 0; i < nodes.length; i++) {
-      const nodeData = nodes[i]
-      const uuid = nodeData.id
-        ? await this.getUuid<EntityPayload>({
-            id: nodeData.id,
-          })
-        : null
-      const node = {
-        label: nodeData.label,
-        url: (uuid ? uuid.alias : null) || nodeData.url || null,
-        id: uuid ? uuid.id : null,
-      }
-      path.push(node)
-    }
-
-    return {
-      data: data[treeIndex],
-      path,
-    }
   }
 
   public async getLicense({ id }: { id: number }): Promise<License> {
