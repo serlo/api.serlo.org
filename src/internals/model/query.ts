@@ -9,7 +9,9 @@ export interface QuerySpec<P, R> {
   getPayload: (key: string) => O.Option<P>
 }
 
-export type Query<P, R> = ((payload: P) => Promise<R>) & {
+export type Query<P, R> = (P extends undefined
+  ? () => Promise<R>
+  : (payload: P) => Promise<R>) & {
   _spec: QuerySpec<P, R>
 }
 
@@ -42,7 +44,7 @@ export function createQuery<P, R>(
     )
   }
   query._spec = spec
-  return query
+  return (query as unknown) as Query<P, R>
 }
 
 export function isQuery(query: unknown): query is Query<unknown, unknown> {

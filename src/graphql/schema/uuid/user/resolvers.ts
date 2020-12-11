@@ -37,7 +37,7 @@ export const resolvers: UserResolvers = {
   Query: {
     async activeAuthors(_parent, payload, { dataSources }) {
       return resolveUserConnectionFromIds({
-        ids: await dataSources.serlo.getActiveAuthorIds(),
+        ids: await dataSources.model.serlo.getActiveAuthorIds(),
         payload,
         dataSources,
       })
@@ -63,7 +63,9 @@ export const resolvers: UserResolvers = {
       return Promise.resolve(encodePath(`/user/profile/${user.username}`))
     },
     async activeAuthor(user, _args, { dataSources }) {
-      return (await dataSources.serlo.getActiveAuthorIds()).includes(user.id)
+      return (await dataSources.model.serlo.getActiveAuthorIds()).includes(
+        user.id
+      )
     },
     async activeDonor(user, _args, { dataSources }) {
       const ids = await activeDonorIDs(dataSources.googleSheetApi)
