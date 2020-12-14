@@ -22,9 +22,9 @@
 import { Matchers } from '@pact-foundation/pact'
 import fetch from 'node-fetch'
 
-import { AliasPayload } from '../../src/schema'
-import { Instance } from '../../src/types'
 import { addJsonInteraction } from '../__utils__'
+import { AliasPayload } from '~/schema/uuid'
+import { Instance } from '~/types'
 
 test('Alias', async () => {
   // This is a noop test that just adds the interaction to the contract

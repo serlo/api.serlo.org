@@ -62,6 +62,8 @@ module.exports = {
           '__tests-pacts__/**/*',
           '__tests__/**/*',
           'scripts/**/*',
+          'jest.config.js',
+          'jest.config-pacts.js',
           'jest.setup.ts',
           'jest.setup-pacts.ts',
           'webpack.config.js',
@@ -72,7 +74,13 @@ module.exports = {
     'import/no-internal-modules': [
       'error',
       {
-        allow: ['msw/node', 'io-ts/lib/*', 'io-ts-types/lib/*', 'fp-ts/lib/*'],
+        allow: [
+          'msw/node',
+          'io-ts/lib/*',
+          'io-ts-types/lib/*',
+          'fp-ts/lib/*',
+          'ts-jest/utils',
+        ],
       },
     ],
     'import/no-mutable-exports': 'error',

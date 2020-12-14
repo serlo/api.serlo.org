@@ -73,8 +73,6 @@ import {
   user,
   user2,
 } from '../../__fixtures__'
-import { Service } from '../../src/internals/auth'
-import { Instance, MutationSetNotificationStateArgs } from '../../src/types'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
@@ -84,6 +82,8 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../__utils__'
+import { Service } from '~/internals/auth'
+import { Instance, MutationSetNotificationStateArgs } from '~/types'
 
 describe('notifications', () => {
   let client: Client

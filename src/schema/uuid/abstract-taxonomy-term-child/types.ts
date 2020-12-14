@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { TypeResolver } from '../../../internals/graphql'
 import { AbstractEntityPayload } from '../abstract-entity'
 import { AppletPayload } from '../applet'
 import { ArticlePayload } from '../article'
@@ -28,6 +27,7 @@ import { EventPayload } from '../event'
 import { ExercisePayload } from '../exercise'
 import { ExerciseGroupPayload } from '../exercise-group'
 import { VideoPayload } from '../video'
+import { TypeResolver } from '~/internals/graphql'
 
 export type TaxonomyTermChildPayload =
   | AppletPayload

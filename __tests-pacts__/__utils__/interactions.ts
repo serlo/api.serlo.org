@@ -21,7 +21,7 @@
  */
 import { Matchers } from '@pact-foundation/pact'
 
-import { NavigationPayload, UuidPayload } from '../../src/schema'
+import { NavigationPayload, UuidPayload } from '~/schema/uuid'
 
 export function addNavigationInteraction(payload: NavigationPayload) {
   return addJsonInteraction({

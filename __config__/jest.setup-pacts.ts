@@ -27,7 +27,6 @@ import rimraf from 'rimraf'
 import util from 'util'
 
 import { createTestClient } from '../__tests__/__utils__'
-import { Service } from '../src/internals/auth'
 import {
   createAfterAll,
   createAfterEach,
@@ -35,6 +34,7 @@ import {
   createBeforeEach,
   setup,
 } from './setup'
+import { Service } from '~/internals/auth'
 
 const pactDir = path.join(__dirname, '..', 'pacts')
 

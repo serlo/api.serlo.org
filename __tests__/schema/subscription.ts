@@ -27,12 +27,12 @@ import {
   getArticleDataWithoutSubResolvers,
   user,
 } from '../../__fixtures__'
-import { Service } from '../../src/internals/auth'
 import {
   assertSuccessfulGraphQLQuery,
   createTestClient,
   createUuidHandler,
 } from '../__utils__'
+import { Service } from '~/internals/auth'
 
 describe('subscriptions', () => {
   beforeEach(() => {

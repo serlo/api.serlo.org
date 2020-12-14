@@ -28,9 +28,6 @@ import {
   user,
   user2,
 } from '../../../__fixtures__'
-import { Service } from '../../../src/internals/auth'
-import { UuidPayload } from '../../../src/schema'
-import { Instance } from '../../../src/types'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
@@ -38,6 +35,9 @@ import {
   createUuidHandler,
   createJsonHandler,
 } from '../../__utils__'
+import { Service } from '~/internals/auth'
+import { UuidPayload } from '~/schema/uuid'
+import { Instance } from '~/types'
 
 let client: Client
 

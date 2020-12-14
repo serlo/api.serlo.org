@@ -19,8 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Resolver } from '../../../internals/graphql'
-import { TaxonomyTermChildrenArgs, TaxonomyTerm } from '../../../types'
 import { Connection } from '../../connection'
 import { NavigationChildResolvers } from '../abstract-navigation-child'
 import {
@@ -29,6 +27,8 @@ import {
   UuidResolvers,
 } from '../abstract-uuid'
 import { AliasResolvers } from '../alias'
+import { Resolver } from '~/internals/graphql'
+import { TaxonomyTermChildrenArgs, TaxonomyTerm } from '~/types'
 
 export interface TaxonomyTermPayload
   extends Omit<TaxonomyTerm, keyof TaxonomyTermResolvers['TaxonomyTerm']> {

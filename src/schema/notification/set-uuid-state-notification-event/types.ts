@@ -19,14 +19,14 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Resolver } from '../../../internals/graphql'
-import { SetUuidStateNotificationEvent } from '../../../types'
-import { UuidPayload } from '../../uuid'
 import {
   AbstractNotificationEventPayload,
   NotificationEventResolvers,
   NotificationEventType,
 } from '../types'
+import { Resolver } from '~/internals/graphql'
+import { UuidPayload } from '~/schema/uuid'
+import { SetUuidStateNotificationEvent } from '~/types'
 
 export interface SetUuidStateNotificationEventPayload
   extends AbstractNotificationEventPayload,

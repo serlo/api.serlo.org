@@ -22,8 +22,8 @@
 import { rest } from 'msw'
 
 import { createLicenseQuery, license } from '../../__fixtures__'
-import { Service } from '../../src/internals/auth'
 import { assertSuccessfulGraphQLQuery, createTestClient } from '../__utils__'
+import { Service } from '~/internals/auth'
 
 beforeEach(() => {
   global.server.use(

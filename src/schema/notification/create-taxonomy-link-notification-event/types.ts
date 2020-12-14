@@ -19,14 +19,14 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Resolver } from '../../../internals/graphql'
-import { CreateTaxonomyLinkNotificationEvent } from '../../../types'
-import { TaxonomyTermPayload, UuidPayload } from '../../uuid'
 import {
   AbstractNotificationEventPayload,
   NotificationEventResolvers,
   NotificationEventType,
 } from '../types'
+import { Resolver } from '~/internals/graphql'
+import { TaxonomyTermPayload, UuidPayload } from '~/schema/uuid'
+import { CreateTaxonomyLinkNotificationEvent } from '~/types'
 
 export interface CreateTaxonomyLinkNotificationEventPayload
   extends AbstractNotificationEventPayload,

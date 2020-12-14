@@ -21,12 +21,12 @@
  */
 import { GraphQLResolveInfo } from 'graphql'
 
-import { Context, requestsOnlyFields } from '../../../internals/graphql'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '../abstract-repository'
 import { CoursePagePayload, CoursePageRevisionPayload } from './types'
+import { Context, requestsOnlyFields } from '~/internals/graphql'
 
 export const resolvers = {
   CoursePage: {

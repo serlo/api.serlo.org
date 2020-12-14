@@ -28,11 +28,11 @@ import {
   video,
   videoRevision,
 } from '../../../__fixtures__'
-import { VideoPayload, VideoRevisionPayload } from '../../../src/schema'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
+import { VideoPayload, VideoRevisionPayload } from '~/schema/uuid'
 
 test('Video', async () => {
   await addUuidInteraction<VideoPayload>({

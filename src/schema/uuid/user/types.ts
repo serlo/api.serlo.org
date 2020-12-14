@@ -20,19 +20,19 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
-import { QueryResolver, Resolver } from '../../../internals/graphql'
-import {
-  QueryActiveAuthorsArgs,
-  QueryActiveDonorsArgs,
-  QueryActiveReviewersArgs,
-  User,
-} from '../../../types'
 import { Connection } from '../../connection'
 import {
   AbstractUuidPayload,
   DiscriminatorType,
   UuidResolvers,
 } from '../abstract-uuid'
+import { QueryResolver, Resolver } from '~/internals/graphql'
+import {
+  QueryActiveAuthorsArgs,
+  QueryActiveDonorsArgs,
+  QueryActiveReviewersArgs,
+  User,
+} from '~/types'
 
 export interface UserPayload extends Omit<User, keyof UserResolvers['User']> {
   __typename: DiscriminatorType.User

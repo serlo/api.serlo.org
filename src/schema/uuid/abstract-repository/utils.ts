@@ -21,7 +21,6 @@
  */
 import { array as A, pipeable } from 'fp-ts'
 
-import { requestsOnlyFields } from '../../../internals/graphql'
 import { resolveConnection } from '../../connection'
 import { isDefined } from '../../utils'
 import { createUuidResolvers } from '../abstract-uuid'
@@ -33,6 +32,7 @@ import {
   RepositoryResolvers,
   RevisionResolvers,
 } from './types'
+import { requestsOnlyFields } from '~/internals/graphql'
 
 export function createRepositoryResolvers<
   E extends AbstractRepositoryPayload,

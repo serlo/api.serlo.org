@@ -28,18 +28,14 @@ import {
   groupedExercise,
   solution,
 } from '../../../__fixtures__'
-import { Service } from '../../../src/internals/auth'
-import {
-  AbstractExercisePayload,
-  EntityType,
-  UuidPayload,
-} from '../../../src/schema'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
+import { Service } from '~/internals/auth'
+import { AbstractExercisePayload, EntityType, UuidPayload } from '~/schema/uuid'
 
 let client: Client
 

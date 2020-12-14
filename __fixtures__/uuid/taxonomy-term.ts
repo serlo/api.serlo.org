@@ -21,8 +21,8 @@
  */
 import * as R from 'ramda'
 
-import { DiscriminatorType, TaxonomyTermPayload } from '../../src/schema'
-import { Instance, TaxonomyTermType } from '../../src/types'
+import { DiscriminatorType, TaxonomyTermPayload } from '~/schema/uuid'
+import { Instance, TaxonomyTermType } from '~/types'
 
 export const taxonomyTermRoot: TaxonomyTermPayload = {
   __typename: DiscriminatorType.TaxonomyTerm,

@@ -21,9 +21,9 @@
  */
 import { ForbiddenError } from 'apollo-server'
 
-import { Service } from '../../internals/auth'
 import { resolveConnection } from '../connection'
 import { CacheResolvers } from './types'
+import { Service } from '~/internals/auth'
 
 export const resolvers: CacheResolvers = {
   Query: {

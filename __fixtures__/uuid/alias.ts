@@ -24,7 +24,7 @@ import {
   isUserPayload,
   RepositoryPayload,
   UserPayload,
-} from '../../src/schema'
+} from '~/schema/uuid'
 
 export function getAliasDataWithoutSubResolvers(
   payload: RepositoryPayload | UserPayload

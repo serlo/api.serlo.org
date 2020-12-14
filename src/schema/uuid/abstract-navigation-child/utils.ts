@@ -20,8 +20,8 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
-import { Resolver } from '../../../internals/graphql'
 import { Navigation, NavigationChildPayload } from './types'
+import { Resolver } from '~/internals/graphql'
 
 export interface NavigationChildResolvers<E extends NavigationChildPayload> {
   navigation: Resolver<E, never, Navigation | null>

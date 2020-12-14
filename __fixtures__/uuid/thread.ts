@@ -19,10 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { CommentPayload, DiscriminatorType } from '../../src/schema'
-import { UnsupportedComment, UnsupportedThread } from '../../src/types'
 import { article } from './article'
 import { user, user2 } from './user'
+import { CommentPayload, DiscriminatorType } from '~/schema/uuid'
+import { UnsupportedComment, UnsupportedThread } from '~/types'
 
 export const comment: CommentPayload = {
   id: 27778,

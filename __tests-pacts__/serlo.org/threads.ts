@@ -23,8 +23,8 @@ import { Matchers } from '@pact-foundation/pact'
 import fetch from 'node-fetch'
 
 import { article, comment } from '../../__fixtures__'
-import { CommentPayload } from '../../src/schema'
 import { addJsonInteraction, addUuidInteraction } from '../__utils__'
+import { CommentPayload } from '~/schema/uuid'
 
 test('Threads', async () => {
   // This is a noop test that just adds the interaction to the contract

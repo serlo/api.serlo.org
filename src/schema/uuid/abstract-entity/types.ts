@@ -19,8 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { TypeResolver } from '../../../internals/graphql'
-import { AbstractEntity, AbstractEntityRevision } from '../../../types'
 import { AppletPayload, AppletRevisionPayload } from '../applet'
 import { ArticlePayload, ArticleRevisionPayload } from '../article'
 import { CoursePayload, CourseRevisionPayload } from '../course'
@@ -37,6 +35,8 @@ import {
 } from '../grouped-exercise'
 import { SolutionPayload, SolutionRevisionPayload } from '../solution'
 import { VideoPayload, VideoRevisionPayload } from '../video'
+import { TypeResolver } from '~/internals/graphql'
+import { AbstractEntity, AbstractEntityRevision } from '~/types'
 
 export enum EntityType {
   Applet = 'Applet',

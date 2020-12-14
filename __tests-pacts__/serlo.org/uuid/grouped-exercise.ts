@@ -29,13 +29,13 @@ import {
   groupedExerciseRevision,
 } from '../../../__fixtures__'
 import {
-  GroupedExercisePayload,
-  GroupedExerciseRevisionPayload,
-} from '../../../src/schema'
-import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
+import {
+  GroupedExercisePayload,
+  GroupedExerciseRevisionPayload,
+} from '~/schema/uuid'
 
 test('GroupedExercise', async () => {
   await addUuidInteraction<GroupedExercisePayload>({

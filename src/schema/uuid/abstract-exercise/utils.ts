@@ -19,9 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { requestsOnlyFields, Resolver } from '../../../internals/graphql'
 import { SolutionPayload } from '../solution'
 import { AbstractExercisePayload } from './types'
+import { requestsOnlyFields, Resolver } from '~/internals/graphql'
 
 export interface ExerciseResolvers<E extends AbstractExercisePayload> {
   solution: Resolver<E, never, Partial<SolutionPayload> | null>

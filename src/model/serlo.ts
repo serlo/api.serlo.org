@@ -23,31 +23,33 @@ import { option as O } from 'fp-ts'
 import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
 
-import { Service } from '../internals/auth'
-import { Environment } from '../internals/environment'
+import { Service } from '~/internals/auth'
+import { Environment } from '~/internals/environment'
 import {
   createHelper,
   createMutation,
   createQuery,
   FetchHelpers,
-} from '../internals/model'
+} from '~/internals/model'
 import {
   AbstractNotificationEventPayload,
+  isUnsupportedNotificationEvent,
+  NotificationsPayload,
+} from '~/schema/notification'
+import { SubscriptionsPayload } from '~/schema/subscription'
+import {
   AbstractUuidPayload,
   AliasPayload,
   decodePath,
   encodePath,
   EntityPayload,
-  isUnsupportedNotificationEvent,
   isUnsupportedUuid,
   Navigation,
   NavigationPayload,
   NodeData,
-  NotificationsPayload,
-  SubscriptionsPayload,
   ThreadsPayload,
-} from '../schema'
-import { Instance, License } from '../types'
+} from '~/schema/uuid'
+import { Instance, License } from '~/types'
 
 export function createSerloModel({
   environment,
