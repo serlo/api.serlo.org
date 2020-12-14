@@ -6,6 +6,9 @@ import * as R from 'ramda'
 import { HOUR, MINUTE } from '../graphql/data-sources'
 import {
   AbstractUuidPayload,
+  AliasPayload,
+  decodePath,
+  encodePath,
   EntityPayload,
   isUnsupportedUuid,
   Navigation,
@@ -199,9 +202,35 @@ export function createSerloModel({
     },
   })
 
+  const getAlias = createQuery<
+    { path: string; instance: Instance },
+    AliasPayload
+  >(
+    {
+      getCurrentValue: async ({ path, instance }) => {
+        const cleanPath = encodePath(decodePath(path))
+        return get({ path: `/api/alias${cleanPath}`, instance })
+      },
+      maxAge: 5 * MINUTE,
+      getKey: ({ path, instance }) => {
+        const cleanPath = encodePath(decodePath(path))
+        return `${instance}.serlo.org/api/alias${cleanPath}`
+      },
+      getPayload: (key) => {
+        const instance = getInstanceFromKey(key)
+        const prefix = `${instance || ''}.serlo.org/api/alias`
+        return instance && key.startsWith(prefix)
+          ? O.some({ instance, path: key.replace(prefix, '') })
+          : O.none
+      },
+    },
+    environment
+  )
+
   return {
     getActiveAuthorIds,
     getActiveReviewerIds,
+    getAlias,
     getNavigationPayload,
     getNavigation,
     getUuid,

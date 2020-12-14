@@ -57,7 +57,7 @@ export const resolvers: AbstractUuidResolvers = {
             return uuid && uuid.__typename === 'User' ? uuid : null
           }
         }
-        const alias = await dataSources.serlo.getAlias(payload.alias)
+        const alias = await dataSources.model.serlo.getAlias(payload.alias)
         return alias
           ? ((await dataSources.model.serlo.getUuid({
               id: alias.id,

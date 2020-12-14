@@ -24,9 +24,6 @@ import jwt from 'jsonwebtoken'
 import { Instance, License } from '../../types'
 import {
   AbstractNotificationEventPayload,
-  AliasPayload,
-  decodePath,
-  encodePath,
   isUnsupportedNotificationEvent,
   NotificationsPayload,
   ThreadsPayload,
@@ -36,21 +33,6 @@ import { Service } from '../schema/types'
 import { CacheableDataSource, DAY, HOUR, MINUTE } from './cacheable-data-source'
 
 export class SerloDataSource extends CacheableDataSource {
-  public async getAlias({
-    path,
-    instance,
-  }: {
-    path: string
-    instance: Instance
-  }) {
-    const cleanPath = encodePath(decodePath(path))
-    return this.cacheAwareGet<AliasPayload>({
-      path: `/api/alias${cleanPath}`,
-      instance,
-      maxAge: 5 * MINUTE,
-    })
-  }
-
   public async getLicense({ id }: { id: number }): Promise<License> {
     return this.cacheAwareGet({
       path: `/api/license/${id}`,
