@@ -5,11 +5,13 @@ import * as R from 'ramda'
 // TODO: review, might want to move some stuff
 import { DAY, HOUR, MINUTE } from '../graphql/data-sources'
 import {
+  AbstractNotificationEventPayload,
   AbstractUuidPayload,
   AliasPayload,
   decodePath,
   encodePath,
   EntityPayload,
+  isUnsupportedNotificationEvent,
   isUnsupportedUuid,
   Navigation,
   NavigationPayload,
@@ -246,6 +248,33 @@ export function createSerloModel({
     environment
   )
 
+  const getNotificationEvent = createQuery<
+    { id: number },
+    AbstractNotificationEventPayload | null
+  >(
+    {
+      getCurrentValue: async ({ id }) => {
+        const notificationEvent = await get<AbstractNotificationEventPayload>({
+          path: `/api/event/${id}`,
+        })
+        return isUnsupportedNotificationEvent(notificationEvent)
+          ? null
+          : notificationEvent
+      },
+      maxAge: 1 * DAY,
+      getKey: ({ id }) => {
+        return `de.serlo.org/api/event/${id}`
+      },
+      getPayload: (key) => {
+        const prefix = 'de.serlo.org/api/event/'
+        return key.startsWith(prefix)
+          ? O.some({ id: parseInt(key.replace(prefix, ''), 10) })
+          : O.none
+      },
+    },
+    environment
+  )
+
   return {
     getActiveAuthorIds,
     getActiveReviewerIds,
@@ -253,6 +282,7 @@ export function createSerloModel({
     getLicense,
     getNavigationPayload,
     getNavigation,
+    getNotificationEvent,
     getUuid,
   }
 }
