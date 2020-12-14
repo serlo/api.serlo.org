@@ -78,7 +78,7 @@ export function createRepositoryResolvers<
       if (requestsOnlyFields('License', ['id'], info)) {
         return partialLicense
       }
-      return dataSources.serlo.getLicense(partialLicense)
+      return dataSources.model.serlo.getLicense(partialLicense)
     },
   }
 }

@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
 
 // TODO: review, might want to move some stuff
-import { HOUR, MINUTE } from '../graphql/data-sources'
+import { DAY, HOUR, MINUTE } from '../graphql/data-sources'
 import {
   AbstractUuidPayload,
   AliasPayload,
@@ -18,7 +18,7 @@ import {
 import { Service } from '../graphql/schema/types'
 import { Environment } from '../internals/environment'
 import { createHelper, createQuery, FetchHelpers } from '../internals/model'
-import { Instance } from '../types'
+import { Instance, License } from '../types'
 
 export function createSerloModel({
   environment,
@@ -219,8 +219,27 @@ export function createSerloModel({
       getPayload: (key) => {
         const instance = getInstanceFromKey(key)
         const prefix = `${instance || ''}.serlo.org/api/alias`
-        return instance && key.startsWith(prefix)
+        return instance && key.startsWith(`${prefix}/`)
           ? O.some({ instance, path: key.replace(prefix, '') })
+          : O.none
+      },
+    },
+    environment
+  )
+
+  const getLicense = createQuery<{ id: number }, License>(
+    {
+      getCurrentValue: async ({ id }) => {
+        return get({ path: `/api/license/${id}` })
+      },
+      maxAge: 1 * DAY,
+      getKey: ({ id }) => {
+        return `de.serlo.org/api/license/${id}`
+      },
+      getPayload: (key) => {
+        const prefix = 'de.serlo.org/api/license/'
+        return key.startsWith(prefix)
+          ? O.some({ id: parseInt(key.replace(prefix, ''), 10) })
           : O.none
       },
     },
@@ -231,6 +250,7 @@ export function createSerloModel({
     getActiveAuthorIds,
     getActiveReviewerIds,
     getAlias,
+    getLicense,
     getNavigationPayload,
     getNavigation,
     getUuid,
