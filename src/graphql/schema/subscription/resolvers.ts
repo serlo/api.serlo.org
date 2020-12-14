@@ -29,7 +29,7 @@ export const resolvers: SubscriptionResolvers = {
   Query: {
     async subscriptions(parent, cursorPayload, { dataSources, user }) {
       if (user === null) throw new AuthenticationError('You are not logged in')
-      const subscriptions = await dataSources.serlo.getSubscriptions({
+      const subscriptions = await dataSources.model.serlo.getSubscriptions({
         id: user,
       })
       const result = await Promise.all(
