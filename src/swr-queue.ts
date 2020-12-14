@@ -29,6 +29,7 @@ import {
   QuerySpec,
 } from './internals/model'
 import { log } from './log'
+import { createGoogleSpreadsheetApiModel } from './model'
 import { createSerloModel } from './model/serlo'
 import { redisUrl } from './redis-url'
 import { Timer } from './timer'
@@ -41,7 +42,6 @@ export interface SwrQueue {
 
 export interface UpdateJob {
   key: string
-  maxAge?: number
 }
 
 export const emptySwrQueue: SwrQueue = {
@@ -64,15 +64,14 @@ export function createSwrQueue({
   timer: Timer
 }): SwrQueue {
   // TODO: this should probably be somewhere else
-  const models = [
-    createSerloModel({
-      environment: {
-        cache,
-        swrQueue: emptySwrQueue,
-      },
-      fetchHelpers: createFetchHelpersFromNodeFetch(),
-    }),
-  ]
+  const args = {
+    environment: {
+      cache,
+      swrQueue: emptySwrQueue,
+    },
+    fetchHelpers: createFetchHelpersFromNodeFetch(),
+  }
+  const models = [createGoogleSpreadsheetApiModel(args), createSerloModel(args)]
 
   function getSpec(key: string): QuerySpec<unknown, unknown> | null {
     for (const model of models) {
@@ -102,7 +101,8 @@ export function createSwrQueue({
       if (spec === null) {
         return 'Skipped update because invalid key'
       }
-      const maxAge = spec.maxAge
+      const maxAge =
+        spec.maxAge === undefined ? undefined : timeToMilliseconds(spec.maxAge)
       const age = timer.now() - cacheEntry.value.lastModified
       if (maxAge === undefined || age <= maxAge * 1000) {
         return `Skipped update because cache non-stale.`
@@ -159,4 +159,31 @@ export function createSwrQueue({
       await queue.close()
     },
   }
+}
+
+export interface Time {
+  day?: number
+  days?: number
+  hour?: number
+  hours?: number
+  minute?: number
+  minutes?: number
+}
+
+function timeToMilliseconds({
+  day = 0,
+  days = 0,
+  hour = 0,
+  hours = 0,
+  minute = 0,
+  minutes = 0,
+}: Time) {
+  const SECOND = 1000
+  const MINUTE = 60 * SECOND
+  const HOUR = 60 * minute
+  const DAY = 24 * hour
+
+  return (
+    (day + days) * DAY + (hour + hours) * HOUR + (minute + minutes) * MINUTE
+  )
 }

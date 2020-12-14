@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
-import { gql } from 'apollo-server'
 import { option } from 'fp-ts'
 import { rest } from 'msw'
 
@@ -31,17 +30,15 @@ import {
   createUpdateCacheMutation,
   user,
   user2,
-  getUserDataWithoutSubResolvers,
 } from '../../__fixtures__'
-import { MajorDimension } from '../../src/graphql/data-sources/google-spreadsheet-api'
 import { Service } from '../../src/graphql/schema/types'
+import { MajorDimension } from '../../src/model'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
-  createTestClient,
   createSpreadsheetHandler,
-  createUuidHandler,
+  createTestClient,
 } from '../__utils__'
 
 const mockSpreadSheetData = {

@@ -22,11 +22,7 @@
 import { either as E, pipeable } from 'fp-ts'
 
 import { ErrorEvent } from '../../../../error-event'
-import {
-  CellValues,
-  GoogleSheetApi,
-  MajorDimension,
-} from '../../../data-sources/google-spreadsheet-api'
+import { CellValues, MajorDimension } from '../../../../model'
 import { ConnectionPayload, resolveConnection } from '../../connection'
 import { Context } from '../../types'
 import { createUuidResolvers } from '../abstract-uuid'
@@ -35,25 +31,25 @@ import { isUserPayload, UserPayload, UserResolvers } from './types'
 
 export const resolvers: UserResolvers = {
   Query: {
-    async activeAuthors(_parent, payload, { dataSources }) {
+    async activeAuthors(_parent, payload, context) {
       return resolveUserConnectionFromIds({
-        ids: await dataSources.model.serlo.getActiveAuthorIds(),
+        ids: await context.dataSources.model.serlo.getActiveAuthorIds(),
         payload,
-        dataSources,
+        context,
       })
     },
-    async activeDonors(_parent, payload, { dataSources }) {
+    async activeDonors(_parent, payload, context) {
       return resolveUserConnectionFromIds({
-        ids: await activeDonorIDs(dataSources.googleSheetApi),
+        ids: await activeDonorIDs(context),
         payload,
-        dataSources,
+        context,
       })
     },
-    async activeReviewers(_parent, payload, { dataSources }) {
+    async activeReviewers(_parent, payload, context) {
       return resolveUserConnectionFromIds({
-        ids: await dataSources.model.serlo.getActiveReviewerIds(),
+        ids: await context.dataSources.model.serlo.getActiveReviewerIds(),
         payload,
-        dataSources,
+        context,
       })
     },
   },
@@ -67,8 +63,8 @@ export const resolvers: UserResolvers = {
         user.id
       )
     },
-    async activeDonor(user, _args, { dataSources }) {
-      const ids = await activeDonorIDs(dataSources.googleSheetApi)
+    async activeDonor(user, _args, context) {
+      const ids = await activeDonorIDs(context)
 
       return ids.includes(user.id)
     },
@@ -83,14 +79,14 @@ export const resolvers: UserResolvers = {
 async function resolveUserConnectionFromIds({
   ids,
   payload,
-  dataSources,
+  context,
 }: {
   ids: number[]
   payload: ConnectionPayload
-  dataSources: Context['dataSources']
+  context: Context
 }) {
   const uuids = await Promise.all(
-    ids.map((id) => dataSources.model.serlo.getUuid({ id }))
+    ids.map((id) => context.dataSources.model.serlo.getUuid({ id }))
   )
   return resolveConnection<UserPayload>({
     // TODO: Report uuids which are not users to sentry
@@ -102,9 +98,9 @@ async function resolveUserConnectionFromIds({
   })
 }
 
-async function activeDonorIDs(googleSheetApi: GoogleSheetApi) {
+async function activeDonorIDs({ dataSources }: Context) {
   return pipeable.pipe(
-    await googleSheetApi.getValues({
+    await dataSources.model.googleSpreadsheetApi.getValues({
       spreadsheetId: process.env.ACTIVE_DONORS_SPREADSHEET_ID,
       range: 'Tabellenblatt1!A:A',
       majorDimension: MajorDimension.Columns,

@@ -1,10 +1,8 @@
 import { option as O } from 'fp-ts'
-import { unknown } from 'io-ts'
 import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
 
 // TODO: review, might want to move some stuff
-import { DAY, HOUR, MINUTE } from '../graphql/data-sources'
 import {
   AbstractNotificationEventPayload,
   AbstractUuidPayload,
@@ -93,7 +91,7 @@ export function createSerloModel({
         })
         return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
       },
-      maxAge: 5 * MINUTE,
+      maxAge: { minutes: 5 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/uuid/${id}`
       },
@@ -113,7 +111,7 @@ export function createSerloModel({
           path: '/api/user/active-authors',
         })
       },
-      maxAge: 1 * HOUR,
+      maxAge: { hour: 1 },
       getKey: () => {
         return 'de.serlo.org/api/user/active-authors'
       },
@@ -132,7 +130,7 @@ export function createSerloModel({
           path: '/api/user/active-reviewers',
         })
       },
-      maxAge: 1 * HOUR,
+      maxAge: { hour: 1 },
       getKey: () => {
         return 'de.serlo.org/api/user/active-reviewers'
       },
@@ -154,7 +152,7 @@ export function createSerloModel({
           instance,
         })
       },
-      maxAge: 1 * HOUR,
+      maxAge: { hour: 1 },
       getKey: ({ instance }) => {
         return `${instance}.serlo.org/api/navigation`
       },
@@ -246,7 +244,7 @@ export function createSerloModel({
         const cleanPath = encodePath(decodePath(path))
         return get({ path: `/api/alias${cleanPath}`, instance })
       },
-      maxAge: 5 * MINUTE,
+      maxAge: { minutes: 5 },
       getKey: ({ path, instance }) => {
         const cleanPath = encodePath(decodePath(path))
         return `${instance}.serlo.org/api/alias${cleanPath}`
@@ -267,7 +265,7 @@ export function createSerloModel({
       getCurrentValue: async ({ id }) => {
         return get({ path: `/api/license/${id}` })
       },
-      maxAge: 1 * DAY,
+      maxAge: { day: 1 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/license/${id}`
       },
@@ -294,7 +292,7 @@ export function createSerloModel({
           ? null
           : notificationEvent
       },
-      maxAge: 1 * DAY,
+      maxAge: { day: 1 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/event/${id}`
       },
@@ -320,7 +318,7 @@ export function createSerloModel({
           notifications: Object.values(payload.notifications),
         }
       },
-      maxAge: 1 * HOUR,
+      maxAge: { hour: 1 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/notifications/${id}`
       },
@@ -365,7 +363,7 @@ export function createSerloModel({
           path: `/api/subscriptions/${id}`,
         })
       },
-      maxAge: 1 * HOUR,
+      maxAge: { hour: 1 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/subscriptions/${id}`
       },
@@ -386,7 +384,7 @@ export function createSerloModel({
           path: `/api/threads/${id}`,
         })
       },
-      maxAge: 5 * MINUTE,
+      maxAge: { minutes: 5 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/threads/${id}`
       },
@@ -407,7 +405,7 @@ export function createSerloModel({
           path: `/api/cache-keys`,
         })
       },
-      maxAge: 1 * HOUR,
+      maxAge: { hour: 1 },
       getKey: () => {
         return 'de.serlo.org/api/cache-keys'
       },

@@ -28,7 +28,6 @@ import fetch from 'node-fetch'
 import { URLSearchParams } from 'url'
 
 import { ModelDataSource } from '../internals/model'
-import { GoogleSheetApi } from './data-sources/google-spreadsheet-api'
 import { Environment } from './environment'
 import { schema } from './schema'
 import { Context, Service } from './schema/types'
@@ -46,10 +45,6 @@ export function getGraphQLOptions(
     dataSources() {
       return {
         model: new ModelDataSource(environment),
-        googleSheetApi: new GoogleSheetApi({
-          apiKey: process.env.GOOGLE_API_KEY,
-          environment,
-        }),
       }
     },
     context({ req }): Promise<Pick<Context, 'service' | 'user'>> {

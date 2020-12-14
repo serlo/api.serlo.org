@@ -1,10 +1,11 @@
 import { option as O, pipeable } from 'fp-ts'
 
+import { Time } from '../../swr-queue'
 import { Environment } from '../environment'
 
 export interface QuerySpec<P, R> {
   getCurrentValue: (payload: P, previousValue: R | null) => Promise<R>
-  maxAge: number
+  maxAge: Time | undefined
   getKey: (payload: P) => string
   getPayload: (key: string) => O.Option<P>
 }
@@ -35,8 +36,6 @@ export function createQuery<P, R>(
         async (cacheEntry) => {
           await environment.swrQueue.queue({
             key,
-            // TODO: no longer needed
-            maxAge: spec.maxAge,
           })
           return cacheEntry.value
         }
