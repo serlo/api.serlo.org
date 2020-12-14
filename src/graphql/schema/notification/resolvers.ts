@@ -48,7 +48,7 @@ export const resolvers: NotificationResolvers = {
       { dataSources, user }
     ) {
       if (user === null) throw new AuthenticationError('You are not logged in')
-      const { notifications } = await dataSources.serlo.getNotifications({
+      const { notifications } = await dataSources.model.serlo.getNotifications({
         id: user,
       })
       return resolveConnection<NotificationPayload>({
