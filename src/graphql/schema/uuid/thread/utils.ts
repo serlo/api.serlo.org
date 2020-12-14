@@ -30,7 +30,7 @@ export function createThreadResolvers(): UuidResolvers {
   return {
     async threads(parent, cursorPayload, { dataSources }) {
       const { firstCommentIds } = await Promise.resolve(
-        dataSources.serlo.getThreadIds({ id: parent.id })
+        dataSources.model.serlo.getThreadIds({ id: parent.id })
       )
 
       const threads = await Promise.all(

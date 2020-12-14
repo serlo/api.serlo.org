@@ -17,7 +17,7 @@ import {
   NavigationPayload,
   NodeData,
   NotificationsPayload,
-  SubscriptionsPayload,
+  SubscriptionsPayload, ThreadsPayload,
 } from '../graphql/schema'
 import { Service } from '../graphql/schema/types'
 import { Environment } from '../internals/environment'
@@ -380,6 +380,27 @@ export function createSerloModel({
     environment
   )
 
+  const getThreadIds = createQuery<{ id: number }, ThreadsPayload>(
+      {
+        getCurrentValue: async ({ id }) => {
+          return get({
+            path: `/api/threads/${id}`,
+          })
+        },
+        maxAge: 5 * MINUTE,
+        getKey: ({ id }) => {
+          return `de.serlo.org/api/threads/${id}`
+        },
+        getPayload: (key) => {
+          const prefix = 'de.serlo.org/api/threads/'
+          return key.startsWith(prefix)
+              ? O.some({ id: parseInt(key.replace(prefix, ''), 10) })
+              : O.none
+        },
+      },
+      environment
+  )
+
   return {
     getActiveAuthorIds,
     getActiveReviewerIds,
@@ -390,6 +411,7 @@ export function createSerloModel({
     getNotificationEvent,
     getNotifications,
     getSubscriptions,
+    getThreadIds,
     getUuid,
     setNotificationState,
   }
