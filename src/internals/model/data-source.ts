@@ -19,4 +19,8 @@ export class ModelDataSource extends RESTDataSource {
       },
     })
   }
+
+  public async updateCacheValue({ key }: { key: string }) {
+    await this.environment.swrQueue.queue({ key })
+  }
 }

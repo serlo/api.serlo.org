@@ -1,4 +1,5 @@
 import { option as O } from 'fp-ts'
+import { unknown } from 'io-ts'
 import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
 
@@ -333,14 +334,11 @@ export function createSerloModel({
     environment
   )
 
-  const setNotificationState = createMutation<
-    {
-      id: number
-      userId: number
-      unread: boolean
-    },
-    void
-  >({
+  const setNotificationState = createMutation<{
+    id: number
+    userId: number
+    unread: boolean
+  }>({
     mutate: async (notificationState: {
       id: number
       userId: number
@@ -421,6 +419,18 @@ export function createSerloModel({
     environment
   )
 
+  const setCacheValue = createMutation<{ key: string; value: unknown }>({
+    mutate: async ({ key, value }) => {
+      await environment.cache.set({ key, value })
+    },
+  })
+
+  const removeCacheValue = createMutation<{ key: string }>({
+    mutate: async ({ key }) => {
+      await environment.cache.remove({ key })
+    },
+  })
+
   return {
     getActiveAuthorIds,
     getActiveReviewerIds,
@@ -434,6 +444,8 @@ export function createSerloModel({
     getSubscriptions,
     getThreadIds,
     getUuid,
+    removeCacheValue,
+    setCacheValue,
     setNotificationState,
   }
 }
