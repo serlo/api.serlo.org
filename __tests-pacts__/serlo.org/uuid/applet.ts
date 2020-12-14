@@ -28,10 +28,7 @@ import {
   getAppletDataWithoutSubResolvers,
   getAppletRevisionDataWithoutSubResolvers,
 } from '../../../__fixtures__'
-import {
-  AppletPayload,
-  AppletRevisionPayload,
-} from '../../../src/graphql/schema'
+import { AppletPayload, AppletRevisionPayload } from '../../../src/schema'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,

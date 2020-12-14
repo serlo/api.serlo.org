@@ -19,9 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { UserPayload, isUserPayload } from '../../src/graphql/schema'
-import { RepositoryPayload } from '../../src/graphql/schema/uuid/abstract-repository'
-import { encodePath } from '../../src/graphql/schema/uuid/alias'
+import {
+  encodePath,
+  isUserPayload,
+  RepositoryPayload,
+  UserPayload,
+} from '../../src/schema'
 
 export function getAliasDataWithoutSubResolvers(
   payload: RepositoryPayload | UserPayload

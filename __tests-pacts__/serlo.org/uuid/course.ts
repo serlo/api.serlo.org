@@ -28,10 +28,7 @@ import {
   getCourseDataWithoutSubResolvers,
   getCourseRevisionDataWithoutSubResolvers,
 } from '../../../__fixtures__'
-import {
-  CoursePayload,
-  CourseRevisionPayload,
-} from '../../../src/graphql/schema'
+import { CoursePayload, CourseRevisionPayload } from '../../../src/schema'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,

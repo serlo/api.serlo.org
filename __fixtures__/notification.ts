@@ -39,7 +39,7 @@ import {
   SetTaxonomyTermNotificationEventPayload,
   SetThreadStateNotificationEventPayload,
   SetUuidStateNotificationEventPayload,
-} from '../src/graphql/schema'
+} from '../src/schema'
 import { Instance } from '../src/types'
 import {
   article,

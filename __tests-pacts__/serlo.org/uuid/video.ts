@@ -28,7 +28,7 @@ import {
   video,
   videoRevision,
 } from '../../../__fixtures__'
-import { VideoPayload, VideoRevisionPayload } from '../../../src/graphql/schema'
+import { VideoPayload, VideoRevisionPayload } from '../../../src/schema'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,

@@ -56,7 +56,7 @@ import {
   setThreadStateNotificationEvent,
   setUuidStateNotificationEvent,
 } from '../../__fixtures__'
-import { AbstractNotificationEventPayload } from '../../src/graphql/schema/notification'
+import { AbstractNotificationEventPayload } from '../../src/schema'
 import { addJsonInteraction, assertSuccessfulGraphQLQuery } from '../__utils__'
 
 async function addNotificationEventInteraction<

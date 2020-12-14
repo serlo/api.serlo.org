@@ -26,8 +26,8 @@ import {
   article,
   getArticleDataWithoutSubResolvers,
   user,
-} from '../../__fixtures__/uuid'
-import { Service } from '../../src/graphql/schema/types'
+} from '../../__fixtures__'
+import { Service } from '../../src/internals/auth'
 import {
   assertSuccessfulGraphQLQuery,
   createTestClient,

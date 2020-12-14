@@ -31,7 +31,7 @@ import {
   user,
   user2,
 } from '../../__fixtures__'
-import { Service } from '../../src/graphql/schema/types'
+import { Service } from '../../src/internals/auth'
 import { MajorDimension } from '../../src/model'
 import {
   assertFailingGraphQLMutation,

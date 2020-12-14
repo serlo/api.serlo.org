@@ -28,10 +28,7 @@ import {
   solution,
   solutionRevision,
 } from '../../../__fixtures__'
-import {
-  SolutionPayload,
-  SolutionRevisionPayload,
-} from '../../../src/graphql/schema'
+import { SolutionPayload, SolutionRevisionPayload } from '../../../src/schema'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,

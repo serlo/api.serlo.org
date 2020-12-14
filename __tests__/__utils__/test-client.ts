@@ -25,9 +25,10 @@ import {
   createTestClient as createApolloTestClient,
 } from 'apollo-server-testing'
 
-import { getGraphQLOptions } from '../../src/graphql'
-import { Context, Service } from '../../src/graphql/schema/types'
-import { emptySwrQueue } from '../../src/swr-queue'
+import { getGraphQLOptions } from '../../src/internals/app'
+import { Service } from '../../src/internals/auth'
+import { Context } from '../../src/internals/graphql'
+import { emptySwrQueue } from '../../src/internals/swr-queue'
 
 export type Client = ApolloServerTestClient
 

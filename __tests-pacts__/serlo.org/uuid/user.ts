@@ -23,7 +23,7 @@ import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
 import { getUserDataWithoutSubResolvers, user } from '../../../__fixtures__'
-import { UserPayload } from '../../../src/graphql/schema/uuid/user'
+import { UserPayload } from '../../../src/schema'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,

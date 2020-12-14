@@ -27,7 +27,7 @@ import rimraf from 'rimraf'
 import util from 'util'
 
 import { createTestClient } from '../__tests__/__utils__'
-import { Service } from '../src/graphql/schema/types'
+import { Service } from '../src/internals/auth'
 import {
   createAfterAll,
   createAfterEach,
