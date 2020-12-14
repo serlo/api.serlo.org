@@ -21,7 +21,7 @@
  */
 import { GraphQLResolveInfo } from 'graphql'
 
-import { DataSources } from '../data-sources'
+import { ModelDataSource } from '../../internals/model'
 
 export type Resolver<P, A, T> = (
   parent: P,
@@ -40,7 +40,9 @@ export enum Service {
 }
 
 export interface Context {
-  dataSources: DataSources
+  dataSources: {
+    model: ModelDataSource
+  }
   service: Service
   user: number | null
 }
