@@ -23,17 +23,18 @@ import Queue from 'bee-queue'
 import { option as O } from 'fp-ts'
 import * as R from 'ramda'
 
-import { modelFactories } from '../model'
 import { Cache, Priority } from './cache'
 import { log } from './log'
 import { createFetchHelpersFromNodeFetch, isQuery, QuerySpec } from './model'
 import { redisUrl } from './redis-url'
 import { Timer } from './timer'
+import { modelFactories } from '~/model'
 
 export interface SwrQueue {
   queue(updateJob: UpdateJob): Promise<never>
   ready(): Promise<void>
   quit(): Promise<void>
+  _queue: never
 }
 
 export interface UpdateJob {
@@ -50,6 +51,7 @@ export const emptySwrQueue: SwrQueue = {
   quit() {
     return Promise.resolve()
   },
+  _queue: undefined as never,
 }
 
 export function createSwrQueue({
@@ -96,17 +98,17 @@ export function createSwrQueue({
       }
       const spec = getSpec(key)
       if (spec === null) {
-        return 'Skipped update because invalid key'
+        return 'Skipped update because invalid key.'
       }
       const maxAge =
         spec.maxAge === undefined ? undefined : timeToMilliseconds(spec.maxAge)
       const age = timer.now() - cacheEntry.value.lastModified
-      if (maxAge === undefined || age <= maxAge * 1000) {
-        return `Skipped update because cache non-stale.`
+      if (maxAge === undefined || age <= maxAge) {
+        return 'Skipped update because cache non-stale.'
       }
       const payload = spec.getPayload(key)
       if (O.isNone(payload)) {
-        return 'Skipped updated because invalid key'
+        return 'Skipped updated because invalid key.'
       }
       await cache.set({
         key,
@@ -127,6 +129,7 @@ export function createSwrQueue({
   )
 
   return {
+    _queue: (queue as unknown) as never,
     async queue(updateJob) {
       log.debug('Queuing job', updateJob.key)
       // By setting the job's ID, we make sure that there will be only one update job for the same key
@@ -165,15 +168,19 @@ export interface Time {
   hours?: number
   minute?: number
   minutes?: number
+  second?: number
+  seconds?: number
 }
 
-function timeToMilliseconds({
+export function timeToMilliseconds({
   day = 0,
   days = 0,
   hour = 0,
   hours = 0,
   minute = 0,
   minutes = 0,
+  second = 0,
+  seconds = 0,
 }: Time) {
   const SECOND = 1000
   const MINUTE = 60 * SECOND
@@ -181,6 +188,9 @@ function timeToMilliseconds({
   const DAY = 24 * hour
 
   return (
-    (day + days) * DAY + (hour + hours) * HOUR + (minute + minutes) * MINUTE
+    (day + days) * DAY +
+    (hour + hours) * HOUR +
+    (minute + minutes) * MINUTE +
+    (second + seconds) * SECOND
   )
 }
