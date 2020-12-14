@@ -51,7 +51,7 @@ export const resolvers: UserResolvers = {
     },
     async activeReviewers(_parent, payload, { dataSources }) {
       return resolveUserConnectionFromIds({
-        ids: await dataSources.serlo.getActiveReviewerIds(),
+        ids: await dataSources.model.serlo.getActiveReviewerIds(),
         payload,
         dataSources,
       })
@@ -73,7 +73,9 @@ export const resolvers: UserResolvers = {
       return ids.includes(user.id)
     },
     async activeReviewer(user, _args, { dataSources }) {
-      return (await dataSources.serlo.getActiveReviewerIds()).includes(user.id)
+      return (await dataSources.model.serlo.getActiveReviewerIds()).includes(
+        user.id
+      )
     },
   },
 }

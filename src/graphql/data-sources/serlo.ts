@@ -36,13 +36,6 @@ import { Service } from '../schema/types'
 import { CacheableDataSource, DAY, HOUR, MINUTE } from './cacheable-data-source'
 
 export class SerloDataSource extends CacheableDataSource {
-  public async getActiveReviewerIds(): Promise<number[]> {
-    return await this.cacheAwareGet<number[]>({
-      path: '/api/user/active-reviewers',
-      maxAge: 1 * HOUR,
-    })
-  }
-
   public async getAlias({
     path,
     instance,
