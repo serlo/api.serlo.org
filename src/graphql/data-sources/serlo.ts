@@ -33,18 +33,6 @@ import { Service } from '../schema/types'
 import { CacheableDataSource, DAY, HOUR, MINUTE } from './cacheable-data-source'
 
 export class SerloDataSource extends CacheableDataSource {
-  public async getNotificationEvent<
-    T extends AbstractNotificationEventPayload
-  >({ id }: { id: number }): Promise<T | null> {
-    const notificationEvent = await this.cacheAwareGet<T>({
-      path: `/api/event/${id}`,
-      maxAge: 1 * DAY,
-    })
-    return isUnsupportedNotificationEvent(notificationEvent)
-      ? null
-      : notificationEvent
-  }
-
   public async getNotifications({
     id,
   }: {
