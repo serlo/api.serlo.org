@@ -16,6 +16,7 @@ import {
   Navigation,
   NavigationPayload,
   NodeData,
+  NotificationsPayload,
 } from '../graphql/schema'
 import { Service } from '../graphql/schema/types'
 import { Environment } from '../internals/environment'
@@ -275,6 +276,32 @@ export function createSerloModel({
     environment
   )
 
+  const getNotifications = createQuery<{ id: number }, NotificationsPayload>(
+    {
+      getCurrentValue: async ({ id }) => {
+        const payload = await get<NotificationsPayload>({
+          path: `/api/notifications/${id}`,
+        })
+        return {
+          ...payload,
+          // Sometimes, Zend serializes an array as an object... This line ensures that we have an array.
+          notifications: Object.values(payload.notifications),
+        }
+      },
+      maxAge: 1 * HOUR,
+      getKey: ({ id }) => {
+        return `de.serlo.org/api/notifications/${id}`
+      },
+      getPayload: (key) => {
+        const prefix = 'de.serlo.org/api/notifications/'
+        return key.startsWith(prefix)
+          ? O.some({ id: parseInt(key.replace(prefix, ''), 10) })
+          : O.none
+      },
+    },
+    environment
+  )
+
   return {
     getActiveAuthorIds,
     getActiveReviewerIds,
@@ -283,6 +310,7 @@ export function createSerloModel({
     getNavigationPayload,
     getNavigation,
     getNotificationEvent,
+    getNotifications,
     getUuid,
   }
 }

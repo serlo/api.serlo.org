@@ -22,34 +22,12 @@
 import jwt from 'jsonwebtoken'
 
 import { Instance } from '../../types'
-import {
-  AbstractNotificationEventPayload,
-  isUnsupportedNotificationEvent,
-  NotificationsPayload,
-  ThreadsPayload,
-} from '../schema'
+import { NotificationsPayload, ThreadsPayload } from '../schema'
 import { SubscriptionsPayload } from '../schema/subscription'
 import { Service } from '../schema/types'
-import { CacheableDataSource, DAY, HOUR, MINUTE } from './cacheable-data-source'
+import { CacheableDataSource, HOUR, MINUTE } from './cacheable-data-source'
 
 export class SerloDataSource extends CacheableDataSource {
-  public async getNotifications({
-    id,
-  }: {
-    id: number
-    bypassCache?: boolean
-  }): Promise<NotificationsPayload> {
-    const response = await this.cacheAwareGet<NotificationsPayload>({
-      path: `/api/notifications/${id}`,
-      maxAge: 1 * HOUR,
-    })
-    return {
-      ...response,
-      // Sometimes, Zend serializes an array as an object... This line ensures that we have an array.
-      notifications: Object.values(response.notifications),
-    }
-  }
-
   public async setNotificationState(notificationState: {
     id: number
     userId: number
