@@ -17,6 +17,7 @@ import {
   NavigationPayload,
   NodeData,
   NotificationsPayload,
+  SubscriptionsPayload,
 } from '../graphql/schema'
 import { Service } from '../graphql/schema/types'
 import { Environment } from '../internals/environment'
@@ -358,6 +359,27 @@ export function createSerloModel({
     },
   })
 
+  const getSubscriptions = createQuery<{ id: number }, SubscriptionsPayload>(
+    {
+      getCurrentValue: async ({ id }) => {
+        return get({
+          path: `/api/subscriptions/${id}`,
+        })
+      },
+      maxAge: 1 * HOUR,
+      getKey: ({ id }) => {
+        return `de.serlo.org/api/subscriptions/${id}`
+      },
+      getPayload: (key) => {
+        const prefix = 'de.serlo.org/api/subscriptions/'
+        return key.startsWith(prefix)
+          ? O.some({ id: parseInt(key.replace(prefix, ''), 10) })
+          : O.none
+      },
+    },
+    environment
+  )
+
   return {
     getActiveAuthorIds,
     getActiveReviewerIds,
@@ -367,6 +389,7 @@ export function createSerloModel({
     getNavigation,
     getNotificationEvent,
     getNotifications,
+    getSubscriptions,
     getUuid,
     setNotificationState,
   }
