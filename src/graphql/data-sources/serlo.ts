@@ -22,18 +22,10 @@
 import jwt from 'jsonwebtoken'
 
 import { Instance } from '../../types'
-import { ThreadsPayload } from '../schema'
 import { Service } from '../schema/types'
-import { CacheableDataSource, HOUR, MINUTE } from './cacheable-data-source'
+import { CacheableDataSource, HOUR } from './cacheable-data-source'
 
 export class SerloDataSource extends CacheableDataSource {
-  public async getThreadIds({ id }: { id: number }): Promise<ThreadsPayload> {
-    return this.cacheAwareGet({
-      path: `/api/threads/${id}`,
-      maxAge: 5 * MINUTE,
-    })
-  }
-
   private async cacheAwareGet<T>({
     path,
     instance,
