@@ -22,30 +22,12 @@
 import jwt from 'jsonwebtoken'
 
 import { Instance } from '../../types'
-import { NotificationsPayload, ThreadsPayload } from '../schema'
+import { ThreadsPayload } from '../schema'
 import { SubscriptionsPayload } from '../schema/subscription'
 import { Service } from '../schema/types'
 import { CacheableDataSource, HOUR, MINUTE } from './cacheable-data-source'
 
 export class SerloDataSource extends CacheableDataSource {
-  public async setNotificationState(notificationState: {
-    id: number
-    userId: number
-    unread: boolean
-  }) {
-    const value = await this.customPost<NotificationsPayload>({
-      path: `/api/set-notification-state/${notificationState.id}`,
-      body: {
-        userId: notificationState.userId,
-        unread: notificationState.unread,
-      },
-    })
-    await this.setCacheValue({
-      key: this.getCacheKey(`/api/notifications/${notificationState.userId}`),
-      update: () => Promise.resolve(value),
-    })
-  }
-
   public async getSubscriptions({
     id,
   }: {
@@ -55,27 +37,6 @@ export class SerloDataSource extends CacheableDataSource {
       path: `/api/subscriptions/${id}`,
       maxAge: 1 * HOUR,
     })
-  }
-
-  private async customPost<T>({
-    path,
-    instance = Instance.De,
-    body,
-  }: {
-    path: string
-    instance?: Instance
-    body: Record<string, unknown>
-  }): Promise<T> {
-    return await super.post(
-      `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
-      body,
-      {
-        headers: {
-          Authorization: `Serlo Service=${getToken()}`,
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-      }
-    )
   }
 
   public async getThreadIds({ id }: { id: number }): Promise<ThreadsPayload> {
