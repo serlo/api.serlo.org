@@ -21,21 +21,10 @@
  */
 import { ModelDataSource } from '../../internals/model'
 import { GoogleSheetApi } from './google-spreadsheet-api'
-import { SerloDataSource } from './serlo'
 
 export interface DataSources {
-  serlo: SerloDataSource
   googleSheetApi: GoogleSheetApi
   model: ModelDataSource
 }
 
 export * from './cacheable-data-source'
-
-export const dataSourceToCacheKeys = {
-  serlo: (key: string) => {
-    return key.includes('serlo.org') // FIXME: what if  www.serlo.org/spreadsheet- happens?
-  },
-  googleSheetApi: (key: string) => {
-    return key.includes('spreadsheet-')
-  },
-}

@@ -21,7 +21,6 @@
  */
 import { ForbiddenError } from 'apollo-server'
 
-import { dataSourceToCacheKeys } from '../../data-sources'
 import { resolveConnection } from '../connection'
 import { Service } from '../types'
 import { CacheResolvers } from './types'
@@ -46,9 +45,9 @@ export const resolvers: CacheResolvers = {
           'You do not have the permissions to set the cache'
         )
       }
-      await dataSources.serlo.setCacheValue({
+      await dataSources.model.serlo.setCacheValue({
         key,
-        update: () => Promise.resolve(value),
+        value,
       })
       return null
     },
@@ -58,7 +57,7 @@ export const resolvers: CacheResolvers = {
           'You do not have the permissions to remove the cache'
         )
       }
-      await dataSources.serlo.removeCache(key)
+      await dataSources.model.serlo.removeCacheValue({ key })
       return null
     },
     async _updateCache(_parent, { keys }, { dataSources, service }) {
@@ -69,14 +68,7 @@ export const resolvers: CacheResolvers = {
       }
       await Promise.all(
         keys.map(async (key) => {
-          let dataSource: keyof typeof dataSourceToCacheKeys
-          for (dataSource in dataSourceToCacheKeys) {
-            if (dataSourceToCacheKeys[dataSource](key)) {
-              await dataSources[dataSource].updateCacheValue({ key })
-              return
-            }
-          }
-          throw new Error(`"${key}" is not a valid key`)
+          await dataSources.model.updateCacheValue({ key })
         })
       )
       return null
