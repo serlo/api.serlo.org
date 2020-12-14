@@ -28,10 +28,7 @@ import {
   getExerciseDataWithoutSubResolvers,
   getExerciseRevisionDataWithoutSubResolvers,
 } from '../../../__fixtures__'
-import {
-  ExercisePayload,
-  ExerciseRevisionPayload,
-} from '../../../src/graphql/schema'
+import { ExercisePayload, ExerciseRevisionPayload } from '../../../src/schema'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,

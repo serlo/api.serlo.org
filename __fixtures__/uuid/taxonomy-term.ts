@@ -21,10 +21,7 @@
  */
 import * as R from 'ramda'
 
-import {
-  DiscriminatorType,
-  TaxonomyTermPayload,
-} from '../../src/graphql/schema'
+import { DiscriminatorType, TaxonomyTermPayload } from '../../src/schema'
 import { Instance, TaxonomyTermType } from '../../src/types'
 
 export const taxonomyTermRoot: TaxonomyTermPayload = {

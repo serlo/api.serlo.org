@@ -21,13 +21,13 @@
  */
 import { rest } from 'msw'
 
-import { LicensePayload } from '../../src/graphql/schema/license'
-import { NotificationEventPayload } from '../../src/graphql/schema/notification'
 import {
   AliasPayload,
+  LicensePayload,
   NavigationPayload,
+  NotificationEventPayload,
   UuidPayload,
-} from '../../src/graphql/schema/uuid'
+} from '../../src/schema'
 import { Instance } from '../../src/types'
 
 export function createAliasHandler(alias: AliasPayload) {

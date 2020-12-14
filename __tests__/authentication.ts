@@ -21,8 +21,7 @@
  */
 import jwt from 'jsonwebtoken'
 
-import { handleAuthentication } from '../src/graphql'
-import { Service } from '../src/graphql/schema/types'
+import { handleAuthentication, Service } from '../src/internals/auth'
 
 describe('Service token only', () => {
   test('valid serlo.org token', async () => {

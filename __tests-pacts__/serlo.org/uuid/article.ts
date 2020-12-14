@@ -28,10 +28,7 @@ import {
   getArticleDataWithoutSubResolvers,
   getArticleRevisionDataWithoutSubResolvers,
 } from '../../../__fixtures__'
-import {
-  ArticlePayload,
-  ArticleRevisionPayload,
-} from '../../../src/graphql/schema'
+import { ArticlePayload, ArticleRevisionPayload } from '../../../src/schema'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,

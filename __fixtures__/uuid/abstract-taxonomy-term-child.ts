@@ -21,7 +21,7 @@
  */
 import { gql } from 'apollo-server'
 
-import { TaxonomyTermChildPayload } from '../../src/graphql/schema'
+import { TaxonomyTermChildPayload } from '../../src/schema'
 
 export function createEntityTaxonomyTermsQuery(
   variables: TaxonomyTermChildPayload

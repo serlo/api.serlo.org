@@ -22,10 +22,7 @@
 import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
-import {
-  RepositoryPayload,
-  RevisionPayload,
-} from '../../src/graphql/schema/uuid/abstract-repository'
+import { RepositoryPayload, RevisionPayload } from '../../src/schema'
 import { getUuidDataWithoutSubResolvers } from './abstract-uuid'
 import { getAliasDataWithoutSubResolvers } from './alias'
 

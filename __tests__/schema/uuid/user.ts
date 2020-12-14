@@ -28,8 +28,8 @@ import {
   user,
   user2,
 } from '../../../__fixtures__'
-import { Service } from '../../../src/graphql/schema/types'
-import { UuidPayload } from '../../../src/graphql/schema/uuid/abstract-uuid'
+import { Service } from '../../../src/internals/auth'
+import { UuidPayload } from '../../../src/schema'
 import { Instance } from '../../../src/types'
 import {
   assertSuccessfulGraphQLQuery,

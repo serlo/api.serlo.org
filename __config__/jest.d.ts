@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 /* eslint-disable @typescript-eslint/no-namespace */
-import { Cache } from '../src/cache'
+import { Cache } from '../src/internals/cache'
 import { MockTimer } from './setup'
 
 declare global {

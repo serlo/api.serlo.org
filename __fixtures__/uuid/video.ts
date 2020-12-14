@@ -26,7 +26,7 @@ import {
   EntityType,
   VideoPayload,
   VideoRevisionPayload,
-} from '../../src/graphql/schema'
+} from '../../src/schema'
 import { Instance } from '../../src/types'
 import { license } from '../license'
 

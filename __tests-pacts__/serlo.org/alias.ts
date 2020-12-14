@@ -22,7 +22,7 @@
 import { Matchers } from '@pact-foundation/pact'
 import fetch from 'node-fetch'
 
-import { AliasPayload } from '../../src/graphql/schema/uuid/alias'
+import { AliasPayload } from '../../src/schema'
 import { Instance } from '../../src/types'
 import { addJsonInteraction } from '../__utils__'
 

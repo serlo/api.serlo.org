@@ -28,7 +28,7 @@ import {
   taxonomyTermRoot,
   taxonomyTermSubject,
 } from '../../../__fixtures__'
-import { TaxonomyTermPayload } from '../../../src/graphql/schema'
+import { TaxonomyTermPayload } from '../../../src/schema'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,

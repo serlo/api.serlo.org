@@ -27,7 +27,7 @@ import {
   EntityType,
   GroupedExercisePayload,
   GroupedExerciseRevisionPayload,
-} from '../../src/graphql/schema'
+} from '../../src/schema'
 import { Instance } from '../../src/types'
 import { license } from '../license'
 import { exerciseGroup } from './exercise-group'

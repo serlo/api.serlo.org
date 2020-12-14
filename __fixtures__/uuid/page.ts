@@ -25,7 +25,7 @@ import {
   DiscriminatorType,
   PagePayload,
   PageRevisionPayload,
-} from '../../src/graphql/schema'
+} from '../../src/schema'
 import { Instance } from '../../src/types'
 import { license } from '../license'
 

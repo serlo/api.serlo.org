@@ -28,12 +28,12 @@ import {
   groupedExercise,
   solution,
 } from '../../../__fixtures__'
+import { Service } from '../../../src/internals/auth'
 import {
   AbstractExercisePayload,
   EntityType,
   UuidPayload,
-} from '../../../src/graphql/schema'
-import { Service } from '../../../src/graphql/schema/types'
+} from '../../../src/schema'
 import {
   assertSuccessfulGraphQLQuery,
   Client,

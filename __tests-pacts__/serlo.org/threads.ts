@@ -22,8 +22,8 @@
 import { Matchers } from '@pact-foundation/pact'
 import fetch from 'node-fetch'
 
-import { article, comment } from '../../__fixtures__/uuid'
-import { CommentPayload } from '../../src/graphql/schema/uuid/thread'
+import { article, comment } from '../../__fixtures__'
+import { CommentPayload } from '../../src/schema'
 import { addJsonInteraction, addUuidInteraction } from '../__utils__'
 
 test('Threads', async () => {

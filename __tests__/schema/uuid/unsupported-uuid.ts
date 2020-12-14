@@ -21,7 +21,7 @@
  */
 import { gql } from 'apollo-server'
 
-import { Service } from '../../../src/graphql/schema/types'
+import { Service } from '../../../src/internals/auth'
 import {
   assertSuccessfulGraphQLQuery,
   Client,

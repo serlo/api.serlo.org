@@ -19,8 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { DiscriminatorType } from '../../src/graphql/schema/uuid/abstract-uuid'
-import { CommentPayload } from '../../src/graphql/schema/uuid/thread'
+import { CommentPayload, DiscriminatorType } from '../../src/schema'
 import { UnsupportedComment, UnsupportedThread } from '../../src/types'
 import { article } from './article'
 import { user, user2 } from './user'

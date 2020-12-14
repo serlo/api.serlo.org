@@ -26,7 +26,7 @@ import {
   AppletRevisionPayload,
   EntityRevisionType,
   EntityType,
-} from '../../src/graphql/schema'
+} from '../../src/schema'
 import { Instance } from '../../src/types'
 import { license } from '../license'
 

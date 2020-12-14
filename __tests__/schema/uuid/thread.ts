@@ -23,11 +23,15 @@ import { gql } from 'apollo-server'
 import { rest } from 'msw'
 import * as R from 'ramda'
 
-import { article, comment2, comment3, user } from '../../../__fixtures__/uuid'
-import { comment1 } from '../../../__fixtures__/uuid/thread'
-import { Service } from '../../../src/graphql/schema/types'
-import { UuidPayload } from '../../../src/graphql/schema/uuid/abstract-uuid'
-import { CommentPayload } from '../../../src/graphql/schema/uuid/thread'
+import {
+  article,
+  comment1,
+  comment2,
+  comment3,
+  user,
+} from '../../../__fixtures__'
+import { Service } from '../../../src/internals/auth'
+import { CommentPayload, UuidPayload } from '../../../src/schema'
 import { Instance } from '../../../src/types'
 import {
   assertSuccessfulGraphQLQuery,

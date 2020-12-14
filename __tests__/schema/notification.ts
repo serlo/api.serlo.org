@@ -73,7 +73,7 @@ import {
   user,
   user2,
 } from '../../__fixtures__'
-import { Service } from '../../src/graphql/schema/types'
+import { Service } from '../../src/internals/auth'
 import { Instance, MutationSetNotificationStateArgs } from '../../src/types'
 import {
   assertFailingGraphQLMutation,
