@@ -21,7 +21,7 @@
  */
 import jwt from 'jsonwebtoken'
 
-import { Instance, License } from '../../types'
+import { Instance } from '../../types'
 import {
   AbstractNotificationEventPayload,
   isUnsupportedNotificationEvent,
@@ -33,13 +33,6 @@ import { Service } from '../schema/types'
 import { CacheableDataSource, DAY, HOUR, MINUTE } from './cacheable-data-source'
 
 export class SerloDataSource extends CacheableDataSource {
-  public async getLicense({ id }: { id: number }): Promise<License> {
-    return this.cacheAwareGet({
-      path: `/api/license/${id}`,
-      maxAge: 1 * DAY,
-    })
-  }
-
   public async getNotificationEvent<
     T extends AbstractNotificationEventPayload
   >({ id }: { id: number }): Promise<T | null> {

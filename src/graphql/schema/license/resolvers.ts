@@ -24,7 +24,7 @@ import { LicenseResolvers } from './types'
 export const resolvers: LicenseResolvers = {
   Query: {
     license(_parent, { id }, { dataSources }) {
-      return dataSources.serlo.getLicense({ id })
+      return dataSources.model.serlo.getLicense({ id })
     },
   },
 }
