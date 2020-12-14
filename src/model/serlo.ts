@@ -17,7 +17,8 @@ import {
   NavigationPayload,
   NodeData,
   NotificationsPayload,
-  SubscriptionsPayload, ThreadsPayload,
+  SubscriptionsPayload,
+  ThreadsPayload,
 } from '../graphql/schema'
 import { Service } from '../graphql/schema/types'
 import { Environment } from '../internals/environment'
@@ -381,30 +382,50 @@ export function createSerloModel({
   )
 
   const getThreadIds = createQuery<{ id: number }, ThreadsPayload>(
-      {
-        getCurrentValue: async ({ id }) => {
-          return get({
-            path: `/api/threads/${id}`,
-          })
-        },
-        maxAge: 5 * MINUTE,
-        getKey: ({ id }) => {
-          return `de.serlo.org/api/threads/${id}`
-        },
-        getPayload: (key) => {
-          const prefix = 'de.serlo.org/api/threads/'
-          return key.startsWith(prefix)
-              ? O.some({ id: parseInt(key.replace(prefix, ''), 10) })
-              : O.none
-        },
+    {
+      getCurrentValue: async ({ id }) => {
+        return get({
+          path: `/api/threads/${id}`,
+        })
       },
-      environment
+      maxAge: 5 * MINUTE,
+      getKey: ({ id }) => {
+        return `de.serlo.org/api/threads/${id}`
+      },
+      getPayload: (key) => {
+        const prefix = 'de.serlo.org/api/threads/'
+        return key.startsWith(prefix)
+          ? O.some({ id: parseInt(key.replace(prefix, ''), 10) })
+          : O.none
+      },
+    },
+    environment
+  )
+
+  const getAllCacheKeys = createQuery<undefined, string[]>(
+    {
+      getCurrentValue: async () => {
+        return get({
+          path: `/api/cache-keys`,
+        })
+      },
+      maxAge: 1 * HOUR,
+      getKey: () => {
+        return 'de.serlo.org/api/cache-keys'
+      },
+      getPayload: (key) => {
+        if (key !== 'de.serlo.org/api/cache-keys') return O.none
+        return O.some(undefined)
+      },
+    },
+    environment
   )
 
   return {
     getActiveAuthorIds,
     getActiveReviewerIds,
     getAlias,
+    getAllCacheKeys,
     getLicense,
     getNavigationPayload,
     getNavigation,
