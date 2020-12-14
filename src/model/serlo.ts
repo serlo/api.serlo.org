@@ -87,6 +87,24 @@ export function createSerloModel({
     environment
   )
 
+  const getActiveReviewerIds = createQuery<undefined, number[]>(
+    {
+      getCurrentValue: async () => {
+        return await get<number[]>({
+          path: '/api/user/active-reviewers',
+        })
+      },
+      maxAge: 1 * HOUR,
+      getKey: () => {
+        return 'de.serlo.org/api/user/active-reviewers'
+      },
+      getPayload: (key: string) => {
+        if (key !== 'de.serlo.org/api/user/active-reviewers') return O.none
+        return O.some(undefined)
+      },
+    },
+    environment
+  )
   const getNavigationPayload = createQuery<
     { instance: Instance },
     NavigationPayload
@@ -183,6 +201,7 @@ export function createSerloModel({
 
   return {
     getActiveAuthorIds,
+    getActiveReviewerIds,
     getNavigationPayload,
     getNavigation,
     getUuid,
