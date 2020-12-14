@@ -21,15 +21,15 @@
  */
 import * as R from 'ramda'
 
+import { license } from '../license'
+import { course } from './course'
 import {
   CoursePagePayload,
   CoursePageRevisionPayload,
   EntityRevisionType,
   EntityType,
-} from '../../src/schema'
-import { Instance } from '../../src/types'
-import { license } from '../license'
-import { course } from './course'
+} from '~/schema/uuid'
+import { Instance } from '~/types'
 
 export const coursePage: CoursePagePayload = {
   __typename: EntityType.CoursePage,

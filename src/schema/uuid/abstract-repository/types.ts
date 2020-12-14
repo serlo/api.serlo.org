@@ -19,7 +19,18 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Resolver, TypeResolver } from '../../../internals/graphql'
+import { Connection } from '../../connection'
+import {
+  EntityPayload,
+  EntityRevisionPayload,
+  EntityRevisionType,
+  EntityType,
+} from '../abstract-entity'
+import { DiscriminatorType, UuidResolvers } from '../abstract-uuid'
+import { AliasResolvers } from '../alias'
+import { PagePayload, PageRevisionPayload } from '../page'
+import { UserPayload } from '../user'
+import { Resolver, TypeResolver } from '~/internals/graphql'
 import {
   AbstractRepository,
   AbstractRevision,
@@ -35,18 +46,7 @@ import {
   PageRevisionsArgs,
   SolutionRevisionsArgs,
   VideoRevisionsArgs,
-} from '../../../types'
-import { Connection } from '../../connection'
-import {
-  EntityPayload,
-  EntityRevisionPayload,
-  EntityRevisionType,
-  EntityType,
-} from '../abstract-entity'
-import { DiscriminatorType, UuidResolvers } from '../abstract-uuid'
-import { AliasResolvers } from '../alias'
-import { PagePayload, PageRevisionPayload } from '../page'
-import { UserPayload } from '../user'
+} from '~/types'
 
 export type RepositoryType = EntityType | DiscriminatorType.Page
 

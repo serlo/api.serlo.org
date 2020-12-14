@@ -22,8 +22,8 @@
 import { SharedOptions } from 'msw/lib/types/sharedOptions'
 import { setupServer } from 'msw/node'
 
-import { createCache } from '../src/internals/cache'
-import { Timer } from '../src/internals/timer'
+import { createCache } from '~/internals/cache'
+import { Timer } from '~/internals/timer'
 
 export class MockTimer implements Timer {
   private currentTime = 0

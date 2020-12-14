@@ -19,16 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import {
-  QueryResolver,
-  Resolver,
-  TypeResolver,
-} from '../../../internals/graphql'
-import {
-  AbstractUuid,
-  AbstractUuidThreadsArgs,
-  QueryUuidArgs,
-} from '../../../types'
 import { Connection } from '../../connection'
 import {
   EntityPayload,
@@ -40,6 +30,8 @@ import { PagePayload, PageRevisionPayload } from '../page'
 import { TaxonomyTermPayload } from '../taxonomy-term'
 import { CommentPayload, ThreadData } from '../thread/types'
 import { UserPayload } from '../user'
+import { QueryResolver, Resolver, TypeResolver } from '~/internals/graphql'
+import { AbstractUuid, AbstractUuidThreadsArgs, QueryUuidArgs } from '~/types'
 
 export enum DiscriminatorType {
   Page = 'Page',

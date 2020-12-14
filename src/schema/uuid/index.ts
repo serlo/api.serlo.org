@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { mergeSchemas } from '../../internals/graphql'
 import { abstractEntitySchema } from './abstract-entity'
 import { abstractExerciseSchema } from './abstract-exercise'
 import { abstractNavigationChildSchema } from './abstract-navigation-child'
@@ -41,6 +40,7 @@ import { taxonomyTermSchema } from './taxonomy-term'
 import { threadSchema } from './thread'
 import { userSchema } from './user'
 import { videoSchema } from './video'
+import { mergeSchemas } from '~/internals/graphql'
 
 export * from './abstract-entity'
 export * from './abstract-exercise'

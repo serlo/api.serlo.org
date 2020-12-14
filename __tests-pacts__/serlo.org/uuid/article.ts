@@ -28,11 +28,11 @@ import {
   getArticleDataWithoutSubResolvers,
   getArticleRevisionDataWithoutSubResolvers,
 } from '../../../__fixtures__'
-import { ArticlePayload, ArticleRevisionPayload } from '../../../src/schema'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
+import { ArticlePayload, ArticleRevisionPayload } from '~/schema/uuid'
 
 test('Article', async () => {
   await addUuidInteraction<ArticlePayload>({

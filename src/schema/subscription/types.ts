@@ -19,10 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { QueryResolver } from '../../internals/graphql'
-import { QuerySubscriptionsArgs } from '../../types'
 import { Connection } from '../connection'
 import { AbstractUuidPayload } from '../uuid'
+import { QueryResolver } from '~/internals/graphql'
+import { QuerySubscriptionsArgs } from '~/types'
 
 export interface SubscriptionsPayload {
   subscriptions: { id: number }[]

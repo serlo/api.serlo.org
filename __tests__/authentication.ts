@@ -21,7 +21,7 @@
  */
 import jwt from 'jsonwebtoken'
 
-import { handleAuthentication, Service } from '../src/internals/auth'
+import { handleAuthentication, Service } from '~/internals/auth'
 
 describe('Service token only', () => {
   test('valid serlo.org token', async () => {

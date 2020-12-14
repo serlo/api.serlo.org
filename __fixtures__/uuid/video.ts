@@ -21,14 +21,14 @@
  */
 import * as R from 'ramda'
 
+import { license } from '../license'
 import {
   EntityRevisionType,
   EntityType,
   VideoPayload,
   VideoRevisionPayload,
-} from '../../src/schema'
-import { Instance } from '../../src/types'
-import { license } from '../license'
+} from '~/schema/uuid'
+import { Instance } from '~/types'
 
 export const video: VideoPayload = {
   __typename: EntityType.Video,

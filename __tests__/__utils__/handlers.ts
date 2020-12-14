@@ -21,14 +21,10 @@
  */
 import { rest } from 'msw'
 
-import {
-  AliasPayload,
-  LicensePayload,
-  NavigationPayload,
-  NotificationEventPayload,
-  UuidPayload,
-} from '../../src/schema'
-import { Instance } from '../../src/types'
+import { LicensePayload } from '~/schema/license'
+import { NotificationEventPayload } from '~/schema/notification'
+import { AliasPayload, NavigationPayload, UuidPayload } from '~/schema/uuid'
+import { Instance } from '~/types'
 
 export function createAliasHandler(alias: AliasPayload) {
   return createJsonHandler({

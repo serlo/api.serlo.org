@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { mergeSchemas, Schema } from '../../internals/graphql'
 import { checkoutRevisionNotificationEventSchema } from './checkout-revision-notification-event'
 import { createCommentNotificationEventSchema } from './create-comment-notification-event'
 import { createEntityLinkNotificationSchema } from './create-entity-link-notification-event'
@@ -38,6 +37,7 @@ import { setTaxonomyTermNotificationEventSchema } from './set-taxonomy-term-noti
 import { setThreadStateNotificationEventSchema } from './set-thread-state-notification-event'
 import { setUuidStateNotificationEventSchema } from './set-uuid-state-notification-event'
 import typeDefs from './types.graphql'
+import { mergeSchemas, Schema } from '~/internals/graphql'
 
 export * from './checkout-revision-notification-event'
 export * from './create-comment-notification-event'

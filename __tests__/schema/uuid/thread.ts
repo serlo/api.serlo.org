@@ -30,9 +30,6 @@ import {
   comment3,
   user,
 } from '../../../__fixtures__'
-import { Service } from '../../../src/internals/auth'
-import { CommentPayload, UuidPayload } from '../../../src/schema'
-import { Instance } from '../../../src/types'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
@@ -40,6 +37,9 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
+import { Service } from '~/internals/auth'
+import { CommentPayload, UuidPayload } from '~/schema/uuid'
+import { Instance } from '~/types'
 
 let client: Client
 

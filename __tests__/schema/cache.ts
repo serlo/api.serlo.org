@@ -31,8 +31,6 @@ import {
   user,
   user2,
 } from '../../__fixtures__'
-import { Service } from '../../src/internals/auth'
-import { MajorDimension } from '../../src/model'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
@@ -40,6 +38,8 @@ import {
   createSpreadsheetHandler,
   createTestClient,
 } from '../__utils__'
+import { Service } from '~/internals/auth'
+import { MajorDimension } from '~/model'
 
 const mockSpreadSheetData = {
   spreadsheetId: process.env.ACTIVE_DONORS_SPREADSHEET_ID,

@@ -28,11 +28,11 @@ import {
   getExerciseDataWithoutSubResolvers,
   getExerciseRevisionDataWithoutSubResolvers,
 } from '../../../__fixtures__'
-import { ExercisePayload, ExerciseRevisionPayload } from '../../../src/schema'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
+import { ExercisePayload, ExerciseRevisionPayload } from '~/schema/uuid'
 
 test('Exercise', async () => {
   await addUuidInteraction<ExercisePayload>({

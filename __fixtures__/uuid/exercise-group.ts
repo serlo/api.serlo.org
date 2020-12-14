@@ -21,14 +21,14 @@
  */
 import * as R from 'ramda'
 
+import { license } from '../license'
 import {
   EntityRevisionType,
   EntityType,
   ExerciseGroupPayload,
   ExerciseGroupRevisionPayload,
-} from '../../src/schema'
-import { Instance } from '../../src/types'
-import { license } from '../license'
+} from '~/schema/uuid'
+import { Instance } from '~/types'
 
 export const exerciseGroup: ExerciseGroupPayload = {
   __typename: EntityType.ExerciseGroup,

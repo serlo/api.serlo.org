@@ -25,9 +25,9 @@ import { nonEmptyArray } from 'io-ts-types/lib/nonEmptyArray'
 import { failure } from 'io-ts/lib/PathReporter'
 import * as R from 'ramda'
 
-import { Environment } from '../internals/environment'
-import { ErrorEvent } from '../internals/error-event'
-import { createQuery, FetchHelpers } from '../internals/model'
+import { Environment } from '~/internals/environment'
+import { ErrorEvent } from '~/internals/error-event'
+import { createQuery, FetchHelpers } from '~/internals/model'
 
 export enum MajorDimension {
   Rows = 'ROWS',

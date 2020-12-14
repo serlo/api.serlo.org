@@ -52,16 +52,6 @@ import {
   video,
   videoRevision,
 } from '../../../__fixtures__'
-import { Service } from '../../../src/internals/auth'
-import {
-  DiscriminatorType,
-  EntityRevisionType,
-  EntityType,
-  RepositoryPayload,
-  RepositoryType,
-  RevisionPayload,
-  RevisionType,
-} from '../../../src/schema'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
@@ -70,6 +60,16 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
+import { Service } from '~/internals/auth'
+import {
+  DiscriminatorType,
+  EntityRevisionType,
+  EntityType,
+  RepositoryPayload,
+  RepositoryType,
+  RevisionPayload,
+  RevisionType,
+} from '~/schema/uuid'
 
 let client: Client
 

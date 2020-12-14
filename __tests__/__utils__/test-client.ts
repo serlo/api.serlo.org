@@ -25,10 +25,10 @@ import {
   createTestClient as createApolloTestClient,
 } from 'apollo-server-testing'
 
-import { getGraphQLOptions } from '../../src/internals/app'
-import { Service } from '../../src/internals/auth'
-import { Context } from '../../src/internals/graphql'
-import { emptySwrQueue } from '../../src/internals/swr-queue'
+import { getGraphQLOptions } from '~/internals/app'
+import { Service } from '~/internals/auth'
+import { Context } from '~/internals/graphql'
+import { emptySwrQueue } from '~/internals/swr-queue'
 
 export type Client = ApolloServerTestClient
 

@@ -21,8 +21,8 @@
  */
 import { GraphQLResolveInfo } from 'graphql'
 
-import { Context, requestsOnlyFields } from '../../../internals/graphql'
 import { UserPayload } from './types'
+import { Context, requestsOnlyFields } from '~/internals/graphql'
 
 export async function resolveUser(
   { id }: { id: number },

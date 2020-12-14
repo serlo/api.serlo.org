@@ -19,19 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import {
-  MutationResolver,
-  QueryResolver,
-  Resolver,
-  TypeResolver,
-} from '../../internals/graphql'
-import {
-  AbstractNotificationEvent,
-  MutationSetNotificationStateArgs,
-  Notification,
-  QueryNotificationEventArgs,
-  QueryNotificationsArgs,
-} from '../../types'
 import { Connection } from '../connection'
 import { UserPayload } from '../uuid'
 import { CheckoutRevisionNotificationEventPayload } from './checkout-revision-notification-event'
@@ -50,6 +37,19 @@ import { SetTaxonomyParentNotificationEventPayload } from './set-taxonomy-parent
 import { SetTaxonomyTermNotificationEventPayload } from './set-taxonomy-term-notification-event'
 import { SetThreadStateNotificationEventPayload } from './set-thread-state-notification-event'
 import { SetUuidStateNotificationEventPayload } from './set-uuid-state-notification-event'
+import {
+  MutationResolver,
+  QueryResolver,
+  Resolver,
+  TypeResolver,
+} from '~/internals/graphql'
+import {
+  AbstractNotificationEvent,
+  MutationSetNotificationStateArgs,
+  Notification,
+  QueryNotificationEventArgs,
+  QueryNotificationsArgs,
+} from '~/types'
 
 export interface NotificationPayload
   extends Omit<Notification, keyof NotificationResolvers['Notification']> {

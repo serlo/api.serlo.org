@@ -23,11 +23,11 @@ import { ApolloServerExpressConfig } from 'apollo-server-express'
 import fetch from 'node-fetch'
 import { URLSearchParams } from 'url'
 
-import { schema } from '../../schema'
 import { handleAuthentication, Service } from '../auth'
 import { Environment } from '../environment'
 import { Context } from '../graphql'
 import { ModelDataSource } from '../model'
+import { schema } from '~/schema'
 
 export function getGraphQLOptions(
   environment: Environment

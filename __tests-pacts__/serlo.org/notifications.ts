@@ -24,8 +24,8 @@ import { gql } from 'apollo-server'
 
 import { checkoutRevisionNotificationEvent, user } from '../../__fixtures__'
 import { createTestClient } from '../../__tests__/__utils__'
-import { Service } from '../../src/internals/auth'
 import { addJsonInteraction, assertSuccessfulGraphQLQuery } from '../__utils__'
+import { Service } from '~/internals/auth'
 
 test('Notifications', async () => {
   global.client = createTestClient({

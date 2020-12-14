@@ -21,8 +21,8 @@
  */
 import GraphQLJSON, { GraphQLJSONObject } from 'graphql-type-json'
 
-import { Schema } from '../../internals/graphql'
 import typeDefs from './types.graphql'
+import { Schema } from '~/internals/graphql'
 
 export const jsonSchema: Schema = {
   resolvers: {

@@ -19,14 +19,14 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { MutationResolver, QueryResolver } from '../../internals/graphql'
+import { MutationResolver, QueryResolver } from '~/internals/graphql'
+import { Connection } from '~/schema/connection'
 import {
   Mutation_RemoveCacheArgs,
   Mutation_SetCacheArgs,
-  Query_CacheKeysArgs,
   Mutation_UpdateCacheArgs,
-} from '../../types'
-import { Connection } from '../connection'
+  Query_CacheKeysArgs,
+} from '~/types'
 
 export interface CacheResolvers {
   Query: {

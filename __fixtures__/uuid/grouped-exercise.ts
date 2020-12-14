@@ -21,16 +21,16 @@
  */
 import * as R from 'ramda'
 
+import { license } from '../license'
+import { exerciseGroup } from './exercise-group'
 import {
   AliasPayload,
   EntityRevisionType,
   EntityType,
   GroupedExercisePayload,
   GroupedExerciseRevisionPayload,
-} from '../../src/schema'
-import { Instance } from '../../src/types'
-import { license } from '../license'
-import { exerciseGroup } from './exercise-group'
+} from '~/schema/uuid'
+import { Instance } from '~/types'
 
 export const groupedExerciseAlias: AliasPayload = {
   id: 2219,

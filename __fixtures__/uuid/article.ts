@@ -21,15 +21,15 @@
  */
 import * as R from 'ramda'
 
+import { license } from '../license'
+import { getRepositoryDataWithoutSubResolvers } from './abstract-repository'
 import {
   ArticlePayload,
   ArticleRevisionPayload,
   EntityRevisionType,
   EntityType,
-} from '../../src/schema'
-import { Instance } from '../../src/types'
-import { license } from '../license'
-import { getRepositoryDataWithoutSubResolvers } from './abstract-repository'
+} from '~/schema/uuid'
+import { Instance } from '~/types'
 
 export const article: ArticlePayload = {
   __typename: EntityType.Article,

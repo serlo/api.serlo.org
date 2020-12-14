@@ -20,8 +20,16 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 /* eslint-disable @typescript-eslint/no-var-requires,import/no-commonjs */
+const { pathsToModuleNameMapper } = require('ts-jest/utils')
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const { compilerOptions } = require('./tsconfig')
+
 module.exports = {
   preset: 'ts-jest',
+  modulePaths: ['<rootDir>/src'],
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
   setupFiles: ['dotenv/config'],
   setupFilesAfterEnv: ['<rootDir>/__config__/jest.setup.ts'],
   testEnvironment: 'node',

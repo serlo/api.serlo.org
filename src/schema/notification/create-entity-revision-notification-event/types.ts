@@ -19,14 +19,14 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Resolver } from '../../../internals/graphql'
-import { CreateEntityRevisionNotificationEvent } from '../../../types'
-import { EntityPayload, EntityRevisionPayload } from '../../uuid'
 import {
   AbstractNotificationEventPayload,
   NotificationEventResolvers,
   NotificationEventType,
 } from '../types'
+import { Resolver } from '~/internals/graphql'
+import { EntityPayload, EntityRevisionPayload } from '~/schema/uuid'
+import { CreateEntityRevisionNotificationEvent } from '~/types'
 
 export interface CreateEntityRevisionNotificationEventPayload
   extends AbstractNotificationEventPayload,
