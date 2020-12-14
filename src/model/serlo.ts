@@ -20,7 +20,12 @@ import {
 } from '../graphql/schema'
 import { Service } from '../graphql/schema/types'
 import { Environment } from '../internals/environment'
-import { createHelper, createQuery, FetchHelpers } from '../internals/model'
+import {
+  createHelper,
+  createMutation,
+  createQuery,
+  FetchHelpers,
+} from '../internals/model'
 import { Instance, License } from '../types'
 
 export function createSerloModel({
@@ -30,6 +35,14 @@ export function createSerloModel({
   environment: Environment
   fetchHelpers: FetchHelpers
 }) {
+  function getToken() {
+    return jwt.sign({}, process.env.SERLO_ORG_SECRET, {
+      expiresIn: '2h',
+      audience: Service.Serlo,
+      issuer: 'api.serlo.org',
+    })
+  }
+
   function get<T>({
     path,
     instance = Instance.De,
@@ -37,17 +50,33 @@ export function createSerloModel({
     path: string
     instance?: Instance
   }): Promise<T> {
-    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
-      expiresIn: '2h',
-      audience: Service.Serlo,
-      issuer: 'api.serlo.org',
-    })
     return fetchHelpers.get(
       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
       {},
       {
         headers: {
-          Authorization: `Serlo Service=${token}`,
+          Authorization: `Serlo Service=${getToken()}`,
+        },
+      }
+    )
+  }
+
+  function post<T>({
+    path,
+    instance = Instance.De,
+    body,
+  }: {
+    path: string
+    instance?: Instance
+    body: Record<string, unknown>
+  }): Promise<T> {
+    return fetchHelpers.post(
+      `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
+      body,
+      {
+        headers: {
+          Authorization: `Serlo Service=${getToken()}`,
+          'Content-Type': 'application/json; charset=utf-8',
         },
       }
     )
@@ -302,6 +331,33 @@ export function createSerloModel({
     environment
   )
 
+  const setNotificationState = createMutation<
+    {
+      id: number
+      userId: number
+      unread: boolean
+    },
+    void
+  >({
+    mutate: async (notificationState: {
+      id: number
+      userId: number
+      unread: boolean
+    }) => {
+      const value = await post<NotificationsPayload>({
+        path: `/api/set-notification-state/${notificationState.id}`,
+        body: {
+          userId: notificationState.userId,
+          unread: notificationState.unread,
+        },
+      })
+      await environment.cache.set({
+        key: `de.serlo.org/api/notifications/${notificationState.userId}`,
+        value,
+      })
+    },
+  })
+
   return {
     getActiveAuthorIds,
     getActiveReviewerIds,
@@ -312,6 +368,7 @@ export function createSerloModel({
     getNotificationEvent,
     getNotifications,
     getUuid,
+    setNotificationState,
   }
 }
 
