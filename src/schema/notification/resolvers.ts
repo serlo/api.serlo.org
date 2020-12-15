@@ -19,9 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { AuthenticationError } from 'apollo-server'
-
 import { resolveConnection } from '../connection'
+import { checkUserIsAuthenticated } from '../utils'
 import {
   NotificationEventPayload,
   NotificationPayload,
@@ -47,9 +46,9 @@ export const resolvers: NotificationResolvers = {
       { unread, ...cursorPayload },
       { dataSources, user }
     ) {
-      if (user === null) throw new AuthenticationError('You are not logged in')
+      checkUserIsAuthenticated(user)
       const { notifications } = await dataSources.model.serlo.getNotifications({
-        id: user,
+        id: user as number,
       })
       return resolveConnection<NotificationPayload>({
         nodes: notifications.filter((notification) => {
@@ -72,19 +71,18 @@ export const resolvers: NotificationResolvers = {
   },
   Mutation: {
     async setNotificationState(_parent, payload, { dataSources, user }) {
-      if (user === null) throw new AuthenticationError('You are not logged in')
-      const result = await dataSources.serlo.setNotificationsState({
+      checkUserIsAuthenticated(user)
+      return await dataSources.model.serlo.setNotificationsState({
         ids: [payload.id],
-        userId: user,
+        userId: user as number,
         unread: payload.unread,
       })
-      return result
     },
     async setNotificationsState(_parent, payload, { dataSources, user }) {
-      if (user === null) throw new AuthenticationError('You are not logged in')
+      checkUserIsAuthenticated(user)
       return await dataSources.model.serlo.setNotificationsState({
         ids: payload.ids,
-        userId: user,
+        userId: user as number,
         unread: payload.unread,
       })
     },
