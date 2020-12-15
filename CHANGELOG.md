@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.13.0](https://github.com/serlo/api.serlo.org/compare/v0.12.2..v0.13.0) - December 15, 2020
+
+### Added
+
+- **uuid**. Resolve `/entity/view/:id` to the given uuid.
+
+### Internal
+
+- Restructure the repository. Please check out the updated README.
+
 ## [v0.12.2](https://github.com/serlo/api.serlo.org/compare/v0.12.1..v0.12.2) - December 9, 2020
 
 ### Changed
