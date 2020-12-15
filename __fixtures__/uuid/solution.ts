@@ -21,16 +21,16 @@
  */
 import * as R from 'ramda'
 
+import { license } from '../license'
+import { exercise } from './exercise'
 import {
   AliasPayload,
   EntityRevisionType,
   EntityType,
   SolutionPayload,
   SolutionRevisionPayload,
-} from '../../src/graphql/schema'
-import { Instance } from '../../src/types'
-import { license } from '../license'
-import { exercise } from './exercise'
+} from '~/schema/uuid'
+import { Instance } from '~/types'
 
 export const solutionAlias: AliasPayload = {
   id: 29648,

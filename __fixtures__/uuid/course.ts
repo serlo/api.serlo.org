@@ -21,14 +21,14 @@
  */
 import * as R from 'ramda'
 
+import { license } from '../license'
 import {
   CoursePayload,
   CourseRevisionPayload,
   EntityRevisionType,
   EntityType,
-} from '../../src/graphql/schema'
-import { Instance } from '../../src/types'
-import { license } from '../license'
+} from '~/schema/uuid'
+import { Instance } from '~/types'
 
 export const course: CoursePayload = {
   __typename: EntityType.Course,

@@ -27,13 +27,13 @@ import {
   getAppletDataWithoutSubResolvers,
   getAppletRevisionDataWithoutSubResolvers,
 } from '../../../__fixtures__'
-import { Service } from '../../../src/graphql/schema/types'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
+import { Service } from '~/internals/auth'
 
 let client: Client
 

@@ -28,9 +28,6 @@ import {
   user,
   user2,
 } from '../../../__fixtures__'
-import { Service } from '../../../src/graphql/schema/types'
-import { UuidPayload } from '../../../src/graphql/schema/uuid/abstract-uuid'
-import { Instance } from '../../../src/types'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
@@ -38,6 +35,9 @@ import {
   createUuidHandler,
   createJsonHandler,
 } from '../../__utils__'
+import { Service } from '~/internals/auth'
+import { UuidPayload } from '~/schema/uuid'
+import { Instance } from '~/types'
 
 let client: Client
 
@@ -631,7 +631,10 @@ describe('endpoint activeReviewers', () => {
   })
 
   test('uses cached value for active reviewers', async () => {
-    await global.cache.set('de.serlo.org/api/user/active-reviewers', [user.id])
+    await global.cache.set({
+      key: 'de.serlo.org/api/user/active-reviewers',
+      value: [user.id],
+    })
 
     await assertSuccessfulGraphQLQuery({
       query: activeReviewersQuery,

@@ -21,13 +21,13 @@
  */
 import * as R from 'ramda'
 
+import { license } from '../license'
 import {
   DiscriminatorType,
   PagePayload,
   PageRevisionPayload,
-} from '../../src/graphql/schema'
-import { Instance } from '../../src/types'
-import { license } from '../license'
+} from '~/schema/uuid'
+import { Instance } from '~/types'
 
 export const page: PagePayload = {
   __typename: DiscriminatorType.Page,

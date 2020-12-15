@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
-import { gql } from 'apollo-server'
 import { option } from 'fp-ts'
 import { rest } from 'msw'
 
@@ -31,18 +30,16 @@ import {
   createUpdateCacheMutation,
   user,
   user2,
-  getUserDataWithoutSubResolvers,
 } from '../../__fixtures__'
-import { MajorDimension } from '../../src/graphql/data-sources/google-spreadsheet-api'
-import { Service } from '../../src/graphql/schema/types'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
-  createTestClient,
   createSpreadsheetHandler,
-  createUuidHandler,
+  createTestClient,
 } from '../__utils__'
+import { Service } from '~/internals/auth'
+import { MajorDimension } from '~/model'
 
 const mockSpreadSheetData = {
   spreadsheetId: process.env.ACTIVE_DONORS_SPREADSHEET_ID,
@@ -139,7 +136,7 @@ test('_setCache (authenticated)', async () => {
     client,
   })
 
-  const cachedValue = await global.cache.get(testVars[0].key)
+  const cachedValue = await global.cache.get({ key: testVars[0].key })
   expect(option.isSome(cachedValue) && cachedValue.value).toEqual({
     lastModified: now,
     value: testVars[0].value,
@@ -173,7 +170,7 @@ test('_removeCache (authenticated)', async () => {
     client,
   })
 
-  const cachedValue = await global.cache.get(testVars[0].key)
+  const cachedValue = await global.cache.get({ key: testVars[0].key })
   expect(option.isNone(cachedValue)).toBe(true)
 })
 
@@ -191,81 +188,4 @@ test('_updateCache (forbidden)', async () => {
       expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
     }
   )
-})
-
-test('_updateCache *serlo.org* (authenticated)', async () => {
-  const client = createTestClient({
-    service: Service.Serlo,
-    user: null,
-  })
-  const now = global.timer.now()
-
-  const keys = [
-    `de.serlo.org/api/${testVars[0].key}`,
-    `en.serlo.org/api/${testVars[1].key}`,
-  ]
-
-  const cachedValueBeforeUpdate1 = await global.cache.get(keys[0])
-  const cachedValueBeforeUpdate2 = await global.cache.get(keys[1])
-
-  await assertSuccessfulGraphQLMutation({
-    ...createUpdateCacheMutation(keys),
-    client,
-  })
-  const cachedValueAfterUpdate1 = await global.cache.get(keys[0])
-  expect(cachedValueBeforeUpdate1).not.toEqual(cachedValueAfterUpdate1)
-  expect(cachedValueAfterUpdate1).toEqual(
-    option.some({ lastModified: now, value: testVars[0].value })
-  )
-  const cachedValueAfterUpdate2 = await global.cache.get(keys[1])
-  expect(cachedValueBeforeUpdate2).not.toEqual(cachedValueAfterUpdate2)
-  expect(cachedValueAfterUpdate2).toEqual(
-    option.some({ lastModified: now, value: testVars[1].value })
-  )
-})
-
-test('_updateCache spreadsheet-* (authenticated)', async () => {
-  global.server.use(createUuidHandler(user), createUuidHandler(user2))
-  const client = createTestClient({
-    service: Service.Serlo,
-    user: null,
-  })
-
-  const mock = mockSpreadSheetData
-  const keys = [
-    `spreadsheet-${mock.spreadsheetId}-${mock.range}-${mock.majorDimension}`,
-  ]
-
-  await assertSuccessfulGraphQLMutation({
-    ...createUpdateCacheMutation(keys),
-    client,
-  })
-
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      {
-        activeDonors {
-          nodes {
-            __typename
-            id
-            trashed
-            alias
-            username
-            date
-            lastLogin
-            description
-          }
-        }
-      }
-    `,
-    data: {
-      activeDonors: {
-        nodes: [
-          getUserDataWithoutSubResolvers(user),
-          getUserDataWithoutSubResolvers(user2),
-        ],
-      },
-    },
-    client,
-  })
 })

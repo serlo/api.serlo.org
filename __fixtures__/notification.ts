@@ -22,6 +22,18 @@
 import * as R from 'ramda'
 
 import {
+  article,
+  articleRevision,
+  unsupportedComment,
+  exercise,
+  solution,
+  taxonomyTermCurriculumTopic,
+  taxonomyTermRoot,
+  taxonomyTermSubject,
+  unsupportedThread,
+  user,
+} from './uuid'
+import {
   CheckoutRevisionNotificationEventPayload,
   CreateCommentNotificationEventPayload,
   CreateEntityLinkNotificationEventPayload,
@@ -39,20 +51,8 @@ import {
   SetTaxonomyTermNotificationEventPayload,
   SetThreadStateNotificationEventPayload,
   SetUuidStateNotificationEventPayload,
-} from '../src/graphql/schema'
-import { Instance } from '../src/types'
-import {
-  article,
-  articleRevision,
-  unsupportedComment,
-  exercise,
-  solution,
-  taxonomyTermCurriculumTopic,
-  taxonomyTermRoot,
-  taxonomyTermSubject,
-  unsupportedThread,
-  user,
-} from './uuid'
+} from '~/schema/notification'
+import { Instance } from '~/types'
 
 export const checkoutRevisionNotificationEvent: CheckoutRevisionNotificationEventPayload = {
   __typename: NotificationEventType.CheckoutRevision,

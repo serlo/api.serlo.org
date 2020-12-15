@@ -28,11 +28,11 @@ import {
   taxonomyTermRoot,
   taxonomyTermSubject,
 } from '../../../__fixtures__'
-import { TaxonomyTermPayload } from '../../../src/graphql/schema'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
+import { TaxonomyTermPayload } from '~/schema/uuid'
 
 function addTaxonomyTermInteraction(payload: TaxonomyTermPayload) {
   return addUuidInteraction<TaxonomyTermPayload>({

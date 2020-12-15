@@ -29,17 +29,13 @@ import {
   solution,
 } from '../../../__fixtures__'
 import {
-  AbstractExercisePayload,
-  EntityType,
-  UuidPayload,
-} from '../../../src/graphql/schema'
-import { Service } from '../../../src/graphql/schema/types'
-import {
   assertSuccessfulGraphQLQuery,
   Client,
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
+import { Service } from '~/internals/auth'
+import { AbstractExercisePayload, EntityType, UuidPayload } from '~/schema/uuid'
 
 let client: Client
 

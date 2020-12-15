@@ -27,7 +27,7 @@ import {
   getVideoDataWithoutSubResolvers,
   getVideoRevisionDataWithoutSubResolvers,
 } from '../../../__fixtures__'
-import { Service } from '../../../src/graphql/schema/types'
+import { Service } from '../../../src/internals/auth'
 import {
   assertSuccessfulGraphQLQuery,
   Client,

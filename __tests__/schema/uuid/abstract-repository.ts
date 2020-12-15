@@ -53,16 +53,6 @@ import {
   videoRevision,
 } from '../../../__fixtures__'
 import {
-  DiscriminatorType,
-  EntityRevisionType,
-  EntityType,
-  RepositoryPayload,
-  RepositoryType,
-  RevisionPayload,
-  RevisionType,
-} from '../../../src/graphql/schema'
-import { Service } from '../../../src/graphql/schema/types'
-import {
   assertSuccessfulGraphQLQuery,
   Client,
   createAliasHandler,
@@ -70,6 +60,16 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
+import { Service } from '~/internals/auth'
+import {
+  DiscriminatorType,
+  EntityRevisionType,
+  EntityType,
+  RepositoryPayload,
+  RepositoryType,
+  RevisionPayload,
+  RevisionType,
+} from '~/schema/uuid'
 
 let client: Client
 

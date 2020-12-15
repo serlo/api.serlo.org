@@ -22,8 +22,9 @@
 import { SharedOptions } from 'msw/lib/types/sharedOptions'
 import { setupServer } from 'msw/node'
 
-import { createCache } from '../src/cache'
-import { Timer } from '../src/timer'
+import { createCache } from '~/internals/cache'
+import { Time, timeToMilliseconds } from '~/internals/swr-queue'
+import { Timer } from '~/internals/timer'
 
 export class MockTimer implements Timer {
   private currentTime = 0
@@ -38,8 +39,8 @@ export class MockTimer implements Timer {
 
   // We make this synchronous function asynchronous just to make clear that this would be asynchronous in production.
   // eslint-disable-next-line @typescript-eslint/require-await
-  public async waitFor(seconds: number) {
-    this.currentTime += seconds * 1000
+  public async waitFor(time: Time) {
+    this.currentTime += timeToMilliseconds(time)
   }
 }
 
