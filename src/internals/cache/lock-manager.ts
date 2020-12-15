@@ -60,7 +60,7 @@ export function createLockManager({
       }
     },
     async quit() {
-      await new Promise((resolve) => {
+      await new Promise<void>((resolve) => {
         client.quit(() => {
           resolve()
         })
