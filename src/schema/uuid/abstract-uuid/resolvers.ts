@@ -57,6 +57,17 @@ export const resolvers: AbstractUuidResolvers = {
             return uuid && uuid.__typename === 'User' ? uuid : null
           }
         }
+
+        //TODO: to support legacy feature. remove after frontend is 100% (#143)
+        if (cleanPath.startsWith('/entity/view/')) {
+          const match = /^\/entity\/view\/(\d+)$/.exec(cleanPath)
+          if (match) {
+            const id = parseInt(match[1], 10)
+            const uuid = await dataSources.serlo.getUuid<UuidPayload>({ id })
+            return uuid || null
+          }
+        }
+
         const alias = await dataSources.model.serlo.getAlias(payload.alias)
         return alias
           ? ((await dataSources.model.serlo.getUuid({
