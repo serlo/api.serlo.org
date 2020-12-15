@@ -1655,16 +1655,6 @@ export type VideoThreadsArgs = {
 };
 
 
-// Warnings were encountered during analysis:
-//
-// src/schema/uuid/abstract-repository/types.ts:30:10 - (TS2305) Module '"../alias"' has no exported member 'AliasResolvers'.
-// src/schema/uuid/alias/utils.ts:1:10 - (TS2305) Module '"./types"' has no exported member 'AliasResolvers'.
-// src/schema/uuid/user/resolvers.ts:89:5 - (TS2322) Type '(AbstractUuidPayload | null)[]' is not assignable to type 'UserPayload[]'.
-//   Type 'AbstractUuidPayload | null' is not assignable to type 'UserPayload'.
-//     Type 'null' is not assignable to type 'UserPayload'.
-// src/schema/uuid/user/types.ts:62:15 - (TS2677) A type predicate's type must be assignable to its parameter's type.
-//   Property 'alias' is missing in type 'UserPayload' but required in type 'AbstractUuidPayload'.
-
 // (No @packageDocumentation comment for this package)
 
 ```
