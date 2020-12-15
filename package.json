@@ -62,7 +62,7 @@
     "tslib": "^2.0.0"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "1.17.8",
+    "@graphql-codegen/cli": "^1.0.0",
     "@graphql-codegen/typescript": "^1.0.0",
     "@microsoft/api-extractor": "^7.0.0",
     "@pact-foundation/pact": "^9.0.0",
@@ -84,7 +84,7 @@
     "apollo-server-testing": "^2.0.0",
     "babel-plugin-import-graphql": "^2.0.0",
     "eslint": "^7.0.0",
-    "eslint-config-prettier": "^6.0.0",
+    "eslint-config-prettier": "^7.0.0",
     "eslint-plugin-import": "^2.0.0",
     "eslint-plugin-react": "^7.0.0",
     "glob": "^7.0.0",
