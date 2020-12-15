@@ -127,7 +127,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
     },
     async ready() {
       if (ready) return
-      await new Promise((resolve) => {
+      await new Promise<void>((resolve) => {
         client.on('ready', () => {
           ready = true
           resolve()
@@ -143,7 +143,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
     },
     async quit() {
       await Promise.all([
-        new Promise((resolve) => {
+        new Promise<void>((resolve) => {
           client.quit(() => {
             resolve()
           })

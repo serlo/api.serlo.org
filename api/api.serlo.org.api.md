@@ -921,6 +921,16 @@ export type License = {
 };
 
 // @public (undocumented)
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+    [SubKey in K]: Maybe<T[SubKey]>;
+};
+
+// @public (undocumented)
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+    [SubKey in K]?: Maybe<T[SubKey]>;
+};
+
+// @public (undocumented)
 export type Maybe<T> = T | null;
 
 // @public (undocumented)

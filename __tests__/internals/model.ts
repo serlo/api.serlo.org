@@ -60,7 +60,7 @@ describe('createQuery', () => {
   async function waitForJob() {
     const job = await beeQueue.getJob(key)
     if (job === null) return
-    await new Promise((resolve) => {
+    await new Promise<void>((resolve) => {
       job.on('succeeded', () => {
         resolve()
       })
