@@ -412,6 +412,14 @@ async function exec(): Promise<void> {
         'Implement Locks using Redlock.',
       ],
     },
+    {
+      tagName: 'v0.13.0',
+      date: '2020-12-15',
+      added: [['uuid', 'Resolve `/entity/view/:id` to the given uuid.']],
+      internal: [
+        'Restructure the repository. Please check out the updated README.',
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
