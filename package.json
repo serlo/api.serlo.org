@@ -83,6 +83,7 @@
     "@typescript-eslint/parser": "^4.0.0",
     "apollo-server-testing": "^2.0.0",
     "babel-plugin-import-graphql": "^2.0.0",
+    "babel-plugin-module-resolver": "^4.0.0",
     "eslint": "^7.0.0",
     "eslint-config-prettier": "^7.0.0",
     "eslint-plugin-import": "^2.0.0",
