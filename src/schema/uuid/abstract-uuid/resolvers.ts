@@ -47,25 +47,22 @@ export const resolvers: AbstractUuidResolvers = {
           })) as UuidPayload | null
         }
 
-        if (cleanPath.startsWith('/user/profile/')) {
-          const match = /^\/user\/profile\/(\d+)$/.exec(cleanPath)
-          if (match) {
-            const id = parseInt(match[1], 10)
-            const uuid = (await dataSources.model.serlo.getUuid({
-              id,
-            })) as UuidPayload | null
-            return uuid && uuid.__typename === 'User' ? uuid : null
-          }
+        const matchUserProfile = /^\/user\/profile\/(\d+)$/.exec(cleanPath)
+        if (matchUserProfile) {
+          const id = parseInt(matchUserProfile[1], 10)
+          const uuid = (await dataSources.model.serlo.getUuid({
+            id,
+          })) as UuidPayload | null
+          return uuid && uuid.__typename === 'User' ? uuid : null
         }
 
-        //TODO: to support legacy feature. remove after frontend is 100% (#143)
-        if (cleanPath.startsWith('/entity/view/')) {
-          const match = /^\/entity\/view\/(\d+)$/.exec(cleanPath)
-          if (match) {
-            const id = parseInt(match[1], 10)
-            const uuid = await dataSources.serlo.getUuid<UuidPayload>({ id })
-            return uuid || null
-          }
+        // TODO: to support legacy feature. remove after frontend is 100% (#143)
+        const matchEntityView = /^\/entity\/view\/(\d+)$/.exec(cleanPath)
+        if (matchEntityView) {
+          const id = parseInt(matchEntityView[1], 10)
+          return (await dataSources.model.serlo.getUuid({
+            id,
+          })) as UuidPayload | null
         }
 
         const alias = await dataSources.model.serlo.getAlias(payload.alias)
