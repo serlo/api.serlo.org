@@ -35,6 +35,7 @@ export interface PagePayload extends Omit<Page, keyof PageResolvers['Page']> {
 export interface PageRevisionPayload
   extends Omit<PageRevision, keyof PageResolvers['PageRevision']> {
   __typename: DiscriminatorType.PageRevision
+  alias: null
   authorId: number
   repositoryId: number
 }

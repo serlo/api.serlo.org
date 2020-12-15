@@ -1,6 +1,7 @@
 interface AbstractUuid {
   id: Int!
   trashed: Boolean!
+  alias: String
   threads(
     after: String
     before: String

@@ -60,7 +60,6 @@ describe('CoursePage', () => {
             ... on CoursePage {
               id
               trashed
-              alias
               instance
               date
             }
@@ -86,7 +85,6 @@ describe('CoursePage', () => {
                 __typename
                 id
                 trashed
-                alias
                 instance
                 date
               }

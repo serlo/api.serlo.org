@@ -28,6 +28,7 @@ import {
   comment1,
   comment2,
   comment3,
+  getCommentDataWithoutSubResolvers,
   user,
 } from '../../../__fixtures__'
 import {
@@ -310,7 +311,7 @@ test('endpoint /uuid/:id will not give back comment on its own', async () => {
         }
       }
     `,
-    variables: comment1,
+    variables: getCommentDataWithoutSubResolvers(comment1),
     data: {
       uuid: null,
     },

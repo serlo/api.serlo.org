@@ -26,7 +26,7 @@ import { isDefined } from '../../utils'
 import { UuidResolvers } from '../abstract-uuid'
 import { CommentPayload, ThreadData, ThreadDataType } from './types'
 
-export function createThreadResolvers(): UuidResolvers {
+export function createThreadResolvers(): Pick<UuidResolvers, 'threads'> {
   return {
     async threads(parent, cursorPayload, { dataSources }) {
       const { firstCommentIds } = await Promise.resolve(

@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Connection } from '../../connection'
-import { DiscriminatorType, UuidPayload } from '../abstract-uuid'
+import { DiscriminatorType, UuidPayload, UuidResolvers } from '../abstract-uuid'
 import { UserPayload } from '../user'
 import { Resolver } from '~/internals/graphql'
 import { Scalars, ThreadCommentsArgs } from '~/types'
@@ -53,7 +53,7 @@ export interface ThreadResolvers {
   Comment: {
     createdAt: Resolver<CommentPayload, never, Scalars['DateTime']>
     author: Resolver<CommentPayload, never, UserPayload>
-  }
+  } & UuidResolvers
 }
 
 export interface CommentPayload {
