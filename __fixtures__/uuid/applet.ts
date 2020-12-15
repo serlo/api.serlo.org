@@ -21,14 +21,14 @@
  */
 import * as R from 'ramda'
 
+import { license } from '../license'
 import {
   AppletPayload,
   AppletRevisionPayload,
   EntityRevisionType,
   EntityType,
-} from '../../src/graphql/schema'
-import { Instance } from '../../src/types'
-import { license } from '../license'
+} from '~/schema/uuid'
+import { Instance } from '~/types'
 
 export const applet: AppletPayload = {
   __typename: EntityType.Applet,

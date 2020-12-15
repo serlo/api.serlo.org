@@ -22,14 +22,13 @@
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
-import { checkoutRevisionNotificationEvent } from '../../__fixtures__'
-import { user } from '../../__fixtures__/uuid'
+import { checkoutRevisionNotificationEvent, user } from '../../__fixtures__'
 import { createTestClient } from '../../__tests__/__utils__'
-import { Service } from '../../src/graphql/schema/types'
 import {
-  assertSuccessfulGraphQLQuery,
   assertSuccessfulGraphQLMutation,
+  assertSuccessfulGraphQLQuery,
 } from '../__utils__'
+import { Service } from '~/internals/auth'
 
 test('setNotificationState', async () => {
   global.client = createTestClient({

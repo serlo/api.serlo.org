@@ -29,13 +29,10 @@ import {
   getAppletRevisionDataWithoutSubResolvers,
 } from '../../../__fixtures__'
 import {
-  AppletPayload,
-  AppletRevisionPayload,
-} from '../../../src/graphql/schema'
-import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
+import { AppletPayload, AppletRevisionPayload } from '~/schema/uuid'
 
 test('Applet', async () => {
   await addUuidInteraction<AppletPayload>({

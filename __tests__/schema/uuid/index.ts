@@ -22,7 +22,6 @@
 import { gql } from 'apollo-server'
 
 import { taxonomyTermRoot } from '../../../__fixtures__'
-import { Service } from '../../../src/graphql/schema/types'
 import {
   assertFailingGraphQLQuery,
   assertSuccessfulGraphQLQuery,
@@ -31,6 +30,7 @@ import {
   createUuidHandler,
   createJsonHandler,
 } from '../../__utils__'
+import { Service } from '~/internals/auth'
 
 let client: Client
 

@@ -29,17 +29,17 @@ import {
   taxonomyTermSubject,
 } from '../../../__fixtures__'
 import {
-  NavigationPayload,
-  PagePayload,
-  TaxonomyTermPayload,
-} from '../../../src/graphql/schema'
-import { Service } from '../../../src/graphql/schema/types'
-import { Instance } from '../../../src/types'
-import {
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   createTestClient,
 } from '../../__utils__'
+import { Service } from '~/internals/auth'
+import {
+  NavigationPayload,
+  PagePayload,
+  TaxonomyTermPayload,
+} from '~/schema/uuid'
+import { Instance } from '~/types'
 
 function createSetNavigationMutation(navigation: NavigationPayload) {
   return {

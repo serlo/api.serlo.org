@@ -28,11 +28,11 @@ import {
   page,
   pageRevision,
 } from '../../../__fixtures__'
-import { PagePayload, PageRevisionPayload } from '../../../src/graphql/schema'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
+import { PagePayload, PageRevisionPayload } from '~/schema/uuid'
 
 test('Page', async () => {
   await addUuidInteraction<PagePayload>({

@@ -19,8 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { NavigationPayload } from '../../src/graphql/schema'
-import { Instance } from '../../src/types'
+import { NavigationPayload } from '~/schema/uuid'
+import { Instance } from '~/types'
 
 export const navigation: NavigationPayload = {
   data: [

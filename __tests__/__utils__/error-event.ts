@@ -21,7 +21,7 @@
  */
 import { either as E } from 'fp-ts'
 
-import { ErrorEvent } from '../../src/error-event'
+import { ErrorEvent } from '~/internals/error-event'
 
 export function expectToBeLeftEventWith<A>(
   value: E.Either<ErrorEvent, A>,
