@@ -415,6 +415,11 @@ async function exec(): Promise<void> {
     {
       tagName: 'v0.13.0',
       date: '2020-12-15',
+      yanked: true,
+    },
+    {
+      tagName: 'v0.13.1',
+      date: '2020-12-15',
       added: [['uuid', 'Resolve `/entity/view/:id` to the given uuid.']],
       internal: [
         'Restructure the repository. Please check out the updated README.',
