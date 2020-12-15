@@ -200,10 +200,10 @@ export class SerloDataSource extends CacheableDataSource {
     userId: number
     unread: boolean
   }) {
-    const values: boolean[] = await Promise.all(
+    const values: NotificationsPayload[] = await Promise.all(
       //TODO: rewrite legacy endpoint so that it accepts an array directly
       notificationState.ids.map(
-        async (notificationId): Promise<boolean> => {
+        async (notificationId): Promise<NotificationsPayload> => {
           const value = await this.customPost<NotificationsPayload>({
             path: `/api/set-notification-state/${notificationId}`,
             body: {
@@ -217,8 +217,7 @@ export class SerloDataSource extends CacheableDataSource {
             ),
             update: () => Promise.resolve(value),
           })
-          //TODO: check what /api/set-… returns if it's not successful
-          return !!value
+          return value
         }
       )
     )
