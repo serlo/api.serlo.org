@@ -9,9 +9,14 @@ interface AbstractEntity {
 }
 
 interface AbstractEntityRevision {
-  # extends AbstractRevision
+  # extends AbstractUuid
   id: Int!
   trashed: Boolean!
+
+  # extends AbstractRevision
   author: User!
   date: DateTime!
+  content: String!
+
+  changes: String!
 }

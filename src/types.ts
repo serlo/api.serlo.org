@@ -400,6 +400,8 @@ export type AbstractEntityRevision = {
   trashed: Scalars['Boolean'];
   author: User;
   date: Scalars['DateTime'];
+  content: Scalars['String'];
+  changes: Scalars['String'];
 };
 
 export type AbstractExercise = {
@@ -475,6 +477,7 @@ export type AbstractRevision = {
   trashed: Scalars['Boolean'];
   author: User;
   date: Scalars['DateTime'];
+  content: Scalars['String'];
 };
 
 export type AbstractTaxonomyTermChild = {

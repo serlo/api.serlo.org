@@ -20,6 +20,8 @@ export type AbstractEntityRevision = {
     trashed: Scalars['Boolean'];
     author: User;
     date: Scalars['DateTime'];
+    content: Scalars['String'];
+    changes: Scalars['String'];
 };
 
 // @public (undocumented)
@@ -74,6 +76,7 @@ export type AbstractRevision = {
     trashed: Scalars['Boolean'];
     author: User;
     date: Scalars['DateTime'];
+    content: Scalars['String'];
 };
 
 // @public (undocumented)
