@@ -48,6 +48,7 @@ export const articleRevision: ArticleRevisionPayload = {
   __typename: EntityRevisionType.ArticleRevision,
   id: 30674,
   trashed: false,
+  alias: null,
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
   repositoryId: article.id,
@@ -61,7 +62,13 @@ export const articleRevision: ArticleRevisionPayload = {
 export function getArticleDataWithoutSubResolvers(article: ArticlePayload) {
   return {
     ...R.omit(
-      ['currentRevisionId', 'revisionIds', 'licenseId', 'taxonomyTermIds'],
+      [
+        'currentRevisionId',
+        'revisionIds',
+        'licenseId',
+        'taxonomyTermIds',
+        'alias',
+      ],
       article
     ),
     ...getRepositoryDataWithoutSubResolvers(article),
@@ -71,5 +78,5 @@ export function getArticleDataWithoutSubResolvers(article: ArticlePayload) {
 export function getArticleRevisionDataWithoutSubResolvers(
   articleRevision: ArticleRevisionPayload
 ) {
-  return R.omit(['authorId', 'repositoryId'], articleRevision)
+  return R.omit(['authorId', 'repositoryId', 'alias'], articleRevision)
 }

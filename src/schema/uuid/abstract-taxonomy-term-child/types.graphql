@@ -2,9 +2,9 @@ interface AbstractTaxonomyTermChild {
   # extends AbstractEntity
   id: Int!
   trashed: Boolean!
+  alias: String
   date: DateTime!
   instance: Instance!
-  alias: String
   license: License!
   taxonomyTerms(
     after: String

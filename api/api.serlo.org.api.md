@@ -40,6 +40,7 @@ export type AbstractExercise = {
 export type AbstractExerciseRevision = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     author: User;
     date: Scalars['DateTime'];
     content: Scalars['String'];
@@ -64,9 +65,9 @@ export type AbstractNotificationEvent = {
 export type AbstractRepository = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
     instance: Instance;
-    alias?: Maybe<Scalars['String']>;
     license: License;
 };
 
@@ -74,6 +75,7 @@ export type AbstractRepository = {
 export type AbstractRevision = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     author: User;
     date: Scalars['DateTime'];
     content: Scalars['String'];
@@ -83,9 +85,9 @@ export type AbstractRevision = {
 export type AbstractTaxonomyTermChild = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
     instance: Instance;
-    alias?: Maybe<Scalars['String']>;
     license: License;
     taxonomyTerms: TaxonomyTermConnection;
 };
@@ -102,6 +104,7 @@ export type AbstractTaxonomyTermChildTaxonomyTermsArgs = {
 export type AbstractUuid = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
 };
 
@@ -156,6 +159,7 @@ export type AppletRevision = AbstractUuid & AbstractRevision & AbstractEntityRev
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: Applet;
@@ -237,6 +241,7 @@ export type ArticleRevision = AbstractUuid & AbstractRevision & AbstractEntityRe
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: Article;
@@ -384,6 +389,7 @@ export type CoursePageRevision = AbstractUuid & AbstractRevision & AbstractEntit
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: CoursePage;
@@ -439,6 +445,7 @@ export type CourseRevision = AbstractUuid & AbstractRevision & AbstractEntityRev
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: Course;
@@ -602,6 +609,7 @@ export type EventRevision = AbstractUuid & AbstractRevision & AbstractEntityRevi
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: Event_2;
@@ -706,6 +714,7 @@ export type ExerciseGroupRevision = AbstractUuid & AbstractRevision & AbstractEn
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: ExerciseGroup;
@@ -768,6 +777,7 @@ export type ExerciseRevision = AbstractUuid & AbstractRevision & AbstractEntityR
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: Exercise;
@@ -846,6 +856,7 @@ export type GroupedExerciseRevision = AbstractUuid & AbstractRevision & Abstract
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: GroupedExercise;
@@ -1062,6 +1073,7 @@ export type PageRevision = AbstractUuid & AbstractRevision & {
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     title: Scalars['String'];
@@ -1327,6 +1339,7 @@ export type SolutionRevision = AbstractUuid & AbstractRevision & AbstractEntityR
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: Solution;
@@ -1582,6 +1595,7 @@ export type VideoRevision = AbstractUuid & AbstractRevision & AbstractEntityRevi
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: Video;
@@ -1640,6 +1654,16 @@ export type VideoThreadsArgs = {
     last?: Maybe<Scalars['Int']>;
 };
 
+
+// Warnings were encountered during analysis:
+//
+// src/schema/uuid/abstract-repository/types.ts:30:10 - (TS2305) Module '"../alias"' has no exported member 'AliasResolvers'.
+// src/schema/uuid/alias/utils.ts:1:10 - (TS2305) Module '"./types"' has no exported member 'AliasResolvers'.
+// src/schema/uuid/user/resolvers.ts:89:5 - (TS2322) Type '(AbstractUuidPayload | null)[]' is not assignable to type 'UserPayload[]'.
+//   Type 'AbstractUuidPayload | null' is not assignable to type 'UserPayload'.
+//     Type 'null' is not assignable to type 'UserPayload'.
+// src/schema/uuid/user/types.ts:62:15 - (TS2677) A type predicate's type must be assignable to its parameter's type.
+//   Property 'alias' is missing in type 'UserPayload' but required in type 'AbstractUuidPayload'.
 
 // (No @packageDocumentation comment for this package)
 

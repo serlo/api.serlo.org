@@ -38,7 +38,6 @@ export function createEntityTaxonomyTermsQuery(
                 trashed
                 type
                 instance
-                alias
                 name
                 description
                 weight

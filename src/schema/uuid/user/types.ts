@@ -36,6 +36,7 @@ import {
 
 export interface UserPayload extends Omit<User, keyof UserResolvers['User']> {
   __typename: DiscriminatorType.User
+  alias: string
 }
 
 export interface UserResolvers {
@@ -51,7 +52,6 @@ export interface UserResolvers {
     >
   }
   User: {
-    alias: Resolver<UserPayload, never, string>
     activeAuthor: Resolver<UserPayload, never, boolean>
     activeDonor: Resolver<UserPayload, never, boolean>
     activeReviewer: Resolver<UserPayload, never, boolean>

@@ -61,7 +61,6 @@ describe('Page', () => {
               id
               trashed
               instance
-              alias
               date
             }
           }

@@ -19,6 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import * as R from 'ramda'
+
 import { article } from './article'
 import { user, user2 } from './user'
 import { CommentPayload, DiscriminatorType } from '~/schema/uuid'
@@ -90,4 +92,8 @@ export const unsupportedThread: UnsupportedThread = {
 
 export const unsupportedComment: UnsupportedComment = {
   id: 15469,
+}
+
+export function getCommentDataWithoutSubResolvers(comment: CommentPayload) {
+  return R.omit(['alias'], comment)
 }

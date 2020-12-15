@@ -48,6 +48,7 @@ export const coursePageRevision: CoursePageRevisionPayload = {
   __typename: EntityRevisionType.CoursePageRevision,
   id: 19277,
   trashed: false,
+  alias: null,
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
   repositoryId: coursePage.id,
@@ -60,7 +61,7 @@ export function getCoursePageDataWithoutSubResolvers(
   coursePage: CoursePagePayload
 ) {
   return R.omit(
-    ['currentRevisionId', 'revisionIds', 'licenseId', 'parentId'],
+    ['currentRevisionId', 'revisionIds', 'licenseId', 'parentId', 'alias'],
     coursePage
   )
 }
@@ -68,5 +69,5 @@ export function getCoursePageDataWithoutSubResolvers(
 export function getCoursePageRevisionDataWithoutSubResolvers(
   coursePageRevision: CoursePageRevisionPayload
 ) {
-  return R.omit(['authorId', 'repositoryId'], coursePageRevision)
+  return R.omit(['authorId', 'repositoryId', 'alias'], coursePageRevision)
 }
