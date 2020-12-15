@@ -25,8 +25,6 @@ import {
   article,
   getArticleDataWithoutSubResolvers,
 } from '../../../__fixtures__'
-import { Service } from '../../../src/graphql/schema/types'
-import { Instance } from '../../../src/types'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
@@ -34,6 +32,8 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
+import { Service } from '~/internals/auth'
+import { Instance } from '~/types'
 
 let client: Client
 
