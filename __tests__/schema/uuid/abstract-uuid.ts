@@ -56,8 +56,10 @@ import {
   UuidPayload,
 } from '../../../src/graphql/schema/uuid/abstract-uuid/types'
 import {
+  assertFailingGraphQLQuery,
   assertSuccessfulGraphQLQuery,
   Client,
+  createJsonHandler,
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
@@ -102,6 +104,78 @@ const abstractUuidFixtures: Record<
   [EntityRevisionType.VideoRevision]: videoRevision,
 }
 const abstractUuidRepository = R.toPairs(abstractUuidFixtures)
+
+describe('uuid', () => {
+  test('returns null when alias cannot be found', async () => {
+    global.server.use(
+      createJsonHandler({
+        path: '/api/alias/not-existing',
+        body: null,
+      })
+    )
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notExistingUuid($alias: AliasInput) {
+          uuid(alias: $alias) {
+            __typename
+          }
+        }
+      `,
+      variables: { alias: { instance: 'de', path: '/not-existing' } },
+      data: { uuid: null },
+      client,
+    })
+  })
+
+  test('returns null when uuid does not exist', async () => {
+    global.server.use(createJsonHandler({ path: '/api/uuid/666', body: null }))
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query requestNonExistingUuid($id: Int!) {
+          uuid(id: $id) {
+            __typename
+          }
+        }
+      `,
+      variables: { id: 666 },
+      data: {
+        uuid: null,
+      },
+      client,
+    })
+  })
+
+  test('returns an error when no arguments are given', async () => {
+    await assertFailingGraphQLQuery({
+      query: gql`
+        query emptyUuidRequest {
+          uuid {
+            __typename
+          }
+        }
+      `,
+      message: 'you need to provide an id or an alias',
+      client,
+    })
+  })
+
+  test("returns an error when the path does not start with '/'", async () => {
+    await assertFailingGraphQLQuery({
+      query: gql`
+        query emptyUuidRequest {
+          uuid(alias: { instance: de, path: "mathe" }) {
+            __typename
+          }
+        }
+      `,
+      message:
+        "First is the worst, please add a '/' at the beginning of your path",
+      client,
+    })
+  })
+})
 
 describe('property "alias"', () => {
   describe('returns encoded alias when alias of payloads is a string', () => {
