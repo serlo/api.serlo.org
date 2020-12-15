@@ -154,60 +154,6 @@ test('Thread with 0 Comments', async () => {
   })
 })
 
-describe('Thread Mutation', () => {
-  function createCreateThreadMutation(variables: MutationCreateThreadArgs) {
-    return {
-      mutation: gql`
-        mutation createThread(
-          $title: String!
-          $content: String!
-          $objectId: Int!
-          $authorId: Int!
-        ) {
-          createThread(
-            title: $title
-            content: $content
-            objectId: $objectId
-            authorId: $authorId
-          ) {
-            title
-            archived
-            trashed
-          }
-        }
-      `,
-      variables,
-    }
-  }
-
-  test('thread mutation', async () => {
-    global.server.use(
-      rest.post(
-        `http://de.${process.env.SERLO_ORG_HOST}/api/create-comment`,
-        (req, res, ctx) => {
-          const body = ctx.json({
-            title: 'Neuer Kommentar',
-            archived: false,
-            trashed: false,
-          })
-          console.log(res(ctx.status(200), body))
-          return res(ctx.status(200), body)
-        }
-      )
-    )
-
-    await assertSuccessfulGraphQLMutation({
-      ...createCreateThreadMutation({
-        title: 'Neuer Kommentar',
-        content: 'Text zum neuen Kommentar',
-        objectId: article.id,
-        authorId: user.id,
-      }),
-      client,
-    })
-  })
-})
-
 test('property "createdAt" of Thread', async () => {
   setupThreads(article, [[comment1, comment2]])
   await assertSuccessfulGraphQLQuery({
@@ -453,6 +399,75 @@ test('Test property "author" of Comment', async () => {
   })
 })
 
+describe('Thread Mutation', () => {
+  function createCreateThreadMutation(variables: MutationCreateThreadArgs) {
+    return {
+      mutation: gql`
+        mutation createThread(
+          $title: String!
+          $content: String!
+          $objectId: Int!
+          $authorId: Int!
+        ) {
+          createThread(
+            title: $title
+            content: $content
+            objectId: $objectId
+            authorId: $authorId
+          ) {
+            title
+            archived
+            trashed
+          }
+        }
+      `,
+      variables,
+    }
+  }
+
+  test('thread mutation', async () => {
+    createAddCommentMutation('Neuer Kommentar', false, false)
+
+    await assertSuccessfulGraphQLMutation({
+      ...createCreateThreadMutation({
+        title: 'Neuer Kommentar',
+        content: 'Text zum neuen Kommentar',
+        objectId: article.id,
+        authorId: user.id,
+      }),
+      client,
+      data: {
+        createThread: {
+          archived: false,
+          title: 'Neuer Kommentar',
+          trashed: false,
+        },
+      },
+    })
+  })
+
+  test('No thread is created with unauthenticated user', async () => {
+    createAddCommentMutation('Neuer Kommentar', false, false)
+
+    await assertSuccessfulGraphQLMutation({
+      ...createCreateThreadMutation({
+        title: 'Neuer Kommentar',
+        content: 'Text zum neuen Kommentar',
+        objectId: article.id,
+        authorId: user.id,
+      }),
+      client,
+      data: {
+        createThread: {
+          archived: false,
+          title: 'Neuer Kommentar',
+          trashed: false,
+        },
+      },
+    })
+  })
+})
+
 function setupThreads(uuidPayload: UuidPayload, threads: CommentPayload[][]) {
   const firstCommentIds = threads.map((thread) => thread[0].id)
   global.server.use(
@@ -493,6 +508,27 @@ function setupThreads(uuidPayload: UuidPayload, threads: CommentPayload[][]) {
               }
 
         return res(ctx.json(payload))
+      }
+    )
+  )
+}
+
+function createAddCommentMutation(
+  title: string,
+  archived: boolean,
+  trashed: boolean
+) {
+  global.server.use(
+    rest.post(
+      `http://de.${process.env.SERLO_ORG_HOST}/api/add-comment`,
+      (req, res, ctx) => {
+        console.log(req.body)
+        const body = ctx.json({
+          title: title,
+          archived: archived,
+          trashed: trashed,
+        })
+        return res(body)
       }
     )
   )

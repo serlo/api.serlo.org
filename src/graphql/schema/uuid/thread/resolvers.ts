@@ -85,10 +85,12 @@ export const resolvers: ThreadResolvers = {
         ...payload,
         userId: user,
       })
-      return {
-        __typename: ThreadDataType,
-        commentPayloads: [commentPayload],
-      }
+      return commentPayload === null
+        ? null
+        : {
+            __typename: ThreadDataType,
+            commentPayloads: [commentPayload],
+          }
     },
   },
 }

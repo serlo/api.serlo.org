@@ -68,5 +68,5 @@ extend type Mutation {
     content: String!
     objectId: Int!
     authorId: Int!
-  ): Thread!
+  ): Thread
 }

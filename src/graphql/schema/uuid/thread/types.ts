@@ -59,7 +59,7 @@ export interface ThreadResolvers {
     author: Resolver<CommentPayload, never, UserPayload>
   }
   Mutation: {
-    createThread: MutationResolver<MutationCreateThreadArgs, ThreadData>
+    createThread: MutationResolver<MutationCreateThreadArgs, ThreadData | null>
   }
 }
 

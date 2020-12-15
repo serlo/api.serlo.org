@@ -251,9 +251,9 @@ export class SerloDataSource extends CacheableDataSource {
 
   public async createThread(
     payload: MutationCreateThreadArgs & { userId: number }
-  ): Promise<CommentPayload> {
-    return await this.customPost<CommentPayload>({
-      path: `/api/create-comment/`,
+  ): Promise<CommentPayload | null> {
+    return await this.customPost<CommentPayload | null>({
+      path: `/api/add-comment/`,
       body: payload,
     })
   }
