@@ -310,7 +310,8 @@ export function createSerloModel({
         const notificationEvent = await get<AbstractNotificationEventPayload>({
           path: `/api/event/${id}`,
         })
-        return isUnsupportedNotificationEvent(notificationEvent)
+        return notificationEvent === null ||
+          isUnsupportedNotificationEvent(notificationEvent)
           ? null
           : notificationEvent
       },
@@ -354,27 +355,37 @@ export function createSerloModel({
     environment
   )
 
-  const setNotificationState = createMutation<{
-    id: number
+  const setNotificationsState = createMutation<{
+    ids: number[]
     userId: number
     unread: boolean
   }>({
     mutate: async (notificationState: {
-      id: number
+      ids: number[]
       userId: number
       unread: boolean
     }) => {
-      const value = await post<NotificationsPayload>({
-        path: `/api/set-notification-state/${notificationState.id}`,
-        body: {
-          userId: notificationState.userId,
-          unread: notificationState.unread,
-        },
-      })
-      await environment.cache.set({
-        key: `de.serlo.org/api/notifications/${notificationState.userId}`,
-        value,
-      })
+      //
+      const values: NotificationsPayload[] = await Promise.all(
+        //TODO: rewrite legacy endpoint so that it accepts an array directly
+        notificationState.ids.map(
+          async (notificationId): Promise<NotificationsPayload> => {
+            const value = await post<NotificationsPayload>({
+              path: `/api/set-notification-state/${notificationId}`,
+              body: {
+                userId: notificationState.userId,
+                unread: notificationState.unread,
+              },
+            })
+            await environment.cache.set({
+              key: `de.serlo.org/api/notifications/${notificationState.userId}`,
+              value,
+            })
+            return value
+          }
+        )
+      )
+      values.every(Boolean)
     },
   })
 
@@ -466,7 +477,7 @@ export function createSerloModel({
     getUuid,
     removeCacheValue,
     setCacheValue,
-    setNotificationState,
+    setNotificationsState,
   }
 }
 

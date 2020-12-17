@@ -20,12 +20,12 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { resolveConnection } from '../connection'
-import { checkUserIsAuthenticated } from '../utils'
 import {
   NotificationEventPayload,
   NotificationPayload,
   NotificationResolvers,
 } from './types'
+import { checkUserIsAuthenticated } from '~/schema/utils'
 
 export const resolvers: NotificationResolvers = {
   AbstractNotificationEvent: {

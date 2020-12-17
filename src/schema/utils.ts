@@ -19,6 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+
+import { AuthenticationError } from 'apollo-server'
+
+import { Context } from '~/internals/graphql'
+
 export function isDefined<A>(value?: A | null): value is A {
   return value !== null && value !== undefined
+}
+
+export function checkUserIsAuthenticated(user: Context['user']) {
+  if (user === null) throw new AuthenticationError('You are not logged in')
 }

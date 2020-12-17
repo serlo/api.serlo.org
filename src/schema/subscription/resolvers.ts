@@ -20,9 +20,9 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { resolveConnection } from '../connection'
-import { checkUserIsAuthenticated } from '../utils'
 import { AbstractUuidPayload } from '../uuid'
 import { SubscriptionResolvers } from './types'
+import { checkUserIsAuthenticated } from '~/schema/utils'
 
 export const resolvers: SubscriptionResolvers = {
   Query: {
