@@ -29,7 +29,7 @@ import {
   assertSuccessfulGraphQLQuery,
   assertSuccessfulGraphQLMutation,
 } from '../__utils__'
-import { Service } from '~/../dist/graphql/schema/types'
+import { Service } from '~/internals/auth'
 
 test('setNotificationsState', async () => {
   global.client = createTestClient({
