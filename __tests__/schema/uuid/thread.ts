@@ -30,6 +30,7 @@ import { UuidPayload } from '../../../src/graphql/schema/uuid/abstract-uuid'
 import { CommentPayload } from '../../../src/graphql/schema/uuid/thread'
 import { Instance, MutationCreateThreadArgs } from '../../../src/types'
 import {
+  assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   Client,
@@ -426,7 +427,7 @@ describe('Thread Mutation', () => {
   }
 
   test('thread mutation', async () => {
-    createAddCommentMutation('Neuer Kommentar', false, false)
+    createAddCommentMutation(article.id, comment1.date)
 
     await assertSuccessfulGraphQLMutation({
       ...createCreateThreadMutation({
@@ -447,24 +448,24 @@ describe('Thread Mutation', () => {
   })
 
   test('No thread is created with unauthenticated user', async () => {
-    createAddCommentMutation('Neuer Kommentar', false, false)
-
-    await assertSuccessfulGraphQLMutation({
-      ...createCreateThreadMutation({
-        title: 'Neuer Kommentar',
-        content: 'Text zum neuen Kommentar',
-        objectId: article.id,
-        authorId: user.id,
-      }),
-      client,
-      data: {
-        createThread: {
-          archived: false,
-          title: 'Neuer Kommentar',
-          trashed: false,
-        },
-      },
+    const { client } = createTestClient({
+      service: Service.SerloCloudflareWorker,
+      user: null,
     })
+    await assertFailingGraphQLMutation(
+      {
+        ...createCreateThreadMutation({
+          title: 'Neuer Kommentar',
+          content: 'Text zum neuen Kommentar',
+          objectId: article.id,
+          authorId: user.id,
+        }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('UNAUTHENTICATED')
+      }
+    )
   })
 })
 
@@ -513,20 +514,29 @@ function setupThreads(uuidPayload: UuidPayload, threads: CommentPayload[][]) {
   )
 }
 
-function createAddCommentMutation(
-  title: string,
-  archived: boolean,
-  trashed: boolean
-) {
+function createAddCommentMutation(id: number, date: string) {
   global.server.use(
     rest.post(
       `http://de.${process.env.SERLO_ORG_HOST}/api/add-comment`,
       (req, res, ctx) => {
-        console.log(req.body)
+        if (typeof req.body === 'string' || typeof req.body === 'undefined')
+          return res(ctx.status(400))
         const body = ctx.json({
-          title: title,
-          archived: archived,
-          trashed: trashed,
+          id,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          title: req.body.title,
+          trashed: false,
+          alias: null,
+          __typename: 'Comment',
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          authorId: req.body.authorId,
+          date,
+          archived: false,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          content: req.body.content,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          parentId: req.body.objectId,
+          childrenIds: [],
         })
         return res(body)
       }
