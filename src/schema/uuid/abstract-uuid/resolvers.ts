@@ -98,12 +98,11 @@ export const resolvers: AbstractUuidResolvers = {
 
       if (_user === null) throw new AuthenticationError('You are not logged in')
 
-      const uuidValue = await dataSources.serlo.setUuidState<UuidPayload>({
+      return await dataSources.serlo.setUuidState<UuidPayload>({
         id: payload.id,
         userId: _user,
         trashed: payload.trashed,
       })
-      return uuidValue
     },
   },
 }
