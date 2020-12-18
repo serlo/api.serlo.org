@@ -125,11 +125,11 @@ export interface NotificationResolvers {
   Mutation: {
     setNotificationState: MutationResolver<
       MutationSetNotificationStateArgs,
-      void
+      boolean
     >
     setNotificationsState: MutationResolver<
       MutationSetNotificationsStateArgs,
-      void
+      boolean
     >
   }
 }

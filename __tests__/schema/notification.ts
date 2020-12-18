@@ -83,11 +83,7 @@ import {
   createUuidHandler,
 } from '../__utils__'
 import { Service } from '~/internals/auth'
-import {
-  Instance,
-  MutationSetNotificationsStateArgs,
-  MutationSetNotificationStateArgs,
-} from '~/types'
+import { Instance } from '~/types'
 
 describe('notifications', () => {
   let client: Client
@@ -2201,6 +2197,12 @@ describe('notificationEvent', () => {
 })
 
 describe('setNotificationState', () => {
+  const mutation = gql`
+    mutation setNotificationState($id: Int!, $unread: Boolean!) {
+      setNotificationState(id: $id, unread: $unread)
+    }
+  `
+
   test('authenticated', async () => {
     global.server.use(
       rest.post(
@@ -2226,25 +2228,26 @@ describe('setNotificationState', () => {
       user: user.id,
     })
     await assertSuccessfulGraphQLMutation({
-      ...createSetNotificationStateMutation({
+      mutation,
+      variables: {
         id: 1,
         unread: false,
-      }),
+      },
       client,
-      data: { setNotificationState: null },
+      data: { setNotificationState: true },
     })
   })
   test('unauthenticated', async () => {
     const client = createTestClient({
-      service: Service.SerloCloudflareWorker,
       user: null,
     })
     await assertFailingGraphQLMutation(
       {
-        ...createSetNotificationStateMutation({
+        mutation,
+        variables: {
           id: 1,
           unread: false,
-        }),
+        },
         client,
       },
       (errors) => {
@@ -2268,7 +2271,8 @@ describe('setNotificationState', () => {
     })
     await assertFailingGraphQLMutation(
       {
-        ...createSetNotificationStateMutation({ id: 1, unread: false }),
+        mutation,
+        variables: { id: 1, unread: false },
         client,
       },
       (errors) => {
@@ -2276,22 +2280,15 @@ describe('setNotificationState', () => {
       }
     )
   })
-
-  function createSetNotificationStateMutation(
-    variables: MutationSetNotificationStateArgs
-  ) {
-    return {
-      mutation: gql`
-        mutation setNotificationState($id: Int!, $unread: Boolean!) {
-          setNotificationState(id: $id, unread: $unread)
-        }
-      `,
-      variables,
-    }
-  }
 })
 
 describe('setNotificationsState', () => {
+  const mutation = gql`
+    mutation setNotificationsState($ids: [Int!]!, $unread: Boolean!) {
+      setNotificationsState(ids: $ids, unread: $unread)
+    }
+  `
+
   test('authenticated', async () => {
     global.server.use(
       rest.post(
@@ -2317,26 +2314,27 @@ describe('setNotificationsState', () => {
       user: user.id,
     })
     await assertSuccessfulGraphQLMutation({
-      ...createSetNotificationsStateMutation({
+      mutation,
+      variables: {
         ids: [1],
         unread: false,
-      }),
+      },
       client,
-      data: { setNotificationsState: null },
+      data: { setNotificationsState: true },
     })
   })
 
   test('unauthenticated', async () => {
     const client = createTestClient({
-      service: Service.SerloCloudflareWorker,
       user: null,
     })
     await assertFailingGraphQLMutation(
       {
-        ...createSetNotificationsStateMutation({
+        mutation,
+        variables: {
           ids: [1, 2, 6],
           unread: false,
-        }),
+        },
         client,
       },
       (errors) => {
@@ -2360,7 +2358,8 @@ describe('setNotificationsState', () => {
     })
     await assertFailingGraphQLMutation(
       {
-        ...createSetNotificationsStateMutation({ ids: [1], unread: false }),
+        mutation,
+        variables: { ids: [1], unread: false },
         client,
       },
       (errors) => {
@@ -2368,17 +2367,4 @@ describe('setNotificationsState', () => {
       }
     )
   })
-
-  function createSetNotificationsStateMutation(
-    variables: MutationSetNotificationsStateArgs
-  ) {
-    return {
-      mutation: gql`
-        mutation setNotificationsState($ids: [Int!]!, $unread: Boolean!) {
-          setNotificationsState(ids: $ids, unread: $unread)
-        }
-      `,
-      variables,
-    }
-  }
 })

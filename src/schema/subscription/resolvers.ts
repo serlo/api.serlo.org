@@ -22,14 +22,14 @@
 import { resolveConnection } from '../connection'
 import { AbstractUuidPayload } from '../uuid'
 import { SubscriptionResolvers } from './types'
-import { checkUserIsAuthenticated } from '~/schema/utils'
+import { assertUserIsAuthenticated } from '~/schema/utils'
 
 export const resolvers: SubscriptionResolvers = {
   Query: {
     async subscriptions(parent, cursorPayload, { dataSources, user }) {
-      checkUserIsAuthenticated(user)
+      assertUserIsAuthenticated(user)
       const subscriptions = await dataSources.model.serlo.getSubscriptions({
-        id: user as number,
+        id: user,
       })
       const result = await Promise.all(
         subscriptions.subscriptions.map((id) => {

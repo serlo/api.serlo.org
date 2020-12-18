@@ -28,6 +28,8 @@ export function isDefined<A>(value?: A | null): value is A {
   return value !== null && value !== undefined
 }
 
-export function checkUserIsAuthenticated(user: Context['user']) {
+export function assertUserIsAuthenticated(
+  user: Context['user']
+): asserts user is number {
   if (user === null) throw new AuthenticationError('You are not logged in')
 }

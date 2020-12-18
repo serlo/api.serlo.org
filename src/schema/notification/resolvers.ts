@@ -25,7 +25,7 @@ import {
   NotificationPayload,
   NotificationResolvers,
 } from './types'
-import { checkUserIsAuthenticated } from '~/schema/utils'
+import { assertUserIsAuthenticated } from '~/schema/utils'
 
 export const resolvers: NotificationResolvers = {
   AbstractNotificationEvent: {
@@ -46,9 +46,9 @@ export const resolvers: NotificationResolvers = {
       { unread, ...cursorPayload },
       { dataSources, user }
     ) {
-      checkUserIsAuthenticated(user)
+      assertUserIsAuthenticated(user)
       const { notifications } = await dataSources.model.serlo.getNotifications({
-        id: user as number,
+        id: user,
       })
       return resolveConnection<NotificationPayload>({
         nodes: notifications.filter((notification) => {
@@ -71,18 +71,18 @@ export const resolvers: NotificationResolvers = {
   },
   Mutation: {
     async setNotificationState(_parent, payload, { dataSources, user }) {
-      checkUserIsAuthenticated(user)
+      assertUserIsAuthenticated(user)
       return await dataSources.model.serlo.setNotificationsState({
         ids: [payload.id],
-        userId: user as number,
+        userId: user,
         unread: payload.unread,
       })
     },
     async setNotificationsState(_parent, payload, { dataSources, user }) {
-      checkUserIsAuthenticated(user)
+      assertUserIsAuthenticated(user)
       return await dataSources.model.serlo.setNotificationsState({
         ids: payload.ids,
-        userId: user as number,
+        userId: user,
         unread: payload.unread,
       })
     },
