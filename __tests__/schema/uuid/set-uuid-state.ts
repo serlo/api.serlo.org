@@ -23,7 +23,6 @@ import { gql } from 'apollo-server'
 import { rest } from 'msw'
 
 import { article, user, user2 } from '../../../__fixtures__'
-import { Service } from '../../../src/graphql/schema/types'
 import { MutationSetUuidStateArgs } from '../../../src/types'
 import {
   assertFailingGraphQLMutation,
@@ -31,6 +30,7 @@ import {
   createTestClient,
   Client,
 } from '../../__utils__'
+import { Service } from '~/internals/auth'
 
 let client: Client
 beforeEach(() => {

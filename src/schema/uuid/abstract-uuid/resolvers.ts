@@ -98,7 +98,7 @@ export const resolvers: AbstractUuidResolvers = {
 
       if (_user === null) throw new AuthenticationError('You are not logged in')
 
-      return await dataSources.serlo.setUuidState<UuidPayload>({
+      return await dataSources.model.serlo.setUuidState({
         id: payload.id,
         userId: _user,
         trashed: payload.trashed,

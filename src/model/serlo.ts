@@ -126,6 +126,34 @@ export function createSerloModel({
     environment
   )
 
+  const setUuidState = createMutation<
+    {
+      id: number
+      userId: number
+      trashed: boolean
+    },
+    AbstractUuidPayload | null
+  >({
+    mutate: async (mutationData: {
+      id: number
+      userId: number
+      trashed: boolean
+    }) => {
+      const value = await post<AbstractUuidPayload | null>({
+        path: `/api/set-uuid-state/${mutationData.id}`,
+        body: {
+          userId: mutationData.userId,
+          trashed: mutationData.trashed,
+        },
+      })
+      await environment.cache.set({
+        key: `de.serlo.org/api/uuid/${mutationData.id}`,
+        value,
+      })
+      return value
+    },
+  })
+
   const getActiveAuthorIds = createQuery<undefined, number[]>(
     {
       getCurrentValue: async () => {
@@ -464,6 +492,7 @@ export function createSerloModel({
     getSubscriptions,
     getThreadIds,
     getUuid,
+    setUuidState,
     removeCacheValue,
     setCacheValue,
     setNotificationState,

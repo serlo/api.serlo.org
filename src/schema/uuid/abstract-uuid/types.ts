@@ -82,6 +82,9 @@ export interface AbstractUuidResolvers {
     uuid: QueryResolver<QueryUuidArgs, UuidPayload | null>
   }
   Mutation: {
-    setUuidState: MutationResolver<MutationSetUuidStateArgs, UuidPayload | null>
+    setUuidState: MutationResolver<
+      MutationSetUuidStateArgs,
+      AbstractUuidPayload | null
+    >
   }
 }
