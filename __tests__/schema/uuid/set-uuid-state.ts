@@ -28,20 +28,15 @@ import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   createTestClient,
-  Client,
 } from '../../__utils__'
 import { Service } from '~/internals/auth'
 
-let client: Client
-beforeEach(() => {
-  client = createTestClient({
-    service: Service.Serlo,
-    user: user.id,
-  })
-})
-
 describe('setUuidState', () => {
   test('authenticated', async () => {
+    const client = createTestClient({
+      service: Service.Serlo,
+      user: user.id,
+    })
     global.server.use(
       rest.post(
         `http://de.${process.env.SERLO_ORG_HOST}/api/set-uuid-state/${article.id}`,
@@ -57,11 +52,11 @@ describe('setUuidState', () => {
     )
     await assertSuccessfulGraphQLMutation({
       ...createSetUuidStateMutation({
-        id: 1,
+        id: article.id,
         trashed: false,
       }),
       client,
-      //TODO: Add data
+      data: null, //TODO: decide on the correct return value
     })
   })
 
@@ -109,7 +104,9 @@ describe('setUuidState', () => {
     return {
       mutation: gql`
         mutation setUuidState($id: Int!, $trashed: Boolean!) {
-          setUuidState(id: $id, trashed: $trashed)
+          setUuidState(id: $id, trashed: $trashed) {
+            id
+          }
         }
       `,
       variables,
