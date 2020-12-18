@@ -21,8 +21,10 @@
  */
 import { UserInputError } from 'apollo-server'
 
-import { decodePath } from '../alias'
+import { AliasPayload, decodePath, encodePath } from '../alias'
 import { AbstractUuidResolvers, DiscriminatorType, UuidPayload } from './types'
+import { aliases } from '~/config/alias'
+import { AliasInput } from '~/types'
 
 export const resolvers: AbstractUuidResolvers = {
   AbstractUuid: {
@@ -65,7 +67,9 @@ export const resolvers: AbstractUuidResolvers = {
           })) as UuidPayload | null
         }
 
-        const alias = await dataSources.model.serlo.getAlias(payload.alias)
+        const alias =
+          resolveCustomAlias(payload.alias) ??
+          (await dataSources.model.serlo.getAlias(payload.alias))
         return alias
           ? ((await dataSources.model.serlo.getUuid({
               id: alias.id,
@@ -80,6 +84,22 @@ export const resolvers: AbstractUuidResolvers = {
         } else return uuid
       } else {
         throw new UserInputError('you need to provide an id or an alias')
+      }
+
+      function resolveCustomAlias({
+        path,
+        instance,
+      }: AliasInput): AliasPayload | null {
+        const cleanPath = encodePath(decodePath(path))
+        const instanceAliasConfig = aliases[instance]
+        const possibleId = instanceAliasConfig?.[cleanPath]
+        return typeof possibleId === 'number'
+          ? {
+              id: possibleId,
+              path: cleanPath,
+              instance,
+            }
+          : null
       }
     },
   },

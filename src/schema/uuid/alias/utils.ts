@@ -1,4 +1,9 @@
+import * as R from 'ramda'
+
 import { AliasResolvers } from './types'
+import { aliases } from '~/config/alias'
+import { AbstractUuidPayload } from '~/schema/uuid'
+import { Instance } from '~/types'
 
 /**
  * This file is part of Serlo.org API
@@ -39,10 +44,21 @@ export function encodePath(path: string) {
 }
 
 export function createAliasResolvers<
-  T extends { alias: string | null }
+  T extends { alias: string | null } & AbstractUuidPayload
 >(): AliasResolvers<T> {
   return {
-    alias(entity) {
+    async alias(entity) {
+      // TODO: check for instance aware entity first
+      const instance = (entity as { instance?: Instance }).instance
+      if (typeof instance === 'string') {
+        const instanceAliasConfig = aliases[instance]
+        const customAlias = R.find(([_path, id]) => {
+          return id === entity.id
+        }, R.toPairs(instanceAliasConfig || {}))
+        if (customAlias) {
+          return encodePath(customAlias[0])
+        }
+      }
       return Promise.resolve(entity.alias ? encodePath(entity.alias) : null)
     },
   }
