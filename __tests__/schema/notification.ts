@@ -83,7 +83,7 @@ import {
   createUuidHandler,
 } from '../__utils__'
 import { Service } from '~/internals/auth'
-import { Instance, MutationSetNotificationStateArgs } from '~/types'
+import { Instance, NotificationMutationSetStateArgs } from '~/types'
 
 describe('notifications', () => {
   let client: Client
@@ -2200,7 +2200,7 @@ describe('notificationEvent', () => {
 
 describe('setNotificationState', () => {
   function createSetNotificationStateMutation(
-    variables: MutationSetNotificationStateArgs
+    variables: NotificationMutationSetStateArgs
   ) {
     return {
       mutation: gql`

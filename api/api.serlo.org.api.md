@@ -1029,12 +1029,25 @@ export type NotificationEdge = {
 // @public (undocumented)
 export type NotificationMutation = {
     __typename?: 'NotificationMutation';
-    setState?: Maybe<Scalars['Boolean']>;
+    setState?: Maybe<NotificationMutationPayload>;
+};
+
+// @public (undocumented)
+export type NotificationMutationPayload = {
+    __typename?: 'NotificationMutationPayload';
+    record?: Maybe<AbstractNotificationEvent>;
+    success: Scalars['Boolean'];
+    query: Query;
 };
 
 // @public (undocumented)
 export type NotificationMutationSetStateArgs = {
-    id: Scalars['Int'];
+    input: NotificationSetStateInput;
+};
+
+// @public (undocumented)
+export type NotificationSetStateInput = {
+    id: Array<Scalars['Int']>;
     unread: Scalars['Boolean'];
 };
 
