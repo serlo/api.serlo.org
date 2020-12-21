@@ -354,13 +354,24 @@ export type AbstractNotificationEvent = {
 
 export type NotificationMutation = {
   __typename?: 'NotificationMutation';
-  setState?: Maybe<Scalars['Boolean']>;
+  setState?: Maybe<NotificationMutationPayload>;
 };
 
 
 export type NotificationMutationSetStateArgs = {
-  id: Scalars['Int'];
+  input: NotificationSetStateInput;
+};
+
+export type NotificationSetStateInput = {
+  id: Array<Scalars['Int']>;
   unread: Scalars['Boolean'];
+};
+
+export type NotificationMutationPayload = {
+  __typename?: 'NotificationMutationPayload';
+  record?: Maybe<AbstractNotificationEvent>;
+  success: Scalars['Boolean'];
+  query: Query;
 };
 
 export type NotificationConnection = {

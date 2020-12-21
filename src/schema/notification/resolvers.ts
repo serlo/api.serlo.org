@@ -77,13 +77,21 @@ export const resolvers: NotificationResolvers = {
   },
   NotificationMutation: {
     async setState(_parent, payload, { dataSources, user }) {
+      //TODO: for next PR: put auth check into function
       if (user === null) throw new AuthenticationError('You are not logged in')
-      await dataSources.model.serlo.setNotificationState({
-        id: payload.id,
+      const { id, unread } = payload.input
+      const idArray = Array.isArray(id) ? id : [id]
+      const res = await dataSources.model.serlo.setNotificationState({
+        id: idArray,
         userId: user,
-        unread: payload.unread,
+        unread: unread,
       })
-      return true
+      //TODO: for new PR, return changed notification in record
+      return {
+        record: null,
+        success: res.every(Boolean),
+        query: {},
+      }
     },
   },
 }
