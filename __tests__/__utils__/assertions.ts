@@ -72,17 +72,20 @@ export async function assertSuccessfulGraphQLMutation({
   mutation,
   variables,
   client,
+  data,
 }: {
   mutation: DocumentNode
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   variables?: Record<string, any>
   client: Client
+  data?: GraphQLResponse['data']
 }) {
   const response = await client.mutate({
     mutation,
     variables,
   })
   expect(response.errors).toBeUndefined()
+  if (data) expect(response.data).toEqual(data)
 }
 
 export async function assertFailingGraphQLMutation(
