@@ -45,7 +45,7 @@ import {
 } from '~/internals/graphql'
 import {
   AbstractNotificationEvent,
-  MutationSetNotificationStateArgs,
+  NotificationMutationSetStateArgs,
   Notification,
   QueryNotificationEventArgs,
   QueryNotificationsArgs,
@@ -122,7 +122,10 @@ export interface NotificationResolvers {
     >
   }
   Mutation: {
-    setNotificationState: MutationResolver<MutationSetNotificationStateArgs>
+    notification: MutationResolver<never, Record<string, never>>
+  }
+  NotificationMutation: {
+    setState: MutationResolver<NotificationMutationSetStateArgs, boolean>
   }
 }
 

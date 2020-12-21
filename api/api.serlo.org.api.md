@@ -942,7 +942,7 @@ export type Mutation = {
     _removeCache?: Maybe<Scalars['Boolean']>;
     _setCache?: Maybe<Scalars['Boolean']>;
     _updateCache?: Maybe<Scalars['Boolean']>;
-    setNotificationState?: Maybe<Scalars['Boolean']>;
+    notification: NotificationMutation;
 };
 
 // @public (undocumented)
@@ -959,12 +959,6 @@ export type Mutation_SetCacheArgs = {
 // @public (undocumented)
 export type Mutation_UpdateCacheArgs = {
     keys: Array<Scalars['String']>;
-};
-
-// @public (undocumented)
-export type MutationSetNotificationStateArgs = {
-    id: Scalars['Int'];
-    unread: Scalars['Boolean'];
 };
 
 // @public (undocumented)
@@ -1030,6 +1024,18 @@ export type NotificationEdge = {
     __typename?: 'NotificationEdge';
     cursor: Scalars['String'];
     node: Notification_2;
+};
+
+// @public (undocumented)
+export type NotificationMutation = {
+    __typename?: 'NotificationMutation';
+    setState?: Maybe<Scalars['Boolean']>;
+};
+
+// @public (undocumented)
+export type NotificationMutationSetStateArgs = {
+    id: Scalars['Int'];
+    unread: Scalars['Boolean'];
 };
 
 // @public (undocumented)
