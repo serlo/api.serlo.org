@@ -22,8 +22,8 @@
 import { Connection } from '../../connection'
 import { DiscriminatorType, UuidPayload } from '../abstract-uuid'
 import { UserPayload } from '../user'
-import { Resolver } from '~/internals/graphql'
-import { Scalars, ThreadCommentsArgs } from '~/types'
+import { MutationResolver, Resolver } from '~/internals/graphql'
+import { MutationCreateThreadArgs, Scalars, ThreadCommentsArgs } from '~/types'
 
 export interface ThreadsPayload {
   firstCommentIds: number[]
@@ -53,6 +53,9 @@ export interface ThreadResolvers {
   Comment: {
     createdAt: Resolver<CommentPayload, never, Scalars['DateTime']>
     author: Resolver<CommentPayload, never, UserPayload>
+  }
+  Mutation: {
+    createThread: MutationResolver<MutationCreateThreadArgs, ThreadData | null>
   }
 }
 
