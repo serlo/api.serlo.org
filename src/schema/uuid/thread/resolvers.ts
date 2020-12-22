@@ -19,13 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ApolloError } from 'apollo-server'
+import { ApolloError, AuthenticationError } from 'apollo-server'
 import * as R from 'ramda'
 
 import { resolveConnection } from '../../connection'
 import { createUuidResolvers, UuidPayload } from '../abstract-uuid'
 import { UserPayload } from '../user'
-import { CommentPayload, ThreadResolvers } from './types'
+import { CommentPayload, ThreadDataType, ThreadResolvers } from './types'
 
 export const resolvers: ThreadResolvers = {
   Thread: {
@@ -76,6 +76,21 @@ export const resolvers: ThreadResolvers = {
         throw new ApolloError('There is no author with this id')
       }
       return author
+    },
+  },
+  Mutation: {
+    async createThread(_parent, payload, { dataSources, user }) {
+      if (user === null) throw new AuthenticationError('You are not logged in')
+      const commentPayload = await dataSources.model.serlo.createThread({
+        ...payload,
+        userId: user,
+      })
+      return commentPayload === null
+        ? null
+        : {
+            __typename: ThreadDataType,
+            commentPayloads: [commentPayload],
+          }
     },
   },
 }

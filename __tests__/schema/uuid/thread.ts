@@ -31,6 +31,8 @@ import {
   user,
 } from '../../../__fixtures__'
 import {
+  assertFailingGraphQLMutation,
+  assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   Client,
   createJsonHandler,
@@ -39,7 +41,7 @@ import {
 } from '../../__utils__'
 import { Service } from '~/internals/auth'
 import { CommentPayload, UuidPayload } from '~/schema/uuid'
-import { Instance } from '~/types'
+import { Instance, MutationCreateThreadArgs } from '~/types'
 
 let client: Client
 
@@ -49,356 +51,426 @@ beforeEach(() => {
     user: user.id,
   })
 })
-
-test('Threads with 3 Comments', async () => {
-  setupThreads(article, [[comment1, comment2], [comment3]])
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query threads($id: Int!) {
-        uuid(id: $id) {
-          threads {
-            totalCount
-            nodes {
-              comments {
-                totalCount
-                nodes {
-                  id
-                }
-              }
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: article.id },
-    data: {
-      uuid: {
-        threads: {
-          totalCount: 2,
-          nodes: [
-            { comments: { totalCount: 1, nodes: [{ id: comment3.id }] } },
-            {
-              comments: {
-                totalCount: 2,
-                nodes: [{ id: comment1.id }, { id: comment2.id }],
-              },
-            },
-          ],
-        },
-      },
-    },
-    client,
-  })
-})
-
-test('Thread with 1 Comment', async () => {
-  setupThreads(article, [[comment3]])
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query threads($id: Int!) {
-        uuid(id: $id) {
-          threads {
-            totalCount
-            nodes {
-              comments {
-                totalCount
-                nodes {
-                  id
-                }
-              }
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: article.id },
-    data: {
-      uuid: {
-        threads: {
-          totalCount: 1,
-          nodes: [
-            {
-              comments: {
-                totalCount: 1,
-                nodes: [{ id: comment3.id }],
-              },
-            },
-          ],
-        },
-      },
-    },
-    client,
-  })
-})
-
-test('Thread with 0 Comments', async () => {
-  setupThreads(article, [])
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query threads($id: Int!) {
-        uuid(id: $id) {
-          threads {
-            totalCount
-            nodes {
-              comments {
-                totalCount
-                nodes {
-                  id
-                }
-              }
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: article.id },
-    data: { uuid: { threads: { totalCount: 0, nodes: [] } } },
-    client,
-  })
-})
-
-test('property "createdAt" of Thread', async () => {
-  setupThreads(article, [[comment1, comment2]])
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query propertyCreatedAt($id: Int!) {
-        uuid(id: $id) {
-          threads {
-            nodes {
-              createdAt
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: article.id },
-    data: {
-      uuid: { threads: { nodes: [{ createdAt: comment1.date }] } },
-    },
-    client,
-  })
-})
-
-test('property "updatedAt" of Thread', async () => {
-  setupThreads(article, [[comment1, comment2]])
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query propertyUpdatedAt($id: Int!) {
-        uuid(id: $id) {
-          threads {
-            nodes {
-              updatedAt
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: article.id },
-    data: {
-      uuid: { threads: { nodes: [{ updatedAt: comment2.date }] } },
-    },
-    client,
-  })
-})
-
-test('property "title" of Thread', async () => {
-  setupThreads(article, [[comment1, comment2]])
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query propertyTitle($id: Int!) {
-        uuid(id: $id) {
-          threads {
-            nodes {
-              title
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: article.id },
-    data: {
-      uuid: { threads: { nodes: [{ title: comment1.title }] } },
-    },
-    client,
-  })
-})
-
-test('property "archived" of Thread', async () => {
-  setupThreads(article, [[comment1, comment2]])
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query propertyArchived($id: Int!) {
-        uuid(id: $id) {
-          threads {
-            nodes {
-              archived
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: article.id },
-    data: {
-      uuid: { threads: { nodes: [{ archived: comment1.archived }] } },
-    },
-    client,
-  })
-})
-
-test('property "trashed" of Thread', async () => {
-  setupThreads(article, [[comment1, comment2]])
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query propertyTrashed($id: Int!) {
-        uuid(id: $id) {
-          threads {
-            nodes {
-              trashed
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: article.id },
-    data: {
-      uuid: { threads: { nodes: [{ trashed: comment1.trashed }] } },
-    },
-    client,
-  })
-})
-
-test('property "object" of Thread', async () => {
-  setupThreads(article, [[comment1, comment2]])
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query propertyObject($id: Int!) {
-        uuid(id: $id) {
-          threads {
-            nodes {
-              object {
-                id
-              }
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: article.id },
-    data: {
-      uuid: { threads: { nodes: [{ object: { id: article.id } }] } },
-    },
-    client,
-  })
-})
-
-test('endpoint /uuid/:id will not give back comment on its own', async () => {
-  global.server.use(createUuidHandler(comment1))
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query comments($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          ... on Comment {
-            __typename
-            trashed
-            id
-            content
-            alias
-            title
-            archived
-          }
-        }
-      }
-    `,
-    variables: comment1,
-    data: {
-      uuid: null,
-    },
-    client,
-  })
-})
-
-test('property "createdAt" of Comment', async () => {
-  setupThreads(article, [[comment1]])
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query propertyCreatedAt($id: Int!) {
-        uuid(id: $id) {
-          threads {
-            nodes {
-              comments {
-                nodes {
-                  createdAt
-                }
-              }
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: article.id },
-    data: {
-      uuid: {
-        threads: {
-          nodes: [
-            {
-              comments: {
-                nodes: [
-                  {
-                    createdAt: comment1.date,
-                  },
-                ],
-              },
-            },
-          ],
-        },
-      },
-    },
-    client,
-  })
-})
-
-test('Test property "author" of Comment', async () => {
-  setupThreads(article, [[comment1]])
-  global.server.use(createUuidHandler(user))
-
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query propertyCreatedAt($id: Int!) {
-        uuid(id: $id) {
-          threads {
-            nodes {
-              comments {
-                nodes {
-                  author {
-                    username
+describe('uuid["threads"]', () => {
+  test('Threads with 3 Comments', async () => {
+    setupThreads(article, [[comment1, comment2], [comment3]])
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query threads($id: Int!) {
+          uuid(id: $id) {
+            threads {
+              totalCount
+              nodes {
+                comments {
+                  totalCount
+                  nodes {
+                    id
                   }
                 }
               }
             }
           }
         }
-      }
-    `,
-    variables: { id: article.id },
-    data: {
-      uuid: {
-        threads: {
-          nodes: [
-            {
-              comments: {
-                nodes: [
-                  {
-                    author: { username: user.username },
-                  },
-                ],
+      `,
+      variables: { id: article.id },
+      data: {
+        uuid: {
+          threads: {
+            totalCount: 2,
+            nodes: [
+              { comments: { totalCount: 1, nodes: [{ id: comment3.id }] } },
+              {
+                comments: {
+                  totalCount: 2,
+                  nodes: [{ id: comment1.id }, { id: comment2.id }],
+                },
               },
-            },
-          ],
+            ],
+          },
         },
       },
-    },
-    client,
+      client,
+    })
+  })
+
+  test('Thread with 1 Comment', async () => {
+    setupThreads(article, [[comment3]])
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query threads($id: Int!) {
+          uuid(id: $id) {
+            threads {
+              totalCount
+              nodes {
+                comments {
+                  totalCount
+                  nodes {
+                    id
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: { id: article.id },
+      data: {
+        uuid: {
+          threads: {
+            totalCount: 1,
+            nodes: [
+              {
+                comments: {
+                  totalCount: 1,
+                  nodes: [{ id: comment3.id }],
+                },
+              },
+            ],
+          },
+        },
+      },
+      client,
+    })
+  })
+
+  test('Thread with 0 Comments', async () => {
+    setupThreads(article, [])
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query threads($id: Int!) {
+          uuid(id: $id) {
+            threads {
+              totalCount
+              nodes {
+                comments {
+                  totalCount
+                  nodes {
+                    id
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: { id: article.id },
+      data: { uuid: { threads: { totalCount: 0, nodes: [] } } },
+      client,
+    })
+  })
+
+  test('property "createdAt" of Thread', async () => {
+    setupThreads(article, [[comment1, comment2]])
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query propertyCreatedAt($id: Int!) {
+          uuid(id: $id) {
+            threads {
+              nodes {
+                createdAt
+              }
+            }
+          }
+        }
+      `,
+      variables: { id: article.id },
+      data: {
+        uuid: { threads: { nodes: [{ createdAt: comment1.date }] } },
+      },
+      client,
+    })
+  })
+
+  test('property "updatedAt" of Thread', async () => {
+    setupThreads(article, [[comment1, comment2]])
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query propertyUpdatedAt($id: Int!) {
+          uuid(id: $id) {
+            threads {
+              nodes {
+                updatedAt
+              }
+            }
+          }
+        }
+      `,
+      variables: { id: article.id },
+      data: {
+        uuid: { threads: { nodes: [{ updatedAt: comment2.date }] } },
+      },
+      client,
+    })
+  })
+
+  test('property "title" of Thread', async () => {
+    setupThreads(article, [[comment1, comment2]])
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query propertyTitle($id: Int!) {
+          uuid(id: $id) {
+            threads {
+              nodes {
+                title
+              }
+            }
+          }
+        }
+      `,
+      variables: { id: article.id },
+      data: {
+        uuid: { threads: { nodes: [{ title: comment1.title }] } },
+      },
+      client,
+    })
+  })
+
+  test('property "archived" of Thread', async () => {
+    setupThreads(article, [[comment1, comment2]])
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query propertyArchived($id: Int!) {
+          uuid(id: $id) {
+            threads {
+              nodes {
+                archived
+              }
+            }
+          }
+        }
+      `,
+      variables: { id: article.id },
+      data: {
+        uuid: { threads: { nodes: [{ archived: comment1.archived }] } },
+      },
+      client,
+    })
+  })
+
+  test('property "trashed" of Thread', async () => {
+    setupThreads(article, [[comment1, comment2]])
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query propertyTrashed($id: Int!) {
+          uuid(id: $id) {
+            threads {
+              nodes {
+                trashed
+              }
+            }
+          }
+        }
+      `,
+      variables: { id: article.id },
+      data: {
+        uuid: { threads: { nodes: [{ trashed: comment1.trashed }] } },
+      },
+      client,
+    })
+  })
+
+  test('property "object" of Thread', async () => {
+    setupThreads(article, [[comment1, comment2]])
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query propertyObject($id: Int!) {
+          uuid(id: $id) {
+            threads {
+              nodes {
+                object {
+                  id
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: { id: article.id },
+      data: {
+        uuid: { threads: { nodes: [{ object: { id: article.id } }] } },
+      },
+      client,
+    })
+  })
+
+  test('endpoint /uuid/:id will not give back comment on its own', async () => {
+    global.server.use(createUuidHandler(comment1))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query comments($id: Int!) {
+          uuid(id: $id) {
+            __typename
+            ... on Comment {
+              __typename
+              trashed
+              id
+              content
+              alias
+              title
+              archived
+            }
+          }
+        }
+      `,
+      variables: comment1,
+      data: {
+        uuid: null,
+      },
+      client,
+    })
+  })
+
+  test('property "createdAt" of Comment', async () => {
+    setupThreads(article, [[comment1]])
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query propertyCreatedAt($id: Int!) {
+          uuid(id: $id) {
+            threads {
+              nodes {
+                comments {
+                  nodes {
+                    createdAt
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: { id: article.id },
+      data: {
+        uuid: {
+          threads: {
+            nodes: [
+              {
+                comments: {
+                  nodes: [
+                    {
+                      createdAt: comment1.date,
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      },
+      client,
+    })
+  })
+
+  test('Test property "author" of Comment', async () => {
+    setupThreads(article, [[comment1]])
+    global.server.use(createUuidHandler(user))
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query propertyCreatedAt($id: Int!) {
+          uuid(id: $id) {
+            threads {
+              nodes {
+                comments {
+                  nodes {
+                    author {
+                      username
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: { id: article.id },
+      data: {
+        uuid: {
+          threads: {
+            nodes: [
+              {
+                comments: {
+                  nodes: [
+                    {
+                      author: { username: user.username },
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      },
+      client,
+    })
+  })
+})
+
+describe('createThread', () => {
+  function createCreateThreadMutation(variables: MutationCreateThreadArgs) {
+    return {
+      mutation: gql`
+        mutation createThread(
+          $title: String!
+          $content: String!
+          $objectId: Int!
+          $authorId: Int!
+        ) {
+          createThread(
+            title: $title
+            content: $content
+            objectId: $objectId
+            authorId: $authorId
+          ) {
+            title
+            archived
+            trashed
+          }
+        }
+      `,
+      variables,
+    }
+  }
+
+  test('thread mutation', async () => {
+    createAddCommentMutation(article.id, comment1.date)
+
+    await assertSuccessfulGraphQLMutation({
+      ...createCreateThreadMutation({
+        title: 'New comment',
+        content: 'Content of new comment',
+        objectId: article.id,
+        authorId: user.id,
+      }),
+      client,
+      data: {
+        createThread: {
+          archived: false,
+          title: 'New comment',
+          trashed: false,
+        },
+      },
+    })
+  })
+
+  test('No thread is created with unauthenticated user', async () => {
+    const client = createTestClient({
+      service: Service.SerloCloudflareWorker,
+      user: null,
+    })
+    await assertFailingGraphQLMutation(
+      {
+        ...createCreateThreadMutation({
+          title: 'New comment',
+          content: 'Content of new comment',
+          objectId: article.id,
+          authorId: user.id,
+        }),
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('UNAUTHENTICATED')
+      }
+    )
   })
 })
 
@@ -442,6 +514,33 @@ function setupThreads(uuidPayload: UuidPayload, threads: CommentPayload[][]) {
               }
 
         return res(ctx.json(payload))
+      }
+    )
+  )
+}
+
+function createAddCommentMutation(id: number, date: string) {
+  global.server.use(
+    rest.post<MutationCreateThreadArgs & { userId: number }>(
+      `http://de.${process.env.SERLO_ORG_HOST}/api/add-comment`,
+      (req, res, ctx) => {
+        if (typeof req.body === 'string' || typeof req.body === 'undefined')
+          return res(ctx.status(400))
+        return res(
+          ctx.json({
+            id,
+            title: req.body.title,
+            trashed: false,
+            alias: null,
+            __typename: 'Comment',
+            authorId: req.body.authorId,
+            date,
+            archived: false,
+            content: req.body.content,
+            parentId: req.body.objectId,
+            childrenIds: [],
+          })
+        )
       }
     )
   )
