@@ -40,6 +40,7 @@ import { SubscriptionsPayload } from '~/schema/subscription'
 import {
   AbstractUuidPayload,
   AliasPayload,
+  CommentPayload,
   decodePath,
   encodePath,
   EntityPayload,
@@ -49,7 +50,7 @@ import {
   NodeData,
   ThreadsPayload,
 } from '~/schema/uuid'
-import { Instance, License } from '~/types'
+import { Instance, License, MutationCreateThreadArgs } from '~/types'
 
 export function createSerloModel({
   environment,
@@ -420,6 +421,18 @@ export function createSerloModel({
     environment
   )
 
+  const createThread = createMutation<
+    MutationCreateThreadArgs & { userId: number },
+    CommentPayload | null
+  >({
+    mutate: async (payload) => {
+      return await post<CommentPayload | null>({
+        path: `/api/add-comment/`,
+        body: payload,
+      })
+    },
+  })
+
   const getAllCacheKeys = createQuery<undefined, string[]>(
     {
       getCurrentValue: async () => {
@@ -452,6 +465,7 @@ export function createSerloModel({
   })
 
   return {
+    createThread,
     getActiveAuthorIds,
     getActiveReviewerIds,
     getAlias,
