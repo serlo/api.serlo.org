@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { updateCopyrightHeader } from '@splish-me/copyright-headers'
+import { updateCopyrightHeader } from '@inyono/copyright-headers'
 import glob from 'glob'
 import * as path from 'path'
 import * as util from 'util'

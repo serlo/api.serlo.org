@@ -27,6 +27,7 @@ All notable changes to this project will be documented in this file.
 ### Internal
 
 - Implement SWR Background updates using Bee-Queue.
+
 - Implement Locks using Redlock.
 
 ## [v0.12.1](https://github.com/serlo/api.serlo.org/compare/v0.12.0..v0.12.1) - December 9, 2020 \[YANKED]
@@ -42,6 +43,7 @@ All notable changes to this project will be documented in this file.
 ### Internal
 
 - **cacheable-data-source**. Use in-memory lock.
+
 - **cacheable-data-source**. Add logs.
 
 ## [v0.11.3](https://github.com/serlo/api.serlo.org/compare/v0.11.2..v0.11.3) - November 24, 2020
@@ -59,7 +61,9 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - We now have a stale-while-revalidate caching approach in place. This should lead to more correct behavior even when our listeners fail.
+
 - **notification**. Add `objectId` to `AbstractNotificationEvent` which reports the ID of the object that triggered the event (and can be used to unsubscribe).
+
 - **uuid**. Add `threads`.
 
 ## [v0.11.1](https://github.com/serlo/api.serlo.org/compare/v0.11.0..v0.11.1) - November 18, 2020 \[YANKED]
@@ -77,6 +81,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Add `subscriptions`.
+
 - **alias**. Hide certain implementation details of our alias system by adding polyfills for typical use cases:
 
   - Resolve `/:id` to the given UUID.
@@ -88,7 +93,9 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - **alias**. Handle paths that are already URL-decoded correctly.
+
 - **alias**. Output URL-encoded paths.
+
 - **uuid**. Return `null` when the UUID does not exist.
 
 ## [v0.9.0](https://github.com/serlo/api.serlo.org/compare/v0.8.1..v0.9.0) - August 16, 2020
@@ -96,21 +103,29 @@ All notable changes to this project will be documented in this file.
 ### Breaking Changes
 
 - Consistently name GraphQL connection types `*Connection` and `*Edge`.
+
 - **abstract-taxonomy-term-child**. `AbstractTaxonomyTermChild.taxonomyTerms` now returns a GraphQL Connection.
+
 - **navigation**. `Navigation.path` now returns a GraphQL connection.
+
 - **taxonomy-term**. `TaxonomyTerm.children` now returns a GraphQL connection.
+
 - **user**. `activeDonors` now returns a GraphQL connection.
 
 ### Added
 
 - **user**. Add `activeAuthors` and `activeReviewers`.
+
 - **user**. Add `activeAuthor` and `activeReviewer` to `User`.
 
 ### Changed
 
 - **abstract-taxonomy-term-child**. `AbstractTaxonomyTermChild.taxonomyTerms` now returns a GraphQL connection.
+
 - **navigation**. `Navigation.path` now returns a GraphQL connection.
+
 - **taxonomy-term**. `TaxonomyTerm.children` now returns a GraphQL connection.
+
 - **user**. `activeDonors` now returns a GraphQL connection.
 
 ### Internal
@@ -126,6 +141,7 @@ All notable changes to this project will be documented in this file.
 ### Internal
 
 - Add Sentry.
+
 - Remove Playground service.
 
 ## [0.8.0](https://github.com/serlo/api.serlo.org/compare/v0.7.4..v0.8.0) - August 10, 2020
@@ -133,7 +149,9 @@ All notable changes to this project will be documented in this file.
 ### Breaking Changes
 
 - **notification**. generalize actor / author / reviewer into actor and move into `AbstractNotificationEvent`
+
 - **notification**. Remove `UnsupportedNotificationEvent`.
+
 - **uuid**. Remove `UnsupportedUuid`.
 
 ### Changed
@@ -143,6 +161,7 @@ All notable changes to this project will be documented in this file.
 ### Removed
 
 - **notification**. Remove `UnsupportedNotificationEvent`.
+
 - **uuid**. Remove `UnsupportedUuid`.
 
 ### Fixed
@@ -154,6 +173,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - **notification**. Add `UnsupportedNotificationEvent`.
+
 - **uuid**. Add `UnsupportedUuid`.
 
 ### Fixed
@@ -165,6 +185,7 @@ All notable changes to this project will be documented in this file.
 ### Breaking Changes
 
 - **notification**. Completely new implementation. We now basically resolve the different event types in the API directly. See `AbstractNotificationEvent`.
+
 - **uuid**. Rename `article` to `repository` in `ArticleRevision` (and similarly for all other types that implement `AbstractRevision`.
 
 ### Added
@@ -189,13 +210,17 @@ All notable changes to this project will be documented in this file.
 ### Breaking Changes
 
 - **navigation**. `Navigation["data"]` is now returned directly as JSON.
+
 - **uuid**. Removed `UnsupportedUuid`.
 
 ### Added
 
 - Add `JSON` & `JSONObject` GraphQL scalars.
+
 - Publish types as npm package `@serlo/api`.
+
 - Add `activeDonors`.
+
 - **user**. Add `activeDonor`.
 
 ### Changed
@@ -209,8 +234,11 @@ All notable changes to this project will be documented in this file.
 ### Internal
 
 - Generate TypeScript types from GraphQL schema.
+
 - Previous `de.serlo.org/api/uuid/*`, `*.serlo.org/api/navigation` cache values won't work anymore.
+
 - **uuid**. Consistently require `__typename` instead of `discriminator` + optional `type`.
+
 - **cache**. Deprecated all `_set*` / `_remove*` mutations in favor of `_setCache` / `_removeCache`.
 
 ## [0.5.8](https://github.com/serlo/api.serlo.org/compare/v0.5.7..v0.5.8) - July 14, 2020
@@ -230,6 +258,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - **notifications**. Implement GraphQL Cursor Connection specification.
+
 - **notifications**. Add optional `unread` filter.
 
 ## [0.5.5](https://github.com/serlo/api.serlo.org/compare/v0.5.4..v0.5.5) - July 13, 2020
@@ -271,6 +300,7 @@ All notable changes to this project will be documented in this file.
 ### Breaking Changes
 
 - Use Redis as cache.
+
 - Use MessagePack as serializer.
 
 ## [0.4.3](https://github.com/serlo/api.serlo.org/compare/v0.4.2..v0.4.3) - April 27, 2020
@@ -300,7 +330,9 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Add `navigation` to `Page` and `TaxonomyTerm`.
+
 - Add meta fields to `EntityRevision`.
+
 - Add `content` to `VideoRevision`.
 
 ## [0.3.0](https://github.com/serlo/api.serlo.org/compare/v0.2.0..v0.3.0) - April 15, 2020
@@ -308,9 +340,13 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Add entity types `Course` and `CoursePage`.
+
 - Add entity types `ExerciseGroup`, `GroupedExercise`, `Exercise`, and `Solution`.
+
 - Add entity type `Applet`.
+
 - Add entity type `Event`.
+
 - Add entity type `Video`.
 
 ## [0.2.0](https://github.com/serlo/api.serlo.org/compare/v0.1.1..v0.2.0) - April 13, 2020
