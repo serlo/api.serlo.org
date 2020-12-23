@@ -425,6 +425,12 @@ async function exec(): Promise<void> {
         'Restructure the repository. Please check out the updated README.',
       ],
     },
+    {
+      tagName: 'v0.14.0',
+      date: '2020-12-23',
+      added: ['Add `createThread` mutation.'],
+      internal: ['Add dashboard for SWR Queue.'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
