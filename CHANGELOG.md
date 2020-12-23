@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.14.2](https://github.com/serlo/api.serlo.org/compare/v0.14.1..v0.14.2) - December 24, 2020
+
+### Changed
+
+- Increase the number of parallel requests when processing SWR updates.
+
 ## [v0.14.1](https://github.com/serlo/api.serlo.org/compare/v0.14.0..v0.14.1) - December 23, 2020
 
 ### Fixed

@@ -436,6 +436,13 @@ async function exec(): Promise<void> {
       date: '2020-12-23',
       fixed: ['Remove completed jobs from SWR Queue.'],
     },
+    {
+      tagName: 'v0.14.2',
+      date: '2020-12-24',
+      changed: [
+        'Increase the number of parallel requests when processing SWR updates.',
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

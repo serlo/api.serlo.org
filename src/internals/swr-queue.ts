@@ -94,6 +94,7 @@ export function createSwrQueue({
   })
 
   queue.process(
+    50,
     async (job): Promise<string> => {
       const { key } = job.data
       const cacheEntry = await cache.get<unknown>({ key })
