@@ -43,5 +43,4 @@ void pact
   })
   .then(function () {
     console.log('success')
-    // do something
   })
