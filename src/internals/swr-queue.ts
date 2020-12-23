@@ -54,6 +54,8 @@ export const emptySwrQueue: SwrQueue = {
   _queue: undefined as never,
 }
 
+export const queueName = 'swr'
+
 export function createSwrQueue({
   cache,
   timer,
@@ -83,7 +85,7 @@ export function createSwrQueue({
     return null
   }
 
-  const queue = new Queue<UpdateJob>('swr', {
+  const queue = new Queue<UpdateJob>(queueName, {
     redis: {
       url: redisUrl,
     },
