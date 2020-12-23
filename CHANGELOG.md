@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.14.1](https://github.com/serlo/api.serlo.org/compare/v0.14.0..v0.14.1) - December 23, 2020
+
+### Fixed
+
+- Remove completed jobs from SWR Queue.
+
 ## [v0.14.0](https://github.com/serlo/api.serlo.org/compare/v0.13.1..v0.14.0) - December 23, 2020
 
 ### Added

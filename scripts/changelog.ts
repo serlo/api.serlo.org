@@ -431,6 +431,11 @@ async function exec(): Promise<void> {
       added: ['Add `createThread` mutation.'],
       internal: ['Add dashboard for SWR Queue.'],
     },
+    {
+      tagName: 'v0.14.1',
+      date: '2020-12-23',
+      fixed: ['Remove completed jobs from SWR Queue.'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

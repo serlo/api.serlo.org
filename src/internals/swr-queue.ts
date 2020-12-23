@@ -89,6 +89,8 @@ export function createSwrQueue({
     redis: {
       url: redisUrl,
     },
+    removeOnFailure: true,
+    removeOnSuccess: true,
   })
 
   queue.process(
