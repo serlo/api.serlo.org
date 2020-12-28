@@ -21,10 +21,9 @@
  */
 import { UserInputError } from 'apollo-server'
 
-import { AliasPayload, decodePath, encodePath } from '../alias'
+import { decodePath, encodePath } from '../alias'
 import { AbstractUuidResolvers, DiscriminatorType, UuidPayload } from './types'
-import { aliases } from '~/config/alias'
-import { AliasInput } from '~/types'
+import { resolveCustomAlias } from '~/config/alias'
 
 export const resolvers: AbstractUuidResolvers = {
   AbstractUuid: {
@@ -35,7 +34,7 @@ export const resolvers: AbstractUuidResolvers = {
   Query: {
     async uuid(_parent, payload, { dataSources }) {
       if (payload.alias) {
-        const cleanPath = decodePath(payload.alias.path)
+        const cleanPath = encodePath(decodePath(payload.alias.path))
         if (!cleanPath.startsWith('/')) {
           throw new UserInputError(
             "First is the worst, please add a '/' at the beginning of your path"
@@ -68,8 +67,10 @@ export const resolvers: AbstractUuidResolvers = {
         }
 
         const alias =
-          resolveCustomAlias(payload.alias) ??
-          (await dataSources.model.serlo.getAlias(payload.alias))
+          resolveCustomAlias({
+            path: cleanPath,
+            instance: payload.alias.instance,
+          }) ?? (await dataSources.model.serlo.getAlias(payload.alias))
         return alias
           ? ((await dataSources.model.serlo.getUuid({
               id: alias.id,
@@ -84,22 +85,6 @@ export const resolvers: AbstractUuidResolvers = {
         } else return uuid
       } else {
         throw new UserInputError('you need to provide an id or an alias')
-      }
-
-      function resolveCustomAlias({
-        path,
-        instance,
-      }: AliasInput): AliasPayload | null {
-        const cleanPath = encodePath(decodePath(path))
-        const instanceAliasConfig = aliases[instance]
-        const possibleId = instanceAliasConfig?.[cleanPath]
-        return typeof possibleId === 'number'
-          ? {
-              id: possibleId,
-              path: cleanPath,
-              instance,
-            }
-          : null
       }
     },
   },

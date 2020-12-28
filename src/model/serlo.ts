@@ -264,8 +264,7 @@ export function createSerloModel({
   >(
     {
       getCurrentValue: async ({ path, instance }) => {
-        const cleanPath = encodePath(decodePath(path))
-        return get({ path: `/api/alias${cleanPath}`, instance })
+        return get({ path: `/api/alias${path}`, instance })
       },
       maxAge: { minutes: 5 },
       getKey: ({ path, instance }) => {
