@@ -1,7 +1,7 @@
 import * as R from 'ramda'
 
 import { AliasResolvers } from './types'
-import { aliases } from '~/config/alias'
+import { aliases, lookupCustomAlias } from '~/config/alias'
 import { AbstractUuidPayload } from '~/schema/uuid'
 import { Instance } from '~/types'
 
@@ -51,12 +51,9 @@ export function createAliasResolvers<
       // TODO: check for instance aware entity first
       const instance = (entity as { instance?: Instance }).instance
       if (typeof instance === 'string') {
-        const instanceAliasConfig = aliases[instance]
-        const customAlias = R.find(([_path, id]) => {
-          return id === entity.id
-        }, R.toPairs(instanceAliasConfig || {}))
+        const customAlias = lookupCustomAlias({ instance, id: entity.id })
         if (customAlias) {
-          return encodePath(customAlias[0])
+          return Promise.resolve(encodePath(customAlias))
         }
       }
       return Promise.resolve(entity.alias ? encodePath(entity.alias) : null)
