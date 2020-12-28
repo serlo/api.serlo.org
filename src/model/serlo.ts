@@ -31,6 +31,7 @@ import {
   createQuery,
   FetchHelpers,
 } from '~/internals/model'
+import { isInstance } from '~/schema/instance'
 import {
   AbstractNotificationEventPayload,
   isUnsupportedNotificationEvent,
@@ -488,8 +489,4 @@ function getInstanceFromKey(key: string): Instance | null {
   return key.startsWith(`${instance}.serlo.org`) && isInstance(instance)
     ? instance
     : null
-}
-
-function isInstance(instance: string): instance is Instance {
-  return Object.values(Instance).includes(instance as Instance)
 }
