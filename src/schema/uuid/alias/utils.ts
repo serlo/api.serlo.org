@@ -1,9 +1,7 @@
-import * as R from 'ramda'
-
 import { AliasResolvers } from './types'
-import { aliases, lookupCustomAlias } from '~/config/alias'
+import { lookupCustomAlias } from '~/config/alias'
+import { isInstanceAware } from '~/schema/instance'
 import { AbstractUuidPayload } from '~/schema/uuid'
-import { Instance } from '~/types'
 
 /**
  * This file is part of Serlo.org API
@@ -48,10 +46,8 @@ export function createAliasResolvers<
 >(): AliasResolvers<T> {
   return {
     async alias(entity) {
-      // TODO: check for instance aware entity first
-      const instance = (entity as { instance?: Instance }).instance
-      if (typeof instance === 'string') {
-        const customAlias = lookupCustomAlias({ instance, id: entity.id })
+      if (isInstanceAware(entity)) {
+        const customAlias = lookupCustomAlias(entity)
         if (customAlias) {
           return Promise.resolve(encodePath(customAlias))
         }
