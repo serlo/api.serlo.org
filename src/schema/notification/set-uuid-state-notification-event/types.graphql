@@ -1,4 +1,4 @@
-type SetUuidStateNotificationEvent implements AbstractNotificationEvent {
+type SetUuidStateNotificationEvent implements AbstractNotificationEvent & InstanceAware {
   id: Int!
   instance: Instance!
   date: DateTime!

@@ -1,4 +1,7 @@
 import { AliasResolvers } from './types'
+import { lookupCustomAlias } from '~/config/alias'
+import { isInstanceAware } from '~/schema/instance'
+import { AbstractUuidPayload } from '~/schema/uuid'
 
 /**
  * This file is part of Serlo.org API
@@ -39,10 +42,16 @@ export function encodePath(path: string) {
 }
 
 export function createAliasResolvers<
-  T extends { alias: string | null }
+  T extends { alias: string | null } & AbstractUuidPayload
 >(): AliasResolvers<T> {
   return {
-    alias(entity) {
+    async alias(entity) {
+      if (isInstanceAware(entity)) {
+        const customAlias = lookupCustomAlias(entity)
+        if (customAlias) {
+          return Promise.resolve(encodePath(customAlias))
+        }
+      }
       return Promise.resolve(entity.alias ? encodePath(entity.alias) : null)
     },
   }

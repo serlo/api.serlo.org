@@ -136,7 +136,7 @@ export type AliasInput = {
 };
 
 // @public (undocumented)
-export type Applet = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
+export type Applet = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & {
     __typename?: 'Applet';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -217,7 +217,7 @@ export type AppletThreadsArgs = {
 };
 
 // @public (undocumented)
-export type Article = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
+export type Article = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & {
     __typename?: 'Article';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -297,7 +297,7 @@ export type ArticleThreadsArgs = {
 };
 
 // @public (undocumented)
-export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & {
+export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'CheckoutRevisionNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -348,7 +348,7 @@ export type CommentThreadsArgs = {
 };
 
 // @public (undocumented)
-export type Course = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
+export type Course = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & {
     __typename?: 'Course';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -364,7 +364,7 @@ export type Course = AbstractUuid & AbstractRepository & AbstractEntity & Abstra
 };
 
 // @public (undocumented)
-export type CoursePage = AbstractUuid & AbstractRepository & AbstractEntity & {
+export type CoursePage = AbstractUuid & AbstractRepository & AbstractEntity & InstanceAware & {
     __typename?: 'CoursePage';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -498,7 +498,7 @@ export type CourseThreadsArgs = {
 };
 
 // @public (undocumented)
-export type CreateCommentNotificationEvent = AbstractNotificationEvent & {
+export type CreateCommentNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'CreateCommentNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -510,7 +510,7 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & {
+export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'CreateEntityLinkNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -522,7 +522,7 @@ export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type CreateEntityNotificationEvent = AbstractNotificationEvent & {
+export type CreateEntityNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'CreateEntityNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -533,7 +533,7 @@ export type CreateEntityNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & {
+export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'CreateEntityRevisionNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -545,7 +545,7 @@ export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & 
 };
 
 // @public (undocumented)
-export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & {
+export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'CreateTaxonomyLinkNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -557,7 +557,7 @@ export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type CreateTaxonomyTermNotificationEvent = AbstractNotificationEvent & {
+export type CreateTaxonomyTermNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'CreateTaxonomyTermNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -568,7 +568,7 @@ export type CreateTaxonomyTermNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type CreateThreadNotificationEvent = AbstractNotificationEvent & {
+export type CreateThreadNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'CreateThreadNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -580,7 +580,7 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-type Event_2 = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
+type Event_2 = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & {
     __typename?: 'Event';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -669,7 +669,7 @@ export type Exact<T extends {
 };
 
 // @public (undocumented)
-export type Exercise = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & AbstractExercise & {
+export type Exercise = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & AbstractExercise & InstanceAware & {
     __typename?: 'Exercise';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -685,7 +685,7 @@ export type Exercise = AbstractUuid & AbstractRepository & AbstractEntity & Abst
 };
 
 // @public (undocumented)
-export type ExerciseGroup = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
+export type ExerciseGroup = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & {
     __typename?: 'ExerciseGroup';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -825,7 +825,7 @@ export type ExerciseThreadsArgs = {
 };
 
 // @public (undocumented)
-export type GroupedExercise = AbstractUuid & AbstractRepository & AbstractEntity & AbstractExercise & {
+export type GroupedExercise = AbstractUuid & AbstractRepository & AbstractEntity & AbstractExercise & InstanceAware & {
     __typename?: 'GroupedExercise';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -911,7 +911,12 @@ export enum Instance {
 }
 
 // @public (undocumented)
-export type License = {
+export type InstanceAware = {
+    instance: Instance;
+};
+
+// @public (undocumented)
+export type License = InstanceAware & {
     __typename?: 'License';
     id: Scalars['Int'];
     instance: Instance;
@@ -1042,7 +1047,7 @@ export type NotificationEdge = {
 };
 
 // @public (undocumented)
-export type Page = AbstractUuid & AbstractRepository & AbstractNavigationChild & {
+export type Page = AbstractUuid & AbstractRepository & AbstractNavigationChild & InstanceAware & {
     __typename?: 'Page';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -1208,7 +1213,7 @@ export type QueryUuidArgs = {
 };
 
 // @public (undocumented)
-export type RejectRevisionNotificationEvent = AbstractNotificationEvent & {
+export type RejectRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'RejectRevisionNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -1221,7 +1226,7 @@ export type RejectRevisionNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & {
+export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'RemoveEntityLinkNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -1233,7 +1238,7 @@ export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type RemoveTaxonomyLinkNotificationEvent = AbstractNotificationEvent & {
+export type RemoveTaxonomyLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'RemoveTaxonomyLinkNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -1257,7 +1262,7 @@ export type Scalars = {
 };
 
 // @public (undocumented)
-export type SetLicenseNotificationEvent = AbstractNotificationEvent & {
+export type SetLicenseNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'SetLicenseNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -1268,7 +1273,7 @@ export type SetLicenseNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type SetTaxonomyParentNotificationEvent = AbstractNotificationEvent & {
+export type SetTaxonomyParentNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'SetTaxonomyParentNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -1281,7 +1286,7 @@ export type SetTaxonomyParentNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type SetTaxonomyTermNotificationEvent = AbstractNotificationEvent & {
+export type SetTaxonomyTermNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'SetTaxonomyTermNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -1292,7 +1297,7 @@ export type SetTaxonomyTermNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type SetThreadStateNotificationEvent = AbstractNotificationEvent & {
+export type SetThreadStateNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'SetThreadStateNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -1304,7 +1309,7 @@ export type SetThreadStateNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type SetUuidStateNotificationEvent = AbstractNotificationEvent & {
+export type SetUuidStateNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'SetUuidStateNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -1316,7 +1321,7 @@ export type SetUuidStateNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type Solution = AbstractUuid & AbstractRepository & AbstractEntity & {
+export type Solution = AbstractUuid & AbstractRepository & AbstractEntity & InstanceAware & {
     __typename?: 'Solution';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -1408,7 +1413,7 @@ export type SubscriptionCursor = {
 };
 
 // @public (undocumented)
-export type TaxonomyTerm = AbstractUuid & AbstractNavigationChild & {
+export type TaxonomyTerm = AbstractUuid & AbstractNavigationChild & InstanceAware & {
     __typename?: 'TaxonomyTerm';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -1571,7 +1576,7 @@ export type UserThreadsArgs = {
 };
 
 // @public (undocumented)
-export type Video = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
+export type Video = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & {
     __typename?: 'Video';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];

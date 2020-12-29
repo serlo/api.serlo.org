@@ -6,3 +6,7 @@ enum Instance {
   hi
   ta
 }
+
+interface InstanceAware {
+  instance: Instance!
+}
