@@ -19,7 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { resolvers } from './resolvers'
 import typeDefs from './types.graphql'
 import { Schema } from '~/internals/graphql'
 
-export const instanceSchema: Schema = { resolvers: {}, typeDefs: [typeDefs] }
+export * from './types'
+export * from './utils'
+
+export const instanceSchema: Schema = { resolvers, typeDefs: [typeDefs] }

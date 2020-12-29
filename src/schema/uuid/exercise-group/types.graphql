@@ -1,4 +1,4 @@
-type ExerciseGroup implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild {
+type ExerciseGroup implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware {
   id: Int!
   trashed: Boolean!
   threads(

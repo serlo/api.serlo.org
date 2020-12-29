@@ -24,6 +24,7 @@ import gql from 'graphql-tag'
 import {
   article,
   getArticleDataWithoutSubResolvers,
+  page,
 } from '../../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
@@ -99,5 +100,45 @@ test('alias path /entity/view/:id returns null when id does not exist', async ()
       uuid: null,
     },
     client,
+  })
+})
+
+describe('custom aliases', () => {
+  test('de.serlo.org/mathe resolves to uuid 19767', async () => {
+    global.server.use(
+      createJsonHandler({
+        path: `/api/uuid/19767`,
+        body: {
+          ...page,
+          id: 19767,
+          alias: '/legacy-alias',
+        },
+      })
+    )
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query uuid($alias: AliasInput!) {
+          uuid(alias: $alias) {
+            id
+            ... on Page {
+              alias
+            }
+          }
+        }
+      `,
+      variables: {
+        alias: {
+          instance: Instance.De,
+          path: '/mathe',
+        },
+      },
+      data: {
+        uuid: {
+          id: 19767,
+          alias: '/mathe',
+        },
+      },
+      client,
+    })
   })
 })

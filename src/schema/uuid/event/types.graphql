@@ -1,4 +1,4 @@
-type Event implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild {
+type Event implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware {
   id: Int!
   trashed: Boolean!
   threads(
