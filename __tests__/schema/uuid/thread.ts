@@ -25,15 +25,16 @@ import * as R from 'ramda'
 
 import {
   article,
+  comment,
   comment1,
   comment2,
   comment3,
-  getCommentDataWithoutSubResolvers,
   user,
 } from '../../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
+  createAliasHandler,
   createJsonHandler,
   createTestClient,
   createUuidHandler,
@@ -292,30 +293,40 @@ test('property "object" of Thread', async () => {
   })
 })
 
-test('endpoint /uuid/:id will not give back comment on its own', async () => {
-  global.server.use(createUuidHandler(comment1))
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query comments($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          ... on Comment {
+describe('endpoint uuid() will not give back comment on its own', () => {
+  test('when requested via id', async () => {
+    global.server.use(createUuidHandler(comment1))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query comments($id: Int!) {
+          uuid(id: $id) {
             __typename
-            trashed
-            id
-            content
-            alias
-            title
-            archived
           }
         }
-      }
-    `,
-    variables: getCommentDataWithoutSubResolvers(comment1),
-    data: {
-      uuid: null,
-    },
-    client,
+      `,
+      variables: { id: comment1.id },
+      data: { uuid: null },
+      client,
+    })
+  })
+
+  test('when requested via alias', async () => {
+    const aliasInput = { path: comment.alias ?? '', instance: Instance.De }
+    global.server.use(createUuidHandler(comment))
+    global.server.use(createAliasHandler({ ...aliasInput, id: comment.id }))
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query comments($alias: AliasInput!) {
+          uuid(alias: $alias) {
+            __typename
+          }
+        }
+      `,
+      variables: { alias: aliasInput },
+      data: { uuid: null },
+      client,
+    })
   })
 })
 

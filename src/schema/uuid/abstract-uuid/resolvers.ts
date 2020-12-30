@@ -21,8 +21,10 @@
  */
 import { UserInputError } from 'apollo-server'
 
-import { decodePath } from '../alias'
 import { AbstractUuidResolvers, DiscriminatorType, UuidPayload } from './types'
+import { Context } from '~/internals/graphql'
+import { decodePath } from '~/schema/uuid/alias'
+import { QueryUuidArgs } from '~/types'
 
 export const resolvers: AbstractUuidResolvers = {
   AbstractUuid: {
@@ -32,55 +34,66 @@ export const resolvers: AbstractUuidResolvers = {
   },
   Query: {
     async uuid(_parent, payload, { dataSources }) {
-      if (payload.alias) {
-        const cleanPath = decodePath(payload.alias.path)
-        if (!cleanPath.startsWith('/')) {
-          throw new UserInputError(
-            "First is the worst, please add a '/' at the beginning of your path"
-          )
-        }
-        const match = /^\/(\d+)$/.exec(cleanPath)
-        if (match) {
-          const id = parseInt(match[1], 10)
-          return (await dataSources.model.serlo.getUuid({
-            id,
-          })) as UuidPayload | null
-        }
+      const id = await resolveIdFromPayload(dataSources, payload)
+      const uuid =
+        id === null ? null : await dataSources.model.serlo.getUuid({ id })
 
-        const matchUserProfile = /^\/user\/profile\/(\d+)$/.exec(cleanPath)
-        if (matchUserProfile) {
-          const id = parseInt(matchUserProfile[1], 10)
-          const uuid = (await dataSources.model.serlo.getUuid({
-            id,
-          })) as UuidPayload | null
-          return uuid && uuid.__typename === 'User' ? uuid : null
-        }
-
-        // TODO: to support legacy feature. remove after frontend is 100% (#143)
-        const matchEntityView = /^\/entity\/view\/(\d+)$/.exec(cleanPath)
-        if (matchEntityView) {
-          const id = parseInt(matchEntityView[1], 10)
-          return (await dataSources.model.serlo.getUuid({
-            id,
-          })) as UuidPayload | null
-        }
-
-        const alias = await dataSources.model.serlo.getAlias(payload.alias)
-        return alias
-          ? ((await dataSources.model.serlo.getUuid({
-              id: alias.id,
-            })) as UuidPayload | null)
-          : null
-      } else if (payload.id) {
-        const uuid = (await dataSources.model.serlo.getUuid({
-          id: payload.id,
-        })) as UuidPayload | null
-        if (uuid && uuid.__typename === DiscriminatorType.Comment) {
-          return null
-        } else return uuid
-      } else {
-        throw new UserInputError('you need to provide an id or an alias')
-      }
+      return checkUuid(payload, uuid as UuidPayload | null)
     },
   },
+}
+
+async function resolveIdFromPayload(
+  dataSources: Context['dataSources'],
+  payload: QueryUuidArgs
+) {
+  if (payload.alias) {
+    return await resolveIdFromAlias(dataSources, payload.alias)
+  } else if (payload.id) {
+    return payload.id
+  } else {
+    throw new UserInputError('you need to provide an id or an alias')
+  }
+}
+
+async function resolveIdFromAlias(
+  dataSources: Context['dataSources'],
+  alias: NonNullable<QueryUuidArgs['alias']>
+): Promise<number | null> {
+  const cleanPath = decodePath(alias.path)
+
+  if (!cleanPath.startsWith('/')) {
+    throw new UserInputError(
+      "First is the worst, please add a '/' at the beginning of your path"
+    )
+  }
+
+  for (const regex of [
+    /^\/(\d+)$/,
+    /^\/entity\/view\/(\d+)$/,
+    /^\/user\/profile\/(\d+)$/,
+  ]) {
+    const match = regex.exec(cleanPath)
+
+    if (match) return parseInt(match[1])
+  }
+
+  return (await dataSources.model.serlo.getAlias(alias))?.id ?? null
+}
+
+function checkUuid(payload: QueryUuidArgs, uuid: UuidPayload | null) {
+  if (uuid !== null) {
+    if (payload.alias != null) {
+      if (
+        payload.alias.path.startsWith('/user/profile/') &&
+        uuid.__typename !== DiscriminatorType.User
+      ) {
+        return null
+      }
+    }
+
+    if (uuid.__typename === DiscriminatorType.Comment) return null
+  }
+
+  return uuid
 }
