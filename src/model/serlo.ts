@@ -261,7 +261,7 @@ export function createSerloModel({
 
   const getAlias = createQuery<
     { path: string; instance: Instance },
-    AliasPayload
+    AliasPayload | null
   >(
     {
       getCurrentValue: async ({ path, instance }) => {

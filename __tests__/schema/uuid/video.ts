@@ -54,7 +54,6 @@ test('Video', async () => {
           ... on Video {
             id
             trashed
-            alias
             instance
             date
           }

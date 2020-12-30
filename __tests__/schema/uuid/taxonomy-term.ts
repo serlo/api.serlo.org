@@ -65,7 +65,6 @@ describe('TaxonomyTerm root', () => {
               type
               trashed
               instance
-              alias
               name
               description
               weight
@@ -93,7 +92,6 @@ describe('TaxonomyTerm root', () => {
                 type
                 trashed
                 instance
-                alias
                 name
                 description
                 weight
@@ -127,7 +125,6 @@ describe('TaxonomyTerm root', () => {
                     type
                     trashed
                     instance
-                    alias
                     name
                     description
                     weight
@@ -202,7 +199,6 @@ describe('TaxonomyTerm subject', () => {
               type
               trashed
               instance
-              alias
               name
               description
               weight
@@ -231,7 +227,6 @@ describe('TaxonomyTerm subject', () => {
                 type
                 trashed
                 instance
-                alias
                 name
                 description
                 weight
@@ -265,7 +260,6 @@ describe('TaxonomyTerm subject', () => {
                     type
                     trashed
                     instance
-                    alias
                     name
                     description
                     weight
@@ -371,7 +365,6 @@ describe('TaxonomyTerm curriculumTopic', () => {
               type
               trashed
               instance
-              alias
               name
               description
               weight
@@ -402,7 +395,6 @@ describe('TaxonomyTerm curriculumTopic', () => {
                 type
                 trashed
                 instance
-                alias
                 name
                 description
                 weight
@@ -434,7 +426,6 @@ describe('TaxonomyTerm curriculumTopic', () => {
                   ... on Article {
                     id
                     trashed
-                    alias
                     instance
                     date
                   }
@@ -523,28 +514,5 @@ describe('TaxonomyTerm curriculumTopic', () => {
       },
       client,
     })
-  })
-})
-
-test('alias property is encoded', async () => {
-  global.server.use(createUuidHandler({ ...taxonomyTermRoot, alias: '/ü/ä' }))
-
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query taxonomyAlias($id: Int!) {
-        uuid(id: $id) {
-          ... on TaxonomyTerm {
-            alias
-          }
-        }
-      }
-    `,
-    variables: { id: taxonomyTermRoot.id },
-    data: {
-      uuid: {
-        alias: '/%C3%BC/%C3%A4',
-      },
-    },
-    client,
   })
 })

@@ -48,6 +48,7 @@ export const videoRevision: VideoRevisionPayload = {
   __typename: EntityRevisionType.VideoRevision,
   id: 16114,
   trashed: false,
+  alias: null,
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
   repositoryId: video.id,
@@ -59,7 +60,13 @@ export const videoRevision: VideoRevisionPayload = {
 
 export function getVideoDataWithoutSubResolvers(video: VideoPayload) {
   return R.omit(
-    ['currentRevisionId', 'revisionIds', 'licenseId', 'taxonomyTermIds'],
+    [
+      'currentRevisionId',
+      'revisionIds',
+      'licenseId',
+      'taxonomyTermIds',
+      'alias',
+    ],
     video
   )
 }
@@ -67,5 +74,5 @@ export function getVideoDataWithoutSubResolvers(video: VideoPayload) {
 export function getVideoRevisionDataWithoutSubResolvers(
   videoRevision: VideoRevisionPayload
 ) {
-  return R.omit(['authorId', 'repositoryId'], videoRevision)
+  return R.omit(['authorId', 'repositoryId', 'alias'], videoRevision)
 }

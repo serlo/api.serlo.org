@@ -36,7 +36,6 @@ export function createExerciseSolutionQuery(
               id
               trashed
               instance
-              alias
               date
             }
           }
