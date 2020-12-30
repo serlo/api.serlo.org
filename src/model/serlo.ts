@@ -31,6 +31,7 @@ import {
   createQuery,
   FetchHelpers,
 } from '~/internals/model'
+import { isInstance } from '~/schema/instance'
 import {
   AbstractNotificationEventPayload,
   isUnsupportedNotificationEvent,
@@ -40,6 +41,7 @@ import { SubscriptionsPayload } from '~/schema/subscription'
 import {
   AbstractUuidPayload,
   AliasPayload,
+  CommentPayload,
   decodePath,
   encodePath,
   EntityPayload,
@@ -49,7 +51,7 @@ import {
   NodeData,
   ThreadsPayload,
 } from '~/schema/uuid'
-import { Instance, License } from '~/types'
+import { Instance, License, MutationCreateThreadArgs } from '~/types'
 
 export function createSerloModel({
   environment,
@@ -263,8 +265,7 @@ export function createSerloModel({
   >(
     {
       getCurrentValue: async ({ path, instance }) => {
-        const cleanPath = encodePath(decodePath(path))
-        return get({ path: `/api/alias${cleanPath}`, instance })
+        return get({ path: `/api/alias${path}`, instance })
       },
       maxAge: { minutes: 5 },
       getKey: ({ path, instance }) => {
@@ -420,6 +421,18 @@ export function createSerloModel({
     environment
   )
 
+  const createThread = createMutation<
+    MutationCreateThreadArgs & { userId: number },
+    CommentPayload | null
+  >({
+    mutate: async (payload) => {
+      return await post<CommentPayload | null>({
+        path: `/api/add-comment/`,
+        body: payload,
+      })
+    },
+  })
+
   const getAllCacheKeys = createQuery<undefined, string[]>(
     {
       getCurrentValue: async () => {
@@ -452,6 +465,7 @@ export function createSerloModel({
   })
 
   return {
+    createThread,
     getActiveAuthorIds,
     getActiveReviewerIds,
     getAlias,
@@ -475,8 +489,4 @@ function getInstanceFromKey(key: string): Instance | null {
   return key.startsWith(`${instance}.serlo.org`) && isInstance(instance)
     ? instance
     : null
-}
-
-function isInstance(instance: string): instance is Instance {
-  return Object.values(Instance).includes(instance as Instance)
 }

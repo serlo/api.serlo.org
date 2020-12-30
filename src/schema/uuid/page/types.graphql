@@ -1,4 +1,4 @@
-type Page implements AbstractUuid & AbstractRepository & AbstractNavigationChild {
+type Page implements AbstractUuid & AbstractRepository & AbstractNavigationChild & InstanceAware {
   id: Int!
   trashed: Boolean!
   threads(

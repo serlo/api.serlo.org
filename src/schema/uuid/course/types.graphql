@@ -1,4 +1,4 @@
-type Course implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild {
+type Course implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware {
   id: Int!
   trashed: Boolean!
   threads(

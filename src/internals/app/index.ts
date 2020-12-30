@@ -19,20 +19,18 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ApolloServer } from 'apollo-server-express'
 import dotenv from 'dotenv'
-import createApp, { Express } from 'express'
-import createPlayground from 'graphql-playground-middleware-express'
-import jwt from 'jsonwebtoken'
+import createApp from 'express'
 
-import { Service } from '../auth'
 import { Cache, createCache } from '../cache'
 import { initializeSentry } from '../sentry'
 import { createSwrQueue, SwrQueue } from '../swr-queue'
 import { createTimer, Timer } from '../timer'
-import { getGraphQLOptions } from './get-graphql-options'
+import { applyGraphQLMiddleware } from '~/internals/app/graphql-middleware'
+import { applySwrQueueDashboardMiddleware } from '~/internals/app/swr-queue-dashboard-middleware'
 
-export * from './get-graphql-options'
+export * from './graphql-middleware'
+export * from './swr-queue-dashboard-middleware'
 
 export function start() {
   dotenv.config()
@@ -68,51 +66,15 @@ function initializeGraphQLServer({
   swrQueue: SwrQueue
 }) {
   const app = createApp()
+  const dashboardPath = applySwrQueueDashboardMiddleware({ app })
   const graphqlPath = applyGraphQLMiddleware({ app, cache, swrQueue })
 
-  app.listen({ port: 3000 }, () => {
+  const port = 3000
+  const host = `http://localhost:${port}`
+  app.listen({ port }, () => {
     console.log('🚀 Server ready')
-    console.log('Playground:       http://localhost:3000/___graphql')
-    console.log(`GraphQL endpoint: http://localhost:3000${graphqlPath}`)
+    console.log(`Playground:          ${host}/___graphql`)
+    console.log(`GraphQL endpoint:    ${host}${graphqlPath}`)
+    console.log(`SWR Queue Dashboard: ${host}${dashboardPath}`)
   })
-}
-
-function applyGraphQLMiddleware({
-  app,
-  cache,
-  swrQueue,
-}: {
-  app: Express
-  cache: Cache
-  swrQueue: SwrQueue
-}) {
-  const environment = {
-    cache,
-    swrQueue,
-  }
-  const server = new ApolloServer(getGraphQLOptions(environment))
-
-  app.use(server.getMiddleware({ path: '/graphql' }))
-  app.get('/___graphql', (...args) => {
-    return createPlayground({
-      endpoint: '/graphql',
-      ...(process.env.NODE_ENV === 'production'
-        ? {}
-        : {
-            headers: {
-              Authorization: `Serlo Service=${jwt.sign(
-                {},
-                process.env.SERLO_CLOUDFLARE_WORKER_SECRET,
-                {
-                  expiresIn: '2h',
-                  audience: 'api.serlo.org',
-                  issuer: Service.SerloCloudflareWorker,
-                }
-              )}`,
-            },
-          }),
-    })(...args)
-  })
-
-  return server.graphqlPath
 }

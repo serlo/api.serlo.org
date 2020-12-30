@@ -22,8 +22,9 @@
 import { UserInputError } from 'apollo-server'
 
 import { AbstractUuidResolvers, DiscriminatorType, UuidPayload } from './types'
+import { resolveCustomId } from '~/config/alias'
 import { Context } from '~/internals/graphql'
-import { decodePath } from '~/schema/uuid/alias'
+import { decodePath, encodePath } from '~/schema/uuid/alias'
 import { QueryUuidArgs } from '~/types'
 
 export const resolvers: AbstractUuidResolvers = {
@@ -60,7 +61,7 @@ async function resolveIdFromAlias(
   dataSources: Context['dataSources'],
   alias: NonNullable<QueryUuidArgs['alias']>
 ): Promise<number | null> {
-  const cleanPath = decodePath(alias.path)
+  const cleanPath = encodePath(decodePath(alias.path))
 
   if (!cleanPath.startsWith('/')) {
     throw new UserInputError(
@@ -77,6 +78,12 @@ async function resolveIdFromAlias(
 
     if (match) return parseInt(match[1])
   }
+
+  const customId = resolveCustomId({
+    path: cleanPath,
+    instance: alias.instance,
+  })
+  if (customId) return customId
 
   return (await dataSources.model.serlo.getAlias(alias))?.id ?? null
 }
