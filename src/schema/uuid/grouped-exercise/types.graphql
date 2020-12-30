@@ -27,6 +27,7 @@ type GroupedExerciseRevision implements AbstractUuid & AbstractRevision & Abstra
   id: Int!
   author: User!
   trashed: Boolean!
+  alias: String
   threads(
     after: String
     before: String

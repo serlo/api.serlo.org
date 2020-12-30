@@ -61,7 +61,6 @@ describe('Course', () => {
               id
               trashed
               instance
-              alias
               date
             }
           }
@@ -87,7 +86,6 @@ describe('Course', () => {
                 id
                 trashed
                 instance
-                alias
                 date
               }
             }

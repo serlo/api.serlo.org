@@ -49,6 +49,7 @@ export const exerciseGroupRevision: ExerciseGroupRevisionPayload = {
   __typename: EntityRevisionType.ExerciseGroupRevision,
   id: 2218,
   trashed: false,
+  alias: null,
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
   repositoryId: exerciseGroup.id,
@@ -66,6 +67,7 @@ export function getExerciseGroupDataWithoutSubResolvers(
       'licenseId',
       'taxonomyTermIds',
       'exerciseIds',
+      'alias',
     ],
     exerciseGroup
   )
@@ -74,5 +76,5 @@ export function getExerciseGroupDataWithoutSubResolvers(
 export function getExerciseGroupRevisionDataWithoutSubResolvers(
   exerciseGroupRevision: ExerciseGroupRevisionPayload
 ) {
-  return R.omit(['authorId', 'repositoryId'], exerciseGroupRevision)
+  return R.omit(['authorId', 'repositoryId', 'alias'], exerciseGroupRevision)
 }

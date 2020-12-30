@@ -47,6 +47,7 @@ export const eventRevision: EventRevisionPayload = {
   __typename: EntityRevisionType.EventRevision,
   id: 35555,
   trashed: false,
+  alias: null,
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
   repositoryId: event.id,
@@ -59,7 +60,13 @@ export const eventRevision: EventRevisionPayload = {
 
 export function getEventDataWithoutSubResolvers(event: EventPayload) {
   return R.omit(
-    ['currentRevisionId', 'revisionIds', 'licenseId', 'taxonomyTermIds'],
+    [
+      'currentRevisionId',
+      'revisionIds',
+      'licenseId',
+      'taxonomyTermIds',
+      'alias',
+    ],
     event
   )
 }
@@ -67,5 +74,5 @@ export function getEventDataWithoutSubResolvers(event: EventPayload) {
 export function getEventRevisionDataWithoutSubResolvers(
   eventRevision: EventRevisionPayload
 ) {
-  return R.omit(['authorId', 'repositoryId'], eventRevision)
+  return R.omit(['authorId', 'repositoryId', 'alias'], eventRevision)
 }

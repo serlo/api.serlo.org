@@ -66,7 +66,6 @@ test('GroupedExercise', async () => {
             id
             trashed
             instance
-            alias
             date
           }
         }
@@ -84,6 +83,7 @@ test('GroupedExerciseRevision', async () => {
     __typename: groupedExerciseRevision.__typename,
     id: groupedExerciseRevision.id,
     trashed: Matchers.boolean(groupedExerciseRevision.trashed),
+    alias: null,
     date: Matchers.iso8601DateTime(groupedExerciseRevision.date),
     authorId: Matchers.integer(groupedExerciseRevision.authorId),
     repositoryId: Matchers.integer(groupedExerciseRevision.repositoryId),
