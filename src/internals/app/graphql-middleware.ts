@@ -19,15 +19,60 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ApolloServerExpressConfig } from 'apollo-server-express'
+import { ApolloServer, ApolloServerExpressConfig } from 'apollo-server-express'
+import { Express } from 'express'
+import createPlayground from 'graphql-playground-middleware-express'
+import jwt from 'jsonwebtoken'
 import fetch from 'node-fetch'
 import { URLSearchParams } from 'url'
 
-import { handleAuthentication, Service } from '../auth'
-import { Environment } from '../environment'
-import { Context } from '../graphql'
-import { ModelDataSource } from '../model'
+import { handleAuthentication, Service } from '~/internals/auth'
+import { Cache } from '~/internals/cache'
+import { Environment } from '~/internals/environment'
+import { Context } from '~/internals/graphql'
+import { ModelDataSource } from '~/internals/model'
+import { SwrQueue } from '~/internals/swr-queue'
 import { schema } from '~/schema'
+
+export function applyGraphQLMiddleware({
+  app,
+  cache,
+  swrQueue,
+}: {
+  app: Express
+  cache: Cache
+  swrQueue: SwrQueue
+}) {
+  const environment = {
+    cache,
+    swrQueue,
+  }
+  const server = new ApolloServer(getGraphQLOptions(environment))
+
+  app.use(server.getMiddleware({ path: '/graphql' }))
+  app.get('/___graphql', (...args) => {
+    return createPlayground({
+      endpoint: '/graphql',
+      ...(process.env.NODE_ENV === 'production'
+        ? {}
+        : {
+            headers: {
+              Authorization: `Serlo Service=${jwt.sign(
+                {},
+                process.env.SERLO_CLOUDFLARE_WORKER_SECRET,
+                {
+                  expiresIn: '2h',
+                  audience: 'api.serlo.org',
+                  issuer: Service.SerloCloudflareWorker,
+                }
+              )}`,
+            },
+          }),
+    })(...args)
+  })
+
+  return server.graphqlPath
+}
 
 export function getGraphQLOptions(
   environment: Environment

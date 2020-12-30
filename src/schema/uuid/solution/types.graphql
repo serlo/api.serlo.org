@@ -1,4 +1,4 @@
-type Solution implements AbstractUuid & AbstractRepository & AbstractEntity {
+type Solution implements AbstractUuid & AbstractRepository & AbstractEntity & InstanceAware {
   id: Int!
   trashed: Boolean!
   threads(

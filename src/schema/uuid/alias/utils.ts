@@ -19,6 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { lookupCustomAlias } from '~/config/alias'
+import { isInstanceAware } from '~/schema/instance'
 import { UuidResolvers } from '~/schema/uuid'
 
 export function decodePath(path: string) {
@@ -40,8 +42,14 @@ export function encodePath(path: string) {
 
 export function createAliasResolvers(): Pick<UuidResolvers, 'alias'> {
   return {
-    alias(uuid) {
-      return Promise.resolve(uuid.alias ? encodePath(uuid.alias) : null)
+    async alias(entity) {
+      if (isInstanceAware(entity)) {
+        const customAlias = lookupCustomAlias(entity)
+        if (customAlias) {
+          return Promise.resolve(encodePath(customAlias))
+        }
+      }
+      return Promise.resolve(entity.alias ? encodePath(entity.alias) : null)
     },
   }
 }

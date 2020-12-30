@@ -1,4 +1,4 @@
-type CreateEntityNotificationEvent implements AbstractNotificationEvent {
+type CreateEntityNotificationEvent implements AbstractNotificationEvent & InstanceAware {
   id: Int!
   instance: Instance!
   date: DateTime!

@@ -1,4 +1,4 @@
-type CreateTaxonomyTermNotificationEvent implements AbstractNotificationEvent {
+type CreateTaxonomyTermNotificationEvent implements AbstractNotificationEvent & InstanceAware {
   id: Int!
   instance: Instance!
   date: DateTime!

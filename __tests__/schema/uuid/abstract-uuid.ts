@@ -242,7 +242,9 @@ describe('property "alias"', () => {
     test.each(abstractUuidRepository.filter(aliasIsString))(
       'type = %s',
       async (_type, payload) => {
-        global.server.use(createUuidHandler({ ...payload, alias: '/%%/größe' }))
+        global.server.use(
+          createUuidHandler({ ...payload, alias: '/%%/größe', id: 23 })
+        )
 
         await assertSuccessfulGraphQLQuery({
           query: gql`
@@ -252,7 +254,7 @@ describe('property "alias"', () => {
               }
             }
           `,
-          variables: { id: payload.id },
+          variables: { id: 23 },
           data: { uuid: { alias: '/%25%25/gr%C3%B6%C3%9Fe' } },
           client,
         })
@@ -280,6 +282,40 @@ describe('property "alias"', () => {
         })
       }
     )
+  })
+})
+
+describe('custom aliases', () => {
+  test('de.serlo.org/mathe resolves to uuid 19767', async () => {
+    global.server.use(
+      createJsonHandler({
+        path: `/api/uuid/19767`,
+        body: {
+          ...page,
+          id: 19767,
+          alias: '/legacy-alias',
+        },
+      })
+    )
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query uuid($alias: AliasInput!) {
+          uuid(alias: $alias) {
+            id
+            ... on Page {
+              alias
+            }
+          }
+        }
+      `,
+      variables: {
+        alias: { instance: Instance.De, path: '/mathe' },
+      },
+      data: {
+        uuid: { id: 19767, alias: '/mathe' },
+      },
+      client,
+    })
   })
 })
 
