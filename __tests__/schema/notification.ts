@@ -2136,34 +2136,36 @@ describe('setNotificationState', () => {
     }
   `
 
-  test('authenticated with array of ids', async () => {
+  beforeEach(() => {
     global.server.use(
       rest.post(
         `http://de.${process.env.SERLO_ORG_HOST}/api/set-notification-state/:id`,
         (req, res, ctx) => {
+          const { userId, unread } = req.body as {
+            userId: number
+            unread: boolean
+          }
           const id = parseInt(req.params.id)
 
+          if (userId !== user.id) return res(ctx.status(403))
           if (![1, 2, 3].includes(id)) return res(ctx.status(404))
 
           return res(
-            ctx.json({
-              notifications: [{ id, unread: false, eventId: id }],
-              userId: user.id,
-            })
+            ctx.json({ notifications: [{ id, unread, eventId: id }], userId })
           )
         }
       )
     )
+  })
 
-    const client = createTestClient({ user: user.id })
-
+  test('authenticated with array of ids', async () => {
     await assertSuccessfulGraphQLMutation({
       mutation,
       variables: {
         input: { id: [1, 2, 3], unread: false },
       },
       data: { notification: { setState: { success: true } } },
-      client,
+      client: createTestClient({ user: user.id }),
     })
   })
 
@@ -2181,22 +2183,11 @@ describe('setNotificationState', () => {
   })
 
   test('wrong user id', async () => {
-    global.server.use(
-      rest.post(
-        `http://de.${process.env.SERLO_ORG_HOST}/api/set-notification-state/1`,
-        (_req, res, ctx) => {
-          return res(ctx.status(403))
-        }
-      )
-    )
-
-    const client = createTestClient({ user: user2.id })
-
     await assertFailingGraphQLMutation(
       {
         mutation,
         variables: { input: { id: 1, unread: false } },
-        client,
+        client: createTestClient({ user: user2.id }),
       },
       (errors) => {
         expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
