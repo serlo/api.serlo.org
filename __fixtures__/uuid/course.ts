@@ -49,6 +49,7 @@ export const courseRevision: CourseRevisionPayload = {
   __typename: EntityRevisionType.CourseRevision,
   id: 30713,
   trashed: false,
+  alias: null,
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
   repositoryId: course.id,
@@ -66,6 +67,7 @@ export function getCourseDataWithoutSubResolvers(course: CoursePayload) {
       'licenseId',
       'taxonomyTermIds',
       'pageIds',
+      'alias',
     ],
     course
   )
@@ -74,5 +76,5 @@ export function getCourseDataWithoutSubResolvers(course: CoursePayload) {
 export function getCourseRevisionDataWithoutSubResolvers(
   courseRevision: CourseRevisionPayload
 ) {
-  return R.omit(['authorId', 'repositoryId'], courseRevision)
+  return R.omit(['authorId', 'repositoryId', 'alias'], courseRevision)
 }

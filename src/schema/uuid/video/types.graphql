@@ -1,4 +1,4 @@
-type Video implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild {
+type Video implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware {
   id: Int!
   trashed: Boolean!
   threads(
@@ -31,6 +31,7 @@ type VideoRevision implements AbstractUuid & AbstractRevision & AbstractEntityRe
   id: Int!
   author: User!
   trashed: Boolean!
+  alias: String
   threads(
     after: String
     before: String

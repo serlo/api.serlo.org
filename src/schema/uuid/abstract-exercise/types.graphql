@@ -14,6 +14,7 @@ interface AbstractExerciseRevision {
   # extends AbstractEntityRevision
   id: Int!
   trashed: Boolean!
+  alias: String
   author: User!
   date: DateTime!
 

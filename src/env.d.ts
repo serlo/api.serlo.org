@@ -26,16 +26,18 @@ declare namespace NodeJS {
   interface ProcessEnv {
     npm_package_version: string
 
-    SENTRY_DSN: string | undefined
-    ENVIRONMENT: string
     ACTIVE_DONORS_SPREADSHEET_ID: string
+    SWR_QUEUE_DASHBOARD_PASSWORD: string
+    SWR_QUEUE_DASHBOARD_USERNAME: string
+    ENVIRONMENT: string
     GOOGLE_API_KEY: string
+    HYDRA_HOST: string
     LOG_LEVEL: LogLevelDesc | undefined
     REDIS_URL: string
     REDIS_URL_TEST: string | undefined
+    SENTRY_DSN: string | undefined
     SERLO_CLOUDFLARE_WORKER_SECRET: string
     SERLO_ORG_HOST: string
     SERLO_ORG_SECRET: string
-    HYDRA_HOST: string
   }
 }

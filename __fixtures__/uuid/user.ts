@@ -19,13 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { getAliasDataWithoutSubResolvers } from './alias'
+import * as R from 'ramda'
+
 import { DiscriminatorType, UserPayload } from '~/schema/uuid'
 
 export const user: UserPayload = {
   __typename: DiscriminatorType.User,
   id: 1,
   trashed: false,
+  alias: '/user/profile/username',
   username: 'username',
   date: '2014-03-01T20:36:21Z',
   lastLogin: '2020-03-24T09:40:55Z',
@@ -36,15 +38,13 @@ export const user2: UserPayload = {
   __typename: DiscriminatorType.User,
   id: 23,
   trashed: false,
-  username: 'second user',
+  alias: '/user/profile/sandra',
+  username: 'sandra',
   date: '2015-02-01T20:35:21Z',
   lastLogin: '2019-03-23T09:20:55Z',
   description: null,
 }
 
 export function getUserDataWithoutSubResolvers(user: UserPayload) {
-  return {
-    ...user,
-    ...getAliasDataWithoutSubResolvers(user),
-  }
+  return R.omit(['alias'], user)
 }

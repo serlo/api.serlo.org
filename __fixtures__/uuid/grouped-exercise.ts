@@ -56,6 +56,7 @@ export const groupedExerciseRevision: GroupedExerciseRevisionPayload = {
   __typename: EntityRevisionType.GroupedExerciseRevision,
   id: 2220,
   trashed: false,
+  alias: null,
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
   repositoryId: groupedExercise.id,
@@ -67,7 +68,14 @@ export function getGroupedExerciseDataWithoutSubResolvers(
   groupedExercise: GroupedExercisePayload
 ) {
   return R.omit(
-    ['currentRevisionId', 'revisionIds', 'licenseId', 'solutionId', 'parentId'],
+    [
+      'currentRevisionId',
+      'revisionIds',
+      'licenseId',
+      'solutionId',
+      'parentId',
+      'alias',
+    ],
     groupedExercise
   )
 }
@@ -75,5 +83,5 @@ export function getGroupedExerciseDataWithoutSubResolvers(
 export function getGroupedExerciseRevisionDataWithoutSubResolvers(
   groupedExerciseRevision: GroupedExerciseRevisionPayload
 ) {
-  return R.omit(['authorId', 'repositoryId'], groupedExerciseRevision)
+  return R.omit(['authorId', 'repositoryId', 'alias'], groupedExerciseRevision)
 }

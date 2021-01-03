@@ -45,6 +45,7 @@ export const pageRevision: PageRevisionPayload = {
   __typename: DiscriminatorType.PageRevision,
   id: 35476,
   trashed: false,
+  alias: null,
   title: 'title',
   content: 'content',
   date: '2015-02-28T02:06:40Z',
@@ -54,7 +55,13 @@ export const pageRevision: PageRevisionPayload = {
 
 export function getPageDataWithoutSubResolvers(page: PagePayload) {
   return R.omit(
-    ['currentRevisionId', 'revisionIds', 'licenseId', 'taxonomyTermIds'],
+    [
+      'currentRevisionId',
+      'revisionIds',
+      'licenseId',
+      'taxonomyTermIds',
+      'alias',
+    ],
     page
   )
 }
@@ -62,5 +69,5 @@ export function getPageDataWithoutSubResolvers(page: PagePayload) {
 export function getPageRevisionDataWithoutSubResolvers(
   pageRevision: PageRevisionPayload
 ) {
-  return R.omit(['authorId', 'repositoryId'], pageRevision)
+  return R.omit(['authorId', 'repositoryId', 'alias'], pageRevision)
 }

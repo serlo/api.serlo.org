@@ -24,7 +24,6 @@ import { array as A, pipeable } from 'fp-ts'
 import { resolveConnection } from '../../connection'
 import { isDefined } from '../../utils'
 import { createUuidResolvers } from '../abstract-uuid'
-import { createAliasResolvers } from '../alias'
 import { resolveUser } from '../user'
 import {
   AbstractRepositoryPayload,
@@ -40,7 +39,6 @@ export function createRepositoryResolvers<
 >(): RepositoryResolvers<E, R> {
   return {
     ...createUuidResolvers(),
-    ...createAliasResolvers<E>(),
     async currentRevision(entity, _args, { dataSources }) {
       if (!entity.currentRevisionId) return null
       return (await dataSources.model.serlo.getUuid({

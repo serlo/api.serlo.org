@@ -1,5 +1,3 @@
-import { AliasResolvers } from './types'
-
 /**
  * This file is part of Serlo.org API
  *
@@ -21,6 +19,10 @@ import { AliasResolvers } from './types'
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { lookupCustomAlias } from '~/config/alias'
+import { isInstanceAware } from '~/schema/instance'
+import { UuidResolvers } from '~/schema/uuid'
+
 export function decodePath(path: string) {
   try {
     return decodeURIComponent(path)
@@ -38,11 +40,15 @@ export function encodePath(path: string) {
   return encodeURIComponent(path).replace(/%2F/g, '/')
 }
 
-export function createAliasResolvers<
-  T extends { alias: string | null }
->(): AliasResolvers<T> {
+export function createAliasResolvers(): Pick<UuidResolvers, 'alias'> {
   return {
-    alias(entity) {
+    async alias(entity) {
+      if (isInstanceAware(entity)) {
+        const customAlias = lookupCustomAlias(entity)
+        if (customAlias) {
+          return Promise.resolve(encodePath(customAlias))
+        }
+      }
       return Promise.resolve(entity.alias ? encodePath(entity.alias) : null)
     },
   }

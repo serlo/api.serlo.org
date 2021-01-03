@@ -98,5 +98,30 @@ describe('createQuery', () => {
         currentUser
       )
     })
+
+    test('Stale value (re-queuing jobs)', async () => {
+      // This test ensures that jobs can be queued again after completion
+      const staleUser1 = { ...currentUser, username: 'Stale User 1' }
+      const staleUser2 = { ...currentUser, username: 'Stale User 2' }
+      await global.cache.set({ key, value: staleUser1 })
+      await global.timer.waitFor(model.getUuid._querySpec.maxAge!)
+      await global.timer.waitFor({ minutes: 5 })
+      global.server.use(createUuidHandler(staleUser2))
+      expect(await model.getUuid(payload)).toEqual(staleUser1)
+      await waitForJob()
+      const cacheValue1 = await global.cache.get({ key })
+      expect(O.isSome(cacheValue1) && cacheValue1.value.value).toEqual(
+        staleUser2
+      )
+      await global.timer.waitFor(model.getUuid._querySpec.maxAge!)
+      await global.timer.waitFor({ minutes: 5 })
+      global.server.use(createUuidHandler(currentUser))
+      expect(await model.getUuid(payload)).toEqual(staleUser2)
+      await waitForJob()
+      const cacheValue2 = await global.cache.get({ key })
+      expect(O.isSome(cacheValue2) && cacheValue2.value.value).toEqual(
+        currentUser
+      )
+    })
   })
 })
