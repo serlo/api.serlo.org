@@ -302,7 +302,6 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
-                  alias
                   username
                   date
                   lastLogin
@@ -334,7 +333,6 @@ describe('notificationEvent', () => {
                   ... on Article {
                     id
                     trashed
-                    alias
                     instance
                     date
                   }
@@ -434,7 +432,6 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
-                  alias
                   username
                   date
                   lastLogin
@@ -466,7 +463,6 @@ describe('notificationEvent', () => {
                   ... on Article {
                     id
                     trashed
-                    alias
                     instance
                     date
                   }
@@ -565,7 +561,6 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
-                  alias
                   username
                   date
                   lastLogin
@@ -675,7 +670,6 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
-                  alias
                   username
                   date
                   lastLogin
@@ -707,7 +701,6 @@ describe('notificationEvent', () => {
                   ... on Article {
                     id
                     trashed
-                    alias
                     instance
                     date
                   }
@@ -770,7 +763,6 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
-                  alias
                   username
                   date
                   lastLogin
@@ -802,7 +794,6 @@ describe('notificationEvent', () => {
                   ... on Exercise {
                     id
                     trashed
-                    alias
                     instance
                     date
                   }
@@ -834,7 +825,6 @@ describe('notificationEvent', () => {
                     id
                     trashed
                     instance
-                    alias
                     date
                   }
                 }
@@ -896,7 +886,6 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
-                  alias
                   username
                   date
                   lastLogin
@@ -928,7 +917,6 @@ describe('notificationEvent', () => {
                   ... on Exercise {
                     id
                     trashed
-                    alias
                     instance
                     date
                   }
@@ -960,7 +948,6 @@ describe('notificationEvent', () => {
                     id
                     trashed
                     instance
-                    alias
                     date
                   }
                 }
@@ -1022,7 +1009,6 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
-                  alias
                   username
                   date
                   lastLogin
@@ -1054,7 +1040,6 @@ describe('notificationEvent', () => {
                   ... on Article {
                     id
                     trashed
-                    alias
                     instance
                     date
                   }
@@ -1153,7 +1138,6 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
-                  alias
                   username
                   date
                   lastLogin
@@ -1186,7 +1170,6 @@ describe('notificationEvent', () => {
                   type
                   trashed
                   instance
-                  alias
                   name
                   description
                   weight
@@ -1251,7 +1234,6 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
-                  alias
                   username
                   date
                   lastLogin
@@ -1284,7 +1266,6 @@ describe('notificationEvent', () => {
                   type
                   trashed
                   instance
-                  alias
                   name
                   description
                   weight
@@ -1349,7 +1330,6 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
-                  alias
                   username
                   date
                   lastLogin
@@ -1382,7 +1362,6 @@ describe('notificationEvent', () => {
                   type
                   trashed
                   instance
-                  alias
                   name
                   description
                   weight
@@ -1416,7 +1395,6 @@ describe('notificationEvent', () => {
                     id
                     trashed
                     instance
-                    alias
                     date
                   }
                 }
@@ -1478,7 +1456,6 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
-                  alias
                   username
                   date
                   lastLogin
@@ -1511,7 +1488,6 @@ describe('notificationEvent', () => {
                   type
                   trashed
                   instance
-                  alias
                   name
                   description
                   weight
@@ -1545,7 +1521,6 @@ describe('notificationEvent', () => {
                     id
                     trashed
                     instance
-                    alias
                     date
                   }
                 }
@@ -1607,7 +1582,6 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
-                  alias
                   username
                   date
                   lastLogin
@@ -1640,7 +1614,6 @@ describe('notificationEvent', () => {
                   type
                   trashed
                   instance
-                  alias
                   name
                   description
                   weight
@@ -1674,7 +1647,6 @@ describe('notificationEvent', () => {
                   type
                   trashed
                   instance
-                  alias
                   name
                   description
                   weight
@@ -1706,7 +1678,6 @@ describe('notificationEvent', () => {
                   type
                   trashed
                   instance
-                  alias
                   name
                   description
                   weight
@@ -1771,7 +1742,6 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
-                  alias
                   username
                   date
                   lastLogin
@@ -1803,7 +1773,6 @@ describe('notificationEvent', () => {
                   ... on Article {
                     id
                     trashed
-                    alias
                     instance
                     date
                   }
@@ -1889,7 +1858,6 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
-                  alias
                   username
                   date
                   lastLogin
@@ -1921,7 +1889,6 @@ describe('notificationEvent', () => {
                   ... on Article {
                     id
                     trashed
-                    alias
                     instance
                     date
                   }
@@ -1985,7 +1952,6 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
-                  alias
                   username
                   date
                   lastLogin
@@ -2073,7 +2039,6 @@ describe('notificationEvent', () => {
                   __typename
                   id
                   trashed
-                  alias
                   username
                   date
                   lastLogin
@@ -2105,7 +2070,6 @@ describe('notificationEvent', () => {
                   ... on Article {
                     id
                     trashed
-                    alias
                     instance
                     date
                   }
@@ -2179,7 +2143,7 @@ describe('setNotificationState', () => {
         (req, res, ctx) => {
           const id = parseInt(req.params.id)
 
-          if (![1,2,3].includes(id)) return res(ctx.status(404))
+          if (![1, 2, 3].includes(id)) return res(ctx.status(404))
 
           return res(
             ctx.json({
@@ -2188,7 +2152,7 @@ describe('setNotificationState', () => {
             })
           )
         }
-      ),
+      )
     )
 
     const client = createTestClient({ user: user.id })
@@ -2227,7 +2191,7 @@ describe('setNotificationState', () => {
     )
 
     const client = createTestClient({ user: user2.id })
-    
+
     await assertFailingGraphQLMutation(
       {
         mutation,

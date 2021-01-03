@@ -19,20 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import {
-  encodePath,
-  isUserPayload,
-  RepositoryPayload,
-  UserPayload,
-} from '~/schema/uuid'
+import { Instance, InstanceAware } from '~/types'
 
-export function getAliasDataWithoutSubResolvers(
-  payload: RepositoryPayload | UserPayload
-) {
-  const decodedAlias = isUserPayload(payload)
-    ? `/user/profile/${payload.username}`
-    : payload.alias
-  const alias = decodedAlias === null ? null : encodePath(decodedAlias)
+export function isInstanceAware(object: unknown): object is InstanceAware {
+  return isInstance((object as InstanceAware).instance ?? '')
+}
 
-  return { alias }
+export function isInstance(instance: string): instance is Instance {
+  return Object.values(Instance).includes(instance as Instance)
 }

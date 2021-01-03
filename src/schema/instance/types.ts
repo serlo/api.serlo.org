@@ -19,10 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Instance } from '~/types'
+import { TypeResolver } from '~/internals/graphql'
+import { InstanceAware } from '~/types'
 
-export interface AliasPayload {
-  id: number
-  instance: Instance
-  path: string
+export interface InstanceAwarePayload extends InstanceAware {
+  __typename: string
+}
+
+export interface InstanceResolvers {
+  InstanceAware: {
+    __resolveType: TypeResolver<InstanceAwarePayload>
+  }
 }

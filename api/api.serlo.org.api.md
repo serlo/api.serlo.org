@@ -40,6 +40,7 @@ export type AbstractExercise = {
 export type AbstractExerciseRevision = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     author: User;
     date: Scalars['DateTime'];
     content: Scalars['String'];
@@ -64,9 +65,9 @@ export type AbstractNotificationEvent = {
 export type AbstractRepository = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
     instance: Instance;
-    alias?: Maybe<Scalars['String']>;
     license: License;
 };
 
@@ -74,6 +75,7 @@ export type AbstractRepository = {
 export type AbstractRevision = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     author: User;
     date: Scalars['DateTime'];
     content: Scalars['String'];
@@ -83,9 +85,9 @@ export type AbstractRevision = {
 export type AbstractTaxonomyTermChild = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
     instance: Instance;
-    alias?: Maybe<Scalars['String']>;
     license: License;
     taxonomyTerms: TaxonomyTermConnection;
 };
@@ -102,6 +104,7 @@ export type AbstractTaxonomyTermChildTaxonomyTermsArgs = {
 export type AbstractUuid = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
 };
 
@@ -136,7 +139,7 @@ export type AliasInput = {
 };
 
 // @public (undocumented)
-export type Applet = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
+export type Applet = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & {
     __typename?: 'Applet';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -156,6 +159,7 @@ export type AppletRevision = AbstractUuid & AbstractRevision & AbstractEntityRev
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: Applet;
@@ -217,7 +221,7 @@ export type AppletThreadsArgs = {
 };
 
 // @public (undocumented)
-export type Article = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
+export type Article = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & {
     __typename?: 'Article';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -237,6 +241,7 @@ export type ArticleRevision = AbstractUuid & AbstractRevision & AbstractEntityRe
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: Article;
@@ -297,7 +302,7 @@ export type ArticleThreadsArgs = {
 };
 
 // @public (undocumented)
-export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & {
+export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'CheckoutRevisionNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -348,7 +353,7 @@ export type CommentThreadsArgs = {
 };
 
 // @public (undocumented)
-export type Course = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
+export type Course = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & {
     __typename?: 'Course';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -364,7 +369,7 @@ export type Course = AbstractUuid & AbstractRepository & AbstractEntity & Abstra
 };
 
 // @public (undocumented)
-export type CoursePage = AbstractUuid & AbstractRepository & AbstractEntity & {
+export type CoursePage = AbstractUuid & AbstractRepository & AbstractEntity & InstanceAware & {
     __typename?: 'CoursePage';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -384,6 +389,7 @@ export type CoursePageRevision = AbstractUuid & AbstractRevision & AbstractEntit
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: CoursePage;
@@ -439,6 +445,7 @@ export type CourseRevision = AbstractUuid & AbstractRevision & AbstractEntityRev
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: Course;
@@ -498,7 +505,7 @@ export type CourseThreadsArgs = {
 };
 
 // @public (undocumented)
-export type CreateCommentNotificationEvent = AbstractNotificationEvent & {
+export type CreateCommentNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'CreateCommentNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -510,7 +517,7 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & {
+export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'CreateEntityLinkNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -522,7 +529,7 @@ export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type CreateEntityNotificationEvent = AbstractNotificationEvent & {
+export type CreateEntityNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'CreateEntityNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -533,7 +540,7 @@ export type CreateEntityNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & {
+export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'CreateEntityRevisionNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -545,7 +552,7 @@ export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & 
 };
 
 // @public (undocumented)
-export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & {
+export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'CreateTaxonomyLinkNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -557,7 +564,7 @@ export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type CreateTaxonomyTermNotificationEvent = AbstractNotificationEvent & {
+export type CreateTaxonomyTermNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'CreateTaxonomyTermNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -568,7 +575,7 @@ export type CreateTaxonomyTermNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type CreateThreadNotificationEvent = AbstractNotificationEvent & {
+export type CreateThreadNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'CreateThreadNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -580,7 +587,7 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-type Event_2 = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
+type Event_2 = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & {
     __typename?: 'Event';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -602,6 +609,7 @@ export type EventRevision = AbstractUuid & AbstractRevision & AbstractEntityRevi
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: Event_2;
@@ -669,7 +677,7 @@ export type Exact<T extends {
 };
 
 // @public (undocumented)
-export type Exercise = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & AbstractExercise & {
+export type Exercise = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & AbstractExercise & InstanceAware & {
     __typename?: 'Exercise';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -685,7 +693,7 @@ export type Exercise = AbstractUuid & AbstractRepository & AbstractEntity & Abst
 };
 
 // @public (undocumented)
-export type ExerciseGroup = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
+export type ExerciseGroup = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & {
     __typename?: 'ExerciseGroup';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -706,6 +714,7 @@ export type ExerciseGroupRevision = AbstractUuid & AbstractRevision & AbstractEn
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: ExerciseGroup;
@@ -768,6 +777,7 @@ export type ExerciseRevision = AbstractUuid & AbstractRevision & AbstractEntityR
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: Exercise;
@@ -825,7 +835,7 @@ export type ExerciseThreadsArgs = {
 };
 
 // @public (undocumented)
-export type GroupedExercise = AbstractUuid & AbstractRepository & AbstractEntity & AbstractExercise & {
+export type GroupedExercise = AbstractUuid & AbstractRepository & AbstractEntity & AbstractExercise & InstanceAware & {
     __typename?: 'GroupedExercise';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -846,6 +856,7 @@ export type GroupedExerciseRevision = AbstractUuid & AbstractRevision & Abstract
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: GroupedExercise;
@@ -911,7 +922,12 @@ export enum Instance {
 }
 
 // @public (undocumented)
-export type License = {
+export type InstanceAware = {
+    instance: Instance;
+};
+
+// @public (undocumented)
+export type License = InstanceAware & {
     __typename?: 'License';
     id: Scalars['Int'];
     instance: Instance;
@@ -1061,7 +1077,7 @@ export type NotificationSetStateInput = {
 };
 
 // @public (undocumented)
-export type Page = AbstractUuid & AbstractRepository & AbstractNavigationChild & {
+export type Page = AbstractUuid & AbstractRepository & AbstractNavigationChild & InstanceAware & {
     __typename?: 'Page';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -1090,6 +1106,7 @@ export type PageRevision = AbstractUuid & AbstractRevision & {
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     title: Scalars['String'];
@@ -1227,7 +1244,7 @@ export type QueryUuidArgs = {
 };
 
 // @public (undocumented)
-export type RejectRevisionNotificationEvent = AbstractNotificationEvent & {
+export type RejectRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'RejectRevisionNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -1240,7 +1257,7 @@ export type RejectRevisionNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & {
+export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'RemoveEntityLinkNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -1252,7 +1269,7 @@ export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type RemoveTaxonomyLinkNotificationEvent = AbstractNotificationEvent & {
+export type RemoveTaxonomyLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'RemoveTaxonomyLinkNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -1276,7 +1293,7 @@ export type Scalars = {
 };
 
 // @public (undocumented)
-export type SetLicenseNotificationEvent = AbstractNotificationEvent & {
+export type SetLicenseNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'SetLicenseNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -1287,7 +1304,7 @@ export type SetLicenseNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type SetTaxonomyParentNotificationEvent = AbstractNotificationEvent & {
+export type SetTaxonomyParentNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'SetTaxonomyParentNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -1300,7 +1317,7 @@ export type SetTaxonomyParentNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type SetTaxonomyTermNotificationEvent = AbstractNotificationEvent & {
+export type SetTaxonomyTermNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'SetTaxonomyTermNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -1311,7 +1328,7 @@ export type SetTaxonomyTermNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type SetThreadStateNotificationEvent = AbstractNotificationEvent & {
+export type SetThreadStateNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'SetThreadStateNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -1323,7 +1340,7 @@ export type SetThreadStateNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type SetUuidStateNotificationEvent = AbstractNotificationEvent & {
+export type SetUuidStateNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'SetUuidStateNotificationEvent';
     id: Scalars['Int'];
     instance: Instance;
@@ -1335,7 +1352,7 @@ export type SetUuidStateNotificationEvent = AbstractNotificationEvent & {
 };
 
 // @public (undocumented)
-export type Solution = AbstractUuid & AbstractRepository & AbstractEntity & {
+export type Solution = AbstractUuid & AbstractRepository & AbstractEntity & InstanceAware & {
     __typename?: 'Solution';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -1355,6 +1372,7 @@ export type SolutionRevision = AbstractUuid & AbstractRevision & AbstractEntityR
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: Solution;
@@ -1427,7 +1445,7 @@ export type SubscriptionCursor = {
 };
 
 // @public (undocumented)
-export type TaxonomyTerm = AbstractUuid & AbstractNavigationChild & {
+export type TaxonomyTerm = AbstractUuid & AbstractNavigationChild & InstanceAware & {
     __typename?: 'TaxonomyTerm';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -1590,7 +1608,7 @@ export type UserThreadsArgs = {
 };
 
 // @public (undocumented)
-export type Video = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & {
+export type Video = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & {
     __typename?: 'Video';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -1610,6 +1628,7 @@ export type VideoRevision = AbstractUuid & AbstractRevision & AbstractEntityRevi
     id: Scalars['Int'];
     author: User;
     trashed: Scalars['Boolean'];
+    alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: Video;

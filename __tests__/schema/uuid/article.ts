@@ -54,7 +54,6 @@ test('Article', async () => {
           ... on Article {
             id
             trashed
-            alias
             instance
             date
           }

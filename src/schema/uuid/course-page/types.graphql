@@ -1,4 +1,4 @@
-type CoursePage implements AbstractUuid & AbstractRepository & AbstractEntity {
+type CoursePage implements AbstractUuid & AbstractRepository & AbstractEntity & InstanceAware {
   id: Int!
   trashed: Boolean!
   threads(
@@ -26,6 +26,7 @@ type CoursePageRevision implements AbstractUuid & AbstractRevision & AbstractEnt
   id: Int!
   author: User!
   trashed: Boolean!
+  alias: String
   threads(
     after: String
     before: String

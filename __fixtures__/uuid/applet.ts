@@ -47,6 +47,7 @@ export const appletRevision: AppletRevisionPayload = {
   __typename: EntityRevisionType.AppletRevision,
   id: 35597,
   trashed: false,
+  alias: null,
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
   repositoryId: applet.id,
@@ -60,7 +61,13 @@ export const appletRevision: AppletRevisionPayload = {
 
 export function getAppletDataWithoutSubResolvers(applet: AppletPayload) {
   return R.omit(
-    ['currentRevisionId', 'revisionIds', 'licenseId', 'taxonomyTermIds'],
+    [
+      'currentRevisionId',
+      'revisionIds',
+      'licenseId',
+      'taxonomyTermIds',
+      'alias',
+    ],
     applet
   )
 }
@@ -68,5 +75,5 @@ export function getAppletDataWithoutSubResolvers(applet: AppletPayload) {
 export function getAppletRevisionDataWithoutSubResolvers(
   appletRevision: AppletRevisionPayload
 ) {
-  return R.omit(['authorId', 'repositoryId'], appletRevision)
+  return R.omit(['authorId', 'repositoryId', 'alias'], appletRevision)
 }

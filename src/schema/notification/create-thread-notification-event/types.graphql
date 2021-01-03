@@ -1,4 +1,4 @@
-type CreateThreadNotificationEvent implements AbstractNotificationEvent {
+type CreateThreadNotificationEvent implements AbstractNotificationEvent & InstanceAware {
   id: Int!
   instance: Instance!
   date: DateTime!

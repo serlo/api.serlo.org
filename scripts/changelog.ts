@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { generateChangelog } from '@splish-me/changelog'
+import { generateChangelog } from '@inyono/changelog'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as util from 'util'
@@ -423,6 +423,24 @@ async function exec(): Promise<void> {
       added: [['uuid', 'Resolve `/entity/view/:id` to the given uuid.']],
       internal: [
         'Restructure the repository. Please check out the updated README.',
+      ],
+    },
+    {
+      tagName: 'v0.14.0',
+      date: '2020-12-23',
+      added: ['Add `createThread` mutation.'],
+      internal: ['Add dashboard for SWR Queue.'],
+    },
+    {
+      tagName: 'v0.14.1',
+      date: '2020-12-23',
+      fixed: ['Remove completed jobs from SWR Queue.'],
+    },
+    {
+      tagName: 'v0.14.2',
+      date: '2020-12-24',
+      changed: [
+        'Increase the number of parallel requests when processing SWR updates.',
       ],
     },
   ])

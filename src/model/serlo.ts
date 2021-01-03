@@ -31,6 +31,7 @@ import {
   createQuery,
   FetchHelpers,
 } from '~/internals/model'
+import { isInstance } from '~/schema/instance'
 import {
   AbstractNotificationEventPayload,
   isUnsupportedNotificationEvent,
@@ -260,12 +261,11 @@ export function createSerloModel({
 
   const getAlias = createQuery<
     { path: string; instance: Instance },
-    AliasPayload
+    AliasPayload | null
   >(
     {
       getCurrentValue: async ({ path, instance }) => {
-        const cleanPath = encodePath(decodePath(path))
-        return get({ path: `/api/alias${cleanPath}`, instance })
+        return get({ path: `/api/alias${path}`, instance })
       },
       maxAge: { minutes: 5 },
       getKey: ({ path, instance }) => {
@@ -493,8 +493,4 @@ function getInstanceFromKey(key: string): Instance | null {
   return key.startsWith(`${instance}.serlo.org`) && isInstance(instance)
     ? instance
     : null
-}
-
-function isInstance(instance: string): instance is Instance {
-  return Object.values(Instance).includes(instance as Instance)
 }

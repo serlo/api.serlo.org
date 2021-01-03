@@ -1,4 +1,4 @@
-type SetThreadStateNotificationEvent implements AbstractNotificationEvent {
+type SetThreadStateNotificationEvent implements AbstractNotificationEvent & InstanceAware {
   id: Int!
   instance: Instance!
   date: DateTime!

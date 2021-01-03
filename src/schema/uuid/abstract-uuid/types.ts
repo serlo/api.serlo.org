@@ -38,7 +38,6 @@ export enum DiscriminatorType {
   PageRevision = 'PageRevision',
   User = 'User',
   TaxonomyTerm = 'TaxonomyTerm',
-  Thread = 'Thread',
   Comment = 'Comment',
 }
 
@@ -55,9 +54,11 @@ export type UuidPayload =
 export interface AbstractUuidPayload
   extends Omit<AbstractUuid, keyof UuidResolvers> {
   __typename: UuidType
+  alias: string | null
 }
 
 export interface UuidResolvers {
+  alias: Resolver<AbstractUuidPayload, never, string | null>
   threads: Resolver<
     AbstractUuidPayload,
     AbstractUuidThreadsArgs,

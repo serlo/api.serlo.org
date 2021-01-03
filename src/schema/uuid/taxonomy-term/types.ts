@@ -26,9 +26,8 @@ import {
   DiscriminatorType,
   UuidResolvers,
 } from '../abstract-uuid'
-import { AliasResolvers } from '../alias'
 import { Resolver } from '~/internals/graphql'
-import { TaxonomyTermChildrenArgs, TaxonomyTerm } from '~/types'
+import { TaxonomyTerm, TaxonomyTermChildrenArgs } from '~/types'
 
 export interface TaxonomyTermPayload
   extends Omit<TaxonomyTerm, keyof TaxonomyTermResolvers['TaxonomyTerm']> {
@@ -46,7 +45,6 @@ export interface TaxonomyTermResolvers {
       TaxonomyTermChildrenArgs,
       Connection<AbstractUuidPayload>
     >
-  } & AliasResolvers<TaxonomyTermPayload> &
-    NavigationChildResolvers<TaxonomyTermPayload> &
+  } & NavigationChildResolvers<TaxonomyTermPayload> &
     UuidResolvers
 }
