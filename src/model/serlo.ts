@@ -364,7 +364,7 @@ export function createSerloModel({
     NotificationsPayload[]
   >({
     mutate: async ({ id, userId, unread }) => {
-      const values: NotificationsPayload[] = await Promise.all(
+      return await Promise.all(
         //TODO: rewrite legacy endpoint so that it accepts an array directly
         id.map(
           async (notificationId): Promise<NotificationsPayload> => {
@@ -380,7 +380,6 @@ export function createSerloModel({
           }
         )
       )
-      return values
     },
   })
 
