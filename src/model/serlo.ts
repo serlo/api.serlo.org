@@ -355,27 +355,31 @@ export function createSerloModel({
     environment
   )
 
-  const setNotificationState = createMutation<{
-    id: number
-    userId: number
-    unread: boolean
-  }>({
-    mutate: async (notificationState: {
-      id: number
+  const setNotificationState = createMutation<
+    {
+      id: number[]
       userId: number
       unread: boolean
-    }) => {
-      const value = await post<NotificationsPayload>({
-        path: `/api/set-notification-state/${notificationState.id}`,
-        body: {
-          userId: notificationState.userId,
-          unread: notificationState.unread,
-        },
-      })
-      await environment.cache.set({
-        key: `de.serlo.org/api/notifications/${notificationState.userId}`,
-        value,
-      })
+    },
+    NotificationsPayload[]
+  >({
+    mutate: async ({ id, userId, unread }) => {
+      return await Promise.all(
+        //TODO: rewrite legacy endpoint so that it accepts an array directly
+        id.map(
+          async (notificationId): Promise<NotificationsPayload> => {
+            const value = await post<NotificationsPayload>({
+              path: `/api/set-notification-state/${notificationId}`,
+              body: { userId, unread },
+            })
+            await environment.cache.set({
+              key: `de.serlo.org/api/notifications/${userId}`,
+              value,
+            })
+            return value
+          }
+        )
+      )
     },
   })
 

@@ -19,16 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { AuthenticationError } from 'apollo-server'
-
 import { resolveConnection } from '../connection'
+import { assertUserIsAuthenticated } from '../utils'
 import { AbstractUuidPayload } from '../uuid'
 import { SubscriptionResolvers } from './types'
 
 export const resolvers: SubscriptionResolvers = {
   Query: {
     async subscriptions(parent, cursorPayload, { dataSources, user }) {
-      if (user === null) throw new AuthenticationError('You are not logged in')
+      assertUserIsAuthenticated(user)
       const subscriptions = await dataSources.model.serlo.getSubscriptions({
         id: user,
       })
