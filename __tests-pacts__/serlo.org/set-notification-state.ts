@@ -74,12 +74,8 @@ test('setNotificationState', async () => {
         }
       }
     `,
-    variables: {
-      input: {
-        id: 9,
-        unread: true,
-      },
-    },
+    variables: { input: { id: 9, unread: true } },
+    data: { notification: { setState: { success: true } } },
   })
   await assertSuccessfulGraphQLQuery({
     query: gql`
@@ -94,15 +90,7 @@ test('setNotificationState', async () => {
       }
     `,
     data: {
-      notifications: {
-        nodes: [
-          {
-            id: 9,
-            unread: true,
-          },
-        ],
-        totalCount: 1,
-      },
+      notifications: { nodes: [{ id: 9, unread: true }], totalCount: 1 },
     },
   })
 })
