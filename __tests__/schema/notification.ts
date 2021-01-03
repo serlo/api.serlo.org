@@ -83,7 +83,7 @@ import {
   createUuidHandler,
 } from '../__utils__'
 import { Service } from '~/internals/auth'
-import { Instance, MutationSetNotificationStateArgs } from '~/types'
+import { Instance } from '~/types'
 
 describe('notifications', () => {
   let client: Client
@@ -96,27 +96,15 @@ describe('notifications', () => {
     global.server.use(
       rest.get(
         `http://de.${process.env.SERLO_ORG_HOST}/api/notifications/${user.id}`,
-        (req, res, ctx) => {
+        (_req, res, ctx) => {
           return res(
             ctx.status(200),
             ctx.json({
               userId: user.id,
               notifications: [
-                {
-                  id: 3,
-                  unread: true,
-                  eventId: 3,
-                },
-                {
-                  id: 2,
-                  unread: false,
-                  eventId: 2,
-                },
-                {
-                  id: 1,
-                  unread: false,
-                  eventId: 1,
-                },
+                { id: 3, unread: true, eventId: 3 },
+                { id: 2, unread: false, eventId: 2 },
+                { id: 1, unread: false, eventId: 1 },
               ],
             })
           )
@@ -124,25 +112,6 @@ describe('notifications', () => {
       )
     )
   })
-
-  function createNotificationsQuery(unread?: boolean) {
-    return {
-      query: gql`
-        query notifications($unread: Boolean) {
-          notifications(unread: $unread) {
-            totalCount
-            nodes {
-              id
-              unread
-            }
-          }
-        }
-      `,
-      variables: {
-        unread,
-      },
-    }
-  }
 
   test('notifications without filter', async () => {
     const client = createTestClient({
@@ -155,18 +124,9 @@ describe('notifications', () => {
         notifications: {
           totalCount: 3,
           nodes: [
-            {
-              id: 3,
-              unread: true,
-            },
-            {
-              id: 2,
-              unread: false,
-            },
-            {
-              id: 1,
-              unread: false,
-            },
+            { id: 3, unread: true },
+            { id: 2, unread: false },
+            { id: 1, unread: false },
           ],
         },
       },
@@ -185,14 +145,8 @@ describe('notifications', () => {
         notifications: {
           totalCount: 2,
           nodes: [
-            {
-              id: 2,
-              unread: false,
-            },
-            {
-              id: 1,
-              unread: false,
-            },
+            { id: 2, unread: false },
+            { id: 1, unread: false },
           ],
         },
       },
@@ -208,15 +162,7 @@ describe('notifications', () => {
     await assertSuccessfulGraphQLQuery({
       ...createNotificationsQuery(true),
       data: {
-        notifications: {
-          totalCount: 1,
-          nodes: [
-            {
-              id: 3,
-              unread: true,
-            },
-          ],
-        },
+        notifications: { totalCount: 1, nodes: [{ id: 3, unread: true }] },
       },
       client,
     })
@@ -226,7 +172,7 @@ describe('notifications', () => {
     global.server.use(
       rest.get(
         `http://de.${process.env.SERLO_ORG_HOST}/api/notifications/${user.id}`,
-        (req, res, ctx) => {
+        (_req, res, ctx) => {
           return res(
             ctx.status(200),
             ctx.json({
@@ -283,6 +229,23 @@ describe('notifications', () => {
       client,
     })
   })
+
+  function createNotificationsQuery(unread?: boolean) {
+    return {
+      query: gql`
+        query notifications($unread: Boolean) {
+          notifications(unread: $unread) {
+            totalCount
+            nodes {
+              id
+              unread
+            }
+          }
+        }
+      `,
+      variables: { unread },
+    }
+  }
 })
 
 describe('notificationEvent', () => {
@@ -2163,28 +2126,53 @@ describe('notificationEvent', () => {
 })
 
 describe('setNotificationState', () => {
-  function createSetNotificationStateMutation(
-    variables: MutationSetNotificationStateArgs
-  ) {
-    return {
-      mutation: gql`
-        mutation setNotificationState($id: Int!, $unread: Boolean!) {
-          setNotificationState(id: $id, unread: $unread)
+  const mutation = gql`
+    mutation notification($input: NotificationSetStateInput!) {
+      notification {
+        setState(input: $input) {
+          success
         }
-      `,
-      variables,
+      }
     }
-  }
+  `
+
+  test('authenticated with array of ids', async () => {
+    global.server.use(
+      rest.post(
+        `http://de.${process.env.SERLO_ORG_HOST}/api/set-notification-state/:id`,
+        (req, res, ctx) => {
+          const id = parseInt(req.params.id)
+
+          if (![1, 2, 3].includes(id)) return res(ctx.status(404))
+
+          return res(
+            ctx.json({
+              notifications: [{ id, unread: false, eventId: id }],
+              userId: user.id,
+            })
+          )
+        }
+      )
+    )
+
+    const client = createTestClient({ user: user.id })
+
+    await assertSuccessfulGraphQLMutation({
+      mutation,
+      variables: {
+        input: { id: [1, 2, 3], unread: false },
+      },
+      data: { notification: { setState: { success: true } } },
+      client,
+    })
+  })
 
   test('unauthenticated', async () => {
-    const client = createTestClient({
-      service: Service.SerloCloudflareWorker,
-      user: null,
-    })
     await assertFailingGraphQLMutation(
       {
-        ...createSetNotificationStateMutation({ id: 1, unread: false }),
-        client,
+        mutation,
+        variables: { input: { id: 1, unread: false } },
+        client: createTestClient({ user: null }),
       },
       (errors) => {
         expect(errors[0].extensions?.code).toEqual('UNAUTHENTICATED')
@@ -2196,98 +2184,23 @@ describe('setNotificationState', () => {
     global.server.use(
       rest.post(
         `http://de.${process.env.SERLO_ORG_HOST}/api/set-notification-state/1`,
-        (req, res, ctx) => {
-          return res(ctx.status(403), ctx.json({}))
+        (_req, res, ctx) => {
+          return res(ctx.status(403))
         }
       )
     )
-    const client = createTestClient({
-      service: Service.SerloCloudflareWorker,
-      user: user2.id,
-    })
+
+    const client = createTestClient({ user: user2.id })
+
     await assertFailingGraphQLMutation(
       {
-        ...createSetNotificationStateMutation({ id: 1, unread: false }),
+        mutation,
+        variables: { input: { id: 1, unread: false } },
         client,
       },
       (errors) => {
         expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
       }
     )
-  })
-
-  test('authenticated', async () => {
-    global.server.use(
-      rest.get(
-        `http://de.${process.env.SERLO_ORG_HOST}/api/notifications/${user.id}`,
-        (req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.json({
-              notifications: [
-                {
-                  id: 1,
-                  unread: true,
-                  eventId: 1,
-                },
-              ],
-              userId: user.id,
-            })
-          )
-        }
-      ),
-      rest.post(
-        `http://de.${process.env.SERLO_ORG_HOST}/api/set-notification-state/1`,
-        (req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.json({
-              notifications: [
-                {
-                  id: 1,
-                  unread: false,
-                  eventId: 1,
-                },
-              ],
-              userId: user.id,
-            })
-          )
-        }
-      )
-    )
-    const client = createTestClient({
-      service: Service.Serlo,
-      user: user.id,
-    })
-    await assertSuccessfulGraphQLMutation({
-      ...createSetNotificationStateMutation({
-        id: 1,
-        unread: false,
-      }),
-      client,
-    })
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          notifications {
-            nodes {
-              id
-              unread
-            }
-          }
-        }
-      `,
-      data: {
-        notifications: {
-          nodes: [
-            {
-              id: 1,
-              unread: false,
-            },
-          ],
-        },
-      },
-      client,
-    })
   })
 })

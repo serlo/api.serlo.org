@@ -24,7 +24,22 @@ extend type Query {
 }
 
 extend type Mutation {
-  setNotificationState(id: Int!, unread: Boolean!): Boolean
+  notification: NotificationMutation!
+}
+
+type NotificationMutation {
+  setState(input: NotificationSetStateInput!): NotificationMutationPayload
+}
+
+input NotificationSetStateInput {
+  id: [Int!]!
+  unread: Boolean!
+}
+
+type NotificationMutationPayload {
+  record: AbstractNotificationEvent
+  success: Boolean!
+  query: Query!
 }
 
 type NotificationConnection {

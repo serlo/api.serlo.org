@@ -1,3 +1,5 @@
+import { AuthenticationError } from 'apollo-server'
+
 /**
  * This file is part of Serlo.org API
  *
@@ -21,4 +23,10 @@
  */
 export function isDefined<A>(value?: A | null): value is A {
   return value !== null && value !== undefined
+}
+
+export function assertUserIsAuthenticated(
+  user: number | null
+): asserts user is number {
+  if (user === null) throw new AuthenticationError('You are not logged in')
 }

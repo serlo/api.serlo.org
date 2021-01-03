@@ -66,14 +66,16 @@ test('setNotificationState', async () => {
   })
   await assertSuccessfulGraphQLMutation({
     mutation: gql`
-      mutation setNotificationState($id: Int!, $unread: Boolean!) {
-        setNotificationState(id: $id, unread: $unread)
+      mutation notification($input: NotificationSetStateInput!) {
+        notification {
+          setState(input: $input) {
+            success
+          }
+        }
       }
     `,
-    variables: {
-      id: 9,
-      unread: true,
-    },
+    variables: { input: { id: 9, unread: true } },
+    data: { notification: { setState: { success: true } } },
   })
   await assertSuccessfulGraphQLQuery({
     query: gql`
@@ -88,15 +90,7 @@ test('setNotificationState', async () => {
       }
     `,
     data: {
-      notifications: {
-        nodes: [
-          {
-            id: 9,
-            unread: true,
-          },
-        ],
-        totalCount: 1,
-      },
+      notifications: { nodes: [{ id: 9, unread: true }], totalCount: 1 },
     },
   })
 })

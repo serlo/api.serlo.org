@@ -22,6 +22,7 @@
 import { GraphQLResolveInfo } from 'graphql'
 
 import { Context } from './context'
+import { Query } from '~/types'
 
 export type Resolver<P, A, T> = (
   parent: P,
@@ -31,5 +32,11 @@ export type Resolver<P, A, T> = (
 ) => Promise<T> | T
 
 export type QueryResolver<A, T> = Resolver<never, A, T>
-export type MutationResolver<A, T = null> = Resolver<never, A, T>
+export type MutationResolver<A, T = null> = Resolver<
+  never,
+  A,
+  T extends { query: Query }
+    ? Omit<T, 'query'> & { query: Record<string, never> }
+    : T
+>
 export type TypeResolver<T> = (type: T) => string

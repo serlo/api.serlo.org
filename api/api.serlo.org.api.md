@@ -959,7 +959,7 @@ export type Mutation = {
     _setCache?: Maybe<Scalars['Boolean']>;
     _updateCache?: Maybe<Scalars['Boolean']>;
     createThread?: Maybe<Thread>;
-    setNotificationState?: Maybe<Scalars['Boolean']>;
+    notification: NotificationMutation;
 };
 
 // @public (undocumented)
@@ -984,12 +984,6 @@ export type MutationCreateThreadArgs = {
     content: Scalars['String'];
     objectId: Scalars['Int'];
     authorId: Scalars['Int'];
-};
-
-// @public (undocumented)
-export type MutationSetNotificationStateArgs = {
-    id: Scalars['Int'];
-    unread: Scalars['Boolean'];
 };
 
 // @public (undocumented)
@@ -1055,6 +1049,31 @@ export type NotificationEdge = {
     __typename?: 'NotificationEdge';
     cursor: Scalars['String'];
     node: Notification_2;
+};
+
+// @public (undocumented)
+export type NotificationMutation = {
+    __typename?: 'NotificationMutation';
+    setState?: Maybe<NotificationMutationPayload>;
+};
+
+// @public (undocumented)
+export type NotificationMutationPayload = {
+    __typename?: 'NotificationMutationPayload';
+    record?: Maybe<AbstractNotificationEvent>;
+    success: Scalars['Boolean'];
+    query: Query;
+};
+
+// @public (undocumented)
+export type NotificationMutationSetStateArgs = {
+    input: NotificationSetStateInput;
+};
+
+// @public (undocumented)
+export type NotificationSetStateInput = {
+    id: Array<Scalars['Int']>;
+    unread: Scalars['Boolean'];
 };
 
 // @public (undocumented)
