@@ -1,7 +1,7 @@
 type Thread {
   createdAt: DateTime!
   updatedAt: DateTime!
-  title: String!
+  title: String
   archived: Boolean!
   trashed: Boolean!
   object: AbstractUuid!

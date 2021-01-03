@@ -227,6 +227,28 @@ describe('uuid["threads"]', () => {
     })
   })
 
+  test('property "title" of Thread can be null', async () => {
+    setupThreads(article, [[{ ...comment1, title: null }]])
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query propertyTitle($id: Int!) {
+          uuid(id: $id) {
+            threads {
+              nodes {
+                title
+              }
+            }
+          }
+        }
+      `,
+      variables: { id: article.id },
+      data: {
+        uuid: { threads: { nodes: [{ title: null }] } },
+      },
+      client,
+    })
+  })
+
   test('property "archived" of Thread', async () => {
     setupThreads(article, [[comment1, comment2]])
     await assertSuccessfulGraphQLQuery({

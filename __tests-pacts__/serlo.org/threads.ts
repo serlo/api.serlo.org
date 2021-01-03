@@ -49,7 +49,7 @@ test('Comment', async () => {
     trashed: Matchers.boolean(comment.trashed),
     alias: null,
     authorId: Matchers.integer(comment.authorId),
-    title: Matchers.string(comment.title),
+    title: comment.title ? Matchers.string(comment.title) : null,
     date: Matchers.iso8601DateTime(comment.date),
     archived: Matchers.boolean(comment.archived),
     content: Matchers.string(comment.content),

@@ -1505,7 +1505,7 @@ export type Thread = {
     __typename?: 'Thread';
     createdAt: Scalars['DateTime'];
     updatedAt: Scalars['DateTime'];
-    title: Scalars['String'];
+    title?: Maybe<Scalars['String']>;
     archived: Scalars['Boolean'];
     trashed: Scalars['Boolean'];
     object: AbstractUuid;
