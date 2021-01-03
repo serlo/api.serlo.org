@@ -2175,28 +2175,20 @@ describe('setNotificationState', () => {
   test('authenticated with array of ids', async () => {
     global.server.use(
       rest.post(
-        `http://de.${process.env.SERLO_ORG_HOST}/api/set-notification-state/1`,
-        (_req, res, ctx) => {
+        `http://de.${process.env.SERLO_ORG_HOST}/api/set-notification-state/:id`,
+        (req, res, ctx) => {
+          const id = parseInt(req.params.id)
+
+          if (![1,2,3].includes(id)) return res(ctx.status(404))
+
           return res(
             ctx.json({
-              notifications: [{ id: 1, unread: false, eventId: 1 }],
+              notifications: [{ id, unread: false, eventId: id }],
               userId: user.id,
             })
           )
         }
       ),
-      rest.post(
-        `http://de.${process.env.SERLO_ORG_HOST}/api/set-notification-state/2`,
-        (_req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.json({
-              notifications: [{ id: 2, unread: false, eventId: 2 }],
-              userId: user.id,
-            })
-          )
-        }
-      )
     )
 
     const client = createTestClient({ user: user.id })
@@ -2204,7 +2196,7 @@ describe('setNotificationState', () => {
     await assertSuccessfulGraphQLMutation({
       mutation,
       variables: {
-        input: { id: [1, 2], unread: false },
+        input: { id: [1, 2, 3], unread: false },
       },
       data: { notification: { setState: { success: true } } },
       client,
