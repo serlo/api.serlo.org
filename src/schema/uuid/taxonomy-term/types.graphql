@@ -12,7 +12,7 @@ enum TaxonomyTermType {
   topicFolder
 }
 
-type TaxonomyTerm implements AbstractUuid & AbstractNavigationChild & InstanceAware {
+type TaxonomyTerm implements AbstractUuid & AbstractNavigationChild & InstanceAware & ThreadAware {
   id: Int!
   trashed: Boolean!
   threads(

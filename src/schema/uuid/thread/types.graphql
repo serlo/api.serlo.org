@@ -22,6 +22,9 @@ type Comment implements AbstractUuid {
   archived: Boolean!
   createdAt: DateTime!
   author: User!
+}
+
+interface ThreadAware {
   threads(
     after: String
     before: String

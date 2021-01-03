@@ -28,6 +28,7 @@ import {
 } from '../abstract-entity'
 import { DiscriminatorType, UuidResolvers } from '../abstract-uuid'
 import { PagePayload, PageRevisionPayload } from '../page'
+import { ThreadAwareResolvers } from '../thread'
 import { UserPayload } from '../user'
 import { Resolver, TypeResolver } from '~/internals/graphql'
 import {
@@ -95,7 +96,8 @@ type AbstractRepositoryRevisionsArgs =
 export interface RepositoryResolvers<
   E extends AbstractRepositoryPayload,
   R extends AbstractRevisionPayload
-> extends UuidResolvers {
+> extends UuidResolvers,
+    ThreadAwareResolvers {
   currentRevision: Resolver<E, never, R | null>
   revisions: Resolver<E, AbstractRepositoryRevisionsArgs, Connection<R>>
   license: Resolver<E, never, Partial<License>>

@@ -22,8 +22,13 @@
 import { Connection } from '../../connection'
 import { DiscriminatorType, UuidPayload, UuidResolvers } from '../abstract-uuid'
 import { UserPayload } from '../user'
-import { MutationResolver, Resolver } from '~/internals/graphql'
-import { MutationCreateThreadArgs, Scalars, ThreadCommentsArgs } from '~/types'
+import { MutationResolver, Resolver, TypeResolver } from '~/internals/graphql'
+import {
+  MutationCreateThreadArgs,
+  Scalars,
+  ThreadAwareThreadsArgs,
+  ThreadCommentsArgs,
+} from '~/types'
 
 export interface ThreadsPayload {
   firstCommentIds: number[]
@@ -57,6 +62,13 @@ export interface ThreadResolvers {
   Mutation: {
     createThread: MutationResolver<MutationCreateThreadArgs, ThreadData | null>
   }
+  ThreadAware: {
+    __resolveType: TypeResolver<UuidPayload>
+  }
+}
+
+export interface ThreadAwareResolvers {
+  threads: Resolver<UuidPayload, ThreadAwareThreadsArgs, Connection<ThreadData>>
 }
 
 export interface CommentPayload {
