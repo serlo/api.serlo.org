@@ -66,9 +66,18 @@ export type AbstractRepository = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
     alias?: Maybe<Scalars['String']>;
+    threads: ThreadsConnection;
     date: Scalars['DateTime'];
     instance: Instance;
     license: License;
+};
+
+// @public (undocumented)
+export type AbstractRepositoryThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)
@@ -105,7 +114,6 @@ export type AbstractUuid = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
     alias?: Maybe<Scalars['String']>;
-    threads: ThreadsConnection;
 };
 
 // @public (undocumented)
@@ -125,21 +133,13 @@ export type AbstractUuidCursor = {
 };
 
 // @public (undocumented)
-export type AbstractUuidThreadsArgs = {
-    after?: Maybe<Scalars['String']>;
-    before?: Maybe<Scalars['String']>;
-    first?: Maybe<Scalars['Int']>;
-    last?: Maybe<Scalars['Int']>;
-};
-
-// @public (undocumented)
 export type AliasInput = {
     instance: Instance;
     path: Scalars['String'];
 };
 
 // @public (undocumented)
-export type Applet = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & {
+export type Applet = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
     __typename?: 'Applet';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -154,7 +154,7 @@ export type Applet = AbstractUuid & AbstractRepository & AbstractEntity & Abstra
 };
 
 // @public (undocumented)
-export type AppletRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
+export type AppletRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware & {
     __typename?: 'AppletRevision';
     id: Scalars['Int'];
     author: User;
@@ -221,7 +221,7 @@ export type AppletThreadsArgs = {
 };
 
 // @public (undocumented)
-export type Article = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & {
+export type Article = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
     __typename?: 'Article';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -325,7 +325,6 @@ export type Comment = AbstractUuid & {
     archived: Scalars['Boolean'];
     createdAt: Scalars['DateTime'];
     author: User;
-    threads: ThreadsConnection;
 };
 
 // @public (undocumented)
@@ -342,14 +341,6 @@ export type CommentEdge = {
     __typename?: 'CommentEdge';
     cursor: Scalars['String'];
     node: Comment;
-};
-
-// @public (undocumented)
-export type CommentThreadsArgs = {
-    after?: Maybe<Scalars['String']>;
-    before?: Maybe<Scalars['String']>;
-    first?: Maybe<Scalars['Int']>;
-    last?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)
@@ -1445,7 +1436,7 @@ export type SubscriptionCursor = {
 };
 
 // @public (undocumented)
-export type TaxonomyTerm = AbstractUuid & AbstractNavigationChild & InstanceAware & {
+export type TaxonomyTerm = AbstractUuid & AbstractNavigationChild & InstanceAware & ThreadAware & {
     __typename?: 'TaxonomyTerm';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -1532,6 +1523,19 @@ export type Thread = {
 };
 
 // @public (undocumented)
+export type ThreadAware = {
+    threads: ThreadsConnection;
+};
+
+// @public (undocumented)
+export type ThreadAwareThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type ThreadCommentsArgs = {
     after?: Maybe<Scalars['String']>;
     before?: Maybe<Scalars['String']>;
@@ -1568,7 +1572,7 @@ export type UnsupportedThread = {
 };
 
 // @public (undocumented)
-export type User = AbstractUuid & {
+export type User = AbstractUuid & ThreadAware & {
     __typename?: 'User';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -1608,6 +1612,7 @@ export type UserThreadsArgs = {
 };
 
 // @public (undocumented)
+<<<<<<< HEAD
 export type UuidMutation = {
     __typename?: 'UuidMutation';
     setState?: Maybe<UuidSetStateResponse>;
@@ -1633,6 +1638,9 @@ export type UuidSetStateResponse = {
 
 // @public (undocumented)
 export type Video = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & {
+=======
+export type Video = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
+>>>>>>> 7c35fd2 (uuid: refactor threads into new interface)
     __typename?: 'Video';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
@@ -1711,6 +1719,45 @@ export type VideoThreadsArgs = {
     last?: Maybe<Scalars['Int']>;
 };
 
+
+// Warnings were encountered during analysis:
+//
+// src/schema/uuid/applet/resolvers.ts:31:34 - (TS2344) Type 'AppletPayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+//   Property 'threads' is missing in type 'AppletPayload' but required in type 'AbstractRepositoryPayload'.
+// src/schema/uuid/applet/resolvers.ts:35:5 - (TS2344) Type 'AppletPayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+// src/schema/uuid/article/resolvers.ts:31:34 - (TS2344) Type 'ArticlePayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+//   Property 'threads' is missing in type 'ArticlePayload' but required in type 'AbstractRepositoryPayload'.
+// src/schema/uuid/article/resolvers.ts:35:5 - (TS2344) Type 'ArticlePayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+// src/schema/uuid/course-page/resolvers.ts:34:7 - (TS2344) Type 'CoursePagePayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+//   Property 'threads' is missing in type 'CoursePagePayload' but required in type 'AbstractRepositoryPayload'.
+// src/schema/uuid/course-page/resolvers.ts:51:5 - (TS2344) Type 'CoursePagePayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+// src/schema/uuid/course/resolvers.ts:32:34 - (TS2344) Type 'CoursePayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+//   Property 'threads' is missing in type 'CoursePayload' but required in type 'AbstractRepositoryPayload'.
+// src/schema/uuid/course/resolvers.ts:43:5 - (TS2344) Type 'CoursePayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+// src/schema/uuid/event/resolvers.ts:31:34 - (TS2344) Type 'EventPayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+//   Property 'threads' is missing in type 'EventPayload' but required in type 'AbstractRepositoryPayload'.
+// src/schema/uuid/event/resolvers.ts:34:42 - (TS2344) Type 'EventPayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+// src/schema/uuid/exercise-group/resolvers.ts:33:7 - (TS2344) Type 'ExerciseGroupPayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+//   Property 'threads' is missing in type 'ExerciseGroupPayload' but required in type 'AbstractRepositoryPayload'.
+// src/schema/uuid/exercise-group/resolvers.ts:50:5 - (TS2344) Type 'ExerciseGroupPayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+// src/schema/uuid/exercise/resolvers.ts:32:34 - (TS2344) Type 'ExercisePayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+//   Property 'threads' is missing in type 'ExercisePayload' but required in type 'AbstractRepositoryPayload'.
+// src/schema/uuid/exercise/resolvers.ts:37:5 - (TS2344) Type 'ExercisePayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+// src/schema/uuid/grouped-exercise/resolvers.ts:35:7 - (TS2344) Type 'GroupedExercisePayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+//   Property 'threads' is missing in type 'GroupedExercisePayload' but required in type 'AbstractRepositoryPayload'.
+// src/schema/uuid/grouped-exercise/resolvers.ts:53:5 - (TS2344) Type 'GroupedExercisePayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+// src/schema/uuid/page/resolvers.ts:31:34 - (TS2344) Type 'PagePayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+//   Property 'threads' is missing in type 'PagePayload' but required in type 'AbstractRepositoryPayload'.
+// src/schema/uuid/page/resolvers.ts:39:41 - (TS2344) Type 'PagePayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+// src/schema/uuid/page/types.ts:44:29 - (TS2344) Type 'PagePayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+//   Property 'threads' is missing in type 'PagePayload' but required in type 'AbstractRepositoryPayload'.
+// src/schema/uuid/page/types.ts:47:35 - (TS2344) Type 'PagePayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+// src/schema/uuid/solution/resolvers.ts:31:34 - (TS2344) Type 'SolutionPayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+//   Property 'threads' is missing in type 'SolutionPayload' but required in type 'AbstractRepositoryPayload'.
+// src/schema/uuid/solution/resolvers.ts:43:5 - (TS2344) Type 'SolutionPayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+// src/schema/uuid/video/resolvers.ts:31:34 - (TS2344) Type 'VideoPayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
+//   Property 'threads' is missing in type 'VideoPayload' but required in type 'AbstractRepositoryPayload'.
+// src/schema/uuid/video/resolvers.ts:34:42 - (TS2344) Type 'VideoPayload' does not satisfy the constraint 'AbstractRepositoryPayload'.
 
 // (No @packageDocumentation comment for this package)
 
