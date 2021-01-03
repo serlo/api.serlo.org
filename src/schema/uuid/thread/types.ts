@@ -40,7 +40,7 @@ export interface ThreadResolvers {
   Thread: {
     createdAt: Resolver<ThreadData, never, Scalars['DateTime']>
     updatedAt: Resolver<ThreadData, never, Scalars['DateTime']>
-    title: Resolver<ThreadData, never, string>
+    title: Resolver<ThreadData, never, string | null>
     archived: Resolver<ThreadData, never, boolean>
     trashed: Resolver<ThreadData, never, boolean>
     object: Resolver<ThreadData, never, UuidPayload>
@@ -65,7 +65,7 @@ export interface CommentPayload {
   alias: null | string
   __typename: DiscriminatorType.Comment
   authorId: number
-  title: string
+  title: string | null
   date: string
   archived: boolean
   content: string
