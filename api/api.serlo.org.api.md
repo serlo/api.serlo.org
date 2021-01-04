@@ -1713,11 +1713,6 @@ export type VideoThreadsArgs = {
 };
 
 
-// Warnings were encountered during analysis:
-//
-// src/schema/uuid/abstract-uuid/types.ts:43:3 - (TS2305) Module '"../../../types"' has no exported member 'UuidMutationPayload'.
-// src/schema/uuid/abstract-uuid/types.ts:44:3 - (TS2305) Module '"../../../types"' has no exported member 'UuidMutationSetStateArgs'.
-
 // (No @packageDocumentation comment for this package)
 
 ```
