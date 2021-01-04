@@ -983,7 +983,6 @@ export type MutationCreateThreadArgs = {
     title: Scalars['String'];
     content: Scalars['String'];
     objectId: Scalars['Int'];
-    authorId: Scalars['Int'];
 };
 
 // @public (undocumented)
