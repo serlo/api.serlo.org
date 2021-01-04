@@ -52,7 +52,14 @@ export type RepositoryType = EntityType | DiscriminatorType.Page
 
 export type RepositoryPayload = EntityPayload | PagePayload
 export interface AbstractRepositoryPayload
-  extends Omit<AbstractRepository, 'alias' | 'currentRevision' | 'license'> {
+  extends Omit<
+    AbstractRepository,
+    // Remove everything that has its own resolver
+    keyof RepositoryResolvers<
+      AbstractRepositoryPayload,
+      AbstractRevisionPayload
+    >
+  > {
   __typename: RepositoryType
   alias: string | null
   currentRevisionId: number | null
