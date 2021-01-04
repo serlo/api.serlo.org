@@ -113,6 +113,7 @@ export type Mutation = {
   _updateCache?: Maybe<Scalars['Boolean']>;
   createThread?: Maybe<Thread>;
   notification: NotificationMutation;
+  uuid: AbstractUuidMutation;
 };
 
 
@@ -570,6 +571,27 @@ export type AbstractUuidCursor = {
   __typename?: 'AbstractUuidCursor';
   cursor: Scalars['String'];
   node: AbstractUuid;
+};
+
+export type AbstractUuidMutation = {
+  __typename?: 'AbstractUuidMutation';
+  setState?: Maybe<AbstractUuidMutationPayload>;
+};
+
+
+export type AbstractUuidMutationSetStateArgs = {
+  input: AbstractUuidSetStateInput;
+};
+
+export type AbstractUuidSetStateInput = {
+  id: Array<Scalars['Int']>;
+  trashed: Scalars['Boolean'];
+};
+
+export type AbstractUuidMutationPayload = {
+  __typename?: 'AbstractUuidMutationPayload';
+  success: Scalars['Boolean'];
+  query: Query;
 };
 
 export type AliasInput = {

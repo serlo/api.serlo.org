@@ -39,7 +39,7 @@ describe('GET /api/notifications/:id', () => {
   require('./notifications')
 })
 describe('POST /api/set-notification-state/:id', () => {
-  require('./set-notification-state')
+  require('./mutation-notification-set-state')
 })
 describe('GET /api/subscriptions', () => {
   require('./subscriptions')

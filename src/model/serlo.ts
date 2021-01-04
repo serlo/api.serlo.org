@@ -128,6 +128,34 @@ export function createSerloModel({
     environment
   )
 
+  const setUuidState = createMutation<
+    {
+      id: number[]
+      userId: number
+      unread: boolean
+    },
+    (AbstractUuidPayload | null)[]
+  >({
+    mutate: async ({ id, userId, unread }) => {
+      //looping should be fine here, since trashing/restoring multiple items will not happen very often
+      return await Promise.all(
+        id.map(
+          async (uuidId): Promise<AbstractUuidPayload | null> => {
+            const value = await post<AbstractUuidPayload | null>({
+              path: `/api/set-uuid-state/${uuidId}`,
+              body: { userId, unread },
+            })
+            await environment.cache.set({
+              key: `de.serlo.org/api/uuid/${uuidId}`,
+              value,
+            })
+            return value
+          }
+        )
+      )
+    },
+  })
+
   const getActiveAuthorIds = createQuery<undefined, number[]>(
     {
       getCurrentValue: async () => {
@@ -482,6 +510,7 @@ export function createSerloModel({
     getSubscriptions,
     getThreadIds,
     getUuid,
+    setUuidState,
     removeCacheValue,
     setCacheValue,
     setNotificationState,

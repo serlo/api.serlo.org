@@ -125,6 +125,30 @@ export type AbstractUuidCursor = {
 };
 
 // @public (undocumented)
+export type AbstractUuidMutation = {
+    __typename?: 'AbstractUuidMutation';
+    setState?: Maybe<AbstractUuidMutationPayload>;
+};
+
+// @public (undocumented)
+export type AbstractUuidMutationPayload = {
+    __typename?: 'AbstractUuidMutationPayload';
+    success: Scalars['Boolean'];
+    query: Query;
+};
+
+// @public (undocumented)
+export type AbstractUuidMutationSetStateArgs = {
+    input: AbstractUuidSetStateInput;
+};
+
+// @public (undocumented)
+export type AbstractUuidSetStateInput = {
+    id: Array<Scalars['Int']>;
+    trashed: Scalars['Boolean'];
+};
+
+// @public (undocumented)
 export type AbstractUuidThreadsArgs = {
     after?: Maybe<Scalars['String']>;
     before?: Maybe<Scalars['String']>;
@@ -960,6 +984,7 @@ export type Mutation = {
     _updateCache?: Maybe<Scalars['Boolean']>;
     createThread?: Maybe<Thread>;
     notification: NotificationMutation;
+    uuid: AbstractUuidMutation;
 };
 
 // @public (undocumented)
@@ -1687,6 +1712,11 @@ export type VideoThreadsArgs = {
     last?: Maybe<Scalars['Int']>;
 };
 
+
+// Warnings were encountered during analysis:
+//
+// src/schema/uuid/abstract-uuid/types.ts:43:3 - (TS2305) Module '"../../../types"' has no exported member 'UuidMutationPayload'.
+// src/schema/uuid/abstract-uuid/types.ts:44:3 - (TS2305) Module '"../../../types"' has no exported member 'UuidMutationSetStateArgs'.
 
 // (No @packageDocumentation comment for this package)
 

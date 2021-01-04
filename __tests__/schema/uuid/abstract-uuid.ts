@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import { rest } from 'msw'
 import * as R from 'ramda'
 
 import {
@@ -46,11 +47,14 @@ import {
   solutionRevision,
   taxonomyTermRoot,
   user,
+  user2,
   video,
   videoRevision,
 } from '../../../__fixtures__'
 import {
+  assertFailingGraphQLMutation,
   assertFailingGraphQLQuery,
+  assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   Client,
   createJsonHandler,
@@ -234,6 +238,75 @@ describe('uuid', () => {
         "First is the worst, please add a '/' at the beginning of your path",
       client,
     })
+  })
+})
+
+describe('uuid mutation setState', () => {
+  const mutation = gql`
+    mutation uuid($input: AbstractUuidSetStateInput!) {
+      uuid {
+        setState(input: $input) {
+          success
+        }
+      }
+    }
+  `
+
+  beforeEach(() => {
+    global.server.use(
+      rest.post(
+        `http://de.${process.env.SERLO_ORG_HOST}/api/set-uuid-state/:id`,
+        (req, res, ctx) => {
+          const { userId, trashed } = req.body as {
+            userId: number
+            trashed: boolean
+          }
+          const id = parseInt(req.params.id)
+
+          if (userId !== user.id) return res(ctx.status(403))
+          if (![1, 2, 3].includes(id)) return res(ctx.status(404))
+
+          return res(ctx.json({ ...article, trashed: trashed }))
+        }
+      )
+    )
+  })
+
+  test('authenticated with array of ids', async () => {
+    await assertSuccessfulGraphQLMutation({
+      mutation,
+      variables: {
+        input: { id: [1, 2, 3], trashed: true },
+      },
+      data: { uuid: { setState: { success: true } } },
+      client: createTestClient({ user: user.id }),
+    })
+  })
+
+  test('unauthenticated', async () => {
+    await assertFailingGraphQLMutation(
+      {
+        mutation,
+        variables: { input: { id: 1, trashed: true } },
+        client: createTestClient({ user: null }),
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('UNAUTHENTICATED')
+      }
+    )
+  })
+
+  test('wrong user id', async () => {
+    await assertFailingGraphQLMutation(
+      {
+        mutation,
+        variables: { input: { id: 1, trashed: false } },
+        client: createTestClient({ user: user2.id }),
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
+      }
+    )
   })
 })
 

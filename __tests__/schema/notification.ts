@@ -2125,7 +2125,7 @@ describe('notificationEvent', () => {
   })
 })
 
-describe('setNotificationState', () => {
+describe('mutation notification setState', () => {
   const mutation = gql`
     mutation notification($input: NotificationSetStateInput!) {
       notification {
