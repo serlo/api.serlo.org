@@ -27,7 +27,7 @@ type Video implements AbstractUuid & AbstractRepository & AbstractEntity & Abstr
   ): TaxonomyTermConnection!
 }
 
-type VideoRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision {
+type VideoRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {
   id: Int!
   author: User!
   trashed: Boolean!
