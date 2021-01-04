@@ -56,9 +56,8 @@ export const resolvers: AbstractUuidResolvers = {
       const res = await dataSources.model.serlo.setUuidState({
         id: idArray,
         userId: user,
-        unread: trashed,
+        trashed: trashed,
       })
-
       //TODO: Add record return
       // const uuidArray = res.map((uuid, index) => {
       //   return checkUuid({ id: id[index] }, uuid as UuidPayload | null)

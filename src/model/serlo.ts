@@ -132,18 +132,18 @@ export function createSerloModel({
     {
       id: number[]
       userId: number
-      unread: boolean
+      trashed: boolean
     },
     (AbstractUuidPayload | null)[]
   >({
-    mutate: async ({ id, userId, unread }) => {
+    mutate: async ({ id, userId, trashed }) => {
       //looping should be fine here, since trashing/restoring multiple items will not happen very often
       return await Promise.all(
         id.map(
           async (uuidId): Promise<AbstractUuidPayload | null> => {
             const value = await post<AbstractUuidPayload | null>({
               path: `/api/set-uuid-state/${uuidId}`,
-              body: { userId, unread },
+              body: { userId, trashed },
             })
             await environment.cache.set({
               key: `de.serlo.org/api/uuid/${uuidId}`,
