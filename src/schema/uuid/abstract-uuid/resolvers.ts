@@ -24,6 +24,7 @@ import { UserInputError } from 'apollo-server'
 import { AbstractUuidResolvers, DiscriminatorType, UuidPayload } from './types'
 import { resolveCustomId } from '~/config/alias'
 import { Context } from '~/internals/graphql'
+import { assertUserIsAuthenticated } from '~/schema/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias'
 import { QueryUuidArgs } from '~/types'
 
@@ -38,8 +39,34 @@ export const resolvers: AbstractUuidResolvers = {
       const id = await resolveIdFromPayload(dataSources, payload)
       const uuid =
         id === null ? null : await dataSources.model.serlo.getUuid({ id })
-
       return checkUuid(payload, uuid as UuidPayload | null)
+    },
+  },
+  Mutation: {
+    uuid() {
+      return {}
+    },
+  },
+  AbstractUuidMutation: {
+    async setState(_parent, payload, { dataSources, user }) {
+      assertUserIsAuthenticated(user)
+
+      const { id, trashed } = payload.input
+      const idArray = Array.isArray(id) ? id : [id]
+      const res = await dataSources.model.serlo.setUuidState({
+        id: idArray,
+        userId: user,
+        unread: trashed,
+      })
+
+      //TODO: Add record return
+      // const uuidArray = res.map((uuid, index) => {
+      //   return checkUuid({ id: id[index] }, uuid as UuidPayload | null)
+      // })
+      return {
+        success: res.every(Boolean),
+        query: {},
+      }
     },
   },
 }
