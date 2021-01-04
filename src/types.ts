@@ -715,7 +715,7 @@ export type ArticleTaxonomyTermsArgs = {
   last?: Maybe<Scalars['Int']>;
 };
 
-export type ArticleRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
+export type ArticleRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware & {
   __typename?: 'ArticleRevision';
   id: Scalars['Int'];
   author: User;
@@ -753,7 +753,7 @@ export type ArticleRevisionCursor = {
   node: ArticleRevision;
 };
 
-export type CoursePage = AbstractUuid & AbstractRepository & AbstractEntity & InstanceAware & {
+export type CoursePage = AbstractUuid & AbstractRepository & AbstractEntity & InstanceAware & ThreadAware & {
   __typename?: 'CoursePage';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -784,7 +784,7 @@ export type CoursePageRevisionsArgs = {
   unrevised?: Maybe<Scalars['Boolean']>;
 };
 
-export type CoursePageRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
+export type CoursePageRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware & {
   __typename?: 'CoursePageRevision';
   id: Scalars['Int'];
   author: User;
@@ -820,7 +820,7 @@ export type CoursePageRevisionCursor = {
   node: CoursePageRevision;
 };
 
-export type Course = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & {
+export type Course = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
   __typename?: 'Course';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -860,7 +860,7 @@ export type CourseTaxonomyTermsArgs = {
   last?: Maybe<Scalars['Int']>;
 };
 
-export type CourseRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
+export type CourseRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware & {
   __typename?: 'CourseRevision';
   id: Scalars['Int'];
   author: User;
@@ -897,7 +897,7 @@ export type CourseRevisionCursor = {
   node: CourseRevision;
 };
 
-export type Event = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & {
+export type Event = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
   __typename?: 'Event';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -936,7 +936,7 @@ export type EventTaxonomyTermsArgs = {
   last?: Maybe<Scalars['Int']>;
 };
 
-export type EventRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
+export type EventRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware & {
   __typename?: 'EventRevision';
   id: Scalars['Int'];
   author: User;
@@ -974,7 +974,7 @@ export type EventRevisionCursor = {
   node: EventRevision;
 };
 
-export type ExerciseGroup = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & {
+export type ExerciseGroup = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
   __typename?: 'ExerciseGroup';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -1014,7 +1014,7 @@ export type ExerciseGroupTaxonomyTermsArgs = {
   last?: Maybe<Scalars['Int']>;
 };
 
-export type ExerciseGroupRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
+export type ExerciseGroupRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware & {
   __typename?: 'ExerciseGroupRevision';
   id: Scalars['Int'];
   author: User;
@@ -1049,7 +1049,7 @@ export type ExerciseGroupRevisionCursor = {
   node: ExerciseGroupRevision;
 };
 
-export type Exercise = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & AbstractExercise & InstanceAware & {
+export type Exercise = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & AbstractExercise & InstanceAware & ThreadAware & {
   __typename?: 'Exercise';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -1089,7 +1089,7 @@ export type ExerciseTaxonomyTermsArgs = {
   last?: Maybe<Scalars['Int']>;
 };
 
-export type ExerciseRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & AbstractExerciseRevision & {
+export type ExerciseRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & AbstractExerciseRevision & ThreadAware & {
   __typename?: 'ExerciseRevision';
   id: Scalars['Int'];
   author: User;
@@ -1124,7 +1124,7 @@ export type ExerciseRevisionCursor = {
   node: ExerciseRevision;
 };
 
-export type GroupedExercise = AbstractUuid & AbstractRepository & AbstractEntity & AbstractExercise & InstanceAware & {
+export type GroupedExercise = AbstractUuid & AbstractRepository & AbstractEntity & AbstractExercise & InstanceAware & ThreadAware & {
   __typename?: 'GroupedExercise';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -1156,7 +1156,7 @@ export type GroupedExerciseRevisionsArgs = {
   unrevised?: Maybe<Scalars['Boolean']>;
 };
 
-export type GroupedExerciseRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & AbstractExerciseRevision & {
+export type GroupedExerciseRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & AbstractExerciseRevision & ThreadAware & {
   __typename?: 'GroupedExerciseRevision';
   id: Scalars['Int'];
   author: User;
@@ -1191,7 +1191,7 @@ export type GroupedExerciseRevisionCursor = {
   node: GroupedExerciseRevision;
 };
 
-export type Page = AbstractUuid & AbstractRepository & AbstractNavigationChild & InstanceAware & {
+export type Page = AbstractUuid & AbstractRepository & AbstractNavigationChild & InstanceAware & ThreadAware & {
   __typename?: 'Page';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -1222,7 +1222,7 @@ export type PageRevisionsArgs = {
   unrevised?: Maybe<Scalars['Boolean']>;
 };
 
-export type PageRevision = AbstractUuid & AbstractRevision & {
+export type PageRevision = AbstractUuid & AbstractRevision & ThreadAware & {
   __typename?: 'PageRevision';
   id: Scalars['Int'];
   author: User;
@@ -1257,7 +1257,7 @@ export type PageRevisionCursor = {
   node: PageRevision;
 };
 
-export type Solution = AbstractUuid & AbstractRepository & AbstractEntity & InstanceAware & {
+export type Solution = AbstractUuid & AbstractRepository & AbstractEntity & InstanceAware & ThreadAware & {
   __typename?: 'Solution';
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -1288,7 +1288,7 @@ export type SolutionRevisionsArgs = {
   unrevised?: Maybe<Scalars['Boolean']>;
 };
 
-export type SolutionRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
+export type SolutionRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware & {
   __typename?: 'SolutionRevision';
   id: Scalars['Int'];
   author: User;
@@ -1526,7 +1526,7 @@ export type VideoTaxonomyTermsArgs = {
   last?: Maybe<Scalars['Int']>;
 };
 
-export type VideoRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & {
+export type VideoRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware & {
   __typename?: 'VideoRevision';
   id: Scalars['Int'];
   author: User;

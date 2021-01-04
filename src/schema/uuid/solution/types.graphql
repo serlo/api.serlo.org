@@ -1,4 +1,4 @@
-type Solution implements AbstractUuid & AbstractRepository & AbstractEntity & InstanceAware {
+type Solution implements AbstractUuid & AbstractRepository & AbstractEntity & InstanceAware & ThreadAware {
   id: Int!
   trashed: Boolean!
   threads(
@@ -22,7 +22,7 @@ type Solution implements AbstractUuid & AbstractRepository & AbstractEntity & In
   exercise: AbstractExercise!
 }
 
-type SolutionRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision {
+type SolutionRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {
   id: Int!
   author: User!
   trashed: Boolean!

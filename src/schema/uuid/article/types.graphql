@@ -27,7 +27,7 @@ type Article implements AbstractUuid & AbstractRepository & AbstractEntity & Abs
   ): TaxonomyTermConnection!
 }
 
-type ArticleRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision {
+type ArticleRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {
   id: Int!
   author: User!
   trashed: Boolean!
