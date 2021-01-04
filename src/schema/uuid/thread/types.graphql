@@ -63,10 +63,5 @@ type CommentEdge {
 }
 
 extend type Mutation {
-  createThread(
-    title: String!
-    content: String!
-    objectId: Int!
-    authorId: Int!
-  ): Thread
+  createThread(title: String!, content: String!, objectId: Int!): Thread
 }

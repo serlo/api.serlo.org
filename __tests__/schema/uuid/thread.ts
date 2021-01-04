@@ -440,31 +440,6 @@ describe('uuid["threads"]', () => {
 })
 
 describe('createThread', () => {
-  function createCreateThreadMutation(variables: MutationCreateThreadArgs) {
-    return {
-      mutation: gql`
-        mutation createThread(
-          $title: String!
-          $content: String!
-          $objectId: Int!
-          $authorId: Int!
-        ) {
-          createThread(
-            title: $title
-            content: $content
-            objectId: $objectId
-            authorId: $authorId
-          ) {
-            title
-            archived
-            trashed
-          }
-        }
-      `,
-      variables,
-    }
-  }
-
   test('thread mutation', async () => {
     createAddCommentMutation(article.id, comment1.date)
 
@@ -473,7 +448,6 @@ describe('createThread', () => {
         title: 'New comment',
         content: 'Content of new comment',
         objectId: article.id,
-        authorId: user.id,
       }),
       client,
       data: {
@@ -487,17 +461,14 @@ describe('createThread', () => {
   })
 
   test('No thread is created with unauthenticated user', async () => {
-    const client = createTestClient({
-      service: Service.SerloCloudflareWorker,
-      user: null,
-    })
+    const client = createTestClient({ user: null })
+
     await assertFailingGraphQLMutation(
       {
         ...createCreateThreadMutation({
           title: 'New comment',
           content: 'Content of new comment',
           objectId: article.id,
-          authorId: user.id,
         }),
         client,
       },
@@ -506,6 +477,25 @@ describe('createThread', () => {
       }
     )
   })
+
+  function createCreateThreadMutation(variables: MutationCreateThreadArgs) {
+    return {
+      mutation: gql`
+        mutation createThread(
+          $title: String!
+          $content: String!
+          $objectId: Int!
+        ) {
+          createThread(title: $title, content: $content, objectId: $objectId) {
+            title
+            archived
+            trashed
+          }
+        }
+      `,
+      variables,
+    }
+  }
 })
 
 function setupThreads(uuidPayload: UuidPayload, threads: CommentPayload[][]) {
@@ -567,7 +557,7 @@ function createAddCommentMutation(id: number, date: string) {
             trashed: false,
             alias: null,
             __typename: 'Comment',
-            authorId: req.body.authorId,
+            authorId: req.body.userId,
             date,
             archived: false,
             content: req.body.content,
