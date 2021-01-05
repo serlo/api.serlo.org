@@ -26,12 +26,18 @@ import { user as currentUser, user2 as staleUser } from '../../__fixtures__'
 import { createUuidHandler } from '../__utils__'
 import { Environment } from '~/internals/environment'
 import { createFetchHelpersFromNodeFetch } from '~/internals/model'
-import { createSwrQueue, UpdateJob } from '~/internals/swr-queue'
+import {
+  createSwrQueue,
+  createSwrQueueWorker,
+  UpdateJob,
+} from '~/internals/swr-queue'
 import { createSerloModel } from '~/model'
 
-const swrQueue = createSwrQueue({
+const swrQueue = createSwrQueue()
+const swrQueueWorker = createSwrQueueWorker({
   cache: global.cache,
   timer: global.timer,
+  concurrency: 1,
 })
 
 const beeQueue = (swrQueue._queue as unknown) as BeeQueue<UpdateJob>
@@ -42,11 +48,11 @@ const environment: Environment = {
 }
 
 beforeEach(async () => {
-  await swrQueue.ready()
+  await Promise.all([swrQueue.ready(), swrQueueWorker.ready()])
 })
 
 afterAll(async () => {
-  await swrQueue.quit()
+  await Promise.all([swrQueue.quit(), swrQueueWorker.quit()])
 })
 
 describe('createQuery', () => {
