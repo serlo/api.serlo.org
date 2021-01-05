@@ -30,7 +30,7 @@ import {
 } from '../__utils__'
 import { Service } from '~/internals/auth'
 
-test('mutation notification setState', async () => {
+test('set-uuid-state', async () => {
   global.client = createTestClient({
     service: Service.SerloCloudflareWorker,
     user: user.id,

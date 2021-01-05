@@ -39,7 +39,7 @@ describe('GET /api/notifications/:id', () => {
   require('./notifications')
 })
 describe('POST /api/set-notification-state/:id', () => {
-  require('./mutation-notification-set-state')
+  require('./set-notification-state')
 })
 describe('GET /api/subscriptions', () => {
   require('./subscriptions')
@@ -51,7 +51,7 @@ describe('GET /api/uuid/:id', () => {
   require('./uuid')
 })
 describe('POST /api/set-uuid-state/:id', () => {
-  require('./mutation-uuid-set-state')
+  require('./set-uuid-state')
 })
 describe('GET /api/threads/:id', () => {
   require('./threads')

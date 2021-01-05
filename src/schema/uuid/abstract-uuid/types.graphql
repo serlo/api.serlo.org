@@ -27,20 +27,19 @@ type Query {
 }
 
 extend type Mutation {
-  uuid: AbstractUuidMutation!
+  uuid: UuidMutation!
 }
 
-type AbstractUuidMutation {
-  setState(input: AbstractUuidSetStateInput!): AbstractUuidMutationPayload
+type UuidMutation {
+  setState(input: UuidSetStateInput!): UuidSetStateResponse
 }
 
-input AbstractUuidSetStateInput {
+input UuidSetStateInput {
   id: [Int!]!
   trashed: Boolean!
 }
 
-type AbstractUuidMutationPayload {
-  # record: [AbstractUuid]
+type UuidSetStateResponse {
   success: Boolean!
   query: Query!
 }

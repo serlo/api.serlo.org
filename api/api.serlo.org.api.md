@@ -125,30 +125,6 @@ export type AbstractUuidCursor = {
 };
 
 // @public (undocumented)
-export type AbstractUuidMutation = {
-    __typename?: 'AbstractUuidMutation';
-    setState?: Maybe<AbstractUuidMutationPayload>;
-};
-
-// @public (undocumented)
-export type AbstractUuidMutationPayload = {
-    __typename?: 'AbstractUuidMutationPayload';
-    success: Scalars['Boolean'];
-    query: Query;
-};
-
-// @public (undocumented)
-export type AbstractUuidMutationSetStateArgs = {
-    input: AbstractUuidSetStateInput;
-};
-
-// @public (undocumented)
-export type AbstractUuidSetStateInput = {
-    id: Array<Scalars['Int']>;
-    trashed: Scalars['Boolean'];
-};
-
-// @public (undocumented)
 export type AbstractUuidThreadsArgs = {
     after?: Maybe<Scalars['String']>;
     before?: Maybe<Scalars['String']>;
@@ -984,7 +960,7 @@ export type Mutation = {
     _updateCache?: Maybe<Scalars['Boolean']>;
     createThread?: Maybe<Thread>;
     notification: NotificationMutation;
-    uuid: AbstractUuidMutation;
+    uuid: UuidMutation;
 };
 
 // @public (undocumented)
@@ -1079,15 +1055,7 @@ export type NotificationEdge = {
 // @public (undocumented)
 export type NotificationMutation = {
     __typename?: 'NotificationMutation';
-    setState?: Maybe<NotificationMutationPayload>;
-};
-
-// @public (undocumented)
-export type NotificationMutationPayload = {
-    __typename?: 'NotificationMutationPayload';
-    record?: Maybe<AbstractNotificationEvent>;
-    success: Scalars['Boolean'];
-    query: Query;
+    setState?: Maybe<NotificationSetStateResponse>;
 };
 
 // @public (undocumented)
@@ -1099,6 +1067,14 @@ export type NotificationMutationSetStateArgs = {
 export type NotificationSetStateInput = {
     id: Array<Scalars['Int']>;
     unread: Scalars['Boolean'];
+};
+
+// @public (undocumented)
+export type NotificationSetStateResponse = {
+    __typename?: 'NotificationSetStateResponse';
+    record?: Maybe<AbstractNotificationEvent>;
+    success: Scalars['Boolean'];
+    query: Query;
 };
 
 // @public (undocumented)
@@ -1633,6 +1609,30 @@ export type UserThreadsArgs = {
 };
 
 // @public (undocumented)
+export type UuidMutation = {
+    __typename?: 'UuidMutation';
+    setState?: Maybe<UuidSetStateResponse>;
+};
+
+// @public (undocumented)
+export type UuidMutationSetStateArgs = {
+    input: UuidSetStateInput;
+};
+
+// @public (undocumented)
+export type UuidSetStateInput = {
+    id: Array<Scalars['Int']>;
+    trashed: Scalars['Boolean'];
+};
+
+// @public (undocumented)
+export type UuidSetStateResponse = {
+    __typename?: 'UuidSetStateResponse';
+    success: Scalars['Boolean'];
+    query: Query;
+};
+
+// @public (undocumented)
 export type Video = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & {
     __typename?: 'Video';
     id: Scalars['Int'];
@@ -1712,6 +1712,11 @@ export type VideoThreadsArgs = {
     last?: Maybe<Scalars['Int']>;
 };
 
+
+// Warnings were encountered during analysis:
+//
+// src/schema/notification/types.ts:52:3 - (TS2305) Module '"../../types"' has no exported member 'NotificationMutationPayload'.
+// src/schema/uuid/abstract-uuid/types.ts:44:3 - (TS2305) Module '"../../../types"' has no exported member 'SetStateMutationResponse'.
 
 // (No @packageDocumentation comment for this package)
 

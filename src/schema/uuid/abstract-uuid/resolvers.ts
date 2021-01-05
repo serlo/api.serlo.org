@@ -47,7 +47,7 @@ export const resolvers: AbstractUuidResolvers = {
       return {}
     },
   },
-  AbstractUuidMutation: {
+  UuidMutation: {
     async setState(_parent, payload, { dataSources, user }) {
       assertUserIsAuthenticated(user)
 
@@ -58,10 +58,6 @@ export const resolvers: AbstractUuidResolvers = {
         userId: user,
         trashed: trashed,
       })
-      //TODO: Add record return
-      // const uuidArray = res.map((uuid, index) => {
-      //   return checkUuid({ id: id[index] }, uuid as UuidPayload | null)
-      // })
       return {
         success: res.every(Boolean),
         query: {},
