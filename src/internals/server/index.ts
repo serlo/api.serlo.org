@@ -25,9 +25,9 @@ import createApp from 'express'
 import { Cache, createCache } from '../cache'
 import { initializeSentry } from '../sentry'
 import { createSwrQueue, SwrQueue } from '../swr-queue'
-import { createTimer, Timer } from '../timer'
-import { applyGraphQLMiddleware } from '~/internals/app/graphql-middleware'
-import { applySwrQueueDashboardMiddleware } from '~/internals/app/swr-queue-dashboard-middleware'
+import { createTimer } from '../timer'
+import { applyGraphQLMiddleware } from './graphql-middleware'
+import { applySwrQueueDashboardMiddleware } from './swr-queue-dashboard-middleware'
 
 export * from './graphql-middleware'
 export * from './swr-queue-dashboard-middleware'
@@ -36,17 +36,9 @@ export function start() {
   dotenv.config()
   initializeSentry()
   const timer = createTimer()
-  const cache = initializeCache({ timer })
-  const swrQueue = initializeSwrQueue()
+  const cache = createCache({ timer })
+  const swrQueue = createSwrQueue()
   initializeGraphQLServer({ cache, swrQueue })
-}
-
-function initializeCache({ timer }: { timer: Timer }): Cache {
-  return createCache({ timer })
-}
-
-function initializeSwrQueue(): SwrQueue {
-  return createSwrQueue()
 }
 
 function initializeGraphQLServer({

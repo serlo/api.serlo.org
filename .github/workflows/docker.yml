@@ -2,8 +2,13 @@ name: Docker
 on:
   pull_request:
 jobs:
-  api:
+  server:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: docker build -f docker/server/Dockerfile -t api:latest .
+      - run: docker build -f docker/server/Dockerfile -t api-server:latest .
+  swr-queue-worker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: docker build -f docker/swr-queue-worker/Dockerfile -t api-swr-queue-worker:latest .
