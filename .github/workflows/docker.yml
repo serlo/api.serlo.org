@@ -6,4 +6,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: docker build -f Dockerfile -t api:latest .
+      - run: docker build -f docker/server/Dockerfile -t api:latest .

@@ -13,7 +13,7 @@ jobs:
         with:
           node-version: 14.x
       - run: yarn
-      - run: yarn build
+      - run: yarn build:server
   eslint:
     runs-on: ubuntu-latest
     steps:
