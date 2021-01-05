@@ -1713,11 +1713,6 @@ export type VideoThreadsArgs = {
 };
 
 
-// Warnings were encountered during analysis:
-//
-// src/schema/notification/types.ts:52:3 - (TS2305) Module '"../../types"' has no exported member 'NotificationMutationPayload'.
-// src/schema/uuid/abstract-uuid/types.ts:44:3 - (TS2305) Module '"../../../types"' has no exported member 'SetStateMutationResponse'.
-
 // (No @packageDocumentation comment for this package)
 
 ```
