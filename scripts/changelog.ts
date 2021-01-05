@@ -1,7 +1,7 @@
 /**
  * This file is part of Serlo.org API
  *
- * Copyright (c) 2020 Serlo Education e.V.
+ * Copyright (c) 2021 Serlo Education e.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License
@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @copyright Copyright (c) 2020 Serlo Education e.V.
+ * @copyright Copyright (c) 2021 Serlo Education e.V.
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
@@ -442,6 +442,20 @@ async function exec(): Promise<void> {
       changed: [
         'Increase the number of parallel requests when processing SWR updates.',
       ],
+    },
+    {
+      tagName: 'v0.15.0',
+      date: '2021-01-05',
+      breakingChanges: [
+        [
+          'notifications',
+          'Move `setNotificationState` mutation to `notification.setState`.',
+        ],
+        ['threads', '`title` is now correctly nullable.'],
+        ['threads', 'Remove unused `authorId` parameter from `createThread`.'],
+      ],
+      added: ['Add `InstanceAware` interface.', 'Add custom aliases.'],
+      changed: ['Move `alias` from concrete types into `AbstractUuid`.'],
     },
   ])
 

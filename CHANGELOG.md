@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.15.0](https://github.com/serlo/api.serlo.org/compare/v0.14.2..v0.15.0) - January 5, 2021
+
+### Breaking Changes
+
+- **notifications**. Move `setNotificationState` mutation to `notification.setState`.
+
+- **threads**. `title` is now correctly nullable.
+
+- **threads**. Remove unused `authorId` parameter from `createThread`.
+
+### Added
+
+- Add `InstanceAware` interface.
+
+- Add custom aliases.
+
+### Changed
+
+- Move `alias` from concrete types into `AbstractUuid`.
+
 ## [v0.14.2](https://github.com/serlo/api.serlo.org/compare/v0.14.1..v0.14.2) - December 24, 2020
 
 ### Changed

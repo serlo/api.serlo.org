@@ -1,7 +1,7 @@
 /**
  * This file is part of Serlo.org API
  *
- * Copyright (c) 2020 Serlo Education e.V.
+ * Copyright (c) 2021 Serlo Education e.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License
@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @copyright Copyright (c) 2020 Serlo Education e.V.
+ * @copyright Copyright (c) 2021 Serlo Education e.V.
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
@@ -30,8 +30,23 @@ export type AliasConfig = {
 // Custom aliases that take precedence over any alias defined in serlo.org
 export const aliases: AliasConfig = {
   [Instance.De]: {
+    '/biologie': 23950,
+    '/chemie': 24706,
+    '/community': 19882,
+    '/engagement': 21563,
+    '/englisch': 25985,
+    '/lerntipps': 182154,
     '/mathe': 19767,
+    '/mitmachen': 19869,
+    '/nachhaltigkeit': 58771,
+    '/partner': 21456,
+    '/physik': 41108,
+    '/politik': 79157,
+    '/presse': 24887,
     '/serlo': 18922,
+    '/team': 21439,
+    '/transparenz': 21468,
+    '/wirkung': 21406,
   },
 }
 
