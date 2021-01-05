@@ -99,12 +99,6 @@ export function createSwrQueue(): SwrQueue {
   }
 }
 
-export interface SwrQueueWorker {
-  ready(): Promise<void>
-  quit(): Promise<void>
-  _queue: never
-}
-
 export function createSwrQueueWorker({
   cache,
   timer,
@@ -113,7 +107,11 @@ export function createSwrQueueWorker({
   cache: Cache
   timer: Timer
   concurrency: number
-}): SwrQueueWorker {
+}): {
+  ready(): Promise<void>
+  quit(): Promise<void>
+  _queue: never
+} {
   const args = {
     environment: {
       cache,

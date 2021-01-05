@@ -19,33 +19,23 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ApolloServer } from 'apollo-server'
-import {
-  ApolloServerTestClient,
-  createTestClient as createApolloTestClient,
-} from 'apollo-server-testing'
+import dotenv from 'dotenv'
 
-import { Service } from '~/internals/auth'
-import { Context } from '~/internals/graphql'
-import { getGraphQLOptions } from '~/internals/server'
-import { emptySwrQueue } from '~/internals/swr-queue'
+import { createCache } from './cache'
+import { initializeSentry } from './sentry'
+import { createSwrQueueWorker } from './swr-queue'
+import { createTimer } from './timer'
 
-export type Client = ApolloServerTestClient
-
-export function createTestClient(
-  args?: Partial<Pick<Context, 'service' | 'user'>>
-): Client {
-  const server = new ApolloServer({
-    ...getGraphQLOptions({
-      cache: global.cache,
-      swrQueue: emptySwrQueue,
-    }),
-    context(): Pick<Context, 'service' | 'user'> {
-      return {
-        service: args?.service ?? Service.SerloCloudflareWorker,
-        user: args?.user ?? null,
-      }
-    },
+export async function start() {
+  dotenv.config()
+  initializeSentry()
+  const timer = createTimer()
+  const cache = createCache({ timer })
+  const swrQueueWorker = createSwrQueueWorker({
+    cache,
+    timer,
+    concurrency: parseInt(process.env.SWR_QUEUE_WORKER_CONCURRENCY, 10),
   })
-  return createApolloTestClient(server)
+  await swrQueueWorker.ready()
+  console.log('🚀 SWR Queue Worker ready')
 }
