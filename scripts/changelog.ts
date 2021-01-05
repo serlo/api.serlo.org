@@ -443,6 +443,20 @@ async function exec(): Promise<void> {
         'Increase the number of parallel requests when processing SWR updates.',
       ],
     },
+    {
+      tagName: 'v0.15.0',
+      date: '2021-01-05',
+      breakingChanges: [
+        [
+          'notifications',
+          'Move `setNotificationState` mutation to `notification.setState`.',
+        ],
+        ['threads', '`title` is now correctly nullable.'],
+        ['threads', 'Remove unused `authorId` parameter from `createThread`.'],
+      ],
+      added: ['Add `InstanceAware` interface.', 'Add custom aliases.'],
+      changed: ['Move `alias` from concrete types into `AbstractUuid`.'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
