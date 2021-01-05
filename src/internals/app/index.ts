@@ -37,7 +37,7 @@ export function start() {
   initializeSentry()
   const timer = createTimer()
   const cache = initializeCache({ timer })
-  const swrQueue = initializeSwrQueue({ cache, timer })
+  const swrQueue = initializeSwrQueue()
   initializeGraphQLServer({ cache, swrQueue })
 }
 
@@ -45,17 +45,8 @@ function initializeCache({ timer }: { timer: Timer }): Cache {
   return createCache({ timer })
 }
 
-function initializeSwrQueue({
-  cache,
-  timer,
-}: {
-  cache: Cache
-  timer: Timer
-}): SwrQueue {
-  return createSwrQueue({
-    cache,
-    timer,
-  })
+function initializeSwrQueue(): SwrQueue {
+  return createSwrQueue()
 }
 
 function initializeGraphQLServer({
