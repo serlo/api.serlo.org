@@ -24,7 +24,10 @@ import { UserInputError } from 'apollo-server'
 import { AbstractUuidResolvers, DiscriminatorType, UuidPayload } from './types'
 import { resolveCustomId } from '~/config/alias'
 import { Context } from '~/internals/graphql'
-import { assertUserIsAuthenticated } from '~/schema/utils'
+import {
+  assertUserIsAuthenticated,
+  createMutationNamespace,
+} from '~/schema/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias'
 import { QueryUuidArgs } from '~/types'
 
@@ -43,9 +46,7 @@ export const resolvers: AbstractUuidResolvers = {
     },
   },
   Mutation: {
-    uuid() {
-      return {}
-    },
+    uuid: createMutationNamespace(),
   },
   UuidMutation: {
     async setState(_parent, payload, { dataSources, user }) {
