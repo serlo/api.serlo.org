@@ -243,7 +243,7 @@ describe('uuid', () => {
 
 describe('uuid mutation setState', () => {
   const mutation = gql`
-    mutation uuid($input: AbstractUuidSetStateInput!) {
+    mutation uuid($input: UuidSetStateInput!) {
       uuid {
         setState(input: $input) {
           success

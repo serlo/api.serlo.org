@@ -38,10 +38,10 @@ import {
 } from '~/internals/graphql'
 import {
   AbstractUuid,
-  AbstractUuidMutationPayload,
-  AbstractUuidMutationSetStateArgs,
+  UuidMutationSetStateArgs,
   AbstractUuidThreadsArgs,
   QueryUuidArgs,
+  UuidSetStateResponse,
 } from '~/types'
 
 export enum DiscriminatorType {
@@ -87,10 +87,7 @@ export interface AbstractUuidResolvers {
   Mutation: {
     uuid: MutationResolver<never, Record<string, never>>
   }
-  AbstractUuidMutation: {
-    setState: MutationResolver<
-      AbstractUuidMutationSetStateArgs,
-      AbstractUuidMutationPayload
-    >
+  UuidMutation: {
+    setState: MutationResolver<UuidMutationSetStateArgs, UuidSetStateResponse>
   }
 }

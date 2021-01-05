@@ -113,7 +113,7 @@ export type Mutation = {
   _updateCache?: Maybe<Scalars['Boolean']>;
   createThread?: Maybe<Thread>;
   notification: NotificationMutation;
-  uuid: AbstractUuidMutation;
+  uuid: UuidMutation;
 };
 
 
@@ -368,7 +368,7 @@ export type AbstractNotificationEvent = {
 
 export type NotificationMutation = {
   __typename?: 'NotificationMutation';
-  setState?: Maybe<NotificationMutationPayload>;
+  setState?: Maybe<NotificationSetStateResponse>;
 };
 
 
@@ -381,8 +381,8 @@ export type NotificationSetStateInput = {
   unread: Scalars['Boolean'];
 };
 
-export type NotificationMutationPayload = {
-  __typename?: 'NotificationMutationPayload';
+export type NotificationSetStateResponse = {
+  __typename?: 'NotificationSetStateResponse';
   record?: Maybe<AbstractNotificationEvent>;
   success: Scalars['Boolean'];
   query: Query;
@@ -573,23 +573,23 @@ export type AbstractUuidCursor = {
   node: AbstractUuid;
 };
 
-export type AbstractUuidMutation = {
-  __typename?: 'AbstractUuidMutation';
-  setState?: Maybe<AbstractUuidMutationPayload>;
+export type UuidMutation = {
+  __typename?: 'UuidMutation';
+  setState?: Maybe<UuidSetStateResponse>;
 };
 
 
-export type AbstractUuidMutationSetStateArgs = {
-  input: AbstractUuidSetStateInput;
+export type UuidMutationSetStateArgs = {
+  input: UuidSetStateInput;
 };
 
-export type AbstractUuidSetStateInput = {
+export type UuidSetStateInput = {
   id: Array<Scalars['Int']>;
   trashed: Scalars['Boolean'];
 };
 
-export type AbstractUuidMutationPayload = {
-  __typename?: 'AbstractUuidMutationPayload';
+export type UuidSetStateResponse = {
+  __typename?: 'UuidSetStateResponse';
   success: Scalars['Boolean'];
   query: Query;
 };

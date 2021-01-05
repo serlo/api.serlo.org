@@ -31,7 +31,7 @@ import {
 import { Service } from '~/internals/auth'
 import { ArticlePayload, UuidPayload } from '~/schema/uuid'
 
-test('mutation uuid setState', async () => {
+test('set-notification-state', async () => {
   global.client = createTestClient({
     service: Service.SerloCloudflareWorker,
     user: user.id,
@@ -84,7 +84,7 @@ test('mutation uuid setState', async () => {
 
   await assertSuccessfulGraphQLMutation({
     mutation: gql`
-      mutation uuid($input: AbstractUuidSetStateInput!) {
+      mutation uuid($input: UuidSetStateInput!) {
         uuid {
           setState(input: $input) {
             success
