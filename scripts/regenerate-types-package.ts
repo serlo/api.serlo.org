@@ -58,13 +58,9 @@ async function exec() {
   }
 
   function bundle() {
-    const { status, error } = spawnSync(
-      'yarn',
-      ['build', '--entry', 'src/types.ts'],
-      {
-        stdio: 'inherit',
-      }
-    )
+    const { status, error } = spawnSync('yarn', ['build:types'], {
+      stdio: 'inherit',
+    })
     if (status !== 0) {
       if (error) throw error
       throw new Error('build failed')
