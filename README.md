@@ -54,8 +54,8 @@ We have `~` as an absolute path alias for `./src` in place, e.g. `~/internals` r
 
 ### Other commands
 
-- `yarn build` builds our packages (only needed for deployment)
-- `yarn changelog` generates the changelog (only needed for dpeloyment)
+- `yarn build:server` builds the server (only needed for deployment)
+- `yarn changelog` generates the changelog (only needed for deployment)
 - `yarn deploy:images` deploys the docker images to our Container Registry (only needed for deployment)
 - `yarn format` formats all source code
 - `yarn lint` lints all source code

@@ -40,7 +40,7 @@ async function run() {
   buildDockerImage({
     name: 'api',
     version,
-    Dockerfile: path.join(root, 'Dockerfile'),
+    Dockerfile: path.join(root, 'docker', 'server', 'Dockerfile'),
     context: '.',
   })
 }
