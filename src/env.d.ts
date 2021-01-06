@@ -29,6 +29,7 @@ declare namespace NodeJS {
     ACTIVE_DONORS_SPREADSHEET_ID: string
     SWR_QUEUE_DASHBOARD_PASSWORD: string
     SWR_QUEUE_DASHBOARD_USERNAME: string
+    SWR_QUEUE_WORKER_CONCURRENCY: string
     ENVIRONMENT: string
     GOOGLE_API_KEY: string
     HYDRA_HOST: string

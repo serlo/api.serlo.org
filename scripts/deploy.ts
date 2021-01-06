@@ -38,9 +38,15 @@ void run().then(() => {})
 async function run() {
   const { version } = await fetchPackageJSON()
   buildDockerImage({
-    name: 'api',
+    name: 'api-server',
     version,
-    Dockerfile: path.join(root, 'Dockerfile'),
+    Dockerfile: path.join(root, 'docker', 'server', 'Dockerfile'),
+    context: '.',
+  })
+  buildDockerImage({
+    name: 'api-swr-queue-worker',
+    version,
+    Dockerfile: path.join(root, 'docker', 'swr-queue-worker', 'Dockerfile'),
     context: '.',
   })
 }

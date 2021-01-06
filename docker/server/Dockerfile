@@ -17,7 +17,7 @@ COPY .babelrc .
 COPY graphql.d.ts .
 COPY tsconfig.json .
 COPY tsconfig.prod.json .
-RUN yarn build
+RUN yarn build:server
 
 FROM prod-dependencies as release
 COPY --from=build /usr/src/app/dist dist

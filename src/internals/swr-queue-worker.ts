@@ -19,6 +19,23 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { start } from '~/internals/app'
+import dotenv from 'dotenv'
 
-start()
+import { createCache } from './cache'
+import { initializeSentry } from './sentry'
+import { createSwrQueueWorker } from './swr-queue'
+import { createTimer } from './timer'
+
+export async function start() {
+  dotenv.config()
+  initializeSentry()
+  const timer = createTimer()
+  const cache = createCache({ timer })
+  const swrQueueWorker = createSwrQueueWorker({
+    cache,
+    timer,
+    concurrency: parseInt(process.env.SWR_QUEUE_WORKER_CONCURRENCY, 10),
+  })
+  await swrQueueWorker.ready()
+  console.log('🚀 SWR Queue Worker ready')
+}
