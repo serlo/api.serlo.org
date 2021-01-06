@@ -74,7 +74,7 @@ export function createGoogleSpreadsheetApiModel({
             `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`,
             {
               majorDimension,
-              key: process.env.GOOGLE_API_KEY,
+              key: process.env.SERVER_GOOGLE_SPREADSHEET_API_SECRET,
             }
           )
 

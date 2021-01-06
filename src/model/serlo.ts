@@ -61,7 +61,7 @@ export function createSerloModel({
   fetchHelpers: FetchHelpers
 }) {
   function getToken() {
-    return jwt.sign({}, process.env.SERLO_ORG_SECRET, {
+    return jwt.sign({}, process.env.SERVER_SERLO_ORG_SECRET, {
       expiresIn: '2h',
       audience: Service.Serlo,
       issuer: 'api.serlo.org',
@@ -76,7 +76,7 @@ export function createSerloModel({
     instance?: Instance
   }): Promise<T> {
     return fetchHelpers.get(
-      `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
+      `http://${instance}.${process.env.SERVER_SERLO_ORG_HOST}${path}`,
       {},
       {
         headers: {
@@ -96,7 +96,7 @@ export function createSerloModel({
     body: Record<string, unknown>
   }): Promise<T> {
     return fetchHelpers.post(
-      `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
+      `http://${instance}.${process.env.SERVER_SERLO_ORG_HOST}${path}`,
       body,
       {
         headers: {

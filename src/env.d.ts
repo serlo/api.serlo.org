@@ -37,14 +37,14 @@ declare namespace NodeJS {
     /**
      * Used by server only
      */
-    ACTIVE_DONORS_SPREADSHEET_ID: string
-    GOOGLE_API_KEY: string
-    HYDRA_HOST: string
-    SERLO_CLOUDFLARE_WORKER_SECRET: string
-    SERLO_ORG_HOST: string
-    SERLO_ORG_SECRET: string
-    SWR_QUEUE_DASHBOARD_PASSWORD: string
-    SWR_QUEUE_DASHBOARD_USERNAME: string
+    SERVER_GOOGLE_SPREADSHEET_API_ACTIVE_DONORS: string
+    SERVER_GOOGLE_SPREADSHEET_API_SECRET: string
+    SERVER_HYDRA_HOST: string
+    SERVER_SERLO_CLOUDFLARE_WORKER_SECRET: string
+    SERVER_SERLO_ORG_HOST: string
+    SERVER_SERLO_ORG_SECRET: string
+    SERVER_SWR_QUEUE_DASHBOARD_PASSWORD: string
+    SERVER_SWR_QUEUE_DASHBOARD_USERNAME: string
 
     /**
      * Used by swr-queue-worker only

@@ -660,8 +660,8 @@ function createActiveDonorsSpreadsheetResponseHandler(
 ) {
   const url =
     `https://sheets.googleapis.com/v4/spreadsheets/` +
-    `${process.env.ACTIVE_DONORS_SPREADSHEET_ID}/values/Tabellenblatt1!A:A` +
-    `?majorDimension=COLUMNS&key=${process.env.GOOGLE_API_KEY}`
+    `${process.env.SERVER_GOOGLE_SPREADSHEET_API_ACTIVE_DONORS}/values/Tabellenblatt1!A:A` +
+    `?majorDimension=COLUMNS&key=${process.env.SERVER_GOOGLE_SPREADSHEET_API_SECRET}`
   return rest.get(url, (_req, res, ctx) => {
     return res(ctx.status(200), ctx.json(body))
   })
