@@ -22,75 +22,92 @@
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
-import { checkoutRevisionNotificationEvent, user } from '../../__fixtures__'
+import { article, user } from '../../__fixtures__'
 import { createTestClient } from '../../__tests__/__utils__'
 import {
-  assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
+  assertSuccessfulGraphQLMutation,
 } from '../__utils__'
 import { Service } from '~/internals/auth'
+import { ArticlePayload, UuidPayload } from '~/schema/uuid'
 
-test('setNotificationState', async () => {
+test('set-notification-state', async () => {
   global.client = createTestClient({
     service: Service.SerloCloudflareWorker,
     user: user.id,
   })
-  await global.pact.addInteraction({
-    uponReceiving: `set state of notification with id 9`,
-    state: `there exists a notification with id 9 for user with id ${user.id}`,
-    withRequest: {
-      method: 'POST',
-      path: '/api/set-notification-state/9',
-      body: {
-        userId: user.id,
-        unread: Matchers.boolean(true),
+
+  function addInteractionWithUuidType<T extends UuidPayload>(
+    data: Record<keyof T, unknown> & { __typename: string; id: number }
+  ) {
+    return global.pact.addInteraction({
+      uponReceiving: `set state of uuid with id 1855`,
+      state: `there exists a uuid with id 1855 that is not trashed`,
+      withRequest: {
+        method: 'POST',
+        path: '/api/set-uuid-state/1855',
+        body: {
+          userId: user.id,
+          trashed: Matchers.boolean(true),
+        },
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
       },
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+        body: data,
       },
-    },
-    willRespondWith: {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-      body: {
-        userId: user.id,
-        notifications: Matchers.eachLike({
-          id: Matchers.integer(9),
-          unread: Matchers.boolean(true),
-          eventId: Matchers.integer(checkoutRevisionNotificationEvent.id),
-        }),
-      },
-    },
+    })
+  }
+
+  await addInteractionWithUuidType<ArticlePayload>({
+    __typename: article.__typename,
+    id: article.id,
+    trashed: Matchers.boolean(true),
+    instance: Matchers.string(article.instance),
+    alias: article.alias ? Matchers.string(article.alias) : null,
+    date: Matchers.iso8601DateTime(article.date),
+    currentRevisionId: article.currentRevisionId
+      ? Matchers.integer(article.currentRevisionId)
+      : null,
+    revisionIds: Matchers.eachLike(article.revisionIds[0]),
+    licenseId: Matchers.integer(article.licenseId),
+    taxonomyTermIds:
+      article.taxonomyTermIds.length > 0
+        ? Matchers.eachLike(Matchers.like(article.taxonomyTermIds[0]))
+        : [],
   })
+
   await assertSuccessfulGraphQLMutation({
     mutation: gql`
-      mutation notification($input: NotificationSetStateInput!) {
-        notification {
+      mutation uuid($input: UuidSetStateInput!) {
+        uuid {
           setState(input: $input) {
             success
           }
         }
       }
     `,
-    variables: { input: { id: 9, unread: true } },
-    data: { notification: { setState: { success: true } } },
+    variables: { input: { id: 1855, trashed: true } },
+    data: { uuid: { setState: { success: true } } },
   })
   await assertSuccessfulGraphQLQuery({
     query: gql`
-      query {
-        notifications {
-          nodes {
-            id
-            unread
-          }
-          totalCount
+      query article($id: Int!) {
+        uuid(id: $id) {
+          __typename
+          id
+          trashed
         }
       }
     `,
+    variables: article,
     data: {
-      notifications: { nodes: [{ id: 9, unread: true }], totalCount: 1 },
+      uuid: { id: article.id, __typename: article.__typename, trashed: true },
     },
   })
 })

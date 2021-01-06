@@ -30,3 +30,9 @@ export function assertUserIsAuthenticated(
 ): asserts user is number {
   if (user === null) throw new AuthenticationError('You are not logged in')
 }
+
+export function createMutationNamespace() {
+  return () => {
+    return {}
+  }
+}

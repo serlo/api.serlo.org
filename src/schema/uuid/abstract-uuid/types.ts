@@ -30,8 +30,19 @@ import { PagePayload, PageRevisionPayload } from '../page'
 import { TaxonomyTermPayload } from '../taxonomy-term'
 import { CommentPayload, ThreadData } from '../thread/types'
 import { UserPayload } from '../user'
-import { QueryResolver, Resolver, TypeResolver } from '~/internals/graphql'
-import { AbstractUuid, AbstractUuidThreadsArgs, QueryUuidArgs } from '~/types'
+import {
+  MutationResolver,
+  QueryResolver,
+  Resolver,
+  TypeResolver,
+} from '~/internals/graphql'
+import {
+  AbstractUuid,
+  UuidMutationSetStateArgs,
+  AbstractUuidThreadsArgs,
+  QueryUuidArgs,
+  UuidSetStateResponse,
+} from '~/types'
 
 export enum DiscriminatorType {
   Page = 'Page',
@@ -65,11 +76,18 @@ export interface UuidResolvers {
     Connection<ThreadData>
   >
 }
+
 export interface AbstractUuidResolvers {
   AbstractUuid: {
     __resolveType: TypeResolver<UuidPayload>
   }
   Query: {
     uuid: QueryResolver<QueryUuidArgs, UuidPayload | null>
+  }
+  Mutation: {
+    uuid: MutationResolver<never, Record<string, never>>
+  }
+  UuidMutation: {
+    setState: MutationResolver<UuidMutationSetStateArgs, UuidSetStateResponse>
   }
 }

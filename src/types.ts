@@ -113,6 +113,7 @@ export type Mutation = {
   _updateCache?: Maybe<Scalars['Boolean']>;
   createThread?: Maybe<Thread>;
   notification: NotificationMutation;
+  uuid: UuidMutation;
 };
 
 
@@ -366,7 +367,7 @@ export type AbstractNotificationEvent = {
 
 export type NotificationMutation = {
   __typename?: 'NotificationMutation';
-  setState?: Maybe<NotificationMutationPayload>;
+  setState?: Maybe<NotificationSetStateResponse>;
 };
 
 
@@ -379,8 +380,8 @@ export type NotificationSetStateInput = {
   unread: Scalars['Boolean'];
 };
 
-export type NotificationMutationPayload = {
-  __typename?: 'NotificationMutationPayload';
+export type NotificationSetStateResponse = {
+  __typename?: 'NotificationSetStateResponse';
   record?: Maybe<AbstractNotificationEvent>;
   success: Scalars['Boolean'];
   query: Query;
@@ -569,6 +570,27 @@ export type AbstractUuidCursor = {
   __typename?: 'AbstractUuidCursor';
   cursor: Scalars['String'];
   node: AbstractUuid;
+};
+
+export type UuidMutation = {
+  __typename?: 'UuidMutation';
+  setState?: Maybe<UuidSetStateResponse>;
+};
+
+
+export type UuidMutationSetStateArgs = {
+  input: UuidSetStateInput;
+};
+
+export type UuidSetStateInput = {
+  id: Array<Scalars['Int']>;
+  trashed: Scalars['Boolean'];
+};
+
+export type UuidSetStateResponse = {
+  __typename?: 'UuidSetStateResponse';
+  success: Scalars['Boolean'];
+  query: Query;
 };
 
 export type AliasInput = {

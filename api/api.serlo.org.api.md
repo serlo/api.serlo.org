@@ -960,6 +960,7 @@ export type Mutation = {
     _updateCache?: Maybe<Scalars['Boolean']>;
     createThread?: Maybe<Thread>;
     notification: NotificationMutation;
+    uuid: UuidMutation;
 };
 
 // @public (undocumented)
@@ -1053,15 +1054,7 @@ export type NotificationEdge = {
 // @public (undocumented)
 export type NotificationMutation = {
     __typename?: 'NotificationMutation';
-    setState?: Maybe<NotificationMutationPayload>;
-};
-
-// @public (undocumented)
-export type NotificationMutationPayload = {
-    __typename?: 'NotificationMutationPayload';
-    record?: Maybe<AbstractNotificationEvent>;
-    success: Scalars['Boolean'];
-    query: Query;
+    setState?: Maybe<NotificationSetStateResponse>;
 };
 
 // @public (undocumented)
@@ -1073,6 +1066,14 @@ export type NotificationMutationSetStateArgs = {
 export type NotificationSetStateInput = {
     id: Array<Scalars['Int']>;
     unread: Scalars['Boolean'];
+};
+
+// @public (undocumented)
+export type NotificationSetStateResponse = {
+    __typename?: 'NotificationSetStateResponse';
+    record?: Maybe<AbstractNotificationEvent>;
+    success: Scalars['Boolean'];
+    query: Query;
 };
 
 // @public (undocumented)
@@ -1604,6 +1605,30 @@ export type UserThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
+export type UuidMutation = {
+    __typename?: 'UuidMutation';
+    setState?: Maybe<UuidSetStateResponse>;
+};
+
+// @public (undocumented)
+export type UuidMutationSetStateArgs = {
+    input: UuidSetStateInput;
+};
+
+// @public (undocumented)
+export type UuidSetStateInput = {
+    id: Array<Scalars['Int']>;
+    trashed: Scalars['Boolean'];
+};
+
+// @public (undocumented)
+export type UuidSetStateResponse = {
+    __typename?: 'UuidSetStateResponse';
+    success: Scalars['Boolean'];
+    query: Query;
 };
 
 // @public (undocumented)

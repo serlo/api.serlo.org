@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { resolveConnection } from '../connection'
-import { assertUserIsAuthenticated } from '../utils'
+import { assertUserIsAuthenticated, createMutationNamespace } from '../utils'
 import {
   NotificationEventPayload,
   NotificationPayload,
@@ -70,9 +70,7 @@ export const resolvers: NotificationResolvers = {
     },
   },
   Mutation: {
-    notification() {
-      return {}
-    },
+    notification: createMutationNamespace(),
   },
   NotificationMutation: {
     async setState(_parent, payload, { dataSources, user }) {
