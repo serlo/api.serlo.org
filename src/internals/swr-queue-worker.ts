@@ -28,7 +28,7 @@ import { createTimer } from './timer'
 
 export async function start() {
   dotenv.config()
-  initializeSentry()
+  initializeSentry('swr-queue-worker')
   const timer = createTimer()
   const cache = createCache({ timer })
   const swrQueueWorker = createSwrQueueWorker({
