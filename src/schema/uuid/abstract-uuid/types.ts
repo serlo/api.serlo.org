@@ -31,6 +31,7 @@ import { TaxonomyTermPayload } from '../taxonomy-term'
 import { CommentPayload, ThreadData } from '../thread/types'
 import { UserPayload } from '../user'
 import {
+  MutationNamespace,
   MutationResolver,
   QueryResolver,
   Resolver,
@@ -85,7 +86,7 @@ export interface AbstractUuidResolvers {
     uuid: QueryResolver<QueryUuidArgs, UuidPayload | null>
   }
   Mutation: {
-    uuid: MutationResolver<never, Record<string, never>>
+    uuid: MutationNamespace
   }
   UuidMutation: {
     setState: MutationResolver<UuidMutationSetStateArgs, UuidSetStateResponse>

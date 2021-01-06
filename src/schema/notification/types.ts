@@ -38,6 +38,7 @@ import { SetTaxonomyTermNotificationEventPayload } from './set-taxonomy-term-not
 import { SetThreadStateNotificationEventPayload } from './set-thread-state-notification-event'
 import { SetUuidStateNotificationEventPayload } from './set-uuid-state-notification-event'
 import {
+  MutationNamespace,
   MutationResolver,
   QueryResolver,
   Resolver,
@@ -123,7 +124,7 @@ export interface NotificationResolvers {
     >
   }
   Mutation: {
-    notification: MutationResolver<never, Record<string, never>>
+    notification: MutationNamespace
   }
   NotificationMutation: {
     setState: MutationResolver<
