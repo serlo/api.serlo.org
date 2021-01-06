@@ -21,11 +21,11 @@
  */
 import * as Sentry from '@sentry/node'
 
-export function initializeSentry() {
+export function initializeSentry(context: string) {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
     environment: process.env.ENVIRONMENT,
-    release: `api.serlo.org@${process.env.npm_package_version}`,
+    release: `api.serlo.org-${context}@${process.env.SENTRY_RELEASE || ''}`,
   })
 }
 
