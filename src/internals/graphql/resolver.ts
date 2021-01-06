@@ -32,7 +32,7 @@ export type Resolver<P, A, T> = (
 ) => Promise<T> | T
 
 export type QueryResolver<A, T> = Resolver<never, A, T>
-export type MutationResolver<A, T = null> = Resolver<
+export type MutationResolver<A, T> = Resolver<
   never,
   A,
   T extends { query: Query }
