@@ -40,3 +40,5 @@ export type MutationResolver<A, T = null> = Resolver<
     : T
 >
 export type TypeResolver<T> = (type: T) => string
+
+export type MutationNamespace = MutationResolver<never, Record<string, never>>
