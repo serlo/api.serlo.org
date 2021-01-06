@@ -34,7 +34,7 @@ import { ArticlePayload, UuidPayload } from '~/schema/uuid'
 test('set-notification-state', async () => {
   global.client = createTestClient({
     service: Service.SerloCloudflareWorker,
-    user: user.id,
+    userId: user.id,
   })
 
   function addInteractionWithUuidType<T extends UuidPayload>(

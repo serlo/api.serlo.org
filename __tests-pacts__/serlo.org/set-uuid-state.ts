@@ -33,7 +33,7 @@ import { Service } from '~/internals/auth'
 test('set-uuid-state', async () => {
   global.client = createTestClient({
     service: Service.SerloCloudflareWorker,
-    user: user.id,
+    userId: user.id,
   })
   await global.pact.addInteraction({
     uponReceiving: `set state of notification with id 9`,

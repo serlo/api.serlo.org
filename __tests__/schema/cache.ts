@@ -93,7 +93,7 @@ beforeEach(() => {
 test('_cacheKeys', async () => {
   const client = createTestClient({
     service: Service.Serlo,
-    user: null,
+    userId: null,
   })
   await assertSuccessfulGraphQLQuery({
     ...createCacheKeysQuery(),
@@ -110,7 +110,7 @@ test('_cacheKeys', async () => {
 test('_setCache (forbidden)', async () => {
   const client = createTestClient({
     service: Service.SerloCloudflareWorker,
-    user: null,
+    userId: null,
   })
 
   await assertFailingGraphQLMutation(
@@ -127,7 +127,7 @@ test('_setCache (forbidden)', async () => {
 test('_setCache (authenticated)', async () => {
   const client = createTestClient({
     service: Service.Serlo,
-    user: null,
+    userId: null,
   })
   const now = global.timer.now()
 
@@ -146,7 +146,7 @@ test('_setCache (authenticated)', async () => {
 test('_removeCache (forbidden)', async () => {
   const client = createTestClient({
     service: Service.SerloCloudflareWorker,
-    user: null,
+    userId: null,
   })
   await assertFailingGraphQLMutation(
     {
@@ -162,7 +162,7 @@ test('_removeCache (forbidden)', async () => {
 test('_removeCache (authenticated)', async () => {
   const client = createTestClient({
     service: Service.Serlo,
-    user: null,
+    userId: null,
   })
 
   await assertSuccessfulGraphQLMutation({
@@ -177,7 +177,7 @@ test('_removeCache (authenticated)', async () => {
 test('_updateCache (forbidden)', async () => {
   const client = createTestClient({
     service: Service.SerloCloudflareWorker,
-    user: null,
+    userId: null,
   })
   await assertFailingGraphQLMutation(
     {

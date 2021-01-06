@@ -76,7 +76,7 @@ let client: Client
 beforeEach(() => {
   client = createTestClient({
     service: Service.SerloCloudflareWorker,
-    user: null,
+    userId: null,
   })
 })
 
@@ -279,7 +279,7 @@ describe('uuid mutation setState', () => {
         input: { id: [1, 2, 3], trashed: true },
       },
       data: { uuid: { setState: { success: true } } },
-      client: createTestClient({ user: user.id }),
+      client: createTestClient({ userId: user.id }),
     })
   })
 
@@ -288,7 +288,7 @@ describe('uuid mutation setState', () => {
       {
         mutation,
         variables: { input: { id: 1, trashed: true } },
-        client: createTestClient({ user: null }),
+        client: createTestClient({ userId: null }),
       },
       (errors) => {
         expect(errors[0].extensions?.code).toEqual('UNAUTHENTICATED')
@@ -301,7 +301,7 @@ describe('uuid mutation setState', () => {
       {
         mutation,
         variables: { input: { id: 1, trashed: false } },
-        client: createTestClient({ user: user2.id }),
+        client: createTestClient({ userId: user2.id }),
       },
       (errors) => {
         expect(errors[0].extensions?.code).toEqual('FORBIDDEN')

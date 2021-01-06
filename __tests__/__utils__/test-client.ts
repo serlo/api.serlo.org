@@ -33,17 +33,17 @@ import { emptySwrQueue } from '~/internals/swr-queue'
 export type Client = ApolloServerTestClient
 
 export function createTestClient(
-  args?: Partial<Pick<Context, 'service' | 'user'>>
+  args?: Partial<Pick<Context, 'service' | 'userId'>>
 ): Client {
   const server = new ApolloServer({
     ...getGraphQLOptions({
       cache: global.cache,
       swrQueue: emptySwrQueue,
     }),
-    context(): Pick<Context, 'service' | 'user'> {
+    context(): Pick<Context, 'service' | 'userId'> {
       return {
         service: args?.service ?? Service.SerloCloudflareWorker,
-        user: args?.user ?? null,
+        userId: args?.userId ?? null,
       }
     },
   })

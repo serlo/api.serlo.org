@@ -80,7 +80,7 @@ export const resolvers: ThreadResolvers = {
     },
   },
   Mutation: {
-    async createThread(_parent, payload, { dataSources, user }) {
+    async createThread(_parent, payload, { dataSources, userId: user }) {
       assertUserIsAuthenticated(user)
       const commentPayload = await dataSources.model.serlo.createThread({
         ...payload,

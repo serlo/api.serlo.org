@@ -49,7 +49,7 @@ export const resolvers: AbstractUuidResolvers = {
     uuid: createMutationNamespace(),
   },
   UuidMutation: {
-    async setState(_parent, payload, { dataSources, user }) {
+    async setState(_parent, payload, { dataSources, userId: user }) {
       assertUserIsAuthenticated(user)
 
       const { id, trashed } = payload.input

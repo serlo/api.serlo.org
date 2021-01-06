@@ -93,7 +93,7 @@ beforeEach(async () => {
   )
   global.client = createTestClient({
     service: Service.SerloCloudflareWorker,
-    user: null,
+    userId: null,
   })
 })
 

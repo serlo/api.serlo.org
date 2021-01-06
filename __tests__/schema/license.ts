@@ -39,7 +39,7 @@ beforeEach(() => {
 test('license', async () => {
   const client = createTestClient({
     service: Service.SerloCloudflareWorker,
-    user: null,
+    userId: null,
   })
   await assertSuccessfulGraphQLQuery({
     ...createLicenseQuery(license),
