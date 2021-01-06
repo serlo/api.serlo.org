@@ -43,7 +43,7 @@ test('Alias', async () => {
       path: Matchers.string(alias.path),
     },
   })
-  await fetch(`http://de.${process.env.SERVER_SERLO_ORG_HOST}/api/alias/mathe`)
+  await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/alias/mathe`)
 })
 
 test('Alias (URL /user/profile/:username)', async () => {
@@ -63,6 +63,6 @@ test('Alias (URL /user/profile/:username)', async () => {
     },
   })
   await fetch(
-    `http://de.${process.env.SERVER_SERLO_ORG_HOST}/api/alias/user/profile/admin`
+    `http://de.${process.env.SERLO_ORG_HOST}/api/alias/user/profile/admin`
   )
 })

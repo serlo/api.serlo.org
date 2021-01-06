@@ -82,7 +82,7 @@ export function createJsonHandler(
   once?: boolean
 ) {
   return rest.get(
-    `http://${instance}.${process.env.SERVER_SERLO_ORG_HOST}${path}`,
+    `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
     (_req, res, ctx) => {
       return (once ? res.once : res)(
         ctx.status(200),

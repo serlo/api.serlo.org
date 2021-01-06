@@ -97,7 +97,7 @@ async function resolveUserConnectionFromIds({
 async function activeDonorIDs({ dataSources }: Context) {
   return pipeable.pipe(
     await dataSources.model.googleSpreadsheetApi.getValues({
-      spreadsheetId: process.env.SERVER_GOOGLE_SPREADSHEET_API_ACTIVE_DONORS,
+      spreadsheetId: process.env.GOOGLE_SPREADSHEET_API_ACTIVE_DONORS,
       range: 'Tabellenblatt1!A:A',
       majorDimension: MajorDimension.Columns,
     }),

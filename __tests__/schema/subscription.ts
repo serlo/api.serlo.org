@@ -39,7 +39,7 @@ describe('subscriptions', () => {
     global.server.use(
       createUuidHandler(article),
       rest.get(
-        `http://de.${process.env.SERVER_SERLO_ORG_HOST}/api/subscriptions/${user.id}`,
+        `http://de.${process.env.SERLO_ORG_HOST}/api/subscriptions/${user.id}`,
         (req, res, ctx) => {
           return res(
             ctx.status(200),

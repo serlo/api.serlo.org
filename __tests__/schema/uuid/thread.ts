@@ -508,7 +508,7 @@ function setupThreads(uuidPayload: UuidPayload, threads: CommentPayload[][]) {
   )
   global.server.use(
     rest.get(
-      `http://${Instance.De}.${process.env.SERVER_SERLO_ORG_HOST}/api/uuid/:id`,
+      `http://${Instance.De}.${process.env.SERLO_ORG_HOST}/api/uuid/:id`,
       (req, res, ctx) => {
         const id = Number(req.params.id)
 
@@ -546,7 +546,7 @@ function setupThreads(uuidPayload: UuidPayload, threads: CommentPayload[][]) {
 function createAddCommentMutation(id: number, date: string) {
   global.server.use(
     rest.post<MutationCreateThreadArgs & { userId: number }>(
-      `http://de.${process.env.SERVER_SERLO_ORG_HOST}/api/add-comment`,
+      `http://de.${process.env.SERLO_ORG_HOST}/api/add-comment`,
       (req, res, ctx) => {
         if (typeof req.body === 'string' || typeof req.body === 'undefined')
           return res(ctx.status(400))

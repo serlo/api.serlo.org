@@ -51,5 +51,5 @@ test('Navigation', async () => {
       }),
     },
   })
-  await fetch(`http://de.${process.env.SERVER_SERLO_ORG_HOST}/api/navigation`)
+  await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/navigation`)
 })

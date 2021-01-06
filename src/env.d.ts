@@ -28,21 +28,21 @@ declare namespace NodeJS {
      * Used by server and swr-queue-worker
      */
     ENVIRONMENT: string
+    GOOGLE_SPREADSHEET_API_ACTIVE_DONORS: string
+    GOOGLE_SPREADSHEET_API_SECRET: string
     LOG_LEVEL: LogLevelDesc | undefined
     REDIS_URL: string
     REDIS_URL_TEST: string | undefined
     SENTRY_DSN: string | undefined
     SENTRY_RELEASE: string | undefined
+    SERLO_ORG_HOST: string
+    SERLO_ORG_SECRET: string
 
     /**
      * Used by server only
      */
-    SERVER_GOOGLE_SPREADSHEET_API_ACTIVE_DONORS: string
-    SERVER_GOOGLE_SPREADSHEET_API_SECRET: string
     SERVER_HYDRA_HOST: string
     SERVER_SERLO_CLOUDFLARE_WORKER_SECRET: string
-    SERVER_SERLO_ORG_HOST: string
-    SERVER_SERLO_ORG_SECRET: string
     SERVER_SWR_QUEUE_DASHBOARD_PASSWORD: string
     SERVER_SWR_QUEUE_DASHBOARD_USERNAME: string
 

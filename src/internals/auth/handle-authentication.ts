@@ -97,7 +97,7 @@ function validateServiceToken(token: string): Service {
     function getSecret(service: Service) {
       switch (service) {
         case Service.Serlo:
-          return process.env.SERVER_SERLO_ORG_SECRET
+          return process.env.SERLO_ORG_SECRET
         case Service.SerloCloudflareWorker:
           return process.env.SERVER_SERLO_CLOUDFLARE_WORKER_SECRET
       }
