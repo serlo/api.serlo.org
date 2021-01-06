@@ -33,8 +33,8 @@ export interface CacheResolvers {
     _cacheKeys: QueryResolver<Query_CacheKeysArgs, Connection<string>>
   }
   Mutation: {
-    _setCache: MutationResolver<Mutation_SetCacheArgs>
-    _removeCache: MutationResolver<Mutation_RemoveCacheArgs>
-    _updateCache: MutationResolver<Mutation_UpdateCacheArgs>
+    _setCache: MutationResolver<Mutation_SetCacheArgs, null>
+    _removeCache: MutationResolver<Mutation_RemoveCacheArgs, null>
+    _updateCache: MutationResolver<Mutation_UpdateCacheArgs, null>
   }
 }
