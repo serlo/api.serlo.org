@@ -457,6 +457,18 @@ async function exec(): Promise<void> {
       added: ['Add `InstanceAware` interface.', 'Add custom aliases.'],
       changed: ['Move `alias` from concrete types into `AbstractUuid`.'],
     },
+    {
+      tagName: 'v0.16.0',
+      date: '2021-01-06',
+      breakingChanges: [
+        'Rename `NotificationMutationPayload` to `NotificationSetStateResponse`.',
+      ],
+      added: [['uuid', 'Add `uuid.setState` mutation.']],
+      internal: [
+        'Split up `api` docker image into `api-server` and `api-swr-queue-worker`.',
+        'Overhaul naming of environment variables.',
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

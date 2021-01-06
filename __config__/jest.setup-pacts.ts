@@ -63,7 +63,7 @@ beforeEach(async () => {
   await createBeforeEach()
   global.server.use(
     rest.get(
-      new RegExp(process.env.SERVER_SERLO_ORG_HOST.replace('.', '\\.')),
+      new RegExp(process.env.SERLO_ORG_HOST.replace('.', '\\.')),
       async (req, res, ctx) => {
         const url = req.url
         const pactRes = await fetch(`http://localhost:${port}/${url.pathname}`)
@@ -71,7 +71,7 @@ beforeEach(async () => {
       }
     ),
     rest.post(
-      new RegExp(process.env.SERVER_SERLO_ORG_HOST.replace('.', '\\.')),
+      new RegExp(process.env.SERLO_ORG_HOST.replace('.', '\\.')),
       async (req, res, ctx) => {
         const url = req.url
         const pactRes = await fetch(

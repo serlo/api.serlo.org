@@ -42,7 +42,7 @@ import { Service } from '~/internals/auth'
 import { MajorDimension } from '~/model'
 
 const mockSpreadSheetData = {
-  spreadsheetId: process.env.SERVER_GOOGLE_SPREADSHEET_API_ACTIVE_DONORS,
+  spreadsheetId: process.env.GOOGLE_SPREADSHEET_API_ACTIVE_DONORS,
   range: 'Tabellenblatt1!A:A',
   majorDimension: MajorDimension.Columns,
   apiKey: 'very-secure-secret',
@@ -69,19 +69,19 @@ const fakeCacheKeys = [testVars[0].key, testVars[1].key, 'uuid']
 beforeEach(() => {
   global.server.use(
     rest.get(
-      `http://de.${process.env.SERVER_SERLO_ORG_HOST}/api/cache-keys`,
+      `http://de.${process.env.SERLO_ORG_HOST}/api/cache-keys`,
       (req, res, ctx) => {
         return res(ctx.status(200), ctx.json(fakeCacheKeys))
       }
     ),
     rest.get(
-      `http://de.${process.env.SERVER_SERLO_ORG_HOST}/api/${testVars[0].key}`,
+      `http://de.${process.env.SERLO_ORG_HOST}/api/${testVars[0].key}`,
       (req, res, ctx) => {
         return res(ctx.status(200), ctx.json(testVars[0].value))
       }
     ),
     rest.get(
-      `http://en.${process.env.SERVER_SERLO_ORG_HOST}/api/${testVars[1].key}`,
+      `http://en.${process.env.SERLO_ORG_HOST}/api/${testVars[1].key}`,
       (req, res, ctx) => {
         return res(ctx.status(200), ctx.json(testVars[1].value))
       }

@@ -37,7 +37,7 @@ test('Threads', async () => {
     },
   })
   await fetch(
-    `http://de.${process.env.SERVER_SERLO_ORG_HOST}/api/threads/${article.id}`
+    `http://de.${process.env.SERLO_ORG_HOST}/api/threads/${article.id}`
   )
 })
 
@@ -56,7 +56,5 @@ test('Comment', async () => {
     parentId: Matchers.integer(comment.parentId),
     childrenIds: comment.childrenIds,
   })
-  await fetch(
-    `http://de.${process.env.SERVER_SERLO_ORG_HOST}/api/uuid/${comment.id}`
-  )
+  await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/uuid/${comment.id}`)
 })
