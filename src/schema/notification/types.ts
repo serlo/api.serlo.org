@@ -49,7 +49,7 @@ import {
   Notification,
   QueryNotificationEventArgs,
   QueryNotificationsArgs,
-  NotificationMutationPayload,
+  NotificationSetStateResponse,
 } from '~/types'
 
 export interface NotificationPayload
@@ -128,7 +128,7 @@ export interface NotificationResolvers {
   NotificationMutation: {
     setState: MutationResolver<
       NotificationMutationSetStateArgs,
-      NotificationMutationPayload
+      NotificationSetStateResponse
     >
   }
 }

@@ -28,7 +28,7 @@ extend type Mutation {
 }
 
 type NotificationMutation {
-  setState(input: NotificationSetStateInput!): NotificationMutationPayload
+  setState(input: NotificationSetStateInput!): NotificationSetStateResponse
 }
 
 input NotificationSetStateInput {
@@ -36,7 +36,7 @@ input NotificationSetStateInput {
   unread: Boolean!
 }
 
-type NotificationMutationPayload {
+type NotificationSetStateResponse {
   record: AbstractNotificationEvent
   success: Boolean!
   query: Query!
