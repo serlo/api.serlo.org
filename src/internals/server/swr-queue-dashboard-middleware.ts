@@ -42,8 +42,8 @@ function createAuthMiddleware(): RequestHandler {
 
     if (
       credentials &&
-      credentials.name === process.env.SWR_QUEUE_DASHBOARD_USERNAME &&
-      credentials.pass === process.env.SWR_QUEUE_DASHBOARD_PASSWORD
+      credentials.name === process.env.SERVER_SWR_QUEUE_DASHBOARD_USERNAME &&
+      credentials.pass === process.env.SERVER_SWR_QUEUE_DASHBOARD_PASSWORD
     ) {
       return next()
     }

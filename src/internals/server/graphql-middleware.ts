@@ -59,7 +59,7 @@ export function applyGraphQLMiddleware({
             headers: {
               Authorization: `Serlo Service=${jwt.sign(
                 {},
-                process.env.SERLO_CLOUDFLARE_WORKER_SECRET,
+                process.env.SERVER_SERLO_CLOUDFLARE_WORKER_SECRET,
                 {
                   expiresIn: '2h',
                   audience: 'api.serlo.org',
@@ -98,11 +98,11 @@ export function getGraphQLOptions(
         })
       }
       return handleAuthentication(authorizationHeader, async (token) => {
-        if (process.env.HYDRA_HOST === undefined) return null
+        if (process.env.SERVER_HYDRA_HOST === undefined) return null
         const params = new URLSearchParams()
         params.append('token', token)
         const resp = await fetch(
-          `${process.env.HYDRA_HOST}/oauth2/introspect`,
+          `${process.env.SERVER_HYDRA_HOST}/oauth2/introspect`,
           {
             method: 'post',
             body: params,
