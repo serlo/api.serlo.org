@@ -23,11 +23,12 @@ import { AuthenticationError } from 'apollo-server-express'
 import { decode, JsonWebTokenError, verify } from 'jsonwebtoken'
 
 import { Service } from './service'
+import { Context } from '~/internals/graphql'
 
 export async function handleAuthentication(
   authorizationHeader: string,
   userTokenValidator: (token: string) => Promise<number | null>
-): Promise<{ service: Service; userId: number | null }> {
+): Promise<Pick<Context, 'service' | 'userId'>> {
   const parts = authorizationHeader.split(' ')
   if (parts.length !== 2 || parts[0] !== 'Serlo') {
     throw invalid()
@@ -40,10 +41,7 @@ export async function handleAuthentication(
   } else if (tokenParts.length === 2) {
     const service = validateServiceToken(tokenParts[0])
     const userId = await validateUserToken(tokenParts[1], userTokenValidator)
-    return {
-      service,
-      userId,
-    }
+    return { service, userId }
   } else {
     throw invalid()
   }
