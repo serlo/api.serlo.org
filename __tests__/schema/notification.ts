@@ -95,7 +95,7 @@ describe('notifications', () => {
     })
     global.server.use(
       rest.get(
-        `http://de.${process.env.SERLO_ORG_HOST}/api/notifications/${user.id}`,
+        `http://de.${process.env.SERVER_SERLO_ORG_HOST}/api/notifications/${user.id}`,
         (_req, res, ctx) => {
           return res(
             ctx.status(200),
@@ -171,7 +171,7 @@ describe('notifications', () => {
   test('notifications (w/ event)', async () => {
     global.server.use(
       rest.get(
-        `http://de.${process.env.SERLO_ORG_HOST}/api/notifications/${user.id}`,
+        `http://de.${process.env.SERVER_SERLO_ORG_HOST}/api/notifications/${user.id}`,
         (_req, res, ctx) => {
           return res(
             ctx.status(200),
@@ -2139,7 +2139,7 @@ describe('mutation notification setState', () => {
   beforeEach(() => {
     global.server.use(
       rest.post(
-        `http://de.${process.env.SERLO_ORG_HOST}/api/set-notification-state/:id`,
+        `http://de.${process.env.SERVER_SERLO_ORG_HOST}/api/set-notification-state/:id`,
         (req, res, ctx) => {
           const { userId, unread } = req.body as {
             userId: number

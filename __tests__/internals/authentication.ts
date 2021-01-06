@@ -25,7 +25,7 @@ import { handleAuthentication, Service } from '~/internals/auth'
 
 describe('Service token only', () => {
   test('valid serlo.org token', async () => {
-    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
+    const token = jwt.sign({}, process.env.SERVER_SERLO_ORG_SECRET, {
       audience: 'api.serlo.org',
       issuer: Service.Serlo,
     })
@@ -37,7 +37,7 @@ describe('Service token only', () => {
   })
 
   test('wrong audience', async () => {
-    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
+    const token = jwt.sign({}, process.env.SERVER_SERLO_ORG_SECRET, {
       audience: Service.Serlo,
       issuer: Service.Serlo,
     })
@@ -55,7 +55,7 @@ describe('Service token only', () => {
   })
 
   test('invalid signature', async () => {
-    const token = jwt.sign({}, `${process.env.SERLO_ORG_SECRET}-wrong`, {
+    const token = jwt.sign({}, `${process.env.SERVER_SERLO_ORG_SECRET}-wrong`, {
       audience: 'api.serlo.org',
       issuer: Service.Serlo,
     })
@@ -75,7 +75,7 @@ describe('Service token only', () => {
       {
         iat: Math.floor(Date.now() / 1000) - 2 * 60 * 60, // 2 hours in past
       },
-      process.env.SERLO_ORG_SECRET,
+      process.env.SERVER_SERLO_ORG_SECRET,
       {
         audience: 'api.serlo.org',
         issuer: Service.Serlo,
@@ -94,7 +94,7 @@ describe('Service token only', () => {
   })
 
   test('wrong authentication type', async () => {
-    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
+    const token = jwt.sign({}, process.env.SERVER_SERLO_ORG_SECRET, {
       audience: 'api.serlo.org',
       issuer: Service.Serlo,
     })
@@ -112,7 +112,7 @@ describe('Service token only', () => {
 
 describe('Service & User token', () => {
   test('valid serlo.org token & valid user token', async () => {
-    const serviceToken = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
+    const serviceToken = jwt.sign({}, process.env.SERVER_SERLO_ORG_SECRET, {
       audience: 'api.serlo.org',
       issuer: Service.Serlo,
     })
@@ -126,7 +126,7 @@ describe('Service & User token', () => {
   })
 
   test('valid serlo.org token & invalid user token', async () => {
-    const serviceToken = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
+    const serviceToken = jwt.sign({}, process.env.SERVER_SERLO_ORG_SECRET, {
       audience: 'api.serlo.org',
       issuer: Service.Serlo,
     })

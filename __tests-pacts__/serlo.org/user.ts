@@ -32,7 +32,9 @@ test('GET /api/user/active-authors', async () => {
     body: Matchers.eachLike(1),
   })
 
-  await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/user/active-authors`)
+  await fetch(
+    `http://de.${process.env.SERVER_SERLO_ORG_HOST}/api/user/active-authors`
+  )
 })
 
 test('GET /api/user/active-reviewers', async () => {
@@ -44,6 +46,6 @@ test('GET /api/user/active-reviewers', async () => {
   })
 
   await fetch(
-    `http://de.${process.env.SERLO_ORG_HOST}/api/user/active-reviewers`
+    `http://de.${process.env.SERVER_SERLO_ORG_HOST}/api/user/active-reviewers`
   )
 })
