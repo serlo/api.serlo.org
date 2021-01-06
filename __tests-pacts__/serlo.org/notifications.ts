@@ -30,7 +30,7 @@ import { Service } from '~/internals/auth'
 test('Notifications', async () => {
   global.client = createTestClient({
     service: Service.SerloCloudflareWorker,
-    user: user.id,
+    userId: user.id,
   })
   await addJsonInteraction({
     name: `fetch data of all notifications for user with id ${user.id}`,
