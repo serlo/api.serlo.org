@@ -27,12 +27,12 @@ declare namespace NodeJS {
     /**
      * Used by server and swr-queue-worker
      */
-    npm_package_version: string
     ENVIRONMENT: string
     LOG_LEVEL: LogLevelDesc | undefined
     REDIS_URL: string
     REDIS_URL_TEST: string | undefined
     SENTRY_DSN: string | undefined
+    SENTRY_RELEASE: string | undefined
 
     /**
      * Used by server only
