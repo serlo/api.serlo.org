@@ -44,7 +44,7 @@ export const resolvers: NotificationResolvers = {
     async notifications(
       _parent,
       { unread, ...cursorPayload },
-      { dataSources, user }
+      { dataSources, userId: user }
     ) {
       assertUserIsAuthenticated(user)
       const { notifications } = await dataSources.model.serlo.getNotifications({
@@ -73,7 +73,7 @@ export const resolvers: NotificationResolvers = {
     notification: createMutationNamespace(),
   },
   NotificationMutation: {
-    async setState(_parent, payload, { dataSources, user }) {
+    async setState(_parent, payload, { dataSources, userId: user }) {
       assertUserIsAuthenticated(user)
       const { id, unread } = payload.input
       const idArray = Array.isArray(id) ? id : [id]

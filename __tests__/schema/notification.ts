@@ -91,7 +91,7 @@ describe('notifications', () => {
   beforeEach(() => {
     client = createTestClient({
       service: Service.SerloCloudflareWorker,
-      user: user.id,
+      userId: user.id,
     })
     global.server.use(
       rest.get(
@@ -116,7 +116,7 @@ describe('notifications', () => {
   test('notifications without filter', async () => {
     const client = createTestClient({
       service: Service.SerloCloudflareWorker,
-      user: 1,
+      userId: 1,
     })
     await assertSuccessfulGraphQLQuery({
       ...createNotificationsQuery(),
@@ -137,7 +137,7 @@ describe('notifications', () => {
   test('notifications (only unread)', async () => {
     const client = createTestClient({
       service: Service.SerloCloudflareWorker,
-      user: 1,
+      userId: 1,
     })
     await assertSuccessfulGraphQLQuery({
       ...createNotificationsQuery(false),
@@ -157,7 +157,7 @@ describe('notifications', () => {
   test('notifications (only read)', async () => {
     const client = createTestClient({
       service: Service.SerloCloudflareWorker,
-      user: 1,
+      userId: 1,
     })
     await assertSuccessfulGraphQLQuery({
       ...createNotificationsQuery(true),
@@ -254,7 +254,7 @@ describe('notificationEvent', () => {
   beforeEach(() => {
     client = createTestClient({
       service: Service.SerloCloudflareWorker,
-      user: null,
+      userId: null,
     })
   })
 
@@ -2165,7 +2165,7 @@ describe('mutation notification setState', () => {
         input: { id: [1, 2, 3], unread: false },
       },
       data: { notification: { setState: { success: true } } },
-      client: createTestClient({ user: user.id }),
+      client: createTestClient({ userId: user.id }),
     })
   })
 
@@ -2174,7 +2174,7 @@ describe('mutation notification setState', () => {
       {
         mutation,
         variables: { input: { id: 1, unread: false } },
-        client: createTestClient({ user: null }),
+        client: createTestClient({ userId: null }),
       },
       (errors) => {
         expect(errors[0].extensions?.code).toEqual('UNAUTHENTICATED')
@@ -2187,7 +2187,7 @@ describe('mutation notification setState', () => {
       {
         mutation,
         variables: { input: { id: 1, unread: false } },
-        client: createTestClient({ user: user2.id }),
+        client: createTestClient({ userId: user2.id }),
       },
       (errors) => {
         expect(errors[0].extensions?.code).toEqual('FORBIDDEN')

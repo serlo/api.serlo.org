@@ -89,12 +89,12 @@ export function getGraphQLOptions(
         model: new ModelDataSource(environment),
       }
     },
-    context({ req }): Promise<Pick<Context, 'service' | 'user'>> {
+    context({ req }): Promise<Pick<Context, 'service' | 'userId'>> {
       const authorizationHeader = req.headers.authorization
       if (!authorizationHeader) {
         return Promise.resolve({
           service: Service.SerloCloudflareWorker,
-          user: null,
+          userId: null,
         })
       }
       return handleAuthentication(authorizationHeader, async (token) => {

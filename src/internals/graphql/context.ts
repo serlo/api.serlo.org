@@ -27,5 +27,5 @@ export interface Context {
     model: ModelDataSource
   }
   service: Service
-  user: number | null
+  userId: number | null
 }

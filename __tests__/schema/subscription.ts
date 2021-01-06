@@ -77,7 +77,7 @@ describe('subscriptions', () => {
   test('Article', async () => {
     const client = createTestClient({
       service: Service.SerloCloudflareWorker,
-      user: 1,
+      userId: 1,
     })
     await assertSuccessfulGraphQLQuery({
       ...createSubscriptionsQuery(),

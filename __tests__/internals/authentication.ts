@@ -32,7 +32,7 @@ describe('Service token only', () => {
     const header = `Serlo Service=${token}`
     expect(await handleAuthentication(header, fakeUserTokenValidator)).toEqual({
       service: Service.Serlo,
-      user: null,
+      userId: null,
     })
   })
 
@@ -121,7 +121,7 @@ describe('Service & User token', () => {
     const header = `Serlo Service=${serviceToken};User=${userToken}`
     expect(await handleAuthentication(header, fakeUserTokenValidator)).toEqual({
       service: Service.Serlo,
-      user: 1,
+      userId: 1,
     })
   })
 
@@ -134,7 +134,7 @@ describe('Service & User token', () => {
     const header = `Serlo Service=${serviceToken};User=${userToken}`
     expect(await handleAuthentication(header, fakeUserTokenValidator)).toEqual({
       service: Service.Serlo,
-      user: null,
+      userId: null,
     })
   })
 

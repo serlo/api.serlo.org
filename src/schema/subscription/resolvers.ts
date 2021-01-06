@@ -26,7 +26,7 @@ import { SubscriptionResolvers } from './types'
 
 export const resolvers: SubscriptionResolvers = {
   Query: {
-    async subscriptions(parent, cursorPayload, { dataSources, user }) {
+    async subscriptions(parent, cursorPayload, { dataSources, userId: user }) {
       assertUserIsAuthenticated(user)
       const subscriptions = await dataSources.model.serlo.getSubscriptions({
         id: user,

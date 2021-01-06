@@ -27,7 +27,7 @@ import { Service } from './service'
 export async function handleAuthentication(
   authorizationHeader: string,
   userTokenValidator: (token: string) => Promise<number | null>
-): Promise<{ service: Service; user: number | null }> {
+): Promise<{ service: Service; userId: number | null }> {
   const parts = authorizationHeader.split(' ')
   if (parts.length !== 2 || parts[0] !== 'Serlo') {
     throw invalid()
@@ -36,13 +36,13 @@ export async function handleAuthentication(
   const tokenParts = parts[1].split(';')
   if (tokenParts.length === 1) {
     const service = validateServiceToken(tokenParts[0])
-    return { service, user: null }
+    return { service, userId: null }
   } else if (tokenParts.length === 2) {
     const service = validateServiceToken(tokenParts[0])
-    const user = await validateUserToken(tokenParts[1], userTokenValidator)
+    const userId = await validateUserToken(tokenParts[1], userTokenValidator)
     return {
       service,
-      user,
+      userId,
     }
   } else {
     throw invalid()
