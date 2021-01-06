@@ -34,7 +34,7 @@ export * from './swr-queue-dashboard-middleware'
 
 export function start() {
   dotenv.config()
-  initializeSentry()
+  initializeSentry('server')
   const timer = createTimer()
   const cache = createCache({ timer })
   const swrQueue = createSwrQueue()
