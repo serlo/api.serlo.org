@@ -50,7 +50,7 @@ let client: Client
 beforeEach(() => {
   client = createTestClient({
     service: Service.SerloCloudflareWorker,
-    user: user.id,
+    userId: user.id,
   })
 })
 describe('uuid["threads"]', () => {
@@ -461,7 +461,7 @@ describe('createThread', () => {
   })
 
   test('No thread is created with unauthenticated user', async () => {
-    const client = createTestClient({ user: null })
+    const client = createTestClient({ userId: null })
 
     await assertFailingGraphQLMutation(
       {

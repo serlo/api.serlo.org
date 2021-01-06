@@ -87,7 +87,7 @@ describe('Page', () => {
   test('Without navigation', async () => {
     const client = createTestClient({
       service: Service.Serlo,
-      user: null,
+      userId: null,
     })
     await assertSuccessfulGraphQLMutation({
       ...createSetPageMutation(subjectHomepage),
@@ -130,7 +130,7 @@ describe('Page', () => {
   })
 
   test('Subject Homepage', async () => {
-    const client = createTestClient({ service: Service.Serlo, user: null })
+    const client = createTestClient({ service: Service.Serlo, userId: null })
     await assertSuccessfulGraphQLMutation({
       ...createSetPageMutation(subjectHomepage),
       client,
@@ -180,7 +180,7 @@ describe('Page', () => {
   })
 
   test('Dropdown', async () => {
-    const client = createTestClient({ service: Service.Serlo, user: null })
+    const client = createTestClient({ service: Service.Serlo, userId: null })
     await assertSuccessfulGraphQLMutation({
       ...createSetPageMutation(subjectHomepage),
       client,
@@ -272,7 +272,7 @@ describe('Taxonomy Term', () => {
   test('Without navigation', async () => {
     const client = createTestClient({
       service: Service.Serlo,
-      user: null,
+      userId: null,
     })
     await assertSuccessfulGraphQLMutation({
       ...createSetTaxonomyTermMutation(taxonomyTermRoot),
@@ -321,7 +321,7 @@ describe('Taxonomy Term', () => {
   test('Subject', async () => {
     const client = createTestClient({
       service: Service.Serlo,
-      user: null,
+      userId: null,
     })
     await assertSuccessfulGraphQLMutation({
       ...createSetPageMutation(subjectHomepage),
@@ -387,7 +387,7 @@ describe('Taxonomy Term', () => {
   test('Curriculum Topic', async () => {
     const client = createTestClient({
       service: Service.Serlo,
-      user: null,
+      userId: null,
     })
     await assertSuccessfulGraphQLMutation({
       ...createSetPageMutation(subjectHomepage),

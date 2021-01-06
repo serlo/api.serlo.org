@@ -49,14 +49,14 @@ export const resolvers: AbstractUuidResolvers = {
     uuid: createMutationNamespace(),
   },
   UuidMutation: {
-    async setState(_parent, payload, { dataSources, user }) {
-      assertUserIsAuthenticated(user)
+    async setState(_parent, payload, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
 
       const { id, trashed } = payload.input
       const idArray = Array.isArray(id) ? id : [id]
       const res = await dataSources.model.serlo.setUuidState({
         id: idArray,
-        userId: user,
+        userId,
         trashed: trashed,
       })
       return {
