@@ -25,7 +25,7 @@ export function initializeSentry(context: string) {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
     environment: process.env.ENVIRONMENT,
-    release: `api.serlo.org-${context}@${process.env.npm_package_version}`,
+    release: `api.serlo.org-${context}@${process.env.SENTRY_RELEASE || ''}`,
   })
 }
 
