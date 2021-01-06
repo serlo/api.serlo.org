@@ -460,6 +460,11 @@ async function exec(): Promise<void> {
     {
       tagName: 'v0.16.0',
       date: '2021-01-06',
+      yanked: true,
+    },
+    {
+      tagName: 'v0.16.1',
+      date: '2021-01-06',
       breakingChanges: [
         'Rename `NotificationMutationPayload` to `NotificationSetStateResponse`.',
       ],
