@@ -84,14 +84,11 @@ export const resolvers: ThreadResolvers = {
       assertUserIsAuthenticated(userId)
       const commentPayload = await dataSources.model.serlo.createThread({
         ...payload,
-        userId: userId,
+        userId,
       })
       return commentPayload === null
         ? null
-        : {
-            __typename: ThreadDataType,
-            commentPayloads: [commentPayload],
-          }
+        : { __typename: ThreadDataType, commentPayloads: [commentPayload] }
     },
   },
 }

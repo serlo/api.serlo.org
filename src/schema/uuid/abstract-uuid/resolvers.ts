@@ -56,7 +56,7 @@ export const resolvers: AbstractUuidResolvers = {
       const idArray = Array.isArray(id) ? id : [id]
       const res = await dataSources.model.serlo.setUuidState({
         id: idArray,
-        userId: userId,
+        userId,
         trashed: trashed,
       })
       return {
