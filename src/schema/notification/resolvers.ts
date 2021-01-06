@@ -44,11 +44,11 @@ export const resolvers: NotificationResolvers = {
     async notifications(
       _parent,
       { unread, ...cursorPayload },
-      { dataSources, userId: user }
+      { dataSources, userId }
     ) {
-      assertUserIsAuthenticated(user)
+      assertUserIsAuthenticated(userId)
       const { notifications } = await dataSources.model.serlo.getNotifications({
-        id: user,
+        id: userId,
       })
       return resolveConnection<NotificationPayload>({
         nodes: notifications.filter((notification) => {
@@ -73,13 +73,13 @@ export const resolvers: NotificationResolvers = {
     notification: createMutationNamespace(),
   },
   NotificationMutation: {
-    async setState(_parent, payload, { dataSources, userId: user }) {
-      assertUserIsAuthenticated(user)
+    async setState(_parent, payload, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
       const { id, unread } = payload.input
       const idArray = Array.isArray(id) ? id : [id]
       const res = await dataSources.model.serlo.setNotificationState({
         id: idArray,
-        userId: user,
+        userId: userId,
         unread: unread,
       })
       //TODO: for new PR, return changed notification in record
