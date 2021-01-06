@@ -24,21 +24,31 @@ declare namespace NodeJS {
   import { LogLevelDesc } from 'loglevel'
 
   interface ProcessEnv {
+    /**
+     * Used by server and swr-queue-worker
+     */
     npm_package_version: string
-
-    ACTIVE_DONORS_SPREADSHEET_ID: string
-    SWR_QUEUE_DASHBOARD_PASSWORD: string
-    SWR_QUEUE_DASHBOARD_USERNAME: string
-    SWR_QUEUE_WORKER_CONCURRENCY: string
     ENVIRONMENT: string
-    GOOGLE_API_KEY: string
-    HYDRA_HOST: string
     LOG_LEVEL: LogLevelDesc | undefined
     REDIS_URL: string
     REDIS_URL_TEST: string | undefined
     SENTRY_DSN: string | undefined
+
+    /**
+     * Used by server only
+     */
+    ACTIVE_DONORS_SPREADSHEET_ID: string
+    GOOGLE_API_KEY: string
+    HYDRA_HOST: string
     SERLO_CLOUDFLARE_WORKER_SECRET: string
     SERLO_ORG_HOST: string
     SERLO_ORG_SECRET: string
+    SWR_QUEUE_DASHBOARD_PASSWORD: string
+    SWR_QUEUE_DASHBOARD_USERNAME: string
+
+    /**
+     * Used by swr-queue-worker only
+     */
+    SWR_QUEUE_WORKER_CONCURRENCY: string
   }
 }
