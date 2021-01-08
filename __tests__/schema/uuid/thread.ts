@@ -471,16 +471,7 @@ describe('createThread', () => {
   }
 })
 
-describe('setThreadState', () => {
-  const mutation = gql`
-    mutation setThreadState($input: ThreadSetThreadStateInput!) {
-      thread {
-        setThreadState(input: $input) {
-          success
-        }
-      }
-    }
-  `
+describe('setState mutations', () => {
   beforeEach(() =>
     global.server.use(
       rest.post(
@@ -503,57 +494,133 @@ describe('setThreadState', () => {
       )
     )
   )
-  test('deleting thread returns success', async () => {
-    await assertSuccessfulGraphQLMutation({
-      mutation,
-      client,
-      variables: {
-        input: { id: encodeThreadId(1), trashed: true },
-      },
-      data: {
-        thread: {
-          setThreadState: {
-            success: true,
-          },
-        },
-      },
-    })
-  })
 
-  test('mutation returns success: false on non existing id', async () => {
-    await assertSuccessfulGraphQLMutation({
-      mutation,
-      client,
-      variables: {
-        input: { id: encodeThreadId(4), trashed: true },
-      },
-      data: {
-        thread: {
-          setThreadState: {
-            success: false,
-          },
-        },
-      },
-    })
-  })
-
-  test('unauthenticated user gets error', async () => {
-    const client = createTestClient({ userId: null })
-    await assertFailingGraphQLMutation(
-      {
-        mutation,
-        variables: {
-          input: {
-            id: encodeThreadId(1),
-            trashed: true,
-          },
-        },
-        client,
-      },
-      (errors) => {
-        expect(errors[0].extensions?.code).toEqual('UNAUTHENTICATED')
+  describe('setThreadState', () => {
+    const mutation = gql`
+      mutation setThreadState($input: ThreadSetThreadStateInput!) {
+        thread {
+          setThreadState(input: $input) {
+            success
+          }
+        }
       }
-    )
+    `
+    test('deleting thread returns success', async () => {
+      await assertSuccessfulGraphQLMutation({
+        mutation,
+        client,
+        variables: {
+          input: { id: encodeThreadId(1), trashed: true },
+        },
+        data: {
+          thread: {
+            setThreadState: {
+              success: true,
+            },
+          },
+        },
+      })
+    })
+
+    test('mutation returns success: false on non existing id', async () => {
+      await assertSuccessfulGraphQLMutation({
+        mutation,
+        client,
+        variables: {
+          input: { id: encodeThreadId(4), trashed: true },
+        },
+        data: {
+          thread: {
+            setThreadState: {
+              success: false,
+            },
+          },
+        },
+      })
+    })
+
+    test('unauthenticated user gets error', async () => {
+      const client = createTestClient({ userId: null })
+      await assertFailingGraphQLMutation(
+        {
+          mutation,
+          variables: {
+            input: {
+              id: encodeThreadId(1),
+              trashed: true,
+            },
+          },
+          client,
+        },
+        (errors) => {
+          expect(errors[0].extensions?.code).toEqual('UNAUTHENTICATED')
+        }
+      )
+    })
+  })
+
+  describe('setCommentState', () => {
+    const mutation = gql`
+      mutation setCommentState($input: ThreadSetCommentStateInput!) {
+        thread {
+          setCommentState(input: $input) {
+            success
+          }
+        }
+      }
+    `
+    test('deleting comment returns success', async () => {
+      await assertSuccessfulGraphQLMutation({
+        mutation,
+        client,
+        variables: {
+          input: { id: 2, trashed: true },
+        },
+        data: {
+          thread: {
+            setCommentState: {
+              success: true,
+            },
+          },
+        },
+      })
+    })
+
+    test('mutation returns success: false on non existing id', async () => {
+      await assertSuccessfulGraphQLMutation({
+        mutation,
+        client,
+        variables: {
+          input: { id: 4, trashed: true },
+        },
+        data: {
+          thread: {
+            setCommentState: {
+              success: false,
+            },
+          },
+        },
+      })
+    })
+
+    test('unauthenticated user gets error', async () => {
+      const client = createTestClient({ userId: null })
+      await assertFailingGraphQLMutation(
+        {
+          mutation,
+          variables: {
+            input: {
+              id: 1,
+              trashed: true,
+            },
+          },
+          client,
+        },
+        (errors) => {
+          expect(errors[0].extensions?.code).toEqual('UNAUTHENTICATED')
+        }
+      )
+    })
   })
 })
 
