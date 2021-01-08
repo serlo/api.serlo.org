@@ -76,5 +76,5 @@ export function encodeThreadId(firstCommentId: number) {
 }
 
 export function decodeThreadId(threadId: string) {
-  return parseInt(Buffer.from(threadId).toString('utf-8').substr(1))
+  return parseInt(Buffer.from(threadId, 'base64').toString('ascii').substr(1))
 }
