@@ -92,9 +92,10 @@ export const resolvers: ThreadResolvers = {
       })
       const success = commentPayload !== null
       return {
-        record: success
-          ? { __typename: ThreadDataType, commentPayloads: [commentPayload] }
-          : null,
+        record:
+          commentPayload !== null
+            ? { __typename: ThreadDataType, commentPayloads: [commentPayload] }
+            : null,
         success,
         query: {},
       }
