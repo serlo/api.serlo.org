@@ -32,6 +32,8 @@ import {
   user,
 } from '../../../__fixtures__'
 import {
+  assertFailingGraphQLMutation,
+  assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   Client,
   createAliasHandler,
@@ -41,7 +43,7 @@ import {
 } from '../../__utils__'
 import { Service } from '~/internals/auth'
 import { CommentPayload, UuidPayload } from '~/schema/uuid'
-import { Instance } from '~/types'
+import { Instance, ThreadCreateThreadInput } from '~/types'
 
 let client: Client
 
@@ -181,28 +183,6 @@ describe('uuid["threads"]', () => {
     })
   })
 
-  test('property "updatedAt" of Thread', async () => {
-    setupThreads(article, [[comment1, comment2]])
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query propertyUpdatedAt($id: Int!) {
-          uuid(id: $id) {
-            threads {
-              nodes {
-                updatedAt
-              }
-            }
-          }
-        }
-      `,
-      variables: { id: article.id },
-      data: {
-        uuid: { threads: { nodes: [{ updatedAt: comment2.date }] } },
-      },
-      client,
-    })
-  })
-
   test('property "title" of Thread', async () => {
     setupThreads(article, [[comment1, comment2]])
     await assertSuccessfulGraphQLQuery({
@@ -264,28 +244,6 @@ describe('uuid["threads"]', () => {
       variables: { id: article.id },
       data: {
         uuid: { threads: { nodes: [{ archived: comment1.archived }] } },
-      },
-      client,
-    })
-  })
-
-  test('property "trashed" of Thread', async () => {
-    setupThreads(article, [[comment1, comment2]])
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query propertyTrashed($id: Int!) {
-          uuid(id: $id) {
-            threads {
-              nodes {
-                trashed
-              }
-            }
-          }
-        }
-      `,
-      variables: { id: article.id },
-      data: {
-        uuid: { threads: { nodes: [{ trashed: comment1.trashed }] } },
       },
       client,
     })
@@ -437,25 +395,27 @@ describe('uuid["threads"]', () => {
   })
 })
 
-/*
-
-TODO: Activate tests
 describe('createThread', () => {
+  //TODO: Add test that checks if comments are also accessible here. Currently not working imo.
   test('thread mutation', async () => {
-    createAddCommentMutation(article.id, comment1.date)
+    setupComments(article.id, comment1.date)
 
     await assertSuccessfulGraphQLMutation({
       ...createCreateThreadMutation({
-        title: 'New comment',
-        content: 'Content of new comment',
+        title: 'First comment in new thread',
+        content: 'first!',
         objectId: article.id,
       }),
       client,
       data: {
-        createThread: {
-          archived: false,
-          title: 'New comment',
-          trashed: false,
+        thread: {
+          createThread: {
+            success: true,
+            record: {
+              __typename: 'Thread',
+              archived: false,
+            },
+          },
         },
       },
     })
@@ -479,26 +439,27 @@ describe('createThread', () => {
     )
   })
 
-  function createCreateThreadMutation(variables: MutationCreateThreadArgs) {
+  function createCreateThreadMutation(variables: ThreadCreateThreadInput) {
     return {
       mutation: gql`
-        mutation createThread(
-          $title: String!
-          $content: String!
-          $objectId: Int!
-        ) {
-          createThread(title: $title, content: $content, objectId: $objectId) {
-            title
-            archived
-            trashed
+        mutation createThread($input: ThreadCreateThreadInput!) {
+          thread {
+            createThread(input: $input) {
+              success
+              record {
+                __typename
+                archived
+              }
+            }
           }
         }
       `,
-      variables,
+      variables: {
+        input: variables,
+      },
     }
   }
 })
-*/
 
 function setupThreads(uuidPayload: UuidPayload, threads: CommentPayload[][]) {
   const firstCommentIds = threads.map((thread) => thread[0].id)
@@ -545,10 +506,9 @@ function setupThreads(uuidPayload: UuidPayload, threads: CommentPayload[][]) {
   )
 }
 
-/*
-function createAddCommentMutation(id: number, date: string) {
+function setupComments(id: number, date: string) {
   global.server.use(
-    rest.post<MutationCreateThreadArgs & { userId: number }>(
+    rest.post<ThreadCreateThreadInput & { userId: number }>(
       `http://de.${process.env.SERLO_ORG_HOST}/api/add-comment`,
       (req, res, ctx) => {
         if (typeof req.body === 'string' || typeof req.body === 'undefined')
@@ -572,4 +532,3 @@ function createAddCommentMutation(id: number, date: string) {
     )
   )
 }
-*/

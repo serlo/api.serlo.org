@@ -3,6 +3,7 @@ type Thread {
   createdAt: DateTime!
   title: String
   archived: Boolean!
+  object: AbstractUuid!
   comments(
     after: String
     before: String

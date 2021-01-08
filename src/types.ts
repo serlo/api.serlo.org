@@ -375,7 +375,6 @@ export type NotificationSetStateInput = {
 
 export type NotificationSetStateResponse = {
   __typename?: 'NotificationSetStateResponse';
-  record?: Maybe<AbstractNotificationEvent>;
   success: Scalars['Boolean'];
   query: Query;
 };
@@ -1368,6 +1367,7 @@ export type Thread = {
   createdAt: Scalars['DateTime'];
   title?: Maybe<Scalars['String']>;
   archived: Scalars['Boolean'];
+  object: AbstractUuid;
   comments: CommentConnection;
 };
 

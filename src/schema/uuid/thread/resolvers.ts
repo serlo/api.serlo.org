@@ -24,7 +24,7 @@ import { ApolloError } from 'apollo-server'
 import { resolveConnection } from '../../connection'
 import { createUuidResolvers } from '../abstract-uuid'
 import { UserPayload } from '../user'
-import { CommentPayload, ThreadResolvers } from './types'
+import { CommentPayload, ThreadDataType, ThreadResolvers } from './types'
 import { makeThreadId } from './utils'
 import {
   assertUserIsAuthenticated,
@@ -45,6 +45,15 @@ export const resolvers: ThreadResolvers = {
     },
     archived(thread, _args) {
       return thread.commentPayloads[0].archived
+    },
+    async object(thread, _args, { dataSources }) {
+      const object = await dataSources.model.serlo.getUuid({
+        id: thread.commentPayloads[0].parentId,
+      })
+      if (object === null) {
+        throw new ApolloError('Thread points to non-existent uuid')
+      }
+      return object
     },
     comments(thread, cursorPayload) {
       return resolveConnection<CommentPayload>({
@@ -81,30 +90,12 @@ export const resolvers: ThreadResolvers = {
         ...payload,
         userId,
       })
-
-      if (commentPayload === null) {
-        return {
-          record: null,
-          success: false,
-          query: {},
-        }
-      }
-
-      //TODO: how do I correctly return a thread there?
-      // (instead of building it manually…?)
-      // const { date, title, id, archived } = commentPayload
-      // const thread = {
-      //   __typename: ThreadDataType,
-      //   id: makeThreadId(id),
-      //   createdAt: date,
-      //   title: title,
-      //   archived: archived,
-      //   comment: commentPayload,
-      // }
-
+      const success = commentPayload !== null
       return {
-        record: null,
-        success: true,
+        record: success
+          ? { __typename: ThreadDataType, commentPayloads: [commentPayload] }
+          : null,
+        success,
         query: {},
       }
     },

@@ -82,9 +82,7 @@ export const resolvers: NotificationResolvers = {
         userId: userId,
         unread: unread,
       })
-      //TODO: for new PR, return changed notification in record
       return {
-        record: null,
         success: res.every(Boolean),
         query: {},
       }
