@@ -71,6 +71,10 @@ export function createThreadResolvers(): Pick<UuidResolvers, 'threads'> {
   }
 }
 
-export function makeThreadId(firstCommentId: number) {
+export function encodeThreadId(firstCommentId: number) {
   return Buffer.from(`t${firstCommentId}`).toString('base64')
+}
+
+export function decodeThreadId(threadId: string) {
+  return parseInt(Buffer.from(threadId).toString('utf-8').substr(1))
 }
