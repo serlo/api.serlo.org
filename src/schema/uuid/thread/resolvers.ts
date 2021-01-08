@@ -100,8 +100,8 @@ export const resolvers: ThreadResolvers = {
         query: {},
       }
     },
+    //TODO: add Caros code
     async createComment(_parent, payload, { dataSources, userId }) {
-      //TODO: add Caros code here
       assertUserIsAuthenticated(userId)
       const commentPayload = await dataSources.model.serlo.createThread({
         objectId: 0,
@@ -115,8 +115,8 @@ export const resolvers: ThreadResolvers = {
         query: {},
       }
     },
+    //TODO: add function in serlo model and define endpoint needs
     async setThreadArchived(_parent, payload, { dataSources, userId }) {
-      //TODO: add function in serlo model…
       console.log(dataSources)
       assertUserIsAuthenticated(userId)
       await new Promise((resolve) => setTimeout(resolve, 3000))
@@ -148,7 +148,7 @@ export const resolvers: ThreadResolvers = {
         trashed,
       })
       return {
-        success: res.every(Boolean),
+        success: res[0] !== null,
         query: {},
       }
     },
