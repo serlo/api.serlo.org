@@ -87,7 +87,7 @@ export const resolvers: ThreadResolvers = {
     async createThread(_parent, payload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       const commentPayload = await dataSources.model.serlo.createThread({
-        ...payload,
+        ...payload.input,
         userId,
       })
       const success = commentPayload !== null
@@ -105,7 +105,7 @@ export const resolvers: ThreadResolvers = {
       assertUserIsAuthenticated(userId)
       const commentPayload = await dataSources.model.serlo.createThread({
         objectId: 0,
-        ...payload,
+        ...payload.input,
         userId,
       })
       console.log(commentPayload)
@@ -127,7 +127,7 @@ export const resolvers: ThreadResolvers = {
     },
     async setThreadState(_parent, payload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
-      const { id, trashed } = payload
+      const { id, trashed } = payload.input
       const firstCommentId = decodeThreadId(id)
       const res = await dataSources.model.serlo.setUuidState({
         id: [firstCommentId],
@@ -135,13 +135,13 @@ export const resolvers: ThreadResolvers = {
         trashed,
       })
       return {
-        success: res.every(Boolean),
+        success: res[0] !== null,
         query: {},
       }
     },
     async setCommentState(_parent, payload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
-      const { id, trashed } = payload
+      const { id, trashed } = payload.input
       const res = await dataSources.model.serlo.setUuidState({
         id: [id],
         userId,

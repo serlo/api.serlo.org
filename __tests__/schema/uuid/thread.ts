@@ -43,6 +43,7 @@ import {
 } from '../../__utils__'
 import { Service } from '~/internals/auth'
 import { CommentPayload, UuidPayload } from '~/schema/uuid'
+import { encodeThreadId } from '~/schema/uuid/thread/utils'
 import { Instance, ThreadCreateThreadInput } from '~/types'
 
 let client: Client
@@ -396,7 +397,7 @@ describe('uuid["threads"]', () => {
 })
 
 describe('createThread', () => {
-  test('thread mutation', async () => {
+  test('successful mutation returns thread', async () => {
     setupComments(article.id, comment1.date)
 
     await assertSuccessfulGraphQLMutation({
@@ -426,7 +427,7 @@ describe('createThread', () => {
     })
   })
 
-  test('No thread is created with unauthenticated user', async () => {
+  test('unauthenticated user gets error', async () => {
     const client = createTestClient({ userId: null })
 
     await assertFailingGraphQLMutation(
@@ -468,6 +469,92 @@ describe('createThread', () => {
       },
     }
   }
+})
+
+describe('setThreadState', () => {
+  const mutation = gql`
+    mutation setThreadState($input: ThreadSetThreadStateInput!) {
+      thread {
+        setThreadState(input: $input) {
+          success
+        }
+      }
+    }
+  `
+  beforeEach(() =>
+    global.server.use(
+      rest.post(
+        `http://de.${process.env.SERLO_ORG_HOST}/api/set-uuid-state/:id`,
+        (req, res, ctx) => {
+          const { userId, trashed } = req.body as {
+            userId: number
+            trashed: boolean
+          }
+          const id = parseInt(req.params.id)
+
+          if (userId !== user.id) return res(ctx.status(403))
+
+          //TODO: how does the endpoint return here actually? 404 or null?
+          // if (![1, 2, 3].includes(id)) return res(ctx.status(404))
+          if (![1, 2, 3].includes(id)) return res(ctx.json(null))
+
+          return res(ctx.json({ ...comment, trashed: trashed }))
+        }
+      )
+    )
+  )
+  test('deleting thread returns success', async () => {
+    await assertSuccessfulGraphQLMutation({
+      mutation,
+      client,
+      variables: {
+        input: { id: encodeThreadId(1), trashed: true },
+      },
+      data: {
+        thread: {
+          setThreadState: {
+            success: true,
+          },
+        },
+      },
+    })
+  })
+
+  test('mutation returns success: false on non existing id', async () => {
+    await assertSuccessfulGraphQLMutation({
+      mutation,
+      client,
+      variables: {
+        input: { id: encodeThreadId(4), trashed: true },
+      },
+      data: {
+        thread: {
+          setThreadState: {
+            success: false,
+          },
+        },
+      },
+    })
+  })
+
+  test('unauthenticated user gets error', async () => {
+    const client = createTestClient({ userId: null })
+    await assertFailingGraphQLMutation(
+      {
+        mutation,
+        variables: {
+          input: {
+            id: encodeThreadId(1),
+            trashed: true,
+          },
+        },
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('UNAUTHENTICATED')
+      }
+    )
+  })
 })
 
 function setupThreads(uuidPayload: UuidPayload, threads: CommentPayload[][]) {
@@ -517,7 +604,7 @@ function setupThreads(uuidPayload: UuidPayload, threads: CommentPayload[][]) {
 
 function setupComments(id: number, date: string) {
   global.server.use(
-    rest.post<{ input: ThreadCreateThreadInput; userId: number }>(
+    rest.post<ThreadCreateThreadInput & { userId: number }>(
       `http://de.${process.env.SERLO_ORG_HOST}/api/add-comment`,
       (req, res, ctx) => {
         if (typeof req.body === 'string' || typeof req.body === 'undefined')
@@ -525,15 +612,15 @@ function setupComments(id: number, date: string) {
         return res(
           ctx.json({
             id,
-            title: req.body.input.title,
+            title: req.body.title,
             trashed: false,
             alias: null,
             __typename: 'Comment',
             authorId: req.body.userId,
             date,
             archived: false,
-            content: req.body.input.content,
-            parentId: req.body.input.objectId,
+            content: req.body.content,
+            parentId: req.body.objectId,
             childrenIds: [],
           })
         )

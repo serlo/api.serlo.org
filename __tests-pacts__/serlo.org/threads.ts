@@ -58,3 +58,5 @@ test('Comment', async () => {
   })
   await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/uuid/${comment.id}`)
 })
+
+// TODO: Add tests for thread mutations

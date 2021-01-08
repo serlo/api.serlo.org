@@ -31,15 +31,15 @@ import {
 import {
   Scalars,
   ThreadCommentsArgs,
-  ThreadCreateCommentInput,
   ThreadCreateCommentResponse,
-  ThreadCreateThreadInput,
   ThreadCreateThreadResponse,
-  ThreadSetCommentStateInput,
+  ThreadMutationCreateCommentArgs,
+  ThreadMutationCreateThreadArgs,
+  ThreadMutationSetCommentStateArgs,
+  ThreadMutationSetThreadArchivedArgs,
+  ThreadMutationSetThreadStateArgs,
   ThreadSetCommentStateResponse,
-  ThreadSetThreadArchivedInput,
   ThreadSetThreadArchivedResponse,
-  ThreadSetThreadStateInput,
   ThreadSetThreadStateResponse,
 } from '~/types'
 
@@ -76,23 +76,23 @@ export interface ThreadResolvers {
   }
   ThreadMutation: {
     createThread: MutationResolver<
-      ThreadCreateThreadInput,
+      ThreadMutationCreateThreadArgs,
       OverwriteRecord<ThreadCreateThreadResponse, ThreadData | null>
     >
     createComment: MutationResolver<
-      ThreadCreateCommentInput,
+      ThreadMutationCreateCommentArgs,
       ThreadCreateCommentResponse
     >
     setThreadArchived: MutationResolver<
-      ThreadSetThreadArchivedInput,
+      ThreadMutationSetThreadArchivedArgs,
       ThreadSetThreadArchivedResponse
     >
     setThreadState: MutationResolver<
-      ThreadSetThreadStateInput,
+      ThreadMutationSetThreadStateArgs,
       ThreadSetThreadStateResponse
     >
     setCommentState: MutationResolver<
-      ThreadSetCommentStateInput,
+      ThreadMutationSetCommentStateArgs,
       ThreadSetCommentStateResponse
     >
   }
