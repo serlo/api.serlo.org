@@ -32,8 +32,6 @@ import {
   user,
 } from '../../../__fixtures__'
 import {
-  assertFailingGraphQLMutation,
-  assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   Client,
   createAliasHandler,
@@ -43,7 +41,7 @@ import {
 } from '../../__utils__'
 import { Service } from '~/internals/auth'
 import { CommentPayload, UuidPayload } from '~/schema/uuid'
-import { Instance, MutationCreateThreadArgs } from '~/types'
+import { Instance } from '~/types'
 
 let client: Client
 
@@ -439,6 +437,9 @@ describe('uuid["threads"]', () => {
   })
 })
 
+/*
+
+TODO: Activate tests
 describe('createThread', () => {
   test('thread mutation', async () => {
     createAddCommentMutation(article.id, comment1.date)
@@ -497,6 +498,7 @@ describe('createThread', () => {
     }
   }
 })
+*/
 
 function setupThreads(uuidPayload: UuidPayload, threads: CommentPayload[][]) {
   const firstCommentIds = threads.map((thread) => thread[0].id)
@@ -543,6 +545,7 @@ function setupThreads(uuidPayload: UuidPayload, threads: CommentPayload[][]) {
   )
 }
 
+/*
 function createAddCommentMutation(id: number, date: string) {
   global.server.use(
     rest.post<MutationCreateThreadArgs & { userId: number }>(
@@ -569,3 +572,4 @@ function createAddCommentMutation(id: number, date: string) {
     )
   )
 }
+*/

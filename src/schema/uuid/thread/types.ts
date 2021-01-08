@@ -20,10 +20,27 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Connection } from '../../connection'
-import { DiscriminatorType, UuidPayload, UuidResolvers } from '../abstract-uuid'
+import { DiscriminatorType, UuidResolvers } from '../abstract-uuid'
 import { UserPayload } from '../user'
-import { MutationResolver, Resolver } from '~/internals/graphql'
-import { MutationCreateThreadArgs, Scalars, ThreadCommentsArgs } from '~/types'
+import {
+  MutationNamespace,
+  MutationResolver,
+  Resolver,
+} from '~/internals/graphql'
+import {
+  Scalars,
+  ThreadCommentsArgs,
+  ThreadCreateCommentInput,
+  ThreadCreateCommentResponse,
+  ThreadCreateThreadInput,
+  ThreadCreateThreadResponse,
+  ThreadSetCommentStateInput,
+  ThreadSetCommentStateResponse,
+  ThreadSetThreadArchivedInput,
+  ThreadSetThreadArchivedResponse,
+  ThreadSetThreadStateInput,
+  ThreadSetThreadStateResponse,
+} from '~/types'
 
 export interface ThreadsPayload {
   firstCommentIds: number[]
@@ -38,12 +55,10 @@ export interface ThreadData {
 
 export interface ThreadResolvers {
   Thread: {
+    id: Resolver<ThreadData, never, string | null>
     createdAt: Resolver<ThreadData, never, Scalars['DateTime']>
-    updatedAt: Resolver<ThreadData, never, Scalars['DateTime']>
     title: Resolver<ThreadData, never, string | null>
     archived: Resolver<ThreadData, never, boolean>
-    trashed: Resolver<ThreadData, never, boolean>
-    object: Resolver<ThreadData, never, UuidPayload>
     comments: Resolver<
       ThreadData,
       ThreadCommentsArgs,
@@ -55,7 +70,29 @@ export interface ThreadResolvers {
     author: Resolver<CommentPayload, never, UserPayload>
   } & UuidResolvers
   Mutation: {
-    createThread: MutationResolver<MutationCreateThreadArgs, ThreadData | null>
+    thread: MutationNamespace
+  }
+  ThreadMutation: {
+    createThread: MutationResolver<
+      ThreadCreateThreadInput,
+      ThreadCreateThreadResponse
+    >
+    createComment: MutationResolver<
+      ThreadCreateCommentInput,
+      ThreadCreateCommentResponse
+    >
+    setThreadArchived: MutationResolver<
+      ThreadSetThreadArchivedInput,
+      ThreadSetThreadArchivedResponse
+    >
+    setThreadState: MutationResolver<
+      ThreadSetThreadStateInput,
+      ThreadSetThreadStateResponse
+    >
+    setCommentState: MutationResolver<
+      ThreadSetCommentStateInput,
+      ThreadSetCommentStateResponse
+    >
   }
 }
 

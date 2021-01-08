@@ -20,21 +20,25 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { ApolloError } from 'apollo-server'
-import * as R from 'ramda'
 
 import { resolveConnection } from '../../connection'
-import { createUuidResolvers, UuidPayload } from '../abstract-uuid'
+import { createUuidResolvers } from '../abstract-uuid'
 import { UserPayload } from '../user'
-import { CommentPayload, ThreadDataType, ThreadResolvers } from './types'
-import { assertUserIsAuthenticated } from '~/schema/utils'
+import { CommentPayload, ThreadResolvers } from './types'
+import { makeThreadId } from './utils'
+import {
+  assertUserIsAuthenticated,
+  createMutationNamespace,
+} from '~/schema/utils'
 
+//TODO: only export untrashed threads
 export const resolvers: ThreadResolvers = {
   Thread: {
-    createdAt(thread, _args) {
-      return thread.commentPayloads.map((comment) => comment.date).reduce(R.min)
+    id(thread, _args) {
+      return makeThreadId(thread.commentPayloads[0].id)
     },
-    updatedAt(thread, _args) {
-      return thread.commentPayloads.map((comment) => comment.date).reduce(R.max)
+    createdAt(thread, _args) {
+      return thread.commentPayloads[0].date
     },
     title(thread, _args) {
       return thread.commentPayloads[0].title
@@ -42,21 +46,9 @@ export const resolvers: ThreadResolvers = {
     archived(thread, _args) {
       return thread.commentPayloads[0].archived
     },
-    trashed(thread, _args) {
-      return thread.commentPayloads[0].trashed
-    },
-    async object(thread, _args, { dataSources }) {
-      const object = (await dataSources.model.serlo.getUuid({
-        id: thread.commentPayloads[0].parentId,
-      })) as UuidPayload | null
-      if (object === null) {
-        throw new ApolloError('Thread points to non-existent uuid')
-      }
-      return object
-    },
     comments(thread, cursorPayload) {
       return resolveConnection<CommentPayload>({
-        nodes: thread.commentPayloads,
+        nodes: thread.commentPayloads.filter((comment) => !comment.trashed),
         payload: cursorPayload,
         createCursor(node) {
           return node.id.toString()
@@ -80,15 +72,93 @@ export const resolvers: ThreadResolvers = {
     },
   },
   Mutation: {
+    thread: createMutationNamespace(),
+  },
+  ThreadMutation: {
     async createThread(_parent, payload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       const commentPayload = await dataSources.model.serlo.createThread({
         ...payload,
         userId,
       })
-      return commentPayload === null
-        ? null
-        : { __typename: ThreadDataType, commentPayloads: [commentPayload] }
+
+      if (commentPayload === null) {
+        return {
+          record: null,
+          success: false,
+          query: {},
+        }
+      }
+
+      //TODO: how do I correctly return a thread there?
+      // (instead of building it manually…?)
+      // const { date, title, id, archived } = commentPayload
+      // const thread = {
+      //   __typename: ThreadDataType,
+      //   id: makeThreadId(id),
+      //   createdAt: date,
+      //   title: title,
+      //   archived: archived,
+      //   comment: commentPayload,
+      // }
+
+      return {
+        record: null,
+        success: true,
+        query: {},
+      }
+    },
+    async createComment(_parent, payload, { dataSources, userId }) {
+      //TODO: add Caros code here
+      assertUserIsAuthenticated(userId)
+      const commentPayload = await dataSources.model.serlo.createThread({
+        objectId: 0,
+        ...payload,
+        userId,
+      })
+      console.log(commentPayload)
+      return {
+        record: null,
+        success: true,
+        query: {},
+      }
+    },
+    async setThreadArchived(_parent, payload, { dataSources, userId }) {
+      //TODO: add function in serlo model…
+      console.log(dataSources)
+      assertUserIsAuthenticated(userId)
+      await new Promise((resolve) => setTimeout(resolve, 3000))
+      return {
+        success: true,
+        query: {},
+      }
+    },
+    async setThreadState(_parent, payload, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+      const { id, trashed } = payload
+      //TODO: decode b64 encoded strgin
+      const res = await dataSources.model.serlo.setUuidState({
+        id: [parseInt(id)],
+        userId,
+        trashed,
+      })
+      return {
+        success: res.every(Boolean),
+        query: {},
+      }
+    },
+    async setCommentState(_parent, payload, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+      const { id, trashed } = payload
+      const res = await dataSources.model.serlo.setUuidState({
+        id: [id],
+        userId,
+        trashed,
+      })
+      return {
+        success: res.every(Boolean),
+        query: {},
+      }
     },
   },
 }
