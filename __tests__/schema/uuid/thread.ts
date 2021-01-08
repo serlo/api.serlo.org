@@ -245,9 +245,11 @@ describe('uuid["threads"]', () => {
       query: gql`
         query propertyTitle($id: Int!) {
           uuid(id: $id) {
-            threads {
-              nodes {
-                title
+            ... on ThreadAware {
+              threads {
+                nodes {
+                  title
+                }
               }
             }
           }
