@@ -85,9 +85,18 @@ export type AbstractRevision = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
     alias?: Maybe<Scalars['String']>;
+    threads: ThreadsConnection;
     author: User;
     date: Scalars['DateTime'];
     content: Scalars['String'];
+};
+
+// @public (undocumented)
+export type AbstractRevisionThreadsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)

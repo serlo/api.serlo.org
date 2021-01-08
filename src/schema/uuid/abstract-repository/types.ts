@@ -71,7 +71,7 @@ export type RevisionType = EntityRevisionType | DiscriminatorType.PageRevision
 
 export type RevisionPayload = EntityRevisionPayload | PageRevisionPayload
 export interface AbstractRevisionPayload
-  extends Omit<AbstractRevision, 'author' | 'repository'> {
+  extends Omit<AbstractRevision, 'author' | 'repository' | 'threads'> {
   __typename: RevisionType
   alias: null
   authorId: number
