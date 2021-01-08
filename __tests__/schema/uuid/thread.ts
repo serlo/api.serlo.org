@@ -396,7 +396,6 @@ describe('uuid["threads"]', () => {
 })
 
 describe('createThread', () => {
-  //TODO: Add test that checks if comments are also accessible here. Currently not working imo.
   test('thread mutation', async () => {
     setupComments(article.id, comment1.date)
 
@@ -412,8 +411,14 @@ describe('createThread', () => {
           createThread: {
             success: true,
             record: {
-              __typename: 'Thread',
               archived: false,
+              comments: {
+                nodes: [
+                  {
+                    content: 'first!',
+                  },
+                ],
+              },
             },
           },
         },
@@ -447,8 +452,12 @@ describe('createThread', () => {
             createThread(input: $input) {
               success
               record {
-                __typename
                 archived
+                comments {
+                  nodes {
+                    content
+                  }
+                }
               }
             }
           }
@@ -508,7 +517,7 @@ function setupThreads(uuidPayload: UuidPayload, threads: CommentPayload[][]) {
 
 function setupComments(id: number, date: string) {
   global.server.use(
-    rest.post<ThreadCreateThreadInput & { userId: number }>(
+    rest.post<{ input: ThreadCreateThreadInput; userId: number }>(
       `http://de.${process.env.SERLO_ORG_HOST}/api/add-comment`,
       (req, res, ctx) => {
         if (typeof req.body === 'string' || typeof req.body === 'undefined')
@@ -516,15 +525,15 @@ function setupComments(id: number, date: string) {
         return res(
           ctx.json({
             id,
-            title: req.body.title,
+            title: req.body.input.title,
             trashed: false,
             alias: null,
             __typename: 'Comment',
             authorId: req.body.userId,
             date,
             archived: false,
-            content: req.body.content,
-            parentId: req.body.objectId,
+            content: req.body.input.content,
+            parentId: req.body.input.objectId,
             childrenIds: [],
           })
         )
