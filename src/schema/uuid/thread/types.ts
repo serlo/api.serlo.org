@@ -20,11 +20,12 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Connection } from '../../connection'
-import { DiscriminatorType, UuidResolvers } from '../abstract-uuid'
+import { DiscriminatorType, UuidPayload, UuidResolvers } from '../abstract-uuid'
 import { UserPayload } from '../user'
 import {
   MutationNamespace,
   MutationResolver,
+  OverwriteRecord,
   Resolver,
 } from '~/internals/graphql'
 import {
@@ -59,6 +60,7 @@ export interface ThreadResolvers {
     createdAt: Resolver<ThreadData, never, Scalars['DateTime']>
     title: Resolver<ThreadData, never, string | null>
     archived: Resolver<ThreadData, never, boolean>
+    object: Resolver<ThreadData, never, UuidPayload>
     comments: Resolver<
       ThreadData,
       ThreadCommentsArgs,
@@ -75,7 +77,7 @@ export interface ThreadResolvers {
   ThreadMutation: {
     createThread: MutationResolver<
       ThreadCreateThreadInput,
-      ThreadCreateThreadResponse
+      OverwriteRecord<ThreadCreateThreadResponse, ThreadData | null>
     >
     createComment: MutationResolver<
       ThreadCreateCommentInput,

@@ -39,6 +39,8 @@ export type MutationResolver<A, T> = Resolver<
     ? Omit<T, 'query'> & { query: Record<string, never> }
     : T
 >
+export type OverwriteRecord<T, R> = Omit<T, 'record'> & { record: R | null }
+
 export type TypeResolver<T> = (type: T) => string
 
 export type MutationNamespace = MutationResolver<never, Record<string, never>>
