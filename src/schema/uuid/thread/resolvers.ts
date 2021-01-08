@@ -22,10 +22,10 @@
 import { ApolloError } from 'apollo-server'
 
 import { resolveConnection } from '../../connection'
-import { createUuidResolvers } from '../abstract-uuid'
+import { createUuidResolvers, UuidPayload } from '../abstract-uuid'
 import { UserPayload } from '../user'
 import { CommentPayload, ThreadDataType, ThreadResolvers } from './types'
-import { makeThreadId } from './utils'
+import { decodeThreadId, encodeThreadId } from './utils'
 import {
   assertUserIsAuthenticated,
   createMutationNamespace,
@@ -35,7 +35,7 @@ import {
 export const resolvers: ThreadResolvers = {
   Thread: {
     id(thread, _args) {
-      return makeThreadId(thread.commentPayloads[0].id)
+      return encodeThreadId(thread.commentPayloads[0].id)
     },
     createdAt(thread, _args) {
       return thread.commentPayloads[0].date
@@ -47,9 +47,9 @@ export const resolvers: ThreadResolvers = {
       return thread.commentPayloads[0].archived
     },
     async object(thread, _args, { dataSources }) {
-      const object = await dataSources.model.serlo.getUuid({
+      const object = (await dataSources.model.serlo.getUuid({
         id: thread.commentPayloads[0].parentId,
-      })
+      })) as UuidPayload | null
       if (object === null) {
         throw new ApolloError('Thread points to non-existent uuid')
       }
@@ -128,9 +128,9 @@ export const resolvers: ThreadResolvers = {
     async setThreadState(_parent, payload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       const { id, trashed } = payload
-      //TODO: decode b64 encoded strgin
+      const firstCommentId = decodeThreadId(id)
       const res = await dataSources.model.serlo.setUuidState({
-        id: [parseInt(id)],
+        id: [firstCommentId],
         userId,
         trashed,
       })

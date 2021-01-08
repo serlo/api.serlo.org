@@ -1807,14 +1807,6 @@ export type VideoThreadsArgs = {
 };
 
 
-// Warnings were encountered during analysis:
-//
-// src/schema/uuid/thread/resolvers.ts:49:11 - (TS2322) Type '{ id(thread: ThreadData, _args: never): string; createdAt(thread: ThreadData, _args: never): string; title(thread: ThreadData, _args: never): string | null; archived(thread: ThreadData, _args: never): boolean; object(thread: any, _args: any, { dataSources }: { ...; }): Promise<...>; comments(thread: ThreadData, curs...' is not assignable to type '{ id: Resolver<ThreadData, never, string | null>; createdAt: Resolver<ThreadData, never, string>; title: Resolver<ThreadData, never, string | null>; archived: Resolver<...>; comments: Resolver<...>; }'.
-//   Object literal may only specify known properties, and 'object' does not exist in type '{ id: Resolver<ThreadData, never, string | null>; createdAt: Resolver<ThreadData, never, string>; title: Resolver<ThreadData, never, string | null>; archived: Resolver<...>; comments: Resolver<...>; }'.
-// src/schema/uuid/thread/resolvers.ts:49:18 - (TS7006) Parameter 'thread' implicitly has an 'any' type.
-// src/schema/uuid/thread/resolvers.ts:49:26 - (TS7006) Parameter '_args' implicitly has an 'any' type.
-// src/schema/uuid/thread/resolvers.ts:49:35 - (TS7031) Binding element 'dataSources' implicitly has an 'any' type.
-
 // (No @packageDocumentation comment for this package)
 
 ```
