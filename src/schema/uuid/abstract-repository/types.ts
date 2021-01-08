@@ -113,7 +113,8 @@ export interface RepositoryResolvers<
 export interface RevisionResolvers<
   E extends AbstractRepositoryPayload,
   R extends AbstractRevisionPayload
-> extends UuidResolvers {
+> extends UuidResolvers,
+    ThreadAwareResolvers {
   author: Resolver<R, never, Partial<UserPayload> | null>
   repository: Resolver<R, never, E | null>
 }

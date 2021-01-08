@@ -90,6 +90,7 @@ export function createRevisionResolvers<
 >(): RevisionResolvers<E, R> {
   return {
     ...createUuidResolvers(),
+    ...createThreadResolvers(),
     author(entityRevision, _args, context, info) {
       return resolveUser({ id: entityRevision.authorId }, context, info)
     },

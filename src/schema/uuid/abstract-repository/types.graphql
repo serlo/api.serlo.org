@@ -25,6 +25,14 @@ interface AbstractRevision {
   trashed: Boolean!
   alias: String
 
+  # extends ThreadAware
+  threads(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ThreadsConnection!
+
   # Implicitly has the following field
   # repository: AbstractRepository!
   author: User!
