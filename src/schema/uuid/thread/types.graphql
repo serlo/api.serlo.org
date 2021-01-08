@@ -1,10 +1,8 @@
 type Thread {
+  id: String!
   createdAt: DateTime!
-  updatedAt: DateTime!
   title: String
   archived: Boolean!
-  trashed: Boolean!
-  object: AbstractUuid!
   comments(
     after: String
     before: String
@@ -15,10 +13,10 @@ type Thread {
 
 type Comment implements AbstractUuid {
   id: Int!
-  trashed: Boolean!
-  alias: String
   title: String!
   content: String!
+  alias: String!
+  trashed: Boolean!
   archived: Boolean!
   createdAt: DateTime!
   author: User!
@@ -63,5 +61,68 @@ type CommentEdge {
 }
 
 extend type Mutation {
-  createThread(title: String!, content: String!, objectId: Int!): Thread
+  thread: ThreadMutation!
+}
+
+type ThreadMutation {
+  createThread(input: ThreadCreateThreadInput!): ThreadCreateThreadResponse
+  createComment(input: ThreadCreateCommentInput!): ThreadCreateCommentResponse
+  setThreadArchived(
+    input: ThreadSetThreadArchivedInput!
+  ): ThreadSetThreadArchivedResponse
+  setThreadState(
+    input: ThreadSetThreadStateInput!
+  ): ThreadSetThreadStateResponse
+  setCommentState(
+    input: ThreadSetCommentStateInput!
+  ): ThreadSetCommentStateResponse
+}
+
+input ThreadCreateThreadInput {
+  title: String!
+  content: String!
+  objectId: Int!
+}
+type ThreadCreateThreadResponse {
+  record: Thread
+  success: Boolean!
+  query: Query!
+}
+
+input ThreadCreateCommentInput {
+  title: String!
+  content: String!
+  threadId: Int!
+}
+type ThreadCreateCommentResponse {
+  record: Comment
+  success: Boolean!
+  query: Query!
+}
+
+input ThreadSetThreadArchivedInput {
+  id: String!
+  archived: Boolean!
+}
+type ThreadSetThreadArchivedResponse {
+  success: Boolean!
+  query: Query!
+}
+
+input ThreadSetThreadStateInput {
+  id: String!
+  trashed: Boolean!
+}
+type ThreadSetThreadStateResponse {
+  success: Boolean!
+  query: Query!
+}
+
+input ThreadSetCommentStateInput {
+  id: Int!
+  trashed: Boolean!
+}
+type ThreadSetCommentStateResponse {
+  success: Boolean!
+  query: Query!
 }
