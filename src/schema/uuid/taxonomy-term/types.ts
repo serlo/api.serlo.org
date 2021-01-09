@@ -26,6 +26,7 @@ import {
   DiscriminatorType,
   UuidResolvers,
 } from '../abstract-uuid'
+import { ThreadAwareResolvers } from '../thread'
 import { Resolver } from '~/internals/graphql'
 import { TaxonomyTerm, TaxonomyTermChildrenArgs } from '~/types'
 
@@ -46,5 +47,6 @@ export interface TaxonomyTermResolvers {
       Connection<AbstractUuidPayload>
     >
   } & NavigationChildResolvers<TaxonomyTermPayload> &
-    UuidResolvers
+    UuidResolvers &
+    ThreadAwareResolvers
 }

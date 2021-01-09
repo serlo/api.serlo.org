@@ -23,10 +23,14 @@ import { ApolloError } from 'apollo-server'
 
 import { resolveConnection } from '../../connection'
 import { isDefined } from '../../utils'
-import { UuidResolvers } from '../abstract-uuid'
-import { CommentPayload, ThreadData, ThreadDataType } from './types'
+import {
+  CommentPayload,
+  ThreadAwareResolvers,
+  ThreadData,
+  ThreadDataType,
+} from './types'
 
-export function createThreadResolvers(): Pick<UuidResolvers, 'threads'> {
+export function createThreadResolvers(): ThreadAwareResolvers {
   return {
     async threads(parent, cursorPayload, { dataSources }) {
       const { firstCommentIds } = await Promise.resolve(
