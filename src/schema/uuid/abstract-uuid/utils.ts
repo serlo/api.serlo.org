@@ -37,5 +37,5 @@ export function isUnsupportedUuid(payload: AbstractUuidPayload) {
 }
 
 export function createUuidResolvers(): UuidResolvers {
-  return { ...createAliasResolvers() }
+  return createAliasResolvers()
 }
