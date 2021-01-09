@@ -2,12 +2,6 @@ interface AbstractUuid {
   id: Int!
   trashed: Boolean!
   alias: String
-  threads(
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): ThreadsConnection!
 }
 
 type AbstractUuidConnection {

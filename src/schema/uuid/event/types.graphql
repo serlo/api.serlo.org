@@ -1,4 +1,4 @@
-type Event implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware {
+type Event implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware {
   id: Int!
   trashed: Boolean!
   threads(
@@ -27,7 +27,7 @@ type Event implements AbstractUuid & AbstractRepository & AbstractEntity & Abstr
   ): TaxonomyTermConnection!
 }
 
-type EventRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision {
+type EventRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {
   id: Int!
   author: User!
   trashed: Boolean!

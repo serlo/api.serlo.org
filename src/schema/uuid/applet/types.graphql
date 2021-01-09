@@ -1,4 +1,4 @@
-type Applet implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware {
+type Applet implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware {
   id: Int!
   trashed: Boolean!
   threads(
@@ -27,7 +27,7 @@ type Applet implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
   ): TaxonomyTermConnection!
 }
 
-type AppletRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision {
+type AppletRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {
   id: Int!
   author: User!
   trashed: Boolean!

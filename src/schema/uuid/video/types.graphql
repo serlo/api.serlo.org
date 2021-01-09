@@ -1,4 +1,4 @@
-type Video implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware {
+type Video implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware {
   id: Int!
   trashed: Boolean!
   threads(
@@ -27,7 +27,7 @@ type Video implements AbstractUuid & AbstractRepository & AbstractEntity & Abstr
   ): TaxonomyTermConnection!
 }
 
-type VideoRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision {
+type VideoRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {
   id: Int!
   author: User!
   trashed: Boolean!
