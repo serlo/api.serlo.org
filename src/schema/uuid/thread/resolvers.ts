@@ -117,11 +117,15 @@ export const resolvers: ThreadResolvers = {
     },
     //TODO: add function in serlo model and define endpoint needs
     async setThreadArchived(_parent, payload, { dataSources, userId }) {
-      console.log(dataSources)
       assertUserIsAuthenticated(userId)
-      await new Promise((resolve) => setTimeout(resolve, 3000))
+      const { id, archived } = payload.input
+      const res = await dataSources.model.serlo.archiveThread({
+        id: id,
+        userId,
+        archived,
+      })
       return {
-        success: true,
+        success: res !== null,
         query: {},
       }
     },
