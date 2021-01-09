@@ -624,6 +624,93 @@ describe('setState mutations', () => {
   })
 })
 
+describe('setThreadArchived', () => {
+  beforeEach(() =>
+    global.server.use(
+      rest.post(
+        `http://de.${process.env.SERLO_ORG_HOST}/api/archive-comment/:id`,
+        (req, res, ctx) => {
+          const { userId, archived } = req.body as {
+            userId: number
+            archived: boolean
+          }
+          const id = parseInt(req.params.id)
+
+          if (userId !== user.id) return res(ctx.status(403))
+
+          //TODO: what does the endpoint return here actually ? 404 or null ?
+          // if (![1, 2, 3].includes(id)) return res(ctx.status(404))
+          if (![1, 2, 3].includes(id)) return res(ctx.json(null))
+
+          return res(ctx.json({ ...comment, archived: archived }))
+        }
+      )
+    )
+  )
+
+  const mutation = gql`
+    mutation setThreadArchived($input: ThreadSetThreadArchivedInput!) {
+      thread {
+        setThreadArchived(input: $input) {
+          success
+        }
+      }
+    }
+  `
+  test('returns success', async () => {
+    await assertSuccessfulGraphQLMutation({
+      mutation,
+      client,
+      variables: {
+        input: { id: encodeThreadId(1), archived: true },
+      },
+      data: {
+        thread: {
+          setThreadArchived: {
+            success: true,
+          },
+        },
+      },
+    })
+  })
+
+  test('mutation returns success: false on non existing id', async () => {
+    await assertSuccessfulGraphQLMutation({
+      mutation,
+      client,
+      variables: {
+        input: { id: encodeThreadId(4), archived: true },
+      },
+      data: {
+        thread: {
+          setThreadArchived: {
+            success: false,
+          },
+        },
+      },
+    })
+  })
+
+  test('unauthenticated user gets error', async () => {
+    const client = createTestClient({ userId: null })
+    await assertFailingGraphQLMutation(
+      {
+        mutation,
+        variables: {
+          input: {
+            id: encodeThreadId(1),
+            archived: true,
+          },
+        },
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('UNAUTHENTICATED')
+      }
+    )
+  })
+})
+
 function setupThreads(uuidPayload: UuidPayload, threads: CommentPayload[][]) {
   const firstCommentIds = threads.map((thread) => thread[0].id)
   global.server.use(

@@ -51,7 +51,13 @@ import {
   NodeData,
   ThreadsPayload,
 } from '~/schema/uuid'
-import { Instance, License, ThreadCreateThreadInput } from '~/types'
+import { decodeThreadId } from '~/schema/uuid/thread/utils'
+import {
+  Instance,
+  License,
+  ThreadCreateThreadInput,
+  ThreadSetThreadArchivedInput,
+} from '~/types'
 
 export function createSerloModel({
   environment,
@@ -465,6 +471,18 @@ export function createSerloModel({
     },
   })
 
+  const archiveThread = createMutation<
+    ThreadSetThreadArchivedInput & { userId: number },
+    CommentPayload | null
+  >({
+    mutate: async (payload) => {
+      return await post<CommentPayload | null>({
+        path: `/api/archive-comment/${decodeThreadId(payload.id)}`,
+        body: payload,
+      })
+    },
+  })
+
   const getAllCacheKeys = createQuery<undefined, string[]>(
     {
       getCurrentValue: async () => {
@@ -498,6 +516,7 @@ export function createSerloModel({
 
   return {
     createThread,
+    archiveThread,
     getActiveAuthorIds,
     getActiveReviewerIds,
     getAlias,
