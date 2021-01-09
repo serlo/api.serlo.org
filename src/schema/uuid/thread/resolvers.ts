@@ -31,7 +31,7 @@ import {
   createMutationNamespace,
 } from '~/schema/utils'
 
-//TODO: only export untrashed threads
+//TODO: add filter for trashed threads and comments
 export const resolvers: ThreadResolvers = {
   Thread: {
     id(thread, _args) {
@@ -57,7 +57,7 @@ export const resolvers: ThreadResolvers = {
     },
     comments(thread, cursorPayload) {
       return resolveConnection<CommentPayload>({
-        nodes: thread.commentPayloads.filter((comment) => !comment.trashed),
+        nodes: thread.commentPayloads,
         payload: cursorPayload,
         createCursor(node) {
           return node.id.toString()
@@ -115,7 +115,7 @@ export const resolvers: ThreadResolvers = {
         query: {},
       }
     },
-    //TODO: add function in serlo model and define endpoint needs
+    //TODO: make issue to define endpoint needs
     async setThreadArchived(_parent, payload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       const { id, archived } = payload.input
