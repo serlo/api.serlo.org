@@ -91,4 +91,9 @@ export const resolvers: ThreadResolvers = {
         : { __typename: ThreadDataType, commentPayloads: [commentPayload] }
     },
   },
+  ThreadAware: {
+    __resolveType(object) {
+      return object.__typename
+    },
+  },
 }

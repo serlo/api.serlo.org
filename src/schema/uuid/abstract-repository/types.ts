@@ -28,6 +28,7 @@ import {
 } from '../abstract-entity'
 import { DiscriminatorType, UuidResolvers } from '../abstract-uuid'
 import { PagePayload, PageRevisionPayload } from '../page'
+import { ThreadAwareResolvers } from '../thread'
 import { UserPayload } from '../user'
 import { Resolver, TypeResolver } from '~/internals/graphql'
 import {
@@ -51,7 +52,14 @@ export type RepositoryType = EntityType | DiscriminatorType.Page
 
 export type RepositoryPayload = EntityPayload | PagePayload
 export interface AbstractRepositoryPayload
-  extends Omit<AbstractRepository, 'alias' | 'currentRevision' | 'license'> {
+  extends Omit<
+    AbstractRepository,
+    // Remove everything that has its own resolver
+    keyof RepositoryResolvers<
+      AbstractRepositoryPayload,
+      AbstractRevisionPayload
+    >
+  > {
   __typename: RepositoryType
   alias: string | null
   currentRevisionId: number | null
@@ -63,7 +71,7 @@ export type RevisionType = EntityRevisionType | DiscriminatorType.PageRevision
 
 export type RevisionPayload = EntityRevisionPayload | PageRevisionPayload
 export interface AbstractRevisionPayload
-  extends Omit<AbstractRevision, 'author' | 'repository'> {
+  extends Omit<AbstractRevision, 'author' | 'repository' | 'threads'> {
   __typename: RevisionType
   alias: null
   authorId: number
@@ -95,7 +103,8 @@ type AbstractRepositoryRevisionsArgs =
 export interface RepositoryResolvers<
   E extends AbstractRepositoryPayload,
   R extends AbstractRevisionPayload
-> extends UuidResolvers {
+> extends UuidResolvers,
+    ThreadAwareResolvers {
   currentRevision: Resolver<E, never, R | null>
   revisions: Resolver<E, AbstractRepositoryRevisionsArgs, Connection<R>>
   license: Resolver<E, never, Partial<License>>
@@ -104,7 +113,8 @@ export interface RepositoryResolvers<
 export interface RevisionResolvers<
   E extends AbstractRepositoryPayload,
   R extends AbstractRevisionPayload
-> extends UuidResolvers {
+> extends UuidResolvers,
+    ThreadAwareResolvers {
   author: Resolver<R, never, Partial<UserPayload> | null>
   repository: Resolver<R, never, E | null>
 }

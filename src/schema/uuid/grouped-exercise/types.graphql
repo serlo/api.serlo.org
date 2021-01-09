@@ -1,4 +1,4 @@
-type GroupedExercise implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractExercise & InstanceAware {
+type GroupedExercise implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractExercise & InstanceAware & ThreadAware {
   id: Int!
   trashed: Boolean!
   threads(
@@ -23,7 +23,7 @@ type GroupedExercise implements AbstractUuid & AbstractRepository & AbstractEnti
   exerciseGroup: ExerciseGroup!
 }
 
-type GroupedExerciseRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & AbstractExerciseRevision {
+type GroupedExerciseRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & AbstractExerciseRevision & ThreadAware {
   id: Int!
   author: User!
   trashed: Boolean!

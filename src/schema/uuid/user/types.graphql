@@ -1,4 +1,4 @@
-type User implements AbstractUuid {
+type User implements AbstractUuid & ThreadAware {
   id: Int!
   trashed: Boolean!
   threads(
