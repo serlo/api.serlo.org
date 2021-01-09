@@ -1820,10 +1820,6 @@ export type VideoThreadsArgs = {
 };
 
 
-// Warnings were encountered during analysis:
-//
-// src/schema/uuid/thread/types.ts:106:34 - (TS2304) Cannot find name 'ThreadAwareThreadsArgs'.
-
 // (No @packageDocumentation comment for this package)
 
 ```
