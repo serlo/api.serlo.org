@@ -26,6 +26,7 @@ import {
   DiscriminatorType,
   UuidResolvers,
 } from '../abstract-uuid'
+import { ThreadAwareResolvers } from '../thread'
 import { QueryResolver, Resolver } from '~/internals/graphql'
 import {
   QueryActiveAuthorsArgs,
@@ -55,7 +56,8 @@ export interface UserResolvers {
     activeAuthor: Resolver<UserPayload, never, boolean>
     activeDonor: Resolver<UserPayload, never, boolean>
     activeReviewer: Resolver<UserPayload, never, boolean>
-  } & UuidResolvers
+  } & UuidResolvers &
+    ThreadAwareResolvers
 }
 
 export function isUserPayload(

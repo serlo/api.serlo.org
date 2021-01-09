@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Connection } from '../../connection'
 import {
   EntityPayload,
   EntityRevisionPayload,
@@ -28,7 +27,7 @@ import {
 } from '../abstract-entity'
 import { PagePayload, PageRevisionPayload } from '../page'
 import { TaxonomyTermPayload } from '../taxonomy-term'
-import { CommentPayload, ThreadData } from '../thread/types'
+import { CommentPayload } from '../thread/types'
 import { UserPayload } from '../user'
 import {
   MutationNamespace,
@@ -40,7 +39,6 @@ import {
 import {
   AbstractUuid,
   UuidMutationSetStateArgs,
-  AbstractUuidThreadsArgs,
   QueryUuidArgs,
   UuidSetStateResponse,
 } from '~/types'
@@ -71,11 +69,6 @@ export interface AbstractUuidPayload
 
 export interface UuidResolvers {
   alias: Resolver<AbstractUuidPayload, never, string | null>
-  threads: Resolver<
-    AbstractUuidPayload,
-    AbstractUuidThreadsArgs,
-    Connection<ThreadData>
-  >
 }
 
 export interface AbstractUuidResolvers {

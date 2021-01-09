@@ -24,6 +24,7 @@ import { either as E, pipeable } from 'fp-ts'
 import { CellValues, MajorDimension } from '../../../model'
 import { ConnectionPayload, resolveConnection } from '../../connection'
 import { createUuidResolvers } from '../abstract-uuid'
+import { createThreadResolvers } from '../thread'
 import { isUserPayload, UserPayload, UserResolvers } from './types'
 import { ErrorEvent } from '~/internals/error-event'
 import { Context } from '~/internals/graphql'
@@ -54,6 +55,7 @@ export const resolvers: UserResolvers = {
   },
   User: {
     ...createUuidResolvers(),
+    ...createThreadResolvers(),
     async activeAuthor(user, _args, { dataSources }) {
       return (await dataSources.model.serlo.getActiveAuthorIds()).includes(
         user.id

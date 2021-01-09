@@ -157,4 +157,9 @@ export const resolvers: ThreadResolvers = {
       }
     },
   },
+  ThreadAware: {
+    __resolveType(object) {
+      return object.__typename
+    },
+  },
 }

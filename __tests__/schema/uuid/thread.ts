@@ -61,13 +61,15 @@ describe('uuid["threads"]', () => {
       query: gql`
         query threads($id: Int!) {
           uuid(id: $id) {
-            threads {
-              totalCount
-              nodes {
-                comments {
-                  totalCount
-                  nodes {
-                    id
+            ... on ThreadAware {
+              threads {
+                totalCount
+                nodes {
+                  comments {
+                    totalCount
+                    nodes {
+                      id
+                    }
                   }
                 }
               }
@@ -102,13 +104,15 @@ describe('uuid["threads"]', () => {
       query: gql`
         query threads($id: Int!) {
           uuid(id: $id) {
-            threads {
-              totalCount
-              nodes {
-                comments {
-                  totalCount
-                  nodes {
-                    id
+            ... on ThreadAware {
+              threads {
+                totalCount
+                nodes {
+                  comments {
+                    totalCount
+                    nodes {
+                      id
+                    }
                   }
                 }
               }
@@ -142,13 +146,15 @@ describe('uuid["threads"]', () => {
       query: gql`
         query threads($id: Int!) {
           uuid(id: $id) {
-            threads {
-              totalCount
-              nodes {
-                comments {
-                  totalCount
-                  nodes {
-                    id
+            ... on ThreadAware {
+              threads {
+                totalCount
+                nodes {
+                  comments {
+                    totalCount
+                    nodes {
+                      id
+                    }
                   }
                 }
               }
@@ -168,9 +174,11 @@ describe('uuid["threads"]', () => {
       query: gql`
         query propertyCreatedAt($id: Int!) {
           uuid(id: $id) {
-            threads {
-              nodes {
-                createdAt
+            ... on ThreadAware {
+              threads {
+                nodes {
+                  createdAt
+                }
               }
             }
           }
@@ -190,9 +198,11 @@ describe('uuid["threads"]', () => {
       query: gql`
         query propertyTitle($id: Int!) {
           uuid(id: $id) {
-            threads {
-              nodes {
-                title
+            ... on ThreadAware {
+              threads {
+                nodes {
+                  title
+                }
               }
             }
           }
@@ -212,9 +222,11 @@ describe('uuid["threads"]', () => {
       query: gql`
         query propertyTitle($id: Int!) {
           uuid(id: $id) {
-            threads {
-              nodes {
-                title
+            ... on ThreadAware {
+              threads {
+                nodes {
+                  title
+                }
               }
             }
           }
@@ -234,9 +246,11 @@ describe('uuid["threads"]', () => {
       query: gql`
         query propertyArchived($id: Int!) {
           uuid(id: $id) {
-            threads {
-              nodes {
-                archived
+            ... on ThreadAware {
+              threads {
+                nodes {
+                  archived
+                }
               }
             }
           }
@@ -256,10 +270,12 @@ describe('uuid["threads"]', () => {
       query: gql`
         query propertyObject($id: Int!) {
           uuid(id: $id) {
-            threads {
-              nodes {
-                object {
-                  id
+            ... on ThreadAware {
+              threads {
+                nodes {
+                  object {
+                    id
+                  }
                 }
               }
             }
@@ -317,11 +333,13 @@ describe('uuid["threads"]', () => {
       query: gql`
         query propertyCreatedAt($id: Int!) {
           uuid(id: $id) {
-            threads {
-              nodes {
-                comments {
-                  nodes {
-                    createdAt
+            ... on ThreadAware {
+              threads {
+                nodes {
+                  comments {
+                    nodes {
+                      createdAt
+                    }
                   }
                 }
               }
@@ -359,12 +377,14 @@ describe('uuid["threads"]', () => {
       query: gql`
         query propertyCreatedAt($id: Int!) {
           uuid(id: $id) {
-            threads {
-              nodes {
-                comments {
-                  nodes {
-                    author {
-                      username
+            ... on ThreadAware {
+              threads {
+                nodes {
+                  comments {
+                    nodes {
+                      author {
+                        username
+                      }
                     }
                   }
                 }

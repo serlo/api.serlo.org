@@ -4,6 +4,14 @@ interface AbstractRepository {
   trashed: Boolean!
   alias: String
 
+  # extends ThreadAware
+  threads(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ThreadsConnection!
+
   date: DateTime!
   instance: Instance!
   license: License!
@@ -16,6 +24,14 @@ interface AbstractRevision {
   id: Int!
   trashed: Boolean!
   alias: String
+
+  # extends ThreadAware
+  threads(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ThreadsConnection!
 
   # Implicitly has the following field
   # repository: AbstractRepository!

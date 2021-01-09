@@ -27,9 +27,11 @@ import {
   MutationResolver,
   OverwriteRecord,
   Resolver,
+  TypeResolver,
 } from '~/internals/graphql'
 import {
   Scalars,
+  ThreadAwareThreadsArgs,
   ThreadCommentsArgs,
   ThreadCreateCommentResponse,
   ThreadCreateThreadResponse,
@@ -96,6 +98,13 @@ export interface ThreadResolvers {
       ThreadSetCommentStateResponse
     >
   }
+  ThreadAware: {
+    __resolveType: TypeResolver<UuidPayload>
+  }
+}
+
+export interface ThreadAwareResolvers {
+  threads: Resolver<UuidPayload, ThreadAwareThreadsArgs, Connection<ThreadData>>
 }
 
 export interface CommentPayload {
