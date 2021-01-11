@@ -34,16 +34,16 @@ import {
 //TODO: add filter for trashed threads and comments
 export const resolvers: ThreadResolvers = {
   Thread: {
-    id(thread, _args) {
+    id(thread) {
       return encodeThreadId(thread.commentPayloads[0].id)
     },
-    createdAt(thread, _args) {
+    createdAt(thread) {
       return thread.commentPayloads[0].date
     },
-    title(thread, _args) {
+    title(thread) {
       return thread.commentPayloads[0].title
     },
-    archived(thread, _args) {
+    archived(thread) {
       return thread.commentPayloads[0].archived
     },
     async object(thread, _args, { dataSources }) {
@@ -133,6 +133,11 @@ export const resolvers: ThreadResolvers = {
       assertUserIsAuthenticated(userId)
       const { id, trashed } = payload.input
       const firstCommentId = decodeThreadId(id)
+      if (firstCommentId === null)
+        return {
+          success: false,
+          query: {},
+        }
       const res = await dataSources.model.serlo.setUuidState({
         id: [firstCommentId],
         userId,

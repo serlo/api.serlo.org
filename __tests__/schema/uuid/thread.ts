@@ -240,6 +240,30 @@ describe('uuid["threads"]', () => {
     })
   })
 
+  test('property "id" of Thread', async () => {
+    setupThreads(article, [[comment1, comment2]])
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query propertyArchived($id: Int!) {
+          uuid(id: $id) {
+            ... on ThreadAware {
+              threads {
+                nodes {
+                  id
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: { id: article.id },
+      data: {
+        uuid: { threads: { nodes: [{ id: encodeThreadId(comment1.id) }] } },
+      },
+      client,
+    })
+  })
+
   test('property "archived" of Thread', async () => {
     setupThreads(article, [[comment1, comment2]])
     await assertSuccessfulGraphQLQuery({
@@ -488,6 +512,33 @@ describe('createThread', () => {
         input: variables,
       },
     }
+  }
+
+  function setupComments(id: number, date: string) {
+    global.server.use(
+      rest.post<ThreadCreateThreadInput & { userId: number }>(
+        `http://de.${process.env.SERLO_ORG_HOST}/api/add-comment`,
+        (req, res, ctx) => {
+          if (typeof req.body === 'string' || typeof req.body === 'undefined')
+            return res(ctx.status(400))
+          return res(
+            ctx.json({
+              id,
+              title: req.body.title,
+              trashed: false,
+              alias: null,
+              __typename: 'Comment',
+              authorId: req.body.userId,
+              date,
+              archived: false,
+              content: req.body.content,
+              parentId: req.body.objectId,
+              childrenIds: [],
+            })
+          )
+        }
+      )
+    )
   }
 })
 
@@ -771,33 +822,6 @@ function setupThreads(uuidPayload: UuidPayload, threads: CommentPayload[][]) {
               }
 
         return res(ctx.json(payload))
-      }
-    )
-  )
-}
-
-function setupComments(id: number, date: string) {
-  global.server.use(
-    rest.post<ThreadCreateThreadInput & { userId: number }>(
-      `http://de.${process.env.SERLO_ORG_HOST}/api/add-comment`,
-      (req, res, ctx) => {
-        if (typeof req.body === 'string' || typeof req.body === 'undefined')
-          return res(ctx.status(400))
-        return res(
-          ctx.json({
-            id,
-            title: req.body.title,
-            trashed: false,
-            alias: null,
-            __typename: 'Comment',
-            authorId: req.body.userId,
-            date,
-            archived: false,
-            content: req.body.content,
-            parentId: req.body.objectId,
-            childrenIds: [],
-          })
-        )
       }
     )
   )
