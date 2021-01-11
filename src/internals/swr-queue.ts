@@ -56,7 +56,24 @@ export const emptySwrQueue: SwrQueue = {
 
 export const queueName = 'swr'
 
-export function createSwrQueue(): SwrQueue {
+export function createSwrQueue({
+  cache,
+  timer,
+}: {
+  cache: Cache
+  timer: Timer
+}): SwrQueue {
+  const args = {
+    environment: {
+      cache,
+      swrQueue: emptySwrQueue,
+    },
+    fetchHelpers: createFetchHelpersFromNodeFetch(),
+  }
+  const models = R.values(modelFactories).map((createModel) =>
+    createModel(args)
+  )
+
   const queue = new Queue<UpdateJob>(queueName, {
     redis: {
       url: redisUrl,
@@ -66,10 +83,41 @@ export function createSwrQueue(): SwrQueue {
     removeOnSuccess: true,
   })
 
+  function getSpec(key: string): QuerySpec<unknown, unknown> | null {
+    for (const model of models) {
+      for (const prop of Object.values(model)) {
+        if (isQuery(prop) && O.isSome(prop._querySpec.getPayload(key))) {
+          return prop._querySpec
+        }
+      }
+    }
+    return null
+  }
+
   return {
     _queue: (queue as unknown) as never,
     async queue(updateJob) {
-      log.debug('Queuing job', updateJob.key)
+      const { key } = updateJob
+      const cacheEntry = await cache.get<unknown>({ key })
+      if (O.isNone(cacheEntry)) {
+        log.debug('Skipped job', key, 'because cache empty.')
+        return undefined as never
+      }
+      const spec = getSpec(key)
+      if (spec === null) {
+        log.debug('Skipped job', key, 'because invalid key.')
+        return undefined as never
+      }
+      const maxAge =
+        spec.maxAge === undefined ? undefined : timeToMilliseconds(spec.maxAge)
+      const age = timer.now() - cacheEntry.value.lastModified
+      if (maxAge === undefined || age <= maxAge) {
+        log.debug('Skipped job', key, 'because cache non-stale')
+        return undefined as never
+      }
+
+      log.debug('Queuing job', key)
+
       // By setting the job's ID, we make sure that there will be only one update job for the same key
       // See also https://github.com/bee-queue/bee-queue#jobsetidid
       const job = await queue.createJob(updateJob).setId(updateJob.key).save()

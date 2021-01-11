@@ -33,7 +33,10 @@ import {
 } from '~/internals/swr-queue'
 import { createSerloModel } from '~/model'
 
-const swrQueue = createSwrQueue()
+const swrQueue = createSwrQueue({
+  cache: global.cache,
+  timer: global.timer,
+})
 const swrQueueWorker = createSwrQueueWorker({
   cache: global.cache,
   timer: global.timer,
