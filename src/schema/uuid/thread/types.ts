@@ -25,7 +25,7 @@ import { UserPayload } from '../user'
 import {
   MutationNamespace,
   MutationResolver,
-  OverwriteRecord,
+  MutationResponseWithRecord,
   Resolver,
   TypeResolver,
 } from '~/internals/graphql'
@@ -34,7 +34,6 @@ import {
   ThreadAwareThreadsArgs,
   ThreadCommentsArgs,
   ThreadCreateCommentResponse,
-  ThreadCreateThreadResponse,
   ThreadMutationCreateCommentArgs,
   ThreadMutationCreateThreadArgs,
   ThreadMutationSetCommentStateArgs,
@@ -58,7 +57,7 @@ export interface ThreadData {
 
 export interface ThreadResolvers {
   Thread: {
-    id: Resolver<ThreadData, never, string | null>
+    id: Resolver<ThreadData, never, string>
     createdAt: Resolver<ThreadData, never, Scalars['DateTime']>
     title: Resolver<ThreadData, never, string | null>
     archived: Resolver<ThreadData, never, boolean>
@@ -79,7 +78,7 @@ export interface ThreadResolvers {
   ThreadMutation: {
     createThread: MutationResolver<
       ThreadMutationCreateThreadArgs,
-      OverwriteRecord<ThreadCreateThreadResponse, ThreadData | null>
+      MutationResponseWithRecord<ThreadData | null>
     >
     createComment: MutationResolver<
       ThreadMutationCreateCommentArgs,

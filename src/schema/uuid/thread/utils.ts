@@ -79,6 +79,9 @@ export function encodeThreadId(firstCommentId: number) {
   return Buffer.from(`t${firstCommentId}`).toString('base64')
 }
 
-export function decodeThreadId(threadId: string) {
-  return parseInt(Buffer.from(threadId, 'base64').toString('ascii').substr(1))
+export function decodeThreadId(threadId: string): number | null {
+  const result = parseInt(
+    Buffer.from(threadId, 'base64').toString('utf-8').substr(1)
+  )
+  return Number.isNaN(result) || result <= 0 ? null : result
 }

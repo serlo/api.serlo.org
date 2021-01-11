@@ -476,8 +476,10 @@ export function createSerloModel({
     CommentPayload | null
   >({
     mutate: async (payload) => {
+      const id = decodeThreadId(payload.id)
+      if (id === null) return null
       return await post<CommentPayload | null>({
-        path: `/api/archive-comment/${decodeThreadId(payload.id)}`,
+        path: `/api/archive-comment/${id}`,
         body: payload,
       })
     },
