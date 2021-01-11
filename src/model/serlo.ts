@@ -75,15 +75,24 @@ export function createSerloModel({
     path: string
     instance?: Instance
   }): Promise<T> {
-    return fetchHelpers.get(
-      `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
-      {},
-      {
-        headers: {
-          Authorization: `Serlo Service=${getToken()}`,
-        },
-      }
-    )
+    if (path.startsWith('/api/uuid/')) {
+      return fetchHelpers.get(
+        `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path.replace(
+          '/api',
+          ''
+        )}`
+      )
+    } else {
+      return fetchHelpers.get(
+        `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
+        {},
+        {
+          headers: {
+            Authorization: `Serlo Service=${getToken()}`,
+          },
+        }
+      )
+    }
   }
 
   function post<T>({
