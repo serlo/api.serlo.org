@@ -37,7 +37,7 @@ export function start() {
   initializeSentry('server')
   const timer = createTimer()
   const cache = createCache({ timer })
-  const swrQueue = createSwrQueue()
+  const swrQueue = createSwrQueue({ cache, timer })
   initializeGraphQLServer({ cache, swrQueue })
 }
 
