@@ -474,6 +474,15 @@ async function exec(): Promise<void> {
         'Overhaul naming of environment variables.',
       ],
     },
+    {
+      tagName: 'v0.17.0',
+      date: '2021-01-11',
+      breakingChanges: [
+        ['uuid', 'Move `threads` from `AbstractUuid` into concrete types.'],
+      ],
+      added: ['Add `ThreadAware` interface for types with `threads`.'],
+      internal: ['Add preparations for database layer.'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
