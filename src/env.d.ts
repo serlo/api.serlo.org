@@ -35,6 +35,7 @@ declare namespace NodeJS {
     REDIS_URL_TEST: string | undefined
     SENTRY_DSN: string | undefined
     SENTRY_RELEASE: string | undefined
+    SERLO_ORG_DATABASE_LAYER_HOST: string
     SERLO_ORG_HOST: string
     SERLO_ORG_SECRET: string
 
