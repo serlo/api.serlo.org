@@ -2,7 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
-## [v0.16.0](https://github.com/serlo/api.serlo.org/compare/v0.15.0..v0.16.0) - January 6, 2021
+## [v0.17.0](https://github.com/serlo/api.serlo.org/compare/v0.16.1..v0.17.0) - January 11, 2021
+
+### Breaking Changes
+
+- **uuid**. Move `threads` from `AbstractUuid` into concrete types.
+
+### Added
+
+- Add `ThreadAware` interface for types with `threads`.
+
+### Internal
+
+- Add preparations for database layer.
+
+## [v0.16.1](https://github.com/serlo/api.serlo.org/compare/v0.16.0..v0.16.1) - January 6, 2021
 
 ### Breaking Changes
 
@@ -17,6 +31,8 @@ All notable changes to this project will be documented in this file.
 - Split up `api` docker image into `api-server` and `api-swr-queue-worker`.
 
 - Overhaul naming of environment variables.
+
+## [v0.16.0](https://github.com/serlo/api.serlo.org/compare/v0.15.0..v0.16.0) - January 6, 2021 \[YANKED]
 
 ## [v0.15.0](https://github.com/serlo/api.serlo.org/compare/v0.14.2..v0.15.0) - January 5, 2021
 
