@@ -483,6 +483,11 @@ async function exec(): Promise<void> {
       added: ['Add `ThreadAware` interface for types with `threads`.'],
       internal: ['Add preparations for database layer.'],
     },
+    {
+      tagName: 'v0.17.1',
+      date: '2021-01-14',
+      internal: ['serlo-org-database-layer@0.1.2'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

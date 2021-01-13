@@ -25,6 +25,7 @@ import { Environment } from '../environment'
 import { Time } from '../swr-queue'
 
 export interface QuerySpec<P, R> {
+  enableSwr: boolean
   getCurrentValue: (payload: P, previousValue: R | null) => Promise<R>
   maxAge: Time | undefined
   getKey: (payload: P) => string

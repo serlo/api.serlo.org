@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import Queue from 'bee-queue'
-import { option as O } from 'fp-ts'
+import { either as E, option as O } from 'fp-ts'
 import * as R from 'ramda'
 
 import { Cache, Priority } from './cache'
@@ -83,36 +83,20 @@ export function createSwrQueue({
     removeOnSuccess: true,
   })
 
-  function getSpec(key: string): QuerySpec<unknown, unknown> | null {
-    for (const model of models) {
-      for (const prop of Object.values(model)) {
-        if (isQuery(prop) && O.isSome(prop._querySpec.getPayload(key))) {
-          return prop._querySpec
-        }
-      }
-    }
-    return null
-  }
-
   return {
     _queue: (queue as unknown) as never,
     async queue(updateJob) {
       const { key } = updateJob
-      const cacheEntry = await cache.get<unknown>({ key })
-      if (O.isNone(cacheEntry)) {
-        log.debug('Skipped job', key, 'because cache empty.')
-        return undefined as never
-      }
-      const spec = getSpec(key)
-      if (spec === null) {
-        log.debug('Skipped job', key, 'because invalid key.')
-        return undefined as never
-      }
-      const maxAge =
-        spec.maxAge === undefined ? undefined : timeToMilliseconds(spec.maxAge)
-      const age = timer.now() - cacheEntry.value.lastModified
-      if (maxAge === undefined || age <= maxAge) {
-        log.debug('Skipped job', key, 'because cache non-stale')
+
+      const result = await shouldProcessJob({
+        key,
+        cache,
+        models,
+        timer,
+      })
+
+      if (E.isLeft(result)) {
+        log.debug('Skipped job', key, 'because', result.left)
         return undefined as never
       }
 
@@ -179,46 +163,30 @@ export function createSwrQueueWorker({
     removeOnSuccess: true,
   })
 
-  function getSpec(key: string): QuerySpec<unknown, unknown> | null {
-    for (const model of models) {
-      for (const prop of Object.values(model)) {
-        if (isQuery(prop) && O.isSome(prop._querySpec.getPayload(key))) {
-          return prop._querySpec
-        }
-      }
-    }
-    return null
-  }
-
   queue.process(
     concurrency,
     async (job): Promise<string> => {
       const { key } = job.data
-      const cacheEntry = await cache.get<unknown>({ key })
-      if (O.isNone(cacheEntry)) {
-        return 'Skipped update because cache empty.'
+
+      const result = await shouldProcessJob({
+        key,
+        cache,
+        models,
+        timer,
+      })
+      if (E.isLeft(result)) {
+        return `Skipped update because ${result.left}`
       }
-      const spec = getSpec(key)
-      if (spec === null) {
-        return 'Skipped update because invalid key.'
-      }
-      const maxAge =
-        spec.maxAge === undefined ? undefined : timeToMilliseconds(spec.maxAge)
-      const age = timer.now() - cacheEntry.value.lastModified
-      if (maxAge === undefined || age <= maxAge) {
-        return 'Skipped update because cache non-stale.'
-      }
-      const payload = spec.getPayload(key)
-      if (O.isNone(payload)) {
-        return 'Skipped updated because invalid key.'
-      }
+
+      const { spec, payload } = result.right
+
       await cache.set({
         key,
         priority: Priority.Low,
         getValue: async () => {
           const cacheEntry = await cache.get<unknown>({ key })
           return await spec.getCurrentValue(
-            payload.value,
+            payload,
             O.isSome(cacheEntry) ? cacheEntry.value.value : null
           )
         },
@@ -236,6 +204,58 @@ export function createSwrQueueWorker({
       await queue.close()
     },
   }
+}
+
+async function shouldProcessJob({
+  key,
+  cache,
+  models,
+  timer,
+}: {
+  key: string
+  cache: Cache
+  models: Record<string, unknown>[]
+  timer: Timer
+}): Promise<
+  E.Either<string, { spec: QuerySpec<unknown, unknown>; payload: unknown }>
+> {
+  function getSpec(key: string): QuerySpec<unknown, unknown> | null {
+    for (const model of models) {
+      for (const prop of Object.values(model)) {
+        if (isQuery(prop) && O.isSome(prop._querySpec.getPayload(key))) {
+          return prop._querySpec
+        }
+      }
+    }
+    return null
+  }
+
+  const cacheEntry = await cache.get<unknown>({ key })
+  if (O.isNone(cacheEntry)) {
+    return E.left('cache empty.')
+  }
+  const spec = getSpec(key)
+  if (spec === null) {
+    return E.left('invalid key.')
+  }
+  if (!spec.enableSwr) {
+    return E.left('SWR disabled.')
+  }
+  const maxAge =
+    spec.maxAge === undefined ? undefined : timeToMilliseconds(spec.maxAge)
+  const age = timer.now() - cacheEntry.value.lastModified
+  if (maxAge === undefined || age <= maxAge) {
+    return E.left('cache non-stale.')
+  }
+  const payload = spec.getPayload(key)
+  if (O.isNone(payload)) {
+    return E.left('invalid key.')
+  }
+
+  return E.right({
+    spec,
+    payload: payload.value,
+  })
 }
 
 export interface Time {
