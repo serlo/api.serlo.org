@@ -68,31 +68,31 @@ export function createSerloModel({
     })
   }
 
-  function get<T>({
+  function getViaLegacySerlo<T>({
     path,
     instance = Instance.De,
   }: {
     path: string
     instance?: Instance
   }): Promise<T> {
-    if (path.startsWith('/api/uuid/')) {
-      return fetchHelpers.get(
-        `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path.replace(
-          '/api',
-          ''
-        )}`
-      )
-    } else {
-      return fetchHelpers.get(
-        `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
-        {},
-        {
-          headers: {
-            Authorization: `Serlo Service=${getToken()}`,
-          },
-        }
-      )
-    }
+    return fetchHelpers.get(
+      `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
+      {},
+      {
+        headers: {
+          Authorization: `Serlo Service=${getToken()}`,
+        },
+      }
+    )
+  }
+
+  function getViaDatabaseLayer<T>({ path }: { path: string }): Promise<T> {
+    return fetchHelpers.get(
+      `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path.replace(
+        '/api',
+        ''
+      )}`
+    )
   }
 
   function post<T>({
@@ -118,8 +118,9 @@ export function createSerloModel({
 
   const getUuid = createQuery<{ id: number }, AbstractUuidPayload | null>(
     {
+      enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        const uuid = await get<AbstractUuidPayload | null>({
+        const uuid = await getViaDatabaseLayer<AbstractUuidPayload | null>({
           path: `/api/uuid/${id}`,
         })
         return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
@@ -167,8 +168,9 @@ export function createSerloModel({
 
   const getActiveAuthorIds = createQuery<undefined, number[]>(
     {
+      enableSwr: true,
       getCurrentValue: async () => {
-        return await get<number[]>({
+        return await getViaDatabaseLayer<number[]>({
           path: '/api/user/active-authors',
         })
       },
@@ -186,8 +188,9 @@ export function createSerloModel({
 
   const getActiveReviewerIds = createQuery<undefined, number[]>(
     {
+      enableSwr: true,
       getCurrentValue: async () => {
-        return await get<number[]>({
+        return await getViaDatabaseLayer<number[]>({
           path: '/api/user/active-reviewers',
         })
       },
@@ -207,8 +210,9 @@ export function createSerloModel({
     NavigationPayload
   >(
     {
+      enableSwr: false,
       getCurrentValue: async ({ instance }) => {
-        return await get<NavigationPayload>({
+        return await getViaLegacySerlo<NavigationPayload>({
           path: '/api/navigation',
           instance,
         })
@@ -301,8 +305,9 @@ export function createSerloModel({
     AliasPayload | null
   >(
     {
+      enableSwr: false,
       getCurrentValue: async ({ path, instance }) => {
-        return get({ path: `/api/alias${path}`, instance })
+        return getViaLegacySerlo({ path: `/api/alias${path}`, instance })
       },
       maxAge: { minutes: 5 },
       getKey: ({ path, instance }) => {
@@ -322,8 +327,9 @@ export function createSerloModel({
 
   const getLicense = createQuery<{ id: number }, License>(
     {
+      enableSwr: false,
       getCurrentValue: async ({ id }) => {
-        return get({ path: `/api/license/${id}` })
+        return getViaLegacySerlo({ path: `/api/license/${id}` })
       },
       maxAge: { day: 1 },
       getKey: ({ id }) => {
@@ -344,10 +350,13 @@ export function createSerloModel({
     AbstractNotificationEventPayload | null
   >(
     {
+      enableSwr: false,
       getCurrentValue: async ({ id }) => {
-        const notificationEvent = await get<AbstractNotificationEventPayload>({
-          path: `/api/event/${id}`,
-        })
+        const notificationEvent = await getViaLegacySerlo<AbstractNotificationEventPayload>(
+          {
+            path: `/api/event/${id}`,
+          }
+        )
         return isUnsupportedNotificationEvent(notificationEvent)
           ? null
           : notificationEvent
@@ -368,8 +377,9 @@ export function createSerloModel({
 
   const getNotifications = createQuery<{ id: number }, NotificationsPayload>(
     {
+      enableSwr: false,
       getCurrentValue: async ({ id }) => {
-        const payload = await get<NotificationsPayload>({
+        const payload = await getViaLegacySerlo<NotificationsPayload>({
           path: `/api/notifications/${id}`,
         })
         return {
@@ -422,8 +432,9 @@ export function createSerloModel({
 
   const getSubscriptions = createQuery<{ id: number }, SubscriptionsPayload>(
     {
+      enableSwr: false,
       getCurrentValue: async ({ id }) => {
-        return get({
+        return getViaLegacySerlo({
           path: `/api/subscriptions/${id}`,
         })
       },
@@ -443,8 +454,9 @@ export function createSerloModel({
 
   const getThreadIds = createQuery<{ id: number }, ThreadsPayload>(
     {
+      enableSwr: false,
       getCurrentValue: async ({ id }) => {
-        return get({
+        return getViaLegacySerlo({
           path: `/api/threads/${id}`,
         })
       },
@@ -476,8 +488,9 @@ export function createSerloModel({
 
   const getAllCacheKeys = createQuery<undefined, string[]>(
     {
+      enableSwr: false,
       getCurrentValue: async () => {
-        return get({
+        return getViaLegacySerlo({
           path: `/api/cache-keys`,
         })
       },
