@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.17.2](https://github.com/serlo/api.serlo.org/compare/v0.17.1..v0.17.2) - January 14, 2021
+
+### Internal
+
+- serlo-org-database-layer@0.1.4
+
+- Add health checks
+
 ## [v0.17.1](https://github.com/serlo/api.serlo.org/compare/v0.17.0..v0.17.1) - January 14, 2021
 
 ### Internal
