@@ -377,9 +377,9 @@ export function createSerloModel({
 
   const getNotifications = createQuery<{ id: number }, NotificationsPayload>(
     {
-      enableSwr: false,
+      enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        const payload = await getViaLegacySerlo<NotificationsPayload>({
+        const payload = await getViaDatabaseLayer<NotificationsPayload>({
           path: `/api/notifications/${id}`,
         })
         return {
@@ -432,9 +432,9 @@ export function createSerloModel({
 
   const getSubscriptions = createQuery<{ id: number }, SubscriptionsPayload>(
     {
-      enableSwr: false,
+      enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        return getViaLegacySerlo({
+        return getViaDatabaseLayer({
           path: `/api/subscriptions/${id}`,
         })
       },
@@ -454,9 +454,9 @@ export function createSerloModel({
 
   const getThreadIds = createQuery<{ id: number }, ThreadsPayload>(
     {
-      enableSwr: false,
+      enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        return getViaLegacySerlo({
+        return getViaDatabaseLayer({
           path: `/api/threads/${id}`,
         })
       },
