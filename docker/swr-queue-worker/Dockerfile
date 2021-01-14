@@ -22,3 +22,4 @@ RUN yarn build:swr-queue-worker
 FROM prod-dependencies as release
 COPY --from=build /usr/src/app/dist dist
 ENTRYPOINT ["node", "dist"]
+EXPOSE 3000

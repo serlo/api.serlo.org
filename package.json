@@ -1,6 +1,6 @@
 {
   "name": "@serlo/api.serlo.org",
-  "version": "0.17.1",
+  "version": "0.17.2",
   "private": true,
   "bugs": {
     "url": "https://github.com/serlo/api.serlo.org/issues"
@@ -32,6 +32,7 @@
     "start": "npm-run-all start:redis start:server",
     "start:redis": "docker-compose up --detach",
     "start:server": "tsdx watch --entry src/server.ts --target node --format cjs --tsconfig tsconfig.prod.json --onSuccess \"node dist\"",
+    "start:swr-queue-worker": "tsdx watch --entry src/swr-queue-worker.ts --target node --format cjs --tsconfig tsconfig.prod.json --onSuccess \"node dist\"",
     "stop:redis": "docker-compose stop",
     "test": "jest --config jest.config.js --runInBand"
   },
