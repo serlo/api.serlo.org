@@ -40,7 +40,7 @@ export async function start() {
   await swrQueueWorker.ready()
 
   const app = createApp()
-  app.get('/.well-known/health', (req, res, next) => {
+  app.get('/.well-known/health', (req, res) => {
     swrQueueWorker
       .healthy()
       .then(() => {
