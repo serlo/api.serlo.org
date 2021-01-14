@@ -33,6 +33,7 @@ import { modelFactories } from '~/model'
 export interface SwrQueue {
   queue(updateJob: UpdateJob): Promise<never>
   ready(): Promise<void>
+  healthy(): Promise<void>
   quit(): Promise<void>
   _queue: never
 }
@@ -46,6 +47,9 @@ export const emptySwrQueue: SwrQueue = {
     return Promise.resolve(undefined as never)
   },
   ready() {
+    return Promise.resolve()
+  },
+  healthy() {
     return Promise.resolve()
   },
   quit() {
@@ -125,6 +129,9 @@ export function createSwrQueue({
     async ready() {
       await queue.ready()
     },
+    async healthy() {
+      await queue.checkHealth()
+    },
     async quit() {
       await queue.close()
     },
@@ -141,6 +148,7 @@ export function createSwrQueueWorker({
   concurrency: number
 }): {
   ready(): Promise<void>
+  healthy(): Promise<void>
   quit(): Promise<void>
   _queue: never
 } {
@@ -199,6 +207,9 @@ export function createSwrQueueWorker({
     _queue: (queue as unknown) as never,
     async ready() {
       await queue.ready()
+    },
+    async healthy() {
+      await queue.checkHealth()
     },
     async quit() {
       await queue.close()
