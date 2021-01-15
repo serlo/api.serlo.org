@@ -254,14 +254,14 @@ describe('uuid mutation setState', () => {
 
   beforeEach(() => {
     global.server.use(
-      rest.post(
-        `http://de.${process.env.SERLO_ORG_HOST}/api/set-uuid-state/:id`,
+      rest.post<{
+        id: number
+        userId: number
+        trashed: boolean
+      }>(
+        `http://de.${process.env.SERLO_ORG_HOST}/api/set-uuid-state`,
         (req, res, ctx) => {
-          const { userId, trashed } = req.body as {
-            userId: number
-            trashed: boolean
-          }
-          const id = parseInt(req.params.id)
+          const { id, userId, trashed } = req.body
 
           if (userId !== user.id) return res(ctx.status(403))
           if (![1, 2, 3].includes(id)) return res(ctx.status(404))
