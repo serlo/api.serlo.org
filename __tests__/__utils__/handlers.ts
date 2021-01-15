@@ -27,23 +27,21 @@ import { AliasPayload, NavigationPayload, UuidPayload } from '~/schema/uuid'
 import { Instance } from '~/types'
 
 export function createAliasHandler(alias: AliasPayload) {
-  return createJsonHandler({
-    instance: alias.instance,
-    path: `/api/alias${alias.path}`,
+  return createJsonHandlerForDatabaseLayer({
+    path: `/alias/${alias.instance}${alias.path}`,
     body: alias,
   })
 }
 
 export function createLicenseHandler(license: LicensePayload) {
-  return createJsonHandler({
-    instance: license.instance,
-    path: `/api/license/${license.id}`,
+  return createJsonHandlerForDatabaseLayer({
+    path: `/license/${license.id}`,
     body: license,
   })
 }
 
 export function createNavigationHandler(navigation: NavigationPayload) {
-  return createJsonHandler({
+  return createJsonHandlerForLegacySerlo({
     instance: navigation.instance,
     path: '/api/navigation',
     body: navigation,
@@ -53,23 +51,23 @@ export function createNavigationHandler(navigation: NavigationPayload) {
 export function createNotificationEventHandler(
   notificationEvent: NotificationEventPayload
 ) {
-  return createJsonHandler({
+  return createJsonHandlerForLegacySerlo({
     path: `/api/event/${notificationEvent.id}`,
     body: notificationEvent,
   })
 }
 
 export function createUuidHandler(uuid: UuidPayload, once?: boolean) {
-  return createJsonHandler(
+  return createJsonHandlerForDatabaseLayer(
     {
-      path: `/api/uuid/${uuid.id}`,
+      path: `/uuid/${uuid.id}`,
       body: uuid,
     },
     once
   )
 }
 
-export function createJsonHandler(
+export function createJsonHandlerForLegacySerlo(
   {
     instance = Instance.De,
     path,
@@ -83,6 +81,27 @@ export function createJsonHandler(
 ) {
   return rest.get(
     `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
+    (_req, res, ctx) => {
+      return (once ? res.once : res)(
+        ctx.status(200),
+        ctx.json(body as Record<string, unknown>)
+      )
+    }
+  )
+}
+
+export function createJsonHandlerForDatabaseLayer(
+  {
+    path,
+    body,
+  }: {
+    path: string
+    body: unknown
+  },
+  once?: boolean
+) {
+  return rest.get(
+    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`,
     (_req, res, ctx) => {
       return (once ? res.once : res)(
         ctx.status(200),

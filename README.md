@@ -35,7 +35,7 @@ Run `yarn start` to start Redis.
 
 ### Use the GraphQL playground
 
-After `yarn start`, you can open the GraphQL playground via [http://localhost:3000/\_\_\_graphql](http://localhost:3000/___graphql). Note that most queries will need a running [serlo/serlo.org](https://github.com/serlo/serlo.org) dev environment. Happy coding!
+After `yarn start`, you can open the GraphQL playground via [http://localhost:3000/\_\_\_graphql](http://localhost:3000/___graphql). Note that most queries will need a running [serlo/serlo.org](https://github.com/serlo/serlo.org) and/or database layer dev environment. Happy coding!
 
 ### Stop
 

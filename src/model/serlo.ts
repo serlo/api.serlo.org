@@ -121,7 +121,7 @@ export function createSerloModel({
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
         const uuid = await getViaDatabaseLayer<AbstractUuidPayload | null>({
-          path: `/api/uuid/${id}`,
+          path: `/uuid/${id}`,
         })
         return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
       },
@@ -171,7 +171,7 @@ export function createSerloModel({
       enableSwr: true,
       getCurrentValue: async () => {
         return await getViaDatabaseLayer<number[]>({
-          path: '/api/user/active-authors',
+          path: '/user/active-authors',
         })
       },
       maxAge: { hour: 1 },
@@ -191,7 +191,7 @@ export function createSerloModel({
       enableSwr: true,
       getCurrentValue: async () => {
         return await getViaDatabaseLayer<number[]>({
-          path: '/api/user/active-reviewers',
+          path: '/user/active-reviewers',
         })
       },
       maxAge: { hour: 1 },
@@ -210,7 +210,7 @@ export function createSerloModel({
     NavigationPayload
   >(
     {
-      enableSwr: false,
+      enableSwr: true,
       getCurrentValue: async ({ instance }) => {
         return await getViaLegacySerlo<NavigationPayload>({
           path: '/api/navigation',
@@ -305,9 +305,9 @@ export function createSerloModel({
     AliasPayload | null
   >(
     {
-      enableSwr: false,
+      enableSwr: true,
       getCurrentValue: async ({ path, instance }) => {
-        return getViaLegacySerlo({ path: `/api/alias${path}`, instance })
+        return getViaDatabaseLayer({ path: `/alias/${instance}${path}` })
       },
       maxAge: { minutes: 5 },
       getKey: ({ path, instance }) => {
@@ -327,9 +327,9 @@ export function createSerloModel({
 
   const getLicense = createQuery<{ id: number }, License>(
     {
-      enableSwr: false,
+      enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        return getViaLegacySerlo({ path: `/api/license/${id}` })
+        return getViaDatabaseLayer({ path: `/license/${id}` })
       },
       maxAge: { day: 1 },
       getKey: ({ id }) => {
@@ -380,7 +380,7 @@ export function createSerloModel({
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
         const payload = await getViaDatabaseLayer<NotificationsPayload>({
-          path: `/api/notifications/${id}`,
+          path: `/notifications/${id}`,
         })
         return {
           ...payload,
@@ -435,7 +435,7 @@ export function createSerloModel({
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
         return getViaDatabaseLayer({
-          path: `/api/subscriptions/${id}`,
+          path: `/subscriptions/${id}`,
         })
       },
       maxAge: { hour: 1 },
@@ -457,7 +457,7 @@ export function createSerloModel({
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
         return getViaDatabaseLayer({
-          path: `/api/threads/${id}`,
+          path: `/threads/${id}`,
         })
       },
       maxAge: { minutes: 5 },

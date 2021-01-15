@@ -20,18 +20,24 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 /* eslint-disable import/no-unassigned-import */
-describe('GET /api/cache-keys', () => {
-  require('./cache-keys')
+describe('GET /alias/:instance/:alias', () => {
+  require('./alias')
 })
-describe('GET /api/event/:id', () => {
-  require('./event')
+describe('GET /license/:id', () => {
+  require('./license')
 })
-describe('GET /api/navigation', () => {
-  require('./navigation')
+describe('GET /notifications/:id', () => {
+  require('./notifications')
 })
-describe('POST /api/set-notification-state/:id', () => {
-  require('./set-notification-state')
+describe('GET /api/subscriptions', () => {
+  require('./subscriptions')
 })
-describe('POST /api/set-uuid-state/:id', () => {
-  require('./set-uuid-state')
+describe('GET /api/threads/:id', () => {
+  require('./threads')
+})
+describe('GET /api/user/:id', () => {
+  require('./user')
+})
+describe('GET /api/uuid/:id', () => {
+  require('./uuid')
 })

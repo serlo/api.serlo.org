@@ -48,14 +48,13 @@ jest.setTimeout(60 * 1000)
 
 global.pact = new Pact({
   consumer: 'api.serlo.org',
-  provider: 'serlo.org',
+  provider: 'serlo.org-database-layer',
   port,
   dir: pactDir,
 })
 
 beforeAll(async () => {
   await createBeforeAll({ onUnhandledRequest: 'bypass' })
-  await rm(pactDir)
   await global.pact.setup()
 })
 
@@ -63,7 +62,7 @@ beforeEach(async () => {
   await createBeforeEach()
   global.server.use(
     rest.get(
-      new RegExp(process.env.SERLO_ORG_HOST.replace('.', '\\.')),
+      new RegExp(process.env.SERLO_ORG_DATABASE_LAYER_HOST.replace('.', '\\.')),
       async (req, res, ctx) => {
         const url = req.url
         const pactRes = await fetch(`http://localhost:${port}/${url.pathname}`)
@@ -71,7 +70,7 @@ beforeEach(async () => {
       }
     ),
     rest.post(
-      new RegExp(process.env.SERLO_ORG_HOST.replace('.', '\\.')),
+      new RegExp(process.env.SERLO_ORG_DATABASE_LAYER_HOST.replace('.', '\\.')),
       async (req, res, ctx) => {
         const url = req.url
         const pactRes = await fetch(
