@@ -65,7 +65,7 @@ export type EntityPayload =
 export interface AbstractEntityPayload
   extends Omit<AbstractEntity, 'alias' | 'currentRevision' | 'license'> {
   __typename: EntityType
-  alias: string | null
+  alias: string
   currentRevisionId: number | null
   revisionIds: number[]
   licenseId: number
@@ -98,7 +98,7 @@ export type EntityRevisionPayload =
 export interface AbstractEntityRevisionPayload
   extends Omit<AbstractEntityRevision, 'author' | 'repository'> {
   __typename: EntityRevisionType
-  alias: string | null
+  alias: string
   authorId: number
   repositoryId: number
 }

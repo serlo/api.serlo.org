@@ -56,7 +56,7 @@ test('Alias (URL /user/profile/:username)', async () => {
     body: {
       id: Matchers.integer(1),
       instance: Matchers.string('de'),
-      path: '/user/profile/admin',
+      path: '/user/1/admin',
     },
   })
   await fetch(
