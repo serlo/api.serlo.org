@@ -48,7 +48,7 @@ export const coursePageRevision: CoursePageRevisionPayload = {
   __typename: EntityRevisionType.CoursePageRevision,
   id: 19277,
   trashed: false,
-  alias: null,
+  alias: '/mathe/19277/startseite',
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
   repositoryId: coursePage.id,

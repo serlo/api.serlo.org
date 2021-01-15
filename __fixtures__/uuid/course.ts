@@ -49,7 +49,7 @@ export const courseRevision: CourseRevisionPayload = {
   __typename: EntityRevisionType.CourseRevision,
   id: 30713,
   trashed: false,
-  alias: null,
+  alias: '/mathe/30713/überblick-zum-satz-des-pythagoras',
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
   repositoryId: course.id,
