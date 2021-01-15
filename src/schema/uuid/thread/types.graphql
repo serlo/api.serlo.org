@@ -96,8 +96,9 @@ type ThreadCreateThreadResponse {
 input ThreadCreateCommentInput {
   title: String!
   content: String!
-  threadId: Int!
+  threadId: String!
 }
+
 type ThreadCreateCommentResponse {
   record: Comment
   success: Boolean!
@@ -108,6 +109,7 @@ input ThreadSetThreadArchivedInput {
   id: String!
   archived: Boolean!
 }
+
 type ThreadSetThreadArchivedResponse {
   success: Boolean!
   query: Query!

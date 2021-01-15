@@ -1500,7 +1500,7 @@ export type ThreadCreateThreadResponse = {
 export type ThreadCreateCommentInput = {
   title: Scalars['String'];
   content: Scalars['String'];
-  threadId: Scalars['Int'];
+  threadId: Scalars['String'];
 };
 
 export type ThreadCreateCommentResponse = {

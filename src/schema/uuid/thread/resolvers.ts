@@ -115,14 +115,19 @@ export const resolvers: ThreadResolvers = {
         query: {},
       }
     },
-    //TODO: make issue to define endpoint needs
     async setThreadArchived(_parent, payload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       const { id, archived } = payload.input
+      const idNumber = decodeThreadId(id)
+      if (idNumber === null)
+        return {
+          success: false,
+          query: {},
+        }
       const res = await dataSources.model.serlo.archiveThread({
-        id: id,
-        userId,
+        id: idNumber,
         archived,
+        userId,
       })
       return {
         success: res !== null,
@@ -139,7 +144,7 @@ export const resolvers: ThreadResolvers = {
           query: {},
         }
       const res = await dataSources.model.serlo.setUuidState({
-        id: [firstCommentId],
+        ids: [firstCommentId],
         userId,
         trashed,
       })
@@ -152,9 +157,9 @@ export const resolvers: ThreadResolvers = {
       assertUserIsAuthenticated(userId)
       const { id, trashed } = payload.input
       const res = await dataSources.model.serlo.setUuidState({
-        id: [id],
-        userId,
+        ids: [id],
         trashed,
+        userId,
       })
       return {
         success: res[0] !== null,
