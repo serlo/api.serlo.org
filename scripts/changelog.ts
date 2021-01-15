@@ -493,6 +493,14 @@ async function exec(): Promise<void> {
       date: '2021-01-14',
       internal: ['serlo-org-database-layer@0.1.4', 'Add health checks'],
     },
+    {
+      tagName: 'v0.17.3',
+      date: '2021-01-15',
+      internal: [
+        'serlo-org-database-layer@0.1.5',
+        'Split contract into serlo.org and serlo.org-database-layer.',
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
