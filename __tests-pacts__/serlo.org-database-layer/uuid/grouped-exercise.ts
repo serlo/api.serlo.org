@@ -83,7 +83,7 @@ test('GroupedExerciseRevision', async () => {
     __typename: groupedExerciseRevision.__typename,
     id: groupedExerciseRevision.id,
     trashed: Matchers.boolean(groupedExerciseRevision.trashed),
-    alias: null,
+    alias: Matchers.string(groupedExerciseRevision.alias),
     date: Matchers.iso8601DateTime(groupedExerciseRevision.date),
     authorId: Matchers.integer(groupedExerciseRevision.authorId),
     repositoryId: Matchers.integer(groupedExerciseRevision.repositoryId),

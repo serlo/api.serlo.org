@@ -39,7 +39,7 @@ function addTaxonomyTermInteraction(payload: TaxonomyTermPayload) {
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
-    alias: payload.alias ? Matchers.string(payload.alias) : null,
+    alias: Matchers.string(payload.alias),
     type: Matchers.string(payload.type),
     instance: Matchers.string(payload.instance),
     name: Matchers.string(payload.name),

@@ -34,7 +34,7 @@ test('User', async () => {
     __typename: user.__typename,
     id: user.id,
     trashed: Matchers.boolean(user.trashed),
-    alias: Matchers.string(`/user/profile/${user.username}`),
+    alias: Matchers.string(`/user/1/${user.username}`),
     username: Matchers.string(user.username),
     date: Matchers.iso8601DateTime(user.date),
     lastLogin: user.lastLogin ? Matchers.iso8601DateTime(user.lastLogin) : null,

@@ -40,7 +40,7 @@ test('Article', async () => {
     id: article.id,
     trashed: Matchers.boolean(article.trashed),
     instance: Matchers.string(article.instance),
-    alias: article.alias ? Matchers.string(article.alias) : null,
+    alias: Matchers.string(article.alias),
     date: Matchers.iso8601DateTime(article.date),
     currentRevisionId: article.currentRevisionId
       ? Matchers.integer(article.currentRevisionId)
@@ -78,7 +78,7 @@ test('ArticleRevision', async () => {
     __typename: articleRevision.__typename,
     id: articleRevision.id,
     trashed: Matchers.boolean(articleRevision.trashed),
-    alias: null,
+    alias: Matchers.string(articleRevision.alias),
     date: Matchers.iso8601DateTime(articleRevision.date),
     authorId: Matchers.integer(articleRevision.authorId),
     repositoryId: Matchers.integer(articleRevision.repositoryId),
