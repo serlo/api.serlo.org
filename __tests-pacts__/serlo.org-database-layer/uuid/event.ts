@@ -40,7 +40,7 @@ test('Event', async () => {
     id: event.id,
     trashed: Matchers.boolean(event.trashed),
     instance: Matchers.string(event.instance),
-    alias: event.alias ? Matchers.string(event.alias) : null,
+    alias: Matchers.string(event.alias),
     date: Matchers.iso8601DateTime(event.date),
     currentRevisionId: event.currentRevisionId
       ? Matchers.integer(event.currentRevisionId)
@@ -77,7 +77,7 @@ test('EventRevision', async () => {
     __typename: eventRevision.__typename,
     id: eventRevision.id,
     trashed: Matchers.boolean(eventRevision.trashed),
-    alias: null,
+    alias: Matchers.string(eventRevision.alias),
     date: Matchers.iso8601DateTime(eventRevision.date),
     authorId: Matchers.integer(eventRevision.authorId),
     repositoryId: Matchers.integer(eventRevision.repositoryId),

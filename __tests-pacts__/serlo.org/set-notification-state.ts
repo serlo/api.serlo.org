@@ -69,7 +69,7 @@ test('set-notification-state', async () => {
     id: article.id,
     trashed: Matchers.boolean(true),
     instance: Matchers.string(article.instance),
-    alias: article.alias ? Matchers.string(article.alias) : null,
+    alias: Matchers.string(article.alias),
     date: Matchers.iso8601DateTime(article.date),
     currentRevisionId: article.currentRevisionId
       ? Matchers.integer(article.currentRevisionId)

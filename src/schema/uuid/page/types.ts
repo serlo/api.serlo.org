@@ -26,7 +26,7 @@ import { DiscriminatorType, UuidResolvers } from '../abstract-uuid'
 
 export interface PagePayload extends Omit<Page, keyof PageResolvers['Page']> {
   __typename: DiscriminatorType.Page
-  alias: string | null
+  alias: string
   currentRevisionId: number | null
   revisionIds: number[]
   licenseId: number
@@ -35,7 +35,7 @@ export interface PagePayload extends Omit<Page, keyof PageResolvers['Page']> {
 export interface PageRevisionPayload
   extends Omit<PageRevision, keyof PageResolvers['PageRevision']> {
   __typename: DiscriminatorType.PageRevision
-  alias: string | null
+  alias: string
   authorId: number
   repositoryId: number
 }
