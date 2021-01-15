@@ -37,7 +37,7 @@ import {
   assertSuccessfulGraphQLQuery,
   Client,
   createAliasHandler,
-  createJsonHandler,
+  createJsonHandlerForDatabaseLayer,
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
@@ -525,14 +525,14 @@ describe('createThread', () => {
 function setupThreads(uuidPayload: UuidPayload, threads: CommentPayload[][]) {
   const firstCommentIds = threads.map((thread) => thread[0].id)
   global.server.use(
-    createJsonHandler({
-      path: `/api/threads/${uuidPayload.id}`,
+    createJsonHandlerForDatabaseLayer({
+      path: `/threads/${uuidPayload.id}`,
       body: { firstCommentIds },
     })
   )
   global.server.use(
     rest.get(
-      `http://${Instance.De}.${process.env.SERLO_ORG_HOST}/api/uuid/:id`,
+      `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}/uuid/:id`,
       (req, res, ctx) => {
         const id = Number(req.params.id)
 

@@ -35,7 +35,7 @@ test('Notifications', async () => {
   await addJsonInteraction({
     name: `fetch data of all notifications for user with id ${user.id}`,
     given: `there exists a notification for user with id ${user.id}`,
-    path: `/api/notifications/${user.id}`,
+    path: `/notifications/${user.id}`,
     body: {
       userId: user.id,
       notifications: Matchers.eachLike({
