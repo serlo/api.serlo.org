@@ -78,9 +78,9 @@ export const resolvers: NotificationResolvers = {
       const { id, unread } = payload.input
       const idArray = Array.isArray(id) ? id : [id]
       const res = await dataSources.model.serlo.setNotificationState({
-        id: idArray,
-        userId: userId,
-        unread: unread,
+        ids: idArray,
+        userId,
+        unread,
       })
       return {
         success: res.every(Boolean),
