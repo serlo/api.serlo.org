@@ -47,7 +47,7 @@ export function addUuidInteraction<T extends UuidPayload>(
   return addJsonInteraction({
     name: `fetch data of uuid ${data.id}`,
     given: `uuid ${data.id} is of type ${data.__typename}`,
-    path: `/api/uuid/${data.id}`,
+    path: `/uuid/${data.id}`,
     body: data,
   })
 }

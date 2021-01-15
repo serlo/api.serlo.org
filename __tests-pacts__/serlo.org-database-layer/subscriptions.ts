@@ -19,23 +19,23 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-/* eslint-disable @typescript-eslint/no-var-requires,import/no-commonjs */
-const { pathsToModuleNameMapper } = require('ts-jest/utils')
+import { Matchers } from '@pact-foundation/pact'
+import fetch from 'node-fetch'
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-const { compilerOptions } = require('./tsconfig')
+import { user } from '../../__fixtures__/uuid'
+import { addJsonInteraction } from '../__utils__'
 
-module.exports = {
-  preset: 'ts-jest',
-  modulePaths: ['<rootDir>/src'],
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
-  setupFiles: ['dotenv/config'],
-  setupFilesAfterEnv: ['<rootDir>/__config__/jest.setup-pacts.ts'],
-  testEnvironment: 'node',
-  testRegex: '/__tests-pacts__/serlo\\.org/index\\.ts',
-  transform: {
-    '^.+\\.graphql$': 'jest-transform-graphql',
-  },
-  watchPathIgnorePatterns: ['<rootDir>/pacts/'],
-}
+test('Subscriptions', async () => {
+  await addJsonInteraction({
+    name: `fetch data of all subscriptions for user with id ${user.id}`,
+    given: `there exists a subscription for user with id ${user.id}`,
+    path: `/subscriptions/${user.id}`,
+    body: {
+      userId: user.id,
+      subscriptions: Matchers.eachLike({ id: Matchers.integer(1) }),
+    },
+  })
+  await fetch(
+    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}/subscriptions/${user.id}`
+  )
+})

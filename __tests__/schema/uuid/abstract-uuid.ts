@@ -57,7 +57,7 @@ import {
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   Client,
-  createJsonHandler,
+  createJsonHandlerForDatabaseLayer,
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
@@ -115,8 +115,8 @@ const abstractUuidRepository = R.toPairs(abstractUuidFixtures)
 describe('uuid', () => {
   test('returns null when alias cannot be found', async () => {
     global.server.use(
-      createJsonHandler({
-        path: '/api/alias/not-existing',
+      createJsonHandlerForDatabaseLayer({
+        path: '/alias/de/not-existing',
         body: null,
       })
     )
@@ -165,7 +165,9 @@ describe('uuid', () => {
   })
 
   test('returns null when uuid does not exist', async () => {
-    global.server.use(createJsonHandler({ path: '/api/uuid/666', body: null }))
+    global.server.use(
+      createJsonHandlerForDatabaseLayer({ path: '/uuid/666', body: null })
+    )
 
     await assertSuccessfulGraphQLQuery({
       query: gql`
@@ -185,8 +187,8 @@ describe('uuid', () => {
 
   test('returns null when alias is /entity/view/:id and uuid does not exist', async () => {
     global.server.use(
-      createJsonHandler({
-        path: `/api/uuid/${article.id}`,
+      createJsonHandlerForDatabaseLayer({
+        path: `/uuid/${article.id}`,
         body: null,
       })
     )
@@ -361,8 +363,8 @@ describe('property "alias"', () => {
 describe('custom aliases', () => {
   test('de.serlo.org/mathe resolves to uuid 19767', async () => {
     global.server.use(
-      createJsonHandler({
-        path: `/api/uuid/19767`,
+      createJsonHandlerForDatabaseLayer({
+        path: `/uuid/19767`,
         body: {
           ...page,
           id: 19767,
