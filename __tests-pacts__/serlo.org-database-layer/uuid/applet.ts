@@ -78,7 +78,7 @@ test('AppletRevision', async () => {
     __typename: appletRevision.__typename,
     id: appletRevision.id,
     trashed: Matchers.boolean(appletRevision.trashed),
-    alias: null,
+    alias: appletRevision.alias,
     date: Matchers.iso8601DateTime(appletRevision.date),
     authorId: Matchers.integer(appletRevision.authorId),
     repositoryId: Matchers.integer(appletRevision.repositoryId),

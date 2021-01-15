@@ -57,11 +57,6 @@ test('Alias (URL /user/profile/:username)', async () => {
       id: Matchers.integer(1),
       instance: Matchers.string('de'),
       path: '/user/profile/admin',
-      source: Matchers.term({
-        matcher: '\\/user\\/profile\\/\\d+',
-        generate: '/user/profile/1',
-      }),
-      timestamp: Matchers.iso8601DateTime('2014-03-01T20:36:21+01:00'),
     },
   })
   await fetch(

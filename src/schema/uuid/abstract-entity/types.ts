@@ -98,7 +98,7 @@ export type EntityRevisionPayload =
 export interface AbstractEntityRevisionPayload
   extends Omit<AbstractEntityRevision, 'author' | 'repository'> {
   __typename: EntityRevisionType
-  alias: null
+  alias: string | null
   authorId: number
   repositoryId: number
 }

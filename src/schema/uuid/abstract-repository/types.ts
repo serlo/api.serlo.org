@@ -73,7 +73,7 @@ export type RevisionPayload = EntityRevisionPayload | PageRevisionPayload
 export interface AbstractRevisionPayload
   extends Omit<AbstractRevision, 'author' | 'repository' | 'threads'> {
   __typename: RevisionType
-  alias: null
+  alias: string | null
   authorId: number
   repositoryId: number
 }
