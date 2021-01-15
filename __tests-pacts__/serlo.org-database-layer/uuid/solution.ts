@@ -40,7 +40,7 @@ test('Solution', async () => {
     id: solution.id,
     trashed: Matchers.boolean(solution.trashed),
     instance: Matchers.string(solution.instance),
-    alias: solution.alias ? Matchers.string(solution.alias) : null,
+    alias: Matchers.string(solution.alias),
     date: Matchers.iso8601DateTime(solution.date),
     currentRevisionId: solution.currentRevisionId
       ? Matchers.integer(solution.currentRevisionId)
@@ -75,7 +75,7 @@ test('SolutionRevision', async () => {
     __typename: solutionRevision.__typename,
     id: solutionRevision.id,
     trashed: Matchers.boolean(solutionRevision.trashed),
-    alias: null,
+    alias: Matchers.string(solutionRevision.alias),
     date: Matchers.iso8601DateTime(solutionRevision.date),
     authorId: Matchers.integer(solutionRevision.authorId),
     repositoryId: Matchers.integer(solutionRevision.repositoryId),

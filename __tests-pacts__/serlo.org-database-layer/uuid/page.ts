@@ -40,7 +40,7 @@ test('Page', async () => {
     id: page.id,
     trashed: Matchers.boolean(page.trashed),
     instance: Matchers.string(page.instance),
-    alias: page.alias ? Matchers.string(page.alias) : null,
+    alias: Matchers.string(page.alias),
     date: Matchers.iso8601DateTime(page.date),
     currentRevisionId: page.currentRevisionId
       ? Matchers.integer(page.currentRevisionId)
@@ -74,7 +74,7 @@ test('PageRevision', async () => {
     __typename: pageRevision.__typename,
     id: 35476,
     trashed: Matchers.boolean(pageRevision.trashed),
-    alias: null,
+    alias: Matchers.string(pageRevision.alias),
     title: Matchers.string(pageRevision.title),
     content: Matchers.string(pageRevision.content),
     date: Matchers.iso8601DateTime(pageRevision.date),
