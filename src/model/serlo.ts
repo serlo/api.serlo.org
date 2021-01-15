@@ -51,13 +51,7 @@ import {
   NodeData,
   ThreadsPayload,
 } from '~/schema/uuid'
-import { decodeThreadId } from '~/schema/uuid/thread/utils'
-import {
-  Instance,
-  License,
-  ThreadCreateThreadInput,
-  ThreadSetThreadArchivedInput,
-} from '~/types'
+import { Instance, License, ThreadCreateThreadInput } from '~/types'
 
 export function createSerloModel({
   environment,
@@ -136,23 +130,23 @@ export function createSerloModel({
 
   const setUuidState = createMutation<
     {
-      id: number[]
+      ids: number[]
       userId: number
       trashed: boolean
     },
     (AbstractUuidPayload | null)[]
   >({
-    mutate: async ({ id, userId, trashed }) => {
+    mutate: async ({ ids, userId, trashed }) => {
       //looping should be fine here, since trashing/restoring multiple items will not happen very often
       return await Promise.all(
-        id.map(
-          async (uuidId): Promise<AbstractUuidPayload | null> => {
+        ids.map(
+          async (id): Promise<AbstractUuidPayload | null> => {
             const value = await post<AbstractUuidPayload | null>({
-              path: `/api/set-uuid-state/${uuidId}`,
-              body: { userId, trashed },
+              path: `/api/set-uuid-state`,
+              body: { id, userId, trashed },
             })
             await environment.cache.set({
-              key: `de.serlo.org/api/uuid/${uuidId}`,
+              key: getUuid._querySpec.getKey({ id }),
               value,
             })
             return value
@@ -403,11 +397,11 @@ export function createSerloModel({
         id.map(
           async (notificationId): Promise<NotificationsPayload> => {
             const value = await post<NotificationsPayload>({
-              path: `/api/set-notification-state/${notificationId}`,
-              body: { userId, unread },
+              path: `/api/set-notification-state`,
+              body: { notificationId, userId, unread },
             })
             await environment.cache.set({
-              key: `de.serlo.org/api/notifications/${userId}`,
+              key: getNotifications._querySpec.getKey({ id: userId }),
               value,
             })
             return value
@@ -464,24 +458,38 @@ export function createSerloModel({
     CommentPayload | null
   >({
     mutate: async (payload) => {
-      return await post<CommentPayload | null>({
-        path: `/api/add-comment/`,
+      const value = await post<CommentPayload | null>({
+        path: `/api/thread/start-thread`,
         body: payload,
       })
+      if (value !== null)
+        await environment.cache.set({
+          key: getUuid._querySpec.getKey({
+            id: value.id,
+          }),
+          value,
+        })
+      return value
     },
   })
 
   const archiveThread = createMutation<
-    ThreadSetThreadArchivedInput & { userId: number },
+    { id: number; archived: boolean; userId: number },
     CommentPayload | null
   >({
     mutate: async (payload) => {
-      const id = decodeThreadId(payload.id)
-      if (id === null) return null
-      return await post<CommentPayload | null>({
-        path: `/api/archive-comment/${id}`,
+      const value = await post<CommentPayload | null>({
+        path: `/api/archive-comment`,
         body: payload,
       })
+      if (value !== null)
+        await environment.cache.set({
+          key: getUuid._querySpec.getKey({
+            id: value.id,
+          }),
+          value,
+        })
+      return value
     },
   })
 

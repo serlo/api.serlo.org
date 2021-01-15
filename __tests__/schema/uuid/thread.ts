@@ -282,7 +282,7 @@ describe('uuid["threads"]', () => {
       `,
       variables: { id: article.id },
       data: {
-        uuid: { threads: { nodes: [{ archived: comment1.archived }] } },
+        uuid: { threads: { nodes: [{ archived: false }] } },
       },
       client,
     })
@@ -442,7 +442,7 @@ describe('uuid["threads"]', () => {
 
 describe('createThread', () => {
   test('successful mutation returns thread', async () => {
-    setupComments(article.id, comment1.date)
+    setupStartThreadEndpoint()
 
     await assertSuccessfulGraphQLMutation({
       ...createCreateThreadMutation({
@@ -461,6 +461,7 @@ describe('createThread', () => {
                 nodes: [
                   {
                     content: 'first!',
+                    title: 'First comment in new thread',
                   },
                 ],
               },
@@ -501,6 +502,7 @@ describe('createThread', () => {
                 comments {
                   nodes {
                     content
+                    title
                   }
                 }
               }
@@ -514,22 +516,22 @@ describe('createThread', () => {
     }
   }
 
-  function setupComments(id: number, date: string) {
+  function setupStartThreadEndpoint() {
     global.server.use(
       rest.post<ThreadCreateThreadInput & { userId: number }>(
-        `http://de.${process.env.SERLO_ORG_HOST}/api/add-comment`,
+        `http://de.${process.env.SERLO_ORG_HOST}/api/thread/start-thread`,
         (req, res, ctx) => {
           if (typeof req.body === 'string' || typeof req.body === 'undefined')
             return res(ctx.status(400))
           return res(
             ctx.json({
-              id,
+              id: 1,
               title: req.body.title,
               trashed: false,
               alias: null,
               __typename: 'Comment',
               authorId: req.body.userId,
-              date,
+              date: '…',
               archived: false,
               content: req.body.content,
               parentId: req.body.objectId,
@@ -545,20 +547,16 @@ describe('createThread', () => {
 describe('setState mutations', () => {
   beforeEach(() =>
     global.server.use(
-      rest.post(
-        `http://de.${process.env.SERLO_ORG_HOST}/api/set-uuid-state/:id`,
+      rest.post<{
+        userId: number
+        trashed: boolean
+        id: number
+      }>(
+        `http://de.${process.env.SERLO_ORG_HOST}/api/set-uuid-state`,
         (req, res, ctx) => {
-          const { userId, trashed } = req.body as {
-            userId: number
-            trashed: boolean
-          }
-          const id = parseInt(req.params.id)
-
+          const { userId, trashed, id } = req.body
           if (userId !== user.id) return res(ctx.status(403))
-
-          //TODO: how does the endpoint return here actually? 404 or null?
-          // if (![1, 2, 3].includes(id)) return res(ctx.status(404))
-          if (![1, 2, 3].includes(id)) return res(ctx.json(null))
+          if (![1, 2, 3].includes(id)) return res(ctx.status(400))
 
           return res(ctx.json({ ...comment, trashed: trashed }))
         }
@@ -594,6 +592,7 @@ describe('setState mutations', () => {
     })
 
     test('mutation returns success: false on non existing id', async () => {
+      //TODO: should probably be `assertFailingGraphQLMutation` but that results in an internal server error… ?
       await assertSuccessfulGraphQLMutation({
         mutation,
         client,
@@ -630,6 +629,7 @@ describe('setState mutations', () => {
     })
   })
 
+  /*
   describe('setCommentState', () => {
     const mutation = gql`
       mutation setCommentState($input: ThreadSetCommentStateInput!) {
@@ -692,26 +692,23 @@ describe('setState mutations', () => {
         }
       )
     })
-  })
+  }) */
 })
 
 describe('setThreadArchived', () => {
   beforeEach(() =>
     global.server.use(
-      rest.post(
-        `http://de.${process.env.SERLO_ORG_HOST}/api/archive-comment/:id`,
+      rest.post<{
+        id: number
+        userId: number
+        archived: boolean
+      }>(
+        `http://de.${process.env.SERLO_ORG_HOST}/api/archive-comment/`,
         (req, res, ctx) => {
-          const { userId, archived } = req.body as {
-            userId: number
-            archived: boolean
-          }
-          const id = parseInt(req.params.id)
+          const { id, userId, archived } = req.body
 
           if (userId !== user.id) return res(ctx.status(403))
-
-          //TODO: what does the endpoint return here actually ? 404 or null ?
-          // if (![1, 2, 3].includes(id)) return res(ctx.status(404))
-          if (![1, 2, 3].includes(id)) return res(ctx.json(null))
+          if (![1, 2, 3].includes(id)) return res(ctx.status(400))
 
           return res(ctx.json({ ...comment, archived: archived }))
         }
@@ -746,6 +743,7 @@ describe('setThreadArchived', () => {
   })
 
   test('mutation returns success: false on non existing id', async () => {
+    //TODO: should probably be `assertFailingGraphQLMutation` but that results in an internal server error… ?
     await assertSuccessfulGraphQLMutation({
       mutation,
       client,
