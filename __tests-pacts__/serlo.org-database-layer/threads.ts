@@ -47,7 +47,7 @@ test('Comment', async () => {
     __typename: comment.__typename,
     id: comment.id,
     trashed: Matchers.boolean(comment.trashed),
-    alias: null,
+    alias: comment.alias,
     authorId: Matchers.integer(comment.authorId),
     title: comment.title ? Matchers.string(comment.title) : null,
     date: Matchers.iso8601DateTime(comment.date),

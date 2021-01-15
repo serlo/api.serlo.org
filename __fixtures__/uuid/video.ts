@@ -48,7 +48,7 @@ export const videoRevision: VideoRevisionPayload = {
   __typename: EntityRevisionType.VideoRevision,
   id: 16114,
   trashed: false,
-  alias: null,
+  alias: '/mathe/16114/waagrechte-und-schiefe-asymptote',
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
   repositoryId: video.id,

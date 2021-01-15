@@ -314,49 +314,24 @@ describe('uuid mutation setState', () => {
 
 describe('property "alias"', () => {
   describe('returns encoded alias when alias of payloads is a string', () => {
-    test.each(abstractUuidRepository.filter(aliasIsString))(
-      'type = %s',
-      async (_type, payload) => {
-        global.server.use(
-          createUuidHandler({ ...payload, alias: '/%%/größe', id: 23 })
-        )
+    test.each(abstractUuidRepository)('type = %s', async (_type, payload) => {
+      global.server.use(
+        createUuidHandler({ ...payload, alias: '/%%/größe', id: 23 })
+      )
 
-        await assertSuccessfulGraphQLQuery({
-          query: gql`
-            query($id: Int) {
-              uuid(id: $id) {
-                alias
-              }
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query($id: Int) {
+            uuid(id: $id) {
+              alias
             }
-          `,
-          variables: { id: 23 },
-          data: { uuid: { alias: '/%25%25/gr%C3%B6%C3%9Fe' } },
-          client,
-        })
-      }
-    )
-  })
-
-  describe('returns null when alias of payload = null', () => {
-    test.each(abstractUuidRepository.filter(aliasIsNull))(
-      'type = %s',
-      async (_type, payload) => {
-        global.server.use(createUuidHandler(payload))
-
-        await assertSuccessfulGraphQLQuery({
-          query: gql`
-            query($id: Int) {
-              uuid(id: $id) {
-                alias
-              }
-            }
-          `,
-          variables: { id: payload.id },
-          data: { uuid: { alias: null } },
-          client,
-        })
-      }
-    )
+          }
+        `,
+        variables: { id: 23 },
+        data: { uuid: { alias: '/%25%25/gr%C3%B6%C3%9Fe' } },
+        client,
+      })
+    })
   })
 })
 
@@ -393,15 +368,3 @@ describe('custom aliases', () => {
     })
   })
 })
-
-function aliasIsNull(
-  testCase: [string, UuidPayload]
-): testCase is [string, UuidPayload & { alias: null }] {
-  return testCase[1].alias === null
-}
-
-function aliasIsString(
-  testCase: [string, UuidPayload]
-): testCase is [string, UuidPayload & { alias: string }] {
-  return typeof testCase[1].alias === 'string'
-}
