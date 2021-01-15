@@ -36,21 +36,23 @@ test('Alias', async () => {
   await addJsonInteraction({
     name: 'fetch data of alias /mathe',
     given: '/mathe is alias of 19767',
-    path: '/api/alias/mathe',
+    path: '/alias/de/mathe',
     body: {
       id: alias.id,
       instance: Matchers.string(alias.instance),
       path: Matchers.string(alias.path),
     },
   })
-  await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/alias/mathe`)
+  await fetch(
+    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}/alias/de/mathe`
+  )
 })
 
 test('Alias (URL /user/profile/:username)', async () => {
   await addJsonInteraction({
     name: 'fetch data of alias /user/profile/admin',
     given: 'user "admin" has id 1',
-    path: '/api/alias/user/profile/admin',
+    path: '/alias/de/user/profile/admin',
     body: {
       id: Matchers.integer(1),
       instance: Matchers.string('de'),
@@ -63,6 +65,6 @@ test('Alias (URL /user/profile/:username)', async () => {
     },
   })
   await fetch(
-    `http://de.${process.env.SERLO_ORG_HOST}/api/alias/user/profile/admin`
+    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}/alias/de/user/profile/admin`
   )
 })

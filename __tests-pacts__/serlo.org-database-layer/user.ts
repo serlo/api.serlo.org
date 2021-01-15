@@ -28,22 +28,24 @@ test('GET /api/user/active-authors', async () => {
   await addJsonInteraction({
     name: 'fetch list of active author ids',
     given: 'users with ids 1 and 10 are active authors',
-    path: '/api/user/active-authors',
+    path: '/user/active-authors',
     body: Matchers.eachLike(1),
   })
 
-  await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/user/active-authors`)
+  await fetch(
+    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}/user/active-authors`
+  )
 })
 
 test('GET /api/user/active-reviewers', async () => {
   await addJsonInteraction({
     name: 'fetch list of active reviewer ids',
     given: 'users with ids 1 and 10 are active reviewers',
-    path: '/api/user/active-reviewers',
+    path: '/user/active-reviewers',
     body: Matchers.eachLike(1),
   })
 
   await fetch(
-    `http://de.${process.env.SERLO_ORG_HOST}/api/user/active-reviewers`
+    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}/user/active-reviewers`
   )
 })
