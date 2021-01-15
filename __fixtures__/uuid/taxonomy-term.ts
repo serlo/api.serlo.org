@@ -28,7 +28,7 @@ export const taxonomyTermRoot: TaxonomyTermPayload = {
   __typename: DiscriminatorType.TaxonomyTerm,
   id: 3,
   trashed: false,
-  alias: null,
+  alias: '/3/root',
   type: TaxonomyTermType.Root,
   instance: Instance.De,
   name: 'name',
