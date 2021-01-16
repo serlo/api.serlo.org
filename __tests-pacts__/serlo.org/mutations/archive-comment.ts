@@ -22,28 +22,25 @@
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
-import { checkoutRevisionNotificationEvent, user } from '../../__fixtures__'
-import { createTestClient } from '../../__tests__/__utils__'
-import {
-  assertSuccessfulGraphQLMutation,
-  assertSuccessfulGraphQLQuery,
-} from '../__utils__'
-import { Service } from '~/internals/auth'
+import { comment, user } from '../../../__fixtures__'
+import { createTestClient } from '../../../__tests__/__utils__'
+import { assertSuccessfulGraphQLMutation } from '../../__utils__'
+import { encodeThreadId } from '~/schema/uuid'
 
-test('set-uuid-state', async () => {
+test('archive-comment', async () => {
   global.client = createTestClient({
-    service: Service.SerloCloudflareWorker,
     userId: user.id,
   })
   await global.pact.addInteraction({
-    uponReceiving: `set state of notification with id 9`,
-    state: `there exists a notification with id 9 for user with id ${user.id}`,
+    uponReceiving: 'set `archived` of thread where id of first comment is 100',
+    state: `there exists a thread with a first comment with an id of 100 and user with id ${user.id} is authenticated`,
     withRequest: {
       method: 'POST',
-      path: '/api/set-notification-state/9',
+      path: '/api/archive-comment',
       body: {
+        id: 100,
         userId: user.id,
-        unread: Matchers.boolean(true),
+        archived: Matchers.boolean(true),
       },
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
@@ -54,43 +51,33 @@ test('set-uuid-state', async () => {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
       },
-      body: {
-        userId: user.id,
-        notifications: Matchers.eachLike({
-          id: Matchers.integer(9),
-          unread: Matchers.boolean(true),
-          eventId: Matchers.integer(checkoutRevisionNotificationEvent.id),
-        }),
-      },
+      body: { ...comment, archived: true },
     },
   })
   await assertSuccessfulGraphQLMutation({
     mutation: gql`
-      mutation notification($input: NotificationSetStateInput!) {
-        notification {
-          setState(input: $input) {
+      mutation archiveThread($input: ThreadSetThreadArchivedInput!) {
+        thread {
+          setThreadArchived(input: $input) {
             success
           }
         }
       }
     `,
-    variables: { input: { id: 9, unread: true } },
-    data: { notification: { setState: { success: true } } },
-  })
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query {
-        notifications {
-          nodes {
-            id
-            unread
-          }
-          totalCount
-        }
-      }
-    `,
+    variables: {
+      input: {
+        id: encodeThreadId(100),
+        archived: true,
+      },
+    },
     data: {
-      notifications: { nodes: [{ id: 9, unread: true }], totalCount: 1 },
+      thread: {
+        setThreadArchived: {
+          success: true,
+        },
+      },
     },
   })
+
+  //TODO: Cache check?
 })

@@ -38,9 +38,6 @@ describe('GET /api/navigation', () => {
 describe('GET /api/notifications/:id', () => {
   require('./notifications')
 })
-describe('POST /api/set-notification-state/:id', () => {
-  require('./set-notification-state')
-})
 describe('GET /api/subscriptions', () => {
   require('./subscriptions')
 })
@@ -50,9 +47,20 @@ describe('GET /api/user/*', () => {
 describe('GET /api/uuid/:id', () => {
   require('./uuid')
 })
-describe('POST /api/set-uuid-state/:id', () => {
-  require('./set-uuid-state')
-})
 describe('GET /api/threads/:id', () => {
   require('./threads')
+})
+
+//mutations
+describe('POST /api/set-uuid-state', () => {
+  require('./mutations/set-uuid-state')
+})
+describe('POST /api/set-notification-state', () => {
+  require('./mutations/set-notification-state')
+})
+describe('POST /api/create-thread', () => {
+  require('./mutations/start-thread')
+})
+describe('POST /api/create-thread', () => {
+  require('./mutations/archive-comment')
 })
