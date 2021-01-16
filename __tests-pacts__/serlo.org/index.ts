@@ -23,12 +23,6 @@
 describe('GET /api/cache-keys', () => {
   require('./cache-keys')
 })
-describe('GET /api/event/:id', () => {
-  require('./event')
-})
-describe('GET /api/navigation', () => {
-  require('./navigation')
-})
 describe('POST /api/set-notification-state/:id', () => {
   require('./set-notification-state')
 })
