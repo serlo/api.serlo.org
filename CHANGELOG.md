@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.17.4](https://github.com/serlo/api.serlo.org/compare/v0.17.3..v0.17.4) - January 16, 2021
+
+### Internal
+
+- serlo-org-database-layer@0.1.6
+
 ## [v0.17.3](https://github.com/serlo/api.serlo.org/compare/v0.17.2..v0.17.3) - January 15, 2021
 
 ### Internal
