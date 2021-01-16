@@ -65,7 +65,7 @@ async function addNotificationEventInteraction<
   await addJsonInteraction({
     name: `fetch data of event with id ${body.id}`,
     given: `event ${body.id} is of type ${body.__typename}`,
-    path: `/api/event/${body.id}`,
+    path: `/event/${body.id}`,
     body,
   })
 }

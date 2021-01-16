@@ -41,9 +41,8 @@ export function createLicenseHandler(license: LicensePayload) {
 }
 
 export function createNavigationHandler(navigation: NavigationPayload) {
-  return createJsonHandlerForLegacySerlo({
-    instance: navigation.instance,
-    path: '/api/navigation',
+  return createJsonHandlerForDatabaseLayer({
+    path: `/navigation/${navigation.instance}`,
     body: navigation,
   })
 }
@@ -51,8 +50,8 @@ export function createNavigationHandler(navigation: NavigationPayload) {
 export function createNotificationEventHandler(
   notificationEvent: NotificationEventPayload
 ) {
-  return createJsonHandlerForLegacySerlo({
-    path: `/api/event/${notificationEvent.id}`,
+  return createJsonHandlerForDatabaseLayer({
+    path: `/event/${notificationEvent.id}`,
     body: notificationEvent,
   })
 }
