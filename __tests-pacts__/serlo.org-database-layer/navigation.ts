@@ -40,7 +40,7 @@ test('Navigation', async () => {
   await addJsonInteraction({
     name: 'fetch data of navigation',
     given: '',
-    path: '/api/navigation',
+    path: `/navigation/${navigation.instance}`,
     body: {
       instance: Matchers.string(navigation.instance),
       data: Matchers.eachLike({
@@ -51,5 +51,7 @@ test('Navigation', async () => {
       }),
     },
   })
-  await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/navigation`)
+  await fetch(
+    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}/navigation/${navigation.instance}`
+  )
 })

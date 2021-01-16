@@ -212,9 +212,8 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ instance }) => {
-        return await getViaLegacySerlo<NavigationPayload>({
-          path: '/api/navigation',
-          instance,
+        return await getViaDatabaseLayer<NavigationPayload>({
+          path: `/navigation/${instance}`,
         })
       },
       maxAge: { hour: 1 },
@@ -350,11 +349,11 @@ export function createSerloModel({
     AbstractNotificationEventPayload | null
   >(
     {
-      enableSwr: false,
+      enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        const notificationEvent = await getViaLegacySerlo<AbstractNotificationEventPayload>(
+        const notificationEvent = await getViaDatabaseLayer<AbstractNotificationEventPayload>(
           {
-            path: `/api/event/${id}`,
+            path: `/event/${id}`,
           }
         )
         return isUnsupportedNotificationEvent(notificationEvent)

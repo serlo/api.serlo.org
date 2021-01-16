@@ -23,8 +23,14 @@
 describe('GET /alias/:instance/:alias', () => {
   require('./alias')
 })
+describe('GET /event/:id', () => {
+  require('./event')
+})
 describe('GET /license/:id', () => {
   require('./license')
+})
+describe('GET /navigation/:instance', () => {
+  require('./navigation')
 })
 describe('GET /notifications/:id', () => {
   require('./notifications')
