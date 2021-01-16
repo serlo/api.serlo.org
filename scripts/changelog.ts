@@ -501,6 +501,11 @@ async function exec(): Promise<void> {
         'Split contract into serlo.org and serlo.org-database-layer.',
       ],
     },
+    {
+      tagName: 'v0.17.4',
+      date: '2021-01-16',
+      internal: ['serlo-org-database-layer@0.1.6'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
