@@ -2139,20 +2139,20 @@ describe('mutation notification setState', () => {
   beforeEach(() => {
     global.server.use(
       rest.post<{
-        notificationId: number
+        id: number
         userId: number
         unread: boolean
       }>(
         `http://de.${process.env.SERLO_ORG_HOST}/api/set-notification-state`,
         (req, res, ctx) => {
-          const { notificationId, userId, unread } = req.body
+          const { id, userId, unread } = req.body
 
           if (userId !== user.id) return res(ctx.status(403))
-          if (![1, 2, 3].includes(notificationId)) return res(ctx.status(404))
+          if (![1, 2, 3].includes(id)) return res(ctx.status(404))
 
           return res(
             ctx.json({
-              notifications: [{ notificationId, unread, eventId: 0 }],
+              notifications: [{ id, unread, eventId: 0 }],
               userId,
             })
           )

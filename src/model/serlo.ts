@@ -395,10 +395,10 @@ export function createSerloModel({
       return await Promise.all(
         //TODO: rewrite legacy endpoint so that it accepts an array directly
         ids.map(
-          async (notificationId): Promise<NotificationsPayload> => {
+          async (id): Promise<NotificationsPayload> => {
             const value = await post<NotificationsPayload>({
               path: `/api/set-notification-state`,
-              body: { notificationId, userId, unread },
+              body: { id, userId, unread },
             })
             await environment.cache.set({
               key: getNotifications._querySpec.getKey({ id: userId }),
@@ -462,13 +462,22 @@ export function createSerloModel({
         path: `/api/thread/start-thread`,
         body: payload,
       })
-      if (value !== null)
-        await environment.cache.set({
-          key: getUuid._querySpec.getKey({
-            id: value.id,
+      if (value !== null) {
+        //TODO: Update instead of invalidate
+        await environment.cache.remove({
+          key: getThreadIds._querySpec.getKey({
+            id: payload.objectId,
           }),
-          value,
         })
+
+        //TODO: It stores the threads as well, right?
+        //TODO: Update instead of invalidating
+        await environment.cache.remove({
+          key: getUuid._querySpec.getKey({
+            id: payload.objectId,
+          }),
+        })
+      }
       return value
     },
   })
@@ -482,13 +491,26 @@ export function createSerloModel({
         path: `/api/archive-comment`,
         body: payload,
       })
-      if (value !== null)
-        await environment.cache.set({
+      if (value !== null) {
+        //TODO: Update instead of invalidate
+        try {
+          await environment.cache.remove({
+            key: getThreadIds._querySpec.getKey({
+              id: value.parentId,
+            }),
+          })
+        } catch (e) {
+          console.log(e)
+        }
+
+        //TODO: It stores the threads as well, right?
+        //TODO: Update instead of invalidating
+        await environment.cache.remove({
           key: getUuid._querySpec.getKey({
-            id: value.id,
+            id: value.parentId,
           }),
-          value,
         })
+      }
       return value
     },
   })

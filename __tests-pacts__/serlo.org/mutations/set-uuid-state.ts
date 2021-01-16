@@ -22,16 +22,16 @@
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
-import { article, user } from '../../__fixtures__'
-import { createTestClient } from '../../__tests__/__utils__'
+import { article, user } from '../../../__fixtures__'
+import { createTestClient } from '../../../__tests__/__utils__'
 import {
   assertSuccessfulGraphQLQuery,
   assertSuccessfulGraphQLMutation,
-} from '../__utils__'
+} from '../../__utils__'
 import { Service } from '~/internals/auth'
 import { ArticlePayload, UuidPayload } from '~/schema/uuid'
 
-test('set-notification-state', async () => {
+test('set-uuid-state', async () => {
   global.client = createTestClient({
     service: Service.SerloCloudflareWorker,
     userId: user.id,
@@ -45,8 +45,9 @@ test('set-notification-state', async () => {
       state: `there exists a uuid with id 1855 that is not trashed`,
       withRequest: {
         method: 'POST',
-        path: '/api/set-uuid-state/1855',
+        path: '/api/set-uuid-state',
         body: {
+          id: 1855,
           userId: user.id,
           trashed: Matchers.boolean(true),
         },
