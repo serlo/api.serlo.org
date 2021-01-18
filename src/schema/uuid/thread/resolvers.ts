@@ -100,18 +100,23 @@ export const resolvers: ThreadResolvers = {
         query: {},
       }
     },
-    //TODO: add Caros code
-    async createComment(_parent, payload, { dataSources, userId }) {
+    async createComment(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
-      const commentPayload = await dataSources.model.serlo.createThread({
-        objectId: 0,
-        ...payload.input,
-        userId,
-      })
-      console.log(commentPayload)
+      const threadId = decodeThreadId(input.threadId)
+
+      const commentPayload =
+        threadId === null
+          ? null
+          : await dataSources.model.serlo.createComment({
+              content: input.content,
+              threadId,
+              userId,
+            })
+
+      const success = commentPayload !== null
       return {
-        record: null,
-        success: true,
+        record: commentPayload,
+        success,
         query: {},
       }
     },
@@ -119,16 +124,15 @@ export const resolvers: ThreadResolvers = {
       assertUserIsAuthenticated(userId)
       const { id, archived } = payload.input
       const idNumber = decodeThreadId(id)
-      if (idNumber === null)
-        return {
-          success: false,
-          query: {},
-        }
-      const res = await dataSources.model.serlo.archiveThread({
-        id: idNumber,
-        archived,
-        userId,
-      })
+
+      const res =
+        idNumber === null
+          ? null
+          : await dataSources.model.serlo.archiveThread({
+              id: idNumber,
+              archived,
+              userId,
+            })
       return {
         success: res !== null,
         query: {},

@@ -482,6 +482,29 @@ export function createSerloModel({
     },
   })
 
+  const createComment = createMutation<
+    { content: string; threadId: number; userId: number },
+    CommentPayload | null
+  >({
+    mutate: async (payload) => {
+      const value = await post<CommentPayload | null>({
+        path: `/api/thread/comment-thread`,
+        body: payload,
+      })
+      if (value !== null) {
+        // Question: uuid stores the threads and it's comment as well, right?
+        // TODO: We should probably get the objectId from the api here as well, so we can invalidate/update the cache of the uuid
+        // TODO: Update instead of invalidating
+        // await environment.cache.remove({
+        //   key: getUuid._querySpec.getKey({
+        //     id: ??,
+        //   }),
+        // })
+      }
+      return value
+    },
+  })
+
   const archiveThread = createMutation<
     { id: number; archived: boolean; userId: number },
     CommentPayload | null
@@ -549,6 +572,7 @@ export function createSerloModel({
   return {
     createThread,
     archiveThread,
+    createComment,
     getActiveAuthorIds,
     getActiveReviewerIds,
     getAlias,

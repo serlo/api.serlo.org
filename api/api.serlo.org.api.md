@@ -1545,7 +1545,6 @@ export type ThreadCommentsArgs = {
 
 // @public (undocumented)
 export type ThreadCreateCommentInput = {
-    title: Scalars['String'];
     content: Scalars['String'];
     threadId: Scalars['String'];
 };

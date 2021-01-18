@@ -87,25 +87,20 @@ describe('setCommentState', () => {
     )
   })
 
-  /*
-    test('mutation returns success: false on non existing id', async () => {
-      await assertSuccessfulGraphQLMutation({
+  test('mutation is unsuccessful for non existing id', async () => {
+    await assertFailingGraphQLMutation(
+      {
         mutation,
-        client,
         variables: {
           input: { id: 4, trashed: true },
         },
-        data: {
-          thread: {
-            setCommentState: {
-              success: false,
-            },
-          },
-        },
-      })
-    })
-
-     */
+        client,
+      },
+      (errors) => {
+        expect(errors[0].extensions?.code).toEqual('INTERNAL_SERVER_ERROR')
+      }
+    )
+  })
 })
 
 function mockSetUuidStateEndpoint() {
