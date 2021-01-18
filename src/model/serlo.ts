@@ -493,11 +493,11 @@ export function createSerloModel({
       })
       if (value !== null) {
         // Question: uuid stores the threads and it's comment as well, right?
-        // TODO: We should probably get the objectId from the api here as well, so we can invalidate/update the cache of the uuid
         // TODO: Update instead of invalidating
+        // TODO: Get the parentId of the thread from the cache or query it or add it to the endpoint…?
         // await environment.cache.remove({
         //   key: getUuid._querySpec.getKey({
-        //     id: ??,
+        //     id: value.parentId,
         //   }),
         // })
       }
