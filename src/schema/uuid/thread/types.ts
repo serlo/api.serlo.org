@@ -33,7 +33,6 @@ import {
   Scalars,
   ThreadAwareThreadsArgs,
   ThreadCommentsArgs,
-  ThreadCreateCommentResponse,
   ThreadMutationCreateCommentArgs,
   ThreadMutationCreateThreadArgs,
   ThreadMutationSetCommentStateArgs,
@@ -82,7 +81,7 @@ export interface ThreadResolvers {
     >
     createComment: MutationResolver<
       ThreadMutationCreateCommentArgs,
-      ThreadCreateCommentResponse
+      MutationResponseWithRecord<CommentPayload | null>
     >
     setThreadArchived: MutationResolver<
       ThreadMutationSetThreadArchivedArgs,

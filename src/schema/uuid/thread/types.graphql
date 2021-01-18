@@ -94,7 +94,6 @@ type ThreadCreateThreadResponse {
 }
 
 input ThreadCreateCommentInput {
-  title: String!
   content: String!
   threadId: String!
 }
