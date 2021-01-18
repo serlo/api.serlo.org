@@ -62,5 +62,8 @@ describe('POST /api/create-thread', () => {
   require('./mutations/start-thread')
 })
 describe('POST /api/create-thread', () => {
+  require('./mutations/comment-thread')
+})
+describe('POST /api/create-thread', () => {
   require('./mutations/archive-comment')
 })
