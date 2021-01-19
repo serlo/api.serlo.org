@@ -60,6 +60,7 @@ import {
   createJsonHandler,
   createTestClient,
   createUuidHandler,
+  getSerloUrl,
 } from '../../__utils__'
 import { Service } from '~/internals/auth'
 import {
@@ -258,17 +259,14 @@ describe('uuid mutation setState', () => {
         id: number
         userId: number
         trashed: boolean
-      }>(
-        `http://de.${process.env.SERLO_ORG_HOST}/api/set-uuid-state`,
-        (req, res, ctx) => {
-          const { id, userId, trashed } = req.body
+      }>(getSerloUrl({ path: '/api/set-uuid-state' }), (req, res, ctx) => {
+        const { id, userId, trashed } = req.body
 
-          if (userId !== user.id) return res(ctx.status(403))
-          if (![1, 2, 3].includes(id)) return res(ctx.status(404))
+        if (userId !== user.id) return res(ctx.status(403))
+        if (![1, 2, 3].includes(id)) return res(ctx.status(404))
 
-          return res(ctx.json({ ...article, trashed: trashed }))
-        }
-      )
+        return res(ctx.json({ ...article, trashed: trashed }))
+      })
     )
   })
 

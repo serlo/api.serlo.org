@@ -31,6 +31,7 @@ import {
   assertSuccessfulGraphQLQuery,
   createTestClient,
   createUuidHandler,
+  getSerloUrl,
 } from '../__utils__'
 import { Service } from '~/internals/auth'
 
@@ -39,14 +40,10 @@ describe('subscriptions', () => {
     global.server.use(
       createUuidHandler(article),
       rest.get(
-        `http://de.${process.env.SERLO_ORG_HOST}/api/subscriptions/${user.id}`,
-        (req, res, ctx) => {
+        getSerloUrl({ path: `/api/subscriptions/${user.id}` }),
+        (_req, res, ctx) => {
           return res(
-            ctx.status(200),
-            ctx.json({
-              userId: user.id,
-              subscriptions: [{ id: article.id }],
-            })
+            ctx.json({ userId: user.id, subscriptions: [{ id: article.id }] })
           )
         }
       )

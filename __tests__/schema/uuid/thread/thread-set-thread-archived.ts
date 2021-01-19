@@ -28,6 +28,7 @@ import {
   assertSuccessfulGraphQLMutation,
   Client,
   createTestClient,
+  getSerloUrl,
 } from '../../../__utils__'
 import { encodeThreadId } from '~/schema/uuid/thread/utils'
 
@@ -113,18 +114,15 @@ function mockArchiveCommentEndpoint() {
       id: number
       userId: number
       archived: boolean
-    }>(
-      `http://de.${process.env.SERLO_ORG_HOST}/api/archive-comment`,
-      (req, res, ctx) => {
-        const { id, userId, archived } = req.body
+    }>(getSerloUrl({ path: '/api/archive-comment' }), (req, res, ctx) => {
+      const { id, userId, archived } = req.body
 
-        if (userId !== user.id) return res(ctx.status(403))
+      if (userId !== user.id) return res(ctx.status(403))
 
-        // TODO: this results in an INTERNAL_SERVER_ERROR which is weird…
-        if (![1, 2, 3].includes(id)) return res(ctx.status(400))
+      // TODO: this results in an INTERNAL_SERVER_ERROR which is weird…
+      if (![1, 2, 3].includes(id)) return res(ctx.status(400))
 
-        return res(ctx.json({ ...comment, archived: archived }))
-      }
-    )
+      return res(ctx.json({ ...comment, archived: archived }))
+    })
   )
 }
