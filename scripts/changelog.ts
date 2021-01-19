@@ -506,6 +506,11 @@ async function exec(): Promise<void> {
       date: '2021-01-16',
       internal: ['serlo-org-database-layer@0.1.6'],
     },
+    {
+      tagName: 'v0.17.5',
+      date: '2021-01-19',
+      fixed: [['cache', 'Handle cache values without timestamp correctly.']],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
