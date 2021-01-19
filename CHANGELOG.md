@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.17.5](https://github.com/serlo/api.serlo.org/compare/v0.17.4..v0.17.5) - January 19, 2021
+
+### Fixed
+
+- **cache**. Handle cache values without timestamp correctly.
+
 ## [v0.17.4](https://github.com/serlo/api.serlo.org/compare/v0.17.3..v0.17.4) - January 16, 2021
 
 ### Internal
