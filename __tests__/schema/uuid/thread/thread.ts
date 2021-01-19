@@ -31,7 +31,10 @@ import {
   comment3,
   user,
 } from '../../../../__fixtures__'
-import { createJsonHandler } from '../../../../__tests__/__utils__/handlers'
+import {
+  createJsonHandler,
+  getSerloUrl,
+} from '../../../../__tests__/__utils__/handlers'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
@@ -40,7 +43,6 @@ import {
   createUuidHandler,
 } from '../../../__utils__'
 import { CommentPayload, UuidPayload } from '~/schema/uuid'
-import { encodeThreadId } from '~/schema/uuid/thread/utils'
 import { Instance } from '~/types'
 
 let client: Client
@@ -255,7 +257,7 @@ describe('uuid["threads"]', () => {
       `,
       variables: { id: article.id },
       data: {
-        uuid: { threads: { nodes: [{ id: encodeThreadId(comment1.id) }] } },
+        uuid: { threads: { nodes: [{ id: expect.any(String) as string }] } },
       },
       client,
     })
@@ -450,38 +452,35 @@ export function mockEndpointsForThreads(
     })
   )
   global.server.use(
-    rest.get(
-      `http://${Instance.De}.${process.env.SERLO_ORG_HOST}/api/uuid/:id`,
-      (req, res, ctx) => {
-        const id = Number(req.params.id)
+    rest.get(getSerloUrl({ path: '/api/uuid/:id' }), (req, res, ctx) => {
+      const id = Number(req.params.id)
 
-        if (id === uuidPayload.id) return res(ctx.json(uuidPayload))
+      if (id === uuidPayload.id) return res(ctx.json(uuidPayload))
 
-        const thread = threads.find((thread) =>
-          thread.some((comment) => comment.id === id)
-        )
+      const thread = threads.find((thread) =>
+        thread.some((comment) => comment.id === id)
+      )
 
-        if (R.isNil(thread)) return res(ctx.status(404))
+      if (R.isNil(thread)) return res(ctx.status(404))
 
-        const comment = thread.find((comment) => comment.id === id)
+      const comment = thread.find((comment) => comment.id === id)
 
-        if (R.isNil(comment)) return res(ctx.status(404))
+      if (R.isNil(comment)) return res(ctx.status(404))
 
-        const payload =
-          comment.id === thread[0].id
-            ? {
-                ...comment,
-                parentId: uuidPayload.id,
-                childrenIds: thread.slice(1).map((comment) => comment.id),
-              }
-            : {
-                ...comment,
-                parentId: thread[0].id,
-                childrenIds: [],
-              }
+      const payload =
+        comment.id === thread[0].id
+          ? {
+              ...comment,
+              parentId: uuidPayload.id,
+              childrenIds: thread.slice(1).map((comment) => comment.id),
+            }
+          : {
+              ...comment,
+              parentId: thread[0].id,
+              childrenIds: [],
+            }
 
-        return res(ctx.json(payload))
-      }
-    )
+      return res(ctx.json(payload))
+    })
   )
 }

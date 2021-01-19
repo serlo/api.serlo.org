@@ -81,6 +81,7 @@ import {
   createNotificationEventHandler,
   createTestClient,
   createUuidHandler,
+  getSerloUrl,
 } from '../__utils__'
 import { Service } from '~/internals/auth'
 import { Instance } from '~/types'
@@ -95,7 +96,7 @@ describe('notifications', () => {
     })
     global.server.use(
       rest.get(
-        `http://de.${process.env.SERLO_ORG_HOST}/api/notifications/${user.id}`,
+        getSerloUrl({ path: `/api/notifications/${user.id}` }),
         (_req, res, ctx) => {
           return res(
             ctx.status(200),
@@ -171,7 +172,7 @@ describe('notifications', () => {
   test('notifications (w/ event)', async () => {
     global.server.use(
       rest.get(
-        `http://de.${process.env.SERLO_ORG_HOST}/api/notifications/${user.id}`,
+        getSerloUrl({ path: `/api/notifications/${user.id}` }),
         (_req, res, ctx) => {
           return res(
             ctx.status(200),
@@ -2143,7 +2144,7 @@ describe('mutation notification setState', () => {
         userId: number
         unread: boolean
       }>(
-        `http://de.${process.env.SERLO_ORG_HOST}/api/set-notification-state`,
+        getSerloUrl({ path: `/api/set-notification-state` }),
         (req, res, ctx) => {
           const { id, userId, unread } = req.body
 

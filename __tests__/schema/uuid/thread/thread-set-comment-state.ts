@@ -28,6 +28,7 @@ import {
   assertSuccessfulGraphQLMutation,
   Client,
   createTestClient,
+  getSerloUrl,
 } from '../../../__utils__'
 
 let client: Client
@@ -109,15 +110,12 @@ function mockSetUuidStateEndpoint() {
       userId: number
       trashed: boolean
       id: number
-    }>(
-      `http://de.${process.env.SERLO_ORG_HOST}/api/set-uuid-state`,
-      (req, res, ctx) => {
-        const { userId, trashed, id } = req.body
-        if (userId !== user.id) return res(ctx.status(403))
-        if (![1, 2, 3].includes(id)) return res(ctx.status(400))
+    }>(getSerloUrl({ path: '/api/set-uuid-state' }), (req, res, ctx) => {
+      const { userId, trashed, id } = req.body
+      if (userId !== user.id) return res(ctx.status(403))
+      if (![1, 2, 3].includes(id)) return res(ctx.status(400))
 
-        return res(ctx.json({ ...comment, trashed: trashed }))
-      }
-    )
+      return res(ctx.json({ ...comment, trashed: trashed }))
+    })
   )
 }
