@@ -65,14 +65,13 @@ describe('archive-comment', () => {
   })
 
   test('mutation is unsuccessful for non existing id', async () => {
-    //TODO: Error should be 400 BAD REQUEST but that's not what the Mock-server returns atm.
     await assertFailingGraphQLMutation({
       mutation,
       variables: {
         input: { id: encodeThreadId(comment.id + 1), archived: true },
       },
       client,
-      expectedError: 'INTERNAL_SERVER_ERROR',
+      expectedError: 'BAD_REQUEST',
     })
   })
 
@@ -97,7 +96,6 @@ function mockArchiveCommentEndpoint() {
       const { id, userId, archived } = req.body
 
       if (userId !== user.id) return res(ctx.status(403))
-      // TODO: this results in an INTERNAL_SERVER_ERROR which is weird…
       if (id !== comment.id) return res(ctx.status(400))
 
       return res(ctx.json({ ...comment, archived: archived }))

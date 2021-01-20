@@ -65,14 +65,13 @@ describe('setThreadState', () => {
   })
 
   test('mutation is unsuccessful for non existing id', async () => {
-    //TODO: Error should be 400 BAD REQUEST but that's not what the Mock-server returns atm.
     await assertFailingGraphQLMutation({
       mutation,
       variables: {
         input: { id: encodeThreadId(comment.id + 1), trashed: true },
       },
       client,
-      expectedError: 'INTERNAL_SERVER_ERROR',
+      expectedError: 'BAD_REQUEST',
     })
   })
 

@@ -73,7 +73,7 @@ describe('setCommentState', () => {
       mutation,
       variables: { input: { id: comment.id + 1, trashed: true } },
       client,
-      expectedError: 'INTERNAL_SERVER_ERROR',
+      expectedError: 'BAD_REQUEST',
     })
   })
 })
