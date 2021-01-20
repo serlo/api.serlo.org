@@ -48,9 +48,7 @@ import { Instance } from '~/types'
 let client: Client
 
 beforeEach(() => {
-  client = createTestClient({
-    userId: user.id,
-  })
+  client = createTestClient({ userId: user.id })
 })
 
 describe('uuid["threads"]', () => {
@@ -125,12 +123,7 @@ describe('uuid["threads"]', () => {
           threads: {
             totalCount: 1,
             nodes: [
-              {
-                comments: {
-                  totalCount: 1,
-                  nodes: [{ id: comment3.id }],
-                },
-              },
+              { comments: { totalCount: 1, nodes: [{ id: comment3.id }] } },
             ],
           },
         },
@@ -184,9 +177,7 @@ describe('uuid["threads"]', () => {
         }
       `,
       variables: { id: article.id },
-      data: {
-        uuid: { threads: { nodes: [{ createdAt: comment1.date }] } },
-      },
+      data: { uuid: { threads: { nodes: [{ createdAt: comment1.date }] } } },
       client,
     })
   })
@@ -208,9 +199,7 @@ describe('uuid["threads"]', () => {
         }
       `,
       variables: { id: article.id },
-      data: {
-        uuid: { threads: { nodes: [{ title: comment1.title }] } },
-      },
+      data: { uuid: { threads: { nodes: [{ title: comment1.title }] } } },
       client,
     })
   })
@@ -232,9 +221,7 @@ describe('uuid["threads"]', () => {
         }
       `,
       variables: { id: article.id },
-      data: {
-        uuid: { threads: { nodes: [{ title: null }] } },
-      },
+      data: { uuid: { threads: { nodes: [{ title: null }] } } },
       client,
     })
   })
@@ -280,9 +267,7 @@ describe('uuid["threads"]', () => {
         }
       `,
       variables: { id: article.id },
-      data: {
-        uuid: { threads: { nodes: [{ archived: false }] } },
-      },
+      data: { uuid: { threads: { nodes: [{ archived: false }] } } },
       client,
     })
   })
@@ -306,9 +291,7 @@ describe('uuid["threads"]', () => {
         }
       `,
       variables: { id: article.id },
-      data: {
-        uuid: { threads: { nodes: [{ object: { id: article.id } }] } },
-      },
+      data: { uuid: { threads: { nodes: [{ object: { id: article.id } }] } } },
       client,
     })
   })
@@ -374,17 +357,7 @@ describe('uuid["threads"]', () => {
       data: {
         uuid: {
           threads: {
-            nodes: [
-              {
-                comments: {
-                  nodes: [
-                    {
-                      createdAt: comment1.date,
-                    },
-                  ],
-                },
-              },
-            ],
+            nodes: [{ comments: { nodes: [{ createdAt: comment1.date }] } }],
           },
         },
       },
@@ -422,13 +395,7 @@ describe('uuid["threads"]', () => {
           threads: {
             nodes: [
               {
-                comments: {
-                  nodes: [
-                    {
-                      author: { username: user.username },
-                    },
-                  ],
-                },
+                comments: { nodes: [{ author: { username: user.username } }] },
               },
             ],
           },
