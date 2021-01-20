@@ -19,11 +19,16 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ApolloServer, ApolloServerExpressConfig } from 'apollo-server-express'
+import {
+  ApolloError,
+  ApolloServer,
+  ApolloServerExpressConfig,
+} from 'apollo-server-express'
 import { Express } from 'express'
 import createPlayground from 'graphql-playground-middleware-express'
 import jwt from 'jsonwebtoken'
 import fetch from 'node-fetch'
+import * as R from 'ramda'
 import { URLSearchParams } from 'url'
 
 import { handleAuthentication, Service } from '~/internals/auth'
@@ -88,6 +93,12 @@ export function getGraphQLOptions(
       return {
         model: new ModelDataSource(environment),
       }
+    },
+    formatError(error) {
+      if (R.path(['response', 'status'], error.extensions) === 400) {
+        return new ApolloError(error.message, 'BAD_REQUEST', error.extensions)
+      }
+      return error
     },
     context({ req }): Promise<Pick<Context, 'service' | 'userId'>> {
       const authorizationHeader = req.headers.authorization
