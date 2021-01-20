@@ -27,56 +27,34 @@ import { createTestClient } from '../../../__tests__/__utils__'
 import {
   assertSuccessfulGraphQLQuery,
   assertSuccessfulGraphQLMutation,
+  addMutationInteraction,
 } from '../../__utils__'
-import { ArticlePayload, UuidPayload } from '~/schema/uuid'
 
 test('set-uuid-state', async () => {
   global.client = createTestClient({ userId: user.id })
 
-  function addInteractionWithUuidType<T extends UuidPayload>(
-    data: Record<keyof T, unknown> & { __typename: string; id: number }
-  ) {
-    return global.pact.addInteraction({
-      uponReceiving: `set state of uuid with id 1855`,
-      state: `there exists a uuid with id 1855 that is not trashed`,
-      withRequest: {
-        method: 'POST',
-        path: '/api/set-uuid-state',
-        body: {
-          id: 1855,
-          userId: user.id,
-          trashed: Matchers.boolean(true),
-        },
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-      },
-      willRespondWith: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-        body: data,
-      },
-    })
-  }
-
-  await addInteractionWithUuidType<ArticlePayload>({
-    __typename: article.__typename,
-    id: article.id,
-    trashed: Matchers.boolean(true),
-    instance: Matchers.string(article.instance),
-    alias: article.alias ? Matchers.string(article.alias) : null,
-    date: Matchers.iso8601DateTime(article.date),
-    currentRevisionId: article.currentRevisionId
-      ? Matchers.integer(article.currentRevisionId)
-      : null,
-    revisionIds: Matchers.eachLike(article.revisionIds[0]),
-    licenseId: Matchers.integer(article.licenseId),
-    taxonomyTermIds:
-      article.taxonomyTermIds.length > 0
-        ? Matchers.eachLike(Matchers.like(article.taxonomyTermIds[0]))
-        : [],
+  await addMutationInteraction({
+    name: 'set state of uuid with id 1855',
+    given: 'there exists a uuid with id 1855 that is not trashed',
+    path: '/api/set-uuid-state',
+    requestBody: { id: article.id, userId: user.id, trashed: true },
+    responseBody: {
+      __typename: article.__typename,
+      id: article.id,
+      trashed: Matchers.boolean(true),
+      instance: Matchers.string(article.instance),
+      alias: article.alias ? Matchers.string(article.alias) : null,
+      date: Matchers.iso8601DateTime(article.date),
+      currentRevisionId: article.currentRevisionId
+        ? Matchers.integer(article.currentRevisionId)
+        : null,
+      revisionIds: Matchers.eachLike(article.revisionIds[0]),
+      licenseId: Matchers.integer(article.licenseId),
+      taxonomyTermIds:
+        article.taxonomyTermIds.length > 0
+          ? Matchers.eachLike(Matchers.like(article.taxonomyTermIds[0]))
+          : [],
+    },
   })
 
   await assertSuccessfulGraphQLMutation({

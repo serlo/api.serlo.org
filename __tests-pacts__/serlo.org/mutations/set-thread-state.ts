@@ -19,48 +19,38 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
-import { user } from '../../../__fixtures__'
+import { comment, user } from '../../../__fixtures__'
 import { createTestClient } from '../../../__tests__/__utils__'
-import { assertSuccessfulGraphQLMutation } from '../../__utils__'
+import {
+  addMutationInteraction,
+  assertSuccessfulGraphQLMutation,
+} from '../../__utils__'
 
 test('set-thread-state', async () => {
   global.client = createTestClient({ userId: user.id })
-  await global.pact.addInteraction({
-    uponReceiving: `set state of thread with id of first comment 100`,
-    state: `there exists a thread with a first comment with id 100 and user with id ${user.id} is authenticated`,
-    withRequest: {
-      method: 'POST',
-      path: '/api/set-uuid-state',
-      body: {
-        id: 100,
-        userId: user.id,
-        trashed: Matchers.boolean(true),
-      },
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
+  await addMutationInteraction({
+    name: 'set state of thread with id of first comment 100',
+    given: `there exists a thread with a first comment with id 100 and user with id ${user.id} is authenticated`,
+    path: '/api/set-uuid-state',
+    requestBody: {
+      id: comment.id,
+      userId: user.id,
+      trashed: true,
     },
-    willRespondWith: {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-      body: {
-        id: 1000,
-        title: 'First comment in new thread',
-        trashed: false,
-        alias: null,
-        __typename: 'Comment',
-        authorId: user.id,
-        date: 'Datestring',
-        archived: false,
-        content: 'first!',
-        parentId: 1565,
-        childrenIds: [],
-      },
+    responseBody: {
+      id: 1000,
+      title: 'First comment in new thread',
+      trashed: false,
+      alias: null,
+      __typename: 'Comment',
+      authorId: user.id,
+      date: 'Datestring',
+      archived: false,
+      content: 'first!',
+      parentId: 1565,
+      childrenIds: [],
     },
   })
   await assertSuccessfulGraphQLMutation({

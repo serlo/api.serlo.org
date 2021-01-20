@@ -79,3 +79,33 @@ export function addJsonInteraction({
     },
   })
 }
+
+export function addMutationInteraction({
+  name,
+  given,
+  path,
+  requestBody,
+  responseBody,
+}: {
+  name: string
+  given: string
+  path: string
+  requestBody: Record<string, unknown>
+  responseBody: Record<string, unknown>
+}) {
+  return global.pact.addInteraction({
+    uponReceiving: name,
+    state: given,
+    withRequest: {
+      method: 'POST',
+      path,
+      body: requestBody,
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+    },
+    willRespondWith: {
+      status: 200,
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: responseBody,
+    },
+  })
+}

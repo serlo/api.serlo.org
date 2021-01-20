@@ -19,38 +19,24 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
 import { comment, user } from '../../../__fixtures__'
 import { createTestClient } from '../../../__tests__/__utils__'
-import { assertSuccessfulGraphQLMutation } from '../../__utils__'
+import {
+  addMutationInteraction,
+  assertSuccessfulGraphQLMutation,
+} from '../../__utils__'
 import { encodeThreadId } from '~/schema/uuid'
 
 test('archive-comment', async () => {
   global.client = createTestClient({ userId: user.id })
-  await global.pact.addInteraction({
-    uponReceiving: 'set `archived` of thread where id of first comment is 100',
-    state: `there exists a thread with a first comment with an id of 100 and user with id ${user.id} is authenticated`,
-    withRequest: {
-      method: 'POST',
-      path: '/api/archive-comment',
-      body: {
-        id: 100,
-        userId: user.id,
-        archived: Matchers.boolean(true),
-      },
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-    },
-    willRespondWith: {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-      body: { ...comment, archived: true },
-    },
+  await addMutationInteraction({
+    name: 'set `archived` of thread where id of first comment is 100',
+    given: `there exists a thread with a first comment with an id of 100 and user with id ${user.id} is authenticated`,
+    path: '/api/archive-comment',
+    requestBody: { id: comment.id, userId: user.id, archived: true },
+    responseBody: { ...comment, archived: true },
   })
   await assertSuccessfulGraphQLMutation({
     mutation: gql`
@@ -62,19 +48,8 @@ test('archive-comment', async () => {
         }
       }
     `,
-    variables: {
-      input: {
-        id: encodeThreadId(100),
-        archived: true,
-      },
-    },
-    data: {
-      thread: {
-        setThreadArchived: {
-          success: true,
-        },
-      },
-    },
+    variables: { input: { id: encodeThreadId(comment.id), archived: true } },
+    data: { thread: { setThreadArchived: { success: true } } },
   })
 
   //TODO: Cache check?

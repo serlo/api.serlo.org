@@ -23,44 +23,35 @@ import { gql } from 'apollo-server'
 
 import { user } from '../../../__fixtures__'
 import { createTestClient } from '../../../__tests__/__utils__'
-import { assertSuccessfulGraphQLMutation } from '../../__utils__'
+import {
+  addMutationInteraction,
+  assertSuccessfulGraphQLMutation,
+} from '../../__utils__'
 
 test('start-thread', async () => {
   global.client = createTestClient({ userId: user.id })
-  await global.pact.addInteraction({
-    uponReceiving: `create new thread for uuid 1565`,
-    state: `there exists a uuid 1565 and user with id ${user.id} is authenticated`,
-    withRequest: {
-      method: 'POST',
-      path: '/api/thread/start-thread',
-      body: {
-        title: 'First comment in new thread',
-        content: 'first!',
-        objectId: 1565,
-        userId: user.id,
-      },
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
+  await addMutationInteraction({
+    name: 'create new thread for uuid 1565',
+    given: `there exists a uuid 1565 and user with id ${user.id} is authenticated`,
+    path: '/api/thread/start-thread',
+    requestBody: {
+      title: 'First comment in new thread',
+      content: 'first!',
+      objectId: 1565,
+      userId: user.id,
     },
-    willRespondWith: {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-      body: {
-        id: 1000,
-        title: 'First comment in new thread',
-        trashed: false,
-        alias: null,
-        __typename: 'Comment',
-        authorId: user.id,
-        date: 'Datestring',
-        archived: false,
-        content: 'first!',
-        parentId: 1565,
-        childrenIds: [],
-      },
+    responseBody: {
+      id: 1000,
+      title: 'First comment in new thread',
+      trashed: false,
+      alias: null,
+      __typename: 'Comment',
+      authorId: user.id,
+      date: 'Datestring',
+      archived: false,
+      content: 'first!',
+      parentId: 1565,
+      childrenIds: [],
     },
   })
   await assertSuccessfulGraphQLMutation({
