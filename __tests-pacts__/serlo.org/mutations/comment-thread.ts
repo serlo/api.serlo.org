@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
 import { comment, user } from '../../../__fixtures__'
@@ -41,16 +42,16 @@ test('comment-thread', async () => {
       userId: user.id,
     },
     responseBody: {
-      id: 101,
+      id: Matchers.integer(101),
       trashed: false,
-      alias: '/mathe/101',
+      alias: Matchers.string('/mathe/101/mathe'),
       __typename: DiscriminatorType.Comment,
       authorId: user.id,
-      title: '',
-      date: '2014-08-25T12:51:02+02:00',
+      title: null,
+      date: Matchers.iso8601DateTime(comment.date),
       archived: false,
       content: 'this is my reply',
-      parentId: 100,
+      parentId: comment.id,
       childrenIds: [],
     },
   })
