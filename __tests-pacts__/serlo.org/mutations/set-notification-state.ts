@@ -25,40 +25,25 @@ import { gql } from 'apollo-server'
 import { checkoutRevisionNotificationEvent, user } from '../../../__fixtures__'
 import { createTestClient } from '../../../__tests__/__utils__'
 import {
+  addMutationInteraction,
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
 
 test('set-notification-state', async () => {
   global.client = createTestClient({ userId: user.id })
-  await global.pact.addInteraction({
-    uponReceiving: `set state of notification with id 9`,
-    state: `there exists a notification with id 9 for user with id ${user.id}`,
-    withRequest: {
-      method: 'POST',
-      path: '/api/set-notification-state',
-      body: {
+  await addMutationInteraction({
+    name: 'set state of notification with id 9',
+    given: `there exists a notification with id 9 for user with id ${user.id}`,
+    path: '/api/set-notification-state',
+    requestBody: { id: 9, userId: user.id, unread: true },
+    responseBody: {
+      userId: user.id,
+      notifications: Matchers.eachLike({
         id: 9,
-        userId: user.id,
-        unread: Matchers.boolean(true),
-      },
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-    },
-    willRespondWith: {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-      body: {
-        userId: user.id,
-        notifications: Matchers.eachLike({
-          id: Matchers.integer(9),
-          unread: Matchers.boolean(true),
-          eventId: Matchers.integer(checkoutRevisionNotificationEvent.id),
-        }),
-      },
+        unread: true,
+        eventId: Matchers.integer(checkoutRevisionNotificationEvent.id),
+      }),
     },
   })
   await assertSuccessfulGraphQLMutation({

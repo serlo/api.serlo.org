@@ -21,46 +21,37 @@
  */
 import { gql } from 'apollo-server'
 
-import { user } from '../../../__fixtures__'
+import { comment, user } from '../../../__fixtures__'
 import { createTestClient } from '../../../__tests__/__utils__'
-import { assertSuccessfulGraphQLMutation } from '../../__utils__'
+import {
+  addMutationInteraction,
+  assertSuccessfulGraphQLMutation,
+} from '../../__utils__'
 import { DiscriminatorType, encodeThreadId } from '~/schema/uuid'
 
 test('comment-thread', async () => {
   global.client = createTestClient({ userId: user.id })
-  await global.pact.addInteraction({
-    uponReceiving: `create new comment on thread where id of first comment is 100`,
-    state: `there exists a thread with a first comment with an id of 100 and ${user.id} is authenticated`,
-    withRequest: {
-      method: 'POST',
-      path: '/api/thread/comment-thread',
-      body: {
-        content: 'this is my reply',
-        threadId: 100,
-        userId: user.id,
-      },
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
+  await addMutationInteraction({
+    name: 'create new comment on thread where id of first comment is 100',
+    given: `there exists a thread with a first comment with an id of 100 and ${user.id} is authenticated`,
+    path: '/api/thread/comment-thread',
+    requestBody: {
+      content: 'this is my reply',
+      threadId: comment.id,
+      userId: user.id,
     },
-    willRespondWith: {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-      body: {
-        id: 101,
-        trashed: false,
-        alias: '/mathe/101',
-        __typename: DiscriminatorType.Comment,
-        authorId: user.id,
-        title: '',
-        date: '2014-08-25T12:51:02+02:00',
-        archived: false,
-        content: 'this is my reply',
-        parentId: 100,
-        childrenIds: [],
-      },
+    responseBody: {
+      id: 101,
+      trashed: false,
+      alias: '/mathe/101',
+      __typename: DiscriminatorType.Comment,
+      authorId: user.id,
+      title: '',
+      date: '2014-08-25T12:51:02+02:00',
+      archived: false,
+      content: 'this is my reply',
+      parentId: 100,
+      childrenIds: [],
     },
   })
   await assertSuccessfulGraphQLMutation({
@@ -80,17 +71,14 @@ test('comment-thread', async () => {
     variables: {
       input: {
         content: 'this is my reply',
-        threadId: encodeThreadId(100),
+        threadId: encodeThreadId(comment.id),
       },
     },
     data: {
       thread: {
         createComment: {
           success: true,
-          record: {
-            archived: false,
-            content: 'this is my reply',
-          },
+          record: { archived: false, content: 'this is my reply' },
         },
       },
     },
