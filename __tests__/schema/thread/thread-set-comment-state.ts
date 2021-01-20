@@ -22,15 +22,14 @@
 import { gql } from 'apollo-server'
 import { rest } from 'msw'
 
-import { comment, user } from '../../../../__fixtures__'
+import { comment, user } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   Client,
   createTestClient,
   getSerloUrl,
-} from '../../../__utils__'
-import { encodeThreadId } from '~/schema/uuid/thread/utils'
+} from '../../__utils__'
 
 let client: Client
 
@@ -40,45 +39,33 @@ beforeEach(() => {
   })
 })
 
-describe('setThreadState', () => {
+describe('setCommentState', () => {
   beforeEach(() => mockSetUuidStateEndpoint())
 
   const mutation = gql`
-    mutation setThreadState($input: ThreadSetThreadStateInput!) {
+    mutation setCommentState($input: ThreadSetCommentStateInput!) {
       thread {
-        setThreadState(input: $input) {
+        setCommentState(input: $input) {
           success
         }
       }
     }
   `
 
-  test('deleting thread returns success', async () => {
+  test('deleting comment returns success', async () => {
     await assertSuccessfulGraphQLMutation({
       mutation,
       client,
       variables: {
-        input: { id: encodeThreadId(1), trashed: true },
+        input: { id: 2, trashed: true },
       },
       data: {
         thread: {
-          setThreadState: {
+          setCommentState: {
             success: true,
           },
         },
       },
-    })
-  })
-
-  test('mutation is unsuccessful for non existing id', async () => {
-    //TODO: Error should be 400 BAD REQUEST but that's not what the Mock-server returns atm.
-    await assertFailingGraphQLMutation({
-      mutation,
-      variables: {
-        input: { id: encodeThreadId(4), trashed: true },
-      },
-      client,
-      expectedError: 'INTERNAL_SERVER_ERROR',
     })
   })
 
@@ -87,10 +74,21 @@ describe('setThreadState', () => {
     await assertFailingGraphQLMutation({
       mutation,
       variables: {
-        input: { id: encodeThreadId(1), trashed: true },
+        input: { id: 1, trashed: true },
       },
       client,
       expectedError: 'UNAUTHENTICATED',
+    })
+  })
+
+  test('mutation is unsuccessful for non existing id', async () => {
+    await assertFailingGraphQLMutation({
+      mutation,
+      variables: {
+        input: { id: 4, trashed: true },
+      },
+      client,
+      expectedError: 'INTERNAL_SERVER_ERROR',
     })
   })
 })

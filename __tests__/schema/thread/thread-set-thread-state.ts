@@ -22,14 +22,14 @@
 import { gql } from 'apollo-server'
 import { rest } from 'msw'
 
-import { comment, user } from '../../../../__fixtures__'
+import { comment, user } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   Client,
   createTestClient,
   getSerloUrl,
-} from '../../../__utils__'
+} from '../../__utils__'
 import { encodeThreadId } from '~/schema/uuid/thread/utils'
 
 let client: Client
@@ -40,28 +40,29 @@ beforeEach(() => {
   })
 })
 
-describe('archive-comment', () => {
-  beforeEach(() => mockArchiveCommentEndpoint())
+describe('setThreadState', () => {
+  beforeEach(() => mockSetUuidStateEndpoint())
 
   const mutation = gql`
-    mutation setThreadArchived($input: ThreadSetThreadArchivedInput!) {
+    mutation setThreadState($input: ThreadSetThreadStateInput!) {
       thread {
-        setThreadArchived(input: $input) {
+        setThreadState(input: $input) {
           success
         }
       }
     }
   `
-  test('returns success', async () => {
+
+  test('deleting thread returns success', async () => {
     await assertSuccessfulGraphQLMutation({
       mutation,
       client,
       variables: {
-        input: { id: encodeThreadId(1), archived: true },
+        input: { id: encodeThreadId(1), trashed: true },
       },
       data: {
         thread: {
-          setThreadArchived: {
+          setThreadState: {
             success: true,
           },
         },
@@ -74,7 +75,7 @@ describe('archive-comment', () => {
     await assertFailingGraphQLMutation({
       mutation,
       variables: {
-        input: { id: encodeThreadId(4), archived: true },
+        input: { id: encodeThreadId(4), trashed: true },
       },
       client,
       expectedError: 'INTERNAL_SERVER_ERROR',
@@ -86,7 +87,7 @@ describe('archive-comment', () => {
     await assertFailingGraphQLMutation({
       mutation,
       variables: {
-        input: { id: encodeThreadId(1), archived: true },
+        input: { id: encodeThreadId(1), trashed: true },
       },
       client,
       expectedError: 'UNAUTHENTICATED',
@@ -94,21 +95,18 @@ describe('archive-comment', () => {
   })
 })
 
-function mockArchiveCommentEndpoint() {
+function mockSetUuidStateEndpoint() {
   global.server.use(
     rest.post<{
-      id: number
       userId: number
-      archived: boolean
-    }>(getSerloUrl({ path: '/api/thread/set-archive' }), (req, res, ctx) => {
-      const { id, userId, archived } = req.body
-
+      trashed: boolean
+      id: number
+    }>(getSerloUrl({ path: '/api/set-uuid-state' }), (req, res, ctx) => {
+      const { userId, trashed, id } = req.body
       if (userId !== user.id) return res(ctx.status(403))
-
-      // TODO: this results in an INTERNAL_SERVER_ERROR which is weird…
       if (![1, 2, 3].includes(id)) return res(ctx.status(400))
 
-      return res(ctx.json({ ...comment, archived: archived }))
+      return res(ctx.json({ ...comment, trashed: trashed }))
     })
   )
 }

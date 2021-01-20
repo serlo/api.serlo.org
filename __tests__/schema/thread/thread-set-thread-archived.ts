@@ -22,14 +22,15 @@
 import { gql } from 'apollo-server'
 import { rest } from 'msw'
 
-import { comment, user } from '../../../../__fixtures__'
+import { comment, user } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   Client,
   createTestClient,
   getSerloUrl,
-} from '../../../__utils__'
+} from '../../__utils__'
+import { encodeThreadId } from '~/schema/uuid/thread/utils'
 
 let client: Client
 
@@ -39,33 +40,44 @@ beforeEach(() => {
   })
 })
 
-describe('setCommentState', () => {
-  beforeEach(() => mockSetUuidStateEndpoint())
+describe('archive-comment', () => {
+  beforeEach(() => mockArchiveCommentEndpoint())
 
   const mutation = gql`
-    mutation setCommentState($input: ThreadSetCommentStateInput!) {
+    mutation setThreadArchived($input: ThreadSetThreadArchivedInput!) {
       thread {
-        setCommentState(input: $input) {
+        setThreadArchived(input: $input) {
           success
         }
       }
     }
   `
-
-  test('deleting comment returns success', async () => {
+  test('returns success', async () => {
     await assertSuccessfulGraphQLMutation({
       mutation,
       client,
       variables: {
-        input: { id: 2, trashed: true },
+        input: { id: encodeThreadId(1), archived: true },
       },
       data: {
         thread: {
-          setCommentState: {
+          setThreadArchived: {
             success: true,
           },
         },
       },
+    })
+  })
+
+  test('mutation is unsuccessful for non existing id', async () => {
+    //TODO: Error should be 400 BAD REQUEST but that's not what the Mock-server returns atm.
+    await assertFailingGraphQLMutation({
+      mutation,
+      variables: {
+        input: { id: encodeThreadId(4), archived: true },
+      },
+      client,
+      expectedError: 'INTERNAL_SERVER_ERROR',
     })
   })
 
@@ -74,37 +86,29 @@ describe('setCommentState', () => {
     await assertFailingGraphQLMutation({
       mutation,
       variables: {
-        input: { id: 1, trashed: true },
+        input: { id: encodeThreadId(1), archived: true },
       },
       client,
       expectedError: 'UNAUTHENTICATED',
     })
   })
-
-  test('mutation is unsuccessful for non existing id', async () => {
-    await assertFailingGraphQLMutation({
-      mutation,
-      variables: {
-        input: { id: 4, trashed: true },
-      },
-      client,
-      expectedError: 'INTERNAL_SERVER_ERROR',
-    })
-  })
 })
 
-function mockSetUuidStateEndpoint() {
+function mockArchiveCommentEndpoint() {
   global.server.use(
     rest.post<{
-      userId: number
-      trashed: boolean
       id: number
-    }>(getSerloUrl({ path: '/api/set-uuid-state' }), (req, res, ctx) => {
-      const { userId, trashed, id } = req.body
+      userId: number
+      archived: boolean
+    }>(getSerloUrl({ path: '/api/thread/set-archive' }), (req, res, ctx) => {
+      const { id, userId, archived } = req.body
+
       if (userId !== user.id) return res(ctx.status(403))
+
+      // TODO: this results in an INTERNAL_SERVER_ERROR which is weird…
       if (![1, 2, 3].includes(id)) return res(ctx.status(400))
 
-      return res(ctx.json({ ...comment, trashed: trashed }))
+      return res(ctx.json({ ...comment, archived: archived }))
     })
   )
 }

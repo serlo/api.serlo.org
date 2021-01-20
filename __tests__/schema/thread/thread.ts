@@ -30,18 +30,18 @@ import {
   comment2,
   comment3,
   user,
-} from '../../../../__fixtures__'
+} from '../../../__fixtures__'
 import {
   createJsonHandler,
   getSerloUrl,
-} from '../../../../__tests__/__utils__/handlers'
+} from '../../../__tests__/__utils__/handlers'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
   createAliasHandler,
   createTestClient,
   createUuidHandler,
-} from '../../../__utils__'
+} from '../../__utils__'
 import { CommentPayload, UuidPayload } from '~/schema/uuid'
 import { Instance } from '~/types'
 
