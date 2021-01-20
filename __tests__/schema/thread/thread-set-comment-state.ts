@@ -34,9 +34,7 @@ import {
 let client: Client
 
 beforeEach(() => {
-  client = createTestClient({
-    userId: user.id,
-  })
+  client = createTestClient({ userId: user.id })
 })
 
 describe('setCommentState', () => {
@@ -56,27 +54,16 @@ describe('setCommentState', () => {
     await assertSuccessfulGraphQLMutation({
       mutation,
       client,
-      variables: {
-        input: { id: 2, trashed: true },
-      },
-      data: {
-        thread: {
-          setCommentState: {
-            success: true,
-          },
-        },
-      },
+      variables: { input: { id: comment.id, trashed: true } },
+      data: { thread: { setCommentState: { success: true } } },
     })
   })
 
   test('unauthenticated user gets error', async () => {
-    const client = createTestClient({ userId: null })
     await assertFailingGraphQLMutation({
       mutation,
-      variables: {
-        input: { id: 1, trashed: true },
-      },
-      client,
+      variables: { input: { id: comment.id, trashed: true } },
+      client: createTestClient({ userId: null }),
       expectedError: 'UNAUTHENTICATED',
     })
   })
@@ -84,9 +71,7 @@ describe('setCommentState', () => {
   test('mutation is unsuccessful for non existing id', async () => {
     await assertFailingGraphQLMutation({
       mutation,
-      variables: {
-        input: { id: 4, trashed: true },
-      },
+      variables: { input: { id: comment.id + 1, trashed: true } },
       client,
       expectedError: 'INTERNAL_SERVER_ERROR',
     })
@@ -102,7 +87,7 @@ function mockSetUuidStateEndpoint() {
     }>(getSerloUrl({ path: '/api/set-uuid-state' }), (req, res, ctx) => {
       const { userId, trashed, id } = req.body
       if (userId !== user.id) return res(ctx.status(403))
-      if (![1, 2, 3].includes(id)) return res(ctx.status(400))
+      if (id != comment.id) return res(ctx.status(400))
 
       return res(ctx.json({ ...comment, trashed: trashed }))
     })
