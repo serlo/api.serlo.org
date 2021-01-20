@@ -111,15 +111,11 @@ test('_setCache (forbidden)', async () => {
     userId: null,
   })
 
-  await assertFailingGraphQLMutation(
-    {
-      ...createSetCacheMutation(testVars[0]),
-      client,
-    },
-    (errors) => {
-      expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
-    }
-  )
+  await assertFailingGraphQLMutation({
+    ...createSetCacheMutation(testVars[0]),
+    client,
+    expectedError: 'FORBIDDEN',
+  })
 })
 
 test('_setCache (authenticated)', async () => {
@@ -146,15 +142,11 @@ test('_removeCache (forbidden)', async () => {
     service: Service.SerloCloudflareWorker,
     userId: null,
   })
-  await assertFailingGraphQLMutation(
-    {
-      ...createRemoveCacheMutation(testVars[0]),
-      client,
-    },
-    (errors) => {
-      expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
-    }
-  )
+  await assertFailingGraphQLMutation({
+    ...createRemoveCacheMutation(testVars[0]),
+    client,
+    expectedError: 'FORBIDDEN',
+  })
 })
 
 test('_removeCache (authenticated)', async () => {
@@ -177,13 +169,9 @@ test('_updateCache (forbidden)', async () => {
     service: Service.SerloCloudflareWorker,
     userId: null,
   })
-  await assertFailingGraphQLMutation(
-    {
-      ...createUpdateCacheMutation(['I', 'will', 'fail']),
-      client,
-    },
-    (errors) => {
-      expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
-    }
-  )
+  await assertFailingGraphQLMutation({
+    ...createUpdateCacheMutation(['I', 'will', 'fail']),
+    client,
+    expectedError: 'FORBIDDEN',
+  })
 })
