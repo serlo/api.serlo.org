@@ -282,29 +282,21 @@ describe('uuid mutation setState', () => {
   })
 
   test('unauthenticated', async () => {
-    await assertFailingGraphQLMutation(
-      {
-        mutation,
-        variables: { input: { id: 1, trashed: true } },
-        client: createTestClient({ userId: null }),
-      },
-      (errors) => {
-        expect(errors[0].extensions?.code).toEqual('UNAUTHENTICATED')
-      }
-    )
+    await assertFailingGraphQLMutation({
+      mutation,
+      variables: { input: { id: 1, trashed: true } },
+      client: createTestClient({ userId: null }),
+      expectedError: 'UNAUTHENTICATED',
+    })
   })
 
   test('wrong user id', async () => {
-    await assertFailingGraphQLMutation(
-      {
-        mutation,
-        variables: { input: { id: 1, trashed: false } },
-        client: createTestClient({ userId: user2.id }),
-      },
-      (errors) => {
-        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
-      }
-    )
+    await assertFailingGraphQLMutation({
+      mutation,
+      variables: { input: { id: 1, trashed: false } },
+      client: createTestClient({ userId: user2.id }),
+      expectedError: 'FORBIDDEN',
+    })
   })
 })
 

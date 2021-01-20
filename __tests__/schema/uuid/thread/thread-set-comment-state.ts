@@ -71,36 +71,25 @@ describe('setCommentState', () => {
 
   test('unauthenticated user gets error', async () => {
     const client = createTestClient({ userId: null })
-    await assertFailingGraphQLMutation(
-      {
-        mutation,
-        variables: {
-          input: {
-            id: 1,
-            trashed: true,
-          },
-        },
-        client,
+    await assertFailingGraphQLMutation({
+      mutation,
+      variables: {
+        input: { id: 1, trashed: true },
       },
-      (errors) => {
-        expect(errors[0].extensions?.code).toEqual('UNAUTHENTICATED')
-      }
-    )
+      client,
+      expectedError: 'UNAUTHENTICATED',
+    })
   })
 
   test('mutation is unsuccessful for non existing id', async () => {
-    await assertFailingGraphQLMutation(
-      {
-        mutation,
-        variables: {
-          input: { id: 4, trashed: true },
-        },
-        client,
+    await assertFailingGraphQLMutation({
+      mutation,
+      variables: {
+        input: { id: 4, trashed: true },
       },
-      (errors) => {
-        expect(errors[0].extensions?.code).toEqual('INTERNAL_SERVER_ERROR')
-      }
-    )
+      client,
+      expectedError: 'INTERNAL_SERVER_ERROR',
+    })
   })
 })
 

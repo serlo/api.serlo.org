@@ -71,40 +71,26 @@ describe('archive-comment', () => {
 
   test('mutation is unsuccessful for non existing id', async () => {
     //TODO: Error should be 400 BAD REQUEST but that's not what the Mock-server returns atm.
-    await assertFailingGraphQLMutation(
-      {
-        mutation,
-        variables: {
-          input: {
-            id: encodeThreadId(4),
-            archived: true,
-          },
-        },
-        client,
+    await assertFailingGraphQLMutation({
+      mutation,
+      variables: {
+        input: { id: encodeThreadId(4), archived: true },
       },
-      (errors) => {
-        expect(errors[0].extensions?.code).toEqual('INTERNAL_SERVER_ERROR')
-      }
-    )
+      client,
+      expectedError: 'INTERNAL_SERVER_ERROR',
+    })
   })
 
   test('unauthenticated user gets error', async () => {
     const client = createTestClient({ userId: null })
-    await assertFailingGraphQLMutation(
-      {
-        mutation,
-        variables: {
-          input: {
-            id: encodeThreadId(1),
-            archived: true,
-          },
-        },
-        client,
+    await assertFailingGraphQLMutation({
+      mutation,
+      variables: {
+        input: { id: encodeThreadId(1), archived: true },
       },
-      (errors) => {
-        expect(errors[0].extensions?.code).toEqual('UNAUTHENTICATED')
-      }
-    )
+      client,
+      expectedError: 'UNAUTHENTICATED',
+    })
   })
 })
 
