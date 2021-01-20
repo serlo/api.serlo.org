@@ -511,7 +511,7 @@ export function createSerloModel({
   >({
     mutate: async (payload) => {
       const value = await post<CommentPayload | null>({
-        path: `/api/archive-comment`,
+        path: '/api/thread/set-archive',
         body: payload,
       })
       if (value !== null) {

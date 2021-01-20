@@ -100,7 +100,7 @@ function mockArchiveCommentEndpoint() {
       id: number
       userId: number
       archived: boolean
-    }>(getSerloUrl({ path: '/api/archive-comment' }), (req, res, ctx) => {
+    }>(getSerloUrl({ path: '/api/thread/set-archive' }), (req, res, ctx) => {
       const { id, userId, archived } = req.body
 
       if (userId !== user.id) return res(ctx.status(403))
