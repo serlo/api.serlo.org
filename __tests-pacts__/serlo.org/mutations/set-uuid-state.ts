@@ -28,14 +28,10 @@ import {
   assertSuccessfulGraphQLQuery,
   assertSuccessfulGraphQLMutation,
 } from '../../__utils__'
-import { Service } from '~/internals/auth'
 import { ArticlePayload, UuidPayload } from '~/schema/uuid'
 
 test('set-uuid-state', async () => {
-  global.client = createTestClient({
-    service: Service.SerloCloudflareWorker,
-    userId: user.id,
-  })
+  global.client = createTestClient({ userId: user.id })
 
   function addInteractionWithUuidType<T extends UuidPayload>(
     data: Record<keyof T, unknown> & { __typename: string; id: number }

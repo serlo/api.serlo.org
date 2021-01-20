@@ -24,14 +24,10 @@ import { gql } from 'apollo-server'
 import { user } from '../../../__fixtures__'
 import { createTestClient } from '../../../__tests__/__utils__'
 import { assertSuccessfulGraphQLMutation } from '../../__utils__'
-import { Service } from '~/internals/auth'
 import { DiscriminatorType, encodeThreadId } from '~/schema/uuid'
 
 test('comment-thread', async () => {
-  global.client = createTestClient({
-    service: Service.SerloCloudflareWorker,
-    userId: user.id,
-  })
+  global.client = createTestClient({ userId: user.id })
   await global.pact.addInteraction({
     uponReceiving: `create new comment on thread where id of first comment is 100`,
     state: `there exists a thread with a first comment with an id of 100 and ${user.id} is authenticated`,
