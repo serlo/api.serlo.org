@@ -513,8 +513,13 @@ async function exec(): Promise<void> {
     },
     {
       tagName: 'v0.17.6',
-      date: '2021-01-19',
+      date: '2021-01-20',
       internal: [['cache', 'Adapt `maxAge`.']],
+    },
+    {
+      tagName: 'v0.17.7',
+      date: '2021-01-21',
+      fixed: [['swr-queue', 'Fix `Time`.']],
     },
   ])
 

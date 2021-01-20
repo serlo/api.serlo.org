@@ -292,8 +292,8 @@ export function timeToMilliseconds({
 }: Time) {
   const SECOND = 1000
   const MINUTE = 60 * SECOND
-  const HOUR = 60 * minute
-  const DAY = 24 * hour
+  const HOUR = 60 * MINUTE
+  const DAY = 24 * HOUR
 
   return (
     (day + days) * DAY +
