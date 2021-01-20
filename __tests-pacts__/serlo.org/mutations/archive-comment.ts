@@ -29,12 +29,12 @@ import {
 } from '../../__utils__'
 import { encodeThreadId } from '~/schema/uuid'
 
-test('archive-comment', async () => {
+test('/api/thread/set-archive', async () => {
   global.client = createTestClient({ userId: user.id })
   await addMutationInteraction({
-    name: 'set `archived` of thread where id of first comment is 100',
+    name: 'set "archived" state of a thread',
     given: `there exists a thread with a first comment with an id of 100 and user with id ${user.id} is authenticated`,
-    path: '/api/archive-comment',
+    path: '/api/thread/set-archive',
     requestBody: { id: comment.id, userId: user.id, archived: true },
     responseBody: { ...comment, archived: true },
   })
