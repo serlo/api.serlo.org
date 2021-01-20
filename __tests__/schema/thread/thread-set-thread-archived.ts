@@ -25,7 +25,6 @@ import { rest } from 'msw'
 import { comment, user } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
-  assertSuccessfulGraphQLMutation,
   Client,
   createTestClient,
   getSerloUrl,
@@ -50,19 +49,6 @@ describe('archive-comment', () => {
       }
     }
   `
-
-  test('returns success', async () => {
-    await assertSuccessfulGraphQLMutation({
-      mutation,
-      client,
-      variables: {
-        input: { id: encodeThreadId(comment.id), archived: true },
-      },
-      data: {
-        thread: { setThreadArchived: { success: true } },
-      },
-    })
-  })
 
   test('mutation is unsuccessful for non existing id', async () => {
     await assertFailingGraphQLMutation({
