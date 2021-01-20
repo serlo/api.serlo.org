@@ -35,9 +35,7 @@ import { encodeThreadId } from '~/schema/uuid/thread/utils'
 let client: Client
 
 beforeEach(() => {
-  client = createTestClient({
-    userId: user.id,
-  })
+  client = createTestClient({ userId: user.id })
 })
 
 describe('archive-comment', () => {
@@ -52,19 +50,16 @@ describe('archive-comment', () => {
       }
     }
   `
+
   test('returns success', async () => {
     await assertSuccessfulGraphQLMutation({
       mutation,
       client,
       variables: {
-        input: { id: encodeThreadId(1), archived: true },
+        input: { id: encodeThreadId(comment.id), archived: true },
       },
       data: {
-        thread: {
-          setThreadArchived: {
-            success: true,
-          },
-        },
+        thread: { setThreadArchived: { success: true } },
       },
     })
   })
@@ -74,7 +69,7 @@ describe('archive-comment', () => {
     await assertFailingGraphQLMutation({
       mutation,
       variables: {
-        input: { id: encodeThreadId(4), archived: true },
+        input: { id: encodeThreadId(comment.id + 1), archived: true },
       },
       client,
       expectedError: 'INTERNAL_SERVER_ERROR',
@@ -85,9 +80,7 @@ describe('archive-comment', () => {
     const client = createTestClient({ userId: null })
     await assertFailingGraphQLMutation({
       mutation,
-      variables: {
-        input: { id: encodeThreadId(1), archived: true },
-      },
+      variables: { input: { id: encodeThreadId(comment.id), archived: true } },
       client,
       expectedError: 'UNAUTHENTICATED',
     })
@@ -104,9 +97,8 @@ function mockArchiveCommentEndpoint() {
       const { id, userId, archived } = req.body
 
       if (userId !== user.id) return res(ctx.status(403))
-
       // TODO: this results in an INTERNAL_SERVER_ERROR which is weird…
-      if (![1, 2, 3].includes(id)) return res(ctx.status(400))
+      if (id !== comment.id) return res(ctx.status(400))
 
       return res(ctx.json({ ...comment, archived: archived }))
     })

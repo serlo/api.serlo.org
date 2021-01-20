@@ -35,9 +35,7 @@ import { encodeThreadId } from '~/schema/uuid/thread/utils'
 let client: Client
 
 beforeEach(() => {
-  client = createTestClient({
-    userId: user.id,
-  })
+  client = createTestClient({ userId: user.id })
 })
 
 describe('setThreadState', () => {
@@ -58,14 +56,10 @@ describe('setThreadState', () => {
       mutation,
       client,
       variables: {
-        input: { id: encodeThreadId(1), trashed: true },
+        input: { id: encodeThreadId(comment.id), trashed: true },
       },
       data: {
-        thread: {
-          setThreadState: {
-            success: true,
-          },
-        },
+        thread: { setThreadState: { success: true } },
       },
     })
   })
@@ -75,7 +69,7 @@ describe('setThreadState', () => {
     await assertFailingGraphQLMutation({
       mutation,
       variables: {
-        input: { id: encodeThreadId(4), trashed: true },
+        input: { id: encodeThreadId(comment.id + 1), trashed: true },
       },
       client,
       expectedError: 'INTERNAL_SERVER_ERROR',
@@ -87,7 +81,7 @@ describe('setThreadState', () => {
     await assertFailingGraphQLMutation({
       mutation,
       variables: {
-        input: { id: encodeThreadId(1), trashed: true },
+        input: { id: encodeThreadId(comment.id), trashed: true },
       },
       client,
       expectedError: 'UNAUTHENTICATED',
@@ -104,7 +98,7 @@ function mockSetUuidStateEndpoint() {
     }>(getSerloUrl({ path: '/api/set-uuid-state' }), (req, res, ctx) => {
       const { userId, trashed, id } = req.body
       if (userId !== user.id) return res(ctx.status(403))
-      if (![1, 2, 3].includes(id)) return res(ctx.status(400))
+      if (id !== comment.id) return res(ctx.status(400))
 
       return res(ctx.json({ ...comment, trashed: trashed }))
     })
