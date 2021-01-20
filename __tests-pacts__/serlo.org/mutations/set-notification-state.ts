@@ -28,13 +28,9 @@ import {
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
-import { Service } from '~/internals/auth'
 
 test('set-notification-state', async () => {
-  global.client = createTestClient({
-    service: Service.SerloCloudflareWorker,
-    userId: user.id,
-  })
+  global.client = createTestClient({ userId: user.id })
   await global.pact.addInteraction({
     uponReceiving: `set state of notification with id 9`,
     state: `there exists a notification with id 9 for user with id ${user.id}`,

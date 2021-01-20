@@ -25,13 +25,9 @@ import { gql } from 'apollo-server'
 import { user } from '../../../__fixtures__'
 import { createTestClient } from '../../../__tests__/__utils__'
 import { assertSuccessfulGraphQLMutation } from '../../__utils__'
-import { Service } from '~/internals/auth'
 
 test('set-thread-state', async () => {
-  global.client = createTestClient({
-    service: Service.SerloCloudflareWorker,
-    userId: user.id,
-  })
+  global.client = createTestClient({ userId: user.id })
   await global.pact.addInteraction({
     uponReceiving: `set state of thread with id of first comment 100`,
     state: `there exists a thread with a first comment with id 100 and user with id ${user.id} is authenticated`,

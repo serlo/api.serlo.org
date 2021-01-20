@@ -24,13 +24,9 @@ import { gql } from 'apollo-server'
 import { user } from '../../../__fixtures__'
 import { createTestClient } from '../../../__tests__/__utils__'
 import { assertSuccessfulGraphQLMutation } from '../../__utils__'
-import { Service } from '~/internals/auth'
 
 test('start-thread', async () => {
-  global.client = createTestClient({
-    service: Service.SerloCloudflareWorker,
-    userId: user.id,
-  })
+  global.client = createTestClient({ userId: user.id })
   await global.pact.addInteraction({
     uponReceiving: `create new thread for uuid 1565`,
     state: `there exists a uuid 1565 and user with id ${user.id} is authenticated`,

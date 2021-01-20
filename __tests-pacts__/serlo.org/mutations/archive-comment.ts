@@ -28,9 +28,7 @@ import { assertSuccessfulGraphQLMutation } from '../../__utils__'
 import { encodeThreadId } from '~/schema/uuid'
 
 test('archive-comment', async () => {
-  global.client = createTestClient({
-    userId: user.id,
-  })
+  global.client = createTestClient({ userId: user.id })
   await global.pact.addInteraction({
     uponReceiving: 'set `archived` of thread where id of first comment is 100',
     state: `there exists a thread with a first comment with an id of 100 and user with id ${user.id} is authenticated`,
