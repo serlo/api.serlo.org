@@ -19,14 +19,16 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
-import { user } from '../../../__fixtures__'
+import { article, user } from '../../../__fixtures__'
 import { createTestClient } from '../../../__tests__/__utils__'
 import {
   addMutationInteraction,
   assertSuccessfulGraphQLMutation,
 } from '../../__utils__'
+import { DiscriminatorType } from '~/schema/uuid'
 
 test('start-thread', async () => {
   global.client = createTestClient({ userId: user.id })
@@ -37,20 +39,20 @@ test('start-thread', async () => {
     requestBody: {
       title: 'First comment in new thread',
       content: 'first!',
-      objectId: 1565,
+      objectId: article.id,
       userId: user.id,
     },
     responseBody: {
-      id: 1000,
+      id: Matchers.integer(1000),
       title: 'First comment in new thread',
       trashed: false,
-      alias: null,
-      __typename: 'Comment',
+      alias: Matchers.string('/mathe/1000/first'),
+      __typename: DiscriminatorType.Comment,
       authorId: user.id,
-      date: 'Datestring',
+      date: Matchers.iso8601DateTime(article.date),
       archived: false,
       content: 'first!',
-      parentId: 1565,
+      parentId: article.id,
       childrenIds: [],
     },
   })
@@ -77,7 +79,7 @@ test('start-thread', async () => {
       input: {
         title: 'First comment in new thread',
         content: 'first!',
-        objectId: 1565,
+        objectId: article.id,
       },
     },
     data: {

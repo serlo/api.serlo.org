@@ -41,7 +41,7 @@ test('set-uuid-state', async () => {
     responseBody: {
       __typename: article.__typename,
       id: article.id,
-      trashed: Matchers.boolean(true),
+      trashed: true,
       instance: Matchers.string(article.instance),
       alias: article.alias ? Matchers.string(article.alias) : null,
       date: Matchers.iso8601DateTime(article.date),
