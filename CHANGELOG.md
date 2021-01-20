@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-## [v0.17.6](https://github.com/serlo/api.serlo.org/compare/v0.17.5..v0.17.6) - January 19, 2021
+## [v0.17.7](https://github.com/serlo/api.serlo.org/compare/v0.17.6..v0.17.7) - January 21, 2021
+
+### Fixed
+
+- **swr-queue**. Fix `Time`.
+
+## [v0.17.6](https://github.com/serlo/api.serlo.org/compare/v0.17.5..v0.17.6) - January 20, 2021
 
 ### Internal
 
