@@ -511,6 +511,11 @@ async function exec(): Promise<void> {
       date: '2021-01-19',
       fixed: [['cache', 'Handle cache values without timestamp correctly.']],
     },
+    {
+      tagName: 'v0.17.6',
+      date: '2021-01-19',
+      internal: [['cache', 'Adapt `maxAge`.']],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

@@ -125,7 +125,7 @@ export function createSerloModel({
         })
         return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
       },
-      maxAge: { minutes: 5 },
+      maxAge: { hour: 1 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/uuid/${id}`
       },
@@ -308,7 +308,7 @@ export function createSerloModel({
       getCurrentValue: async ({ path, instance }) => {
         return getViaDatabaseLayer({ path: `/alias/${instance}${path}` })
       },
-      maxAge: { minutes: 5 },
+      maxAge: { hour: 1 },
       getKey: ({ path, instance }) => {
         const cleanPath = encodePath(decodePath(path))
         return `${instance}.serlo.org/api/alias${cleanPath}`
@@ -459,7 +459,7 @@ export function createSerloModel({
           path: `/threads/${id}`,
         })
       },
-      maxAge: { minutes: 5 },
+      maxAge: { hour: 1 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/threads/${id}`
       },
