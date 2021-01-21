@@ -19,24 +19,5 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
-
-import { createUuidHandler } from '../../__tests__/__utils__'
-import { UuidPayload } from '~/schema/uuid'
-
 export * from './assertions'
 export * from './interactions'
-
-export async function givenUuidInCache(payload: UuidPayload) {
-  global.server.use(createUuidHandler(payload))
-  await global.client.query({
-    query: gql`
-      query($id: Int) {
-        uuid(id: $id) {
-          __typename
-        }
-      }
-    `,
-    variables: { id: payload.id },
-  })
-}

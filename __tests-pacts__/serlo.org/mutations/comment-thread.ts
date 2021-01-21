@@ -23,13 +23,15 @@ import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
 import { article, comment, user } from '../../../__fixtures__'
-import { createTestClient } from '../../../__tests__/__utils__'
+import {
+  createTestClient,
+  createUuidHandler,
+} from '../../../__tests__/__utils__'
 import { mockEndpointsForThreads } from '../../../__tests__/schema/thread/thread'
 import {
   assertSuccessfulGraphQLQuery,
   addMutationInteraction,
   assertSuccessfulGraphQLMutation,
-  givenUuidInCache,
 } from '../../__utils__'
 import { DiscriminatorType, encodeThreadId } from '~/schema/uuid'
 
@@ -58,8 +60,17 @@ test('comment-thread', async () => {
       childrenIds: [],
     },
   })
-
-  await givenUuidInCache(comment)
+  global.server.use(createUuidHandler(comment))
+  await global.client.query({
+    query: gql`
+      query($id: Int) {
+        uuid(id: $id) {
+          __typename
+        }
+      }
+    `,
+    variables: { id: comment.id },
+  })
   mockEndpointsForThreads(article, [[comment]])
 
   await assertSuccessfulGraphQLMutation({
