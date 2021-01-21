@@ -22,12 +22,10 @@
 import { gql } from 'apollo-server'
 
 import { article, comment, user } from '../../../__fixtures__'
-import {
-  assertSuccessfulGraphQLQuery,
-  createTestClient,
-} from '../../../__tests__/__utils__'
+import { createTestClient } from '../../../__tests__/__utils__'
 import { mockEndpointsForThreads } from '../../../__tests__/schema/thread/thread'
 import {
+  assertSuccessfulGraphQLQuery,
   addMutationInteraction,
   assertSuccessfulGraphQLMutation,
 } from '../../__utils__'
@@ -72,7 +70,6 @@ test('/api/thread/set-archive', async () => {
       }
     `,
     variables: { id: article.id },
-    client: global.client,
     data: { uuid: { threads: { nodes: [{ archived: true }] } } },
   })
 })

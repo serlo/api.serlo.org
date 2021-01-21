@@ -23,12 +23,10 @@ import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
 import { article, comment, user } from '../../../__fixtures__'
-import {
-  assertSuccessfulGraphQLQuery,
-  createTestClient,
-} from '../../../__tests__/__utils__'
+import { createTestClient } from '../../../__tests__/__utils__'
 import { mockEndpointsForThreads } from '../../../__tests__/schema/thread/thread'
 import {
+  assertSuccessfulGraphQLQuery,
   addMutationInteraction,
   assertSuccessfulGraphQLMutation,
   givenUuidInCache,
@@ -129,6 +127,5 @@ test('comment-thread', async () => {
         },
       },
     },
-    client: global.client,
   })
 })
