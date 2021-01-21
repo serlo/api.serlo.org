@@ -21,8 +21,12 @@
  */
 import { gql } from 'apollo-server'
 
-import { comment, user } from '../../../__fixtures__'
-import { createTestClient } from '../../../__tests__/__utils__'
+import { article, comment, user } from '../../../__fixtures__'
+import {
+  assertSuccessfulGraphQLQuery,
+  createTestClient,
+} from '../../../__tests__/__utils__'
+import { mockEndpointsForThreads } from '../../../__tests__/schema/thread/thread'
 import {
   addMutationInteraction,
   assertSuccessfulGraphQLMutation,
@@ -52,5 +56,23 @@ test('/api/thread/set-archive', async () => {
     data: { thread: { setThreadArchived: { success: true } } },
   })
 
-  //TODO: Cache check?
+  mockEndpointsForThreads(article, [[comment]])
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query($id: Int) {
+        uuid(id: $id) {
+          ... on ThreadAware {
+            threads {
+              nodes {
+                archived
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables: { id: article.id },
+    client: global.client,
+    data: { uuid: { threads: { nodes: [{ archived: true }] } } },
+  })
 })

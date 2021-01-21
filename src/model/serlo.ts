@@ -514,26 +514,12 @@ export function createSerloModel({
         path: '/api/thread/set-archive',
         body: payload,
       })
-      if (value !== null) {
-        //TODO: Update instead of invalidate
-        try {
-          await environment.cache.remove({
-            key: getThreadIds._querySpec.getKey({
-              id: value.parentId,
-            }),
-          })
-        } catch (e) {
-          console.log(e)
-        }
-
-        //TODO: It stores the threads as well, right?
-        //TODO: Update instead of invalidating
-        await environment.cache.remove({
-          key: getUuid._querySpec.getKey({
-            id: value.parentId,
-          }),
+      if (value !== null)
+        await environment.cache.set({
+          key: getUuid._querySpec.getKey({ id: value.id }),
+          value,
         })
-      }
+
       return value
     },
   })
