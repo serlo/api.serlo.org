@@ -35,7 +35,10 @@ export enum Priority {
   High,
 }
 
-export type FunctionOrValue<T> = { getValue: () => Promise<T> } | { value: T }
+interface UpdateFunction<T> {
+  getValue: (current?: T) => Promise<T | undefined>
+}
+export type FunctionOrValue<T> = UpdateFunction<T> | { value: T }
 
 export interface Cache {
   get<T>({ key }: { key: string }): Promise<O.Option<CacheEntry<T>>>
@@ -93,24 +96,35 @@ export function createCache({ timer }: { timer: Timer }): Cache {
         })
       )
     },
-    set: async <T>(
+    async set<T>(
+      this: Cache,
       payload: {
         key: string
         priority?: Priority
       } & FunctionOrValue<T>
-    ) => {
+    ) {
       const { key, priority = Priority.High } = payload
       const lockManager = lockManagers[priority]
       try {
         const lock = await lockManager.lock(key)
         try {
-          const value = isFunction(payload)
-            ? await payload.getValue()
-            : payload.value
-          const valueWithTimestamp = {
-            value,
-            lastModified: timer.now(),
+          let value: T | undefined
+
+          if (isFunction(payload)) {
+            const current = pipeable.pipe(
+              await this.get({ key }),
+              O.map((entry) => entry.value as T),
+              O.toUndefined
+            )
+
+            value = await payload.getValue(current)
+          } else {
+            value = payload.value
           }
+
+          if (value === undefined) return
+
+          const valueWithTimestamp = { value, lastModified: timer.now() }
           const packedValue = msgpack.pack(valueWithTimestamp) as Buffer
           await set(key, packedValue)
         } catch (e) {
@@ -165,10 +179,6 @@ function isCacheEntryWithTimestamp<Value>(
   return R.has('lastModified', entry) && R.has('value', entry)
 }
 
-function isFunction<T>(
-  payload: FunctionOrValue<T>
-): payload is { getValue: () => Promise<T> } {
-  return (
-    typeof (payload as { getValue: () => Promise<T> }).getValue === 'function'
-  )
+function isFunction<T>(arg: FunctionOrValue<T>): arg is UpdateFunction<T> {
+  return typeof (arg as { getValue: unknown }).getValue === 'function'
 }
