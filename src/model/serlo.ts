@@ -492,14 +492,22 @@ export function createSerloModel({
         body: payload,
       })
       if (value !== null) {
-        // Question: uuid stores the threads and it's comment as well, right?
-        // TODO: Update instead of invalidating
-        // TODO: Get the parentId of the thread from the cache or query it or add it to the endpoint…?
-        // await environment.cache.remove({
-        //   key: getUuid._querySpec.getKey({
-        //     id: value.parentId,
-        //   }),
-        // })
+        await environment.cache.set({
+          key: getUuid._querySpec.getKey({ id: value.id }),
+          value,
+        })
+
+        await environment.cache.set<CommentPayload>({
+          key: getUuid._querySpec.getKey({ id: payload.threadId }),
+          getValue(current) {
+            if (current === undefined) return Promise.resolve(undefined)
+
+            current.childrenIds.push(value.id)
+            current.childrenIds.sort()
+
+            return Promise.resolve(current)
+          },
+        })
       }
       return value
     },

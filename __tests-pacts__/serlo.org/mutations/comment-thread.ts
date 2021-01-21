@@ -22,11 +22,16 @@
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
-import { comment, user } from '../../../__fixtures__'
-import { createTestClient } from '../../../__tests__/__utils__'
+import { article, comment, user } from '../../../__fixtures__'
+import {
+  assertSuccessfulGraphQLQuery,
+  createTestClient,
+} from '../../../__tests__/__utils__'
+import { mockEndpointsForThreads } from '../../../__tests__/schema/thread/thread'
 import {
   addMutationInteraction,
   assertSuccessfulGraphQLMutation,
+  givenUuidInCache,
 } from '../../__utils__'
 import { DiscriminatorType, encodeThreadId } from '~/schema/uuid'
 
@@ -55,6 +60,10 @@ test('comment-thread', async () => {
       childrenIds: [],
     },
   })
+
+  await givenUuidInCache(comment)
+  mockEndpointsForThreads(article, [[comment]])
+
   await assertSuccessfulGraphQLMutation({
     mutation: gql`
       mutation createThread($input: ThreadCreateCommentInput!) {
@@ -85,22 +94,41 @@ test('comment-thread', async () => {
     },
   })
 
-  // Check cache
-
-  // await assertSuccessfulGraphQLQuery({
-  //   query: gql`
-  //     query {
-  //       notifications {
-  //         nodes {
-  //           id
-  //           unread
-  //         }
-  //         totalCount
-  //       }
-  //     }
-  //   `,
-  //   data: {
-  //     notifications: { nodes: [{ id: 9, unread: true }], totalCount: 1 },
-  //   },
-  // })
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query($id: Int) {
+        uuid(id: $id) {
+          ... on ThreadAware {
+            threads {
+              nodes {
+                comments {
+                  nodes {
+                    content
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables: { id: article.id },
+    data: {
+      uuid: {
+        threads: {
+          nodes: [
+            {
+              comments: {
+                nodes: [
+                  { content: comment.content },
+                  { content: 'this is my reply' },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    },
+    client: global.client,
+  })
 })
