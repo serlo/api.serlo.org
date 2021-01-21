@@ -24,14 +24,35 @@ import { gql } from 'apollo-server'
 
 import { article, user } from '../../../__fixtures__'
 import { createTestClient } from '../../../__tests__/__utils__'
+import { mockEndpointsForThreads } from '../../../__tests__/schema/thread/thread'
 import {
   addMutationInteraction,
   assertSuccessfulGraphQLMutation,
+  assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
 import { DiscriminatorType } from '~/schema/uuid'
 
 test('start-thread', async () => {
   global.client = createTestClient({ userId: user.id })
+
+  mockEndpointsForThreads(article, [])
+  await global.client.query({
+    query: gql`
+      query($id: Int) {
+        uuid(id: $id) {
+          ... on ThreadAware {
+            threads {
+              nodes {
+                title
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables: { id: article.id },
+  })
+
   await addMutationInteraction({
     name: 'create new thread for uuid 1565',
     given: `there exists a uuid 1565 and user with id ${user.id} is authenticated`,
@@ -102,23 +123,23 @@ test('start-thread', async () => {
     },
   })
 
-  // uuid cache is probably invalidated, should we check that here?
-  // scrap that – we probably want to mutate the cache instead anyway :)
-
-  // await assertSuccessfulGraphQLQuery({
-  //   query: gql`
-  //     query {
-  //       notifications {
-  //         nodes {
-  //           id
-  //           unread
-  //         }
-  //         totalCount
-  //       }
-  //     }
-  //   `,
-  //   data: {
-  //     notifications: { nodes: [{ id: 9, unread: true }], totalCount: 1 },
-  //   },
-  // })
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query($id: Int) {
+        uuid(id: $id) {
+          ... on ThreadAware {
+            threads {
+              nodes {
+                title
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables: { id: article.id },
+    data: {
+      uuid: { threads: { nodes: [{ title: 'First comment in new thread' }] } },
+    },
+  })
 })

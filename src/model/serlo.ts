@@ -435,9 +435,7 @@ export function createSerloModel({
   const getThreadIds = createQuery<{ id: number }, ThreadsPayload>(
     {
       getCurrentValue: async ({ id }) => {
-        return get({
-          path: `/api/threads/${id}`,
-        })
+        return get({ path: `/api/threads/${id}` })
       },
       maxAge: { minutes: 5 },
       getKey: ({ id }) => {
@@ -462,20 +460,23 @@ export function createSerloModel({
         path: `/api/thread/start-thread`,
         body: payload,
       })
+
       if (value !== null) {
-        //TODO: Update instead of invalidate
-        await environment.cache.remove({
-          key: getThreadIds._querySpec.getKey({
-            id: payload.objectId,
-          }),
+        await environment.cache.set<ThreadsPayload>({
+          key: getThreadIds._querySpec.getKey({ id: payload.objectId }),
+          getValue(current) {
+            if (current === undefined) return Promise.resolve(undefined)
+
+            current.firstCommentIds.push(value.id)
+            current.firstCommentIds.sort()
+
+            return Promise.resolve(current)
+          },
         })
 
-        //TODO: It stores the threads as well, right?
-        //TODO: Update instead of invalidating
-        await environment.cache.remove({
-          key: getUuid._querySpec.getKey({
-            id: payload.objectId,
-          }),
+        await environment.cache.set({
+          key: getUuid._querySpec.getKey({ id: value.id }),
+          value,
         })
       }
       return value
