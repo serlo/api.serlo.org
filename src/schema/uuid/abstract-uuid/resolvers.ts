@@ -53,16 +53,13 @@ export const resolvers: AbstractUuidResolvers = {
       assertUserIsAuthenticated(userId)
 
       const { id, trashed } = payload.input
-      const idArray = Array.isArray(id) ? id : [id]
+      const ids = Array.isArray(id) ? id : [id]
       const res = await dataSources.model.serlo.setUuidState({
-        ids: idArray,
+        ids,
         userId,
         trashed,
       })
-      return {
-        success: res.every(Boolean),
-        query: {},
-      }
+      return { success: res.every(Boolean), query: {} }
     },
   },
 }

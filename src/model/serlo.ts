@@ -51,7 +51,12 @@ import {
   NodeData,
   ThreadsPayload,
 } from '~/schema/uuid'
-import { Instance, License, ThreadCreateThreadInput } from '~/types'
+import {
+  Instance,
+  License,
+  ThreadCreateThreadInput,
+  ThreadSetThreadArchivedInput,
+} from '~/types'
 
 export function createSerloModel({
   environment,
@@ -515,7 +520,7 @@ export function createSerloModel({
   })
 
   const archiveThread = createMutation<
-    { id: number; archived: boolean; userId: number },
+    ThreadSetThreadArchivedInput & { userId: number },
     CommentPayload | null
   >({
     mutate: async (payload) => {
