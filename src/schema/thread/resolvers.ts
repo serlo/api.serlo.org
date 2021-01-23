@@ -21,15 +21,15 @@
  */
 import { ApolloError } from 'apollo-server'
 
-import { resolveConnection } from '../../connection'
-import { createUuidResolvers, UuidPayload } from '../abstract-uuid'
-import { UserPayload } from '../user'
 import { CommentPayload, ThreadDataType, ThreadResolvers } from './types'
 import { decodeThreadId, encodeThreadId } from './utils'
+import { resolveConnection } from '~/schema/connection'
 import {
   assertUserIsAuthenticated,
   createMutationNamespace,
 } from '~/schema/utils'
+import { createUuidResolvers, UuidPayload } from '~/schema/uuid/abstract-uuid'
+import { UserPayload } from '~/schema/uuid/user'
 
 //TODO: add filter for trashed threads and comments
 export const resolvers: ThreadResolvers = {

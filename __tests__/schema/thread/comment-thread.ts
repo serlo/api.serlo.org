@@ -23,7 +23,7 @@ import { gql } from 'apollo-server'
 
 import { comment } from '../../../__fixtures__'
 import { assertFailingGraphQLMutation, createTestClient } from '../../__utils__'
-import { encodeThreadId } from '~/schema/uuid'
+import { encodeThreadId } from '~/schema/thread'
 
 test('unauthenticated user gets error', async () => {
   await assertFailingGraphQLMutation({

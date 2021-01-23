@@ -30,7 +30,8 @@ import {
   addMutationInteraction,
   assertSuccessfulGraphQLMutation,
 } from '../__utils__'
-import { DiscriminatorType, encodeThreadId } from '~/schema/uuid'
+import { encodeThreadId } from '~/schema/thread'
+import { DiscriminatorType } from '~/schema/uuid'
 
 test('comment-thread', async () => {
   global.client = createTestClient({ userId: user.id })
