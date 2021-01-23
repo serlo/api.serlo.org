@@ -82,6 +82,7 @@ import {
   createNotificationEventHandler,
   createTestClient,
   createUuidHandler,
+  getSerloUrl,
 } from '../__utils__'
 import { Service } from '~/internals/auth'
 import { Instance } from '~/types'
@@ -2129,20 +2130,23 @@ describe('mutation notification setState', () => {
 
   beforeEach(() => {
     global.server.use(
-      rest.post(
-        `http://de.${process.env.SERLO_ORG_HOST}/api/set-notification-state/:id`,
+      rest.post<{
+        id: number
+        userId: number
+        unread: boolean
+      }>(
+        getSerloUrl({ path: `/api/set-notification-state` }),
         (req, res, ctx) => {
-          const { userId, unread } = req.body as {
-            userId: number
-            unread: boolean
-          }
-          const id = parseInt(req.params.id)
+          const { id, userId, unread } = req.body
 
           if (userId !== user.id) return res(ctx.status(403))
           if (![1, 2, 3].includes(id)) return res(ctx.status(404))
 
           return res(
-            ctx.json({ notifications: [{ id, unread, eventId: id }], userId })
+            ctx.json({
+              notifications: [{ id, unread, eventId: 0 }],
+              userId,
+            })
           )
         }
       )
@@ -2161,28 +2165,20 @@ describe('mutation notification setState', () => {
   })
 
   test('unauthenticated', async () => {
-    await assertFailingGraphQLMutation(
-      {
-        mutation,
-        variables: { input: { id: 1, unread: false } },
-        client: createTestClient({ userId: null }),
-      },
-      (errors) => {
-        expect(errors[0].extensions?.code).toEqual('UNAUTHENTICATED')
-      }
-    )
+    await assertFailingGraphQLMutation({
+      mutation,
+      variables: { input: { id: 1, unread: false } },
+      client: createTestClient({ userId: null }),
+      expectedError: 'UNAUTHENTICATED',
+    })
   })
 
   test('wrong user id', async () => {
-    await assertFailingGraphQLMutation(
-      {
-        mutation,
-        variables: { input: { id: 1, unread: false } },
-        client: createTestClient({ userId: user2.id }),
-      },
-      (errors) => {
-        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
-      }
-    )
+    await assertFailingGraphQLMutation({
+      mutation,
+      variables: { input: { id: 1, unread: false } },
+      client: createTestClient({ userId: user2.id }),
+      expectedError: 'FORBIDDEN',
+    })
   })
 })

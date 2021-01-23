@@ -76,18 +76,13 @@ export const resolvers: NotificationResolvers = {
     async setState(_parent, payload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       const { id, unread } = payload.input
-      const idArray = Array.isArray(id) ? id : [id]
+      const ids = Array.isArray(id) ? id : [id]
       const res = await dataSources.model.serlo.setNotificationState({
-        id: idArray,
-        userId: userId,
-        unread: unread,
+        ids,
+        userId,
+        unread,
       })
-      //TODO: for new PR, return changed notification in record
-      return {
-        record: null,
-        success: res.every(Boolean),
-        query: {},
-      }
+      return { success: res.every(Boolean), query: {} }
     },
   },
 }

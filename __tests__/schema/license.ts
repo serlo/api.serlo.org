@@ -29,10 +29,7 @@ import { Service } from '~/internals/auth'
 
 beforeEach(() => {
   global.server.use(
-    createJsonHandlerForDatabaseLayer({
-      path: '/license/1',
-      body: license,
-    })
+    createJsonHandlerForDatabaseLayer({ path: '/license/1', body: license })
   )
 })
 

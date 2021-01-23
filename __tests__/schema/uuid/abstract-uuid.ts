@@ -60,6 +60,7 @@ import {
   createJsonHandlerForDatabaseLayer,
   createTestClient,
   createUuidHandler,
+  getDatabaseLayerUrl,
 } from '../../__utils__'
 import { Service } from '~/internals/auth'
 import {
@@ -256,21 +257,18 @@ describe('uuid mutation setState', () => {
 
   beforeEach(() => {
     global.server.use(
-      rest.post(
-        `http://de.${process.env.SERLO_ORG_HOST}/api/set-uuid-state/:id`,
-        (req, res, ctx) => {
-          const { userId, trashed } = req.body as {
-            userId: number
-            trashed: boolean
-          }
-          const id = parseInt(req.params.id)
+      rest.post<{
+        id: number
+        userId: number
+        trashed: boolean
+      }>(getDatabaseLayerUrl({ path: '/set-uuid-state' }), (req, res, ctx) => {
+        const { id, userId, trashed } = req.body
 
-          if (userId !== user.id) return res(ctx.status(403))
-          if (![1, 2, 3].includes(id)) return res(ctx.status(404))
+        if (userId !== user.id) return res(ctx.status(403))
+        if (![1, 2, 3].includes(id)) return res(ctx.status(404))
 
-          return res(ctx.json({ ...article, trashed: trashed }))
-        }
-      )
+        return res(ctx.json({ ...article, trashed: trashed }))
+      })
     )
   })
 
@@ -286,29 +284,21 @@ describe('uuid mutation setState', () => {
   })
 
   test('unauthenticated', async () => {
-    await assertFailingGraphQLMutation(
-      {
-        mutation,
-        variables: { input: { id: 1, trashed: true } },
-        client: createTestClient({ userId: null }),
-      },
-      (errors) => {
-        expect(errors[0].extensions?.code).toEqual('UNAUTHENTICATED')
-      }
-    )
+    await assertFailingGraphQLMutation({
+      mutation,
+      variables: { input: { id: 1, trashed: true } },
+      client: createTestClient({ userId: null }),
+      expectedError: 'UNAUTHENTICATED',
+    })
   })
 
   test('wrong user id', async () => {
-    await assertFailingGraphQLMutation(
-      {
-        mutation,
-        variables: { input: { id: 1, trashed: false } },
-        client: createTestClient({ userId: user2.id }),
-      },
-      (errors) => {
-        expect(errors[0].extensions?.code).toEqual('FORBIDDEN')
-      }
-    )
+    await assertFailingGraphQLMutation({
+      mutation,
+      variables: { input: { id: 1, trashed: false } },
+      client: createTestClient({ userId: user2.id }),
+      expectedError: 'FORBIDDEN',
+    })
   })
 })
 

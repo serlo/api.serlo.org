@@ -22,12 +22,25 @@
 import { Connection } from '../../connection'
 import { DiscriminatorType, UuidPayload, UuidResolvers } from '../abstract-uuid'
 import { UserPayload } from '../user'
-import { MutationResolver, Resolver, TypeResolver } from '~/internals/graphql'
 import {
-  MutationCreateThreadArgs,
+  MutationNamespace,
+  MutationResolver,
+  MutationResponseWithRecord,
+  Resolver,
+  TypeResolver,
+} from '~/internals/graphql'
+import {
   Scalars,
   ThreadAwareThreadsArgs,
   ThreadCommentsArgs,
+  ThreadMutationCreateCommentArgs,
+  ThreadMutationCreateThreadArgs,
+  ThreadMutationSetCommentStateArgs,
+  ThreadMutationSetThreadArchivedArgs,
+  ThreadMutationSetThreadStateArgs,
+  ThreadSetCommentStateResponse,
+  ThreadSetThreadArchivedResponse,
+  ThreadSetThreadStateResponse,
 } from '~/types'
 
 export interface ThreadsPayload {
@@ -43,11 +56,10 @@ export interface ThreadData {
 
 export interface ThreadResolvers {
   Thread: {
+    id: Resolver<ThreadData, never, string>
     createdAt: Resolver<ThreadData, never, Scalars['DateTime']>
-    updatedAt: Resolver<ThreadData, never, Scalars['DateTime']>
     title: Resolver<ThreadData, never, string | null>
     archived: Resolver<ThreadData, never, boolean>
-    trashed: Resolver<ThreadData, never, boolean>
     object: Resolver<ThreadData, never, UuidPayload>
     comments: Resolver<
       ThreadData,
@@ -60,7 +72,29 @@ export interface ThreadResolvers {
     author: Resolver<CommentPayload, never, UserPayload>
   } & UuidResolvers
   Mutation: {
-    createThread: MutationResolver<MutationCreateThreadArgs, ThreadData | null>
+    thread: MutationNamespace
+  }
+  ThreadMutation: {
+    createThread: MutationResolver<
+      ThreadMutationCreateThreadArgs,
+      MutationResponseWithRecord<ThreadData | null>
+    >
+    createComment: MutationResolver<
+      ThreadMutationCreateCommentArgs,
+      MutationResponseWithRecord<CommentPayload | null>
+    >
+    setThreadArchived: MutationResolver<
+      ThreadMutationSetThreadArchivedArgs,
+      ThreadSetThreadArchivedResponse
+    >
+    setThreadState: MutationResolver<
+      ThreadMutationSetThreadStateArgs,
+      ThreadSetThreadStateResponse
+    >
+    setCommentState: MutationResolver<
+      ThreadMutationSetCommentStateArgs,
+      ThreadSetCommentStateResponse
+    >
   }
   ThreadAware: {
     __resolveType: TypeResolver<UuidPayload>

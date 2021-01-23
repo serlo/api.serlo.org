@@ -67,47 +67,46 @@ export function createUuidHandler(uuid: UuidPayload, once?: boolean) {
 }
 
 export function createJsonHandlerForLegacySerlo(
-  {
-    instance = Instance.De,
-    path,
-    body,
-  }: {
+  args: {
     instance?: Instance
     path: string
     body: unknown
   },
-  once?: boolean
+  once = false
 ) {
-  return rest.get(
-    `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
-    (_req, res, ctx) => {
-      return (once ? res.once : res)(
-        ctx.status(200),
-        ctx.json(body as Record<string, unknown>)
-      )
-    }
-  )
+  return rest.get(getSerloUrl(args), (_req, res, ctx) => {
+    return (once ? res.once : res)(
+      ctx.json(args.body as Record<string, unknown>)
+    )
+  })
 }
 
 export function createJsonHandlerForDatabaseLayer(
-  {
-    path,
-    body,
-  }: {
+  args: {
     path: string
     body: unknown
   },
-  once?: boolean
+  once = false
 ) {
-  return rest.get(
-    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`,
-    (_req, res, ctx) => {
-      return (once ? res.once : res)(
-        ctx.status(200),
-        ctx.json(body as Record<string, unknown>)
-      )
-    }
-  )
+  return rest.get(getDatabaseLayerUrl(args), (_req, res, ctx) => {
+    return (once ? res.once : res)(
+      ctx.json(args.body as Record<string, unknown>)
+    )
+  })
+}
+
+export function getSerloUrl({
+  instance = Instance.De,
+  path,
+}: {
+  instance?: Instance
+  path: string
+}) {
+  return `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`
+}
+
+export function getDatabaseLayerUrl({ path }: { path: string }) {
+  return `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`
 }
 
 export function createSpreadsheetHandler({

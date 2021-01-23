@@ -39,6 +39,15 @@ export type MutationResolver<A, T> = Resolver<
     ? Omit<T, 'query'> & { query: Record<string, never> }
     : T
 >
+
+export interface MutationResponse {
+  success: boolean
+  query: Record<string, never>
+}
+export interface MutationResponseWithRecord<R> extends MutationResponse {
+  record: R
+}
+
 export type TypeResolver<T> = (type: T) => string
 
 export type MutationNamespace = MutationResolver<never, Record<string, never>>

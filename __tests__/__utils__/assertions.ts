@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { GraphQLResponse } from 'apollo-server-types'
-import { DocumentNode, GraphQLFormattedError } from 'graphql'
+import { DocumentNode } from 'graphql'
 
 import { Client } from './test-client'
 
@@ -88,22 +88,21 @@ export async function assertSuccessfulGraphQLMutation({
   if (data !== undefined) expect(response.data).toEqual(data)
 }
 
-export async function assertFailingGraphQLMutation(
-  {
-    mutation,
-    variables,
-    client,
-  }: {
-    mutation: DocumentNode
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    variables?: Record<string, any>
-    client: Client
-  },
-  assert: (errors: readonly GraphQLFormattedError[]) => void
-) {
+export async function assertFailingGraphQLMutation({
+  mutation,
+  variables,
+  client,
+  expectedError,
+}: {
+  mutation: DocumentNode
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  variables?: Record<string, any>
+  client: Client
+  expectedError: string
+}) {
   const response = await client.mutate({
     mutation,
     variables,
   })
-  assert(response.errors!)
+  expect(response?.errors?.[0]?.extensions?.code).toEqual(expectedError)
 }

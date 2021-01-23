@@ -191,12 +191,8 @@ export function createSwrQueueWorker({
       await cache.set({
         key,
         priority: Priority.Low,
-        getValue: async () => {
-          const cacheEntry = await cache.get<unknown>({ key })
-          return await spec.getCurrentValue(
-            payload,
-            O.isSome(cacheEntry) ? cacheEntry.value.value : null
-          )
+        getValue: async (current) => {
+          return await spec.getCurrentValue(payload, current ?? null)
         },
       })
       return 'Updated because stale'
