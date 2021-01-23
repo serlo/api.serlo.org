@@ -19,31 +19,25 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Matchers } from '@pact-foundation/pact'
-import fetch from 'node-fetch'
+/* eslint-disable @typescript-eslint/no-var-requires,import/no-commonjs */
+const { pathsToModuleNameMapper } = require('ts-jest/utils')
 
-import { addJsonInteraction } from '../__utils__'
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const { compilerOptions } = require('./tsconfig')
 
-test('GET /api/user/active-authors', async () => {
-  await addJsonInteraction({
-    name: 'fetch list of active author ids',
-    given: 'users with ids 1 and 10 are active authors',
-    path: '/api/user/active-authors',
-    body: Matchers.eachLike(1),
-  })
-
-  await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/user/active-authors`)
-})
-
-test('GET /api/user/active-reviewers', async () => {
-  await addJsonInteraction({
-    name: 'fetch list of active reviewer ids',
-    given: 'users with ids 1 and 10 are active reviewers',
-    path: '/api/user/active-reviewers',
-    body: Matchers.eachLike(1),
-  })
-
-  await fetch(
-    `http://de.${process.env.SERLO_ORG_HOST}/api/user/active-reviewers`
-  )
-})
+module.exports = {
+  preset: 'ts-jest',
+  modulePaths: ['<rootDir>/src'],
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
+  setupFiles: ['dotenv/config'],
+  setupFilesAfterEnv: [
+    '<rootDir>/__config__/jest.setup-pacts-serlo-org-database-layer.ts',
+  ],
+  testEnvironment: 'node',
+  testRegex: '/__tests-pacts__/serlo\\.org-database-layer/index\\.ts',
+  transform: {
+    '^.+\\.graphql$': 'jest-transform-graphql',
+  },
+  watchPathIgnorePatterns: ['<rootDir>/pacts/'],
+}

@@ -1819,6 +1819,11 @@ export type VideoThreadsArgs = {
 };
 
 
+// Warnings were encountered during analysis:
+//
+// src/internals/cache/index.ts:139:11 - (TS2684) The 'this' context of type 'void' is not assignable to method's 'this' of type 'Cache'.
+// src/schema/uuid/thread/resolvers.ts:132:15 - (TS2322) Type 'number' is not assignable to type 'string'.
+
 // (No @packageDocumentation comment for this package)
 
 ```

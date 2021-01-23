@@ -19,21 +19,17 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { rest } from 'msw'
-
 import { createLicenseQuery, license } from '../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
+  createJsonHandlerForDatabaseLayer,
   createTestClient,
-  getSerloUrl,
 } from '../__utils__'
 import { Service } from '~/internals/auth'
 
 beforeEach(() => {
   global.server.use(
-    rest.get(getSerloUrl({ path: '/api/license/1' }), (_req, res, ctx) =>
-      res(ctx.json(license))
-    )
+    createJsonHandlerForDatabaseLayer({ path: '/license/1', body: license })
   )
 })
 

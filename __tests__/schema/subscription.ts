@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
-import { rest } from 'msw'
 
 import {
   article,
@@ -29,9 +28,9 @@ import {
 } from '../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
+  createJsonHandlerForDatabaseLayer,
   createTestClient,
   createUuidHandler,
-  getSerloUrl,
 } from '../__utils__'
 import { Service } from '~/internals/auth'
 
@@ -39,14 +38,13 @@ describe('subscriptions', () => {
   beforeEach(() => {
     global.server.use(
       createUuidHandler(article),
-      rest.get(
-        getSerloUrl({ path: `/api/subscriptions/${user.id}` }),
-        (_req, res, ctx) => {
-          return res(
-            ctx.json({ userId: user.id, subscriptions: [{ id: article.id }] })
-          )
-        }
-      )
+      createJsonHandlerForDatabaseLayer({
+        path: `/subscriptions/${user.id}`,
+        body: {
+          userId: user.id,
+          subscriptions: [{ id: article.id }],
+        },
+      })
     )
   })
 

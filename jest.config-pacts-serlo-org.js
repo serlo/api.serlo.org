@@ -19,37 +19,23 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+/* eslint-disable @typescript-eslint/no-var-requires,import/no-commonjs */
+const { pathsToModuleNameMapper } = require('ts-jest/utils')
 
-declare namespace NodeJS {
-  import { LogLevelDesc } from 'loglevel'
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const { compilerOptions } = require('./tsconfig')
 
-  interface ProcessEnv {
-    /**
-     * Used by server and swr-queue-worker
-     */
-    ENVIRONMENT: string
-    GOOGLE_SPREADSHEET_API_ACTIVE_DONORS: string
-    GOOGLE_SPREADSHEET_API_SECRET: string
-    LOG_LEVEL: LogLevelDesc | undefined
-    REDIS_URL: string
-    REDIS_URL_TEST: string | undefined
-    SENTRY_DSN: string | undefined
-    SENTRY_RELEASE: string | undefined
-    SERLO_ORG_DATABASE_LAYER_HOST: string
-    SERLO_ORG_HOST: string
-    SERLO_ORG_SECRET: string
-
-    /**
-     * Used by server only
-     */
-    SERVER_HYDRA_HOST: string
-    SERVER_SERLO_CLOUDFLARE_WORKER_SECRET: string
-    SERVER_SWR_QUEUE_DASHBOARD_PASSWORD: string
-    SERVER_SWR_QUEUE_DASHBOARD_USERNAME: string
-
-    /**
-     * Used by swr-queue-worker only
-     */
-    SWR_QUEUE_WORKER_CONCURRENCY: string
-  }
+module.exports = {
+  preset: 'ts-jest',
+  modulePaths: ['<rootDir>/src'],
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
+  setupFiles: ['dotenv/config'],
+  setupFilesAfterEnv: ['<rootDir>/__config__/jest.setup-pacts-serlo-org.ts'],
+  testEnvironment: 'node',
+  testRegex: '/__tests-pacts__/serlo\\.org/index\\.ts',
+  transform: {
+    '^.+\\.graphql$': 'jest-transform-graphql',
+  },
+  watchPathIgnorePatterns: ['<rootDir>/pacts/'],
 }

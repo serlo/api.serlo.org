@@ -55,7 +55,7 @@ export const solutionRevision: SolutionRevisionPayload = {
   __typename: EntityRevisionType.SolutionRevision,
   id: 29652,
   trashed: false,
-  alias: null,
+  alias: '/mathe/29652/29652',
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
   repositoryId: solution.id,

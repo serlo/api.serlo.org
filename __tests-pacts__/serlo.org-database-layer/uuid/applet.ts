@@ -40,7 +40,7 @@ test('Applet', async () => {
     id: applet.id,
     trashed: Matchers.boolean(applet.trashed),
     instance: Matchers.string(applet.instance),
-    alias: applet.alias ? Matchers.string(applet.alias) : null,
+    alias: Matchers.string(applet.alias),
     date: Matchers.iso8601DateTime(applet.date),
     currentRevisionId: applet.currentRevisionId
       ? Matchers.integer(applet.currentRevisionId)
@@ -78,7 +78,7 @@ test('AppletRevision', async () => {
     __typename: appletRevision.__typename,
     id: appletRevision.id,
     trashed: Matchers.boolean(appletRevision.trashed),
-    alias: null,
+    alias: Matchers.string(appletRevision.alias),
     date: Matchers.iso8601DateTime(appletRevision.date),
     authorId: Matchers.integer(appletRevision.authorId),
     repositoryId: Matchers.integer(appletRevision.repositoryId),

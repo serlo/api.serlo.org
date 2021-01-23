@@ -28,7 +28,7 @@ test('License', async () => {
   await addJsonInteraction({
     name: `fetch data of license with id ${license.id}`,
     given: `there exists an license with id ${license.id}`,
-    path: `/api/license/${license.id}`,
+    path: `/license/${license.id}`,
     body: {
       id: 1,
       instance: Matchers.string(license.instance),

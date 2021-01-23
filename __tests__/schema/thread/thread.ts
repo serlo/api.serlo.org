@@ -32,15 +32,13 @@ import {
   user,
 } from '../../../__fixtures__'
 import {
-  createJsonHandler,
-  getSerloUrl,
-} from '../../../__tests__/__utils__/handlers'
-import {
   assertSuccessfulGraphQLQuery,
   Client,
   createAliasHandler,
+  createJsonHandlerForDatabaseLayer,
   createTestClient,
   createUuidHandler,
+  getDatabaseLayerUrl,
 } from '../../__utils__'
 import { CommentPayload, UuidPayload } from '~/schema/uuid'
 import { Instance } from '~/types'
@@ -413,13 +411,13 @@ export function mockEndpointsForThreads(
   const firstCommentIds = threads.map((thread) => thread[0].id)
 
   global.server.use(
-    createJsonHandler({
-      path: `/api/threads/${uuidPayload.id}`,
+    createJsonHandlerForDatabaseLayer({
+      path: `/threads/${uuidPayload.id}`,
       body: { firstCommentIds },
     })
   )
   global.server.use(
-    rest.get(getSerloUrl({ path: '/api/uuid/:id' }), (req, res, ctx) => {
+    rest.get(getDatabaseLayerUrl({ path: '/uuid/:id' }), (req, res, ctx) => {
       const id = Number(req.params.id)
 
       if (id === uuidPayload.id) return res(ctx.json(uuidPayload))

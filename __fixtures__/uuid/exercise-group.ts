@@ -49,7 +49,7 @@ export const exerciseGroupRevision: ExerciseGroupRevisionPayload = {
   __typename: EntityRevisionType.ExerciseGroupRevision,
   id: 2218,
   trashed: false,
-  alias: null,
+  alias: '/mathe/2218/2218',
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
   repositoryId: exerciseGroup.id,

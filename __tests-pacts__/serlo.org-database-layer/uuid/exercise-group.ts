@@ -43,7 +43,7 @@ test('ExerciseGroup', async () => {
     id: exerciseGroup.id,
     trashed: Matchers.boolean(exerciseGroup.trashed),
     instance: Matchers.string(exerciseGroup.instance),
-    alias: exerciseGroup.alias ? Matchers.string(exerciseGroup.alias) : null,
+    alias: Matchers.string(exerciseGroup.alias),
     date: Matchers.iso8601DateTime(exerciseGroup.date),
     currentRevisionId: exerciseGroup.currentRevisionId
       ? Matchers.integer(exerciseGroup.currentRevisionId)
@@ -85,7 +85,7 @@ test('ExerciseGroupRevision', async () => {
     __typename: exerciseGroupRevision.__typename,
     id: exerciseGroupRevision.id,
     trashed: Matchers.boolean(exerciseGroupRevision.trashed),
-    alias: null,
+    alias: Matchers.string(exerciseGroupRevision.alias),
     date: Matchers.iso8601DateTime(exerciseGroupRevision.date),
     authorId: Matchers.integer(exerciseGroupRevision.authorId),
     repositoryId: Matchers.integer(exerciseGroupRevision.repositoryId),

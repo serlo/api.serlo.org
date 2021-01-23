@@ -68,103 +68,127 @@ export function createCache({ timer }: { timer: Timer }): Cache {
     }),
   }
 
-  /* eslint-disable @typescript-eslint/unbound-method */
-  const get = (util.promisify(client.get).bind(client) as unknown) as (
-    key: string
-  ) => Promise<Buffer | null>
-  const del = (util.promisify(client.del).bind(client) as unknown) as (
-    key: string
-  ) => Promise<void>
-  const set = (util.promisify(client.set).bind(client) as unknown) as (
-    key: string,
-    value: Buffer
-  ) => Promise<void>
-  /* eslint-enable @typescript-eslint/unbound-method */
+  let isReady = false
 
-  let ready = false
+  async function set<T>(
+    this: Cache,
+    payload: {
+      key: string
+      priority?: Priority
+    } & FunctionOrValue<T>
+  ) {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    const clientSet = (util.promisify(client.set).bind(client) as unknown) as (
+      key: string,
+      value: Buffer
+    ) => Promise<void>
+
+    const { key, priority = Priority.High } = payload
+    const lockManager = lockManagers[priority]
+    try {
+      const lock = await lockManager.lock(key)
+      try {
+        let value: T | undefined
+
+        if (isFunction(payload)) {
+          const current = pipeable.pipe(
+            await this.get<T>({ key }),
+            O.map((entry) => entry.value),
+            O.toUndefined
+          )
+
+          value = await payload.getValue(current)
+        } else {
+          value = payload.value
+        }
+
+        if (value === undefined) return
+
+        const valueWithTimestamp = { value, lastModified: timer.now() }
+        const packedValue = msgpack.pack(valueWithTimestamp) as Buffer
+        await clientSet(key, packedValue)
+      } catch (e) {
+        log.error(`Failed to set key "${key}":`, e)
+      } finally {
+        await lock.unlock()
+      }
+    } catch (e) {
+      log.debug(`Failed to acquire lock for key "${key}":`, e)
+    }
+  }
+
+  async function get<T>(
+    this: Cache,
+    {
+      key,
+    }: {
+      key: string
+    }
+  ): Promise<O.Option<CacheEntry<T>>> {
+    const clientGet = (util
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      .promisify(client.get)
+      .bind(client) as unknown) as (key: string) => Promise<Buffer | null>
+
+    const packedValue = await clientGet(key)
+    if (packedValue === null) return O.none
+
+    const value = msgpack.unpack(packedValue) as T | CacheEntry<T>
+
+    if (isCacheEntryWithTimestamp<T>(value)) {
+      return O.some(value)
+    }
+
+    await this.set({ key, value })
+    return this.get({ key })
+  }
+
+  const remove = async ({ key }: { key: string }) => {
+    const clientRemove = (util
+      .promisify(client.del)
+      .bind(client) as unknown) as (key: string) => Promise<void>
+
+    await clientRemove(key)
+  }
+
+  const ready = async () => {
+    if (isReady) return
+    await new Promise<void>((resolve) => {
+      client.on('ready', () => {
+        isReady = true
+        resolve()
+      })
+    })
+  }
+
+  const flush = async () => {
+    const clientFlush = (util
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      .promisify(client.flushdb)
+      .bind(client) as unknown) as () => Promise<void>
+
+    await clientFlush()
+  }
+
+  const quit = async () => {
+    const clientQuit = (util
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      .promisify(client.quit)
+      .bind(client) as unknown) as () => Promise<void>
+
+    await Promise.all([
+      clientQuit(),
+      ...Object.values(lockManagers).map((lockManager) => lockManager.quit()),
+    ])
+  }
 
   return {
-    get: async <T>({ key }: { key: string }) => {
-      return pipeable.pipe(
-        await get(key),
-        O.fromNullable,
-        O.map((value) => msgpack.unpack(value) as T),
-        O.map((value) => {
-          return isCacheEntryWithTimestamp<T>(value)
-            ? value
-            : { value, lastModified: timer.now() }
-        })
-      )
-    },
-    async set<T>(
-      this: Cache,
-      payload: {
-        key: string
-        priority?: Priority
-      } & FunctionOrValue<T>
-    ) {
-      const { key, priority = Priority.High } = payload
-      const lockManager = lockManagers[priority]
-      try {
-        const lock = await lockManager.lock(key)
-        try {
-          let value: T | undefined
-
-          if (isFunction(payload)) {
-            const current = pipeable.pipe(
-              await this.get({ key }),
-              O.map((entry) => entry.value as T),
-              O.toUndefined
-            )
-
-            value = await payload.getValue(current)
-          } else {
-            value = payload.value
-          }
-
-          if (value === undefined) return
-
-          const valueWithTimestamp = { value, lastModified: timer.now() }
-          const packedValue = msgpack.pack(valueWithTimestamp) as Buffer
-          await set(key, packedValue)
-        } catch (e) {
-          log.error(`Failed to set key "${key}":`, e)
-        } finally {
-          await lock.unlock()
-        }
-      } catch (e) {
-        log.debug(`Failed to acquire lock for key "${key}":`, e)
-      }
-    },
-    async remove({ key }) {
-      await del(key)
-    },
-    async ready() {
-      if (ready) return
-      await new Promise<void>((resolve) => {
-        client.on('ready', () => {
-          ready = true
-          resolve()
-        })
-      })
-    },
-    async flush() {
-      return new Promise((resolve) => {
-        client.flushdb(() => {
-          resolve()
-        })
-      })
-    },
-    async quit() {
-      await Promise.all([
-        new Promise<void>((resolve) => {
-          client.quit(() => {
-            resolve()
-          })
-        }),
-        ...Object.values(lockManagers).map((lockManager) => lockManager.quit()),
-      ])
-    },
+    get,
+    set,
+    remove,
+    ready,
+    flush,
+    quit,
   }
 }
 

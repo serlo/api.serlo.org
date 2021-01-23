@@ -47,7 +47,7 @@ export const eventRevision: EventRevisionPayload = {
   __typename: EntityRevisionType.EventRevision,
   id: 35555,
   trashed: false,
-  alias: null,
+  alias: '/mathe/35555/beispielveranstaltung',
   date: '2014-09-15T15:28:35Z',
   authorId: 1,
   repositoryId: event.id,

@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import dotenv from 'dotenv'
+import createApp from 'express'
 
 import { createCache } from './cache'
 import { initializeSentry } from './sentry'
@@ -37,5 +38,19 @@ export async function start() {
     concurrency: parseInt(process.env.SWR_QUEUE_WORKER_CONCURRENCY, 10),
   })
   await swrQueueWorker.ready()
-  console.log('🚀 SWR Queue Worker ready')
+
+  const app = createApp()
+  app.get('/.well-known/health', (req, res) => {
+    swrQueueWorker
+      .healthy()
+      .then(() => {
+        res.sendStatus(200)
+      })
+      .catch(() => {
+        res.sendStatus(503)
+      })
+  })
+  app.listen({ port: 3000 }, () => {
+    console.log('🚀 SWR Queue Worker ready')
+  })
 }

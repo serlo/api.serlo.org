@@ -63,6 +63,7 @@ export function createGoogleSpreadsheetApiModel({
 }) {
   const getValues = createQuery<Arguments, E.Either<ErrorEvent, CellValues>>(
     {
+      enableSwr: true,
       getCurrentValue: async (args) => {
         const { spreadsheetId, range } = args
         const majorDimension = args.majorDimension ?? MajorDimension.Rows
