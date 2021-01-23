@@ -57,7 +57,7 @@ export const resolvers: ThreadResolvers = {
     },
     comments(thread, cursorPayload) {
       return resolveConnection<CommentPayload>({
-        nodes: thread.commentPayloads,
+        nodes: thread.commentPayloads.sort((comment) => comment.id),
         payload: cursorPayload,
         createCursor(node) {
           return node.id.toString()

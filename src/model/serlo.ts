@@ -503,8 +503,6 @@ export function createSerloModel({
             if (current === undefined) return Promise.resolve(undefined)
 
             current.firstCommentIds.push(value.id)
-            current.firstCommentIds.sort()
-
             return Promise.resolve(current)
           },
         })
@@ -539,8 +537,6 @@ export function createSerloModel({
             if (current === undefined) return Promise.resolve(undefined)
 
             current.childrenIds.push(value.id)
-            current.childrenIds.sort()
-
             return Promise.resolve(current)
           },
         })
