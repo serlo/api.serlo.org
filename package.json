@@ -1,6 +1,6 @@
 {
   "name": "@serlo/api.serlo.org",
-  "version": "0.16.1",
+  "version": "0.17.7",
   "private": true,
   "bugs": {
     "url": "https://github.com/serlo/api.serlo.org/issues"
@@ -25,13 +25,17 @@
     "lint:eslint": "yarn _eslint",
     "lint:prettier": "yarn _prettier --check",
     "lint:tsc": "tsc --noEmit",
-    "pacts": "jest --config jest.config-pacts.js --runInBand",
+    "pacts": "npm-run-all pacts:clean pacts:serlo-org pacts:serlo-org-database-layer",
+    "pacts:clean": "rimraf pacts",
     "pacts:publish": "ts-node scripts/publish-pacts",
+    "pacts:serlo-org": "jest --config jest.config-pacts-serlo-org.js --runInBand",
+    "pacts:serlo-org-database-layer": "jest --config jest.config-pacts-serlo-org-database-layer.js --runInBand",
     "preregenerate-types": "graphql-codegen --config codegen.yml",
     "regenerate-types": "ts-node scripts/regenerate-types-package",
     "start": "npm-run-all start:redis start:server",
     "start:redis": "docker-compose up --detach",
     "start:server": "tsdx watch --entry src/server.ts --target node --format cjs --tsconfig tsconfig.prod.json --onSuccess \"node dist\"",
+    "start:swr-queue-worker": "tsdx watch --entry src/swr-queue-worker.ts --target node --format cjs --tsconfig tsconfig.prod.json --onSuccess \"node dist\"",
     "stop:redis": "docker-compose stop",
     "test": "jest --config jest.config.js --runInBand"
   },

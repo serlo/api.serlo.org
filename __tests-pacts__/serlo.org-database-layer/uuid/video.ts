@@ -40,7 +40,7 @@ test('Video', async () => {
     id: video.id,
     trashed: Matchers.boolean(video.trashed),
     instance: Matchers.string(video.instance),
-    alias: video.alias ? Matchers.string(video.alias) : null,
+    alias: Matchers.string(video.alias),
     date: Matchers.iso8601DateTime(video.date),
     currentRevisionId: video.currentRevisionId
       ? Matchers.integer(video.currentRevisionId)
@@ -77,7 +77,7 @@ test('VideoRevision', async () => {
     __typename: videoRevision.__typename,
     id: videoRevision.id,
     trashed: Matchers.boolean(videoRevision.trashed),
-    alias: null,
+    alias: Matchers.string(videoRevision.alias),
     date: Matchers.iso8601DateTime(videoRevision.date),
     authorId: Matchers.integer(videoRevision.authorId),
     repositoryId: Matchers.integer(videoRevision.repositoryId),

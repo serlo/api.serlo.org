@@ -54,7 +54,14 @@ export function applyGraphQLMiddleware({
   }
   const server = new ApolloServer(getGraphQLOptions(environment))
 
-  app.use(server.getMiddleware({ path: '/graphql' }))
+  app.use(
+    server.getMiddleware({
+      path: '/graphql',
+      onHealthCheck: async () => {
+        await swrQueue.healthy()
+      },
+    })
+  )
   app.get('/___graphql', (...args) => {
     return createPlayground({
       endpoint: '/graphql',

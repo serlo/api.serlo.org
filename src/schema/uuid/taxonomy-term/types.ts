@@ -33,7 +33,7 @@ import { TaxonomyTerm, TaxonomyTermChildrenArgs } from '~/types'
 export interface TaxonomyTermPayload
   extends Omit<TaxonomyTerm, keyof TaxonomyTermResolvers['TaxonomyTerm']> {
   __typename: DiscriminatorType.TaxonomyTerm
-  alias: string | null
+  alias: string
   parentId: number | null
   childrenIds: number[]
 }

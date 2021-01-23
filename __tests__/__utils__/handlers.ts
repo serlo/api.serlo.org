@@ -27,25 +27,22 @@ import { AliasPayload, NavigationPayload, UuidPayload } from '~/schema/uuid'
 import { Instance } from '~/types'
 
 export function createAliasHandler(alias: AliasPayload) {
-  return createJsonHandler({
-    instance: alias.instance,
-    path: `/api/alias${alias.path}`,
+  return createJsonHandlerForDatabaseLayer({
+    path: `/alias/${alias.instance}${alias.path}`,
     body: alias,
   })
 }
 
 export function createLicenseHandler(license: LicensePayload) {
-  return createJsonHandler({
-    instance: license.instance,
-    path: `/api/license/${license.id}`,
+  return createJsonHandlerForDatabaseLayer({
+    path: `/license/${license.id}`,
     body: license,
   })
 }
 
 export function createNavigationHandler(navigation: NavigationPayload) {
-  return createJsonHandler({
-    instance: navigation.instance,
-    path: '/api/navigation',
+  return createJsonHandlerForDatabaseLayer({
+    path: `/navigation/${navigation.instance}`,
     body: navigation,
   })
 }
@@ -53,23 +50,23 @@ export function createNavigationHandler(navigation: NavigationPayload) {
 export function createNotificationEventHandler(
   notificationEvent: NotificationEventPayload
 ) {
-  return createJsonHandler({
-    path: `/api/event/${notificationEvent.id}`,
+  return createJsonHandlerForDatabaseLayer({
+    path: `/event/${notificationEvent.id}`,
     body: notificationEvent,
   })
 }
 
 export function createUuidHandler(uuid: UuidPayload, once?: boolean) {
-  return createJsonHandler(
+  return createJsonHandlerForDatabaseLayer(
     {
-      path: `/api/uuid/${uuid.id}`,
+      path: `/uuid/${uuid.id}`,
       body: uuid,
     },
     once
   )
 }
 
-export function createJsonHandler(
+export function createJsonHandlerForLegacySerlo(
   args: {
     instance?: Instance
     path: string
@@ -84,6 +81,20 @@ export function createJsonHandler(
   })
 }
 
+export function createJsonHandlerForDatabaseLayer(
+  args: {
+    path: string
+    body: unknown
+  },
+  once = false
+) {
+  return rest.get(getDatabaseLayerUrl(args), (_req, res, ctx) => {
+    return (once ? res.once : res)(
+      ctx.json(args.body as Record<string, unknown>)
+    )
+  })
+}
+
 export function getSerloUrl({
   instance = Instance.De,
   path,
@@ -92,6 +103,10 @@ export function getSerloUrl({
   path: string
 }) {
   return `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`
+}
+
+export function getDatabaseLayerUrl({ path }: { path: string }) {
+  return `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`
 }
 
 export function createSpreadsheetHandler({

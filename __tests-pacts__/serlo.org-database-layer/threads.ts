@@ -31,13 +31,13 @@ test('Threads', async () => {
   await addJsonInteraction({
     name: `fetch first comment ids of all threads for an article}`,
     given: `article ${article.id} has threads`,
-    path: `/api/threads/${article.id}`,
+    path: `/threads/${article.id}`,
     body: {
       firstCommentIds: Matchers.eachLike(Matchers.integer(1)),
     },
   })
   await fetch(
-    `http://de.${process.env.SERLO_ORG_HOST}/api/threads/${article.id}`
+    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}/threads/${article.id}`
   )
 })
 
@@ -47,7 +47,7 @@ test('Comment', async () => {
     __typename: comment.__typename,
     id: comment.id,
     trashed: Matchers.boolean(comment.trashed),
-    alias: null,
+    alias: comment.alias,
     authorId: Matchers.integer(comment.authorId),
     title: comment.title ? Matchers.string(comment.title) : null,
     date: Matchers.iso8601DateTime(comment.date),
@@ -56,7 +56,9 @@ test('Comment', async () => {
     parentId: Matchers.integer(comment.parentId),
     childrenIds: comment.childrenIds,
   })
-  await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/uuid/${comment.id}`)
+  await fetch(
+    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}/uuid/${comment.id}`
+  )
 })
 
 // TODO: Add tests for thread mutations

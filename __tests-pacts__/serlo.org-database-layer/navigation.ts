@@ -22,20 +22,36 @@
 import { Matchers } from '@pact-foundation/pact'
 import fetch from 'node-fetch'
 
-import { user } from '../../__fixtures__/uuid'
 import { addJsonInteraction } from '../__utils__'
+import { NavigationPayload } from '~/schema/uuid'
+import { Instance } from '~/types'
 
-test('Subscriptions', async () => {
+test('Navigation', async () => {
+  // This is a noop test that just adds the interaction to the contract
+  const navigation: NavigationPayload = {
+    instance: Instance.De,
+    data: [
+      {
+        label: 'Mathematik',
+        children: [{ label: 'Alle Themen' }],
+      },
+    ],
+  }
   await addJsonInteraction({
-    name: `fetch data of all subscriptions for user with id ${user.id}`,
-    given: `there exists a subscription for user with id ${user.id}`,
-    path: `/api/subscriptions/${user.id}`,
+    name: 'fetch data of navigation',
+    given: '',
+    path: `/navigation/${navigation.instance}`,
     body: {
-      userId: user.id,
-      subscriptions: Matchers.eachLike({ id: Matchers.integer(1) }),
+      instance: Matchers.string(navigation.instance),
+      data: Matchers.eachLike({
+        label: Matchers.string(navigation.data[0].label),
+        children: Matchers.eachLike({
+          label: Matchers.string(navigation.data[0].children?.[0].label),
+        }),
+      }),
     },
   })
   await fetch(
-    `http://de.${process.env.SERLO_ORG_HOST}/api/subscriptions/${user.id}`
+    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}/navigation/${navigation.instance}`
   )
 })

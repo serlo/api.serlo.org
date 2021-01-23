@@ -19,37 +19,31 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-
-declare namespace NodeJS {
-  import { LogLevelDesc } from 'loglevel'
-
-  interface ProcessEnv {
-    /**
-     * Used by server and swr-queue-worker
-     */
-    ENVIRONMENT: string
-    GOOGLE_SPREADSHEET_API_ACTIVE_DONORS: string
-    GOOGLE_SPREADSHEET_API_SECRET: string
-    LOG_LEVEL: LogLevelDesc | undefined
-    REDIS_URL: string
-    REDIS_URL_TEST: string | undefined
-    SENTRY_DSN: string | undefined
-    SENTRY_RELEASE: string | undefined
-    SERLO_ORG_DATABASE_LAYER_HOST: string
-    SERLO_ORG_HOST: string
-    SERLO_ORG_SECRET: string
-
-    /**
-     * Used by server only
-     */
-    SERVER_HYDRA_HOST: string
-    SERVER_SERLO_CLOUDFLARE_WORKER_SECRET: string
-    SERVER_SWR_QUEUE_DASHBOARD_PASSWORD: string
-    SERVER_SWR_QUEUE_DASHBOARD_USERNAME: string
-
-    /**
-     * Used by swr-queue-worker only
-     */
-    SWR_QUEUE_WORKER_CONCURRENCY: string
-  }
-}
+/* eslint-disable import/no-unassigned-import */
+describe('GET /alias/:instance/:alias', () => {
+  require('./alias')
+})
+describe('GET /event/:id', () => {
+  require('./event')
+})
+describe('GET /license/:id', () => {
+  require('./license')
+})
+describe('GET /navigation/:instance', () => {
+  require('./navigation')
+})
+describe('GET /notifications/:id', () => {
+  require('./notifications')
+})
+describe('GET /api/subscriptions', () => {
+  require('./subscriptions')
+})
+describe('GET /api/threads/:id', () => {
+  require('./threads')
+})
+describe('GET /api/user/:id', () => {
+  require('./user')
+})
+describe('GET /api/uuid/:id', () => {
+  require('./uuid')
+})

@@ -474,6 +474,53 @@ async function exec(): Promise<void> {
         'Overhaul naming of environment variables.',
       ],
     },
+    {
+      tagName: 'v0.17.0',
+      date: '2021-01-11',
+      breakingChanges: [
+        ['uuid', 'Move `threads` from `AbstractUuid` into concrete types.'],
+      ],
+      added: ['Add `ThreadAware` interface for types with `threads`.'],
+      internal: ['Add preparations for database layer.'],
+    },
+    {
+      tagName: 'v0.17.1',
+      date: '2021-01-14',
+      internal: ['serlo-org-database-layer@0.1.2'],
+    },
+    {
+      tagName: 'v0.17.2',
+      date: '2021-01-14',
+      internal: ['serlo-org-database-layer@0.1.4', 'Add health checks'],
+    },
+    {
+      tagName: 'v0.17.3',
+      date: '2021-01-15',
+      internal: [
+        'serlo-org-database-layer@0.1.5',
+        'Split contract into serlo.org and serlo.org-database-layer.',
+      ],
+    },
+    {
+      tagName: 'v0.17.4',
+      date: '2021-01-16',
+      internal: ['serlo-org-database-layer@0.1.6'],
+    },
+    {
+      tagName: 'v0.17.5',
+      date: '2021-01-19',
+      fixed: [['cache', 'Handle cache values without timestamp correctly.']],
+    },
+    {
+      tagName: 'v0.17.6',
+      date: '2021-01-20',
+      internal: [['cache', 'Adapt `maxAge`.']],
+    },
+    {
+      tagName: 'v0.17.7',
+      date: '2021-01-21',
+      fixed: [['swr-queue', 'Fix `Time`.']],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

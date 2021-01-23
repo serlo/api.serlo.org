@@ -51,12 +51,7 @@ import {
   NodeData,
   ThreadsPayload,
 } from '~/schema/uuid'
-import {
-  Instance,
-  License,
-  ThreadCreateThreadInput,
-  ThreadSetThreadArchivedInput,
-} from '~/types'
+import { Instance, License, ThreadCreateThreadInput } from '~/types'
 
 export function createSerloModel({
   environment,
@@ -73,7 +68,7 @@ export function createSerloModel({
     })
   }
 
-  function get<T>({
+  function getViaLegacySerlo<T>({
     path,
     instance = Instance.De,
   }: {
@@ -88,6 +83,15 @@ export function createSerloModel({
           Authorization: `Serlo Service=${getToken()}`,
         },
       }
+    )
+  }
+
+  function getViaDatabaseLayer<T>({ path }: { path: string }): Promise<T> {
+    return fetchHelpers.get(
+      `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path.replace(
+        '/api',
+        ''
+      )}`
     )
   }
 
@@ -114,13 +118,14 @@ export function createSerloModel({
 
   const getUuid = createQuery<{ id: number }, AbstractUuidPayload | null>(
     {
+      enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        const uuid = await get<AbstractUuidPayload | null>({
-          path: `/api/uuid/${id}`,
+        const uuid = await getViaDatabaseLayer<AbstractUuidPayload | null>({
+          path: `/uuid/${id}`,
         })
         return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
       },
-      maxAge: { minutes: 5 },
+      maxAge: { hour: 1 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/uuid/${id}`
       },
@@ -163,9 +168,10 @@ export function createSerloModel({
 
   const getActiveAuthorIds = createQuery<undefined, number[]>(
     {
+      enableSwr: true,
       getCurrentValue: async () => {
-        return await get<number[]>({
-          path: '/api/user/active-authors',
+        return await getViaDatabaseLayer<number[]>({
+          path: '/user/active-authors',
         })
       },
       maxAge: { hour: 1 },
@@ -182,9 +188,10 @@ export function createSerloModel({
 
   const getActiveReviewerIds = createQuery<undefined, number[]>(
     {
+      enableSwr: true,
       getCurrentValue: async () => {
-        return await get<number[]>({
-          path: '/api/user/active-reviewers',
+        return await getViaDatabaseLayer<number[]>({
+          path: '/user/active-reviewers',
         })
       },
       maxAge: { hour: 1 },
@@ -203,10 +210,10 @@ export function createSerloModel({
     NavigationPayload
   >(
     {
+      enableSwr: true,
       getCurrentValue: async ({ instance }) => {
-        return await get<NavigationPayload>({
-          path: '/api/navigation',
-          instance,
+        return await getViaDatabaseLayer<NavigationPayload>({
+          path: `/navigation/${instance}`,
         })
       },
       maxAge: { hour: 1 },
@@ -297,10 +304,11 @@ export function createSerloModel({
     AliasPayload | null
   >(
     {
+      enableSwr: true,
       getCurrentValue: async ({ path, instance }) => {
-        return get({ path: `/api/alias${path}`, instance })
+        return getViaDatabaseLayer({ path: `/alias/${instance}${path}` })
       },
-      maxAge: { minutes: 5 },
+      maxAge: { hour: 1 },
       getKey: ({ path, instance }) => {
         const cleanPath = encodePath(decodePath(path))
         return `${instance}.serlo.org/api/alias${cleanPath}`
@@ -318,8 +326,9 @@ export function createSerloModel({
 
   const getLicense = createQuery<{ id: number }, License>(
     {
+      enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        return get({ path: `/api/license/${id}` })
+        return getViaDatabaseLayer({ path: `/license/${id}` })
       },
       maxAge: { day: 1 },
       getKey: ({ id }) => {
@@ -340,10 +349,13 @@ export function createSerloModel({
     AbstractNotificationEventPayload | null
   >(
     {
+      enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        const notificationEvent = await get<AbstractNotificationEventPayload>({
-          path: `/api/event/${id}`,
-        })
+        const notificationEvent = await getViaDatabaseLayer<AbstractNotificationEventPayload>(
+          {
+            path: `/event/${id}`,
+          }
+        )
         return isUnsupportedNotificationEvent(notificationEvent)
           ? null
           : notificationEvent
@@ -364,9 +376,10 @@ export function createSerloModel({
 
   const getNotifications = createQuery<{ id: number }, NotificationsPayload>(
     {
+      enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        const payload = await get<NotificationsPayload>({
-          path: `/api/notifications/${id}`,
+        const payload = await getViaDatabaseLayer<NotificationsPayload>({
+          path: `/notifications/${id}`,
         })
         return {
           ...payload,
@@ -418,9 +431,10 @@ export function createSerloModel({
 
   const getSubscriptions = createQuery<{ id: number }, SubscriptionsPayload>(
     {
+      enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        return get({
-          path: `/api/subscriptions/${id}`,
+        return getViaDatabaseLayer({
+          path: `/subscriptions/${id}`,
         })
       },
       maxAge: { hour: 1 },
@@ -439,10 +453,11 @@ export function createSerloModel({
 
   const getThreadIds = createQuery<{ id: number }, ThreadsPayload>(
     {
+      enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        return get({ path: `/api/threads/${id}` })
+        return getViaDatabaseLayer({ path: `/threads/${id}` })
       },
-      maxAge: { minutes: 5 },
+      maxAge: { hour: 1 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/threads/${id}`
       },
@@ -520,7 +535,7 @@ export function createSerloModel({
   })
 
   const archiveThread = createMutation<
-    ThreadSetThreadArchivedInput & { userId: number },
+    { id: number; archived: boolean; userId: number },
     CommentPayload | null
   >({
     mutate: async (payload) => {
@@ -540,8 +555,9 @@ export function createSerloModel({
 
   const getAllCacheKeys = createQuery<undefined, string[]>(
     {
+      enableSwr: false,
       getCurrentValue: async () => {
-        return get({
+        return getViaLegacySerlo({
           path: `/api/cache-keys`,
         })
       },

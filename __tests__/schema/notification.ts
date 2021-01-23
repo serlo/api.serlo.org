@@ -78,6 +78,7 @@ import {
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   Client,
+  createJsonHandlerForDatabaseLayer,
   createNotificationEventHandler,
   createTestClient,
   createUuidHandler,
@@ -95,22 +96,17 @@ describe('notifications', () => {
       userId: user.id,
     })
     global.server.use(
-      rest.get(
-        getSerloUrl({ path: `/api/notifications/${user.id}` }),
-        (_req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.json({
-              userId: user.id,
-              notifications: [
-                { id: 3, unread: true, eventId: 3 },
-                { id: 2, unread: false, eventId: 2 },
-                { id: 1, unread: false, eventId: 1 },
-              ],
-            })
-          )
-        }
-      )
+      createJsonHandlerForDatabaseLayer({
+        path: `/notifications/${user.id}`,
+        body: {
+          userId: user.id,
+          notifications: [
+            { id: 3, unread: true, eventId: 3 },
+            { id: 2, unread: false, eventId: 2 },
+            { id: 1, unread: false, eventId: 1 },
+          ],
+        },
+      })
     )
   })
 
@@ -171,24 +167,19 @@ describe('notifications', () => {
 
   test('notifications (w/ event)', async () => {
     global.server.use(
-      rest.get(
-        getSerloUrl({ path: `/api/notifications/${user.id}` }),
-        (_req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.json({
-              userId: user.id,
-              notifications: [
-                {
-                  id: 1,
-                  unread: false,
-                  eventId: checkoutRevisionNotificationEvent.id,
-                },
-              ],
-            })
-          )
-        }
-      ),
+      createJsonHandlerForDatabaseLayer({
+        path: `/notifications/${user.id}`,
+        body: {
+          userId: user.id,
+          notifications: [
+            {
+              id: 1,
+              unread: false,
+              eventId: checkoutRevisionNotificationEvent.id,
+            },
+          ],
+        },
+      }),
       createNotificationEventHandler(checkoutRevisionNotificationEvent)
     )
     await assertSuccessfulGraphQLQuery({

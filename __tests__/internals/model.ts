@@ -33,7 +33,10 @@ import {
 } from '~/internals/swr-queue'
 import { createSerloModel } from '~/model'
 
-const swrQueue = createSwrQueue()
+const swrQueue = createSwrQueue({
+  cache: global.cache,
+  timer: global.timer,
+})
 const swrQueueWorker = createSwrQueueWorker({
   cache: global.cache,
   timer: global.timer,
@@ -96,7 +99,7 @@ describe('createQuery', () => {
     test('Stale value', async () => {
       await global.cache.set({ key, value: staleUser })
       await global.timer.waitFor(model.getUuid._querySpec.maxAge!)
-      await global.timer.waitFor({ minutes: 5 })
+      await global.timer.waitFor({ hour: 1 })
       expect(await model.getUuid(payload)).toEqual(staleUser)
       await waitForJob()
       const cacheValue = await global.cache.get({ key })
@@ -111,7 +114,7 @@ describe('createQuery', () => {
       const staleUser2 = { ...currentUser, username: 'Stale User 2' }
       await global.cache.set({ key, value: staleUser1 })
       await global.timer.waitFor(model.getUuid._querySpec.maxAge!)
-      await global.timer.waitFor({ minutes: 5 })
+      await global.timer.waitFor({ hour: 1 })
       global.server.use(createUuidHandler(staleUser2))
       expect(await model.getUuid(payload)).toEqual(staleUser1)
       await waitForJob()
@@ -120,7 +123,7 @@ describe('createQuery', () => {
         staleUser2
       )
       await global.timer.waitFor(model.getUuid._querySpec.maxAge!)
-      await global.timer.waitFor({ minutes: 5 })
+      await global.timer.waitFor({ hour: 1 })
       global.server.use(createUuidHandler(currentUser))
       expect(await model.getUuid(payload)).toEqual(staleUser2)
       await waitForJob()

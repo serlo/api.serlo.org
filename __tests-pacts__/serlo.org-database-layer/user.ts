@@ -23,33 +23,29 @@ import { Matchers } from '@pact-foundation/pact'
 import fetch from 'node-fetch'
 
 import { addJsonInteraction } from '../__utils__'
-import { NavigationPayload } from '~/schema/uuid'
-import { Instance } from '~/types'
 
-test('Navigation', async () => {
-  // This is a noop test that just adds the interaction to the contract
-  const navigation: NavigationPayload = {
-    instance: Instance.De,
-    data: [
-      {
-        label: 'Mathematik',
-        children: [{ label: 'Alle Themen' }],
-      },
-    ],
-  }
+test('GET /api/user/active-authors', async () => {
   await addJsonInteraction({
-    name: 'fetch data of navigation',
-    given: '',
-    path: '/api/navigation',
-    body: {
-      instance: Matchers.string(navigation.instance),
-      data: Matchers.eachLike({
-        label: Matchers.string(navigation.data[0].label),
-        children: Matchers.eachLike({
-          label: Matchers.string(navigation.data[0].children?.[0].label),
-        }),
-      }),
-    },
+    name: 'fetch list of active author ids',
+    given: 'users with ids 1 and 10 are active authors',
+    path: '/user/active-authors',
+    body: Matchers.eachLike(1),
   })
-  await fetch(`http://de.${process.env.SERLO_ORG_HOST}/api/navigation`)
+
+  await fetch(
+    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}/user/active-authors`
+  )
+})
+
+test('GET /api/user/active-reviewers', async () => {
+  await addJsonInteraction({
+    name: 'fetch list of active reviewer ids',
+    given: 'users with ids 1 and 10 are active reviewers',
+    path: '/user/active-reviewers',
+    body: Matchers.eachLike(1),
+  })
+
+  await fetch(
+    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}/user/active-reviewers`
+  )
 })

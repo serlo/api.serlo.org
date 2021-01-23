@@ -63,7 +63,7 @@ module.exports = {
           '__tests__/**/*',
           'scripts/**/*',
           'jest.config.js',
-          'jest.config-pacts.js',
+          'jest.config-pacts-*.js',
           'jest.setup.ts',
           'jest.setup-pacts.ts',
           'webpack.config.js',
