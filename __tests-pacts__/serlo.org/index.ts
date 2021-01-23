@@ -24,17 +24,17 @@ describe('GET /api/cache-keys', () => {
   require('./cache-keys')
 })
 describe('POST /api/set-uuid-state', () => {
-  require('./mutations/set-uuid-state')
+  require('./set-uuid-state')
 })
 describe('POST /api/set-notification-state', () => {
-  require('./mutations/set-notification-state')
+  require('./set-notification-state')
 })
 describe('POST /api/create-thread', () => {
-  require('./mutations/start-thread')
+  require('./start-thread')
 })
 describe('POST /api/create-thread', () => {
-  require('./mutations/comment-thread')
+  require('./comment-thread')
 })
 describe('POST /api/create-thread', () => {
-  require('./mutations/archive-comment')
+  require('./archive-comment')
 })
