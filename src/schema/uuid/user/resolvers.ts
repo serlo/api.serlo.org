@@ -21,12 +21,12 @@
  */
 import { either as E, pipeable } from 'fp-ts'
 
-import { CellValues, MajorDimension } from '../../../model'
 import { ConnectionPayload, resolveConnection } from '../../connection'
 import { createUuidResolvers } from '../abstract-uuid'
 import { isUserPayload, UserPayload, UserResolvers } from './types'
 import { ErrorEvent } from '~/internals/error-event'
 import { Context } from '~/internals/graphql'
+import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
 import { createThreadResolvers } from '~/schema/thread'
 
 export const resolvers: UserResolvers = {
