@@ -72,9 +72,7 @@ export function addJsonInteraction({
     },
     willRespondWith: {
       status: 200,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
       body,
     },
   })
@@ -100,7 +98,7 @@ export function addMutationInteraction({
       method: 'POST',
       path,
       body: requestBody,
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      headers: { 'Content-Type': 'application/json' },
     },
     willRespondWith: {
       status: 200,
