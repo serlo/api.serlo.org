@@ -21,14 +21,14 @@
  */
 import { gql } from 'apollo-server'
 
-import { article, comment, user } from '../../../__fixtures__'
-import { createTestClient } from '../../../__tests__/__utils__'
-import { mockEndpointsForThreads } from '../../../__tests__/schema/thread/thread'
+import { article, comment, user } from '../../__fixtures__'
+import { createTestClient } from '../../__tests__/__utils__'
+import { mockEndpointsForThreads } from '../../__tests__/schema/thread/thread'
 import {
   assertSuccessfulGraphQLQuery,
   addMutationInteraction,
   assertSuccessfulGraphQLMutation,
-} from '../../__utils__'
+} from '../__utils__'
 import { encodeThreadId } from '~/schema/uuid'
 
 test('/api/thread/set-archive', async () => {
