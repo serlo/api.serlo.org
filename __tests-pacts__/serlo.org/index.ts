@@ -23,9 +23,6 @@
 describe('GET /api/cache-keys', () => {
   require('./cache-keys')
 })
-describe('POST /api/set-uuid-state', () => {
-  require('./set-uuid-state')
-})
 describe('POST /api/set-notification-state', () => {
   require('./set-notification-state')
 })

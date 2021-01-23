@@ -47,3 +47,6 @@ describe('GET /api/user/:id', () => {
 describe('GET /api/uuid/:id', () => {
   require('./uuid')
 })
+describe('POST /api/set-uuid-state', () => {
+  require('./set-uuid-state')
+})

@@ -78,11 +78,7 @@ export function createSerloModel({
     return fetchHelpers.get(
       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
       {},
-      {
-        headers: {
-          Authorization: `Serlo Service=${getToken()}`,
-        },
-      }
+      { headers: { Authorization: `Serlo Service=${getToken()}` } }
     )
   }
 
@@ -120,12 +116,7 @@ export function createSerloModel({
     return fetchHelpers.post(
       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
       body,
-      {
-        headers: {
-          Authorization: `Serlo Service=${getToken()}`,
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-      }
+      { headers: { Authorization: `Serlo Service=${getToken()}` } }
     )
   }
 

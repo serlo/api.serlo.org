@@ -36,7 +36,7 @@ test('set-uuid-state', async () => {
   await addMutationInteraction({
     name: 'set state of uuid with id 1855',
     given: 'there exists a uuid with id 1855 that is not trashed',
-    path: '/api/set-uuid-state',
+    path: '/set-uuid-state',
     requestBody: { id: article.id, userId: user.id, trashed: true },
     responseBody: {
       __typename: article.__typename,
