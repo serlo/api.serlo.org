@@ -51,7 +51,7 @@ import {
   NodeData,
   ThreadsPayload,
 } from '~/schema/uuid'
-import { Instance, License, MutationCreateThreadArgs } from '~/types'
+import { Instance, License, ThreadCreateThreadInput } from '~/types'
 
 export function createSerloModel({
   environment,
@@ -78,11 +78,7 @@ export function createSerloModel({
     return fetchHelpers.get(
       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
       {},
-      {
-        headers: {
-          Authorization: `Serlo Service=${getToken()}`,
-        },
-      }
+      { headers: { Authorization: `Serlo Service=${getToken()}` } }
     )
   }
 
@@ -92,6 +88,19 @@ export function createSerloModel({
         '/api',
         ''
       )}`
+    )
+  }
+
+  function postViaDatabaseLayer<T>({
+    path,
+    body,
+  }: {
+    path: string
+    body: Record<string, unknown>
+  }): Promise<T> {
+    return fetchHelpers.post(
+      `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`,
+      body
     )
   }
 
@@ -107,12 +116,7 @@ export function createSerloModel({
     return fetchHelpers.post(
       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
       body,
-      {
-        headers: {
-          Authorization: `Serlo Service=${getToken()}`,
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-      }
+      { headers: { Authorization: `Serlo Service=${getToken()}` } }
     )
   }
 
@@ -140,23 +144,25 @@ export function createSerloModel({
 
   const setUuidState = createMutation<
     {
-      id: number[]
+      ids: number[]
       userId: number
       trashed: boolean
     },
     (AbstractUuidPayload | null)[]
   >({
-    mutate: async ({ id, userId, trashed }) => {
+    mutate: async ({ ids, userId, trashed }) => {
       //looping should be fine here, since trashing/restoring multiple items will not happen very often
       return await Promise.all(
-        id.map(
-          async (uuidId): Promise<AbstractUuidPayload | null> => {
-            const value = await post<AbstractUuidPayload | null>({
-              path: `/api/set-uuid-state/${uuidId}`,
-              body: { userId, trashed },
-            })
+        ids.map(
+          async (id): Promise<AbstractUuidPayload | null> => {
+            const value = await postViaDatabaseLayer<AbstractUuidPayload | null>(
+              {
+                path: `/set-uuid-state`,
+                body: { id, userId, trashed },
+              }
+            )
             await environment.cache.set({
-              key: `de.serlo.org/api/uuid/${uuidId}`,
+              key: getUuid._querySpec.getKey({ id }),
               value,
             })
             return value
@@ -403,23 +409,23 @@ export function createSerloModel({
 
   const setNotificationState = createMutation<
     {
-      id: number[]
+      ids: number[]
       userId: number
       unread: boolean
     },
     NotificationsPayload[]
   >({
-    mutate: async ({ id, userId, unread }) => {
+    mutate: async ({ ids, userId, unread }) => {
       return await Promise.all(
         //TODO: rewrite legacy endpoint so that it accepts an array directly
-        id.map(
-          async (notificationId): Promise<NotificationsPayload> => {
+        ids.map(
+          async (id): Promise<NotificationsPayload> => {
             const value = await post<NotificationsPayload>({
-              path: `/api/set-notification-state/${notificationId}`,
-              body: { userId, unread },
+              path: `/api/set-notification-state`,
+              body: { id, userId, unread },
             })
             await environment.cache.set({
-              key: `de.serlo.org/api/notifications/${userId}`,
+              key: getNotifications._querySpec.getKey({ id: userId }),
               value,
             })
             return value
@@ -455,9 +461,7 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        return getViaDatabaseLayer({
-          path: `/threads/${id}`,
-        })
+        return getViaDatabaseLayer({ path: `/threads/${id}` })
       },
       maxAge: { hour: 1 },
       getKey: ({ id }) => {
@@ -474,14 +478,80 @@ export function createSerloModel({
   )
 
   const createThread = createMutation<
-    MutationCreateThreadArgs & { userId: number },
+    ThreadCreateThreadInput & { userId: number },
     CommentPayload | null
   >({
     mutate: async (payload) => {
-      return await post<CommentPayload | null>({
-        path: `/api/add-comment/`,
+      const value = await post<CommentPayload | null>({
+        path: `/api/thread/start-thread`,
         body: payload,
       })
+
+      if (value !== null) {
+        await environment.cache.set<ThreadsPayload>({
+          key: getThreadIds._querySpec.getKey({ id: payload.objectId }),
+          getValue(current) {
+            if (current === undefined) return Promise.resolve(undefined)
+
+            current.firstCommentIds.push(value.id)
+            return Promise.resolve(current)
+          },
+        })
+
+        await environment.cache.set({
+          key: getUuid._querySpec.getKey({ id: value.id }),
+          value,
+        })
+      }
+      return value
+    },
+  })
+
+  const createComment = createMutation<
+    { content: string; threadId: number; userId: number },
+    CommentPayload | null
+  >({
+    mutate: async (payload) => {
+      const value = await post<CommentPayload | null>({
+        path: `/api/thread/comment-thread`,
+        body: payload,
+      })
+      if (value !== null) {
+        await environment.cache.set({
+          key: getUuid._querySpec.getKey({ id: value.id }),
+          value,
+        })
+
+        await environment.cache.set<CommentPayload>({
+          key: getUuid._querySpec.getKey({ id: payload.threadId }),
+          getValue(current) {
+            if (current === undefined) return Promise.resolve(undefined)
+
+            current.childrenIds.push(value.id)
+            return Promise.resolve(current)
+          },
+        })
+      }
+      return value
+    },
+  })
+
+  const archiveThread = createMutation<
+    { id: number; archived: boolean; userId: number },
+    CommentPayload | null
+  >({
+    mutate: async (payload) => {
+      const value = await post<CommentPayload | null>({
+        path: '/api/thread/set-archive',
+        body: payload,
+      })
+      if (value !== null)
+        await environment.cache.set({
+          key: getUuid._querySpec.getKey({ id: value.id }),
+          value,
+        })
+
+      return value
     },
   })
 
@@ -519,6 +589,8 @@ export function createSerloModel({
 
   return {
     createThread,
+    archiveThread,
+    createComment,
     getActiveAuthorIds,
     getActiveReviewerIds,
     getAlias,

@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { option as O } from 'fp-ts'
+import { option as O, pipeable } from 'fp-ts'
 import msgpack from 'msgpack'
 import * as R from 'ramda'
 import redis from 'redis'
@@ -35,7 +35,10 @@ export enum Priority {
   High,
 }
 
-export type FunctionOrValue<T> = { getValue: () => Promise<T> } | { value: T }
+interface UpdateFunction<T> {
+  getValue: (current?: T) => Promise<T | undefined>
+}
+export type FunctionOrValue<T> = UpdateFunction<T> | { value: T }
 
 export interface Cache {
   get<T>({ key }: { key: string }): Promise<O.Option<CacheEntry<T>>>
@@ -67,12 +70,13 @@ export function createCache({ timer }: { timer: Timer }): Cache {
 
   let isReady = false
 
-  const set = async <T>(
+  async function set<T>(
+    this: Cache,
     payload: {
       key: string
       priority?: Priority
     } & FunctionOrValue<T>
-  ) => {
+  ) {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     const clientSet = (util.promisify(client.set).bind(client) as unknown) as (
       key: string,
@@ -84,13 +88,23 @@ export function createCache({ timer }: { timer: Timer }): Cache {
     try {
       const lock = await lockManager.lock(key)
       try {
-        const value = isFunction(payload)
-          ? await payload.getValue()
-          : payload.value
-        const valueWithTimestamp = {
-          value,
-          lastModified: timer.now(),
+        let value: T | undefined
+
+        if (isFunction(payload)) {
+          const current = pipeable.pipe(
+            await this.get<T>({ key }),
+            O.map((entry) => entry.value),
+            O.toUndefined
+          )
+
+          value = await payload.getValue(current)
+        } else {
+          value = payload.value
         }
+
+        if (value === undefined) return
+
+        const valueWithTimestamp = { value, lastModified: timer.now() }
         const packedValue = msgpack.pack(valueWithTimestamp) as Buffer
         await clientSet(key, packedValue)
       } catch (e) {
@@ -103,11 +117,14 @@ export function createCache({ timer }: { timer: Timer }): Cache {
     }
   }
 
-  const get = async <T>({
-    key,
-  }: {
-    key: string
-  }): Promise<O.Option<CacheEntry<T>>> => {
+  async function get<T>(
+    this: Cache,
+    {
+      key,
+    }: {
+      key: string
+    }
+  ): Promise<O.Option<CacheEntry<T>>> {
     const clientGet = (util
       // eslint-disable-next-line @typescript-eslint/unbound-method
       .promisify(client.get)
@@ -122,8 +139,8 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       return O.some(value)
     }
 
-    await set({ key, value })
-    return get({ key })
+    await this.set({ key, value })
+    return this.get({ key })
   }
 
   const remove = async ({ key }: { key: string }) => {
@@ -186,10 +203,6 @@ function isCacheEntryWithTimestamp<Value>(
   return R.has('lastModified', entry) && R.has('value', entry)
 }
 
-function isFunction<T>(
-  payload: FunctionOrValue<T>
-): payload is { getValue: () => Promise<T> } {
-  return (
-    typeof (payload as { getValue: () => Promise<T> }).getValue === 'function'
-  )
+function isFunction<T>(arg: FunctionOrValue<T>): arg is UpdateFunction<T> {
+  return typeof (arg as { getValue: unknown }).getValue === 'function'
 }

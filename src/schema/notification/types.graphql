@@ -37,7 +37,6 @@ input NotificationSetStateInput {
 }
 
 type NotificationSetStateResponse {
-  record: AbstractNotificationEvent
   success: Boolean!
   query: Query!
 }

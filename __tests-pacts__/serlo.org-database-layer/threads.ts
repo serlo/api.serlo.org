@@ -60,3 +60,5 @@ test('Comment', async () => {
     `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}/uuid/${comment.id}`
   )
 })
+
+// TODO: Add tests for thread mutations

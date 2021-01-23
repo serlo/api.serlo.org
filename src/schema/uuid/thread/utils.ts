@@ -38,34 +38,37 @@ export function createThreadResolvers(): ThreadAwareResolvers {
       )
 
       const threads = await Promise.all(
-        firstCommentIds.map(
-          async (firstCommentId): Promise<ThreadData> => {
-            const firstComment = (await dataSources.model.serlo.getUuid({
-              id: firstCommentId,
-            })) as CommentPayload | null
-            if (firstComment === null) {
-              throw new ApolloError('There are no comments yet')
+        firstCommentIds
+          .sort()
+          .reverse()
+          .map(
+            async (firstCommentId): Promise<ThreadData> => {
+              const firstComment = (await dataSources.model.serlo.getUuid({
+                id: firstCommentId,
+              })) as CommentPayload | null
+              if (firstComment === null) {
+                throw new ApolloError('There are no comments yet')
+              }
+              const remainingComments = await Promise.all(
+                firstComment.childrenIds.map(async (id) => {
+                  return (await dataSources.model.serlo.getUuid({
+                    id,
+                  })) as CommentPayload | null
+                })
+              )
+              return {
+                __typename: ThreadDataType,
+                commentPayloads: [
+                  firstComment,
+                  ...remainingComments.filter(isDefined),
+                ],
+              }
             }
-            const remainingComments = await Promise.all(
-              firstComment.childrenIds.map(async (id) => {
-                return (await dataSources.model.serlo.getUuid({
-                  id,
-                })) as CommentPayload | null
-              })
-            )
-            return {
-              __typename: ThreadDataType,
-              commentPayloads: [
-                firstComment,
-                ...remainingComments.filter(isDefined),
-              ],
-            }
-          }
-        )
+          )
       )
 
       return resolveConnection({
-        nodes: threads.reverse(),
+        nodes: threads,
         payload: cursorPayload,
         createCursor(node) {
           return node.commentPayloads[0].id.toString()
@@ -73,4 +76,15 @@ export function createThreadResolvers(): ThreadAwareResolvers {
       })
     },
   }
+}
+
+export function encodeThreadId(firstCommentId: number) {
+  return Buffer.from(`t${firstCommentId}`).toString('base64')
+}
+
+export function decodeThreadId(threadId: string): number | null {
+  const result = parseInt(
+    Buffer.from(threadId, 'base64').toString('utf-8').substr(1)
+  )
+  return Number.isNaN(result) || result <= 0 ? null : result
 }

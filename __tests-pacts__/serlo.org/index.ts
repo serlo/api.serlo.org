@@ -23,9 +23,15 @@
 describe('GET /api/cache-keys', () => {
   require('./cache-keys')
 })
-describe('POST /api/set-notification-state/:id', () => {
+describe('POST /api/set-notification-state', () => {
   require('./set-notification-state')
 })
-describe('POST /api/set-uuid-state/:id', () => {
-  require('./set-uuid-state')
+describe('POST /api/create-thread', () => {
+  require('./start-thread')
+})
+describe('POST /api/create-thread', () => {
+  require('./comment-thread')
+})
+describe('POST /api/create-thread', () => {
+  require('./archive-comment')
 })
