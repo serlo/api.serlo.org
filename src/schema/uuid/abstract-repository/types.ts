@@ -28,9 +28,9 @@ import {
 } from '../abstract-entity'
 import { DiscriminatorType, UuidResolvers } from '../abstract-uuid'
 import { PagePayload, PageRevisionPayload } from '../page'
-import { ThreadAwareResolvers } from '../thread'
 import { UserPayload } from '../user'
 import { Resolver, TypeResolver } from '~/internals/graphql'
+import { ThreadAwareResolvers } from '~/schema/thread'
 import {
   AbstractRepository,
   AbstractRevision,

@@ -37,7 +37,6 @@ import { groupedExerciseSchema } from './grouped-exercise'
 import { pageSchema } from './page'
 import { solutionSchema } from './solution'
 import { taxonomyTermSchema } from './taxonomy-term'
-import { threadSchema } from './thread'
 import { userSchema } from './user'
 import { videoSchema } from './video'
 import { mergeSchemas } from '~/internals/graphql'
@@ -60,7 +59,6 @@ export * from './grouped-exercise'
 export * from './page'
 export * from './solution'
 export * from './taxonomy-term'
-export * from './thread'
 export * from './user'
 export * from './video'
 
@@ -83,7 +81,6 @@ export const uuidSchema = mergeSchemas(
   pageSchema,
   solutionSchema,
   taxonomyTermSchema,
-  threadSchema,
   userSchema,
   videoSchema
 )

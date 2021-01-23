@@ -27,7 +27,6 @@ import {
 } from '../abstract-entity'
 import { PagePayload, PageRevisionPayload } from '../page'
 import { TaxonomyTermPayload } from '../taxonomy-term'
-import { CommentPayload } from '../thread/types'
 import { UserPayload } from '../user'
 import {
   MutationNamespace,
@@ -36,6 +35,7 @@ import {
   Resolver,
   TypeResolver,
 } from '~/internals/graphql'
+import { CommentPayload } from '~/schema/thread/types'
 import {
   AbstractUuid,
   UuidMutationSetStateArgs,

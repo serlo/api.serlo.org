@@ -22,7 +22,8 @@
 
 import { article } from './article'
 import { user, user2 } from './user'
-import { CommentPayload, DiscriminatorType } from '~/schema/uuid'
+import { CommentPayload } from '~/schema/thread'
+import { DiscriminatorType } from '~/schema/uuid'
 import { UnsupportedComment, UnsupportedThread } from '~/types'
 
 export const comment: CommentPayload = {

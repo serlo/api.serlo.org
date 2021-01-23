@@ -21,14 +21,14 @@
  */
 import { ApolloError } from 'apollo-server'
 
-import { resolveConnection } from '../../connection'
-import { isDefined } from '../../utils'
 import {
   CommentPayload,
   ThreadAwareResolvers,
   ThreadData,
   ThreadDataType,
 } from './types'
+import { resolveConnection } from '~/schema/connection'
+import { isDefined } from '~/schema/utils'
 
 export function createThreadResolvers(): ThreadAwareResolvers {
   return {
