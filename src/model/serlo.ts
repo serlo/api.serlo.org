@@ -95,6 +95,19 @@ export function createSerloModel({
     )
   }
 
+  function postViaDatabaseLayer<T>({
+    path,
+    body,
+  }: {
+    path: string
+    body: Record<string, unknown>
+  }): Promise<T> {
+    return fetchHelpers.post(
+      `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`,
+      body
+    )
+  }
+
   function post<T>({
     path,
     instance = Instance.De,
@@ -151,10 +164,12 @@ export function createSerloModel({
       return await Promise.all(
         ids.map(
           async (id): Promise<AbstractUuidPayload | null> => {
-            const value = await post<AbstractUuidPayload | null>({
-              path: `/api/set-uuid-state`,
-              body: { id, userId, trashed },
-            })
+            const value = await postViaDatabaseLayer<AbstractUuidPayload | null>(
+              {
+                path: `/set-uuid-state`,
+                body: { id, userId, trashed },
+              }
+            )
             await environment.cache.set({
               key: getUuid._querySpec.getKey({ id }),
               value,

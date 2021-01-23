@@ -28,7 +28,7 @@ import {
   assertSuccessfulGraphQLMutation,
   Client,
   createTestClient,
-  getSerloUrl,
+  getDatabaseLayerUrl,
 } from '../../__utils__'
 import { encodeThreadId } from '~/schema/uuid/thread/utils'
 
@@ -94,7 +94,7 @@ function mockSetUuidStateEndpoint() {
       userId: number
       trashed: boolean
       id: number
-    }>(getSerloUrl({ path: '/api/set-uuid-state' }), (req, res, ctx) => {
+    }>(getDatabaseLayerUrl({ path: '/set-uuid-state' }), (req, res, ctx) => {
       const { userId, trashed, id } = req.body
       if (userId !== user.id) return res(ctx.status(403))
       if (id !== comment.id) return res(ctx.status(400))

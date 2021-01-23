@@ -60,7 +60,7 @@ import {
   createJsonHandlerForDatabaseLayer,
   createTestClient,
   createUuidHandler,
-  getSerloUrl,
+  getDatabaseLayerUrl,
 } from '../../__utils__'
 import { Service } from '~/internals/auth'
 import {
@@ -261,7 +261,7 @@ describe('uuid mutation setState', () => {
         id: number
         userId: number
         trashed: boolean
-      }>(getSerloUrl({ path: '/api/set-uuid-state' }), (req, res, ctx) => {
+      }>(getDatabaseLayerUrl({ path: '/set-uuid-state' }), (req, res, ctx) => {
         const { id, userId, trashed } = req.body
 
         if (userId !== user.id) return res(ctx.status(403))
