@@ -38,10 +38,10 @@ import {
   NotificationsPayload,
 } from '~/schema/notification'
 import { SubscriptionsPayload } from '~/schema/subscription'
+import { CommentPayload, ThreadsPayload } from '~/schema/thread'
 import {
   AbstractUuidPayload,
   AliasPayload,
-  CommentPayload,
   decodePath,
   encodePath,
   EntityPayload,
@@ -49,7 +49,6 @@ import {
   Navigation,
   NavigationPayload,
   NodeData,
-  ThreadsPayload,
 } from '~/schema/uuid'
 import { Instance, License, ThreadCreateThreadInput } from '~/types'
 

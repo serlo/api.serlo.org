@@ -26,8 +26,8 @@ import {
   DiscriminatorType,
   UuidResolvers,
 } from '../abstract-uuid'
-import { ThreadAwareResolvers } from '../thread'
 import { QueryResolver, Resolver } from '~/internals/graphql'
+import { ThreadAwareResolvers } from '~/schema/thread'
 import {
   QueryActiveAuthorsArgs,
   QueryActiveDonorsArgs,

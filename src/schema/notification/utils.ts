@@ -21,7 +21,7 @@
  */
 import * as R from 'ramda'
 
-import { resolveUser } from '../uuid'
+import { resolveUser } from '../uuid/user/utils'
 import {
   AbstractNotificationEventPayload,
   NotificationEventResolvers,

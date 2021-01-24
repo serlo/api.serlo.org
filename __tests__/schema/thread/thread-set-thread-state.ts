@@ -30,7 +30,7 @@ import {
   createTestClient,
   getDatabaseLayerUrl,
 } from '../../__utils__'
-import { encodeThreadId } from '~/schema/uuid/thread/utils'
+import { encodeThreadId } from '~/schema/thread'
 
 let client: Client
 

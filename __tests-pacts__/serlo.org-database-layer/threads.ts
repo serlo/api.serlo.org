@@ -24,7 +24,7 @@ import fetch from 'node-fetch'
 
 import { article, comment } from '../../__fixtures__'
 import { addJsonInteraction, addUuidInteraction } from '../__utils__'
-import { CommentPayload } from '~/schema/uuid'
+import { CommentPayload } from '~/schema/thread'
 
 test('Threads', async () => {
   // This is a noop test that just adds the interaction to the contract

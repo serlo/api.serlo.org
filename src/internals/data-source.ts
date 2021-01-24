@@ -21,8 +21,8 @@
  */
 import { RESTDataSource } from 'apollo-datasource-rest'
 
-import { createGoogleSpreadsheetApiModel, createSerloModel } from '../../model'
-import { Environment } from '../environment'
+import { Environment } from '~/internals/environment'
+import { createGoogleSpreadsheetApiModel, createSerloModel } from '~/model'
 
 export class ModelDataSource extends RESTDataSource {
   public googleSpreadsheetApi: ReturnType<

@@ -22,9 +22,9 @@
 import { resolveConnection } from '../../connection'
 import { isDefined } from '../../utils'
 import { createUuidResolvers } from '../abstract-uuid'
-import { createThreadResolvers } from '../thread'
 import { TaxonomyTermPayload, TaxonomyTermResolvers } from './types'
 import { Context } from '~/internals/graphql'
+import { createThreadResolvers } from '~/schema/thread'
 
 export const resolvers: TaxonomyTermResolvers = {
   TaxonomyTerm: {

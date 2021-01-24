@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Service } from '../auth'
-import { ModelDataSource } from '../model'
+import { ModelDataSource } from '../data-source'
 
 export interface Context {
   dataSources: {
