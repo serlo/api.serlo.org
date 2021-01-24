@@ -27,6 +27,7 @@ import { jsonSchema } from './json'
 import { licenseSchema } from './license'
 import { notificationSchema } from './notification'
 import { subscriptionSchema } from './subscription'
+import { threadSchema } from './thread'
 import { uuidSchema } from './uuid'
 import { mergeSchemas } from '~/internals/graphql'
 
@@ -38,6 +39,7 @@ export const schema = mergeSchemas(
   jsonSchema,
   licenseSchema,
   notificationSchema,
-  uuidSchema,
-  subscriptionSchema
+  subscriptionSchema,
+  threadSchema,
+  uuidSchema
 )

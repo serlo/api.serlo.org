@@ -33,9 +33,9 @@ import { URLSearchParams } from 'url'
 
 import { handleAuthentication, Service } from '~/internals/auth'
 import { Cache } from '~/internals/cache'
+import { ModelDataSource } from '~/internals/data-source'
 import { Environment } from '~/internals/environment'
 import { Context } from '~/internals/graphql'
-import { ModelDataSource } from '~/internals/model'
 import { SwrQueue } from '~/internals/swr-queue'
 import { schema } from '~/schema'
 

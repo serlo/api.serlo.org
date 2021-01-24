@@ -29,7 +29,7 @@ import {
   addMutationInteraction,
   assertSuccessfulGraphQLMutation,
 } from '../__utils__'
-import { encodeThreadId } from '~/schema/uuid'
+import { encodeThreadId } from '~/schema/thread'
 
 test('/api/thread/set-archive', async () => {
   global.client = createTestClient({ userId: user.id })
