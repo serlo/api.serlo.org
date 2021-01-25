@@ -84,17 +84,13 @@ import {
   createUuidHandler,
   getSerloUrl,
 } from '../__utils__'
-import { Service } from '~/internals/auth'
 import { Instance } from '~/types'
 
 describe('notifications', () => {
   let client: Client
 
   beforeEach(() => {
-    client = createTestClient({
-      service: Service.SerloCloudflareWorker,
-      userId: user.id,
-    })
+    client = createTestClient({ userId: user.id })
     global.server.use(
       createJsonHandlerForDatabaseLayer({
         path: `/notifications/${user.id}`,
@@ -111,10 +107,6 @@ describe('notifications', () => {
   })
 
   test('notifications without filter', async () => {
-    const client = createTestClient({
-      service: Service.SerloCloudflareWorker,
-      userId: 1,
-    })
     await assertSuccessfulGraphQLQuery({
       ...createNotificationsQuery(),
       data: {
@@ -132,10 +124,6 @@ describe('notifications', () => {
   })
 
   test('notifications (only unread)', async () => {
-    const client = createTestClient({
-      service: Service.SerloCloudflareWorker,
-      userId: 1,
-    })
     await assertSuccessfulGraphQLQuery({
       ...createNotificationsQuery(false),
       data: {
@@ -152,10 +140,6 @@ describe('notifications', () => {
   })
 
   test('notifications (only read)', async () => {
-    const client = createTestClient({
-      service: Service.SerloCloudflareWorker,
-      userId: 1,
-    })
     await assertSuccessfulGraphQLQuery({
       ...createNotificationsQuery(true),
       data: {
@@ -244,10 +228,7 @@ describe('notificationEvent', () => {
   let client: Client
 
   beforeEach(() => {
-    client = createTestClient({
-      service: Service.SerloCloudflareWorker,
-      userId: null,
-    })
+    client = createTestClient({ userId: null })
   })
 
   describe('CheckoutRevisionNotification', () => {

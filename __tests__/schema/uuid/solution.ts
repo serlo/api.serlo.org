@@ -35,15 +35,11 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
-import { Service } from '~/internals/auth'
 
 let client: Client
 
 beforeEach(() => {
-  client = createTestClient({
-    service: Service.SerloCloudflareWorker,
-    userId: null,
-  })
+  client = createTestClient()
 })
 
 describe('Solution', () => {
