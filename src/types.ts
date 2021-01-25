@@ -447,6 +447,7 @@ export type ThreadAwareThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 export type ThreadsConnection = {
@@ -673,6 +674,7 @@ export type AbstractRepositoryThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 export type AbstractRevision = {
@@ -691,6 +693,7 @@ export type AbstractRevisionThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 export type AbstractTaxonomyTermChild = {
@@ -791,6 +794,7 @@ export type AppletThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -833,6 +837,7 @@ export type AppletRevisionThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 export type AppletRevisionConnection = {
@@ -869,6 +874,7 @@ export type ArticleThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -910,6 +916,7 @@ export type ArticleRevisionThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 export type ArticleRevisionConnection = {
@@ -946,6 +953,7 @@ export type CoursePageThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -977,6 +985,7 @@ export type CoursePageRevisionThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 export type CoursePageRevisionConnection = {
@@ -1014,6 +1023,7 @@ export type CourseThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -1054,6 +1064,7 @@ export type CourseRevisionThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 export type CourseRevisionConnection = {
@@ -1090,6 +1101,7 @@ export type EventThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -1131,6 +1143,7 @@ export type EventRevisionThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 export type EventRevisionConnection = {
@@ -1168,6 +1181,7 @@ export type ExerciseGroupThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -1206,6 +1220,7 @@ export type ExerciseGroupRevisionThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 export type ExerciseGroupRevisionConnection = {
@@ -1243,6 +1258,7 @@ export type ExerciseThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -1281,6 +1297,7 @@ export type ExerciseRevisionThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 export type ExerciseRevisionConnection = {
@@ -1318,6 +1335,7 @@ export type GroupedExerciseThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -1348,6 +1366,7 @@ export type GroupedExerciseRevisionThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 export type GroupedExerciseRevisionConnection = {
@@ -1384,6 +1403,7 @@ export type PageThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -1414,6 +1434,7 @@ export type PageRevisionThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 export type PageRevisionConnection = {
@@ -1450,6 +1471,7 @@ export type SolutionThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -1480,6 +1502,7 @@ export type SolutionRevisionThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 export type SolutionRevisionConnection = {
@@ -1532,6 +1555,7 @@ export type TaxonomyTermThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -1563,6 +1587,7 @@ export type UserThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 export type UserConnection = {
@@ -1599,6 +1624,7 @@ export type VideoThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -1639,6 +1665,7 @@ export type VideoRevisionThreadsArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  archived?: Maybe<Scalars['Boolean']>;
 };
 
 export type VideoRevisionConnection = {

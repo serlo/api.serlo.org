@@ -6,6 +6,7 @@ type GroupedExercise implements AbstractUuid & AbstractRepository & AbstractEnti
     before: String
     first: Int
     last: Int
+    archived: Boolean
   ): ThreadsConnection!
   instance: Instance!
   alias: String
@@ -33,6 +34,7 @@ type GroupedExerciseRevision implements AbstractUuid & AbstractRevision & Abstra
     before: String
     first: Int
     last: Int
+    archived: Boolean
   ): ThreadsConnection!
   date: DateTime!
   repository: GroupedExercise!

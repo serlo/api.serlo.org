@@ -6,6 +6,7 @@ type Solution implements AbstractUuid & AbstractRepository & AbstractEntity & In
     before: String
     first: Int
     last: Int
+    archived: Boolean
   ): ThreadsConnection!
   instance: Instance!
   alias: String
@@ -32,6 +33,7 @@ type SolutionRevision implements AbstractUuid & AbstractRevision & AbstractEntit
     before: String
     first: Int
     last: Int
+    archived: Boolean
   ): ThreadsConnection!
   date: DateTime!
   repository: Solution!

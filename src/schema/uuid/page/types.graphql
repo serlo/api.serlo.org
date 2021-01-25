@@ -6,6 +6,7 @@ type Page implements AbstractUuid & AbstractRepository & AbstractNavigationChild
     before: String
     first: Int
     last: Int
+    archived: Boolean
   ): ThreadsConnection!
   date: DateTime!
   instance: Instance!
@@ -32,6 +33,7 @@ type PageRevision implements AbstractUuid & AbstractRevision & ThreadAware {
     before: String
     first: Int
     last: Int
+    archived: Boolean
   ): ThreadsConnection!
   date: DateTime!
   title: String!
