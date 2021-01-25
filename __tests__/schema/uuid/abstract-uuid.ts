@@ -62,7 +62,6 @@ import {
   createUuidHandler,
   getDatabaseLayerUrl,
 } from '../../__utils__'
-import { Service } from '~/internals/auth'
 import {
   DiscriminatorType,
   EntityRevisionType,
@@ -75,10 +74,7 @@ import { Instance } from '~/types'
 let client: Client
 
 beforeEach(() => {
-  client = createTestClient({
-    service: Service.SerloCloudflareWorker,
-    userId: null,
-  })
+  client = createTestClient()
 })
 
 const abstractUuidFixtures: Record<

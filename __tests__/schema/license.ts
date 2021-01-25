@@ -25,7 +25,6 @@ import {
   createJsonHandlerForDatabaseLayer,
   createTestClient,
 } from '../__utils__'
-import { Service } from '~/internals/auth'
 
 beforeEach(() => {
   global.server.use(
@@ -34,15 +33,11 @@ beforeEach(() => {
 })
 
 test('license', async () => {
-  const client = createTestClient({
-    service: Service.SerloCloudflareWorker,
-    userId: null,
-  })
   await assertSuccessfulGraphQLQuery({
     ...createLicenseQuery(license),
     data: {
       license,
     },
-    client,
+    client: createTestClient(),
   })
 })
