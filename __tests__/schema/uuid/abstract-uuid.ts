@@ -161,6 +161,27 @@ describe('uuid', () => {
     })
   })
 
+  test('returns revision when alias is /entity/repository/compare/:entityId/:revisionId', async () => {
+    global.server.use(createUuidHandler(articleRevision))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query uuid($alias: AliasInput!) {
+          uuid(alias: $alias) {
+            id
+          }
+        }
+      `,
+      variables: {
+        alias: {
+          instance: Instance.De,
+          path: `/entity/repository/compare/${article.id}/${articleRevision.id}`,
+        },
+      },
+      data: { uuid: { id: articleRevision.id } },
+      client,
+    })
+  })
+
   test('returns null when uuid does not exist', async () => {
     global.server.use(
       createJsonHandlerForDatabaseLayer({ path: '/uuid/666', body: null })
@@ -175,34 +196,6 @@ describe('uuid', () => {
         }
       `,
       variables: { id: 666 },
-      data: {
-        uuid: null,
-      },
-      client,
-    })
-  })
-
-  test('returns null when alias is /entity/view/:id and uuid does not exist', async () => {
-    global.server.use(
-      createJsonHandlerForDatabaseLayer({
-        path: `/uuid/${article.id}`,
-        body: null,
-      })
-    )
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query uuid($alias: AliasInput!) {
-          uuid(alias: $alias) {
-            __typename
-          }
-        }
-      `,
-      variables: {
-        alias: {
-          instance: Instance.De,
-          path: `/entity/view/${article.id}`,
-        },
-      },
       data: {
         uuid: null,
       },
