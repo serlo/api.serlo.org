@@ -51,111 +51,128 @@ beforeEach(() => {
 })
 
 describe('uuid["threads"]', () => {
-  test('Threads with 3 Comments', async () => {
-    mockEndpointsForThreads(article, [[comment1, comment2], [comment3]])
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query threads($id: Int!) {
-          uuid(id: $id) {
-            ... on ThreadAware {
-              threads {
-                totalCount
-                nodes {
-                  comments {
-                    totalCount
-                    nodes {
-                      id
-                    }
+  describe('returns comment threads', () => {
+    const query = gql`
+      query threads($id: Int!, $archived: Boolean, $trashed: Boolean) {
+        uuid(id: $id) {
+          ... on ThreadAware {
+            threads(archived: $archived, trashed: $trashed) {
+              nodes {
+                comments {
+                  nodes {
+                    id
                   }
                 }
               }
             }
           }
         }
-      `,
-      variables: { id: article.id },
-      data: {
-        uuid: {
-          threads: {
-            totalCount: 2,
-            nodes: [
-              { comments: { totalCount: 1, nodes: [{ id: comment3.id }] } },
-              {
-                comments: {
-                  totalCount: 2,
-                  nodes: [{ id: comment1.id }, { id: comment2.id }],
+      }
+    `
+
+    test('Threads with 3 Comments', async () => {
+      mockEndpointsForThreads(article, [
+        [comment1, { ...comment2, trashed: true }],
+        [{ ...comment3, archived: true }],
+      ])
+      await assertSuccessfulGraphQLQuery({
+        query,
+        variables: { id: article.id },
+        data: {
+          uuid: {
+            threads: {
+              nodes: [
+                { comments: { nodes: [{ id: comment3.id }] } },
+                {
+                  comments: {
+                    nodes: [{ id: comment1.id }, { id: comment2.id }],
+                  },
+                },
+              ],
+            },
+          },
+        },
+        client,
+      })
+    })
+
+    test('Thread with 1 Comment', async () => {
+      mockEndpointsForThreads(article, [[comment3]])
+      await assertSuccessfulGraphQLQuery({
+        query,
+        variables: { id: article.id },
+        data: {
+          uuid: {
+            threads: {
+              nodes: [{ comments: { nodes: [{ id: comment3.id }] } }],
+            },
+          },
+        },
+        client,
+      })
+    })
+
+    test('Thread with 0 Comments', async () => {
+      mockEndpointsForThreads(article, [])
+      await assertSuccessfulGraphQLQuery({
+        query,
+        variables: { id: article.id },
+        data: { uuid: { threads: { nodes: [] } } },
+        client,
+      })
+    })
+
+    describe('input "archived" filters archived threads', () => {
+      test.each([true, false])(
+        'when "archived" is set to %s',
+        async (archived) => {
+          const threads = [
+            [{ ...comment2, archived }],
+            [{ ...comment3, archived: !archived }],
+          ]
+          mockEndpointsForThreads(article, threads)
+          await assertSuccessfulGraphQLQuery({
+            query,
+            variables: { id: article.id, archived },
+            data: {
+              uuid: {
+                threads: {
+                  nodes: [{ comments: { nodes: [{ id: comment2.id }] } }],
                 },
               },
-            ],
-          },
-        },
-      },
-      client,
-    })
-  })
-
-  test('Thread with 1 Comment', async () => {
-    mockEndpointsForThreads(article, [[comment3]])
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query threads($id: Int!) {
-          uuid(id: $id) {
-            ... on ThreadAware {
-              threads {
-                totalCount
-                nodes {
-                  comments {
-                    totalCount
-                    nodes {
-                      id
-                    }
-                  }
-                }
-              }
-            }
-          }
+            },
+            client,
+          })
         }
-      `,
-      variables: { id: article.id },
-      data: {
-        uuid: {
-          threads: {
-            totalCount: 1,
-            nodes: [
-              { comments: { totalCount: 1, nodes: [{ id: comment3.id }] } },
-            ],
-          },
-        },
-      },
-      client,
+      )
     })
-  })
 
-  test('Thread with 0 Comments', async () => {
-    mockEndpointsForThreads(article, [])
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query threads($id: Int!) {
-          uuid(id: $id) {
-            ... on ThreadAware {
-              threads {
-                totalCount
-                nodes {
-                  comments {
-                    totalCount
-                    nodes {
-                      id
-                    }
-                  }
-                }
-              }
-            }
-          }
+    describe('input "trashed" filters trashed comments and threads', () => {
+      test.each([true, false])(
+        'when "trashed" is set to %s',
+        async (trashed) => {
+          const threads = [
+            [
+              { ...comment2, trashed },
+              { ...comment, trashed: !trashed },
+            ],
+            [{ ...comment3, trashed: !trashed }],
+          ]
+          mockEndpointsForThreads(article, threads)
+          await assertSuccessfulGraphQLQuery({
+            query,
+            variables: { id: article.id, trashed },
+            data: {
+              uuid: {
+                threads: {
+                  nodes: [{ comments: { nodes: [{ id: comment2.id }] } }],
+                },
+              },
+            },
+            client,
+          })
         }
-      `,
-      variables: { id: article.id },
-      data: { uuid: { threads: { totalCount: 0, nodes: [] } } },
-      client,
+      )
     })
   })
 

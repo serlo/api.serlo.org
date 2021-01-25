@@ -6,6 +6,8 @@ type Article implements AbstractUuid & AbstractRepository & AbstractEntity & Abs
     before: String
     first: Int
     last: Int
+    archived: Boolean
+    trashed: Boolean
   ): ThreadsConnection!
   instance: Instance!
   alias: String
@@ -37,6 +39,8 @@ type ArticleRevision implements AbstractUuid & AbstractRevision & AbstractEntity
     before: String
     first: Int
     last: Int
+    archived: Boolean
+    trashed: Boolean
   ): ThreadsConnection!
   date: DateTime!
   repository: Article!

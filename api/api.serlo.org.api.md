@@ -78,6 +78,8 @@ export type AbstractRepositoryThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -97,6 +99,8 @@ export type AbstractRevisionThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -211,6 +215,8 @@ export type AppletRevisionThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -227,6 +233,8 @@ export type AppletThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -292,6 +300,8 @@ export type ArticleRevisionThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -308,6 +318,8 @@ export type ArticleThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -429,6 +441,8 @@ export type CoursePageRevisionThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -437,6 +451,8 @@ export type CoursePageThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -486,6 +502,8 @@ export type CourseRevisionThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -502,6 +520,8 @@ export type CourseThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -651,6 +671,8 @@ export type EventRevisionThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -667,6 +689,8 @@ export type EventThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -753,6 +777,8 @@ export type ExerciseGroupRevisionThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -769,6 +795,8 @@ export type ExerciseGroupThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -816,6 +844,8 @@ export type ExerciseRevisionThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -832,6 +862,8 @@ export type ExerciseThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -895,6 +927,8 @@ export type GroupedExerciseRevisionThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -903,6 +937,8 @@ export type GroupedExerciseThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -1137,6 +1173,8 @@ export type PageRevisionThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -1145,6 +1183,8 @@ export type PageThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -1403,6 +1443,8 @@ export type SolutionRevisionThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -1411,6 +1453,8 @@ export type SolutionThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -1483,6 +1527,8 @@ export type TaxonomyTermThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -1533,6 +1579,8 @@ export type ThreadAwareThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -1712,6 +1760,8 @@ export type UserThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -1800,6 +1850,8 @@ export type VideoRevisionThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 // @public (undocumented)
@@ -1816,6 +1868,8 @@ export type VideoThreadsArgs = {
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
+    archived?: Maybe<Scalars['Boolean']>;
+    trashed?: Maybe<Scalars['Boolean']>;
 };
 
 

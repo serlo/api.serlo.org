@@ -6,6 +6,8 @@ type Event implements AbstractUuid & AbstractRepository & AbstractEntity & Abstr
     before: String
     first: Int
     last: Int
+    archived: Boolean
+    trashed: Boolean
   ): ThreadsConnection!
   instance: Instance!
   alias: String
@@ -37,6 +39,8 @@ type EventRevision implements AbstractUuid & AbstractRevision & AbstractEntityRe
     before: String
     first: Int
     last: Int
+    archived: Boolean
+    trashed: Boolean
   ): ThreadsConnection!
   date: DateTime!
   repository: Event!

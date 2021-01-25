@@ -31,7 +31,6 @@ import {
 import { createUuidResolvers, UuidPayload } from '~/schema/uuid/abstract-uuid'
 import { UserPayload } from '~/schema/uuid/user'
 
-//TODO: add filter for trashed threads and comments
 export const resolvers: ThreadResolvers = {
   Thread: {
     id(thread) {
