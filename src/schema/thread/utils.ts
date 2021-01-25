@@ -19,57 +19,56 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ApolloError } from 'apollo-server'
-
 import {
   CommentPayload,
   ThreadAwareResolvers,
   ThreadData,
   ThreadDataType,
 } from './types'
+import { Context } from '~/internals/graphql'
 import { resolveConnection } from '~/schema/connection'
 import { isDefined } from '~/schema/utils'
 
 export function createThreadResolvers(): ThreadAwareResolvers {
   return {
-    async threads(parent, cursorPayload, { dataSources }) {
-      const { firstCommentIds } = await Promise.resolve(
-        dataSources.model.serlo.getThreadIds({ id: parent.id })
+    async threads(parent, payload, { dataSources }) {
+      const { firstCommentIds } = await dataSources.model.serlo.getThreadIds({
+        id: parent.id,
+      })
+
+      const firstComments = await resolveComments(
+        dataSources,
+        firstCommentIds.sort().reverse()
       )
 
+      const filteredFirstComments = firstComments.filter((comment) => {
+        if (
+          payload.archived !== undefined &&
+          payload.archived !== comment.archived
+        )
+          return false
+
+        return true
+      })
+
       const threads = await Promise.all(
-        firstCommentIds
-          .sort()
-          .reverse()
-          .map(
-            async (firstCommentId): Promise<ThreadData> => {
-              const firstComment = (await dataSources.model.serlo.getUuid({
-                id: firstCommentId,
-              })) as CommentPayload | null
-              if (firstComment === null) {
-                throw new ApolloError('There are no comments yet')
-              }
-              const remainingComments = await Promise.all(
-                firstComment.childrenIds.map(async (id) => {
-                  return (await dataSources.model.serlo.getUuid({
-                    id,
-                  })) as CommentPayload | null
-                })
-              )
-              return {
-                __typename: ThreadDataType,
-                commentPayloads: [
-                  firstComment,
-                  ...remainingComments.filter(isDefined),
-                ],
-              }
+        filteredFirstComments.map(
+          async (firstComment): Promise<ThreadData> => {
+            const remainingComments = await resolveComments(
+              dataSources,
+              firstComment.childrenIds
+            )
+            return {
+              __typename: ThreadDataType,
+              commentPayloads: [firstComment, ...remainingComments],
             }
-          )
+          }
+        )
       )
 
       return resolveConnection({
         nodes: threads,
-        payload: cursorPayload,
+        payload: payload,
         createCursor(node) {
           return node.commentPayloads[0].id.toString()
         },
@@ -87,4 +86,15 @@ export function decodeThreadId(threadId: string): number | null {
     Buffer.from(threadId, 'base64').toString('utf-8').substr(1)
   )
   return Number.isNaN(result) || result <= 0 ? null : result
+}
+
+async function resolveComments(
+  dataSources: Context['dataSources'],
+  ids: number[]
+) {
+  const comments = (await Promise.all(
+    ids.map((id) => dataSources.model.serlo.getUuid({ id }))
+  )) as (CommentPayload | null)[]
+
+  return comments.filter(isDefined)
 }

@@ -6,6 +6,7 @@ type Video implements AbstractUuid & AbstractRepository & AbstractEntity & Abstr
     before: String
     first: Int
     last: Int
+    archived: Boolean
   ): ThreadsConnection!
   instance: Instance!
   alias: String
@@ -37,6 +38,7 @@ type VideoRevision implements AbstractUuid & AbstractRevision & AbstractEntityRe
     before: String
     first: Int
     last: Int
+    archived: Boolean
   ): ThreadsConnection!
   date: DateTime!
   repository: Video!
