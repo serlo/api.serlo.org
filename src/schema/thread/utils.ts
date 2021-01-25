@@ -47,6 +47,11 @@ export function createThreadResolvers(): ThreadAwareResolvers {
           payload.archived !== comment.archived
         )
           return false
+        if (
+          payload.trashed !== undefined &&
+          payload.trashed !== comment.trashed
+        )
+          return false
 
         return true
       })
@@ -58,9 +63,18 @@ export function createThreadResolvers(): ThreadAwareResolvers {
               dataSources,
               firstComment.childrenIds
             )
+            const filteredComments = remainingComments.filter((comment) => {
+              if (
+                payload.trashed !== undefined &&
+                payload.trashed !== comment.trashed
+              )
+                return false
+
+              return true
+            })
             return {
               __typename: ThreadDataType,
-              commentPayloads: [firstComment, ...remainingComments],
+              commentPayloads: [firstComment, ...filteredComments],
             }
           }
         )

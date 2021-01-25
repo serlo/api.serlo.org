@@ -7,6 +7,7 @@ type Exercise implements AbstractUuid & AbstractRepository & AbstractEntity & Ab
     first: Int
     last: Int
     archived: Boolean
+    trashed: Boolean
   ): ThreadsConnection!
   instance: Instance!
   alias: String
@@ -40,6 +41,7 @@ type ExerciseRevision implements AbstractUuid & AbstractRevision & AbstractEntit
     first: Int
     last: Int
     archived: Boolean
+    trashed: Boolean
   ): ThreadsConnection!
   date: DateTime!
   repository: Exercise!

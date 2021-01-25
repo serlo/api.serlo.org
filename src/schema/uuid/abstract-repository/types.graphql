@@ -11,6 +11,7 @@ interface AbstractRepository {
     first: Int
     last: Int
     archived: Boolean
+    trashed: Boolean
   ): ThreadsConnection!
 
   date: DateTime!
@@ -33,6 +34,7 @@ interface AbstractRevision {
     first: Int
     last: Int
     archived: Boolean
+    trashed: Boolean
   ): ThreadsConnection!
 
   # Implicitly has the following field

@@ -53,10 +53,10 @@ beforeEach(() => {
 describe('uuid["threads"]', () => {
   describe('returns comment threads', () => {
     const query = gql`
-      query threads($id: Int!, $archived: Boolean) {
+      query threads($id: Int!, $archived: Boolean, $trashed: Boolean) {
         uuid(id: $id) {
           ... on ThreadAware {
-            threads(archived: $archived) {
+            threads(archived: $archived, trashed: $trashed) {
               nodes {
                 comments {
                   nodes {
@@ -134,6 +134,34 @@ describe('uuid["threads"]', () => {
           await assertSuccessfulGraphQLQuery({
             query,
             variables: { id: article.id, archived },
+            data: {
+              uuid: {
+                threads: {
+                  nodes: [{ comments: { nodes: [{ id: comment2.id }] } }],
+                },
+              },
+            },
+            client,
+          })
+        }
+      )
+    })
+
+    describe('input "trashed" filters trashed comments and threads', () => {
+      test.each([true, false])(
+        'when "trashed" is set to %s',
+        async (trashed) => {
+          const threads = [
+            [
+              { ...comment2, trashed },
+              { ...comment, trashed: !trashed },
+            ],
+            [{ ...comment3, trashed: !trashed }],
+          ]
+          mockEndpointsForThreads(article, threads)
+          await assertSuccessfulGraphQLQuery({
+            query,
+            variables: { id: article.id, trashed },
             data: {
               uuid: {
                 threads: {
