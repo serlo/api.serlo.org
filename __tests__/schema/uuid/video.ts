@@ -27,7 +27,6 @@ import {
   getVideoDataWithoutSubResolvers,
   getVideoRevisionDataWithoutSubResolvers,
 } from '../../../__fixtures__'
-import { Service } from '../../../src/internals/auth'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
@@ -38,10 +37,7 @@ import {
 let client: Client
 
 beforeEach(() => {
-  client = createTestClient({
-    service: Service.SerloCloudflareWorker,
-    userId: null,
-  })
+  client = createTestClient()
 })
 
 test('Video', async () => {

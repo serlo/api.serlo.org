@@ -32,7 +32,6 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../__utils__'
-import { Service } from '~/internals/auth'
 
 describe('subscriptions', () => {
   beforeEach(() => {
@@ -70,10 +69,7 @@ describe('subscriptions', () => {
   }
 
   test('Article', async () => {
-    const client = createTestClient({
-      service: Service.SerloCloudflareWorker,
-      userId: 1,
-    })
+    const client = createTestClient({ userId: 1 })
     await assertSuccessfulGraphQLQuery({
       ...createSubscriptionsQuery(),
       data: {

@@ -35,17 +35,13 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
-import { Service } from '~/internals/auth'
 import { UuidPayload } from '~/schema/uuid'
 import { Instance } from '~/types'
 
 let client: Client
 
 beforeEach(() => {
-  client = createTestClient({
-    service: Service.SerloCloudflareWorker,
-    userId: null,
-  })
+  client = createTestClient()
 
   global.server.use(createUuidHandler(user))
 })

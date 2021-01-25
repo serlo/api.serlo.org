@@ -60,7 +60,6 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
-import { Service } from '~/internals/auth'
 import {
   DiscriminatorType,
   EntityRevisionType,
@@ -74,10 +73,7 @@ import {
 let client: Client
 
 beforeEach(() => {
-  client = createTestClient({
-    service: Service.SerloCloudflareWorker,
-    userId: null,
-  })
+  client = createTestClient()
 })
 
 const repositoryFixtures: Record<

@@ -25,13 +25,9 @@ import { gql } from 'apollo-server'
 import { checkoutRevisionNotificationEvent, user } from '../../__fixtures__'
 import { createTestClient } from '../../__tests__/__utils__'
 import { addJsonInteraction, assertSuccessfulGraphQLQuery } from '../__utils__'
-import { Service } from '~/internals/auth'
 
 test('Notifications', async () => {
-  global.client = createTestClient({
-    service: Service.SerloCloudflareWorker,
-    userId: user.id,
-  })
+  global.client = createTestClient({ userId: user.id })
   await addJsonInteraction({
     name: `fetch data of all notifications for user with id ${user.id}`,
     given: `there exists a notification for user with id ${user.id}`,

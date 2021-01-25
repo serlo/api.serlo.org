@@ -39,7 +39,6 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
-import { Service } from '~/internals/auth'
 import {
   EntityPayload,
   EntityType,
@@ -49,10 +48,7 @@ import {
 let client: Client
 
 beforeEach(() => {
-  client = createTestClient({
-    service: Service.SerloCloudflareWorker,
-    userId: null,
-  })
+  client = createTestClient()
 })
 
 type TaxonomyTermChildType = TaxonomyTermChildPayload['__typename']
