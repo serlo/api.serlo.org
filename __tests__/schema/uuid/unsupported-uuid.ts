@@ -21,7 +21,6 @@
  */
 import { gql } from 'apollo-server'
 
-import { Service } from '../../../src/internals/auth'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
@@ -32,10 +31,7 @@ import {
 let client: Client
 
 beforeEach(() => {
-  client = createTestClient({
-    service: Service.SerloCloudflareWorker,
-    userId: null,
-  })
+  client = createTestClient()
   global.server.use(
     createUuidHandler({
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

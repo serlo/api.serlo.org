@@ -34,16 +34,12 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
-import { Service } from '~/internals/auth'
 import { AbstractExercisePayload, EntityType, UuidPayload } from '~/schema/uuid'
 
 let client: Client
 
 beforeEach(() => {
-  client = createTestClient({
-    service: Service.SerloCloudflareWorker,
-    userId: null,
-  })
+  client = createTestClient()
 })
 
 const exerciseFixtures: Record<string, AbstractExercisePayload> = {
@@ -54,7 +50,7 @@ const exerciseCases = R.toPairs(exerciseFixtures) as Array<
   [EntityType, AbstractExercisePayload & UuidPayload]
 >
 
-test.each(exerciseCases)('%s by id (w/ solution)', async (type, entity) => {
+test.each(exerciseCases)('%s by id (w/ solution)', async (_type, entity) => {
   global.server.use(createUuidHandler(entity), createUuidHandler(solution))
   await assertSuccessfulGraphQLQuery({
     ...createExerciseSolutionQuery(entity),
