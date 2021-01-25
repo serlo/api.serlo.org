@@ -30,6 +30,7 @@ interface ThreadAware {
     first: Int
     last: Int
     archived: Boolean
+    trashed: Boolean
   ): ThreadsConnection!
 }
 

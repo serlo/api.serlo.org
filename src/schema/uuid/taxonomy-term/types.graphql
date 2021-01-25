@@ -21,6 +21,7 @@ type TaxonomyTerm implements AbstractUuid & AbstractNavigationChild & InstanceAw
     first: Int
     last: Int
     archived: Boolean
+    trashed: Boolean
   ): ThreadsConnection!
   type: TaxonomyTermType!
   instance: Instance!
