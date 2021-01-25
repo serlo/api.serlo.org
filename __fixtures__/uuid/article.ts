@@ -36,7 +36,7 @@ export const article: ArticlePayload = {
   id: 1855,
   trashed: false,
   instance: Instance.De,
-  alias: '/mathe/funktionen/übersicht-aller-artikel-zu-funktionen/parabel',
+  alias: '/mathe/1855/parabel',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 30674,
   licenseId: license.id,

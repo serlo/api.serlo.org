@@ -35,8 +35,7 @@ export const exerciseGroup: ExerciseGroupPayload = {
   id: 2217,
   trashed: false,
   instance: Instance.De,
-  alias:
-    '/mathe/arithmetik-und-rechnen/grundrechenarten/sachaufgaben-zu-den-grundrechenarten/2217',
+  alias: '/mathe/2217/2217',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 2218,
   revisionIds: [2218],

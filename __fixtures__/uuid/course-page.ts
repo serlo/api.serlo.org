@@ -36,7 +36,7 @@ export const coursePage: CoursePagePayload = {
   id: 18521,
   trashed: false,
   instance: Instance.De,
-  alias: '/18521/formel',
+  alias: '/mathe/18521/startseite',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 19277,
   revisionIds: [19277],
