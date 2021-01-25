@@ -10,6 +10,8 @@ interface AbstractRepository {
     before: String
     first: Int
     last: Int
+    archived: Boolean
+    trashed: Boolean
   ): ThreadsConnection!
 
   date: DateTime!
@@ -31,6 +33,8 @@ interface AbstractRevision {
     before: String
     first: Int
     last: Int
+    archived: Boolean
+    trashed: Boolean
   ): ThreadsConnection!
 
   # Implicitly has the following field

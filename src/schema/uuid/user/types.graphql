@@ -6,6 +6,8 @@ type User implements AbstractUuid & ThreadAware {
     before: String
     first: Int
     last: Int
+    archived: Boolean
+    trashed: Boolean
   ): ThreadsConnection!
   alias: String
   username: String!
