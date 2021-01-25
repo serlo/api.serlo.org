@@ -182,34 +182,6 @@ describe('uuid', () => {
     })
   })
 
-  test('returns null when alias is /entity/view/:id and uuid does not exist', async () => {
-    global.server.use(
-      createJsonHandlerForDatabaseLayer({
-        path: `/uuid/${article.id}`,
-        body: null,
-      })
-    )
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query uuid($alias: AliasInput!) {
-          uuid(alias: $alias) {
-            __typename
-          }
-        }
-      `,
-      variables: {
-        alias: {
-          instance: Instance.De,
-          path: `/entity/view/${article.id}`,
-        },
-      },
-      data: {
-        uuid: null,
-      },
-      client,
-    })
-  })
-
   test('returns an error when no arguments are given', async () => {
     await assertFailingGraphQLQuery({
       query: gql`
