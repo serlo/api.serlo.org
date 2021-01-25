@@ -92,6 +92,7 @@ async function resolveIdFromAlias(
   for (const regex of [
     /^\/(\d+)$/,
     /^\/entity\/view\/(\d+)$/,
+    /^\/entity\/repository\/compare\/\d+\/(\d+)$/,
     /^\/user\/profile\/(\d+)$/,
   ]) {
     const match = regex.exec(cleanPath)
