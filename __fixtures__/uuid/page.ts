@@ -34,7 +34,7 @@ export const page: PagePayload = {
   id: 19767,
   trashed: false,
   instance: Instance.De,
-  alias: '/mathe',
+  alias: '/19767/mathematik-startseite',
   date: '2015-02-28T02:06:40Z',
   currentRevisionId: 35476,
   revisionIds: [35476],

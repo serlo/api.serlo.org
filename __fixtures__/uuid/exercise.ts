@@ -35,7 +35,7 @@ export const exercise: ExercisePayload = {
   id: 29637,
   trashed: false,
   instance: Instance.De,
-  alias: '/mathe/stochastik/grundbegriffe-und-methoden/baumdiagramm/29637',
+  alias: '/mathe/29637/29637',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 29638,
   revisionIds: [29638],

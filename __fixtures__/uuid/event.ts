@@ -35,7 +35,7 @@ export const event: EventPayload = {
   id: 35554,
   trashed: false,
   instance: Instance.De,
-  alias: '/mathe/beispielinhalte/beispielveranstaltung',
+  alias: '/mathe/35554/beispielveranstaltung',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 35555,
   revisionIds: [35555],
