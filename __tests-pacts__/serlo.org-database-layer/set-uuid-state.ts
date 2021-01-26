@@ -19,15 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
 import { article, user } from '../../__fixtures__'
 import { createTestClient } from '../../__tests__/__utils__'
 import {
-  assertSuccessfulGraphQLQuery,
-  assertSuccessfulGraphQLMutation,
   addMutationInteraction,
+  assertSuccessfulGraphQLMutation,
 } from '../__utils__'
 
 test('set-uuid-state', async () => {
@@ -37,24 +35,8 @@ test('set-uuid-state', async () => {
     name: 'set state of uuid with id 1855',
     given: 'there exists a uuid with id 1855 that is not trashed',
     path: '/set-uuid-state',
-    requestBody: { id: article.id, userId: user.id, trashed: true },
-    responseBody: {
-      __typename: article.__typename,
-      id: article.id,
-      trashed: true,
-      instance: Matchers.string(article.instance),
-      alias: article.alias ? Matchers.string(article.alias) : null,
-      date: Matchers.iso8601DateTime(article.date),
-      currentRevisionId: article.currentRevisionId
-        ? Matchers.integer(article.currentRevisionId)
-        : null,
-      revisionIds: Matchers.eachLike(article.revisionIds[0]),
-      licenseId: Matchers.integer(article.licenseId),
-      taxonomyTermIds:
-        article.taxonomyTermIds.length > 0
-          ? Matchers.eachLike(Matchers.like(article.taxonomyTermIds[0]))
-          : [],
-    },
+    requestBody: { ids: [article.id], userId: user.id, trashed: true },
+    responseBody: { success: true },
   })
 
   await assertSuccessfulGraphQLMutation({
@@ -69,20 +51,5 @@ test('set-uuid-state', async () => {
     `,
     variables: { input: { id: 1855, trashed: true } },
     data: { uuid: { setState: { success: true } } },
-  })
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query article($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          id
-          trashed
-        }
-      }
-    `,
-    variables: article,
-    data: {
-      uuid: { id: article.id, __typename: article.__typename, trashed: true },
-    },
   })
 })

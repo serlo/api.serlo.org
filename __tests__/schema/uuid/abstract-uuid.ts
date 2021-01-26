@@ -247,16 +247,15 @@ describe('uuid mutation setState', () => {
   beforeEach(() => {
     global.server.use(
       rest.post<{
-        id: number
+        ids: number[]
         userId: number
         trashed: boolean
       }>(getDatabaseLayerUrl({ path: '/set-uuid-state' }), (req, res, ctx) => {
-        const { id, userId, trashed } = req.body
+        const { userId } = req.body
 
         if (userId !== user.id) return res(ctx.status(403))
-        if (![1, 2, 3].includes(id)) return res(ctx.status(404))
 
-        return res(ctx.json({ ...article, trashed: trashed }))
+        return res(ctx.json({ success: true }))
       })
     )
   })

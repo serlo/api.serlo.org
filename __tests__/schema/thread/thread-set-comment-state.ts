@@ -67,15 +67,6 @@ describe('setCommentState', () => {
       expectedError: 'UNAUTHENTICATED',
     })
   })
-
-  test('mutation is unsuccessful for non existing id', async () => {
-    await assertFailingGraphQLMutation({
-      mutation,
-      variables: { input: { id: comment.id + 1, trashed: true } },
-      client,
-      expectedError: 'BAD_REQUEST',
-    })
-  })
 })
 
 function mockSetUuidStateEndpoint() {
@@ -83,11 +74,10 @@ function mockSetUuidStateEndpoint() {
     rest.post<{
       userId: number
       trashed: boolean
-      id: number
+      ids: number[]
     }>(getDatabaseLayerUrl({ path: '/set-uuid-state' }), (req, res, ctx) => {
-      const { userId, trashed, id } = req.body
+      const { userId, trashed } = req.body
       if (userId !== user.id) return res(ctx.status(403))
-      if (id != comment.id) return res(ctx.status(400))
 
       return res(ctx.json({ ...comment, trashed: trashed }))
     })
