@@ -54,12 +54,19 @@ export const resolvers: AbstractUuidResolvers = {
 
       const { id, trashed } = payload.input
       const ids = Array.isArray(id) ? id : [id]
-      const res = await dataSources.model.serlo.setUuidState({
+      const response = await dataSources.model.serlo.setUuidState({
         ids,
         userId,
         trashed,
       })
-      return { success: res.every(Boolean), query: {} }
+      if (response.success) {
+        return {
+          success: true,
+          query: {},
+        }
+      } else {
+        throw response.error
+      }
     },
   },
 }

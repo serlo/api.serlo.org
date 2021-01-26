@@ -25,17 +25,10 @@ import { rest } from 'msw'
 import { comment, user } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
-  Client,
   createTestClient,
   getSerloUrl,
 } from '../../__utils__'
 import { encodeThreadId } from '~/schema/thread'
-
-let client: Client
-
-beforeEach(() => {
-  client = createTestClient({ userId: user.id })
-})
 
 describe('archive-comment', () => {
   beforeEach(() => mockArchiveCommentEndpoint())
@@ -49,17 +42,6 @@ describe('archive-comment', () => {
       }
     }
   `
-
-  test('mutation is unsuccessful for non existing id', async () => {
-    await assertFailingGraphQLMutation({
-      mutation,
-      variables: {
-        input: { id: encodeThreadId(comment.id + 1), archived: true },
-      },
-      client,
-      expectedError: 'BAD_REQUEST',
-    })
-  })
 
   test('unauthenticated user gets error', async () => {
     const client = createTestClient({ userId: null })
