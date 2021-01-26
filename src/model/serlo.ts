@@ -68,26 +68,9 @@ export function createSerloModel({
     })
   }
 
-  function getViaLegacySerlo<T>({
-    path,
-    instance = Instance.De,
-  }: {
-    path: string
-    instance?: Instance
-  }): Promise<T> {
+  function get<T>({ path }: { path: string }): Promise<T> {
     return fetchHelpers.get(
-      `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
-      {},
-      { headers: { Authorization: `Serlo Service=${getToken()}` } }
-    )
-  }
-
-  function getViaDatabaseLayer<T>({ path }: { path: string }): Promise<T> {
-    return fetchHelpers.get(
-      `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path.replace(
-        '/api',
-        ''
-      )}`
+      `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`
     )
   }
 
@@ -124,7 +107,7 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        const uuid = await getViaDatabaseLayer<AbstractUuidPayload | null>({
+        const uuid = await get<AbstractUuidPayload | null>({
           path: `/uuid/${id}`,
         })
         return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
@@ -194,7 +177,7 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async () => {
-        return await getViaDatabaseLayer<number[]>({
+        return await get<number[]>({
           path: '/user/active-authors',
         })
       },
@@ -214,7 +197,7 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async () => {
-        return await getViaDatabaseLayer<number[]>({
+        return await get<number[]>({
           path: '/user/active-reviewers',
         })
       },
@@ -236,7 +219,7 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ instance }) => {
-        return await getViaDatabaseLayer<NavigationPayload>({
+        return await get<NavigationPayload>({
           path: `/navigation/${instance}`,
         })
       },
@@ -330,7 +313,7 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ path, instance }) => {
-        return getViaDatabaseLayer({ path: `/alias/${instance}${path}` })
+        return get({ path: `/alias/${instance}${path}` })
       },
       maxAge: { hour: 1 },
       getKey: ({ path, instance }) => {
@@ -352,7 +335,7 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        return getViaDatabaseLayer({ path: `/license/${id}` })
+        return get({ path: `/license/${id}` })
       },
       maxAge: { day: 1 },
       getKey: ({ id }) => {
@@ -375,11 +358,9 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        const notificationEvent = await getViaDatabaseLayer<AbstractNotificationEventPayload>(
-          {
-            path: `/event/${id}`,
-          }
-        )
+        const notificationEvent = await get<AbstractNotificationEventPayload>({
+          path: `/event/${id}`,
+        })
         return isUnsupportedNotificationEvent(notificationEvent)
           ? null
           : notificationEvent
@@ -402,7 +383,7 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        const payload = await getViaDatabaseLayer<NotificationsPayload>({
+        const payload = await get<NotificationsPayload>({
           path: `/notifications/${id}`,
         })
         return {
@@ -457,7 +438,7 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        return getViaDatabaseLayer({
+        return get({
           path: `/subscriptions/${id}`,
         })
       },
@@ -479,7 +460,7 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        return getViaDatabaseLayer({ path: `/threads/${id}` })
+        return get({ path: `/threads/${id}` })
       },
       maxAge: { hour: 1 },
       getKey: ({ id }) => {
@@ -573,26 +554,6 @@ export function createSerloModel({
     },
   })
 
-  const getAllCacheKeys = createQuery<undefined, string[]>(
-    {
-      enableSwr: false,
-      getCurrentValue: async () => {
-        return getViaLegacySerlo({
-          path: `/api/cache-keys`,
-        })
-      },
-      maxAge: { hour: 1 },
-      getKey: () => {
-        return 'de.serlo.org/api/cache-keys'
-      },
-      getPayload: (key) => {
-        if (key !== 'de.serlo.org/api/cache-keys') return O.none
-        return O.some(undefined)
-      },
-    },
-    environment
-  )
-
   const setCacheValue = createMutation<{ key: string; value: unknown }>({
     mutate: async ({ key, value }) => {
       await environment.cache.set({ key, value })
@@ -612,7 +573,6 @@ export function createSerloModel({
     getActiveAuthorIds,
     getActiveReviewerIds,
     getAlias,
-    getAllCacheKeys,
     getLicense,
     getNavigationPayload,
     getNavigation,

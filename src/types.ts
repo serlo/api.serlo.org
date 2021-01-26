@@ -14,98 +14,6 @@ export type Scalars = {
   JSONObject: Record<string, unknown>;
 };
 
-export type Query = {
-  __typename?: 'Query';
-  _cacheKeys: StringConnection;
-  activeAuthors: UserConnection;
-  activeDonors: UserConnection;
-  activeReviewers: UserConnection;
-  license?: Maybe<License>;
-  notificationEvent?: Maybe<AbstractNotificationEvent>;
-  notifications: NotificationConnection;
-  subscriptions: QuerySubscriptionResult;
-  uuid?: Maybe<AbstractUuid>;
-};
-
-
-export type Query_CacheKeysArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryActiveAuthorsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryActiveDonorsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryActiveReviewersArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryLicenseArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type QueryNotificationEventArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type QueryNotificationsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  unread?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type QuerySubscriptionsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-};
-
-
-export type QueryUuidArgs = {
-  alias?: Maybe<AliasInput>;
-  id?: Maybe<Scalars['Int']>;
-};
-
-export type StringConnection = {
-  __typename?: 'StringConnection';
-  edges: Array<StringEdge>;
-  nodes: Array<Scalars['String']>;
-  totalCount: Scalars['Int'];
-  pageInfo: PageInfo;
-};
-
-export type StringEdge = {
-  __typename?: 'StringEdge';
-  cursor: Scalars['String'];
-  node: Scalars['String'];
-};
-
 export type Mutation = {
   __typename?: 'Mutation';
   _removeCache?: Maybe<Scalars['Boolean']>;
@@ -166,6 +74,75 @@ export type License = InstanceAware & {
   content: Scalars['String'];
   agreement: Scalars['String'];
   iconHref: Scalars['String'];
+};
+
+export type Query = {
+  __typename?: 'Query';
+  activeAuthors: UserConnection;
+  activeDonors: UserConnection;
+  activeReviewers: UserConnection;
+  license?: Maybe<License>;
+  notificationEvent?: Maybe<AbstractNotificationEvent>;
+  notifications: NotificationConnection;
+  subscriptions: QuerySubscriptionResult;
+  uuid?: Maybe<AbstractUuid>;
+};
+
+
+export type QueryActiveAuthorsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryActiveDonorsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryActiveReviewersArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryLicenseArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryNotificationEventArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryNotificationsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  unread?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type QuerySubscriptionsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryUuidArgs = {
+  alias?: Maybe<AliasInput>;
+  id?: Maybe<Scalars['Int']>;
 };
 
 export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
