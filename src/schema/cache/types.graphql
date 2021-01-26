@@ -1,24 +1,3 @@
-extend type Query {
-  _cacheKeys(
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): StringConnection!
-}
-
-type StringConnection {
-  edges: [StringEdge!]!
-  nodes: [String!]!
-  totalCount: Int!
-  pageInfo: PageInfo!
-}
-
-type StringEdge {
-  cursor: String!
-  node: String!
-}
-
 type Mutation {
   _setCache(key: String!, value: JSON!): Boolean
   _removeCache(key: String!): Boolean
