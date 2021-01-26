@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.18.0](https://github.com/serlo/api.serlo.org/compare/v0.17.7..v0.18.0) - January 26, 2021
+
+### Breaking Changes
+
+- **thread**. Move `createThread` mutation to `thread.createThread`.
+
+### Added
+
+- **uuid**. Add `archived` filter to `threads`.
+
+- **uuid**. Add `trashed` filter to `threads`.
+
+- **thread**. Add `thread.createComment` mutation.
+
+- **thread**. Add `thread.setThreadArchived` mutation.
+
+- **thread**. Add `thread.setThreadState` mutation.
+
+- **thread**. Add `thread.setCommentState` mutation.
+
 ## [v0.17.7](https://github.com/serlo/api.serlo.org/compare/v0.17.6..v0.17.7) - January 21, 2021
 
 ### Fixed
