@@ -20,9 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 /* eslint-disable import/no-unassigned-import */
-describe('GET /api/cache-keys', () => {
-  require('./cache-keys')
-})
 describe('POST /api/set-notification-state', () => {
   require('./set-notification-state')
 })

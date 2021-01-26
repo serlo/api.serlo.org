@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { UserInputError } from 'apollo-server'
+import { ForbiddenError, UserInputError } from 'apollo-server'
 
 import { AbstractUuidResolvers, DiscriminatorType, UuidPayload } from './types'
 import { resolveCustomId } from '~/config/alias'
@@ -51,6 +51,10 @@ export const resolvers: AbstractUuidResolvers = {
   UuidMutation: {
     async setState(_parent, payload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
+      // TODO: Mock permissions for now
+      if ([1, 10, 15473, 18981].indexOf(userId) < 0) {
+        throw new ForbiddenError('You are not allowed to set the thread state.')
+      }
 
       const { id, trashed } = payload.input
       const ids = Array.isArray(id) ? id : [id]
