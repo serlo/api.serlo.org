@@ -521,6 +521,21 @@ async function exec(): Promise<void> {
       date: '2021-01-21',
       fixed: [['swr-queue', 'Fix `Time`.']],
     },
+    {
+      tagName: 'v0.18.0',
+      date: '2021-01-26',
+      breakingChanges: [
+        ['thread', 'Move `createThread` mutation to `thread.createThread`.'],
+      ],
+      added: [
+        ['uuid', 'Add `archived` filter to `threads`.'],
+        ['uuid', 'Add `trashed` filter to `threads`.'],
+        ['thread', 'Add `thread.createComment` mutation.'],
+        ['thread', 'Add `thread.setThreadArchived` mutation.'],
+        ['thread', 'Add `thread.setThreadState` mutation.'],
+        ['thread', 'Add `thread.setCommentState` mutation.'],
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
