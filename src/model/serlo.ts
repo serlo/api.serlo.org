@@ -49,6 +49,7 @@ import {
   Navigation,
   NavigationPayload,
   NodeData,
+  UuidPayload,
 } from '~/schema/uuid'
 import { Instance, License, ThreadCreateThreadInput } from '~/types'
 
@@ -147,27 +148,45 @@ export function createSerloModel({
       userId: number
       trashed: boolean
     },
-    (AbstractUuidPayload | null)[]
+    | {
+        success: true
+      }
+    | {
+        success: false
+        error: unknown
+      }
   >({
     mutate: async ({ ids, userId, trashed }) => {
-      //looping should be fine here, since trashing/restoring multiple items will not happen very often
-      return await Promise.all(
-        ids.map(
-          async (id): Promise<AbstractUuidPayload | null> => {
-            const value = await postViaDatabaseLayer<AbstractUuidPayload | null>(
-              {
-                path: `/set-uuid-state`,
-                body: { id, userId, trashed },
-              }
-            )
-            await environment.cache.set({
-              key: getUuid._querySpec.getKey({ id }),
-              value,
-            })
-            return value
-          }
+      try {
+        await postViaDatabaseLayer<{ success: true }>({
+          path: `/set-uuid-state`,
+          body: { ids, userId, trashed },
+        })
+        await Promise.all(
+          ids.map(
+            async (id): Promise<void> => {
+              await environment.cache.set<UuidPayload>({
+                key: getUuid._querySpec.getKey({ id }),
+                // eslint-disable-next-line @typescript-eslint/require-await
+                async getValue(value) {
+                  if (value === undefined || value.trashed === trashed) {
+                    return undefined
+                  }
+                  return { ...value, trashed }
+                },
+              })
+            }
+          )
         )
-      )
+        return {
+          success: true,
+        }
+      } catch (e) {
+        return {
+          success: false,
+          error: e,
+        }
+      }
     },
   })
 

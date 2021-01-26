@@ -146,27 +146,35 @@ export const resolvers: ThreadResolvers = {
           success: false,
           query: {},
         }
-      const res = await dataSources.model.serlo.setUuidState({
+      const response = await dataSources.model.serlo.setUuidState({
         ids: [firstCommentId],
         userId,
         trashed,
       })
-      return {
-        success: res[0] !== null,
-        query: {},
+      if (response.success) {
+        return {
+          success: true,
+          query: {},
+        }
+      } else {
+        throw response.error
       }
     },
     async setCommentState(_parent, payload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       const { id, trashed } = payload.input
-      const res = await dataSources.model.serlo.setUuidState({
+      const response = await dataSources.model.serlo.setUuidState({
         ids: [id],
         trashed,
         userId,
       })
-      return {
-        success: res[0] !== null,
-        query: {},
+      if (response.success) {
+        return {
+          success: true,
+          query: {},
+        }
+      } else {
+        throw response.error
       }
     },
   },

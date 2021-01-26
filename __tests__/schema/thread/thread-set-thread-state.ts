@@ -64,17 +64,6 @@ describe('setThreadState', () => {
     })
   })
 
-  test('mutation is unsuccessful for non existing id', async () => {
-    await assertFailingGraphQLMutation({
-      mutation,
-      variables: {
-        input: { id: encodeThreadId(comment.id + 1), trashed: true },
-      },
-      client,
-      expectedError: 'BAD_REQUEST',
-    })
-  })
-
   test('unauthenticated user gets error', async () => {
     const client = createTestClient({ userId: null })
     await assertFailingGraphQLMutation({
@@ -93,13 +82,13 @@ function mockSetUuidStateEndpoint() {
     rest.post<{
       userId: number
       trashed: boolean
-      id: number
+      ids: number[]
     }>(getDatabaseLayerUrl({ path: '/set-uuid-state' }), (req, res, ctx) => {
-      const { userId, trashed, id } = req.body
-      if (userId !== user.id) return res(ctx.status(403))
-      if (id !== comment.id) return res(ctx.status(400))
+      const { userId } = req.body
 
-      return res(ctx.json({ ...comment, trashed: trashed }))
+      if (userId !== user.id) return res(ctx.status(403))
+
+      return res(ctx.json({ success: true }))
     })
   )
 }
