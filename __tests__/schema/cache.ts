@@ -24,7 +24,6 @@ import { option } from 'fp-ts'
 import { rest } from 'msw'
 
 import {
-  createCacheKeysQuery,
   createRemoveCacheMutation,
   createSetCacheMutation,
   createUpdateCacheMutation,
@@ -34,7 +33,6 @@ import {
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
-  assertSuccessfulGraphQLQuery,
   createSpreadsheetHandler,
   createTestClient,
   getSerloUrl,
@@ -65,13 +63,8 @@ const testVars = [
   },
 ]
 
-const fakeCacheKeys = [testVars[0].key, testVars[1].key, 'uuid']
-
 beforeEach(() => {
   global.server.use(
-    rest.get(getSerloUrl({ path: '/api/cache-keys' }), (_req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(fakeCacheKeys))
-    }),
     rest.get(
       getSerloUrl({ path: `/api/${testVars[0].key}` }),
       (_req, res, ctx) => {
@@ -86,23 +79,6 @@ beforeEach(() => {
     ),
     createSpreadsheetHandler(mockSpreadSheetData)
   )
-})
-
-test('_cacheKeys', async () => {
-  const client = createTestClient({
-    service: Service.Serlo,
-    userId: null,
-  })
-  await assertSuccessfulGraphQLQuery({
-    ...createCacheKeysQuery(),
-    data: {
-      _cacheKeys: {
-        nodes: fakeCacheKeys,
-        totalCount: 3,
-      },
-    },
-    client,
-  })
 })
 
 test('_setCache (forbidden)', async () => {

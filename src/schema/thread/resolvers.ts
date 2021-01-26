@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ApolloError } from 'apollo-server'
+import { ApolloError, ForbiddenError } from 'apollo-server'
 
 import { CommentPayload, ThreadDataType, ThreadResolvers } from './types'
 import { decodeThreadId, encodeThreadId } from './utils'
@@ -139,6 +139,11 @@ export const resolvers: ThreadResolvers = {
     },
     async setThreadState(_parent, payload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
+      // TODO: Mock permissions for now
+      if ([1, 10, 15473, 18981].indexOf(userId) < 0) {
+        throw new ForbiddenError('You are not allowed to set the thread state.')
+      }
+
       const { id, trashed } = payload.input
       const firstCommentId = decodeThreadId(id)
       if (firstCommentId === null)
@@ -162,6 +167,11 @@ export const resolvers: ThreadResolvers = {
     },
     async setCommentState(_parent, payload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
+      // TODO: Mock permissions for now
+      if ([1, 10, 15473, 18981].indexOf(userId) < 0) {
+        throw new ForbiddenError('You are not allowed to set the thread state.')
+      }
+
       const { id, trashed } = payload.input
       const response = await dataSources.model.serlo.setUuidState({
         ids: [id],

@@ -1190,7 +1190,6 @@ export type PageThreadsArgs = {
 // @public (undocumented)
 export type Query = {
     __typename?: 'Query';
-    _cacheKeys: StringConnection;
     activeAuthors: UserConnection;
     activeDonors: UserConnection;
     activeReviewers: UserConnection;
@@ -1199,14 +1198,6 @@ export type Query = {
     notifications: NotificationConnection;
     subscriptions: QuerySubscriptionResult;
     uuid?: Maybe<AbstractUuid>;
-};
-
-// @public (undocumented)
-export type Query_CacheKeysArgs = {
-    after?: Maybe<Scalars['String']>;
-    before?: Maybe<Scalars['String']>;
-    first?: Maybe<Scalars['Int']>;
-    last?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)
@@ -1455,22 +1446,6 @@ export type SolutionThreadsArgs = {
     last?: Maybe<Scalars['Int']>;
     archived?: Maybe<Scalars['Boolean']>;
     trashed?: Maybe<Scalars['Boolean']>;
-};
-
-// @public (undocumented)
-export type StringConnection = {
-    __typename?: 'StringConnection';
-    edges: Array<StringEdge>;
-    nodes: Array<Scalars['String']>;
-    totalCount: Scalars['Int'];
-    pageInfo: PageInfo;
-};
-
-// @public (undocumented)
-export type StringEdge = {
-    __typename?: 'StringEdge';
-    cursor: Scalars['String'];
-    node: Scalars['String'];
 };
 
 // @public (undocumented)
