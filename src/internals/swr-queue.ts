@@ -25,7 +25,7 @@ import * as R from 'ramda'
 
 import { Cache, Priority } from './cache'
 import { log } from './log'
-import { createFetchHelpersFromNodeFetch, isQuery, QuerySpec } from './model'
+import { isQuery, QuerySpec } from './model'
 import { redisUrl } from './redis-url'
 import { Timer } from './timer'
 import { modelFactories } from '~/model'
@@ -72,7 +72,6 @@ export function createSwrQueue({
       cache,
       swrQueue: emptySwrQueue,
     },
-    fetchHelpers: createFetchHelpersFromNodeFetch(),
   }
   const models = R.values(modelFactories).map((createModel) =>
     createModel(args)
@@ -157,7 +156,6 @@ export function createSwrQueueWorker({
       cache,
       swrQueue: emptySwrQueue,
     },
-    fetchHelpers: createFetchHelpersFromNodeFetch(),
   }
   const models = R.values(modelFactories).map((createModel) =>
     createModel(args)

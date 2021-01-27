@@ -35,7 +35,7 @@ import {
   assertSuccessfulGraphQLQuery,
   Client,
   createAliasHandler,
-  createJsonHandlerForDatabaseLayer,
+  createJsonHandler,
   createTestClient,
   createUuidHandler,
   getDatabaseLayerUrl,
@@ -429,7 +429,7 @@ export function mockEndpointsForThreads(
   const firstCommentIds = threads.map((thread) => thread[0].id)
 
   global.server.use(
-    createJsonHandlerForDatabaseLayer({
+    createJsonHandler({
       path: `/threads/${uuidPayload.id}`,
       body: { firstCommentIds },
     })

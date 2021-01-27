@@ -78,7 +78,7 @@ import {
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   Client,
-  createJsonHandlerForDatabaseLayer,
+  createJsonHandler,
   createNotificationEventHandler,
   createTestClient,
   createUuidHandler,
@@ -92,7 +92,7 @@ describe('notifications', () => {
   beforeEach(() => {
     client = createTestClient({ userId: user.id })
     global.server.use(
-      createJsonHandlerForDatabaseLayer({
+      createJsonHandler({
         path: `/notifications/${user.id}`,
         body: {
           userId: user.id,
@@ -151,7 +151,7 @@ describe('notifications', () => {
 
   test('notifications (w/ event)', async () => {
     global.server.use(
-      createJsonHandlerForDatabaseLayer({
+      createJsonHandler({
         path: `/notifications/${user.id}`,
         body: {
           userId: user.id,

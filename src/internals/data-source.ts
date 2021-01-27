@@ -34,13 +34,6 @@ export class ModelDataSource extends RESTDataSource {
     super()
     const args = {
       environment,
-      fetchHelpers: {
-        get: this.get.bind(this),
-        post: this.post.bind(this),
-        patch: this.patch.bind(this),
-        put: this.put.bind(this),
-        delete: this.delete.bind(this),
-      },
     }
     this.serlo = createSerloModel(args)
     this.googleSpreadsheetApi = createGoogleSpreadsheetApiModel(args)
