@@ -23,11 +23,13 @@ import { either as E, option as O, pipeable } from 'fp-ts'
 import * as t from 'io-ts'
 import { nonEmptyArray } from 'io-ts-types/lib/nonEmptyArray'
 import { failure } from 'io-ts/lib/PathReporter'
+import fetch from 'node-fetch'
 import * as R from 'ramda'
+import { URL } from 'url'
 
 import { Environment } from '~/internals/environment'
 import { ErrorEvent } from '~/internals/error-event'
-import { createQuery, FetchHelpers } from '~/internals/model'
+import { createQuery } from '~/internals/model'
 
 export enum MajorDimension {
   Rows = 'ROWS',
@@ -56,10 +58,8 @@ interface Arguments {
 
 export function createGoogleSpreadsheetApiModel({
   environment,
-  fetchHelpers,
 }: {
   environment: Environment
-  fetchHelpers: FetchHelpers
 }) {
   const getValues = createQuery<Arguments, E.Either<ErrorEvent, CellValues>>(
     {
@@ -71,16 +71,19 @@ export function createGoogleSpreadsheetApiModel({
         let result: E.Either<ErrorEvent, CellValues>
 
         try {
-          const response = await fetchHelpers.get(
-            `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`,
-            {
-              majorDimension,
-              key: process.env.GOOGLE_SPREADSHEET_API_SECRET,
-            }
+          const url = new URL(
+            `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`
+          )
+          url.searchParams.append('majorDimension', majorDimension)
+          url.searchParams.append(
+            'key',
+            process.env.GOOGLE_SPREADSHEET_API_SECRET
           )
 
+          const response = await fetch(url.toString())
+
           result = pipeable.pipe(
-            response,
+            await response.json(),
             (res) => ValueRange.decode(res),
             E.mapLeft((errors) => {
               return {

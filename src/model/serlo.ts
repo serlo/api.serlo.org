@@ -19,18 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { ForbiddenError } from 'apollo-server'
 import { option as O } from 'fp-ts'
 import jwt from 'jsonwebtoken'
+import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
 
 import { Service } from '~/internals/auth'
 import { Environment } from '~/internals/environment'
-import {
-  createHelper,
-  createMutation,
-  createQuery,
-  FetchHelpers,
-} from '~/internals/model'
+import { createHelper, createMutation, createQuery } from '~/internals/model'
 import { isInstance } from '~/schema/instance'
 import {
   AbstractNotificationEventPayload,
@@ -55,10 +52,8 @@ import { Instance, License, ThreadCreateThreadInput } from '~/types'
 
 export function createSerloModel({
   environment,
-  fetchHelpers,
 }: {
   environment: Environment
-  fetchHelpers: FetchHelpers
 }) {
   function getToken() {
     return jwt.sign({}, process.env.SERLO_ORG_SECRET, {
@@ -68,26 +63,32 @@ export function createSerloModel({
     })
   }
 
-  function get<T>({ path }: { path: string }): Promise<T> {
-    return fetchHelpers.get(
+  async function get({ path }: { path: string }): Promise<Response> {
+    return await fetch(
       `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`
     )
   }
 
-  function postViaDatabaseLayer<T>({
+  async function postViaDatabaseLayer({
     path,
     body,
   }: {
     path: string
     body: Record<string, unknown>
-  }): Promise<T> {
-    return fetchHelpers.post(
+  }): Promise<Response> {
+    return await fetch(
       `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`,
-      body
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
     )
   }
 
-  function post<T>({
+  async function postViaLegacySerlo({
     path,
     instance = Instance.De,
     body,
@@ -95,21 +96,37 @@ export function createSerloModel({
     path: string
     instance?: Instance
     body: Record<string, unknown>
-  }): Promise<T> {
-    return fetchHelpers.post(
+  }): Promise<Response> {
+    const response = await fetch(
       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
-      body,
-      { headers: { Authorization: `Serlo Service=${getToken()}` } }
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          Authorization: `Serlo Service=${getToken()}`,
+          'Content-Type': 'application/json',
+        },
+      }
     )
+    if (response.status === 403) {
+      throw new ForbiddenError(
+        'You are not allowed to set the notification state'
+      )
+    }
+    return response
   }
 
   const getUuid = createQuery<{ id: number }, AbstractUuidPayload | null>(
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        const uuid = await get<AbstractUuidPayload | null>({
+        const response = await get({
           path: `/uuid/${id}`,
         })
+        if (response.status !== 200 && response.status !== 404) {
+          throw new Error(`${response.status}: ${response.statusText}`)
+        }
+        const uuid = (await response.json()) as AbstractUuidPayload | null
         return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
       },
       maxAge: { hour: 1 },
@@ -131,44 +148,36 @@ export function createSerloModel({
       userId: number
       trashed: boolean
     },
-    | {
-        success: true
-      }
-    | {
-        success: false
-        error: unknown
-      }
+    {
+      success: true
+    }
   >({
     mutate: async ({ ids, userId, trashed }) => {
-      try {
-        await postViaDatabaseLayer<{ success: true }>({
-          path: `/set-uuid-state`,
-          body: { ids, userId, trashed },
-        })
-        await Promise.all(
-          ids.map(
-            async (id): Promise<void> => {
-              await environment.cache.set<UuidPayload>({
-                key: getUuid._querySpec.getKey({ id }),
-                // eslint-disable-next-line @typescript-eslint/require-await
-                async getValue(value) {
-                  if (value === undefined || value.trashed === trashed) {
-                    return undefined
-                  }
-                  return { ...value, trashed }
-                },
-              })
-            }
-          )
+      const response = await postViaDatabaseLayer({
+        path: `/set-uuid-state`,
+        body: { ids, userId, trashed },
+      })
+      if (response.status !== 200) {
+        throw new Error(`${response.status}: ${response.statusText}`)
+      }
+      await Promise.all(
+        ids.map(
+          async (id): Promise<void> => {
+            await environment.cache.set<UuidPayload>({
+              key: getUuid._querySpec.getKey({ id }),
+              // eslint-disable-next-line @typescript-eslint/require-await
+              async getValue(value) {
+                if (value === undefined || value.trashed === trashed) {
+                  return undefined
+                }
+                return { ...value, trashed }
+              },
+            })
+          }
         )
-        return {
-          success: true,
-        }
-      } catch (e) {
-        return {
-          success: false,
-          error: e,
-        }
+      )
+      return {
+        success: true,
       }
     },
   })
@@ -177,9 +186,13 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async () => {
-        return await get<number[]>({
+        const response = await get({
           path: '/user/active-authors',
         })
+        if (response.status !== 200) {
+          throw new Error(`${response.status}: ${response.statusText}`)
+        }
+        return (await response.json()) as number[]
       },
       maxAge: { hour: 1 },
       getKey: () => {
@@ -197,9 +210,13 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async () => {
-        return await get<number[]>({
+        const response = await get({
           path: '/user/active-reviewers',
         })
+        if (response.status !== 200) {
+          throw new Error(`${response.status}: ${response.statusText}`)
+        }
+        return (await response.json()) as number[]
       },
       maxAge: { hour: 1 },
       getKey: () => {
@@ -219,9 +236,13 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ instance }) => {
-        return await get<NavigationPayload>({
+        const response = await get({
           path: `/navigation/${instance}`,
         })
+        if (response.status !== 200) {
+          throw new Error(`${response.status}: ${response.statusText}`)
+        }
+        return (await response.json()) as NavigationPayload
       },
       maxAge: { hour: 1 },
       getKey: ({ instance }) => {
@@ -313,7 +334,11 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ path, instance }) => {
-        return get({ path: `/alias/${instance}${path}` })
+        const response = await get({ path: `/alias/${instance}${path}` })
+        if (response.status !== 200 && response.status !== 404) {
+          throw new Error(`${response.status}: ${response.statusText}`)
+        }
+        return (await response.json()) as AliasPayload | null
       },
       maxAge: { hour: 1 },
       getKey: ({ path, instance }) => {
@@ -335,7 +360,13 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        return get({ path: `/license/${id}` })
+        const response = await get({
+          path: `/license/${id}`,
+        })
+        if (response.status !== 200 && response.status !== 404) {
+          throw new Error(`${response.status}: ${response.statusText}`)
+        }
+        return (await response.json()) as License
       },
       maxAge: { day: 1 },
       getKey: ({ id }) => {
@@ -358,9 +389,13 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        const notificationEvent = await get<AbstractNotificationEventPayload>({
+        const response = await get({
           path: `/event/${id}`,
         })
+        if (response.status !== 200 && response.status !== 404) {
+          throw new Error(`${response.status}: ${response.statusText}`)
+        }
+        const notificationEvent = (await response.json()) as AbstractNotificationEventPayload
         return isUnsupportedNotificationEvent(notificationEvent)
           ? null
           : notificationEvent
@@ -383,14 +418,13 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        const payload = await get<NotificationsPayload>({
+        const response = await get({
           path: `/notifications/${id}`,
         })
-        return {
-          ...payload,
-          // Sometimes, Zend serializes an array as an object... This line ensures that we have an array.
-          notifications: Object.values(payload.notifications),
+        if (response.status !== 200) {
+          throw new Error(`${response.status}: ${response.statusText}`)
         }
+        return (await response.json()) as NotificationsPayload
       },
       maxAge: { hour: 1 },
       getKey: ({ id }) => {
@@ -419,10 +453,14 @@ export function createSerloModel({
         //TODO: rewrite legacy endpoint so that it accepts an array directly
         ids.map(
           async (id): Promise<NotificationsPayload> => {
-            const value = await post<NotificationsPayload>({
+            const response = await postViaLegacySerlo({
               path: `/api/set-notification-state`,
               body: { id, userId, unread },
             })
+            if (response.status !== 200) {
+              throw new Error(`${response.status}: ${response.statusText}`)
+            }
+            const value = (await response.json()) as NotificationsPayload
             await environment.cache.set({
               key: getNotifications._querySpec.getKey({ id: userId }),
               value,
@@ -438,9 +476,13 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        return get({
+        const response = await get({
           path: `/subscriptions/${id}`,
         })
+        if (response.status !== 200) {
+          throw new Error(`${response.status}: ${response.statusText}`)
+        }
+        return (await response.json()) as SubscriptionsPayload
       },
       maxAge: { hour: 1 },
       getKey: ({ id }) => {
@@ -460,7 +502,13 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        return get({ path: `/threads/${id}` })
+        const response = await get({
+          path: `/threads/${id}`,
+        })
+        if (response.status !== 200) {
+          throw new Error(`${response.status}: ${response.statusText}`)
+        }
+        return (await response.json()) as ThreadsPayload
       },
       maxAge: { hour: 1 },
       getKey: ({ id }) => {
@@ -481,10 +529,14 @@ export function createSerloModel({
     CommentPayload | null
   >({
     mutate: async (payload) => {
-      const value = await post<CommentPayload | null>({
+      const response = await postViaLegacySerlo({
         path: `/api/thread/start-thread`,
         body: payload,
       })
+      if (response.status !== 200) {
+        throw new Error(`${response.status}: ${response.statusText}`)
+      }
+      const value = (await response.json()) as CommentPayload | null
 
       if (value !== null) {
         await environment.cache.set<ThreadsPayload>({
@@ -511,10 +563,14 @@ export function createSerloModel({
     CommentPayload | null
   >({
     mutate: async (payload) => {
-      const value = await post<CommentPayload | null>({
+      const response = await postViaLegacySerlo({
         path: `/api/thread/comment-thread`,
         body: payload,
       })
+      if (response.status !== 200) {
+        throw new Error(`${response.status}: ${response.statusText}`)
+      }
+      const value = (await response.json()) as CommentPayload | null
       if (value !== null) {
         await environment.cache.set({
           key: getUuid._querySpec.getKey({ id: value.id }),
@@ -540,10 +596,14 @@ export function createSerloModel({
     CommentPayload | null
   >({
     mutate: async (payload) => {
-      const value = await post<CommentPayload | null>({
+      const response = await postViaLegacySerlo({
         path: '/api/thread/set-archive',
         body: payload,
       })
+      if (response.status !== 200) {
+        throw new Error(`${response.status}: ${response.statusText}`)
+      }
+      const value = (await response.json()) as CommentPayload | null
       if (value !== null)
         await environment.cache.set({
           key: getUuid._querySpec.getKey({ id: value.id }),
