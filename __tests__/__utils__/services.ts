@@ -61,6 +61,14 @@ export function returnsJson(data: unknown): RestResolver {
   return (_req, res, ctx) => res(ctx.json(data as Record<string, unknown>))
 }
 
+export function returnsMalformedJson(): RestResolver {
+  return (_req, res, ctx) => res(ctx.body('MALFORMED JSON'))
+}
+
+export function hasInternalServerError(): RestResolver {
+  return (_req, res, ctx) => res(ctx.status(500))
+}
+
 function toKey(query: SpreadsheetQuery) {
   return [query.spreadsheetId, query.range, query.majorDimension].join('/')
 }
