@@ -35,7 +35,7 @@ export enum Priority {
   High,
 }
 
-interface UpdateFunction<T> {
+export interface UpdateFunction<T> {
   getValue: (current?: T) => Promise<T | undefined>
 }
 export type FunctionOrValue<T> = UpdateFunction<T> | { value: T }

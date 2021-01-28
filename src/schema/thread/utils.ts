@@ -45,13 +45,15 @@ export function createThreadResolvers(): ThreadAwareResolvers {
         if (
           payload.archived !== undefined &&
           payload.archived !== comment.archived
-        )
+        ) {
           return false
+        }
         if (
           payload.trashed !== undefined &&
           payload.trashed !== comment.trashed
-        )
+        ) {
           return false
+        }
 
         return true
       })
