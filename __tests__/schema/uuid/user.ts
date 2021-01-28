@@ -31,7 +31,7 @@ import {
 import {
   assertSuccessfulGraphQLQuery,
   Client,
-  createJsonHandlerForDatabaseLayer,
+  createJsonHandler,
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
@@ -79,7 +79,7 @@ describe('User', () => {
 
   test('by alias /user/profile/:id returns null when user does not exist', async () => {
     global.server.use(
-      createJsonHandlerForDatabaseLayer({
+      createJsonHandler({
         path: `/uuid/${user.id}`,
         body: null,
       })
@@ -623,7 +623,7 @@ function createActiveAuthorsHandler(users: UuidPayload[]) {
 }
 
 function createActiveAuthorsResponseHandler(body: unknown) {
-  return createJsonHandlerForDatabaseLayer({
+  return createJsonHandler({
     path: '/user/active-authors',
     body,
   })
@@ -636,7 +636,7 @@ function createActiveReviewersHandler(users: UuidPayload[]) {
 }
 
 function createActiveReviewersHandlersResponseHandler(body: unknown) {
-  return createJsonHandlerForDatabaseLayer({
+  return createJsonHandler({
     path: '/user/active-reviewers',
     body,
   })

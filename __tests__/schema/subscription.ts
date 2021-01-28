@@ -28,7 +28,7 @@ import {
 } from '../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
-  createJsonHandlerForDatabaseLayer,
+  createJsonHandler,
   createTestClient,
   createUuidHandler,
 } from '../__utils__'
@@ -37,7 +37,7 @@ describe('subscriptions', () => {
   beforeEach(() => {
     global.server.use(
       createUuidHandler(article),
-      createJsonHandlerForDatabaseLayer({
+      createJsonHandler({
         path: `/subscriptions/${user.id}`,
         body: {
           userId: user.id,

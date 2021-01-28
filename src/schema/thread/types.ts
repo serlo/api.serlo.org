@@ -28,8 +28,8 @@ import {
 } from '~/internals/graphql'
 import { Connection } from '~/schema/connection'
 import {
-  UserPayload,
   DiscriminatorType,
+  UserPayload,
   UuidPayload,
   UuidResolvers,
 } from '~/schema/uuid'

@@ -151,18 +151,14 @@ export const resolvers: ThreadResolvers = {
           success: false,
           query: {},
         }
-      const response = await dataSources.model.serlo.setUuidState({
+      await dataSources.model.serlo.setUuidState({
         ids: [firstCommentId],
         userId,
         trashed,
       })
-      if (response.success) {
-        return {
-          success: true,
-          query: {},
-        }
-      } else {
-        throw response.error
+      return {
+        success: true,
+        query: {},
       }
     },
     async setCommentState(_parent, payload, { dataSources, userId }) {
@@ -173,18 +169,14 @@ export const resolvers: ThreadResolvers = {
       }
 
       const { id, trashed } = payload.input
-      const response = await dataSources.model.serlo.setUuidState({
+      await dataSources.model.serlo.setUuidState({
         ids: [id],
         trashed,
         userId,
       })
-      if (response.success) {
-        return {
-          success: true,
-          query: {},
-        }
-      } else {
-        throw response.error
+      return {
+        success: true,
+        query: {},
       }
     },
   },

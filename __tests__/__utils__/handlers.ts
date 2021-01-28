@@ -27,21 +27,21 @@ import { AliasPayload, NavigationPayload, UuidPayload } from '~/schema/uuid'
 import { Instance } from '~/types'
 
 export function createAliasHandler(alias: AliasPayload) {
-  return createJsonHandlerForDatabaseLayer({
+  return createJsonHandler({
     path: `/alias/${alias.instance}${alias.path}`,
     body: alias,
   })
 }
 
 export function createLicenseHandler(license: LicensePayload) {
-  return createJsonHandlerForDatabaseLayer({
+  return createJsonHandler({
     path: `/license/${license.id}`,
     body: license,
   })
 }
 
 export function createNavigationHandler(navigation: NavigationPayload) {
-  return createJsonHandlerForDatabaseLayer({
+  return createJsonHandler({
     path: `/navigation/${navigation.instance}`,
     body: navigation,
   })
@@ -50,14 +50,14 @@ export function createNavigationHandler(navigation: NavigationPayload) {
 export function createNotificationEventHandler(
   notificationEvent: NotificationEventPayload
 ) {
-  return createJsonHandlerForDatabaseLayer({
+  return createJsonHandler({
     path: `/event/${notificationEvent.id}`,
     body: notificationEvent,
   })
 }
 
 export function createUuidHandler(uuid: UuidPayload, once?: boolean) {
-  return createJsonHandlerForDatabaseLayer(
+  return createJsonHandler(
     {
       path: `/uuid/${uuid.id}`,
       body: uuid,
@@ -66,22 +66,7 @@ export function createUuidHandler(uuid: UuidPayload, once?: boolean) {
   )
 }
 
-export function createJsonHandlerForLegacySerlo(
-  args: {
-    instance?: Instance
-    path: string
-    body: unknown
-  },
-  once = false
-) {
-  return rest.get(getSerloUrl(args), (_req, res, ctx) => {
-    return (once ? res.once : res)(
-      ctx.json(args.body as Record<string, unknown>)
-    )
-  })
-}
-
-export function createJsonHandlerForDatabaseLayer(
+export function createJsonHandler(
   args: {
     path: string
     body: unknown
