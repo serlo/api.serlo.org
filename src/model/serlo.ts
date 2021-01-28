@@ -40,13 +40,13 @@ import {
   AbstractUuidPayload,
   AliasPayload,
   decodePath,
+  DiscriminatorType,
   encodePath,
   EntityPayload,
   isUnsupportedUuid,
   Navigation,
   NavigationPayload,
   NodeData,
-  UuidPayload,
 } from '~/schema/uuid'
 import { Instance, License, ThreadCreateThreadInput } from '~/types'
 
@@ -160,22 +160,18 @@ export function createSerloModel({
       if (response.status !== 200) {
         throw new Error(`${response.status}: ${response.statusText}`)
       }
-      await Promise.all(
-        ids.map(
-          async (id): Promise<void> => {
-            await environment.cache.set<UuidPayload>({
-              key: getUuid._querySpec.getKey({ id }),
-              // eslint-disable-next-line @typescript-eslint/require-await
-              async getValue(value) {
-                if (value === undefined || value.trashed === trashed) {
-                  return undefined
-                }
-                return { ...value, trashed }
-              },
-            })
+      await getUuid._querySpec.setCache({
+        payloads: ids.map((id) => {
+          return { id }
+        }),
+        // eslint-disable-next-line @typescript-eslint/require-await
+        async getValue(current) {
+          if (!current || current.trashed === trashed) {
+            return
           }
-        )
-      )
+          return { ...current, trashed }
+        },
+      })
       return {
         success: true,
       }
@@ -461,8 +457,8 @@ export function createSerloModel({
               throw new Error(`${response.status}: ${response.statusText}`)
             }
             const value = (await response.json()) as NotificationsPayload
-            await environment.cache.set({
-              key: getNotifications._querySpec.getKey({ id: userId }),
+            await getNotifications._querySpec.setCache({
+              payload: { id: userId },
               value,
             })
             return value
@@ -539,18 +535,18 @@ export function createSerloModel({
       const value = (await response.json()) as CommentPayload | null
 
       if (value !== null) {
-        await environment.cache.set<ThreadsPayload>({
-          key: getThreadIds._querySpec.getKey({ id: payload.objectId }),
-          getValue(current) {
-            if (current === undefined) return Promise.resolve(undefined)
+        await getThreadIds._querySpec.setCache({
+          payload: { id: payload.objectId },
+          // eslint-disable-next-line @typescript-eslint/require-await
+          async getValue(current) {
+            if (current === undefined) return
 
             current.firstCommentIds.push(value.id)
-            return Promise.resolve(current)
+            return current
           },
         })
-
-        await environment.cache.set({
-          key: getUuid._querySpec.getKey({ id: value.id }),
+        await getUuid._querySpec.setCache({
+          payload: { id: value.id },
           value,
         })
       }
@@ -572,18 +568,17 @@ export function createSerloModel({
       }
       const value = (await response.json()) as CommentPayload | null
       if (value !== null) {
-        await environment.cache.set({
-          key: getUuid._querySpec.getKey({ id: value.id }),
+        await getUuid._querySpec.setCache({
+          payload: { id: value.id },
           value,
         })
-
-        await environment.cache.set<CommentPayload>({
-          key: getUuid._querySpec.getKey({ id: payload.threadId }),
-          getValue(current) {
-            if (current === undefined) return Promise.resolve(undefined)
-
+        await getUuid._querySpec.setCache({
+          payload: { id: payload.threadId },
+          // eslint-disable-next-line @typescript-eslint/require-await
+          async getValue(current) {
+            if (!current || !isCommentPayload(current)) return
             current.childrenIds.push(value.id)
-            return Promise.resolve(current)
+            return current
           },
         })
       }
@@ -604,12 +599,12 @@ export function createSerloModel({
         throw new Error(`${response.status}: ${response.statusText}`)
       }
       const value = (await response.json()) as CommentPayload | null
-      if (value !== null)
-        await environment.cache.set({
-          key: getUuid._querySpec.getKey({ id: value.id }),
+      if (value !== null) {
+        await getUuid._querySpec.setCache({
+          payload: { id: value.id },
           value,
         })
-
+      }
       return value
     },
   })
@@ -653,4 +648,11 @@ function getInstanceFromKey(key: string): Instance | null {
   return key.startsWith(`${instance}.serlo.org`) && isInstance(instance)
     ? instance
     : null
+}
+
+function isCommentPayload(value: unknown): value is CommentPayload {
+  return (
+    typeof value === 'object' &&
+    (value as AbstractUuidPayload).__typename === DiscriminatorType.Comment
+  )
 }
