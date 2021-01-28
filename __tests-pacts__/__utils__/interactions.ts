@@ -89,7 +89,7 @@ export function addMutationInteraction({
   given: string
   path: string
   requestBody: Record<string, unknown>
-  responseBody: Record<string, unknown>
+  responseBody?: Record<string, unknown>
 }) {
   return global.pact.addInteraction({
     uponReceiving: name,
@@ -102,8 +102,12 @@ export function addMutationInteraction({
     },
     willRespondWith: {
       status: 200,
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
-      body: responseBody,
+      ...(responseBody === undefined
+        ? {}
+        : {
+            headers: { 'Content-Type': 'application/json; charset=utf-8' },
+            body: responseBody,
+          }),
     },
   })
 }

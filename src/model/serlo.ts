@@ -148,13 +148,11 @@ export function createSerloModel({
       userId: number
       trashed: boolean
     },
-    {
-      success: true
-    }
+    void
   >({
     mutate: async ({ ids, userId, trashed }) => {
       const response = await postViaDatabaseLayer({
-        path: `/set-uuid-state`,
+        path: '/set-uuid-state',
         body: { ids, userId, trashed },
       })
       if (response.status !== 200) {
@@ -172,9 +170,6 @@ export function createSerloModel({
           return { ...current, trashed }
         },
       })
-      return {
-        success: true,
-      }
     },
   })
 
