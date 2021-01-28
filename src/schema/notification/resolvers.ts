@@ -19,6 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { ForbiddenError } from 'apollo-server'
+
 import { resolveConnection } from '../connection'
 import { assertUserIsAuthenticated, createMutationNamespace } from '../utils'
 import {
@@ -75,14 +77,27 @@ export const resolvers: NotificationResolvers = {
   NotificationMutation: {
     async setState(_parent, payload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
+
+      const { notifications } = await dataSources.model.serlo.getNotifications({
+        id: userId,
+      })
       const { id, unread } = payload.input
       const ids = Array.isArray(id) ? id : [id]
-      const res = await dataSources.model.serlo.setNotificationState({
+
+      ids.forEach((id) => {
+        if (!notifications.find((n) => n.id == id)) {
+          throw new ForbiddenError(
+            'You are only allowed to set your own notification states.'
+          )
+        }
+      })
+
+      await dataSources.model.serlo.setNotificationState({
         ids,
         userId,
         unread,
       })
-      return { success: res.every(Boolean), query: {} }
+      return { success: true, query: {} }
     },
   },
 }
