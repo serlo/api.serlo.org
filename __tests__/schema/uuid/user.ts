@@ -384,129 +384,70 @@ describe('endpoint activeAuthors', () => {
 })
 
 describe('endpoint activeDonors', () => {
-  const activeDonorsQuery = gql`
-    {
-      activeDonors {
-        nodes {
-          __typename
-          id
-          trashed
-          username
-          date
-          lastLogin
-          description
-        }
-        totalCount
-      }
-    }
-  `
-
   test('returns list of users', async () => {
     givenActiveDonors([user, user2])
     global.server.use(createUuidHandler(user2))
 
-    await assertSuccessfulGraphQLQuery({
-      query: activeDonorsQuery,
-      data: {
-        activeDonors: {
-          nodes: [
-            getUserDataWithoutSubResolvers(user),
-            getUserDataWithoutSubResolvers(user2),
-          ],
-          totalCount: 2,
-        },
-      },
-      client,
-    })
+    await expectActiveUserIds([user.id, user2.id])
   })
 
   test('returned list only contains user', async () => {
     givenActiveDonors([user, article])
     global.server.use(createUuidHandler(article))
 
-    await assertSuccessfulGraphQLQuery({
-      query: activeDonorsQuery,
-      data: {
-        activeDonors: {
-          nodes: [getUserDataWithoutSubResolvers(user)],
-          totalCount: 1,
-        },
-      },
-      client,
-    })
+    await expectActiveUserIds([user.id])
   })
 
   describe('parser', () => {
-    function createActiveDonorsQueryExpectingIds(ids: number[]) {
-      return {
-        query: gql`
-          {
-            activeDonors {
-              nodes {
-                id
-              }
-            }
-          }
-        `,
-        data: {
-          activeDonors: {
-            nodes: ids.map((id) => {
-              return { id }
-            }),
-          },
-        },
-      }
-    }
-
-    function createUsersHandler(ids: number[]) {
-      return ids.map((id) => {
-        return createUuidHandler({ ...user, id })
-      })
-    }
-
-    test('extract user ids from first column with omitting the header', async () => {
-      givenActiveDonorsSpreadsheet([['Header', '1', '2', '3']])
-      global.server.use(...createUsersHandler([1, 2, 3]))
-      await assertSuccessfulGraphQLQuery({
-        ...createActiveDonorsQueryExpectingIds([1, 2, 3]),
-        client,
-      })
-    })
-
     test('removes entries which are no valid uuids', async () => {
       givenActiveDonorsSpreadsheet([['Header', '23', 'foo', '-1', '', '1.5']])
-      global.server.use(...createUsersHandler([23]))
-      await assertSuccessfulGraphQLQuery({
-        ...createActiveDonorsQueryExpectingIds([23]),
-        client,
-      })
+
+      await expectActiveUserIds([23])
     })
 
     test('cell entries are trimmed of leading and trailing whitespaces', async () => {
       givenActiveDonorsSpreadsheet([['Header', ' 10 ', '  20']])
-      global.server.use(...createUsersHandler([10, 20]))
-      await assertSuccessfulGraphQLQuery({
-        ...createActiveDonorsQueryExpectingIds([10, 20]),
-        client,
-      })
+
+      await expectActiveUserIds([10, 20])
     })
 
     test('returns empty list when spreadsheet is empty', async () => {
       givenActiveDonorsSpreadsheet([[]])
-      await assertSuccessfulGraphQLQuery({
-        ...createActiveDonorsQueryExpectingIds([]),
-        client,
-      })
+
+      await expectActiveUserIds([])
     })
 
     test('returns empty list when an error occured while accessing the spreadsheet', async () => {
       givenSpreadheetApi(returnsJson({}))
-      await assertSuccessfulGraphQLQuery({
-        ...createActiveDonorsQueryExpectingIds([]),
-        client,
-      })
+
+      await expectActiveUserIds([])
     })
   })
+
+  function expectActiveUserIds(ids: number[]) {
+    global.server.use(...ids.map((id) => createUuidHandler({ ...user, id })))
+
+    return assertSuccessfulGraphQLQuery({
+      query: gql`
+        query {
+          activeDonors {
+            nodes {
+              __typename
+              id
+            }
+          }
+        }
+      `,
+      data: {
+        activeDonors: {
+          nodes: ids.map((id) => {
+            return { __typename: 'User', id }
+          }),
+        },
+      },
+      client,
+    })
+  }
 })
 
 describe('endpoint activeReviewers', () => {
