@@ -40,13 +40,13 @@ export interface QuerySpecWithHelpers<P, R> extends QuerySpec<P, R> {
   ) => Promise<void>
 }
 
-export type PayloadArrayOrPayload<P> =
-  | {
-      payload: P
-    }
-  | {
-      payloads: P[]
-    }
+interface Payload<P> {
+  payload: P
+}
+interface ArrayPayload<P> {
+  payloads: P[]
+}
+export type PayloadArrayOrPayload<P> = Payload<P> | ArrayPayload<P>
 
 export type Query<P, R> = (P extends undefined
   ? () => Promise<R>
@@ -101,19 +101,9 @@ export function createQuery<P, R>(
 }
 
 export function isQuery(query: unknown): query is Query<unknown, unknown> {
-  return (query as Query<unknown, unknown>)?._querySpec !== undefined
+  return R.has('_querySpec', query) && query._querySpec !== undefined
 }
 
 function toPayloadArray<P>(arg: PayloadArrayOrPayload<P>): P[] {
-  const generalizedArgs:
-    | {
-        payload: P
-        payloads?: undefined
-      }
-    | {
-        payload?: undefined
-        payloads: P[]
-      } = arg
-
-  return generalizedArgs.payloads ?? [generalizedArgs.payload]
+  return R.has('payloads', arg) ? arg.payloads : [arg.payload]
 }
