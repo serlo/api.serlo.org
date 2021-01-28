@@ -63,10 +63,20 @@ export function createSerloModel({
     })
   }
 
-  async function get({ path }: { path: string }): Promise<Response> {
-    return await fetch(
+  async function get({
+    path,
+    expectedStatusCodes,
+  }: {
+    path: string
+    expectedStatusCodes: number[]
+  }): Promise<Response> {
+    const response = await fetch(
       `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`
     )
+    if (!expectedStatusCodes.includes(response.status)) {
+      throw new Error(`${response.status}: ${response.statusText}`)
+    }
+    return response
   }
 
   async function postViaDatabaseLayer({
@@ -122,10 +132,8 @@ export function createSerloModel({
       getCurrentValue: async ({ id }) => {
         const response = await get({
           path: `/uuid/${id}`,
+          expectedStatusCodes: [200, 404],
         })
-        if (response.status !== 200 && response.status !== 404) {
-          throw new Error(`${response.status}: ${response.statusText}`)
-        }
         const uuid = (await response.json()) as AbstractUuidPayload | null
         return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
       },
@@ -179,10 +187,8 @@ export function createSerloModel({
       getCurrentValue: async () => {
         const response = await get({
           path: '/user/active-authors',
+          expectedStatusCodes: [200],
         })
-        if (response.status !== 200) {
-          throw new Error(`${response.status}: ${response.statusText}`)
-        }
         return (await response.json()) as number[]
       },
       maxAge: { hour: 1 },
@@ -203,10 +209,8 @@ export function createSerloModel({
       getCurrentValue: async () => {
         const response = await get({
           path: '/user/active-reviewers',
+          expectedStatusCodes: [200],
         })
-        if (response.status !== 200) {
-          throw new Error(`${response.status}: ${response.statusText}`)
-        }
         return (await response.json()) as number[]
       },
       maxAge: { hour: 1 },
@@ -229,10 +233,8 @@ export function createSerloModel({
       getCurrentValue: async ({ instance }) => {
         const response = await get({
           path: `/navigation/${instance}`,
+          expectedStatusCodes: [200],
         })
-        if (response.status !== 200) {
-          throw new Error(`${response.status}: ${response.statusText}`)
-        }
         return (await response.json()) as NavigationPayload
       },
       maxAge: { hour: 1 },
@@ -325,10 +327,10 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ path, instance }) => {
-        const response = await get({ path: `/alias/${instance}${path}` })
-        if (response.status !== 200 && response.status !== 404) {
-          throw new Error(`${response.status}: ${response.statusText}`)
-        }
+        const response = await get({
+          path: `/alias/${instance}${path}`,
+          expectedStatusCodes: [200, 404],
+        })
         return (await response.json()) as AliasPayload | null
       },
       maxAge: { hour: 1 },
@@ -353,10 +355,8 @@ export function createSerloModel({
       getCurrentValue: async ({ id }) => {
         const response = await get({
           path: `/license/${id}`,
+          expectedStatusCodes: [200, 404],
         })
-        if (response.status !== 200 && response.status !== 404) {
-          throw new Error(`${response.status}: ${response.statusText}`)
-        }
         return (await response.json()) as License
       },
       maxAge: { day: 1 },
@@ -382,10 +382,8 @@ export function createSerloModel({
       getCurrentValue: async ({ id }) => {
         const response = await get({
           path: `/event/${id}`,
+          expectedStatusCodes: [200, 404],
         })
-        if (response.status !== 200 && response.status !== 404) {
-          throw new Error(`${response.status}: ${response.statusText}`)
-        }
         const notificationEvent = (await response.json()) as AbstractNotificationEventPayload
         return isUnsupportedNotificationEvent(notificationEvent)
           ? null
@@ -411,10 +409,8 @@ export function createSerloModel({
       getCurrentValue: async ({ id }) => {
         const response = await get({
           path: `/notifications/${id}`,
+          expectedStatusCodes: [200],
         })
-        if (response.status !== 200) {
-          throw new Error(`${response.status}: ${response.statusText}`)
-        }
         return (await response.json()) as NotificationsPayload
       },
       maxAge: { hour: 1 },
@@ -469,10 +465,8 @@ export function createSerloModel({
       getCurrentValue: async ({ id }) => {
         const response = await get({
           path: `/subscriptions/${id}`,
+          expectedStatusCodes: [200],
         })
-        if (response.status !== 200) {
-          throw new Error(`${response.status}: ${response.statusText}`)
-        }
         return (await response.json()) as SubscriptionsPayload
       },
       maxAge: { hour: 1 },
@@ -495,10 +489,8 @@ export function createSerloModel({
       getCurrentValue: async ({ id }) => {
         const response = await get({
           path: `/threads/${id}`,
+          expectedStatusCodes: [200],
         })
-        if (response.status !== 200) {
-          throw new Error(`${response.status}: ${response.statusText}`)
-        }
         return (await response.json()) as ThreadsPayload
       },
       maxAge: { hour: 1 },
