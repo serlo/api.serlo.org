@@ -35,8 +35,7 @@ export const video: VideoPayload = {
   id: 16078,
   trashed: false,
   instance: Instance.De,
-  alias:
-    '/mathe/artikel-und-videos-aus-serlo1/waagrechte-und-schiefe-asymptote',
+  alias: '/mathe/16078/waagrechte-und-schiefe-asymptote',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 16114,
   revisionIds: [16114],
