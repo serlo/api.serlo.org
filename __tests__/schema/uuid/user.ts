@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
-import { rest } from 'msw'
 
 import {
   article,
@@ -34,7 +33,11 @@ import {
   createJsonHandler,
   createTestClient,
   createUuidHandler,
+  givenSpreadheetApi,
+  givenSpreadsheet,
+  returnsJson,
 } from '../../__utils__'
+import { MajorDimension } from '~/model'
 import { UuidPayload } from '~/schema/uuid'
 import { Instance } from '~/types'
 
@@ -231,7 +234,7 @@ describe('User', () => {
     `
 
     test('by id (w/ activeDonor when user is an active donor)', async () => {
-      global.server.use(createActiveDonorsHandler([user]))
+      givenActiveDonors([user])
 
       await assertSuccessfulGraphQLQuery({
         query,
@@ -244,7 +247,7 @@ describe('User', () => {
     })
 
     test('by id (w/ activeDonor when user is not an active donor', async () => {
-      global.server.use(createActiveDonorsHandler([]))
+      givenActiveDonors([])
 
       await assertSuccessfulGraphQLQuery({
         query,
@@ -399,10 +402,9 @@ describe('endpoint activeDonors', () => {
   `
 
   test('returns list of users', async () => {
-    global.server.use(
-      createUuidHandler(user2),
-      createActiveDonorsHandler([user, user2])
-    )
+    givenActiveDonors([user, user2])
+    global.server.use(createUuidHandler(user2))
+
     await assertSuccessfulGraphQLQuery({
       query: activeDonorsQuery,
       data: {
@@ -419,10 +421,9 @@ describe('endpoint activeDonors', () => {
   })
 
   test('returned list only contains user', async () => {
-    global.server.use(
-      createUuidHandler(article),
-      createActiveDonorsHandler([user, article])
-    )
+    givenActiveDonors([user, article])
+    global.server.use(createUuidHandler(article))
+
     await assertSuccessfulGraphQLQuery({
       query: activeDonorsQuery,
       data: {
@@ -464,10 +465,8 @@ describe('endpoint activeDonors', () => {
     }
 
     test('extract user ids from first column with omitting the header', async () => {
-      global.server.use(
-        ...createUsersHandler([1, 2, 3]),
-        createActiveDonorsSpreadsheetHandler([['Header', '1', '2', '3']])
-      )
+      givenActiveDonorsSpreadsheet([['Header', '1', '2', '3']])
+      global.server.use(...createUsersHandler([1, 2, 3]))
       await assertSuccessfulGraphQLQuery({
         ...createActiveDonorsQueryExpectingIds([1, 2, 3]),
         client,
@@ -475,12 +474,8 @@ describe('endpoint activeDonors', () => {
     })
 
     test('removes entries which are no valid uuids', async () => {
-      global.server.use(
-        ...createUsersHandler([23]),
-        createActiveDonorsSpreadsheetHandler([
-          ['Header', '23', 'foo', '-1', '', '1.5'],
-        ])
-      )
+      givenActiveDonorsSpreadsheet([['Header', '23', 'foo', '-1', '', '1.5']])
+      global.server.use(...createUsersHandler([23]))
       await assertSuccessfulGraphQLQuery({
         ...createActiveDonorsQueryExpectingIds([23]),
         client,
@@ -488,10 +483,8 @@ describe('endpoint activeDonors', () => {
     })
 
     test('cell entries are trimmed of leading and trailing whitespaces', async () => {
-      global.server.use(
-        ...createUsersHandler([10, 20]),
-        createActiveDonorsSpreadsheetHandler([['Header', ' 10 ', '  20']])
-      )
+      givenActiveDonorsSpreadsheet([['Header', ' 10 ', '  20']])
+      global.server.use(...createUsersHandler([10, 20]))
       await assertSuccessfulGraphQLQuery({
         ...createActiveDonorsQueryExpectingIds([10, 20]),
         client,
@@ -499,7 +492,7 @@ describe('endpoint activeDonors', () => {
     })
 
     test('returns empty list when spreadsheet is empty', async () => {
-      global.server.use(createActiveDonorsSpreadsheetHandler([[]]))
+      givenActiveDonorsSpreadsheet([[]])
       await assertSuccessfulGraphQLQuery({
         ...createActiveDonorsQueryExpectingIds([]),
         client,
@@ -507,7 +500,7 @@ describe('endpoint activeDonors', () => {
     })
 
     test('returns empty list when an error occured while accessing the spreadsheet', async () => {
-      global.server.use(createActiveDonorsSpreadsheetResponseHandler({}))
+      givenSpreadheetApi(returnsJson({}))
       await assertSuccessfulGraphQLQuery({
         ...createActiveDonorsQueryExpectingIds([]),
         client,
@@ -642,29 +635,16 @@ function createActiveReviewersHandlersResponseHandler(body: unknown) {
   })
 }
 
-function createActiveDonorsHandler(users: UuidPayload[]) {
-  return createActiveDonorsSpreadsheetHandler([
-    ['Header', ...users.map((user) => user.id.toString())],
-  ])
+function givenActiveDonors(users: UuidPayload[]) {
+  const values = [['Header', ...users.map((user) => user.id.toString())]]
+  givenActiveDonorsSpreadsheet(values)
 }
 
-function createActiveDonorsSpreadsheetHandler(values: string[][]) {
-  const body = {
+function givenActiveDonorsSpreadsheet(values: string[][]) {
+  givenSpreadsheet({
+    spreadsheetId: process.env.GOOGLE_SPREADSHEET_API_ACTIVE_DONORS,
     range: 'Tabellenblatt1!A:A',
-    majorDimension: 'COLUMNS',
+    majorDimension: MajorDimension.Columns,
     values,
-  }
-  return createActiveDonorsSpreadsheetResponseHandler(body)
-}
-
-function createActiveDonorsSpreadsheetResponseHandler(
-  body: Record<string, unknown>
-) {
-  const url =
-    `https://sheets.googleapis.com/v4/spreadsheets/` +
-    `${process.env.GOOGLE_SPREADSHEET_API_ACTIVE_DONORS}/values/Tabellenblatt1!A:A` +
-    `?majorDimension=COLUMNS&key=${process.env.GOOGLE_SPREADSHEET_API_SECRET}`
-  return rest.get(url, (_req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(body))
   })
 }
