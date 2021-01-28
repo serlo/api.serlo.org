@@ -19,12 +19,17 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { either as E, option as O, pipeable } from 'fp-ts'
+import {
+  either as E,
+  option as O,
+  taskEither as TE,
+  function as F,
+} from 'fp-ts'
 import * as t from 'io-ts'
 import { nonEmptyArray } from 'io-ts-types/lib/nonEmptyArray'
 import { failure } from 'io-ts/lib/PathReporter'
-import fetch from 'node-fetch'
-import * as R from 'ramda'
+import fetch, { Response } from 'node-fetch'
+import R from 'ramda'
 import { URL } from 'url'
 
 import { Environment } from '~/internals/environment'
@@ -67,50 +72,56 @@ export function createGoogleSpreadsheetApiModel({
       getCurrentValue: async (args) => {
         const { spreadsheetId, range } = args
         const majorDimension = args.majorDimension ?? MajorDimension.Rows
+        const apiSecret = process.env.GOOGLE_SPREADSHEET_API_SECRET
+        const url = new URL(
+          `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`
+        )
+        url.searchParams.append('majorDimension', majorDimension)
+        url.searchParams.append('key', apiSecret)
 
-        let result: E.Either<ErrorEvent, CellValues>
-
-        try {
-          const url = new URL(
-            `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`
-          )
-          url.searchParams.append('majorDimension', majorDimension)
-          url.searchParams.append(
-            'key',
-            process.env.GOOGLE_SPREADSHEET_API_SECRET
-          )
-
-          const response = await fetch(url.toString())
-
-          result = pipeable.pipe(
-            await response.json(),
-            (res) => ValueRange.decode(res),
-            E.mapLeft((errors) => {
-              return {
-                message: `invalid response while accessing spreadsheet "${spreadsheetId}"`,
-                contexts: { response, validationErrors: failure(errors) },
+        return await F.pipe(
+          TE.fromTask<ErrorEvent, Response>(() => fetch(url.href)),
+          TE.chain((response) =>
+            TE.tryCatch<ErrorEvent, unknown>(
+              () => response.json(),
+              (error) => {
+                return {
+                  message: 'malformed json was returned',
+                  exception: E.toError(error),
+                }
               }
-            }),
-            E.map((v) => v.values),
-            E.chain(
-              E.fromNullable({
-                message: `range "${range}" of spreadsheet "${spreadsheetId}" is empty`,
-              })
+            )
+          ),
+          TE.chain(
+            F.flow(
+              (data) => ValueRange.decode(data),
+              E.mapLeft((errors) => {
+                return {
+                  message: `invalid response was returned`,
+                  contexts: { validationErrors: failure(errors) },
+                }
+              }),
+              E.map((v) => v.values),
+              E.chain(
+                E.fromNullable<ErrorEvent>({
+                  message: `returned range is empty`,
+                })
+              ),
+              TE.fromEither
+            )
+          ),
+          TE.mapLeft<ErrorEvent, ErrorEvent>((errorEvent) =>
+            R.mergeDeepRight(
+              {
+                context: {
+                  function: 'dataSources.spreadSheetapi.getValues()',
+                  args,
+                },
+              },
+              errorEvent
             )
           )
-        } catch (error) {
-          const exception =
-            error instanceof Error ? error : new Error(JSON.stringify(error))
-
-          result = E.left({
-            message: `An error occurred while accessing spreadsheet "${spreadsheetId}"`,
-            exception,
-          })
-        }
-
-        return E.mapLeft((event: ErrorEvent) =>
-          R.mergeDeepRight({ contexts: { args } }, event)
-        )(result)
+        )()
       },
       maxAge: { hour: 1 },
       getKey: (args) => {
