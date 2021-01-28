@@ -21,7 +21,7 @@
  */
 import { gql } from 'apollo-server'
 
-import { article, comment, user } from '../../__fixtures__'
+import { article, comment3, user } from '../../__fixtures__'
 import { createTestClient } from '../../__tests__/__utils__'
 import { mockEndpointsForThreads } from '../../__tests__/schema/thread/thread'
 import {
@@ -37,8 +37,8 @@ test('/api/thread/set-archive', async () => {
     name: 'set "archived" state of a thread',
     given: `there exists a thread with a first comment with an id of 100 and user with id ${user.id} is authenticated`,
     path: '/api/thread/set-archive',
-    requestBody: { id: comment.id, userId: user.id, archived: true },
-    responseBody: { ...comment, archived: true },
+    requestBody: { id: comment3.id, userId: user.id, archived: true },
+    responseBody: { ...comment3, archived: true },
   })
   await assertSuccessfulGraphQLMutation({
     mutation: gql`
@@ -50,11 +50,11 @@ test('/api/thread/set-archive', async () => {
         }
       }
     `,
-    variables: { input: { id: encodeThreadId(comment.id), archived: true } },
+    variables: { input: { id: encodeThreadId(comment3.id), archived: true } },
     data: { thread: { setThreadArchived: { success: true } } },
   })
 
-  mockEndpointsForThreads(article, [[comment]])
+  mockEndpointsForThreads(article, [[comment3]])
   await assertSuccessfulGraphQLQuery({
     query: gql`
       query($id: Int) {
