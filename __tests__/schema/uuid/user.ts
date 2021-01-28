@@ -35,7 +35,9 @@ import {
   createUuidHandler,
   givenSpreadheetApi,
   givenSpreadsheet,
+  hasInternalServerError,
   returnsJson,
+  returnsMalformedJson,
 } from '../../__utils__'
 import { MajorDimension } from '~/model'
 import { UuidPayload } from '~/schema/uuid'
@@ -411,16 +413,30 @@ describe('endpoint activeDonors', () => {
       await expectActiveUserIds([10, 20])
     })
 
-    test('returns empty list when spreadsheet is empty', async () => {
-      givenActiveDonorsSpreadsheet([[]])
+    describe('returns empty list', () => {
+      test('when spreadsheet is empty', async () => {
+        givenActiveDonorsSpreadsheet([[]])
 
-      await expectActiveUserIds([])
-    })
+        await expectActiveUserIds([])
+      })
 
-    test('returns empty list when an error occured while accessing the spreadsheet', async () => {
-      givenSpreadheetApi(returnsJson({}))
+      test('when spreadsheet api responds with invalid json data', async () => {
+        givenSpreadheetApi(returnsJson({}))
 
-      await expectActiveUserIds([])
+        await expectActiveUserIds([])
+      })
+
+      test('when spreadsheet api responds with malformed json', async () => {
+        givenSpreadheetApi(returnsMalformedJson())
+
+        await expectActiveUserIds([])
+      })
+
+      test('when spreadsheet api has an internal server error', async () => {
+        givenSpreadheetApi(hasInternalServerError())
+
+        await expectActiveUserIds([])
+      })
     })
   })
 
