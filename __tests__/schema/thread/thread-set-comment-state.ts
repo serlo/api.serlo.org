@@ -76,10 +76,11 @@ function mockSetUuidStateEndpoint() {
       trashed: boolean
       ids: number[]
     }>(getDatabaseLayerUrl({ path: '/set-uuid-state' }), (req, res, ctx) => {
-      const { userId, trashed } = req.body
+      const { userId } = req.body
+
       if (userId !== user.id) return res(ctx.status(403))
 
-      return res(ctx.json({ ...comment, trashed: trashed }))
+      return res(ctx.status(200))
     })
   )
 }

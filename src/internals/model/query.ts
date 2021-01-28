@@ -20,7 +20,9 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { option as O, pipeable } from 'fp-ts'
+import * as R from 'ramda'
 
+import { FunctionOrValue } from '../cache'
 import { Environment } from '../environment'
 import { Time } from '../swr-queue'
 
@@ -32,10 +34,24 @@ export interface QuerySpec<P, R> {
   getPayload: (key: string) => O.Option<P>
 }
 
+export interface QuerySpecWithHelpers<P, R> extends QuerySpec<P, R> {
+  setCache: (
+    args: PayloadArrayOrPayload<P> & FunctionOrValue<R>
+  ) => Promise<void>
+}
+
+export type PayloadArrayOrPayload<P> =
+  | {
+      payload: P
+    }
+  | {
+      payloads: P[]
+    }
+
 export type Query<P, R> = (P extends undefined
   ? () => Promise<R>
   : (payload: P) => Promise<R>) & {
-  _querySpec: QuerySpec<P, R>
+  _querySpec: QuerySpecWithHelpers<P, R>
 }
 
 export function createQuery<P, R>(
@@ -64,10 +80,40 @@ export function createQuery<P, R>(
       )
     )
   }
-  query._querySpec = spec
+
+  const querySpecWithHelpers: QuerySpecWithHelpers<P, R> = {
+    ...spec,
+    async setCache(args) {
+      await Promise.all(
+        R.map(async (payload) => {
+          await environment.cache.set({
+            key: spec.getKey(payload),
+            ...args,
+          })
+        }, toPayloadArray(args))
+      )
+    },
+  }
+
+  query._querySpec = querySpecWithHelpers
+
   return (query as unknown) as Query<P, R>
 }
 
 export function isQuery(query: unknown): query is Query<unknown, unknown> {
   return (query as Query<unknown, unknown>)?._querySpec !== undefined
+}
+
+function toPayloadArray<P>(arg: PayloadArrayOrPayload<P>): P[] {
+  const generalizedArgs:
+    | {
+        payload: P
+        payloads?: undefined
+      }
+    | {
+        payload?: undefined
+        payloads: P[]
+      } = arg
+
+  return generalizedArgs.payloads ?? [generalizedArgs.payload]
 }

@@ -25,7 +25,6 @@ import { option as O } from 'fp-ts'
 import { user as currentUser, user2 as staleUser } from '../../__fixtures__'
 import { createUuidHandler } from '../__utils__'
 import { Environment } from '~/internals/environment'
-import { createFetchHelpersFromNodeFetch } from '~/internals/model'
 import {
   createSwrQueue,
   createSwrQueueWorker,
@@ -61,7 +60,6 @@ afterAll(async () => {
 describe('createQuery', () => {
   const model = createSerloModel({
     environment,
-    fetchHelpers: createFetchHelpersFromNodeFetch(),
   })
   const payload = { id: currentUser.id }
   const key = model.getUuid._querySpec.getKey(payload)

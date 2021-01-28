@@ -19,18 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { ForbiddenError } from 'apollo-server'
 import { option as O } from 'fp-ts'
 import jwt from 'jsonwebtoken'
+import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
 
 import { Service } from '~/internals/auth'
 import { Environment } from '~/internals/environment'
-import {
-  createHelper,
-  createMutation,
-  createQuery,
-  FetchHelpers,
-} from '~/internals/model'
+import { createHelper, createMutation, createQuery } from '~/internals/model'
 import { isInstance } from '~/schema/instance'
 import {
   AbstractNotificationEventPayload,
@@ -43,22 +40,20 @@ import {
   AbstractUuidPayload,
   AliasPayload,
   decodePath,
+  DiscriminatorType,
   encodePath,
   EntityPayload,
   isUnsupportedUuid,
   Navigation,
   NavigationPayload,
   NodeData,
-  UuidPayload,
 } from '~/schema/uuid'
 import { Instance, License, ThreadCreateThreadInput } from '~/types'
 
 export function createSerloModel({
   environment,
-  fetchHelpers,
 }: {
   environment: Environment
-  fetchHelpers: FetchHelpers
 }) {
   function getToken() {
     return jwt.sign({}, process.env.SERLO_ORG_SECRET, {
@@ -68,26 +63,42 @@ export function createSerloModel({
     })
   }
 
-  function get<T>({ path }: { path: string }): Promise<T> {
-    return fetchHelpers.get(
+  async function get({
+    path,
+    expectedStatusCodes,
+  }: {
+    path: string
+    expectedStatusCodes: number[]
+  }): Promise<Response> {
+    const response = await fetch(
       `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`
     )
+    if (!expectedStatusCodes.includes(response.status)) {
+      throw new Error(`${response.status}: ${response.statusText}`)
+    }
+    return response
   }
 
-  function postViaDatabaseLayer<T>({
+  async function postViaDatabaseLayer({
     path,
     body,
   }: {
     path: string
     body: Record<string, unknown>
-  }): Promise<T> {
-    return fetchHelpers.post(
+  }): Promise<Response> {
+    return await fetch(
       `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`,
-      body
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
     )
   }
 
-  function post<T>({
+  async function postViaLegacySerlo({
     path,
     instance = Instance.De,
     body,
@@ -95,21 +106,35 @@ export function createSerloModel({
     path: string
     instance?: Instance
     body: Record<string, unknown>
-  }): Promise<T> {
-    return fetchHelpers.post(
+  }): Promise<Response> {
+    const response = await fetch(
       `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
-      body,
-      { headers: { Authorization: `Serlo Service=${getToken()}` } }
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          Authorization: `Serlo Service=${getToken()}`,
+          'Content-Type': 'application/json',
+        },
+      }
     )
+    if (response.status === 403) {
+      throw new ForbiddenError(
+        'You are not allowed to set the notification state'
+      )
+    }
+    return response
   }
 
   const getUuid = createQuery<{ id: number }, AbstractUuidPayload | null>(
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        const uuid = await get<AbstractUuidPayload | null>({
+        const response = await get({
           path: `/uuid/${id}`,
+          expectedStatusCodes: [200, 404],
         })
+        const uuid = (await response.json()) as AbstractUuidPayload | null
         return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
       },
       maxAge: { hour: 1 },
@@ -131,45 +156,28 @@ export function createSerloModel({
       userId: number
       trashed: boolean
     },
-    | {
-        success: true
-      }
-    | {
-        success: false
-        error: unknown
-      }
+    void
   >({
     mutate: async ({ ids, userId, trashed }) => {
-      try {
-        await postViaDatabaseLayer<{ success: true }>({
-          path: `/set-uuid-state`,
-          body: { ids, userId, trashed },
-        })
-        await Promise.all(
-          ids.map(
-            async (id): Promise<void> => {
-              await environment.cache.set<UuidPayload>({
-                key: getUuid._querySpec.getKey({ id }),
-                // eslint-disable-next-line @typescript-eslint/require-await
-                async getValue(value) {
-                  if (value === undefined || value.trashed === trashed) {
-                    return undefined
-                  }
-                  return { ...value, trashed }
-                },
-              })
-            }
-          )
-        )
-        return {
-          success: true,
-        }
-      } catch (e) {
-        return {
-          success: false,
-          error: e,
-        }
+      const response = await postViaDatabaseLayer({
+        path: '/set-uuid-state',
+        body: { ids, userId, trashed },
+      })
+      if (response.status !== 200) {
+        throw new Error(`${response.status}: ${response.statusText}`)
       }
+      await getUuid._querySpec.setCache({
+        payloads: ids.map((id) => {
+          return { id }
+        }),
+        // eslint-disable-next-line @typescript-eslint/require-await
+        async getValue(current) {
+          if (!current || current.trashed === trashed) {
+            return
+          }
+          return { ...current, trashed }
+        },
+      })
     },
   })
 
@@ -177,9 +185,11 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async () => {
-        return await get<number[]>({
+        const response = await get({
           path: '/user/active-authors',
+          expectedStatusCodes: [200],
         })
+        return (await response.json()) as number[]
       },
       maxAge: { hour: 1 },
       getKey: () => {
@@ -197,9 +207,11 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async () => {
-        return await get<number[]>({
+        const response = await get({
           path: '/user/active-reviewers',
+          expectedStatusCodes: [200],
         })
+        return (await response.json()) as number[]
       },
       maxAge: { hour: 1 },
       getKey: () => {
@@ -219,9 +231,11 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ instance }) => {
-        return await get<NavigationPayload>({
+        const response = await get({
           path: `/navigation/${instance}`,
+          expectedStatusCodes: [200],
         })
+        return (await response.json()) as NavigationPayload
       },
       maxAge: { hour: 1 },
       getKey: ({ instance }) => {
@@ -313,7 +327,11 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ path, instance }) => {
-        return get({ path: `/alias/${instance}${path}` })
+        const response = await get({
+          path: `/alias/${instance}${path}`,
+          expectedStatusCodes: [200, 404],
+        })
+        return (await response.json()) as AliasPayload | null
       },
       maxAge: { hour: 1 },
       getKey: ({ path, instance }) => {
@@ -335,7 +353,11 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        return get({ path: `/license/${id}` })
+        const response = await get({
+          path: `/license/${id}`,
+          expectedStatusCodes: [200, 404],
+        })
+        return (await response.json()) as License
       },
       maxAge: { day: 1 },
       getKey: ({ id }) => {
@@ -358,9 +380,11 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        const notificationEvent = await get<AbstractNotificationEventPayload>({
+        const response = await get({
           path: `/event/${id}`,
+          expectedStatusCodes: [200, 404],
         })
+        const notificationEvent = (await response.json()) as AbstractNotificationEventPayload
         return isUnsupportedNotificationEvent(notificationEvent)
           ? null
           : notificationEvent
@@ -383,14 +407,11 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        const payload = await get<NotificationsPayload>({
+        const response = await get({
           path: `/notifications/${id}`,
+          expectedStatusCodes: [200],
         })
-        return {
-          ...payload,
-          // Sometimes, Zend serializes an array as an object... This line ensures that we have an array.
-          notifications: Object.values(payload.notifications),
-        }
+        return (await response.json()) as NotificationsPayload
       },
       maxAge: { hour: 1 },
       getKey: ({ id }) => {
@@ -419,12 +440,16 @@ export function createSerloModel({
         //TODO: rewrite legacy endpoint so that it accepts an array directly
         ids.map(
           async (id): Promise<NotificationsPayload> => {
-            const value = await post<NotificationsPayload>({
+            const response = await postViaLegacySerlo({
               path: `/api/set-notification-state`,
               body: { id, userId, unread },
             })
-            await environment.cache.set({
-              key: getNotifications._querySpec.getKey({ id: userId }),
+            if (response.status !== 200) {
+              throw new Error(`${response.status}: ${response.statusText}`)
+            }
+            const value = (await response.json()) as NotificationsPayload
+            await getNotifications._querySpec.setCache({
+              payload: { id: userId },
               value,
             })
             return value
@@ -438,9 +463,11 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        return get({
+        const response = await get({
           path: `/subscriptions/${id}`,
+          expectedStatusCodes: [200],
         })
+        return (await response.json()) as SubscriptionsPayload
       },
       maxAge: { hour: 1 },
       getKey: ({ id }) => {
@@ -460,7 +487,11 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        return get({ path: `/threads/${id}` })
+        const response = await get({
+          path: `/threads/${id}`,
+          expectedStatusCodes: [200],
+        })
+        return (await response.json()) as ThreadsPayload
       },
       maxAge: { hour: 1 },
       getKey: ({ id }) => {
@@ -481,24 +512,28 @@ export function createSerloModel({
     CommentPayload | null
   >({
     mutate: async (payload) => {
-      const value = await post<CommentPayload | null>({
+      const response = await postViaLegacySerlo({
         path: `/api/thread/start-thread`,
         body: payload,
       })
+      if (response.status !== 200) {
+        throw new Error(`${response.status}: ${response.statusText}`)
+      }
+      const value = (await response.json()) as CommentPayload | null
 
       if (value !== null) {
-        await environment.cache.set<ThreadsPayload>({
-          key: getThreadIds._querySpec.getKey({ id: payload.objectId }),
-          getValue(current) {
-            if (current === undefined) return Promise.resolve(undefined)
+        await getThreadIds._querySpec.setCache({
+          payload: { id: payload.objectId },
+          // eslint-disable-next-line @typescript-eslint/require-await
+          async getValue(current) {
+            if (current === undefined) return
 
             current.firstCommentIds.push(value.id)
-            return Promise.resolve(current)
+            return current
           },
         })
-
-        await environment.cache.set({
-          key: getUuid._querySpec.getKey({ id: value.id }),
+        await getUuid._querySpec.setCache({
+          payload: { id: value.id },
           value,
         })
       }
@@ -511,23 +546,26 @@ export function createSerloModel({
     CommentPayload | null
   >({
     mutate: async (payload) => {
-      const value = await post<CommentPayload | null>({
+      const response = await postViaLegacySerlo({
         path: `/api/thread/comment-thread`,
         body: payload,
       })
+      if (response.status !== 200) {
+        throw new Error(`${response.status}: ${response.statusText}`)
+      }
+      const value = (await response.json()) as CommentPayload | null
       if (value !== null) {
-        await environment.cache.set({
-          key: getUuid._querySpec.getKey({ id: value.id }),
+        await getUuid._querySpec.setCache({
+          payload: { id: value.id },
           value,
         })
-
-        await environment.cache.set<CommentPayload>({
-          key: getUuid._querySpec.getKey({ id: payload.threadId }),
-          getValue(current) {
-            if (current === undefined) return Promise.resolve(undefined)
-
+        await getUuid._querySpec.setCache({
+          payload: { id: payload.threadId },
+          // eslint-disable-next-line @typescript-eslint/require-await
+          async getValue(current) {
+            if (!current || !isCommentPayload(current)) return
             current.childrenIds.push(value.id)
-            return Promise.resolve(current)
+            return current
           },
         })
       }
@@ -540,16 +578,20 @@ export function createSerloModel({
     CommentPayload | null
   >({
     mutate: async (payload) => {
-      const value = await post<CommentPayload | null>({
+      const response = await postViaLegacySerlo({
         path: '/api/thread/set-archive',
         body: payload,
       })
-      if (value !== null)
-        await environment.cache.set({
-          key: getUuid._querySpec.getKey({ id: value.id }),
+      if (response.status !== 200) {
+        throw new Error(`${response.status}: ${response.statusText}`)
+      }
+      const value = (await response.json()) as CommentPayload | null
+      if (value !== null) {
+        await getUuid._querySpec.setCache({
+          payload: { id: value.id },
           value,
         })
-
+      }
       return value
     },
   })
@@ -593,4 +635,11 @@ function getInstanceFromKey(key: string): Instance | null {
   return key.startsWith(`${instance}.serlo.org`) && isInstance(instance)
     ? instance
     : null
+}
+
+function isCommentPayload(value: unknown): value is CommentPayload {
+  return (
+    typeof value === 'object' &&
+    (value as AbstractUuidPayload).__typename === DiscriminatorType.Comment
+  )
 }
