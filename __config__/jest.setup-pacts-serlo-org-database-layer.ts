@@ -23,8 +23,6 @@ import { Pact } from '@pact-foundation/pact'
 import { rest } from 'msw'
 import fetch from 'node-fetch'
 import path from 'path'
-import rimraf from 'rimraf'
-import util from 'util'
 
 import { createTestClient } from '../__tests__/__utils__'
 import {
@@ -37,8 +35,6 @@ import {
 import { Service } from '~/internals/auth'
 
 const pactDir = path.join(__dirname, '..', 'pacts')
-
-const rm = util.promisify(rimraf)
 
 const port = 9009
 
@@ -65,7 +61,7 @@ beforeEach(async () => {
       new RegExp(process.env.SERLO_ORG_DATABASE_LAYER_HOST.replace('.', '\\.')),
       async (req, res, ctx) => {
         const url = req.url
-        const pactRes = await fetch(`http://localhost:${port}/${url.pathname}`)
+        const pactRes = await fetch(`http://localhost:${port}${url.pathname}`)
         return res(ctx.status(pactRes.status), ctx.json(await pactRes.json()))
       }
     ),
@@ -73,20 +69,17 @@ beforeEach(async () => {
       new RegExp(process.env.SERLO_ORG_DATABASE_LAYER_HOST.replace('.', '\\.')),
       async (req, res, ctx) => {
         const url = req.url
-        const pactRes = await fetch(
-          `http://localhost:${port}/${url.pathname}`,
-          {
-            method: 'POST',
-            body:
-              typeof req.body === 'object'
-                ? JSON.stringify(req.body)
-                : req.body,
-            headers: {
-              'Content-Type': req.headers.get('Content-Type')!,
-            },
-          }
-        )
-        return res(ctx.status(pactRes.status), ctx.json(await pactRes.json()))
+        const pactRes = await fetch(`http://localhost:${port}${url.pathname}`, {
+          method: 'POST',
+          body:
+            typeof req.body === 'object' ? JSON.stringify(req.body) : req.body,
+          headers: {
+            'Content-Type': req.headers.get('Content-Type')!,
+          },
+        })
+        return pactRes.bodyUsed
+          ? res(ctx.status(pactRes.status), ctx.json(await pactRes.json()))
+          : res(ctx.status(pactRes.status))
       }
     )
   )

@@ -88,7 +88,7 @@ function mockSetUuidStateEndpoint() {
 
       if (userId !== user.id) return res(ctx.status(403))
 
-      return res(ctx.json({ success: true }))
+      return res(ctx.status(200))
     })
   )
 }

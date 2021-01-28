@@ -36,7 +36,6 @@ test('set-uuid-state', async () => {
     given: 'there exists a uuid with id 1855 that is not trashed',
     path: '/set-uuid-state',
     requestBody: { ids: [article.id], userId: user.id, trashed: true },
-    responseBody: { success: true },
   })
 
   await assertSuccessfulGraphQLMutation({
