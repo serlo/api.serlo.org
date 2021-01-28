@@ -22,4 +22,5 @@
 export * from './assertions'
 export * from './handlers'
 export * from './error-event'
+export * from './services'
 export * from './test-client'

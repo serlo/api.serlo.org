@@ -22,6 +22,10 @@
 import { SharedOptions } from 'msw/lib/types/sharedOptions'
 import { setupServer } from 'msw/node'
 
+import {
+  defaultSpreadsheetApi,
+  givenSpreadheetApi,
+} from '../__tests__/__utils__'
 import { createCache } from '~/internals/cache'
 import { Time, timeToMilliseconds } from '~/internals/swr-queue'
 import { Timer } from '~/internals/timer'
@@ -60,6 +64,8 @@ export async function createBeforeAll(options: SharedOptions) {
 }
 
 export async function createBeforeEach() {
+  givenSpreadheetApi(defaultSpreadsheetApi())
+
   await global.cache.flush()
   global.timer.flush()
 }
