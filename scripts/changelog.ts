@@ -536,6 +536,11 @@ async function exec(): Promise<void> {
         ['thread', 'Add `thread.setCommentState` mutation.'],
       ],
     },
+    {
+      tagName: 'v0.18.1',
+      date: '2021-01-28',
+      fixed: [['swr-queue', 'Only update cache when requests succeed.']],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
