@@ -43,7 +43,7 @@ export const solution: SolutionPayload = {
   id: 29648,
   trashed: false,
   instance: Instance.De,
-  alias: '/29648/29648',
+  alias: '/mathe/29648/29648',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 29652,
   revisionIds: [29652],

@@ -43,7 +43,7 @@ export const groupedExercise: GroupedExercisePayload = {
   id: 2219,
   trashed: false,
   instance: Instance.De,
-  alias: '/2219/2219',
+  alias: '/mathe/2219/2219',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 2220,
   revisionIds: [2220],

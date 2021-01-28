@@ -35,7 +35,7 @@ export const applet: AppletPayload = {
   id: 35596,
   trashed: false,
   instance: Instance.En,
-  alias: '/math/example-content/example-topic-1/example-applet',
+  alias: '/math/35596/example-applet',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 35597,
   revisionIds: [35597],

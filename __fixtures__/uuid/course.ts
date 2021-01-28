@@ -35,8 +35,7 @@ export const course: CoursePayload = {
   id: 18514,
   trashed: false,
   instance: Instance.De,
-  alias:
-    '/mathe/geometrie/satzgruppe-des-pythagoras/ueberblick-zum-satz-des-pythagoras',
+  alias: '/mathe/18514/überblick-zum-satz-des-pythagoras',
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: 30713,
   revisionIds: [30713],
