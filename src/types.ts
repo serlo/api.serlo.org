@@ -526,7 +526,7 @@ export type ThreadCreateCommentResponse = {
 };
 
 export type ThreadSetThreadArchivedInput = {
-  id: Scalars['String'];
+  id: Array<Scalars['String']>;
   archived: Scalars['Boolean'];
 };
 

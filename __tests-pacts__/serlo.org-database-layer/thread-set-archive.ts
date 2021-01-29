@@ -25,21 +25,21 @@ import { article, comment3, user } from '../../__fixtures__'
 import { createTestClient } from '../../__tests__/__utils__'
 import { mockEndpointsForThreads } from '../../__tests__/schema/thread/thread'
 import {
-  assertSuccessfulGraphQLQuery,
   addMutationInteraction,
   assertSuccessfulGraphQLMutation,
 } from '../__utils__'
 import { encodeThreadId } from '~/schema/thread'
 
-test('/api/thread/set-archive', async () => {
+test('/thread/set-archive', async () => {
   global.client = createTestClient({ userId: user.id })
+
   await addMutationInteraction({
     name: 'set "archived" state of a thread',
-    given: `there exists a thread with a first comment with an id of 100 and user with id ${user.id} is authenticated`,
-    path: '/api/thread/set-archive',
-    requestBody: { id: comment3.id, userId: user.id, archived: true },
-    responseBody: { ...comment3, archived: true },
+    given: `there exists a thread with a first comment with an id of ${comment3.id} and user with id ${user.id} is authenticated`,
+    path: '/thread/set-archive',
+    requestBody: { ids: [comment3.id], userId: user.id, archived: true },
   })
+
   await assertSuccessfulGraphQLMutation({
     mutation: gql`
       mutation archiveThread($input: ThreadSetThreadArchivedInput!) {
@@ -55,21 +55,4 @@ test('/api/thread/set-archive', async () => {
   })
 
   mockEndpointsForThreads(article, [[comment3]])
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query($id: Int) {
-        uuid(id: $id) {
-          ... on ThreadAware {
-            threads {
-              nodes {
-                archived
-              }
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: article.id },
-    data: { uuid: { threads: { nodes: [{ archived: true }] } } },
-  })
 })
