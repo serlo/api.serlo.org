@@ -20,12 +20,9 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 /* eslint-disable import/no-unassigned-import */
-describe('POST /api/create-thread', () => {
+describe('POST /api/start-thread', () => {
   require('./start-thread')
 })
-describe('POST /api/create-thread', () => {
+describe('POST /api/comment-thread', () => {
   require('./comment-thread')
-})
-describe('POST /api/create-thread', () => {
-  require('./archive-comment')
 })
