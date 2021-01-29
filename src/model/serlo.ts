@@ -453,10 +453,9 @@ export function createSerloModel({
           const updated = current.notifications.map((notification) => {
             return {
               ...notification,
-              unread:
-                ids.indexOf(notification.id) > -1
-                  ? unread
-                  : notification.unread,
+              unread: ids.includes(notification.id)
+                ? unread
+                : notification.unread,
             }
           })
           return { ...current, notifications: updated }
