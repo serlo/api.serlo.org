@@ -126,14 +126,20 @@ export const resolvers: ThreadResolvers = {
         throw new ForbiddenError('You are not allowed to set the thread state.')
       }
       const { id, archived } = payload.input
-      const idNumber = decodeThreadId(id)
-      if (idNumber === null) {
-        throw new UserInputError(
-          'you need to provide a valid thread id (string)'
-        )
-      }
+      const ids = Array.isArray(id) ? id : [id]
+
+      const numberIds = ids.map((id) => {
+        const num = decodeThreadId(id)
+        if (num === null) {
+          throw new UserInputError(
+            'you need to provide a valid thread id (string)'
+          )
+        }
+        return num
+      })
+
       await dataSources.model.serlo.archiveThread({
-        ids: [idNumber],
+        ids: numberIds,
         archived,
         userId,
       })

@@ -56,6 +56,22 @@ describe('archive-comment', () => {
     })
   })
 
+  test('setting multiple ids', async () => {
+    const client = createTestClient({ userId: user.id })
+
+    await assertSuccessfulGraphQLMutation({
+      mutation,
+      client,
+      variables: {
+        input: {
+          id: [encodeThreadId(comment1.id), encodeThreadId(comment.id)],
+          archived: true,
+        },
+      },
+      data: { thread: { setThreadArchived: { success: true } } },
+    })
+  })
+
   test('cache gets updated as expected', async () => {
     const client = createTestClient({ userId: user.id })
     mockEndpointsForThreads(article, [[{ ...comment1, archived: true }]])
@@ -83,7 +99,7 @@ describe('archive-comment', () => {
       mutation,
       client,
       variables: {
-        input: { id: encodeThreadId(comment1.id), archived: true },
+        input: { id: encodeThreadId(comment1.id), archived: false },
       },
       data: { thread: { setThreadArchived: { success: true } } },
     })
@@ -92,7 +108,7 @@ describe('archive-comment', () => {
       query,
       client,
       variables: { id: article.id },
-      data: { uuid: { threads: { nodes: [{ archived: true }] } } },
+      data: { uuid: { threads: { nodes: [{ archived: false }] } } },
     })
   })
 })
@@ -106,11 +122,7 @@ function mockThreadSetArchiveEndpoint() {
     }>(
       getDatabaseLayerUrl({ path: '/thread/set-archive' }),
       (req, res, ctx) => {
-        const { ids, archived } = req.body
-
-        if (!ids.indexOf(comment.id)) return res(ctx.status(404))
-
-        return res(ctx.json({ ...comment, archived: archived }))
+        return res(ctx.status(200))
       }
     )
   )

@@ -35,7 +35,7 @@ import {
   NotificationsPayload,
 } from '~/schema/notification'
 import { SubscriptionsPayload } from '~/schema/subscription'
-import { CommentPayload, decodeThreadId, ThreadsPayload } from '~/schema/thread'
+import { CommentPayload, ThreadsPayload } from '~/schema/thread'
 import {
   AbstractUuidPayload,
   AliasPayload,
@@ -48,12 +48,7 @@ import {
   NavigationPayload,
   NodeData,
 } from '~/schema/uuid'
-import {
-  Instance,
-  License,
-  ThreadAware,
-  ThreadCreateThreadInput,
-} from '~/types'
+import { Instance, License, ThreadCreateThreadInput } from '~/types'
 
 export function createSerloModel({
   environment,
@@ -597,19 +592,11 @@ export function createSerloModel({
         }),
         // eslint-disable-next-line @typescript-eslint/require-await
         async getValue(current) {
-          if (!current) return
-          const updated = ((current as unknown) as ThreadAware).threads?.nodes.map(
-            (thread) => {
-              return {
-                ...thread,
-                archived:
-                  ids.indexOf(decodeThreadId(thread.id) ?? -1) > -1
-                    ? archived
-                    : thread.archived,
-              }
-            }
-          )
-          return { ...current, threads: { nodes: updated } }
+          if (!current || !isCommentPayload(current)) return
+          return {
+            ...current,
+            archived: ids.includes(current.id) ? archived : current.archived,
+          }
         },
       })
     },
