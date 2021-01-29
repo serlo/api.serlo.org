@@ -25,7 +25,6 @@ import { article, comment3, user } from '../../__fixtures__'
 import { createTestClient } from '../../__tests__/__utils__'
 import { mockEndpointsForThreads } from '../../__tests__/schema/thread/thread'
 import {
-  assertSuccessfulGraphQLQuery,
   addMutationInteraction,
   assertSuccessfulGraphQLMutation,
 } from '../__utils__'
@@ -56,21 +55,4 @@ test('/thread/set-archive', async () => {
   })
 
   mockEndpointsForThreads(article, [[comment3]])
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query($id: Int) {
-        uuid(id: $id) {
-          ... on ThreadAware {
-            threads {
-              nodes {
-                archived
-              }
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: article.id },
-    data: { uuid: { threads: { nodes: [{ archived: true }] } } },
-  })
 })
