@@ -1648,7 +1648,7 @@ export type ThreadsCursor = {
 
 // @public (undocumented)
 export type ThreadSetCommentStateInput = {
-    id: Scalars['Int'];
+    id: Array<Scalars['Int']>;
     trashed: Scalars['Boolean'];
 };
 
@@ -1674,7 +1674,7 @@ export type ThreadSetThreadArchivedResponse = {
 
 // @public (undocumented)
 export type ThreadSetThreadStateInput = {
-    id: Scalars['String'];
+    id: Array<Scalars['String']>;
     trashed: Scalars['Boolean'];
 };
 
