@@ -99,11 +99,18 @@ export function encodeThreadId(firstCommentId: number) {
   return Buffer.from(`t${firstCommentId}`).toString('base64')
 }
 
-export function decodeThreadId(threadId: string): number | null {
+export function decodeThreadId(threadId: string): number {
   const result = parseInt(
     Buffer.from(threadId, 'base64').toString('utf-8').substr(1)
   )
-  return Number.isNaN(result) || result <= 0 ? null : result
+  if (Number.isNaN(result) || result <= 0) {
+    throw new UserInputError('you need to provide a valid thread id (string)')
+  }
+  return result
+}
+
+export function decodeThreadIds(ids: string[]): number[] {
+  return ids.map(decodeThreadId)
 }
 
 async function resolveComments(
@@ -115,15 +122,4 @@ async function resolveComments(
   )) as (CommentPayload | null)[]
 
   return comments.filter(isDefined)
-}
-
-export function threadIdInputToNumberArray(id: string | string[]) {
-  const ids = Array.isArray(id) ? id : [id]
-  return ids.map((id) => {
-    const num = decodeThreadId(id)
-    if (num === null) {
-      throw new UserInputError('you need to provide a valid thread id (string)')
-    }
-    return num
-  })
 }

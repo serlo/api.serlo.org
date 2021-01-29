@@ -22,11 +22,7 @@
 import { ApolloError, ForbiddenError } from 'apollo-server'
 
 import { CommentPayload, ThreadDataType, ThreadResolvers } from './types'
-import {
-  decodeThreadId,
-  encodeThreadId,
-  threadIdInputToNumberArray,
-} from './utils'
+import { decodeThreadId, decodeThreadIds, encodeThreadId } from './utils'
 import { resolveConnection } from '~/schema/connection'
 import {
   assertUserIsAuthenticated,
@@ -105,21 +101,17 @@ export const resolvers: ThreadResolvers = {
     },
     async createComment(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
+
       const threadId = decodeThreadId(input.threadId)
+      const commentPayload = await dataSources.model.serlo.createComment({
+        content: input.content,
+        threadId,
+        userId,
+      })
 
-      const commentPayload =
-        threadId === null
-          ? null
-          : await dataSources.model.serlo.createComment({
-              content: input.content,
-              threadId,
-              userId,
-            })
-
-      const success = commentPayload !== null
       return {
         record: commentPayload,
-        success,
+        success: commentPayload !== null,
         query: {},
       }
     },
@@ -131,10 +123,8 @@ export const resolvers: ThreadResolvers = {
       }
       const { id, archived } = payload.input
 
-      const numberIds = threadIdInputToNumberArray(id)
-
       await dataSources.model.serlo.archiveThread({
-        ids: numberIds,
+        ids: decodeThreadIds(id),
         archived,
         userId,
       })
@@ -148,10 +138,8 @@ export const resolvers: ThreadResolvers = {
       }
       const { id, trashed } = payload.input
 
-      const numberIds = threadIdInputToNumberArray(id)
-
       await dataSources.model.serlo.setUuidState({
-        ids: numberIds,
+        ids: decodeThreadIds(id),
         userId,
         trashed,
       })
