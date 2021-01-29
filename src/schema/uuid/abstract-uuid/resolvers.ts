@@ -53,7 +53,7 @@ export const resolvers: AbstractUuidResolvers = {
       assertUserIsAuthenticated(userId)
       // TODO: Mock permissions for now
       if ([1, 10, 15473, 18981].indexOf(userId) < 0) {
-        throw new ForbiddenError('You are not allowed to set the thread state.')
+        throw new ForbiddenError('You are not allowed to set the uuid state.')
       }
 
       const { id, trashed } = payload.input
