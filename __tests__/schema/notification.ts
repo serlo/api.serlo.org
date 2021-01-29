@@ -82,7 +82,7 @@ import {
   createNotificationEventHandler,
   createTestClient,
   createUuidHandler,
-  getSerloUrl,
+  getDatabaseLayerUrl,
 } from '../__utils__'
 import { Instance } from '~/types'
 
@@ -2109,28 +2109,43 @@ describe('mutation notification setState', () => {
     }
   `
 
+  const notificationQuery = gql`
+    query {
+      notifications {
+        nodes {
+          id
+          unread
+        }
+        totalCount
+      }
+    }
+  `
+
   beforeEach(() => {
     global.server.use(
       rest.post<{
-        id: number
+        ids: number[]
         userId: number
         unread: boolean
       }>(
-        getSerloUrl({ path: `/api/set-notification-state` }),
+        getDatabaseLayerUrl({ path: `/set-notification-state` }),
         (req, res, ctx) => {
-          const { id, userId, unread } = req.body
-
-          if (userId !== user.id) return res(ctx.status(403))
-          if (![1, 2, 3].includes(id)) return res(ctx.status(404))
-
-          return res(
-            ctx.json({
-              notifications: [{ id, unread, eventId: 0 }],
-              userId,
-            })
-          )
+          return res(ctx.status(200))
         }
       )
+    )
+    global.server.use(
+      createJsonHandler({
+        path: `/notifications/${user.id}`,
+        body: {
+          userId: user.id,
+          notifications: [
+            { id: 3, unread: true, eventId: 3 },
+            { id: 2, unread: false, eventId: 2 },
+            { id: 1, unread: false, eventId: 1 },
+          ],
+        },
+      })
     )
   })
 
@@ -2154,12 +2169,58 @@ describe('mutation notification setState', () => {
     })
   })
 
-  test('wrong user id', async () => {
+  test('setting ids from other user', async () => {
+    global.server.use(
+      createJsonHandler({
+        path: `/notifications/${user2.id}`,
+        body: {
+          userId: user2.id,
+          notifications: [
+            { id: 4, unread: true, eventId: 3 },
+            { id: 5, unread: false, eventId: 2 },
+          ],
+        },
+      })
+    )
     await assertFailingGraphQLMutation({
       mutation,
-      variables: { input: { id: 1, unread: false } },
+      variables: { input: { id: [1, 2, 3], unread: false } },
       client: createTestClient({ userId: user2.id }),
       expectedError: 'FORBIDDEN',
+    })
+  })
+
+  test('cache is mutated as expected', async () => {
+    const client = createTestClient({ userId: user.id })
+
+    //fill notification cache
+    await client.query({
+      query: notificationQuery,
+      variables: {},
+    })
+
+    await assertSuccessfulGraphQLMutation({
+      mutation,
+      variables: {
+        input: { id: 1, unread: true },
+      },
+      data: { notification: { setState: { success: true } } },
+      client: createTestClient({ userId: user.id }),
+    })
+
+    await assertSuccessfulGraphQLQuery({
+      query: notificationQuery,
+      data: {
+        notifications: {
+          nodes: [
+            { id: 3, unread: true },
+            { id: 2, unread: false },
+            { id: 1, unread: true },
+          ],
+          totalCount: 3,
+        },
+      },
+      client,
     })
   })
 })

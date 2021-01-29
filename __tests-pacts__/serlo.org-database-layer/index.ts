@@ -50,6 +50,9 @@ describe('GET /uuid/:id', () => {
 describe('POST /set-uuid-state', () => {
   require('./set-uuid-state')
 })
+describe('POST /set-notification-state', () => {
+  require('./set-notification-state')
+})
 describe('POST /thread/set-archive', () => {
   require('./thread-set-archive')
 })
