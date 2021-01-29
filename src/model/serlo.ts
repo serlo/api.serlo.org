@@ -433,29 +433,34 @@ export function createSerloModel({
       userId: number
       unread: boolean
     },
-    NotificationsPayload[]
+    void
   >({
     mutate: async ({ ids, userId, unread }) => {
-      return await Promise.all(
-        //TODO: rewrite legacy endpoint so that it accepts an array directly
-        ids.map(
-          async (id): Promise<NotificationsPayload> => {
-            const response = await postViaLegacySerlo({
-              path: `/api/set-notification-state`,
-              body: { id, userId, unread },
-            })
-            if (response.status !== 200) {
-              throw new Error(`${response.status}: ${response.statusText}`)
+      const response = await postViaDatabaseLayer({
+        path: '/set-notification-state',
+        body: { ids, userId, unread },
+      })
+      if (response.status !== 200) {
+        throw new Error(`${response.status}: ${response.statusText}`)
+      }
+      await getNotifications._querySpec.setCache({
+        payloads: ids.map((id) => {
+          return { id }
+        }),
+        // eslint-disable-next-line @typescript-eslint/require-await
+        async getValue(current) {
+          if (!current) return
+          const updated = current.notifications.map((notification) => {
+            return {
+              ...notification,
+              unread: ids.includes(notification.id)
+                ? unread
+                : notification.unread,
             }
-            const value = (await response.json()) as NotificationsPayload
-            await getNotifications._querySpec.setCache({
-              payload: { id: userId },
-              value,
-            })
-            return value
-          }
-        )
-      )
+          })
+          return { ...current, notifications: updated }
+        },
+      })
     },
   })
 

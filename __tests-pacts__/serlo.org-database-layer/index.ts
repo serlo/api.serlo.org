@@ -35,18 +35,21 @@ describe('GET /navigation/:instance', () => {
 describe('GET /notifications/:id', () => {
   require('./notifications')
 })
-describe('GET /api/subscriptions', () => {
+describe('GET /subscriptions', () => {
   require('./subscriptions')
 })
-describe('GET /api/threads/:id', () => {
+describe('GET /threads/:id', () => {
   require('./threads')
 })
-describe('GET /api/user/:id', () => {
+describe('GET /user/:id', () => {
   require('./user')
 })
-describe('GET /api/uuid/:id', () => {
+describe('GET /uuid/:id', () => {
   require('./uuid')
 })
-describe('POST /api/set-uuid-state', () => {
+describe('POST /set-uuid-state', () => {
   require('./set-uuid-state')
+})
+describe('POST /set-notification-state', () => {
+  require('./set-notification-state')
 })
