@@ -19,6 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { UserInputError } from 'apollo-server'
+
 import {
   CommentPayload,
   ThreadAwareResolvers,
@@ -113,4 +115,15 @@ async function resolveComments(
   )) as (CommentPayload | null)[]
 
   return comments.filter(isDefined)
+}
+
+export function threadIdInputToNumberArray(id: string | string[]) {
+  const ids = Array.isArray(id) ? id : [id]
+  return ids.map((id) => {
+    const num = decodeThreadId(id)
+    if (num === null) {
+      throw new UserInputError('you need to provide a valid thread id (string)')
+    }
+    return num
+  })
 }

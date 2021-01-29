@@ -537,7 +537,7 @@ export type ThreadSetThreadArchivedResponse = {
 };
 
 export type ThreadSetThreadStateInput = {
-  id: Scalars['String'];
+  id: Array<Scalars['String']>;
   trashed: Scalars['Boolean'];
 };
 
@@ -548,7 +548,7 @@ export type ThreadSetThreadStateResponse = {
 };
 
 export type ThreadSetCommentStateInput = {
-  id: Scalars['Int'];
+  id: Array<Scalars['Int']>;
   trashed: Scalars['Boolean'];
 };
 
