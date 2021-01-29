@@ -204,5 +204,5 @@ function isCacheEntryWithTimestamp<Value>(
 }
 
 function isFunction<T>(arg: FunctionOrValue<T>): arg is UpdateFunction<T> {
-  return typeof (arg as { getValue: unknown }).getValue === 'function'
+  return R.has('getValue', arg) && typeof arg.getValue === 'function'
 }

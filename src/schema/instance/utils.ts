@@ -19,12 +19,14 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import R from 'ramda'
+
 import { Instance, InstanceAware } from '~/types'
 
 export function isInstanceAware(object: unknown): object is InstanceAware {
-  return isInstance((object as InstanceAware).instance ?? '')
+  return R.has('instance', object) && isInstance(object.instance)
 }
 
-export function isInstance(instance: string): instance is Instance {
+export function isInstance(instance: unknown): instance is Instance {
   return Object.values(Instance).includes(instance as Instance)
 }
