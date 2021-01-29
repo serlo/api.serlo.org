@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.18.2](https://github.com/serlo/api.serlo.org/compare/v0.18.1..v0.18.2)
+
+### Changed
+
+- **thread**. `thread.setThreadArchived` now also accepts a list of ids.
+
+- **thread**. `thread.setThreadState` now also accepts a list of ids.
+
+- **thread**. `thread.setCommentState` now also accepts a list of ids.
+
+### Internal
+
+- serlo-org-database-layer@0.2.2
+
 ## [v0.18.1](https://github.com/serlo/api.serlo.org/compare/v0.18.0..v0.18.1) - January 28, 2021
 
 ### Fixed

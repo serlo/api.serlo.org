@@ -1,7 +1,7 @@
 /**
  * This file is part of Serlo.org API
  *
- * Copyright (c) 2021 Serlo Education e.V.
+ * Copyright (c) 2020-2021 Serlo Education e.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License
@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @copyright Copyright (c) 2021 Serlo Education e.V.
+ * @copyright Copyright (c) 2020-2021 Serlo Education e.V.
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
@@ -540,6 +540,18 @@ async function exec(): Promise<void> {
       tagName: 'v0.18.1',
       date: '2021-01-28',
       fixed: [['swr-queue', 'Only update cache when requests succeed.']],
+    },
+    {
+      tagName: 'v0.18.2',
+      changed: [
+        [
+          'thread',
+          '`thread.setThreadArchived` now also accepts a list of ids.',
+        ],
+        ['thread', '`thread.setThreadState` now also accepts a list of ids.'],
+        ['thread', '`thread.setCommentState` now also accepts a list of ids.'],
+      ],
+      internal: ['serlo-org-database-layer@0.2.2'],
     },
   ])
 
