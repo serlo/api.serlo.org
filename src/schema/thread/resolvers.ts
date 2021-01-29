@@ -19,10 +19,14 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ApolloError, ForbiddenError, UserInputError } from 'apollo-server'
+import { ApolloError, ForbiddenError } from 'apollo-server'
 
 import { CommentPayload, ThreadDataType, ThreadResolvers } from './types'
-import { decodeThreadId, encodeThreadId } from './utils'
+import {
+  decodeThreadId,
+  encodeThreadId,
+  threadIdInputToNumberArray,
+} from './utils'
 import { resolveConnection } from '~/schema/connection'
 import {
   assertUserIsAuthenticated,
@@ -126,17 +130,8 @@ export const resolvers: ThreadResolvers = {
         throw new ForbiddenError('You are not allowed to set the thread state.')
       }
       const { id, archived } = payload.input
-      const ids = Array.isArray(id) ? id : [id]
 
-      const numberIds = ids.map((id) => {
-        const num = decodeThreadId(id)
-        if (num === null) {
-          throw new UserInputError(
-            'you need to provide a valid thread id (string)'
-          )
-        }
-        return num
-      })
+      const numberIds = threadIdInputToNumberArray(id)
 
       await dataSources.model.serlo.archiveThread({
         ids: numberIds,
@@ -151,16 +146,12 @@ export const resolvers: ThreadResolvers = {
       if ([1, 10, 15473, 18981].indexOf(userId) < 0) {
         throw new ForbiddenError('You are not allowed to set the thread state.')
       }
-
       const { id, trashed } = payload.input
-      const firstCommentId = decodeThreadId(id)
-      if (firstCommentId === null)
-        return {
-          success: false,
-          query: {},
-        }
+
+      const numberIds = threadIdInputToNumberArray(id)
+
       await dataSources.model.serlo.setUuidState({
-        ids: [firstCommentId],
+        ids: numberIds,
         userId,
         trashed,
       })
@@ -175,10 +166,11 @@ export const resolvers: ThreadResolvers = {
       if ([1, 10, 15473, 18981].indexOf(userId) < 0) {
         throw new ForbiddenError('You are not allowed to set the thread state.')
       }
-
       const { id, trashed } = payload.input
+      const ids = Array.isArray(id) ? id : [id]
+
       await dataSources.model.serlo.setUuidState({
-        ids: [id],
+        ids: ids,
         trashed,
         userId,
       })
