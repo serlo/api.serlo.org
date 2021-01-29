@@ -22,16 +22,19 @@
 import { gql } from 'apollo-server'
 import { rest } from 'msw'
 
-import { comment, user } from '../../../__fixtures__'
+import { article, comment, comment1, user } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
+  assertSuccessfulGraphQLMutation,
+  assertSuccessfulGraphQLQuery,
   createTestClient,
-  getSerloUrl,
+  getDatabaseLayerUrl,
 } from '../../__utils__'
+import { mockEndpointsForThreads } from './thread'
 import { encodeThreadId } from '~/schema/thread'
 
 describe('archive-comment', () => {
-  beforeEach(() => mockArchiveCommentEndpoint())
+  beforeEach(() => mockThreadSetArchiveEndpoint())
 
   const mutation = gql`
     mutation setThreadArchived($input: ThreadSetThreadArchivedInput!) {
@@ -52,21 +55,75 @@ describe('archive-comment', () => {
       expectedError: 'UNAUTHENTICATED',
     })
   })
+
+  test('setting multiple ids', async () => {
+    const client = createTestClient({ userId: user.id })
+
+    await assertSuccessfulGraphQLMutation({
+      mutation,
+      client,
+      variables: {
+        input: {
+          id: [encodeThreadId(comment1.id), encodeThreadId(comment.id)],
+          archived: true,
+        },
+      },
+      data: { thread: { setThreadArchived: { success: true } } },
+    })
+  })
+
+  test('cache gets updated as expected', async () => {
+    const client = createTestClient({ userId: user.id })
+    mockEndpointsForThreads(article, [[{ ...comment1, archived: true }]])
+    const query = gql`
+      query($id: Int) {
+        uuid(id: $id) {
+          ... on ThreadAware {
+            threads {
+              nodes {
+                archived
+              }
+            }
+          }
+        }
+      }
+    `
+
+    // fill cache
+    await client.query({
+      query,
+      variables: { id: article.id },
+    })
+
+    await assertSuccessfulGraphQLMutation({
+      mutation,
+      client,
+      variables: {
+        input: { id: encodeThreadId(comment1.id), archived: false },
+      },
+      data: { thread: { setThreadArchived: { success: true } } },
+    })
+
+    await assertSuccessfulGraphQLQuery({
+      query,
+      client,
+      variables: { id: article.id },
+      data: { uuid: { threads: { nodes: [{ archived: false }] } } },
+    })
+  })
 })
 
-function mockArchiveCommentEndpoint() {
+function mockThreadSetArchiveEndpoint() {
   global.server.use(
     rest.post<{
-      id: number
+      ids: number[]
       userId: number
       archived: boolean
-    }>(getSerloUrl({ path: '/api/thread/set-archive' }), (req, res, ctx) => {
-      const { id, userId, archived } = req.body
-
-      if (userId !== user.id) return res(ctx.status(403))
-      if (id !== comment.id) return res(ctx.status(400))
-
-      return res(ctx.json({ ...comment, archived: archived }))
-    })
+    }>(
+      getDatabaseLayerUrl({ path: '/thread/set-archive' }),
+      (req, res, ctx) => {
+        return res(ctx.status(200))
+      }
+    )
   )
 }

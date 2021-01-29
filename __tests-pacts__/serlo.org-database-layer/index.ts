@@ -17,7 +17,7 @@
  *
  * @copyright Copyright (c) 2021 Serlo Education e.V.
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
+ * @link      https://github.com/serlo-org.serlo.org for the canonical source repository
  */
 /* eslint-disable import/no-unassigned-import */
 describe('GET /alias/:instance/:alias', () => {
@@ -52,4 +52,7 @@ describe('POST /set-uuid-state', () => {
 })
 describe('POST /set-notification-state', () => {
   require('./set-notification-state')
+})
+describe('POST /thread/set-archive', () => {
+  require('./thread-set-archive')
 })

@@ -70,7 +70,7 @@ describe('uuid["threads"]', () => {
       }
     `
 
-    test('Threads with 3 Comments', async () => {
+    test('Threads with 3 Comments (with some comments trashed / archived)', async () => {
       mockEndpointsForThreads(article, [
         [comment1, { ...comment2, trashed: true }],
         [{ ...comment3, archived: true }],
@@ -82,12 +82,12 @@ describe('uuid["threads"]', () => {
           uuid: {
             threads: {
               nodes: [
-                { comments: { nodes: [{ id: comment3.id }] } },
                 {
                   comments: {
                     nodes: [{ id: comment1.id }, { id: comment2.id }],
                   },
                 },
+                { comments: { nodes: [{ id: comment3.id }] } },
               ],
             },
           },

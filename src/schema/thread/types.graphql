@@ -107,7 +107,7 @@ type ThreadCreateCommentResponse {
 }
 
 input ThreadSetThreadArchivedInput {
-  id: String!
+  id: [String!]!
   archived: Boolean!
 }
 

@@ -72,17 +72,17 @@ export const comment2: CommentPayload = {
 }
 
 export const comment3: CommentPayload = {
-  id: 49238,
+  id: 27144,
   trashed: false,
-  alias: null,
+  alias: '/mathe/27144/feedback-zu-dem-artikel-über-das-formular',
   __typename: DiscriminatorType.Comment,
-  authorId: user2.id,
-  parentId: article.id,
-  title: 'Parabeln besser darstellen',
-  date: '2020-01-02T09:00:31+02:00',
+  authorId: 10,
+  title: 'Feedback zu dem Artikel über das Formular',
+  date: '2014-08-09T12:33:47+02:00',
   archived: false,
   content:
-    'Das Parabeldesign ist nicht schön genug, da müssen wir uns noch etwas mehr Mühe geben',
+    'Das obere Beispiel ist "ungut". Denn man hat da Kettenrechnungen hintereinander gestellt und mehrere Gleichzeitszeichen in einer Zeile, aber am Anfang ist die Rechnung 1+2 und am Ende ist die Lösung 6. Mathematisch ist das eine falsche Schreibweise, auch wenn man üblicherweise so rechnet. Bei der zweiten Variante ist das besser gelöst, denn da wird diese Nebenrechnung nicht in die Zeile der Endlösung reingeschrieben.',
+  parentId: 1495,
   childrenIds: [],
 }
 
