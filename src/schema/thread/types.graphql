@@ -117,7 +117,7 @@ type ThreadSetThreadArchivedResponse {
 }
 
 input ThreadSetThreadStateInput {
-  id: String!
+  id: [String!]!
   trashed: Boolean!
 }
 type ThreadSetThreadStateResponse {
@@ -126,7 +126,7 @@ type ThreadSetThreadStateResponse {
 }
 
 input ThreadSetCommentStateInput {
-  id: Int!
+  id: [Int!]!
   trashed: Boolean!
 }
 type ThreadSetCommentStateResponse {
