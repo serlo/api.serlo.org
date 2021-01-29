@@ -22,16 +22,16 @@
 import { gql } from 'apollo-server'
 import { rest } from 'msw'
 
-import { comment, user } from '../../../__fixtures__'
+import { comment } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
   createTestClient,
-  getSerloUrl,
+  getDatabaseLayerUrl,
 } from '../../__utils__'
 import { encodeThreadId } from '~/schema/thread'
 
 describe('archive-comment', () => {
-  beforeEach(() => mockArchiveCommentEndpoint())
+  beforeEach(() => mockThreadSetArchiveEndpoint())
 
   const mutation = gql`
     mutation setThreadArchived($input: ThreadSetThreadArchivedInput!) {
@@ -54,19 +54,21 @@ describe('archive-comment', () => {
   })
 })
 
-function mockArchiveCommentEndpoint() {
+function mockThreadSetArchiveEndpoint() {
   global.server.use(
     rest.post<{
-      id: number
+      ids: number[]
       userId: number
       archived: boolean
-    }>(getSerloUrl({ path: '/api/thread/set-archive' }), (req, res, ctx) => {
-      const { id, userId, archived } = req.body
+    }>(
+      getDatabaseLayerUrl({ path: '/thread/set-archive' }),
+      (req, res, ctx) => {
+        const { ids, archived } = req.body
 
-      if (userId !== user.id) return res(ctx.status(403))
-      if (id !== comment.id) return res(ctx.status(400))
+        if (!ids.indexOf(comment.id)) return res(ctx.status(404))
 
-      return res(ctx.json({ ...comment, archived: archived }))
-    })
+        return res(ctx.json({ ...comment, archived: archived }))
+      }
+    )
   )
 }

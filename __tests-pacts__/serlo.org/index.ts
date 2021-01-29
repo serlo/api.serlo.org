@@ -23,12 +23,9 @@
 describe('POST /api/set-notification-state', () => {
   require('./set-notification-state')
 })
-describe('POST /api/create-thread', () => {
+describe('POST /api/start-thread', () => {
   require('./start-thread')
 })
-describe('POST /api/create-thread', () => {
+describe('POST /api/comment-thread', () => {
   require('./comment-thread')
-})
-describe('POST /api/create-thread', () => {
-  require('./archive-comment')
 })

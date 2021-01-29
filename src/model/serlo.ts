@@ -35,7 +35,7 @@ import {
   NotificationsPayload,
 } from '~/schema/notification'
 import { SubscriptionsPayload } from '~/schema/subscription'
-import { CommentPayload, ThreadsPayload } from '~/schema/thread'
+import { CommentPayload, decodeThreadId, ThreadsPayload } from '~/schema/thread'
 import {
   AbstractUuidPayload,
   AliasPayload,
@@ -48,7 +48,12 @@ import {
   NavigationPayload,
   NodeData,
 } from '~/schema/uuid'
-import { Instance, License, ThreadCreateThreadInput } from '~/types'
+import {
+  Instance,
+  License,
+  ThreadAware,
+  ThreadCreateThreadInput,
+} from '~/types'
 
 export function createSerloModel({
   environment,
@@ -574,25 +579,39 @@ export function createSerloModel({
   })
 
   const archiveThread = createMutation<
-    { id: number; archived: boolean; userId: number },
-    CommentPayload | null
+    { ids: number[]; archived: boolean; userId: number },
+    void
   >({
     mutate: async (payload) => {
-      const response = await postViaLegacySerlo({
-        path: '/api/thread/set-archive',
+      const response = await postViaDatabaseLayer({
+        path: '/thread/set-archive',
         body: payload,
       })
       if (response.status !== 200) {
         throw new Error(`${response.status}: ${response.statusText}`)
       }
-      const value = (await response.json()) as CommentPayload | null
-      if (value !== null) {
-        await getUuid._querySpec.setCache({
-          payload: { id: value.id },
-          value,
-        })
-      }
-      return value
+      const { ids, archived } = payload
+      await getUuid._querySpec.setCache({
+        payloads: payload.ids.map((id) => {
+          return { id }
+        }),
+        // eslint-disable-next-line @typescript-eslint/require-await
+        async getValue(current) {
+          if (!current) return
+          const updated = ((current as unknown) as ThreadAware).threads?.nodes.map(
+            (thread) => {
+              return {
+                ...thread,
+                archived:
+                  ids.indexOf(decodeThreadId(thread.id) ?? -1) > -1
+                    ? archived
+                    : thread.archived,
+              }
+            }
+          )
+          return { ...current, threads: { nodes: updated } }
+        },
+      })
     },
   })
 
