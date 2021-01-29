@@ -1661,7 +1661,7 @@ export type ThreadSetCommentStateResponse = {
 
 // @public (undocumented)
 export type ThreadSetThreadArchivedInput = {
-    id: Scalars['String'];
+    id: Array<Scalars['String']>;
     archived: Scalars['Boolean'];
 };
 

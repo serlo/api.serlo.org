@@ -17,7 +17,7 @@
  *
  * @copyright Copyright (c) 2021 Serlo Education e.V.
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
+ * @link      https://github.com/serlo-org.serlo.org for the canonical source repository
  */
 /* eslint-disable import/no-unassigned-import */
 describe('GET /alias/:instance/:alias', () => {
@@ -35,18 +35,21 @@ describe('GET /navigation/:instance', () => {
 describe('GET /notifications/:id', () => {
   require('./notifications')
 })
-describe('GET /api/subscriptions', () => {
+describe('GET /subscriptions', () => {
   require('./subscriptions')
 })
-describe('GET /api/threads/:id', () => {
+describe('GET /threads/:id', () => {
   require('./threads')
 })
-describe('GET /api/user/:id', () => {
+describe('GET /user/:id', () => {
   require('./user')
 })
-describe('GET /api/uuid/:id', () => {
+describe('GET /uuid/:id', () => {
   require('./uuid')
 })
-describe('POST /api/set-uuid-state', () => {
+describe('POST /set-uuid-state', () => {
   require('./set-uuid-state')
+})
+describe('POST /thread/set-archive', () => {
+  require('./thread-set-archive')
 })

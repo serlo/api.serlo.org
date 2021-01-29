@@ -574,25 +574,31 @@ export function createSerloModel({
   })
 
   const archiveThread = createMutation<
-    { id: number; archived: boolean; userId: number },
-    CommentPayload | null
+    { ids: number[]; archived: boolean; userId: number },
+    void
   >({
     mutate: async (payload) => {
-      const response = await postViaLegacySerlo({
-        path: '/api/thread/set-archive',
+      const response = await postViaDatabaseLayer({
+        path: '/thread/set-archive',
         body: payload,
       })
       if (response.status !== 200) {
         throw new Error(`${response.status}: ${response.statusText}`)
       }
-      const value = (await response.json()) as CommentPayload | null
-      if (value !== null) {
-        await getUuid._querySpec.setCache({
-          payload: { id: value.id },
-          value,
-        })
-      }
-      return value
+      const { ids, archived } = payload
+      await getUuid._querySpec.setCache({
+        payloads: payload.ids.map((id) => {
+          return { id }
+        }),
+        // eslint-disable-next-line @typescript-eslint/require-await
+        async getValue(current) {
+          if (!current || !isCommentPayload(current)) return
+          return {
+            ...current,
+            archived: ids.includes(current.id) ? archived : current.archived,
+          }
+        },
+      })
     },
   })
 
