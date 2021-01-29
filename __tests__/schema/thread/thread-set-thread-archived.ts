@@ -22,12 +22,15 @@
 import { gql } from 'apollo-server'
 import { rest } from 'msw'
 
-import { comment } from '../../../__fixtures__'
+import { article, comment, comment1, user } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
+  assertSuccessfulGraphQLMutation,
+  assertSuccessfulGraphQLQuery,
   createTestClient,
   getDatabaseLayerUrl,
 } from '../../__utils__'
+import { mockEndpointsForThreads } from './thread'
 import { encodeThreadId } from '~/schema/thread'
 
 describe('archive-comment', () => {
@@ -50,6 +53,46 @@ describe('archive-comment', () => {
       variables: { input: { id: encodeThreadId(comment.id), archived: true } },
       client,
       expectedError: 'UNAUTHENTICATED',
+    })
+  })
+
+  test('cache gets updated as expected', async () => {
+    const client = createTestClient({ userId: user.id })
+    mockEndpointsForThreads(article, [[{ ...comment1, archived: true }]])
+    const query = gql`
+      query($id: Int) {
+        uuid(id: $id) {
+          ... on ThreadAware {
+            threads {
+              nodes {
+                archived
+              }
+            }
+          }
+        }
+      }
+    `
+
+    // fill cache
+    await client.query({
+      query,
+      variables: { id: article.id },
+    })
+
+    await assertSuccessfulGraphQLMutation({
+      mutation,
+      client,
+      variables: {
+        input: { id: encodeThreadId(comment1.id), archived: true },
+      },
+      data: { thread: { setThreadArchived: { success: true } } },
+    })
+
+    await assertSuccessfulGraphQLQuery({
+      query,
+      client,
+      variables: { id: article.id },
+      data: { uuid: { threads: { nodes: [{ archived: true }] } } },
     })
   })
 })
