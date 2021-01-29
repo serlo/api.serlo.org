@@ -85,7 +85,7 @@ export const resolvers: NotificationResolvers = {
       const ids = Array.isArray(id) ? id : [id]
 
       ids.forEach((id) => {
-        if (!notifications.find((n) => n.id == id)) {
+        if (!notifications.find((n) => n.id === id)) {
           throw new ForbiddenError(
             'You are only allowed to set your own notification states.'
           )

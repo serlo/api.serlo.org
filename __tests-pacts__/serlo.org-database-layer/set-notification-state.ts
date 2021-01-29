@@ -61,20 +61,4 @@ test('set-notification-state', async () => {
     variables: { input: { id: 9, unread: true } },
     data: { notification: { setState: { success: true } } },
   })
-  // await assertSuccessfulGraphQLQuery({
-  //   query: gql`
-  //     query {
-  //       notifications {
-  //         nodes {
-  //           id
-  //           unread
-  //         }
-  //         totalCount
-  //       }
-  //     }
-  //   `,
-  //   data: {
-  //     notifications: { nodes: [{ id: 9, unread: true }], totalCount: 1 },
-  //   },
-  // })
 })

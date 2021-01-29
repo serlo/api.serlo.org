@@ -2109,6 +2109,18 @@ describe('mutation notification setState', () => {
     }
   `
 
+  const notificationQuery = gql`
+    query {
+      notifications {
+        nodes {
+          id
+          unread
+        }
+        totalCount
+      }
+    }
+  `
+
   beforeEach(() => {
     global.server.use(
       rest.post<{
@@ -2118,13 +2130,7 @@ describe('mutation notification setState', () => {
       }>(
         getDatabaseLayerUrl({ path: `/set-notification-state` }),
         (req, res, ctx) => {
-          const { ids } = req.body
-
-          if (!ids.every((id) => [1, 2, 3].includes(id))) {
-            return res(ctx.status(404))
-          }
-
-          return res(ctx.json({}))
+          return res(ctx.status(200))
         }
       )
     )
@@ -2181,6 +2187,40 @@ describe('mutation notification setState', () => {
       variables: { input: { id: [1, 2, 3], unread: false } },
       client: createTestClient({ userId: user2.id }),
       expectedError: 'FORBIDDEN',
+    })
+  })
+
+  test('cache is mutated as expected', async () => {
+    const client = createTestClient({ userId: user.id })
+
+    //fill notification cache
+    await client.query({
+      query: notificationQuery,
+      variables: {},
+    })
+
+    await assertSuccessfulGraphQLMutation({
+      mutation,
+      variables: {
+        input: { id: 1, unread: true },
+      },
+      data: { notification: { setState: { success: true } } },
+      client: createTestClient({ userId: user.id }),
+    })
+
+    await assertSuccessfulGraphQLQuery({
+      query: notificationQuery,
+      data: {
+        notifications: {
+          nodes: [
+            { id: 3, unread: true },
+            { id: 2, unread: false },
+            { id: 1, unread: true },
+          ],
+          totalCount: 3,
+        },
+      },
+      client,
     })
   })
 })
