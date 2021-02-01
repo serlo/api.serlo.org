@@ -19,13 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ForbiddenError } from 'apollo-server'
 import { option as O } from 'fp-ts'
-import jwt from 'jsonwebtoken'
 import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
 
-import { Service } from '~/internals/auth'
 import { Environment } from '~/internals/environment'
 import { createHelper, createMutation, createQuery } from '~/internals/model'
 import { isInstance } from '~/schema/instance'
@@ -55,14 +52,6 @@ export function createSerloModel({
 }: {
   environment: Environment
 }) {
-  function getToken() {
-    return jwt.sign({}, process.env.SERLO_ORG_SECRET, {
-      expiresIn: '2h',
-      audience: Service.Serlo,
-      issuer: 'api.serlo.org',
-    })
-  }
-
   async function get({
     path,
     expectedStatusCodes,
@@ -79,7 +68,7 @@ export function createSerloModel({
     return response
   }
 
-  async function postViaDatabaseLayer({
+  async function post({
     path,
     body,
   }: {
@@ -96,34 +85,6 @@ export function createSerloModel({
         },
       }
     )
-  }
-
-  async function postViaLegacySerlo({
-    path,
-    instance = Instance.De,
-    body,
-  }: {
-    path: string
-    instance?: Instance
-    body: Record<string, unknown>
-  }): Promise<Response> {
-    const response = await fetch(
-      `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`,
-      {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: {
-          Authorization: `Serlo Service=${getToken()}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    )
-    if (response.status === 403) {
-      throw new ForbiddenError(
-        'You are not allowed to set the notification state'
-      )
-    }
-    return response
   }
 
   const getUuid = createQuery<{ id: number }, AbstractUuidPayload | null>(
@@ -159,7 +120,7 @@ export function createSerloModel({
     void
   >({
     mutate: async ({ ids, userId, trashed }) => {
-      const response = await postViaDatabaseLayer({
+      const response = await post({
         path: '/set-uuid-state',
         body: { ids, userId, trashed },
       })
@@ -436,7 +397,7 @@ export function createSerloModel({
     void
   >({
     mutate: async ({ ids, userId, unread }) => {
-      const response = await postViaDatabaseLayer({
+      const response = await post({
         path: '/set-notification-state',
         body: { ids, userId, unread },
       })
@@ -517,8 +478,8 @@ export function createSerloModel({
     CommentPayload | null
   >({
     mutate: async (payload) => {
-      const response = await postViaLegacySerlo({
-        path: `/api/thread/start-thread`,
+      const response = await post({
+        path: `/thread/start-thread`,
         body: payload,
       })
       if (response.status !== 200) {
@@ -531,9 +492,9 @@ export function createSerloModel({
           payload: { id: payload.objectId },
           // eslint-disable-next-line @typescript-eslint/require-await
           async getValue(current) {
-            if (current === undefined) return
+            if (!current || !isCommentPayload(current)) return
 
-            current.firstCommentIds.push(value.id)
+            current.firstCommentIds.unshift(value.id) //new thread on first pos
             return current
           },
         })
@@ -551,8 +512,8 @@ export function createSerloModel({
     CommentPayload | null
   >({
     mutate: async (payload) => {
-      const response = await postViaLegacySerlo({
-        path: `/api/thread/comment-thread`,
+      const response = await post({
+        path: `thread/comment-thread`,
         body: payload,
       })
       if (response.status !== 200) {
@@ -569,7 +530,7 @@ export function createSerloModel({
           // eslint-disable-next-line @typescript-eslint/require-await
           async getValue(current) {
             if (!current || !isCommentPayload(current)) return
-            current.childrenIds.unshift(value.id)
+            current.childrenIds.push(value.id) // new comment on last pos in thread
             return current
           },
         })
@@ -583,7 +544,7 @@ export function createSerloModel({
     void
   >({
     mutate: async (payload) => {
-      const response = await postViaDatabaseLayer({
+      const response = await post({
         path: '/thread/set-archive',
         body: payload,
       })

@@ -22,14 +22,17 @@
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
-import { article, comment, user } from '../../__fixtures__'
-import { createTestClient, createUuidHandler } from '../../__tests__/__utils__'
-import { mockEndpointsForThreads } from '../../__tests__/schema/thread/thread'
+import { article, comment, user } from '../../../__fixtures__'
+import {
+  createTestClient,
+  createUuidHandler,
+} from '../../../__tests__/__utils__'
+import { mockEndpointsForThreads } from '../../../__tests__/schema/thread/thread'
 import {
   assertSuccessfulGraphQLQuery,
   addMutationInteraction,
   assertSuccessfulGraphQLMutation,
-} from '../__utils__'
+} from '../../__utils__'
 import { encodeThreadId } from '~/schema/thread'
 import { DiscriminatorType } from '~/schema/uuid'
 
@@ -38,7 +41,7 @@ test('comment-thread', async () => {
   await addMutationInteraction({
     name: 'create new comment on thread where id of first comment is 100',
     given: `there exists a thread with a first comment with an id of 100 and ${user.id} is authenticated`,
-    path: '/api/thread/comment-thread',
+    path: '/thread/comment-thread',
     requestBody: {
       content: 'this is my reply',
       threadId: comment.id,

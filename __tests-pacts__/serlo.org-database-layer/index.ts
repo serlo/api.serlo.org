@@ -39,7 +39,7 @@ describe('GET /subscriptions', () => {
   require('./subscriptions')
 })
 describe('GET /threads/:id', () => {
-  require('./threads')
+  require('./threads/threads')
 })
 describe('GET /user/:id', () => {
   require('./user')
@@ -54,5 +54,11 @@ describe('POST /set-notification-state', () => {
   require('./set-notification-state')
 })
 describe('POST /thread/set-archive', () => {
-  require('./thread-set-archive')
+  require('./threads/thread-set-archive')
+})
+describe('POST /thread/start-thread', () => {
+  require('./threads/start-thread')
+})
+describe('POST /thread/comment-thread', () => {
+  require('./threads/comment-thread')
 })
