@@ -569,7 +569,7 @@ export function createSerloModel({
           // eslint-disable-next-line @typescript-eslint/require-await
           async getValue(current) {
             if (!current || !isCommentPayload(current)) return
-            current.childrenIds.push(value.id)
+            current.childrenIds.unshift(value.id)
             return current
           },
         })

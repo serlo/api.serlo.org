@@ -45,7 +45,7 @@ test('comment-thread', async () => {
       userId: user.id,
     },
     responseBody: {
-      id: Matchers.integer(101),
+      id: Matchers.integer(comment.id + 1),
       trashed: false,
       alias: Matchers.string('/mathe/101/mathe'),
       __typename: DiscriminatorType.Comment,
