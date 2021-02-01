@@ -22,14 +22,14 @@
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
-import { article, user } from '../../__fixtures__'
-import { createTestClient } from '../../__tests__/__utils__'
-import { mockEndpointsForThreads } from '../../__tests__/schema/thread/thread'
+import { article, user } from '../../../__fixtures__'
+import { createTestClient } from '../../../__tests__/__utils__'
+import { mockEndpointsForThreads } from '../../../__tests__/schema/thread/thread'
 import {
   addMutationInteraction,
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
-} from '../__utils__'
+} from '../../__utils__'
 import { DiscriminatorType } from '~/schema/uuid'
 
 test('start-thread', async () => {
@@ -54,25 +54,25 @@ test('start-thread', async () => {
   })
 
   await addMutationInteraction({
-    name: 'create new thread for uuid 1565',
-    given: `there exists a uuid 1565 and user with id ${user.id} is authenticated`,
-    path: '/api/thread/start-thread',
+    name: 'create new thread for uuid 1855',
+    given: `there exists a uuid 1855 and user with id ${user.id} is authenticated`,
+    path: '/thread/start-thread',
     requestBody: {
-      title: 'First comment in new thread',
-      content: 'first!',
+      title: 'My new thread',
+      content: '🔥 brand new!',
       objectId: article.id,
       userId: user.id,
     },
     responseBody: {
       id: Matchers.integer(1000),
-      title: 'First comment in new thread',
+      title: 'My new thread',
       trashed: false,
       alias: Matchers.string('/mathe/1000/first'),
       __typename: DiscriminatorType.Comment,
       authorId: user.id,
       date: Matchers.iso8601DateTime(article.date),
       archived: false,
-      content: 'first!',
+      content: '🔥 brand new!',
       parentId: article.id,
       childrenIds: [],
     },
@@ -98,8 +98,8 @@ test('start-thread', async () => {
     `,
     variables: {
       input: {
-        title: 'First comment in new thread',
-        content: 'first!',
+        title: 'My new thread',
+        content: '🔥 brand new!',
         objectId: article.id,
       },
     },
@@ -112,8 +112,8 @@ test('start-thread', async () => {
             comments: {
               nodes: [
                 {
-                  content: 'first!',
-                  title: 'First comment in new thread',
+                  title: 'My new thread',
+                  content: '🔥 brand new!',
                 },
               ],
             },
@@ -139,7 +139,7 @@ test('start-thread', async () => {
     `,
     variables: { id: article.id },
     data: {
-      uuid: { threads: { nodes: [{ title: 'First comment in new thread' }] } },
+      uuid: { threads: { nodes: [{ title: 'My new thread' }] } },
     },
   })
 })
