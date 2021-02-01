@@ -19,17 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import {
-  either as E,
-  option as O,
-  taskEither as TE,
-  function as F,
-} from 'fp-ts'
+import { either as E, option as O, pipeable } from 'fp-ts'
 import * as t from 'io-ts'
 import { nonEmptyArray } from 'io-ts-types/lib/nonEmptyArray'
 import { failure } from 'io-ts/lib/PathReporter'
-import fetch, { Response } from 'node-fetch'
-import R from 'ramda'
+import fetch from 'node-fetch'
+import * as R from 'ramda'
 import { URL } from 'url'
 
 import { Environment } from '~/internals/environment'
@@ -72,56 +67,37 @@ export function createGoogleSpreadsheetApiModel({
       getCurrentValue: async (args) => {
         const { spreadsheetId, range } = args
         const majorDimension = args.majorDimension ?? MajorDimension.Rows
-        const apiSecret = process.env.GOOGLE_SPREADSHEET_API_SECRET
         const url = new URL(
           `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`
         )
         url.searchParams.append('majorDimension', majorDimension)
-        url.searchParams.append('key', apiSecret)
+        const apiSectret = process.env.GOOGLE_SPREADSHEET_API_SECRET
+        url.searchParams.append('key', apiSectret)
 
-        return await F.pipe(
-          TE.fromTask<ErrorEvent, Response>(() => fetch(url.href)),
-          TE.chain((response) =>
-            TE.tryCatch<ErrorEvent, unknown>(
-              () => response.json(),
-              (error) => {
-                return {
-                  message: 'malformed json was returned',
-                  exception: E.toError(error),
-                }
-              }
-            )
-          ),
-          TE.chain(
-            F.flow(
-              (data) => ValueRange.decode(data),
+        const contexts = { function: 'googleSpreadSheetApi.getValues()', args }
+        const addContext = E.mapLeft((event: ErrorEvent) =>
+          R.mergeDeepRight({ contexts }, event)
+        )
+
+        try {
+          const response = await fetch(url.toString())
+
+          return addContext(
+            pipeable.pipe(
+              ValueRange.decode(await response.json()),
               E.mapLeft((errors) => {
                 return {
-                  message: `invalid response was returned`,
+                  message: 'invalid response',
                   contexts: { validationErrors: failure(errors) },
                 }
               }),
               E.map((v) => v.values),
-              E.chain(
-                E.fromNullable<ErrorEvent>({
-                  message: `returned range is empty`,
-                })
-              ),
-              TE.fromEither
-            )
-          ),
-          TE.mapLeft<ErrorEvent, ErrorEvent>((errorEvent) =>
-            R.mergeDeepRight(
-              {
-                context: {
-                  function: 'dataSources.spreadSheetapi.getValues()',
-                  args,
-                },
-              },
-              errorEvent
+              E.chain(E.fromNullable({ message: 'range is empty' }))
             )
           )
-        )()
+        } catch (error) {
+          return addContext(E.left({ exception: E.toError(error) }))
+        }
       },
       maxAge: { hour: 1 },
       getKey: (args) => {
