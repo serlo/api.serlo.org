@@ -40,7 +40,7 @@ export function createThreadResolvers(): ThreadAwareResolvers {
 
       const firstComments = await resolveComments(
         dataSources,
-        firstCommentIds.sort().reverse()
+        firstCommentIds.sort((a, b) => b - a)
       )
 
       const filteredFirstComments = firstComments.filter((comment) => {
