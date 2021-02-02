@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.18.3](https://github.com/serlo/api.serlo.org/compare/v0.18.2..v0.18.3)
+
+### Fixed
+
+- **thread**. Return threads in the correct order.
+
 ## [v0.18.2](https://github.com/serlo/api.serlo.org/compare/v0.18.1..v0.18.2)
 
 ### Changed

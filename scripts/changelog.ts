@@ -553,6 +553,10 @@ async function exec(): Promise<void> {
       ],
       internal: ['serlo-org-database-layer@0.2.2'],
     },
+    {
+      tagName: 'v0.18.3',
+      fixed: [['thread', 'Return threads in the correct order.']],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
