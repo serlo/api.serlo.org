@@ -24,7 +24,6 @@ import { gql } from 'apollo-server'
 
 import { article, user } from '../../../__fixtures__'
 import { createTestClient } from '../../../__tests__/__utils__'
-import { mockEndpointsForThreads } from '../../../__tests__/schema/thread/thread'
 import {
   addMutationInteraction,
   assertSuccessfulGraphQLMutation,
@@ -33,8 +32,6 @@ import { DiscriminatorType } from '~/schema/uuid'
 
 test('start-thread', async () => {
   global.client = createTestClient({ userId: user.id })
-
-  mockEndpointsForThreads(article, [])
 
   await addMutationInteraction({
     name: 'create new thread for uuid 1855',

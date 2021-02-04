@@ -39,9 +39,10 @@ test('comment-thread', async () => {
       body: {
         input: {
           content: 'Hello',
-          threadId: encodeThreadId(comment1.id),
+          threadId: comment1.id,
           subscribe: true,
           sendEmail: false,
+          userId: user.id,
         },
       },
       headers: { 'Content-Type': 'application/json' },
@@ -64,19 +65,12 @@ test('comment-thread', async () => {
     },
   })
 
-  // global.server.use(createUuidHandler(article))
-  // mockEndpointsForThreads(article, [[comment1]])
-
   await assertSuccessfulGraphQLMutation({
     mutation: gql`
       mutation createThread($input: ThreadCreateCommentInput!) {
         thread {
           createComment(input: $input) {
             success
-            # record {
-            #   archived
-            #   content
-            # }
           }
         }
       }
@@ -93,7 +87,6 @@ test('comment-thread', async () => {
       thread: {
         createComment: {
           success: true,
-          // record: { archived: false, content: 'this is my reply' },
         },
       },
     },
