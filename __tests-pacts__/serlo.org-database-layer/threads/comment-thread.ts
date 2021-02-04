@@ -22,57 +22,50 @@
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
-import { article, comment, user } from '../../../__fixtures__'
-import {
-  createTestClient,
-  createUuidHandler,
-} from '../../../__tests__/__utils__'
-import { mockEndpointsForThreads } from '../../../__tests__/schema/thread/thread'
-import {
-  assertSuccessfulGraphQLQuery,
-  addMutationInteraction,
-  assertSuccessfulGraphQLMutation,
-} from '../../__utils__'
+import { comment1, user } from '../../../__fixtures__'
+import { createTestClient } from '../../../__tests__/__utils__'
+import { assertSuccessfulGraphQLMutation } from '../../__utils__'
 import { encodeThreadId } from '~/schema/thread'
-import { DiscriminatorType } from '~/schema/uuid'
 
 test('comment-thread', async () => {
   global.client = createTestClient({ userId: user.id })
-  await addMutationInteraction({
-    name: 'create new comment on thread where id of first comment is 100',
-    given: `there exists a thread with a first comment with an id of 100 and ${user.id} is authenticated`,
-    path: '/thread/comment-thread',
-    requestBody: {
-      content: 'this is my reply',
-      threadId: comment.id,
-      userId: user.id,
+
+  await global.pact.addInteraction({
+    uponReceiving: `create new comment on thread where id of first comment is ${comment1.id}`,
+    state: `there exists a thread with a first comment with an id of ${comment1.id} and ${user.id} is authenticated`,
+    withRequest: {
+      method: 'POST',
+      path: '/thread/comment-thread',
+      body: {
+        input: {
+          content: 'Hello',
+          threadId: encodeThreadId(comment1.id),
+          subscribe: true,
+          sendEmail: false,
+        },
+      },
+      headers: { 'Content-Type': 'application/json' },
     },
-    responseBody: {
-      id: Matchers.integer(comment.id + 1),
-      trashed: false,
-      alias: Matchers.string('/mathe/101/mathe'),
-      __typename: DiscriminatorType.Comment,
-      authorId: user.id,
-      title: null,
-      date: Matchers.iso8601DateTime(comment.date),
-      archived: false,
-      content: 'this is my reply',
-      parentId: comment.id,
-      childrenIds: [],
+    willRespondWith: {
+      status: 200,
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: {
+        __typename: 'comment',
+        id: Matchers.integer(comment1.id + 1),
+        content: 'Hello',
+        parentId: comment1.id,
+        trashed: false,
+        alias: Matchers.string('/mathe/101/mathe'),
+        date: Matchers.iso8601DateTime(comment1.date),
+        title: null,
+        archived: false,
+        childrenIds: [],
+      },
     },
   })
-  global.server.use(createUuidHandler(comment))
-  await global.client.query({
-    query: gql`
-      query($id: Int) {
-        uuid(id: $id) {
-          __typename
-        }
-      }
-    `,
-    variables: { id: comment.id },
-  })
-  mockEndpointsForThreads(article, [[comment]])
+
+  // global.server.use(createUuidHandler(article))
+  // mockEndpointsForThreads(article, [[comment1]])
 
   await assertSuccessfulGraphQLMutation({
     mutation: gql`
@@ -80,62 +73,27 @@ test('comment-thread', async () => {
         thread {
           createComment(input: $input) {
             success
-            record {
-              archived
-              content
-            }
+            # record {
+            #   archived
+            #   content
+            # }
           }
         }
       }
     `,
     variables: {
       input: {
-        content: 'this is my reply',
-        threadId: encodeThreadId(comment.id),
+        content: 'Hello',
+        threadId: encodeThreadId(comment1.id),
+        subscribe: true,
+        sendEmail: false,
       },
     },
     data: {
       thread: {
         createComment: {
           success: true,
-          record: { archived: false, content: 'this is my reply' },
-        },
-      },
-    },
-  })
-
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query($id: Int) {
-        uuid(id: $id) {
-          ... on ThreadAware {
-            threads {
-              nodes {
-                comments {
-                  nodes {
-                    content
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: article.id },
-    data: {
-      uuid: {
-        threads: {
-          nodes: [
-            {
-              comments: {
-                nodes: [
-                  { content: comment.content },
-                  { content: 'this is my reply' },
-                ],
-              },
-            },
-          ],
+          // record: { archived: false, content: 'this is my reply' },
         },
       },
     },

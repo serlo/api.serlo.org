@@ -488,19 +488,18 @@ export function createSerloModel({
       const value = (await response.json()) as CommentPayload | null
 
       if (value !== null) {
+        await getUuid._querySpec.setCache({
+          payload: { id: value.id },
+          value,
+        })
         await getThreadIds._querySpec.setCache({
           payload: { id: payload.objectId },
           // eslint-disable-next-line @typescript-eslint/require-await
           async getValue(current) {
-            if (!current || !isCommentPayload(current)) return
-
+            if (!current) return
             current.firstCommentIds.unshift(value.id) //new thread on first pos
             return current
           },
-        })
-        await getUuid._querySpec.setCache({
-          payload: { id: value.id },
-          value,
         })
       }
       return value
@@ -513,7 +512,7 @@ export function createSerloModel({
   >({
     mutate: async (payload) => {
       const response = await post({
-        path: `thread/comment-thread`,
+        path: `/thread/comment-thread`,
         body: payload,
       })
       if (response.status !== 200) {

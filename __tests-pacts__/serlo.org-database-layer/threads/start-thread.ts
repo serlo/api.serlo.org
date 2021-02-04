@@ -28,7 +28,6 @@ import { mockEndpointsForThreads } from '../../../__tests__/schema/thread/thread
 import {
   addMutationInteraction,
   assertSuccessfulGraphQLMutation,
-  assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
 import { DiscriminatorType } from '~/schema/uuid'
 
@@ -36,22 +35,6 @@ test('start-thread', async () => {
   global.client = createTestClient({ userId: user.id })
 
   mockEndpointsForThreads(article, [])
-  await global.client.query({
-    query: gql`
-      query($id: Int) {
-        uuid(id: $id) {
-          ... on ThreadAware {
-            threads {
-              nodes {
-                title
-              }
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: article.id },
-  })
 
   await addMutationInteraction({
     name: 'create new thread for uuid 1855',
@@ -62,6 +45,8 @@ test('start-thread', async () => {
       content: '🔥 brand new!',
       objectId: article.id,
       userId: user.id,
+      subscribe: true,
+      sendEmail: false,
     },
     responseBody: {
       id: Matchers.integer(1000),
@@ -77,6 +62,7 @@ test('start-thread', async () => {
       childrenIds: [],
     },
   })
+
   await assertSuccessfulGraphQLMutation({
     mutation: gql`
       mutation createThread($input: ThreadCreateThreadInput!) {
@@ -101,6 +87,8 @@ test('start-thread', async () => {
         title: 'My new thread',
         content: '🔥 brand new!',
         objectId: article.id,
+        subscribe: true,
+        sendEmail: false,
       },
     },
     data: {
@@ -120,26 +108,6 @@ test('start-thread', async () => {
           },
         },
       },
-    },
-  })
-
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query($id: Int) {
-        uuid(id: $id) {
-          ... on ThreadAware {
-            threads {
-              nodes {
-                title
-              }
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: article.id },
-    data: {
-      uuid: { threads: { nodes: [{ title: 'My new thread' }] } },
     },
   })
 })

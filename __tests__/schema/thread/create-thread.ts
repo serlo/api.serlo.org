@@ -20,9 +20,17 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import { rest } from 'msw'
 
-import { article } from '../../../__fixtures__'
-import { assertFailingGraphQLMutation, createTestClient } from '../../__utils__'
+import { article, comment, comment1, user } from '../../../__fixtures__'
+import {
+  assertFailingGraphQLMutation,
+  assertSuccessfulGraphQLMutation,
+  assertSuccessfulGraphQLQuery,
+  createTestClient,
+  getDatabaseLayerUrl,
+} from '../../__utils__'
+import { mockEndpointsForThreads } from './thread'
 
 test('unauthenticated user gets error', async () => {
   await assertFailingGraphQLMutation({
@@ -36,9 +44,164 @@ test('unauthenticated user gets error', async () => {
       }
     `,
     variables: {
-      input: { content: 'Hello', title: 'Hello', objectId: article.id },
+      input: {
+        content: 'Hello',
+        title: 'Hello',
+        objectId: article.id,
+        subscribe: true,
+        sendEmail: false,
+      },
     },
     client: createTestClient({ userId: null }),
     expectedError: 'UNAUTHENTICATED',
+  })
+})
+
+test('thread gets created, cache mutated as expected', async () => {
+  const client = createTestClient({ userId: user.id })
+
+  mockEndpointsForThreads(article, [[comment]])
+
+  //fill cache
+  await client.query({
+    query: gql`
+      query($id: Int) {
+        uuid(id: $id) {
+          ... on ThreadAware {
+            threads {
+              nodes {
+                comments {
+                  nodes {
+                    content
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables: { id: article.id },
+  })
+
+  global.server.use(
+    rest.post<{
+      content: string
+      title: string
+      objectId: number
+      subscribe: boolean
+      sendEmail: boolean
+      userId: number
+    }>(
+      getDatabaseLayerUrl({ path: '/thread/start-thread' }),
+      (req, res, ctx) => {
+        const { objectId, content, title } = req.body
+        return res(
+          ctx.status(200),
+          ctx.json({
+            __typename: 'comment',
+            id: comment1.id,
+            parentId: null,
+            objectId,
+            content,
+            trashed: false,
+            alias: null,
+            title,
+            archived: false,
+            childrenIds: [],
+          })
+        )
+      }
+    )
+  )
+
+  await assertSuccessfulGraphQLMutation({
+    mutation: gql`
+      mutation createThread($input: ThreadCreateThreadInput!) {
+        thread {
+          createThread(input: $input) {
+            success
+            record {
+              archived
+              comments {
+                nodes {
+                  content
+                  title
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+    client,
+    variables: {
+      input: {
+        title: 'My new thread',
+        content: '🔥 brand new!',
+        objectId: article.id,
+        subscribe: true,
+        sendEmail: false,
+      },
+    },
+    data: {
+      thread: {
+        createThread: {
+          success: true,
+          record: {
+            archived: false,
+            comments: {
+              nodes: [
+                {
+                  title: 'My new thread',
+                  content: '🔥 brand new!',
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+  })
+
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query($id: Int) {
+        uuid(id: $id) {
+          ... on ThreadAware {
+            threads {
+              nodes {
+                comments {
+                  nodes {
+                    content
+                    title
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables: { id: article.id },
+    client,
+    data: {
+      uuid: {
+        threads: {
+          nodes: [
+            {
+              comments: {
+                nodes: [{ title: 'My new thread', content: '🔥 brand new!' }],
+              },
+            },
+            {
+              comments: {
+                nodes: [{ title: comment.title, content: comment.content }],
+              },
+            },
+          ],
+        },
+      },
+    },
   })
 })
