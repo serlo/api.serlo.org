@@ -21,9 +21,8 @@
  */
 import { gql } from 'apollo-server'
 
-import { article, comment3, user } from '../../../__fixtures__'
+import { comment3, user } from '../../../__fixtures__'
 import { createTestClient } from '../../../__tests__/__utils__'
-import { mockEndpointsForThreads } from '../../../__tests__/schema/thread/thread'
 import {
   addMutationInteraction,
   assertSuccessfulGraphQLMutation,
@@ -53,6 +52,4 @@ test('/thread/set-archive', async () => {
     variables: { input: { id: encodeThreadId(comment3.id), archived: true } },
     data: { thread: { setThreadArchived: { success: true } } },
   })
-
-  mockEndpointsForThreads(article, [[comment3]])
 })

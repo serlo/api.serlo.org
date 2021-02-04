@@ -20,9 +20,17 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import { rest } from 'msw'
 
-import { comment } from '../../../__fixtures__'
-import { assertFailingGraphQLMutation, createTestClient } from '../../__utils__'
+import { article, comment1, user } from '../../../__fixtures__'
+import {
+  assertFailingGraphQLMutation,
+  assertSuccessfulGraphQLMutation,
+  assertSuccessfulGraphQLQuery,
+  createTestClient,
+  getDatabaseLayerUrl,
+} from '../../__utils__'
+import { mockEndpointsForThreads } from './thread'
 import { encodeThreadId } from '~/schema/thread'
 
 test('unauthenticated user gets error', async () => {
@@ -37,9 +45,140 @@ test('unauthenticated user gets error', async () => {
       }
     `,
     variables: {
-      input: { content: 'Hello', threadId: encodeThreadId(comment.id) },
+      input: {
+        content: 'Hello',
+        threadId: encodeThreadId(comment1.id),
+        subscribe: true,
+        sendEmail: false,
+      },
     },
     client: createTestClient({ userId: null }),
     expectedError: 'UNAUTHENTICATED',
+  })
+})
+
+test('comment gets created, cache mutated as expected', async () => {
+  const client = createTestClient({ userId: user.id })
+
+  global.server.use(
+    rest.post<{
+      content: string
+      threadId: number
+      userId: number
+      subscribe: boolean
+      sendEmail: boolean
+    }>(
+      getDatabaseLayerUrl({ path: '/thread/comment-thread' }),
+      (req, res, ctx) => {
+        const { threadId, content } = req.body
+        return res(
+          ctx.status(200),
+          ctx.json({
+            __typename: 'comment',
+            id: comment1.id + 1,
+            parentId: threadId,
+            content: content,
+            trashed: false,
+            alias: null,
+            title: null,
+            archived: false,
+            childrenIds: [],
+          })
+        )
+      }
+    )
+  )
+
+  mockEndpointsForThreads(article, [[comment1]])
+
+  //fill cache
+  await client.query({
+    query: gql`
+      query($id: Int) {
+        uuid(id: $id) {
+          ... on ThreadAware {
+            threads {
+              nodes {
+                comments {
+                  nodes {
+                    content
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables: { id: article.id },
+  })
+
+  await assertSuccessfulGraphQLMutation({
+    mutation: gql`
+      mutation($input: ThreadCreateCommentInput!) {
+        thread {
+          createComment(input: $input) {
+            success
+            record {
+              archived
+              content
+              id
+            }
+          }
+        }
+      }
+    `,
+    variables: {
+      input: {
+        content: 'Hello',
+        threadId: encodeThreadId(comment1.id),
+        subscribe: true,
+        sendEmail: false,
+      },
+    },
+    client,
+    data: {
+      thread: {
+        createComment: {
+          success: true,
+          record: { archived: false, content: 'Hello', id: comment1.id + 1 },
+        },
+      },
+    },
+  })
+
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query($id: Int) {
+        uuid(id: $id) {
+          ... on ThreadAware {
+            threads {
+              nodes {
+                comments {
+                  nodes {
+                    content
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables: { id: article.id },
+    client,
+    data: {
+      uuid: {
+        threads: {
+          nodes: [
+            {
+              comments: {
+                nodes: [{ content: comment1.content }, { content: 'Hello' }],
+              },
+            },
+          ],
+        },
+      },
+    },
   })
 })
