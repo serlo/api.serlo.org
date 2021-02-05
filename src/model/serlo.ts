@@ -507,12 +507,18 @@ export function createSerloModel({
   })
 
   const createComment = createMutation<
-    { content: string; threadId: number; userId: number },
+    {
+      content: string
+      threadId: number
+      userId: number
+      subscribe: boolean
+      sendEmail: boolean
+    },
     CommentPayload | null
   >({
     mutate: async (payload) => {
       const response = await post({
-        path: `/thread/comment-thread`,
+        path: '/thread/comment-thread',
         body: payload,
       })
       if (response.status !== 200) {

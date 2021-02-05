@@ -21,53 +21,47 @@
  */
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
+import fetch from 'node-fetch'
 
 import { comment1, user } from '../../../__fixtures__'
 import { createTestClient } from '../../../__tests__/__utils__'
-import { assertSuccessfulGraphQLMutation } from '../../__utils__'
+import {
+  addMutationInteraction,
+  assertSuccessfulGraphQLMutation,
+} from '../../__utils__'
 import { encodeThreadId } from '~/schema/thread'
 
 test('comment-thread', async () => {
   global.client = createTestClient({ userId: user.id })
 
-  await global.pact.addInteraction({
-    uponReceiving: `create new comment on thread where id of first comment is ${comment1.id}`,
-    state: `there exists a thread with a first comment with an id of ${comment1.id} and ${user.id} is authenticated`,
-    withRequest: {
-      method: 'POST',
-      path: '/thread/comment-thread',
-      body: {
-        input: {
-          content: 'Hello',
-          threadId: comment1.id,
-          subscribe: true,
-          sendEmail: false,
-          userId: user.id,
-        },
-      },
-      headers: { 'Content-Type': 'application/json' },
+  await addMutationInteraction({
+    name: `create new comment on thread where id of first comment is ${comment1.id}`,
+    given: `there exists a thread with a first comment with an id of ${comment1.id} and ${user.id} is authenticated`,
+    path: '/thread/comment-thread',
+    requestBody: {
+      content: 'Hello',
+      threadId: comment1.id,
+      userId: user.id,
+      subscribe: true,
+      sendEmail: false,
     },
-    willRespondWith: {
-      status: 200,
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
-      body: {
-        __typename: 'comment',
-        id: Matchers.integer(comment1.id + 1),
-        content: 'Hello',
-        parentId: comment1.id,
-        trashed: false,
-        alias: Matchers.string('/mathe/101/mathe'),
-        date: Matchers.iso8601DateTime(comment1.date),
-        title: null,
-        archived: false,
-        childrenIds: [],
-      },
+    responseBody: {
+      __typename: 'comment',
+      id: Matchers.integer(comment1.id + 1),
+      content: 'Hello',
+      parentId: comment1.id,
+      trashed: false,
+      alias: Matchers.string('/mathe/101/mathe'),
+      date: Matchers.iso8601DateTime(comment1.date),
+      title: null,
+      archived: false,
+      childrenIds: [],
     },
   })
 
   await assertSuccessfulGraphQLMutation({
     mutation: gql`
-      mutation createThread($input: ThreadCreateCommentInput!) {
+      mutation createComment($input: ThreadCreateCommentInput!) {
         thread {
           createComment(input: $input) {
             success

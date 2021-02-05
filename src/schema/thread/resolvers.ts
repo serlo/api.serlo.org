@@ -105,7 +105,7 @@ export const resolvers: ThreadResolvers = {
 
       const threadId = decodeThreadId(input.threadId)
       const commentPayload = await dataSources.model.serlo.createComment({
-        content: input.content,
+        ...input,
         threadId,
         userId,
       })
