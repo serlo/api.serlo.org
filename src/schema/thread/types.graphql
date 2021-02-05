@@ -88,7 +88,10 @@ input ThreadCreateThreadInput {
   title: String!
   content: String!
   objectId: Int!
+  subscribe: Boolean!
+  sendEmail: Boolean!
 }
+
 type ThreadCreateThreadResponse {
   record: Thread
   success: Boolean!
@@ -98,6 +101,8 @@ type ThreadCreateThreadResponse {
 input ThreadCreateCommentInput {
   content: String!
   threadId: String!
+  subscribe: Boolean!
+  sendEmail: Boolean!
 }
 
 type ThreadCreateCommentResponse {

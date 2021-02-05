@@ -2190,7 +2190,7 @@ describe('mutation notification setState', () => {
     })
   })
 
-  test('cache is mutated as expected', async () => {
+  test('cache is mutated as expected: single id', async () => {
     const client = createTestClient({ userId: user.id })
 
     //fill notification cache
@@ -2205,7 +2205,7 @@ describe('mutation notification setState', () => {
         input: { id: 1, unread: true },
       },
       data: { notification: { setState: { success: true } } },
-      client: createTestClient({ userId: user.id }),
+      client,
     })
 
     await assertSuccessfulGraphQLQuery({
@@ -2216,6 +2216,40 @@ describe('mutation notification setState', () => {
             { id: 3, unread: true },
             { id: 2, unread: false },
             { id: 1, unread: true },
+          ],
+          totalCount: 3,
+        },
+      },
+      client,
+    })
+  })
+
+  test('cache is mutated as expected: array', async () => {
+    const client = createTestClient({ userId: user.id })
+
+    //fill notification cache
+    await client.query({
+      query: notificationQuery,
+      variables: {},
+    })
+
+    await assertSuccessfulGraphQLMutation({
+      mutation,
+      variables: {
+        input: { id: [1, 2, 3], unread: false },
+      },
+      data: { notification: { setState: { success: true } } },
+      client,
+    })
+
+    await assertSuccessfulGraphQLQuery({
+      query: notificationQuery,
+      data: {
+        notifications: {
+          nodes: [
+            { id: 3, unread: false },
+            { id: 2, unread: false },
+            { id: 1, unread: false },
           ],
           totalCount: 3,
         },

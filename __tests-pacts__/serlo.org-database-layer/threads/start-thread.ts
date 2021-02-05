@@ -22,61 +22,44 @@
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
-import { article, user } from '../../__fixtures__'
-import { createTestClient } from '../../__tests__/__utils__'
-import { mockEndpointsForThreads } from '../../__tests__/schema/thread/thread'
+import { article, user } from '../../../__fixtures__'
+import { createTestClient } from '../../../__tests__/__utils__'
 import {
   addMutationInteraction,
   assertSuccessfulGraphQLMutation,
-  assertSuccessfulGraphQLQuery,
-} from '../__utils__'
+} from '../../__utils__'
 import { DiscriminatorType } from '~/schema/uuid'
 
 test('start-thread', async () => {
   global.client = createTestClient({ userId: user.id })
 
-  mockEndpointsForThreads(article, [])
-  await global.client.query({
-    query: gql`
-      query($id: Int) {
-        uuid(id: $id) {
-          ... on ThreadAware {
-            threads {
-              nodes {
-                title
-              }
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: article.id },
-  })
-
   await addMutationInteraction({
-    name: 'create new thread for uuid 1565',
-    given: `there exists a uuid 1565 and user with id ${user.id} is authenticated`,
-    path: '/api/thread/start-thread',
+    name: 'create new thread for uuid 1855',
+    given: `there exists a uuid 1855 and user with id ${user.id} is authenticated`,
+    path: '/thread/start-thread',
     requestBody: {
-      title: 'First comment in new thread',
-      content: 'first!',
+      title: 'My new thread',
+      content: '🔥 brand new!',
       objectId: article.id,
       userId: user.id,
+      subscribe: true,
+      sendEmail: false,
     },
     responseBody: {
       id: Matchers.integer(1000),
-      title: 'First comment in new thread',
+      title: 'My new thread',
       trashed: false,
       alias: Matchers.string('/mathe/1000/first'),
       __typename: DiscriminatorType.Comment,
       authorId: user.id,
       date: Matchers.iso8601DateTime(article.date),
       archived: false,
-      content: 'first!',
+      content: '🔥 brand new!',
       parentId: article.id,
       childrenIds: [],
     },
   })
+
   await assertSuccessfulGraphQLMutation({
     mutation: gql`
       mutation createThread($input: ThreadCreateThreadInput!) {
@@ -98,9 +81,11 @@ test('start-thread', async () => {
     `,
     variables: {
       input: {
-        title: 'First comment in new thread',
-        content: 'first!',
+        title: 'My new thread',
+        content: '🔥 brand new!',
         objectId: article.id,
+        subscribe: true,
+        sendEmail: false,
       },
     },
     data: {
@@ -112,34 +97,14 @@ test('start-thread', async () => {
             comments: {
               nodes: [
                 {
-                  content: 'first!',
-                  title: 'First comment in new thread',
+                  title: 'My new thread',
+                  content: '🔥 brand new!',
                 },
               ],
             },
           },
         },
       },
-    },
-  })
-
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query($id: Int) {
-        uuid(id: $id) {
-          ... on ThreadAware {
-            threads {
-              nodes {
-                title
-              }
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: article.id },
-    data: {
-      uuid: { threads: { nodes: [{ title: 'First comment in new thread' }] } },
     },
   })
 })
