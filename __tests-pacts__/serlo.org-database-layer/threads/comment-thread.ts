@@ -22,7 +22,7 @@
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
-import { comment1, user } from '../../../__fixtures__'
+import { comment, user } from '../../../__fixtures__'
 import { createTestClient } from '../../../__tests__/__utils__'
 import {
   addMutationInteraction,
@@ -34,24 +34,24 @@ test('comment-thread', async () => {
   global.client = createTestClient({ userId: user.id })
 
   await addMutationInteraction({
-    name: `create new comment on thread where id of first comment is ${comment1.id}`,
-    given: `there exists a thread with a first comment with an id of ${comment1.id} and ${user.id} is authenticated`,
+    name: `create new comment on thread where id of first comment is ${comment.id}`,
+    given: `there exists a thread with a first comment with an id of ${comment.id} and ${user.id} is authenticated`,
     path: '/thread/comment-thread',
     requestBody: {
       content: 'Hello',
-      threadId: comment1.id,
+      threadId: comment.id,
       userId: user.id,
       subscribe: true,
       sendEmail: false,
     },
     responseBody: {
       __typename: 'comment',
-      id: Matchers.integer(comment1.id + 1),
+      id: Matchers.integer(comment.id + 1),
       content: 'Hello',
-      parentId: comment1.id,
+      parentId: comment.id,
       trashed: false,
       alias: Matchers.string('/mathe/101/mathe'),
-      date: Matchers.iso8601DateTime(comment1.date),
+      date: Matchers.iso8601DateTime(comment.date),
       title: null,
       archived: false,
       childrenIds: [],
@@ -71,7 +71,7 @@ test('comment-thread', async () => {
     variables: {
       input: {
         content: 'Hello',
-        threadId: encodeThreadId(comment1.id),
+        threadId: encodeThreadId(comment.id),
         subscribe: true,
         sendEmail: false,
       },
