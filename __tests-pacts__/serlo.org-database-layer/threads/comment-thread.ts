@@ -29,6 +29,7 @@ import {
   assertSuccessfulGraphQLMutation,
 } from '../../__utils__'
 import { encodeThreadId } from '~/schema/thread'
+import { DiscriminatorType } from '~/schema/uuid'
 
 test('comment-thread', async () => {
   global.client = createTestClient({ userId: user.id })
@@ -45,7 +46,7 @@ test('comment-thread', async () => {
       sendEmail: false,
     },
     responseBody: {
-      __typename: 'comment',
+      __typename: DiscriminatorType.Comment,
       id: Matchers.integer(comment.id + 1),
       content: 'Hello',
       parentId: comment.id,
