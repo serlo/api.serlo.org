@@ -77,7 +77,7 @@ beforeEach(async () => {
             'Content-Type': req.headers.get('Content-Type')!,
           },
         })
-        return pactRes.bodyUsed
+        return pactRes.headers.get('Content-Type')
           ? res(ctx.status(pactRes.status), ctx.json(await pactRes.json()))
           : res(ctx.status(pactRes.status))
       }
