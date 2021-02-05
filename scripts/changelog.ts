@@ -543,6 +543,7 @@ async function exec(): Promise<void> {
     },
     {
       tagName: 'v0.18.2',
+      date: '2021-01-29',
       changed: [
         [
           'thread',
@@ -555,7 +556,23 @@ async function exec(): Promise<void> {
     },
     {
       tagName: 'v0.18.3',
+      date: '2021-02-02',
       fixed: [['thread', 'Return threads in the correct order.']],
+    },
+    {
+      tagName: 'v0.19.0',
+      date: '2021-02-05',
+      breakingChanges: [
+        [
+          'thread',
+          '`thread.createThread` requires additional fields `subscribe` and `sendEmail`.',
+        ],
+        [
+          'thread',
+          '`thread.createComment` requires additional fields `subscribe` and `sendEmail`.',
+        ],
+      ],
+      internal: ['serlo-org-database-layer@0.2.3'],
     },
   ])
 
