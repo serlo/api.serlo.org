@@ -21,7 +21,6 @@
  */
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
-import fetch from 'node-fetch'
 
 import { comment1, user } from '../../../__fixtures__'
 import { createTestClient } from '../../../__tests__/__utils__'
