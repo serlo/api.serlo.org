@@ -2,13 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
-## [v0.18.3](https://github.com/serlo/api.serlo.org/compare/v0.18.2..v0.18.3)
+## [v0.19.0](https://github.com/serlo/api.serlo.org/compare/v0.18.3..v0.19.0) - February 5, 2021
+
+### Breaking Changes
+
+- **thread**. `thread.createThread` requires additional fields `subscribe` and `sendEmail`.
+
+- **thread**. `thread.createComment` requires additional fields `subscribe` and `sendEmail`.
+
+### Internal
+
+- serlo-org-database-layer@0.2.3
+
+## [v0.18.3](https://github.com/serlo/api.serlo.org/compare/v0.18.2..v0.18.3) - February 2, 2021
 
 ### Fixed
 
 - **thread**. Return threads in the correct order.
 
-## [v0.18.2](https://github.com/serlo/api.serlo.org/compare/v0.18.1..v0.18.2)
+## [v0.18.2](https://github.com/serlo/api.serlo.org/compare/v0.18.1..v0.18.2) - January 29, 2021
 
 ### Changed
 
