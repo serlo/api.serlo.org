@@ -80,16 +80,6 @@ export function createJsonHandler(
   })
 }
 
-export function getSerloUrl({
-  instance = Instance.De,
-  path,
-}: {
-  instance?: Instance
-  path: string
-}) {
-  return `http://${instance}.${process.env.SERLO_ORG_HOST}${path}`
-}
-
 export function getDatabaseLayerUrl({ path }: { path: string }) {
   return `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`
 }
