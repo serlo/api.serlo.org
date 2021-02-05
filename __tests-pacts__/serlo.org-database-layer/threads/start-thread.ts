@@ -46,11 +46,11 @@ test('start-thread', async () => {
       sendEmail: false,
     },
     responseBody: {
+      __typename: DiscriminatorType.Comment,
       id: Matchers.integer(1000),
       title: 'My new thread',
       trashed: false,
       alias: Matchers.string('/mathe/1000/first'),
-      __typename: DiscriminatorType.Comment,
       authorId: user.id,
       date: Matchers.iso8601DateTime(article.date),
       archived: false,
