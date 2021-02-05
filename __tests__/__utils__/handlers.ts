@@ -20,11 +20,11 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { rest } from 'msw'
+import * as R from 'ramda'
 
 import { LicensePayload } from '~/schema/license'
 import { NotificationEventPayload } from '~/schema/notification'
 import { AliasPayload, NavigationPayload, UuidPayload } from '~/schema/uuid'
-import { Instance } from '~/types'
 
 export function createAliasHandler(alias: AliasPayload) {
   return createJsonHandler({
@@ -34,8 +34,13 @@ export function createAliasHandler(alias: AliasPayload) {
 }
 
 export function createLicenseHandler(license: LicensePayload) {
-  return createJsonHandler({
-    path: `/license/${license.id}`,
+  return createMessageHandler({
+    message: {
+      type: 'LicenseQuery',
+      payload: {
+        id: license.id,
+      },
+    },
     body: license,
   })
 }
@@ -78,6 +83,37 @@ export function createJsonHandler(
       ctx.json(args.body as Record<string, unknown>)
     )
   })
+}
+
+export function createMessageHandler(
+  args: {
+    message: {
+      type: string
+      payload?: Record<string, unknown>
+    }
+    body?: unknown
+  },
+  once = false
+) {
+  const { message, body } = args
+
+  const handler = rest.post(
+    getDatabaseLayerUrl({ path: '/' }),
+    (req, res, ctx) => {
+      return (once ? res.once : res)(
+        body === undefined
+          ? ctx.status(200)
+          : ctx.json(body as Record<string, unknown>)
+      )
+    }
+  )
+
+  // Only use this handler if message matches
+  handler.predicate = (req) => {
+    return R.equals(req.body, message)
+  }
+
+  return handler
 }
 
 export function getDatabaseLayerUrl({ path }: { path: string }) {
