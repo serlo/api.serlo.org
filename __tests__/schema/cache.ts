@@ -21,36 +21,18 @@
  */
 
 import { option } from 'fp-ts'
-import { rest } from 'msw'
 
 import {
   createRemoveCacheMutation,
   createSetCacheMutation,
   createUpdateCacheMutation,
-  user,
-  user2,
 } from '../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
-  createSpreadsheetHandler,
   createTestClient,
-  getSerloUrl,
 } from '../__utils__'
 import { Service } from '~/internals/auth'
-import { MajorDimension } from '~/model'
-
-const mockSpreadSheetData = {
-  spreadsheetId: process.env.GOOGLE_SPREADSHEET_API_ACTIVE_DONORS,
-  range: 'Tabellenblatt1!A:A',
-  majorDimension: MajorDimension.Columns,
-  apiKey: 'very-secure-secret',
-  body: {
-    values: [['Ids', user.id.toString(), user2.id.toString()]],
-    majorDimension: MajorDimension.Columns,
-    range: 'Tabellenblatt1!A:A',
-  },
-}
 
 const testVars = [
   {
@@ -62,24 +44,6 @@ const testVars = [
     value: ['whatever'],
   },
 ]
-
-beforeEach(() => {
-  global.server.use(
-    rest.get(
-      getSerloUrl({ path: `/api/${testVars[0].key}` }),
-      (_req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(testVars[0].value))
-      }
-    ),
-    rest.get(
-      getSerloUrl({ path: `/api/${testVars[1].key}` }),
-      (_req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(testVars[1].value))
-      }
-    ),
-    createSpreadsheetHandler(mockSpreadSheetData)
-  )
-})
 
 test('_setCache (forbidden)', async () => {
   const client = createTestClient({
