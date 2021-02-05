@@ -504,6 +504,8 @@ export type ThreadCreateThreadInput = {
   title: Scalars['String'];
   content: Scalars['String'];
   objectId: Scalars['Int'];
+  subscribe: Scalars['Boolean'];
+  sendEmail: Scalars['Boolean'];
 };
 
 export type ThreadCreateThreadResponse = {
@@ -516,6 +518,8 @@ export type ThreadCreateThreadResponse = {
 export type ThreadCreateCommentInput = {
   content: Scalars['String'];
   threadId: Scalars['String'];
+  subscribe: Scalars['Boolean'];
+  sendEmail: Scalars['Boolean'];
 };
 
 export type ThreadCreateCommentResponse = {
