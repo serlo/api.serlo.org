@@ -22,12 +22,12 @@
 import { createLicenseQuery, license } from '../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
-  createJsonHandler,
+  createLicenseHandler,
   createTestClient,
 } from '../__utils__'
 
 beforeEach(() => {
-  global.server.use(createJsonHandler({ path: '/license/1', body: license }))
+  global.server.use(createLicenseHandler(license))
 })
 
 test('license', async () => {

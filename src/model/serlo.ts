@@ -87,6 +87,32 @@ export function createSerloModel({
     )
   }
 
+  async function handleMessage({
+    message,
+    expectedStatusCodes,
+  }: {
+    message: {
+      type: string
+      payload?: Record<string, unknown>
+    }
+    expectedStatusCodes: number[]
+  }): Promise<Response> {
+    const response = await fetch(
+      `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`,
+      {
+        method: 'POST',
+        body: JSON.stringify(message),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+    if (!expectedStatusCodes.includes(response.status)) {
+      throw new Error(`${response.status}: ${response.statusText}`)
+    }
+    return response
+  }
+
   const getUuid = createQuery<{ id: number }, AbstractUuidPayload | null>(
     {
       enableSwr: true,
@@ -314,8 +340,13 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        const response = await get({
-          path: `/license/${id}`,
+        const response = await handleMessage({
+          message: {
+            type: 'LicenseQuery',
+            payload: {
+              id,
+            },
+          },
           expectedStatusCodes: [200, 404],
         })
         return (await response.json()) as License
