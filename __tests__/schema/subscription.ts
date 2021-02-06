@@ -80,7 +80,7 @@ describe('subscription mutation set', () => {
     }
   `
 
-  beforeEach(() => {
+  test('with array of ids', async () => {
     global.server.use(
       createSubscriptionSetMutationHandler({
         ids: [1565, 1555],
@@ -89,10 +89,6 @@ describe('subscription mutation set', () => {
         sendEmail: false,
       })
     )
-  })
-
-  test('with array of ids', async () => {
-    global.server.use(createSubscriptionSetMutationHandler({}))
 
     await assertSuccessfulGraphQLMutation({
       mutation,
@@ -124,7 +120,14 @@ describe('subscription mutation set', () => {
         },
       })
     )
-    global.server.use(createSubscriptionSetMutationHandler({}))
+    global.server.use(
+      createSubscriptionSetMutationHandler({
+        ids: [article.id],
+        userId: user.id,
+        subscribe: false,
+        sendEmail: false,
+      })
+    )
     const client = createTestClient({ userId: user.id })
 
     // fill cache
