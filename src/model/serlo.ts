@@ -480,6 +480,42 @@ export function createSerloModel({
     environment
   )
 
+  const setSubscription = createMutation<
+    {
+      ids: number[]
+      userId: number
+      subscribe: boolean
+      sendEmail: boolean
+    },
+    void
+  >({
+    mutate: async ({ ids, userId, subscribe, sendEmail }) => {
+      await handleMessage({
+        message: {
+          type: 'SubscriptionSetMutation',
+          payload: {
+            ids,
+            userId,
+            subscribe,
+            sendEmail,
+          },
+        },
+        expectedStatusCodes: [200],
+      })
+      await getSubscriptions._querySpec.setCache({
+        payload: { id: userId },
+        // eslint-disable-next-line @typescript-eslint/require-await
+        async getValue(current) {
+          if (!current) return
+          const updated = current.subscriptions.filter(function (node) {
+            return !ids.includes(node.id)
+          })
+          return { ...current, subscriptions: updated }
+        },
+      })
+    },
+  })
+
   const getThreadIds = createQuery<{ id: number }, ThreadsPayload>(
     {
       enableSwr: true,
@@ -629,6 +665,7 @@ export function createSerloModel({
     getNotificationEvent,
     getNotifications,
     getSubscriptions,
+    setSubscription,
     getThreadIds,
     getUuid,
     setUuidState,

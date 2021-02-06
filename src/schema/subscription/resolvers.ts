@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { resolveConnection } from '../connection'
-import { assertUserIsAuthenticated } from '../utils'
+import { assertUserIsAuthenticated, createMutationNamespace } from '../utils'
 import { AbstractUuidPayload } from '../uuid'
 import { SubscriptionResolvers } from './types'
 
@@ -45,6 +45,27 @@ export const resolvers: SubscriptionResolvers = {
           return node.id.toString()
         },
       })
+    },
+  },
+  Mutation: {
+    subscription: createMutationNamespace(),
+  },
+  SubscriptionMutation: {
+    async set(_parent, payload, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const { id, subscribe, sendEmail } = payload.input
+      const ids = Array.isArray(id) ? id : [id]
+      await dataSources.model.serlo.setSubscription({
+        ids,
+        userId,
+        subscribe,
+        sendEmail,
+      })
+      return {
+        success: true,
+        query: {},
+      }
     },
   },
 }
