@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { rest } from 'msw'
+import * as R from 'ramda'
 
 import { LicensePayload } from '~/schema/license'
 import { NotificationEventPayload } from '~/schema/notification'
@@ -119,12 +120,8 @@ export function createMessageHandler(
   )
 
   // Only use this handler if message matches
-  // ignore payload
   handler.predicate = (req) => {
-    return !!(
-      req.body &&
-      ((req.body as unknown) as Record<string, unknown>).type === message.type
-    )
+    return R.equals(req.body, message)
   }
 
   return handler
