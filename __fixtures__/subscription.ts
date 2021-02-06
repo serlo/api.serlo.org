@@ -19,35 +19,40 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Connection } from '../connection'
-import { AbstractUuidPayload } from '../uuid'
-import {
-  MutationNamespace,
-  MutationResolver,
-  QueryResolver,
-} from '~/internals/graphql'
-import {
-  QuerySubscriptionsArgs,
-  SubscriptionMutationSetArgs,
-  SubscriptionSetResponse,
-} from '~/types'
+import { gql } from 'apollo-server'
 
-export interface SubscriptionsPayload {
-  subscriptions: { id: number }[]
-  userId: number
+export function createSubscriptionsQuery() {
+  return {
+    query: gql`
+      query subscriptions {
+        subscriptions {
+          totalCount
+          nodes {
+            __typename
+            id
+            trashed
+            ... on Article {
+              instance
+              date
+            }
+          }
+        }
+      }
+    `,
+  }
 }
 
-export interface SubscriptionResolvers {
-  Query: {
-    subscriptions: QueryResolver<
-      QuerySubscriptionsArgs,
-      Connection<AbstractUuidPayload>
-    >
-  }
-  Mutation: {
-    subscription: MutationNamespace
-  }
-  SubscriptionMutation: {
-    set: MutationResolver<SubscriptionMutationSetArgs, SubscriptionSetResponse>
+export function createSubscriptionsQueryOnlyId() {
+  return {
+    query: gql`
+      query subscriptions {
+        subscriptions {
+          totalCount
+          nodes {
+            id
+          }
+        }
+      }
+    `,
   }
 }

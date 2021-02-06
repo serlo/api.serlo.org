@@ -18,3 +18,22 @@ type SubscriptionCursor {
   cursor: String!
   node: AbstractUuid!
 }
+
+extend type Mutation {
+  subscription: SubscriptionMutation!
+}
+
+type SubscriptionMutation {
+  set(input: SubscriptionSetInput!): SubscriptionSetResponse
+}
+
+input SubscriptionSetInput {
+  id: [Int!]!
+  subscribe: Boolean!
+  sendEmail: Boolean!
+}
+
+type SubscriptionSetResponse {
+  success: Boolean!
+  query: Query!
+}
