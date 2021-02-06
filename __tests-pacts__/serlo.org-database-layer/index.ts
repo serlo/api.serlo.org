@@ -26,9 +26,6 @@ describe('GET /alias/:instance/:alias', () => {
 describe('GET /event/:id', () => {
   require('./event')
 })
-describe('GET /license/:id', () => {
-  require('./license')
-})
 describe('GET /navigation/:instance', () => {
   require('./navigation')
 })
@@ -61,4 +58,8 @@ describe('POST /thread/start-thread', () => {
 })
 describe('POST /thread/comment-thread', () => {
   require('./threads/comment-thread')
+})
+
+describe('LicenseMessage', () => {
+  require('./license')
 })

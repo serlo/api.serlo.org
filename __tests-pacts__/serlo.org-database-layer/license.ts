@@ -22,14 +22,21 @@
 import { Matchers } from '@pact-foundation/pact'
 
 import { createLicenseQuery, license } from '../../__fixtures__'
-import { addJsonInteraction, assertSuccessfulGraphQLQuery } from '../__utils__'
+import {
+  addMessageInteraction,
+  assertSuccessfulGraphQLQuery,
+} from '../__utils__'
 
-test('License', async () => {
-  await addJsonInteraction({
-    name: `fetch data of license with id ${license.id}`,
+test('LicenseQuery', async () => {
+  await addMessageInteraction({
     given: `there exists an license with id ${license.id}`,
-    path: `/license/${license.id}`,
-    body: {
+    message: {
+      type: 'LicenseQuery',
+      payload: {
+        id: 1,
+      },
+    },
+    responseBody: {
       id: 1,
       instance: Matchers.string(license.instance),
       default: Matchers.boolean(license.default),
