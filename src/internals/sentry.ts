@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as Sentry from '@sentry/node'
+import type { ApolloServerPlugin } from 'apollo-server-plugin-base'
 
 export function initializeSentry(context: string) {
   Sentry.init({
@@ -27,6 +28,38 @@ export function initializeSentry(context: string) {
     environment: process.env.ENVIRONMENT,
     release: `api.serlo.org-${context}@${process.env.SENTRY_RELEASE || ''}`,
   })
+}
+
+export function createSentryPlugin(): ApolloServerPlugin {
+  return {
+    requestDidStart() {
+      return {
+        didEncounterErrors(ctx) {
+          if (!ctx.operation) return
+
+          for (const error of ctx.errors) {
+            Sentry.captureException(error, (scope) => {
+              scope.setTag('kind', ctx.operationName)
+              scope.setContext('graphql', {
+                query: ctx.request.query,
+                variables: ctx.request.variables,
+              })
+
+              if (error.path) {
+                scope.addBreadcrumb({
+                  category: 'query-path',
+                  message: error.path.join(' > '),
+                  level: Sentry.Severity.Debug,
+                })
+              }
+
+              return scope
+            })
+          }
+        },
+      }
+    },
+  }
 }
 
 export { Sentry }

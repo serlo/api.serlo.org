@@ -36,6 +36,7 @@ import { Cache } from '~/internals/cache'
 import { ModelDataSource } from '~/internals/data-source'
 import { Environment } from '~/internals/environment'
 import { Context } from '~/internals/graphql'
+import { createSentryPlugin } from '~/internals/sentry'
 import { SwrQueue } from '~/internals/swr-queue'
 import { schema } from '~/schema'
 
@@ -96,6 +97,7 @@ export function getGraphQLOptions(
     introspection: true,
     // We add the playground via express middleware in src/index.ts
     playground: false,
+    plugins: [createSentryPlugin()],
     dataSources() {
       return {
         model: new ModelDataSource(environment),
