@@ -49,11 +49,12 @@ export function applyGraphQLMiddleware({
   cache: Cache
   swrQueue: SwrQueue
 }) {
-  const environment = {
-    cache,
-    swrQueue,
-  }
+  const environment = { cache, swrQueue }
   const server = new ApolloServer(getGraphQLOptions(environment))
+  const headers =
+    process.env.NODE_ENV === 'production'
+      ? {}
+      : { headers: { Authorization: `Serlo Service=${getToken()}` } }
 
   app.use(
     server.getMiddleware({
@@ -64,24 +65,7 @@ export function applyGraphQLMiddleware({
     })
   )
   app.get('/___graphql', (...args) => {
-    return createPlayground({
-      endpoint: '/graphql',
-      ...(process.env.NODE_ENV === 'production'
-        ? {}
-        : {
-            headers: {
-              Authorization: `Serlo Service=${jwt.sign(
-                {},
-                process.env.SERVER_SERLO_CLOUDFLARE_WORKER_SECRET,
-                {
-                  expiresIn: '2h',
-                  audience: 'api.serlo.org',
-                  issuer: Service.SerloCloudflareWorker,
-                }
-              )}`,
-            },
-          }),
-    })(...args)
+    return createPlayground({ endpoint: '/graphql', ...headers })(...args)
   })
 
   return server.graphqlPath
@@ -138,4 +122,12 @@ export function getGraphQLOptions(
       })
     },
   }
+}
+
+function getToken() {
+  return jwt.sign({}, process.env.SERVER_SERLO_CLOUDFLARE_WORKER_SECRET, {
+    expiresIn: '2h',
+    audience: 'api.serlo.org',
+    issuer: Service.SerloCloudflareWorker,
+  })
 }
