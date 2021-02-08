@@ -102,10 +102,9 @@ export function getGraphQLOptions(
       }
     },
     formatError(error) {
-      if (R.path(['response', 'status'], error.extensions) === 400) {
-        return new ApolloError(error.message, 'BAD_REQUEST', error.extensions)
-      }
-      return error
+      return R.path(['response', 'status'], error.extensions) === 400
+        ? new ApolloError(error.message, 'BAD_REQUEST', error.extensions)
+        : error
     },
     context({ req }): Promise<Pick<Context, 'service' | 'userId'>> {
       const authorizationHeader = req.headers.authorization
