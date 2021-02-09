@@ -75,7 +75,7 @@ export function createSerloModel({
     path: string
     body: Record<string, unknown>
   }): Promise<Response> {
-    return await fetch(
+    const response = await fetch(
       `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`,
       {
         method: 'POST',
@@ -85,6 +85,10 @@ export function createSerloModel({
         },
       }
     )
+    if (response.status != 200) {
+      throw new Error(`${response.status}: ${response.statusText}`)
+    }
+    return response
   }
 
   async function handleMessage({
@@ -146,13 +150,10 @@ export function createSerloModel({
     void
   >({
     mutate: async ({ ids, userId, trashed }) => {
-      const response = await post({
+      await post({
         path: '/set-uuid-state',
         body: { ids, userId, trashed },
       })
-      if (response.status !== 200) {
-        throw new Error(`${response.status}: ${response.statusText}`)
-      }
       await getUuid._querySpec.setCache({
         payloads: ids.map((id) => {
           return { id }
@@ -395,10 +396,13 @@ export function createSerloModel({
     environment
   )
 
-  const getNotifications = createQuery<{ id: number }, NotificationsPayload>(
+  const getNotifications = createQuery<
+    { userId: number },
+    NotificationsPayload
+  >(
     {
       enableSwr: true,
-      getCurrentValue: async ({ id }) => {
+      getCurrentValue: async ({ userId: id }) => {
         const response = await get({
           path: `/notifications/${id}`,
           expectedStatusCodes: [200],
@@ -406,13 +410,13 @@ export function createSerloModel({
         return (await response.json()) as NotificationsPayload
       },
       maxAge: { hour: 1 },
-      getKey: ({ id }) => {
+      getKey: ({ userId: id }) => {
         return `de.serlo.org/api/notifications/${id}`
       },
       getPayload: (key) => {
         const prefix = 'de.serlo.org/api/notifications/'
         return key.startsWith(prefix)
-          ? O.some({ id: parseInt(key.replace(prefix, ''), 10) })
+          ? O.some({ userId: parseInt(key.replace(prefix, ''), 10) })
           : O.none
       },
     },
@@ -428,20 +432,16 @@ export function createSerloModel({
     void
   >({
     mutate: async ({ ids, userId, unread }) => {
-      const response = await post({
+      await post({
         path: '/set-notification-state',
         body: { ids, userId, unread },
       })
-      if (response.status !== 200) {
-        throw new Error(`${response.status}: ${response.statusText}`)
-      }
       await getNotifications._querySpec.setCache({
-        payloads: ids.map((id) => {
-          return { id }
-        }),
+        payload: { userId },
         // eslint-disable-next-line @typescript-eslint/require-await
         async getValue(current) {
           if (!current) return
+
           const updated = current.notifications.map((notification) => {
             return {
               ...notification,
@@ -513,9 +513,6 @@ export function createSerloModel({
         path: `/thread/start-thread`,
         body: payload,
       })
-      if (response.status !== 200) {
-        throw new Error(`${response.status}: ${response.statusText}`)
-      }
       const value = (await response.json()) as CommentPayload | null
 
       if (value !== null) {
@@ -552,9 +549,6 @@ export function createSerloModel({
         path: '/thread/comment-thread',
         body: payload,
       })
-      if (response.status !== 200) {
-        throw new Error(`${response.status}: ${response.statusText}`)
-      }
       const value = (await response.json()) as CommentPayload | null
       if (value !== null) {
         await getUuid._querySpec.setCache({
@@ -580,13 +574,10 @@ export function createSerloModel({
     void
   >({
     mutate: async (payload) => {
-      const response = await post({
+      await post({
         path: '/thread/set-archive',
         body: payload,
       })
-      if (response.status !== 200) {
-        throw new Error(`${response.status}: ${response.statusText}`)
-      }
       const { ids, archived } = payload
       await getUuid._querySpec.setCache({
         payloads: payload.ids.map((id) => {
