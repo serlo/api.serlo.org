@@ -67,50 +67,37 @@ export function createGoogleSpreadsheetApiModel({
       getCurrentValue: async (args) => {
         const { spreadsheetId, range } = args
         const majorDimension = args.majorDimension ?? MajorDimension.Rows
+        const url = new URL(
+          `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`
+        )
+        url.searchParams.append('majorDimension', majorDimension)
+        const apiSectret = process.env.GOOGLE_SPREADSHEET_API_SECRET
+        url.searchParams.append('key', apiSectret)
 
-        let result: E.Either<ErrorEvent, CellValues>
+        const contexts = { function: 'googleSpreadSheetApi.getValues()', args }
+        const addContext = E.mapLeft((event: ErrorEvent) =>
+          R.mergeDeepRight({ contexts }, event)
+        )
 
         try {
-          const url = new URL(
-            `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`
-          )
-          url.searchParams.append('majorDimension', majorDimension)
-          url.searchParams.append(
-            'key',
-            process.env.GOOGLE_SPREADSHEET_API_SECRET
-          )
-
           const response = await fetch(url.toString())
 
-          result = pipeable.pipe(
-            await response.json(),
-            (res) => ValueRange.decode(res),
-            E.mapLeft((errors) => {
-              return {
-                message: `invalid response while accessing spreadsheet "${spreadsheetId}"`,
-                contexts: { response, validationErrors: failure(errors) },
-              }
-            }),
-            E.map((v) => v.values),
-            E.chain(
-              E.fromNullable({
-                message: `range "${range}" of spreadsheet "${spreadsheetId}" is empty`,
-              })
+          return addContext(
+            pipeable.pipe(
+              ValueRange.decode(await response.json()),
+              E.mapLeft((errors) => {
+                return {
+                  message: 'invalid response',
+                  contexts: { validationErrors: failure(errors) },
+                }
+              }),
+              E.map((v) => v.values),
+              E.chain(E.fromNullable({ message: 'range is empty' }))
             )
           )
         } catch (error) {
-          const exception =
-            error instanceof Error ? error : new Error(JSON.stringify(error))
-
-          result = E.left({
-            message: `An error occurred while accessing spreadsheet "${spreadsheetId}"`,
-            exception,
-          })
+          return addContext(E.left({ exception: E.toError(error) }))
         }
-
-        return E.mapLeft((event: ErrorEvent) =>
-          R.mergeDeepRight({ contexts: { args } }, event)
-        )(result)
       },
       maxAge: { hour: 1 },
       getKey: (args) => {
