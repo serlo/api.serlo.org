@@ -20,3 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 export type AsyncOrSync<T> = Promise<T> | T
+
+export function isDefined<A>(value?: A | null): value is A {
+  return value !== null && value !== undefined
+}
