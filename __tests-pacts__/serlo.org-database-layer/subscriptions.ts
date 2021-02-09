@@ -32,7 +32,10 @@ test('Subscriptions', async () => {
     path: `/subscriptions/${user.id}`,
     body: {
       userId: user.id,
-      subscriptions: Matchers.eachLike({ id: Matchers.integer(1) }),
+      subscriptions: Matchers.eachLike({
+        id: Matchers.integer(1),
+        sendEmail: Matchers.boolean(true),
+      }),
     },
   })
   await fetch(

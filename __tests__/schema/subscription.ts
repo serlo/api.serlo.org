@@ -48,7 +48,7 @@ describe('subscriptions', () => {
         path: `/subscriptions/${user.id}`,
         body: {
           userId: user.id,
-          subscriptions: [{ id: article.id }],
+          subscriptions: [{ id: article.id, sendEmail: true }],
         },
       })
     )
