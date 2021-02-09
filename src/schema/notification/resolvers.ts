@@ -50,7 +50,7 @@ export const resolvers: NotificationResolvers = {
     ) {
       assertUserIsAuthenticated(userId)
       const { notifications } = await dataSources.model.serlo.getNotifications({
-        userId: userId,
+        userId,
       })
       return resolveConnection<NotificationPayload>({
         nodes: notifications.filter((notification) => {
@@ -79,7 +79,7 @@ export const resolvers: NotificationResolvers = {
       assertUserIsAuthenticated(userId)
 
       const { notifications } = await dataSources.model.serlo.getNotifications({
-        userId: userId,
+        userId,
       })
       const { id, unread } = payload.input
       const ids = Array.isArray(id) ? id : [id]
