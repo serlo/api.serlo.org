@@ -71,11 +71,9 @@ export function createSerloModel({
   async function post({
     path,
     body,
-    expectedStatusCodes = [200],
   }: {
     path: string
     body: Record<string, unknown>
-    expectedStatusCodes?: number[]
   }): Promise<Response> {
     const response = await fetch(
       `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`,
@@ -87,7 +85,7 @@ export function createSerloModel({
         },
       }
     )
-    if (!expectedStatusCodes.includes(response.status)) {
+    if (response.status != 200) {
       throw new Error(`${response.status}: ${response.statusText}`)
     }
     return response
