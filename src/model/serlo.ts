@@ -396,10 +396,13 @@ export function createSerloModel({
     environment
   )
 
-  const getNotifications = createQuery<{ id: number }, NotificationsPayload>(
+  const getNotifications = createQuery<
+    { userId: number },
+    NotificationsPayload
+  >(
     {
       enableSwr: true,
-      getCurrentValue: async ({ id }) => {
+      getCurrentValue: async ({ userId: id }) => {
         const response = await get({
           path: `/notifications/${id}`,
           expectedStatusCodes: [200],
@@ -407,13 +410,13 @@ export function createSerloModel({
         return (await response.json()) as NotificationsPayload
       },
       maxAge: { hour: 1 },
-      getKey: ({ id }) => {
+      getKey: ({ userId: id }) => {
         return `de.serlo.org/api/notifications/${id}`
       },
       getPayload: (key) => {
         const prefix = 'de.serlo.org/api/notifications/'
         return key.startsWith(prefix)
-          ? O.some({ id: parseInt(key.replace(prefix, ''), 10) })
+          ? O.some({ userId: parseInt(key.replace(prefix, ''), 10) })
           : O.none
       },
     },
@@ -438,7 +441,7 @@ export function createSerloModel({
       }
       await getNotifications._querySpec.setCache({
         payloads: ids.map((id) => {
-          return { id }
+          return { userId: id }
         }),
         // eslint-disable-next-line @typescript-eslint/require-await
         async getValue(current) {
