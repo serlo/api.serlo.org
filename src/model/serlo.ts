@@ -71,11 +71,13 @@ export function createSerloModel({
   async function post({
     path,
     body,
+    expectedStatusCodes,
   }: {
     path: string
     body: Record<string, unknown>
+    expectedStatusCodes: number[]
   }): Promise<Response> {
-    return await fetch(
+    const response = await fetch(
       `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`,
       {
         method: 'POST',
@@ -85,6 +87,10 @@ export function createSerloModel({
         },
       }
     )
+    if (!expectedStatusCodes.includes(response.status)) {
+      throw new Error(`${response.status}: ${response.statusText}`)
+    }
+    return response
   }
 
   async function handleMessage({
@@ -146,13 +152,11 @@ export function createSerloModel({
     void
   >({
     mutate: async ({ ids, userId, trashed }) => {
-      const response = await post({
+      await post({
         path: '/set-uuid-state',
         body: { ids, userId, trashed },
+        expectedStatusCodes: [200],
       })
-      if (response.status !== 200) {
-        throw new Error(`${response.status}: ${response.statusText}`)
-      }
       await getUuid._querySpec.setCache({
         payloads: ids.map((id) => {
           return { id }
@@ -431,6 +435,7 @@ export function createSerloModel({
       const response = await post({
         path: '/set-notification-state',
         body: { ids, userId, unread },
+        expectedStatusCodes: [200],
       })
       if (response.status !== 200) {
         throw new Error(`${response.status}: ${response.statusText}`)
@@ -512,10 +517,8 @@ export function createSerloModel({
       const response = await post({
         path: `/thread/start-thread`,
         body: payload,
+        expectedStatusCodes: [200],
       })
-      if (response.status !== 200) {
-        throw new Error(`${response.status}: ${response.statusText}`)
-      }
       const value = (await response.json()) as CommentPayload | null
 
       if (value !== null) {
@@ -551,10 +554,8 @@ export function createSerloModel({
       const response = await post({
         path: '/thread/comment-thread',
         body: payload,
+        expectedStatusCodes: [200],
       })
-      if (response.status !== 200) {
-        throw new Error(`${response.status}: ${response.statusText}`)
-      }
       const value = (await response.json()) as CommentPayload | null
       if (value !== null) {
         await getUuid._querySpec.setCache({
@@ -580,13 +581,11 @@ export function createSerloModel({
     void
   >({
     mutate: async (payload) => {
-      const response = await post({
+      await post({
         path: '/thread/set-archive',
         body: payload,
+        expectedStatusCodes: [200],
       })
-      if (response.status !== 200) {
-        throw new Error(`${response.status}: ${response.statusText}`)
-      }
       const { ids, archived } = payload
       await getUuid._querySpec.setCache({
         payloads: payload.ids.map((id) => {
