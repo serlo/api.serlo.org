@@ -432,20 +432,16 @@ export function createSerloModel({
     void
   >({
     mutate: async ({ ids, userId, unread }) => {
-      const response = await post({
+      await post({
         path: '/set-notification-state',
         body: { ids, userId, unread },
       })
-      if (response.status !== 200) {
-        throw new Error(`${response.status}: ${response.statusText}`)
-      }
       await getNotifications._querySpec.setCache({
-        payloads: ids.map((id) => {
-          return { userId: id }
-        }),
+        payload: { userId },
         // eslint-disable-next-line @typescript-eslint/require-await
         async getValue(current) {
           if (!current) return
+
           const updated = current.notifications.map((notification) => {
             return {
               ...notification,
