@@ -29,7 +29,7 @@ import {
 } from './types'
 import { Context } from '~/internals/graphql'
 import { resolveConnection } from '~/schema/connection'
-import { isDefined } from '~/schema/utils'
+import { isDefined } from '~/utils'
 
 export function createThreadResolvers(): ThreadAwareResolvers {
   return {
