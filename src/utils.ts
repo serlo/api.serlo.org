@@ -19,36 +19,4 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { GraphQLResolveInfo } from 'graphql'
-
-import { Context } from './context'
-import { Query } from '~/types'
-import { AsyncOrSync } from '~/utils'
-
-export type Resolver<P, A, T> = (
-  parent: P,
-  args: A,
-  context: Context,
-  info: GraphQLResolveInfo
-) => AsyncOrSync<T>
-
-export type QueryResolver<A, T> = Resolver<never, A, T>
-export type MutationResolver<A, T> = Resolver<
-  never,
-  A,
-  T extends { query: Query }
-    ? Omit<T, 'query'> & { query: Record<string, never> }
-    : T
->
-
-export interface MutationResponse {
-  success: boolean
-  query: Record<string, never>
-}
-export interface MutationResponseWithRecord<R> extends MutationResponse {
-  record: R
-}
-
-export type TypeResolver<T> = (type: T) => string
-
-export type MutationNamespace = MutationResolver<never, Record<string, never>>
+export type AsyncOrSync<T> = Promise<T> | T
