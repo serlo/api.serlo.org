@@ -442,15 +442,12 @@ export function createSerloModel({
         async getValue(current) {
           if (!current) return
 
-          const updated = current.notifications.map((notification) => {
-            return {
-              ...notification,
-              unread: ids.includes(notification.id)
-                ? unread
-                : notification.unread,
-            }
-          })
-          return { ...current, notifications: updated }
+          const notifications = current.notifications.map((notification) =>
+            ids.includes(notification.id)
+              ? R.assoc('unread', unread, notification)
+              : notification
+          )
+          return { ...current, notifications }
         },
       })
     },
