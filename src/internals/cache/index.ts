@@ -29,6 +29,7 @@ import { log } from '../log'
 import { redisUrl } from '../redis-url'
 import { Timer } from '../timer'
 import { createLockManager, LockManager } from './lock-manager'
+import { AsyncOrSync } from '~/utils'
 
 export enum Priority {
   Low,
@@ -36,7 +37,7 @@ export enum Priority {
 }
 
 export interface UpdateFunction<T> {
-  getValue: (current?: T) => Promise<T | undefined>
+  getValue: (current?: T) => AsyncOrSync<T | undefined>
 }
 export type FunctionOrValue<T> = UpdateFunction<T> | { value: T }
 

@@ -22,7 +22,6 @@
 import { array as A, pipeable } from 'fp-ts'
 
 import { resolveConnection } from '../../connection'
-import { isDefined } from '../../utils'
 import { createUuidResolvers } from '../abstract-uuid'
 import { resolveUser } from '../user/utils'
 import {
@@ -33,6 +32,7 @@ import {
 } from './types'
 import { requestsOnlyFields } from '~/internals/graphql'
 import { createThreadResolvers } from '~/schema/thread/utils'
+import { isDefined } from '~/utils'
 
 export function createRepositoryResolvers<
   E extends AbstractRepositoryPayload,

@@ -158,8 +158,7 @@ export function createSerloModel({
         payloads: ids.map((id) => {
           return { id }
         }),
-        // eslint-disable-next-line @typescript-eslint/require-await
-        async getValue(current) {
+        getValue(current) {
           if (!current || current.trashed === trashed) {
             return
           }
@@ -438,19 +437,15 @@ export function createSerloModel({
       })
       await getNotifications._querySpec.setCache({
         payload: { userId },
-        // eslint-disable-next-line @typescript-eslint/require-await
-        async getValue(current) {
+        getValue(current) {
           if (!current) return
 
-          const updated = current.notifications.map((notification) => {
-            return {
-              ...notification,
-              unread: ids.includes(notification.id)
-                ? unread
-                : notification.unread,
-            }
-          })
-          return { ...current, notifications: updated }
+          const notifications = current.notifications.map((notification) =>
+            ids.includes(notification.id)
+              ? R.assoc('unread', unread, notification)
+              : notification
+          )
+          return { ...current, notifications }
         },
       })
     },
@@ -522,8 +517,7 @@ export function createSerloModel({
         })
         await getThreadIds._querySpec.setCache({
           payload: { id: payload.objectId },
-          // eslint-disable-next-line @typescript-eslint/require-await
-          async getValue(current) {
+          getValue(current) {
             if (!current) return
             current.firstCommentIds.unshift(value.id) //new thread on first pos
             return current
@@ -557,8 +551,7 @@ export function createSerloModel({
         })
         await getUuid._querySpec.setCache({
           payload: { id: payload.threadId },
-          // eslint-disable-next-line @typescript-eslint/require-await
-          async getValue(current) {
+          getValue(current) {
             if (!current || !isCommentPayload(current)) return
             current.childrenIds.push(value.id) // new comment on last pos in thread
             return current
@@ -583,8 +576,7 @@ export function createSerloModel({
         payloads: payload.ids.map((id) => {
           return { id }
         }),
-        // eslint-disable-next-line @typescript-eslint/require-await
-        async getValue(current) {
+        getValue(current) {
           if (!current || !isCommentPayload(current)) return
           return {
             ...current,
