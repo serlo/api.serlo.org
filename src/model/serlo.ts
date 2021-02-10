@@ -442,7 +442,7 @@ export function createSerloModel({
 
           const notifications = current.notifications.map((notification) =>
             ids.includes(notification.id)
-              ? R.assoc('unread', unread, notification)
+              ? { ...notification, unread }
               : notification
           )
           return { ...current, notifications }
