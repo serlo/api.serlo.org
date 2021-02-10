@@ -20,10 +20,10 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Connection, resolveConnection } from '../../connection'
-import { isDefined } from '../../utils'
 import { AbstractTaxonomyTermChildPayload } from './types'
 import { Context, Resolver } from '~/internals/graphql'
 import { TaxonomyTermChildrenArgs } from '~/types'
+import { isDefined } from '~/utils'
 
 export interface TaxonomyTermChildResolvers<
   E extends AbstractTaxonomyTermChildPayload
