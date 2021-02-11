@@ -131,7 +131,7 @@ describe('subscription mutation set', () => {
       data: {
         subscriptions: {
           totalCount: 3,
-          nodes: [{ id: article.id }, { id: 1565 }, { id: 1555 }],
+          nodes: [{ id: 1555 }, { id: 1565 }, { id: article.id }],
         },
       },
       client,
