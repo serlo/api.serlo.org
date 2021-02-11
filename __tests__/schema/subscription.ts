@@ -27,15 +27,11 @@ import {
   user,
 } from '../../__fixtures__'
 import {
-  createSubscriptionsQuery,
-  createSubscriptionsQueryOnlyId,
-} from '../../__fixtures__/subscription'
-import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   createJsonHandler,
-  createSubscriptionSetMutationHandler,
+  createMessageHandler,
   createTestClient,
   createUuidHandler,
 } from '../__utils__'
@@ -164,3 +160,50 @@ describe('subscription mutation set', () => {
     })
   })
 })
+
+export function createSubscriptionsQuery() {
+  return {
+    query: gql`
+      query subscriptions {
+        subscriptions {
+          totalCount
+          nodes {
+            __typename
+            id
+            trashed
+            ... on Article {
+              instance
+              date
+            }
+          }
+        }
+      }
+    `,
+  }
+}
+
+export function createSubscriptionsQueryOnlyId() {
+  return {
+    query: gql`
+      query subscriptions {
+        subscriptions {
+          totalCount
+          nodes {
+            id
+          }
+        }
+      }
+    `,
+  }
+}
+
+export function createSubscriptionSetMutationHandler(
+  payload: Record<string, unknown>
+) {
+  return createMessageHandler({
+    message: {
+      type: 'SubscriptionSetMutation',
+      payload,
+    },
+  })
+}
