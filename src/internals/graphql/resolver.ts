@@ -23,13 +23,14 @@ import { GraphQLResolveInfo } from 'graphql'
 
 import { Context } from './context'
 import { Query } from '~/types'
+import { AsyncOrSync } from '~/utils'
 
 export type Resolver<P, A, T> = (
   parent: P,
   args: A,
   context: Context,
   info: GraphQLResolveInfo
-) => Promise<T> | T
+) => AsyncOrSync<T>
 
 export type QueryResolver<A, T> = Resolver<never, A, T>
 export type MutationResolver<A, T> = Resolver<
