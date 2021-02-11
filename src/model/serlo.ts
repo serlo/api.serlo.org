@@ -499,13 +499,31 @@ export function createSerloModel({
       })
       await getSubscriptions._querySpec.setCache({
         payload: { id: userId },
-        // eslint-disable-next-line @typescript-eslint/require-await
-        async getValue(current) {
+        getValue(current) {
           if (!current) return
-          const updated = current.subscriptions.filter(function (node) {
-            return !ids.includes(node.id)
+
+          // remove
+          if (!subscribe) {
+            return {
+              ...current,
+              subscriptions: current.subscriptions.filter(
+                (node) => !ids.includes(node.id)
+              ),
+            }
+          }
+
+          //add
+          const newIds = ids.filter((id) => {
+            return current.subscriptions.find((sub) => sub.id !== id)
           })
-          return { ...current, subscriptions: updated }
+
+          return {
+            ...current,
+            subscriptions: [
+              ...current.subscriptions,
+              ...newIds.map((id) => ({ id })),
+            ],
+          }
         },
       })
     },

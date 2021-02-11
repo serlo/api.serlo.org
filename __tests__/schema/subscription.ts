@@ -75,6 +75,36 @@ describe('subscription mutation set', () => {
       }
     }
   `
+  const client = createTestClient({ userId: user.id })
+
+  // given a single subscription to article.id
+  beforeEach(async () => {
+    // mock subscriptions handlers
+    global.server.use(
+      createUuidHandler(article),
+      createUuidHandler({ ...article, id: 1555 }),
+      createUuidHandler({ ...article, id: 1565 }),
+      createJsonHandler({
+        path: `/subscriptions/${user.id}`,
+        body: {
+          userId: user.id,
+          subscriptions: [{ id: article.id }],
+        },
+      })
+    )
+
+    // fill cache
+    await assertSuccessfulGraphQLQuery({
+      ...createSubscriptionsQueryOnlyId(),
+      data: {
+        subscriptions: {
+          totalCount: 1,
+          nodes: [{ id: article.id }],
+        },
+      },
+      client,
+    })
+  })
 
   test('with array of ids', async () => {
     global.server.use(
@@ -94,6 +124,18 @@ describe('subscription mutation set', () => {
       data: { subscription: { set: { success: true } } },
       client: createTestClient({ userId: user.id }),
     })
+
+    //check cache
+    await assertSuccessfulGraphQLQuery({
+      ...createSubscriptionsQueryOnlyId(),
+      data: {
+        subscriptions: {
+          totalCount: 3,
+          nodes: [{ id: article.id }, { id: 1565 }, { id: 1555 }],
+        },
+      },
+      client,
+    })
   })
 
   test('unauthenticated', async () => {
@@ -107,16 +149,6 @@ describe('subscription mutation set', () => {
 
   test('remove subscription, check cache mutation', async () => {
     global.server.use(
-      createUuidHandler(article),
-      createJsonHandler({
-        path: `/subscriptions/${user.id}`,
-        body: {
-          userId: user.id,
-          subscriptions: [{ id: article.id }],
-        },
-      })
-    )
-    global.server.use(
       createSubscriptionSetMutationHandler({
         ids: [article.id],
         userId: user.id,
@@ -124,19 +156,6 @@ describe('subscription mutation set', () => {
         sendEmail: false,
       })
     )
-    const client = createTestClient({ userId: user.id })
-
-    // fill cache
-    await assertSuccessfulGraphQLQuery({
-      ...createSubscriptionsQueryOnlyId(),
-      data: {
-        subscriptions: {
-          totalCount: 1,
-          nodes: [{ id: article.id }],
-        },
-      },
-      client,
-    })
 
     await assertSuccessfulGraphQLMutation({
       mutation,
