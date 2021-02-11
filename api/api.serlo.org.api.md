@@ -995,6 +995,7 @@ export type Mutation = {
     _setCache?: Maybe<Scalars['Boolean']>;
     _updateCache?: Maybe<Scalars['Boolean']>;
     notification: NotificationMutation;
+    subscription: SubscriptionMutation;
     thread: ThreadMutation;
     uuid: UuidMutation;
 };
@@ -1453,6 +1454,31 @@ export type SubscriptionCursor = {
     __typename?: 'SubscriptionCursor';
     cursor: Scalars['String'];
     node: AbstractUuid;
+};
+
+// @public (undocumented)
+export type SubscriptionMutation = {
+    __typename?: 'SubscriptionMutation';
+    set?: Maybe<SubscriptionSetResponse>;
+};
+
+// @public (undocumented)
+export type SubscriptionMutationSetArgs = {
+    input: SubscriptionSetInput;
+};
+
+// @public (undocumented)
+export type SubscriptionSetInput = {
+    id: Array<Scalars['Int']>;
+    subscribe: Scalars['Boolean'];
+    sendEmail: Scalars['Boolean'];
+};
+
+// @public (undocumented)
+export type SubscriptionSetResponse = {
+    __typename?: 'SubscriptionSetResponse';
+    success: Scalars['Boolean'];
+    query: Query;
 };
 
 // @public (undocumented)

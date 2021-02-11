@@ -27,8 +27,11 @@ import {
   user,
 } from '../../__fixtures__'
 import {
+  assertFailingGraphQLMutation,
+  assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   createJsonHandler,
+  createMessageHandler,
   createTestClient,
   createUuidHandler,
 } from '../__utils__'
@@ -41,32 +44,11 @@ describe('subscriptions', () => {
         path: `/subscriptions/${user.id}`,
         body: {
           userId: user.id,
-          subscriptions: [{ id: article.id }],
+          subscriptions: [{ id: article.id, sendEmail: true }],
         },
       })
     )
   })
-
-  function createSubscriptionsQuery() {
-    return {
-      query: gql`
-        query subscriptions {
-          subscriptions {
-            totalCount
-            nodes {
-              __typename
-              id
-              trashed
-              ... on Article {
-                instance
-                date
-              }
-            }
-          }
-        }
-      `,
-    }
-  }
 
   test('Article', async () => {
     const client = createTestClient({ userId: 1 })
@@ -82,3 +64,165 @@ describe('subscriptions', () => {
     })
   })
 })
+
+describe('subscription mutation set', () => {
+  const mutation = gql`
+    mutation set($input: SubscriptionSetInput!) {
+      subscription {
+        set(input: $input) {
+          success
+        }
+      }
+    }
+  `
+  const client = createTestClient({ userId: user.id })
+
+  // given a single subscription to article.id
+  beforeEach(async () => {
+    // mock subscriptions handlers
+    global.server.use(
+      createUuidHandler(article),
+      createUuidHandler({ ...article, id: 1555 }),
+      createUuidHandler({ ...article, id: 1565 }),
+      createJsonHandler({
+        path: `/subscriptions/${user.id}`,
+        body: {
+          userId: user.id,
+          subscriptions: [{ id: article.id }],
+        },
+      })
+    )
+
+    // fill cache
+    await assertSuccessfulGraphQLQuery({
+      ...createSubscriptionsQueryOnlyId(),
+      data: {
+        subscriptions: {
+          totalCount: 1,
+          nodes: [{ id: article.id }],
+        },
+      },
+      client,
+    })
+  })
+
+  test('with array of ids', async () => {
+    global.server.use(
+      createSubscriptionSetMutationHandler({
+        ids: [1565, 1555],
+        userId: user.id,
+        subscribe: true,
+        sendEmail: false,
+      })
+    )
+
+    await assertSuccessfulGraphQLMutation({
+      mutation,
+      variables: {
+        input: { id: [1565, 1555], subscribe: true, sendEmail: false },
+      },
+      data: { subscription: { set: { success: true } } },
+      client: createTestClient({ userId: user.id }),
+    })
+
+    //check cache
+    await assertSuccessfulGraphQLQuery({
+      ...createSubscriptionsQueryOnlyId(),
+      data: {
+        subscriptions: {
+          totalCount: 3,
+          nodes: [{ id: 1555 }, { id: 1565 }, { id: article.id }],
+        },
+      },
+      client,
+    })
+  })
+
+  test('unauthenticated', async () => {
+    await assertFailingGraphQLMutation({
+      mutation,
+      variables: { input: { id: 1565, subscribe: true, sendEmail: false } },
+      client: createTestClient({ userId: null }),
+      expectedError: 'UNAUTHENTICATED',
+    })
+  })
+
+  test('remove subscription, check cache mutation', async () => {
+    global.server.use(
+      createSubscriptionSetMutationHandler({
+        ids: [article.id],
+        userId: user.id,
+        subscribe: false,
+        sendEmail: false,
+      })
+    )
+
+    await assertSuccessfulGraphQLMutation({
+      mutation,
+      variables: {
+        input: { id: [article.id], subscribe: false, sendEmail: false },
+      },
+      data: { subscription: { set: { success: true } } },
+      client,
+    })
+
+    //check cache
+    await assertSuccessfulGraphQLQuery({
+      ...createSubscriptionsQueryOnlyId(),
+      data: {
+        subscriptions: {
+          totalCount: 0,
+          nodes: [],
+        },
+      },
+      client,
+    })
+  })
+})
+
+export function createSubscriptionsQuery() {
+  return {
+    query: gql`
+      query subscriptions {
+        subscriptions {
+          totalCount
+          nodes {
+            __typename
+            id
+            trashed
+            ... on Article {
+              instance
+              date
+            }
+          }
+        }
+      }
+    `,
+  }
+}
+
+export function createSubscriptionsQueryOnlyId() {
+  return {
+    query: gql`
+      query subscriptions {
+        subscriptions {
+          totalCount
+          nodes {
+            id
+          }
+        }
+      }
+    `,
+  }
+}
+
+export function createSubscriptionSetMutationHandler(
+  payload: Record<string, unknown>
+) {
+  return createMessageHandler({
+    message: {
+      type: 'SubscriptionSetMutation',
+      payload,
+    },
+  })
+}
