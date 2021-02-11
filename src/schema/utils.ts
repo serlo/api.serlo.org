@@ -21,10 +21,6 @@ import { AuthenticationError } from 'apollo-server'
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-export function isDefined<A>(value?: A | null): value is A {
-  return value !== null && value !== undefined
-}
-
 export function assertUserIsAuthenticated(
   user: number | null
 ): asserts user is number {

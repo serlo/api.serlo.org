@@ -75,7 +75,7 @@ export function createSerloModel({
     path: string
     body: Record<string, unknown>
   }): Promise<Response> {
-    return await fetch(
+    const response = await fetch(
       `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`,
       {
         method: 'POST',
@@ -85,6 +85,10 @@ export function createSerloModel({
         },
       }
     )
+    if (response.status != 200) {
+      throw new Error(`${response.status}: ${response.statusText}`)
+    }
+    return response
   }
 
   async function handleMessage({
@@ -146,19 +150,15 @@ export function createSerloModel({
     void
   >({
     mutate: async ({ ids, userId, trashed }) => {
-      const response = await post({
+      await post({
         path: '/set-uuid-state',
         body: { ids, userId, trashed },
       })
-      if (response.status !== 200) {
-        throw new Error(`${response.status}: ${response.statusText}`)
-      }
       await getUuid._querySpec.setCache({
         payloads: ids.map((id) => {
           return { id }
         }),
-        // eslint-disable-next-line @typescript-eslint/require-await
-        async getValue(current) {
+        getValue(current) {
           if (!current || current.trashed === trashed) {
             return
           }
@@ -395,10 +395,13 @@ export function createSerloModel({
     environment
   )
 
-  const getNotifications = createQuery<{ id: number }, NotificationsPayload>(
+  const getNotifications = createQuery<
+    { userId: number },
+    NotificationsPayload
+  >(
     {
       enableSwr: true,
-      getCurrentValue: async ({ id }) => {
+      getCurrentValue: async ({ userId: id }) => {
         const response = await get({
           path: `/notifications/${id}`,
           expectedStatusCodes: [200],
@@ -406,13 +409,13 @@ export function createSerloModel({
         return (await response.json()) as NotificationsPayload
       },
       maxAge: { hour: 1 },
-      getKey: ({ id }) => {
+      getKey: ({ userId: id }) => {
         return `de.serlo.org/api/notifications/${id}`
       },
       getPayload: (key) => {
         const prefix = 'de.serlo.org/api/notifications/'
         return key.startsWith(prefix)
-          ? O.some({ id: parseInt(key.replace(prefix, ''), 10) })
+          ? O.some({ userId: parseInt(key.replace(prefix, ''), 10) })
           : O.none
       },
     },
@@ -428,29 +431,21 @@ export function createSerloModel({
     void
   >({
     mutate: async ({ ids, userId, unread }) => {
-      const response = await post({
+      await post({
         path: '/set-notification-state',
         body: { ids, userId, unread },
       })
-      if (response.status !== 200) {
-        throw new Error(`${response.status}: ${response.statusText}`)
-      }
       await getNotifications._querySpec.setCache({
-        payloads: ids.map((id) => {
-          return { id }
-        }),
-        // eslint-disable-next-line @typescript-eslint/require-await
-        async getValue(current) {
+        payload: { userId },
+        getValue(current) {
           if (!current) return
-          const updated = current.notifications.map((notification) => {
-            return {
-              ...notification,
-              unread: ids.includes(notification.id)
-                ? unread
-                : notification.unread,
-            }
-          })
-          return { ...current, notifications: updated }
+
+          const notifications = current.notifications.map((notification) =>
+            ids.includes(notification.id)
+              ? { ...notification, unread }
+              : notification
+          )
+          return { ...current, notifications }
         },
       })
     },
@@ -549,9 +544,6 @@ export function createSerloModel({
         path: `/thread/start-thread`,
         body: payload,
       })
-      if (response.status !== 200) {
-        throw new Error(`${response.status}: ${response.statusText}`)
-      }
       const value = (await response.json()) as CommentPayload | null
 
       if (value !== null) {
@@ -561,8 +553,7 @@ export function createSerloModel({
         })
         await getThreadIds._querySpec.setCache({
           payload: { id: payload.objectId },
-          // eslint-disable-next-line @typescript-eslint/require-await
-          async getValue(current) {
+          getValue(current) {
             if (!current) return
             current.firstCommentIds.unshift(value.id) //new thread on first pos
             return current
@@ -588,9 +579,6 @@ export function createSerloModel({
         path: '/thread/comment-thread',
         body: payload,
       })
-      if (response.status !== 200) {
-        throw new Error(`${response.status}: ${response.statusText}`)
-      }
       const value = (await response.json()) as CommentPayload | null
       if (value !== null) {
         await getUuid._querySpec.setCache({
@@ -599,8 +587,7 @@ export function createSerloModel({
         })
         await getUuid._querySpec.setCache({
           payload: { id: payload.threadId },
-          // eslint-disable-next-line @typescript-eslint/require-await
-          async getValue(current) {
+          getValue(current) {
             if (!current || !isCommentPayload(current)) return
             current.childrenIds.push(value.id) // new comment on last pos in thread
             return current
@@ -616,20 +603,16 @@ export function createSerloModel({
     void
   >({
     mutate: async (payload) => {
-      const response = await post({
+      await post({
         path: '/thread/set-archive',
         body: payload,
       })
-      if (response.status !== 200) {
-        throw new Error(`${response.status}: ${response.statusText}`)
-      }
       const { ids, archived } = payload
       await getUuid._querySpec.setCache({
         payloads: payload.ids.map((id) => {
           return { id }
         }),
-        // eslint-disable-next-line @typescript-eslint/require-await
-        async getValue(current) {
+        getValue(current) {
           if (!current || !isCommentPayload(current)) return
           return {
             ...current,
