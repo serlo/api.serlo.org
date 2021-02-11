@@ -21,8 +21,16 @@
  */
 import { Connection } from '../connection'
 import { AbstractUuidPayload } from '../uuid'
-import { QueryResolver } from '~/internals/graphql'
-import { QuerySubscriptionsArgs } from '~/types'
+import {
+  MutationNamespace,
+  MutationResolver,
+  QueryResolver,
+} from '~/internals/graphql'
+import {
+  QuerySubscriptionsArgs,
+  SubscriptionMutationSetArgs,
+  SubscriptionSetResponse,
+} from '~/types'
 
 export interface SubscriptionsPayload {
   subscriptions: { id: number }[]
@@ -35,5 +43,11 @@ export interface SubscriptionResolvers {
       QuerySubscriptionsArgs,
       Connection<AbstractUuidPayload>
     >
+  }
+  Mutation: {
+    subscription: MutationNamespace
+  }
+  SubscriptionMutation: {
+    set: MutationResolver<SubscriptionMutationSetArgs, SubscriptionSetResponse>
   }
 }

@@ -63,3 +63,6 @@ describe('POST /thread/comment-thread', () => {
 describe('LicenseMessage', () => {
   require('./license')
 })
+describe('SubscriptionSetMutation', () => {
+  require('./subscription-set-mutation')
+})
