@@ -516,13 +516,14 @@ export function createSerloModel({
           const newIds = ids.filter((id) => {
             return current.subscriptions.find((sub) => sub.id !== id)
           })
+          const updated = [
+            ...current.subscriptions,
+            ...newIds.map((id) => ({ id })),
+          ].sort((a, b) => a.id - b.id)
 
           return {
             ...current,
-            subscriptions: [
-              ...current.subscriptions,
-              ...newIds.map((id) => ({ id })),
-            ],
+            subscriptions: updated,
           }
         },
       })
