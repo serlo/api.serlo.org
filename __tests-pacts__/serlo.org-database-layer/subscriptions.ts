@@ -34,7 +34,7 @@ test('Subscriptions', async () => {
       userId: user.id,
       subscriptions: Matchers.eachLike({
         id: Matchers.integer(1),
-        sendEmail: Matchers.boolean(true),
+        sendEmail: Matchers.boolean(false),
       }),
     },
   })

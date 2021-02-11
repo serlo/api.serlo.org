@@ -45,17 +45,6 @@ export function createLicenseHandler(license: LicensePayload) {
   })
 }
 
-export function createSubscriptionSetMutationHandler(
-  payload: Record<string, unknown>
-) {
-  return createMessageHandler({
-    message: {
-      type: 'SubscriptionSetMutation',
-      payload,
-    },
-  })
-}
-
 export function createNavigationHandler(navigation: NavigationPayload) {
   return createJsonHandler({
     path: `/navigation/${navigation.instance}`,

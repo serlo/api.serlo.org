@@ -46,7 +46,7 @@ test('SubscriptionSetMutation', async () => {
 
   await assertSuccessfulGraphQLMutation({
     mutation: gql`
-      mutation uuid($input: SubscriptionSetInput!) {
+      mutation setSubscription($input: SubscriptionSetInput!) {
         subscription {
           set(input: $input) {
             success
