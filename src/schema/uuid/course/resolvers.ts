@@ -19,11 +19,14 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import R from 'ramda'
+
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '../abstract-repository'
 import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
+import { CoursePagePayload } from '../course-page'
 import { CoursePayload, CourseRevisionPayload } from './types'
 import { Context } from '~/internals/graphql'
 import { CoursePagesArgs } from '~/types'
@@ -35,17 +38,26 @@ export const resolvers = {
     ...createTaxonomyTermChildResolvers<CoursePayload>(),
     async pages(
       course: CoursePayload,
-      { trashed }: CoursePagesArgs,
+      { trashed, hasCurrentRevision }: CoursePagesArgs,
       { dataSources }: Context
     ) {
       const pages = await Promise.all(
         course.pageIds.map((id: number) => {
-          return dataSources.model.serlo.getUuid({ id })
+          return dataSources.model.serlo.getUuid({
+            id,
+          }) as Promise<CoursePagePayload | null>
         })
       )
 
       return pages.filter(isDefined).filter((page) => {
-        return trashed === undefined || page.trashed == trashed
+        if (trashed !== undefined && page.trashed !== trashed) return false
+        if (
+          hasCurrentRevision !== undefined &&
+          R.isNil(page.currentRevisionId) === hasCurrentRevision
+        )
+          return false
+
+        return true
       })
     },
   },

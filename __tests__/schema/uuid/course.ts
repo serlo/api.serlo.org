@@ -166,6 +166,75 @@ describe('Course', () => {
       })
     })
   })
+
+  describe('filter "hasCurrentRevision"', () => {
+    const pages = [
+      { ...coursePage, id: 1 },
+      { ...coursePage, id: 2, currentRevisionId: null },
+    ]
+
+    beforeEach(() => {
+      global.server.use(...pages.map((page) => createUuidHandler(page)))
+      global.server.use(createUuidHandler({ ...course, pageIds: [1, 2] }))
+    })
+
+    test('when not set', async () => {
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query($id: Int!) {
+            uuid(id: $id) {
+              ... on Course {
+                pages {
+                  id
+                }
+              }
+            }
+          }
+        `,
+        variables: { id: course.id },
+        client,
+        data: { uuid: { pages: [{ id: 1 }, { id: 2 }] } },
+      })
+    })
+
+    test('when set to true', async () => {
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query($id: Int!) {
+            uuid(id: $id) {
+              ... on Course {
+                pages(hasCurrentRevision: true) {
+                  id
+                }
+              }
+            }
+          }
+        `,
+        variables: { id: course.id },
+        client,
+        data: { uuid: { pages: [{ id: 1 }] } },
+      })
+    })
+
+    test('when set to false', async () => {
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query($id: Int!) {
+            uuid(id: $id) {
+              ... on Course {
+                pages(hasCurrentRevision: false) {
+                  id
+                }
+              }
+            }
+          }
+        `,
+        variables: { id: course.id },
+        client,
+        data: { uuid: { pages: [{ id: 2 }] } },
+      })
+    })
+  })
 })
 
 test('CourseRevision', async () => {
