@@ -26,17 +26,27 @@ import {
 import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
 import { CoursePayload, CourseRevisionPayload } from './types'
 import { Context } from '~/internals/graphql'
+import { CoursePagesArgs } from '~/types'
+import { isDefined } from '~/utils'
 
 export const resolvers = {
   Course: {
     ...createRepositoryResolvers<CoursePayload, CourseRevisionPayload>(),
     ...createTaxonomyTermChildResolvers<CoursePayload>(),
-    pages(course: CoursePayload, _args: never, { dataSources }: Context) {
-      return Promise.all(
+    async pages(
+      course: CoursePayload,
+      { trashed }: CoursePagesArgs,
+      { dataSources }: Context
+    ) {
+      const pages = await Promise.all(
         course.pageIds.map((id: number) => {
           return dataSources.model.serlo.getUuid({ id })
         })
       )
+
+      return pages.filter(isDefined).filter((page) => {
+        return trashed === undefined || page.trashed == trashed
+      })
     },
   },
   CourseRevision: createRevisionResolvers<

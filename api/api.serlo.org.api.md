@@ -446,6 +446,11 @@ export type CoursePageRevisionThreadsArgs = {
 };
 
 // @public (undocumented)
+export type CoursePagesArgs = {
+    trashed?: Maybe<Scalars['Boolean']>;
+};
+
+// @public (undocumented)
 export type CoursePageThreadsArgs = {
     after?: Maybe<Scalars['String']>;
     before?: Maybe<Scalars['String']>;
