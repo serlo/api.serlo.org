@@ -52,8 +52,11 @@ export function createLicenseHandler(license: LicensePayload) {
 }
 
 export function createNavigationHandler(navigation: NavigationPayload) {
-  return createJsonHandler({
-    path: `/navigation/${navigation.instance}`,
+  return createMessageHandler({
+    message: {
+      type: 'NavigationQuery',
+      payload: { instance: navigation.instance },
+    },
     body: navigation,
   })
 }

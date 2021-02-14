@@ -218,8 +218,13 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ instance }) => {
-        const response = await get({
-          path: `/navigation/${instance}`,
+        const response = await handleMessage({
+          message: {
+            type: 'NavigationQuery',
+            payload: {
+              instance,
+            },
+          },
           expectedStatusCodes: [200],
         })
         return (await response.json()) as NavigationPayload

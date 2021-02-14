@@ -19,27 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Matchers } from '@pact-foundation/pact'
-
-import { NavigationPayload, UuidPayload } from '~/schema/uuid'
-
-export function addNavigationInteraction(payload: NavigationPayload) {
-  return addJsonInteraction({
-    name: `fetch data of navigation`,
-    given: '',
-    path: '/api/navigation',
-    body: {
-      data: Matchers.eachLike({
-        label: Matchers.string(payload.data[0].label),
-        id: Matchers.integer(payload.data[0].id),
-        children: Matchers.eachLike({
-          label: Matchers.string(payload.data[0].children?.[0].label),
-          id: Matchers.integer(payload.data[0].children?.[0].id),
-        }),
-      }),
-    },
-  })
-}
+import { UuidPayload } from '~/schema/uuid'
 
 export function addUuidInteraction<T extends UuidPayload>(
   data: Record<keyof T, unknown> & { __typename: string; id: number }
