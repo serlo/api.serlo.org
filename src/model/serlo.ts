@@ -451,24 +451,32 @@ export function createSerloModel({
     },
   })
 
-  const getSubscriptions = createQuery<{ id: number }, SubscriptionsPayload>(
+  const getSubscriptions = createQuery<
+    { userId: number },
+    SubscriptionsPayload
+  >(
     {
       enableSwr: true,
-      getCurrentValue: async ({ id }) => {
-        const response = await get({
-          path: `/subscriptions/${id}`,
+      getCurrentValue: async ({ userId }) => {
+        const response = await handleMessage({
+          message: {
+            type: 'SubscriptionsQuery',
+            payload: {
+              userId,
+            },
+          },
           expectedStatusCodes: [200],
         })
         return (await response.json()) as SubscriptionsPayload
       },
       maxAge: { hour: 1 },
-      getKey: ({ id }) => {
-        return `de.serlo.org/api/subscriptions/${id}`
+      getKey: ({ userId }) => {
+        return `de.serlo.org/api/subscriptions/${userId}`
       },
       getPayload: (key) => {
         const prefix = 'de.serlo.org/api/subscriptions/'
         return key.startsWith(prefix)
-          ? O.some({ id: parseInt(key.replace(prefix, ''), 10) })
+          ? O.some({ userId: parseInt(key.replace(prefix, ''), 10) })
           : O.none
       },
     },
@@ -498,7 +506,7 @@ export function createSerloModel({
         expectedStatusCodes: [200],
       })
       await getSubscriptions._querySpec.setCache({
-        payload: { id: userId },
+        payload: { userId },
         getValue(current) {
           if (!current) return
 
