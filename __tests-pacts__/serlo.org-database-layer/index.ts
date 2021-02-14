@@ -20,9 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 /* eslint-disable import/no-unassigned-import */
-describe('GET /alias/:instance/:alias', () => {
-  require('./alias')
-})
 describe('GET /event/:id', () => {
   require('./event')
 })
@@ -57,6 +54,9 @@ describe('POST /thread/comment-thread', () => {
   require('./threads/comment-thread')
 })
 
+describe('AliasMessage', () => {
+  require('./alias')
+})
 describe('LicenseMessage', () => {
   require('./license')
 })

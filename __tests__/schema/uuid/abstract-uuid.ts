@@ -58,6 +58,7 @@ import {
   assertSuccessfulGraphQLQuery,
   Client,
   createJsonHandler,
+  createMessageHandler,
   createTestClient,
   createUuidHandler,
   getDatabaseLayerUrl,
@@ -112,8 +113,15 @@ const abstractUuidRepository = R.toPairs(abstractUuidFixtures)
 describe('uuid', () => {
   test('returns null when alias cannot be found', async () => {
     global.server.use(
-      createJsonHandler({
-        path: '/alias/de/not-existing',
+      createMessageHandler({
+        message: {
+          type: 'AliasQuery',
+          payload: {
+            instance: Instance.De,
+            path: '/not-existing',
+          },
+        },
+        statusCode: 404,
         body: null,
       })
     )
@@ -126,7 +134,7 @@ describe('uuid', () => {
           }
         }
       `,
-      variables: { alias: { instance: 'de', path: '/not-existing' } },
+      variables: { alias: { instance: Instance.De, path: '/not-existing' } },
       data: { uuid: null },
       client,
     })

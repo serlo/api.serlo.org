@@ -20,46 +20,57 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Matchers } from '@pact-foundation/pact'
-import fetch from 'node-fetch'
 
-import { addJsonInteraction } from '../__utils__'
+import { addMessageInteraction } from '../__utils__'
 import { AliasPayload } from '~/schema/uuid'
 import { Instance } from '~/types'
 
-test('Alias', async () => {
-  // This is a noop test that just adds the interaction to the contract
+test('AliasQuery', async () => {
   const alias: AliasPayload = {
     id: 19767,
     instance: Instance.De,
     path: '/mathe',
   }
-  await addJsonInteraction({
-    name: 'fetch data of alias /mathe',
+  await addMessageInteraction({
     given: '/mathe is alias of 19767',
-    path: '/alias/de/mathe',
-    body: {
+    message: {
+      type: 'AliasQuery',
+      payload: {
+        instance: alias.instance,
+        path: alias.path,
+      },
+    },
+    responseBody: {
       id: alias.id,
-      instance: Matchers.string(alias.instance),
+      instance: alias.instance,
       path: Matchers.string(alias.path),
     },
   })
-  await fetch(
-    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}/alias/de/mathe`
-  )
+  const response = await global.serloModel.getAlias(alias)
+  expect(response).toEqual(alias)
 })
 
-test('Alias (URL /user/profile/:username)', async () => {
-  await addJsonInteraction({
-    name: 'fetch data of alias /user/profile/admin',
+test('AliasQuery (/user/profile/:username)', async () => {
+  const alias: AliasPayload = {
+    id: 1,
+    instance: Instance.De,
+    path: '/user/1/admin',
+  }
+  await addMessageInteraction({
     given: 'user "admin" has id 1',
-    path: '/alias/de/user/profile/admin',
-    body: {
-      id: Matchers.integer(1),
-      instance: Matchers.string('de'),
-      path: '/user/1/admin',
+    message: {
+      type: 'AliasQuery',
+      payload: {
+        instance: alias.instance,
+        path: alias.path,
+      },
+    },
+    responseBody: {
+      id: alias.id,
+      instance: alias.instance,
+      path: Matchers.string(alias.path),
     },
   })
-  await fetch(
-    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}/alias/de/user/profile/admin`
-  )
+  const response = await global.serloModel.getAlias(alias)
+  expect(response).toEqual(alias)
 })
