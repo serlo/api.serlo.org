@@ -19,8 +19,81 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-export interface ErrorEvent {
-  message?: string
-  exception?: Error
-  contexts?: Record<string, unknown>
+import * as Sentry from '@sentry/node'
+import { function as F, array as A } from 'fp-ts'
+import R from 'ramda'
+
+export interface ErrorEvent extends Context {
+  error: Error
+}
+
+export function addContext(
+  context: Context
+): (error: ErrorEvent) => ErrorEvent {
+  return R.mergeDeepRight(context)
+}
+
+export function consumeErrorEvent<A>(defaultValue: A) {
+  return (event: ErrorEvent) => {
+    captureErrorEvent(event)
+
+    return defaultValue
+  }
+}
+
+export function assertAll<A, B extends A>(
+  args: { assertation: F.Refinement<A, B> } & ErrorEvent
+): (list: A[]) => B[]
+export function assertAll<A>(
+  args: { assertation: F.Predicate<A> } & ErrorEvent
+): (list: A[]) => A[]
+export function assertAll(
+  args: { assertation: (x: unknown) => boolean } & ErrorEvent
+) {
+  return (originalList: unknown[]) => {
+    const { left, right } = A.partition(args.assertation)(originalList)
+
+    if (left.length > 0) {
+      const errorEvent = addContext({
+        errorContext: {
+          originalList,
+          invalidElements: left,
+        },
+      })(args)
+
+      captureErrorEvent(errorEvent)
+    }
+
+    return right
+  }
+}
+
+function captureErrorEvent(event: ErrorEvent) {
+  Sentry.captureException(event.error, (scope) => {
+    if (event.location) {
+      if (!event.error.message.startsWith(event.location)) {
+        event.error.message = `${event.location}: ${event.error.message}`
+      }
+
+      scope.setTag('location', event.location)
+    }
+
+    if (event.locationContext) {
+      scope.setContext('location', event.locationContext)
+    }
+
+    if (event.errorContext) {
+      scope.setContext('error', event.errorContext)
+    }
+
+    scope.setLevel(Sentry.Severity.Error)
+
+    return scope
+  })
+}
+
+interface Context {
+  location?: string
+  locationContext?: Record<string, unknown>
+  errorContext?: Record<string, unknown>
 }
