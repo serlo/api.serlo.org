@@ -314,8 +314,14 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ path, instance }) => {
-        const response = await get({
-          path: `/alias/${instance}${path}`,
+        const response = await handleMessage({
+          message: {
+            type: 'AliasQuery',
+            payload: {
+              instance,
+              path: decodePath(path),
+            },
+          },
           expectedStatusCodes: [200, 404],
         })
         return (await response.json()) as AliasPayload | null
