@@ -29,7 +29,7 @@ export const resolvers: SubscriptionResolvers = {
     async subscriptions(parent, cursorPayload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       const subscriptions = await dataSources.model.serlo.getSubscriptions({
-        id: userId,
+        userId,
       })
       const result = await Promise.all(
         subscriptions.subscriptions.map((id) => {

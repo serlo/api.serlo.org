@@ -32,9 +32,6 @@ describe('GET /navigation/:instance', () => {
 describe('GET /notifications/:id', () => {
   require('./notifications')
 })
-describe('GET /subscriptions', () => {
-  require('./subscriptions')
-})
 describe('GET /threads/:id', () => {
   require('./threads/threads')
 })
@@ -63,6 +60,6 @@ describe('POST /thread/comment-thread', () => {
 describe('LicenseMessage', () => {
   require('./license')
 })
-describe('SubscriptionSetMutation', () => {
-  require('./subscription-set-mutation')
+describe('SubscriptionMessage', () => {
+  require('./subscription')
 })
