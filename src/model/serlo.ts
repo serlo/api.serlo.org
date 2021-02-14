@@ -378,8 +378,13 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        const response = await get({
-          path: `/event/${id}`,
+        const response = await handleMessage({
+          message: {
+            type: 'EventQuery',
+            payload: {
+              id,
+            },
+          },
           expectedStatusCodes: [200, 404],
         })
         const notificationEvent = (await response.json()) as AbstractNotificationEventPayload
