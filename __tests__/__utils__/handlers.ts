@@ -61,8 +61,13 @@ export function createNavigationHandler(navigation: NavigationPayload) {
 export function createNotificationEventHandler(
   notificationEvent: NotificationEventPayload
 ) {
-  return createJsonHandler({
-    path: `/event/${notificationEvent.id}`,
+  return createMessageHandler({
+    message: {
+      type: 'EventQuery',
+      payload: {
+        id: notificationEvent.id,
+      },
+    },
     body: notificationEvent,
   })
 }
