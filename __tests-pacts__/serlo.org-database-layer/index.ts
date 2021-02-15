@@ -20,9 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 /* eslint-disable import/no-unassigned-import */
-describe('GET /threads/:id', () => {
-  require('./threads/threads')
-})
 describe('GET /user/:id', () => {
   require('./user')
 })
@@ -59,4 +56,7 @@ describe('NotificationMessage', () => {
 })
 describe('SubscriptionMessage', () => {
   require('./subscription')
+})
+describe('ThreadMessage', () => {
+  require('./thread')
 })
