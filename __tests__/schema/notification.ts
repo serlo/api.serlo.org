@@ -78,12 +78,13 @@ import {
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   Client,
-  createJsonHandler,
+  createMessageHandler,
   createNotificationEventHandler,
   createTestClient,
   createUuidHandler,
   getDatabaseLayerUrl,
 } from '../__utils__'
+import { NotificationsPayload } from '~/schema/notification'
 import { Instance } from '~/types'
 
 describe('notifications', () => {
@@ -92,16 +93,13 @@ describe('notifications', () => {
   beforeEach(() => {
     client = createTestClient({ userId: user.id })
     global.server.use(
-      createJsonHandler({
-        path: `/notifications/${user.id}`,
-        body: {
-          userId: user.id,
-          notifications: [
-            { id: 3, unread: true, eventId: 3 },
-            { id: 2, unread: false, eventId: 2 },
-            { id: 1, unread: false, eventId: 1 },
-          ],
-        },
+      createNotificationsHandler({
+        userId: user.id,
+        notifications: [
+          { id: 3, unread: true, eventId: 3 },
+          { id: 2, unread: false, eventId: 2 },
+          { id: 1, unread: false, eventId: 1 },
+        ],
       })
     )
   })
@@ -151,18 +149,15 @@ describe('notifications', () => {
 
   test('notifications (w/ event)', async () => {
     global.server.use(
-      createJsonHandler({
-        path: `/notifications/${user.id}`,
-        body: {
-          userId: user.id,
-          notifications: [
-            {
-              id: 1,
-              unread: false,
-              eventId: checkoutRevisionNotificationEvent.id,
-            },
-          ],
-        },
+      createNotificationsHandler({
+        userId: user.id,
+        notifications: [
+          {
+            id: 1,
+            unread: false,
+            eventId: checkoutRevisionNotificationEvent.id,
+          },
+        ],
       }),
       createNotificationEventHandler(checkoutRevisionNotificationEvent)
     )
@@ -2135,16 +2130,13 @@ describe('mutation notification setState', () => {
       )
     )
     global.server.use(
-      createJsonHandler({
-        path: `/notifications/${user.id}`,
-        body: {
-          userId: user.id,
-          notifications: [
-            { id: 3, unread: true, eventId: 3 },
-            { id: 2, unread: false, eventId: 2 },
-            { id: 1, unread: false, eventId: 1 },
-          ],
-        },
+      createNotificationsHandler({
+        userId: user.id,
+        notifications: [
+          { id: 3, unread: true, eventId: 3 },
+          { id: 2, unread: false, eventId: 2 },
+          { id: 1, unread: false, eventId: 1 },
+        ],
       })
     )
   })
@@ -2171,15 +2163,12 @@ describe('mutation notification setState', () => {
 
   test('setting ids from other user', async () => {
     global.server.use(
-      createJsonHandler({
-        path: `/notifications/${user2.id}`,
-        body: {
-          userId: user2.id,
-          notifications: [
-            { id: 4, unread: true, eventId: 3 },
-            { id: 5, unread: false, eventId: 2 },
-          ],
-        },
+      createNotificationsHandler({
+        userId: user2.id,
+        notifications: [
+          { id: 4, unread: true, eventId: 3 },
+          { id: 5, unread: false, eventId: 2 },
+        ],
       })
     )
     await assertFailingGraphQLMutation({
@@ -2258,3 +2247,13 @@ describe('mutation notification setState', () => {
     })
   })
 })
+
+function createNotificationsHandler(payload: NotificationsPayload) {
+  return createMessageHandler({
+    message: {
+      type: 'NotificationsQuery',
+      payload: { userId: payload.userId },
+    },
+    body: payload,
+  })
+}

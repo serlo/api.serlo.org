@@ -417,16 +417,21 @@ export function createSerloModel({
   >(
     {
       enableSwr: true,
-      getCurrentValue: async ({ userId: id }) => {
-        const response = await get({
-          path: `/notifications/${id}`,
+      getCurrentValue: async ({ userId }) => {
+        const response = await handleMessage({
+          message: {
+            type: 'NotificationsQuery',
+            payload: {
+              userId,
+            },
+          },
           expectedStatusCodes: [200],
         })
         return (await response.json()) as NotificationsPayload
       },
       maxAge: { hour: 1 },
-      getKey: ({ userId: id }) => {
-        return `de.serlo.org/api/notifications/${id}`
+      getKey: ({ userId }) => {
+        return `de.serlo.org/api/notifications/${userId}`
       },
       getPayload: (key) => {
         const prefix = 'de.serlo.org/api/notifications/'
