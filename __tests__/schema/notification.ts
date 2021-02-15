@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
-import { rest } from 'msw'
 
 import {
   article,
@@ -82,7 +81,6 @@ import {
   createNotificationEventHandler,
   createTestClient,
   createUuidHandler,
-  getDatabaseLayerUrl,
 } from '../__utils__'
 import { NotificationsPayload } from '~/schema/notification'
 import { Instance } from '~/types'
@@ -2118,18 +2116,6 @@ describe('mutation notification setState', () => {
 
   beforeEach(() => {
     global.server.use(
-      rest.post<{
-        ids: number[]
-        userId: number
-        unread: boolean
-      }>(
-        getDatabaseLayerUrl({ path: `/set-notification-state` }),
-        (req, res, ctx) => {
-          return res(ctx.status(200))
-        }
-      )
-    )
-    global.server.use(
       createNotificationsHandler({
         userId: user.id,
         notifications: [
@@ -2142,6 +2128,14 @@ describe('mutation notification setState', () => {
   })
 
   test('authenticated with array of ids', async () => {
+    global.server.use(
+      createMessageHandler({
+        message: {
+          type: 'NotificationSetStateMutation',
+          payload: { ids: [1, 2, 3], userId: user.id, unread: false },
+        },
+      })
+    )
     await assertSuccessfulGraphQLMutation({
       mutation,
       variables: {
@@ -2163,6 +2157,12 @@ describe('mutation notification setState', () => {
 
   test('setting ids from other user', async () => {
     global.server.use(
+      createMessageHandler({
+        message: {
+          type: 'NotificationSetStateMutation',
+          payload: { ids: [1, 2, 3], userId: user2.id, unread: false },
+        },
+      }),
       createNotificationsHandler({
         userId: user2.id,
         notifications: [
@@ -2180,6 +2180,14 @@ describe('mutation notification setState', () => {
   })
 
   test('cache is mutated as expected: single id', async () => {
+    global.server.use(
+      createMessageHandler({
+        message: {
+          type: 'NotificationSetStateMutation',
+          payload: { ids: [1], userId: user.id, unread: true },
+        },
+      })
+    )
     const client = createTestClient({ userId: user.id })
 
     //fill notification cache
@@ -2214,6 +2222,15 @@ describe('mutation notification setState', () => {
   })
 
   test('cache is mutated as expected: array', async () => {
+    global.server.use(
+      createMessageHandler({
+        message: {
+          type: 'NotificationSetStateMutation',
+          payload: { ids: [1, 2, 3], userId: user.id, unread: false },
+        },
+      })
+    )
+
     const client = createTestClient({ userId: user.id })
 
     //fill notification cache

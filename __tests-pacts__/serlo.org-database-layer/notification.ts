@@ -73,3 +73,18 @@ test('NotificationsQuery', async () => {
     },
   })
 })
+
+test('NotificationSetStateMutation', async () => {
+  await addMessageInteraction({
+    given: `there exists a notification with id 9 for user with id ${user.id}`,
+    message: {
+      type: 'NotificationSetStateMutation',
+      payload: { ids: [9], userId: user.id, unread: true },
+    },
+  })
+  await global.serloModel.setNotificationState({
+    userId: user.id,
+    ids: [9],
+    unread: true,
+  })
+})
