@@ -452,9 +452,16 @@ export function createSerloModel({
     void
   >({
     mutate: async ({ ids, userId, unread }) => {
-      await post({
-        path: '/set-notification-state',
-        body: { ids, userId, unread },
+      await handleMessage({
+        message: {
+          type: 'NotificationSetStateMutation',
+          payload: {
+            ids,
+            userId,
+            unread,
+          },
+        },
+        expectedStatusCodes: [200],
       })
       await getNotifications._querySpec.setCache({
         payload: { userId },
