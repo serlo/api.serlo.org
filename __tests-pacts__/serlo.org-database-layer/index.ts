@@ -32,9 +32,6 @@ describe('POST /set-uuid-state', () => {
 describe('POST /thread/set-archive', () => {
   require('./threads/thread-set-archive')
 })
-describe('POST /thread/start-thread', () => {
-  require('./threads/start-thread')
-})
 describe('POST /thread/comment-thread', () => {
   require('./threads/comment-thread')
 })
