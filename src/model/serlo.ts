@@ -570,8 +570,11 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        const response = await get({
-          path: `/threads/${id}`,
+        const response = await handleMessage({
+          message: {
+            type: 'ThreadsQuery',
+            payload: { id },
+          },
           expectedStatusCodes: [200],
         })
         return (await response.json()) as ThreadsPayload

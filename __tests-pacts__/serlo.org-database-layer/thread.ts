@@ -19,18 +19,22 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-/* eslint-disable import/no-unassigned-import */
-import './applet'
-import './article'
-import './course'
-import './course-page'
-import './comment'
-import './event'
-import './exercise'
-import './exercise-group'
-import './grouped-exercise'
-import './page'
-import './solution'
-import './taxonomy-term'
-import './user'
-import './video'
+import { Matchers } from '@pact-foundation/pact'
+
+import { article } from '../../__fixtures__'
+import { addMessageInteraction } from '../__utils__'
+
+test('ThreadsQuery', async () => {
+  await addMessageInteraction({
+    given: `article ${article.id} has threads`,
+    message: {
+      type: 'ThreadsQuery',
+      payload: { id: article.id },
+    },
+    responseBody: {
+      firstCommentIds: Matchers.eachLike(Matchers.integer(1)),
+    },
+  })
+  const response = await global.serloModel.getThreadIds({ id: article.id })
+  expect(response).toEqual({ firstCommentIds: [1] })
+})
