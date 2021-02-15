@@ -20,9 +20,15 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Matchers } from '@pact-foundation/pact'
+import { gql } from 'apollo-server'
 
-import { article } from '../../__fixtures__'
-import { addMessageInteraction } from '../__utils__'
+import { article, user } from '../../__fixtures__'
+import { createTestClient } from '../../__tests__/__utils__'
+import {
+  addMessageInteraction,
+  assertSuccessfulGraphQLMutation,
+} from '../__utils__'
+import { DiscriminatorType } from '~/schema/uuid'
 
 test('ThreadsQuery', async () => {
   await addMessageInteraction({
@@ -37,4 +43,83 @@ test('ThreadsQuery', async () => {
   })
   const response = await global.serloModel.getThreadIds({ id: article.id })
   expect(response).toEqual({ firstCommentIds: [1] })
+})
+
+test('ThreadCreateThreadMutation', async () => {
+  global.client = createTestClient({ userId: user.id })
+  await addMessageInteraction({
+    given: `there exists a uuid 1855 and user with id ${user.id} is authenticated`,
+    message: {
+      type: 'ThreadCreateThreadMutation',
+      payload: {
+        title: 'My new thread',
+        content: '🔥 brand new!',
+        objectId: article.id,
+        userId: user.id,
+        subscribe: true,
+        sendEmail: false,
+      },
+    },
+    responseBody: {
+      __typename: DiscriminatorType.Comment,
+      id: Matchers.integer(1000),
+      title: 'My new thread',
+      trashed: false,
+      alias: Matchers.string('/mathe/1000/first'),
+      authorId: user.id,
+      date: Matchers.iso8601DateTime(article.date),
+      archived: false,
+      content: '🔥 brand new!',
+      parentId: article.id,
+      childrenIds: [],
+    },
+  })
+
+  await assertSuccessfulGraphQLMutation({
+    mutation: gql`
+      mutation createThread($input: ThreadCreateThreadInput!) {
+        thread {
+          createThread(input: $input) {
+            success
+            record {
+              archived
+              comments {
+                nodes {
+                  content
+                  title
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables: {
+      input: {
+        title: 'My new thread',
+        content: '🔥 brand new!',
+        objectId: article.id,
+        subscribe: true,
+        sendEmail: false,
+      },
+    },
+    data: {
+      thread: {
+        createThread: {
+          success: true,
+          record: {
+            archived: false,
+            comments: {
+              nodes: [
+                {
+                  title: 'My new thread',
+                  content: '🔥 brand new!',
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+  })
 })

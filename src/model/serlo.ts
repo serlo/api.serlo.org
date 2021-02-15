@@ -598,9 +598,12 @@ export function createSerloModel({
     CommentPayload | null
   >({
     mutate: async (payload) => {
-      const response = await post({
-        path: `/thread/start-thread`,
-        body: payload,
+      const response = await handleMessage({
+        message: {
+          type: 'ThreadCreateThreadMutation',
+          payload,
+        },
+        expectedStatusCodes: [200],
       })
       const value = (await response.json()) as CommentPayload | null
 
