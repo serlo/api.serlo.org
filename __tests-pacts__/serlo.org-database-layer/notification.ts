@@ -24,15 +24,22 @@ import { gql } from 'apollo-server'
 
 import { checkoutRevisionNotificationEvent, user } from '../../__fixtures__'
 import { createTestClient } from '../../__tests__/__utils__'
-import { addJsonInteraction, assertSuccessfulGraphQLQuery } from '../__utils__'
+import {
+  addMessageInteraction,
+  assertSuccessfulGraphQLQuery,
+} from '../__utils__'
 
-test('Notifications', async () => {
+test('NotificationsQuery', async () => {
   global.client = createTestClient({ userId: user.id })
-  await addJsonInteraction({
-    name: `fetch data of all notifications for user with id ${user.id}`,
+  await addMessageInteraction({
     given: `there exists a notification for user with id ${user.id}`,
-    path: `/notifications/${user.id}`,
-    body: {
+    message: {
+      type: 'NotificationsQuery',
+      payload: {
+        userId: user.id,
+      },
+    },
+    responseBody: {
       userId: user.id,
       notifications: Matchers.eachLike({
         id: Matchers.integer(1),
