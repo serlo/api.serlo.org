@@ -22,12 +22,13 @@
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
-import { article, user } from '../../__fixtures__'
+import { article, comment, user } from '../../__fixtures__'
 import { createTestClient } from '../../__tests__/__utils__'
 import {
   addMessageInteraction,
   assertSuccessfulGraphQLMutation,
 } from '../__utils__'
+import { encodeThreadId } from '~/schema/thread'
 import { DiscriminatorType } from '~/schema/uuid'
 
 test('ThreadsQuery', async () => {
@@ -47,6 +48,7 @@ test('ThreadsQuery', async () => {
 
 test('ThreadCreateThreadMutation', async () => {
   global.client = createTestClient({ userId: user.id })
+
   await addMessageInteraction({
     given: `there exists a uuid 1855 and user with id ${user.id} is authenticated`,
     message: {
@@ -118,6 +120,63 @@ test('ThreadCreateThreadMutation', async () => {
               ],
             },
           },
+        },
+      },
+    },
+  })
+})
+
+test('ThreadCreateCommentMutation', async () => {
+  global.client = createTestClient({ userId: user.id })
+
+  await addMessageInteraction({
+    given: `there exists a thread with a first comment with an id of ${comment.id} and ${user.id} is authenticated`,
+    message: {
+      type: 'ThreadCreateCommentMutation',
+      payload: {
+        content: 'Hello',
+        threadId: comment.id,
+        userId: user.id,
+        subscribe: true,
+        sendEmail: false,
+      },
+    },
+    responseBody: {
+      __typename: DiscriminatorType.Comment,
+      id: Matchers.integer(comment.id + 1),
+      content: 'Hello',
+      parentId: comment.id,
+      trashed: false,
+      alias: Matchers.string('/mathe/101/mathe'),
+      date: Matchers.iso8601DateTime(comment.date),
+      title: null,
+      archived: false,
+      childrenIds: [],
+    },
+  })
+
+  await assertSuccessfulGraphQLMutation({
+    mutation: gql`
+      mutation createComment($input: ThreadCreateCommentInput!) {
+        thread {
+          createComment(input: $input) {
+            success
+          }
+        }
+      }
+    `,
+    variables: {
+      input: {
+        content: 'Hello',
+        threadId: encodeThreadId(comment.id),
+        subscribe: true,
+        sendEmail: false,
+      },
+    },
+    data: {
+      thread: {
+        createComment: {
+          success: true,
         },
       },
     },
