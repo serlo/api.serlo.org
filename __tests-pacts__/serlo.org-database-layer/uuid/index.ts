@@ -34,3 +34,37 @@ import './solution'
 import './taxonomy-term'
 import './user'
 import './video'
+import { gql } from 'apollo-server'
+
+import { article, user } from '../../../__fixtures__'
+import { createTestClient } from '../../../__tests__/__utils__'
+import {
+  addMessageInteraction,
+  assertSuccessfulGraphQLMutation,
+} from '../../__utils__'
+
+test('set-UuidSetStateMutation-state', async () => {
+  global.client = createTestClient({ userId: user.id })
+
+  await addMessageInteraction({
+    given: 'there exists a uuid with id 1855 that is not trashed',
+    message: {
+      type: 'UuidSetStateMutation',
+      payload: { ids: [article.id], userId: user.id, trashed: true },
+    },
+  })
+
+  await assertSuccessfulGraphQLMutation({
+    mutation: gql`
+      mutation uuid($input: UuidSetStateInput!) {
+        uuid {
+          setState(input: $input) {
+            success
+          }
+        }
+      }
+    `,
+    variables: { input: { id: 1855, trashed: true } },
+    data: { uuid: { setState: { success: true } } },
+  })
+})

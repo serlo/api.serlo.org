@@ -52,29 +52,6 @@ export function createSerloModel({
 }: {
   environment: Environment
 }) {
-  async function post({
-    path,
-    body,
-  }: {
-    path: string
-    body: Record<string, unknown>
-  }): Promise<Response> {
-    const response = await fetch(
-      `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`,
-      {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    )
-    if (response.status != 200) {
-      throw new Error(`${response.status}: ${response.statusText}`)
-    }
-    return response
-  }
-
   async function handleMessage({
     message,
     expectedStatusCodes,
@@ -139,9 +116,12 @@ export function createSerloModel({
     void
   >({
     mutate: async ({ ids, userId, trashed }) => {
-      await post({
-        path: '/set-uuid-state',
-        body: { ids, userId, trashed },
+      await handleMessage({
+        message: {
+          type: 'UuidSetStateMutation',
+          payload: { ids, userId, trashed },
+        },
+        expectedStatusCodes: [200],
       })
       await getUuid._querySpec.setCache({
         payloads: ids.map((id) => {
