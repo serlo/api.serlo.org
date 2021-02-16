@@ -589,8 +589,10 @@ function createActiveReviewersHandler(users: UuidPayload[]) {
 }
 
 function createActiveReviewersHandlersResponseHandler(body: unknown) {
-  return createJsonHandler({
-    path: '/user/active-reviewers',
+  return createMessageHandler({
+    message: {
+      type: 'ActiveReviewersQuery',
+    },
     body,
   })
 }
