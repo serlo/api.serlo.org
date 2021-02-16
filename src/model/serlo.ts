@@ -52,22 +52,6 @@ export function createSerloModel({
 }: {
   environment: Environment
 }) {
-  async function get({
-    path,
-    expectedStatusCodes,
-  }: {
-    path: string
-    expectedStatusCodes: number[]
-  }): Promise<Response> {
-    const response = await fetch(
-      `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`
-    )
-    if (!expectedStatusCodes.includes(response.status)) {
-      throw new Error(`${response.status}: ${response.statusText}`)
-    }
-    return response
-  }
-
   async function post({
     path,
     body,
@@ -121,8 +105,13 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        const response = await get({
-          path: `/uuid/${id}`,
+        const response = await handleMessage({
+          message: {
+            type: 'UuidQuery',
+            payload: {
+              id,
+            },
+          },
           expectedStatusCodes: [200, 404],
         })
         const uuid = (await response.json()) as AbstractUuidPayload | null

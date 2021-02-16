@@ -57,7 +57,6 @@ import {
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   Client,
-  createJsonHandler,
   createMessageHandler,
   createTestClient,
   createUuidHandler,
@@ -191,7 +190,15 @@ describe('uuid', () => {
   })
 
   test('returns null when uuid does not exist', async () => {
-    global.server.use(createJsonHandler({ path: '/uuid/666', body: null }))
+    global.server.use(
+      createMessageHandler({
+        message: {
+          type: 'UuidQuery',
+          payload: { id: 666 },
+        },
+        body: null,
+      })
+    )
 
     await assertSuccessfulGraphQLQuery({
       query: gql`
@@ -239,14 +246,14 @@ describe('uuid', () => {
   })
 
   test('returns an error when request fails (500)', async () => {
-    // TODO: this should be a helper
     global.server.use(
-      rest.get(
-        getDatabaseLayerUrl({ path: `/uuid/${user.id}` }),
-        (_req, res, ctx) => {
-          return res(ctx.status(500), ctx.json(null))
-        }
-      )
+      createMessageHandler({
+        message: {
+          type: 'UuidQuery',
+          payload: { id: user.id },
+        },
+        statusCode: 500,
+      })
     )
 
     await assertFailingGraphQLQuery({
@@ -265,12 +272,14 @@ describe('uuid', () => {
 
   test('succeeds on 404', async () => {
     global.server.use(
-      rest.get(
-        getDatabaseLayerUrl({ path: `/uuid/${user.id}` }),
-        (_req, res, ctx) => {
-          return res(ctx.status(404), ctx.json(null))
-        }
-      )
+      createMessageHandler({
+        message: {
+          type: 'UuidQuery',
+          payload: { id: user.id },
+        },
+        body: null,
+        statusCode: 404,
+      })
     )
 
     await assertSuccessfulGraphQLQuery({
@@ -373,13 +382,10 @@ describe('property "alias"', () => {
 describe('custom aliases', () => {
   test('de.serlo.org/mathe resolves to uuid 19767', async () => {
     global.server.use(
-      createJsonHandler({
-        path: `/uuid/19767`,
-        body: {
-          ...page,
-          id: 19767,
-          alias: '/legacy-alias',
-        },
+      createUuidHandler({
+        ...page,
+        id: 19767,
+        alias: '/legacy-alias',
       })
     )
     await assertSuccessfulGraphQLQuery({

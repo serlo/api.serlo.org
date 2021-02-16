@@ -30,7 +30,6 @@ import {
 import {
   assertSuccessfulGraphQLQuery,
   Client,
-  createJsonHandler,
   createMessageHandler,
   createTestClient,
   createUuidHandler,
@@ -85,8 +84,11 @@ describe('User', () => {
 
   test('by alias /user/profile/:id returns null when user does not exist', async () => {
     global.server.use(
-      createJsonHandler({
-        path: `/uuid/${user.id}`,
+      createMessageHandler({
+        message: {
+          type: 'UuidQuery',
+          payload: { id: user.id },
+        },
         body: null,
       })
     )
