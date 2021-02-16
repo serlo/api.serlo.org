@@ -667,9 +667,12 @@ export function createSerloModel({
     void
   >({
     mutate: async (payload) => {
-      await post({
-        path: '/thread/set-archive',
-        body: payload,
+      await handleMessage({
+        message: {
+          type: 'ThreadSetThreadArchivedMutation',
+          payload,
+        },
+        expectedStatusCodes: [200],
       })
       const { ids, archived } = payload
       await getUuid._querySpec.setCache({

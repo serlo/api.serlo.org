@@ -29,9 +29,6 @@ describe('GET /uuid/:id', () => {
 describe('POST /set-uuid-state', () => {
   require('./set-uuid-state')
 })
-describe('POST /thread/set-archive', () => {
-  require('./threads/thread-set-archive')
-})
 
 describe('AliasMessage', () => {
   require('./alias')
