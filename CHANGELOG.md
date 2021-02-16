@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.19.1](https://github.com/serlo/api.serlo.org/compare/v0.19.0..v0.19.1) - February 16, 2021
+
+### Added
+
+- **subscription**. Add `subscription.set` mutation.
+
+- **uuid**. Add optional filters `trashed` and `hasCurrentRevision` to `Course.pages`.
+
+### Fixed
+
+- **notification**. Use correct cache key for \`notification.setState.
+
 ## [v0.19.0](https://github.com/serlo/api.serlo.org/compare/v0.18.3..v0.19.0) - February 5, 2021
 
 ### Breaking Changes
