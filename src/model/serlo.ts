@@ -172,8 +172,10 @@ export function createSerloModel({
     {
       enableSwr: true,
       getCurrentValue: async () => {
-        const response = await get({
-          path: '/user/active-authors',
+        const response = await handleMessage({
+          message: {
+            type: 'ActiveAuthorsQuery',
+          },
           expectedStatusCodes: [200],
         })
         return (await response.json()) as number[]

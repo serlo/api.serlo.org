@@ -31,6 +31,7 @@ import {
   assertSuccessfulGraphQLQuery,
   Client,
   createJsonHandler,
+  createMessageHandler,
   createTestClient,
   createUuidHandler,
   givenSpreadheetApi,
@@ -573,8 +574,10 @@ function createActiveAuthorsHandler(users: UuidPayload[]) {
 }
 
 function createActiveAuthorsResponseHandler(body: unknown) {
-  return createJsonHandler({
-    path: '/user/active-authors',
+  return createMessageHandler({
+    message: {
+      type: 'ActiveAuthorsQuery',
+    },
     body,
   })
 }

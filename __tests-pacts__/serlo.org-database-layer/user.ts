@@ -22,19 +22,19 @@
 import { Matchers } from '@pact-foundation/pact'
 import fetch from 'node-fetch'
 
-import { addJsonInteraction } from '../__utils__'
+import { addJsonInteraction, addMessageInteraction } from '../__utils__'
 
-test('GET /api/user/active-authors', async () => {
-  await addJsonInteraction({
-    name: 'fetch list of active author ids',
+test('ActiveAuthorsQuery', async () => {
+  await addMessageInteraction({
     given: 'users with ids 1 and 10 are active authors',
-    path: '/user/active-authors',
-    body: Matchers.eachLike(1),
+    message: {
+      type: 'ActiveAuthorsQuery',
+    },
+    responseBody: Matchers.eachLike(1),
   })
 
-  await fetch(
-    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}/user/active-authors`
-  )
+  const response = await global.serloModel.getActiveAuthorIds()
+  expect(response).toEqual([1])
 })
 
 test('GET /api/user/active-reviewers', async () => {
