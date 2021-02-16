@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
-import { rest } from 'msw'
 import * as R from 'ramda'
 
 import {
@@ -60,7 +59,6 @@ import {
   createMessageHandler,
   createTestClient,
   createUuidHandler,
-  getDatabaseLayerUrl,
 } from '../../__utils__'
 import {
   DiscriminatorType,
@@ -310,23 +308,19 @@ describe('uuid mutation setState', () => {
     }
   `
 
-  beforeEach(() => {
+  test('authenticated with array of ids', async () => {
     global.server.use(
-      rest.post<{
-        ids: number[]
-        userId: number
-        trashed: boolean
-      }>(getDatabaseLayerUrl({ path: '/set-uuid-state' }), (req, res, ctx) => {
-        const { userId } = req.body
-
-        if (userId !== user.id) return res(ctx.status(403))
-
-        return res(ctx.status(200))
+      createMessageHandler({
+        message: {
+          type: 'UuidSetStateMutation',
+          payload: {
+            ids: [1, 2, 3],
+            userId: user.id,
+            trashed: true,
+          },
+        },
       })
     )
-  })
-
-  test('authenticated with array of ids', async () => {
     await assertSuccessfulGraphQLMutation({
       mutation,
       variables: {

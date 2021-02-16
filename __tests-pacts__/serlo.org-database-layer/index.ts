@@ -20,10 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 /* eslint-disable import/no-unassigned-import */
-describe('POST /set-uuid-state', () => {
-  require('./set-uuid-state')
-})
-
 describe('AliasMessage', () => {
   require('./alias')
 })
