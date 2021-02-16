@@ -27,8 +27,14 @@ import { NotificationEventPayload } from '~/schema/notification'
 import { AliasPayload, NavigationPayload, UuidPayload } from '~/schema/uuid'
 
 export function createAliasHandler(alias: AliasPayload) {
-  return createJsonHandler({
-    path: `/alias/${alias.instance}${alias.path}`,
+  return createMessageHandler({
+    message: {
+      type: 'AliasQuery',
+      payload: {
+        instance: alias.instance,
+        path: alias.path,
+      },
+    },
     body: alias,
   })
 }
@@ -46,8 +52,11 @@ export function createLicenseHandler(license: LicensePayload) {
 }
 
 export function createNavigationHandler(navigation: NavigationPayload) {
-  return createJsonHandler({
-    path: `/navigation/${navigation.instance}`,
+  return createMessageHandler({
+    message: {
+      type: 'NavigationQuery',
+      payload: { instance: navigation.instance },
+    },
     body: navigation,
   })
 }
@@ -55,34 +64,28 @@ export function createNavigationHandler(navigation: NavigationPayload) {
 export function createNotificationEventHandler(
   notificationEvent: NotificationEventPayload
 ) {
-  return createJsonHandler({
-    path: `/event/${notificationEvent.id}`,
+  return createMessageHandler({
+    message: {
+      type: 'EventQuery',
+      payload: {
+        id: notificationEvent.id,
+      },
+    },
     body: notificationEvent,
   })
 }
 
 export function createUuidHandler(uuid: UuidPayload, once?: boolean) {
-  return createJsonHandler(
+  return createMessageHandler(
     {
-      path: `/uuid/${uuid.id}`,
+      message: {
+        type: 'UuidQuery',
+        payload: { id: uuid.id },
+      },
       body: uuid,
     },
     once
   )
-}
-
-export function createJsonHandler(
-  args: {
-    path: string
-    body: unknown
-  },
-  once = false
-) {
-  return rest.get(getDatabaseLayerUrl(args), (_req, res, ctx) => {
-    return (once ? res.once : res)(
-      ctx.json(args.body as Record<string, unknown>)
-    )
-  })
 }
 
 export function createMessageHandler(
@@ -92,6 +95,7 @@ export function createMessageHandler(
       payload?: Record<string, unknown>
     }
     body?: unknown
+    statusCode?: number
   },
   once = false
 ) {
@@ -101,9 +105,10 @@ export function createMessageHandler(
     getDatabaseLayerUrl({ path: '/' }),
     (req, res, ctx) => {
       return (once ? res.once : res)(
-        body === undefined
-          ? ctx.status(200)
-          : ctx.json(body as Record<string, unknown>)
+        ctx.status(args.statusCode ?? 200),
+        ...(body === undefined
+          ? []
+          : [ctx.json(body as Record<string, unknown>)])
       )
     }
   )

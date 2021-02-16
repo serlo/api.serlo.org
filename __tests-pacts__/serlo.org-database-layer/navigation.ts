@@ -22,12 +22,11 @@
 import { Matchers } from '@pact-foundation/pact'
 import fetch from 'node-fetch'
 
-import { addJsonInteraction } from '../__utils__'
+import { addMessageInteraction } from '../__utils__'
 import { NavigationPayload } from '~/schema/uuid'
 import { Instance } from '~/types'
 
-test('Navigation', async () => {
-  // This is a noop test that just adds the interaction to the contract
+test('NavigationQuery', async () => {
   const navigation: NavigationPayload = {
     instance: Instance.De,
     data: [
@@ -37,12 +36,16 @@ test('Navigation', async () => {
       },
     ],
   }
-  await addJsonInteraction({
-    name: 'fetch data of navigation',
+  await addMessageInteraction({
     given: '',
-    path: `/navigation/${navigation.instance}`,
-    body: {
-      instance: Matchers.string(navigation.instance),
+    message: {
+      type: 'NavigationQuery',
+      payload: {
+        instance: navigation.instance,
+      },
+    },
+    responseBody: {
+      instance: navigation.instance,
       data: Matchers.eachLike({
         label: Matchers.string(navigation.data[0].label),
         children: Matchers.eachLike({
@@ -51,7 +54,18 @@ test('Navigation', async () => {
       }),
     },
   })
-  await fetch(
-    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}/navigation/${navigation.instance}`
+  const response = await fetch(
+    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`,
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        type: 'NavigationQuery',
+        payload: { instance: navigation.instance },
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
   )
+  expect(await response.json()).toEqual(navigation)
 })

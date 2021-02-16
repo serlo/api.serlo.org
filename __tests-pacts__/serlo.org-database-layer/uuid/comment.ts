@@ -20,25 +20,25 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Matchers } from '@pact-foundation/pact'
-import fetch from 'node-fetch'
 
-import { user } from '../../__fixtures__/uuid'
-import { addJsonInteraction } from '../__utils__'
+import { comment } from '../../../__fixtures__'
+import { addUuidInteraction } from '../../__utils__'
+import { CommentPayload } from '~/schema/thread'
 
-test('Subscriptions', async () => {
-  await addJsonInteraction({
-    name: `fetch data of all subscriptions for user with id ${user.id}`,
-    given: `there exists a subscription for user with id ${user.id}`,
-    path: `/subscriptions/${user.id}`,
-    body: {
-      userId: user.id,
-      subscriptions: Matchers.eachLike({
-        id: Matchers.integer(1),
-        sendEmail: Matchers.boolean(false),
-      }),
-    },
+test('Comment', async () => {
+  await addUuidInteraction<CommentPayload>({
+    __typename: comment.__typename,
+    id: comment.id,
+    trashed: Matchers.boolean(comment.trashed),
+    alias: comment.alias,
+    authorId: Matchers.integer(comment.authorId),
+    title: comment.title ? Matchers.string(comment.title) : null,
+    date: Matchers.iso8601DateTime(comment.date),
+    archived: Matchers.boolean(comment.archived),
+    content: Matchers.string(comment.content),
+    parentId: Matchers.integer(comment.parentId),
+    childrenIds: comment.childrenIds,
   })
-  await fetch(
-    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}/subscriptions/${user.id}`
-  )
+  const response = await global.serloModel.getUuid(comment)
+  expect(response).toEqual(comment)
 })

@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
-import { rest } from 'msw'
 
 import {
   article,
@@ -78,12 +77,12 @@ import {
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   Client,
-  createJsonHandler,
+  createMessageHandler,
   createNotificationEventHandler,
   createTestClient,
   createUuidHandler,
-  getDatabaseLayerUrl,
 } from '../__utils__'
+import { NotificationsPayload } from '~/schema/notification'
 import { Instance } from '~/types'
 
 describe('notifications', () => {
@@ -92,16 +91,13 @@ describe('notifications', () => {
   beforeEach(() => {
     client = createTestClient({ userId: user.id })
     global.server.use(
-      createJsonHandler({
-        path: `/notifications/${user.id}`,
-        body: {
-          userId: user.id,
-          notifications: [
-            { id: 3, unread: true, eventId: 3 },
-            { id: 2, unread: false, eventId: 2 },
-            { id: 1, unread: false, eventId: 1 },
-          ],
-        },
+      createNotificationsHandler({
+        userId: user.id,
+        notifications: [
+          { id: 3, unread: true, eventId: 3 },
+          { id: 2, unread: false, eventId: 2 },
+          { id: 1, unread: false, eventId: 1 },
+        ],
       })
     )
   })
@@ -151,18 +147,15 @@ describe('notifications', () => {
 
   test('notifications (w/ event)', async () => {
     global.server.use(
-      createJsonHandler({
-        path: `/notifications/${user.id}`,
-        body: {
-          userId: user.id,
-          notifications: [
-            {
-              id: 1,
-              unread: false,
-              eventId: checkoutRevisionNotificationEvent.id,
-            },
-          ],
-        },
+      createNotificationsHandler({
+        userId: user.id,
+        notifications: [
+          {
+            id: 1,
+            unread: false,
+            eventId: checkoutRevisionNotificationEvent.id,
+          },
+        ],
       }),
       createNotificationEventHandler(checkoutRevisionNotificationEvent)
     )
@@ -2123,33 +2116,26 @@ describe('mutation notification setState', () => {
 
   beforeEach(() => {
     global.server.use(
-      rest.post<{
-        ids: number[]
-        userId: number
-        unread: boolean
-      }>(
-        getDatabaseLayerUrl({ path: `/set-notification-state` }),
-        (req, res, ctx) => {
-          return res(ctx.status(200))
-        }
-      )
-    )
-    global.server.use(
-      createJsonHandler({
-        path: `/notifications/${user.id}`,
-        body: {
-          userId: user.id,
-          notifications: [
-            { id: 3, unread: true, eventId: 3 },
-            { id: 2, unread: false, eventId: 2 },
-            { id: 1, unread: false, eventId: 1 },
-          ],
-        },
+      createNotificationsHandler({
+        userId: user.id,
+        notifications: [
+          { id: 3, unread: true, eventId: 3 },
+          { id: 2, unread: false, eventId: 2 },
+          { id: 1, unread: false, eventId: 1 },
+        ],
       })
     )
   })
 
   test('authenticated with array of ids', async () => {
+    global.server.use(
+      createMessageHandler({
+        message: {
+          type: 'NotificationSetStateMutation',
+          payload: { ids: [1, 2, 3], userId: user.id, unread: false },
+        },
+      })
+    )
     await assertSuccessfulGraphQLMutation({
       mutation,
       variables: {
@@ -2171,15 +2157,18 @@ describe('mutation notification setState', () => {
 
   test('setting ids from other user', async () => {
     global.server.use(
-      createJsonHandler({
-        path: `/notifications/${user2.id}`,
-        body: {
-          userId: user2.id,
-          notifications: [
-            { id: 4, unread: true, eventId: 3 },
-            { id: 5, unread: false, eventId: 2 },
-          ],
+      createMessageHandler({
+        message: {
+          type: 'NotificationSetStateMutation',
+          payload: { ids: [1, 2, 3], userId: user2.id, unread: false },
         },
+      }),
+      createNotificationsHandler({
+        userId: user2.id,
+        notifications: [
+          { id: 4, unread: true, eventId: 3 },
+          { id: 5, unread: false, eventId: 2 },
+        ],
       })
     )
     await assertFailingGraphQLMutation({
@@ -2191,6 +2180,14 @@ describe('mutation notification setState', () => {
   })
 
   test('cache is mutated as expected: single id', async () => {
+    global.server.use(
+      createMessageHandler({
+        message: {
+          type: 'NotificationSetStateMutation',
+          payload: { ids: [1], userId: user.id, unread: true },
+        },
+      })
+    )
     const client = createTestClient({ userId: user.id })
 
     //fill notification cache
@@ -2225,6 +2222,15 @@ describe('mutation notification setState', () => {
   })
 
   test('cache is mutated as expected: array', async () => {
+    global.server.use(
+      createMessageHandler({
+        message: {
+          type: 'NotificationSetStateMutation',
+          payload: { ids: [1, 2, 3], userId: user.id, unread: false },
+        },
+      })
+    )
+
     const client = createTestClient({ userId: user.id })
 
     //fill notification cache
@@ -2258,3 +2264,13 @@ describe('mutation notification setState', () => {
     })
   })
 })
+
+function createNotificationsHandler(payload: NotificationsPayload) {
+  return createMessageHandler({
+    message: {
+      type: 'NotificationsQuery',
+      payload: { userId: payload.userId },
+    },
+    body: payload,
+  })
+}
