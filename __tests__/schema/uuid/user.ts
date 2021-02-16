@@ -30,7 +30,7 @@ import {
 import {
   assertSuccessfulGraphQLQuery,
   Client,
-  createJsonHandler,
+  createMessageHandler,
   createTestClient,
   createUuidHandler,
   givenSpreadheetApi,
@@ -84,8 +84,11 @@ describe('User', () => {
 
   test('by alias /user/profile/:id returns null when user does not exist', async () => {
     global.server.use(
-      createJsonHandler({
-        path: `/uuid/${user.id}`,
+      createMessageHandler({
+        message: {
+          type: 'UuidQuery',
+          payload: { id: user.id },
+        },
         body: null,
       })
     )
@@ -573,8 +576,10 @@ function createActiveAuthorsHandler(users: UuidPayload[]) {
 }
 
 function createActiveAuthorsResponseHandler(body: unknown) {
-  return createJsonHandler({
-    path: '/user/active-authors',
+  return createMessageHandler({
+    message: {
+      type: 'ActiveAuthorsQuery',
+    },
     body,
   })
 }
@@ -586,8 +591,10 @@ function createActiveReviewersHandler(users: UuidPayload[]) {
 }
 
 function createActiveReviewersHandlersResponseHandler(body: unknown) {
-  return createJsonHandler({
-    path: '/user/active-reviewers',
+  return createMessageHandler({
+    message: {
+      type: 'ActiveReviewersQuery',
+    },
     body,
   })
 }

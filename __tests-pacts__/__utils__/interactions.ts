@@ -19,96 +19,18 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Matchers } from '@pact-foundation/pact'
-
-import { NavigationPayload, UuidPayload } from '~/schema/uuid'
-
-export function addNavigationInteraction(payload: NavigationPayload) {
-  return addJsonInteraction({
-    name: `fetch data of navigation`,
-    given: '',
-    path: '/api/navigation',
-    body: {
-      data: Matchers.eachLike({
-        label: Matchers.string(payload.data[0].label),
-        id: Matchers.integer(payload.data[0].id),
-        children: Matchers.eachLike({
-          label: Matchers.string(payload.data[0].children?.[0].label),
-          id: Matchers.integer(payload.data[0].children?.[0].id),
-        }),
-      }),
-    },
-  })
-}
+import { UuidPayload } from '~/schema/uuid'
 
 export function addUuidInteraction<T extends UuidPayload>(
   data: Record<keyof T, unknown> & { __typename: string; id: number }
 ) {
-  return addJsonInteraction({
-    name: `fetch data of uuid ${data.id}`,
+  return addMessageInteraction({
     given: `uuid ${data.id} is of type ${data.__typename}`,
-    path: `/uuid/${data.id}`,
-    body: data,
-  })
-}
-
-export function addJsonInteraction({
-  name,
-  given,
-  path,
-  body,
-}: {
-  name: string
-  given: string
-  path: string
-  body: unknown
-}) {
-  return global.pact.addInteraction({
-    uponReceiving: name,
-    state: given,
-    withRequest: {
-      method: 'GET',
-      path,
+    message: {
+      type: 'UuidQuery',
+      payload: { id: data.id },
     },
-    willRespondWith: {
-      status: 200,
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
-      body,
-    },
-  })
-}
-
-export function addMutationInteraction({
-  name,
-  given,
-  path,
-  requestBody,
-  responseBody,
-}: {
-  name: string
-  given: string
-  path: string
-  requestBody: Record<string, unknown>
-  responseBody?: Record<string, unknown>
-}) {
-  return global.pact.addInteraction({
-    uponReceiving: name,
-    state: given,
-    withRequest: {
-      method: 'POST',
-      path,
-      body: requestBody,
-      headers: { 'Content-Type': 'application/json' },
-    },
-    willRespondWith: {
-      status: 200,
-      ...(responseBody === undefined
-        ? {}
-        : {
-            headers: { 'Content-Type': 'application/json; charset=utf-8' },
-            body: responseBody,
-          }),
-    },
+    responseBody: data,
   })
 }
 

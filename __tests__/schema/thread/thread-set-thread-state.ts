@@ -20,15 +20,14 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
-import { rest } from 'msw'
 
 import { comment, user } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   Client,
+  createMessageHandler,
   createTestClient,
-  getDatabaseLayerUrl,
 } from '../../__utils__'
 import { encodeThreadId } from '~/schema/thread'
 
@@ -39,8 +38,6 @@ beforeEach(() => {
 })
 
 describe('setThreadState', () => {
-  beforeEach(() => mockSetUuidStateEndpoint())
-
   const mutation = gql`
     mutation setThreadState($input: ThreadSetThreadStateInput!) {
       thread {
@@ -52,6 +49,18 @@ describe('setThreadState', () => {
   `
 
   test('deleting thread returns success', async () => {
+    global.server.use(
+      createMessageHandler({
+        message: {
+          type: 'UuidSetStateMutation',
+          payload: {
+            ids: [comment.id],
+            userId: user.id,
+            trashed: true,
+          },
+        },
+      })
+    )
     await assertSuccessfulGraphQLMutation({
       mutation,
       client,
@@ -76,19 +85,3 @@ describe('setThreadState', () => {
     })
   })
 })
-
-function mockSetUuidStateEndpoint() {
-  global.server.use(
-    rest.post<{
-      userId: number
-      trashed: boolean
-      ids: number[]
-    }>(getDatabaseLayerUrl({ path: '/set-uuid-state' }), (req, res, ctx) => {
-      const { userId } = req.body
-
-      if (userId !== user.id) return res(ctx.status(403))
-
-      return res(ctx.status(200))
-    })
-  )
-}

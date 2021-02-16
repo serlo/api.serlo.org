@@ -33,6 +33,8 @@ import {
   setup,
 } from './setup'
 import { Service } from '~/internals/auth'
+import { emptySwrQueue } from '~/internals/swr-queue'
+import { createSerloModel } from '~/model'
 
 const pactDir = path.join(__dirname, '..', 'pacts')
 
@@ -87,6 +89,12 @@ beforeEach(async () => {
     service: Service.SerloCloudflareWorker,
     userId: null,
   })
+  global.serloModel = createSerloModel({
+    environment: {
+      cache: global.cache,
+      swrQueue: emptySwrQueue,
+    },
+  })
 })
 
 afterEach(async () => {
@@ -111,6 +119,7 @@ declare global {
     interface Global {
       pact: import('@pact-foundation/pact').Pact
       client: import('../__tests__/__utils__').Client
+      serloModel: ReturnType<typeof createSerloModel>
     }
   }
 }

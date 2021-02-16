@@ -20,15 +20,14 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
-import { rest } from 'msw'
 
 import { article, comment1, user } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
+  createMessageHandler,
   createTestClient,
-  getDatabaseLayerUrl,
 } from '../../__utils__'
 import { mockEndpointsForThreads } from './thread'
 import { encodeThreadId } from '~/schema/thread'
@@ -61,32 +60,29 @@ test('comment gets created, cache mutated as expected', async () => {
   const client = createTestClient({ userId: user.id })
 
   global.server.use(
-    rest.post<{
-      content: string
-      threadId: number
-      userId: number
-      subscribe: boolean
-      sendEmail: boolean
-    }>(
-      getDatabaseLayerUrl({ path: '/thread/comment-thread' }),
-      (req, res, ctx) => {
-        const { threadId, content } = req.body
-        return res(
-          ctx.status(200),
-          ctx.json({
-            __typename: 'comment',
-            id: comment1.id + 1,
-            parentId: threadId,
-            content: content,
-            trashed: false,
-            alias: null,
-            title: null,
-            archived: false,
-            childrenIds: [],
-          })
-        )
-      }
-    )
+    createMessageHandler({
+      message: {
+        type: 'ThreadCreateCommentMutation',
+        payload: {
+          userId: user.id,
+          content: 'Hello',
+          threadId: comment1.id,
+          subscribe: true,
+          sendEmail: false,
+        },
+      },
+      body: {
+        __typename: 'Comment',
+        id: comment1.id + 1,
+        parentId: encodeThreadId(comment1.id),
+        content: 'Hello',
+        trashed: false,
+        alias: null,
+        title: null,
+        archived: false,
+        childrenIds: [],
+      },
+    })
   )
 
   mockEndpointsForThreads(article, [[comment1]])

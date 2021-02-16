@@ -20,22 +20,19 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
-import { rest } from 'msw'
 
 import { article, comment, comment1, user } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
+  createMessageHandler,
   createTestClient,
-  getDatabaseLayerUrl,
 } from '../../__utils__'
 import { mockEndpointsForThreads } from './thread'
 import { encodeThreadId } from '~/schema/thread'
 
 describe('archive-comment', () => {
-  beforeEach(() => mockThreadSetArchiveEndpoint())
-
   const mutation = gql`
     mutation setThreadArchived($input: ThreadSetThreadArchivedInput!) {
       thread {
@@ -59,6 +56,19 @@ describe('archive-comment', () => {
   test('setting multiple ids', async () => {
     const client = createTestClient({ userId: user.id })
 
+    global.server.use(
+      createMessageHandler({
+        message: {
+          type: 'ThreadSetThreadArchivedMutation',
+          payload: {
+            userId: user.id,
+            ids: [comment1.id, comment.id],
+            archived: true,
+          },
+        },
+      })
+    )
+
     await assertSuccessfulGraphQLMutation({
       mutation,
       client,
@@ -75,6 +85,19 @@ describe('archive-comment', () => {
   test('cache gets updated as expected', async () => {
     const client = createTestClient({ userId: user.id })
     mockEndpointsForThreads(article, [[{ ...comment1, archived: true }]])
+    global.server.use(
+      createMessageHandler({
+        message: {
+          type: 'ThreadSetThreadArchivedMutation',
+          payload: {
+            userId: user.id,
+            ids: [comment1.id],
+            archived: false,
+          },
+        },
+      })
+    )
+
     const query = gql`
       query($id: Int) {
         uuid(id: $id) {
@@ -112,18 +135,3 @@ describe('archive-comment', () => {
     })
   })
 })
-
-function mockThreadSetArchiveEndpoint() {
-  global.server.use(
-    rest.post<{
-      ids: number[]
-      userId: number
-      archived: boolean
-    }>(
-      getDatabaseLayerUrl({ path: '/thread/set-archive' }),
-      (req, res, ctx) => {
-        return res(ctx.status(200))
-      }
-    )
-  )
-}
