@@ -574,6 +574,20 @@ async function exec(): Promise<void> {
       ],
       internal: ['serlo-org-database-layer@0.2.3'],
     },
+    {
+      tagName: 'v0.19.1',
+      date: '2021-02-16',
+      fixed: [
+        ['notification', 'Use correct cache key for `notification.setState.'],
+      ],
+      added: [
+        ['subscription', 'Add `subscription.set` mutation.'],
+        [
+          'uuid',
+          'Add optional filters `trashed` and `hasCurrentRevision` to `Course.pages`.',
+        ],
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
