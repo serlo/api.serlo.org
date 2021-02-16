@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Matchers } from '@pact-foundation/pact'
-import fetch from 'node-fetch'
 
 import { comment } from '../../../__fixtures__'
 import { addUuidInteraction } from '../../__utils__'
@@ -40,7 +39,6 @@ test('Comment', async () => {
     parentId: Matchers.integer(comment.parentId),
     childrenIds: comment.childrenIds,
   })
-  await fetch(
-    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}/uuid/${comment.id}`
-  )
+  const response = await global.serloModel.getUuid(comment)
+  expect(response).toEqual(comment)
 })

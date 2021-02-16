@@ -76,27 +76,16 @@ export function createNotificationEventHandler(
 }
 
 export function createUuidHandler(uuid: UuidPayload, once?: boolean) {
-  return createJsonHandler(
+  return createMessageHandler(
     {
-      path: `/uuid/${uuid.id}`,
+      message: {
+        type: 'UuidQuery',
+        payload: { id: uuid.id },
+      },
       body: uuid,
     },
     once
   )
-}
-
-export function createJsonHandler(
-  args: {
-    path: string
-    body: unknown
-  },
-  once = false
-) {
-  return rest.get(getDatabaseLayerUrl(args), (_req, res, ctx) => {
-    return (once ? res.once : res)(
-      ctx.json(args.body as Record<string, unknown>)
-    )
-  })
 }
 
 export function createMessageHandler(

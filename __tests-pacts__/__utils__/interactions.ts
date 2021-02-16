@@ -24,37 +24,13 @@ import { UuidPayload } from '~/schema/uuid'
 export function addUuidInteraction<T extends UuidPayload>(
   data: Record<keyof T, unknown> & { __typename: string; id: number }
 ) {
-  return addJsonInteraction({
-    name: `fetch data of uuid ${data.id}`,
+  return addMessageInteraction({
     given: `uuid ${data.id} is of type ${data.__typename}`,
-    path: `/uuid/${data.id}`,
-    body: data,
-  })
-}
-
-export function addJsonInteraction({
-  name,
-  given,
-  path,
-  body,
-}: {
-  name: string
-  given: string
-  path: string
-  body: unknown
-}) {
-  return global.pact.addInteraction({
-    uponReceiving: name,
-    state: given,
-    withRequest: {
-      method: 'GET',
-      path,
+    message: {
+      type: 'UuidQuery',
+      payload: { id: data.id },
     },
-    willRespondWith: {
-      status: 200,
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
-      body,
-    },
+    responseBody: data,
   })
 }
 
