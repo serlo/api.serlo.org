@@ -22,7 +22,7 @@
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
-import { article, comment, user } from '../../__fixtures__'
+import { article, comment, comment3, user } from '../../__fixtures__'
 import { createTestClient } from '../../__tests__/__utils__'
 import {
   addMessageInteraction,
@@ -180,5 +180,31 @@ test('ThreadCreateCommentMutation', async () => {
         },
       },
     },
+  })
+})
+
+test('ThreadSetThreadArchivedMutation', async () => {
+  global.client = createTestClient({ userId: user.id })
+
+  await addMessageInteraction({
+    given: `there exists a thread with a first comment with an id of ${comment3.id} and user with id ${user.id} is authenticated`,
+    message: {
+      type: 'ThreadSetThreadArchivedMutation',
+      payload: { ids: [comment3.id], userId: user.id, archived: true },
+    },
+  })
+
+  await assertSuccessfulGraphQLMutation({
+    mutation: gql`
+      mutation archiveThread($input: ThreadSetThreadArchivedInput!) {
+        thread {
+          setThreadArchived(input: $input) {
+            success
+          }
+        }
+      }
+    `,
+    variables: { input: { id: encodeThreadId(comment3.id), archived: true } },
+    data: { thread: { setThreadArchived: { success: true } } },
   })
 })
