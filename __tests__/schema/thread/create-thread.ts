@@ -97,10 +97,10 @@ test('thread gets created, cache mutated as expected', async () => {
         },
       },
       body: {
-        __typename: 'comment',
+        __typename: 'Comment',
         id: comment1.id,
         trashed: false,
-        alias: null,
+        alias: `/mathe/${comment1.id}/`,
         authorId: user.id,
         title: 'My new thread',
         date: '2014-08-25T12:51:02+02:00',

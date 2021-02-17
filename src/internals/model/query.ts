@@ -19,7 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { option as O, pipeable } from 'fp-ts'
+import { option as O, either as E } from 'fp-ts'
+import * as t from 'io-ts'
 import * as R from 'ramda'
 
 import { FunctionOrValue } from '../cache'
@@ -27,6 +28,8 @@ import { Environment } from '../environment'
 import { Time } from '../swr-queue'
 
 export interface QuerySpec<P, R> {
+  // TODO: this should probably be required
+  decoder?: t.Type<R>
   enableSwr: boolean
   getCurrentValue: (payload: P, previousValue: R | null) => Promise<R>
   maxAge: Time | undefined
@@ -60,25 +63,35 @@ export function createQuery<P, R>(
 ): Query<P, R> {
   async function query(payload: P): Promise<R> {
     const key = spec.getKey(payload)
-    return await pipeable.pipe(
-      await environment.cache.get<R>({ key }),
-      O.fold(
-        async () => {
-          const value = await spec.getCurrentValue(payload, null)
-          await environment.cache.set({
-            key,
-            value,
-          })
-          return value
-        },
-        async (cacheEntry) => {
-          await environment.swrQueue.queue({
-            key,
-          })
-          return cacheEntry.value
-        }
-      )
-    )
+    const cacheValue = await environment.cache.get<R>({ key })
+
+    const decoder = spec.decoder || t.unknown
+
+    if (O.isSome(cacheValue)) {
+      const cacheEntry = cacheValue.value
+
+      const decoded = decoder.decode(cacheEntry.value)
+      if (E.isRight(decoded)) {
+        await environment.swrQueue.queue({
+          key,
+        })
+        return decoded.right as R
+      }
+    }
+
+    // Cache empty or invalid value
+    const value = await spec.getCurrentValue(payload, null)
+
+    const decoded = decoder.decode(value)
+    if (E.isRight(decoded)) {
+      await environment.cache.set({
+        key,
+        value,
+      })
+      return value
+    }
+
+    throw new Error(`Invalid value: ${JSON.stringify(value)}`)
   }
 
   const querySpecWithHelpers: QuerySpecWithHelpers<P, R> = {
