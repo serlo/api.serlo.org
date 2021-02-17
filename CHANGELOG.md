@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.19.3](https://github.com/serlo/api.serlo.org/compare/v0.19.2..v0.19.3) - February 17, 2021
+
+### Internal
+
+- Improve error message for unexpected status codes.
+
 ## [v0.19.2](https://github.com/serlo/api.serlo.org/compare/v0.19.1..v0.19.2) - February 17, 2021
 
 ### Internal
