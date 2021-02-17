@@ -73,7 +73,7 @@ export function createSerloModel({
       }
     )
     if (!expectedStatusCodes.includes(response.status)) {
-      throw new Error(`${response.status}: ${response.statusText}`)
+      throw new Error(`${response.status}: ${JSON.stringify(message)}`)
     }
     return response
   }
