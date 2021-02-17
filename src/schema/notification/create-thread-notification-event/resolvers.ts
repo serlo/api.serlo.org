@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { UuidPayload } from '../../uuid'
 import { createNotificationEventResolvers } from '../utils'
 import { CreateThreadNotificationEventResolvers } from './types'
 
@@ -27,9 +26,9 @@ export const resolvers: CreateThreadNotificationEventResolvers = {
   CreateThreadNotificationEvent: {
     ...createNotificationEventResolvers(),
     async object(notificationEvent, _args, { dataSources }) {
-      return (await dataSources.model.serlo.getUuid({
+      return await dataSources.model.serlo.getUuid({
         id: notificationEvent.objectId,
-      })) as UuidPayload | null
+      })
     },
     thread(notificationEvent) {
       return Promise.resolve({ id: notificationEvent.threadId })

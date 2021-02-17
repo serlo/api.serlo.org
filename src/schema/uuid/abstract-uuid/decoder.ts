@@ -19,16 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { createNotificationEventResolvers } from '../utils'
-import { SetUuidStateNotificationEventResolvers } from './types'
+import * as t from 'io-ts'
 
-export const resolvers: SetUuidStateNotificationEventResolvers = {
-  SetUuidStateNotificationEvent: {
-    ...createNotificationEventResolvers(),
-    async object(notificationEvent, _args, { dataSources }) {
-      return await dataSources.model.serlo.getUuid({
-        id: notificationEvent.objectId,
-      })
-    },
-  },
-}
+export const AbstractUuidPayloadDecoder = t.type({
+  id: t.number,
+  trashed: t.boolean,
+  alias: t.string,
+})

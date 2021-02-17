@@ -28,7 +28,7 @@ import {
   assertUserIsAuthenticated,
   createMutationNamespace,
 } from '~/schema/utils'
-import { createUuidResolvers, UuidPayload } from '~/schema/uuid/abstract-uuid'
+import { createUuidResolvers } from '~/schema/uuid/abstract-uuid'
 import { UserPayload } from '~/schema/uuid/user'
 
 export const resolvers: ThreadResolvers = {
@@ -46,9 +46,9 @@ export const resolvers: ThreadResolvers = {
       return thread.commentPayloads[0].archived
     },
     async object(thread, _args, { dataSources }) {
-      const object = (await dataSources.model.serlo.getUuid({
+      const object = await dataSources.model.serlo.getUuid({
         id: thread.commentPayloads[0].parentId,
-      })) as UuidPayload | null
+      })
       if (object === null) {
         throw new ApolloError('Thread points to non-existent uuid')
       }

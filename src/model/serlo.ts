@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { option as O } from 'fp-ts'
+import * as t from 'io-ts'
 import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
 
@@ -44,7 +45,9 @@ import {
   Navigation,
   NavigationPayload,
   NodeData,
+  UuidPayload,
 } from '~/schema/uuid'
+import { UuidPayloadDecoder } from '~/schema/uuid/decoder'
 import { Instance, License, ThreadCreateThreadInput } from '~/types'
 
 export function createSerloModel({
@@ -78,8 +81,10 @@ export function createSerloModel({
     return response
   }
 
-  const getUuid = createQuery<{ id: number }, AbstractUuidPayload | null>(
+  const getUuid = createQuery<{ id: number }, UuidPayload | null>(
     {
+      // @ts-expect-error TODO:
+      decoder: t.union([UuidPayloadDecoder, t.null]),
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
         const response = await handleMessage({
@@ -91,7 +96,7 @@ export function createSerloModel({
           },
           expectedStatusCodes: [200, 404],
         })
-        const uuid = (await response.json()) as AbstractUuidPayload | null
+        const uuid = (await response.json()) as UuidPayload | null
         return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
       },
       maxAge: { hour: 1 },
