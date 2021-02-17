@@ -2,11 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-## [v0.19.4](https://github.com/serlo/api.serlo.org/compare/v0.19.3..v0.19.4) - February 17, 2021
+## [v0.19.5](https://github.com/serlo/api.serlo.org/compare/v0.19.4..v0.19.5) - February 17, 2021
 
 ### Fixed
 
 - Reject invalid cache values.
+
+## [v0.19.4](https://github.com/serlo/api.serlo.org/compare/v0.19.3..v0.19.4) - February 17, 2021 \[YANKED]
 
 ## [v0.19.3](https://github.com/serlo/api.serlo.org/compare/v0.19.2..v0.19.3) - February 17, 2021
 

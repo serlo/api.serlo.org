@@ -601,6 +601,11 @@ async function exec(): Promise<void> {
     {
       tagName: 'v0.19.4',
       date: '2021-02-17',
+      yanked: true,
+    },
+    {
+      tagName: 'v0.19.5',
+      date: '2021-02-17',
       fixed: ['Reject invalid cache values.'],
     },
   ])
