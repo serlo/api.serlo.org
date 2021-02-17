@@ -1,6 +1,6 @@
 {
   "name": "@serlo/api.serlo.org",
-  "version": "0.19.2",
+  "version": "0.19.3",
   "private": true,
   "bugs": {
     "url": "https://github.com/serlo/api.serlo.org/issues"
