@@ -38,32 +38,34 @@ import {
 import { CommentPayload } from '~/schema/thread/types'
 import {
   AbstractUuid,
-  UuidMutationSetStateArgs,
   QueryUuidArgs,
+  UuidMutationSetStateArgs,
   UuidSetStateResponse,
 } from '~/types'
 
 export enum DiscriminatorType {
+  Comment = 'Comment',
   Page = 'Page',
   PageRevision = 'PageRevision',
-  User = 'User',
   TaxonomyTerm = 'TaxonomyTerm',
-  Comment = 'Comment',
+  User = 'User',
 }
 
 export type UuidType = DiscriminatorType | EntityType | EntityRevisionType
 
 export type UuidPayload =
+  | CommentPayload
   | EntityPayload
   | EntityRevisionPayload
   | PagePayload
   | PageRevisionPayload
-  | UserPayload
   | TaxonomyTermPayload
-  | CommentPayload
+  | UserPayload
+
 export interface AbstractUuidPayload
   extends Omit<AbstractUuid, keyof UuidResolvers> {
   __typename: UuidType
+  // TODO: this is actually non-null
   alias: string | null
 }
 

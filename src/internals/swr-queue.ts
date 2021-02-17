@@ -21,6 +21,7 @@
  */
 import Queue from 'bee-queue'
 import { either as E, option as O } from 'fp-ts'
+import * as t from 'io-ts'
 import * as R from 'ramda'
 
 import { Cache, Priority } from './cache'
@@ -190,7 +191,13 @@ export function createSwrQueueWorker({
         key,
         priority: Priority.Low,
         getValue: async (current) => {
-          return await spec.getCurrentValue(payload, current ?? null)
+          const value = await spec.getCurrentValue(payload, current ?? null)
+          const decoder = spec.decoder || t.unknown
+          const decoded = decoder.decode(value)
+          if (E.isRight(decoded)) {
+            return decoded.right
+          }
+          throw new Error(`Invalid value: ${JSON.stringify(value)}`)
         },
       })
       return 'Updated because stale'

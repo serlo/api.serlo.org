@@ -74,12 +74,14 @@ test('comment gets created, cache mutated as expected', async () => {
       body: {
         __typename: 'Comment',
         id: comment1.id + 1,
-        parentId: encodeThreadId(comment1.id),
-        content: 'Hello',
         trashed: false,
-        alias: null,
+        alias: `/mathe/${comment1.id + 1}/`,
+        authorId: user.id,
         title: null,
+        date: '2014-03-01T20:45:56Z',
         archived: false,
+        content: 'Hello',
+        parentId: comment1.id,
         childrenIds: [],
       },
     })

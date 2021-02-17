@@ -42,7 +42,7 @@ export const resolvers: AbstractUuidResolvers = {
       const id = await resolveIdFromPayload(dataSources, payload)
       const uuid =
         id === null ? null : await dataSources.model.serlo.getUuid({ id })
-      return checkUuid(payload, uuid as UuidPayload | null)
+      return checkUuid(payload, uuid)
     },
   },
   Mutation: {

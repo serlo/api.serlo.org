@@ -44,7 +44,7 @@ export const comment: CommentPayload = {
 export const comment1: CommentPayload = {
   id: 41443,
   trashed: false,
-  alias: null,
+  alias: '/mathe/41443/related-content-ist-chaotisch',
   __typename: DiscriminatorType.Comment,
   authorId: user.id,
   parentId: article.id,
@@ -59,7 +59,7 @@ export const comment1: CommentPayload = {
 export const comment2: CommentPayload = {
   id: 49237,
   trashed: false,
-  alias: null,
+  alias: '/mathe/49237/related-content',
   __typename: DiscriminatorType.Comment,
   authorId: user2.id,
   parentId: comment1.id,
