@@ -43,6 +43,7 @@ export const AppletRevisionDecoder = t.exact(
     t.type({
       __typename: t.literal(EntityRevisionType.AppletRevision),
       url: t.string,
+      title: t.string,
       content: t.string,
       metaTitle: t.string,
       metaDescription: t.string,
