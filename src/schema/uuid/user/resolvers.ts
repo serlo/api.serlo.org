@@ -94,7 +94,7 @@ async function resolveUserConnectionFromIds({
   )
   return resolveConnection<UserPayload>({
     nodes: assertAll({
-      assertation: isUserPayload,
+      assertion: isUserPayload,
       error: new Error('ids do not belong to a user'),
     })(uuids),
     payload,
@@ -129,7 +129,7 @@ function extractIDsFromFirstColumn(
     E.map((rows) => rows.slice(1).map(R.trim)),
     E.map(
       assertAll({
-        assertation: (entry) => /^\d+$/.test(entry),
+        assertion: (entry) => /^\d+$/.test(entry),
         error: new Error('invalid entry in activeDonorSpreadsheet'),
       })
     ),
