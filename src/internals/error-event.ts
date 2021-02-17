@@ -42,16 +42,16 @@ export function consumeErrorEvent<A>(defaultValue: A) {
 }
 
 export function assertAll<A, B extends A>(
-  args: { assertation: F.Refinement<A, B> } & ErrorEvent
+  args: { assertion: F.Refinement<A, B> } & ErrorEvent
 ): (list: A[]) => B[]
 export function assertAll<A>(
-  args: { assertation: F.Predicate<A> } & ErrorEvent
+  args: { assertion: F.Predicate<A> } & ErrorEvent
 ): (list: A[]) => A[]
 export function assertAll(
-  args: { assertation: (x: unknown) => boolean } & ErrorEvent
+  args: { assertion: (x: unknown) => boolean } & ErrorEvent
 ) {
   return (originalList: unknown[]) => {
-    const { left, right } = A.partition(args.assertation)(originalList)
+    const { left, right } = A.partition(args.assertion)(originalList)
 
     if (left.length > 0) {
       const errorEvent = addContext({
@@ -79,17 +79,23 @@ function captureErrorEvent(event: ErrorEvent) {
     }
 
     if (event.locationContext) {
-      scope.setContext('location', event.locationContext)
+      scope.setContext('location', serializeRecord(event.locationContext))
     }
 
     if (event.errorContext) {
-      scope.setContext('error', event.errorContext)
+      scope.setContext('error', serializeRecord(event.errorContext))
     }
 
     scope.setLevel(Sentry.Severity.Error)
 
     return scope
   })
+
+  function serializeRecord(record: Record<string, unknown>) {
+    return R.mapObjIndexed((value) => {
+      return typeof value === 'object' ? JSON.stringify(value, null, 2) : value
+    }, record)
+  }
 }
 
 interface Context {

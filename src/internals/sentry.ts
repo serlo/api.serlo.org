@@ -21,6 +21,7 @@
  */
 import * as Sentry from '@sentry/node'
 import type { ApolloServerPlugin } from 'apollo-server-plugin-base'
+import R from 'ramda'
 
 export function initializeSentry(context: string) {
   Sentry.init({
@@ -42,7 +43,15 @@ export function createSentryPlugin(): ApolloServerPlugin {
               scope.setTag('kind', ctx.operationName)
               scope.setContext('graphql', {
                 query: ctx.request.query,
-                variables: ctx.request.variables,
+                ...(ctx.request.variables === undefined
+                  ? {}
+                  : {
+                      variables: R.mapObjIndexed((value: unknown) => {
+                        return typeof value === 'object'
+                          ? JSON.stringify(value, null, 2)
+                          : value
+                      }, ctx.request.variables),
+                    }),
               })
 
               if (error.path) {

@@ -70,8 +70,8 @@ export function createGoogleSpreadsheetApiModel({
           `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`
         )
         url.searchParams.append('majorDimension', majorDimension)
-        const apiSectret = process.env.GOOGLE_SPREADSHEET_API_SECRET
-        url.searchParams.append('key', apiSectret)
+        const apiSecret = process.env.GOOGLE_SPREADSHEET_API_SECRET
+        url.searchParams.append('key', apiSecret)
 
         const specifyErrorLocation = E.mapLeft(
           addContext({
