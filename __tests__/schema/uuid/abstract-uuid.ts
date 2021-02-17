@@ -263,7 +263,7 @@ describe('uuid', () => {
         }
       `,
       variables: user,
-      message: '500: Internal Server Error',
+      message: '500: {"type":"UuidQuery","payload":{"id":1}}',
       client,
     })
   })
