@@ -588,6 +588,11 @@ async function exec(): Promise<void> {
         ],
       ],
     },
+    {
+      tagName: 'v0.19.2',
+      date: '2021-02-17',
+      internal: ['Improve error context.'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

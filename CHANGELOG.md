@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.19.2](https://github.com/serlo/api.serlo.org/compare/v0.19.1..v0.19.2) - February 17, 2021
+
+### Internal
+
+- Improve error context.
+
 ## [v0.19.1](https://github.com/serlo/api.serlo.org/compare/v0.19.0..v0.19.1) - February 16, 2021
 
 ### Added
