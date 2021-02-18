@@ -22,8 +22,8 @@
 import BeeQueue from 'bee-queue'
 import { option as O } from 'fp-ts'
 
-import { user as currentUser, user2 as staleUser } from '../../__fixtures__'
-import { createUuidHandler } from '../__utils__'
+import { user } from '../../__fixtures__'
+import { createMessageHandler, createUuidHandler } from '../__utils__'
 import { Environment } from '~/internals/environment'
 import {
   createSwrQueue,
@@ -48,6 +48,9 @@ const environment: Environment = {
   swrQueue,
   cache: global.cache,
 }
+
+const currentUser = user
+const staleUser = { ...user, username: 'Stale User' }
 
 beforeEach(async () => {
   await Promise.all([swrQueue.ready(), swrQueueWorker.ready()])
@@ -129,6 +132,51 @@ describe('createQuery', () => {
       expect(O.isSome(cacheValue2) && cacheValue2.value.value).toEqual(
         currentUser
       )
+    })
+  })
+
+  describe('Possible errors', () => {
+    test('Invalid value', async () => {
+      global.server.use(
+        createMessageHandler({
+          message: {
+            type: 'UuidQuery',
+            payload: { id: currentUser.id },
+          },
+          body: {
+            __typename: currentUser.__typename,
+            username: currentUser.username,
+          },
+        })
+      )
+
+      await global.cache.set({ key, value: staleUser })
+      await global.timer.waitFor(model.getUuid._querySpec.maxAge!)
+      await global.timer.waitFor({ hour: 1 })
+      expect(await model.getUuid(payload)).toEqual(staleUser)
+      await waitForJob()
+      const cacheValue = await global.cache.get({ key })
+      expect(O.isSome(cacheValue) && cacheValue.value.value).toEqual(staleUser)
+    })
+
+    test('Unexpected status code', async () => {
+      global.server.use(
+        createMessageHandler({
+          message: {
+            type: 'UuidQuery',
+            payload: { id: currentUser.id },
+          },
+          statusCode: 500,
+        })
+      )
+
+      await global.cache.set({ key, value: staleUser })
+      await global.timer.waitFor(model.getUuid._querySpec.maxAge!)
+      await global.timer.waitFor({ hour: 1 })
+      expect(await model.getUuid(payload)).toEqual(staleUser)
+      await waitForJob()
+      const cacheValue = await global.cache.get({ key })
+      expect(O.isSome(cacheValue) && cacheValue.value.value).toEqual(staleUser)
     })
   })
 })
