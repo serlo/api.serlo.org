@@ -613,6 +613,11 @@ async function exec(): Promise<void> {
       date: '2021-02-19',
       internal: [['swr-queue-worker', 'Configurable delay between jobs.']],
     },
+    {
+      tagName: 'v0.19.7',
+      date: '2021-02-19',
+      internal: [['uuid', 'Reject invalid cache values for videos.']],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
