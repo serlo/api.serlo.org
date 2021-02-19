@@ -19,12 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { EntityRevisionType, EntityType } from '../abstract-entity'
+import {
+  EntityRevisionType,
+  EntityType,
+} from '~/schema/uuid/abstract-entity/types'
 import {
   AbstractExercisePayload,
   AbstractExerciseRevisionPayload,
-} from '../abstract-exercise'
-import { AbstractTaxonomyTermChildPayload } from '../abstract-taxonomy-term-child'
+} from '~/schema/uuid/abstract-exercise/types'
+import { AbstractTaxonomyTermChildPayload } from '~/schema/uuid/abstract-taxonomy-term-child/types'
 
 export interface ExercisePayload
   extends AbstractTaxonomyTermChildPayload,

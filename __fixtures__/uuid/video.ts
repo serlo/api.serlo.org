@@ -25,9 +25,8 @@ import { license } from '../license'
 import {
   EntityRevisionType,
   EntityType,
-  VideoPayload,
-  VideoRevisionPayload,
-} from '~/schema/uuid'
+} from '~/schema/uuid/abstract-entity/types'
+import { VideoPayload, VideoRevisionPayload } from '~/schema/uuid/video/types'
 import { Instance } from '~/types'
 
 export const video: VideoPayload = {

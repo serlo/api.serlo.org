@@ -23,11 +23,13 @@ import * as R from 'ramda'
 
 import { license } from '../license'
 import {
-  AppletPayload,
-  AppletRevisionPayload,
   EntityRevisionType,
   EntityType,
-} from '~/schema/uuid'
+} from '~/schema/uuid/abstract-entity/types'
+import {
+  AppletPayload,
+  AppletRevisionPayload,
+} from '~/schema/uuid/applet/types'
 import { Instance } from '~/types'
 
 export const applet: AppletPayload = {

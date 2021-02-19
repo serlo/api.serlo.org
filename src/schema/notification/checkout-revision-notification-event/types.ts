@@ -25,7 +25,10 @@ import {
   NotificationEventType,
 } from '../types'
 import { Resolver } from '~/internals/graphql'
-import { RepositoryPayload, RevisionPayload } from '~/schema/uuid'
+import {
+  RepositoryPayload,
+  RevisionPayload,
+} from '~/schema/uuid/abstract-repository/types'
 import { CheckoutRevisionNotificationEvent } from '~/types'
 
 export interface CheckoutRevisionNotificationEventPayload

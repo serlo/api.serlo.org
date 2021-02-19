@@ -21,14 +21,14 @@
  */
 import R from 'ramda'
 
+import { CoursePayload, CourseRevisionPayload } from './types'
+import { Context } from '~/internals/graphql'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
-} from '../abstract-repository'
-import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
-import { CoursePagePayload } from '../course-page'
-import { CoursePayload, CourseRevisionPayload } from './types'
-import { Context } from '~/internals/graphql'
+} from '~/schema/uuid/abstract-repository/utils'
+import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
+import { CoursePagePayload } from '~/schema/uuid/course-page/types'
 import { CoursePagesArgs } from '~/types'
 import { isDefined } from '~/utils'
 

@@ -19,24 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Connection } from '../connection'
-import { UserPayload } from '../uuid'
-import { CheckoutRevisionNotificationEventPayload } from './checkout-revision-notification-event'
-import { CreateCommentNotificationEventPayload } from './create-comment-notification-event'
-import { CreateEntityLinkNotificationEventPayload } from './create-entity-link-notification-event'
-import { CreateEntityNotificationEventPayload } from './create-entity-notification-event'
-import { CreateEntityRevisionNotificationEventPayload } from './create-entity-revision-notification-event'
-import { CreateTaxonomyLinkNotificationEventPayload } from './create-taxonomy-link-notification-event'
-import { CreateTaxonomyTermNotificationEventPayload } from './create-taxonomy-term-notification-event'
-import { CreateThreadNotificationEventPayload } from './create-thread-notification-event'
-import { RejectRevisionNotificationEventPayload } from './reject-revision-notification-event'
-import { RemoveEntityLinkNotificationEventPayload } from './remove-entity-link-notification-event'
-import { RemoveTaxonomyLinkNotificationEventPayload } from './remove-taxonomy-link-notification-event'
-import { SetLicenseNotificationEventPayload } from './set-license-notification-event'
-import { SetTaxonomyParentNotificationEventPayload } from './set-taxonomy-parent-notification-event'
-import { SetTaxonomyTermNotificationEventPayload } from './set-taxonomy-term-notification-event'
-import { SetThreadStateNotificationEventPayload } from './set-thread-state-notification-event'
-import { SetUuidStateNotificationEventPayload } from './set-uuid-state-notification-event'
 import {
   MutationNamespace,
   MutationResolver,
@@ -44,6 +26,24 @@ import {
   Resolver,
   TypeResolver,
 } from '~/internals/graphql'
+import { Connection } from '~/schema/connection/types'
+import { CheckoutRevisionNotificationEventPayload } from '~/schema/notification/checkout-revision-notification-event/types'
+import { CreateCommentNotificationEventPayload } from '~/schema/notification/create-comment-notification-event/types'
+import { CreateEntityLinkNotificationEventPayload } from '~/schema/notification/create-entity-link-notification-event/types'
+import { CreateEntityNotificationEventPayload } from '~/schema/notification/create-entity-notification-event/types'
+import { CreateEntityRevisionNotificationEventPayload } from '~/schema/notification/create-entity-revision-notification-event/types'
+import { CreateTaxonomyLinkNotificationEventPayload } from '~/schema/notification/create-taxonomy-link-notification-event/types'
+import { CreateTaxonomyTermNotificationEventPayload } from '~/schema/notification/create-taxonomy-term-notification-event/types'
+import { CreateThreadNotificationEventPayload } from '~/schema/notification/create-thread-notification-event/types'
+import { RejectRevisionNotificationEventPayload } from '~/schema/notification/reject-revision-notification-event/types'
+import { RemoveEntityLinkNotificationEventPayload } from '~/schema/notification/remove-entity-link-notification-event/types'
+import { RemoveTaxonomyLinkNotificationEventPayload } from '~/schema/notification/remove-taxonomy-link-notification-event/types'
+import { SetLicenseNotificationEventPayload } from '~/schema/notification/set-license-notification-event/types'
+import { SetTaxonomyParentNotificationEventPayload } from '~/schema/notification/set-taxonomy-parent-notification-event/types'
+import { SetTaxonomyTermNotificationEventPayload } from '~/schema/notification/set-taxonomy-term-notification-event/types'
+import { SetThreadStateNotificationEventPayload } from '~/schema/notification/set-thread-state-notification-event/types'
+import { SetUuidStateNotificationEventPayload } from '~/schema/notification/set-uuid-state-notification-event/types'
+import { UserPayload } from '~/schema/uuid/user/types'
 import {
   AbstractNotificationEvent,
   NotificationMutationSetStateArgs,

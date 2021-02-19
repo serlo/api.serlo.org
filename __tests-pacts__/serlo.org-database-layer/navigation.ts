@@ -23,7 +23,7 @@ import { Matchers } from '@pact-foundation/pact'
 import fetch from 'node-fetch'
 
 import { addMessageInteraction } from '../__utils__'
-import { NavigationPayload } from '~/schema/uuid'
+import { NavigationPayload } from '~/schema/uuid/abstract-navigation-child/types'
 import { Instance } from '~/types'
 
 test('NavigationQuery', async () => {

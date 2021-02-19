@@ -25,9 +25,11 @@ import { license } from '../license'
 import {
   EntityRevisionType,
   EntityType,
+} from '~/schema/uuid/abstract-entity/types'
+import {
   ExercisePayload,
   ExerciseRevisionPayload,
-} from '~/schema/uuid'
+} from '~/schema/uuid/exercise/types'
 import { Instance } from '~/types'
 
 export const exercise: ExercisePayload = {

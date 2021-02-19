@@ -25,9 +25,8 @@ import { license } from '../license'
 import {
   EntityRevisionType,
   EntityType,
-  EventPayload,
-  EventRevisionPayload,
-} from '~/schema/uuid'
+} from '~/schema/uuid/abstract-entity/types'
+import { EventPayload, EventRevisionPayload } from '~/schema/uuid/event/types'
 import { Instance } from '~/types'
 
 export const event: EventPayload = {

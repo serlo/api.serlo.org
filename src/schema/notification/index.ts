@@ -39,25 +39,6 @@ import { setUuidStateNotificationEventSchema } from './set-uuid-state-notificati
 import typeDefs from './types.graphql'
 import { mergeSchemas, Schema } from '~/internals/graphql'
 
-export * from './checkout-revision-notification-event'
-export * from './create-comment-notification-event'
-export * from './create-entity-notification-event'
-export * from './create-entity-link-notification-event'
-export * from './create-entity-revision-notification-event'
-export * from './create-taxonomy-term-notification-event'
-export * from './create-taxonomy-link-notification-event'
-export * from './create-thread-notification-event'
-export * from './reject-revision-notification-event'
-export * from './remove-entity-link-notification-event'
-export * from './remove-taxonomy-link-notification-event'
-export * from './set-license-notification-event'
-export * from './set-taxonomy-parent-notification-event'
-export * from './set-taxonomy-term-notification-event'
-export * from './set-thread-state-notification-event'
-export * from './set-uuid-state-notification-event'
-export * from './types'
-export * from './utils'
-
 const baseSchema: Schema = { resolvers, typeDefs: [typeDefs] }
 
 export const notificationSchema = mergeSchemas(

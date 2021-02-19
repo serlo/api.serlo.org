@@ -23,7 +23,7 @@ import { Matchers } from '@pact-foundation/pact'
 
 import { comment } from '../../../__fixtures__'
 import { addUuidInteraction } from '../../__utils__'
-import { CommentPayload } from '~/schema/thread'
+import { CommentPayload } from '~/schema/thread/types'
 
 test('Comment', async () => {
   await addUuidInteraction<CommentPayload>({

@@ -20,9 +20,15 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Page, PageRevision } from '../../../types'
-import { NavigationChildResolvers } from '../abstract-navigation-child'
-import { RepositoryResolvers, RevisionResolvers } from '../abstract-repository'
-import { DiscriminatorType, UuidResolvers } from '../abstract-uuid'
+import { NavigationChildResolvers } from '~/schema/uuid/abstract-navigation-child/utils'
+import {
+  RepositoryResolvers,
+  RevisionResolvers,
+} from '~/schema/uuid/abstract-repository/types'
+import {
+  DiscriminatorType,
+  UuidResolvers,
+} from '~/schema/uuid/abstract-uuid/types'
 
 export interface PagePayload extends Omit<Page, keyof PageResolvers['Page']> {
   __typename: DiscriminatorType.Page

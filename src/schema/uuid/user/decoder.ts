@@ -21,8 +21,8 @@
  */
 import * as t from 'io-ts'
 
-import { DiscriminatorType } from '~/schema/uuid/abstract-uuid'
 import { AbstractUuidPayloadDecoder } from '~/schema/uuid/abstract-uuid/decoder'
+import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
 
 export const UserPayloadDecoder = t.exact(
   t.intersection([

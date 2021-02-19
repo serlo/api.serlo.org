@@ -24,12 +24,14 @@ import * as R from 'ramda'
 import { license } from '../license'
 import { exercise } from './exercise'
 import {
-  AliasPayload,
   EntityRevisionType,
   EntityType,
+} from '~/schema/uuid/abstract-entity/types'
+import { AliasPayload } from '~/schema/uuid/alias/types'
+import {
   SolutionPayload,
   SolutionRevisionPayload,
-} from '~/schema/uuid'
+} from '~/schema/uuid/solution/types'
 import { Instance } from '~/types'
 
 export const solutionAlias: AliasPayload = {

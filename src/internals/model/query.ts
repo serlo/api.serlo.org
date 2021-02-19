@@ -41,6 +41,10 @@ export interface QuerySpecWithHelpers<P, R> extends QuerySpec<P, R> {
   setCache: (
     args: PayloadArrayOrPayload<P> & FunctionOrValue<R>
   ) => Promise<void>
+  queryWithDecoder<S extends R>(
+    payload: P,
+    customDecoder: t.Type<S>
+  ): Promise<S>
 }
 
 interface Payload<P> {
@@ -61,11 +65,14 @@ export function createQuery<P, R>(
   spec: QuerySpec<P, R>,
   environment: Environment
 ): Query<P, R> {
-  async function query(payload: P): Promise<R> {
+  async function queryWithDecoder<S extends R>(
+    payload: P,
+    customDecoder?: t.Type<S>
+  ): Promise<S> {
     const key = spec.getKey(payload)
     const cacheValue = await environment.cache.get<R>({ key })
 
-    const decoder = spec.decoder || t.unknown
+    const decoder = customDecoder ?? t.unknown
 
     if (O.isSome(cacheValue)) {
       const cacheEntry = cacheValue.value
@@ -75,7 +82,7 @@ export function createQuery<P, R>(
         await environment.swrQueue.queue({
           key,
         })
-        return decoded.right as R
+        return decoded.right as S
       }
     }
 
@@ -84,18 +91,24 @@ export function createQuery<P, R>(
 
     const decoded = decoder.decode(value)
     if (E.isRight(decoded)) {
+      const value = decoded.right
       await environment.cache.set({
         key,
         value,
       })
-      return value
+      return value as S
     }
 
     throw new Error(`Invalid value: ${JSON.stringify(value)}`)
   }
 
+  function query(payload: P): Promise<R> {
+    return queryWithDecoder(payload, spec.decoder)
+  }
+
   const querySpecWithHelpers: QuerySpecWithHelpers<P, R> = {
     ...spec,
+    queryWithDecoder,
     async setCache(args) {
       await Promise.all(
         R.map(async (payload) => {

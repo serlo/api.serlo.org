@@ -32,7 +32,10 @@ import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
-import { ArticlePayload, ArticleRevisionPayload } from '~/schema/uuid'
+import {
+  ArticlePayload,
+  ArticleRevisionPayload,
+} from '~/schema/uuid/article/types'
 
 test('Article', async () => {
   await addUuidInteraction<ArticlePayload>({
