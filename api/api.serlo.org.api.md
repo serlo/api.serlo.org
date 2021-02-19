@@ -1197,7 +1197,7 @@ export type Query = {
     license?: Maybe<License>;
     notificationEvent?: Maybe<AbstractNotificationEvent>;
     notifications: NotificationConnection;
-    subscriptions: QuerySubscriptionResult;
+    subscriptions: SubscriptionConnection;
     uuid?: Maybe<AbstractUuid>;
 };
 
@@ -1242,15 +1242,6 @@ export type QueryNotificationsArgs = {
     first?: Maybe<Scalars['Int']>;
     last?: Maybe<Scalars['Int']>;
     unread?: Maybe<Scalars['Boolean']>;
-};
-
-// @public (undocumented)
-export type QuerySubscriptionResult = {
-    __typename?: 'QuerySubscriptionResult';
-    edges: Array<SubscriptionCursor>;
-    nodes: Array<AbstractUuid>;
-    totalCount: Scalars['Int'];
-    pageInfo: PageInfo;
 };
 
 // @public (undocumented)
@@ -1450,10 +1441,26 @@ export type SolutionThreadsArgs = {
 };
 
 // @public (undocumented)
+export type Subscription = {
+    __typename?: 'Subscription';
+    object: AbstractUuid;
+    sendEmail: Scalars['Boolean'];
+};
+
+// @public (undocumented)
+export type SubscriptionConnection = {
+    __typename?: 'SubscriptionConnection';
+    edges: Array<SubscriptionCursor>;
+    nodes: Array<Subscription>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
 export type SubscriptionCursor = {
     __typename?: 'SubscriptionCursor';
     cursor: Scalars['String'];
-    node: AbstractUuid;
+    node: Subscription;
 };
 
 // @public (undocumented)

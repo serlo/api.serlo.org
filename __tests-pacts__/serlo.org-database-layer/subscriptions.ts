@@ -22,7 +22,7 @@
 import { Matchers } from '@pact-foundation/pact'
 import fetch from 'node-fetch'
 
-import { user } from '../../__fixtures__/uuid'
+import { article, user } from '../../__fixtures__/uuid'
 import { addJsonInteraction } from '../__utils__'
 
 test('Subscriptions', async () => {
@@ -33,7 +33,7 @@ test('Subscriptions', async () => {
     body: {
       userId: user.id,
       subscriptions: Matchers.eachLike({
-        id: Matchers.integer(1),
+        id: Matchers.integer(article.id),
         sendEmail: Matchers.boolean(false),
       }),
     },

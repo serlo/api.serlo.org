@@ -57,7 +57,12 @@ describe('subscriptions', () => {
       data: {
         subscriptions: {
           totalCount: 1,
-          nodes: [getArticleDataWithoutSubResolvers(article)],
+          nodes: [
+            {
+              object: getArticleDataWithoutSubResolvers(article),
+              sendEmail: false,
+            },
+          ],
         },
       },
       client,
@@ -187,13 +192,16 @@ export function createSubscriptionsQuery() {
         subscriptions {
           totalCount
           nodes {
-            __typename
-            id
-            trashed
-            ... on Article {
-              instance
-              date
+            object {
+              __typename
+              id
+              trashed
+              ... on Article {
+                instance
+                date
+              }
             }
+            sendEmail
           }
         }
       }
@@ -208,7 +216,10 @@ export function createSubscriptionsQueryOnlyId() {
         subscriptions {
           totalCount
           nodes {
-            id
+            sendEmail
+            object {
+              id
+            }
           }
         }
       }

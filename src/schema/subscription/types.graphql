@@ -1,22 +1,27 @@
+type Subscription {
+  object: AbstractUuid!
+  sendEmail: Boolean!
+}
+
 extend type Query {
   subscriptions(
     after: String
     before: String
     first: Int
     last: Int
-  ): QuerySubscriptionResult!
+  ): SubscriptionConnection!
 }
 
-type QuerySubscriptionResult {
+type SubscriptionConnection {
   edges: [SubscriptionCursor!]!
-  nodes: [AbstractUuid!]!
+  nodes: [Subscription!]!
   totalCount: Int!
   pageInfo: PageInfo!
 }
 
 type SubscriptionCursor {
   cursor: String!
-  node: AbstractUuid!
+  node: Subscription!
 }
 
 extend type Mutation {

@@ -33,8 +33,13 @@ import {
 } from '~/types'
 
 export interface SubscriptionsPayload {
-  subscriptions: { id: number }[]
+  subscriptions: SubscriptionPayload[]
   userId: number
+}
+
+export interface SubscriptionPayload {
+  id: number
+  sendEmail: boolean
 }
 
 export interface SubscriptionResolvers {

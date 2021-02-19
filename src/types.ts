@@ -85,7 +85,7 @@ export type Query = {
   license?: Maybe<License>;
   notificationEvent?: Maybe<AbstractNotificationEvent>;
   notifications: NotificationConnection;
-  subscriptions: QuerySubscriptionResult;
+  subscriptions: SubscriptionConnection;
   uuid?: Maybe<AbstractUuid>;
 };
 
@@ -371,10 +371,16 @@ export type NotificationEdge = {
   node: Notification;
 };
 
-export type QuerySubscriptionResult = {
-  __typename?: 'QuerySubscriptionResult';
+export type Subscription = {
+  __typename?: 'Subscription';
+  object: AbstractUuid;
+  sendEmail: Scalars['Boolean'];
+};
+
+export type SubscriptionConnection = {
+  __typename?: 'SubscriptionConnection';
   edges: Array<SubscriptionCursor>;
-  nodes: Array<AbstractUuid>;
+  nodes: Array<Subscription>;
   totalCount: Scalars['Int'];
   pageInfo: PageInfo;
 };
@@ -382,7 +388,7 @@ export type QuerySubscriptionResult = {
 export type SubscriptionCursor = {
   __typename?: 'SubscriptionCursor';
   cursor: Scalars['String'];
-  node: AbstractUuid;
+  node: Subscription;
 };
 
 export type SubscriptionMutation = {
