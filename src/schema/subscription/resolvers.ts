@@ -21,12 +21,8 @@
  */
 import { resolveConnection } from '../connection'
 import { assertUserIsAuthenticated, createMutationNamespace } from '../utils'
-import { AbstractUuidPayload } from '../uuid'
-import {
-  SubscriptionPayload,
-  SubscriptionResolvers,
-  SubscriptionsPayload,
-} from './types'
+import { SubscriptionResolvers } from './types'
+import { Subscription } from '~/types'
 
 export const resolvers: SubscriptionResolvers = {
   Query: {
@@ -37,20 +33,20 @@ export const resolvers: SubscriptionResolvers = {
       })
       const result = (
         await Promise.all(
-          subscriptions.subscriptions.map(({ id, sendEmail }) => {
+          subscriptions.subscriptions.map(async ({ id, sendEmail }) => {
             return {
-              object: dataSources.model.serlo.getUuid({ id }),
+              object: await dataSources.model.serlo.getUuid({ id }),
               sendEmail,
             }
           })
         )
-      ).filter((payload) => payload !== null)
+      ).filter((payload) => payload.object !== null)
 
-      return resolveConnection<SubscriptionsPayload>({
-        nodes: result as SubscriptionsPayload,
+      return resolveConnection({
+        nodes: result as Subscription[],
         payload: cursorPayload,
         createCursor(node) {
-          return node.id.toString()
+          return node.object.id.toString()
         },
       })
     },
