@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.19.7](https://github.com/serlo/api.serlo.org/compare/v0.19.6..v0.19.7) - February 19, 2021
+
+### Internal
+
+- **uuid**. Reject invalid cache values for videos.
+
 ## [v0.19.6](https://github.com/serlo/api.serlo.org/compare/v0.19.5..v0.19.6) - February 19, 2021
 
 ### Internal
