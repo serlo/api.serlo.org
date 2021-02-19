@@ -19,10 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Connection } from '../../connection'
-import { PagePayload } from '../page'
 import { Resolver, TypeResolver } from '~/internals/graphql'
-import { TaxonomyTermPayload } from '~/schema/uuid'
+import { Connection } from '~/schema/connection/types'
+import { PagePayload } from '~/schema/uuid/page/types'
+import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
 import { Instance, NavigationNode, NavigationPathArgs } from '~/types'
 
 export type NavigationChildPayload = TaxonomyTermPayload | PagePayload

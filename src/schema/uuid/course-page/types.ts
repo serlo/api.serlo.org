@@ -24,7 +24,7 @@ import {
   AbstractEntityRevisionPayload,
   EntityRevisionType,
   EntityType,
-} from '../abstract-entity'
+} from '~/schema/uuid/abstract-entity/types'
 
 export interface CoursePagePayload extends AbstractEntityPayload {
   __typename: EntityType.CoursePage

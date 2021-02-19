@@ -22,8 +22,8 @@
 import * as t from 'io-ts'
 
 import { InstanceDecoder } from '~/schema/instance/decoder'
-import { DiscriminatorType } from '~/schema/uuid/abstract-uuid'
 import { AbstractUuidPayloadDecoder } from '~/schema/uuid/abstract-uuid/decoder'
+import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
 
 export const TaxonomyTermPayloadDecoder = t.exact(
   t.intersection([

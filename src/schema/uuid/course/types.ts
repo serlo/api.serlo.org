@@ -23,8 +23,8 @@ import {
   AbstractEntityRevisionPayload,
   EntityRevisionType,
   EntityType,
-} from '../abstract-entity'
-import { AbstractTaxonomyTermChildPayload } from '../abstract-taxonomy-term-child'
+} from '~/schema/uuid/abstract-entity/types'
+import { AbstractTaxonomyTermChildPayload } from '~/schema/uuid/abstract-taxonomy-term-child/types'
 
 export interface CoursePayload extends AbstractTaxonomyTermChildPayload {
   __typename: EntityType.Course

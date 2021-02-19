@@ -19,13 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { RepositoryPayload } from '../../uuid'
 import {
   AbstractNotificationEventPayload,
   NotificationEventResolvers,
   NotificationEventType,
 } from '../types'
 import { Resolver } from '~/internals/graphql'
+import { RepositoryPayload } from '~/schema/uuid/abstract-repository/types'
 import { SetLicenseNotificationEvent } from '~/types'
 
 export interface SetLicenseNotificationEventPayload

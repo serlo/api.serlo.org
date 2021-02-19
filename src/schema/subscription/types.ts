@@ -19,13 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Connection } from '../connection'
-import { AbstractUuidPayload } from '../uuid'
 import {
   MutationNamespace,
   MutationResolver,
   QueryResolver,
 } from '~/internals/graphql'
+import { Connection } from '~/schema/connection/types'
+import { AbstractUuidPayload } from '~/schema/uuid/abstract-uuid/types'
 import {
   QuerySubscriptionsArgs,
   SubscriptionMutationSetArgs,

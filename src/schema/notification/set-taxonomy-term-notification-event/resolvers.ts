@@ -19,9 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { TaxonomyTermPayload } from '../../uuid'
 import { createNotificationEventResolvers } from '../utils'
 import { SetTaxonomyTermNotificationEventResolvers } from './types'
+import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
 
 export const resolvers: SetTaxonomyTermNotificationEventResolvers = {
   SetTaxonomyTermNotificationEvent: {

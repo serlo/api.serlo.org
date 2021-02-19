@@ -20,8 +20,8 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { lookupCustomAlias } from '~/config/alias'
-import { isInstanceAware } from '~/schema/instance'
-import { UuidResolvers } from '~/schema/uuid'
+import { isInstanceAware } from '~/schema/instance/utils'
+import { UuidResolvers } from '~/schema/uuid/abstract-uuid/types'
 
 export function decodePath(path: string) {
   try {

@@ -35,7 +35,7 @@ import {
 import {
   ExerciseGroupPayload,
   ExerciseGroupRevisionPayload,
-} from '~/schema/uuid'
+} from '~/schema/uuid/exercise-group/types'
 
 test('ExerciseGroup', async () => {
   await addUuidInteraction<ExerciseGroupPayload>({

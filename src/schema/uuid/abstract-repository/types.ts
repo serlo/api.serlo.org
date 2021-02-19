@@ -19,18 +19,21 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Connection } from '../../connection'
+import { Resolver, TypeResolver } from '~/internals/graphql'
+import { Connection } from '~/schema/connection/types'
+import { ThreadAwareResolvers } from '~/schema/thread/types'
 import {
   EntityPayload,
   EntityRevisionPayload,
   EntityRevisionType,
   EntityType,
-} from '../abstract-entity'
-import { DiscriminatorType, UuidResolvers } from '../abstract-uuid'
-import { PagePayload, PageRevisionPayload } from '../page'
-import { UserPayload } from '../user'
-import { Resolver, TypeResolver } from '~/internals/graphql'
-import { ThreadAwareResolvers } from '~/schema/thread'
+} from '~/schema/uuid/abstract-entity/types'
+import {
+  DiscriminatorType,
+  UuidResolvers,
+} from '~/schema/uuid/abstract-uuid/types'
+import { PagePayload, PageRevisionPayload } from '~/schema/uuid/page/types'
+import { UserPayload } from '~/schema/uuid/user/types'
 import {
   AbstractRepository,
   AbstractRevision,

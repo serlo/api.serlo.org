@@ -22,7 +22,4 @@
 import typeDefs from './types.graphql'
 import { Schema } from '~/internals/graphql'
 
-export * from './types'
-export * from './utils'
-
 export const aliasSchema: Schema = { resolvers: {}, typeDefs: [typeDefs] }

@@ -40,8 +40,8 @@ import {
   createUuidHandler,
   getDatabaseLayerUrl,
 } from '../../__utils__'
-import { CommentPayload } from '~/schema/thread'
-import { UuidPayload } from '~/schema/uuid'
+import { CommentPayload } from '~/schema/thread/types'
+import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 import { Instance } from '~/types'
 
 let client: Client

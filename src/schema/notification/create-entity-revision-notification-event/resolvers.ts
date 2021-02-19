@@ -19,9 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { EntityPayload, EntityRevisionPayload } from '../../uuid'
 import { createNotificationEventResolvers } from '../utils'
 import { CreateEntityRevisionNotificationEventResolvers } from './types'
+import {
+  EntityPayload,
+  EntityRevisionPayload,
+} from '~/schema/uuid/abstract-entity/types'
 
 export const resolvers: CreateEntityRevisionNotificationEventResolvers = {
   CreateEntityRevisionNotificationEvent: {

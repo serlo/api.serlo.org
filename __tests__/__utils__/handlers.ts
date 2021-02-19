@@ -22,9 +22,11 @@
 import { rest } from 'msw'
 import * as R from 'ramda'
 
-import { LicensePayload } from '~/schema/license'
-import { NotificationEventPayload } from '~/schema/notification'
-import { AliasPayload, NavigationPayload, UuidPayload } from '~/schema/uuid'
+import { LicensePayload } from '~/schema/license/types'
+import { NotificationEventPayload } from '~/schema/notification/types'
+import { NavigationPayload } from '~/schema/uuid/abstract-navigation-child/types'
+import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
+import { AliasPayload } from '~/schema/uuid/alias/types'
 
 export function createAliasHandler(alias: AliasPayload) {
   return createMessageHandler({

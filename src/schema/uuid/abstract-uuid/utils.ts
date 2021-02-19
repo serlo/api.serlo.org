@@ -21,10 +21,12 @@
  */
 import * as R from 'ramda'
 
-import { EntityRevisionType, EntityType } from '../abstract-entity'
-import { AbstractUuidPayload, UuidResolvers } from '../abstract-uuid'
-import { createAliasResolvers } from '../alias'
-import { DiscriminatorType } from './types'
+import { AbstractUuidPayload, DiscriminatorType, UuidResolvers } from './types'
+import {
+  EntityRevisionType,
+  EntityType,
+} from '~/schema/uuid/abstract-entity/types'
+import { createAliasResolvers } from '~/schema/uuid/alias/utils'
 
 const validTypes = [
   ...Object.values(DiscriminatorType),

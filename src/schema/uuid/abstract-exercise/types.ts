@@ -19,11 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { TypeResolver } from '~/internals/graphql'
 import {
   AbstractEntityPayload,
   AbstractEntityRevisionPayload,
-} from '../abstract-entity'
-import { TypeResolver } from '~/internals/graphql'
+} from '~/schema/uuid/abstract-entity/types'
 
 export interface AbstractExercisePayload extends AbstractEntityPayload {
   solutionId: number | null

@@ -24,11 +24,13 @@ import * as R from 'ramda'
 import { license } from '../license'
 import { course } from './course'
 import {
-  CoursePagePayload,
-  CoursePageRevisionPayload,
   EntityRevisionType,
   EntityType,
-} from '~/schema/uuid'
+} from '~/schema/uuid/abstract-entity/types'
+import {
+  CoursePagePayload,
+  CoursePageRevisionPayload,
+} from '~/schema/uuid/course-page/types'
 import { Instance } from '~/types'
 
 export const coursePage: CoursePagePayload = {

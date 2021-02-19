@@ -19,11 +19,14 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { EntityRevisionType, EntityType } from '../abstract-entity'
+import {
+  EntityRevisionType,
+  EntityType,
+} from '~/schema/uuid/abstract-entity/types'
 import {
   AbstractExercisePayload,
   AbstractExerciseRevisionPayload,
-} from '../abstract-exercise'
+} from '~/schema/uuid/abstract-exercise/types'
 
 export interface GroupedExercisePayload extends AbstractExercisePayload {
   __typename: EntityType.GroupedExercise
