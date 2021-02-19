@@ -60,7 +60,7 @@ describe('subscriptions', () => {
           nodes: [
             {
               object: getArticleDataWithoutSubResolvers(article),
-              sendEmail: false,
+              sendEmail: true,
             },
           ],
         },
@@ -93,7 +93,7 @@ describe('subscription mutation set', () => {
         path: `/subscriptions/${user.id}`,
         body: {
           userId: user.id,
-          subscriptions: [{ id: article.id }],
+          subscriptions: [{ id: article.id, sendEmail: true }],
         },
       })
     )
@@ -104,14 +104,14 @@ describe('subscription mutation set', () => {
       data: {
         subscriptions: {
           totalCount: 1,
-          nodes: [{ id: article.id }],
+          nodes: [{ object: { id: article.id }, sendEmail: true }],
         },
       },
       client,
     })
   })
 
-  test('with array of ids', async () => {
+  test('new subscriptions (with array of ids)', async () => {
     global.server.use(
       createSubscriptionSetMutationHandler({
         ids: [1565, 1555],
@@ -136,7 +136,11 @@ describe('subscription mutation set', () => {
       data: {
         subscriptions: {
           totalCount: 3,
-          nodes: [{ id: 1555 }, { id: 1565 }, { id: article.id }],
+          nodes: [
+            { object: { id: 1555 }, sendEmail: false },
+            { object: { id: 1565 }, sendEmail: false },
+            { object: { id: article.id }, sendEmail: true },
+          ],
         },
       },
       client,
@@ -152,7 +156,7 @@ describe('subscription mutation set', () => {
     })
   })
 
-  test('remove subscription, check cache mutation', async () => {
+  test('remove subscription', async () => {
     global.server.use(
       createSubscriptionSetMutationHandler({
         ids: [article.id],
@@ -178,6 +182,38 @@ describe('subscription mutation set', () => {
         subscriptions: {
           totalCount: 0,
           nodes: [],
+        },
+      },
+      client,
+    })
+  })
+
+  test('change subscription: sendEmail to false', async () => {
+    global.server.use(
+      createSubscriptionSetMutationHandler({
+        ids: [article.id],
+        userId: user.id,
+        subscribe: true,
+        sendEmail: false,
+      })
+    )
+
+    await assertSuccessfulGraphQLMutation({
+      mutation,
+      variables: {
+        input: { id: [article.id], subscribe: true, sendEmail: false },
+      },
+      data: { subscription: { set: { success: true } } },
+      client,
+    })
+
+    //check cache
+    await assertSuccessfulGraphQLQuery({
+      ...createSubscriptionsQueryOnlyId(),
+      data: {
+        subscriptions: {
+          totalCount: 1,
+          nodes: [{ object: { id: article.id }, sendEmail: false }],
         },
       },
       client,

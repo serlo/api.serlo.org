@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Connection } from '../connection'
-import { AbstractUuidPayload } from '../uuid'
 import {
   MutationNamespace,
   MutationResolver,
@@ -28,6 +27,7 @@ import {
 } from '~/internals/graphql'
 import {
   QuerySubscriptionsArgs,
+  Subscription,
   SubscriptionMutationSetArgs,
   SubscriptionSetResponse,
 } from '~/types'
@@ -46,7 +46,7 @@ export interface SubscriptionResolvers {
   Query: {
     subscriptions: QueryResolver<
       QuerySubscriptionsArgs,
-      Connection<AbstractUuidPayload>
+      Connection<Subscription>
     >
   }
   Mutation: {
