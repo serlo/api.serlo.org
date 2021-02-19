@@ -33,25 +33,23 @@ import {
   unsupportedThread,
   user,
 } from './uuid'
-import {
-  CheckoutRevisionNotificationEventPayload,
-  CreateCommentNotificationEventPayload,
-  CreateEntityLinkNotificationEventPayload,
-  CreateEntityNotificationEventPayload,
-  CreateEntityRevisionNotificationEventPayload,
-  CreateTaxonomyLinkNotificationEventPayload,
-  CreateTaxonomyTermNotificationEventPayload,
-  CreateThreadNotificationEventPayload,
-  NotificationEventType,
-  RejectRevisionNotificationEventPayload,
-  RemoveEntityLinkNotificationEventPayload,
-  RemoveTaxonomyLinkNotificationEventPayload,
-  SetLicenseNotificationEventPayload,
-  SetTaxonomyParentNotificationEventPayload,
-  SetTaxonomyTermNotificationEventPayload,
-  SetThreadStateNotificationEventPayload,
-  SetUuidStateNotificationEventPayload,
-} from '~/schema/notification'
+import { CheckoutRevisionNotificationEventPayload } from '~/schema/notification/checkout-revision-notification-event/types'
+import { CreateCommentNotificationEventPayload } from '~/schema/notification/create-comment-notification-event/types'
+import { CreateEntityLinkNotificationEventPayload } from '~/schema/notification/create-entity-link-notification-event/types'
+import { CreateEntityNotificationEventPayload } from '~/schema/notification/create-entity-notification-event/types'
+import { CreateEntityRevisionNotificationEventPayload } from '~/schema/notification/create-entity-revision-notification-event/types'
+import { CreateTaxonomyLinkNotificationEventPayload } from '~/schema/notification/create-taxonomy-link-notification-event/types'
+import { CreateTaxonomyTermNotificationEventPayload } from '~/schema/notification/create-taxonomy-term-notification-event/types'
+import { CreateThreadNotificationEventPayload } from '~/schema/notification/create-thread-notification-event/types'
+import { RejectRevisionNotificationEventPayload } from '~/schema/notification/reject-revision-notification-event/types'
+import { RemoveEntityLinkNotificationEventPayload } from '~/schema/notification/remove-entity-link-notification-event/types'
+import { RemoveTaxonomyLinkNotificationEventPayload } from '~/schema/notification/remove-taxonomy-link-notification-event/types'
+import { SetLicenseNotificationEventPayload } from '~/schema/notification/set-license-notification-event/types'
+import { SetTaxonomyParentNotificationEventPayload } from '~/schema/notification/set-taxonomy-parent-notification-event/types'
+import { SetTaxonomyTermNotificationEventPayload } from '~/schema/notification/set-taxonomy-term-notification-event/types'
+import { SetThreadStateNotificationEventPayload } from '~/schema/notification/set-thread-state-notification-event/types'
+import { SetUuidStateNotificationEventPayload } from '~/schema/notification/set-uuid-state-notification-event/types'
+import { NotificationEventType } from '~/schema/notification/types'
 import { Instance } from '~/types'
 
 export const checkoutRevisionNotificationEvent: CheckoutRevisionNotificationEventPayload = {

@@ -82,7 +82,7 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../__utils__'
-import { NotificationsPayload } from '~/schema/notification'
+import { NotificationsPayload } from '~/schema/notification/types'
 import { Instance } from '~/types'
 
 describe('notifications', () => {

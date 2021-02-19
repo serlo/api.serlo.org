@@ -41,27 +41,6 @@ import { userSchema } from './user'
 import { videoSchema } from './video'
 import { mergeSchemas } from '~/internals/graphql'
 
-export * from './abstract-entity'
-export * from './abstract-exercise'
-export * from './abstract-navigation-child'
-export * from './abstract-repository'
-export * from './abstract-taxonomy-term-child'
-export * from './abstract-uuid'
-export * from './alias'
-export * from './applet'
-export * from './article'
-export * from './course'
-export * from './course-page'
-export * from './event'
-export * from './exercise'
-export * from './exercise-group'
-export * from './grouped-exercise'
-export * from './page'
-export * from './solution'
-export * from './taxonomy-term'
-export * from './user'
-export * from './video'
-
 export const uuidSchema = mergeSchemas(
   abstractEntitySchema,
   abstractExerciseSchema,

@@ -19,12 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { PagePayload, PageRevisionPayload } from '.'
+import { PagePayload, PageResolvers, PageRevisionPayload } from './types'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
-} from '../abstract-repository'
-import { PageResolvers } from './types'
+} from '~/schema/uuid/abstract-repository/utils'
 
 export const resolvers: PageResolvers = {
   Page: {

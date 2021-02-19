@@ -40,7 +40,7 @@ import {
   returnsMalformedJson,
 } from '../../__utils__'
 import { MajorDimension } from '~/model'
-import { UuidPayload } from '~/schema/uuid'
+import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 import { Instance } from '~/types'
 
 let client: Client

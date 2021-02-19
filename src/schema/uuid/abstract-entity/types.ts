@@ -19,23 +19,41 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { AppletPayload, AppletRevisionPayload } from '../applet'
-import { ArticlePayload, ArticleRevisionPayload } from '../article'
-import { CoursePayload, CourseRevisionPayload } from '../course'
-import { CoursePagePayload, CoursePageRevisionPayload } from '../course-page'
-import { EventPayload, EventRevisionPayload } from '../event'
-import { ExercisePayload, ExerciseRevisionPayload } from '../exercise'
+import { TypeResolver } from '~/internals/graphql'
+import {
+  AppletPayload,
+  AppletRevisionPayload,
+} from '~/schema/uuid/applet/types'
+import {
+  ArticlePayload,
+  ArticleRevisionPayload,
+} from '~/schema/uuid/article/types'
+import {
+  CoursePagePayload,
+  CoursePageRevisionPayload,
+} from '~/schema/uuid/course-page/types'
+import {
+  CoursePayload,
+  CourseRevisionPayload,
+} from '~/schema/uuid/course/types'
+import { EventPayload, EventRevisionPayload } from '~/schema/uuid/event/types'
 import {
   ExerciseGroupPayload,
   ExerciseGroupRevisionPayload,
-} from '../exercise-group'
+} from '~/schema/uuid/exercise-group/types'
+import {
+  ExercisePayload,
+  ExerciseRevisionPayload,
+} from '~/schema/uuid/exercise/types'
 import {
   GroupedExercisePayload,
   GroupedExerciseRevisionPayload,
-} from '../grouped-exercise'
-import { SolutionPayload, SolutionRevisionPayload } from '../solution'
-import { VideoPayload, VideoRevisionPayload } from '../video'
-import { TypeResolver } from '~/internals/graphql'
+} from '~/schema/uuid/grouped-exercise/types'
+import {
+  SolutionPayload,
+  SolutionRevisionPayload,
+} from '~/schema/uuid/solution/types'
+import { VideoPayload, VideoRevisionPayload } from '~/schema/uuid/video/types'
 import { AbstractEntity, AbstractEntityRevision } from '~/types'
 
 export enum EntityType {

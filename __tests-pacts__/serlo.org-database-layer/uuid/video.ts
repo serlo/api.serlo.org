@@ -32,7 +32,7 @@ import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
-import { VideoPayload, VideoRevisionPayload } from '~/schema/uuid'
+import { VideoPayload, VideoRevisionPayload } from '~/schema/uuid/video/types'
 
 test('Video', async () => {
   await addUuidInteraction<VideoPayload>({

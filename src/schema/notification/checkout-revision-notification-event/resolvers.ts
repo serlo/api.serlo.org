@@ -19,9 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { RepositoryPayload, RevisionPayload } from '../../uuid'
 import { createNotificationEventResolvers } from '../utils'
 import { CheckoutRevisionNotificationEventResolvers } from './types'
+import {
+  RepositoryPayload,
+  RevisionPayload,
+} from '~/schema/uuid/abstract-repository/types'
 
 export const resolvers: CheckoutRevisionNotificationEventResolvers = {
   CheckoutRevisionNotificationEvent: {

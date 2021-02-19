@@ -21,7 +21,8 @@
  */
 import * as R from 'ramda'
 
-import { ConnectionPayload, resolveConnection } from '~/schema/connection'
+import { ConnectionPayload } from '~/schema/connection/types'
+import { resolveConnection } from '~/schema/connection/utils'
 
 describe('resolveConnection', () => {
   const nodes = R.range(1, 10)

@@ -26,27 +26,28 @@ import * as R from 'ramda'
 
 import { Environment } from '~/internals/environment'
 import { createHelper, createMutation, createQuery } from '~/internals/model'
-import { isInstance } from '~/schema/instance'
+import { isInstance } from '~/schema/instance/utils'
 import {
   AbstractNotificationEventPayload,
-  isUnsupportedNotificationEvent,
   NotificationsPayload,
-} from '~/schema/notification'
-import { SubscriptionsPayload } from '~/schema/subscription'
-import { CommentPayload, ThreadsPayload } from '~/schema/thread'
+} from '~/schema/notification/types'
+import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
+import { SubscriptionsPayload } from '~/schema/subscription/types'
+import { CommentPayload, ThreadsPayload } from '~/schema/thread/types'
+import { EntityPayload } from '~/schema/uuid/abstract-entity/types'
 import {
-  AbstractUuidPayload,
-  AliasPayload,
-  decodePath,
-  DiscriminatorType,
-  encodePath,
-  EntityPayload,
-  isUnsupportedUuid,
   Navigation,
   NavigationPayload,
   NodeData,
+} from '~/schema/uuid/abstract-navigation-child/types'
+import {
+  AbstractUuidPayload,
+  DiscriminatorType,
   UuidPayload,
-} from '~/schema/uuid'
+} from '~/schema/uuid/abstract-uuid/types'
+import { isUnsupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
+import { AliasPayload } from '~/schema/uuid/alias/types'
+import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { UuidPayloadDecoder } from '~/schema/uuid/decoder'
 import { Instance, License, ThreadCreateThreadInput } from '~/types'
 

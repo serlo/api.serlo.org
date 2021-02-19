@@ -30,7 +30,7 @@ import {
   createTestClient,
 } from '../../__utils__'
 import { mockEndpointsForThreads } from './thread'
-import { encodeThreadId } from '~/schema/thread'
+import { encodeThreadId } from '~/schema/thread/utils'
 
 describe('archive-comment', () => {
   const mutation = gql`

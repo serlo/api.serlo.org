@@ -28,7 +28,7 @@ import {
   ThreadDataType,
 } from './types'
 import { Context } from '~/internals/graphql'
-import { resolveConnection } from '~/schema/connection'
+import { resolveConnection } from '~/schema/connection/utils'
 import { isDefined } from '~/utils'
 
 export function createThreadResolvers(): ThreadAwareResolvers {

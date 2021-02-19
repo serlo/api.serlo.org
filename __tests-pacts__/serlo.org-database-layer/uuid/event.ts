@@ -32,7 +32,7 @@ import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
-import { EventPayload, EventRevisionPayload } from '~/schema/uuid'
+import { EventPayload, EventRevisionPayload } from '~/schema/uuid/event/types'
 
 test('Event', async () => {
   await addUuidInteraction<EventPayload>({

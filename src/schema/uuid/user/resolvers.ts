@@ -22,8 +22,6 @@
 import { either as E, function as F, array as A } from 'fp-ts'
 import R from 'ramda'
 
-import { ConnectionPayload, resolveConnection } from '../../connection'
-import { createUuidResolvers } from '../abstract-uuid'
 import { isUserPayload, UserPayload, UserResolvers } from './types'
 import {
   addContext,
@@ -33,7 +31,10 @@ import {
 } from '~/internals/error-event'
 import { Context } from '~/internals/graphql'
 import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
-import { createThreadResolvers } from '~/schema/thread'
+import { ConnectionPayload } from '~/schema/connection/types'
+import { resolveConnection } from '~/schema/connection/utils'
+import { createThreadResolvers } from '~/schema/thread/utils'
+import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 
 export const resolvers: UserResolvers = {
   Query: {

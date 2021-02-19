@@ -21,11 +21,14 @@
  */
 import * as t from 'io-ts'
 
-import { EntityRevisionType, EntityType } from '~/schema/uuid'
 import {
   AbstractEntityPayloadDecoder,
   AbstractEntityRevisionPayloadDecoder,
 } from '~/schema/uuid/abstract-entity/decoder'
+import {
+  EntityRevisionType,
+  EntityType,
+} from '~/schema/uuid/abstract-entity/types'
 
 export const SolutionDecoder = t.exact(
   t.intersection([

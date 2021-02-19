@@ -19,9 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { NavigationNode } from '../../../types'
-import { resolveConnection } from '../../connection'
 import { AbstractNavigationChildResolvers } from './types'
+import { resolveConnection } from '~/schema/connection/utils'
+import { NavigationNode } from '~/types'
 
 export const resolvers: AbstractNavigationChildResolvers = {
   AbstractNavigationChild: {

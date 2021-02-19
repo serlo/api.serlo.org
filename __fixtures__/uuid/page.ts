@@ -22,11 +22,8 @@
 import * as R from 'ramda'
 
 import { license } from '../license'
-import {
-  DiscriminatorType,
-  PagePayload,
-  PageRevisionPayload,
-} from '~/schema/uuid'
+import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
+import { PagePayload, PageRevisionPayload } from '~/schema/uuid/page/types'
 import { Instance } from '~/types'
 
 export const page: PagePayload = {
