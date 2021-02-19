@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.19.6](https://github.com/serlo/api.serlo.org/compare/v0.19.5..v0.19.6) - February 19, 2021
+
+### Internal
+
+- **swr-queue-worker**. Configurable delay between jobs.
+
 ## [v0.19.5](https://github.com/serlo/api.serlo.org/compare/v0.19.4..v0.19.5) - February 17, 2021
 
 ### Fixed

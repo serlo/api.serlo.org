@@ -173,34 +173,47 @@ export function createSwrQueueWorker({
   queue.process(
     concurrency,
     async (job): Promise<string> => {
-      const { key } = job.data
+      async function processJob() {
+        const { key } = job.data
 
-      const result = await shouldProcessJob({
-        key,
-        cache,
-        models,
-        timer,
-      })
-      if (E.isLeft(result)) {
-        return `Skipped update because ${result.left}`
+        const result = await shouldProcessJob({
+          key,
+          cache,
+          models,
+          timer,
+        })
+        if (E.isLeft(result)) {
+          return `Skipped update because ${result.left}`
+        }
+
+        const { spec, payload } = result.right
+
+        await cache.set({
+          key,
+          priority: Priority.Low,
+          getValue: async (current) => {
+            const value = await spec.getCurrentValue(payload, current ?? null)
+            const decoder = spec.decoder || t.unknown
+            const decoded = decoder.decode(value)
+            if (E.isRight(decoded)) {
+              return decoded.right
+            }
+            throw new Error(`Invalid value: ${JSON.stringify(value)}`)
+          },
+        })
+        return 'Updated because stale'
       }
 
-      const { spec, payload } = result.right
-
-      await cache.set({
-        key,
-        priority: Priority.Low,
-        getValue: async (current) => {
-          const value = await spec.getCurrentValue(payload, current ?? null)
-          const decoder = spec.decoder || t.unknown
-          const decoded = decoder.decode(value)
-          if (E.isRight(decoded)) {
-            return decoded.right
-          }
-          throw new Error(`Invalid value: ${JSON.stringify(value)}`)
-        },
-      })
-      return 'Updated because stale'
+      const result = await processJob()
+      if (process.env.SWR_QUEUE_WORKER_DELAY !== undefined) {
+        const delay = parseInt(process.env.SWR_QUEUE_WORKER_DELAY, 10)
+        await new Promise<void>((resolve) => {
+          setTimeout(() => {
+            resolve()
+          }, delay)
+        })
+      }
+      return result
     }
   )
 
