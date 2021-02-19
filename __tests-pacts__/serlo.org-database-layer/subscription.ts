@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
 import { article, user } from '../../__fixtures__'
@@ -27,6 +28,36 @@ import {
   addMessageInteraction,
   assertSuccessfulGraphQLMutation,
 } from '../__utils__'
+
+test('SubscriptionsQuery', async () => {
+  const message = {
+    type: 'SubscriptionsQuery',
+    payload: {
+      userId: user.id,
+    },
+  }
+  await addMessageInteraction({
+    given: `there exists a subscription for user with id ${user.id}`,
+    message,
+    responseBody: {
+      userId: user.id,
+      subscriptions: Matchers.eachLike({
+        id: Matchers.integer(1),
+        sendEmail: Matchers.boolean(false),
+      }),
+    },
+  })
+  const response = await global.serloModel.getSubscriptions({ userId: user.id })
+  expect(response).toEqual({
+    userId: user.id,
+    subscriptions: [
+      {
+        id: 1,
+        sendEmail: false,
+      },
+    ],
+  })
+})
 
 test('SubscriptionSetMutation', async () => {
   global.client = createTestClient({ userId: user.id })

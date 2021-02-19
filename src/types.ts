@@ -1063,6 +1063,12 @@ export type CourseTaxonomyTermsArgs = {
   last?: Maybe<Scalars['Int']>;
 };
 
+
+export type CoursePagesArgs = {
+  trashed?: Maybe<Scalars['Boolean']>;
+  hasCurrentRevision?: Maybe<Scalars['Boolean']>;
+};
+
 export type CourseRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware & {
   __typename?: 'CourseRevision';
   id: Scalars['Int'];

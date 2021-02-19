@@ -19,24 +19,46 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import R from 'ramda'
+
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '../abstract-repository'
 import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
+import { CoursePagePayload } from '../course-page'
 import { CoursePayload, CourseRevisionPayload } from './types'
 import { Context } from '~/internals/graphql'
+import { CoursePagesArgs } from '~/types'
+import { isDefined } from '~/utils'
 
 export const resolvers = {
   Course: {
     ...createRepositoryResolvers<CoursePayload, CourseRevisionPayload>(),
     ...createTaxonomyTermChildResolvers<CoursePayload>(),
-    pages(course: CoursePayload, _args: never, { dataSources }: Context) {
-      return Promise.all(
+    async pages(
+      course: CoursePayload,
+      { trashed, hasCurrentRevision }: CoursePagesArgs,
+      { dataSources }: Context
+    ) {
+      const pages = await Promise.all(
         course.pageIds.map((id: number) => {
-          return dataSources.model.serlo.getUuid({ id })
+          return dataSources.model.serlo.getUuid({
+            id,
+          }) as Promise<CoursePagePayload | null>
         })
       )
+
+      return pages.filter(isDefined).filter((page) => {
+        if (trashed !== undefined && page.trashed !== trashed) return false
+        if (
+          hasCurrentRevision !== undefined &&
+          R.isNil(page.currentRevisionId) === hasCurrentRevision
+        )
+          return false
+
+        return true
+      })
     },
   },
   CourseRevision: createRevisionResolvers<

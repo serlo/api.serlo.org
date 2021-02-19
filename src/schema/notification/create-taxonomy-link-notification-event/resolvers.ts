@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { TaxonomyTermPayload, UuidPayload } from '../../uuid'
+import { TaxonomyTermPayload } from '../../uuid'
 import { createNotificationEventResolvers } from '../utils'
 import { CreateTaxonomyLinkNotificationEventResolvers } from './types'
 
@@ -32,9 +32,9 @@ export const resolvers: CreateTaxonomyLinkNotificationEventResolvers = {
       })) as TaxonomyTermPayload | null
     },
     async child(notificationEvent, _args, { dataSources }) {
-      return (await dataSources.model.serlo.getUuid({
+      return await dataSources.model.serlo.getUuid({
         id: notificationEvent.childId,
-      })) as UuidPayload | null
+      })
     },
   },
 }

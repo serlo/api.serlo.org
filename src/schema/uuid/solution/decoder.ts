@@ -19,26 +19,30 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Matchers } from '@pact-foundation/pact'
-import fetch from 'node-fetch'
+import * as t from 'io-ts'
 
-import { article, user } from '../../__fixtures__/uuid'
-import { addJsonInteraction } from '../__utils__'
+import { EntityRevisionType, EntityType } from '~/schema/uuid'
+import {
+  AbstractEntityPayloadDecoder,
+  AbstractEntityRevisionPayloadDecoder,
+} from '~/schema/uuid/abstract-entity/decoder'
 
-test('Subscriptions', async () => {
-  await addJsonInteraction({
-    name: `fetch data of all subscriptions for user with id ${user.id}`,
-    given: `there exists a subscription for user with id ${user.id}`,
-    path: `/subscriptions/${user.id}`,
-    body: {
-      userId: user.id,
-      subscriptions: Matchers.eachLike({
-        id: Matchers.integer(article.id),
-        sendEmail: Matchers.boolean(false),
-      }),
-    },
-  })
-  await fetch(
-    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}/subscriptions/${user.id}`
-  )
-})
+export const SolutionDecoder = t.exact(
+  t.intersection([
+    AbstractEntityPayloadDecoder,
+    t.type({
+      __typename: t.literal(EntityType.Solution),
+      parentId: t.number,
+    }),
+  ])
+)
+
+export const SolutionRevisionDecoder = t.exact(
+  t.intersection([
+    AbstractEntityRevisionPayloadDecoder,
+    t.type({
+      __typename: t.literal(EntityRevisionType.SolutionRevision),
+      content: t.string,
+    }),
+  ])
+)

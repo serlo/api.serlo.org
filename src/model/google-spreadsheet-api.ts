@@ -24,11 +24,10 @@ import * as t from 'io-ts'
 import { nonEmptyArray } from 'io-ts-types/lib/nonEmptyArray'
 import { failure } from 'io-ts/lib/PathReporter'
 import fetch from 'node-fetch'
-import * as R from 'ramda'
 import { URL } from 'url'
 
 import { Environment } from '~/internals/environment'
-import { ErrorEvent } from '~/internals/error-event'
+import { addContext, ErrorEvent } from '~/internals/error-event'
 import { createQuery } from '~/internals/model'
 
 export enum MajorDimension {
@@ -71,32 +70,33 @@ export function createGoogleSpreadsheetApiModel({
           `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`
         )
         url.searchParams.append('majorDimension', majorDimension)
-        const apiSectret = process.env.GOOGLE_SPREADSHEET_API_SECRET
-        url.searchParams.append('key', apiSectret)
+        const apiSecret = process.env.GOOGLE_SPREADSHEET_API_SECRET
+        url.searchParams.append('key', apiSecret)
 
-        const contexts = { function: 'googleSpreadSheetApi.getValues()', args }
-        const addContext = E.mapLeft((event: ErrorEvent) =>
-          R.mergeDeepRight({ contexts }, event)
+        const specifyErrorLocation = E.mapLeft(
+          addContext({
+            location: 'googleSpreadSheetApi',
+            locationContext: { ...args },
+          })
         )
 
         try {
           const response = await fetch(url.toString())
 
-          return addContext(
-            pipeable.pipe(
-              ValueRange.decode(await response.json()),
-              E.mapLeft((errors) => {
-                return {
-                  message: 'invalid response',
-                  contexts: { validationErrors: failure(errors) },
-                }
-              }),
-              E.map((v) => v.values),
-              E.chain(E.fromNullable({ message: 'range is empty' }))
-            )
+          return pipeable.pipe(
+            ValueRange.decode(await response.json()),
+            E.mapLeft((errors) => {
+              return {
+                error: new Error('invalid response'),
+                errorContext: { validationErrors: failure(errors) },
+              }
+            }),
+            E.map((v) => v.values),
+            E.chain(E.fromNullable({ error: new Error('range is empty') })),
+            specifyErrorLocation
           )
         } catch (error) {
-          return addContext(E.left({ exception: E.toError(error) }))
+          return specifyErrorLocation(E.left({ error: E.toError(error) }))
         }
       },
       maxAge: { hour: 1 },

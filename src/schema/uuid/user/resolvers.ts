@@ -19,12 +19,18 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { either as E, pipeable } from 'fp-ts'
+import { either as E, function as F, array as A } from 'fp-ts'
+import R from 'ramda'
 
 import { ConnectionPayload, resolveConnection } from '../../connection'
 import { createUuidResolvers } from '../abstract-uuid'
 import { isUserPayload, UserPayload, UserResolvers } from './types'
-import { ErrorEvent } from '~/internals/error-event'
+import {
+  addContext,
+  assertAll,
+  consumeErrorEvent,
+  ErrorEvent,
+} from '~/internals/error-event'
 import { Context } from '~/internals/graphql'
 import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
 import { createThreadResolvers } from '~/schema/thread'
@@ -87,8 +93,10 @@ async function resolveUserConnectionFromIds({
     ids.map((id) => context.dataSources.model.serlo.getUuid({ id }))
   )
   return resolveConnection<UserPayload>({
-    // TODO: Report uuids which are not users to sentry
-    nodes: uuids.filter(isUserPayload),
+    nodes: assertAll({
+      assertion: isUserPayload,
+      error: new Error('ids do not belong to a user'),
+    })(uuids),
     payload,
     createCursor(node) {
       return node.id.toString()
@@ -97,7 +105,7 @@ async function resolveUserConnectionFromIds({
 }
 
 async function activeDonorIDs({ dataSources }: Context) {
-  return pipeable.pipe(
+  return F.pipe(
     await dataSources.model.googleSpreadsheetApi.getValues({
       spreadsheetId: process.env.GOOGLE_SPREADSHEET_API_ACTIVE_DONORS,
       range: 'Tabellenblatt1!A:A',
@@ -108,19 +116,25 @@ async function activeDonorIDs({ dataSources }: Context) {
 }
 
 function extractIDsFromFirstColumn(
-  cells: E.Either<ErrorEvent, CellValues>
+  columns: E.Either<ErrorEvent, CellValues>
 ): number[] {
-  return pipeable.pipe(
-    cells,
-    E.map((cells) =>
-      cells[0]
-        .slice(1)
-        .map((c) => c.trim())
-        // TODO: Report those invalid values to sentry
-        .filter((x) => /^\d+$/.test(x))
-        .map((x) => Number(x))
+  return F.pipe(
+    columns,
+    E.map((columns) => R.head(columns)),
+    E.chain(
+      E.fromNullable<ErrorEvent>({
+        error: new Error('no columns in selected range'),
+      })
     ),
-    // TODO: Report error to sentry
-    E.getOrElse<ErrorEvent, number[]>(() => [])
+    E.map((rows) => rows.slice(1).map(R.trim)),
+    E.map(
+      assertAll({
+        assertion: (entry) => /^\d+$/.test(entry),
+        error: new Error('invalid entry in activeDonorSpreadsheet'),
+      })
+    ),
+    E.map(A.map((entry) => Number(entry))),
+    E.mapLeft(addContext({ location: 'activeDonorSpreadsheet' })),
+    E.getOrElse(consumeErrorEvent([] as number[]))
   )
 }

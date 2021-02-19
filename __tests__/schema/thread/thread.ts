@@ -35,7 +35,7 @@ import {
   assertSuccessfulGraphQLQuery,
   Client,
   createAliasHandler,
-  createJsonHandler,
+  createMessageHandler,
   createTestClient,
   createUuidHandler,
   getDatabaseLayerUrl,
@@ -429,41 +429,58 @@ export function mockEndpointsForThreads(
   const firstCommentIds = threads.map((thread) => thread[0].id)
 
   global.server.use(
-    createJsonHandler({
-      path: `/threads/${uuidPayload.id}`,
+    createMessageHandler({
+      message: {
+        type: 'ThreadsQuery',
+        payload: { id: uuidPayload.id },
+      },
       body: { firstCommentIds },
-    })
+    }),
+    createThreadHandlers()
   )
-  global.server.use(
-    rest.get(getDatabaseLayerUrl({ path: '/uuid/:id' }), (req, res, ctx) => {
-      const id = Number(req.params.id)
 
-      if (id === uuidPayload.id) return res(ctx.json(uuidPayload))
+  function createThreadHandlers() {
+    const handler = rest.post(
+      getDatabaseLayerUrl({ path: '/' }),
+      (req, res, ctx) => {
+        if (typeof req.body !== 'object') return res(ctx.status(404))
+        const id = Number((req.body.payload as { id?: unknown }).id)
 
-      const thread = threads.find((thread) =>
-        thread.some((comment) => comment.id === id)
-      )
+        if (id === uuidPayload.id) return res(ctx.json(uuidPayload))
 
-      if (R.isNil(thread)) return res(ctx.status(404))
+        const thread = threads.find((thread) =>
+          thread.some((comment) => comment.id === id)
+        )
 
-      const comment = thread.find((comment) => comment.id === id)
+        if (R.isNil(thread)) return res(ctx.status(404))
 
-      if (R.isNil(comment)) return res(ctx.status(404))
+        const comment = thread.find((comment) => comment.id === id)
 
-      const payload =
-        comment.id === thread[0].id
-          ? {
-              ...comment,
-              parentId: uuidPayload.id,
-              childrenIds: thread.slice(1).map((comment) => comment.id),
-            }
-          : {
-              ...comment,
-              parentId: thread[0].id,
-              childrenIds: [],
-            }
+        if (R.isNil(comment)) return res(ctx.status(404))
 
-      return res(ctx.json(payload))
-    })
-  )
+        const payload =
+          comment.id === thread[0].id
+            ? {
+                ...comment,
+                parentId: uuidPayload.id,
+                childrenIds: thread.slice(1).map((comment) => comment.id),
+              }
+            : {
+                ...comment,
+                parentId: thread[0].id,
+                childrenIds: [],
+              }
+
+        return res(ctx.json(payload))
+      }
+    )
+
+    // Only use this handler if message matches
+    handler.predicate = (req) => {
+      const { body } = req
+      return typeof body === 'object' && body['type'] === 'UuidQuery'
+    }
+
+    return handler
+  }
 }

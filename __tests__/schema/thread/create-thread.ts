@@ -20,15 +20,14 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
-import { rest } from 'msw'
 
 import { article, comment, comment1, user } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
+  createMessageHandler,
   createTestClient,
-  getDatabaseLayerUrl,
 } from '../../__utils__'
 import { mockEndpointsForThreads } from './thread'
 
@@ -85,34 +84,32 @@ test('thread gets created, cache mutated as expected', async () => {
   })
 
   global.server.use(
-    rest.post<{
-      content: string
-      title: string
-      objectId: number
-      subscribe: boolean
-      sendEmail: boolean
-      userId: number
-    }>(
-      getDatabaseLayerUrl({ path: '/thread/start-thread' }),
-      (req, res, ctx) => {
-        const { objectId, content, title } = req.body
-        return res(
-          ctx.status(200),
-          ctx.json({
-            __typename: 'comment',
-            id: comment1.id,
-            parentId: null,
-            objectId,
-            content,
-            trashed: false,
-            alias: null,
-            title,
-            archived: false,
-            childrenIds: [],
-          })
-        )
-      }
-    )
+    createMessageHandler({
+      message: {
+        type: 'ThreadCreateThreadMutation',
+        payload: {
+          title: 'My new thread',
+          content: '🔥 brand new!',
+          objectId: article.id,
+          subscribe: true,
+          sendEmail: false,
+          userId: user.id,
+        },
+      },
+      body: {
+        __typename: 'Comment',
+        id: comment1.id,
+        trashed: false,
+        alias: `/mathe/${comment1.id}/`,
+        authorId: user.id,
+        title: 'My new thread',
+        date: '2014-08-25T12:51:02+02:00',
+        archived: false,
+        content: '🔥 brand new!',
+        parentId: article.id,
+        childrenIds: [],
+      },
+    })
   )
 
   await assertSuccessfulGraphQLMutation({

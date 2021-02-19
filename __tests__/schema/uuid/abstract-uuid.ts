@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
-import { rest } from 'msw'
 import * as R from 'ramda'
 
 import {
@@ -57,10 +56,9 @@ import {
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   Client,
-  createJsonHandler,
+  createMessageHandler,
   createTestClient,
   createUuidHandler,
-  getDatabaseLayerUrl,
 } from '../../__utils__'
 import {
   DiscriminatorType,
@@ -112,8 +110,15 @@ const abstractUuidRepository = R.toPairs(abstractUuidFixtures)
 describe('uuid', () => {
   test('returns null when alias cannot be found', async () => {
     global.server.use(
-      createJsonHandler({
-        path: '/alias/de/not-existing',
+      createMessageHandler({
+        message: {
+          type: 'AliasQuery',
+          payload: {
+            instance: Instance.De,
+            path: '/not-existing',
+          },
+        },
+        statusCode: 404,
         body: null,
       })
     )
@@ -126,7 +131,7 @@ describe('uuid', () => {
           }
         }
       `,
-      variables: { alias: { instance: 'de', path: '/not-existing' } },
+      variables: { alias: { instance: Instance.De, path: '/not-existing' } },
       data: { uuid: null },
       client,
     })
@@ -183,7 +188,15 @@ describe('uuid', () => {
   })
 
   test('returns null when uuid does not exist', async () => {
-    global.server.use(createJsonHandler({ path: '/uuid/666', body: null }))
+    global.server.use(
+      createMessageHandler({
+        message: {
+          type: 'UuidQuery',
+          payload: { id: 666 },
+        },
+        body: null,
+      })
+    )
 
     await assertSuccessfulGraphQLQuery({
       query: gql`
@@ -231,14 +244,14 @@ describe('uuid', () => {
   })
 
   test('returns an error when request fails (500)', async () => {
-    // TODO: this should be a helper
     global.server.use(
-      rest.get(
-        getDatabaseLayerUrl({ path: `/uuid/${user.id}` }),
-        (_req, res, ctx) => {
-          return res(ctx.status(500), ctx.json(null))
-        }
-      )
+      createMessageHandler({
+        message: {
+          type: 'UuidQuery',
+          payload: { id: user.id },
+        },
+        statusCode: 500,
+      })
     )
 
     await assertFailingGraphQLQuery({
@@ -250,19 +263,21 @@ describe('uuid', () => {
         }
       `,
       variables: user,
-      message: '500: Internal Server Error',
+      message: '500: {"type":"UuidQuery","payload":{"id":1}}',
       client,
     })
   })
 
   test('succeeds on 404', async () => {
     global.server.use(
-      rest.get(
-        getDatabaseLayerUrl({ path: `/uuid/${user.id}` }),
-        (_req, res, ctx) => {
-          return res(ctx.status(404), ctx.json(null))
-        }
-      )
+      createMessageHandler({
+        message: {
+          type: 'UuidQuery',
+          payload: { id: user.id },
+        },
+        body: null,
+        statusCode: 404,
+      })
     )
 
     await assertSuccessfulGraphQLQuery({
@@ -293,23 +308,19 @@ describe('uuid mutation setState', () => {
     }
   `
 
-  beforeEach(() => {
+  test('authenticated with array of ids', async () => {
     global.server.use(
-      rest.post<{
-        ids: number[]
-        userId: number
-        trashed: boolean
-      }>(getDatabaseLayerUrl({ path: '/set-uuid-state' }), (req, res, ctx) => {
-        const { userId } = req.body
-
-        if (userId !== user.id) return res(ctx.status(403))
-
-        return res(ctx.status(200))
+      createMessageHandler({
+        message: {
+          type: 'UuidSetStateMutation',
+          payload: {
+            ids: [1, 2, 3],
+            userId: user.id,
+            trashed: true,
+          },
+        },
       })
     )
-  })
-
-  test('authenticated with array of ids', async () => {
     await assertSuccessfulGraphQLMutation({
       mutation,
       variables: {
@@ -365,13 +376,10 @@ describe('property "alias"', () => {
 describe('custom aliases', () => {
   test('de.serlo.org/mathe resolves to uuid 19767', async () => {
     global.server.use(
-      createJsonHandler({
-        path: `/uuid/19767`,
-        body: {
-          ...page,
-          id: 19767,
-          alias: '/legacy-alias',
-        },
+      createUuidHandler({
+        ...page,
+        id: 19767,
+        alias: '/legacy-alias',
       })
     )
     await assertSuccessfulGraphQLQuery({

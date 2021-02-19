@@ -36,6 +36,7 @@ import { Cache } from '~/internals/cache'
 import { ModelDataSource } from '~/internals/data-source'
 import { Environment } from '~/internals/environment'
 import { Context } from '~/internals/graphql'
+import { createSentryPlugin } from '~/internals/sentry'
 import { SwrQueue } from '~/internals/swr-queue'
 import { schema } from '~/schema'
 
@@ -48,11 +49,12 @@ export function applyGraphQLMiddleware({
   cache: Cache
   swrQueue: SwrQueue
 }) {
-  const environment = {
-    cache,
-    swrQueue,
-  }
+  const environment = { cache, swrQueue }
   const server = new ApolloServer(getGraphQLOptions(environment))
+  const headers =
+    process.env.NODE_ENV === 'production'
+      ? {}
+      : { headers: { Authorization: `Serlo Service=${getToken()}` } }
 
   app.use(
     server.getMiddleware({
@@ -63,24 +65,7 @@ export function applyGraphQLMiddleware({
     })
   )
   app.get('/___graphql', (...args) => {
-    return createPlayground({
-      endpoint: '/graphql',
-      ...(process.env.NODE_ENV === 'production'
-        ? {}
-        : {
-            headers: {
-              Authorization: `Serlo Service=${jwt.sign(
-                {},
-                process.env.SERVER_SERLO_CLOUDFLARE_WORKER_SECRET,
-                {
-                  expiresIn: '2h',
-                  audience: 'api.serlo.org',
-                  issuer: Service.SerloCloudflareWorker,
-                }
-              )}`,
-            },
-          }),
-    })(...args)
+    return createPlayground({ endpoint: '/graphql', ...headers })(...args)
   })
 
   return server.graphqlPath
@@ -96,16 +81,16 @@ export function getGraphQLOptions(
     introspection: true,
     // We add the playground via express middleware in src/index.ts
     playground: false,
+    plugins: [createSentryPlugin()],
     dataSources() {
       return {
         model: new ModelDataSource(environment),
       }
     },
     formatError(error) {
-      if (R.path(['response', 'status'], error.extensions) === 400) {
-        return new ApolloError(error.message, 'BAD_REQUEST', error.extensions)
-      }
-      return error
+      return R.path(['response', 'status'], error.extensions) === 400
+        ? new ApolloError(error.message, 'BAD_REQUEST', error.extensions)
+        : error
     },
     context({ req }): Promise<Pick<Context, 'service' | 'userId'>> {
       const authorizationHeader = req.headers.authorization
@@ -137,4 +122,12 @@ export function getGraphQLOptions(
       })
     },
   }
+}
+
+function getToken() {
+  return jwt.sign({}, process.env.SERVER_SERLO_CLOUDFLARE_WORKER_SECRET, {
+    expiresIn: '2h',
+    audience: 'api.serlo.org',
+    issuer: Service.SerloCloudflareWorker,
+  })
 }

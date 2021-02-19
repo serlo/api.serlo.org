@@ -30,7 +30,6 @@ import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
-  createJsonHandler,
   createMessageHandler,
   createTestClient,
   createUuidHandler,
@@ -40,8 +39,8 @@ describe('subscriptions', () => {
   beforeEach(() => {
     global.server.use(
       createUuidHandler(article),
-      createJsonHandler({
-        path: `/subscriptions/${user.id}`,
+      createSubscriptionsHandler({
+        payload: { userId: user.id },
         body: {
           userId: user.id,
           subscriptions: [{ id: article.id, sendEmail: true }],
@@ -89,8 +88,8 @@ describe('subscription mutation set', () => {
       createUuidHandler(article),
       createUuidHandler({ ...article, id: 1555 }),
       createUuidHandler({ ...article, id: 1565 }),
-      createJsonHandler({
-        path: `/subscriptions/${user.id}`,
+      createSubscriptionsHandler({
+        payload: { userId: user.id },
         body: {
           userId: user.id,
           subscriptions: [{ id: article.id, sendEmail: true }],
@@ -221,7 +220,23 @@ describe('subscription mutation set', () => {
   })
 })
 
-export function createSubscriptionsQuery() {
+function createSubscriptionsHandler({
+  payload,
+  body,
+}: {
+  payload: { userId: number }
+  body: Record<string, unknown>
+}) {
+  return createMessageHandler({
+    message: {
+      type: 'SubscriptionsQuery',
+      payload,
+    },
+    body,
+  })
+}
+
+function createSubscriptionsQuery() {
   return {
     query: gql`
       query subscriptions {
@@ -245,7 +260,7 @@ export function createSubscriptionsQuery() {
   }
 }
 
-export function createSubscriptionsQueryOnlyId() {
+function createSubscriptionsQueryOnlyId() {
   return {
     query: gql`
       query subscriptions {
@@ -263,7 +278,7 @@ export function createSubscriptionsQueryOnlyId() {
   }
 }
 
-export function createSubscriptionSetMutationHandler(
+function createSubscriptionSetMutationHandler(
   payload: Record<string, unknown>
 ) {
   return createMessageHandler({

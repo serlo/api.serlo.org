@@ -20,49 +20,30 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 /* eslint-disable import/no-unassigned-import */
-describe('GET /alias/:instance/:alias', () => {
+describe('AliasMessage', () => {
   require('./alias')
 })
-describe('GET /event/:id', () => {
+describe('EventMessage', () => {
   require('./event')
 })
-describe('GET /navigation/:instance', () => {
-  require('./navigation')
-})
-describe('GET /notifications/:id', () => {
-  require('./notifications')
-})
-describe('GET /subscriptions', () => {
-  require('./subscriptions')
-})
-describe('GET /threads/:id', () => {
-  require('./threads/threads')
-})
-describe('GET /user/:id', () => {
-  require('./user')
-})
-describe('GET /uuid/:id', () => {
-  require('./uuid')
-})
-describe('POST /set-uuid-state', () => {
-  require('./set-uuid-state')
-})
-describe('POST /set-notification-state', () => {
-  require('./set-notification-state')
-})
-describe('POST /thread/set-archive', () => {
-  require('./threads/thread-set-archive')
-})
-describe('POST /thread/start-thread', () => {
-  require('./threads/start-thread')
-})
-describe('POST /thread/comment-thread', () => {
-  require('./threads/comment-thread')
-})
-
 describe('LicenseMessage', () => {
   require('./license')
 })
-describe('SubscriptionSetMutation', () => {
-  require('./subscription-set-mutation')
+describe('NavigationMessage', () => {
+  require('./navigation')
+})
+describe('NotificationMessage', () => {
+  require('./notification')
+})
+describe('SubscriptionMessage', () => {
+  require('./subscription')
+})
+describe('ThreadMessage', () => {
+  require('./thread')
+})
+describe('UserMessage', () => {
+  require('./user')
+})
+describe('UuidMessage', () => {
+  require('./uuid')
 })

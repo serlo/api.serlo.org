@@ -20,29 +20,12 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Matchers } from '@pact-foundation/pact'
-import fetch from 'node-fetch'
 
-import { article, comment } from '../../../__fixtures__'
-import { addJsonInteraction, addUuidInteraction } from '../../__utils__'
+import { comment } from '../../../__fixtures__'
+import { addUuidInteraction } from '../../__utils__'
 import { CommentPayload } from '~/schema/thread'
 
-test('Threads', async () => {
-  // This is a noop test that just adds the interaction to the contract
-  await addJsonInteraction({
-    name: `fetch first comment ids of all threads for an article}`,
-    given: `article ${article.id} has threads`,
-    path: `/threads/${article.id}`,
-    body: {
-      firstCommentIds: Matchers.eachLike(Matchers.integer(1)),
-    },
-  })
-  await fetch(
-    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}/threads/${article.id}`
-  )
-})
-
 test('Comment', async () => {
-  // This is a noop test that just adds the interaction to the contract
   await addUuidInteraction<CommentPayload>({
     __typename: comment.__typename,
     id: comment.id,
@@ -56,7 +39,6 @@ test('Comment', async () => {
     parentId: Matchers.integer(comment.parentId),
     childrenIds: comment.childrenIds,
   })
-  await fetch(
-    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}/uuid/${comment.id}`
-  )
+  const response = await global.serloModel.getUuid(comment)
+  expect(response).toEqual(comment)
 })
