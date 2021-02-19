@@ -34,7 +34,9 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
-import { AbstractExercisePayload, EntityType, UuidPayload } from '~/schema/uuid'
+import { EntityType } from '~/schema/uuid/abstract-entity/types'
+import { AbstractExercisePayload } from '~/schema/uuid/abstract-exercise/types'
+import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 
 let client: Client
 

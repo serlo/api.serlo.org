@@ -29,7 +29,7 @@ import {
   createMessageHandler,
   createTestClient,
 } from '../../__utils__'
-import { encodeThreadId } from '~/schema/thread'
+import { encodeThreadId } from '~/schema/thread/utils'
 
 let client: Client
 

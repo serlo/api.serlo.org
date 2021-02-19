@@ -23,11 +23,13 @@ import * as R from 'ramda'
 
 import { license } from '../license'
 import {
-  CoursePayload,
-  CourseRevisionPayload,
   EntityRevisionType,
   EntityType,
-} from '~/schema/uuid'
+} from '~/schema/uuid/abstract-entity/types'
+import {
+  CoursePayload,
+  CourseRevisionPayload,
+} from '~/schema/uuid/course/types'
 import { Instance } from '~/types'
 
 export const course: CoursePayload = {

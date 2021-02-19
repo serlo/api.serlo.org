@@ -19,15 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Connection } from '../../connection'
-import { NavigationChildResolvers } from '../abstract-navigation-child'
+import { Resolver } from '~/internals/graphql'
+import { Connection } from '~/schema/connection/types'
+import { ThreadAwareResolvers } from '~/schema/thread/types'
+import { NavigationChildResolvers } from '~/schema/uuid/abstract-navigation-child/utils'
 import {
   AbstractUuidPayload,
   DiscriminatorType,
   UuidResolvers,
-} from '../abstract-uuid'
-import { Resolver } from '~/internals/graphql'
-import { ThreadAwareResolvers } from '~/schema/thread'
+} from '~/schema/uuid/abstract-uuid/types'
 import { TaxonomyTerm, TaxonomyTermChildrenArgs } from '~/types'
 
 export interface TaxonomyTermPayload

@@ -23,13 +23,13 @@ import { ApolloError, ForbiddenError } from 'apollo-server'
 
 import { CommentPayload, ThreadDataType, ThreadResolvers } from './types'
 import { decodeThreadId, decodeThreadIds, encodeThreadId } from './utils'
-import { resolveConnection } from '~/schema/connection'
+import { resolveConnection } from '~/schema/connection/utils'
 import {
   assertUserIsAuthenticated,
   createMutationNamespace,
 } from '~/schema/utils'
-import { createUuidResolvers } from '~/schema/uuid/abstract-uuid'
-import { UserPayload } from '~/schema/uuid/user'
+import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
+import { UserPayload } from '~/schema/uuid/user/types'
 
 export const resolvers: ThreadResolvers = {
   Thread: {

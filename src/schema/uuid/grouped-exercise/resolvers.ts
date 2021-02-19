@@ -21,13 +21,13 @@
  */
 import { GraphQLResolveInfo } from 'graphql'
 
-import { createExerciseResolvers } from '../abstract-exercise'
+import { GroupedExercisePayload, GroupedExerciseRevisionPayload } from './types'
+import { Context, requestsOnlyFields } from '~/internals/graphql'
+import { createExerciseResolvers } from '~/schema/uuid/abstract-exercise/utils'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
-} from '../abstract-repository'
-import { GroupedExercisePayload, GroupedExerciseRevisionPayload } from './types'
-import { Context, requestsOnlyFields } from '~/internals/graphql'
+} from '~/schema/uuid/abstract-repository/utils'
 
 export const resolvers = {
   GroupedExercise: {

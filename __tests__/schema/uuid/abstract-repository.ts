@@ -61,14 +61,16 @@ import {
   createUuidHandler,
 } from '../../__utils__'
 import {
-  DiscriminatorType,
   EntityRevisionType,
   EntityType,
+} from '~/schema/uuid/abstract-entity/types'
+import {
   RepositoryPayload,
   RepositoryType,
   RevisionPayload,
   RevisionType,
-} from '~/schema/uuid'
+} from '~/schema/uuid/abstract-repository/types'
+import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
 
 let client: Client
 

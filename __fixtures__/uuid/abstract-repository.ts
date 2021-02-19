@@ -23,7 +23,10 @@ import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
 import { getUuidDataWithoutSubResolvers } from './abstract-uuid'
-import { RepositoryPayload, RevisionPayload } from '~/schema/uuid'
+import {
+  RepositoryPayload,
+  RevisionPayload,
+} from '~/schema/uuid/abstract-repository/types'
 
 export function createRepositoryLicenseQuery(variables: RepositoryPayload) {
   return {

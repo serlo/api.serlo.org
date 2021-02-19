@@ -19,9 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Connection, resolveConnection } from '../../connection'
 import { AbstractTaxonomyTermChildPayload } from './types'
 import { Context, Resolver } from '~/internals/graphql'
+import { Connection } from '~/schema/connection/types'
+import { resolveConnection } from '~/schema/connection/utils'
 import { TaxonomyTermChildrenArgs } from '~/types'
 import { isDefined } from '~/utils'
 

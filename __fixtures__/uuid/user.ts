@@ -21,7 +21,8 @@
  */
 import * as R from 'ramda'
 
-import { DiscriminatorType, UserPayload } from '~/schema/uuid'
+import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
+import { UserPayload } from '~/schema/uuid/user/types'
 
 export const user: UserPayload = {
   __typename: DiscriminatorType.User,

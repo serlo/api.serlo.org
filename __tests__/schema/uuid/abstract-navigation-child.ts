@@ -34,11 +34,9 @@ import {
   createTestClient,
 } from '../../__utils__'
 import { Service } from '~/internals/auth'
-import {
-  NavigationPayload,
-  PagePayload,
-  TaxonomyTermPayload,
-} from '~/schema/uuid'
+import { NavigationPayload } from '~/schema/uuid/abstract-navigation-child/types'
+import { PagePayload } from '~/schema/uuid/page/types'
+import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
 import { Instance } from '~/types'
 
 function createSetNavigationMutation(navigation: NavigationPayload) {

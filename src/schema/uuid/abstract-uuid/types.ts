@@ -20,15 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import {
-  EntityPayload,
-  EntityRevisionPayload,
-  EntityRevisionType,
-  EntityType,
-} from '../abstract-entity'
-import { PagePayload, PageRevisionPayload } from '../page'
-import { TaxonomyTermPayload } from '../taxonomy-term'
-import { UserPayload } from '../user'
-import {
   MutationNamespace,
   MutationResolver,
   QueryResolver,
@@ -36,6 +27,15 @@ import {
   TypeResolver,
 } from '~/internals/graphql'
 import { CommentPayload } from '~/schema/thread/types'
+import {
+  EntityPayload,
+  EntityRevisionPayload,
+  EntityRevisionType,
+  EntityType,
+} from '~/schema/uuid/abstract-entity/types'
+import { PagePayload, PageRevisionPayload } from '~/schema/uuid/page/types'
+import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
+import { UserPayload } from '~/schema/uuid/user/types'
 import {
   AbstractUuid,
   QueryUuidArgs,

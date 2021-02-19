@@ -32,7 +32,7 @@ import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
-import { TaxonomyTermPayload } from '~/schema/uuid'
+import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
 
 function addTaxonomyTermInteraction(payload: TaxonomyTermPayload) {
   return addUuidInteraction<TaxonomyTermPayload>({

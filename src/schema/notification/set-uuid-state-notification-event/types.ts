@@ -25,7 +25,7 @@ import {
   NotificationEventType,
 } from '../types'
 import { Resolver } from '~/internals/graphql'
-import { UuidPayload } from '~/schema/uuid'
+import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 import { SetUuidStateNotificationEvent } from '~/types'
 
 export interface SetUuidStateNotificationEventPayload
