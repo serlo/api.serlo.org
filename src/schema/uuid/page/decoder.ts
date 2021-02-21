@@ -24,8 +24,9 @@ import * as t from 'io-ts'
 import { InstanceDecoder } from '~/schema/instance/decoder'
 import { AbstractUuidPayloadDecoder } from '~/schema/uuid/abstract-uuid/decoder'
 import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
+import { PagePayload, PageRevisionPayload } from '~/schema/uuid/page/types'
 
-export const PagePayloadDecoder = t.exact(
+export const PagePayloadDecoder: t.Type<PagePayload> = t.exact(
   t.intersection([
     AbstractUuidPayloadDecoder,
     t.type({
@@ -39,7 +40,7 @@ export const PagePayloadDecoder = t.exact(
   ])
 )
 
-export const PageRevisionPayloadDecoder = t.exact(
+export const PageRevisionPayloadDecoder: t.Type<PageRevisionPayload> = t.exact(
   t.intersection([
     AbstractUuidPayloadDecoder,
     t.type({

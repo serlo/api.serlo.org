@@ -25,14 +25,22 @@ import {
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
+import {
+  ArticleDecoder,
+  ArticleRevisionDecoder,
+} from '~/schema/uuid/article/decoder'
 
 export const resolvers = {
   Article: {
-    ...createRepositoryResolvers<ArticlePayload, ArticleRevisionPayload>(),
+    ...createRepositoryResolvers<ArticlePayload, ArticleRevisionPayload>({
+      revisionDecoder: ArticleRevisionDecoder,
+    }),
     ...createTaxonomyTermChildResolvers<ArticlePayload>(),
   },
   ArticleRevision: createRevisionResolvers<
     ArticlePayload,
     ArticleRevisionPayload
-  >(),
+  >({
+    repositoryDecoder: ArticleDecoder,
+  }),
 }

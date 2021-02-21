@@ -23,14 +23,17 @@ import * as t from 'io-ts'
 
 import { AbstractUuidPayloadDecoder } from '~/schema/uuid/abstract-uuid/decoder'
 import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
+import { UserPayload } from '~/schema/uuid/user/types'
 
-export const UserPayloadDecoder = t.exact(
+export const UserPayloadDecoder: t.Type<UserPayload> = t.exact(
   t.intersection([
     AbstractUuidPayloadDecoder,
     t.type({
       __typename: t.literal(DiscriminatorType.User),
       username: t.string,
       date: t.string,
+    }),
+    t.partial({
       lastLogin: t.union([t.string, t.null]),
       description: t.union([t.string, t.null]),
     }),

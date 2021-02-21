@@ -29,8 +29,12 @@ import {
   EntityRevisionType,
   EntityType,
 } from '~/schema/uuid/abstract-entity/types'
+import {
+  AppletPayload,
+  AppletRevisionPayload,
+} from '~/schema/uuid/applet/types'
 
-export const AppletDecoder = t.exact(
+export const AppletDecoder: t.Type<AppletPayload> = t.exact(
   t.intersection([
     AbstractEntityPayloadDecoder,
     t.type({
@@ -40,7 +44,7 @@ export const AppletDecoder = t.exact(
   ])
 )
 
-export const AppletRevisionDecoder = t.exact(
+export const AppletRevisionDecoder: t.Type<AppletRevisionPayload> = t.exact(
   t.intersection([
     AbstractEntityRevisionPayloadDecoder,
     t.type({

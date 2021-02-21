@@ -29,12 +29,12 @@ import { VideoDecoder, VideoRevisionDecoder } from '~/schema/uuid/video/decoder'
 
 export const resolvers = {
   Video: {
-    ...createRepositoryResolvers<VideoPayload, VideoRevisionPayload>(
-      VideoRevisionDecoder
-    ),
+    ...createRepositoryResolvers<VideoPayload, VideoRevisionPayload>({
+      revisionDecoder: VideoRevisionDecoder,
+    }),
     ...createTaxonomyTermChildResolvers<VideoPayload>(),
   },
-  VideoRevision: createRevisionResolvers<VideoPayload, VideoRevisionPayload>(
-    VideoDecoder
-  ),
+  VideoRevision: createRevisionResolvers<VideoPayload, VideoRevisionPayload>({
+    repositoryDecoder: VideoDecoder,
+  }),
 }

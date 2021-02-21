@@ -112,7 +112,7 @@ export interface ThreadAwareResolvers {
 export interface CommentPayload {
   id: number
   trashed: boolean
-  alias: null | string
+  alias: string
   __typename: DiscriminatorType.Comment
   authorId: number
   title: string | null
