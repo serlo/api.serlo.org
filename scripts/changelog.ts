@@ -621,6 +621,11 @@ async function exec(): Promise<void> {
     {
       tagName: 'v0.19.8',
       date: '2021-02-21',
+      yanked: true,
+    },
+    {
+      tagName: 'v0.19.9',
+      date: '2021-02-21',
       internal: [
         ['uuid', 'Reject invalid cache values for repositories and revisions.'],
       ],
