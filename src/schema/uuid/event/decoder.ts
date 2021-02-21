@@ -29,8 +29,9 @@ import {
   EntityRevisionType,
   EntityType,
 } from '~/schema/uuid/abstract-entity/types'
+import { EventPayload, EventRevisionPayload } from '~/schema/uuid/event/types'
 
-export const EventDecoder = t.exact(
+export const EventDecoder: t.Type<EventPayload> = t.exact(
   t.intersection([
     AbstractEntityPayloadDecoder,
     t.type({
@@ -40,7 +41,7 @@ export const EventDecoder = t.exact(
   ])
 )
 
-export const EventRevisionDecoder = t.exact(
+export const EventRevisionDecoder: t.Type<EventRevisionPayload> = t.exact(
   t.intersection([
     AbstractEntityRevisionPayloadDecoder,
     t.type({

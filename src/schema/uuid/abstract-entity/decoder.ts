@@ -22,11 +22,29 @@
 import * as t from 'io-ts'
 
 import { InstanceDecoder } from '~/schema/instance/decoder'
+import {
+  EntityRevisionType,
+  EntityType,
+} from '~/schema/uuid/abstract-entity/types'
 import { AbstractUuidPayloadDecoder } from '~/schema/uuid/abstract-uuid/decoder'
+
+export const EntityTypeDecoder: t.Type<EntityType> = t.union([
+  t.literal(EntityType.Applet),
+  t.literal(EntityType.Article),
+  t.literal(EntityType.Course),
+  t.literal(EntityType.CoursePage),
+  t.literal(EntityType.Event),
+  t.literal(EntityType.Exercise),
+  t.literal(EntityType.ExerciseGroup),
+  t.literal(EntityType.GroupedExercise),
+  t.literal(EntityType.Solution),
+  t.literal(EntityType.Video),
+])
 
 export const AbstractEntityPayloadDecoder = t.intersection([
   AbstractUuidPayloadDecoder,
   t.type({
+    __typename: EntityTypeDecoder,
     instance: InstanceDecoder,
     date: t.string,
     licenseId: t.number,
@@ -35,9 +53,24 @@ export const AbstractEntityPayloadDecoder = t.intersection([
   }),
 ])
 
+export const EntityRevisionTypeDecoder: t.Type<EntityRevisionType> = t.union([
+  t.literal(EntityRevisionType.AppletRevision),
+  t.literal(EntityRevisionType.ArticleRevision),
+  t.literal(EntityRevisionType.CourseRevision),
+  t.literal(EntityRevisionType.CoursePageRevision),
+  t.literal(EntityRevisionType.EventRevision),
+  t.literal(EntityRevisionType.ExerciseRevision),
+  t.literal(EntityRevisionType.ExerciseGroupRevision),
+  t.literal(EntityRevisionType.GroupedExerciseRevision),
+  t.literal(EntityRevisionType.SolutionRevision),
+  t.literal(EntityRevisionType.VideoRevision),
+])
+
 export const AbstractEntityRevisionPayloadDecoder = t.intersection([
   AbstractUuidPayloadDecoder,
   t.type({
+    __typename: EntityRevisionTypeDecoder,
+    content: t.string,
     date: t.string,
     authorId: t.number,
     repositoryId: t.number,
