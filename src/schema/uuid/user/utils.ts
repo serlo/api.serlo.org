@@ -23,6 +23,7 @@ import { GraphQLResolveInfo } from 'graphql'
 
 import { UserPayload } from './types'
 import { Context, requestsOnlyFields } from '~/internals/graphql'
+import { UserPayloadDecoder } from '~/schema/uuid/user/decoder'
 
 export async function resolveUser(
   { id }: { id: number },
@@ -33,7 +34,8 @@ export async function resolveUser(
   if (requestsOnlyFields('User', ['id'], info)) {
     return partialUser
   }
-  return (await dataSources.model.serlo.getUuid(
-    partialUser
-  )) as UserPayload | null
+  return await dataSources.model.serlo.getUuidWithCustomDecoder({
+    ...partialUser,
+    decoder: UserPayloadDecoder,
+  })
 }

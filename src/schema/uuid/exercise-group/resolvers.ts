@@ -30,6 +30,7 @@ import {
   ExerciseGroupDecoder,
   ExerciseGroupRevisionDecoder,
 } from '~/schema/uuid/exercise-group/decoder'
+import { GroupedExerciseDecoder } from '~/schema/uuid/grouped-exercise/decoder'
 
 export const resolvers = {
   ExerciseGroup: {
@@ -47,7 +48,10 @@ export const resolvers = {
     ) {
       return Promise.all(
         exerciseGroup.exerciseIds.map((id: number) => {
-          return dataSources.model.serlo.getUuid({ id })
+          return dataSources.model.serlo.getUuidWithCustomDecoder({
+            id,
+            decoder: GroupedExerciseDecoder,
+          })
         })
       )
     },

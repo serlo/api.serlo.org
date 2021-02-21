@@ -31,6 +31,7 @@ import {
   CoursePageDecoder,
   CoursePageRevisionDecoder,
 } from '~/schema/uuid/course-page/decoder'
+import { CourseDecoder } from '~/schema/uuid/course/decoder'
 
 export const resolvers = {
   CoursePage: {
@@ -47,7 +48,10 @@ export const resolvers = {
       if (requestsOnlyFields('Course', ['id'], info)) {
         return partialCourse
       }
-      return dataSources.model.serlo.getUuid(partialCourse)
+      return dataSources.model.serlo.getUuidWithCustomDecoder({
+        ...partialCourse,
+        decoder: CourseDecoder,
+      })
     },
   },
   CoursePageRevision: createRevisionResolvers<

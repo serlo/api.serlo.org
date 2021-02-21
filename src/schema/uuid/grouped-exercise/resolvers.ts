@@ -28,6 +28,7 @@ import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
+import { ExerciseGroupDecoder } from '~/schema/uuid/exercise-group/decoder'
 import {
   GroupedExerciseDecoder,
   GroupedExerciseRevisionDecoder,
@@ -50,7 +51,10 @@ export const resolvers = {
       if (requestsOnlyFields('ExerciseGroup', ['id'], info)) {
         return partialExerciseGroup
       }
-      return dataSources.model.serlo.getUuid(partialExerciseGroup)
+      return dataSources.model.serlo.getUuidWithCustomDecoder({
+        ...partialExerciseGroup,
+        decoder: ExerciseGroupDecoder,
+      })
     },
   },
   GroupedExerciseRevision: createRevisionResolvers<
