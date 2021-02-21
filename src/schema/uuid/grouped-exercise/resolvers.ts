@@ -28,13 +28,17 @@ import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
+import {
+  GroupedExerciseDecoder,
+  GroupedExerciseRevisionDecoder,
+} from '~/schema/uuid/grouped-exercise/decoder'
 
 export const resolvers = {
   GroupedExercise: {
     ...createRepositoryResolvers<
       GroupedExercisePayload,
       GroupedExerciseRevisionPayload
-    >(),
+    >({ revisionDecoder: GroupedExerciseRevisionDecoder }),
     ...createExerciseResolvers<GroupedExercisePayload>(),
     async exerciseGroup(
       groupedExercise: GroupedExercisePayload,
@@ -52,5 +56,5 @@ export const resolvers = {
   GroupedExerciseRevision: createRevisionResolvers<
     GroupedExercisePayload,
     GroupedExerciseRevisionPayload
-  >(),
+  >({ repositoryDecoder: GroupedExerciseDecoder }),
 }

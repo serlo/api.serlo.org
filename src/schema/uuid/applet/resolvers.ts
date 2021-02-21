@@ -26,14 +26,19 @@ import {
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
+import {
+  AppletDecoder,
+  AppletRevisionDecoder,
+} from '~/schema/uuid/applet/decoder'
 
 export const resolvers = {
   Applet: {
-    ...createRepositoryResolvers<AppletPayload, AppletRevisionPayload>(),
+    ...createRepositoryResolvers<AppletPayload, AppletRevisionPayload>({
+      revisionDecoder: AppletRevisionDecoder,
+    }),
     ...createTaxonomyTermChildResolvers<AppletPayload>(),
   },
-  AppletRevision: createRevisionResolvers<
-    AppletPayload,
-    AppletRevisionPayload
-  >(),
+  AppletRevision: createRevisionResolvers<AppletPayload, AppletRevisionPayload>(
+    { repositoryDecoder: AppletDecoder }
+  ),
 }

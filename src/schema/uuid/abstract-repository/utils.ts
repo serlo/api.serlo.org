@@ -38,43 +38,35 @@ import { isDefined } from '~/utils'
 export function createRepositoryResolvers<
   E extends AbstractRepositoryPayload,
   R extends AbstractRevisionPayload
->(customDecoder?: t.Type<R>): RepositoryResolvers<E, R> {
+>({
+  revisionDecoder,
+}: {
+  revisionDecoder: t.Type<R>
+}): RepositoryResolvers<E, R> {
   return {
     ...createUuidResolvers(),
     ...createThreadResolvers(),
     async currentRevision(entity, _args, { dataSources }) {
       if (!entity.currentRevisionId) return null
-      if (customDecoder === undefined) {
-        return (await dataSources.model.serlo.getUuid({
+      // @ts-expect-error TODO: check typing
+      return await dataSources.model.serlo.getUuid._querySpec.queryWithDecoder<R | null>(
+        {
           id: entity.currentRevisionId,
-        })) as R | null
-      } else {
-        // @ts-expect-error TODO: check typing
-        return await dataSources.model.serlo.getUuid._querySpec.queryWithDecoder<R | null>(
-          {
-            id: entity.currentRevisionId,
-          },
-          t.union([customDecoder, t.null])
-        )
-      }
+        },
+        t.union([revisionDecoder, t.null])
+      )
     },
     async revisions(entity, cursorPayload, { dataSources }) {
       const revisions = pipeable.pipe(
         await Promise.all(
           entity.revisionIds.map(async (id) => {
-            if (customDecoder === undefined) {
-              return (await dataSources.model.serlo.getUuid({
+            // @ts-expect-error TODO: check typing
+            return await dataSources.model.serlo.getUuid._querySpec.queryWithDecoder<R>(
+              {
                 id,
-              })) as R | null
-            } else {
-              // @ts-expect-error TODO: check typing
-              return await dataSources.model.serlo.getUuid._querySpec.queryWithDecoder<R>(
-                {
-                  id,
-                },
-                t.union([customDecoder, t.null])
-              )
-            }
+              },
+              t.union([revisionDecoder, t.null])
+            )
           })
         ),
         A.filter(isDefined),
@@ -110,7 +102,11 @@ export function createRepositoryResolvers<
 export function createRevisionResolvers<
   E extends AbstractRepositoryPayload,
   R extends AbstractRevisionPayload
->(customDecoder?: t.Type<E>): RevisionResolvers<E, R> {
+>({
+  repositoryDecoder,
+}: {
+  repositoryDecoder: t.Type<E>
+}): RevisionResolvers<E, R> {
   return {
     ...createUuidResolvers(),
     ...createThreadResolvers(),
@@ -118,19 +114,13 @@ export function createRevisionResolvers<
       return resolveUser({ id: entityRevision.authorId }, context, info)
     },
     repository: async (entityRevision, _args, { dataSources }) => {
-      if (customDecoder === undefined) {
-        return (await dataSources.model.serlo.getUuid({
+      // @ts-expect-error TODO: check typing
+      return await dataSources.model.serlo.getUuid._querySpec.queryWithDecoder<E>(
+        {
           id: entityRevision.repositoryId,
-        })) as E | null
-      } else {
-        // @ts-expect-error TODO: check typing
-        return await dataSources.model.serlo.getUuid._querySpec.queryWithDecoder<E>(
-          {
-            id: entityRevision.repositoryId,
-          },
-          customDecoder
-        )
-      }
+        },
+        repositoryDecoder
+      )
     },
   }
 }

@@ -26,13 +26,19 @@ import {
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
+import {
+  ExerciseGroupDecoder,
+  ExerciseGroupRevisionDecoder,
+} from '~/schema/uuid/exercise-group/decoder'
 
 export const resolvers = {
   ExerciseGroup: {
     ...createRepositoryResolvers<
       ExerciseGroupPayload,
       ExerciseGroupRevisionPayload
-    >(),
+    >({
+      revisionDecoder: ExerciseGroupRevisionDecoder,
+    }),
     ...createTaxonomyTermChildResolvers<ExerciseGroupPayload>(),
     exercises(
       exerciseGroup: ExerciseGroupPayload,
@@ -49,5 +55,7 @@ export const resolvers = {
   ExerciseGroupRevision: createRevisionResolvers<
     ExerciseGroupPayload,
     ExerciseGroupRevisionPayload
-  >(),
+  >({
+    repositoryDecoder: ExerciseGroupDecoder,
+  }),
 }

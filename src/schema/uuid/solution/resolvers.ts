@@ -25,10 +25,16 @@ import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
+import {
+  SolutionDecoder,
+  SolutionRevisionDecoder,
+} from '~/schema/uuid/solution/decoder'
 
 export const resolvers = {
   Solution: {
-    ...createRepositoryResolvers<SolutionPayload, SolutionRevisionPayload>(),
+    ...createRepositoryResolvers<SolutionPayload, SolutionRevisionPayload>({
+      revisionDecoder: SolutionRevisionDecoder,
+    }),
     async exercise(
       solution: SolutionPayload,
       _args: never,
@@ -42,5 +48,7 @@ export const resolvers = {
   SolutionRevision: createRevisionResolvers<
     SolutionPayload,
     SolutionRevisionPayload
-  >(),
+  >({
+    repositoryDecoder: SolutionDecoder,
+  }),
 }

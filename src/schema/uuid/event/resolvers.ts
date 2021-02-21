@@ -25,11 +25,16 @@ import {
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
+import { EventDecoder, EventRevisionDecoder } from '~/schema/uuid/event/decoder'
 
 export const resolvers = {
   Event: {
-    ...createRepositoryResolvers<EventPayload, EventRevisionPayload>(),
+    ...createRepositoryResolvers<EventPayload, EventRevisionPayload>({
+      revisionDecoder: EventRevisionDecoder,
+    }),
     ...createTaxonomyTermChildResolvers<EventPayload>(),
   },
-  EventRevision: createRevisionResolvers<EventPayload, EventRevisionPayload>(),
+  EventRevision: createRevisionResolvers<EventPayload, EventRevisionPayload>({
+    repositoryDecoder: EventDecoder,
+  }),
 }
