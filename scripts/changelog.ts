@@ -630,6 +630,11 @@ async function exec(): Promise<void> {
         ['uuid', 'Reject invalid cache values for repositories and revisions.'],
       ],
     },
+    {
+      tagName: 'v0.19.10',
+      date: '2021-02-21',
+      internal: [['uuid', 'Reject invalid cache values for threads.']],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
