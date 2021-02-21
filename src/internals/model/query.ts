@@ -45,6 +45,11 @@ export interface QuerySpecWithHelpers<P, R> extends QuerySpec<P, R> {
     payload: P,
     customDecoder: t.Type<S>
   ): Promise<S>
+  queryWithDecoders<S2 extends R, S1 extends S2>(
+    payload: P,
+    customDecoder1: t.Type<S1>,
+    customDecoder2: t.Type<S2>
+  ): Promise<S2>
 }
 
 interface Payload<P> {
@@ -102,6 +107,18 @@ export function createQuery<P, R>(
     throw new Error(`Invalid value: ${JSON.stringify(value)}`)
   }
 
+  async function queryWithDecoders<S2 extends R, S1 extends S2>(
+    payload: P,
+    customDecoder1: t.Type<S1>,
+    customDecoder2: t.Type<S2>
+  ): Promise<S2> {
+    try {
+      return await queryWithDecoder(payload, customDecoder1)
+    } catch (e) {
+      return await queryWithDecoder(payload, customDecoder2)
+    }
+  }
+
   function query(payload: P): Promise<R> {
     return queryWithDecoder(payload, spec.decoder)
   }
@@ -109,6 +126,7 @@ export function createQuery<P, R>(
   const querySpecWithHelpers: QuerySpecWithHelpers<P, R> = {
     ...spec,
     queryWithDecoder,
+    queryWithDecoders,
     async setCache(args) {
       await Promise.all(
         R.map(async (payload) => {
