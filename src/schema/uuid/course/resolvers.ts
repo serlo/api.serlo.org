@@ -28,7 +28,7 @@ import {
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
-import { CoursePagePayload } from '~/schema/uuid/course-page/types'
+import { CoursePageDecoder } from '~/schema/uuid/course-page/decoder'
 import {
   CourseDecoder,
   CourseRevisionDecoder,
@@ -49,9 +49,10 @@ export const resolvers = {
     ) {
       const pages = await Promise.all(
         course.pageIds.map((id: number) => {
-          return dataSources.model.serlo.getUuid({
+          return dataSources.model.serlo.getUuidWithCustomDecoder({
             id,
-          }) as Promise<CoursePagePayload | null>
+            decoder: CoursePageDecoder,
+          })
         })
       )
 

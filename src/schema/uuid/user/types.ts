@@ -24,7 +24,6 @@ import { QueryResolver, Resolver } from '~/internals/graphql'
 import { Connection } from '~/schema/connection/types'
 import { ThreadAwareResolvers } from '~/schema/thread/types'
 import {
-  AbstractUuidPayload,
   DiscriminatorType,
   UuidResolvers,
 } from '~/schema/uuid/abstract-uuid/types'
@@ -58,10 +57,4 @@ export interface UserResolvers {
     activeReviewer: Resolver<UserPayload, never, boolean>
   } & UuidResolvers &
     ThreadAwareResolvers
-}
-
-export function isUserPayload(
-  payload: AbstractUuidPayload | null
-): payload is UserPayload {
-  return payload !== null && payload.__typename === DiscriminatorType.User
 }
