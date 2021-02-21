@@ -26,15 +26,21 @@ import {
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
+import {
+  ExerciseDecoder,
+  ExerciseRevisionDecoder,
+} from '~/schema/uuid/exercise/decoder'
 
 export const resolvers = {
   Exercise: {
-    ...createRepositoryResolvers<ExercisePayload, ExerciseRevisionPayload>(),
+    ...createRepositoryResolvers<ExercisePayload, ExerciseRevisionPayload>({
+      revisionDecoder: ExerciseRevisionDecoder,
+    }),
     ...createTaxonomyTermChildResolvers<ExercisePayload>(),
     ...createExerciseResolvers<ExercisePayload>(),
   },
   ExerciseRevision: createRevisionResolvers<
     ExercisePayload,
     ExerciseRevisionPayload
-  >(),
+  >({ repositoryDecoder: ExerciseDecoder }),
 }

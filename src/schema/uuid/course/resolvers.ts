@@ -29,12 +29,18 @@ import {
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
 import { CoursePagePayload } from '~/schema/uuid/course-page/types'
+import {
+  CourseDecoder,
+  CourseRevisionDecoder,
+} from '~/schema/uuid/course/decoder'
 import { CoursePagesArgs } from '~/types'
 import { isDefined } from '~/utils'
 
 export const resolvers = {
   Course: {
-    ...createRepositoryResolvers<CoursePayload, CourseRevisionPayload>(),
+    ...createRepositoryResolvers<CoursePayload, CourseRevisionPayload>({
+      revisionDecoder: CourseRevisionDecoder,
+    }),
     ...createTaxonomyTermChildResolvers<CoursePayload>(),
     async pages(
       course: CoursePayload,
@@ -61,8 +67,7 @@ export const resolvers = {
       })
     },
   },
-  CourseRevision: createRevisionResolvers<
-    CoursePayload,
-    CourseRevisionPayload
-  >(),
+  CourseRevision: createRevisionResolvers<CoursePayload, CourseRevisionPayload>(
+    { repositoryDecoder: CourseDecoder }
+  ),
 }

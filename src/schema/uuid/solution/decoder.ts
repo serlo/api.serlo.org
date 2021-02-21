@@ -29,8 +29,12 @@ import {
   EntityRevisionType,
   EntityType,
 } from '~/schema/uuid/abstract-entity/types'
+import {
+  SolutionPayload,
+  SolutionRevisionPayload,
+} from '~/schema/uuid/solution/types'
 
-export const SolutionDecoder = t.exact(
+export const SolutionDecoder: t.Type<SolutionPayload> = t.exact(
   t.intersection([
     AbstractEntityPayloadDecoder,
     t.type({
@@ -40,7 +44,7 @@ export const SolutionDecoder = t.exact(
   ])
 )
 
-export const SolutionRevisionDecoder = t.exact(
+export const SolutionRevisionDecoder: t.Type<SolutionRevisionPayload> = t.exact(
   t.intersection([
     AbstractEntityRevisionPayloadDecoder,
     t.type({

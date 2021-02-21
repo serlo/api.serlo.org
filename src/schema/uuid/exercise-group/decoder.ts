@@ -29,8 +29,12 @@ import {
   EntityRevisionType,
   EntityType,
 } from '~/schema/uuid/abstract-entity/types'
+import {
+  ExerciseGroupPayload,
+  ExerciseGroupRevisionPayload,
+} from '~/schema/uuid/exercise-group/types'
 
-export const ExerciseGroupDecoder = t.exact(
+export const ExerciseGroupDecoder: t.Type<ExerciseGroupPayload> = t.exact(
   t.intersection([
     AbstractEntityPayloadDecoder,
     t.type({
@@ -41,7 +45,7 @@ export const ExerciseGroupDecoder = t.exact(
   ])
 )
 
-export const ExerciseGroupRevisionDecoder = t.exact(
+export const ExerciseGroupRevisionDecoder: t.Type<ExerciseGroupRevisionPayload> = t.exact(
   t.intersection([
     AbstractEntityRevisionPayloadDecoder,
     t.type({

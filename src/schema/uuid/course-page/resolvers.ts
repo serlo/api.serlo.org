@@ -27,13 +27,16 @@ import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
+import {
+  CoursePageDecoder,
+  CoursePageRevisionDecoder,
+} from '~/schema/uuid/course-page/decoder'
 
 export const resolvers = {
   CoursePage: {
-    ...createRepositoryResolvers<
-      CoursePagePayload,
-      CoursePageRevisionPayload
-    >(),
+    ...createRepositoryResolvers<CoursePagePayload, CoursePageRevisionPayload>({
+      revisionDecoder: CoursePageRevisionDecoder,
+    }),
     async course(
       coursePage: CoursePagePayload,
       _args: never,
@@ -50,5 +53,7 @@ export const resolvers = {
   CoursePageRevision: createRevisionResolvers<
     CoursePagePayload,
     CoursePageRevisionPayload
-  >(),
+  >({
+    repositoryDecoder: CoursePageDecoder,
+  }),
 }

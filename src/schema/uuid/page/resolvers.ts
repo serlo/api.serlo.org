@@ -24,10 +24,16 @@ import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
+import {
+  PagePayloadDecoder,
+  PageRevisionPayloadDecoder,
+} from '~/schema/uuid/page/decoder'
 
 export const resolvers: PageResolvers = {
   Page: {
-    ...createRepositoryResolvers<PagePayload, PageRevisionPayload>(),
+    ...createRepositoryResolvers<PagePayload, PageRevisionPayload>({
+      revisionDecoder: PageRevisionPayloadDecoder,
+    }),
     async navigation(page, _args, { dataSources }) {
       return dataSources.model.serlo.getNavigation({
         instance: page.instance,
@@ -35,5 +41,7 @@ export const resolvers: PageResolvers = {
       })
     },
   },
-  PageRevision: createRevisionResolvers<PagePayload, PageRevisionPayload>(),
+  PageRevision: createRevisionResolvers<PagePayload, PageRevisionPayload>({
+    repositoryDecoder: PagePayloadDecoder,
+  }),
 }
