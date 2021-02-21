@@ -32,12 +32,13 @@ import {
 import { requestsOnlyFields } from '~/internals/graphql'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
+import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { isDefined } from '~/utils'
 
 export function createRepositoryResolvers<
-  E extends AbstractRepositoryPayload,
-  R extends AbstractRevisionPayload
+  E extends UuidPayload & AbstractRepositoryPayload,
+  R extends UuidPayload & AbstractRevisionPayload
 >({
   revisionDecoder,
 }: {
@@ -48,7 +49,6 @@ export function createRepositoryResolvers<
     ...createThreadResolvers(),
     async currentRevision(entity, _args, { dataSources }) {
       if (!entity.currentRevisionId) return null
-      // @ts-expect-error TODO: check typing
       return await dataSources.model.serlo.getUuid._querySpec.queryWithDecoder<R | null>(
         {
           id: entity.currentRevisionId,
@@ -60,8 +60,7 @@ export function createRepositoryResolvers<
       const revisions = pipeable.pipe(
         await Promise.all(
           entity.revisionIds.map(async (id) => {
-            // @ts-expect-error TODO: check typing
-            return await dataSources.model.serlo.getUuid._querySpec.queryWithDecoder<R>(
+            return await dataSources.model.serlo.getUuid._querySpec.queryWithDecoder<R | null>(
               {
                 id,
               },
@@ -100,8 +99,8 @@ export function createRepositoryResolvers<
 }
 
 export function createRevisionResolvers<
-  E extends AbstractRepositoryPayload,
-  R extends AbstractRevisionPayload
+  E extends UuidPayload & AbstractRepositoryPayload,
+  R extends UuidPayload & AbstractRevisionPayload
 >({
   repositoryDecoder,
 }: {
@@ -114,7 +113,6 @@ export function createRevisionResolvers<
       return resolveUser({ id: entityRevision.authorId }, context, info)
     },
     repository: async (entityRevision, _args, { dataSources }) => {
-      // @ts-expect-error TODO: check typing
       return await dataSources.model.serlo.getUuid._querySpec.queryWithDecoder<E>(
         {
           id: entityRevision.repositoryId,
