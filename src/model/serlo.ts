@@ -112,6 +112,20 @@ export function createSerloModel({
     environment
   )
 
+  async function getUuidWithCustomDecoder<S extends UuidPayload>({
+    id,
+    decoder,
+  }: {
+    id: number
+    decoder: t.Type<S>
+  }): Promise<S | null> {
+    return getUuid._querySpec.queryWithDecoders(
+      { id },
+      decoder,
+      t.union([decoder, t.null])
+    )
+  }
+
   const setUuidState = createMutation<
     {
       ids: number[]
@@ -696,6 +710,7 @@ export function createSerloModel({
     setSubscription,
     getThreadIds,
     getUuid,
+    getUuidWithCustomDecoder,
     setUuidState,
     removeCacheValue,
     setCacheValue,

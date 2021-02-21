@@ -49,23 +49,19 @@ export function createRepositoryResolvers<
     ...createThreadResolvers(),
     async currentRevision(entity, _args, { dataSources }) {
       if (!entity.currentRevisionId) return null
-      return await dataSources.model.serlo.getUuid._querySpec.queryWithDecoder<R | null>(
-        {
-          id: entity.currentRevisionId,
-        },
-        t.union([revisionDecoder, t.null])
-      )
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: entity.currentRevisionId,
+        decoder: revisionDecoder,
+      })
     },
     async revisions(entity, cursorPayload, { dataSources }) {
       const revisions = pipeable.pipe(
         await Promise.all(
           entity.revisionIds.map(async (id) => {
-            return await dataSources.model.serlo.getUuid._querySpec.queryWithDecoder<R | null>(
-              {
-                id,
-              },
-              t.union([revisionDecoder, t.null])
-            )
+            return await dataSources.model.serlo.getUuidWithCustomDecoder({
+              id,
+              decoder: revisionDecoder,
+            })
           })
         ),
         A.filter(isDefined),
@@ -113,12 +109,10 @@ export function createRevisionResolvers<
       return resolveUser({ id: entityRevision.authorId }, context, info)
     },
     repository: async (entityRevision, _args, { dataSources }) => {
-      return await dataSources.model.serlo.getUuid._querySpec.queryWithDecoder<E>(
-        {
-          id: entityRevision.repositoryId,
-        },
-        repositoryDecoder
-      )
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: entityRevision.repositoryId,
+        decoder: repositoryDecoder,
+      })
     },
   }
 }
