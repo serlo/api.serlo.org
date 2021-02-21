@@ -29,7 +29,7 @@ import {
   createMutationNamespace,
 } from '~/schema/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
-import { UserPayload } from '~/schema/uuid/user/types'
+import { UserPayloadDecoder } from '~/schema/uuid/user/decoder'
 
 export const resolvers: ThreadResolvers = {
   Thread: {
@@ -70,9 +70,10 @@ export const resolvers: ThreadResolvers = {
       return comment.date
     },
     async author(comment, _args, { dataSources }) {
-      const author = (await dataSources.model.serlo.getUuid({
+      const author = await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: comment.authorId,
-      })) as UserPayload | null
+        decoder: UserPayloadDecoder,
+      })
       if (author === null) {
         throw new ApolloError('There is no author with this id')
       }
