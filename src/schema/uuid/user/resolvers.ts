@@ -19,10 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { either as E, function as F, array as A } from 'fp-ts'
+import { array as A, either as E, function as F } from 'fp-ts'
 import R from 'ramda'
 
-import { isUserPayload, UserPayload, UserResolvers } from './types'
+import { UserPayload, UserResolvers } from './types'
 import {
   addContext,
   assertAll,
@@ -35,6 +35,7 @@ import { ConnectionPayload } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
+import { UserPayloadDecoder } from '~/schema/uuid/user/decoder'
 
 export const resolvers: UserResolvers = {
   Query: {
@@ -91,13 +92,19 @@ async function resolveUserConnectionFromIds({
   context: Context
 }) {
   const uuids = await Promise.all(
-    ids.map((id) => context.dataSources.model.serlo.getUuid({ id }))
+    ids.map(async (id) => {
+      try {
+        return await context.dataSources.model.serlo.getUuidWithCustomDecoder({
+          id,
+          decoder: UserPayloadDecoder,
+        })
+      } catch (e) {
+        return null
+      }
+    })
   )
   return resolveConnection<UserPayload>({
-    nodes: assertAll({
-      assertion: isUserPayload,
-      error: new Error('ids do not belong to a user'),
-    })(uuids),
+    nodes: uuids.filter((uuid) => uuid !== null) as UserPayload[],
     payload,
     createCursor(node) {
       return node.id.toString()
