@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.19.10](https://github.com/serlo/api.serlo.org/compare/v0.19.9..v0.19.10) - February 21, 2021
+
+### Internal
+
+- **uuid**. Reject invalid cache values for threads.
+
 ## [v0.19.9](https://github.com/serlo/api.serlo.org/compare/v0.19.8..v0.19.9) - February 21, 2021
 
 ### Internal
