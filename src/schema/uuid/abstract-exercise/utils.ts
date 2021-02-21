@@ -21,6 +21,7 @@
  */
 import { AbstractExercisePayload } from './types'
 import { requestsOnlyFields, Resolver } from '~/internals/graphql'
+import { SolutionDecoder } from '~/schema/uuid/solution/decoder'
 import { SolutionPayload } from '~/schema/uuid/solution/types'
 
 export interface ExerciseResolvers<E extends AbstractExercisePayload> {
@@ -37,7 +38,10 @@ export function createExerciseResolvers<
       if (requestsOnlyFields('Solution', ['id'], info)) {
         return partialSolution
       }
-      return await dataSources.model.serlo.getUuid(partialSolution)
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
+        ...partialSolution,
+        decoder: SolutionDecoder,
+      })
     },
   }
 }
