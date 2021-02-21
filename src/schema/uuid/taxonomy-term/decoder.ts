@@ -28,16 +28,17 @@ import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
 import { TaxonomyTermType } from '~/types'
 
 export const TaxonomyTermTypeDecoder: t.Type<TaxonomyTermType> = t.union([
-  t.literal<TaxonomyTermType>(TaxonomyTermType.Blog),
-  t.literal<TaxonomyTermType>(TaxonomyTermType.Curriculum),
-  t.literal<TaxonomyTermType>(TaxonomyTermType.CurriculumTopic),
-  t.literal<TaxonomyTermType>(TaxonomyTermType.CurriculumTopicFolder),
-  t.literal<TaxonomyTermType>(TaxonomyTermType.Forum),
-  t.literal<TaxonomyTermType>(TaxonomyTermType.ForumCategory),
-  t.literal<TaxonomyTermType>(TaxonomyTermType.Root),
-  t.literal<TaxonomyTermType>(TaxonomyTermType.Subject),
-  t.literal<TaxonomyTermType>(TaxonomyTermType.Topic),
-  t.literal<TaxonomyTermType>(TaxonomyTermType.TopicFolder),
+  t.literal(TaxonomyTermType.Blog),
+  t.literal(TaxonomyTermType.Curriculum),
+  t.literal(TaxonomyTermType.CurriculumTopic),
+  t.literal(TaxonomyTermType.CurriculumTopicFolder),
+  t.literal(TaxonomyTermType.Forum),
+  t.literal(TaxonomyTermType.ForumCategory),
+  t.literal(TaxonomyTermType.Locale),
+  t.literal(TaxonomyTermType.Root),
+  t.literal(TaxonomyTermType.Subject),
+  t.literal(TaxonomyTermType.Topic),
+  t.literal(TaxonomyTermType.TopicFolder),
 ])
 
 export const TaxonomyTermPayloadDecoder: t.Type<TaxonomyTermPayload> = t.exact(
