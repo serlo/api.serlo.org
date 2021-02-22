@@ -79,17 +79,23 @@ function captureErrorEvent(event: ErrorEvent) {
     }
 
     if (event.locationContext) {
-      scope.setContext('location', event.locationContext)
+      scope.setContext('location', serializeRecord(event.locationContext))
     }
 
     if (event.errorContext) {
-      scope.setContext('error', event.errorContext)
+      scope.setContext('error', serializeRecord(event.errorContext))
     }
 
     scope.setLevel(Sentry.Severity.Error)
 
     return scope
   })
+
+  function serializeRecord(record: Record<string, unknown>) {
+    return R.mapObjIndexed((value) => {
+      return typeof value === 'object' ? JSON.stringify(value, null, 2) : value
+    }, record)
+  }
 }
 
 interface Context {

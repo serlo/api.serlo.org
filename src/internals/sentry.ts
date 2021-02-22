@@ -28,15 +28,6 @@ export function initializeSentry(context: string) {
     dsn: process.env.SENTRY_DSN,
     environment: process.env.ENVIRONMENT,
     release: `api.serlo.org-${context}@${process.env.SENTRY_RELEASE || ''}`,
-    beforeSend(event) {
-      if (event.contexts)
-        event.contexts = R.mapObjIndexed(
-          R.mapObjIndexed(serializeContextVariable),
-          event.contexts
-        )
-
-      return event
-    },
   })
 }
 
@@ -50,11 +41,17 @@ export function createSentryPlugin(): ApolloServerPlugin {
           for (const error of ctx.errors) {
             Sentry.captureException(error, (scope) => {
               scope.setTag('kind', ctx.operationName)
-
-              const { query, variables } = ctx.request
               scope.setContext('graphql', {
-                query,
-                ...(variables === undefined ? {} : { variables }),
+                query: ctx.request.query,
+                ...(ctx.request.variables === undefined
+                  ? {}
+                  : {
+                      variables: R.mapObjIndexed((value: unknown) => {
+                        return typeof value === 'object'
+                          ? JSON.stringify(value, null, 2)
+                          : value
+                      }, ctx.request.variables),
+                    }),
               })
 
               if (error.path) {
@@ -72,14 +69,6 @@ export function createSentryPlugin(): ApolloServerPlugin {
       }
     },
   }
-}
-
-function serializeContextVariable(record: unknown): unknown {
-  if (typeof record !== 'object') return record
-
-  return R.mapObjIndexed((value) => {
-    return typeof value === 'object' ? JSON.stringify(value, null, 2) : value
-  }, record as Record<string, unknown>)
 }
 
 export { Sentry }

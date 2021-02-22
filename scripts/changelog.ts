@@ -650,6 +650,11 @@ async function exec(): Promise<void> {
     {
       tagName: 'v0.19.13',
       date: '2021-02-22',
+      yanked: true,
+    },
+    {
+      tagName: 'v0.19.14',
+      date: '2021-02-22',
       internal: [['uuid', 'Disable SWR background updates.']],
     },
   ])
