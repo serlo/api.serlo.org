@@ -66,6 +66,7 @@
     "ramda": "^0.27.0",
     "redis": "^3.0.0",
     "redlock": "^3.0.0",
+    "ts-toolbelt": "^9.0.0",
     "tslib": "^2.0.0"
   },
   "devDependencies": {
