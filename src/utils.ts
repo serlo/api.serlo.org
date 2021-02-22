@@ -19,7 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import R from 'ramda'
+
 export type AsyncOrSync<T> = Promise<T> | T
+
+export function serializeRecord(record: Record<string, unknown>) {
+  return R.mapObjIndexed((value) => {
+    return typeof value === 'object' ? JSON.stringify(value, null, 2) : value
+  }, record)
+}
 
 export function isDefined<A>(value?: A | null): value is A {
   return value !== null && value !== undefined

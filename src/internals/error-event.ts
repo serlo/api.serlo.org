@@ -23,6 +23,8 @@ import * as Sentry from '@sentry/node'
 import { function as F, array as A } from 'fp-ts'
 import R from 'ramda'
 
+import { serializeRecord } from '~/utils'
+
 export interface ErrorEvent extends Context {
   error: Error
 }
@@ -90,12 +92,6 @@ function captureErrorEvent(event: ErrorEvent) {
 
     return scope
   })
-
-  function serializeRecord(record: Record<string, unknown>) {
-    return R.mapObjIndexed((value) => {
-      return typeof value === 'object' ? JSON.stringify(value, null, 2) : value
-    }, record)
-  }
 }
 
 interface Context {
