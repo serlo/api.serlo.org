@@ -642,6 +642,11 @@ async function exec(): Promise<void> {
         ['uuid', 'Reject invalid cache values for various other cases.'],
       ],
     },
+    {
+      tagName: 'v0.19.12',
+      date: '2021-02-22',
+      internal: [['uuid', 'Disable SWR background updates.']],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
