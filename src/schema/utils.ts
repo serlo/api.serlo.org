@@ -42,21 +42,31 @@ export function createMutationNamespace() {
   }
 }
 
-export interface QueryResolvers<Properties extends keyof QueryResolvers> {
-  Query: Required<Pick<QueryResolvers, Properties>>
-}
+export type PickQueryResolvers<
+  Properties extends keyof QueryResolvers
+> = A.Compute<
+  {
+    Query: Required<Pick<QueryResolvers, Properties>>
+  },
+  'deep'
+>
 
 export type ResolversFor<TypeNames extends keyof GraphQLTypes> = A.Compute<
   {
     [TypeName in TypeNames]: ResolverFor<TypeName>
-  }
+  },
+  'deep'
 >
 
 type ResolverFor<TypeName extends keyof GraphQLTypes> = {
-  [Property in keyof Resolvers[TypeName] &
-    RequiredResolverMethodNames<TypeName>]: Resolvers[TypeName][Property]
+  [Property in keyof GetResolvers<TypeName> &
+    RequiredResolverMethodNames<TypeName>]: GetResolvers<TypeName>[Property]
 } &
+  GetResolvers<TypeName>
+
+type GetResolvers<TypeName extends keyof GraphQLTypes> = NonNullable<
   Resolvers[TypeName]
+>
 
 type RequiredResolverMethodNames<
   TypeName extends keyof GraphQLTypes
