@@ -21,7 +21,7 @@
  */
 import { gql } from 'apollo-server'
 
-import { LicenseModel } from '~/model/types'
+import { LicenseModel } from '~/model'
 import { Instance } from '~/types'
 
 export const license: LicenseModel = {

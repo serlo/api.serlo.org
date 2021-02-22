@@ -24,6 +24,7 @@ import { createSerloModel } from './serlo'
 
 export * from './google-spreadsheet-api'
 export * from './serlo'
+export * from './types'
 
 export const modelFactories = {
   googleSpreadsheetApi: createGoogleSpreadsheetApiModel,

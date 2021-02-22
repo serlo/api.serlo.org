@@ -22,7 +22,7 @@
 import { rest } from 'msw'
 import * as R from 'ramda'
 
-import { LicenseModel } from '~/model/types'
+import { LicenseModel } from '~/model'
 import { NotificationEventPayload } from '~/schema/notification/types'
 import { NavigationPayload } from '~/schema/uuid/abstract-navigation-child/types'
 import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
