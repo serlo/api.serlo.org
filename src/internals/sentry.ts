@@ -21,14 +21,22 @@
  */
 import * as Sentry from '@sentry/node'
 import type { ApolloServerPlugin } from 'apollo-server-plugin-base'
-
-import { serializeRecord } from '~/utils'
+import R from 'ramda'
 
 export function initializeSentry(context: string) {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
     environment: process.env.ENVIRONMENT,
     release: `api.serlo.org-${context}@${process.env.SENTRY_RELEASE || ''}`,
+    beforeSend(event) {
+      if (event.contexts)
+        event.contexts = R.mapObjIndexed(
+          R.mapObjIndexed(serializeContextVariable),
+          event.contexts
+        )
+
+      return event
+    },
   })
 }
 
@@ -46,9 +54,7 @@ export function createSentryPlugin(): ApolloServerPlugin {
               const { query, variables } = ctx.request
               scope.setContext('graphql', {
                 query,
-                ...(variables === undefined
-                  ? {}
-                  : { variables: serializeRecord(variables) }),
+                ...(variables === undefined ? {} : { variables }),
               })
 
               if (error.path) {
@@ -66,6 +72,14 @@ export function createSentryPlugin(): ApolloServerPlugin {
       }
     },
   }
+}
+
+function serializeContextVariable(record: unknown): unknown {
+  if (typeof record !== 'object') return record
+
+  return R.mapObjIndexed((value) => {
+    return typeof value === 'object' ? JSON.stringify(value, null, 2) : value
+  }, record as Record<string, unknown>)
 }
 
 export { Sentry }

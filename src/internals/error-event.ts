@@ -23,8 +23,6 @@ import * as Sentry from '@sentry/node'
 import { function as F, array as A } from 'fp-ts'
 import R from 'ramda'
 
-import { serializeRecord } from '~/utils'
-
 export interface ErrorEvent extends Context {
   error: Error
 }
@@ -81,11 +79,11 @@ function captureErrorEvent(event: ErrorEvent) {
     }
 
     if (event.locationContext) {
-      scope.setContext('location', serializeRecord(event.locationContext))
+      scope.setContext('location', event.locationContext)
     }
 
     if (event.errorContext) {
-      scope.setContext('error', serializeRecord(event.errorContext))
+      scope.setContext('error', event.errorContext)
     }
 
     scope.setLevel(Sentry.Severity.Error)
