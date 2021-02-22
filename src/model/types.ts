@@ -19,13 +19,18 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { License, QueryLicenseArgs } from '../../types'
-import { QueryResolver } from '~/internals/graphql'
+import * as t from 'io-ts'
 
-export type LicensePayload = License
+import { InstanceDecoder } from '~/schema/instance/decoder'
 
-export interface LicenseResolvers {
-  Query: {
-    license: QueryResolver<QueryLicenseArgs, License>
-  }
-}
+export const LicenseDecoder = t.type({
+  id: t.number,
+  instance: InstanceDecoder,
+  default: t.boolean,
+  title: t.string,
+  url: t.string,
+  content: t.string,
+  agreement: t.string,
+  iconHref: t.string,
+})
+export type LicenseModel = t.TypeOf<typeof LicenseDecoder>

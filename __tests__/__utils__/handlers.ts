@@ -22,7 +22,7 @@
 import { rest } from 'msw'
 import * as R from 'ramda'
 
-import { LicensePayload } from '~/schema/license/types'
+import { LicenseModel } from '~/model/types'
 import { NotificationEventPayload } from '~/schema/notification/types'
 import { NavigationPayload } from '~/schema/uuid/abstract-navigation-child/types'
 import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
@@ -41,7 +41,7 @@ export function createAliasHandler(alias: AliasPayload) {
   })
 }
 
-export function createLicenseHandler(license: LicensePayload) {
+export function createLicenseHandler(license: LicenseModel) {
   return createMessageHandler({
     message: {
       type: 'LicenseQuery',

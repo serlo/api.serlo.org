@@ -71,6 +71,7 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^1.0.0",
     "@graphql-codegen/typescript": "^1.0.0",
+    "@graphql-codegen/typescript-resolvers": "^1.0.0",
     "@inyono/changelog": "^0.2.0",
     "@inyono/copyright-headers": "^0.1.0",
     "@microsoft/api-extractor": "^7.0.0",
