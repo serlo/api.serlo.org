@@ -24,6 +24,7 @@ import * as t from 'io-ts'
 import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
 
+import { LicenseModel, LicenseDecoder } from './types'
 import { Environment } from '~/internals/environment'
 import { createHelper, createMutation, createQuery } from '~/internals/model'
 import { isInstance } from '~/schema/instance/utils'
@@ -49,7 +50,7 @@ import { isUnsupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
 import { AliasPayload } from '~/schema/uuid/alias/types'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { UuidPayloadDecoder } from '~/schema/uuid/decoder'
-import { Instance, License, ThreadCreateThreadInput } from '~/types'
+import { Instance, ThreadCreateThreadInput } from '~/types'
 
 export function createSerloModel({
   environment,
@@ -339,10 +340,11 @@ export function createSerloModel({
     environment
   )
 
-  const getLicense = createQuery<{ id: number }, License>(
+  const getLicense = createQuery<{ id: number }, LicenseModel>(
     {
+      decoder: LicenseDecoder,
       enableSwr: true,
-      getCurrentValue: async ({ id }) => {
+      getCurrentValue: async ({ id }: { id: number }) => {
         const response = await handleMessage({
           message: {
             type: 'LicenseQuery',
@@ -352,7 +354,7 @@ export function createSerloModel({
           },
           expectedStatusCodes: [200, 404],
         })
-        return (await response.json()) as License
+        return (await response.json()) as unknown
       },
       maxAge: { day: 1 },
       getKey: ({ id }) => {

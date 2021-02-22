@@ -31,7 +31,7 @@ export interface QuerySpec<P, R> {
   // TODO: this should probably be required
   decoder?: t.Type<R>
   enableSwr: boolean
-  getCurrentValue: (payload: P, previousValue: R | null) => Promise<R>
+  getCurrentValue: (payload: P, previousValue: R | null) => Promise<R | unknown>
   maxAge: Time | undefined
   getKey: (payload: P) => string
   getPayload: (key: string) => O.Option<P>
