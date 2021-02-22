@@ -1,5 +1,3 @@
-import { AuthenticationError } from 'apollo-server'
-
 /**
  * This file is part of Serlo.org API
  *
@@ -21,6 +19,17 @@ import { AuthenticationError } from 'apollo-server'
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { AuthenticationError } from 'apollo-server'
+import { A } from 'ts-toolbelt'
+
+import {
+  License,
+  QueryResolvers,
+  Resolvers,
+  ResolversParentTypes,
+  User,
+} from '~/types'
+
 export function assertUserIsAuthenticated(
   user: number | null
 ): asserts user is number {
@@ -31,4 +40,39 @@ export function createMutationNamespace() {
   return () => {
     return {}
   }
+}
+
+export interface QueryResolvers<Properties extends keyof QueryResolvers> {
+  Query: Required<Pick<QueryResolvers, Properties>>
+}
+
+export type ResolversFor<TypeNames extends keyof GraphQLTypes> = A.Compute<
+  {
+    [TypeName in TypeNames]: ResolverFor<TypeName>
+  }
+>
+
+type ResolverFor<TypeName extends keyof GraphQLTypes> = {
+  [Property in keyof Resolvers[TypeName] &
+    RequiredResolverMethodNames<TypeName>]: Resolvers[TypeName][Property]
+} &
+  Resolvers[TypeName]
+
+type RequiredResolverMethodNames<
+  TypeName extends keyof GraphQLTypes
+> = IncompatibleProperties<
+  GraphQLTypes[TypeName],
+  ResolversParentTypes[TypeName]
+>
+type IncompatibleProperties<GraphQLType, ModelType> = {
+  [Property in keyof GraphQLType]: Property extends keyof ModelType
+    ? ModelType[Property] extends GraphQLType[Property]
+      ? never
+      : Property
+    : Property
+}[keyof GraphQLType]
+
+interface GraphQLTypes {
+  License: License
+  User: User
 }
