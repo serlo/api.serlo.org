@@ -52,17 +52,19 @@ export type PickQueryResolvers<
 >
 
 export type ResolversFor<TypeNames extends keyof GraphQLTypes> = A.Compute<
-  {
-    [TypeName in TypeNames]: ResolverFor<TypeName>
-  },
+  ExcludeTrivialProperties<
+    {
+      [TypeName in TypeNames]: ResolverFor<TypeName>
+    }
+  > &
+    Pick<Resolvers, TypeNames>,
   'deep'
 >
 
 type ResolverFor<TypeName extends keyof GraphQLTypes> = {
   [Property in keyof GetResolvers<TypeName> &
     RequiredResolverMethodNames<TypeName>]: GetResolvers<TypeName>[Property]
-} &
-  GetResolvers<TypeName>
+}
 
 type GetResolvers<TypeName extends keyof GraphQLTypes> = NonNullable<
   Resolvers[TypeName]
@@ -81,6 +83,11 @@ type IncompatibleProperties<GraphQLType, ModelType> = {
       : Property
     : Property
 }[keyof GraphQLType]
+
+type ExcludeTrivialProperties<O> = Omit<
+  O,
+  { [P in keyof O]: keyof O[P] extends never ? P : never }[keyof O]
+>
 
 interface GraphQLTypes {
   License: License

@@ -23,7 +23,6 @@ import { PickQueryResolvers, ResolversFor } from '~/schema/utils'
 
 export const resolvers: ResolversFor<'License'> &
   PickQueryResolvers<'license'> = {
-  License: {},
   Query: {
     license(_parent, { id }, { dataSources }) {
       return dataSources.model.serlo.getLicense({ id })
