@@ -48,8 +48,8 @@ export type Querys<QueryProperties extends keyof QueryResolvers> = A.Compute<
   'deep'
 >
 
-export type TypeResolvers<Ts extends keyof GraphQLTypes> = A.Compute<
-  O.Merge<
+export type TypeResolvers<Ts extends keyof Specs> = A.Compute<
+  O.MergeUp<
     PickRequiredResolvers<
       {
         [T in Ts]: RequiredResolvers<T>
@@ -61,14 +61,21 @@ export type TypeResolvers<Ts extends keyof GraphQLTypes> = A.Compute<
   'deep'
 >
 
-type RequiredResolvers<T extends keyof GraphQLTypes> = OmitKeys<
-  Required<NonNullable<Resolvers[T]>>,
-  | O.IntersectKeys<GraphQLTypes[T], ResolversParentTypes[T], '<-extends'>
+type RequiredResolvers<T extends keyof Specs> = OmitKeys<
+  Required<Specs[T]['Resolvers']>,
+  | O.IntersectKeys<Specs[T]['GraphQL'], Specs[T]['Model'], '<-extends'>
   | '__isTypeOf'
 >
 type PickRequiredResolvers<O extends object> = O.Filter<O, object, '<-extends'>
 type OmitKeys<O extends object, Keys extends string> = Omit<O, Keys & keyof O>
 
-interface GraphQLTypes {
-  License: License
+interface Specs {
+  License: Spec<'License', License>
 }
+
+interface Spec<TypeName extends PossibleTypeNames, GraphQLType> {
+  GraphQL: GraphQLType
+  Model: ResolversParentTypes[TypeName]
+  Resolvers: NonNullable<Resolvers[TypeName]>
+}
+type PossibleTypeNames = keyof Resolvers & keyof ResolversParentTypes
