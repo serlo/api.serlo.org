@@ -41,6 +41,10 @@ export function createMutationNamespace() {
   }
 }
 
+/**
+ * Resolvers type where all query properties in `QueryProperties` are
+ * required.
+ */
 export type Querys<QueryProperties extends keyof QueryResolvers> = A.Compute<
   {
     Query: Required<Pick<QueryResolvers, QueryProperties>>
@@ -48,34 +52,52 @@ export type Querys<QueryProperties extends keyof QueryResolvers> = A.Compute<
   'deep'
 >
 
-export type TypeResolvers<Ts extends keyof Specs> = A.Compute<
-  O.MergeUp<
-    PickRequiredResolvers<
-      {
-        [T in Ts]: RequiredResolvers<T>
-      }
-    >,
-    Pick<Resolvers, Ts>,
-    'deep'
-  >,
+/**
+ * Resolvers type with all resolvers in the union `TypeNames`. All resolvers
+ * functions are required where either its corresponding property is missing
+ * in the model type or the type of the model type does not fit the type of
+ * the graphql type.
+ *
+ * You need to add a specification to {@link Specs} for any graphql type you
+ * want to use this type helper with.
+ */
+export type TypeResolvers<TypeNames extends keyof Specs> = A.Compute<
+  O.MergeUp<RequiredResolvers<TypeNames>, Pick<Resolvers, TypeNames>, 'deep'>,
   'deep'
 >
-
-type RequiredResolvers<T extends keyof Specs> = OmitKeys<
+type RequiredResolvers<TypeNames extends keyof Specs> = PickRequiredResolvers<
+  {
+    [TypeName in TypeNames]: RequiredResolverFunctions<TypeName>
+  }
+>
+type RequiredResolverFunctions<T extends keyof Specs> = OmitKeys<
   Required<Specs[T]['Resolvers']>,
   | O.IntersectKeys<Specs[T]['GraphQL'], Specs[T]['Model'], '<-extends'>
   | '__isTypeOf'
 >
+// When the model and the graphql type are the same, the object with all required
+// resolver functions will be empty. This type function filters all such
+// empty resolver types.
 type PickRequiredResolvers<O extends object> = O.Filter<O, object, '<-extends'>
-type OmitKeys<O extends object, Keys extends string> = Omit<O, Keys & keyof O>
 
+/**
+ * List of specifications which couple the graphql type, the model type and the
+ * resolvers type for a graphql type together. To add a specification for
+ * another type add a property with a name equaling the type name and the type
+ * `Spec< ...type name as string..., ...type generated in src/types ...>`
+ */
 interface Specs {
   License: Spec<'License', License>
 }
-
 interface Spec<TypeName extends PossibleTypeNames, GraphQLType> {
   GraphQL: GraphQLType
   Model: ResolversParentTypes[TypeName]
   Resolvers: NonNullable<Resolvers[TypeName]>
 }
 type PossibleTypeNames = keyof Resolvers & keyof ResolversParentTypes
+
+/**
+ * A version of `Omit` where the keys do not need to be property names of the
+ * object.
+ */
+type OmitKeys<O extends object, Keys extends string> = Omit<O, Keys & keyof O>
