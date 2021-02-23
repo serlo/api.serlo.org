@@ -20,14 +20,13 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { AuthenticationError } from 'apollo-server'
-import { A } from 'ts-toolbelt'
+import { A, O } from 'ts-toolbelt'
 
 import {
   License,
   QueryResolvers,
   Resolvers,
   ResolversParentTypes,
-  User,
 } from '~/types'
 
 export function assertUserIsAuthenticated(
@@ -42,54 +41,34 @@ export function createMutationNamespace() {
   }
 }
 
-export type PickQueryResolvers<
-  Properties extends keyof QueryResolvers
-> = A.Compute<
+export type Querys<QueryProperties extends keyof QueryResolvers> = A.Compute<
   {
-    Query: Required<Pick<QueryResolvers, Properties>>
+    Query: Required<Pick<QueryResolvers, QueryProperties>>
   },
   'deep'
 >
 
-export type ResolversFor<TypeNames extends keyof GraphQLTypes> = A.Compute<
-  ExcludeTrivialProperties<
-    {
-      [TypeName in TypeNames]: ResolverFor<TypeName>
-    }
-  > &
-    Pick<Resolvers, TypeNames>,
+export type TypeResolvers<Ts extends keyof GraphQLTypes> = A.Compute<
+  O.Merge<
+    PickRequiredResolvers<
+      {
+        [T in Ts]: RequiredResolvers<T>
+      }
+    >,
+    Pick<Resolvers, Ts>,
+    'deep'
+  >,
   'deep'
 >
 
-type ResolverFor<TypeName extends keyof GraphQLTypes> = {
-  [Property in keyof GetResolvers<TypeName> &
-    RequiredResolverMethodNames<TypeName>]: GetResolvers<TypeName>[Property]
-}
-
-type GetResolvers<TypeName extends keyof GraphQLTypes> = NonNullable<
-  Resolvers[TypeName]
+type RequiredResolvers<T extends keyof GraphQLTypes> = OmitKeys<
+  Required<NonNullable<Resolvers[T]>>,
+  | O.IntersectKeys<GraphQLTypes[T], ResolversParentTypes[T], '<-extends'>
+  | '__isTypeOf'
 >
-
-type RequiredResolverMethodNames<
-  TypeName extends keyof GraphQLTypes
-> = IncompatibleProperties<
-  GraphQLTypes[TypeName],
-  ResolversParentTypes[TypeName]
->
-type IncompatibleProperties<GraphQLType, ModelType> = {
-  [Property in keyof GraphQLType]: Property extends keyof ModelType
-    ? ModelType[Property] extends GraphQLType[Property]
-      ? never
-      : Property
-    : Property
-}[keyof GraphQLType]
-
-type ExcludeTrivialProperties<O> = Omit<
-  O,
-  { [P in keyof O]: keyof O[P] extends never ? P : never }[keyof O]
->
+type PickRequiredResolvers<O extends object> = O.Filter<O, object, '<-extends'>
+type OmitKeys<O extends object, Keys extends string> = Omit<O, Keys & keyof O>
 
 interface GraphQLTypes {
   License: License
-  User: User
 }
