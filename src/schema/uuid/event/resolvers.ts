@@ -19,17 +19,22 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { EventPayload, EventRevisionPayload } from './types'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
-} from '../abstract-repository'
-import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
-import { EventPayload, EventRevisionPayload } from './types'
+} from '~/schema/uuid/abstract-repository/utils'
+import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
+import { EventDecoder, EventRevisionDecoder } from '~/schema/uuid/event/decoder'
 
 export const resolvers = {
   Event: {
-    ...createRepositoryResolvers<EventPayload, EventRevisionPayload>(),
+    ...createRepositoryResolvers<EventPayload, EventRevisionPayload>({
+      revisionDecoder: EventRevisionDecoder,
+    }),
     ...createTaxonomyTermChildResolvers<EventPayload>(),
   },
-  EventRevision: createRevisionResolvers<EventPayload, EventRevisionPayload>(),
+  EventRevision: createRevisionResolvers<EventPayload, EventRevisionPayload>({
+    repositoryDecoder: EventDecoder,
+  }),
 }

@@ -25,7 +25,10 @@ import {
   NotificationEventType,
 } from '../types'
 import { Resolver } from '~/internals/graphql'
-import { EntityPayload, EntityRevisionPayload } from '~/schema/uuid'
+import {
+  EntityPayload,
+  EntityRevisionPayload,
+} from '~/schema/uuid/abstract-entity/types'
 import { CreateEntityRevisionNotificationEvent } from '~/types'
 
 export interface CreateEntityRevisionNotificationEventPayload

@@ -21,20 +21,25 @@
  */
 import { GraphQLResolveInfo } from 'graphql'
 
-import { createExerciseResolvers } from '../abstract-exercise'
+import { GroupedExercisePayload, GroupedExerciseRevisionPayload } from './types'
+import { Context, requestsOnlyFields } from '~/internals/graphql'
+import { createExerciseResolvers } from '~/schema/uuid/abstract-exercise/utils'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
-} from '../abstract-repository'
-import { GroupedExercisePayload, GroupedExerciseRevisionPayload } from './types'
-import { Context, requestsOnlyFields } from '~/internals/graphql'
+} from '~/schema/uuid/abstract-repository/utils'
+import { ExerciseGroupDecoder } from '~/schema/uuid/exercise-group/decoder'
+import {
+  GroupedExerciseDecoder,
+  GroupedExerciseRevisionDecoder,
+} from '~/schema/uuid/grouped-exercise/decoder'
 
 export const resolvers = {
   GroupedExercise: {
     ...createRepositoryResolvers<
       GroupedExercisePayload,
       GroupedExerciseRevisionPayload
-    >(),
+    >({ revisionDecoder: GroupedExerciseRevisionDecoder }),
     ...createExerciseResolvers<GroupedExercisePayload>(),
     async exerciseGroup(
       groupedExercise: GroupedExercisePayload,
@@ -46,11 +51,14 @@ export const resolvers = {
       if (requestsOnlyFields('ExerciseGroup', ['id'], info)) {
         return partialExerciseGroup
       }
-      return dataSources.model.serlo.getUuid(partialExerciseGroup)
+      return dataSources.model.serlo.getUuidWithCustomDecoder({
+        ...partialExerciseGroup,
+        decoder: ExerciseGroupDecoder,
+      })
     },
   },
   GroupedExerciseRevision: createRevisionResolvers<
     GroupedExercisePayload,
     GroupedExerciseRevisionPayload
-  >(),
+  >({ repositoryDecoder: GroupedExerciseDecoder }),
 }

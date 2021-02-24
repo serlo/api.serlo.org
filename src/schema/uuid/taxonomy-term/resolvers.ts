@@ -19,11 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { createUuidResolvers } from '../abstract-uuid'
 import { TaxonomyTermPayload, TaxonomyTermResolvers } from './types'
 import { Context } from '~/internals/graphql'
-import { resolveConnection } from '~/schema/connection'
-import { createThreadResolvers } from '~/schema/thread'
+import { resolveConnection } from '~/schema/connection/utils'
+import { createThreadResolvers } from '~/schema/thread/utils'
+import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
+import { TaxonomyTermPayloadDecoder } from '~/schema/uuid/taxonomy-term/decoder'
 import { isDefined } from '~/utils'
 
 export const resolvers: TaxonomyTermResolvers = {
@@ -92,9 +93,10 @@ async function resolveTaxonomyTermPath(
   let current: TaxonomyTermPayload = parent
 
   while (current.parentId !== null) {
-    const next = (await dataSources.model.serlo.getUuid({
+    const next = await dataSources.model.serlo.getUuidWithCustomDecoder({
       id: current.parentId,
-    })) as TaxonomyTermPayload | null
+      decoder: TaxonomyTermPayloadDecoder,
+    })
     if (next === null) break
     path.unshift(next)
     current = next

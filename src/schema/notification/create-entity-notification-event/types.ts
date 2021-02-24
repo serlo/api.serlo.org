@@ -25,7 +25,7 @@ import {
   NotificationEventType,
 } from '../types'
 import { Resolver } from '~/internals/graphql'
-import { EntityPayload } from '~/schema/uuid'
+import { EntityPayload } from '~/schema/uuid/abstract-entity/types'
 import { CreateEntityNotificationEvent } from '~/types'
 
 export interface CreateEntityNotificationEventPayload

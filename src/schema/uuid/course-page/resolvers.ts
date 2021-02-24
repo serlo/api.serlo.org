@@ -21,19 +21,23 @@
  */
 import { GraphQLResolveInfo } from 'graphql'
 
+import { CoursePagePayload, CoursePageRevisionPayload } from './types'
+import { Context, requestsOnlyFields } from '~/internals/graphql'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
-} from '../abstract-repository'
-import { CoursePagePayload, CoursePageRevisionPayload } from './types'
-import { Context, requestsOnlyFields } from '~/internals/graphql'
+} from '~/schema/uuid/abstract-repository/utils'
+import {
+  CoursePageDecoder,
+  CoursePageRevisionDecoder,
+} from '~/schema/uuid/course-page/decoder'
+import { CourseDecoder } from '~/schema/uuid/course/decoder'
 
 export const resolvers = {
   CoursePage: {
-    ...createRepositoryResolvers<
-      CoursePagePayload,
-      CoursePageRevisionPayload
-    >(),
+    ...createRepositoryResolvers<CoursePagePayload, CoursePageRevisionPayload>({
+      revisionDecoder: CoursePageRevisionDecoder,
+    }),
     async course(
       coursePage: CoursePagePayload,
       _args: never,
@@ -44,11 +48,16 @@ export const resolvers = {
       if (requestsOnlyFields('Course', ['id'], info)) {
         return partialCourse
       }
-      return dataSources.model.serlo.getUuid(partialCourse)
+      return dataSources.model.serlo.getUuidWithCustomDecoder({
+        ...partialCourse,
+        decoder: CourseDecoder,
+      })
     },
   },
   CoursePageRevision: createRevisionResolvers<
     CoursePagePayload,
     CoursePageRevisionPayload
-  >(),
+  >({
+    repositoryDecoder: CoursePageDecoder,
+  }),
 }

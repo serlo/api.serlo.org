@@ -39,11 +39,8 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
-import {
-  EntityPayload,
-  EntityType,
-  TaxonomyTermChildPayload,
-} from '~/schema/uuid'
+import { EntityPayload, EntityType } from '~/schema/uuid/abstract-entity/types'
+import { TaxonomyTermChildPayload } from '~/schema/uuid/abstract-taxonomy-term-child/types'
 
 let client: Client
 

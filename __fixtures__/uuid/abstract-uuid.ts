@@ -21,7 +21,7 @@
  */
 import * as R from 'ramda'
 
-import { UuidPayload } from '~/schema/uuid'
+import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 
 export function getUuidDataWithoutSubResolvers(uuid: UuidPayload) {
   return R.pick(['__typename', 'id', 'trashed'], uuid)

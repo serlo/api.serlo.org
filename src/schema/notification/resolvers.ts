@@ -21,13 +21,13 @@
  */
 import { ForbiddenError } from 'apollo-server'
 
-import { resolveConnection } from '../connection'
 import { assertUserIsAuthenticated, createMutationNamespace } from '../utils'
 import {
   NotificationEventPayload,
   NotificationPayload,
   NotificationResolvers,
 } from './types'
+import { resolveConnection } from '~/schema/connection/utils'
 
 export const resolvers: NotificationResolvers = {
   AbstractNotificationEvent: {

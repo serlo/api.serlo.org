@@ -32,7 +32,10 @@ import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
-import { AppletPayload, AppletRevisionPayload } from '~/schema/uuid'
+import {
+  AppletPayload,
+  AppletRevisionPayload,
+} from '~/schema/uuid/applet/types'
 
 test('Applet', async () => {
   await addUuidInteraction<AppletPayload>({

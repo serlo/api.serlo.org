@@ -21,10 +21,11 @@
  */
 import * as t from 'io-ts'
 
-import { DiscriminatorType } from '~/schema/uuid'
+import { CommentPayload } from '~/schema/thread/types'
 import { AbstractUuidPayloadDecoder } from '~/schema/uuid/abstract-uuid/decoder'
+import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
 
-export const CommentPayloadDecoder = t.exact(
+export const CommentPayloadDecoder: t.Type<CommentPayload> = t.exact(
   t.intersection([
     AbstractUuidPayloadDecoder,
     t.type({

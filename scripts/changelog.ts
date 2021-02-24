@@ -608,6 +608,55 @@ async function exec(): Promise<void> {
       date: '2021-02-17',
       fixed: ['Reject invalid cache values.'],
     },
+    {
+      tagName: 'v0.19.6',
+      date: '2021-02-19',
+      internal: [['swr-queue-worker', 'Configurable delay between jobs.']],
+    },
+    {
+      tagName: 'v0.19.7',
+      date: '2021-02-19',
+      internal: [['uuid', 'Reject invalid cache values for videos.']],
+    },
+    {
+      tagName: 'v0.19.8',
+      date: '2021-02-21',
+      yanked: true,
+    },
+    {
+      tagName: 'v0.19.9',
+      date: '2021-02-21',
+      internal: [
+        ['uuid', 'Reject invalid cache values for repositories and revisions.'],
+      ],
+    },
+    {
+      tagName: 'v0.19.10',
+      date: '2021-02-21',
+      internal: [['uuid', 'Reject invalid cache values for threads.']],
+    },
+    {
+      tagName: 'v0.19.11',
+      date: '2021-02-21',
+      internal: [
+        ['uuid', 'Reject invalid cache values for various other cases.'],
+      ],
+    },
+    {
+      tagName: 'v0.19.12',
+      date: '2021-02-22',
+      yanked: true,
+    },
+    {
+      tagName: 'v0.19.13',
+      date: '2021-02-22',
+      yanked: true,
+    },
+    {
+      tagName: 'v0.19.14',
+      date: '2021-02-22',
+      internal: [['uuid', 'Disable SWR background updates.']],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

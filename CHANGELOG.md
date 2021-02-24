@@ -2,6 +2,48 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.19.14](https://github.com/serlo/api.serlo.org/compare/v0.19.13..v0.19.14) - February 22, 2021
+
+### Internal
+
+- **uuid**. Disable SWR background updates.
+
+## [v0.19.13](https://github.com/serlo/api.serlo.org/compare/v0.19.12..v0.19.13) - February 22, 2021 \[YANKED]
+
+## [v0.19.12](https://github.com/serlo/api.serlo.org/compare/v0.19.11..v0.19.12) - February 22, 2021 \[YANKED]
+
+## [v0.19.11](https://github.com/serlo/api.serlo.org/compare/v0.19.10..v0.19.11) - February 21, 2021
+
+### Internal
+
+- **uuid**. Reject invalid cache values for various other cases.
+
+## [v0.19.10](https://github.com/serlo/api.serlo.org/compare/v0.19.9..v0.19.10) - February 21, 2021
+
+### Internal
+
+- **uuid**. Reject invalid cache values for threads.
+
+## [v0.19.9](https://github.com/serlo/api.serlo.org/compare/v0.19.8..v0.19.9) - February 21, 2021
+
+### Internal
+
+- **uuid**. Reject invalid cache values for repositories and revisions.
+
+## [v0.19.8](https://github.com/serlo/api.serlo.org/compare/v0.19.7..v0.19.8) - February 21, 2021 \[YANKED]
+
+## [v0.19.7](https://github.com/serlo/api.serlo.org/compare/v0.19.6..v0.19.7) - February 19, 2021
+
+### Internal
+
+- **uuid**. Reject invalid cache values for videos.
+
+## [v0.19.6](https://github.com/serlo/api.serlo.org/compare/v0.19.5..v0.19.6) - February 19, 2021
+
+### Internal
+
+- **swr-queue-worker**. Configurable delay between jobs.
+
 ## [v0.19.5](https://github.com/serlo/api.serlo.org/compare/v0.19.4..v0.19.5) - February 17, 2021
 
 ### Fixed

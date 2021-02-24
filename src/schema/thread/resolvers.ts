@@ -23,13 +23,13 @@ import { ApolloError, ForbiddenError } from 'apollo-server'
 
 import { CommentPayload, ThreadDataType, ThreadResolvers } from './types'
 import { decodeThreadId, decodeThreadIds, encodeThreadId } from './utils'
-import { resolveConnection } from '~/schema/connection'
+import { resolveConnection } from '~/schema/connection/utils'
 import {
   assertUserIsAuthenticated,
   createMutationNamespace,
 } from '~/schema/utils'
-import { createUuidResolvers } from '~/schema/uuid/abstract-uuid'
-import { UserPayload } from '~/schema/uuid/user'
+import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
+import { UserPayloadDecoder } from '~/schema/uuid/user/decoder'
 
 export const resolvers: ThreadResolvers = {
   Thread: {
@@ -70,9 +70,10 @@ export const resolvers: ThreadResolvers = {
       return comment.date
     },
     async author(comment, _args, { dataSources }) {
-      const author = (await dataSources.model.serlo.getUuid({
+      const author = await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: comment.authorId,
-      })) as UserPayload | null
+        decoder: UserPayloadDecoder,
+      })
       if (author === null) {
         throw new ApolloError('There is no author with this id')
       }

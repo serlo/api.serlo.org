@@ -24,11 +24,13 @@ import * as R from 'ramda'
 import { license } from '../license'
 import { getRepositoryDataWithoutSubResolvers } from './abstract-repository'
 import {
-  ArticlePayload,
-  ArticleRevisionPayload,
   EntityRevisionType,
   EntityType,
-} from '~/schema/uuid'
+} from '~/schema/uuid/abstract-entity/types'
+import {
+  ArticlePayload,
+  ArticleRevisionPayload,
+} from '~/schema/uuid/article/types'
 import { Instance } from '~/types'
 
 export const article: ArticlePayload = {

@@ -21,20 +21,26 @@
  */
 import R from 'ramda'
 
+import { CoursePayload, CourseRevisionPayload } from './types'
+import { Context } from '~/internals/graphql'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
-} from '../abstract-repository'
-import { createTaxonomyTermChildResolvers } from '../abstract-taxonomy-term-child'
-import { CoursePagePayload } from '../course-page'
-import { CoursePayload, CourseRevisionPayload } from './types'
-import { Context } from '~/internals/graphql'
+} from '~/schema/uuid/abstract-repository/utils'
+import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
+import { CoursePageDecoder } from '~/schema/uuid/course-page/decoder'
+import {
+  CourseDecoder,
+  CourseRevisionDecoder,
+} from '~/schema/uuid/course/decoder'
 import { CoursePagesArgs } from '~/types'
 import { isDefined } from '~/utils'
 
 export const resolvers = {
   Course: {
-    ...createRepositoryResolvers<CoursePayload, CourseRevisionPayload>(),
+    ...createRepositoryResolvers<CoursePayload, CourseRevisionPayload>({
+      revisionDecoder: CourseRevisionDecoder,
+    }),
     ...createTaxonomyTermChildResolvers<CoursePayload>(),
     async pages(
       course: CoursePayload,
@@ -43,9 +49,10 @@ export const resolvers = {
     ) {
       const pages = await Promise.all(
         course.pageIds.map((id: number) => {
-          return dataSources.model.serlo.getUuid({
+          return dataSources.model.serlo.getUuidWithCustomDecoder({
             id,
-          }) as Promise<CoursePagePayload | null>
+            decoder: CoursePageDecoder,
+          })
         })
       )
 
@@ -61,8 +68,7 @@ export const resolvers = {
       })
     },
   },
-  CourseRevision: createRevisionResolvers<
-    CoursePayload,
-    CourseRevisionPayload
-  >(),
+  CourseRevision: createRevisionResolvers<CoursePayload, CourseRevisionPayload>(
+    { repositoryDecoder: CourseDecoder }
+  ),
 }

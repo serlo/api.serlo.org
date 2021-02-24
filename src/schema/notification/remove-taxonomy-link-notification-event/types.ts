@@ -25,7 +25,8 @@ import {
   NotificationEventType,
 } from '../types'
 import { Resolver } from '~/internals/graphql'
-import { TaxonomyTermPayload, UuidPayload } from '~/schema/uuid'
+import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
+import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
 import { RemoveTaxonomyLinkNotificationEvent } from '~/types'
 
 export interface RemoveTaxonomyLinkNotificationEventPayload

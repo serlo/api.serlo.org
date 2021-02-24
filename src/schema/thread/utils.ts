@@ -21,14 +21,10 @@
  */
 import { UserInputError } from 'apollo-server'
 
-import {
-  CommentPayload,
-  ThreadAwareResolvers,
-  ThreadData,
-  ThreadDataType,
-} from './types'
+import { ThreadAwareResolvers, ThreadData, ThreadDataType } from './types'
 import { Context } from '~/internals/graphql'
-import { resolveConnection } from '~/schema/connection'
+import { resolveConnection } from '~/schema/connection/utils'
+import { CommentPayloadDecoder } from '~/schema/thread/decoder'
 import { isDefined } from '~/utils'
 
 export function createThreadResolvers(): ThreadAwareResolvers {
@@ -117,9 +113,14 @@ async function resolveComments(
   dataSources: Context['dataSources'],
   ids: number[]
 ) {
-  const comments = (await Promise.all(
-    ids.map((id) => dataSources.model.serlo.getUuid({ id }))
-  )) as (CommentPayload | null)[]
+  const comments = await Promise.all(
+    ids.map((id) =>
+      dataSources.model.serlo.getUuidWithCustomDecoder({
+        id,
+        decoder: CommentPayloadDecoder,
+      })
+    )
+  )
 
   return comments.filter(isDefined)
 }

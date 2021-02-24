@@ -21,13 +21,20 @@
  */
 import * as t from 'io-ts'
 
-import { EntityRevisionType, EntityType } from '~/schema/uuid'
 import {
   AbstractEntityPayloadDecoder,
   AbstractEntityRevisionPayloadDecoder,
 } from '~/schema/uuid/abstract-entity/decoder'
+import {
+  EntityRevisionType,
+  EntityType,
+} from '~/schema/uuid/abstract-entity/types'
+import {
+  ExercisePayload,
+  ExerciseRevisionPayload,
+} from '~/schema/uuid/exercise/types'
 
-export const ExerciseDecoder = t.exact(
+export const ExerciseDecoder: t.Type<ExercisePayload> = t.exact(
   t.intersection([
     AbstractEntityPayloadDecoder,
     t.type({
@@ -38,7 +45,7 @@ export const ExerciseDecoder = t.exact(
   ])
 )
 
-export const ExerciseRevisionDecoder = t.exact(
+export const ExerciseRevisionDecoder: t.Type<ExerciseRevisionPayload> = t.exact(
   t.intersection([
     AbstractEntityRevisionPayloadDecoder,
     t.type({

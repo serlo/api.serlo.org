@@ -23,11 +23,11 @@ import * as t from 'io-ts'
 
 import { Instance } from '~/types'
 
-export const InstanceDecoder = t.union([
-  t.literal<Instance>(Instance.De),
-  t.literal<Instance>(Instance.En),
-  t.literal<Instance>(Instance.Es),
-  t.literal<Instance>(Instance.Fr),
-  t.literal<Instance>(Instance.Hi),
-  t.literal<Instance>(Instance.Ta),
+export const InstanceDecoder: t.Type<Instance> = t.union([
+  t.literal(Instance.De),
+  t.literal(Instance.En),
+  t.literal(Instance.Es),
+  t.literal(Instance.Fr),
+  t.literal(Instance.Hi),
+  t.literal(Instance.Ta),
 ])

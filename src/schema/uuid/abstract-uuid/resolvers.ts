@@ -28,7 +28,7 @@ import {
   assertUserIsAuthenticated,
   createMutationNamespace,
 } from '~/schema/utils'
-import { decodePath, encodePath } from '~/schema/uuid/alias'
+import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { QueryUuidArgs } from '~/types'
 
 export const resolvers: AbstractUuidResolvers = {

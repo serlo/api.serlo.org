@@ -26,13 +26,13 @@ import {
   Resolver,
   TypeResolver,
 } from '~/internals/graphql'
-import { Connection } from '~/schema/connection'
+import { Connection } from '~/schema/connection/types'
 import {
   DiscriminatorType,
-  UserPayload,
   UuidPayload,
   UuidResolvers,
-} from '~/schema/uuid'
+} from '~/schema/uuid/abstract-uuid/types'
+import { UserPayload } from '~/schema/uuid/user/types'
 import {
   Scalars,
   ThreadAwareThreadsArgs,
@@ -112,7 +112,7 @@ export interface ThreadAwareResolvers {
 export interface CommentPayload {
   id: number
   trashed: boolean
-  alias: null | string
+  alias: string
   __typename: DiscriminatorType.Comment
   authorId: number
   title: string | null

@@ -20,9 +20,8 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { array as A, pipeable } from 'fp-ts'
+import * as t from 'io-ts'
 
-import { resolveConnection } from '../../connection'
-import { createUuidResolvers } from '../abstract-uuid'
 import { resolveUser } from '../user/utils'
 import {
   AbstractRepositoryPayload,
@@ -31,27 +30,38 @@ import {
   RevisionResolvers,
 } from './types'
 import { requestsOnlyFields } from '~/internals/graphql'
+import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
+import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
+import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { isDefined } from '~/utils'
 
 export function createRepositoryResolvers<
-  E extends AbstractRepositoryPayload,
-  R extends AbstractRevisionPayload
->(): RepositoryResolvers<E, R> {
+  E extends UuidPayload & AbstractRepositoryPayload,
+  R extends UuidPayload & AbstractRevisionPayload
+>({
+  revisionDecoder,
+}: {
+  revisionDecoder: t.Type<R>
+}): RepositoryResolvers<E, R> {
   return {
     ...createUuidResolvers(),
     ...createThreadResolvers(),
     async currentRevision(entity, _args, { dataSources }) {
       if (!entity.currentRevisionId) return null
-      return (await dataSources.model.serlo.getUuid({
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: entity.currentRevisionId,
-      })) as R | null
+        decoder: revisionDecoder,
+      })
     },
     async revisions(entity, cursorPayload, { dataSources }) {
       const revisions = pipeable.pipe(
         await Promise.all(
           entity.revisionIds.map(async (id) => {
-            return (await dataSources.model.serlo.getUuid({ id })) as R | null
+            return await dataSources.model.serlo.getUuidWithCustomDecoder({
+              id,
+              decoder: revisionDecoder,
+            })
           })
         ),
         A.filter(isDefined),
@@ -85,9 +95,13 @@ export function createRepositoryResolvers<
 }
 
 export function createRevisionResolvers<
-  E extends AbstractRepositoryPayload,
-  R extends AbstractRevisionPayload
->(): RevisionResolvers<E, R> {
+  E extends UuidPayload & AbstractRepositoryPayload,
+  R extends UuidPayload & AbstractRevisionPayload
+>({
+  repositoryDecoder,
+}: {
+  repositoryDecoder: t.Type<E>
+}): RevisionResolvers<E, R> {
   return {
     ...createUuidResolvers(),
     ...createThreadResolvers(),
@@ -95,9 +109,10 @@ export function createRevisionResolvers<
       return resolveUser({ id: entityRevision.authorId }, context, info)
     },
     repository: async (entityRevision, _args, { dataSources }) => {
-      return (await dataSources.model.serlo.getUuid({
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: entityRevision.repositoryId,
-      })) as E | null
+        decoder: repositoryDecoder,
+      })
     },
   }
 }

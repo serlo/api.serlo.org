@@ -35,7 +35,7 @@ import {
 import {
   GroupedExercisePayload,
   GroupedExerciseRevisionPayload,
-} from '~/schema/uuid'
+} from '~/schema/uuid/grouped-exercise/types'
 
 test('GroupedExercise', async () => {
   await addUuidInteraction<GroupedExercisePayload>({

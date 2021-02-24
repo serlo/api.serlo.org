@@ -20,14 +20,13 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
-import { Connection } from '../../connection'
+import { QueryResolver, Resolver } from '~/internals/graphql'
+import { Connection } from '~/schema/connection/types'
+import { ThreadAwareResolvers } from '~/schema/thread/types'
 import {
-  AbstractUuidPayload,
   DiscriminatorType,
   UuidResolvers,
-} from '../abstract-uuid'
-import { QueryResolver, Resolver } from '~/internals/graphql'
-import { ThreadAwareResolvers } from '~/schema/thread'
+} from '~/schema/uuid/abstract-uuid/types'
 import {
   QueryActiveAuthorsArgs,
   QueryActiveDonorsArgs,
@@ -58,10 +57,4 @@ export interface UserResolvers {
     activeReviewer: Resolver<UserPayload, never, boolean>
   } & UuidResolvers &
     ThreadAwareResolvers
-}
-
-export function isUserPayload(
-  payload: AbstractUuidPayload | null
-): payload is UserPayload {
-  return payload !== null && payload.__typename === DiscriminatorType.User
 }

@@ -19,16 +19,21 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { PagePayload, PageRevisionPayload } from '.'
+import { PagePayload, PageResolvers, PageRevisionPayload } from './types'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
-} from '../abstract-repository'
-import { PageResolvers } from './types'
+} from '~/schema/uuid/abstract-repository/utils'
+import {
+  PagePayloadDecoder,
+  PageRevisionPayloadDecoder,
+} from '~/schema/uuid/page/decoder'
 
 export const resolvers: PageResolvers = {
   Page: {
-    ...createRepositoryResolvers<PagePayload, PageRevisionPayload>(),
+    ...createRepositoryResolvers<PagePayload, PageRevisionPayload>({
+      revisionDecoder: PageRevisionPayloadDecoder,
+    }),
     async navigation(page, _args, { dataSources }) {
       return dataSources.model.serlo.getNavigation({
         instance: page.instance,
@@ -36,5 +41,7 @@ export const resolvers: PageResolvers = {
       })
     },
   },
-  PageRevision: createRevisionResolvers<PagePayload, PageRevisionPayload>(),
+  PageRevision: createRevisionResolvers<PagePayload, PageRevisionPayload>({
+    repositoryDecoder: PagePayloadDecoder,
+  }),
 }

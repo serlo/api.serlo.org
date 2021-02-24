@@ -60,7 +60,7 @@ import {
   addMessageInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../__utils__'
-import { AbstractNotificationEventPayload } from '~/schema/notification'
+import { AbstractNotificationEventPayload } from '~/schema/notification/types'
 
 describe('EventQuery', () => {
   async function addNotificationEventInteraction<

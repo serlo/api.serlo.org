@@ -50,5 +50,6 @@ declare namespace NodeJS {
      * Used by swr-queue-worker only
      */
     SWR_QUEUE_WORKER_CONCURRENCY: string
+    SWR_QUEUE_WORKER_DELAY: string | undefined
   }
 }

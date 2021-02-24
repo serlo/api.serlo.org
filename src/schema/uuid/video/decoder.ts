@@ -21,13 +21,17 @@
  */
 import * as t from 'io-ts'
 
-import { EntityRevisionType, EntityType } from '~/schema/uuid'
 import {
   AbstractEntityPayloadDecoder,
   AbstractEntityRevisionPayloadDecoder,
 } from '~/schema/uuid/abstract-entity/decoder'
+import {
+  EntityRevisionType,
+  EntityType,
+} from '~/schema/uuid/abstract-entity/types'
+import { VideoPayload, VideoRevisionPayload } from '~/schema/uuid/video/types'
 
-export const VideoDecoder = t.exact(
+export const VideoDecoder: t.Type<VideoPayload> = t.exact(
   t.intersection([
     AbstractEntityPayloadDecoder,
     t.type({
@@ -37,7 +41,7 @@ export const VideoDecoder = t.exact(
   ])
 )
 
-export const VideoRevisionDecoder = t.exact(
+export const VideoRevisionDecoder: t.Type<VideoRevisionPayload> = t.exact(
   t.intersection([
     AbstractEntityRevisionPayloadDecoder,
     t.type({

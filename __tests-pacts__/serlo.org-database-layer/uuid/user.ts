@@ -27,7 +27,7 @@ import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
-import { UserPayload } from '~/schema/uuid'
+import { UserPayload } from '~/schema/uuid/user/types'
 
 test('User', async () => {
   await addUuidInteraction<UserPayload>({

@@ -22,21 +22,39 @@
 import * as t from 'io-ts'
 
 import { InstanceDecoder } from '~/schema/instance/decoder'
-import { DiscriminatorType } from '~/schema/uuid/abstract-uuid'
 import { AbstractUuidPayloadDecoder } from '~/schema/uuid/abstract-uuid/decoder'
+import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
+import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
+import { TaxonomyTermType } from '~/types'
 
-export const TaxonomyTermPayloadDecoder = t.exact(
+export const TaxonomyTermTypeDecoder: t.Type<TaxonomyTermType> = t.union([
+  t.literal(TaxonomyTermType.Blog),
+  t.literal(TaxonomyTermType.Curriculum),
+  t.literal(TaxonomyTermType.CurriculumTopic),
+  t.literal(TaxonomyTermType.CurriculumTopicFolder),
+  t.literal(TaxonomyTermType.Forum),
+  t.literal(TaxonomyTermType.ForumCategory),
+  t.literal(TaxonomyTermType.Locale),
+  t.literal(TaxonomyTermType.Root),
+  t.literal(TaxonomyTermType.Subject),
+  t.literal(TaxonomyTermType.Topic),
+  t.literal(TaxonomyTermType.TopicFolder),
+])
+
+export const TaxonomyTermPayloadDecoder: t.Type<TaxonomyTermPayload> = t.exact(
   t.intersection([
     AbstractUuidPayloadDecoder,
     t.type({
       __typename: t.literal(DiscriminatorType.TaxonomyTerm),
-      type: t.string,
+      type: TaxonomyTermTypeDecoder,
       instance: InstanceDecoder,
       name: t.string,
-      description: t.union([t.string, t.null]),
       weight: t.number,
-      parentId: t.union([t.number, t.null]),
       childrenIds: t.array(t.number),
+      parentId: t.union([t.number, t.null]),
+    }),
+    t.partial({
+      description: t.union([t.string, t.null]),
     }),
   ])
 )
