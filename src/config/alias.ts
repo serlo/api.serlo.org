@@ -70,7 +70,7 @@ export const aliases: AliasConfig = {
     '/serlo': 112249,
   },
   [Instance.Fr]: {
-    '/boîte-à-méthodes': 148617,
+    '/conseils-pour-apprendre': 148617,
     '/community': 141583,
     '/contact': 143390,
     '/get-involved': 141581,
