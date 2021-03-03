@@ -26,7 +26,7 @@ import { AbstractUuidPayload } from '~/schema/uuid/abstract-uuid/types'
 
 export const resolvers: SubscriptionResolvers = {
   Query: {
-    async subscriptions(parent, cursorPayload, { dataSources, userId }) {
+    async subscriptions(_parent, cursorPayload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       const subscriptions = await dataSources.model.serlo.getSubscriptions({
         userId,
