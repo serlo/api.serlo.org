@@ -22,7 +22,7 @@
 import { assertUserIsAuthenticated, createMutationNamespace } from '../utils'
 import { SubscriptionResolvers } from './types'
 import { resolveConnection } from '~/schema/connection/utils'
-import { AbstractUuidPayload } from '~/schema/uuid/abstract-uuid/types'
+import { isDefined } from '~/utils'
 
 export const resolvers: SubscriptionResolvers = {
   Query: {
@@ -36,10 +36,8 @@ export const resolvers: SubscriptionResolvers = {
           return dataSources.model.serlo.getUuid({ id: id.id })
         })
       )
-      return resolveConnection<AbstractUuidPayload>({
-        nodes: result.filter(
-          (payload) => payload !== null
-        ) as AbstractUuidPayload[],
+      return resolveConnection({
+        nodes: result.filter(isDefined),
         payload: cursorPayload,
         createCursor(node) {
           return node.id.toString()
