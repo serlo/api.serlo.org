@@ -20,17 +20,40 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as t from 'io-ts'
-import { A } from 'ts-toolbelt'
 
 import { Connection } from '~/schema/connection/types'
 import { InstanceDecoder } from '~/schema/instance/decoder'
 import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
-import { AbstractUuid } from '~/types'
 
 export interface Models {
   Mutation: Record<string, never>
   Query: Record<string, never>
   License: t.TypeOf<typeof LicenseDecoder>
+  Comment: UuidPayload
+  Applet: UuidPayload
+  AppletRevision: UuidPayload
+  Article: UuidPayload
+  ArticleRevision: UuidPayload
+  CoursePage: UuidPayload
+  CoursePageRevision: UuidPayload
+  Course: UuidPayload
+  CourseRevision: UuidPayload
+  Event: UuidPayload
+  EventRevision: UuidPayload
+  ExerciseGroup: UuidPayload
+  ExerciseGroupRevision: UuidPayload
+  Exercise: UuidPayload
+  ExerciseRevision: UuidPayload
+  GroupedExercise: UuidPayload
+  GroupedExerciseRevision: UuidPayload
+  Page: UuidPayload
+  PageRevision: UuidPayload
+  Solution: UuidPayload
+  SolutionRevision: UuidPayload
+  TaxonomyTerm: UuidPayload
+  User: UuidPayload
+  Video: UuidPayload
+  VideoRevision: UuidPayload
 }
 
 export const LicenseDecoder = t.type({
@@ -44,12 +67,8 @@ export const LicenseDecoder = t.type({
   iconHref: t.string,
 })
 
-// TODO: There must be a better way to compute the model type of a graphql
-// interface
 // TODO: Is there a better way to handle primitive types?
-export type Model<T> = A.Equals<T, AbstractUuid> extends 1
-  ? UuidPayload
-  : T extends boolean
+export type Model<T> = T extends boolean
   ? boolean
   : Typename<T> extends keyof Models
   ? Models[Typename<T>]

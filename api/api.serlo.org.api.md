@@ -60,7 +60,7 @@ export type AbstractExercise = {
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     license: License;
-    currentRevision?: Maybe<AbstractExerciseRevision>;
+    currentRevision?: Maybe<ExerciseRevision | GroupedExerciseRevision>;
     solution?: Maybe<Solution>;
 };
 
@@ -238,7 +238,7 @@ export type AbstractUuid = {
 export type AbstractUuidConnection = {
     __typename?: 'AbstractUuidConnection';
     edges: Array<AbstractUuidCursor>;
-    nodes: Array<AbstractUuid>;
+    nodes: Array<Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event_2 | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision>;
     totalCount: Scalars['Int'];
     pageInfo: PageInfo;
 };
@@ -256,7 +256,7 @@ export type AbstractUuidConnectionResolvers<ContextType = Context, ParentType ex
 export type AbstractUuidCursor = {
     __typename?: 'AbstractUuidCursor';
     cursor: Scalars['String'];
-    node: AbstractUuid;
+    node: Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event_2 | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
 };
 
 // @public (undocumented)
@@ -556,8 +556,8 @@ export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & Inst
     date: Scalars['DateTime'];
     actor: User;
     objectId: Scalars['Int'];
-    repository: AbstractRepository;
-    revision: AbstractRevision;
+    repository: Applet | Article | CoursePage | Course | Event_2 | ExerciseGroup | Exercise | GroupedExercise | Page | Solution | Video;
+    revision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | GroupedExerciseRevision | PageRevision | SolutionRevision | VideoRevision;
     reason: Scalars['String'];
 };
 
@@ -924,8 +924,8 @@ export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & Inst
     date: Scalars['DateTime'];
     actor: User;
     objectId: Scalars['Int'];
-    parent: AbstractEntity;
-    child: AbstractEntity;
+    parent: Applet | Article | CoursePage | Course | Event_2 | ExerciseGroup | Exercise | GroupedExercise | Solution | Video;
+    child: Applet | Article | CoursePage | Course | Event_2 | ExerciseGroup | Exercise | GroupedExercise | Solution | Video;
 };
 
 // @public (undocumented)
@@ -948,7 +948,7 @@ export type CreateEntityNotificationEvent = AbstractNotificationEvent & Instance
     date: Scalars['DateTime'];
     actor: User;
     objectId: Scalars['Int'];
-    entity: AbstractEntity;
+    entity: Applet | Article | CoursePage | Course | Event_2 | ExerciseGroup | Exercise | GroupedExercise | Solution | Video;
 };
 
 // @public (undocumented)
@@ -970,8 +970,8 @@ export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & 
     date: Scalars['DateTime'];
     actor: User;
     objectId: Scalars['Int'];
-    entity: AbstractEntity;
-    entityRevision: AbstractEntityRevision;
+    entity: Applet | Article | CoursePage | Course | Event_2 | ExerciseGroup | Exercise | GroupedExercise | Solution | Video;
+    entityRevision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | GroupedExerciseRevision | SolutionRevision | VideoRevision;
 };
 
 // @public (undocumented)
@@ -995,7 +995,7 @@ export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & In
     actor: User;
     objectId: Scalars['Int'];
     parent: TaxonomyTerm;
-    child: AbstractUuid;
+    child: Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event_2 | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
 };
 
 // @public (undocumented)
@@ -1040,7 +1040,7 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
     date: Scalars['DateTime'];
     actor: User;
     objectId: Scalars['Int'];
-    object: AbstractUuid;
+    object: Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event_2 | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
     thread: UnsupportedThread;
 };
 
@@ -1799,7 +1799,7 @@ type Notification_2 = {
     __typename?: 'Notification';
     id: Scalars['Int'];
     unread: Scalars['Boolean'];
-    event: AbstractNotificationEvent;
+    event: CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent;
 };
 
 export { Notification_2 as Notification }
@@ -2025,10 +2025,10 @@ export type Query = {
     activeDonors: UserConnection;
     activeReviewers: UserConnection;
     license?: Maybe<License>;
-    notificationEvent?: Maybe<AbstractNotificationEvent>;
+    notificationEvent?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
     notifications: NotificationConnection;
     subscriptions: QuerySubscriptionResult;
-    uuid?: Maybe<AbstractUuid>;
+    uuid?: Maybe<Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event_2 | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision>;
 };
 
 // @public (undocumented)
@@ -2090,7 +2090,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
 export type QuerySubscriptionResult = {
     __typename?: 'QuerySubscriptionResult';
     edges: Array<SubscriptionCursor>;
-    nodes: Array<AbstractUuid>;
+    nodes: Array<Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event_2 | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision>;
     totalCount: Scalars['Int'];
     pageInfo: PageInfo;
 };
@@ -2126,8 +2126,8 @@ export type RejectRevisionNotificationEvent = AbstractNotificationEvent & Instan
     date: Scalars['DateTime'];
     actor: User;
     objectId: Scalars['Int'];
-    repository: AbstractRepository;
-    revision: AbstractRevision;
+    repository: Applet | Article | CoursePage | Course | Event_2 | ExerciseGroup | Exercise | GroupedExercise | Page | Solution | Video;
+    revision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | GroupedExerciseRevision | PageRevision | SolutionRevision | VideoRevision;
     reason: Scalars['String'];
 };
 
@@ -2152,8 +2152,8 @@ export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & Inst
     date: Scalars['DateTime'];
     actor: User;
     objectId: Scalars['Int'];
-    parent: AbstractEntity;
-    child: AbstractEntity;
+    parent: Applet | Article | CoursePage | Course | Event_2 | ExerciseGroup | Exercise | GroupedExercise | Solution | Video;
+    child: Applet | Article | CoursePage | Course | Event_2 | ExerciseGroup | Exercise | GroupedExercise | Solution | Video;
 };
 
 // @public (undocumented)
@@ -2177,7 +2177,7 @@ export type RemoveTaxonomyLinkNotificationEvent = AbstractNotificationEvent & In
     actor: User;
     objectId: Scalars['Int'];
     parent: TaxonomyTerm;
-    child: AbstractUuid;
+    child: Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event_2 | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
 };
 
 // @public (undocumented)
@@ -2614,7 +2614,7 @@ export type SetLicenseNotificationEvent = AbstractNotificationEvent & InstanceAw
     date: Scalars['DateTime'];
     actor: User;
     objectId: Scalars['Int'];
-    repository: AbstractRepository;
+    repository: Applet | Article | CoursePage | Course | Event_2 | ExerciseGroup | Exercise | GroupedExercise | Page | Solution | Video;
 };
 
 // @public (undocumented)
@@ -2708,7 +2708,7 @@ export type SetUuidStateNotificationEvent = AbstractNotificationEvent & Instance
     date: Scalars['DateTime'];
     actor: User;
     objectId: Scalars['Int'];
-    object: AbstractUuid;
+    object: Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event_2 | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
     trashed: Scalars['Boolean'];
 };
 
@@ -2736,7 +2736,7 @@ export type Solution = AbstractUuid & AbstractRepository & AbstractEntity & Inst
     license: License;
     currentRevision?: Maybe<SolutionRevision>;
     revisions?: Maybe<SolutionRevisionConnection>;
-    exercise: AbstractExercise;
+    exercise: Exercise | GroupedExercise;
 };
 
 // @public (undocumented)
@@ -2850,7 +2850,7 @@ export type StitchingResolver<TResult, TParent, TContext, TArgs> = LegacyStitchi
 export type SubscriptionCursor = {
     __typename?: 'SubscriptionCursor';
     cursor: Scalars['String'];
-    node: AbstractUuid;
+    node: Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event_2 | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
 };
 
 // @public (undocumented)
@@ -3047,7 +3047,7 @@ export type Thread = {
     createdAt: Scalars['DateTime'];
     title?: Maybe<Scalars['String']>;
     archived: Scalars['Boolean'];
-    object: AbstractUuid;
+    object: Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event_2 | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
     comments: CommentConnection;
 };
 
@@ -3546,6 +3546,17 @@ export type VideoThreadsArgs = {
     trashed?: Maybe<Scalars['Boolean']>;
 };
 
+
+// Warnings were encountered during analysis:
+//
+// src/schema/subscription/resolvers.ts:33:11 - (TS2322) Type '(_parent: {}, cursorPayload: RequireFields<QuerySubscriptionsArgs, never>, { dataSources, userId }: Context) => Promise<Connection<UuidPayload>>' is not assignable to type 'ResolverFn<ResolverTypeWrapper<Connection<{ id: never; trashed: boolean; alias?: undefined; threads: Connection<{ __typename?: undefined; id: never; createdAt: never; title?: undefined; archived: boolean; object: ... | { id: never; trashed: boolean; ... 8 more ...; revisions: Connection<...>; } | ... 22 more ... | {...'.
+//   Type '(_parent: {}, cursorPayload: RequireFields<QuerySubscriptionsArgs, never>, { dataSources, userId }: Context) => Promise<Connection<UuidPayload>>' is not assignable to type 'ResolverFn<ResolverTypeWrapper<Connection<{ id: never; trashed: boolean; alias?: undefined; threads: Connection<{ __typename?: undefined; id: never; createdAt: never; title?: undefined; archived: boolean; object: ... | { id: never; trashed: boolean; ... 8 more ...; revisions: Connection<...>; } | ... 22 more ... | {...'.
+//     Type 'Promise<Connection<UuidPayload>>' is not assignable to type 'Connection<{ id: never; trashed: boolean; alias?: undefined; threads: Connection<{ __typename?: undefined; id: never; createdAt: never; title?: undefined; archived: boolean; object: ... | { id: never; trashed: boolean; ... 8 more ...; revisions: Connection<...>; } | ... 22 more ... | { ...; }; comments: Connection<....'.
+//       Type 'Promise<Connection<UuidPayload>>' is not assignable to type 'Promise<Connection<{ id: never; trashed: boolean; alias?: undefined; threads: Connection<{ __typename?: undefined; id: never; createdAt: never; title?: undefined; archived: boolean; object: ... | { id: never; trashed: boolean; ... 8 more ...; revisions: Connection<...>; } | ... 22 more ... | { ...; }; comments: Conn...'.
+//         Type 'Connection<UuidPayload>' is not assignable to type 'Connection<{ id: never; trashed: boolean; alias?: undefined; threads: Connection<{ __typename?: undefined; id: never; createdAt: never; title?: undefined; archived: boolean; object: ... | { id: never; trashed: boolean; ... 8 more ...; revisions: Connection<...>; } | ... 22 more ... | { ...; }; comments: Connection<....'.
+//           Type 'UuidPayload' is not assignable to type '{ id: never; trashed: boolean; alias?: undefined; threads: Connection<{ __typename?: undefined; id: never; createdAt: never; title?: undefined; archived: boolean; object: ... | { id: never; trashed: boolean; ... 8 more ...; revisions: Connection<...>; } | ... 22 more ... | { ...; }; comments: Connection<...>; }>; .....'.
+//             Type 'UserPayload' is not assignable to type '{ id: never; trashed: boolean; alias?: undefined; threads: Connection<{ __typename?: undefined; id: never; createdAt: never; title?: undefined; archived: boolean; object: ... | { id: never; trashed: boolean; ... 8 more ...; revisions: Connection<...>; } | ... 22 more ... | { ...; }; comments: Connection<...>; }>; .....'.
+//               Type 'UserPayload' is missing the following properties from type '{ id: never; trashed: boolean; alias?: undefined; threads: Connection<{ __typename?: undefined; id: never; createdAt: never; title?: undefined; archived: boolean; object: { id: never; trashed: boolean; alias?: undefined; ... 7 more ...; revisions: Connection<...>; } | ... 23 more ... | { ...; }; comments: Connection...': threads, activeAuthor, activeDonor, activeReviewer
 
 // (No @packageDocumentation comment for this package)
 

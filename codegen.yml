@@ -14,4 +14,5 @@ generates:
         DateTime: string
         JSON: unknown
         JSONObject: 'Record<string, unknown>'
+      useImplementingTypes: true
       useTypeImports: true
