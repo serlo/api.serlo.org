@@ -40,14 +40,12 @@ export const LicenseDecoder = t.type({
   iconHref: t.string,
 })
 
-export type Model<Typename extends keyof Models> = Models[Typename]
-
-export type ComputeModel<T> = Typename<T> extends keyof Models
-  ? Model<Typename<T>>
+export type Model<T> = Typename<T> extends keyof Models
+  ? Models[Typename<T>]
   : T extends (infer U)[]
-  ? ComputeModel<U>[]
+  ? Model<U>[]
   : T extends object
-  ? { [P in keyof T]: ComputeModel<T[P]> }
+  ? { [P in keyof T]: Model<T[P]> }
   : T
 
 export type Typename<T> = T extends { __typename?: infer U }

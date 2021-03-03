@@ -22,7 +22,7 @@
 import { AuthenticationError } from 'apollo-server'
 import { A, O } from 'ts-toolbelt'
 
-import { ComputeModel, Typename } from '~/model'
+import { Model, Typename } from '~/model'
 import { QueryResolvers, Resolvers } from '~/types'
 
 export function assertUserIsAuthenticated(
@@ -74,7 +74,7 @@ type RequiredResolverFunctions<
 > = Typename<T> extends keyof Resolvers
   ? OmitKeys<
       Required<NonNullable<Resolvers[Typename<T>]>>,
-      O.IntersectKeys<T, ComputeModel<T>, '<-extends'> | '__isTypeOf'
+      O.IntersectKeys<T, Model<T>, '<-extends'> | '__isTypeOf'
     >
   : never
 
