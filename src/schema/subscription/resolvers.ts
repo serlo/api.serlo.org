@@ -19,12 +19,16 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { assertUserIsAuthenticated, createMutationNamespace } from '../utils'
-import { SubscriptionResolvers } from './types'
+import {
+  assertUserIsAuthenticated,
+  createMutationNamespace,
+  Mutations,
+  Querys,
+} from '../utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { isDefined } from '~/utils'
 
-export const resolvers: SubscriptionResolvers = {
+export const resolvers: Querys<'subscriptions'> & Mutations<'subscription'> = {
   Query: {
     async subscriptions(_parent, cursorPayload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
