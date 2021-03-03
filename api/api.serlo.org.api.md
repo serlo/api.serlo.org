@@ -4,11 +4,11 @@
 
 ```ts
 
+import type { ComputeModel } from '~/model/types';
 import type { Context } from 'internals/graphql/context';
 import type { GraphQLResolveInfo } from 'graphql';
 import type { GraphQLScalarType } from 'graphql';
 import type { GraphQLScalarTypeConfig } from 'graphql';
-import type { LicenseModel } from 'model/types';
 
 // @public (undocumented)
 export type AbstractEntity = {
@@ -1664,12 +1664,12 @@ export type LicenseResolvers<ContextType = Context, ParentType extends Resolvers
 };
 
 // @public (undocumented)
-export type MakeMaybe<T, K extends keyof T> = Omit_2<T, K> & {
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
     [SubKey in K]: Maybe<T[SubKey]>;
 };
 
 // @public (undocumented)
-export type MakeOptional<T, K extends keyof T> = Omit_2<T, K> & {
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
     [SubKey in K]?: Maybe<T[SubKey]>;
 };
 
@@ -1880,11 +1880,6 @@ export type NotificationSetStateResponseResolvers<ContextType = Context, ParentT
     query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
-
-// @public (undocumented)
-type Omit_2<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-
-export { Omit_2 as Omit }
 
 // @public (undocumented)
 export type Page = AbstractUuid & AbstractRepository & AbstractNavigationChild & InstanceAware & ThreadAware & {
@@ -2333,611 +2328,267 @@ export type Resolvers<ContextType = Context> = {
 // @public
 export type ResolversParentTypes = {
     Mutation: {};
-    Boolean: Scalars['Boolean'];
-    String: Scalars['String'];
-    PageInfo: PageInfo;
-    DateTime: Scalars['DateTime'];
+    Boolean: ComputeModel<Scalars['Boolean']>;
+    String: ComputeModel<Scalars['String']>;
+    PageInfo: ComputeModel<PageInfo>;
+    DateTime: ComputeModel<Scalars['DateTime']>;
     InstanceAware: ResolversParentTypes['License'] | ResolversParentTypes['CheckoutRevisionNotificationEvent'] | ResolversParentTypes['CreateCommentNotificationEvent'] | ResolversParentTypes['CreateEntityLinkNotificationEvent'] | ResolversParentTypes['CreateEntityNotificationEvent'] | ResolversParentTypes['CreateEntityRevisionNotificationEvent'] | ResolversParentTypes['CreateTaxonomyLinkNotificationEvent'] | ResolversParentTypes['CreateTaxonomyTermNotificationEvent'] | ResolversParentTypes['CreateThreadNotificationEvent'] | ResolversParentTypes['RejectRevisionNotificationEvent'] | ResolversParentTypes['RemoveEntityLinkNotificationEvent'] | ResolversParentTypes['RemoveTaxonomyLinkNotificationEvent'] | ResolversParentTypes['SetLicenseNotificationEvent'] | ResolversParentTypes['SetTaxonomyParentNotificationEvent'] | ResolversParentTypes['SetTaxonomyTermNotificationEvent'] | ResolversParentTypes['SetThreadStateNotificationEvent'] | ResolversParentTypes['SetUuidStateNotificationEvent'] | ResolversParentTypes['Applet'] | ResolversParentTypes['Article'] | ResolversParentTypes['CoursePage'] | ResolversParentTypes['Course'] | ResolversParentTypes['Event'] | ResolversParentTypes['ExerciseGroup'] | ResolversParentTypes['Exercise'] | ResolversParentTypes['GroupedExercise'] | ResolversParentTypes['Page'] | ResolversParentTypes['Solution'] | ResolversParentTypes['TaxonomyTerm'] | ResolversParentTypes['Video'];
-    JSON: Scalars['JSON'];
-    JSONObject: Scalars['JSONObject'];
-    License: LicenseModel;
-    Int: Scalars['Int'];
+    JSON: ComputeModel<Scalars['JSON']>;
+    JSONObject: ComputeModel<Scalars['JSONObject']>;
+    License: ComputeModel<License>;
+    Int: ComputeModel<Scalars['Int']>;
     Query: {};
-    CheckoutRevisionNotificationEvent: Omit_2<CheckoutRevisionNotificationEvent, 'repository'> & {
-        repository: ResolversParentTypes['AbstractRepository'];
-    };
-    CreateCommentNotificationEvent: CreateCommentNotificationEvent;
-    CreateEntityLinkNotificationEvent: Omit_2<CreateEntityLinkNotificationEvent, 'parent' | 'child'> & {
-        parent: ResolversParentTypes['AbstractEntity'];
-        child: ResolversParentTypes['AbstractEntity'];
-    };
-    CreateEntityNotificationEvent: Omit_2<CreateEntityNotificationEvent, 'entity'> & {
-        entity: ResolversParentTypes['AbstractEntity'];
-    };
-    CreateEntityRevisionNotificationEvent: Omit_2<CreateEntityRevisionNotificationEvent, 'entity'> & {
-        entity: ResolversParentTypes['AbstractEntity'];
-    };
-    CreateTaxonomyLinkNotificationEvent: CreateTaxonomyLinkNotificationEvent;
-    CreateTaxonomyTermNotificationEvent: CreateTaxonomyTermNotificationEvent;
-    CreateThreadNotificationEvent: CreateThreadNotificationEvent;
-    RejectRevisionNotificationEvent: Omit_2<RejectRevisionNotificationEvent, 'repository'> & {
-        repository: ResolversParentTypes['AbstractRepository'];
-    };
-    RemoveEntityLinkNotificationEvent: Omit_2<RemoveEntityLinkNotificationEvent, 'parent' | 'child'> & {
-        parent: ResolversParentTypes['AbstractEntity'];
-        child: ResolversParentTypes['AbstractEntity'];
-    };
-    RemoveTaxonomyLinkNotificationEvent: RemoveTaxonomyLinkNotificationEvent;
-    SetLicenseNotificationEvent: Omit_2<SetLicenseNotificationEvent, 'repository'> & {
-        repository: ResolversParentTypes['AbstractRepository'];
-    };
-    SetTaxonomyParentNotificationEvent: SetTaxonomyParentNotificationEvent;
-    SetTaxonomyTermNotificationEvent: SetTaxonomyTermNotificationEvent;
-    SetThreadStateNotificationEvent: SetThreadStateNotificationEvent;
-    SetUuidStateNotificationEvent: SetUuidStateNotificationEvent;
-    Notification: Notification_2;
+    CheckoutRevisionNotificationEvent: ComputeModel<CheckoutRevisionNotificationEvent>;
+    CreateCommentNotificationEvent: ComputeModel<CreateCommentNotificationEvent>;
+    CreateEntityLinkNotificationEvent: ComputeModel<CreateEntityLinkNotificationEvent>;
+    CreateEntityNotificationEvent: ComputeModel<CreateEntityNotificationEvent>;
+    CreateEntityRevisionNotificationEvent: ComputeModel<CreateEntityRevisionNotificationEvent>;
+    CreateTaxonomyLinkNotificationEvent: ComputeModel<CreateTaxonomyLinkNotificationEvent>;
+    CreateTaxonomyTermNotificationEvent: ComputeModel<CreateTaxonomyTermNotificationEvent>;
+    CreateThreadNotificationEvent: ComputeModel<CreateThreadNotificationEvent>;
+    RejectRevisionNotificationEvent: ComputeModel<RejectRevisionNotificationEvent>;
+    RemoveEntityLinkNotificationEvent: ComputeModel<RemoveEntityLinkNotificationEvent>;
+    RemoveTaxonomyLinkNotificationEvent: ComputeModel<RemoveTaxonomyLinkNotificationEvent>;
+    SetLicenseNotificationEvent: ComputeModel<SetLicenseNotificationEvent>;
+    SetTaxonomyParentNotificationEvent: ComputeModel<SetTaxonomyParentNotificationEvent>;
+    SetTaxonomyTermNotificationEvent: ComputeModel<SetTaxonomyTermNotificationEvent>;
+    SetThreadStateNotificationEvent: ComputeModel<SetThreadStateNotificationEvent>;
+    SetUuidStateNotificationEvent: ComputeModel<SetUuidStateNotificationEvent>;
+    Notification: ComputeModel<Notification_2>;
     AbstractNotificationEvent: ResolversParentTypes['CheckoutRevisionNotificationEvent'] | ResolversParentTypes['CreateCommentNotificationEvent'] | ResolversParentTypes['CreateEntityLinkNotificationEvent'] | ResolversParentTypes['CreateEntityNotificationEvent'] | ResolversParentTypes['CreateEntityRevisionNotificationEvent'] | ResolversParentTypes['CreateTaxonomyLinkNotificationEvent'] | ResolversParentTypes['CreateTaxonomyTermNotificationEvent'] | ResolversParentTypes['CreateThreadNotificationEvent'] | ResolversParentTypes['RejectRevisionNotificationEvent'] | ResolversParentTypes['RemoveEntityLinkNotificationEvent'] | ResolversParentTypes['RemoveTaxonomyLinkNotificationEvent'] | ResolversParentTypes['SetLicenseNotificationEvent'] | ResolversParentTypes['SetTaxonomyParentNotificationEvent'] | ResolversParentTypes['SetTaxonomyTermNotificationEvent'] | ResolversParentTypes['SetThreadStateNotificationEvent'] | ResolversParentTypes['SetUuidStateNotificationEvent'];
-    NotificationMutation: Omit_2<NotificationMutation, 'setState'> & {
-        setState?: Maybe<ResolversParentTypes['NotificationSetStateResponse']>;
-    };
-    NotificationSetStateInput: NotificationSetStateInput;
-    NotificationSetStateResponse: Omit_2<NotificationSetStateResponse, 'query'> & {
-        query: ResolversParentTypes['Query'];
-    };
-    NotificationConnection: NotificationConnection;
-    NotificationEdge: NotificationEdge;
-    QuerySubscriptionResult: QuerySubscriptionResult;
-    SubscriptionCursor: SubscriptionCursor;
-    SubscriptionMutation: Omit_2<SubscriptionMutation, 'set'> & {
-        set?: Maybe<ResolversParentTypes['SubscriptionSetResponse']>;
-    };
-    SubscriptionSetInput: SubscriptionSetInput;
-    SubscriptionSetResponse: Omit_2<SubscriptionSetResponse, 'query'> & {
-        query: ResolversParentTypes['Query'];
-    };
-    Thread: Thread;
-    Comment: Comment;
+    NotificationMutation: ComputeModel<NotificationMutation>;
+    NotificationSetStateInput: ComputeModel<NotificationSetStateInput>;
+    NotificationSetStateResponse: ComputeModel<NotificationSetStateResponse>;
+    NotificationConnection: ComputeModel<NotificationConnection>;
+    NotificationEdge: ComputeModel<NotificationEdge>;
+    QuerySubscriptionResult: ComputeModel<QuerySubscriptionResult>;
+    SubscriptionCursor: ComputeModel<SubscriptionCursor>;
+    SubscriptionMutation: ComputeModel<SubscriptionMutation>;
+    SubscriptionSetInput: ComputeModel<SubscriptionSetInput>;
+    SubscriptionSetResponse: ComputeModel<SubscriptionSetResponse>;
+    Thread: ComputeModel<Thread>;
+    Comment: ComputeModel<Comment>;
     ThreadAware: ResolversParentTypes['Applet'] | ResolversParentTypes['AppletRevision'] | ResolversParentTypes['Article'] | ResolversParentTypes['ArticleRevision'] | ResolversParentTypes['CoursePage'] | ResolversParentTypes['CoursePageRevision'] | ResolversParentTypes['Course'] | ResolversParentTypes['CourseRevision'] | ResolversParentTypes['Event'] | ResolversParentTypes['EventRevision'] | ResolversParentTypes['ExerciseGroup'] | ResolversParentTypes['ExerciseGroupRevision'] | ResolversParentTypes['Exercise'] | ResolversParentTypes['ExerciseRevision'] | ResolversParentTypes['GroupedExercise'] | ResolversParentTypes['GroupedExerciseRevision'] | ResolversParentTypes['Page'] | ResolversParentTypes['PageRevision'] | ResolversParentTypes['Solution'] | ResolversParentTypes['SolutionRevision'] | ResolversParentTypes['TaxonomyTerm'] | ResolversParentTypes['User'] | ResolversParentTypes['Video'] | ResolversParentTypes['VideoRevision'];
-    ThreadsConnection: ThreadsConnection;
-    ThreadsCursor: ThreadsCursor;
-    UnsupportedThread: UnsupportedThread;
-    UnsupportedComment: UnsupportedComment;
-    CommentConnection: CommentConnection;
-    CommentEdge: CommentEdge;
-    ThreadMutation: Omit_2<ThreadMutation, 'createThread' | 'createComment' | 'setThreadArchived' | 'setThreadState' | 'setCommentState'> & {
-        createThread?: Maybe<ResolversParentTypes['ThreadCreateThreadResponse']>;
-        createComment?: Maybe<ResolversParentTypes['ThreadCreateCommentResponse']>;
-        setThreadArchived?: Maybe<ResolversParentTypes['ThreadSetThreadArchivedResponse']>;
-        setThreadState?: Maybe<ResolversParentTypes['ThreadSetThreadStateResponse']>;
-        setCommentState?: Maybe<ResolversParentTypes['ThreadSetCommentStateResponse']>;
-    };
-    ThreadCreateThreadInput: ThreadCreateThreadInput;
-    ThreadCreateThreadResponse: Omit_2<ThreadCreateThreadResponse, 'query'> & {
-        query: ResolversParentTypes['Query'];
-    };
-    ThreadCreateCommentInput: ThreadCreateCommentInput;
-    ThreadCreateCommentResponse: Omit_2<ThreadCreateCommentResponse, 'query'> & {
-        query: ResolversParentTypes['Query'];
-    };
-    ThreadSetThreadArchivedInput: ThreadSetThreadArchivedInput;
-    ThreadSetThreadArchivedResponse: Omit_2<ThreadSetThreadArchivedResponse, 'query'> & {
-        query: ResolversParentTypes['Query'];
-    };
-    ThreadSetThreadStateInput: ThreadSetThreadStateInput;
-    ThreadSetThreadStateResponse: Omit_2<ThreadSetThreadStateResponse, 'query'> & {
-        query: ResolversParentTypes['Query'];
-    };
-    ThreadSetCommentStateInput: ThreadSetCommentStateInput;
-    ThreadSetCommentStateResponse: Omit_2<ThreadSetCommentStateResponse, 'query'> & {
-        query: ResolversParentTypes['Query'];
-    };
+    ThreadsConnection: ComputeModel<ThreadsConnection>;
+    ThreadsCursor: ComputeModel<ThreadsCursor>;
+    UnsupportedThread: ComputeModel<UnsupportedThread>;
+    UnsupportedComment: ComputeModel<UnsupportedComment>;
+    CommentConnection: ComputeModel<CommentConnection>;
+    CommentEdge: ComputeModel<CommentEdge>;
+    ThreadMutation: ComputeModel<ThreadMutation>;
+    ThreadCreateThreadInput: ComputeModel<ThreadCreateThreadInput>;
+    ThreadCreateThreadResponse: ComputeModel<ThreadCreateThreadResponse>;
+    ThreadCreateCommentInput: ComputeModel<ThreadCreateCommentInput>;
+    ThreadCreateCommentResponse: ComputeModel<ThreadCreateCommentResponse>;
+    ThreadSetThreadArchivedInput: ComputeModel<ThreadSetThreadArchivedInput>;
+    ThreadSetThreadArchivedResponse: ComputeModel<ThreadSetThreadArchivedResponse>;
+    ThreadSetThreadStateInput: ComputeModel<ThreadSetThreadStateInput>;
+    ThreadSetThreadStateResponse: ComputeModel<ThreadSetThreadStateResponse>;
+    ThreadSetCommentStateInput: ComputeModel<ThreadSetCommentStateInput>;
+    ThreadSetCommentStateResponse: ComputeModel<ThreadSetCommentStateResponse>;
     AbstractEntity: ResolversParentTypes['Applet'] | ResolversParentTypes['Article'] | ResolversParentTypes['CoursePage'] | ResolversParentTypes['Course'] | ResolversParentTypes['Event'] | ResolversParentTypes['ExerciseGroup'] | ResolversParentTypes['Exercise'] | ResolversParentTypes['GroupedExercise'] | ResolversParentTypes['Solution'] | ResolversParentTypes['Video'];
     AbstractEntityRevision: ResolversParentTypes['AppletRevision'] | ResolversParentTypes['ArticleRevision'] | ResolversParentTypes['CoursePageRevision'] | ResolversParentTypes['CourseRevision'] | ResolversParentTypes['EventRevision'] | ResolversParentTypes['ExerciseGroupRevision'] | ResolversParentTypes['ExerciseRevision'] | ResolversParentTypes['GroupedExerciseRevision'] | ResolversParentTypes['SolutionRevision'] | ResolversParentTypes['VideoRevision'];
     AbstractExercise: ResolversParentTypes['Exercise'] | ResolversParentTypes['GroupedExercise'];
     AbstractExerciseRevision: ResolversParentTypes['ExerciseRevision'] | ResolversParentTypes['GroupedExerciseRevision'];
     AbstractNavigationChild: ResolversParentTypes['Page'] | ResolversParentTypes['TaxonomyTerm'];
-    Navigation: Navigation;
-    NavigationNodeConnection: NavigationNodeConnection;
-    NavigationNodeEdge: NavigationNodeEdge;
-    NavigationNode: NavigationNode;
+    Navigation: ComputeModel<Navigation>;
+    NavigationNodeConnection: ComputeModel<NavigationNodeConnection>;
+    NavigationNodeEdge: ComputeModel<NavigationNodeEdge>;
+    NavigationNode: ComputeModel<NavigationNode>;
     AbstractRepository: ResolversParentTypes['Applet'] | ResolversParentTypes['Article'] | ResolversParentTypes['CoursePage'] | ResolversParentTypes['Course'] | ResolversParentTypes['Event'] | ResolversParentTypes['ExerciseGroup'] | ResolversParentTypes['Exercise'] | ResolversParentTypes['GroupedExercise'] | ResolversParentTypes['Page'] | ResolversParentTypes['Solution'] | ResolversParentTypes['Video'];
     AbstractRevision: ResolversParentTypes['AppletRevision'] | ResolversParentTypes['ArticleRevision'] | ResolversParentTypes['CoursePageRevision'] | ResolversParentTypes['CourseRevision'] | ResolversParentTypes['EventRevision'] | ResolversParentTypes['ExerciseGroupRevision'] | ResolversParentTypes['ExerciseRevision'] | ResolversParentTypes['GroupedExerciseRevision'] | ResolversParentTypes['PageRevision'] | ResolversParentTypes['SolutionRevision'] | ResolversParentTypes['VideoRevision'];
     AbstractTaxonomyTermChild: ResolversParentTypes['Applet'] | ResolversParentTypes['Article'] | ResolversParentTypes['Course'] | ResolversParentTypes['Event'] | ResolversParentTypes['ExerciseGroup'] | ResolversParentTypes['Exercise'] | ResolversParentTypes['Video'];
-    TaxonomyTermConnection: TaxonomyTermConnection;
-    TaxonomyTermEdge: TaxonomyTermEdge;
+    TaxonomyTermConnection: ComputeModel<TaxonomyTermConnection>;
+    TaxonomyTermEdge: ComputeModel<TaxonomyTermEdge>;
     AbstractUuid: ResolversParentTypes['Comment'] | ResolversParentTypes['Applet'] | ResolversParentTypes['AppletRevision'] | ResolversParentTypes['Article'] | ResolversParentTypes['ArticleRevision'] | ResolversParentTypes['CoursePage'] | ResolversParentTypes['CoursePageRevision'] | ResolversParentTypes['Course'] | ResolversParentTypes['CourseRevision'] | ResolversParentTypes['Event'] | ResolversParentTypes['EventRevision'] | ResolversParentTypes['ExerciseGroup'] | ResolversParentTypes['ExerciseGroupRevision'] | ResolversParentTypes['Exercise'] | ResolversParentTypes['ExerciseRevision'] | ResolversParentTypes['GroupedExercise'] | ResolversParentTypes['GroupedExerciseRevision'] | ResolversParentTypes['Page'] | ResolversParentTypes['PageRevision'] | ResolversParentTypes['Solution'] | ResolversParentTypes['SolutionRevision'] | ResolversParentTypes['TaxonomyTerm'] | ResolversParentTypes['User'] | ResolversParentTypes['Video'] | ResolversParentTypes['VideoRevision'];
-    AbstractUuidConnection: AbstractUuidConnection;
-    AbstractUuidCursor: AbstractUuidCursor;
-    UuidMutation: Omit_2<UuidMutation, 'setState'> & {
-        setState?: Maybe<ResolversParentTypes['UuidSetStateResponse']>;
-    };
-    UuidSetStateInput: UuidSetStateInput;
-    UuidSetStateResponse: Omit_2<UuidSetStateResponse, 'query'> & {
-        query: ResolversParentTypes['Query'];
-    };
-    AliasInput: AliasInput;
-    Applet: Omit_2<Applet, 'license' | 'currentRevision' | 'revisions'> & {
-        license: ResolversParentTypes['License'];
-        currentRevision?: Maybe<ResolversParentTypes['AppletRevision']>;
-        revisions: ResolversParentTypes['AppletRevisionConnection'];
-    };
-    AppletRevision: Omit_2<AppletRevision, 'repository'> & {
-        repository: ResolversParentTypes['Applet'];
-    };
-    AppletRevisionConnection: Omit_2<AppletRevisionConnection, 'edges' | 'nodes'> & {
-        edges: Array<ResolversParentTypes['AppletRevisionCursor']>;
-        nodes: Array<ResolversParentTypes['AppletRevision']>;
-    };
-    AppletRevisionCursor: Omit_2<AppletRevisionCursor, 'node'> & {
-        node: ResolversParentTypes['AppletRevision'];
-    };
-    Article: Omit_2<Article, 'license' | 'currentRevision' | 'revisions'> & {
-        license: ResolversParentTypes['License'];
-        currentRevision?: Maybe<ResolversParentTypes['ArticleRevision']>;
-        revisions: ResolversParentTypes['ArticleRevisionConnection'];
-    };
-    ArticleRevision: Omit_2<ArticleRevision, 'repository'> & {
-        repository: ResolversParentTypes['Article'];
-    };
-    ArticleRevisionConnection: Omit_2<ArticleRevisionConnection, 'edges' | 'nodes'> & {
-        edges: Array<ResolversParentTypes['ArticleRevisionCursor']>;
-        nodes: Array<ResolversParentTypes['ArticleRevision']>;
-    };
-    ArticleRevisionCursor: Omit_2<ArticleRevisionCursor, 'node'> & {
-        node: ResolversParentTypes['ArticleRevision'];
-    };
-    CoursePage: Omit_2<CoursePage, 'license' | 'currentRevision' | 'revisions' | 'course'> & {
-        license: ResolversParentTypes['License'];
-        currentRevision?: Maybe<ResolversParentTypes['CoursePageRevision']>;
-        revisions: ResolversParentTypes['CoursePageRevisionConnection'];
-        course: ResolversParentTypes['Course'];
-    };
-    CoursePageRevision: Omit_2<CoursePageRevision, 'repository'> & {
-        repository: ResolversParentTypes['CoursePage'];
-    };
-    CoursePageRevisionConnection: Omit_2<CoursePageRevisionConnection, 'edges' | 'nodes'> & {
-        edges: Array<ResolversParentTypes['CoursePageRevisionCursor']>;
-        nodes: Array<ResolversParentTypes['CoursePageRevision']>;
-    };
-    CoursePageRevisionCursor: Omit_2<CoursePageRevisionCursor, 'node'> & {
-        node: ResolversParentTypes['CoursePageRevision'];
-    };
-    Course: Omit_2<Course, 'license' | 'currentRevision' | 'revisions' | 'pages'> & {
-        license: ResolversParentTypes['License'];
-        currentRevision?: Maybe<ResolversParentTypes['CourseRevision']>;
-        revisions: ResolversParentTypes['CourseRevisionConnection'];
-        pages: Array<ResolversParentTypes['CoursePage']>;
-    };
-    CourseRevision: Omit_2<CourseRevision, 'repository'> & {
-        repository: ResolversParentTypes['Course'];
-    };
-    CourseRevisionConnection: Omit_2<CourseRevisionConnection, 'edges' | 'nodes'> & {
-        edges: Array<ResolversParentTypes['CourseRevisionCursor']>;
-        nodes: Array<ResolversParentTypes['CourseRevision']>;
-    };
-    CourseRevisionCursor: Omit_2<CourseRevisionCursor, 'node'> & {
-        node: ResolversParentTypes['CourseRevision'];
-    };
-    Event: Omit_2<Event_2, 'license' | 'currentRevision' | 'revisions'> & {
-        license: ResolversParentTypes['License'];
-        currentRevision?: Maybe<ResolversParentTypes['EventRevision']>;
-        revisions: ResolversParentTypes['EventRevisionConnection'];
-    };
-    EventRevision: Omit_2<EventRevision, 'repository'> & {
-        repository: ResolversParentTypes['Event'];
-    };
-    EventRevisionConnection: Omit_2<EventRevisionConnection, 'edges' | 'nodes'> & {
-        edges: Array<ResolversParentTypes['EventRevisionCursor']>;
-        nodes: Array<ResolversParentTypes['EventRevision']>;
-    };
-    EventRevisionCursor: Omit_2<EventRevisionCursor, 'node'> & {
-        node: ResolversParentTypes['EventRevision'];
-    };
-    ExerciseGroup: Omit_2<ExerciseGroup, 'license' | 'currentRevision' | 'revisions' | 'exercises'> & {
-        license: ResolversParentTypes['License'];
-        currentRevision?: Maybe<ResolversParentTypes['ExerciseGroupRevision']>;
-        revisions: ResolversParentTypes['ExerciseGroupRevisionConnection'];
-        exercises: Array<ResolversParentTypes['GroupedExercise']>;
-    };
-    ExerciseGroupRevision: Omit_2<ExerciseGroupRevision, 'repository'> & {
-        repository: ResolversParentTypes['ExerciseGroup'];
-    };
-    ExerciseGroupRevisionConnection: Omit_2<ExerciseGroupRevisionConnection, 'edges' | 'nodes'> & {
-        edges: Array<ResolversParentTypes['ExerciseGroupRevisionCursor']>;
-        nodes: Array<ResolversParentTypes['ExerciseGroupRevision']>;
-    };
-    ExerciseGroupRevisionCursor: Omit_2<ExerciseGroupRevisionCursor, 'node'> & {
-        node: ResolversParentTypes['ExerciseGroupRevision'];
-    };
-    Exercise: Omit_2<Exercise, 'license' | 'currentRevision' | 'revisions' | 'solution'> & {
-        license: ResolversParentTypes['License'];
-        currentRevision?: Maybe<ResolversParentTypes['ExerciseRevision']>;
-        revisions: ResolversParentTypes['ExerciseRevisionConnection'];
-        solution?: Maybe<ResolversParentTypes['Solution']>;
-    };
-    ExerciseRevision: Omit_2<ExerciseRevision, 'repository'> & {
-        repository: ResolversParentTypes['Exercise'];
-    };
-    ExerciseRevisionConnection: Omit_2<ExerciseRevisionConnection, 'edges' | 'nodes'> & {
-        edges: Array<ResolversParentTypes['ExerciseRevisionCursor']>;
-        nodes: Array<ResolversParentTypes['ExerciseRevision']>;
-    };
-    ExerciseRevisionCursor: Omit_2<ExerciseRevisionCursor, 'node'> & {
-        node: ResolversParentTypes['ExerciseRevision'];
-    };
-    GroupedExercise: Omit_2<GroupedExercise, 'license' | 'currentRevision' | 'revisions' | 'solution' | 'exerciseGroup'> & {
-        license: ResolversParentTypes['License'];
-        currentRevision?: Maybe<ResolversParentTypes['GroupedExerciseRevision']>;
-        revisions: ResolversParentTypes['GroupedExerciseRevisionConnection'];
-        solution?: Maybe<ResolversParentTypes['Solution']>;
-        exerciseGroup: ResolversParentTypes['ExerciseGroup'];
-    };
-    GroupedExerciseRevision: Omit_2<GroupedExerciseRevision, 'repository'> & {
-        repository: ResolversParentTypes['GroupedExercise'];
-    };
-    GroupedExerciseRevisionConnection: Omit_2<GroupedExerciseRevisionConnection, 'edges' | 'nodes'> & {
-        edges: Array<ResolversParentTypes['GroupedExerciseRevisionCursor']>;
-        nodes: Array<ResolversParentTypes['GroupedExerciseRevision']>;
-    };
-    GroupedExerciseRevisionCursor: Omit_2<GroupedExerciseRevisionCursor, 'node'> & {
-        node: ResolversParentTypes['GroupedExerciseRevision'];
-    };
-    Page: Omit_2<Page, 'license' | 'currentRevision' | 'revisions'> & {
-        license: ResolversParentTypes['License'];
-        currentRevision?: Maybe<ResolversParentTypes['PageRevision']>;
-        revisions: ResolversParentTypes['PageRevisionConnection'];
-    };
-    PageRevision: Omit_2<PageRevision, 'repository'> & {
-        repository: ResolversParentTypes['Page'];
-    };
-    PageRevisionConnection: Omit_2<PageRevisionConnection, 'edges' | 'nodes'> & {
-        edges: Array<ResolversParentTypes['PageRevisionCursor']>;
-        nodes: Array<ResolversParentTypes['PageRevision']>;
-    };
-    PageRevisionCursor: Omit_2<PageRevisionCursor, 'node'> & {
-        node: ResolversParentTypes['PageRevision'];
-    };
-    Solution: Omit_2<Solution, 'license' | 'currentRevision' | 'revisions' | 'exercise'> & {
-        license: ResolversParentTypes['License'];
-        currentRevision?: Maybe<ResolversParentTypes['SolutionRevision']>;
-        revisions?: Maybe<ResolversParentTypes['SolutionRevisionConnection']>;
-        exercise: ResolversParentTypes['AbstractExercise'];
-    };
-    SolutionRevision: Omit_2<SolutionRevision, 'repository'> & {
-        repository: ResolversParentTypes['Solution'];
-    };
-    SolutionRevisionConnection: Omit_2<SolutionRevisionConnection, 'edges' | 'nodes'> & {
-        edges: Array<ResolversParentTypes['SolutionRevisionCursor']>;
-        nodes: Array<ResolversParentTypes['SolutionRevision']>;
-    };
-    SolutionRevisionCursor: Omit_2<SolutionRevisionCursor, 'node'> & {
-        node: ResolversParentTypes['SolutionRevision'];
-    };
-    TaxonomyTerm: TaxonomyTerm;
-    User: User;
-    UserConnection: UserConnection;
-    UserEdge: UserEdge;
-    Video: Omit_2<Video, 'license' | 'currentRevision' | 'revisions'> & {
-        license: ResolversParentTypes['License'];
-        currentRevision?: Maybe<ResolversParentTypes['VideoRevision']>;
-        revisions: ResolversParentTypes['VideoRevisionConnection'];
-    };
-    VideoRevision: Omit_2<VideoRevision, 'repository'> & {
-        repository: ResolversParentTypes['Video'];
-    };
-    VideoRevisionConnection: Omit_2<VideoRevisionConnection, 'edges' | 'nodes'> & {
-        edges: Array<ResolversParentTypes['VideoRevisionCursor']>;
-        nodes: Array<ResolversParentTypes['VideoRevision']>;
-    };
-    VideoRevisionCursor: Omit_2<VideoRevisionCursor, 'node'> & {
-        node: ResolversParentTypes['VideoRevision'];
-    };
+    AbstractUuidConnection: ComputeModel<AbstractUuidConnection>;
+    AbstractUuidCursor: ComputeModel<AbstractUuidCursor>;
+    UuidMutation: ComputeModel<UuidMutation>;
+    UuidSetStateInput: ComputeModel<UuidSetStateInput>;
+    UuidSetStateResponse: ComputeModel<UuidSetStateResponse>;
+    AliasInput: ComputeModel<AliasInput>;
+    Applet: ComputeModel<Applet>;
+    AppletRevision: ComputeModel<AppletRevision>;
+    AppletRevisionConnection: ComputeModel<AppletRevisionConnection>;
+    AppletRevisionCursor: ComputeModel<AppletRevisionCursor>;
+    Article: ComputeModel<Article>;
+    ArticleRevision: ComputeModel<ArticleRevision>;
+    ArticleRevisionConnection: ComputeModel<ArticleRevisionConnection>;
+    ArticleRevisionCursor: ComputeModel<ArticleRevisionCursor>;
+    CoursePage: ComputeModel<CoursePage>;
+    CoursePageRevision: ComputeModel<CoursePageRevision>;
+    CoursePageRevisionConnection: ComputeModel<CoursePageRevisionConnection>;
+    CoursePageRevisionCursor: ComputeModel<CoursePageRevisionCursor>;
+    Course: ComputeModel<Course>;
+    CourseRevision: ComputeModel<CourseRevision>;
+    CourseRevisionConnection: ComputeModel<CourseRevisionConnection>;
+    CourseRevisionCursor: ComputeModel<CourseRevisionCursor>;
+    Event: ComputeModel<Event_2>;
+    EventRevision: ComputeModel<EventRevision>;
+    EventRevisionConnection: ComputeModel<EventRevisionConnection>;
+    EventRevisionCursor: ComputeModel<EventRevisionCursor>;
+    ExerciseGroup: ComputeModel<ExerciseGroup>;
+    ExerciseGroupRevision: ComputeModel<ExerciseGroupRevision>;
+    ExerciseGroupRevisionConnection: ComputeModel<ExerciseGroupRevisionConnection>;
+    ExerciseGroupRevisionCursor: ComputeModel<ExerciseGroupRevisionCursor>;
+    Exercise: ComputeModel<Exercise>;
+    ExerciseRevision: ComputeModel<ExerciseRevision>;
+    ExerciseRevisionConnection: ComputeModel<ExerciseRevisionConnection>;
+    ExerciseRevisionCursor: ComputeModel<ExerciseRevisionCursor>;
+    GroupedExercise: ComputeModel<GroupedExercise>;
+    GroupedExerciseRevision: ComputeModel<GroupedExerciseRevision>;
+    GroupedExerciseRevisionConnection: ComputeModel<GroupedExerciseRevisionConnection>;
+    GroupedExerciseRevisionCursor: ComputeModel<GroupedExerciseRevisionCursor>;
+    Page: ComputeModel<Page>;
+    PageRevision: ComputeModel<PageRevision>;
+    PageRevisionConnection: ComputeModel<PageRevisionConnection>;
+    PageRevisionCursor: ComputeModel<PageRevisionCursor>;
+    Solution: ComputeModel<Solution>;
+    SolutionRevision: ComputeModel<SolutionRevision>;
+    SolutionRevisionConnection: ComputeModel<SolutionRevisionConnection>;
+    SolutionRevisionCursor: ComputeModel<SolutionRevisionCursor>;
+    TaxonomyTerm: ComputeModel<TaxonomyTerm>;
+    User: ComputeModel<User>;
+    UserConnection: ComputeModel<UserConnection>;
+    UserEdge: ComputeModel<UserEdge>;
+    Video: ComputeModel<Video>;
+    VideoRevision: ComputeModel<VideoRevision>;
+    VideoRevisionConnection: ComputeModel<VideoRevisionConnection>;
+    VideoRevisionCursor: ComputeModel<VideoRevisionCursor>;
 };
 
 // @public
 export type ResolversTypes = {
     Mutation: ResolverTypeWrapper<{}>;
-    Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-    String: ResolverTypeWrapper<Scalars['String']>;
-    PageInfo: ResolverTypeWrapper<PageInfo>;
-    DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
-    Instance: Instance;
+    Boolean: ResolverTypeWrapper<ComputeModel<Scalars['Boolean']>>;
+    String: ResolverTypeWrapper<ComputeModel<Scalars['String']>>;
+    PageInfo: ResolverTypeWrapper<ComputeModel<PageInfo>>;
+    DateTime: ResolverTypeWrapper<ComputeModel<Scalars['DateTime']>>;
+    Instance: ResolverTypeWrapper<ComputeModel<Instance>>;
     InstanceAware: ResolversTypes['License'] | ResolversTypes['CheckoutRevisionNotificationEvent'] | ResolversTypes['CreateCommentNotificationEvent'] | ResolversTypes['CreateEntityLinkNotificationEvent'] | ResolversTypes['CreateEntityNotificationEvent'] | ResolversTypes['CreateEntityRevisionNotificationEvent'] | ResolversTypes['CreateTaxonomyLinkNotificationEvent'] | ResolversTypes['CreateTaxonomyTermNotificationEvent'] | ResolversTypes['CreateThreadNotificationEvent'] | ResolversTypes['RejectRevisionNotificationEvent'] | ResolversTypes['RemoveEntityLinkNotificationEvent'] | ResolversTypes['RemoveTaxonomyLinkNotificationEvent'] | ResolversTypes['SetLicenseNotificationEvent'] | ResolversTypes['SetTaxonomyParentNotificationEvent'] | ResolversTypes['SetTaxonomyTermNotificationEvent'] | ResolversTypes['SetThreadStateNotificationEvent'] | ResolversTypes['SetUuidStateNotificationEvent'] | ResolversTypes['Applet'] | ResolversTypes['Article'] | ResolversTypes['CoursePage'] | ResolversTypes['Course'] | ResolversTypes['Event'] | ResolversTypes['ExerciseGroup'] | ResolversTypes['Exercise'] | ResolversTypes['GroupedExercise'] | ResolversTypes['Page'] | ResolversTypes['Solution'] | ResolversTypes['TaxonomyTerm'] | ResolversTypes['Video'];
-    JSON: ResolverTypeWrapper<Scalars['JSON']>;
-    JSONObject: ResolverTypeWrapper<Scalars['JSONObject']>;
-    License: ResolverTypeWrapper<LicenseModel>;
-    Int: ResolverTypeWrapper<Scalars['Int']>;
+    JSON: ResolverTypeWrapper<ComputeModel<Scalars['JSON']>>;
+    JSONObject: ResolverTypeWrapper<ComputeModel<Scalars['JSONObject']>>;
+    License: ResolverTypeWrapper<ComputeModel<License>>;
+    Int: ResolverTypeWrapper<ComputeModel<Scalars['Int']>>;
     Query: ResolverTypeWrapper<{}>;
-    CheckoutRevisionNotificationEvent: ResolverTypeWrapper<Omit_2<CheckoutRevisionNotificationEvent, 'repository'> & {
-        repository: ResolversTypes['AbstractRepository'];
-    }>;
-    CreateCommentNotificationEvent: ResolverTypeWrapper<CreateCommentNotificationEvent>;
-    CreateEntityLinkNotificationEvent: ResolverTypeWrapper<Omit_2<CreateEntityLinkNotificationEvent, 'parent' | 'child'> & {
-        parent: ResolversTypes['AbstractEntity'];
-        child: ResolversTypes['AbstractEntity'];
-    }>;
-    CreateEntityNotificationEvent: ResolverTypeWrapper<Omit_2<CreateEntityNotificationEvent, 'entity'> & {
-        entity: ResolversTypes['AbstractEntity'];
-    }>;
-    CreateEntityRevisionNotificationEvent: ResolverTypeWrapper<Omit_2<CreateEntityRevisionNotificationEvent, 'entity'> & {
-        entity: ResolversTypes['AbstractEntity'];
-    }>;
-    CreateTaxonomyLinkNotificationEvent: ResolverTypeWrapper<CreateTaxonomyLinkNotificationEvent>;
-    CreateTaxonomyTermNotificationEvent: ResolverTypeWrapper<CreateTaxonomyTermNotificationEvent>;
-    CreateThreadNotificationEvent: ResolverTypeWrapper<CreateThreadNotificationEvent>;
-    RejectRevisionNotificationEvent: ResolverTypeWrapper<Omit_2<RejectRevisionNotificationEvent, 'repository'> & {
-        repository: ResolversTypes['AbstractRepository'];
-    }>;
-    RemoveEntityLinkNotificationEvent: ResolverTypeWrapper<Omit_2<RemoveEntityLinkNotificationEvent, 'parent' | 'child'> & {
-        parent: ResolversTypes['AbstractEntity'];
-        child: ResolversTypes['AbstractEntity'];
-    }>;
-    RemoveTaxonomyLinkNotificationEvent: ResolverTypeWrapper<RemoveTaxonomyLinkNotificationEvent>;
-    SetLicenseNotificationEvent: ResolverTypeWrapper<Omit_2<SetLicenseNotificationEvent, 'repository'> & {
-        repository: ResolversTypes['AbstractRepository'];
-    }>;
-    SetTaxonomyParentNotificationEvent: ResolverTypeWrapper<SetTaxonomyParentNotificationEvent>;
-    SetTaxonomyTermNotificationEvent: ResolverTypeWrapper<SetTaxonomyTermNotificationEvent>;
-    SetThreadStateNotificationEvent: ResolverTypeWrapper<SetThreadStateNotificationEvent>;
-    SetUuidStateNotificationEvent: ResolverTypeWrapper<SetUuidStateNotificationEvent>;
-    Notification: ResolverTypeWrapper<Notification_2>;
+    CheckoutRevisionNotificationEvent: ResolverTypeWrapper<ComputeModel<CheckoutRevisionNotificationEvent>>;
+    CreateCommentNotificationEvent: ResolverTypeWrapper<ComputeModel<CreateCommentNotificationEvent>>;
+    CreateEntityLinkNotificationEvent: ResolverTypeWrapper<ComputeModel<CreateEntityLinkNotificationEvent>>;
+    CreateEntityNotificationEvent: ResolverTypeWrapper<ComputeModel<CreateEntityNotificationEvent>>;
+    CreateEntityRevisionNotificationEvent: ResolverTypeWrapper<ComputeModel<CreateEntityRevisionNotificationEvent>>;
+    CreateTaxonomyLinkNotificationEvent: ResolverTypeWrapper<ComputeModel<CreateTaxonomyLinkNotificationEvent>>;
+    CreateTaxonomyTermNotificationEvent: ResolverTypeWrapper<ComputeModel<CreateTaxonomyTermNotificationEvent>>;
+    CreateThreadNotificationEvent: ResolverTypeWrapper<ComputeModel<CreateThreadNotificationEvent>>;
+    RejectRevisionNotificationEvent: ResolverTypeWrapper<ComputeModel<RejectRevisionNotificationEvent>>;
+    RemoveEntityLinkNotificationEvent: ResolverTypeWrapper<ComputeModel<RemoveEntityLinkNotificationEvent>>;
+    RemoveTaxonomyLinkNotificationEvent: ResolverTypeWrapper<ComputeModel<RemoveTaxonomyLinkNotificationEvent>>;
+    SetLicenseNotificationEvent: ResolverTypeWrapper<ComputeModel<SetLicenseNotificationEvent>>;
+    SetTaxonomyParentNotificationEvent: ResolverTypeWrapper<ComputeModel<SetTaxonomyParentNotificationEvent>>;
+    SetTaxonomyTermNotificationEvent: ResolverTypeWrapper<ComputeModel<SetTaxonomyTermNotificationEvent>>;
+    SetThreadStateNotificationEvent: ResolverTypeWrapper<ComputeModel<SetThreadStateNotificationEvent>>;
+    SetUuidStateNotificationEvent: ResolverTypeWrapper<ComputeModel<SetUuidStateNotificationEvent>>;
+    Notification: ResolverTypeWrapper<ComputeModel<Notification_2>>;
     AbstractNotificationEvent: ResolversTypes['CheckoutRevisionNotificationEvent'] | ResolversTypes['CreateCommentNotificationEvent'] | ResolversTypes['CreateEntityLinkNotificationEvent'] | ResolversTypes['CreateEntityNotificationEvent'] | ResolversTypes['CreateEntityRevisionNotificationEvent'] | ResolversTypes['CreateTaxonomyLinkNotificationEvent'] | ResolversTypes['CreateTaxonomyTermNotificationEvent'] | ResolversTypes['CreateThreadNotificationEvent'] | ResolversTypes['RejectRevisionNotificationEvent'] | ResolversTypes['RemoveEntityLinkNotificationEvent'] | ResolversTypes['RemoveTaxonomyLinkNotificationEvent'] | ResolversTypes['SetLicenseNotificationEvent'] | ResolversTypes['SetTaxonomyParentNotificationEvent'] | ResolversTypes['SetTaxonomyTermNotificationEvent'] | ResolversTypes['SetThreadStateNotificationEvent'] | ResolversTypes['SetUuidStateNotificationEvent'];
-    NotificationMutation: ResolverTypeWrapper<Omit_2<NotificationMutation, 'setState'> & {
-        setState?: Maybe<ResolversTypes['NotificationSetStateResponse']>;
-    }>;
-    NotificationSetStateInput: NotificationSetStateInput;
-    NotificationSetStateResponse: ResolverTypeWrapper<Omit_2<NotificationSetStateResponse, 'query'> & {
-        query: ResolversTypes['Query'];
-    }>;
-    NotificationConnection: ResolverTypeWrapper<NotificationConnection>;
-    NotificationEdge: ResolverTypeWrapper<NotificationEdge>;
-    QuerySubscriptionResult: ResolverTypeWrapper<QuerySubscriptionResult>;
-    SubscriptionCursor: ResolverTypeWrapper<SubscriptionCursor>;
-    SubscriptionMutation: ResolverTypeWrapper<Omit_2<SubscriptionMutation, 'set'> & {
-        set?: Maybe<ResolversTypes['SubscriptionSetResponse']>;
-    }>;
-    SubscriptionSetInput: SubscriptionSetInput;
-    SubscriptionSetResponse: ResolverTypeWrapper<Omit_2<SubscriptionSetResponse, 'query'> & {
-        query: ResolversTypes['Query'];
-    }>;
-    Thread: ResolverTypeWrapper<Thread>;
-    Comment: ResolverTypeWrapper<Comment>;
+    NotificationMutation: ResolverTypeWrapper<ComputeModel<NotificationMutation>>;
+    NotificationSetStateInput: ResolverTypeWrapper<ComputeModel<NotificationSetStateInput>>;
+    NotificationSetStateResponse: ResolverTypeWrapper<ComputeModel<NotificationSetStateResponse>>;
+    NotificationConnection: ResolverTypeWrapper<ComputeModel<NotificationConnection>>;
+    NotificationEdge: ResolverTypeWrapper<ComputeModel<NotificationEdge>>;
+    QuerySubscriptionResult: ResolverTypeWrapper<ComputeModel<QuerySubscriptionResult>>;
+    SubscriptionCursor: ResolverTypeWrapper<ComputeModel<SubscriptionCursor>>;
+    SubscriptionMutation: ResolverTypeWrapper<ComputeModel<SubscriptionMutation>>;
+    SubscriptionSetInput: ResolverTypeWrapper<ComputeModel<SubscriptionSetInput>>;
+    SubscriptionSetResponse: ResolverTypeWrapper<ComputeModel<SubscriptionSetResponse>>;
+    Thread: ResolverTypeWrapper<ComputeModel<Thread>>;
+    Comment: ResolverTypeWrapper<ComputeModel<Comment>>;
     ThreadAware: ResolversTypes['Applet'] | ResolversTypes['AppletRevision'] | ResolversTypes['Article'] | ResolversTypes['ArticleRevision'] | ResolversTypes['CoursePage'] | ResolversTypes['CoursePageRevision'] | ResolversTypes['Course'] | ResolversTypes['CourseRevision'] | ResolversTypes['Event'] | ResolversTypes['EventRevision'] | ResolversTypes['ExerciseGroup'] | ResolversTypes['ExerciseGroupRevision'] | ResolversTypes['Exercise'] | ResolversTypes['ExerciseRevision'] | ResolversTypes['GroupedExercise'] | ResolversTypes['GroupedExerciseRevision'] | ResolversTypes['Page'] | ResolversTypes['PageRevision'] | ResolversTypes['Solution'] | ResolversTypes['SolutionRevision'] | ResolversTypes['TaxonomyTerm'] | ResolversTypes['User'] | ResolversTypes['Video'] | ResolversTypes['VideoRevision'];
-    ThreadsConnection: ResolverTypeWrapper<ThreadsConnection>;
-    ThreadsCursor: ResolverTypeWrapper<ThreadsCursor>;
-    UnsupportedThread: ResolverTypeWrapper<UnsupportedThread>;
-    UnsupportedComment: ResolverTypeWrapper<UnsupportedComment>;
-    CommentConnection: ResolverTypeWrapper<CommentConnection>;
-    CommentEdge: ResolverTypeWrapper<CommentEdge>;
-    ThreadMutation: ResolverTypeWrapper<Omit_2<ThreadMutation, 'createThread' | 'createComment' | 'setThreadArchived' | 'setThreadState' | 'setCommentState'> & {
-        createThread?: Maybe<ResolversTypes['ThreadCreateThreadResponse']>;
-        createComment?: Maybe<ResolversTypes['ThreadCreateCommentResponse']>;
-        setThreadArchived?: Maybe<ResolversTypes['ThreadSetThreadArchivedResponse']>;
-        setThreadState?: Maybe<ResolversTypes['ThreadSetThreadStateResponse']>;
-        setCommentState?: Maybe<ResolversTypes['ThreadSetCommentStateResponse']>;
-    }>;
-    ThreadCreateThreadInput: ThreadCreateThreadInput;
-    ThreadCreateThreadResponse: ResolverTypeWrapper<Omit_2<ThreadCreateThreadResponse, 'query'> & {
-        query: ResolversTypes['Query'];
-    }>;
-    ThreadCreateCommentInput: ThreadCreateCommentInput;
-    ThreadCreateCommentResponse: ResolverTypeWrapper<Omit_2<ThreadCreateCommentResponse, 'query'> & {
-        query: ResolversTypes['Query'];
-    }>;
-    ThreadSetThreadArchivedInput: ThreadSetThreadArchivedInput;
-    ThreadSetThreadArchivedResponse: ResolverTypeWrapper<Omit_2<ThreadSetThreadArchivedResponse, 'query'> & {
-        query: ResolversTypes['Query'];
-    }>;
-    ThreadSetThreadStateInput: ThreadSetThreadStateInput;
-    ThreadSetThreadStateResponse: ResolverTypeWrapper<Omit_2<ThreadSetThreadStateResponse, 'query'> & {
-        query: ResolversTypes['Query'];
-    }>;
-    ThreadSetCommentStateInput: ThreadSetCommentStateInput;
-    ThreadSetCommentStateResponse: ResolverTypeWrapper<Omit_2<ThreadSetCommentStateResponse, 'query'> & {
-        query: ResolversTypes['Query'];
-    }>;
+    ThreadsConnection: ResolverTypeWrapper<ComputeModel<ThreadsConnection>>;
+    ThreadsCursor: ResolverTypeWrapper<ComputeModel<ThreadsCursor>>;
+    UnsupportedThread: ResolverTypeWrapper<ComputeModel<UnsupportedThread>>;
+    UnsupportedComment: ResolverTypeWrapper<ComputeModel<UnsupportedComment>>;
+    CommentConnection: ResolverTypeWrapper<ComputeModel<CommentConnection>>;
+    CommentEdge: ResolverTypeWrapper<ComputeModel<CommentEdge>>;
+    ThreadMutation: ResolverTypeWrapper<ComputeModel<ThreadMutation>>;
+    ThreadCreateThreadInput: ResolverTypeWrapper<ComputeModel<ThreadCreateThreadInput>>;
+    ThreadCreateThreadResponse: ResolverTypeWrapper<ComputeModel<ThreadCreateThreadResponse>>;
+    ThreadCreateCommentInput: ResolverTypeWrapper<ComputeModel<ThreadCreateCommentInput>>;
+    ThreadCreateCommentResponse: ResolverTypeWrapper<ComputeModel<ThreadCreateCommentResponse>>;
+    ThreadSetThreadArchivedInput: ResolverTypeWrapper<ComputeModel<ThreadSetThreadArchivedInput>>;
+    ThreadSetThreadArchivedResponse: ResolverTypeWrapper<ComputeModel<ThreadSetThreadArchivedResponse>>;
+    ThreadSetThreadStateInput: ResolverTypeWrapper<ComputeModel<ThreadSetThreadStateInput>>;
+    ThreadSetThreadStateResponse: ResolverTypeWrapper<ComputeModel<ThreadSetThreadStateResponse>>;
+    ThreadSetCommentStateInput: ResolverTypeWrapper<ComputeModel<ThreadSetCommentStateInput>>;
+    ThreadSetCommentStateResponse: ResolverTypeWrapper<ComputeModel<ThreadSetCommentStateResponse>>;
     AbstractEntity: ResolversTypes['Applet'] | ResolversTypes['Article'] | ResolversTypes['CoursePage'] | ResolversTypes['Course'] | ResolversTypes['Event'] | ResolversTypes['ExerciseGroup'] | ResolversTypes['Exercise'] | ResolversTypes['GroupedExercise'] | ResolversTypes['Solution'] | ResolversTypes['Video'];
     AbstractEntityRevision: ResolversTypes['AppletRevision'] | ResolversTypes['ArticleRevision'] | ResolversTypes['CoursePageRevision'] | ResolversTypes['CourseRevision'] | ResolversTypes['EventRevision'] | ResolversTypes['ExerciseGroupRevision'] | ResolversTypes['ExerciseRevision'] | ResolversTypes['GroupedExerciseRevision'] | ResolversTypes['SolutionRevision'] | ResolversTypes['VideoRevision'];
     AbstractExercise: ResolversTypes['Exercise'] | ResolversTypes['GroupedExercise'];
     AbstractExerciseRevision: ResolversTypes['ExerciseRevision'] | ResolversTypes['GroupedExerciseRevision'];
     AbstractNavigationChild: ResolversTypes['Page'] | ResolversTypes['TaxonomyTerm'];
-    Navigation: ResolverTypeWrapper<Navigation>;
-    NavigationNodeConnection: ResolverTypeWrapper<NavigationNodeConnection>;
-    NavigationNodeEdge: ResolverTypeWrapper<NavigationNodeEdge>;
-    NavigationNode: ResolverTypeWrapper<NavigationNode>;
+    Navigation: ResolverTypeWrapper<ComputeModel<Navigation>>;
+    NavigationNodeConnection: ResolverTypeWrapper<ComputeModel<NavigationNodeConnection>>;
+    NavigationNodeEdge: ResolverTypeWrapper<ComputeModel<NavigationNodeEdge>>;
+    NavigationNode: ResolverTypeWrapper<ComputeModel<NavigationNode>>;
     AbstractRepository: ResolversTypes['Applet'] | ResolversTypes['Article'] | ResolversTypes['CoursePage'] | ResolversTypes['Course'] | ResolversTypes['Event'] | ResolversTypes['ExerciseGroup'] | ResolversTypes['Exercise'] | ResolversTypes['GroupedExercise'] | ResolversTypes['Page'] | ResolversTypes['Solution'] | ResolversTypes['Video'];
     AbstractRevision: ResolversTypes['AppletRevision'] | ResolversTypes['ArticleRevision'] | ResolversTypes['CoursePageRevision'] | ResolversTypes['CourseRevision'] | ResolversTypes['EventRevision'] | ResolversTypes['ExerciseGroupRevision'] | ResolversTypes['ExerciseRevision'] | ResolversTypes['GroupedExerciseRevision'] | ResolversTypes['PageRevision'] | ResolversTypes['SolutionRevision'] | ResolversTypes['VideoRevision'];
     AbstractTaxonomyTermChild: ResolversTypes['Applet'] | ResolversTypes['Article'] | ResolversTypes['Course'] | ResolversTypes['Event'] | ResolversTypes['ExerciseGroup'] | ResolversTypes['Exercise'] | ResolversTypes['Video'];
-    TaxonomyTermConnection: ResolverTypeWrapper<TaxonomyTermConnection>;
-    TaxonomyTermEdge: ResolverTypeWrapper<TaxonomyTermEdge>;
+    TaxonomyTermConnection: ResolverTypeWrapper<ComputeModel<TaxonomyTermConnection>>;
+    TaxonomyTermEdge: ResolverTypeWrapper<ComputeModel<TaxonomyTermEdge>>;
     AbstractUuid: ResolversTypes['Comment'] | ResolversTypes['Applet'] | ResolversTypes['AppletRevision'] | ResolversTypes['Article'] | ResolversTypes['ArticleRevision'] | ResolversTypes['CoursePage'] | ResolversTypes['CoursePageRevision'] | ResolversTypes['Course'] | ResolversTypes['CourseRevision'] | ResolversTypes['Event'] | ResolversTypes['EventRevision'] | ResolversTypes['ExerciseGroup'] | ResolversTypes['ExerciseGroupRevision'] | ResolversTypes['Exercise'] | ResolversTypes['ExerciseRevision'] | ResolversTypes['GroupedExercise'] | ResolversTypes['GroupedExerciseRevision'] | ResolversTypes['Page'] | ResolversTypes['PageRevision'] | ResolversTypes['Solution'] | ResolversTypes['SolutionRevision'] | ResolversTypes['TaxonomyTerm'] | ResolversTypes['User'] | ResolversTypes['Video'] | ResolversTypes['VideoRevision'];
-    AbstractUuidConnection: ResolverTypeWrapper<AbstractUuidConnection>;
-    AbstractUuidCursor: ResolverTypeWrapper<AbstractUuidCursor>;
-    UuidMutation: ResolverTypeWrapper<Omit_2<UuidMutation, 'setState'> & {
-        setState?: Maybe<ResolversTypes['UuidSetStateResponse']>;
-    }>;
-    UuidSetStateInput: UuidSetStateInput;
-    UuidSetStateResponse: ResolverTypeWrapper<Omit_2<UuidSetStateResponse, 'query'> & {
-        query: ResolversTypes['Query'];
-    }>;
-    AliasInput: AliasInput;
-    Applet: ResolverTypeWrapper<Omit_2<Applet, 'license' | 'currentRevision' | 'revisions'> & {
-        license: ResolversTypes['License'];
-        currentRevision?: Maybe<ResolversTypes['AppletRevision']>;
-        revisions: ResolversTypes['AppletRevisionConnection'];
-    }>;
-    AppletRevision: ResolverTypeWrapper<Omit_2<AppletRevision, 'repository'> & {
-        repository: ResolversTypes['Applet'];
-    }>;
-    AppletRevisionConnection: ResolverTypeWrapper<Omit_2<AppletRevisionConnection, 'edges' | 'nodes'> & {
-        edges: Array<ResolversTypes['AppletRevisionCursor']>;
-        nodes: Array<ResolversTypes['AppletRevision']>;
-    }>;
-    AppletRevisionCursor: ResolverTypeWrapper<Omit_2<AppletRevisionCursor, 'node'> & {
-        node: ResolversTypes['AppletRevision'];
-    }>;
-    Article: ResolverTypeWrapper<Omit_2<Article, 'license' | 'currentRevision' | 'revisions'> & {
-        license: ResolversTypes['License'];
-        currentRevision?: Maybe<ResolversTypes['ArticleRevision']>;
-        revisions: ResolversTypes['ArticleRevisionConnection'];
-    }>;
-    ArticleRevision: ResolverTypeWrapper<Omit_2<ArticleRevision, 'repository'> & {
-        repository: ResolversTypes['Article'];
-    }>;
-    ArticleRevisionConnection: ResolverTypeWrapper<Omit_2<ArticleRevisionConnection, 'edges' | 'nodes'> & {
-        edges: Array<ResolversTypes['ArticleRevisionCursor']>;
-        nodes: Array<ResolversTypes['ArticleRevision']>;
-    }>;
-    ArticleRevisionCursor: ResolverTypeWrapper<Omit_2<ArticleRevisionCursor, 'node'> & {
-        node: ResolversTypes['ArticleRevision'];
-    }>;
-    CoursePage: ResolverTypeWrapper<Omit_2<CoursePage, 'license' | 'currentRevision' | 'revisions' | 'course'> & {
-        license: ResolversTypes['License'];
-        currentRevision?: Maybe<ResolversTypes['CoursePageRevision']>;
-        revisions: ResolversTypes['CoursePageRevisionConnection'];
-        course: ResolversTypes['Course'];
-    }>;
-    CoursePageRevision: ResolverTypeWrapper<Omit_2<CoursePageRevision, 'repository'> & {
-        repository: ResolversTypes['CoursePage'];
-    }>;
-    CoursePageRevisionConnection: ResolverTypeWrapper<Omit_2<CoursePageRevisionConnection, 'edges' | 'nodes'> & {
-        edges: Array<ResolversTypes['CoursePageRevisionCursor']>;
-        nodes: Array<ResolversTypes['CoursePageRevision']>;
-    }>;
-    CoursePageRevisionCursor: ResolverTypeWrapper<Omit_2<CoursePageRevisionCursor, 'node'> & {
-        node: ResolversTypes['CoursePageRevision'];
-    }>;
-    Course: ResolverTypeWrapper<Omit_2<Course, 'license' | 'currentRevision' | 'revisions' | 'pages'> & {
-        license: ResolversTypes['License'];
-        currentRevision?: Maybe<ResolversTypes['CourseRevision']>;
-        revisions: ResolversTypes['CourseRevisionConnection'];
-        pages: Array<ResolversTypes['CoursePage']>;
-    }>;
-    CourseRevision: ResolverTypeWrapper<Omit_2<CourseRevision, 'repository'> & {
-        repository: ResolversTypes['Course'];
-    }>;
-    CourseRevisionConnection: ResolverTypeWrapper<Omit_2<CourseRevisionConnection, 'edges' | 'nodes'> & {
-        edges: Array<ResolversTypes['CourseRevisionCursor']>;
-        nodes: Array<ResolversTypes['CourseRevision']>;
-    }>;
-    CourseRevisionCursor: ResolverTypeWrapper<Omit_2<CourseRevisionCursor, 'node'> & {
-        node: ResolversTypes['CourseRevision'];
-    }>;
-    Event: ResolverTypeWrapper<Omit_2<Event_2, 'license' | 'currentRevision' | 'revisions'> & {
-        license: ResolversTypes['License'];
-        currentRevision?: Maybe<ResolversTypes['EventRevision']>;
-        revisions: ResolversTypes['EventRevisionConnection'];
-    }>;
-    EventRevision: ResolverTypeWrapper<Omit_2<EventRevision, 'repository'> & {
-        repository: ResolversTypes['Event'];
-    }>;
-    EventRevisionConnection: ResolverTypeWrapper<Omit_2<EventRevisionConnection, 'edges' | 'nodes'> & {
-        edges: Array<ResolversTypes['EventRevisionCursor']>;
-        nodes: Array<ResolversTypes['EventRevision']>;
-    }>;
-    EventRevisionCursor: ResolverTypeWrapper<Omit_2<EventRevisionCursor, 'node'> & {
-        node: ResolversTypes['EventRevision'];
-    }>;
-    ExerciseGroup: ResolverTypeWrapper<Omit_2<ExerciseGroup, 'license' | 'currentRevision' | 'revisions' | 'exercises'> & {
-        license: ResolversTypes['License'];
-        currentRevision?: Maybe<ResolversTypes['ExerciseGroupRevision']>;
-        revisions: ResolversTypes['ExerciseGroupRevisionConnection'];
-        exercises: Array<ResolversTypes['GroupedExercise']>;
-    }>;
-    ExerciseGroupRevision: ResolverTypeWrapper<Omit_2<ExerciseGroupRevision, 'repository'> & {
-        repository: ResolversTypes['ExerciseGroup'];
-    }>;
-    ExerciseGroupRevisionConnection: ResolverTypeWrapper<Omit_2<ExerciseGroupRevisionConnection, 'edges' | 'nodes'> & {
-        edges: Array<ResolversTypes['ExerciseGroupRevisionCursor']>;
-        nodes: Array<ResolversTypes['ExerciseGroupRevision']>;
-    }>;
-    ExerciseGroupRevisionCursor: ResolverTypeWrapper<Omit_2<ExerciseGroupRevisionCursor, 'node'> & {
-        node: ResolversTypes['ExerciseGroupRevision'];
-    }>;
-    Exercise: ResolverTypeWrapper<Omit_2<Exercise, 'license' | 'currentRevision' | 'revisions' | 'solution'> & {
-        license: ResolversTypes['License'];
-        currentRevision?: Maybe<ResolversTypes['ExerciseRevision']>;
-        revisions: ResolversTypes['ExerciseRevisionConnection'];
-        solution?: Maybe<ResolversTypes['Solution']>;
-    }>;
-    ExerciseRevision: ResolverTypeWrapper<Omit_2<ExerciseRevision, 'repository'> & {
-        repository: ResolversTypes['Exercise'];
-    }>;
-    ExerciseRevisionConnection: ResolverTypeWrapper<Omit_2<ExerciseRevisionConnection, 'edges' | 'nodes'> & {
-        edges: Array<ResolversTypes['ExerciseRevisionCursor']>;
-        nodes: Array<ResolversTypes['ExerciseRevision']>;
-    }>;
-    ExerciseRevisionCursor: ResolverTypeWrapper<Omit_2<ExerciseRevisionCursor, 'node'> & {
-        node: ResolversTypes['ExerciseRevision'];
-    }>;
-    GroupedExercise: ResolverTypeWrapper<Omit_2<GroupedExercise, 'license' | 'currentRevision' | 'revisions' | 'solution' | 'exerciseGroup'> & {
-        license: ResolversTypes['License'];
-        currentRevision?: Maybe<ResolversTypes['GroupedExerciseRevision']>;
-        revisions: ResolversTypes['GroupedExerciseRevisionConnection'];
-        solution?: Maybe<ResolversTypes['Solution']>;
-        exerciseGroup: ResolversTypes['ExerciseGroup'];
-    }>;
-    GroupedExerciseRevision: ResolverTypeWrapper<Omit_2<GroupedExerciseRevision, 'repository'> & {
-        repository: ResolversTypes['GroupedExercise'];
-    }>;
-    GroupedExerciseRevisionConnection: ResolverTypeWrapper<Omit_2<GroupedExerciseRevisionConnection, 'edges' | 'nodes'> & {
-        edges: Array<ResolversTypes['GroupedExerciseRevisionCursor']>;
-        nodes: Array<ResolversTypes['GroupedExerciseRevision']>;
-    }>;
-    GroupedExerciseRevisionCursor: ResolverTypeWrapper<Omit_2<GroupedExerciseRevisionCursor, 'node'> & {
-        node: ResolversTypes['GroupedExerciseRevision'];
-    }>;
-    Page: ResolverTypeWrapper<Omit_2<Page, 'license' | 'currentRevision' | 'revisions'> & {
-        license: ResolversTypes['License'];
-        currentRevision?: Maybe<ResolversTypes['PageRevision']>;
-        revisions: ResolversTypes['PageRevisionConnection'];
-    }>;
-    PageRevision: ResolverTypeWrapper<Omit_2<PageRevision, 'repository'> & {
-        repository: ResolversTypes['Page'];
-    }>;
-    PageRevisionConnection: ResolverTypeWrapper<Omit_2<PageRevisionConnection, 'edges' | 'nodes'> & {
-        edges: Array<ResolversTypes['PageRevisionCursor']>;
-        nodes: Array<ResolversTypes['PageRevision']>;
-    }>;
-    PageRevisionCursor: ResolverTypeWrapper<Omit_2<PageRevisionCursor, 'node'> & {
-        node: ResolversTypes['PageRevision'];
-    }>;
-    Solution: ResolverTypeWrapper<Omit_2<Solution, 'license' | 'currentRevision' | 'revisions' | 'exercise'> & {
-        license: ResolversTypes['License'];
-        currentRevision?: Maybe<ResolversTypes['SolutionRevision']>;
-        revisions?: Maybe<ResolversTypes['SolutionRevisionConnection']>;
-        exercise: ResolversTypes['AbstractExercise'];
-    }>;
-    SolutionRevision: ResolverTypeWrapper<Omit_2<SolutionRevision, 'repository'> & {
-        repository: ResolversTypes['Solution'];
-    }>;
-    SolutionRevisionConnection: ResolverTypeWrapper<Omit_2<SolutionRevisionConnection, 'edges' | 'nodes'> & {
-        edges: Array<ResolversTypes['SolutionRevisionCursor']>;
-        nodes: Array<ResolversTypes['SolutionRevision']>;
-    }>;
-    SolutionRevisionCursor: ResolverTypeWrapper<Omit_2<SolutionRevisionCursor, 'node'> & {
-        node: ResolversTypes['SolutionRevision'];
-    }>;
-    TaxonomyTermType: TaxonomyTermType;
-    TaxonomyTerm: ResolverTypeWrapper<TaxonomyTerm>;
-    User: ResolverTypeWrapper<User>;
-    UserConnection: ResolverTypeWrapper<UserConnection>;
-    UserEdge: ResolverTypeWrapper<UserEdge>;
-    Video: ResolverTypeWrapper<Omit_2<Video, 'license' | 'currentRevision' | 'revisions'> & {
-        license: ResolversTypes['License'];
-        currentRevision?: Maybe<ResolversTypes['VideoRevision']>;
-        revisions: ResolversTypes['VideoRevisionConnection'];
-    }>;
-    VideoRevision: ResolverTypeWrapper<Omit_2<VideoRevision, 'repository'> & {
-        repository: ResolversTypes['Video'];
-    }>;
-    VideoRevisionConnection: ResolverTypeWrapper<Omit_2<VideoRevisionConnection, 'edges' | 'nodes'> & {
-        edges: Array<ResolversTypes['VideoRevisionCursor']>;
-        nodes: Array<ResolversTypes['VideoRevision']>;
-    }>;
-    VideoRevisionCursor: ResolverTypeWrapper<Omit_2<VideoRevisionCursor, 'node'> & {
-        node: ResolversTypes['VideoRevision'];
-    }>;
+    AbstractUuidConnection: ResolverTypeWrapper<ComputeModel<AbstractUuidConnection>>;
+    AbstractUuidCursor: ResolverTypeWrapper<ComputeModel<AbstractUuidCursor>>;
+    UuidMutation: ResolverTypeWrapper<ComputeModel<UuidMutation>>;
+    UuidSetStateInput: ResolverTypeWrapper<ComputeModel<UuidSetStateInput>>;
+    UuidSetStateResponse: ResolverTypeWrapper<ComputeModel<UuidSetStateResponse>>;
+    AliasInput: ResolverTypeWrapper<ComputeModel<AliasInput>>;
+    Applet: ResolverTypeWrapper<ComputeModel<Applet>>;
+    AppletRevision: ResolverTypeWrapper<ComputeModel<AppletRevision>>;
+    AppletRevisionConnection: ResolverTypeWrapper<ComputeModel<AppletRevisionConnection>>;
+    AppletRevisionCursor: ResolverTypeWrapper<ComputeModel<AppletRevisionCursor>>;
+    Article: ResolverTypeWrapper<ComputeModel<Article>>;
+    ArticleRevision: ResolverTypeWrapper<ComputeModel<ArticleRevision>>;
+    ArticleRevisionConnection: ResolverTypeWrapper<ComputeModel<ArticleRevisionConnection>>;
+    ArticleRevisionCursor: ResolverTypeWrapper<ComputeModel<ArticleRevisionCursor>>;
+    CoursePage: ResolverTypeWrapper<ComputeModel<CoursePage>>;
+    CoursePageRevision: ResolverTypeWrapper<ComputeModel<CoursePageRevision>>;
+    CoursePageRevisionConnection: ResolverTypeWrapper<ComputeModel<CoursePageRevisionConnection>>;
+    CoursePageRevisionCursor: ResolverTypeWrapper<ComputeModel<CoursePageRevisionCursor>>;
+    Course: ResolverTypeWrapper<ComputeModel<Course>>;
+    CourseRevision: ResolverTypeWrapper<ComputeModel<CourseRevision>>;
+    CourseRevisionConnection: ResolverTypeWrapper<ComputeModel<CourseRevisionConnection>>;
+    CourseRevisionCursor: ResolverTypeWrapper<ComputeModel<CourseRevisionCursor>>;
+    Event: ResolverTypeWrapper<ComputeModel<Event_2>>;
+    EventRevision: ResolverTypeWrapper<ComputeModel<EventRevision>>;
+    EventRevisionConnection: ResolverTypeWrapper<ComputeModel<EventRevisionConnection>>;
+    EventRevisionCursor: ResolverTypeWrapper<ComputeModel<EventRevisionCursor>>;
+    ExerciseGroup: ResolverTypeWrapper<ComputeModel<ExerciseGroup>>;
+    ExerciseGroupRevision: ResolverTypeWrapper<ComputeModel<ExerciseGroupRevision>>;
+    ExerciseGroupRevisionConnection: ResolverTypeWrapper<ComputeModel<ExerciseGroupRevisionConnection>>;
+    ExerciseGroupRevisionCursor: ResolverTypeWrapper<ComputeModel<ExerciseGroupRevisionCursor>>;
+    Exercise: ResolverTypeWrapper<ComputeModel<Exercise>>;
+    ExerciseRevision: ResolverTypeWrapper<ComputeModel<ExerciseRevision>>;
+    ExerciseRevisionConnection: ResolverTypeWrapper<ComputeModel<ExerciseRevisionConnection>>;
+    ExerciseRevisionCursor: ResolverTypeWrapper<ComputeModel<ExerciseRevisionCursor>>;
+    GroupedExercise: ResolverTypeWrapper<ComputeModel<GroupedExercise>>;
+    GroupedExerciseRevision: ResolverTypeWrapper<ComputeModel<GroupedExerciseRevision>>;
+    GroupedExerciseRevisionConnection: ResolverTypeWrapper<ComputeModel<GroupedExerciseRevisionConnection>>;
+    GroupedExerciseRevisionCursor: ResolverTypeWrapper<ComputeModel<GroupedExerciseRevisionCursor>>;
+    Page: ResolverTypeWrapper<ComputeModel<Page>>;
+    PageRevision: ResolverTypeWrapper<ComputeModel<PageRevision>>;
+    PageRevisionConnection: ResolverTypeWrapper<ComputeModel<PageRevisionConnection>>;
+    PageRevisionCursor: ResolverTypeWrapper<ComputeModel<PageRevisionCursor>>;
+    Solution: ResolverTypeWrapper<ComputeModel<Solution>>;
+    SolutionRevision: ResolverTypeWrapper<ComputeModel<SolutionRevision>>;
+    SolutionRevisionConnection: ResolverTypeWrapper<ComputeModel<SolutionRevisionConnection>>;
+    SolutionRevisionCursor: ResolverTypeWrapper<ComputeModel<SolutionRevisionCursor>>;
+    TaxonomyTermType: ResolverTypeWrapper<ComputeModel<TaxonomyTermType>>;
+    TaxonomyTerm: ResolverTypeWrapper<ComputeModel<TaxonomyTerm>>;
+    User: ResolverTypeWrapper<ComputeModel<User>>;
+    UserConnection: ResolverTypeWrapper<ComputeModel<UserConnection>>;
+    UserEdge: ResolverTypeWrapper<ComputeModel<UserEdge>>;
+    Video: ResolverTypeWrapper<ComputeModel<Video>>;
+    VideoRevision: ResolverTypeWrapper<ComputeModel<VideoRevision>>;
+    VideoRevisionConnection: ResolverTypeWrapper<ComputeModel<VideoRevisionConnection>>;
+    VideoRevisionCursor: ResolverTypeWrapper<ComputeModel<VideoRevisionCursor>>;
 };
 
 // @public (undocumented)

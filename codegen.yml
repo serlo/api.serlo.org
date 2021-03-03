@@ -3,12 +3,13 @@ schema: src/**/*.graphql
 generates:
   src/types.ts:
     plugins:
+      - add:
+          content: "import type { ComputeModel } from '~/model/types'"
       - typescript
       - typescript-resolvers
     config:
       contextType: internals/graphql/context#Context
-      mappers:
-        License: model/types#LicenseModel
+      defaultMapper: ComputeModel<{T}>
       scalars:
         DateTime: string
         JSON: unknown

@@ -70,6 +70,7 @@
     "tslib": "^2.0.0"
   },
   "devDependencies": {
+    "@graphql-codegen/add": "^2.0.0",
     "@graphql-codegen/cli": "^1.0.0",
     "@graphql-codegen/typescript": "^1.0.0",
     "@graphql-codegen/typescript-resolvers": "^1.0.0",
