@@ -87,10 +87,10 @@ export type Query = {
   activeDonors: UserConnection;
   activeReviewers: UserConnection;
   license?: Maybe<License>;
-  notificationEvent?: Maybe<AbstractNotificationEvent>;
+  notificationEvent?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
   notifications: NotificationConnection;
   subscriptions: QuerySubscriptionResult;
-  uuid?: Maybe<AbstractUuid>;
+  uuid?: Maybe<Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision>;
 };
 
 
@@ -157,8 +157,8 @@ export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & Inst
   date: Scalars['DateTime'];
   actor: User;
   objectId: Scalars['Int'];
-  repository: AbstractRepository;
-  revision: AbstractRevision;
+  repository: Applet | Article | CoursePage | Course | Event | ExerciseGroup | Exercise | GroupedExercise | Page | Solution | Video;
+  revision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | GroupedExerciseRevision | PageRevision | SolutionRevision | VideoRevision;
   reason: Scalars['String'];
 };
 
@@ -180,8 +180,8 @@ export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & Inst
   date: Scalars['DateTime'];
   actor: User;
   objectId: Scalars['Int'];
-  parent: AbstractEntity;
-  child: AbstractEntity;
+  parent: Applet | Article | CoursePage | Course | Event | ExerciseGroup | Exercise | GroupedExercise | Solution | Video;
+  child: Applet | Article | CoursePage | Course | Event | ExerciseGroup | Exercise | GroupedExercise | Solution | Video;
 };
 
 export type CreateEntityNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -191,7 +191,7 @@ export type CreateEntityNotificationEvent = AbstractNotificationEvent & Instance
   date: Scalars['DateTime'];
   actor: User;
   objectId: Scalars['Int'];
-  entity: AbstractEntity;
+  entity: Applet | Article | CoursePage | Course | Event | ExerciseGroup | Exercise | GroupedExercise | Solution | Video;
 };
 
 export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -201,8 +201,8 @@ export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & 
   date: Scalars['DateTime'];
   actor: User;
   objectId: Scalars['Int'];
-  entity: AbstractEntity;
-  entityRevision: AbstractEntityRevision;
+  entity: Applet | Article | CoursePage | Course | Event | ExerciseGroup | Exercise | GroupedExercise | Solution | Video;
+  entityRevision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | GroupedExerciseRevision | SolutionRevision | VideoRevision;
 };
 
 export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -213,7 +213,7 @@ export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & In
   actor: User;
   objectId: Scalars['Int'];
   parent: TaxonomyTerm;
-  child: AbstractUuid;
+  child: Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
 };
 
 export type CreateTaxonomyTermNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -233,7 +233,7 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
   date: Scalars['DateTime'];
   actor: User;
   objectId: Scalars['Int'];
-  object: AbstractUuid;
+  object: Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
   thread: UnsupportedThread;
 };
 
@@ -244,8 +244,8 @@ export type RejectRevisionNotificationEvent = AbstractNotificationEvent & Instan
   date: Scalars['DateTime'];
   actor: User;
   objectId: Scalars['Int'];
-  repository: AbstractRepository;
-  revision: AbstractRevision;
+  repository: Applet | Article | CoursePage | Course | Event | ExerciseGroup | Exercise | GroupedExercise | Page | Solution | Video;
+  revision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | GroupedExerciseRevision | PageRevision | SolutionRevision | VideoRevision;
   reason: Scalars['String'];
 };
 
@@ -256,8 +256,8 @@ export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & Inst
   date: Scalars['DateTime'];
   actor: User;
   objectId: Scalars['Int'];
-  parent: AbstractEntity;
-  child: AbstractEntity;
+  parent: Applet | Article | CoursePage | Course | Event | ExerciseGroup | Exercise | GroupedExercise | Solution | Video;
+  child: Applet | Article | CoursePage | Course | Event | ExerciseGroup | Exercise | GroupedExercise | Solution | Video;
 };
 
 export type RemoveTaxonomyLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -268,7 +268,7 @@ export type RemoveTaxonomyLinkNotificationEvent = AbstractNotificationEvent & In
   actor: User;
   objectId: Scalars['Int'];
   parent: TaxonomyTerm;
-  child: AbstractUuid;
+  child: Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
 };
 
 export type SetLicenseNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -278,7 +278,7 @@ export type SetLicenseNotificationEvent = AbstractNotificationEvent & InstanceAw
   date: Scalars['DateTime'];
   actor: User;
   objectId: Scalars['Int'];
-  repository: AbstractRepository;
+  repository: Applet | Article | CoursePage | Course | Event | ExerciseGroup | Exercise | GroupedExercise | Page | Solution | Video;
 };
 
 export type SetTaxonomyParentNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -321,7 +321,7 @@ export type SetUuidStateNotificationEvent = AbstractNotificationEvent & Instance
   date: Scalars['DateTime'];
   actor: User;
   objectId: Scalars['Int'];
-  object: AbstractUuid;
+  object: Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
   trashed: Scalars['Boolean'];
 };
 
@@ -329,7 +329,7 @@ export type Notification = {
   __typename?: 'Notification';
   id: Scalars['Int'];
   unread: Scalars['Boolean'];
-  event: AbstractNotificationEvent;
+  event: CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent;
 };
 
 export type AbstractNotificationEvent = {
@@ -378,7 +378,7 @@ export type NotificationEdge = {
 export type QuerySubscriptionResult = {
   __typename?: 'QuerySubscriptionResult';
   edges: Array<SubscriptionCursor>;
-  nodes: Array<AbstractUuid>;
+  nodes: Array<Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision>;
   totalCount: Scalars['Int'];
   pageInfo: PageInfo;
 };
@@ -386,7 +386,7 @@ export type QuerySubscriptionResult = {
 export type SubscriptionCursor = {
   __typename?: 'SubscriptionCursor';
   cursor: Scalars['String'];
-  node: AbstractUuid;
+  node: Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
 };
 
 export type SubscriptionMutation = {
@@ -417,7 +417,7 @@ export type Thread = {
   createdAt: Scalars['DateTime'];
   title?: Maybe<Scalars['String']>;
   archived: Scalars['Boolean'];
-  object: AbstractUuid;
+  object: Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
   comments: CommentConnection;
 };
 
@@ -614,7 +614,7 @@ export type AbstractExercise = {
   instance: Instance;
   alias?: Maybe<Scalars['String']>;
   license: License;
-  currentRevision?: Maybe<AbstractExerciseRevision>;
+  currentRevision?: Maybe<ExerciseRevision | GroupedExerciseRevision>;
   solution?: Maybe<Solution>;
 };
 
@@ -748,7 +748,7 @@ export type AbstractUuid = {
 export type AbstractUuidConnection = {
   __typename?: 'AbstractUuidConnection';
   edges: Array<AbstractUuidCursor>;
-  nodes: Array<AbstractUuid>;
+  nodes: Array<Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision>;
   totalCount: Scalars['Int'];
   pageInfo: PageInfo;
 };
@@ -756,7 +756,7 @@ export type AbstractUuidConnection = {
 export type AbstractUuidCursor = {
   __typename?: 'AbstractUuidCursor';
   cursor: Scalars['String'];
-  node: AbstractUuid;
+  node: Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
 };
 
 export type UuidMutation = {
@@ -1497,7 +1497,7 @@ export type Solution = AbstractUuid & AbstractRepository & AbstractEntity & Inst
   license: License;
   currentRevision?: Maybe<SolutionRevision>;
   revisions?: Maybe<SolutionRevisionConnection>;
-  exercise: AbstractExercise;
+  exercise: Exercise | GroupedExercise;
 };
 
 
