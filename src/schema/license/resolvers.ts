@@ -20,8 +20,9 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Querys, TypeResolvers } from '~/schema/utils'
+import { License } from '~/types'
 
-export const resolvers: TypeResolvers<'License'> & Querys<'license'> = {
+export const resolvers: TypeResolvers<License> & Querys<'license'> = {
   Query: {
     license(_parent, { id }, { dataSources }) {
       return dataSources.model.serlo.getLicense({ id })

@@ -22,12 +22,8 @@
 import { AuthenticationError } from 'apollo-server'
 import { A, O } from 'ts-toolbelt'
 
-import {
-  License,
-  QueryResolvers,
-  Resolvers,
-  ResolversParentTypes,
-} from '~/types'
+import { ComputeModel, Typename } from '~/model'
+import { QueryResolvers, Resolvers } from '~/types'
 
 export function assertUserIsAuthenticated(
   user: number | null
@@ -53,46 +49,42 @@ export type Querys<QueryProperties extends keyof QueryResolvers> = A.Compute<
 >
 
 /**
- * Resolvers type with all resolvers in the union `TypeNames`. All resolvers
- * functions are required where either its corresponding property is missing
- * in the model type or the type of the model type does not fit the type of
- * the graphql type.
- *
- * You need to add the GraphQL type to the interface {@link GraphQLTypes} in
- * order to use this feature.
+ * Resolvers type with all resolvers for the GraphQL type `T`. All resolver
+ * functions are required where either the corresponding property in the model
+ * type is missing or the type of the model property does not fit the type of
+ * the graphql property.
  */
-export type TypeResolvers<TypeNames extends PossibleTypeNames> = A.Compute<
-  O.MergeUp<RequiredResolvers<TypeNames>, Pick<Resolvers, TypeNames>, 'deep'>,
-  'deep'
->
-type RequiredResolvers<
-  TypeNames extends PossibleTypeNames
-> = PickRequiredResolvers<
+export type TypeResolvers<
+  T extends { __typename?: keyof Resolvers }
+> = Typename<T> extends keyof Resolvers
+  ? A.Compute<
+      O.MergeUp<RequiredResolvers<T>, Pick<Resolvers, Typename<T>>, 'deep'>,
+      'deep'
+    >
+  : never
+
+type RequiredResolvers<T extends object> = PickRequiredResolvers<
   {
-    [TypeName in TypeNames]: RequiredResolverFunctions<TypeName>
+    [P in Typename<T>]: RequiredResolverFunctions<T>
   }
 >
-type RequiredResolverFunctions<T extends PossibleTypeNames> = OmitKeys<
-  Resolver<T>,
-  | O.IntersectKeys<GraphQLTypes[T], ResolversParentTypes[T], '<-extends'>
-  | '__isTypeOf'
->
+
+type RequiredResolverFunctions<
+  T extends object
+> = Typename<T> extends keyof Resolvers
+  ? OmitKeys<
+      Required<NonNullable<Resolvers[Typename<T>]>>,
+      O.IntersectKeys<T, ComputeModel<T>, '<-extends'> | '__isTypeOf'
+    >
+  : never
+
 // When the model and the graphql type are the same, the object with all required
-// resolver functions will be empty. This type function filters all such
-// empty resolver types.
+// resolver functions will be empty (i.e {}). This type helper filters
+// all such empty resolver types since they do not need to be defined.
 type PickRequiredResolvers<O extends object> = O.Filter<O, object, '<-extends'>
-
-type PossibleTypeNames = keyof Resolvers &
-  keyof ResolversParentTypes &
-  keyof GraphQLTypes
-type Resolver<T extends PossibleTypeNames> = Required<NonNullable<Resolvers[T]>>
-
-interface GraphQLTypes {
-  License: License
-}
 
 /**
  * A version of `Omit` where the keys do not need to be property names of the
  * object.
  */
-type OmitKeys<O extends object, Keys extends string> = Omit<O, Keys & keyof O>
+type OmitKeys<O extends object, Keys> = Omit<O, Keys & keyof O>
