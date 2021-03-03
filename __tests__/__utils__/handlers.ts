@@ -27,6 +27,7 @@ import { NotificationEventPayload } from '~/schema/notification/types'
 import { NavigationPayload } from '~/schema/uuid/abstract-navigation-child/types'
 import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 import { AliasPayload } from '~/schema/uuid/alias/types'
+import { License } from '~/types'
 
 export function createAliasHandler(alias: AliasPayload) {
   return createMessageHandler({
@@ -41,7 +42,7 @@ export function createAliasHandler(alias: AliasPayload) {
   })
 }
 
-export function createLicenseHandler(license: Model<'License'>) {
+export function createLicenseHandler(license: Model<License>) {
   return createMessageHandler({
     message: {
       type: 'LicenseQuery',

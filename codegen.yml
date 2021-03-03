@@ -4,12 +4,12 @@ generates:
   src/types.ts:
     plugins:
       - add:
-          content: "import type { ComputeModel } from '~/model/types'"
+          content: "import type { Model } from '~/model/types'"
       - typescript
       - typescript-resolvers
     config:
       contextType: internals/graphql/context#Context
-      defaultMapper: ComputeModel<{T}>
+      defaultMapper: Model<{T}>
       scalars:
         DateTime: string
         JSON: unknown
