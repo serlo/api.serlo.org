@@ -29,6 +29,7 @@ export interface Models {
   Mutation: Record<string, never>
   Query: Record<string, never>
   License: t.TypeOf<typeof LicenseDecoder>
+  // Those will be replaced with the actual Payloads
   Comment: UuidPayload
   Applet: UuidPayload
   AppletRevision: UuidPayload
@@ -72,7 +73,7 @@ export type Model<T> = T extends boolean
   ? boolean
   : Typename<T> extends keyof Models
   ? Models[Typename<T>]
-  : T extends { nodes: Array<infer U> }
+  : T extends { nodes: Array<infer U>; totalCount: number }
   ? Connection<Model<U>>
   : T extends (infer U)[]
   ? Model<U>[]
