@@ -23,7 +23,7 @@ import { AuthenticationError } from 'apollo-server'
 import { A, O } from 'ts-toolbelt'
 
 import { Model, Typename } from '~/model'
-import { QueryResolvers, Resolvers } from '~/types'
+import { MutationResolvers, QueryResolvers, Resolvers } from '~/types'
 
 export function assertUserIsAuthenticated(
   user: number | null
@@ -35,6 +35,17 @@ export function createMutationNamespace() {
   return () => {
     return {}
   }
+}
+
+/**
+ * Resolvers type for all mutations of the namespaces `Namespaces`.
+ */
+export type Mutations<Namespaces extends keyof MutationResolvers> = {
+  Mutation: Required<Pick<MutationResolvers, Namespaces>>
+} & {
+  [P in `${Capitalize<Namespaces>}Mutation`]: P extends keyof Resolvers
+    ? Required<Omit<NonNullable<Resolvers[P]>, '__isTypeOf'>>
+    : never
 }
 
 /**
@@ -74,7 +85,9 @@ type RequiredResolverFunctions<
 > = Typename<T> extends keyof Resolvers
   ? OmitKeys<
       Required<NonNullable<Resolvers[Typename<T>]>>,
-      O.IntersectKeys<T, Model<T>, '<-extends'> | '__isTypeOf'
+      Model<T> extends object
+        ? O.IntersectKeys<T, Model<T>, '<-extends'> | '__isTypeOf'
+        : never
     >
   : never
 

@@ -3547,14 +3547,6 @@ export type VideoThreadsArgs = {
 };
 
 
-// Warnings were encountered during analysis:
-//
-// __tests__/__utils__/handlers.ts:49:21 - (TS2339) Property 'id' does not exist on type 'never'.
-// src/model/serlo.ts:345:7 - (TS2322) Type 'TypeC<{ id: NumberC; instance: Type<Instance, Instance, unknown>; default: BooleanC; title: StringC; url: StringC; content: StringC; agreement: StringC; iconHref: StringC; }>' is not assignable to type 'Type<never, never, unknown>'.
-//   Types of property 'is' are incompatible.
-//     Type 'Is<{ id: number; instance: Instance; default: boolean; title: string; url: string; content: string; agreement: string; iconHref: string; }>' is not assignable to type 'Is<never>'.
-//       Type '{ id: number; instance: Instance; default: boolean; title: string; url: string; content: string; agreement: string; iconHref: string; }' is not assignable to type 'never'.
-
 // (No @packageDocumentation comment for this package)
 
 ```
