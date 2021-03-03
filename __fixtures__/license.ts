@@ -21,10 +21,10 @@
  */
 import { gql } from 'apollo-server'
 
-import { LicenseModel } from '~/model'
+import { Model } from '~/model'
 import { Instance } from '~/types'
 
-export const license: LicenseModel = {
+export const license: Model<'License'> = {
   id: 1,
   instance: Instance.De,
   default: true,

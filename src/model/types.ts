@@ -23,6 +23,12 @@ import * as t from 'io-ts'
 
 import { InstanceDecoder } from '~/schema/instance/decoder'
 
+export interface Models {
+  Mutation: Record<string, never>
+  Query: Record<string, never>
+  License: t.TypeOf<typeof LicenseDecoder>
+}
+
 export const LicenseDecoder = t.type({
   id: t.number,
   instance: InstanceDecoder,
@@ -33,4 +39,19 @@ export const LicenseDecoder = t.type({
   agreement: t.string,
   iconHref: t.string,
 })
-export type LicenseModel = t.TypeOf<typeof LicenseDecoder>
+
+export type Model<Typename extends keyof Models> = Models[Typename]
+
+export type ComputeModel<T> = Typename<T> extends keyof Models
+  ? Model<Typename<T>>
+  : T extends (infer U)[]
+  ? ComputeModel<U>[]
+  : T extends object
+  ? { [P in keyof T]: ComputeModel<T[P]> }
+  : T
+
+export type Typename<T> = T extends { __typename?: infer U }
+  ? U extends keyof Models
+    ? U
+    : never
+  : never
