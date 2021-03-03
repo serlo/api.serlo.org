@@ -51,7 +51,7 @@ export type ComputeModel<T> = Typename<T> extends keyof Models
   : T
 
 export type Typename<T> = T extends { __typename?: infer U }
-  ? U extends keyof Models
+  ? U extends string
     ? U
     : never
   : never
