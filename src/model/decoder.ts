@@ -21,7 +21,7 @@
  */
 import * as t from 'io-ts'
 
-import { CommentPayloadDecoder } from '~/schema/thread/decoder'
+import { AbstractUuidPayloadDecoder } from '~/schema/uuid/abstract-uuid/decoder'
 import {
   AppletDecoder,
   AppletRevisionDecoder,
@@ -63,6 +63,22 @@ import { TaxonomyTermPayloadDecoder } from '~/schema/uuid/taxonomy-term/decoder'
 import { UserPayloadDecoder } from '~/schema/uuid/user/decoder'
 import { VideoDecoder, VideoRevisionDecoder } from '~/schema/uuid/video/decoder'
 
+export const CommentDecoder = t.exact(
+  t.intersection([
+    AbstractUuidPayloadDecoder,
+    t.type({
+      __typename: t.literal('Comment'),
+      authorId: t.number,
+      title: t.union([t.string, t.null]),
+      date: t.string,
+      archived: t.boolean,
+      content: t.string,
+      parentId: t.number,
+      childrenIds: t.array(t.number),
+    }),
+  ])
+)
+
 export const EntityPayloadDecoder = t.union([
   AppletDecoder,
   ArticleDecoder,
@@ -90,7 +106,7 @@ export const EntityRevisionPayloadDecoder = t.union([
 ])
 
 export const UuidPayloadDecoder = t.union([
-  CommentPayloadDecoder,
+  CommentDecoder,
   EntityPayloadDecoder,
   EntityRevisionPayloadDecoder,
   PagePayloadDecoder,

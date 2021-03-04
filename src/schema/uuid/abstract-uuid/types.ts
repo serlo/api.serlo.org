@@ -53,7 +53,7 @@ export type UuidPayload =
 
 export interface AbstractUuidPayload
   extends Omit<AbstractUuid, keyof UuidResolvers> {
-  __typename: UuidType
+  __typename: UuidType | 'Comment'
   // TODO: this is actually non-null
   alias: string | null
 }
