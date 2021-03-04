@@ -23,40 +23,75 @@ import { A } from 'ts-toolbelt'
 
 import { createSerloModel } from './serlo'
 import { Connection } from '~/schema/connection/types'
-import { ThreadData } from '~/schema/thread/types'
-import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
+import { CommentPayload, ThreadData } from '~/schema/thread/types'
+import {
+  AppletPayload,
+  AppletRevisionPayload,
+} from '~/schema/uuid/applet/types'
+import {
+  ArticlePayload,
+  ArticleRevisionPayload,
+} from '~/schema/uuid/article/types'
+import {
+  CoursePagePayload,
+  CoursePageRevisionPayload,
+} from '~/schema/uuid/course-page/types'
+import {
+  CoursePayload,
+  CourseRevisionPayload,
+} from '~/schema/uuid/course/types'
+import { EventPayload, EventRevisionPayload } from '~/schema/uuid/event/types'
+import {
+  ExerciseGroupPayload,
+  ExerciseGroupRevisionPayload,
+} from '~/schema/uuid/exercise-group/types'
+import {
+  ExercisePayload,
+  ExerciseRevisionPayload,
+} from '~/schema/uuid/exercise/types'
+import {
+  GroupedExercisePayload,
+  GroupedExerciseRevisionPayload,
+} from '~/schema/uuid/grouped-exercise/types'
+import { PagePayload, PageRevisionPayload } from '~/schema/uuid/page/types'
+import {
+  SolutionPayload,
+  SolutionRevisionPayload,
+} from '~/schema/uuid/solution/types'
+import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
+import { UserPayload } from '~/schema/uuid/user/types'
+import { VideoPayload, VideoRevisionPayload } from '~/schema/uuid/video/types'
 
 export interface Models {
-  // TODO: Update Uuid Payloads
-  Applet: UuidPayload
-  AppletRevision: UuidPayload
-  Article: UuidPayload
-  ArticleRevision: UuidPayload
-  Comment: UuidPayload
-  CoursePage: UuidPayload
-  CoursePageRevision: UuidPayload
-  Course: UuidPayload
-  CourseRevision: UuidPayload
-  Event: UuidPayload
-  EventRevision: UuidPayload
-  ExerciseGroup: UuidPayload
-  ExerciseGroupRevision: UuidPayload
-  Exercise: UuidPayload
-  ExerciseRevision: UuidPayload
-  GroupedExercise: UuidPayload
-  GroupedExerciseRevision: UuidPayload
+  Applet: AppletPayload
+  AppletRevision: AppletRevisionPayload
+  Article: ArticlePayload
+  ArticleRevision: ArticleRevisionPayload
+  Comment: CommentPayload
+  CoursePage: CoursePagePayload
+  CoursePageRevision: CoursePageRevisionPayload
+  Course: CoursePayload
+  CourseRevision: CourseRevisionPayload
+  Event: EventPayload
+  EventRevision: EventRevisionPayload
+  ExerciseGroup: ExerciseGroupPayload
+  ExerciseGroupRevision: ExerciseGroupRevisionPayload
+  Exercise: ExercisePayload
+  ExerciseRevision: ExerciseRevisionPayload
+  GroupedExercise: GroupedExercisePayload
+  GroupedExerciseRevision: GroupedExerciseRevisionPayload
   Mutation: Record<string, never>
   License: Payload<'getLicense'>
-  Page: UuidPayload
-  PageRevision: UuidPayload
+  Page: PagePayload
+  PageRevision: PageRevisionPayload
   Query: Record<string, never>
-  Solution: UuidPayload
-  SolutionRevision: UuidPayload
-  TaxonomyTerm: UuidPayload
+  Solution: SolutionPayload
+  SolutionRevision: SolutionRevisionPayload
+  TaxonomyTerm: TaxonomyTermPayload
   Thread: ThreadData
-  User: UuidPayload
-  Video: UuidPayload
-  VideoRevision: UuidPayload
+  User: UserPayload
+  Video: VideoPayload
+  VideoRevision: VideoRevisionPayload
 }
 
 // TODO: Is there a better way to handle primitive types?
