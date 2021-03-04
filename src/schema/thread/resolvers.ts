@@ -21,17 +21,29 @@
  */
 import { ApolloError, ForbiddenError } from 'apollo-server'
 
-import { CommentPayload, ThreadDataType, ThreadResolvers } from './types'
+import { CommentPayload, ThreadDataType } from './types'
 import { decodeThreadId, decodeThreadIds, encodeThreadId } from './utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import {
   assertUserIsAuthenticated,
   createMutationNamespace,
+  InterfaceResolvers,
+  Mutations,
+  TypeResolvers,
 } from '~/schema/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { UserPayloadDecoder } from '~/schema/uuid/user/decoder'
+import { Comment, Thread } from '~/types'
 
-export const resolvers: ThreadResolvers = {
+export const resolvers: InterfaceResolvers<'ThreadAware'> &
+  Mutations<'thread'> &
+  TypeResolvers<Thread> &
+  TypeResolvers<Comment> = {
+  ThreadAware: {
+    __resolveType(parent) {
+      return parent.__typename
+    },
+  },
   Thread: {
     id(thread) {
       return encodeThreadId(thread.commentPayloads[0].id)
@@ -168,11 +180,6 @@ export const resolvers: ThreadResolvers = {
         success: true,
         query: {},
       }
-    },
-  },
-  ThreadAware: {
-    __resolveType(object) {
-      return object.__typename
     },
   },
 }

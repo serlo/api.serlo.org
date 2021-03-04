@@ -95,7 +95,7 @@ export interface Models {
 }
 
 // TODO: Is there a better way to handle primitive types?
-export type Model<T> = T extends boolean | string | number
+export type Model<T> = T extends boolean | string | number | null
   ? T
   : Typename<T> extends keyof Models
   ? Models[Typename<T>]

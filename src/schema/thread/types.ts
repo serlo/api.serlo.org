@@ -19,85 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import {
-  MutationNamespace,
-  MutationResolver,
-  MutationResponseWithRecord,
-  Resolver,
-  TypeResolver,
-} from '~/internals/graphql'
-import { Connection } from '~/schema/connection/types'
-import {
-  DiscriminatorType,
-  UuidPayload,
-  UuidResolvers,
-} from '~/schema/uuid/abstract-uuid/types'
-import { UserPayload } from '~/schema/uuid/user/types'
-import {
-  Scalars,
-  ThreadCommentsArgs,
-  ThreadMutationCreateCommentArgs,
-  ThreadMutationCreateThreadArgs,
-  ThreadMutationSetCommentStateArgs,
-  ThreadMutationSetThreadArchivedArgs,
-  ThreadMutationSetThreadStateArgs,
-  ThreadSetCommentStateResponse,
-  ThreadSetThreadArchivedResponse,
-  ThreadSetThreadStateResponse,
-} from '~/types'
+import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
 
 export const ThreadDataType = 'Thread'
 
 export interface ThreadData {
   __typename: typeof ThreadDataType
   commentPayloads: CommentPayload[]
-}
-
-export interface ThreadResolvers {
-  Thread: {
-    id: Resolver<ThreadData, never, string>
-    createdAt: Resolver<ThreadData, never, Scalars['DateTime']>
-    title: Resolver<ThreadData, never, string | null>
-    archived: Resolver<ThreadData, never, boolean>
-    object: Resolver<ThreadData, never, UuidPayload>
-    comments: Resolver<
-      ThreadData,
-      ThreadCommentsArgs,
-      Connection<CommentPayload>
-    >
-  }
-  Comment: {
-    createdAt: Resolver<CommentPayload, never, Scalars['DateTime']>
-    author: Resolver<CommentPayload, never, UserPayload>
-  } & UuidResolvers
-  Mutation: {
-    thread: MutationNamespace
-  }
-  ThreadMutation: {
-    createThread: MutationResolver<
-      ThreadMutationCreateThreadArgs,
-      MutationResponseWithRecord<ThreadData | null>
-    >
-    createComment: MutationResolver<
-      ThreadMutationCreateCommentArgs,
-      MutationResponseWithRecord<CommentPayload | null>
-    >
-    setThreadArchived: MutationResolver<
-      ThreadMutationSetThreadArchivedArgs,
-      ThreadSetThreadArchivedResponse
-    >
-    setThreadState: MutationResolver<
-      ThreadMutationSetThreadStateArgs,
-      ThreadSetThreadStateResponse
-    >
-    setCommentState: MutationResolver<
-      ThreadMutationSetCommentStateArgs,
-      ThreadSetCommentStateResponse
-    >
-  }
-  ThreadAware: {
-    __resolveType: TypeResolver<UuidPayload>
-  }
 }
 
 export interface CommentPayload {
