@@ -46,7 +46,7 @@ export interface Models {
   GroupedExercise: UuidPayload
   GroupedExerciseRevision: UuidPayload
   Mutation: Record<string, never>
-  License: SerloModelReturnType<'getLicense'>
+  License: Payload<'getLicense'>
   Page: UuidPayload
   PageRevision: UuidPayload
   Query: Record<string, never>
@@ -58,8 +58,6 @@ export interface Models {
   Video: UuidPayload
   VideoRevision: UuidPayload
 }
-
-export type AliasModel = SerloModelReturnType<'getAlias'>
 
 // TODO: Is there a better way to handle primitive types?
 export type Model<T> = T extends boolean | string | number
@@ -80,7 +78,7 @@ export type Typename<T> = T extends { __typename?: infer U }
     : never
   : never
 
-type SerloModelReturnType<T extends keyof SerloModel> = NonNullable<
+export type Payload<T extends keyof SerloModel> = NonNullable<
   A.PromiseOf<ReturnType<SerloModel[T]>>
 >
 

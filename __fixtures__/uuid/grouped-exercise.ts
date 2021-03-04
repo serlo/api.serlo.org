@@ -23,7 +23,7 @@ import * as R from 'ramda'
 
 import { license } from '../license'
 import { exerciseGroup } from './exercise-group'
-import { AliasModel } from '~/model'
+import { Payload } from '~/model'
 import {
   EntityRevisionType,
   EntityType,
@@ -34,7 +34,7 @@ import {
 } from '~/schema/uuid/grouped-exercise/types'
 import { Instance } from '~/types'
 
-export const groupedExerciseAlias: AliasModel = {
+export const groupedExerciseAlias: Payload<'getAlias'> = {
   id: 2219,
   instance: Instance.De,
   path: '/2219/2219',
