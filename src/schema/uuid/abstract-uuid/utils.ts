@@ -21,7 +21,8 @@
  */
 import * as R from 'ramda'
 
-import { AbstractUuidPayload, DiscriminatorType, UuidResolvers } from './types'
+import { AbstractUuidPayload, DiscriminatorType } from './types'
+import { PickResolvers } from '~/schema/utils'
 import {
   EntityRevisionType,
   EntityType,
@@ -38,6 +39,6 @@ export function isUnsupportedUuid(payload: AbstractUuidPayload) {
   return !R.includes(payload.__typename, validTypes)
 }
 
-export function createUuidResolvers(): UuidResolvers {
+export function createUuidResolvers(): PickResolvers<'AbstractUuid', 'alias'> {
   return createAliasResolvers()
 }

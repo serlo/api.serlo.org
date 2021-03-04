@@ -69,8 +69,8 @@ export const LicenseDecoder = t.type({
 })
 
 // TODO: Is there a better way to handle primitive types?
-export type Model<T> = T extends boolean
-  ? boolean
+export type Model<T> = T extends boolean | string | number
+  ? T
   : Typename<T> extends keyof Models
   ? Models[Typename<T>]
   : T extends { nodes: Array<infer U>; totalCount: number }
@@ -79,7 +79,7 @@ export type Model<T> = T extends boolean
   ? Model<U>[]
   : T extends object
   ? { [P in keyof T]: Model<T[P]> }
-  : T
+  : never
 
 export type Typename<T> = T extends { __typename?: infer U }
   ? U extends string
