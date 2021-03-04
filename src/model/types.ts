@@ -19,8 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import * as t from 'io-ts'
 import { A } from 'ts-toolbelt'
 
+import { CommentDecoder } from './decoder'
 import { createSerloModel } from './serlo'
 import { Connection } from '~/schema/connection/types'
 import { CommentPayload } from '~/schema/thread/types'
@@ -67,7 +69,7 @@ export interface Models {
   AppletRevision: AppletRevisionPayload
   Article: ArticlePayload
   ArticleRevision: ArticleRevisionPayload
-  Comment: CommentPayload
+  Comment: t.TypeOf<typeof CommentDecoder>
   CoursePage: CoursePagePayload
   CoursePageRevision: CoursePageRevisionPayload
   Course: CoursePayload

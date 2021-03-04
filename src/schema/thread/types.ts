@@ -19,13 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
 
 export interface CommentPayload {
   id: number
   trashed: boolean
   alias: string
-  __typename: DiscriminatorType.Comment
+  __typename: 'Comment'
   authorId: number
   title: string | null
   date: string

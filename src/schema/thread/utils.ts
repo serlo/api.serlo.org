@@ -22,8 +22,8 @@
 import { UserInputError } from 'apollo-server'
 
 import { Context } from '~/internals/graphql'
+import { CommentDecoder } from '~/model'
 import { resolveConnection } from '~/schema/connection/utils'
-import { CommentPayloadDecoder } from '~/schema/thread/decoder'
 import { PickResolvers } from '~/schema/utils'
 import { isDefined } from '~/utils'
 
@@ -115,7 +115,7 @@ async function resolveComments(
     ids.map((id) =>
       dataSources.model.serlo.getUuidWithCustomDecoder({
         id,
-        decoder: CommentPayloadDecoder,
+        decoder: CommentDecoder,
       })
     )
   )
