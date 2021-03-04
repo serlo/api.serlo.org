@@ -25,6 +25,7 @@ import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
 
 import { UuidPayloadDecoder } from './decoder'
+import { Model } from './types'
 import { Environment } from '~/internals/environment'
 import { createHelper, createMutation, createQuery } from '~/internals/model'
 import { InstanceDecoder } from '~/schema/instance/decoder'
@@ -35,7 +36,6 @@ import {
 } from '~/schema/notification/types'
 import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
 import { SubscriptionsPayload } from '~/schema/subscription/types'
-import { CommentPayload } from '~/schema/thread/types'
 import { EntityPayload } from '~/schema/uuid/abstract-entity/types'
 import {
   Navigation,
@@ -49,7 +49,7 @@ import {
 } from '~/schema/uuid/abstract-uuid/types'
 import { isUnsupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
-import { Instance, ThreadCreateThreadInput } from '~/types'
+import { Comment, Instance, ThreadCreateThreadInput } from '~/types'
 
 export function createSerloModel({
   environment,
@@ -599,17 +599,18 @@ export function createSerloModel({
 
   const createThread = createMutation<
     ThreadCreateThreadInput & { userId: number },
-    CommentPayload | null
+    // TODO: There should not be a need to import the Model type helper here
+    Model<Comment> | null
   >({
+    // TODO: We need a decoder here
     mutate: async (payload) => {
-      const response = await handleMessage({
+      const value = (await handleMessageJson({
         message: {
           type: 'ThreadCreateThreadMutation',
           payload,
         },
         expectedStatusCodes: [200],
-      })
-      const value = (await response.json()) as CommentPayload | null
+      })) as Model<Comment> | null
 
       if (value !== null) {
         await getUuid._querySpec.setCache({
@@ -637,17 +638,16 @@ export function createSerloModel({
       subscribe: boolean
       sendEmail: boolean
     },
-    CommentPayload | null
+    Model<Comment> | null
   >({
     mutate: async (payload) => {
-      const response = await handleMessage({
+      const value = (await handleMessageJson({
         message: {
           type: 'ThreadCreateCommentMutation',
           payload,
         },
         expectedStatusCodes: [200],
-      })
-      const value = (await response.json()) as CommentPayload | null
+      })) as Model<Comment> | null
       if (value !== null) {
         await getUuid._querySpec.setCache({
           payload: { id: value.id },
@@ -737,7 +737,7 @@ function getInstanceFromKey(key: string): Instance | null {
     : null
 }
 
-function isCommentPayload(value: unknown): value is CommentPayload {
+function isCommentPayload(value: unknown): value is Model<Comment> {
   return (
     typeof value === 'object' &&
     (value as AbstractUuidPayload).__typename === DiscriminatorType.Comment

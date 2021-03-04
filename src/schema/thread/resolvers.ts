@@ -21,7 +21,6 @@
  */
 import { ApolloError, ForbiddenError } from 'apollo-server'
 
-import { CommentPayload } from './types'
 import { decodeThreadId, decodeThreadIds, encodeThreadId } from './utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import {
@@ -67,7 +66,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       return object
     },
     comments(thread, cursorPayload) {
-      return resolveConnection<CommentPayload>({
+      return resolveConnection({
         nodes: thread.commentPayloads.sort((a, b) => a.id - b.id),
         payload: cursorPayload,
         createCursor(node) {

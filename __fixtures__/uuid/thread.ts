@@ -22,11 +22,11 @@
 
 import { article } from './article'
 import { user, user2 } from './user'
-import { CommentPayload } from '~/schema/thread/types'
+import { Model } from '~/model'
 import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
-import { UnsupportedComment, UnsupportedThread } from '~/types'
+import { Comment, UnsupportedComment, UnsupportedThread } from '~/types'
 
-export const comment: CommentPayload = {
+export const comment: Model<Comment> = {
   id: 27778,
   trashed: false,
   alias: '/mathe/27778/applets-vertauscht',
@@ -41,7 +41,7 @@ export const comment: CommentPayload = {
   childrenIds: [],
 }
 
-export const comment1: CommentPayload = {
+export const comment1: Model<Comment> = {
   id: 41443,
   trashed: false,
   alias: '/mathe/41443/related-content-ist-chaotisch',
@@ -56,7 +56,7 @@ export const comment1: CommentPayload = {
   childrenIds: [49237],
 }
 
-export const comment2: CommentPayload = {
+export const comment2: Model<Comment> = {
   id: 49237,
   trashed: false,
   alias: '/mathe/49237/related-content',
@@ -71,7 +71,7 @@ export const comment2: CommentPayload = {
   childrenIds: [],
 }
 
-export const comment3: CommentPayload = {
+export const comment3: Model<Comment> = {
   id: 27144,
   trashed: false,
   alias: '/mathe/27144/feedback-zu-dem-artikel-über-das-formular',

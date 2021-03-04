@@ -25,7 +25,6 @@ import { A } from 'ts-toolbelt'
 import { CommentDecoder } from './decoder'
 import { createSerloModel } from './serlo'
 import { Connection } from '~/schema/connection/types'
-import { CommentPayload } from '~/schema/thread/types'
 import {
   AppletPayload,
   AppletRevisionPayload,
@@ -92,7 +91,7 @@ export interface Models {
   TaxonomyTerm: TaxonomyTermPayload
   Thread: {
     __typename: 'Thread'
-    commentPayloads: CommentPayload[]
+    commentPayloads: Models['Comment'][]
   }
   User: UserPayload
   Video: VideoPayload
