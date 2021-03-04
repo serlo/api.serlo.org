@@ -27,15 +27,12 @@ import { ThreadData } from '~/schema/thread/types'
 import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 
 export interface Models {
-  Mutation: Record<string, never>
-  Query: Record<string, never>
-  License: SerloModelReturnType<'getLicense'>
-  // Those will be replaced with the actual Payloads
-  Comment: UuidPayload
+  // TODO: Update Uuid Payloads
   Applet: UuidPayload
   AppletRevision: UuidPayload
   Article: UuidPayload
   ArticleRevision: UuidPayload
+  Comment: UuidPayload
   CoursePage: UuidPayload
   CoursePageRevision: UuidPayload
   Course: UuidPayload
@@ -48,8 +45,11 @@ export interface Models {
   ExerciseRevision: UuidPayload
   GroupedExercise: UuidPayload
   GroupedExerciseRevision: UuidPayload
+  Mutation: Record<string, never>
+  License: SerloModelReturnType<'getLicense'>
   Page: UuidPayload
   PageRevision: UuidPayload
+  Query: Record<string, never>
   Solution: UuidPayload
   SolutionRevision: UuidPayload
   TaxonomyTerm: UuidPayload

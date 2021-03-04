@@ -34,7 +34,7 @@ import {
 } from '~/schema/notification/types'
 import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
 import { SubscriptionsPayload } from '~/schema/subscription/types'
-import { CommentPayload, ThreadsPayload } from '~/schema/thread/types'
+import { CommentPayload } from '~/schema/thread/types'
 import { EntityPayload } from '~/schema/uuid/abstract-entity/types'
 import {
   Navigation,
@@ -573,19 +573,16 @@ export function createSerloModel({
     },
   })
 
-  const getThreadIds = createQuery<{ id: number }, ThreadsPayload>(
+  const getThreadIds = createQuery(
     {
-      enableSwr: true,
-      getCurrentValue: async ({ id }) => {
-        const response = await handleMessage({
-          message: {
-            type: 'ThreadsQuery',
-            payload: { id },
-          },
+      decoder: t.type({ firstCommentIds: t.array(t.number) }),
+      getCurrentValue: async ({ id }: { id: number }) => {
+        return handleMessageJson({
+          message: { type: 'ThreadsQuery', payload: { id } },
           expectedStatusCodes: [200],
         })
-        return (await response.json()) as ThreadsPayload
       },
+      enableSwr: true,
       maxAge: { hour: 1 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/threads/${id}`
