@@ -19,12 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import {
-  MutationNamespace,
-  MutationResolver,
-  QueryResolver,
-  TypeResolver,
-} from '~/internals/graphql'
 import { CommentPayload } from '~/schema/thread/types'
 import { PickResolvers } from '~/schema/utils'
 import {
@@ -36,12 +30,7 @@ import {
 import { PagePayload, PageRevisionPayload } from '~/schema/uuid/page/types'
 import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
 import { UserPayload } from '~/schema/uuid/user/types'
-import {
-  AbstractUuid,
-  QueryUuidArgs,
-  UuidMutationSetStateArgs,
-  UuidSetStateResponse,
-} from '~/types'
+import { AbstractUuid } from '~/types'
 
 export enum DiscriminatorType {
   Comment = 'Comment',
@@ -71,18 +60,3 @@ export interface AbstractUuidPayload
 
 // TODO: Should be deletable
 export type UuidResolvers = PickResolvers<'AbstractUuid', 'alias'>
-
-export interface AbstractUuidResolvers {
-  AbstractUuid: {
-    __resolveType: TypeResolver<UuidPayload>
-  }
-  Query: {
-    uuid: QueryResolver<QueryUuidArgs, UuidPayload | null>
-  }
-  Mutation: {
-    uuid: MutationNamespace
-  }
-  UuidMutation: {
-    setState: MutationResolver<UuidMutationSetStateArgs, UuidSetStateResponse>
-  }
-}

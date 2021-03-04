@@ -60,6 +60,21 @@ export type Querys<QueryProperties extends keyof QueryResolvers> = A.Compute<
 >
 
 /**
+ * Resolver helper type for implementing all Interface resolvers of type `I`
+ *
+ * @example
+ *
+ *   export const resolvers: InterfaceResolvers<"AbstractUuid"> = {
+ *     AbstractUuid: {
+ *      ...
+ *     }
+ *   }
+ */
+export type InterfaceResolvers<I extends keyof Resolvers> = Required<
+  Pick<Resolvers, I>
+>
+
+/**
  * Resolvers type with all resolvers for the GraphQL type `T`. All resolver
  * functions are required where either the corresponding property in the model
  * type is missing or the type of the model property does not fit the type of
