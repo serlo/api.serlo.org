@@ -21,7 +21,7 @@
  */
 import { lookupCustomAlias } from '~/config/alias'
 import { isInstanceAware } from '~/schema/instance/utils'
-import { UuidResolvers } from '~/schema/uuid/abstract-uuid/types'
+import { PickResolvers } from '~/schema/utils'
 
 export function decodePath(path: string) {
   try {
@@ -40,7 +40,7 @@ export function encodePath(path: string) {
   return encodeURIComponent(path).replace(/%2F/g, '/')
 }
 
-export function createAliasResolvers(): Pick<UuidResolvers, 'alias'> {
+export function createAliasResolvers(): PickResolvers<'AbstractUuid', 'alias'> {
   return {
     async alias(entity) {
       if (isInstanceAware(entity)) {

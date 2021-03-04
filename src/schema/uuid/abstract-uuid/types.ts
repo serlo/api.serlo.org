@@ -23,10 +23,10 @@ import {
   MutationNamespace,
   MutationResolver,
   QueryResolver,
-  Resolver,
   TypeResolver,
 } from '~/internals/graphql'
 import { CommentPayload } from '~/schema/thread/types'
+import { PickResolvers } from '~/schema/utils'
 import {
   EntityPayload,
   EntityRevisionPayload,
@@ -69,9 +69,8 @@ export interface AbstractUuidPayload
   alias: string | null
 }
 
-export interface UuidResolvers {
-  alias: Resolver<AbstractUuidPayload, never, string | null>
-}
+// TODO: Should be deletable
+export type UuidResolvers = PickResolvers<'AbstractUuid', 'alias'>
 
 export interface AbstractUuidResolvers {
   AbstractUuid: {

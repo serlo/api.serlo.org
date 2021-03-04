@@ -96,8 +96,19 @@ type RequiredResolverFunctions<
 // all such empty resolver types since they do not need to be defined.
 type PickRequiredResolvers<O extends object> = O.Filter<O, object, '<-extends'>
 
+export type PickResolvers<
+  R extends keyof Resolvers,
+  F extends string
+> = PickKeys<Required<NonNullable<Resolvers[R]>>, F>
+
 /**
  * A version of `Omit` where the keys do not need to be property names of the
  * object.
  */
 type OmitKeys<O extends object, Keys> = Omit<O, Keys & keyof O>
+
+/**
+ * A version of `Pick` where the keys do not need to be property names of the
+ * object.
+ */
+type PickKeys<O extends object, Keys> = Pick<O, Keys & keyof O>
