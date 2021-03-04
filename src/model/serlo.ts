@@ -24,8 +24,7 @@ import * as t from 'io-ts'
 import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
 
-import { UuidPayloadDecoder } from './decoder'
-import { Model } from './types'
+import { CommentDecoder, UuidPayloadDecoder } from './decoder'
 import { Environment } from '~/internals/environment'
 import { createHelper, createMutation, createQuery } from '~/internals/model'
 import { InstanceDecoder } from '~/schema/instance/decoder'
@@ -45,7 +44,7 @@ import {
 import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 import { isUnsupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
-import { Comment, Instance, ThreadCreateThreadInput } from '~/types'
+import { Instance, ThreadCreateThreadInput } from '~/types'
 
 export function createSerloModel({
   environment,
@@ -593,21 +592,15 @@ export function createSerloModel({
     environment
   )
 
-  const createThread = createMutation<
-    ThreadCreateThreadInput & { userId: number },
-    // TODO: There should not be a need to import the Model type helper here
-    Model<Comment> | null
-  >({
-    // TODO: We need a decoder here
-    mutate: async (payload) => {
-      const value = (await handleMessageJson({
-        message: {
-          type: 'ThreadCreateThreadMutation',
-          payload,
-        },
+  const createThread = createMutation({
+    decoder: t.union([CommentDecoder, t.null]),
+    mutate: (payload: ThreadCreateThreadInput & { userId: number }) => {
+      return handleMessageJson({
+        message: { type: 'ThreadCreateThreadMutation', payload },
         expectedStatusCodes: [200],
-      })) as Model<Comment> | null
-
+      })
+    },
+    updateCache: async (payload, value) => {
       if (value !== null) {
         await getUuid._querySpec.setCache({
           payload: { id: value.id },
@@ -622,28 +615,24 @@ export function createSerloModel({
           },
         })
       }
-      return value
     },
   })
 
-  const createComment = createMutation<
-    {
+  const createComment = createMutation({
+    decoder: t.union([CommentDecoder, t.null]),
+    mutate: (payload: {
       content: string
       threadId: number
       userId: number
       subscribe: boolean
       sendEmail: boolean
-    },
-    Model<Comment> | null
-  >({
-    mutate: async (payload) => {
-      const value = (await handleMessageJson({
-        message: {
-          type: 'ThreadCreateCommentMutation',
-          payload,
-        },
+    }) => {
+      return handleMessageJson({
+        message: { type: 'ThreadCreateCommentMutation', payload },
         expectedStatusCodes: [200],
-      })) as Model<Comment> | null
+      })
+    },
+    updateCache: async (payload, value) => {
       if (value !== null) {
         await getUuid._querySpec.setCache({
           payload: { id: value.id },
@@ -658,7 +647,6 @@ export function createSerloModel({
           },
         })
       }
-      return value
     },
   })
 
