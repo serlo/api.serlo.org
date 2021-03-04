@@ -23,6 +23,7 @@ import { A } from 'ts-toolbelt'
 
 import { createSerloModel } from './serlo'
 import { Connection } from '~/schema/connection/types'
+import { ThreadData } from '~/schema/thread/types'
 import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 
 export interface Models {
@@ -52,6 +53,7 @@ export interface Models {
   Solution: UuidPayload
   SolutionRevision: UuidPayload
   TaxonomyTerm: UuidPayload
+  Thread: ThreadData
   User: UuidPayload
   Video: UuidPayload
   VideoRevision: UuidPayload

@@ -99,7 +99,7 @@ type RequiredResolverFunctions<
   T extends object
 > = Typename<T> extends keyof Resolvers
   ? OmitKeys<
-      Required<NonNullable<Resolvers[Typename<T>]>>,
+      Required<GetResolver<Typename<T>>>,
       Model<T> extends object
         ? O.IntersectKeys<T, Model<T>, '<-extends'> | '__isTypeOf'
         : never
@@ -113,8 +113,10 @@ type PickRequiredResolvers<O extends object> = O.Filter<O, object, '<-extends'>
 
 export type PickResolvers<
   R extends keyof Resolvers,
-  F extends string
-> = PickKeys<Required<NonNullable<Resolvers[R]>>, F>
+  F = O.OptionalKeys<GetResolver<R>>
+> = Required<PickKeys<GetResolver<R>, F>>
+
+type GetResolver<Name extends keyof Resolvers> = NonNullable<Resolvers[Name]>
 
 /**
  * A version of `Omit` where the keys do not need to be property names of the

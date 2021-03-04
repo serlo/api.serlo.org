@@ -21,13 +21,13 @@
  */
 import { UserInputError } from 'apollo-server'
 
-import { ThreadAwareResolvers, ThreadData, ThreadDataType } from './types'
 import { Context } from '~/internals/graphql'
 import { resolveConnection } from '~/schema/connection/utils'
 import { CommentPayloadDecoder } from '~/schema/thread/decoder'
+import { PickResolvers } from '~/schema/utils'
 import { isDefined } from '~/utils'
 
-export function createThreadResolvers(): ThreadAwareResolvers {
+export function createThreadResolvers(): PickResolvers<'ThreadAware'> {
   return {
     async threads(parent, payload, { dataSources }) {
       const { firstCommentIds } = await dataSources.model.serlo.getThreadIds({
@@ -57,27 +57,25 @@ export function createThreadResolvers(): ThreadAwareResolvers {
       })
 
       const threads = await Promise.all(
-        filteredFirstComments.map(
-          async (firstComment): Promise<ThreadData> => {
-            const remainingComments = await resolveComments(
-              dataSources,
-              firstComment.childrenIds
+        filteredFirstComments.map(async (firstComment) => {
+          const remainingComments = await resolveComments(
+            dataSources,
+            firstComment.childrenIds
+          )
+          const filteredComments = remainingComments.filter((comment) => {
+            if (
+              payload.trashed !== undefined &&
+              payload.trashed !== comment.trashed
             )
-            const filteredComments = remainingComments.filter((comment) => {
-              if (
-                payload.trashed !== undefined &&
-                payload.trashed !== comment.trashed
-              )
-                return false
+              return false
 
-              return true
-            })
-            return {
-              __typename: ThreadDataType,
-              commentPayloads: [firstComment, ...filteredComments],
-            }
+            return true
+          })
+          return {
+            __typename: 'Thread' as const,
+            commentPayloads: [firstComment, ...filteredComments],
           }
-        )
+        })
       )
 
       return resolveConnection({

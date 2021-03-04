@@ -21,7 +21,7 @@
  */
 import { Resolver } from '~/internals/graphql'
 import { Connection } from '~/schema/connection/types'
-import { ThreadAwareResolvers } from '~/schema/thread/types'
+import { PickResolvers } from '~/schema/utils'
 import { NavigationChildResolvers } from '~/schema/uuid/abstract-navigation-child/utils'
 import {
   AbstractUuidPayload,
@@ -48,5 +48,5 @@ export interface TaxonomyTermResolvers {
     >
   } & NavigationChildResolvers<TaxonomyTermPayload> &
     UuidResolvers &
-    ThreadAwareResolvers
+    PickResolvers<'ThreadAware'>
 }
