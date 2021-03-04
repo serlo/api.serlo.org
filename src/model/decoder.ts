@@ -23,11 +23,6 @@ import * as t from 'io-ts'
 
 import { CommentPayloadDecoder } from '~/schema/thread/decoder'
 import {
-  EntityPayload,
-  EntityRevisionPayload,
-} from '~/schema/uuid/abstract-entity/types'
-import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
-import {
   AppletDecoder,
   AppletRevisionDecoder,
 } from '~/schema/uuid/applet/decoder'
@@ -68,7 +63,7 @@ import { TaxonomyTermPayloadDecoder } from '~/schema/uuid/taxonomy-term/decoder'
 import { UserPayloadDecoder } from '~/schema/uuid/user/decoder'
 import { VideoDecoder, VideoRevisionDecoder } from '~/schema/uuid/video/decoder'
 
-export const EntityPayloadDecoder: t.Type<EntityPayload> = t.union([
+export const EntityPayloadDecoder = t.union([
   AppletDecoder,
   ArticleDecoder,
   CourseDecoder,
@@ -81,22 +76,20 @@ export const EntityPayloadDecoder: t.Type<EntityPayload> = t.union([
   VideoDecoder,
 ])
 
-export const EntityRevisionPayloadDecoder: t.Type<EntityRevisionPayload> = t.union(
-  [
-    AppletRevisionDecoder,
-    ArticleRevisionDecoder,
-    CourseRevisionDecoder,
-    CoursePageRevisionDecoder,
-    EventRevisionDecoder,
-    ExerciseRevisionDecoder,
-    ExerciseGroupRevisionDecoder,
-    GroupedExerciseRevisionDecoder,
-    SolutionRevisionDecoder,
-    VideoRevisionDecoder,
-  ]
-)
+export const EntityRevisionPayloadDecoder = t.union([
+  AppletRevisionDecoder,
+  ArticleRevisionDecoder,
+  CourseRevisionDecoder,
+  CoursePageRevisionDecoder,
+  EventRevisionDecoder,
+  ExerciseRevisionDecoder,
+  ExerciseGroupRevisionDecoder,
+  GroupedExerciseRevisionDecoder,
+  SolutionRevisionDecoder,
+  VideoRevisionDecoder,
+])
 
-export const UuidPayloadDecoder: t.Type<UuidPayload> = t.union([
+export const UuidPayloadDecoder = t.union([
   CommentPayloadDecoder,
   EntityPayloadDecoder,
   EntityRevisionPayloadDecoder,
