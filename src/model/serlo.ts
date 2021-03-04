@@ -24,7 +24,6 @@ import * as t from 'io-ts'
 import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
 
-import { LicenseDecoder } from './types'
 import { Environment } from '~/internals/environment'
 import { createHelper, createMutation, createQuery } from '~/internals/model'
 import { InstanceDecoder } from '~/schema/instance/decoder'
@@ -350,7 +349,16 @@ export function createSerloModel({
 
   const getLicense = createQuery(
     {
-      decoder: LicenseDecoder,
+      decoder: t.type({
+        id: t.number,
+        instance: InstanceDecoder,
+        default: t.boolean,
+        title: t.string,
+        url: t.string,
+        content: t.string,
+        agreement: t.string,
+        iconHref: t.string,
+      }),
       enableSwr: true,
       getCurrentValue: async ({ id }: { id: number }) => {
         const response = await handleMessage({
