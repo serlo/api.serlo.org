@@ -20,7 +20,9 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as t from 'io-ts'
+import { A } from 'ts-toolbelt'
 
+import { createSerloModel } from './serlo'
 import { Connection } from '~/schema/connection/types'
 import { InstanceDecoder } from '~/schema/instance/decoder'
 import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
@@ -56,6 +58,10 @@ export interface Models {
   Video: UuidPayload
   VideoRevision: UuidPayload
 }
+
+export type AliasModel = NonNullable<
+  A.PromiseOf<ReturnType<ReturnType<typeof createSerloModel>['getAlias']>>
+>
 
 export const LicenseDecoder = t.type({
   id: t.number,

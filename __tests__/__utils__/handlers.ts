@@ -22,14 +22,13 @@
 import { rest } from 'msw'
 import * as R from 'ramda'
 
-import { Model } from '~/model'
+import { AliasModel, Model } from '~/model'
 import { NotificationEventPayload } from '~/schema/notification/types'
 import { NavigationPayload } from '~/schema/uuid/abstract-navigation-child/types'
 import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
-import { AliasPayload } from '~/schema/uuid/alias/types'
 import { License } from '~/types'
 
-export function createAliasHandler(alias: AliasPayload) {
+export function createAliasHandler(alias: AliasModel) {
   return createMessageHandler({
     message: {
       type: 'AliasQuery',

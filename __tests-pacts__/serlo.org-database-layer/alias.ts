@@ -22,11 +22,11 @@
 import { Matchers } from '@pact-foundation/pact'
 
 import { addMessageInteraction } from '../__utils__'
-import { AliasPayload } from '~/schema/uuid/alias/types'
+import { AliasModel } from '~/model'
 import { Instance } from '~/types'
 
 test('AliasQuery', async () => {
-  const alias: AliasPayload = {
+  const alias: AliasModel = {
     id: 19767,
     instance: Instance.De,
     path: '/mathe',
@@ -51,7 +51,7 @@ test('AliasQuery', async () => {
 })
 
 test('AliasQuery (/user/profile/:username)', async () => {
-  const alias: AliasPayload = {
+  const alias: AliasModel = {
     id: 1,
     instance: Instance.De,
     path: '/user/1/admin',

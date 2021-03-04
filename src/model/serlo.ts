@@ -27,6 +27,7 @@ import * as R from 'ramda'
 import { LicenseDecoder } from './types'
 import { Environment } from '~/internals/environment'
 import { createHelper, createMutation, createQuery } from '~/internals/model'
+import { InstanceDecoder } from '~/schema/instance/decoder'
 import { isInstance } from '~/schema/instance/utils'
 import {
   AbstractNotificationEventPayload,
@@ -47,7 +48,6 @@ import {
   UuidPayload,
 } from '~/schema/uuid/abstract-uuid/types'
 import { isUnsupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
-import { AliasPayload } from '~/schema/uuid/alias/types'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { UuidPayloadDecoder } from '~/schema/uuid/decoder'
 import { Instance, ThreadCreateThreadInput } from '~/types'
@@ -305,24 +305,32 @@ export function createSerloModel({
     },
   })
 
-  const getAlias = createQuery<
-    { path: string; instance: Instance },
-    AliasPayload | null
-  >(
+  const getAlias = createQuery(
     {
+      decoder: t.union([
+        t.type({
+          id: t.number,
+          instance: InstanceDecoder,
+          path: t.string,
+        }),
+        t.null,
+      ]),
       enableSwr: true,
-      getCurrentValue: async ({ path, instance }) => {
+      getCurrentValue: async ({
+        path,
+        instance,
+      }: {
+        path: string
+        instance: Instance
+      }) => {
         const response = await handleMessage({
           message: {
             type: 'AliasQuery',
-            payload: {
-              instance,
-              path: decodePath(path),
-            },
+            payload: { instance, path: decodePath(path) },
           },
           expectedStatusCodes: [200, 404],
         })
-        return (await response.json()) as AliasPayload | null
+        return (await response.json()) as unknown
       },
       maxAge: { hour: 1 },
       getKey: ({ path, instance }) => {
