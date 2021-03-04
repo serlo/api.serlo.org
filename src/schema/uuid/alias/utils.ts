@@ -42,14 +42,14 @@ export function encodePath(path: string) {
 
 export function createAliasResolvers(): PickResolvers<'AbstractUuid', 'alias'> {
   return {
-    async alias(entity) {
+    alias(entity) {
       if (isInstanceAware(entity)) {
         const customAlias = lookupCustomAlias(entity)
-        if (customAlias) {
-          return Promise.resolve(encodePath(customAlias))
-        }
+
+        if (customAlias) return encodePath(customAlias)
       }
-      return Promise.resolve(entity.alias ? encodePath(entity.alias) : null)
+
+      return entity.alias ? encodePath(entity.alias) : null
     },
   }
 }
