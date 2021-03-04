@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { CommentPayload } from '~/schema/thread/types'
+import { Model } from '~/model'
 import { PickResolvers } from '~/schema/utils'
 import {
   EntityPayload,
@@ -30,7 +30,7 @@ import {
 import { PagePayload, PageRevisionPayload } from '~/schema/uuid/page/types'
 import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
 import { UserPayload } from '~/schema/uuid/user/types'
-import { AbstractUuid } from '~/types'
+import { AbstractUuid, Comment } from '~/types'
 
 export enum DiscriminatorType {
   Comment = 'Comment',
@@ -43,7 +43,7 @@ export enum DiscriminatorType {
 export type UuidType = DiscriminatorType | EntityType | EntityRevisionType
 
 export type UuidPayload =
-  | CommentPayload
+  | Model<Comment>
   | EntityPayload
   | EntityRevisionPayload
   | PagePayload
