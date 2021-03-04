@@ -19,18 +19,16 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import * as t from 'io-ts'
 import { A } from 'ts-toolbelt'
 
 import { createSerloModel } from './serlo'
 import { Connection } from '~/schema/connection/types'
-import { InstanceDecoder } from '~/schema/instance/decoder'
 import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 
 export interface Models {
   Mutation: Record<string, never>
   Query: Record<string, never>
-  License: t.TypeOf<typeof LicenseDecoder>
+  License: SerloModelReturnType<'getLicense'>
   // Those will be replaced with the actual Payloads
   Comment: UuidPayload
   Applet: UuidPayload
@@ -59,20 +57,7 @@ export interface Models {
   VideoRevision: UuidPayload
 }
 
-export type AliasModel = NonNullable<
-  A.PromiseOf<ReturnType<ReturnType<typeof createSerloModel>['getAlias']>>
->
-
-export const LicenseDecoder = t.type({
-  id: t.number,
-  instance: InstanceDecoder,
-  default: t.boolean,
-  title: t.string,
-  url: t.string,
-  content: t.string,
-  agreement: t.string,
-  iconHref: t.string,
-})
+export type AliasModel = SerloModelReturnType<'getAlias'>
 
 // TODO: Is there a better way to handle primitive types?
 export type Model<T> = T extends boolean | string | number
@@ -92,3 +77,9 @@ export type Typename<T> = T extends { __typename?: infer U }
     ? U
     : never
   : never
+
+type SerloModelReturnType<T extends keyof SerloModel> = NonNullable<
+  A.PromiseOf<ReturnType<SerloModel[T]>>
+>
+
+type SerloModel = ReturnType<typeof createSerloModel>
