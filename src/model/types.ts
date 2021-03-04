@@ -23,7 +23,7 @@ import { A } from 'ts-toolbelt'
 
 import { createSerloModel } from './serlo'
 import { Connection } from '~/schema/connection/types'
-import { CommentPayload, ThreadData } from '~/schema/thread/types'
+import { CommentPayload } from '~/schema/thread/types'
 import {
   AppletPayload,
   AppletRevisionPayload,
@@ -88,7 +88,10 @@ export interface Models {
   Solution: SolutionPayload
   SolutionRevision: SolutionRevisionPayload
   TaxonomyTerm: TaxonomyTermPayload
-  Thread: ThreadData
+  Thread: {
+    __typename: 'Thread'
+    commentPayloads: CommentPayload[]
+  }
   User: UserPayload
   Video: VideoPayload
   VideoRevision: VideoRevisionPayload

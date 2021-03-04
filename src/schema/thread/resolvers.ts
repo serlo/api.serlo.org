@@ -21,7 +21,7 @@
  */
 import { ApolloError, ForbiddenError } from 'apollo-server'
 
-import { CommentPayload, ThreadDataType } from './types'
+import { CommentPayload } from './types'
 import { decodeThreadId, decodeThreadIds, encodeThreadId } from './utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import {
@@ -107,7 +107,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       return {
         record:
           commentPayload !== null
-            ? { __typename: ThreadDataType, commentPayloads: [commentPayload] }
+            ? { __typename: 'Thread', commentPayloads: [commentPayload] }
             : null,
         success,
         query: {},

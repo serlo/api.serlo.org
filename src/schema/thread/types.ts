@@ -21,13 +21,6 @@
  */
 import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
 
-export const ThreadDataType = 'Thread'
-
-export interface ThreadData {
-  __typename: typeof ThreadDataType
-  commentPayloads: CommentPayload[]
-}
-
 export interface CommentPayload {
   id: number
   trashed: boolean
