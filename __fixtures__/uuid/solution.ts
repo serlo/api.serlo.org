@@ -23,7 +23,7 @@ import * as R from 'ramda'
 
 import { license } from '../license'
 import { exercise } from './exercise'
-import { AliasModel } from '~/model'
+import { Payload } from '~/model'
 import {
   EntityRevisionType,
   EntityType,
@@ -34,7 +34,7 @@ import {
 } from '~/schema/uuid/solution/types'
 import { Instance } from '~/types'
 
-export const solutionAlias: AliasModel = {
+export const solutionAlias: Payload<'getAlias'> = {
   id: 29648,
   instance: Instance.De,
   path: '/29648/29648',
