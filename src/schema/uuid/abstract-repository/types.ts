@@ -21,7 +21,7 @@
  */
 import { Resolver, TypeResolver } from '~/internals/graphql'
 import { Connection } from '~/schema/connection/types'
-import { ThreadAwareResolvers } from '~/schema/thread/types'
+import { PickResolvers } from '~/schema/utils'
 import {
   EntityPayload,
   EntityRevisionPayload,
@@ -107,7 +107,7 @@ export interface RepositoryResolvers<
   E extends AbstractRepositoryPayload,
   R extends AbstractRevisionPayload
 > extends UuidResolvers,
-    ThreadAwareResolvers {
+    PickResolvers<'ThreadAware'> {
   currentRevision: Resolver<E, never, R | null>
   revisions: Resolver<E, AbstractRepositoryRevisionsArgs, Connection<R>>
   license: Resolver<E, never, Partial<License>>
@@ -117,7 +117,7 @@ export interface RevisionResolvers<
   E extends AbstractRepositoryPayload,
   R extends AbstractRevisionPayload
 > extends UuidResolvers,
-    ThreadAwareResolvers {
+    PickResolvers<'ThreadAware'> {
   author: Resolver<R, never, Partial<UserPayload> | null>
   repository: Resolver<R, never, E | null>
 }

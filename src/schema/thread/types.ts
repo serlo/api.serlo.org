@@ -35,7 +35,6 @@ import {
 import { UserPayload } from '~/schema/uuid/user/types'
 import {
   Scalars,
-  ThreadAwareThreadsArgs,
   ThreadCommentsArgs,
   ThreadMutationCreateCommentArgs,
   ThreadMutationCreateThreadArgs,
@@ -103,10 +102,6 @@ export interface ThreadResolvers {
   ThreadAware: {
     __resolveType: TypeResolver<UuidPayload>
   }
-}
-
-export interface ThreadAwareResolvers {
-  threads: Resolver<UuidPayload, ThreadAwareThreadsArgs, Connection<ThreadData>>
 }
 
 export interface CommentPayload {

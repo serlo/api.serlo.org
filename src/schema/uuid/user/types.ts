@@ -22,7 +22,7 @@
 
 import { QueryResolver, Resolver } from '~/internals/graphql'
 import { Connection } from '~/schema/connection/types'
-import { ThreadAwareResolvers } from '~/schema/thread/types'
+import { PickResolvers } from '~/schema/utils'
 import {
   DiscriminatorType,
   UuidResolvers,
@@ -56,5 +56,5 @@ export interface UserResolvers {
     activeDonor: Resolver<UserPayload, never, boolean>
     activeReviewer: Resolver<UserPayload, never, boolean>
   } & UuidResolvers &
-    ThreadAwareResolvers
+    PickResolvers<'ThreadAware'>
 }
