@@ -56,16 +56,15 @@ export function createSerloModel({
 }: {
   environment: Environment
 }) {
+  async function handleMessageJson(args: MessagePayload) {
+    const response = await handleMessage(args)
+    return (await response.json()) as unknown
+  }
+
   async function handleMessage({
     message,
     expectedStatusCodes,
-  }: {
-    message: {
-      type: string
-      payload?: Record<string, unknown>
-    }
-    expectedStatusCodes: number[]
-  }): Promise<Response> {
+  }: MessagePayload): Promise<Response> {
     const response = await fetch(
       `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`,
       {
@@ -82,12 +81,20 @@ export function createSerloModel({
     return response
   }
 
+  interface MessagePayload {
+    message: {
+      type: string
+      payload?: Record<string, unknown>
+    }
+    expectedStatusCodes: number[]
+  }
+
   const getUuid = createQuery<{ id: number }, UuidPayload | null>(
     {
       decoder: t.union([UuidPayloadDecoder, t.null]),
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
-        const response = await handleMessage({
+        const uuid = (await handleMessageJson({
           message: {
             type: 'UuidQuery',
             payload: {
@@ -95,8 +102,7 @@ export function createSerloModel({
             },
           },
           expectedStatusCodes: [200, 404],
-        })
-        const uuid = (await response.json()) as UuidPayload | null
+        })) as UuidPayload | null
         return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
       },
       maxAge: { hour: 1 },
@@ -315,21 +321,20 @@ export function createSerloModel({
         t.null,
       ]),
       enableSwr: true,
-      getCurrentValue: async ({
+      getCurrentValue: ({
         path,
         instance,
       }: {
         path: string
         instance: Instance
       }) => {
-        const response = await handleMessage({
+        return handleMessageJson({
           message: {
             type: 'AliasQuery',
             payload: { instance, path: decodePath(path) },
           },
           expectedStatusCodes: [200, 404],
         })
-        return (await response.json()) as unknown
       },
       maxAge: { hour: 1 },
       getKey: ({ path, instance }) => {
@@ -359,23 +364,15 @@ export function createSerloModel({
         agreement: t.string,
         iconHref: t.string,
       }),
-      enableSwr: true,
-      getCurrentValue: async ({ id }: { id: number }) => {
-        const response = await handleMessage({
-          message: {
-            type: 'LicenseQuery',
-            payload: {
-              id,
-            },
-          },
+      getCurrentValue: ({ id }: { id: number }) => {
+        return handleMessageJson({
+          message: { type: 'LicenseQuery', payload: { id } },
           expectedStatusCodes: [200, 404],
         })
-        return (await response.json()) as unknown
       },
+      enableSwr: true,
       maxAge: { day: 1 },
-      getKey: ({ id }) => {
-        return `de.serlo.org/api/license/${id}`
-      },
+      getKey: ({ id }) => `de.serlo.org/api/license/${id}`,
       getPayload: (key) => {
         const prefix = 'de.serlo.org/api/license/'
         return key.startsWith(prefix)
