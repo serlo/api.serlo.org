@@ -46,10 +46,6 @@ import {
   ThreadSetThreadStateResponse,
 } from '~/types'
 
-export interface ThreadsPayload {
-  firstCommentIds: number[]
-}
-
 export const ThreadDataType = 'Thread'
 
 export interface ThreadData {
