@@ -24,6 +24,7 @@ import * as t from 'io-ts'
 import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
 
+import { UuidPayloadDecoder } from './decoder'
 import { Environment } from '~/internals/environment'
 import { createHelper, createMutation, createQuery } from '~/internals/model'
 import { InstanceDecoder } from '~/schema/instance/decoder'
@@ -48,7 +49,6 @@ import {
 } from '~/schema/uuid/abstract-uuid/types'
 import { isUnsupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
-import { UuidPayloadDecoder } from '~/schema/uuid/decoder'
 import { Instance, ThreadCreateThreadInput } from '~/types'
 
 export function createSerloModel({
