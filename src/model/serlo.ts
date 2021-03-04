@@ -42,11 +42,7 @@ import {
   NavigationPayload,
   NodeData,
 } from '~/schema/uuid/abstract-navigation-child/types'
-import {
-  AbstractUuidPayload,
-  DiscriminatorType,
-  UuidPayload,
-} from '~/schema/uuid/abstract-uuid/types'
+import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 import { isUnsupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { Comment, Instance, ThreadCreateThreadInput } from '~/types'
@@ -656,7 +652,7 @@ export function createSerloModel({
         await getUuid._querySpec.setCache({
           payload: { id: payload.threadId },
           getValue(current) {
-            if (!current || !isCommentPayload(current)) return
+            if (!current || current.__typename !== 'Comment') return
             current.childrenIds.push(value.id) // new comment on last pos in thread
             return current
           },
@@ -684,7 +680,7 @@ export function createSerloModel({
           return { id }
         }),
         getValue(current) {
-          if (!current || !isCommentPayload(current)) return
+          if (!current || current.__typename !== 'Comment') return
           return {
             ...current,
             archived: ids.includes(current.id) ? archived : current.archived,
@@ -735,11 +731,4 @@ function getInstanceFromKey(key: string): Instance | null {
   return key.startsWith(`${instance}.serlo.org`) && isInstance(instance)
     ? instance
     : null
-}
-
-function isCommentPayload(value: unknown): value is Model<Comment> {
-  return (
-    typeof value === 'object' &&
-    (value as AbstractUuidPayload).__typename === DiscriminatorType.Comment
-  )
 }
