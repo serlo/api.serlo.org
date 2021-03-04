@@ -19,20 +19,45 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-export interface MutationSpec<P, R> {
-  mutate: (payload: P) => Promise<R>
-}
-
-export type Mutation<P, R> = ((payload: P) => Promise<R>) & {
-  _mutationSpec: MutationSpec<P, R>
-}
+import { either as E } from 'fp-ts'
+import t from 'io-ts'
+import R from 'ramda'
 
 export function createMutation<P, R = void>(
   spec: MutationSpec<P, R>
 ): Mutation<P, R> {
   async function mutation(payload: P): Promise<R> {
-    return await spec.mutate(payload)
+    if (R.has('decoder', spec)) {
+      const result = await spec.mutate(payload)
+
+      const value = E.getOrElse<unknown, R>(() => {
+        throw new Error('illegal payload received')
+      })(spec.decoder.decode(result))
+
+      if (spec.updateCache !== undefined) await spec.updateCache(payload, value)
+
+      return value
+    } else {
+      return await spec.mutate(payload)
+    }
   }
+
   mutation._mutationSpec = spec
+
   return mutation
+}
+
+type MutationSpec<P, R> =
+  // TODO: We do not want the first version in the future
+  | {
+      mutate: (payload: P) => Promise<R>
+    }
+  | {
+      decoder: t.Type<R>
+      updateCache?: (payload: P, newValue: R) => Promise<void> | void
+      mutate: (payload: P) => Promise<unknown>
+    }
+
+type Mutation<P, R> = ((payload: P) => Promise<R>) & {
+  _mutationSpec: MutationSpec<P, R>
 }
