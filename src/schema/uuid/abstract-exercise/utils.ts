@@ -19,27 +19,18 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { AbstractExercisePayload } from './types'
-import { requestsOnlyFields, Resolver } from '~/internals/graphql'
 import { SolutionDecoder } from '~/model'
-import { SolutionPayload } from '~/schema/uuid/solution/types'
+import { PickResolvers } from '~/schema/utils'
 
-export interface ExerciseResolvers<E extends AbstractExercisePayload> {
-  solution: Resolver<E, never, Partial<SolutionPayload> | null>
-}
-
-export function createExerciseResolvers<
-  E extends AbstractExercisePayload
->(): ExerciseResolvers<E> {
+export function createExerciseResolvers(): PickResolvers<
+  'AbstractExercise',
+  'solution'
+> {
   return {
-    async solution(exercise, _args, { dataSources }, info) {
-      if (!exercise.solutionId) return null
-      const partialSolution = { id: exercise.solutionId }
-      if (requestsOnlyFields('Solution', ['id'], info)) {
-        return partialSolution
-      }
+    async solution(exercise, _args, { dataSources }) {
+      if (exercise.solutionId === null) return null
       return await dataSources.model.serlo.getUuidWithCustomDecoder({
-        ...partialSolution,
+        id: exercise.solutionId,
         decoder: SolutionDecoder,
       })
     },
