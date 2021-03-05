@@ -40,7 +40,7 @@ export const resolvers = {
       GroupedExercisePayload,
       GroupedExerciseRevisionPayload
     >({ revisionDecoder: GroupedExerciseRevisionDecoder }),
-    ...createExerciseResolvers<GroupedExercisePayload>(),
+    ...createExerciseResolvers(),
     async exerciseGroup(
       groupedExercise: GroupedExercisePayload,
       _args: never,
