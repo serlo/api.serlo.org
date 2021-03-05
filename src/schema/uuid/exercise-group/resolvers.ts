@@ -40,7 +40,7 @@ export const resolvers = {
     >({
       revisionDecoder: ExerciseGroupRevisionDecoder,
     }),
-    ...createTaxonomyTermChildResolvers<ExerciseGroupPayload>(),
+    ...createTaxonomyTermChildResolvers(),
     exercises(
       exerciseGroup: ExerciseGroupPayload,
       _args: never,

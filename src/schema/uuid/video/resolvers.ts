@@ -32,7 +32,7 @@ export const resolvers = {
     ...createRepositoryResolvers<VideoPayload, VideoRevisionPayload>({
       revisionDecoder: VideoRevisionDecoder,
     }),
-    ...createTaxonomyTermChildResolvers<VideoPayload>(),
+    ...createTaxonomyTermChildResolvers(),
   },
   VideoRevision: createRevisionResolvers<VideoPayload, VideoRevisionPayload>({
     repositoryDecoder: VideoDecoder,

@@ -32,7 +32,7 @@ export const resolvers = {
     ...createRepositoryResolvers<EventPayload, EventRevisionPayload>({
       revisionDecoder: EventRevisionDecoder,
     }),
-    ...createTaxonomyTermChildResolvers<EventPayload>(),
+    ...createTaxonomyTermChildResolvers(),
   },
   EventRevision: createRevisionResolvers<EventPayload, EventRevisionPayload>({
     repositoryDecoder: EventDecoder,

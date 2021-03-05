@@ -41,7 +41,7 @@ export const resolvers = {
     ...createRepositoryResolvers<CoursePayload, CourseRevisionPayload>({
       revisionDecoder: CourseRevisionDecoder,
     }),
-    ...createTaxonomyTermChildResolvers<CoursePayload>(),
+    ...createTaxonomyTermChildResolvers(),
     async pages(
       course: CoursePayload,
       { trashed, hasCurrentRevision }: CoursePagesArgs,

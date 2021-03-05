@@ -33,7 +33,7 @@ export const resolvers = {
     ...createRepositoryResolvers<AppletPayload, AppletRevisionPayload>({
       revisionDecoder: AppletRevisionDecoder,
     }),
-    ...createTaxonomyTermChildResolvers<AppletPayload>(),
+    ...createTaxonomyTermChildResolvers(),
   },
   AppletRevision: createRevisionResolvers<AppletPayload, AppletRevisionPayload>(
     { repositoryDecoder: AppletDecoder }
