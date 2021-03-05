@@ -21,9 +21,11 @@
  */
 import { AbstractNavigationChildResolvers } from './types'
 import { resolveConnection } from '~/schema/connection/utils'
+import { InterfaceResolvers } from '~/schema/utils'
 import { NavigationNode } from '~/types'
 
-export const resolvers: AbstractNavigationChildResolvers = {
+export const resolvers: AbstractNavigationChildResolvers &
+  InterfaceResolvers<'AbstractNavigationChild'> = {
   AbstractNavigationChild: {
     __resolveType(entity) {
       return entity.__typename

@@ -19,9 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { AbstractRepositoryResolvers } from './types'
+import { InterfaceResolvers } from '~/schema/utils'
 
-export const resolvers: AbstractRepositoryResolvers = {
+export const resolvers: InterfaceResolvers<'AbstractRepository'> &
+  InterfaceResolvers<'AbstractRevision'> = {
   AbstractRepository: {
     __resolveType(repository) {
       return repository.__typename

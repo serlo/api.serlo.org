@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Resolver, TypeResolver } from '~/internals/graphql'
+import { Resolver } from '~/internals/graphql'
 import { Connection } from '~/schema/connection/types'
 import { PagePayload } from '~/schema/uuid/page/types'
 import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
@@ -45,9 +45,6 @@ export interface NodeData {
 }
 
 export interface AbstractNavigationChildResolvers {
-  AbstractNavigationChild: {
-    __resolveType: TypeResolver<NavigationChildPayload>
-  }
   Navigation: {
     path: Resolver<Navigation, NavigationPathArgs, Connection<NavigationNode>>
   }

@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { TypeResolver } from '~/internals/graphql'
 import {
   AppletPayload,
   AppletRevisionPayload,
@@ -119,13 +118,4 @@ export interface AbstractEntityRevisionPayload
   alias: string
   authorId: number
   repositoryId: number
-}
-
-export interface AbstractEntityResolvers {
-  AbstractEntity: {
-    __resolveType: TypeResolver<EntityPayload>
-  }
-  AbstractEntityRevision: {
-    __resolveType: TypeResolver<EntityRevisionPayload>
-  }
 }
