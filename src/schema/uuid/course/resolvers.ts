@@ -24,15 +24,15 @@ import R from 'ramda'
 import { CoursePayload, CourseRevisionPayload } from './types'
 import { Context } from '~/internals/graphql'
 import {
+  CourseDecoder,
+  CoursePageDecoder,
+  CourseRevisionDecoder,
+} from '~/model'
+import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
-import { CoursePageDecoder } from '~/schema/uuid/course-page/decoder'
-import {
-  CourseDecoder,
-  CourseRevisionDecoder,
-} from '~/schema/uuid/course/decoder'
 import { CoursePagesArgs } from '~/types'
 import { isDefined } from '~/utils'
 

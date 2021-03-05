@@ -22,6 +22,7 @@
 import { ApolloError, ForbiddenError } from 'apollo-server'
 
 import { decodeThreadId, decodeThreadIds, encodeThreadId } from './utils'
+import { UserDecoder } from '~/model'
 import { resolveConnection } from '~/schema/connection/utils'
 import {
   assertUserIsAuthenticated,
@@ -31,7 +32,6 @@ import {
   TypeResolvers,
 } from '~/schema/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
-import { UserPayloadDecoder } from '~/schema/uuid/user/decoder'
 import { Comment, Thread } from '~/types'
 
 export const resolvers: InterfaceResolvers<'ThreadAware'> &
@@ -83,7 +83,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
     async author(comment, _args, { dataSources }) {
       const author = await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: comment.authorId,
-        decoder: UserPayloadDecoder,
+        decoder: UserDecoder,
       })
       if (author === null) {
         throw new ApolloError('There is no author with this id')

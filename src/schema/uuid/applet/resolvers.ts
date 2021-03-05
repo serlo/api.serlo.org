@@ -21,15 +21,12 @@
  */
 
 import { AppletPayload, AppletRevisionPayload } from './types'
+import { AppletDecoder, AppletRevisionDecoder } from '~/model'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
-import {
-  AppletDecoder,
-  AppletRevisionDecoder,
-} from '~/schema/uuid/applet/decoder'
 
 export const resolvers = {
   Applet: {

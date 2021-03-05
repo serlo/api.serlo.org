@@ -20,15 +20,12 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { ArticlePayload, ArticleRevisionPayload } from './types'
+import { ArticleDecoder, ArticleRevisionDecoder } from '~/model'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
-import {
-  ArticleDecoder,
-  ArticleRevisionDecoder,
-} from '~/schema/uuid/article/decoder'
 
 export const resolvers = {
   Article: {

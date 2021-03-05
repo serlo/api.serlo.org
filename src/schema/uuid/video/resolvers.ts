@@ -20,12 +20,12 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { VideoPayload, VideoRevisionPayload } from './types'
+import { VideoDecoder, VideoRevisionDecoder } from '~/model'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
-import { VideoDecoder, VideoRevisionDecoder } from '~/schema/uuid/video/decoder'
 
 export const resolvers = {
   Video: {

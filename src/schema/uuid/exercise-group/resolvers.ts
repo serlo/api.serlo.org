@@ -22,15 +22,15 @@
 import { ExerciseGroupPayload, ExerciseGroupRevisionPayload } from './types'
 import { Context } from '~/internals/graphql'
 import {
+  ExerciseGroupDecoder,
+  ExerciseGroupRevisionDecoder,
+  GroupedExerciseDecoder,
+} from '~/model'
+import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
-import {
-  ExerciseGroupDecoder,
-  ExerciseGroupRevisionDecoder,
-} from '~/schema/uuid/exercise-group/decoder'
-import { GroupedExerciseDecoder } from '~/schema/uuid/grouped-exercise/decoder'
 
 export const resolvers = {
   ExerciseGroup: {

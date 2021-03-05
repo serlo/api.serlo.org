@@ -21,10 +21,10 @@
  */
 import { TaxonomyTermPayload, TaxonomyTermResolvers } from './types'
 import { Context } from '~/internals/graphql'
+import { TaxonomyTermPayloadDecoder } from '~/model'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
-import { TaxonomyTermPayloadDecoder } from '~/schema/uuid/taxonomy-term/decoder'
 import { isDefined } from '~/utils'
 
 export const resolvers: TaxonomyTermResolvers = {

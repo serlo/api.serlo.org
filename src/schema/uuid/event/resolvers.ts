@@ -20,12 +20,12 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { EventPayload, EventRevisionPayload } from './types'
+import { EventDecoder, EventRevisionDecoder } from '~/model'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
-import { EventDecoder, EventRevisionDecoder } from '~/schema/uuid/event/decoder'
 
 export const resolvers = {
   Event: {
