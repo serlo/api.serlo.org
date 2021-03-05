@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Resolver, TypeResolver } from '~/internals/graphql'
+import { Resolver } from '~/internals/graphql'
 import { Connection } from '~/schema/connection/types'
 import { PickResolvers } from '~/schema/utils'
 import {
@@ -79,15 +79,6 @@ export interface AbstractRevisionPayload
   alias: string | null
   authorId: number
   repositoryId: number
-}
-
-export interface AbstractRepositoryResolvers {
-  AbstractRepository: {
-    __resolveType: TypeResolver<RepositoryPayload>
-  }
-  AbstractRevision: {
-    __resolveType: TypeResolver<RevisionPayload>
-  }
 }
 
 type AbstractRepositoryRevisionsArgs =

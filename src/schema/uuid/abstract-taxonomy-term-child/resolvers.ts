@@ -19,9 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { AbstractTaxonomyTermChildResolvers } from './types'
+import { InterfaceResolvers } from '~/schema/utils'
 
-export const resolvers: AbstractTaxonomyTermChildResolvers = {
+export const resolvers: InterfaceResolvers<'AbstractTaxonomyTermChild'> = {
   AbstractTaxonomyTermChild: {
     __resolveType(entity) {
       return entity.__typename

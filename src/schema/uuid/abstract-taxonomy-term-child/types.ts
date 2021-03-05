@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { TypeResolver } from '~/internals/graphql'
 import { AbstractEntityPayload } from '~/schema/uuid/abstract-entity/types'
 import { AppletPayload } from '~/schema/uuid/applet/types'
 import { ArticlePayload } from '~/schema/uuid/article/types'
@@ -40,10 +39,4 @@ export type TaxonomyTermChildPayload =
 export interface AbstractTaxonomyTermChildPayload
   extends AbstractEntityPayload {
   taxonomyTermIds: number[]
-}
-
-export interface AbstractTaxonomyTermChildResolvers {
-  AbstractTaxonomyTermChild: {
-    __resolveType: TypeResolver<TaxonomyTermChildPayload>
-  }
 }
