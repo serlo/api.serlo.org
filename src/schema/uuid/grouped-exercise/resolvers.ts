@@ -23,16 +23,16 @@ import { GraphQLResolveInfo } from 'graphql'
 
 import { GroupedExercisePayload, GroupedExerciseRevisionPayload } from './types'
 import { Context, requestsOnlyFields } from '~/internals/graphql'
+import {
+  ExerciseGroupDecoder,
+  GroupedExerciseDecoder,
+  GroupedExerciseRevisionDecoder,
+} from '~/model'
 import { createExerciseResolvers } from '~/schema/uuid/abstract-exercise/utils'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
-import { ExerciseGroupDecoder } from '~/schema/uuid/exercise-group/decoder'
-import {
-  GroupedExerciseDecoder,
-  GroupedExerciseRevisionDecoder,
-} from '~/schema/uuid/grouped-exercise/decoder'
 
 export const resolvers = {
   GroupedExercise: {

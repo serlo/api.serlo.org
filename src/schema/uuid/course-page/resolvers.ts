@@ -24,14 +24,14 @@ import { GraphQLResolveInfo } from 'graphql'
 import { CoursePagePayload, CoursePageRevisionPayload } from './types'
 import { Context, requestsOnlyFields } from '~/internals/graphql'
 import {
+  CourseDecoder,
+  CoursePageDecoder,
+  CoursePageRevisionDecoder,
+} from '~/model'
+import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
-import {
-  CoursePageDecoder,
-  CoursePageRevisionDecoder,
-} from '~/schema/uuid/course-page/decoder'
-import { CourseDecoder } from '~/schema/uuid/course/decoder'
 
 export const resolvers = {
   CoursePage: {

@@ -20,14 +20,11 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { PagePayload, PageResolvers, PageRevisionPayload } from './types'
+import { PagePayloadDecoder, PageRevisionPayloadDecoder } from '~/model'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
-import {
-  PagePayloadDecoder,
-  PageRevisionPayloadDecoder,
-} from '~/schema/uuid/page/decoder'
 
 export const resolvers: PageResolvers = {
   Page: {

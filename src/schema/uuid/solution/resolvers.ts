@@ -21,14 +21,11 @@
  */
 import { SolutionPayload, SolutionRevisionPayload } from './types'
 import { Context } from '~/internals/graphql'
+import { SolutionDecoder, SolutionRevisionDecoder } from '~/model'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
-import {
-  SolutionDecoder,
-  SolutionRevisionDecoder,
-} from '~/schema/uuid/solution/decoder'
 
 export const resolvers = {
   Solution: {
