@@ -32,7 +32,7 @@ export const resolvers = {
     ...createRepositoryResolvers<ArticlePayload, ArticleRevisionPayload>({
       revisionDecoder: ArticleRevisionDecoder,
     }),
-    ...createTaxonomyTermChildResolvers<ArticlePayload>(),
+    ...createTaxonomyTermChildResolvers(),
   },
   ArticleRevision: createRevisionResolvers<
     ArticlePayload,
