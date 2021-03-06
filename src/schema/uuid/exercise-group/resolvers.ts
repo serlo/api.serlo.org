@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ExerciseGroupPayload, ExerciseGroupRevisionPayload } from './types'
+import { ExerciseGroupPayload } from './types'
 import { Context } from '~/internals/graphql'
 import {
   ExerciseGroupDecoder,
@@ -34,12 +34,7 @@ import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonom
 
 export const resolvers = {
   ExerciseGroup: {
-    ...createRepositoryResolvers<
-      ExerciseGroupPayload,
-      ExerciseGroupRevisionPayload
-    >({
-      revisionDecoder: ExerciseGroupRevisionDecoder,
-    }),
+    ...createRepositoryResolvers({ decoder: ExerciseGroupRevisionDecoder }),
     ...createTaxonomyTermChildResolvers(),
     exercises(
       exerciseGroup: ExerciseGroupPayload,
@@ -56,10 +51,7 @@ export const resolvers = {
       )
     },
   },
-  ExerciseGroupRevision: createRevisionResolvers<
-    ExerciseGroupPayload,
-    ExerciseGroupRevisionPayload
-  >({
-    repositoryDecoder: ExerciseGroupDecoder,
+  ExerciseGroupRevision: createRevisionResolvers({
+    decoder: ExerciseGroupDecoder,
   }),
 }

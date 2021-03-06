@@ -19,9 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Resolver } from '~/internals/graphql'
-import { Connection } from '~/schema/connection/types'
-import { PickResolvers } from '~/schema/utils'
 import {
   EntityPayload,
   EntityRevisionPayload,
@@ -30,19 +27,6 @@ import {
 } from '~/schema/uuid/abstract-entity/types'
 import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
 import { PagePayload, PageRevisionPayload } from '~/schema/uuid/page/types'
-import {
-  AppletRevisionsArgs,
-  ArticleRevisionsArgs,
-  CoursePageRevisionsArgs,
-  CourseRevisionsArgs,
-  EventRevisionsArgs,
-  ExerciseGroupRevisionsArgs,
-  ExerciseRevisionsArgs,
-  GroupedExerciseRevisionsArgs,
-  PageRevisionsArgs,
-  SolutionRevisionsArgs,
-  VideoRevisionsArgs,
-} from '~/types'
 
 export type RepositoryType = EntityType | DiscriminatorType.Page
 
@@ -52,33 +36,3 @@ export type AbstractRepositoryPayload = RepositoryPayload
 export type RevisionPayload = EntityRevisionPayload | PageRevisionPayload
 export type RevisionType = EntityRevisionType | DiscriminatorType.PageRevision
 export type AbstractRevisionPayload = RevisionPayload
-
-type AbstractRepositoryRevisionsArgs =
-  | AppletRevisionsArgs
-  | ArticleRevisionsArgs
-  | CoursePageRevisionsArgs
-  | CourseRevisionsArgs
-  | EventRevisionsArgs
-  | ExerciseGroupRevisionsArgs
-  | ExerciseRevisionsArgs
-  | GroupedExerciseRevisionsArgs
-  | PageRevisionsArgs
-  | SolutionRevisionsArgs
-  | VideoRevisionsArgs
-
-export interface RepositoryResolvers<
-  E extends RepositoryPayload,
-  R extends RevisionPayload
-> extends PickResolvers<'AbstractRepository', 'threads' | 'alias' | 'license'> {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  currentRevision: Resolver<E, {}, R | null>
-  revisions: Resolver<E, AbstractRepositoryRevisionsArgs, Connection<R>>
-}
-
-export interface RevisionResolvers<
-  E extends RepositoryPayload,
-  R extends RevisionPayload
-> extends PickResolvers<'AbstractRevision', 'threads' | 'alias' | 'author'> {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  repository: Resolver<R, {}, E>
-}

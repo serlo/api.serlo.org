@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { SolutionPayload, SolutionRevisionPayload } from './types'
+import { SolutionPayload } from './types'
 import { Context } from '~/internals/graphql'
 import { SolutionDecoder, SolutionRevisionDecoder } from '~/model'
 import {
@@ -29,9 +29,7 @@ import {
 
 export const resolvers = {
   Solution: {
-    ...createRepositoryResolvers<SolutionPayload, SolutionRevisionPayload>({
-      revisionDecoder: SolutionRevisionDecoder,
-    }),
+    ...createRepositoryResolvers({ decoder: SolutionRevisionDecoder }),
     async exercise(
       solution: SolutionPayload,
       _args: never,
@@ -42,10 +40,5 @@ export const resolvers = {
       })
     },
   },
-  SolutionRevision: createRevisionResolvers<
-    SolutionPayload,
-    SolutionRevisionPayload
-  >({
-    repositoryDecoder: SolutionDecoder,
-  }),
+  SolutionRevision: createRevisionResolvers({ decoder: SolutionDecoder }),
 }

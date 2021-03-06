@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ExercisePayload, ExerciseRevisionPayload } from './types'
 import { ExerciseDecoder, ExerciseRevisionDecoder } from '~/model'
 import { createExerciseResolvers } from '~/schema/uuid/abstract-exercise/utils'
 import {
@@ -30,14 +29,9 @@ import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonom
 
 export const resolvers = {
   Exercise: {
-    ...createRepositoryResolvers<ExercisePayload, ExerciseRevisionPayload>({
-      revisionDecoder: ExerciseRevisionDecoder,
-    }),
+    ...createRepositoryResolvers({ decoder: ExerciseRevisionDecoder }),
     ...createTaxonomyTermChildResolvers(),
     ...createExerciseResolvers(),
   },
-  ExerciseRevision: createRevisionResolvers<
-    ExercisePayload,
-    ExerciseRevisionPayload
-  >({ repositoryDecoder: ExerciseDecoder }),
+  ExerciseRevision: createRevisionResolvers({ decoder: ExerciseDecoder }),
 }
