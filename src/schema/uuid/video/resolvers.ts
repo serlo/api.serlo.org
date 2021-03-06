@@ -19,8 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { VideoPayload, VideoRevisionPayload } from './types'
-import { VideoDecoder, VideoRevisionDecoder } from '~/model'
+import { Model, VideoDecoder, VideoRevisionDecoder } from '~/model'
 import { TypeResolvers } from '~/schema/utils'
 import {
   createRepositoryResolvers,
@@ -31,12 +30,12 @@ import { Video, VideoRevision } from '~/types'
 
 export const resolvers: TypeResolvers<Video> & TypeResolvers<VideoRevision> = {
   Video: {
-    ...createRepositoryResolvers<VideoPayload, VideoRevisionPayload>({
+    ...createRepositoryResolvers<Model<Video>, Model<VideoRevision>>({
       revisionDecoder: VideoRevisionDecoder,
     }),
     ...createTaxonomyTermChildResolvers(),
   },
-  VideoRevision: createRevisionResolvers<VideoPayload, VideoRevisionPayload>({
+  VideoRevision: createRevisionResolvers<Model<Video>, Model<VideoRevision>>({
     repositoryDecoder: VideoDecoder,
   }),
 }

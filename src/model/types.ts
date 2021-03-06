@@ -22,7 +22,7 @@
 import * as t from 'io-ts'
 import { A } from 'ts-toolbelt'
 
-import { CommentDecoder } from './decoder'
+import { CommentDecoder, VideoDecoder, VideoRevisionDecoder } from './decoder'
 import { createSerloModel } from './serlo'
 import { Connection } from '~/schema/connection/types'
 import {
@@ -61,7 +61,6 @@ import {
 } from '~/schema/uuid/solution/types'
 import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
 import { UserPayload } from '~/schema/uuid/user/types'
-import { VideoPayload, VideoRevisionPayload } from '~/schema/uuid/video/types'
 
 export interface Models {
   Applet: AppletPayload
@@ -95,8 +94,8 @@ export interface Models {
     commentPayloads: Models['Comment'][]
   }
   User: UserPayload
-  Video: VideoPayload
-  VideoRevision: VideoRevisionPayload
+  Video: t.TypeOf<typeof VideoDecoder>
+  VideoRevision: t.TypeOf<typeof VideoRevisionDecoder>
 }
 
 // TODO: Is there a better way to handle primitive types?
