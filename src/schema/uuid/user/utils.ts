@@ -19,23 +19,16 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { GraphQLResolveInfo } from 'graphql'
-
 import { UserPayload } from './types'
-import { Context, requestsOnlyFields } from '~/internals/graphql'
+import { Context } from '~/internals/graphql'
 import { UserDecoder } from '~/model'
 
 export async function resolveUser(
   { id }: { id: number },
-  { dataSources }: Context,
-  info: GraphQLResolveInfo
-): Promise<Partial<UserPayload> | null> {
-  const partialUser = { id }
-  if (requestsOnlyFields('User', ['id'], info)) {
-    return partialUser
-  }
+  { dataSources }: Context
+): Promise<UserPayload | null> {
   return await dataSources.model.serlo.getUuidWithCustomDecoder({
-    ...partialUser,
+    id,
     decoder: UserDecoder,
   })
 }
