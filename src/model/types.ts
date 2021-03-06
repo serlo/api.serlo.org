@@ -23,83 +23,69 @@ import * as t from 'io-ts'
 import { A } from 'ts-toolbelt'
 
 import {
+  AppletDecoder,
+  AppletRevisionDecoder,
+  ArticleDecoder,
+  ArticleRevisionDecoder,
   CommentDecoder,
+  CourseDecoder,
+  CoursePageDecoder,
+  CoursePageRevisionDecoder,
+  CourseRevisionDecoder,
+  EventDecoder,
+  EventRevisionDecoder,
+  ExerciseDecoder,
+  ExerciseGroupDecoder,
+  ExerciseGroupRevisionDecoder,
+  ExerciseRevisionDecoder,
+  GroupedExerciseDecoder,
+  GroupedExerciseRevisionDecoder,
+  PagePayloadDecoder,
+  PageRevisionPayloadDecoder,
   RepositoryDecoder,
   RevisionDecoder,
+  SolutionDecoder,
+  SolutionRevisionDecoder,
+  TaxonomyTermTypeDecoder,
+  UserDecoder,
   VideoDecoder,
   VideoRevisionDecoder,
 } from './decoder'
 import { createSerloModel } from './serlo'
 import { Connection } from '~/schema/connection/types'
-import {
-  AppletPayload,
-  AppletRevisionPayload,
-} from '~/schema/uuid/applet/types'
-import {
-  ArticlePayload,
-  ArticleRevisionPayload,
-} from '~/schema/uuid/article/types'
-import {
-  CoursePagePayload,
-  CoursePageRevisionPayload,
-} from '~/schema/uuid/course-page/types'
-import {
-  CoursePayload,
-  CourseRevisionPayload,
-} from '~/schema/uuid/course/types'
-import { EventPayload, EventRevisionPayload } from '~/schema/uuid/event/types'
-import {
-  ExerciseGroupPayload,
-  ExerciseGroupRevisionPayload,
-} from '~/schema/uuid/exercise-group/types'
-import {
-  ExercisePayload,
-  ExerciseRevisionPayload,
-} from '~/schema/uuid/exercise/types'
-import {
-  GroupedExercisePayload,
-  GroupedExerciseRevisionPayload,
-} from '~/schema/uuid/grouped-exercise/types'
-import { PagePayload, PageRevisionPayload } from '~/schema/uuid/page/types'
-import {
-  SolutionPayload,
-  SolutionRevisionPayload,
-} from '~/schema/uuid/solution/types'
-import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
-import { UserPayload } from '~/schema/uuid/user/types'
 
 export interface Models {
-  Applet: AppletPayload
-  AppletRevision: AppletRevisionPayload
-  Article: ArticlePayload
-  ArticleRevision: ArticleRevisionPayload
+  Applet: t.TypeOf<typeof AppletDecoder>
+  AppletRevision: t.TypeOf<typeof AppletRevisionDecoder>
+  Article: t.TypeOf<typeof ArticleDecoder>
+  ArticleRevision: t.TypeOf<typeof ArticleRevisionDecoder>
   Comment: t.TypeOf<typeof CommentDecoder>
-  CoursePage: CoursePagePayload
-  CoursePageRevision: CoursePageRevisionPayload
-  Course: CoursePayload
-  CourseRevision: CourseRevisionPayload
-  Event: EventPayload
-  EventRevision: EventRevisionPayload
-  ExerciseGroup: ExerciseGroupPayload
-  ExerciseGroupRevision: ExerciseGroupRevisionPayload
-  Exercise: ExercisePayload
-  ExerciseRevision: ExerciseRevisionPayload
-  GroupedExercise: GroupedExercisePayload
-  GroupedExerciseRevision: GroupedExerciseRevisionPayload
+  CoursePage: t.TypeOf<typeof CoursePageDecoder>
+  CoursePageRevision: t.TypeOf<typeof CoursePageRevisionDecoder>
+  Course: t.TypeOf<typeof CourseDecoder>
+  CourseRevision: t.TypeOf<typeof CourseRevisionDecoder>
+  Event: t.TypeOf<typeof EventDecoder>
+  EventRevision: t.TypeOf<typeof EventRevisionDecoder>
+  ExerciseGroup: t.TypeOf<typeof ExerciseGroupDecoder>
+  ExerciseGroupRevision: t.TypeOf<typeof ExerciseGroupRevisionDecoder>
+  Exercise: t.TypeOf<typeof ExerciseDecoder>
+  ExerciseRevision: t.TypeOf<typeof ExerciseRevisionDecoder>
+  GroupedExercise: t.TypeOf<typeof GroupedExerciseDecoder>
+  GroupedExerciseRevision: t.TypeOf<typeof GroupedExerciseRevisionDecoder>
   Mutation: Record<string, never>
   Navigation: Payload<'getNavigation'>
   License: Payload<'getLicense'>
-  Page: PagePayload
-  PageRevision: PageRevisionPayload
+  Page: t.TypeOf<typeof PagePayloadDecoder>
+  PageRevision: t.TypeOf<typeof PageRevisionPayloadDecoder>
   Query: Record<string, never>
-  Solution: SolutionPayload
-  SolutionRevision: SolutionRevisionPayload
-  TaxonomyTerm: TaxonomyTermPayload
+  Solution: t.TypeOf<typeof SolutionDecoder>
+  SolutionRevision: t.TypeOf<typeof SolutionRevisionDecoder>
+  TaxonomyTerm: t.TypeOf<typeof TaxonomyTermTypeDecoder>
   Thread: {
     __typename: 'Thread'
     commentPayloads: Models['Comment'][]
   }
-  User: UserPayload
+  User: t.TypeOf<typeof UserDecoder>
   Video: t.TypeOf<typeof VideoDecoder>
   VideoRevision: t.TypeOf<typeof VideoRevisionDecoder>
 }
