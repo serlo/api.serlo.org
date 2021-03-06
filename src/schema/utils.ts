@@ -22,8 +22,9 @@
 import { AuthenticationError } from 'apollo-server'
 import { A, O } from 'ts-toolbelt'
 
+import { Context } from '~/internals/graphql'
 import { Model, Typename } from '~/model'
-import { MutationResolvers, QueryResolvers, Resolvers } from '~/types'
+import { MutationResolvers, QueryResolvers, Resolver, Resolvers } from '~/types'
 
 export function assertUserIsAuthenticated(
   user: number | null
@@ -115,6 +116,14 @@ export type PickResolvers<
   R extends keyof Resolvers,
   F = O.OptionalKeys<GetResolver<R>>
 > = Required<PickKeys<GetResolver<R>, F>>
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type ResolverFunction<Result, Parent, Args = {}> = Resolver<
+  Result,
+  Parent,
+  Context,
+  Args
+>
 
 type GetResolver<Name extends keyof Resolvers> = NonNullable<Resolvers[Name]>
 

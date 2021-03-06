@@ -26,42 +26,6 @@ import {
   EntityType,
 } from '~/schema/uuid/abstract-entity/types'
 import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
-import {
-  AppletPayload,
-  AppletRevisionPayload,
-} from '~/schema/uuid/applet/types'
-import {
-  ArticlePayload,
-  ArticleRevisionPayload,
-} from '~/schema/uuid/article/types'
-import {
-  CoursePagePayload,
-  CoursePageRevisionPayload,
-} from '~/schema/uuid/course-page/types'
-import {
-  CoursePayload,
-  CourseRevisionPayload,
-} from '~/schema/uuid/course/types'
-import { EventPayload, EventRevisionPayload } from '~/schema/uuid/event/types'
-import {
-  ExerciseGroupPayload,
-  ExerciseGroupRevisionPayload,
-} from '~/schema/uuid/exercise-group/types'
-import {
-  ExercisePayload,
-  ExerciseRevisionPayload,
-} from '~/schema/uuid/exercise/types'
-import {
-  GroupedExercisePayload,
-  GroupedExerciseRevisionPayload,
-} from '~/schema/uuid/grouped-exercise/types'
-import { PagePayload, PageRevisionPayload } from '~/schema/uuid/page/types'
-import {
-  SolutionPayload,
-  SolutionRevisionPayload,
-} from '~/schema/uuid/solution/types'
-import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
-import { UserPayload } from '~/schema/uuid/user/types'
 import { Instance, TaxonomyTermType } from '~/types'
 
 export const InstanceDecoder: t.Type<Instance> = t.union([
@@ -79,7 +43,7 @@ export const AbstractUuidPayloadDecoder = t.type({
   alias: t.string,
 })
 
-export const EntityTypeDecoder: t.Type<EntityType> = t.union([
+export const EntityTypeDecoder = t.union([
   t.literal(EntityType.Applet),
   t.literal(EntityType.Article),
   t.literal(EntityType.Course),
@@ -104,7 +68,7 @@ export const AbstractEntityPayloadDecoder = t.intersection([
   }),
 ])
 
-export const EntityRevisionTypeDecoder: t.Type<EntityRevisionType> = t.union([
+export const EntityRevisionTypeDecoder = t.union([
   t.literal(EntityRevisionType.AppletRevision),
   t.literal(EntityRevisionType.ArticleRevision),
   t.literal(EntityRevisionType.CourseRevision),
@@ -129,7 +93,7 @@ export const AbstractEntityRevisionPayloadDecoder = t.intersection([
   }),
 ])
 
-export const PagePayloadDecoder: t.Type<PagePayload> = t.exact(
+export const PagePayloadDecoder = t.exact(
   t.intersection([
     AbstractUuidPayloadDecoder,
     t.type({
@@ -143,7 +107,7 @@ export const PagePayloadDecoder: t.Type<PagePayload> = t.exact(
   ])
 )
 
-export const PageRevisionPayloadDecoder: t.Type<PageRevisionPayload> = t.exact(
+export const PageRevisionPayloadDecoder = t.exact(
   t.intersection([
     AbstractUuidPayloadDecoder,
     t.type({
@@ -157,7 +121,7 @@ export const PageRevisionPayloadDecoder: t.Type<PageRevisionPayload> = t.exact(
   ])
 )
 
-export const TaxonomyTermTypeDecoder: t.Type<TaxonomyTermType> = t.union([
+export const TaxonomyTermTypeDecoder = t.union([
   t.literal(TaxonomyTermType.Blog),
   t.literal(TaxonomyTermType.Curriculum),
   t.literal(TaxonomyTermType.CurriculumTopic),
@@ -171,7 +135,7 @@ export const TaxonomyTermTypeDecoder: t.Type<TaxonomyTermType> = t.union([
   t.literal(TaxonomyTermType.TopicFolder),
 ])
 
-export const TaxonomyTermPayloadDecoder: t.Type<TaxonomyTermPayload> = t.exact(
+export const TaxonomyTermPayloadDecoder = t.exact(
   t.intersection([
     AbstractUuidPayloadDecoder,
     t.type({
@@ -205,7 +169,7 @@ export const CommentDecoder = t.exact(
   ])
 )
 
-export const ArticleDecoder: t.Type<ArticlePayload> = t.exact(
+export const ArticleDecoder = t.exact(
   t.intersection([
     AbstractEntityPayloadDecoder,
     t.type({
@@ -215,7 +179,7 @@ export const ArticleDecoder: t.Type<ArticlePayload> = t.exact(
   ])
 )
 
-export const ArticleRevisionDecoder: t.Type<ArticleRevisionPayload> = t.exact(
+export const ArticleRevisionDecoder = t.exact(
   t.intersection([
     AbstractEntityRevisionPayloadDecoder,
     t.type({
@@ -228,7 +192,7 @@ export const ArticleRevisionDecoder: t.Type<ArticleRevisionPayload> = t.exact(
   ])
 )
 
-export const AppletDecoder: t.Type<AppletPayload> = t.exact(
+export const AppletDecoder = t.exact(
   t.intersection([
     AbstractEntityPayloadDecoder,
     t.type({
@@ -238,7 +202,7 @@ export const AppletDecoder: t.Type<AppletPayload> = t.exact(
   ])
 )
 
-export const AppletRevisionDecoder: t.Type<AppletRevisionPayload> = t.exact(
+export const AppletRevisionDecoder = t.exact(
   t.intersection([
     AbstractEntityRevisionPayloadDecoder,
     t.type({
@@ -252,7 +216,7 @@ export const AppletRevisionDecoder: t.Type<AppletRevisionPayload> = t.exact(
   ])
 )
 
-export const CourseDecoder: t.Type<CoursePayload> = t.exact(
+export const CourseDecoder = t.exact(
   t.intersection([
     AbstractEntityPayloadDecoder,
     t.type({
@@ -263,7 +227,7 @@ export const CourseDecoder: t.Type<CoursePayload> = t.exact(
   ])
 )
 
-export const CourseRevisionDecoder: t.Type<CourseRevisionPayload> = t.exact(
+export const CourseRevisionDecoder = t.exact(
   t.intersection([
     AbstractEntityRevisionPayloadDecoder,
     t.type({
@@ -275,7 +239,7 @@ export const CourseRevisionDecoder: t.Type<CourseRevisionPayload> = t.exact(
   ])
 )
 
-export const CoursePageDecoder: t.Type<CoursePagePayload> = t.exact(
+export const CoursePageDecoder = t.exact(
   t.intersection([
     AbstractEntityPayloadDecoder,
     t.type({
@@ -285,7 +249,7 @@ export const CoursePageDecoder: t.Type<CoursePagePayload> = t.exact(
   ])
 )
 
-export const CoursePageRevisionDecoder: t.Type<CoursePageRevisionPayload> = t.exact(
+export const CoursePageRevisionDecoder = t.exact(
   t.intersection([
     AbstractEntityRevisionPayloadDecoder,
     t.type({
@@ -296,7 +260,7 @@ export const CoursePageRevisionDecoder: t.Type<CoursePageRevisionPayload> = t.ex
   ])
 )
 
-export const ExerciseDecoder: t.Type<ExercisePayload> = t.exact(
+export const ExerciseDecoder = t.exact(
   t.intersection([
     AbstractEntityPayloadDecoder,
     t.type({
@@ -307,7 +271,7 @@ export const ExerciseDecoder: t.Type<ExercisePayload> = t.exact(
   ])
 )
 
-export const ExerciseRevisionDecoder: t.Type<ExerciseRevisionPayload> = t.exact(
+export const ExerciseRevisionDecoder = t.exact(
   t.intersection([
     AbstractEntityRevisionPayloadDecoder,
     t.type({
@@ -317,7 +281,7 @@ export const ExerciseRevisionDecoder: t.Type<ExerciseRevisionPayload> = t.exact(
   ])
 )
 
-export const ExerciseGroupDecoder: t.Type<ExerciseGroupPayload> = t.exact(
+export const ExerciseGroupDecoder = t.exact(
   t.intersection([
     AbstractEntityPayloadDecoder,
     t.type({
@@ -328,7 +292,7 @@ export const ExerciseGroupDecoder: t.Type<ExerciseGroupPayload> = t.exact(
   ])
 )
 
-export const ExerciseGroupRevisionDecoder: t.Type<ExerciseGroupRevisionPayload> = t.exact(
+export const ExerciseGroupRevisionDecoder = t.exact(
   t.intersection([
     AbstractEntityRevisionPayloadDecoder,
     t.type({
@@ -338,7 +302,7 @@ export const ExerciseGroupRevisionDecoder: t.Type<ExerciseGroupRevisionPayload> 
   ])
 )
 
-export const EventDecoder: t.Type<EventPayload> = t.exact(
+export const EventDecoder = t.exact(
   t.intersection([
     AbstractEntityPayloadDecoder,
     t.type({
@@ -348,7 +312,7 @@ export const EventDecoder: t.Type<EventPayload> = t.exact(
   ])
 )
 
-export const EventRevisionDecoder: t.Type<EventRevisionPayload> = t.exact(
+export const EventRevisionDecoder = t.exact(
   t.intersection([
     AbstractEntityRevisionPayloadDecoder,
     t.type({
@@ -361,7 +325,7 @@ export const EventRevisionDecoder: t.Type<EventRevisionPayload> = t.exact(
   ])
 )
 
-export const GroupedExerciseDecoder: t.Type<GroupedExercisePayload> = t.exact(
+export const GroupedExerciseDecoder = t.exact(
   t.intersection([
     AbstractEntityPayloadDecoder,
     t.type({
@@ -372,7 +336,7 @@ export const GroupedExerciseDecoder: t.Type<GroupedExercisePayload> = t.exact(
   ])
 )
 
-export const GroupedExerciseRevisionDecoder: t.Type<GroupedExerciseRevisionPayload> = t.exact(
+export const GroupedExerciseRevisionDecoder = t.exact(
   t.intersection([
     AbstractEntityRevisionPayloadDecoder,
     t.type({
@@ -382,7 +346,7 @@ export const GroupedExerciseRevisionDecoder: t.Type<GroupedExerciseRevisionPaylo
   ])
 )
 
-export const SolutionDecoder: t.Type<SolutionPayload> = t.exact(
+export const SolutionDecoder = t.exact(
   t.intersection([
     AbstractEntityPayloadDecoder,
     t.type({
@@ -392,7 +356,7 @@ export const SolutionDecoder: t.Type<SolutionPayload> = t.exact(
   ])
 )
 
-export const SolutionRevisionDecoder: t.Type<SolutionRevisionPayload> = t.exact(
+export const SolutionRevisionDecoder = t.exact(
   t.intersection([
     AbstractEntityRevisionPayloadDecoder,
     t.type({
@@ -424,7 +388,7 @@ export const VideoRevisionDecoder = t.exact(
   ])
 )
 
-export const UserDecoder: t.Type<UserPayload> = t.exact(
+export const UserDecoder = t.exact(
   t.intersection([
     AbstractUuidPayloadDecoder,
     t.type({
@@ -465,12 +429,20 @@ export const EntityRevisionPayloadDecoder = t.union([
   VideoRevisionDecoder,
 ])
 
+export const RepositoryDecoder = t.union([
+  EntityPayloadDecoder,
+  PagePayloadDecoder,
+])
+
+export const RevisionDecoder = t.union([
+  EntityRevisionPayloadDecoder,
+  PageRevisionPayloadDecoder,
+])
+
 export const UuidPayloadDecoder = t.union([
   CommentDecoder,
-  EntityPayloadDecoder,
-  EntityRevisionPayloadDecoder,
-  PagePayloadDecoder,
-  PageRevisionPayloadDecoder,
+  RepositoryDecoder,
+  RevisionDecoder,
   TaxonomyTermPayloadDecoder,
   UserDecoder,
 ])

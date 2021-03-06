@@ -21,7 +21,7 @@
  */
 import { GraphQLResolveInfo } from 'graphql'
 
-import { CoursePagePayload, CoursePageRevisionPayload } from './types'
+import { CoursePagePayload } from './types'
 import { Context, requestsOnlyFields } from '~/internals/graphql'
 import {
   CourseDecoder,
@@ -35,9 +35,7 @@ import {
 
 export const resolvers = {
   CoursePage: {
-    ...createRepositoryResolvers<CoursePagePayload, CoursePageRevisionPayload>({
-      revisionDecoder: CoursePageRevisionDecoder,
-    }),
+    ...createRepositoryResolvers({ decoder: CoursePageRevisionDecoder }),
     async course(
       coursePage: CoursePagePayload,
       _args: never,
@@ -54,10 +52,5 @@ export const resolvers = {
       })
     },
   },
-  CoursePageRevision: createRevisionResolvers<
-    CoursePagePayload,
-    CoursePageRevisionPayload
-  >({
-    repositoryDecoder: CoursePageDecoder,
-  }),
+  CoursePageRevision: createRevisionResolvers({ decoder: CoursePageDecoder }),
 }

@@ -21,7 +21,7 @@
  */
 import R from 'ramda'
 
-import { CoursePayload, CourseRevisionPayload } from './types'
+import { CoursePayload } from './types'
 import { Context } from '~/internals/graphql'
 import {
   CourseDecoder,
@@ -38,9 +38,7 @@ import { isDefined } from '~/utils'
 
 export const resolvers = {
   Course: {
-    ...createRepositoryResolvers<CoursePayload, CourseRevisionPayload>({
-      revisionDecoder: CourseRevisionDecoder,
-    }),
+    ...createRepositoryResolvers({ decoder: CourseRevisionDecoder }),
     ...createTaxonomyTermChildResolvers(),
     async pages(
       course: CoursePayload,
@@ -68,7 +66,5 @@ export const resolvers = {
       })
     },
   },
-  CourseRevision: createRevisionResolvers<CoursePayload, CourseRevisionPayload>(
-    { repositoryDecoder: CourseDecoder }
-  ),
+  CourseRevision: createRevisionResolvers({ decoder: CourseDecoder }),
 }

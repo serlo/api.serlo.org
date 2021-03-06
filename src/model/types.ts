@@ -22,7 +22,13 @@
 import * as t from 'io-ts'
 import { A } from 'ts-toolbelt'
 
-import { CommentDecoder, VideoDecoder, VideoRevisionDecoder } from './decoder'
+import {
+  CommentDecoder,
+  RepositoryDecoder,
+  RevisionDecoder,
+  VideoDecoder,
+  VideoRevisionDecoder,
+} from './decoder'
 import { createSerloModel } from './serlo'
 import { Connection } from '~/schema/connection/types'
 import {
@@ -97,6 +103,18 @@ export interface Models {
   Video: t.TypeOf<typeof VideoDecoder>
   VideoRevision: t.TypeOf<typeof VideoRevisionDecoder>
 }
+
+export type Revision<
+  T extends t.TypeOf<typeof RepositoryDecoder>
+> = Models[`${T['__typename']}Revision`]
+
+export type Repository<
+  R extends t.TypeOf<typeof RevisionDecoder>
+> = Models[R['__typename'] extends `${infer U}Revision`
+  ? U extends keyof Models
+    ? U
+    : never
+  : never]
 
 // TODO: Is there a better way to handle primitive types?
 export type Model<T> = T extends boolean | string | number | null

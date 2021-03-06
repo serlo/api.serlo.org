@@ -19,37 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Page, PageRevision } from '../../../types'
-import { NavigationChildResolvers } from '~/schema/uuid/abstract-navigation-child/utils'
-import {
-  RepositoryResolvers,
-  RevisionResolvers,
-} from '~/schema/uuid/abstract-repository/types'
-import {
-  DiscriminatorType,
-  UuidResolvers,
-} from '~/schema/uuid/abstract-uuid/types'
+import t from 'io-ts'
 
-export interface PagePayload extends Omit<Page, keyof PageResolvers['Page']> {
-  __typename: DiscriminatorType.Page
-  alias: string
-  currentRevisionId: number | null
-  revisionIds: number[]
-  licenseId: number
-}
+import { PagePayloadDecoder, PageRevisionPayloadDecoder } from '~/model'
 
-export interface PageRevisionPayload
-  extends Omit<PageRevision, keyof PageResolvers['PageRevision']> {
-  __typename: DiscriminatorType.PageRevision
-  alias: string
-  authorId: number
-  repositoryId: number
-}
-
-export interface PageResolvers {
-  Page: RepositoryResolvers<PagePayload, PageRevisionPayload> &
-    NavigationChildResolvers<PagePayload> &
-    UuidResolvers
-  PageRevision: RevisionResolvers<PagePayload, PageRevisionPayload> &
-    UuidResolvers
-}
+export type PagePayload = t.TypeOf<typeof PagePayloadDecoder>
+export type PageRevisionPayload = t.TypeOf<typeof PageRevisionPayloadDecoder>

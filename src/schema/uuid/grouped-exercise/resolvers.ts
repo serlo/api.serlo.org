@@ -21,7 +21,7 @@
  */
 import { GraphQLResolveInfo } from 'graphql'
 
-import { GroupedExercisePayload, GroupedExerciseRevisionPayload } from './types'
+import { GroupedExercisePayload } from './types'
 import { Context, requestsOnlyFields } from '~/internals/graphql'
 import {
   ExerciseGroupDecoder,
@@ -36,10 +36,7 @@ import {
 
 export const resolvers = {
   GroupedExercise: {
-    ...createRepositoryResolvers<
-      GroupedExercisePayload,
-      GroupedExerciseRevisionPayload
-    >({ revisionDecoder: GroupedExerciseRevisionDecoder }),
+    ...createRepositoryResolvers({ decoder: GroupedExerciseRevisionDecoder }),
     ...createExerciseResolvers(),
     async exerciseGroup(
       groupedExercise: GroupedExercisePayload,
@@ -57,8 +54,7 @@ export const resolvers = {
       })
     },
   },
-  GroupedExerciseRevision: createRevisionResolvers<
-    GroupedExercisePayload,
-    GroupedExerciseRevisionPayload
-  >({ repositoryDecoder: GroupedExerciseDecoder }),
+  GroupedExerciseRevision: createRevisionResolvers({
+    decoder: GroupedExerciseDecoder,
+  }),
 }
