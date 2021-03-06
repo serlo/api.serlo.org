@@ -20,14 +20,17 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { ExerciseDecoder, ExerciseRevisionDecoder } from '~/model'
+import { TypeResolvers } from '~/schema/utils'
 import { createExerciseResolvers } from '~/schema/uuid/abstract-exercise/utils'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
+import { Exercise, ExerciseRevision } from '~/types'
 
-export const resolvers = {
+export const resolvers: TypeResolvers<Exercise> &
+  TypeResolvers<ExerciseRevision> = {
   Exercise: {
     ...createRepositoryResolvers({ decoder: ExerciseRevisionDecoder }),
     ...createTaxonomyTermChildResolvers(),

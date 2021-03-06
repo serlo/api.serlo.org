@@ -19,15 +19,17 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { TaxonomyTermPayload, TaxonomyTermResolvers } from './types'
+import { TaxonomyTermPayload } from './types'
 import { Context } from '~/internals/graphql'
 import { TaxonomyTermPayloadDecoder } from '~/model'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
+import { TypeResolvers } from '~/schema/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
+import { TaxonomyTerm } from '~/types'
 import { isDefined } from '~/utils'
 
-export const resolvers: TaxonomyTermResolvers = {
+export const resolvers: TypeResolvers<TaxonomyTerm> = {
   TaxonomyTerm: {
     ...createUuidResolvers(),
     ...createThreadResolvers(),

@@ -19,34 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Resolver } from '~/internals/graphql'
-import { Connection } from '~/schema/connection/types'
-import { PickResolvers } from '~/schema/utils'
-import { NavigationChildResolvers } from '~/schema/uuid/abstract-navigation-child/utils'
-import {
-  UuidPayload,
-  DiscriminatorType,
-  UuidResolvers,
-} from '~/schema/uuid/abstract-uuid/types'
-import { TaxonomyTerm, TaxonomyTermChildrenArgs } from '~/types'
+import t from 'io-ts'
 
-export interface TaxonomyTermPayload
-  extends Omit<TaxonomyTerm, keyof TaxonomyTermResolvers['TaxonomyTerm']> {
-  __typename: DiscriminatorType.TaxonomyTerm
-  alias: string
-  parentId: number | null
-  childrenIds: number[]
-}
+import { TaxonomyTermPayloadDecoder } from '~/model'
 
-export interface TaxonomyTermResolvers {
-  TaxonomyTerm: {
-    parent: Resolver<TaxonomyTermPayload, never, TaxonomyTermPayload | null>
-    children: Resolver<
-      TaxonomyTermPayload,
-      TaxonomyTermChildrenArgs,
-      Connection<UuidPayload>
-    >
-  } & NavigationChildResolvers<TaxonomyTermPayload> &
-    UuidResolvers &
-    PickResolvers<'ThreadAware'>
-}
+export type TaxonomyTermPayload = t.TypeOf<typeof TaxonomyTermPayloadDecoder>

@@ -19,42 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import t from 'io-ts'
 
-import { QueryResolver, Resolver } from '~/internals/graphql'
-import { Connection } from '~/schema/connection/types'
-import { PickResolvers } from '~/schema/utils'
-import {
-  DiscriminatorType,
-  UuidResolvers,
-} from '~/schema/uuid/abstract-uuid/types'
-import {
-  QueryActiveAuthorsArgs,
-  QueryActiveDonorsArgs,
-  QueryActiveReviewersArgs,
-  User,
-} from '~/types'
+import { UserDecoder } from '~/model'
 
-export interface UserPayload extends Omit<User, keyof UserResolvers['User']> {
-  __typename: DiscriminatorType.User
-  alias: string
-}
-
-export interface UserResolvers {
-  Query: {
-    activeAuthors: QueryResolver<
-      QueryActiveAuthorsArgs,
-      Connection<UserPayload>
-    >
-    activeDonors: QueryResolver<QueryActiveDonorsArgs, Connection<UserPayload>>
-    activeReviewers: QueryResolver<
-      QueryActiveReviewersArgs,
-      Connection<UserPayload>
-    >
-  }
-  User: {
-    activeAuthor: Resolver<UserPayload, never, boolean>
-    activeDonor: Resolver<UserPayload, never, boolean>
-    activeReviewer: Resolver<UserPayload, never, boolean>
-  } & UuidResolvers &
-    PickResolvers<'ThreadAware'>
-}
+export type UserPayload = t.TypeOf<typeof UserDecoder>
