@@ -24,7 +24,7 @@ import { Connection } from '~/schema/connection/types'
 import { PickResolvers } from '~/schema/utils'
 import { NavigationChildResolvers } from '~/schema/uuid/abstract-navigation-child/utils'
 import {
-  AbstractUuidPayload,
+  UuidPayload,
   DiscriminatorType,
   UuidResolvers,
 } from '~/schema/uuid/abstract-uuid/types'
@@ -44,7 +44,7 @@ export interface TaxonomyTermResolvers {
     children: Resolver<
       TaxonomyTermPayload,
       TaxonomyTermChildrenArgs,
-      Connection<AbstractUuidPayload>
+      Connection<UuidPayload>
     >
   } & NavigationChildResolvers<TaxonomyTermPayload> &
     UuidResolvers &

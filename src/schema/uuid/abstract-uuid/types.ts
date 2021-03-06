@@ -30,7 +30,7 @@ import {
 import { PagePayload, PageRevisionPayload } from '~/schema/uuid/page/types'
 import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
 import { UserPayload } from '~/schema/uuid/user/types'
-import { AbstractUuid, Comment } from '~/types'
+import { Comment } from '~/types'
 
 export enum DiscriminatorType {
   Comment = 'Comment',
@@ -50,13 +50,6 @@ export type UuidPayload =
   | PageRevisionPayload
   | TaxonomyTermPayload
   | UserPayload
-
-export interface AbstractUuidPayload
-  extends Omit<AbstractUuid, keyof UuidResolvers> {
-  __typename: UuidType | 'Comment'
-  // TODO: this is actually non-null
-  alias: string | null
-}
 
 // TODO: Should be deletable
 export type UuidResolvers = PickResolvers<'AbstractUuid', 'alias'>
