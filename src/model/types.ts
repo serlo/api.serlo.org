@@ -82,6 +82,7 @@ export interface Models {
   GroupedExercise: GroupedExercisePayload
   GroupedExerciseRevision: GroupedExerciseRevisionPayload
   Mutation: Record<string, never>
+  Navigation: Payload<'getNavigation'>
   License: Payload<'getLicense'>
   Page: PagePayload
   PageRevision: PageRevisionPayload

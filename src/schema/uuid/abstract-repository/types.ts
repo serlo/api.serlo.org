@@ -28,15 +28,9 @@ import {
   EntityRevisionType,
   EntityType,
 } from '~/schema/uuid/abstract-entity/types'
-import {
-  DiscriminatorType,
-  UuidResolvers,
-} from '~/schema/uuid/abstract-uuid/types'
+import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
 import { PagePayload, PageRevisionPayload } from '~/schema/uuid/page/types'
-import { UserPayload } from '~/schema/uuid/user/types'
 import {
-  AbstractRepository,
-  AbstractRevision,
   AppletRevisionsArgs,
   ArticleRevisionsArgs,
   CoursePageRevisionsArgs,
@@ -45,7 +39,6 @@ import {
   ExerciseGroupRevisionsArgs,
   ExerciseRevisionsArgs,
   GroupedExerciseRevisionsArgs,
-  License,
   PageRevisionsArgs,
   SolutionRevisionsArgs,
   VideoRevisionsArgs,
@@ -54,32 +47,11 @@ import {
 export type RepositoryType = EntityType | DiscriminatorType.Page
 
 export type RepositoryPayload = EntityPayload | PagePayload
-export interface AbstractRepositoryPayload
-  extends Omit<
-    AbstractRepository,
-    // Remove everything that has its own resolver
-    keyof RepositoryResolvers<
-      AbstractRepositoryPayload,
-      AbstractRevisionPayload
-    >
-  > {
-  __typename: RepositoryType
-  alias: string | null
-  currentRevisionId: number | null
-  revisionIds: number[]
-  licenseId: number
-}
-
-export type RevisionType = EntityRevisionType | DiscriminatorType.PageRevision
+export type AbstractRepositoryPayload = RepositoryPayload
 
 export type RevisionPayload = EntityRevisionPayload | PageRevisionPayload
-export interface AbstractRevisionPayload
-  extends Omit<AbstractRevision, 'author' | 'repository' | 'threads'> {
-  __typename: RevisionType
-  alias: string | null
-  authorId: number
-  repositoryId: number
-}
+export type RevisionType = EntityRevisionType | DiscriminatorType.PageRevision
+export type AbstractRevisionPayload = RevisionPayload
 
 type AbstractRepositoryRevisionsArgs =
   | AppletRevisionsArgs
@@ -95,20 +67,18 @@ type AbstractRepositoryRevisionsArgs =
   | VideoRevisionsArgs
 
 export interface RepositoryResolvers<
-  E extends AbstractRepositoryPayload,
-  R extends AbstractRevisionPayload
-> extends UuidResolvers,
-    PickResolvers<'ThreadAware'> {
-  currentRevision: Resolver<E, never, R | null>
+  E extends RepositoryPayload,
+  R extends RevisionPayload
+> extends PickResolvers<'AbstractRepository', 'threads' | 'alias' | 'license'> {
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  currentRevision: Resolver<E, {}, R | null>
   revisions: Resolver<E, AbstractRepositoryRevisionsArgs, Connection<R>>
-  license: Resolver<E, never, Partial<License>>
 }
 
 export interface RevisionResolvers<
-  E extends AbstractRepositoryPayload,
-  R extends AbstractRevisionPayload
-> extends UuidResolvers,
-    PickResolvers<'ThreadAware'> {
-  author: Resolver<R, never, Partial<UserPayload> | null>
-  repository: Resolver<R, never, E | null>
+  E extends RepositoryPayload,
+  R extends RevisionPayload
+> extends PickResolvers<'AbstractRevision', 'threads' | 'alias' | 'author'> {
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  repository: Resolver<R, {}, E>
 }

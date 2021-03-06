@@ -21,13 +21,15 @@
  */
 import { VideoPayload, VideoRevisionPayload } from './types'
 import { VideoDecoder, VideoRevisionDecoder } from '~/model'
+import { TypeResolvers } from '~/schema/utils'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
+import { Video, VideoRevision } from '~/types'
 
-export const resolvers = {
+export const resolvers: TypeResolvers<Video> & TypeResolvers<VideoRevision> = {
   Video: {
     ...createRepositoryResolvers<VideoPayload, VideoRevisionPayload>({
       revisionDecoder: VideoRevisionDecoder,
