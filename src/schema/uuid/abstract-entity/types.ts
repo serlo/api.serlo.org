@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Model } from '~/model'
 import {
   AppletPayload,
   AppletRevisionPayload,
@@ -52,8 +53,12 @@ import {
   SolutionPayload,
   SolutionRevisionPayload,
 } from '~/schema/uuid/solution/types'
-import { VideoPayload, VideoRevisionPayload } from '~/schema/uuid/video/types'
-import { AbstractEntity, AbstractEntityRevision } from '~/types'
+import {
+  AbstractEntity,
+  AbstractEntityRevision,
+  Video,
+  VideoRevision,
+} from '~/types'
 
 export enum EntityType {
   Applet = 'Applet',
@@ -78,7 +83,7 @@ export type EntityPayload =
   | ExerciseGroupPayload
   | GroupedExercisePayload
   | SolutionPayload
-  | VideoPayload
+  | Model<Video>
 export interface AbstractEntityPayload
   extends Omit<AbstractEntity, 'alias' | 'currentRevision' | 'license'> {
   __typename: EntityType
@@ -111,7 +116,7 @@ export type EntityRevisionPayload =
   | ExerciseGroupRevisionPayload
   | GroupedExerciseRevisionPayload
   | SolutionRevisionPayload
-  | VideoRevisionPayload
+  | Model<VideoRevision>
 export interface AbstractEntityRevisionPayload
   extends Omit<AbstractEntityRevision, 'author' | 'repository'> {
   __typename: EntityRevisionType

@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Model } from '~/model'
 import { AbstractEntityPayload } from '~/schema/uuid/abstract-entity/types'
 import { AppletPayload } from '~/schema/uuid/applet/types'
 import { ArticlePayload } from '~/schema/uuid/article/types'
@@ -26,7 +27,7 @@ import { CoursePayload } from '~/schema/uuid/course/types'
 import { EventPayload } from '~/schema/uuid/event/types'
 import { ExerciseGroupPayload } from '~/schema/uuid/exercise-group/types'
 import { ExercisePayload } from '~/schema/uuid/exercise/types'
-import { VideoPayload } from '~/schema/uuid/video/types'
+import { Video } from '~/types'
 
 export type TaxonomyTermChildPayload =
   | AppletPayload
@@ -35,7 +36,7 @@ export type TaxonomyTermChildPayload =
   | EventPayload
   | ExercisePayload
   | ExerciseGroupPayload
-  | VideoPayload
+  | Model<Video>
 export interface AbstractTaxonomyTermChildPayload
   extends AbstractEntityPayload {
   taxonomyTermIds: number[]

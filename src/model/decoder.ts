@@ -62,7 +62,6 @@ import {
 } from '~/schema/uuid/solution/types'
 import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
 import { UserPayload } from '~/schema/uuid/user/types'
-import { VideoPayload, VideoRevisionPayload } from '~/schema/uuid/video/types'
 import { Instance, TaxonomyTermType } from '~/types'
 
 export const InstanceDecoder: t.Type<Instance> = t.union([
@@ -403,7 +402,7 @@ export const SolutionRevisionDecoder: t.Type<SolutionRevisionPayload> = t.exact(
   ])
 )
 
-export const VideoDecoder: t.Type<VideoPayload> = t.exact(
+export const VideoDecoder = t.exact(
   t.intersection([
     AbstractEntityPayloadDecoder,
     t.type({
@@ -413,7 +412,7 @@ export const VideoDecoder: t.Type<VideoPayload> = t.exact(
   ])
 )
 
-export const VideoRevisionDecoder: t.Type<VideoRevisionPayload> = t.exact(
+export const VideoRevisionDecoder = t.exact(
   t.intersection([
     AbstractEntityRevisionPayloadDecoder,
     t.type({
