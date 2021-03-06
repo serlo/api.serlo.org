@@ -22,7 +22,7 @@
 import { array as A, either as E, function as F } from 'fp-ts'
 import R from 'ramda'
 
-import { UserPayload, UserResolvers } from './types'
+import { UserPayload } from './types'
 import {
   addContext,
   assertAll,
@@ -35,9 +35,14 @@ import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
 import { ConnectionPayload } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
+import { Querys, TypeResolvers } from '~/schema/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
+import { User } from '~/types'
 
-export const resolvers: UserResolvers = {
+export const resolvers: Querys<
+  'activeAuthors' | 'activeReviewers' | 'activeDonors'
+> &
+  TypeResolvers<User> = {
   Query: {
     async activeAuthors(_parent, payload, context) {
       return resolveUserConnectionFromIds({

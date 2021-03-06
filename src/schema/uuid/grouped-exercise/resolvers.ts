@@ -19,39 +19,33 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { GraphQLResolveInfo } from 'graphql'
-
-import { GroupedExercisePayload } from './types'
-import { Context, requestsOnlyFields } from '~/internals/graphql'
 import {
   ExerciseGroupDecoder,
   GroupedExerciseDecoder,
   GroupedExerciseRevisionDecoder,
 } from '~/model'
+import { TypeResolvers } from '~/schema/utils'
 import { createExerciseResolvers } from '~/schema/uuid/abstract-exercise/utils'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
+import { GroupedExercise, GroupedExerciseRevision } from '~/types'
 
-export const resolvers = {
+export const resolvers: TypeResolvers<GroupedExercise> &
+  TypeResolvers<GroupedExerciseRevision> = {
   GroupedExercise: {
     ...createRepositoryResolvers({ decoder: GroupedExerciseRevisionDecoder }),
     ...createExerciseResolvers(),
-    async exerciseGroup(
-      groupedExercise: GroupedExercisePayload,
-      _args: never,
-      { dataSources }: Context,
-      info: GraphQLResolveInfo
-    ) {
-      const partialExerciseGroup = { id: groupedExercise.parentId }
-      if (requestsOnlyFields('ExerciseGroup', ['id'], info)) {
-        return partialExerciseGroup
-      }
-      return dataSources.model.serlo.getUuidWithCustomDecoder({
-        ...partialExerciseGroup,
+    async exerciseGroup(groupedExercise, _args, { dataSources }) {
+      const result = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: groupedExercise.parentId,
         decoder: ExerciseGroupDecoder,
       })
+
+      if (result === null) throw new Error('exerciseGroup cannot be null')
+
+      return result
     },
   },
   GroupedExerciseRevision: createRevisionResolvers({

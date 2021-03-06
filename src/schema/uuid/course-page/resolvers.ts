@@ -19,37 +19,31 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { GraphQLResolveInfo } from 'graphql'
-
-import { CoursePagePayload } from './types'
-import { Context, requestsOnlyFields } from '~/internals/graphql'
 import {
   CourseDecoder,
   CoursePageDecoder,
   CoursePageRevisionDecoder,
 } from '~/model'
+import { TypeResolvers } from '~/schema/utils'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
+import { CoursePage, CoursePageRevision } from '~/types'
 
-export const resolvers = {
+export const resolvers: TypeResolvers<CoursePage> &
+  TypeResolvers<CoursePageRevision> = {
   CoursePage: {
     ...createRepositoryResolvers({ decoder: CoursePageRevisionDecoder }),
-    async course(
-      coursePage: CoursePagePayload,
-      _args: never,
-      { dataSources }: Context,
-      info: GraphQLResolveInfo
-    ) {
-      const partialCourse = { id: coursePage.parentId }
-      if (requestsOnlyFields('Course', ['id'], info)) {
-        return partialCourse
-      }
-      return dataSources.model.serlo.getUuidWithCustomDecoder({
-        ...partialCourse,
+    async course(coursePage, _args, { dataSources }) {
+      const course = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: coursePage.parentId,
         decoder: CourseDecoder,
       })
+
+      if (course === null) throw new Error('course cannot be null')
+
+      return course
     },
   },
   CoursePageRevision: createRevisionResolvers({ decoder: CoursePageDecoder }),

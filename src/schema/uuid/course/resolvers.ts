@@ -21,30 +21,26 @@
  */
 import R from 'ramda'
 
-import { CoursePayload } from './types'
-import { Context } from '~/internals/graphql'
 import {
   CourseDecoder,
   CoursePageDecoder,
   CourseRevisionDecoder,
 } from '~/model'
+import { TypeResolvers } from '~/schema/utils'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
-import { CoursePagesArgs } from '~/types'
+import { Course, CourseRevision } from '~/types'
 import { isDefined } from '~/utils'
 
-export const resolvers = {
+export const resolvers: TypeResolvers<Course> &
+  TypeResolvers<CourseRevision> = {
   Course: {
     ...createRepositoryResolvers({ decoder: CourseRevisionDecoder }),
     ...createTaxonomyTermChildResolvers(),
-    async pages(
-      course: CoursePayload,
-      { trashed, hasCurrentRevision }: CoursePagesArgs,
-      { dataSources }: Context
-    ) {
+    async pages(course, { trashed, hasCurrentRevision }, { dataSources }) {
       const pages = await Promise.all(
         course.pageIds.map((id: number) => {
           return dataSources.model.serlo.getUuidWithCustomDecoder({

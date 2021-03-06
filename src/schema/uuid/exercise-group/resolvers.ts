@@ -19,29 +19,27 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ExerciseGroupPayload } from './types'
-import { Context } from '~/internals/graphql'
 import {
   ExerciseGroupDecoder,
   ExerciseGroupRevisionDecoder,
   GroupedExerciseDecoder,
 } from '~/model'
+import { TypeResolvers } from '~/schema/utils'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
+import { ExerciseGroup, ExerciseGroupRevision } from '~/types'
+import { isDefined } from '~/utils'
 
-export const resolvers = {
+export const resolvers: TypeResolvers<ExerciseGroup> &
+  TypeResolvers<ExerciseGroupRevision> = {
   ExerciseGroup: {
     ...createRepositoryResolvers({ decoder: ExerciseGroupRevisionDecoder }),
     ...createTaxonomyTermChildResolvers(),
-    exercises(
-      exerciseGroup: ExerciseGroupPayload,
-      _args: never,
-      { dataSources }: Context
-    ) {
-      return Promise.all(
+    async exercises(exerciseGroup, _args, { dataSources }) {
+      const exercises = await Promise.all(
         exerciseGroup.exerciseIds.map((id: number) => {
           return dataSources.model.serlo.getUuidWithCustomDecoder({
             id,
@@ -49,6 +47,8 @@ export const resolvers = {
           })
         })
       )
+
+      return exercises.filter(isDefined)
     },
   },
   ExerciseGroupRevision: createRevisionResolvers({

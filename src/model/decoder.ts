@@ -403,15 +403,19 @@ export const UserDecoder = t.exact(
   ])
 )
 
+export const AbstractExerciseDecoder = t.union([
+  ExerciseDecoder,
+  GroupedExerciseDecoder,
+])
+
 export const EntityPayloadDecoder = t.union([
+  AbstractExerciseDecoder,
   AppletDecoder,
   ArticleDecoder,
   CourseDecoder,
   CoursePageDecoder,
   EventDecoder,
-  ExerciseDecoder,
   ExerciseGroupDecoder,
-  GroupedExerciseDecoder,
   SolutionDecoder,
   VideoDecoder,
 ])
