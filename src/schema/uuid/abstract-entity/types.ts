@@ -36,7 +36,6 @@ import {
   CoursePayload,
   CourseRevisionPayload,
 } from '~/schema/uuid/course/types'
-import { EventPayload, EventRevisionPayload } from '~/schema/uuid/event/types'
 import {
   ExerciseGroupPayload,
   ExerciseGroupRevisionPayload,
@@ -56,6 +55,8 @@ import {
 import {
   AbstractEntity,
   AbstractEntityRevision,
+  Event,
+  EventRevision,
   Video,
   VideoRevision,
 } from '~/types'
@@ -78,7 +79,7 @@ export type EntityPayload =
   | ArticlePayload
   | CoursePayload
   | CoursePagePayload
-  | EventPayload
+  | Model<Event>
   | ExercisePayload
   | ExerciseGroupPayload
   | GroupedExercisePayload
@@ -111,7 +112,7 @@ export type EntityRevisionPayload =
   | ArticleRevisionPayload
   | CourseRevisionPayload
   | CoursePageRevisionPayload
-  | EventRevisionPayload
+  | Model<EventRevision>
   | ExerciseRevisionPayload
   | ExerciseGroupRevisionPayload
   | GroupedExerciseRevisionPayload
