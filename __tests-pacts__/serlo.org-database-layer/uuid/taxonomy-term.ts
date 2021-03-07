@@ -32,10 +32,11 @@ import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
-import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
+import { Model } from '~/model'
+import { TaxonomyTerm } from '~/types'
 
-function addTaxonomyTermInteraction(payload: TaxonomyTermPayload) {
-  return addUuidInteraction<TaxonomyTermPayload>({
+function addTaxonomyTermInteraction(payload: Model<TaxonomyTerm>) {
+  return addUuidInteraction<Model<TaxonomyTerm>>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),
