@@ -19,18 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Model } from '~/model'
-import { PickResolvers } from '~/schema/utils'
+import { InterfaceModels, PickResolvers } from '~/schema/utils'
 import {
-  EntityPayload,
-  EntityRevisionPayload,
   EntityRevisionType,
   EntityType,
 } from '~/schema/uuid/abstract-entity/types'
-import { PagePayload, PageRevisionPayload } from '~/schema/uuid/page/types'
-import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
-import { UserPayload } from '~/schema/uuid/user/types'
-import { Comment } from '~/types'
 
 export enum DiscriminatorType {
   Comment = 'Comment',
@@ -42,14 +35,7 @@ export enum DiscriminatorType {
 
 export type UuidType = DiscriminatorType | EntityType | EntityRevisionType
 
-export type UuidPayload =
-  | Model<Comment>
-  | EntityPayload
-  | EntityRevisionPayload
-  | PagePayload
-  | PageRevisionPayload
-  | TaxonomyTermPayload
-  | UserPayload
+export type UuidPayload = InterfaceModels<'AbstractUuid'>
 
 // TODO: Should be deletable
 export type UuidResolvers = PickResolvers<'AbstractUuid', 'alias'>
