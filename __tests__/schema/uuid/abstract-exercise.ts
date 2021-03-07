@@ -34,9 +34,8 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
+import { InterfaceModels } from '~/schema/utils'
 import { EntityType } from '~/schema/uuid/abstract-entity/types'
-import { AbstractExercisePayload } from '~/schema/uuid/abstract-exercise/types'
-import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 
 let client: Client
 
@@ -44,13 +43,11 @@ beforeEach(() => {
   client = createTestClient()
 })
 
-const exerciseFixtures: Record<string, AbstractExercisePayload> = {
+const exerciseFixtures: Record<string, InterfaceModels<'AbstractExercise'>> = {
   [EntityType.Exercise]: exercise,
   [EntityType.GroupedExercise]: groupedExercise,
 }
-const exerciseCases = R.toPairs(exerciseFixtures) as Array<
-  [EntityType, AbstractExercisePayload & UuidPayload]
->
+const exerciseCases = R.toPairs(exerciseFixtures)
 
 test.each(exerciseCases)('%s by id (w/ solution)', async (_type, entity) => {
   global.server.use(createUuidHandler(entity), createUuidHandler(solution))

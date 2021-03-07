@@ -21,10 +21,10 @@
  */
 import { gql } from 'apollo-server'
 
-import { AbstractExercisePayload } from '~/schema/uuid/abstract-exercise/types'
+import { InterfaceModels } from '~/schema/utils'
 
 export function createExerciseSolutionQuery(
-  variables: AbstractExercisePayload
+  variables: InterfaceModels<'AbstractExercise'>
 ) {
   return {
     query: gql`
