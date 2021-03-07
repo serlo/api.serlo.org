@@ -32,10 +32,11 @@ import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
-import { PagePayload, PageRevisionPayload } from '~/schema/uuid/page/types'
+import { Model } from '~/model'
+import { Page, PageRevision } from '~/types'
 
 test('Page', async () => {
-  await addUuidInteraction<PagePayload>({
+  await addUuidInteraction<Model<Page>>({
     __typename: page.__typename,
     id: page.id,
     trashed: Matchers.boolean(page.trashed),
@@ -70,7 +71,7 @@ test('Page', async () => {
 })
 
 test('PageRevision', async () => {
-  await addUuidInteraction<PageRevisionPayload>({
+  await addUuidInteraction<Model<PageRevision>>({
     __typename: pageRevision.__typename,
     id: 35476,
     trashed: Matchers.boolean(pageRevision.trashed),
