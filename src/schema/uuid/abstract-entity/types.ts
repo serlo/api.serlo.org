@@ -19,47 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Model } from '~/model'
-import {
-  AppletPayload,
-  AppletRevisionPayload,
-} from '~/schema/uuid/applet/types'
-import {
-  ArticlePayload,
-  ArticleRevisionPayload,
-} from '~/schema/uuid/article/types'
-import {
-  CoursePagePayload,
-  CoursePageRevisionPayload,
-} from '~/schema/uuid/course-page/types'
-import {
-  CoursePayload,
-  CourseRevisionPayload,
-} from '~/schema/uuid/course/types'
-import {
-  ExerciseGroupPayload,
-  ExerciseGroupRevisionPayload,
-} from '~/schema/uuid/exercise-group/types'
-import {
-  ExercisePayload,
-  ExerciseRevisionPayload,
-} from '~/schema/uuid/exercise/types'
-import {
-  GroupedExercisePayload,
-  GroupedExerciseRevisionPayload,
-} from '~/schema/uuid/grouped-exercise/types'
-import {
-  SolutionPayload,
-  SolutionRevisionPayload,
-} from '~/schema/uuid/solution/types'
-import {
-  AbstractEntity,
-  AbstractEntityRevision,
-  Event,
-  EventRevision,
-  Video,
-  VideoRevision,
-} from '~/types'
+import { InterfaceModels } from '~/schema/utils'
+import { AbstractEntity, AbstractEntityRevision } from '~/types'
 
 export enum EntityType {
   Applet = 'Applet',
@@ -74,17 +35,7 @@ export enum EntityType {
   Video = 'Video',
 }
 
-export type EntityPayload =
-  | AppletPayload
-  | ArticlePayload
-  | CoursePayload
-  | CoursePagePayload
-  | Model<Event>
-  | ExercisePayload
-  | ExerciseGroupPayload
-  | GroupedExercisePayload
-  | SolutionPayload
-  | Model<Video>
+export type EntityPayload = InterfaceModels<'AbstractEntity'>
 export interface AbstractEntityPayload
   extends Omit<AbstractEntity, 'alias' | 'currentRevision' | 'license'> {
   __typename: EntityType
@@ -107,17 +58,7 @@ export enum EntityRevisionType {
   VideoRevision = 'VideoRevision',
 }
 
-export type EntityRevisionPayload =
-  | AppletRevisionPayload
-  | ArticleRevisionPayload
-  | CourseRevisionPayload
-  | CoursePageRevisionPayload
-  | Model<EventRevision>
-  | ExerciseRevisionPayload
-  | ExerciseGroupRevisionPayload
-  | GroupedExerciseRevisionPayload
-  | SolutionRevisionPayload
-  | Model<VideoRevision>
+export type EntityRevisionPayload = InterfaceModels<'AbstractEntityRevision'>
 export interface AbstractEntityRevisionPayload
   extends Omit<AbstractEntityRevision, 'author' | 'repository'> {
   __typename: EntityRevisionType
