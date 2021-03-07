@@ -21,7 +21,7 @@
  */
 import { TaxonomyTermPayload } from './types'
 import { Context } from '~/internals/graphql'
-import { TaxonomyTermPayloadDecoder } from '~/model'
+import { TaxonomyTermDecoder } from '~/model'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { TypeResolvers } from '~/schema/utils'
@@ -97,7 +97,7 @@ async function resolveTaxonomyTermPath(
   while (current.parentId !== null) {
     const next = await dataSources.model.serlo.getUuidWithCustomDecoder({
       id: current.parentId,
-      decoder: TaxonomyTermPayloadDecoder,
+      decoder: TaxonomyTermDecoder,
     })
     if (next === null) break
     path.unshift(next)

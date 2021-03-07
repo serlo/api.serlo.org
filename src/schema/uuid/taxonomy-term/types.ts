@@ -21,6 +21,6 @@
  */
 import t from 'io-ts'
 
-import { TaxonomyTermPayloadDecoder } from '~/model'
+import { TaxonomyTermDecoder } from '~/model'
 
-export type TaxonomyTermPayload = t.TypeOf<typeof TaxonomyTermPayloadDecoder>
+export type TaxonomyTermPayload = t.TypeOf<typeof TaxonomyTermDecoder>

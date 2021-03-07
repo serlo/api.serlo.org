@@ -24,7 +24,7 @@ import * as t from 'io-ts'
 import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
 
-import { CommentDecoder, InstanceDecoder, UuidPayloadDecoder } from './decoder'
+import { CommentDecoder, InstanceDecoder, UuidDecoder } from './decoder'
 import { Environment } from '~/internals/environment'
 import { createHelper, createMutation, createQuery } from '~/internals/model'
 import { isInstance } from '~/schema/instance/utils'
@@ -85,7 +85,7 @@ export function createSerloModel({
 
   const getUuid = createQuery<{ id: number }, UuidPayload | null>(
     {
-      decoder: t.union([UuidPayloadDecoder, t.null]),
+      decoder: t.union([UuidDecoder, t.null]),
       enableSwr: true,
       getCurrentValue: async ({ id }) => {
         const uuid = (await handleMessageJson({
