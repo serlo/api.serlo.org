@@ -21,7 +21,7 @@
  */
 import t from 'io-ts'
 
-import { PagePayloadDecoder, PageRevisionPayloadDecoder } from '~/model'
+import { PageDecoder, PageRevisionDecoder } from '~/model'
 
-export type PagePayload = t.TypeOf<typeof PagePayloadDecoder>
-export type PageRevisionPayload = t.TypeOf<typeof PageRevisionPayloadDecoder>
+export type PagePayload = t.TypeOf<typeof PageDecoder>
+export type PageRevisionPayload = t.TypeOf<typeof PageRevisionDecoder>

@@ -40,13 +40,13 @@ import {
   ExerciseRevisionDecoder,
   GroupedExerciseDecoder,
   GroupedExerciseRevisionDecoder,
-  PagePayloadDecoder,
-  PageRevisionPayloadDecoder,
+  PageDecoder,
+  PageRevisionDecoder,
   RepositoryDecoder,
   RevisionDecoder,
   SolutionDecoder,
   SolutionRevisionDecoder,
-  TaxonomyTermPayloadDecoder,
+  TaxonomyTermDecoder,
   UserDecoder,
   VideoDecoder,
   VideoRevisionDecoder,
@@ -75,12 +75,12 @@ export interface Models {
   Mutation: Record<string, never>
   Navigation: Payload<'getNavigation'>
   License: Payload<'getLicense'>
-  Page: t.TypeOf<typeof PagePayloadDecoder>
-  PageRevision: t.TypeOf<typeof PageRevisionPayloadDecoder>
+  Page: t.TypeOf<typeof PageDecoder>
+  PageRevision: t.TypeOf<typeof PageRevisionDecoder>
   Query: Record<string, never>
   Solution: t.TypeOf<typeof SolutionDecoder>
   SolutionRevision: t.TypeOf<typeof SolutionRevisionDecoder>
-  TaxonomyTerm: t.TypeOf<typeof TaxonomyTermPayloadDecoder>
+  TaxonomyTerm: t.TypeOf<typeof TaxonomyTermDecoder>
   Thread: {
     __typename: 'Thread'
     commentPayloads: Models['Comment'][]
