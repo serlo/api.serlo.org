@@ -22,17 +22,14 @@
 import * as R from 'ramda'
 
 import { license } from '../license'
+import { Model } from '~/model'
 import {
   EntityRevisionType,
   EntityType,
 } from '~/schema/uuid/abstract-entity/types'
-import {
-  CoursePayload,
-  CourseRevisionPayload,
-} from '~/schema/uuid/course/types'
-import { Instance } from '~/types'
+import { Course, CourseRevision, Instance } from '~/types'
 
-export const course: CoursePayload = {
+export const course: Model<Course> = {
   __typename: EntityType.Course,
   id: 18514,
   trashed: false,
@@ -46,7 +43,7 @@ export const course: CoursePayload = {
   pageIds: [18521],
 }
 
-export const courseRevision: CourseRevisionPayload = {
+export const courseRevision: Model<CourseRevision> = {
   __typename: EntityRevisionType.CourseRevision,
   id: 30713,
   trashed: false,
@@ -60,7 +57,7 @@ export const courseRevision: CourseRevisionPayload = {
   metaDescription: 'metaDescription',
 }
 
-export function getCourseDataWithoutSubResolvers(course: CoursePayload) {
+export function getCourseDataWithoutSubResolvers(course: Model<Course>) {
   return R.omit(
     [
       'currentRevisionId',
@@ -75,7 +72,7 @@ export function getCourseDataWithoutSubResolvers(course: CoursePayload) {
 }
 
 export function getCourseRevisionDataWithoutSubResolvers(
-  courseRevision: CourseRevisionPayload
+  courseRevision: Model<CourseRevision>
 ) {
   return R.omit(['authorId', 'repositoryId', 'alias'], courseRevision)
 }

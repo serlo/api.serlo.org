@@ -38,6 +38,11 @@ export function createMutationNamespace() {
   }
 }
 
+export type InterfaceModels<I extends InterfaceTypes> = Parameters<
+  GetResolver<I>['__resolveType']
+>[0]
+type InterfaceTypes = O.SelectKeys<Resolvers, { __resolveType: unknown }>
+
 /**
  * Resolvers type for all mutations of the namespaces `Namespaces`.
  */
