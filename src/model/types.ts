@@ -46,7 +46,7 @@ import {
   RevisionDecoder,
   SolutionDecoder,
   SolutionRevisionDecoder,
-  TaxonomyTermTypeDecoder,
+  TaxonomyTermPayloadDecoder,
   UserDecoder,
   VideoDecoder,
   VideoRevisionDecoder,
@@ -80,7 +80,7 @@ export interface Models {
   Query: Record<string, never>
   Solution: t.TypeOf<typeof SolutionDecoder>
   SolutionRevision: t.TypeOf<typeof SolutionRevisionDecoder>
-  TaxonomyTerm: t.TypeOf<typeof TaxonomyTermTypeDecoder>
+  TaxonomyTerm: t.TypeOf<typeof TaxonomyTermPayloadDecoder>
   Thread: {
     __typename: 'Thread'
     commentPayloads: Models['Comment'][]
