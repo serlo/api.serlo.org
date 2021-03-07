@@ -24,16 +24,15 @@ import { AbstractEntityPayload } from '~/schema/uuid/abstract-entity/types'
 import { AppletPayload } from '~/schema/uuid/applet/types'
 import { ArticlePayload } from '~/schema/uuid/article/types'
 import { CoursePayload } from '~/schema/uuid/course/types'
-import { EventPayload } from '~/schema/uuid/event/types'
 import { ExerciseGroupPayload } from '~/schema/uuid/exercise-group/types'
 import { ExercisePayload } from '~/schema/uuid/exercise/types'
-import { Video } from '~/types'
+import { Video, Event } from '~/types'
 
 export type TaxonomyTermChildPayload =
   | AppletPayload
   | ArticlePayload
   | CoursePayload
-  | EventPayload
+  | Model<Event>
   | ExercisePayload
   | ExerciseGroupPayload
   | Model<Video>
