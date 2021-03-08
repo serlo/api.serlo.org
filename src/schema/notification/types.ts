@@ -26,6 +26,7 @@ import {
   Resolver,
   TypeResolver,
 } from '~/internals/graphql'
+import { Model } from '~/model'
 import { Connection } from '~/schema/connection/types'
 import { CheckoutRevisionNotificationEventPayload } from '~/schema/notification/checkout-revision-notification-event/types'
 import { CreateCommentNotificationEventPayload } from '~/schema/notification/create-comment-notification-event/types'
@@ -43,7 +44,6 @@ import { SetTaxonomyParentNotificationEventPayload } from '~/schema/notification
 import { SetTaxonomyTermNotificationEventPayload } from '~/schema/notification/set-taxonomy-term-notification-event/types'
 import { SetThreadStateNotificationEventPayload } from '~/schema/notification/set-thread-state-notification-event/types'
 import { SetUuidStateNotificationEventPayload } from '~/schema/notification/set-uuid-state-notification-event/types'
-import { UserPayload } from '~/schema/uuid/user/types'
 import {
   AbstractNotificationEvent,
   NotificationMutationSetStateArgs,
@@ -51,6 +51,7 @@ import {
   QueryNotificationEventArgs,
   QueryNotificationsArgs,
   NotificationSetStateResponse,
+  User,
 } from '~/types'
 
 export interface NotificationPayload
@@ -137,5 +138,5 @@ export interface NotificationResolvers {
 export interface NotificationEventResolvers<
   T extends AbstractNotificationEventPayload
 > {
-  actor: Resolver<T, never, Partial<UserPayload> | null>
+  actor: Resolver<T, never, Partial<Model<User>> | null>
 }

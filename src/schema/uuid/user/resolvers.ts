@@ -22,7 +22,6 @@
 import { array as A, either as E, function as F } from 'fp-ts'
 import R from 'ramda'
 
-import { UserPayload } from './types'
 import {
   addContext,
   assertAll,
@@ -38,6 +37,7 @@ import { createThreadResolvers } from '~/schema/thread/utils'
 import { Querys, TypeResolvers } from '~/schema/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { User } from '~/types'
+import { isDefined } from '~/utils'
 
 export const resolvers: Querys<
   'activeAuthors' | 'activeReviewers' | 'activeDonors'
@@ -108,8 +108,8 @@ async function resolveUserConnectionFromIds({
       }
     })
   )
-  return resolveConnection<UserPayload>({
-    nodes: uuids.filter((uuid) => uuid !== null) as UserPayload[],
+  return resolveConnection({
+    nodes: uuids.filter(isDefined),
     payload,
     createCursor(node) {
       return node.id.toString()

@@ -19,14 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { UserPayload } from './types'
 import { Context } from '~/internals/graphql'
 import { UserDecoder } from '~/model'
 
 export async function resolveUser(
   { id }: { id: number },
   { dataSources }: Context
-): Promise<UserPayload | null> {
+) {
   return await dataSources.model.serlo.getUuidWithCustomDecoder({
     id,
     decoder: UserDecoder,
