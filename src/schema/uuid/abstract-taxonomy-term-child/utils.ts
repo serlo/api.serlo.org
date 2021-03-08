@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { TaxonomyTermPayload } from '~/../dist/schema/uuid/taxonomy-term/types'
+import { TaxonomyTermDecoder } from '~/model'
 import { resolveConnection } from '~/schema/connection/utils'
 import { PickResolvers } from '~/schema/utils'
 import { isDefined } from '~/utils'
@@ -32,9 +32,10 @@ export function createTaxonomyTermChildResolvers(): PickResolvers<
     async taxonomyTerms(entity, cursorPayload, { dataSources }) {
       const taxonomyTerms = await Promise.all(
         entity.taxonomyTermIds.map(async (id: number) => {
-          return (await dataSources.model.serlo.getUuid({
+          return await dataSources.model.serlo.getUuidWithCustomDecoder({
             id,
-          })) as TaxonomyTermPayload | null
+            decoder: TaxonomyTermDecoder,
+          })
         })
       )
       return resolveConnection({
