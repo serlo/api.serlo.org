@@ -27,10 +27,7 @@ import {
 import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
 
 export type RepositoryType = EntityType | DiscriminatorType.Page
-
 export type RepositoryPayload = InterfaceModels<'AbstractRepository'>
-export type AbstractRepositoryPayload = RepositoryPayload
 
-export type RevisionPayload = InterfaceModels<'AbstractRevision'>
 export type RevisionType = EntityRevisionType | DiscriminatorType.PageRevision
-export type AbstractRevisionPayload = RevisionPayload
+export type RevisionPayload = InterfaceModels<'AbstractRevision'>

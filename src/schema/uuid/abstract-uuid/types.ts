@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { InterfaceModels, PickResolvers } from '~/schema/utils'
+import { InterfaceModels } from '~/schema/utils'
 import {
   EntityRevisionType,
   EntityType,
@@ -34,8 +34,4 @@ export enum DiscriminatorType {
 }
 
 export type UuidType = DiscriminatorType | EntityType | EntityRevisionType
-
 export type UuidPayload = InterfaceModels<'AbstractUuid'>
-
-// TODO: Should be deletable
-export type UuidResolvers = PickResolvers<'AbstractUuid', 'alias'>

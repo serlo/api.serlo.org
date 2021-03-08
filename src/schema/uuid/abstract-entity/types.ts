@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { InterfaceModels } from '~/schema/utils'
-import { AbstractEntity, AbstractEntityRevision } from '~/types'
 
 export enum EntityType {
   Applet = 'Applet',
@@ -36,14 +35,6 @@ export enum EntityType {
 }
 
 export type EntityPayload = InterfaceModels<'AbstractEntity'>
-export interface AbstractEntityPayload
-  extends Omit<AbstractEntity, 'alias' | 'currentRevision' | 'license'> {
-  __typename: EntityType
-  alias: string
-  currentRevisionId: number | null
-  revisionIds: number[]
-  licenseId: number
-}
 
 export enum EntityRevisionType {
   ArticleRevision = 'ArticleRevision',
@@ -59,10 +50,3 @@ export enum EntityRevisionType {
 }
 
 export type EntityRevisionPayload = InterfaceModels<'AbstractEntityRevision'>
-export interface AbstractEntityRevisionPayload
-  extends Omit<AbstractEntityRevision, 'author' | 'repository'> {
-  __typename: EntityRevisionType
-  alias: string
-  authorId: number
-  repositoryId: number
-}
