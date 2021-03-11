@@ -24,7 +24,7 @@ import {
   createMutationNamespace,
   Mutations,
   Querys,
-} from '../utils'
+} from '~/internals/graphql'
 import { resolveConnection } from '~/schema/connection/utils'
 import { isDefined } from '~/utils'
 

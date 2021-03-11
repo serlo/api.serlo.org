@@ -19,8 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { InterfaceResolvers, TypeResolvers } from '~/internals/graphql'
 import { resolveConnection } from '~/schema/connection/utils'
-import { InterfaceResolvers, TypeResolvers } from '~/schema/utils'
 import { NavigationNode, Navigation } from '~/types'
 
 export const resolvers: TypeResolvers<Navigation> &

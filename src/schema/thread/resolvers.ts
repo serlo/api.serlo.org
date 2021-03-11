@@ -22,15 +22,15 @@
 import { ApolloError, ForbiddenError } from 'apollo-server'
 
 import { decodeThreadId, decodeThreadIds, encodeThreadId } from './utils'
-import { UserDecoder } from '~/model'
-import { resolveConnection } from '~/schema/connection/utils'
 import {
   assertUserIsAuthenticated,
   createMutationNamespace,
   InterfaceResolvers,
   Mutations,
   TypeResolvers,
-} from '~/schema/utils'
+} from '~/internals/graphql'
+import { UserDecoder } from '~/model'
+import { resolveConnection } from '~/schema/connection/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Comment, Thread } from '~/types'
 

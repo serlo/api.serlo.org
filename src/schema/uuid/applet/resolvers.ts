@@ -20,8 +20,8 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
+import { TypeResolvers } from '~/internals/graphql'
 import { AppletDecoder, AppletRevisionDecoder } from '~/model'
-import { TypeResolvers } from '~/schema/utils'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,

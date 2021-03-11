@@ -20,8 +20,8 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { lookupCustomAlias } from '~/config/alias'
+import { PickResolvers } from '~/internals/graphql'
 import { isInstanceAware } from '~/schema/instance/utils'
-import { PickResolvers } from '~/schema/utils'
 
 export function decodePath(path: string) {
   try {
