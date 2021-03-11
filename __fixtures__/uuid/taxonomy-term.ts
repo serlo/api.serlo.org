@@ -21,11 +21,11 @@
  */
 import * as R from 'ramda'
 
-import { ModelOf } from '~/model'
+import { Model } from '~/internals/graphql'
 import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
-import { Instance, TaxonomyTerm, TaxonomyTermType } from '~/types'
+import { Instance, TaxonomyTermType } from '~/types'
 
-export const taxonomyTermRoot: ModelOf<TaxonomyTerm> = {
+export const taxonomyTermRoot: Model<'TaxonomyTerm'> = {
   __typename: DiscriminatorType.TaxonomyTerm,
   id: 3,
   trashed: false,
@@ -39,7 +39,7 @@ export const taxonomyTermRoot: ModelOf<TaxonomyTerm> = {
   childrenIds: [5],
 }
 
-export const taxonomyTermSubject: ModelOf<TaxonomyTerm> = {
+export const taxonomyTermSubject: Model<'TaxonomyTerm'> = {
   __typename: DiscriminatorType.TaxonomyTerm,
   id: 5,
   trashed: false,
@@ -53,7 +53,7 @@ export const taxonomyTermSubject: ModelOf<TaxonomyTerm> = {
   childrenIds: [16048],
 }
 
-export const taxonomyTermCurriculumTopic: ModelOf<TaxonomyTerm> = {
+export const taxonomyTermCurriculumTopic: Model<'TaxonomyTerm'> = {
   __typename: DiscriminatorType.TaxonomyTerm,
   id: 16048,
   trashed: false,
@@ -68,7 +68,7 @@ export const taxonomyTermCurriculumTopic: ModelOf<TaxonomyTerm> = {
 }
 
 export function getTaxonomyTermDataWithoutSubResolvers(
-  taxonomyTerm: ModelOf<TaxonomyTerm>
+  taxonomyTerm: Model<'TaxonomyTerm'>
 ) {
   return R.omit(['parentId', 'childrenIds', 'alias'], taxonomyTerm)
 }

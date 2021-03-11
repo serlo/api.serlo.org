@@ -23,11 +23,10 @@ import { Matchers } from '@pact-foundation/pact'
 
 import { comment } from '../../../__fixtures__'
 import { addUuidInteraction } from '../../__utils__'
-import { ModelOf } from '~/model'
-import { Comment } from '~/types'
+import { Model } from '~/internals/graphql'
 
 test('Comment', async () => {
-  await addUuidInteraction<ModelOf<Comment>>({
+  await addUuidInteraction<Model<'Comment'>>({
     __typename: comment.__typename,
     id: comment.id,
     trashed: Matchers.boolean(comment.trashed),

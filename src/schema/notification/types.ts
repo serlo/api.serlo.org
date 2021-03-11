@@ -20,13 +20,13 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import {
+  Model,
   MutationNamespace,
   MutationResolver,
   QueryResolver,
   Resolver,
   TypeResolver,
 } from '~/internals/graphql'
-import { ModelOf } from '~/model'
 import { Connection } from '~/schema/connection/types'
 import { CheckoutRevisionNotificationEventPayload } from '~/schema/notification/checkout-revision-notification-event/types'
 import { CreateCommentNotificationEventPayload } from '~/schema/notification/create-comment-notification-event/types'
@@ -51,7 +51,6 @@ import {
   QueryNotificationEventArgs,
   QueryNotificationsArgs,
   NotificationSetStateResponse,
-  User,
 } from '~/types'
 
 export interface NotificationPayload
@@ -138,5 +137,5 @@ export interface NotificationResolvers {
 export interface NotificationEventResolvers<
   T extends AbstractNotificationEventPayload
 > {
-  actor: Resolver<T, never, Partial<ModelOf<User>> | null>
+  actor: Resolver<T, never, Partial<Model<'User'>> | null>
 }

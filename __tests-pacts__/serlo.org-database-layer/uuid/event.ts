@@ -32,11 +32,10 @@ import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
-import { ModelOf } from '~/model'
-import { EventRevision, Event } from '~/types'
+import { Model } from '~/internals/graphql'
 
 test('Event', async () => {
-  await addUuidInteraction<ModelOf<Event>>({
+  await addUuidInteraction<Model<'Event'>>({
     __typename: event.__typename,
     id: event.id,
     trashed: Matchers.boolean(event.trashed),
@@ -74,7 +73,7 @@ test('Event', async () => {
 })
 
 test('EventRevision', async () => {
-  await addUuidInteraction<ModelOf<EventRevision>>({
+  await addUuidInteraction<Model<'EventRevision'>>({
     __typename: eventRevision.__typename,
     id: eventRevision.id,
     trashed: Matchers.boolean(eventRevision.trashed),

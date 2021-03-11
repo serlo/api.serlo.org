@@ -32,11 +32,10 @@ import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
-import { ModelOf } from '~/model'
-import { TaxonomyTerm } from '~/types'
+import { Model } from '~/internals/graphql'
 
-function addTaxonomyTermInteraction(payload: ModelOf<TaxonomyTerm>) {
-  return addUuidInteraction<ModelOf<TaxonomyTerm>>({
+function addTaxonomyTermInteraction(payload: Model<'TaxonomyTerm'>) {
+  return addUuidInteraction<Model<'TaxonomyTerm'>>({
     __typename: payload.__typename,
     id: payload.id,
     trashed: Matchers.boolean(payload.trashed),

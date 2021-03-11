@@ -23,14 +23,14 @@ import * as R from 'ramda'
 
 import { license } from '../license'
 import { course } from './course'
-import { ModelOf } from '~/model'
+import { Model } from '~/internals/graphql'
 import {
   EntityRevisionType,
   EntityType,
 } from '~/schema/uuid/abstract-entity/types'
-import { CoursePage, CoursePageRevision, Instance } from '~/types'
+import { Instance } from '~/types'
 
-export const coursePage: ModelOf<CoursePage> = {
+export const coursePage: Model<'CoursePage'> = {
   __typename: EntityType.CoursePage,
   id: 18521,
   trashed: false,
@@ -43,7 +43,7 @@ export const coursePage: ModelOf<CoursePage> = {
   parentId: course.id,
 }
 
-export const coursePageRevision: ModelOf<CoursePageRevision> = {
+export const coursePageRevision: Model<'CoursePageRevision'> = {
   __typename: EntityRevisionType.CoursePageRevision,
   id: 19277,
   trashed: false,
@@ -57,7 +57,7 @@ export const coursePageRevision: ModelOf<CoursePageRevision> = {
 }
 
 export function getCoursePageDataWithoutSubResolvers(
-  coursePage: ModelOf<CoursePage>
+  coursePage: Model<'CoursePage'>
 ) {
   return R.omit(
     ['currentRevisionId', 'revisionIds', 'licenseId', 'parentId', 'alias'],
@@ -66,7 +66,7 @@ export function getCoursePageDataWithoutSubResolvers(
 }
 
 export function getCoursePageRevisionDataWithoutSubResolvers(
-  coursePageRevision: ModelOf<CoursePageRevision>
+  coursePageRevision: Model<'CoursePageRevision'>
 ) {
   return R.omit(['authorId', 'repositoryId', 'alias'], coursePageRevision)
 }

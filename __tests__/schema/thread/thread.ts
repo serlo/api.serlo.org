@@ -40,9 +40,9 @@ import {
   createUuidHandler,
   getDatabaseLayerUrl,
 } from '../../__utils__'
-import { ModelOf } from '~/model'
+import { Model } from '~/internals/graphql'
 import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
-import { Comment, Instance } from '~/types'
+import { Instance } from '~/types'
 
 let client: Client
 
@@ -424,7 +424,7 @@ describe('uuid["threads"]', () => {
 
 export function mockEndpointsForThreads(
   uuidPayload: UuidPayload,
-  threads: ModelOf<Comment>[][]
+  threads: Model<'Comment'>[][]
 ) {
   const firstCommentIds = threads.map((thread) => thread[0].id)
 
