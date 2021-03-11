@@ -36,7 +36,9 @@ import { isDefined } from '~/utils'
 export const resolvers: TypeResolvers<ExerciseGroup> &
   TypeResolvers<ExerciseGroupRevision> = {
   ExerciseGroup: {
-    ...createRepositoryResolvers({ decoder: ExerciseGroupRevisionDecoder }),
+    ...createRepositoryResolvers({
+      revisionDecoder: ExerciseGroupRevisionDecoder,
+    }),
     ...createTaxonomyTermChildResolvers(),
     async exercises(exerciseGroup, _args, { dataSources }) {
       const exercises = await Promise.all(
@@ -52,6 +54,6 @@ export const resolvers: TypeResolvers<ExerciseGroup> &
     },
   },
   ExerciseGroupRevision: createRevisionResolvers({
-    decoder: ExerciseGroupDecoder,
+    repositoryDecoder: ExerciseGroupDecoder,
   }),
 }

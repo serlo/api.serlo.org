@@ -34,7 +34,9 @@ import { CoursePage, CoursePageRevision } from '~/types'
 export const resolvers: TypeResolvers<CoursePage> &
   TypeResolvers<CoursePageRevision> = {
   CoursePage: {
-    ...createRepositoryResolvers({ decoder: CoursePageRevisionDecoder }),
+    ...createRepositoryResolvers({
+      revisionDecoder: CoursePageRevisionDecoder,
+    }),
     async course(coursePage, _args, { dataSources }) {
       const course = await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: coursePage.parentId,
@@ -46,5 +48,7 @@ export const resolvers: TypeResolvers<CoursePage> &
       return course
     },
   },
-  CoursePageRevision: createRevisionResolvers({ decoder: CoursePageDecoder }),
+  CoursePageRevision: createRevisionResolvers({
+    repositoryDecoder: CoursePageDecoder,
+  }),
 }

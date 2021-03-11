@@ -38,7 +38,7 @@ import { isDefined } from '~/utils'
 export const resolvers: TypeResolvers<Course> &
   TypeResolvers<CourseRevision> = {
   Course: {
-    ...createRepositoryResolvers({ decoder: CourseRevisionDecoder }),
+    ...createRepositoryResolvers({ revisionDecoder: CourseRevisionDecoder }),
     ...createTaxonomyTermChildResolvers(),
     async pages(course, { trashed, hasCurrentRevision }, { dataSources }) {
       const pages = await Promise.all(
@@ -62,5 +62,5 @@ export const resolvers: TypeResolvers<Course> &
       })
     },
   },
-  CourseRevision: createRevisionResolvers({ decoder: CourseDecoder }),
+  CourseRevision: createRevisionResolvers({ repositoryDecoder: CourseDecoder }),
 }

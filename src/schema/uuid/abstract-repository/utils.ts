@@ -38,9 +38,9 @@ import { VideoRevisionsArgs } from '~/types'
 import { isDefined } from '~/utils'
 
 export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
-  decoder,
+  revisionDecoder,
 }: {
-  decoder: t.Type<R>
+  revisionDecoder: t.Type<R>
 }): PickResolvers<'AbstractRepository', 'alias' | 'threads' | 'license'> & {
   currentRevision: ResolverFunction<R | null, Repository<R['__typename']>>
   revisions: ResolverFunction<
@@ -56,7 +56,7 @@ export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
       if (!entity.currentRevisionId) return null
       return await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: entity.currentRevisionId,
-        decoder,
+        decoder: revisionDecoder,
       })
     },
     async revisions(entity, cursorPayload, { dataSources }) {
@@ -65,7 +65,7 @@ export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
           entity.revisionIds.map(async (id) => {
             return await dataSources.model.serlo.getUuidWithCustomDecoder({
               id,
-              decoder,
+              decoder: revisionDecoder,
             })
           })
         ),
@@ -96,9 +96,9 @@ export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
 }
 
 export function createRevisionResolvers<E extends Model<'AbstractRepository'>>({
-  decoder,
+  repositoryDecoder,
 }: {
-  decoder: t.Type<E>
+  repositoryDecoder: t.Type<E>
 }): PickResolvers<'AbstractRevision', 'alias' | 'threads' | 'author'> & {
   repository: ResolverFunction<E, Revision<E['__typename']>>
 } {
@@ -116,7 +116,7 @@ export function createRevisionResolvers<E extends Model<'AbstractRepository'>>({
       const repository = await dataSources.model.serlo.getUuidWithCustomDecoder(
         {
           id: entityRevision.repositoryId,
-          decoder,
+          decoder: repositoryDecoder,
         }
       )
 

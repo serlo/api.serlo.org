@@ -32,9 +32,11 @@ import { Exercise, ExerciseRevision } from '~/types'
 export const resolvers: TypeResolvers<Exercise> &
   TypeResolvers<ExerciseRevision> = {
   Exercise: {
-    ...createRepositoryResolvers({ decoder: ExerciseRevisionDecoder }),
+    ...createRepositoryResolvers({ revisionDecoder: ExerciseRevisionDecoder }),
     ...createTaxonomyTermChildResolvers(),
     ...createExerciseResolvers(),
   },
-  ExerciseRevision: createRevisionResolvers({ decoder: ExerciseDecoder }),
+  ExerciseRevision: createRevisionResolvers({
+    repositoryDecoder: ExerciseDecoder,
+  }),
 }

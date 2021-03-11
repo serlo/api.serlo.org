@@ -30,8 +30,8 @@ import { EventRevision, Event } from '~/types'
 
 export const resolvers: TypeResolvers<Event> & TypeResolvers<EventRevision> = {
   Event: {
-    ...createRepositoryResolvers({ decoder: EventRevisionDecoder }),
+    ...createRepositoryResolvers({ revisionDecoder: EventRevisionDecoder }),
     ...createTaxonomyTermChildResolvers(),
   },
-  EventRevision: createRevisionResolvers({ decoder: EventDecoder }),
+  EventRevision: createRevisionResolvers({ repositoryDecoder: EventDecoder }),
 }
