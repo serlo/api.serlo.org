@@ -32,11 +32,10 @@ import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
-import { ModelOf } from '~/model'
-import { Video, VideoRevision } from '~/types'
+import { Model } from '~/internals/graphql'
 
 test('Video', async () => {
-  await addUuidInteraction<ModelOf<Video>>({
+  await addUuidInteraction<Model<'Video'>>({
     __typename: video.__typename,
     id: video.id,
     trashed: Matchers.boolean(video.trashed),
@@ -74,7 +73,7 @@ test('Video', async () => {
 })
 
 test('VideoRevision', async () => {
-  await addUuidInteraction<ModelOf<VideoRevision>>({
+  await addUuidInteraction<Model<'VideoRevision'>>({
     __typename: videoRevision.__typename,
     id: videoRevision.id,
     trashed: Matchers.boolean(videoRevision.trashed),

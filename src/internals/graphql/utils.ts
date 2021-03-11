@@ -23,7 +23,7 @@ import { AuthenticationError } from 'apollo-server'
 import { A, O } from 'ts-toolbelt'
 
 import { Context } from '~/internals/graphql'
-import { ModelOf, Typename } from '~/model'
+import { Typename } from '~/model'
 import { MutationResolvers, QueryResolvers, Resolver, Resolvers } from '~/types'
 
 export function assertUserIsAuthenticated(
@@ -147,8 +147,8 @@ type RequiredResolverFunctions<
 > = Typename<T> extends keyof Resolvers
   ? OmitKeys<
       Required<GetResolver<Typename<T>>>,
-      ModelOf<T> extends object
-        ? O.IntersectKeys<T, ModelOf<T>, '<-extends'> | '__isTypeOf'
+      Model<Typename<T>> extends object
+        ? O.IntersectKeys<T, Model<Typename<T>>, '<-extends'> | '__isTypeOf'
         : never
     >
   : never

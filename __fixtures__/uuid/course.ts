@@ -22,14 +22,14 @@
 import * as R from 'ramda'
 
 import { license } from '../license'
-import { ModelOf } from '~/model'
+import { Model } from '~/internals/graphql'
 import {
   EntityRevisionType,
   EntityType,
 } from '~/schema/uuid/abstract-entity/types'
-import { Course, CourseRevision, Instance } from '~/types'
+import { Instance } from '~/types'
 
-export const course: ModelOf<Course> = {
+export const course: Model<'Course'> = {
   __typename: EntityType.Course,
   id: 18514,
   trashed: false,
@@ -43,7 +43,7 @@ export const course: ModelOf<Course> = {
   pageIds: [18521],
 }
 
-export const courseRevision: ModelOf<CourseRevision> = {
+export const courseRevision: Model<'CourseRevision'> = {
   __typename: EntityRevisionType.CourseRevision,
   id: 30713,
   trashed: false,
@@ -57,7 +57,7 @@ export const courseRevision: ModelOf<CourseRevision> = {
   metaDescription: 'metaDescription',
 }
 
-export function getCourseDataWithoutSubResolvers(course: ModelOf<Course>) {
+export function getCourseDataWithoutSubResolvers(course: Model<'Course'>) {
   return R.omit(
     [
       'currentRevisionId',
@@ -72,7 +72,7 @@ export function getCourseDataWithoutSubResolvers(course: ModelOf<Course>) {
 }
 
 export function getCourseRevisionDataWithoutSubResolvers(
-  courseRevision: ModelOf<CourseRevision>
+  courseRevision: Model<'CourseRevision'>
 ) {
   return R.omit(['authorId', 'repositoryId', 'alias'], courseRevision)
 }

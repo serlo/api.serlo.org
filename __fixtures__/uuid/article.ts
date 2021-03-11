@@ -23,14 +23,14 @@ import * as R from 'ramda'
 
 import { license } from '../license'
 import { getRepositoryDataWithoutSubResolvers } from './abstract-repository'
-import { ModelOf } from '~/model'
+import { Model } from '~/internals/graphql'
 import {
   EntityRevisionType,
   EntityType,
 } from '~/schema/uuid/abstract-entity/types'
-import { Article, ArticleRevision, Instance } from '~/types'
+import { Instance } from '~/types'
 
-export const article: ModelOf<Article> = {
+export const article: Model<'Article'> = {
   __typename: EntityType.Article,
   id: 1855,
   trashed: false,
@@ -43,7 +43,7 @@ export const article: ModelOf<Article> = {
   revisionIds: [30674],
 }
 
-export const articleRevision: ModelOf<ArticleRevision> = {
+export const articleRevision: Model<'ArticleRevision'> = {
   __typename: EntityRevisionType.ArticleRevision,
   id: 30674,
   trashed: false,
@@ -58,7 +58,7 @@ export const articleRevision: ModelOf<ArticleRevision> = {
   metaTitle: 'metaTitle',
 }
 
-export function getArticleDataWithoutSubResolvers(article: ModelOf<Article>) {
+export function getArticleDataWithoutSubResolvers(article: Model<'Article'>) {
   return {
     ...R.omit(
       [
@@ -75,7 +75,7 @@ export function getArticleDataWithoutSubResolvers(article: ModelOf<Article>) {
 }
 
 export function getArticleRevisionDataWithoutSubResolvers(
-  articleRevision: ModelOf<ArticleRevision>
+  articleRevision: Model<'ArticleRevision'>
 ) {
   return R.omit(['authorId', 'repositoryId', 'alias'], articleRevision)
 }

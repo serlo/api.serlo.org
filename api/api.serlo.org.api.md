@@ -3547,6 +3547,20 @@ export type VideoThreadsArgs = {
 };
 
 
+// Warnings were encountered during analysis:
+//
+// __tests__/__utils__/handlers.ts:25:19 - (TS2724) '"../../src/model"' has no exported member named 'Model'. Did you mean 'Models'?
+// src/internals/graphql/utils.ts:26:10 - (TS2724) '"../../model"' has no exported member named 'Model'. Did you mean 'Models'?
+// src/schema/notification/types.ts:29:10 - (TS2724) '"../../model"' has no exported member named 'Model'. Did you mean 'Models'?
+// src/schema/thread/resolvers.ts:78:3 - (TS2322) Type '{ createdAt(comment: { id: number; trashed: boolean; alias: string; } & { __typename: "Comment"; authorId: number; title: string | null; date: string; archived: boolean; content: string; parentId: number; childrenIds: number[]; }): string; author(comment: { ...; } & { ...; }, _args: {}, { dataSources }: Context): Pr...' is not assignable to type '{ id?: ResolverFn<ResolverTypeWrapper<number>, { id: number; trashed: boolean; alias: string; } & { __typename: "Comment"; authorId: number; title: string | null; date: string; archived: boolean; content: string; parentId: number; childrenIds: number[]; }, Context, {}> | { ...; } | { ...; } | undefined; ... 7 more ....'.
+//   Types of property 'alias' are incompatible.
+//     Type 'ResolverFn<Maybe<ResolverTypeWrapper<string>>, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityType; instance: Instance; date: string; licenseId: number; currentRevisionId: number | null; revisionIds: number[]; } & { ...; }) | ... 23 more ... | ({ ...; } & ... 1 more ... & { ...; }), Context,...' is not assignable to type 'ResolverFn<ResolverTypeWrapper<string>, { id: number; trashed: boolean; alias: string; } & { __typename: "Comment"; authorId: number; title: string | null; date: string; archived: boolean; content: string; parentId: number; childrenIds: number[]; }, Context, {}> | { ...; } | { ...; } | undefined'.
+//       Type 'ResolverFn<Maybe<ResolverTypeWrapper<string>>, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityType; instance: Instance; date: string; licenseId: number; currentRevisionId: number | null; revisionIds: number[]; } & { ...; }) | ... 23 more ... | ({ ...; } & ... 1 more ... & { ...; }), Context,...' is not assignable to type 'ResolverFn<ResolverTypeWrapper<string>, { id: number; trashed: boolean; alias: string; } & { __typename: "Comment"; authorId: number; title: string | null; date: string; archived: boolean; content: string; parentId: number; childrenIds: number[]; }, Context, {}> | { ...; } | { ...; } | undefined'.
+//         Type 'ResolverFn<Maybe<ResolverTypeWrapper<string>>, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityType; instance: Instance; date: string; licenseId: number; currentRevisionId: number | null; revisionIds: number[]; } & { ...; }) | ... 23 more ... | ({ ...; } & ... 1 more ... & { ...; }), Context,...' is not assignable to type 'ResolverFn<ResolverTypeWrapper<string>, { id: number; trashed: boolean; alias: string; } & { __typename: "Comment"; authorId: number; title: string | null; date: string; archived: boolean; content: string; parentId: number; childrenIds: number[]; }, Context, {}>'.
+//           Type 'Maybe<ResolverTypeWrapper<string>>' is not assignable to type 'ResolverTypeWrapper<string>'.
+//             Type 'null' is not assignable to type 'ResolverTypeWrapper<string>'.
+// src/schema/uuid/abstract-navigation-child/types.ts:22:10 - (TS2724) '"../../../model"' has no exported member named 'Model'. Did you mean 'Models'?
+
 // (No @packageDocumentation comment for this package)
 
 ```

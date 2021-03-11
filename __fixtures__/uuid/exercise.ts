@@ -22,14 +22,14 @@
 import * as R from 'ramda'
 
 import { license } from '../license'
-import { ModelOf } from '~/model'
+import { Model } from '~/internals/graphql'
 import {
   EntityRevisionType,
   EntityType,
 } from '~/schema/uuid/abstract-entity/types'
-import { Exercise, ExerciseRevision, Instance } from '~/types'
+import { Instance } from '~/types'
 
-export const exercise: ModelOf<Exercise> = {
+export const exercise: Model<'Exercise'> = {
   __typename: EntityType.Exercise,
   id: 29637,
   trashed: false,
@@ -43,7 +43,7 @@ export const exercise: ModelOf<Exercise> = {
   taxonomyTermIds: [5],
 }
 
-export const exerciseRevision: ModelOf<ExerciseRevision> = {
+export const exerciseRevision: Model<'ExerciseRevision'> = {
   __typename: EntityRevisionType.ExerciseRevision,
   id: 29638,
   trashed: false,
@@ -56,7 +56,7 @@ export const exerciseRevision: ModelOf<ExerciseRevision> = {
 }
 
 export function getExerciseDataWithoutSubResolvers(
-  exercise: ModelOf<Exercise>
+  exercise: Model<'Exercise'>
 ) {
   return R.omit(
     [
@@ -72,7 +72,7 @@ export function getExerciseDataWithoutSubResolvers(
 }
 
 export function getExerciseRevisionDataWithoutSubResolvers(
-  exerciseRevision: ModelOf<ExerciseRevision>
+  exerciseRevision: Model<'ExerciseRevision'>
 ) {
   return R.omit(['authorId', 'repositoryId', 'alias'], exerciseRevision)
 }

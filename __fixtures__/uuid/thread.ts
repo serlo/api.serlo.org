@@ -22,11 +22,11 @@
 
 import { article } from './article'
 import { user, user2 } from './user'
-import { ModelOf } from '~/model'
+import { Model } from '~/internals/graphql'
 import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
-import { Comment, UnsupportedComment, UnsupportedThread } from '~/types'
+import { UnsupportedComment, UnsupportedThread } from '~/types'
 
-export const comment: ModelOf<Comment> = {
+export const comment: Model<'Comment'> = {
   id: 27778,
   trashed: false,
   alias: '/mathe/27778/applets-vertauscht',
@@ -41,7 +41,7 @@ export const comment: ModelOf<Comment> = {
   childrenIds: [],
 }
 
-export const comment1: ModelOf<Comment> = {
+export const comment1: Model<'Comment'> = {
   id: 41443,
   trashed: false,
   alias: '/mathe/41443/related-content-ist-chaotisch',
@@ -56,7 +56,7 @@ export const comment1: ModelOf<Comment> = {
   childrenIds: [49237],
 }
 
-export const comment2: ModelOf<Comment> = {
+export const comment2: Model<'Comment'> = {
   id: 49237,
   trashed: false,
   alias: '/mathe/49237/related-content',
@@ -71,7 +71,7 @@ export const comment2: ModelOf<Comment> = {
   childrenIds: [],
 }
 
-export const comment3: ModelOf<Comment> = {
+export const comment3: Model<'Comment'> = {
   id: 27144,
   trashed: false,
   alias: '/mathe/27144/feedback-zu-dem-artikel-über-das-formular',
