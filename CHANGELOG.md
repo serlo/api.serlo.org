@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.19.14](https://github.com/serlo/api.serlo.org/compare/v0.19.13..v0.19.14) - February 22, 2021
+
+### Internal
+
+- **uuid**. Disable SWR background updates.
+
+## [v0.19.13](https://github.com/serlo/api.serlo.org/compare/v0.19.12..v0.19.13) - February 22, 2021 \[YANKED]
+
+## [v0.19.12](https://github.com/serlo/api.serlo.org/compare/v0.19.11..v0.19.12) - February 22, 2021 \[YANKED]
+
 ## [v0.19.11](https://github.com/serlo/api.serlo.org/compare/v0.19.10..v0.19.11) - February 21, 2021
 
 ### Internal
