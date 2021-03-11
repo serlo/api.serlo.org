@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { DocumentNode } from 'graphql'
-import * as R from 'ramda'
+import R from 'ramda'
 import { A, O } from 'ts-toolbelt'
 
 import { Context } from './context'
@@ -92,6 +92,14 @@ type ModelMapping = {
       : never
     : never
 }
+
+export type Revision<
+  T extends Model<'AbstractRepository'>['__typename']
+> = Model<`${T}Revision`>
+
+export type Repository<
+  R extends Model<'AbstractRevision'>['__typename']
+> = Model<R extends `${infer U}Revision` ? U : never>
 
 /**
  * Resolvers type where all mutations of the namespace `Namespaces` are

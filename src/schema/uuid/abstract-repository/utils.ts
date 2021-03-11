@@ -23,13 +23,13 @@ import { array as A, pipeable } from 'fp-ts'
 import * as t from 'io-ts'
 
 import { resolveUser } from '../user/utils'
-import { PickResolvers, ResolverFunction } from '~/internals/graphql'
 import {
+  Model,
+  PickResolvers,
   Repository,
-  RepositoryDecoder,
+  ResolverFunction,
   Revision,
-  RevisionDecoder,
-} from '~/model'
+} from '~/internals/graphql'
 import { Connection } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
@@ -37,18 +37,15 @@ import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { VideoRevisionsArgs } from '~/types'
 import { isDefined } from '~/utils'
 
-// TODO: This should be deletable
-type RevisionPayload = t.TypeOf<typeof RevisionDecoder>
-
-export function createRepositoryResolvers<R extends RevisionPayload>({
+export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
   decoder,
 }: {
   decoder: t.Type<R>
 }): PickResolvers<'AbstractRepository', 'alias' | 'threads' | 'license'> & {
-  currentRevision: ResolverFunction<R | null, Repository<RevisionPayload>>
+  currentRevision: ResolverFunction<R | null, Repository<R['__typename']>>
   revisions: ResolverFunction<
     Connection<R>,
-    Repository<RevisionPayload>,
+    Repository<R['__typename']>,
     VideoRevisionsArgs
   >
 } {
@@ -98,14 +95,12 @@ export function createRepositoryResolvers<R extends RevisionPayload>({
   }
 }
 
-export function createRevisionResolvers<
-  E extends t.TypeOf<typeof RepositoryDecoder>
->({
+export function createRevisionResolvers<E extends Model<'AbstractRepository'>>({
   decoder,
 }: {
   decoder: t.Type<E>
 }): PickResolvers<'AbstractRevision', 'alias' | 'threads' | 'author'> & {
-  repository: ResolverFunction<E, Revision<E>>
+  repository: ResolverFunction<E, Revision<E['__typename']>>
 } {
   return {
     ...createUuidResolvers(),
