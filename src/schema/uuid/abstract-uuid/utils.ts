@@ -22,7 +22,7 @@
 import * as R from 'ramda'
 
 import { UuidPayload, DiscriminatorType } from './types'
-import { PickResolvers } from '~/schema/utils'
+import { PickResolvers } from '~/internals/graphql'
 import {
   EntityRevisionType,
   EntityType,

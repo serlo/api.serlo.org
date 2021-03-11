@@ -28,13 +28,12 @@ import {
   consumeErrorEvent,
   ErrorEvent,
 } from '~/internals/error-event'
-import { Context } from '~/internals/graphql'
+import { Context, Querys, TypeResolvers } from '~/internals/graphql'
 import { UserDecoder } from '~/model'
 import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
 import { ConnectionPayload } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
-import { Querys, TypeResolvers } from '~/schema/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { User } from '~/types'
 import { isDefined } from '~/utils'

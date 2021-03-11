@@ -21,10 +21,9 @@
  */
 import { UserInputError } from 'apollo-server'
 
-import { Context } from '~/internals/graphql'
+import { Context, PickResolvers } from '~/internals/graphql'
 import { CommentDecoder } from '~/model'
 import { resolveConnection } from '~/schema/connection/utils'
-import { PickResolvers } from '~/schema/utils'
 import { isDefined } from '~/utils'
 
 export function createThreadResolvers(): PickResolvers<'ThreadAware'> {

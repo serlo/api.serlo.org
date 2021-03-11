@@ -21,7 +21,7 @@
  */
 import R from 'ramda'
 
-import { Model } from '~/schema/utils'
+import { Model } from '~/internals/graphql'
 
 export function getUuidDataWithoutSubResolvers(uuid: Model<'AbstractUuid'>) {
   return R.pick(['__typename', 'id', 'trashed'], uuid)

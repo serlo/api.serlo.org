@@ -21,7 +21,7 @@
  */
 import { gql } from 'apollo-server'
 
-import { Model } from '~/schema/utils'
+import { Model } from '~/internals/graphql'
 
 export function createEntityTaxonomyTermsQuery(
   variables: Model<'AbstractTaxonomyTermChild'>

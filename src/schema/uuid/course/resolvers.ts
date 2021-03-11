@@ -21,12 +21,12 @@
  */
 import R from 'ramda'
 
+import { TypeResolvers } from '~/internals/graphql'
 import {
   CourseDecoder,
   CoursePageDecoder,
   CourseRevisionDecoder,
 } from '~/model'
-import { TypeResolvers } from '~/schema/utils'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,

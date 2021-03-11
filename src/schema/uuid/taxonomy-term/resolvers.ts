@@ -20,11 +20,10 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { TaxonomyTermPayload } from './types'
-import { Context } from '~/internals/graphql'
+import { TypeResolvers, Context } from '~/internals/graphql'
 import { TaxonomyTermDecoder } from '~/model'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
-import { TypeResolvers } from '~/schema/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { TaxonomyTerm } from '~/types'
 import { isDefined } from '~/utils'

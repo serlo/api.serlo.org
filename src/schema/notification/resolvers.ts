@@ -21,12 +21,15 @@
  */
 import { ForbiddenError } from 'apollo-server'
 
-import { assertUserIsAuthenticated, createMutationNamespace } from '../utils'
 import {
   NotificationEventPayload,
   NotificationPayload,
   NotificationResolvers,
 } from './types'
+import {
+  assertUserIsAuthenticated,
+  createMutationNamespace,
+} from '~/internals/graphql'
 import { resolveConnection } from '~/schema/connection/utils'
 
 export const resolvers: NotificationResolvers = {

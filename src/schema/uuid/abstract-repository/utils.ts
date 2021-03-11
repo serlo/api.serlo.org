@@ -23,6 +23,7 @@ import { array as A, pipeable } from 'fp-ts'
 import * as t from 'io-ts'
 
 import { resolveUser } from '../user/utils'
+import { PickResolvers, ResolverFunction } from '~/internals/graphql'
 import {
   Repository,
   RepositoryDecoder,
@@ -32,7 +33,6 @@ import {
 import { Connection } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
-import { PickResolvers, ResolverFunction } from '~/schema/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { VideoRevisionsArgs } from '~/types'
 import { isDefined } from '~/utils'

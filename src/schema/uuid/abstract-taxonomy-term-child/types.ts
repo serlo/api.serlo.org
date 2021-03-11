@@ -19,6 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Model } from '~/schema/utils'
+import { Model } from '~/internals/graphql/'
 
 export type TaxonomyTermChildPayload = Model<'AbstractTaxonomyTermChild'>

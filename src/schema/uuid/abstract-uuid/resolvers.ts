@@ -23,14 +23,14 @@ import { ForbiddenError, UserInputError } from 'apollo-server'
 
 import { DiscriminatorType, UuidPayload } from './types'
 import { resolveCustomId } from '~/config/alias'
-import { Context } from '~/internals/graphql'
 import {
   assertUserIsAuthenticated,
   createMutationNamespace,
   InterfaceResolvers,
   Mutations,
   Querys,
-} from '~/schema/utils'
+  Context,
+} from '~/internals/graphql'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { QueryUuidArgs } from '~/types'
 
