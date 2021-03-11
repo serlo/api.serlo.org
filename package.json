@@ -37,6 +37,9 @@
     "stop:redis": "docker-compose stop",
     "test": "jest --config jest.config.js --runInBand"
   },
+  "resolutions": {
+    "**/typescript": "^4.1.0"
+  },
   "dependencies": {
     "@sentry/node": "^6.0.0",
     "apollo-datasource-rest": "^0.10.0",
