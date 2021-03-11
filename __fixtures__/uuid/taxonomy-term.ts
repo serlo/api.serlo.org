@@ -21,11 +21,11 @@
  */
 import * as R from 'ramda'
 
-import { Model } from '~/model'
+import { ModelOf } from '~/model'
 import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
 import { Instance, TaxonomyTerm, TaxonomyTermType } from '~/types'
 
-export const taxonomyTermRoot: Model<TaxonomyTerm> = {
+export const taxonomyTermRoot: ModelOf<TaxonomyTerm> = {
   __typename: DiscriminatorType.TaxonomyTerm,
   id: 3,
   trashed: false,
@@ -39,7 +39,7 @@ export const taxonomyTermRoot: Model<TaxonomyTerm> = {
   childrenIds: [5],
 }
 
-export const taxonomyTermSubject: Model<TaxonomyTerm> = {
+export const taxonomyTermSubject: ModelOf<TaxonomyTerm> = {
   __typename: DiscriminatorType.TaxonomyTerm,
   id: 5,
   trashed: false,
@@ -53,7 +53,7 @@ export const taxonomyTermSubject: Model<TaxonomyTerm> = {
   childrenIds: [16048],
 }
 
-export const taxonomyTermCurriculumTopic: Model<TaxonomyTerm> = {
+export const taxonomyTermCurriculumTopic: ModelOf<TaxonomyTerm> = {
   __typename: DiscriminatorType.TaxonomyTerm,
   id: 16048,
   trashed: false,
@@ -68,7 +68,7 @@ export const taxonomyTermCurriculumTopic: Model<TaxonomyTerm> = {
 }
 
 export function getTaxonomyTermDataWithoutSubResolvers(
-  taxonomyTerm: Model<TaxonomyTerm>
+  taxonomyTerm: ModelOf<TaxonomyTerm>
 ) {
   return R.omit(['parentId', 'childrenIds', 'alias'], taxonomyTerm)
 }

@@ -34,7 +34,7 @@ import {
   createTestClient,
 } from '../../__utils__'
 import { Service } from '~/internals/auth'
-import { Model } from '~/model'
+import { ModelOf } from '~/model'
 import { NavigationPayload } from '~/schema/uuid/abstract-navigation-child/types'
 import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
 import { Instance, Page } from '~/types'
@@ -53,7 +53,7 @@ function createSetNavigationMutation(navigation: NavigationPayload) {
   }
 }
 
-function createSetPageMutation(page: Model<Page>) {
+function createSetPageMutation(page: ModelOf<Page>) {
   return {
     mutation: gql`
       mutation _setCache($key: String!, $value: JSON!) {

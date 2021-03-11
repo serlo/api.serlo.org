@@ -22,14 +22,14 @@
 import * as R from 'ramda'
 
 import { license } from '../license'
-import { Model } from '~/model'
+import { ModelOf } from '~/model'
 import {
   EntityRevisionType,
   EntityType,
 } from '~/schema/uuid/abstract-entity/types'
 import { Applet, AppletRevision, Instance } from '~/types'
 
-export const applet: Model<Applet> = {
+export const applet: ModelOf<Applet> = {
   __typename: EntityType.Applet,
   id: 35596,
   trashed: false,
@@ -42,7 +42,7 @@ export const applet: Model<Applet> = {
   taxonomyTermIds: [5],
 }
 
-export const appletRevision: Model<AppletRevision> = {
+export const appletRevision: ModelOf<AppletRevision> = {
   __typename: EntityRevisionType.AppletRevision,
   id: 35597,
   trashed: false,
@@ -58,7 +58,7 @@ export const appletRevision: Model<AppletRevision> = {
   metaTitle: 'metaTitle',
 }
 
-export function getAppletDataWithoutSubResolvers(applet: Model<Applet>) {
+export function getAppletDataWithoutSubResolvers(applet: ModelOf<Applet>) {
   return R.omit(
     [
       'currentRevisionId',
@@ -72,7 +72,7 @@ export function getAppletDataWithoutSubResolvers(applet: Model<Applet>) {
 }
 
 export function getAppletRevisionDataWithoutSubResolvers(
-  appletRevision: Model<AppletRevision>
+  appletRevision: ModelOf<AppletRevision>
 ) {
   return R.omit(['authorId', 'repositoryId', 'alias'], appletRevision)
 }

@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { InterfaceModels } from '~/schema/utils'
+import { Model } from '~/schema/utils'
 
 export enum EntityType {
   Applet = 'Applet',
@@ -34,7 +34,7 @@ export enum EntityType {
   Video = 'Video',
 }
 
-export type EntityPayload = InterfaceModels<'AbstractEntity'>
+export type EntityPayload = Model<'AbstractEntity'>
 
 export enum EntityRevisionType {
   ArticleRevision = 'ArticleRevision',
@@ -49,4 +49,4 @@ export enum EntityRevisionType {
   VideoRevision = 'VideoRevision',
 }
 
-export type EntityRevisionPayload = InterfaceModels<'AbstractEntityRevision'>
+export type EntityRevisionPayload = Model<'AbstractEntityRevision'>

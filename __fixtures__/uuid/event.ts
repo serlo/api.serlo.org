@@ -22,14 +22,14 @@
 import * as R from 'ramda'
 
 import { license } from '../license'
-import { Model } from '~/model'
+import { ModelOf } from '~/model'
 import {
   EntityRevisionType,
   EntityType,
 } from '~/schema/uuid/abstract-entity/types'
 import { Instance, Event, EventRevision } from '~/types'
 
-export const event: Model<Event> = {
+export const event: ModelOf<Event> = {
   __typename: EntityType.Event,
   id: 35554,
   trashed: false,
@@ -42,7 +42,7 @@ export const event: Model<Event> = {
   taxonomyTermIds: [5],
 }
 
-export const eventRevision: Model<EventRevision> = {
+export const eventRevision: ModelOf<EventRevision> = {
   __typename: EntityRevisionType.EventRevision,
   id: 35555,
   trashed: false,
@@ -57,7 +57,7 @@ export const eventRevision: Model<EventRevision> = {
   metaTitle: 'metaTitle',
 }
 
-export function getEventDataWithoutSubResolvers(event: Model<Event>) {
+export function getEventDataWithoutSubResolvers(event: ModelOf<Event>) {
   return R.omit(
     [
       'currentRevisionId',
@@ -71,7 +71,7 @@ export function getEventDataWithoutSubResolvers(event: Model<Event>) {
 }
 
 export function getEventRevisionDataWithoutSubResolvers(
-  eventRevision: Model<EventRevision>
+  eventRevision: ModelOf<EventRevision>
 ) {
   return R.omit(['authorId', 'repositoryId', 'alias'], eventRevision)
 }

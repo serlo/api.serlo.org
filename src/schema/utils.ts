@@ -23,7 +23,7 @@ import { AuthenticationError } from 'apollo-server'
 import { A, O } from 'ts-toolbelt'
 
 import { Context } from '~/internals/graphql'
-import { Model, Typename } from '~/model'
+import { ModelOf, Typename } from '~/model'
 import { MutationResolvers, QueryResolvers, Resolver, Resolvers } from '~/types'
 
 export function assertUserIsAuthenticated(
@@ -38,10 +38,51 @@ export function createMutationNamespace() {
   }
 }
 
-export type InterfaceModels<I extends InterfaceTypes> = Parameters<
-  GetResolver<I>['__resolveType']
->[0]
-type InterfaceTypes = O.SelectKeys<Resolvers, { __resolveType: unknown }>
+/**
+ * Given the name `M` of a graphql type `Model<M>` returns the model type of the
+ * graphql type with the name `M`. In case `M` is the name of a union or an
+ * interface the union of all model types are returned whose corresponding
+ * graphql types are in the union or implement the interface.
+ *
+ * @example
+ *
+ *   type ThreadModel = Model<"Thread">
+ *   type UuidPayload = Model<"AbstractUuid">
+ */
+export type Model<M extends keyof ModelMapping> = NonNullable<ModelMapping[M]>
+
+/**
+ * Mapping between graphql type names and their model types:
+ *
+ *   ModelMapping = {
+ *     User: { id: number, username: string, ... }
+ *     ArticleRevision: { id: number, authorId: number, ... }
+ *     ...
+ *     AbstractRevision: | ModelMapping["ArticleRevision"]
+ *                       | ModelMapping["CourseRevision"]
+ *                       | ...
+ *     ...
+ *   }
+ *
+ * Here we use, that for each concrete graphql type there is a `__isTypeOf`
+ * function in the generated resolver type whose first parameter is the parent
+ * and thus has the model type of the concrete graphql type. This first
+ * parameter is used for the mapping. For union and interface graphql types
+ * the `__resolveType` function of the resolver type is used in the same way.
+ */
+type ModelMapping = {
+  [R in keyof Resolvers]: '__resolveType' extends keyof GetResolver<R>
+    ? GetResolver<R>['__resolveType'] extends (...args: infer P) => unknown
+      ? P[0]
+      : never
+    : '__isTypeOf' extends keyof GetResolver<R>
+    ? NonNullable<GetResolver<R>['__isTypeOf']> extends (
+        ...args: infer P
+      ) => unknown
+      ? P[0]
+      : never
+    : never
+}
 
 /**
  * Resolvers type for all mutations of the namespaces `Namespaces`.
@@ -106,8 +147,8 @@ type RequiredResolverFunctions<
 > = Typename<T> extends keyof Resolvers
   ? OmitKeys<
       Required<GetResolver<Typename<T>>>,
-      Model<T> extends object
-        ? O.IntersectKeys<T, Model<T>, '<-extends'> | '__isTypeOf'
+      ModelOf<T> extends object
+        ? O.IntersectKeys<T, ModelOf<T>, '<-extends'> | '__isTypeOf'
         : never
     >
   : never

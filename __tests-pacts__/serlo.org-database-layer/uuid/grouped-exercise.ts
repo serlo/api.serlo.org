@@ -32,11 +32,11 @@ import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
-import { Model } from '~/model'
+import { ModelOf } from '~/model'
 import { GroupedExercise, GroupedExerciseRevision } from '~/types'
 
 test('GroupedExercise', async () => {
-  await addUuidInteraction<Model<GroupedExercise>>({
+  await addUuidInteraction<ModelOf<GroupedExercise>>({
     __typename: groupedExercise.__typename,
     id: groupedExercise.id,
     trashed: Matchers.boolean(groupedExercise.trashed),
@@ -77,7 +77,7 @@ test('GroupedExercise', async () => {
 })
 
 test('GroupedExerciseRevision', async () => {
-  await addUuidInteraction<Model<GroupedExerciseRevision>>({
+  await addUuidInteraction<ModelOf<GroupedExerciseRevision>>({
     __typename: groupedExerciseRevision.__typename,
     id: groupedExerciseRevision.id,
     trashed: Matchers.boolean(groupedExerciseRevision.trashed),

@@ -26,7 +26,7 @@ import {
   Resolver,
   TypeResolver,
 } from '~/internals/graphql'
-import { Model } from '~/model'
+import { ModelOf } from '~/model'
 import { Connection } from '~/schema/connection/types'
 import { CheckoutRevisionNotificationEventPayload } from '~/schema/notification/checkout-revision-notification-event/types'
 import { CreateCommentNotificationEventPayload } from '~/schema/notification/create-comment-notification-event/types'
@@ -138,5 +138,5 @@ export interface NotificationResolvers {
 export interface NotificationEventResolvers<
   T extends AbstractNotificationEventPayload
 > {
-  actor: Resolver<T, never, Partial<Model<User>> | null>
+  actor: Resolver<T, never, Partial<ModelOf<User>> | null>
 }

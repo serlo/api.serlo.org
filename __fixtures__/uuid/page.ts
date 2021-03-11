@@ -22,11 +22,11 @@
 import * as R from 'ramda'
 
 import { license } from '../license'
-import { Model } from '~/model'
+import { ModelOf } from '~/model'
 import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
 import { Instance, Page, PageRevision } from '~/types'
 
-export const page: Model<Page> = {
+export const page: ModelOf<Page> = {
   __typename: DiscriminatorType.Page,
   id: 19767,
   trashed: false,
@@ -38,7 +38,7 @@ export const page: Model<Page> = {
   licenseId: license.id,
 }
 
-export const pageRevision: Model<PageRevision> = {
+export const pageRevision: ModelOf<PageRevision> = {
   __typename: DiscriminatorType.PageRevision,
   id: 35476,
   trashed: false,
@@ -50,7 +50,7 @@ export const pageRevision: Model<PageRevision> = {
   repositoryId: page.id,
 }
 
-export function getPageDataWithoutSubResolvers(page: Model<Page>) {
+export function getPageDataWithoutSubResolvers(page: ModelOf<Page>) {
   return R.omit(
     [
       'currentRevisionId',
@@ -64,7 +64,7 @@ export function getPageDataWithoutSubResolvers(page: Model<Page>) {
 }
 
 export function getPageRevisionDataWithoutSubResolvers(
-  pageRevision: Model<PageRevision>
+  pageRevision: ModelOf<PageRevision>
 ) {
   return R.omit(['authorId', 'repositoryId', 'alias'], pageRevision)
 }
