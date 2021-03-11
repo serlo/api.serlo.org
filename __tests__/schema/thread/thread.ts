@@ -40,7 +40,7 @@ import {
   createUuidHandler,
   getDatabaseLayerUrl,
 } from '../../__utils__'
-import { Model } from '~/model'
+import { ModelOf } from '~/model'
 import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 import { Comment, Instance } from '~/types'
 
@@ -424,7 +424,7 @@ describe('uuid["threads"]', () => {
 
 export function mockEndpointsForThreads(
   uuidPayload: UuidPayload,
-  threads: Model<Comment>[][]
+  threads: ModelOf<Comment>[][]
 ) {
   const firstCommentIds = threads.map((thread) => thread[0].id)
 

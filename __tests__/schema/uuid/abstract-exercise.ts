@@ -34,7 +34,7 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
-import { InterfaceModels } from '~/schema/utils'
+import { Model } from '~/schema/utils'
 import { EntityType } from '~/schema/uuid/abstract-entity/types'
 
 let client: Client
@@ -43,7 +43,7 @@ beforeEach(() => {
   client = createTestClient()
 })
 
-const exerciseFixtures: Record<string, InterfaceModels<'AbstractExercise'>> = {
+const exerciseFixtures: Record<string, Model<'AbstractExercise'>> = {
   [EntityType.Exercise]: exercise,
   [EntityType.GroupedExercise]: groupedExercise,
 }

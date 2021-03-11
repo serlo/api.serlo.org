@@ -27,11 +27,11 @@ import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
-import { Model } from '~/model'
+import { ModelOf } from '~/model'
 import { User } from '~/types'
 
 test('User', async () => {
-  await addUuidInteraction<Model<User>>({
+  await addUuidInteraction<ModelOf<User>>({
     __typename: user.__typename,
     id: user.id,
     trashed: Matchers.boolean(user.trashed),

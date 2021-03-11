@@ -23,10 +23,10 @@ import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
 import { getUuidDataWithoutSubResolvers } from './abstract-uuid'
-import { InterfaceModels } from '~/schema/utils'
+import { Model } from '~/schema/utils'
 
 export function createRepositoryLicenseQuery(
-  variables: InterfaceModels<'AbstractRepository'>
+  variables: Model<'AbstractRepository'>
 ) {
   return {
     query: gql`
@@ -52,7 +52,7 @@ export function createRepositoryLicenseQuery(
 }
 
 export function getRepositoryDataWithoutSubResolvers(
-  repository: InterfaceModels<'AbstractRepository'>
+  repository: Model<'AbstractRepository'>
 ) {
   return {
     ...getUuidDataWithoutSubResolvers(repository),
@@ -61,7 +61,7 @@ export function getRepositoryDataWithoutSubResolvers(
 }
 
 export function getRevisionDataWithoutSubResolvers(
-  revision: InterfaceModels<'AbstractRevision'>
+  revision: Model<'AbstractRevision'>
 ) {
   return {
     ...getUuidDataWithoutSubResolvers(revision),

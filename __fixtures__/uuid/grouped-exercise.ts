@@ -23,7 +23,7 @@ import * as R from 'ramda'
 
 import { license } from '../license'
 import { exerciseGroup } from './exercise-group'
-import { Model, Payload } from '~/model'
+import { ModelOf, Payload } from '~/model'
 import {
   EntityRevisionType,
   EntityType,
@@ -36,7 +36,7 @@ export const groupedExerciseAlias: Payload<'getAlias'> = {
   path: '/2219/2219',
 }
 
-export const groupedExercise: Model<GroupedExercise> = {
+export const groupedExercise: ModelOf<GroupedExercise> = {
   __typename: EntityType.GroupedExercise,
   id: 2219,
   trashed: false,
@@ -50,7 +50,7 @@ export const groupedExercise: Model<GroupedExercise> = {
   parentId: exerciseGroup.id,
 }
 
-export const groupedExerciseRevision: Model<GroupedExerciseRevision> = {
+export const groupedExerciseRevision: ModelOf<GroupedExerciseRevision> = {
   __typename: EntityRevisionType.GroupedExerciseRevision,
   id: 2220,
   trashed: false,
@@ -63,7 +63,7 @@ export const groupedExerciseRevision: Model<GroupedExerciseRevision> = {
 }
 
 export function getGroupedExerciseDataWithoutSubResolvers(
-  groupedExercise: Model<GroupedExercise>
+  groupedExercise: ModelOf<GroupedExercise>
 ) {
   return R.omit(
     [
@@ -79,7 +79,7 @@ export function getGroupedExerciseDataWithoutSubResolvers(
 }
 
 export function getGroupedExerciseRevisionDataWithoutSubResolvers(
-  groupedExerciseRevision: Model<GroupedExerciseRevision>
+  groupedExerciseRevision: ModelOf<GroupedExerciseRevision>
 ) {
   return R.omit(['authorId', 'repositoryId', 'alias'], groupedExerciseRevision)
 }

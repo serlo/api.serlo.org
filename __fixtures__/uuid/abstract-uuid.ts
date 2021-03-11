@@ -21,10 +21,8 @@
  */
 import R from 'ramda'
 
-import { InterfaceModels } from '~/schema/utils'
+import { Model } from '~/schema/utils'
 
-export function getUuidDataWithoutSubResolvers(
-  uuid: InterfaceModels<'AbstractUuid'>
-) {
+export function getUuidDataWithoutSubResolvers(uuid: Model<'AbstractUuid'>) {
   return R.pick(['__typename', 'id', 'trashed'], uuid)
 }

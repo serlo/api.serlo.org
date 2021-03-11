@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { InterfaceModels } from '~/schema/utils'
+import { Model } from '~/schema/utils'
 import {
   EntityRevisionType,
   EntityType,
@@ -27,7 +27,7 @@ import {
 import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
 
 export type RepositoryType = EntityType | DiscriminatorType.Page
-export type RepositoryPayload = InterfaceModels<'AbstractRepository'>
+export type RepositoryPayload = Model<'AbstractRepository'>
 
 export type RevisionType = EntityRevisionType | DiscriminatorType.PageRevision
-export type RevisionPayload = InterfaceModels<'AbstractRevision'>
+export type RevisionPayload = Model<'AbstractRevision'>
