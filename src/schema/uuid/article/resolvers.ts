@@ -31,8 +31,10 @@ import { Article, ArticleRevision } from '~/types'
 export const resolvers: TypeResolvers<Article> &
   TypeResolvers<ArticleRevision> = {
   Article: {
-    ...createRepositoryResolvers({ decoder: ArticleRevisionDecoder }),
+    ...createRepositoryResolvers({ revisionDecoder: ArticleRevisionDecoder }),
     ...createTaxonomyTermChildResolvers(),
   },
-  ArticleRevision: createRevisionResolvers({ decoder: ArticleDecoder }),
+  ArticleRevision: createRevisionResolvers({
+    repositoryDecoder: ArticleDecoder,
+  }),
 }

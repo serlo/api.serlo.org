@@ -29,7 +29,7 @@ import { Page, PageRevision } from '~/types'
 
 export const resolvers: TypeResolvers<Page> & TypeResolvers<PageRevision> = {
   Page: {
-    ...createRepositoryResolvers({ decoder: PageRevisionDecoder }),
+    ...createRepositoryResolvers({ revisionDecoder: PageRevisionDecoder }),
     navigation(page, _args, { dataSources }) {
       return dataSources.model.serlo.getNavigation({
         instance: page.instance,
@@ -37,5 +37,5 @@ export const resolvers: TypeResolvers<Page> & TypeResolvers<PageRevision> = {
       })
     },
   },
-  PageRevision: createRevisionResolvers({ decoder: PageDecoder }),
+  PageRevision: createRevisionResolvers({ repositoryDecoder: PageDecoder }),
 }

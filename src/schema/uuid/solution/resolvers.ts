@@ -34,7 +34,7 @@ import { Solution, SolutionRevision } from '~/types'
 export const resolvers: TypeResolvers<Solution> &
   TypeResolvers<SolutionRevision> = {
   Solution: {
-    ...createRepositoryResolvers({ decoder: SolutionRevisionDecoder }),
+    ...createRepositoryResolvers({ revisionDecoder: SolutionRevisionDecoder }),
     async exercise(solution, _args, { dataSources }) {
       const exercise = await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: solution.parentId,
@@ -46,5 +46,7 @@ export const resolvers: TypeResolvers<Solution> &
       return exercise
     },
   },
-  SolutionRevision: createRevisionResolvers({ decoder: SolutionDecoder }),
+  SolutionRevision: createRevisionResolvers({
+    repositoryDecoder: SolutionDecoder,
+  }),
 }

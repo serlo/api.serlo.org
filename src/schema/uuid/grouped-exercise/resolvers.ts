@@ -35,7 +35,9 @@ import { GroupedExercise, GroupedExerciseRevision } from '~/types'
 export const resolvers: TypeResolvers<GroupedExercise> &
   TypeResolvers<GroupedExerciseRevision> = {
   GroupedExercise: {
-    ...createRepositoryResolvers({ decoder: GroupedExerciseRevisionDecoder }),
+    ...createRepositoryResolvers({
+      revisionDecoder: GroupedExerciseRevisionDecoder,
+    }),
     ...createExerciseResolvers(),
     async exerciseGroup(groupedExercise, _args, { dataSources }) {
       const result = await dataSources.model.serlo.getUuidWithCustomDecoder({
@@ -49,6 +51,6 @@ export const resolvers: TypeResolvers<GroupedExercise> &
     },
   },
   GroupedExerciseRevision: createRevisionResolvers({
-    decoder: GroupedExerciseDecoder,
+    repositoryDecoder: GroupedExerciseDecoder,
   }),
 }

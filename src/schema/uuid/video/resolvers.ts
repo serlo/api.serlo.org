@@ -30,8 +30,8 @@ import { Video, VideoRevision } from '~/types'
 
 export const resolvers: TypeResolvers<Video> & TypeResolvers<VideoRevision> = {
   Video: {
-    ...createRepositoryResolvers({ decoder: VideoRevisionDecoder }),
+    ...createRepositoryResolvers({ revisionDecoder: VideoRevisionDecoder }),
     ...createTaxonomyTermChildResolvers(),
   },
-  VideoRevision: createRevisionResolvers({ decoder: VideoDecoder }),
+  VideoRevision: createRevisionResolvers({ repositoryDecoder: VideoDecoder }),
 }

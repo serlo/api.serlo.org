@@ -32,8 +32,8 @@ import { Applet, AppletRevision } from '~/types'
 export const resolvers: TypeResolvers<Applet> &
   TypeResolvers<AppletRevision> = {
   Applet: {
-    ...createRepositoryResolvers({ decoder: AppletRevisionDecoder }),
+    ...createRepositoryResolvers({ revisionDecoder: AppletRevisionDecoder }),
     ...createTaxonomyTermChildResolvers(),
   },
-  AppletRevision: createRevisionResolvers({ decoder: AppletDecoder }),
+  AppletRevision: createRevisionResolvers({ repositoryDecoder: AppletDecoder }),
 }
