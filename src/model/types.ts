@@ -42,8 +42,6 @@ import {
   GroupedExerciseRevisionDecoder,
   PageDecoder,
   PageRevisionDecoder,
-  RepositoryDecoder,
-  RevisionDecoder,
   SolutionDecoder,
   SolutionRevisionDecoder,
   TaxonomyTermDecoder,
@@ -114,15 +112,3 @@ export type Payload<T extends keyof SerloModel> = NonNullable<
 >
 
 type SerloModel = ReturnType<typeof createSerloModel>
-
-export type Revision<
-  T extends t.TypeOf<typeof RepositoryDecoder>
-> = Models[`${T['__typename']}Revision`]
-
-export type Repository<
-  R extends t.TypeOf<typeof RevisionDecoder>
-> = Models[R['__typename'] extends `${infer U}Revision`
-  ? U extends keyof Models
-    ? U
-    : never
-  : never]
