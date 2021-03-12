@@ -26,7 +26,7 @@ import { Payload } from '~/internals/model/types'
 import { Instance } from '~/types'
 
 test('AliasQuery', async () => {
-  const alias: Payload<'getAlias'> = {
+  const alias: Payload<'serlo', 'getAlias'> = {
     id: 19767,
     instance: Instance.De,
     path: '/mathe',
@@ -51,7 +51,7 @@ test('AliasQuery', async () => {
 })
 
 test('AliasQuery (/user/profile/:username)', async () => {
-  const alias: Payload<'getAlias'> = {
+  const alias: Payload<'serlo', 'getAlias'> = {
     id: 1,
     instance: Instance.De,
     path: '/user/1/admin',

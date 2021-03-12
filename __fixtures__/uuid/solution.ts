@@ -31,7 +31,7 @@ import {
 } from '~/schema/uuid/abstract-entity/types'
 import { Instance } from '~/types'
 
-export const solutionAlias: Payload<'getAlias'> = {
+export const solutionAlias: Payload<'serlo', 'getAlias'> = {
   id: 29648,
   instance: Instance.De,
   path: '/29648/29648',
