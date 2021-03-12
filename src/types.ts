@@ -1,4 +1,4 @@
-import type { ModelOf } from '~/model/types'
+import type { ModelOf } from '~/internals/model/types'
 import type { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import type { Context } from 'internals/graphql/context';
 export type Maybe<T> = T | null;

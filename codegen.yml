@@ -4,7 +4,7 @@ generates:
   src/types.ts:
     plugins:
       - add:
-          content: "import type { ModelOf } from '~/model/types'"
+          content: "import type { ModelOf } from '~/internals/model/types'"
       - typescript
       - typescript-resolvers
     config:
