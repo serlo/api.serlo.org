@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Context } from '~/internals/graphql'
-import { UserDecoder } from '~/model'
+import { UserDecoder } from '~/model/decoder'
 
 export async function resolveUser(
   { id }: { id: number },

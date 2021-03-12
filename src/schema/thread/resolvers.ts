@@ -29,7 +29,7 @@ import {
   Mutations,
   TypeResolvers,
 } from '~/internals/graphql'
-import { UserDecoder } from '~/model'
+import { UserDecoder } from '~/model/decoder'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Comment, Thread } from '~/types'

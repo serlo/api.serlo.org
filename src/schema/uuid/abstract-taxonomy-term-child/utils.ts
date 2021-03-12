@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { PickResolvers } from '~/internals/graphql'
-import { TaxonomyTermDecoder } from '~/model'
+import { TaxonomyTermDecoder } from '~/model/decoder'
 import { resolveConnection } from '~/schema/connection/utils'
 import { isDefined } from '~/utils'
 

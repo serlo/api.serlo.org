@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { TypeResolvers } from '~/internals/graphql'
-import { ExerciseDecoder, ExerciseRevisionDecoder } from '~/model'
+import { ExerciseDecoder, ExerciseRevisionDecoder } from '~/model/decoder'
 import { createExerciseResolvers } from '~/schema/uuid/abstract-exercise/utils'
 import {
   createRepositoryResolvers,

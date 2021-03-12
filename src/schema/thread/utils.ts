@@ -22,7 +22,7 @@
 import { UserInputError } from 'apollo-server'
 
 import { Context, PickResolvers } from '~/internals/graphql'
-import { CommentDecoder } from '~/model'
+import { CommentDecoder } from '~/model/decoder'
 import { resolveConnection } from '~/schema/connection/utils'
 import { isDefined } from '~/utils'
 

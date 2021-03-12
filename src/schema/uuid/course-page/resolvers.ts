@@ -24,7 +24,7 @@ import {
   CourseDecoder,
   CoursePageDecoder,
   CoursePageRevisionDecoder,
-} from '~/model'
+} from '~/model/decoder'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,

@@ -21,7 +21,7 @@
  */
 
 import { TypeResolvers } from '~/internals/graphql'
-import { AppletDecoder, AppletRevisionDecoder } from '~/model'
+import { AppletDecoder, AppletRevisionDecoder } from '~/model/decoder'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,

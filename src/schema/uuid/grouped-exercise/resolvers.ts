@@ -24,7 +24,7 @@ import {
   ExerciseGroupDecoder,
   GroupedExerciseDecoder,
   GroupedExerciseRevisionDecoder,
-} from '~/model'
+} from '~/model/decoder'
 import { createExerciseResolvers } from '~/schema/uuid/abstract-exercise/utils'
 import {
   createRepositoryResolvers,
