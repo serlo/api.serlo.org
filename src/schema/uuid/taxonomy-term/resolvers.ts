@@ -21,7 +21,7 @@
  */
 import { TaxonomyTermPayload } from './types'
 import { TypeResolvers, Context } from '~/internals/graphql'
-import { TaxonomyTermDecoder } from '~/model'
+import { TaxonomyTermDecoder } from '~/model/decoder'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'

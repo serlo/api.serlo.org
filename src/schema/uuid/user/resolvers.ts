@@ -29,7 +29,7 @@ import {
   ErrorEvent,
 } from '~/internals/error-event'
 import { Context, Querys, TypeResolvers } from '~/internals/graphql'
-import { UserDecoder } from '~/model'
+import { UserDecoder } from '~/model/decoder'
 import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
 import { ConnectionPayload } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'

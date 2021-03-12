@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { TypeResolvers } from '~/internals/graphql'
-import { PageDecoder, PageRevisionDecoder } from '~/model'
+import { PageDecoder, PageRevisionDecoder } from '~/model/decoder'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,

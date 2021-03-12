@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { PickResolvers } from '~/internals/graphql'
-import { SolutionDecoder } from '~/model'
+import { SolutionDecoder } from '~/model/decoder'
 
 export function createExerciseResolvers(): PickResolvers<
   'AbstractExercise',

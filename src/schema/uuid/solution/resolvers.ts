@@ -24,7 +24,7 @@ import {
   AbstractExerciseDecoder,
   SolutionDecoder,
   SolutionRevisionDecoder,
-} from '~/model'
+} from '~/model/decoder'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
