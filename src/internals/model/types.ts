@@ -21,7 +21,7 @@
  */
 import { A } from 'ts-toolbelt'
 
-import { createSerloModel } from '~/model'
+import { modelFactories } from '~/model'
 import { Models } from '~/model/types'
 import { Connection } from '~/schema/connection/types'
 
@@ -43,8 +43,21 @@ export type Typename<T> = T extends { __typename?: infer U }
     : never
   : never
 
-export type Payload<T extends keyof SerloModel> = NonNullable<
-  A.PromiseOf<ReturnType<SerloModel[T]>>
->
+type A = Payload<'serlo', 'getAlias'>
 
-type SerloModel = ReturnType<typeof createSerloModel>
+export type Payload<
+  M extends keyof AllPayloads,
+  P extends keyof AllPayloads[M]
+> = AllPayloads[M][P]
+
+type AllPayloads = {
+  [M in keyof ModelFactories]: Payloads<ReturnType<ModelFactories[M]>>
+}
+type Payloads<M> = {
+  [F in keyof M]: NonNullable<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    A.PromiseOf<M[F] extends (...args: any) => infer R ? R : never>
+  >
+}
+
+type ModelFactories = typeof modelFactories

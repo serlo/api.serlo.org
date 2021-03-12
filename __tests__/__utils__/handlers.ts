@@ -28,7 +28,7 @@ import { NotificationEventPayload } from '~/schema/notification/types'
 import { NavigationPayload } from '~/schema/uuid/abstract-navigation-child/types'
 import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 
-export function createAliasHandler(alias: Payload<'getAlias'>) {
+export function createAliasHandler(alias: Payload<'serlo', 'getAlias'>) {
   return createMessageHandler({
     message: {
       type: 'AliasQuery',

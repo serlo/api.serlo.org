@@ -31,7 +31,7 @@ import {
 } from '~/schema/uuid/abstract-entity/types'
 import { Instance } from '~/types'
 
-export const groupedExerciseAlias: Payload<'getAlias'> = {
+export const groupedExerciseAlias: Payload<'serlo', 'getAlias'> = {
   id: 2219,
   instance: Instance.De,
   path: '/2219/2219',
