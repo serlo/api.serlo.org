@@ -134,7 +134,7 @@ export function createSerloModel({
     },
     void
   >({
-    mutate: async ({ ids, userId, trashed }) => {
+    legacyMutate: async ({ ids, userId, trashed }) => {
       await handleMessage({
         message: {
           type: 'UuidSetStateMutation',
@@ -452,7 +452,7 @@ export function createSerloModel({
     },
     void
   >({
-    mutate: async ({ ids, userId, unread }) => {
+    legacyMutate: async ({ ids, userId, unread }) => {
       await handleMessage({
         message: {
           type: 'NotificationSetStateMutation',
@@ -521,7 +521,7 @@ export function createSerloModel({
     },
     void
   >({
-    mutate: async ({ ids, userId, subscribe, sendEmail }) => {
+    legacyMutate: async ({ ids, userId, subscribe, sendEmail }) => {
       await handleMessage({
         message: {
           type: 'SubscriptionSetMutation',
@@ -653,7 +653,7 @@ export function createSerloModel({
     { ids: number[]; archived: boolean; userId: number },
     void
   >({
-    mutate: async (payload) => {
+    legacyMutate: async (payload) => {
       await handleMessage({
         message: {
           type: 'ThreadSetThreadArchivedMutation',
@@ -678,13 +678,13 @@ export function createSerloModel({
   })
 
   const setCacheValue = createMutation<{ key: string; value: unknown }>({
-    mutate: async ({ key, value }) => {
+    legacyMutate: async ({ key, value }) => {
       await environment.cache.set({ key, value })
     },
   })
 
   const removeCacheValue = createMutation<{ key: string }>({
-    mutate: async ({ key }) => {
+    legacyMutate: async ({ key }) => {
       await environment.cache.remove({ key })
     },
   })
