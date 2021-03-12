@@ -45,7 +45,7 @@ export function createMutation<P, R = void>(
 
       return value
     } else {
-      return await spec.mutate(payload)
+      return await spec.legacyMutate(payload)
     }
   }
 
@@ -57,7 +57,7 @@ export function createMutation<P, R = void>(
 type MutationSpec<P, R> =
   // TODO: We do not want the first version in the future
   | {
-      mutate: (payload: P) => Promise<R>
+      legacyMutate: (payload: P) => Promise<R>
     }
   | {
       decoder: t.Type<R>
