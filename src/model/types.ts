@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as t from 'io-ts'
-import { A } from 'ts-toolbelt'
 
 import {
   AppletDecoder,
@@ -49,8 +48,7 @@ import {
   VideoDecoder,
   VideoRevisionDecoder,
 } from './decoder'
-import { createSerloModel } from './serlo'
-import { Connection } from '~/schema/connection/types'
+import { Payload } from '~/internals/model/types'
 
 export interface Models {
   Applet: t.TypeOf<typeof AppletDecoder>
@@ -87,28 +85,3 @@ export interface Models {
   Video: t.TypeOf<typeof VideoDecoder>
   VideoRevision: t.TypeOf<typeof VideoRevisionDecoder>
 }
-
-// TODO: Is there a better way to handle primitive types?
-export type ModelOf<T> = T extends boolean | string | number | null
-  ? T
-  : Typename<T> extends keyof Models
-  ? Models[Typename<T>]
-  : T extends { nodes: Array<infer U>; totalCount: number }
-  ? Connection<ModelOf<U>>
-  : T extends (infer U)[]
-  ? ModelOf<U>[]
-  : T extends object
-  ? { [P in keyof T]: ModelOf<T[P]> }
-  : never
-
-export type Typename<T> = T extends { __typename?: infer U }
-  ? U extends string
-    ? U
-    : never
-  : never
-
-export type Payload<T extends keyof SerloModel> = NonNullable<
-  A.PromiseOf<ReturnType<SerloModel[T]>>
->
-
-type SerloModel = ReturnType<typeof createSerloModel>

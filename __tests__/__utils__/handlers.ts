@@ -23,7 +23,7 @@ import { rest } from 'msw'
 import * as R from 'ramda'
 
 import { Model } from '~/internals/graphql'
-import { Payload } from '~/model'
+import { Payload } from '~/internals/model/types'
 import { NotificationEventPayload } from '~/schema/notification/types'
 import { NavigationPayload } from '~/schema/uuid/abstract-navigation-child/types'
 import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'

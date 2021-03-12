@@ -24,7 +24,7 @@ import * as R from 'ramda'
 import { license } from '../license'
 import { exerciseGroup } from './exercise-group'
 import { Model } from '~/internals/graphql'
-import { Payload } from '~/model'
+import { Payload } from '~/internals/model/types'
 import {
   EntityRevisionType,
   EntityType,
