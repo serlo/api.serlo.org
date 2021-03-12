@@ -21,6 +21,7 @@
  */
 import { either as E } from 'fp-ts'
 import t from 'io-ts'
+import { PathReporter } from 'io-ts/lib/PathReporter'
 import R from 'ramda'
 
 export function createMutation<P, R = void>(
@@ -30,9 +31,15 @@ export function createMutation<P, R = void>(
     if (R.has('decoder', spec)) {
       const result = await spec.mutate(payload)
 
-      const value = E.getOrElse<unknown, R>(() => {
-        throw new Error('illegal payload received')
-      })(spec.decoder.decode(result))
+      const decoded = spec.decoder.decode(result)
+
+      if (E.isLeft(decoded)) {
+        const message = PathReporter.report(decoded).join('\n ')
+
+        throw new Error(`illegal payload received: ${message}`)
+      }
+
+      const value = decoded.right
 
       if (spec.updateCache !== undefined) await spec.updateCache(payload, value)
 
