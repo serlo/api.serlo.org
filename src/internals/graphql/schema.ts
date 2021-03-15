@@ -134,7 +134,7 @@ export type Mutations<Namespaces extends keyof MutationResolvers> = {
  *   }
  * }
  */
-export type Querys<QueryProperties extends keyof QueryResolvers> = A.Compute<
+export type Queries<QueryProperties extends keyof QueryResolvers> = A.Compute<
   {
     Query: Required<Pick<QueryResolvers, QueryProperties>>
   },

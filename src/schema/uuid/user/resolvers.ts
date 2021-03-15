@@ -28,7 +28,7 @@ import {
   consumeErrorEvent,
   ErrorEvent,
 } from '~/internals/error-event'
-import { Context, Querys, TypeResolvers } from '~/internals/graphql'
+import { Context, Queries, TypeResolvers } from '~/internals/graphql'
 import { UserDecoder } from '~/model/decoder'
 import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
 import { ConnectionPayload } from '~/schema/connection/types'
@@ -38,7 +38,7 @@ import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { User } from '~/types'
 import { isDefined } from '~/utils'
 
-export const resolvers: Querys<
+export const resolvers: Queries<
   'activeAuthors' | 'activeReviewers' | 'activeDonors'
 > &
   TypeResolvers<User> = {

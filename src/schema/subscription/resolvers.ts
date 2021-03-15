@@ -23,12 +23,12 @@ import {
   assertUserIsAuthenticated,
   createMutationNamespace,
   Mutations,
-  Querys,
+  Queries,
 } from '~/internals/graphql'
 import { resolveConnection } from '~/schema/connection/utils'
 import { isDefined } from '~/utils'
 
-export const resolvers: Querys<'subscriptions'> & Mutations<'subscription'> = {
+export const resolvers: Queries<'subscriptions'> & Mutations<'subscription'> = {
   Query: {
     async subscriptions(_parent, cursorPayload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)

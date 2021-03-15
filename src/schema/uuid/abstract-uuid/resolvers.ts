@@ -28,7 +28,7 @@ import {
   createMutationNamespace,
   InterfaceResolvers,
   Mutations,
-  Querys,
+  Queries,
   Context,
 } from '~/internals/graphql'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
@@ -36,7 +36,7 @@ import { QueryUuidArgs } from '~/types'
 
 export const resolvers: InterfaceResolvers<'AbstractUuid'> &
   Mutations<'uuid'> &
-  Querys<'uuid'> = {
+  Queries<'uuid'> = {
   AbstractUuid: {
     __resolveType(uuid) {
       return uuid.__typename
