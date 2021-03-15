@@ -19,10 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Querys, TypeResolvers } from '~/internals/graphql'
+import { Queries, TypeResolvers } from '~/internals/graphql'
 import { License } from '~/types'
 
-export const resolvers: TypeResolvers<License> & Querys<'license'> = {
+export const resolvers: TypeResolvers<License> & Queries<'license'> = {
   Query: {
     license(_parent, { id }, { dataSources }) {
       return dataSources.model.serlo.getLicense({ id })
