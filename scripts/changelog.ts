@@ -657,6 +657,14 @@ async function exec(): Promise<void> {
       date: '2021-02-22',
       internal: [['uuid', 'Disable SWR background updates.']],
     },
+    {
+      tagName: 'v0.20.0',
+      date: '2021-03-16',
+      internal: [
+        'Various refactorings.',
+        'Various changes to the build toolchain.',
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
