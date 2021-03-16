@@ -4,7 +4,7 @@
 
 ```ts
 
-import type { Context } from 'internals/graphql/context';
+import type { Context } from '~/internals/graphql/context';
 import type { GraphQLResolveInfo } from 'graphql';
 import type { GraphQLScalarType } from 'graphql';
 import type { GraphQLScalarTypeConfig } from 'graphql';
