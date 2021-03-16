@@ -22,22 +22,26 @@
 import { array as A, either as E, function as F } from 'fp-ts'
 import R from 'ramda'
 
-import { UserPayload, UserResolvers } from './types'
 import {
   addContext,
   assertAll,
   consumeErrorEvent,
   ErrorEvent,
 } from '~/internals/error-event'
-import { Context } from '~/internals/graphql'
+import { Context, Queries, TypeResolvers } from '~/internals/graphql'
+import { UserDecoder } from '~/model/decoder'
 import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
 import { ConnectionPayload } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
-import { UserPayloadDecoder } from '~/schema/uuid/user/decoder'
+import { User } from '~/types'
+import { isDefined } from '~/utils'
 
-export const resolvers: UserResolvers = {
+export const resolvers: Queries<
+  'activeAuthors' | 'activeReviewers' | 'activeDonors'
+> &
+  TypeResolvers<User> = {
   Query: {
     async activeAuthors(_parent, payload, context) {
       return resolveUserConnectionFromIds({
@@ -96,15 +100,15 @@ async function resolveUserConnectionFromIds({
       try {
         return await context.dataSources.model.serlo.getUuidWithCustomDecoder({
           id,
-          decoder: UserPayloadDecoder,
+          decoder: UserDecoder,
         })
       } catch (e) {
         return null
       }
     })
   )
-  return resolveConnection<UserPayload>({
-    nodes: uuids.filter((uuid) => uuid !== null) as UserPayload[],
+  return resolveConnection({
+    nodes: uuids.filter(isDefined),
     payload,
     createCursor(node) {
       return node.id.toString()

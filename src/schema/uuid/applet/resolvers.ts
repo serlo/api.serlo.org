@@ -20,25 +20,20 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
-import { AppletPayload, AppletRevisionPayload } from './types'
+import { TypeResolvers } from '~/internals/graphql'
+import { AppletDecoder, AppletRevisionDecoder } from '~/model/decoder'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
-import {
-  AppletDecoder,
-  AppletRevisionDecoder,
-} from '~/schema/uuid/applet/decoder'
+import { Applet, AppletRevision } from '~/types'
 
-export const resolvers = {
+export const resolvers: TypeResolvers<Applet> &
+  TypeResolvers<AppletRevision> = {
   Applet: {
-    ...createRepositoryResolvers<AppletPayload, AppletRevisionPayload>({
-      revisionDecoder: AppletRevisionDecoder,
-    }),
-    ...createTaxonomyTermChildResolvers<AppletPayload>(),
+    ...createRepositoryResolvers({ revisionDecoder: AppletRevisionDecoder }),
+    ...createTaxonomyTermChildResolvers(),
   },
-  AppletRevision: createRevisionResolvers<AppletPayload, AppletRevisionPayload>(
-    { repositoryDecoder: AppletDecoder }
-  ),
+  AppletRevision: createRevisionResolvers({ repositoryDecoder: AppletDecoder }),
 }

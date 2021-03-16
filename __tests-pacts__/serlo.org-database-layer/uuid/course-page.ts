@@ -32,13 +32,10 @@ import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
-import {
-  CoursePagePayload,
-  CoursePageRevisionPayload,
-} from '~/schema/uuid/course-page/types'
+import { Model } from '~/internals/graphql'
 
 test('CoursePage', async () => {
-  await addUuidInteraction<CoursePagePayload>({
+  await addUuidInteraction<Model<'CoursePage'>>({
     __typename: coursePage.__typename,
     id: coursePage.id,
     trashed: Matchers.boolean(coursePage.trashed),
@@ -73,7 +70,7 @@ test('CoursePage', async () => {
 })
 
 test('CoursePageRevision', async () => {
-  await addUuidInteraction<CoursePageRevisionPayload>({
+  await addUuidInteraction<Model<'CoursePageRevision'>>({
     __typename: coursePageRevision.__typename,
     id: coursePageRevision.id,
     trashed: Matchers.boolean(coursePageRevision.trashed),

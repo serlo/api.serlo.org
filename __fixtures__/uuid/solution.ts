@@ -23,24 +23,21 @@ import * as R from 'ramda'
 
 import { license } from '../license'
 import { exercise } from './exercise'
+import { Model } from '~/internals/graphql'
+import { Payload } from '~/internals/model/types'
 import {
   EntityRevisionType,
   EntityType,
 } from '~/schema/uuid/abstract-entity/types'
-import { AliasPayload } from '~/schema/uuid/alias/types'
-import {
-  SolutionPayload,
-  SolutionRevisionPayload,
-} from '~/schema/uuid/solution/types'
 import { Instance } from '~/types'
 
-export const solutionAlias: AliasPayload = {
+export const solutionAlias: Payload<'serlo', 'getAlias'> = {
   id: 29648,
   instance: Instance.De,
   path: '/29648/29648',
 }
 
-export const solution: SolutionPayload = {
+export const solution: Model<'Solution'> = {
   __typename: EntityType.Solution,
   id: 29648,
   trashed: false,
@@ -53,7 +50,7 @@ export const solution: SolutionPayload = {
   parentId: exercise.id,
 }
 
-export const solutionRevision: SolutionRevisionPayload = {
+export const solutionRevision: Model<'SolutionRevision'> = {
   __typename: EntityRevisionType.SolutionRevision,
   id: 29652,
   trashed: false,
@@ -65,7 +62,9 @@ export const solutionRevision: SolutionRevisionPayload = {
   changes: 'changes',
 }
 
-export function getSolutionDataWithoutSubResolvers(solution: SolutionPayload) {
+export function getSolutionDataWithoutSubResolvers(
+  solution: Model<'Solution'>
+) {
   return R.omit(
     ['currentRevisionId', 'revisionIds', 'licenseId', 'parentId', 'alias'],
     solution
@@ -73,7 +72,7 @@ export function getSolutionDataWithoutSubResolvers(solution: SolutionPayload) {
 }
 
 export function getSolutionRevisionDataWithoutSubResolvers(
-  solutionRevision: SolutionRevisionPayload
+  solutionRevision: Model<'SolutionRevision'>
 ) {
   return R.omit(['authorId', 'repositoryId', 'alias'], solutionRevision)
 }

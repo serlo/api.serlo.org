@@ -19,28 +19,22 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ArticlePayload, ArticleRevisionPayload } from './types'
+import { TypeResolvers } from '~/internals/graphql'
+import { ArticleDecoder, ArticleRevisionDecoder } from '~/model/decoder'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
-import {
-  ArticleDecoder,
-  ArticleRevisionDecoder,
-} from '~/schema/uuid/article/decoder'
+import { Article, ArticleRevision } from '~/types'
 
-export const resolvers = {
+export const resolvers: TypeResolvers<Article> &
+  TypeResolvers<ArticleRevision> = {
   Article: {
-    ...createRepositoryResolvers<ArticlePayload, ArticleRevisionPayload>({
-      revisionDecoder: ArticleRevisionDecoder,
-    }),
-    ...createTaxonomyTermChildResolvers<ArticlePayload>(),
+    ...createRepositoryResolvers({ revisionDecoder: ArticleRevisionDecoder }),
+    ...createTaxonomyTermChildResolvers(),
   },
-  ArticleRevision: createRevisionResolvers<
-    ArticlePayload,
-    ArticleRevisionPayload
-  >({
+  ArticleRevision: createRevisionResolvers({
     repositoryDecoder: ArticleDecoder,
   }),
 }

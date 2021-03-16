@@ -21,17 +21,28 @@
  */
 import { ApolloError, ForbiddenError } from 'apollo-server'
 
-import { CommentPayload, ThreadDataType, ThreadResolvers } from './types'
 import { decodeThreadId, decodeThreadIds, encodeThreadId } from './utils'
-import { resolveConnection } from '~/schema/connection/utils'
 import {
   assertUserIsAuthenticated,
   createMutationNamespace,
-} from '~/schema/utils'
+  InterfaceResolvers,
+  Mutations,
+  TypeResolvers,
+} from '~/internals/graphql'
+import { UserDecoder } from '~/model/decoder'
+import { resolveConnection } from '~/schema/connection/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
-import { UserPayloadDecoder } from '~/schema/uuid/user/decoder'
+import { Comment, Thread } from '~/types'
 
-export const resolvers: ThreadResolvers = {
+export const resolvers: InterfaceResolvers<'ThreadAware'> &
+  Mutations<'thread'> &
+  TypeResolvers<Thread> &
+  TypeResolvers<Comment> = {
+  ThreadAware: {
+    __resolveType(parent) {
+      return parent.__typename
+    },
+  },
   Thread: {
     id(thread) {
       return encodeThreadId(thread.commentPayloads[0].id)
@@ -55,7 +66,7 @@ export const resolvers: ThreadResolvers = {
       return object
     },
     comments(thread, cursorPayload) {
-      return resolveConnection<CommentPayload>({
+      return resolveConnection({
         nodes: thread.commentPayloads.sort((a, b) => a.id - b.id),
         payload: cursorPayload,
         createCursor(node) {
@@ -72,7 +83,7 @@ export const resolvers: ThreadResolvers = {
     async author(comment, _args, { dataSources }) {
       const author = await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: comment.authorId,
-        decoder: UserPayloadDecoder,
+        decoder: UserDecoder,
       })
       if (author === null) {
         throw new ApolloError('There is no author with this id')
@@ -95,7 +106,7 @@ export const resolvers: ThreadResolvers = {
       return {
         record:
           commentPayload !== null
-            ? { __typename: ThreadDataType, commentPayloads: [commentPayload] }
+            ? { __typename: 'Thread', commentPayloads: [commentPayload] }
             : null,
         success,
         query: {},
@@ -168,11 +179,6 @@ export const resolvers: ThreadResolvers = {
         success: true,
         query: {},
       }
-    },
-  },
-  ThreadAware: {
-    __resolveType(object) {
-      return object.__typename
     },
   },
 }

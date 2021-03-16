@@ -19,14 +19,18 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { assertUserIsAuthenticated, createMutationNamespace } from '../utils'
-import { SubscriptionResolvers } from './types'
+import {
+  assertUserIsAuthenticated,
+  createMutationNamespace,
+  Mutations,
+  Queries,
+} from '~/internals/graphql'
 import { resolveConnection } from '~/schema/connection/utils'
-import { AbstractUuidPayload } from '~/schema/uuid/abstract-uuid/types'
+import { isDefined } from '~/utils'
 
-export const resolvers: SubscriptionResolvers = {
+export const resolvers: Queries<'subscriptions'> & Mutations<'subscription'> = {
   Query: {
-    async subscriptions(parent, cursorPayload, { dataSources, userId }) {
+    async subscriptions(_parent, cursorPayload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       const subscriptions = await dataSources.model.serlo.getSubscriptions({
         userId,
@@ -36,10 +40,8 @@ export const resolvers: SubscriptionResolvers = {
           return dataSources.model.serlo.getUuid({ id: id.id })
         })
       )
-      return resolveConnection<AbstractUuidPayload>({
-        nodes: result.filter(
-          (payload) => payload !== null
-        ) as AbstractUuidPayload[],
+      return resolveConnection({
+        nodes: result.filter(isDefined),
         payload: cursorPayload,
         createCursor(node) {
           return node.id.toString()

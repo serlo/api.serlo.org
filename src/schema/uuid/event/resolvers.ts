@@ -19,22 +19,19 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { EventPayload, EventRevisionPayload } from './types'
+import { TypeResolvers } from '~/internals/graphql'
+import { EventDecoder, EventRevisionDecoder } from '~/model/decoder'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
-import { EventDecoder, EventRevisionDecoder } from '~/schema/uuid/event/decoder'
+import { EventRevision, Event } from '~/types'
 
-export const resolvers = {
+export const resolvers: TypeResolvers<Event> & TypeResolvers<EventRevision> = {
   Event: {
-    ...createRepositoryResolvers<EventPayload, EventRevisionPayload>({
-      revisionDecoder: EventRevisionDecoder,
-    }),
-    ...createTaxonomyTermChildResolvers<EventPayload>(),
+    ...createRepositoryResolvers({ revisionDecoder: EventRevisionDecoder }),
+    ...createTaxonomyTermChildResolvers(),
   },
-  EventRevision: createRevisionResolvers<EventPayload, EventRevisionPayload>({
-    repositoryDecoder: EventDecoder,
-  }),
+  EventRevision: createRevisionResolvers({ repositoryDecoder: EventDecoder }),
 }

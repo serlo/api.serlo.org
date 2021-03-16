@@ -23,24 +23,21 @@ import * as R from 'ramda'
 
 import { license } from '../license'
 import { exerciseGroup } from './exercise-group'
+import { Model } from '~/internals/graphql'
+import { Payload } from '~/internals/model/types'
 import {
   EntityRevisionType,
   EntityType,
 } from '~/schema/uuid/abstract-entity/types'
-import { AliasPayload } from '~/schema/uuid/alias/types'
-import {
-  GroupedExercisePayload,
-  GroupedExerciseRevisionPayload,
-} from '~/schema/uuid/grouped-exercise/types'
 import { Instance } from '~/types'
 
-export const groupedExerciseAlias: AliasPayload = {
+export const groupedExerciseAlias: Payload<'serlo', 'getAlias'> = {
   id: 2219,
   instance: Instance.De,
   path: '/2219/2219',
 }
 
-export const groupedExercise: GroupedExercisePayload = {
+export const groupedExercise: Model<'GroupedExercise'> = {
   __typename: EntityType.GroupedExercise,
   id: 2219,
   trashed: false,
@@ -54,7 +51,7 @@ export const groupedExercise: GroupedExercisePayload = {
   parentId: exerciseGroup.id,
 }
 
-export const groupedExerciseRevision: GroupedExerciseRevisionPayload = {
+export const groupedExerciseRevision: Model<'GroupedExerciseRevision'> = {
   __typename: EntityRevisionType.GroupedExerciseRevision,
   id: 2220,
   trashed: false,
@@ -67,7 +64,7 @@ export const groupedExerciseRevision: GroupedExerciseRevisionPayload = {
 }
 
 export function getGroupedExerciseDataWithoutSubResolvers(
-  groupedExercise: GroupedExercisePayload
+  groupedExercise: Model<'GroupedExercise'>
 ) {
   return R.omit(
     [
@@ -83,7 +80,7 @@ export function getGroupedExerciseDataWithoutSubResolvers(
 }
 
 export function getGroupedExerciseRevisionDataWithoutSubResolvers(
-  groupedExerciseRevision: GroupedExerciseRevisionPayload
+  groupedExerciseRevision: Model<'GroupedExerciseRevision'>
 ) {
   return R.omit(['authorId', 'repositoryId', 'alias'], groupedExerciseRevision)
 }

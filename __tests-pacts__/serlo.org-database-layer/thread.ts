@@ -145,6 +145,7 @@ test('ThreadCreateCommentMutation', async () => {
       __typename: DiscriminatorType.Comment,
       id: Matchers.integer(comment.id + 1),
       content: 'Hello',
+      authorId: Matchers.integer(user.id),
       parentId: comment.id,
       trashed: false,
       alias: Matchers.string('/mathe/101/mathe'),

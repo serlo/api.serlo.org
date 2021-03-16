@@ -19,15 +19,16 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import * as t from 'io-ts'
+import { AuthenticationError } from 'apollo-server'
 
-import { Instance } from '~/types'
+export function assertUserIsAuthenticated(
+  user: number | null
+): asserts user is number {
+  if (user === null) throw new AuthenticationError('You are not logged in')
+}
 
-export const InstanceDecoder: t.Type<Instance> = t.union([
-  t.literal(Instance.De),
-  t.literal(Instance.En),
-  t.literal(Instance.Es),
-  t.literal(Instance.Fr),
-  t.literal(Instance.Hi),
-  t.literal(Instance.Ta),
-])
+export function createMutationNamespace() {
+  return () => {
+    return {}
+  }
+}

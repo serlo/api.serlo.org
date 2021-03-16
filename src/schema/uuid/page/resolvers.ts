@@ -19,29 +19,23 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { PagePayload, PageResolvers, PageRevisionPayload } from './types'
+import { TypeResolvers } from '~/internals/graphql'
+import { PageDecoder, PageRevisionDecoder } from '~/model/decoder'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
-import {
-  PagePayloadDecoder,
-  PageRevisionPayloadDecoder,
-} from '~/schema/uuid/page/decoder'
+import { Page, PageRevision } from '~/types'
 
-export const resolvers: PageResolvers = {
+export const resolvers: TypeResolvers<Page> & TypeResolvers<PageRevision> = {
   Page: {
-    ...createRepositoryResolvers<PagePayload, PageRevisionPayload>({
-      revisionDecoder: PageRevisionPayloadDecoder,
-    }),
-    async navigation(page, _args, { dataSources }) {
+    ...createRepositoryResolvers({ revisionDecoder: PageRevisionDecoder }),
+    navigation(page, _args, { dataSources }) {
       return dataSources.model.serlo.getNavigation({
         instance: page.instance,
         id: page.id,
       })
     },
   },
-  PageRevision: createRevisionResolvers<PagePayload, PageRevisionPayload>({
-    repositoryDecoder: PagePayloadDecoder,
-  }),
+  PageRevision: createRevisionResolvers({ repositoryDecoder: PageDecoder }),
 }

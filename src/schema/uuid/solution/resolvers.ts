@@ -19,36 +19,34 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { SolutionPayload, SolutionRevisionPayload } from './types'
-import { Context } from '~/internals/graphql'
+import { TypeResolvers } from '~/internals/graphql'
+import {
+  AbstractExerciseDecoder,
+  SolutionDecoder,
+  SolutionRevisionDecoder,
+} from '~/model/decoder'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
-import {
-  SolutionDecoder,
-  SolutionRevisionDecoder,
-} from '~/schema/uuid/solution/decoder'
+import { Solution, SolutionRevision } from '~/types'
 
-export const resolvers = {
+export const resolvers: TypeResolvers<Solution> &
+  TypeResolvers<SolutionRevision> = {
   Solution: {
-    ...createRepositoryResolvers<SolutionPayload, SolutionRevisionPayload>({
-      revisionDecoder: SolutionRevisionDecoder,
-    }),
-    async exercise(
-      solution: SolutionPayload,
-      _args: never,
-      { dataSources }: Context
-    ) {
-      return dataSources.model.serlo.getUuid({
+    ...createRepositoryResolvers({ revisionDecoder: SolutionRevisionDecoder }),
+    async exercise(solution, _args, { dataSources }) {
+      const exercise = await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: solution.parentId,
+        decoder: AbstractExerciseDecoder,
       })
+
+      if (exercise === null) throw new Error('exercise cannot be null')
+
+      return exercise
     },
   },
-  SolutionRevision: createRevisionResolvers<
-    SolutionPayload,
-    SolutionRevisionPayload
-  >({
+  SolutionRevision: createRevisionResolvers({
     repositoryDecoder: SolutionDecoder,
   }),
 }

@@ -21,10 +21,10 @@
  */
 import * as R from 'ramda'
 
+import { Model } from '~/internals/graphql'
 import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
-import { UserPayload } from '~/schema/uuid/user/types'
 
-export const user: UserPayload = {
+export const user: Model<'User'> = {
   __typename: DiscriminatorType.User,
   id: 1,
   trashed: false,
@@ -35,7 +35,7 @@ export const user: UserPayload = {
   description: null,
 }
 
-export const user2: UserPayload = {
+export const user2: Model<'User'> = {
   __typename: DiscriminatorType.User,
   id: 23,
   trashed: false,
@@ -46,6 +46,6 @@ export const user2: UserPayload = {
   description: null,
 }
 
-export function getUserDataWithoutSubResolvers(user: UserPayload) {
+export function getUserDataWithoutSubResolvers(user: Model<'User'>) {
   return R.omit(['alias'], user)
 }

@@ -19,34 +19,29 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ExerciseGroupPayload, ExerciseGroupRevisionPayload } from './types'
-import { Context } from '~/internals/graphql'
+import { TypeResolvers } from '~/internals/graphql'
+import {
+  ExerciseGroupDecoder,
+  ExerciseGroupRevisionDecoder,
+  GroupedExerciseDecoder,
+} from '~/model/decoder'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
-import {
-  ExerciseGroupDecoder,
-  ExerciseGroupRevisionDecoder,
-} from '~/schema/uuid/exercise-group/decoder'
-import { GroupedExerciseDecoder } from '~/schema/uuid/grouped-exercise/decoder'
+import { ExerciseGroup, ExerciseGroupRevision } from '~/types'
+import { isDefined } from '~/utils'
 
-export const resolvers = {
+export const resolvers: TypeResolvers<ExerciseGroup> &
+  TypeResolvers<ExerciseGroupRevision> = {
   ExerciseGroup: {
-    ...createRepositoryResolvers<
-      ExerciseGroupPayload,
-      ExerciseGroupRevisionPayload
-    >({
+    ...createRepositoryResolvers({
       revisionDecoder: ExerciseGroupRevisionDecoder,
     }),
-    ...createTaxonomyTermChildResolvers<ExerciseGroupPayload>(),
-    exercises(
-      exerciseGroup: ExerciseGroupPayload,
-      _args: never,
-      { dataSources }: Context
-    ) {
-      return Promise.all(
+    ...createTaxonomyTermChildResolvers(),
+    async exercises(exerciseGroup, _args, { dataSources }) {
+      const exercises = await Promise.all(
         exerciseGroup.exerciseIds.map((id: number) => {
           return dataSources.model.serlo.getUuidWithCustomDecoder({
             id,
@@ -54,12 +49,11 @@ export const resolvers = {
           })
         })
       )
+
+      return exercises.filter(isDefined)
     },
   },
-  ExerciseGroupRevision: createRevisionResolvers<
-    ExerciseGroupPayload,
-    ExerciseGroupRevisionPayload
-  >({
+  ExerciseGroupRevision: createRevisionResolvers({
     repositoryDecoder: ExerciseGroupDecoder,
   }),
 }
