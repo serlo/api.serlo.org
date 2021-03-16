@@ -19,28 +19,24 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ExercisePayload, ExerciseRevisionPayload } from './types'
+import { TypeResolvers } from '~/internals/graphql'
+import { ExerciseDecoder, ExerciseRevisionDecoder } from '~/model/decoder'
 import { createExerciseResolvers } from '~/schema/uuid/abstract-exercise/utils'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
-import {
-  ExerciseDecoder,
-  ExerciseRevisionDecoder,
-} from '~/schema/uuid/exercise/decoder'
+import { Exercise, ExerciseRevision } from '~/types'
 
-export const resolvers = {
+export const resolvers: TypeResolvers<Exercise> &
+  TypeResolvers<ExerciseRevision> = {
   Exercise: {
-    ...createRepositoryResolvers<ExercisePayload, ExerciseRevisionPayload>({
-      revisionDecoder: ExerciseRevisionDecoder,
-    }),
-    ...createTaxonomyTermChildResolvers<ExercisePayload>(),
-    ...createExerciseResolvers<ExercisePayload>(),
+    ...createRepositoryResolvers({ revisionDecoder: ExerciseRevisionDecoder }),
+    ...createTaxonomyTermChildResolvers(),
+    ...createExerciseResolvers(),
   },
-  ExerciseRevision: createRevisionResolvers<
-    ExercisePayload,
-    ExerciseRevisionPayload
-  >({ repositoryDecoder: ExerciseDecoder }),
+  ExerciseRevision: createRevisionResolvers({
+    repositoryDecoder: ExerciseDecoder,
+  }),
 }

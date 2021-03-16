@@ -22,13 +22,13 @@
 import { rest } from 'msw'
 import * as R from 'ramda'
 
-import { LicensePayload } from '~/schema/license/types'
+import { Model } from '~/internals/graphql'
+import { Payload } from '~/internals/model/types'
 import { NotificationEventPayload } from '~/schema/notification/types'
 import { NavigationPayload } from '~/schema/uuid/abstract-navigation-child/types'
 import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
-import { AliasPayload } from '~/schema/uuid/alias/types'
 
-export function createAliasHandler(alias: AliasPayload) {
+export function createAliasHandler(alias: Payload<'serlo', 'getAlias'>) {
   return createMessageHandler({
     message: {
       type: 'AliasQuery',
@@ -41,7 +41,7 @@ export function createAliasHandler(alias: AliasPayload) {
   })
 }
 
-export function createLicenseHandler(license: LicensePayload) {
+export function createLicenseHandler(license: Model<'License'>) {
   return createMessageHandler({
     message: {
       type: 'LicenseQuery',
@@ -105,7 +105,7 @@ export function createMessageHandler(
 
   const handler = rest.post(
     getDatabaseLayerUrl({ path: '/' }),
-    (req, res, ctx) => {
+    (_req, res, ctx) => {
       return (once ? res.once : res)(
         ctx.status(args.statusCode ?? 200),
         ...(body === undefined

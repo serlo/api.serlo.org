@@ -24,26 +24,31 @@ import * as t from 'io-ts'
 
 import { resolveUser } from '../user/utils'
 import {
-  AbstractRepositoryPayload,
-  AbstractRevisionPayload,
-  RepositoryResolvers,
-  RevisionResolvers,
-} from './types'
-import { requestsOnlyFields } from '~/internals/graphql'
+  Model,
+  PickResolvers,
+  Repository,
+  ResolverFunction,
+  Revision,
+} from '~/internals/graphql'
+import { Connection } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
-import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
+import { VideoRevisionsArgs } from '~/types'
 import { isDefined } from '~/utils'
 
-export function createRepositoryResolvers<
-  E extends UuidPayload & AbstractRepositoryPayload,
-  R extends UuidPayload & AbstractRevisionPayload
->({
+export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
   revisionDecoder,
 }: {
   revisionDecoder: t.Type<R>
-}): RepositoryResolvers<E, R> {
+}): PickResolvers<'AbstractRepository', 'alias' | 'threads' | 'license'> & {
+  currentRevision: ResolverFunction<R | null, Repository<R['__typename']>>
+  revisions: ResolverFunction<
+    Connection<R>,
+    Repository<R['__typename']>,
+    VideoRevisionsArgs
+  >
+} {
   return {
     ...createUuidResolvers(),
     ...createThreadResolvers(),
@@ -84,35 +89,40 @@ export function createRepositoryResolvers<
         },
       })
     },
-    async license(repository, _args, { dataSources }, info) {
-      const partialLicense = { id: repository.licenseId }
-      if (requestsOnlyFields('License', ['id'], info)) {
-        return partialLicense
-      }
-      return dataSources.model.serlo.getLicense(partialLicense)
+    async license(repository, _args, { dataSources }) {
+      return dataSources.model.serlo.getLicense({ id: repository.licenseId })
     },
   }
 }
 
-export function createRevisionResolvers<
-  E extends UuidPayload & AbstractRepositoryPayload,
-  R extends UuidPayload & AbstractRevisionPayload
->({
+export function createRevisionResolvers<E extends Model<'AbstractRepository'>>({
   repositoryDecoder,
 }: {
   repositoryDecoder: t.Type<E>
-}): RevisionResolvers<E, R> {
+}): PickResolvers<'AbstractRevision', 'alias' | 'threads' | 'author'> & {
+  repository: ResolverFunction<E, Revision<E['__typename']>>
+} {
   return {
     ...createUuidResolvers(),
     ...createThreadResolvers(),
-    author(entityRevision, _args, context, info) {
-      return resolveUser({ id: entityRevision.authorId }, context, info)
+    async author(entityRevision, _args, context) {
+      const user = await resolveUser({ id: entityRevision.authorId }, context)
+
+      if (user === null) throw new Error('author cannot be null')
+
+      return user
     },
     repository: async (entityRevision, _args, { dataSources }) => {
-      return await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: entityRevision.repositoryId,
-        decoder: repositoryDecoder,
-      })
+      const repository = await dataSources.model.serlo.getUuidWithCustomDecoder(
+        {
+          id: entityRevision.repositoryId,
+          decoder: repositoryDecoder,
+        }
+      )
+
+      if (repository === null) throw new Error('respository cannot be null')
+
+      return repository
     },
   }
 }

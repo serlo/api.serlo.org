@@ -19,9 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { AbstractExerciseResolvers } from './types'
+import { InterfaceResolvers } from '~/internals/graphql'
 
-export const resolvers: AbstractExerciseResolvers = {
+export const resolvers: InterfaceResolvers<'AbstractExercise'> &
+  InterfaceResolvers<'AbstractExerciseRevision'> = {
   AbstractExercise: {
     __resolveType(exercise) {
       return exercise.__typename

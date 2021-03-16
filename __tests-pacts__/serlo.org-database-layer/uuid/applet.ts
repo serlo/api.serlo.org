@@ -32,13 +32,10 @@ import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
-import {
-  AppletPayload,
-  AppletRevisionPayload,
-} from '~/schema/uuid/applet/types'
+import { Model } from '~/internals/graphql'
 
 test('Applet', async () => {
-  await addUuidInteraction<AppletPayload>({
+  await addUuidInteraction<Model<'Applet'>>({
     __typename: applet.__typename,
     id: applet.id,
     trashed: Matchers.boolean(applet.trashed),
@@ -77,7 +74,7 @@ test('Applet', async () => {
 })
 
 test('AppletRevision', async () => {
-  await addUuidInteraction<AppletRevisionPayload>({
+  await addUuidInteraction<Model<'AppletRevision'>>({
     __typename: appletRevision.__typename,
     id: appletRevision.id,
     trashed: Matchers.boolean(appletRevision.trashed),

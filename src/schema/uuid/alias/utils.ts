@@ -20,8 +20,8 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { lookupCustomAlias } from '~/config/alias'
+import { PickResolvers } from '~/internals/graphql'
 import { isInstanceAware } from '~/schema/instance/utils'
-import { UuidResolvers } from '~/schema/uuid/abstract-uuid/types'
 
 export function decodePath(path: string) {
   try {
@@ -40,16 +40,16 @@ export function encodePath(path: string) {
   return encodeURIComponent(path).replace(/%2F/g, '/')
 }
 
-export function createAliasResolvers(): Pick<UuidResolvers, 'alias'> {
+export function createAliasResolvers(): PickResolvers<'AbstractUuid', 'alias'> {
   return {
-    async alias(entity) {
+    alias(entity) {
       if (isInstanceAware(entity)) {
         const customAlias = lookupCustomAlias(entity)
-        if (customAlias) {
-          return Promise.resolve(encodePath(customAlias))
-        }
+
+        if (customAlias) return encodePath(customAlias)
       }
-      return Promise.resolve(entity.alias ? encodePath(entity.alias) : null)
+
+      return entity.alias ? encodePath(entity.alias) : null
     },
   }
 }

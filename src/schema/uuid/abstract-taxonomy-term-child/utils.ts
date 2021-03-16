@@ -19,36 +19,26 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { AbstractTaxonomyTermChildPayload } from './types'
-import { Context, Resolver } from '~/internals/graphql'
-import { Connection } from '~/schema/connection/types'
+import { PickResolvers } from '~/internals/graphql'
+import { TaxonomyTermDecoder } from '~/model/decoder'
 import { resolveConnection } from '~/schema/connection/utils'
-import { TaxonomyTermChildrenArgs } from '~/types'
 import { isDefined } from '~/utils'
 
-export interface TaxonomyTermChildResolvers<
-  E extends AbstractTaxonomyTermChildPayload
+export function createTaxonomyTermChildResolvers(): PickResolvers<
+  'AbstractTaxonomyTermChild',
+  'taxonomyTerms'
 > {
-  taxonomyTerms: Resolver<
-    E,
-    TaxonomyTermChildrenArgs,
-    Connection<AbstractTaxonomyTermChildPayload>
-  >
-}
-
-export function createTaxonomyTermChildResolvers<
-  E extends AbstractTaxonomyTermChildPayload
->(): TaxonomyTermChildResolvers<E> {
   return {
-    async taxonomyTerms(entity: E, cursorPayload, { dataSources }: Context) {
+    async taxonomyTerms(entity, cursorPayload, { dataSources }) {
       const taxonomyTerms = await Promise.all(
         entity.taxonomyTermIds.map(async (id: number) => {
-          return (await dataSources.model.serlo.getUuid({
+          return await dataSources.model.serlo.getUuidWithCustomDecoder({
             id,
-          })) as AbstractTaxonomyTermChildPayload | null
+            decoder: TaxonomyTermDecoder,
+          })
         })
       )
-      return resolveConnection<AbstractTaxonomyTermChildPayload>({
+      return resolveConnection({
         nodes: taxonomyTerms.filter(isDefined),
         payload: cursorPayload,
         createCursor(node) {

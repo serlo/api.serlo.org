@@ -40,8 +40,8 @@ export function createNotificationEventResolvers<
   T extends AbstractNotificationEventPayload
 >(): NotificationEventResolvers<T> {
   return {
-    actor(notificationEvent, _args, context, info) {
-      return resolveUser({ id: notificationEvent.actorId }, context, info)
+    actor(notificationEvent, _args, context) {
+      return resolveUser({ id: notificationEvent.actorId }, context)
     },
   }
 }

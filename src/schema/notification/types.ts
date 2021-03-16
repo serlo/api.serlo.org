@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import {
+  Model,
   MutationNamespace,
   MutationResolver,
   QueryResolver,
@@ -43,7 +44,6 @@ import { SetTaxonomyParentNotificationEventPayload } from '~/schema/notification
 import { SetTaxonomyTermNotificationEventPayload } from '~/schema/notification/set-taxonomy-term-notification-event/types'
 import { SetThreadStateNotificationEventPayload } from '~/schema/notification/set-thread-state-notification-event/types'
 import { SetUuidStateNotificationEventPayload } from '~/schema/notification/set-uuid-state-notification-event/types'
-import { UserPayload } from '~/schema/uuid/user/types'
 import {
   AbstractNotificationEvent,
   NotificationMutationSetStateArgs,
@@ -137,5 +137,5 @@ export interface NotificationResolvers {
 export interface NotificationEventResolvers<
   T extends AbstractNotificationEventPayload
 > {
-  actor: Resolver<T, never, Partial<UserPayload> | null>
+  actor: Resolver<T, never, Partial<Model<'User'>> | null>
 }

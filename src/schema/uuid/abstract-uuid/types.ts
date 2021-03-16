@@ -19,29 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Model } from '~/internals/graphql'
 import {
-  MutationNamespace,
-  MutationResolver,
-  QueryResolver,
-  Resolver,
-  TypeResolver,
-} from '~/internals/graphql'
-import { CommentPayload } from '~/schema/thread/types'
-import {
-  EntityPayload,
-  EntityRevisionPayload,
   EntityRevisionType,
   EntityType,
 } from '~/schema/uuid/abstract-entity/types'
-import { PagePayload, PageRevisionPayload } from '~/schema/uuid/page/types'
-import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
-import { UserPayload } from '~/schema/uuid/user/types'
-import {
-  AbstractUuid,
-  QueryUuidArgs,
-  UuidMutationSetStateArgs,
-  UuidSetStateResponse,
-} from '~/types'
 
 export enum DiscriminatorType {
   Comment = 'Comment',
@@ -52,38 +34,4 @@ export enum DiscriminatorType {
 }
 
 export type UuidType = DiscriminatorType | EntityType | EntityRevisionType
-
-export type UuidPayload =
-  | CommentPayload
-  | EntityPayload
-  | EntityRevisionPayload
-  | PagePayload
-  | PageRevisionPayload
-  | TaxonomyTermPayload
-  | UserPayload
-
-export interface AbstractUuidPayload
-  extends Omit<AbstractUuid, keyof UuidResolvers> {
-  __typename: UuidType
-  // TODO: this is actually non-null
-  alias: string | null
-}
-
-export interface UuidResolvers {
-  alias: Resolver<AbstractUuidPayload, never, string | null>
-}
-
-export interface AbstractUuidResolvers {
-  AbstractUuid: {
-    __resolveType: TypeResolver<UuidPayload>
-  }
-  Query: {
-    uuid: QueryResolver<QueryUuidArgs, UuidPayload | null>
-  }
-  Mutation: {
-    uuid: MutationNamespace
-  }
-  UuidMutation: {
-    setState: MutationResolver<UuidMutationSetStateArgs, UuidSetStateResponse>
-  }
-}
+export type UuidPayload = Model<'AbstractUuid'>

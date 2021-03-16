@@ -22,14 +22,14 @@
 import * as R from 'ramda'
 
 import { license } from '../license'
+import { Model } from '~/internals/graphql'
 import {
   EntityRevisionType,
   EntityType,
 } from '~/schema/uuid/abstract-entity/types'
-import { VideoPayload, VideoRevisionPayload } from '~/schema/uuid/video/types'
 import { Instance } from '~/types'
 
-export const video: VideoPayload = {
+export const video: Model<'Video'> = {
   __typename: EntityType.Video,
   id: 16078,
   trashed: false,
@@ -42,7 +42,7 @@ export const video: VideoPayload = {
   taxonomyTermIds: [5],
 }
 
-export const videoRevision: VideoRevisionPayload = {
+export const videoRevision: Model<'VideoRevision'> = {
   __typename: EntityRevisionType.VideoRevision,
   id: 16114,
   trashed: false,
@@ -56,7 +56,7 @@ export const videoRevision: VideoRevisionPayload = {
   changes: 'changes',
 }
 
-export function getVideoDataWithoutSubResolvers(video: VideoPayload) {
+export function getVideoDataWithoutSubResolvers(video: Model<'Video'>) {
   return R.omit(
     [
       'currentRevisionId',
@@ -70,7 +70,7 @@ export function getVideoDataWithoutSubResolvers(video: VideoPayload) {
 }
 
 export function getVideoRevisionDataWithoutSubResolvers(
-  videoRevision: VideoRevisionPayload
+  videoRevision: Model<'VideoRevision'>
 ) {
   return R.omit(['authorId', 'repositoryId', 'alias'], videoRevision)
 }

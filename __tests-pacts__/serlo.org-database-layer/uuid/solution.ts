@@ -32,13 +32,10 @@ import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
-import {
-  SolutionPayload,
-  SolutionRevisionPayload,
-} from '~/schema/uuid/solution/types'
+import { Model } from '~/internals/graphql'
 
 test('Solution', async () => {
-  await addUuidInteraction<SolutionPayload>({
+  await addUuidInteraction<Model<'Solution'>>({
     __typename: solution.__typename,
     id: solution.id,
     trashed: Matchers.boolean(solution.trashed),
@@ -74,7 +71,7 @@ test('Solution', async () => {
 })
 
 test('SolutionRevision', async () => {
-  await addUuidInteraction<SolutionRevisionPayload>({
+  await addUuidInteraction<Model<'SolutionRevision'>>({
     __typename: solutionRevision.__typename,
     id: solutionRevision.id,
     trashed: Matchers.boolean(solutionRevision.trashed),
