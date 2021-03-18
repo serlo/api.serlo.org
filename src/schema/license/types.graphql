@@ -1,4 +1,4 @@
-type License implements InstanceAware {
+type License {
   id: Int!
   instance: Instance!
   default: Boolean!
