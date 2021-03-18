@@ -64,12 +64,13 @@ export enum Instance {
 }
 
 export type InstanceAware = {
+  __typename?: 'InstanceAware';
   instance: Instance;
 };
 
 
 
-export type License = InstanceAware & {
+export type License = {
   __typename?: 'License';
   id: Scalars['Int'];
   instance: Instance;
