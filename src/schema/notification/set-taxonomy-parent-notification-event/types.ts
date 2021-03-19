@@ -24,7 +24,7 @@ import {
   NotificationEventResolvers,
   NotificationEventType,
 } from '../types'
-import { Resolver } from '~/internals/graphql'
+import { LegacyResolver } from '~/internals/graphql'
 import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
 import { SetTaxonomyParentNotificationEvent } from '~/types'
 
@@ -32,7 +32,7 @@ export interface SetTaxonomyParentNotificationEventPayload
   extends AbstractNotificationEventPayload,
     Omit<
       SetTaxonomyParentNotificationEvent,
-      keyof SetTaxonomyParentNotificationEventResolvers['SetTaxonomyParentNotificationEvent']
+      keyof LegacySetTaxonomyParentNotificationEventResolvers['SetTaxonomyParentNotificationEvent']
     > {
   __typename: NotificationEventType.SetTaxonomyParent
   previousParentId: number | null
@@ -40,19 +40,19 @@ export interface SetTaxonomyParentNotificationEventPayload
   childId: number
 }
 
-export interface SetTaxonomyParentNotificationEventResolvers {
+export interface LegacySetTaxonomyParentNotificationEventResolvers {
   SetTaxonomyParentNotificationEvent: {
-    previousParent: Resolver<
+    previousParent: LegacyResolver<
       SetTaxonomyParentNotificationEventPayload,
       never,
       TaxonomyTermPayload | null
     >
-    parent: Resolver<
+    parent: LegacyResolver<
       SetTaxonomyParentNotificationEventPayload,
       never,
       TaxonomyTermPayload | null
     >
-    child: Resolver<
+    child: LegacyResolver<
       SetTaxonomyParentNotificationEventPayload,
       never,
       TaxonomyTermPayload | null

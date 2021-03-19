@@ -20,10 +20,10 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { createNotificationEventResolvers } from '../utils'
-import { RemoveTaxonomyLinkNotificationEventResolvers } from './types'
+import { LegacyRemoveTaxonomyLinkNotificationEventResolvers } from './types'
 import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
 
-export const resolvers: RemoveTaxonomyLinkNotificationEventResolvers = {
+export const resolvers: LegacyRemoveTaxonomyLinkNotificationEventResolvers = {
   RemoveTaxonomyLinkNotificationEvent: {
     ...createNotificationEventResolvers(),
     async parent(notificationEvent, _args, { dataSources }) {

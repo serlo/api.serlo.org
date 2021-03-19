@@ -24,7 +24,7 @@ import {
   NotificationEventResolvers,
   NotificationEventType,
 } from '../types'
-import { Resolver } from '~/internals/graphql'
+import { LegacyResolver } from '~/internals/graphql'
 import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
 import { CreateTaxonomyTermNotificationEvent } from '~/types'
 
@@ -32,15 +32,15 @@ export interface CreateTaxonomyTermNotificationEventPayload
   extends AbstractNotificationEventPayload,
     Omit<
       CreateTaxonomyTermNotificationEvent,
-      keyof CreateTaxonomyTermNotificationEventResolvers['CreateTaxonomyTermNotificationEvent']
+      keyof LegacyCreateTaxonomyTermNotificationEventResolvers['CreateTaxonomyTermNotificationEvent']
     > {
   __typename: NotificationEventType.CreateTaxonomyTerm
   taxonomyTermId: number
 }
 
-export interface CreateTaxonomyTermNotificationEventResolvers {
+export interface LegacyCreateTaxonomyTermNotificationEventResolvers {
   CreateTaxonomyTermNotificationEvent: {
-    taxonomyTerm: Resolver<
+    taxonomyTerm: LegacyResolver<
       CreateTaxonomyTermNotificationEventPayload,
       never,
       TaxonomyTermPayload | null

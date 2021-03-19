@@ -24,7 +24,7 @@ import {
   NotificationEventResolvers,
   NotificationEventType,
 } from '../types'
-import { Resolver } from '~/internals/graphql'
+import { LegacyResolver } from '~/internals/graphql'
 import {
   EntityPayload,
   EntityRevisionPayload,
@@ -35,21 +35,21 @@ export interface CreateEntityRevisionNotificationEventPayload
   extends AbstractNotificationEventPayload,
     Omit<
       CreateEntityRevisionNotificationEvent,
-      keyof CreateEntityRevisionNotificationEventResolvers['CreateEntityRevisionNotificationEvent']
+      keyof LegacyCreateEntityRevisionNotificationEventResolvers['CreateEntityRevisionNotificationEvent']
     > {
   __typename: NotificationEventType.CreateEntityRevision
   entityId: number
   entityRevisionId: number
 }
 
-export interface CreateEntityRevisionNotificationEventResolvers {
+export interface LegacyCreateEntityRevisionNotificationEventResolvers {
   CreateEntityRevisionNotificationEvent: {
-    entity: Resolver<
+    entity: LegacyResolver<
       CreateEntityRevisionNotificationEventPayload,
       never,
       EntityPayload | null
     >
-    entityRevision: Resolver<
+    entityRevision: LegacyResolver<
       CreateEntityRevisionNotificationEventPayload,
       never,
       EntityRevisionPayload | null

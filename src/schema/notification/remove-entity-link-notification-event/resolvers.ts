@@ -20,10 +20,10 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { createNotificationEventResolvers } from '../utils'
-import { RemoveEntityLinkNotificationEventResolvers } from './types'
+import { LegacyRemoveEntityLinkNotificationEventResolvers } from './types'
 import { EntityPayload } from '~/schema/uuid/abstract-entity/types'
 
-export const resolvers: RemoveEntityLinkNotificationEventResolvers = {
+export const resolvers: LegacyRemoveEntityLinkNotificationEventResolvers = {
   RemoveEntityLinkNotificationEvent: {
     ...createNotificationEventResolvers(),
     async parent(notificationEvent, _args, { dataSources }) {

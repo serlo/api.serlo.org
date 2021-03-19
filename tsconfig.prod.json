@@ -9,6 +9,7 @@
     "moduleResolution": "node",
     "target": "es5",
     "sourceMap": true,
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "plugins": [{ "transform": "@zerollup/ts-transform-paths" }]
   }
 }

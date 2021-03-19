@@ -24,7 +24,7 @@ import {
   NotificationEventResolvers,
   NotificationEventType,
 } from '../types'
-import { Resolver } from '~/internals/graphql'
+import { LegacyResolver } from '~/internals/graphql'
 import { EntityPayload } from '~/schema/uuid/abstract-entity/types'
 import { RemoveEntityLinkNotificationEvent } from '~/types'
 
@@ -32,21 +32,21 @@ export interface RemoveEntityLinkNotificationEventPayload
   extends AbstractNotificationEventPayload,
     Omit<
       RemoveEntityLinkNotificationEvent,
-      keyof RemoveEntityLinkNotificationEventResolvers['RemoveEntityLinkNotificationEvent']
+      keyof LegacyRemoveEntityLinkNotificationEventResolvers['RemoveEntityLinkNotificationEvent']
     > {
   __typename: NotificationEventType.RemoveEntityLink
   parentId: number
   childId: number
 }
 
-export interface RemoveEntityLinkNotificationEventResolvers {
+export interface LegacyRemoveEntityLinkNotificationEventResolvers {
   RemoveEntityLinkNotificationEvent: {
-    parent: Resolver<
+    parent: LegacyResolver<
       RemoveEntityLinkNotificationEventPayload,
       never,
       EntityPayload | null
     >
-    child: Resolver<
+    child: LegacyResolver<
       RemoveEntityLinkNotificationEventPayload,
       never,
       EntityPayload | null

@@ -24,7 +24,7 @@ import { ForbiddenError } from 'apollo-server'
 import {
   NotificationEventPayload,
   NotificationPayload,
-  NotificationResolvers,
+  LegacyNotificationResolvers,
 } from './types'
 import {
   assertUserIsAuthenticated,
@@ -32,7 +32,7 @@ import {
 } from '~/internals/graphql'
 import { resolveConnection } from '~/schema/connection/utils'
 
-export const resolvers: NotificationResolvers = {
+export const resolvers: LegacyNotificationResolvers = {
   AbstractNotificationEvent: {
     __resolveType(notificationEvent) {
       return notificationEvent.__typename
