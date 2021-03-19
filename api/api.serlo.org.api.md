@@ -4,11 +4,19 @@
 
 ```ts
 
-import type { Context } from '~/internals/graphql/context';
-import type { GraphQLResolveInfo } from 'graphql';
+import { A } from 'ts-toolbelt';
+import { DocumentNode } from 'graphql';
+import { either } from 'fp-ts';
+import { function } from 'fp-ts';
+import { GraphQLResolveInfo } from 'graphql';
 import type { GraphQLScalarType } from 'graphql';
 import type { GraphQLScalarTypeConfig } from 'graphql';
-import type { ModelOf } from '~/internals/model/types';
+import { NonEmptyArray } from 'fp-ts/lib/NonEmptyArray';
+import { O } from 'ts-toolbelt';
+import { option } from 'fp-ts';
+import { RESTDataSource } from 'apollo-datasource-rest';
+import * as t from 'io-ts';
+import { default as t_2 } from 'io-ts';
 
 // @public (undocumented)
 export type AbstractEntity = {
@@ -19,6 +27,20 @@ export type AbstractEntity = {
     alias?: Maybe<Scalars['String']>;
     license: License;
 };
+
+// @public (undocumented)
+export const AbstractEntityDecoder: t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>;
 
 // @public (undocumented)
 export type AbstractEntityResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractEntity'] = ResolversParentTypes['AbstractEntity']> = {
@@ -42,6 +64,20 @@ export type AbstractEntityRevision = {
 };
 
 // @public (undocumented)
+export const AbstractEntityRevisionDecoder: t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>;
+
+// @public (undocumented)
 export type AbstractEntityRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractEntityRevision'] = ResolversParentTypes['AbstractEntityRevision']> = {
     __resolveType: TypeResolveFn<'AppletRevision' | 'ArticleRevision' | 'CoursePageRevision' | 'CourseRevision' | 'EventRevision' | 'ExerciseGroupRevision' | 'ExerciseRevision' | 'GroupedExerciseRevision' | 'SolutionRevision' | 'VideoRevision', ParentType, ContextType>;
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -63,6 +99,39 @@ export type AbstractExercise = {
     currentRevision?: Maybe<ExerciseRevision | GroupedExerciseRevision>;
     solution?: Maybe<Solution>;
 };
+
+// @public (undocumented)
+export const AbstractExerciseDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Exercise>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    solutionId: t.UnionC<[t.NumberC, t.NullC]>;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.GroupedExercise>;
+    parentId: t.NumberC;
+    solutionId: t.UnionC<[t.NumberC, t.NullC]>;
+}>]>>]>;
 
 // @public (undocumented)
 export type AbstractExerciseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractExercise'] = ResolversParentTypes['AbstractExercise']> = {
@@ -119,6 +188,16 @@ export type AbstractNotificationEvent = {
     actor: User;
     objectId: Scalars['Int'];
 };
+
+// @public (undocumented)
+export interface AbstractNotificationEventPayload extends Omit<AbstractNotificationEvent, 'actor'> {
+    // (undocumented)
+    __typename: NotificationEventType;
+    // (undocumented)
+    actorId: number;
+    // (undocumented)
+    objectId: number;
+}
 
 // @public (undocumented)
 export type AbstractNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractNotificationEvent'] = ResolversParentTypes['AbstractNotificationEvent']> = {
@@ -267,6 +346,13 @@ export type AbstractUuidCursorResolvers<ContextType = Context, ParentType extend
 };
 
 // @public (undocumented)
+export const AbstractUuidDecoder: t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>;
+
+// @public (undocumented)
 export type AbstractUuidResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractUuid'] = ResolversParentTypes['AbstractUuid']> = {
     __resolveType: TypeResolveFn<'Comment' | 'Applet' | 'AppletRevision' | 'Article' | 'ArticleRevision' | 'CoursePage' | 'CoursePageRevision' | 'Course' | 'CourseRevision' | 'Event' | 'EventRevision' | 'ExerciseGroup' | 'ExerciseGroupRevision' | 'Exercise' | 'ExerciseRevision' | 'GroupedExercise' | 'GroupedExerciseRevision' | 'Page' | 'PageRevision' | 'Solution' | 'SolutionRevision' | 'TaxonomyTerm' | 'User' | 'Video' | 'VideoRevision', ParentType, ContextType>;
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -275,9 +361,17 @@ export type AbstractUuidResolvers<ContextType = Context, ParentType extends Reso
 };
 
 // @public (undocumented)
+export function addContext(context: ErrorContext): (error: ErrorEvent_2) => ErrorEvent_2;
+
+// @public (undocumented)
 export type AliasInput = {
     instance: Instance;
     path: Scalars['String'];
+};
+
+// @public (undocumented)
+export type AllPayloads = {
+    [M in keyof ModelFactories]: Payloads<ReturnType<ModelFactories[M]>>;
 };
 
 // @public (undocumented)
@@ -294,6 +388,23 @@ export type Applet = AbstractUuid & AbstractRepository & AbstractEntity & Abstra
     revisions: AppletRevisionConnection;
     taxonomyTerms: TaxonomyTermConnection;
 };
+
+// @public (undocumented)
+export const AppletDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Applet>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type AppletResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Applet'] = ResolversParentTypes['Applet']> = {
@@ -361,6 +472,27 @@ export type AppletRevisionCursorResolvers<ContextType = Context, ParentType exte
 };
 
 // @public (undocumented)
+export const AppletRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.AppletRevision>;
+    url: t.StringC;
+    title: t.StringC;
+    content: t.StringC;
+    metaTitle: t.StringC;
+    metaDescription: t.StringC;
+}>]>>;
+
+// @public (undocumented)
 export type AppletRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AppletRevision'] = ResolversParentTypes['AppletRevision']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
@@ -416,6 +548,16 @@ export type AppletThreadsArgs = {
 };
 
 // @public (undocumented)
+export interface Arguments {
+    // (undocumented)
+    majorDimension?: MajorDimension;
+    // (undocumented)
+    range: string;
+    // (undocumented)
+    spreadsheetId: string;
+}
+
+// @public (undocumented)
 export type Article = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
     __typename?: 'Article';
     id: Scalars['Int'];
@@ -429,6 +571,23 @@ export type Article = AbstractUuid & AbstractRepository & AbstractEntity & Abstr
     revisions: ArticleRevisionConnection;
     taxonomyTerms: TaxonomyTermConnection;
 };
+
+// @public (undocumented)
+export const ArticleDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Article>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type ArticleResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Article'] = ResolversParentTypes['Article']> = {
@@ -495,6 +654,26 @@ export type ArticleRevisionCursorResolvers<ContextType = Context, ParentType ext
 };
 
 // @public (undocumented)
+export const ArticleRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.ArticleRevision>;
+    title: t.StringC;
+    content: t.StringC;
+    metaTitle: t.StringC;
+    metaDescription: t.StringC;
+}>]>>;
+
+// @public (undocumented)
 export type ArticleRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ArticleRevision'] = ResolversParentTypes['ArticleRevision']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
@@ -549,6 +728,58 @@ export type ArticleThreadsArgs = {
 };
 
 // @public (undocumented)
+export function assertAll<A, B extends A>(args: {
+    assertion: function.Refinement<A, B>;
+} & ErrorEvent_2): (list: A[]) => B[];
+
+// @public (undocumented)
+export function assertAll<A>(args: {
+    assertion: function.Predicate<A>;
+} & ErrorEvent_2): (list: A[]) => A[];
+
+// @public (undocumented)
+export function assertUserIsAuthenticated(user: number | null): asserts user is number;
+
+// @public (undocumented)
+export type AsyncOrSync<T> = Promise<T> | T;
+
+// @public (undocumented)
+interface Cache_2 {
+    // (undocumented)
+    flush(): Promise<void>;
+    // (undocumented)
+    get<T>({ key }: {
+        key: string;
+    }): Promise<option.Option<CacheEntry<T>>>;
+    // (undocumented)
+    quit(): Promise<void>;
+    // (undocumented)
+    ready(): Promise<void>;
+    // (undocumented)
+    remove({ key }: {
+        key: string;
+    }): Promise<void>;
+    // (undocumented)
+    set<T>(payload: {
+        key: string;
+        priority?: Priority;
+    } & FunctionOrValue<T>): Promise<void>;
+}
+
+export { Cache_2 as Cache }
+
+// @public (undocumented)
+export interface CacheEntry<Value> {
+    // (undocumented)
+    lastModified: number;
+    // (undocumented)
+    value: Value;
+}
+
+// @public (undocumented)
+export type CellValues = NonEmptyArray<string[]>;
+
+// @public (undocumented)
 export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'CheckoutRevisionNotificationEvent';
     id: Scalars['Int'];
@@ -560,6 +791,16 @@ export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & Inst
     revision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | GroupedExerciseRevision | PageRevision | SolutionRevision | VideoRevision;
     reason: Scalars['String'];
 };
+
+// @public (undocumented)
+export interface CheckoutRevisionNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CheckoutRevisionNotificationEvent, keyof LegacyCheckoutRevisionNotificationEventResolvers['CheckoutRevisionNotificationEvent']> {
+    // (undocumented)
+    __typename: NotificationEventType.CheckoutRevision;
+    // (undocumented)
+    repositoryId: number;
+    // (undocumented)
+    revisionId: number;
+}
 
 // @public (undocumented)
 export type CheckoutRevisionNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CheckoutRevisionNotificationEvent'] = ResolversParentTypes['CheckoutRevisionNotificationEvent']> = {
@@ -606,6 +847,22 @@ export type CommentConnectionResolvers<ContextType = Context, ParentType extends
 };
 
 // @public (undocumented)
+export const CommentDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.LiteralC<"Comment">;
+    authorId: t.NumberC;
+    title: t.UnionC<[t.StringC, t.NullC]>;
+    date: t.StringC;
+    archived: t.BooleanC;
+    content: t.StringC;
+    parentId: t.NumberC;
+    childrenIds: t.ArrayC<t.NumberC>;
+}>]>>;
+
+// @public (undocumented)
 export type CommentEdge = {
     __typename?: 'CommentEdge';
     cursor: Scalars['String'];
@@ -633,6 +890,45 @@ export type CommentResolvers<ContextType = Context, ParentType extends Resolvers
 };
 
 // @public (undocumented)
+export interface Connection<T> {
+    // (undocumented)
+    edges: Cursor<T>[];
+    // (undocumented)
+    nodes: T[];
+    // (undocumented)
+    pageInfo: PageInfo;
+    // (undocumented)
+    totalCount: number;
+}
+
+// @public (undocumented)
+export interface ConnectionPayload {
+    // (undocumented)
+    after?: Maybe<Scalars['String']>;
+    // (undocumented)
+    before?: Maybe<Scalars['String']>;
+    // (undocumented)
+    first?: Maybe<Scalars['Int']>;
+    // (undocumented)
+    last?: Maybe<Scalars['Int']>;
+}
+
+// @public (undocumented)
+export function consumeErrorEvent<A>(defaultValue: A): (event: ErrorEvent_2) => A;
+
+// @public (undocumented)
+export interface Context {
+    // (undocumented)
+    dataSources: {
+        model: ModelDataSource;
+    };
+    // (undocumented)
+    service: Service;
+    // (undocumented)
+    userId: number | null;
+}
+
+// @public (undocumented)
 export type Course = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
     __typename?: 'Course';
     id: Scalars['Int'];
@@ -649,6 +945,24 @@ export type Course = AbstractUuid & AbstractRepository & AbstractEntity & Abstra
 };
 
 // @public (undocumented)
+export const CourseDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Course>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    pageIds: t.ArrayC<t.NumberC>;
+}>]>>;
+
+// @public (undocumented)
 export type CoursePage = AbstractUuid & AbstractRepository & AbstractEntity & InstanceAware & ThreadAware & {
     __typename?: 'CoursePage';
     id: Scalars['Int'];
@@ -662,6 +976,23 @@ export type CoursePage = AbstractUuid & AbstractRepository & AbstractEntity & In
     revisions: CoursePageRevisionConnection;
     course: Course;
 };
+
+// @public (undocumented)
+export const CoursePageDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.CoursePage>;
+    parentId: t.NumberC;
+}>]>>;
 
 // @public (undocumented)
 export type CoursePageResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CoursePage'] = ResolversParentTypes['CoursePage']> = {
@@ -724,6 +1055,24 @@ export type CoursePageRevisionCursorResolvers<ContextType = Context, ParentType 
     node?: Resolver<ResolversTypes['CoursePageRevision'], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+// @public (undocumented)
+export const CoursePageRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.CoursePageRevision>;
+    title: t.StringC;
+    content: t.StringC;
+}>]>>;
 
 // @public (undocumented)
 export type CoursePageRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CoursePageRevision'] = ResolversParentTypes['CoursePageRevision']> = {
@@ -840,6 +1189,25 @@ export type CourseRevisionCursorResolvers<ContextType = Context, ParentType exte
 };
 
 // @public (undocumented)
+export const CourseRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.CourseRevision>;
+    title: t.StringC;
+    content: t.StringC;
+    metaDescription: t.StringC;
+}>]>>;
+
+// @public (undocumented)
 export type CourseRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CourseRevision'] = ResolversParentTypes['CourseRevision']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
@@ -893,6 +1261,11 @@ export type CourseThreadsArgs = {
 };
 
 // @public (undocumented)
+export function createCache({ timer }: {
+    timer: Timer;
+}): Cache_2;
+
+// @public (undocumented)
 export type CreateCommentNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'CreateCommentNotificationEvent';
     id: Scalars['Int'];
@@ -903,6 +1276,16 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & Instanc
     thread: UnsupportedThread;
     comment: UnsupportedComment;
 };
+
+// @public (undocumented)
+export interface CreateCommentNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CreateCommentNotificationEvent, keyof LegacyCreateCommentNotificationEventResolvers['CreateCommentNotificationEvent']> {
+    // (undocumented)
+    __typename: NotificationEventType.CreateComment;
+    // (undocumented)
+    commentId: number;
+    // (undocumented)
+    threadId: number;
+}
 
 // @public (undocumented)
 export type CreateCommentNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateCommentNotificationEvent'] = ResolversParentTypes['CreateCommentNotificationEvent']> = {
@@ -929,6 +1312,16 @@ export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & Inst
 };
 
 // @public (undocumented)
+export interface CreateEntityLinkNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CreateEntityLinkNotificationEvent, keyof LegacyCreateEntityLinkNotificationEventResolvers['CreateEntityLinkNotificationEvent']> {
+    // (undocumented)
+    __typename: NotificationEventType.CreateEntityLink;
+    // (undocumented)
+    childId: number;
+    // (undocumented)
+    parentId: number;
+}
+
+// @public (undocumented)
 export type CreateEntityLinkNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateEntityLinkNotificationEvent'] = ResolversParentTypes['CreateEntityLinkNotificationEvent']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
@@ -950,6 +1343,14 @@ export type CreateEntityNotificationEvent = AbstractNotificationEvent & Instance
     objectId: Scalars['Int'];
     entity: Applet | Article | CoursePage | Course | Event_2 | ExerciseGroup | Exercise | GroupedExercise | Solution | Video;
 };
+
+// @public (undocumented)
+export interface CreateEntityNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CreateEntityNotificationEvent, keyof LegacyCreateEntityNotificationEventResolvers['CreateEntityNotificationEvent']> {
+    // (undocumented)
+    __typename: NotificationEventType.CreateEntity;
+    // (undocumented)
+    entityId: number;
+}
 
 // @public (undocumented)
 export type CreateEntityNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateEntityNotificationEvent'] = ResolversParentTypes['CreateEntityNotificationEvent']> = {
@@ -975,6 +1376,16 @@ export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & 
 };
 
 // @public (undocumented)
+export interface CreateEntityRevisionNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CreateEntityRevisionNotificationEvent, keyof LegacyCreateEntityRevisionNotificationEventResolvers['CreateEntityRevisionNotificationEvent']> {
+    // (undocumented)
+    __typename: NotificationEventType.CreateEntityRevision;
+    // (undocumented)
+    entityId: number;
+    // (undocumented)
+    entityRevisionId: number;
+}
+
+// @public (undocumented)
 export type CreateEntityRevisionNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateEntityRevisionNotificationEvent'] = ResolversParentTypes['CreateEntityRevisionNotificationEvent']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
@@ -984,6 +1395,418 @@ export type CreateEntityRevisionNotificationEventResolvers<ContextType = Context
     entity?: Resolver<ResolversTypes['AbstractEntity'], ParentType, ContextType>;
     entityRevision?: Resolver<ResolversTypes['AbstractEntityRevision'], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+// @public (undocumented)
+export function createGoogleSpreadsheetApiModel({ environment, }: {
+    environment: Environment;
+}): {
+    getValues: ModelQuery<Arguments, either.Either<ErrorEvent_2, CellValues>>;
+};
+
+// @public (undocumented)
+export function createHelper<P, R>(spec: HelperSpec<P, R>): Helper<P, R>;
+
+// @public (undocumented)
+export function createMutationNamespace(): () => {};
+
+// @public (undocumented)
+export function createQuery<P, R>(spec: QuerySpec<P, R>, environment: Environment): ModelQuery<P, R>;
+
+// @public (undocumented)
+export function createSerloModel({ environment, }: {
+    environment: Environment;
+}): {
+    createThread: ((payload: ThreadCreateThreadInput & {
+        userId: number;
+    }) => Promise<({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: "Comment";
+        authorId: number;
+        title: string | null;
+        date: string;
+        archived: boolean;
+        content: string;
+        parentId: number;
+        childrenIds: number[];
+    }) | null>) & {
+        _mutationSpec: {
+            legacyMutate: (payload: ThreadCreateThreadInput & {
+                userId: number;
+            }) => Promise<({
+                id: number;
+                trashed: boolean;
+                alias: string;
+            } & {
+                __typename: "Comment";
+                authorId: number;
+                title: string | null;
+                date: string;
+                archived: boolean;
+                content: string;
+                parentId: number;
+                childrenIds: number[];
+            }) | null>;
+        } | {
+            decoder: t.Type<({
+                id: number;
+                trashed: boolean;
+                alias: string;
+            } & {
+                __typename: "Comment";
+                authorId: number;
+                title: string | null;
+                date: string;
+                archived: boolean;
+                content: string;
+                parentId: number;
+                childrenIds: number[];
+            }) | null, ({
+                id: number;
+                trashed: boolean;
+                alias: string;
+            } & {
+                __typename: "Comment";
+                authorId: number;
+                title: string | null;
+                date: string;
+                archived: boolean;
+                content: string;
+                parentId: number;
+                childrenIds: number[];
+            }) | null, unknown>;
+            updateCache?: ((payload: ThreadCreateThreadInput & {
+                userId: number;
+            }, newValue: ({
+                id: number;
+                trashed: boolean;
+                alias: string;
+            } & {
+                __typename: "Comment";
+                authorId: number;
+                title: string | null;
+                date: string;
+                archived: boolean;
+                content: string;
+                parentId: number;
+                childrenIds: number[];
+            }) | null) => void | Promise<void>) | undefined;
+            mutate: (payload: ThreadCreateThreadInput & {
+                userId: number;
+            }) => Promise<unknown>;
+        };
+    };
+    archiveThread: ((payload: {
+        ids: number[];
+        archived: boolean;
+        userId: number;
+    }) => Promise<void>) & {
+        _mutationSpec: {
+            legacyMutate: (payload: {
+                ids: number[];
+                archived: boolean;
+                userId: number;
+            }) => Promise<void>;
+        } | {
+            decoder: t.Type<void, void, unknown>;
+            updateCache?: ((payload: {
+                ids: number[];
+                archived: boolean;
+                userId: number;
+            }, newValue: void) => void | Promise<void>) | undefined;
+            mutate: (payload: {
+                ids: number[];
+                archived: boolean;
+                userId: number;
+            }) => Promise<unknown>;
+        };
+    };
+    createComment: ((payload: {
+        content: string;
+        threadId: number;
+        userId: number;
+        subscribe: boolean;
+        sendEmail: boolean;
+    }) => Promise<({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: "Comment";
+        authorId: number;
+        title: string | null;
+        date: string;
+        archived: boolean;
+        content: string;
+        parentId: number;
+        childrenIds: number[];
+    }) | null>) & {
+        _mutationSpec: {
+            legacyMutate: (payload: {
+                content: string;
+                threadId: number;
+                userId: number;
+                subscribe: boolean;
+                sendEmail: boolean;
+            }) => Promise<({
+                id: number;
+                trashed: boolean;
+                alias: string;
+            } & {
+                __typename: "Comment";
+                authorId: number;
+                title: string | null;
+                date: string;
+                archived: boolean;
+                content: string;
+                parentId: number;
+                childrenIds: number[];
+            }) | null>;
+        } | {
+            decoder: t.Type<({
+                id: number;
+                trashed: boolean;
+                alias: string;
+            } & {
+                __typename: "Comment";
+                authorId: number;
+                title: string | null;
+                date: string;
+                archived: boolean;
+                content: string;
+                parentId: number;
+                childrenIds: number[];
+            }) | null, ({
+                id: number;
+                trashed: boolean;
+                alias: string;
+            } & {
+                __typename: "Comment";
+                authorId: number;
+                title: string | null;
+                date: string;
+                archived: boolean;
+                content: string;
+                parentId: number;
+                childrenIds: number[];
+            }) | null, unknown>;
+            updateCache?: ((payload: {
+                content: string;
+                threadId: number;
+                userId: number;
+                subscribe: boolean;
+                sendEmail: boolean;
+            }, newValue: ({
+                id: number;
+                trashed: boolean;
+                alias: string;
+            } & {
+                __typename: "Comment";
+                authorId: number;
+                title: string | null;
+                date: string;
+                archived: boolean;
+                content: string;
+                parentId: number;
+                childrenIds: number[];
+            }) | null) => void | Promise<void>) | undefined;
+            mutate: (payload: {
+                content: string;
+                threadId: number;
+                userId: number;
+                subscribe: boolean;
+                sendEmail: boolean;
+            }) => Promise<unknown>;
+        };
+    };
+    getActiveAuthorIds: ModelQuery<undefined, number[]>;
+    getActiveReviewerIds: ModelQuery<undefined, number[]>;
+    getAlias: ModelQuery<{
+        path: string;
+        instance: Instance;
+    }, {
+        id: number;
+        instance: Instance;
+        path: string;
+    } | null>;
+    getLicense: ModelQuery<{
+        id: number;
+    }, {
+        id: number;
+        instance: Instance;
+        default: boolean;
+        title: string;
+        url: string;
+        content: string;
+        agreement: string;
+        iconHref: string;
+    }>;
+    getNavigationPayload: ModelQuery<{
+        instance: Instance;
+    }, NavigationPayload>;
+    getNavigation: Helper<{
+        instance: Instance;
+        id: number;
+    }, NavigationData | null>;
+    getNotificationEvent: ModelQuery<{
+        id: number;
+    }, AbstractNotificationEventPayload | null>;
+    getNotifications: ModelQuery<{
+        userId: number;
+    }, NotificationsPayload>;
+    getSubscriptions: ModelQuery<{
+        userId: number;
+    }, SubscriptionsPayload>;
+    setSubscription: ((payload: {
+        ids: number[];
+        userId: number;
+        subscribe: boolean;
+        sendEmail: boolean;
+    }) => Promise<void>) & {
+        _mutationSpec: {
+            legacyMutate: (payload: {
+                ids: number[];
+                userId: number;
+                subscribe: boolean;
+                sendEmail: boolean;
+            }) => Promise<void>;
+        } | {
+            decoder: t.Type<void, void, unknown>;
+            updateCache?: ((payload: {
+                ids: number[];
+                userId: number;
+                subscribe: boolean;
+                sendEmail: boolean;
+            }, newValue: void) => void | Promise<void>) | undefined;
+            mutate: (payload: {
+                ids: number[];
+                userId: number;
+                subscribe: boolean;
+                sendEmail: boolean;
+            }) => Promise<unknown>;
+        };
+    };
+    getThreadIds: ModelQuery<{
+        id: number;
+    }, {
+        firstCommentIds: number[];
+    }>;
+    getUuid: ModelQuery<{
+        id: number;
+    }, UuidPayload | null>;
+    getUuidWithCustomDecoder: <S extends UuidPayload>({ id, decoder, }: {
+        id: number;
+        decoder: t.Type<S, S, unknown>;
+    }) => Promise<S | null>;
+    setUuidState: ((payload: {
+        ids: number[];
+        userId: number;
+        trashed: boolean;
+    }) => Promise<void>) & {
+        _mutationSpec: {
+            legacyMutate: (payload: {
+                ids: number[];
+                userId: number;
+                trashed: boolean;
+            }) => Promise<void>;
+        } | {
+            decoder: t.Type<void, void, unknown>;
+            updateCache?: ((payload: {
+                ids: number[];
+                userId: number;
+                trashed: boolean;
+            }, newValue: void) => void | Promise<void>) | undefined;
+            mutate: (payload: {
+                ids: number[];
+                userId: number;
+                trashed: boolean;
+            }) => Promise<unknown>;
+        };
+    };
+    removeCacheValue: ((payload: {
+        key: string;
+    }) => Promise<void>) & {
+        _mutationSpec: {
+            legacyMutate: (payload: {
+                key: string;
+            }) => Promise<void>;
+        } | {
+            decoder: t.Type<void, void, unknown>;
+            updateCache?: ((payload: {
+                key: string;
+            }, newValue: void) => void | Promise<void>) | undefined;
+            mutate: (payload: {
+                key: string;
+            }) => Promise<unknown>;
+        };
+    };
+    setCacheValue: ((payload: {
+        key: string;
+        value: unknown;
+    }) => Promise<void>) & {
+        _mutationSpec: {
+            legacyMutate: (payload: {
+                key: string;
+                value: unknown;
+            }) => Promise<void>;
+        } | {
+            decoder: t.Type<void, void, unknown>;
+            updateCache?: ((payload: {
+                key: string;
+                value: unknown;
+            }, newValue: void) => void | Promise<void>) | undefined;
+            mutate: (payload: {
+                key: string;
+                value: unknown;
+            }) => Promise<unknown>;
+        };
+    };
+    setNotificationState: ((payload: {
+        ids: number[];
+        userId: number;
+        unread: boolean;
+    }) => Promise<void>) & {
+        _mutationSpec: {
+            legacyMutate: (payload: {
+                ids: number[];
+                userId: number;
+                unread: boolean;
+            }) => Promise<void>;
+        } | {
+            decoder: t.Type<void, void, unknown>;
+            updateCache?: ((payload: {
+                ids: number[];
+                userId: number;
+                unread: boolean;
+            }, newValue: void) => void | Promise<void>) | undefined;
+            mutate: (payload: {
+                ids: number[];
+                userId: number;
+                unread: boolean;
+            }) => Promise<unknown>;
+        };
+    };
+};
+
+// @public (undocumented)
+export function createSwrQueue({ cache, timer, }: {
+    cache: Cache_2;
+    timer: Timer;
+}): SwrQueue;
+
+// @public (undocumented)
+export function createSwrQueueWorker({ cache, timer, concurrency, }: {
+    cache: Cache_2;
+    timer: Timer;
+    concurrency: number;
+}): {
+    ready(): Promise<void>;
+    healthy(): Promise<void>;
+    quit(): Promise<void>;
+    _queue: never;
 };
 
 // @public (undocumented)
@@ -997,6 +1820,16 @@ export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & In
     parent: TaxonomyTerm;
     child: Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event_2 | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
 };
+
+// @public (undocumented)
+export interface CreateTaxonomyLinkNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CreateTaxonomyLinkNotificationEvent, keyof LegacyCreateTaxonomyLinkNotificationEventResolvers['CreateTaxonomyLinkNotificationEvent']> {
+    // (undocumented)
+    __typename: NotificationEventType.CreateTaxonomyLink;
+    // (undocumented)
+    childId: number;
+    // (undocumented)
+    parentId: number;
+}
 
 // @public (undocumented)
 export type CreateTaxonomyLinkNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateTaxonomyLinkNotificationEvent'] = ResolversParentTypes['CreateTaxonomyLinkNotificationEvent']> = {
@@ -1022,6 +1855,14 @@ export type CreateTaxonomyTermNotificationEvent = AbstractNotificationEvent & In
 };
 
 // @public (undocumented)
+export interface CreateTaxonomyTermNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CreateTaxonomyTermNotificationEvent, keyof LegacyCreateTaxonomyTermNotificationEventResolvers['CreateTaxonomyTermNotificationEvent']> {
+    // (undocumented)
+    __typename: NotificationEventType.CreateTaxonomyTerm;
+    // (undocumented)
+    taxonomyTermId: number;
+}
+
+// @public (undocumented)
 export type CreateTaxonomyTermNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateTaxonomyTermNotificationEvent'] = ResolversParentTypes['CreateTaxonomyTermNotificationEvent']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
@@ -1045,6 +1886,16 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
 };
 
 // @public (undocumented)
+export interface CreateThreadNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CreateThreadNotificationEvent, keyof LegacyCreateThreadNotificationEventResolvers['CreateThreadNotificationEvent']> {
+    // (undocumented)
+    __typename: NotificationEventType.CreateThread;
+    // (undocumented)
+    objectId: number;
+    // (undocumented)
+    threadId: number;
+}
+
+// @public (undocumented)
 export type CreateThreadNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateThreadNotificationEvent'] = ResolversParentTypes['CreateThreadNotificationEvent']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
@@ -1057,6 +1908,17 @@ export type CreateThreadNotificationEventResolvers<ContextType = Context, Parent
 };
 
 // @public (undocumented)
+export function createTimer(): Timer;
+
+// @public (undocumented)
+export interface Cursor<T> {
+    // (undocumented)
+    cursor: string;
+    // (undocumented)
+    node: T;
+}
+
+// @public (undocumented)
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
     // (undocumented)
     name: 'DateTime';
@@ -1064,6 +1926,414 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 
 // @public (undocumented)
 export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs = {}> = (next: NextResolverFn<TResult>, parent: TParent, args: TArgs, context: TContext, info: GraphQLResolveInfo) => TResult | Promise<TResult>;
+
+// @public (undocumented)
+export enum DiscriminatorType {
+    // (undocumented)
+    Comment = "Comment",
+    // (undocumented)
+    Page = "Page",
+    // (undocumented)
+    PageRevision = "PageRevision",
+    // (undocumented)
+    TaxonomyTerm = "TaxonomyTerm",
+    // (undocumented)
+    User = "User"
+}
+
+// @public (undocumented)
+export const emptySwrQueue: SwrQueue;
+
+// @public (undocumented)
+export const EntityDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Exercise>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    solutionId: t.UnionC<[t.NumberC, t.NullC]>;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.GroupedExercise>;
+    parentId: t.NumberC;
+    solutionId: t.UnionC<[t.NumberC, t.NullC]>;
+}>]>>]>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Applet>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Article>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Course>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    pageIds: t.ArrayC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.CoursePage>;
+    parentId: t.NumberC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Event>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.ExerciseGroup>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    exerciseIds: t.ArrayC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Solution>;
+    parentId: t.NumberC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Video>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+}>]>>]>;
+
+// @public (undocumented)
+export type EntityPayload = Model<'AbstractEntity'>;
+
+// @public (undocumented)
+export const EntityRevisionDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.AppletRevision>;
+    url: t.StringC;
+    title: t.StringC;
+    content: t.StringC;
+    metaTitle: t.StringC;
+    metaDescription: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.ArticleRevision>;
+    title: t.StringC;
+    content: t.StringC;
+    metaTitle: t.StringC;
+    metaDescription: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.CourseRevision>;
+    title: t.StringC;
+    content: t.StringC;
+    metaDescription: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.CoursePageRevision>;
+    title: t.StringC;
+    content: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.EventRevision>;
+    title: t.StringC;
+    content: t.StringC;
+    metaTitle: t.StringC;
+    metaDescription: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.ExerciseRevision>;
+    content: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.ExerciseGroupRevision>;
+    content: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.GroupedExerciseRevision>;
+    content: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.SolutionRevision>;
+    content: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.VideoRevision>;
+    url: t.StringC;
+    title: t.StringC;
+    content: t.StringC;
+}>]>>]>;
+
+// @public (undocumented)
+export type EntityRevisionPayload = Model<'AbstractEntityRevision'>;
+
+// @public (undocumented)
+export enum EntityRevisionType {
+    // (undocumented)
+    AppletRevision = "AppletRevision",
+    // (undocumented)
+    ArticleRevision = "ArticleRevision",
+    // (undocumented)
+    CoursePageRevision = "CoursePageRevision",
+    // (undocumented)
+    CourseRevision = "CourseRevision",
+    // (undocumented)
+    EventRevision = "EventRevision",
+    // (undocumented)
+    ExerciseGroupRevision = "ExerciseGroupRevision",
+    // (undocumented)
+    ExerciseRevision = "ExerciseRevision",
+    // (undocumented)
+    GroupedExerciseRevision = "GroupedExerciseRevision",
+    // (undocumented)
+    SolutionRevision = "SolutionRevision",
+    // (undocumented)
+    VideoRevision = "VideoRevision"
+}
+
+// @public (undocumented)
+export const EntityRevisionTypeDecoder: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+
+// @public (undocumented)
+export enum EntityType {
+    // (undocumented)
+    Applet = "Applet",
+    // (undocumented)
+    Article = "Article",
+    // (undocumented)
+    Course = "Course",
+    // (undocumented)
+    CoursePage = "CoursePage",
+    // (undocumented)
+    Event = "Event",
+    // (undocumented)
+    Exercise = "Exercise",
+    // (undocumented)
+    ExerciseGroup = "ExerciseGroup",
+    // (undocumented)
+    GroupedExercise = "GroupedExercise",
+    // (undocumented)
+    Solution = "Solution",
+    // (undocumented)
+    Video = "Video"
+}
+
+// @public (undocumented)
+export const EntityTypeDecoder: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+
+// @public (undocumented)
+export interface Environment {
+    // (undocumented)
+    cache: Cache_2;
+    // (undocumented)
+    swrQueue: SwrQueue;
+}
+
+// @public (undocumented)
+export interface ErrorContext {
+    // (undocumented)
+    errorContext?: Record<string, unknown>;
+    // (undocumented)
+    location?: string;
+    // (undocumented)
+    locationContext?: Record<string, unknown>;
+}
+
+// @public (undocumented)
+interface ErrorEvent_2 extends ErrorContext {
+    // (undocumented)
+    error: Error;
+}
+
+export { ErrorEvent_2 as ErrorEvent }
 
 // @public (undocumented)
 type Event_2 = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
@@ -1081,6 +2351,23 @@ type Event_2 = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxo
 };
 
 export { Event_2 as Event }
+
+// @public (undocumented)
+export const EventDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Event>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type EventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = {
@@ -1145,6 +2432,26 @@ export type EventRevisionCursorResolvers<ContextType = Context, ParentType exten
     node?: Resolver<ResolversTypes['EventRevision'], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+// @public (undocumented)
+export const EventRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.EventRevision>;
+    title: t.StringC;
+    content: t.StringC;
+    metaTitle: t.StringC;
+    metaDescription: t.StringC;
+}>]>>;
 
 // @public (undocumented)
 export type EventRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EventRevision'] = ResolversParentTypes['EventRevision']> = {
@@ -1224,6 +2531,24 @@ export type Exercise = AbstractUuid & AbstractRepository & AbstractEntity & Abst
 };
 
 // @public (undocumented)
+export const ExerciseDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Exercise>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    solutionId: t.UnionC<[t.NumberC, t.NullC]>;
+}>]>>;
+
+// @public (undocumented)
 export type ExerciseGroup = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
     __typename?: 'ExerciseGroup';
     id: Scalars['Int'];
@@ -1238,6 +2563,24 @@ export type ExerciseGroup = AbstractUuid & AbstractRepository & AbstractEntity &
     taxonomyTerms: TaxonomyTermConnection;
     exercises: Array<GroupedExercise>;
 };
+
+// @public (undocumented)
+export const ExerciseGroupDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.ExerciseGroup>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    exerciseIds: t.ArrayC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type ExerciseGroupResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExerciseGroup'] = ResolversParentTypes['ExerciseGroup']> = {
@@ -1300,6 +2643,23 @@ export type ExerciseGroupRevisionCursorResolvers<ContextType = Context, ParentTy
     node?: Resolver<ResolversTypes['ExerciseGroupRevision'], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+// @public (undocumented)
+export const ExerciseGroupRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.ExerciseGroupRevision>;
+    content: t.StringC;
+}>]>>;
 
 // @public (undocumented)
 export type ExerciseGroupRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExerciseGroupRevision'] = ResolversParentTypes['ExerciseGroupRevision']> = {
@@ -1415,6 +2775,23 @@ export type ExerciseRevisionCursorResolvers<ContextType = Context, ParentType ex
 };
 
 // @public (undocumented)
+export const ExerciseRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.ExerciseRevision>;
+    content: t.StringC;
+}>]>>;
+
+// @public (undocumented)
 export type ExerciseRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExerciseRevision'] = ResolversParentTypes['ExerciseRevision']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
@@ -1466,6 +2843,14 @@ export type ExerciseThreadsArgs = {
 };
 
 // @public (undocumented)
+export type FunctionOrValue<T> = UpdateFunction<T> | {
+    value: T;
+};
+
+// @public (undocumented)
+export type GetResolver<Name extends keyof Resolvers> = NonNullable<Resolvers[Name]>;
+
+// @public (undocumented)
 export type GroupedExercise = AbstractUuid & AbstractRepository & AbstractEntity & AbstractExercise & InstanceAware & ThreadAware & {
     __typename?: 'GroupedExercise';
     id: Scalars['Int'];
@@ -1480,6 +2865,24 @@ export type GroupedExercise = AbstractUuid & AbstractRepository & AbstractEntity
     solution?: Maybe<Solution>;
     exerciseGroup: ExerciseGroup;
 };
+
+// @public (undocumented)
+export const GroupedExerciseDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.GroupedExercise>;
+    parentId: t.NumberC;
+    solutionId: t.UnionC<[t.NumberC, t.NullC]>;
+}>]>>;
 
 // @public (undocumented)
 export type GroupedExerciseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GroupedExercise'] = ResolversParentTypes['GroupedExercise']> = {
@@ -1544,6 +2947,23 @@ export type GroupedExerciseRevisionCursorResolvers<ContextType = Context, Parent
 };
 
 // @public (undocumented)
+export const GroupedExerciseRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.GroupedExerciseRevision>;
+    content: t.StringC;
+}>]>>;
+
+// @public (undocumented)
 export type GroupedExerciseRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GroupedExerciseRevision'] = ResolversParentTypes['GroupedExerciseRevision']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
@@ -1587,6 +3007,17 @@ export type GroupedExerciseThreadsArgs = {
 };
 
 // @public (undocumented)
+export type Helper<P, R> = ((payload: P) => Promise<R>) & {
+    _helperSpec: HelperSpec<P, R>;
+};
+
+// @public (undocumented)
+export interface HelperSpec<P, R> {
+    // (undocumented)
+    helper: (payload: P) => Promise<R>;
+}
+
+// @public (undocumented)
 export enum Instance {
     // (undocumented)
     De = "de",
@@ -1613,8 +3044,20 @@ export type InstanceAwareResolvers<ContextType = Context, ParentType extends Res
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
 };
 
+// @public (undocumented)
+export const InstanceDecoder: t.Type<Instance>;
+
+// @public
+export type InterfaceResolvers<I extends keyof Resolvers> = Required<Pick<Resolvers, I>>;
+
 // @public @deprecated (undocumented)
 export type IResolvers<ContextType = Context> = Resolvers<ContextType>;
+
+// @public (undocumented)
+export function isDefined<A>(value?: A | null): value is A;
+
+// @public (undocumented)
+export function isQuery(query: unknown): query is ModelQuery<unknown, unknown>;
 
 // @public (undocumented)
 export type IsTypeOfResolverFn<T = {}, TContext = {}> = (obj: T, context: TContext, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
@@ -1629,6 +3072,173 @@ export interface JsonObjectScalarConfig extends GraphQLScalarTypeConfig<Resolver
 export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
     // (undocumented)
     name: 'JSON';
+}
+
+// @public (undocumented)
+export interface LegacyCheckoutRevisionNotificationEventResolvers {
+    // (undocumented)
+    CheckoutRevisionNotificationEvent: {
+        repository: LegacyResolver<CheckoutRevisionNotificationEventPayload, never, RepositoryPayload | null>;
+        revision: LegacyResolver<CheckoutRevisionNotificationEventPayload, never, RevisionPayload | null>;
+    } & NotificationEventResolvers<CheckoutRevisionNotificationEventPayload>;
+}
+
+// @public (undocumented)
+export interface LegacyCreateCommentNotificationEventResolvers {
+    // (undocumented)
+    CreateCommentNotificationEvent: {
+        thread: LegacyResolver<CreateCommentNotificationEventPayload, never, UnsupportedThread>;
+        comment: LegacyResolver<CreateCommentNotificationEventPayload, never, UnsupportedComment>;
+    } & NotificationEventResolvers<CreateCommentNotificationEventPayload>;
+}
+
+// @public (undocumented)
+export interface LegacyCreateEntityLinkNotificationEventResolvers {
+    // (undocumented)
+    CreateEntityLinkNotificationEvent: {
+        parent: LegacyResolver<CreateEntityLinkNotificationEventPayload, never, EntityPayload | null>;
+        child: LegacyResolver<CreateEntityLinkNotificationEventPayload, never, EntityPayload | null>;
+    } & NotificationEventResolvers<CreateEntityLinkNotificationEventPayload>;
+}
+
+// @public (undocumented)
+export interface LegacyCreateEntityNotificationEventResolvers {
+    // (undocumented)
+    CreateEntityNotificationEvent: {
+        entity: LegacyResolver<CreateEntityNotificationEventPayload, never, EntityPayload | null>;
+    } & NotificationEventResolvers<CreateEntityNotificationEventPayload>;
+}
+
+// @public (undocumented)
+export interface LegacyCreateEntityRevisionNotificationEventResolvers {
+    // (undocumented)
+    CreateEntityRevisionNotificationEvent: {
+        entity: LegacyResolver<CreateEntityRevisionNotificationEventPayload, never, EntityPayload | null>;
+        entityRevision: LegacyResolver<CreateEntityRevisionNotificationEventPayload, never, EntityRevisionPayload | null>;
+    } & NotificationEventResolvers<CreateEntityRevisionNotificationEventPayload>;
+}
+
+// @public (undocumented)
+export interface LegacyCreateTaxonomyLinkNotificationEventResolvers {
+    // (undocumented)
+    CreateTaxonomyLinkNotificationEvent: {
+        parent: LegacyResolver<CreateTaxonomyLinkNotificationEventPayload, never, TaxonomyTermPayload | null>;
+        child: LegacyResolver<CreateTaxonomyLinkNotificationEventPayload, never, UuidPayload | null>;
+    } & NotificationEventResolvers<CreateTaxonomyLinkNotificationEventPayload>;
+}
+
+// @public (undocumented)
+export interface LegacyCreateTaxonomyTermNotificationEventResolvers {
+    // (undocumented)
+    CreateTaxonomyTermNotificationEvent: {
+        taxonomyTerm: LegacyResolver<CreateTaxonomyTermNotificationEventPayload, never, TaxonomyTermPayload | null>;
+    } & NotificationEventResolvers<CreateTaxonomyTermNotificationEventPayload>;
+}
+
+// @public (undocumented)
+export interface LegacyCreateThreadNotificationEventResolvers {
+    // (undocumented)
+    CreateThreadNotificationEvent: {
+        object: LegacyResolver<CreateThreadNotificationEventPayload, never, UuidPayload | null>;
+        thread: LegacyResolver<CreateThreadNotificationEventPayload, never, UnsupportedThread>;
+    } & NotificationEventResolvers<CreateThreadNotificationEventPayload>;
+}
+
+// @public (undocumented)
+export interface LegacyNotificationResolvers {
+    // (undocumented)
+    AbstractNotificationEvent: {
+        __resolveType: TypeResolver<NotificationEventPayload>;
+    };
+    // (undocumented)
+    Mutation: {
+        notification: MutationNamespace;
+    };
+    // (undocumented)
+    Notification: {
+        event: LegacyResolver<NotificationPayload, never, NotificationEventPayload | null>;
+    };
+    // (undocumented)
+    NotificationMutation: {
+        setState: MutationResolver<NotificationMutationSetStateArgs, NotificationSetStateResponse>;
+    };
+    // (undocumented)
+    Query: {
+        notifications: QueryResolver<QueryNotificationsArgs, Connection<NotificationPayload>>;
+        notificationEvent: QueryResolver<QueryNotificationEventArgs, NotificationEventPayload | null>;
+    };
+}
+
+// @public (undocumented)
+export interface LegacyRejectRevisionNotificationEventResolvers {
+    // (undocumented)
+    RejectRevisionNotificationEvent: {
+        repository: LegacyResolver<RejectRevisionNotificationEventPayload, never, RepositoryPayload | null>;
+        revision: LegacyResolver<RejectRevisionNotificationEventPayload, never, RevisionPayload | null>;
+    } & NotificationEventResolvers<RejectRevisionNotificationEventPayload>;
+}
+
+// @public (undocumented)
+export interface LegacyRemoveEntityLinkNotificationEventResolvers {
+    // (undocumented)
+    RemoveEntityLinkNotificationEvent: {
+        parent: LegacyResolver<RemoveEntityLinkNotificationEventPayload, never, EntityPayload | null>;
+        child: LegacyResolver<RemoveEntityLinkNotificationEventPayload, never, EntityPayload | null>;
+    } & NotificationEventResolvers<RemoveEntityLinkNotificationEventPayload>;
+}
+
+// @public (undocumented)
+export interface LegacyRemoveTaxonomyLinkNotificationEventResolvers {
+    // (undocumented)
+    RemoveTaxonomyLinkNotificationEvent: {
+        parent: LegacyResolver<RemoveTaxonomyLinkNotificationEventPayload, never, TaxonomyTermPayload | null>;
+        child: LegacyResolver<RemoveTaxonomyLinkNotificationEventPayload, never, UuidPayload | null>;
+    } & NotificationEventResolvers<RemoveTaxonomyLinkNotificationEventPayload>;
+}
+
+// @public (undocumented)
+export type LegacyResolver<P, A, T> = (parent: P, args: A, context: Context, info: GraphQLResolveInfo) => AsyncOrSync<T>;
+
+// @public (undocumented)
+export interface LegacySetLicenseNotificationEventResolvers {
+    // (undocumented)
+    SetLicenseNotificationEvent: {
+        repository: LegacyResolver<SetLicenseNotificationEventPayload, never, RepositoryPayload | null>;
+    } & NotificationEventResolvers<SetLicenseNotificationEventPayload>;
+}
+
+// @public (undocumented)
+export interface LegacySetTaxonomyParentNotificationEventResolvers {
+    // (undocumented)
+    SetTaxonomyParentNotificationEvent: {
+        previousParent: LegacyResolver<SetTaxonomyParentNotificationEventPayload, never, TaxonomyTermPayload | null>;
+        parent: LegacyResolver<SetTaxonomyParentNotificationEventPayload, never, TaxonomyTermPayload | null>;
+        child: LegacyResolver<SetTaxonomyParentNotificationEventPayload, never, TaxonomyTermPayload | null>;
+    } & NotificationEventResolvers<SetTaxonomyParentNotificationEventPayload>;
+}
+
+// @public (undocumented)
+export interface LegacySetTaxonomyTermNotificationEventResolvers {
+    // (undocumented)
+    SetTaxonomyTermNotificationEvent: {
+        taxonomyTerm: LegacyResolver<SetTaxonomyTermNotificationEventPayload, never, TaxonomyTermPayload | null>;
+    } & NotificationEventResolvers<SetTaxonomyTermNotificationEventPayload>;
+}
+
+// @public (undocumented)
+export interface LegacySetThreadStateNotificationEventResolvers {
+    // (undocumented)
+    SetThreadStateNotificationEvent: {
+        thread: LegacyResolver<SetThreadStateNotificationEventPayload, never, UnsupportedThread>;
+    } & NotificationEventResolvers<SetThreadStateNotificationEventPayload>;
+}
+
+// @public (undocumented)
+export interface LegacySetUuidStateNotificationEventResolvers {
+    // (undocumented)
+    SetUuidStateNotificationEvent: {
+        object: LegacyResolver<SetUuidStateNotificationEventPayload, never, UuidPayload | null>;
+    } & NotificationEventResolvers<SetUuidStateNotificationEventPayload>;
 }
 
 // @public (undocumented)
@@ -1664,6 +3274,14 @@ export type LicenseResolvers<ContextType = Context, ParentType extends Resolvers
 };
 
 // @public (undocumented)
+export enum MajorDimension {
+    // (undocumented)
+    Columns = "COLUMNS",
+    // (undocumented)
+    Rows = "ROWS"
+}
+
+// @public (undocumented)
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
     [SubKey in K]: Maybe<T[SubKey]>;
 };
@@ -1675,6 +3293,119 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
 
 // @public (undocumented)
 export type Maybe<T> = T | null;
+
+// @public (undocumented)
+export function mergeSchemas(...schemas: Schema[]): Schema;
+
+// @public
+export type Model<M extends keyof ModelMapping> = NonNullable<ModelMapping[M]>;
+
+// @public (undocumented)
+export class ModelDataSource extends RESTDataSource {
+    constructor(environment: Environment);
+    // (undocumented)
+    googleSpreadsheetApi: ReturnType<typeof createGoogleSpreadsheetApiModel>;
+    // (undocumented)
+    serlo: ReturnType<typeof createSerloModel>;
+    // (undocumented)
+    updateCacheValue({ key }: {
+        key: string;
+    }): Promise<void>;
+}
+
+// @public (undocumented)
+export type ModelFactories = typeof modelFactories;
+
+// @public (undocumented)
+export const modelFactories: {
+    googleSpreadsheetApi: typeof createGoogleSpreadsheetApiModel;
+    serlo: typeof createSerloModel;
+};
+
+// @public
+export type ModelMapping = {
+    [R in keyof Resolvers]: '__resolveType' extends keyof GetResolver<R> ? GetResolver<R>['__resolveType'] extends (...args: infer P) => unknown ? P[0] : never : '__isTypeOf' extends keyof GetResolver<R> ? NonNullable<GetResolver<R>['__isTypeOf']> extends (...args: infer P) => unknown ? P[0] : never : never;
+};
+
+// @public (undocumented)
+export type ModelOf<T> = T extends boolean | string | number | null ? T : Typename<T> extends keyof Models ? Models[Typename<T>] : T extends {
+    nodes: Array<infer U>;
+    totalCount: number;
+} ? Connection<ModelOf<U>> : T extends (infer U)[] ? ModelOf<U>[] : T extends object ? {
+    [P in keyof T]: ModelOf<T[P]>;
+} : never;
+
+// @public (undocumented)
+export type ModelQuery<P, R> = (P extends undefined ? () => Promise<R> : (payload: P) => Promise<R>) & {
+    _querySpec: QuerySpecWithHelpers<P, R>;
+};
+
+// @public (undocumented)
+export interface Models {
+    // (undocumented)
+    Applet: t.TypeOf<typeof AppletDecoder>;
+    // (undocumented)
+    AppletRevision: t.TypeOf<typeof AppletRevisionDecoder>;
+    // (undocumented)
+    Article: t.TypeOf<typeof ArticleDecoder>;
+    // (undocumented)
+    ArticleRevision: t.TypeOf<typeof ArticleRevisionDecoder>;
+    // (undocumented)
+    Comment: t.TypeOf<typeof CommentDecoder>;
+    // (undocumented)
+    Course: t.TypeOf<typeof CourseDecoder>;
+    // (undocumented)
+    CoursePage: t.TypeOf<typeof CoursePageDecoder>;
+    // (undocumented)
+    CoursePageRevision: t.TypeOf<typeof CoursePageRevisionDecoder>;
+    // (undocumented)
+    CourseRevision: t.TypeOf<typeof CourseRevisionDecoder>;
+    // (undocumented)
+    Event: t.TypeOf<typeof EventDecoder>;
+    // (undocumented)
+    EventRevision: t.TypeOf<typeof EventRevisionDecoder>;
+    // (undocumented)
+    Exercise: t.TypeOf<typeof ExerciseDecoder>;
+    // (undocumented)
+    ExerciseGroup: t.TypeOf<typeof ExerciseGroupDecoder>;
+    // (undocumented)
+    ExerciseGroupRevision: t.TypeOf<typeof ExerciseGroupRevisionDecoder>;
+    // (undocumented)
+    ExerciseRevision: t.TypeOf<typeof ExerciseRevisionDecoder>;
+    // (undocumented)
+    GroupedExercise: t.TypeOf<typeof GroupedExerciseDecoder>;
+    // (undocumented)
+    GroupedExerciseRevision: t.TypeOf<typeof GroupedExerciseRevisionDecoder>;
+    // (undocumented)
+    License: Payload<'serlo', 'getLicense'>;
+    // (undocumented)
+    Mutation: Record<string, never>;
+    // (undocumented)
+    Navigation: Payload<'serlo', 'getNavigation'>;
+    // (undocumented)
+    Page: t.TypeOf<typeof PageDecoder>;
+    // (undocumented)
+    PageRevision: t.TypeOf<typeof PageRevisionDecoder>;
+    // (undocumented)
+    Query: Record<string, never>;
+    // (undocumented)
+    Solution: t.TypeOf<typeof SolutionDecoder>;
+    // (undocumented)
+    SolutionRevision: t.TypeOf<typeof SolutionRevisionDecoder>;
+    // (undocumented)
+    TaxonomyTerm: t.TypeOf<typeof TaxonomyTermDecoder>;
+    // (undocumented)
+    Thread: {
+        __typename: 'Thread';
+        commentPayloads: Models['Comment'][];
+    };
+    // (undocumented)
+    User: t.TypeOf<typeof UserDecoder>;
+    // (undocumented)
+    Video: t.TypeOf<typeof VideoDecoder>;
+    // (undocumented)
+    VideoRevision: t.TypeOf<typeof VideoRevisionDecoder>;
+}
 
 // @public (undocumented)
 export type Mutation = {
@@ -1705,6 +3436,16 @@ export type Mutation_UpdateCacheArgs = {
 };
 
 // @public (undocumented)
+export type MutationNamespace = MutationResolver<never, Record<string, never>>;
+
+// @public (undocumented)
+export type MutationResolver<A, T> = LegacyResolver<never, A, T extends {
+    query: Query;
+} ? Omit<T, 'query'> & {
+    query: Record<string, never>;
+} : T>;
+
+// @public (undocumented)
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
     _removeCache?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<Mutation_RemoveCacheArgs, 'key'>>;
     _setCache?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<Mutation_SetCacheArgs, 'key' | 'value'>>;
@@ -1716,11 +3457,43 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 // @public (undocumented)
+export interface MutationResponse {
+    // (undocumented)
+    query: Record<string, never>;
+    // (undocumented)
+    success: boolean;
+}
+
+// @public (undocumented)
+export interface MutationResponseWithRecord<R> extends MutationResponse {
+    // (undocumented)
+    record: R;
+}
+
+// @public
+export type Mutations<Namespaces extends keyof MutationResolvers> = {
+    Mutation: Required<Pick<MutationResolvers, Namespaces>>;
+} & {
+    [P in `${Capitalize<Namespaces>}Mutation`]: P extends keyof Resolvers ? Required<Omit<NonNullable<Resolvers[P]>, '__isTypeOf'>> : never;
+};
+
+// @public (undocumented)
 export type Navigation = {
     __typename?: 'Navigation';
     data: Scalars['JSON'];
     path: NavigationNodeConnection;
 };
+
+// @public (undocumented)
+export type NavigationChildPayload = TaxonomyTermPayload | Model<'Page'>;
+
+// @public (undocumented)
+export interface NavigationData {
+    // (undocumented)
+    data: NodeData;
+    // (undocumented)
+    path: NavigationNode[];
+}
 
 // @public (undocumented)
 export type NavigationNode = {
@@ -1779,6 +3552,14 @@ export type NavigationPathArgs = {
 };
 
 // @public (undocumented)
+export interface NavigationPayload {
+    // (undocumented)
+    data: NodeData[];
+    // (undocumented)
+    instance: Instance;
+}
+
+// @public (undocumented)
 export type NavigationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Navigation'] = ResolversParentTypes['Navigation']> = {
     data?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
     path?: Resolver<ResolversTypes['NavigationNodeConnection'], ParentType, ContextType, RequireFields<NavigationPathArgs, never>>;
@@ -1793,6 +3574,18 @@ export type NewStitchingResolver<TResult, TParent, TContext, TArgs> = {
 
 // @public (undocumented)
 export type NextResolverFn<T> = () => Promise<T>;
+
+// @public (undocumented)
+export interface NodeData {
+    // (undocumented)
+    children?: NodeData[];
+    // (undocumented)
+    id?: number;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    url?: string;
+}
 
 // @public (undocumented)
 type Notification_2 = {
@@ -1837,6 +3630,51 @@ export type NotificationEdgeResolvers<ContextType = Context, ParentType extends 
 };
 
 // @public (undocumented)
+export type NotificationEventPayload = CheckoutRevisionNotificationEventPayload | RejectRevisionNotificationEventPayload | CreateEntityNotificationEventPayload | CreateEntityLinkNotificationEventPayload | RemoveEntityLinkNotificationEventPayload | CreateEntityRevisionNotificationEventPayload | CreateTaxonomyTermNotificationEventPayload | CreateTaxonomyLinkNotificationEventPayload | RemoveTaxonomyLinkNotificationEventPayload | CreateThreadNotificationEventPayload | CreateCommentNotificationEventPayload | SetLicenseNotificationEventPayload | SetTaxonomyParentNotificationEventPayload | SetTaxonomyTermNotificationEventPayload | SetThreadStateNotificationEventPayload | SetUuidStateNotificationEventPayload;
+
+// @public (undocumented)
+export interface NotificationEventResolvers<T extends AbstractNotificationEventPayload> {
+    // (undocumented)
+    actor: LegacyResolver<T, never, Partial<Model<'User'>> | null>;
+}
+
+// @public (undocumented)
+export enum NotificationEventType {
+    // (undocumented)
+    CheckoutRevision = "CheckoutRevisionNotificationEvent",
+    // (undocumented)
+    CreateComment = "CreateCommentNotificationEvent",
+    // (undocumented)
+    CreateEntity = "CreateEntityNotificationEvent",
+    // (undocumented)
+    CreateEntityLink = "CreateEntityLinkNotificationEvent",
+    // (undocumented)
+    CreateEntityRevision = "CreateEntityRevisionNotificationEvent",
+    // (undocumented)
+    CreateTaxonomyLink = "CreateTaxonomyLinkNotificationEvent",
+    // (undocumented)
+    CreateTaxonomyTerm = "CreateTaxonomyTermNotificationEvent",
+    // (undocumented)
+    CreateThread = "CreateThreadNotificationEvent",
+    // (undocumented)
+    RejectRevision = "RejectRevisionNotificationEvent",
+    // (undocumented)
+    RemoveEntityLink = "RemoveEntityLinkNotificationEvent",
+    // (undocumented)
+    RemoveTaxonomyLink = "RemoveTaxonomyLinkNotificationEvent",
+    // (undocumented)
+    SetLicense = "SetLicenseNotificationEvent",
+    // (undocumented)
+    SetTaxonomyParent = "SetTaxonomyParentNotificationEvent",
+    // (undocumented)
+    SetTaxonomyTerm = "SetTaxonomyTermNotificationEvent",
+    // (undocumented)
+    SetThreadState = "SetThreadStateNotificationEvent",
+    // (undocumented)
+    SetUuidState = "SetUuidStateNotificationEvent"
+}
+
+// @public (undocumented)
 export type NotificationMutation = {
     __typename?: 'NotificationMutation';
     setState?: Maybe<NotificationSetStateResponse>;
@@ -1852,6 +3690,12 @@ export type NotificationMutationResolvers<ContextType = Context, ParentType exte
 export type NotificationMutationSetStateArgs = {
     input: NotificationSetStateInput;
 };
+
+// @public (undocumented)
+export interface NotificationPayload extends Omit<Notification_2, keyof LegacyNotificationResolvers['Notification']> {
+    // (undocumented)
+    eventId: number;
+}
 
 // @public (undocumented)
 export type NotificationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Notification'] = ResolversParentTypes['Notification']> = {
@@ -1882,6 +3726,17 @@ export type NotificationSetStateResponseResolvers<ContextType = Context, ParentT
 };
 
 // @public (undocumented)
+export interface NotificationsPayload {
+    // (undocumented)
+    notifications: NotificationPayload[];
+    // (undocumented)
+    userId: number;
+}
+
+// @public
+export type OmitKeys<O extends object, Keys> = Omit<O, Keys & keyof O>;
+
+// @public (undocumented)
 export type Page = AbstractUuid & AbstractRepository & AbstractNavigationChild & InstanceAware & ThreadAware & {
     __typename?: 'Page';
     id: Scalars['Int'];
@@ -1895,6 +3750,20 @@ export type Page = AbstractUuid & AbstractRepository & AbstractNavigationChild &
     revisions: PageRevisionConnection;
     navigation?: Maybe<Navigation>;
 };
+
+// @public (undocumented)
+export const PageDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.LiteralC<DiscriminatorType.Page>;
+    instance: t.Type<Instance, Instance, unknown>;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+}>]>>;
 
 // @public (undocumented)
 export type PageInfo = {
@@ -1976,6 +3845,20 @@ export type PageRevisionCursorResolvers<ContextType = Context, ParentType extend
 };
 
 // @public (undocumented)
+export const PageRevisionDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.LiteralC<DiscriminatorType.PageRevision>;
+    title: t.StringC;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+}>]>>;
+
+// @public (undocumented)
 export type PageRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageRevision'] = ResolversParentTypes['PageRevision']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
@@ -2017,6 +3900,43 @@ export type PageThreadsArgs = {
     archived?: Maybe<Scalars['Boolean']>;
     trashed?: Maybe<Scalars['Boolean']>;
 };
+
+// @public (undocumented)
+export type Payload<M extends keyof AllPayloads, P extends keyof AllPayloads[M]> = AllPayloads[M][P];
+
+// @public (undocumented)
+export type PayloadArrayOrPayload<P> = {
+    payload: P;
+} | {
+    payloads: P[];
+};
+
+// @public (undocumented)
+export type Payloads<M> = {
+    [F in keyof M]: NonNullable<A.PromiseOf<M[F] extends (...args: any) => infer R ? R : never>>;
+};
+
+// @public
+export type PickKeys<O extends object, Keys> = Pick<O, Keys & keyof O>;
+
+// @public (undocumented)
+export type PickRequiredResolvers<O extends object> = O.Filter<O, object, '<-extends'>;
+
+// @public
+export type PickResolvers<R extends keyof Resolvers, F = O.OptionalKeys<GetResolver<R>>> = Required<PickKeys<GetResolver<R>, F>>;
+
+// @public (undocumented)
+export enum Priority {
+    // (undocumented)
+    High = 1,
+    // (undocumented)
+    Low = 0
+}
+
+// @public
+export type Queries<QueryProperties extends keyof QueryResolvers> = A.Compute<{
+    Query: Required<Pick<QueryResolvers, QueryProperties>>;
+}, 'deep'>;
 
 // @public (undocumented)
 export type Query = {
@@ -2075,6 +3995,9 @@ export type QueryNotificationsArgs = {
 };
 
 // @public (undocumented)
+export type QueryResolver<A, T> = LegacyResolver<never, A, T>;
+
+// @public (undocumented)
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
     activeAuthors?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, RequireFields<QueryActiveAuthorsArgs, never>>;
     activeDonors?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, RequireFields<QueryActiveDonorsArgs, never>>;
@@ -2085,6 +4008,32 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
     subscriptions?: Resolver<ResolversTypes['QuerySubscriptionResult'], ParentType, ContextType, RequireFields<QuerySubscriptionsArgs, never>>;
     uuid?: Resolver<Maybe<ResolversTypes['AbstractUuid']>, ParentType, ContextType, RequireFields<QueryUuidArgs, never>>;
 };
+
+// @public (undocumented)
+export interface QuerySpec<P, R> {
+    // (undocumented)
+    decoder?: t.Type<R>;
+    // (undocumented)
+    enableSwr: boolean;
+    // (undocumented)
+    getCurrentValue: (payload: P, previousValue: R | null) => Promise<R | unknown>;
+    // (undocumented)
+    getKey: (payload: P) => string;
+    // (undocumented)
+    getPayload: (key: string) => option.Option<P>;
+    // (undocumented)
+    maxAge: Time | undefined;
+}
+
+// @public (undocumented)
+export interface QuerySpecWithHelpers<P, R> extends QuerySpec<P, R> {
+    // (undocumented)
+    queryWithDecoder<S extends R>(payload: P, customDecoder: t.Type<S>): Promise<S>;
+    // (undocumented)
+    queryWithDecoders<S2 extends R, S1 extends S2>(payload: P, customDecoder1: t.Type<S1>, customDecoder2: t.Type<S2>): Promise<S2>;
+    // (undocumented)
+    setCache: (args: PayloadArrayOrPayload<P> & FunctionOrValue<R>) => Promise<void>;
+}
 
 // @public (undocumented)
 export type QuerySubscriptionResult = {
@@ -2119,6 +4068,9 @@ export type QueryUuidArgs = {
 };
 
 // @public (undocumented)
+export const queueName = "swr";
+
+// @public (undocumented)
 export type RejectRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'RejectRevisionNotificationEvent';
     id: Scalars['Int'];
@@ -2130,6 +4082,16 @@ export type RejectRevisionNotificationEvent = AbstractNotificationEvent & Instan
     revision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | GroupedExerciseRevision | PageRevision | SolutionRevision | VideoRevision;
     reason: Scalars['String'];
 };
+
+// @public (undocumented)
+export interface RejectRevisionNotificationEventPayload extends AbstractNotificationEventPayload, Omit<RejectRevisionNotificationEvent, keyof LegacyRejectRevisionNotificationEventResolvers['RejectRevisionNotificationEvent']> {
+    // (undocumented)
+    __typename: NotificationEventType.RejectRevision;
+    // (undocumented)
+    repositoryId: number;
+    // (undocumented)
+    revisionId: number;
+}
 
 // @public (undocumented)
 export type RejectRevisionNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RejectRevisionNotificationEvent'] = ResolversParentTypes['RejectRevisionNotificationEvent']> = {
@@ -2157,6 +4119,16 @@ export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & Inst
 };
 
 // @public (undocumented)
+export interface RemoveEntityLinkNotificationEventPayload extends AbstractNotificationEventPayload, Omit<RemoveEntityLinkNotificationEvent, keyof LegacyRemoveEntityLinkNotificationEventResolvers['RemoveEntityLinkNotificationEvent']> {
+    // (undocumented)
+    __typename: NotificationEventType.RemoveEntityLink;
+    // (undocumented)
+    childId: number;
+    // (undocumented)
+    parentId: number;
+}
+
+// @public (undocumented)
 export type RemoveEntityLinkNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RemoveEntityLinkNotificationEvent'] = ResolversParentTypes['RemoveEntityLinkNotificationEvent']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
@@ -2181,6 +4153,16 @@ export type RemoveTaxonomyLinkNotificationEvent = AbstractNotificationEvent & In
 };
 
 // @public (undocumented)
+export interface RemoveTaxonomyLinkNotificationEventPayload extends AbstractNotificationEventPayload, Omit<RemoveTaxonomyLinkNotificationEvent, keyof LegacyRemoveTaxonomyLinkNotificationEventResolvers['RemoveTaxonomyLinkNotificationEvent']> {
+    // (undocumented)
+    __typename: NotificationEventType.RemoveTaxonomyLink;
+    // (undocumented)
+    childId: number;
+    // (undocumented)
+    parentId: number;
+}
+
+// @public (undocumented)
 export type RemoveTaxonomyLinkNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RemoveTaxonomyLinkNotificationEvent'] = ResolversParentTypes['RemoveTaxonomyLinkNotificationEvent']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
@@ -2191,6 +4173,184 @@ export type RemoveTaxonomyLinkNotificationEventResolvers<ContextType = Context, 
     child?: Resolver<ResolversTypes['AbstractUuid'], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+// @public (undocumented)
+export type Repository<R extends Model<'AbstractRevision'>['__typename']> = Model<R extends `${infer U}Revision` ? U : never>;
+
+// @public (undocumented)
+export const RepositoryDecoder: t.UnionC<[t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Exercise>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    solutionId: t.UnionC<[t.NumberC, t.NullC]>;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.GroupedExercise>;
+    parentId: t.NumberC;
+    solutionId: t.UnionC<[t.NumberC, t.NullC]>;
+}>]>>]>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Applet>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Article>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Course>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    pageIds: t.ArrayC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.CoursePage>;
+    parentId: t.NumberC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Event>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.ExerciseGroup>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    exerciseIds: t.ArrayC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Solution>;
+    parentId: t.NumberC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Video>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+}>]>>]>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.LiteralC<DiscriminatorType.Page>;
+    instance: t.Type<Instance, Instance, unknown>;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+}>]>>]>;
+
+// @public (undocumented)
+export type RepositoryPayload = Model<'AbstractRepository'>;
+
+// @public (undocumented)
+export type RepositoryType = EntityType | DiscriminatorType.Page;
+
+// @public (undocumented)
+export function requestsOnlyFields(type: string, fields: string[], info: GraphQLResolveInfo): boolean;
+
+// @public (undocumented)
+export type RequiredResolverFunctions<T extends object> = Typename<T> extends keyof Resolvers ? OmitKeys<Required<GetResolver<Typename<T>>>, Model<Typename<T>> extends object ? O.IntersectKeys<T, Model<Typename<T>>, '<-extends'> | '__isTypeOf' : never> : never;
+
+// @public (undocumented)
+export type RequiredResolvers<T extends object> = PickRequiredResolvers<{
+    [P in Typename<T>]: RequiredResolverFunctions<T>;
+}>;
 
 // @public (undocumented)
 export type RequireFields<T, K extends keyof T> = {
@@ -2204,6 +4364,9 @@ export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> = Resolve
 
 // @public (undocumented)
 export type ResolverFn<TResult, TParent, TContext, TArgs> = (parent: TParent, args: TArgs, context: TContext, info: GraphQLResolveInfo) => Promise<TResult> | TResult;
+
+// @public (undocumented)
+export type ResolverFunction<Result, Parent, Args = {}> = Resolver<Result, Parent, Context, Args>;
 
 // @public (undocumented)
 export type Resolvers<ContextType = Context> = {
@@ -2594,6 +4757,184 @@ export type ResolversTypes = {
 // @public (undocumented)
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
+// @public (undocumented)
+export type Revision<T extends Model<'AbstractRepository'>['__typename']> = Model<`${T}Revision`>;
+
+// @public (undocumented)
+export const RevisionDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.AppletRevision>;
+    url: t.StringC;
+    title: t.StringC;
+    content: t.StringC;
+    metaTitle: t.StringC;
+    metaDescription: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.ArticleRevision>;
+    title: t.StringC;
+    content: t.StringC;
+    metaTitle: t.StringC;
+    metaDescription: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.CourseRevision>;
+    title: t.StringC;
+    content: t.StringC;
+    metaDescription: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.CoursePageRevision>;
+    title: t.StringC;
+    content: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.EventRevision>;
+    title: t.StringC;
+    content: t.StringC;
+    metaTitle: t.StringC;
+    metaDescription: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.ExerciseRevision>;
+    content: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.ExerciseGroupRevision>;
+    content: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.GroupedExerciseRevision>;
+    content: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.SolutionRevision>;
+    content: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.VideoRevision>;
+    url: t.StringC;
+    title: t.StringC;
+    content: t.StringC;
+}>]>>]>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.LiteralC<DiscriminatorType.PageRevision>;
+    title: t.StringC;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+}>]>>]>;
+
+// @public (undocumented)
+export type RevisionPayload = Model<'AbstractRevision'>;
+
+// @public (undocumented)
+export type RevisionType = EntityRevisionType | DiscriminatorType.PageRevision;
+
 // @public
 export type Scalars = {
     ID: string;
@@ -2607,6 +4948,22 @@ export type Scalars = {
 };
 
 // @public (undocumented)
+export interface Schema {
+    // (undocumented)
+    resolvers: {};
+    // (undocumented)
+    typeDefs: DocumentNode[];
+}
+
+// @public (undocumented)
+export enum Service {
+    // (undocumented)
+    Serlo = "serlo.org",
+    // (undocumented)
+    SerloCloudflareWorker = "serlo.org-cloudflare-worker"
+}
+
+// @public (undocumented)
 export type SetLicenseNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'SetLicenseNotificationEvent';
     id: Scalars['Int'];
@@ -2616,6 +4973,14 @@ export type SetLicenseNotificationEvent = AbstractNotificationEvent & InstanceAw
     objectId: Scalars['Int'];
     repository: Applet | Article | CoursePage | Course | Event_2 | ExerciseGroup | Exercise | GroupedExercise | Page | Solution | Video;
 };
+
+// @public (undocumented)
+export interface SetLicenseNotificationEventPayload extends AbstractNotificationEventPayload, Omit<SetLicenseNotificationEvent, keyof LegacySetLicenseNotificationEventResolvers['SetLicenseNotificationEvent']> {
+    // (undocumented)
+    __typename: NotificationEventType.SetLicense;
+    // (undocumented)
+    repositoryId: number;
+}
 
 // @public (undocumented)
 export type SetLicenseNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SetLicenseNotificationEvent'] = ResolversParentTypes['SetLicenseNotificationEvent']> = {
@@ -2642,6 +5007,18 @@ export type SetTaxonomyParentNotificationEvent = AbstractNotificationEvent & Ins
 };
 
 // @public (undocumented)
+export interface SetTaxonomyParentNotificationEventPayload extends AbstractNotificationEventPayload, Omit<SetTaxonomyParentNotificationEvent, keyof LegacySetTaxonomyParentNotificationEventResolvers['SetTaxonomyParentNotificationEvent']> {
+    // (undocumented)
+    __typename: NotificationEventType.SetTaxonomyParent;
+    // (undocumented)
+    childId: number;
+    // (undocumented)
+    parentId: number | null;
+    // (undocumented)
+    previousParentId: number | null;
+}
+
+// @public (undocumented)
 export type SetTaxonomyParentNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SetTaxonomyParentNotificationEvent'] = ResolversParentTypes['SetTaxonomyParentNotificationEvent']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
@@ -2664,6 +5041,14 @@ export type SetTaxonomyTermNotificationEvent = AbstractNotificationEvent & Insta
     objectId: Scalars['Int'];
     taxonomyTerm: TaxonomyTerm;
 };
+
+// @public (undocumented)
+export interface SetTaxonomyTermNotificationEventPayload extends AbstractNotificationEventPayload, Omit<SetTaxonomyTermNotificationEvent, keyof LegacySetTaxonomyTermNotificationEventResolvers['SetTaxonomyTermNotificationEvent']> {
+    // (undocumented)
+    __typename: NotificationEventType.SetTaxonomyTerm;
+    // (undocumented)
+    taxonomyTermId: number;
+}
 
 // @public (undocumented)
 export type SetTaxonomyTermNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SetTaxonomyTermNotificationEvent'] = ResolversParentTypes['SetTaxonomyTermNotificationEvent']> = {
@@ -2689,6 +5074,14 @@ export type SetThreadStateNotificationEvent = AbstractNotificationEvent & Instan
 };
 
 // @public (undocumented)
+export interface SetThreadStateNotificationEventPayload extends AbstractNotificationEventPayload, Omit<SetThreadStateNotificationEvent, keyof LegacySetThreadStateNotificationEventResolvers['SetThreadStateNotificationEvent']> {
+    // (undocumented)
+    __typename: NotificationEventType.SetThreadState;
+    // (undocumented)
+    threadId: number;
+}
+
+// @public (undocumented)
 export type SetThreadStateNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SetThreadStateNotificationEvent'] = ResolversParentTypes['SetThreadStateNotificationEvent']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
@@ -2711,6 +5104,14 @@ export type SetUuidStateNotificationEvent = AbstractNotificationEvent & Instance
     object: Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event_2 | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
     trashed: Scalars['Boolean'];
 };
+
+// @public (undocumented)
+export interface SetUuidStateNotificationEventPayload extends AbstractNotificationEventPayload, Omit<SetUuidStateNotificationEvent, keyof LegacySetUuidStateNotificationEventResolvers['SetUuidStateNotificationEvent']> {
+    // (undocumented)
+    __typename: NotificationEventType.SetUuidState;
+    // (undocumented)
+    objectId: number;
+}
 
 // @public (undocumented)
 export type SetUuidStateNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SetUuidStateNotificationEvent'] = ResolversParentTypes['SetUuidStateNotificationEvent']> = {
@@ -2738,6 +5139,23 @@ export type Solution = AbstractUuid & AbstractRepository & AbstractEntity & Inst
     revisions?: Maybe<SolutionRevisionConnection>;
     exercise: Exercise | GroupedExercise;
 };
+
+// @public (undocumented)
+export const SolutionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Solution>;
+    parentId: t.NumberC;
+}>]>>;
 
 // @public (undocumented)
 export type SolutionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Solution'] = ResolversParentTypes['Solution']> = {
@@ -2799,6 +5217,23 @@ export type SolutionRevisionCursorResolvers<ContextType = Context, ParentType ex
     node?: Resolver<ResolversTypes['SolutionRevision'], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+// @public (undocumented)
+export const SolutionRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.SolutionRevision>;
+    content: t.StringC;
+}>]>>;
 
 // @public (undocumented)
 export type SolutionRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SolutionRevision'] = ResolversParentTypes['SolutionRevision']> = {
@@ -2916,6 +5351,16 @@ export type SubscriptionSetResponseResolvers<ContextType = Context, ParentType e
 };
 
 // @public (undocumented)
+export interface SubscriptionsPayload {
+    // (undocumented)
+    subscriptions: {
+        id: number;
+    }[];
+    // (undocumented)
+    userId: number;
+}
+
+// @public (undocumented)
 export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (parent: TParent, args: TArgs, context: TContext, info: GraphQLResolveInfo) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;
 
 // @public (undocumented)
@@ -2928,6 +5373,20 @@ export interface SubscriptionSubscriberObject<TResult, TKey extends string, TPar
     subscribe: SubscriptionSubscribeFn<{
         [key in TKey]: TResult;
     }, TParent, TContext, TArgs>;
+}
+
+// @public (undocumented)
+export interface SwrQueue {
+    // (undocumented)
+    healthy(): Promise<void>;
+    // (undocumented)
+    queue(updateJob: UpdateJob): Promise<never>;
+    // (undocumented)
+    _queue: never;
+    // (undocumented)
+    quit(): Promise<void>;
+    // (undocumented)
+    ready(): Promise<void>;
 }
 
 // @public (undocumented)
@@ -2974,6 +5433,23 @@ export type TaxonomyTermConnectionResolvers<ContextType = Context, ParentType ex
 };
 
 // @public (undocumented)
+export const TaxonomyTermDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.LiteralC<DiscriminatorType.TaxonomyTerm>;
+    type: t.UnionC<[t.LiteralC<TaxonomyTermType.Blog>, t.LiteralC<TaxonomyTermType.Curriculum>, t.LiteralC<TaxonomyTermType.CurriculumTopic>, t.LiteralC<TaxonomyTermType.CurriculumTopicFolder>, t.LiteralC<TaxonomyTermType.Forum>, t.LiteralC<TaxonomyTermType.ForumCategory>, t.LiteralC<TaxonomyTermType.Locale>, t.LiteralC<TaxonomyTermType.Root>, t.LiteralC<TaxonomyTermType.Subject>, t.LiteralC<TaxonomyTermType.Topic>, t.LiteralC<TaxonomyTermType.TopicFolder>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    name: t.StringC;
+    weight: t.NumberC;
+    childrenIds: t.ArrayC<t.NumberC>;
+    parentId: t.UnionC<[t.NumberC, t.NullC]>;
+}>, t.PartialC<{
+    description: t.UnionC<[t.StringC, t.NullC]>;
+}>]>>;
+
+// @public (undocumented)
 export type TaxonomyTermEdge = {
     __typename?: 'TaxonomyTermEdge';
     cursor: Scalars['String'];
@@ -2986,6 +5462,9 @@ export type TaxonomyTermEdgeResolvers<ContextType = Context, ParentType extends 
     node?: Resolver<ResolversTypes['TaxonomyTerm'], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+// @public (undocumented)
+export type TaxonomyTermPayload = t_2.TypeOf<typeof TaxonomyTermDecoder>;
 
 // @public (undocumented)
 export type TaxonomyTermResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTerm'] = ResolversParentTypes['TaxonomyTerm']> = {
@@ -3039,6 +5518,9 @@ export enum TaxonomyTermType {
     // (undocumented)
     TopicFolder = "topicFolder"
 }
+
+// @public (undocumented)
+export const TaxonomyTermTypeDecoder: t.UnionC<[t.LiteralC<TaxonomyTermType.Blog>, t.LiteralC<TaxonomyTermType.Curriculum>, t.LiteralC<TaxonomyTermType.CurriculumTopic>, t.LiteralC<TaxonomyTermType.CurriculumTopicFolder>, t.LiteralC<TaxonomyTermType.Forum>, t.LiteralC<TaxonomyTermType.ForumCategory>, t.LiteralC<TaxonomyTermType.Locale>, t.LiteralC<TaxonomyTermType.Root>, t.LiteralC<TaxonomyTermType.Subject>, t.LiteralC<TaxonomyTermType.Topic>, t.LiteralC<TaxonomyTermType.TopicFolder>]>;
 
 // @public (undocumented)
 export type Thread = {
@@ -3278,7 +5760,49 @@ export type ThreadSetThreadStateResponseResolvers<ContextType = Context, ParentT
 };
 
 // @public (undocumented)
+export interface Time {
+    // (undocumented)
+    day?: number;
+    // (undocumented)
+    days?: number;
+    // (undocumented)
+    hour?: number;
+    // (undocumented)
+    hours?: number;
+    // (undocumented)
+    minute?: number;
+    // (undocumented)
+    minutes?: number;
+    // (undocumented)
+    second?: number;
+    // (undocumented)
+    seconds?: number;
+}
+
+// @public (undocumented)
+export interface Timer {
+    // (undocumented)
+    now: typeof Date.now;
+}
+
+// @public (undocumented)
+export function timeToMilliseconds({ day, days, hour, hours, minute, minutes, second, seconds, }: Time): number;
+
+// @public (undocumented)
+export type Typename<T> = T extends {
+    __typename?: infer U;
+} ? U extends string ? U : never : never;
+
+// @public (undocumented)
 export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (parent: TParent, context: TContext, info: GraphQLResolveInfo) => Maybe<TTypes> | Promise<Maybe<TTypes>>;
+
+// @public (undocumented)
+export type TypeResolver<T> = (type: T) => string;
+
+// @public
+export type TypeResolvers<T extends {
+    __typename?: keyof Resolvers;
+}> = Typename<T> extends keyof Resolvers ? A.Compute<O.MergeUp<RequiredResolvers<T>, Pick<Resolvers, Typename<T>>, 'deep'>, 'deep'> : never;
 
 // @public (undocumented)
 export type UnsupportedComment = {
@@ -3303,6 +5827,18 @@ export type UnsupportedThreadResolvers<ContextType = Context, ParentType extends
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+// @public (undocumented)
+export interface UpdateFunction<T> {
+    // (undocumented)
+    getValue: (current?: T) => AsyncOrSync<T | undefined>;
+}
+
+// @public (undocumented)
+export interface UpdateJob {
+    // (undocumented)
+    key: string;
+}
 
 // @public (undocumented)
 export type User = AbstractUuid & ThreadAware & {
@@ -3337,6 +5873,20 @@ export type UserConnectionResolvers<ContextType = Context, ParentType extends Re
     pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+// @public (undocumented)
+export const UserDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.LiteralC<DiscriminatorType.User>;
+    username: t.StringC;
+    date: t.StringC;
+}>, t.PartialC<{
+    lastLogin: t.UnionC<[t.StringC, t.NullC]>;
+    description: t.UnionC<[t.StringC, t.NullC]>;
+}>]>>;
 
 // @public (undocumented)
 export type UserEdge = {
@@ -3379,6 +5929,368 @@ export type UserThreadsArgs = {
 };
 
 // @public (undocumented)
+export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.LiteralC<"Comment">;
+    authorId: t.NumberC;
+    title: t.UnionC<[t.StringC, t.NullC]>;
+    date: t.StringC;
+    archived: t.BooleanC;
+    content: t.StringC;
+    parentId: t.NumberC;
+    childrenIds: t.ArrayC<t.NumberC>;
+}>]>>, t.UnionC<[t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Exercise>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    solutionId: t.UnionC<[t.NumberC, t.NullC]>;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.GroupedExercise>;
+    parentId: t.NumberC;
+    solutionId: t.UnionC<[t.NumberC, t.NullC]>;
+}>]>>]>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Applet>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Article>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Course>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    pageIds: t.ArrayC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.CoursePage>;
+    parentId: t.NumberC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Event>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.ExerciseGroup>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    exerciseIds: t.ArrayC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Solution>;
+    parentId: t.NumberC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Video>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+}>]>>]>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.LiteralC<DiscriminatorType.Page>;
+    instance: t.Type<Instance, Instance, unknown>;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+}>]>>]>, t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.AppletRevision>;
+    url: t.StringC;
+    title: t.StringC;
+    content: t.StringC;
+    metaTitle: t.StringC;
+    metaDescription: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.ArticleRevision>;
+    title: t.StringC;
+    content: t.StringC;
+    metaTitle: t.StringC;
+    metaDescription: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.CourseRevision>;
+    title: t.StringC;
+    content: t.StringC;
+    metaDescription: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.CoursePageRevision>;
+    title: t.StringC;
+    content: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.EventRevision>;
+    title: t.StringC;
+    content: t.StringC;
+    metaTitle: t.StringC;
+    metaDescription: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.ExerciseRevision>;
+    content: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.ExerciseGroupRevision>;
+    content: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.GroupedExerciseRevision>;
+    content: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.SolutionRevision>;
+    content: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.VideoRevision>;
+    url: t.StringC;
+    title: t.StringC;
+    content: t.StringC;
+}>]>>]>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.LiteralC<DiscriminatorType.PageRevision>;
+    title: t.StringC;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+}>]>>]>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.LiteralC<DiscriminatorType.TaxonomyTerm>;
+    type: t.UnionC<[t.LiteralC<TaxonomyTermType.Blog>, t.LiteralC<TaxonomyTermType.Curriculum>, t.LiteralC<TaxonomyTermType.CurriculumTopic>, t.LiteralC<TaxonomyTermType.CurriculumTopicFolder>, t.LiteralC<TaxonomyTermType.Forum>, t.LiteralC<TaxonomyTermType.ForumCategory>, t.LiteralC<TaxonomyTermType.Locale>, t.LiteralC<TaxonomyTermType.Root>, t.LiteralC<TaxonomyTermType.Subject>, t.LiteralC<TaxonomyTermType.Topic>, t.LiteralC<TaxonomyTermType.TopicFolder>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    name: t.StringC;
+    weight: t.NumberC;
+    childrenIds: t.ArrayC<t.NumberC>;
+    parentId: t.UnionC<[t.NumberC, t.NullC]>;
+}>, t.PartialC<{
+    description: t.UnionC<[t.StringC, t.NullC]>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.LiteralC<DiscriminatorType.User>;
+    username: t.StringC;
+    date: t.StringC;
+}>, t.PartialC<{
+    lastLogin: t.UnionC<[t.StringC, t.NullC]>;
+    description: t.UnionC<[t.StringC, t.NullC]>;
+}>]>>]>;
+
+// @public (undocumented)
 export type UuidMutation = {
     __typename?: 'UuidMutation';
     setState?: Maybe<UuidSetStateResponse>;
@@ -3394,6 +6306,9 @@ export type UuidMutationResolvers<ContextType = Context, ParentType extends Reso
 export type UuidMutationSetStateArgs = {
     input: UuidSetStateInput;
 };
+
+// @public (undocumented)
+export type UuidPayload = Model<'AbstractUuid'>;
 
 // @public (undocumented)
 export type UuidSetStateInput = {
@@ -3416,6 +6331,9 @@ export type UuidSetStateResponseResolvers<ContextType = Context, ParentType exte
 };
 
 // @public (undocumented)
+export type UuidType = DiscriminatorType | EntityType | EntityRevisionType;
+
+// @public (undocumented)
 export type Video = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
     __typename?: 'Video';
     id: Scalars['Int'];
@@ -3429,6 +6347,23 @@ export type Video = AbstractUuid & AbstractRepository & AbstractEntity & Abstrac
     revisions: VideoRevisionConnection;
     taxonomyTerms: TaxonomyTermConnection;
 };
+
+// @public (undocumented)
+export const VideoDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityType.Applet>, t.LiteralC<EntityType.Article>, t.LiteralC<EntityType.Course>, t.LiteralC<EntityType.CoursePage>, t.LiteralC<EntityType.Event>, t.LiteralC<EntityType.Exercise>, t.LiteralC<EntityType.ExerciseGroup>, t.LiteralC<EntityType.GroupedExercise>, t.LiteralC<EntityType.Solution>, t.LiteralC<EntityType.Video>]>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    licenseId: t.NumberC;
+    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
+    revisionIds: t.ArrayC<t.NumberC>;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityType.Video>;
+    taxonomyTermIds: t.ArrayC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type VideoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Video'] = ResolversParentTypes['Video']> = {
@@ -3492,6 +6427,25 @@ export type VideoRevisionCursorResolvers<ContextType = Context, ParentType exten
     node?: Resolver<ResolversTypes['VideoRevision'], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+// @public (undocumented)
+export const VideoRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
+    id: t.NumberC;
+    trashed: t.BooleanC;
+    alias: t.StringC;
+}>, t.TypeC<{
+    __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
+    content: t.StringC;
+    date: t.StringC;
+    authorId: t.NumberC;
+    repositoryId: t.NumberC;
+    changes: t.StringC;
+}>]>, t.TypeC<{
+    __typename: t.LiteralC<EntityRevisionType.VideoRevision>;
+    url: t.StringC;
+    title: t.StringC;
+    content: t.StringC;
+}>]>>;
 
 // @public (undocumented)
 export type VideoRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['VideoRevision'] = ResolversParentTypes['VideoRevision']> = {

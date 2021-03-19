@@ -20,9 +20,9 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { createNotificationEventResolvers } from '../utils'
-import { SetThreadStateNotificationEventResolvers } from './types'
+import { LegacySetThreadStateNotificationEventResolvers } from './types'
 
-export const resolvers: SetThreadStateNotificationEventResolvers = {
+export const resolvers: LegacySetThreadStateNotificationEventResolvers = {
   SetThreadStateNotificationEvent: {
     ...createNotificationEventResolvers(),
     thread(notificationEvent) {

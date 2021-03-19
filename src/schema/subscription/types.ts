@@ -20,6 +20,9 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
+/**
+ *
+ */
 export interface SubscriptionsPayload {
   subscriptions: { id: number }[]
   userId: number

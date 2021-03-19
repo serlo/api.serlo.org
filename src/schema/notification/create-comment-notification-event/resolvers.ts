@@ -20,9 +20,9 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { createNotificationEventResolvers } from '../utils'
-import { CreateCommentNotificationEventResolvers } from './types'
+import { LegacyCreateCommentNotificationEventResolvers } from './types'
 
-export const resolvers: CreateCommentNotificationEventResolvers = {
+export const resolvers: LegacyCreateCommentNotificationEventResolvers = {
   CreateCommentNotificationEvent: {
     ...createNotificationEventResolvers(),
     thread(notificationEvent) {

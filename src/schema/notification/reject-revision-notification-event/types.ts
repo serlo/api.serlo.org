@@ -24,7 +24,7 @@ import {
   NotificationEventResolvers,
   NotificationEventType,
 } from '../types'
-import { Resolver } from '~/internals/graphql'
+import { LegacyResolver } from '~/internals/graphql'
 import {
   RepositoryPayload,
   RevisionPayload,
@@ -35,21 +35,21 @@ export interface RejectRevisionNotificationEventPayload
   extends AbstractNotificationEventPayload,
     Omit<
       RejectRevisionNotificationEvent,
-      keyof RejectRevisionNotificationEventResolvers['RejectRevisionNotificationEvent']
+      keyof LegacyRejectRevisionNotificationEventResolvers['RejectRevisionNotificationEvent']
     > {
   __typename: NotificationEventType.RejectRevision
   repositoryId: number
   revisionId: number
 }
 
-export interface RejectRevisionNotificationEventResolvers {
+export interface LegacyRejectRevisionNotificationEventResolvers {
   RejectRevisionNotificationEvent: {
-    repository: Resolver<
+    repository: LegacyResolver<
       RejectRevisionNotificationEventPayload,
       never,
       RepositoryPayload | null
     >
-    revision: Resolver<
+    revision: LegacyResolver<
       RejectRevisionNotificationEventPayload,
       never,
       RevisionPayload | null

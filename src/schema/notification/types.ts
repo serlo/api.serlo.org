@@ -24,7 +24,7 @@ import {
   MutationNamespace,
   MutationResolver,
   QueryResolver,
-  Resolver,
+  LegacyResolver,
   TypeResolver,
 } from '~/internals/graphql'
 import { Connection } from '~/schema/connection/types'
@@ -54,7 +54,10 @@ import {
 } from '~/types'
 
 export interface NotificationPayload
-  extends Omit<Notification, keyof NotificationResolvers['Notification']> {
+  extends Omit<
+    Notification,
+    keyof LegacyNotificationResolvers['Notification']
+  > {
   eventId: number
 }
 
@@ -106,12 +109,16 @@ export interface AbstractNotificationEventPayload
   objectId: number
 }
 
-export interface NotificationResolvers {
+export interface LegacyNotificationResolvers {
   AbstractNotificationEvent: {
     __resolveType: TypeResolver<NotificationEventPayload>
   }
   Notification: {
-    event: Resolver<NotificationPayload, never, NotificationEventPayload | null>
+    event: LegacyResolver<
+      NotificationPayload,
+      never,
+      NotificationEventPayload | null
+    >
   }
   Query: {
     notifications: QueryResolver<
@@ -137,5 +144,5 @@ export interface NotificationResolvers {
 export interface NotificationEventResolvers<
   T extends AbstractNotificationEventPayload
 > {
-  actor: Resolver<T, never, Partial<Model<'User'>> | null>
+  actor: LegacyResolver<T, never, Partial<Model<'User'>> | null>
 }

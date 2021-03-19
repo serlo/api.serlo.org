@@ -24,22 +24,22 @@ import {
   NotificationEventResolvers,
   NotificationEventType,
 } from '../types'
-import { Resolver } from '~/internals/graphql'
+import { LegacyResolver } from '~/internals/graphql'
 import { SetThreadStateNotificationEvent, UnsupportedThread } from '~/types'
 
 export interface SetThreadStateNotificationEventPayload
   extends AbstractNotificationEventPayload,
     Omit<
       SetThreadStateNotificationEvent,
-      keyof SetThreadStateNotificationEventResolvers['SetThreadStateNotificationEvent']
+      keyof LegacySetThreadStateNotificationEventResolvers['SetThreadStateNotificationEvent']
     > {
   __typename: NotificationEventType.SetThreadState
   threadId: number
 }
 
-export interface SetThreadStateNotificationEventResolvers {
+export interface LegacySetThreadStateNotificationEventResolvers {
   SetThreadStateNotificationEvent: {
-    thread: Resolver<
+    thread: LegacyResolver<
       SetThreadStateNotificationEventPayload,
       never,
       UnsupportedThread
