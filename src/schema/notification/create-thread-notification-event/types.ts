@@ -24,7 +24,7 @@ import {
   NotificationEventResolvers,
   NotificationEventType,
 } from '../types'
-import { Resolver } from '~/internals/graphql'
+import { LegacyResolver } from '~/internals/graphql'
 import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 import { CreateThreadNotificationEvent, UnsupportedThread } from '~/types'
 
@@ -32,21 +32,21 @@ export interface CreateThreadNotificationEventPayload
   extends AbstractNotificationEventPayload,
     Omit<
       CreateThreadNotificationEvent,
-      keyof CreateThreadNotificationEventResolvers['CreateThreadNotificationEvent']
+      keyof LegacyCreateThreadNotificationEventResolvers['CreateThreadNotificationEvent']
     > {
   __typename: NotificationEventType.CreateThread
   objectId: number
   threadId: number
 }
 
-export interface CreateThreadNotificationEventResolvers {
+export interface LegacyCreateThreadNotificationEventResolvers {
   CreateThreadNotificationEvent: {
-    object: Resolver<
+    object: LegacyResolver<
       CreateThreadNotificationEventPayload,
       never,
       UuidPayload | null
     >
-    thread: Resolver<
+    thread: LegacyResolver<
       CreateThreadNotificationEventPayload,
       never,
       UnsupportedThread

@@ -25,15 +25,15 @@ import { Context } from './context'
 import { Query } from '~/types'
 import { AsyncOrSync } from '~/utils'
 
-export type Resolver<P, A, T> = (
+export type LegacyResolver<P, A, T> = (
   parent: P,
   args: A,
   context: Context,
   info: GraphQLResolveInfo
 ) => AsyncOrSync<T>
 
-export type QueryResolver<A, T> = Resolver<never, A, T>
-export type MutationResolver<A, T> = Resolver<
+export type QueryResolver<A, T> = LegacyResolver<never, A, T>
+export type MutationResolver<A, T> = LegacyResolver<
   never,
   A,
   T extends { query: Query }

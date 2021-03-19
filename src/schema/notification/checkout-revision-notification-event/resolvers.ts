@@ -20,13 +20,13 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { createNotificationEventResolvers } from '../utils'
-import { CheckoutRevisionNotificationEventResolvers } from './types'
+import { LegacyCheckoutRevisionNotificationEventResolvers } from './types'
 import {
   RepositoryPayload,
   RevisionPayload,
 } from '~/schema/uuid/abstract-repository/types'
 
-export const resolvers: CheckoutRevisionNotificationEventResolvers = {
+export const resolvers: LegacyCheckoutRevisionNotificationEventResolvers = {
   CheckoutRevisionNotificationEvent: {
     ...createNotificationEventResolvers(),
     async repository(notificationEvent, _args, { dataSources }) {

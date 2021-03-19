@@ -20,9 +20,9 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { createNotificationEventResolvers } from '../utils'
-import { SetUuidStateNotificationEventResolvers } from './types'
+import { LegacySetUuidStateNotificationEventResolvers } from './types'
 
-export const resolvers: SetUuidStateNotificationEventResolvers = {
+export const resolvers: LegacySetUuidStateNotificationEventResolvers = {
   SetUuidStateNotificationEvent: {
     ...createNotificationEventResolvers(),
     async object(notificationEvent, _args, { dataSources }) {

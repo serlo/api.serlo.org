@@ -28,6 +28,9 @@ import {
 import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
 import { Instance, TaxonomyTermType } from '~/types'
 
+export * from '~/schema/uuid/abstract-entity/types'
+export * from '~/schema/uuid/abstract-uuid/types'
+
 export const InstanceDecoder: t.Type<Instance> = t.union([
   t.literal(Instance.De),
   t.literal(Instance.En),

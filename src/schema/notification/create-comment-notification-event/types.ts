@@ -24,7 +24,7 @@ import {
   NotificationEventResolvers,
   NotificationEventType,
 } from '../types'
-import { Resolver } from '~/internals/graphql'
+import { LegacyResolver } from '~/internals/graphql'
 import {
   CreateCommentNotificationEvent,
   UnsupportedComment,
@@ -35,21 +35,21 @@ export interface CreateCommentNotificationEventPayload
   extends AbstractNotificationEventPayload,
     Omit<
       CreateCommentNotificationEvent,
-      keyof CreateCommentNotificationEventResolvers['CreateCommentNotificationEvent']
+      keyof LegacyCreateCommentNotificationEventResolvers['CreateCommentNotificationEvent']
     > {
   __typename: NotificationEventType.CreateComment
   threadId: number
   commentId: number
 }
 
-export interface CreateCommentNotificationEventResolvers {
+export interface LegacyCreateCommentNotificationEventResolvers {
   CreateCommentNotificationEvent: {
-    thread: Resolver<
+    thread: LegacyResolver<
       CreateCommentNotificationEventPayload,
       never,
       UnsupportedThread
     >
-    comment: Resolver<
+    comment: LegacyResolver<
       CreateCommentNotificationEventPayload,
       never,
       UnsupportedComment

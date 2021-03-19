@@ -24,7 +24,7 @@ import {
   NotificationEventResolvers,
   NotificationEventType,
 } from '../types'
-import { Resolver } from '~/internals/graphql'
+import { LegacyResolver } from '~/internals/graphql'
 import { RepositoryPayload } from '~/schema/uuid/abstract-repository/types'
 import { SetLicenseNotificationEvent } from '~/types'
 
@@ -32,15 +32,15 @@ export interface SetLicenseNotificationEventPayload
   extends AbstractNotificationEventPayload,
     Omit<
       SetLicenseNotificationEvent,
-      keyof SetLicenseNotificationEventResolvers['SetLicenseNotificationEvent']
+      keyof LegacySetLicenseNotificationEventResolvers['SetLicenseNotificationEvent']
     > {
   __typename: NotificationEventType.SetLicense
   repositoryId: number
 }
 
-export interface SetLicenseNotificationEventResolvers {
+export interface LegacySetLicenseNotificationEventResolvers {
   SetLicenseNotificationEvent: {
-    repository: Resolver<
+    repository: LegacyResolver<
       SetLicenseNotificationEventPayload,
       never,
       RepositoryPayload | null
