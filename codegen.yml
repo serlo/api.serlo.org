@@ -8,7 +8,7 @@ generates:
       - typescript
       - typescript-resolvers
     config:
-      contextType: internals/graphql/context#Context
+      contextType: '~/internals/graphql/context#Context'
       defaultMapper: ModelOf<{T}>
       scalars:
         DateTime: string

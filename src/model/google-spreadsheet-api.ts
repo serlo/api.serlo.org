@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { either as E, option as O, pipeable } from 'fp-ts'
+import { NonEmptyArray } from 'fp-ts/lib/NonEmptyArray'
 import * as t from 'io-ts'
 import { nonEmptyArray } from 'io-ts-types/lib/nonEmptyArray'
 import { failure } from 'io-ts/lib/PathReporter'
@@ -28,7 +29,7 @@ import { URL } from 'url'
 
 import { Environment } from '~/internals/environment'
 import { addContext, ErrorEvent } from '~/internals/error-event'
-import { createQuery } from '~/internals/model'
+import { createQuery, ModelQuery } from '~/internals/model'
 
 export enum MajorDimension {
   Rows = 'ROWS',
@@ -36,7 +37,9 @@ export enum MajorDimension {
 }
 
 const CellValues = nonEmptyArray(t.array(t.string))
-export type CellValues = t.TypeOf<typeof CellValues>
+// Syntax manually de-sugared because API Exporter doesn't support import() types yet
+// export type CellValues = t.TypeOf<typeof CellValues>
+export type CellValues = NonEmptyArray<string[]>
 
 const ValueRange = t.intersection([
   t.partial({
@@ -49,7 +52,7 @@ const ValueRange = t.intersection([
 ])
 type ValueRange = t.TypeOf<typeof ValueRange>
 
-interface Arguments {
+export interface Arguments {
   spreadsheetId: string
   range: string
   majorDimension?: MajorDimension
@@ -60,7 +63,10 @@ export function createGoogleSpreadsheetApiModel({
 }: {
   environment: Environment
 }) {
-  const getValues = createQuery<Arguments, E.Either<ErrorEvent, CellValues>>(
+  const getValues: ModelQuery<
+    Arguments,
+    E.Either<ErrorEvent, CellValues>
+  > = createQuery(
     {
       enableSwr: true,
       getCurrentValue: async (args) => {

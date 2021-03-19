@@ -26,7 +26,13 @@ import * as R from 'ramda'
 
 import { CommentDecoder, InstanceDecoder, UuidDecoder } from './decoder'
 import { Environment } from '~/internals/environment'
-import { createHelper, createMutation, createQuery } from '~/internals/model'
+import {
+  createHelper,
+  createMutation,
+  createQuery,
+  Helper,
+  ModelQuery,
+} from '~/internals/model'
 import { isInstance } from '~/schema/instance/utils'
 import {
   AbstractNotificationEventPayload,
@@ -36,7 +42,7 @@ import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
 import { SubscriptionsPayload } from '~/schema/subscription/types'
 import { EntityPayload } from '~/schema/uuid/abstract-entity/types'
 import {
-  Navigation,
+  NavigationData,
   NavigationPayload,
   NodeData,
 } from '~/schema/uuid/abstract-navigation-child/types'
@@ -156,7 +162,7 @@ export function createSerloModel({
     },
   })
 
-  const getActiveAuthorIds = createQuery<undefined, number[]>(
+  const getActiveAuthorIds: ModelQuery<undefined, number[]> = createQuery(
     {
       enableSwr: true,
       getCurrentValue: async () => {
@@ -235,10 +241,10 @@ export function createSerloModel({
     environment
   )
 
-  const getNavigation = createHelper<
+  const getNavigation: Helper<
     { instance: Instance; id: number },
-    Navigation | null
-  >({
+    NavigationData | null
+  > = createHelper({
     helper: async ({ instance, id }) => {
       const payload = await getNavigationPayload({ instance })
       const { data } = payload

@@ -24,7 +24,7 @@ import {
   NotificationEventResolvers,
   NotificationEventType,
 } from '../types'
-import { Resolver } from '~/internals/graphql'
+import { LegacyResolver } from '~/internals/graphql'
 import {
   RepositoryPayload,
   RevisionPayload,
@@ -35,21 +35,21 @@ export interface CheckoutRevisionNotificationEventPayload
   extends AbstractNotificationEventPayload,
     Omit<
       CheckoutRevisionNotificationEvent,
-      keyof CheckoutRevisionNotificationEventResolvers['CheckoutRevisionNotificationEvent']
+      keyof LegacyCheckoutRevisionNotificationEventResolvers['CheckoutRevisionNotificationEvent']
     > {
   __typename: NotificationEventType.CheckoutRevision
   repositoryId: number
   revisionId: number
 }
 
-export interface CheckoutRevisionNotificationEventResolvers {
+export interface LegacyCheckoutRevisionNotificationEventResolvers {
   CheckoutRevisionNotificationEvent: {
-    repository: Resolver<
+    repository: LegacyResolver<
       CheckoutRevisionNotificationEventPayload,
       never,
       RepositoryPayload | null
     >
-    revision: Resolver<
+    revision: LegacyResolver<
       CheckoutRevisionNotificationEventPayload,
       never,
       RevisionPayload | null

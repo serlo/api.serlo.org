@@ -52,9 +52,10 @@ export function mergeSchemas(...schemas: Schema[]): Schema {
  * graphql types are in the union or implement the interface.
  *
  * @example
- *
- *   type ThreadModel = Model<"Thread">
- *   type UuidPayload = Model<"AbstractUuid">
+ * ```ts
+ * type ThreadModel = Model<"Thread">
+ * type UuidPayload = Model<"AbstractUuid">
+ * ```
  */
 // TODO: For some reason `ModelMapping[M]` is a union with undefined and thus
 // we need `NonNullable<...>`. There should be a way to remove this.
@@ -62,7 +63,7 @@ export type Model<M extends keyof ModelMapping> = NonNullable<ModelMapping[M]>
 
 /**
  * Mapping between graphql type names and their model types:
- *
+ * ```ts
  *   ModelMapping = {
  *     User: { id: number, username: string, ... }
  *     ArticleRevision: { id: number, authorId: number, ... }
@@ -72,14 +73,14 @@ export type Model<M extends keyof ModelMapping> = NonNullable<ModelMapping[M]>
  *                       | ...
  *     ...
  *   }
- *
+ * ```
  * Here we use, that for each concrete graphql type there is a `__isTypeOf`
  * function in the generated resolver type whose first parameter is the parent
  * and thus has the model type of the concrete graphql type. This first
  * parameter is used for the mapping. For union and interface graphql types
  * the `__resolveType` function of the resolver type is used in the same way.
  */
-type ModelMapping = {
+export type ModelMapping = {
   [R in keyof Resolvers]: '__resolveType' extends keyof GetResolver<R>
     ? GetResolver<R>['__resolveType'] extends (...args: infer P) => unknown
       ? P[0]
@@ -106,7 +107,7 @@ export type Repository<
  * required.
  *
  * @example
- *
+ * ```ts
  *   const resolvers : Mutations<"subscription"> = {
  *     Mutation: {
  *       subscription: () => { return {} }
@@ -115,6 +116,7 @@ export type Repository<
  *       ...
  *     }
  *   }
+ * ```
  */
 export type Mutations<Namespaces extends keyof MutationResolvers> = {
   Mutation: Required<Pick<MutationResolvers, Namespaces>>
@@ -127,12 +129,15 @@ export type Mutations<Namespaces extends keyof MutationResolvers> = {
 /**
  * Resolvers type where all queries `QueryProperties` are required.
  *
+ * @example
+ * ```ts
  * const resolvers: Query<"uuid" | "activeAuthors"> = {
  *   Query: {
  *     uuid(...) { ... }
  *     activeAuthors(...) { ... }
  *   }
  * }
+ * ```
  */
 export type Queries<QueryProperties extends keyof QueryResolvers> = A.Compute<
   {
@@ -145,12 +150,13 @@ export type Queries<QueryProperties extends keyof QueryResolvers> = A.Compute<
  * Resolvers type where all Interface resolvers in `I` are required.
  *
  * @example
- *
- *   export const resolvers: InterfaceResolvers<"AbstractUuid"> = {
- *     AbstractUuid: {
- *       __resolveType(...) { ... }
- *     }
+ * ```ts
+ * export const resolvers: InterfaceResolvers<"AbstractUuid"> = {
+ *   AbstractUuid: {
+ *     __resolveType(...) { ... }
  *   }
+ * }
+ * ```
  */
 export type InterfaceResolvers<I extends keyof Resolvers> = Required<
   Pick<Resolvers, I>
@@ -162,10 +168,11 @@ export type InterfaceResolvers<I extends keyof Resolvers> = Required<
  * required.
  *
  * @example
- *
- *  const resolvers : PickResolvers<"AbstractUuid", | "alias" > = {
- *    alias(...) { ... }
- *  }
+ * ```ts
+ * const resolvers : PickResolvers<"AbstractUuid", | "alias" > = {
+ *   alias(...) { ... }
+ * }
+ * ```
  */
 export type PickResolvers<
   R extends keyof Resolvers,
@@ -187,14 +194,15 @@ export type ResolverFunction<Result, Parent, Args = {}> = Resolver<
  * the graphql property.
  *
  * @example
- *
- *    const resolvers : TypeResolvers<User> {
- *      User: {
- *        activeAuthor(...) { ... }
- *        activeReviewer(...) { ... }
- *        ...
- *      }
- *    }
+ * ```ts
+ * const resolvers : TypeResolvers<User> {
+ *   User: {
+ *     activeAuthor(...) { ... }
+ *     activeReviewer(...) { ... }
+ *     ...
+ *   }
+ * }
+ * ```
  */
 export type TypeResolvers<
   T extends { __typename?: keyof Resolvers }
@@ -205,13 +213,13 @@ export type TypeResolvers<
     >
   : never
 
-type RequiredResolvers<T extends object> = PickRequiredResolvers<
+export type RequiredResolvers<T extends object> = PickRequiredResolvers<
   {
     [P in Typename<T>]: RequiredResolverFunctions<T>
   }
 >
 
-type RequiredResolverFunctions<
+export type RequiredResolverFunctions<
   T extends object
 > = Typename<T> extends keyof Resolvers
   ? OmitKeys<
@@ -225,18 +233,24 @@ type RequiredResolverFunctions<
 // When the model and the graphql type are the same, the object with all required
 // resolver functions will be empty (i.e {}). This type helper filters
 // all such empty resolver types since they do not need to be defined.
-type PickRequiredResolvers<O extends object> = O.Filter<O, object, '<-extends'>
+export type PickRequiredResolvers<O extends object> = O.Filter<
+  O,
+  object,
+  '<-extends'
+>
 
-type GetResolver<Name extends keyof Resolvers> = NonNullable<Resolvers[Name]>
+export type GetResolver<Name extends keyof Resolvers> = NonNullable<
+  Resolvers[Name]
+>
 
 /**
  * A version of `Omit` where the keys do not need to be property names of the
  * object.
  */
-type OmitKeys<O extends object, Keys> = Omit<O, Keys & keyof O>
+export type OmitKeys<O extends object, Keys> = Omit<O, Keys & keyof O>
 
 /**
  * A version of `Pick` where the keys do not need to be property names of the
  * object.
  */
-type PickKeys<O extends object, Keys> = Pick<O, Keys & keyof O>
+export type PickKeys<O extends object, Keys> = Pick<O, Keys & keyof O>

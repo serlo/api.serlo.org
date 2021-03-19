@@ -24,7 +24,7 @@ import {
   NotificationEventResolvers,
   NotificationEventType,
 } from '../types'
-import { Resolver } from '~/internals/graphql'
+import { LegacyResolver } from '~/internals/graphql'
 import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 import { SetUuidStateNotificationEvent } from '~/types'
 
@@ -32,15 +32,15 @@ export interface SetUuidStateNotificationEventPayload
   extends AbstractNotificationEventPayload,
     Omit<
       SetUuidStateNotificationEvent,
-      keyof SetUuidStateNotificationEventResolvers['SetUuidStateNotificationEvent']
+      keyof LegacySetUuidStateNotificationEventResolvers['SetUuidStateNotificationEvent']
     > {
   __typename: NotificationEventType.SetUuidState
   objectId: number
 }
 
-export interface SetUuidStateNotificationEventResolvers {
+export interface LegacySetUuidStateNotificationEventResolvers {
   SetUuidStateNotificationEvent: {
-    object: Resolver<
+    object: LegacyResolver<
       SetUuidStateNotificationEventPayload,
       never,
       UuidPayload | null

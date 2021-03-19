@@ -52,15 +52,9 @@ export interface QuerySpecWithHelpers<P, R> extends QuerySpec<P, R> {
   ): Promise<S2>
 }
 
-interface Payload<P> {
-  payload: P
-}
-interface ArrayPayload<P> {
-  payloads: P[]
-}
-export type PayloadArrayOrPayload<P> = Payload<P> | ArrayPayload<P>
+export type PayloadArrayOrPayload<P> = { payload: P } | { payloads: P[] }
 
-export type Query<P, R> = (P extends undefined
+export type ModelQuery<P, R> = (P extends undefined
   ? () => Promise<R>
   : (payload: P) => Promise<R>) & {
   _querySpec: QuerySpecWithHelpers<P, R>
@@ -69,7 +63,7 @@ export type Query<P, R> = (P extends undefined
 export function createQuery<P, R>(
   spec: QuerySpec<P, R>,
   environment: Environment
-): Query<P, R> {
+): ModelQuery<P, R> {
   async function queryWithDecoder<S extends R>(
     payload: P,
     customDecoder?: t.Type<S>
@@ -141,10 +135,10 @@ export function createQuery<P, R>(
 
   query._querySpec = querySpecWithHelpers
 
-  return (query as unknown) as Query<P, R>
+  return (query as unknown) as ModelQuery<P, R>
 }
 
-export function isQuery(query: unknown): query is Query<unknown, unknown> {
+export function isQuery(query: unknown): query is ModelQuery<unknown, unknown> {
   return R.has('_querySpec', query) && query._querySpec !== undefined
 }
 

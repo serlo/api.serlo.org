@@ -23,12 +23,12 @@ import * as Sentry from '@sentry/node'
 import { function as F, array as A } from 'fp-ts'
 import R from 'ramda'
 
-export interface ErrorEvent extends Context {
+export interface ErrorEvent extends ErrorContext {
   error: Error
 }
 
 export function addContext(
-  context: Context
+  context: ErrorContext
 ): (error: ErrorEvent) => ErrorEvent {
   return R.mergeDeepRight(context)
 }
@@ -98,7 +98,7 @@ function captureErrorEvent(event: ErrorEvent) {
   }
 }
 
-interface Context {
+export interface ErrorContext {
   location?: string
   locationContext?: Record<string, unknown>
   errorContext?: Record<string, unknown>

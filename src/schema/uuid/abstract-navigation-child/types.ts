@@ -25,7 +25,7 @@ import { Instance, NavigationNode } from '~/types'
 
 export type NavigationChildPayload = TaxonomyTermPayload | Model<'Page'>
 
-export interface Navigation {
+export interface NavigationData {
   data: NodeData
   path: NavigationNode[]
 }

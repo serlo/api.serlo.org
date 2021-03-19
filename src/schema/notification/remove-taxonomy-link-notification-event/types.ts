@@ -24,7 +24,7 @@ import {
   NotificationEventResolvers,
   NotificationEventType,
 } from '../types'
-import { Resolver } from '~/internals/graphql'
+import { LegacyResolver } from '~/internals/graphql'
 import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
 import { RemoveTaxonomyLinkNotificationEvent } from '~/types'
@@ -33,21 +33,21 @@ export interface RemoveTaxonomyLinkNotificationEventPayload
   extends AbstractNotificationEventPayload,
     Omit<
       RemoveTaxonomyLinkNotificationEvent,
-      keyof RemoveTaxonomyLinkNotificationEventResolvers['RemoveTaxonomyLinkNotificationEvent']
+      keyof LegacyRemoveTaxonomyLinkNotificationEventResolvers['RemoveTaxonomyLinkNotificationEvent']
     > {
   __typename: NotificationEventType.RemoveTaxonomyLink
   parentId: number
   childId: number
 }
 
-export interface RemoveTaxonomyLinkNotificationEventResolvers {
+export interface LegacyRemoveTaxonomyLinkNotificationEventResolvers {
   RemoveTaxonomyLinkNotificationEvent: {
-    parent: Resolver<
+    parent: LegacyResolver<
       RemoveTaxonomyLinkNotificationEventPayload,
       never,
       TaxonomyTermPayload | null
     >
-    child: Resolver<
+    child: LegacyResolver<
       RemoveTaxonomyLinkNotificationEventPayload,
       never,
       UuidPayload | null

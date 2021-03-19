@@ -1,6 +1,6 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
-  "mainEntryPointFilePath": "dist/types.d.ts",
+  "mainEntryPointFilePath": "dist/api.d.ts",
 
   "dtsRollup": {
     "enabled": true,
