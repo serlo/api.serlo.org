@@ -665,6 +665,11 @@ async function exec(): Promise<void> {
     {
       tagName: 'v0.20.1',
       date: '2021-03-19',
+      yanked: true,
+    },
+    {
+      tagName: 'v0.20.2',
+      date: '2021-03-21',
       internal: [
         'Various refactorings.',
         'Various changes to the build toolchain.',

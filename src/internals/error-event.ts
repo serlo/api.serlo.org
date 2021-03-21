@@ -20,7 +20,8 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as Sentry from '@sentry/node'
-import { function as F, array as A } from 'fp-ts'
+import { array as A } from 'fp-ts'
+import * as F from 'fp-ts/lib/function'
 import R from 'ramda'
 
 export interface ErrorEvent extends ErrorContext {

@@ -2,13 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [v0.20.1](https://github.com/serlo/api.serlo.org/compare/v0.20.0..v0.20.1) - March 19, 2021
+## [v0.20.2](https://github.com/serlo/api.serlo.org/compare/v0.20.1..v0.20.2) - March 21, 2021
 
 ### Internal
 
 - Various refactorings.
 
 - Various changes to the build toolchain.
+
+## [v0.20.1](https://github.com/serlo/api.serlo.org/compare/v0.20.0..v0.20.1) - March 19, 2021 \[YANKED]
 
 ## [v0.20.0](https://github.com/serlo/api.serlo.org/compare/v0.19.14..v0.20.0) - March 16, 2021 \[YANKED]
 
