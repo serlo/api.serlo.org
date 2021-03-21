@@ -7,7 +7,7 @@
 import { A } from 'ts-toolbelt';
 import { DocumentNode } from 'graphql';
 import { either } from 'fp-ts';
-import { function } from 'fp-ts';
+import * as F from 'fp-ts/lib/function';
 import { GraphQLResolveInfo } from 'graphql';
 import type { GraphQLScalarType } from 'graphql';
 import type { GraphQLScalarTypeConfig } from 'graphql';
@@ -729,12 +729,12 @@ export type ArticleThreadsArgs = {
 
 // @public (undocumented)
 export function assertAll<A, B extends A>(args: {
-    assertion: function.Refinement<A, B>;
+    assertion: F.Refinement<A, B>;
 } & ErrorEvent_2): (list: A[]) => B[];
 
 // @public (undocumented)
 export function assertAll<A>(args: {
-    assertion: function.Predicate<A>;
+    assertion: F.Predicate<A>;
 } & ErrorEvent_2): (list: A[]) => A[];
 
 // @public (undocumented)
