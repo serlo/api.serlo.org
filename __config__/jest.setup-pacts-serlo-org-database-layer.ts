@@ -32,7 +32,7 @@ import {
   createBeforeEach,
   setup,
 } from './setup'
-import { Service } from '~/internals/auth'
+import { Service } from '~/internals/authentication'
 import { emptySwrQueue } from '~/internals/swr-queue'
 import { createSerloModel } from '~/model'
 

@@ -25,7 +25,7 @@ import {
   createTestClient as createApolloTestClient,
 } from 'apollo-server-testing'
 
-import { Service } from '~/internals/auth'
+import { Service } from '~/internals/authentication'
 import { Context } from '~/internals/graphql'
 import { getGraphQLOptions } from '~/internals/server'
 import { emptySwrQueue } from '~/internals/swr-queue'
