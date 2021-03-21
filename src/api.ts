@@ -1,4 +1,4 @@
-export * from '~/internals/auth/service'
+export * from '~/internals/authentication/service'
 export * from '~/internals/cache'
 export * from '~/internals/data-source'
 export * from '~/internals/environment'
