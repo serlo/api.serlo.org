@@ -4342,9 +4342,6 @@ export type RepositoryPayload = Model<'AbstractRepository'>;
 export type RepositoryType = EntityType | DiscriminatorType.Page;
 
 // @public (undocumented)
-export function requestsOnlyFields(type: string, fields: string[], info: GraphQLResolveInfo): boolean;
-
-// @public (undocumented)
 export type RequiredResolverFunctions<T extends object> = Typename<T> extends keyof Resolvers ? OmitKeys<Required<GetResolver<Typename<T>>>, Model<Typename<T>> extends object ? O.IntersectKeys<T, Model<Typename<T>>, '<-extends'> | '__isTypeOf' : never> : never;
 
 // @public (undocumented)
