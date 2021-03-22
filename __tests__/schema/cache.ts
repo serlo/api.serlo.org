@@ -26,6 +26,7 @@ import {
   createRemoveCacheMutation,
   createSetCacheMutation,
   createUpdateCacheMutation,
+  user,
 } from '../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
@@ -89,10 +90,25 @@ test('_removeCache (forbidden)', async () => {
   })
 })
 
-test('_removeCache (authenticated)', async () => {
+test('_removeCache (authenticated via Serlo Service)', async () => {
   const client = createTestClient({
     service: Service.Serlo,
     userId: null,
+  })
+
+  await assertSuccessfulGraphQLMutation({
+    ...createRemoveCacheMutation(testVars[0]),
+    client,
+  })
+
+  const cachedValue = await global.cache.get({ key: testVars[0].key })
+  expect(option.isNone(cachedValue)).toBe(true)
+})
+
+test('_removeCache (authenticated as User)', async () => {
+  const client = createTestClient({
+    service: Service.SerloCloudflareWorker,
+    userId: user.id,
   })
 
   await assertSuccessfulGraphQLMutation({
