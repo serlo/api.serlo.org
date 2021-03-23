@@ -216,6 +216,23 @@ describe('uuid', () => {
     })
   })
 
+  test('returns an error when alias contains the null character', async () => {
+    global.server.use(createUuidHandler({ ...article, alias: '\0\0/1/math' }))
+
+    await assertFailingGraphQLQuery({
+      query: gql`
+        query($id: Int!) {
+          uuid(id: $id) {
+            __typename
+          }
+        }
+      `,
+      variables: { id: article.id },
+      message: expect.stringContaining('Invalid value'),
+      client,
+    })
+  })
+
   test('returns an error when no arguments are given', async () => {
     await assertFailingGraphQLQuery({
       query: gql`
