@@ -40,10 +40,16 @@ export const InstanceDecoder: t.Type<Instance> = t.union([
   t.literal(Instance.Ta),
 ])
 
+const StringWithoutNullCharacter = t.refinement(
+  t.string,
+  (text) => !text.includes('\0'),
+  'AliasString'
+)
+
 export const AbstractUuidDecoder = t.type({
   id: t.number,
   trashed: t.boolean,
-  alias: t.string,
+  alias: StringWithoutNullCharacter,
 })
 
 export const EntityTypeDecoder = t.union([
