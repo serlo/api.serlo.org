@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.20.3](https://github.com/serlo/api.serlo.org/compare/v0.20.2..v0.20.3) - March 23, 2021
+
+### Internal
+
+- **uuid**. Reject aliases containing null characters.
+
 ## [v0.20.2](https://github.com/serlo/api.serlo.org/compare/v0.20.1..v0.20.2) - March 21, 2021
 
 ### Internal

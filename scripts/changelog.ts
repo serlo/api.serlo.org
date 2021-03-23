@@ -675,6 +675,11 @@ async function exec(): Promise<void> {
         'Various changes to the build toolchain.',
       ],
     },
+    {
+      tagName: 'v0.20.3',
+      date: '2021-03-23',
+      internal: [['uuid', 'Reject aliases containing null characters.']],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
