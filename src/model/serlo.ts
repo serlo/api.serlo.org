@@ -43,7 +43,7 @@ import {
 import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 import { isUnsupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
-import { Instance, License, ThreadCreateThreadInput } from '~/types'
+import { Instance, ThreadCreateThreadInput } from '~/types'
 
 export function createSerloModel({
   environment,
@@ -348,7 +348,6 @@ export function createSerloModel({
   const getLicense = createQuery(
     {
       decoder: t.type({
-        __typename: t.string,
         id: t.number,
         instance: InstanceDecoder,
         default: t.boolean,
@@ -359,12 +358,10 @@ export function createSerloModel({
         iconHref: t.string,
       }),
       getCurrentValue: ({ id }: { id: number }) => {
-        const response = handleMessage({
+        return handleMessage({
           message: { type: 'LicenseQuery', payload: { id } },
           expectedStatusCodes: [200, 404],
         })
-        //TODO: Remove this after implementation of __typename in the database layer
-        return response as License & { __typename: 'license' }
       },
       enableSwr: true,
       maxAge: { day: 1 },
