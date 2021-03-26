@@ -24,7 +24,7 @@ import {
   ApolloServer,
   ApolloServerExpressConfig,
 } from 'apollo-server-express'
-import { Express } from 'express'
+import { Express, json } from 'express'
 import createPlayground from 'graphql-playground-middleware-express'
 import jwt from 'jsonwebtoken'
 import fetch from 'node-fetch'
@@ -56,6 +56,7 @@ export function applyGraphQLMiddleware({
       ? {}
       : { headers: { Authorization: `Serlo Service=${getToken()}` } }
 
+  app.use(json({ limit: '2mb' }))
   app.use(
     server.getMiddleware({
       path: '/graphql',
