@@ -52,7 +52,7 @@ const StringWithoutNullCharacter = t.refinement(
   'AliasString'
 )
 
-const Uuid = t.refinement(t.number, (id) => id < MAX_UUID, 'Uuid')
+export const Uuid = t.refinement(t.number, (id) => id < MAX_UUID, 'Uuid')
 
 export const AbstractUuidDecoder = t.type({
   id: Uuid,
