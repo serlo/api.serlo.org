@@ -30,7 +30,7 @@ export type AbstractEntity = {
 
 // @public (undocumented)
 export const AbstractEntityDecoder: t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -38,8 +38,8 @@ export const AbstractEntityDecoder: t.IntersectionC<[t.TypeC<{
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>;
 
 // @public (undocumented)
@@ -65,15 +65,15 @@ export type AbstractEntityRevision = {
 
 // @public (undocumented)
 export const AbstractEntityRevisionDecoder: t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>;
 
@@ -102,7 +102,7 @@ export type AbstractExercise = {
 
 // @public (undocumented)
 export const AbstractExerciseDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -110,14 +110,14 @@ export const AbstractExerciseDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.Inte
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Exercise>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
-    solutionId: t.UnionC<[t.NumberC, t.NullC]>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
+    solutionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -125,12 +125,12 @@ export const AbstractExerciseDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.Inte
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.GroupedExercise>;
-    parentId: t.NumberC;
-    solutionId: t.UnionC<[t.NumberC, t.NullC]>;
+    parentId: t.RefinementC<t.NumberC>;
+    solutionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
 }>]>>]>;
 
 // @public (undocumented)
@@ -347,7 +347,7 @@ export type AbstractUuidCursorResolvers<ContextType = Context, ParentType extend
 
 // @public (undocumented)
 export const AbstractUuidDecoder: t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>;
@@ -391,7 +391,7 @@ export type Applet = AbstractUuid & AbstractRepository & AbstractEntity & Abstra
 
 // @public (undocumented)
 export const AppletDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -399,11 +399,11 @@ export const AppletDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Applet>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>;
 
 // @public (undocumented)
@@ -473,15 +473,15 @@ export type AppletRevisionCursorResolvers<ContextType = Context, ParentType exte
 
 // @public (undocumented)
 export const AppletRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.AppletRevision>;
@@ -574,7 +574,7 @@ export type Article = AbstractUuid & AbstractRepository & AbstractEntity & Abstr
 
 // @public (undocumented)
 export const ArticleDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -582,11 +582,11 @@ export const ArticleDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Article>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>;
 
 // @public (undocumented)
@@ -655,15 +655,15 @@ export type ArticleRevisionCursorResolvers<ContextType = Context, ParentType ext
 
 // @public (undocumented)
 export const ArticleRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.ArticleRevision>;
@@ -848,7 +848,7 @@ export type CommentConnectionResolvers<ContextType = Context, ParentType extends
 
 // @public (undocumented)
 export const CommentDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -858,8 +858,8 @@ export const CommentDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
     date: t.StringC;
     archived: t.BooleanC;
     content: t.StringC;
-    parentId: t.NumberC;
-    childrenIds: t.ArrayC<t.NumberC>;
+    parentId: t.RefinementC<t.NumberC>;
+    childrenIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>;
 
 // @public (undocumented)
@@ -946,7 +946,7 @@ export type Course = AbstractUuid & AbstractRepository & AbstractEntity & Abstra
 
 // @public (undocumented)
 export const CourseDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -954,12 +954,12 @@ export const CourseDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Course>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
-    pageIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
+    pageIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>;
 
 // @public (undocumented)
@@ -979,7 +979,7 @@ export type CoursePage = AbstractUuid & AbstractRepository & AbstractEntity & In
 
 // @public (undocumented)
 export const CoursePageDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -987,11 +987,11 @@ export const CoursePageDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.Typ
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.CoursePage>;
-    parentId: t.NumberC;
+    parentId: t.RefinementC<t.NumberC>;
 }>]>>;
 
 // @public (undocumented)
@@ -1058,15 +1058,15 @@ export type CoursePageRevisionCursorResolvers<ContextType = Context, ParentType 
 
 // @public (undocumented)
 export const CoursePageRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.CoursePageRevision>;
@@ -1190,15 +1190,15 @@ export type CourseRevisionCursorResolvers<ContextType = Context, ParentType exte
 
 // @public (undocumented)
 export const CourseRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.CourseRevision>;
@@ -1946,7 +1946,7 @@ export const emptySwrQueue: SwrQueue;
 
 // @public (undocumented)
 export const EntityDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -1954,14 +1954,14 @@ export const EntityDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.Inte
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Exercise>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
-    solutionId: t.UnionC<[t.NumberC, t.NullC]>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
+    solutionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -1969,14 +1969,14 @@ export const EntityDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.Inte
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.GroupedExercise>;
-    parentId: t.NumberC;
-    solutionId: t.UnionC<[t.NumberC, t.NullC]>;
+    parentId: t.RefinementC<t.NumberC>;
+    solutionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
 }>]>>]>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -1984,13 +1984,13 @@ export const EntityDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.Inte
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Applet>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -1998,13 +1998,13 @@ export const EntityDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.Inte
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Article>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -2012,14 +2012,14 @@ export const EntityDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.Inte
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Course>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
-    pageIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
+    pageIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -2027,13 +2027,13 @@ export const EntityDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.Inte
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.CoursePage>;
-    parentId: t.NumberC;
+    parentId: t.RefinementC<t.NumberC>;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -2041,13 +2041,13 @@ export const EntityDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.Inte
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Event>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -2055,14 +2055,14 @@ export const EntityDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.Inte
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.ExerciseGroup>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
-    exerciseIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
+    exerciseIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -2070,13 +2070,13 @@ export const EntityDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.Inte
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Solution>;
     parentId: t.NumberC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -2084,11 +2084,11 @@ export const EntityDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.Inte
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Video>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>]>;
 
 // @public (undocumented)
@@ -2096,15 +2096,15 @@ export type EntityPayload = Model<'AbstractEntity'>;
 
 // @public (undocumented)
 export const EntityRevisionDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.AppletRevision>;
@@ -2114,15 +2114,15 @@ export const EntityRevisionDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.Inters
     metaTitle: t.StringC;
     metaDescription: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.ArticleRevision>;
@@ -2131,15 +2131,15 @@ export const EntityRevisionDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.Inters
     metaTitle: t.StringC;
     metaDescription: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.CourseRevision>;
@@ -2147,30 +2147,30 @@ export const EntityRevisionDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.Inters
     content: t.StringC;
     metaDescription: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.CoursePageRevision>;
     title: t.StringC;
     content: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.EventRevision>;
@@ -2179,71 +2179,71 @@ export const EntityRevisionDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.Inters
     metaTitle: t.StringC;
     metaDescription: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.ExerciseRevision>;
     content: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.ExerciseGroupRevision>;
     content: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.GroupedExerciseRevision>;
     content: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.SolutionRevision>;
     content: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.VideoRevision>;
@@ -2354,7 +2354,7 @@ export { Event_2 as Event }
 
 // @public (undocumented)
 export const EventDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -2362,11 +2362,11 @@ export const EventDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Event>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>;
 
 // @public (undocumented)
@@ -2435,15 +2435,15 @@ export type EventRevisionCursorResolvers<ContextType = Context, ParentType exten
 
 // @public (undocumented)
 export const EventRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.EventRevision>;
@@ -2532,7 +2532,7 @@ export type Exercise = AbstractUuid & AbstractRepository & AbstractEntity & Abst
 
 // @public (undocumented)
 export const ExerciseDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -2540,12 +2540,12 @@ export const ExerciseDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Exercise>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
-    solutionId: t.UnionC<[t.NumberC, t.NullC]>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
+    solutionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
 }>]>>;
 
 // @public (undocumented)
@@ -2566,7 +2566,7 @@ export type ExerciseGroup = AbstractUuid & AbstractRepository & AbstractEntity &
 
 // @public (undocumented)
 export const ExerciseGroupDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -2574,12 +2574,12 @@ export const ExerciseGroupDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.ExerciseGroup>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
-    exerciseIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
+    exerciseIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>;
 
 // @public (undocumented)
@@ -2646,15 +2646,15 @@ export type ExerciseGroupRevisionCursorResolvers<ContextType = Context, ParentTy
 
 // @public (undocumented)
 export const ExerciseGroupRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.ExerciseGroupRevision>;
@@ -2776,15 +2776,15 @@ export type ExerciseRevisionCursorResolvers<ContextType = Context, ParentType ex
 
 // @public (undocumented)
 export const ExerciseRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.ExerciseRevision>;
@@ -2868,7 +2868,7 @@ export type GroupedExercise = AbstractUuid & AbstractRepository & AbstractEntity
 
 // @public (undocumented)
 export const GroupedExerciseDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -2876,12 +2876,12 @@ export const GroupedExerciseDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.GroupedExercise>;
-    parentId: t.NumberC;
-    solutionId: t.UnionC<[t.NumberC, t.NullC]>;
+    parentId: t.RefinementC<t.NumberC>;
+    solutionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
 }>]>>;
 
 // @public (undocumented)
@@ -2948,15 +2948,15 @@ export type GroupedExerciseRevisionCursorResolvers<ContextType = Context, Parent
 
 // @public (undocumented)
 export const GroupedExerciseRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.GroupedExerciseRevision>;
@@ -3753,14 +3753,14 @@ export type Page = AbstractUuid & AbstractRepository & AbstractNavigationChild &
 
 // @public (undocumented)
 export const PageDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.LiteralC<DiscriminatorType.Page>;
     instance: t.Type<Instance, Instance, unknown>;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
     date: t.StringC;
     licenseId: t.NumberC;
 }>]>>;
@@ -3846,7 +3846,7 @@ export type PageRevisionCursorResolvers<ContextType = Context, ParentType extend
 
 // @public (undocumented)
 export const PageRevisionDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -3854,8 +3854,8 @@ export const PageRevisionDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
     title: t.StringC;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
 }>]>>;
 
 // @public (undocumented)
@@ -4179,7 +4179,7 @@ export type Repository<R extends Model<'AbstractRevision'>['__typename']> = Mode
 
 // @public (undocumented)
 export const RepositoryDecoder: t.UnionC<[t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -4187,14 +4187,14 @@ export const RepositoryDecoder: t.UnionC<[t.UnionC<[t.UnionC<[t.ExactC<t.Interse
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Exercise>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
-    solutionId: t.UnionC<[t.NumberC, t.NullC]>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
+    solutionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -4202,14 +4202,14 @@ export const RepositoryDecoder: t.UnionC<[t.UnionC<[t.UnionC<[t.ExactC<t.Interse
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.GroupedExercise>;
-    parentId: t.NumberC;
-    solutionId: t.UnionC<[t.NumberC, t.NullC]>;
+    parentId: t.RefinementC<t.NumberC>;
+    solutionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
 }>]>>]>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -4217,13 +4217,13 @@ export const RepositoryDecoder: t.UnionC<[t.UnionC<[t.UnionC<[t.ExactC<t.Interse
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Applet>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -4231,13 +4231,13 @@ export const RepositoryDecoder: t.UnionC<[t.UnionC<[t.UnionC<[t.ExactC<t.Interse
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Article>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -4245,14 +4245,14 @@ export const RepositoryDecoder: t.UnionC<[t.UnionC<[t.UnionC<[t.ExactC<t.Interse
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Course>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
-    pageIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
+    pageIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -4260,13 +4260,13 @@ export const RepositoryDecoder: t.UnionC<[t.UnionC<[t.UnionC<[t.ExactC<t.Interse
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.CoursePage>;
-    parentId: t.NumberC;
+    parentId: t.RefinementC<t.NumberC>;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -4274,13 +4274,13 @@ export const RepositoryDecoder: t.UnionC<[t.UnionC<[t.UnionC<[t.ExactC<t.Interse
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Event>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -4288,14 +4288,14 @@ export const RepositoryDecoder: t.UnionC<[t.UnionC<[t.UnionC<[t.ExactC<t.Interse
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.ExerciseGroup>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
-    exerciseIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
+    exerciseIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -4303,13 +4303,13 @@ export const RepositoryDecoder: t.UnionC<[t.UnionC<[t.UnionC<[t.ExactC<t.Interse
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Solution>;
     parentId: t.NumberC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -4317,20 +4317,20 @@ export const RepositoryDecoder: t.UnionC<[t.UnionC<[t.UnionC<[t.ExactC<t.Interse
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Video>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>]>, t.ExactC<t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.LiteralC<DiscriminatorType.Page>;
     instance: t.Type<Instance, Instance, unknown>;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
     date: t.StringC;
     licenseId: t.NumberC;
 }>]>>]>;
@@ -4762,15 +4762,15 @@ export type Revision<T extends Model<'AbstractRepository'>['__typename']> = Mode
 
 // @public (undocumented)
 export const RevisionDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.AppletRevision>;
@@ -4780,15 +4780,15 @@ export const RevisionDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.In
     metaTitle: t.StringC;
     metaDescription: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.ArticleRevision>;
@@ -4797,15 +4797,15 @@ export const RevisionDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.In
     metaTitle: t.StringC;
     metaDescription: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.CourseRevision>;
@@ -4813,30 +4813,30 @@ export const RevisionDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.In
     content: t.StringC;
     metaDescription: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.CoursePageRevision>;
     title: t.StringC;
     content: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.EventRevision>;
@@ -4845,71 +4845,71 @@ export const RevisionDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.In
     metaTitle: t.StringC;
     metaDescription: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.ExerciseRevision>;
     content: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.ExerciseGroupRevision>;
     content: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.GroupedExerciseRevision>;
     content: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.SolutionRevision>;
     content: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.VideoRevision>;
@@ -4917,7 +4917,7 @@ export const RevisionDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.In
     title: t.StringC;
     content: t.StringC;
 }>]>>]>, t.ExactC<t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -4925,8 +4925,8 @@ export const RevisionDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.In
     title: t.StringC;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
 }>]>>]>;
 
 // @public (undocumented)
@@ -5142,7 +5142,7 @@ export type Solution = AbstractUuid & AbstractRepository & AbstractEntity & Inst
 
 // @public (undocumented)
 export const SolutionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -5150,8 +5150,8 @@ export const SolutionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Solution>;
     parentId: t.NumberC;
@@ -5220,15 +5220,15 @@ export type SolutionRevisionCursorResolvers<ContextType = Context, ParentType ex
 
 // @public (undocumented)
 export const SolutionRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.SolutionRevision>;
@@ -5434,7 +5434,7 @@ export type TaxonomyTermConnectionResolvers<ContextType = Context, ParentType ex
 
 // @public (undocumented)
 export const TaxonomyTermDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -5443,8 +5443,8 @@ export const TaxonomyTermDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
     instance: t.Type<Instance, Instance, unknown>;
     name: t.StringC;
     weight: t.NumberC;
-    childrenIds: t.ArrayC<t.NumberC>;
-    parentId: t.UnionC<[t.NumberC, t.NullC]>;
+    childrenIds: t.ArrayC<t.RefinementC<t.NumberC>>;
+    parentId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
 }>, t.PartialC<{
     description: t.UnionC<[t.StringC, t.NullC]>;
 }>]>>;
@@ -5876,7 +5876,7 @@ export type UserConnectionResolvers<ContextType = Context, ParentType extends Re
 
 // @public (undocumented)
 export const UserDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -5929,8 +5929,11 @@ export type UserThreadsArgs = {
 };
 
 // @public (undocumented)
+export const Uuid: t.RefinementC<t.NumberC>;
+
+// @public (undocumented)
 export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -5940,10 +5943,10 @@ export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
     date: t.StringC;
     archived: t.BooleanC;
     content: t.StringC;
-    parentId: t.NumberC;
-    childrenIds: t.ArrayC<t.NumberC>;
+    parentId: t.RefinementC<t.NumberC>;
+    childrenIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>, t.UnionC<[t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -5951,14 +5954,14 @@ export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Exercise>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
-    solutionId: t.UnionC<[t.NumberC, t.NullC]>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
+    solutionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -5966,14 +5969,14 @@ export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.GroupedExercise>;
-    parentId: t.NumberC;
-    solutionId: t.UnionC<[t.NumberC, t.NullC]>;
+    parentId: t.RefinementC<t.NumberC>;
+    solutionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
 }>]>>]>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -5981,13 +5984,13 @@ export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Applet>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -5995,13 +5998,13 @@ export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Article>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -6009,14 +6012,14 @@ export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Course>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
-    pageIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
+    pageIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -6024,13 +6027,13 @@ export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.CoursePage>;
-    parentId: t.NumberC;
+    parentId: t.RefinementC<t.NumberC>;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -6038,13 +6041,13 @@ export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Event>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -6052,14 +6055,14 @@ export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.ExerciseGroup>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
-    exerciseIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
+    exerciseIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -6067,13 +6070,13 @@ export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Solution>;
     parentId: t.NumberC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -6081,32 +6084,32 @@ export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Video>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>]>, t.ExactC<t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.LiteralC<DiscriminatorType.Page>;
     instance: t.Type<Instance, Instance, unknown>;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
     date: t.StringC;
     licenseId: t.NumberC;
 }>]>>]>, t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.AppletRevision>;
@@ -6116,15 +6119,15 @@ export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
     metaTitle: t.StringC;
     metaDescription: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.ArticleRevision>;
@@ -6133,15 +6136,15 @@ export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
     metaTitle: t.StringC;
     metaDescription: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.CourseRevision>;
@@ -6149,30 +6152,30 @@ export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
     content: t.StringC;
     metaDescription: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.CoursePageRevision>;
     title: t.StringC;
     content: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.EventRevision>;
@@ -6181,71 +6184,71 @@ export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
     metaTitle: t.StringC;
     metaDescription: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.ExerciseRevision>;
     content: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.ExerciseGroupRevision>;
     content: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.GroupedExerciseRevision>;
     content: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.SolutionRevision>;
     content: t.StringC;
 }>]>>, t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.VideoRevision>;
@@ -6253,7 +6256,7 @@ export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
     title: t.StringC;
     content: t.StringC;
 }>]>>]>, t.ExactC<t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -6261,10 +6264,10 @@ export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
     title: t.StringC;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
 }>]>>]>, t.ExactC<t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -6273,12 +6276,12 @@ export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
     instance: t.Type<Instance, Instance, unknown>;
     name: t.StringC;
     weight: t.NumberC;
-    childrenIds: t.ArrayC<t.NumberC>;
-    parentId: t.UnionC<[t.NumberC, t.NullC]>;
+    childrenIds: t.ArrayC<t.RefinementC<t.NumberC>>;
+    parentId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
 }>, t.PartialC<{
     description: t.UnionC<[t.StringC, t.NullC]>;
 }>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -6350,7 +6353,7 @@ export type Video = AbstractUuid & AbstractRepository & AbstractEntity & Abstrac
 
 // @public (undocumented)
 export const VideoDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
@@ -6358,11 +6361,11 @@ export const VideoDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     licenseId: t.NumberC;
-    currentRevisionId: t.UnionC<[t.NumberC, t.NullC]>;
-    revisionIds: t.ArrayC<t.NumberC>;
+    currentRevisionId: t.UnionC<[t.RefinementC<t.NumberC>, t.NullC]>;
+    revisionIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityType.Video>;
-    taxonomyTermIds: t.ArrayC<t.NumberC>;
+    taxonomyTermIds: t.ArrayC<t.RefinementC<t.NumberC>>;
 }>]>>;
 
 // @public (undocumented)
@@ -6430,15 +6433,15 @@ export type VideoRevisionCursorResolvers<ContextType = Context, ParentType exten
 
 // @public (undocumented)
 export const VideoRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
-    id: t.NumberC;
+    id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
     __typename: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
     content: t.StringC;
     date: t.StringC;
-    authorId: t.NumberC;
-    repositoryId: t.NumberC;
+    authorId: t.RefinementC<t.NumberC>;
+    repositoryId: t.RefinementC<t.NumberC>;
     changes: t.StringC;
 }>]>, t.TypeC<{
     __typename: t.LiteralC<EntityRevisionType.VideoRevision>;
