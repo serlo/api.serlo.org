@@ -351,7 +351,6 @@ export function createSerloModel({
     },
     environment
   )
-
   const getLicense = createQuery(
     {
       decoder: t.type({

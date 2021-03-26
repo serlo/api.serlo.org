@@ -19,12 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { InstanceResolvers } from '~/schema/instance/types'
+import { InterfaceResolvers } from '~/internals/graphql'
 
-export const resolvers: InstanceResolvers = {
+export const resolvers: InterfaceResolvers<'InstanceAware'> = {
   InstanceAware: {
     __resolveType(object) {
-      return object.__typename
+      //TODO: Remove "!" when all Events have model types
+      return object.__typename!
     },
   },
 }
