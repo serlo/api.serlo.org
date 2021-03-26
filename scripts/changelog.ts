@@ -680,6 +680,11 @@ async function exec(): Promise<void> {
       date: '2021-03-23',
       internal: [['uuid', 'Reject aliases containing null characters.']],
     },
+    {
+      tagName: 'v0.20.4',
+      date: '2021-03-26',
+      fixed: ['Increase request body size limit.'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
