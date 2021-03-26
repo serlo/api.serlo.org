@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.20.4](https://github.com/serlo/api.serlo.org/compare/v0.20.3..v0.20.4) - March 26, 2021
+
+### Fixed
+
+- Increase request body size limit.
+
 ## [v0.20.3](https://github.com/serlo/api.serlo.org/compare/v0.20.2..v0.20.3) - March 23, 2021
 
 ### Internal
