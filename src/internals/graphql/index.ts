@@ -21,6 +21,5 @@
  */
 export * from './context'
 export * from './schema'
-export * from './requests-only-fields'
 export * from './resolver'
 export * from './utils'
