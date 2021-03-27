@@ -54,7 +54,6 @@
     "express": "^4.0.0",
     "fp-ts": "^2.0.0",
     "graphql": "^15.0.0",
-    "graphql-parse-resolve-info": "^4.0.0",
     "graphql-playground-middleware-express": "^1.0.0",
     "graphql-tag": "^2.0.0",
     "graphql-type-json": "^0.3.0",
