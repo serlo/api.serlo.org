@@ -78,10 +78,22 @@ test('_setCache (authenticated)', async () => {
   })
 })
 
-test('_removeCache (forbidden)', async () => {
+test('_removeCache (forbidden with not logged in user)', async () => {
   const client = createTestClient({
     service: Service.SerloCloudflareWorker,
     userId: null,
+  })
+  await assertFailingGraphQLMutation({
+    ...createRemoveCacheMutation(testVars[0]),
+    client,
+    expectedError: 'FORBIDDEN',
+  })
+})
+
+test('_removeCache (forbidden with wrong user)', async () => {
+  const client = createTestClient({
+    service: Service.SerloCloudflareWorker,
+    userId: user.id,
   })
   await assertFailingGraphQLMutation({
     ...createRemoveCacheMutation(testVars[0]),
@@ -105,10 +117,10 @@ test('_removeCache (authenticated via Serlo Service)', async () => {
   expect(option.isNone(cachedValue)).toBe(true)
 })
 
-test('_removeCache (authenticated as User)', async () => {
+test('_removeCache (authenticated as CarolinJaser)', async () => {
   const client = createTestClient({
     service: Service.SerloCloudflareWorker,
-    userId: user.id,
+    userId: 178145,
   })
 
   await assertSuccessfulGraphQLMutation({
