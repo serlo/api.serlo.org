@@ -39,7 +39,18 @@ export const resolvers: CacheResolvers = {
       return null
     },
     async _removeCache(_parent, { key }, { dataSources, service, userId }) {
-      if (service !== Service.Serlo && userId === null) {
+      const allowedUserIds = [
+        26217, // kulla
+        15473, // inyono
+        131536, // dal
+        32543, // botho
+        178145, // CarolinJaser
+      ]
+
+      if (
+        service !== Service.Serlo &&
+        (userId === null || !allowedUserIds.includes(userId))
+      ) {
         throw new ForbiddenError(
           'You do not have the permissions to remove the cache'
         )
