@@ -40,14 +40,22 @@ export const InstanceDecoder: t.Type<Instance> = t.union([
   t.literal(Instance.Ta),
 ])
 
+// As of 26.03.2021 the maximum uuid is 201517. Thus there are ~200.000 uuids
+// per 10 years. The following maximum shouldn't be hit in the next ~ 40 years.
+// Having a test against the maximum will make our decoders more strict and thus
+// the app more robust against malformed responses from the database layer.
+const MAX_UUID = 1e7
+
 const StringWithoutNullCharacter = t.refinement(
   t.string,
   (text) => !text.includes('\0'),
   'AliasString'
 )
 
+export const Uuid = t.refinement(t.number, (id) => id < MAX_UUID, 'Uuid')
+
 export const AbstractUuidDecoder = t.type({
-  id: t.number,
+  id: Uuid,
   trashed: t.boolean,
   alias: StringWithoutNullCharacter,
 })
@@ -72,8 +80,8 @@ export const AbstractEntityDecoder = t.intersection([
     instance: InstanceDecoder,
     date: t.string,
     licenseId: t.number,
-    currentRevisionId: t.union([t.number, t.null]),
-    revisionIds: t.array(t.number),
+    currentRevisionId: t.union([Uuid, t.null]),
+    revisionIds: t.array(Uuid),
   }),
 ])
 
@@ -96,8 +104,8 @@ export const AbstractEntityRevisionDecoder = t.intersection([
     __typename: EntityRevisionTypeDecoder,
     content: t.string,
     date: t.string,
-    authorId: t.number,
-    repositoryId: t.number,
+    authorId: Uuid,
+    repositoryId: Uuid,
     changes: t.string,
   }),
 ])
@@ -108,8 +116,8 @@ export const PageDecoder = t.exact(
     t.type({
       __typename: t.literal(DiscriminatorType.Page),
       instance: InstanceDecoder,
-      currentRevisionId: t.union([t.number, t.null]),
-      revisionIds: t.array(t.number),
+      currentRevisionId: t.union([Uuid, t.null]),
+      revisionIds: t.array(Uuid),
       date: t.string,
       licenseId: t.number,
     }),
@@ -124,8 +132,8 @@ export const PageRevisionDecoder = t.exact(
       title: t.string,
       content: t.string,
       date: t.string,
-      authorId: t.number,
-      repositoryId: t.number,
+      authorId: Uuid,
+      repositoryId: Uuid,
     }),
   ])
 )
@@ -153,8 +161,8 @@ export const TaxonomyTermDecoder = t.exact(
       instance: InstanceDecoder,
       name: t.string,
       weight: t.number,
-      childrenIds: t.array(t.number),
-      parentId: t.union([t.number, t.null]),
+      childrenIds: t.array(Uuid),
+      parentId: t.union([Uuid, t.null]),
     }),
     t.partial({
       description: t.union([t.string, t.null]),
@@ -172,8 +180,8 @@ export const CommentDecoder = t.exact(
       date: t.string,
       archived: t.boolean,
       content: t.string,
-      parentId: t.number,
-      childrenIds: t.array(t.number),
+      parentId: Uuid,
+      childrenIds: t.array(Uuid),
     }),
   ])
 )
@@ -183,7 +191,7 @@ export const ArticleDecoder = t.exact(
     AbstractEntityDecoder,
     t.type({
       __typename: t.literal(EntityType.Article),
-      taxonomyTermIds: t.array(t.number),
+      taxonomyTermIds: t.array(Uuid),
     }),
   ])
 )
@@ -206,7 +214,7 @@ export const AppletDecoder = t.exact(
     AbstractEntityDecoder,
     t.type({
       __typename: t.literal(EntityType.Applet),
-      taxonomyTermIds: t.array(t.number),
+      taxonomyTermIds: t.array(Uuid),
     }),
   ])
 )
@@ -230,8 +238,8 @@ export const CourseDecoder = t.exact(
     AbstractEntityDecoder,
     t.type({
       __typename: t.literal(EntityType.Course),
-      taxonomyTermIds: t.array(t.number),
-      pageIds: t.array(t.number),
+      taxonomyTermIds: t.array(Uuid),
+      pageIds: t.array(Uuid),
     }),
   ])
 )
@@ -253,7 +261,7 @@ export const CoursePageDecoder = t.exact(
     AbstractEntityDecoder,
     t.type({
       __typename: t.literal(EntityType.CoursePage),
-      parentId: t.number,
+      parentId: Uuid,
     }),
   ])
 )
@@ -274,8 +282,8 @@ export const ExerciseDecoder = t.exact(
     AbstractEntityDecoder,
     t.type({
       __typename: t.literal(EntityType.Exercise),
-      taxonomyTermIds: t.array(t.number),
-      solutionId: t.union([t.number, t.null]),
+      taxonomyTermIds: t.array(Uuid),
+      solutionId: t.union([Uuid, t.null]),
     }),
   ])
 )
@@ -295,8 +303,8 @@ export const ExerciseGroupDecoder = t.exact(
     AbstractEntityDecoder,
     t.type({
       __typename: t.literal(EntityType.ExerciseGroup),
-      taxonomyTermIds: t.array(t.number),
-      exerciseIds: t.array(t.number),
+      taxonomyTermIds: t.array(Uuid),
+      exerciseIds: t.array(Uuid),
     }),
   ])
 )
@@ -316,7 +324,7 @@ export const EventDecoder = t.exact(
     AbstractEntityDecoder,
     t.type({
       __typename: t.literal(EntityType.Event),
-      taxonomyTermIds: t.array(t.number),
+      taxonomyTermIds: t.array(Uuid),
     }),
   ])
 )
@@ -339,8 +347,8 @@ export const GroupedExerciseDecoder = t.exact(
     AbstractEntityDecoder,
     t.type({
       __typename: t.literal(EntityType.GroupedExercise),
-      parentId: t.number,
-      solutionId: t.union([t.number, t.null]),
+      parentId: Uuid,
+      solutionId: t.union([Uuid, t.null]),
     }),
   ])
 )
@@ -380,7 +388,7 @@ export const VideoDecoder = t.exact(
     AbstractEntityDecoder,
     t.type({
       __typename: t.literal(EntityType.Video),
-      taxonomyTermIds: t.array(t.number),
+      taxonomyTermIds: t.array(Uuid),
     }),
   ])
 )

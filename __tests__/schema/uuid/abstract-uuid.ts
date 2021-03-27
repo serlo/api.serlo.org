@@ -216,6 +216,21 @@ describe('uuid', () => {
     })
   })
 
+  test('returns null when requested id is too high to be an uuid', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query($path: String!) {
+          uuid(alias: { instance: de, path: $path }) {
+            __typename
+          }
+        }
+      `,
+      variables: { path: '/100000000000000' },
+      data: { uuid: null },
+      client,
+    })
+  })
+
   test('returns an error when alias contains the null character', async () => {
     global.server.use(createUuidHandler({ ...article, alias: '\0\0/1/math' }))
 

@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { ForbiddenError, UserInputError } from 'apollo-server'
+import { either as E } from 'fp-ts'
 
 import { DiscriminatorType, UuidPayload } from './types'
 import { resolveCustomId } from '~/config/alias'
@@ -31,6 +32,7 @@ import {
   Queries,
   Context,
 } from '~/internals/graphql'
+import { Uuid } from '~/model/decoder'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { QueryUuidArgs } from '~/types'
 
@@ -45,8 +47,15 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
   Query: {
     async uuid(_parent, payload, { dataSources }) {
       const id = await resolveIdFromPayload(dataSources, payload)
-      const uuid =
-        id === null ? null : await dataSources.model.serlo.getUuid({ id })
+
+      if (id === null) return null
+
+      const decodedUuid = Uuid.decode(id)
+      if (E.isLeft(decodedUuid)) return null
+
+      const uuid = await dataSources.model.serlo.getUuid({
+        id: decodedUuid.right,
+      })
       return checkUuid(payload, uuid)
     },
   },
