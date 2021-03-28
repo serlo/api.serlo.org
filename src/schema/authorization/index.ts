@@ -19,29 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { authorizationSchema } from './authorization'
-import { cacheSchema } from './cache'
-import { connectionSchema } from './connection'
-import { dateTimeSchema } from './date-time'
-import { instanceSchema } from './instance'
-import { jsonSchema } from './json'
-import { licenseSchema } from './license'
-import { notificationSchema } from './notification'
-import { subscriptionSchema } from './subscription'
-import { threadSchema } from './thread'
-import { uuidSchema } from './uuid'
-import { mergeSchemas } from '~/internals/graphql'
+import { resolvers } from './resolvers'
+import typeDefs from './types.graphql'
+import { Schema } from '~/internals/graphql'
 
-export const schema = mergeSchemas(
-  authorizationSchema,
-  connectionSchema,
-  cacheSchema,
-  dateTimeSchema,
-  instanceSchema,
-  jsonSchema,
-  licenseSchema,
-  notificationSchema,
-  subscriptionSchema,
-  threadSchema,
-  uuidSchema
-)
+export const authorizationSchema: Schema = { resolvers, typeDefs: [typeDefs] }

@@ -19,29 +19,25 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { authorizationSchema } from './authorization'
-import { cacheSchema } from './cache'
-import { connectionSchema } from './connection'
-import { dateTimeSchema } from './date-time'
-import { instanceSchema } from './instance'
-import { jsonSchema } from './json'
-import { licenseSchema } from './license'
-import { notificationSchema } from './notification'
-import { subscriptionSchema } from './subscription'
-import { threadSchema } from './thread'
-import { uuidSchema } from './uuid'
-import { mergeSchemas } from '~/internals/graphql'
+import { Role, RolesPayload, resolveRolesPayload } from './roles'
+import { Scope } from '~/authorization'
+import { Queries } from '~/internals/graphql'
 
-export const schema = mergeSchemas(
-  authorizationSchema,
-  connectionSchema,
-  cacheSchema,
-  dateTimeSchema,
-  instanceSchema,
-  jsonSchema,
-  licenseSchema,
-  notificationSchema,
-  subscriptionSchema,
-  threadSchema,
-  uuidSchema
-)
+export const resolvers: Queries<'authorization'> = {
+  Query: {
+    // TODO: no idea why this expects `never` as return type
+    // @ts-expect-error
+    authorization(_parent, _payload, { userId }) {
+      const roles: RolesPayload =
+        userId === null
+          ? {
+              [Scope.Serlo]: [Role.Guest],
+            }
+          : // TODO: fetch roles of authenticated users.
+            {}
+
+      const authorizationPayload = resolveRolesPayload(roles)
+      return authorizationPayload
+    },
+  },
+}
