@@ -31,6 +31,15 @@ export function initializeSentry(context: string) {
   })
 }
 
+// See https://www.apollographql.com/docs/apollo-server/data/errors/
+const ignoredErrorCodes = [
+  'GRAPHQL_PARSE_FAILED',
+  'GRAPHQL_VALIDATION_FAILED',
+  'BAD_USER_INPUT',
+  'UNAUTHENTICATED',
+  'FORBIDDEN',
+]
+
 export function createSentryPlugin(): ApolloServerPlugin {
   return {
     requestDidStart() {
@@ -39,6 +48,7 @@ export function createSentryPlugin(): ApolloServerPlugin {
           if (!ctx.operation) return
 
           for (const error of ctx.errors) {
+            if (ignoredErrorCodes.includes(error.extensions?.code)) continue
             Sentry.captureException(error, (scope) => {
               scope.setTag('kind', ctx.operationName)
               scope.setContext('graphql', {
