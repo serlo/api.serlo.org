@@ -412,6 +412,7 @@ export const UserDecoder = t.exact(
       __typename: t.literal(DiscriminatorType.User),
       username: t.string,
       date: t.string,
+      roles: t.array(t.string),
     }),
     t.partial({
       lastLogin: t.union([t.string, t.null]),
