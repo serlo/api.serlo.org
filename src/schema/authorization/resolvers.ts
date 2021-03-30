@@ -19,25 +19,108 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Role, RolesPayload, resolveRolesPayload } from './roles'
+import { resolveRolesPayload, Role, RolesPayload } from './roles'
 import { Scope } from '~/authorization'
 import { Queries } from '~/internals/graphql'
+import { UserDecoder } from '~/model/decoder'
+import { isInstance } from '~/schema/instance/utils'
+import { Instance } from '~/types'
 
 export const resolvers: Queries<'authorization'> = {
   Query: {
     // TODO: no idea why this expects `never` as return type
     // @ts-expect-error
-    authorization(_parent, _payload, { userId }) {
-      const roles: RolesPayload =
-        userId === null
-          ? {
-              [Scope.Serlo]: [Role.Guest],
-            }
-          : // TODO: fetch roles of authenticated users.
-            {}
+    async authorization(_parent, _payload, { userId, dataSources }) {
+      async function fetchRolesPayload(): Promise<RolesPayload> {
+        if (userId === null) {
+          return {
+            [Scope.Serlo]: [Role.Guest],
+          }
+        }
 
-      const authorizationPayload = resolveRolesPayload(roles)
-      return authorizationPayload
+        const user = await dataSources.model.serlo.getUuidWithCustomDecoder({
+          id: userId,
+          decoder: UserDecoder,
+        })
+        const legacyRoles = user?.roles ?? []
+        const rolesPayload: RolesPayload = {}
+
+        for (const role of legacyRoles) {
+          const result = legacyRoleToRole(role)
+          if (result === null) continue
+          rolesPayload[result.scope] = rolesPayload[result.scope] ?? []
+          rolesPayload[result.scope]?.push(result.role)
+        }
+
+        return rolesPayload
+
+        function legacyRoleToRole(
+          role: string
+        ): { scope: Scope; role: Role } | null {
+          const globalRole = legacyRoleToGlobalRole(role)
+          if (globalRole) {
+            return { scope: Scope.Serlo, role: globalRole }
+          }
+
+          const [instance, roleName] = role.split('_', 2)
+          const instancedRole = legacyRoleToInstancedRole(roleName)
+          if (isInstance(instance) && instancedRole) {
+            return { scope: instanceToScope(instance), role: instancedRole }
+          }
+
+          return null
+        }
+
+        function legacyRoleToGlobalRole(role: string): Role | null {
+          switch (role) {
+            case 'guest':
+              return Role.Guest
+            case 'login':
+              return Role.Login
+            case 'sysadmin':
+              return Role.Sysadmin
+            default:
+              return null
+          }
+        }
+
+        function legacyRoleToInstancedRole(role: string): Role | null {
+          switch (role) {
+            case 'moderator':
+              return Role.Moderator
+            case 'reviewer':
+              return Role.Reviewer
+            case 'architect':
+              return Role.Architect
+            case 'static_pages_builder':
+              return Role.StaticPagesBuilder
+            case 'admin':
+              return Role.Admin
+            default:
+              return null
+          }
+        }
+
+        function instanceToScope(instance: Instance): Scope {
+          switch (instance) {
+            case Instance.De:
+              return Scope.Serlo_De
+            case Instance.En:
+              return Scope.Serlo_En
+            case Instance.Es:
+              return Scope.Serlo_Es
+            case Instance.Fr:
+              return Scope.Serlo_Fr
+            case Instance.Hi:
+              return Scope.Serlo_Hi
+            case Instance.Ta:
+              return Scope.Serlo_Ta
+          }
+        }
+      }
+
+      const rolesPayload = await fetchRolesPayload()
+      return resolveRolesPayload(rolesPayload)
     },
   },
 }

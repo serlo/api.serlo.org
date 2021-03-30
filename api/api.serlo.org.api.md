@@ -5882,6 +5882,7 @@ export const UserDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
     __typename: t.LiteralC<DiscriminatorType.User>;
     username: t.StringC;
     date: t.StringC;
+    roles: t.ArrayC<t.StringC>;
 }>, t.PartialC<{
     lastLogin: t.UnionC<[t.StringC, t.NullC]>;
     description: t.UnionC<[t.StringC, t.NullC]>;
@@ -6287,6 +6288,7 @@ export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
     __typename: t.LiteralC<DiscriminatorType.User>;
     username: t.StringC;
     date: t.StringC;
+    roles: t.ArrayC<t.StringC>;
 }>, t.PartialC<{
     lastLogin: t.UnionC<[t.StringC, t.NullC]>;
     description: t.UnionC<[t.StringC, t.NullC]>;
