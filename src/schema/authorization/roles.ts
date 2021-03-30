@@ -26,8 +26,13 @@ import { AuthorizationPayload, Permission, Scope } from '~/authorization'
 export enum Role {
   Guest = 'guest',
   Login = 'login',
-  Moderator = 'moderator',
   Sysadmin = 'sysadmin',
+
+  Moderator = 'moderator',
+  Reviewer = 'reviewer',
+  Architect = 'architect',
+  StaticPagesBuilder = 'static-pages-builder',
+  Admin = 'admin',
 }
 
 interface RoleDefinition {
@@ -43,6 +48,10 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
       Permission.Thread_CreateComment,
     ],
   },
+  [Role.Sysadmin]: {
+    extends: [Role.Guest, Role.Login, Role.Moderator],
+  },
+
   [Role.Moderator]: {
     permissions: [
       Permission.Thread_SetThreadArchived,
@@ -50,9 +59,10 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
       Permission.Thread_SetCommentState,
     ],
   },
-  [Role.Sysadmin]: {
-    extends: [Role.Guest, Role.Login, Role.Moderator],
-  },
+  [Role.Reviewer]: {},
+  [Role.Architect]: {},
+  [Role.StaticPagesBuilder]: {},
+  [Role.Admin]: {},
 }
 
 export type RolesPayload = { [scope in Scope]?: Role[] }
