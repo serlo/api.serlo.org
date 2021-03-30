@@ -685,6 +685,11 @@ async function exec(): Promise<void> {
       date: '2021-03-26',
       fixed: ['Increase request body size limit.'],
     },
+    {
+      tagName: 'v0.20.5',
+      date: '2021-03-30',
+      internal: ['Improve error reporting.'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

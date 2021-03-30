@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.20.5](https://github.com/serlo/api.serlo.org/compare/v0.20.4..v0.20.5) - March 30, 2021
+
+### Internal
+
+- Improve error reporting.
+
 ## [v0.20.4](https://github.com/serlo/api.serlo.org/compare/v0.20.3..v0.20.4) - March 26, 2021
 
 ### Fixed
