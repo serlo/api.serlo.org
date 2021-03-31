@@ -29,6 +29,8 @@
  * The scope name represents its inheritance path, split by a colon (e.g. "serlo.org:de:math:foobar"). This allows us
  * to optimize fetching the authorization payload later (e.g. frontend might only request the permissions for de.serlo.org).
  */
+import { Instance } from '~/types'
+
 export enum Scope {
   Serlo = 'serlo.org',
   Serlo_De = 'serlo.org:de',
@@ -37,6 +39,10 @@ export enum Scope {
   Serlo_Fr = 'serlo.org:fr',
   Serlo_Hi = 'serlo.org:hi',
   Serlo_Ta = 'serlo.org:ta',
+}
+
+export function instanceToScope(instance: Instance): Scope {
+  return `serlo.org:${instance}` as Scope
 }
 
 /**
