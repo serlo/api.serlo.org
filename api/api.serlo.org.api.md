@@ -3328,7 +3328,7 @@ export type ModelMapping = {
 };
 
 // @public (undocumented)
-export type ModelOf<T> = T extends boolean | string | number | null ? T : Typename<T> extends keyof Models ? Models[Typename<T>] : T extends {
+export type ModelOf<T> = A.Equals<T, unknown> extends 1 ? T : T extends boolean | string | number | null ? T : Typename<T> extends keyof Models ? Models[Typename<T>] : T extends {
     nodes: Array<infer U>;
     totalCount: number;
 } ? Connection<ModelOf<U>> : T extends (infer U)[] ? ModelOf<U>[] : T extends object ? {
