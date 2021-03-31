@@ -20,11 +20,10 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { resolveRolesPayload, Role, RolesPayload } from './roles'
-import { Scope } from '~/authorization'
+import { instanceToScope, Scope } from '~/authorization'
 import { Queries } from '~/internals/graphql'
 import { UserDecoder } from '~/model/decoder'
 import { isInstance } from '~/schema/instance/utils'
-import { Instance } from '~/types'
 
 export const resolvers: Queries<'authorization'> = {
   Query: {
@@ -98,23 +97,6 @@ export const resolvers: Queries<'authorization'> = {
               return Role.Admin
             default:
               return null
-          }
-        }
-
-        function instanceToScope(instance: Instance): Scope {
-          switch (instance) {
-            case Instance.De:
-              return Scope.Serlo_De
-            case Instance.En:
-              return Scope.Serlo_En
-            case Instance.Es:
-              return Scope.Serlo_Es
-            case Instance.Fr:
-              return Scope.Serlo_Fr
-            case Instance.Hi:
-              return Scope.Serlo_Hi
-            case Instance.Ta:
-              return Scope.Serlo_Ta
           }
         }
       }
