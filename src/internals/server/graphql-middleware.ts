@@ -31,7 +31,7 @@ import fetch from 'node-fetch'
 import * as R from 'ramda'
 import { URLSearchParams } from 'url'
 
-import { handleAuthentication, Service } from '~/internals/auth'
+import { handleAuthentication, Service } from '~/internals/authentication'
 import { Cache } from '~/internals/cache'
 import { ModelDataSource } from '~/internals/data-source'
 import { Environment } from '~/internals/environment'

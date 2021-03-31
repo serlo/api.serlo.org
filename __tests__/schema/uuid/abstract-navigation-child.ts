@@ -33,7 +33,7 @@ import {
   assertSuccessfulGraphQLQuery,
   createTestClient,
 } from '../../__utils__'
-import { Service } from '~/internals/auth'
+import { Service } from '~/internals/authentication'
 import { Model } from '~/internals/graphql'
 import { NavigationPayload } from '~/schema/uuid/abstract-navigation-child/types'
 import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'

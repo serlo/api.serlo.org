@@ -3944,6 +3944,7 @@ export type Query = {
     activeAuthors: UserConnection;
     activeDonors: UserConnection;
     activeReviewers: UserConnection;
+    authorization: Scalars['JSON'];
     license?: Maybe<License>;
     notificationEvent?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
     notifications: NotificationConnection;
@@ -4002,6 +4003,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
     activeAuthors?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, RequireFields<QueryActiveAuthorsArgs, never>>;
     activeDonors?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, RequireFields<QueryActiveDonorsArgs, never>>;
     activeReviewers?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, RequireFields<QueryActiveReviewersArgs, never>>;
+    authorization?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
     license?: Resolver<Maybe<ResolversTypes['License']>, ParentType, ContextType, RequireFields<QueryLicenseArgs, 'id'>>;
     notificationEvent?: Resolver<Maybe<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType, RequireFields<QueryNotificationEventArgs, 'id'>>;
     notifications?: Resolver<ResolversTypes['NotificationConnection'], ParentType, ContextType, RequireFields<QueryNotificationsArgs, never>>;
@@ -4367,6 +4369,7 @@ export type ResolverFunction<Result, Parent, Args = {}> = Resolver<Result, Paren
 
 // @public (undocumented)
 export type Resolvers<ContextType = Context> = {
+    Query?: QueryResolvers<ContextType>;
     Mutation?: MutationResolvers<ContextType>;
     PageInfo?: PageInfoResolvers<ContextType>;
     DateTime?: GraphQLScalarType;
@@ -4374,7 +4377,6 @@ export type Resolvers<ContextType = Context> = {
     JSON?: GraphQLScalarType;
     JSONObject?: GraphQLScalarType;
     License?: LicenseResolvers<ContextType>;
-    Query?: QueryResolvers<ContextType>;
     CheckoutRevisionNotificationEvent?: CheckoutRevisionNotificationEventResolvers<ContextType>;
     CreateCommentNotificationEvent?: CreateCommentNotificationEventResolvers<ContextType>;
     CreateEntityLinkNotificationEvent?: CreateEntityLinkNotificationEventResolvers<ContextType>;
@@ -4487,17 +4489,17 @@ export type Resolvers<ContextType = Context> = {
 
 // @public
 export type ResolversParentTypes = {
-    Mutation: {};
-    Boolean: ModelOf<Scalars['Boolean']>;
+    Query: {};
     String: ModelOf<Scalars['String']>;
+    Int: ModelOf<Scalars['Int']>;
+    Boolean: ModelOf<Scalars['Boolean']>;
+    Mutation: {};
     PageInfo: ModelOf<PageInfo>;
     DateTime: ModelOf<Scalars['DateTime']>;
     InstanceAware: ResolversParentTypes['CheckoutRevisionNotificationEvent'] | ResolversParentTypes['CreateCommentNotificationEvent'] | ResolversParentTypes['CreateEntityLinkNotificationEvent'] | ResolversParentTypes['CreateEntityNotificationEvent'] | ResolversParentTypes['CreateEntityRevisionNotificationEvent'] | ResolversParentTypes['CreateTaxonomyLinkNotificationEvent'] | ResolversParentTypes['CreateTaxonomyTermNotificationEvent'] | ResolversParentTypes['CreateThreadNotificationEvent'] | ResolversParentTypes['RejectRevisionNotificationEvent'] | ResolversParentTypes['RemoveEntityLinkNotificationEvent'] | ResolversParentTypes['RemoveTaxonomyLinkNotificationEvent'] | ResolversParentTypes['SetLicenseNotificationEvent'] | ResolversParentTypes['SetTaxonomyParentNotificationEvent'] | ResolversParentTypes['SetTaxonomyTermNotificationEvent'] | ResolversParentTypes['SetThreadStateNotificationEvent'] | ResolversParentTypes['SetUuidStateNotificationEvent'] | ResolversParentTypes['Applet'] | ResolversParentTypes['Article'] | ResolversParentTypes['CoursePage'] | ResolversParentTypes['Course'] | ResolversParentTypes['Event'] | ResolversParentTypes['ExerciseGroup'] | ResolversParentTypes['Exercise'] | ResolversParentTypes['GroupedExercise'] | ResolversParentTypes['Page'] | ResolversParentTypes['Solution'] | ResolversParentTypes['TaxonomyTerm'] | ResolversParentTypes['Video'];
     JSON: ModelOf<Scalars['JSON']>;
     JSONObject: ModelOf<Scalars['JSONObject']>;
     License: ModelOf<License>;
-    Int: ModelOf<Scalars['Int']>;
-    Query: {};
     CheckoutRevisionNotificationEvent: ModelOf<CheckoutRevisionNotificationEvent>;
     CreateCommentNotificationEvent: ModelOf<CreateCommentNotificationEvent>;
     CreateEntityLinkNotificationEvent: ModelOf<CreateEntityLinkNotificationEvent>;
@@ -4619,9 +4621,11 @@ export type ResolversParentTypes = {
 
 // @public
 export type ResolversTypes = {
-    Mutation: ResolverTypeWrapper<{}>;
-    Boolean: ResolverTypeWrapper<ModelOf<Scalars['Boolean']>>;
+    Query: ResolverTypeWrapper<{}>;
     String: ResolverTypeWrapper<ModelOf<Scalars['String']>>;
+    Int: ResolverTypeWrapper<ModelOf<Scalars['Int']>>;
+    Boolean: ResolverTypeWrapper<ModelOf<Scalars['Boolean']>>;
+    Mutation: ResolverTypeWrapper<{}>;
     PageInfo: ResolverTypeWrapper<ModelOf<PageInfo>>;
     DateTime: ResolverTypeWrapper<ModelOf<Scalars['DateTime']>>;
     Instance: ResolverTypeWrapper<ModelOf<Instance>>;
@@ -4629,8 +4633,6 @@ export type ResolversTypes = {
     JSON: ResolverTypeWrapper<ModelOf<Scalars['JSON']>>;
     JSONObject: ResolverTypeWrapper<ModelOf<Scalars['JSONObject']>>;
     License: ResolverTypeWrapper<ModelOf<License>>;
-    Int: ResolverTypeWrapper<ModelOf<Scalars['Int']>>;
-    Query: ResolverTypeWrapper<{}>;
     CheckoutRevisionNotificationEvent: ResolverTypeWrapper<ModelOf<CheckoutRevisionNotificationEvent>>;
     CreateCommentNotificationEvent: ResolverTypeWrapper<ModelOf<CreateCommentNotificationEvent>>;
     CreateEntityLinkNotificationEvent: ResolverTypeWrapper<ModelOf<CreateEntityLinkNotificationEvent>>;
@@ -5880,6 +5882,7 @@ export const UserDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
     __typename: t.LiteralC<DiscriminatorType.User>;
     username: t.StringC;
     date: t.StringC;
+    roles: t.ArrayC<t.StringC>;
 }>, t.PartialC<{
     lastLogin: t.UnionC<[t.StringC, t.NullC]>;
     description: t.UnionC<[t.StringC, t.NullC]>;
@@ -6285,6 +6288,7 @@ export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
     __typename: t.LiteralC<DiscriminatorType.User>;
     username: t.StringC;
     date: t.StringC;
+    roles: t.ArrayC<t.StringC>;
 }>, t.PartialC<{
     lastLogin: t.UnionC<[t.StringC, t.NullC]>;
     description: t.UnionC<[t.StringC, t.NullC]>;

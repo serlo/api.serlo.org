@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { authorizationSchema } from './authorization'
 import { cacheSchema } from './cache'
 import { connectionSchema } from './connection'
 import { dateTimeSchema } from './date-time'
@@ -32,6 +33,7 @@ import { uuidSchema } from './uuid'
 import { mergeSchemas } from '~/internals/graphql'
 
 export const schema = mergeSchemas(
+  authorizationSchema,
   connectionSchema,
   cacheSchema,
   dateTimeSchema,

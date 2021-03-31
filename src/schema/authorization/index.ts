@@ -19,33 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ApolloServer } from 'apollo-server'
-import {
-  ApolloServerTestClient,
-  createTestClient as createApolloTestClient,
-} from 'apollo-server-testing'
+import { resolvers } from './resolvers'
+import typeDefs from './types.graphql'
+import { Schema } from '~/internals/graphql'
 
-import { Service } from '~/internals/authentication'
-import { Context } from '~/internals/graphql'
-import { getGraphQLOptions } from '~/internals/server'
-import { emptySwrQueue } from '~/internals/swr-queue'
-
-export type Client = ApolloServerTestClient
-
-export function createTestClient(
-  args?: Partial<Pick<Context, 'service' | 'userId'>>
-): Client {
-  const server = new ApolloServer({
-    ...getGraphQLOptions({
-      cache: global.cache,
-      swrQueue: emptySwrQueue,
-    }),
-    context(): Pick<Context, 'service' | 'userId'> {
-      return {
-        service: args?.service ?? Service.SerloCloudflareWorker,
-        userId: args?.userId ?? null,
-      }
-    },
-  })
-  return createApolloTestClient(server)
-}
+export const authorizationSchema: Schema = { resolvers, typeDefs: [typeDefs] }

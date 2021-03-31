@@ -39,6 +39,7 @@ test('User', async () => {
     date: Matchers.iso8601DateTime(user.date),
     lastLogin: user.lastLogin ? Matchers.iso8601DateTime(user.lastLogin) : null,
     description: user.description ? Matchers.string(user.description) : null,
+    roles: Matchers.eachLike('login'),
   })
   await assertSuccessfulGraphQLQuery({
     query: gql`

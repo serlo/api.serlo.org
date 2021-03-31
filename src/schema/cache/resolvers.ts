@@ -22,7 +22,7 @@
 import { ForbiddenError } from 'apollo-server'
 
 import { CacheResolvers } from './types'
-import { Service } from '~/internals/auth'
+import { Service } from '~/internals/authentication'
 
 export const resolvers: CacheResolvers = {
   Mutation: {

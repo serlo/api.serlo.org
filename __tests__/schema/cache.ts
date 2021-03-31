@@ -33,7 +33,7 @@ import {
   assertSuccessfulGraphQLMutation,
   createTestClient,
 } from '../__utils__'
-import { Service } from '~/internals/auth'
+import { Service } from '~/internals/authentication'
 
 const testVars = [
   {

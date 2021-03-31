@@ -33,6 +33,7 @@ export const user: Model<'User'> = {
   date: '2014-03-01T20:36:21Z',
   lastLogin: '2020-03-24T09:40:55Z',
   description: null,
+  roles: ['login', 'german_horizonhelper', 'sysadmin'],
 }
 
 export const user2: Model<'User'> = {
@@ -44,8 +45,9 @@ export const user2: Model<'User'> = {
   date: '2015-02-01T20:35:21Z',
   lastLogin: '2019-03-23T09:20:55Z',
   description: null,
+  roles: ['login'],
 }
 
 export function getUserDataWithoutSubResolvers(user: Model<'User'>) {
-  return R.omit(['alias'], user)
+  return R.omit(['alias', 'roles'], user)
 }
