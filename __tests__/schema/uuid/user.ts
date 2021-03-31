@@ -393,57 +393,57 @@ describe('endpoint activeDonors', () => {
     givenActiveDonors([user, user2])
     global.server.use(createUuidHandler(user2))
 
-    await expectActiveUserIds([user.id, user2.id])
+    await expectActiveDonorIds([user.id, user2.id])
   })
 
   test('returned list only contains user', async () => {
     givenActiveDonors([user, article])
     global.server.use(createUuidHandler(article))
 
-    await expectActiveUserIds([user.id])
+    await expectActiveDonorIds([user.id])
   })
 
   describe('parser', () => {
     test('removes entries which are no valid uuids', async () => {
       givenActiveDonorsSpreadsheet([['Header', '23', 'foo', '-1', '', '1.5']])
 
-      await expectActiveUserIds([23])
+      await expectActiveDonorIds([23])
     })
 
     test('cell entries are trimmed of leading and trailing whitespaces', async () => {
       givenActiveDonorsSpreadsheet([['Header', ' 10 ', '  20']])
 
-      await expectActiveUserIds([10, 20])
+      await expectActiveDonorIds([10, 20])
     })
 
     describe('returns empty list', () => {
       test('when spreadsheet is empty', async () => {
         givenActiveDonorsSpreadsheet([[]])
 
-        await expectActiveUserIds([])
+        await expectActiveDonorIds([])
       })
 
       test('when spreadsheet api responds with invalid json data', async () => {
         givenSpreadheetApi(returnsJson({}))
 
-        await expectActiveUserIds([])
+        await expectActiveDonorIds([])
       })
 
       test('when spreadsheet api responds with malformed json', async () => {
         givenSpreadheetApi(returnsMalformedJson())
 
-        await expectActiveUserIds([])
+        await expectActiveDonorIds([])
       })
 
       test('when spreadsheet api has an internal server error', async () => {
         givenSpreadheetApi(hasInternalServerError())
 
-        await expectActiveUserIds([])
+        await expectActiveDonorIds([])
       })
     })
   })
 
-  function expectActiveUserIds(ids: number[]) {
+  function expectActiveDonorIds(ids: number[]) {
     global.server.use(...ids.map((id) => createUuidHandler({ ...user, id })))
 
     return assertSuccessfulGraphQLQuery({
