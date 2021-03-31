@@ -108,14 +108,14 @@ export function resolveRolesPayload(
     const allRoles: Role[] = []
     const queue = [...initialRoles]
 
-    while (!R.isEmpty(queue)) {
-      const role = queue.pop()!
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const role = queue.pop()
+      if (!role) return allRoles
       if (allRoles.includes(role)) continue
       allRoles.push(role)
       const inheritedRoles = roleDefinitions[role].extends ?? []
       queue.push(...inheritedRoles)
     }
-
-    return allRoles
   }
 }
