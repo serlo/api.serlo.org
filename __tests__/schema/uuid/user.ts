@@ -342,50 +342,6 @@ describe('endpoint activeAuthors', () => {
       client,
     })
   })
-
-  test('returned list does only contain users', async () => {
-    global.server.use(
-      createUuidHandler(article),
-      createActiveAuthorsHandler([user, article])
-    )
-
-    await assertSuccessfulGraphQLQuery({
-      query: activeAuthorsQuery,
-      data: {
-        activeAuthors: {
-          nodes: [getUserDataWithoutSubResolvers(user)],
-          totalCount: 1,
-        },
-      },
-      client,
-    })
-  })
-
-  test('list of active authors is cached', async () => {
-    global.server.use(createActiveAuthorsHandler([user]))
-    await assertSuccessfulGraphQLQuery({
-      query: activeAuthorsQuery,
-      data: {
-        activeAuthors: {
-          nodes: [getUserDataWithoutSubResolvers(user)],
-          totalCount: 1,
-        },
-      },
-      client,
-    })
-    global.server.use(createActiveAuthorsHandler([user, user2]))
-
-    await assertSuccessfulGraphQLQuery({
-      query: activeAuthorsQuery,
-      data: {
-        activeAuthors: {
-          nodes: [getUserDataWithoutSubResolvers(user)],
-          totalCount: 1,
-        },
-      },
-      client,
-    })
-  })
 })
 
 describe('endpoint activeDonors', () => {
@@ -513,50 +469,6 @@ describe('endpoint activeReviewers', () => {
       createUuidHandler(article),
       createActiveReviewersHandler([user, article])
     )
-
-    await assertSuccessfulGraphQLQuery({
-      query: activeReviewersQuery,
-      data: {
-        activeReviewers: {
-          nodes: [getUserDataWithoutSubResolvers(user)],
-          totalCount: 1,
-        },
-      },
-      client,
-    })
-  })
-
-  test('list of active authors is cached for 1 hour', async () => {
-    global.server.use(createActiveReviewersHandler([user]))
-    await assertSuccessfulGraphQLQuery({
-      query: activeReviewersQuery,
-      data: {
-        activeReviewers: {
-          nodes: [getUserDataWithoutSubResolvers(user)],
-          totalCount: 1,
-        },
-      },
-      client,
-    })
-    global.server.use(createActiveReviewersHandler([user, user2]))
-
-    await assertSuccessfulGraphQLQuery({
-      query: activeReviewersQuery,
-      data: {
-        activeReviewers: {
-          nodes: [getUserDataWithoutSubResolvers(user)],
-          totalCount: 1,
-        },
-      },
-      client,
-    })
-  })
-
-  test('uses cached value for active reviewers', async () => {
-    await global.cache.set({
-      key: 'de.serlo.org/api/user/active-reviewers',
-      value: [user.id],
-    })
 
     await assertSuccessfulGraphQLQuery({
       query: activeReviewersQuery,
