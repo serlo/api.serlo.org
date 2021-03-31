@@ -19,9 +19,14 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-export * from './assertions'
-export * from './handlers'
-export * from './error-event'
-export * from './services'
-export * from './test-client'
-export * from './utils'
+import { gql } from 'apollo-server'
+import { query } from 'gql-query-builder'
+
+export function buildQuery(...args: Parameters<typeof query>) {
+  const result = query(...args)
+
+  return {
+    query: gql(result.query),
+    variables: result.variables as Record<string, unknown>,
+  }
+}
