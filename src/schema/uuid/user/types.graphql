@@ -13,6 +13,7 @@ type User implements AbstractUuid & ThreadAware {
   username: String!
   date: DateTime!
   lastLogin: DateTime
+  roles: [ScopedRole!]!
   description: String
   activeAuthor: Boolean!
   activeDonor: Boolean!

@@ -189,6 +189,41 @@ describe('User', () => {
     })
   })
 
+  test('property "roles"', async () => {
+    global.server.use(
+      createUuidHandler({
+        ...user,
+        roles: ['login', 'sysadmin', 'en_moderator'],
+      })
+    )
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query($id: Int) {
+          uuid(id: $id) {
+            ... on User {
+              roles {
+                role
+                scope
+              }
+            }
+          }
+        }
+      `,
+      data: {
+        uuid: {
+          roles: [
+            { role: 'login', scope: null },
+            { role: 'sysadmin', scope: null },
+            { role: 'moderator', scope: 'en' },
+          ],
+        },
+      },
+      variables: { id: user.id },
+      client,
+    })
+  })
+
   describe('property "activeAuthor"', () => {
     const query = gql`
       query propertyActiveAuthor($id: Int!) {
