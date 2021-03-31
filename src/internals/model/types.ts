@@ -25,7 +25,9 @@ import { modelFactories } from '~/model'
 import { Models } from '~/model/types'
 import { Connection } from '~/schema/connection/types'
 
-export type ModelOf<T> = T extends boolean | string | number | null
+export type ModelOf<T> = A.Equals<T, unknown> extends 1
+  ? T
+  : T extends boolean | string | number | null
   ? T
   : Typename<T> extends keyof Models
   ? Models[Typename<T>]
@@ -42,8 +44,6 @@ export type Typename<T> = T extends { __typename?: infer U }
     ? U
     : never
   : never
-
-type A = Payload<'serlo', 'getAlias'>
 
 export type Payload<
   M extends keyof AllPayloads,

@@ -27,7 +27,6 @@ import { isInstance } from '~/schema/instance/utils'
 
 export const resolvers: Queries<'authorization'> = {
   Query: {
-    // @ts-expect-error TODO: no idea why this expects `never` as return type
     async authorization(_parent, _payload, { userId, dataSources }) {
       async function fetchRolesPayload(): Promise<RolesPayload> {
         if (userId === null) {
