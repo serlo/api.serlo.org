@@ -376,6 +376,23 @@ export type NotificationEdge = {
   node: Notification;
 };
 
+export type ScopedRole = {
+  __typename?: 'ScopedRole';
+  role: Role;
+  scope?: Maybe<Instance>;
+};
+
+export enum Role {
+  Guest = 'guest',
+  Login = 'login',
+  Sysadmin = 'sysadmin',
+  Moderator = 'moderator',
+  Reviewer = 'reviewer',
+  Architect = 'architect',
+  StaticPagesBuilder = 'static_pages_builder',
+  Admin = 'admin'
+}
+
 export type QuerySubscriptionResult = {
   __typename?: 'QuerySubscriptionResult';
   edges: Array<SubscriptionCursor>;
@@ -1614,6 +1631,7 @@ export type User = AbstractUuid & ThreadAware & {
   username: Scalars['String'];
   date: Scalars['DateTime'];
   lastLogin?: Maybe<Scalars['DateTime']>;
+  roles: Array<ScopedRole>;
   description?: Maybe<Scalars['String']>;
   activeAuthor: Scalars['Boolean'];
   activeDonor: Scalars['Boolean'];
@@ -1837,6 +1855,8 @@ export type ResolversTypes = {
   NotificationSetStateResponse: ResolverTypeWrapper<ModelOf<NotificationSetStateResponse>>;
   NotificationConnection: ResolverTypeWrapper<ModelOf<NotificationConnection>>;
   NotificationEdge: ResolverTypeWrapper<ModelOf<NotificationEdge>>;
+  ScopedRole: ResolverTypeWrapper<ModelOf<ScopedRole>>;
+  Role: ResolverTypeWrapper<ModelOf<Role>>;
   QuerySubscriptionResult: ResolverTypeWrapper<ModelOf<QuerySubscriptionResult>>;
   SubscriptionCursor: ResolverTypeWrapper<ModelOf<SubscriptionCursor>>;
   SubscriptionMutation: ResolverTypeWrapper<ModelOf<SubscriptionMutation>>;
@@ -1970,6 +1990,7 @@ export type ResolversParentTypes = {
   NotificationSetStateResponse: ModelOf<NotificationSetStateResponse>;
   NotificationConnection: ModelOf<NotificationConnection>;
   NotificationEdge: ModelOf<NotificationEdge>;
+  ScopedRole: ModelOf<ScopedRole>;
   QuerySubscriptionResult: ModelOf<QuerySubscriptionResult>;
   SubscriptionCursor: ModelOf<SubscriptionCursor>;
   SubscriptionMutation: ModelOf<SubscriptionMutation>;
@@ -2338,6 +2359,12 @@ export type NotificationConnectionResolvers<ContextType = Context, ParentType ex
 export type NotificationEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['NotificationEdge'] = ResolversParentTypes['NotificationEdge']> = {
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<ResolversTypes['Notification'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ScopedRoleResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ScopedRole'] = ResolversParentTypes['ScopedRole']> = {
+  role?: Resolver<ResolversTypes['Role'], ParentType, ContextType>;
+  scope?: Resolver<Maybe<ResolversTypes['Instance']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3077,6 +3104,7 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   lastLogin?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  roles?: Resolver<Array<ResolversTypes['ScopedRole']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   activeAuthor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   activeDonor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -3172,6 +3200,7 @@ export type Resolvers<ContextType = Context> = {
   NotificationSetStateResponse?: NotificationSetStateResponseResolvers<ContextType>;
   NotificationConnection?: NotificationConnectionResolvers<ContextType>;
   NotificationEdge?: NotificationEdgeResolvers<ContextType>;
+  ScopedRole?: ScopedRoleResolvers<ContextType>;
   QuerySubscriptionResult?: QuerySubscriptionResultResolvers<ContextType>;
   SubscriptionCursor?: SubscriptionCursorResolvers<ContextType>;
   SubscriptionMutation?: SubscriptionMutationResolvers<ContextType>;

@@ -32,6 +32,7 @@ import {
 import { Context, Queries, TypeResolvers } from '~/internals/graphql'
 import { UserDecoder } from '~/model/decoder'
 import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
+import { getUserRoles } from '~/schema/authorization/utils'
 import { ConnectionPayload } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
@@ -83,6 +84,9 @@ export const resolvers: Queries<
       return (await dataSources.model.serlo.getActiveReviewerIds()).includes(
         user.id
       )
+    },
+    roles(user) {
+      return getUserRoles(user)
     },
   },
 }

@@ -1,0 +1,74 @@
+/**
+ * This file is part of Serlo.org API
+ *
+ * Copyright (c) 2020-2021 Serlo Education e.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License")
+ * you may not use this file except in compliance with the License
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @copyright Copyright (c) 2020-2021 Serlo Education e.V.
+ * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
+ * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
+ */
+import { Model } from '~/internals/graphql'
+import { isInstance } from '~/schema/instance/utils'
+import { Role } from '~/types'
+import { isDefined } from '~/utils'
+
+export function getUserRoles(user: Model<'User'>): Model<'ScopedRole'>[] {
+  return user.roles.map(legacyRoleToScopedRole).filter(isDefined)
+}
+
+function legacyRoleToScopedRole(role: string): Model<'ScopedRole'> | null {
+  const globalRole = legacyRoleToGlobalRole(role)
+  if (globalRole) {
+    return { role: globalRole }
+  }
+
+  const [instance, roleName] = role.split('_', 2)
+  const instancedRole = legacyRoleToInstancedRole(roleName)
+  if (isInstance(instance) && instancedRole) {
+    return { scope: instance, role: instancedRole }
+  }
+
+  return null
+}
+
+function legacyRoleToGlobalRole(role: string): Role | null {
+  switch (role) {
+    case 'guest':
+      return Role.Guest
+    case 'login':
+      return Role.Login
+    case 'sysadmin':
+      return Role.Sysadmin
+    default:
+      return null
+  }
+}
+
+function legacyRoleToInstancedRole(role: string): Role | null {
+  switch (role) {
+    case 'moderator':
+      return Role.Moderator
+    case 'reviewer':
+      return Role.Reviewer
+    case 'architect':
+      return Role.Architect
+    case 'static_pages_builder':
+      return Role.StaticPagesBuilder
+    case 'admin':
+      return Role.Admin
+    default:
+      return null
+  }
+}

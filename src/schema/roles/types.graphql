@@ -1,0 +1,16 @@
+type ScopedRole {
+  role: Role!
+  scope: Instance
+}
+
+enum Role {
+  guest
+  login
+  sysadmin
+
+  moderator
+  reviewer
+  architect
+  static_pages_builder
+  admin
+}
