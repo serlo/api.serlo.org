@@ -20,12 +20,98 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
+import { gql } from 'apollo-server'
+
+import { user } from '../../__fixtures__'
+import {
+  assertSuccessfulGraphQLQuery,
+  createTestClient,
+  createUuidHandler,
+} from '../__utils__'
 import { Scope, Thread } from '~/authorization'
 import {
   resolveRolesPayload,
   Role,
   RolesPayload,
 } from '~/schema/authorization/roles'
+
+describe('authorization', () => {
+  test('Guests', async () => {
+    const client = createTestClient()
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        {
+          authorization
+        }
+      `,
+      data: {
+        authorization: resolveRolesPayload({
+          [Scope.Serlo]: [Role.Guest],
+        }),
+      },
+      client,
+    })
+  })
+
+  test('Authenticated Users (no special roles)', async () => {
+    global.server.use(createUuidHandler({ ...user, roles: ['login'] }))
+    const client = createTestClient({ userId: user.id })
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        {
+          authorization
+        }
+      `,
+      data: {
+        authorization: resolveRolesPayload({
+          [Scope.Serlo]: [Role.Login],
+        }),
+      },
+      client,
+    })
+  })
+
+  test('Authenticated Users (filter old legacy roles)', async () => {
+    global.server.use(
+      createUuidHandler({ ...user, roles: ['login', 'german_moderator'] })
+    )
+    const client = createTestClient({ userId: user.id })
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        {
+          authorization
+        }
+      `,
+      data: {
+        authorization: resolveRolesPayload({
+          [Scope.Serlo]: [Role.Login],
+        }),
+      },
+      client,
+    })
+  })
+
+  test('Authenticated Users (map new legacy roles)', async () => {
+    global.server.use(
+      createUuidHandler({ ...user, roles: ['login', 'de_moderator'] })
+    )
+    const client = createTestClient({ userId: user.id })
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        {
+          authorization
+        }
+      `,
+      data: {
+        authorization: resolveRolesPayload({
+          [Scope.Serlo]: [Role.Login],
+          [Scope.Serlo_De]: [Role.Moderator],
+        }),
+      },
+      client,
+    })
+  })
+})
 
 describe('resolveRolesPayload', () => {
   test('No roles', () => {
