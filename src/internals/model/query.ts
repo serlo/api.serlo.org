@@ -79,11 +79,10 @@ export function createQuery<P, R>(
 
       const decoded = decoder.decode(cacheEntry.value)
       if (E.isRight(decoded)) {
-        if (spec.swrFrequency && Math.random() < spec.swrFrequency) {
-          await environment.swrQueue.queue({
-            key,
-          })
-        } else if (!spec.swrFrequency) {
+        if (
+          spec.swrFrequency === undefined ||
+          Math.random() < spec.swrFrequency
+        ) {
           await environment.swrQueue.queue({
             key,
           })
