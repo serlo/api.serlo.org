@@ -4025,6 +4025,8 @@ export interface QuerySpec<P, R> {
     getPayload: (key: string) => option.Option<P>;
     // (undocumented)
     maxAge: Time | undefined;
+    // (undocumented)
+    swrFrequency?: number;
 }
 
 // @public (undocumented)

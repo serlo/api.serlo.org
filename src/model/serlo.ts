@@ -93,6 +93,7 @@ export function createSerloModel({
     {
       decoder: t.union([UuidDecoder, t.null]),
       enableSwr: false,
+      swrFrequency: 0.01,
       getCurrentValue: async ({ id }) => {
         const uuid = (await handleMessage({
           message: {
