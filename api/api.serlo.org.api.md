@@ -3226,14 +3226,6 @@ export interface LegacySetTaxonomyTermNotificationEventResolvers {
 }
 
 // @public (undocumented)
-export interface LegacySetThreadStateNotificationEventResolvers {
-    // (undocumented)
-    SetThreadStateNotificationEvent: {
-        thread: LegacyResolver<SetThreadStateNotificationEventPayload, never, UnsupportedThread>;
-    } & NotificationEventResolvers<SetThreadStateNotificationEventPayload>;
-}
-
-// @public (undocumented)
 export interface LegacySetUuidStateNotificationEventResolvers {
     // (undocumented)
     SetUuidStateNotificationEvent: {
@@ -3388,6 +3380,8 @@ export interface Models {
     PageRevision: t.TypeOf<typeof PageRevisionDecoder>;
     // (undocumented)
     Query: Record<string, never>;
+    // (undocumented)
+    SetThreadStateNotificationEvent: t.TypeOf<typeof SetThreadStateNotificationEventDecoder>;
     // (undocumented)
     Solution: t.TypeOf<typeof SolutionDecoder>;
     // (undocumented)
@@ -3630,12 +3624,12 @@ export type NotificationEdgeResolvers<ContextType = Context, ParentType extends 
 };
 
 // @public (undocumented)
-export type NotificationEventPayload = CheckoutRevisionNotificationEventPayload | RejectRevisionNotificationEventPayload | CreateEntityNotificationEventPayload | CreateEntityLinkNotificationEventPayload | RemoveEntityLinkNotificationEventPayload | CreateEntityRevisionNotificationEventPayload | CreateTaxonomyTermNotificationEventPayload | CreateTaxonomyLinkNotificationEventPayload | RemoveTaxonomyLinkNotificationEventPayload | CreateThreadNotificationEventPayload | CreateCommentNotificationEventPayload | SetLicenseNotificationEventPayload | SetTaxonomyParentNotificationEventPayload | SetTaxonomyTermNotificationEventPayload | SetThreadStateNotificationEventPayload | SetUuidStateNotificationEventPayload;
+export type NotificationEventPayload = CheckoutRevisionNotificationEventPayload | RejectRevisionNotificationEventPayload | CreateEntityNotificationEventPayload | CreateEntityLinkNotificationEventPayload | RemoveEntityLinkNotificationEventPayload | CreateEntityRevisionNotificationEventPayload | CreateTaxonomyTermNotificationEventPayload | CreateTaxonomyLinkNotificationEventPayload | RemoveTaxonomyLinkNotificationEventPayload | CreateThreadNotificationEventPayload | CreateCommentNotificationEventPayload | SetLicenseNotificationEventPayload | SetTaxonomyParentNotificationEventPayload | SetTaxonomyTermNotificationEventPayload | Model<'SetThreadStateNotificationEvent'> | SetUuidStateNotificationEventPayload;
 
 // @public (undocumented)
 export interface NotificationEventResolvers<T extends AbstractNotificationEventPayload> {
     // (undocumented)
-    actor: LegacyResolver<T, never, Partial<Model<'User'>> | null>;
+    actor: LegacyResolver<T, {}, Model<'User'>>;
 }
 
 // @public (undocumented)
@@ -3673,6 +3667,11 @@ export enum NotificationEventType {
     // (undocumented)
     SetUuidState = "SetUuidStateNotificationEvent"
 }
+
+// Warning: (ae-forgotten-export) The symbol "NotificationEventType" needs to be exported by the entry point api.d.ts
+//
+// @public (undocumented)
+export const NotificationEventTypeDecoder: t.Type<NotificationEventType_2, NotificationEventType_2, unknown>;
 
 // @public (undocumented)
 export type NotificationMutation = {
@@ -5073,12 +5072,16 @@ export type SetThreadStateNotificationEvent = AbstractNotificationEvent & Instan
 };
 
 // @public (undocumented)
-export interface SetThreadStateNotificationEventPayload extends AbstractNotificationEventPayload, Omit<SetThreadStateNotificationEvent, keyof LegacySetThreadStateNotificationEventResolvers['SetThreadStateNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.SetThreadState;
-    // (undocumented)
-    threadId: number;
-}
+export const SetThreadStateNotificationEventDecoder: t.ExactC<t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType_2.SetThreadState>;
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+    threadId: t.RefinementC<t.NumberC>;
+    archived: t.BooleanC;
+}>>;
 
 // @public (undocumented)
 export type SetThreadStateNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SetThreadStateNotificationEvent'] = ResolversParentTypes['SetThreadStateNotificationEvent']> = {
