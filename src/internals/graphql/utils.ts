@@ -19,12 +19,40 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { AuthenticationError } from 'apollo-server'
+import { AuthenticationError, ForbiddenError } from 'apollo-server'
+
+import { AuthorizationGuard, Scope } from '~/authorization'
+import { Context } from '~/internals/graphql/context'
+import { fetchAuthorizationPayload } from '~/schema/authorization/utils'
 
 export function assertUserIsAuthenticated(
-  user: number | null
-): asserts user is number {
-  if (user === null) throw new AuthenticationError('You are not logged in')
+  userId: number | null
+): asserts userId is number {
+  if (userId === null) {
+    throw new AuthenticationError('You are not logged in')
+  }
+}
+
+export async function assertUserIsAuthorized({
+  userId,
+  guard,
+  scope,
+  message,
+  dataSources,
+}: {
+  userId: number | null
+  scope: Scope
+  guard: AuthorizationGuard
+  message: string
+  dataSources: Context['dataSources']
+}): Promise<void> {
+  const authorizationPayload = await fetchAuthorizationPayload({
+    userId,
+    dataSources,
+  })
+  if (!guard({ authorizationPayload, scope })) {
+    throw new ForbiddenError(message)
+  }
 }
 
 export function createMutationNamespace() {

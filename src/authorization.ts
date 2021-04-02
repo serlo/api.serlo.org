@@ -72,8 +72,8 @@ export type AuthorizationPayload = {
  * An `AuthorizationGuard` expects an `AuthorizationPayload` and the current `Scope`. It returns true if the user
  * may do the action associated with the guard. See `createPermissionGuard` for an example.
  */
-type AuthorizationGuard = (args: {
-  payload: AuthorizationPayload
+export type AuthorizationGuard = (args: {
+  authorizationPayload: AuthorizationPayload
   scope: Scope
 }) => boolean
 
@@ -84,8 +84,8 @@ type AuthorizationGuard = (args: {
  * @returns An `AuthorizationGuard`
  */
 function createPermissionGuard(permission: Permission): AuthorizationGuard {
-  return ({ payload, scope }) => {
-    return payload[scope]?.includes(permission) === true
+  return ({ authorizationPayload, scope }) => {
+    return authorizationPayload[scope]?.includes(permission) === true
   }
 }
 
