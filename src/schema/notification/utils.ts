@@ -40,8 +40,12 @@ export function createNotificationEventResolvers<
   T extends AbstractNotificationEventPayload
 >(): NotificationEventResolvers<T> {
   return {
-    actor(notificationEvent, _args, context) {
-      return resolveUser({ id: notificationEvent.actorId }, context)
+    async actor(notificationEvent, _args, context) {
+      const user = await resolveUser({ id: notificationEvent.actorId }, context)
+
+      if (user === null) throw new Error('user cannot be null')
+
+      return user
     },
   }
 }

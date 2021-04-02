@@ -33,6 +33,7 @@ import {
   unsupportedThread,
   user,
 } from './uuid'
+import { Model } from '~/internals/graphql'
 import { CheckoutRevisionNotificationEventPayload } from '~/schema/notification/checkout-revision-notification-event/types'
 import { CreateCommentNotificationEventPayload } from '~/schema/notification/create-comment-notification-event/types'
 import { CreateEntityLinkNotificationEventPayload } from '~/schema/notification/create-entity-link-notification-event/types'
@@ -47,7 +48,6 @@ import { RemoveTaxonomyLinkNotificationEventPayload } from '~/schema/notificatio
 import { SetLicenseNotificationEventPayload } from '~/schema/notification/set-license-notification-event/types'
 import { SetTaxonomyParentNotificationEventPayload } from '~/schema/notification/set-taxonomy-parent-notification-event/types'
 import { SetTaxonomyTermNotificationEventPayload } from '~/schema/notification/set-taxonomy-term-notification-event/types'
-import { SetThreadStateNotificationEventPayload } from '~/schema/notification/set-thread-state-notification-event/types'
 import { SetUuidStateNotificationEventPayload } from '~/schema/notification/set-uuid-state-notification-event/types'
 import { NotificationEventType } from '~/schema/notification/types'
 import { Instance } from '~/types'
@@ -291,7 +291,7 @@ export function getSetLicenseNotificationEventDataWithoutSubResolvers(
   return R.omit(['actorId', 'repositoryId'], notificationEvent)
 }
 
-export const setThreadStateNotificationEvent: SetThreadStateNotificationEventPayload = {
+export const setThreadStateNotificationEvent: Model<'SetThreadStateNotificationEvent'> = {
   __typename: NotificationEventType.SetThreadState,
   id: 40750,
   instance: Instance.De,
@@ -303,7 +303,7 @@ export const setThreadStateNotificationEvent: SetThreadStateNotificationEventPay
 }
 
 export function getSetThreadStateNotificationEventDataWithoutSubResolvers(
-  notificationEvent: SetThreadStateNotificationEventPayload
+  notificationEvent: Model<'SetThreadStateNotificationEvent'>
 ) {
   return R.omit(['actorId', 'threadId'], notificationEvent)
 }

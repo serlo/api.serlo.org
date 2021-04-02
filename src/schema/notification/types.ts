@@ -42,7 +42,6 @@ import { RemoveTaxonomyLinkNotificationEventPayload } from '~/schema/notificatio
 import { SetLicenseNotificationEventPayload } from '~/schema/notification/set-license-notification-event/types'
 import { SetTaxonomyParentNotificationEventPayload } from '~/schema/notification/set-taxonomy-parent-notification-event/types'
 import { SetTaxonomyTermNotificationEventPayload } from '~/schema/notification/set-taxonomy-term-notification-event/types'
-import { SetThreadStateNotificationEventPayload } from '~/schema/notification/set-thread-state-notification-event/types'
 import { SetUuidStateNotificationEventPayload } from '~/schema/notification/set-uuid-state-notification-event/types'
 import {
   AbstractNotificationEvent,
@@ -100,7 +99,7 @@ export type NotificationEventPayload =
   | SetLicenseNotificationEventPayload
   | SetTaxonomyParentNotificationEventPayload
   | SetTaxonomyTermNotificationEventPayload
-  | SetThreadStateNotificationEventPayload
+  | Model<'SetThreadStateNotificationEvent'>
   | SetUuidStateNotificationEventPayload
 export interface AbstractNotificationEventPayload
   extends Omit<AbstractNotificationEvent, 'actor'> {
@@ -144,5 +143,6 @@ export interface LegacyNotificationResolvers {
 export interface NotificationEventResolvers<
   T extends AbstractNotificationEventPayload
 > {
-  actor: LegacyResolver<T, never, Partial<Model<'User'>> | null>
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  actor: LegacyResolver<T, {}, Model<'User'>>
 }
