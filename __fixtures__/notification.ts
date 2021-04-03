@@ -44,7 +44,6 @@ import { CreateTaxonomyTermNotificationEventPayload } from '~/schema/notificatio
 import { CreateThreadNotificationEventPayload } from '~/schema/notification/create-thread-notification-event/types'
 import { RejectRevisionNotificationEventPayload } from '~/schema/notification/reject-revision-notification-event/types'
 import { RemoveEntityLinkNotificationEventPayload } from '~/schema/notification/remove-entity-link-notification-event/types'
-import { RemoveTaxonomyLinkNotificationEventPayload } from '~/schema/notification/remove-taxonomy-link-notification-event/types'
 import { SetLicenseNotificationEventPayload } from '~/schema/notification/set-license-notification-event/types'
 import { SetTaxonomyParentNotificationEventPayload } from '~/schema/notification/set-taxonomy-parent-notification-event/types'
 import { SetTaxonomyTermNotificationEventPayload } from '~/schema/notification/set-taxonomy-term-notification-event/types'
@@ -221,7 +220,7 @@ export function getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers(
   return R.omit(['actorId', 'parentId', 'childId'], notificationEvent)
 }
 
-export const removeTaxonomyLinkNotificationEvent: RemoveTaxonomyLinkNotificationEventPayload = {
+export const removeTaxonomyLinkNotificationEvent: Model<'RemoveTaxonomyLinkNotificationEvent'> = {
   __typename: NotificationEventType.RemoveTaxonomyLink,
   id: 48077,
   instance: Instance.De,
@@ -233,7 +232,7 @@ export const removeTaxonomyLinkNotificationEvent: RemoveTaxonomyLinkNotification
 }
 
 export function getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers(
-  notificationEvent: RemoveTaxonomyLinkNotificationEventPayload
+  notificationEvent: Model<'RemoveTaxonomyLinkNotificationEvent'>
 ) {
   return R.omit(['actorId', 'parentId', 'childId'], notificationEvent)
 }

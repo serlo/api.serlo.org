@@ -45,7 +45,6 @@ export * from '~/schema/notification/create-taxonomy-term-notification-event/typ
 export * from '~/schema/notification/create-thread-notification-event/types'
 export * from '~/schema/notification/reject-revision-notification-event/types'
 export * from '~/schema/notification/remove-entity-link-notification-event/types'
-export * from '~/schema/notification/remove-taxonomy-link-notification-event/types'
 export * from '~/schema/notification/set-license-notification-event/types'
 export * from '~/schema/notification/set-taxonomy-parent-notification-event/types'
 export * from '~/schema/notification/set-taxonomy-term-notification-event/types'
