@@ -490,30 +490,34 @@ export const NotificationEventTypeDecoder = fromEnum(
   NotificationEventType
 )
 
+export const AbstractNotificationEventDecoder = t.type({
+  id: Uuid,
+  instance: InstanceDecoder,
+  date: t.string,
+  actorId: Uuid,
+  objectId: Uuid,
+})
+
 export const SetThreadStateNotificationEventDecoder = t.exact(
-  t.type({
-    __typename: t.literal(NotificationEventType.SetThreadState),
-    id: Uuid,
-    instance: InstanceDecoder,
-    date: t.string,
-    actorId: Uuid,
-    objectId: Uuid,
-    threadId: Uuid,
-    archived: t.boolean,
-  })
+  t.intersection([
+    AbstractNotificationEventDecoder,
+    t.type({
+      __typename: t.literal(NotificationEventType.SetThreadState),
+      threadId: Uuid,
+      archived: t.boolean,
+    }),
+  ])
 )
 
 export const RemoveTaxonomyLinkNotificationEventDecoder = t.exact(
-  t.type({
-    __typename: t.literal(NotificationEventType.RemoveTaxonomyLink),
-    id: Uuid,
-    instance: InstanceDecoder,
-    date: t.string,
-    actorId: Uuid,
-    objectId: Uuid,
-    parentId: Uuid,
-    childId: Uuid,
-  })
+  t.intersection([
+    AbstractNotificationEventDecoder,
+    t.type({
+      __typename: t.literal(NotificationEventType.RemoveTaxonomyLink),
+      parentId: Uuid,
+      childId: Uuid,
+    }),
+  ])
 )
 
 /**
