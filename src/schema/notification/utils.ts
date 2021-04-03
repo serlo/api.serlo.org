@@ -24,9 +24,9 @@ import * as R from 'ramda'
 import { resolveUser } from '../uuid/user/utils'
 import {
   AbstractNotificationEventPayload,
-  NotificationEventResolvers,
   NotificationEventType,
 } from './types'
+import { PickResolvers } from '~/internals/graphql'
 
 const validTypes = Object.values(NotificationEventType)
 
@@ -36,9 +36,10 @@ export function isUnsupportedNotificationEvent(
   return !R.includes(payload.__typename, validTypes)
 }
 
-export function createNotificationEventResolvers<
-  T extends AbstractNotificationEventPayload
->(): NotificationEventResolvers<T> {
+export function createNotificationEventResolvers(): PickResolvers<
+  'AbstractNotificationEvent',
+  'actor'
+> {
   return {
     async actor(notificationEvent, _args, context) {
       const user = await resolveUser({ id: notificationEvent.actorId }, context)
