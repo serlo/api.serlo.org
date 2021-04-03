@@ -21,18 +21,23 @@
  */
 import { ForbiddenError } from 'apollo-server'
 
-import {
-  NotificationEventPayload,
-  NotificationPayload,
-  LegacyNotificationResolvers,
-} from './types'
+import { NotificationEventPayload } from './types'
 import {
   assertUserIsAuthenticated,
   createMutationNamespace,
+  InterfaceResolvers,
+  Mutations,
+  Queries,
+  TypeResolvers,
 } from '~/internals/graphql'
 import { resolveConnection } from '~/schema/connection/utils'
+import { Notification } from '~/types'
+import { isDefined } from '~/utils'
 
-export const resolvers: LegacyNotificationResolvers = {
+export const resolvers: TypeResolvers<Notification> &
+  InterfaceResolvers<'AbstractNotificationEvent'> &
+  Queries<'notifications' | 'notificationEvent'> &
+  Mutations<'notification'> = {
   AbstractNotificationEvent: {
     __resolveType(notificationEvent) {
       return notificationEvent.__typename
@@ -55,13 +60,12 @@ export const resolvers: LegacyNotificationResolvers = {
       const { notifications } = await dataSources.model.serlo.getNotifications({
         userId,
       })
-      return resolveConnection<NotificationPayload>({
-        nodes: notifications.filter((notification) => {
-          return (
-            notification !== null &&
-            (unread == null || notification.unread === unread)
-          )
-        }),
+      return resolveConnection({
+        nodes: notifications
+          .filter(isDefined)
+          .filter(
+            (notification) => unread == null || notification.unread === unread
+          ),
         payload: cursorPayload,
         createCursor(node) {
           return `${node.id}`
