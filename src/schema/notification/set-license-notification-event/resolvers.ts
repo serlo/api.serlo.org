@@ -20,16 +20,20 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { createNotificationEventResolvers } from '../utils'
-import { LegacySetLicenseNotificationEventResolvers } from './types'
-import { RepositoryPayload } from '~/schema/uuid/abstract-repository/types'
+import { TypeResolvers } from '~/internals/graphql'
+import { RepositoryDecoder } from '~/model/decoder'
+import { SetLicenseNotificationEvent } from '~/types'
 
-export const resolvers: LegacySetLicenseNotificationEventResolvers = {
+export const resolvers: TypeResolvers<SetLicenseNotificationEvent> = {
   SetLicenseNotificationEvent: {
     ...createNotificationEventResolvers(),
-    async repository(notificationEvent, _args, { dataSources }) {
-      return (await dataSources.model.serlo.getUuid({
-        id: notificationEvent.repositoryId,
-      })) as RepositoryPayload | null
+    repository(notificationEvent, _args, { dataSources }) {
+      return dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(
+        {
+          id: notificationEvent.repositoryId,
+        },
+        RepositoryDecoder
+      )
     },
   },
 }

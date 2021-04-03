@@ -28,20 +28,6 @@ import {
   TypeResolver,
 } from '~/internals/graphql'
 import { Connection } from '~/schema/connection/types'
-import { CheckoutRevisionNotificationEventPayload } from '~/schema/notification/checkout-revision-notification-event/types'
-import { CreateCommentNotificationEventPayload } from '~/schema/notification/create-comment-notification-event/types'
-import { CreateEntityLinkNotificationEventPayload } from '~/schema/notification/create-entity-link-notification-event/types'
-import { CreateEntityNotificationEventPayload } from '~/schema/notification/create-entity-notification-event/types'
-import { CreateEntityRevisionNotificationEventPayload } from '~/schema/notification/create-entity-revision-notification-event/types'
-import { CreateTaxonomyLinkNotificationEventPayload } from '~/schema/notification/create-taxonomy-link-notification-event/types'
-import { CreateTaxonomyTermNotificationEventPayload } from '~/schema/notification/create-taxonomy-term-notification-event/types'
-import { CreateThreadNotificationEventPayload } from '~/schema/notification/create-thread-notification-event/types'
-import { RejectRevisionNotificationEventPayload } from '~/schema/notification/reject-revision-notification-event/types'
-import { RemoveEntityLinkNotificationEventPayload } from '~/schema/notification/remove-entity-link-notification-event/types'
-import { SetLicenseNotificationEventPayload } from '~/schema/notification/set-license-notification-event/types'
-import { SetTaxonomyParentNotificationEventPayload } from '~/schema/notification/set-taxonomy-parent-notification-event/types'
-import { SetTaxonomyTermNotificationEventPayload } from '~/schema/notification/set-taxonomy-term-notification-event/types'
-import { SetUuidStateNotificationEventPayload } from '~/schema/notification/set-uuid-state-notification-event/types'
 import {
   AbstractNotificationEvent,
   NotificationMutationSetStateArgs,
@@ -83,23 +69,8 @@ export enum NotificationEventType {
   SetUuidState = 'SetUuidStateNotificationEvent',
 }
 
-export type NotificationEventPayload =
-  | CheckoutRevisionNotificationEventPayload
-  | RejectRevisionNotificationEventPayload
-  | CreateEntityNotificationEventPayload
-  | CreateEntityLinkNotificationEventPayload
-  | RemoveEntityLinkNotificationEventPayload
-  | CreateEntityRevisionNotificationEventPayload
-  | CreateTaxonomyTermNotificationEventPayload
-  | CreateTaxonomyLinkNotificationEventPayload
-  | Model<'RemoveTaxonomyLinkNotificationEvent'>
-  | CreateThreadNotificationEventPayload
-  | CreateCommentNotificationEventPayload
-  | SetLicenseNotificationEventPayload
-  | SetTaxonomyParentNotificationEventPayload
-  | SetTaxonomyTermNotificationEventPayload
-  | Model<'SetThreadStateNotificationEvent'>
-  | SetUuidStateNotificationEventPayload
+export type NotificationEventPayload = Model<'AbstractNotificationEvent'>
+
 export interface AbstractNotificationEventPayload
   extends Omit<AbstractNotificationEvent, 'actor'> {
   __typename: NotificationEventType

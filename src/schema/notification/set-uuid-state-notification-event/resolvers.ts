@@ -20,15 +20,20 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { createNotificationEventResolvers } from '../utils'
-import { LegacySetUuidStateNotificationEventResolvers } from './types'
+import { TypeResolvers } from '~/api'
+import { SetUuidStateNotificationEvent } from '~/types'
 
-export const resolvers: LegacySetUuidStateNotificationEventResolvers = {
+export const resolvers: TypeResolvers<SetUuidStateNotificationEvent> = {
   SetUuidStateNotificationEvent: {
     ...createNotificationEventResolvers(),
     async object(notificationEvent, _args, { dataSources }) {
-      return await dataSources.model.serlo.getUuid({
+      const uuid = await dataSources.model.serlo.getUuid({
         id: notificationEvent.objectId,
       })
+
+      if (uuid === null) throw new Error('uuid cannot be null')
+
+      return uuid
     },
   },
 }

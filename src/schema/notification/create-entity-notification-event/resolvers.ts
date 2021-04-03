@@ -20,16 +20,20 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { createNotificationEventResolvers } from '../utils'
-import { LegacyCreateEntityNotificationEventResolvers } from './types'
-import { EntityPayload } from '~/schema/uuid/abstract-entity/types'
+import { TypeResolvers } from '~/internals/graphql'
+import { EntityDecoder } from '~/model/decoder'
+import { CreateEntityNotificationEvent } from '~/types'
 
-export const resolvers: LegacyCreateEntityNotificationEventResolvers = {
+export const resolvers: TypeResolvers<CreateEntityNotificationEvent> = {
   CreateEntityNotificationEvent: {
     ...createNotificationEventResolvers(),
     async entity(notificationEvent, _args, { dataSources }) {
-      return (await dataSources.model.serlo.getUuid({
-        id: notificationEvent.entityId,
-      })) as EntityPayload | null
+      return dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(
+        {
+          id: notificationEvent.entityId,
+        },
+        EntityDecoder
+      )
     },
   },
 }

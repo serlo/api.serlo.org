@@ -20,21 +20,29 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { createNotificationEventResolvers } from '../utils'
-import { LegacyCreateTaxonomyLinkNotificationEventResolvers } from './types'
-import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
+import { TypeResolvers } from '~/internals/graphql'
+import { TaxonomyTermDecoder } from '~/model/decoder'
+import { CreateTaxonomyLinkNotificationEvent } from '~/types'
 
-export const resolvers: LegacyCreateTaxonomyLinkNotificationEventResolvers = {
+export const resolvers: TypeResolvers<CreateTaxonomyLinkNotificationEvent> = {
   CreateTaxonomyLinkNotificationEvent: {
     ...createNotificationEventResolvers(),
-    async parent(notificationEvent, _args, { dataSources }) {
-      return (await dataSources.model.serlo.getUuid({
-        id: notificationEvent.parentId,
-      })) as TaxonomyTermPayload | null
+    parent(notificationEvent, _args, { dataSources }) {
+      return dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(
+        {
+          id: notificationEvent.parentId,
+        },
+        TaxonomyTermDecoder
+      )
     },
     async child(notificationEvent, _args, { dataSources }) {
-      return await dataSources.model.serlo.getUuid({
+      const child = await dataSources.model.serlo.getUuid({
         id: notificationEvent.childId,
       })
+
+      if (child === null) throw new Error('child cannot be null')
+
+      return child
     },
   },
 }

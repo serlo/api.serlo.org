@@ -20,24 +20,28 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { createNotificationEventResolvers } from '../utils'
-import { LegacyCreateEntityRevisionNotificationEventResolvers } from './types'
-import {
-  EntityPayload,
-  EntityRevisionPayload,
-} from '~/schema/uuid/abstract-entity/types'
+import { TypeResolvers } from '~/internals/graphql'
+import { EntityDecoder, EntityRevisionDecoder } from '~/model/decoder'
+import { CreateEntityRevisionNotificationEvent } from '~/types'
 
-export const resolvers: LegacyCreateEntityRevisionNotificationEventResolvers = {
+export const resolvers: TypeResolvers<CreateEntityRevisionNotificationEvent> = {
   CreateEntityRevisionNotificationEvent: {
     ...createNotificationEventResolvers(),
-    async entity(notificationEvent, _args, { dataSources }) {
-      return (await dataSources.model.serlo.getUuid({
-        id: notificationEvent.entityId,
-      })) as EntityPayload | null
+    entity(notificationEvent, _args, { dataSources }) {
+      return dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(
+        {
+          id: notificationEvent.entityId,
+        },
+        EntityDecoder
+      )
     },
-    async entityRevision(notificationEvent, _args, { dataSources }) {
-      return (await dataSources.model.serlo.getUuid({
-        id: notificationEvent.entityRevisionId,
-      })) as EntityRevisionPayload | null
+    entityRevision(notificationEvent, _args, { dataSources }) {
+      return dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(
+        {
+          id: notificationEvent.entityRevisionId,
+        },
+        EntityRevisionDecoder
+      )
     },
   },
 }
