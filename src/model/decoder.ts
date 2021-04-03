@@ -503,6 +503,19 @@ export const SetThreadStateNotificationEventDecoder = t.exact(
   })
 )
 
+export const RemoveTaxonomyLinkNotificationEventDecoder = t.exact(
+  t.type({
+    __typename: t.literal(NotificationEventType.RemoveTaxonomyLink),
+    id: Uuid,
+    instance: InstanceDecoder,
+    date: t.string,
+    actorId: Uuid,
+    objectId: Uuid,
+    parentId: Uuid,
+    childId: Uuid,
+  })
+)
+
 /**
  * Turns an enum into a io-ts decoder.
  *

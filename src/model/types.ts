@@ -41,6 +41,7 @@ import {
   GroupedExerciseRevisionDecoder,
   PageDecoder,
   PageRevisionDecoder,
+  RemoveTaxonomyLinkNotificationEventDecoder,
   SetThreadStateNotificationEventDecoder,
   SolutionDecoder,
   SolutionRevisionDecoder,
@@ -75,6 +76,9 @@ export interface Models {
   Page: t.TypeOf<typeof PageDecoder>
   PageRevision: t.TypeOf<typeof PageRevisionDecoder>
   Query: Record<string, never>
+  RemoveTaxonomyLinkNotificationEvent: t.TypeOf<
+    typeof RemoveTaxonomyLinkNotificationEventDecoder
+  >
   SetThreadStateNotificationEvent: t.TypeOf<
     typeof SetThreadStateNotificationEventDecoder
   >
