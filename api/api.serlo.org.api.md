@@ -190,6 +190,15 @@ export type AbstractNotificationEvent = {
 };
 
 // @public (undocumented)
+export const AbstractNotificationEventDecoder: t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>;
+
+// @public (undocumented)
 export interface AbstractNotificationEventPayload extends Omit<AbstractNotificationEvent, 'actor'> {
     // (undocumented)
     __typename: NotificationEventType;
@@ -793,14 +802,18 @@ export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & Inst
 };
 
 // @public (undocumented)
-export interface CheckoutRevisionNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CheckoutRevisionNotificationEvent, keyof LegacyCheckoutRevisionNotificationEventResolvers['CheckoutRevisionNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.CheckoutRevision;
-    // (undocumented)
-    repositoryId: number;
-    // (undocumented)
-    revisionId: number;
-}
+export const CheckoutRevisionNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType_2.CheckoutRevision>;
+    repositoryId: t.RefinementC<t.NumberC>;
+    revisionId: t.RefinementC<t.NumberC>;
+    reason: t.StringC;
+}>]>>;
 
 // @public (undocumented)
 export type CheckoutRevisionNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CheckoutRevisionNotificationEvent'] = ResolversParentTypes['CheckoutRevisionNotificationEvent']> = {
@@ -1278,14 +1291,17 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & Instanc
 };
 
 // @public (undocumented)
-export interface CreateCommentNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CreateCommentNotificationEvent, keyof LegacyCreateCommentNotificationEventResolvers['CreateCommentNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.CreateComment;
-    // (undocumented)
-    commentId: number;
-    // (undocumented)
-    threadId: number;
-}
+export const CreateCommentNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType_2.CreateComment>;
+    threadId: t.RefinementC<t.NumberC>;
+    commentId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type CreateCommentNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateCommentNotificationEvent'] = ResolversParentTypes['CreateCommentNotificationEvent']> = {
@@ -1312,14 +1328,17 @@ export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & Inst
 };
 
 // @public (undocumented)
-export interface CreateEntityLinkNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CreateEntityLinkNotificationEvent, keyof LegacyCreateEntityLinkNotificationEventResolvers['CreateEntityLinkNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.CreateEntityLink;
-    // (undocumented)
-    childId: number;
-    // (undocumented)
-    parentId: number;
-}
+export const CreateEntityLinkNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType_2.CreateEntityLink>;
+    parentId: t.RefinementC<t.NumberC>;
+    childId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type CreateEntityLinkNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateEntityLinkNotificationEvent'] = ResolversParentTypes['CreateEntityLinkNotificationEvent']> = {
@@ -1345,12 +1364,16 @@ export type CreateEntityNotificationEvent = AbstractNotificationEvent & Instance
 };
 
 // @public (undocumented)
-export interface CreateEntityNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CreateEntityNotificationEvent, keyof LegacyCreateEntityNotificationEventResolvers['CreateEntityNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.CreateEntity;
-    // (undocumented)
-    entityId: number;
-}
+export const CreateEntityNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType_2.CreateEntity>;
+    entityId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type CreateEntityNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateEntityNotificationEvent'] = ResolversParentTypes['CreateEntityNotificationEvent']> = {
@@ -1376,14 +1399,17 @@ export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & 
 };
 
 // @public (undocumented)
-export interface CreateEntityRevisionNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CreateEntityRevisionNotificationEvent, keyof LegacyCreateEntityRevisionNotificationEventResolvers['CreateEntityRevisionNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.CreateEntityRevision;
-    // (undocumented)
-    entityId: number;
-    // (undocumented)
-    entityRevisionId: number;
-}
+export const CreateEntityRevisionNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType_2.CreateEntityRevision>;
+    entityId: t.RefinementC<t.NumberC>;
+    entityRevisionId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type CreateEntityRevisionNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateEntityRevisionNotificationEvent'] = ResolversParentTypes['CreateEntityRevisionNotificationEvent']> = {
@@ -1822,14 +1848,17 @@ export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & In
 };
 
 // @public (undocumented)
-export interface CreateTaxonomyLinkNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CreateTaxonomyLinkNotificationEvent, keyof LegacyCreateTaxonomyLinkNotificationEventResolvers['CreateTaxonomyLinkNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.CreateTaxonomyLink;
-    // (undocumented)
-    childId: number;
-    // (undocumented)
-    parentId: number;
-}
+export const CreateTaxonomyLinkNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType_2.CreateTaxonomyLink>;
+    parentId: t.RefinementC<t.NumberC>;
+    childId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type CreateTaxonomyLinkNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateTaxonomyLinkNotificationEvent'] = ResolversParentTypes['CreateTaxonomyLinkNotificationEvent']> = {
@@ -1855,12 +1884,16 @@ export type CreateTaxonomyTermNotificationEvent = AbstractNotificationEvent & In
 };
 
 // @public (undocumented)
-export interface CreateTaxonomyTermNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CreateTaxonomyTermNotificationEvent, keyof LegacyCreateTaxonomyTermNotificationEventResolvers['CreateTaxonomyTermNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.CreateTaxonomyTerm;
-    // (undocumented)
-    taxonomyTermId: number;
-}
+export const CreateTaxonomyTermNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType_2.CreateTaxonomyTerm>;
+    taxonomyTermId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type CreateTaxonomyTermNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateTaxonomyTermNotificationEvent'] = ResolversParentTypes['CreateTaxonomyTermNotificationEvent']> = {
@@ -1886,14 +1919,16 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
 };
 
 // @public (undocumented)
-export interface CreateThreadNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CreateThreadNotificationEvent, keyof LegacyCreateThreadNotificationEventResolvers['CreateThreadNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.CreateThread;
-    // (undocumented)
-    objectId: number;
-    // (undocumented)
-    threadId: number;
-}
+export const CreateThreadNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType_2.CreateThread>;
+    threadId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type CreateThreadNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateThreadNotificationEvent'] = ResolversParentTypes['CreateThreadNotificationEvent']> = {
@@ -3075,76 +3110,6 @@ export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 }
 
 // @public (undocumented)
-export interface LegacyCheckoutRevisionNotificationEventResolvers {
-    // (undocumented)
-    CheckoutRevisionNotificationEvent: {
-        repository: LegacyResolver<CheckoutRevisionNotificationEventPayload, never, RepositoryPayload | null>;
-        revision: LegacyResolver<CheckoutRevisionNotificationEventPayload, never, RevisionPayload | null>;
-    } & NotificationEventResolvers<CheckoutRevisionNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacyCreateCommentNotificationEventResolvers {
-    // (undocumented)
-    CreateCommentNotificationEvent: {
-        thread: LegacyResolver<CreateCommentNotificationEventPayload, never, UnsupportedThread>;
-        comment: LegacyResolver<CreateCommentNotificationEventPayload, never, UnsupportedComment>;
-    } & NotificationEventResolvers<CreateCommentNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacyCreateEntityLinkNotificationEventResolvers {
-    // (undocumented)
-    CreateEntityLinkNotificationEvent: {
-        parent: LegacyResolver<CreateEntityLinkNotificationEventPayload, never, EntityPayload | null>;
-        child: LegacyResolver<CreateEntityLinkNotificationEventPayload, never, EntityPayload | null>;
-    } & NotificationEventResolvers<CreateEntityLinkNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacyCreateEntityNotificationEventResolvers {
-    // (undocumented)
-    CreateEntityNotificationEvent: {
-        entity: LegacyResolver<CreateEntityNotificationEventPayload, never, EntityPayload | null>;
-    } & NotificationEventResolvers<CreateEntityNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacyCreateEntityRevisionNotificationEventResolvers {
-    // (undocumented)
-    CreateEntityRevisionNotificationEvent: {
-        entity: LegacyResolver<CreateEntityRevisionNotificationEventPayload, never, EntityPayload | null>;
-        entityRevision: LegacyResolver<CreateEntityRevisionNotificationEventPayload, never, EntityRevisionPayload | null>;
-    } & NotificationEventResolvers<CreateEntityRevisionNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacyCreateTaxonomyLinkNotificationEventResolvers {
-    // (undocumented)
-    CreateTaxonomyLinkNotificationEvent: {
-        parent: LegacyResolver<CreateTaxonomyLinkNotificationEventPayload, never, TaxonomyTermPayload | null>;
-        child: LegacyResolver<CreateTaxonomyLinkNotificationEventPayload, never, UuidPayload | null>;
-    } & NotificationEventResolvers<CreateTaxonomyLinkNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacyCreateTaxonomyTermNotificationEventResolvers {
-    // (undocumented)
-    CreateTaxonomyTermNotificationEvent: {
-        taxonomyTerm: LegacyResolver<CreateTaxonomyTermNotificationEventPayload, never, TaxonomyTermPayload | null>;
-    } & NotificationEventResolvers<CreateTaxonomyTermNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacyCreateThreadNotificationEventResolvers {
-    // (undocumented)
-    CreateThreadNotificationEvent: {
-        object: LegacyResolver<CreateThreadNotificationEventPayload, never, UuidPayload | null>;
-        thread: LegacyResolver<CreateThreadNotificationEventPayload, never, UnsupportedThread>;
-    } & NotificationEventResolvers<CreateThreadNotificationEventPayload>;
-}
-
-// @public (undocumented)
 export interface LegacyNotificationResolvers {
     // (undocumented)
     AbstractNotificationEvent: {
@@ -3170,68 +3135,7 @@ export interface LegacyNotificationResolvers {
 }
 
 // @public (undocumented)
-export interface LegacyRejectRevisionNotificationEventResolvers {
-    // (undocumented)
-    RejectRevisionNotificationEvent: {
-        repository: LegacyResolver<RejectRevisionNotificationEventPayload, never, RepositoryPayload | null>;
-        revision: LegacyResolver<RejectRevisionNotificationEventPayload, never, RevisionPayload | null>;
-    } & NotificationEventResolvers<RejectRevisionNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacyRemoveEntityLinkNotificationEventResolvers {
-    // (undocumented)
-    RemoveEntityLinkNotificationEvent: {
-        parent: LegacyResolver<RemoveEntityLinkNotificationEventPayload, never, EntityPayload | null>;
-        child: LegacyResolver<RemoveEntityLinkNotificationEventPayload, never, EntityPayload | null>;
-    } & NotificationEventResolvers<RemoveEntityLinkNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacyRemoveTaxonomyLinkNotificationEventResolvers {
-    // (undocumented)
-    RemoveTaxonomyLinkNotificationEvent: {
-        parent: LegacyResolver<RemoveTaxonomyLinkNotificationEventPayload, never, TaxonomyTermPayload | null>;
-        child: LegacyResolver<RemoveTaxonomyLinkNotificationEventPayload, never, UuidPayload | null>;
-    } & NotificationEventResolvers<RemoveTaxonomyLinkNotificationEventPayload>;
-}
-
-// @public (undocumented)
 export type LegacyResolver<P, A, T> = (parent: P, args: A, context: Context, info: GraphQLResolveInfo) => AsyncOrSync<T>;
-
-// @public (undocumented)
-export interface LegacySetLicenseNotificationEventResolvers {
-    // (undocumented)
-    SetLicenseNotificationEvent: {
-        repository: LegacyResolver<SetLicenseNotificationEventPayload, never, RepositoryPayload | null>;
-    } & NotificationEventResolvers<SetLicenseNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacySetTaxonomyParentNotificationEventResolvers {
-    // (undocumented)
-    SetTaxonomyParentNotificationEvent: {
-        previousParent: LegacyResolver<SetTaxonomyParentNotificationEventPayload, never, TaxonomyTermPayload | null>;
-        parent: LegacyResolver<SetTaxonomyParentNotificationEventPayload, never, TaxonomyTermPayload | null>;
-        child: LegacyResolver<SetTaxonomyParentNotificationEventPayload, never, TaxonomyTermPayload | null>;
-    } & NotificationEventResolvers<SetTaxonomyParentNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacySetTaxonomyTermNotificationEventResolvers {
-    // (undocumented)
-    SetTaxonomyTermNotificationEvent: {
-        taxonomyTerm: LegacyResolver<SetTaxonomyTermNotificationEventPayload, never, TaxonomyTermPayload | null>;
-    } & NotificationEventResolvers<SetTaxonomyTermNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacySetUuidStateNotificationEventResolvers {
-    // (undocumented)
-    SetUuidStateNotificationEvent: {
-        object: LegacyResolver<SetUuidStateNotificationEventPayload, never, UuidPayload | null>;
-    } & NotificationEventResolvers<SetUuidStateNotificationEventPayload>;
-}
 
 // @public (undocumented)
 export type LegacyStitchingResolver<TResult, TParent, TContext, TArgs> = {
@@ -3343,6 +3247,8 @@ export interface Models {
     // (undocumented)
     ArticleRevision: t.TypeOf<typeof ArticleRevisionDecoder>;
     // (undocumented)
+    CheckoutRevisionNotificationEvent: t.TypeOf<typeof CheckoutRevisionNotificationEventDecoder>;
+    // (undocumented)
     Comment: t.TypeOf<typeof CommentDecoder>;
     // (undocumented)
     Course: t.TypeOf<typeof CourseDecoder>;
@@ -3352,6 +3258,20 @@ export interface Models {
     CoursePageRevision: t.TypeOf<typeof CoursePageRevisionDecoder>;
     // (undocumented)
     CourseRevision: t.TypeOf<typeof CourseRevisionDecoder>;
+    // (undocumented)
+    CreateCommentNotificationEvent: t.TypeOf<typeof CreateCommentNotificationEventDecoder>;
+    // (undocumented)
+    CreateEntityLinkNotificationEvent: t.TypeOf<typeof CreateEntityLinkNotificationEventDecoder>;
+    // (undocumented)
+    CreateEntityNotificationEvent: t.TypeOf<typeof CreateEntityNotificationEventDecoder>;
+    // (undocumented)
+    CreateEntityRevisionNotificationEvent: t.TypeOf<typeof CreateEntityRevisionNotificationEventDecoder>;
+    // (undocumented)
+    CreateTaxonomyLinkNotificationEvent: t.TypeOf<typeof CreateTaxonomyLinkNotificationEventDecoder>;
+    // (undocumented)
+    CreateTaxonomyTermNotificationEvent: t.TypeOf<typeof CreateTaxonomyTermNotificationEventDecoder>;
+    // (undocumented)
+    CreateThreadNotificationEvent: t.TypeOf<typeof CreateThreadNotificationEventDecoder>;
     // (undocumented)
     Event: t.TypeOf<typeof EventDecoder>;
     // (undocumented)
@@ -3381,7 +3301,21 @@ export interface Models {
     // (undocumented)
     Query: Record<string, never>;
     // (undocumented)
+    RejectRevisionNotificationEvent: t.TypeOf<typeof RejectRevisionNotificationEventDecoder>;
+    // (undocumented)
+    RemoveEntityLinkNotificationEvent: t.TypeOf<typeof RemoveEntityLinkNotificationEventDecoder>;
+    // (undocumented)
+    RemoveTaxonomyLinkNotificationEvent: t.TypeOf<typeof RemoveTaxonomyLinkNotificationEventDecoder>;
+    // (undocumented)
+    SetLicenseNotificationEvent: t.TypeOf<typeof SetLicenseNotificationEventDecoder>;
+    // (undocumented)
+    SetTaxonomyParentNotificationEvent: t.TypeOf<typeof SetTaxonomyParentNotificationEventDecoder>;
+    // (undocumented)
+    SetTaxonomyTermNotificationEvent: t.TypeOf<typeof SetTaxonomyTermNotificationEventDecoder>;
+    // (undocumented)
     SetThreadStateNotificationEvent: t.TypeOf<typeof SetThreadStateNotificationEventDecoder>;
+    // (undocumented)
+    SetUuidStateNotificationEvent: t.TypeOf<typeof SetUuidStateNotificationEventDecoder>;
     // (undocumented)
     Solution: t.TypeOf<typeof SolutionDecoder>;
     // (undocumented)
@@ -3624,13 +3558,7 @@ export type NotificationEdgeResolvers<ContextType = Context, ParentType extends 
 };
 
 // @public (undocumented)
-export type NotificationEventPayload = CheckoutRevisionNotificationEventPayload | RejectRevisionNotificationEventPayload | CreateEntityNotificationEventPayload | CreateEntityLinkNotificationEventPayload | RemoveEntityLinkNotificationEventPayload | CreateEntityRevisionNotificationEventPayload | CreateTaxonomyTermNotificationEventPayload | CreateTaxonomyLinkNotificationEventPayload | RemoveTaxonomyLinkNotificationEventPayload | CreateThreadNotificationEventPayload | CreateCommentNotificationEventPayload | SetLicenseNotificationEventPayload | SetTaxonomyParentNotificationEventPayload | SetTaxonomyTermNotificationEventPayload | Model<'SetThreadStateNotificationEvent'> | SetUuidStateNotificationEventPayload;
-
-// @public (undocumented)
-export interface NotificationEventResolvers<T extends AbstractNotificationEventPayload> {
-    // (undocumented)
-    actor: LegacyResolver<T, {}, Model<'User'>>;
-}
+export type NotificationEventPayload = Model<'AbstractNotificationEvent'>;
 
 // @public (undocumented)
 export enum NotificationEventType {
@@ -3667,11 +3595,6 @@ export enum NotificationEventType {
     // (undocumented)
     SetUuidState = "SetUuidStateNotificationEvent"
 }
-
-// Warning: (ae-forgotten-export) The symbol "NotificationEventType" needs to be exported by the entry point api.d.ts
-//
-// @public (undocumented)
-export const NotificationEventTypeDecoder: t.Type<NotificationEventType_2, NotificationEventType_2, unknown>;
 
 // @public (undocumented)
 export type NotificationMutation = {
@@ -4085,14 +4008,18 @@ export type RejectRevisionNotificationEvent = AbstractNotificationEvent & Instan
 };
 
 // @public (undocumented)
-export interface RejectRevisionNotificationEventPayload extends AbstractNotificationEventPayload, Omit<RejectRevisionNotificationEvent, keyof LegacyRejectRevisionNotificationEventResolvers['RejectRevisionNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.RejectRevision;
-    // (undocumented)
-    repositoryId: number;
-    // (undocumented)
-    revisionId: number;
-}
+export const RejectRevisionNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType_2.RejectRevision>;
+    repositoryId: t.RefinementC<t.NumberC>;
+    revisionId: t.RefinementC<t.NumberC>;
+    reason: t.StringC;
+}>]>>;
 
 // @public (undocumented)
 export type RejectRevisionNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RejectRevisionNotificationEvent'] = ResolversParentTypes['RejectRevisionNotificationEvent']> = {
@@ -4120,14 +4047,17 @@ export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & Inst
 };
 
 // @public (undocumented)
-export interface RemoveEntityLinkNotificationEventPayload extends AbstractNotificationEventPayload, Omit<RemoveEntityLinkNotificationEvent, keyof LegacyRemoveEntityLinkNotificationEventResolvers['RemoveEntityLinkNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.RemoveEntityLink;
-    // (undocumented)
-    childId: number;
-    // (undocumented)
-    parentId: number;
-}
+export const RemoveEntityLinkNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType_2.RemoveEntityLink>;
+    parentId: t.RefinementC<t.NumberC>;
+    childId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type RemoveEntityLinkNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RemoveEntityLinkNotificationEvent'] = ResolversParentTypes['RemoveEntityLinkNotificationEvent']> = {
@@ -4154,14 +4084,17 @@ export type RemoveTaxonomyLinkNotificationEvent = AbstractNotificationEvent & In
 };
 
 // @public (undocumented)
-export interface RemoveTaxonomyLinkNotificationEventPayload extends AbstractNotificationEventPayload, Omit<RemoveTaxonomyLinkNotificationEvent, keyof LegacyRemoveTaxonomyLinkNotificationEventResolvers['RemoveTaxonomyLinkNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.RemoveTaxonomyLink;
-    // (undocumented)
-    childId: number;
-    // (undocumented)
-    parentId: number;
-}
+export const RemoveTaxonomyLinkNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType_2.RemoveTaxonomyLink>;
+    parentId: t.RefinementC<t.NumberC>;
+    childId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type RemoveTaxonomyLinkNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RemoveTaxonomyLinkNotificationEvent'] = ResolversParentTypes['RemoveTaxonomyLinkNotificationEvent']> = {
@@ -4973,12 +4906,16 @@ export type SetLicenseNotificationEvent = AbstractNotificationEvent & InstanceAw
 };
 
 // @public (undocumented)
-export interface SetLicenseNotificationEventPayload extends AbstractNotificationEventPayload, Omit<SetLicenseNotificationEvent, keyof LegacySetLicenseNotificationEventResolvers['SetLicenseNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.SetLicense;
-    // (undocumented)
-    repositoryId: number;
-}
+export const SetLicenseNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType_2.SetLicense>;
+    repositoryId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type SetLicenseNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SetLicenseNotificationEvent'] = ResolversParentTypes['SetLicenseNotificationEvent']> = {
@@ -5005,16 +4942,18 @@ export type SetTaxonomyParentNotificationEvent = AbstractNotificationEvent & Ins
 };
 
 // @public (undocumented)
-export interface SetTaxonomyParentNotificationEventPayload extends AbstractNotificationEventPayload, Omit<SetTaxonomyParentNotificationEvent, keyof LegacySetTaxonomyParentNotificationEventResolvers['SetTaxonomyParentNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.SetTaxonomyParent;
-    // (undocumented)
-    childId: number;
-    // (undocumented)
-    parentId: number | null;
-    // (undocumented)
-    previousParentId: number | null;
-}
+export const SetTaxonomyParentNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType_2.SetTaxonomyParent>;
+    previousParentId: t.RefinementC<t.NumberC>;
+    parentId: t.RefinementC<t.NumberC>;
+    childId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type SetTaxonomyParentNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SetTaxonomyParentNotificationEvent'] = ResolversParentTypes['SetTaxonomyParentNotificationEvent']> = {
@@ -5041,12 +4980,16 @@ export type SetTaxonomyTermNotificationEvent = AbstractNotificationEvent & Insta
 };
 
 // @public (undocumented)
-export interface SetTaxonomyTermNotificationEventPayload extends AbstractNotificationEventPayload, Omit<SetTaxonomyTermNotificationEvent, keyof LegacySetTaxonomyTermNotificationEventResolvers['SetTaxonomyTermNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.SetTaxonomyTerm;
-    // (undocumented)
-    taxonomyTermId: number;
-}
+export const SetTaxonomyTermNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType_2.SetTaxonomyTerm>;
+    taxonomyTermId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type SetTaxonomyTermNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SetTaxonomyTermNotificationEvent'] = ResolversParentTypes['SetTaxonomyTermNotificationEvent']> = {
@@ -5072,16 +5015,17 @@ export type SetThreadStateNotificationEvent = AbstractNotificationEvent & Instan
 };
 
 // @public (undocumented)
-export const SetThreadStateNotificationEventDecoder: t.ExactC<t.TypeC<{
-    __typename: t.LiteralC<NotificationEventType_2.SetThreadState>;
+export const SetThreadStateNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
     id: t.RefinementC<t.NumberC>;
     instance: t.Type<Instance, Instance, unknown>;
     date: t.StringC;
     actorId: t.RefinementC<t.NumberC>;
     objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType_2.SetThreadState>;
     threadId: t.RefinementC<t.NumberC>;
     archived: t.BooleanC;
-}>>;
+}>]>>;
 
 // @public (undocumented)
 export type SetThreadStateNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SetThreadStateNotificationEvent'] = ResolversParentTypes['SetThreadStateNotificationEvent']> = {
@@ -5108,12 +5052,16 @@ export type SetUuidStateNotificationEvent = AbstractNotificationEvent & Instance
 };
 
 // @public (undocumented)
-export interface SetUuidStateNotificationEventPayload extends AbstractNotificationEventPayload, Omit<SetUuidStateNotificationEvent, keyof LegacySetUuidStateNotificationEventResolvers['SetUuidStateNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.SetUuidState;
-    // (undocumented)
-    objectId: number;
-}
+export const SetUuidStateNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType_2.SetUuidState>;
+    trashed: t.BooleanC;
+}>]>>;
 
 // @public (undocumented)
 export type SetUuidStateNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SetUuidStateNotificationEvent'] = ResolversParentTypes['SetUuidStateNotificationEvent']> = {
@@ -6507,6 +6455,10 @@ export type VideoThreadsArgs = {
     trashed?: Maybe<Scalars['Boolean']>;
 };
 
+
+// Warnings were encountered during analysis:
+//
+// dist/model/decoder.d.ts:1517:5 - (ae-forgotten-export) The symbol "NotificationEventType" needs to be exported by the entry point api.d.ts
 
 // (No @packageDocumentation comment for this package)
 
