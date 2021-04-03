@@ -26,11 +26,19 @@ import {
   AppletRevisionDecoder,
   ArticleDecoder,
   ArticleRevisionDecoder,
+  CheckoutRevisionNotificationEventDecoder,
   CommentDecoder,
   CourseDecoder,
   CoursePageDecoder,
   CoursePageRevisionDecoder,
   CourseRevisionDecoder,
+  CreateCommentNotificationEventDecoder,
+  CreateEntityLinkNotificationEventDecoder,
+  CreateEntityNotificationEventDecoder,
+  CreateEntityRevisionNotificationEventDecoder,
+  CreateTaxonomyLinkNotificationEventDecoder,
+  CreateTaxonomyTermNotificationEventDecoder,
+  CreateThreadNotificationEventDecoder,
   EventDecoder,
   EventRevisionDecoder,
   ExerciseDecoder,
@@ -41,8 +49,14 @@ import {
   GroupedExerciseRevisionDecoder,
   PageDecoder,
   PageRevisionDecoder,
+  RejectRevisionNotificationEventDecoder,
+  RemoveEntityLinkNotificationEventDecoder,
   RemoveTaxonomyLinkNotificationEventDecoder,
+  SetLicenseNotificationEventDecoder,
+  SetTaxonomyParentNotificationEventDecoder,
+  SetTaxonomyTermNotificationEventDecoder,
   SetThreadStateNotificationEventDecoder,
+  SetUuidStateNotificationEventDecoder,
   SolutionDecoder,
   SolutionRevisionDecoder,
   TaxonomyTermDecoder,
@@ -76,12 +90,6 @@ export interface Models {
   Page: t.TypeOf<typeof PageDecoder>
   PageRevision: t.TypeOf<typeof PageRevisionDecoder>
   Query: Record<string, never>
-  RemoveTaxonomyLinkNotificationEvent: t.TypeOf<
-    typeof RemoveTaxonomyLinkNotificationEventDecoder
-  >
-  SetThreadStateNotificationEvent: t.TypeOf<
-    typeof SetThreadStateNotificationEventDecoder
-  >
   Solution: t.TypeOf<typeof SolutionDecoder>
   SolutionRevision: t.TypeOf<typeof SolutionRevisionDecoder>
   TaxonomyTerm: t.TypeOf<typeof TaxonomyTermDecoder>
@@ -92,4 +100,52 @@ export interface Models {
   User: t.TypeOf<typeof UserDecoder>
   Video: t.TypeOf<typeof VideoDecoder>
   VideoRevision: t.TypeOf<typeof VideoRevisionDecoder>
+  CheckoutRevisionNotificationEvent: t.TypeOf<
+    typeof CheckoutRevisionNotificationEventDecoder
+  >
+  CreateCommentNotificationEvent: t.TypeOf<
+    typeof CreateCommentNotificationEventDecoder
+  >
+  CreateEntityNotificationEvent: t.TypeOf<
+    typeof CreateEntityNotificationEventDecoder
+  >
+  CreateEntityRevisionNotificationEvent: t.TypeOf<
+    typeof CreateEntityRevisionNotificationEventDecoder
+  >
+  CreateEntityLinkNotificationEvent: t.TypeOf<
+    typeof CreateEntityLinkNotificationEventDecoder
+  >
+  CreateTaxonomyTermNotificationEvent: t.TypeOf<
+    typeof CreateTaxonomyTermNotificationEventDecoder
+  >
+  CreateTaxonomyLinkNotificationEvent: t.TypeOf<
+    typeof CreateTaxonomyLinkNotificationEventDecoder
+  >
+  CreateThreadNotificationEvent: t.TypeOf<
+    typeof CreateThreadNotificationEventDecoder
+  >
+  RejectRevisionNotificationEvent: t.TypeOf<
+    typeof RejectRevisionNotificationEventDecoder
+  >
+  RemoveEntityLinkNotificationEvent: t.TypeOf<
+    typeof RemoveEntityLinkNotificationEventDecoder
+  >
+  SetLicenseNotificationEvent: t.TypeOf<
+    typeof SetLicenseNotificationEventDecoder
+  >
+  SetTaxonomyTermNotificationEvent: t.TypeOf<
+    typeof SetTaxonomyTermNotificationEventDecoder
+  >
+  SetTaxonomyParentNotificationEvent: t.TypeOf<
+    typeof SetTaxonomyParentNotificationEventDecoder
+  >
+  SetUuidStateNotificationEvent: t.TypeOf<
+    typeof SetUuidStateNotificationEventDecoder
+  >
+  RemoveTaxonomyLinkNotificationEvent: t.TypeOf<
+    typeof RemoveTaxonomyLinkNotificationEventDecoder
+  >
+  SetThreadStateNotificationEvent: t.TypeOf<
+    typeof SetThreadStateNotificationEventDecoder
+  >
 }

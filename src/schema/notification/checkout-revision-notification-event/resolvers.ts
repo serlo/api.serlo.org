@@ -20,24 +20,28 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { createNotificationEventResolvers } from '../utils'
-import { LegacyCheckoutRevisionNotificationEventResolvers } from './types'
-import {
-  RepositoryPayload,
-  RevisionPayload,
-} from '~/schema/uuid/abstract-repository/types'
+import { TypeResolvers } from '~/internals/graphql'
+import { RepositoryDecoder, RevisionDecoder } from '~/model/decoder'
+import { CheckoutRevisionNotificationEvent } from '~/types'
 
-export const resolvers: LegacyCheckoutRevisionNotificationEventResolvers = {
+export const resolvers: TypeResolvers<CheckoutRevisionNotificationEvent> = {
   CheckoutRevisionNotificationEvent: {
     ...createNotificationEventResolvers(),
     async repository(notificationEvent, _args, { dataSources }) {
-      return (await dataSources.model.serlo.getUuid({
-        id: notificationEvent.repositoryId,
-      })) as RepositoryPayload | null
+      return await dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(
+        {
+          id: notificationEvent.repositoryId,
+        },
+        RepositoryDecoder
+      )
     },
     async revision(notificationEvent, _args, { dataSources }) {
-      return (await dataSources.model.serlo.getUuid({
-        id: notificationEvent.revisionId,
-      })) as RevisionPayload | null
+      return await dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(
+        {
+          id: notificationEvent.revisionId,
+        },
+        RevisionDecoder
+      )
     },
   },
 }

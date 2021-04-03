@@ -20,28 +20,38 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { createNotificationEventResolvers } from '../utils'
-import { LegacySetTaxonomyParentNotificationEventResolvers } from './types'
-import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
+import { TypeResolvers } from '~/internals/graphql'
+import { TaxonomyTermDecoder } from '~/model/decoder'
+import { SetTaxonomyParentNotificationEvent } from '~/types'
 
-export const resolvers: LegacySetTaxonomyParentNotificationEventResolvers = {
+export const resolvers: TypeResolvers<SetTaxonomyParentNotificationEvent> = {
   SetTaxonomyParentNotificationEvent: {
     ...createNotificationEventResolvers(),
-    async previousParent(notificationEvent, _args, { dataSources }) {
+    previousParent(notificationEvent, _args, { dataSources }) {
       if (notificationEvent.previousParentId === null) return null
-      return (await dataSources.model.serlo.getUuid({
-        id: notificationEvent.previousParentId,
-      })) as TaxonomyTermPayload | null
+      return dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(
+        {
+          id: notificationEvent.previousParentId,
+        },
+        TaxonomyTermDecoder
+      )
     },
-    async parent(notificationEvent, _args, { dataSources }) {
+    parent(notificationEvent, _args, { dataSources }) {
       if (notificationEvent.parentId === null) return null
-      return (await dataSources.model.serlo.getUuid({
-        id: notificationEvent.parentId,
-      })) as TaxonomyTermPayload | null
+      return dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(
+        {
+          id: notificationEvent.parentId,
+        },
+        TaxonomyTermDecoder
+      )
     },
-    async child(notificationEvent, _args, { dataSources }) {
-      return (await dataSources.model.serlo.getUuid({
-        id: notificationEvent.childId,
-      })) as TaxonomyTermPayload | null
+    child(notificationEvent, _args, { dataSources }) {
+      return dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(
+        {
+          id: notificationEvent.childId,
+        },
+        TaxonomyTermDecoder
+      )
     },
   },
 }
