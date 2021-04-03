@@ -109,10 +109,3 @@ export interface LegacyNotificationResolvers {
     >
   }
 }
-
-export interface NotificationEventResolvers<
-  T extends AbstractNotificationEventPayload
-> {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  actor: LegacyResolver<T, {}, Model<'User'>>
-}
