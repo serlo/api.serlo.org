@@ -19,93 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import {
-  Model,
-  MutationNamespace,
-  MutationResolver,
-  QueryResolver,
-  LegacyResolver,
-  TypeResolver,
-} from '~/internals/graphql'
-import { Connection } from '~/schema/connection/types'
-import {
-  AbstractNotificationEvent,
-  NotificationMutationSetStateArgs,
-  Notification,
-  QueryNotificationEventArgs,
-  QueryNotificationsArgs,
-  NotificationSetStateResponse,
-} from '~/types'
-
-export interface NotificationPayload
-  extends Omit<
-    Notification,
-    keyof LegacyNotificationResolvers['Notification']
-  > {
-  eventId: number
-}
+import { Model } from '~/internals/graphql'
 
 export interface NotificationsPayload {
-  notifications: NotificationPayload[]
+  notifications: Model<'Notification'>[]
   userId: number
 }
 
-export enum NotificationEventType {
-  CheckoutRevision = 'CheckoutRevisionNotificationEvent',
-  CreateComment = 'CreateCommentNotificationEvent',
-  CreateEntity = 'CreateEntityNotificationEvent',
-  CreateEntityRevision = 'CreateEntityRevisionNotificationEvent',
-  CreateEntityLink = 'CreateEntityLinkNotificationEvent',
-  CreateTaxonomyTerm = 'CreateTaxonomyTermNotificationEvent',
-  CreateTaxonomyLink = 'CreateTaxonomyLinkNotificationEvent',
-  CreateThread = 'CreateThreadNotificationEvent',
-  RejectRevision = 'RejectRevisionNotificationEvent',
-  RemoveEntityLink = 'RemoveEntityLinkNotificationEvent',
-  RemoveTaxonomyLink = 'RemoveTaxonomyLinkNotificationEvent',
-  SetLicense = 'SetLicenseNotificationEvent',
-  SetTaxonomyTerm = 'SetTaxonomyTermNotificationEvent',
-  SetTaxonomyParent = 'SetTaxonomyParentNotificationEvent',
-  SetThreadState = 'SetThreadStateNotificationEvent',
-  SetUuidState = 'SetUuidStateNotificationEvent',
-}
-
 export type NotificationEventPayload = Model<'AbstractNotificationEvent'>
-
-export interface AbstractNotificationEventPayload
-  extends Omit<AbstractNotificationEvent, 'actor'> {
-  __typename: NotificationEventType
-  actorId: number
-  objectId: number
-}
-
-export interface LegacyNotificationResolvers {
-  AbstractNotificationEvent: {
-    __resolveType: TypeResolver<NotificationEventPayload>
-  }
-  Notification: {
-    event: LegacyResolver<
-      NotificationPayload,
-      never,
-      NotificationEventPayload | null
-    >
-  }
-  Query: {
-    notifications: QueryResolver<
-      QueryNotificationsArgs,
-      Connection<NotificationPayload>
-    >
-    notificationEvent: QueryResolver<
-      QueryNotificationEventArgs,
-      NotificationEventPayload | null
-    >
-  }
-  Mutation: {
-    notification: MutationNamespace
-  }
-  NotificationMutation: {
-    setState: MutationResolver<
-      NotificationMutationSetStateArgs,
-      NotificationSetStateResponse
-    >
-  }
-}

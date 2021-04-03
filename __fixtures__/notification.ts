@@ -34,7 +34,7 @@ import {
   user,
 } from './uuid'
 import { Model } from '~/internals/graphql'
-import { NotificationEventType } from '~/schema/notification/types'
+import { NotificationEventType } from '~/model/decoder'
 import { Instance } from '~/types'
 
 export const checkoutRevisionNotificationEvent: Model<'CheckoutRevisionNotificationEvent'> = {

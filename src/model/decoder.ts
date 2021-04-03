@@ -466,7 +466,7 @@ export const UuidDecoder = t.union([
   UserDecoder,
 ])
 
-enum NotificationEventType {
+export enum NotificationEventType {
   CheckoutRevision = 'CheckoutRevisionNotificationEvent',
   CreateComment = 'CreateCommentNotificationEvent',
   CreateEntity = 'CreateEntityNotificationEvent',
@@ -664,4 +664,31 @@ export const SetUuidStateNotificationEventDecoder = t.exact(
       trashed: t.boolean,
     }),
   ])
+)
+
+export const NotificationEventDecoder = t.union([
+  CheckoutRevisionNotificationEventDecoder,
+  CreateCommentNotificationEventDecoder,
+  CreateEntityNotificationEventDecoder,
+  CreateEntityRevisionNotificationEventDecoder,
+  CreateEntityLinkNotificationEventDecoder,
+  CreateTaxonomyTermNotificationEventDecoder,
+  CreateTaxonomyLinkNotificationEventDecoder,
+  CreateThreadNotificationEventDecoder,
+  RejectRevisionNotificationEventDecoder,
+  RemoveEntityLinkNotificationEventDecoder,
+  RemoveTaxonomyLinkNotificationEventDecoder,
+  SetLicenseNotificationEventDecoder,
+  SetTaxonomyTermNotificationEventDecoder,
+  SetTaxonomyParentNotificationEventDecoder,
+  SetThreadStateNotificationEventDecoder,
+  SetUuidStateNotificationEventDecoder,
+])
+
+export const NotificationDecoder = t.exact(
+  t.type({
+    id: t.number,
+    unread: t.boolean,
+    eventId: t.number,
+  })
 )

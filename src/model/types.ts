@@ -47,6 +47,7 @@ import {
   ExerciseRevisionDecoder,
   GroupedExerciseDecoder,
   GroupedExerciseRevisionDecoder,
+  NotificationDecoder,
   PageDecoder,
   PageRevisionDecoder,
   RejectRevisionNotificationEventDecoder,
@@ -100,6 +101,7 @@ export interface Models {
   User: t.TypeOf<typeof UserDecoder>
   Video: t.TypeOf<typeof VideoDecoder>
   VideoRevision: t.TypeOf<typeof VideoRevisionDecoder>
+  Notification: t.TypeOf<typeof NotificationDecoder>
   CheckoutRevisionNotificationEvent: t.TypeOf<
     typeof CheckoutRevisionNotificationEventDecoder
   >

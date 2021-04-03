@@ -22,16 +22,13 @@
 import * as R from 'ramda'
 
 import { resolveUser } from '../uuid/user/utils'
-import {
-  AbstractNotificationEventPayload,
-  NotificationEventType,
-} from './types'
-import { PickResolvers } from '~/internals/graphql'
+import { Model, PickResolvers } from '~/internals/graphql'
+import { NotificationEventType } from '~/model/decoder'
 
 const validTypes = Object.values(NotificationEventType)
 
 export function isUnsupportedNotificationEvent(
-  payload: AbstractNotificationEventPayload
+  payload: Model<'AbstractNotificationEvent'>
 ) {
   return !R.includes(payload.__typename, validTypes)
 }

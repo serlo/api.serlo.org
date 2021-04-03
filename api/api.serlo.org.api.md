@@ -199,16 +199,6 @@ export const AbstractNotificationEventDecoder: t.TypeC<{
 }>;
 
 // @public (undocumented)
-export interface AbstractNotificationEventPayload extends Omit<AbstractNotificationEvent, 'actor'> {
-    // (undocumented)
-    __typename: NotificationEventType;
-    // (undocumented)
-    actorId: number;
-    // (undocumented)
-    objectId: number;
-}
-
-// @public (undocumented)
 export type AbstractNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractNotificationEvent'] = ResolversParentTypes['AbstractNotificationEvent']> = {
     __resolveType: TypeResolveFn<'CheckoutRevisionNotificationEvent' | 'CreateCommentNotificationEvent' | 'CreateEntityLinkNotificationEvent' | 'CreateEntityNotificationEvent' | 'CreateEntityRevisionNotificationEvent' | 'CreateTaxonomyLinkNotificationEvent' | 'CreateTaxonomyTermNotificationEvent' | 'CreateThreadNotificationEvent' | 'RejectRevisionNotificationEvent' | 'RemoveEntityLinkNotificationEvent' | 'RemoveTaxonomyLinkNotificationEvent' | 'SetLicenseNotificationEvent' | 'SetTaxonomyParentNotificationEvent' | 'SetTaxonomyTermNotificationEvent' | 'SetThreadStateNotificationEvent' | 'SetUuidStateNotificationEvent', ParentType, ContextType>;
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -809,7 +799,7 @@ export const CheckoutRevisionNotificationEventDecoder: t.ExactC<t.IntersectionC<
     actorId: t.RefinementC<t.NumberC>;
     objectId: t.RefinementC<t.NumberC>;
 }>, t.TypeC<{
-    __typename: t.LiteralC<NotificationEventType_2.CheckoutRevision>;
+    __typename: t.LiteralC<NotificationEventType.CheckoutRevision>;
     repositoryId: t.RefinementC<t.NumberC>;
     revisionId: t.RefinementC<t.NumberC>;
     reason: t.StringC;
@@ -1298,7 +1288,7 @@ export const CreateCommentNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.
     actorId: t.RefinementC<t.NumberC>;
     objectId: t.RefinementC<t.NumberC>;
 }>, t.TypeC<{
-    __typename: t.LiteralC<NotificationEventType_2.CreateComment>;
+    __typename: t.LiteralC<NotificationEventType.CreateComment>;
     threadId: t.RefinementC<t.NumberC>;
     commentId: t.RefinementC<t.NumberC>;
 }>]>>;
@@ -1335,7 +1325,7 @@ export const CreateEntityLinkNotificationEventDecoder: t.ExactC<t.IntersectionC<
     actorId: t.RefinementC<t.NumberC>;
     objectId: t.RefinementC<t.NumberC>;
 }>, t.TypeC<{
-    __typename: t.LiteralC<NotificationEventType_2.CreateEntityLink>;
+    __typename: t.LiteralC<NotificationEventType.CreateEntityLink>;
     parentId: t.RefinementC<t.NumberC>;
     childId: t.RefinementC<t.NumberC>;
 }>]>>;
@@ -1371,7 +1361,7 @@ export const CreateEntityNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.T
     actorId: t.RefinementC<t.NumberC>;
     objectId: t.RefinementC<t.NumberC>;
 }>, t.TypeC<{
-    __typename: t.LiteralC<NotificationEventType_2.CreateEntity>;
+    __typename: t.LiteralC<NotificationEventType.CreateEntity>;
     entityId: t.RefinementC<t.NumberC>;
 }>]>>;
 
@@ -1406,7 +1396,7 @@ export const CreateEntityRevisionNotificationEventDecoder: t.ExactC<t.Intersecti
     actorId: t.RefinementC<t.NumberC>;
     objectId: t.RefinementC<t.NumberC>;
 }>, t.TypeC<{
-    __typename: t.LiteralC<NotificationEventType_2.CreateEntityRevision>;
+    __typename: t.LiteralC<NotificationEventType.CreateEntityRevision>;
     entityId: t.RefinementC<t.NumberC>;
     entityRevisionId: t.RefinementC<t.NumberC>;
 }>]>>;
@@ -1679,7 +1669,164 @@ export function createSerloModel({ environment, }: {
     }, NavigationData | null>;
     getNotificationEvent: ModelQuery<{
         id: number;
-    }, AbstractNotificationEventPayload | null>;
+    }, ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CheckoutRevision;
+        repositoryId: number;
+        revisionId: number;
+        reason: string;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CreateComment;
+        threadId: number;
+        commentId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CreateEntity;
+        entityId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CreateEntityRevision;
+        entityId: number;
+        entityRevisionId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CreateEntityLink;
+        parentId: number;
+        childId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CreateTaxonomyTerm;
+        taxonomyTermId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CreateTaxonomyLink;
+        parentId: number;
+        childId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CreateThread;
+        threadId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.RejectRevision;
+        repositoryId: number;
+        revisionId: number;
+        reason: string;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.RemoveEntityLink;
+        parentId: number;
+        childId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.RemoveTaxonomyLink;
+        parentId: number;
+        childId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.SetLicense;
+        repositoryId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.SetTaxonomyTerm;
+        taxonomyTermId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.SetTaxonomyParent;
+        previousParentId: number;
+        parentId: number;
+        childId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.SetThreadState;
+        threadId: number;
+        archived: boolean;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.SetUuidState;
+        trashed: boolean;
+    }) | null>;
     getNotifications: ModelQuery<{
         userId: number;
     }, NotificationsPayload>;
@@ -1855,7 +2002,7 @@ export const CreateTaxonomyLinkNotificationEventDecoder: t.ExactC<t.Intersection
     actorId: t.RefinementC<t.NumberC>;
     objectId: t.RefinementC<t.NumberC>;
 }>, t.TypeC<{
-    __typename: t.LiteralC<NotificationEventType_2.CreateTaxonomyLink>;
+    __typename: t.LiteralC<NotificationEventType.CreateTaxonomyLink>;
     parentId: t.RefinementC<t.NumberC>;
     childId: t.RefinementC<t.NumberC>;
 }>]>>;
@@ -1891,7 +2038,7 @@ export const CreateTaxonomyTermNotificationEventDecoder: t.ExactC<t.Intersection
     actorId: t.RefinementC<t.NumberC>;
     objectId: t.RefinementC<t.NumberC>;
 }>, t.TypeC<{
-    __typename: t.LiteralC<NotificationEventType_2.CreateTaxonomyTerm>;
+    __typename: t.LiteralC<NotificationEventType.CreateTaxonomyTerm>;
     taxonomyTermId: t.RefinementC<t.NumberC>;
 }>]>>;
 
@@ -1926,7 +2073,7 @@ export const CreateThreadNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.T
     actorId: t.RefinementC<t.NumberC>;
     objectId: t.RefinementC<t.NumberC>;
 }>, t.TypeC<{
-    __typename: t.LiteralC<NotificationEventType_2.CreateThread>;
+    __typename: t.LiteralC<NotificationEventType.CreateThread>;
     threadId: t.RefinementC<t.NumberC>;
 }>]>>;
 
@@ -3110,31 +3257,6 @@ export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 }
 
 // @public (undocumented)
-export interface LegacyNotificationResolvers {
-    // (undocumented)
-    AbstractNotificationEvent: {
-        __resolveType: TypeResolver<NotificationEventPayload>;
-    };
-    // (undocumented)
-    Mutation: {
-        notification: MutationNamespace;
-    };
-    // (undocumented)
-    Notification: {
-        event: LegacyResolver<NotificationPayload, never, NotificationEventPayload | null>;
-    };
-    // (undocumented)
-    NotificationMutation: {
-        setState: MutationResolver<NotificationMutationSetStateArgs, NotificationSetStateResponse>;
-    };
-    // (undocumented)
-    Query: {
-        notifications: QueryResolver<QueryNotificationsArgs, Connection<NotificationPayload>>;
-        notificationEvent: QueryResolver<QueryNotificationEventArgs, NotificationEventPayload | null>;
-    };
-}
-
-// @public (undocumented)
 export type LegacyResolver<P, A, T> = (parent: P, args: A, context: Context, info: GraphQLResolveInfo) => AsyncOrSync<T>;
 
 // @public (undocumented)
@@ -3294,6 +3416,8 @@ export interface Models {
     Mutation: Record<string, never>;
     // (undocumented)
     Navigation: Payload<'serlo', 'getNavigation'>;
+    // (undocumented)
+    Notification: t.TypeOf<typeof NotificationDecoder>;
     // (undocumented)
     Page: t.TypeOf<typeof PageDecoder>;
     // (undocumented)
@@ -3544,6 +3668,13 @@ export type NotificationConnectionResolvers<ContextType = Context, ParentType ex
 };
 
 // @public (undocumented)
+export const NotificationDecoder: t.ExactC<t.TypeC<{
+    id: t.NumberC;
+    unread: t.BooleanC;
+    eventId: t.NumberC;
+}>>;
+
+// @public (undocumented)
 export type NotificationEdge = {
     __typename?: 'NotificationEdge';
     cursor: Scalars['String'];
@@ -3556,6 +3687,166 @@ export type NotificationEdgeResolvers<ContextType = Context, ParentType extends 
     node?: Resolver<ResolversTypes['Notification'], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+// @public (undocumented)
+export const NotificationEventDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CheckoutRevision>;
+    repositoryId: t.RefinementC<t.NumberC>;
+    revisionId: t.RefinementC<t.NumberC>;
+    reason: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CreateComment>;
+    threadId: t.RefinementC<t.NumberC>;
+    commentId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CreateEntity>;
+    entityId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CreateEntityRevision>;
+    entityId: t.RefinementC<t.NumberC>;
+    entityRevisionId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CreateEntityLink>;
+    parentId: t.RefinementC<t.NumberC>;
+    childId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CreateTaxonomyTerm>;
+    taxonomyTermId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CreateTaxonomyLink>;
+    parentId: t.RefinementC<t.NumberC>;
+    childId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CreateThread>;
+    threadId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.RejectRevision>;
+    repositoryId: t.RefinementC<t.NumberC>;
+    revisionId: t.RefinementC<t.NumberC>;
+    reason: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.RemoveEntityLink>;
+    parentId: t.RefinementC<t.NumberC>;
+    childId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.RemoveTaxonomyLink>;
+    parentId: t.RefinementC<t.NumberC>;
+    childId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.SetLicense>;
+    repositoryId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.SetTaxonomyTerm>;
+    taxonomyTermId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.SetTaxonomyParent>;
+    previousParentId: t.RefinementC<t.NumberC>;
+    parentId: t.RefinementC<t.NumberC>;
+    childId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.SetThreadState>;
+    threadId: t.RefinementC<t.NumberC>;
+    archived: t.BooleanC;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.SetUuidState>;
+    trashed: t.BooleanC;
+}>]>>]>;
 
 // @public (undocumented)
 export type NotificationEventPayload = Model<'AbstractNotificationEvent'>;
@@ -3614,12 +3905,6 @@ export type NotificationMutationSetStateArgs = {
 };
 
 // @public (undocumented)
-export interface NotificationPayload extends Omit<Notification_2, keyof LegacyNotificationResolvers['Notification']> {
-    // (undocumented)
-    eventId: number;
-}
-
-// @public (undocumented)
 export type NotificationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Notification'] = ResolversParentTypes['Notification']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     unread?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -3650,7 +3935,7 @@ export type NotificationSetStateResponseResolvers<ContextType = Context, ParentT
 // @public (undocumented)
 export interface NotificationsPayload {
     // (undocumented)
-    notifications: NotificationPayload[];
+    notifications: Model<'Notification'>[];
     // (undocumented)
     userId: number;
 }
@@ -4015,7 +4300,7 @@ export const RejectRevisionNotificationEventDecoder: t.ExactC<t.IntersectionC<[t
     actorId: t.RefinementC<t.NumberC>;
     objectId: t.RefinementC<t.NumberC>;
 }>, t.TypeC<{
-    __typename: t.LiteralC<NotificationEventType_2.RejectRevision>;
+    __typename: t.LiteralC<NotificationEventType.RejectRevision>;
     repositoryId: t.RefinementC<t.NumberC>;
     revisionId: t.RefinementC<t.NumberC>;
     reason: t.StringC;
@@ -4054,7 +4339,7 @@ export const RemoveEntityLinkNotificationEventDecoder: t.ExactC<t.IntersectionC<
     actorId: t.RefinementC<t.NumberC>;
     objectId: t.RefinementC<t.NumberC>;
 }>, t.TypeC<{
-    __typename: t.LiteralC<NotificationEventType_2.RemoveEntityLink>;
+    __typename: t.LiteralC<NotificationEventType.RemoveEntityLink>;
     parentId: t.RefinementC<t.NumberC>;
     childId: t.RefinementC<t.NumberC>;
 }>]>>;
@@ -4091,7 +4376,7 @@ export const RemoveTaxonomyLinkNotificationEventDecoder: t.ExactC<t.Intersection
     actorId: t.RefinementC<t.NumberC>;
     objectId: t.RefinementC<t.NumberC>;
 }>, t.TypeC<{
-    __typename: t.LiteralC<NotificationEventType_2.RemoveTaxonomyLink>;
+    __typename: t.LiteralC<NotificationEventType.RemoveTaxonomyLink>;
     parentId: t.RefinementC<t.NumberC>;
     childId: t.RefinementC<t.NumberC>;
 }>]>>;
@@ -4913,7 +5198,7 @@ export const SetLicenseNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.Typ
     actorId: t.RefinementC<t.NumberC>;
     objectId: t.RefinementC<t.NumberC>;
 }>, t.TypeC<{
-    __typename: t.LiteralC<NotificationEventType_2.SetLicense>;
+    __typename: t.LiteralC<NotificationEventType.SetLicense>;
     repositoryId: t.RefinementC<t.NumberC>;
 }>]>>;
 
@@ -4949,7 +5234,7 @@ export const SetTaxonomyParentNotificationEventDecoder: t.ExactC<t.IntersectionC
     actorId: t.RefinementC<t.NumberC>;
     objectId: t.RefinementC<t.NumberC>;
 }>, t.TypeC<{
-    __typename: t.LiteralC<NotificationEventType_2.SetTaxonomyParent>;
+    __typename: t.LiteralC<NotificationEventType.SetTaxonomyParent>;
     previousParentId: t.RefinementC<t.NumberC>;
     parentId: t.RefinementC<t.NumberC>;
     childId: t.RefinementC<t.NumberC>;
@@ -4987,7 +5272,7 @@ export const SetTaxonomyTermNotificationEventDecoder: t.ExactC<t.IntersectionC<[
     actorId: t.RefinementC<t.NumberC>;
     objectId: t.RefinementC<t.NumberC>;
 }>, t.TypeC<{
-    __typename: t.LiteralC<NotificationEventType_2.SetTaxonomyTerm>;
+    __typename: t.LiteralC<NotificationEventType.SetTaxonomyTerm>;
     taxonomyTermId: t.RefinementC<t.NumberC>;
 }>]>>;
 
@@ -5022,7 +5307,7 @@ export const SetThreadStateNotificationEventDecoder: t.ExactC<t.IntersectionC<[t
     actorId: t.RefinementC<t.NumberC>;
     objectId: t.RefinementC<t.NumberC>;
 }>, t.TypeC<{
-    __typename: t.LiteralC<NotificationEventType_2.SetThreadState>;
+    __typename: t.LiteralC<NotificationEventType.SetThreadState>;
     threadId: t.RefinementC<t.NumberC>;
     archived: t.BooleanC;
 }>]>>;
@@ -5059,7 +5344,7 @@ export const SetUuidStateNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.T
     actorId: t.RefinementC<t.NumberC>;
     objectId: t.RefinementC<t.NumberC>;
 }>, t.TypeC<{
-    __typename: t.LiteralC<NotificationEventType_2.SetUuidState>;
+    __typename: t.LiteralC<NotificationEventType.SetUuidState>;
     trashed: t.BooleanC;
 }>]>>;
 
@@ -6455,10 +6740,6 @@ export type VideoThreadsArgs = {
     trashed?: Maybe<Scalars['Boolean']>;
 };
 
-
-// Warnings were encountered during analysis:
-//
-// dist/model/decoder.d.ts:1517:5 - (ae-forgotten-export) The symbol "NotificationEventType" needs to be exported by the entry point api.d.ts
 
 // (No @packageDocumentation comment for this package)
 

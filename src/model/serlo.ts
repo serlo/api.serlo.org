@@ -24,8 +24,19 @@ import * as t from 'io-ts'
 import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
 
-import { CommentDecoder, InstanceDecoder, UuidDecoder } from './decoder'
+import {
+  CommentDecoder,
+  InstanceDecoder,
+  NotificationEventDecoder,
+  UuidDecoder,
+  // TODO: The following import is needed for the API extractor
+  // Delete the line when https://github.com/microsoft/rushstack/issues/2140
+  // got fixed
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  NotificationEventType,
+} from './decoder'
 import { Environment } from '~/internals/environment'
+import { Model } from '~/internals/graphql'
 import {
   createHelper,
   createMutation,
@@ -34,10 +45,7 @@ import {
   ModelQuery,
 } from '~/internals/model'
 import { isInstance } from '~/schema/instance/utils'
-import {
-  AbstractNotificationEventPayload,
-  NotificationsPayload,
-} from '~/schema/notification/types'
+import { NotificationsPayload } from '~/schema/notification/types'
 import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
 import { SubscriptionsPayload } from '~/schema/subscription/types'
 import { EntityPayload } from '~/schema/uuid/abstract-entity/types'
@@ -383,24 +391,18 @@ export function createSerloModel({
     environment
   )
 
-  const getNotificationEvent = createQuery<
-    { id: number },
-    AbstractNotificationEventPayload | null
-  >(
+  const getNotificationEvent = createQuery(
     {
+      decoder: t.union([NotificationEventDecoder, t.null]),
       enableSwr: true,
-      getCurrentValue: async ({ id }) => {
-        const response = await handleMessageWithoutResponse({
-          message: {
-            type: 'EventQuery',
-            payload: {
-              id,
-            },
-          },
+      getCurrentValue: async ({ id }: { id: number }) => {
+        const notificationEvent = (await handleMessage({
+          message: { type: 'EventQuery', payload: { id } },
           expectedStatusCodes: [200, 404],
-        })
-        const notificationEvent = (await response.json()) as AbstractNotificationEventPayload
-        return isUnsupportedNotificationEvent(notificationEvent)
+        })) as Model<'AbstractNotificationEvent'> | null
+
+        return notificationEvent === null ||
+          isUnsupportedNotificationEvent(notificationEvent)
           ? null
           : notificationEvent
       },
