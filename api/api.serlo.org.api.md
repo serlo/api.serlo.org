@@ -16,7 +16,6 @@ import { O } from 'ts-toolbelt';
 import { option } from 'fp-ts';
 import { RESTDataSource } from 'apollo-datasource-rest';
 import * as t from 'io-ts';
-import { default as t_2 } from 'io-ts';
 
 // @public (undocumented)
 export type AbstractEntity = {
@@ -3544,7 +3543,7 @@ export type Navigation = {
 };
 
 // @public (undocumented)
-export type NavigationChildPayload = TaxonomyTermPayload | Model<'Page'>;
+export type NavigationChildPayload = Model<'TaxonomyTerm'> | Model<'Page'>;
 
 // @public (undocumented)
 export interface NavigationData {
@@ -5693,9 +5692,6 @@ export type TaxonomyTermEdgeResolvers<ContextType = Context, ParentType extends 
     node?: Resolver<ResolversTypes['TaxonomyTerm'], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
-
-// @public (undocumented)
-export type TaxonomyTermPayload = t_2.TypeOf<typeof TaxonomyTermDecoder>;
 
 // @public (undocumented)
 export type TaxonomyTermResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTerm'] = ResolversParentTypes['TaxonomyTerm']> = {
