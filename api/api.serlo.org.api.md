@@ -3849,9 +3849,6 @@ export const NotificationEventDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.Typ
 }>]>>]>;
 
 // @public (undocumented)
-export type NotificationEventPayload = Model<'AbstractNotificationEvent'>;
-
-// @public (undocumented)
 export enum NotificationEventType {
     // (undocumented)
     CheckoutRevision = "CheckoutRevisionNotificationEvent",
