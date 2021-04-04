@@ -25,5 +25,3 @@ export interface NotificationsPayload {
   notifications: Model<'Notification'>[]
   userId: number
 }
-
-export type NotificationEventPayload = Model<'AbstractNotificationEvent'>

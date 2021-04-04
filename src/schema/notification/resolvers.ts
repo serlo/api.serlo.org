@@ -21,7 +21,6 @@
  */
 import { ForbiddenError } from 'apollo-server'
 
-import { NotificationEventPayload } from './types'
 import {
   assertUserIsAuthenticated,
   createMutationNamespace,
@@ -45,9 +44,13 @@ export const resolvers: TypeResolvers<Notification> &
   },
   Notification: {
     async event(parent, _args, { dataSources }) {
-      return (await dataSources.model.serlo.getNotificationEvent({
+      const event = await dataSources.model.serlo.getNotificationEvent({
         id: parent.eventId,
-      })) as NotificationEventPayload
+      })
+
+      if (event === null) throw new Error('event cannot be null')
+
+      return event
     },
   },
   Query: {
@@ -73,9 +76,11 @@ export const resolvers: TypeResolvers<Notification> &
       })
     },
     async notificationEvent(_parent, payload, { dataSources }) {
-      return (await dataSources.model.serlo.getNotificationEvent(
-        payload
-      )) as NotificationEventPayload
+      const event = await dataSources.model.serlo.getNotificationEvent(payload)
+
+      if (event === null) throw new Error('event cannot be null')
+
+      return event
     },
   },
   Mutation: {
