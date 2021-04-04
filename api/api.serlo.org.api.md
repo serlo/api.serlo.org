@@ -1829,7 +1829,14 @@ export function createSerloModel({ environment, }: {
     }) | null>;
     getNotifications: ModelQuery<{
         userId: number;
-    }, NotificationsPayload>;
+    }, {
+        notifications: {
+            id: number;
+            unread: boolean;
+            eventId: number;
+        }[];
+        userId: number;
+    }>;
     getSubscriptions: ModelQuery<{
         userId: number;
     }, SubscriptionsPayload>;
@@ -3928,14 +3935,6 @@ export type NotificationSetStateResponseResolvers<ContextType = Context, ParentT
     query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
-
-// @public (undocumented)
-export interface NotificationsPayload {
-    // (undocumented)
-    notifications: Model<'Notification'>[];
-    // (undocumented)
-    userId: number;
-}
 
 // @public
 export type OmitKeys<O extends object, Keys> = Omit<O, Keys & keyof O>;

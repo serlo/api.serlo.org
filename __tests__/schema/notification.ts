@@ -82,7 +82,7 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../__utils__'
-import { NotificationsPayload } from '~/schema/notification/types'
+import { Payload } from '~/internals/model/types'
 import { Instance } from '~/types'
 
 describe('notifications', () => {
@@ -2265,7 +2265,9 @@ describe('mutation notification setState', () => {
   })
 })
 
-function createNotificationsHandler(payload: NotificationsPayload) {
+function createNotificationsHandler(
+  payload: Payload<'serlo', 'getNotifications'>
+) {
   return createMessageHandler({
     message: {
       type: 'NotificationsQuery',

@@ -34,6 +34,8 @@ import {
   // got fixed
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   NotificationEventType,
+  Uuid,
+  NotificationDecoder,
 } from './decoder'
 import { Environment } from '~/internals/environment'
 import { Model } from '~/internals/graphql'
@@ -45,7 +47,6 @@ import {
   ModelQuery,
 } from '~/internals/model'
 import { isInstance } from '~/schema/instance/utils'
-import { NotificationsPayload } from '~/schema/notification/types'
 import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
 import { SubscriptionsPayload } from '~/schema/subscription/types'
 import { EntityPayload } from '~/schema/uuid/abstract-entity/types'
@@ -420,14 +421,17 @@ export function createSerloModel({
     environment
   )
 
-  const getNotifications = createQuery<
-    { userId: number },
-    NotificationsPayload
-  >(
+  const getNotifications = createQuery(
     {
+      decoder: t.exact(
+        t.type({
+          notifications: t.array(NotificationDecoder),
+          userId: Uuid,
+        })
+      ),
       enableSwr: true,
-      getCurrentValue: async ({ userId }) => {
-        const response = await handleMessageWithoutResponse({
+      getCurrentValue: ({ userId }: { userId: number }) => {
+        return handleMessage({
           message: {
             type: 'NotificationsQuery',
             payload: {
@@ -436,7 +440,6 @@ export function createSerloModel({
           },
           expectedStatusCodes: [200],
         })
-        return (await response.json()) as NotificationsPayload
       },
       maxAge: { hour: 1 },
       getKey: ({ userId }) => {
