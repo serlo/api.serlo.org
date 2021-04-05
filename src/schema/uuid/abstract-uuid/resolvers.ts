@@ -22,7 +22,6 @@
 import { ForbiddenError, UserInputError } from 'apollo-server'
 import { either as E } from 'fp-ts'
 
-import { DiscriminatorType } from './types'
 import { resolveCustomId } from '~/config/alias'
 import {
   assertUserIsAuthenticated,
@@ -33,7 +32,7 @@ import {
   Context,
   Model,
 } from '~/internals/graphql'
-import { Uuid } from '~/model/decoder'
+import { Uuid, DiscriminatorType } from '~/model/decoder'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { QueryUuidArgs } from '~/types'
 

@@ -21,12 +21,12 @@
  */
 import * as R from 'ramda'
 
-import { DiscriminatorType } from './types'
 import { Model, PickResolvers } from '~/internals/graphql'
 import {
+  DiscriminatorType,
   EntityRevisionType,
   EntityType,
-} from '~/schema/uuid/abstract-entity/types'
+} from '~/model/decoder'
 import { createAliasResolvers } from '~/schema/uuid/alias/utils'
 
 const validTypes = [

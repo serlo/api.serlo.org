@@ -25,10 +25,7 @@ import { license } from '../license'
 import { exerciseGroup } from './exercise-group'
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model/types'
-import {
-  EntityRevisionType,
-  EntityType,
-} from '~/schema/uuid/abstract-entity/types'
+import { EntityRevisionType, EntityType } from '~/model/decoder'
 import { Instance } from '~/types'
 
 export const groupedExerciseAlias: Payload<'serlo', 'getAlias'> = {

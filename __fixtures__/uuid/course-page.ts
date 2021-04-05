@@ -24,10 +24,7 @@ import * as R from 'ramda'
 import { license } from '../license'
 import { course } from './course'
 import { Model } from '~/internals/graphql'
-import {
-  EntityRevisionType,
-  EntityType,
-} from '~/schema/uuid/abstract-entity/types'
+import { EntityRevisionType, EntityType } from '~/model/decoder'
 import { Instance } from '~/types'
 
 export const coursePage: Model<'CoursePage'> = {
