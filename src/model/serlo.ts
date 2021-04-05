@@ -36,7 +36,6 @@ import {
   NotificationEventType,
   Uuid,
   NotificationDecoder,
-  EntityDecoder,
 } from './decoder'
 import { Environment } from '~/internals/environment'
 import { Model } from '~/internals/graphql'
@@ -299,12 +298,7 @@ export function createSerloModel({
 
       for (let i = 0; i < nodes.length; i++) {
         const nodeData = nodes[i]
-        const uuid = nodeData.id
-          ? await getUuid._querySpec.queryWithDecoder(
-              { id: nodeData.id },
-              EntityDecoder
-            )
-          : null
+        const uuid = nodeData.id ? await getUuid({ id: nodeData.id }) : null
         const node = {
           label: nodeData.label,
           url: (uuid ? uuid.alias : null) || nodeData.url || null,
