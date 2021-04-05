@@ -75,12 +75,8 @@ export const resolvers: TypeResolvers<Notification> &
         },
       })
     },
-    async notificationEvent(_parent, payload, { dataSources }) {
-      const event = await dataSources.model.serlo.getNotificationEvent(payload)
-
-      if (event === null) throw new Error('event cannot be null')
-
-      return event
+    notificationEvent(_parent, payload, { dataSources }) {
+      return dataSources.model.serlo.getNotificationEvent(payload)
     },
   },
   Mutation: {

@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { createNotificationEventResolvers } from '../utils'
-import { TypeResolvers } from '~/api'
+import { TypeResolvers } from '~/internals/graphql'
 import { SetUuidStateNotificationEvent } from '~/types'
 
 export const resolvers: TypeResolvers<SetUuidStateNotificationEvent> = {
