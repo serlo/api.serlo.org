@@ -2280,9 +2280,6 @@ export const EntityDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.Inte
 }>]>>]>;
 
 // @public (undocumented)
-export type EntityPayload = Model<'AbstractEntity'>;
-
-// @public (undocumented)
 export const EntityRevisionDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
     id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
@@ -2441,9 +2438,6 @@ export const EntityRevisionDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.Inters
 }>]>>]>;
 
 // @public (undocumented)
-export type EntityRevisionPayload = Model<'AbstractEntityRevision'>;
-
-// @public (undocumented)
 export enum EntityRevisionType {
     // (undocumented)
     AppletRevision = "AppletRevision",
@@ -2470,7 +2464,11 @@ export enum EntityRevisionType {
 // @public (undocumented)
 export const EntityRevisionTypeDecoder: t.UnionC<[t.LiteralC<EntityRevisionType.AppletRevision>, t.LiteralC<EntityRevisionType.ArticleRevision>, t.LiteralC<EntityRevisionType.CourseRevision>, t.LiteralC<EntityRevisionType.CoursePageRevision>, t.LiteralC<EntityRevisionType.EventRevision>, t.LiteralC<EntityRevisionType.ExerciseRevision>, t.LiteralC<EntityRevisionType.ExerciseGroupRevision>, t.LiteralC<EntityRevisionType.GroupedExerciseRevision>, t.LiteralC<EntityRevisionType.SolutionRevision>, t.LiteralC<EntityRevisionType.VideoRevision>]>;
 
-// @public (undocumented)
+// Warning: (tsdoc-undefined-tag) The TSDoc tag "@copyright" is not defined in this configuration
+// Warning: (tsdoc-undefined-tag) The TSDoc tag "@license" is not defined in this configuration
+// Warning: (tsdoc-tag-should-not-have-braces) The TSDoc tag "@link" is not an inline tag; it must not be enclosed in "{ }" braces
+//
+// @public
 export enum EntityType {
     // (undocumented)
     Applet = "Applet",

@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Model } from '~/internals/graphql'
 
 export enum EntityType {
   Applet = 'Applet',
@@ -34,8 +33,6 @@ export enum EntityType {
   Video = 'Video',
 }
 
-export type EntityPayload = Model<'AbstractEntity'>
-
 export enum EntityRevisionType {
   ArticleRevision = 'ArticleRevision',
   AppletRevision = 'AppletRevision',
@@ -48,5 +45,3 @@ export enum EntityRevisionType {
   SolutionRevision = 'SolutionRevision',
   VideoRevision = 'VideoRevision',
 }
-
-export type EntityRevisionPayload = Model<'AbstractEntityRevision'>

@@ -36,6 +36,7 @@ import {
   NotificationEventType,
   Uuid,
   NotificationDecoder,
+  EntityDecoder,
 } from './decoder'
 import { Environment } from '~/internals/environment'
 import { Model } from '~/internals/graphql'
@@ -49,7 +50,6 @@ import {
 import { isInstance } from '~/schema/instance/utils'
 import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
 import { SubscriptionsPayload } from '~/schema/subscription/types'
-import { EntityPayload } from '~/schema/uuid/abstract-entity/types'
 import {
   NavigationData,
   NavigationPayload,
@@ -300,9 +300,10 @@ export function createSerloModel({
       for (let i = 0; i < nodes.length; i++) {
         const nodeData = nodes[i]
         const uuid = nodeData.id
-          ? ((await getUuid({
-              id: nodeData.id,
-            })) as EntityPayload)
+          ? await getUuid._querySpec.queryWithDecoder(
+              { id: nodeData.id },
+              EntityDecoder
+            )
           : null
         const node = {
           label: nodeData.label,
