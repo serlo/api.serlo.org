@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Model } from '~/internals/graphql'
 import {
   EntityRevisionType,
   EntityType,
@@ -27,7 +26,4 @@ import {
 import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
 
 export type RepositoryType = EntityType | DiscriminatorType.Page
-export type RepositoryPayload = Model<'AbstractRepository'>
-
 export type RevisionType = EntityRevisionType | DiscriminatorType.PageRevision
-export type RevisionPayload = Model<'AbstractRevision'>
