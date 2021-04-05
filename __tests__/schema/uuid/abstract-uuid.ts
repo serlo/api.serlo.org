@@ -64,8 +64,9 @@ import { Model } from '~/internals/graphql'
 import {
   EntityRevisionType,
   EntityType,
-} from '~/schema/uuid/abstract-entity/types'
-import { DiscriminatorType, UuidType } from '~/schema/uuid/abstract-uuid/types'
+  DiscriminatorType,
+  UuidType,
+} from '~/model/decoder'
 import { Instance } from '~/types'
 
 let client: Client

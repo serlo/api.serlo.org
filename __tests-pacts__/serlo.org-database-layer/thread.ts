@@ -28,8 +28,8 @@ import {
   addMessageInteraction,
   assertSuccessfulGraphQLMutation,
 } from '../__utils__'
+import { DiscriminatorType } from '~/model/decoder'
 import { encodeThreadId } from '~/schema/thread/utils'
-import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
 
 test('ThreadsQuery', async () => {
   await addMessageInteraction({
