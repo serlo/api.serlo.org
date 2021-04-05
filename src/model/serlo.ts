@@ -54,7 +54,6 @@ import {
   NavigationPayload,
   NodeData,
 } from '~/schema/uuid/abstract-navigation-child/types'
-import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 import { isUnsupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { Instance, ThreadCreateThreadInput } from '~/types'
@@ -97,11 +96,11 @@ export function createSerloModel({
     expectedStatusCodes: number[]
   }
 
-  const getUuid = createQuery<{ id: number }, UuidPayload | null>(
+  const getUuid = createQuery(
     {
       decoder: t.union([UuidDecoder, t.null]),
       enableSwr: false,
-      getCurrentValue: async ({ id }) => {
+      getCurrentValue: async ({ id }: { id: number }) => {
         const uuid = (await handleMessage({
           message: {
             type: 'UuidQuery',
@@ -110,7 +109,7 @@ export function createSerloModel({
             },
           },
           expectedStatusCodes: [200, 404],
-        })) as UuidPayload | null
+        })) as Model<'AbstractUuid'> | null
         return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
       },
       maxAge: { hour: 1 },
@@ -126,7 +125,7 @@ export function createSerloModel({
     environment
   )
 
-  async function getUuidWithCustomDecoder<S extends UuidPayload>({
+  async function getUuidWithCustomDecoder<S extends Model<'AbstractUuid'>>({
     id,
     decoder,
   }: {
