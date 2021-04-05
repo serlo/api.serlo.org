@@ -4548,9 +4548,6 @@ export const RepositoryDecoder: t.UnionC<[t.UnionC<[t.UnionC<[t.ExactC<t.Interse
 }>]>>]>;
 
 // @public (undocumented)
-export type RepositoryPayload = Model<'AbstractRepository'>;
-
-// @public (undocumented)
 export type RepositoryType = EntityType | DiscriminatorType.Page;
 
 // @public (undocumented)
@@ -5137,9 +5134,6 @@ export const RevisionDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.In
     authorId: t.RefinementC<t.NumberC>;
     repositoryId: t.RefinementC<t.NumberC>;
 }>]>>]>;
-
-// @public (undocumented)
-export type RevisionPayload = Model<'AbstractRevision'>;
 
 // @public (undocumented)
 export type RevisionType = EntityRevisionType | DiscriminatorType.PageRevision;
