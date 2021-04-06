@@ -28,12 +28,14 @@ export const resolvers: TypeResolvers<RemoveTaxonomyLinkNotificationEvent> = {
   RemoveTaxonomyLinkNotificationEvent: {
     ...createNotificationEventResolvers(),
     async parent(notificationEvent, _args, { dataSources }) {
-      return await dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(
-        {
-          id: notificationEvent.parentId,
-        },
-        TaxonomyTermDecoder
-      )
+      const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: notificationEvent.parentId,
+        decoder: TaxonomyTermDecoder,
+      })
+
+      if (parent === null) throw new Error('parent cannot be null')
+
+      return parent
     },
     async child(notificationEvent, _args, { dataSources }) {
       const child = await dataSources.model.serlo.getUuid({

@@ -27,23 +27,28 @@ import { SetTaxonomyParentNotificationEvent } from '~/types'
 export const resolvers: TypeResolvers<SetTaxonomyParentNotificationEvent> = {
   SetTaxonomyParentNotificationEvent: {
     ...createNotificationEventResolvers(),
-    previousParent(notificationEvent, _args, { dataSources }) {
+    async previousParent(notificationEvent, _args, { dataSources }) {
       if (notificationEvent.previousParentId === null) return null
-      return dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(
-        {
-          id: notificationEvent.previousParentId,
-        },
-        TaxonomyTermDecoder
-      )
+
+      const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: notificationEvent.previousParentId,
+        decoder: TaxonomyTermDecoder,
+      })
+
+      if (parent === null) throw new Error('parent cannot be null')
+
+      return parent
     },
-    parent(notificationEvent, _args, { dataSources }) {
+    async parent(notificationEvent, _args, { dataSources }) {
       if (notificationEvent.parentId === null) return null
-      return dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(
-        {
-          id: notificationEvent.parentId,
-        },
-        TaxonomyTermDecoder
-      )
+      const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: notificationEvent.parentId,
+        decoder: TaxonomyTermDecoder,
+      })
+
+      if (parent === null) throw new Error('parent cannot be null')
+
+      return parent
     },
     child(notificationEvent, _args, { dataSources }) {
       return dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(

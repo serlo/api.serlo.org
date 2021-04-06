@@ -28,20 +28,26 @@ export const resolvers: TypeResolvers<CheckoutRevisionNotificationEvent> = {
   CheckoutRevisionNotificationEvent: {
     ...createNotificationEventResolvers(),
     async repository(notificationEvent, _args, { dataSources }) {
-      return await dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(
+      const repository = await dataSources.model.serlo.getUuidWithCustomDecoder(
         {
           id: notificationEvent.repositoryId,
-        },
-        RepositoryDecoder
+          decoder: RepositoryDecoder,
+        }
       )
+
+      if (repository === null) throw new Error('repository cannot be null')
+
+      return repository
     },
     async revision(notificationEvent, _args, { dataSources }) {
-      return await dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(
-        {
-          id: notificationEvent.revisionId,
-        },
-        RevisionDecoder
-      )
+      const revision = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: notificationEvent.revisionId,
+        decoder: RevisionDecoder,
+      })
+
+      if (revision === null) throw new Error('revision cannot be null')
+
+      return revision
     },
   },
 }
