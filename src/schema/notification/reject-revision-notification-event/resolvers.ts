@@ -27,21 +27,27 @@ import { RejectRevisionNotificationEvent } from '~/types'
 export const resolvers: TypeResolvers<RejectRevisionNotificationEvent> = {
   RejectRevisionNotificationEvent: {
     ...createNotificationEventResolvers(),
-    repository(notificationEvent, _args, { dataSources }) {
-      return dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(
+    async repository(notificationEvent, _args, { dataSources }) {
+      const repository = await dataSources.model.serlo.getUuidWithCustomDecoder(
         {
           id: notificationEvent.repositoryId,
-        },
-        RepositoryDecoder
+          decoder: RepositoryDecoder,
+        }
       )
+
+      if (repository === null) throw new Error('repository cannot be null')
+
+      return repository
     },
-    revision(notificationEvent, _args, { dataSources }) {
-      return dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(
-        {
-          id: notificationEvent.revisionId,
-        },
-        RevisionDecoder
-      )
+    async revision(notificationEvent, _args, { dataSources }) {
+      const revision = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: notificationEvent.revisionId,
+        decoder: RevisionDecoder,
+      })
+
+      if (revision === null) throw new Error('revision cannot be null')
+
+      return revision
     },
   },
 }

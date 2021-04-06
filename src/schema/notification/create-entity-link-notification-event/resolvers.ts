@@ -27,21 +27,25 @@ import { CreateEntityLinkNotificationEvent } from '~/types'
 export const resolvers: TypeResolvers<CreateEntityLinkNotificationEvent> = {
   CreateEntityLinkNotificationEvent: {
     ...createNotificationEventResolvers(),
-    parent(notificationEvent, _args, { dataSources }) {
-      return dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(
-        {
-          id: notificationEvent.parentId,
-        },
-        EntityDecoder
-      )
+    async parent(notificationEvent, _args, { dataSources }) {
+      const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: notificationEvent.parentId,
+        decoder: EntityDecoder,
+      })
+
+      if (parent === null) throw new Error('parent cannot be null')
+
+      return parent
     },
-    child(notificationEvent, _args, { dataSources }) {
-      return dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(
-        {
-          id: notificationEvent.childId,
-        },
-        EntityDecoder
-      )
+    async child(notificationEvent, _args, { dataSources }) {
+      const child = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: notificationEvent.childId,
+        decoder: EntityDecoder,
+      })
+
+      if (child === null) throw Error('child cannot be null')
+
+      return child
     },
   },
 }

@@ -27,13 +27,17 @@ import { CreateTaxonomyTermNotificationEvent } from '~/types'
 export const resolvers: TypeResolvers<CreateTaxonomyTermNotificationEvent> = {
   CreateTaxonomyTermNotificationEvent: {
     ...createNotificationEventResolvers(),
-    taxonomyTerm(notificationEvent, _args, { dataSources }) {
-      return dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(
+    async taxonomyTerm(notificationEvent, _args, { dataSources }) {
+      const taxonomyTerm = await dataSources.model.serlo.getUuidWithCustomDecoder(
         {
           id: notificationEvent.taxonomyTermId,
-        },
-        TaxonomyTermDecoder
+          decoder: TaxonomyTermDecoder,
+        }
       )
+
+      if (taxonomyTerm === null) throw new Error('taxonomyTerm cannot be null')
+
+      return taxonomyTerm
     },
   },
 }
