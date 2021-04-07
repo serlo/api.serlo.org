@@ -19,8 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import * as t from 'io-ts'
-
 import { TypeResolvers, Context, Model } from '~/internals/graphql'
 import { TaxonomyTermDecoder } from '~/model/decoder'
 import { resolveConnection } from '~/schema/connection/utils'
@@ -35,12 +33,10 @@ export const resolvers: TypeResolvers<TaxonomyTerm> = {
     ...createThreadResolvers(),
     parent(taxonomyTerm, _args, { dataSources }) {
       if (!taxonomyTerm.parentId) return null
-      return dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(
-        {
-          id: taxonomyTerm.parentId,
-        },
-        t.union([TaxonomyTermDecoder, t.null])
-      )
+      return dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: taxonomyTerm.parentId,
+        decoder: TaxonomyTermDecoder,
+      })
     },
     async children(taxonomyTerm, cursorPayload, { dataSources }) {
       const children = await Promise.all(
