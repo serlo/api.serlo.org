@@ -1405,9 +1405,6 @@ export function createGoogleSpreadsheetApiModel({ environment, }: {
 };
 
 // @public (undocumented)
-export function createHelper<P, R>(spec: HelperSpec<P, R>): Helper<P, R>;
-
-// @public (undocumented)
 export function createMutationNamespace(): () => {};
 
 // @public (undocumented)
@@ -1647,10 +1644,10 @@ export function createSerloModel({ environment, }: {
     getNavigationPayload: ModelQuery<{
         instance: Instance;
     }, NavigationPayload>;
-    getNavigation: Helper<{
+    getNavigation: ({ instance, id, }: {
         instance: Instance;
         id: number;
-    }, NavigationData | null>;
+    }) => Promise<NavigationData | null>;
     getNotificationEvent: ModelQuery<{
         id: number;
     }, AbstractNotificationEventPayload | null>;
@@ -3005,17 +3002,6 @@ export type GroupedExerciseThreadsArgs = {
     archived?: Maybe<Scalars['Boolean']>;
     trashed?: Maybe<Scalars['Boolean']>;
 };
-
-// @public (undocumented)
-export type Helper<P, R> = ((payload: P) => Promise<R>) & {
-    _helperSpec: HelperSpec<P, R>;
-};
-
-// @public (undocumented)
-export interface HelperSpec<P, R> {
-    // (undocumented)
-    helper: (payload: P) => Promise<R>;
-}
 
 // @public (undocumented)
 export enum Instance {
