@@ -31,6 +31,7 @@ export interface QuerySpec<P, R> {
   // TODO: this should probably be required
   decoder?: t.Type<R>
   enableSwr: boolean
+  swrFrequency?: number
   getCurrentValue: (payload: P, previousValue: R | null) => Promise<R | unknown>
   maxAge: Time | undefined
   getKey: (payload: P) => string
@@ -78,9 +79,15 @@ export function createQuery<P, R>(
 
       const decoded = decoder.decode(cacheEntry.value)
       if (E.isRight(decoded)) {
-        await environment.swrQueue.queue({
-          key,
-        })
+        if (
+          spec.swrFrequency === undefined ||
+          Math.random() < spec.swrFrequency
+        ) {
+          await environment.swrQueue.queue({
+            key,
+          })
+        }
+
         return decoded.right as S
       }
     }
