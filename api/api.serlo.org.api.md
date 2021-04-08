@@ -189,6 +189,24 @@ export type AbstractNotificationEvent = {
 };
 
 // @public (undocumented)
+export type AbstractNotificationEventConnection = {
+    __typename?: 'AbstractNotificationEventConnection';
+    edges: Array<AbstractNotificationEventEdge>;
+    nodes: Array<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type AbstractNotificationEventConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractNotificationEventConnection'] = ResolversParentTypes['AbstractNotificationEventConnection']> = {
+    edges?: Resolver<Array<ResolversTypes['AbstractNotificationEventEdge']>, ParentType, ContextType>;
+    nodes?: Resolver<Array<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType>;
+    totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+    pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+// @public (undocumented)
 export const AbstractNotificationEventDecoder: t.TypeC<{
     id: t.RefinementC<t.NumberC>;
     instance: t.Type<Instance, Instance, unknown>;
@@ -196,6 +214,20 @@ export const AbstractNotificationEventDecoder: t.TypeC<{
     actorId: t.RefinementC<t.NumberC>;
     objectId: t.RefinementC<t.NumberC>;
 }>;
+
+// @public (undocumented)
+export type AbstractNotificationEventEdge = {
+    __typename?: 'AbstractNotificationEventEdge';
+    cursor: Scalars['String'];
+    node: CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent;
+};
+
+// @public (undocumented)
+export type AbstractNotificationEventEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractNotificationEventEdge'] = ResolversParentTypes['AbstractNotificationEventEdge']> = {
+    cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+    node?: Resolver<ResolversTypes['AbstractNotificationEvent'], ParentType, ContextType>;
+    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
 
 // @public (undocumented)
 export type AbstractNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractNotificationEvent'] = ResolversParentTypes['AbstractNotificationEvent']> = {
@@ -767,6 +799,40 @@ interface Cache_2 {
 export { Cache_2 as Cache }
 
 // @public (undocumented)
+export type CachedModelQuery<P, R> = (P extends undefined ? () => Promise<R> : (payload: P) => Promise<R>) & {
+    _querySpec: CachedQuerySpecWithHelpers<P, R>;
+    __typename: 'CachedQuery';
+};
+
+// @public (undocumented)
+export interface CachedQuerySpec<P, R> {
+    // (undocumented)
+    decoder?: t.Type<R>;
+    // (undocumented)
+    enableSwr: boolean;
+    // (undocumented)
+    getCurrentValue: (payload: P, previousValue: R | null) => Promise<R | unknown>;
+    // (undocumented)
+    getKey: (payload: P) => string;
+    // (undocumented)
+    getPayload: (key: string) => option.Option<P>;
+    // (undocumented)
+    maxAge: Time | undefined;
+    // (undocumented)
+    swrFrequency?: number;
+}
+
+// @public (undocumented)
+export interface CachedQuerySpecWithHelpers<P, R> extends CachedQuerySpec<P, R> {
+    // (undocumented)
+    queryWithDecoder<S extends R>(payload: P, customDecoder: t.Type<S>): Promise<S>;
+    // (undocumented)
+    queryWithDecoders<S2 extends R, S1 extends S2>(payload: P, customDecoder1: t.Type<S1>, customDecoder2: t.Type<S2>): Promise<S2>;
+    // (undocumented)
+    setCache: (args: PayloadArrayOrPayload<P> & FunctionOrValue<R>) => Promise<void>;
+}
+
+// @public (undocumented)
 export interface CacheEntry<Value> {
     // (undocumented)
     lastModified: number;
@@ -1268,6 +1334,9 @@ export function createCache({ timer }: {
 }): Cache_2;
 
 // @public (undocumented)
+export function createCachedQuery<P, R>(spec: CachedQuerySpec<P, R>, environment: Environment): CachedModelQuery<P, R>;
+
+// @public (undocumented)
 export type CreateCommentNotificationEvent = AbstractNotificationEvent & InstanceAware & {
     __typename?: 'CreateCommentNotificationEvent';
     id: Scalars['Int'];
@@ -1416,14 +1485,14 @@ export type CreateEntityRevisionNotificationEventResolvers<ContextType = Context
 export function createGoogleSpreadsheetApiModel({ environment, }: {
     environment: Environment;
 }): {
-    getValues: ModelQuery<Arguments, either.Either<ErrorEvent_2, CellValues>>;
+    getValues: CachedModelQuery<Arguments, either.Either<ErrorEvent_2, CellValues>>;
 };
 
 // @public (undocumented)
 export function createMutationNamespace(): () => {};
 
 // @public (undocumented)
-export function createQuery<P, R>(spec: QuerySpec<P, R>, environment: Environment): ModelQuery<P, R>;
+export function createQuery<P, R>(spec: QuerySpec<P, R>): ModelQuery<P, R>;
 
 // @public (undocumented)
 export function createSerloModel({ environment, }: {
@@ -1634,9 +1703,9 @@ export function createSerloModel({ environment, }: {
             }) => Promise<unknown>;
         };
     };
-    getActiveAuthorIds: ModelQuery<undefined, number[]>;
-    getActiveReviewerIds: ModelQuery<undefined, number[]>;
-    getAlias: ModelQuery<{
+    getActiveAuthorIds: CachedModelQuery<undefined, number[]>;
+    getActiveReviewerIds: CachedModelQuery<undefined, number[]>;
+    getAlias: CachedModelQuery<{
         path: string;
         instance: Instance;
     }, {
@@ -1644,7 +1713,7 @@ export function createSerloModel({ environment, }: {
         instance: Instance;
         path: string;
     } | null>;
-    getLicense: ModelQuery<{
+    getLicense: CachedModelQuery<{
         id: number;
     }, {
         id: number;
@@ -1656,14 +1725,14 @@ export function createSerloModel({ environment, }: {
         agreement: string;
         iconHref: string;
     }>;
-    getNavigationPayload: ModelQuery<{
+    getNavigationPayload: CachedModelQuery<{
         instance: Instance;
     }, NavigationPayload>;
     getNavigation: ({ instance, id, }: {
         instance: Instance;
         id: number;
     }) => Promise<NavigationData | null>;
-    getNotificationEvent: ModelQuery<{
+    getNotificationEvent: CachedModelQuery<{
         id: number;
     }, ({
         id: number;
@@ -1823,7 +1892,165 @@ export function createSerloModel({ environment, }: {
         __typename: NotificationEventType.SetUuidState;
         trashed: boolean;
     }) | null>;
-    getNotifications: ModelQuery<{
+    getEvents: CachedModelQuery<undefined, (({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CheckoutRevision;
+        repositoryId: number;
+        revisionId: number;
+        reason: string;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CreateComment;
+        threadId: number;
+        commentId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CreateEntity;
+        entityId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CreateEntityRevision;
+        entityId: number;
+        entityRevisionId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CreateEntityLink;
+        parentId: number;
+        childId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CreateTaxonomyTerm;
+        taxonomyTermId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CreateTaxonomyLink;
+        parentId: number;
+        childId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CreateThread;
+        threadId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.RejectRevision;
+        repositoryId: number;
+        revisionId: number;
+        reason: string;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.RemoveEntityLink;
+        parentId: number;
+        childId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.RemoveTaxonomyLink;
+        parentId: number;
+        childId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.SetLicense;
+        repositoryId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.SetTaxonomyTerm;
+        taxonomyTermId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.SetTaxonomyParent;
+        previousParentId: number;
+        parentId: number;
+        childId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.SetThreadState;
+        threadId: number;
+        archived: boolean;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.SetUuidState;
+        trashed: boolean;
+    }))[]>;
+    getNotifications: CachedModelQuery<{
         userId: number;
     }, {
         notifications: {
@@ -1833,7 +2060,7 @@ export function createSerloModel({ environment, }: {
         }[];
         userId: number;
     }>;
-    getSubscriptions: ModelQuery<{
+    getSubscriptions: CachedModelQuery<{
         userId: number;
     }, SubscriptionsPayload>;
     setSubscription: ((payload: {
@@ -1865,12 +2092,12 @@ export function createSerloModel({ environment, }: {
             }) => Promise<unknown>;
         };
     };
-    getThreadIds: ModelQuery<{
+    getThreadIds: CachedModelQuery<{
         id: number;
     }, {
         firstCommentIds: number[];
     }>;
-    getUuid: ModelQuery<{
+    getUuid: CachedModelQuery<{
         id: number;
     }, ({
         id: number;
@@ -3942,10 +4169,10 @@ export type InterfaceResolvers<I extends keyof Resolvers> = Required<Pick<Resolv
 export type IResolvers<ContextType = Context> = Resolvers<ContextType>;
 
 // @public (undocumented)
-export function isDefined<A>(value?: A | null): value is A;
+export function isCachedQuery(query: unknown): query is CachedModelQuery<unknown, unknown>;
 
 // @public (undocumented)
-export function isQuery(query: unknown): query is ModelQuery<unknown, unknown>;
+export function isDefined<A>(value?: A | null): value is A;
 
 // @public (undocumented)
 export type IsTypeOfResolverFn<T = {}, TContext = {}> = (obj: T, context: TContext, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
@@ -4060,8 +4287,8 @@ export type ModelOf<T> = A.Equals<T, unknown> extends 1 ? T : T extends boolean 
 } : never;
 
 // @public (undocumented)
-export type ModelQuery<P, R> = (P extends undefined ? () => Promise<R> : (payload: P) => Promise<R>) & {
-    _querySpec: QuerySpecWithHelpers<P, R>;
+export type ModelQuery<P, R> = ((payload: P) => Promise<R>) & {
+    _querySpec: QuerySpec<P, R>;
 };
 
 // @public (undocumented)
@@ -4847,6 +5074,7 @@ export type Query = {
     activeDonors: UserConnection;
     activeReviewers: UserConnection;
     authorization: Scalars['JSON'];
+    events: AbstractNotificationEventConnection;
     license?: Maybe<License>;
     notificationEvent?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
     notifications: NotificationConnection;
@@ -4872,6 +5100,14 @@ export type QueryActiveDonorsArgs = {
 
 // @public (undocumented)
 export type QueryActiveReviewersArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
+export type QueryEventsArgs = {
     after?: Maybe<Scalars['String']>;
     before?: Maybe<Scalars['String']>;
     first?: Maybe<Scalars['Int']>;
@@ -4906,6 +5142,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
     activeDonors?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, RequireFields<QueryActiveDonorsArgs, never>>;
     activeReviewers?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, RequireFields<QueryActiveReviewersArgs, never>>;
     authorization?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<QueryEventsArgs, never>>;
     license?: Resolver<Maybe<ResolversTypes['License']>, ParentType, ContextType, RequireFields<QueryLicenseArgs, 'id'>>;
     notificationEvent?: Resolver<Maybe<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType, RequireFields<QueryNotificationEventArgs, 'id'>>;
     notifications?: Resolver<ResolversTypes['NotificationConnection'], ParentType, ContextType, RequireFields<QueryNotificationsArgs, never>>;
@@ -4916,29 +5153,9 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
 // @public (undocumented)
 export interface QuerySpec<P, R> {
     // (undocumented)
-    decoder?: t.Type<R>;
+    decoder: t.Type<R>;
     // (undocumented)
-    enableSwr: boolean;
-    // (undocumented)
-    getCurrentValue: (payload: P, previousValue: R | null) => Promise<R | unknown>;
-    // (undocumented)
-    getKey: (payload: P) => string;
-    // (undocumented)
-    getPayload: (key: string) => option.Option<P>;
-    // (undocumented)
-    maxAge: Time | undefined;
-    // (undocumented)
-    swrFrequency?: number;
-}
-
-// @public (undocumented)
-export interface QuerySpecWithHelpers<P, R> extends QuerySpec<P, R> {
-    // (undocumented)
-    queryWithDecoder<S extends R>(payload: P, customDecoder: t.Type<S>): Promise<S>;
-    // (undocumented)
-    queryWithDecoders<S2 extends R, S1 extends S2>(payload: P, customDecoder1: t.Type<S1>, customDecoder2: t.Type<S2>): Promise<S2>;
-    // (undocumented)
-    setCache: (args: PayloadArrayOrPayload<P> & FunctionOrValue<R>) => Promise<void>;
+    getCurrentValue: (payload: P) => Promise<unknown>;
 }
 
 // @public (undocumented)
@@ -5310,6 +5527,8 @@ export type Resolvers<ContextType = Context> = {
     NotificationSetStateResponse?: NotificationSetStateResponseResolvers<ContextType>;
     NotificationConnection?: NotificationConnectionResolvers<ContextType>;
     NotificationEdge?: NotificationEdgeResolvers<ContextType>;
+    AbstractNotificationEventConnection?: AbstractNotificationEventConnectionResolvers<ContextType>;
+    AbstractNotificationEventEdge?: AbstractNotificationEventEdgeResolvers<ContextType>;
     QuerySubscriptionResult?: QuerySubscriptionResultResolvers<ContextType>;
     SubscriptionCursor?: SubscriptionCursorResolvers<ContextType>;
     SubscriptionMutation?: SubscriptionMutationResolvers<ContextType>;
@@ -5434,6 +5653,8 @@ export type ResolversParentTypes = {
     NotificationSetStateResponse: ModelOf<NotificationSetStateResponse>;
     NotificationConnection: ModelOf<NotificationConnection>;
     NotificationEdge: ModelOf<NotificationEdge>;
+    AbstractNotificationEventConnection: ModelOf<AbstractNotificationEventConnection>;
+    AbstractNotificationEventEdge: ModelOf<AbstractNotificationEventEdge>;
     QuerySubscriptionResult: ModelOf<QuerySubscriptionResult>;
     SubscriptionCursor: ModelOf<SubscriptionCursor>;
     SubscriptionMutation: ModelOf<SubscriptionMutation>;
@@ -5567,6 +5788,8 @@ export type ResolversTypes = {
     NotificationSetStateResponse: ResolverTypeWrapper<ModelOf<NotificationSetStateResponse>>;
     NotificationConnection: ResolverTypeWrapper<ModelOf<NotificationConnection>>;
     NotificationEdge: ResolverTypeWrapper<ModelOf<NotificationEdge>>;
+    AbstractNotificationEventConnection: ResolverTypeWrapper<ModelOf<AbstractNotificationEventConnection>>;
+    AbstractNotificationEventEdge: ResolverTypeWrapper<ModelOf<AbstractNotificationEventEdge>>;
     QuerySubscriptionResult: ResolverTypeWrapper<ModelOf<QuerySubscriptionResult>>;
     SubscriptionCursor: ResolverTypeWrapper<ModelOf<SubscriptionCursor>>;
     SubscriptionMutation: ResolverTypeWrapper<ModelOf<SubscriptionMutation>>;

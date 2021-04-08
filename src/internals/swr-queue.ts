@@ -26,7 +26,7 @@ import * as R from 'ramda'
 
 import { Cache, Priority } from './cache'
 import { log } from './log'
-import { isQuery, QuerySpec } from './model'
+import { isCachedQuery, CachedQuerySpec } from './model'
 import { redisUrl } from './redis-url'
 import { Timer } from './timer'
 import { modelFactories } from '~/model'
@@ -242,12 +242,15 @@ async function shouldProcessJob({
   models: Record<string, unknown>[]
   timer: Timer
 }): Promise<
-  E.Either<string, { spec: QuerySpec<unknown, unknown>; payload: unknown }>
+  E.Either<
+    string,
+    { spec: CachedQuerySpec<unknown, unknown>; payload: unknown }
+  >
 > {
-  function getSpec(key: string): QuerySpec<unknown, unknown> | null {
+  function getSpec(key: string): CachedQuerySpec<unknown, unknown> | null {
     for (const model of models) {
       for (const prop of Object.values(model)) {
-        if (isQuery(prop) && O.isSome(prop._querySpec.getPayload(key))) {
+        if (isCachedQuery(prop) && O.isSome(prop._querySpec.getPayload(key))) {
           return prop._querySpec
         }
       }
