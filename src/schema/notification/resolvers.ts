@@ -68,7 +68,7 @@ export const resolvers: TypeResolvers<Notification> &
 
       const unfilteredEvents = await dataSources.model.serlo.getEvents()
       const events = unfilteredEvents.filter((event) => {
-        if (isDefined(payload.userId) && payload.userId !== event.actorId)
+        if (isDefined(payload.actorId) && payload.actorId !== event.actorId)
           return false
         if (isDefined(payload.instance) && payload.instance !== event.instance)
           return false
