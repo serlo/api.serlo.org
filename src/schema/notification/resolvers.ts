@@ -72,6 +72,8 @@ export const resolvers: TypeResolvers<Notification> &
           return false
         if (isDefined(payload.instance) && payload.instance !== event.instance)
           return false
+        if (isDefined(payload.objectId) && payload.objectId !== event.objectId)
+          return false
 
         return true
       })
