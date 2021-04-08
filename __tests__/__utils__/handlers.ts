@@ -138,7 +138,7 @@ export function createDatabaseLayerHandler(args: {
   return handler
 }
 
-export function getDatabaseLayerUrl({ path }: { path: string }) {
+function getDatabaseLayerUrl({ path }: { path: string }) {
   return `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`
 }
 

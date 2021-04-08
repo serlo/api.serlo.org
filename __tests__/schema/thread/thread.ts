@@ -38,7 +38,7 @@ import {
   createMessageHandler,
   createTestClient,
   createUuidHandler,
-  getDatabaseLayerUrl,
+  createDatabaseLayerHandler,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { Instance } from '~/types'
@@ -439,9 +439,11 @@ export function mockEndpointsForThreads(
   )
 
   function createThreadHandlers() {
-    const handler = rest.post(
-      getDatabaseLayerUrl({ path: '/' }),
-      (req, res, ctx) => {
+    return createDatabaseLayerHandler({
+      message: {
+        type: 'UuidQuery',
+      },
+      resolver(req, res, ctx) {
         if (typeof req.body !== 'object') return res(ctx.status(404))
         const id = Number((req.body.payload as { id?: unknown }).id)
 
@@ -471,15 +473,7 @@ export function mockEndpointsForThreads(
               }
 
         return res(ctx.json(payload))
-      }
-    )
-
-    // Only use this handler if message matches
-    handler.predicate = (req) => {
-      const { body } = req
-      return typeof body === 'object' && body['type'] === 'UuidQuery'
-    }
-
-    return handler
+      },
+    })
   }
 }
