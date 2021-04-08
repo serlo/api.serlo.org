@@ -29,7 +29,11 @@ import { URL } from 'url'
 
 import { Environment } from '~/internals/environment'
 import { addContext, ErrorEvent } from '~/internals/error-event'
-import { createQuery, ModelQuery } from '~/internals/model'
+import {
+  createCachedQuery,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  CachedModelQuery,
+} from '~/internals/model'
 
 export enum MajorDimension {
   Rows = 'ROWS',
@@ -63,10 +67,10 @@ export function createGoogleSpreadsheetApiModel({
 }: {
   environment: Environment
 }) {
-  const getValues: ModelQuery<
+  const getValues = createCachedQuery<
     Arguments,
     E.Either<ErrorEvent, CellValues>
-  > = createQuery(
+  >(
     {
       enableSwr: true,
       getCurrentValue: async (args) => {

@@ -35,7 +35,7 @@ import { isDefined } from '~/utils'
 
 export const resolvers: TypeResolvers<Notification> &
   InterfaceResolvers<'AbstractNotificationEvent'> &
-  Queries<'notifications' | 'notificationEvent'> &
+  Queries<'events' | 'notifications' | 'notificationEvent'> &
   Mutations<'notification'> = {
   AbstractNotificationEvent: {
     __resolveType(notificationEvent) {
@@ -54,6 +54,15 @@ export const resolvers: TypeResolvers<Notification> &
     },
   },
   Query: {
+    async events(_parent, payload, { dataSources }) {
+      return resolveConnection({
+        nodes: await dataSources.model.serlo.getEvents(),
+        payload,
+        createCursor(node) {
+          return node.id.toString()
+        },
+      })
+    },
     async notifications(
       _parent,
       { unread, ...cursorPayload },
