@@ -439,13 +439,12 @@ export function mockEndpointsForThreads(
   )
 
   function createThreadHandlers() {
-    return createDatabaseLayerHandler({
-      message: {
+    return createDatabaseLayerHandler<{ id: number }>({
+      matchMessage: {
         type: 'UuidQuery',
       },
       resolver(req, res, ctx) {
-        if (typeof req.body !== 'object') return res(ctx.status(404))
-        const id = Number((req.body.payload as { id?: unknown }).id)
+        const id = req.body.payload.id
 
         if (id === uuidPayload.id) return res(ctx.json(uuidPayload))
 

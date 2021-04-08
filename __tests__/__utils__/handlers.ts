@@ -91,10 +91,7 @@ export function createUuidHandler(uuid: Model<'AbstractUuid'>, once?: boolean) {
 
 export function createMessageHandler(
   args: {
-    message: {
-      type: string
-      payload?: Record<string, unknown>
-    }
+    message: MessagePayload
     body?: unknown
     statusCode?: number
   },
@@ -103,7 +100,7 @@ export function createMessageHandler(
   const { message, body, statusCode } = args
 
   const handler = createDatabaseLayerHandler({
-    ...args,
+    matchMessage: message,
     resolver: (_req, res, ctx) => {
       return (once ? res.once : res)(
         ctx.status(statusCode ?? 200),
@@ -121,19 +118,16 @@ export function createMessageHandler(
   return handler
 }
 
-export function createDatabaseLayerHandler(args: {
-  message: MessagePayload
-  resolver: RestResolver<MessagePayload>
+export function createDatabaseLayerHandler<Payload = DefaultPayloadType>(args: {
+  matchMessage: MessagePayload<Payload>
+  resolver: RestResolver<Required<MessagePayload<Payload>>>
 }) {
-  const { message, resolver } = args
+  const { matchMessage, resolver } = args
 
-  const handler = rest.post<MessagePayload>(
-    getDatabaseLayerUrl({ path: '/' }),
-    resolver
-  )
+  const handler = rest.post(getDatabaseLayerUrl({ path: '/' }), resolver)
 
   // Only use this handler if message matches
-  handler.predicate = (req) => req.body.type === message.type
+  handler.predicate = (req) => req.body.type === matchMessage.type
 
   return handler
 }
@@ -142,10 +136,12 @@ function getDatabaseLayerUrl({ path }: { path: string }) {
   return `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`
 }
 
-interface MessagePayload {
+interface MessagePayload<Payload = DefaultPayloadType> {
   type: string
-  payload?: Record<string, unknown>
+  payload?: Payload
 }
+
+type DefaultPayloadType = Record<string, unknown>
 
 export function createSpreadsheetHandler({
   spreadsheetId,
