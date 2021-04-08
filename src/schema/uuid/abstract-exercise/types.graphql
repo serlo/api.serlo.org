@@ -7,6 +7,14 @@ interface AbstractExercise {
   alias: String
   license: License!
   currentRevision: AbstractExerciseRevision
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
   solution: Solution
 }
 
@@ -17,6 +25,14 @@ interface AbstractExerciseRevision {
   alias: String
   author: User!
   date: DateTime!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
 
   content: String!
   changes: String!

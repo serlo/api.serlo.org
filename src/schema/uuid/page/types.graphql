@@ -9,6 +9,14 @@ type Page implements AbstractUuid & AbstractRepository & AbstractNavigationChild
     archived: Boolean
     trashed: Boolean
   ): ThreadsConnection!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
   date: DateTime!
   instance: Instance!
   alias: String
@@ -37,6 +45,14 @@ type PageRevision implements AbstractUuid & AbstractRevision & ThreadAware {
     archived: Boolean
     trashed: Boolean
   ): ThreadsConnection!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
   date: DateTime!
   title: String!
   content: String!
