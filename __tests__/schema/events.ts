@@ -49,6 +49,7 @@ import {
 import { Service } from '~/internals/authentication'
 import { Model } from '~/internals/graphql'
 import { NotificationEventType } from '~/model/decoder'
+import { Instance } from '~/types'
 
 let client: Client
 
@@ -115,6 +116,35 @@ describe('query endpoint "events"', () => {
       query: gql`
         query events {
           events(userId: 42) {
+            nodes {
+              __typename
+              id
+            }
+          }
+        }
+      `,
+      client,
+      data: {
+        events: {
+          nodes: events.slice(0, allEvents.length).map(getTypenameAndId),
+        },
+      },
+    })
+  })
+
+  test('with filter "instance"', async () => {
+    const events = updateIds(
+      R.concat(
+        allEvents.map(R.assoc('instance', Instance.En)),
+        allEvents.map(R.assoc('instance', Instance.De))
+      )
+    )
+    setupEvents(events)
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query events {
+          events(instance: en) {
             nodes {
               __typename
               id

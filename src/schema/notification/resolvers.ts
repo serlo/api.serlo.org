@@ -70,6 +70,8 @@ export const resolvers: TypeResolvers<Notification> &
       const events = unfilteredEvents.filter((event) => {
         if (isDefined(payload.userId) && payload.userId !== event.actorId)
           return false
+        if (isDefined(payload.instance) && payload.instance !== event.instance)
+          return false
 
         return true
       })
