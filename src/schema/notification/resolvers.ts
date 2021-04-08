@@ -66,8 +66,16 @@ export const resolvers: TypeResolvers<Notification> &
         first = maxReturn
       }
 
+      const unfilteredEvents = await dataSources.model.serlo.getEvents()
+      const events = unfilteredEvents.filter((event) => {
+        if (isDefined(payload.userId) && payload.userId !== event.actorId)
+          return false
+
+        return true
+      })
+
       return resolveConnection({
-        nodes: await dataSources.model.serlo.getEvents(),
+        nodes: events,
         payload: { ...payload, first, last },
         createCursor(node) {
           return node.id.toString()

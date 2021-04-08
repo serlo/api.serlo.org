@@ -102,6 +102,35 @@ describe('query endpoint "events"', () => {
     })
   })
 
+  test('with filter "userId"', async () => {
+    const events = updateIds(
+      R.concat(
+        allEvents.map(R.assoc('actorId', 42)),
+        allEvents.map(R.assoc('actorId', 23))
+      )
+    )
+    setupEvents(events)
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query events {
+          events(userId: 42) {
+            nodes {
+              __typename
+              id
+            }
+          }
+        }
+      `,
+      client,
+      data: {
+        events: {
+          nodes: events.slice(0, allEvents.length).map(getTypenameAndId),
+        },
+      },
+    })
+  })
+
   describe('number of returned events is bounded to 100', () => {
     let events: Model<'AbstractNotificationEvent'>[]
 
