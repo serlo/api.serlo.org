@@ -99,7 +99,7 @@ export function createMessageHandler(
 ) {
   const { message, body, statusCode } = args
 
-  const handler = createDatabaseLayerHandler({
+  return createDatabaseLayerHandler({
     matchMessage: message,
     resolver: (_req, res, ctx) => {
       return (once ? res.once : res)(
@@ -110,12 +110,6 @@ export function createMessageHandler(
       )
     },
   })
-  const { predicate: oldPredicate } = handler
-
-  handler.predicate = (req, parsed) =>
-    oldPredicate(req, parsed) && R.equals(req.body.payload, message.payload)
-
-  return handler
 }
 
 export function createDatabaseLayerHandler<Payload = DefaultPayloadType>(args: {
@@ -127,7 +121,10 @@ export function createDatabaseLayerHandler<Payload = DefaultPayloadType>(args: {
   const handler = rest.post(getDatabaseLayerUrl({ path: '/' }), resolver)
 
   // Only use this handler if message matches
-  handler.predicate = (req) => req.body.type === matchMessage.type
+  handler.predicate = (req) =>
+    req.body.type === matchMessage.type &&
+    (matchMessage.payload === undefined ||
+      R.equals(req.body.payload, matchMessage.payload))
 
   return handler
 }
