@@ -19,7 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ForbiddenError } from 'apollo-server'
+import { ForbiddenError, UserInputError } from 'apollo-server'
+import R from 'ramda'
 
 import {
   assertUserIsAuthenticated,
@@ -55,6 +56,11 @@ export const resolvers: TypeResolvers<Notification> &
   },
   Query: {
     async events(_parent, payload, { dataSources }) {
+      if (isDefined(payload.first) && payload.first > 100)
+        throw new UserInputError('first must be smaller or equal 100')
+      if (isDefined(payload.last) && payload.last > 100)
+        throw new UserInputError('last must be smaller or equal 100')
+
       const maxReturn = 100
       let { first, last } = payload
 
@@ -80,7 +86,13 @@ export const resolvers: TypeResolvers<Notification> &
 
       return resolveConnection({
         nodes: events,
-        payload: { ...payload, first, last },
+        payload: {
+          ...payload,
+          first:
+            R.isNil(payload.first) && R.isNil(payload.last)
+              ? 100
+              : payload.first,
+        },
         createCursor(node) {
           return node.id.toString()
         },
