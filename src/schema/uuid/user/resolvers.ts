@@ -34,6 +34,7 @@ import { UserDecoder } from '~/model/decoder'
 import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
 import { ConnectionPayload } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
+import { resolveEvents } from '~/schema/notification/resolvers'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { User } from '~/types'
@@ -69,6 +70,12 @@ export const resolvers: Queries<
   User: {
     ...createUuidResolvers(),
     ...createThreadResolvers(),
+    eventsByUser(user, payload, { dataSources }) {
+      return resolveEvents({
+        payload: { ...payload, actorId: user.id },
+        dataSources,
+      })
+    },
     async activeAuthor(user, _args, { dataSources }) {
       return (await dataSources.model.serlo.getActiveAuthorIds()).includes(
         user.id

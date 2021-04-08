@@ -46,6 +46,7 @@ import {
   assertSuccessfulGraphQLQuery,
   createDatabaseLayerHandler,
   assertFailingGraphQLQuery,
+  createUuidHandler,
 } from '../__utils__'
 import { Service } from '~/internals/authentication'
 import { Model } from '~/internals/graphql'
@@ -243,6 +244,43 @@ describe('query endpoint "events"', () => {
       client,
       message: 'last must be smaller or equal 100',
     })
+  })
+})
+
+test('User.eventsByUser returns events of this user', async () => {
+  const events = updateIds(
+    R.concat(
+      allEvents.map(R.assoc('actorId', user.id)),
+      allEvents.map(R.assoc('actorId', user.id + 1))
+    )
+  )
+  setupEvents(events)
+  global.server.use(createUuidHandler(user))
+
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query userEvents($id: Int) {
+        uuid(id: $id) {
+          ... on User {
+            eventsByUser {
+              nodes {
+                __typename
+                id
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables: { id: user.id },
+    client,
+    data: {
+      uuid: {
+        eventsByUser: {
+          nodes: events.slice(0, allEvents.length).map(getTypenameAndId),
+        },
+      },
+    },
   })
 })
 
