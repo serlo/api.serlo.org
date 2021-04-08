@@ -69,19 +69,19 @@ export function hasInternalServerError(): RestResolver {
   return (_req, res, ctx) => res(ctx.status(500))
 }
 
-function toKey(query: SpreadsheetQuery) {
-  return [query.spreadsheetId, query.range, query.majorDimension].join('/')
-}
-
-type SpreadsheetApiResolver = RestResolver<never, SpreadsheetQueryBasic>
-
-type RestResolver<
+export type RestResolver<
   RequestBodyType = MockedRequest['body'],
   RequestParamsType = MockedRequest['params']
 > = ResponseResolver<
   MockedRequest<RequestBodyType, RequestParamsType>,
   typeof restContext
 >
+
+function toKey(query: SpreadsheetQuery) {
+  return [query.spreadsheetId, query.range, query.majorDimension].join('/')
+}
+
+type SpreadsheetApiResolver = RestResolver<never, SpreadsheetQueryBasic>
 
 interface SpreadsheetQueryBasic {
   range: string
