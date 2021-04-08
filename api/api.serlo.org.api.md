@@ -6995,6 +6995,7 @@ export type User = AbstractUuid & ThreadAware & {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
     threads: ThreadsConnection;
+    eventsByUser: AbstractNotificationEventConnection;
     alias?: Maybe<Scalars['String']>;
     username: Scalars['String'];
     date: Scalars['DateTime'];
@@ -7053,10 +7054,21 @@ export type UserEdgeResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 // @public (undocumented)
+export type UserEventsByUserArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    objectId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<UserThreadsArgs, never>>;
+    eventsByUser?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<UserEventsByUserArgs, never>>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -7651,6 +7663,11 @@ export type VideoThreadsArgs = {
     trashed?: Maybe<Scalars['Boolean']>;
 };
 
+
+// Warnings were encountered during analysis:
+//
+// src/schema/uuid/user/resolvers.ts:69:3 - (TS2322) Type '{ activeAuthor(user: { id: number; trashed: boolean; alias: string; } & { __typename: DiscriminatorType.User; username: string; date: string; roles: string[]; } & { lastLogin?: string | null | undefined; description?: string | ... 1 more ... | undefined; }, _args: {}, { dataSources }: Context): Promise<...>; activeD...' is not assignable to type '{ threads: ResolverFn<ResolverTypeWrapper<Connection<{ __typename: "Thread"; commentPayloads: ({ id: number; trashed: boolean; alias: string; } & { __typename: "Comment"; authorId: number; title: string | null; date: string; archived: boolean; content: string; parentId: number; childrenIds: number[]; })[]; }>>, { .....'.
+//   Property 'eventsByUser' is missing in type '{ activeAuthor(user: { id: number; trashed: boolean; alias: string; } & { __typename: DiscriminatorType.User; username: string; date: string; roles: string[]; } & { lastLogin?: string | null | undefined; description?: string | ... 1 more ... | undefined; }, _args: {}, { dataSources }: Context): Promise<...>; activeD...' but required in type '{ threads: ResolverFn<ResolverTypeWrapper<Connection<{ __typename: "Thread"; commentPayloads: ({ id: number; trashed: boolean; alias: string; } & { __typename: "Comment"; authorId: number; title: string | null; date: string; archived: boolean; content: string; parentId: number; childrenIds: number[]; })[]; }>>, { .....'.
 
 // (No @packageDocumentation comment for this package)
 

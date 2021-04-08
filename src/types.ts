@@ -1636,6 +1636,7 @@ export type User = AbstractUuid & ThreadAware & {
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
   threads: ThreadsConnection;
+  eventsByUser: AbstractNotificationEventConnection;
   alias?: Maybe<Scalars['String']>;
   username: Scalars['String'];
   date: Scalars['DateTime'];
@@ -1654,6 +1655,16 @@ export type UserThreadsArgs = {
   last?: Maybe<Scalars['Int']>;
   archived?: Maybe<Scalars['Boolean']>;
   trashed?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type UserEventsByUserArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  instance?: Maybe<Instance>;
+  objectId?: Maybe<Scalars['Int']>;
 };
 
 export type UserConnection = {
@@ -3118,6 +3129,7 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<UserThreadsArgs, never>>;
+  eventsByUser?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<UserEventsByUserArgs, never>>;
   alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
