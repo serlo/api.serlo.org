@@ -55,9 +55,20 @@ export const resolvers: TypeResolvers<Notification> &
   },
   Query: {
     async events(_parent, payload, { dataSources }) {
+      const maxReturn = 100
+      let { first, last } = payload
+
+      if (isDefined(first)) {
+        first = Math.min(maxReturn, first)
+      } else if (isDefined(last)) {
+        last = Math.min(maxReturn, last)
+      } else {
+        first = maxReturn
+      }
+
       return resolveConnection({
         nodes: await dataSources.model.serlo.getEvents(),
-        payload,
+        payload: { ...payload, first, last },
         createCursor(node) {
           return node.id.toString()
         },
