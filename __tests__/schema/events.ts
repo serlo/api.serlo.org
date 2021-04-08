@@ -39,6 +39,7 @@ import {
   setTaxonomyTermNotificationEvent,
   setThreadStateNotificationEvent,
   user,
+  article,
 } from '../../__fixtures__'
 import {
   Client,
@@ -277,6 +278,43 @@ test('User.eventsByUser returns events of this user', async () => {
     data: {
       uuid: {
         eventsByUser: {
+          nodes: events.slice(0, allEvents.length).map(getTypenameAndId),
+        },
+      },
+    },
+  })
+})
+
+test('AbstractEntity.events returns events for this entity', async () => {
+  const events = updateIds(
+    R.concat(
+      allEvents.map(R.assoc('objectId', article.id)),
+      allEvents.map(R.assoc('objectId', article.id + 1))
+    )
+  )
+  setupEvents(events)
+  global.server.use(createUuidHandler(article))
+
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query articleEvents($id: Int) {
+        uuid(id: $id) {
+          ... on Article {
+            events {
+              nodes {
+                __typename
+                id
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables: { id: article.id },
+    client,
+    data: {
+      uuid: {
+        events: {
           nodes: events.slice(0, allEvents.length).map(getTypenameAndId),
         },
       },

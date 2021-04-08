@@ -21,6 +21,7 @@ import * as t from 'io-ts';
 export type AbstractEntity = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    events: AbstractNotificationEventConnection;
     date: Scalars['DateTime'];
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
@@ -42,10 +43,21 @@ export const AbstractEntityDecoder: t.IntersectionC<[t.TypeC<{
 }>]>;
 
 // @public (undocumented)
+export type AbstractEntityEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type AbstractEntityResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractEntity'] = ResolversParentTypes['AbstractEntity']> = {
     __resolveType: TypeResolveFn<'Applet' | 'Article' | 'CoursePage' | 'Course' | 'Event' | 'ExerciseGroup' | 'Exercise' | 'GroupedExercise' | 'Solution' | 'Video', ParentType, ContextType>;
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<AbstractEntityEventsArgs, never>>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -56,6 +68,7 @@ export type AbstractEntityResolvers<ContextType = Context, ParentType extends Re
 export type AbstractEntityRevision = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    events: AbstractNotificationEventConnection;
     author: User;
     date: Scalars['DateTime'];
     content: Scalars['String'];
@@ -77,10 +90,21 @@ export const AbstractEntityRevisionDecoder: t.IntersectionC<[t.TypeC<{
 }>]>;
 
 // @public (undocumented)
+export type AbstractEntityRevisionEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type AbstractEntityRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractEntityRevision'] = ResolversParentTypes['AbstractEntityRevision']> = {
     __resolveType: TypeResolveFn<'AppletRevision' | 'ArticleRevision' | 'CoursePageRevision' | 'CourseRevision' | 'EventRevision' | 'ExerciseGroupRevision' | 'ExerciseRevision' | 'GroupedExerciseRevision' | 'SolutionRevision' | 'VideoRevision', ParentType, ContextType>;
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<AbstractEntityRevisionEventsArgs, never>>;
     author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
     content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -96,6 +120,7 @@ export type AbstractExercise = {
     alias?: Maybe<Scalars['String']>;
     license: License;
     currentRevision?: Maybe<ExerciseRevision | GroupedExerciseRevision>;
+    events: AbstractNotificationEventConnection;
     solution?: Maybe<Solution>;
 };
 
@@ -133,6 +158,16 @@ export const AbstractExerciseDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.Inte
 }>]>>]>;
 
 // @public (undocumented)
+export type AbstractExerciseEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type AbstractExerciseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractExercise'] = ResolversParentTypes['AbstractExercise']> = {
     __resolveType: TypeResolveFn<'Exercise' | 'GroupedExercise', ParentType, ContextType>;
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -142,6 +177,7 @@ export type AbstractExerciseResolvers<ContextType = Context, ParentType extends 
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
     currentRevision?: Resolver<Maybe<ResolversTypes['AbstractExerciseRevision']>, ParentType, ContextType>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<AbstractExerciseEventsArgs, never>>;
     solution?: Resolver<Maybe<ResolversTypes['Solution']>, ParentType, ContextType>;
 };
 
@@ -152,8 +188,19 @@ export type AbstractExerciseRevision = {
     alias?: Maybe<Scalars['String']>;
     author: User;
     date: Scalars['DateTime'];
+    events: AbstractNotificationEventConnection;
     content: Scalars['String'];
     changes: Scalars['String'];
+};
+
+// @public (undocumented)
+export type AbstractExerciseRevisionEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)
@@ -164,6 +211,7 @@ export type AbstractExerciseRevisionResolvers<ContextType = Context, ParentType 
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<AbstractExerciseRevisionEventsArgs, never>>;
     content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
     changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
@@ -244,10 +292,21 @@ export type AbstractRepository = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
     alias?: Maybe<Scalars['String']>;
+    events: AbstractNotificationEventConnection;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     instance: Instance;
     license: License;
+};
+
+// @public (undocumented)
+export type AbstractRepositoryEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)
@@ -256,6 +315,7 @@ export type AbstractRepositoryResolvers<ContextType = Context, ParentType extend
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<AbstractRepositoryEventsArgs, never>>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<AbstractRepositoryThreadsArgs, never>>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
@@ -277,10 +337,21 @@ export type AbstractRevision = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
     alias?: Maybe<Scalars['String']>;
+    events: AbstractNotificationEventConnection;
     threads: ThreadsConnection;
     author: User;
     date: Scalars['DateTime'];
     content: Scalars['String'];
+};
+
+// @public (undocumented)
+export type AbstractRevisionEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)
@@ -289,6 +360,7 @@ export type AbstractRevisionResolvers<ContextType = Context, ParentType extends 
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<AbstractRevisionEventsArgs, never>>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<AbstractRevisionThreadsArgs, never>>;
     author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -310,10 +382,21 @@ export type AbstractTaxonomyTermChild = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
     alias?: Maybe<Scalars['String']>;
+    events: AbstractNotificationEventConnection;
     date: Scalars['DateTime'];
     instance: Instance;
     license: License;
     taxonomyTerms: TaxonomyTermConnection;
+};
+
+// @public (undocumented)
+export type AbstractTaxonomyTermChildEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)
@@ -322,6 +405,7 @@ export type AbstractTaxonomyTermChildResolvers<ContextType = Context, ParentType
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<AbstractTaxonomyTermChildEventsArgs, never>>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
     license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
@@ -341,6 +425,7 @@ export type AbstractUuid = {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
     alias?: Maybe<Scalars['String']>;
+    events: AbstractNotificationEventConnection;
 };
 
 // @public (undocumented)
@@ -383,11 +468,22 @@ export const AbstractUuidDecoder: t.TypeC<{
 }>;
 
 // @public (undocumented)
+export type AbstractUuidEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type AbstractUuidResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractUuid'] = ResolversParentTypes['AbstractUuid']> = {
     __resolveType: TypeResolveFn<'Comment' | 'Applet' | 'AppletRevision' | 'Article' | 'ArticleRevision' | 'CoursePage' | 'CoursePageRevision' | 'Course' | 'CourseRevision' | 'Event' | 'EventRevision' | 'ExerciseGroup' | 'ExerciseGroupRevision' | 'Exercise' | 'ExerciseRevision' | 'GroupedExercise' | 'GroupedExerciseRevision' | 'Page' | 'PageRevision' | 'Solution' | 'SolutionRevision' | 'TaxonomyTerm' | 'User' | 'Video' | 'VideoRevision', ParentType, ContextType>;
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<AbstractUuidEventsArgs, never>>;
 };
 
 // @public (undocumented)
@@ -409,6 +505,7 @@ export type Applet = AbstractUuid & AbstractRepository & AbstractEntity & Abstra
     __typename?: 'Applet';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
+    events: AbstractNotificationEventConnection;
     threads: ThreadsConnection;
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
@@ -437,9 +534,20 @@ export const AppletDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
 }>]>>;
 
 // @public (undocumented)
+export type AppletEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type AppletResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Applet'] = ResolversParentTypes['Applet']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<AppletEventsArgs, never>>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<AppletThreadsArgs, never>>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -458,6 +566,7 @@ export type AppletRevision = AbstractUuid & AbstractRevision & AbstractEntityRev
     author: User;
     trashed: Scalars['Boolean'];
     alias?: Maybe<Scalars['String']>;
+    events: AbstractNotificationEventConnection;
     threads: ThreadsConnection;
     date: Scalars['DateTime'];
     repository: Applet;
@@ -523,11 +632,22 @@ export const AppletRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t
 }>]>>;
 
 // @public (undocumented)
+export type AppletRevisionEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type AppletRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AppletRevision'] = ResolversParentTypes['AppletRevision']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<AppletRevisionEventsArgs, never>>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<AppletRevisionThreadsArgs, never>>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
     repository?: Resolver<ResolversTypes['Applet'], ParentType, ContextType>;
@@ -593,6 +713,7 @@ export type Article = AbstractUuid & AbstractRepository & AbstractEntity & Abstr
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
     threads: ThreadsConnection;
+    events: AbstractNotificationEventConnection;
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
@@ -620,10 +741,21 @@ export const ArticleDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<
 }>]>>;
 
 // @public (undocumented)
+export type ArticleEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type ArticleResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Article'] = ResolversParentTypes['Article']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<ArticleThreadsArgs, never>>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<ArticleEventsArgs, never>>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -642,6 +774,7 @@ export type ArticleRevision = AbstractUuid & AbstractRevision & AbstractEntityRe
     trashed: Scalars['Boolean'];
     alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
+    events: AbstractNotificationEventConnection;
     date: Scalars['DateTime'];
     repository: Article;
     title: Scalars['String'];
@@ -704,12 +837,23 @@ export const ArticleRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[
 }>]>>;
 
 // @public (undocumented)
+export type ArticleRevisionEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type ArticleRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ArticleRevision'] = ResolversParentTypes['ArticleRevision']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<ArticleRevisionThreadsArgs, never>>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<ArticleRevisionEventsArgs, never>>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
     repository?: Resolver<ResolversTypes['Article'], ParentType, ContextType>;
     title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -890,6 +1034,7 @@ export type Comment = AbstractUuid & {
     title: Scalars['String'];
     content: Scalars['String'];
     alias: Scalars['String'];
+    events: AbstractNotificationEventConnection;
     trashed: Scalars['Boolean'];
     archived: Scalars['Boolean'];
     createdAt: Scalars['DateTime'];
@@ -945,11 +1090,22 @@ export type CommentEdgeResolvers<ContextType = Context, ParentType extends Resol
 };
 
 // @public (undocumented)
+export type CommentEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type CommentResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Comment'] = ResolversParentTypes['Comment']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
     content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
     alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<CommentEventsArgs, never>>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     archived?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -1002,6 +1158,7 @@ export type Course = AbstractUuid & AbstractRepository & AbstractEntity & Abstra
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
     threads: ThreadsConnection;
+    events: AbstractNotificationEventConnection;
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
@@ -1031,11 +1188,22 @@ export const CourseDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
 }>]>>;
 
 // @public (undocumented)
+export type CourseEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type CoursePage = AbstractUuid & AbstractRepository & AbstractEntity & InstanceAware & ThreadAware & {
     __typename?: 'CoursePage';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
     threads: ThreadsConnection;
+    events: AbstractNotificationEventConnection;
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
@@ -1063,10 +1231,21 @@ export const CoursePageDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.Typ
 }>]>>;
 
 // @public (undocumented)
+export type CoursePageEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type CoursePageResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CoursePage'] = ResolversParentTypes['CoursePage']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<CoursePageThreadsArgs, never>>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<CoursePageEventsArgs, never>>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -1085,6 +1264,7 @@ export type CoursePageRevision = AbstractUuid & AbstractRevision & AbstractEntit
     trashed: Scalars['Boolean'];
     alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
+    events: AbstractNotificationEventConnection;
     date: Scalars['DateTime'];
     repository: CoursePage;
     title: Scalars['String'];
@@ -1143,12 +1323,23 @@ export const CoursePageRevisionDecoder: t.ExactC<t.IntersectionC<[t.Intersection
 }>]>>;
 
 // @public (undocumented)
+export type CoursePageRevisionEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type CoursePageRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CoursePageRevision'] = ResolversParentTypes['CoursePageRevision']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<CoursePageRevisionThreadsArgs, never>>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<CoursePageRevisionEventsArgs, never>>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
     repository?: Resolver<ResolversTypes['CoursePage'], ParentType, ContextType>;
     title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1197,6 +1388,7 @@ export type CourseResolvers<ContextType = Context, ParentType extends ResolversP
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<CourseThreadsArgs, never>>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<CourseEventsArgs, never>>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -1216,6 +1408,7 @@ export type CourseRevision = AbstractUuid & AbstractRevision & AbstractEntityRev
     trashed: Scalars['Boolean'];
     alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
+    events: AbstractNotificationEventConnection;
     date: Scalars['DateTime'];
     repository: Course;
     title: Scalars['String'];
@@ -1276,12 +1469,23 @@ export const CourseRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t
 }>]>>;
 
 // @public (undocumented)
+export type CourseRevisionEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type CourseRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CourseRevision'] = ResolversParentTypes['CourseRevision']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<CourseRevisionThreadsArgs, never>>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<CourseRevisionEventsArgs, never>>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
     repository?: Resolver<ResolversTypes['Course'], ParentType, ContextType>;
     title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -3467,6 +3671,7 @@ type Event_2 = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxo
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
     threads: ThreadsConnection;
+    events: AbstractNotificationEventConnection;
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
@@ -3496,10 +3701,21 @@ export const EventDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
 }>]>>;
 
 // @public (undocumented)
+export type EventEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type EventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<EventThreadsArgs, never>>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<EventEventsArgs, never>>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -3518,6 +3734,7 @@ export type EventRevision = AbstractUuid & AbstractRevision & AbstractEntityRevi
     trashed: Scalars['Boolean'];
     alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
+    events: AbstractNotificationEventConnection;
     date: Scalars['DateTime'];
     repository: Event_2;
     title: Scalars['String'];
@@ -3580,12 +3797,23 @@ export const EventRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.
 }>]>>;
 
 // @public (undocumented)
+export type EventRevisionEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type EventRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EventRevision'] = ResolversParentTypes['EventRevision']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<EventRevisionThreadsArgs, never>>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<EventRevisionEventsArgs, never>>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
     repository?: Resolver<ResolversTypes['Event'], ParentType, ContextType>;
     title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -3646,6 +3874,7 @@ export type Exercise = AbstractUuid & AbstractRepository & AbstractEntity & Abst
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
     threads: ThreadsConnection;
+    events: AbstractNotificationEventConnection;
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
@@ -3675,11 +3904,22 @@ export const ExerciseDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC
 }>]>>;
 
 // @public (undocumented)
+export type ExerciseEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type ExerciseGroup = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
     __typename?: 'ExerciseGroup';
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
     threads: ThreadsConnection;
+    events: AbstractNotificationEventConnection;
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
@@ -3709,10 +3949,21 @@ export const ExerciseGroupDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.
 }>]>>;
 
 // @public (undocumented)
+export type ExerciseGroupEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type ExerciseGroupResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExerciseGroup'] = ResolversParentTypes['ExerciseGroup']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<ExerciseGroupThreadsArgs, never>>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<ExerciseGroupEventsArgs, never>>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -3732,6 +3983,7 @@ export type ExerciseGroupRevision = AbstractUuid & AbstractRevision & AbstractEn
     trashed: Scalars['Boolean'];
     alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
+    events: AbstractNotificationEventConnection;
     date: Scalars['DateTime'];
     repository: ExerciseGroup;
     content: Scalars['String'];
@@ -3788,12 +4040,23 @@ export const ExerciseGroupRevisionDecoder: t.ExactC<t.IntersectionC<[t.Intersect
 }>]>>;
 
 // @public (undocumented)
+export type ExerciseGroupRevisionEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type ExerciseGroupRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExerciseGroupRevision'] = ResolversParentTypes['ExerciseGroupRevision']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<ExerciseGroupRevisionThreadsArgs, never>>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<ExerciseGroupRevisionEventsArgs, never>>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
     repository?: Resolver<ResolversTypes['ExerciseGroup'], ParentType, ContextType>;
     content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -3843,6 +4106,7 @@ export type ExerciseResolvers<ContextType = Context, ParentType extends Resolver
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<ExerciseThreadsArgs, never>>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<ExerciseEventsArgs, never>>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -3862,6 +4126,7 @@ export type ExerciseRevision = AbstractUuid & AbstractRevision & AbstractEntityR
     trashed: Scalars['Boolean'];
     alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
+    events: AbstractNotificationEventConnection;
     date: Scalars['DateTime'];
     repository: Exercise;
     content: Scalars['String'];
@@ -3918,12 +4183,23 @@ export const ExerciseRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<
 }>]>>;
 
 // @public (undocumented)
+export type ExerciseRevisionEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type ExerciseRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExerciseRevision'] = ResolversParentTypes['ExerciseRevision']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<ExerciseRevisionThreadsArgs, never>>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<ExerciseRevisionEventsArgs, never>>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
     repository?: Resolver<ResolversTypes['Exercise'], ParentType, ContextType>;
     content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -3982,6 +4258,7 @@ export type GroupedExercise = AbstractUuid & AbstractRepository & AbstractEntity
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
     threads: ThreadsConnection;
+    events: AbstractNotificationEventConnection;
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
@@ -4011,10 +4288,21 @@ export const GroupedExerciseDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[
 }>]>>;
 
 // @public (undocumented)
+export type GroupedExerciseEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type GroupedExerciseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GroupedExercise'] = ResolversParentTypes['GroupedExercise']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<GroupedExerciseThreadsArgs, never>>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<GroupedExerciseEventsArgs, never>>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -4034,6 +4322,7 @@ export type GroupedExerciseRevision = AbstractUuid & AbstractRevision & Abstract
     trashed: Scalars['Boolean'];
     alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
+    events: AbstractNotificationEventConnection;
     date: Scalars['DateTime'];
     repository: GroupedExercise;
     content: Scalars['String'];
@@ -4090,12 +4379,23 @@ export const GroupedExerciseRevisionDecoder: t.ExactC<t.IntersectionC<[t.Interse
 }>]>>;
 
 // @public (undocumented)
+export type GroupedExerciseRevisionEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type GroupedExerciseRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GroupedExerciseRevision'] = ResolversParentTypes['GroupedExerciseRevision']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<GroupedExerciseRevisionThreadsArgs, never>>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<GroupedExerciseRevisionEventsArgs, never>>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
     repository?: Resolver<ResolversTypes['GroupedExercise'], ParentType, ContextType>;
     content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -4871,6 +5171,7 @@ export type Page = AbstractUuid & AbstractRepository & AbstractNavigationChild &
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
     threads: ThreadsConnection;
+    events: AbstractNotificationEventConnection;
     date: Scalars['DateTime'];
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
@@ -4895,6 +5196,16 @@ export const PageDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
 }>]>>;
 
 // @public (undocumented)
+export type PageEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type PageInfo = {
     __typename?: 'PageInfo';
     hasNextPage: Scalars['Boolean'];
@@ -4917,6 +5228,7 @@ export type PageResolvers<ContextType = Context, ParentType extends ResolversPar
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<PageThreadsArgs, never>>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<PageEventsArgs, never>>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -4935,6 +5247,7 @@ export type PageRevision = AbstractUuid & AbstractRevision & ThreadAware & {
     trashed: Scalars['Boolean'];
     alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
+    events: AbstractNotificationEventConnection;
     date: Scalars['DateTime'];
     title: Scalars['String'];
     content: Scalars['String'];
@@ -4988,12 +5301,23 @@ export const PageRevisionDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
 }>]>>;
 
 // @public (undocumented)
+export type PageRevisionEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type PageRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageRevision'] = ResolversParentTypes['PageRevision']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<PageRevisionThreadsArgs, never>>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<PageRevisionEventsArgs, never>>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
     title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
     content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -6283,6 +6607,7 @@ export type Solution = AbstractUuid & AbstractRepository & AbstractEntity & Inst
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
     threads: ThreadsConnection;
+    events: AbstractNotificationEventConnection;
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
@@ -6310,10 +6635,21 @@ export const SolutionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC
 }>]>>;
 
 // @public (undocumented)
+export type SolutionEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type SolutionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Solution'] = ResolversParentTypes['Solution']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<SolutionThreadsArgs, never>>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<SolutionEventsArgs, never>>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -6332,6 +6668,7 @@ export type SolutionRevision = AbstractUuid & AbstractRevision & AbstractEntityR
     trashed: Scalars['Boolean'];
     alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
+    events: AbstractNotificationEventConnection;
     date: Scalars['DateTime'];
     repository: Solution;
     content: Scalars['String'];
@@ -6388,12 +6725,23 @@ export const SolutionRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<
 }>]>>;
 
 // @public (undocumented)
+export type SolutionRevisionEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type SolutionRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SolutionRevision'] = ResolversParentTypes['SolutionRevision']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<SolutionRevisionThreadsArgs, never>>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<SolutionRevisionEventsArgs, never>>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
     repository?: Resolver<ResolversTypes['Solution'], ParentType, ContextType>;
     content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -6547,6 +6895,7 @@ export type TaxonomyTerm = AbstractUuid & AbstractNavigationChild & InstanceAwar
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
     threads: ThreadsConnection;
+    events: AbstractNotificationEventConnection;
     type: TaxonomyTermType;
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
@@ -6616,10 +6965,21 @@ export type TaxonomyTermEdgeResolvers<ContextType = Context, ParentType extends 
 };
 
 // @public (undocumented)
+export type TaxonomyTermEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type TaxonomyTermResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTerm'] = ResolversParentTypes['TaxonomyTerm']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<TaxonomyTermThreadsArgs, never>>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<TaxonomyTermEventsArgs, never>>;
     type?: Resolver<ResolversTypes['TaxonomyTermType'], ParentType, ContextType>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -6995,6 +7355,7 @@ export type User = AbstractUuid & ThreadAware & {
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
     threads: ThreadsConnection;
+    events: AbstractNotificationEventConnection;
     eventsByUser: AbstractNotificationEventConnection;
     alias?: Maybe<Scalars['String']>;
     username: Scalars['String'];
@@ -7054,6 +7415,16 @@ export type UserEdgeResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 // @public (undocumented)
+export type UserEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type UserEventsByUserArgs = {
     after?: Maybe<Scalars['String']>;
     before?: Maybe<Scalars['String']>;
@@ -7068,6 +7439,7 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<UserThreadsArgs, never>>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<UserEventsArgs, never>>;
     eventsByUser?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<UserEventsByUserArgs, never>>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -7502,6 +7874,7 @@ export type Video = AbstractUuid & AbstractRepository & AbstractEntity & Abstrac
     id: Scalars['Int'];
     trashed: Scalars['Boolean'];
     threads: ThreadsConnection;
+    events: AbstractNotificationEventConnection;
     instance: Instance;
     alias?: Maybe<Scalars['String']>;
     date: Scalars['DateTime'];
@@ -7529,10 +7902,21 @@ export const VideoDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
 }>]>>;
 
 // @public (undocumented)
+export type VideoEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type VideoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Video'] = ResolversParentTypes['Video']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<VideoThreadsArgs, never>>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<VideoEventsArgs, never>>;
     instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -7551,6 +7935,7 @@ export type VideoRevision = AbstractUuid & AbstractRevision & AbstractEntityRevi
     trashed: Scalars['Boolean'];
     alias?: Maybe<Scalars['String']>;
     threads: ThreadsConnection;
+    events: AbstractNotificationEventConnection;
     date: Scalars['DateTime'];
     repository: Video;
     url: Scalars['String'];
@@ -7611,12 +7996,23 @@ export const VideoRevisionDecoder: t.ExactC<t.IntersectionC<[t.IntersectionC<[t.
 }>]>>;
 
 // @public (undocumented)
+export type VideoRevisionEventsArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
+    instance?: Maybe<Instance>;
+    actorId?: Maybe<Scalars['Int']>;
+};
+
+// @public (undocumented)
 export type VideoRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['VideoRevision'] = ResolversParentTypes['VideoRevision']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<VideoRevisionThreadsArgs, never>>;
+    events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<VideoRevisionEventsArgs, never>>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
     repository?: Resolver<ResolversTypes['Video'], ParentType, ContextType>;
     url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -7666,8 +8062,50 @@ export type VideoThreadsArgs = {
 
 // Warnings were encountered during analysis:
 //
-// src/schema/uuid/user/resolvers.ts:69:3 - (TS2322) Type '{ activeAuthor(user: { id: number; trashed: boolean; alias: string; } & { __typename: DiscriminatorType.User; username: string; date: string; roles: string[]; } & { lastLogin?: string | null | undefined; description?: string | ... 1 more ... | undefined; }, _args: {}, { dataSources }: Context): Promise<...>; activeD...' is not assignable to type '{ threads: ResolverFn<ResolverTypeWrapper<Connection<{ __typename: "Thread"; commentPayloads: ({ id: number; trashed: boolean; alias: string; } & { __typename: "Comment"; authorId: number; title: string | null; date: string; archived: boolean; content: string; parentId: number; childrenIds: number[]; })[]; }>>, { .....'.
-//   Property 'eventsByUser' is missing in type '{ activeAuthor(user: { id: number; trashed: boolean; alias: string; } & { __typename: DiscriminatorType.User; username: string; date: string; roles: string[]; } & { lastLogin?: string | null | undefined; description?: string | ... 1 more ... | undefined; }, _args: {}, { dataSources }: Context): Promise<...>; activeD...' but required in type '{ threads: ResolverFn<ResolverTypeWrapper<Connection<{ __typename: "Thread"; commentPayloads: ({ id: number; trashed: boolean; alias: string; } & { __typename: "Comment"; authorId: number; title: string | null; date: string; archived: boolean; content: string; parentId: number; childrenIds: number[]; })[]; }>>, { .....'.
+// src/schema/uuid/applet/resolvers.ts:34:3 - (TS2322) Type '{ taxonomyTerms: Resolver<ResolverTypeWrapper<Connection<{ id: number; trashed: boolean; alias: string; } & { __typename: DiscriminatorType.TaxonomyTerm; type: TaxonomyTermType; instance: Instance; name: string; weight: number; childrenIds: number[]; parentId: number | null; } & { ...; }>>, ({ ...; } & ... 1 more .....' is not assignable to type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+//   Property 'events' is missing in type '{ taxonomyTerms: Resolver<ResolverTypeWrapper<Connection<{ id: number; trashed: boolean; alias: string; } & { __typename: DiscriminatorType.TaxonomyTerm; type: TaxonomyTermType; instance: Instance; name: string; weight: number; childrenIds: number[]; parentId: number | null; } & { ...; }>>, ({ ...; } & ... 1 more .....' but required in type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+// src/schema/uuid/applet/resolvers.ts:38:3 - (TS2322) Type 'Required<PickKeys<AbstractRevisionResolvers<Context, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityRevisionType; content: string; date: string; authorId: number; repositoryId: number; changes: string; } & { ...; }) | ... 9 more ... | ({ ...; } & { ...; })>, "alias" | ... 1 more ... | "autho...' is not assignable to type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+//   Property 'events' is missing in type 'Required<PickKeys<AbstractRevisionResolvers<Context, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityRevisionType; content: string; date: string; authorId: number; repositoryId: number; changes: string; } & { ...; }) | ... 9 more ... | ({ ...; } & { ...; })>, "alias" | ... 1 more ... | "autho...' but required in type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+// src/schema/uuid/article/resolvers.ts:33:3 - (TS2322) Type '{ taxonomyTerms: Resolver<ResolverTypeWrapper<Connection<{ id: number; trashed: boolean; alias: string; } & { __typename: DiscriminatorType.TaxonomyTerm; type: TaxonomyTermType; instance: Instance; name: string; weight: number; childrenIds: number[]; parentId: number | null; } & { ...; }>>, ({ ...; } & ... 1 more .....' is not assignable to type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+//   Property 'events' is missing in type '{ taxonomyTerms: Resolver<ResolverTypeWrapper<Connection<{ id: number; trashed: boolean; alias: string; } & { __typename: DiscriminatorType.TaxonomyTerm; type: TaxonomyTermType; instance: Instance; name: string; weight: number; childrenIds: number[]; parentId: number | null; } & { ...; }>>, ({ ...; } & ... 1 more .....' but required in type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+// src/schema/uuid/article/resolvers.ts:37:3 - (TS2322) Type 'Required<PickKeys<AbstractRevisionResolvers<Context, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityRevisionType; content: string; date: string; authorId: number; repositoryId: number; changes: string; } & { ...; }) | ... 9 more ... | ({ ...; } & { ...; })>, "alias" | ... 1 more ... | "autho...' is not assignable to type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+//   Property 'events' is missing in type 'Required<PickKeys<AbstractRevisionResolvers<Context, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityRevisionType; content: string; date: string; authorId: number; repositoryId: number; changes: string; } & { ...; }) | ... 9 more ... | ({ ...; } & { ...; })>, "alias" | ... 1 more ... | "autho...' but required in type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+// src/schema/uuid/course-page/resolvers.ts:36:3 - (TS2322) Type '{ course(coursePage: { id: number; trashed: boolean; alias: string; } & { __typename: EntityType; instance: Instance; date: string; licenseId: number; currentRevisionId: number | null; revisionIds: number[]; } & { ...; }, _args: {}, { dataSources }: Context): Promise<...>; ... 4 more ...; revisions: ResolverFunction...' is not assignable to type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+//   Property 'events' is missing in type '{ course(coursePage: { id: number; trashed: boolean; alias: string; } & { __typename: EntityType; instance: Instance; date: string; licenseId: number; currentRevisionId: number | null; revisionIds: number[]; } & { ...; }, _args: {}, { dataSources }: Context): Promise<...>; ... 4 more ...; revisions: ResolverFunction...' but required in type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+// src/schema/uuid/course-page/resolvers.ts:51:3 - (TS2322) Type 'Required<PickKeys<AbstractRevisionResolvers<Context, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityRevisionType; content: string; date: string; authorId: number; repositoryId: number; changes: string; } & { ...; }) | ... 9 more ... | ({ ...; } & { ...; })>, "alias" | ... 1 more ... | "autho...' is not assignable to type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+//   Property 'events' is missing in type 'Required<PickKeys<AbstractRevisionResolvers<Context, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityRevisionType; content: string; date: string; authorId: number; repositoryId: number; changes: string; } & { ...; }) | ... 9 more ... | ({ ...; } & { ...; })>, "alias" | ... 1 more ... | "autho...' but required in type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+// src/schema/uuid/course/resolvers.ts:40:3 - (TS2322) Type '{ pages(course: { id: number; trashed: boolean; alias: string; } & { __typename: EntityType; instance: Instance; date: string; licenseId: number; currentRevisionId: number | null; revisionIds: number[]; } & { ...; }, { trashed, hasCurrentRevision }: RequireFields<...>, { dataSources }: Context): Promise<...>; ... 5 ...' is not assignable to type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+//   Property 'events' is missing in type '{ pages(course: { id: number; trashed: boolean; alias: string; } & { __typename: EntityType; instance: Instance; date: string; licenseId: number; currentRevisionId: number | null; revisionIds: number[]; } & { ...; }, { trashed, hasCurrentRevision }: RequireFields<...>, { dataSources }: Context): Promise<...>; ... 5 ...' but required in type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+// src/schema/uuid/course/resolvers.ts:65:3 - (TS2322) Type 'Required<PickKeys<AbstractRevisionResolvers<Context, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityRevisionType; content: string; date: string; authorId: number; repositoryId: number; changes: string; } & { ...; }) | ... 9 more ... | ({ ...; } & { ...; })>, "alias" | ... 1 more ... | "autho...' is not assignable to type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+//   Property 'events' is missing in type 'Required<PickKeys<AbstractRevisionResolvers<Context, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityRevisionType; content: string; date: string; authorId: number; repositoryId: number; changes: string; } & { ...; }) | ... 9 more ... | ({ ...; } & { ...; })>, "alias" | ... 1 more ... | "autho...' but required in type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+// src/schema/uuid/event/resolvers.ts:32:3 - (TS2322) Type '{ taxonomyTerms: Resolver<ResolverTypeWrapper<Connection<{ id: number; trashed: boolean; alias: string; } & { __typename: DiscriminatorType.TaxonomyTerm; type: TaxonomyTermType; instance: Instance; name: string; weight: number; childrenIds: number[]; parentId: number | null; } & { ...; }>>, ({ ...; } & ... 1 more .....' is not assignable to type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+//   Property 'events' is missing in type '{ taxonomyTerms: Resolver<ResolverTypeWrapper<Connection<{ id: number; trashed: boolean; alias: string; } & { __typename: DiscriminatorType.TaxonomyTerm; type: TaxonomyTermType; instance: Instance; name: string; weight: number; childrenIds: number[]; parentId: number | null; } & { ...; }>>, ({ ...; } & ... 1 more .....' but required in type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+// src/schema/uuid/event/resolvers.ts:36:3 - (TS2322) Type 'Required<PickKeys<AbstractRevisionResolvers<Context, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityRevisionType; content: string; date: string; authorId: number; repositoryId: number; changes: string; } & { ...; }) | ... 9 more ... | ({ ...; } & { ...; })>, "alias" | ... 1 more ... | "autho...' is not assignable to type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+//   Property 'events' is missing in type 'Required<PickKeys<AbstractRevisionResolvers<Context, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityRevisionType; content: string; date: string; authorId: number; repositoryId: number; changes: string; } & { ...; }) | ... 9 more ... | ({ ...; } & { ...; })>, "alias" | ... 1 more ... | "autho...' but required in type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+// src/schema/uuid/exercise-group/resolvers.ts:38:3 - (TS2322) Type '{ exercises(exerciseGroup: { id: number; trashed: boolean; alias: string; } & { __typename: EntityType; instance: Instance; date: string; licenseId: number; currentRevisionId: number | null; revisionIds: number[]; } & { ...; }, _args: {}, { dataSources }: Context): Promise<...>; ... 5 more ...; revisions: ResolverFu...' is not assignable to type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+//   Property 'events' is missing in type '{ exercises(exerciseGroup: { id: number; trashed: boolean; alias: string; } & { __typename: EntityType; instance: Instance; date: string; licenseId: number; currentRevisionId: number | null; revisionIds: number[]; } & { ...; }, _args: {}, { dataSources }: Context): Promise<...>; ... 5 more ...; revisions: ResolverFu...' but required in type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+// src/schema/uuid/exercise-group/resolvers.ts:56:3 - (TS2322) Type 'Required<PickKeys<AbstractRevisionResolvers<Context, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityRevisionType; content: string; date: string; authorId: number; repositoryId: number; changes: string; } & { ...; }) | ... 9 more ... | ({ ...; } & { ...; })>, "alias" | ... 1 more ... | "autho...' is not assignable to type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+//   Property 'events' is missing in type 'Required<PickKeys<AbstractRevisionResolvers<Context, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityRevisionType; content: string; date: string; authorId: number; repositoryId: number; changes: string; } & { ...; }) | ... 9 more ... | ({ ...; } & { ...; })>, "alias" | ... 1 more ... | "autho...' but required in type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+// src/schema/uuid/exercise/resolvers.ts:34:3 - (TS2322) Type '{ solution: Resolver<Maybe<ResolverTypeWrapper<{ id: number; trashed: boolean; alias: string; } & { __typename: EntityType; instance: Instance; date: string; licenseId: number; currentRevisionId: number | null; revisionIds: number[]; } & { ...; }>>, ({ ...; } & ... 1 more ... & { ...; }) | ({ ...; } & ... 1 more ......' is not assignable to type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+//   Property 'events' is missing in type '{ solution: Resolver<Maybe<ResolverTypeWrapper<{ id: number; trashed: boolean; alias: string; } & { __typename: EntityType; instance: Instance; date: string; licenseId: number; currentRevisionId: number | null; revisionIds: number[]; } & { ...; }>>, ({ ...; } & ... 1 more ... & { ...; }) | ({ ...; } & ... 1 more ......' but required in type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+// src/schema/uuid/exercise/resolvers.ts:39:3 - (TS2322) Type 'Required<PickKeys<AbstractRevisionResolvers<Context, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityRevisionType; content: string; date: string; authorId: number; repositoryId: number; changes: string; } & { ...; }) | ... 9 more ... | ({ ...; } & { ...; })>, "alias" | ... 1 more ... | "autho...' is not assignable to type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+//   Property 'events' is missing in type 'Required<PickKeys<AbstractRevisionResolvers<Context, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityRevisionType; content: string; date: string; authorId: number; repositoryId: number; changes: string; } & { ...; }) | ... 9 more ... | ({ ...; } & { ...; })>, "alias" | ... 1 more ... | "autho...' but required in type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+// src/schema/uuid/grouped-exercise/resolvers.ts:37:3 - (TS2322) Type '{ exerciseGroup(groupedExercise: { id: number; trashed: boolean; alias: string; } & { __typename: EntityType; instance: Instance; date: string; licenseId: number; currentRevisionId: number | null; revisionIds: number[]; } & { ...; }, _args: {}, { dataSources }: Context): Promise<...>; ... 5 more ...; revisions: Reso...' is not assignable to type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+//   Property 'events' is missing in type '{ exerciseGroup(groupedExercise: { id: number; trashed: boolean; alias: string; } & { __typename: EntityType; instance: Instance; date: string; licenseId: number; currentRevisionId: number | null; revisionIds: number[]; } & { ...; }, _args: {}, { dataSources }: Context): Promise<...>; ... 5 more ...; revisions: Reso...' but required in type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+// src/schema/uuid/grouped-exercise/resolvers.ts:53:3 - (TS2322) Type 'Required<PickKeys<AbstractRevisionResolvers<Context, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityRevisionType; content: string; date: string; authorId: number; repositoryId: number; changes: string; } & { ...; }) | ... 9 more ... | ({ ...; } & { ...; })>, "alias" | ... 1 more ... | "autho...' is not assignable to type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+//   Property 'events' is missing in type 'Required<PickKeys<AbstractRevisionResolvers<Context, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityRevisionType; content: string; date: string; authorId: number; repositoryId: number; changes: string; } & { ...; }) | ... 9 more ... | ({ ...; } & { ...; })>, "alias" | ... 1 more ... | "autho...' but required in type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+// src/schema/uuid/page/resolvers.ts:31:3 - (TS2322) Type '{ navigation(page: { id: number; trashed: boolean; alias: string; } & { __typename: DiscriminatorType.Page; instance: Instance; currentRevisionId: number | null; revisionIds: number[]; date: string; licenseId: number; }, _args: {}, { dataSources }: Context): Promise<...>; ... 4 more ...; revisions: ResolverFunction<...' is not assignable to type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & { ...;...'.
+//   Property 'events' is missing in type '{ navigation(page: { id: number; trashed: boolean; alias: string; } & { __typename: DiscriminatorType.Page; instance: Instance; currentRevisionId: number | null; revisionIds: number[]; date: string; licenseId: number; }, _args: {}, { dataSources }: Context): Promise<...>; ... 4 more ...; revisions: ResolverFunction<...' but required in type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & { ...;...'.
+// src/schema/uuid/page/resolvers.ts:40:3 - (TS2322) Type 'Required<PickKeys<AbstractRevisionResolvers<Context, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityRevisionType; content: string; date: string; authorId: number; repositoryId: number; changes: string; } & { ...; }) | ... 9 more ... | ({ ...; } & { ...; })>, "alias" | ... 1 more ... | "autho...' is not assignable to type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & { ...;...'.
+//   Property 'events' is missing in type 'Required<PickKeys<AbstractRevisionResolvers<Context, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityRevisionType; content: string; date: string; authorId: number; repositoryId: number; changes: string; } & { ...; }) | ... 9 more ... | ({ ...; } & { ...; })>, "alias" | ... 1 more ... | "autho...' but required in type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & { ...;...'.
+// src/schema/uuid/solution/resolvers.ts:36:3 - (TS2322) Type '{ exercise(solution: { id: number; trashed: boolean; alias: string; } & { __typename: EntityType; instance: Instance; date: string; licenseId: number; currentRevisionId: number | null; revisionIds: number[]; } & { ...; }, _args: {}, { dataSources }: Context): Promise<...>; ... 4 more ...; revisions: ResolverFunction...' is not assignable to type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+//   Property 'events' is missing in type '{ exercise(solution: { id: number; trashed: boolean; alias: string; } & { __typename: EntityType; instance: Instance; date: string; licenseId: number; currentRevisionId: number | null; revisionIds: number[]; } & { ...; }, _args: {}, { dataSources }: Context): Promise<...>; ... 4 more ...; revisions: ResolverFunction...' but required in type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+// src/schema/uuid/solution/resolvers.ts:49:3 - (TS2322) Type 'Required<PickKeys<AbstractRevisionResolvers<Context, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityRevisionType; content: string; date: string; authorId: number; repositoryId: number; changes: string; } & { ...; }) | ... 9 more ... | ({ ...; } & { ...; })>, "alias" | ... 1 more ... | "autho...' is not assignable to type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+//   Property 'events' is missing in type 'Required<PickKeys<AbstractRevisionResolvers<Context, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityRevisionType; content: string; date: string; authorId: number; repositoryId: number; changes: string; } & { ...; }) | ... 9 more ... | ({ ...; } & { ...; })>, "alias" | ... 1 more ... | "autho...' but required in type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+// src/schema/uuid/video/resolvers.ts:32:3 - (TS2322) Type '{ taxonomyTerms: Resolver<ResolverTypeWrapper<Connection<{ id: number; trashed: boolean; alias: string; } & { __typename: DiscriminatorType.TaxonomyTerm; type: TaxonomyTermType; instance: Instance; name: string; weight: number; childrenIds: number[]; parentId: number | null; } & { ...; }>>, ({ ...; } & ... 1 more .....' is not assignable to type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+//   Property 'events' is missing in type '{ taxonomyTerms: Resolver<ResolverTypeWrapper<Connection<{ id: number; trashed: boolean; alias: string; } & { __typename: DiscriminatorType.TaxonomyTerm; type: TaxonomyTermType; instance: Instance; name: string; weight: number; childrenIds: number[]; parentId: number | null; } & { ...; }>>, ({ ...; } & ... 1 more .....' but required in type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+// src/schema/uuid/video/resolvers.ts:36:3 - (TS2322) Type 'Required<PickKeys<AbstractRevisionResolvers<Context, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityRevisionType; content: string; date: string; authorId: number; repositoryId: number; changes: string; } & { ...; }) | ... 9 more ... | ({ ...; } & { ...; })>, "alias" | ... 1 more ... | "autho...' is not assignable to type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
+//   Property 'events' is missing in type 'Required<PickKeys<AbstractRevisionResolvers<Context, ({ id: number; trashed: boolean; alias: string; } & { __typename: EntityRevisionType; content: string; date: string; authorId: number; repositoryId: number; changes: string; } & { ...; }) | ... 9 more ... | ({ ...; } & { ...; })>, "alias" | ... 1 more ... | "autho...' but required in type '{ events: ResolverFn<ResolverTypeWrapper<Connection<({ id: number; instance: Instance; date: string; actorId: number; objectId: number; } & { __typename: NotificationEventType.CheckoutRevision; repositoryId: number; revisionId: number; reason: string; }) | ... 14 more ... | ({ ...; } & { ...; })>>, { ...; } & ... 1 ...'.
 
 // (No @packageDocumentation comment for this package)
 

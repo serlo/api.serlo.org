@@ -17,6 +17,14 @@ type Comment implements AbstractUuid {
   title: String!
   content: String!
   alias: String!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
   trashed: Boolean!
   archived: Boolean!
   createdAt: DateTime!
