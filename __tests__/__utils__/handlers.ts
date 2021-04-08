@@ -22,6 +22,7 @@
 import { rest } from 'msw'
 import * as R from 'ramda'
 
+import { RestResolver } from './services'
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model/types'
 import { NavigationPayload } from '~/schema/uuid/abstract-navigation-child/types'
@@ -99,30 +100,51 @@ export function createMessageHandler(
   },
   once = false
 ) {
-  const { message, body } = args
+  const { message, body, statusCode } = args
 
-  const handler = rest.post(
-    getDatabaseLayerUrl({ path: '/' }),
-    (_req, res, ctx) => {
+  const handler = createDatabaseLayerHandler({
+    ...args,
+    resolver: (_req, res, ctx) => {
       return (once ? res.once : res)(
-        ctx.status(args.statusCode ?? 200),
+        ctx.status(statusCode ?? 200),
         ...(body === undefined
           ? []
           : [ctx.json(body as Record<string, unknown>)])
       )
-    }
+    },
+  })
+  const { predicate: oldPredicate } = handler
+
+  handler.predicate = (req, parsed) =>
+    oldPredicate(req, parsed) && R.equals(req.body.payload, message.payload)
+
+  return handler
+}
+
+export function createDatabaseLayerHandler(args: {
+  message: MessagePayload
+  resolver: RestResolver<MessagePayload>
+}) {
+  const { message, resolver } = args
+
+  const handler = rest.post<MessagePayload>(
+    getDatabaseLayerUrl({ path: '/' }),
+    resolver
   )
 
   // Only use this handler if message matches
-  handler.predicate = (req) => {
-    return R.equals(req.body, message)
-  }
+  handler.predicate = (req) => req.body.type === message.type
 
   return handler
 }
 
 export function getDatabaseLayerUrl({ path }: { path: string }) {
   return `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`
+}
+
+interface MessagePayload {
+  type: string
+  payload?: Record<string, unknown>
 }
 
 export function createSpreadsheetHandler({
