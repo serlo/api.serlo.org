@@ -738,10 +738,30 @@ export function assertAll<A>(args: {
 } & ErrorEvent_2): (list: A[]) => A[];
 
 // @public (undocumented)
-export function assertUserIsAuthenticated(user: number | null): asserts user is number;
+export function assertUserIsAuthenticated(userId: number | null): asserts userId is number;
+
+// @public (undocumented)
+export function assertUserIsAuthorized({ userId, guard, scope, message, dataSources, }: {
+    userId: number | null;
+    scope: Scope;
+    guard: AuthorizationGuard;
+    message: string;
+    dataSources: Context['dataSources'];
+}): Promise<void>;
 
 // @public (undocumented)
 export type AsyncOrSync<T> = Promise<T> | T;
+
+// @public
+export type AuthorizationGuard = (args: {
+    authorizationPayload: AuthorizationPayload;
+    scope: Scope;
+}) => boolean;
+
+// @public
+export type AuthorizationPayload = {
+    [scope in Scope]?: Permission[];
+};
 
 // @public (undocumented)
 interface Cache_2 {
@@ -1405,9 +1425,6 @@ export function createGoogleSpreadsheetApiModel({ environment, }: {
 };
 
 // @public (undocumented)
-export function createHelper<P, R>(spec: HelperSpec<P, R>): Helper<P, R>;
-
-// @public (undocumented)
 export function createMutationNamespace(): () => {};
 
 // @public (undocumented)
@@ -1647,10 +1664,10 @@ export function createSerloModel({ environment, }: {
     getNavigationPayload: ModelQuery<{
         instance: Instance;
     }, NavigationPayload>;
-    getNavigation: Helper<{
+    getNavigation: ({ instance, id, }: {
         instance: Instance;
         id: number;
-    }, NavigationData | null>;
+    }) => Promise<NavigationData | null>;
     getNotificationEvent: ModelQuery<{
         id: number;
     }, AbstractNotificationEventPayload | null>;
@@ -3007,17 +3024,6 @@ export type GroupedExerciseThreadsArgs = {
 };
 
 // @public (undocumented)
-export type Helper<P, R> = ((payload: P) => Promise<R>) & {
-    _helperSpec: HelperSpec<P, R>;
-};
-
-// @public (undocumented)
-export interface HelperSpec<P, R> {
-    // (undocumented)
-    helper: (payload: P) => Promise<R>;
-}
-
-// @public (undocumented)
 export enum Instance {
     // (undocumented)
     De = "de",
@@ -3388,6 +3394,11 @@ export interface Models {
     PageRevision: t.TypeOf<typeof PageRevisionDecoder>;
     // (undocumented)
     Query: Record<string, never>;
+    // (undocumented)
+    ScopedRole: {
+        role: Role;
+        scope: Scope;
+    };
     // (undocumented)
     Solution: t.TypeOf<typeof SolutionDecoder>;
     // (undocumented)
@@ -3917,6 +3928,20 @@ export type Payloads<M> = {
 };
 
 // @public
+export enum Permission {
+    // (undocumented)
+    Thread_CreateComment = "thread:createComment",
+    // (undocumented)
+    Thread_CreateThread = "thread:createThread",
+    // (undocumented)
+    Thread_SetCommentState = "thread:setCommentState",
+    // (undocumented)
+    Thread_SetThreadArchived = "thread:setThreadArchived",
+    // (undocumented)
+    Thread_SetThreadState = "thread:setThreadState"
+}
+
+// @public
 export type PickKeys<O extends object, Keys> = Pick<O, Keys & keyof O>;
 
 // @public (undocumented)
@@ -4025,6 +4050,8 @@ export interface QuerySpec<P, R> {
     getPayload: (key: string) => option.Option<P>;
     // (undocumented)
     maxAge: Time | undefined;
+    // (undocumented)
+    swrFrequency?: number;
 }
 
 // @public (undocumented)
@@ -4979,16 +5006,34 @@ export interface Schema {
 }
 
 // @public (undocumented)
+export enum Scope {
+    // (undocumented)
+    Serlo = "serlo.org",
+    // (undocumented)
+    Serlo_De = "serlo.org:de",
+    // (undocumented)
+    Serlo_En = "serlo.org:en",
+    // (undocumented)
+    Serlo_Es = "serlo.org:es",
+    // (undocumented)
+    Serlo_Fr = "serlo.org:fr",
+    // (undocumented)
+    Serlo_Hi = "serlo.org:hi",
+    // (undocumented)
+    Serlo_Ta = "serlo.org:ta"
+}
+
+// @public (undocumented)
 export type ScopedRole = {
     __typename?: 'ScopedRole';
     role: Role;
-    scope?: Maybe<Instance>;
+    scope?: Maybe<Scalars['String']>;
 };
 
 // @public (undocumented)
 export type ScopedRoleResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ScopedRole'] = ResolversParentTypes['ScopedRole']> = {
     role?: Resolver<ResolversTypes['Role'], ParentType, ContextType>;
-    scope?: Resolver<Maybe<ResolversTypes['Instance']>, ParentType, ContextType>;
+    scope?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -6544,6 +6589,10 @@ export type VideoThreadsArgs = {
     trashed?: Maybe<Scalars['Boolean']>;
 };
 
+
+// Warnings were encountered during analysis:
+//
+// src/schema/uuid/user/resolvers.ts:35:10 - (TS2305) Module '"~/schema/authorization/utils"' has no exported member 'getUserRoles'.
 
 // (No @packageDocumentation comment for this package)
 

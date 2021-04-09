@@ -1,6 +1,6 @@
 type ScopedRole {
   role: Role!
-  scope: Instance
+  scope: String
 }
 
 enum Role {

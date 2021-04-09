@@ -379,7 +379,7 @@ export type NotificationEdge = {
 export type ScopedRole = {
   __typename?: 'ScopedRole';
   role: Role;
-  scope?: Maybe<Instance>;
+  scope?: Maybe<Scalars['String']>;
 };
 
 export enum Role {
@@ -2364,7 +2364,7 @@ export type NotificationEdgeResolvers<ContextType = Context, ParentType extends 
 
 export type ScopedRoleResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ScopedRole'] = ResolversParentTypes['ScopedRole']> = {
   role?: Resolver<ResolversTypes['Role'], ParentType, ContextType>;
-  scope?: Resolver<Maybe<ResolversTypes['Instance']>, ParentType, ContextType>;
+  scope?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

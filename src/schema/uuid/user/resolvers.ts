@@ -32,7 +32,7 @@ import {
 import { Context, Queries, TypeResolvers } from '~/internals/graphql'
 import { UserDecoder } from '~/model/decoder'
 import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
-import { getUserRoles } from '~/schema/authorization/utils'
+import { resolveScopedRoles } from '~/schema/authorization/utils'
 import { ConnectionPayload } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
@@ -86,7 +86,7 @@ export const resolvers: Queries<
       )
     },
     roles(user) {
-      return getUserRoles(user)
+      return resolveScopedRoles(user)
     },
   },
 }

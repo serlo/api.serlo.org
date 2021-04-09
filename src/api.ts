@@ -19,13 +19,18 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+export {
+  AuthorizationGuard,
+  AuthorizationPayload,
+  Permission,
+  Scope,
+} from '~/authorization'
 export * from '~/internals/authentication/service'
 export * from '~/internals/cache'
 export * from '~/internals/data-source'
 export * from '~/internals/environment'
 export * from '~/internals/error-event'
 export * from '~/internals/graphql'
-export * from '~/internals/model/helper'
 export * from '~/internals/model/query'
 export * from '~/internals/model/types'
 export * from '~/internals/swr-queue'

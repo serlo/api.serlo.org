@@ -19,45 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { resolveRolesPayload, RolesPayload } from './roles'
-import { getUserRoles } from './utils'
-import { instanceToScope, Scope } from '~/authorization'
-import { Model, Queries } from '~/internals/graphql'
-import { UserDecoder } from '~/model/decoder'
-import { Role } from '~/types'
+import { fetchAuthorizationPayload } from './utils'
+import { Queries } from '~/internals/graphql'
 
 export const resolvers: Queries<'authorization'> = {
   Query: {
-    async authorization(_parent, _payload, { userId, dataSources }) {
-      if (userId === null) {
-        return resolveRolesPayload({
-          [Scope.Serlo]: [Role.Guest],
-        })
-      }
-
-      const user = await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: userId,
-        decoder: UserDecoder,
-      })
-
-      if (user === null) {
-        throw new Error(`id ${userId} need to be a user`)
-      }
-
-      return resolveRolesPayload(fetchRolesPayload(user))
+    authorization(_parent, _payload, { userId, dataSources }) {
+      return fetchAuthorizationPayload({ userId, dataSources })
     },
   },
-}
-
-function fetchRolesPayload(user: Model<'User'>): RolesPayload {
-  const legacyRoles = getUserRoles(user)
-  const rolesPayload: RolesPayload = {}
-
-  for (const { role, scope: instance } of legacyRoles) {
-    const scope = instanceToScope(instance ?? null)
-    rolesPayload[scope] = rolesPayload[scope] ?? []
-    rolesPayload[scope]?.push(role)
-  }
-
-  return rolesPayload
 }
