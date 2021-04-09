@@ -33,6 +33,7 @@ import {
 import { mockEndpointsForThreads } from './thread'
 
 test('unauthenticated user gets error', async () => {
+  global.server.use(createUuidHandler(article))
   await assertFailingGraphQLMutation({
     mutation: gql`
       mutation($input: ThreadCreateThreadInput!) {
@@ -59,11 +60,11 @@ test('unauthenticated user gets error', async () => {
 
 test('thread gets created, cache mutated as expected', async () => {
   const client = createTestClient({ userId: user.id })
+  global.server.use(createUuidHandler(user))
 
-  // TODO: this also needs to include the user. Either as an optional argument or change up `mockEndpointsForThreads` so that it does not override other handlers...
   mockEndpointsForThreads(article, [[comment]])
 
-  //fill cache
+  // Fill cache
   await client.query({
     query: gql`
       query($id: Int) {
