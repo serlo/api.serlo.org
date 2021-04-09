@@ -193,7 +193,7 @@ describe('User', () => {
     global.server.use(
       createUuidHandler({
         ...user,
-        roles: ['login', 'sysadmin', 'en_moderator'],
+        roles: ['login', 'en_moderator', 'de_reviewer'],
       })
     )
 
@@ -213,9 +213,9 @@ describe('User', () => {
       data: {
         uuid: {
           roles: [
-            { role: 'login', scope: null },
-            { role: 'sysadmin', scope: null },
-            { role: 'moderator', scope: 'en' },
+            { role: 'login', scope: 'serlo.org' },
+            { role: 'moderator', scope: 'serlo.org:en' },
+            { role: 'reviewer', scope: 'serlo.org:de' },
           ],
         },
       },
@@ -340,87 +340,42 @@ describe('User', () => {
 })
 
 describe('endpoint activeAuthors', () => {
-  const activeAuthorsQuery = gql`
-    {
-      activeAuthors {
-        nodes {
-          __typename
-          id
-          trashed
-          username
-          date
-          lastLogin
-          description
-        }
-        totalCount
-      }
-    }
-  `
-
   test('returns list of active authors', async () => {
-    global.server.use(
-      createUuidHandler(user2),
-      createActiveAuthorsHandler([user, user2])
-    )
-
-    await assertSuccessfulGraphQLQuery({
-      query: activeAuthorsQuery,
-      data: {
-        activeAuthors: {
-          nodes: [
-            getUserDataWithoutSubResolvers(user),
-            getUserDataWithoutSubResolvers(user2),
-          ],
-          totalCount: 2,
-        },
-      },
-      client,
-    })
-  })
-
-  test('returned list does only contain users', async () => {
-    global.server.use(
-      createUuidHandler(article),
-      createActiveAuthorsHandler([user, article])
-    )
-
-    await assertSuccessfulGraphQLQuery({
-      query: activeAuthorsQuery,
-      data: {
-        activeAuthors: {
-          nodes: [getUserDataWithoutSubResolvers(user)],
-          totalCount: 1,
-        },
-      },
-      client,
-    })
-  })
-
-  test('list of active authors is cached', async () => {
-    global.server.use(createActiveAuthorsHandler([user]))
-    await assertSuccessfulGraphQLQuery({
-      query: activeAuthorsQuery,
-      data: {
-        activeAuthors: {
-          nodes: [getUserDataWithoutSubResolvers(user)],
-          totalCount: 1,
-        },
-      },
-      client,
-    })
     global.server.use(createActiveAuthorsHandler([user, user2]))
 
-    await assertSuccessfulGraphQLQuery({
-      query: activeAuthorsQuery,
+    await expectActiveAuthorIds([user.id, user2.id])
+  })
+
+  test('only returns users', async () => {
+    global.server.use(createActiveAuthorsHandler([user, article]))
+
+    await expectActiveAuthorIds([user.id])
+  })
+
+  function expectActiveAuthorIds(ids: number[]) {
+    global.server.use(...ids.map((id) => createUuidHandler({ ...user, id })))
+
+    return assertSuccessfulGraphQLQuery({
+      query: gql`
+        query {
+          activeAuthors {
+            nodes {
+              __typename
+              id
+            }
+          }
+        }
+      `,
       data: {
         activeAuthors: {
-          nodes: [getUserDataWithoutSubResolvers(user)],
-          totalCount: 1,
+          nodes: ids.map((id) => {
+            return { __typename: 'User', id }
+          }),
         },
       },
       client,
     })
-  })
+  }
 })
 
 describe('endpoint activeDonors', () => {
@@ -428,57 +383,57 @@ describe('endpoint activeDonors', () => {
     givenActiveDonors([user, user2])
     global.server.use(createUuidHandler(user2))
 
-    await expectActiveUserIds([user.id, user2.id])
+    await expectActiveDonorIds([user.id, user2.id])
   })
 
   test('returned list only contains user', async () => {
     givenActiveDonors([user, article])
     global.server.use(createUuidHandler(article))
 
-    await expectActiveUserIds([user.id])
+    await expectActiveDonorIds([user.id])
   })
 
   describe('parser', () => {
     test('removes entries which are no valid uuids', async () => {
       givenActiveDonorsSpreadsheet([['Header', '23', 'foo', '-1', '', '1.5']])
 
-      await expectActiveUserIds([23])
+      await expectActiveDonorIds([23])
     })
 
     test('cell entries are trimmed of leading and trailing whitespaces', async () => {
       givenActiveDonorsSpreadsheet([['Header', ' 10 ', '  20']])
 
-      await expectActiveUserIds([10, 20])
+      await expectActiveDonorIds([10, 20])
     })
 
     describe('returns empty list', () => {
       test('when spreadsheet is empty', async () => {
         givenActiveDonorsSpreadsheet([[]])
 
-        await expectActiveUserIds([])
+        await expectActiveDonorIds([])
       })
 
       test('when spreadsheet api responds with invalid json data', async () => {
         givenSpreadheetApi(returnsJson({}))
 
-        await expectActiveUserIds([])
+        await expectActiveDonorIds([])
       })
 
       test('when spreadsheet api responds with malformed json', async () => {
         givenSpreadheetApi(returnsMalformedJson())
 
-        await expectActiveUserIds([])
+        await expectActiveDonorIds([])
       })
 
       test('when spreadsheet api has an internal server error', async () => {
         givenSpreadheetApi(hasInternalServerError())
 
-        await expectActiveUserIds([])
+        await expectActiveDonorIds([])
       })
     })
   })
 
-  function expectActiveUserIds(ids: number[]) {
+  function expectActiveDonorIds(ids: number[]) {
     global.server.use(...ids.map((id) => createUuidHandler({ ...user, id })))
 
     return assertSuccessfulGraphQLQuery({
@@ -505,105 +460,42 @@ describe('endpoint activeDonors', () => {
 })
 
 describe('endpoint activeReviewers', () => {
-  const activeReviewersQuery = gql`
-    {
-      activeReviewers {
-        nodes {
-          __typename
-          id
-          trashed
-          username
-          date
-          lastLogin
-          description
-        }
-        totalCount
-      }
-    }
-  `
-
   test('returns list of active reviewers', async () => {
-    global.server.use(
-      createUuidHandler(user2),
-      createActiveReviewersHandler([user, user2])
-    )
-
-    await assertSuccessfulGraphQLQuery({
-      query: activeReviewersQuery,
-      data: {
-        activeReviewers: {
-          nodes: [
-            getUserDataWithoutSubResolvers(user),
-            getUserDataWithoutSubResolvers(user2),
-          ],
-          totalCount: 2,
-        },
-      },
-      client,
-    })
-  })
-
-  test('returned list does only contain users', async () => {
-    global.server.use(
-      createUuidHandler(article),
-      createActiveReviewersHandler([user, article])
-    )
-
-    await assertSuccessfulGraphQLQuery({
-      query: activeReviewersQuery,
-      data: {
-        activeReviewers: {
-          nodes: [getUserDataWithoutSubResolvers(user)],
-          totalCount: 1,
-        },
-      },
-      client,
-    })
-  })
-
-  test('list of active authors is cached for 1 hour', async () => {
-    global.server.use(createActiveReviewersHandler([user]))
-    await assertSuccessfulGraphQLQuery({
-      query: activeReviewersQuery,
-      data: {
-        activeReviewers: {
-          nodes: [getUserDataWithoutSubResolvers(user)],
-          totalCount: 1,
-        },
-      },
-      client,
-    })
     global.server.use(createActiveReviewersHandler([user, user2]))
 
-    await assertSuccessfulGraphQLQuery({
-      query: activeReviewersQuery,
+    await expectActiveReviewerIds([user.id, user2.id])
+  })
+
+  test('only returns users', async () => {
+    global.server.use(createActiveReviewersHandler([user, article]))
+
+    await expectActiveReviewerIds([user.id])
+  })
+
+  function expectActiveReviewerIds(ids: number[]) {
+    global.server.use(...ids.map((id) => createUuidHandler({ ...user, id })))
+
+    return assertSuccessfulGraphQLQuery({
+      query: gql`
+        query {
+          activeReviewers {
+            nodes {
+              __typename
+              id
+            }
+          }
+        }
+      `,
       data: {
         activeReviewers: {
-          nodes: [getUserDataWithoutSubResolvers(user)],
-          totalCount: 1,
+          nodes: ids.map((id) => {
+            return { __typename: 'User', id }
+          }),
         },
       },
       client,
     })
-  })
-
-  test('uses cached value for active reviewers', async () => {
-    await global.cache.set({
-      key: 'de.serlo.org/api/user/active-reviewers',
-      value: [user.id],
-    })
-
-    await assertSuccessfulGraphQLQuery({
-      query: activeReviewersQuery,
-      data: {
-        activeReviewers: {
-          nodes: [getUserDataWithoutSubResolvers(user)],
-          totalCount: 1,
-        },
-      },
-      client,
-    })
-  })
+  }
 })
 
 function createActiveAuthorsHandler(users: UuidPayload[]) {

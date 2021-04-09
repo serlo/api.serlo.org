@@ -48,7 +48,9 @@ import {
   VideoDecoder,
   VideoRevisionDecoder,
 } from './decoder'
+import { Scope } from '~/authorization'
 import { Payload } from '~/internals/model/types'
+import { Role } from '~/types'
 
 export interface Models {
   Applet: t.TypeOf<typeof AppletDecoder>
@@ -84,4 +86,5 @@ export interface Models {
   User: t.TypeOf<typeof UserDecoder>
   Video: t.TypeOf<typeof VideoDecoder>
   VideoRevision: t.TypeOf<typeof VideoRevisionDecoder>
+  ScopedRole: { role: Role; scope: Scope }
 }
