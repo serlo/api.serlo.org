@@ -4427,6 +4427,8 @@ export type Resolvers<ContextType = Context> = {
     NotificationConnection?: NotificationConnectionResolvers<ContextType>;
     NotificationEdge?: NotificationEdgeResolvers<ContextType>;
     ScopedRole?: ScopedRoleResolvers<ContextType>;
+    ScopedRoleConnection?: ScopedRoleConnectionResolvers<ContextType>;
+    ScopedRoleCursor?: ScopedRoleCursorResolvers<ContextType>;
     QuerySubscriptionResult?: QuerySubscriptionResultResolvers<ContextType>;
     SubscriptionCursor?: SubscriptionCursorResolvers<ContextType>;
     SubscriptionMutation?: SubscriptionMutationResolvers<ContextType>;
@@ -4552,6 +4554,8 @@ export type ResolversParentTypes = {
     NotificationConnection: ModelOf<NotificationConnection>;
     NotificationEdge: ModelOf<NotificationEdge>;
     ScopedRole: ModelOf<ScopedRole>;
+    ScopedRoleConnection: ModelOf<ScopedRoleConnection>;
+    ScopedRoleCursor: ModelOf<ScopedRoleCursor>;
     QuerySubscriptionResult: ModelOf<QuerySubscriptionResult>;
     SubscriptionCursor: ModelOf<SubscriptionCursor>;
     SubscriptionMutation: ModelOf<SubscriptionMutation>;
@@ -4687,6 +4691,8 @@ export type ResolversTypes = {
     NotificationEdge: ResolverTypeWrapper<ModelOf<NotificationEdge>>;
     ScopedRole: ResolverTypeWrapper<ModelOf<ScopedRole>>;
     Role: ResolverTypeWrapper<ModelOf<Role>>;
+    ScopedRoleConnection: ResolverTypeWrapper<ModelOf<ScopedRoleConnection>>;
+    ScopedRoleCursor: ResolverTypeWrapper<ModelOf<ScopedRoleCursor>>;
     QuerySubscriptionResult: ResolverTypeWrapper<ModelOf<QuerySubscriptionResult>>;
     SubscriptionCursor: ResolverTypeWrapper<ModelOf<SubscriptionCursor>>;
     SubscriptionMutation: ResolverTypeWrapper<ModelOf<SubscriptionMutation>>;
@@ -4980,7 +4986,7 @@ export enum Role {
     // (undocumented)
     Reviewer = "reviewer",
     // (undocumented)
-    StaticPagesBuilder = "static_pages_builder",
+    StaticPagesBuilder = "staticPagesBuilder",
     // (undocumented)
     Sysadmin = "sysadmin"
 }
@@ -5028,6 +5034,38 @@ export type ScopedRole = {
     __typename?: 'ScopedRole';
     role: Role;
     scope?: Maybe<Scalars['String']>;
+};
+
+// @public (undocumented)
+export type ScopedRoleConnection = {
+    __typename?: 'ScopedRoleConnection';
+    edges: Array<ScopedRoleCursor>;
+    nodes: Array<ScopedRole>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type ScopedRoleConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ScopedRoleConnection'] = ResolversParentTypes['ScopedRoleConnection']> = {
+    edges?: Resolver<Array<ResolversTypes['ScopedRoleCursor']>, ParentType, ContextType>;
+    nodes?: Resolver<Array<ResolversTypes['ScopedRole']>, ParentType, ContextType>;
+    totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+    pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+// @public (undocumented)
+export type ScopedRoleCursor = {
+    __typename?: 'ScopedRoleCursor';
+    cursor: Scalars['String'];
+    node: ScopedRole;
+};
+
+// @public (undocumented)
+export type ScopedRoleCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ScopedRoleCursor'] = ResolversParentTypes['ScopedRoleCursor']> = {
+    cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+    node?: Resolver<ResolversTypes['ScopedRole'], ParentType, ContextType>;
+    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 // @public (undocumented)
@@ -5932,7 +5970,7 @@ export type User = AbstractUuid & ThreadAware & {
     username: Scalars['String'];
     date: Scalars['DateTime'];
     lastLogin?: Maybe<Scalars['DateTime']>;
-    roles: Array<ScopedRole>;
+    roles: ScopedRoleConnection;
     description?: Maybe<Scalars['String']>;
     activeAuthor: Scalars['Boolean'];
     activeDonor: Scalars['Boolean'];
@@ -5995,12 +6033,20 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
     username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
     lastLogin?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-    roles?: Resolver<Array<ResolversTypes['ScopedRole']>, ParentType, ContextType>;
+    roles?: Resolver<ResolversTypes['ScopedRoleConnection'], ParentType, ContextType, RequireFields<UserRolesArgs, never>>;
     description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     activeAuthor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     activeDonor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     activeReviewer?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+// @public (undocumented)
+export type UserRolesArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)
@@ -6589,10 +6635,6 @@ export type VideoThreadsArgs = {
     trashed?: Maybe<Scalars['Boolean']>;
 };
 
-
-// Warnings were encountered during analysis:
-//
-// src/schema/uuid/user/resolvers.ts:35:10 - (TS2305) Module '"~/schema/authorization/utils"' has no exported member 'getUserRoles'.
 
 // (No @packageDocumentation comment for this package)
 
