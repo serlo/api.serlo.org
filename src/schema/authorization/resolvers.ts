@@ -19,88 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { resolveRolesPayload, Role, RolesPayload } from './roles'
-import { instanceToScope, Scope } from '~/authorization'
+import { fetchAuthorizationPayload } from './utils'
 import { Queries } from '~/internals/graphql'
-import { UserDecoder } from '~/model/decoder'
-import { isInstance } from '~/schema/instance/utils'
 
 export const resolvers: Queries<'authorization'> = {
   Query: {
-    async authorization(_parent, _payload, { userId, dataSources }) {
-      async function fetchRolesPayload(): Promise<RolesPayload> {
-        if (userId === null) {
-          return {
-            [Scope.Serlo]: [Role.Guest],
-          }
-        }
-
-        const user = await dataSources.model.serlo.getUuidWithCustomDecoder({
-          id: userId,
-          decoder: UserDecoder,
-        })
-        const legacyRoles = user?.roles ?? []
-        const rolesPayload: RolesPayload = {}
-
-        for (const role of legacyRoles) {
-          const result = legacyRoleToRole(role)
-          if (result === null) continue
-          rolesPayload[result.scope] = rolesPayload[result.scope] ?? []
-          rolesPayload[result.scope]?.push(result.role)
-        }
-
-        return rolesPayload
-
-        function legacyRoleToRole(
-          role: string
-        ): { scope: Scope; role: Role } | null {
-          const globalRole = legacyRoleToGlobalRole(role)
-          if (globalRole) {
-            return { scope: Scope.Serlo, role: globalRole }
-          }
-
-          const [instance, roleName] = role.split('_', 2)
-          const instancedRole = legacyRoleToInstancedRole(roleName)
-          if (isInstance(instance) && instancedRole) {
-            return { scope: instanceToScope(instance), role: instancedRole }
-          }
-
-          return null
-        }
-
-        function legacyRoleToGlobalRole(role: string): Role | null {
-          switch (role) {
-            case 'guest':
-              return Role.Guest
-            case 'login':
-              return Role.Login
-            case 'sysadmin':
-              return Role.Sysadmin
-            default:
-              return null
-          }
-        }
-
-        function legacyRoleToInstancedRole(role: string): Role | null {
-          switch (role) {
-            case 'moderator':
-              return Role.Moderator
-            case 'reviewer':
-              return Role.Reviewer
-            case 'architect':
-              return Role.Architect
-            case 'static_pages_builder':
-              return Role.StaticPagesBuilder
-            case 'admin':
-              return Role.Admin
-            default:
-              return null
-          }
-        }
-      }
-
-      const rolesPayload = await fetchRolesPayload()
-      return resolveRolesPayload(rolesPayload)
+    authorization(_parent, _payload, { userId, dataSources }) {
+      return fetchAuthorizationPayload({ userId, dataSources })
     },
   },
 }
