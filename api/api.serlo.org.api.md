@@ -738,10 +738,30 @@ export function assertAll<A>(args: {
 } & ErrorEvent_2): (list: A[]) => A[];
 
 // @public (undocumented)
-export function assertUserIsAuthenticated(user: number | null): asserts user is number;
+export function assertUserIsAuthenticated(userId: number | null): asserts userId is number;
+
+// @public (undocumented)
+export function assertUserIsAuthorized({ userId, guard, scope, message, dataSources, }: {
+    userId: number | null;
+    scope: Scope;
+    guard: AuthorizationGuard;
+    message: string;
+    dataSources: Context['dataSources'];
+}): Promise<void>;
 
 // @public (undocumented)
 export type AsyncOrSync<T> = Promise<T> | T;
+
+// @public
+export type AuthorizationGuard = (args: {
+    authorizationPayload: AuthorizationPayload;
+    scope: Scope;
+}) => boolean;
+
+// @public
+export type AuthorizationPayload = {
+    [scope in Scope]?: Permission[];
+};
 
 // @public (undocumented)
 interface Cache_2 {
@@ -3903,6 +3923,20 @@ export type Payloads<M> = {
 };
 
 // @public
+export enum Permission {
+    // (undocumented)
+    Thread_CreateComment = "thread:createComment",
+    // (undocumented)
+    Thread_CreateThread = "thread:createThread",
+    // (undocumented)
+    Thread_SetCommentState = "thread:setCommentState",
+    // (undocumented)
+    Thread_SetThreadArchived = "thread:setThreadArchived",
+    // (undocumented)
+    Thread_SetThreadState = "thread:setThreadState"
+}
+
+// @public
 export type PickKeys<O extends object, Keys> = Pick<O, Keys & keyof O>;
 
 // @public (undocumented)
@@ -4940,6 +4974,24 @@ export interface Schema {
     resolvers: {};
     // (undocumented)
     typeDefs: DocumentNode[];
+}
+
+// @public (undocumented)
+export enum Scope {
+    // (undocumented)
+    Serlo = "serlo.org",
+    // (undocumented)
+    Serlo_De = "serlo.org:de",
+    // (undocumented)
+    Serlo_En = "serlo.org:en",
+    // (undocumented)
+    Serlo_Es = "serlo.org:es",
+    // (undocumented)
+    Serlo_Fr = "serlo.org:fr",
+    // (undocumented)
+    Serlo_Hi = "serlo.org:hi",
+    // (undocumented)
+    Serlo_Ta = "serlo.org:ta"
 }
 
 // @public (undocumented)

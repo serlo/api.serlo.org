@@ -60,7 +60,7 @@ export enum Permission {
 
 /**
  * The AuthorizationPayload is the opaque data structure that clients (e.g. frontend) use with our authorization API
- * (i.e. @serlo/authorization package) to check if users is allowed to do something. For now, it is an object representing
+ * (i.e. \@serlo/authorization package) to check if users is allowed to do something. For now, it is an object representing
  * the granted permissions in each scope (while also including the granted permissions of parent scopes). We can optimize
  * that payload later if needed.
  */
