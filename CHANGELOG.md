@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.21.0](https://github.com/serlo/api.serlo.org/compare/v0.20.5..v0.21.0) - April 9, 2021
+
+### Added
+
+- **authorization**. Initial internal test release.
+
+### Internal
+
+- Add configurable `swrFrequency`.
+
 ## [v0.20.5](https://github.com/serlo/api.serlo.org/compare/v0.20.4..v0.20.5) - March 30, 2021
 
 ### Internal
