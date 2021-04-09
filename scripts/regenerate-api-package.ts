@@ -53,12 +53,12 @@ async function exec() {
 
   async function clean() {
     const rm = util.promisify(rimraf)
-    await rm('dist-types')
+    await rm('dist-api')
     await rm(path.join('node_modules', '.cache'))
   }
 
   function bundle() {
-    const { status, error } = spawnSync('yarn', ['build:types'], {
+    const { status, error } = spawnSync('yarn', ['build:api'], {
       stdio: 'inherit',
     })
     if (status !== 0) {
@@ -92,7 +92,7 @@ async function exec() {
       license: string
       author: string
     }
-    const dir = path.join(process.cwd(), 'dist-types')
+    const dir = path.join(process.cwd(), 'dist-api')
     await writeFile(
       path.join(dir, 'package.json'),
       JSON.stringify(

@@ -4,7 +4,7 @@ api/
 
 # Transpiled code
 dist/
-dist-types/
+dist-api/
 
 # Generated pact files
 pacts/
