@@ -118,7 +118,7 @@ function legacyRoleToInstancedRole(role: string): Role | null {
       return Role.Reviewer
     case 'architect':
       return Role.Architect
-    case 'static_pages_builder':
+    case 'staticPagesBuilder':
       return Role.StaticPagesBuilder
     case 'admin':
       return Role.Admin

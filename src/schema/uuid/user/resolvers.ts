@@ -85,8 +85,14 @@ export const resolvers: Queries<
         user.id
       )
     },
-    roles(user) {
-      return resolveScopedRoles(user)
+    roles(user, payload) {
+      return resolveConnection({
+        nodes: resolveScopedRoles(user),
+        payload,
+        createCursor(node) {
+          return node.scope + node.role
+        },
+      })
     },
   },
 }

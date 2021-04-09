@@ -39,6 +39,7 @@ import {
   returnsJson,
   returnsMalformedJson,
 } from '../../__utils__'
+import { Scope } from '~/authorization'
 import { MajorDimension } from '~/model'
 import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 import { Instance } from '~/types'
@@ -203,8 +204,10 @@ describe('User', () => {
           uuid(id: $id) {
             ... on User {
               roles {
-                role
-                scope
+                nodes {
+                  role
+                  scope
+                }
               }
             }
           }
@@ -212,11 +215,13 @@ describe('User', () => {
       `,
       data: {
         uuid: {
-          roles: [
-            { role: 'login', scope: 'serlo.org' },
-            { role: 'moderator', scope: 'serlo.org:en' },
-            { role: 'reviewer', scope: 'serlo.org:de' },
-          ],
+          roles: {
+            nodes: [
+              { role: 'login', scope: Scope.Serlo },
+              { role: 'moderator', scope: Scope.Serlo_En },
+              { role: 'reviewer', scope: Scope.Serlo_De },
+            ],
+          },
         },
       },
       variables: { id: user.id },
