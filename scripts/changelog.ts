@@ -690,6 +690,12 @@ async function exec(): Promise<void> {
       date: '2021-03-30',
       internal: ['Improve error reporting.'],
     },
+    {
+      tagName: 'v0.21.0',
+      date: '2021-04-09',
+      added: [['authorization', 'Initial internal test release.']],
+      internal: ['Add configurable `swrFrequency`.'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

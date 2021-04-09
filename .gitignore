@@ -82,7 +82,8 @@ pacts/
 
 # Transpiled code
 dist/
-dist-types/
+dist-api/
+dist-authorization/
 
 # API Extractor
 .api-extractor
