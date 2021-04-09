@@ -29,7 +29,6 @@ import {
 } from '../../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
-  buildQuery,
   Client,
   createMessageHandler,
   createTestClient,
@@ -402,10 +401,16 @@ function expectUserIds({
   global.server.use(...ids.map((id) => createUuidHandler({ ...user, id })))
 
   return assertSuccessfulGraphQLQuery({
-    ...buildQuery({
-      operation: endpoint,
-      fields: [{ nodes: ['__typename', 'id'] }],
-    }),
+    query: gql`
+      query {
+        ${endpoint} {
+          nodes {
+            __typename
+            id
+          }
+        }
+      }
+    `,
     data: {
       [endpoint]: {
         nodes: ids.map((id) => {

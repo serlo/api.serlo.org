@@ -104,7 +104,6 @@
     "eslint-plugin-import": "^2.0.0",
     "eslint-plugin-react": "^7.0.0",
     "glob": "^7.0.0",
-    "gql-query-builder": "^3.0.0",
     "jest": "^26.0.0",
     "jest-transform-graphql": "^2.0.0",
     "msw": "^0.26.0",
