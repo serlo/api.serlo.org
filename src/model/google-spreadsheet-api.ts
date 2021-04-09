@@ -109,10 +109,10 @@ export function createGoogleSpreadsheetApiModel({
       getKey: (args) => {
         const { spreadsheetId, range } = args
         const majorDimension = args.majorDimension ?? MajorDimension.Rows
-        return `spreadsheet-${spreadsheetId}-${range}-${majorDimension}`
+        return `spreadsheet/${spreadsheetId}/${range}/${majorDimension}`
       },
       getPayload: (key) => {
-        const parts = key.split('-')
+        const parts = key.split('/')
         return parts.length === 4 && parts[0] === 'spreadsheet'
           ? O.some({
               spreadsheetId: parts[1],
