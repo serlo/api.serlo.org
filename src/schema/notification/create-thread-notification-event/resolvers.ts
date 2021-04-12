@@ -20,15 +20,20 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { createNotificationEventResolvers } from '../utils'
-import { LegacyCreateThreadNotificationEventResolvers } from './types'
+import { TypeResolvers } from '~/internals/graphql'
+import { CreateThreadNotificationEvent } from '~/types'
 
-export const resolvers: LegacyCreateThreadNotificationEventResolvers = {
+export const resolvers: TypeResolvers<CreateThreadNotificationEvent> = {
   CreateThreadNotificationEvent: {
     ...createNotificationEventResolvers(),
     async object(notificationEvent, _args, { dataSources }) {
-      return await dataSources.model.serlo.getUuid({
+      const uuid = await dataSources.model.serlo.getUuid({
         id: notificationEvent.objectId,
       })
+
+      if (uuid === null) throw new Error('object cannot be null')
+
+      return uuid
     },
     thread(notificationEvent) {
       return Promise.resolve({ id: notificationEvent.threadId })
