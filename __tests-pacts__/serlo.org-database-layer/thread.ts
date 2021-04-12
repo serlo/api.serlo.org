@@ -129,6 +129,11 @@ test('ThreadCreateThreadMutation', async () => {
 
 test('ThreadCreateCommentMutation', async () => {
   global.client = createTestClient({ userId: user.id })
+  global.server.use(
+    createUuidHandler(article),
+    createUuidHandler(comment),
+    createUuidHandler(user)
+  )
 
   await addMessageInteraction({
     given: `there exists a thread with a first comment with an id of ${comment.id} and ${user.id} is authenticated`,
@@ -187,6 +192,11 @@ test('ThreadCreateCommentMutation', async () => {
 
 test('ThreadSetThreadArchivedMutation', async () => {
   global.client = createTestClient({ userId: user.id })
+  global.server.use(
+    createUuidHandler(article),
+    createUuidHandler({ ...comment, id: comment3.id }),
+    createUuidHandler(user)
+  )
 
   await addMessageInteraction({
     given: `there exists a thread with a first comment with an id of ${comment3.id} and user with id ${user.id} is authenticated`,
