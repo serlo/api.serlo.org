@@ -39,8 +39,8 @@ import {
   returnsJson,
   returnsMalformedJson,
 } from '../../__utils__'
+import { Model } from '~/internals/graphql'
 import { MajorDimension } from '~/model'
-import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 import { Instance } from '~/types'
 
 let client: Client
@@ -422,7 +422,7 @@ function expectUserIds({
   })
 }
 
-function createActiveAuthorsHandler(users: UuidPayload[]) {
+function createActiveAuthorsHandler(users: Model<'AbstractUuid'>[]) {
   return createActiveAuthorsResponseHandler(users.map((user) => user.id))
 }
 
@@ -435,7 +435,7 @@ function createActiveAuthorsResponseHandler(body: unknown) {
   })
 }
 
-function createActiveReviewersHandler(users: UuidPayload[]) {
+function createActiveReviewersHandler(users: Model<'AbstractUuid'>[]) {
   return createActiveReviewersHandlersResponseHandler(
     users.map((user) => user.id)
   )
@@ -450,7 +450,7 @@ function createActiveReviewersHandlersResponseHandler(body: unknown) {
   })
 }
 
-function givenActiveDonors(users: UuidPayload[]) {
+function givenActiveDonors(users: Model<'AbstractUuid'>[]) {
   const values = [['Header', ...users.map((user) => user.id.toString())]]
   givenActiveDonorsSpreadsheet(values)
 }

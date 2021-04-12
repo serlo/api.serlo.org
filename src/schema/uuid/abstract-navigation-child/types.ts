@@ -20,10 +20,9 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Model } from '~/internals/graphql'
-import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
 import { Instance, NavigationNode } from '~/types'
 
-export type NavigationChildPayload = TaxonomyTermPayload | Model<'Page'>
+export type NavigationChildPayload = Model<'TaxonomyTerm'> | Model<'Page'>
 
 export interface NavigationData {
   data: NodeData

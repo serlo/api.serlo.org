@@ -22,7 +22,6 @@
 import { ForbiddenError, UserInputError } from 'apollo-server'
 import { either as E } from 'fp-ts'
 
-import { DiscriminatorType, UuidPayload } from './types'
 import { resolveCustomId } from '~/config/alias'
 import {
   assertUserIsAuthenticated,
@@ -31,8 +30,9 @@ import {
   Mutations,
   Queries,
   Context,
+  Model,
 } from '~/internals/graphql'
-import { Uuid } from '~/model/decoder'
+import { Uuid, DiscriminatorType } from '~/model/decoder'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { QueryUuidArgs } from '~/types'
 
@@ -130,7 +130,7 @@ async function resolveIdFromAlias(
   return (await dataSources.model.serlo.getAlias(alias))?.id ?? null
 }
 
-function checkUuid(payload: QueryUuidArgs, uuid: UuidPayload | null) {
+function checkUuid(payload: QueryUuidArgs, uuid: Model<'AbstractUuid'> | null) {
   if (uuid !== null) {
     if (payload.alias != null) {
       if (
