@@ -22,14 +22,17 @@
 import { ApolloError, ForbiddenError } from 'apollo-server'
 
 import { decodeThreadId, decodeThreadIds, encodeThreadId } from './utils'
+import * as auth from '~/authorization'
 import {
   assertUserIsAuthenticated,
+  assertUserIsAuthorized,
   createMutationNamespace,
   InterfaceResolvers,
   Mutations,
   TypeResolvers,
 } from '~/internals/graphql'
 import { UserDecoder } from '~/model/decoder'
+import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Comment, Thread } from '~/types'
@@ -96,7 +99,17 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
   },
   ThreadMutation: {
     async createThread(_parent, payload, { dataSources, userId }) {
+      const { objectId } = payload.input
+      const scope = await fetchScopeOfUuid({ id: objectId, dataSources })
+
       assertUserIsAuthenticated(userId)
+      await assertUserIsAuthorized({
+        userId,
+        guard: auth.Thread.createThread,
+        message: 'You are not allowed to create a thread on this object.',
+        scope,
+        dataSources,
+      })
 
       const commentPayload = await dataSources.model.serlo.createThread({
         ...payload.input,
