@@ -477,7 +477,23 @@ export function mockEndpointsForThreads(
     // Only use this handler if message matches
     handler.predicate = (req) => {
       const { body } = req
-      return typeof body === 'object' && body['type'] === 'UuidQuery'
+      const validIds = [
+        uuidPayload.id,
+        ...R.flatten(
+          threads.map((thread) => {
+            return thread.map((comment) => comment.id)
+          })
+        ),
+      ]
+      const validMessages = validIds.map((id) => {
+        return {
+          type: 'UuidQuery',
+          payload: {
+            id,
+          },
+        }
+      })
+      return validMessages.some((message) => R.equals(message, body))
     }
 
     return handler

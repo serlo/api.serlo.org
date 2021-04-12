@@ -23,7 +23,7 @@ import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
 import { article, comment, comment3, user } from '../../__fixtures__'
-import { createTestClient } from '../../__tests__/__utils__'
+import { createTestClient, createUuidHandler } from '../../__tests__/__utils__'
 import {
   addMessageInteraction,
   assertSuccessfulGraphQLMutation,
@@ -48,6 +48,7 @@ test('ThreadsQuery', async () => {
 
 test('ThreadCreateThreadMutation', async () => {
   global.client = createTestClient({ userId: user.id })
+  global.server.use(createUuidHandler(article), createUuidHandler(user))
 
   await addMessageInteraction({
     given: `there exists a uuid 1855 and user with id ${user.id} is authenticated`,

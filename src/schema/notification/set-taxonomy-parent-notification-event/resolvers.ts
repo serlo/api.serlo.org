@@ -50,13 +50,15 @@ export const resolvers: TypeResolvers<SetTaxonomyParentNotificationEvent> = {
 
       return parent
     },
-    child(notificationEvent, _args, { dataSources }) {
-      return dataSources.model.serlo.getUuid._querySpec.queryWithDecoder(
-        {
-          id: notificationEvent.childId,
-        },
-        TaxonomyTermDecoder
-      )
+    async child(notificationEvent, _args, { dataSources }) {
+      const child = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: notificationEvent.childId,
+        decoder: TaxonomyTermDecoder,
+      })
+
+      if (child === null) throw new Error('child cannot be null')
+
+      return child
     },
   },
 }
