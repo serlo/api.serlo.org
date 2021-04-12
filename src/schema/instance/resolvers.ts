@@ -24,9 +24,7 @@ import { InterfaceResolvers } from '~/internals/graphql'
 export const resolvers: InterfaceResolvers<'InstanceAware'> = {
   InstanceAware: {
     __resolveType(object) {
-      // TODO: Remove "!" when all Events have model types
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      return object.__typename!
+      return object.__typename
     },
   },
 }

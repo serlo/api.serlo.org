@@ -20,28 +20,45 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { createNotificationEventResolvers } from '../utils'
-import { LegacySetTaxonomyParentNotificationEventResolvers } from './types'
-import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
+import { TypeResolvers } from '~/internals/graphql'
+import { TaxonomyTermDecoder } from '~/model/decoder'
+import { SetTaxonomyParentNotificationEvent } from '~/types'
 
-export const resolvers: LegacySetTaxonomyParentNotificationEventResolvers = {
+export const resolvers: TypeResolvers<SetTaxonomyParentNotificationEvent> = {
   SetTaxonomyParentNotificationEvent: {
     ...createNotificationEventResolvers(),
     async previousParent(notificationEvent, _args, { dataSources }) {
       if (notificationEvent.previousParentId === null) return null
-      return (await dataSources.model.serlo.getUuid({
+
+      const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: notificationEvent.previousParentId,
-      })) as TaxonomyTermPayload | null
+        decoder: TaxonomyTermDecoder,
+      })
+
+      if (parent === null) throw new Error('parent cannot be null')
+
+      return parent
     },
     async parent(notificationEvent, _args, { dataSources }) {
       if (notificationEvent.parentId === null) return null
-      return (await dataSources.model.serlo.getUuid({
+      const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: notificationEvent.parentId,
-      })) as TaxonomyTermPayload | null
+        decoder: TaxonomyTermDecoder,
+      })
+
+      if (parent === null) throw new Error('parent cannot be null')
+
+      return parent
     },
     async child(notificationEvent, _args, { dataSources }) {
-      return (await dataSources.model.serlo.getUuid({
+      const child = await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: notificationEvent.childId,
-      })) as TaxonomyTermPayload | null
+        decoder: TaxonomyTermDecoder,
+      })
+
+      if (child === null) throw new Error('child cannot be null')
+
+      return child
     },
   },
 }

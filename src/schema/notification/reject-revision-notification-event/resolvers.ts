@@ -20,24 +20,34 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { createNotificationEventResolvers } from '../utils'
-import { LegacyRejectRevisionNotificationEventResolvers } from './types'
-import {
-  RepositoryPayload,
-  RevisionPayload,
-} from '~/schema/uuid/abstract-repository/types'
+import { TypeResolvers } from '~/internals/graphql'
+import { RepositoryDecoder, RevisionDecoder } from '~/model/decoder'
+import { RejectRevisionNotificationEvent } from '~/types'
 
-export const resolvers: LegacyRejectRevisionNotificationEventResolvers = {
+export const resolvers: TypeResolvers<RejectRevisionNotificationEvent> = {
   RejectRevisionNotificationEvent: {
     ...createNotificationEventResolvers(),
     async repository(notificationEvent, _args, { dataSources }) {
-      return (await dataSources.model.serlo.getUuid({
-        id: notificationEvent.repositoryId,
-      })) as RepositoryPayload | null
+      const repository = await dataSources.model.serlo.getUuidWithCustomDecoder(
+        {
+          id: notificationEvent.repositoryId,
+          decoder: RepositoryDecoder,
+        }
+      )
+
+      if (repository === null) throw new Error('repository cannot be null')
+
+      return repository
     },
     async revision(notificationEvent, _args, { dataSources }) {
-      return (await dataSources.model.serlo.getUuid({
+      const revision = await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: notificationEvent.revisionId,
-      })) as RevisionPayload | null
+        decoder: RevisionDecoder,
+      })
+
+      if (revision === null) throw new Error('revision cannot be null')
+
+      return revision
     },
   },
 }
