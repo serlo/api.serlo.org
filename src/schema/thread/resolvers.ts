@@ -151,15 +151,24 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       }
     },
     async setThreadArchived(_parent, payload, { dataSources, userId }) {
-      assertUserIsAuthenticated(userId)
-      // TODO: Mock permissions for now
-      if ([1, 10, 15473, 18981].indexOf(userId) < 0) {
-        throw new ForbiddenError('You are not allowed to set the thread state.')
-      }
       const { id, archived } = payload.input
+      const ids = decodeThreadIds(id)
+
+      const scopes = await Promise.all(
+        ids.map((id) => fetchScopeOfUuid({ id, dataSources }))
+      )
+
+      assertUserIsAuthenticated(userId)
+      await assertUserIsAuthorized({
+        userId,
+        guard: auth.Thread.setThreadArchived,
+        message: 'You are not allowed to archive this thread(s).',
+        scopes,
+        dataSources,
+      })
 
       await dataSources.model.serlo.archiveThread({
-        ids: decodeThreadIds(id),
+        ids,
         archived,
         userId,
       })
