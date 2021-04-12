@@ -308,39 +308,31 @@ describe('endpoint activeAuthors', () => {
   test('returns list of active authors', async () => {
     global.server.use(createActiveAuthorsHandler([user, user2]))
 
-    await expectActiveAuthorIds([user.id, user2.id])
+    await expectUserIds({ endpoint: 'activeAuthors', ids: [user.id, user2.id] })
   })
 
-  test('only returns users', async () => {
+  test('returns only users', async () => {
     global.server.use(createActiveAuthorsHandler([user, article]))
 
-    await expectActiveAuthorIds([user.id])
+    await expectUserIds({ endpoint: 'activeAuthors', ids: [user.id] })
+  })
+})
+
+describe('endpoint activeReviewers', () => {
+  test('returns list of active reviewers', async () => {
+    global.server.use(createActiveReviewersHandler([user, user2]))
+
+    await expectUserIds({
+      endpoint: 'activeReviewers',
+      ids: [user.id, user2.id],
+    })
   })
 
-  function expectActiveAuthorIds(ids: number[]) {
-    global.server.use(...ids.map((id) => createUuidHandler({ ...user, id })))
+  test('returns only users', async () => {
+    global.server.use(createActiveReviewersHandler([user, article]))
 
-    return assertSuccessfulGraphQLQuery({
-      query: gql`
-        query {
-          activeAuthors {
-            nodes {
-              __typename
-              id
-            }
-          }
-        }
-      `,
-      data: {
-        activeAuthors: {
-          nodes: ids.map((id) => {
-            return { __typename: 'User', id }
-          }),
-        },
-      },
-      client,
-    })
-  }
+    await expectUserIds({ endpoint: 'activeReviewers', ids: [user.id] })
+  })
 })
 
 describe('endpoint activeDonors', () => {
@@ -348,120 +340,87 @@ describe('endpoint activeDonors', () => {
     givenActiveDonors([user, user2])
     global.server.use(createUuidHandler(user2))
 
-    await expectActiveDonorIds([user.id, user2.id])
+    await expectUserIds({ endpoint: 'activeDonors', ids: [user.id, user2.id] })
   })
 
   test('returned list only contains user', async () => {
     givenActiveDonors([user, article])
     global.server.use(createUuidHandler(article))
 
-    await expectActiveDonorIds([user.id])
+    await expectUserIds({ endpoint: 'activeDonors', ids: [user.id] })
   })
 
   describe('parser', () => {
     test('removes entries which are no valid uuids', async () => {
       givenActiveDonorsSpreadsheet([['Header', '23', 'foo', '-1', '', '1.5']])
 
-      await expectActiveDonorIds([23])
+      await expectUserIds({ endpoint: 'activeDonors', ids: [23] })
     })
 
     test('cell entries are trimmed of leading and trailing whitespaces', async () => {
       givenActiveDonorsSpreadsheet([['Header', ' 10 ', '  20']])
 
-      await expectActiveDonorIds([10, 20])
+      await expectUserIds({ endpoint: 'activeDonors', ids: [10, 20] })
     })
 
     describe('returns empty list', () => {
       test('when spreadsheet is empty', async () => {
         givenActiveDonorsSpreadsheet([[]])
 
-        await expectActiveDonorIds([])
+        await expectUserIds({ endpoint: 'activeDonors', ids: [] })
       })
 
       test('when spreadsheet api responds with invalid json data', async () => {
         givenSpreadheetApi(returnsJson({}))
 
-        await expectActiveDonorIds([])
+        await expectUserIds({ endpoint: 'activeDonors', ids: [] })
       })
 
       test('when spreadsheet api responds with malformed json', async () => {
         givenSpreadheetApi(returnsMalformedJson())
 
-        await expectActiveDonorIds([])
+        await expectUserIds({ endpoint: 'activeDonors', ids: [] })
       })
 
       test('when spreadsheet api has an internal server error', async () => {
         givenSpreadheetApi(hasInternalServerError())
 
-        await expectActiveDonorIds([])
+        await expectUserIds({ endpoint: 'activeDonors', ids: [] })
       })
     })
   })
-
-  function expectActiveDonorIds(ids: number[]) {
-    global.server.use(...ids.map((id) => createUuidHandler({ ...user, id })))
-
-    return assertSuccessfulGraphQLQuery({
-      query: gql`
-        query {
-          activeDonors {
-            nodes {
-              __typename
-              id
-            }
-          }
-        }
-      `,
-      data: {
-        activeDonors: {
-          nodes: ids.map((id) => {
-            return { __typename: 'User', id }
-          }),
-        },
-      },
-      client,
-    })
-  }
 })
 
-describe('endpoint activeReviewers', () => {
-  test('returns list of active reviewers', async () => {
-    global.server.use(createActiveReviewersHandler([user, user2]))
+function expectUserIds({
+  endpoint,
+  ids,
+}: {
+  endpoint: 'activeReviewers' | 'activeAuthors' | 'activeDonors'
+  ids: number[]
+}) {
+  global.server.use(...ids.map((id) => createUuidHandler({ ...user, id })))
 
-    await expectActiveReviewerIds([user.id, user2.id])
-  })
-
-  test('only returns users', async () => {
-    global.server.use(createActiveReviewersHandler([user, article]))
-
-    await expectActiveReviewerIds([user.id])
-  })
-
-  function expectActiveReviewerIds(ids: number[]) {
-    global.server.use(...ids.map((id) => createUuidHandler({ ...user, id })))
-
-    return assertSuccessfulGraphQLQuery({
-      query: gql`
-        query {
-          activeReviewers {
-            nodes {
-              __typename
-              id
-            }
+  return assertSuccessfulGraphQLQuery({
+    query: gql`
+      query {
+        ${endpoint} {
+          nodes {
+            __typename
+            id
           }
         }
-      `,
-      data: {
-        activeReviewers: {
-          nodes: ids.map((id) => {
-            return { __typename: 'User', id }
-          }),
-        },
+      }
+    `,
+    data: {
+      [endpoint]: {
+        nodes: ids.map((id) => {
+          return { __typename: 'User', id }
+        }),
       },
-      client,
-    })
-  }
-})
+    },
+    client,
+  })
+}
 
 function createActiveAuthorsHandler(users: Model<'AbstractUuid'>[]) {
   return createActiveAuthorsResponseHandler(users.map((user) => user.id))
