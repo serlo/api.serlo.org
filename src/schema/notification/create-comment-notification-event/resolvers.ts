@@ -20,16 +20,17 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { createNotificationEventResolvers } from '../utils'
-import { LegacyCreateCommentNotificationEventResolvers } from './types'
+import { TypeResolvers } from '~/internals/graphql'
+import { CreateCommentNotificationEvent } from '~/types'
 
-export const resolvers: LegacyCreateCommentNotificationEventResolvers = {
+export const resolvers: TypeResolvers<CreateCommentNotificationEvent> = {
   CreateCommentNotificationEvent: {
     ...createNotificationEventResolvers(),
     thread(notificationEvent) {
-      return Promise.resolve({ id: notificationEvent.threadId })
+      return { id: notificationEvent.threadId }
     },
     comment(notificationEvent) {
-      return Promise.resolve({ id: notificationEvent.commentId })
+      return { id: notificationEvent.commentId }
     },
   },
 }

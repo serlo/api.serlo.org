@@ -20,21 +20,32 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { createNotificationEventResolvers } from '../utils'
-import { LegacyRemoveEntityLinkNotificationEventResolvers } from './types'
-import { EntityPayload } from '~/schema/uuid/abstract-entity/types'
+import { TypeResolvers } from '~/internals/graphql'
+import { EntityDecoder } from '~/model/decoder'
+import { RemoveEntityLinkNotificationEvent } from '~/types'
 
-export const resolvers: LegacyRemoveEntityLinkNotificationEventResolvers = {
+export const resolvers: TypeResolvers<RemoveEntityLinkNotificationEvent> = {
   RemoveEntityLinkNotificationEvent: {
     ...createNotificationEventResolvers(),
     async parent(notificationEvent, _args, { dataSources }) {
-      return (await dataSources.model.serlo.getUuid({
+      const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: notificationEvent.parentId,
-      })) as EntityPayload | null
+        decoder: EntityDecoder,
+      })
+
+      if (parent === null) throw new Error('parent cannot be null')
+
+      return parent
     },
     async child(notificationEvent, _args, { dataSources }) {
-      return (await dataSources.model.serlo.getUuid({
+      const child = await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: notificationEvent.childId,
-      })) as EntityPayload | null
+        decoder: EntityDecoder,
+      })
+
+      if (child === null) throw new Error('child cannot be null')
+
+      return child
     },
   },
 }

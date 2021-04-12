@@ -22,26 +22,28 @@
 import * as R from 'ramda'
 
 import { resolveUser } from '../uuid/user/utils'
-import {
-  AbstractNotificationEventPayload,
-  NotificationEventResolvers,
-  NotificationEventType,
-} from './types'
+import { Model, PickResolvers } from '~/internals/graphql'
+import { NotificationEventType } from '~/model/decoder'
 
 const validTypes = Object.values(NotificationEventType)
 
 export function isUnsupportedNotificationEvent(
-  payload: AbstractNotificationEventPayload
+  payload: Model<'AbstractNotificationEvent'>
 ) {
   return !R.includes(payload.__typename, validTypes)
 }
 
-export function createNotificationEventResolvers<
-  T extends AbstractNotificationEventPayload
->(): NotificationEventResolvers<T> {
+export function createNotificationEventResolvers(): PickResolvers<
+  'AbstractNotificationEvent',
+  'actor'
+> {
   return {
-    actor(notificationEvent, _args, context) {
-      return resolveUser({ id: notificationEvent.actorId }, context)
+    async actor(notificationEvent, _args, context) {
+      const user = await resolveUser({ id: notificationEvent.actorId }, context)
+
+      if (user === null) throw new Error('user cannot be null')
+
+      return user
     },
   }
 }
