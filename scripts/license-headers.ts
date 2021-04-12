@@ -55,7 +55,7 @@ void g('**/*@(.js|.ts|.tsx)', {
   cwd: root,
   ignore: [
     '**/dist/**',
-    '**/dist-types/**',
+    '**/dist-api/**',
     '**/node_modules/**',
     'src/types.ts',
   ],

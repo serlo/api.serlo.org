@@ -912,9 +912,6 @@ export function assertAll<A>(args: {
 } & ErrorEvent_2): (list: A[]) => A[];
 
 // @public (undocumented)
-export function assertUserIsAuthenticated(user: number | null): asserts user is number;
-
-// @public (undocumented)
 export type AsyncOrSync<T> = Promise<T> | T;
 
 // @public (undocumented)
