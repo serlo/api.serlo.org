@@ -100,7 +100,9 @@ export function createMessageHandler(
   const { message, body, statusCode } = args
 
   return createDatabaseLayerHandler({
-    matchMessage: message,
+    matchType: message.type,
+    matchPayloads:
+      message.payload === undefined ? undefined : [message.payload],
     resolver: (_req, res, ctx) => {
       return (once ? res.once : res)(
         ctx.status(statusCode ?? 200),
@@ -113,18 +115,19 @@ export function createMessageHandler(
 }
 
 export function createDatabaseLayerHandler<Payload = DefaultPayloadType>(args: {
-  matchMessage: MessagePayload<Payload>
+  matchType: string
+  matchPayloads?: Payload[]
   resolver: RestResolver<Required<MessagePayload<Payload>>>
 }) {
-  const { matchMessage, resolver } = args
+  const { matchType, matchPayloads, resolver } = args
 
   const handler = rest.post(getDatabaseLayerUrl({ path: '/' }), resolver)
 
   // Only use this handler if message matches
   handler.predicate = (req) =>
-    req.body.type === matchMessage.type &&
-    (matchMessage.payload === undefined ||
-      R.equals(req.body.payload, matchMessage.payload))
+    req.body.type === matchType &&
+    (matchPayloads === undefined ||
+      matchPayloads.some((payload) => R.equals(req.body.payload, payload)))
 
   return handler
 }

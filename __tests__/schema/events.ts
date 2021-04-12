@@ -334,7 +334,7 @@ function setupEvents(
 
   global.server.use(
     createDatabaseLayerHandler<{ after?: number }>({
-      matchMessage: { type: 'EventsQuery' },
+      matchType: 'EventsQuery',
       resolver(req, res, ctx) {
         const { after } = req.body.payload
 
