@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.21.1](https://github.com/serlo/api.serlo.org/compare/v0.21.0..v0.21.1) - April 12, 2021
+
+### Internal
+
+- Handle cache keys for Google Spreadsheets correctly.
+
+- No longer leak authorization exports in @serlo/api.
+
+- **notification**. Reject invalid cache values.
+
 ## [v0.21.0](https://github.com/serlo/api.serlo.org/compare/v0.20.5..v0.21.0) - April 9, 2021
 
 ### Added

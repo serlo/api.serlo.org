@@ -696,6 +696,15 @@ async function exec(): Promise<void> {
       added: [['authorization', 'Initial internal test release.']],
       internal: ['Add configurable `swrFrequency`.'],
     },
+    {
+      tagName: 'v0.21.1',
+      date: '2021-04-12',
+      internal: [
+        'Handle cache keys for Google Spreadsheets correctly.',
+        'No longer leak authorization exports in @serlo/api.',
+        ['notification', 'Reject invalid cache values.'],
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
