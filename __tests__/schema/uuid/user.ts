@@ -312,7 +312,10 @@ describe('endpoint activeAuthors', () => {
   })
 
   test('returns only users', async () => {
-    global.server.use(createActiveAuthorsHandler([user, article]))
+    global.server.use(
+      createActiveAuthorsHandler([user, article]),
+      createUuidHandler(article)
+    )
 
     await expectUserIds({ endpoint: 'activeAuthors', ids: [user.id] })
   })
@@ -329,7 +332,10 @@ describe('endpoint activeReviewers', () => {
   })
 
   test('returns only users', async () => {
-    global.server.use(createActiveReviewersHandler([user, article]))
+    global.server.use(
+      createActiveReviewersHandler([user, article]),
+      createUuidHandler(article)
+    )
 
     await expectUserIds({ endpoint: 'activeReviewers', ids: [user.id] })
   })
