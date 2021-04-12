@@ -2,7 +2,7 @@ import { UserInputError } from 'apollo-server'
 
 import { AuthorizationPayload, instanceToScope, Scope } from '~/authorization'
 import { Context } from '~/internals/graphql'
-import { CommentDecoder, DiscriminatorType, UserDecoder } from '~/model/decoder'
+import { DiscriminatorType, UserDecoder } from '~/model/decoder'
 import {
   resolveRolesPayload,
   Role,
