@@ -84,7 +84,7 @@ const eventRepository: Record<
   [NotificationEventType.SetTaxonomyParent]: setTaxonomyTermNotificationEvent,
   [NotificationEventType.SetThreadState]: setThreadStateNotificationEvent,
 }
-const allEvents = updateIds(R.values(eventRepository))
+const allEvents = assignSequentialIds(R.values(eventRepository))
 
 describe('query endpoint "events"', () => {
   test('returns event log', async () => {
@@ -107,7 +107,7 @@ describe('query endpoint "events"', () => {
   })
 
   test('with filter "actorId"', async () => {
-    const events = updateIds(
+    const events = assignSequentialIds(
       R.concat(
         allEvents.map(R.assoc('actorId', 42)),
         allEvents.map(R.assoc('actorId', 23))
@@ -136,7 +136,7 @@ describe('query endpoint "events"', () => {
   })
 
   test('with filter "instance"', async () => {
-    const events = updateIds(
+    const events = assignSequentialIds(
       R.concat(
         allEvents.map(R.assoc('instance', Instance.En)),
         allEvents.map(R.assoc('instance', Instance.De))
@@ -165,7 +165,7 @@ describe('query endpoint "events"', () => {
   })
 
   test('with filter "objectId"', async () => {
-    const events = updateIds(
+    const events = assignSequentialIds(
       R.concat(
         allEvents.map(R.assoc('objectId', 42)),
         allEvents.map(R.assoc('objectId', 23))
@@ -194,7 +194,9 @@ describe('query endpoint "events"', () => {
   })
 
   test('number of returned events is bounded to 100 when first = last = undefined', async () => {
-    const events = updateIds(R.range(0, 10).flatMap(R.always(allEvents)))
+    const events = assignSequentialIds(
+      R.range(0, 10).flatMap(R.always(allEvents))
+    )
     setupEvents(events)
 
     await assertSuccessfulGraphQLQuery({
@@ -249,7 +251,7 @@ describe('query endpoint "events"', () => {
 })
 
 test('User.eventsByUser returns events of this user', async () => {
-  const events = updateIds(
+  const events = assignSequentialIds(
     R.concat(
       allEvents.map(R.assoc('actorId', user.id)),
       allEvents.map(R.assoc('actorId', user.id + 1))
@@ -286,7 +288,7 @@ test('User.eventsByUser returns events of this user', async () => {
 })
 
 test('AbstractEntity.events returns events for this entity', async () => {
-  const events = updateIds(
+  const events = assignSequentialIds(
     R.concat(
       allEvents.map(R.assoc('objectId', article.id)),
       allEvents.map(R.assoc('objectId', article.id + 1))
@@ -356,6 +358,6 @@ function getTypenameAndId(event: Model<'AbstractNotificationEvent'>) {
   return R.pick(['__typename', 'id'], event)
 }
 
-function updateIds(events: Model<'AbstractNotificationEvent'>[]) {
+function assignSequentialIds(events: Model<'AbstractNotificationEvent'>[]) {
   return events.map((event, id) => R.assoc('id', id + 1, event))
 }
