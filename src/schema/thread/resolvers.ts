@@ -126,9 +126,18 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       }
     },
     async createComment(_parent, { input }, { dataSources, userId }) {
-      assertUserIsAuthenticated(userId)
-
       const threadId = decodeThreadId(input.threadId)
+      const scope = await fetchScopeOfUuid({ id: threadId, dataSources })
+
+      assertUserIsAuthenticated(userId)
+      await assertUserIsAuthorized({
+        userId,
+        guard: auth.Thread.createComment,
+        message: 'You are not allowed to comment on this thread.',
+        scope,
+        dataSources,
+      })
+
       const commentPayload = await dataSources.model.serlo.createComment({
         ...input,
         threadId,
