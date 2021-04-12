@@ -23,7 +23,7 @@ import * as R from 'ramda'
 
 import { license } from '../license'
 import { Model } from '~/internals/graphql'
-import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
+import { DiscriminatorType } from '~/model/decoder'
 import { Instance } from '~/types'
 
 export const page: Model<'Page'> = {
