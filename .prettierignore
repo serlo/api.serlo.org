@@ -4,8 +4,6 @@ api/
 
 # Transpiled code
 dist/
-dist-api/
-dist-authorization/
 
 # Generated pact files
 pacts/

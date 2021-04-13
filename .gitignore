@@ -82,12 +82,6 @@ pacts/
 
 # Transpiled code
 dist/
-dist-api/
-dist-authorization/
-
-# API Extractor
-.api-extractor
-tsdoc-metadata.json
 
 # WebStorm
 .idea
