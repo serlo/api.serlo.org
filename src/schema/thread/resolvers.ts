@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ApolloError, ForbiddenError } from 'apollo-server'
+import { ApolloError } from 'apollo-server'
 
 import { decodeThreadId, decodeThreadIds, encodeThreadId } from './utils'
 import * as auth from '~/authorization'
@@ -126,9 +126,18 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       }
     },
     async createComment(_parent, { input }, { dataSources, userId }) {
-      assertUserIsAuthenticated(userId)
-
       const threadId = decodeThreadId(input.threadId)
+      const scope = await fetchScopeOfUuid({ id: threadId, dataSources })
+
+      assertUserIsAuthenticated(userId)
+      await assertUserIsAuthorized({
+        userId,
+        guard: auth.Thread.createComment,
+        message: 'You are not allowed to comment on this thread.',
+        scope,
+        dataSources,
+      })
+
       const commentPayload = await dataSources.model.serlo.createComment({
         ...input,
         threadId,
@@ -142,30 +151,49 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       }
     },
     async setThreadArchived(_parent, payload, { dataSources, userId }) {
-      assertUserIsAuthenticated(userId)
-      // TODO: Mock permissions for now
-      if ([1, 10, 15473, 18981].indexOf(userId) < 0) {
-        throw new ForbiddenError('You are not allowed to set the thread state.')
-      }
       const { id, archived } = payload.input
+      const ids = decodeThreadIds(id)
+
+      const scopes = await Promise.all(
+        ids.map((id) => fetchScopeOfUuid({ id, dataSources }))
+      )
+
+      assertUserIsAuthenticated(userId)
+      await assertUserIsAuthorized({
+        userId,
+        guard: auth.Thread.setThreadArchived,
+        message: 'You are not allowed to archive the provided thread(s).',
+        scopes,
+        dataSources,
+      })
 
       await dataSources.model.serlo.archiveThread({
-        ids: decodeThreadIds(id),
+        ids,
         archived,
         userId,
       })
       return { success: true, query: {} }
     },
     async setThreadState(_parent, payload, { dataSources, userId }) {
-      assertUserIsAuthenticated(userId)
-      // TODO: Mock permissions for now
-      if ([1, 10, 15473, 18981].indexOf(userId) < 0) {
-        throw new ForbiddenError('You are not allowed to set the thread state.')
-      }
       const { id, trashed } = payload.input
+      const ids = decodeThreadIds(id)
+
+      const scopes = await Promise.all(
+        ids.map((id) => fetchScopeOfUuid({ id, dataSources }))
+      )
+
+      assertUserIsAuthenticated(userId)
+      await assertUserIsAuthorized({
+        userId,
+        guard: auth.Thread.setThreadState,
+        message:
+          'You are not allowed to set the state of the provided thread(s).',
+        scopes,
+        dataSources,
+      })
 
       await dataSources.model.serlo.setUuidState({
-        ids: decodeThreadIds(id),
+        ids,
         userId,
         trashed,
       })
@@ -175,13 +203,22 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       }
     },
     async setCommentState(_parent, payload, { dataSources, userId }) {
-      assertUserIsAuthenticated(userId)
-      // TODO: Mock permissions for now
-      if ([1, 10, 15473, 18981].indexOf(userId) < 0) {
-        throw new ForbiddenError('You are not allowed to set the thread state.')
-      }
       const { id, trashed } = payload.input
-      const ids = Array.isArray(id) ? id : [id]
+      const ids = id
+
+      const scopes = await Promise.all(
+        ids.map((id) => fetchScopeOfUuid({ id, dataSources }))
+      )
+
+      assertUserIsAuthenticated(userId)
+      await assertUserIsAuthorized({
+        userId,
+        guard: auth.Thread.setThreadState,
+        message:
+          'You are not allowed to set the state of the provided comments(s).',
+        scopes,
+        dataSources,
+      })
 
       await dataSources.model.serlo.setUuidState({
         ids: ids,

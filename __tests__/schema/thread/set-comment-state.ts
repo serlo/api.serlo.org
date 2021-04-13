@@ -21,13 +21,14 @@
  */
 import { gql } from 'apollo-server'
 
-import { comment, user } from '../../../__fixtures__'
+import { article, comment, user } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   Client,
   createMessageHandler,
   createTestClient,
+  createUuidHandler,
 } from '../../__utils__'
 
 let client: Client
@@ -47,7 +48,24 @@ describe('setCommentState', () => {
     }
   `
 
-  test('deleting comment returns success', async () => {
+  test('unauthenticated user gets error', async () => {
+    global.server.use(createUuidHandler(article), createUuidHandler(comment))
+    await assertFailingGraphQLMutation({
+      mutation,
+      variables: { input: { id: comment.id, trashed: true } },
+      client: createTestClient({ userId: null }),
+      expectedError: 'UNAUTHENTICATED',
+    })
+  })
+
+  // TODO: this is actually wrong since the provided comment is a thread
+  test('trashing comment returns success', async () => {
+    global.server.use(
+      createUuidHandler(article),
+      createUuidHandler(comment),
+      createUuidHandler(user)
+    )
+
     global.server.use(
       createMessageHandler({
         message: {
@@ -65,15 +83,6 @@ describe('setCommentState', () => {
       client,
       variables: { input: { id: comment.id, trashed: true } },
       data: { thread: { setCommentState: { success: true } } },
-    })
-  })
-
-  test('unauthenticated user gets error', async () => {
-    await assertFailingGraphQLMutation({
-      mutation,
-      variables: { input: { id: comment.id, trashed: true } },
-      client: createTestClient({ userId: null }),
-      expectedError: 'UNAUTHENTICATED',
     })
   })
 })

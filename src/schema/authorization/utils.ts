@@ -23,7 +23,7 @@ import { UserInputError } from 'apollo-server'
 
 import { AuthorizationPayload, instanceToScope, Scope } from '~/authorization'
 import { Context, Model } from '~/internals/graphql'
-import { UserDecoder } from '~/model/decoder'
+import { DiscriminatorType, UserDecoder } from '~/model/decoder'
 import { resolveRolesPayload, RolesPayload } from '~/schema/authorization/roles'
 import { isInstance, isInstanceAware } from '~/schema/instance/utils'
 import { Role } from '~/types'
@@ -73,9 +73,18 @@ export async function fetchScopeOfUuid({
 }): Promise<Scope> {
   const object = await dataSources.model.serlo.getUuid({ id })
   if (object === null) throw new UserInputError('UUID does not exist.')
-  return isInstanceAware(object)
-    ? instanceToScope(object.instance)
-    : Scope.Serlo
+
+  // If the object has an instance, return the corresponding scope
+  if (isInstanceAware(object)) {
+    return instanceToScope(object.instance)
+  }
+
+  // Comments and Threads don't have an instance itself, but their object descendant has
+  if (object.__typename === DiscriminatorType.Comment) {
+    return await fetchScopeOfUuid({ id: object.parentId, dataSources })
+  }
+
+  return Scope.Serlo
 }
 
 export function resolveScopedRoles(user: Model<'User'>): Model<'ScopedRole'>[] {
