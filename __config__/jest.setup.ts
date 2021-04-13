@@ -30,7 +30,25 @@ import {
 setup()
 
 beforeAll(async () => {
-  await createBeforeAll({ onUnhandledRequest: 'error' })
+  await createBeforeAll({
+    onUnhandledRequest(req) {
+      if (
+        req.method === 'POST' &&
+        req.url.href.includes(process.env.SERLO_ORG_DATABASE_LAYER_HOST)
+      ) {
+        console.error(
+          'Found an unhandled request for message %s',
+          JSON.stringify(req.body)
+        )
+      } else {
+        console.error(
+          'Found an unhandled %s request to %s',
+          req.method,
+          req.url.href
+        )
+      }
+    },
+  })
 })
 
 beforeEach(createBeforeEach)

@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { AuthenticationError, ForbiddenError } from 'apollo-server'
+import * as R from 'ramda'
 
 import { AuthorizationGuard, Scope } from '~/authorization'
 import { Context } from '~/internals/graphql/context'
@@ -36,23 +37,33 @@ export function assertUserIsAuthenticated(
 export async function assertUserIsAuthorized({
   userId,
   guard,
-  scope,
   message,
   dataSources,
+  ...scopeRequest
 }: {
   userId: number | null
-  scope: Scope
   guard: AuthorizationGuard
   message: string
   dataSources: Context['dataSources']
-}): Promise<void> {
+} & ScopeRequest): Promise<void> {
   const authorizationPayload = await fetchAuthorizationPayload({
     userId,
     dataSources,
   })
-  if (!guard({ authorizationPayload, scope })) {
-    throw new ForbiddenError(message)
-  }
+  const scopes = fromScopeRequest(scopeRequest)
+  scopes.forEach((scope) => {
+    if (!guard({ authorizationPayload, scope })) {
+      throw new ForbiddenError(message)
+    }
+  })
+}
+
+export type ScopeRequest = { scope: Scope } | { scopes: Scope[] }
+
+function fromScopeRequest(scopeRequest: ScopeRequest): Scope[] {
+  return R.has('scopes', scopeRequest)
+    ? scopeRequest.scopes
+    : [scopeRequest.scope]
 }
 
 export function createMutationNamespace() {
