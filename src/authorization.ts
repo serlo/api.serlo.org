@@ -29,6 +29,13 @@
  * The scope name represents its inheritance path, split by a colon (e.g. "serlo.org:de:math:foobar"). This allows us
  * to optimize fetching the authorization payload later (e.g. frontend might only request the permissions for de.serlo.org).
  */
+import { either as E } from 'fp-ts'
+import { Model } from '~/internals/graphql'
+import {
+  DiscriminatorType,
+  EntityRevisionTypeDecoder,
+  EntityTypeDecoder,
+} from '~/model/decoder'
 import { Instance } from '~/types'
 
 export enum Scope {
@@ -103,4 +110,37 @@ export const Thread = {
   setThreadArchived: createPermissionGuard(Permission.Thread_SetThreadArchived),
   setThreadState: createPermissionGuard(Permission.Thread_SetThreadState),
   setCommentState: createPermissionGuard(Permission.Thread_SetCommentState),
+}
+
+export const Uuid = {
+  setUuid: ({
+    __typename,
+  }: Pick<Model<'AbstractUuid'>, '__typename'>): AuthorizationGuard => {
+    return (payload) => {
+      switch (__typename) {
+        case DiscriminatorType.Comment:
+          return false
+        case DiscriminatorType.Page:
+          return checkPermission(Permission.Uuid_SetState_Page)
+        case DiscriminatorType.PageRevision:
+          return checkPermission(Permission.Uuid_SetState_PageRevision)
+        case DiscriminatorType.TaxonomyTerm:
+          return checkPermission(Permission.Uuid_SetState_TaxonomyTerm)
+        case DiscriminatorType.User:
+          return false
+        default:
+          if (E.isRight(EntityTypeDecoder.decode(__typename))) {
+            return checkPermission(Permission.Uuid_SetState_Entity)
+          }
+          if (E.isRight(EntityRevisionTypeDecoder.decode(__typename))) {
+            return checkPermission(Permission.Uuid_SetState_Entity)
+          }
+          return false
+      }
+
+      function checkPermission(permission: Permission) {
+        return createPermissionGuard(permission)(payload)
+      }
+    }
+  },
 }
