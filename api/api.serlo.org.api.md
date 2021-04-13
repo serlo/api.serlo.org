@@ -851,7 +851,7 @@ export const CommentDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
-    __typename: t.LiteralC<"Comment">;
+    __typename: t.LiteralC<DiscriminatorType.Comment>;
     authorId: t.NumberC;
     title: t.UnionC<[t.StringC, t.NullC]>;
     date: t.StringC;
@@ -1433,7 +1433,7 @@ export function createSerloModel({ environment, }: {
         trashed: boolean;
         alias: string;
     } & {
-        __typename: "Comment";
+        __typename: DiscriminatorType.Comment;
         authorId: number;
         title: string | null;
         date: string;
@@ -1450,7 +1450,7 @@ export function createSerloModel({ environment, }: {
                 trashed: boolean;
                 alias: string;
             } & {
-                __typename: "Comment";
+                __typename: DiscriminatorType.Comment;
                 authorId: number;
                 title: string | null;
                 date: string;
@@ -1465,7 +1465,7 @@ export function createSerloModel({ environment, }: {
                 trashed: boolean;
                 alias: string;
             } & {
-                __typename: "Comment";
+                __typename: DiscriminatorType.Comment;
                 authorId: number;
                 title: string | null;
                 date: string;
@@ -1478,7 +1478,7 @@ export function createSerloModel({ environment, }: {
                 trashed: boolean;
                 alias: string;
             } & {
-                __typename: "Comment";
+                __typename: DiscriminatorType.Comment;
                 authorId: number;
                 title: string | null;
                 date: string;
@@ -1494,7 +1494,7 @@ export function createSerloModel({ environment, }: {
                 trashed: boolean;
                 alias: string;
             } & {
-                __typename: "Comment";
+                __typename: DiscriminatorType.Comment;
                 authorId: number;
                 title: string | null;
                 date: string;
@@ -1544,7 +1544,7 @@ export function createSerloModel({ environment, }: {
         trashed: boolean;
         alias: string;
     } & {
-        __typename: "Comment";
+        __typename: DiscriminatorType.Comment;
         authorId: number;
         title: string | null;
         date: string;
@@ -1565,7 +1565,7 @@ export function createSerloModel({ environment, }: {
                 trashed: boolean;
                 alias: string;
             } & {
-                __typename: "Comment";
+                __typename: DiscriminatorType.Comment;
                 authorId: number;
                 title: string | null;
                 date: string;
@@ -1580,7 +1580,7 @@ export function createSerloModel({ environment, }: {
                 trashed: boolean;
                 alias: string;
             } & {
-                __typename: "Comment";
+                __typename: DiscriminatorType.Comment;
                 authorId: number;
                 title: string | null;
                 date: string;
@@ -1593,7 +1593,7 @@ export function createSerloModel({ environment, }: {
                 trashed: boolean;
                 alias: string;
             } & {
-                __typename: "Comment";
+                __typename: DiscriminatorType.Comment;
                 authorId: number;
                 title: string | null;
                 date: string;
@@ -1613,7 +1613,7 @@ export function createSerloModel({ environment, }: {
                 trashed: boolean;
                 alias: string;
             } & {
-                __typename: "Comment";
+                __typename: DiscriminatorType.Comment;
                 authorId: number;
                 title: string | null;
                 date: string;
@@ -1874,7 +1874,7 @@ export function createSerloModel({ environment, }: {
         trashed: boolean;
         alias: string;
     } & {
-        __typename: "Comment";
+        __typename: DiscriminatorType.Comment;
         authorId: number;
         title: string | null;
         date: string;
@@ -2235,7 +2235,7 @@ export function createSerloModel({ environment, }: {
         trashed: boolean;
         alias: string;
     } & {
-        __typename: "Comment";
+        __typename: DiscriminatorType.Comment;
         authorId: number;
         title: string | null;
         date: string;
@@ -6949,7 +6949,7 @@ export const UuidDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
     trashed: t.BooleanC;
     alias: t.RefinementC<t.StringC>;
 }>, t.TypeC<{
-    __typename: t.LiteralC<"Comment">;
+    __typename: t.LiteralC<DiscriminatorType.Comment>;
     authorId: t.NumberC;
     title: t.UnionC<[t.StringC, t.NullC]>;
     date: t.StringC;

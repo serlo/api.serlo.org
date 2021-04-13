@@ -205,7 +205,7 @@ export const CommentDecoder = t.exact(
   t.intersection([
     AbstractUuidDecoder,
     t.type({
-      __typename: t.literal('Comment'),
+      __typename: t.literal(DiscriminatorType.Comment),
       authorId: t.number,
       title: t.union([t.string, t.null]),
       date: t.string,
