@@ -48,10 +48,24 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
       Permission.Thread_SetCommentState,
     ],
   },
-  [Role.Reviewer]: {},
-  [Role.Architect]: {},
-  [Role.StaticPagesBuilder]: {},
-  [Role.Admin]: {},
+  [Role.Reviewer]: {
+    permissions: [Permission.Uuid_SetState_EntityRevision],
+  },
+  [Role.Architect]: {
+    permissions: [
+      Permission.Uuid_SetState_Entity,
+      Permission.Uuid_SetState_TaxonomyTerm,
+    ],
+  },
+  [Role.StaticPagesBuilder]: {
+    permissions: [
+      Permission.Uuid_SetState_Page,
+      Permission.Uuid_SetState_PageRevision,
+    ],
+  },
+  [Role.Admin]: {
+    extends: [Role.Moderator, Role.Reviewer, Role.Architect],
+  },
 }
 
 export type RolesPayload = { [scope in Scope]?: Role[] }

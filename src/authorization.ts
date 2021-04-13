@@ -56,6 +56,11 @@ export enum Permission {
   Thread_SetThreadArchived = 'thread:setThreadArchived',
   Thread_SetThreadState = 'thread:setThreadState',
   Thread_SetCommentState = 'thread:setCommentState',
+  Uuid_SetState_Entity = 'uuid:setState:Entity',
+  Uuid_SetState_EntityRevision = 'uuid:setState:EntityRevision',
+  Uuid_SetState_Page = 'uuid:setState:Page',
+  Uuid_SetState_PageRevision = 'uuid:setState:PageRevision',
+  Uuid_SetState_TaxonomyTerm = 'uuid:setState:TaxonomyTerm',
 }
 
 /**
