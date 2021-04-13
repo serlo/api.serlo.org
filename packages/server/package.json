@@ -20,7 +20,9 @@
     "@graphql-codegen/add": "^2.0.0",
     "@graphql-codegen/cli": "^1.0.0",
     "@graphql-codegen/typescript": "^1.0.0",
-    "@graphql-codegen/typescript-resolvers": "^1.0.0"
+    "@graphql-codegen/typescript-resolvers": "^1.0.0",
+    "@zerollup/ts-transform-paths": "^1.0.0",
+    "ttypescript": "^1.0.0"
   },
   "publishConfig": {
     "access": "public"
