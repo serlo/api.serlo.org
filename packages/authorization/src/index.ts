@@ -1,22 +1,24 @@
 /**
- * Users are granted permissions in a specific scope. Scopes may inherit other scopes. Therefore, scopes are lay out
- * in a tree-like structure (or to be more precise, a forest-like structure). For now, we have a scope for each
- * instance (e.g. de.serlo.org) and one global scope (e.g. serlo.org). In the future we might add more granular scopes
- * (e.g. subject "Mathematik" in de.serlo.org) or other global scopes (e.g. some-fancy-new-product.serlo.org).
+ * This file is part of Serlo.org API
  *
- * The scope name represents its inheritance path, split by a colon (e.g. "serlo.org:de:math:foobar"). This allows us
- * to optimize fetching the authorization payload later (e.g. frontend might only request the permissions for de.serlo.org).
+ * Copyright (c) 2020-2021 Serlo Education e.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License")
+ * you may not use this file except in compliance with the License
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @copyright Copyright (c) 2020-2021 Serlo Education e.V.
+ * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
+ * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { either as E } from 'fp-ts'
-
-import { Model } from '~/internals/graphql'
-import {
-  DiscriminatorType,
-  EntityRevisionTypeDecoder,
-  EntityTypeDecoder,
-} from '~/model/decoder'
-import { Instance } from '~/types'
-
 export enum Scope {
   Serlo = 'serlo.org',
   Serlo_De = 'serlo.org:de',
@@ -25,6 +27,16 @@ export enum Scope {
   Serlo_Fr = 'serlo.org:fr',
   Serlo_Hi = 'serlo.org:hi',
   Serlo_Ta = 'serlo.org:ta',
+}
+
+// TODO: this should be imported from @serlo/api instead
+export enum Instance {
+  De = 'de',
+  En = 'en',
+  Es = 'es',
+  Fr = 'fr',
+  Hi = 'hi',
+  Ta = 'ta',
 }
 
 export function instanceToScope(instance: Instance | null): Scope {
@@ -94,29 +106,29 @@ export const Thread = {
   setCommentState: createPermissionGuard(Permission.Thread_SetCommentState),
 }
 
+export type UuidType =
+  | 'Entity'
+  | 'EntityRevision'
+  | 'Page'
+  | 'PageRevision'
+  | 'TaxonomyTerm'
+  | 'User'
+
 export const Uuid = {
-  setUuid: ({
-    __typename,
-  }: Pick<Model<'AbstractUuid'>, '__typename'>): GenericAuthorizationGuard => {
+  setState: (type: UuidType): GenericAuthorizationGuard => {
     return (scope) => (authorizationPayload) => {
-      switch (__typename) {
-        case DiscriminatorType.Comment:
-          return false
-        case DiscriminatorType.Page:
+      switch (type) {
+        case 'Entity':
+          return checkPermission(Permission.Uuid_SetState_Entity)
+        case 'EntityRevision':
+          return checkPermission(Permission.Uuid_SetState_EntityRevision)
+        case 'Page':
           return checkPermission(Permission.Uuid_SetState_Page)
-        case DiscriminatorType.PageRevision:
+        case 'PageRevision':
           return checkPermission(Permission.Uuid_SetState_PageRevision)
-        case DiscriminatorType.TaxonomyTerm:
+        case 'TaxonomyTerm':
           return checkPermission(Permission.Uuid_SetState_TaxonomyTerm)
-        case DiscriminatorType.User:
-          return false
-        default:
-          if (E.isRight(EntityTypeDecoder.decode(__typename))) {
-            return checkPermission(Permission.Uuid_SetState_Entity)
-          }
-          if (E.isRight(EntityRevisionTypeDecoder.decode(__typename))) {
-            return checkPermission(Permission.Uuid_SetState_Entity)
-          }
+        case 'User':
           return false
       }
 
