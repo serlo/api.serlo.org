@@ -402,6 +402,37 @@ export type AbstractNotificationEventEdge = {
   node: CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent;
 };
 
+export type ScopedRole = {
+  __typename?: 'ScopedRole';
+  role: Role;
+  scope?: Maybe<Scalars['String']>;
+};
+
+export enum Role {
+  Guest = 'guest',
+  Login = 'login',
+  Sysadmin = 'sysadmin',
+  Moderator = 'moderator',
+  Reviewer = 'reviewer',
+  Architect = 'architect',
+  StaticPagesBuilder = 'staticPagesBuilder',
+  Admin = 'admin'
+}
+
+export type ScopedRoleConnection = {
+  __typename?: 'ScopedRoleConnection';
+  edges: Array<ScopedRoleCursor>;
+  nodes: Array<ScopedRole>;
+  totalCount: Scalars['Int'];
+  pageInfo: PageInfo;
+};
+
+export type ScopedRoleCursor = {
+  __typename?: 'ScopedRoleCursor';
+  cursor: Scalars['String'];
+  node: ScopedRole;
+};
+
 export type QuerySubscriptionResult = {
   __typename?: 'QuerySubscriptionResult';
   edges: Array<SubscriptionCursor>;
@@ -1972,6 +2003,7 @@ export type User = AbstractUuid & ThreadAware & {
   username: Scalars['String'];
   date: Scalars['DateTime'];
   lastLogin?: Maybe<Scalars['DateTime']>;
+  roles: ScopedRoleConnection;
   description?: Maybe<Scalars['String']>;
   activeAuthor: Scalars['Boolean'];
   activeDonor: Scalars['Boolean'];
@@ -2006,6 +2038,14 @@ export type UserEventsByUserArgs = {
   last?: Maybe<Scalars['Int']>;
   instance?: Maybe<Instance>;
   objectId?: Maybe<Scalars['Int']>;
+};
+
+
+export type UserRolesArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type UserConnection = {
@@ -2239,6 +2279,10 @@ export type ResolversTypes = {
   NotificationEdge: ResolverTypeWrapper<ModelOf<NotificationEdge>>;
   AbstractNotificationEventConnection: ResolverTypeWrapper<ModelOf<AbstractNotificationEventConnection>>;
   AbstractNotificationEventEdge: ResolverTypeWrapper<ModelOf<AbstractNotificationEventEdge>>;
+  ScopedRole: ResolverTypeWrapper<ModelOf<ScopedRole>>;
+  Role: ResolverTypeWrapper<ModelOf<Role>>;
+  ScopedRoleConnection: ResolverTypeWrapper<ModelOf<ScopedRoleConnection>>;
+  ScopedRoleCursor: ResolverTypeWrapper<ModelOf<ScopedRoleCursor>>;
   QuerySubscriptionResult: ResolverTypeWrapper<ModelOf<QuerySubscriptionResult>>;
   SubscriptionCursor: ResolverTypeWrapper<ModelOf<SubscriptionCursor>>;
   SubscriptionMutation: ResolverTypeWrapper<ModelOf<SubscriptionMutation>>;
@@ -2374,6 +2418,9 @@ export type ResolversParentTypes = {
   NotificationEdge: ModelOf<NotificationEdge>;
   AbstractNotificationEventConnection: ModelOf<AbstractNotificationEventConnection>;
   AbstractNotificationEventEdge: ModelOf<AbstractNotificationEventEdge>;
+  ScopedRole: ModelOf<ScopedRole>;
+  ScopedRoleConnection: ModelOf<ScopedRoleConnection>;
+  ScopedRoleCursor: ModelOf<ScopedRoleCursor>;
   QuerySubscriptionResult: ModelOf<QuerySubscriptionResult>;
   SubscriptionCursor: ModelOf<SubscriptionCursor>;
   SubscriptionMutation: ModelOf<SubscriptionMutation>;
@@ -2757,6 +2804,26 @@ export type AbstractNotificationEventConnectionResolvers<ContextType = Context, 
 export type AbstractNotificationEventEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractNotificationEventEdge'] = ResolversParentTypes['AbstractNotificationEventEdge']> = {
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<ResolversTypes['AbstractNotificationEvent'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ScopedRoleResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ScopedRole'] = ResolversParentTypes['ScopedRole']> = {
+  role?: Resolver<ResolversTypes['Role'], ParentType, ContextType>;
+  scope?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ScopedRoleConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ScopedRoleConnection'] = ResolversParentTypes['ScopedRoleConnection']> = {
+  edges?: Resolver<Array<ResolversTypes['ScopedRoleCursor']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<ResolversTypes['ScopedRole']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ScopedRoleCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ScopedRoleCursor'] = ResolversParentTypes['ScopedRoleCursor']> = {
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<ResolversTypes['ScopedRole'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3528,6 +3595,7 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   lastLogin?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  roles?: Resolver<ResolversTypes['ScopedRoleConnection'], ParentType, ContextType, RequireFields<UserRolesArgs, never>>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   activeAuthor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   activeDonor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -3627,6 +3695,9 @@ export type Resolvers<ContextType = Context> = {
   NotificationEdge?: NotificationEdgeResolvers<ContextType>;
   AbstractNotificationEventConnection?: AbstractNotificationEventConnectionResolvers<ContextType>;
   AbstractNotificationEventEdge?: AbstractNotificationEventEdgeResolvers<ContextType>;
+  ScopedRole?: ScopedRoleResolvers<ContextType>;
+  ScopedRoleConnection?: ScopedRoleConnectionResolvers<ContextType>;
+  ScopedRoleCursor?: ScopedRoleCursorResolvers<ContextType>;
   QuerySubscriptionResult?: QuerySubscriptionResultResolvers<ContextType>;
   SubscriptionCursor?: SubscriptionCursorResolvers<ContextType>;
   SubscriptionMutation?: SubscriptionMutationResolvers<ContextType>;

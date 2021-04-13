@@ -39,6 +39,7 @@ import {
   returnsJson,
   returnsMalformedJson,
 } from '../../__utils__'
+import { Scope } from '~/authorization'
 import { Model } from '~/internals/graphql'
 import { MajorDimension } from '~/model'
 import { Instance } from '~/types'
@@ -189,6 +190,45 @@ describe('User', () => {
     })
   })
 
+  test('property "roles"', async () => {
+    global.server.use(
+      createUuidHandler({
+        ...user,
+        roles: ['login', 'en_moderator', 'de_reviewer'],
+      })
+    )
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query($id: Int) {
+          uuid(id: $id) {
+            ... on User {
+              roles {
+                nodes {
+                  role
+                  scope
+                }
+              }
+            }
+          }
+        }
+      `,
+      data: {
+        uuid: {
+          roles: {
+            nodes: [
+              { role: 'login', scope: Scope.Serlo },
+              { role: 'moderator', scope: Scope.Serlo_En },
+              { role: 'reviewer', scope: Scope.Serlo_De },
+            ],
+          },
+        },
+      },
+      variables: { id: user.id },
+      client,
+    })
+  })
+
   describe('property "activeAuthor"', () => {
     const query = gql`
       query propertyActiveAuthor($id: Int!) {
@@ -312,7 +352,10 @@ describe('endpoint activeAuthors', () => {
   })
 
   test('returns only users', async () => {
-    global.server.use(createActiveAuthorsHandler([user, article]))
+    global.server.use(
+      createActiveAuthorsHandler([user, article]),
+      createUuidHandler(article)
+    )
 
     await expectUserIds({ endpoint: 'activeAuthors', ids: [user.id] })
   })
@@ -329,7 +372,10 @@ describe('endpoint activeReviewers', () => {
   })
 
   test('returns only users', async () => {
-    global.server.use(createActiveReviewersHandler([user, article]))
+    global.server.use(
+      createActiveReviewersHandler([user, article]),
+      createUuidHandler(article)
+    )
 
     await expectUserIds({ endpoint: 'activeReviewers', ids: [user.id] })
   })

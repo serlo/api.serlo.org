@@ -41,8 +41,8 @@ export enum Scope {
   Serlo_Ta = 'serlo.org:ta',
 }
 
-export function instanceToScope(instance: Instance): Scope {
-  return `serlo.org:${instance}` as Scope
+export function instanceToScope(instance: Instance | null): Scope {
+  return instance === null ? Scope.Serlo : (`serlo.org:${instance}` as Scope)
 }
 
 /**
