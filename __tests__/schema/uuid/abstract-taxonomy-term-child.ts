@@ -39,8 +39,8 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
-import { EntityPayload, EntityType } from '~/schema/uuid/abstract-entity/types'
-import { TaxonomyTermChildPayload } from '~/schema/uuid/abstract-taxonomy-term-child/types'
+import { Model } from '~/internals/graphql'
+import { EntityType } from '~/model/decoder'
 
 let client: Client
 
@@ -48,11 +48,9 @@ beforeEach(() => {
   client = createTestClient()
 })
 
-type TaxonomyTermChildType = TaxonomyTermChildPayload['__typename']
-
 const taxonomyTermChildFixtures: Record<
-  TaxonomyTermChildType,
-  EntityPayload
+  Model<'AbstractTaxonomyTermChild'>['__typename'],
+  Model<'AbstractTaxonomyTermChild'>
 > = {
   [EntityType.Applet]: applet,
   [EntityType.Article]: article,
@@ -62,13 +60,11 @@ const taxonomyTermChildFixtures: Record<
   [EntityType.ExerciseGroup]: exerciseGroup,
   [EntityType.Video]: video,
 }
-const taxonomyTermChildCases = R.toPairs(taxonomyTermChildFixtures) as Array<
-  [TaxonomyTermChildType, TaxonomyTermChildPayload]
->
+const taxonomyTermChildCases = R.toPairs(taxonomyTermChildFixtures)
 
 test.each(taxonomyTermChildCases)(
   '%s by id (w/ taxonomyTerms)',
-  async (type, entity) => {
+  async (_type, entity) => {
     global.server.use(
       createUuidHandler(entity),
       createUuidHandler(taxonomyTermSubject)

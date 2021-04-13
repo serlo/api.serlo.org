@@ -36,7 +36,6 @@ import {
 import { Service } from '~/internals/authentication'
 import { Model } from '~/internals/graphql'
 import { NavigationPayload } from '~/schema/uuid/abstract-navigation-child/types'
-import { TaxonomyTermPayload } from '~/schema/uuid/taxonomy-term/types'
 import { Instance } from '~/types'
 
 function createSetNavigationMutation(navigation: NavigationPayload) {
@@ -67,7 +66,7 @@ function createSetPageMutation(page: Model<'Page'>) {
   }
 }
 
-function createSetTaxonomyTermMutation(taxonomyTerm: TaxonomyTermPayload) {
+function createSetTaxonomyTermMutation(taxonomyTerm: Model<'TaxonomyTerm'>) {
   return {
     mutation: gql`
       mutation _setCache($key: String!, $value: JSON!) {

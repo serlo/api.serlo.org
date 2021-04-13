@@ -22,7 +22,7 @@
 import * as R from 'ramda'
 
 import { Model } from '~/internals/graphql'
-import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
+import { DiscriminatorType } from '~/model/decoder'
 import { Instance, TaxonomyTermType } from '~/types'
 
 export const taxonomyTermRoot: Model<'TaxonomyTerm'> = {
