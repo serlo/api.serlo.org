@@ -4,7 +4,7 @@
   "compilerOptions": {
     "baseUrl": "./src",
     "paths": {
-      "~/*": ["*"],
+      "~/*": ["*"]
     },
     "plugins": [{ "transform": "@zerollup/ts-transform-paths" }]
   }
