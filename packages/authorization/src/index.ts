@@ -19,6 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Instance } from '@serlo/api'
+
 export enum Scope {
   Serlo = 'serlo.org',
   Serlo_De = 'serlo.org:de',
@@ -27,16 +29,6 @@ export enum Scope {
   Serlo_Fr = 'serlo.org:fr',
   Serlo_Hi = 'serlo.org:hi',
   Serlo_Ta = 'serlo.org:ta',
-}
-
-// TODO: this should be imported from @serlo/api instead
-export enum Instance {
-  De = 'de',
-  En = 'en',
-  Es = 'es',
-  Fr = 'fr',
-  Hi = 'hi',
-  Ta = 'ta',
 }
 
 export function instanceToScope(instance: Instance | null): Scope {
