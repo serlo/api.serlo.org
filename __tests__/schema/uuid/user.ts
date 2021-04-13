@@ -39,6 +39,7 @@ import {
   returnsJson,
   returnsMalformedJson,
 } from '../../__utils__'
+import { Scope } from '~/authorization'
 import { Model } from '~/internals/graphql'
 import { MajorDimension } from '~/model'
 import { Instance } from '~/types'
@@ -185,6 +186,45 @@ describe('User', () => {
       data: {
         uuid: getUserDataWithoutSubResolvers(user),
       },
+      client,
+    })
+  })
+
+  test('property "roles"', async () => {
+    global.server.use(
+      createUuidHandler({
+        ...user,
+        roles: ['login', 'en_moderator', 'de_reviewer'],
+      })
+    )
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query($id: Int) {
+          uuid(id: $id) {
+            ... on User {
+              roles {
+                nodes {
+                  role
+                  scope
+                }
+              }
+            }
+          }
+        }
+      `,
+      data: {
+        uuid: {
+          roles: {
+            nodes: [
+              { role: 'login', scope: Scope.Serlo },
+              { role: 'moderator', scope: Scope.Serlo_En },
+              { role: 'reviewer', scope: Scope.Serlo_De },
+            ],
+          },
+        },
+      },
+      variables: { id: user.id },
       client,
     })
   })
