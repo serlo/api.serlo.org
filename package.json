@@ -20,6 +20,7 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "lerna": "^3.0.0",
     "prettier": "^2.0.0",
     "prettier-plugin-packagejson": "^2.0.0",
     "tsdx": "^0.14.0",

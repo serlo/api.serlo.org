@@ -10,7 +10,9 @@
   "scripts": {
     "build": "tsdx build --tsconfig tsconfig.prod.json"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@serlo/api": "^0.21.1"
+  },
   "devDependencies": {},
   "publishConfig": {
     "access": "public"
