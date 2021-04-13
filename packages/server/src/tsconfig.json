@@ -2,6 +2,10 @@
   "extends": "../../../tsconfig",
   "compilerOptions": {
     "emitDeclarationOnly": true,
-    "outDir": "../dist"
+    "outDir": "../dist",
+    "baseUrl": "./",
+    "paths": {
+      "~/*": ["*"]
+    }
   }
 }
