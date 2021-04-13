@@ -121,13 +121,13 @@ describe('resolveRolesPayload', () => {
       [Scope.Serlo_De]: [Role.Moderator],
     })
     expect(
-      Thread.setThreadArchived({ authorizationPayload, scope: Scope.Serlo_De })
+      Thread.setThreadArchived(Scope.Serlo_De)(authorizationPayload)
     ).toBeTruthy()
     expect(
-      Thread.setThreadArchived({ authorizationPayload, scope: Scope.Serlo_En })
+      Thread.setThreadArchived(Scope.Serlo_En)(authorizationPayload)
     ).toBeFalsy()
     expect(
-      Thread.setThreadArchived({ authorizationPayload, scope: Scope.Serlo })
+      Thread.setThreadArchived(Scope.Serlo)(authorizationPayload)
     ).toBeFalsy()
   })
 
@@ -136,13 +136,13 @@ describe('resolveRolesPayload', () => {
       [Scope.Serlo]: [Role.Moderator],
     })
     expect(
-      Thread.setThreadArchived({ authorizationPayload, scope: Scope.Serlo })
+      Thread.setThreadArchived(Scope.Serlo)(authorizationPayload)
     ).toBeTruthy()
     expect(
-      Thread.setThreadArchived({ authorizationPayload, scope: Scope.Serlo_De })
+      Thread.setThreadArchived(Scope.Serlo_De)(authorizationPayload)
     ).toBeTruthy()
     expect(
-      Thread.setThreadArchived({ authorizationPayload, scope: Scope.Serlo_En })
+      Thread.setThreadArchived(Scope.Serlo_En)(authorizationPayload)
     ).toBeTruthy()
   })
 
@@ -151,7 +151,7 @@ describe('resolveRolesPayload', () => {
       [Scope.Serlo]: [Role.Sysadmin],
     })
     expect(
-      Thread.setCommentState({ authorizationPayload, scope: Scope.Serlo })
+      Thread.setCommentState(Scope.Serlo)(authorizationPayload)
     ).toBeTruthy()
   })
 })
