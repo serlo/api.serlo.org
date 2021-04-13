@@ -50,7 +50,6 @@ export * from '~/schema/notification/set-taxonomy-parent-notification-event/type
 export * from '~/schema/notification/set-taxonomy-term-notification-event/types'
 export * from '~/schema/notification/set-thread-state-notification-event/types'
 export * from '~/schema/notification/set-uuid-state-notification-event/types'
-export * from '~/schema/subscription/types'
 export * from '~/schema/uuid/abstract-navigation-child/types'
 export * from '~/schema/uuid/abstract-repository/types'
 export * from '~/schema/uuid/taxonomy-term/types'
