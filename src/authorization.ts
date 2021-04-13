@@ -80,14 +80,15 @@ export type AuthorizationPayload = {
   [scope in Scope]?: Permission[]
 }
 
-/**
- * An `AuthorizationGuard` expects an `AuthorizationPayload` and the current `Scope`. It returns true if the user
- * may do the action associated with the guard. See `createPermissionGuard` for an example.
- */
-export type AuthorizationGuard = (args: {
+/** An `AuthorizationGuard` expects an `AuthorizationPayload`. It returns true if the user may do the action associated with the guard. */
+export type AuthorizationGuard = (
   authorizationPayload: AuthorizationPayload
-  scope: Scope
-}) => boolean
+) => boolean
+
+/**
+ * A `GenericAuthorizationGuard` expects the current `Scope` and returns an `AuthorizationGuard`.
+ */
+export type GenericAuthorizationGuard = (scope: Scope) => AuthorizationGuard
 
 /**
  * Creates an authorization guard that checks whether the user has the given permission in the given scope.
@@ -95,8 +96,10 @@ export type AuthorizationGuard = (args: {
  * @param permission The permission to check
  * @returns An `AuthorizationGuard`
  */
-function createPermissionGuard(permission: Permission): AuthorizationGuard {
-  return ({ authorizationPayload, scope }) => {
+function createPermissionGuard(
+  permission: Permission
+): GenericAuthorizationGuard {
+  return (scope) => (authorizationPayload) => {
     return authorizationPayload[scope]?.includes(permission) === true
   }
 }
@@ -115,8 +118,8 @@ export const Thread = {
 export const Uuid = {
   setUuid: ({
     __typename,
-  }: Pick<Model<'AbstractUuid'>, '__typename'>): AuthorizationGuard => {
-    return (payload) => {
+  }: Pick<Model<'AbstractUuid'>, '__typename'>): GenericAuthorizationGuard => {
+    return (scope) => (authorizationPayload) => {
       switch (__typename) {
         case DiscriminatorType.Comment:
           return false
@@ -139,7 +142,7 @@ export const Uuid = {
       }
 
       function checkPermission(permission: Permission) {
-        return createPermissionGuard(permission)(payload)
+        return createPermissionGuard(permission)(scope)(authorizationPayload)
       }
     }
   },

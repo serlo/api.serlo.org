@@ -22,7 +22,7 @@
 import { AuthenticationError, ForbiddenError } from 'apollo-server'
 import * as R from 'ramda'
 
-import { AuthorizationGuard, Scope } from '~/authorization'
+import { AuthorizationGuard } from '~/authorization'
 import { Context } from '~/internals/graphql/context'
 import { fetchAuthorizationPayload } from '~/schema/authorization/utils'
 
@@ -36,34 +36,34 @@ export function assertUserIsAuthenticated(
 
 export async function assertUserIsAuthorized({
   userId,
-  guard,
   message,
   dataSources,
-  ...scopeRequest
+  ...guardRequest
 }: {
   userId: number | null
-  guard: AuthorizationGuard
   message: string
   dataSources: Context['dataSources']
-} & ScopeRequest): Promise<void> {
+} & GuardRequest): Promise<void> {
   const authorizationPayload = await fetchAuthorizationPayload({
     userId,
     dataSources,
   })
-  const scopes = fromScopeRequest(scopeRequest)
-  scopes.forEach((scope) => {
-    if (!guard({ authorizationPayload, scope })) {
+  const guards = fromGuardRequest(guardRequest)
+  guards.forEach((guard) => {
+    if (!guard(authorizationPayload)) {
       throw new ForbiddenError(message)
     }
   })
 }
 
-export type ScopeRequest = { scope: Scope } | { scopes: Scope[] }
+export type GuardRequest =
+  | { guard: AuthorizationGuard }
+  | { guards: AuthorizationGuard[] }
 
-function fromScopeRequest(scopeRequest: ScopeRequest): Scope[] {
-  return R.has('scopes', scopeRequest)
-    ? scopeRequest.scopes
-    : [scopeRequest.scope]
+function fromGuardRequest(guardRequest: GuardRequest): AuthorizationGuard[] {
+  return R.has('guards', guardRequest)
+    ? guardRequest.guards
+    : [guardRequest.guard]
 }
 
 export function createMutationNamespace() {

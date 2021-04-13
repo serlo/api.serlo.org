@@ -105,9 +105,8 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
-        guard: auth.Thread.createThread,
+        guard: auth.Thread.createThread(scope),
         message: 'You are not allowed to create a thread on this object.',
-        scope,
         dataSources,
       })
 
@@ -132,9 +131,8 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
-        guard: auth.Thread.createComment,
+        guard: auth.Thread.createComment(scope),
         message: 'You are not allowed to comment on this thread.',
-        scope,
         dataSources,
       })
 
@@ -161,9 +159,8 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
-        guard: auth.Thread.setThreadArchived,
+        guards: scopes.map((scope) => auth.Thread.setThreadArchived(scope)),
         message: 'You are not allowed to archive the provided thread(s).',
-        scopes,
         dataSources,
       })
 
@@ -185,10 +182,9 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
-        guard: auth.Thread.setThreadState,
+        guards: scopes.map((scope) => auth.Thread.setThreadState(scope)),
         message:
           'You are not allowed to set the state of the provided thread(s).',
-        scopes,
         dataSources,
       })
 
@@ -213,10 +209,9 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
-        guard: auth.Thread.setThreadState,
+        guards: scopes.map((scope) => auth.Thread.setCommentState(scope)),
         message:
           'You are not allowed to set the state of the provided comments(s).',
-        scopes,
         dataSources,
       })
 
