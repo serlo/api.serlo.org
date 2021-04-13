@@ -1,0 +1,28 @@
+{
+  "name": "@serlo/api.serlo.org",
+  "version": "0.21.1",
+  "repository": "serlo/api.serlo.org",
+  "license": "Apache-2.0",
+  "author": "Serlo Education e.V.",
+  "main": "dist/index.js",
+  "module": "dist/authorization.esm.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "_build": "tsdx build --tsconfig tsconfig.prod.json",
+    "build:server": "yarn _build --format cjs --target node --entry src/server.ts",
+    "build:swr-queue-worker": "yarn _build --format cjs --target node --entry src/swr-queue-worker.ts",
+    "codegen": "graphql-codegen --config codegen.yml"
+  },
+  "dependencies": {
+    "graphql": "^15.0.0"
+  },
+  "devDependencies": {
+    "@graphql-codegen/add": "^2.0.0",
+    "@graphql-codegen/cli": "^1.0.0",
+    "@graphql-codegen/typescript": "^1.0.0",
+    "@graphql-codegen/typescript-resolvers": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -11,5 +11,5 @@ dist-authorization/
 pacts/
 
 # Generated GraphQL types
+packages/server/src/types.ts
 packages/types/src/index.ts
-src/types.ts
