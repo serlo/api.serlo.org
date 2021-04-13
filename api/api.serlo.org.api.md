@@ -1656,7 +1656,12 @@ export function createSerloModel({ environment, }: {
     }, NotificationsPayload>;
     getSubscriptions: ModelQuery<{
         userId: number;
-    }, SubscriptionsPayload>;
+    }, {
+        subscriptions: {
+            id: number;
+        }[];
+        userId: number;
+    }>;
     setSubscription: ((payload: {
         ids: number[];
         userId: number;
@@ -3934,7 +3939,7 @@ export type Query = {
     license?: Maybe<License>;
     notificationEvent?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
     notifications: NotificationConnection;
-    subscriptions: QuerySubscriptionResult;
+    subscriptions: AbstractUuidConnection;
     uuid?: Maybe<Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event_2 | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision>;
 };
 
@@ -3993,7 +3998,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
     license?: Resolver<Maybe<ResolversTypes['License']>, ParentType, ContextType, RequireFields<QueryLicenseArgs, 'id'>>;
     notificationEvent?: Resolver<Maybe<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType, RequireFields<QueryNotificationEventArgs, 'id'>>;
     notifications?: Resolver<ResolversTypes['NotificationConnection'], ParentType, ContextType, RequireFields<QueryNotificationsArgs, never>>;
-    subscriptions?: Resolver<ResolversTypes['QuerySubscriptionResult'], ParentType, ContextType, RequireFields<QuerySubscriptionsArgs, never>>;
+    subscriptions?: Resolver<ResolversTypes['AbstractUuidConnection'], ParentType, ContextType, RequireFields<QuerySubscriptionsArgs, never>>;
     uuid?: Resolver<Maybe<ResolversTypes['AbstractUuid']>, ParentType, ContextType, RequireFields<QueryUuidArgs, never>>;
 };
 
@@ -4024,24 +4029,6 @@ export interface QuerySpecWithHelpers<P, R> extends QuerySpec<P, R> {
     // (undocumented)
     setCache: (args: PayloadArrayOrPayload<P> & FunctionOrValue<R>) => Promise<void>;
 }
-
-// @public (undocumented)
-export type QuerySubscriptionResult = {
-    __typename?: 'QuerySubscriptionResult';
-    edges: Array<SubscriptionCursor>;
-    nodes: Array<Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event_2 | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision>;
-    totalCount: Scalars['Int'];
-    pageInfo: PageInfo;
-};
-
-// @public (undocumented)
-export type QuerySubscriptionResultResolvers<ContextType = Context, ParentType extends ResolversParentTypes['QuerySubscriptionResult'] = ResolversParentTypes['QuerySubscriptionResult']> = {
-    edges?: Resolver<Array<ResolversTypes['SubscriptionCursor']>, ParentType, ContextType>;
-    nodes?: Resolver<Array<ResolversTypes['AbstractUuid']>, ParentType, ContextType>;
-    totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-    pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
-    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
 
 // @public (undocumented)
 export type QuerySubscriptionsArgs = {
@@ -4387,8 +4374,6 @@ export type Resolvers<ContextType = Context> = {
     NotificationSetStateResponse?: NotificationSetStateResponseResolvers<ContextType>;
     NotificationConnection?: NotificationConnectionResolvers<ContextType>;
     NotificationEdge?: NotificationEdgeResolvers<ContextType>;
-    QuerySubscriptionResult?: QuerySubscriptionResultResolvers<ContextType>;
-    SubscriptionCursor?: SubscriptionCursorResolvers<ContextType>;
     SubscriptionMutation?: SubscriptionMutationResolvers<ContextType>;
     SubscriptionSetResponse?: SubscriptionSetResponseResolvers<ContextType>;
     Thread?: ThreadResolvers<ContextType>;
@@ -4511,8 +4496,6 @@ export type ResolversParentTypes = {
     NotificationSetStateResponse: ModelOf<NotificationSetStateResponse>;
     NotificationConnection: ModelOf<NotificationConnection>;
     NotificationEdge: ModelOf<NotificationEdge>;
-    QuerySubscriptionResult: ModelOf<QuerySubscriptionResult>;
-    SubscriptionCursor: ModelOf<SubscriptionCursor>;
     SubscriptionMutation: ModelOf<SubscriptionMutation>;
     SubscriptionSetInput: ModelOf<SubscriptionSetInput>;
     SubscriptionSetResponse: ModelOf<SubscriptionSetResponse>;
@@ -4644,8 +4627,6 @@ export type ResolversTypes = {
     NotificationSetStateResponse: ResolverTypeWrapper<ModelOf<NotificationSetStateResponse>>;
     NotificationConnection: ResolverTypeWrapper<ModelOf<NotificationConnection>>;
     NotificationEdge: ResolverTypeWrapper<ModelOf<NotificationEdge>>;
-    QuerySubscriptionResult: ResolverTypeWrapper<ModelOf<QuerySubscriptionResult>>;
-    SubscriptionCursor: ResolverTypeWrapper<ModelOf<SubscriptionCursor>>;
     SubscriptionMutation: ResolverTypeWrapper<ModelOf<SubscriptionMutation>>;
     SubscriptionSetInput: ResolverTypeWrapper<ModelOf<SubscriptionSetInput>>;
     SubscriptionSetResponse: ResolverTypeWrapper<ModelOf<SubscriptionSetResponse>>;
@@ -5269,20 +5250,6 @@ export type SolutionThreadsArgs = {
 export type StitchingResolver<TResult, TParent, TContext, TArgs> = LegacyStitchingResolver<TResult, TParent, TContext, TArgs> | NewStitchingResolver<TResult, TParent, TContext, TArgs>;
 
 // @public (undocumented)
-export type SubscriptionCursor = {
-    __typename?: 'SubscriptionCursor';
-    cursor: Scalars['String'];
-    node: Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event_2 | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
-};
-
-// @public (undocumented)
-export type SubscriptionCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionCursor'] = ResolversParentTypes['SubscriptionCursor']> = {
-    cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-    node?: Resolver<ResolversTypes['AbstractUuid'], ParentType, ContextType>;
-    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-// @public (undocumented)
 export type SubscriptionMutation = {
     __typename?: 'SubscriptionMutation';
     set?: Maybe<SubscriptionSetResponse>;
@@ -5336,16 +5303,6 @@ export type SubscriptionSetResponseResolvers<ContextType = Context, ParentType e
     query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
-
-// @public (undocumented)
-export interface SubscriptionsPayload {
-    // (undocumented)
-    subscriptions: {
-        id: number;
-    }[];
-    // (undocumented)
-    userId: number;
-}
 
 // @public (undocumented)
 export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (parent: TParent, args: TArgs, context: TContext, info: GraphQLResolveInfo) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;

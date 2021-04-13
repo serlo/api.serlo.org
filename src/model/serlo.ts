@@ -33,7 +33,6 @@ import {
   NotificationsPayload,
 } from '~/schema/notification/types'
 import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
-import { SubscriptionsPayload } from '~/schema/subscription/types'
 import { EntityPayload } from '~/schema/uuid/abstract-entity/types'
 import {
   NavigationData,
@@ -481,13 +480,16 @@ export function createSerloModel({
     },
   })
 
-  const getSubscriptions = createQuery<
-    { userId: number },
-    SubscriptionsPayload
-  >(
+  const getSubscriptions = createQuery(
     {
+      decoder: t.exact(
+        t.type({
+          subscriptions: t.array(t.type({ id: t.number })),
+          userId: t.number,
+        })
+      ),
       enableSwr: true,
-      getCurrentValue: async ({ userId }) => {
+      getCurrentValue: async ({ userId }: { userId: number }) => {
         const response = await handleMessageWithoutResponse({
           message: {
             type: 'SubscriptionsQuery',
@@ -497,7 +499,7 @@ export function createSerloModel({
           },
           expectedStatusCodes: [200],
         })
-        return (await response.json()) as SubscriptionsPayload
+        return (await response.json()) as unknown
       },
       maxAge: { hour: 1 },
       getKey: ({ userId }) => {
