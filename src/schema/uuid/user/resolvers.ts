@@ -32,6 +32,7 @@ import {
 import { Context, Queries, TypeResolvers } from '~/internals/graphql'
 import { UserDecoder } from '~/model/decoder'
 import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
+import { resolveScopedRoles } from '~/schema/authorization/utils'
 import { ConnectionPayload } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
 import { resolveEvents } from '~/schema/notification/resolvers'
@@ -90,6 +91,15 @@ export const resolvers: Queries<
       return (await dataSources.model.serlo.getActiveReviewerIds()).includes(
         user.id
       )
+    },
+    roles(user, payload) {
+      return resolveConnection({
+        nodes: resolveScopedRoles(user),
+        payload,
+        createCursor(node) {
+          return node.scope + node.role
+        },
+      })
     },
   },
 }

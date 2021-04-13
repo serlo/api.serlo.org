@@ -33,7 +33,8 @@ import {
 import { mockEndpointsForThreads } from './thread'
 
 test('unauthenticated user gets error', async () => {
-  global.server.use(createUuidHandler(article))
+  mockEndpointsForThreads(article, [[comment]])
+
   await assertFailingGraphQLMutation({
     mutation: gql`
       mutation($input: ThreadCreateThreadInput!) {
