@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Model } from '~/internals/graphql/'
+import { TypeResolvers } from '~/internals/graphql'
+import { ScopedRole } from '~/types'
 
-export type TaxonomyTermChildPayload = Model<'AbstractTaxonomyTermChild'>
+export const resolvers: TypeResolvers<ScopedRole> = {}

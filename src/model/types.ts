@@ -65,7 +65,9 @@ import {
   VideoDecoder,
   VideoRevisionDecoder,
 } from './decoder'
+import { Scope } from '~/authorization'
 import { Payload } from '~/internals/model/types'
+import { Role } from '~/types'
 
 export interface Models {
   Applet: t.TypeOf<typeof AppletDecoder>
@@ -150,4 +152,5 @@ export interface Models {
   SetThreadStateNotificationEvent: t.TypeOf<
     typeof SetThreadStateNotificationEventDecoder
   >
+  ScopedRole: { role: Role; scope: Scope }
 }

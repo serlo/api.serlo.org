@@ -60,17 +60,14 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
+import { Model } from '~/internals/graphql'
 import {
   EntityRevisionType,
   EntityType,
-} from '~/schema/uuid/abstract-entity/types'
-import {
-  RepositoryPayload,
   RepositoryType,
-  RevisionPayload,
   RevisionType,
-} from '~/schema/uuid/abstract-repository/types'
-import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
+  DiscriminatorType,
+} from '~/model/decoder'
 
 let client: Client
 
@@ -81,8 +78,8 @@ beforeEach(() => {
 const repositoryFixtures: Record<
   RepositoryType,
   {
-    repository: RepositoryPayload
-    revision: RevisionPayload
+    repository: Model<'AbstractRepository'>
+    revision: Model<'AbstractRevision'>
     revisionType: RevisionType
   }
 > = {
@@ -142,16 +139,7 @@ const repositoryFixtures: Record<
     revisionType: DiscriminatorType.PageRevision,
   },
 }
-const repositoryCases = R.toPairs(repositoryFixtures) as Array<
-  [
-    RepositoryType,
-    {
-      repository: RepositoryPayload
-      revision: RevisionPayload
-      revisionType: RevisionType
-    }
-  ]
->
+const repositoryCases = R.toPairs(repositoryFixtures)
 
 describe('Repository', () => {
   test.each(repositoryCases)('%s by id', async (_type, { repository }) => {
@@ -560,6 +548,6 @@ describe('Revision', () => {
   )
 })
 
-function trashed(revision: RevisionPayload) {
+function trashed(revision: Model<'AbstractRevision'>) {
   return { ...revision, trashed: true }
 }

@@ -27,6 +27,7 @@ import { instanceSchema } from './instance'
 import { jsonSchema } from './json'
 import { licenseSchema } from './license'
 import { notificationSchema } from './notification'
+import { rolesSchema } from './roles'
 import { subscriptionSchema } from './subscription'
 import { threadSchema } from './thread'
 import { uuidSchema } from './uuid'
@@ -41,6 +42,7 @@ export const schema = mergeSchemas(
   jsonSchema,
   licenseSchema,
   notificationSchema,
+  rolesSchema,
   subscriptionSchema,
   threadSchema,
   uuidSchema
