@@ -1,0 +1,18 @@
+{
+  "name": "@serlo/authorization",
+  "version": "0.21.1",
+  "repository": "serlo/api.serlo.org",
+  "license": "Apache-2.0",
+  "author": "Serlo Education e.V.",
+  "main": "dist/index.js",
+  "module": "dist/authorization.esm.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsdx build --tsconfig tsconfig.prod.json"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "publishConfig": {
+    "access": "public"
+  }
+}
