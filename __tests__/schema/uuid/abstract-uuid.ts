@@ -60,15 +60,13 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
+import { Model } from '~/internals/graphql'
 import {
   EntityRevisionType,
   EntityType,
-} from '~/schema/uuid/abstract-entity/types'
-import {
   DiscriminatorType,
-  UuidPayload,
   UuidType,
-} from '~/schema/uuid/abstract-uuid/types'
+} from '~/model/decoder'
 import { Instance } from '~/types'
 
 let client: Client
@@ -80,7 +78,7 @@ beforeEach(() => {
 const abstractUuidFixtures: Record<
   // Endpoint uuid() returns null for comments
   Exclude<UuidType, DiscriminatorType.Comment>,
-  UuidPayload
+  Model<'AbstractUuid'>
 > = {
   [DiscriminatorType.Page]: page,
   [DiscriminatorType.PageRevision]: pageRevision,

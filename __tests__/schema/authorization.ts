@@ -29,11 +29,8 @@ import {
   createUuidHandler,
 } from '../__utils__'
 import { Scope, Thread } from '~/authorization'
-import {
-  resolveRolesPayload,
-  Role,
-  RolesPayload,
-} from '~/schema/authorization/roles'
+import { resolveRolesPayload, RolesPayload } from '~/schema/authorization/roles'
+import { Role } from '~/types'
 
 describe('authorization', () => {
   test('Guests', async () => {

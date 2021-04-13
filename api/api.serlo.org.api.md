@@ -16,7 +16,6 @@ import { O } from 'ts-toolbelt';
 import { option } from 'fp-ts';
 import { RESTDataSource } from 'apollo-datasource-rest';
 import * as t from 'io-ts';
-import { default as t_2 } from 'io-ts';
 
 // @public (undocumented)
 export type AbstractEntity = {
@@ -1870,8 +1869,728 @@ export function createSerloModel({ environment, }: {
     }>;
     getUuid: ModelQuery<{
         id: number;
-    }, UuidPayload | null>;
-    getUuidWithCustomDecoder: <S extends UuidPayload>({ id, decoder, }: {
+    }, ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: "Comment";
+        authorId: number;
+        title: string | null;
+        date: string;
+        archived: boolean;
+        content: string;
+        parentId: number;
+        childrenIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Exercise;
+        taxonomyTermIds: number[];
+        solutionId: number | null;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.GroupedExercise;
+        parentId: number;
+        solutionId: number | null;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Applet;
+        taxonomyTermIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Article;
+        taxonomyTermIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Course;
+        taxonomyTermIds: number[];
+        pageIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.CoursePage;
+        parentId: number;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Event;
+        taxonomyTermIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.ExerciseGroup;
+        taxonomyTermIds: number[];
+        exerciseIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Solution;
+        parentId: number;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Video;
+        taxonomyTermIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: DiscriminatorType.Page;
+        instance: Instance;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+        date: string;
+        licenseId: number;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.AppletRevision;
+        url: string;
+        title: string;
+        content: string;
+        metaTitle: string;
+        metaDescription: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.ArticleRevision;
+        title: string;
+        content: string;
+        metaTitle: string;
+        metaDescription: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.CourseRevision;
+        title: string;
+        content: string;
+        metaDescription: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.CoursePageRevision;
+        title: string;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.EventRevision;
+        title: string;
+        content: string;
+        metaTitle: string;
+        metaDescription: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.ExerciseRevision;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.ExerciseGroupRevision;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.GroupedExerciseRevision;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.SolutionRevision;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.VideoRevision;
+        url: string;
+        title: string;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: DiscriminatorType.PageRevision;
+        title: string;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: DiscriminatorType.TaxonomyTerm;
+        type: TaxonomyTermType;
+        instance: Instance;
+        name: string;
+        weight: number;
+        childrenIds: number[];
+        parentId: number | null;
+    } & {
+        description?: string | null | undefined;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: DiscriminatorType.User;
+        username: string;
+        date: string;
+        roles: string[];
+    } & {
+        lastLogin?: string | null | undefined;
+        description?: string | null | undefined;
+    }) | null>;
+    getUuidWithCustomDecoder: <S extends ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: "Comment";
+        authorId: number;
+        title: string | null;
+        date: string;
+        archived: boolean;
+        content: string;
+        parentId: number;
+        childrenIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Exercise;
+        taxonomyTermIds: number[];
+        solutionId: number | null;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.GroupedExercise;
+        parentId: number;
+        solutionId: number | null;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Applet;
+        taxonomyTermIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Article;
+        taxonomyTermIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Course;
+        taxonomyTermIds: number[];
+        pageIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.CoursePage;
+        parentId: number;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Event;
+        taxonomyTermIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.ExerciseGroup;
+        taxonomyTermIds: number[];
+        exerciseIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Solution;
+        parentId: number;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Video;
+        taxonomyTermIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: DiscriminatorType.Page;
+        instance: Instance;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+        date: string;
+        licenseId: number;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.AppletRevision;
+        url: string;
+        title: string;
+        content: string;
+        metaTitle: string;
+        metaDescription: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.ArticleRevision;
+        title: string;
+        content: string;
+        metaTitle: string;
+        metaDescription: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.CourseRevision;
+        title: string;
+        content: string;
+        metaDescription: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.CoursePageRevision;
+        title: string;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.EventRevision;
+        title: string;
+        content: string;
+        metaTitle: string;
+        metaDescription: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.ExerciseRevision;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.ExerciseGroupRevision;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.GroupedExerciseRevision;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.SolutionRevision;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.VideoRevision;
+        url: string;
+        title: string;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: DiscriminatorType.PageRevision;
+        title: string;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: DiscriminatorType.TaxonomyTerm;
+        type: TaxonomyTermType;
+        instance: Instance;
+        name: string;
+        weight: number;
+        childrenIds: number[];
+        parentId: number | null;
+    } & {
+        description?: string | null | undefined;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: DiscriminatorType.User;
+        username: string;
+        date: string;
+        roles: string[];
+    } & {
+        lastLogin?: string | null | undefined;
+        description?: string | null | undefined;
+    })>({ id, decoder, }: {
         id: number;
         decoder: t.Type<S, S, unknown>;
     }) => Promise<S | null>;
@@ -2275,9 +2994,6 @@ export const EntityDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.Inte
 }>]>>]>;
 
 // @public (undocumented)
-export type EntityPayload = Model<'AbstractEntity'>;
-
-// @public (undocumented)
 export const EntityRevisionDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
     id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
@@ -2434,9 +3150,6 @@ export const EntityRevisionDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.Inters
     title: t.StringC;
     content: t.StringC;
 }>]>>]>;
-
-// @public (undocumented)
-export type EntityRevisionPayload = Model<'AbstractEntityRevision'>;
 
 // @public (undocumented)
 export enum EntityRevisionType {
@@ -3421,6 +4134,11 @@ export interface Models {
     // (undocumented)
     RemoveTaxonomyLinkNotificationEvent: t.TypeOf<typeof RemoveTaxonomyLinkNotificationEventDecoder>;
     // (undocumented)
+    ScopedRole: {
+        role: Role;
+        scope: Scope;
+    };
+    // (undocumented)
     SetLicenseNotificationEvent: t.TypeOf<typeof SetLicenseNotificationEventDecoder>;
     // (undocumented)
     SetTaxonomyParentNotificationEvent: t.TypeOf<typeof SetTaxonomyParentNotificationEventDecoder>;
@@ -3527,7 +4245,7 @@ export type Navigation = {
 };
 
 // @public (undocumented)
-export type NavigationChildPayload = TaxonomyTermPayload | Model<'Page'>;
+export type NavigationChildPayload = Model<'TaxonomyTerm'> | Model<'Page'>;
 
 // @public (undocumented)
 export interface NavigationData {
@@ -4536,9 +5254,6 @@ export const RepositoryDecoder: t.UnionC<[t.UnionC<[t.UnionC<[t.ExactC<t.Interse
 }>]>>]>;
 
 // @public (undocumented)
-export type RepositoryPayload = Model<'AbstractRepository'>;
-
-// @public (undocumented)
 export type RepositoryType = EntityType | DiscriminatorType.Page;
 
 // @public (undocumented)
@@ -4597,6 +5312,9 @@ export type Resolvers<ContextType = Context> = {
     NotificationSetStateResponse?: NotificationSetStateResponseResolvers<ContextType>;
     NotificationConnection?: NotificationConnectionResolvers<ContextType>;
     NotificationEdge?: NotificationEdgeResolvers<ContextType>;
+    ScopedRole?: ScopedRoleResolvers<ContextType>;
+    ScopedRoleConnection?: ScopedRoleConnectionResolvers<ContextType>;
+    ScopedRoleCursor?: ScopedRoleCursorResolvers<ContextType>;
     QuerySubscriptionResult?: QuerySubscriptionResultResolvers<ContextType>;
     SubscriptionCursor?: SubscriptionCursorResolvers<ContextType>;
     SubscriptionMutation?: SubscriptionMutationResolvers<ContextType>;
@@ -4721,6 +5439,9 @@ export type ResolversParentTypes = {
     NotificationSetStateResponse: ModelOf<NotificationSetStateResponse>;
     NotificationConnection: ModelOf<NotificationConnection>;
     NotificationEdge: ModelOf<NotificationEdge>;
+    ScopedRole: ModelOf<ScopedRole>;
+    ScopedRoleConnection: ModelOf<ScopedRoleConnection>;
+    ScopedRoleCursor: ModelOf<ScopedRoleCursor>;
     QuerySubscriptionResult: ModelOf<QuerySubscriptionResult>;
     SubscriptionCursor: ModelOf<SubscriptionCursor>;
     SubscriptionMutation: ModelOf<SubscriptionMutation>;
@@ -4854,6 +5575,10 @@ export type ResolversTypes = {
     NotificationSetStateResponse: ResolverTypeWrapper<ModelOf<NotificationSetStateResponse>>;
     NotificationConnection: ResolverTypeWrapper<ModelOf<NotificationConnection>>;
     NotificationEdge: ResolverTypeWrapper<ModelOf<NotificationEdge>>;
+    ScopedRole: ResolverTypeWrapper<ModelOf<ScopedRole>>;
+    Role: ResolverTypeWrapper<ModelOf<Role>>;
+    ScopedRoleConnection: ResolverTypeWrapper<ModelOf<ScopedRoleConnection>>;
+    ScopedRoleCursor: ResolverTypeWrapper<ModelOf<ScopedRoleCursor>>;
     QuerySubscriptionResult: ResolverTypeWrapper<ModelOf<QuerySubscriptionResult>>;
     SubscriptionCursor: ResolverTypeWrapper<ModelOf<SubscriptionCursor>>;
     SubscriptionMutation: ResolverTypeWrapper<ModelOf<SubscriptionMutation>>;
@@ -5127,10 +5852,27 @@ export const RevisionDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.In
 }>]>>]>;
 
 // @public (undocumented)
-export type RevisionPayload = Model<'AbstractRevision'>;
+export type RevisionType = EntityRevisionType | DiscriminatorType.PageRevision;
 
 // @public (undocumented)
-export type RevisionType = EntityRevisionType | DiscriminatorType.PageRevision;
+export enum Role {
+    // (undocumented)
+    Admin = "admin",
+    // (undocumented)
+    Architect = "architect",
+    // (undocumented)
+    Guest = "guest",
+    // (undocumented)
+    Login = "login",
+    // (undocumented)
+    Moderator = "moderator",
+    // (undocumented)
+    Reviewer = "reviewer",
+    // (undocumented)
+    StaticPagesBuilder = "staticPagesBuilder",
+    // (undocumented)
+    Sysadmin = "sysadmin"
+}
 
 // @public
 export type Scalars = {
@@ -5151,6 +5893,52 @@ export interface Schema {
     // (undocumented)
     typeDefs: DocumentNode[];
 }
+
+// @public (undocumented)
+export type ScopedRole = {
+    __typename?: 'ScopedRole';
+    role: Role;
+    scope?: Maybe<Scalars['String']>;
+};
+
+// @public (undocumented)
+export type ScopedRoleConnection = {
+    __typename?: 'ScopedRoleConnection';
+    edges: Array<ScopedRoleCursor>;
+    nodes: Array<ScopedRole>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type ScopedRoleConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ScopedRoleConnection'] = ResolversParentTypes['ScopedRoleConnection']> = {
+    edges?: Resolver<Array<ResolversTypes['ScopedRoleCursor']>, ParentType, ContextType>;
+    nodes?: Resolver<Array<ResolversTypes['ScopedRole']>, ParentType, ContextType>;
+    totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+    pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+// @public (undocumented)
+export type ScopedRoleCursor = {
+    __typename?: 'ScopedRoleCursor';
+    cursor: Scalars['String'];
+    node: ScopedRole;
+};
+
+// @public (undocumented)
+export type ScopedRoleCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ScopedRoleCursor'] = ResolversParentTypes['ScopedRoleCursor']> = {
+    cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+    node?: Resolver<ResolversTypes['ScopedRole'], ParentType, ContextType>;
+    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+// @public (undocumented)
+export type ScopedRoleResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ScopedRole'] = ResolversParentTypes['ScopedRole']> = {
+    role?: Resolver<ResolversTypes['Role'], ParentType, ContextType>;
+    scope?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
 
 // @public (undocumented)
 export enum Service {
@@ -5680,9 +6468,6 @@ export type TaxonomyTermEdgeResolvers<ContextType = Context, ParentType extends 
 };
 
 // @public (undocumented)
-export type TaxonomyTermPayload = t_2.TypeOf<typeof TaxonomyTermDecoder>;
-
-// @public (undocumented)
 export type TaxonomyTermResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTerm'] = ResolversParentTypes['TaxonomyTerm']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -6066,6 +6851,7 @@ export type User = AbstractUuid & ThreadAware & {
     username: Scalars['String'];
     date: Scalars['DateTime'];
     lastLogin?: Maybe<Scalars['DateTime']>;
+    roles: ScopedRoleConnection;
     description?: Maybe<Scalars['String']>;
     activeAuthor: Scalars['Boolean'];
     activeDonor: Scalars['Boolean'];
@@ -6128,11 +6914,20 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
     username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
     lastLogin?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+    roles?: Resolver<ResolversTypes['ScopedRoleConnection'], ParentType, ContextType, RequireFields<UserRolesArgs, never>>;
     description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     activeAuthor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     activeDonor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     activeReviewer?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+// @public (undocumented)
+export type UserRolesArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)
@@ -6529,9 +7324,6 @@ export type UuidMutationSetStateArgs = {
 };
 
 // @public (undocumented)
-export type UuidPayload = Model<'AbstractUuid'>;
-
-// @public (undocumented)
 export type UuidSetStateInput = {
     id: Array<Scalars['Int']>;
     trashed: Scalars['Boolean'];
@@ -6721,6 +7513,10 @@ export type VideoThreadsArgs = {
     trashed?: Maybe<Scalars['Boolean']>;
 };
 
+
+// Warnings were encountered during analysis:
+//
+// dist/model/types.d.ts:80:9 - (ae-forgotten-export) The symbol "Scope" needs to be exported by the entry point api.d.ts
 
 // (No @packageDocumentation comment for this package)
 

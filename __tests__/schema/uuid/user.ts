@@ -39,8 +39,9 @@ import {
   returnsJson,
   returnsMalformedJson,
 } from '../../__utils__'
+import { Scope } from '~/authorization'
+import { Model } from '~/internals/graphql'
 import { MajorDimension } from '~/model'
-import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 import { Instance } from '~/types'
 
 let client: Client
@@ -185,6 +186,45 @@ describe('User', () => {
       data: {
         uuid: getUserDataWithoutSubResolvers(user),
       },
+      client,
+    })
+  })
+
+  test('property "roles"', async () => {
+    global.server.use(
+      createUuidHandler({
+        ...user,
+        roles: ['login', 'en_moderator', 'de_reviewer'],
+      })
+    )
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query($id: Int) {
+          uuid(id: $id) {
+            ... on User {
+              roles {
+                nodes {
+                  role
+                  scope
+                }
+              }
+            }
+          }
+        }
+      `,
+      data: {
+        uuid: {
+          roles: {
+            nodes: [
+              { role: 'login', scope: Scope.Serlo },
+              { role: 'moderator', scope: Scope.Serlo_En },
+              { role: 'reviewer', scope: Scope.Serlo_De },
+            ],
+          },
+        },
+      },
+      variables: { id: user.id },
       client,
     })
   })
@@ -428,7 +468,7 @@ function expectUserIds({
   })
 }
 
-function createActiveAuthorsHandler(users: UuidPayload[]) {
+function createActiveAuthorsHandler(users: Model<'AbstractUuid'>[]) {
   return createActiveAuthorsResponseHandler(users.map((user) => user.id))
 }
 
@@ -441,7 +481,7 @@ function createActiveAuthorsResponseHandler(body: unknown) {
   })
 }
 
-function createActiveReviewersHandler(users: UuidPayload[]) {
+function createActiveReviewersHandler(users: Model<'AbstractUuid'>[]) {
   return createActiveReviewersHandlersResponseHandler(
     users.map((user) => user.id)
   )
@@ -456,7 +496,7 @@ function createActiveReviewersHandlersResponseHandler(body: unknown) {
   })
 }
 
-function givenActiveDonors(users: UuidPayload[]) {
+function givenActiveDonors(users: Model<'AbstractUuid'>[]) {
   const values = [['Header', ...users.map((user) => user.id.toString())]]
   givenActiveDonorsSpreadsheet(values)
 }

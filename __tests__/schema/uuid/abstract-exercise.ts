@@ -35,7 +35,7 @@ import {
   createUuidHandler,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
-import { EntityType } from '~/schema/uuid/abstract-entity/types'
+import { EntityType } from '~/model/decoder'
 
 let client: Client
 
