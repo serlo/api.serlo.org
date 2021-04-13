@@ -46,7 +46,6 @@ import {
   solutionRevision,
   taxonomyTermRoot,
   user,
-  user2,
   video,
   videoRevision,
 } from '../../../__fixtures__'
@@ -341,12 +340,20 @@ describe('uuid mutation setState', () => {
   `
 
   test('authenticated with array of ids', async () => {
+    const ids = [article.id, article.id + 1, article.id + 2]
+    global.server.use(
+      ...ids.map((id) => createUuidHandler({ ...article, id })),
+      createUuidHandler({
+        ...user,
+        roles: ['de_architect'],
+      })
+    )
     global.server.use(
       createMessageHandler({
         message: {
           type: 'UuidSetStateMutation',
           payload: {
-            ids: [1, 2, 3],
+            ids,
             userId: user.id,
             trashed: true,
           },
@@ -356,7 +363,7 @@ describe('uuid mutation setState', () => {
     await assertSuccessfulGraphQLMutation({
       mutation,
       variables: {
-        input: { id: [1, 2, 3], trashed: true },
+        input: { id: ids, trashed: true },
       },
       data: { uuid: { setState: { success: true } } },
       client: createTestClient({ userId: user.id }),
@@ -364,6 +371,7 @@ describe('uuid mutation setState', () => {
   })
 
   test('unauthenticated', async () => {
+    global.server.use(createUuidHandler(user))
     await assertFailingGraphQLMutation({
       mutation,
       variables: { input: { id: 1, trashed: true } },
@@ -372,11 +380,19 @@ describe('uuid mutation setState', () => {
     })
   })
 
-  test('wrong user id', async () => {
+  test('insufficient permissions', async () => {
+    // Architects are not allowed to set the state of pages.
+    global.server.use(
+      createUuidHandler(page),
+      createUuidHandler({
+        ...user,
+        roles: ['de_architect'],
+      })
+    )
     await assertFailingGraphQLMutation({
       mutation,
-      variables: { input: { id: 1, trashed: false } },
-      client: createTestClient({ userId: user2.id }),
+      variables: { input: { id: page.id, trashed: false } },
+      client: createTestClient({ userId: user.id }),
       expectedError: 'FORBIDDEN',
     })
   })

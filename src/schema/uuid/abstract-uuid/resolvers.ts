@@ -19,12 +19,14 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ForbiddenError, UserInputError } from 'apollo-server'
+import { UserInputError } from 'apollo-server'
 import { either as E } from 'fp-ts'
 
+import * as auth from '~/authorization'
 import { resolveCustomId } from '~/config/alias'
 import {
   assertUserIsAuthenticated,
+  assertUserIsAuthorized,
   createMutationNamespace,
   InterfaceResolvers,
   Mutations,
@@ -33,8 +35,10 @@ import {
   Model,
 } from '~/internals/graphql'
 import { Uuid, DiscriminatorType } from '~/model/decoder'
+import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { QueryUuidArgs } from '~/types'
+import { isDefined } from '~/utils'
 
 export const resolvers: InterfaceResolvers<'AbstractUuid'> &
   Mutations<'uuid'> &
@@ -64,14 +68,34 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
   },
   UuidMutation: {
     async setState(_parent, payload, { dataSources, userId }) {
-      assertUserIsAuthenticated(userId)
-      // TODO: Mock permissions for now
-      if ([1, 10, 15473, 18981].indexOf(userId) < 0) {
-        throw new ForbiddenError('You are not allowed to set the uuid state.')
-      }
-
       const { id, trashed } = payload.input
-      const ids = Array.isArray(id) ? id : [id]
+      const ids = id
+
+      const guards = await Promise.all(
+        ids.map(
+          async (id): Promise<auth.AuthorizationGuard | null> => {
+            // TODO: this is not optimized since it fetches the object twice and sequentially.
+            // change up fetchScopeOfUuid to return { scope, object } instead
+            const scope = await fetchScopeOfUuid({ id, dataSources })
+            const object = await dataSources.model.serlo.getUuid({ id })
+            if (object === null) {
+              return null
+            } else {
+              return auth.Uuid.setUuid(object)(scope)
+            }
+          }
+        )
+      )
+
+      assertUserIsAuthenticated(userId)
+      await assertUserIsAuthorized({
+        userId,
+        guards: guards.filter(isDefined),
+        message:
+          'You are not allowed to set the state of the provided UUID(s).',
+        dataSources,
+      })
+
       await dataSources.model.serlo.setUuidState({
         ids,
         userId,

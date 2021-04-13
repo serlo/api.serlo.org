@@ -30,6 +30,7 @@
  * to optimize fetching the authorization payload later (e.g. frontend might only request the permissions for de.serlo.org).
  */
 import { either as E } from 'fp-ts'
+
 import { Model } from '~/internals/graphql'
 import {
   DiscriminatorType,
