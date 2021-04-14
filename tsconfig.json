@@ -3,10 +3,11 @@
   "compilerOptions": {
     "module": "commonjs",
     "importHelpers": false,
-    "baseUrl": "packages",
+    "baseUrl": "./packages",
     "paths": {
       "@serlo/api": ["types/src"],
-      "@serlo/authorization": ["authorization/src"]
+      "@serlo/authorization": ["authorization/src"],
+      "~/*": ["server/src/*"]
     }
   }
 }
