@@ -24,7 +24,7 @@ import * as t from 'io-ts'
 import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
 
-import { CommentDecoder, InstanceDecoder, UuidDecoder } from './decoder'
+import { CommentDecoder, InstanceDecoder, Uuid, UuidDecoder } from './decoder'
 import { Environment } from '~/internals/environment'
 import { createMutation, createQuery, ModelQuery } from '~/internals/model'
 import { isInstance } from '~/schema/instance/utils'
@@ -484,13 +484,13 @@ export function createSerloModel({
     {
       decoder: t.exact(
         t.type({
-          subscriptions: t.array(t.type({ id: t.number })),
-          userId: t.number,
+          subscriptions: t.array(t.type({ id: Uuid })),
+          userId: Uuid,
         })
       ),
       enableSwr: true,
       getCurrentValue: async ({ userId }: { userId: number }) => {
-        const response = await handleMessageWithoutResponse({
+        return await handleMessage({
           message: {
             type: 'SubscriptionsQuery',
             payload: {
@@ -499,7 +499,6 @@ export function createSerloModel({
           },
           expectedStatusCodes: [200],
         })
-        return (await response.json()) as unknown
       },
       maxAge: { hour: 1 },
       getKey: ({ userId }) => {
