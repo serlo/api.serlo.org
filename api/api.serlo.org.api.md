@@ -5302,8 +5302,6 @@ export type Resolvers<ContextType = Context> = {
     ScopedRole?: ScopedRoleResolvers<ContextType>;
     ScopedRoleConnection?: ScopedRoleConnectionResolvers<ContextType>;
     ScopedRoleCursor?: ScopedRoleCursorResolvers<ContextType>;
-    QuerySubscriptionResult?: QuerySubscriptionResultResolvers<ContextType>;
-    SubscriptionCursor?: SubscriptionCursorResolvers<ContextType>;
     SubscriptionMutation?: SubscriptionMutationResolvers<ContextType>;
     SubscriptionSetResponse?: SubscriptionSetResponseResolvers<ContextType>;
     Thread?: ThreadResolvers<ContextType>;
@@ -5429,8 +5427,6 @@ export type ResolversParentTypes = {
     ScopedRole: ModelOf<ScopedRole>;
     ScopedRoleConnection: ModelOf<ScopedRoleConnection>;
     ScopedRoleCursor: ModelOf<ScopedRoleCursor>;
-    QuerySubscriptionResult: ModelOf<QuerySubscriptionResult>;
-    SubscriptionCursor: ModelOf<SubscriptionCursor>;
     SubscriptionMutation: ModelOf<SubscriptionMutation>;
     SubscriptionSetInput: ModelOf<SubscriptionSetInput>;
     SubscriptionSetResponse: ModelOf<SubscriptionSetResponse>;
@@ -5566,8 +5562,6 @@ export type ResolversTypes = {
     Role: ResolverTypeWrapper<ModelOf<Role>>;
     ScopedRoleConnection: ResolverTypeWrapper<ModelOf<ScopedRoleConnection>>;
     ScopedRoleCursor: ResolverTypeWrapper<ModelOf<ScopedRoleCursor>>;
-    QuerySubscriptionResult: ResolverTypeWrapper<ModelOf<QuerySubscriptionResult>>;
-    SubscriptionCursor: ResolverTypeWrapper<ModelOf<SubscriptionCursor>>;
     SubscriptionMutation: ResolverTypeWrapper<ModelOf<SubscriptionMutation>>;
     SubscriptionSetInput: ResolverTypeWrapper<ModelOf<SubscriptionSetInput>>;
     SubscriptionSetResponse: ResolverTypeWrapper<ModelOf<SubscriptionSetResponse>>;

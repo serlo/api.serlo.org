@@ -407,20 +407,6 @@ export type ScopedRoleCursor = {
   node: ScopedRole;
 };
 
-export type QuerySubscriptionResult = {
-  __typename?: 'QuerySubscriptionResult';
-  edges: Array<SubscriptionCursor>;
-  nodes: Array<Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision>;
-  totalCount: Scalars['Int'];
-  pageInfo: PageInfo;
-};
-
-export type SubscriptionCursor = {
-  __typename?: 'SubscriptionCursor';
-  cursor: Scalars['String'];
-  node: Comment | Applet | AppletRevision | Article | ArticleRevision | CoursePage | CoursePageRevision | Course | CourseRevision | Event | EventRevision | ExerciseGroup | ExerciseGroupRevision | Exercise | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
-};
-
 export type SubscriptionMutation = {
   __typename?: 'SubscriptionMutation';
   set?: Maybe<SubscriptionSetResponse>;
@@ -1881,8 +1867,6 @@ export type ResolversTypes = {
   Role: ResolverTypeWrapper<ModelOf<Role>>;
   ScopedRoleConnection: ResolverTypeWrapper<ModelOf<ScopedRoleConnection>>;
   ScopedRoleCursor: ResolverTypeWrapper<ModelOf<ScopedRoleCursor>>;
-  QuerySubscriptionResult: ResolverTypeWrapper<ModelOf<QuerySubscriptionResult>>;
-  SubscriptionCursor: ResolverTypeWrapper<ModelOf<SubscriptionCursor>>;
   SubscriptionMutation: ResolverTypeWrapper<ModelOf<SubscriptionMutation>>;
   SubscriptionSetInput: ResolverTypeWrapper<ModelOf<SubscriptionSetInput>>;
   SubscriptionSetResponse: ResolverTypeWrapper<ModelOf<SubscriptionSetResponse>>;
@@ -2017,8 +2001,6 @@ export type ResolversParentTypes = {
   ScopedRole: ModelOf<ScopedRole>;
   ScopedRoleConnection: ModelOf<ScopedRoleConnection>;
   ScopedRoleCursor: ModelOf<ScopedRoleCursor>;
-  QuerySubscriptionResult: ModelOf<QuerySubscriptionResult>;
-  SubscriptionCursor: ModelOf<SubscriptionCursor>;
   SubscriptionMutation: ModelOf<SubscriptionMutation>;
   SubscriptionSetInput: ModelOf<SubscriptionSetInput>;
   SubscriptionSetResponse: ModelOf<SubscriptionSetResponse>;
@@ -2405,20 +2387,6 @@ export type ScopedRoleConnectionResolvers<ContextType = Context, ParentType exte
 export type ScopedRoleCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ScopedRoleCursor'] = ResolversParentTypes['ScopedRoleCursor']> = {
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<ResolversTypes['ScopedRole'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type QuerySubscriptionResultResolvers<ContextType = Context, ParentType extends ResolversParentTypes['QuerySubscriptionResult'] = ResolversParentTypes['QuerySubscriptionResult']> = {
-  edges?: Resolver<Array<ResolversTypes['SubscriptionCursor']>, ParentType, ContextType>;
-  nodes?: Resolver<Array<ResolversTypes['AbstractUuid']>, ParentType, ContextType>;
-  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type SubscriptionCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionCursor'] = ResolversParentTypes['SubscriptionCursor']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['AbstractUuid'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3243,8 +3211,6 @@ export type Resolvers<ContextType = Context> = {
   ScopedRole?: ScopedRoleResolvers<ContextType>;
   ScopedRoleConnection?: ScopedRoleConnectionResolvers<ContextType>;
   ScopedRoleCursor?: ScopedRoleCursorResolvers<ContextType>;
-  QuerySubscriptionResult?: QuerySubscriptionResultResolvers<ContextType>;
-  SubscriptionCursor?: SubscriptionCursorResolvers<ContextType>;
   SubscriptionMutation?: SubscriptionMutationResolvers<ContextType>;
   SubscriptionSetResponse?: SubscriptionSetResponseResolvers<ContextType>;
   Thread?: ThreadResolvers<ContextType>;
