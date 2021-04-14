@@ -107,7 +107,7 @@ module.exports = {
           'packages/server/__tests__/**/*',
           'scripts/**/*',
           'jest.config.js',
-          'jest.config-pacts-*.js'
+          'jest.config-pacts-*.js',
         ],
         optionalDependencies: false,
       },
