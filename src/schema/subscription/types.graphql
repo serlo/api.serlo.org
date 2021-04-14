@@ -4,19 +4,7 @@ extend type Query {
     before: String
     first: Int
     last: Int
-  ): QuerySubscriptionResult!
-}
-
-type QuerySubscriptionResult {
-  edges: [SubscriptionCursor!]!
-  nodes: [AbstractUuid!]!
-  totalCount: Int!
-  pageInfo: PageInfo!
-}
-
-type SubscriptionCursor {
-  cursor: String!
-  node: AbstractUuid!
+  ): AbstractUuidConnection!
 }
 
 extend type Mutation {
