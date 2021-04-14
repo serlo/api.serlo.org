@@ -12,7 +12,8 @@
     "build:server": "yarn _build --format cjs --target node --entry src/server.ts",
     "build:swr-queue-worker": "yarn _build --format cjs --target node --entry src/swr-queue-worker.ts",
     "codegen": "graphql-codegen --config codegen.yml",
-    "start": "tsdx watch --entry src/server.ts --target node --format cjs --tsconfig tsconfig.prod.json --onSuccess \"node dist\""
+    "start": "tsdx watch --entry src/server.ts --target node --format cjs --tsconfig tsconfig.prod.json --onSuccess \"node dist\"",
+    "test": "jest --config jest.config.js --runInBand"
   },
   "dependencies": {
     "@sentry/node": "^6.0.0",

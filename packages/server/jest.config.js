@@ -23,7 +23,7 @@
 const { pathsToModuleNameMapper } = require('ts-jest/utils')
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-const { compilerOptions } = require('./tsconfig')
+const { compilerOptions } = require('./tsconfig.prod.json')
 
 module.exports = {
   preset: 'ts-jest',

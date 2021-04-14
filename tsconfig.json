@@ -4,6 +4,7 @@
     "module": "commonjs",
     "importHelpers": false,
     "baseUrl": "./packages",
+    "target": "es2019",
     "paths": {
       "@serlo/api": ["types/src"],
       "@serlo/authorization": ["authorization/src"],
