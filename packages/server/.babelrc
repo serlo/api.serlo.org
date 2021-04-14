@@ -5,7 +5,7 @@
       "babel-plugin-module-resolver",
       {
         "alias": {
-          "~": "./packages/server/src"
+          "~": "./src"
         }
       }
     ]
