@@ -16,11 +16,6 @@
     "preregenerate-types": "graphql-codegen --config codegen.yml",
     "regenerate-types": "ts-node scripts/regenerate-api-package",
     "regenerate-authorization-package": "ts-node scripts/regenerate-authorization-package",
-    "start": "npm-run-all start:redis start:server",
-    "start:redis": "docker-compose up --detach",
-    "start:server": "tsdx watch --entry src/server.ts --target node --format cjs --tsconfig tsconfig.prod.json --onSuccess \"node dist\"",
-    "start:swr-queue-worker": "tsdx watch --entry src/swr-queue-worker.ts --target node --format cjs --tsconfig tsconfig.prod.json --onSuccess \"node dist\"",
-    "stop:redis": "docker-compose stop",
     "test": "jest --config jest.config.js --runInBand"
   },
   "resolutions": {
