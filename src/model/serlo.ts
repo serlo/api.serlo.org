@@ -45,7 +45,6 @@ import { Model } from '~/internals/graphql'
 import { createMutation, createQuery, ModelQuery } from '~/internals/model'
 import { isInstance } from '~/schema/instance/utils'
 import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
-import { SubscriptionsPayload } from '~/schema/subscription/types'
 import {
   NavigationData,
   NavigationPayload,
@@ -488,14 +487,17 @@ export function createSerloModel({
     },
   })
 
-  const getSubscriptions = createQuery<
-    { userId: number },
-    SubscriptionsPayload
-  >(
+  const getSubscriptions = createQuery(
     {
+      decoder: t.exact(
+        t.type({
+          subscriptions: t.array(t.type({ id: Uuid })),
+          userId: Uuid,
+        })
+      ),
       enableSwr: true,
-      getCurrentValue: async ({ userId }) => {
-        const response = await handleMessageWithoutResponse({
+      getCurrentValue: async ({ userId }: { userId: number }) => {
+        return await handleMessage({
           message: {
             type: 'SubscriptionsQuery',
             payload: {
@@ -504,7 +506,6 @@ export function createSerloModel({
           },
           expectedStatusCodes: [200],
         })
-        return (await response.json()) as SubscriptionsPayload
       },
       maxAge: { hour: 1 },
       getKey: ({ userId }) => {
