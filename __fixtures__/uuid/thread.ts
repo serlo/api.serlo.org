@@ -23,7 +23,7 @@
 import { article } from './article'
 import { user, user2 } from './user'
 import { Model } from '~/internals/graphql'
-import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
+import { DiscriminatorType } from '~/model/decoder'
 import { UnsupportedComment, UnsupportedThread } from '~/types'
 
 export const comment: Model<'Comment'> = {

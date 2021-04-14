@@ -28,6 +28,7 @@ import {
   assertSuccessfulGraphQLQuery,
   createMessageHandler,
   createTestClient,
+  createUuidHandler,
 } from '../../__utils__'
 import { mockEndpointsForThreads } from './thread'
 import { encodeThreadId } from '~/schema/thread/utils'
@@ -44,6 +45,7 @@ describe('archive-comment', () => {
   `
 
   test('unauthenticated user gets error', async () => {
+    global.server.use(createUuidHandler(article), createUuidHandler(comment))
     const client = createTestClient({ userId: null })
     await assertFailingGraphQLMutation({
       mutation,
@@ -54,6 +56,12 @@ describe('archive-comment', () => {
   })
 
   test('setting multiple ids', async () => {
+    global.server.use(
+      createUuidHandler(article),
+      createUuidHandler(comment),
+      createUuidHandler(comment1),
+      createUuidHandler(user)
+    )
     const client = createTestClient({ userId: user.id })
 
     global.server.use(
@@ -84,6 +92,12 @@ describe('archive-comment', () => {
 
   test('cache gets updated as expected', async () => {
     const client = createTestClient({ userId: user.id })
+    global.server.use(
+      createUuidHandler(article),
+      createUuidHandler(comment1),
+      createUuidHandler(user)
+    )
+
     mockEndpointsForThreads(article, [[{ ...comment1, archived: true }]])
     global.server.use(
       createMessageHandler({

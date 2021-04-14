@@ -29,11 +29,8 @@ import {
   createUuidHandler,
 } from '../__utils__'
 import { Scope, Thread } from '~/authorization'
-import {
-  resolveRolesPayload,
-  Role,
-  RolesPayload,
-} from '~/schema/authorization/roles'
+import { resolveRolesPayload, RolesPayload } from '~/schema/authorization/roles'
+import { Role } from '~/types'
 
 describe('authorization', () => {
   test('Guests', async () => {
@@ -120,39 +117,41 @@ describe('resolveRolesPayload', () => {
   })
 
   test('Scoped roles grant permissions only in those scopes', () => {
-    const payload = resolveRolesPayload({
+    const authorizationPayload = resolveRolesPayload({
       [Scope.Serlo_De]: [Role.Moderator],
     })
     expect(
-      Thread.setThreadArchived({ payload, scope: Scope.Serlo_De })
+      Thread.setThreadArchived({ authorizationPayload, scope: Scope.Serlo_De })
     ).toBeTruthy()
     expect(
-      Thread.setThreadArchived({ payload, scope: Scope.Serlo_En })
+      Thread.setThreadArchived({ authorizationPayload, scope: Scope.Serlo_En })
     ).toBeFalsy()
     expect(
-      Thread.setThreadArchived({ payload, scope: Scope.Serlo })
+      Thread.setThreadArchived({ authorizationPayload, scope: Scope.Serlo })
     ).toBeFalsy()
   })
 
   test('Global roles grant permissions in all scopes', () => {
-    const payload = resolveRolesPayload({
+    const authorizationPayload = resolveRolesPayload({
       [Scope.Serlo]: [Role.Moderator],
     })
     expect(
-      Thread.setThreadArchived({ payload, scope: Scope.Serlo })
+      Thread.setThreadArchived({ authorizationPayload, scope: Scope.Serlo })
     ).toBeTruthy()
     expect(
-      Thread.setThreadArchived({ payload, scope: Scope.Serlo_De })
+      Thread.setThreadArchived({ authorizationPayload, scope: Scope.Serlo_De })
     ).toBeTruthy()
     expect(
-      Thread.setThreadArchived({ payload, scope: Scope.Serlo_En })
+      Thread.setThreadArchived({ authorizationPayload, scope: Scope.Serlo_En })
     ).toBeTruthy()
   })
 
   test('Roles also grant permissions of inherited roles', () => {
-    const payload = resolveRolesPayload({
+    const authorizationPayload = resolveRolesPayload({
       [Scope.Serlo]: [Role.Sysadmin],
     })
-    expect(Thread.setCommentState({ payload, scope: Scope.Serlo })).toBeTruthy()
+    expect(
+      Thread.setCommentState({ authorizationPayload, scope: Scope.Serlo })
+    ).toBeTruthy()
   })
 })

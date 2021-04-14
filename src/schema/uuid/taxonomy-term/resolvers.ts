@@ -19,8 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { TaxonomyTermPayload } from './types'
-import { TypeResolvers, Context } from '~/internals/graphql'
+import { TypeResolvers, Context, Model } from '~/internals/graphql'
 import { TaxonomyTermDecoder } from '~/model/decoder'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
@@ -32,11 +31,12 @@ export const resolvers: TypeResolvers<TaxonomyTerm> = {
   TaxonomyTerm: {
     ...createUuidResolvers(),
     ...createThreadResolvers(),
-    async parent(taxonomyTerm, _args, { dataSources }) {
+    parent(taxonomyTerm, _args, { dataSources }) {
       if (!taxonomyTerm.parentId) return null
-      return (await dataSources.model.serlo.getUuid({
+      return dataSources.model.serlo.getUuidWithCustomDecoder({
         id: taxonomyTerm.parentId,
-      })) as TaxonomyTermPayload | null
+        decoder: TaxonomyTermDecoder,
+      })
     },
     async children(taxonomyTerm, cursorPayload, { dataSources }) {
       const children = await Promise.all(
@@ -87,11 +87,11 @@ export const resolvers: TypeResolvers<TaxonomyTerm> = {
 }
 
 async function resolveTaxonomyTermPath(
-  parent: TaxonomyTermPayload,
+  parent: Model<'TaxonomyTerm'>,
   { dataSources }: Context
 ) {
-  const path: TaxonomyTermPayload[] = [parent]
-  let current: TaxonomyTermPayload = parent
+  const path = [parent]
+  let current = parent
 
   while (current.parentId !== null) {
     const next = await dataSources.model.serlo.getUuidWithCustomDecoder({

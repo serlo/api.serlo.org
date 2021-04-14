@@ -23,10 +23,7 @@ import * as R from 'ramda'
 
 import { license } from '../license'
 import { Model } from '~/internals/graphql'
-import {
-  EntityRevisionType,
-  EntityType,
-} from '~/schema/uuid/abstract-entity/types'
+import { EntityRevisionType, EntityType } from '~/model/decoder'
 import { Instance } from '~/types'
 
 export const applet: Model<'Applet'> = {

@@ -60,24 +60,9 @@ import {
   addMessageInteraction,
   assertSuccessfulGraphQLQuery,
 } from '../__utils__'
-import { AbstractNotificationEventPayload } from '~/schema/notification/types'
+import { Model } from '~/internals/graphql'
 
 describe('EventQuery', () => {
-  async function addNotificationEventInteraction<
-    T extends Pick<AbstractNotificationEventPayload, '__typename' | 'id'>
-  >(body: T) {
-    await addMessageInteraction({
-      given: `event ${body.id} is of type ${body.__typename}`,
-      message: {
-        type: 'EventQuery',
-        payload: {
-          id: body.id,
-        },
-      },
-      responseBody: body,
-    })
-  }
-
   test('CheckoutRevisionNotificationEvent', async () => {
     await addNotificationEventInteraction({
       __typename: checkoutRevisionNotificationEvent.__typename,
@@ -265,6 +250,7 @@ describe('EventQuery', () => {
       date: Matchers.iso8601DateTime(removeEntityLinkNotificationEvent.date),
       actorId: Matchers.integer(removeEntityLinkNotificationEvent.actorId),
       objectId: Matchers.integer(removeEntityLinkNotificationEvent.objectId),
+      parentId: Matchers.integer(removeEntityLinkNotificationEvent.parentId),
       childId: Matchers.integer(removeEntityLinkNotificationEvent.childId),
     })
     await assertSuccessfulGraphQLQuery({
@@ -648,3 +634,25 @@ describe('EventQuery', () => {
     })
   })
 })
+
+async function addNotificationEventInteraction(
+  body: NotificationEventMatcher<Model<'AbstractNotificationEvent'>>
+) {
+  await addMessageInteraction({
+    given: `event ${body.id} is of type ${body.__typename}`,
+    message: {
+      type: 'EventQuery',
+      payload: {
+        id: body.id,
+      },
+    },
+    responseBody: body,
+  })
+}
+
+type NotificationEventMatcher<E> = E extends {
+  __typename: string
+  id: number
+}
+  ? Record<keyof E, unknown> & Pick<E, '__typename' | 'id'>
+  : never

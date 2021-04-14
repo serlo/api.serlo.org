@@ -28,11 +28,14 @@ import {
   assertSuccessfulGraphQLQuery,
   createMessageHandler,
   createTestClient,
+  createUuidHandler,
 } from '../../__utils__'
 import { mockEndpointsForThreads } from './thread'
 import { encodeThreadId } from '~/schema/thread/utils'
 
 test('unauthenticated user gets error', async () => {
+  mockEndpointsForThreads(article, [[comment1]])
+
   await assertFailingGraphQLMutation({
     mutation: gql`
       mutation($input: ThreadCreateCommentInput!) {
@@ -58,6 +61,7 @@ test('unauthenticated user gets error', async () => {
 
 test('comment gets created, cache mutated as expected', async () => {
   const client = createTestClient({ userId: user.id })
+  global.server.use(createUuidHandler(user))
 
   global.server.use(
     createMessageHandler({

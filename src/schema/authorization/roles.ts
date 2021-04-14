@@ -22,18 +22,7 @@
 import * as R from 'ramda'
 
 import { AuthorizationPayload, Permission, Scope } from '~/authorization'
-
-export enum Role {
-  Guest = 'guest',
-  Login = 'login',
-  Sysadmin = 'sysadmin',
-
-  Moderator = 'moderator',
-  Reviewer = 'reviewer',
-  Architect = 'architect',
-  StaticPagesBuilder = 'static-pages-builder',
-  Admin = 'admin',
-}
+import { Role } from '~/types'
 
 interface RoleDefinition {
   extends?: Role[]

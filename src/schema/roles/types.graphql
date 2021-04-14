@@ -1,0 +1,27 @@
+type ScopedRole {
+  role: Role!
+  scope: String
+}
+
+enum Role {
+  guest
+  login
+  sysadmin
+  moderator
+  reviewer
+  architect
+  staticPagesBuilder
+  admin
+}
+
+type ScopedRoleConnection {
+  edges: [ScopedRoleCursor!]!
+  nodes: [ScopedRole!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type ScopedRoleCursor {
+  cursor: String!
+  node: ScopedRole!
+}
