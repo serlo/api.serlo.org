@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "author": "Serlo Education e.V.",
   "main": "dist/index.js",
-  "module": "dist/authorization.esm.js",
+  "module": "dist/api.esm.js",
   "typings": "dist/index.d.ts",
   "scripts": {
     "build": "tsdx build --tsconfig tsconfig.prod.json",
