@@ -102,15 +102,12 @@ module.exports = {
       'error',
       {
         devDependencies: [
-          '__config__/**/*',
-          '__tests-pacts__/**/*',
-          '__tests__/**/*',
+          'packages/server/__config__/**/*',
+          'packages/server/__tests-pacts__/**/*',
+          'packages/server/__tests__/**/*',
           'scripts/**/*',
           'jest.config.js',
-          'jest.config-pacts-*.js',
-          'jest.setup.ts',
-          'jest.setup-pacts.ts',
-          'webpack.config.js',
+          'jest.config-pacts-*.js'
         ],
         optionalDependencies: false,
       },
@@ -164,8 +161,8 @@ module.exports = {
   overrides: [
     {
       files: [
-        '__tests-pacts__/**/*',
-        '__tests__/**/*',
+        'packages/server/__tests-pacts__/**/*',
+        'packages/server/__tests__/**/*',
         'jest.setup.ts',
         'jest.setup-pacts.ts',
       ],

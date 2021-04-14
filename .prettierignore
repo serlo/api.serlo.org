@@ -1,7 +1,3 @@
-# API Extractor
-.api-extractor/
-api/
-
 # Transpiled code
 dist/
 
