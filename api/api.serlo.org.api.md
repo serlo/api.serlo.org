@@ -16,7 +16,6 @@ import { O } from 'ts-toolbelt';
 import { option } from 'fp-ts';
 import { RESTDataSource } from 'apollo-datasource-rest';
 import * as t from 'io-ts';
-import { default as t_2 } from 'io-ts';
 
 // @public (undocumented)
 export type AbstractEntity = {
@@ -190,14 +189,13 @@ export type AbstractNotificationEvent = {
 };
 
 // @public (undocumented)
-export interface AbstractNotificationEventPayload extends Omit<AbstractNotificationEvent, 'actor'> {
-    // (undocumented)
-    __typename: NotificationEventType;
-    // (undocumented)
-    actorId: number;
-    // (undocumented)
-    objectId: number;
-}
+export const AbstractNotificationEventDecoder: t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>;
 
 // @public (undocumented)
 export type AbstractNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractNotificationEvent'] = ResolversParentTypes['AbstractNotificationEvent']> = {
@@ -738,9 +736,6 @@ export function assertAll<A>(args: {
 } & ErrorEvent_2): (list: A[]) => A[];
 
 // @public (undocumented)
-export function assertUserIsAuthenticated(user: number | null): asserts user is number;
-
-// @public (undocumented)
 export type AsyncOrSync<T> = Promise<T> | T;
 
 // @public (undocumented)
@@ -793,14 +788,18 @@ export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & Inst
 };
 
 // @public (undocumented)
-export interface CheckoutRevisionNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CheckoutRevisionNotificationEvent, keyof LegacyCheckoutRevisionNotificationEventResolvers['CheckoutRevisionNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.CheckoutRevision;
-    // (undocumented)
-    repositoryId: number;
-    // (undocumented)
-    revisionId: number;
-}
+export const CheckoutRevisionNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CheckoutRevision>;
+    repositoryId: t.RefinementC<t.NumberC>;
+    revisionId: t.RefinementC<t.NumberC>;
+    reason: t.StringC;
+}>]>>;
 
 // @public (undocumented)
 export type CheckoutRevisionNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CheckoutRevisionNotificationEvent'] = ResolversParentTypes['CheckoutRevisionNotificationEvent']> = {
@@ -1278,14 +1277,17 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & Instanc
 };
 
 // @public (undocumented)
-export interface CreateCommentNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CreateCommentNotificationEvent, keyof LegacyCreateCommentNotificationEventResolvers['CreateCommentNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.CreateComment;
-    // (undocumented)
-    commentId: number;
-    // (undocumented)
-    threadId: number;
-}
+export const CreateCommentNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CreateComment>;
+    threadId: t.RefinementC<t.NumberC>;
+    commentId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type CreateCommentNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateCommentNotificationEvent'] = ResolversParentTypes['CreateCommentNotificationEvent']> = {
@@ -1312,14 +1314,17 @@ export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & Inst
 };
 
 // @public (undocumented)
-export interface CreateEntityLinkNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CreateEntityLinkNotificationEvent, keyof LegacyCreateEntityLinkNotificationEventResolvers['CreateEntityLinkNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.CreateEntityLink;
-    // (undocumented)
-    childId: number;
-    // (undocumented)
-    parentId: number;
-}
+export const CreateEntityLinkNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CreateEntityLink>;
+    parentId: t.RefinementC<t.NumberC>;
+    childId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type CreateEntityLinkNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateEntityLinkNotificationEvent'] = ResolversParentTypes['CreateEntityLinkNotificationEvent']> = {
@@ -1345,12 +1350,16 @@ export type CreateEntityNotificationEvent = AbstractNotificationEvent & Instance
 };
 
 // @public (undocumented)
-export interface CreateEntityNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CreateEntityNotificationEvent, keyof LegacyCreateEntityNotificationEventResolvers['CreateEntityNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.CreateEntity;
-    // (undocumented)
-    entityId: number;
-}
+export const CreateEntityNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CreateEntity>;
+    entityId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type CreateEntityNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateEntityNotificationEvent'] = ResolversParentTypes['CreateEntityNotificationEvent']> = {
@@ -1376,14 +1385,17 @@ export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & 
 };
 
 // @public (undocumented)
-export interface CreateEntityRevisionNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CreateEntityRevisionNotificationEvent, keyof LegacyCreateEntityRevisionNotificationEventResolvers['CreateEntityRevisionNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.CreateEntityRevision;
-    // (undocumented)
-    entityId: number;
-    // (undocumented)
-    entityRevisionId: number;
-}
+export const CreateEntityRevisionNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CreateEntityRevision>;
+    entityId: t.RefinementC<t.NumberC>;
+    entityRevisionId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type CreateEntityRevisionNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateEntityRevisionNotificationEvent'] = ResolversParentTypes['CreateEntityRevisionNotificationEvent']> = {
@@ -1650,10 +1662,174 @@ export function createSerloModel({ environment, }: {
     }) => Promise<NavigationData | null>;
     getNotificationEvent: ModelQuery<{
         id: number;
-    }, AbstractNotificationEventPayload | null>;
+    }, ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CheckoutRevision;
+        repositoryId: number;
+        revisionId: number;
+        reason: string;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CreateComment;
+        threadId: number;
+        commentId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CreateEntity;
+        entityId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CreateEntityRevision;
+        entityId: number;
+        entityRevisionId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CreateEntityLink;
+        parentId: number;
+        childId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CreateTaxonomyTerm;
+        taxonomyTermId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CreateTaxonomyLink;
+        parentId: number;
+        childId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.CreateThread;
+        threadId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.RejectRevision;
+        repositoryId: number;
+        revisionId: number;
+        reason: string;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.RemoveEntityLink;
+        parentId: number;
+        childId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.RemoveTaxonomyLink;
+        parentId: number;
+        childId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.SetLicense;
+        repositoryId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.SetTaxonomyTerm;
+        taxonomyTermId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.SetTaxonomyParent;
+        previousParentId: number;
+        parentId: number;
+        childId: number;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.SetThreadState;
+        threadId: number;
+        archived: boolean;
+    }) | ({
+        id: number;
+        instance: Instance;
+        date: string;
+        actorId: number;
+        objectId: number;
+    } & {
+        __typename: NotificationEventType.SetUuidState;
+        trashed: boolean;
+    }) | null>;
     getNotifications: ModelQuery<{
         userId: number;
-    }, NotificationsPayload>;
+    }, {
+        notifications: {
+            id: number;
+            unread: boolean;
+            eventId: number;
+        }[];
+        userId: number;
+    }>;
     getSubscriptions: ModelQuery<{
         userId: number;
     }, {
@@ -1698,8 +1874,728 @@ export function createSerloModel({ environment, }: {
     }>;
     getUuid: ModelQuery<{
         id: number;
-    }, UuidPayload | null>;
-    getUuidWithCustomDecoder: <S extends UuidPayload>({ id, decoder, }: {
+    }, ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: "Comment";
+        authorId: number;
+        title: string | null;
+        date: string;
+        archived: boolean;
+        content: string;
+        parentId: number;
+        childrenIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Exercise;
+        taxonomyTermIds: number[];
+        solutionId: number | null;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.GroupedExercise;
+        parentId: number;
+        solutionId: number | null;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Applet;
+        taxonomyTermIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Article;
+        taxonomyTermIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Course;
+        taxonomyTermIds: number[];
+        pageIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.CoursePage;
+        parentId: number;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Event;
+        taxonomyTermIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.ExerciseGroup;
+        taxonomyTermIds: number[];
+        exerciseIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Solution;
+        parentId: number;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Video;
+        taxonomyTermIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: DiscriminatorType.Page;
+        instance: Instance;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+        date: string;
+        licenseId: number;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.AppletRevision;
+        url: string;
+        title: string;
+        content: string;
+        metaTitle: string;
+        metaDescription: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.ArticleRevision;
+        title: string;
+        content: string;
+        metaTitle: string;
+        metaDescription: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.CourseRevision;
+        title: string;
+        content: string;
+        metaDescription: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.CoursePageRevision;
+        title: string;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.EventRevision;
+        title: string;
+        content: string;
+        metaTitle: string;
+        metaDescription: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.ExerciseRevision;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.ExerciseGroupRevision;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.GroupedExerciseRevision;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.SolutionRevision;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.VideoRevision;
+        url: string;
+        title: string;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: DiscriminatorType.PageRevision;
+        title: string;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: DiscriminatorType.TaxonomyTerm;
+        type: TaxonomyTermType;
+        instance: Instance;
+        name: string;
+        weight: number;
+        childrenIds: number[];
+        parentId: number | null;
+    } & {
+        description?: string | null | undefined;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: DiscriminatorType.User;
+        username: string;
+        date: string;
+        roles: string[];
+    } & {
+        lastLogin?: string | null | undefined;
+        description?: string | null | undefined;
+    }) | null>;
+    getUuidWithCustomDecoder: <S extends ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: "Comment";
+        authorId: number;
+        title: string | null;
+        date: string;
+        archived: boolean;
+        content: string;
+        parentId: number;
+        childrenIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Exercise;
+        taxonomyTermIds: number[];
+        solutionId: number | null;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.GroupedExercise;
+        parentId: number;
+        solutionId: number | null;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Applet;
+        taxonomyTermIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Article;
+        taxonomyTermIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Course;
+        taxonomyTermIds: number[];
+        pageIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.CoursePage;
+        parentId: number;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Event;
+        taxonomyTermIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.ExerciseGroup;
+        taxonomyTermIds: number[];
+        exerciseIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Solution;
+        parentId: number;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityType;
+        instance: Instance;
+        date: string;
+        licenseId: number;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+    } & {
+        __typename: EntityType.Video;
+        taxonomyTermIds: number[];
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: DiscriminatorType.Page;
+        instance: Instance;
+        currentRevisionId: number | null;
+        revisionIds: number[];
+        date: string;
+        licenseId: number;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.AppletRevision;
+        url: string;
+        title: string;
+        content: string;
+        metaTitle: string;
+        metaDescription: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.ArticleRevision;
+        title: string;
+        content: string;
+        metaTitle: string;
+        metaDescription: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.CourseRevision;
+        title: string;
+        content: string;
+        metaDescription: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.CoursePageRevision;
+        title: string;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.EventRevision;
+        title: string;
+        content: string;
+        metaTitle: string;
+        metaDescription: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.ExerciseRevision;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.ExerciseGroupRevision;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.GroupedExerciseRevision;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.SolutionRevision;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: EntityRevisionType;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+        changes: string;
+    } & {
+        __typename: EntityRevisionType.VideoRevision;
+        url: string;
+        title: string;
+        content: string;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: DiscriminatorType.PageRevision;
+        title: string;
+        content: string;
+        date: string;
+        authorId: number;
+        repositoryId: number;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: DiscriminatorType.TaxonomyTerm;
+        type: TaxonomyTermType;
+        instance: Instance;
+        name: string;
+        weight: number;
+        childrenIds: number[];
+        parentId: number | null;
+    } & {
+        description?: string | null | undefined;
+    }) | ({
+        id: number;
+        trashed: boolean;
+        alias: string;
+    } & {
+        __typename: DiscriminatorType.User;
+        username: string;
+        date: string;
+        roles: string[];
+    } & {
+        lastLogin?: string | null | undefined;
+        description?: string | null | undefined;
+    })>({ id, decoder, }: {
         id: number;
         decoder: t.Type<S, S, unknown>;
     }) => Promise<S | null>;
@@ -1824,14 +2720,17 @@ export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & In
 };
 
 // @public (undocumented)
-export interface CreateTaxonomyLinkNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CreateTaxonomyLinkNotificationEvent, keyof LegacyCreateTaxonomyLinkNotificationEventResolvers['CreateTaxonomyLinkNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.CreateTaxonomyLink;
-    // (undocumented)
-    childId: number;
-    // (undocumented)
-    parentId: number;
-}
+export const CreateTaxonomyLinkNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CreateTaxonomyLink>;
+    parentId: t.RefinementC<t.NumberC>;
+    childId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type CreateTaxonomyLinkNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateTaxonomyLinkNotificationEvent'] = ResolversParentTypes['CreateTaxonomyLinkNotificationEvent']> = {
@@ -1857,12 +2756,16 @@ export type CreateTaxonomyTermNotificationEvent = AbstractNotificationEvent & In
 };
 
 // @public (undocumented)
-export interface CreateTaxonomyTermNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CreateTaxonomyTermNotificationEvent, keyof LegacyCreateTaxonomyTermNotificationEventResolvers['CreateTaxonomyTermNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.CreateTaxonomyTerm;
-    // (undocumented)
-    taxonomyTermId: number;
-}
+export const CreateTaxonomyTermNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CreateTaxonomyTerm>;
+    taxonomyTermId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type CreateTaxonomyTermNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateTaxonomyTermNotificationEvent'] = ResolversParentTypes['CreateTaxonomyTermNotificationEvent']> = {
@@ -1888,14 +2791,16 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
 };
 
 // @public (undocumented)
-export interface CreateThreadNotificationEventPayload extends AbstractNotificationEventPayload, Omit<CreateThreadNotificationEvent, keyof LegacyCreateThreadNotificationEventResolvers['CreateThreadNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.CreateThread;
-    // (undocumented)
-    objectId: number;
-    // (undocumented)
-    threadId: number;
-}
+export const CreateThreadNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CreateThread>;
+    threadId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type CreateThreadNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateThreadNotificationEvent'] = ResolversParentTypes['CreateThreadNotificationEvent']> = {
@@ -2094,9 +2999,6 @@ export const EntityDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.Inte
 }>]>>]>;
 
 // @public (undocumented)
-export type EntityPayload = Model<'AbstractEntity'>;
-
-// @public (undocumented)
 export const EntityRevisionDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.IntersectionC<[t.TypeC<{
     id: t.RefinementC<t.NumberC>;
     trashed: t.BooleanC;
@@ -2253,9 +3155,6 @@ export const EntityRevisionDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.Inters
     title: t.StringC;
     content: t.StringC;
 }>]>>]>;
-
-// @public (undocumented)
-export type EntityRevisionPayload = Model<'AbstractEntityRevision'>;
 
 // @public (undocumented)
 export enum EntityRevisionType {
@@ -3066,171 +3965,7 @@ export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 }
 
 // @public (undocumented)
-export interface LegacyCheckoutRevisionNotificationEventResolvers {
-    // (undocumented)
-    CheckoutRevisionNotificationEvent: {
-        repository: LegacyResolver<CheckoutRevisionNotificationEventPayload, never, RepositoryPayload | null>;
-        revision: LegacyResolver<CheckoutRevisionNotificationEventPayload, never, RevisionPayload | null>;
-    } & NotificationEventResolvers<CheckoutRevisionNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacyCreateCommentNotificationEventResolvers {
-    // (undocumented)
-    CreateCommentNotificationEvent: {
-        thread: LegacyResolver<CreateCommentNotificationEventPayload, never, UnsupportedThread>;
-        comment: LegacyResolver<CreateCommentNotificationEventPayload, never, UnsupportedComment>;
-    } & NotificationEventResolvers<CreateCommentNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacyCreateEntityLinkNotificationEventResolvers {
-    // (undocumented)
-    CreateEntityLinkNotificationEvent: {
-        parent: LegacyResolver<CreateEntityLinkNotificationEventPayload, never, EntityPayload | null>;
-        child: LegacyResolver<CreateEntityLinkNotificationEventPayload, never, EntityPayload | null>;
-    } & NotificationEventResolvers<CreateEntityLinkNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacyCreateEntityNotificationEventResolvers {
-    // (undocumented)
-    CreateEntityNotificationEvent: {
-        entity: LegacyResolver<CreateEntityNotificationEventPayload, never, EntityPayload | null>;
-    } & NotificationEventResolvers<CreateEntityNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacyCreateEntityRevisionNotificationEventResolvers {
-    // (undocumented)
-    CreateEntityRevisionNotificationEvent: {
-        entity: LegacyResolver<CreateEntityRevisionNotificationEventPayload, never, EntityPayload | null>;
-        entityRevision: LegacyResolver<CreateEntityRevisionNotificationEventPayload, never, EntityRevisionPayload | null>;
-    } & NotificationEventResolvers<CreateEntityRevisionNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacyCreateTaxonomyLinkNotificationEventResolvers {
-    // (undocumented)
-    CreateTaxonomyLinkNotificationEvent: {
-        parent: LegacyResolver<CreateTaxonomyLinkNotificationEventPayload, never, TaxonomyTermPayload | null>;
-        child: LegacyResolver<CreateTaxonomyLinkNotificationEventPayload, never, UuidPayload | null>;
-    } & NotificationEventResolvers<CreateTaxonomyLinkNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacyCreateTaxonomyTermNotificationEventResolvers {
-    // (undocumented)
-    CreateTaxonomyTermNotificationEvent: {
-        taxonomyTerm: LegacyResolver<CreateTaxonomyTermNotificationEventPayload, never, TaxonomyTermPayload | null>;
-    } & NotificationEventResolvers<CreateTaxonomyTermNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacyCreateThreadNotificationEventResolvers {
-    // (undocumented)
-    CreateThreadNotificationEvent: {
-        object: LegacyResolver<CreateThreadNotificationEventPayload, never, UuidPayload | null>;
-        thread: LegacyResolver<CreateThreadNotificationEventPayload, never, UnsupportedThread>;
-    } & NotificationEventResolvers<CreateThreadNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacyNotificationResolvers {
-    // (undocumented)
-    AbstractNotificationEvent: {
-        __resolveType: TypeResolver<NotificationEventPayload>;
-    };
-    // (undocumented)
-    Mutation: {
-        notification: MutationNamespace;
-    };
-    // (undocumented)
-    Notification: {
-        event: LegacyResolver<NotificationPayload, never, NotificationEventPayload | null>;
-    };
-    // (undocumented)
-    NotificationMutation: {
-        setState: MutationResolver<NotificationMutationSetStateArgs, NotificationSetStateResponse>;
-    };
-    // (undocumented)
-    Query: {
-        notifications: QueryResolver<QueryNotificationsArgs, Connection<NotificationPayload>>;
-        notificationEvent: QueryResolver<QueryNotificationEventArgs, NotificationEventPayload | null>;
-    };
-}
-
-// @public (undocumented)
-export interface LegacyRejectRevisionNotificationEventResolvers {
-    // (undocumented)
-    RejectRevisionNotificationEvent: {
-        repository: LegacyResolver<RejectRevisionNotificationEventPayload, never, RepositoryPayload | null>;
-        revision: LegacyResolver<RejectRevisionNotificationEventPayload, never, RevisionPayload | null>;
-    } & NotificationEventResolvers<RejectRevisionNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacyRemoveEntityLinkNotificationEventResolvers {
-    // (undocumented)
-    RemoveEntityLinkNotificationEvent: {
-        parent: LegacyResolver<RemoveEntityLinkNotificationEventPayload, never, EntityPayload | null>;
-        child: LegacyResolver<RemoveEntityLinkNotificationEventPayload, never, EntityPayload | null>;
-    } & NotificationEventResolvers<RemoveEntityLinkNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacyRemoveTaxonomyLinkNotificationEventResolvers {
-    // (undocumented)
-    RemoveTaxonomyLinkNotificationEvent: {
-        parent: LegacyResolver<RemoveTaxonomyLinkNotificationEventPayload, never, TaxonomyTermPayload | null>;
-        child: LegacyResolver<RemoveTaxonomyLinkNotificationEventPayload, never, UuidPayload | null>;
-    } & NotificationEventResolvers<RemoveTaxonomyLinkNotificationEventPayload>;
-}
-
-// @public (undocumented)
 export type LegacyResolver<P, A, T> = (parent: P, args: A, context: Context, info: GraphQLResolveInfo) => AsyncOrSync<T>;
-
-// @public (undocumented)
-export interface LegacySetLicenseNotificationEventResolvers {
-    // (undocumented)
-    SetLicenseNotificationEvent: {
-        repository: LegacyResolver<SetLicenseNotificationEventPayload, never, RepositoryPayload | null>;
-    } & NotificationEventResolvers<SetLicenseNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacySetTaxonomyParentNotificationEventResolvers {
-    // (undocumented)
-    SetTaxonomyParentNotificationEvent: {
-        previousParent: LegacyResolver<SetTaxonomyParentNotificationEventPayload, never, TaxonomyTermPayload | null>;
-        parent: LegacyResolver<SetTaxonomyParentNotificationEventPayload, never, TaxonomyTermPayload | null>;
-        child: LegacyResolver<SetTaxonomyParentNotificationEventPayload, never, TaxonomyTermPayload | null>;
-    } & NotificationEventResolvers<SetTaxonomyParentNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacySetTaxonomyTermNotificationEventResolvers {
-    // (undocumented)
-    SetTaxonomyTermNotificationEvent: {
-        taxonomyTerm: LegacyResolver<SetTaxonomyTermNotificationEventPayload, never, TaxonomyTermPayload | null>;
-    } & NotificationEventResolvers<SetTaxonomyTermNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacySetThreadStateNotificationEventResolvers {
-    // (undocumented)
-    SetThreadStateNotificationEvent: {
-        thread: LegacyResolver<SetThreadStateNotificationEventPayload, never, UnsupportedThread>;
-    } & NotificationEventResolvers<SetThreadStateNotificationEventPayload>;
-}
-
-// @public (undocumented)
-export interface LegacySetUuidStateNotificationEventResolvers {
-    // (undocumented)
-    SetUuidStateNotificationEvent: {
-        object: LegacyResolver<SetUuidStateNotificationEventPayload, never, UuidPayload | null>;
-    } & NotificationEventResolvers<SetUuidStateNotificationEventPayload>;
-}
 
 // @public (undocumented)
 export type LegacyStitchingResolver<TResult, TParent, TContext, TArgs> = {
@@ -3342,6 +4077,8 @@ export interface Models {
     // (undocumented)
     ArticleRevision: t.TypeOf<typeof ArticleRevisionDecoder>;
     // (undocumented)
+    CheckoutRevisionNotificationEvent: t.TypeOf<typeof CheckoutRevisionNotificationEventDecoder>;
+    // (undocumented)
     Comment: t.TypeOf<typeof CommentDecoder>;
     // (undocumented)
     Course: t.TypeOf<typeof CourseDecoder>;
@@ -3351,6 +4088,20 @@ export interface Models {
     CoursePageRevision: t.TypeOf<typeof CoursePageRevisionDecoder>;
     // (undocumented)
     CourseRevision: t.TypeOf<typeof CourseRevisionDecoder>;
+    // (undocumented)
+    CreateCommentNotificationEvent: t.TypeOf<typeof CreateCommentNotificationEventDecoder>;
+    // (undocumented)
+    CreateEntityLinkNotificationEvent: t.TypeOf<typeof CreateEntityLinkNotificationEventDecoder>;
+    // (undocumented)
+    CreateEntityNotificationEvent: t.TypeOf<typeof CreateEntityNotificationEventDecoder>;
+    // (undocumented)
+    CreateEntityRevisionNotificationEvent: t.TypeOf<typeof CreateEntityRevisionNotificationEventDecoder>;
+    // (undocumented)
+    CreateTaxonomyLinkNotificationEvent: t.TypeOf<typeof CreateTaxonomyLinkNotificationEventDecoder>;
+    // (undocumented)
+    CreateTaxonomyTermNotificationEvent: t.TypeOf<typeof CreateTaxonomyTermNotificationEventDecoder>;
+    // (undocumented)
+    CreateThreadNotificationEvent: t.TypeOf<typeof CreateThreadNotificationEventDecoder>;
     // (undocumented)
     Event: t.TypeOf<typeof EventDecoder>;
     // (undocumented)
@@ -3374,11 +4125,34 @@ export interface Models {
     // (undocumented)
     Navigation: Payload<'serlo', 'getNavigation'>;
     // (undocumented)
+    Notification: t.TypeOf<typeof NotificationDecoder>;
+    // (undocumented)
     Page: t.TypeOf<typeof PageDecoder>;
     // (undocumented)
     PageRevision: t.TypeOf<typeof PageRevisionDecoder>;
     // (undocumented)
     Query: Record<string, never>;
+    // (undocumented)
+    RejectRevisionNotificationEvent: t.TypeOf<typeof RejectRevisionNotificationEventDecoder>;
+    // (undocumented)
+    RemoveEntityLinkNotificationEvent: t.TypeOf<typeof RemoveEntityLinkNotificationEventDecoder>;
+    // (undocumented)
+    RemoveTaxonomyLinkNotificationEvent: t.TypeOf<typeof RemoveTaxonomyLinkNotificationEventDecoder>;
+    // (undocumented)
+    ScopedRole: {
+        role: Role;
+        scope: Scope;
+    };
+    // (undocumented)
+    SetLicenseNotificationEvent: t.TypeOf<typeof SetLicenseNotificationEventDecoder>;
+    // (undocumented)
+    SetTaxonomyParentNotificationEvent: t.TypeOf<typeof SetTaxonomyParentNotificationEventDecoder>;
+    // (undocumented)
+    SetTaxonomyTermNotificationEvent: t.TypeOf<typeof SetTaxonomyTermNotificationEventDecoder>;
+    // (undocumented)
+    SetThreadStateNotificationEvent: t.TypeOf<typeof SetThreadStateNotificationEventDecoder>;
+    // (undocumented)
+    SetUuidStateNotificationEvent: t.TypeOf<typeof SetUuidStateNotificationEventDecoder>;
     // (undocumented)
     Solution: t.TypeOf<typeof SolutionDecoder>;
     // (undocumented)
@@ -3476,7 +4250,7 @@ export type Navigation = {
 };
 
 // @public (undocumented)
-export type NavigationChildPayload = TaxonomyTermPayload | Model<'Page'>;
+export type NavigationChildPayload = Model<'TaxonomyTerm'> | Model<'Page'>;
 
 // @public (undocumented)
 export interface NavigationData {
@@ -3607,6 +4381,13 @@ export type NotificationConnectionResolvers<ContextType = Context, ParentType ex
 };
 
 // @public (undocumented)
+export const NotificationDecoder: t.ExactC<t.TypeC<{
+    id: t.NumberC;
+    unread: t.BooleanC;
+    eventId: t.NumberC;
+}>>;
+
+// @public (undocumented)
 export type NotificationEdge = {
     __typename?: 'NotificationEdge';
     cursor: Scalars['String'];
@@ -3621,13 +4402,164 @@ export type NotificationEdgeResolvers<ContextType = Context, ParentType extends 
 };
 
 // @public (undocumented)
-export type NotificationEventPayload = CheckoutRevisionNotificationEventPayload | RejectRevisionNotificationEventPayload | CreateEntityNotificationEventPayload | CreateEntityLinkNotificationEventPayload | RemoveEntityLinkNotificationEventPayload | CreateEntityRevisionNotificationEventPayload | CreateTaxonomyTermNotificationEventPayload | CreateTaxonomyLinkNotificationEventPayload | RemoveTaxonomyLinkNotificationEventPayload | CreateThreadNotificationEventPayload | CreateCommentNotificationEventPayload | SetLicenseNotificationEventPayload | SetTaxonomyParentNotificationEventPayload | SetTaxonomyTermNotificationEventPayload | SetThreadStateNotificationEventPayload | SetUuidStateNotificationEventPayload;
-
-// @public (undocumented)
-export interface NotificationEventResolvers<T extends AbstractNotificationEventPayload> {
-    // (undocumented)
-    actor: LegacyResolver<T, never, Partial<Model<'User'>> | null>;
-}
+export const NotificationEventDecoder: t.UnionC<[t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CheckoutRevision>;
+    repositoryId: t.RefinementC<t.NumberC>;
+    revisionId: t.RefinementC<t.NumberC>;
+    reason: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CreateComment>;
+    threadId: t.RefinementC<t.NumberC>;
+    commentId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CreateEntity>;
+    entityId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CreateEntityRevision>;
+    entityId: t.RefinementC<t.NumberC>;
+    entityRevisionId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CreateEntityLink>;
+    parentId: t.RefinementC<t.NumberC>;
+    childId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CreateTaxonomyTerm>;
+    taxonomyTermId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CreateTaxonomyLink>;
+    parentId: t.RefinementC<t.NumberC>;
+    childId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.CreateThread>;
+    threadId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.RejectRevision>;
+    repositoryId: t.RefinementC<t.NumberC>;
+    revisionId: t.RefinementC<t.NumberC>;
+    reason: t.StringC;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.RemoveEntityLink>;
+    parentId: t.RefinementC<t.NumberC>;
+    childId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.RemoveTaxonomyLink>;
+    parentId: t.RefinementC<t.NumberC>;
+    childId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.SetLicense>;
+    repositoryId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.SetTaxonomyTerm>;
+    taxonomyTermId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.SetTaxonomyParent>;
+    previousParentId: t.RefinementC<t.NumberC>;
+    parentId: t.RefinementC<t.NumberC>;
+    childId: t.RefinementC<t.NumberC>;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.SetThreadState>;
+    threadId: t.RefinementC<t.NumberC>;
+    archived: t.BooleanC;
+}>]>>, t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.SetUuidState>;
+    trashed: t.BooleanC;
+}>]>>]>;
 
 // @public (undocumented)
 export enum NotificationEventType {
@@ -3683,12 +4615,6 @@ export type NotificationMutationSetStateArgs = {
 };
 
 // @public (undocumented)
-export interface NotificationPayload extends Omit<Notification_2, keyof LegacyNotificationResolvers['Notification']> {
-    // (undocumented)
-    eventId: number;
-}
-
-// @public (undocumented)
 export type NotificationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Notification'] = ResolversParentTypes['Notification']> = {
     id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
     unread?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -3715,14 +4641,6 @@ export type NotificationSetStateResponseResolvers<ContextType = Context, ParentT
     query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
-
-// @public (undocumented)
-export interface NotificationsPayload {
-    // (undocumented)
-    notifications: NotificationPayload[];
-    // (undocumented)
-    userId: number;
-}
 
 // @public
 export type OmitKeys<O extends object, Keys> = Omit<O, Keys & keyof O>;
@@ -4061,14 +4979,18 @@ export type RejectRevisionNotificationEvent = AbstractNotificationEvent & Instan
 };
 
 // @public (undocumented)
-export interface RejectRevisionNotificationEventPayload extends AbstractNotificationEventPayload, Omit<RejectRevisionNotificationEvent, keyof LegacyRejectRevisionNotificationEventResolvers['RejectRevisionNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.RejectRevision;
-    // (undocumented)
-    repositoryId: number;
-    // (undocumented)
-    revisionId: number;
-}
+export const RejectRevisionNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.RejectRevision>;
+    repositoryId: t.RefinementC<t.NumberC>;
+    revisionId: t.RefinementC<t.NumberC>;
+    reason: t.StringC;
+}>]>>;
 
 // @public (undocumented)
 export type RejectRevisionNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RejectRevisionNotificationEvent'] = ResolversParentTypes['RejectRevisionNotificationEvent']> = {
@@ -4096,14 +5018,17 @@ export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & Inst
 };
 
 // @public (undocumented)
-export interface RemoveEntityLinkNotificationEventPayload extends AbstractNotificationEventPayload, Omit<RemoveEntityLinkNotificationEvent, keyof LegacyRemoveEntityLinkNotificationEventResolvers['RemoveEntityLinkNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.RemoveEntityLink;
-    // (undocumented)
-    childId: number;
-    // (undocumented)
-    parentId: number;
-}
+export const RemoveEntityLinkNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.RemoveEntityLink>;
+    parentId: t.RefinementC<t.NumberC>;
+    childId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type RemoveEntityLinkNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RemoveEntityLinkNotificationEvent'] = ResolversParentTypes['RemoveEntityLinkNotificationEvent']> = {
@@ -4130,14 +5055,17 @@ export type RemoveTaxonomyLinkNotificationEvent = AbstractNotificationEvent & In
 };
 
 // @public (undocumented)
-export interface RemoveTaxonomyLinkNotificationEventPayload extends AbstractNotificationEventPayload, Omit<RemoveTaxonomyLinkNotificationEvent, keyof LegacyRemoveTaxonomyLinkNotificationEventResolvers['RemoveTaxonomyLinkNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.RemoveTaxonomyLink;
-    // (undocumented)
-    childId: number;
-    // (undocumented)
-    parentId: number;
-}
+export const RemoveTaxonomyLinkNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.RemoveTaxonomyLink>;
+    parentId: t.RefinementC<t.NumberC>;
+    childId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type RemoveTaxonomyLinkNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RemoveTaxonomyLinkNotificationEvent'] = ResolversParentTypes['RemoveTaxonomyLinkNotificationEvent']> = {
@@ -4313,9 +5241,6 @@ export const RepositoryDecoder: t.UnionC<[t.UnionC<[t.UnionC<[t.ExactC<t.Interse
 }>]>>]>;
 
 // @public (undocumented)
-export type RepositoryPayload = Model<'AbstractRepository'>;
-
-// @public (undocumented)
 export type RepositoryType = EntityType | DiscriminatorType.Page;
 
 // @public (undocumented)
@@ -4374,6 +5299,11 @@ export type Resolvers<ContextType = Context> = {
     NotificationSetStateResponse?: NotificationSetStateResponseResolvers<ContextType>;
     NotificationConnection?: NotificationConnectionResolvers<ContextType>;
     NotificationEdge?: NotificationEdgeResolvers<ContextType>;
+    ScopedRole?: ScopedRoleResolvers<ContextType>;
+    ScopedRoleConnection?: ScopedRoleConnectionResolvers<ContextType>;
+    ScopedRoleCursor?: ScopedRoleCursorResolvers<ContextType>;
+    QuerySubscriptionResult?: QuerySubscriptionResultResolvers<ContextType>;
+    SubscriptionCursor?: SubscriptionCursorResolvers<ContextType>;
     SubscriptionMutation?: SubscriptionMutationResolvers<ContextType>;
     SubscriptionSetResponse?: SubscriptionSetResponseResolvers<ContextType>;
     Thread?: ThreadResolvers<ContextType>;
@@ -4496,6 +5426,11 @@ export type ResolversParentTypes = {
     NotificationSetStateResponse: ModelOf<NotificationSetStateResponse>;
     NotificationConnection: ModelOf<NotificationConnection>;
     NotificationEdge: ModelOf<NotificationEdge>;
+    ScopedRole: ModelOf<ScopedRole>;
+    ScopedRoleConnection: ModelOf<ScopedRoleConnection>;
+    ScopedRoleCursor: ModelOf<ScopedRoleCursor>;
+    QuerySubscriptionResult: ModelOf<QuerySubscriptionResult>;
+    SubscriptionCursor: ModelOf<SubscriptionCursor>;
     SubscriptionMutation: ModelOf<SubscriptionMutation>;
     SubscriptionSetInput: ModelOf<SubscriptionSetInput>;
     SubscriptionSetResponse: ModelOf<SubscriptionSetResponse>;
@@ -4627,6 +5562,12 @@ export type ResolversTypes = {
     NotificationSetStateResponse: ResolverTypeWrapper<ModelOf<NotificationSetStateResponse>>;
     NotificationConnection: ResolverTypeWrapper<ModelOf<NotificationConnection>>;
     NotificationEdge: ResolverTypeWrapper<ModelOf<NotificationEdge>>;
+    ScopedRole: ResolverTypeWrapper<ModelOf<ScopedRole>>;
+    Role: ResolverTypeWrapper<ModelOf<Role>>;
+    ScopedRoleConnection: ResolverTypeWrapper<ModelOf<ScopedRoleConnection>>;
+    ScopedRoleCursor: ResolverTypeWrapper<ModelOf<ScopedRoleCursor>>;
+    QuerySubscriptionResult: ResolverTypeWrapper<ModelOf<QuerySubscriptionResult>>;
+    SubscriptionCursor: ResolverTypeWrapper<ModelOf<SubscriptionCursor>>;
     SubscriptionMutation: ResolverTypeWrapper<ModelOf<SubscriptionMutation>>;
     SubscriptionSetInput: ResolverTypeWrapper<ModelOf<SubscriptionSetInput>>;
     SubscriptionSetResponse: ResolverTypeWrapper<ModelOf<SubscriptionSetResponse>>;
@@ -4898,10 +5839,27 @@ export const RevisionDecoder: t.UnionC<[t.UnionC<[t.ExactC<t.IntersectionC<[t.In
 }>]>>]>;
 
 // @public (undocumented)
-export type RevisionPayload = Model<'AbstractRevision'>;
+export type RevisionType = EntityRevisionType | DiscriminatorType.PageRevision;
 
 // @public (undocumented)
-export type RevisionType = EntityRevisionType | DiscriminatorType.PageRevision;
+export enum Role {
+    // (undocumented)
+    Admin = "admin",
+    // (undocumented)
+    Architect = "architect",
+    // (undocumented)
+    Guest = "guest",
+    // (undocumented)
+    Login = "login",
+    // (undocumented)
+    Moderator = "moderator",
+    // (undocumented)
+    Reviewer = "reviewer",
+    // (undocumented)
+    StaticPagesBuilder = "staticPagesBuilder",
+    // (undocumented)
+    Sysadmin = "sysadmin"
+}
 
 // @public
 export type Scalars = {
@@ -4924,6 +5882,52 @@ export interface Schema {
 }
 
 // @public (undocumented)
+export type ScopedRole = {
+    __typename?: 'ScopedRole';
+    role: Role;
+    scope?: Maybe<Scalars['String']>;
+};
+
+// @public (undocumented)
+export type ScopedRoleConnection = {
+    __typename?: 'ScopedRoleConnection';
+    edges: Array<ScopedRoleCursor>;
+    nodes: Array<ScopedRole>;
+    totalCount: Scalars['Int'];
+    pageInfo: PageInfo;
+};
+
+// @public (undocumented)
+export type ScopedRoleConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ScopedRoleConnection'] = ResolversParentTypes['ScopedRoleConnection']> = {
+    edges?: Resolver<Array<ResolversTypes['ScopedRoleCursor']>, ParentType, ContextType>;
+    nodes?: Resolver<Array<ResolversTypes['ScopedRole']>, ParentType, ContextType>;
+    totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+    pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+// @public (undocumented)
+export type ScopedRoleCursor = {
+    __typename?: 'ScopedRoleCursor';
+    cursor: Scalars['String'];
+    node: ScopedRole;
+};
+
+// @public (undocumented)
+export type ScopedRoleCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ScopedRoleCursor'] = ResolversParentTypes['ScopedRoleCursor']> = {
+    cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+    node?: Resolver<ResolversTypes['ScopedRole'], ParentType, ContextType>;
+    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+// @public (undocumented)
+export type ScopedRoleResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ScopedRole'] = ResolversParentTypes['ScopedRole']> = {
+    role?: Resolver<ResolversTypes['Role'], ParentType, ContextType>;
+    scope?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+// @public (undocumented)
 export enum Service {
     // (undocumented)
     Serlo = "serlo.org",
@@ -4943,12 +5947,16 @@ export type SetLicenseNotificationEvent = AbstractNotificationEvent & InstanceAw
 };
 
 // @public (undocumented)
-export interface SetLicenseNotificationEventPayload extends AbstractNotificationEventPayload, Omit<SetLicenseNotificationEvent, keyof LegacySetLicenseNotificationEventResolvers['SetLicenseNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.SetLicense;
-    // (undocumented)
-    repositoryId: number;
-}
+export const SetLicenseNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.SetLicense>;
+    repositoryId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type SetLicenseNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SetLicenseNotificationEvent'] = ResolversParentTypes['SetLicenseNotificationEvent']> = {
@@ -4975,16 +5983,18 @@ export type SetTaxonomyParentNotificationEvent = AbstractNotificationEvent & Ins
 };
 
 // @public (undocumented)
-export interface SetTaxonomyParentNotificationEventPayload extends AbstractNotificationEventPayload, Omit<SetTaxonomyParentNotificationEvent, keyof LegacySetTaxonomyParentNotificationEventResolvers['SetTaxonomyParentNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.SetTaxonomyParent;
-    // (undocumented)
-    childId: number;
-    // (undocumented)
-    parentId: number | null;
-    // (undocumented)
-    previousParentId: number | null;
-}
+export const SetTaxonomyParentNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.SetTaxonomyParent>;
+    previousParentId: t.RefinementC<t.NumberC>;
+    parentId: t.RefinementC<t.NumberC>;
+    childId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type SetTaxonomyParentNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SetTaxonomyParentNotificationEvent'] = ResolversParentTypes['SetTaxonomyParentNotificationEvent']> = {
@@ -5011,12 +6021,16 @@ export type SetTaxonomyTermNotificationEvent = AbstractNotificationEvent & Insta
 };
 
 // @public (undocumented)
-export interface SetTaxonomyTermNotificationEventPayload extends AbstractNotificationEventPayload, Omit<SetTaxonomyTermNotificationEvent, keyof LegacySetTaxonomyTermNotificationEventResolvers['SetTaxonomyTermNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.SetTaxonomyTerm;
-    // (undocumented)
-    taxonomyTermId: number;
-}
+export const SetTaxonomyTermNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.SetTaxonomyTerm>;
+    taxonomyTermId: t.RefinementC<t.NumberC>;
+}>]>>;
 
 // @public (undocumented)
 export type SetTaxonomyTermNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SetTaxonomyTermNotificationEvent'] = ResolversParentTypes['SetTaxonomyTermNotificationEvent']> = {
@@ -5042,12 +6056,17 @@ export type SetThreadStateNotificationEvent = AbstractNotificationEvent & Instan
 };
 
 // @public (undocumented)
-export interface SetThreadStateNotificationEventPayload extends AbstractNotificationEventPayload, Omit<SetThreadStateNotificationEvent, keyof LegacySetThreadStateNotificationEventResolvers['SetThreadStateNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.SetThreadState;
-    // (undocumented)
-    threadId: number;
-}
+export const SetThreadStateNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.SetThreadState>;
+    threadId: t.RefinementC<t.NumberC>;
+    archived: t.BooleanC;
+}>]>>;
 
 // @public (undocumented)
 export type SetThreadStateNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SetThreadStateNotificationEvent'] = ResolversParentTypes['SetThreadStateNotificationEvent']> = {
@@ -5074,12 +6093,16 @@ export type SetUuidStateNotificationEvent = AbstractNotificationEvent & Instance
 };
 
 // @public (undocumented)
-export interface SetUuidStateNotificationEventPayload extends AbstractNotificationEventPayload, Omit<SetUuidStateNotificationEvent, keyof LegacySetUuidStateNotificationEventResolvers['SetUuidStateNotificationEvent']> {
-    // (undocumented)
-    __typename: NotificationEventType.SetUuidState;
-    // (undocumented)
-    objectId: number;
-}
+export const SetUuidStateNotificationEventDecoder: t.ExactC<t.IntersectionC<[t.TypeC<{
+    id: t.RefinementC<t.NumberC>;
+    instance: t.Type<Instance, Instance, unknown>;
+    date: t.StringC;
+    actorId: t.RefinementC<t.NumberC>;
+    objectId: t.RefinementC<t.NumberC>;
+}>, t.TypeC<{
+    __typename: t.LiteralC<NotificationEventType.SetUuidState>;
+    trashed: t.BooleanC;
+}>]>>;
 
 // @public (undocumented)
 export type SetUuidStateNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SetUuidStateNotificationEvent'] = ResolversParentTypes['SetUuidStateNotificationEvent']> = {
@@ -5406,9 +6429,6 @@ export type TaxonomyTermEdgeResolvers<ContextType = Context, ParentType extends 
     node?: Resolver<ResolversTypes['TaxonomyTerm'], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
-
-// @public (undocumented)
-export type TaxonomyTermPayload = t_2.TypeOf<typeof TaxonomyTermDecoder>;
 
 // @public (undocumented)
 export type TaxonomyTermResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTerm'] = ResolversParentTypes['TaxonomyTerm']> = {
@@ -5794,6 +6814,7 @@ export type User = AbstractUuid & ThreadAware & {
     username: Scalars['String'];
     date: Scalars['DateTime'];
     lastLogin?: Maybe<Scalars['DateTime']>;
+    roles: ScopedRoleConnection;
     description?: Maybe<Scalars['String']>;
     activeAuthor: Scalars['Boolean'];
     activeDonor: Scalars['Boolean'];
@@ -5856,11 +6877,20 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
     username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
     date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
     lastLogin?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+    roles?: Resolver<ResolversTypes['ScopedRoleConnection'], ParentType, ContextType, RequireFields<UserRolesArgs, never>>;
     description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
     activeAuthor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     activeDonor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     activeReviewer?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+// @public (undocumented)
+export type UserRolesArgs = {
+    after?: Maybe<Scalars['String']>;
+    before?: Maybe<Scalars['String']>;
+    first?: Maybe<Scalars['Int']>;
+    last?: Maybe<Scalars['Int']>;
 };
 
 // @public (undocumented)
@@ -6257,9 +7287,6 @@ export type UuidMutationSetStateArgs = {
 };
 
 // @public (undocumented)
-export type UuidPayload = Model<'AbstractUuid'>;
-
-// @public (undocumented)
 export type UuidSetStateInput = {
     id: Array<Scalars['Int']>;
     trashed: Scalars['Boolean'];
@@ -6449,6 +7476,10 @@ export type VideoThreadsArgs = {
     trashed?: Maybe<Scalars['Boolean']>;
 };
 
+
+// Warnings were encountered during analysis:
+//
+// dist/model/types.d.ts:80:9 - (ae-forgotten-export) The symbol "Scope" needs to be exported by the entry point api.d.ts
 
 // (No @packageDocumentation comment for this package)
 

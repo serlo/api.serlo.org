@@ -24,25 +24,40 @@ import * as t from 'io-ts'
 import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
 
-import { CommentDecoder, InstanceDecoder, Uuid, UuidDecoder } from './decoder'
+import {
+  CommentDecoder,
+  InstanceDecoder,
+  NotificationEventDecoder,
+  UuidDecoder,
+  Uuid,
+  NotificationDecoder,
+  // TODO: The following imports are needed for the API extractor
+  // Delete them when https://github.com/microsoft/rushstack/issues/2140 is fixed
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  NotificationEventType,
+  EntityType,
+  EntityRevisionType,
+  DiscriminatorType,
+  /* eslint-enable @typescript-eslint/no-unused-vars */
+} from './decoder'
 import { Environment } from '~/internals/environment'
+import { Model } from '~/internals/graphql'
 import { createMutation, createQuery, ModelQuery } from '~/internals/model'
 import { isInstance } from '~/schema/instance/utils'
-import {
-  AbstractNotificationEventPayload,
-  NotificationsPayload,
-} from '~/schema/notification/types'
 import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
-import { EntityPayload } from '~/schema/uuid/abstract-entity/types'
 import {
   NavigationData,
   NavigationPayload,
   NodeData,
 } from '~/schema/uuid/abstract-navigation-child/types'
-import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 import { isUnsupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
-import { Instance, ThreadCreateThreadInput } from '~/types'
+import {
+  Instance,
+  ThreadCreateThreadInput,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  TaxonomyTermType,
+} from '~/types'
 
 export function createSerloModel({
   environment,
@@ -82,11 +97,11 @@ export function createSerloModel({
     expectedStatusCodes: number[]
   }
 
-  const getUuid = createQuery<{ id: number }, UuidPayload | null>(
+  const getUuid = createQuery(
     {
       decoder: t.union([UuidDecoder, t.null]),
       enableSwr: false,
-      getCurrentValue: async ({ id }) => {
+      getCurrentValue: async ({ id }: { id: number }) => {
         const uuid = (await handleMessage({
           message: {
             type: 'UuidQuery',
@@ -95,7 +110,7 @@ export function createSerloModel({
             },
           },
           expectedStatusCodes: [200, 404],
-        })) as UuidPayload | null
+        })) as Model<'AbstractUuid'> | null
         return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
       },
       maxAge: { hour: 1 },
@@ -111,7 +126,7 @@ export function createSerloModel({
     environment
   )
 
-  async function getUuidWithCustomDecoder<S extends UuidPayload>({
+  async function getUuidWithCustomDecoder<S extends Model<'AbstractUuid'>>({
     id,
     decoder,
   }: {
@@ -285,11 +300,7 @@ export function createSerloModel({
 
     for (let i = 0; i < nodes.length; i++) {
       const nodeData = nodes[i]
-      const uuid = nodeData.id
-        ? ((await getUuid({
-            id: nodeData.id,
-          })) as EntityPayload)
-        : null
+      const uuid = nodeData.id ? await getUuid({ id: nodeData.id }) : null
       const node = {
         label: nodeData.label,
         url: (uuid ? uuid.alias : null) || nodeData.url || null,
@@ -377,24 +388,18 @@ export function createSerloModel({
     environment
   )
 
-  const getNotificationEvent = createQuery<
-    { id: number },
-    AbstractNotificationEventPayload | null
-  >(
+  const getNotificationEvent = createQuery(
     {
+      decoder: t.union([NotificationEventDecoder, t.null]),
       enableSwr: true,
-      getCurrentValue: async ({ id }) => {
-        const response = await handleMessageWithoutResponse({
-          message: {
-            type: 'EventQuery',
-            payload: {
-              id,
-            },
-          },
+      getCurrentValue: async ({ id }: { id: number }) => {
+        const notificationEvent = (await handleMessage({
+          message: { type: 'EventQuery', payload: { id } },
           expectedStatusCodes: [200, 404],
-        })
-        const notificationEvent = (await response.json()) as AbstractNotificationEventPayload
-        return isUnsupportedNotificationEvent(notificationEvent)
+        })) as Model<'AbstractNotificationEvent'> | null
+
+        return notificationEvent === null ||
+          isUnsupportedNotificationEvent(notificationEvent)
           ? null
           : notificationEvent
       },
@@ -412,14 +417,17 @@ export function createSerloModel({
     environment
   )
 
-  const getNotifications = createQuery<
-    { userId: number },
-    NotificationsPayload
-  >(
+  const getNotifications = createQuery(
     {
+      decoder: t.exact(
+        t.type({
+          notifications: t.array(NotificationDecoder),
+          userId: Uuid,
+        })
+      ),
       enableSwr: true,
-      getCurrentValue: async ({ userId }) => {
-        const response = await handleMessageWithoutResponse({
+      getCurrentValue: ({ userId }: { userId: number }) => {
+        return handleMessage({
           message: {
             type: 'NotificationsQuery',
             payload: {
@@ -428,7 +436,6 @@ export function createSerloModel({
           },
           expectedStatusCodes: [200],
         })
-        return (await response.json()) as NotificationsPayload
       },
       maxAge: { hour: 1 },
       getKey: ({ userId }) => {

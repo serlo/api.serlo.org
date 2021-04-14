@@ -23,13 +23,13 @@ import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
 import { article, comment, comment3, user } from '../../__fixtures__'
-import { createTestClient } from '../../__tests__/__utils__'
+import { createTestClient, createUuidHandler } from '../../__tests__/__utils__'
 import {
   addMessageInteraction,
   assertSuccessfulGraphQLMutation,
 } from '../__utils__'
+import { DiscriminatorType } from '~/model/decoder'
 import { encodeThreadId } from '~/schema/thread/utils'
-import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
 
 test('ThreadsQuery', async () => {
   await addMessageInteraction({
@@ -48,6 +48,7 @@ test('ThreadsQuery', async () => {
 
 test('ThreadCreateThreadMutation', async () => {
   global.client = createTestClient({ userId: user.id })
+  global.server.use(createUuidHandler(article), createUuidHandler(user))
 
   await addMessageInteraction({
     given: `there exists a uuid 1855 and user with id ${user.id} is authenticated`,
@@ -128,6 +129,11 @@ test('ThreadCreateThreadMutation', async () => {
 
 test('ThreadCreateCommentMutation', async () => {
   global.client = createTestClient({ userId: user.id })
+  global.server.use(
+    createUuidHandler(article),
+    createUuidHandler(comment),
+    createUuidHandler(user)
+  )
 
   await addMessageInteraction({
     given: `there exists a thread with a first comment with an id of ${comment.id} and ${user.id} is authenticated`,
@@ -186,6 +192,11 @@ test('ThreadCreateCommentMutation', async () => {
 
 test('ThreadSetThreadArchivedMutation', async () => {
   global.client = createTestClient({ userId: user.id })
+  global.server.use(
+    createUuidHandler(article),
+    createUuidHandler({ ...comment, id: comment3.id }),
+    createUuidHandler(user)
+  )
 
   await addMessageInteraction({
     given: `there exists a thread with a first comment with an id of ${comment3.id} and user with id ${user.id} is authenticated`,

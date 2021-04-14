@@ -19,12 +19,51 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { AuthenticationError } from 'apollo-server'
+import { AuthenticationError, ForbiddenError } from 'apollo-server'
+import * as R from 'ramda'
+
+import { AuthorizationGuard, Scope } from '~/authorization'
+import { Context } from '~/internals/graphql/context'
+import { fetchAuthorizationPayload } from '~/schema/authorization/utils'
 
 export function assertUserIsAuthenticated(
-  user: number | null
-): asserts user is number {
-  if (user === null) throw new AuthenticationError('You are not logged in')
+  userId: number | null
+): asserts userId is number {
+  if (userId === null) {
+    throw new AuthenticationError('You are not logged in')
+  }
+}
+
+export async function assertUserIsAuthorized({
+  userId,
+  guard,
+  message,
+  dataSources,
+  ...scopeRequest
+}: {
+  userId: number | null
+  guard: AuthorizationGuard
+  message: string
+  dataSources: Context['dataSources']
+} & ScopeRequest): Promise<void> {
+  const authorizationPayload = await fetchAuthorizationPayload({
+    userId,
+    dataSources,
+  })
+  const scopes = fromScopeRequest(scopeRequest)
+  scopes.forEach((scope) => {
+    if (!guard({ authorizationPayload, scope })) {
+      throw new ForbiddenError(message)
+    }
+  })
+}
+
+export type ScopeRequest = { scope: Scope } | { scopes: Scope[] }
+
+function fromScopeRequest(scopeRequest: ScopeRequest): Scope[] {
+  return R.has('scopes', scopeRequest)
+    ? scopeRequest.scopes
+    : [scopeRequest.scope]
 }
 
 export function createMutationNamespace() {

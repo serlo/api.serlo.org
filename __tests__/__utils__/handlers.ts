@@ -24,9 +24,7 @@ import * as R from 'ramda'
 
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model/types'
-import { NotificationEventPayload } from '~/schema/notification/types'
 import { NavigationPayload } from '~/schema/uuid/abstract-navigation-child/types'
-import { UuidPayload } from '~/schema/uuid/abstract-uuid/types'
 
 export function createAliasHandler(alias: Payload<'serlo', 'getAlias'>) {
   return createMessageHandler({
@@ -64,7 +62,7 @@ export function createNavigationHandler(navigation: NavigationPayload) {
 }
 
 export function createNotificationEventHandler(
-  notificationEvent: NotificationEventPayload
+  notificationEvent: Model<'AbstractNotificationEvent'>
 ) {
   return createMessageHandler({
     message: {
@@ -77,7 +75,7 @@ export function createNotificationEventHandler(
   })
 }
 
-export function createUuidHandler(uuid: UuidPayload, once?: boolean) {
+export function createUuidHandler(uuid: Model<'AbstractUuid'>, once?: boolean) {
   return createMessageHandler(
     {
       message: {

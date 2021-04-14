@@ -21,11 +21,10 @@
  */
 import { spawnSync } from 'child_process'
 import fs from 'fs'
+import { copy } from 'fs-extra'
 import * as path from 'path'
 import rimraf from 'rimraf'
 import * as util from 'util'
-
-import { invoke } from './api-extractor'
 
 exec()
   .then(() => {
@@ -41,8 +40,7 @@ async function exec() {
   while (i++ < 3) {
     try {
       await clean()
-      bundle()
-      invokeApiExtractor()
+      await bundle()
       await generateEntry()
       return
     } catch (e) {
@@ -53,25 +51,24 @@ async function exec() {
 
   async function clean() {
     const rm = util.promisify(rimraf)
-    await rm('dist-types')
+    await rm('dist-authorization')
+    const mkdir = util.promisify(fs.mkdir)
+    await mkdir('dist-authorization')
     await rm(path.join('node_modules', '.cache'))
   }
 
-  function bundle() {
-    const { status, error } = spawnSync('yarn', ['build:types'], {
+  async function bundle() {
+    const { status, error } = spawnSync('yarn', ['build:authorization'], {
       stdio: 'inherit',
     })
     if (status !== 0) {
       if (error) throw error
       throw new Error('build failed')
     }
-  }
-
-  function invokeApiExtractor() {
-    invoke({
-      localBuild: true,
-      showVerboseMessages: true,
-    })
+    await copy(
+      path.join(process.cwd(), 'dist'),
+      path.join(process.cwd(), 'dist-authorization')
+    )
   }
 
   async function generateEntry() {
@@ -92,18 +89,20 @@ async function exec() {
       license: string
       author: string
     }
-    const dir = path.join(process.cwd(), 'dist-types')
+    const dir = path.join(process.cwd(), 'dist-authorization')
     await writeFile(
       path.join(dir, 'package.json'),
       JSON.stringify(
         {
-          name: '@serlo/api',
+          name: '@serlo/authorization',
           version: metadata.version,
           bugs: metadata.bugs,
           repository: metadata.repository,
           license: metadata.license,
           author: metadata.author,
-          typings: `index.d.ts`,
+          module: 'api.serlo.org.esm.js',
+          main: 'index.js',
+          typings: 'authorization.d.ts',
           publishConfig: {
             access: 'public',
           },

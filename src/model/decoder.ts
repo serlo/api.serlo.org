@@ -21,15 +21,7 @@
  */
 import * as t from 'io-ts'
 
-import {
-  EntityRevisionType,
-  EntityType,
-} from '~/schema/uuid/abstract-entity/types'
-import { DiscriminatorType } from '~/schema/uuid/abstract-uuid/types'
 import { Instance, TaxonomyTermType } from '~/types'
-
-export * from '~/schema/uuid/abstract-entity/types'
-export * from '~/schema/uuid/abstract-uuid/types'
 
 export const InstanceDecoder: t.Type<Instance> = t.union([
   t.literal(Instance.De),
@@ -39,6 +31,45 @@ export const InstanceDecoder: t.Type<Instance> = t.union([
   t.literal(Instance.Hi),
   t.literal(Instance.Ta),
 ])
+
+export enum DiscriminatorType {
+  Comment = 'Comment',
+  Page = 'Page',
+  PageRevision = 'PageRevision',
+  TaxonomyTerm = 'TaxonomyTerm',
+  User = 'User',
+}
+
+export type UuidType = DiscriminatorType | EntityType | EntityRevisionType
+
+export type RepositoryType = EntityType | DiscriminatorType.Page
+export type RevisionType = EntityRevisionType | DiscriminatorType.PageRevision
+
+export enum EntityType {
+  Applet = 'Applet',
+  Article = 'Article',
+  Course = 'Course',
+  CoursePage = 'CoursePage',
+  Event = 'Event',
+  Exercise = 'Exercise',
+  ExerciseGroup = 'ExerciseGroup',
+  GroupedExercise = 'GroupedExercise',
+  Solution = 'Solution',
+  Video = 'Video',
+}
+
+export enum EntityRevisionType {
+  ArticleRevision = 'ArticleRevision',
+  AppletRevision = 'AppletRevision',
+  CourseRevision = 'CourseRevision',
+  CoursePageRevision = 'CoursePageRevision',
+  EventRevision = 'EventRevision',
+  ExerciseRevision = 'ExerciseRevision',
+  ExerciseGroupRevision = 'ExerciseGroupRevision',
+  GroupedExerciseRevision = 'GroupedExerciseRevision',
+  SolutionRevision = 'SolutionRevision',
+  VideoRevision = 'VideoRevision',
+}
 
 // As of 26.03.2021 the maximum uuid is 201517. Thus there are ~200.000 uuids
 // per 10 years. The following maximum shouldn't be hit in the next ~ 40 years.
@@ -465,3 +496,230 @@ export const UuidDecoder = t.union([
   TaxonomyTermDecoder,
   UserDecoder,
 ])
+
+export enum NotificationEventType {
+  CheckoutRevision = 'CheckoutRevisionNotificationEvent',
+  CreateComment = 'CreateCommentNotificationEvent',
+  CreateEntity = 'CreateEntityNotificationEvent',
+  CreateEntityRevision = 'CreateEntityRevisionNotificationEvent',
+  CreateEntityLink = 'CreateEntityLinkNotificationEvent',
+  CreateTaxonomyTerm = 'CreateTaxonomyTermNotificationEvent',
+  CreateTaxonomyLink = 'CreateTaxonomyLinkNotificationEvent',
+  CreateThread = 'CreateThreadNotificationEvent',
+  RejectRevision = 'RejectRevisionNotificationEvent',
+  RemoveEntityLink = 'RemoveEntityLinkNotificationEvent',
+  RemoveTaxonomyLink = 'RemoveTaxonomyLinkNotificationEvent',
+  SetLicense = 'SetLicenseNotificationEvent',
+  SetTaxonomyTerm = 'SetTaxonomyTermNotificationEvent',
+  SetTaxonomyParent = 'SetTaxonomyParentNotificationEvent',
+  SetThreadState = 'SetThreadStateNotificationEvent',
+  SetUuidState = 'SetUuidStateNotificationEvent',
+}
+
+export const AbstractNotificationEventDecoder = t.type({
+  id: Uuid,
+  instance: InstanceDecoder,
+  date: t.string,
+  actorId: Uuid,
+  objectId: Uuid,
+})
+
+export const SetThreadStateNotificationEventDecoder = t.exact(
+  t.intersection([
+    AbstractNotificationEventDecoder,
+    t.type({
+      __typename: t.literal(NotificationEventType.SetThreadState),
+      threadId: Uuid,
+      archived: t.boolean,
+    }),
+  ])
+)
+
+export const RemoveTaxonomyLinkNotificationEventDecoder = t.exact(
+  t.intersection([
+    AbstractNotificationEventDecoder,
+    t.type({
+      __typename: t.literal(NotificationEventType.RemoveTaxonomyLink),
+      parentId: Uuid,
+      childId: Uuid,
+    }),
+  ])
+)
+
+export const CheckoutRevisionNotificationEventDecoder = t.exact(
+  t.intersection([
+    AbstractNotificationEventDecoder,
+    t.type({
+      __typename: t.literal(NotificationEventType.CheckoutRevision),
+      repositoryId: Uuid,
+      revisionId: Uuid,
+      reason: t.string,
+    }),
+  ])
+)
+
+export const RejectRevisionNotificationEventDecoder = t.exact(
+  t.intersection([
+    AbstractNotificationEventDecoder,
+    t.type({
+      __typename: t.literal(NotificationEventType.RejectRevision),
+      repositoryId: Uuid,
+      revisionId: Uuid,
+      reason: t.string,
+    }),
+  ])
+)
+
+export const CreateCommentNotificationEventDecoder = t.exact(
+  t.intersection([
+    AbstractNotificationEventDecoder,
+    t.type({
+      __typename: t.literal(NotificationEventType.CreateComment),
+      threadId: Uuid,
+      commentId: Uuid,
+    }),
+  ])
+)
+
+export const CreateEntityNotificationEventDecoder = t.exact(
+  t.intersection([
+    AbstractNotificationEventDecoder,
+    t.type({
+      __typename: t.literal(NotificationEventType.CreateEntity),
+      entityId: Uuid,
+    }),
+  ])
+)
+
+export const CreateEntityLinkNotificationEventDecoder = t.exact(
+  t.intersection([
+    AbstractNotificationEventDecoder,
+    t.type({
+      __typename: t.literal(NotificationEventType.CreateEntityLink),
+      parentId: Uuid,
+      childId: Uuid,
+    }),
+  ])
+)
+
+export const RemoveEntityLinkNotificationEventDecoder = t.exact(
+  t.intersection([
+    AbstractNotificationEventDecoder,
+    t.type({
+      __typename: t.literal(NotificationEventType.RemoveEntityLink),
+      parentId: Uuid,
+      childId: Uuid,
+    }),
+  ])
+)
+
+export const CreateEntityRevisionNotificationEventDecoder = t.exact(
+  t.intersection([
+    AbstractNotificationEventDecoder,
+    t.type({
+      __typename: t.literal(NotificationEventType.CreateEntityRevision),
+      entityId: Uuid,
+      entityRevisionId: Uuid,
+    }),
+  ])
+)
+
+export const CreateTaxonomyTermNotificationEventDecoder = t.exact(
+  t.intersection([
+    AbstractNotificationEventDecoder,
+    t.type({
+      __typename: t.literal(NotificationEventType.CreateTaxonomyTerm),
+      taxonomyTermId: Uuid,
+    }),
+  ])
+)
+
+export const SetTaxonomyTermNotificationEventDecoder = t.exact(
+  t.intersection([
+    AbstractNotificationEventDecoder,
+    t.type({
+      __typename: t.literal(NotificationEventType.SetTaxonomyTerm),
+      taxonomyTermId: Uuid,
+    }),
+  ])
+)
+
+export const CreateTaxonomyLinkNotificationEventDecoder = t.exact(
+  t.intersection([
+    AbstractNotificationEventDecoder,
+    t.type({
+      __typename: t.literal(NotificationEventType.CreateTaxonomyLink),
+      parentId: Uuid,
+      childId: Uuid,
+    }),
+  ])
+)
+
+export const SetTaxonomyParentNotificationEventDecoder = t.exact(
+  t.intersection([
+    AbstractNotificationEventDecoder,
+    t.type({
+      __typename: t.literal(NotificationEventType.SetTaxonomyParent),
+      previousParentId: Uuid,
+      parentId: Uuid,
+      childId: Uuid,
+    }),
+  ])
+)
+
+export const CreateThreadNotificationEventDecoder = t.exact(
+  t.intersection([
+    AbstractNotificationEventDecoder,
+    t.type({
+      __typename: t.literal(NotificationEventType.CreateThread),
+      threadId: Uuid,
+    }),
+  ])
+)
+
+export const SetLicenseNotificationEventDecoder = t.exact(
+  t.intersection([
+    AbstractNotificationEventDecoder,
+    t.type({
+      __typename: t.literal(NotificationEventType.SetLicense),
+      repositoryId: Uuid,
+    }),
+  ])
+)
+
+export const SetUuidStateNotificationEventDecoder = t.exact(
+  t.intersection([
+    AbstractNotificationEventDecoder,
+    t.type({
+      __typename: t.literal(NotificationEventType.SetUuidState),
+      trashed: t.boolean,
+    }),
+  ])
+)
+
+export const NotificationEventDecoder = t.union([
+  CheckoutRevisionNotificationEventDecoder,
+  CreateCommentNotificationEventDecoder,
+  CreateEntityNotificationEventDecoder,
+  CreateEntityRevisionNotificationEventDecoder,
+  CreateEntityLinkNotificationEventDecoder,
+  CreateTaxonomyTermNotificationEventDecoder,
+  CreateTaxonomyLinkNotificationEventDecoder,
+  CreateThreadNotificationEventDecoder,
+  RejectRevisionNotificationEventDecoder,
+  RemoveEntityLinkNotificationEventDecoder,
+  RemoveTaxonomyLinkNotificationEventDecoder,
+  SetLicenseNotificationEventDecoder,
+  SetTaxonomyTermNotificationEventDecoder,
+  SetTaxonomyParentNotificationEventDecoder,
+  SetThreadStateNotificationEventDecoder,
+  SetUuidStateNotificationEventDecoder,
+])
+
+export const NotificationDecoder = t.exact(
+  t.type({
+    id: t.number,
+    unread: t.boolean,
+    eventId: t.number,
+  })
+)

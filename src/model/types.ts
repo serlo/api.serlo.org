@@ -26,11 +26,19 @@ import {
   AppletRevisionDecoder,
   ArticleDecoder,
   ArticleRevisionDecoder,
+  CheckoutRevisionNotificationEventDecoder,
   CommentDecoder,
   CourseDecoder,
   CoursePageDecoder,
   CoursePageRevisionDecoder,
   CourseRevisionDecoder,
+  CreateCommentNotificationEventDecoder,
+  CreateEntityLinkNotificationEventDecoder,
+  CreateEntityNotificationEventDecoder,
+  CreateEntityRevisionNotificationEventDecoder,
+  CreateTaxonomyLinkNotificationEventDecoder,
+  CreateTaxonomyTermNotificationEventDecoder,
+  CreateThreadNotificationEventDecoder,
   EventDecoder,
   EventRevisionDecoder,
   ExerciseDecoder,
@@ -39,8 +47,17 @@ import {
   ExerciseRevisionDecoder,
   GroupedExerciseDecoder,
   GroupedExerciseRevisionDecoder,
+  NotificationDecoder,
   PageDecoder,
   PageRevisionDecoder,
+  RejectRevisionNotificationEventDecoder,
+  RemoveEntityLinkNotificationEventDecoder,
+  RemoveTaxonomyLinkNotificationEventDecoder,
+  SetLicenseNotificationEventDecoder,
+  SetTaxonomyParentNotificationEventDecoder,
+  SetTaxonomyTermNotificationEventDecoder,
+  SetThreadStateNotificationEventDecoder,
+  SetUuidStateNotificationEventDecoder,
   SolutionDecoder,
   SolutionRevisionDecoder,
   TaxonomyTermDecoder,
@@ -48,7 +65,9 @@ import {
   VideoDecoder,
   VideoRevisionDecoder,
 } from './decoder'
+import { Scope } from '~/authorization'
 import { Payload } from '~/internals/model/types'
+import { Role } from '~/types'
 
 export interface Models {
   Applet: t.TypeOf<typeof AppletDecoder>
@@ -84,4 +103,54 @@ export interface Models {
   User: t.TypeOf<typeof UserDecoder>
   Video: t.TypeOf<typeof VideoDecoder>
   VideoRevision: t.TypeOf<typeof VideoRevisionDecoder>
+  Notification: t.TypeOf<typeof NotificationDecoder>
+  CheckoutRevisionNotificationEvent: t.TypeOf<
+    typeof CheckoutRevisionNotificationEventDecoder
+  >
+  CreateCommentNotificationEvent: t.TypeOf<
+    typeof CreateCommentNotificationEventDecoder
+  >
+  CreateEntityNotificationEvent: t.TypeOf<
+    typeof CreateEntityNotificationEventDecoder
+  >
+  CreateEntityRevisionNotificationEvent: t.TypeOf<
+    typeof CreateEntityRevisionNotificationEventDecoder
+  >
+  CreateEntityLinkNotificationEvent: t.TypeOf<
+    typeof CreateEntityLinkNotificationEventDecoder
+  >
+  CreateTaxonomyTermNotificationEvent: t.TypeOf<
+    typeof CreateTaxonomyTermNotificationEventDecoder
+  >
+  CreateTaxonomyLinkNotificationEvent: t.TypeOf<
+    typeof CreateTaxonomyLinkNotificationEventDecoder
+  >
+  CreateThreadNotificationEvent: t.TypeOf<
+    typeof CreateThreadNotificationEventDecoder
+  >
+  RejectRevisionNotificationEvent: t.TypeOf<
+    typeof RejectRevisionNotificationEventDecoder
+  >
+  RemoveEntityLinkNotificationEvent: t.TypeOf<
+    typeof RemoveEntityLinkNotificationEventDecoder
+  >
+  SetLicenseNotificationEvent: t.TypeOf<
+    typeof SetLicenseNotificationEventDecoder
+  >
+  SetTaxonomyTermNotificationEvent: t.TypeOf<
+    typeof SetTaxonomyTermNotificationEventDecoder
+  >
+  SetTaxonomyParentNotificationEvent: t.TypeOf<
+    typeof SetTaxonomyParentNotificationEventDecoder
+  >
+  SetUuidStateNotificationEvent: t.TypeOf<
+    typeof SetUuidStateNotificationEventDecoder
+  >
+  RemoveTaxonomyLinkNotificationEvent: t.TypeOf<
+    typeof RemoveTaxonomyLinkNotificationEventDecoder
+  >
+  SetThreadStateNotificationEvent: t.TypeOf<
+    typeof SetThreadStateNotificationEventDecoder
+  >
+  ScopedRole: { role: Role; scope: Scope }
 }

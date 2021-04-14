@@ -41,8 +41,8 @@ export enum Scope {
   Serlo_Ta = 'serlo.org:ta',
 }
 
-export function instanceToScope(instance: Instance): Scope {
-  return `serlo.org:${instance}` as Scope
+export function instanceToScope(instance: Instance | null): Scope {
+  return instance === null ? Scope.Serlo : (`serlo.org:${instance}` as Scope)
 }
 
 /**
@@ -60,7 +60,7 @@ export enum Permission {
 
 /**
  * The AuthorizationPayload is the opaque data structure that clients (e.g. frontend) use with our authorization API
- * (i.e. @serlo/authorization package) to check if users is allowed to do something. For now, it is an object representing
+ * (i.e. \@serlo/authorization package) to check if users is allowed to do something. For now, it is an object representing
  * the granted permissions in each scope (while also including the granted permissions of parent scopes). We can optimize
  * that payload later if needed.
  */
@@ -72,8 +72,8 @@ export type AuthorizationPayload = {
  * An `AuthorizationGuard` expects an `AuthorizationPayload` and the current `Scope`. It returns true if the user
  * may do the action associated with the guard. See `createPermissionGuard` for an example.
  */
-type AuthorizationGuard = (args: {
-  payload: AuthorizationPayload
+export type AuthorizationGuard = (args: {
+  authorizationPayload: AuthorizationPayload
   scope: Scope
 }) => boolean
 
@@ -84,8 +84,8 @@ type AuthorizationGuard = (args: {
  * @returns An `AuthorizationGuard`
  */
 function createPermissionGuard(permission: Permission): AuthorizationGuard {
-  return ({ payload, scope }) => {
-    return payload[scope]?.includes(permission) === true
+  return ({ authorizationPayload, scope }) => {
+    return authorizationPayload[scope]?.includes(permission) === true
   }
 }
 
