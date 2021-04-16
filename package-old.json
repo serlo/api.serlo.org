@@ -11,12 +11,8 @@
   "scripts": {
     "deploy:image": "ts-node scripts/deploy",
     "prepacts": "rimraf pacts",
-    "pacts": "jest --config jest.config-pacts-serlo-org-database-layer.js --runInBand",
     "pacts:publish": "ts-node scripts/publish-pacts",
-    "preregenerate-types": "graphql-codegen --config codegen.yml",
-    "regenerate-types": "ts-node scripts/regenerate-api-package",
-    "regenerate-authorization-package": "ts-node scripts/regenerate-authorization-package",
-    "test": "jest --config jest.config.js --runInBand"
+    "preregenerate-types": "graphql-codegen --config codegen.yml"
   },
   "resolutions": {
     "**/typescript": "^4.1.0"
