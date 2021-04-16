@@ -15,6 +15,7 @@
     "deploy:image": "ts-node scripts/deploy",
     "prepacts": "rimraf pacts",
     "pacts": "jest --config jest.config-pacts-serlo-org-database-layer.js --runInBand",
+    "pacts:publish": "ts-node scripts/publish-pacts",
     "start": "tsdx watch --entry src/server.ts --target node --format cjs --tsconfig tsconfig.prod.json --onSuccess \"node dist\"",
     "test": "jest --config jest.config.js --runInBand"
   },
