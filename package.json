@@ -22,11 +22,7 @@
     "lint": "npm-run-all --parallel lint:prettier lint:tsc lint:eslint",
     "lint:eslint": "yarn _eslint",
     "lint:prettier": "yarn _prettier --check",
-    "lint:tsc": "tsc --noEmit",
-    "start": "npm-run-all start:redis start:server",
-    "start:redis": "docker compose up --detach",
-    "start:server": "lerna run --stream start",
-    "stop:redis": "docker-compose stop"
+    "lint:tsc": "tsc --noEmit"
   },
   "resolutions": {
     "**/typescript": "^4.1.0"
