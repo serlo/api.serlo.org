@@ -12,6 +12,8 @@
     "build:server": "yarn _build --format cjs --target node --entry src/server.ts",
     "build:swr-queue-worker": "yarn _build --format cjs --target node --entry src/swr-queue-worker.ts",
     "codegen": "graphql-codegen --config codegen.yml",
+    "prepacts": "rimraf pacts",
+    "pacts": "jest --config jest.config-pacts-serlo-org-database-layer.js --runInBand",
     "start": "tsdx watch --entry src/server.ts --target node --format cjs --tsconfig tsconfig.prod.json --onSuccess \"node dist\"",
     "test": "jest --config jest.config.js --runInBand"
   },
@@ -63,6 +65,7 @@
     "apollo-server-testing": "^2.0.0",
     "babel-plugin-import-graphql": "^2.0.0",
     "babel-plugin-module-resolver": "^4.0.0",
+    "rimraf": "^3.0.0",
     "ttypescript": "^1.0.0"
   },
   "publishConfig": {
