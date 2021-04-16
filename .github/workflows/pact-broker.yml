@@ -12,9 +12,9 @@ jobs:
         with:
           node-version: 14.x
       - run: yarn
-      - run: yarn start:redis
-      - run: yarn pacts
-      - run: yarn pacts:publish
+      - run: (cd packages/server && yarn start:redis)
+      - run: (cd packages/server && yarn pacts)
+      - run: (cd packages/server && yarn pacts:publish)
         env:
           PACT_BROKER_USERNAME: ${{ secrets.PACT_BROKER_USERNAME }}
           PACT_BROKER_PASSWORD: ${{ secrets.PACT_BROKER_PASSWORD }}
