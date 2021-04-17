@@ -27,12 +27,13 @@
     "lint:eslint": "yarn _eslint",
     "lint:prettier": "yarn _prettier --check",
     "lint:tsc": "tsc --noEmit",
-    "pacts": "lerna run --stream pacts",
-    "pacts:publish": "lerna run --stream pacts:publish",
+    "prepacts": "rimraf pacts",
+    "pacts": "jest --config jest.config-pacts-serlo-org-database-layer.js --runInBand",
+    "pacts:publish": "ts-node scripts/publish-pacts",
     "start": "lerna run --stream start",
     "start:redis": "lerna run --stream start:redis",
     "stop:redis": "lerna run --stream stop:redis",
-    "test": "lerna run --stream test"
+    "test": "jest --config jest.config.js --runInBand"
   },
   "resolutions": {
     "**/typescript": "^4.1.0"

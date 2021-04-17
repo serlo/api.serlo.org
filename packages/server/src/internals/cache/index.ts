@@ -20,7 +20,8 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { option as O, pipeable } from 'fp-ts'
-import msgpack from 'msgpack'
+// @ts-expect-error
+import createMsgpack from 'msgpack5'
 import * as R from 'ramda'
 import redis from 'redis'
 import * as util from 'util'
@@ -30,6 +31,8 @@ import { redisUrl } from '../redis-url'
 import { Timer } from '../timer'
 import { createLockManager, LockManager } from './lock-manager'
 import { AsyncOrSync } from '~/utils'
+
+const msgpack = createMsgpack()
 
 export enum Priority {
   Low,
@@ -106,7 +109,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
         if (value === undefined) return
 
         const valueWithTimestamp = { value, lastModified: timer.now() }
-        const packedValue = msgpack.pack(valueWithTimestamp) as Buffer
+        const packedValue = msgpack.encode(valueWithTimestamp) as Buffer
         await clientSet(key, packedValue)
       } catch (e) {
         log.error(`Failed to set key "${key}":`, e)
@@ -134,7 +137,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
     const packedValue = await clientGet(key)
     if (packedValue === null) return O.none
 
-    const value = msgpack.unpack(packedValue) as T | CacheEntry<T>
+    const value = msgpack.decode(packedValue) as T | CacheEntry<T>
 
     if (isCacheEntryWithTimestamp<T>(value)) {
       return O.some(value)
