@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@sentry/node": "^6.0.0",
+    "@serlo/authorization": "^0.21.1",
     "apollo-datasource-rest": "^0.10.0",
     "apollo-server": "^2.0.0",
     "apollo-server-caching": "^0.5.0",

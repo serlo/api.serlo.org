@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Scope } from '@serlo/authorization'
 import * as t from 'io-ts'
 
 import {
@@ -65,7 +66,6 @@ import {
   VideoDecoder,
   VideoRevisionDecoder,
 } from './decoder'
-import { Scope } from '~/authorization'
 import { Payload } from '~/internals/model/types'
 import { Role } from '~/types'
 

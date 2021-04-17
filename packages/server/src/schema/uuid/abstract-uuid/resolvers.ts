@@ -19,10 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import * as auth from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
 import { either as E } from 'fp-ts'
 
-import * as auth from '~/authorization'
 import { resolveCustomId } from '~/config/alias'
 import {
   assertUserIsAuthenticated,
@@ -34,7 +34,12 @@ import {
   Context,
   Model,
 } from '~/internals/graphql'
-import { Uuid, DiscriminatorType } from '~/model/decoder'
+import {
+  Uuid,
+  DiscriminatorType,
+  EntityTypeDecoder,
+  EntityRevisionTypeDecoder,
+} from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { QueryUuidArgs } from '~/types'
@@ -81,7 +86,32 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
             if (object === null) {
               return null
             } else {
-              return auth.Uuid.setUuid(object)(scope)
+              return auth.Uuid.setState(getType(object))(scope)
+            }
+
+            function getType(object: Model<'AbstractUuid'>): auth.UuidType {
+              switch (object.__typename) {
+                case DiscriminatorType.Page:
+                  return 'Page'
+                case DiscriminatorType.PageRevision:
+                  return 'PageRevision'
+                case DiscriminatorType.TaxonomyTerm:
+                  return 'TaxonomyTerm'
+                case DiscriminatorType.User:
+                  return 'User'
+                default:
+                  if (E.isRight(EntityTypeDecoder.decode(object.__typename))) {
+                    return 'Entity'
+                  }
+                  if (
+                    E.isRight(
+                      EntityRevisionTypeDecoder.decode(object.__typename)
+                    )
+                  ) {
+                    return 'EntityRevision'
+                  }
+                  return 'unknown'
+              }
             }
           }
         )

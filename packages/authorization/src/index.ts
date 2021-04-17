@@ -105,6 +105,7 @@ export type UuidType =
   | 'PageRevision'
   | 'TaxonomyTerm'
   | 'User'
+  | string
 
 export const Uuid = {
   setState: (type: UuidType): GenericAuthorizationGuard => {
@@ -121,6 +122,8 @@ export const Uuid = {
         case 'TaxonomyTerm':
           return checkPermission(Permission.Uuid_SetState_TaxonomyTerm)
         case 'User':
+          return false
+        default:
           return false
       }
 
