@@ -19,10 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { AuthorizationGuard } from '@serlo/authorization'
 import { AuthenticationError, ForbiddenError } from 'apollo-server'
 import * as R from 'ramda'
 
-import { AuthorizationGuard } from '~/authorization'
 import { Context } from '~/internals/graphql/context'
 import { fetchAuthorizationPayload } from '~/schema/authorization/utils'
 

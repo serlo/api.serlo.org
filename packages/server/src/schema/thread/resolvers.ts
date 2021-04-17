@@ -19,10 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import * as auth from '@serlo/authorization'
 import { ApolloError } from 'apollo-server'
 
 import { decodeThreadId, decodeThreadIds, encodeThreadId } from './utils'
-import * as auth from '~/authorization'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,

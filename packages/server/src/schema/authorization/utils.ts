@@ -19,9 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import {
+  AuthorizationPayload,
+  instanceToScope,
+  Scope,
+} from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
 
-import { AuthorizationPayload, instanceToScope, Scope } from '~/authorization'
 import { Context, Model } from '~/internals/graphql'
 import { DiscriminatorType, UserDecoder } from '~/model/decoder'
 import { resolveRolesPayload, RolesPayload } from '~/schema/authorization/roles'

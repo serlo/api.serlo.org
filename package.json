@@ -14,7 +14,11 @@
   "scripts": {
     "_eslint": "eslint \"{{__fixtures__,__tests-pacts__,__tests__,scripts,packages/*/src}/**/*,*}.{js,jsx,ts,tsx}\"",
     "_prettier": "prettier .",
+    "build:server": "lerna run --stream build:server",
+    "build:swr-queue-worker": "lerna run --stream build:swr-queue-worker",
     "changelog": "ts-node scripts/changelog",
+    "codegen": "lerna run --stream codegen",
+    "deploy:image": "lerna run --stream deploy:image",
     "format": "npm-run-all -c format:*",
     "format:eslint": "yarn _eslint --fix",
     "format:prettier": "yarn _prettier --write",
@@ -22,7 +26,13 @@
     "lint": "npm-run-all --parallel lint:prettier lint:tsc lint:eslint",
     "lint:eslint": "yarn _eslint",
     "lint:prettier": "yarn _prettier --check",
-    "lint:tsc": "tsc --noEmit"
+    "lint:tsc": "tsc --noEmit",
+    "pacts": "lerna run --stream pacts",
+    "pacts:publish": "lerna run --stream pacts:publish",
+    "start": "lerna run --stream start",
+    "start:redis": "lerna run --stream start:redis",
+    "stop:redis": "lerna run --stream stop:redis",
+    "test": "lerna run --stream test"
   },
   "resolutions": {
     "**/typescript": "^4.1.0"
