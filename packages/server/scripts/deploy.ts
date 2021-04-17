@@ -41,13 +41,13 @@ async function run() {
     name: 'api-server',
     version,
     Dockerfile: path.join(root, 'docker', 'server', 'Dockerfile'),
-    context: '.',
+    context: '../..',
   })
   buildDockerImage({
     name: 'api-swr-queue-worker',
     version,
     Dockerfile: path.join(root, 'docker', 'swr-queue-worker', 'Dockerfile'),
-    context: '.',
+    context: '../..',
   })
 }
 
