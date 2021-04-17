@@ -13,14 +13,10 @@
     "build:swr-queue-worker": "yarn _build --format cjs --target node --entry src/swr-queue-worker.ts",
     "codegen": "graphql-codegen --config codegen.yml",
     "deploy:image": "ts-node scripts/deploy",
-    "prepacts": "rimraf pacts",
-    "pacts": "jest --config jest.config-pacts-serlo-org-database-layer.js --runInBand",
-    "pacts:publish": "ts-node scripts/publish-pacts",
     "start": "npm-run-all start:redis start:server",
     "start:redis": "docker-compose up --detach",
     "start:server": "tsdx watch --entry src/server.ts --target node --format cjs --tsconfig tsconfig.prod.json --onSuccess \"node dist\"",
-    "stop:redis": "docker-compose stop",
-    "test": "jest --config jest.config.js --runInBand"
+    "stop:redis": "docker-compose stop"
   },
   "dependencies": {
     "@sentry/node": "^6.0.0",
@@ -46,6 +42,7 @@
     "loglevel": "^1.0.0",
     "monocle-ts": "^2.0.0",
     "msgpack": "^1.0.0",
+    "msgpack5": "^5.0.0",
     "newtype-ts": "^0.3.0",
     "node-fetch": "^2.6.1",
     "ramda": "^0.27.0",

@@ -23,13 +23,17 @@
 const { pathsToModuleNameMapper } = require('ts-jest/utils')
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-const { compilerOptions } = require('./tsconfig.prod.json')
+const { compilerOptions } = require('./tsconfig.json')
 
 module.exports = {
   preset: 'ts-jest',
-  modulePaths: ['<rootDir>/src'],
+  modulePaths: ['<rootDir>/packages'],
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
+  moduleNameMapper: {
+    ...pathsToModuleNameMapper(compilerOptions.paths),
+    '@serlo/api': '@serlo/api/src',
+    '@serlo/authorization': '@serlo/authorization/src',
+  },
   setupFiles: ['dotenv/config'],
   setupFilesAfterEnv: ['<rootDir>/__config__/jest.setup.ts'],
   testEnvironment: 'node',
