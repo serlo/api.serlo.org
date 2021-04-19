@@ -21,6 +21,7 @@
  */
 import dotenv from 'dotenv'
 import createApp from 'express'
+import path from 'path'
 
 import { createCache } from './cache'
 import { initializeSentry } from './sentry'
@@ -28,7 +29,9 @@ import { createSwrQueueWorker } from './swr-queue'
 import { createTimer } from './timer'
 
 export async function start() {
-  dotenv.config()
+  dotenv.config({
+    path: path.join(__dirname, '..', '..', '..', '.env'),
+  })
   initializeSentry('swr-queue-worker')
   const timer = createTimer()
   const cache = createCache({ timer })

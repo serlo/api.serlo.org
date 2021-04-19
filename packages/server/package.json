@@ -13,10 +13,8 @@
     "build:swr-queue-worker": "yarn _build --format cjs --target node --entry src/swr-queue-worker.ts",
     "codegen": "graphql-codegen --config codegen.yml",
     "deploy:image": "ts-node scripts/deploy",
-    "start": "npm-run-all start:redis start:server",
-    "start:redis": "docker-compose up --detach",
-    "start:server": "tsdx watch --entry src/server.ts --target node --format cjs --tsconfig tsconfig.prod.json --onSuccess \"node dist\"",
-    "stop:redis": "docker-compose stop"
+    "prestart": "lerna run build",
+    "start": "tsdx watch --entry src/server.ts --target node --format cjs --tsconfig tsconfig.prod.json --onSuccess \"node dist\""
   },
   "dependencies": {
     "@sentry/node": "^6.0.0",
@@ -69,7 +67,6 @@
     "apollo-server-testing": "^2.0.0",
     "babel-plugin-import-graphql": "^2.0.0",
     "babel-plugin-module-resolver": "^4.0.0",
-    "rimraf": "^3.0.0",
     "semver": "^7.0.0",
     "ttypescript": "^1.0.0"
   },
