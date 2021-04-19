@@ -14,7 +14,7 @@
     "codegen": "graphql-codegen --config codegen.yml",
     "deploy:image": "ts-node scripts/deploy",
     "prestart": "lerna run build",
-    "start": "tsdx watch --entry src/server.ts --target node --format cjs --tsconfig tsconfig.prod.json --onSuccess \"node dist\""
+    "start": "tsdx watch --format cjs --target node --entry src/server.ts --tsconfig tsconfig.prod.json --onSuccess \"node dist\""
   },
   "dependencies": {
     "@sentry/node": "^6.0.0",
@@ -39,7 +39,6 @@
     "jsonwebtoken": "^8.0.0",
     "loglevel": "^1.0.0",
     "monocle-ts": "^2.0.0",
-    "msgpack": "^1.0.0",
     "msgpack5": "^5.0.0",
     "newtype-ts": "^0.3.0",
     "node-fetch": "^2.6.1",
@@ -57,7 +56,6 @@
     "@types/bull-arena": "^3.0.0",
     "@types/graphql-modules": "^0.21.1",
     "@types/jsonwebtoken": "^8.0.0",
-    "@types/msgpack": "^0.0.30",
     "@types/node-fetch": "^2.0.0",
     "@types/ramda": "0.27.37",
     "@types/redis": "^2.0.0",

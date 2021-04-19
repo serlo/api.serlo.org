@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { option as O, pipeable } from 'fp-ts'
+// @ts-expect-error Missing types
 import createMsgpack from 'msgpack5'
 import * as R from 'ramda'
 import redis from 'redis'
@@ -31,7 +32,10 @@ import { Timer } from '../timer'
 import { createLockManager, LockManager } from './lock-manager'
 import { AsyncOrSync } from '~/utils'
 
-const msgpack = createMsgpack()
+const msgpack = (createMsgpack as () => {
+  encode(value: unknown): Buffer
+  decode<T>(buffer: Buffer): T
+})()
 
 export enum Priority {
   Low,

@@ -47,15 +47,9 @@ module.exports = {
       tsconfig: options.tsconfig,
       tsconfigDefaults: {
         exclude: [
-          // all TS test files, regardless whether co-located or in test/ etc
-          '**/*.spec.ts',
-          '**/*.test.ts',
-          '**/*.spec.tsx',
-          '**/*.test.tsx',
-          // TS defaults below
+          // TS defaults below,
+          '../../node_modules',
           'node_modules',
-          'bower_components',
-          'jspm_packages',
           'dist',
         ],
         compilerOptions: {
