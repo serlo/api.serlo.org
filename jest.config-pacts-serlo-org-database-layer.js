@@ -30,6 +30,7 @@ module.exports = {
   modulePaths: ['<rootDir>/packages'],
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   moduleNameMapper: {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     ...pathsToModuleNameMapper(compilerOptions.paths),
     '@serlo/api': '@serlo/api/src',
     '@serlo/authorization': '@serlo/authorization/src',

@@ -102,9 +102,6 @@ module.exports = {
       'error',
       {
         devDependencies: [
-          'packages/server/__config__/**/*',
-          'packages/server/__tests-pacts__/**/*',
-          'packages/server/__tests__/**/*',
           'scripts/**/*',
           'jest.config.js',
           'jest.config-pacts-*.js',
@@ -161,13 +158,15 @@ module.exports = {
   overrides: [
     {
       files: [
-        'packages/server/__tests-pacts__/**/*',
-        'packages/server/__tests__/**/*',
+        '__fixtures__/**/*',
+        '__tests-pacts__/**/*',
+        '__tests__/**/*',
         'jest.setup.ts',
         'jest.setup-pacts.ts',
       ],
       rules: {
         '@typescript-eslint/no-non-null-assertion': 'off',
+        'import/no-extraneous-dependencies': 'off',
       },
     },
   ],
