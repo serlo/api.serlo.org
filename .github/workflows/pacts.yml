@@ -10,5 +10,5 @@ jobs:
         with:
           node-version: 14.x
       - run: yarn
-      - run: (cd packages/server && yarn start:redis)
-      - run: (cd packages/server && yarn pacts)
+      - run: yarn start:redis
+      - run: yarn pacts

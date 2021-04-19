@@ -30,9 +30,10 @@
     "prepacts": "rimraf pacts",
     "pacts": "jest --config jest.config-pacts-serlo-org-database-layer.js --runInBand",
     "pacts:publish": "ts-node scripts/publish-pacts",
-    "start": "lerna run --stream start",
-    "start:redis": "lerna run --stream start:redis",
-    "stop:redis": "lerna run --stream stop:redis",
+    "start": "npm-run-all start:redis start:server",
+    "start:redis": "docker-compose up --detach",
+    "start:server": "lerna run --stream --scope @serlo/api.serlo.org start",
+    "stop:redis": "docker-compose stop",
     "test": "jest --config jest.config.js --runInBand"
   },
   "resolutions": {
@@ -62,6 +63,7 @@
     "npm-run-all": "^4.0.0",
     "prettier": "^2.0.0",
     "prettier-plugin-packagejson": "^2.0.0",
+    "rimraf": "^3.0.0",
     "ts-jest": "^26.0.0",
     "ts-node": "^9.0.0",
     "tsdx": "^0.14.0",

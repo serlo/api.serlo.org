@@ -21,6 +21,7 @@
  */
 import dotenv from 'dotenv'
 import createApp from 'express'
+import path from 'path'
 
 import { Cache, createCache } from '../cache'
 import { initializeSentry } from '../sentry'
@@ -33,7 +34,9 @@ export * from './graphql-middleware'
 export * from './swr-queue-dashboard-middleware'
 
 export function start() {
-  dotenv.config()
+  dotenv.config({
+    path: path.join(__dirname, '..', '..', '..', '.env'),
+  })
   initializeSentry('server')
   const timer = createTimer()
   const cache = createCache({ timer })
