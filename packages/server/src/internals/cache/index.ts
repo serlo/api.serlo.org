@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { option as O, pipeable } from 'fp-ts'
-// @ts-expect-error
 import createMsgpack from 'msgpack5'
 import * as R from 'ramda'
 import redis from 'redis'
@@ -109,7 +108,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
         if (value === undefined) return
 
         const valueWithTimestamp = { value, lastModified: timer.now() }
-        const packedValue = msgpack.encode(valueWithTimestamp) as Buffer
+        const packedValue = msgpack.encode(valueWithTimestamp)
         await clientSet(key, packedValue)
       } catch (e) {
         log.error(`Failed to set key "${key}":`, e)
@@ -137,7 +136,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
     const packedValue = await clientGet(key)
     if (packedValue === null) return O.none
 
-    const value = msgpack.decode(packedValue) as T | CacheEntry<T>
+    const value = msgpack.decode<T | CacheEntry<T>>(packedValue)
 
     if (isCacheEntryWithTimestamp<T>(value)) {
       return O.some(value)
