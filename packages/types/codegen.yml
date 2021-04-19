@@ -1,0 +1,11 @@
+overwrite: true
+schema: ../server/src/**/*.graphql
+generates:
+  src/index.ts:
+    plugins:
+      - typescript
+    config:
+      scalars:
+        DateTime: string
+        JSON: unknown
+        JSONObject: 'Record<string, unknown>'

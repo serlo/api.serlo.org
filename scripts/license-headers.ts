@@ -57,7 +57,8 @@ void g('**/*@(.js|.ts|.tsx)', {
     '**/dist/**',
     '**/dist-api/**',
     '**/node_modules/**',
-    'src/types.ts',
+    'packages/server/src/types.ts',
+    'packages/types/src/index.ts',
   ],
 }).then((files) => {
   return files.map((file) => {

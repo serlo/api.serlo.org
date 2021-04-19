@@ -1,2 +1,2 @@
-api/api.serlo.org.api.md
-src/types.ts
+packages/server/src/types.ts
+packages/types/src/index.ts

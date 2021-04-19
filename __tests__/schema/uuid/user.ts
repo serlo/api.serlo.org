@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Scope } from '@serlo/authorization'
 import { gql } from 'apollo-server'
 
 import {
@@ -39,7 +40,6 @@ import {
   returnsJson,
   returnsMalformedJson,
 } from '../../__utils__'
-import { Scope } from '~/authorization'
 import { Model } from '~/internals/graphql'
 import { MajorDimension } from '~/model'
 import { Instance } from '~/types'

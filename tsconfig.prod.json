@@ -1,15 +1,15 @@
 {
-  "extends": "./tsconfig.json",
-  "include": ["src", "graphql.d.ts"],
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "declaration": true,
     "declarationMap": true,
-    "lib": ["esnext"],
+    "esModuleInterop": true,
+    "importHelpers": true,
     "module": "esnext",
     "moduleResolution": "node",
+    "skipLibCheck": true,
+    "strict": true,
     "target": "es5",
-    "sourceMap": true,
-    "rootDir": "./src",
-    "plugins": [{ "transform": "@zerollup/ts-transform-paths" }]
+    "sourceMap": true
   }
 }

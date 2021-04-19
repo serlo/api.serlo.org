@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-
+import { Scope, Thread } from '@serlo/authorization'
 import { gql } from 'apollo-server'
 
 import { user } from '../../__fixtures__'
@@ -28,7 +28,6 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../__utils__'
-import { Scope, Thread } from '~/authorization'
 import { resolveRolesPayload, RolesPayload } from '~/schema/authorization/roles'
 import { Role } from '~/types'
 

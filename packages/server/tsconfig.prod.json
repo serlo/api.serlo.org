@@ -1,0 +1,11 @@
+{
+  "include": ["src"],
+  "extends": "../../tsconfig.prod.json",
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "~/*": ["*"]
+    },
+    "plugins": [{ "transform": "@zerollup/ts-transform-paths" }]
+  }
+}
