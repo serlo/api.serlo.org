@@ -1,17 +1,14 @@
 {
+  "extends": "./tsconfig.prod.json",
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "importHelpers": true,
-    "lib": ["esnext", "webworker"],
     "module": "commonjs",
-    "moduleResolution": "node",
-    "skipLibCheck": true,
-    "strict": true,
+    "importHelpers": false,
+    "baseUrl": "./packages",
     "target": "es2019",
-    "baseUrl": "./src",
     "paths": {
-      "~/*": ["*"]
+      "@serlo/api": ["types/src"],
+      "@serlo/authorization": ["authorization/src"],
+      "~/*": ["server/src/*"]
     }
   }
 }

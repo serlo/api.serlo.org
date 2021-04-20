@@ -705,6 +705,19 @@ async function exec(): Promise<void> {
         ['notification', 'Reject invalid cache values.'],
       ],
     },
+    {
+      tagName: 'v0.22.0',
+      date: '2021-04-20',
+      added: [
+        ['authorization', 'Add additional `Thread` permissions.'],
+        ['authorization', 'Add `Uuid` permissions.'],
+        ['uuid', 'Add `roles` to `User`.'],
+      ],
+      internal: [
+        'Monorepo setup.',
+        ['subscription', 'Reject invalid cache values.'],
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
