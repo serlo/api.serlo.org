@@ -1111,7 +1111,7 @@ export type Query = {
   license?: Maybe<License>;
   notificationEvent?: Maybe<AbstractNotificationEvent>;
   notifications: NotificationConnection;
-  subscriptions: QuerySubscriptionResult;
+  subscriptions: AbstractUuidConnection;
   uuid?: Maybe<AbstractUuid>;
 };
 
@@ -1170,14 +1170,6 @@ export type QuerySubscriptionsArgs = {
 export type QueryUuidArgs = {
   alias?: Maybe<AliasInput>;
   id?: Maybe<Scalars['Int']>;
-};
-
-export type QuerySubscriptionResult = {
-  __typename?: 'QuerySubscriptionResult';
-  edges: Array<SubscriptionCursor>;
-  nodes: Array<AbstractUuid>;
-  totalCount: Scalars['Int'];
-  pageInfo: PageInfo;
 };
 
 export type RejectRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -1367,12 +1359,6 @@ export type SolutionRevisionCursor = {
   __typename?: 'SolutionRevisionCursor';
   cursor: Scalars['String'];
   node: SolutionRevision;
-};
-
-export type SubscriptionCursor = {
-  __typename?: 'SubscriptionCursor';
-  cursor: Scalars['String'];
-  node: AbstractUuid;
 };
 
 export type SubscriptionMutation = {

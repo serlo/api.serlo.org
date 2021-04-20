@@ -1115,7 +1115,7 @@ export type Query = {
   license?: Maybe<License>;
   notificationEvent?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
   notifications: NotificationConnection;
-  subscriptions: QuerySubscriptionResult;
+  subscriptions: AbstractUuidConnection;
   uuid?: Maybe<Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision>;
 };
 
@@ -1174,14 +1174,6 @@ export type QuerySubscriptionsArgs = {
 export type QueryUuidArgs = {
   alias?: Maybe<AliasInput>;
   id?: Maybe<Scalars['Int']>;
-};
-
-export type QuerySubscriptionResult = {
-  __typename?: 'QuerySubscriptionResult';
-  edges: Array<SubscriptionCursor>;
-  nodes: Array<Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision>;
-  totalCount: Scalars['Int'];
-  pageInfo: PageInfo;
 };
 
 export type RejectRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -1371,12 +1363,6 @@ export type SolutionRevisionCursor = {
   __typename?: 'SolutionRevisionCursor';
   cursor: Scalars['String'];
   node: SolutionRevision;
-};
-
-export type SubscriptionCursor = {
-  __typename?: 'SubscriptionCursor';
-  cursor: Scalars['String'];
-  node: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
 };
 
 export type SubscriptionMutation = {
@@ -1924,7 +1910,6 @@ export type ResolversTypes = {
   PageRevisionConnection: ResolverTypeWrapper<ModelOf<PageRevisionConnection>>;
   PageRevisionCursor: ResolverTypeWrapper<ModelOf<PageRevisionCursor>>;
   Query: ResolverTypeWrapper<{}>;
-  QuerySubscriptionResult: ResolverTypeWrapper<ModelOf<QuerySubscriptionResult>>;
   RejectRevisionNotificationEvent: ResolverTypeWrapper<ModelOf<RejectRevisionNotificationEvent>>;
   RemoveEntityLinkNotificationEvent: ResolverTypeWrapper<ModelOf<RemoveEntityLinkNotificationEvent>>;
   RemoveTaxonomyLinkNotificationEvent: ResolverTypeWrapper<ModelOf<RemoveTaxonomyLinkNotificationEvent>>;
@@ -1941,7 +1926,6 @@ export type ResolversTypes = {
   SolutionRevision: ResolverTypeWrapper<ModelOf<SolutionRevision>>;
   SolutionRevisionConnection: ResolverTypeWrapper<ModelOf<SolutionRevisionConnection>>;
   SolutionRevisionCursor: ResolverTypeWrapper<ModelOf<SolutionRevisionCursor>>;
-  SubscriptionCursor: ResolverTypeWrapper<ModelOf<SubscriptionCursor>>;
   SubscriptionMutation: ResolverTypeWrapper<ModelOf<SubscriptionMutation>>;
   SubscriptionSetInput: ResolverTypeWrapper<ModelOf<SubscriptionSetInput>>;
   SubscriptionSetResponse: ResolverTypeWrapper<ModelOf<SubscriptionSetResponse>>;
@@ -2061,7 +2045,6 @@ export type ResolversParentTypes = {
   PageRevisionConnection: ModelOf<PageRevisionConnection>;
   PageRevisionCursor: ModelOf<PageRevisionCursor>;
   Query: {};
-  QuerySubscriptionResult: ModelOf<QuerySubscriptionResult>;
   RejectRevisionNotificationEvent: ModelOf<RejectRevisionNotificationEvent>;
   RemoveEntityLinkNotificationEvent: ModelOf<RemoveEntityLinkNotificationEvent>;
   RemoveTaxonomyLinkNotificationEvent: ModelOf<RemoveTaxonomyLinkNotificationEvent>;
@@ -2077,7 +2060,6 @@ export type ResolversParentTypes = {
   SolutionRevision: ModelOf<SolutionRevision>;
   SolutionRevisionConnection: ModelOf<SolutionRevisionConnection>;
   SolutionRevisionCursor: ModelOf<SolutionRevisionCursor>;
-  SubscriptionCursor: ModelOf<SubscriptionCursor>;
   SubscriptionMutation: ModelOf<SubscriptionMutation>;
   SubscriptionSetInput: ModelOf<SubscriptionSetInput>;
   SubscriptionSetResponse: ModelOf<SubscriptionSetResponse>;
@@ -2837,16 +2819,8 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   license?: Resolver<Maybe<ResolversTypes['License']>, ParentType, ContextType, RequireFields<QueryLicenseArgs, 'id'>>;
   notificationEvent?: Resolver<Maybe<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType, RequireFields<QueryNotificationEventArgs, 'id'>>;
   notifications?: Resolver<ResolversTypes['NotificationConnection'], ParentType, ContextType, RequireFields<QueryNotificationsArgs, never>>;
-  subscriptions?: Resolver<ResolversTypes['QuerySubscriptionResult'], ParentType, ContextType, RequireFields<QuerySubscriptionsArgs, never>>;
+  subscriptions?: Resolver<ResolversTypes['AbstractUuidConnection'], ParentType, ContextType, RequireFields<QuerySubscriptionsArgs, never>>;
   uuid?: Resolver<Maybe<ResolversTypes['AbstractUuid']>, ParentType, ContextType, RequireFields<QueryUuidArgs, never>>;
-};
-
-export type QuerySubscriptionResultResolvers<ContextType = Context, ParentType extends ResolversParentTypes['QuerySubscriptionResult'] = ResolversParentTypes['QuerySubscriptionResult']> = {
-  edges?: Resolver<Array<ResolversTypes['SubscriptionCursor']>, ParentType, ContextType>;
-  nodes?: Resolver<Array<ResolversTypes['AbstractUuid']>, ParentType, ContextType>;
-  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type RejectRevisionNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RejectRevisionNotificationEvent'] = ResolversParentTypes['RejectRevisionNotificationEvent']> = {
@@ -2995,12 +2969,6 @@ export type SolutionRevisionConnectionResolvers<ContextType = Context, ParentTyp
 export type SolutionRevisionCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SolutionRevisionCursor'] = ResolversParentTypes['SolutionRevisionCursor']> = {
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<ResolversTypes['SolutionRevision'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type SubscriptionCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionCursor'] = ResolversParentTypes['SubscriptionCursor']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['AbstractUuid'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3286,7 +3254,6 @@ export type Resolvers<ContextType = Context> = {
   PageRevisionConnection?: PageRevisionConnectionResolvers<ContextType>;
   PageRevisionCursor?: PageRevisionCursorResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
-  QuerySubscriptionResult?: QuerySubscriptionResultResolvers<ContextType>;
   RejectRevisionNotificationEvent?: RejectRevisionNotificationEventResolvers<ContextType>;
   RemoveEntityLinkNotificationEvent?: RemoveEntityLinkNotificationEventResolvers<ContextType>;
   RemoveTaxonomyLinkNotificationEvent?: RemoveTaxonomyLinkNotificationEventResolvers<ContextType>;
@@ -3302,7 +3269,6 @@ export type Resolvers<ContextType = Context> = {
   SolutionRevision?: SolutionRevisionResolvers<ContextType>;
   SolutionRevisionConnection?: SolutionRevisionConnectionResolvers<ContextType>;
   SolutionRevisionCursor?: SolutionRevisionCursorResolvers<ContextType>;
-  SubscriptionCursor?: SubscriptionCursorResolvers<ContextType>;
   SubscriptionMutation?: SubscriptionMutationResolvers<ContextType>;
   SubscriptionSetResponse?: SubscriptionSetResponseResolvers<ContextType>;
   TaxonomyTerm?: TaxonomyTermResolvers<ContextType>;
