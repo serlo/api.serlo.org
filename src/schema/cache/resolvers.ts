@@ -21,10 +21,11 @@
  */
 import { ForbiddenError } from 'apollo-server'
 
-import { CacheResolvers } from './types'
 import { Service } from '~/internals/authentication'
+import { Resolvers } from '~/types'
 
-export const resolvers: CacheResolvers = {
+//TODO: Implement Mutations<M> Type helper once breaking change is taken care of
+export const resolvers: Resolvers = {
   Mutation: {
     async _setCache(_parent, { key, value }, { dataSources, service }) {
       if (service !== Service.Serlo) {
