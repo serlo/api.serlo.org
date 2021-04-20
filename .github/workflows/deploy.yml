@@ -16,7 +16,7 @@ jobs:
         uses: salsify/action-detect-and-tag-new-version@v2
         with:
           version-command: |
-            node --print 'require("./lerna.json").version'
+            jq ".version" --raw-output < lerna.json
   docker-image:
     runs-on: ubuntu-latest
     needs: update-version
