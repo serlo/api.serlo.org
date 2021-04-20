@@ -14,6 +14,9 @@ jobs:
           fetch-depth: 2
       - id: version
         uses: salsify/action-detect-and-tag-new-version@v2
+        with:
+          version-command: |
+            node --print 'require("./lerna.json").version'
   docker-image:
     runs-on: ubuntu-latest
     needs: update-version
@@ -29,7 +32,7 @@ jobs:
           service_account_key: ${{ secrets.GCP_KEY_CONTAINER_REGISTRY }}
       - run: gcloud auth configure-docker
       - run: yarn
-      - run: yarn deploy:image
+      - run: (cd packages/server && yarn deploy:image)
   npm-package-api:
     runs-on: ubuntu-latest
     needs: update-version
@@ -41,8 +44,8 @@ jobs:
           node-version: 14.x
           registry-url: 'https://registry.npmjs.org'
       - run: yarn
-      - run: yarn regenerate-types
-      - run: (cd dist-api && npm publish)
+      - run: (cd packages/types && yarn build)
+      - run: (cd packages/types && npm publish)
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
   npm-package-authorization:
@@ -56,7 +59,7 @@ jobs:
           node-version: 14.x
           registry-url: 'https://registry.npmjs.org'
       - run: yarn
-      - run: yarn regenerate-authorization-package
-      - run: (cd dist-authorization && npm publish)
+      - run: (cd packages/authorization && yarn build)
+      - run: (cd packages/authorization && npm publish)
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
