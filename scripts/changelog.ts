@@ -728,6 +728,11 @@ async function exec(): Promise<void> {
     {
       tagName: 'v0.22.4',
       date: '2021-04-20',
+      yanked: true,
+    },
+    {
+      tagName: 'v0.22.5',
+      date: '2021-04-20',
       added: [
         ['authorization', 'Add additional `Thread` permissions.'],
         ['authorization', 'Add `Uuid` permissions.'],

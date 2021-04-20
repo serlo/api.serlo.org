@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [v0.22.4](https://github.com/serlo/api.serlo.org/compare/v0.22.3..v0.22.4) - April 20, 2021
+## [v0.22.5](https://github.com/serlo/api.serlo.org/compare/v0.22.4..v0.22.5) - April 20, 2021
 
 ### Added
 
@@ -17,6 +17,8 @@ All notable changes to this project will be documented in this file.
 - Monorepo setup.
 
 - **subscription**. Reject invalid cache values.
+
+## [v0.22.4](https://github.com/serlo/api.serlo.org/compare/v0.22.3..v0.22.4) - April 20, 2021 \[YANKED]
 
 ## [v0.22.3](https://github.com/serlo/api.serlo.org/compare/v0.22.2..v0.22.3) - April 20, 2021 \[YANKED]
 
