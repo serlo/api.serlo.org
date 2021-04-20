@@ -30,6 +30,7 @@
     "prepacts": "rimraf pacts",
     "pacts": "jest --config jest.config-pacts-serlo-org-database-layer.js --runInBand",
     "pacts:publish": "ts-node scripts/publish-pacts",
+    "prepare-release": "yarn lerna version --no-git-tag-version --no-push",
     "start": "npm-run-all start:redis start:server",
     "start:redis": "docker-compose up --detach",
     "start:server": "lerna run --stream --scope @serlo/api.serlo.org start",

@@ -7,3 +7,6 @@ pacts/
 # Generated GraphQL types
 packages/server/src/types.ts
 packages/types/src/index.ts
+
+# Lerna config
+lerna.json
