@@ -1,6 +1,6 @@
 {
   "name": "@serlo/api",
-  "version": "0.21.1",
+  "version": "0.22.0",
   "repository": "serlo/api.serlo.org",
   "license": "Apache-2.0",
   "author": "Serlo Education e.V.",
@@ -11,7 +11,6 @@
     "build": "tsdx build --tsconfig tsconfig.prod.json",
     "codegen": "graphql-codegen --config codegen.yml"
   },
-  "dependencies": {},
   "devDependencies": {
     "@graphql-codegen/add": "^2.0.0",
     "@graphql-codegen/cli": "^1.0.0",

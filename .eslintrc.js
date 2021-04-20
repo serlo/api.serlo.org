@@ -102,6 +102,7 @@ module.exports = {
       'error',
       {
         devDependencies: [
+          'packages/server/scripts/**/*',
           'scripts/**/*',
           'jest.config.js',
           'jest.config-pacts-*.js',
