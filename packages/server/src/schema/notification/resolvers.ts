@@ -90,7 +90,7 @@ export const resolvers: TypeResolvers<Notification> &
         userId,
       })
       const { id, unread } = payload.input
-      const ids = Array.isArray(id) ? id : [id]
+      const ids = id
 
       ids.forEach((id) => {
         if (!notifications.find((n) => n.id === id)) {
