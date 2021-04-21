@@ -2134,6 +2134,23 @@ describe('mutation notification setState', () => {
           type: 'NotificationSetStateMutation',
           payload: { ids: [1, 2, 3], userId: user.id, unread: false },
         },
+      }),
+      createUuidHandler(user),
+      createUuidHandler(article),
+      createNotificationEventHandler({
+        ...createEntityNotificationEvent,
+        id: 1,
+        objectId: article.id,
+      }),
+      createNotificationEventHandler({
+        ...createEntityNotificationEvent,
+        id: 2,
+        objectId: article.id,
+      }),
+      createNotificationEventHandler({
+        ...createEntityNotificationEvent,
+        id: 3,
+        objectId: article.id,
       })
     )
     await assertSuccessfulGraphQLMutation({
@@ -2186,8 +2203,16 @@ describe('mutation notification setState', () => {
           type: 'NotificationSetStateMutation',
           payload: { ids: [1], userId: user.id, unread: true },
         },
+      }),
+      createUuidHandler(user),
+      createUuidHandler(article),
+      createNotificationEventHandler({
+        ...createEntityNotificationEvent,
+        id: 1,
+        objectId: article.id,
       })
     )
+
     const client = createTestClient({ userId: user.id })
 
     //fill notification cache
@@ -2228,6 +2253,23 @@ describe('mutation notification setState', () => {
           type: 'NotificationSetStateMutation',
           payload: { ids: [1, 2, 3], userId: user.id, unread: false },
         },
+      }),
+      createUuidHandler(user),
+      createUuidHandler(article),
+      createNotificationEventHandler({
+        ...createEntityNotificationEvent,
+        id: 1,
+        objectId: article.id,
+      }),
+      createNotificationEventHandler({
+        ...createEntityNotificationEvent,
+        id: 2,
+        objectId: article.id,
+      }),
+      createNotificationEventHandler({
+        ...createEntityNotificationEvent,
+        id: 3,
+        objectId: article.id,
       })
     )
 

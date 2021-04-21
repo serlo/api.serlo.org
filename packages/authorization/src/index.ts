@@ -36,6 +36,7 @@ export function instanceToScope(instance: Instance | null): Scope {
 }
 
 export enum Permission {
+  Notification_SetState = 'notification:setState',
   Subscription_Set = 'subscription:set',
   Thread_CreateThread = 'thread:createThread',
   Thread_CreateComment = 'thread:createComment',
@@ -65,6 +66,10 @@ function createPermissionGuard(
   return (scope) => (authorizationPayload) => {
     return authorizationPayload[scope]?.includes(permission) === true
   }
+}
+
+export const Notification = {
+  setState: createPermissionGuard(Permission.Notification_SetState),
 }
 
 export const Subscription = {
