@@ -31,6 +31,8 @@ import {
   UuidDecoder,
   Uuid,
   NotificationDecoder,
+  NavigationDecoder,
+  NavigationDataDecoder,
   // TODO: The following imports are needed for the API extractor
   // Delete them when https://github.com/microsoft/rushstack/issues/2140 is fixed
   /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -38,6 +40,7 @@ import {
   EntityType,
   EntityRevisionType,
   DiscriminatorType,
+  NavigationNodeDecoder,
   /* eslint-enable @typescript-eslint/no-unused-vars */
 } from './decoder'
 import { Environment } from '~/internals/environment'
@@ -45,11 +48,6 @@ import { Model } from '~/internals/graphql'
 import { createMutation, createQuery, ModelQuery } from '~/internals/model'
 import { isInstance } from '~/schema/instance/utils'
 import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
-import {
-  NavigationData,
-  NavigationPayload,
-  NodeData,
-} from '~/schema/uuid/abstract-navigation-child/types'
 import { isUnsupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import {
@@ -217,14 +215,13 @@ export function createSerloModel({
     },
     environment
   )
-  const getNavigationPayload = createQuery<
-    { instance: Instance },
-    NavigationPayload
-  >(
+
+  const getNavigationPayload = createQuery(
     {
+      decoder: NavigationDecoder,
       enableSwr: true,
-      getCurrentValue: async ({ instance }) => {
-        const response = await handleMessageWithoutResponse({
+      getCurrentValue: async ({ instance }: {instance: Instance}) => {
+        return await handleMessage({
           message: {
             type: 'NavigationQuery',
             payload: {
@@ -233,7 +230,6 @@ export function createSerloModel({
           },
           expectedStatusCodes: [200],
         })
-        return (await response.json()) as NavigationPayload
       },
       maxAge: { hour: 1 },
       getKey: ({ instance }) => {
@@ -255,9 +251,11 @@ export function createSerloModel({
   }: {
     instance: Instance
     id: number
-  }): Promise<NavigationData | null> => {
+  }): Promise<typeof NavigationDataDecoder | null> => {
     const payload = await getNavigationPayload({ instance })
     const { data } = payload
+
+    type NodeData = typeof data[number]
 
     const leaves: Record<string, number> = {}
 
