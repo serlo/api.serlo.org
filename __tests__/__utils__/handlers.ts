@@ -19,12 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import * as t from 'io-ts'
 import { rest } from 'msw'
 import * as R from 'ramda'
 
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model/types'
-import { NavigationPayload } from '~/schema/uuid/abstract-navigation-child/types'
+import { NavigationDecoder } from '~/model/decoder'
 
 export function createAliasHandler(alias: Payload<'serlo', 'getAlias'>) {
   return createMessageHandler({
@@ -51,7 +52,9 @@ export function createLicenseHandler(license: Model<'License'>) {
   })
 }
 
-export function createNavigationHandler(navigation: NavigationPayload) {
+export function createNavigationHandler(
+  navigation: t.TypeOf<typeof NavigationDecoder>
+) {
   return createMessageHandler({
     message: {
       type: 'NavigationQuery',

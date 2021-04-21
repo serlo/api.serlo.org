@@ -40,7 +40,6 @@ import {
   EntityType,
   EntityRevisionType,
   DiscriminatorType,
-  NavigationNodeDecoder,
   /* eslint-enable @typescript-eslint/no-unused-vars */
 } from './decoder'
 import { Environment } from '~/internals/environment'
@@ -220,7 +219,7 @@ export function createSerloModel({
     {
       decoder: NavigationDecoder,
       enableSwr: true,
-      getCurrentValue: async ({ instance }: {instance: Instance}) => {
+      getCurrentValue: async ({ instance }: { instance: Instance }) => {
         return await handleMessage({
           message: {
             type: 'NavigationQuery',
@@ -251,7 +250,7 @@ export function createSerloModel({
   }: {
     instance: Instance
     id: number
-  }): Promise<typeof NavigationDataDecoder | null> => {
+  }): Promise<t.TypeOf<typeof NavigationDataDecoder> | null> => {
     const payload = await getNavigationPayload({ instance })
     const { data } = payload
 

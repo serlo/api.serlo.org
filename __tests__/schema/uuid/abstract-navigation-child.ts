@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import * as t from 'io-ts'
 
 import {
   navigation,
@@ -35,10 +36,12 @@ import {
 } from '../../__utils__'
 import { Service } from '~/internals/authentication'
 import { Model } from '~/internals/graphql'
-import { NavigationPayload } from '~/schema/uuid/abstract-navigation-child/types'
+import { NavigationDecoder } from '~/model/decoder'
 import { Instance } from '~/types'
 
-function createSetNavigationMutation(navigation: NavigationPayload) {
+function createSetNavigationMutation(
+  navigation: t.TypeOf<typeof NavigationDecoder>
+) {
   return {
     mutation: gql`
       mutation _setCache($key: String!, $value: JSON!) {
