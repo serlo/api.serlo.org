@@ -23,7 +23,7 @@ import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
 import { article, user } from '../../__fixtures__'
-import { createTestClient } from '../../__tests__/__utils__'
+import { createTestClient, createUuidHandler } from '../../__tests__/__utils__'
 import {
   addMessageInteraction,
   assertSuccessfulGraphQLMutation,
@@ -61,6 +61,7 @@ test('SubscriptionsQuery', async () => {
 
 test('SubscriptionSetMutation', async () => {
   global.client = createTestClient({ userId: user.id })
+  global.server.use(createUuidHandler(user), createUuidHandler(article))
 
   await addMessageInteraction({
     given: `there exists uuid ${article.id} and user ${user.id} with no prior subscription`,

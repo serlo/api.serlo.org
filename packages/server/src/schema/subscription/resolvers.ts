@@ -19,12 +19,16 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import * as auth from '@serlo/authorization'
+
 import {
   assertUserIsAuthenticated,
+  assertUserIsAuthorized,
   createMutationNamespace,
   Mutations,
   Queries,
 } from '~/internals/graphql'
+import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { isDefined } from '~/utils'
 
@@ -54,10 +58,21 @@ export const resolvers: Queries<'subscriptions'> & Mutations<'subscription'> = {
   },
   SubscriptionMutation: {
     async set(_parent, payload, { dataSources, userId }) {
-      assertUserIsAuthenticated(userId)
-
       const { id, subscribe, sendEmail } = payload.input
-      const ids = Array.isArray(id) ? id : [id]
+      const ids = id
+
+      const scopes = await Promise.all(
+        ids.map((id) => fetchScopeOfUuid({ id, dataSources }))
+      )
+
+      assertUserIsAuthenticated(userId)
+      await assertUserIsAuthorized({
+        userId,
+        guards: scopes.map((scope) => auth.Subscription.set(scope)),
+        message: 'You are not allowed to subscribe to this object.',
+        dataSources,
+      })
+
       await dataSources.model.serlo.setSubscription({
         ids,
         userId,
