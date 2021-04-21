@@ -37,12 +37,13 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
       Permission.Subscription_Set,
       Permission.Thread_CreateThread,
       Permission.Thread_CreateComment,
+      Permission.Uuid_Create_Entity,
+      Permission.Uuid_Create_EntityRevision,
     ],
   },
   [Role.Sysadmin]: {
     extends: [Role.Guest, Role.Login, Role.Moderator],
   },
-
   [Role.Moderator]: {
     permissions: [
       Permission.Thread_SetThreadArchived,
@@ -57,10 +58,13 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
     permissions: [
       Permission.Uuid_SetState_Entity,
       Permission.Uuid_SetState_TaxonomyTerm,
+      Permission.Uuid_Create_TaxonomyTerm,
     ],
   },
   [Role.StaticPagesBuilder]: {
     permissions: [
+      Permission.Uuid_Create_Page,
+      Permission.Uuid_Create_PageRevision,
       Permission.Uuid_SetState_Page,
       Permission.Uuid_SetState_PageRevision,
     ],
