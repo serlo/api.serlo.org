@@ -33,6 +33,7 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
   [Role.Guest]: {},
   [Role.Login]: {
     permissions: [
+      Permission.Notification_SetState,
       Permission.Subscription_Set,
       Permission.Thread_CreateThread,
       Permission.Thread_CreateComment,

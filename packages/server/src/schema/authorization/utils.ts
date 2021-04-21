@@ -91,6 +91,23 @@ export async function fetchScopeOfUuid({
   return Scope.Serlo
 }
 
+export async function fetchScopeOfNotificationEvent({
+  id,
+  dataSources,
+}: {
+  id: number
+  dataSources: Context['dataSources']
+}): Promise<Scope> {
+  const event = await dataSources.model.serlo.getNotificationEvent({ id })
+  if (event === null)
+    throw new UserInputError('Notification event does not exist.')
+
+  return await fetchScopeOfUuid({
+    id: event.objectId,
+    dataSources,
+  })
+}
+
 export function resolveScopedRoles(user: Model<'User'>): Model<'ScopedRole'>[] {
   return user.roles.map(legacyRoleToRole).filter(isDefined)
 }
