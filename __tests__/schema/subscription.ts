@@ -39,6 +39,7 @@ describe('subscriptions', () => {
   beforeEach(() => {
     global.server.use(
       createUuidHandler(article),
+      createUuidHandler(user),
       createSubscriptionsHandler({
         payload: { userId: user.id },
         body: {
@@ -81,6 +82,7 @@ describe('subscription mutation set', () => {
     // mock subscriptions handlers
     global.server.use(
       createUuidHandler(article),
+      createUuidHandler(user),
       createUuidHandler({ ...article, id: 1555 }),
       createUuidHandler({ ...article, id: 1565 }),
       createSubscriptionsHandler({
