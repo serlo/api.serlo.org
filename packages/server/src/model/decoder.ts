@@ -141,6 +141,46 @@ export const AbstractEntityRevisionDecoder = t.intersection([
   }),
 ])
 
+interface NavigationNodeDecoder {
+  label: string
+  id?: number
+  url?: string
+  children?: NavigationNodeDecoder[]
+}
+
+export const NavigationNodeDecoder: t.Type<NavigationNodeDecoder> = t.recursion(
+  'NavigationNodeDecoder',
+  () =>
+    t.intersection([
+      t.type({
+        label: t.string,
+      }),
+      t.partial({
+        id: t.number,
+        url: t.string,
+        children: t.array(NavigationNodeDecoder),
+      }),
+    ])
+)
+
+export const NavigationDecoder = t.type({
+  data: t.array(NavigationNodeDecoder),
+  instance: InstanceDecoder,
+})
+
+export const NavigationDataDecoder = t.type({
+  data: NavigationNodeDecoder,
+  path: t.array(t.intersection([
+    t.type({
+      label: t.string,
+    }),
+    t.partial({
+      id: t.number,
+      url: t.string,
+    }),
+  ]))
+})
+
 export const PageDecoder = t.exact(
   t.intersection([
     AbstractUuidDecoder,
