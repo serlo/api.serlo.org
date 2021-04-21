@@ -141,14 +141,14 @@ export const AbstractEntityRevisionDecoder = t.intersection([
   }),
 ])
 
-interface NavigationNodeDecoder {
+interface NavigationNode {
   label: string
   id?: number
   url?: string
-  children?: NavigationNodeDecoder[]
+  children?: NavigationNode[]
 }
 
-export const NavigationNodeDecoder: t.Type<NavigationNodeDecoder> = t.recursion(
+export const NavigationNodeDecoder: t.Type<NavigationNode> = t.recursion(
   'NavigationNodeDecoder',
   () =>
     t.intersection([
@@ -170,15 +170,17 @@ export const NavigationDecoder = t.type({
 
 export const NavigationDataDecoder = t.type({
   data: NavigationNodeDecoder,
-  path: t.array(t.intersection([
-    t.type({
-      label: t.string,
-    }),
-    t.partial({
-      id: t.number,
-      url: t.string,
-    }),
-  ]))
+  path: t.array(
+    t.intersection([
+      t.type({
+        label: t.string,
+      }),
+      t.partial({
+        id: t.union([t.number, t.null]),
+        url: t.union([t.string, t.null]),
+      }),
+    ])
+  ),
 })
 
 export const PageDecoder = t.exact(
