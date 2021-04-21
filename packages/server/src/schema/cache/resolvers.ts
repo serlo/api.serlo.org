@@ -21,10 +21,10 @@
  */
 import { ForbiddenError } from 'apollo-server'
 
-import { CacheResolvers } from './types'
 import { Service } from '~/internals/authentication'
+import { Resolvers } from '~/types'
 
-export const resolvers: CacheResolvers = {
+export const resolvers: Resolvers = {
   Mutation: {
     async _setCache(_parent, { key, value }, { dataSources, service }) {
       if (service !== Service.Serlo) {
