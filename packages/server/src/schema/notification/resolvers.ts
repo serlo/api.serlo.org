@@ -19,16 +19,19 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import * as auth from '@serlo/authorization'
 import { ForbiddenError } from 'apollo-server'
 
 import {
   assertUserIsAuthenticated,
+  assertUserIsAuthorized,
   createMutationNamespace,
   InterfaceResolvers,
   Mutations,
   Queries,
   TypeResolvers,
 } from '~/internals/graphql'
+import { fetchScopeOfNotificationEvent } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { Notification } from '~/types'
 import { isDefined } from '~/utils'
@@ -84,20 +87,33 @@ export const resolvers: TypeResolvers<Notification> &
   },
   NotificationMutation: {
     async setState(_parent, payload, { dataSources, userId }) {
-      assertUserIsAuthenticated(userId)
-
-      const { notifications } = await dataSources.model.serlo.getNotifications({
-        userId,
-      })
       const { id, unread } = payload.input
       const ids = id
 
-      ids.forEach((id) => {
-        if (!notifications.find((n) => n.id === id)) {
+      assertUserIsAuthenticated(userId)
+      const { notifications } = await dataSources.model.serlo.getNotifications({
+        userId,
+      })
+      const eventIds = ids.map((id) => {
+        const notification = notifications.find((n) => n.id === id)
+        if (!notification) {
           throw new ForbiddenError(
             'You are only allowed to set your own notification states.'
           )
         }
+        return notification.eventId
+      })
+
+      const scopes = await Promise.all(
+        eventIds.map((id) => fetchScopeOfNotificationEvent({ id, dataSources }))
+      )
+
+      await assertUserIsAuthorized({
+        userId,
+        guards: scopes.map((scope) => auth.Notification.setState(scope)),
+        message:
+          'You are not allowed to set the state of the provided notification(s).',
+        dataSources,
       })
 
       await dataSources.model.serlo.setNotificationState({
