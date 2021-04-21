@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { MockedRequest, ResponseResolver, rest, restContext } from 'msw'
+import { RestRequest, ResponseResolver, rest, restContext } from 'msw'
 
 import { MajorDimension } from '~/model'
 
@@ -76,10 +76,10 @@ function toKey(query: SpreadsheetQuery) {
 type SpreadsheetApiResolver = RestResolver<never, SpreadsheetQueryBasic>
 
 type RestResolver<
-  RequestBodyType = MockedRequest['body'],
-  RequestParamsType = MockedRequest['params']
+  RequestBodyType = RestRequest['body'],
+  RequestParamsType = RestRequest['params']
 > = ResponseResolver<
-  MockedRequest<RequestBodyType, RequestParamsType>,
+  RestRequest<RequestBodyType, RequestParamsType>,
   typeof restContext
 >
 
