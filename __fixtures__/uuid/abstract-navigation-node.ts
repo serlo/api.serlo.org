@@ -20,9 +20,10 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
+import { Payload } from '~/internals/model/types'
 import { Instance } from '~/types'
 
-export const navigation = {
+export const navigation: Payload<'serlo', 'getNavigationPayload'> = {
   data: [
     {
       label: 'Mathematik',

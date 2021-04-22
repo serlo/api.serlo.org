@@ -250,6 +250,7 @@ export function createSerloModel({
   }: {
     instance: Instance
     id: number
+    // TODO: Wait for https://github.com/serlo/api.serlo.org/pull/299 and use getQuery() for this branch
   }): Promise<t.TypeOf<typeof NavigationDataDecoder> | null> => {
     const payload = await getNavigationPayload({ instance })
     const { data } = payload
