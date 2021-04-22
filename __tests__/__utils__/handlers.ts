@@ -24,7 +24,6 @@ import * as R from 'ramda'
 
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model/types'
-import { NavigationPayload } from '~/schema/uuid/abstract-navigation-child/types'
 
 export function createAliasHandler(alias: Payload<'serlo', 'getAlias'>) {
   return createMessageHandler({
@@ -51,7 +50,9 @@ export function createLicenseHandler(license: Model<'License'>) {
   })
 }
 
-export function createNavigationHandler(navigation: NavigationPayload) {
+export function createNavigationHandler(
+  navigation: Payload<'serlo', 'getNavigationPayload'>
+) {
   return createMessageHandler({
     message: {
       type: 'NavigationQuery',
