@@ -23,11 +23,11 @@ import { Matchers } from '@pact-foundation/pact'
 import fetch from 'node-fetch'
 
 import { addMessageInteraction } from '../__utils__'
-import { NavigationPayload } from '~/schema/uuid/abstract-navigation-child/types'
+import { Payload } from '~/internals/model/types'
 import { Instance } from '~/types'
 
 test('NavigationQuery', async () => {
-  const navigation: NavigationPayload = {
+  const navigation: Payload<'serlo', 'getNavigationPayload'> = {
     instance: Instance.De,
     data: [
       {
