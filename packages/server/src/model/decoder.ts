@@ -141,7 +141,7 @@ export const AbstractEntityRevisionDecoder = t.intersection([
   }),
 ])
 
-interface NavigationNode {
+export interface NavigationNode {
   label: string
   id?: number
   url?: string
