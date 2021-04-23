@@ -33,14 +33,6 @@ import {
   NotificationDecoder,
   NavigationDecoder,
   NavigationDataDecoder,
-  // TODO: The following imports are needed for the API extractor
-  // Delete them when https://github.com/microsoft/rushstack/issues/2140 is fixed
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  NotificationEventType,
-  EntityType,
-  EntityRevisionType,
-  DiscriminatorType,
-  /* eslint-enable @typescript-eslint/no-unused-vars */
 } from './decoder'
 import { Environment } from '~/internals/environment'
 import { Model } from '~/internals/graphql'
@@ -49,12 +41,7 @@ import { isInstance } from '~/schema/instance/utils'
 import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
 import { isUnsupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
-import {
-  Instance,
-  ThreadCreateThreadInput,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  TaxonomyTermType,
-} from '~/types'
+import { Instance, ThreadCreateThreadInput } from '~/types'
 
 export function createSerloModel({
   environment,
