@@ -165,6 +165,35 @@ describe('uuid', () => {
     })
   })
 
+  test('returns uuid when alias is /:subject/:id/:alias (as hotfix for the current bug in the database layer)', async () => {
+    global.server.use(createUuidHandler(article))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query uuid($alias: AliasInput!) {
+          uuid(alias: $alias) {
+            __typename
+            ... on Article {
+              id
+              trashed
+              instance
+              date
+            }
+          }
+        }
+      `,
+      variables: {
+        alias: {
+          instance: Instance.De,
+          path: `/mathe/${article.id}/das-viereck`,
+        },
+      },
+      data: {
+        uuid: getArticleDataWithoutSubResolvers(article),
+      },
+      client,
+    })
+  })
+
   test('returns revision when alias is /entity/repository/compare/:entityId/:revisionId', async () => {
     global.server.use(createUuidHandler(articleRevision))
     await assertSuccessfulGraphQLQuery({

@@ -165,14 +165,15 @@ async function resolveIdFromAlias(
   }
 
   for (const regex of [
-    /^\/(\d+)$/,
-    /^\/entity\/view\/(\d+)$/,
-    /^\/entity\/repository\/compare\/\d+\/(\d+)$/,
-    /^\/user\/profile\/(\d+)$/,
+    /^\/(?<id>\d+)$/,
+    /^\/entity\/view\/(?<id>\d+)$/,
+    /^\/(?<subject>[^/]+\/)?(?<id>\d+)\/(?<title>[^/]*)$/,
+    /^\/entity\/repository\/compare\/\d+\/(?<id>\d+)$/,
+    /^\/user\/profile\/(?<id>\d+)$/,
   ]) {
     const match = regex.exec(cleanPath)
 
-    if (match) return parseInt(match[1])
+    if (match && match.groups !== undefined) return parseInt(match.groups.id)
   }
 
   const customId = resolveCustomId({
