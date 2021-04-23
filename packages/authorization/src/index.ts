@@ -43,11 +43,16 @@ export enum Permission {
   Thread_SetThreadArchived = 'thread:setThreadArchived',
   Thread_SetThreadState = 'thread:setThreadState',
   Thread_SetCommentState = 'thread:setCommentState',
-  Uuid_SetState_Entity = 'uuid:setState:Entity',
-  Uuid_SetState_EntityRevision = 'uuid:setState:EntityRevision',
-  Uuid_SetState_Page = 'uuid:setState:Page',
-  Uuid_SetState_PageRevision = 'uuid:setState:PageRevision',
-  Uuid_SetState_TaxonomyTerm = 'uuid:setState:TaxonomyTerm',
+  Uuid_Create_Entity = 'uuid:create:entity',
+  Uuid_Create_EntityRevision = 'uuid:create:entityRevision',
+  Uuid_Create_Page = 'uuid:create:page',
+  Uuid_Create_PageRevision = 'uuid:create:pageRevision',
+  Uuid_Create_TaxonomyTerm = 'uuid:create:taxonomyTerm',
+  Uuid_SetState_Entity = 'uuid:setState:entity',
+  Uuid_SetState_EntityRevision = 'uuid:setState:entityRevision',
+  Uuid_SetState_Page = 'uuid:setState:page',
+  Uuid_SetState_PageRevision = 'uuid:setState:pageRevision',
+  Uuid_SetState_TaxonomyTerm = 'uuid:setState:taxonomyTerm',
 }
 
 export type AuthorizationPayload = {
@@ -94,6 +99,30 @@ export type UuidType =
   | string
 
 export const Uuid = {
+  create: (type: UuidType): GenericAuthorizationGuard => {
+    return (scope) => (authorizationPayload) => {
+      switch (type) {
+        case 'Entity':
+          return checkPermission(Permission.Uuid_Create_Entity)
+        case 'EntityRevision':
+          return checkPermission(Permission.Uuid_Create_EntityRevision)
+        case 'Page':
+          return checkPermission(Permission.Uuid_Create_Page)
+        case 'PageRevision':
+          return checkPermission(Permission.Uuid_Create_PageRevision)
+        case 'TaxonomyTerm':
+          return checkPermission(Permission.Uuid_Create_TaxonomyTerm)
+        case 'User':
+          return false
+        default:
+          return false
+      }
+
+      function checkPermission(permission: Permission) {
+        return createPermissionGuard(permission)(scope)(authorizationPayload)
+      }
+    }
+  },
   setState: (type: UuidType): GenericAuthorizationGuard => {
     return (scope) => (authorizationPayload) => {
       switch (type) {
