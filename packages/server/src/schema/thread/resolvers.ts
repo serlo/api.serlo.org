@@ -59,6 +59,9 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
     archived(thread) {
       return thread.commentPayloads[0].archived
     },
+    trashed(thread) {
+      return thread.commentPayloads[0].trashed
+    },
     async object(thread, _args, { dataSources }) {
       const object = await dataSources.model.serlo.getUuid({
         id: thread.commentPayloads[0].parentId,

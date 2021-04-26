@@ -1451,6 +1451,7 @@ export type Thread = {
   createdAt: Scalars['DateTime'];
   title?: Maybe<Scalars['String']>;
   archived: Scalars['Boolean'];
+  trashed: Scalars['Boolean'];
   object: AbstractUuid;
   comments: CommentConnection;
 };
