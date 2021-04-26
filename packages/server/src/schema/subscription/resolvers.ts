@@ -24,7 +24,7 @@ import * as auth from '@serlo/authorization'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
-  createMutationNamespace,
+  createNamespace,
   Mutations,
   Queries,
 } from '~/internals/graphql'
@@ -54,7 +54,7 @@ export const resolvers: Queries<'subscriptions'> & Mutations<'subscription'> = {
     },
   },
   Mutation: {
-    subscription: createMutationNamespace(),
+    subscription: createNamespace(),
   },
   SubscriptionMutation: {
     async set(_parent, payload, { dataSources, userId }) {
