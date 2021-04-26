@@ -743,6 +743,18 @@ async function exec(): Promise<void> {
         ['subscription', 'Reject invalid cache values.'],
       ],
     },
+    {
+      tagName: 'v0.23.0',
+      date: '2021-04-26',
+      added: [
+        ['authorization', 'Add `Subscription.set` permission.'],
+        ['authorization', 'Add `Notification.setState` permission.'],
+        ['authorization', 'Add `Uuid.create` permissions.'],
+      ],
+      fixed: [
+        ['alias', 'Resolve id aliases directly as a temporary workaround.'],
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
