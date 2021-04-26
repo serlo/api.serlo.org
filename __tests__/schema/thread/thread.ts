@@ -287,6 +287,28 @@ describe('uuid["threads"]', () => {
     })
   })
 
+  test('property "trashed" of Thread', async () => {
+    mockEndpointsForThreads(article, [[comment1, comment2]])
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query propertyArchived($id: Int!) {
+          uuid(id: $id) {
+            ... on ThreadAware {
+              threads {
+                nodes {
+                  trashed
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: { id: article.id },
+      data: { uuid: { threads: { nodes: [{ trashed: false }] } } },
+      client,
+    })
+  })
+
   test('property "object" of Thread', async () => {
     mockEndpointsForThreads(article, [[comment1, comment2]])
     await assertSuccessfulGraphQLQuery({
