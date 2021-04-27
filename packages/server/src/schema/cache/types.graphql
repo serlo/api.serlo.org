@@ -1,5 +1,37 @@
-type Mutation {
-  _setCache(key: String!, value: JSON!): Boolean
-  _removeCache(key: String!): Boolean
-  _updateCache(keys: [String!]!): Boolean
+extend type Mutation {
+  cache: CacheMutation!
+}
+
+type CacheMutation {
+  _set(input: CacheSetInput!): CacheSetResponse
+  _remove(input: CacheRemoveInput!): CacheRemoveResponse
+  _update(input: CacheUpdateInput!): CacheUpdateResponse
+}
+
+input CacheSetInput {
+  key: String!
+  value: JSON!
+}
+
+type CacheSetResponse {
+  success: Boolean!
+  query: Query!
+}
+
+input CacheRemoveInput {
+  key: String!
+}
+
+type CacheRemoveResponse {
+  success: Boolean!
+  query: Query!
+}
+
+input CacheUpdateInput {
+  keys: [String!]!
+}
+
+type CacheUpdateResponse {
+  success: Boolean!
+  query: Query!
 }

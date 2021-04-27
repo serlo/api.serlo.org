@@ -22,11 +22,15 @@
 import { ForbiddenError } from 'apollo-server'
 
 import { Service } from '~/internals/authentication'
-import { Resolvers } from '~/types'
+import { createMutationNamespace, Mutations } from '~/internals/graphql'
 
-export const resolvers: Resolvers = {
+export const resolvers: Mutations<'cache'> = {
   Mutation: {
-    async _setCache(_parent, { key, value }, { dataSources, service }) {
+    cache: createMutationNamespace(),
+  },
+  CacheMutation: {
+    async _set(_parent, payload, { dataSources, service }) {
+      const { key, value } = payload.input
       if (service !== Service.Serlo) {
         throw new ForbiddenError(
           'You do not have the permissions to set the cache'
@@ -38,7 +42,8 @@ export const resolvers: Resolvers = {
       })
       return null
     },
-    async _removeCache(_parent, { key }, { dataSources, service, userId }) {
+    async _remove(_parent, payload, { dataSources, service, userId }) {
+      const { key } = payload.input
       const allowedUserIds = [
         26217, // kulla
         15473, // inyono
@@ -58,7 +63,8 @@ export const resolvers: Resolvers = {
       await dataSources.model.serlo.removeCacheValue({ key })
       return null
     },
-    async _updateCache(_parent, { keys }, { dataSources, service }) {
+    async _update(_parent, payload, { dataSources, service }) {
+      const { keys } = payload.input
       if (service !== Service.Serlo) {
         throw new ForbiddenError(
           'You do not have the permissions to update the cache'
