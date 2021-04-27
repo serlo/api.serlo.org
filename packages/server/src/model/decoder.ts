@@ -77,13 +77,13 @@ export enum EntityRevisionType {
 // the app more robust against malformed responses from the database layer.
 const MAX_UUID = 1e7
 
+export const Uuid = t.refinement(t.number, (id) => id < MAX_UUID, 'Uuid')
+
 const StringWithoutNullCharacter = t.refinement(
   t.string,
   (text) => !text.includes('\0'),
   'AliasString'
 )
-
-export const Uuid = t.refinement(t.number, (id) => id < MAX_UUID, 'Uuid')
 
 export const AbstractUuidDecoder = t.type({
   id: Uuid,
