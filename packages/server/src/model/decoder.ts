@@ -441,7 +441,7 @@ export const SolutionDecoder = t.exact(
     AbstractEntityDecoder,
     t.type({
       __typename: t.literal(EntityType.Solution),
-      parentId: t.number,
+      parentId: Uuid,
     }),
   ])
 )
