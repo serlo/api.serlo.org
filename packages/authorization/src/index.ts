@@ -46,6 +46,7 @@ export enum Permission {
   License_Delete = 'license:delete',
   License_Set = 'license:set',
   Notification_SetState = 'notification:setState',
+  Page_Set = 'page:set',
   Subscription_Set = 'subscription:set',
   TaxonomyTerm_AddChild = 'taxonomyTerm:addChild',
   TaxonomyTerm_RemoveChild = 'taxonomyTerm:removeChild',
