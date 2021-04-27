@@ -59,11 +59,9 @@ export function createSentryPlugin(): ApolloServerPlugin {
                 ...(ctx.request.variables === undefined
                   ? {}
                   : {
-                      variables: R.mapObjIndexed((value: unknown) => {
-                        return typeof value === 'object'
-                          ? JSON.stringify(value, null, 2)
-                          : value
-                      }, ctx.request.variables),
+                      variables: stringifyObjectProperties(
+                        ctx.request.variables
+                      ),
                     }),
               })
 
@@ -78,7 +76,9 @@ export function createSentryPlugin(): ApolloServerPlugin {
               if (error.originalError !== undefined) {
                 if (error.originalError instanceof InvalidValueError) {
                   scope.setContext('decoder', {
-                    invalidValue: error.originalError.invalidValue,
+                    invalidValue: stringifyObjectProperties(
+                      error.originalError.invalidValue
+                    ),
                   })
                 }
               }
@@ -90,6 +90,16 @@ export function createSentryPlugin(): ApolloServerPlugin {
       }
     },
   }
+}
+
+function stringifyObjectProperties(value: unknown) {
+  return typeof value === 'object' && value !== null
+    ? R.mapObjIndexed(stringifyObjects, value)
+    : value
+}
+
+function stringifyObjects(value: unknown) {
+  return typeof value === 'object' ? JSON.stringify(value, null, 2) : value
 }
 
 export { Sentry }
