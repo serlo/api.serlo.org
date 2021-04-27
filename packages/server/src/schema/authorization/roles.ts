@@ -33,8 +33,11 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
   [Role.Guest]: {},
   [Role.Login]: {
     permissions: [
+      Permission.Entity_AddChild,
+      Permission.File_Create,
       Permission.Notification_SetState,
       Permission.Subscription_Set,
+      Permission.TaxonomyTerm_AddChild,
       Permission.Thread_CreateThread,
       Permission.Thread_CreateComment,
       Permission.Uuid_Create_Entity,
@@ -52,10 +55,18 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
     ],
   },
   [Role.Reviewer]: {
-    permissions: [Permission.Uuid_SetState_EntityRevision],
+    permissions: [
+      Permission.Entity_OrderChildren,
+      Permission.TaxonomyTerm_OrderChildren,
+      Permission.Uuid_SetState_EntityRevision,
+    ],
   },
   [Role.Architect]: {
     permissions: [
+      Permission.Entity_RemoveChild,
+      Permission.TaxonomyTerm_OrderChildren,
+      Permission.TaxonomyTerm_RemoveChild,
+      Permission.TaxonomyTerm_Set,
       Permission.Uuid_SetState_Entity,
       Permission.Uuid_SetState_TaxonomyTerm,
       Permission.Uuid_Create_TaxonomyTerm,
@@ -63,6 +74,7 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
   },
   [Role.StaticPagesBuilder]: {
     permissions: [
+      Permission.Page_Set,
       Permission.Uuid_Create_Page,
       Permission.Uuid_Create_PageRevision,
       Permission.Uuid_SetState_Page,
@@ -71,6 +83,20 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
   },
   [Role.Admin]: {
     extends: [Role.Moderator, Role.Reviewer, Role.Architect],
+    permissions: [
+      Permission.Entity_SetLicense,
+      Permission.File_Delete,
+      Permission.License_Create,
+      Permission.License_Delete,
+      Permission.License_Set,
+      Permission.Thread_DeleteThread,
+      Permission.Thread_DeleteComment,
+      Permission.Uuid_Delete_Entity,
+      Permission.Uuid_Create_EntityRevision,
+      Permission.Uuid_Delete_Page,
+      Permission.Uuid_Delete_PageRevision,
+      Permission.Uuid_Delete_TaxonomyTerm,
+    ],
   },
 }
 
