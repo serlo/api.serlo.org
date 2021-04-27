@@ -69,6 +69,7 @@ test('_setCache (authenticated)', async () => {
   await assertSuccessfulGraphQLMutation({
     ...createSetCacheMutation(testVars[0]),
     client,
+    data: { _setCache: true },
   })
 
   const cachedValue = await global.cache.get({ key: testVars[0].key })
@@ -111,6 +112,7 @@ test('_removeCache (authenticated via Serlo Service)', async () => {
   await assertSuccessfulGraphQLMutation({
     ...createRemoveCacheMutation(testVars[0]),
     client,
+    data: { _removeCache: true },
   })
 
   const cachedValue = await global.cache.get({ key: testVars[0].key })
@@ -126,6 +128,7 @@ test('_removeCache (authenticated as CarolinJaser)', async () => {
   await assertSuccessfulGraphQLMutation({
     ...createRemoveCacheMutation(testVars[0]),
     client,
+    data: { _removeCache: true },
   })
 
   const cachedValue = await global.cache.get({ key: testVars[0].key })

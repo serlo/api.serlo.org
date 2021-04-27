@@ -36,7 +36,7 @@ export const resolvers: Resolvers = {
         key,
         value,
       })
-      return null
+      return true
     },
     async _removeCache(_parent, { key }, { dataSources, service, userId }) {
       const allowedUserIds = [
@@ -56,7 +56,7 @@ export const resolvers: Resolvers = {
         )
       }
       await dataSources.model.serlo.removeCacheValue({ key })
-      return null
+      return true
     },
     async _updateCache(_parent, { keys }, { dataSources, service }) {
       if (service !== Service.Serlo) {
@@ -69,7 +69,7 @@ export const resolvers: Resolvers = {
           await dataSources.model.updateCacheValue({ key })
         })
       )
-      return null
+      return true
     },
   },
 }
