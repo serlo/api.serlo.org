@@ -1,4 +1,4 @@
-extend type Mutation {
+type Mutation {
   cache: CacheMutation!
 }
 

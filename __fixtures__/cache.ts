@@ -27,13 +27,19 @@ export function createSetCacheMutation(variables: {
 }) {
   return {
     mutation: gql`
-      mutation setCache($key: String!, $value: JSON!) {
-        _setCache(key: $key, value: $value)
+      mutation($input: CacheSetInput!) {
+        cache {
+          _set(input: $input) {
+            success
+          }
+        }
       }
     `,
     variables: {
-      key: variables.key,
-      value: variables.value,
+      input: {
+        key: variables.key,
+        value: variables.value,
+      },
     },
   }
 }
@@ -41,21 +47,37 @@ export function createSetCacheMutation(variables: {
 export function createRemoveCacheMutation(variables: { key: string }) {
   return {
     mutation: gql`
-      mutation removeCache($key: String!) {
-        _removeCache(key: $key)
+      mutation($input: CacheRemoveInput!) {
+        cache {
+          _remove(input: $input) {
+            success
+          }
+        }
       }
     `,
-    variables,
+    variables: {
+      input: {
+        key: variables.key,
+      },
+    },
   }
 }
 
 export function createUpdateCacheMutation(keys: string[]) {
   return {
     mutation: gql`
-      mutation _updateCache($keys: [String!]!) {
-        _updateCache(keys: $keys)
+      mutation($input: CacheUpdateInput!) {
+        cache {
+          _update(input: $input) {
+            success
+          }
+        }
       }
     `,
-    variables: { keys },
+    variables: {
+      input: {
+        keys: keys,
+      },
+    },
   }
 }
