@@ -23,6 +23,8 @@ import * as Sentry from '@sentry/node'
 import type { ApolloServerPlugin } from 'apollo-server-plugin-base'
 import R from 'ramda'
 
+import { InvalidValueError } from './model'
+
 export function initializeSentry(context: string) {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
@@ -49,6 +51,7 @@ export function createSentryPlugin(): ApolloServerPlugin {
 
           for (const error of ctx.errors) {
             if (ignoredErrorCodes.includes(error.extensions?.code)) continue
+
             Sentry.captureException(error, (scope) => {
               scope.setTag('kind', ctx.operationName)
               scope.setContext('graphql', {
@@ -70,6 +73,14 @@ export function createSentryPlugin(): ApolloServerPlugin {
                   message: error.path.join(' > '),
                   level: Sentry.Severity.Debug,
                 })
+              }
+
+              if (error.originalError !== undefined) {
+                if (error.originalError instanceof InvalidValueError) {
+                  scope.setContext('decoder', {
+                    invalidValue: error.originalError.invalidValue,
+                  })
+                }
               }
 
               return scope
