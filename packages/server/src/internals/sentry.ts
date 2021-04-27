@@ -75,6 +75,10 @@ export function createSentryPlugin(): ApolloServerPlugin {
 
               if (error.originalError !== undefined) {
                 if (error.originalError instanceof InvalidValueError) {
+                  scope.setFingerprint([
+                    JSON.stringify(error.originalError.invalidValue),
+                  ])
+
                   scope.setContext('decoder', {
                     invalidValue: stringifyObjectProperties(
                       error.originalError.invalidValue
