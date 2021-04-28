@@ -671,18 +671,6 @@ export function createSerloModel({
     },
   })
 
-  const setCacheValue = createMutation<{ key: string; value: unknown }>({
-    legacyMutate: async ({ key, value }) => {
-      await environment.cache.set({ key, value })
-    },
-  })
-
-  const removeCacheValue = createMutation<{ key: string }>({
-    legacyMutate: async ({ key }) => {
-      await environment.cache.remove({ key })
-    },
-  })
-
   return {
     createThread,
     archiveThread,
@@ -701,8 +689,6 @@ export function createSerloModel({
     getUuid,
     getUuidWithCustomDecoder,
     setUuidState,
-    removeCacheValue,
-    setCacheValue,
     setNotificationState,
   }
 }

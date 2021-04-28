@@ -39,6 +39,14 @@ export class ModelDataSource extends RESTDataSource {
     this.googleSpreadsheetApi = createGoogleSpreadsheetApiModel(args)
   }
 
+  public async removeCacheValue({ key }: { key: string }) {
+    await this.environment.cache.remove({ key })
+  }
+
+  public async setCacheValue(args: { key: string; value: unknown }) {
+    await this.environment.cache.set(args)
+  }
+
   public async updateCacheValue({ key }: { key: string }) {
     await this.environment.swrQueue.queue({ key })
   }
