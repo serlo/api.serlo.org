@@ -19,9 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-/* eslint-disable @typescript-eslint/no-namespace */
+import { Event } from '@sentry/node'
+
 import { MockTimer } from './setup'
 import { Cache } from '~/internals/cache'
+
+export {}
 
 declare global {
   namespace NodeJS {
@@ -29,6 +32,7 @@ declare global {
       cache: Cache
       server: ReturnType<typeof import('msw/node').setupServer>
       timer: MockTimer
+      sentryEvents: Event[]
     }
   }
 }
