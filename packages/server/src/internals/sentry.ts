@@ -23,6 +23,8 @@ import * as Sentry from '@sentry/node'
 import type { ApolloServerPlugin } from 'apollo-server-plugin-base'
 import R from 'ramda'
 
+import { InvalidValueError } from './model'
+
 export function initializeSentry(context: string) {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
@@ -49,6 +51,7 @@ export function createSentryPlugin(): ApolloServerPlugin {
 
           for (const error of ctx.errors) {
             if (ignoredErrorCodes.includes(error.extensions?.code)) continue
+
             Sentry.captureException(error, (scope) => {
               scope.setTag('kind', ctx.operationName)
               scope.setContext('graphql', {
@@ -56,11 +59,9 @@ export function createSentryPlugin(): ApolloServerPlugin {
                 ...(ctx.request.variables === undefined
                   ? {}
                   : {
-                      variables: R.mapObjIndexed((value: unknown) => {
-                        return typeof value === 'object'
-                          ? JSON.stringify(value, null, 2)
-                          : value
-                      }, ctx.request.variables),
+                      variables: stringifyObjectProperties(
+                        ctx.request.variables
+                      ),
                     }),
               })
 
@@ -72,6 +73,20 @@ export function createSentryPlugin(): ApolloServerPlugin {
                 })
               }
 
+              if (error.originalError !== undefined) {
+                if (error.originalError instanceof InvalidValueError) {
+                  scope.setFingerprint([
+                    JSON.stringify(error.originalError.invalidValue),
+                  ])
+
+                  scope.setContext('decoder', {
+                    invalidValue: stringifyObjectProperties(
+                      error.originalError.invalidValue
+                    ),
+                  })
+                }
+              }
+
               return scope
             })
           }
@@ -79,6 +94,16 @@ export function createSentryPlugin(): ApolloServerPlugin {
       }
     },
   }
+}
+
+function stringifyObjectProperties(value: unknown) {
+  return typeof value === 'object' && value !== null
+    ? R.mapObjIndexed(stringifyObjects, value)
+    : value
+}
+
+function stringifyObjects(value: unknown) {
+  return typeof value === 'object' ? JSON.stringify(value, null, 2) : value
 }
 
 export { Sentry }
