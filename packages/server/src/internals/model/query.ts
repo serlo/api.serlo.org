@@ -103,9 +103,9 @@ export function createQuery<P, R>(
         value,
       })
       return value as S
+    } else {
+      throw new InvalidValueError(value)
     }
-
-    throw new Error(`Invalid value: ${JSON.stringify(value)}`)
   }
 
   async function queryWithDecoders<S2 extends R, S1 extends S2>(
@@ -143,6 +143,12 @@ export function createQuery<P, R>(
   query._querySpec = querySpecWithHelpers
 
   return (query as unknown) as ModelQuery<P, R>
+}
+
+export class InvalidValueError extends Error {
+  constructor(public invalidValue: unknown) {
+    super('Invalid value received from a data source.')
+  }
 }
 
 export function isQuery(query: unknown): query is ModelQuery<unknown, unknown> {
