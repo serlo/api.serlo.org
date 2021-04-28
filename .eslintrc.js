@@ -105,6 +105,7 @@ module.exports = {
           'scripts/**/*',
           'jest.config.js',
           'jest.config-pacts-*.js',
+          '__config__/*.ts',
         ],
         optionalDependencies: false,
       },
