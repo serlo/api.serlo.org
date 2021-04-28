@@ -36,7 +36,7 @@ export const resolvers: Mutations<'cache'> = {
           'You do not have the permissions to set the cache'
         )
       }
-      await dataSources.model.serlo.setCacheValue({
+      await dataSources.model.setCacheValue({
         key,
         value,
       })
@@ -60,7 +60,7 @@ export const resolvers: Mutations<'cache'> = {
           'You do not have the permissions to remove the cache'
         )
       }
-      await dataSources.model.serlo.removeCacheValue({ key })
+      await dataSources.model.removeCacheValue({ key })
       return null
     },
     async _update(_parent, payload, { dataSources, service }) {
