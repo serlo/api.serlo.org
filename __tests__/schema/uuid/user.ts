@@ -402,8 +402,7 @@ describe('endpoint activeDonors', () => {
       givenActiveDonorsSpreadsheet([['Header', '23', 'foo', '-1', '', '1.5']])
 
       await expectUserIds({ endpoint: 'activeDonors', ids: [23] })
-
-      assertErrorEvent({
+      await assertErrorEvent({
         message: 'invalid entry in activeDonorSpreadsheet',
         errorContext: { invalidElements: ['foo', '-1', '', '1.5'] },
       })
