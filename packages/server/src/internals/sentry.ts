@@ -54,15 +54,13 @@ export function createSentryPlugin(): ApolloServerPlugin {
 
             Sentry.captureException(error, (scope) => {
               scope.setTag('kind', ctx.operationName)
+
+              const { query, variables } = ctx.request
               scope.setContext(
                 'graphql',
                 stringifyContext({
-                  query: ctx.request.query,
-                  ...(ctx.request.variables === undefined
-                    ? {}
-                    : {
-                        variables: ctx.request.variables,
-                      }),
+                  query,
+                  ...(variables === undefined ? {} : { variables }),
                 })
               )
 
