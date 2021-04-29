@@ -23,6 +23,7 @@ import * as Sentry from '@sentry/node'
 import { array as A } from 'fp-ts'
 import * as F from 'fp-ts/lib/function'
 import R from 'ramda'
+import { stringifyContext } from './sentry'
 
 export interface ErrorEvent extends ErrorContext {
   error: Error
@@ -80,23 +81,17 @@ function captureErrorEvent(event: ErrorEvent) {
     }
 
     if (event.locationContext) {
-      scope.setContext('location', serializeRecord(event.locationContext))
+      scope.setContext('location', stringifyContext(event.locationContext))
     }
 
     if (event.errorContext) {
-      scope.setContext('error', serializeRecord(event.errorContext))
+      scope.setContext('error', stringifyContext(event.errorContext))
     }
 
     scope.setLevel(Sentry.Severity.Error)
 
     return scope
   })
-
-  function serializeRecord(record: Record<string, unknown>) {
-    return R.mapObjIndexed((value) => {
-      return typeof value === 'object' ? JSON.stringify(value, null, 2) : value
-    }, record)
-  }
 }
 
 export interface ErrorContext {
