@@ -79,7 +79,7 @@ export function createSentryPlugin(): ApolloServerPlugin {
                     JSON.stringify(error.originalError.invalidValue),
                   ])
 
-                  scope.setContext('decoder', {
+                  scope.setContext('error', {
                     invalidValue: stringifyObjectProperties(
                       error.originalError.invalidValue
                     ),

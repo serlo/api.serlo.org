@@ -136,30 +136,39 @@ export async function assertFailingGraphQLMutation({
  *   errorContext: { invalidValue: 23 },
  * })
  */
-export function assertErrorEvent(args?: {
+export async function assertErrorEvent(args?: {
   message?: string
   errorContext?: Record<string, unknown>
 }) {
   const eventPredicate = (event: Sentry.Event) => {
     const exception = event.exception?.values?.[0]
 
-    if (exception?.type !== 'Error') return false
-
-    if (args?.message !== undefined && exception.value !== args.message)
+    if (args?.message !== undefined && exception?.value !== args.message)
       return false
 
     if (args?.errorContext !== undefined) {
       for (const contextName in args.errorContext) {
         const contextValue = event.contexts?.error?.[contextName]
+        const targetValue = args.errorContext[contextName]
 
-        if (typeof contextValue !== 'string') return false
-        if (!R.equals(JSON.parse(contextValue), args.errorContext[contextName]))
-          return false
+        if (typeof contextValue === 'string') {
+          if (typeof targetValue === 'string') {
+            if (contextValue !== targetValue) return false
+          } else {
+            if (!R.equals(JSON.parse(contextValue), targetValue)) return false
+          }
+        } else {
+          if (!R.equals(contextValue, targetValue)) return false
+        }
       }
     }
 
     return true
   }
+  const waitForAllSentryEvents = new Promise((resolve) =>
+    setTimeout(resolve, 400)
+  )
 
+  await waitForAllSentryEvents
   expect(global.sentryEvents.some(eventPredicate)).toBe(true)
 }
