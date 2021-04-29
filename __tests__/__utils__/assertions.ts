@@ -110,31 +110,37 @@ export async function assertFailingGraphQLMutation({
 }
 
 /**
- * Assertation that a certain error event occured. Since we use Sentry this
+ * Assertion that a certain error event occured. Since we use Sentry this
  * function checks that a Sentry event was thrown.
  *
- * TODO: This function has not a good error message in case the asseration
- * fails. I reccomend you to investigate `global.sentryEvents` with
+ * TODO: This function has not a good error message in case the assertion
+ * fails. I recommend you to investigate `global.sentryEvents` with
  * `console.log()` or something similar when your tests fail.
  *
  * @example
- * // assertation that at least one error occured
+ * ```ts
+ * // assertion that at least one error occurred
  * assertErrorEvent()
+ * ```
  *
  * @example
+ * ```ts
  * assertErrorEvent({
- *   // additional assertation that error message is 'Error XYZ'
+ *   // additional assertion that error message is 'Error XYZ'
  *   message: 'Error XYZ'
  * })
+ * ```
  *
  * @example
+ * ```ts
  * assertErrorEvent({
- *   // additional assertation that the context "error" contains
+ *   // additional assertion that the context "error" contains
  *   // `{ invalidValue: 23 }`. This means that `contexts.error.invalidValue === 23`.
  *   // See https://docs.sentry.io/platforms/javascript/enriching-events/context/
  *   // for an introduction about contexts in Sentry
  *   errorContext: { invalidValue: 23 },
  * })
+ * ```
  */
 export async function assertErrorEvent(args?: {
   message?: string
