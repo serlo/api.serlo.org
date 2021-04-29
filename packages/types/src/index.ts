@@ -311,28 +311,6 @@ export type ArticleRevisionCursor = {
   node: ArticleRevision;
 };
 
-export type CacheMutation = {
-  __typename?: 'CacheMutation';
-  _set?: Maybe<CacheSetResponse>;
-  _remove?: Maybe<CacheRemoveResponse>;
-  _update?: Maybe<CacheUpdateResponse>;
-};
-
-
-export type CacheMutation_SetArgs = {
-  input: CacheSetInput;
-};
-
-
-export type CacheMutation_RemoveArgs = {
-  input: CacheRemoveInput;
-};
-
-
-export type CacheMutation_UpdateArgs = {
-  input: CacheUpdateInput;
-};
-
 export type CacheRemoveInput = {
   key: Scalars['String'];
 };
@@ -975,7 +953,7 @@ export type License = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  cache: CacheMutation;
+  _cache: _CacheMutation;
   notification: NotificationMutation;
   subscription: SubscriptionMutation;
   thread: ThreadMutation;
@@ -1779,4 +1757,26 @@ export type VideoRevisionCursor = {
   __typename?: 'VideoRevisionCursor';
   cursor: Scalars['String'];
   node: VideoRevision;
+};
+
+export type _CacheMutation = {
+  __typename?: '_cacheMutation';
+  set: CacheSetResponse;
+  remove: CacheRemoveResponse;
+  update: CacheUpdateResponse;
+};
+
+
+export type _CacheMutationSetArgs = {
+  input: CacheSetInput;
+};
+
+
+export type _CacheMutationRemoveArgs = {
+  input: CacheRemoveInput;
+};
+
+
+export type _CacheMutationUpdateArgs = {
+  input: CacheUpdateInput;
 };

@@ -24,12 +24,12 @@ import { ForbiddenError } from 'apollo-server'
 import { Service } from '~/internals/authentication'
 import { createMutationNamespace, Mutations } from '~/internals/graphql'
 
-export const resolvers: Mutations<'cache'> = {
+export const resolvers: Mutations<'_cache'> = {
   Mutation: {
-    cache: createMutationNamespace(),
+    _cache: createMutationNamespace(),
   },
-  CacheMutation: {
-    async _set(_parent, payload, { dataSources, service }) {
+  _cacheMutation: {
+    async set(_parent, payload, { dataSources, service }) {
       const { key, value } = payload.input
       if (service !== Service.Serlo) {
         throw new ForbiddenError(
@@ -42,7 +42,7 @@ export const resolvers: Mutations<'cache'> = {
       })
       return { success: true, query: {} }
     },
-    async _remove(_parent, payload, { dataSources, service, userId }) {
+    async remove(_parent, payload, { dataSources, service, userId }) {
       const { key } = payload.input
       const allowedUserIds = [
         26217, // kulla
@@ -63,7 +63,7 @@ export const resolvers: Mutations<'cache'> = {
       await dataSources.model.removeCacheValue({ key })
       return { success: true, query: {} }
     },
-    async _update(_parent, payload, { dataSources, service }) {
+    async update(_parent, payload, { dataSources, service }) {
       const { keys } = payload.input
       if (service !== Service.Serlo) {
         throw new ForbiddenError(
