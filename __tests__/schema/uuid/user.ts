@@ -359,6 +359,7 @@ describe('endpoint activeAuthors', () => {
     )
 
     await expectUserIds({ endpoint: 'activeAuthors', ids: [user.id] })
+    await assertErrorEvent({ errorContext: { invalidElements: [article] } })
   })
 })
 
@@ -379,6 +380,7 @@ describe('endpoint activeReviewers', () => {
     )
 
     await expectUserIds({ endpoint: 'activeReviewers', ids: [user.id] })
+    await assertErrorEvent({ errorContext: { invalidElements: [article] } })
   })
 })
 
@@ -395,6 +397,7 @@ describe('endpoint activeDonors', () => {
     global.server.use(createUuidHandler(article))
 
     await expectUserIds({ endpoint: 'activeDonors', ids: [user.id] })
+    await assertErrorEvent({ errorContext: { invalidElements: [article] } })
   })
 
   describe('parser', () => {
