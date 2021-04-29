@@ -63,6 +63,26 @@ describe('subscriptions', () => {
       client,
     })
   })
+
+  test('currentUserHasSubscribed (positive case)', async () => {
+    const client = createTestClient({ userId: user.id })
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+      query subscription($id: Int!) {
+        subscription {
+          currentUserHasSubscribed(id: $id)
+        }
+      }
+    `,
+      variables: {id: article.id},
+      data: {
+        subscription: {
+          currentUserHasSubscribed: true,
+        },
+      },
+      client,
+    })
+  })
 })
 
 describe('subscription mutation set', () => {
