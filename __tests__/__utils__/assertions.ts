@@ -141,20 +141,21 @@ export function assertErrorEvent(args?: {
   errorContext?: Record<string, unknown>
 }) {
   const eventPredicate = (event: Sentry.Event) => {
-    if (event.exception?.values?.[0].type !== 'Error') return false
+    const exception = event.exception?.values?.[0]
 
-    if (args?.message !== undefined) {
-      if (event.exception?.values?.[0]?.value !== args.message) return false
-    }
+    if (exception?.type !== 'Error') return false
+
+    if (args?.message !== undefined && exception.value !== args.message)
+      return false
 
     if (args?.errorContext !== undefined) {
-      if (
-        R.toPairs(args.errorContext).some(
-          ([key, value]) =>
-            !R.equals(JSON.parse(event.contexts?.error?.[key] as string), value)
-        )
-      )
-        return false
+      for (const contextName in args.errorContext) {
+        const contextValue = event.contexts?.error?.[contextName]
+
+        if (typeof contextValue !== 'string') return false
+        if (!R.equals(JSON.parse(contextValue), args.errorContext[contextName]))
+          return false
+      }
     }
 
     return true
