@@ -64,7 +64,7 @@ describe('subscriptions', () => {
     })
   })
 
-  test('currentUserHasSubscribed (positive case)', async () => {
+  test('currentUserHasSubscribed (true case)', async () => {
     const client = createTestClient({ userId: user.id })
     await assertSuccessfulGraphQLQuery({
       query: gql`
@@ -78,6 +78,26 @@ describe('subscriptions', () => {
       data: {
         subscription: {
           currentUserHasSubscribed: true,
+        },
+      },
+      client,
+    })
+  })
+
+  test('currentUserHasSubscribed (false case)', async () => {
+    const client = createTestClient({ userId: user.id })
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+      query subscription($id: Int!) {
+        subscription {
+          currentUserHasSubscribed(id: $id)
+        }
+      }
+    `,
+      variables: {id: 1555},
+      data: {
+        subscription: {
+          currentUserHasSubscribed: false,
         },
       },
       client,
