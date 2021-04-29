@@ -24,8 +24,6 @@ import { array as A } from 'fp-ts'
 import * as F from 'fp-ts/lib/function'
 import R from 'ramda'
 
-import { stringifyContext } from './sentry'
-
 export interface ErrorEvent extends ErrorContext {
   error: Error
 }
@@ -82,11 +80,11 @@ function captureErrorEvent(event: ErrorEvent) {
     }
 
     if (event.locationContext) {
-      scope.setContext('location', stringifyContext(event.locationContext))
+      scope.setContext('location', event.locationContext)
     }
 
     if (event.errorContext) {
-      scope.setContext('error', stringifyContext(event.errorContext))
+      scope.setContext('error', event.errorContext)
     }
 
     scope.setLevel(Sentry.Severity.Error)

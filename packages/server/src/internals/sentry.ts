@@ -25,11 +25,27 @@ import R from 'ramda'
 
 import { InvalidValueError } from './model'
 
-export function initializeSentry(context: string) {
+export function initializeSentry({
+  dsn = process.env.SENTRY_DSN,
+  environment = process.env.ENVIRONMENT,
+  context,
+}: {
+  context: string
+  dsn?: string
+  environment?: string
+}) {
   Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    environment: process.env.ENVIRONMENT,
+    dsn,
+    environment,
     release: `api.serlo.org-${context}@${process.env.SENTRY_RELEASE || ''}`,
+  })
+
+  Sentry.addGlobalEventProcessor((event) => {
+    if (event.contexts) {
+      event.contexts = stringifyContexts(event.contexts)
+    }
+
+    return event
   })
 }
 
@@ -56,13 +72,10 @@ export function createSentryPlugin(): ApolloServerPlugin {
               scope.setTag('kind', ctx.operationName)
 
               const { query, variables } = ctx.request
-              scope.setContext(
-                'graphql',
-                stringifyContext({
-                  query,
-                  ...(variables === undefined ? {} : { variables }),
-                })
-              )
+              scope.setContext('graphql', {
+                query,
+                ...(variables === undefined ? {} : { variables }),
+              })
 
               if (error.path) {
                 scope.addBreadcrumb({
@@ -78,12 +91,9 @@ export function createSentryPlugin(): ApolloServerPlugin {
                     JSON.stringify(error.originalError.invalidValue),
                   ])
 
-                  scope.setContext(
-                    'error',
-                    stringifyContext({
-                      invalidValue: error.originalError.invalidValue,
-                    })
-                  )
+                  scope.setContext('error', {
+                    invalidValue: error.originalError.invalidValue,
+                  })
                 }
               }
 
@@ -96,8 +106,8 @@ export function createSentryPlugin(): ApolloServerPlugin {
   }
 }
 
-export function stringifyContext(context: Record<string, unknown>) {
-  return R.mapObjIndexed(stringifyContextValue, context)
+function stringifyContexts(contexts: Record<string, Record<string, unknown>>) {
+  return R.mapObjIndexed(R.mapObjIndexed(stringifyContextValue), contexts)
 }
 
 function stringifyContextValue(value: unknown) {

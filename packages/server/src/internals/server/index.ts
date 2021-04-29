@@ -37,7 +37,7 @@ export function start() {
   dotenv.config({
     path: path.join(__dirname, '..', '..', '..', '.env'),
   })
-  initializeSentry('server')
+  initializeSentry({ context: 'server' })
   const timer = createTimer()
   const cache = createCache({ timer })
   const swrQueue = createSwrQueue({ cache, timer })
