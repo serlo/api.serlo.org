@@ -30,7 +30,6 @@ import {
   ErrorEvent,
 } from '~/internals/error-event'
 import { Context, Model, Queries, TypeResolvers } from '~/internals/graphql'
-import { Payload } from '~/internals/model/types'
 import { DiscriminatorType } from '~/model/decoder'
 import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
 import { resolveScopedRoles } from '~/schema/authorization/utils'
