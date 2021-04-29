@@ -40,7 +40,7 @@ export const resolvers: Mutations<'cache'> = {
         key,
         value,
       })
-      return null
+      return { success: true, query: {} }
     },
     async _remove(_parent, payload, { dataSources, service, userId }) {
       const { key } = payload.input
@@ -61,7 +61,7 @@ export const resolvers: Mutations<'cache'> = {
         )
       }
       await dataSources.model.removeCacheValue({ key })
-      return null
+      return { success: true, query: {} }
     },
     async _update(_parent, payload, { dataSources, service }) {
       const { keys } = payload.input
@@ -75,7 +75,7 @@ export const resolvers: Mutations<'cache'> = {
           await dataSources.model.updateCacheValue({ key })
         })
       )
-      return null
+      return { success: true, query: {} }
     },
   },
 }
