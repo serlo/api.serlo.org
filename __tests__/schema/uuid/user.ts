@@ -29,6 +29,7 @@ import {
   user2,
 } from '../../../__fixtures__'
 import {
+  assertErrorEvent,
   assertSuccessfulGraphQLQuery,
   Client,
   createMessageHandler,
@@ -401,6 +402,11 @@ describe('endpoint activeDonors', () => {
       givenActiveDonorsSpreadsheet([['Header', '23', 'foo', '-1', '', '1.5']])
 
       await expectUserIds({ endpoint: 'activeDonors', ids: [23] })
+
+      assertErrorEvent({
+        message: 'invalid entry in activeDonorSpreadsheet',
+        errorContext: { invalidElements: ['foo', '-1', '', '1.5'] },
+      })
     })
 
     test('cell entries are trimmed of leading and trailing whitespaces', async () => {
