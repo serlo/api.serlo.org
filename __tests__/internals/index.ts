@@ -19,20 +19,40 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Event } from '@sentry/node'
+import { gql } from 'apollo-server'
 
-import { MockTimer } from './setup'
-import { Cache } from '~/internals/cache'
+import {
+  assertErrorEvent,
+  assertFailingGraphQLQuery,
+  createMessageHandler,
+  createTestClient,
+} from '../__utils__'
 
-export {}
+test('invalid values are reported to sentry', async () => {
+  const client = createTestClient()
+  const invalidValue = { __typename: 'Article', invalid: 'this in invalid' }
 
-declare global {
-  namespace NodeJS {
-    interface Global {
-      cache: Cache
-      server: ReturnType<typeof import('msw/node').setupServer>
-      timer: MockTimer
-      sentryEvents: Event[]
-    }
-  }
-}
+  global.server.use(
+    createMessageHandler({
+      message: { type: 'UuidQuery', payload: { id: 42 } },
+      body: invalidValue,
+    })
+  )
+
+  await assertFailingGraphQLQuery({
+    query: gql`
+      query($id: Int!) {
+        uuid(id: $id) {
+          __typename
+        }
+      }
+    `,
+    variables: { id: 42 },
+    client,
+  })
+
+  await assertErrorEvent({
+    message: 'Invalid value received from a data source.',
+    errorContext: { invalidValue },
+  })
+})
