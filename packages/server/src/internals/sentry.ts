@@ -54,16 +54,17 @@ export function createSentryPlugin(): ApolloServerPlugin {
 
             Sentry.captureException(error, (scope) => {
               scope.setTag('kind', ctx.operationName)
-              scope.setContext('graphql', {
-                query: ctx.request.query,
-                ...(ctx.request.variables === undefined
-                  ? {}
-                  : {
-                      variables: stringifyObjectProperties(
-                        ctx.request.variables
-                      ),
-                    }),
-              })
+              scope.setContext(
+                'graphql',
+                stringifyContext({
+                  query: ctx.request.query,
+                  ...(ctx.request.variables === undefined
+                    ? {}
+                    : {
+                        variables: ctx.request.variables,
+                      }),
+                })
+              )
 
               if (error.path) {
                 scope.addBreadcrumb({
@@ -79,11 +80,12 @@ export function createSentryPlugin(): ApolloServerPlugin {
                     JSON.stringify(error.originalError.invalidValue),
                   ])
 
-                  scope.setContext('error', {
-                    invalidValue: stringifyObjectProperties(
-                      error.originalError.invalidValue
-                    ),
-                  })
+                  scope.setContext(
+                    'error',
+                    stringifyContext({
+                      invalidValue: error.originalError.invalidValue,
+                    })
+                  )
                 }
               }
 
@@ -96,14 +98,22 @@ export function createSentryPlugin(): ApolloServerPlugin {
   }
 }
 
-function stringifyObjectProperties(value: unknown) {
-  return typeof value === 'object' && value !== null
-    ? R.mapObjIndexed(stringifyObjects, value)
+export function stringifyContext(context: Record<string, unknown>) {
+  return R.mapObjIndexed(stringifyContextValue, context)
+}
+
+function stringifyContextValue(value: unknown) {
+  return Array.isArray(value)
+    ? R.map(stringify, value)
+    : typeof value === 'object' && value !== null
+    ? R.mapObjIndexed(stringify, value)
     : value
 }
 
-function stringifyObjects(value: unknown) {
-  return typeof value === 'object' ? JSON.stringify(value, null, 2) : value
+function stringify(value: unknown) {
+  return typeof value === 'object' || typeof value === 'string'
+    ? JSON.stringify(value, null, 2)
+    : value
 }
 
 export { Sentry }

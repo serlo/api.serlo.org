@@ -151,15 +151,8 @@ export async function assertErrorEvent(args?: {
         const contextValue = event.contexts?.error?.[contextName]
         const targetValue = args.errorContext[contextName]
 
-        if (typeof contextValue === 'string') {
-          if (typeof targetValue === 'string') {
-            if (contextValue !== targetValue) return false
-          } else {
-            if (!R.equals(JSON.parse(contextValue), targetValue)) return false
-          }
-        } else {
-          if (!R.equals(contextValue, targetValue)) return false
-        }
+        if (!R.equals(destringifyProperties(contextValue), targetValue))
+          return false
       }
     }
 
@@ -171,4 +164,15 @@ export async function assertErrorEvent(args?: {
 
   await waitForAllSentryEvents
   expect(global.sentryEvents.some(eventPredicate)).toBe(true)
+}
+
+function destringifyProperties(value: unknown) {
+  const destringify = (value: unknown) =>
+    typeof value === 'string' ? (JSON.parse(value) as unknown) : value
+
+  return Array.isArray(value)
+    ? value.map(destringify)
+    : typeof value === 'object' && value !== null
+    ? R.mapObjIndexed(destringify, value)
+    : value
 }
