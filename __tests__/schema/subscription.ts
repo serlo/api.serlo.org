@@ -68,13 +68,13 @@ describe('subscriptions', () => {
     const client = createTestClient({ userId: user.id })
     await assertSuccessfulGraphQLQuery({
       query: gql`
-      query subscription($id: Int!) {
-        subscription {
-          currentUserHasSubscribed(id: $id)
+        query subscription($id: Int!) {
+          subscription {
+            currentUserHasSubscribed(id: $id)
+          }
         }
-      }
-    `,
-      variables: {id: article.id},
+      `,
+      variables: { id: article.id },
       data: {
         subscription: {
           currentUserHasSubscribed: true,
@@ -88,13 +88,13 @@ describe('subscriptions', () => {
     const client = createTestClient({ userId: user.id })
     await assertSuccessfulGraphQLQuery({
       query: gql`
-      query subscription($id: Int!) {
-        subscription {
-          currentUserHasSubscribed(id: $id)
+        query subscription($id: Int!) {
+          subscription {
+            currentUserHasSubscribed(id: $id)
+          }
         }
-      }
-    `,
-      variables: {id: 1555},
+      `,
+      variables: { id: 1555 },
       data: {
         subscription: {
           currentUserHasSubscribed: false,

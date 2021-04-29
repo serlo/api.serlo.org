@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as auth from '@serlo/authorization'
-import { create } from 'node:domain'
 
 import {
   assertUserIsAuthenticated,
@@ -32,11 +31,11 @@ import {
 } from '~/internals/graphql'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
-import { isDefined } from '~/utils'
 import { SubscriptionQuery } from '~/types'
+import { isDefined } from '~/utils'
 
 export const resolvers: TypeResolvers<SubscriptionQuery> &
-  Queries<'subscriptions' | 'subscription'> & 
+  Queries<'subscriptions' | 'subscription'> &
   Mutations<'subscription'> = {
   Query: {
     async subscriptions(_parent, cursorPayload, { dataSources, userId }) {
@@ -68,9 +67,13 @@ export const resolvers: TypeResolvers<SubscriptionQuery> &
       const subscriptions = await dataSources.model.serlo.getSubscriptions({
         userId,
       })
-      const candidates = subscriptions.subscriptions.map((candidate) => candidate.id)
-      return candidates.find(candidate => candidate == id) != undefined ? true : false
-    }
+      const candidates = subscriptions.subscriptions.map(
+        (candidate) => candidate.id
+      )
+      return candidates.find((candidate) => candidate == id) != undefined
+        ? true
+        : false
+    },
   },
   SubscriptionMutation: {
     async set(_parent, payload, { dataSources, userId }) {
