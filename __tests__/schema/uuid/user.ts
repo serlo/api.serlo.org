@@ -428,18 +428,21 @@ describe('endpoint activeDonors', () => {
         givenSpreadheetApi(returnsJson({}))
 
         await expectUserIds({ endpoint: 'activeDonors', ids: [] })
+        await assertErrorEvent()
       })
 
       test('when spreadsheet api responds with malformed json', async () => {
         givenSpreadheetApi(returnsMalformedJson())
 
         await expectUserIds({ endpoint: 'activeDonors', ids: [] })
+        await assertErrorEvent()
       })
 
       test('when spreadsheet api has an internal server error', async () => {
         givenSpreadheetApi(hasInternalServerError())
 
         await expectUserIds({ endpoint: 'activeDonors', ids: [] })
+        await assertErrorEvent()
       })
     })
   })
