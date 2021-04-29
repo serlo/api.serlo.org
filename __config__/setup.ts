@@ -29,6 +29,7 @@ import {
   givenSpreadheetApi,
 } from '../__tests__/__utils__'
 import { createCache } from '~/internals/cache'
+import { initializeSentry } from '~/internals/sentry'
 import { Time, timeToMilliseconds } from '~/internals/swr-queue'
 import { Timer } from '~/internals/timer'
 
@@ -51,9 +52,10 @@ export class MockTimer implements Timer {
 }
 
 export function setup() {
-  Sentry.init({
+  initializeSentry({
     dsn: 'https://public@127.0.0.1/0',
     environment: 'testing',
+    context: 'testing',
   })
 
   const timer = new MockTimer()

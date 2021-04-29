@@ -32,7 +32,7 @@ export async function start() {
   dotenv.config({
     path: path.join(__dirname, '..', '..', '..', '.env'),
   })
-  initializeSentry('swr-queue-worker')
+  initializeSentry({ context: 'swr-queue-worker' })
   const timer = createTimer()
   const cache = createCache({ timer })
   const swrQueueWorker = createSwrQueueWorker({
@@ -43,7 +43,7 @@ export async function start() {
   await swrQueueWorker.ready()
 
   const app = createApp()
-  app.get('/.well-known/health', (req, res) => {
+  app.get('/.well-known/health', (_req, res) => {
     swrQueueWorker
       .healthy()
       .then(() => {
