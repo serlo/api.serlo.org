@@ -19,8 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import * as Sentry from '@sentry/node'
 import { GraphQLResponse } from 'apollo-server-types'
 import { DocumentNode } from 'graphql'
+import R from 'ramda'
 
 import { Client } from './test-client'
 
@@ -105,4 +107,58 @@ export async function assertFailingGraphQLMutation({
     variables,
   })
   expect(response?.errors?.[0]?.extensions?.code).toEqual(expectedError)
+}
+
+/**
+ * Assertation that a certain error event occured. Since we use Sentry this
+ * function checks that a Sentry event was thrown.
+ *
+ * TODO: This function has not a good error message in case the asseration
+ * fails. I reccomend you to investigate `global.sentryEvents` with
+ * `console.log()` or something similar when your tests fail.
+ *
+ * @example
+ * // assertation that at least one error occured
+ * assertErrorEvent()
+ *
+ * @example
+ * assertErrorEvent({
+ *   // additional assertation that error message is 'Error XYZ'
+ *   message: 'Error XYZ'
+ * })
+ *
+ * @example
+ * assertErrorEvent({
+ *   // additional assertation that the context "error" contains
+ *   // `{ invalidValue: 23 }`. This means that `contexts.error.invalidValue === 23`.
+ *   // See https://docs.sentry.io/platforms/javascript/enriching-events/context/
+ *   // for an introduction about contexts in Sentry
+ *   errorContext: { invalidValue: 23 },
+ * })
+ */
+export function assertErrorEvent(args?: {
+  message?: string
+  errorContext?: Record<string, unknown>
+}) {
+  const eventPredicate = (event: Sentry.Event) => {
+    if (event.exception?.values?.[0].type !== 'Error') return false
+
+    if (args?.message !== undefined) {
+      if (event.exception?.values?.[0]?.value !== args.message) return false
+    }
+
+    if (args?.errorContext !== undefined) {
+      if (
+        R.toPairs(args.errorContext).some(
+          ([key, value]) =>
+            !R.equals(JSON.parse(event.contexts?.error?.[key] as string), value)
+        )
+      )
+        return false
+    }
+
+    return true
+  }
+
+  expect(global.sentryEvents.some(eventPredicate)).toBe(true)
 }
