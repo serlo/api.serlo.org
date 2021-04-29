@@ -74,6 +74,7 @@ export interface Models {
   AppletRevision: t.TypeOf<typeof AppletRevisionDecoder>
   Article: t.TypeOf<typeof ArticleDecoder>
   ArticleRevision: t.TypeOf<typeof ArticleRevisionDecoder>
+  _cacheMutation: Record<string, never>
   Comment: t.TypeOf<typeof CommentDecoder>
   CoursePage: t.TypeOf<typeof CoursePageDecoder>
   CoursePageRevision: t.TypeOf<typeof CoursePageRevisionDecoder>

@@ -1,11 +1,11 @@
 type Mutation {
-  cache: CacheMutation!
+  _cache: _cacheMutation!
 }
 
-type CacheMutation {
-  _set(input: CacheSetInput!): CacheSetResponse
-  _remove(input: CacheRemoveInput!): CacheRemoveResponse
-  _update(input: CacheUpdateInput!): CacheUpdateResponse
+type _cacheMutation {
+  set(input: CacheSetInput!): CacheSetResponse!
+  remove(input: CacheRemoveInput!): CacheRemoveResponse!
+  update(input: CacheUpdateInput!): CacheUpdateResponse!
 }
 
 input CacheSetInput {
