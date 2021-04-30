@@ -36,11 +36,7 @@ import {
 } from './decoder'
 import { Environment } from '~/internals/environment'
 import { Model } from '~/internals/graphql'
-import {
-  createMutation,
-  createCachedQuery,
-  createQuery,
-} from '~/internals/model'
+import { createMutation, createQuery, createRequest } from '~/internals/model'
 import { isInstance } from '~/schema/instance/utils'
 import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
 import { isUnsupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
@@ -85,7 +81,7 @@ export function createSerloModel({
     expectedStatusCodes: number[]
   }
 
-  const getUuid = createCachedQuery(
+  const getUuid = createQuery(
     {
       decoder: t.union([UuidDecoder, t.null]),
       enableSwr: false,
@@ -158,7 +154,7 @@ export function createSerloModel({
     },
   })
 
-  const getActiveAuthorIds = createCachedQuery<undefined, number[]>(
+  const getActiveAuthorIds = createQuery<undefined, number[]>(
     {
       enableSwr: true,
       getCurrentValue: async () => {
@@ -182,7 +178,7 @@ export function createSerloModel({
     environment
   )
 
-  const getActiveReviewerIds = createCachedQuery<undefined, number[]>(
+  const getActiveReviewerIds = createQuery<undefined, number[]>(
     {
       enableSwr: true,
       getCurrentValue: async () => {
@@ -206,7 +202,7 @@ export function createSerloModel({
     environment
   )
 
-  const getNavigationPayload = createCachedQuery(
+  const getNavigationPayload = createQuery(
     {
       decoder: NavigationDecoder,
       enableSwr: true,
@@ -304,7 +300,7 @@ export function createSerloModel({
     }
   }
 
-  const getAlias = createCachedQuery(
+  const getAlias = createQuery(
     {
       decoder: t.union([
         t.type({
@@ -346,7 +342,7 @@ export function createSerloModel({
     environment
   )
 
-  const getLicense = createCachedQuery(
+  const getLicense = createQuery(
     {
       decoder: t.type({
         id: t.number,
@@ -377,7 +373,7 @@ export function createSerloModel({
     environment
   )
 
-  const getNotificationEvent = createCachedQuery(
+  const getNotificationEvent = createQuery(
     {
       decoder: t.union([NotificationEventDecoder, t.null]),
       enableSwr: true,
@@ -406,7 +402,7 @@ export function createSerloModel({
     environment
   )
 
-  const getNewEvents = createQuery({
+  const getNewEvents = createRequest({
     decoder: t.type({ events: t.array(NotificationEventDecoder) }),
     async getCurrentValue(payload: { after?: number }) {
       return await handleMessage({
@@ -416,7 +412,7 @@ export function createSerloModel({
     },
   })
 
-  const getEvents = createCachedQuery<
+  const getEvents = createQuery<
     undefined,
     Model<'AbstractNotificationEvent'>[]
   >(
@@ -449,7 +445,7 @@ export function createSerloModel({
     environment
   )
 
-  const getNotifications = createCachedQuery(
+  const getNotifications = createQuery(
     {
       decoder: t.exact(
         t.type({
@@ -519,7 +515,7 @@ export function createSerloModel({
     },
   })
 
-  const getSubscriptions = createCachedQuery(
+  const getSubscriptions = createQuery(
     {
       decoder: t.exact(
         t.type({
@@ -608,7 +604,7 @@ export function createSerloModel({
     },
   })
 
-  const getThreadIds = createCachedQuery(
+  const getThreadIds = createQuery(
     {
       decoder: t.type({ firstCommentIds: t.array(t.number) }),
       getCurrentValue: async ({ id }: { id: number }) => {
