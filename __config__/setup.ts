@@ -19,6 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import * as Sentry from '@sentry/node'
+import { rest } from 'msw'
 import { SharedOptions } from 'msw/lib/types/sharedOptions'
 import { setupServer } from 'msw/node'
 
@@ -27,6 +29,7 @@ import {
   givenSpreadheetApi,
 } from '../__tests__/__utils__'
 import { createCache } from '~/internals/cache'
+import { initializeSentry } from '~/internals/sentry'
 import { Time, timeToMilliseconds } from '~/internals/swr-queue'
 import { Timer } from '~/internals/timer'
 
@@ -49,6 +52,12 @@ export class MockTimer implements Timer {
 }
 
 export function setup() {
+  initializeSentry({
+    dsn: 'https://public@127.0.0.1/0',
+    environment: 'testing',
+    context: 'testing',
+  })
+
   const timer = new MockTimer()
   const cache = createCache({ timer })
   const server = setupServer()
@@ -60,14 +69,28 @@ export function setup() {
 
 export async function createBeforeAll(options: SharedOptions) {
   await global.cache.ready()
+
   global.server.listen(options)
 }
 
 export async function createBeforeEach() {
   givenSpreadheetApi(defaultSpreadsheetApi())
 
+  // Mock store endpoint of sentry ( https://develop.sentry.dev/sdk/store/ )
+  global.server.use(
+    rest.post<Sentry.Event>(
+      'https://127.0.0.1/api/0/store/',
+      (req, res, ctx) => {
+        global.sentryEvents.push(req.body)
+
+        return res(ctx.status(200))
+      }
+    )
+  )
+
   await global.cache.flush()
   global.timer.flush()
+  global.sentryEvents = []
 }
 
 export function createAfterEach() {

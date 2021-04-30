@@ -705,6 +705,56 @@ async function exec(): Promise<void> {
         ['notification', 'Reject invalid cache values.'],
       ],
     },
+    {
+      tagName: 'v0.22.0',
+      date: '2021-04-20',
+      yanked: true,
+    },
+    {
+      tagName: 'v0.22.1',
+      date: '2021-04-20',
+      yanked: true,
+    },
+    {
+      tagName: 'v0.22.2',
+      date: '2021-04-20',
+      yanked: true,
+    },
+    {
+      tagName: 'v0.22.3',
+      date: '2021-04-20',
+      yanked: true,
+    },
+    {
+      tagName: 'v0.22.4',
+      date: '2021-04-20',
+      yanked: true,
+    },
+    {
+      tagName: 'v0.22.5',
+      date: '2021-04-20',
+      added: [
+        ['authorization', 'Add additional `Thread` permissions.'],
+        ['authorization', 'Add `Uuid` permissions.'],
+        ['uuid', 'Add `roles` to `User`.'],
+      ],
+      internal: [
+        'Monorepo setup.',
+        ['subscription', 'Reject invalid cache values.'],
+      ],
+    },
+    {
+      tagName: 'v0.23.0',
+      date: '2021-04-26',
+      added: [
+        ['authorization', 'Add `Subscription.set` permission.'],
+        ['authorization', 'Add `Notification.setState` permission.'],
+        ['authorization', 'Add `Uuid.create` permissions.'],
+      ],
+      fixed: [
+        ['alias', 'Resolve id aliases directly as a temporary workaround.'],
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

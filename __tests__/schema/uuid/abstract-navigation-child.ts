@@ -35,10 +35,12 @@ import {
 } from '../../__utils__'
 import { Service } from '~/internals/authentication'
 import { Model } from '~/internals/graphql'
-import { NavigationPayload } from '~/schema/uuid/abstract-navigation-child/types'
+import { Payload } from '~/internals/model/types'
 import { Instance } from '~/types'
 
-function createSetNavigationMutation(navigation: NavigationPayload) {
+function createSetNavigationMutation(
+  navigation: Payload<'serlo', 'getNavigationPayload'>
+) {
   return {
     mutation: gql`
       mutation _setCache($key: String!, $value: JSON!) {

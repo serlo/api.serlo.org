@@ -14,6 +14,9 @@ jobs:
           fetch-depth: 2
       - id: version
         uses: salsify/action-detect-and-tag-new-version@v2
+        with:
+          version-command: |
+            jq ".version" --raw-output < lerna.json
   docker-image:
     runs-on: ubuntu-latest
     needs: update-version
@@ -29,8 +32,8 @@ jobs:
           service_account_key: ${{ secrets.GCP_KEY_CONTAINER_REGISTRY }}
       - run: gcloud auth configure-docker
       - run: yarn
-      - run: yarn deploy:image
-  npm-package-api:
+      - run: (cd packages/server && yarn deploy:image)
+  npm-package:
     runs-on: ubuntu-latest
     needs: update-version
     if: ${{ needs.update-version.outputs.tag }}
@@ -40,23 +43,9 @@ jobs:
         with:
           node-version: 14.x
           registry-url: 'https://registry.npmjs.org'
-      - run: yarn
-      - run: yarn regenerate-types
-      - run: (cd dist-api && npm publish)
+      - run: yarn --frozen-lockfile
+      - run: yarn build
+      - run: echo //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN} > .npmrc
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-  npm-package-authorization:
-    runs-on: ubuntu-latest
-    needs: update-version
-    if: ${{ needs.update-version.outputs.tag }}
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 14.x
-          registry-url: 'https://registry.npmjs.org'
-      - run: yarn
-      - run: yarn regenerate-authorization-package
-      - run: (cd dist-authorization && npm publish)
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: yarn lerna publish from-package --yes

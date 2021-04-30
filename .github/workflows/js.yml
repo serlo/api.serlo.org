@@ -5,7 +5,7 @@ on:
       - master
   pull_request:
 jobs:
-  build-server:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -13,16 +13,9 @@ jobs:
         with:
           node-version: 14.x
       - run: yarn
-      - run: yarn build:server
-  build-swr-queue-worker:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 14.x
-      - run: yarn
-      - run: yarn build:swr-queue-worker
+      - run: yarn lerna run build
+      - run: (cd packages/server && yarn build:server)
+      - run: (cd packages/server && yarn build:swr-queue-worker)
   eslint:
     runs-on: ubuntu-latest
     steps:
@@ -60,7 +53,7 @@ jobs:
       - run: yarn
       - run: yarn start:redis
       - run: yarn test
-  types:
+  codegen-api:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -68,8 +61,21 @@ jobs:
         with:
           node-version: 14.x
       - run: yarn
-      - run: yarn regenerate-types
+      - run: (cd packages/types && yarn codegen)
       - id: changes
         uses: UnicornGlobal/has-changes-action@v1.0.11
-      - run: echo "Outdated types. Please run `yarn regenerate-types` and commit your changes." && exit 1
+      - run: echo "Outdated types. Please run `yarn codegen` in `packages/types` and commit your changes." && exit 1
+        if: steps.changes.outputs.changed == 1
+  codegen-server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - run: yarn
+      - run: (cd packages/server && yarn codegen)
+      - id: changes
+        uses: UnicornGlobal/has-changes-action@v1.0.11
+      - run: echo "Outdated types. Please run `yarn codegen` in `packages/server` and commit your changes." && exit 1
         if: steps.changes.outputs.changed == 1

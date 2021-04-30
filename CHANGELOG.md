@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.23.0](https://github.com/serlo/api.serlo.org/compare/v0.22.5..v0.23.0) - April 26, 2021
+
+### Added
+
+- **authorization**. Add `Subscription.set` permission.
+
+- **authorization**. Add `Notification.setState` permission.
+
+- **authorization**. Add `Uuid.create` permissions.
+
+### Fixed
+
+- **alias**. Resolve id aliases directly as a temporary workaround.
+
+## [v0.22.5](https://github.com/serlo/api.serlo.org/compare/v0.22.4..v0.22.5) - April 20, 2021
+
+### Added
+
+- **authorization**. Add additional `Thread` permissions.
+
+- **authorization**. Add `Uuid` permissions.
+
+- **uuid**. Add `roles` to `User`.
+
+### Internal
+
+- Monorepo setup.
+
+- **subscription**. Reject invalid cache values.
+
+## [v0.22.4](https://github.com/serlo/api.serlo.org/compare/v0.22.3..v0.22.4) - April 20, 2021 \[YANKED]
+
+## [v0.22.3](https://github.com/serlo/api.serlo.org/compare/v0.22.2..v0.22.3) - April 20, 2021 \[YANKED]
+
+## [v0.22.2](https://github.com/serlo/api.serlo.org/compare/v0.22.1..v0.22.2) - April 20, 2021 \[YANKED]
+
+## [v0.22.1](https://github.com/serlo/api.serlo.org/compare/v0.22.0..v0.22.1) - April 20, 2021 \[YANKED]
+
+## [v0.22.0](https://github.com/serlo/api.serlo.org/compare/v0.21.1..v0.22.0) - April 20, 2021 \[YANKED]
+
 ## [v0.21.1](https://github.com/serlo/api.serlo.org/compare/v0.21.0..v0.21.1) - April 12, 2021
 
 ### Internal

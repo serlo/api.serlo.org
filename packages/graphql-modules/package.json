@@ -1,0 +1,9 @@
+{
+  "name": "@types/graphql-modules",
+  "version": "0.23.0",
+  "private": true,
+  "repository": "serlo/api.serlo.org",
+  "license": "Apache-2.0",
+  "author": "Serlo Education e.V.",
+  "typings": "index.d.ts"
+}

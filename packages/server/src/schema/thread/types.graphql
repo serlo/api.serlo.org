@@ -1,0 +1,149 @@
+type Thread {
+  id: String!
+  createdAt: DateTime!
+  title: String
+  archived: Boolean!
+  trashed: Boolean!
+  object: AbstractUuid!
+  comments(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CommentConnection!
+}
+
+type Comment implements AbstractUuid {
+  id: Int!
+  title: String!
+  content: String!
+  alias: String!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
+  trashed: Boolean!
+  archived: Boolean!
+  createdAt: DateTime!
+  author: User!
+}
+
+interface ThreadAware {
+  threads(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    archived: Boolean
+    trashed: Boolean
+  ): ThreadsConnection!
+}
+
+type ThreadsConnection {
+  edges: [ThreadsCursor!]!
+  nodes: [Thread!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type ThreadsCursor {
+  cursor: String!
+  node: Thread!
+}
+
+type UnsupportedThread {
+  id: Int!
+}
+
+type UnsupportedComment {
+  id: Int!
+}
+
+type CommentConnection {
+  edges: [CommentEdge!]!
+  nodes: [Comment!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type CommentEdge {
+  cursor: String!
+  node: Comment!
+}
+
+extend type Mutation {
+  thread: ThreadMutation!
+}
+
+type ThreadMutation {
+  createThread(input: ThreadCreateThreadInput!): ThreadCreateThreadResponse
+  createComment(input: ThreadCreateCommentInput!): ThreadCreateCommentResponse
+  setThreadArchived(
+    input: ThreadSetThreadArchivedInput!
+  ): ThreadSetThreadArchivedResponse
+  setThreadState(
+    input: ThreadSetThreadStateInput!
+  ): ThreadSetThreadStateResponse
+  setCommentState(
+    input: ThreadSetCommentStateInput!
+  ): ThreadSetCommentStateResponse
+}
+
+input ThreadCreateThreadInput {
+  title: String!
+  content: String!
+  objectId: Int!
+  subscribe: Boolean!
+  sendEmail: Boolean!
+}
+
+type ThreadCreateThreadResponse {
+  record: Thread
+  success: Boolean!
+  query: Query!
+}
+
+input ThreadCreateCommentInput {
+  content: String!
+  threadId: String!
+  subscribe: Boolean!
+  sendEmail: Boolean!
+}
+
+type ThreadCreateCommentResponse {
+  record: Comment
+  success: Boolean!
+  query: Query!
+}
+
+input ThreadSetThreadArchivedInput {
+  id: [String!]!
+  archived: Boolean!
+}
+
+type ThreadSetThreadArchivedResponse {
+  success: Boolean!
+  query: Query!
+}
+
+input ThreadSetThreadStateInput {
+  id: [String!]!
+  trashed: Boolean!
+}
+type ThreadSetThreadStateResponse {
+  success: Boolean!
+  query: Query!
+}
+
+input ThreadSetCommentStateInput {
+  id: [Int!]!
+  trashed: Boolean!
+}
+type ThreadSetCommentStateResponse {
+  success: Boolean!
+  query: Query!
+}

@@ -1,0 +1,180 @@
+/**
+ * This file is part of Serlo.org API
+ *
+ * Copyright (c) 2020-2021 Serlo Education e.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License")
+ * you may not use this file except in compliance with the License
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @copyright Copyright (c) 2020-2021 Serlo Education e.V.
+ * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
+ * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
+ */
+import * as auth from '@serlo/authorization'
+import { ForbiddenError, UserInputError } from 'apollo-server'
+import R from 'ramda'
+
+import {
+  assertUserIsAuthenticated,
+  assertUserIsAuthorized,
+  Context,
+  createMutationNamespace,
+  InterfaceResolvers,
+  Mutations,
+  Queries,
+  TypeResolvers,
+} from '~/internals/graphql'
+import { fetchScopeOfNotificationEvent } from '~/schema/authorization/utils'
+import { resolveConnection } from '~/schema/connection/utils'
+import { Notification, QueryEventsArgs } from '~/types'
+import { isDefined } from '~/utils'
+
+export const resolvers: TypeResolvers<Notification> &
+  InterfaceResolvers<'AbstractNotificationEvent'> &
+  Queries<'events' | 'notifications' | 'notificationEvent'> &
+  Mutations<'notification'> = {
+  AbstractNotificationEvent: {
+    __resolveType(notificationEvent) {
+      return notificationEvent.__typename
+    },
+  },
+  Notification: {
+    async event(parent, _args, { dataSources }) {
+      const event = await dataSources.model.serlo.getNotificationEvent({
+        id: parent.eventId,
+      })
+
+      if (event === null) throw new Error('event cannot be null')
+
+      return event
+    },
+  },
+  Query: {
+    events(_parent, payload, { dataSources }) {
+      return resolveEvents({ payload, dataSources })
+    },
+    async notifications(
+      _parent,
+      { unread, ...cursorPayload },
+      { dataSources, userId }
+    ) {
+      assertUserIsAuthenticated(userId)
+      const { notifications } = await dataSources.model.serlo.getNotifications({
+        userId,
+      })
+      return resolveConnection({
+        nodes: notifications
+          .filter(isDefined)
+          .filter(
+            (notification) => unread == null || notification.unread === unread
+          ),
+        payload: cursorPayload,
+        createCursor(node) {
+          return `${node.id}`
+        },
+      })
+    },
+    notificationEvent(_parent, payload, { dataSources }) {
+      return dataSources.model.serlo.getNotificationEvent(payload)
+    },
+  },
+  Mutation: {
+    notification: createMutationNamespace(),
+  },
+  NotificationMutation: {
+    async setState(_parent, payload, { dataSources, userId }) {
+      const { id, unread } = payload.input
+      const ids = id
+
+      assertUserIsAuthenticated(userId)
+      const { notifications } = await dataSources.model.serlo.getNotifications({
+        userId,
+      })
+      const eventIds = ids.map((id) => {
+        const notification = notifications.find((n) => n.id === id)
+        if (!notification) {
+          throw new ForbiddenError(
+            'You are only allowed to set your own notification states.'
+          )
+        }
+        return notification.eventId
+      })
+
+      const scopes = await Promise.all(
+        eventIds.map((id) => fetchScopeOfNotificationEvent({ id, dataSources }))
+      )
+
+      await assertUserIsAuthorized({
+        userId,
+        guards: scopes.map((scope) => auth.Notification.setState(scope)),
+        message:
+          'You are not allowed to set the state of the provided notification(s).',
+        dataSources,
+      })
+
+      await dataSources.model.serlo.setNotificationState({
+        ids,
+        userId,
+        unread,
+      })
+      return { success: true, query: {} }
+    },
+  },
+}
+
+export async function resolveEvents({
+  payload,
+  dataSources,
+}: {
+  payload: QueryEventsArgs
+  dataSources: Context['dataSources']
+}) {
+  if (isDefined(payload.first) && payload.first > 100)
+    throw new UserInputError('first must be smaller or equal 100')
+  if (isDefined(payload.last) && payload.last > 100)
+    throw new UserInputError('last must be smaller or equal 100')
+
+  const maxReturn = 100
+  let { first, last } = payload
+
+  if (isDefined(first)) {
+    first = Math.min(maxReturn, first)
+  } else if (isDefined(last)) {
+    last = Math.min(maxReturn, last)
+  } else {
+    first = maxReturn
+  }
+
+  const unfilteredEvents = await dataSources.model.serlo.getEvents()
+  const events = unfilteredEvents.filter((event) => {
+    if (isDefined(payload.actorId) && payload.actorId !== event.actorId)
+      return false
+    if (isDefined(payload.instance) && payload.instance !== event.instance)
+      return false
+    if (isDefined(payload.objectId) && payload.objectId !== event.objectId)
+      return false
+
+    return true
+  })
+
+  return resolveConnection({
+    nodes: events,
+    payload: {
+      ...payload,
+      first:
+        R.isNil(payload.first) && R.isNil(payload.last) ? 100 : payload.first,
+    },
+    createCursor(node) {
+      return node.id.toString()
+    },
+  })
+}
