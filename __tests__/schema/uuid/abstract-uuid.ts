@@ -46,7 +46,6 @@ import {
   solutionRevision,
   taxonomyTermRoot,
   user,
-  user2,
   video,
   videoRevision,
 } from '../../../__fixtures__'
@@ -157,6 +156,35 @@ describe('uuid', () => {
         alias: {
           instance: Instance.De,
           path: `/entity/view/${article.id}`,
+        },
+      },
+      data: {
+        uuid: getArticleDataWithoutSubResolvers(article),
+      },
+      client,
+    })
+  })
+
+  test('returns uuid when alias is /:subject/:id/:alias (as hotfix for the current bug in the database layer)', async () => {
+    global.server.use(createUuidHandler(article))
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query uuid($alias: AliasInput!) {
+          uuid(alias: $alias) {
+            __typename
+            ... on Article {
+              id
+              trashed
+              instance
+              date
+            }
+          }
+        }
+      `,
+      variables: {
+        alias: {
+          instance: Instance.De,
+          path: `/mathe/${article.id}/das-viereck`,
         },
       },
       data: {
@@ -341,12 +369,20 @@ describe('uuid mutation setState', () => {
   `
 
   test('authenticated with array of ids', async () => {
+    const ids = [article.id, article.id + 1, article.id + 2]
+    global.server.use(
+      ...ids.map((id) => createUuidHandler({ ...article, id })),
+      createUuidHandler({
+        ...user,
+        roles: ['de_architect'],
+      })
+    )
     global.server.use(
       createMessageHandler({
         message: {
           type: 'UuidSetStateMutation',
           payload: {
-            ids: [1, 2, 3],
+            ids,
             userId: user.id,
             trashed: true,
           },
@@ -356,7 +392,7 @@ describe('uuid mutation setState', () => {
     await assertSuccessfulGraphQLMutation({
       mutation,
       variables: {
-        input: { id: [1, 2, 3], trashed: true },
+        input: { id: ids, trashed: true },
       },
       data: { uuid: { setState: { success: true } } },
       client: createTestClient({ userId: user.id }),
@@ -364,6 +400,7 @@ describe('uuid mutation setState', () => {
   })
 
   test('unauthenticated', async () => {
+    global.server.use(createUuidHandler(user))
     await assertFailingGraphQLMutation({
       mutation,
       variables: { input: { id: 1, trashed: true } },
@@ -372,11 +409,19 @@ describe('uuid mutation setState', () => {
     })
   })
 
-  test('wrong user id', async () => {
+  test('insufficient permissions', async () => {
+    // Architects are not allowed to set the state of pages.
+    global.server.use(
+      createUuidHandler(page),
+      createUuidHandler({
+        ...user,
+        roles: ['de_architect'],
+      })
+    )
     await assertFailingGraphQLMutation({
       mutation,
-      variables: { input: { id: 1, trashed: false } },
-      client: createTestClient({ userId: user2.id }),
+      variables: { input: { id: page.id, trashed: false } },
+      client: createTestClient({ userId: user.id }),
       expectedError: 'FORBIDDEN',
     })
   })

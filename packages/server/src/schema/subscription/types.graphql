@@ -1,0 +1,27 @@
+extend type Query {
+  subscriptions(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): AbstractUuidConnection!
+}
+
+extend type Mutation {
+  subscription: SubscriptionMutation!
+}
+
+type SubscriptionMutation {
+  set(input: SubscriptionSetInput!): SubscriptionSetResponse
+}
+
+input SubscriptionSetInput {
+  id: [Int!]!
+  subscribe: Boolean!
+  sendEmail: Boolean!
+}
+
+type SubscriptionSetResponse {
+  success: Boolean!
+  query: Query!
+}

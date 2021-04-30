@@ -11,7 +11,6 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'plugin:react/recommended',
-    'prettier/@typescript-eslint',
     'prettier',
   ],
   parser: '@typescript-eslint/parser',
@@ -102,15 +101,11 @@ module.exports = {
       'error',
       {
         devDependencies: [
-          '__config__/**/*',
-          '__tests-pacts__/**/*',
-          '__tests__/**/*',
+          'packages/server/scripts/**/*',
           'scripts/**/*',
           'jest.config.js',
           'jest.config-pacts-*.js',
-          'jest.setup.ts',
-          'jest.setup-pacts.ts',
-          'webpack.config.js',
+          '__config__/*.ts',
         ],
         optionalDependencies: false,
       },
@@ -164,6 +159,7 @@ module.exports = {
   overrides: [
     {
       files: [
+        '__fixtures__/**/*',
         '__tests-pacts__/**/*',
         '__tests__/**/*',
         'jest.setup.ts',
@@ -171,6 +167,7 @@ module.exports = {
       ],
       rules: {
         '@typescript-eslint/no-non-null-assertion': 'off',
+        'import/no-extraneous-dependencies': 'off',
       },
     },
   ],

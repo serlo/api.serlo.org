@@ -19,13 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { rest } from 'msw'
+import { MockedRequest, rest } from 'msw'
 import * as R from 'ramda'
 
 import { RestResolver } from './services'
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model/types'
-import { NavigationPayload } from '~/schema/uuid/abstract-navigation-child/types'
 
 export function createAliasHandler(alias: Payload<'serlo', 'getAlias'>) {
   return createMessageHandler({
@@ -52,7 +51,9 @@ export function createLicenseHandler(license: Model<'License'>) {
   })
 }
 
-export function createNavigationHandler(navigation: NavigationPayload) {
+export function createNavigationHandler(
+  navigation: Payload<'serlo', 'getNavigationPayload'>
+) {
   return createMessageHandler({
     message: {
       type: 'NavigationQuery',
@@ -114,18 +115,23 @@ export function createMessageHandler(
   })
 }
 
-export function createDatabaseLayerHandler<Payload = DefaultPayloadType>(args: {
+export function createDatabaseLayerHandler<
+  Payload = DefaultPayloadType,
+  BodyType extends Required<MessagePayload<Payload>> = Required<
+    MessagePayload<Payload>
+  >
+>(args: {
   matchType: string
   matchPayloads?: Payload[]
-  resolver: RestResolver<Required<MessagePayload<Payload>>>
+  resolver: RestResolver<BodyType>
 }) {
   const { matchType, matchPayloads, resolver } = args
 
   const handler = rest.post(getDatabaseLayerUrl({ path: '/' }), resolver)
 
   // Only use this handler if message matches
-  handler.predicate = (req) =>
-    req.body.type === matchType &&
+  handler.predicate = (req: MockedRequest<BodyType>) =>
+    req?.body?.type === matchType &&
     (matchPayloads === undefined ||
       matchPayloads.some((payload) => R.equals(req.body.payload, payload)))
 

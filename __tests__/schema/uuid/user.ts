@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Scope } from '@serlo/authorization'
 import { gql } from 'apollo-server'
 
 import {
@@ -28,6 +29,7 @@ import {
   user2,
 } from '../../../__fixtures__'
 import {
+  assertErrorEvent,
   assertSuccessfulGraphQLQuery,
   Client,
   createMessageHandler,
@@ -39,7 +41,6 @@ import {
   returnsJson,
   returnsMalformedJson,
 } from '../../__utils__'
-import { Scope } from '~/authorization'
 import { Model } from '~/internals/graphql'
 import { MajorDimension } from '~/model'
 import { Instance } from '~/types'
@@ -358,6 +359,7 @@ describe('endpoint activeAuthors', () => {
     )
 
     await expectUserIds({ endpoint: 'activeAuthors', ids: [user.id] })
+    await assertErrorEvent({ errorContext: { invalidElements: [article] } })
   })
 })
 
@@ -378,6 +380,7 @@ describe('endpoint activeReviewers', () => {
     )
 
     await expectUserIds({ endpoint: 'activeReviewers', ids: [user.id] })
+    await assertErrorEvent({ errorContext: { invalidElements: [article] } })
   })
 })
 
@@ -394,6 +397,7 @@ describe('endpoint activeDonors', () => {
     global.server.use(createUuidHandler(article))
 
     await expectUserIds({ endpoint: 'activeDonors', ids: [user.id] })
+    await assertErrorEvent({ errorContext: { invalidElements: [article] } })
   })
 
   describe('parser', () => {
@@ -401,6 +405,10 @@ describe('endpoint activeDonors', () => {
       givenActiveDonorsSpreadsheet([['Header', '23', 'foo', '-1', '', '1.5']])
 
       await expectUserIds({ endpoint: 'activeDonors', ids: [23] })
+      await assertErrorEvent({
+        message: 'invalid entry in activeDonorSpreadsheet',
+        errorContext: { invalidElements: ['foo', '-1', '', '1.5'] },
+      })
     })
 
     test('cell entries are trimmed of leading and trailing whitespaces', async () => {
@@ -420,18 +428,21 @@ describe('endpoint activeDonors', () => {
         givenSpreadheetApi(returnsJson({}))
 
         await expectUserIds({ endpoint: 'activeDonors', ids: [] })
+        await assertErrorEvent()
       })
 
       test('when spreadsheet api responds with malformed json', async () => {
         givenSpreadheetApi(returnsMalformedJson())
 
         await expectUserIds({ endpoint: 'activeDonors', ids: [] })
+        await assertErrorEvent()
       })
 
       test('when spreadsheet api has an internal server error', async () => {
         givenSpreadheetApi(hasInternalServerError())
 
         await expectUserIds({ endpoint: 'activeDonors', ids: [] })
+        await assertErrorEvent()
       })
     })
   })
