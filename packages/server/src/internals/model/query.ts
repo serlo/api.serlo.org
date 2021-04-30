@@ -27,12 +27,12 @@ import { FunctionOrValue } from '../cache'
 import { Environment } from '../environment'
 import { Time } from '../swr-queue'
 
-export interface QuerySpec<P, R> {
+export interface RequestSpec<P, R> {
   decoder: t.Type<R>
   getCurrentValue: (payload: P) => Promise<unknown>
 }
 
-export interface CachedQuerySpec<P, R> {
+export interface QuerySpec<P, R> {
   // TODO: this should probably be required
   decoder?: t.Type<R>
   getCurrentValue: (payload: P, previousValue: R | null) => Promise<R | unknown>
@@ -43,8 +43,7 @@ export interface CachedQuerySpec<P, R> {
   getPayload: (key: string) => O.Option<P>
 }
 
-export interface CachedQuerySpecWithHelpers<P, R>
-  extends CachedQuerySpec<P, R> {
+export interface QuerySpecWithHelpers<P, R> extends QuerySpec<P, R> {
   setCache: (
     args: PayloadArrayOrPayload<P> & FunctionOrValue<R>
   ) => Promise<void>
@@ -61,18 +60,20 @@ export interface CachedQuerySpecWithHelpers<P, R>
 
 export type PayloadArrayOrPayload<P> = { payload: P } | { payloads: P[] }
 
-export type ModelQuery<P, R> = ((payload: P) => Promise<R>) & {
-  _querySpec: QuerySpec<P, R>
+export type ModelRequest<P, R> = ((payload: P) => Promise<R>) & {
+  _querySpec: RequestSpec<P, R>
 }
 
-export type CachedModelQuery<P, R> = (P extends undefined
+export type ModelQuery<P, R> = (P extends undefined
   ? () => Promise<R>
   : (payload: P) => Promise<R>) & {
-  _querySpec: CachedQuerySpecWithHelpers<P, R>
+  _querySpec: QuerySpecWithHelpers<P, R>
   __typename: 'CachedQuery'
 }
 
-export function createQuery<P, R>(spec: QuerySpec<P, R>): ModelQuery<P, R> {
+export function createRequest<P, R>(
+  spec: RequestSpec<P, R>
+): ModelRequest<P, R> {
   async function query(payload: P) {
     const value = await spec.getCurrentValue(payload)
 
@@ -88,10 +89,10 @@ export function createQuery<P, R>(spec: QuerySpec<P, R>): ModelQuery<P, R> {
   return query
 }
 
-export function createCachedQuery<P, R>(
-  spec: CachedQuerySpec<P, R>,
+export function createQuery<P, R>(
+  spec: QuerySpec<P, R>,
   environment: Environment
-): CachedModelQuery<P, R> {
+): ModelQuery<P, R> {
   async function queryWithDecoder<S extends R>(
     payload: P,
     customDecoder?: t.Type<S>
@@ -151,7 +152,7 @@ export function createCachedQuery<P, R>(
     return queryWithDecoder(payload, spec.decoder)
   }
 
-  const querySpecWithHelpers: CachedQuerySpecWithHelpers<P, R> = {
+  const querySpecWithHelpers: QuerySpecWithHelpers<P, R> = {
     ...spec,
     queryWithDecoder,
     queryWithDecoders,
@@ -170,7 +171,7 @@ export function createCachedQuery<P, R>(
   query._querySpec = querySpecWithHelpers
   query.__typename = 'CachedQuery'
 
-  return (query as unknown) as CachedModelQuery<P, R>
+  return (query as unknown) as ModelQuery<P, R>
 }
 
 export class InvalidValueError extends Error {
@@ -179,9 +180,7 @@ export class InvalidValueError extends Error {
   }
 }
 
-export function isCachedQuery(
-  query: unknown
-): query is CachedModelQuery<unknown, unknown> {
+export function isQuery(query: unknown): query is ModelQuery<unknown, unknown> {
   return R.has('__typename', query) && query.__typename === 'CachedQuery'
 }
 
