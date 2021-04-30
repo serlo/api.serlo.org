@@ -29,11 +29,7 @@ import { URL } from 'url'
 
 import { Environment } from '~/internals/environment'
 import { addContext, ErrorEvent } from '~/internals/error-event'
-import {
-  createQuery,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ModelQuery,
-} from '~/internals/model'
+import { createQuery } from '~/internals/model'
 
 export enum MajorDimension {
   Rows = 'ROWS',
