@@ -21,25 +21,27 @@
  */
 import * as t from 'io-ts'
 
-export interface RequestSpec<P, R> {
-  decoder: t.Type<R>
-  getCurrentValue: (payload: P) => Promise<unknown>
+import { InvalidValueError } from './common'
+
+export interface RequestSpec<Payload, Result> {
+  decoder: t.Type<Result>
+  getCurrentValue: (payload: Payload) => Promise<unknown>
 }
 
-export type ModelRequest<P, R> = ((payload: P) => Promise<R>) & {
-  _querySpec: RequestSpec<P, R>
+export type Request<Payload, Result> = ((
+  payload: Payload
+) => Promise<Result>) & {
+  _querySpec: RequestSpec<Payload, Result>
 }
 
-export function createRequest<P, R>(
-  spec: RequestSpec<P, R>
-): ModelRequest<P, R> {
+export function createRequest<P, R>(spec: RequestSpec<P, R>): Request<P, R> {
   async function query(payload: P) {
     const value = await spec.getCurrentValue(payload)
 
     if (spec.decoder.is(value)) {
       return value
     } else {
-      throw new Error('Illegal Value received')
+      throw new InvalidValueError(value)
     }
   }
 
