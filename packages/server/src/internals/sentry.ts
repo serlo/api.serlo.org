@@ -23,7 +23,7 @@ import * as Sentry from '@sentry/node'
 import type { ApolloServerPlugin } from 'apollo-server-plugin-base'
 import R from 'ramda'
 
-import { InvalidValueError } from './model'
+import { InvalidValueError } from './data-source-helper'
 
 export function initializeSentry({
   dsn = process.env.SENTRY_DSN,

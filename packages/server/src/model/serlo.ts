@@ -34,9 +34,13 @@ import {
   NavigationDecoder,
   NavigationDataDecoder,
 } from './decoder'
+import {
+  createMutation,
+  createQuery,
+  createRequest,
+} from '~/internals/data-source-helper'
 import { Environment } from '~/internals/environment'
 import { Model } from '~/internals/graphql'
-import { createMutation, createQuery, createRequest } from '~/internals/model'
 import { isInstance } from '~/schema/instance/utils'
 import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
 import { isUnsupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
