@@ -151,8 +151,9 @@ export function createSerloModel({
     },
   })
 
-  const getActiveAuthorIds = createQuery<undefined, number[]>(
+  const getActiveAuthorIds = createQuery(
     {
+      decoder: t.array(t.number),
       enableSwr: true,
       getCurrentValue: async () => {
         const response = await handleMessageWithoutResponse({
@@ -175,8 +176,9 @@ export function createSerloModel({
     environment
   )
 
-  const getActiveReviewerIds = createQuery<undefined, number[]>(
+  const getActiveReviewerIds = createQuery(
     {
+      decoder: t.array(t.number),
       enableSwr: true,
       getCurrentValue: async () => {
         const response = await handleMessageWithoutResponse({
