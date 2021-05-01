@@ -124,22 +124,15 @@ export function createSerloModel({
     )
   }
 
-  const setUuidState = createMutation<
-    {
-      ids: number[]
-      userId: number
-      trashed: boolean
-    },
-    void
-  >({
-    legacyMutate: async ({ ids, userId, trashed }) => {
+  const setUuidState = createMutation({
+    decoder: t.void,
+    async mutate(payload: { ids: number[]; userId: number; trashed: boolean }) {
       await handleMessageWithoutResponse({
-        message: {
-          type: 'UuidSetStateMutation',
-          payload: { ids, userId, trashed },
-        },
+        message: { type: 'UuidSetStateMutation', payload },
         expectedStatusCodes: [200],
       })
+    },
+    async updateCache({ ids, trashed }) {
       await getUuid._querySpec.setCache({
         payloads: ids.map((id) => {
           return { id }
@@ -479,26 +472,15 @@ export function createSerloModel({
     environment
   )
 
-  const setNotificationState = createMutation<
-    {
-      ids: number[]
-      userId: number
-      unread: boolean
-    },
-    void
-  >({
-    legacyMutate: async ({ ids, userId, unread }) => {
+  const setNotificationState = createMutation({
+    decoder: t.void,
+    async mutate(payload: { ids: number[]; userId: number; unread: boolean }) {
       await handleMessageWithoutResponse({
-        message: {
-          type: 'NotificationSetStateMutation',
-          payload: {
-            ids,
-            userId,
-            unread,
-          },
-        },
+        message: { type: 'NotificationSetStateMutation', payload },
         expectedStatusCodes: [200],
       })
+    },
+    async updateCache({ ids, userId, unread }) {
       await getNotifications._querySpec.setCache({
         payload: { userId },
         getValue(current) {
@@ -549,28 +531,20 @@ export function createSerloModel({
     environment
   )
 
-  const setSubscription = createMutation<
-    {
+  const setSubscription = createMutation({
+    decoder: t.void,
+    async mutate(payload: {
       ids: number[]
       userId: number
       subscribe: boolean
       sendEmail: boolean
-    },
-    void
-  >({
-    legacyMutate: async ({ ids, userId, subscribe, sendEmail }) => {
+    }) {
       await handleMessageWithoutResponse({
-        message: {
-          type: 'SubscriptionSetMutation',
-          payload: {
-            ids,
-            userId,
-            subscribe,
-            sendEmail,
-          },
-        },
+        message: { type: 'SubscriptionSetMutation', payload },
         expectedStatusCodes: [200],
       })
+    },
+    async updateCache({ ids, userId, subscribe }) {
       await getSubscriptions._querySpec.setCache({
         payload: { userId },
         getValue(current) {
@@ -686,21 +660,21 @@ export function createSerloModel({
     },
   })
 
-  const archiveThread = createMutation<
-    { ids: number[]; archived: boolean; userId: number },
-    void
-  >({
-    legacyMutate: async (payload) => {
+  const archiveThread = createMutation({
+    decoder: t.void,
+    async mutate(payload: {
+      ids: number[]
+      archived: boolean
+      userId: number
+    }) {
       await handleMessageWithoutResponse({
-        message: {
-          type: 'ThreadSetThreadArchivedMutation',
-          payload,
-        },
+        message: { type: 'ThreadSetThreadArchivedMutation', payload },
         expectedStatusCodes: [200],
       })
-      const { ids, archived } = payload
+    },
+    async updateCache({ ids, archived }) {
       await getUuid._querySpec.setCache({
-        payloads: payload.ids.map((id) => {
+        payloads: ids.map((id) => {
           return { id }
         }),
         getValue(current) {
