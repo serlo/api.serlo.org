@@ -21,7 +21,7 @@
  */
 import t from 'io-ts'
 
-import { InvalidValueError } from './query'
+import { InvalidValueError } from './common'
 import { AsyncOrSync } from '~/utils'
 
 /**

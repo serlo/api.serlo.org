@@ -19,7 +19,31 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-export { InvalidValueError } from './common'
-export { createMutation } from './mutation'
-export { createRequest } from './request'
-export * from './query'
+import * as t from 'io-ts'
+
+export interface RequestSpec<P, R> {
+  decoder: t.Type<R>
+  getCurrentValue: (payload: P) => Promise<unknown>
+}
+
+export type ModelRequest<P, R> = ((payload: P) => Promise<R>) & {
+  _querySpec: RequestSpec<P, R>
+}
+
+export function createRequest<P, R>(
+  spec: RequestSpec<P, R>
+): ModelRequest<P, R> {
+  async function query(payload: P) {
+    const value = await spec.getCurrentValue(payload)
+
+    if (spec.decoder.is(value)) {
+      return value
+    } else {
+      throw new Error('Illegal Value received')
+    }
+  }
+
+  query._querySpec = spec
+
+  return query
+}
