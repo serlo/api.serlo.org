@@ -19,29 +19,23 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { either as E } from 'fp-ts'
 import t from 'io-ts'
-import { PathReporter } from 'io-ts/lib/PathReporter'
 
-export function createMutation<P, R = void>(
-  spec: MutationSpec<P, R>
-): Mutation<P, R> {
+import { InvalidValueError } from './query'
+import { AsyncOrSync } from '~/utils'
+
+export function createMutation<P, R>(spec: MutationSpec<P, R>): Mutation<P, R> {
   async function mutation(payload: P): Promise<R> {
     const result = await spec.mutate(payload)
 
-    const decoded = spec.decoder.decode(result)
+    if (spec.decoder.is(result)) {
+      if (spec.updateCache !== undefined)
+        await spec.updateCache(payload, result)
 
-    if (E.isLeft(decoded)) {
-      const message = PathReporter.report(decoded).join('\n ')
-
-      throw new Error(`illegal payload received: ${message}`)
+      return result
+    } else {
+      throw new InvalidValueError(result)
     }
-
-    const value = decoded.right
-
-    if (spec.updateCache !== undefined) await spec.updateCache(payload, value)
-
-    return value
   }
 
   mutation._mutationSpec = spec
@@ -49,12 +43,12 @@ export function createMutation<P, R = void>(
   return mutation
 }
 
-interface MutationSpec<P, R> {
-  decoder: t.Type<R>
-  updateCache?: (payload: P, newValue: R) => Promise<void> | void
-  mutate: (payload: P) => Promise<unknown>
+interface MutationSpec<Payload, Result> {
+  decoder: t.Type<Result>
+  mutate: (payload: Payload) => Promise<unknown>
+  updateCache?: (payload: Payload, newValue: Result) => AsyncOrSync<void>
 }
 
-type Mutation<P, R> = ((payload: P) => Promise<R>) & {
-  _mutationSpec: MutationSpec<P, R>
+type Mutation<Payload, Result> = ((payload: Payload) => Promise<Result>) & {
+  _mutationSpec: MutationSpec<Payload, Result>
 }
