@@ -24,7 +24,7 @@ import R from 'ramda'
 import { A, O } from 'ts-toolbelt'
 
 import { Context } from './context'
-import { Typename } from '~/internals/model/types'
+import { Typename } from '~/internals/model'
 import { MutationResolvers, QueryResolvers, Resolver, Resolvers } from '~/types'
 
 export interface Schema {

@@ -26,11 +26,7 @@ import * as R from 'ramda'
 import { FunctionOrValue } from '../cache'
 import { Environment } from '../environment'
 import { Time } from '../swr-queue'
-
-export interface RequestSpec<P, R> {
-  decoder: t.Type<R>
-  getCurrentValue: (payload: P) => Promise<unknown>
-}
+import { InvalidValueError } from './common'
 
 export interface QuerySpec<P, R> {
   // TODO: this should probably be required
@@ -60,33 +56,11 @@ export interface QuerySpecWithHelpers<P, R> extends QuerySpec<P, R> {
 
 export type PayloadArrayOrPayload<P> = { payload: P } | { payloads: P[] }
 
-export type ModelRequest<P, R> = ((payload: P) => Promise<R>) & {
-  _querySpec: RequestSpec<P, R>
-}
-
 export type ModelQuery<P, R> = (P extends undefined
   ? () => Promise<R>
   : (payload: P) => Promise<R>) & {
   _querySpec: QuerySpecWithHelpers<P, R>
   __typename: 'CachedQuery'
-}
-
-export function createRequest<P, R>(
-  spec: RequestSpec<P, R>
-): ModelRequest<P, R> {
-  async function query(payload: P) {
-    const value = await spec.getCurrentValue(payload)
-
-    if (spec.decoder.is(value)) {
-      return value
-    } else {
-      throw new Error('Illegal Value received')
-    }
-  }
-
-  query._querySpec = spec
-
-  return query
 }
 
 export function createQuery<P, R>(
@@ -172,12 +146,6 @@ export function createQuery<P, R>(
   query.__typename = 'CachedQuery'
 
   return (query as unknown) as ModelQuery<P, R>
-}
-
-export class InvalidValueError extends Error {
-  constructor(public invalidValue: unknown) {
-    super('Invalid value received from a data source.')
-  }
 }
 
 export function isQuery(query: unknown): query is ModelQuery<unknown, unknown> {
