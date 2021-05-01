@@ -23,17 +23,37 @@ import * as t from 'io-ts'
 
 import { InvalidValueError } from './common'
 
+/**
+ * Specification object for a request function.
+ */
 export interface RequestSpec<Payload, Result> {
+  /**
+   * io-ts decoder which is used during runtime to check whether the returned
+   * value is of the aspected type.
+   */
   decoder: t.Type<Result>
+
+  /**
+   * Function which does the actual query operation.
+   */
   getCurrentValue: (payload: Payload) => Promise<unknown>
 }
 
+/**
+ * Type of a request operation in a data source.
+ */
 export type Request<Payload, Result> = ((
   payload: Payload
 ) => Promise<Result>) & {
   _querySpec: RequestSpec<Payload, Result>
 }
 
+/**
+ * Creates a request function for a data source. This is a "read" operation
+ * which shall never be cached by the API. Thus it only checks whether the
+ * returned value has the right type. It throws an error when the check was not
+ * sucessfull.
+ */
 export function createRequest<P, R>(spec: RequestSpec<P, R>): Request<P, R> {
   async function query(payload: P) {
     const value = await spec.getCurrentValue(payload)
