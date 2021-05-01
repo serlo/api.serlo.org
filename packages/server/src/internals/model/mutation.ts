@@ -25,37 +25,37 @@ import { InvalidValueError } from './query'
 import { AsyncOrSync } from '~/utils'
 
 /**
- * Type of a mutation function in a data source. Given arguments of type
- * `Payload` it executes the mutation and returns a Promise of type `Result`.
- * This function is created via the factory function {@link createMutation}.
- * Via the property `_mutationSpec` the specification object which was given
- * to `createMutation()` can be accessed (see {@link MutationSpec}.
- */
-type Mutation<Payload, Result> = ((payload: Payload) => Promise<Result>) & {
-  _mutationSpec: MutationSpec<Payload, Result>
-}
-
-/**
- * Object type which specifies a mutation. It is the argument type of
- * {@link createMutation} with which a mutation in a data source can be created.
+ * Helper function to create a mutation in a datasource. An example:
  *
- * @property decoder - io-ts decoder to control the returned value of the
- * mutation during runtime. An error is thrown when the returned value does not
- * match the decoder.
- * @property mutate - Function which executes the actual mutation.
- * @property updateCache - Optional function which updates the API cache when
- * the mutation could be executed and the returned type matches the decoder.
- */
-interface MutationSpec<Payload, Result> {
-  decoder: t.Type<Result>
-  mutate: (payload: Payload) => Promise<unknown>
-  updateCache?: (payload: Payload, newValue: Result) => AsyncOrSync<void>
-}
-
-/**
- * Helper function to create a mutation in a datasource. Given a specification
- * of type {@link MutationSpec} it creates a mutation function of type
- * {@link Mutation}.
+ * ```ts
+ * import * as t from 'io-ts'
+ *
+ * const removeObject = createMutation({
+ *   // Decoder to check the returned result in runtime.
+ *   // Here does the mutation returns the type `{ success: boolean }`.
+ *   decoder: t.strict({ success: t.boolean }),
+ *
+ *   // function which executes the necessary requests for the mutation
+ *   async mutate({ id } : { id: number }) {
+ *     const url = `http://api.example.com/remove/{ id }`
+ *     const response = await fetch(url, {
+ *       method: "POST"
+ *     })
+ *     return await response.json() as unknown
+ *   },
+ *
+ *   // function which updates the cache
+ *   async updateCache({ id }) {
+ *     await cache.remove(id)
+ *   }
+ * })
+ * ```
+ *
+ * The created mutation can be executed by calling the returned function (e.g.
+ *  `await removeObject({ id: 1 })`). Via the property `__mutationSpec` the
+ *  passed specification to `createMutation()` can be accessed. So for example
+ *  with `removeObject.__mutationSpec.decoder` you can access the decoder of the
+ *  mutation.
  */
 export function createMutation<P, R>(spec: MutationSpec<P, R>): Mutation<P, R> {
   async function mutation(payload: P): Promise<R> {
@@ -74,4 +74,35 @@ export function createMutation<P, R>(spec: MutationSpec<P, R>): Mutation<P, R> {
   mutation._mutationSpec = spec
 
   return mutation
+}
+
+/**
+ * Argument type for the function {@link createMutation} with which a mutation
+ * in a data source can be created.
+ */
+export interface MutationSpec<Payload, Result> {
+  /**
+   * io-ts decoder to control the returned value of the
+   * mutation during runtime. An error is thrown when the returned value does not
+   * match the decoder.
+   */
+  decoder: t.Type<Result>
+
+  /**
+   * Function which executes the actual mutation.
+   */
+  mutate: (payload: Payload) => Promise<unknown>
+
+  /**
+   * Optional function which updates the API cache when the mutation could be
+   * executed and the result of the mutation matches the decoder.
+   */
+  updateCache?: (payload: Payload, newValue: Result) => AsyncOrSync<void>
+}
+
+/**
+ * Type of a mutation function in a data source.
+ */
+type Mutation<Payload, Result> = ((payload: Payload) => Promise<Result>) & {
+  _mutationSpec: MutationSpec<Payload, Result>
 }
