@@ -22,4 +22,4 @@
 export { InvalidValueError } from './common'
 export { createMutation } from './mutation'
 export { createRequest } from './request'
-export * from './query'
+export { createQuery, isQuery, QuerySpec } from './query'
