@@ -24,6 +24,39 @@ import t from 'io-ts'
 import { InvalidValueError } from './query'
 import { AsyncOrSync } from '~/utils'
 
+/**
+ * Type of a mutation function in a data source. Given arguments of type
+ * `Payload` it executes the mutation and returns a Promise of type `Result`.
+ * This function is created via the factory function {@link createMutation}.
+ * Via the property `_mutationSpec` the specification object which was given
+ * to `createMutation()` can be accessed (see {@link MutationSpec}.
+ */
+type Mutation<Payload, Result> = ((payload: Payload) => Promise<Result>) & {
+  _mutationSpec: MutationSpec<Payload, Result>
+}
+
+/**
+ * Object type which specifies a mutation. It is the argument type of
+ * {@link createMutation} with which a mutation in a data source can be created.
+ *
+ * @property decoder - io-ts decoder to control the returned value of the
+ * mutation during runtime. An error is thrown when the returned value does not
+ * match the decoder.
+ * @property mutate - Function which executes the actual mutation.
+ * @property updateCache - Optional function which updates the API cache when
+ * the mutation could be executed and the returned type matches the decoder.
+ */
+interface MutationSpec<Payload, Result> {
+  decoder: t.Type<Result>
+  mutate: (payload: Payload) => Promise<unknown>
+  updateCache?: (payload: Payload, newValue: Result) => AsyncOrSync<void>
+}
+
+/**
+ * Helper function to create a mutation in a datasource. Given a specification
+ * of type {@link MutationSpec} it creates a mutation function of type
+ * {@link Mutation}.
+ */
 export function createMutation<P, R>(spec: MutationSpec<P, R>): Mutation<P, R> {
   async function mutation(payload: P): Promise<R> {
     const result = await spec.mutate(payload)
@@ -41,14 +74,4 @@ export function createMutation<P, R>(spec: MutationSpec<P, R>): Mutation<P, R> {
   mutation._mutationSpec = spec
 
   return mutation
-}
-
-interface MutationSpec<Payload, Result> {
-  decoder: t.Type<Result>
-  mutate: (payload: Payload) => Promise<unknown>
-  updateCache?: (payload: Payload, newValue: Result) => AsyncOrSync<void>
-}
-
-type Mutation<Payload, Result> = ((payload: Payload) => Promise<Result>) & {
-  _mutationSpec: MutationSpec<Payload, Result>
 }
