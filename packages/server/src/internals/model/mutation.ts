@@ -22,31 +22,26 @@
 import { either as E } from 'fp-ts'
 import t from 'io-ts'
 import { PathReporter } from 'io-ts/lib/PathReporter'
-import R from 'ramda'
 
 export function createMutation<P, R = void>(
   spec: MutationSpec<P, R>
 ): Mutation<P, R> {
   async function mutation(payload: P): Promise<R> {
-    if (R.has('decoder', spec)) {
-      const result = await spec.mutate(payload)
+    const result = await spec.mutate(payload)
 
-      const decoded = spec.decoder.decode(result)
+    const decoded = spec.decoder.decode(result)
 
-      if (E.isLeft(decoded)) {
-        const message = PathReporter.report(decoded).join('\n ')
+    if (E.isLeft(decoded)) {
+      const message = PathReporter.report(decoded).join('\n ')
 
-        throw new Error(`illegal payload received: ${message}`)
-      }
-
-      const value = decoded.right
-
-      if (spec.updateCache !== undefined) await spec.updateCache(payload, value)
-
-      return value
-    } else {
-      return await spec.legacyMutate(payload)
+      throw new Error(`illegal payload received: ${message}`)
     }
+
+    const value = decoded.right
+
+    if (spec.updateCache !== undefined) await spec.updateCache(payload, value)
+
+    return value
   }
 
   mutation._mutationSpec = spec
@@ -54,16 +49,11 @@ export function createMutation<P, R = void>(
   return mutation
 }
 
-type MutationSpec<P, R> =
-  // TODO: We do not want the first version in the future
-  | {
-      legacyMutate: (payload: P) => Promise<R>
-    }
-  | {
-      decoder: t.Type<R>
-      updateCache?: (payload: P, newValue: R) => Promise<void> | void
-      mutate: (payload: P) => Promise<unknown>
-    }
+interface MutationSpec<P, R> {
+  decoder: t.Type<R>
+  updateCache?: (payload: P, newValue: R) => Promise<void> | void
+  mutate: (payload: P) => Promise<unknown>
+}
 
 type Mutation<P, R> = ((payload: P) => Promise<R>) & {
   _mutationSpec: MutationSpec<P, R>
