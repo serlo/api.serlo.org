@@ -82,7 +82,7 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../__utils__'
-import { Payload } from '~/internals/model/types'
+import { Payload } from '~/internals/model'
 import { Instance } from '~/types'
 
 describe('notifications', () => {
