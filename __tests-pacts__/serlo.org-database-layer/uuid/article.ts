@@ -21,13 +21,9 @@
  */
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
-import {
-  article,
-  articleRevision,
-  getArticleDataWithoutSubResolvers,
-  getArticleRevisionDataWithoutSubResolvers,
-} from '../../../__fixtures__'
+import { article, articleRevision } from '../../../__fixtures__'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
@@ -52,6 +48,7 @@ test('Article', async () => {
         ? Matchers.eachLike(Matchers.like(article.taxonomyTermIds[0]))
         : [],
   })
+
   await assertSuccessfulGraphQLQuery({
     query: gql`
       query article($id: Int!) {
@@ -66,9 +63,12 @@ test('Article', async () => {
         }
       }
     `,
-    variables: article,
+    variables: { id: article.id },
     data: {
-      uuid: getArticleDataWithoutSubResolvers(article),
+      uuid: R.pick(
+        ['__typename', 'id', 'trashed', 'instance', 'date'],
+        article
+      ),
     },
   })
 })
@@ -88,6 +88,7 @@ test('ArticleRevision', async () => {
     metaTitle: Matchers.string(articleRevision.metaTitle),
     metaDescription: Matchers.string(articleRevision.metaDescription),
   })
+
   await assertSuccessfulGraphQLQuery({
     query: gql`
       query articleRevision($id: Int!) {
@@ -108,7 +109,20 @@ test('ArticleRevision', async () => {
     `,
     variables: articleRevision,
     data: {
-      uuid: getArticleRevisionDataWithoutSubResolvers(articleRevision),
+      uuid: R.pick(
+        [
+          '__typename',
+          'id',
+          'trashed',
+          'date',
+          'title',
+          'content',
+          'changes',
+          'metaTitle',
+          'metaDescription',
+        ],
+        articleRevision
+      ),
     },
   })
 })
