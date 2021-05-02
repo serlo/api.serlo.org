@@ -20,6 +20,7 @@
     "changelog": "ts-node scripts/changelog",
     "codegen": "lerna run --stream codegen",
     "deploy:image": "lerna run --stream deploy:image",
+    "doc": "typedoc packages/server/src/",
     "format": "npm-run-all -c format:*",
     "format:eslint": "yarn _eslint --fix",
     "format:prettier": "yarn _prettier --write",
@@ -71,6 +72,7 @@
     "ts-jest": "^26.0.0",
     "ts-node": "^9.0.0",
     "tsdx": "^0.14.0",
+    "typedoc": "^0.20.0",
     "typescript": "^4.1.0"
   },
   "engines": {

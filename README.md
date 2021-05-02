@@ -41,6 +41,12 @@ After `yarn start`, you can open the GraphQL playground via [http://localhost:30
 
 Interrupt the `yarn start` command to stop the dev server and run `yarn stop:redis` to stop Redis.
 
+### Generate and open API reference
+
+You can locally create a documentation for the whole source code by running `yarn doc`. Afterwards you can open the documentation by opening `docs/index.html`.
+
+By using `yarn doc --watch` the documentation is recreated whenever you make changes in the source code. This is ideal when you document the source code. Behind the scenes we use [typedoc](https://typedoc.org/). See also [jsdoc](https://jsdoc.app/) for a documentation how to add documentation comments into the source code. typedoc has also a site where they list [all supported documentation tags and formats](https://typedoc.org/guides/doccomments/).
+
 ### Repository structure
 
 - `__fixtures__` contains test data (used by both unit and contract tests).
