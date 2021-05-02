@@ -21,11 +21,7 @@
  */
 import { gql } from 'apollo-server'
 
-import {
-  article,
-  getArticleDataWithoutSubResolvers,
-  user,
-} from '../../__fixtures__'
+import { article, user } from '../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
@@ -33,6 +29,7 @@ import {
   createMessageHandler,
   createTestClient,
   createUuidHandler,
+  getTypenameAndId,
 } from '../__utils__'
 
 describe('subscriptions', () => {
@@ -55,10 +52,7 @@ describe('subscriptions', () => {
     await assertSuccessfulGraphQLQuery({
       ...createSubscriptionsQuery(),
       data: {
-        subscriptions: {
-          totalCount: 1,
-          nodes: [getArticleDataWithoutSubResolvers(article)],
-        },
+        subscriptions: { totalCount: 1, nodes: [getTypenameAndId(article)] },
       },
       client,
     })
@@ -206,11 +200,6 @@ function createSubscriptionsQuery() {
           nodes {
             __typename
             id
-            trashed
-            ... on Article {
-              instance
-              date
-            }
           }
         }
       }
