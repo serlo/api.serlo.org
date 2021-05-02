@@ -103,6 +103,8 @@ export interface MutationSpec<Payload, Result> {
 /**
  * Type of a mutation function in a data source.
  */
-type Mutation<Payload, Result> = ((payload: Payload) => Promise<Result>) & {
+export type Mutation<Payload, Result> = ((
+  payload: Payload
+) => Promise<Result>) & {
   _mutationSpec: MutationSpec<Payload, Result>
 }
