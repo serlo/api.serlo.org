@@ -230,74 +230,76 @@ export function createSerloModel({
     environment
   )
 
-  const getNavigation = async ({
-    instance,
-    id,
-  }: {
-    instance: Instance
-    id: number
-    // TODO: Wait for https://github.com/serlo/api.serlo.org/pull/299 and use getQuery() for this branch
-  }): Promise<t.TypeOf<typeof NavigationDataDecoder> | null> => {
-    const payload = await getNavigationPayload({ instance })
-    const { data } = payload
+  const getNavigation = createRequest({
+    decoder: t.union([NavigationDataDecoder, t.null]),
+    async getCurrentValue({
+      instance,
+      id,
+    }: {
+      instance: Instance
+      id: number
+    }) {
+      const payload = await getNavigationPayload({ instance })
+      const { data } = payload
 
-    type NodeData = typeof data[number]
+      type NodeData = typeof data[number]
 
-    const leaves: Record<string, number> = {}
+      const leaves: Record<string, number> = {}
 
-    const findLeaves = (node: NodeData): number[] => {
-      return [
-        ...(node.id ? [node.id] : []),
-        ...R.flatten(R.map(findLeaves, node.children || [])),
-      ]
-    }
-
-    for (let i = 0; i < data.length; i++) {
-      findLeaves(data[i]).forEach((id) => {
-        leaves[id] = i
-      })
-    }
-
-    const treeIndex = leaves[id]
-
-    if (treeIndex === undefined) return null
-
-    const findPathToLeaf = (node: NodeData, leaf: number): NodeData[] => {
-      if (node.id !== undefined && node.id === leaf) {
-        return [node]
+      const findLeaves = (node: NodeData): number[] => {
+        return [
+          ...(node.id ? [node.id] : []),
+          ...R.flatten(R.map(findLeaves, node.children || [])),
+        ]
       }
 
-      if (node.children === undefined) return []
-
-      const childPaths = node.children.map((childNode) => {
-        return findPathToLeaf(childNode, leaf)
-      })
-      const goodPaths = childPaths.filter((path) => {
-        return path.length > 0
-      })
-      if (goodPaths.length === 0) return []
-      return [node, ...goodPaths[0]]
-    }
-
-    const nodes = findPathToLeaf(data[treeIndex], id)
-    const path = []
-
-    for (let i = 0; i < nodes.length; i++) {
-      const nodeData = nodes[i]
-      const uuid = nodeData.id ? await getUuid({ id: nodeData.id }) : null
-      const node = {
-        label: nodeData.label,
-        url: (uuid ? uuid.alias : null) || nodeData.url || null,
-        id: uuid ? uuid.id : null,
+      for (let i = 0; i < data.length; i++) {
+        findLeaves(data[i]).forEach((id) => {
+          leaves[id] = i
+        })
       }
-      path.push(node)
-    }
 
-    return {
-      data: data[treeIndex],
-      path,
-    }
-  }
+      const treeIndex = leaves[id]
+
+      if (treeIndex === undefined) return null
+
+      const findPathToLeaf = (node: NodeData, leaf: number): NodeData[] => {
+        if (node.id !== undefined && node.id === leaf) {
+          return [node]
+        }
+
+        if (node.children === undefined) return []
+
+        const childPaths = node.children.map((childNode) => {
+          return findPathToLeaf(childNode, leaf)
+        })
+        const goodPaths = childPaths.filter((path) => {
+          return path.length > 0
+        })
+        if (goodPaths.length === 0) return []
+        return [node, ...goodPaths[0]]
+      }
+
+      const nodes = findPathToLeaf(data[treeIndex], id)
+      const path = []
+
+      for (let i = 0; i < nodes.length; i++) {
+        const nodeData = nodes[i]
+        const uuid = nodeData.id ? await getUuid({ id: nodeData.id }) : null
+        const node = {
+          label: nodeData.label,
+          url: (uuid ? uuid.alias : null) || nodeData.url || null,
+          id: uuid ? uuid.id : null,
+        }
+        path.push(node)
+      }
+
+      return {
+        data: data[treeIndex],
+        path,
+      }
+    },
+  })
 
   const getAlias = createQuery(
     {
