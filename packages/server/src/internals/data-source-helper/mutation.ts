@@ -25,37 +25,7 @@ import { InvalidValueError } from './common'
 import { AsyncOrSync } from '~/utils'
 
 /**
- * Helper function to create a mutation in a datasource. An example:
- *
- * ```ts
- * import * as t from 'io-ts'
- *
- * const removeObject = createMutation({
- *   // Decoder to check the returned result in runtime.
- *   // Here does the mutation returns the type `{ success: boolean }`.
- *   decoder: t.strict({ success: t.boolean }),
- *
- *   // function which executes the necessary requests for the mutation
- *   async mutate({ id } : { id: number }) {
- *     const url = `http://api.example.com/remove/{ id }`
- *     const response = await fetch(url, {
- *       method: "POST"
- *     })
- *     return await response.json() as unknown
- *   },
- *
- *   // function which updates the cache
- *   async updateCache({ id }) {
- *     await cache.remove(id)
- *   }
- * })
- * ```
- *
- * The created mutation can be executed by calling the returned function (e.g.
- *  `await removeObject({ id: 1 })`). Via the property `__mutationSpec` the
- *  passed specification to `createMutation()` can be accessed. So for example
- *  with `removeObject.__mutationSpec.decoder` you can access the decoder of the
- *  mutation.
+ * Helper function to create a mutation in a datasource.
  */
 export function createMutation<P, R>(spec: MutationSpec<P, R>): Mutation<P, R> {
   async function mutation(payload: P): Promise<R> {
