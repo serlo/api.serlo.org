@@ -94,7 +94,7 @@ describe('subscriptions', () => {
           }
         }
       `,
-      variables: { id: 1555 },
+      variables: { id: article.id + 1 },
       data: {
         subscription: {
           currentUserHasSubscribed: false,
