@@ -67,12 +67,7 @@ export const resolvers: TypeResolvers<SubscriptionQuery> &
       const subscriptions = await dataSources.model.serlo.getSubscriptions({
         userId,
       })
-      const candidates = subscriptions.subscriptions.map(
-        (candidate) => candidate.id
-      )
-      return candidates.find((candidate) => candidate == id) != undefined
-        ? true
-        : false
+      return subscriptions.subscriptions.some(subscription => subscription.id === id)
     },
   },
   SubscriptionMutation: {
