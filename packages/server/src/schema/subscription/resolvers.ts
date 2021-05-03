@@ -24,15 +24,19 @@ import * as auth from '@serlo/authorization'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
-  createMutationNamespace,
+  createNamespace,
   Mutations,
   Queries,
+  TypeResolvers,
 } from '~/internals/graphql'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
+import { SubscriptionQuery } from '~/types'
 import { isDefined } from '~/utils'
 
-export const resolvers: Queries<'subscriptions'> & Mutations<'subscription'> = {
+export const resolvers: TypeResolvers<SubscriptionQuery> &
+  Queries<'subscriptions' | 'subscription'> &
+  Mutations<'subscription'> = {
   Query: {
     async subscriptions(_parent, cursorPayload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
@@ -52,9 +56,21 @@ export const resolvers: Queries<'subscriptions'> & Mutations<'subscription'> = {
         },
       })
     },
+    subscription: createNamespace(),
   },
   Mutation: {
-    subscription: createMutationNamespace(),
+    subscription: createNamespace(),
+  },
+  SubscriptionQuery: {
+    async currentUserHasSubscribed(_parent, { id }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+      const subscriptions = await dataSources.model.serlo.getSubscriptions({
+        userId,
+      })
+      return subscriptions.subscriptions.some(
+        (subscription) => subscription.id === id
+      )
+    },
   },
   SubscriptionMutation: {
     async set(_parent, payload, { dataSources, userId }) {
