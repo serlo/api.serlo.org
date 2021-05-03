@@ -34,14 +34,12 @@ import {
 import {
   assertSuccessfulGraphQLQuery,
   Client,
-  createAliasHandler,
   createMessageHandler,
   createTestClient,
   createUuidHandler,
   getDatabaseLayerUrl,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
-import { Instance } from '~/types'
 
 let client: Client
 
@@ -333,9 +331,43 @@ describe('uuid["threads"]', () => {
     })
   })
 
-  describe('endpoint uuid() will not give back comment on its own', () => {
-    test('when requested via id', async () => {
-      global.server.use(createUuidHandler(comment1))
+  // describe('endpoint uuid() will not give back comment on its own', () => {
+  //   test('when requested via id', async () => {
+  //     global.server.use(createUuidHandler(comment1))
+  //     await assertSuccessfulGraphQLQuery({
+  //       query: gql`
+  //         query comments($id: Int!) {
+  //           uuid(id: $id) {
+  //             __typename
+  //           }
+  //         }
+  //       `,
+  //       variables: { id: comment1.id },
+  //       data: { uuid: null },
+  //       client,
+  //     })
+  //   })
+
+  //   test('when requested via alias', async () => {
+  //     const aliasInput = { path: comment.alias ?? '', instance: Instance.De }
+  //     global.server.use(createUuidHandler(comment))
+  //     global.server.use(createAliasHandler({ ...aliasInput, id: comment.id }))
+
+  //     await assertSuccessfulGraphQLQuery({
+  //       query: gql`
+  //         query comments($alias: AliasInput!) {
+  //           uuid(alias: $alias) {
+  //             __typename
+  //           }
+  //         }
+  //       `,
+  //       variables: { alias: aliasInput },
+  //       data: { uuid: null },
+  //       client,
+  //     })
+  //   })
+  // })
+
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query comments($id: Int!) {
