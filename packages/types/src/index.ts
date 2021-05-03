@@ -333,7 +333,7 @@ export type Comment = AbstractUuid & {
   archived: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
   author: User;
-  object: AbstractUuid;
+  legacyObject: AbstractUuid;
 };
 
 export type CommentConnection = {
