@@ -22,6 +22,7 @@ type Comment implements AbstractUuid {
   archived: Boolean!
   createdAt: DateTime!
   author: User!
+  object: AbstractUuid
 }
 
 interface ThreadAware {
