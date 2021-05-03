@@ -331,72 +331,61 @@ describe('uuid["threads"]', () => {
     })
   })
 
-  // describe('endpoint uuid() will not give back comment on its own', () => {
-  //   test('when requested via id', async () => {
-  //     global.server.use(createUuidHandler(comment1))
-  //     await assertSuccessfulGraphQLQuery({
-  //       query: gql`
-  //         query comments($id: Int!) {
-  //           uuid(id: $id) {
-  //             __typename
-  //           }
-  //         }
-  //       `,
-  //       variables: { id: comment1.id },
-  //       data: { uuid: null },
-  //       client,
-  //     })
-  //   })
 
-  //   test('when requested via alias', async () => {
-  //     const aliasInput = { path: comment.alias ?? '', instance: Instance.De }
-  //     global.server.use(createUuidHandler(comment))
-  //     global.server.use(createAliasHandler({ ...aliasInput, id: comment.id }))
 
-  //     await assertSuccessfulGraphQLQuery({
-  //       query: gql`
-  //         query comments($alias: AliasInput!) {
-  //           uuid(alias: $alias) {
-  //             __typename
-  //           }
-  //         }
-  //       `,
-  //       variables: { alias: aliasInput },
-  //       data: { uuid: null },
-  //       client,
-  //     })
-  //   })
-  // })
-
+  describe('property "object" of Comment', () => {
+    test('1-level comment', async () => {
+      mockEndpointsForThreads(article, [[comment1]])
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query comments($id: Int!) {
             uuid(id: $id) {
-              __typename
+              ... on Comment {
+                object {
+                  id
+                  alias
+                }
+              }
             }
           }
         `,
         variables: { id: comment1.id },
-        data: { uuid: null },
+        data: {
+          uuid: {
+            object: {
+              id: article.id,
+              alias: article.alias,
+            },
+          },
+        },
         client,
       })
     })
 
-    test('when requested via alias', async () => {
-      const aliasInput = { path: comment.alias ?? '', instance: Instance.De }
-      global.server.use(createUuidHandler(comment))
-      global.server.use(createAliasHandler({ ...aliasInput, id: comment.id }))
-
+    test('2-level comment', async () => {
+      mockEndpointsForThreads(article, [[comment1, comment2]])
       await assertSuccessfulGraphQLQuery({
         query: gql`
-          query comments($alias: AliasInput!) {
-            uuid(alias: $alias) {
-              __typename
+          query object($id: Int!) {
+            uuid(id: $id) {
+              ... on Comment {
+                object {
+                  id
+                  alias
+                }
+              }
             }
           }
         `,
-        variables: { alias: aliasInput },
-        data: { uuid: null },
+        variables: { id: comment2.id },
+        data: {
+          uuid: {
+            object: {
+              id: article.id,
+              alias: article.alias,
+            },
+          },
+        },
         client,
       })
     })
