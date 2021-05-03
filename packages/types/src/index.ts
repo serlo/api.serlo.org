@@ -1111,6 +1111,7 @@ export type Query = {
   license?: Maybe<License>;
   notificationEvent?: Maybe<AbstractNotificationEvent>;
   notifications: NotificationConnection;
+  subscription: SubscriptionQuery;
   subscriptions: AbstractUuidConnection;
   uuid?: Maybe<AbstractUuid>;
 };
@@ -1369,6 +1370,16 @@ export type SubscriptionMutation = {
 
 export type SubscriptionMutationSetArgs = {
   input: SubscriptionSetInput;
+};
+
+export type SubscriptionQuery = {
+  __typename?: 'SubscriptionQuery';
+  currentUserHasSubscribed: Scalars['Boolean'];
+};
+
+
+export type SubscriptionQueryCurrentUserHasSubscribedArgs = {
+  id: Scalars['Int'];
 };
 
 export type SubscriptionSetInput = {

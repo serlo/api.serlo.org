@@ -27,7 +27,7 @@ import { resolveCustomId } from '~/config/alias'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
-  createMutationNamespace,
+  createNamespace,
   InterfaceResolvers,
   Mutations,
   Queries,
@@ -69,7 +69,7 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
     },
   },
   Mutation: {
-    uuid: createMutationNamespace(),
+    uuid: createNamespace(),
   },
   UuidMutation: {
     async setState(_parent, payload, { dataSources, userId }) {
