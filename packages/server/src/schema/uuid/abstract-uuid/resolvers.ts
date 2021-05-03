@@ -196,7 +196,7 @@ function checkUuid(payload: QueryUuidArgs, uuid: Model<'AbstractUuid'> | null) {
       }
     }
 
-    if (uuid.__typename === DiscriminatorType.Comment) return null
+    // if (uuid.__typename === DiscriminatorType.Comment) return null
   }
 
   return uuid
