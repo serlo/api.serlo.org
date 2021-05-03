@@ -331,8 +331,6 @@ describe('uuid["threads"]', () => {
     })
   })
 
-
-
   describe('property "object" of Comment', () => {
     test('1-level comment', async () => {
       mockEndpointsForThreads(article, [[comment1]])
@@ -341,7 +339,7 @@ describe('uuid["threads"]', () => {
           query comments($id: Int!) {
             uuid(id: $id) {
               ... on Comment {
-                object {
+                legacyObject {
                   id
                   alias
                 }
@@ -352,7 +350,7 @@ describe('uuid["threads"]', () => {
         variables: { id: comment1.id },
         data: {
           uuid: {
-            object: {
+            legacyObject: {
               id: article.id,
               alias: article.alias,
             },
@@ -369,7 +367,7 @@ describe('uuid["threads"]', () => {
           query object($id: Int!) {
             uuid(id: $id) {
               ... on Comment {
-                object {
+                legacyObject {
                   id
                   alias
                 }
@@ -380,7 +378,7 @@ describe('uuid["threads"]', () => {
         variables: { id: comment2.id },
         data: {
           uuid: {
-            object: {
+            legacyObject: {
               id: article.id,
               alias: article.alias,
             },

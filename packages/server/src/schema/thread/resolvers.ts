@@ -98,7 +98,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       }
       return author
     },
-    async object(comment, _args, { dataSources }) {
+    async legacyObject(comment, _args, { dataSources }) {
       return resolveObject(comment, dataSources)
     },
   },
