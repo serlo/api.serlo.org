@@ -116,6 +116,11 @@ function buildDockerImage({
 }
 
 function getTags(version: string) {
+  if (version.includes('-')) {
+    // Prerelease
+    return ['next', version]
+  }
+
   return [
     'latest',
     semver.major(version),
