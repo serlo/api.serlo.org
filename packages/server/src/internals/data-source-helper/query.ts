@@ -107,14 +107,6 @@ export function createQuery<P, R>(
 }
 
 /**
- * Type guard that a certain object is a query function created by
- * {@link createQuery}.
- */
-export function isQuery(query: unknown): query is Query<unknown, unknown> {
-  return R.has('__typename', query) && query.__typename === 'Query'
-}
-
-/**
  * Specification object to create a query function.
  */
 export interface QuerySpec<Payload, Result> {
@@ -160,21 +152,10 @@ export interface QuerySpec<Payload, Result> {
   getKey: (payload: Payload) => string
 
   /**
-   * The inverse function of {@link geKey}. It shall return `O.none` in case
+   * The inverse function of {@link getKey}. It shall return `O.none` in case
    * the cache key does not belong to this query.
    */
   getPayload: (key: string) => O.Option<Payload>
-}
-
-/**
- * Type of a query operation in a data source. Note that the specification
- * object is extened by some helper functions.
- */
-export type Query<Payload, Result> = (Payload extends undefined
-  ? () => Promise<Result>
-  : (payload: Payload) => Promise<Result>) & {
-  _querySpec: QuerySpecWithHelpers<Payload, Result>
-  __typename: 'Query'
 }
 
 /**
@@ -206,6 +187,25 @@ export interface QuerySpecWithHelpers<Payload, Result>
     customDecoder1: t.Type<S1>,
     customDecoder2: t.Type<S2>
   ): Promise<S2>
+}
+
+/**
+ * Type of a query operation in a data source. Note that the specification
+ * object is extended by some helper functions.
+ */
+export type Query<Payload, Result> = (Payload extends undefined
+  ? () => Promise<Result>
+  : (payload: Payload) => Promise<Result>) & {
+  _querySpec: QuerySpecWithHelpers<Payload, Result>
+  __typename: 'Query'
+}
+
+/**
+ * Type guard that a certain object is a query function created by
+ * {@link createQuery}.
+ */
+export function isQuery(query: unknown): query is Query<unknown, unknown> {
+  return R.has('__typename', query) && query.__typename === 'Query'
 }
 
 type PayloadArrayOrPayload<P> = { payload: P } | { payloads: P[] }
