@@ -484,6 +484,7 @@ export type Comment = AbstractUuid & {
   archived: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
   author: User;
+  legacyObject: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
 };
 
 
@@ -1427,6 +1428,7 @@ export type Query = {
   license?: Maybe<License>;
   notificationEvent?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
   notifications: NotificationConnection;
+  subscription: SubscriptionQuery;
   subscriptions: AbstractUuidConnection;
   uuid?: Maybe<Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision>;
 };
@@ -1718,6 +1720,16 @@ export type SubscriptionMutation = {
 
 export type SubscriptionMutationSetArgs = {
   input: SubscriptionSetInput;
+};
+
+export type SubscriptionQuery = {
+  __typename?: 'SubscriptionQuery';
+  currentUserHasSubscribed: Scalars['Boolean'];
+};
+
+
+export type SubscriptionQueryCurrentUserHasSubscribedArgs = {
+  id: Scalars['Int'];
 };
 
 export type SubscriptionSetInput = {
@@ -2330,6 +2342,7 @@ export type ResolversTypes = {
   SolutionRevisionConnection: ResolverTypeWrapper<ModelOf<SolutionRevisionConnection>>;
   SolutionRevisionCursor: ResolverTypeWrapper<ModelOf<SolutionRevisionCursor>>;
   SubscriptionMutation: ResolverTypeWrapper<ModelOf<SubscriptionMutation>>;
+  SubscriptionQuery: ResolverTypeWrapper<ModelOf<SubscriptionQuery>>;
   SubscriptionSetInput: ResolverTypeWrapper<ModelOf<SubscriptionSetInput>>;
   SubscriptionSetResponse: ResolverTypeWrapper<ModelOf<SubscriptionSetResponse>>;
   TaxonomyTerm: ResolverTypeWrapper<ModelOf<TaxonomyTerm>>;
@@ -2466,6 +2479,7 @@ export type ResolversParentTypes = {
   SolutionRevisionConnection: ModelOf<SolutionRevisionConnection>;
   SolutionRevisionCursor: ModelOf<SolutionRevisionCursor>;
   SubscriptionMutation: ModelOf<SubscriptionMutation>;
+  SubscriptionQuery: ModelOf<SubscriptionQuery>;
   SubscriptionSetInput: ModelOf<SubscriptionSetInput>;
   SubscriptionSetResponse: ModelOf<SubscriptionSetResponse>;
   TaxonomyTerm: ModelOf<TaxonomyTerm>;
@@ -2748,6 +2762,7 @@ export type CommentResolvers<ContextType = Context, ParentType extends Resolvers
   archived?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  legacyObject?: Resolver<ResolversTypes['AbstractUuid'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3266,6 +3281,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   license?: Resolver<Maybe<ResolversTypes['License']>, ParentType, ContextType, RequireFields<QueryLicenseArgs, 'id'>>;
   notificationEvent?: Resolver<Maybe<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType, RequireFields<QueryNotificationEventArgs, 'id'>>;
   notifications?: Resolver<ResolversTypes['NotificationConnection'], ParentType, ContextType, RequireFields<QueryNotificationsArgs, never>>;
+  subscription?: Resolver<ResolversTypes['SubscriptionQuery'], ParentType, ContextType>;
   subscriptions?: Resolver<ResolversTypes['AbstractUuidConnection'], ParentType, ContextType, RequireFields<QuerySubscriptionsArgs, never>>;
   uuid?: Resolver<Maybe<ResolversTypes['AbstractUuid']>, ParentType, ContextType, RequireFields<QueryUuidArgs, never>>;
 };
@@ -3423,6 +3439,11 @@ export type SolutionRevisionCursorResolvers<ContextType = Context, ParentType ex
 
 export type SubscriptionMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionMutation'] = ResolversParentTypes['SubscriptionMutation']> = {
   set?: Resolver<Maybe<ResolversTypes['SubscriptionSetResponse']>, ParentType, ContextType, RequireFields<SubscriptionMutationSetArgs, 'input'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SubscriptionQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionQuery'] = ResolversParentTypes['SubscriptionQuery']> = {
+  currentUserHasSubscribed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<SubscriptionQueryCurrentUserHasSubscribedArgs, 'id'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3727,6 +3748,7 @@ export type Resolvers<ContextType = Context> = {
   SolutionRevisionConnection?: SolutionRevisionConnectionResolvers<ContextType>;
   SolutionRevisionCursor?: SolutionRevisionCursorResolvers<ContextType>;
   SubscriptionMutation?: SubscriptionMutationResolvers<ContextType>;
+  SubscriptionQuery?: SubscriptionQueryResolvers<ContextType>;
   SubscriptionSetResponse?: SubscriptionSetResponseResolvers<ContextType>;
   TaxonomyTerm?: TaxonomyTermResolvers<ContextType>;
   TaxonomyTermConnection?: TaxonomyTermConnectionResolvers<ContextType>;

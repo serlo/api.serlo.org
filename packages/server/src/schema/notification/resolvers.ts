@@ -27,7 +27,7 @@ import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   Context,
-  createMutationNamespace,
+  createNamespace,
   InterfaceResolvers,
   Mutations,
   Queries,
@@ -88,7 +88,7 @@ export const resolvers: TypeResolvers<Notification> &
     },
   },
   Mutation: {
-    notification: createMutationNamespace(),
+    notification: createNamespace(),
   },
   NotificationMutation: {
     async setState(_parent, payload, { dataSources, userId }) {

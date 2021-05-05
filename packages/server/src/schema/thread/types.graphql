@@ -30,6 +30,11 @@ type Comment implements AbstractUuid {
   archived: Boolean!
   createdAt: DateTime!
   author: User!
+  # This property is only temporarily used to redirect requests of individual comments to its object
+  # (Will be deleted when separate Comments module has been deployed)
+  # e.g. Comment with id 35695 -> object: Article with id 1573
+  # see https://github.com/serlo/serlo.org-cloudflare-worker/issues/152
+  legacyObject: AbstractUuid!
 }
 
 interface ThreadAware {
