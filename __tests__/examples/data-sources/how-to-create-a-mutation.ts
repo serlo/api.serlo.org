@@ -29,6 +29,8 @@ import {
 } from '~/internals/data-source-helper/mutation'
 
 describe('How to create a mutation in a data source: update the content of an article', () => {
+  // # Prerequisites
+
   // Lets assume we want to implement a mutation which updates the content of
   // an article. The following object simulates a database whereby the article's
   // contents are indexed by the article's id.
@@ -41,6 +43,9 @@ describe('How to create a mutation in a data source: update the content of an ar
   // the success of the operation in the property `success`.
   let dataSources: {
     database: {
+      // `Mutation<P, R>` is the type a mutation in the data source has. `P`
+      // defines the arguments to the mutation and `R` the result of the
+      // operation.
       updateContent: Mutation<
         { id: number; newContent: string },
         { success: boolean }
@@ -84,6 +89,8 @@ describe('How to create a mutation in a data source: update the content of an ar
 
     dataSources = {
       database: {
+        // # The actual code example to create a mutation
+
         // Here we create the mutation with the helper function
         // `createMutation()`
         updateContent: createMutation({
@@ -93,10 +100,13 @@ describe('How to create a mutation in a data source: update the content of an ar
           // does something weired.
           decoder: t.strict({ success: t.boolean }),
 
-          // Function which does the actual mutation
+          // Function which does the actual mutation. Since we will need to wait
+          // until the fetch completes we use "async" here + "await" in the
+          // function body. The type `{ id: number, newContent: string }`
+          // defines the arguments for this function.
           async mutate({ id, newContent }: { id: number; newContent: string }) {
             // Call to the API of the database to update the content of the
-            // article
+            // article. We use "await" to wait until the fetch completes.
             const url = `http://database-api.serlo.org/articles/${id}`
             const res = await fetch(url, {
               method: 'PUT',
@@ -119,9 +129,12 @@ describe('How to create a mutation in a data source: update the content of an ar
     }
   })
 
-  describe('via calling the created mutation function the content of an article can be updated', () => {
-    test('when the article exists (mutaion was successfull)', async () => {
-      // We call the mutation function to update an article
+  // How the created mutation can be used
+  // ====================================
+  describe('calling the created mutation will execute the mutation', () => {
+    test('case when the article exists (mutation was successfull)', async () => {
+      // We call the mutation function to update an article (here we use "await"
+      // to wait until the mutation completes)
       const result = await dataSources.database.updateContent({
         id: 42,
         newContent: 'new content',
@@ -134,7 +147,7 @@ describe('How to create a mutation in a data source: update the content of an ar
       expect(contentDatabase[42]).toBe('new content')
     })
 
-    test('when the article does not exist (mutation was not successfull)', async () => {
+    test('case when the article does not exist (mutation was not successfull)', async () => {
       // Lets do a mutation for a non existing article
       const result = await dataSources.database.updateContent({
         id: 23,
