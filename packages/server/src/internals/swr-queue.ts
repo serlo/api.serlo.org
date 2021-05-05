@@ -108,7 +108,13 @@ export function createSwrQueue({
 
       // By setting the job's ID, we make sure that there will be only one update job for the same key
       // See also https://github.com/bee-queue/bee-queue#jobsetidid
-      const job = await queue.createJob(updateJob).setId(updateJob.key).save()
+      const job = await queue
+        .createJob(updateJob)
+        .setId(updateJob.key)
+        .timeout(60000)
+        .retries(5)
+        .backoff('exponential', 10000)
+        .save()
 
       job.on('failed', (err) => {
         log.error(`Job ${job.id} failed with error ${err.message}`)
