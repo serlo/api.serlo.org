@@ -32,7 +32,7 @@ import { AsyncOrSync } from '~/utils'
  *
  * const removeObject = createMutation({
  *   // Decoder to check the returned result in runtime.
- *   // Here does the mutation returns the type `{ success: boolean }`.
+ *   // Here the mutation returns the type `{ success: boolean }`.
  *   decoder: t.strict({ success: t.boolean }),
  *
  *   // function which executes the necessary requests for the mutation

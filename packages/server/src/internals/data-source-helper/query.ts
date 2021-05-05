@@ -160,7 +160,7 @@ export interface QuerySpec<Payload, Result> {
   getKey: (payload: Payload) => string
 
   /**
-   * The inverse function of {@link geKey}. It shall return `O.none` in case
+   * The inverse function of {@link getKey}. It shall return `O.none` in case
    * the cache key does not belong to this query.
    */
   getPayload: (key: string) => O.Option<Payload>
@@ -168,7 +168,7 @@ export interface QuerySpec<Payload, Result> {
 
 /**
  * Type of a query operation in a data source. Note that the specification
- * object is extened by some helper functions.
+ * object is extended by some helper functions.
  */
 export type Query<Payload, Result> = (Payload extends undefined
   ? () => Promise<Result>
