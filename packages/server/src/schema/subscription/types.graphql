@@ -5,10 +5,15 @@ extend type Query {
     first: Int
     last: Int
   ): AbstractUuidConnection!
+  subscription: SubscriptionQuery!
 }
 
 extend type Mutation {
   subscription: SubscriptionMutation!
+}
+
+type SubscriptionQuery {
+  currentUserHasSubscribed(id: Int!): Boolean!
 }
 
 type SubscriptionMutation {

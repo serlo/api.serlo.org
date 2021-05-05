@@ -66,7 +66,7 @@ function fromGuardRequest(guardRequest: GuardRequest): AuthorizationGuard[] {
     : [guardRequest.guard]
 }
 
-export function createMutationNamespace() {
+export function createNamespace() {
   return () => {
     return {}
   }
