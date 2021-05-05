@@ -23,6 +23,14 @@ type TaxonomyTerm implements AbstractUuid & AbstractNavigationChild & InstanceAw
     archived: Boolean
     trashed: Boolean
   ): ThreadsConnection!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
   type: TaxonomyTermType!
   instance: Instance!
   alias: String

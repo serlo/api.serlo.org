@@ -41,7 +41,10 @@ export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
   revisionDecoder,
 }: {
   revisionDecoder: t.Type<R>
-}): PickResolvers<'AbstractRepository', 'alias' | 'threads' | 'license'> & {
+}): PickResolvers<
+  'AbstractRepository',
+  'alias' | 'threads' | 'license' | 'events'
+> & {
   currentRevision: ResolverFunction<R | null, Repository<R['__typename']>>
   revisions: ResolverFunction<
     Connection<R>,
@@ -99,7 +102,10 @@ export function createRevisionResolvers<E extends Model<'AbstractRepository'>>({
   repositoryDecoder,
 }: {
   repositoryDecoder: t.Type<E>
-}): PickResolvers<'AbstractRevision', 'alias' | 'threads' | 'author'> & {
+}): PickResolvers<
+  'AbstractRevision',
+  'alias' | 'threads' | 'author' | 'events'
+> & {
   repository: ResolverFunction<E, Revision<E['__typename']>>
 } {
   return {

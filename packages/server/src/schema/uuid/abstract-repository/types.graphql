@@ -3,6 +3,14 @@ interface AbstractRepository {
   id: Int!
   trashed: Boolean!
   alias: String
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
 
   # extends ThreadAware
   threads(
@@ -26,6 +34,14 @@ interface AbstractRevision {
   id: Int!
   trashed: Boolean!
   alias: String
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
 
   # extends ThreadAware
   threads(

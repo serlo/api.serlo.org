@@ -26,12 +26,14 @@ import { decodeThreadId, decodeThreadIds, encodeThreadId } from './utils'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
-  createMutationNamespace,
+  createNamespace,
   InterfaceResolvers,
   Mutations,
   TypeResolvers,
+  Model,
+  Context,
 } from '~/internals/graphql'
-import { UserDecoder } from '~/model/decoder'
+import { DiscriminatorType, UserDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
@@ -96,9 +98,12 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       }
       return author
     },
+    async legacyObject(comment, _args, { dataSources }) {
+      return resolveObject(comment, dataSources)
+    },
   },
   Mutation: {
-    thread: createMutationNamespace(),
+    thread: createNamespace(),
   },
   ThreadMutation: {
     async createThread(_parent, payload, { dataSources, userId }) {
@@ -229,4 +234,20 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       }
     },
   },
+}
+
+async function resolveObject(
+  comment: Model<'Comment'>,
+  dataSources: Context['dataSources']
+): Promise<Model<'AbstractUuid'>> {
+  const obj = await dataSources.model.serlo.getUuid({
+    id: comment.parentId,
+  })
+  if (obj === null) {
+    throw new ApolloError('Comment points to non-existent uuid')
+  }
+  if (obj.__typename === DiscriminatorType.Comment) {
+    return resolveObject(obj, dataSources)
+  }
+  return obj
 }

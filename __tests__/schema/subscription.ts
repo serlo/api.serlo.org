@@ -57,6 +57,46 @@ describe('subscriptions', () => {
       client,
     })
   })
+
+  test('currentUserHasSubscribed (true case)', async () => {
+    const client = createTestClient({ userId: user.id })
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query subscription($id: Int!) {
+          subscription {
+            currentUserHasSubscribed(id: $id)
+          }
+        }
+      `,
+      variables: { id: article.id },
+      data: {
+        subscription: {
+          currentUserHasSubscribed: true,
+        },
+      },
+      client,
+    })
+  })
+
+  test('currentUserHasSubscribed (false case)', async () => {
+    const client = createTestClient({ userId: user.id })
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query subscription($id: Int!) {
+          subscription {
+            currentUserHasSubscribed(id: $id)
+          }
+        }
+      `,
+      variables: { id: article.id + 1 },
+      data: {
+        subscription: {
+          currentUserHasSubscribed: false,
+        },
+      },
+      client,
+    })
+  })
 })
 
 describe('subscription mutation set', () => {

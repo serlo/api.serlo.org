@@ -1,6 +1,14 @@
 type Applet implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware {
   id: Int!
   trashed: Boolean!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
   threads(
     after: String
     before: String
@@ -34,6 +42,14 @@ type AppletRevision implements AbstractUuid & AbstractRevision & AbstractEntityR
   author: User!
   trashed: Boolean!
   alias: String
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
   threads(
     after: String
     before: String
