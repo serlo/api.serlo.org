@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
-import { rest } from 'msw'
 import R from 'ramda'
 
 import {
@@ -38,7 +37,7 @@ import {
   createMessageHandler,
   createTestClient,
   createUuidHandler,
-  getDatabaseLayerUrl,
+  createDatabaseLayerHandler,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { Instance } from '~/types'
@@ -461,11 +460,16 @@ export function mockEndpointsForThreads(
   )
 
   function createThreadHandlers() {
-    const handler = rest.post(
-      getDatabaseLayerUrl({ path: '/' }),
-      (req, res, ctx) => {
-        if (typeof req.body !== 'object') return res(ctx.status(404))
-        const id = Number((req.body.payload as { id?: unknown }).id)
+    return createDatabaseLayerHandler<{ id: number }>({
+      matchType: 'UuidQuery',
+      matchPayloads: threads
+        .flat<Model<'AbstractUuid'>>()
+        .concat([uuidPayload])
+        .map((comment) => {
+          return { id: comment.id }
+        }),
+      resolver(req, res, ctx) {
+        const id = req.body.payload.id
 
         if (id === uuidPayload.id) return res(ctx.json(uuidPayload))
 
@@ -493,31 +497,7 @@ export function mockEndpointsForThreads(
               }
 
         return res(ctx.json(payload))
-      }
-    )
-
-    // Only use this handler if message matches
-    handler.predicate = (req) => {
-      const { body } = req
-      const validIds = [
-        uuidPayload.id,
-        ...R.flatten(
-          threads.map((thread) => {
-            return thread.map((comment) => comment.id)
-          })
-        ),
-      ]
-      const validMessages = validIds.map((id) => {
-        return {
-          type: 'UuidQuery',
-          payload: {
-            id,
-          },
-        }
-      })
-      return validMessages.some((message) => R.equals(message, body))
-    }
-
-    return handler
+      },
+    })
   }
 }

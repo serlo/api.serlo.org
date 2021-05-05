@@ -2,6 +2,14 @@ interface AbstractUuid {
   id: Int!
   trashed: Boolean!
   alias: String
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
 }
 
 type AbstractUuidConnection {

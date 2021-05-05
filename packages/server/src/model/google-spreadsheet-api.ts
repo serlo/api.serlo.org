@@ -29,7 +29,7 @@ import { URL } from 'url'
 
 import { Environment } from '~/internals/environment'
 import { addContext, ErrorEvent } from '~/internals/error-event'
-import { createQuery, ModelQuery } from '~/internals/model'
+import { createQuery } from '~/internals/model'
 
 export enum MajorDimension {
   Rows = 'ROWS',
@@ -63,10 +63,7 @@ export function createGoogleSpreadsheetApiModel({
 }: {
   environment: Environment
 }) {
-  const getValues: ModelQuery<
-    Arguments,
-    E.Either<ErrorEvent, CellValues>
-  > = createQuery(
+  const getValues = createQuery<Arguments, E.Either<ErrorEvent, CellValues>>(
     {
       enableSwr: true,
       getCurrentValue: async (args) => {
