@@ -26,7 +26,7 @@ import { decodeThreadId, decodeThreadIds, encodeThreadId } from './utils'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
-  createMutationNamespace,
+  createNamespace,
   InterfaceResolvers,
   Mutations,
   TypeResolvers,
@@ -98,7 +98,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
     },
   },
   Mutation: {
-    thread: createMutationNamespace(),
+    thread: createNamespace(),
   },
   ThreadMutation: {
     async createThread(_parent, payload, { dataSources, userId }) {
