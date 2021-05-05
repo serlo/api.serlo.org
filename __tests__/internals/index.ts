@@ -19,36 +19,40 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { GraphQLResolveInfo } from 'graphql'
+import { gql } from 'apollo-server'
 
-import { Context } from './context'
-import { Query } from '~/types'
-import { AsyncOrSync } from '~/utils'
+import {
+  assertErrorEvent,
+  assertFailingGraphQLQuery,
+  createMessageHandler,
+  createTestClient,
+} from '../__utils__'
 
-export type LegacyResolver<P, A, T> = (
-  parent: P,
-  args: A,
-  context: Context,
-  info: GraphQLResolveInfo
-) => AsyncOrSync<T>
+test('invalid values are reported to sentry', async () => {
+  const client = createTestClient()
+  const invalidValue = { __typename: 'Article', invalid: 'this in invalid' }
 
-export type QueryResolver<A, T> = LegacyResolver<never, A, T>
-export type MutationResolver<A, T> = LegacyResolver<
-  never,
-  A,
-  T extends { query: Query }
-    ? Omit<T, 'query'> & { query: Record<string, never> }
-    : T
->
+  global.server.use(
+    createMessageHandler({
+      message: { type: 'UuidQuery', payload: { id: 42 } },
+      body: invalidValue,
+    })
+  )
 
-export interface MutationResponse {
-  success: boolean
-  query: Record<string, never>
-}
-export interface MutationResponseWithRecord<R> extends MutationResponse {
-  record: R
-}
+  await assertFailingGraphQLQuery({
+    query: gql`
+      query($id: Int!) {
+        uuid(id: $id) {
+          __typename
+        }
+      }
+    `,
+    variables: { id: 42 },
+    client,
+  })
 
-export type TypeResolver<T> = (type: T) => string
-
-export type MutationNamespace = MutationResolver<never, Record<string, never>>
+  await assertErrorEvent({
+    message: 'Invalid value received from a data source.',
+    errorContext: { invalidValue },
+  })
+})

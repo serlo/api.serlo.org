@@ -1,7 +1,17 @@
 interface AbstractEntity {
-  # extends AbstractRepository
+  # extends AbstractUuid
   id: Int!
   trashed: Boolean!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
+
+  # extends AbstractRepository
   date: DateTime!
   instance: Instance!
   alias: String
@@ -12,6 +22,14 @@ interface AbstractEntityRevision {
   # extends AbstractUuid
   id: Int!
   trashed: Boolean!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
 
   # extends AbstractRevision
   author: User!

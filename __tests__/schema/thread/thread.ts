@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
-import { rest } from 'msw'
 import R from 'ramda'
 
 import {
@@ -34,14 +33,12 @@ import {
 import {
   assertSuccessfulGraphQLQuery,
   Client,
-  createAliasHandler,
   createMessageHandler,
   createTestClient,
   createUuidHandler,
-  getDatabaseLayerUrl,
+  createDatabaseLayerHandler,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
-import { Instance } from '~/types'
 
 let client: Client
 
@@ -287,6 +284,28 @@ describe('uuid["threads"]', () => {
     })
   })
 
+  test('property "trashed" of Thread', async () => {
+    mockEndpointsForThreads(article, [[comment1, comment2]])
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query propertyArchived($id: Int!) {
+          uuid(id: $id) {
+            ... on ThreadAware {
+              threads {
+                nodes {
+                  trashed
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: { id: article.id },
+      data: { uuid: { threads: { nodes: [{ trashed: false }] } } },
+      client,
+    })
+  })
+
   test('property "object" of Thread', async () => {
     mockEndpointsForThreads(article, [[comment1, comment2]])
     await assertSuccessfulGraphQLQuery({
@@ -311,38 +330,59 @@ describe('uuid["threads"]', () => {
     })
   })
 
-  describe('endpoint uuid() will not give back comment on its own', () => {
-    test('when requested via id', async () => {
-      global.server.use(createUuidHandler(comment1))
+  describe('property "object" of Comment', () => {
+    test('1-level comment', async () => {
+      mockEndpointsForThreads(article, [[comment1]])
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query comments($id: Int!) {
             uuid(id: $id) {
-              __typename
+              ... on Comment {
+                legacyObject {
+                  id
+                  alias
+                }
+              }
             }
           }
         `,
         variables: { id: comment1.id },
-        data: { uuid: null },
+        data: {
+          uuid: {
+            legacyObject: {
+              id: article.id,
+              alias: article.alias,
+            },
+          },
+        },
         client,
       })
     })
 
-    test('when requested via alias', async () => {
-      const aliasInput = { path: comment.alias ?? '', instance: Instance.De }
-      global.server.use(createUuidHandler(comment))
-      global.server.use(createAliasHandler({ ...aliasInput, id: comment.id }))
-
+    test('2-level comment', async () => {
+      mockEndpointsForThreads(article, [[comment1, comment2]])
       await assertSuccessfulGraphQLQuery({
         query: gql`
-          query comments($alias: AliasInput!) {
-            uuid(alias: $alias) {
-              __typename
+          query object($id: Int!) {
+            uuid(id: $id) {
+              ... on Comment {
+                legacyObject {
+                  id
+                  alias
+                }
+              }
             }
           }
         `,
-        variables: { alias: aliasInput },
-        data: { uuid: null },
+        variables: { id: comment2.id },
+        data: {
+          uuid: {
+            legacyObject: {
+              id: article.id,
+              alias: article.alias,
+            },
+          },
+        },
         client,
       })
     })
@@ -439,11 +479,16 @@ export function mockEndpointsForThreads(
   )
 
   function createThreadHandlers() {
-    const handler = rest.post(
-      getDatabaseLayerUrl({ path: '/' }),
-      (req, res, ctx) => {
-        if (typeof req.body !== 'object') return res(ctx.status(404))
-        const id = Number((req.body.payload as { id?: unknown }).id)
+    return createDatabaseLayerHandler<{ id: number }>({
+      matchType: 'UuidQuery',
+      matchPayloads: threads
+        .flat<Model<'AbstractUuid'>>()
+        .concat([uuidPayload])
+        .map((comment) => {
+          return { id: comment.id }
+        }),
+      resolver(req, res, ctx) {
+        const id = req.body.payload.id
 
         if (id === uuidPayload.id) return res(ctx.json(uuidPayload))
 
@@ -471,31 +516,7 @@ export function mockEndpointsForThreads(
               }
 
         return res(ctx.json(payload))
-      }
-    )
-
-    // Only use this handler if message matches
-    handler.predicate = (req) => {
-      const { body } = req
-      const validIds = [
-        uuidPayload.id,
-        ...R.flatten(
-          threads.map((thread) => {
-            return thread.map((comment) => comment.id)
-          })
-        ),
-      ]
-      const validMessages = validIds.map((id) => {
-        return {
-          type: 'UuidQuery',
-          payload: {
-            id,
-          },
-        }
-      })
-      return validMessages.some((message) => R.equals(message, body))
-    }
-
-    return handler
+      },
+    })
   }
 }

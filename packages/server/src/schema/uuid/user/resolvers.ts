@@ -29,16 +29,16 @@ import {
   consumeErrorEvent,
   ErrorEvent,
 } from '~/internals/error-event'
-import { Context, Queries, TypeResolvers } from '~/internals/graphql'
-import { UserDecoder } from '~/model/decoder'
+import { Context, Model, Queries, TypeResolvers } from '~/internals/graphql'
+import { DiscriminatorType } from '~/model/decoder'
 import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
 import { resolveScopedRoles } from '~/schema/authorization/utils'
 import { ConnectionPayload } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
+import { resolveEvents } from '~/schema/notification/resolvers'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { User } from '~/types'
-import { isDefined } from '~/utils'
 
 export const resolvers: Queries<
   'activeAuthors' | 'activeReviewers' | 'activeDonors'
@@ -70,6 +70,12 @@ export const resolvers: Queries<
   User: {
     ...createUuidResolvers(),
     ...createThreadResolvers(),
+    eventsByUser(user, payload, { dataSources }) {
+      return resolveEvents({
+        payload: { ...payload, actorId: user.id },
+        dataSources,
+      })
+    },
     async activeAuthor(user, _args, { dataSources }) {
       return (await dataSources.model.serlo.getActiveAuthorIds()).includes(
         user.id
@@ -107,19 +113,17 @@ async function resolveUserConnectionFromIds({
   context: Context
 }) {
   const uuids = await Promise.all(
-    ids.map(async (id) => {
-      try {
-        return await context.dataSources.model.serlo.getUuidWithCustomDecoder({
-          id,
-          decoder: UserDecoder,
-        })
-      } catch (e) {
-        return null
-      }
-    })
+    ids.map(async (id) => context.dataSources.model.serlo.getUuid({ id }))
   )
+  const users = assertAll({
+    assertion(uuid: Model<'AbstractUuid'> | null): uuid is Model<'User'> {
+      return uuid !== null && uuid.__typename == DiscriminatorType.User
+    },
+    error: new Error('Invalid user found'),
+  })(uuids)
+
   return resolveConnection({
-    nodes: uuids.filter(isDefined),
+    nodes: users,
     payload,
     createCursor(node) {
       return node.id.toString()

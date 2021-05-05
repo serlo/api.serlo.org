@@ -19,9 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { rest } from 'msw'
+import { MockedRequest, rest } from 'msw'
 import * as R from 'ramda'
 
+import { RestResolver } from './services'
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model/types'
 
@@ -91,40 +92,62 @@ export function createUuidHandler(uuid: Model<'AbstractUuid'>, once?: boolean) {
 
 export function createMessageHandler(
   args: {
-    message: {
-      type: string
-      payload?: Record<string, unknown>
-    }
+    message: MessagePayload
     body?: unknown
     statusCode?: number
   },
   once = false
 ) {
-  const { message, body } = args
+  const { message, body, statusCode } = args
 
-  const handler = rest.post(
-    getDatabaseLayerUrl({ path: '/' }),
-    (_req, res, ctx) => {
+  return createDatabaseLayerHandler({
+    matchType: message.type,
+    matchPayloads:
+      message.payload === undefined ? undefined : [message.payload],
+    resolver: (_req, res, ctx) => {
       return (once ? res.once : res)(
-        ctx.status(args.statusCode ?? 200),
+        ctx.status(statusCode ?? 200),
         ...(body === undefined
           ? []
           : [ctx.json(body as Record<string, unknown>)])
       )
-    }
-  )
+    },
+  })
+}
+
+export function createDatabaseLayerHandler<
+  Payload = DefaultPayloadType,
+  BodyType extends Required<MessagePayload<Payload>> = Required<
+    MessagePayload<Payload>
+  >
+>(args: {
+  matchType: string
+  matchPayloads?: Payload[]
+  resolver: RestResolver<BodyType>
+}) {
+  const { matchType, matchPayloads, resolver } = args
+
+  const handler = rest.post(getDatabaseLayerUrl({ path: '/' }), resolver)
 
   // Only use this handler if message matches
-  handler.predicate = (req) => {
-    return R.equals(req.body, message)
-  }
+  handler.predicate = (req: MockedRequest<BodyType>) =>
+    req?.body?.type === matchType &&
+    (matchPayloads === undefined ||
+      matchPayloads.some((payload) => R.equals(req.body.payload, payload)))
 
   return handler
 }
 
-export function getDatabaseLayerUrl({ path }: { path: string }) {
+function getDatabaseLayerUrl({ path }: { path: string }) {
   return `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`
 }
+
+interface MessagePayload<Payload = DefaultPayloadType> {
+  type: string
+  payload?: Payload
+}
+
+type DefaultPayloadType = Record<string, unknown>
 
 export function createSpreadsheetHandler({
   spreadsheetId,

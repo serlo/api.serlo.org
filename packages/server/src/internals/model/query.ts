@@ -27,12 +27,17 @@ import { FunctionOrValue } from '../cache'
 import { Environment } from '../environment'
 import { Time } from '../swr-queue'
 
+export interface RequestSpec<P, R> {
+  decoder: t.Type<R>
+  getCurrentValue: (payload: P) => Promise<unknown>
+}
+
 export interface QuerySpec<P, R> {
   // TODO: this should probably be required
   decoder?: t.Type<R>
+  getCurrentValue: (payload: P, previousValue: R | null) => Promise<R | unknown>
   enableSwr: boolean
   swrFrequency?: number
-  getCurrentValue: (payload: P, previousValue: R | null) => Promise<R | unknown>
   maxAge: Time | undefined
   getKey: (payload: P) => string
   getPayload: (key: string) => O.Option<P>
@@ -55,10 +60,33 @@ export interface QuerySpecWithHelpers<P, R> extends QuerySpec<P, R> {
 
 export type PayloadArrayOrPayload<P> = { payload: P } | { payloads: P[] }
 
+export type ModelRequest<P, R> = ((payload: P) => Promise<R>) & {
+  _querySpec: RequestSpec<P, R>
+}
+
 export type ModelQuery<P, R> = (P extends undefined
   ? () => Promise<R>
   : (payload: P) => Promise<R>) & {
   _querySpec: QuerySpecWithHelpers<P, R>
+  __typename: 'CachedQuery'
+}
+
+export function createRequest<P, R>(
+  spec: RequestSpec<P, R>
+): ModelRequest<P, R> {
+  async function query(payload: P) {
+    const value = await spec.getCurrentValue(payload)
+
+    if (spec.decoder.is(value)) {
+      return value
+    } else {
+      throw new Error('Illegal Value received')
+    }
+  }
+
+  query._querySpec = spec
+
+  return query
 }
 
 export function createQuery<P, R>(
@@ -103,9 +131,9 @@ export function createQuery<P, R>(
         value,
       })
       return value as S
+    } else {
+      throw new InvalidValueError(value)
     }
-
-    throw new Error(`Invalid value: ${JSON.stringify(value)}`)
   }
 
   async function queryWithDecoders<S2 extends R, S1 extends S2>(
@@ -141,12 +169,19 @@ export function createQuery<P, R>(
   }
 
   query._querySpec = querySpecWithHelpers
+  query.__typename = 'CachedQuery'
 
   return (query as unknown) as ModelQuery<P, R>
 }
 
+export class InvalidValueError extends Error {
+  constructor(public invalidValue: unknown) {
+    super('Invalid value received from a data source.')
+  }
+}
+
 export function isQuery(query: unknown): query is ModelQuery<unknown, unknown> {
-  return R.has('_querySpec', query) && query._querySpec !== undefined
+  return R.has('__typename', query) && query.__typename === 'CachedQuery'
 }
 
 function toPayloadArray<P>(arg: PayloadArrayOrPayload<P>): P[] {
