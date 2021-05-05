@@ -20,11 +20,13 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as auth from '@serlo/authorization'
-import { ForbiddenError } from 'apollo-server'
+import { ForbiddenError, UserInputError } from 'apollo-server'
+import R from 'ramda'
 
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
+  Context,
   createNamespace,
   InterfaceResolvers,
   Mutations,
@@ -33,12 +35,12 @@ import {
 } from '~/internals/graphql'
 import { fetchScopeOfNotificationEvent } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
-import { Notification } from '~/types'
+import { Notification, QueryEventsArgs } from '~/types'
 import { isDefined } from '~/utils'
 
 export const resolvers: TypeResolvers<Notification> &
   InterfaceResolvers<'AbstractNotificationEvent'> &
-  Queries<'notifications' | 'notificationEvent'> &
+  Queries<'events' | 'notifications' | 'notificationEvent'> &
   Mutations<'notification'> = {
   AbstractNotificationEvent: {
     __resolveType(notificationEvent) {
@@ -57,6 +59,9 @@ export const resolvers: TypeResolvers<Notification> &
     },
   },
   Query: {
+    events(_parent, payload, { dataSources }) {
+      return resolveEvents({ payload, dataSources })
+    },
     async notifications(
       _parent,
       { unread, ...cursorPayload },
@@ -124,4 +129,52 @@ export const resolvers: TypeResolvers<Notification> &
       return { success: true, query: {} }
     },
   },
+}
+
+export async function resolveEvents({
+  payload,
+  dataSources,
+}: {
+  payload: QueryEventsArgs
+  dataSources: Context['dataSources']
+}) {
+  if (isDefined(payload.first) && payload.first > 100)
+    throw new UserInputError('first must be smaller or equal 100')
+  if (isDefined(payload.last) && payload.last > 100)
+    throw new UserInputError('last must be smaller or equal 100')
+
+  const maxReturn = 100
+  let { first, last } = payload
+
+  if (isDefined(first)) {
+    first = Math.min(maxReturn, first)
+  } else if (isDefined(last)) {
+    last = Math.min(maxReturn, last)
+  } else {
+    first = maxReturn
+  }
+
+  const unfilteredEvents = await dataSources.model.serlo.getEvents()
+  const events = unfilteredEvents.filter((event) => {
+    if (isDefined(payload.actorId) && payload.actorId !== event.actorId)
+      return false
+    if (isDefined(payload.instance) && payload.instance !== event.instance)
+      return false
+    if (isDefined(payload.objectId) && payload.objectId !== event.objectId)
+      return false
+
+    return true
+  })
+
+  return resolveConnection({
+    nodes: events,
+    payload: {
+      ...payload,
+      first:
+        R.isNil(payload.first) && R.isNil(payload.last) ? 100 : payload.first,
+    },
+    createCursor(node) {
+      return node.id.toString()
+    },
+  })
 }

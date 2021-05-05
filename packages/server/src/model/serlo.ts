@@ -36,7 +36,7 @@ import {
 } from './decoder'
 import { Environment } from '~/internals/environment'
 import { Model } from '~/internals/graphql'
-import { createMutation, createQuery, ModelQuery } from '~/internals/model'
+import { createMutation, createQuery, createRequest } from '~/internals/model'
 import { isInstance } from '~/schema/instance/utils'
 import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
 import { isUnsupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
@@ -154,7 +154,7 @@ export function createSerloModel({
     },
   })
 
-  const getActiveAuthorIds: ModelQuery<undefined, number[]> = createQuery(
+  const getActiveAuthorIds = createQuery<undefined, number[]>(
     {
       enableSwr: true,
       getCurrentValue: async () => {
@@ -398,6 +398,49 @@ export function createSerloModel({
           ? O.some({ id: parseInt(key.replace(prefix, ''), 10) })
           : O.none
       },
+    },
+    environment
+  )
+
+  const getNewEvents = createRequest({
+    decoder: t.type({ events: t.array(NotificationEventDecoder) }),
+    async getCurrentValue(payload: { after?: number }) {
+      return await handleMessage({
+        message: { type: 'EventsQuery', payload },
+        expectedStatusCodes: [200],
+      })
+    },
+  })
+
+  const getEvents = createQuery<
+    undefined,
+    Model<'AbstractNotificationEvent'>[]
+  >(
+    {
+      decoder: t.array(NotificationEventDecoder),
+      async getCurrentValue(_payload, current) {
+        current ??= []
+        const lastEvent = R.last(current)
+        const payload = lastEvent === undefined ? {} : { after: lastEvent.id }
+        const updateEvents = await getNewEvents(payload)
+
+        if (updateEvents.events.length === 0) {
+          return current
+        } else {
+          return this.getCurrentValue(
+            undefined,
+            current.concat(updateEvents.events)
+          )
+        }
+      },
+      getKey() {
+        return 'de.serlo.org/events'
+      },
+      getPayload(key: string) {
+        return key === 'de.serlo.org/events' ? O.some(undefined) : O.none
+      },
+      enableSwr: true,
+      maxAge: { minute: 2 },
     },
     environment
   )
@@ -694,6 +737,7 @@ export function createSerloModel({
     getNavigationPayload,
     getNavigation,
     getNotificationEvent,
+    getEvents,
     getNotifications,
     getSubscriptions,
     setSubscription,

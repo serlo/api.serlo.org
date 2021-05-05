@@ -9,6 +9,14 @@ type Exercise implements AbstractUuid & AbstractRepository & AbstractEntity & Ab
     archived: Boolean
     trashed: Boolean
   ): ThreadsConnection!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
   instance: Instance!
   alias: String
   date: DateTime!
@@ -43,6 +51,14 @@ type ExerciseRevision implements AbstractUuid & AbstractRevision & AbstractEntit
     archived: Boolean
     trashed: Boolean
   ): ThreadsConnection!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
   date: DateTime!
   repository: Exercise!
   content: String!
