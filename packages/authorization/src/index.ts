@@ -36,10 +36,26 @@ export function instanceToScope(instance: Instance | null): Scope {
 }
 
 export enum Permission {
+  Entity_SetLicense = 'entity:setLicense',
+  Entity_AddChild = 'entity:addChild',
+  Entity_RemoveChild = 'entity:removeChild',
+  Entity_OrderChildren = 'entity:orderChildren',
+  File_Create = 'file:create',
+  File_Delete = 'file:delete',
+  License_Create = 'license:create',
+  License_Delete = 'license:delete',
+  License_Set = 'license:set',
   Notification_SetState = 'notification:setState',
+  Page_Set = 'page:set',
   Subscription_Set = 'subscription:set',
+  TaxonomyTerm_AddChild = 'taxonomyTerm:addChild',
+  TaxonomyTerm_RemoveChild = 'taxonomyTerm:removeChild',
+  TaxonomyTerm_OrderChildren = 'taxonomyTerm:orderChildren',
+  TaxonomyTerm_Set = 'taxonomyTerm:set',
   Thread_CreateThread = 'thread:createThread',
   Thread_CreateComment = 'thread:createComment',
+  Thread_DeleteThread = 'thread:deleteThread',
+  Thread_DeleteComment = 'thread:deleteComment',
   Thread_SetThreadArchived = 'thread:setThreadArchived',
   Thread_SetThreadState = 'thread:setThreadState',
   Thread_SetCommentState = 'thread:setCommentState',
@@ -48,6 +64,11 @@ export enum Permission {
   Uuid_Create_Page = 'uuid:create:page',
   Uuid_Create_PageRevision = 'uuid:create:pageRevision',
   Uuid_Create_TaxonomyTerm = 'uuid:create:taxonomyTerm',
+  Uuid_Delete_Entity = 'uuid:delete:entity',
+  Uuid_Delete_EntityRevision = 'uuid:delete:entityRevision',
+  Uuid_Delete_Page = 'uuid:delete:page',
+  Uuid_Delete_PageRevision = 'uuid:delete:pageRevision',
+  Uuid_Delete_TaxonomyTerm = 'uuid:delete:taxonomyTerm',
   Uuid_SetState_Entity = 'uuid:setState:entity',
   Uuid_SetState_EntityRevision = 'uuid:setState:entityRevision',
   Uuid_SetState_Page = 'uuid:setState:page',
@@ -73,17 +94,48 @@ function createPermissionGuard(
   }
 }
 
+export const Entity = {
+  setLicense: createPermissionGuard(Permission.Entity_SetLicense),
+  addChild: createPermissionGuard(Permission.Entity_AddChild),
+  removeChild: createPermissionGuard(Permission.Entity_RemoveChild),
+  orderChildren: createPermissionGuard(Permission.Entity_OrderChildren),
+}
+
+export const File = {
+  create: createPermissionGuard(Permission.File_Create),
+  delete: createPermissionGuard(Permission.File_Delete),
+}
+
+export const License = {
+  create: createPermissionGuard(Permission.License_Create),
+  delete: createPermissionGuard(Permission.License_Delete),
+  set: createPermissionGuard(Permission.License_Set),
+}
+
 export const Notification = {
   setState: createPermissionGuard(Permission.Notification_SetState),
+}
+
+export const Page = {
+  set: createPermissionGuard(Permission.Page_Set),
 }
 
 export const Subscription = {
   set: createPermissionGuard(Permission.Subscription_Set),
 }
 
+export const TaxonomyTerm = {
+  addChild: createPermissionGuard(Permission.TaxonomyTerm_AddChild),
+  removeChild: createPermissionGuard(Permission.TaxonomyTerm_RemoveChild),
+  orderChildren: createPermissionGuard(Permission.TaxonomyTerm_OrderChildren),
+  set: createPermissionGuard(Permission.TaxonomyTerm_Set),
+}
+
 export const Thread = {
   createThread: createPermissionGuard(Permission.Thread_CreateThread),
   createComment: createPermissionGuard(Permission.Thread_CreateComment),
+  deleteThread: createPermissionGuard(Permission.Thread_DeleteThread),
+  deleteComment: createPermissionGuard(Permission.Thread_DeleteComment),
   setThreadArchived: createPermissionGuard(Permission.Thread_SetThreadArchived),
   setThreadState: createPermissionGuard(Permission.Thread_SetThreadState),
   setCommentState: createPermissionGuard(Permission.Thread_SetCommentState),
@@ -112,6 +164,30 @@ export const Uuid = {
           return checkPermission(Permission.Uuid_Create_PageRevision)
         case 'TaxonomyTerm':
           return checkPermission(Permission.Uuid_Create_TaxonomyTerm)
+        case 'User':
+          return false
+        default:
+          return false
+      }
+
+      function checkPermission(permission: Permission) {
+        return createPermissionGuard(permission)(scope)(authorizationPayload)
+      }
+    }
+  },
+  delete: (type: UuidType): GenericAuthorizationGuard => {
+    return (scope) => (authorizationPayload) => {
+      switch (type) {
+        case 'Entity':
+          return checkPermission(Permission.Uuid_Delete_Entity)
+        case 'EntityRevision':
+          return checkPermission(Permission.Uuid_Delete_EntityRevision)
+        case 'Page':
+          return checkPermission(Permission.Uuid_Delete_Page)
+        case 'PageRevision':
+          return checkPermission(Permission.Uuid_Delete_PageRevision)
+        case 'TaxonomyTerm':
+          return checkPermission(Permission.Uuid_Delete_TaxonomyTerm)
         case 'User':
           return false
         default:

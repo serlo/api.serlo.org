@@ -22,11 +22,11 @@
 import { ForbiddenError } from 'apollo-server'
 
 import { Service } from '~/internals/authentication'
-import { createMutationNamespace, Mutations } from '~/internals/graphql'
+import { createNamespace, Mutations } from '~/internals/graphql'
 
 export const resolvers: Mutations<'_cache'> = {
   Mutation: {
-    _cache: createMutationNamespace(),
+    _cache: createNamespace(),
   },
   _cacheMutation: {
     async set(_parent, payload, { dataSources, service }) {

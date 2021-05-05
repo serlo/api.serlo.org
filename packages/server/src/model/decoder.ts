@@ -77,13 +77,19 @@ export enum EntityRevisionType {
 // the app more robust against malformed responses from the database layer.
 const MAX_UUID = 1e7
 
+export const Uuid = t.refinement(t.number, (id) => id < MAX_UUID, 'Uuid')
+
 const StringWithoutNullCharacter = t.refinement(
   t.string,
   (text) => !text.includes('\0'),
   'AliasString'
 )
 
-export const Uuid = t.refinement(t.number, (id) => id < MAX_UUID, 'Uuid')
+const NonEmtpyString = t.refinement(
+  t.string,
+  (text) => text.length > 0,
+  'NonEmtpyString'
+)
 
 export const AbstractUuidDecoder = t.type({
   id: Uuid,
@@ -133,7 +139,7 @@ export const AbstractEntityRevisionDecoder = t.intersection([
   AbstractUuidDecoder,
   t.type({
     __typename: EntityRevisionTypeDecoder,
-    content: t.string,
+    content: NonEmtpyString,
     date: t.string,
     authorId: Uuid,
     repositoryId: Uuid,
@@ -275,7 +281,6 @@ export const ArticleRevisionDecoder = t.exact(
     t.type({
       __typename: t.literal(EntityRevisionType.ArticleRevision),
       title: t.string,
-      content: t.string,
       metaTitle: t.string,
       metaDescription: t.string,
     }),
@@ -299,7 +304,6 @@ export const AppletRevisionDecoder = t.exact(
       __typename: t.literal(EntityRevisionType.AppletRevision),
       url: t.string,
       title: t.string,
-      content: t.string,
       metaTitle: t.string,
       metaDescription: t.string,
     }),
@@ -323,7 +327,6 @@ export const CourseRevisionDecoder = t.exact(
     t.type({
       __typename: t.literal(EntityRevisionType.CourseRevision),
       title: t.string,
-      content: t.string,
       metaDescription: t.string,
     }),
   ])
@@ -345,7 +348,6 @@ export const CoursePageRevisionDecoder = t.exact(
     t.type({
       __typename: t.literal(EntityRevisionType.CoursePageRevision),
       title: t.string,
-      content: t.string,
     }),
   ])
 )
@@ -366,7 +368,6 @@ export const ExerciseRevisionDecoder = t.exact(
     AbstractEntityRevisionDecoder,
     t.type({
       __typename: t.literal(EntityRevisionType.ExerciseRevision),
-      content: t.string,
     }),
   ])
 )
@@ -387,7 +388,6 @@ export const ExerciseGroupRevisionDecoder = t.exact(
     AbstractEntityRevisionDecoder,
     t.type({
       __typename: t.literal(EntityRevisionType.ExerciseGroupRevision),
-      content: t.string,
     }),
   ])
 )
@@ -408,7 +408,6 @@ export const EventRevisionDecoder = t.exact(
     t.type({
       __typename: t.literal(EntityRevisionType.EventRevision),
       title: t.string,
-      content: t.string,
       metaTitle: t.string,
       metaDescription: t.string,
     }),
@@ -431,7 +430,6 @@ export const GroupedExerciseRevisionDecoder = t.exact(
     AbstractEntityRevisionDecoder,
     t.type({
       __typename: t.literal(EntityRevisionType.GroupedExerciseRevision),
-      content: t.string,
     }),
   ])
 )
@@ -441,7 +439,7 @@ export const SolutionDecoder = t.exact(
     AbstractEntityDecoder,
     t.type({
       __typename: t.literal(EntityType.Solution),
-      parentId: t.number,
+      parentId: Uuid,
     }),
   ])
 )
@@ -451,7 +449,6 @@ export const SolutionRevisionDecoder = t.exact(
     AbstractEntityRevisionDecoder,
     t.type({
       __typename: t.literal(EntityRevisionType.SolutionRevision),
-      content: t.string,
     }),
   ])
 )
@@ -473,7 +470,6 @@ export const VideoRevisionDecoder = t.exact(
       __typename: t.literal(EntityRevisionType.VideoRevision),
       url: t.string,
       title: t.string,
-      content: t.string,
     }),
   ])
 )

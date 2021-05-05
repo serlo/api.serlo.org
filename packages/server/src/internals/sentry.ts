@@ -23,11 +23,29 @@ import * as Sentry from '@sentry/node'
 import type { ApolloServerPlugin } from 'apollo-server-plugin-base'
 import R from 'ramda'
 
-export function initializeSentry(context: string) {
+import { InvalidValueError } from './model'
+
+export function initializeSentry({
+  dsn = process.env.SENTRY_DSN,
+  environment = process.env.ENVIRONMENT,
+  context,
+}: {
+  context: string
+  dsn?: string
+  environment?: string
+}) {
   Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    environment: process.env.ENVIRONMENT,
+    dsn,
+    environment,
     release: `api.serlo.org-${context}@${process.env.SENTRY_RELEASE || ''}`,
+  })
+
+  Sentry.addGlobalEventProcessor((event) => {
+    if (event.contexts) {
+      event.contexts = stringifyContexts(event.contexts)
+    }
+
+    return event
   })
 }
 
@@ -49,19 +67,14 @@ export function createSentryPlugin(): ApolloServerPlugin {
 
           for (const error of ctx.errors) {
             if (ignoredErrorCodes.includes(error.extensions?.code)) continue
+
             Sentry.captureException(error, (scope) => {
               scope.setTag('kind', ctx.operationName)
+
+              const { query, variables } = ctx.request
               scope.setContext('graphql', {
-                query: ctx.request.query,
-                ...(ctx.request.variables === undefined
-                  ? {}
-                  : {
-                      variables: R.mapObjIndexed((value: unknown) => {
-                        return typeof value === 'object'
-                          ? JSON.stringify(value, null, 2)
-                          : value
-                      }, ctx.request.variables),
-                    }),
+                query,
+                ...(variables === undefined ? {} : { variables }),
               })
 
               if (error.path) {
@@ -72,6 +85,18 @@ export function createSentryPlugin(): ApolloServerPlugin {
                 })
               }
 
+              if (error.originalError !== undefined) {
+                if (error.originalError instanceof InvalidValueError) {
+                  scope.setFingerprint([
+                    JSON.stringify(error.originalError.invalidValue),
+                  ])
+
+                  scope.setContext('error', {
+                    invalidValue: error.originalError.invalidValue,
+                  })
+                }
+              }
+
               return scope
             })
           }
@@ -79,6 +104,24 @@ export function createSentryPlugin(): ApolloServerPlugin {
       }
     },
   }
+}
+
+function stringifyContexts(contexts: Record<string, Record<string, unknown>>) {
+  return R.mapObjIndexed(R.mapObjIndexed(stringifyContextValue), contexts)
+}
+
+function stringifyContextValue(value: unknown) {
+  return Array.isArray(value)
+    ? R.map(stringify, value)
+    : typeof value === 'object' && value !== null
+    ? R.mapObjIndexed(stringify, value)
+    : value
+}
+
+function stringify(value: unknown) {
+  return typeof value === 'object' || typeof value === 'string'
+    ? JSON.stringify(value, null, 2)
+    : value
 }
 
 export { Sentry }

@@ -2,6 +2,52 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.23.1](https://github.com/serlo/api.serlo.org/compare/v0.23.0..v0.23.1) - May 4, 2021
+
+### Added
+
+- **authorization**. Add `Entity.setLicense` permission.
+
+- **authorization**. Add `Entity.addChild`, `Entity.removeChild` and `Entity.orderChildren` permissions.
+
+- **authorization**. Add `File.create` and `File.delete` permissions.
+
+- **authorization**. Add `License.create`, `License.delete` and `License.set` permissions
+
+- **authorization**. Add `Page.set` permission.
+
+- **authorization**. Add `TaxonomyTerm.addChild`, `TaxonomyTerm.removeChild` and `TaxonomyTerm.orderChildren` permissions.
+
+- **authorization**. Add `TaxonomyTerm.set` permission.
+
+- **authorization**. Add `Thread.deleteThread` and `Thread.deleteComment` permissions.
+
+- **authorization**. Add `Uuid.delete` permission.
+
+- **subscription**. Add `currentUserHasSubscribed`.
+
+- **threads**. Add `trashed`.
+
+### Internal
+
+- Reject various invalid cache values.
+
+- Improve Sentry integration.
+
+## [v0.23.0](https://github.com/serlo/api.serlo.org/compare/v0.22.5..v0.23.0) - April 26, 2021
+
+### Added
+
+- **authorization**. Add `Subscription.set` permission.
+
+- **authorization**. Add `Notification.setState` permission.
+
+- **authorization**. Add `Uuid.create` permissions.
+
+### Fixed
+
+- **alias**. Resolve id aliases directly as a temporary workaround.
+
 ## [v0.22.5](https://github.com/serlo/api.serlo.org/compare/v0.22.4..v0.22.5) - April 20, 2021
 
 ### Added
