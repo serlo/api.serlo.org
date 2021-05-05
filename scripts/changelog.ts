@@ -755,6 +755,40 @@ async function exec(): Promise<void> {
         ['alias', 'Resolve id aliases directly as a temporary workaround.'],
       ],
     },
+    {
+      tagName: 'v0.23.1',
+      date: '2021-05-04',
+      added: [
+        ['authorization', 'Add `Entity.setLicense` permission.'],
+        [
+          'authorization',
+          'Add `Entity.addChild`, `Entity.removeChild` and `Entity.orderChildren` permissions.',
+        ],
+        ['authorization', 'Add `File.create` and `File.delete` permissions.'],
+        [
+          'authorization',
+          'Add `License.create`, `License.delete` and `License.set` permissions',
+        ],
+        ['authorization', 'Add `Page.set` permission.'],
+        [
+          'authorization',
+          'Add `TaxonomyTerm.addChild`, `TaxonomyTerm.removeChild` and `TaxonomyTerm.orderChildren` permissions.',
+        ],
+        ['authorization', 'Add `TaxonomyTerm.set` permission.'],
+        [
+          'authorization',
+          'Add `Thread.deleteThread` and `Thread.deleteComment` permissions.',
+        ],
+        ['authorization', 'Add `Uuid.delete` permission.'],
+
+        ['subscription', 'Add `currentUserHasSubscribed`.'],
+        ['threads', 'Add `trashed`.'],
+      ],
+      internal: [
+        'Reject various invalid cache values.',
+        'Improve Sentry integration.',
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
