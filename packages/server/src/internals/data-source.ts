@@ -32,11 +32,17 @@ export class ModelDataSource extends RESTDataSource {
 
   constructor(private environment: Environment) {
     super()
-    const args = {
-      environment,
-    }
-    this.serlo = createSerloModel(args)
-    this.googleSpreadsheetApi = createGoogleSpreadsheetApiModel(args)
+
+    this.serlo = createSerloModel({ environment })
+    this.googleSpreadsheetApi = createGoogleSpreadsheetApiModel({ environment })
+  }
+
+  public async removeCacheValue({ key }: { key: string }) {
+    await this.environment.cache.remove({ key })
+  }
+
+  public async setCacheValue(args: { key: string; value: unknown }) {
+    await this.environment.cache.set(args)
   }
 
   public async updateCacheValue({ key }: { key: string }) {

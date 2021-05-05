@@ -20,21 +20,11 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
-import { Payload } from '~/internals/model'
-import { Instance } from '~/types'
-
-export const navigation: Payload<'serlo', 'getNavigationPayload'> = {
-  data: [
-    {
-      label: 'Mathematik',
-      id: 19767,
-      children: [
-        {
-          label: 'Alle Themen',
-          id: 5,
-        },
-      ],
-    },
-  ],
-  instance: Instance.De,
+/**
+ * Error for the case an invalid value was returned by a data source function.
+ */
+export class InvalidValueError extends Error {
+  constructor(public invalidValue: unknown) {
+    super('Invalid value received from a data source.')
+  }
 }
