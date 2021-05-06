@@ -327,6 +327,7 @@ export const CourseRevisionDecoder = t.exact(
     t.type({
       __typename: t.literal(EntityRevisionType.CourseRevision),
       title: t.string,
+      content: t.string, //overwrite because empty strings are expected here
       metaDescription: t.string,
     }),
   ])
