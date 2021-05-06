@@ -25,8 +25,9 @@ import * as R from 'ramda'
 
 import { FunctionOrValue } from '../cache'
 import { Environment } from '../environment'
+import { captureErrorEvent } from '../error-event'
 import { Time } from '../swr-queue'
-import { InvalidValueError } from './common'
+import { InvalidCurrentValueError, InvalidCachedValueError } from './common'
 
 /**
  * Helper function to create a query in a data source. A query operation is a
@@ -58,6 +59,10 @@ export function createQuery<P, R>(
 
         return value as S
       }
+
+      captureErrorEvent({
+        error: new InvalidCachedValueError(JSON.stringify(value)),
+      })
     }
 
     // Cache empty or invalid value
@@ -67,7 +72,7 @@ export function createQuery<P, R>(
       await environment.cache.set({ key, value })
       return value as S
     } else {
-      throw new InvalidValueError({
+      throw new InvalidCurrentValueError({
         ...(O.isSome(cacheValue)
           ? { invalidPreviousValue: cacheValue.value.value }
           : {}),

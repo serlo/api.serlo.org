@@ -21,7 +21,7 @@
  */
 import t from 'io-ts'
 
-import { InvalidValueError } from './common'
+import { InvalidCurrentValueError } from './common'
 import { AsyncOrSync } from '~/utils'
 
 /**
@@ -37,7 +37,7 @@ export function createMutation<P, R>(spec: MutationSpec<P, R>): Mutation<P, R> {
 
       return result
     } else {
-      throw new InvalidValueError({
+      throw new InvalidCurrentValueError({
         invalidCurrentValue: result,
       })
     }
