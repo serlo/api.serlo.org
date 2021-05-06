@@ -24,7 +24,12 @@
  * Error for the case an invalid value was returned by a data source function.
  */
 export class InvalidValueError extends Error {
-  constructor(public invalidValue: unknown) {
+  constructor(
+    public invalidValue: {
+      invalidPreviousValue?: unknown
+      invalidCurrentValue: unknown
+    }
+  ) {
     super('Invalid value received from a data source.')
   }
 }

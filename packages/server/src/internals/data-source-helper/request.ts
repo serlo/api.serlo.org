@@ -61,7 +61,9 @@ export function createRequest<P, R>(spec: RequestSpec<P, R>): Request<P, R> {
     if (spec.decoder.is(value)) {
       return value
     } else {
-      throw new InvalidValueError(value)
+      throw new InvalidValueError({
+        invalidCurrentValue: value,
+      })
     }
   }
 

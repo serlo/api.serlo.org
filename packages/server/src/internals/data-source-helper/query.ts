@@ -67,7 +67,12 @@ export function createQuery<P, R>(
       await environment.cache.set({ key, value })
       return value as S
     } else {
-      throw new InvalidValueError(value)
+      throw new InvalidValueError({
+        ...(O.isSome(cacheValue)
+          ? { invalidPreviousValue: cacheValue.value.value }
+          : {}),
+        invalidCurrentValue: value,
+      })
     }
   }
 
