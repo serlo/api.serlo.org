@@ -46,7 +46,7 @@ const testVars = [
   },
 ]
 
-test('_set (forbidden)', async () => {
+test('set (forbidden)', async () => {
   const client = createTestClient({
     service: Service.SerloCloudflareWorker,
     userId: null,
@@ -59,7 +59,7 @@ test('_set (forbidden)', async () => {
   })
 })
 
-test('_set (authenticated)', async () => {
+test('set (authenticated)', async () => {
   const client = createTestClient({
     service: Service.Serlo,
     userId: null,
@@ -79,7 +79,7 @@ test('_set (authenticated)', async () => {
   })
 })
 
-test('_remove (forbidden with not logged in user)', async () => {
+test('remove (forbidden with not logged in user)', async () => {
   const client = createTestClient({
     service: Service.SerloCloudflareWorker,
     userId: null,
@@ -91,7 +91,7 @@ test('_remove (forbidden with not logged in user)', async () => {
   })
 })
 
-test('_remove (forbidden with wrong user)', async () => {
+test('remove (forbidden with wrong user)', async () => {
   const client = createTestClient({
     service: Service.SerloCloudflareWorker,
     userId: user.id,
@@ -103,7 +103,7 @@ test('_remove (forbidden with wrong user)', async () => {
   })
 })
 
-test('_remove (authenticated via Serlo Service)', async () => {
+test('remove (authenticated via Serlo Service)', async () => {
   const client = createTestClient({
     service: Service.Serlo,
     userId: null,
@@ -119,7 +119,7 @@ test('_remove (authenticated via Serlo Service)', async () => {
   expect(option.isNone(cachedValue)).toBe(true)
 })
 
-test('_remove (authenticated as CarolinJaser)', async () => {
+test('remove (authenticated as CarolinJaser)', async () => {
   const client = createTestClient({
     service: Service.SerloCloudflareWorker,
     userId: 178145,
@@ -135,7 +135,7 @@ test('_remove (authenticated as CarolinJaser)', async () => {
   expect(option.isNone(cachedValue)).toBe(true)
 })
 
-test('_update (forbidden)', async () => {
+test('update (forbidden)', async () => {
   const client = createTestClient({
     service: Service.SerloCloudflareWorker,
     userId: null,
