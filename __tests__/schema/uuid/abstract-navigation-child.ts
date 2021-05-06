@@ -43,7 +43,7 @@ function createSetNavigationMutation(
 ) {
   return {
     mutation: gql`
-      mutation($input: CacheSetInput!) {
+      mutation setCache($input: CacheSetInput!) {
         _cache {
           set(input: $input) {
             success
@@ -63,7 +63,7 @@ function createSetNavigationMutation(
 function createSetPageMutation(page: Model<'Page'>) {
   return {
     mutation: gql`
-      mutation($input: CacheSetInput!) {
+      mutation setCache($input: CacheSetInput!) {
         _cache {
           set(input: $input) {
             success
@@ -83,7 +83,7 @@ function createSetPageMutation(page: Model<'Page'>) {
 function createSetTaxonomyTermMutation(taxonomyTerm: Model<'TaxonomyTerm'>) {
   return {
     mutation: gql`
-      mutation($input: CacheSetInput!) {
+      mutation setCache($input: CacheSetInput!) {
         _cache {
           set(input: $input) {
             success
