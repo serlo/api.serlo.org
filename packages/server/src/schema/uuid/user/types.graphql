@@ -57,3 +57,42 @@ type UserEdge {
   cursor: String!
   node: User!
 }
+
+extend type Mutation {
+  user: UserMutation!
+}
+
+type UserMutation {
+  deleteBot(input: UserDeleteBotInput!): UserDeleteBotResponse
+  deleteRegularUser(input: UserDeleteRegularUserInput!): UserDeleteRegularUserResponse
+  setEmail(input: UserSetEmailInput!): UserSetEmailResponse
+}
+
+type UserDeleteBotInput {
+  userId: [Int!]!
+}
+
+type UserDeleteBotResponse {
+  success: Boolean!
+  username: String!
+}
+
+type UserDeleteRegularUserInput {
+  userId: [Int!]!
+}
+
+type UserDeleteRegularUserResponse {
+  success: Boolean!
+  username: String!
+}
+
+type UserSetEmailInput {
+  userId: Int!
+  email: String!
+}
+
+type UserSetEmailResponse {
+  success: Boolean!
+  username: String!
+  email: String!
+}
