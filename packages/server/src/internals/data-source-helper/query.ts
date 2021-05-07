@@ -24,7 +24,7 @@ import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
-import { FunctionOrValue } from '../cache'
+import { CacheEntry, FunctionOrValue } from '../cache'
 import { Environment } from '../environment'
 import { Time } from '../swr-queue'
 import { InvalidCurrentValueError } from './common'
@@ -46,6 +46,8 @@ export function createQuery<P, R>(
 
     const decoder = customDecoder ?? t.unknown
 
+    let invalidCachedValue: CacheEntry<R> | null = null
+
     if (O.isSome(cacheValue)) {
       const { value } = cacheValue.value
 
@@ -60,16 +62,7 @@ export function createQuery<P, R>(
         return value as S
       }
 
-      Sentry.captureMessage(
-        'Invalid cached value received that could be repaired automatically by data source.',
-        (scope) => {
-          scope.setContext('cache', {
-            key,
-            value,
-          })
-          return scope
-        }
-      )
+      invalidCachedValue = cacheValue.value
     }
 
     // Cache empty or invalid value
@@ -77,6 +70,21 @@ export function createQuery<P, R>(
 
     if (decoder.is(value)) {
       await environment.cache.set({ key, value })
+
+      if (invalidCachedValue) {
+        Sentry.captureMessage(
+          'Invalid cached value received that could be repaired automatically by data source.',
+          (scope) => {
+            scope.setFingerprint([key])
+            scope.setContext('cache', {
+              key,
+              value: invalidCachedValue?.value,
+            })
+            return scope
+          }
+        )
+      }
+
       return value as S
     } else {
       throw new InvalidCurrentValueError({
