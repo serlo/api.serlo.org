@@ -19,15 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import * as Sentry from '@sentry/node'
 import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
 import { FunctionOrValue } from '../cache'
 import { Environment } from '../environment'
-import { captureErrorEvent } from '../error-event'
 import { Time } from '../swr-queue'
-import { InvalidCurrentValueError, InvalidCachedValueError } from './common'
+import { InvalidCurrentValueError } from './common'
 
 /**
  * Helper function to create a query in a data source. A query operation is a
@@ -60,9 +60,16 @@ export function createQuery<P, R>(
         return value as S
       }
 
-      captureErrorEvent({
-        error: new InvalidCachedValueError(JSON.stringify(value)),
-      })
+      Sentry.captureMessage(
+        'Invalid cached value received that could be repaired automatically by data source.',
+        (scope) => {
+          scope.setContext('cache', {
+            key,
+            value,
+          })
+          return scope
+        }
+      )
     }
 
     // Cache empty or invalid value

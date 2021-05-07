@@ -69,7 +69,7 @@ export function assertAll(
   }
 }
 
-export function captureErrorEvent(event: ErrorEvent) {
+function captureErrorEvent(event: ErrorEvent) {
   Sentry.captureException(event.error, (scope) => {
     if (event.location) {
       if (!event.error.message.startsWith(event.location)) {
