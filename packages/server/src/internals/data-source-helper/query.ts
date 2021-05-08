@@ -78,7 +78,8 @@ export function createQuery<P, R>(
             scope.setFingerprint([key])
             scope.setContext('cache', {
               key,
-              value: invalidCachedValue?.value,
+              invalidCacheValue: invalidCachedValue?.value,
+              currentValue: value,
             })
             return scope
           }
