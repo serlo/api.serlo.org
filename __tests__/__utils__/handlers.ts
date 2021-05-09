@@ -24,7 +24,7 @@ import * as R from 'ramda'
 
 import { RestResolver } from './services'
 import { Model } from '~/internals/graphql'
-import { Payload } from '~/internals/model/types'
+import { Payload } from '~/internals/model'
 
 export function createAliasHandler(alias: Payload<'serlo', 'getAlias'>) {
   return createMessageHandler({

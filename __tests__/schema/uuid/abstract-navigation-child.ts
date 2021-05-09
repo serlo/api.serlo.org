@@ -35,7 +35,7 @@ import {
 } from '../../__utils__'
 import { Service } from '~/internals/authentication'
 import { Model } from '~/internals/graphql'
-import { Payload } from '~/internals/model/types'
+import { Payload } from '~/internals/model'
 import { Instance } from '~/types'
 
 function createSetNavigationMutation(

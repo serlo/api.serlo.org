@@ -66,7 +66,7 @@ import {
   VideoDecoder,
   VideoRevisionDecoder,
 } from './decoder'
-import { Payload } from '~/internals/model/types'
+import { Payload } from '~/internals/model'
 import { Role } from '~/types'
 
 export interface Models {
