@@ -46,7 +46,7 @@ const testVars = [
   },
 ]
 
-test('_setCache (forbidden)', async () => {
+test('set (forbidden)', async () => {
   const client = createTestClient({
     service: Service.SerloCloudflareWorker,
     userId: null,
@@ -59,7 +59,7 @@ test('_setCache (forbidden)', async () => {
   })
 })
 
-test('_setCache (authenticated)', async () => {
+test('set (authenticated)', async () => {
   const client = createTestClient({
     service: Service.Serlo,
     userId: null,
@@ -69,6 +69,7 @@ test('_setCache (authenticated)', async () => {
   await assertSuccessfulGraphQLMutation({
     ...createSetCacheMutation(testVars[0]),
     client,
+    data: { _cache: { set: { success: true } } },
   })
 
   const cachedValue = await global.cache.get({ key: testVars[0].key })
@@ -78,7 +79,7 @@ test('_setCache (authenticated)', async () => {
   })
 })
 
-test('_removeCache (forbidden with not logged in user)', async () => {
+test('remove (forbidden with not logged in user)', async () => {
   const client = createTestClient({
     service: Service.SerloCloudflareWorker,
     userId: null,
@@ -90,7 +91,7 @@ test('_removeCache (forbidden with not logged in user)', async () => {
   })
 })
 
-test('_removeCache (forbidden with wrong user)', async () => {
+test('remove (forbidden with wrong user)', async () => {
   const client = createTestClient({
     service: Service.SerloCloudflareWorker,
     userId: user.id,
@@ -102,7 +103,7 @@ test('_removeCache (forbidden with wrong user)', async () => {
   })
 })
 
-test('_removeCache (authenticated via Serlo Service)', async () => {
+test('remove (authenticated via Serlo Service)', async () => {
   const client = createTestClient({
     service: Service.Serlo,
     userId: null,
@@ -111,13 +112,14 @@ test('_removeCache (authenticated via Serlo Service)', async () => {
   await assertSuccessfulGraphQLMutation({
     ...createRemoveCacheMutation(testVars[0]),
     client,
+    data: { _cache: { remove: { success: true } } },
   })
 
   const cachedValue = await global.cache.get({ key: testVars[0].key })
   expect(option.isNone(cachedValue)).toBe(true)
 })
 
-test('_removeCache (authenticated as CarolinJaser)', async () => {
+test('remove (authenticated as CarolinJaser)', async () => {
   const client = createTestClient({
     service: Service.SerloCloudflareWorker,
     userId: 178145,
@@ -126,13 +128,14 @@ test('_removeCache (authenticated as CarolinJaser)', async () => {
   await assertSuccessfulGraphQLMutation({
     ...createRemoveCacheMutation(testVars[0]),
     client,
+    data: { _cache: { remove: { success: true } } },
   })
 
   const cachedValue = await global.cache.get({ key: testVars[0].key })
   expect(option.isNone(cachedValue)).toBe(true)
 })
 
-test('_updateCache (forbidden)', async () => {
+test('update (forbidden)', async () => {
   const client = createTestClient({
     service: Service.SerloCloudflareWorker,
     userId: null,
