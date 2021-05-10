@@ -23,7 +23,7 @@ import * as Sentry from '@sentry/node'
 import type { ApolloServerPlugin } from 'apollo-server-plugin-base'
 import R from 'ramda'
 
-import { InvalidValueError } from './data-source-helper'
+import { InvalidCurrentValueError } from './data-source-helper'
 
 export function initializeSentry({
   dsn = process.env.SENTRY_DSN,
@@ -86,13 +86,18 @@ export function createSentryPlugin(): ApolloServerPlugin {
               }
 
               if (error.originalError !== undefined) {
-                if (error.originalError instanceof InvalidValueError) {
-                  scope.setFingerprint([
-                    JSON.stringify(error.originalError.invalidValue),
-                  ])
+                if (error.originalError instanceof InvalidCurrentValueError) {
+                  const { invalidValue } = error.originalError
+
+                  scope.setFingerprint([JSON.stringify(invalidValue)])
 
                   scope.setContext('error', {
-                    invalidValue: error.originalError.invalidValue,
+                    ...(invalidValue.invalidCachedValue
+                      ? {
+                          invalidCachedValue: invalidValue.invalidCachedValue,
+                        }
+                      : {}),
+                    invalidCurrentValue: invalidValue.invalidCurrentValue,
                   })
                 }
               }

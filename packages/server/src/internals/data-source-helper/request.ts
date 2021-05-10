@@ -21,7 +21,7 @@
  */
 import * as t from 'io-ts'
 
-import { InvalidValueError } from './common'
+import { InvalidCurrentValueError } from './common'
 
 /**
  * Specification object for a request function.
@@ -61,7 +61,9 @@ export function createRequest<P, R>(spec: RequestSpec<P, R>): Request<P, R> {
     if (spec.decoder.is(value)) {
       return value
     } else {
-      throw new InvalidValueError(value)
+      throw new InvalidCurrentValueError({
+        invalidCurrentValue: value,
+      })
     }
   }
 

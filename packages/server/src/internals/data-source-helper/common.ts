@@ -23,8 +23,13 @@
 /**
  * Error for the case an invalid value was returned by a data source function.
  */
-export class InvalidValueError extends Error {
-  constructor(public invalidValue: unknown) {
-    super('Invalid value received from a data source.')
+export class InvalidCurrentValueError extends Error {
+  constructor(
+    public invalidValue: {
+      invalidCachedValue?: unknown
+      invalidCurrentValue: unknown
+    }
+  ) {
+    super('Invalid value received from data source.')
   }
 }
