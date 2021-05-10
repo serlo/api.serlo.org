@@ -43,13 +43,19 @@ function createSetNavigationMutation(
 ) {
   return {
     mutation: gql`
-      mutation _setCache($key: String!, $value: JSON!) {
-        _setCache(key: $key, value: $value)
+      mutation setCache($input: CacheSetInput!) {
+        _cache {
+          set(input: $input) {
+            success
+          }
+        }
       }
     `,
     variables: {
-      key: `${navigation.instance}.serlo.org/api/navigation`,
-      value: navigation,
+      input: {
+        key: `${navigation.instance}.serlo.org/api/navigation`,
+        value: navigation,
+      },
     },
   }
 }
@@ -57,13 +63,19 @@ function createSetNavigationMutation(
 function createSetPageMutation(page: Model<'Page'>) {
   return {
     mutation: gql`
-      mutation _setCache($key: String!, $value: JSON!) {
-        _setCache(key: $key, value: $value)
+      mutation setCache($input: CacheSetInput!) {
+        _cache {
+          set(input: $input) {
+            success
+          }
+        }
       }
     `,
     variables: {
-      key: `de.serlo.org/api/uuid/${page.id}`,
-      value: page,
+      input: {
+        key: `de.serlo.org/api/uuid/${page.id}`,
+        value: page,
+      },
     },
   }
 }
@@ -71,13 +83,19 @@ function createSetPageMutation(page: Model<'Page'>) {
 function createSetTaxonomyTermMutation(taxonomyTerm: Model<'TaxonomyTerm'>) {
   return {
     mutation: gql`
-      mutation _setCache($key: String!, $value: JSON!) {
-        _setCache(key: $key, value: $value)
+      mutation setCache($input: CacheSetInput!) {
+        _cache {
+          set(input: $input) {
+            success
+          }
+        }
       }
     `,
     variables: {
-      key: `de.serlo.org/api/uuid/${taxonomyTerm.id}`,
-      value: taxonomyTerm,
+      input: {
+        key: `de.serlo.org/api/uuid/${taxonomyTerm.id}`,
+        value: taxonomyTerm,
+      },
     },
   }
 }
