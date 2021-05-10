@@ -457,6 +457,37 @@ export type ArticleRevisionCursor = {
   node: ArticleRevision;
 };
 
+export type CacheRemoveInput = {
+  key: Scalars['String'];
+};
+
+export type CacheRemoveResponse = {
+  __typename?: 'CacheRemoveResponse';
+  success: Scalars['Boolean'];
+  query: Query;
+};
+
+export type CacheSetInput = {
+  key: Scalars['String'];
+  value: Scalars['JSON'];
+};
+
+export type CacheSetResponse = {
+  __typename?: 'CacheSetResponse';
+  success: Scalars['Boolean'];
+  query: Query;
+};
+
+export type CacheUpdateInput = {
+  keys: Array<Scalars['String']>;
+};
+
+export type CacheUpdateResponse = {
+  __typename?: 'CacheUpdateResponse';
+  success: Scalars['Boolean'];
+  query: Query;
+};
+
 export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CheckoutRevisionNotificationEvent';
   id: Scalars['Int'];
@@ -1212,29 +1243,11 @@ export type License = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  _removeCache?: Maybe<Scalars['Boolean']>;
-  _setCache?: Maybe<Scalars['Boolean']>;
-  _updateCache?: Maybe<Scalars['Boolean']>;
+  _cache: _CacheMutation;
   notification: NotificationMutation;
   subscription: SubscriptionMutation;
   thread: ThreadMutation;
   uuid: UuidMutation;
-};
-
-
-export type Mutation_RemoveCacheArgs = {
-  key: Scalars['String'];
-};
-
-
-export type Mutation_SetCacheArgs = {
-  key: Scalars['String'];
-  value: Scalars['JSON'];
-};
-
-
-export type Mutation_UpdateCacheArgs = {
-  keys: Array<Scalars['String']>;
 };
 
 export type Navigation = {
@@ -2157,4 +2170,26 @@ export type VideoRevisionCursor = {
   __typename?: 'VideoRevisionCursor';
   cursor: Scalars['String'];
   node: VideoRevision;
+};
+
+export type _CacheMutation = {
+  __typename?: '_cacheMutation';
+  set: CacheSetResponse;
+  remove: CacheRemoveResponse;
+  update: CacheUpdateResponse;
+};
+
+
+export type _CacheMutationSetArgs = {
+  input: CacheSetInput;
+};
+
+
+export type _CacheMutationRemoveArgs = {
+  input: CacheRemoveInput;
+};
+
+
+export type _CacheMutationUpdateArgs = {
+  input: CacheUpdateInput;
 };
