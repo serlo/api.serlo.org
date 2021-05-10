@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.23.2](https://github.com/serlo/api.serlo.org/compare/v0.23.1..v0.23.2) - May 10, 2021
+
+### Added
+
+- **events**. Add `events` Query.
+
+- **threads**. Add `legacyObject` to threads and comments.
+
+### Fixed
+
+- **swr-queue**. Handle stuck jobs gracefully.
+
+### Internal
+
+- Improve Sentry integration.
+
 ## [v0.23.1](https://github.com/serlo/api.serlo.org/compare/v0.23.0..v0.23.1) - May 4, 2021
 
 ### Added
