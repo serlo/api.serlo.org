@@ -94,13 +94,11 @@ export type ModelMapping = {
     : never
 }
 
-export type Revision<
-  T extends Model<'AbstractRepository'>['__typename']
-> = Model<`${T}Revision`>
+export type Revision<T extends Model<'AbstractRepository'>['__typename']> =
+  Model<`${T}Revision`>
 
-export type Repository<
-  R extends Model<'AbstractRevision'>['__typename']
-> = Model<R extends `${infer U}Revision` ? U : never>
+export type Repository<R extends Model<'AbstractRevision'>['__typename']> =
+  Model<R extends `${infer U}Revision` ? U : never>
 
 /**
  * Resolvers type where all mutations of the namespace `Namespaces` are
@@ -204,14 +202,13 @@ export type ResolverFunction<Result, Parent, Args = {}> = Resolver<
  * }
  * ```
  */
-export type TypeResolvers<
-  T extends { __typename?: keyof Resolvers }
-> = Typename<T> extends keyof Resolvers
-  ? A.Compute<
-      O.MergeUp<RequiredResolvers<T>, Pick<Resolvers, Typename<T>>, 'deep'>,
-      'deep'
-    >
-  : never
+export type TypeResolvers<T extends { __typename?: keyof Resolvers }> =
+  Typename<T> extends keyof Resolvers
+    ? A.Compute<
+        O.MergeUp<RequiredResolvers<T>, Pick<Resolvers, Typename<T>>, 'deep'>,
+        'deep'
+      >
+    : never
 
 export type RequiredResolvers<T extends object> = PickRequiredResolvers<
   {
@@ -219,16 +216,15 @@ export type RequiredResolvers<T extends object> = PickRequiredResolvers<
   }
 >
 
-export type RequiredResolverFunctions<
-  T extends object
-> = Typename<T> extends keyof Resolvers
-  ? OmitKeys<
-      Required<GetResolver<Typename<T>>>,
-      Model<Typename<T>> extends object
-        ? O.IntersectKeys<T, Model<Typename<T>>, '<-extends'> | '__isTypeOf'
-        : never
-    >
-  : never
+export type RequiredResolverFunctions<T extends object> =
+  Typename<T> extends keyof Resolvers
+    ? OmitKeys<
+        Required<GetResolver<Typename<T>>>,
+        Model<Typename<T>> extends object
+          ? O.IntersectKeys<T, Model<Typename<T>>, '<-extends'> | '__isTypeOf'
+          : never
+      >
+    : never
 
 // When the model and the graphql type are the same, the object with all required
 // resolver functions will be empty (i.e {}). This type helper filters

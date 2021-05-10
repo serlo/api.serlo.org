@@ -29,11 +29,13 @@ import {
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
 import { Applet, AppletRevision } from '~/types'
 
-export const resolvers: TypeResolvers<Applet> &
-  TypeResolvers<AppletRevision> = {
-  Applet: {
-    ...createRepositoryResolvers({ revisionDecoder: AppletRevisionDecoder }),
-    ...createTaxonomyTermChildResolvers(),
-  },
-  AppletRevision: createRevisionResolvers({ repositoryDecoder: AppletDecoder }),
-}
+export const resolvers: TypeResolvers<Applet> & TypeResolvers<AppletRevision> =
+  {
+    Applet: {
+      ...createRepositoryResolvers({ revisionDecoder: AppletRevisionDecoder }),
+      ...createTaxonomyTermChildResolvers(),
+    },
+    AppletRevision: createRevisionResolvers({
+      repositoryDecoder: AppletDecoder,
+    }),
+  }

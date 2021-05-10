@@ -37,7 +37,7 @@ test('unauthenticated user gets error', async () => {
 
   await assertFailingGraphQLMutation({
     mutation: gql`
-      mutation($input: ThreadCreateThreadInput!) {
+      mutation ($input: ThreadCreateThreadInput!) {
         thread {
           createThread(input: $input) {
             success
@@ -68,7 +68,7 @@ test('thread gets created, cache mutated as expected', async () => {
   // Fill cache
   await client.query({
     query: gql`
-      query($id: Int) {
+      query ($id: Int) {
         uuid(id: $id) {
           ... on ThreadAware {
             threads {
@@ -167,7 +167,7 @@ test('thread gets created, cache mutated as expected', async () => {
 
   await assertSuccessfulGraphQLQuery({
     query: gql`
-      query($id: Int) {
+      query ($id: Int) {
         uuid(id: $id) {
           ... on ThreadAware {
             threads {

@@ -201,7 +201,7 @@ describe('User', () => {
 
     await assertSuccessfulGraphQLQuery({
       query: gql`
-        query($id: Int) {
+        query ($id: Int) {
           uuid(id: $id) {
             ... on User {
               roles {

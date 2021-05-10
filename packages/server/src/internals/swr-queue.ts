@@ -88,7 +88,7 @@ export function createSwrQueue({
   })
 
   return {
-    _queue: (queue as unknown) as never,
+    _queue: queue as unknown as never,
     async queue(updateJob) {
       const { key } = updateJob
 
@@ -176,55 +176,52 @@ export function createSwrQueueWorker({
     removeOnSuccess: true,
   })
 
-  queue.process(
-    concurrency,
-    async (job): Promise<string> => {
-      async function processJob() {
-        const { key } = job.data
+  queue.process(concurrency, async (job): Promise<string> => {
+    async function processJob() {
+      const { key } = job.data
 
-        const result = await shouldProcessJob({
-          key,
-          cache,
-          models,
-          timer,
-        })
-        if (E.isLeft(result)) {
-          return `Skipped update because ${result.left}`
-        }
-
-        const { spec, payload } = result.right
-
-        await cache.set({
-          key,
-          priority: Priority.Low,
-          getValue: async (current) => {
-            const value = await spec.getCurrentValue(payload, current ?? null)
-            const decoder = spec.decoder || t.unknown
-            const decoded = decoder.decode(value)
-            if (E.isRight(decoded)) {
-              return decoded.right
-            }
-            throw new Error(`Invalid value: ${JSON.stringify(value)}`)
-          },
-        })
-        return 'Updated because stale'
+      const result = await shouldProcessJob({
+        key,
+        cache,
+        models,
+        timer,
+      })
+      if (E.isLeft(result)) {
+        return `Skipped update because ${result.left}`
       }
 
-      const result = await processJob()
-      if (process.env.SWR_QUEUE_WORKER_DELAY !== undefined) {
-        const delay = parseInt(process.env.SWR_QUEUE_WORKER_DELAY, 10)
-        await new Promise<void>((resolve) => {
-          setTimeout(() => {
-            resolve()
-          }, delay)
-        })
-      }
-      return result
+      const { spec, payload } = result.right
+
+      await cache.set({
+        key,
+        priority: Priority.Low,
+        getValue: async (current) => {
+          const value = await spec.getCurrentValue(payload, current ?? null)
+          const decoder = spec.decoder || t.unknown
+          const decoded = decoder.decode(value)
+          if (E.isRight(decoded)) {
+            return decoded.right
+          }
+          throw new Error(`Invalid value: ${JSON.stringify(value)}`)
+        },
+      })
+      return 'Updated because stale'
     }
-  )
+
+    const result = await processJob()
+    if (process.env.SWR_QUEUE_WORKER_DELAY !== undefined) {
+      const delay = parseInt(process.env.SWR_QUEUE_WORKER_DELAY, 10)
+      await new Promise<void>((resolve) => {
+        setTimeout(() => {
+          resolve()
+        }, delay)
+      })
+    }
+    return result
+  })
 
   return {
-    _queue: (queue as unknown) as never,
+    _queue: queue as unknown as never,
     async ready() {
       await queue.ready()
     },

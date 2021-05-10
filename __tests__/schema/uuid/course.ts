@@ -112,7 +112,7 @@ describe('Course', () => {
     test('when not set', async () => {
       await assertSuccessfulGraphQLQuery({
         query: gql`
-          query($id: Int!) {
+          query ($id: Int!) {
             uuid(id: $id) {
               ... on Course {
                 pages {
@@ -131,7 +131,7 @@ describe('Course', () => {
     test('when set to true', async () => {
       await assertSuccessfulGraphQLQuery({
         query: gql`
-          query($id: Int!) {
+          query ($id: Int!) {
             uuid(id: $id) {
               ... on Course {
                 pages(trashed: true) {
@@ -150,7 +150,7 @@ describe('Course', () => {
     test('when set to false', async () => {
       await assertSuccessfulGraphQLQuery({
         query: gql`
-          query($id: Int!) {
+          query ($id: Int!) {
             uuid(id: $id) {
               ... on Course {
                 pages(trashed: false) {
@@ -181,7 +181,7 @@ describe('Course', () => {
     test('when not set', async () => {
       await assertSuccessfulGraphQLQuery({
         query: gql`
-          query($id: Int!) {
+          query ($id: Int!) {
             uuid(id: $id) {
               ... on Course {
                 pages {
@@ -200,7 +200,7 @@ describe('Course', () => {
     test('when set to true', async () => {
       await assertSuccessfulGraphQLQuery({
         query: gql`
-          query($id: Int!) {
+          query ($id: Int!) {
             uuid(id: $id) {
               ... on Course {
                 pages(hasCurrentRevision: true) {
@@ -219,7 +219,7 @@ describe('Course', () => {
     test('when set to false', async () => {
       await assertSuccessfulGraphQLQuery({
         query: gql`
-          query($id: Int!) {
+          query ($id: Int!) {
             uuid(id: $id) {
               ... on Course {
                 pages(hasCurrentRevision: false) {
