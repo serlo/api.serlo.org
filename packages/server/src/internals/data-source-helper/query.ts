@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import * as Sentry from '@sentry/node'
 import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
@@ -28,6 +27,7 @@ import { CacheEntry, FunctionOrValue } from '../cache'
 import { Environment } from '../environment'
 import { Time } from '../swr-queue'
 import { InvalidCurrentValueError } from './common'
+import { Sentry } from '~/internals/sentry'
 
 /**
  * Helper function to create a query in a data source. A query operation is a
@@ -90,7 +90,7 @@ export function createQuery<P, R>(
     } else {
       throw new InvalidCurrentValueError({
         ...(O.isSome(cacheValue)
-          ? { invalidPreviousValue: cacheValue.value.value }
+          ? { invalidCachedValue: cacheValue.value.value }
           : {}),
         invalidCurrentValue: value,
       })

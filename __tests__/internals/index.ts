@@ -53,6 +53,8 @@ test('invalid values are reported to sentry', async () => {
 
   await assertErrorEvent({
     message: 'Invalid value received from data source.',
-    errorContext: { invalidCurrentValue: invalidValue },
+    errorContext: {
+      invalidCurrentValue: invalidValue,
+    },
   })
 })

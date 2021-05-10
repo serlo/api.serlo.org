@@ -106,7 +106,8 @@ function buildDockerImage({
   )
 
   const tags = getTags(version)
-  const remoteTags = R.map((tag) => `${remoteName}:${tag}`, tags)
+
+  const remoteTags = R.map((tag) => `${remoteName}:${tag}`, getTags(version))
   remoteTags.forEach((remoteTag) => {
     console.log('Pushing', remoteTag)
     spawnSync('docker', ['tag', `${name}:${tags[0]}`, remoteTag], {

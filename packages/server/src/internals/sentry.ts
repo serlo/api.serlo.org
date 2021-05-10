@@ -92,10 +92,9 @@ export function createSentryPlugin(): ApolloServerPlugin {
                   scope.setFingerprint([JSON.stringify(invalidValue)])
 
                   scope.setContext('error', {
-                    ...(invalidValue.invalidPreviousValue
+                    ...(invalidValue.invalidCachedValue
                       ? {
-                          invalidPreviousValue:
-                            invalidValue.invalidPreviousValue,
+                          invalidCachedValue: invalidValue.invalidCachedValue,
                         }
                       : {}),
                     invalidCurrentValue: invalidValue.invalidCurrentValue,
