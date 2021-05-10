@@ -72,14 +72,18 @@ const eventRepository: Record<
   [NotificationEventType.CreateComment]: createCommentNotificationEvent,
   [NotificationEventType.SetLicense]: setLicenseNotificationEvent,
   [NotificationEventType.CreateEntity]: createEntityNotificationEvent,
-  [NotificationEventType.CreateTaxonomyLink]: createTaxonomyLinkNotificationEvent,
-  [NotificationEventType.RemoveTaxonomyLink]: removeTaxonomyLinkNotificationEvent,
+  [NotificationEventType.CreateTaxonomyLink]:
+    createTaxonomyLinkNotificationEvent,
+  [NotificationEventType.RemoveTaxonomyLink]:
+    removeTaxonomyLinkNotificationEvent,
   [NotificationEventType.CreateThread]: createThreadNotificationEvent,
   [NotificationEventType.SetUuidState]: setUuidStateNotificationEvent,
   [NotificationEventType.CreateEntityLink]: createEntityLinkNotificationEvent,
   [NotificationEventType.RemoveEntityLink]: removeEntityLinkNotificationEvent,
-  [NotificationEventType.CreateEntityRevision]: createEntityRevisionNotificationEvent,
-  [NotificationEventType.CreateTaxonomyTerm]: createTaxonomyTermNotificationEvent,
+  [NotificationEventType.CreateEntityRevision]:
+    createEntityRevisionNotificationEvent,
+  [NotificationEventType.CreateTaxonomyTerm]:
+    createTaxonomyTermNotificationEvent,
   [NotificationEventType.SetTaxonomyTerm]: setTaxonomyTermNotificationEvent,
   [NotificationEventType.SetTaxonomyParent]: setTaxonomyTermNotificationEvent,
   [NotificationEventType.SetThreadState]: setThreadStateNotificationEvent,

@@ -188,9 +188,10 @@ describe('notifications', () => {
             {
               id: 1,
               unread: false,
-              event: getCheckoutRevisionNotificationEventDataWithoutSubResolvers(
-                checkoutRevisionNotificationEvent
-              ),
+              event:
+                getCheckoutRevisionNotificationEventDataWithoutSubResolvers(
+                  checkoutRevisionNotificationEvent
+                ),
             },
           ],
         },
@@ -249,9 +250,10 @@ describe('notificationEvent', () => {
         `,
         variables: checkoutRevisionNotificationEvent,
         data: {
-          notificationEvent: getCheckoutRevisionNotificationEventDataWithoutSubResolvers(
-            checkoutRevisionNotificationEvent
-          ),
+          notificationEvent:
+            getCheckoutRevisionNotificationEventDataWithoutSubResolvers(
+              checkoutRevisionNotificationEvent
+            ),
         },
         client,
       })
@@ -344,9 +346,8 @@ describe('notificationEvent', () => {
         variables: checkoutRevisionNotificationEvent,
         data: {
           notificationEvent: {
-            revision: getArticleRevisionDataWithoutSubResolvers(
-              articleRevision
-            ),
+            revision:
+              getArticleRevisionDataWithoutSubResolvers(articleRevision),
           },
         },
         client,
@@ -379,9 +380,10 @@ describe('notificationEvent', () => {
         `,
         variables: rejectRevisionNotificationEvent,
         data: {
-          notificationEvent: getRejectRevisionNotificationEventDataWithoutSubResolvers(
-            rejectRevisionNotificationEvent
-          ),
+          notificationEvent:
+            getRejectRevisionNotificationEventDataWithoutSubResolvers(
+              rejectRevisionNotificationEvent
+            ),
         },
         client,
       })
@@ -474,9 +476,8 @@ describe('notificationEvent', () => {
         variables: rejectRevisionNotificationEvent,
         data: {
           notificationEvent: {
-            revision: getArticleRevisionDataWithoutSubResolvers(
-              articleRevision
-            ),
+            revision:
+              getArticleRevisionDataWithoutSubResolvers(articleRevision),
           },
         },
         client,
@@ -508,9 +509,10 @@ describe('notificationEvent', () => {
         `,
         variables: createCommentNotificationEvent,
         data: {
-          notificationEvent: getCreateCommentNotificationEventDataWithoutSubResolvers(
-            createCommentNotificationEvent
-          ),
+          notificationEvent:
+            getCreateCommentNotificationEventDataWithoutSubResolvers(
+              createCommentNotificationEvent
+            ),
         },
         client,
       })
@@ -617,9 +619,10 @@ describe('notificationEvent', () => {
         `,
         variables: createEntityNotificationEvent,
         data: {
-          notificationEvent: getCreateEntityNotificationEventDataWithoutSubResolvers(
-            createEntityNotificationEvent
-          ),
+          notificationEvent:
+            getCreateEntityNotificationEventDataWithoutSubResolvers(
+              createEntityNotificationEvent
+            ),
         },
         client,
       })
@@ -710,9 +713,10 @@ describe('notificationEvent', () => {
         `,
         variables: createEntityLinkNotificationEvent,
         data: {
-          notificationEvent: getCreateEntityLinkNotificationEventDataWithoutSubResolvers(
-            createEntityLinkNotificationEvent
-          ),
+          notificationEvent:
+            getCreateEntityLinkNotificationEventDataWithoutSubResolvers(
+              createEntityLinkNotificationEvent
+            ),
         },
         client,
       })
@@ -833,9 +837,10 @@ describe('notificationEvent', () => {
         `,
         variables: removeEntityLinkNotificationEvent,
         data: {
-          notificationEvent: getRemoveEntityLinkNotificationEventDataWithoutSubResolvers(
-            removeEntityLinkNotificationEvent
-          ),
+          notificationEvent:
+            getRemoveEntityLinkNotificationEventDataWithoutSubResolvers(
+              removeEntityLinkNotificationEvent
+            ),
         },
         client,
       })
@@ -956,9 +961,10 @@ describe('notificationEvent', () => {
         `,
         variables: createEntityRevisionNotificationEvent,
         data: {
-          notificationEvent: getCreateEntityRevisionNotificationEventDataWithoutSubResolvers(
-            createEntityRevisionNotificationEvent
-          ),
+          notificationEvent:
+            getCreateEntityRevisionNotificationEventDataWithoutSubResolvers(
+              createEntityRevisionNotificationEvent
+            ),
         },
         client,
       })
@@ -1051,9 +1057,8 @@ describe('notificationEvent', () => {
         variables: createEntityRevisionNotificationEvent,
         data: {
           notificationEvent: {
-            entityRevision: getArticleRevisionDataWithoutSubResolvers(
-              articleRevision
-            ),
+            entityRevision:
+              getArticleRevisionDataWithoutSubResolvers(articleRevision),
           },
         },
         client,
@@ -1085,9 +1090,10 @@ describe('notificationEvent', () => {
         `,
         variables: createTaxonomyTermNotificationEvent,
         data: {
-          notificationEvent: getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers(
-            createTaxonomyTermNotificationEvent
-          ),
+          notificationEvent:
+            getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers(
+              createTaxonomyTermNotificationEvent
+            ),
         },
         client,
       })
@@ -1181,9 +1187,10 @@ describe('notificationEvent', () => {
         `,
         variables: setTaxonomyTermNotificationEvent,
         data: {
-          notificationEvent: getSetTaxonomyTermNotificationEventDataWithoutSubResolvers(
-            setTaxonomyTermNotificationEvent
-          ),
+          notificationEvent:
+            getSetTaxonomyTermNotificationEventDataWithoutSubResolvers(
+              setTaxonomyTermNotificationEvent
+            ),
         },
         client,
       })
@@ -1277,9 +1284,10 @@ describe('notificationEvent', () => {
         `,
         variables: createTaxonomyLinkNotificationEvent,
         data: {
-          notificationEvent: getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers(
-            createTaxonomyLinkNotificationEvent
-          ),
+          notificationEvent:
+            getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers(
+              createTaxonomyLinkNotificationEvent
+            ),
         },
         client,
       })
@@ -1403,9 +1411,10 @@ describe('notificationEvent', () => {
         `,
         variables: removeTaxonomyLinkNotificationEvent,
         data: {
-          notificationEvent: getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers(
-            removeTaxonomyLinkNotificationEvent
-          ),
+          notificationEvent:
+            getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers(
+              removeTaxonomyLinkNotificationEvent
+            ),
         },
         client,
       })
@@ -1529,9 +1538,10 @@ describe('notificationEvent', () => {
         `,
         variables: setTaxonomyParentNotificationEvent,
         data: {
-          notificationEvent: getSetTaxonomyParentNotificationEventDataWithoutSubResolvers(
-            setTaxonomyParentNotificationEvent
-          ),
+          notificationEvent:
+            getSetTaxonomyParentNotificationEventDataWithoutSubResolvers(
+              setTaxonomyParentNotificationEvent
+            ),
         },
         client,
       })
@@ -1591,9 +1601,8 @@ describe('notificationEvent', () => {
         variables: setTaxonomyParentNotificationEvent,
         data: {
           notificationEvent: {
-            previousParent: getTaxonomyTermDataWithoutSubResolvers(
-              taxonomyTermRoot
-            ),
+            previousParent:
+              getTaxonomyTermDataWithoutSubResolvers(taxonomyTermRoot),
           },
         },
         client,
@@ -1689,9 +1698,10 @@ describe('notificationEvent', () => {
         `,
         variables: createThreadNotificationEvent,
         data: {
-          notificationEvent: getCreateThreadNotificationEventDataWithoutSubResolvers(
-            createThreadNotificationEvent
-          ),
+          notificationEvent:
+            getCreateThreadNotificationEventDataWithoutSubResolvers(
+              createThreadNotificationEvent
+            ),
         },
         client,
       })
@@ -1805,9 +1815,10 @@ describe('notificationEvent', () => {
         `,
         variables: setLicenseNotificationEvent,
         data: {
-          notificationEvent: getSetLicenseNotificationEventDataWithoutSubResolvers(
-            setLicenseNotificationEvent
-          ),
+          notificationEvent:
+            getSetLicenseNotificationEventDataWithoutSubResolvers(
+              setLicenseNotificationEvent
+            ),
         },
         client,
       })
@@ -1899,9 +1910,10 @@ describe('notificationEvent', () => {
         `,
         variables: setThreadStateNotificationEvent,
         data: {
-          notificationEvent: getSetThreadStateNotificationEventDataWithoutSubResolvers(
-            setThreadStateNotificationEvent
-          ),
+          notificationEvent:
+            getSetThreadStateNotificationEventDataWithoutSubResolvers(
+              setThreadStateNotificationEvent
+            ),
         },
         client,
       })
@@ -1986,9 +1998,10 @@ describe('notificationEvent', () => {
         `,
         variables: setUuidStateNotificationEvent,
         data: {
-          notificationEvent: getSetUuidStateNotificationEventDataWithoutSubResolvers(
-            setUuidStateNotificationEvent
-          ),
+          notificationEvent:
+            getSetUuidStateNotificationEventDataWithoutSubResolvers(
+              setUuidStateNotificationEvent
+            ),
         },
         client,
       })

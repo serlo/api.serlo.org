@@ -32,10 +32,12 @@ import { Timer } from '../timer'
 import { createLockManager, LockManager } from './lock-manager'
 import { AsyncOrSync } from '~/utils'
 
-const msgpack = (createMsgpack as () => {
-  encode(value: unknown): Buffer
-  decode<T>(buffer: Buffer): T
-})()
+const msgpack = (
+  createMsgpack as () => {
+    encode(value: unknown): Buffer
+    decode<T>(buffer: Buffer): T
+  }
+)()
 
 export enum Priority {
   Low,
@@ -85,7 +87,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
     } & FunctionOrValue<T>
   ) {
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    const clientSet = (util.promisify(client.set).bind(client) as unknown) as (
+    const clientSet = util.promisify(client.set).bind(client) as unknown as (
       key: string,
       value: Buffer
     ) => Promise<void>
@@ -132,10 +134,10 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       key: string
     }
   ): Promise<O.Option<CacheEntry<T>>> {
-    const clientGet = (util
+    const clientGet = util
       // eslint-disable-next-line @typescript-eslint/unbound-method
       .promisify(client.get)
-      .bind(client) as unknown) as (key: string) => Promise<Buffer | null>
+      .bind(client) as unknown as (key: string) => Promise<Buffer | null>
 
     const packedValue = await clientGet(key)
     if (packedValue === null) return O.none
@@ -151,9 +153,9 @@ export function createCache({ timer }: { timer: Timer }): Cache {
   }
 
   const remove = async ({ key }: { key: string }) => {
-    const clientRemove = (util
-      .promisify(client.del)
-      .bind(client) as unknown) as (key: string) => Promise<void>
+    const clientRemove = util.promisify(client.del).bind(client) as unknown as (
+      key: string
+    ) => Promise<void>
 
     await clientRemove(key)
   }
@@ -169,19 +171,19 @@ export function createCache({ timer }: { timer: Timer }): Cache {
   }
 
   const flush = async () => {
-    const clientFlush = (util
+    const clientFlush = util
       // eslint-disable-next-line @typescript-eslint/unbound-method
       .promisify(client.flushdb)
-      .bind(client) as unknown) as () => Promise<void>
+      .bind(client) as unknown as () => Promise<void>
 
     await clientFlush()
   }
 
   const quit = async () => {
-    const clientQuit = (util
+    const clientQuit = util
       // eslint-disable-next-line @typescript-eslint/unbound-method
       .promisify(client.quit)
-      .bind(client) as unknown) as () => Promise<void>
+      .bind(client) as unknown as () => Promise<void>
 
     await Promise.all([
       clientQuit(),

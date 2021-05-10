@@ -68,9 +68,10 @@ function validateServiceToken(token: string): Service {
   }
   return service
 
-  function validateJwt(
-    token: string
-  ): { service: Service | null; error?: JsonWebTokenError } {
+  function validateJwt(token: string): {
+    service: Service | null
+    error?: JsonWebTokenError
+  } {
     try {
       const decoded = decode(token)
       if (!decoded || typeof decoded !== 'object') return unauthenticated()
