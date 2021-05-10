@@ -35,32 +35,34 @@ import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonom
 import { Course, CourseRevision } from '~/types'
 import { isDefined } from '~/utils'
 
-export const resolvers: TypeResolvers<Course> &
-  TypeResolvers<CourseRevision> = {
-  Course: {
-    ...createRepositoryResolvers({ revisionDecoder: CourseRevisionDecoder }),
-    ...createTaxonomyTermChildResolvers(),
-    async pages(course, { trashed, hasCurrentRevision }, { dataSources }) {
-      const pages = await Promise.all(
-        course.pageIds.map((id: number) => {
-          return dataSources.model.serlo.getUuidWithCustomDecoder({
-            id,
-            decoder: CoursePageDecoder,
+export const resolvers: TypeResolvers<Course> & TypeResolvers<CourseRevision> =
+  {
+    Course: {
+      ...createRepositoryResolvers({ revisionDecoder: CourseRevisionDecoder }),
+      ...createTaxonomyTermChildResolvers(),
+      async pages(course, { trashed, hasCurrentRevision }, { dataSources }) {
+        const pages = await Promise.all(
+          course.pageIds.map((id: number) => {
+            return dataSources.model.serlo.getUuidWithCustomDecoder({
+              id,
+              decoder: CoursePageDecoder,
+            })
           })
-        })
-      )
-
-      return pages.filter(isDefined).filter((page) => {
-        if (trashed !== undefined && page.trashed !== trashed) return false
-        if (
-          hasCurrentRevision !== undefined &&
-          R.isNil(page.currentRevisionId) === hasCurrentRevision
         )
-          return false
 
-        return true
-      })
+        return pages.filter(isDefined).filter((page) => {
+          if (trashed !== undefined && page.trashed !== trashed) return false
+          if (
+            hasCurrentRevision !== undefined &&
+            R.isNil(page.currentRevisionId) === hasCurrentRevision
+          )
+            return false
+
+          return true
+        })
+      },
     },
-  },
-  CourseRevision: createRevisionResolvers({ repositoryDecoder: CourseDecoder }),
-}
+    CourseRevision: createRevisionResolvers({
+      repositoryDecoder: CourseDecoder,
+    }),
+  }

@@ -41,7 +41,7 @@ test('invalid values are reported to sentry', async () => {
 
   await assertFailingGraphQLQuery({
     query: gql`
-      query($id: Int!) {
+      query ($id: Int!) {
         uuid(id: $id) {
           __typename
         }
