@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import * as Sentry from '@sentry/node'
 import { rest } from 'msw'
 import { SharedOptions } from 'msw/lib/types/sharedOptions'
 import { setupServer } from 'msw/node'
@@ -29,7 +28,7 @@ import {
   givenSpreadheetApi,
 } from '../__tests__/__utils__'
 import { createCache } from '~/internals/cache'
-import { initializeSentry } from '~/internals/sentry'
+import { initializeSentry, Sentry } from '~/internals/sentry'
 import { Time, timeToMilliseconds } from '~/internals/swr-queue'
 import { Timer } from '~/internals/timer'
 
