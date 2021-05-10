@@ -132,7 +132,7 @@ export function createQuery<P, R>(
   query._querySpec = querySpecWithHelpers
   query.__typename = 'Query'
 
-  return (query as unknown) as Query<P, R>
+  return query as unknown as Query<P, R>
 }
 
 /**
