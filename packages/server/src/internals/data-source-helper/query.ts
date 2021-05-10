@@ -79,6 +79,9 @@ export function createQuery<P, R>(
             scope.setContext('cache', {
               key,
               invalidCacheValue: invalidCachedValue?.value,
+              timeInvalidCacheSaved: invalidCachedValue
+                ? new Date(invalidCachedValue.lastModified).toISOString()
+                : undefined,
               currentValue: value,
             })
             return scope
@@ -129,7 +132,7 @@ export function createQuery<P, R>(
   query._querySpec = querySpecWithHelpers
   query.__typename = 'Query'
 
-  return query as unknown as Query<P, R>
+  return (query as unknown) as Query<P, R>
 }
 
 /**
