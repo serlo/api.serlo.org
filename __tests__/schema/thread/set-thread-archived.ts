@@ -113,7 +113,7 @@ describe('archive-comment', () => {
     )
 
     const query = gql`
-      query($id: Int) {
+      query ($id: Int) {
         uuid(id: $id) {
           ... on ThreadAware {
             threads {
