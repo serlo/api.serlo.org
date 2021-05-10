@@ -79,6 +79,9 @@ export function createQuery<P, R>(
             scope.setContext('cache', {
               key,
               invalidCacheValue: invalidCachedValue?.value,
+              timeInvalidCacheSaved: invalidCachedValue
+                ? new Date(invalidCachedValue.lastModified).toISOString()
+                : undefined,
               currentValue: value,
             })
             return scope
