@@ -23,6 +23,7 @@ import * as Sentry from '@sentry/node'
 import type { ApolloServerPlugin } from 'apollo-server-plugin-base'
 import R from 'ramda'
 
+import { InvalidValueFromListener } from './data-source'
 import { InvalidCurrentValueError } from './data-source-helper'
 
 export function initializeSentry({
@@ -85,9 +86,11 @@ export function createSentryPlugin(): ApolloServerPlugin {
                 })
               }
 
-              if (error.originalError !== undefined) {
-                if (error.originalError instanceof InvalidCurrentValueError) {
-                  const { invalidValue } = error.originalError
+              const { originalError } = error
+
+              if (originalError !== undefined) {
+                if (originalError instanceof InvalidCurrentValueError) {
+                  const { invalidValue } = originalError
 
                   scope.setFingerprint([JSON.stringify(invalidValue)])
 
@@ -99,6 +102,11 @@ export function createSentryPlugin(): ApolloServerPlugin {
                       : {}),
                     invalidCurrentValue: invalidValue.invalidCurrentValue,
                   })
+                }
+
+                if (originalError instanceof InvalidValueFromListener) {
+                  scope.setFingerprint([originalError.errorContext.key])
+                  scope.setContext('error', originalError.errorContext)
                 }
               }
 
