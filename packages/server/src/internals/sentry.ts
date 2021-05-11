@@ -87,17 +87,14 @@ export function createSentryPlugin(): ApolloServerPlugin {
 
               if (error.originalError !== undefined) {
                 if (error.originalError instanceof InvalidCurrentValueError) {
-                  const { invalidValue } = error.originalError
+                  const { errorContext } = error.originalError
 
                   scope.setFingerprint([
                     'invalid-value',
                     'data-source',
-                    JSON.stringify(
-                      error.originalError.invalidValue.invalidCurrentValue
-                    ),
+                    JSON.stringify(errorContext.invalidCurrentValue),
                   ])
-
-                  scope.setContext('error', invalidValue)
+                  scope.setContext('error', errorContext)
                 }
               }
 
