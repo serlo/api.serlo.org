@@ -28,6 +28,7 @@ export class InvalidCurrentValueError extends Error {
     public invalidValue: {
       invalidCachedValue?: unknown
       invalidCurrentValue: unknown
+      key?: string
     }
   ) {
     super('Invalid value received from data source.')
