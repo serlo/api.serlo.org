@@ -20,7 +20,9 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { RESTDataSource } from 'apollo-datasource-rest'
+import { option as O } from 'fp-ts'
 
+import { isQuery } from './data-source-helper'
 import { Environment } from '~/internals/environment'
 import { createGoogleSpreadsheetApiModel, createSerloModel } from '~/model'
 
@@ -41,11 +43,38 @@ export class ModelDataSource extends RESTDataSource {
     await this.environment.cache.remove({ key })
   }
 
-  public async setCacheValue(args: { key: string; value: unknown }) {
-    await this.environment.cache.set(args)
+  public async setCacheValue({ key, value }: { key: string; value: unknown }) {
+    // TODO: The following code is also used in the SWR queue / worker
+    // Both codes should be merged together
+    for (const model of [this.serlo, this.googleSpreadsheetApi]) {
+      for (const query of Object.values(model)) {
+        if (
+          isQuery(query) &&
+          O.isSome(query._querySpec.getPayload(key)) &&
+          query._querySpec.decoder !== undefined &&
+          !query._querySpec.decoder.is(value)
+        ) {
+          throw new InvalidValueFromListener({
+            key,
+            invalidValueFromListener: value,
+          })
+        }
+      }
+    }
+
+    await this.environment.cache.set({ key, value })
   }
 
   public async updateCacheValue({ key }: { key: string }) {
     await this.environment.swrQueue.queue({ key })
+  }
+}
+
+// TODO: Find a better place for this error (maybe together with InvalidCurrentValueError)
+export class InvalidValueFromListener extends Error {
+  constructor(
+    public errorContext: { key: string; invalidValueFromListener: unknown }
+  ) {
+    super('Invalid value received from listener.')
   }
 }
