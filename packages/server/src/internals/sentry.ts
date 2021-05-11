@@ -101,7 +101,11 @@ export function createSentryPlugin(): ApolloServerPlugin {
                 }
 
                 if (originalError instanceof InvalidValueFromListener) {
-                  scope.setFingerprint([originalError.errorContext.key])
+                  scope.setFingerprint([
+                    'invalid-value',
+                    'listener',
+                    originalError.errorContext.key,
+                  ])
                   scope.setContext('error', originalError.errorContext)
                 }
               }
