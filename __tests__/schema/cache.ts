@@ -22,7 +22,7 @@
 import { gql } from 'apollo-server'
 import { option } from 'fp-ts'
 
-import { createRemoveCacheMutation, user } from '../../__fixtures__'
+import { user } from '../../__fixtures__'
 import {
   assertErrorEvent,
   assertFailingGraphQLMutation,
@@ -30,17 +30,6 @@ import {
   createTestClient,
 } from '../__utils__'
 import { Service } from '~/internals/authentication'
-
-const testVars = [
-  {
-    key: 'foo',
-    value: { anything: 'bar' },
-  },
-  {
-    key: 'bar.fuss',
-    value: ['whatever'],
-  },
-]
 
 describe('set', () => {
   const key = 'de.serlo.org/api/uuid/1'
@@ -101,60 +90,80 @@ describe('set', () => {
   })
 })
 
-test('remove (forbidden with not logged in user)', async () => {
-  const client = createTestClient({
-    service: Service.SerloCloudflareWorker,
-    userId: null,
-  })
-  await assertFailingGraphQLMutation({
-    ...createRemoveCacheMutation(testVars[0]),
-    client,
-    expectedError: 'FORBIDDEN',
-  })
-})
+describe('remove', () => {
+  const key = 'de.serlo.org/api/uuid/1'
+  const mutation = gql`
+    mutation ($input: CacheRemoveInput!) {
+      _cache {
+        remove(input: $input) {
+          success
+        }
+      }
+    }
+  `
 
-test('remove (forbidden with wrong user)', async () => {
-  const client = createTestClient({
-    service: Service.SerloCloudflareWorker,
-    userId: user.id,
-  })
-  await assertFailingGraphQLMutation({
-    ...createRemoveCacheMutation(testVars[0]),
-    client,
-    expectedError: 'FORBIDDEN',
-  })
-})
-
-test('remove (authenticated via Serlo Service)', async () => {
-  const client = createTestClient({
-    service: Service.Serlo,
-    userId: null,
+  beforeEach(async () => {
+    await global.cache.set({
+      key,
+      value: { lastModified: global.timer.now(), value: user },
+    })
   })
 
-  await assertSuccessfulGraphQLMutation({
-    ...createRemoveCacheMutation(testVars[0]),
-    client,
-    data: { _cache: { remove: { success: true } } },
+  test('is forbidden when user is not logged in', async () => {
+    const client = createTestClient({ userId: null })
+
+    await assertFailingGraphQLMutation({
+      mutation,
+      variables: { input: { key } },
+      client,
+      expectedError: 'FORBIDDEN',
+    })
   })
 
-  const cachedValue = await global.cache.get({ key: testVars[0].key })
-  expect(option.isNone(cachedValue)).toBe(true)
-})
+  test('is forbidden when user is not developer', async () => {
+    const client = createTestClient({ userId: user.id })
 
-test('remove (authenticated as CarolinJaser)', async () => {
-  const client = createTestClient({
-    service: Service.SerloCloudflareWorker,
-    userId: 178145,
+    await assertFailingGraphQLMutation({
+      mutation,
+      variables: { input: { key } },
+      client,
+      expectedError: 'FORBIDDEN',
+    })
   })
 
-  await assertSuccessfulGraphQLMutation({
-    ...createRemoveCacheMutation(testVars[0]),
-    client,
-    data: { _cache: { remove: { success: true } } },
+  test('removes a cache value (authenticated via Serlo Service)', async () => {
+    const client = createTestClient({
+      service: Service.Serlo,
+      userId: null,
+    })
+
+    await assertSuccessfulGraphQLMutation({
+      mutation,
+      variables: { input: { key } },
+      client,
+      data: { _cache: { remove: { success: true } } },
+    })
+
+    const cachedValue = await global.cache.get({ key })
+    expect(option.isNone(cachedValue)).toBe(true)
   })
 
-  const cachedValue = await global.cache.get({ key: testVars[0].key })
-  expect(option.isNone(cachedValue)).toBe(true)
+  test('removes a cache value (authenticated as CarolinJaser)', async () => {
+    const client = createTestClient({
+      service: Service.SerloCloudflareWorker,
+      userId: 178145,
+    })
+
+    await assertSuccessfulGraphQLMutation({
+      mutation,
+      variables: { input: { key } },
+      client,
+      data: { _cache: { remove: { success: true } } },
+    })
+
+    const cachedValue = await global.cache.get({ key })
+    expect(option.isNone(cachedValue)).toBe(true)
+  })
 })
 
 describe('update', () => {
