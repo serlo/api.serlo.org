@@ -24,11 +24,7 @@ import { option } from 'fp-ts'
 
 import { createRemoveCacheMutation, user } from '../../__fixtures__'
 import {
-  createRemoveCacheMutation,
-  createSetCacheMutation,
-  user,
-} from '../../__fixtures__'
-import {
+  assertErrorEvent,
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   createTestClient,
@@ -84,6 +80,23 @@ describe('set', () => {
     expect(option.isSome(cachedValue) && cachedValue.value).toEqual({
       lastModified: now,
       value: user,
+    })
+  })
+
+  test('reports an error when value was invalid', async () => {
+    const invalidValue = { value: 'Some invalid value' }
+    const client = createTestClient({ service: Service.Serlo })
+
+    await assertFailingGraphQLMutation({
+      mutation,
+      variables: { input: { key, value: invalidValue } },
+      client,
+      expectedError: 'INTERNAL_SERVER_ERROR',
+    })
+
+    await assertErrorEvent({
+      message: 'Invalid value received from listener.',
+      errorContext: { key, invalidValueFromListener: invalidValue },
     })
   })
 })
