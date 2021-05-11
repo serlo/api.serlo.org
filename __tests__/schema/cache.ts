@@ -19,13 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-
+import { gql } from 'apollo-server'
 import { option } from 'fp-ts'
 
 import {
   createRemoveCacheMutation,
   createSetCacheMutation,
-  createUpdateCacheMutation,
   user,
 } from '../../__fixtures__'
 import {
@@ -46,36 +45,45 @@ const testVars = [
   },
 ]
 
-test('set (forbidden)', async () => {
-  const client = createTestClient({
-    service: Service.SerloCloudflareWorker,
-    userId: null,
+describe('set', () => {
+  const key = 'de.serlo.org/api/uuid/1'
+  const mutation = gql`
+    mutation ($input: CacheSetInput!) {
+      _cache {
+        set(input: $input) {
+          success
+        }
+      }
+    }
+  `
+
+  test('is forbidden when service is not legacy serlo.org', async () => {
+    const client = createTestClient({ service: Service.SerloCloudflareWorker })
+
+    await assertFailingGraphQLMutation({
+      mutation,
+      variables: { input: { key, value: user } },
+      client,
+      expectedError: 'FORBIDDEN',
+    })
   })
 
-  await assertFailingGraphQLMutation({
-    ...createSetCacheMutation(testVars[0]),
-    client,
-    expectedError: 'FORBIDDEN',
-  })
-})
+  test('sets a certain cache value', async () => {
+    const client = createTestClient({ service: Service.Serlo })
+    const now = global.timer.now()
 
-test('set (authenticated)', async () => {
-  const client = createTestClient({
-    service: Service.Serlo,
-    userId: null,
-  })
-  const now = global.timer.now()
+    await assertSuccessfulGraphQLMutation({
+      mutation,
+      variables: { input: { key, value: user } },
+      client,
+      data: { _cache: { set: { success: true } } },
+    })
 
-  await assertSuccessfulGraphQLMutation({
-    ...createSetCacheMutation(testVars[0]),
-    client,
-    data: { _cache: { set: { success: true } } },
-  })
-
-  const cachedValue = await global.cache.get({ key: testVars[0].key })
-  expect(option.isSome(cachedValue) && cachedValue.value).toEqual({
-    lastModified: now,
-    value: testVars[0].value,
+    const cachedValue = await global.cache.get({ key })
+    expect(option.isSome(cachedValue) && cachedValue.value).toEqual({
+      lastModified: now,
+      value: user,
+    })
   })
 })
 
@@ -135,14 +143,23 @@ test('remove (authenticated as CarolinJaser)', async () => {
   expect(option.isNone(cachedValue)).toBe(true)
 })
 
-test('update (forbidden)', async () => {
-  const client = createTestClient({
-    service: Service.SerloCloudflareWorker,
-    userId: null,
-  })
-  await assertFailingGraphQLMutation({
-    ...createUpdateCacheMutation(['I', 'will', 'fail']),
-    client,
-    expectedError: 'FORBIDDEN',
+describe('update', () => {
+  test('is forbidden when service is not legacy serlo.org', async () => {
+    const client = createTestClient({ service: Service.SerloCloudflareWorker })
+
+    await assertFailingGraphQLMutation({
+      mutation: gql`
+        mutation ($input: CacheUpdateInput!) {
+          _cache {
+            update(input: $input) {
+              success
+            }
+          }
+        }
+      `,
+      variables: { input: { keys: ['key1', 'key2'] } },
+      client,
+      expectedError: 'FORBIDDEN',
+    })
   })
 })

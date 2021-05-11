@@ -62,22 +62,3 @@ export function createRemoveCacheMutation(variables: { key: string }) {
     },
   }
 }
-
-export function createUpdateCacheMutation(keys: string[]) {
-  return {
-    mutation: gql`
-      mutation updateCache($input: CacheUpdateInput!) {
-        _cache {
-          update(input: $input) {
-            success
-          }
-        }
-      }
-    `,
-    variables: {
-      input: {
-        keys: keys,
-      },
-    },
-  }
-}
