@@ -25,7 +25,7 @@
  */
 export class InvalidCurrentValueError extends Error {
   constructor(
-    public invalidValue: {
+    public errorContext: {
       invalidCachedValue?: unknown
       invalidCurrentValue: unknown
       key?: string
