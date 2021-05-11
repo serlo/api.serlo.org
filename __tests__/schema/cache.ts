@@ -22,6 +22,7 @@
 import { gql } from 'apollo-server'
 import { option } from 'fp-ts'
 
+import { createRemoveCacheMutation, user } from '../../__fixtures__'
 import {
   createRemoveCacheMutation,
   createSetCacheMutation,

@@ -21,29 +21,6 @@
  */
 import { gql } from 'apollo-server'
 
-export function createSetCacheMutation(variables: {
-  key: string
-  value: unknown
-}) {
-  return {
-    mutation: gql`
-      mutation setCache($input: CacheSetInput!) {
-        _cache {
-          set(input: $input) {
-            success
-          }
-        }
-      }
-    `,
-    variables: {
-      input: {
-        key: variables.key,
-        value: variables.value,
-      },
-    },
-  }
-}
-
 export function createRemoveCacheMutation(variables: { key: string }) {
   return {
     mutation: gql`
