@@ -85,6 +85,7 @@ describe('set', () => {
 
     await assertErrorEvent({
       message: 'Invalid value received from listener.',
+      fingerprint: ['invalid-value', 'listener', key],
       errorContext: { key, invalidValueFromListener: invalidValue },
     })
   })
