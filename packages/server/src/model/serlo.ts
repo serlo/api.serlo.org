@@ -88,7 +88,7 @@ export function createSerloModel({
   const getUuid = createQuery(
     {
       decoder: t.union([UuidDecoder, t.null]),
-      enableSwr: false,
+      enableSwr: true,
       getCurrentValue: async ({ id }: { id: number }) => {
         const uuid = (await handleMessage({
           message: {
