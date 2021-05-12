@@ -799,6 +799,15 @@ async function exec(): Promise<void> {
       fixed: [['swr-queue', 'Handle stuck jobs gracefully.']],
       internal: ['Improve Sentry integration.'],
     },
+    {
+      tagName: 'v0.24.0',
+      date: '2021-05-12',
+      breakingChanges: [['cache', 'Move queries into `_cache` namespace.']],
+      internal: [
+        'Reject invalid values provided by listeners.',
+        'Improve Sentry integration.',
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
