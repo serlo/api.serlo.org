@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.24.0](https://github.com/serlo/api.serlo.org/compare/v0.23.2..v0.24.0) - May 12, 2021
+
+### Breaking Changes
+
+- **cache**. Move queries into `_cache` namespace.
+
+### Internal
+
+- Reject invalid values provided by listeners.
+
+- Improve Sentry integration.
+
 ## [v0.23.2](https://github.com/serlo/api.serlo.org/compare/v0.23.1..v0.23.2) - May 10, 2021
 
 ### Added
