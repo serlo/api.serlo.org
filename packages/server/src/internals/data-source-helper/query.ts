@@ -75,7 +75,7 @@ export function createQuery<P, R>(
         Sentry.captureMessage(
           'Invalid cached value received that could be repaired automatically by data source.',
           (scope) => {
-            scope.setFingerprint([key])
+            scope.setFingerprint(['invalid-value', 'cache', key])
             scope.setContext('cache', {
               key,
               invalidCacheValue: invalidCachedValue?.value,
@@ -93,6 +93,7 @@ export function createQuery<P, R>(
           ? { invalidCachedValue: cacheValue.value.value }
           : {}),
         invalidCurrentValue: value,
+        key,
       })
     }
   }

@@ -53,8 +53,10 @@ test('invalid values are reported to sentry', async () => {
 
   await assertErrorEvent({
     message: 'Invalid value received from data source.',
+    fingerprint: ['invalid-value', 'data-source', JSON.stringify(invalidValue)],
     errorContext: {
       invalidCurrentValue: invalidValue,
+      key: 'de.serlo.org/api/uuid/42',
     },
   })
 })
