@@ -82,7 +82,27 @@ export function getGraphQLOptions(
     introspection: true,
     // We add the playground via express middleware in src/index.ts
     playground: false,
-    plugins: [createSentryPlugin()],
+    plugins: [
+      createSentryPlugin(),
+      {
+        requestDidStart() {
+          return {
+            executionDidStart() {
+              return {
+                willResolveField({ source, args, context, info }) {
+                  return (error) => {
+                    if (error) {
+                      const cacheKeyStack = source?.['_cacheKeyStack'] ?? []
+                      console.log(`It failed with ${error}`, cacheKeyStack)
+                    }
+                  }
+                },
+              }
+            },
+          }
+        },
+      },
+    ],
     dataSources() {
       return {
         model: new ModelDataSource(environment),

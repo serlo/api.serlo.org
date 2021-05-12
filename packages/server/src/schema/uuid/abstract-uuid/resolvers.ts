@@ -65,6 +65,18 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
       const uuid = await dataSources.model.serlo.getUuid({
         id: decodedUuid.right,
       })
+
+      if (uuid) {
+        // @ts-expect-error
+        uuid['_cacheKeyStack'] = uuid['_cacheKeyStack'] ?? []
+        // @ts-expect-error
+        uuid['_cacheKeyStack'].push(
+          dataSources.model.serlo.getUuid._querySpec.getKey({
+            id: decodedUuid.right,
+          })
+        )
+      }
+
       return checkUuid(payload, uuid)
     },
   },

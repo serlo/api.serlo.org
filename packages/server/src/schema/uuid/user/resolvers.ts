@@ -77,6 +77,7 @@ export const resolvers: Queries<
       })
     },
     async activeAuthor(user, _args, { dataSources }) {
+      throw new Error('simulate error here')
       return (await dataSources.model.serlo.getActiveAuthorIds()).includes(
         user.id
       )
