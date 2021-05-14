@@ -200,6 +200,7 @@ export function createSwrQueueWorker({
         models,
         timer,
       })
+
       if (E.isLeft(result)) {
         return `Skipped update because ${result.left}`
       }
@@ -213,11 +214,12 @@ export function createSwrQueueWorker({
         getValue: async (current) => {
           const value = await spec.getCurrentValue(payload, current ?? null)
           const decoder = spec.decoder || t.unknown
-          const decoded = decoder.decode(value)
-          if (E.isRight(decoded)) {
-            return decoded.right
+
+          if (decoder.is(value)) {
+            return value
+          } else {
+            throw new Error(`Invalid value: ${JSON.stringify(value)}`)
           }
-          throw new Error(`Invalid value: ${JSON.stringify(value)}`)
         },
       })
       return 'Updated because stale'
