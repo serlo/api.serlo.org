@@ -1,4 +1,4 @@
-import type { ModelOf } from '~/internals/model/types'
+import type { ModelOf } from '~/internals/model'
 import type { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import type { Context } from '~/internals/graphql/context';
 export type Maybe<T> = T | null;
@@ -459,6 +459,37 @@ export type ArticleRevisionCursor = {
   __typename?: 'ArticleRevisionCursor';
   cursor: Scalars['String'];
   node: ArticleRevision;
+};
+
+export type CacheRemoveInput = {
+  key: Scalars['String'];
+};
+
+export type CacheRemoveResponse = {
+  __typename?: 'CacheRemoveResponse';
+  success: Scalars['Boolean'];
+  query: Query;
+};
+
+export type CacheSetInput = {
+  key: Scalars['String'];
+  value: Scalars['JSON'];
+};
+
+export type CacheSetResponse = {
+  __typename?: 'CacheSetResponse';
+  success: Scalars['Boolean'];
+  query: Query;
+};
+
+export type CacheUpdateInput = {
+  keys: Array<Scalars['String']>;
+};
+
+export type CacheUpdateResponse = {
+  __typename?: 'CacheUpdateResponse';
+  success: Scalars['Boolean'];
+  query: Query;
 };
 
 export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -1216,29 +1247,11 @@ export type License = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  _removeCache?: Maybe<Scalars['Boolean']>;
-  _setCache?: Maybe<Scalars['Boolean']>;
-  _updateCache?: Maybe<Scalars['Boolean']>;
+  _cache: _CacheMutation;
   notification: NotificationMutation;
   subscription: SubscriptionMutation;
   thread: ThreadMutation;
   uuid: UuidMutation;
-};
-
-
-export type Mutation_RemoveCacheArgs = {
-  key: Scalars['String'];
-};
-
-
-export type Mutation_SetCacheArgs = {
-  key: Scalars['String'];
-  value: Scalars['JSON'];
-};
-
-
-export type Mutation_UpdateCacheArgs = {
-  keys: Array<Scalars['String']>;
 };
 
 export type Navigation = {
@@ -2163,6 +2176,28 @@ export type VideoRevisionCursor = {
   node: VideoRevision;
 };
 
+export type _CacheMutation = {
+  __typename?: '_cacheMutation';
+  set: CacheSetResponse;
+  remove: CacheRemoveResponse;
+  update: CacheUpdateResponse;
+};
+
+
+export type _CacheMutationSetArgs = {
+  input: CacheSetInput;
+};
+
+
+export type _CacheMutationRemoveArgs = {
+  input: CacheRemoveInput;
+};
+
+
+export type _CacheMutationUpdateArgs = {
+  input: CacheUpdateInput;
+};
+
 
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -2267,6 +2302,12 @@ export type ResolversTypes = {
   ArticleRevision: ResolverTypeWrapper<ModelOf<ArticleRevision>>;
   ArticleRevisionConnection: ResolverTypeWrapper<ModelOf<ArticleRevisionConnection>>;
   ArticleRevisionCursor: ResolverTypeWrapper<ModelOf<ArticleRevisionCursor>>;
+  CacheRemoveInput: ResolverTypeWrapper<ModelOf<CacheRemoveInput>>;
+  CacheRemoveResponse: ResolverTypeWrapper<ModelOf<CacheRemoveResponse>>;
+  CacheSetInput: ResolverTypeWrapper<ModelOf<CacheSetInput>>;
+  CacheSetResponse: ResolverTypeWrapper<ModelOf<CacheSetResponse>>;
+  CacheUpdateInput: ResolverTypeWrapper<ModelOf<CacheUpdateInput>>;
+  CacheUpdateResponse: ResolverTypeWrapper<ModelOf<CacheUpdateResponse>>;
   CheckoutRevisionNotificationEvent: ResolverTypeWrapper<ModelOf<CheckoutRevisionNotificationEvent>>;
   Comment: ResolverTypeWrapper<ModelOf<Comment>>;
   CommentConnection: ResolverTypeWrapper<ModelOf<CommentConnection>>;
@@ -2376,6 +2417,7 @@ export type ResolversTypes = {
   VideoRevision: ResolverTypeWrapper<ModelOf<VideoRevision>>;
   VideoRevisionConnection: ResolverTypeWrapper<ModelOf<VideoRevisionConnection>>;
   VideoRevisionCursor: ResolverTypeWrapper<ModelOf<VideoRevisionCursor>>;
+  _cacheMutation: ResolverTypeWrapper<ModelOf<_CacheMutation>>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -2406,6 +2448,12 @@ export type ResolversParentTypes = {
   ArticleRevision: ModelOf<ArticleRevision>;
   ArticleRevisionConnection: ModelOf<ArticleRevisionConnection>;
   ArticleRevisionCursor: ModelOf<ArticleRevisionCursor>;
+  CacheRemoveInput: ModelOf<CacheRemoveInput>;
+  CacheRemoveResponse: ModelOf<CacheRemoveResponse>;
+  CacheSetInput: ModelOf<CacheSetInput>;
+  CacheSetResponse: ModelOf<CacheSetResponse>;
+  CacheUpdateInput: ModelOf<CacheUpdateInput>;
+  CacheUpdateResponse: ModelOf<CacheUpdateResponse>;
   CheckoutRevisionNotificationEvent: ModelOf<CheckoutRevisionNotificationEvent>;
   Comment: ModelOf<Comment>;
   CommentConnection: ModelOf<CommentConnection>;
@@ -2512,6 +2560,7 @@ export type ResolversParentTypes = {
   VideoRevision: ModelOf<VideoRevision>;
   VideoRevisionConnection: ModelOf<VideoRevisionConnection>;
   VideoRevisionCursor: ModelOf<VideoRevisionCursor>;
+  _cacheMutation: ModelOf<_CacheMutation>;
 };
 
 export type AbstractEntityResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractEntity'] = ResolversParentTypes['AbstractEntity']> = {
@@ -2737,6 +2786,24 @@ export type ArticleRevisionConnectionResolvers<ContextType = Context, ParentType
 export type ArticleRevisionCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ArticleRevisionCursor'] = ResolversParentTypes['ArticleRevisionCursor']> = {
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<ResolversTypes['ArticleRevision'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type CacheRemoveResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CacheRemoveResponse'] = ResolversParentTypes['CacheRemoveResponse']> = {
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type CacheSetResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CacheSetResponse'] = ResolversParentTypes['CacheSetResponse']> = {
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type CacheUpdateResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CacheUpdateResponse'] = ResolversParentTypes['CacheUpdateResponse']> = {
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3153,9 +3220,7 @@ export type LicenseResolvers<ContextType = Context, ParentType extends Resolvers
 };
 
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  _removeCache?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<Mutation_RemoveCacheArgs, 'key'>>;
-  _setCache?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<Mutation_SetCacheArgs, 'key' | 'value'>>;
-  _updateCache?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<Mutation_UpdateCacheArgs, 'keys'>>;
+  _cache?: Resolver<ResolversTypes['_cacheMutation'], ParentType, ContextType>;
   notification?: Resolver<ResolversTypes['NotificationMutation'], ParentType, ContextType>;
   subscription?: Resolver<ResolversTypes['SubscriptionMutation'], ParentType, ContextType>;
   thread?: Resolver<ResolversTypes['ThreadMutation'], ParentType, ContextType>;
@@ -3653,6 +3718,13 @@ export type VideoRevisionCursorResolvers<ContextType = Context, ParentType exten
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type _CacheMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['_cacheMutation'] = ResolversParentTypes['_cacheMutation']> = {
+  set?: Resolver<ResolversTypes['CacheSetResponse'], ParentType, ContextType, RequireFields<_CacheMutationSetArgs, 'input'>>;
+  remove?: Resolver<ResolversTypes['CacheRemoveResponse'], ParentType, ContextType, RequireFields<_CacheMutationRemoveArgs, 'input'>>;
+  update?: Resolver<ResolversTypes['CacheUpdateResponse'], ParentType, ContextType, RequireFields<_CacheMutationUpdateArgs, 'input'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = Context> = {
   AbstractEntity?: AbstractEntityResolvers<ContextType>;
   AbstractEntityRevision?: AbstractEntityRevisionResolvers<ContextType>;
@@ -3676,6 +3748,9 @@ export type Resolvers<ContextType = Context> = {
   ArticleRevision?: ArticleRevisionResolvers<ContextType>;
   ArticleRevisionConnection?: ArticleRevisionConnectionResolvers<ContextType>;
   ArticleRevisionCursor?: ArticleRevisionCursorResolvers<ContextType>;
+  CacheRemoveResponse?: CacheRemoveResponseResolvers<ContextType>;
+  CacheSetResponse?: CacheSetResponseResolvers<ContextType>;
+  CacheUpdateResponse?: CacheUpdateResponseResolvers<ContextType>;
   CheckoutRevisionNotificationEvent?: CheckoutRevisionNotificationEventResolvers<ContextType>;
   Comment?: CommentResolvers<ContextType>;
   CommentConnection?: CommentConnectionResolvers<ContextType>;
@@ -3774,6 +3849,7 @@ export type Resolvers<ContextType = Context> = {
   VideoRevision?: VideoRevisionResolvers<ContextType>;
   VideoRevisionConnection?: VideoRevisionConnectionResolvers<ContextType>;
   VideoRevisionCursor?: VideoRevisionCursorResolvers<ContextType>;
+  _cacheMutation?: _CacheMutationResolvers<ContextType>;
 };
 
 

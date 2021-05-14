@@ -27,9 +27,9 @@ import { failure } from 'io-ts/lib/PathReporter'
 import fetch from 'node-fetch'
 import { URL } from 'url'
 
+import { createQuery } from '~/internals/data-source-helper'
 import { Environment } from '~/internals/environment'
 import { addContext, ErrorEvent } from '~/internals/error-event'
-import { createQuery } from '~/internals/model'
 
 export enum MajorDimension {
   Rows = 'ROWS',

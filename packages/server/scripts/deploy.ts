@@ -105,10 +105,12 @@ function buildDockerImage({
     }
   )
 
-  const remoteTags = R.map((tag) => `${remoteName}:${tag}`, getTags(version))
+  const tags = getTags(version)
+
+  const remoteTags = R.map((tag) => `${remoteName}:${tag}`, tags)
   remoteTags.forEach((remoteTag) => {
     console.log('Pushing', remoteTag)
-    spawnSync('docker', ['tag', `${name}:latest`, remoteTag], {
+    spawnSync('docker', ['tag', `${name}:${tags[0]}`, remoteTag], {
       stdio: 'inherit',
     })
     spawnSync('docker', ['push', remoteTag], { stdio: 'inherit' })
@@ -116,6 +118,11 @@ function buildDockerImage({
 }
 
 function getTags(version: string) {
+  if (version.includes('-')) {
+    // Prerelease
+    return ['next', version]
+  }
+
   return [
     'latest',
     semver.major(version),

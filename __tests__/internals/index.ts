@@ -41,7 +41,7 @@ test('invalid values are reported to sentry', async () => {
 
   await assertFailingGraphQLQuery({
     query: gql`
-      query($id: Int!) {
+      query ($id: Int!) {
         uuid(id: $id) {
           __typename
         }
@@ -52,7 +52,11 @@ test('invalid values are reported to sentry', async () => {
   })
 
   await assertErrorEvent({
-    message: 'Invalid value received from a data source.',
-    errorContext: { invalidValue },
+    message: 'Invalid value received from data source.',
+    fingerprint: ['invalid-value', 'data-source', JSON.stringify(invalidValue)],
+    errorContext: {
+      invalidCurrentValue: invalidValue,
+      key: 'de.serlo.org/api/uuid/42',
+    },
   })
 })

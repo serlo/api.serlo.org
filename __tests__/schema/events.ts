@@ -1,7 +1,7 @@
 /**
  * This file is part of Serlo.org API
  *
- * Copyright (c) 2020 Serlo Education e.V.
+ * Copyright (c) 2020-2021 Serlo Education e.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License
@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @copyright Copyright (c) 2020 Serlo Education e.V.
+ * @copyright Copyright (c) 2020-2021 Serlo Education e.V.
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
@@ -72,14 +72,18 @@ const eventRepository: Record<
   [NotificationEventType.CreateComment]: createCommentNotificationEvent,
   [NotificationEventType.SetLicense]: setLicenseNotificationEvent,
   [NotificationEventType.CreateEntity]: createEntityNotificationEvent,
-  [NotificationEventType.CreateTaxonomyLink]: createTaxonomyLinkNotificationEvent,
-  [NotificationEventType.RemoveTaxonomyLink]: removeTaxonomyLinkNotificationEvent,
+  [NotificationEventType.CreateTaxonomyLink]:
+    createTaxonomyLinkNotificationEvent,
+  [NotificationEventType.RemoveTaxonomyLink]:
+    removeTaxonomyLinkNotificationEvent,
   [NotificationEventType.CreateThread]: createThreadNotificationEvent,
   [NotificationEventType.SetUuidState]: setUuidStateNotificationEvent,
   [NotificationEventType.CreateEntityLink]: createEntityLinkNotificationEvent,
   [NotificationEventType.RemoveEntityLink]: removeEntityLinkNotificationEvent,
-  [NotificationEventType.CreateEntityRevision]: createEntityRevisionNotificationEvent,
-  [NotificationEventType.CreateTaxonomyTerm]: createTaxonomyTermNotificationEvent,
+  [NotificationEventType.CreateEntityRevision]:
+    createEntityRevisionNotificationEvent,
+  [NotificationEventType.CreateTaxonomyTerm]:
+    createTaxonomyTermNotificationEvent,
   [NotificationEventType.SetTaxonomyTerm]: setTaxonomyTermNotificationEvent,
   [NotificationEventType.SetTaxonomyParent]: setTaxonomyTermNotificationEvent,
   [NotificationEventType.SetThreadState]: setThreadStateNotificationEvent,

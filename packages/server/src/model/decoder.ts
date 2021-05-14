@@ -85,10 +85,10 @@ const StringWithoutNullCharacter = t.refinement(
   'AliasString'
 )
 
-const NonEmtpyString = t.refinement(
+const NonEmptyString = t.refinement(
   t.string,
   (text) => text.length > 0,
-  'NonEmtpyString'
+  'NonEmptyString'
 )
 
 export const AbstractUuidDecoder = t.type({
@@ -139,7 +139,7 @@ export const AbstractEntityRevisionDecoder = t.intersection([
   AbstractUuidDecoder,
   t.type({
     __typename: EntityRevisionTypeDecoder,
-    content: NonEmtpyString,
+    content: NonEmptyString,
     date: t.string,
     authorId: Uuid,
     repositoryId: Uuid,

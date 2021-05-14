@@ -19,5 +19,18 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-export * from './mutation'
-export * from './query'
+
+/**
+ * Error for the case an invalid value was returned by a data source function.
+ */
+export class InvalidCurrentValueError extends Error {
+  constructor(
+    public errorContext: {
+      invalidCachedValue?: unknown
+      invalidCurrentValue: unknown
+      key?: string
+    }
+  ) {
+    super('Invalid value received from data source.')
+  }
+}
