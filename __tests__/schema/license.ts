@@ -19,7 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { createLicenseQuery, license } from '../../__fixtures__'
+import { gql } from 'apollo-server'
+
+import { license } from '../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
   createLicenseHandler,
@@ -32,10 +34,22 @@ beforeEach(() => {
 
 test('license', async () => {
   await assertSuccessfulGraphQLQuery({
-    ...createLicenseQuery(license),
-    data: {
-      license,
-    },
+    query: gql`
+      query license($id: Int!) {
+        license(id: $id) {
+          id
+          instance
+          default
+          title
+          url
+          content
+          agreement
+          iconHref
+        }
+      }
+    `,
+    variables: { id: license.id },
+    data: { license },
     client: createTestClient(),
   })
 })

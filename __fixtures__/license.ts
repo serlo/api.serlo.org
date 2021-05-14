@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
 
 import { Model } from '~/internals/graphql'
 import { Instance } from '~/types'
@@ -33,24 +32,4 @@ export const license: Model<'License'> = {
   content: 'content',
   agreement: 'agreement',
   iconHref: 'iconHref',
-}
-
-export function createLicenseQuery(variables: { id: number }) {
-  return {
-    query: gql`
-      query license($id: Int!) {
-        license(id: $id) {
-          id
-          instance
-          default
-          title
-          url
-          content
-          agreement
-          iconHref
-        }
-      }
-    `,
-    variables,
-  }
 }
