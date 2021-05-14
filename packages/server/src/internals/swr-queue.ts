@@ -28,6 +28,7 @@ import { Cache, Priority } from './cache'
 import { isQuery, QuerySpec } from './data-source-helper'
 import { log } from './log'
 import { redisUrl } from './redis-url'
+import { Sentry } from './sentry'
 import { Timer } from './timer'
 import { modelFactories } from '~/model'
 
@@ -179,6 +180,19 @@ export function createSwrQueueWorker({
   queue.process(concurrency, async (job): Promise<string> => {
     async function processJob() {
       const { key } = job.data
+
+      // TODO: Delete this when not necessary any more
+      // article "Prozent"
+      if (key === 'de.serlo.org/api/uuid/1627') {
+        Sentry.captureMessage(
+          'Hey Kulla, how are you? Sentry is working in SWR by the way (with "captureMessage")'
+        )
+
+        // to test wether thrown errors work
+        throw new Error(
+          'Hey Kulla, how are you? Sentry is working in SWR by the way (with "captureMessage")'
+        )
+      }
 
       const result = await shouldProcessJob({
         key,
