@@ -305,8 +305,8 @@ describe('Repository', () => {
             ...repository,
             revisionIds: [
               unrevisedRevision.id,
-              revision.id,
               revisedRevision.id,
+              revision.id,
             ],
           }),
 
@@ -323,7 +323,6 @@ describe('Repository', () => {
             uuid(id: $id) {
               ... on ${type} {
                 revisions {
-                  totalCount
                   nodes {
                     __typename
                     id
@@ -339,7 +338,6 @@ describe('Repository', () => {
           data: {
             uuid: {
               revisions: {
-                totalCount: 3,
                 nodes: [
                   getRevisionDataWithoutSubResolvers(unrevisedRevision),
                   getRevisionDataWithoutSubResolvers(revision),
