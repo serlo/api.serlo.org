@@ -96,9 +96,10 @@ describe('EventQuery', () => {
       `,
       variables: checkoutRevisionNotificationEvent,
       data: {
-        notificationEvent: getCheckoutRevisionNotificationEventDataWithoutSubResolvers(
-          checkoutRevisionNotificationEvent
-        ),
+        notificationEvent:
+          getCheckoutRevisionNotificationEventDataWithoutSubResolvers(
+            checkoutRevisionNotificationEvent
+          ),
       },
     })
   })
@@ -134,9 +135,10 @@ describe('EventQuery', () => {
       `,
       variables: rejectRevisionNotificationEvent,
       data: {
-        notificationEvent: getRejectRevisionNotificationEventDataWithoutSubResolvers(
-          rejectRevisionNotificationEvent
-        ),
+        notificationEvent:
+          getRejectRevisionNotificationEventDataWithoutSubResolvers(
+            rejectRevisionNotificationEvent
+          ),
       },
     })
   })
@@ -168,9 +170,10 @@ describe('EventQuery', () => {
       `,
       variables: createCommentNotificationEvent,
       data: {
-        notificationEvent: getCreateCommentNotificationEventDataWithoutSubResolvers(
-          createCommentNotificationEvent
-        ),
+        notificationEvent:
+          getCreateCommentNotificationEventDataWithoutSubResolvers(
+            createCommentNotificationEvent
+          ),
       },
     })
   })
@@ -201,9 +204,10 @@ describe('EventQuery', () => {
       `,
       variables: createEntityNotificationEvent,
       data: {
-        notificationEvent: getCreateEntityNotificationEventDataWithoutSubResolvers(
-          createEntityNotificationEvent
-        ),
+        notificationEvent:
+          getCreateEntityNotificationEventDataWithoutSubResolvers(
+            createEntityNotificationEvent
+          ),
       },
     })
   })
@@ -235,9 +239,10 @@ describe('EventQuery', () => {
       `,
       variables: createEntityLinkNotificationEvent,
       data: {
-        notificationEvent: getCreateEntityLinkNotificationEventDataWithoutSubResolvers(
-          createEntityLinkNotificationEvent
-        ),
+        notificationEvent:
+          getCreateEntityLinkNotificationEventDataWithoutSubResolvers(
+            createEntityLinkNotificationEvent
+          ),
       },
     })
   })
@@ -269,9 +274,10 @@ describe('EventQuery', () => {
       `,
       variables: removeEntityLinkNotificationEvent,
       data: {
-        notificationEvent: getRemoveEntityLinkNotificationEventDataWithoutSubResolvers(
-          removeEntityLinkNotificationEvent
-        ),
+        notificationEvent:
+          getRemoveEntityLinkNotificationEventDataWithoutSubResolvers(
+            removeEntityLinkNotificationEvent
+          ),
       },
     })
   })
@@ -311,9 +317,10 @@ describe('EventQuery', () => {
       `,
       variables: createEntityRevisionNotificationEvent,
       data: {
-        notificationEvent: getCreateEntityRevisionNotificationEventDataWithoutSubResolvers(
-          createEntityRevisionNotificationEvent
-        ),
+        notificationEvent:
+          getCreateEntityRevisionNotificationEventDataWithoutSubResolvers(
+            createEntityRevisionNotificationEvent
+          ),
       },
     })
   })
@@ -346,9 +353,10 @@ describe('EventQuery', () => {
       `,
       variables: createTaxonomyTermNotificationEvent,
       data: {
-        notificationEvent: getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers(
-          createTaxonomyTermNotificationEvent
-        ),
+        notificationEvent:
+          getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers(
+            createTaxonomyTermNotificationEvent
+          ),
       },
     })
   })
@@ -381,9 +389,10 @@ describe('EventQuery', () => {
       `,
       variables: setTaxonomyTermNotificationEvent,
       data: {
-        notificationEvent: getSetTaxonomyTermNotificationEventDataWithoutSubResolvers(
-          setTaxonomyTermNotificationEvent
-        ),
+        notificationEvent:
+          getSetTaxonomyTermNotificationEventDataWithoutSubResolvers(
+            setTaxonomyTermNotificationEvent
+          ),
       },
     })
   })
@@ -415,9 +424,10 @@ describe('EventQuery', () => {
       `,
       variables: createTaxonomyLinkNotificationEvent,
       data: {
-        notificationEvent: getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers(
-          createTaxonomyLinkNotificationEvent
-        ),
+        notificationEvent:
+          getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers(
+            createTaxonomyLinkNotificationEvent
+          ),
       },
     })
   })
@@ -449,9 +459,10 @@ describe('EventQuery', () => {
       `,
       variables: removeTaxonomyLinkNotificationEvent,
       data: {
-        notificationEvent: getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers(
-          removeTaxonomyLinkNotificationEvent
-        ),
+        notificationEvent:
+          getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers(
+            removeTaxonomyLinkNotificationEvent
+          ),
       },
     })
   })
@@ -492,9 +503,10 @@ describe('EventQuery', () => {
       `,
       variables: setTaxonomyParentNotificationEvent,
       data: {
-        notificationEvent: getSetTaxonomyParentNotificationEventDataWithoutSubResolvers(
-          setTaxonomyParentNotificationEvent
-        ),
+        notificationEvent:
+          getSetTaxonomyParentNotificationEventDataWithoutSubResolvers(
+            setTaxonomyParentNotificationEvent
+          ),
       },
     })
   })
@@ -525,9 +537,10 @@ describe('EventQuery', () => {
       `,
       variables: createThreadNotificationEvent,
       data: {
-        notificationEvent: getCreateThreadNotificationEventDataWithoutSubResolvers(
-          createThreadNotificationEvent
-        ),
+        notificationEvent:
+          getCreateThreadNotificationEventDataWithoutSubResolvers(
+            createThreadNotificationEvent
+          ),
       },
     })
   })
@@ -558,9 +571,10 @@ describe('EventQuery', () => {
       `,
       variables: setLicenseNotificationEvent,
       data: {
-        notificationEvent: getSetLicenseNotificationEventDataWithoutSubResolvers(
-          setLicenseNotificationEvent
-        ),
+        notificationEvent:
+          getSetLicenseNotificationEventDataWithoutSubResolvers(
+            setLicenseNotificationEvent
+          ),
       },
     })
   })
@@ -593,9 +607,10 @@ describe('EventQuery', () => {
       `,
       variables: setThreadStateNotificationEvent,
       data: {
-        notificationEvent: getSetThreadStateNotificationEventDataWithoutSubResolvers(
-          setThreadStateNotificationEvent
-        ),
+        notificationEvent:
+          getSetThreadStateNotificationEventDataWithoutSubResolvers(
+            setThreadStateNotificationEvent
+          ),
       },
     })
   })
@@ -627,9 +642,10 @@ describe('EventQuery', () => {
       `,
       variables: setUuidStateNotificationEvent,
       data: {
-        notificationEvent: getSetUuidStateNotificationEventDataWithoutSubResolvers(
-          setUuidStateNotificationEvent
-        ),
+        notificationEvent:
+          getSetUuidStateNotificationEventDataWithoutSubResolvers(
+            setUuidStateNotificationEvent
+          ),
       },
     })
   })

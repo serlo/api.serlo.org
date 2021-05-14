@@ -19,43 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
-
-export function createSetCacheMutation(variables: {
-  key: string
-  value: unknown
-}) {
-  return {
-    mutation: gql`
-      mutation setCache($key: String!, $value: JSON!) {
-        _setCache(key: $key, value: $value)
-      }
-    `,
-    variables: {
-      key: variables.key,
-      value: variables.value,
-    },
-  }
-}
-
-export function createRemoveCacheMutation(variables: { key: string }) {
-  return {
-    mutation: gql`
-      mutation removeCache($key: String!) {
-        _removeCache(key: $key)
-      }
-    `,
-    variables,
-  }
-}
-
-export function createUpdateCacheMutation(keys: string[]) {
-  return {
-    mutation: gql`
-      mutation _updateCache($keys: [String!]!) {
-        _updateCache(keys: $keys)
-      }
-    `,
-    variables: { keys },
-  }
-}
+export { InvalidCurrentValueError } from './common'
+export { createMutation } from './mutation'
+export { createRequest } from './request'
+export { createQuery, isQuery, QuerySpec } from './query'

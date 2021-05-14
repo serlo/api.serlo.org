@@ -19,12 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import * as Sentry from '@sentry/node'
 import { GraphQLResponse } from 'apollo-server-types'
 import { DocumentNode } from 'graphql'
 import R from 'ramda'
 
 import { Client } from './test-client'
+import { Sentry } from '~/internals/sentry'
 
 export async function assertSuccessfulGraphQLQuery({
   query,
@@ -144,6 +144,7 @@ export async function assertFailingGraphQLMutation({
  */
 export async function assertErrorEvent(args?: {
   message?: string
+  fingerprint?: string[]
   errorContext?: Record<string, unknown>
 }) {
   const eventPredicate = (event: Sentry.Event) => {
@@ -160,6 +161,10 @@ export async function assertErrorEvent(args?: {
         if (!R.equals(destringifyProperties(contextValue), targetValue))
           return false
       }
+    }
+
+    if (args?.fingerprint !== undefined) {
+      if (!R.equals(event.fingerprint, args.fingerprint)) return false
     }
 
     return true

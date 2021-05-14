@@ -228,7 +228,7 @@ describe('uuid', () => {
   test('returns null when requested id is too high to be an uuid', async () => {
     await assertSuccessfulGraphQLQuery({
       query: gql`
-        query($path: String!) {
+        query ($path: String!) {
           uuid(alias: { instance: de, path: $path }) {
             __typename
           }
@@ -245,7 +245,7 @@ describe('uuid', () => {
 
     await assertFailingGraphQLQuery({
       query: gql`
-        query($id: Int!) {
+        query ($id: Int!) {
           uuid(id: $id) {
             __typename
           }
@@ -419,7 +419,7 @@ describe('property "alias"', () => {
 
       await assertSuccessfulGraphQLQuery({
         query: gql`
-          query($id: Int) {
+          query ($id: Int) {
             uuid(id: $id) {
               alias
             }

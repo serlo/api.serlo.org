@@ -19,10 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import * as Sentry from '@sentry/node'
 import { array as A } from 'fp-ts'
 import * as F from 'fp-ts/lib/function'
 import R from 'ramda'
+
+import { Sentry } from '~/internals/sentry'
 
 export interface ErrorEvent extends ErrorContext {
   error: Error

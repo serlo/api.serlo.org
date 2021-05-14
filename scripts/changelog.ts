@@ -789,6 +789,25 @@ async function exec(): Promise<void> {
         'Improve Sentry integration.',
       ],
     },
+    {
+      tagName: 'v0.23.2',
+      date: '2021-05-10',
+      added: [
+        ['events', 'Add `events` Query.'],
+        ['threads', 'Add `legacyObject` to threads and comments.'],
+      ],
+      fixed: [['swr-queue', 'Handle stuck jobs gracefully.']],
+      internal: ['Improve Sentry integration.'],
+    },
+    {
+      tagName: 'v0.24.0',
+      date: '2021-05-12',
+      breakingChanges: [['cache', 'Move queries into `_cache` namespace.']],
+      internal: [
+        'Reject invalid values provided by listeners.',
+        'Improve Sentry integration.',
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
