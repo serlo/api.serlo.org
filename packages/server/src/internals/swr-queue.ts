@@ -117,13 +117,15 @@ export function createSwrQueue({
         .backoff('exponential', 10000)
         .save()
 
-      job.on('failed', (err) => {
-        log.error(`Job ${job.id} failed with error ${err.message}`)
+      job.on('failed', (error) => {
+        captureException({ jobStatus: 'failed', error })
+        log.error(`Job ${job.id} failed with error ${error.message}`)
       })
 
-      job.on('retrying', (err) => {
+      job.on('retrying', (error) => {
+        captureException({ jobStatus: 'retrying', error })
         log.debug(
-          `Job ${job.id} failed with error ${err.message} but is being retried!`
+          `Job ${job.id} failed with error ${error.message} but is being retried!`
         )
       })
 
@@ -181,19 +183,6 @@ export function createSwrQueueWorker({
     async function processJob() {
       const { key } = job.data
 
-      // TODO: Delete this when not necessary any more
-      // article "Prozent"
-      if (key === 'de.serlo.org/api/uuid/1627') {
-        Sentry.captureMessage(
-          'Hey Kulla, how are you? Sentry is working in SWR by the way (with "captureMessage")'
-        )
-
-        // to test wether thrown errors work
-        throw new Error(
-          'Hey Kulla, how are you? Sentry is working in SWR by the way (with "error")'
-        )
-      }
-
       const result = await shouldProcessJob({
         key,
         cache,
@@ -212,13 +201,20 @@ export function createSwrQueueWorker({
         source: 'SWR worker',
         priority: Priority.Low,
         getValue: async (current) => {
-          const value = await spec.getCurrentValue(payload, current ?? null)
+          let value = await spec.getCurrentValue(payload, current ?? null)
           const decoder = spec.decoder || t.unknown
+
+          // TODO: Delete this when not necessary any more
+          // article "Prozent"
+          if (key === 'de.serlo.org/api/uuid/1627') {
+            // to test wether thrown errors work
+            value = "Hey Kulla! Nice guy! It's working. You can delete me! :-)"
+          }
 
           if (decoder.is(value)) {
             return value
           } else {
-            throw new Error(`Invalid value: ${JSON.stringify(value)}`)
+            throw new InvalidValueError({ invalidValue: value, key })
           }
         },
       })
@@ -335,4 +331,31 @@ export function timeToMilliseconds({
     (minute + minutes) * MINUTE +
     (second + seconds) * SECOND
   )
+}
+
+// TODO: Move to sentry.ts and merge with other sentry related code
+function captureException({
+  error,
+  jobStatus,
+}: {
+  error: Error
+  jobStatus: string
+}) {
+  Sentry.captureException(error, (scope) => {
+    scope.setTag('kind', 'SWR')
+    scope.setTag('job_status', jobStatus)
+
+    if (error instanceof InvalidValueError) {
+      scope.setContext('error', error.errorContext)
+    }
+
+    return scope
+  })
+}
+
+// TODO: Merge with other InvalidValueErrors
+class InvalidValueError extends Error {
+  constructor(public errorContext: { invalidValue: unknown; key: string }) {
+    super('SWR-Queue: Invalid value received from data source')
+  }
 }
