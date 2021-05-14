@@ -23,7 +23,6 @@ import { gql } from 'apollo-server'
 
 import {
   article,
-  getArticleDataWithoutSubResolvers,
   getTaxonomyTermDataWithoutSubResolvers,
   navigation,
   page,
@@ -37,6 +36,7 @@ import {
   createNavigationHandler,
   createTestClient,
   createUuidHandler,
+  getTypenameAndId,
 } from '../../__utils__'
 
 let client: Client
@@ -419,14 +419,8 @@ describe('TaxonomyTerm curriculumTopic', () => {
               children {
                 nodes {
                   __typename
-                  ... on Article {
-                    id
-                    trashed
-                    instance
-                    date
-                  }
+                  id
                 }
-                totalCount
               }
             }
           }
@@ -435,11 +429,7 @@ describe('TaxonomyTerm curriculumTopic', () => {
       variables: taxonomyTermCurriculumTopic,
       data: {
         uuid: {
-          children: {
-            nodes: [getArticleDataWithoutSubResolvers(article)],
-
-            totalCount: 1,
-          },
+          children: { nodes: [getTypenameAndId(article)] },
         },
       },
       client,

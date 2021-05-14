@@ -21,17 +21,13 @@
  */
 import { gql } from 'apollo-server'
 
-import {
-  article,
-  articleRevision,
-  getArticleDataWithoutSubResolvers,
-  getArticleRevisionDataWithoutSubResolvers,
-} from '../../../__fixtures__'
+import { article, articleRevision } from '../../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
   createTestClient,
   createUuidHandler,
+  getTypenameAndId,
 } from '../../__utils__'
 
 let client: Client
@@ -47,19 +43,12 @@ test('Article', async () => {
       query article($id: Int!) {
         uuid(id: $id) {
           __typename
-          ... on Article {
-            id
-            trashed
-            instance
-            date
-          }
+          id
         }
       }
     `,
     variables: article,
-    data: {
-      uuid: getArticleDataWithoutSubResolvers(article),
-    },
+    data: { uuid: getTypenameAndId(article) },
     client,
   })
 })
@@ -71,23 +60,12 @@ test('ArticleRevision', async () => {
       query articleRevision($id: Int!) {
         uuid(id: $id) {
           __typename
-          ... on ArticleRevision {
-            id
-            trashed
-            date
-            title
-            content
-            changes
-            metaTitle
-            metaDescription
-          }
+          id
         }
       }
     `,
     variables: articleRevision,
-    data: {
-      uuid: getArticleRevisionDataWithoutSubResolvers(articleRevision),
-    },
+    data: { uuid: getTypenameAndId(articleRevision) },
     client,
   })
 })
