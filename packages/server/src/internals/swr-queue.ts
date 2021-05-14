@@ -190,7 +190,7 @@ export function createSwrQueueWorker({
 
         // to test wether thrown errors work
         throw new Error(
-          'Hey Kulla, how are you? Sentry is working in SWR by the way (with "captureMessage")'
+          'Hey Kulla, how are you? Sentry is working in SWR by the way (with "error")'
         )
       }
 
