@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { array as A, pipeable } from 'fp-ts'
+import { array as A, function as F, number as N, ord } from 'fp-ts'
 import * as t from 'io-ts'
 
 import { resolveUser } from '../user/utils'
@@ -63,14 +63,18 @@ export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
       })
     },
     async revisions(entity, cursorPayload, { dataSources }) {
-      const revisions = pipeable.pipe(
+      const revisions = F.pipe(
         await Promise.all(
-          entity.revisionIds.map(async (id) => {
-            return await dataSources.model.serlo.getUuidWithCustomDecoder({
-              id,
-              decoder: revisionDecoder,
+          F.pipe(
+            entity.revisionIds,
+            A.sort(ord.reverse(N.Ord)),
+            A.map(async (id) => {
+              return await dataSources.model.serlo.getUuidWithCustomDecoder({
+                id,
+                decoder: revisionDecoder,
+              })
             })
-          })
+          )
         ),
         A.filter(isDefined),
         A.filter((revision) => {
