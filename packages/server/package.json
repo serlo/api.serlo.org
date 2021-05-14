@@ -1,6 +1,6 @@
 {
   "name": "@serlo/api.serlo.org",
-  "version": "0.24.0-staging.0-error",
+  "version": "0.24.0-staging.1-error",
   "private": true,
   "repository": "serlo/api.serlo.org",
   "license": "Apache-2.0",
