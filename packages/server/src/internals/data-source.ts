@@ -62,7 +62,11 @@ export class ModelDataSource extends RESTDataSource {
       }
     }
 
-    await this.environment.cache.set({ key, value })
+    await this.environment.cache.set({
+      key,
+      value,
+      source: 'Legacy serlo.org listener',
+    })
   }
 
   public async updateCacheValue({ key }: { key: string }) {
