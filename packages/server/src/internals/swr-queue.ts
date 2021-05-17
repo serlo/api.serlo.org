@@ -194,6 +194,7 @@ export function createSwrQueueWorker({
 
       await cache.set({
         key,
+        source: 'SWR worker',
         priority: Priority.Low,
         getValue: async (current) => {
           const value = await spec.getCurrentValue(payload, current ?? null)

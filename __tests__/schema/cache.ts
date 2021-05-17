@@ -69,6 +69,7 @@ describe('set', () => {
     expect(option.isSome(cachedValue) && cachedValue.value).toEqual({
       lastModified: now,
       value: user,
+      source: 'Legacy serlo.org listener',
     })
   })
 
@@ -106,6 +107,7 @@ describe('remove', () => {
   beforeEach(async () => {
     await global.cache.set({
       key,
+      source: '',
       value: { lastModified: global.timer.now(), value: user },
     })
   })
