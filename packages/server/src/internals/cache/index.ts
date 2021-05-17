@@ -124,11 +124,15 @@ export function createCache({ timer }: { timer: Timer }): Cache {
         await clientSet(key, packedValue)
       } catch (e) {
         log.error(`Failed to set key "${key}":`, e)
+
+        throw e
       } finally {
         await lock.unlock()
       }
     } catch (e) {
       log.debug(`Failed to acquire lock for key "${key}":`, e)
+
+      throw e
     }
   }
 
