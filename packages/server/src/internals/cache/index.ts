@@ -35,7 +35,7 @@ import { AsyncOrSync } from '~/utils'
 const msgpack = (
   createMsgpack as () => {
     encode(value: unknown): Buffer
-    decode<T>(buffer: Buffer): T
+    decode(buffer: Buffer): unknown
   }
 )()
 
@@ -148,18 +148,13 @@ export function createCache({ timer }: { timer: Timer }): Cache {
     const packedValue = await clientGet(key)
     if (packedValue === null) return O.none
 
-    const value = msgpack.decode<T | CacheEntry<T>>(packedValue)
+    const value = msgpack.decode(packedValue)
 
-    if (isCacheEntryWithTimestamp<T>(value)) {
+    if (isCacheEntry<T>(value)) {
       return O.some(value)
+    } else {
+      return O.none
     }
-
-    await this.set({
-      key,
-      value,
-      source: 'update from old cache value without timestamp',
-    })
-    return this.get({ key })
   }
 
   const remove = async ({ key }: { key: string }) => {
@@ -217,10 +212,8 @@ export interface CacheEntry<Value> {
   source: string
 }
 
-function isCacheEntryWithTimestamp<Value>(
-  entry: unknown
-): entry is CacheEntry<Value> {
-  return R.has('lastModified', entry) && R.has('value', entry)
+function isCacheEntry<Value>(value: unknown): value is CacheEntry<Value> {
+  return R.has('lastModified', value) && R.has('value', value)
 }
 
 function isFunction<T>(arg: FunctionOrValue<T>): arg is UpdateFunction<T> {
