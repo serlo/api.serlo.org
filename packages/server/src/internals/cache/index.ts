@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { option as O, pipeable } from 'fp-ts'
+import { option as O, function as F } from 'fp-ts'
 // @ts-expect-error Missing types
 import createMsgpack from 'msgpack5'
 import * as R from 'ramda'
@@ -54,6 +54,7 @@ export interface Cache {
   set<T>(
     payload: {
       key: string
+      source: string
       priority?: Priority
     } & FunctionOrValue<T>
   ): Promise<void>
@@ -83,6 +84,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
     this: Cache,
     payload: {
       key: string
+      source: string
       priority?: Priority
     } & FunctionOrValue<T>
   ) {
@@ -92,7 +94,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       value: Buffer
     ) => Promise<void>
 
-    const { key, priority = Priority.High } = payload
+    const { key, priority = Priority.High, source } = payload
     const lockManager = lockManagers[priority]
     try {
       const lock = await lockManager.lock(key)
@@ -100,7 +102,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
         let value: T | undefined
 
         if (isFunction(payload)) {
-          const current = pipeable.pipe(
+          const current = F.pipe(
             await this.get<T>({ key }),
             O.map((entry) => entry.value),
             O.toUndefined
@@ -113,7 +115,11 @@ export function createCache({ timer }: { timer: Timer }): Cache {
 
         if (value === undefined) return
 
-        const valueWithTimestamp = { value, lastModified: timer.now() }
+        const valueWithTimestamp: CacheEntry<T> = {
+          value,
+          source,
+          lastModified: timer.now(),
+        }
         const packedValue = msgpack.encode(valueWithTimestamp)
         await clientSet(key, packedValue)
       } catch (e) {
@@ -148,7 +154,11 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       return O.some(value)
     }
 
-    await this.set({ key, value })
+    await this.set({
+      key,
+      value,
+      source: 'update from old cache value without timestamp',
+    })
     return this.get({ key })
   }
 
@@ -204,6 +214,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
 export interface CacheEntry<Value> {
   value: Value
   lastModified: number
+  source: string
 }
 
 function isCacheEntryWithTimestamp<Value>(

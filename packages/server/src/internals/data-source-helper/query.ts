@@ -69,7 +69,11 @@ export function createQuery<P, R>(
     const value = await spec.getCurrentValue(payload, null)
 
     if (decoder.is(value)) {
-      await environment.cache.set({ key, value })
+      await environment.cache.set({
+        key,
+        value,
+        source: 'API: From a call to a data source',
+      })
 
       if (invalidCachedValue) {
         Sentry.captureMessage(
@@ -83,6 +87,7 @@ export function createQuery<P, R>(
                 ? new Date(invalidCachedValue.lastModified).toISOString()
                 : undefined,
               currentValue: value,
+              source: invalidCachedValue?.source,
             })
             return scope
           }
@@ -124,7 +129,11 @@ export function createQuery<P, R>(
     async setCache(args) {
       await Promise.all(
         toPayloadArray(args).map((payload) =>
-          environment.cache.set({ key: spec.getKey(payload), ...args })
+          environment.cache.set({
+            key: spec.getKey(payload),
+            ...args,
+            source: 'API: Cache update function after a mutation',
+          })
         )
       )
     },
