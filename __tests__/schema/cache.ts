@@ -105,11 +105,7 @@ describe('remove', () => {
   `
 
   beforeEach(async () => {
-    await global.cache.set({
-      key,
-      source: '',
-      value: { lastModified: global.timer.now(), value: user },
-    })
+    await global.cache.set({ key, source: '', value: user })
   })
 
   test('is forbidden when user is not logged in', async () => {
