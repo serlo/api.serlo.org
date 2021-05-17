@@ -31,6 +31,10 @@ import { redisUrl } from './redis-url'
 import { Sentry } from './sentry'
 import { Timer } from './timer'
 import { modelFactories } from '~/model'
+import { captureErrorEvent } from './error-event'
+
+const INVALID_VALUE_RECEIVED =
+  'SWR-Queue: Invalid value received from data source.'
 
 export interface SwrQueue {
   queue(updateJob: UpdateJob): Promise<never>
@@ -118,12 +122,12 @@ export function createSwrQueue({
         .save()
 
       job.on('failed', (error) => {
-        captureException({ jobStatus: 'failed', error })
+        reportError({ jobStatus: 'failed', error })
         log.error(`Job ${job.id} failed with error ${error.message}`)
       })
 
       job.on('retrying', (error) => {
-        captureException({ jobStatus: 'retrying', error })
+        reportError({ jobStatus: 'retrying', error })
         log.debug(
           `Job ${job.id} failed with error ${error.message} but is being retried!`
         )
@@ -214,7 +218,13 @@ export function createSwrQueueWorker({
           if (decoder.is(value)) {
             return value
           } else {
-            throw new InvalidValueError({ invalidValue: value, key })
+            captureErrorEvent({
+              error: new Error(INVALID_VALUE_RECEIVED),
+              location: 'SWR worker',
+              errorContext: { key, invalidValue: value },
+            })
+
+            throw new Error(INVALID_VALUE_RECEIVED)
           }
         },
       })
@@ -333,29 +343,18 @@ export function timeToMilliseconds({
   )
 }
 
-// TODO: Move to sentry.ts and merge with other sentry related code
-function captureException({
+function reportError({
   error,
   jobStatus,
 }: {
   error: Error
   jobStatus: string
 }) {
-  Sentry.captureException(error, (scope) => {
-    scope.setTag('kind', 'SWR')
-    scope.setTag('job_status', jobStatus)
-
-    if (error instanceof InvalidValueError) {
-      scope.setContext('error', error.errorContext)
-    }
-
-    return scope
-  })
-}
-
-// TODO: Merge with other InvalidValueErrors
-class InvalidValueError extends Error {
-  constructor(public errorContext: { invalidValue: unknown; key: string }) {
-    super('SWR-Queue: Invalid value received from data source')
+  if (error.message != INVALID_VALUE_RECEIVED) {
+    captureErrorEvent({
+      error,
+      errorContext: { jobStatus },
+      location: 'SWR worker',
+    })
   }
 }
