@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { option as O } from 'fp-ts'
+import { option as O, string } from 'fp-ts'
 import * as t from 'io-ts'
 import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
@@ -41,7 +41,8 @@ import { isInstance } from '~/schema/instance/utils'
 import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
 import { isUnsupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
-import { Instance, ThreadCreateThreadInput } from '~/types'
+import { Instance, ThreadCreateThreadInput, UserDeleteBotInput, UserDeleteRegularUserInput } from '~/types'
+import { UserSetEmailInput } from '@serlo/api'
 
 export function createSerloModel({
   environment,
@@ -201,6 +202,40 @@ export function createSerloModel({
     },
     environment
   )
+
+  const deleteBot = createMutation({
+    //decoder: t.type({userId: t.array(t.number)}),
+    decoder: t.type({username: t.string}),
+    mutate: (payload: UserDeleteBotInput) => {
+      return handleMessage({
+        message: { type: 'UserDeleteBotMutation', payload },
+        expectedStatusCodes: [200],
+      })
+    }
+    // TODO: updateCache: User löschen + Inhalte löschen
+  })
+
+  const deleteRegularUser = createMutation({
+    decoder: t.type({username: t.string}),
+    mutate: (payload: UserDeleteRegularUserInput) => {
+      return handleMessage({
+        message: { type: 'UserDeleteRegularUserMutation', payload},
+        expectedStatusCodes: [200],
+      })
+    }
+    // TODO: updateCache: nur User löschen, Inhalte behalten
+  })
+
+  const setEmail = createMutation({
+    decoder: t.type({username: t.string, email: t.string}),
+    mutate: (payload: UserSetEmailInput) => {
+      return handleMessage({
+        message: { type: 'UserSetEmailMutation', payload},
+        expectedStatusCodes: [200],
+      })
+    }
+    // TODO: updateCache: Update E-mail
+  })
 
   const getNavigationPayload = createQuery(
     {
@@ -687,6 +722,9 @@ export function createSerloModel({
     createThread,
     archiveThread,
     createComment,
+    deleteBot,
+    deleteRegularUser,
+    setEmail,
     getActiveAuthorIds,
     getActiveReviewerIds,
     getAlias,

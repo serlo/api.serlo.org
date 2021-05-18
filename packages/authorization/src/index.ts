@@ -56,6 +56,9 @@ export enum Permission {
   Thread_CreateComment = 'thread:createComment',
   Thread_DeleteThread = 'thread:deleteThread',
   Thread_DeleteComment = 'thread:deleteComment',
+  User_DeleteBot = 'user:deleteBot',
+  User_DeleteRegularUser = 'user:deleteRegularUser',
+  User_SetEmail = 'user:setEmail',
   Thread_SetThreadArchived = 'thread:setThreadArchived',
   Thread_SetThreadState = 'thread:setThreadState',
   Thread_SetCommentState = 'thread:setCommentState',
@@ -108,6 +111,12 @@ export const Thread = {
   setThreadArchived: createPermissionGuard(Permission.Thread_SetThreadArchived),
   setThreadState: createPermissionGuard(Permission.Thread_SetThreadState),
   setCommentState: createPermissionGuard(Permission.Thread_SetCommentState),
+}
+
+export const User = {
+  deleteBot: createPermissionGuard(Permission.User_DeleteBot),
+  deleteRegularUser: createPermissionGuard(Permission.User_DeleteRegularUser),
+  setEmail: createPermissionGuard(Permission.User_SetEmail)
 }
 
 export type UuidType =
