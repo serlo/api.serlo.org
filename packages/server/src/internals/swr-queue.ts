@@ -26,10 +26,14 @@ import * as R from 'ramda'
 
 import { Cache, Priority } from './cache'
 import { isQuery, QuerySpec } from './data-source-helper'
+import { captureErrorEvent } from './error-event'
 import { log } from './log'
 import { redisUrl } from './redis-url'
 import { Timer } from './timer'
 import { modelFactories } from '~/model'
+
+const INVALID_VALUE_RECEIVED =
+  'SWR-Queue: Invalid value received from data source.'
 
 export interface SwrQueue {
   queue(updateJob: UpdateJob): Promise<never>
@@ -116,13 +120,15 @@ export function createSwrQueue({
         .backoff('exponential', 10000)
         .save()
 
-      job.on('failed', (err) => {
-        log.error(`Job ${job.id} failed with error ${err.message}`)
+      job.on('failed', (error) => {
+        reportError({ jobStatus: 'failed', error })
+        log.error(`Job ${job.id} failed with error ${error.message}`)
       })
 
-      job.on('retrying', (err) => {
+      job.on('retrying', (error) => {
+        reportError({ jobStatus: 'retrying', error })
         log.debug(
-          `Job ${job.id} failed with error ${err.message} but is being retried!`
+          `Job ${job.id} failed with error ${error.message} but is being retried!`
         )
       })
 
@@ -186,6 +192,7 @@ export function createSwrQueueWorker({
         models,
         timer,
       })
+
       if (E.isLeft(result)) {
         return `Skipped update because ${result.left}`
       }
@@ -199,11 +206,18 @@ export function createSwrQueueWorker({
         getValue: async (current) => {
           const value = await spec.getCurrentValue(payload, current ?? null)
           const decoder = spec.decoder || t.unknown
-          const decoded = decoder.decode(value)
-          if (E.isRight(decoded)) {
-            return decoded.right
+
+          if (decoder.is(value)) {
+            return value
+          } else {
+            captureErrorEvent({
+              error: new Error(INVALID_VALUE_RECEIVED),
+              location: 'SWR worker',
+              errorContext: { key, invalidValue: value },
+            })
+
+            throw new Error(INVALID_VALUE_RECEIVED)
           }
-          throw new Error(`Invalid value: ${JSON.stringify(value)}`)
         },
       })
       return 'Updated because stale'
@@ -319,4 +333,20 @@ export function timeToMilliseconds({
     (minute + minutes) * MINUTE +
     (second + seconds) * SECOND
   )
+}
+
+function reportError({
+  error,
+  jobStatus,
+}: {
+  error: Error
+  jobStatus: string
+}) {
+  if (error.message != INVALID_VALUE_RECEIVED) {
+    captureErrorEvent({
+      error,
+      errorContext: { jobStatus },
+      location: 'SWR worker',
+    })
+  }
 }
