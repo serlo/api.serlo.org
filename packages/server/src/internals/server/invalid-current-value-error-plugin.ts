@@ -4,17 +4,8 @@ import * as R from 'ramda'
 import { InvalidCurrentValueError } from '~/internals/data-source-helper'
 import { Environment } from '~/internals/environment'
 import { createSerloModel } from '~/model'
-import {
-  DiscriminatorType,
-  EntityRevisionType,
-  EntityType,
-} from '~/model/decoder'
-
-const uuidTypes: string[] = [
-  ...Object.values(DiscriminatorType),
-  ...Object.values(EntityType),
-  ...Object.values(EntityRevisionType),
-]
+import { UuidDecoder } from '~/model/decoder'
+import { isSupportedUuidType } from '~/schema/uuid/abstract-uuid/utils'
 
 export function createInvalidCurrentValueErrorPlugin({
   environment,
@@ -30,10 +21,10 @@ export function createInvalidCurrentValueErrorPlugin({
           return {
             willResolveField({ source, info }) {
               if (
-                uuidTypes.includes(info.parentType.name) &&
-                R.has('id', source)
+                isSupportedUuidType(info.parentType.name) &&
+                UuidDecoder.is(source)
               ) {
-                uuids.push(source.id as number)
+                uuids.push(source.id)
               }
             },
           }
@@ -44,13 +35,11 @@ export function createInvalidCurrentValueErrorPlugin({
             return error.originalError instanceof InvalidCurrentValueError
           }, errors)
           if (hasInvalidCurrentValueError) {
-            await Promise.all(
-              uuids.map((id) => {
-                return environment.cache.remove({
-                  key: serloModel.getUuid._querySpec.getKey({ id }),
-                })
-              })
-            )
+            await serloModel.getUuid._querySpec.removeCache({
+              payloads: uuids.map((id) => {
+                return { id }
+              }),
+            })
           }
         },
       }
