@@ -19,8 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { option as O } from 'fp-ts'
+import { option as O, either as E } from 'fp-ts'
 import * as t from 'io-ts'
+import { PathReporter } from 'io-ts/lib/PathReporter'
 import * as R from 'ramda'
 
 import { CacheEntry, FunctionOrValue } from '../cache'
@@ -46,12 +47,18 @@ export function createQuery<P, R>(
 
     const decoder = customDecoder ?? t.unknown
 
-    let invalidCachedValue: CacheEntry<R> | null = null
+    let invalidCacheValueErrorContext: {
+      timeInvalidCacheSaved: string
+      invalidCacheValue: unknown
+      source: string
+      validationErrors: string
+    } | null = null
 
     if (O.isSome(cacheValue)) {
-      const { value } = cacheValue.value
+      const cacheEntry = cacheValue.value
+      const decodedCacheValue = decoder.decode(cacheEntry.value)
 
-      if (decoder.is(value)) {
+      if (E.isRight(decodedCacheValue)) {
         if (
           spec.swrFrequency === undefined ||
           Math.random() < spec.swrFrequency
@@ -59,35 +66,39 @@ export function createQuery<P, R>(
           await environment.swrQueue.queue({ key })
         }
 
-        return value as S
+        return decodedCacheValue.right as S
+      } else {
+        invalidCacheValueErrorContext = {
+          timeInvalidCacheSaved: new Date(
+            cacheEntry.lastModified
+          ).toISOString(),
+          invalidCacheValue: cacheEntry.value,
+          source: cacheEntry.source,
+          validationErrors: PathReporter.report(decodedCacheValue).join('\n'),
+        }
       }
-
-      invalidCachedValue = cacheValue.value
     }
 
     // Cache empty or invalid value
     const value = await spec.getCurrentValue(payload, null)
+    const decoded = decoder.decode(value)
 
-    if (decoder.is(value)) {
+    if (E.isRight(decoded)) {
       await environment.cache.set({
         key,
-        value,
+        value: decoded.right,
         source: 'API: From a call to a data source',
       })
 
-      if (invalidCachedValue) {
+      if (invalidCacheValueErrorContext) {
         Sentry.captureMessage(
           'Invalid cached value received that could be repaired automatically by data source.',
           (scope) => {
             scope.setFingerprint(['invalid-value', 'cache', key])
             scope.setContext('cache', {
+              ...invalidCacheValueErrorContext,
               key,
-              invalidCacheValue: invalidCachedValue?.value,
-              timeInvalidCacheSaved: invalidCachedValue
-                ? new Date(invalidCachedValue.lastModified).toISOString()
-                : undefined,
               currentValue: value,
-              source: invalidCachedValue?.source,
               decoder: decoder.name,
             })
             return scope
@@ -103,6 +114,7 @@ export function createQuery<P, R>(
           : {}),
         invalidCurrentValue: value,
         decoder: decoder.name,
+        validationErrors: PathReporter.report(decoded).join('\n'),
         key,
       })
     }
