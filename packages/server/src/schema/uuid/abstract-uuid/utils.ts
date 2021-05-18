@@ -21,7 +21,7 @@
  */
 import * as R from 'ramda'
 
-import { Model, PickResolvers } from '~/internals/graphql'
+import { PickResolvers } from '~/internals/graphql'
 import {
   DiscriminatorType,
   EntityRevisionType,
@@ -36,8 +36,8 @@ const validTypes = [
   ...Object.values(EntityRevisionType),
 ]
 
-export function isUnsupportedUuid(payload: Model<'AbstractUuid'>) {
-  return !R.includes(payload.__typename, validTypes)
+export function isSupportedUuidType(name: string) {
+  return R.includes(name, validTypes)
 }
 
 export function createUuidResolvers(): PickResolvers<
