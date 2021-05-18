@@ -63,6 +63,7 @@ export function createRequest<P, R>(spec: RequestSpec<P, R>): Request<P, R> {
     } else {
       throw new InvalidCurrentValueError({
         invalidCurrentValue: value,
+        decoder: spec.decoder.name,
       })
     }
   }
