@@ -3,6 +3,7 @@ import * as R from 'ramda'
 
 import { InvalidCurrentValueError } from '~/internals/data-source-helper'
 import { Environment } from '~/internals/environment'
+import { Sentry } from '~/internals/sentry'
 import { createSerloModel } from '~/model'
 import { UuidDecoder } from '~/model/decoder'
 import { isSupportedUuidType } from '~/schema/uuid/abstract-uuid/utils'
@@ -35,11 +36,25 @@ export function createInvalidCurrentValueErrorPlugin({
             return error.originalError instanceof InvalidCurrentValueError
           }, errors)
           if (hasInvalidCurrentValueError) {
+            const ids = R.uniq(uuids).sort()
             await serloModel.getUuid._querySpec.removeCache({
               payloads: uuids.map((id) => {
                 return { id }
               }),
             })
+            Sentry.captureMessage(
+              'Purging cache recursively because invalid value received from data source.',
+              (scope) => {
+                scope.setFingerprint([
+                  'invalid-current-value-error-plugin',
+                  JSON.stringify(ids),
+                ])
+                scope.setContext('cache', {
+                  ids,
+                })
+                return scope
+              }
+            )
           }
         },
       }
