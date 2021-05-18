@@ -24,7 +24,7 @@ import * as t from 'io-ts'
 import { PathReporter } from 'io-ts/lib/PathReporter'
 import * as R from 'ramda'
 
-import { CacheEntry, FunctionOrValue } from '../cache'
+import { FunctionOrValue } from '../cache'
 import { Environment } from '../environment'
 import { Time } from '../swr-queue'
 import { InvalidCurrentValueError } from './common'
