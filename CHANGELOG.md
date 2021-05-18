@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.24.1](https://github.com/serlo/api.serlo.org/compare/v0.24.0..v0.24.1) - May 18, 2021
+
+### Internal
+
+- **swr-queue-worker**. Fix Sentry integration.
+
+- **swr-queue-worker**. Re-enable SWR for getUuid.
+
+- Report source of invalid cache values.
+
+- Reject ancestors' cache values when invalid value could not be repaired.
+
 ## [v0.24.0](https://github.com/serlo/api.serlo.org/compare/v0.23.2..v0.24.0) - May 12, 2021
 
 ### Breaking Changes

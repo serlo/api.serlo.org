@@ -43,7 +43,7 @@ import { Environment } from '~/internals/environment'
 import { Model } from '~/internals/graphql'
 import { isInstance } from '~/schema/instance/utils'
 import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
-import { isUnsupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
+import { isSupportedUuidType } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { Instance, ThreadCreateThreadInput } from '~/types'
 
@@ -88,7 +88,7 @@ export function createSerloModel({
   const getUuid = createQuery(
     {
       decoder: t.union([UuidDecoder, t.null]),
-      enableSwr: false,
+      enableSwr: true,
       getCurrentValue: async ({ id }: { id: number }) => {
         const uuid = (await handleMessage({
           message: {
@@ -99,7 +99,9 @@ export function createSerloModel({
           },
           expectedStatusCodes: [200, 404],
         })) as Model<'AbstractUuid'> | null
-        return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
+        return uuid !== null && isSupportedUuidType(uuid.__typename)
+          ? uuid
+          : null
       },
       maxAge: { hour: 1 },
       getKey: ({ id }) => {

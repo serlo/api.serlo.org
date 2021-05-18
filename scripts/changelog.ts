@@ -808,6 +808,16 @@ async function exec(): Promise<void> {
         'Improve Sentry integration.',
       ],
     },
+    {
+      tagName: 'v0.24.1',
+      date: '2021-05-18',
+      internal: [
+        ['swr-queue-worker', 'Fix Sentry integration.'],
+        ['swr-queue-worker', 'Re-enable SWR for getUuid.'],
+        'Report source of invalid cache values.',
+        "Reject ancestors' cache values when invalid value could not be repaired.",
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
