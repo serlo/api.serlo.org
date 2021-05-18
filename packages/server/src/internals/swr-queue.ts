@@ -26,12 +26,11 @@ import * as R from 'ramda'
 
 import { Cache, Priority } from './cache'
 import { isQuery, QuerySpec } from './data-source-helper'
+import { captureErrorEvent } from './error-event'
 import { log } from './log'
 import { redisUrl } from './redis-url'
-import { Sentry } from './sentry'
 import { Timer } from './timer'
 import { modelFactories } from '~/model'
-import { captureErrorEvent } from './error-event'
 
 const INVALID_VALUE_RECEIVED =
   'SWR-Queue: Invalid value received from data source.'
