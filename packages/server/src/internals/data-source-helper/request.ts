@@ -19,7 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { either as E } from 'fp-ts'
 import * as t from 'io-ts'
+import { PathReporter } from 'io-ts/lib/PathReporter'
 
 import { InvalidCurrentValueError } from './common'
 
@@ -56,13 +58,16 @@ export type Request<Payload, Result> = ((
  */
 export function createRequest<P, R>(spec: RequestSpec<P, R>): Request<P, R> {
   async function query(payload: P) {
-    const value = await spec.getCurrentValue(payload)
+    const result = await spec.getCurrentValue(payload)
+    const decodedResult = spec.decoder.decode(result)
 
-    if (spec.decoder.is(value)) {
-      return value
+    if (E.isRight(decodedResult)) {
+      return decodedResult.right
     } else {
       throw new InvalidCurrentValueError({
-        invalidCurrentValue: value,
+        invalidCurrentValue: result,
+        decoder: spec.decoder.name,
+        validationErrors: PathReporter.report(decodedResult).join('\n'),
       })
     }
   }

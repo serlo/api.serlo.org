@@ -22,6 +22,7 @@
 import Queue from 'bee-queue'
 import { either as E, option as O } from 'fp-ts'
 import * as t from 'io-ts'
+import { PathReporter } from 'io-ts/lib/PathReporter'
 import * as R from 'ramda'
 
 import { Cache, Priority } from './cache'
@@ -206,14 +207,20 @@ export function createSwrQueueWorker({
         getValue: async (current) => {
           const value = await spec.getCurrentValue(payload, current ?? null)
           const decoder = spec.decoder || t.unknown
+          const decodedValue = decoder.decode(value)
 
-          if (decoder.is(value)) {
-            return value
+          if (E.isRight(decodedValue)) {
+            return decodedValue.right
           } else {
             captureErrorEvent({
               error: new Error(INVALID_VALUE_RECEIVED),
               location: 'SWR worker',
-              errorContext: { key, invalidValue: value },
+              errorContext: {
+                key,
+                invalidValue: value,
+                decoder: decoder.name,
+                validationErrors: PathReporter.report(decodedValue).join('\n'),
+              },
             })
 
             throw new Error(INVALID_VALUE_RECEIVED)
