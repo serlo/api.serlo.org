@@ -96,39 +96,37 @@ export function createCache({ timer }: { timer: Timer }): Cache {
 
     const { key, priority = Priority.High, source } = payload
     const lockManager = lockManagers[priority]
+
+    const lock = await lockManager.lock(key)
     try {
-      const lock = await lockManager.lock(key)
-      try {
-        let value: T | undefined
+      let value: T | undefined
 
-        if (isFunction(payload)) {
-          const current = F.pipe(
-            await this.get<T>({ key }),
-            O.map((entry) => entry.value),
-            O.toUndefined
-          )
+      if (isFunction(payload)) {
+        const current = F.pipe(
+          await this.get<T>({ key }),
+          O.map((entry) => entry.value),
+          O.toUndefined
+        )
 
-          value = await payload.getValue(current)
-        } else {
-          value = payload.value
-        }
-
-        if (value === undefined) return
-
-        const valueWithTimestamp: CacheEntry<T> = {
-          value,
-          source,
-          lastModified: timer.now(),
-        }
-        const packedValue = msgpack.encode(valueWithTimestamp)
-        await clientSet(key, packedValue)
-      } catch (e) {
-        log.error(`Failed to set key "${key}":`, e)
-      } finally {
-        await lock.unlock()
+        value = await payload.getValue(current)
+      } else {
+        value = payload.value
       }
+
+      if (value === undefined) return
+
+      const valueWithTimestamp: CacheEntry<T> = {
+        value,
+        source,
+        lastModified: timer.now(),
+      }
+      const packedValue = msgpack.encode(valueWithTimestamp)
+      await clientSet(key, packedValue)
     } catch (e) {
-      log.debug(`Failed to acquire lock for key "${key}":`, e)
+      log.error(`Failed to set key "${key}":`, e)
+      throw e
+    } finally {
+      await lock.unlock()
     }
   }
 
