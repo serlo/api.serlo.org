@@ -69,7 +69,11 @@ export function createQuery<P, R>(
     const value = await spec.getCurrentValue(payload, null)
 
     if (decoder.is(value)) {
-      await environment.cache.set({ key, value })
+      await environment.cache.set({
+        key,
+        value,
+        source: 'API: From a call to a data source',
+      })
 
       if (invalidCachedValue) {
         Sentry.captureMessage(
@@ -83,6 +87,7 @@ export function createQuery<P, R>(
                 ? new Date(invalidCachedValue.lastModified).toISOString()
                 : undefined,
               currentValue: value,
+              source: invalidCachedValue?.source,
             })
             return scope
           }
@@ -121,10 +126,21 @@ export function createQuery<P, R>(
     ...spec,
     queryWithDecoder,
     queryWithDecoders,
+    async removeCache(args) {
+      await Promise.all(
+        toPayloadArray(args).map((payload) =>
+          environment.cache.remove({ key: spec.getKey(payload) })
+        )
+      )
+    },
     async setCache(args) {
       await Promise.all(
         toPayloadArray(args).map((payload) =>
-          environment.cache.set({ key: spec.getKey(payload), ...args })
+          environment.cache.set({
+            key: spec.getKey(payload),
+            ...args,
+            source: 'API: Cache update function after a mutation',
+          })
         )
       )
     },
@@ -199,6 +215,11 @@ export interface QuerySpecWithHelpers<Payload, Result>
   setCache(
     args: PayloadArrayOrPayload<Payload> & FunctionOrValue<Result>
   ): Promise<void>
+
+  /**
+   * Function to remove a cached value.
+   */
+  removeCache(args: PayloadArrayOrPayload<Payload>): Promise<void>
 
   /**
    * Query function with a custom io-ts decoder.
