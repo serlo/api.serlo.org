@@ -38,7 +38,7 @@ export function createInvalidCurrentValueErrorPlugin({
           if (hasInvalidCurrentValueError) {
             const ids = R.uniq(uuids).sort()
             await serloModel.getUuid._querySpec.removeCache({
-              payloads: uuids.map((id) => {
+              payloads: ids.map((id) => {
                 return { id }
               }),
             })
