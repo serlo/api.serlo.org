@@ -19,7 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { either as E } from 'fp-ts'
 import t from 'io-ts'
+import { PathReporter } from 'io-ts/lib/PathReporter'
 
 import { InvalidCurrentValueError } from './common'
 import { AsyncOrSync } from '~/utils'
@@ -30,14 +32,19 @@ import { AsyncOrSync } from '~/utils'
 export function createMutation<P, R>(spec: MutationSpec<P, R>): Mutation<P, R> {
   async function mutation(payload: P): Promise<R> {
     const result = await spec.mutate(payload)
+    const decodedResult = spec.decoder.decode(result)
 
-    if (spec.decoder.is(result)) {
+    if (E.isRight(decodedResult)) {
       if (spec.updateCache !== undefined)
-        await spec.updateCache(payload, result)
+        await spec.updateCache(payload, decodedResult.right)
 
-      return result
+      return decodedResult.right
     } else {
-      throw new InvalidCurrentValueError({ invalidCurrentValue: result })
+      throw new InvalidCurrentValueError({
+        invalidCurrentValue: result,
+        decoder: spec.decoder.name,
+        validationErrors: PathReporter.report(decodedResult).join('\n'),
+      })
     }
   }
 

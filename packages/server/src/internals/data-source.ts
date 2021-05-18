@@ -20,7 +20,8 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { RESTDataSource } from 'apollo-datasource-rest'
-import { option as O } from 'fp-ts'
+import { option as O, either as E } from 'fp-ts'
+import { PathReporter } from 'io-ts/lib/PathReporter'
 
 import { isQuery } from './data-source-helper'
 import { Environment } from '~/internals/environment'
@@ -51,13 +52,18 @@ export class ModelDataSource extends RESTDataSource {
         if (
           isQuery(query) &&
           O.isSome(query._querySpec.getPayload(key)) &&
-          query._querySpec.decoder !== undefined &&
-          !query._querySpec.decoder.is(value)
+          query._querySpec.decoder !== undefined
         ) {
-          throw new InvalidValueFromListener({
-            key,
-            invalidValueFromListener: value,
-          })
+          const decoded = query._querySpec.decoder.decode(value)
+
+          if (E.isLeft(decoded)) {
+            throw new InvalidValueFromListener({
+              key,
+              invalidValueFromListener: value,
+              decoder: query._querySpec.decoder.name,
+              validationErrors: PathReporter.report(decoded).join('\n'),
+            })
+          }
         }
       }
     }
@@ -77,7 +83,12 @@ export class ModelDataSource extends RESTDataSource {
 // TODO: Find a better place for this error (maybe together with InvalidCurrentValueError)
 export class InvalidValueFromListener extends Error {
   constructor(
-    public errorContext: { key: string; invalidValueFromListener: unknown }
+    public errorContext: {
+      key: string
+      invalidValueFromListener: unknown
+      decoder: string
+      validationErrors: string
+    }
   ) {
     super('Invalid value received from listener.')
   }
