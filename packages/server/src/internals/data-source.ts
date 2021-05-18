@@ -57,6 +57,7 @@ export class ModelDataSource extends RESTDataSource {
           throw new InvalidValueFromListener({
             key,
             invalidValueFromListener: value,
+            decoder: query._querySpec.decoder.name,
           })
         }
       }
@@ -77,7 +78,11 @@ export class ModelDataSource extends RESTDataSource {
 // TODO: Find a better place for this error (maybe together with InvalidCurrentValueError)
 export class InvalidValueFromListener extends Error {
   constructor(
-    public errorContext: { key: string; invalidValueFromListener: unknown }
+    public errorContext: {
+      key: string
+      invalidValueFromListener: unknown
+      decoder: string
+    }
   ) {
     super('Invalid value received from listener.')
   }

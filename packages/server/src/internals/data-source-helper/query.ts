@@ -88,6 +88,7 @@ export function createQuery<P, R>(
                 : undefined,
               currentValue: value,
               source: invalidCachedValue?.source,
+              decoder: decoder.name,
             })
             return scope
           }
@@ -101,6 +102,7 @@ export function createQuery<P, R>(
           ? { invalidCachedValue: cacheValue.value.value }
           : {}),
         invalidCurrentValue: value,
+        decoder: decoder.name,
         key,
       })
     }

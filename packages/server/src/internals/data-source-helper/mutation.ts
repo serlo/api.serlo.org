@@ -37,7 +37,10 @@ export function createMutation<P, R>(spec: MutationSpec<P, R>): Mutation<P, R> {
 
       return result
     } else {
-      throw new InvalidCurrentValueError({ invalidCurrentValue: result })
+      throw new InvalidCurrentValueError({
+        invalidCurrentValue: result,
+        decoder: spec.decoder.name,
+      })
     }
   }
 

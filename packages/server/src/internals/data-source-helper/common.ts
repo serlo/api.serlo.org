@@ -28,6 +28,7 @@ export class InvalidCurrentValueError extends Error {
     public errorContext: {
       invalidCachedValue?: unknown
       invalidCurrentValue: unknown
+      decoder: string
       key?: string
     }
   ) {

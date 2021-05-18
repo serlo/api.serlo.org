@@ -213,7 +213,7 @@ export function createSwrQueueWorker({
             captureErrorEvent({
               error: new Error(INVALID_VALUE_RECEIVED),
               location: 'SWR worker',
-              errorContext: { key, invalidValue: value },
+              errorContext: { key, invalidValue: value, decoder: decoder.name },
             })
 
             throw new Error(INVALID_VALUE_RECEIVED)
