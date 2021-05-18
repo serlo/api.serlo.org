@@ -205,15 +205,8 @@ export function createSwrQueueWorker({
         source: 'SWR worker',
         priority: Priority.Low,
         getValue: async (current) => {
-          let value = await spec.getCurrentValue(payload, current ?? null)
+          const value = await spec.getCurrentValue(payload, current ?? null)
           const decoder = spec.decoder || t.unknown
-
-          // TODO: Delete this when not necessary any more
-          // article "Prozent"
-          if (key === 'de.serlo.org/api/uuid/1627') {
-            // to test wether thrown errors work
-            value = "Hey Kulla! Nice guy! It's working. You can delete me! :-)"
-          }
 
           if (decoder.is(value)) {
             return value
