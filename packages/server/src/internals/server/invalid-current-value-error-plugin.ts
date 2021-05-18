@@ -35,13 +35,11 @@ export function createInvalidCurrentValueErrorPlugin({
             return error.originalError instanceof InvalidCurrentValueError
           }, errors)
           if (hasInvalidCurrentValueError) {
-            await Promise.all(
-              uuids.map((id) => {
-                return environment.cache.remove({
-                  key: serloModel.getUuid._querySpec.getKey({ id }),
-                })
-              })
-            )
+            await serloModel.getUuid._querySpec.removeCache({
+              payloads: uuids.map((id) => {
+                return { id }
+              }),
+            })
           }
         },
       }

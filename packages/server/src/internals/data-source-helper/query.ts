@@ -121,6 +121,13 @@ export function createQuery<P, R>(
     ...spec,
     queryWithDecoder,
     queryWithDecoders,
+    async removeCache(args) {
+      await Promise.all(
+        toPayloadArray(args).map((payload) =>
+          environment.cache.remove({ key: spec.getKey(payload) })
+        )
+      )
+    },
     async setCache(args) {
       await Promise.all(
         toPayloadArray(args).map((payload) =>
@@ -199,6 +206,11 @@ export interface QuerySpecWithHelpers<Payload, Result>
   setCache(
     args: PayloadArrayOrPayload<Payload> & FunctionOrValue<Result>
   ): Promise<void>
+
+  /**
+   * Function to remove a cached value.
+   */
+  removeCache(args: PayloadArrayOrPayload<Payload>): Promise<void>
 
   /**
    * Query function with a custom io-ts decoder.
