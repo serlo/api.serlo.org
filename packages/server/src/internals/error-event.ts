@@ -32,7 +32,11 @@ export interface ErrorEvent extends ErrorContext {
 export function addContext(
   context: ErrorContext
 ): (error: ErrorEvent) => ErrorEvent {
-  return R.mergeDeepWith(R.concat, context)
+  return R.mergeDeepWith(
+    (a: unknown, b: unknown) =>
+      Array.isArray(a) && Array.isArray(b) ? R.concat(a, b) : a,
+    context
+  )
 }
 
 export function consumeErrorEvent<A>(defaultValue: A) {
