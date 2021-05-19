@@ -32,7 +32,11 @@ export interface ErrorEvent extends ErrorContext {
 export function addContext(
   context: ErrorContext
 ): (error: ErrorEvent) => ErrorEvent {
-  return R.mergeDeepRight(context)
+  return R.mergeDeepWith(
+    (a: unknown, b: unknown) =>
+      Array.isArray(a) && Array.isArray(b) ? R.concat(a, b) : a,
+    context
+  )
 }
 
 export function consumeErrorEvent<A>(defaultValue: A) {
@@ -88,6 +92,10 @@ export function captureErrorEvent(event: ErrorEvent) {
       scope.setContext('error', event.errorContext)
     }
 
+    if (event.fingerprint) {
+      scope.setFingerprint(event.fingerprint)
+    }
+
     scope.setLevel(Sentry.Severity.Error)
 
     return scope
@@ -96,6 +104,7 @@ export function captureErrorEvent(event: ErrorEvent) {
 
 export interface ErrorContext {
   location?: string
+  fingerprint?: string[]
   locationContext?: Record<string, unknown>
   errorContext?: Record<string, unknown>
 }
