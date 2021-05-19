@@ -215,6 +215,7 @@ export function createSwrQueueWorker({
             captureErrorEvent({
               error: new Error(INVALID_VALUE_RECEIVED),
               location: 'SWR worker',
+              fingerprint: ['invalid-value', 'swr', JSON.stringify(value)],
               errorContext: {
                 key,
                 invalidValue: value,
