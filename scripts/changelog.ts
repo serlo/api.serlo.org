@@ -818,6 +818,11 @@ async function exec(): Promise<void> {
         "Reject ancestors' cache values when invalid value could not be repaired.",
       ],
     },
+    {
+      tagName: 'v0.24.2',
+      date: '2021-05-19',
+      internal: ['Improve Sentry integration.'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

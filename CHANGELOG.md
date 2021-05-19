@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.24.2](https://github.com/serlo/api.serlo.org/compare/v0.24.1..v0.24.2) - May 19, 2021
+
+### Internal
+
+- Improve Sentry integration.
+
 ## [v0.24.1](https://github.com/serlo/api.serlo.org/compare/v0.24.0..v0.24.1) - May 18, 2021
 
 ### Internal
