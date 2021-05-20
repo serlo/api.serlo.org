@@ -7951,6 +7951,11 @@ interpret@^1.0.0:
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-1.4.0.tgz#665ab8bc4da27a774a40584e812e3e0fa45b1a1e"
   integrity sha512-agE4QfB2Lkp9uICn7BAqoscw4SZP9kTE2hxiFI3jBPmXJfdqiahTbUuKGsMoN2GtqL9AxhYioAcVvgsb1HvRbA==
 
+io-ts-reporters@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/io-ts-reporters/-/io-ts-reporters-1.2.2.tgz#4d3219777ea5219c7d8f6ffac01fd68e72426dd1"
+  integrity sha512-igASwWWkDY757OutNcM6zTtdJf/eTZYkoe2ymsX2qpm5bKZLo74FJYjsCtMQOEdY7dRHLLEulCyFQwdN69GBCg==
+
 io-ts-types@^0.5.0:
   version "0.5.16"
   resolved "https://registry.yarnpkg.com/io-ts-types/-/io-ts-types-0.5.16.tgz#e9eed75371e217c97050cc507915e8eedc250946"

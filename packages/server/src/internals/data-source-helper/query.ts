@@ -21,7 +21,7 @@
  */
 import { option as O, either as E } from 'fp-ts'
 import * as t from 'io-ts'
-import { PathReporter } from 'io-ts/lib/PathReporter'
+import reporter from 'io-ts-reporters'
 import * as R from 'ramda'
 
 import { FunctionOrValue } from '../cache'
@@ -51,7 +51,7 @@ export function createQuery<P, R>(
       timeInvalidCacheSaved: string
       invalidCacheValue: unknown
       source: string
-      validationErrors: string
+      validationErrors: string[]
     } | null = null
 
     if (O.isSome(cacheValue)) {
@@ -74,7 +74,7 @@ export function createQuery<P, R>(
           ).toISOString(),
           invalidCacheValue: cacheEntry.value,
           source: cacheEntry.source,
-          validationErrors: PathReporter.report(decodedCacheValue).join('\n'),
+          validationErrors: reporter.report(decodedCacheValue),
         }
       }
     }
@@ -113,7 +113,7 @@ export function createQuery<P, R>(
           : {}),
         invalidCurrentValue: value,
         decoder: decoder.name,
-        validationErrors: PathReporter.report(decoded).join('\n'),
+        validationErrors: reporter.report(decoded),
         key,
       })
     }

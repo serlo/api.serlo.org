@@ -19,11 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { either as E, option as O, pipeable } from 'fp-ts'
+import { either as E, option as O, function as F } from 'fp-ts'
 import { NonEmptyArray } from 'fp-ts/lib/NonEmptyArray'
 import * as t from 'io-ts'
+import { formatValidationErrors } from 'io-ts-reporters'
 import { nonEmptyArray } from 'io-ts-types/lib/nonEmptyArray'
-import { failure } from 'io-ts/lib/PathReporter'
 import fetch from 'node-fetch'
 import { URL } from 'url'
 
@@ -86,12 +86,14 @@ export function createGoogleSpreadsheetApiModel({
         try {
           const response = await fetch(url.toString())
 
-          return pipeable.pipe(
+          return F.pipe(
             ValueRange.decode(await response.json()),
             E.mapLeft((errors) => {
               return {
                 error: new Error('invalid response'),
-                errorContext: { validationErrors: failure(errors) },
+                errorContext: {
+                  validationErrors: formatValidationErrors(errors),
+                },
               }
             }),
             E.map((v) => v.values),
