@@ -148,11 +148,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
 
     const value = msgpack.decode(packedValue)
 
-    if (isCacheEntry<T>(value)) {
-      return O.some(value)
-    } else {
-      return O.none
-    }
+    return isCacheEntry<T>(value) ? O.some(value) : O.none
   }
 
   const remove = async ({ key }: { key: string }) => {
