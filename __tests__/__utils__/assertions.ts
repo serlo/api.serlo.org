@@ -190,5 +190,7 @@ function destringifyProperties(value: unknown) {
     ? value.map(destringify)
     : typeof value === 'object' && value !== null
     ? R.mapObjIndexed(destringify, value)
+    : value === 'null'
+    ? null
     : value
 }
