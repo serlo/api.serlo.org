@@ -28,7 +28,7 @@ import { FunctionOrValue } from '../cache'
 import { Environment } from '../environment'
 import { Time } from '../swr-queue'
 import { InvalidCurrentValueError } from './common'
-import { Sentry } from '~/internals/sentry'
+import { captureErrorEvent } from '~/internals/error-event'
 
 /**
  * Helper function to create a query in a data source. A query operation is a
@@ -91,19 +91,18 @@ export function createQuery<P, R>(
       })
 
       if (invalidCacheValueErrorContext) {
-        Sentry.captureMessage(
-          'Invalid cached value received that could be repaired automatically by data source.',
-          (scope) => {
-            scope.setFingerprint(['invalid-value', 'cache', key])
-            scope.setContext('cache', {
-              ...invalidCacheValueErrorContext,
-              key,
-              currentValue: value,
-              decoder: decoder.name,
-            })
-            return scope
-          }
-        )
+        captureErrorEvent({
+          error: new Error(
+            'Invalid cached value received that could be repaired automatically by data source.'
+          ),
+          fingerprint: ['invalid-value', 'cache', key],
+          errorContext: {
+            ...invalidCacheValueErrorContext,
+            key,
+            currentValue: value,
+            decoder: decoder.name,
+          },
+        })
       }
 
       return value as S
