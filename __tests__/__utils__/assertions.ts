@@ -183,9 +183,6 @@ export async function assertErrorEvent(args?: {
 }
 
 function destringifyProperties(value: unknown) {
-  const destringify = (value: unknown) =>
-    typeof value === 'string' ? (JSON.parse(value) as unknown) : value
-
   return Array.isArray(value)
     ? value.map(destringify)
     : typeof value === 'object' && value !== null
@@ -193,4 +190,8 @@ function destringifyProperties(value: unknown) {
     : value === 'null'
     ? null
     : value
+}
+
+function destringify(value: unknown) {
+  return typeof value === 'string' ? (JSON.parse(value) as unknown) : value
 }
