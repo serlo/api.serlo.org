@@ -21,7 +21,7 @@
  */
 import { gql } from 'apollo-server'
 
-import { user } from '../../__fixtures__'
+import { article, articleRevision, user } from '../../__fixtures__'
 import {
   assertErrorEvent,
   assertFailingGraphQLQuery,
@@ -71,37 +71,72 @@ describe('sentry', () => {
     })
   })
 
-  test('invalid cache values are reported', async () => {
-    const key = `de.serlo.org/api/uuid/${user.id}`
-    global.server.use(createUuidHandler(user))
-    global.timer.setCurrentTime(1000)
-    await global.cache.set({ key, value: invalidValue, source: 'unit-test' })
+  describe('reports invalid cache values', () => {
+    test('when cache value has invalid properties', async () => {
+      const key = `de.serlo.org/api/uuid/${user.id}`
+      global.server.use(createUuidHandler(user))
+      global.timer.setCurrentTime(1000)
+      await global.cache.set({ key, value: invalidValue, source: 'unit-test' })
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query ($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            id
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query ($id: Int!) {
+            uuid(id: $id) {
+              __typename
+              id
+            }
           }
-        }
-      `,
-      variables: { id: user.id },
-      data: { uuid: getTypenameAndId(user) },
-      client: createTestClient(),
+        `,
+        variables: { id: user.id },
+        data: { uuid: getTypenameAndId(user) },
+        client: createTestClient(),
+      })
+
+      await assertErrorEvent({
+        message:
+          'Invalid cached value received that could be repaired automatically by data source.',
+        errorContext: {
+          invalidCacheValue: invalidValue,
+          currentValue: user,
+          timeInvalidCacheSaved: new Date(1000).toISOString(),
+          key,
+          source: 'unit-test',
+        },
+        fingerprint: ['invalid-value', 'cache', key],
+      })
     })
 
-    await assertErrorEvent({
-      message:
-        'Invalid cached value received that could be repaired automatically by data source.',
-      errorContext: {
-        invalidCacheValue: invalidValue,
-        currentValue: user,
-        timeInvalidCacheSaved: new Date(1000).toISOString(),
-        key,
-        source: 'unit-test',
-      },
-      fingerprint: ['invalid-value', 'cache', key],
+    test('when cache value is null but shall not be null', async () => {
+      const key = `de.serlo.org/api/uuid/${article.currentRevisionId ?? ''}`
+      global.server.use(
+        createUuidHandler(article),
+        createUuidHandler(articleRevision)
+      )
+      await global.cache.set({ key, value: null, source: 'unit-test' })
+
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query ($id: Int!) {
+            uuid(id: $id) {
+              ... on Article {
+                currentRevision {
+                  __typename
+                  id
+                }
+              }
+            }
+          }
+        `,
+        variables: { id: article.id },
+        data: { uuid: { currentRevision: getTypenameAndId(articleRevision) } },
+        client: createTestClient(),
+      })
+
+      await assertErrorEvent({
+        message:
+          'Invalid cached value received that could be repaired automatically by data source.',
+        errorContext: { invalidCacheValue: null },
+      })
     })
   })
 })
