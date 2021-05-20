@@ -48,6 +48,10 @@ export class MockTimer implements Timer {
   public async waitFor(time: Time) {
     this.currentTime += timeToMilliseconds(time)
   }
+
+  public setCurrentTime(time: number) {
+    this.currentTime = time
+  }
 }
 
 export function setup() {
