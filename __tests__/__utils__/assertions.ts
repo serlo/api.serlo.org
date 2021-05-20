@@ -150,8 +150,13 @@ export async function assertErrorEvent(args?: {
   const eventPredicate = (event: Sentry.Event) => {
     const exception = event.exception?.values?.[0]
 
-    if (args?.message !== undefined && exception?.value !== args.message)
+    if (
+      args?.message !== undefined &&
+      exception?.value !== args.message &&
+      event.message !== args.message
+    ) {
       return false
+    }
 
     if (args?.errorContext !== undefined) {
       for (const contextName in args.errorContext) {
