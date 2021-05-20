@@ -21,42 +21,87 @@
  */
 import { gql } from 'apollo-server'
 
+import { user } from '../../__fixtures__'
 import {
   assertErrorEvent,
   assertFailingGraphQLQuery,
+  assertSuccessfulGraphQLQuery,
   createMessageHandler,
   createTestClient,
+  createUuidHandler,
+  getTypenameAndId,
 } from '../__utils__'
 
-test('invalid values are reported to sentry', async () => {
-  const client = createTestClient()
+describe('sentry', () => {
   const invalidValue = { __typename: 'Article', invalid: 'this in invalid' }
 
-  global.server.use(
-    createMessageHandler({
-      message: { type: 'UuidQuery', payload: { id: 42 } },
-      body: invalidValue,
-    })
-  )
+  test('invalid values from data sources are reported', async () => {
+    const client = createTestClient()
 
-  await assertFailingGraphQLQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          __typename
+    global.server.use(
+      createMessageHandler({
+        message: { type: 'UuidQuery', payload: { id: 42 } },
+        body: invalidValue,
+      })
+    )
+
+    await assertFailingGraphQLQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            __typename
+          }
         }
-      }
-    `,
-    variables: { id: 42 },
-    client,
+      `,
+      variables: { id: 42 },
+      client,
+    })
+
+    await assertErrorEvent({
+      message: 'Invalid value received from data source.',
+      fingerprint: [
+        'invalid-value',
+        'data-source',
+        JSON.stringify(invalidValue),
+      ],
+      errorContext: {
+        invalidCurrentValue: invalidValue,
+        key: 'de.serlo.org/api/uuid/42',
+      },
+    })
   })
 
-  await assertErrorEvent({
-    message: 'Invalid value received from data source.',
-    fingerprint: ['invalid-value', 'data-source', JSON.stringify(invalidValue)],
-    errorContext: {
-      invalidCurrentValue: invalidValue,
-      key: 'de.serlo.org/api/uuid/42',
-    },
+  test('invalid cache values are reported', async () => {
+    const key = `de.serlo.org/api/uuid/${user.id}`
+    global.server.use(createUuidHandler(user))
+    global.timer.setCurrentTime(1000)
+    await global.cache.set({ key, value: invalidValue, source: 'unit-test' })
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            __typename
+            id
+          }
+        }
+      `,
+      variables: { id: user.id },
+      data: { uuid: getTypenameAndId(user) },
+      client: createTestClient(),
+    })
+
+    await assertErrorEvent({
+      message:
+        'Invalid cached value received that could be repaired automatically by data source.',
+      errorContext: {
+        invalidCacheValue: invalidValue,
+        currentValue: user,
+        timeInvalidCacheSaved: new Date(1000).toISOString(),
+        key,
+        source: 'unit-test',
+      },
+      fingerprint: ['invalid-value', 'cache', key],
+    })
   })
 })
