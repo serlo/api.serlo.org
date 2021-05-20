@@ -19,10 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { array as A, either as E } from 'fp-ts'
+import { array as A } from 'fp-ts'
 import * as F from 'fp-ts/lib/function'
-import * as t from 'io-ts'
-import reporter from 'io-ts-reporters'
 import R from 'ramda'
 
 import { Sentry } from '~/internals/sentry'
