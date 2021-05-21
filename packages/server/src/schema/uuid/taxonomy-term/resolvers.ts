@@ -22,12 +22,11 @@
 import * as t from 'io-ts'
 
 import { TypeResolvers, Context, Model } from '~/internals/graphql'
-import { TaxonomyTermDecoder } from '~/model/decoder'
+import { TaxonomyTermDecoder, UuidDecoder } from '~/model/decoder'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { TaxonomyTerm } from '~/types'
-import { isDefined } from '~/utils'
 
 export const resolvers: TypeResolvers<TaxonomyTerm> = {
   TaxonomyTerm: {
@@ -43,11 +42,14 @@ export const resolvers: TypeResolvers<TaxonomyTerm> = {
     async children(taxonomyTerm, cursorPayload, { dataSources }) {
       const children = await Promise.all(
         taxonomyTerm.childrenIds.map((id) => {
-          return dataSources.model.serlo.getUuid({ id })
+          return dataSources.model.serlo.getUuidWithCustomDecoder({
+            id,
+            decoder: UuidDecoder,
+          })
         })
       )
       return resolveConnection({
-        nodes: children.filter(isDefined),
+        nodes: children,
         payload: cursorPayload,
         createCursor(node) {
           return node.id.toString()
