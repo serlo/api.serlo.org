@@ -22,7 +22,6 @@
 import { PickResolvers } from '~/internals/graphql'
 import { TaxonomyTermDecoder } from '~/model/decoder'
 import { resolveConnection } from '~/schema/connection/utils'
-import { isDefined } from '~/utils'
 
 export function createTaxonomyTermChildResolvers(): PickResolvers<
   'AbstractTaxonomyTermChild',
@@ -39,7 +38,7 @@ export function createTaxonomyTermChildResolvers(): PickResolvers<
         })
       )
       return resolveConnection({
-        nodes: taxonomyTerms.filter(isDefined),
+        nodes: taxonomyTerms,
         payload: cursorPayload,
         createCursor(node) {
           return node.id.toString()

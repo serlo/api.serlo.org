@@ -28,14 +28,10 @@ export const resolvers: TypeResolvers<CreateEntityNotificationEvent> = {
   CreateEntityNotificationEvent: {
     ...createNotificationEventResolvers(),
     async entity(notificationEvent, _args, { dataSources }) {
-      const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: notificationEvent.entityId,
         decoder: EntityDecoder,
       })
-
-      if (entity === null) throw new Error('entity cannot be null')
-
-      return entity
     },
   },
 }

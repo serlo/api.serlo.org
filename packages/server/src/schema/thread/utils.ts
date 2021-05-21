@@ -24,7 +24,6 @@ import { UserInputError } from 'apollo-server'
 import { Context, PickResolvers } from '~/internals/graphql'
 import { CommentDecoder } from '~/model/decoder'
 import { resolveConnection } from '~/schema/connection/utils'
-import { isDefined } from '~/utils'
 
 export function createThreadResolvers(): PickResolvers<'ThreadAware'> {
   return {
@@ -110,7 +109,7 @@ async function resolveComments(
   dataSources: Context['dataSources'],
   ids: number[]
 ) {
-  const comments = await Promise.all(
+  return await Promise.all(
     ids.map((id) =>
       dataSources.model.serlo.getUuidWithCustomDecoder({
         id,
@@ -118,6 +117,4 @@ async function resolveComments(
       })
     )
   )
-
-  return comments.filter(isDefined)
 }

@@ -21,6 +21,7 @@
  */
 import { array as A, function as F, number as N, ord } from 'fp-ts'
 import * as t from 'io-ts'
+import R from 'ramda'
 
 import { resolveUser } from '../user/utils'
 import {
@@ -35,7 +36,6 @@ import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { VideoRevisionsArgs } from '~/types'
-import { isDefined } from '~/utils'
 
 export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
   revisionDecoder,
@@ -76,9 +76,8 @@ export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
             })
           )
         ),
-        A.filter(isDefined),
         A.filter((revision) => {
-          if (!isDefined(cursorPayload.unrevised)) return true
+          if (R.isNil(cursorPayload.unrevised)) return true
 
           if (revision.trashed) return false
 
@@ -116,23 +115,13 @@ export function createRevisionResolvers<E extends Model<'AbstractRepository'>>({
     ...createUuidResolvers(),
     ...createThreadResolvers(),
     async author(entityRevision, _args, context) {
-      const user = await resolveUser({ id: entityRevision.authorId }, context)
-
-      if (user === null) throw new Error('author cannot be null')
-
-      return user
+      return await resolveUser({ id: entityRevision.authorId }, context)
     },
     repository: async (entityRevision, _args, { dataSources }) => {
-      const repository = await dataSources.model.serlo.getUuidWithCustomDecoder(
-        {
-          id: entityRevision.repositoryId,
-          decoder: repositoryDecoder,
-        }
-      )
-
-      if (repository === null) throw new Error('respository cannot be null')
-
-      return repository
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: entityRevision.repositoryId,
+        decoder: repositoryDecoder,
+      })
     },
   }
 }

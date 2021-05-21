@@ -39,11 +39,7 @@ export function createNotificationEventResolvers(): PickResolvers<
 > {
   return {
     async actor(notificationEvent, _args, context) {
-      const user = await resolveUser({ id: notificationEvent.actorId }, context)
-
-      if (user === null) throw new Error('user cannot be null')
-
-      return user
+      return await resolveUser({ id: notificationEvent.actorId }, context)
     },
   }
 }

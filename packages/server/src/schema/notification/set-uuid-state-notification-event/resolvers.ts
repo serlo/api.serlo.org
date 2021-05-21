@@ -21,19 +21,17 @@
  */
 import { createNotificationEventResolvers } from '../utils'
 import { TypeResolvers } from '~/internals/graphql'
+import { UuidDecoder } from '~/model/decoder'
 import { SetUuidStateNotificationEvent } from '~/types'
 
 export const resolvers: TypeResolvers<SetUuidStateNotificationEvent> = {
   SetUuidStateNotificationEvent: {
     ...createNotificationEventResolvers(),
     async object(notificationEvent, _args, { dataSources }) {
-      const uuid = await dataSources.model.serlo.getUuid({
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: notificationEvent.objectId,
+        decoder: UuidDecoder,
       })
-
-      if (uuid === null) throw new Error('uuid cannot be null')
-
-      return uuid
     },
   },
 }

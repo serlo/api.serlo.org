@@ -28,24 +28,16 @@ export const resolvers: TypeResolvers<CreateEntityLinkNotificationEvent> = {
   CreateEntityLinkNotificationEvent: {
     ...createNotificationEventResolvers(),
     async parent(notificationEvent, _args, { dataSources }) {
-      const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: notificationEvent.parentId,
         decoder: EntityDecoder,
       })
-
-      if (parent === null) throw new Error('parent cannot be null')
-
-      return parent
     },
     async child(notificationEvent, _args, { dataSources }) {
-      const child = await dataSources.model.serlo.getUuidWithCustomDecoder({
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: notificationEvent.childId,
         decoder: EntityDecoder,
       })
-
-      if (child === null) throw Error('child cannot be null')
-
-      return child
     },
   },
 }
