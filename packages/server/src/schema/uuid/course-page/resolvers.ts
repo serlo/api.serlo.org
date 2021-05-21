@@ -38,14 +38,10 @@ export const resolvers: TypeResolvers<CoursePage> &
       revisionDecoder: CoursePageRevisionDecoder,
     }),
     async course(coursePage, _args, { dataSources }) {
-      const course = await dataSources.model.serlo.getUuidWithCustomDecoder({
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: coursePage.parentId,
         decoder: CourseDecoder,
       })
-
-      if (course === null) throw new Error('course cannot be null')
-
-      return course
     },
   },
   CoursePageRevision: createRevisionResolvers({

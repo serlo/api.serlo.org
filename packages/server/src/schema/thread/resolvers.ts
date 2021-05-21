@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as auth from '@serlo/authorization'
-import { ApolloError } from 'apollo-server'
 
 import { decodeThreadId, decodeThreadIds, encodeThreadId } from './utils'
 import {
@@ -33,7 +32,7 @@ import {
   Model,
   Context,
 } from '~/internals/graphql'
-import { DiscriminatorType, UserDecoder } from '~/model/decoder'
+import { DiscriminatorType, UserDecoder, UuidDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
@@ -65,13 +64,10 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       return thread.commentPayloads[0].trashed
     },
     async object(thread, _args, { dataSources }) {
-      const object = await dataSources.model.serlo.getUuid({
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: thread.commentPayloads[0].parentId,
+        decoder: UuidDecoder,
       })
-      if (object === null) {
-        throw new ApolloError('Thread points to non-existent uuid')
-      }
-      return object
     },
     comments(thread, cursorPayload) {
       return resolveConnection({
@@ -89,14 +85,10 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       return comment.date
     },
     async author(comment, _args, { dataSources }) {
-      const author = await dataSources.model.serlo.getUuidWithCustomDecoder({
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: comment.authorId,
         decoder: UserDecoder,
       })
-      if (author === null) {
-        throw new ApolloError('There is no author with this id')
-      }
-      return author
     },
     async legacyObject(comment, _args, { dataSources }) {
       return resolveObject(comment, dataSources)
@@ -240,14 +232,12 @@ async function resolveObject(
   comment: Model<'Comment'>,
   dataSources: Context['dataSources']
 ): Promise<Model<'AbstractUuid'>> {
-  const obj = await dataSources.model.serlo.getUuid({
+  const obj = await dataSources.model.serlo.getUuidWithCustomDecoder({
     id: comment.parentId,
+    decoder: UuidDecoder,
   })
-  if (obj === null) {
-    throw new ApolloError('Comment points to non-existent uuid')
-  }
-  if (obj.__typename === DiscriminatorType.Comment) {
-    return resolveObject(obj, dataSources)
-  }
-  return obj
+
+  return obj.__typename === DiscriminatorType.Comment
+    ? resolveObject(obj, dataSources)
+    : obj
 }

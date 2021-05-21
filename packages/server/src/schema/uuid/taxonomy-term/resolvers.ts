@@ -19,6 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import * as t from 'io-ts'
+
 import { TypeResolvers, Context, Model } from '~/internals/graphql'
 import { TaxonomyTermDecoder } from '~/model/decoder'
 import { resolveConnection } from '~/schema/connection/utils'
@@ -96,7 +98,7 @@ async function resolveTaxonomyTermPath(
   while (current.parentId !== null) {
     const next = await dataSources.model.serlo.getUuidWithCustomDecoder({
       id: current.parentId,
-      decoder: TaxonomyTermDecoder,
+      decoder: t.union([TaxonomyTermDecoder, t.null]),
     })
     if (next === null) break
     path.unshift(next)
