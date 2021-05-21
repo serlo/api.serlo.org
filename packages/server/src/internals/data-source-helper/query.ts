@@ -120,18 +120,6 @@ export function createQuery<P, R>(
     }
   }
 
-  async function queryWithDecoders<S2 extends R, S1 extends S2>(
-    payload: P,
-    customDecoder1: t.Type<S1>,
-    customDecoder2: t.Type<S2>
-  ): Promise<S2> {
-    try {
-      return await queryWithDecoder(payload, customDecoder1)
-    } catch (e) {
-      return await queryWithDecoder(payload, customDecoder2)
-    }
-  }
-
   function query(payload: P): Promise<R> {
     return queryWithDecoder(payload, spec.decoder)
   }
@@ -139,7 +127,6 @@ export function createQuery<P, R>(
   const querySpecWithHelpers: QuerySpecWithHelpers<P, R> = {
     ...spec,
     queryWithDecoder,
-    queryWithDecoders,
     async removeCache(args) {
       await Promise.all(
         toPayloadArray(args).map((payload) =>
@@ -242,16 +229,6 @@ export interface QuerySpecWithHelpers<Payload, Result>
     payload: Payload,
     customDecoder: t.Type<S>
   ): Promise<S>
-
-  /**
-   * Query function where two different io-ts decoder can be used. The second
-   * decoder is a fallback in case the first decoder does not match the result.
-   */
-  queryWithDecoders<S2 extends Result, S1 extends S2>(
-    payload: Payload,
-    customDecoder1: t.Type<S1>,
-    customDecoder2: t.Type<S2>
-  ): Promise<S2>
 }
 
 /**
