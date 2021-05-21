@@ -23,7 +23,6 @@ import { array as A, function as F, number as N, ord } from 'fp-ts'
 import * as t from 'io-ts'
 import R from 'ramda'
 
-import { resolveUser } from '../user/utils'
 import {
   Model,
   PickResolvers,
@@ -31,6 +30,7 @@ import {
   ResolverFunction,
   Revision,
 } from '~/internals/graphql'
+import { UserDecoder } from '~/model/decoder'
 import { Connection } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
@@ -114,8 +114,11 @@ export function createRevisionResolvers<E extends Model<'AbstractRepository'>>({
   return {
     ...createUuidResolvers(),
     ...createThreadResolvers(),
-    async author(entityRevision, _args, context) {
-      return await resolveUser({ id: entityRevision.authorId }, context)
+    async author(entityRevision, _args, { dataSources }) {
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: entityRevision.authorId,
+        decoder: UserDecoder,
+      })
     },
     repository: async (entityRevision, _args, { dataSources }) => {
       return await dataSources.model.serlo.getUuidWithCustomDecoder({

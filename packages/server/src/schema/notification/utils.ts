@@ -21,9 +21,8 @@
  */
 import * as R from 'ramda'
 
-import { resolveUser } from '../uuid/user/utils'
 import { Model, PickResolvers } from '~/internals/graphql'
-import { NotificationEventType } from '~/model/decoder'
+import { NotificationEventType, UserDecoder } from '~/model/decoder'
 
 const validTypes = Object.values(NotificationEventType)
 
@@ -38,8 +37,11 @@ export function createNotificationEventResolvers(): PickResolvers<
   'actor'
 > {
   return {
-    async actor(notificationEvent, _args, context) {
-      return await resolveUser({ id: notificationEvent.actorId }, context)
+    async actor(notificationEvent, _args, { dataSources }) {
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: notificationEvent.actorId,
+        decoder: UserDecoder,
+      })
     },
   }
 }
