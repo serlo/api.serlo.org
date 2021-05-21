@@ -29,10 +29,10 @@ import {
   Queries,
   TypeResolvers,
 } from '~/internals/graphql'
+import { UuidDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { SubscriptionQuery } from '~/types'
-import { isDefined } from '~/utils'
 
 export const resolvers: TypeResolvers<SubscriptionQuery> &
   Queries<'subscriptions' | 'subscription'> &
@@ -45,11 +45,14 @@ export const resolvers: TypeResolvers<SubscriptionQuery> &
       })
       const result = await Promise.all(
         subscriptions.subscriptions.map((id) => {
-          return dataSources.model.serlo.getUuid({ id: id.id })
+          return dataSources.model.serlo.getUuidWithCustomDecoder({
+            id: id.id,
+            decoder: UuidDecoder,
+          })
         })
       )
       return resolveConnection({
-        nodes: result.filter(isDefined),
+        nodes: result,
         payload: cursorPayload,
         createCursor(node) {
           return node.id.toString()

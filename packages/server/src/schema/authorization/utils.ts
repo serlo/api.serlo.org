@@ -52,8 +52,6 @@ export async function fetchAuthorizationPayload({
       decoder: UserDecoder,
     })
 
-    if (user === null) throw new Error('user cannot be null')
-
     const rolesPayload: RolesPayload = {}
 
     for (const result of resolveScopedRoles(user)) {

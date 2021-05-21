@@ -33,7 +33,6 @@ import {
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
 import { Course, CourseRevision } from '~/types'
-import { isDefined } from '~/utils'
 
 export const resolvers: TypeResolvers<Course> & TypeResolvers<CourseRevision> =
   {
@@ -50,7 +49,7 @@ export const resolvers: TypeResolvers<Course> & TypeResolvers<CourseRevision> =
           })
         )
 
-        return pages.filter(isDefined).filter((page) => {
+        return pages.filter((page) => {
           if (trashed !== undefined && page.trashed !== trashed) return false
           if (
             hasCurrentRevision !== undefined &&

@@ -40,14 +40,10 @@ export const resolvers: TypeResolvers<GroupedExercise> &
     }),
     ...createExerciseResolvers(),
     async exerciseGroup(groupedExercise, _args, { dataSources }) {
-      const result = await dataSources.model.serlo.getUuidWithCustomDecoder({
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: groupedExercise.parentId,
         decoder: ExerciseGroupDecoder,
       })
-
-      if (result === null) throw new Error('exerciseGroup cannot be null')
-
-      return result
     },
   },
   GroupedExerciseRevision: createRevisionResolvers({

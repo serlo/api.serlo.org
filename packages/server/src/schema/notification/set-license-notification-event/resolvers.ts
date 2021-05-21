@@ -28,16 +28,10 @@ export const resolvers: TypeResolvers<SetLicenseNotificationEvent> = {
   SetLicenseNotificationEvent: {
     ...createNotificationEventResolvers(),
     async repository(notificationEvent, _args, { dataSources }) {
-      const repository = await dataSources.model.serlo.getUuidWithCustomDecoder(
-        {
-          id: notificationEvent.repositoryId,
-          decoder: RepositoryDecoder,
-        }
-      )
-
-      if (repository === null) throw new Error('repository cannot be null')
-
-      return repository
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: notificationEvent.repositoryId,
+        decoder: RepositoryDecoder,
+      })
     },
   },
 }

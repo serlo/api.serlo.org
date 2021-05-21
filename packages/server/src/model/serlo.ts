@@ -116,18 +116,10 @@ export function createSerloModel({
     environment
   )
 
-  async function getUuidWithCustomDecoder<S extends Model<'AbstractUuid'>>({
-    id,
-    decoder,
-  }: {
-    id: number
-    decoder: t.Type<S>
-  }): Promise<S | null> {
-    return getUuid._querySpec.queryWithDecoders(
-      { id },
-      decoder,
-      t.union([decoder, t.null])
-    )
+  async function getUuidWithCustomDecoder<
+    S extends Model<'AbstractUuid'> | null
+  >({ id, decoder }: { id: number; decoder: t.Type<S> }): Promise<S> {
+    return getUuid._querySpec.queryWithDecoder({ id }, decoder)
   }
 
   const setUuidState = createMutation({

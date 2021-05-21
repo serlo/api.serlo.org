@@ -28,24 +28,16 @@ export const resolvers: TypeResolvers<CreateEntityRevisionNotificationEvent> = {
   CreateEntityRevisionNotificationEvent: {
     ...createNotificationEventResolvers(),
     async entity(notificationEvent, _args, { dataSources }) {
-      const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: notificationEvent.entityId,
         decoder: EntityDecoder,
       })
-
-      if (entity === null) throw new Error('entity cannot be null')
-
-      return entity
     },
     async entityRevision(notificationEvent, _args, { dataSources }) {
-      const revision = await dataSources.model.serlo.getUuidWithCustomDecoder({
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: notificationEvent.entityRevisionId,
         decoder: EntityRevisionDecoder,
       })
-
-      if (revision === null) throw new Error('revision cannot be null')
-
-      return revision
     },
   },
 }
