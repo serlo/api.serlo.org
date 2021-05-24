@@ -21,7 +21,7 @@
  */
 import { RESTDataSource } from 'apollo-datasource-rest'
 import { option as O, either as E } from 'fp-ts'
-import { PathReporter } from 'io-ts/lib/PathReporter'
+import reporter from 'io-ts-reporters'
 
 import { isQuery } from './data-source-helper'
 import { Environment } from '~/internals/environment'
@@ -61,7 +61,7 @@ export class ModelDataSource extends RESTDataSource {
               key,
               invalidValueFromListener: value,
               decoder: query._querySpec.decoder.name,
-              validationErrors: PathReporter.report(decoded).join('\n'),
+              validationErrors: reporter.report(decoded),
             })
           }
         }
@@ -87,7 +87,7 @@ export class InvalidValueFromListener extends Error {
       key: string
       invalidValueFromListener: unknown
       decoder: string
-      validationErrors: string
+      validationErrors: string[]
     }
   ) {
     super('Invalid value received from listener.')

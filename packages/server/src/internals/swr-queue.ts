@@ -22,7 +22,7 @@
 import Queue from 'bee-queue'
 import { either as E, option as O } from 'fp-ts'
 import * as t from 'io-ts'
-import { PathReporter } from 'io-ts/lib/PathReporter'
+import reporter from 'io-ts-reporters'
 import * as R from 'ramda'
 
 import { Cache, Priority } from './cache'
@@ -220,7 +220,7 @@ export function createSwrQueueWorker({
                 key,
                 invalidValue: value,
                 decoder: decoder.name,
-                validationErrors: PathReporter.report(decodedValue).join('\n'),
+                validationErrors: reporter.report(decodedValue),
               },
             })
 
