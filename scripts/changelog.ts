@@ -831,6 +831,11 @@ async function exec(): Promise<void> {
         'Code refactoring for validating uuids.',
       ],
     },
+    {
+      tagName: 'v0.24.4',
+      date: '2021-05-24',
+      internal: ['Improve Sentry integration.'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
