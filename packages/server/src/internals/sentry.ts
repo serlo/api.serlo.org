@@ -128,6 +128,8 @@ function stringifyContextValue(value: unknown) {
     ? R.map(stringify, value)
     : typeof value === 'object' && value !== null
     ? R.mapObjIndexed(stringify, value)
+    : value === null
+    ? JSON.stringify(value)
     : value
 }
 

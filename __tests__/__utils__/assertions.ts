@@ -150,8 +150,13 @@ export async function assertErrorEvent(args?: {
   const eventPredicate = (event: Sentry.Event) => {
     const exception = event.exception?.values?.[0]
 
-    if (args?.message !== undefined && exception?.value !== args.message)
+    if (
+      args?.message !== undefined &&
+      exception?.value !== args.message &&
+      event.message !== args.message
+    ) {
       return false
+    }
 
     if (args?.errorContext !== undefined) {
       for (const contextName in args.errorContext) {
@@ -178,12 +183,15 @@ export async function assertErrorEvent(args?: {
 }
 
 function destringifyProperties(value: unknown) {
-  const destringify = (value: unknown) =>
-    typeof value === 'string' ? (JSON.parse(value) as unknown) : value
-
   return Array.isArray(value)
     ? value.map(destringify)
     : typeof value === 'object' && value !== null
     ? R.mapObjIndexed(destringify, value)
+    : value === 'null'
+    ? null
     : value
+}
+
+function destringify(value: unknown) {
+  return typeof value === 'string' ? (JSON.parse(value) as unknown) : value
 }

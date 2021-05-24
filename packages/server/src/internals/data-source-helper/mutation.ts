@@ -21,7 +21,7 @@
  */
 import { either as E } from 'fp-ts'
 import t from 'io-ts'
-import { PathReporter } from 'io-ts/lib/PathReporter'
+import reporter from 'io-ts-reporters'
 
 import { InvalidCurrentValueError } from './common'
 import { AsyncOrSync } from '~/utils'
@@ -43,7 +43,7 @@ export function createMutation<P, R>(spec: MutationSpec<P, R>): Mutation<P, R> {
       throw new InvalidCurrentValueError({
         invalidCurrentValue: result,
         decoder: spec.decoder.name,
-        validationErrors: PathReporter.report(decodedResult).join('\n'),
+        validationErrors: reporter.report(decodedResult),
       })
     }
   }
