@@ -1969,11 +1969,6 @@ export type ThreadsCursor = {
   node: Thread;
 };
 
-export type UnsupportedComment = {
-  __typename?: 'UnsupportedComment';
-  id: Scalars['Int'];
-};
-
 export type UnsupportedThread = {
   __typename?: 'UnsupportedThread';
   id: Scalars['Int'];
