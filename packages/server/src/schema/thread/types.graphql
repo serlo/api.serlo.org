@@ -64,10 +64,6 @@ type UnsupportedThread {
   id: Int!
 }
 
-type UnsupportedComment {
-  id: Int!
-}
-
 type CommentConnection {
   edges: [CommentEdge!]!
   nodes: [Comment!]!
