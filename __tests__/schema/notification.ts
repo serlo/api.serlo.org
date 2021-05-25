@@ -25,6 +25,7 @@ import {
   article,
   articleRevision,
   checkoutRevisionNotificationEvent,
+  comment,
   createCommentNotificationEvent,
   createEntityLinkNotificationEvent,
   createEntityNotificationEvent,
@@ -65,7 +66,6 @@ import {
   taxonomyTermCurriculumTopic,
   taxonomyTermRoot,
   taxonomyTermSubject,
-  unsupportedComment,
   unsupportedThread,
   user,
   user2,
@@ -529,6 +529,7 @@ describe('notificationEvent', () => {
     })
 
     test('by id (w/ comment)', async () => {
+      global.server.use(createUuidHandler(comment))
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query notificationEvent($id: Int!) {
@@ -536,6 +537,7 @@ describe('notificationEvent', () => {
               ... on CreateCommentNotificationEvent {
                 comment {
                   id
+                  __typename
                 }
               }
             }
@@ -544,7 +546,7 @@ describe('notificationEvent', () => {
         variables: createCommentNotificationEvent,
         data: {
           notificationEvent: {
-            comment: unsupportedComment,
+            comment: getTypenameAndId(comment),
           },
         },
         client,
