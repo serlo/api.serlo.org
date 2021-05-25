@@ -748,7 +748,7 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & Instanc
   actor: User;
   objectId: Scalars['Int'];
   thread: UnsupportedThread;
-  comment: UnsupportedComment;
+  comment: Comment;
 };
 
 export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -1967,11 +1967,6 @@ export type ThreadsCursor = {
   __typename?: 'ThreadsCursor';
   cursor: Scalars['String'];
   node: Thread;
-};
-
-export type UnsupportedComment = {
-  __typename?: 'UnsupportedComment';
-  id: Scalars['Int'];
 };
 
 export type UnsupportedThread = {

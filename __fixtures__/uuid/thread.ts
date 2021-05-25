@@ -24,7 +24,7 @@ import { article } from './article'
 import { user, user2 } from './user'
 import { Model } from '~/internals/graphql'
 import { DiscriminatorType } from '~/model/decoder'
-import { UnsupportedComment, UnsupportedThread } from '~/types'
+import { UnsupportedThread } from '~/types'
 
 export const comment: Model<'Comment'> = {
   id: 27778,
@@ -88,8 +88,4 @@ export const comment3: Model<'Comment'> = {
 
 export const unsupportedThread: UnsupportedThread = {
   id: 15468,
-}
-
-export const unsupportedComment: UnsupportedComment = {
-  id: 15469,
 }

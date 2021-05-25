@@ -752,7 +752,7 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & Instanc
   actor: User;
   objectId: Scalars['Int'];
   thread: UnsupportedThread;
-  comment: UnsupportedComment;
+  comment: Comment;
 };
 
 export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -1973,11 +1973,6 @@ export type ThreadsCursor = {
   node: Thread;
 };
 
-export type UnsupportedComment = {
-  __typename?: 'UnsupportedComment';
-  id: Scalars['Int'];
-};
-
 export type UnsupportedThread = {
   __typename?: 'UnsupportedThread';
   id: Scalars['Int'];
@@ -2405,7 +2400,6 @@ export type ResolversTypes = {
   ThreadSetThreadStateResponse: ResolverTypeWrapper<ModelOf<ThreadSetThreadStateResponse>>;
   ThreadsConnection: ResolverTypeWrapper<ModelOf<ThreadsConnection>>;
   ThreadsCursor: ResolverTypeWrapper<ModelOf<ThreadsCursor>>;
-  UnsupportedComment: ResolverTypeWrapper<ModelOf<UnsupportedComment>>;
   UnsupportedThread: ResolverTypeWrapper<ModelOf<UnsupportedThread>>;
   User: ResolverTypeWrapper<ModelOf<User>>;
   UserConnection: ResolverTypeWrapper<ModelOf<UserConnection>>;
@@ -2548,7 +2542,6 @@ export type ResolversParentTypes = {
   ThreadSetThreadStateResponse: ModelOf<ThreadSetThreadStateResponse>;
   ThreadsConnection: ModelOf<ThreadsConnection>;
   ThreadsCursor: ModelOf<ThreadsCursor>;
-  UnsupportedComment: ModelOf<UnsupportedComment>;
   UnsupportedThread: ModelOf<UnsupportedThread>;
   User: ModelOf<User>;
   UserConnection: ModelOf<UserConnection>;
@@ -2944,7 +2937,7 @@ export type CreateCommentNotificationEventResolvers<ContextType = Context, Paren
   actor?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   objectId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   thread?: Resolver<ResolversTypes['UnsupportedThread'], ParentType, ContextType>;
-  comment?: Resolver<ResolversTypes['UnsupportedComment'], ParentType, ContextType>;
+  comment?: Resolver<ResolversTypes['Comment'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3620,11 +3613,6 @@ export type ThreadsCursorResolvers<ContextType = Context, ParentType extends Res
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UnsupportedCommentResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UnsupportedComment'] = ResolversParentTypes['UnsupportedComment']> = {
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type UnsupportedThreadResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UnsupportedThread'] = ResolversParentTypes['UnsupportedThread']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -3838,7 +3826,6 @@ export type Resolvers<ContextType = Context> = {
   ThreadSetThreadStateResponse?: ThreadSetThreadStateResponseResolvers<ContextType>;
   ThreadsConnection?: ThreadsConnectionResolvers<ContextType>;
   ThreadsCursor?: ThreadsCursorResolvers<ContextType>;
-  UnsupportedComment?: UnsupportedCommentResolvers<ContextType>;
   UnsupportedThread?: UnsupportedThreadResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   UserConnection?: UserConnectionResolvers<ContextType>;
