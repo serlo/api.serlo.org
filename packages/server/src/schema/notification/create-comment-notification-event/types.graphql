@@ -5,5 +5,5 @@ type CreateCommentNotificationEvent implements AbstractNotificationEvent & Insta
   actor: User!
   objectId: Int!
   thread: UnsupportedThread!
-  comment: UnsupportedComment!
+  comment: Comment!
 }

@@ -748,7 +748,7 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & Instanc
   actor: User;
   objectId: Scalars['Int'];
   thread: UnsupportedThread;
-  comment: UnsupportedComment;
+  comment: Comment;
 };
 
 export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
