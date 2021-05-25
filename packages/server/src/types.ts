@@ -752,7 +752,7 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & Instanc
   actor: User;
   objectId: Scalars['Int'];
   thread: UnsupportedThread;
-  comment: UnsupportedComment;
+  comment: Comment;
 };
 
 export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -2944,7 +2944,7 @@ export type CreateCommentNotificationEventResolvers<ContextType = Context, Paren
   actor?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   objectId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   thread?: Resolver<ResolversTypes['UnsupportedThread'], ParentType, ContextType>;
-  comment?: Resolver<ResolversTypes['UnsupportedComment'], ParentType, ContextType>;
+  comment?: Resolver<ResolversTypes['Comment'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

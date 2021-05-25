@@ -24,7 +24,6 @@ import * as R from 'ramda'
 import {
   article,
   articleRevision,
-  unsupportedComment,
   exercise,
   solution,
   taxonomyTermCurriculumTopic,
@@ -32,6 +31,7 @@ import {
   taxonomyTermSubject,
   unsupportedThread,
   user,
+  comment,
 } from './uuid'
 import { Model } from '~/internals/graphql'
 import { NotificationEventType } from '~/model/decoder'
@@ -82,9 +82,9 @@ export const createCommentNotificationEvent: Model<'CreateCommentNotificationEve
     instance: Instance.De,
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
-    objectId: unsupportedComment.id,
+    objectId: comment.id,
     threadId: unsupportedThread.id,
-    commentId: unsupportedComment.id,
+    commentId: comment.id,
   }
 
 export function getCreateCommentNotificationEventDataWithoutSubResolvers(
