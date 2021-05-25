@@ -546,7 +546,7 @@ describe('notificationEvent', () => {
         variables: createCommentNotificationEvent,
         data: {
           notificationEvent: {
-            comment: { id: comment.id, __typename: comment.__typename },
+            comment: getTypenameAndId(comment),
           },
         },
         client,
