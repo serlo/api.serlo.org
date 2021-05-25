@@ -836,6 +836,13 @@ async function exec(): Promise<void> {
       date: '2021-05-24',
       internal: ['Improve Sentry integration.'],
     },
+    {
+      tagName: 'v0.24.5',
+      date: '2021-05-25',
+      internal: [
+        'Fix: Taxonomy term resolver can handle children which are null.',
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

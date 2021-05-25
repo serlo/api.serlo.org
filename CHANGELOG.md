@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.24.5](https://github.com/serlo/api.serlo.org/compare/v0.24.4..v0.24.5) - May 25, 2021
+
+### Internal
+
+- Fix: Taxonomy term resolver can handle children which are null.
+
 ## [v0.24.4](https://github.com/serlo/api.serlo.org/compare/v0.24.3..v0.24.4) - May 24, 2021
 
 ### Internal
