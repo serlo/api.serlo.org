@@ -26,6 +26,7 @@ import {
   article as baseArticle,
   articleRevision,
   user as baseUser,
+  video,
 } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
@@ -77,11 +78,7 @@ beforeEach(() => {
     const revision = uuids[revisionId]
 
     if (revision === undefined || revision.__typename != 'ArticleRevision') {
-      // TODO
-      return res(
-        ctx.status(400),
-        ctx.json({ success: false, reason: 'revision does not exist' })
-      )
+      return res(ctx.status(500))
     }
 
     const article = uuids[revision.repositoryId]
@@ -105,7 +102,7 @@ beforeEach(() => {
   })
 })
 
-test('when revision can be successfully checkout', async () => {
+test('returns "{ success: true }" when mutation could be successfully done', async () => {
   await assertSuccessfulGraphQLMutation({
     ...createCheckoutRevisionMutation(),
     data: { entity: { checkoutRevision: { success: true } } },
@@ -113,7 +110,7 @@ test('when revision can be successfully checkout', async () => {
   })
 })
 
-test('api cache is updated properly', async () => {
+test('following queries for entity contain the current revision when entity is already in the cache', async () => {
   await assertSuccessfulGraphQLQuery({
     query: gql`
       query ($id: Int!) {
@@ -133,7 +130,6 @@ test('api cache is updated properly', async () => {
 
   await assertSuccessfulGraphQLMutation({
     ...createCheckoutRevisionMutation(),
-    data: { entity: { checkoutRevision: { success: true } } },
     client,
   })
 
@@ -185,7 +181,17 @@ test('fails when database layer has an internal error', async () => {
   })
 })
 
-function createCheckoutRevisionMutation() {
+test('fails when revisionId does not belong to a revision', async () => {
+  givenUuid(video)
+
+  await assertFailingGraphQLMutation({
+    ...createCheckoutRevisionMutation({ revisionId: video.id }),
+    client,
+    expectedError: 'BAD_USER_INPUT',
+  })
+})
+
+function createCheckoutRevisionMutation(args?: { revisionId: number }) {
   return {
     mutation: gql`
       mutation ($input: CheckoutRevisionInput!) {
@@ -197,7 +203,10 @@ function createCheckoutRevisionMutation() {
       }
     `,
     variables: {
-      input: { revisionId: unrevisedRevision.id, reason: 'given reason' },
+      input: {
+        revisionId: args?.revisionId ?? unrevisedRevision.id,
+        reason: 'given reason',
+      },
     },
   }
 }
