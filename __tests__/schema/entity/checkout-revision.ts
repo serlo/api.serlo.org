@@ -105,7 +105,7 @@ beforeEach(() => {
   })
 })
 
-test('returns "{ success: true }" when mutation could be successfully done', async () => {
+test('returns "{ success: true }" when mutation could be successfully executed', async () => {
   await assertSuccessfulGraphQLMutation({
     ...createCheckoutRevisionMutation(),
     data: { entity: { checkoutRevision: { success: true } } },
@@ -113,7 +113,7 @@ test('returns "{ success: true }" when mutation could be successfully done', asy
   })
 })
 
-test('following queries for entity contain the current revision when entity is already in the cache', async () => {
+test('following queries for entity point to checkout revision when entity is already in the cache', async () => {
   await assertSuccessfulGraphQLQuery({
     query: gql`
       query ($id: Int!) {
@@ -174,13 +174,12 @@ test('fails when user does not have role "reviewer"', async () => {
   })
 })
 
-test('fails when database layer has an internal error', async () => {
-  givenEntityCheckoutRevisionEndpoint(hasInternalServerError())
-
+test('fails when revisionId is already checkout out', async () => {
   await assertFailingGraphQLMutation({
-    ...createCheckoutRevisionMutation(),
+    ...createCheckoutRevisionMutation({ revisionId: articleRevision.id }),
     client,
-    expectedError: 'INTERNAL_SERVER_ERROR',
+    expectedError: 'BAD_USER_INPUT',
+    message: 'revision is already checked out',
   })
 })
 
@@ -194,12 +193,13 @@ test('fails when revisionId does not belong to a revision', async () => {
   })
 })
 
-test('fails when revisionId is already checkout out', async () => {
+test('fails when database layer has an internal error', async () => {
+  givenEntityCheckoutRevisionEndpoint(hasInternalServerError())
+
   await assertFailingGraphQLMutation({
-    ...createCheckoutRevisionMutation({ revisionId: articleRevision.id }),
+    ...createCheckoutRevisionMutation(),
     client,
-    expectedError: 'BAD_USER_INPUT',
-    message: 'revision is already checked out',
+    expectedError: 'INTERNAL_SERVER_ERROR',
   })
 })
 
