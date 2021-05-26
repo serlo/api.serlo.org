@@ -78,22 +78,25 @@ beforeEach(() => {
     const revision = uuids[revisionId]
 
     if (revision === undefined || revision.__typename != 'ArticleRevision') {
+      // Should never occur since the API checks already "revisionId"
       return res(ctx.status(500))
     }
 
     const article = uuids[revision.repositoryId]
 
     if (article === undefined || article.__typename != 'Article') {
-      // TODO
-      return res(ctx.status(501))
+      // Database is in an invalid state
+      return res(ctx.status(500))
     }
 
     if (
       article.currentRevisionId !== null &&
       article.currentRevisionId >= revisionId
     ) {
-      // TODO
-      return res(ctx.status(502))
+      return res(
+        ctx.status(400),
+        ctx.json({ success: false, reason: 'revision is already checked out' })
+      )
     }
 
     article.currentRevisionId = revisionId
@@ -188,6 +191,15 @@ test('fails when revisionId does not belong to a revision', async () => {
     ...createCheckoutRevisionMutation({ revisionId: video.id }),
     client,
     expectedError: 'BAD_USER_INPUT',
+  })
+})
+
+test('fails when revisionId is already checkout out', async () => {
+  await assertFailingGraphQLMutation({
+    ...createCheckoutRevisionMutation({ revisionId: articleRevision.id }),
+    client,
+    expectedError: 'BAD_USER_INPUT',
+    message: 'revision is already checked out',
   })
 })
 
