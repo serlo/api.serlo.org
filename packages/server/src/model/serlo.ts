@@ -711,7 +711,6 @@ export function createSerloModel({
         decoder: EntityRevisionDecoder,
       })
 
-      // TODO: Add test
       await getUuid._querySpec.removeCache({
         payload: { id: revision.repositoryId },
       })
