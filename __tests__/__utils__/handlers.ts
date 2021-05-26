@@ -115,22 +115,26 @@ export function createMessageHandler(
   })
 }
 
-export function createDatabaseLayerHandler<
-  Payload = DefaultPayloadType,
-  BodyType extends Required<MessagePayload<Payload>> = Required<
-    MessagePayload<Payload>
-  >
->(args: {
+export function givenSerloEndpoint<Payload = DefaultPayloadType>(
+  matchType: string,
+  resolver: MessageResolver<Payload>
+) {
+  global.server.use(
+    createDatabaseLayerHandler<Payload>({ matchType, resolver })
+  )
+}
+
+export function createDatabaseLayerHandler<Payload = DefaultPayloadType>(args: {
   matchType: string
   matchPayloads?: Payload[]
-  resolver: RestResolver<BodyType>
+  resolver: MessageResolver<Payload>
 }) {
   const { matchType, matchPayloads, resolver } = args
 
   const handler = rest.post(getDatabaseLayerUrl({ path: '/' }), resolver)
 
   // Only use this handler if message matches
-  handler.predicate = (req: MockedRequest<BodyType>) =>
+  handler.predicate = (req: MockedRequest<BodyType<Payload>>) =>
     req?.body?.type === matchType &&
     (matchPayloads === undefined ||
       matchPayloads.some((payload) => R.equals(req.body.payload, payload)))
@@ -141,6 +145,11 @@ export function createDatabaseLayerHandler<
 function getDatabaseLayerUrl({ path }: { path: string }) {
   return `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`
 }
+
+type MessageResolver<Payload = DefaultPayloadType> = RestResolver<
+  BodyType<Payload>
+>
+type BodyType<Payload = DefaultPayloadType> = Required<MessagePayload<Payload>>
 
 interface MessagePayload<Payload = DefaultPayloadType> {
   type: string

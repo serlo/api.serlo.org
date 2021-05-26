@@ -33,6 +33,7 @@ import {
   assertSuccessfulGraphQLQuery,
   createDatabaseLayerHandler,
   createTestClient,
+  givenSerloEndpoint,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 
@@ -53,65 +54,54 @@ beforeEach(() => {
 
   givenUuids([user, article, articleRevision, unrevisedRevision])
 
-  global.server.use(
-    createDatabaseLayerHandler<{ id: number }>({
-      matchType: 'UuidQuery',
-      resolver(req, res, ctx) {
-        const uuid = uuids[req.body.payload.id]
+  givenSerloEndpoint<{ id: number }>('UuidQuery', (req, res, ctx) => {
+    const uuid = uuids[req.body.payload.id]
 
-        return uuid ? res(ctx.json(uuid)) : res(ctx.json(null), ctx.status(404))
-      },
-    }),
-    createDatabaseLayerHandler<{
-      revisionId: number
-      reason: string
-      userId: number
-    }>({
-      matchType: 'EntityCheckoutRevisionMutation',
-      resolver(req, res, ctx) {
-        const { revisionId, reason, userId } = req.body.payload
+    return uuid ? res(ctx.json(uuid)) : res(ctx.json(null), ctx.status(404))
+  })
+  givenSerloEndpoint<{
+    revisionId: number
+    reason: string
+    userId: number
+  }>('EntityCheckoutRevisionMutation', (req, res, ctx) => {
+    const { revisionId, reason, userId } = req.body.payload
 
-        // In order to test whether these parameters are passed properly
-        // TODO: What are the expected site effects, where do we see these
-        // things?
-        if (userId !== user.id || reason !== 'given reason') {
-          return res(ctx.status(500))
-        }
+    // In order to test whether these parameters are passed properly
+    // TODO: What are the expected site effects, where do we see these
+    // things?
+    if (userId !== user.id || reason !== 'given reason') {
+      return res(ctx.status(500))
+    }
 
-        const revision = uuids[revisionId]
+    const revision = uuids[revisionId]
 
-        if (
-          revision === undefined ||
-          revision.__typename != 'ArticleRevision'
-        ) {
-          // TODO
-          return res(
-            ctx.status(400),
-            ctx.json({ success: false, reason: 'revision does not exist' })
-          )
-        }
+    if (revision === undefined || revision.__typename != 'ArticleRevision') {
+      // TODO
+      return res(
+        ctx.status(400),
+        ctx.json({ success: false, reason: 'revision does not exist' })
+      )
+    }
 
-        const article = uuids[revision.repositoryId]
+    const article = uuids[revision.repositoryId]
 
-        if (article === undefined || article.__typename != 'Article') {
-          // TODO
-          return res(ctx.status(501))
-        }
+    if (article === undefined || article.__typename != 'Article') {
+      // TODO
+      return res(ctx.status(501))
+    }
 
-        if (
-          article.currentRevisionId !== null &&
-          article.currentRevisionId >= revisionId
-        ) {
-          // TODO
-          return res(ctx.status(502))
-        }
+    if (
+      article.currentRevisionId !== null &&
+      article.currentRevisionId >= revisionId
+    ) {
+      // TODO
+      return res(ctx.status(502))
+    }
 
-        article.currentRevisionId = revisionId
+    article.currentRevisionId = revisionId
 
-        return res(ctx.json({ success: true }))
-      },
-    })
-  )
+    return res(ctx.json({ success: true }))
+  })
 })
 
 test('when revision can be successfully checkout', async () => {
