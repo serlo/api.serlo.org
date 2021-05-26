@@ -23,6 +23,7 @@ import { gql } from 'apollo-server'
 
 import { articleRevision, user } from '../../../__fixtures__'
 import {
+  assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   createMessageHandler,
   createTestClient,
@@ -33,19 +34,18 @@ test('when revision can be successfully checkout', async () => {
   global.server.use(createCheckoutRevisionHandler({ success: true }))
 
   await assertSuccessfulGraphQLMutation({
-    mutation: gql`
-      mutation ($input: CheckoutRevisionInput!) {
-        entity {
-          checkoutRevision(input: $input) {
-            success
-          }
-        }
-      }
-    `,
-    variables: {
-      input: { revisionId: articleRevision.id, reason: 'given reason' },
-    },
+    ...createCheckoutRevisionMutation(),
     client,
+  })
+})
+
+test('fails when user is not authenticated', async () => {
+  const client = createTestClient({ userId: null })
+
+  await assertFailingGraphQLMutation({
+    ...createCheckoutRevisionMutation(),
+    client,
+    expectedError: 'UNAUTHENTICATED',
   })
 })
 
@@ -61,4 +61,21 @@ function createCheckoutRevisionHandler(body: { success: boolean }) {
     },
     body,
   })
+}
+
+function createCheckoutRevisionMutation() {
+  return {
+    mutation: gql`
+      mutation ($input: CheckoutRevisionInput!) {
+        entity {
+          checkoutRevision(input: $input) {
+            success
+          }
+        }
+      }
+    `,
+    variables: {
+      input: { revisionId: articleRevision.id, reason: 'given reason' },
+    },
+  }
 }
