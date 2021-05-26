@@ -124,6 +124,12 @@ export function givenSerloEndpoint<Payload = DefaultPayloadType>(
   )
 }
 
+export function givenUuidQueryEndpoint(
+  resolver: MessageResolver<{ id: number }>
+) {
+  givenSerloEndpoint('UuidQuery', resolver)
+}
+
 export function createDatabaseLayerHandler<Payload = DefaultPayloadType>(args: {
   matchType: string
   matchPayloads?: Payload[]

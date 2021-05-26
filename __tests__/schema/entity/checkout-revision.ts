@@ -33,6 +33,7 @@ import {
   assertSuccessfulGraphQLQuery,
   createDatabaseLayerHandler,
   createTestClient,
+  givenUuidQueryEndpoint,
   givenSerloEndpoint,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
@@ -54,7 +55,7 @@ beforeEach(() => {
 
   givenUuids([user, article, articleRevision, unrevisedRevision])
 
-  givenSerloEndpoint<{ id: number }>('UuidQuery', (req, res, ctx) => {
+  givenUuidQueryEndpoint((req, res, ctx) => {
     const uuid = uuids[req.body.payload.id]
 
     return uuid ? res(ctx.json(uuid)) : res(ctx.json(null), ctx.status(404))
