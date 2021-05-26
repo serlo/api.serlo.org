@@ -25,6 +25,7 @@ import { articleRevision, user } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
+  createDatabaseLayerHandler,
   createMessageHandler,
   createTestClient,
 } from '../../__utils__'
@@ -47,6 +48,24 @@ test('fails when user is not authenticated', async () => {
     ...createCheckoutRevisionMutation(),
     client,
     expectedError: 'UNAUTHENTICATED',
+  })
+})
+
+test('fails when database layer has an internal error', async () => {
+  global.server.use(
+    createDatabaseLayerHandler({
+      matchType: 'EntityCheckoutRevisionMutation',
+      resolver(_req, res, ctx) {
+        return res(ctx.status(500))
+      },
+    })
+  )
+  const client = createTestClient({ userId: user.id })
+
+  await assertFailingGraphQLMutation({
+    ...createCheckoutRevisionMutation(),
+    client,
+    expectedError: 'INTERNAL_SERVER_ERROR',
   })
 })
 
