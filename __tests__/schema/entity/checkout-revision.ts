@@ -57,14 +57,9 @@ beforeEach(() => {
     createDatabaseLayerHandler<{ id: number }>({
       matchType: 'UuidQuery',
       resolver(req, res, ctx) {
-        const { id } = req.body.payload
-        const uuid = uuids[id]
+        const uuid = uuids[req.body.payload.id]
 
-        if (uuid) {
-          return res(ctx.json(uuid))
-        } else {
-          return res(ctx.json(null), ctx.status(404))
-        }
+        return uuid ? res(ctx.json(uuid)) : res(ctx.json(null), ctx.status(404))
       },
     }),
     createDatabaseLayerHandler<{
