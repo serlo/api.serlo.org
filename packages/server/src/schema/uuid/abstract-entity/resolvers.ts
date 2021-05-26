@@ -20,15 +20,17 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as serloAuth from '@serlo/authorization'
+import { UserInputError } from 'apollo-server-errors'
 
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   createNamespace,
   InterfaceResolvers,
+  Model,
   Mutations,
 } from '~/internals/graphql'
-import { EntityRevisionDecoder } from '~/model/decoder'
+import { EntityRevisionDecoder, EntityRevisionType } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 
 export const resolvers: InterfaceResolvers<'AbstractEntity'> &
@@ -51,10 +53,14 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     async checkoutRevision(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
-      const revision = await dataSources.model.serlo.getUuidWithCustomDecoder({
+      const revision = await dataSources.model.serlo.getUuid({
         id: input.revisionId,
-        decoder: EntityRevisionDecoder,
       })
+
+      if (revision === null || !isEntityRevision(revision)) {
+        throw new UserInputError('revisionId must belong to a revision')
+      }
+
       const scope = await fetchScopeOfUuid({
         id: revision.repositoryId,
         dataSources,
@@ -72,4 +78,10 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
   },
+}
+
+function isEntityRevision(
+  uuid: Model<'AbstractUuid'>
+): uuid is Model<'AbstractEntityRevision'> {
+  return Object.values<string>(EntityRevisionType).includes(uuid.__typename)
 }
