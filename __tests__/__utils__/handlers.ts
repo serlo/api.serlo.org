@@ -115,6 +115,22 @@ export function createMessageHandler(
   })
 }
 
+export function givenUuidQueryEndpoint(
+  resolver: MessageResolver<{ id: number }>
+) {
+  givenSerloEndpoint('UuidQuery', resolver)
+}
+
+export function givenEntityCheckoutRevisionEndpoint(
+  resolver: MessageResolver<{
+    revisionId: number
+    reason: string
+    userId: number
+  }>
+) {
+  givenSerloEndpoint('EntityCheckoutRevisionMutation', resolver)
+}
+
 export function givenSerloEndpoint<Payload = DefaultPayloadType>(
   matchType: string,
   resolver: MessageResolver<Payload>
@@ -122,12 +138,6 @@ export function givenSerloEndpoint<Payload = DefaultPayloadType>(
   global.server.use(
     createDatabaseLayerHandler<Payload>({ matchType, resolver })
   )
-}
-
-export function givenUuidQueryEndpoint(
-  resolver: MessageResolver<{ id: number }>
-) {
-  givenSerloEndpoint('UuidQuery', resolver)
 }
 
 export function createDatabaseLayerHandler<Payload = DefaultPayloadType>(args: {

@@ -31,10 +31,10 @@ import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
-  createDatabaseLayerHandler,
   createTestClient,
   givenUuidQueryEndpoint,
-  givenSerloEndpoint,
+  givenEntityCheckoutRevisionEndpoint,
+  hasInternalServerError,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 
@@ -60,11 +60,7 @@ beforeEach(() => {
 
     return uuid ? res(ctx.json(uuid)) : res(ctx.json(null), ctx.status(404))
   })
-  givenSerloEndpoint<{
-    revisionId: number
-    reason: string
-    userId: number
-  }>('EntityCheckoutRevisionMutation', (req, res, ctx) => {
+  givenEntityCheckoutRevisionEndpoint((req, res, ctx) => {
     const { revisionId, reason, userId } = req.body.payload
 
     // In order to test whether these parameters are passed properly
@@ -181,14 +177,7 @@ test('fails when user does not have role "reviewer"', async () => {
 })
 
 test('fails when database layer has an internal error', async () => {
-  global.server.use(
-    createDatabaseLayerHandler({
-      matchType: 'EntityCheckoutRevisionMutation',
-      resolver(_req, res, ctx) {
-        return res(ctx.status(500))
-      },
-    })
-  )
+  givenEntityCheckoutRevisionEndpoint(hasInternalServerError())
   const client = createTestClient({ userId: user.id })
 
   await assertFailingGraphQLMutation({
