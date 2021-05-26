@@ -35,6 +35,7 @@ import {
   givenUuidQueryEndpoint,
   givenEntityCheckoutRevisionEndpoint,
   hasInternalServerError,
+  Client,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 
@@ -42,6 +43,7 @@ import { Model } from '~/internals/graphql'
 // when it passes review
 let uuids: Record<number, Model<'AbstractUuid'> | undefined>
 
+let client: Client
 const user = { ...baseUser, roles: ['de_reviewer'] }
 const article = {
   ...baseArticle,
@@ -51,6 +53,8 @@ const article = {
 const unrevisedRevision = { ...articleRevision, id: articleRevision.id + 1 }
 
 beforeEach(() => {
+  client = createTestClient({ userId: user.id })
+
   uuids = {}
 
   givenUuids([user, article, articleRevision, unrevisedRevision])
@@ -102,8 +106,6 @@ beforeEach(() => {
 })
 
 test('when revision can be successfully checkout', async () => {
-  const client = createTestClient({ userId: user.id })
-
   await assertSuccessfulGraphQLMutation({
     ...createCheckoutRevisionMutation(),
     data: { entity: { checkoutRevision: { success: true } } },
@@ -112,8 +114,6 @@ test('when revision can be successfully checkout', async () => {
 })
 
 test('api cache is updated properly', async () => {
-  const client = createTestClient({ userId: user.id })
-
   await assertSuccessfulGraphQLQuery({
     query: gql`
       query ($id: Int!) {
@@ -166,7 +166,6 @@ test('fails when user is not authenticated', async () => {
 })
 
 test('fails when user does not have role "reviewer"', async () => {
-  const client = createTestClient({ userId: user.id })
   givenUuid({ ...user, roles: ['login', 'de_moderator'] })
 
   await assertFailingGraphQLMutation({
@@ -178,7 +177,6 @@ test('fails when user does not have role "reviewer"', async () => {
 
 test('fails when database layer has an internal error', async () => {
   givenEntityCheckoutRevisionEndpoint(hasInternalServerError())
-  const client = createTestClient({ userId: user.id })
 
   await assertFailingGraphQLMutation({
     ...createCheckoutRevisionMutation(),
