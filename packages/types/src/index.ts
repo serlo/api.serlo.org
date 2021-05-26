@@ -488,6 +488,11 @@ export type CacheUpdateResponse = {
   query: Query;
 };
 
+export type CheckoutRevisionInput = {
+  revisionId: Scalars['Int'];
+  reason: Scalars['String'];
+};
+
 export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CheckoutRevisionNotificationEvent';
   id: Scalars['Int'];
@@ -498,6 +503,11 @@ export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & Inst
   repository: AbstractRepository;
   revision: AbstractRevision;
   reason: Scalars['String'];
+};
+
+export type CheckoutRevisionResponse = {
+  __typename?: 'CheckoutRevisionResponse';
+  success: Scalars['Boolean'];
 };
 
 export type Comment = AbstractUuid & {
@@ -815,6 +825,16 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
   thread: UnsupportedThread;
 };
 
+
+export type EntityMutation = {
+  __typename?: 'EntityMutation';
+  checkoutRevision: CheckoutRevisionResponse;
+};
+
+
+export type EntityMutationCheckoutRevisionArgs = {
+  input: CheckoutRevisionInput;
+};
 
 export type Event = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
   __typename?: 'Event';
@@ -1244,6 +1264,7 @@ export type License = {
 export type Mutation = {
   __typename?: 'Mutation';
   _cache: _CacheMutation;
+  entity: EntityMutation;
   notification: NotificationMutation;
   subscription: SubscriptionMutation;
   thread: ThreadMutation;

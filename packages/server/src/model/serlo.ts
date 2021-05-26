@@ -690,10 +690,26 @@ export function createSerloModel({
     },
   })
 
+  const checkoutRevision = createMutation({
+    decoder: t.type({ success: t.boolean }),
+    async mutate(payload: {
+      revisionId: number
+      userId: number
+      reason: string
+    }) {
+      return await handleMessage({
+        message: { type: 'EntityCheckoutRevisionMutation', payload },
+        expectedStatusCodes: [200],
+      })
+    },
+    // TODO: Update Cache
+  })
+
   return {
     createThread,
     archiveThread,
     createComment,
+    checkoutRevision,
     getActiveAuthorIds,
     getActiveReviewerIds,
     getAlias,

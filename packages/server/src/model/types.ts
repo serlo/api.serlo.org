@@ -80,6 +80,7 @@ export interface Models {
   CoursePageRevision: t.TypeOf<typeof CoursePageRevisionDecoder>
   Course: t.TypeOf<typeof CourseDecoder>
   CourseRevision: t.TypeOf<typeof CourseRevisionDecoder>
+  EntityMutation: Record<string, never>
   Event: t.TypeOf<typeof EventDecoder>
   EventRevision: t.TypeOf<typeof EventRevisionDecoder>
   ExerciseGroup: t.TypeOf<typeof ExerciseGroupDecoder>

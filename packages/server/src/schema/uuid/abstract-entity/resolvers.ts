@@ -20,10 +20,19 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
-import { InterfaceResolvers } from '~/internals/graphql'
+import {
+  assertUserIsAuthenticated,
+  createNamespace,
+  InterfaceResolvers,
+  Mutations,
+} from '~/internals/graphql'
 
 export const resolvers: InterfaceResolvers<'AbstractEntity'> &
-  InterfaceResolvers<'AbstractEntityRevision'> = {
+  InterfaceResolvers<'AbstractEntityRevision'> &
+  Mutations<'entity'> = {
+  Mutation: {
+    entity: createNamespace(),
+  },
   AbstractEntity: {
     __resolveType(entity) {
       return entity.__typename
@@ -32,6 +41,16 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   AbstractEntityRevision: {
     __resolveType(entityRevision) {
       return entityRevision.__typename
+    },
+  },
+  EntityMutation: {
+    checkoutRevision(_parent, { input }, { dataSources, userId }) {
+      // Todo: Authentication
+
+      // Todo: Add test
+      assertUserIsAuthenticated(userId)
+
+      return dataSources.model.serlo.checkoutRevision({ ...input, userId })
     },
   },
 }
