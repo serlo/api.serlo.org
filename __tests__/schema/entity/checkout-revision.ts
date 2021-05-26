@@ -21,24 +21,144 @@
  */
 import { gql } from 'apollo-server'
 
-import { articleRevision, user } from '../../../__fixtures__'
+import { article, articleRevision, user } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
+  assertSuccessfulGraphQLQuery,
   createDatabaseLayerHandler,
-  createMessageHandler,
   createTestClient,
-  createUuidHandler,
 } from '../../__utils__'
+import { Model } from '~/internals/graphql'
+
+const unrevisedRevision = { ...articleRevision, id: articleRevision.id + 1 }
+
+// TODO: Move this + givenUuid to setup.ts when it passes review
+let uuids: Record<number, Model<'AbstractUuid'> | undefined>
+
+beforeEach(() => {
+  uuids = {}
+
+  givenUuid(article)
+  givenUuid(articleRevision)
+  givenUuid(unrevisedRevision)
+
+  global.server.use(
+    createDatabaseLayerHandler<{ id: number }>({
+      matchType: 'UuidQuery',
+      resolver(req, res, ctx) {
+        const { id } = req.body.payload
+        const uuid = uuids[id]
+
+        if (uuid) {
+          return res(ctx.json(uuid))
+        } else {
+          return res(ctx.json(null), ctx.status(404))
+        }
+      },
+    }),
+    createDatabaseLayerHandler<{
+      revisionId: number
+      reason: string
+      userId: number
+    }>({
+      matchType: 'EntityCheckoutRevisionMutation',
+      resolver(req, res, ctx) {
+        const { revisionId, reason, userId } = req.body.payload
+
+        // In order to test whether these parameters are passed properly
+        // TODO: What are the expected site effects, where do we see these
+        // things?
+        if (userId !== user.id || reason !== 'given reason') {
+          return res(ctx.status(500))
+        }
+
+        const revision = uuids[revisionId]
+
+        if (
+          revision === undefined ||
+          revision.__typename != 'ArticleRevision'
+        ) {
+          // TODO
+          return res(
+            ctx.status(400),
+            ctx.json({ success: false, reason: 'revision does not exist' })
+          )
+        }
+
+        const article = uuids[revision.repositoryId]
+
+        if (article === undefined || article.__typename != 'Article') {
+          // TODO
+          return res(ctx.status(501))
+        }
+
+        if (
+          article.currentRevisionId !== null &&
+          article.currentRevisionId >= revisionId
+        ) {
+          // TODO
+          return res(ctx.status(502))
+        }
+
+        article.currentRevisionId = revisionId
+
+        return res(ctx.json({ success: true }))
+      },
+    })
+  )
+})
 
 test('when revision can be successfully checkout', async () => {
   const client = createTestClient({ userId: user.id })
-  global.server.use(createCheckoutRevisionHandler({ success: true }))
-  global.server.use(createUuidHandler(articleRevision))
 
   await assertSuccessfulGraphQLMutation({
     ...createCheckoutRevisionMutation(),
     data: { entity: { checkoutRevision: { success: true } } },
+    client,
+  })
+})
+
+test('api cache is updated properly', async () => {
+  const client = createTestClient({ userId: user.id })
+
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query ($id: Int!) {
+        uuid(id: $id) {
+          ... on Article {
+            currentRevision {
+              id
+            }
+          }
+        }
+      }
+    `,
+    variables: { id: article.id },
+    data: { uuid: { currentRevision: { id: articleRevision.id } } },
+    client,
+  })
+
+  await assertSuccessfulGraphQLMutation({
+    ...createCheckoutRevisionMutation(),
+    data: { entity: { checkoutRevision: { success: true } } },
+    client,
+  })
+
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query ($id: Int!) {
+        uuid(id: $id) {
+          ... on Article {
+            currentRevision {
+              id
+            }
+          }
+        }
+      }
+    `,
+    variables: { id: article.id },
+    data: { uuid: { currentRevision: { id: unrevisedRevision.id } } },
     client,
   })
 })
@@ -71,20 +191,6 @@ test('fails when database layer has an internal error', async () => {
   })
 })
 
-function createCheckoutRevisionHandler(body: { success: boolean }) {
-  return createMessageHandler({
-    message: {
-      type: 'EntityCheckoutRevisionMutation',
-      payload: {
-        revisionId: articleRevision.id,
-        userId: user.id,
-        reason: 'given reason',
-      },
-    },
-    body,
-  })
-}
-
 function createCheckoutRevisionMutation() {
   return {
     mutation: gql`
@@ -97,7 +203,13 @@ function createCheckoutRevisionMutation() {
       }
     `,
     variables: {
-      input: { revisionId: articleRevision.id, reason: 'given reason' },
+      input: { revisionId: unrevisedRevision.id, reason: 'given reason' },
     },
   }
+}
+
+function givenUuid(uuid: Model<'AbstractUuid'>) {
+  // A copy of the uuid is created here so that changes of the uuid object in
+  // the `uuids` database does not affect the passed object
+  uuids[uuid.id] = { ...uuid }
 }
