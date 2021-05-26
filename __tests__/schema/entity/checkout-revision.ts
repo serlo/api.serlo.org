@@ -22,7 +22,11 @@
 import { Instance } from '@serlo/api'
 import { gql } from 'apollo-server'
 
-import { article, articleRevision, user } from '../../../__fixtures__'
+import {
+  article as baseArticle,
+  articleRevision,
+  user as baseUser,
+} from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
@@ -32,18 +36,22 @@ import {
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 
-const unrevisedRevision = { ...articleRevision, id: articleRevision.id + 1 }
-
-// TODO: Move this + givenUuid to setup.ts when it passes review
+// TODO: Move this + other helper functions like givenUuid to setup.ts
+// when it passes review
 let uuids: Record<number, Model<'AbstractUuid'> | undefined>
+
+const user = { ...baseUser, roles: ['de_reviewer'] }
+const article = {
+  ...baseArticle,
+  instance: Instance.De,
+  currentRevision: articleRevision.id,
+}
+const unrevisedRevision = { ...articleRevision, id: articleRevision.id + 1 }
 
 beforeEach(() => {
   uuids = {}
 
-  givenUuid({ ...user, roles: ['de_reviewer'] })
-  givenUuid({ ...article, instance: Instance.De })
-  givenUuid(articleRevision)
-  givenUuid(unrevisedRevision)
+  givenUuids([user, article, articleRevision, unrevisedRevision])
 
   global.server.use(
     createDatabaseLayerHandler<{ id: number }>({
@@ -218,6 +226,12 @@ function createCheckoutRevisionMutation() {
     variables: {
       input: { revisionId: unrevisedRevision.id, reason: 'given reason' },
     },
+  }
+}
+
+function givenUuids(uuids: Model<'AbstractUuid'>[]) {
+  for (const uuid of uuids) {
+    givenUuid(uuid)
   }
 }
 
