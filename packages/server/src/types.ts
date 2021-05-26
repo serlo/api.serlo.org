@@ -492,6 +492,11 @@ export type CacheUpdateResponse = {
   query: Query;
 };
 
+export type CheckoutRevisionInput = {
+  revisionId: Scalars['Int'];
+  reason: Scalars['String'];
+};
+
 export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CheckoutRevisionNotificationEvent';
   id: Scalars['Int'];
@@ -502,6 +507,11 @@ export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & Inst
   repository: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | GroupedExercise | Page | Solution | Video;
   revision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | GroupedExerciseRevision | PageRevision | SolutionRevision | VideoRevision;
   reason: Scalars['String'];
+};
+
+export type CheckoutRevisionResponse = {
+  __typename?: 'CheckoutRevisionResponse';
+  success: Scalars['Boolean'];
 };
 
 export type Comment = AbstractUuid & {
@@ -819,6 +829,16 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
   thread: UnsupportedThread;
 };
 
+
+export type EntityMutation = {
+  __typename?: 'EntityMutation';
+  checkoutRevision: CheckoutRevisionResponse;
+};
+
+
+export type EntityMutationCheckoutRevisionArgs = {
+  input: CheckoutRevisionInput;
+};
 
 export type Event = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
   __typename?: 'Event';
@@ -1248,6 +1268,7 @@ export type License = {
 export type Mutation = {
   __typename?: 'Mutation';
   _cache: _CacheMutation;
+  entity: EntityMutation;
   notification: NotificationMutation;
   subscription: SubscriptionMutation;
   thread: ThreadMutation;
@@ -2303,7 +2324,9 @@ export type ResolversTypes = {
   CacheSetResponse: ResolverTypeWrapper<ModelOf<CacheSetResponse>>;
   CacheUpdateInput: ResolverTypeWrapper<ModelOf<CacheUpdateInput>>;
   CacheUpdateResponse: ResolverTypeWrapper<ModelOf<CacheUpdateResponse>>;
+  CheckoutRevisionInput: ResolverTypeWrapper<ModelOf<CheckoutRevisionInput>>;
   CheckoutRevisionNotificationEvent: ResolverTypeWrapper<ModelOf<CheckoutRevisionNotificationEvent>>;
+  CheckoutRevisionResponse: ResolverTypeWrapper<ModelOf<CheckoutRevisionResponse>>;
   Comment: ResolverTypeWrapper<ModelOf<Comment>>;
   CommentConnection: ResolverTypeWrapper<ModelOf<CommentConnection>>;
   CommentEdge: ResolverTypeWrapper<ModelOf<CommentEdge>>;
@@ -2323,6 +2346,7 @@ export type ResolversTypes = {
   CreateTaxonomyTermNotificationEvent: ResolverTypeWrapper<ModelOf<CreateTaxonomyTermNotificationEvent>>;
   CreateThreadNotificationEvent: ResolverTypeWrapper<ModelOf<CreateThreadNotificationEvent>>;
   DateTime: ResolverTypeWrapper<ModelOf<Scalars['DateTime']>>;
+  EntityMutation: ResolverTypeWrapper<ModelOf<EntityMutation>>;
   Event: ResolverTypeWrapper<ModelOf<Event>>;
   EventRevision: ResolverTypeWrapper<ModelOf<EventRevision>>;
   EventRevisionConnection: ResolverTypeWrapper<ModelOf<EventRevisionConnection>>;
@@ -2448,7 +2472,9 @@ export type ResolversParentTypes = {
   CacheSetResponse: ModelOf<CacheSetResponse>;
   CacheUpdateInput: ModelOf<CacheUpdateInput>;
   CacheUpdateResponse: ModelOf<CacheUpdateResponse>;
+  CheckoutRevisionInput: ModelOf<CheckoutRevisionInput>;
   CheckoutRevisionNotificationEvent: ModelOf<CheckoutRevisionNotificationEvent>;
+  CheckoutRevisionResponse: ModelOf<CheckoutRevisionResponse>;
   Comment: ModelOf<Comment>;
   CommentConnection: ModelOf<CommentConnection>;
   CommentEdge: ModelOf<CommentEdge>;
@@ -2468,6 +2494,7 @@ export type ResolversParentTypes = {
   CreateTaxonomyTermNotificationEvent: ModelOf<CreateTaxonomyTermNotificationEvent>;
   CreateThreadNotificationEvent: ModelOf<CreateThreadNotificationEvent>;
   DateTime: ModelOf<Scalars['DateTime']>;
+  EntityMutation: ModelOf<EntityMutation>;
   Event: ModelOf<Event>;
   EventRevision: ModelOf<EventRevision>;
   EventRevisionConnection: ModelOf<EventRevisionConnection>;
@@ -2812,6 +2839,11 @@ export type CheckoutRevisionNotificationEventResolvers<ContextType = Context, Pa
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type CheckoutRevisionResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CheckoutRevisionResponse'] = ResolversParentTypes['CheckoutRevisionResponse']> = {
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type CommentResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Comment'] = ResolversParentTypes['Comment']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -3008,6 +3040,11 @@ export type CreateThreadNotificationEventResolvers<ContextType = Context, Parent
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
   name: 'DateTime';
 }
+
+export type EntityMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityMutation'] = ResolversParentTypes['EntityMutation']> = {
+  checkoutRevision?: Resolver<ResolversTypes['CheckoutRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationCheckoutRevisionArgs, 'input'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
 
 export type EventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -3214,6 +3251,7 @@ export type LicenseResolvers<ContextType = Context, ParentType extends Resolvers
 
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   _cache?: Resolver<ResolversTypes['_cacheMutation'], ParentType, ContextType>;
+  entity?: Resolver<ResolversTypes['EntityMutation'], ParentType, ContextType>;
   notification?: Resolver<ResolversTypes['NotificationMutation'], ParentType, ContextType>;
   subscription?: Resolver<ResolversTypes['SubscriptionMutation'], ParentType, ContextType>;
   thread?: Resolver<ResolversTypes['ThreadMutation'], ParentType, ContextType>;
@@ -3740,6 +3778,7 @@ export type Resolvers<ContextType = Context> = {
   CacheSetResponse?: CacheSetResponseResolvers<ContextType>;
   CacheUpdateResponse?: CacheUpdateResponseResolvers<ContextType>;
   CheckoutRevisionNotificationEvent?: CheckoutRevisionNotificationEventResolvers<ContextType>;
+  CheckoutRevisionResponse?: CheckoutRevisionResponseResolvers<ContextType>;
   Comment?: CommentResolvers<ContextType>;
   CommentConnection?: CommentConnectionResolvers<ContextType>;
   CommentEdge?: CommentEdgeResolvers<ContextType>;
@@ -3759,6 +3798,7 @@ export type Resolvers<ContextType = Context> = {
   CreateTaxonomyTermNotificationEvent?: CreateTaxonomyTermNotificationEventResolvers<ContextType>;
   CreateThreadNotificationEvent?: CreateThreadNotificationEventResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
+  EntityMutation?: EntityMutationResolvers<ContextType>;
   Event?: EventResolvers<ContextType>;
   EventRevision?: EventRevisionResolvers<ContextType>;
   EventRevisionConnection?: EventRevisionConnectionResolvers<ContextType>;
