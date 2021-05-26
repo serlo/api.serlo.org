@@ -19,13 +19,17 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import * as serloAuth from '@serlo/authorization'
 
 import {
   assertUserIsAuthenticated,
+  assertUserIsAuthorized,
   createNamespace,
   InterfaceResolvers,
   Mutations,
 } from '~/internals/graphql'
+import { EntityRevisionDecoder } from '~/model/decoder'
+import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 
 export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   InterfaceResolvers<'AbstractEntityRevision'> &
@@ -44,11 +48,28 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     },
   },
   EntityMutation: {
-    checkoutRevision(_parent, { input }, { dataSources, userId }) {
-      // Todo: Authentication
+    async checkoutRevision(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
-      return dataSources.model.serlo.checkoutRevision({ ...input, userId })
+      const revision = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: input.revisionId,
+        decoder: EntityRevisionDecoder,
+      })
+      const scope = await fetchScopeOfUuid({
+        id: revision.repositoryId,
+        dataSources,
+      })
+      await assertUserIsAuthorized({
+        userId,
+        dataSources,
+        message: 'you are not authorized to checkout a revision',
+        guard: serloAuth.Entity.checkoutRevision(scope),
+      })
+
+      return await dataSources.model.serlo.checkoutRevision({
+        ...input,
+        userId,
+      })
     },
   },
 }

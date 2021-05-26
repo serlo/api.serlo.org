@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Instance } from '@serlo/api'
 import { gql } from 'apollo-server'
 
 import { article, articleRevision, user } from '../../../__fixtures__'
@@ -39,7 +40,8 @@ let uuids: Record<number, Model<'AbstractUuid'> | undefined>
 beforeEach(() => {
   uuids = {}
 
-  givenUuid(article)
+  givenUuid({ ...user, roles: ['de_reviewer'] })
+  givenUuid({ ...article, instance: Instance.De })
   givenUuid(articleRevision)
   givenUuid(unrevisedRevision)
 
@@ -170,6 +172,17 @@ test('fails when user is not authenticated', async () => {
     ...createCheckoutRevisionMutation(),
     client,
     expectedError: 'UNAUTHENTICATED',
+  })
+})
+
+test('fails when user does not have role "reviewer"', async () => {
+  const client = createTestClient({ userId: user.id })
+  givenUuid({ ...user, roles: ['login', 'de_moderator'] })
+
+  await assertFailingGraphQLMutation({
+    ...createCheckoutRevisionMutation(),
+    client,
+    expectedError: 'FORBIDDEN',
   })
 })
 
