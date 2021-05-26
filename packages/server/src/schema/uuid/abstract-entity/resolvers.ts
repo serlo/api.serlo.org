@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as serloAuth from '@serlo/authorization'
-import { UserInputError } from 'apollo-server-errors'
+import { UserInputError } from 'apollo-server'
 
 import {
   assertUserIsAuthenticated,
@@ -30,7 +30,7 @@ import {
   Model,
   Mutations,
 } from '~/internals/graphql'
-import { EntityRevisionDecoder, EntityRevisionType } from '~/model/decoder'
+import { EntityRevisionType } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 
 export const resolvers: InterfaceResolvers<'AbstractEntity'> &
