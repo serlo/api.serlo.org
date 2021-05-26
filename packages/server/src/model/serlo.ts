@@ -692,7 +692,10 @@ export function createSerloModel({
   })
 
   const checkoutRevision = createMutation({
-    decoder: t.type({ success: t.boolean }),
+    decoder: t.union([
+      t.type({ success: t.literal(true) }),
+      t.type({ success: t.literal(false), reason: t.string }),
+    ]),
     async mutate(payload: {
       revisionId: number
       userId: number
@@ -700,7 +703,7 @@ export function createSerloModel({
     }) {
       return await handleMessage({
         message: { type: 'EntityCheckoutRevisionMutation', payload },
-        expectedStatusCodes: [200],
+        expectedStatusCodes: [200, 400],
       })
     },
     async updateCache({ revisionId }) {

@@ -72,10 +72,16 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         guard: serloAuth.Entity.checkoutRevision(scope),
       })
 
-      return await dataSources.model.serlo.checkoutRevision({
+      const result = await dataSources.model.serlo.checkoutRevision({
         ...input,
         userId,
       })
+
+      if (result.success !== true) {
+        throw new UserInputError(result.reason)
+      }
+
+      return result
     },
   },
 }

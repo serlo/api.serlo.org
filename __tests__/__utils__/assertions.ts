@@ -95,18 +95,22 @@ export async function assertFailingGraphQLMutation({
   variables,
   client,
   expectedError,
+  message,
 }: {
   mutation: DocumentNode
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   variables?: Record<string, any>
   client: Client
   expectedError: string
+  message?: string
 }) {
   const response = await client.mutate({
     mutation,
     variables,
   })
   expect(response?.errors?.[0]?.extensions?.code).toEqual(expectedError)
+
+  if (message) expect(response?.errors?.[0]?.message).toEqual(message)
 }
 
 /**
