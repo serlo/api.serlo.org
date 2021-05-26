@@ -28,11 +28,13 @@ import {
   createDatabaseLayerHandler,
   createMessageHandler,
   createTestClient,
+  createUuidHandler,
 } from '../../__utils__'
 
 test('when revision can be successfully checkout', async () => {
   const client = createTestClient({ userId: user.id })
   global.server.use(createCheckoutRevisionHandler({ success: true }))
+  global.server.use(createUuidHandler(articleRevision))
 
   await assertSuccessfulGraphQLMutation({
     ...createCheckoutRevisionMutation(),

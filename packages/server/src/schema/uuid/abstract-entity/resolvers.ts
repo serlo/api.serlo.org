@@ -46,8 +46,6 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   EntityMutation: {
     checkoutRevision(_parent, { input }, { dataSources, userId }) {
       // Todo: Authentication
-
-      // Todo: Add test
       assertUserIsAuthenticated(userId)
 
       return dataSources.model.serlo.checkoutRevision({ ...input, userId })

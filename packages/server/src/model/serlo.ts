@@ -33,6 +33,7 @@ import {
   NotificationDecoder,
   NavigationDecoder,
   NavigationDataDecoder,
+  EntityRevisionDecoder,
 } from './decoder'
 import {
   createMutation,
@@ -702,7 +703,19 @@ export function createSerloModel({
         expectedStatusCodes: [200],
       })
     },
-    // TODO: Update Cache
+    async updateCache({ revisionId }) {
+      // TODO: Here we need to discuss whether we want to pass entityId as well
+      // so that we do not need to fetch the revision here
+      const revision = await getUuidWithCustomDecoder({
+        id: revisionId,
+        decoder: EntityRevisionDecoder,
+      })
+
+      // TODO: Add test
+      await getUuid._querySpec.removeCache({
+        payload: { id: revision.repositoryId },
+      })
+    },
   })
 
   return {
