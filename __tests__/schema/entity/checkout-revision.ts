@@ -35,6 +35,7 @@ test('when revision can be successfully checkout', async () => {
 
   await assertSuccessfulGraphQLMutation({
     ...createCheckoutRevisionMutation(),
+    data: { entity: { checkoutRevision: { success: true } } },
     client,
   })
 })
