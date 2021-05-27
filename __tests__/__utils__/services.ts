@@ -57,8 +57,15 @@ export function givenSpreadsheet(
   spreadsheets[toKey(args)] = args.values
 }
 
-export function returnsJson(data: unknown): RestResolver {
-  return (_req, res, ctx) => res(ctx.json(data as Record<string, unknown>))
+export function returnsJson({
+  status = 200,
+  json,
+}: {
+  status?: number
+  json: unknown
+}): RestResolver {
+  return (_req, res, ctx) =>
+    res(ctx.status(status), ctx.json(json as Record<string, unknown>))
 }
 
 export function returnsMalformedJson(): RestResolver {
