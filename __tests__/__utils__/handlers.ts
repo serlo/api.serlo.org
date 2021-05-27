@@ -22,10 +22,10 @@
 import { MockedRequest, rest } from 'msw'
 import * as R from 'ramda'
 
+import { Database } from './database'
 import { RestResolver } from './services'
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model'
-import { Database } from './database'
 
 export function createAliasHandler(alias: Payload<'serlo', 'getAlias'>) {
   return createMessageHandler({
