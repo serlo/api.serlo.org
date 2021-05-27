@@ -38,12 +38,11 @@ import {
   hasInternalServerError,
   Client,
   returnsJson,
+  Database,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 
-// TODO: Move this + other helper functions like givenUuid to setup.ts
-// when it passes review
-let uuids: Record<number, Model<'AbstractUuid'> | undefined>
+let database: Database
 
 let client: Client
 const user = { ...baseUser, roles: ['de_reviewer'] }
@@ -57,12 +56,12 @@ const unrevisedRevision = { ...articleRevision, id: articleRevision.id + 1 }
 beforeEach(() => {
   client = createTestClient({ userId: user.id })
 
-  uuids = {}
+  database = new Database()
 
-  givenUuids([user, article, articleRevision, unrevisedRevision])
+  database.hasUuids([user, article, articleRevision, unrevisedRevision])
 
   givenUuidQueryEndpoint((req, res, ctx) => {
-    const uuid = uuids[req.body.payload.id]
+    const uuid = database.getUuid(req.body.payload.id)
 
     return uuid ? res(ctx.json(uuid)) : res(ctx.json(null), ctx.status(404))
   })
@@ -70,16 +69,15 @@ beforeEach(() => {
     const { revisionId, reason, userId } = req.body.payload
 
     // In order to test whether these parameters are passed properly
-    // TODO: What are the expected site effects, where do we see these
-    // things?
     if (userId !== user.id || reason !== 'given reason') {
       return res(ctx.status(500))
     }
 
-    const revision = uuids[revisionId] as Model<'AbstractRevision'>
-    const article = uuids[revision.repositoryId] as Model<'AbstractEntity'>
+    const revision = database.getUuid(revisionId) as Model<'AbstractRevision'>
 
-    article.currentRevisionId = revisionId
+    database.changeUuid(revision.repositoryId, {
+      currentRevisionId: revisionId,
+    })
 
     return res(ctx.json({ success: true }))
   })
@@ -145,7 +143,7 @@ test('fails when user is not authenticated', async () => {
 })
 
 test('fails when user does not have role "reviewer"', async () => {
-  givenUuid({ ...user, roles: ['login', 'de_moderator'] })
+  database.hasUuid({ ...user, roles: ['login', 'de_moderator'] })
 
   await assertFailingGraphQLMutation({
     ...createCheckoutRevisionMutation(),
@@ -155,7 +153,7 @@ test('fails when user does not have role "reviewer"', async () => {
 })
 
 test('fails when revisionId does not belong to a revision', async () => {
-  givenUuid(video)
+  database.hasUuid(video)
 
   await assertFailingGraphQLMutation({
     ...createCheckoutRevisionMutation({ revisionId: video.id }),
@@ -208,16 +206,4 @@ function createCheckoutRevisionMutation(args?: { revisionId: number }) {
       },
     },
   }
-}
-
-function givenUuids(uuids: Model<'AbstractUuid'>[]) {
-  for (const uuid of uuids) {
-    givenUuid(uuid)
-  }
-}
-
-function givenUuid(uuid: Model<'AbstractUuid'>) {
-  // A copy of the uuid is created here so that changes of the uuid object in
-  // the `uuids` database does not affect the passed object
-  uuids[uuid.id] = { ...uuid }
 }
