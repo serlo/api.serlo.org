@@ -25,6 +25,7 @@ import * as R from 'ramda'
 import { RestResolver } from './services'
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model'
+import { Database } from './database'
 
 export function createAliasHandler(alias: Payload<'serlo', 'getAlias'>) {
   return createMessageHandler({
@@ -119,6 +120,16 @@ export function givenUuidQueryEndpoint(
   resolver: MessageResolver<{ id: number }>
 ) {
   givenSerloEndpoint('UuidQuery', resolver)
+}
+
+export function returnsUuidsFromDatabase(
+  database: Database
+): RestResolver<BodyType<{ id: number }>> {
+  return (req, res, ctx) => {
+    const uuid = database.getUuid(req.body.payload.id)
+
+    return uuid ? res(ctx.json(uuid)) : res(ctx.json(null), ctx.status(404))
+  }
 }
 
 export function givenEntityCheckoutRevisionEndpoint(
