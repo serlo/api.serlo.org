@@ -34,6 +34,7 @@ import {
   NavigationDecoder,
   NavigationDataDecoder,
   EntityRevisionDecoder,
+  EntityDecoder,
 } from './decoder'
 import {
   createMutation,
@@ -707,15 +708,20 @@ export function createSerloModel({
       })
     },
     async updateCache({ revisionId }) {
-      // TODO: Here we need to discuss whether we want to pass entityId as well
-      // so that we do not need to fetch the revision here
       const revision = await getUuidWithCustomDecoder({
         id: revisionId,
         decoder: EntityRevisionDecoder,
       })
 
-      await getUuid._querySpec.removeCache({
+      await getUuid._querySpec.setCache({
         payload: { id: revision.repositoryId },
+        getValue(current) {
+          if (!EntityDecoder.is(current)) return
+
+          current.currentRevisionId = revisionId
+
+          return current
+        },
       })
     },
   })
