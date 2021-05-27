@@ -27,10 +27,9 @@ import {
   assertUserIsAuthorized,
   createNamespace,
   InterfaceResolvers,
-  Model,
   Mutations,
 } from '~/internals/graphql'
-import { EntityRevisionType } from '~/model/decoder'
+import { EntityRevisionDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 
 export const resolvers: InterfaceResolvers<'AbstractEntity'> &
@@ -57,7 +56,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         id: input.revisionId,
       })
 
-      if (revision === null || !isEntityRevision(revision)) {
+      if (revision === null || !EntityRevisionDecoder.is(revision)) {
         throw new UserInputError('revisionId must belong to a revision')
       }
 
@@ -84,10 +83,4 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       return result
     },
   },
-}
-
-function isEntityRevision(
-  uuid: Model<'AbstractUuid'>
-): uuid is Model<'AbstractEntityRevision'> {
-  return Object.values<string>(EntityRevisionType).includes(uuid.__typename)
 }
