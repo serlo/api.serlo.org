@@ -37,6 +37,7 @@ import {
   givenEntityCheckoutRevisionEndpoint,
   hasInternalServerError,
   Client,
+  returnsJson,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 
@@ -75,29 +76,8 @@ beforeEach(() => {
       return res(ctx.status(500))
     }
 
-    const revision = uuids[revisionId]
-
-    if (revision === undefined || revision.__typename != 'ArticleRevision') {
-      // Should never occur since the API checks already "revisionId"
-      return res(ctx.status(500))
-    }
-
-    const article = uuids[revision.repositoryId]
-
-    if (article === undefined || article.__typename != 'Article') {
-      // Database is in an invalid state
-      return res(ctx.status(500))
-    }
-
-    if (
-      article.currentRevisionId !== null &&
-      article.currentRevisionId >= revisionId
-    ) {
-      return res(
-        ctx.status(400),
-        ctx.json({ success: false, reason: 'revision is already checked out' })
-      )
-    }
+    const revision = uuids[revisionId] as Model<'AbstractRevision'>
+    const article = uuids[revision.repositoryId] as Model<'AbstractEntity'>
 
     article.currentRevisionId = revisionId
 
@@ -174,15 +154,6 @@ test('fails when user does not have role "reviewer"', async () => {
   })
 })
 
-test('fails when revisionId is already checkout out', async () => {
-  await assertFailingGraphQLMutation({
-    ...createCheckoutRevisionMutation({ revisionId: articleRevision.id }),
-    client,
-    expectedError: 'BAD_USER_INPUT',
-    message: 'revision is already checked out',
-  })
-})
-
 test('fails when revisionId does not belong to a revision', async () => {
   givenUuid(video)
 
@@ -190,6 +161,22 @@ test('fails when revisionId does not belong to a revision', async () => {
     ...createCheckoutRevisionMutation({ revisionId: video.id }),
     client,
     expectedError: 'BAD_USER_INPUT',
+  })
+})
+
+test('fails when database layer returns a 400er response', async () => {
+  givenEntityCheckoutRevisionEndpoint(
+    returnsJson({
+      status: 400,
+      json: { success: false, reason: 'revision is already checked out' },
+    })
+  )
+
+  await assertFailingGraphQLMutation({
+    ...createCheckoutRevisionMutation({ revisionId: articleRevision.id }),
+    client,
+    expectedError: 'BAD_USER_INPUT',
+    message: 'revision is already checked out',
   })
 })
 
