@@ -82,5 +82,38 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
 
       return result
     },
+    async rejectRevision(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const revision = await dataSources.model.serlo.getUuid({
+        id: input.revisionId,
+      })
+
+      if (revision === null || !EntityRevisionDecoder.is(revision)) {
+        throw new UserInputError('revisionId must belong to a revision.')
+      }
+
+      const scope = await fetchScopeOfUuid({
+        id: revision.repositoryId,
+        dataSources,
+      })
+      await assertUserIsAuthorized({
+        userId,
+        dataSources,
+        message: 'You are not allowed to reject the provided revision.',
+        guard: serloAuth.Entity.rejectRevision(scope),
+      })
+
+      const result = await dataSources.model.serlo.rejectRevision({
+        ...input,
+        userId,
+      })
+
+      if (result.success === false) {
+        throw new UserInputError(result.reason)
+      }
+
+      return result
+    },
   },
 }

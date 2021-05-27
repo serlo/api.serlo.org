@@ -833,11 +833,17 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
 export type EntityMutation = {
   __typename?: 'EntityMutation';
   checkoutRevision: CheckoutRevisionResponse;
+  rejectRevision: RejectRevisionResponse;
 };
 
 
 export type EntityMutationCheckoutRevisionArgs = {
   input: CheckoutRevisionInput;
+};
+
+
+export type EntityMutationRejectRevisionArgs = {
+  input: RejectRevisionInput;
 };
 
 export type Event = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
@@ -1535,6 +1541,11 @@ export type QueryUuidArgs = {
   id?: Maybe<Scalars['Int']>;
 };
 
+export type RejectRevisionInput = {
+  revisionId: Scalars['Int'];
+  reason: Scalars['String'];
+};
+
 export type RejectRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'RejectRevisionNotificationEvent';
   id: Scalars['Int'];
@@ -1545,6 +1556,11 @@ export type RejectRevisionNotificationEvent = AbstractNotificationEvent & Instan
   repository: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | GroupedExercise | Page | Solution | Video;
   revision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | GroupedExerciseRevision | PageRevision | SolutionRevision | VideoRevision;
   reason: Scalars['String'];
+};
+
+export type RejectRevisionResponse = {
+  __typename?: 'RejectRevisionResponse';
+  success: Scalars['Boolean'];
 };
 
 export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -2385,7 +2401,9 @@ export type ResolversTypes = {
   PageRevisionConnection: ResolverTypeWrapper<ModelOf<PageRevisionConnection>>;
   PageRevisionCursor: ResolverTypeWrapper<ModelOf<PageRevisionCursor>>;
   Query: ResolverTypeWrapper<{}>;
+  RejectRevisionInput: ResolverTypeWrapper<ModelOf<RejectRevisionInput>>;
   RejectRevisionNotificationEvent: ResolverTypeWrapper<ModelOf<RejectRevisionNotificationEvent>>;
+  RejectRevisionResponse: ResolverTypeWrapper<ModelOf<RejectRevisionResponse>>;
   RemoveEntityLinkNotificationEvent: ResolverTypeWrapper<ModelOf<RemoveEntityLinkNotificationEvent>>;
   RemoveTaxonomyLinkNotificationEvent: ResolverTypeWrapper<ModelOf<RemoveTaxonomyLinkNotificationEvent>>;
   Role: ResolverTypeWrapper<ModelOf<Role>>;
@@ -2532,7 +2550,9 @@ export type ResolversParentTypes = {
   PageRevisionConnection: ModelOf<PageRevisionConnection>;
   PageRevisionCursor: ModelOf<PageRevisionCursor>;
   Query: {};
+  RejectRevisionInput: ModelOf<RejectRevisionInput>;
   RejectRevisionNotificationEvent: ModelOf<RejectRevisionNotificationEvent>;
+  RejectRevisionResponse: ModelOf<RejectRevisionResponse>;
   RemoveEntityLinkNotificationEvent: ModelOf<RemoveEntityLinkNotificationEvent>;
   RemoveTaxonomyLinkNotificationEvent: ModelOf<RemoveTaxonomyLinkNotificationEvent>;
   ScopedRole: ModelOf<ScopedRole>;
@@ -3043,6 +3063,7 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 
 export type EntityMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityMutation'] = ResolversParentTypes['EntityMutation']> = {
   checkoutRevision?: Resolver<ResolversTypes['CheckoutRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationCheckoutRevisionArgs, 'input'>>;
+  rejectRevision?: Resolver<ResolversTypes['RejectRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationRejectRevisionArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3391,6 +3412,11 @@ export type RejectRevisionNotificationEventResolvers<ContextType = Context, Pare
   repository?: Resolver<ResolversTypes['AbstractRepository'], ParentType, ContextType>;
   revision?: Resolver<ResolversTypes['AbstractRevision'], ParentType, ContextType>;
   reason?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type RejectRevisionResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RejectRevisionResponse'] = ResolversParentTypes['RejectRevisionResponse']> = {
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3836,6 +3862,7 @@ export type Resolvers<ContextType = Context> = {
   PageRevisionCursor?: PageRevisionCursorResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RejectRevisionNotificationEvent?: RejectRevisionNotificationEventResolvers<ContextType>;
+  RejectRevisionResponse?: RejectRevisionResponseResolvers<ContextType>;
   RemoveEntityLinkNotificationEvent?: RemoveEntityLinkNotificationEventResolvers<ContextType>;
   RemoveTaxonomyLinkNotificationEvent?: RemoveTaxonomyLinkNotificationEventResolvers<ContextType>;
   ScopedRole?: ScopedRoleResolvers<ContextType>;

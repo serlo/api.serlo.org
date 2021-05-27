@@ -45,6 +45,7 @@ extend type Mutation {
 
 type EntityMutation {
   checkoutRevision(input: CheckoutRevisionInput!): CheckoutRevisionResponse!
+  rejectRevision(input: RejectRevisionInput!): RejectRevisionResponse!
 }
 
 input CheckoutRevisionInput {
@@ -53,5 +54,14 @@ input CheckoutRevisionInput {
 }
 
 type CheckoutRevisionResponse {
+  success: Boolean!
+}
+
+input RejectRevisionInput {
+  revisionId: Int!
+  reason: String!
+}
+
+type RejectRevisionResponse {
   success: Boolean!
 }
