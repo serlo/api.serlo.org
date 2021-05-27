@@ -57,6 +57,7 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
   [Role.Reviewer]: {
     permissions: [
       Permission.Entity_CheckoutRevision,
+      Permission.Entity_RejectRevision,
       Permission.Entity_OrderChildren,
       Permission.TaxonomyTerm_OrderChildren,
       Permission.Uuid_SetState_EntityRevision,

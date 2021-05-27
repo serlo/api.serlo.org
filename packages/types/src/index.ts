@@ -829,11 +829,17 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
 export type EntityMutation = {
   __typename?: 'EntityMutation';
   checkoutRevision: CheckoutRevisionResponse;
+  rejectRevision: RejectRevisionResponse;
 };
 
 
 export type EntityMutationCheckoutRevisionArgs = {
   input: CheckoutRevisionInput;
+};
+
+
+export type EntityMutationRejectRevisionArgs = {
+  input: RejectRevisionInput;
 };
 
 export type Event = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
@@ -1531,6 +1537,11 @@ export type QueryUuidArgs = {
   id?: Maybe<Scalars['Int']>;
 };
 
+export type RejectRevisionInput = {
+  revisionId: Scalars['Int'];
+  reason: Scalars['String'];
+};
+
 export type RejectRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'RejectRevisionNotificationEvent';
   id: Scalars['Int'];
@@ -1541,6 +1552,11 @@ export type RejectRevisionNotificationEvent = AbstractNotificationEvent & Instan
   repository: AbstractRepository;
   revision: AbstractRevision;
   reason: Scalars['String'];
+};
+
+export type RejectRevisionResponse = {
+  __typename?: 'RejectRevisionResponse';
+  success: Scalars['Boolean'];
 };
 
 export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {

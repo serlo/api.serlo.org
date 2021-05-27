@@ -726,6 +726,35 @@ export function createSerloModel({
     },
   })
 
+  const rejectRevision = createMutation({
+    decoder: t.union([
+      t.type({ success: t.literal(true) }),
+      t.type({ success: t.literal(false), reason: t.string }),
+    ]),
+    async mutate(payload: {
+      revisionId: number
+      userId: number
+      reason: string
+    }) {
+      return await handleMessage({
+        message: { type: 'EntityRejectRevisionMutation', payload },
+        expectedStatusCodes: [200, 400],
+      })
+    },
+    async updateCache({ revisionId }) {
+      await getUuid._querySpec.setCache({
+        payload: { id: revisionId },
+        getValue(current) {
+          if (!EntityRevisionDecoder.is(current)) return
+
+          current.trashed = true
+
+          return current
+        },
+      })
+    },
+  })
+
   return {
     createThread,
     archiveThread,
@@ -745,6 +774,7 @@ export function createSerloModel({
     getThreadIds,
     getUuid,
     getUuidWithCustomDecoder,
+    rejectRevision,
     setUuidState,
     setNotificationState,
   }
