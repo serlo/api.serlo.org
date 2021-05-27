@@ -57,7 +57,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
 
       if (revision === null || !EntityRevisionDecoder.is(revision)) {
-        throw new UserInputError('revisionId must belong to a revision')
+        throw new UserInputError('revisionId must belong to a revision.')
       }
 
       const scope = await fetchScopeOfUuid({
@@ -67,7 +67,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       await assertUserIsAuthorized({
         userId,
         dataSources,
-        message: 'you are not authorized to checkout a revision',
+        message: 'You are not allowed to check out the provided revision.',
         guard: serloAuth.Entity.checkoutRevision(scope),
       })
 
