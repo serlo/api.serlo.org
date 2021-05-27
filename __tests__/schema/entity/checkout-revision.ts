@@ -39,6 +39,7 @@ import {
   Client,
   returnsJson,
   Database,
+  returnsUuidsFromDatabase,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 
@@ -57,14 +58,9 @@ beforeEach(() => {
   client = createTestClient({ userId: user.id })
 
   database = new Database()
-
   database.hasUuids([user, article, articleRevision, unrevisedRevision])
 
-  givenUuidQueryEndpoint((req, res, ctx) => {
-    const uuid = database.getUuid(req.body.payload.id)
-
-    return uuid ? res(ctx.json(uuid)) : res(ctx.json(null), ctx.status(404))
-  })
+  givenUuidQueryEndpoint(returnsUuidsFromDatabase(database))
   givenEntityCheckoutRevisionEndpoint((req, res, ctx) => {
     const { revisionId, reason, userId } = req.body.payload
 
