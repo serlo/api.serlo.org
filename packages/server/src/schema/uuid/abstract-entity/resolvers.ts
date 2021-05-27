@@ -76,7 +76,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         userId,
       })
 
-      if (result.success !== true) {
+      if (result.success === false) {
         throw new UserInputError(result.reason)
       }
 
