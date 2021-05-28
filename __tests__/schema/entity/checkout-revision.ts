@@ -26,7 +26,6 @@ import {
   article as baseArticle,
   articleRevision,
   user as baseUser,
-  video,
 } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
