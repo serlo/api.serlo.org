@@ -29,7 +29,6 @@ import {
   InterfaceResolvers,
   Mutations,
 } from '~/internals/graphql'
-import { EntityRevisionDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 
 export const resolvers: InterfaceResolvers<'AbstractEntity'> &
