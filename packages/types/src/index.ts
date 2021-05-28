@@ -488,6 +488,11 @@ export type CacheUpdateResponse = {
   query: Query;
 };
 
+export type CheckoutRevisionInput = {
+  revisionId: Scalars['Int'];
+  reason: Scalars['String'];
+};
+
 export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CheckoutRevisionNotificationEvent';
   id: Scalars['Int'];
@@ -498,6 +503,12 @@ export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & Inst
   repository: AbstractRepository;
   revision: AbstractRevision;
   reason: Scalars['String'];
+};
+
+export type CheckoutRevisionResponse = {
+  __typename?: 'CheckoutRevisionResponse';
+  success: Scalars['Boolean'];
+  query: Query;
 };
 
 export type Comment = AbstractUuid & {
@@ -815,6 +826,22 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
   thread: UnsupportedThread;
 };
 
+
+export type EntityMutation = {
+  __typename?: 'EntityMutation';
+  checkoutRevision: CheckoutRevisionResponse;
+  rejectRevision: RejectRevisionResponse;
+};
+
+
+export type EntityMutationCheckoutRevisionArgs = {
+  input: CheckoutRevisionInput;
+};
+
+
+export type EntityMutationRejectRevisionArgs = {
+  input: RejectRevisionInput;
+};
 
 export type Event = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
   __typename?: 'Event';
@@ -1244,6 +1271,7 @@ export type License = {
 export type Mutation = {
   __typename?: 'Mutation';
   _cache: _CacheMutation;
+  entity: EntityMutation;
   notification: NotificationMutation;
   subscription: SubscriptionMutation;
   thread: ThreadMutation;
@@ -1510,6 +1538,11 @@ export type QueryUuidArgs = {
   id?: Maybe<Scalars['Int']>;
 };
 
+export type RejectRevisionInput = {
+  revisionId: Scalars['Int'];
+  reason: Scalars['String'];
+};
+
 export type RejectRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'RejectRevisionNotificationEvent';
   id: Scalars['Int'];
@@ -1520,6 +1553,12 @@ export type RejectRevisionNotificationEvent = AbstractNotificationEvent & Instan
   repository: AbstractRepository;
   revision: AbstractRevision;
   reason: Scalars['String'];
+};
+
+export type RejectRevisionResponse = {
+  __typename?: 'RejectRevisionResponse';
+  success: Scalars['Boolean'];
+  query: Query;
 };
 
 export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {

@@ -19,15 +19,29 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import R from 'ramda'
 
-export * from './assertions'
-export * from './database'
-export * from './handlers'
-export * from './error-event'
-export * from './services'
-export * from './test-client'
+import { Model } from '~/internals/graphql'
 
-export function getTypenameAndId(value: { __typename: string; id: number }) {
-  return R.pick(['__typename', 'id'], value)
+export class Database {
+  private uuids: Record<number, Model<'AbstractUuid'> | undefined> = {}
+
+  public getUuid(id: number) {
+    return this.uuids[id]
+  }
+
+  public changeUuid(id: number, update: Partial<Model<'AbstractUuid'>>) {
+    this.uuids[id] = { ...this.uuids[id], ...(update as Model<'AbstractUuid'>) }
+  }
+
+  public hasUuid(uuid: Model<'AbstractUuid'>) {
+    // A copy of the uuid is created here so that changes of the uuid object in
+    // the `uuids` database does not affect the passed object
+    this.uuids[uuid.id] = { ...uuid }
+  }
+
+  public hasUuids(uuids: Model<'AbstractUuid'>[]) {
+    for (const uuid of uuids) {
+      this.hasUuid(uuid)
+    }
+  }
 }

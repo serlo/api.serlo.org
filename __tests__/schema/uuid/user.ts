@@ -425,7 +425,7 @@ describe('endpoint activeDonors', () => {
       })
 
       test('when spreadsheet api responds with invalid json data', async () => {
-        givenSpreadheetApi(returnsJson({}))
+        givenSpreadheetApi(returnsJson({ json: {} }))
 
         await expectUserIds({ endpoint: 'activeDonors', ids: [] })
         await assertErrorEvent()
