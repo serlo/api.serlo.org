@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.24.6](https://github.com/serlo/api.serlo.org/compare/v0.24.5..v0.24.6) - May 28, 2021
+
+### Added
+
+- mutation for checking out a revision
+
+- mutation for rejecting a revision
+
+### Internal
+
+- Remove UnsupportedComment
+
 ## [v0.24.5](https://github.com/serlo/api.serlo.org/compare/v0.24.4..v0.24.5) - May 25, 2021
 
 ### Internal
