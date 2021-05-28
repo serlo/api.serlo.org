@@ -78,9 +78,9 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
 
       if (result.success === false) {
         throw new UserInputError(result.reason)
+      } else {
+        return { ...result, query: {} }
       }
-
-      return result
     },
     async rejectRevision(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
@@ -111,9 +111,9 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
 
       if (result.success === false) {
         throw new UserInputError(result.reason)
+      } else {
+        return { ...result, query: {} }
       }
-
-      return result
     },
   },
 }

@@ -508,6 +508,7 @@ export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & Inst
 export type CheckoutRevisionResponse = {
   __typename?: 'CheckoutRevisionResponse';
   success: Scalars['Boolean'];
+  query: Query;
 };
 
 export type Comment = AbstractUuid & {
@@ -1557,6 +1558,7 @@ export type RejectRevisionNotificationEvent = AbstractNotificationEvent & Instan
 export type RejectRevisionResponse = {
   __typename?: 'RejectRevisionResponse';
   success: Scalars['Boolean'];
+  query: Query;
 };
 
 export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {

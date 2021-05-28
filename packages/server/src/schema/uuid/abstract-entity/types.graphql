@@ -55,6 +55,7 @@ input CheckoutRevisionInput {
 
 type CheckoutRevisionResponse {
   success: Boolean!
+  query: Query!
 }
 
 input RejectRevisionInput {
@@ -64,4 +65,5 @@ input RejectRevisionInput {
 
 type RejectRevisionResponse {
   success: Boolean!
+  query: Query!
 }

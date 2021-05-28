@@ -512,6 +512,7 @@ export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & Inst
 export type CheckoutRevisionResponse = {
   __typename?: 'CheckoutRevisionResponse';
   success: Scalars['Boolean'];
+  query: Query;
 };
 
 export type Comment = AbstractUuid & {
@@ -1561,6 +1562,7 @@ export type RejectRevisionNotificationEvent = AbstractNotificationEvent & Instan
 export type RejectRevisionResponse = {
   __typename?: 'RejectRevisionResponse';
   success: Scalars['Boolean'];
+  query: Query;
 };
 
 export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -2861,6 +2863,7 @@ export type CheckoutRevisionNotificationEventResolvers<ContextType = Context, Pa
 
 export type CheckoutRevisionResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CheckoutRevisionResponse'] = ResolversParentTypes['CheckoutRevisionResponse']> = {
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3417,6 +3420,7 @@ export type RejectRevisionNotificationEventResolvers<ContextType = Context, Pare
 
 export type RejectRevisionResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RejectRevisionResponse'] = ResolversParentTypes['RejectRevisionResponse']> = {
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
