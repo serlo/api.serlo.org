@@ -148,16 +148,6 @@ test('fails when user does not have role "reviewer"', async () => {
   })
 })
 
-test('fails when revisionId does not belong to a revision', async () => {
-  database.hasUuid(video)
-
-  await assertFailingGraphQLMutation({
-    ...createCheckoutRevisionMutation({ revisionId: video.id }),
-    client,
-    expectedError: 'BAD_USER_INPUT',
-  })
-})
-
 test('fails when database layer returns a 400er response', async () => {
   givenEntityCheckoutRevisionEndpoint(
     returnsJson({

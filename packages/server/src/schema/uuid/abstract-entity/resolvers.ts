@@ -52,16 +52,8 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     async checkoutRevision(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
-      const revision = await dataSources.model.serlo.getUuid({
-        id: input.revisionId,
-      })
-
-      if (revision === null || !EntityRevisionDecoder.is(revision)) {
-        throw new UserInputError('revisionId must belong to a revision.')
-      }
-
       const scope = await fetchScopeOfUuid({
-        id: revision.repositoryId,
+        id: input.revisionId,
         dataSources,
       })
       await assertUserIsAuthorized({
@@ -85,16 +77,8 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     async rejectRevision(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
-      const revision = await dataSources.model.serlo.getUuid({
-        id: input.revisionId,
-      })
-
-      if (revision === null || !EntityRevisionDecoder.is(revision)) {
-        throw new UserInputError('revisionId must belong to a revision.')
-      }
-
       const scope = await fetchScopeOfUuid({
-        id: revision.repositoryId,
+        id: input.revisionId,
         dataSources,
       })
       await assertUserIsAuthorized({
