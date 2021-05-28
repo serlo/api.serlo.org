@@ -22,7 +22,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires,import/no-commonjs */
 const { pathsToModuleNameMapper } = require('ts-jest/utils')
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,import/extensions
 const { compilerOptions } = require('./tsconfig.json')
 
 module.exports = {
