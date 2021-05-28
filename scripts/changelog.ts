@@ -843,6 +843,15 @@ async function exec(): Promise<void> {
         'Fix: Taxonomy term resolver can handle children which are null.',
       ],
     },
+    {
+      tagName: 'v0.24.6',
+      date: '2021-05-28',
+      added: [
+        'mutation for checking out a revision',
+        'mutation for rejecting a revision',
+      ],
+      internal: ['Remove UnsupportedComment'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
