@@ -53,9 +53,9 @@ export function createLockManager({
       log.debug('Locking key', key)
       const lock = await redlock.lock(`locks:${key}`, 10000)
       return {
-        unlock() {
+        async unlock() {
           log.debug('Unlocking key', key)
-          return lock.unlock()
+          await lock.unlock()
         },
       }
     },

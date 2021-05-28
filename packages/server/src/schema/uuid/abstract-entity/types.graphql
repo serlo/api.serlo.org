@@ -38,3 +38,32 @@ interface AbstractEntityRevision {
 
   changes: String!
 }
+
+extend type Mutation {
+  entity: EntityMutation!
+}
+
+type EntityMutation {
+  checkoutRevision(input: CheckoutRevisionInput!): CheckoutRevisionResponse!
+  rejectRevision(input: RejectRevisionInput!): RejectRevisionResponse!
+}
+
+input CheckoutRevisionInput {
+  revisionId: Int!
+  reason: String!
+}
+
+type CheckoutRevisionResponse {
+  success: Boolean!
+  query: Query!
+}
+
+input RejectRevisionInput {
+  revisionId: Int!
+  reason: String!
+}
+
+type RejectRevisionResponse {
+  success: Boolean!
+  query: Query!
+}

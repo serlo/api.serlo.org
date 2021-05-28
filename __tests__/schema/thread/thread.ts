@@ -479,14 +479,16 @@ export function mockEndpointsForThreads(
   )
 
   function createThreadHandlers() {
+    const matchPayloads = threads
+      .flat()
+      .map((comment) => {
+        return { id: comment.id }
+      })
+      .concat([{ id: uuidPayload.id }])
+
     return createDatabaseLayerHandler<{ id: number }>({
       matchType: 'UuidQuery',
-      matchPayloads: threads
-        .flat<Model<'AbstractUuid'>>()
-        .concat([uuidPayload])
-        .map((comment) => {
-          return { id: comment.id }
-        }),
+      matchPayloads,
       resolver(req, res, ctx) {
         const id = req.body.payload.id
 
