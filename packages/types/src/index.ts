@@ -823,7 +823,7 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
   actor: User;
   objectId: Scalars['Int'];
   object: AbstractUuid;
-  thread: UnsupportedThread;
+  thread: Thread;
 };
 
 

@@ -5,5 +5,5 @@ type CreateThreadNotificationEvent implements AbstractNotificationEvent & Instan
   actor: User!
   objectId: Int!
   object: AbstractUuid!
-  thread: UnsupportedThread!
+  thread: Thread!
 }

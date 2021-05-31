@@ -264,7 +264,7 @@ export const createThreadNotificationEvent: Model<'CreateThreadNotificationEvent
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
     objectId: article.id,
-    threadId: unsupportedThread.id,
+    threadId: comment.id,
   }
 
 export function getCreateThreadNotificationEventDataWithoutSubResolvers(
