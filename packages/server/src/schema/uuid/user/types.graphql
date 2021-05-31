@@ -69,21 +69,21 @@ type UserMutation {
 }
 
 type UserDeleteBotInput {
-  userId: [Int!]!
+  userIds: [Int!]!
 }
 
 type UserDeleteBotResponse {
   success: Boolean!
-  username: String!
+  usernames: [String!]!
 }
 
 type UserDeleteRegularUserInput {
-  userId: [Int!]!
+  userIds: [Int!]!
 }
 
 type UserDeleteRegularUserResponse {
   success: Boolean!
-  username: String!
+  usernames: [String!]!
 }
 
 type UserSetEmailInput {
@@ -93,6 +93,6 @@ type UserSetEmailInput {
 
 type UserSetEmailResponse {
   success: Boolean!
-  username: String!
+  usernames: [String!]!
   email: String!
 }

@@ -1647,24 +1647,24 @@ export type UserConnection = {
 
 export type UserDeleteBotInput = {
   __typename?: 'UserDeleteBotInput';
-  userId: Array<Scalars['Int']>;
+  userIds: Array<Scalars['Int']>;
 };
 
 export type UserDeleteBotResponse = {
   __typename?: 'UserDeleteBotResponse';
   success: Scalars['Boolean'];
-  username: Scalars['String'];
+  usernames: Array<Scalars['String']>;
 };
 
 export type UserDeleteRegularUserInput = {
   __typename?: 'UserDeleteRegularUserInput';
-  userId: Array<Scalars['Int']>;
+  userIds: Array<Scalars['Int']>;
 };
 
 export type UserDeleteRegularUserResponse = {
   __typename?: 'UserDeleteRegularUserResponse';
   success: Scalars['Boolean'];
-  username: Scalars['String'];
+  usernames: Array<Scalars['String']>;
 };
 
 export type UserEdge = {
@@ -1704,7 +1704,7 @@ export type UserSetEmailInput = {
 export type UserSetEmailResponse = {
   __typename?: 'UserSetEmailResponse';
   success: Scalars['Boolean'];
-  username: Scalars['String'];
+  usernames: Array<Scalars['String']>;
   email: Scalars['String'];
 };
 
@@ -3193,24 +3193,24 @@ export type UserConnectionResolvers<ContextType = Context, ParentType extends Re
 };
 
 export type UserDeleteBotInputResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserDeleteBotInput'] = ResolversParentTypes['UserDeleteBotInput']> = {
-  userId?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType>;
+  userIds?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserDeleteBotResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserDeleteBotResponse'] = ResolversParentTypes['UserDeleteBotResponse']> = {
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  usernames?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserDeleteRegularUserInputResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserDeleteRegularUserInput'] = ResolversParentTypes['UserDeleteRegularUserInput']> = {
-  userId?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType>;
+  userIds?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserDeleteRegularUserResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserDeleteRegularUserResponse'] = ResolversParentTypes['UserDeleteRegularUserResponse']> = {
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  usernames?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3235,7 +3235,7 @@ export type UserSetEmailInputResolvers<ContextType = Context, ParentType extends
 
 export type UserSetEmailResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserSetEmailResponse'] = ResolversParentTypes['UserSetEmailResponse']> = {
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  usernames?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

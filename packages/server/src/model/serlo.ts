@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { option as O, string } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
@@ -33,6 +33,7 @@ import {
   NotificationDecoder,
   NavigationDecoder,
   NavigationDataDecoder,
+  DiscriminatorType,
 } from './decoder'
 import { Environment } from '~/internals/environment'
 import { Model } from '~/internals/graphql'
@@ -204,10 +205,9 @@ export function createSerloModel({
   )
 
   const deleteBot = createMutation({
-    //decoder: t.type({userId: t.array(t.number)}),
-    decoder: t.type({username: t.string}),
+    decoder: t.type({usernames: t.array(t.string)}),
     mutate: (payload: UserDeleteBotInput) => {
-      return handleMessage({
+      const response =  handleMessage({
         message: { type: 'UserDeleteBotMutation', payload },
         expectedStatusCodes: [200],
       })
@@ -216,25 +216,41 @@ export function createSerloModel({
   })
 
   const deleteRegularUser = createMutation({
-    decoder: t.type({username: t.string}),
+    decoder: t.type({usernames: t.array(t.string)}),
     mutate: (payload: UserDeleteRegularUserInput) => {
       return handleMessage({
         message: { type: 'UserDeleteRegularUserMutation', payload},
         expectedStatusCodes: [200],
       })
+    },
+    updateCache: async (payload, value) => {
+      if (value !== null) {
+        
+      }
     }
-    // TODO: updateCache: nur User löschen, Inhalte behalten
   })
 
   const setEmail = createMutation({
-    decoder: t.type({username: t.string, email: t.string}),
+    decoder: t.type({usernames: t.array(t.string), email: t.string}),
     mutate: (payload: UserSetEmailInput) => {
       return handleMessage({
         message: { type: 'UserSetEmailMutation', payload},
         expectedStatusCodes: [200],
       })
+    },
+    updateCache: async (payload, value) => {
+      if (value !== null) {
+        await getUuid._querySpec.setCache({
+          payload: { id: payload.userId },
+          getValue: (current) => {
+            if (current == null) {return}
+            else if (current.__typename !== DiscriminatorType.User){return}//hier checken ob das ein user ist}
+            else {current.email = payload.email
+            return current}
+         },
+        })
+      }
     }
-    // TODO: updateCache: Update E-mail
   })
 
   const getNavigationPayload = createQuery(
