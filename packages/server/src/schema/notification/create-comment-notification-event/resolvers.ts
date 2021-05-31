@@ -23,12 +23,13 @@ import { createNotificationEventResolvers } from '../utils'
 import { TypeResolvers } from '~/internals/graphql'
 import { CommentDecoder } from '~/model/decoder'
 import { CreateCommentNotificationEvent } from '~/types'
+import { resolveThread } from '~/schema/thread/utils'
 
 export const resolvers: TypeResolvers<CreateCommentNotificationEvent> = {
   CreateCommentNotificationEvent: {
     ...createNotificationEventResolvers(),
-    thread(notificationEvent) {
-      return { id: notificationEvent.threadId }
+    thread(notificationEvent, _args, { dataSources }) {
+      return resolveThread(notificationEvent.threadId, dataSources)
     },
     async comment(notificationEvent, _args, { dataSources }) {
       return await dataSources.model.serlo.getUuidWithCustomDecoder({

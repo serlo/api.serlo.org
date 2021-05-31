@@ -762,7 +762,7 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & Instanc
   date: Scalars['DateTime'];
   actor: User;
   objectId: Scalars['Int'];
-  thread: UnsupportedThread;
+  thread: Thread;
   comment: Comment;
 };
 
@@ -2991,7 +2991,7 @@ export type CreateCommentNotificationEventResolvers<ContextType = Context, Paren
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   actor?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   objectId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  thread?: Resolver<ResolversTypes['UnsupportedThread'], ParentType, ContextType>;
+  thread?: Resolver<ResolversTypes['Thread'], ParentType, ContextType>;
   comment?: Resolver<ResolversTypes['Comment'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
