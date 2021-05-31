@@ -19,8 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import * as R from 'ramda'
-
 import { license } from '../license'
 import { Model } from '~/internals/graphql'
 import { EntityRevisionType, EntityType } from '~/model/decoder'
@@ -53,23 +51,4 @@ export const appletRevision: Model<'AppletRevision'> = {
   changes: 'changes',
   metaDescription: 'metaDescription',
   metaTitle: 'metaTitle',
-}
-
-export function getAppletDataWithoutSubResolvers(applet: Model<'Applet'>) {
-  return R.omit(
-    [
-      'currentRevisionId',
-      'revisionIds',
-      'licenseId',
-      'taxonomyTermIds',
-      'alias',
-    ],
-    applet
-  )
-}
-
-export function getAppletRevisionDataWithoutSubResolvers(
-  appletRevision: Model<'AppletRevision'>
-) {
-  return R.omit(['authorId', 'repositoryId', 'alias'], appletRevision)
 }
