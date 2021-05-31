@@ -20,13 +20,9 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
-import {
-  applet,
-  appletRevision,
-  getAppletDataWithoutSubResolvers,
-  getAppletRevisionDataWithoutSubResolvers,
-} from '../../../__fixtures__'
+import { applet, appletRevision } from '../../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
@@ -58,7 +54,7 @@ test('Applet', async () => {
     `,
     variables: applet,
     data: {
-      uuid: getAppletDataWithoutSubResolvers(applet),
+      uuid: R.pick(['__typename', 'id', 'trashed', 'instance', 'date'], applet),
     },
     client,
   })
@@ -87,7 +83,21 @@ test('AppletRevision', async () => {
     `,
     variables: appletRevision,
     data: {
-      uuid: getAppletRevisionDataWithoutSubResolvers(appletRevision),
+      uuid: R.pick(
+        [
+          '__typename',
+          'id',
+          'trashed',
+          'date',
+          'url',
+          'title',
+          'content',
+          'changes',
+          'metaTitle',
+          'metaDescription',
+        ],
+        appletRevision
+      ),
     },
     client,
   })
