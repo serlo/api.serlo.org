@@ -40,7 +40,7 @@ import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
 } from '~/internals/graphql'
-import { DiscriminatorType } from '~/model/decoder'
+import { DiscriminatorType, UserDecoder } from '~/model/decoder'
 import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
 import { resolveScopedRoles } from '~/schema/authorization/utils'
 import { ConnectionPayload } from '~/schema/connection/types'
@@ -113,21 +113,36 @@ export const resolvers: Queries<
     },
   },
   Mutation: {
+    // TODO: Register "Record<string, never" as model type of "UserMutation"
     user: createNamespace(),
   },
   UserMutation: {
-    async deleteBot(_parent, payload, { dataSources, userId }) {
+    async deleteBot(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
         guard: serloAuth.User.deleteBot(serloAuth.Scope.Serlo),
-        message: 'You are not allowed to delete users',
+        message: 'You are not allowed to delete bots',
         dataSources,
       })
-      return {
-        ...(await dataSources.model.serlo.deleteBot({ ...payload.input })),
-        success: true,
-      }
+
+      const users = await Promise.all(
+        input.botIds.map((botId) =>
+          dataSources.model.serlo.getUuidWithCustomDecoder({
+            id: botId,
+            decoder: UserDecoder,
+          })
+        )
+      )
+
+      return await Promise.all(
+        users.map(async (user) => {
+          return {
+            ...(await dataSources.model.serlo.deleteBot({ botId: user.id })),
+            username: user.username,
+          }
+        })
+      )
     },
 
     async deleteRegularUser(_parent, payload, { dataSources, userId }) {
