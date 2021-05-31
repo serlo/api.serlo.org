@@ -66,7 +66,6 @@ import {
   taxonomyTermCurriculumTopic,
   taxonomyTermRoot,
   taxonomyTermSubject,
-  unsupportedThread,
   user,
   user2,
 } from '../../__fixtures__'
@@ -523,7 +522,7 @@ describe('notificationEvent', () => {
         variables: createCommentNotificationEvent,
         data: {
           notificationEvent: {
-            thread: { title: comment.title},
+            thread: { title: comment.title },
           },
         },
         client,
@@ -1674,9 +1673,7 @@ describe('notificationEvent', () => {
     })
 
     test('by id (w/ thread)', async () => {
-      mockEndpointsForThreads(article, [
-        [comment],
-      ])
+      mockEndpointsForThreads(article, [[comment]])
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query notificationEvent($id: Int!) {
@@ -1694,7 +1691,7 @@ describe('notificationEvent', () => {
           notificationEvent: {
             thread: {
               title: comment.title,
-            }
+            },
           },
         },
         client,
@@ -1869,7 +1866,7 @@ describe('notificationEvent', () => {
         data: {
           notificationEvent: {
             thread: {
-              title: comment.title
+              title: comment.title,
             },
           },
         },
