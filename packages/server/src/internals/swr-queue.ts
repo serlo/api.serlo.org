@@ -22,14 +22,19 @@
 import Queue from 'bee-queue'
 import { either as E, option as O } from 'fp-ts'
 import * as t from 'io-ts'
+import reporter from 'io-ts-reporters'
 import * as R from 'ramda'
 
 import { Cache, Priority } from './cache'
+import { isQuery, QuerySpec } from './data-source-helper'
+import { captureErrorEvent } from './error-event'
 import { log } from './log'
-import { isQuery, QuerySpec } from './model'
 import { redisUrl } from './redis-url'
 import { Timer } from './timer'
 import { modelFactories } from '~/model'
+
+const INVALID_VALUE_RECEIVED =
+  'SWR-Queue: Invalid value received from data source.'
 
 export interface SwrQueue {
   queue(updateJob: UpdateJob): Promise<never>
@@ -88,7 +93,7 @@ export function createSwrQueue({
   })
 
   return {
-    _queue: (queue as unknown) as never,
+    _queue: queue as unknown as never,
     async queue(updateJob) {
       const { key } = updateJob
 
@@ -108,15 +113,23 @@ export function createSwrQueue({
 
       // By setting the job's ID, we make sure that there will be only one update job for the same key
       // See also https://github.com/bee-queue/bee-queue#jobsetidid
-      const job = await queue.createJob(updateJob).setId(updateJob.key).save()
+      const job = await queue
+        .createJob(updateJob)
+        .setId(updateJob.key)
+        .timeout(60000)
+        .retries(5)
+        .backoff('exponential', 10000)
+        .save()
 
-      job.on('failed', (err) => {
-        log.error(`Job ${job.id} failed with error ${err.message}`)
+      job.on('failed', (error) => {
+        reportError({ jobStatus: 'failed', error })
+        log.error(`Job ${job.id} failed with error ${error.message}`)
       })
 
-      job.on('retrying', (err) => {
+      job.on('retrying', (error) => {
+        reportError({ jobStatus: 'retrying', error })
         log.debug(
-          `Job ${job.id} failed with error ${err.message} but is being retried!`
+          `Job ${job.id} failed with error ${error.message} but is being retried!`
         )
       })
 
@@ -170,55 +183,68 @@ export function createSwrQueueWorker({
     removeOnSuccess: true,
   })
 
-  queue.process(
-    concurrency,
-    async (job): Promise<string> => {
-      async function processJob() {
-        const { key } = job.data
+  queue.process(concurrency, async (job): Promise<string> => {
+    async function processJob() {
+      const { key } = job.data
 
-        const result = await shouldProcessJob({
-          key,
-          cache,
-          models,
-          timer,
-        })
-        if (E.isLeft(result)) {
-          return `Skipped update because ${result.left}`
-        }
+      const result = await shouldProcessJob({
+        key,
+        cache,
+        models,
+        timer,
+      })
 
-        const { spec, payload } = result.right
-
-        await cache.set({
-          key,
-          priority: Priority.Low,
-          getValue: async (current) => {
-            const value = await spec.getCurrentValue(payload, current ?? null)
-            const decoder = spec.decoder || t.unknown
-            const decoded = decoder.decode(value)
-            if (E.isRight(decoded)) {
-              return decoded.right
-            }
-            throw new Error(`Invalid value: ${JSON.stringify(value)}`)
-          },
-        })
-        return 'Updated because stale'
+      if (E.isLeft(result)) {
+        return `Skipped update because ${result.left}`
       }
 
-      const result = await processJob()
-      if (process.env.SWR_QUEUE_WORKER_DELAY !== undefined) {
-        const delay = parseInt(process.env.SWR_QUEUE_WORKER_DELAY, 10)
-        await new Promise<void>((resolve) => {
-          setTimeout(() => {
-            resolve()
-          }, delay)
-        })
-      }
-      return result
+      const { spec, payload } = result.right
+
+      await cache.set({
+        key,
+        source: 'SWR worker',
+        priority: Priority.Low,
+        getValue: async (current) => {
+          const value = await spec.getCurrentValue(payload, current ?? null)
+          const decoder = spec.decoder || t.unknown
+          const decodedValue = decoder.decode(value)
+
+          if (E.isRight(decodedValue)) {
+            return decodedValue.right
+          } else {
+            captureErrorEvent({
+              error: new Error(INVALID_VALUE_RECEIVED),
+              location: 'SWR worker',
+              fingerprint: ['invalid-value', 'swr', JSON.stringify(value)],
+              errorContext: {
+                key,
+                invalidValue: value,
+                decoder: decoder.name,
+                validationErrors: reporter.report(decodedValue),
+              },
+            })
+
+            throw new Error(INVALID_VALUE_RECEIVED)
+          }
+        },
+      })
+      return 'Updated because stale'
     }
-  )
+
+    const result = await processJob()
+    if (process.env.SWR_QUEUE_WORKER_DELAY !== undefined) {
+      const delay = parseInt(process.env.SWR_QUEUE_WORKER_DELAY, 10)
+      await new Promise<void>((resolve) => {
+        setTimeout(() => {
+          resolve()
+        }, delay)
+      })
+    }
+    return result
+  })
 
   return {
-    _queue: (queue as unknown) as never,
+    _queue: queue as unknown as never,
     async ready() {
       await queue.ready()
     },
@@ -315,4 +341,20 @@ export function timeToMilliseconds({
     (minute + minutes) * MINUTE +
     (second + seconds) * SECOND
   )
+}
+
+function reportError({
+  error,
+  jobStatus,
+}: {
+  error: Error
+  jobStatus: string
+}) {
+  if (error.message != INVALID_VALUE_RECEIVED) {
+    captureErrorEvent({
+      error,
+      errorContext: { jobStatus },
+      location: 'SWR worker',
+    })
+  }
 }

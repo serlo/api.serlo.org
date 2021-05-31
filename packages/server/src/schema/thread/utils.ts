@@ -21,10 +21,9 @@
  */
 import { UserInputError } from 'apollo-server'
 
-import { Context, PickResolvers } from '~/internals/graphql'
+import { Context, Model, PickResolvers } from '~/internals/graphql'
 import { CommentDecoder } from '~/model/decoder'
 import { resolveConnection } from '~/schema/connection/utils'
-import { isDefined } from '~/utils'
 
 export function createThreadResolvers(): PickResolvers<'ThreadAware'> {
   return {
@@ -88,6 +87,26 @@ export function createThreadResolvers(): PickResolvers<'ThreadAware'> {
   }
 }
 
+export async function resolveThread(
+  firstCommentId: number,
+  dataSources: Context['dataSources']
+): Promise<Model<'Thread'>> {
+  const firstComment = await dataSources.model.serlo.getUuidWithCustomDecoder({
+    id: firstCommentId,
+    decoder: CommentDecoder,
+  })
+
+  const remainingComments = await resolveComments(
+    dataSources,
+    firstComment.childrenIds
+  )
+
+  return {
+    __typename: 'Thread' as const,
+    commentPayloads: [firstComment, ...remainingComments],
+  }
+}
+
 export function encodeThreadId(firstCommentId: number) {
   return Buffer.from(`t${firstCommentId}`).toString('base64')
 }
@@ -110,7 +129,7 @@ async function resolveComments(
   dataSources: Context['dataSources'],
   ids: number[]
 ) {
-  const comments = await Promise.all(
+  return await Promise.all(
     ids.map((id) =>
       dataSources.model.serlo.getUuidWithCustomDecoder({
         id,
@@ -118,6 +137,4 @@ async function resolveComments(
       })
     )
   )
-
-  return comments.filter(isDefined)
 }

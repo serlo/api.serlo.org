@@ -25,6 +25,7 @@ import {
   article,
   articleRevision,
   checkoutRevisionNotificationEvent,
+  comment,
   createCommentNotificationEvent,
   createEntityLinkNotificationEvent,
   createEntityNotificationEvent,
@@ -33,8 +34,6 @@ import {
   createTaxonomyTermNotificationEvent,
   createThreadNotificationEvent,
   exercise,
-  getArticleDataWithoutSubResolvers,
-  getArticleRevisionDataWithoutSubResolvers,
   getCheckoutRevisionNotificationEventDataWithoutSubResolvers,
   getCreateCommentNotificationEventDataWithoutSubResolvers,
   getCreateEntityLinkNotificationEventDataWithoutSubResolvers,
@@ -67,8 +66,6 @@ import {
   taxonomyTermCurriculumTopic,
   taxonomyTermRoot,
   taxonomyTermSubject,
-  unsupportedComment,
-  unsupportedThread,
   user,
   user2,
 } from '../../__fixtures__'
@@ -81,8 +78,10 @@ import {
   createNotificationEventHandler,
   createTestClient,
   createUuidHandler,
+  getTypenameAndId,
 } from '../__utils__'
-import { Payload } from '~/internals/model/types'
+import { mockEndpointsForThreads } from './thread/thread'
+import { Payload } from '~/internals/model'
 import { Instance } from '~/types'
 
 describe('notifications', () => {
@@ -188,9 +187,10 @@ describe('notifications', () => {
             {
               id: 1,
               unread: false,
-              event: getCheckoutRevisionNotificationEventDataWithoutSubResolvers(
-                checkoutRevisionNotificationEvent
-              ),
+              event:
+                getCheckoutRevisionNotificationEventDataWithoutSubResolvers(
+                  checkoutRevisionNotificationEvent
+                ),
             },
           ],
         },
@@ -249,9 +249,10 @@ describe('notificationEvent', () => {
         `,
         variables: checkoutRevisionNotificationEvent,
         data: {
-          notificationEvent: getCheckoutRevisionNotificationEventDataWithoutSubResolvers(
-            checkoutRevisionNotificationEvent
-          ),
+          notificationEvent:
+            getCheckoutRevisionNotificationEventDataWithoutSubResolvers(
+              checkoutRevisionNotificationEvent
+            ),
         },
         client,
       })
@@ -296,23 +297,14 @@ describe('notificationEvent', () => {
               ... on CheckoutRevisionNotificationEvent {
                 repository {
                   __typename
-                  ... on Article {
-                    id
-                    trashed
-                    instance
-                    date
-                  }
+                  id
                 }
               }
             }
           }
         `,
         variables: checkoutRevisionNotificationEvent,
-        data: {
-          notificationEvent: {
-            repository: getArticleDataWithoutSubResolvers(article),
-          },
-        },
+        data: { notificationEvent: { repository: getTypenameAndId(article) } },
         client,
       })
     })
@@ -326,16 +318,7 @@ describe('notificationEvent', () => {
               ... on CheckoutRevisionNotificationEvent {
                 revision {
                   __typename
-                  ... on ArticleRevision {
-                    id
-                    trashed
-                    date
-                    title
-                    content
-                    changes
-                    metaTitle
-                    metaDescription
-                  }
+                  id
                 }
               }
             }
@@ -343,11 +326,7 @@ describe('notificationEvent', () => {
         `,
         variables: checkoutRevisionNotificationEvent,
         data: {
-          notificationEvent: {
-            revision: getArticleRevisionDataWithoutSubResolvers(
-              articleRevision
-            ),
-          },
+          notificationEvent: { revision: getTypenameAndId(articleRevision) },
         },
         client,
       })
@@ -379,9 +358,10 @@ describe('notificationEvent', () => {
         `,
         variables: rejectRevisionNotificationEvent,
         data: {
-          notificationEvent: getRejectRevisionNotificationEventDataWithoutSubResolvers(
-            rejectRevisionNotificationEvent
-          ),
+          notificationEvent:
+            getRejectRevisionNotificationEventDataWithoutSubResolvers(
+              rejectRevisionNotificationEvent
+            ),
         },
         client,
       })
@@ -426,23 +406,14 @@ describe('notificationEvent', () => {
               ... on RejectRevisionNotificationEvent {
                 repository {
                   __typename
-                  ... on Article {
-                    id
-                    trashed
-                    instance
-                    date
-                  }
+                  id
                 }
               }
             }
           }
         `,
         variables: rejectRevisionNotificationEvent,
-        data: {
-          notificationEvent: {
-            repository: getArticleDataWithoutSubResolvers(article),
-          },
-        },
+        data: { notificationEvent: { repository: getTypenameAndId(article) } },
         client,
       })
     })
@@ -456,16 +427,7 @@ describe('notificationEvent', () => {
               ... on RejectRevisionNotificationEvent {
                 revision {
                   __typename
-                  ... on ArticleRevision {
-                    id
-                    trashed
-                    date
-                    title
-                    content
-                    changes
-                    metaTitle
-                    metaDescription
-                  }
+                  id
                 }
               }
             }
@@ -473,11 +435,7 @@ describe('notificationEvent', () => {
         `,
         variables: rejectRevisionNotificationEvent,
         data: {
-          notificationEvent: {
-            revision: getArticleRevisionDataWithoutSubResolvers(
-              articleRevision
-            ),
-          },
+          notificationEvent: { revision: getTypenameAndId(articleRevision) },
         },
         client,
       })
@@ -508,9 +466,10 @@ describe('notificationEvent', () => {
         `,
         variables: createCommentNotificationEvent,
         data: {
-          notificationEvent: getCreateCommentNotificationEventDataWithoutSubResolvers(
-            createCommentNotificationEvent
-          ),
+          notificationEvent:
+            getCreateCommentNotificationEventDataWithoutSubResolvers(
+              createCommentNotificationEvent
+            ),
         },
         client,
       })
@@ -547,13 +506,14 @@ describe('notificationEvent', () => {
     })
 
     test('by id (w/ thread)', async () => {
+      mockEndpointsForThreads(article, [[comment]])
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query notificationEvent($id: Int!) {
             notificationEvent(id: $id) {
               ... on CreateCommentNotificationEvent {
                 thread {
-                  id
+                  title
                 }
               }
             }
@@ -562,7 +522,7 @@ describe('notificationEvent', () => {
         variables: createCommentNotificationEvent,
         data: {
           notificationEvent: {
-            thread: unsupportedThread,
+            thread: { title: comment.title },
           },
         },
         client,
@@ -570,6 +530,7 @@ describe('notificationEvent', () => {
     })
 
     test('by id (w/ comment)', async () => {
+      global.server.use(createUuidHandler(comment))
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query notificationEvent($id: Int!) {
@@ -577,6 +538,7 @@ describe('notificationEvent', () => {
               ... on CreateCommentNotificationEvent {
                 comment {
                   id
+                  __typename
                 }
               }
             }
@@ -585,7 +547,7 @@ describe('notificationEvent', () => {
         variables: createCommentNotificationEvent,
         data: {
           notificationEvent: {
-            comment: unsupportedComment,
+            comment: getTypenameAndId(comment),
           },
         },
         client,
@@ -617,9 +579,10 @@ describe('notificationEvent', () => {
         `,
         variables: createEntityNotificationEvent,
         data: {
-          notificationEvent: getCreateEntityNotificationEventDataWithoutSubResolvers(
-            createEntityNotificationEvent
-          ),
+          notificationEvent:
+            getCreateEntityNotificationEventDataWithoutSubResolvers(
+              createEntityNotificationEvent
+            ),
         },
         client,
       })
@@ -664,23 +627,14 @@ describe('notificationEvent', () => {
               ... on CreateEntityNotificationEvent {
                 entity {
                   __typename
-                  ... on Article {
-                    id
-                    trashed
-                    instance
-                    date
-                  }
+                  id
                 }
               }
             }
           }
         `,
         variables: createEntityNotificationEvent,
-        data: {
-          notificationEvent: {
-            entity: getArticleDataWithoutSubResolvers(article),
-          },
-        },
+        data: { notificationEvent: { entity: getTypenameAndId(article) } },
         client,
       })
     })
@@ -710,9 +664,10 @@ describe('notificationEvent', () => {
         `,
         variables: createEntityLinkNotificationEvent,
         data: {
-          notificationEvent: getCreateEntityLinkNotificationEventDataWithoutSubResolvers(
-            createEntityLinkNotificationEvent
-          ),
+          notificationEvent:
+            getCreateEntityLinkNotificationEventDataWithoutSubResolvers(
+              createEntityLinkNotificationEvent
+            ),
         },
         client,
       })
@@ -833,9 +788,10 @@ describe('notificationEvent', () => {
         `,
         variables: removeEntityLinkNotificationEvent,
         data: {
-          notificationEvent: getRemoveEntityLinkNotificationEventDataWithoutSubResolvers(
-            removeEntityLinkNotificationEvent
-          ),
+          notificationEvent:
+            getRemoveEntityLinkNotificationEventDataWithoutSubResolvers(
+              removeEntityLinkNotificationEvent
+            ),
         },
         client,
       })
@@ -956,9 +912,10 @@ describe('notificationEvent', () => {
         `,
         variables: createEntityRevisionNotificationEvent,
         data: {
-          notificationEvent: getCreateEntityRevisionNotificationEventDataWithoutSubResolvers(
-            createEntityRevisionNotificationEvent
-          ),
+          notificationEvent:
+            getCreateEntityRevisionNotificationEventDataWithoutSubResolvers(
+              createEntityRevisionNotificationEvent
+            ),
         },
         client,
       })
@@ -1003,23 +960,14 @@ describe('notificationEvent', () => {
               ... on CreateEntityRevisionNotificationEvent {
                 entity {
                   __typename
-                  ... on Article {
-                    id
-                    trashed
-                    instance
-                    date
-                  }
+                  id
                 }
               }
             }
           }
         `,
         variables: createEntityRevisionNotificationEvent,
-        data: {
-          notificationEvent: {
-            entity: getArticleDataWithoutSubResolvers(article),
-          },
-        },
+        data: { notificationEvent: { entity: getTypenameAndId(article) } },
         client,
       })
     })
@@ -1033,16 +981,7 @@ describe('notificationEvent', () => {
               ... on CreateEntityRevisionNotificationEvent {
                 entityRevision {
                   __typename
-                  ... on ArticleRevision {
-                    id
-                    trashed
-                    date
-                    title
-                    content
-                    changes
-                    metaTitle
-                    metaDescription
-                  }
+                  id
                 }
               }
             }
@@ -1051,9 +990,7 @@ describe('notificationEvent', () => {
         variables: createEntityRevisionNotificationEvent,
         data: {
           notificationEvent: {
-            entityRevision: getArticleRevisionDataWithoutSubResolvers(
-              articleRevision
-            ),
+            entityRevision: getTypenameAndId(articleRevision),
           },
         },
         client,
@@ -1085,9 +1022,10 @@ describe('notificationEvent', () => {
         `,
         variables: createTaxonomyTermNotificationEvent,
         data: {
-          notificationEvent: getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers(
-            createTaxonomyTermNotificationEvent
-          ),
+          notificationEvent:
+            getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers(
+              createTaxonomyTermNotificationEvent
+            ),
         },
         client,
       })
@@ -1181,9 +1119,10 @@ describe('notificationEvent', () => {
         `,
         variables: setTaxonomyTermNotificationEvent,
         data: {
-          notificationEvent: getSetTaxonomyTermNotificationEventDataWithoutSubResolvers(
-            setTaxonomyTermNotificationEvent
-          ),
+          notificationEvent:
+            getSetTaxonomyTermNotificationEventDataWithoutSubResolvers(
+              setTaxonomyTermNotificationEvent
+            ),
         },
         client,
       })
@@ -1277,9 +1216,10 @@ describe('notificationEvent', () => {
         `,
         variables: createTaxonomyLinkNotificationEvent,
         data: {
-          notificationEvent: getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers(
-            createTaxonomyLinkNotificationEvent
-          ),
+          notificationEvent:
+            getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers(
+              createTaxonomyLinkNotificationEvent
+            ),
         },
         client,
       })
@@ -1357,23 +1297,14 @@ describe('notificationEvent', () => {
               ... on CreateTaxonomyLinkNotificationEvent {
                 child {
                   __typename
-                  ... on Article {
-                    id
-                    trashed
-                    instance
-                    date
-                  }
+                  id
                 }
               }
             }
           }
         `,
         variables: createTaxonomyLinkNotificationEvent,
-        data: {
-          notificationEvent: {
-            child: getArticleDataWithoutSubResolvers(article),
-          },
-        },
+        data: { notificationEvent: { child: getTypenameAndId(article) } },
         client,
       })
     })
@@ -1403,9 +1334,10 @@ describe('notificationEvent', () => {
         `,
         variables: removeTaxonomyLinkNotificationEvent,
         data: {
-          notificationEvent: getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers(
-            removeTaxonomyLinkNotificationEvent
-          ),
+          notificationEvent:
+            getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers(
+              removeTaxonomyLinkNotificationEvent
+            ),
         },
         client,
       })
@@ -1483,23 +1415,14 @@ describe('notificationEvent', () => {
               ... on RemoveTaxonomyLinkNotificationEvent {
                 child {
                   __typename
-                  ... on Article {
-                    id
-                    trashed
-                    instance
-                    date
-                  }
+                  id
                 }
               }
             }
           }
         `,
         variables: removeTaxonomyLinkNotificationEvent,
-        data: {
-          notificationEvent: {
-            child: getArticleDataWithoutSubResolvers(article),
-          },
-        },
+        data: { notificationEvent: { child: getTypenameAndId(article) } },
         client,
       })
     })
@@ -1529,9 +1452,10 @@ describe('notificationEvent', () => {
         `,
         variables: setTaxonomyParentNotificationEvent,
         data: {
-          notificationEvent: getSetTaxonomyParentNotificationEventDataWithoutSubResolvers(
-            setTaxonomyParentNotificationEvent
-          ),
+          notificationEvent:
+            getSetTaxonomyParentNotificationEventDataWithoutSubResolvers(
+              setTaxonomyParentNotificationEvent
+            ),
         },
         client,
       })
@@ -1591,9 +1515,8 @@ describe('notificationEvent', () => {
         variables: setTaxonomyParentNotificationEvent,
         data: {
           notificationEvent: {
-            previousParent: getTaxonomyTermDataWithoutSubResolvers(
-              taxonomyTermRoot
-            ),
+            previousParent:
+              getTaxonomyTermDataWithoutSubResolvers(taxonomyTermRoot),
           },
         },
         client,
@@ -1689,9 +1612,10 @@ describe('notificationEvent', () => {
         `,
         variables: createThreadNotificationEvent,
         data: {
-          notificationEvent: getCreateThreadNotificationEventDataWithoutSubResolvers(
-            createThreadNotificationEvent
-          ),
+          notificationEvent:
+            getCreateThreadNotificationEventDataWithoutSubResolvers(
+              createThreadNotificationEvent
+            ),
         },
         client,
       })
@@ -1736,34 +1660,6 @@ describe('notificationEvent', () => {
               ... on CreateThreadNotificationEvent {
                 object {
                   __typename
-                  ... on Article {
-                    id
-                    trashed
-                    instance
-                    date
-                  }
-                }
-              }
-            }
-          }
-        `,
-        variables: createThreadNotificationEvent,
-        data: {
-          notificationEvent: {
-            object: getArticleDataWithoutSubResolvers(article),
-          },
-        },
-        client,
-      })
-    })
-
-    test('by id (w/ thread)', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CreateThreadNotificationEvent {
-                thread {
                   id
                 }
               }
@@ -1771,9 +1667,31 @@ describe('notificationEvent', () => {
           }
         `,
         variables: createThreadNotificationEvent,
+        data: { notificationEvent: { object: getTypenameAndId(article) } },
+        client,
+      })
+    })
+
+    test('by id (w/ thread)', async () => {
+      mockEndpointsForThreads(article, [[comment]])
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query notificationEvent($id: Int!) {
+            notificationEvent(id: $id) {
+              ... on CreateThreadNotificationEvent {
+                thread {
+                  title
+                }
+              }
+            }
+          }
+        `,
+        variables: createThreadNotificationEvent,
         data: {
           notificationEvent: {
-            thread: unsupportedThread,
+            thread: {
+              title: comment.title,
+            },
           },
         },
         client,
@@ -1805,9 +1723,10 @@ describe('notificationEvent', () => {
         `,
         variables: setLicenseNotificationEvent,
         data: {
-          notificationEvent: getSetLicenseNotificationEventDataWithoutSubResolvers(
-            setLicenseNotificationEvent
-          ),
+          notificationEvent:
+            getSetLicenseNotificationEventDataWithoutSubResolvers(
+              setLicenseNotificationEvent
+            ),
         },
         client,
       })
@@ -1852,23 +1771,14 @@ describe('notificationEvent', () => {
               ... on SetLicenseNotificationEvent {
                 repository {
                   __typename
-                  ... on Article {
-                    id
-                    trashed
-                    instance
-                    date
-                  }
+                  id
                 }
               }
             }
           }
         `,
         variables: setLicenseNotificationEvent,
-        data: {
-          notificationEvent: {
-            repository: getArticleDataWithoutSubResolvers(article),
-          },
-        },
+        data: { notificationEvent: { repository: getTypenameAndId(article) } },
         client,
       })
     })
@@ -1899,9 +1809,10 @@ describe('notificationEvent', () => {
         `,
         variables: setThreadStateNotificationEvent,
         data: {
-          notificationEvent: getSetThreadStateNotificationEventDataWithoutSubResolvers(
-            setThreadStateNotificationEvent
-          ),
+          notificationEvent:
+            getSetThreadStateNotificationEventDataWithoutSubResolvers(
+              setThreadStateNotificationEvent
+            ),
         },
         client,
       })
@@ -1938,13 +1849,14 @@ describe('notificationEvent', () => {
     })
 
     test('by id (w/ thread)', async () => {
+      mockEndpointsForThreads(article, [[comment]])
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query notificationEvent($id: Int!) {
             notificationEvent(id: $id) {
               ... on SetThreadStateNotificationEvent {
                 thread {
-                  id
+                  title
                 }
               }
             }
@@ -1953,7 +1865,9 @@ describe('notificationEvent', () => {
         variables: setThreadStateNotificationEvent,
         data: {
           notificationEvent: {
-            thread: unsupportedThread,
+            thread: {
+              title: comment.title,
+            },
           },
         },
         client,
@@ -1986,9 +1900,10 @@ describe('notificationEvent', () => {
         `,
         variables: setUuidStateNotificationEvent,
         data: {
-          notificationEvent: getSetUuidStateNotificationEventDataWithoutSubResolvers(
-            setUuidStateNotificationEvent
-          ),
+          notificationEvent:
+            getSetUuidStateNotificationEventDataWithoutSubResolvers(
+              setUuidStateNotificationEvent
+            ),
         },
         client,
       })
@@ -2033,23 +1948,14 @@ describe('notificationEvent', () => {
               ... on SetUuidStateNotificationEvent {
                 object {
                   __typename
-                  ... on Article {
-                    id
-                    trashed
-                    instance
-                    date
-                  }
+                  id
                 }
               }
             }
           }
         `,
         variables: setUuidStateNotificationEvent,
-        data: {
-          notificationEvent: {
-            object: getArticleDataWithoutSubResolvers(article),
-          },
-        },
+        data: { notificationEvent: { object: getTypenameAndId(article) } },
         client,
       })
     })

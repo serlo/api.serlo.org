@@ -21,5 +21,4 @@
  */
 export * from './context'
 export * from './schema'
-export * from './resolver'
 export * from './utils'

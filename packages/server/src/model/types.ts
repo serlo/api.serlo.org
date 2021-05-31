@@ -66,7 +66,7 @@ import {
   VideoDecoder,
   VideoRevisionDecoder,
 } from './decoder'
-import { Payload } from '~/internals/model/types'
+import { Payload } from '~/internals/model'
 import { Role } from '~/types'
 
 export interface Models {
@@ -74,11 +74,13 @@ export interface Models {
   AppletRevision: t.TypeOf<typeof AppletRevisionDecoder>
   Article: t.TypeOf<typeof ArticleDecoder>
   ArticleRevision: t.TypeOf<typeof ArticleRevisionDecoder>
+  _cacheMutation: Record<string, never>
   Comment: t.TypeOf<typeof CommentDecoder>
   CoursePage: t.TypeOf<typeof CoursePageDecoder>
   CoursePageRevision: t.TypeOf<typeof CoursePageRevisionDecoder>
   Course: t.TypeOf<typeof CourseDecoder>
   CourseRevision: t.TypeOf<typeof CourseRevisionDecoder>
+  EntityMutation: Record<string, never>
   Event: t.TypeOf<typeof EventDecoder>
   EventRevision: t.TypeOf<typeof EventRevisionDecoder>
   ExerciseGroup: t.TypeOf<typeof ExerciseGroupDecoder>
@@ -93,6 +95,7 @@ export interface Models {
   Page: t.TypeOf<typeof PageDecoder>
   PageRevision: t.TypeOf<typeof PageRevisionDecoder>
   Query: Record<string, never>
+  SubscriptionQuery: Record<string, never>
   Solution: t.TypeOf<typeof SolutionDecoder>
   SolutionRevision: t.TypeOf<typeof SolutionRevisionDecoder>
   TaxonomyTerm: t.TypeOf<typeof TaxonomyTermDecoder>

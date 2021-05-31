@@ -21,12 +21,13 @@
  */
 import * as R from 'ramda'
 
-import { Model, PickResolvers } from '~/internals/graphql'
+import { PickResolvers } from '~/internals/graphql'
 import {
   DiscriminatorType,
   EntityRevisionType,
   EntityType,
 } from '~/model/decoder'
+import { resolveEvents } from '~/schema/notification/resolvers'
 import { createAliasResolvers } from '~/schema/uuid/alias/utils'
 
 const validTypes = [
@@ -35,10 +36,21 @@ const validTypes = [
   ...Object.values(EntityRevisionType),
 ]
 
-export function isUnsupportedUuid(payload: Model<'AbstractUuid'>) {
-  return !R.includes(payload.__typename, validTypes)
+export function isSupportedUuidType(name: string) {
+  return R.includes(name, validTypes)
 }
 
-export function createUuidResolvers(): PickResolvers<'AbstractUuid', 'alias'> {
-  return createAliasResolvers()
+export function createUuidResolvers(): PickResolvers<
+  'AbstractUuid',
+  'alias' | 'events'
+> {
+  return {
+    ...createAliasResolvers(),
+    events(uuid, payload, { dataSources }) {
+      return resolveEvents({
+        payload: { ...payload, objectId: uuid.id },
+        dataSources,
+      })
+    },
+  }
 }

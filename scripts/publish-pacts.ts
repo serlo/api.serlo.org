@@ -23,7 +23,7 @@ import pact from '@pact-foundation/pact-node'
 import { spawnSync } from 'child_process'
 import * as path from 'path'
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires,import/no-commonjs
+// eslint-disable-next-line @typescript-eslint/no-var-requires,import/extensions,import/no-commonjs
 const { version } = require('../lerna.json') as { version: string }
 
 const result = spawnSync('git', ['rev-parse', '--short', 'HEAD'], {

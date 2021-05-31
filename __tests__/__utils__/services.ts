@@ -57,8 +57,15 @@ export function givenSpreadsheet(
   spreadsheets[toKey(args)] = args.values
 }
 
-export function returnsJson(data: unknown): RestResolver {
-  return (_req, res, ctx) => res(ctx.json(data as Record<string, unknown>))
+export function returnsJson({
+  status = 200,
+  json,
+}: {
+  status?: number
+  json: unknown
+}): RestResolver {
+  return (_req, res, ctx) =>
+    res(ctx.status(status), ctx.json(json as Record<string, unknown>))
 }
 
 export function returnsMalformedJson(): RestResolver {
@@ -69,19 +76,19 @@ export function hasInternalServerError(): RestResolver {
   return (_req, res, ctx) => res(ctx.status(500))
 }
 
-function toKey(query: SpreadsheetQuery) {
-  return [query.spreadsheetId, query.range, query.majorDimension].join('/')
-}
-
-type SpreadsheetApiResolver = RestResolver<never, SpreadsheetQueryBasic>
-
-type RestResolver<
+export type RestResolver<
   RequestBodyType = RestRequest['body'],
   RequestParamsType = RestRequest['params']
 > = ResponseResolver<
   RestRequest<RequestBodyType, RequestParamsType>,
   typeof restContext
 >
+
+function toKey(query: SpreadsheetQuery) {
+  return [query.spreadsheetId, query.range, query.majorDimension].join('/')
+}
+
+type SpreadsheetApiResolver = RestResolver<never, SpreadsheetQueryBasic>
 
 interface SpreadsheetQueryBasic {
   range: string

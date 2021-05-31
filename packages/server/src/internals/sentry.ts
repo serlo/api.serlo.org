@@ -23,13 +23,30 @@ import * as Sentry from '@sentry/node'
 import type { ApolloServerPlugin } from 'apollo-server-plugin-base'
 import R from 'ramda'
 
-import { InvalidValueError } from './model'
+import { InvalidValueFromListener } from './data-source'
+import { InvalidCurrentValueError } from './data-source-helper'
 
-export function initializeSentry(context: string) {
+export function initializeSentry({
+  dsn = process.env.SENTRY_DSN,
+  environment = process.env.ENVIRONMENT,
+  context,
+}: {
+  context: string
+  dsn?: string
+  environment?: string
+}) {
   Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    environment: process.env.ENVIRONMENT,
+    dsn,
+    environment,
     release: `api.serlo.org-${context}@${process.env.SENTRY_RELEASE || ''}`,
+  })
+
+  Sentry.addGlobalEventProcessor((event) => {
+    if (event.contexts) {
+      event.contexts = stringifyContexts(event.contexts)
+    }
+
+    return event
   })
 }
 
@@ -54,15 +71,11 @@ export function createSentryPlugin(): ApolloServerPlugin {
 
             Sentry.captureException(error, (scope) => {
               scope.setTag('kind', ctx.operationName)
+
+              const { query, variables } = ctx.request
               scope.setContext('graphql', {
-                query: ctx.request.query,
-                ...(ctx.request.variables === undefined
-                  ? {}
-                  : {
-                      variables: stringifyObjectProperties(
-                        ctx.request.variables
-                      ),
-                    }),
+                query,
+                ...(variables === undefined ? {} : { variables }),
               })
 
               if (error.path) {
@@ -73,18 +86,28 @@ export function createSentryPlugin(): ApolloServerPlugin {
                 })
               }
 
-              if (error.originalError !== undefined) {
-                if (error.originalError instanceof InvalidValueError) {
-                  scope.setFingerprint([
-                    JSON.stringify(error.originalError.invalidValue),
-                  ])
+              const { originalError } = error
 
-                  scope.setContext('decoder', {
-                    invalidValue: stringifyObjectProperties(
-                      error.originalError.invalidValue
-                    ),
-                  })
-                }
+              if (originalError instanceof InvalidCurrentValueError) {
+                const { errorContext } = originalError
+
+                scope.setFingerprint([
+                  'invalid-value',
+                  'data-source',
+                  JSON.stringify(errorContext.invalidCurrentValue),
+                ])
+                scope.setContext('error', errorContext)
+              }
+
+              if (originalError instanceof InvalidValueFromListener) {
+                const { errorContext } = originalError
+
+                scope.setFingerprint([
+                  'invalid-value',
+                  'listener',
+                  errorContext.key,
+                ])
+                scope.setContext('error', errorContext)
               }
 
               return scope
@@ -96,14 +119,24 @@ export function createSentryPlugin(): ApolloServerPlugin {
   }
 }
 
-function stringifyObjectProperties(value: unknown) {
-  return typeof value === 'object' && value !== null
-    ? R.mapObjIndexed(stringifyObjects, value)
+function stringifyContexts(contexts: Record<string, Record<string, unknown>>) {
+  return R.mapObjIndexed(R.mapObjIndexed(stringifyContextValue), contexts)
+}
+
+function stringifyContextValue(value: unknown) {
+  return Array.isArray(value)
+    ? R.map(stringify, value)
+    : typeof value === 'object' && value !== null
+    ? R.mapObjIndexed(stringify, value)
+    : value === null
+    ? JSON.stringify(value)
     : value
 }
 
-function stringifyObjects(value: unknown) {
-  return typeof value === 'object' ? JSON.stringify(value, null, 2) : value
+function stringify(value: unknown) {
+  return typeof value === 'object' || typeof value === 'string'
+    ? JSON.stringify(value, null, 2)
+    : value
 }
 
 export { Sentry }

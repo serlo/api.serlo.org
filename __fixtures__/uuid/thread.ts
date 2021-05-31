@@ -24,7 +24,6 @@ import { article } from './article'
 import { user, user2 } from './user'
 import { Model } from '~/internals/graphql'
 import { DiscriminatorType } from '~/model/decoder'
-import { UnsupportedComment, UnsupportedThread } from '~/types'
 
 export const comment: Model<'Comment'> = {
   id: 27778,
@@ -84,12 +83,4 @@ export const comment3: Model<'Comment'> = {
     'Das obere Beispiel ist "ungut". Denn man hat da Kettenrechnungen hintereinander gestellt und mehrere Gleichzeitszeichen in einer Zeile, aber am Anfang ist die Rechnung 1+2 und am Ende ist die Lösung 6. Mathematisch ist das eine falsche Schreibweise, auch wenn man üblicherweise so rechnet. Bei der zweiten Variante ist das besser gelöst, denn da wird diese Nebenrechnung nicht in die Zeile der Endlösung reingeschrieben.',
   parentId: 1495,
   childrenIds: [],
-}
-
-export const unsupportedThread: UnsupportedThread = {
-  id: 15468,
-}
-
-export const unsupportedComment: UnsupportedComment = {
-  id: 15469,
 }

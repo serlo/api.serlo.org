@@ -2,6 +2,116 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.24.6](https://github.com/serlo/api.serlo.org/compare/v0.24.5..v0.24.6) - May 28, 2021
+
+### Added
+
+- mutation for checking out a revision
+
+- mutation for rejecting a revision
+
+### Internal
+
+- Remove UnsupportedComment
+
+## [v0.24.5](https://github.com/serlo/api.serlo.org/compare/v0.24.4..v0.24.5) - May 25, 2021
+
+### Internal
+
+- Fix: Taxonomy term resolver can handle children which are null.
+
+## [v0.24.4](https://github.com/serlo/api.serlo.org/compare/v0.24.3..v0.24.4) - May 24, 2021
+
+### Internal
+
+- Improve Sentry integration.
+
+## [v0.24.3](https://github.com/serlo/api.serlo.org/compare/v0.24.2..v0.24.3) - May 21, 2021
+
+### Internal
+
+- Improve Sentry integration.
+
+- Code refactoring for validating uuids.
+
+## [v0.24.2](https://github.com/serlo/api.serlo.org/compare/v0.24.1..v0.24.2) - May 19, 2021
+
+### Internal
+
+- Improve Sentry integration.
+
+## [v0.24.1](https://github.com/serlo/api.serlo.org/compare/v0.24.0..v0.24.1) - May 18, 2021
+
+### Internal
+
+- **swr-queue-worker**. Fix Sentry integration.
+
+- **swr-queue-worker**. Re-enable SWR for getUuid.
+
+- Report source of invalid cache values.
+
+- Reject ancestors' cache values when invalid value could not be repaired.
+
+## [v0.24.0](https://github.com/serlo/api.serlo.org/compare/v0.23.2..v0.24.0) - May 12, 2021
+
+### Breaking Changes
+
+- **cache**. Move queries into `_cache` namespace.
+
+### Internal
+
+- Reject invalid values provided by listeners.
+
+- Improve Sentry integration.
+
+## [v0.23.2](https://github.com/serlo/api.serlo.org/compare/v0.23.1..v0.23.2) - May 10, 2021
+
+### Added
+
+- **events**. Add `events` Query.
+
+- **threads**. Add `legacyObject` to threads and comments.
+
+### Fixed
+
+- **swr-queue**. Handle stuck jobs gracefully.
+
+### Internal
+
+- Improve Sentry integration.
+
+## [v0.23.1](https://github.com/serlo/api.serlo.org/compare/v0.23.0..v0.23.1) - May 4, 2021
+
+### Added
+
+- **authorization**. Add `Entity.setLicense` permission.
+
+- **authorization**. Add `Entity.addChild`, `Entity.removeChild` and `Entity.orderChildren` permissions.
+
+- **authorization**. Add `File.create` and `File.delete` permissions.
+
+- **authorization**. Add `License.create`, `License.delete` and `License.set` permissions
+
+- **authorization**. Add `Page.set` permission.
+
+- **authorization**. Add `TaxonomyTerm.addChild`, `TaxonomyTerm.removeChild` and `TaxonomyTerm.orderChildren` permissions.
+
+- **authorization**. Add `TaxonomyTerm.set` permission.
+
+- **authorization**. Add `Thread.deleteThread` and `Thread.deleteComment` permissions.
+
+- **authorization**. Add `Uuid.delete` permission.
+
+- **subscription**. Add `currentUserHasSubscribed`.
+
+- **threads**. Add `trashed`.
+
+### Internal
+
+- Reject various invalid cache values.
+
+- Improve Sentry integration.
+
 ## [v0.23.0](https://github.com/serlo/api.serlo.org/compare/v0.22.5..v0.23.0) - April 26, 2021
 
 ### Added

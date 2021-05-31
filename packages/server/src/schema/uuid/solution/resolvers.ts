@@ -36,14 +36,10 @@ export const resolvers: TypeResolvers<Solution> &
   Solution: {
     ...createRepositoryResolvers({ revisionDecoder: SolutionRevisionDecoder }),
     async exercise(solution, _args, { dataSources }) {
-      const exercise = await dataSources.model.serlo.getUuidWithCustomDecoder({
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: solution.parentId,
         decoder: AbstractExerciseDecoder,
       })
-
-      if (exercise === null) throw new Error('exercise cannot be null')
-
-      return exercise
     },
   },
   SolutionRevision: createRevisionResolvers({

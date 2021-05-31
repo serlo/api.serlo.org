@@ -34,16 +34,27 @@ import {
   NavigationDecoder,
   NavigationDataDecoder,
   DiscriminatorType,
+  EntityRevisionDecoder,
+  EntityDecoder,
 } from './decoder'
+import {
+  createMutation,
+  createQuery,
+  createRequest,
+} from '~/internals/data-source-helper'
 import { Environment } from '~/internals/environment'
 import { Model } from '~/internals/graphql'
-import { createMutation, createQuery, ModelQuery } from '~/internals/model'
 import { isInstance } from '~/schema/instance/utils'
 import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
-import { isUnsupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
+import { isSupportedUuidType } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
-import { Instance, ThreadCreateThreadInput, UserDeleteBotInput, UserDeleteRegularUserInput } from '~/types'
-import { UserSetEmailInput } from '@serlo/api'
+import {
+  Instance,
+  ThreadCreateThreadInput,
+  UserDeleteBotInput,
+  UserDeleteRegularUserInput,
+  UserSetEmailInput,
+} from '~/types'
 
 export function createSerloModel({
   environment,
@@ -86,7 +97,7 @@ export function createSerloModel({
   const getUuid = createQuery(
     {
       decoder: t.union([UuidDecoder, t.null]),
-      enableSwr: false,
+      enableSwr: true,
       getCurrentValue: async ({ id }: { id: number }) => {
         const uuid = (await handleMessage({
           message: {
@@ -97,7 +108,9 @@ export function createSerloModel({
           },
           expectedStatusCodes: [200, 404],
         })) as Model<'AbstractUuid'> | null
-        return uuid === null || isUnsupportedUuid(uuid) ? null : uuid
+        return uuid !== null && isSupportedUuidType(uuid.__typename)
+          ? uuid
+          : null
       },
       maxAge: { hour: 1 },
       getKey: ({ id }) => {
@@ -112,36 +125,21 @@ export function createSerloModel({
     environment
   )
 
-  async function getUuidWithCustomDecoder<S extends Model<'AbstractUuid'>>({
-    id,
-    decoder,
-  }: {
-    id: number
-    decoder: t.Type<S>
-  }): Promise<S | null> {
-    return getUuid._querySpec.queryWithDecoders(
-      { id },
-      decoder,
-      t.union([decoder, t.null])
-    )
+  async function getUuidWithCustomDecoder<
+    S extends Model<'AbstractUuid'> | null
+  >({ id, decoder }: { id: number; decoder: t.Type<S> }): Promise<S> {
+    return getUuid._querySpec.queryWithDecoder({ id }, decoder)
   }
 
-  const setUuidState = createMutation<
-    {
-      ids: number[]
-      userId: number
-      trashed: boolean
-    },
-    void
-  >({
-    legacyMutate: async ({ ids, userId, trashed }) => {
+  const setUuidState = createMutation({
+    decoder: t.void,
+    async mutate(payload: { ids: number[]; userId: number; trashed: boolean }) {
       await handleMessageWithoutResponse({
-        message: {
-          type: 'UuidSetStateMutation',
-          payload: { ids, userId, trashed },
-        },
+        message: { type: 'UuidSetStateMutation', payload },
         expectedStatusCodes: [200],
       })
+    },
+    async updateCache({ ids, trashed }) {
       await getUuid._querySpec.setCache({
         payloads: ids.map((id) => {
           return { id }
@@ -156,8 +154,9 @@ export function createSerloModel({
     },
   })
 
-  const getActiveAuthorIds: ModelQuery<undefined, number[]> = createQuery(
+  const getActiveAuthorIds = createQuery(
     {
+      decoder: t.array(t.number),
       enableSwr: true,
       getCurrentValue: async () => {
         const response = await handleMessageWithoutResponse({
@@ -180,8 +179,9 @@ export function createSerloModel({
     environment
   )
 
-  const getActiveReviewerIds = createQuery<undefined, number[]>(
+  const getActiveReviewerIds = createQuery(
     {
+      decoder: t.array(t.number),
       enableSwr: true,
       getCurrentValue: async () => {
         const response = await handleMessageWithoutResponse({
@@ -205,36 +205,35 @@ export function createSerloModel({
   )
 
   const deleteBot = createMutation({
-    decoder: t.type({usernames: t.array(t.string)}),
+    decoder: t.type({ usernames: t.array(t.string) }),
     mutate: (payload: UserDeleteBotInput) => {
-      const response =  handleMessage({
+      const response = handleMessage({
         message: { type: 'UserDeleteBotMutation', payload },
         expectedStatusCodes: [200],
       })
-    }
+    },
     // TODO: updateCache: User löschen + Inhalte löschen
   })
 
   const deleteRegularUser = createMutation({
-    decoder: t.type({usernames: t.array(t.string)}),
+    decoder: t.type({ usernames: t.array(t.string) }),
     mutate: (payload: UserDeleteRegularUserInput) => {
       return handleMessage({
-        message: { type: 'UserDeleteRegularUserMutation', payload},
+        message: { type: 'UserDeleteRegularUserMutation', payload },
         expectedStatusCodes: [200],
       })
     },
     updateCache: async (payload, value) => {
       if (value !== null) {
-        
       }
-    }
+    },
   })
 
   const setEmail = createMutation({
-    decoder: t.type({usernames: t.array(t.string), email: t.string}),
+    decoder: t.type({ usernames: t.array(t.string), email: t.string }),
     mutate: (payload: UserSetEmailInput) => {
       return handleMessage({
-        message: { type: 'UserSetEmailMutation', payload},
+        message: { type: 'UserSetEmailMutation', payload },
         expectedStatusCodes: [200],
       })
     },
@@ -243,14 +242,19 @@ export function createSerloModel({
         await getUuid._querySpec.setCache({
           payload: { id: payload.userId },
           getValue: (current) => {
-            if (current == null) {return}
-            else if (current.__typename !== DiscriminatorType.User){return}//hier checken ob das ein user ist}
-            else {current.email = payload.email
-            return current}
-         },
+            if (current == null) {
+              return
+            } else if (current.__typename !== DiscriminatorType.User) {
+              return
+            } //hier checken ob das ein user ist}
+            else {
+              current.email = payload.email
+              return current
+            }
+          },
         })
       }
-    }
+    },
   })
 
   const getNavigationPayload = createQuery(
@@ -282,74 +286,76 @@ export function createSerloModel({
     environment
   )
 
-  const getNavigation = async ({
-    instance,
-    id,
-  }: {
-    instance: Instance
-    id: number
-    // TODO: Wait for https://github.com/serlo/api.serlo.org/pull/299 and use getQuery() for this branch
-  }): Promise<t.TypeOf<typeof NavigationDataDecoder> | null> => {
-    const payload = await getNavigationPayload({ instance })
-    const { data } = payload
+  const getNavigation = createRequest({
+    decoder: t.union([NavigationDataDecoder, t.null]),
+    async getCurrentValue({
+      instance,
+      id,
+    }: {
+      instance: Instance
+      id: number
+    }) {
+      const payload = await getNavigationPayload({ instance })
+      const { data } = payload
 
-    type NodeData = typeof data[number]
+      type NodeData = typeof data[number]
 
-    const leaves: Record<string, number> = {}
+      const leaves: Record<string, number> = {}
 
-    const findLeaves = (node: NodeData): number[] => {
-      return [
-        ...(node.id ? [node.id] : []),
-        ...R.flatten(R.map(findLeaves, node.children || [])),
-      ]
-    }
-
-    for (let i = 0; i < data.length; i++) {
-      findLeaves(data[i]).forEach((id) => {
-        leaves[id] = i
-      })
-    }
-
-    const treeIndex = leaves[id]
-
-    if (treeIndex === undefined) return null
-
-    const findPathToLeaf = (node: NodeData, leaf: number): NodeData[] => {
-      if (node.id !== undefined && node.id === leaf) {
-        return [node]
+      const findLeaves = (node: NodeData): number[] => {
+        return [
+          ...(node.id ? [node.id] : []),
+          ...R.flatten(R.map(findLeaves, node.children || [])),
+        ]
       }
 
-      if (node.children === undefined) return []
-
-      const childPaths = node.children.map((childNode) => {
-        return findPathToLeaf(childNode, leaf)
-      })
-      const goodPaths = childPaths.filter((path) => {
-        return path.length > 0
-      })
-      if (goodPaths.length === 0) return []
-      return [node, ...goodPaths[0]]
-    }
-
-    const nodes = findPathToLeaf(data[treeIndex], id)
-    const path = []
-
-    for (let i = 0; i < nodes.length; i++) {
-      const nodeData = nodes[i]
-      const uuid = nodeData.id ? await getUuid({ id: nodeData.id }) : null
-      const node = {
-        label: nodeData.label,
-        url: (uuid ? uuid.alias : null) || nodeData.url || null,
-        id: uuid ? uuid.id : null,
+      for (let i = 0; i < data.length; i++) {
+        findLeaves(data[i]).forEach((id) => {
+          leaves[id] = i
+        })
       }
-      path.push(node)
-    }
 
-    return {
-      data: data[treeIndex],
-      path,
-    }
-  }
+      const treeIndex = leaves[id]
+
+      if (treeIndex === undefined) return null
+
+      const findPathToLeaf = (node: NodeData, leaf: number): NodeData[] => {
+        if (node.id !== undefined && node.id === leaf) {
+          return [node]
+        }
+
+        if (node.children === undefined) return []
+
+        const childPaths = node.children.map((childNode) => {
+          return findPathToLeaf(childNode, leaf)
+        })
+        const goodPaths = childPaths.filter((path) => {
+          return path.length > 0
+        })
+        if (goodPaths.length === 0) return []
+        return [node, ...goodPaths[0]]
+      }
+
+      const nodes = findPathToLeaf(data[treeIndex], id)
+      const path = []
+
+      for (let i = 0; i < nodes.length; i++) {
+        const nodeData = nodes[i]
+        const uuid = nodeData.id ? await getUuid({ id: nodeData.id }) : null
+        const node = {
+          label: nodeData.label,
+          url: (uuid ? uuid.alias : null) || nodeData.url || null,
+          id: uuid ? uuid.id : null,
+        }
+        path.push(node)
+      }
+
+      return {
+        data: data[treeIndex],
+        path,
+      }
+    },
+  })
 
   const getAlias = createQuery(
     {
@@ -453,6 +459,49 @@ export function createSerloModel({
     environment
   )
 
+  const getNewEvents = createRequest({
+    decoder: t.type({ events: t.array(NotificationEventDecoder) }),
+    async getCurrentValue(payload: { after?: number }) {
+      return await handleMessage({
+        message: { type: 'EventsQuery', payload },
+        expectedStatusCodes: [200],
+      })
+    },
+  })
+
+  const getEvents = createQuery<
+    undefined,
+    Model<'AbstractNotificationEvent'>[]
+  >(
+    {
+      decoder: t.array(NotificationEventDecoder),
+      async getCurrentValue(_payload, current) {
+        current ??= []
+        const lastEvent = R.last(current)
+        const payload = lastEvent === undefined ? {} : { after: lastEvent.id }
+        const updateEvents = await getNewEvents(payload)
+
+        if (updateEvents.events.length === 0) {
+          return current
+        } else {
+          return this.getCurrentValue(
+            undefined,
+            current.concat(updateEvents.events)
+          )
+        }
+      },
+      getKey() {
+        return 'de.serlo.org/events'
+      },
+      getPayload(key: string) {
+        return key === 'de.serlo.org/events' ? O.some(undefined) : O.none
+      },
+      enableSwr: true,
+      maxAge: { minute: 2 },
+    },
+    environment
+  )
+
   const getNotifications = createQuery(
     {
       decoder: t.exact(
@@ -487,26 +536,15 @@ export function createSerloModel({
     environment
   )
 
-  const setNotificationState = createMutation<
-    {
-      ids: number[]
-      userId: number
-      unread: boolean
-    },
-    void
-  >({
-    legacyMutate: async ({ ids, userId, unread }) => {
+  const setNotificationState = createMutation({
+    decoder: t.void,
+    async mutate(payload: { ids: number[]; userId: number; unread: boolean }) {
       await handleMessageWithoutResponse({
-        message: {
-          type: 'NotificationSetStateMutation',
-          payload: {
-            ids,
-            userId,
-            unread,
-          },
-        },
+        message: { type: 'NotificationSetStateMutation', payload },
         expectedStatusCodes: [200],
       })
+    },
+    async updateCache({ ids, userId, unread }) {
       await getNotifications._querySpec.setCache({
         payload: { userId },
         getValue(current) {
@@ -557,28 +595,20 @@ export function createSerloModel({
     environment
   )
 
-  const setSubscription = createMutation<
-    {
+  const setSubscription = createMutation({
+    decoder: t.void,
+    async mutate(payload: {
       ids: number[]
       userId: number
       subscribe: boolean
       sendEmail: boolean
-    },
-    void
-  >({
-    legacyMutate: async ({ ids, userId, subscribe, sendEmail }) => {
+    }) {
       await handleMessageWithoutResponse({
-        message: {
-          type: 'SubscriptionSetMutation',
-          payload: {
-            ids,
-            userId,
-            subscribe,
-            sendEmail,
-          },
-        },
+        message: { type: 'SubscriptionSetMutation', payload },
         expectedStatusCodes: [200],
       })
+    },
+    async updateCache({ ids, userId, subscribe }) {
       await getSubscriptions._querySpec.setCache({
         payload: { userId },
         getValue(current) {
@@ -694,21 +724,21 @@ export function createSerloModel({
     },
   })
 
-  const archiveThread = createMutation<
-    { ids: number[]; archived: boolean; userId: number },
-    void
-  >({
-    legacyMutate: async (payload) => {
+  const archiveThread = createMutation({
+    decoder: t.void,
+    async mutate(payload: {
+      ids: number[]
+      archived: boolean
+      userId: number
+    }) {
       await handleMessageWithoutResponse({
-        message: {
-          type: 'ThreadSetThreadArchivedMutation',
-          payload,
-        },
+        message: { type: 'ThreadSetThreadArchivedMutation', payload },
         expectedStatusCodes: [200],
       })
-      const { ids, archived } = payload
+    },
+    async updateCache({ ids, archived }) {
       await getUuid._querySpec.setCache({
-        payloads: payload.ids.map((id) => {
+        payloads: ids.map((id) => {
           return { id }
         }),
         getValue(current) {
@@ -722,15 +752,66 @@ export function createSerloModel({
     },
   })
 
-  const setCacheValue = createMutation<{ key: string; value: unknown }>({
-    legacyMutate: async ({ key, value }) => {
-      await environment.cache.set({ key, value })
+  const checkoutRevision = createMutation({
+    decoder: t.union([
+      t.type({ success: t.literal(true) }),
+      t.type({ success: t.literal(false), reason: t.string }),
+    ]),
+    async mutate(payload: {
+      revisionId: number
+      userId: number
+      reason: string
+    }) {
+      return await handleMessage({
+        message: { type: 'EntityCheckoutRevisionMutation', payload },
+        expectedStatusCodes: [200, 400],
+      })
+    },
+    async updateCache({ revisionId }) {
+      const revision = await getUuidWithCustomDecoder({
+        id: revisionId,
+        decoder: EntityRevisionDecoder,
+      })
+
+      await getUuid._querySpec.setCache({
+        payload: { id: revision.repositoryId },
+        getValue(current) {
+          if (!EntityDecoder.is(current)) return
+
+          current.currentRevisionId = revisionId
+
+          return current
+        },
+      })
     },
   })
 
-  const removeCacheValue = createMutation<{ key: string }>({
-    legacyMutate: async ({ key }) => {
-      await environment.cache.remove({ key })
+  const rejectRevision = createMutation({
+    decoder: t.union([
+      t.type({ success: t.literal(true) }),
+      t.type({ success: t.literal(false), reason: t.string }),
+    ]),
+    async mutate(payload: {
+      revisionId: number
+      userId: number
+      reason: string
+    }) {
+      return await handleMessage({
+        message: { type: 'EntityRejectRevisionMutation', payload },
+        expectedStatusCodes: [200, 400],
+      })
+    },
+    async updateCache({ revisionId }) {
+      await getUuid._querySpec.setCache({
+        payload: { id: revisionId },
+        getValue(current) {
+          if (!EntityRevisionDecoder.is(current)) return
+
+          current.trashed = true
+
+          return current
+        },
+      })
     },
   })
 
@@ -741,6 +822,7 @@ export function createSerloModel({
     deleteBot,
     deleteRegularUser,
     setEmail,
+    checkoutRevision,
     getActiveAuthorIds,
     getActiveReviewerIds,
     getAlias,
@@ -748,15 +830,15 @@ export function createSerloModel({
     getNavigationPayload,
     getNavigation,
     getNotificationEvent,
+    getEvents,
     getNotifications,
     getSubscriptions,
     setSubscription,
     getThreadIds,
     getUuid,
     getUuidWithCustomDecoder,
+    rejectRevision,
     setUuidState,
-    removeCacheValue,
-    setCacheValue,
     setNotificationState,
   }
 }

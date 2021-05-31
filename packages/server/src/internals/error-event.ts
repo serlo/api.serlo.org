@@ -19,10 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import * as Sentry from '@sentry/node'
 import { array as A } from 'fp-ts'
 import * as F from 'fp-ts/lib/function'
 import R from 'ramda'
+
+import { Sentry } from '~/internals/sentry'
 
 export interface ErrorEvent extends ErrorContext {
   error: Error
@@ -31,7 +32,11 @@ export interface ErrorEvent extends ErrorContext {
 export function addContext(
   context: ErrorContext
 ): (error: ErrorEvent) => ErrorEvent {
-  return R.mergeDeepRight(context)
+  return R.mergeDeepWith(
+    (a: unknown, b: unknown) =>
+      Array.isArray(a) && Array.isArray(b) ? R.concat(a, b) : a,
+    context
+  )
 }
 
 export function consumeErrorEvent<A>(defaultValue: A) {
@@ -69,7 +74,7 @@ export function assertAll(
   }
 }
 
-function captureErrorEvent(event: ErrorEvent) {
+export function captureErrorEvent(event: ErrorEvent) {
   Sentry.captureException(event.error, (scope) => {
     if (event.location) {
       if (!event.error.message.startsWith(event.location)) {
@@ -80,27 +85,26 @@ function captureErrorEvent(event: ErrorEvent) {
     }
 
     if (event.locationContext) {
-      scope.setContext('location', serializeRecord(event.locationContext))
+      scope.setContext('location', event.locationContext)
     }
 
     if (event.errorContext) {
-      scope.setContext('error', serializeRecord(event.errorContext))
+      scope.setContext('error', event.errorContext)
+    }
+
+    if (event.fingerprint) {
+      scope.setFingerprint(event.fingerprint)
     }
 
     scope.setLevel(Sentry.Severity.Error)
 
     return scope
   })
-
-  function serializeRecord(record: Record<string, unknown>) {
-    return R.mapObjIndexed((value) => {
-      return typeof value === 'object' ? JSON.stringify(value, null, 2) : value
-    }, record)
-  }
 }
 
 export interface ErrorContext {
   location?: string
+  fingerprint?: string[]
   locationContext?: Record<string, unknown>
   errorContext?: Record<string, unknown>
 }

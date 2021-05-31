@@ -19,15 +19,29 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Context } from '~/internals/graphql'
-import { UserDecoder } from '~/model/decoder'
 
-export async function resolveUser(
-  { id }: { id: number },
-  { dataSources }: Context
-) {
-  return await dataSources.model.serlo.getUuidWithCustomDecoder({
-    id,
-    decoder: UserDecoder,
-  })
+import { Model } from '~/internals/graphql'
+
+export class Database {
+  private uuids: Record<number, Model<'AbstractUuid'> | undefined> = {}
+
+  public getUuid(id: number) {
+    return this.uuids[id]
+  }
+
+  public changeUuid(id: number, update: Partial<Model<'AbstractUuid'>>) {
+    this.uuids[id] = { ...this.uuids[id], ...(update as Model<'AbstractUuid'>) }
+  }
+
+  public hasUuid(uuid: Model<'AbstractUuid'>) {
+    // A copy of the uuid is created here so that changes of the uuid object in
+    // the `uuids` database does not affect the passed object
+    this.uuids[uuid.id] = { ...uuid }
+  }
+
+  public hasUuids(uuids: Model<'AbstractUuid'>[]) {
+    for (const uuid of uuids) {
+      this.hasUuid(uuid)
+    }
+  }
 }

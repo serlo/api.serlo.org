@@ -21,30 +21,23 @@
  */
 import { createNotificationEventResolvers } from '../utils'
 import { TypeResolvers } from '~/internals/graphql'
-import { TaxonomyTermDecoder } from '~/model/decoder'
+import { TaxonomyTermDecoder, UuidDecoder } from '~/model/decoder'
 import { CreateTaxonomyLinkNotificationEvent } from '~/types'
 
 export const resolvers: TypeResolvers<CreateTaxonomyLinkNotificationEvent> = {
   CreateTaxonomyLinkNotificationEvent: {
     ...createNotificationEventResolvers(),
     async parent(notificationEvent, _args, { dataSources }) {
-      const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: notificationEvent.parentId,
         decoder: TaxonomyTermDecoder,
       })
-
-      if (parent === null) throw new Error('parent cannot be null')
-
-      return parent
     },
     async child(notificationEvent, _args, { dataSources }) {
-      const child = await dataSources.model.serlo.getUuid({
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: notificationEvent.childId,
+        decoder: UuidDecoder,
       })
-
-      if (child === null) throw new Error('child cannot be null')
-
-      return child
     },
   },
 }
