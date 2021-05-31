@@ -297,8 +297,8 @@ export const setThreadStateNotificationEvent: Model<'SetThreadStateNotificationE
     instance: Instance.De,
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
-    objectId: unsupportedThread.id,
-    threadId: unsupportedThread.id,
+    objectId: comment.id,
+    threadId: comment.id,
     archived: true,
   }
 

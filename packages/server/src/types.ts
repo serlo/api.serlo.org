@@ -1657,7 +1657,7 @@ export type SetThreadStateNotificationEvent = AbstractNotificationEvent & Instan
   date: Scalars['DateTime'];
   actor: User;
   objectId: Scalars['Int'];
-  thread: UnsupportedThread;
+  thread: Thread;
   archived: Scalars['Boolean'];
 };
 
@@ -3504,7 +3504,7 @@ export type SetThreadStateNotificationEventResolvers<ContextType = Context, Pare
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   actor?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   objectId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  thread?: Resolver<ResolversTypes['UnsupportedThread'], ParentType, ContextType>;
+  thread?: Resolver<ResolversTypes['Thread'], ParentType, ContextType>;
   archived?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
