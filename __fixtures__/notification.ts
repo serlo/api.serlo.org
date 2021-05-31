@@ -29,7 +29,6 @@ import {
   taxonomyTermCurriculumTopic,
   taxonomyTermRoot,
   taxonomyTermSubject,
-  unsupportedThread,
   user,
   comment,
 } from './uuid'

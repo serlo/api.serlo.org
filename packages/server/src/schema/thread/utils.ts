@@ -87,13 +87,19 @@ export function createThreadResolvers(): PickResolvers<'ThreadAware'> {
   }
 }
 
-export async function resolveThread(firstCommentId: number, dataSources: Context["dataSources"]): Promise<Model<"Thread">> {
+export async function resolveThread(
+  firstCommentId: number,
+  dataSources: Context['dataSources']
+): Promise<Model<'Thread'>> {
   const firstComment = await dataSources.model.serlo.getUuidWithCustomDecoder({
     id: firstCommentId,
     decoder: CommentDecoder,
   })
 
-  const remainingComments = await resolveComments(dataSources, firstComment.childrenIds)
+  const remainingComments = await resolveComments(
+    dataSources,
+    firstComment.childrenIds
+  )
 
   return {
     __typename: 'Thread' as const,
