@@ -79,18 +79,19 @@ extend type Mutation {
 }
 
 type UserMutation {
-  deleteBot(input: UserDeleteBotInput!): UserDeleteBotResponse
+  deleteBot(input: UserDeleteBotInput!): [UserDeleteBotResponse!]!
   deleteRegularUser(input: UserDeleteRegularUserInput!): UserDeleteRegularUserResponse
   setEmail(input: UserSetEmailInput!): UserSetEmailResponse
 }
 
 type UserDeleteBotInput {
-  userIds: [Int!]!
+  botIds: [Int!]!
 }
 
 type UserDeleteBotResponse {
   success: Boolean!
-  usernames: [String!]!
+  username: String!
+  reason: String
 }
 
 type UserDeleteRegularUserInput {

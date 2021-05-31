@@ -2075,13 +2075,14 @@ export type UserConnection = {
 
 export type UserDeleteBotInput = {
   __typename?: 'UserDeleteBotInput';
-  userIds: Array<Scalars['Int']>;
+  botIds: Array<Scalars['Int']>;
 };
 
 export type UserDeleteBotResponse = {
   __typename?: 'UserDeleteBotResponse';
   success: Scalars['Boolean'];
-  usernames: Array<Scalars['String']>;
+  username: Scalars['String'];
+  reason?: Maybe<Scalars['String']>;
 };
 
 export type UserDeleteRegularUserInput = {
@@ -2103,7 +2104,7 @@ export type UserEdge = {
 
 export type UserMutation = {
   __typename?: 'UserMutation';
-  deleteBot?: Maybe<UserDeleteBotResponse>;
+  deleteBot: Array<UserDeleteBotResponse>;
   deleteRegularUser?: Maybe<UserDeleteRegularUserResponse>;
   setEmail?: Maybe<UserSetEmailResponse>;
 };

@@ -2079,13 +2079,14 @@ export type UserConnection = {
 
 export type UserDeleteBotInput = {
   __typename?: 'UserDeleteBotInput';
-  userIds: Array<Scalars['Int']>;
+  botIds: Array<Scalars['Int']>;
 };
 
 export type UserDeleteBotResponse = {
   __typename?: 'UserDeleteBotResponse';
   success: Scalars['Boolean'];
-  usernames: Array<Scalars['String']>;
+  username: Scalars['String'];
+  reason?: Maybe<Scalars['String']>;
 };
 
 export type UserDeleteRegularUserInput = {
@@ -2107,7 +2108,7 @@ export type UserEdge = {
 
 export type UserMutation = {
   __typename?: 'UserMutation';
-  deleteBot?: Maybe<UserDeleteBotResponse>;
+  deleteBot: Array<UserDeleteBotResponse>;
   deleteRegularUser?: Maybe<UserDeleteRegularUserResponse>;
   setEmail?: Maybe<UserSetEmailResponse>;
 };
@@ -3774,13 +3775,14 @@ export type UserConnectionResolvers<ContextType = Context, ParentType extends Re
 };
 
 export type UserDeleteBotInputResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserDeleteBotInput'] = ResolversParentTypes['UserDeleteBotInput']> = {
-  userIds?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType>;
+  botIds?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserDeleteBotResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserDeleteBotResponse'] = ResolversParentTypes['UserDeleteBotResponse']> = {
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  usernames?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  reason?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3802,7 +3804,7 @@ export type UserEdgeResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 export type UserMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserMutation'] = ResolversParentTypes['UserMutation']> = {
-  deleteBot?: Resolver<Maybe<ResolversTypes['UserDeleteBotResponse']>, ParentType, ContextType, RequireFields<UserMutationDeleteBotArgs, 'input'>>;
+  deleteBot?: Resolver<Array<ResolversTypes['UserDeleteBotResponse']>, ParentType, ContextType, RequireFields<UserMutationDeleteBotArgs, 'input'>>;
   deleteRegularUser?: Resolver<Maybe<ResolversTypes['UserDeleteRegularUserResponse']>, ParentType, ContextType, RequireFields<UserMutationDeleteRegularUserArgs, 'input'>>;
   setEmail?: Resolver<Maybe<ResolversTypes['UserSetEmailResponse']>, ParentType, ContextType, RequireFields<UserMutationSetEmailArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

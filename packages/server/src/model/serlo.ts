@@ -205,14 +205,25 @@ export function createSerloModel({
   )
 
   const deleteBot = createMutation({
-    decoder: t.type({ usernames: t.array(t.string) }),
-    mutate: (payload: UserDeleteBotInput) => {
-      const response = handleMessage({
+    decoder: t.union([
+      t.type({ success: t.literal(true), deletedUuids: t.array(t.number) }),
+      t.type({ success: t.literal(false), reason: t.string }),
+    ]),
+    mutate(payload: { botId: number }) {
+      return handleMessage({
         message: { type: 'UserDeleteBotMutation', payload },
         expectedStatusCodes: [200],
       })
     },
-    // TODO: updateCache: User löschen + Inhalte löschen
+    async updateCache({ botId }, serverPayload) {
+      if (!serverPayload.success) return
+
+      await getUuid._querySpec.removeCache({
+        payloads: [botId, ...serverPayload.deletedUuids].map((id) => {
+          return { id }
+        }),
+      })
+    },
   })
 
   const deleteRegularUser = createMutation({
