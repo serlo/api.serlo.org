@@ -37,7 +37,6 @@ import {
   exerciseGroup,
   exerciseGroupRevision,
   exerciseRevision,
-  getArticleDataWithoutSubResolvers,
   groupedExercise,
   groupedExerciseRevision,
   page,
@@ -58,6 +57,7 @@ import {
   createMessageHandler,
   createTestClient,
   createUuidHandler,
+  getTypenameAndId,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import {
@@ -142,25 +142,15 @@ describe('uuid', () => {
       query: gql`
         query uuid($alias: AliasInput!) {
           uuid(alias: $alias) {
+            id
             __typename
-            ... on Article {
-              id
-              trashed
-              instance
-              date
-            }
           }
         }
       `,
       variables: {
-        alias: {
-          instance: Instance.De,
-          path: `/entity/view/${article.id}`,
-        },
+        alias: { instance: Instance.De, path: `/entity/view/${article.id}` },
       },
-      data: {
-        uuid: getArticleDataWithoutSubResolvers(article),
-      },
+      data: { uuid: getTypenameAndId(article) },
       client,
     })
   })
@@ -172,12 +162,7 @@ describe('uuid', () => {
         query uuid($alias: AliasInput!) {
           uuid(alias: $alias) {
             __typename
-            ... on Article {
-              id
-              trashed
-              instance
-              date
-            }
+            id
           }
         }
       `,
@@ -187,9 +172,7 @@ describe('uuid', () => {
           path: `/mathe/${article.id}/das-viereck`,
         },
       },
-      data: {
-        uuid: getArticleDataWithoutSubResolvers(article),
-      },
+      data: { uuid: getTypenameAndId(article) },
       client,
     })
   })
@@ -245,7 +228,7 @@ describe('uuid', () => {
   test('returns null when requested id is too high to be an uuid', async () => {
     await assertSuccessfulGraphQLQuery({
       query: gql`
-        query($path: String!) {
+        query ($path: String!) {
           uuid(alias: { instance: de, path: $path }) {
             __typename
           }
@@ -262,7 +245,7 @@ describe('uuid', () => {
 
     await assertFailingGraphQLQuery({
       query: gql`
-        query($id: Int!) {
+        query ($id: Int!) {
           uuid(id: $id) {
             __typename
           }
@@ -436,7 +419,7 @@ describe('property "alias"', () => {
 
       await assertSuccessfulGraphQLQuery({
         query: gql`
-          query($id: Int) {
+          query ($id: Int) {
             uuid(id: $id) {
               alias
             }

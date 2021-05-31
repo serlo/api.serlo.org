@@ -755,6 +755,103 @@ async function exec(): Promise<void> {
         ['alias', 'Resolve id aliases directly as a temporary workaround.'],
       ],
     },
+    {
+      tagName: 'v0.23.1',
+      date: '2021-05-04',
+      added: [
+        ['authorization', 'Add `Entity.setLicense` permission.'],
+        [
+          'authorization',
+          'Add `Entity.addChild`, `Entity.removeChild` and `Entity.orderChildren` permissions.',
+        ],
+        ['authorization', 'Add `File.create` and `File.delete` permissions.'],
+        [
+          'authorization',
+          'Add `License.create`, `License.delete` and `License.set` permissions',
+        ],
+        ['authorization', 'Add `Page.set` permission.'],
+        [
+          'authorization',
+          'Add `TaxonomyTerm.addChild`, `TaxonomyTerm.removeChild` and `TaxonomyTerm.orderChildren` permissions.',
+        ],
+        ['authorization', 'Add `TaxonomyTerm.set` permission.'],
+        [
+          'authorization',
+          'Add `Thread.deleteThread` and `Thread.deleteComment` permissions.',
+        ],
+        ['authorization', 'Add `Uuid.delete` permission.'],
+
+        ['subscription', 'Add `currentUserHasSubscribed`.'],
+        ['threads', 'Add `trashed`.'],
+      ],
+      internal: [
+        'Reject various invalid cache values.',
+        'Improve Sentry integration.',
+      ],
+    },
+    {
+      tagName: 'v0.23.2',
+      date: '2021-05-10',
+      added: [
+        ['events', 'Add `events` Query.'],
+        ['threads', 'Add `legacyObject` to threads and comments.'],
+      ],
+      fixed: [['swr-queue', 'Handle stuck jobs gracefully.']],
+      internal: ['Improve Sentry integration.'],
+    },
+    {
+      tagName: 'v0.24.0',
+      date: '2021-05-12',
+      breakingChanges: [['cache', 'Move queries into `_cache` namespace.']],
+      internal: [
+        'Reject invalid values provided by listeners.',
+        'Improve Sentry integration.',
+      ],
+    },
+    {
+      tagName: 'v0.24.1',
+      date: '2021-05-18',
+      internal: [
+        ['swr-queue-worker', 'Fix Sentry integration.'],
+        ['swr-queue-worker', 'Re-enable SWR for getUuid.'],
+        'Report source of invalid cache values.',
+        "Reject ancestors' cache values when invalid value could not be repaired.",
+      ],
+    },
+    {
+      tagName: 'v0.24.2',
+      date: '2021-05-19',
+      internal: ['Improve Sentry integration.'],
+    },
+    {
+      tagName: 'v0.24.3',
+      date: '2021-05-21',
+      internal: [
+        'Improve Sentry integration.',
+        'Code refactoring for validating uuids.',
+      ],
+    },
+    {
+      tagName: 'v0.24.4',
+      date: '2021-05-24',
+      internal: ['Improve Sentry integration.'],
+    },
+    {
+      tagName: 'v0.24.5',
+      date: '2021-05-25',
+      internal: [
+        'Fix: Taxonomy term resolver can handle children which are null.',
+      ],
+    },
+    {
+      tagName: 'v0.24.6',
+      date: '2021-05-28',
+      added: [
+        'mutation for checking out a revision',
+        'mutation for rejecting a revision',
+      ],
+      internal: ['Remove UnsupportedComment'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

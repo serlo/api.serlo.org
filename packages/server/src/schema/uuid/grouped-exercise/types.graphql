@@ -9,6 +9,14 @@ type GroupedExercise implements AbstractUuid & AbstractRepository & AbstractEnti
     archived: Boolean
     trashed: Boolean
   ): ThreadsConnection!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
   instance: Instance!
   alias: String
   date: DateTime!
@@ -38,6 +46,14 @@ type GroupedExerciseRevision implements AbstractUuid & AbstractRevision & Abstra
     archived: Boolean
     trashed: Boolean
   ): ThreadsConnection!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
   date: DateTime!
   repository: GroupedExercise!
   content: String!

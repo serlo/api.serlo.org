@@ -9,6 +9,22 @@ type User implements AbstractUuid & ThreadAware {
     archived: Boolean
     trashed: Boolean
   ): ThreadsConnection!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    actorId: Int
+  ): AbstractNotificationEventConnection!
+  eventsByUser(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    instance: Instance
+    objectId: Int
+  ): AbstractNotificationEventConnection!
   alias: String
   username: String!
   date: DateTime!

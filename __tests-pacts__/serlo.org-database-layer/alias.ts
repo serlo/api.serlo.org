@@ -22,7 +22,7 @@
 import { Matchers } from '@pact-foundation/pact'
 
 import { addMessageInteraction } from '../__utils__'
-import { Payload } from '~/internals/model/types'
+import { Payload } from '~/internals/model'
 import { Instance } from '~/types'
 
 test('AliasQuery', async () => {

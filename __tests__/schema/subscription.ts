@@ -21,11 +21,7 @@
  */
 import { gql } from 'apollo-server'
 
-import {
-  article,
-  getArticleDataWithoutSubResolvers,
-  user,
-} from '../../__fixtures__'
+import { article, user } from '../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
@@ -33,6 +29,7 @@ import {
   createMessageHandler,
   createTestClient,
   createUuidHandler,
+  getTypenameAndId,
 } from '../__utils__'
 
 describe('subscriptions', () => {
@@ -55,9 +52,46 @@ describe('subscriptions', () => {
     await assertSuccessfulGraphQLQuery({
       ...createSubscriptionsQuery(),
       data: {
-        subscriptions: {
-          totalCount: 1,
-          nodes: [getArticleDataWithoutSubResolvers(article)],
+        subscriptions: { totalCount: 1, nodes: [getTypenameAndId(article)] },
+      },
+      client,
+    })
+  })
+
+  test('currentUserHasSubscribed (true case)', async () => {
+    const client = createTestClient({ userId: user.id })
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query subscription($id: Int!) {
+          subscription {
+            currentUserHasSubscribed(id: $id)
+          }
+        }
+      `,
+      variables: { id: article.id },
+      data: {
+        subscription: {
+          currentUserHasSubscribed: true,
+        },
+      },
+      client,
+    })
+  })
+
+  test('currentUserHasSubscribed (false case)', async () => {
+    const client = createTestClient({ userId: user.id })
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query subscription($id: Int!) {
+          subscription {
+            currentUserHasSubscribed(id: $id)
+          }
+        }
+      `,
+      variables: { id: article.id + 1 },
+      data: {
+        subscription: {
+          currentUserHasSubscribed: false,
         },
       },
       client,
@@ -206,11 +240,6 @@ function createSubscriptionsQuery() {
           nodes {
             __typename
             id
-            trashed
-            ... on Article {
-              instance
-              date
-            }
           }
         }
       }

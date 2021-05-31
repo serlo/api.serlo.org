@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { option as O, pipeable } from 'fp-ts'
+import { option as O, function as F } from 'fp-ts'
 // @ts-expect-error Missing types
 import createMsgpack from 'msgpack5'
 import * as R from 'ramda'
@@ -32,10 +32,12 @@ import { Timer } from '../timer'
 import { createLockManager, LockManager } from './lock-manager'
 import { AsyncOrSync } from '~/utils'
 
-const msgpack = (createMsgpack as () => {
-  encode(value: unknown): Buffer
-  decode<T>(buffer: Buffer): T
-})()
+const msgpack = (
+  createMsgpack as () => {
+    encode(value: unknown): Buffer
+    decode(buffer: Buffer): unknown
+  }
+)()
 
 export enum Priority {
   Low,
@@ -52,6 +54,7 @@ export interface Cache {
   set<T>(
     payload: {
       key: string
+      source: string
       priority?: Priority
     } & FunctionOrValue<T>
   ): Promise<void>
@@ -81,46 +84,49 @@ export function createCache({ timer }: { timer: Timer }): Cache {
     this: Cache,
     payload: {
       key: string
+      source: string
       priority?: Priority
     } & FunctionOrValue<T>
   ) {
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    const clientSet = (util.promisify(client.set).bind(client) as unknown) as (
+    const clientSet = util.promisify(client.set).bind(client) as unknown as (
       key: string,
       value: Buffer
     ) => Promise<void>
 
-    const { key, priority = Priority.High } = payload
+    const { key, priority = Priority.High, source } = payload
     const lockManager = lockManagers[priority]
+
+    const lock = await lockManager.lock(key)
     try {
-      const lock = await lockManager.lock(key)
-      try {
-        let value: T | undefined
+      let value: T | undefined
 
-        if (isFunction(payload)) {
-          const current = pipeable.pipe(
-            await this.get<T>({ key }),
-            O.map((entry) => entry.value),
-            O.toUndefined
-          )
+      if (isFunction(payload)) {
+        const current = F.pipe(
+          await this.get<T>({ key }),
+          O.map((entry) => entry.value),
+          O.toUndefined
+        )
 
-          value = await payload.getValue(current)
-        } else {
-          value = payload.value
-        }
-
-        if (value === undefined) return
-
-        const valueWithTimestamp = { value, lastModified: timer.now() }
-        const packedValue = msgpack.encode(valueWithTimestamp)
-        await clientSet(key, packedValue)
-      } catch (e) {
-        log.error(`Failed to set key "${key}":`, e)
-      } finally {
-        await lock.unlock()
+        value = await payload.getValue(current)
+      } else {
+        value = payload.value
       }
+
+      if (value === undefined) return
+
+      const valueWithTimestamp: CacheEntry<T> = {
+        value,
+        source,
+        lastModified: timer.now(),
+      }
+      const packedValue = msgpack.encode(valueWithTimestamp)
+      await clientSet(key, packedValue)
     } catch (e) {
-      log.debug(`Failed to acquire lock for key "${key}":`, e)
+      log.error(`Failed to set key "${key}":`, e)
+      throw e
+    } finally {
+      await lock.unlock()
     }
   }
 
@@ -132,28 +138,23 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       key: string
     }
   ): Promise<O.Option<CacheEntry<T>>> {
-    const clientGet = (util
+    const clientGet = util
       // eslint-disable-next-line @typescript-eslint/unbound-method
       .promisify(client.get)
-      .bind(client) as unknown) as (key: string) => Promise<Buffer | null>
+      .bind(client) as unknown as (key: string) => Promise<Buffer | null>
 
     const packedValue = await clientGet(key)
     if (packedValue === null) return O.none
 
-    const value = msgpack.decode<T | CacheEntry<T>>(packedValue)
+    const value = msgpack.decode(packedValue)
 
-    if (isCacheEntryWithTimestamp<T>(value)) {
-      return O.some(value)
-    }
-
-    await this.set({ key, value })
-    return this.get({ key })
+    return isCacheEntry<T>(value) ? O.some(value) : O.none
   }
 
   const remove = async ({ key }: { key: string }) => {
-    const clientRemove = (util
-      .promisify(client.del)
-      .bind(client) as unknown) as (key: string) => Promise<void>
+    const clientRemove = util.promisify(client.del).bind(client) as unknown as (
+      key: string
+    ) => Promise<void>
 
     await clientRemove(key)
   }
@@ -169,19 +170,19 @@ export function createCache({ timer }: { timer: Timer }): Cache {
   }
 
   const flush = async () => {
-    const clientFlush = (util
+    const clientFlush = util
       // eslint-disable-next-line @typescript-eslint/unbound-method
       .promisify(client.flushdb)
-      .bind(client) as unknown) as () => Promise<void>
+      .bind(client) as unknown as () => Promise<void>
 
     await clientFlush()
   }
 
   const quit = async () => {
-    const clientQuit = (util
+    const clientQuit = util
       // eslint-disable-next-line @typescript-eslint/unbound-method
       .promisify(client.quit)
-      .bind(client) as unknown) as () => Promise<void>
+      .bind(client) as unknown as () => Promise<void>
 
     await Promise.all([
       clientQuit(),
@@ -202,12 +203,11 @@ export function createCache({ timer }: { timer: Timer }): Cache {
 export interface CacheEntry<Value> {
   value: Value
   lastModified: number
+  source: string
 }
 
-function isCacheEntryWithTimestamp<Value>(
-  entry: unknown
-): entry is CacheEntry<Value> {
-  return R.has('lastModified', entry) && R.has('value', entry)
+function isCacheEntry<Value>(value: unknown): value is CacheEntry<Value> {
+  return R.has('lastModified', value) && R.has('value', value)
 }
 
 function isFunction<T>(arg: FunctionOrValue<T>): arg is UpdateFunction<T> {

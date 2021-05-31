@@ -31,7 +31,6 @@ import {
 } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
 import { ExerciseGroup, ExerciseGroupRevision } from '~/types'
-import { isDefined } from '~/utils'
 
 export const resolvers: TypeResolvers<ExerciseGroup> &
   TypeResolvers<ExerciseGroupRevision> = {
@@ -41,7 +40,7 @@ export const resolvers: TypeResolvers<ExerciseGroup> &
     }),
     ...createTaxonomyTermChildResolvers(),
     async exercises(exerciseGroup, _args, { dataSources }) {
-      const exercises = await Promise.all(
+      return await Promise.all(
         exerciseGroup.exerciseIds.map((id: number) => {
           return dataSources.model.serlo.getUuidWithCustomDecoder({
             id,
@@ -49,8 +48,6 @@ export const resolvers: TypeResolvers<ExerciseGroup> &
           })
         })
       )
-
-      return exercises.filter(isDefined)
     },
   },
   ExerciseGroupRevision: createRevisionResolvers({

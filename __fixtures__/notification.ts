@@ -24,30 +24,30 @@ import * as R from 'ramda'
 import {
   article,
   articleRevision,
-  unsupportedComment,
   exercise,
   solution,
   taxonomyTermCurriculumTopic,
   taxonomyTermRoot,
   taxonomyTermSubject,
-  unsupportedThread,
   user,
+  comment,
 } from './uuid'
 import { Model } from '~/internals/graphql'
 import { NotificationEventType } from '~/model/decoder'
 import { Instance } from '~/types'
 
-export const checkoutRevisionNotificationEvent: Model<'CheckoutRevisionNotificationEvent'> = {
-  __typename: NotificationEventType.CheckoutRevision,
-  id: 301,
-  instance: Instance.De,
-  date: '2014-03-01T20:45:56Z',
-  actorId: user.id,
-  objectId: articleRevision.id,
-  repositoryId: article.id,
-  revisionId: articleRevision.id,
-  reason: 'reason',
-}
+export const checkoutRevisionNotificationEvent: Model<'CheckoutRevisionNotificationEvent'> =
+  {
+    __typename: NotificationEventType.CheckoutRevision,
+    id: 301,
+    instance: Instance.De,
+    date: '2014-03-01T20:45:56Z',
+    actorId: user.id,
+    objectId: articleRevision.id,
+    repositoryId: article.id,
+    revisionId: articleRevision.id,
+    reason: 'reason',
+  }
 
 export function getCheckoutRevisionNotificationEventDataWithoutSubResolvers(
   notificationEvent: Model<'CheckoutRevisionNotificationEvent'>
@@ -55,17 +55,18 @@ export function getCheckoutRevisionNotificationEventDataWithoutSubResolvers(
   return R.omit(['actorId', 'repositoryId', 'revisionId'], notificationEvent)
 }
 
-export const rejectRevisionNotificationEvent: Model<'RejectRevisionNotificationEvent'> = {
-  __typename: NotificationEventType.RejectRevision,
-  id: 38035,
-  instance: Instance.De,
-  date: '2014-03-01T20:45:56Z',
-  actorId: user.id,
-  objectId: articleRevision.id,
-  repositoryId: article.id,
-  revisionId: articleRevision.id,
-  reason: 'reason',
-}
+export const rejectRevisionNotificationEvent: Model<'RejectRevisionNotificationEvent'> =
+  {
+    __typename: NotificationEventType.RejectRevision,
+    id: 38035,
+    instance: Instance.De,
+    date: '2014-03-01T20:45:56Z',
+    actorId: user.id,
+    objectId: articleRevision.id,
+    repositoryId: article.id,
+    revisionId: articleRevision.id,
+    reason: 'reason',
+  }
 
 export function getRejectRevisionNotificationEventDataWithoutSubResolvers(
   notificationEvent: Model<'RejectRevisionNotificationEvent'>
@@ -73,16 +74,17 @@ export function getRejectRevisionNotificationEventDataWithoutSubResolvers(
   return R.omit(['actorId', 'repositoryId', 'revisionId'], notificationEvent)
 }
 
-export const createCommentNotificationEvent: Model<'CreateCommentNotificationEvent'> = {
-  __typename: NotificationEventType.CreateComment,
-  id: 37375,
-  instance: Instance.De,
-  date: '2014-03-01T20:45:56Z',
-  actorId: user.id,
-  objectId: unsupportedComment.id,
-  threadId: unsupportedThread.id,
-  commentId: unsupportedComment.id,
-}
+export const createCommentNotificationEvent: Model<'CreateCommentNotificationEvent'> =
+  {
+    __typename: NotificationEventType.CreateComment,
+    id: 37375,
+    instance: Instance.De,
+    date: '2014-03-01T20:45:56Z',
+    actorId: user.id,
+    objectId: comment.id,
+    threadId: comment.id,
+    commentId: comment.id,
+  }
 
 export function getCreateCommentNotificationEventDataWithoutSubResolvers(
   notificationEvent: Model<'CreateCommentNotificationEvent'>
@@ -90,15 +92,16 @@ export function getCreateCommentNotificationEventDataWithoutSubResolvers(
   return R.omit(['actorId', 'threadId', 'commentId'], notificationEvent)
 }
 
-export const createEntityNotificationEvent: Model<'CreateEntityNotificationEvent'> = {
-  __typename: NotificationEventType.CreateEntity,
-  id: 298,
-  instance: Instance.De,
-  date: '2014-03-01T20:45:56Z',
-  actorId: user.id,
-  objectId: article.id,
-  entityId: article.id,
-}
+export const createEntityNotificationEvent: Model<'CreateEntityNotificationEvent'> =
+  {
+    __typename: NotificationEventType.CreateEntity,
+    id: 298,
+    instance: Instance.De,
+    date: '2014-03-01T20:45:56Z',
+    actorId: user.id,
+    objectId: article.id,
+    entityId: article.id,
+  }
 
 export function getCreateEntityNotificationEventDataWithoutSubResolvers(
   notificationEvent: Model<'CreateEntityNotificationEvent'>
@@ -106,16 +109,17 @@ export function getCreateEntityNotificationEventDataWithoutSubResolvers(
   return R.omit(['actorId', 'entityId'], notificationEvent)
 }
 
-export const createEntityLinkNotificationEvent: Model<'CreateEntityLinkNotificationEvent'> = {
-  __typename: NotificationEventType.CreateEntityLink,
-  id: 2115,
-  instance: Instance.De,
-  date: '2014-03-01T20:45:56Z',
-  actorId: user.id,
-  objectId: solution.id,
-  parentId: exercise.id,
-  childId: solution.id,
-}
+export const createEntityLinkNotificationEvent: Model<'CreateEntityLinkNotificationEvent'> =
+  {
+    __typename: NotificationEventType.CreateEntityLink,
+    id: 2115,
+    instance: Instance.De,
+    date: '2014-03-01T20:45:56Z',
+    actorId: user.id,
+    objectId: solution.id,
+    parentId: exercise.id,
+    childId: solution.id,
+  }
 
 export function getCreateEntityLinkNotificationEventDataWithoutSubResolvers(
   notificationEvent: Model<'CreateEntityLinkNotificationEvent'>
@@ -123,16 +127,17 @@ export function getCreateEntityLinkNotificationEventDataWithoutSubResolvers(
   return R.omit(['actorId', 'parentId', 'childId'], notificationEvent)
 }
 
-export const removeEntityLinkNotificationEvent: Model<'RemoveEntityLinkNotificationEvent'> = {
-  __typename: NotificationEventType.RemoveEntityLink,
-  id: 55273,
-  instance: Instance.De,
-  date: '2014-03-01T20:45:56Z',
-  actorId: user.id,
-  objectId: solution.id,
-  parentId: exercise.id,
-  childId: solution.id,
-}
+export const removeEntityLinkNotificationEvent: Model<'RemoveEntityLinkNotificationEvent'> =
+  {
+    __typename: NotificationEventType.RemoveEntityLink,
+    id: 55273,
+    instance: Instance.De,
+    date: '2014-03-01T20:45:56Z',
+    actorId: user.id,
+    objectId: solution.id,
+    parentId: exercise.id,
+    childId: solution.id,
+  }
 
 export function getRemoveEntityLinkNotificationEventDataWithoutSubResolvers(
   notificationEvent: Model<'RemoveEntityLinkNotificationEvent'>
@@ -140,16 +145,17 @@ export function getRemoveEntityLinkNotificationEventDataWithoutSubResolvers(
   return R.omit(['actorId', 'parentId', 'childId'], notificationEvent)
 }
 
-export const createEntityRevisionNotificationEvent: Model<'CreateEntityRevisionNotificationEvent'> = {
-  __typename: NotificationEventType.CreateEntityRevision,
-  id: 300,
-  instance: Instance.De,
-  date: '2014-03-01T20:45:56Z',
-  actorId: user.id,
-  objectId: articleRevision.id,
-  entityId: article.id,
-  entityRevisionId: articleRevision.id,
-}
+export const createEntityRevisionNotificationEvent: Model<'CreateEntityRevisionNotificationEvent'> =
+  {
+    __typename: NotificationEventType.CreateEntityRevision,
+    id: 300,
+    instance: Instance.De,
+    date: '2014-03-01T20:45:56Z',
+    actorId: user.id,
+    objectId: articleRevision.id,
+    entityId: article.id,
+    entityRevisionId: articleRevision.id,
+  }
 
 export function getCreateEntityRevisionNotificationEventDataWithoutSubResolvers(
   notificationEvent: Model<'CreateEntityRevisionNotificationEvent'>
@@ -157,15 +163,16 @@ export function getCreateEntityRevisionNotificationEventDataWithoutSubResolvers(
   return R.omit(['actorId', 'entityId', 'entityRevisionId'], notificationEvent)
 }
 
-export const createTaxonomyTermNotificationEvent: Model<'CreateTaxonomyTermNotificationEvent'> = {
-  __typename: NotificationEventType.CreateTaxonomyTerm,
-  id: 90,
-  instance: Instance.De,
-  date: '2014-03-01T20:45:56Z',
-  actorId: user.id,
-  objectId: taxonomyTermCurriculumTopic.id,
-  taxonomyTermId: taxonomyTermCurriculumTopic.id,
-}
+export const createTaxonomyTermNotificationEvent: Model<'CreateTaxonomyTermNotificationEvent'> =
+  {
+    __typename: NotificationEventType.CreateTaxonomyTerm,
+    id: 90,
+    instance: Instance.De,
+    date: '2014-03-01T20:45:56Z',
+    actorId: user.id,
+    objectId: taxonomyTermCurriculumTopic.id,
+    taxonomyTermId: taxonomyTermCurriculumTopic.id,
+  }
 
 export function getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers(
   notificationEvent: Model<'CreateTaxonomyTermNotificationEvent'>
@@ -173,15 +180,16 @@ export function getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers(
   return R.omit(['actorId', 'taxonomyTermId'], notificationEvent)
 }
 
-export const setTaxonomyTermNotificationEvent: Model<'SetTaxonomyTermNotificationEvent'> = {
-  __typename: NotificationEventType.SetTaxonomyTerm,
-  id: 38405,
-  instance: Instance.De,
-  date: '2014-03-01T20:45:56Z',
-  actorId: user.id,
-  objectId: taxonomyTermCurriculumTopic.id,
-  taxonomyTermId: taxonomyTermCurriculumTopic.id,
-}
+export const setTaxonomyTermNotificationEvent: Model<'SetTaxonomyTermNotificationEvent'> =
+  {
+    __typename: NotificationEventType.SetTaxonomyTerm,
+    id: 38405,
+    instance: Instance.De,
+    date: '2014-03-01T20:45:56Z',
+    actorId: user.id,
+    objectId: taxonomyTermCurriculumTopic.id,
+    taxonomyTermId: taxonomyTermCurriculumTopic.id,
+  }
 
 export function getSetTaxonomyTermNotificationEventDataWithoutSubResolvers(
   notificationEvent: Model<'SetTaxonomyTermNotificationEvent'>
@@ -189,16 +197,17 @@ export function getSetTaxonomyTermNotificationEventDataWithoutSubResolvers(
   return R.omit(['actorId', 'taxonomyTermId'], notificationEvent)
 }
 
-export const createTaxonomyLinkNotificationEvent: Model<'CreateTaxonomyLinkNotificationEvent'> = {
-  __typename: NotificationEventType.CreateTaxonomyLink,
-  id: 674,
-  instance: Instance.De,
-  date: '2014-03-01T20:45:56Z',
-  actorId: user.id,
-  objectId: taxonomyTermCurriculumTopic.id,
-  parentId: taxonomyTermCurriculumTopic.id,
-  childId: article.id,
-}
+export const createTaxonomyLinkNotificationEvent: Model<'CreateTaxonomyLinkNotificationEvent'> =
+  {
+    __typename: NotificationEventType.CreateTaxonomyLink,
+    id: 674,
+    instance: Instance.De,
+    date: '2014-03-01T20:45:56Z',
+    actorId: user.id,
+    objectId: taxonomyTermCurriculumTopic.id,
+    parentId: taxonomyTermCurriculumTopic.id,
+    childId: article.id,
+  }
 
 export function getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers(
   notificationEvent: Model<'CreateTaxonomyLinkNotificationEvent'>
@@ -206,16 +215,17 @@ export function getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers(
   return R.omit(['actorId', 'parentId', 'childId'], notificationEvent)
 }
 
-export const removeTaxonomyLinkNotificationEvent: Model<'RemoveTaxonomyLinkNotificationEvent'> = {
-  __typename: NotificationEventType.RemoveTaxonomyLink,
-  id: 48077,
-  instance: Instance.De,
-  date: '2014-03-01T20:45:56Z',
-  actorId: user.id,
-  objectId: taxonomyTermCurriculumTopic.id,
-  parentId: taxonomyTermCurriculumTopic.id,
-  childId: article.id,
-}
+export const removeTaxonomyLinkNotificationEvent: Model<'RemoveTaxonomyLinkNotificationEvent'> =
+  {
+    __typename: NotificationEventType.RemoveTaxonomyLink,
+    id: 48077,
+    instance: Instance.De,
+    date: '2014-03-01T20:45:56Z',
+    actorId: user.id,
+    objectId: taxonomyTermCurriculumTopic.id,
+    parentId: taxonomyTermCurriculumTopic.id,
+    childId: article.id,
+  }
 
 export function getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers(
   notificationEvent: Model<'RemoveTaxonomyLinkNotificationEvent'>
@@ -223,17 +233,18 @@ export function getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers(
   return R.omit(['actorId', 'parentId', 'childId'], notificationEvent)
 }
 
-export const setTaxonomyParentNotificationEvent: Model<'SetTaxonomyParentNotificationEvent'> = {
-  __typename: NotificationEventType.SetTaxonomyParent,
-  id: 47414,
-  instance: Instance.De,
-  date: '2014-03-01T20:45:56Z',
-  actorId: user.id,
-  objectId: taxonomyTermCurriculumTopic.id,
-  previousParentId: taxonomyTermRoot.id,
-  parentId: taxonomyTermSubject.id,
-  childId: taxonomyTermCurriculumTopic.id,
-}
+export const setTaxonomyParentNotificationEvent: Model<'SetTaxonomyParentNotificationEvent'> =
+  {
+    __typename: NotificationEventType.SetTaxonomyParent,
+    id: 47414,
+    instance: Instance.De,
+    date: '2014-03-01T20:45:56Z',
+    actorId: user.id,
+    objectId: taxonomyTermCurriculumTopic.id,
+    previousParentId: taxonomyTermRoot.id,
+    parentId: taxonomyTermSubject.id,
+    childId: taxonomyTermCurriculumTopic.id,
+  }
 
 export function getSetTaxonomyParentNotificationEventDataWithoutSubResolvers(
   notificationEvent: Model<'SetTaxonomyParentNotificationEvent'>
@@ -244,15 +255,16 @@ export function getSetTaxonomyParentNotificationEventDataWithoutSubResolvers(
   )
 }
 
-export const createThreadNotificationEvent: Model<'CreateThreadNotificationEvent'> = {
-  __typename: NotificationEventType.CreateThread,
-  id: 37374,
-  instance: Instance.De,
-  date: '2014-03-01T20:45:56Z',
-  actorId: user.id,
-  objectId: article.id,
-  threadId: unsupportedThread.id,
-}
+export const createThreadNotificationEvent: Model<'CreateThreadNotificationEvent'> =
+  {
+    __typename: NotificationEventType.CreateThread,
+    id: 37374,
+    instance: Instance.De,
+    date: '2014-03-01T20:45:56Z',
+    actorId: user.id,
+    objectId: article.id,
+    threadId: comment.id,
+  }
 
 export function getCreateThreadNotificationEventDataWithoutSubResolvers(
   notificationEvent: Model<'CreateThreadNotificationEvent'>
@@ -260,15 +272,16 @@ export function getCreateThreadNotificationEventDataWithoutSubResolvers(
   return R.omit(['actorId', 'threadId'], notificationEvent)
 }
 
-export const setLicenseNotificationEvent: Model<'SetLicenseNotificationEvent'> = {
-  __typename: NotificationEventType.SetLicense,
-  id: 297,
-  instance: Instance.De,
-  date: '2014-03-01T20:45:56Z',
-  actorId: user.id,
-  objectId: article.id,
-  repositoryId: article.id,
-}
+export const setLicenseNotificationEvent: Model<'SetLicenseNotificationEvent'> =
+  {
+    __typename: NotificationEventType.SetLicense,
+    id: 297,
+    instance: Instance.De,
+    date: '2014-03-01T20:45:56Z',
+    actorId: user.id,
+    objectId: article.id,
+    repositoryId: article.id,
+  }
 
 export function getSetLicenseNotificationEventDataWithoutSubResolvers(
   notificationEvent: Model<'SetLicenseNotificationEvent'>
@@ -276,16 +289,17 @@ export function getSetLicenseNotificationEventDataWithoutSubResolvers(
   return R.omit(['actorId', 'repositoryId'], notificationEvent)
 }
 
-export const setThreadStateNotificationEvent: Model<'SetThreadStateNotificationEvent'> = {
-  __typename: NotificationEventType.SetThreadState,
-  id: 40750,
-  instance: Instance.De,
-  date: '2014-03-01T20:45:56Z',
-  actorId: user.id,
-  objectId: unsupportedThread.id,
-  threadId: unsupportedThread.id,
-  archived: true,
-}
+export const setThreadStateNotificationEvent: Model<'SetThreadStateNotificationEvent'> =
+  {
+    __typename: NotificationEventType.SetThreadState,
+    id: 40750,
+    instance: Instance.De,
+    date: '2014-03-01T20:45:56Z',
+    actorId: user.id,
+    objectId: comment.id,
+    threadId: comment.id,
+    archived: true,
+  }
 
 export function getSetThreadStateNotificationEventDataWithoutSubResolvers(
   notificationEvent: Model<'SetThreadStateNotificationEvent'>
@@ -293,15 +307,16 @@ export function getSetThreadStateNotificationEventDataWithoutSubResolvers(
   return R.omit(['actorId', 'threadId'], notificationEvent)
 }
 
-export const setUuidStateNotificationEvent: Model<'SetUuidStateNotificationEvent'> = {
-  __typename: NotificationEventType.SetUuidState,
-  id: 38513,
-  instance: Instance.De,
-  date: '2014-03-01T20:45:56Z',
-  actorId: user.id,
-  objectId: article.id,
-  trashed: true,
-}
+export const setUuidStateNotificationEvent: Model<'SetUuidStateNotificationEvent'> =
+  {
+    __typename: NotificationEventType.SetUuidState,
+    id: 38513,
+    instance: Instance.De,
+    date: '2014-03-01T20:45:56Z',
+    actorId: user.id,
+    objectId: article.id,
+    trashed: true,
+  }
 
 export function getSetUuidStateNotificationEventDataWithoutSubResolvers(
   notificationEvent: Model<'SetUuidStateNotificationEvent'>

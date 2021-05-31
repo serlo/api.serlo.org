@@ -19,10 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { array as A, pipeable } from 'fp-ts'
+import { array as A, function as F, number as N, ord } from 'fp-ts'
 import * as t from 'io-ts'
+import R from 'ramda'
 
-import { resolveUser } from '../user/utils'
 import {
   Model,
   PickResolvers,
@@ -30,18 +30,21 @@ import {
   ResolverFunction,
   Revision,
 } from '~/internals/graphql'
+import { UserDecoder } from '~/model/decoder'
 import { Connection } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { VideoRevisionsArgs } from '~/types'
-import { isDefined } from '~/utils'
 
 export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
   revisionDecoder,
 }: {
   revisionDecoder: t.Type<R>
-}): PickResolvers<'AbstractRepository', 'alias' | 'threads' | 'license'> & {
+}): PickResolvers<
+  'AbstractRepository',
+  'alias' | 'threads' | 'license' | 'events'
+> & {
   currentRevision: ResolverFunction<R | null, Repository<R['__typename']>>
   revisions: ResolverFunction<
     Connection<R>,
@@ -60,18 +63,21 @@ export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
       })
     },
     async revisions(entity, cursorPayload, { dataSources }) {
-      const revisions = pipeable.pipe(
+      const revisions = F.pipe(
         await Promise.all(
-          entity.revisionIds.map(async (id) => {
-            return await dataSources.model.serlo.getUuidWithCustomDecoder({
-              id,
-              decoder: revisionDecoder,
+          F.pipe(
+            entity.revisionIds,
+            A.sort(ord.reverse(N.Ord)),
+            A.map(async (id) => {
+              return await dataSources.model.serlo.getUuidWithCustomDecoder({
+                id,
+                decoder: revisionDecoder,
+              })
             })
-          })
+          )
         ),
-        A.filter(isDefined),
         A.filter((revision) => {
-          if (!isDefined(cursorPayload.unrevised)) return true
+          if (R.isNil(cursorPayload.unrevised)) return true
 
           if (revision.trashed) return false
 
@@ -99,30 +105,26 @@ export function createRevisionResolvers<E extends Model<'AbstractRepository'>>({
   repositoryDecoder,
 }: {
   repositoryDecoder: t.Type<E>
-}): PickResolvers<'AbstractRevision', 'alias' | 'threads' | 'author'> & {
+}): PickResolvers<
+  'AbstractRevision',
+  'alias' | 'threads' | 'author' | 'events'
+> & {
   repository: ResolverFunction<E, Revision<E['__typename']>>
 } {
   return {
     ...createUuidResolvers(),
     ...createThreadResolvers(),
-    async author(entityRevision, _args, context) {
-      const user = await resolveUser({ id: entityRevision.authorId }, context)
-
-      if (user === null) throw new Error('author cannot be null')
-
-      return user
+    async author(entityRevision, _args, { dataSources }) {
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: entityRevision.authorId,
+        decoder: UserDecoder,
+      })
     },
     repository: async (entityRevision, _args, { dataSources }) => {
-      const repository = await dataSources.model.serlo.getUuidWithCustomDecoder(
-        {
-          id: entityRevision.repositoryId,
-          decoder: repositoryDecoder,
-        }
-      )
-
-      if (repository === null) throw new Error('respository cannot be null')
-
-      return repository
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: entityRevision.repositoryId,
+        decoder: repositoryDecoder,
+      })
     },
   }
 }

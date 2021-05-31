@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as serloAuth from '@serlo/authorization'
-import { Scope } from '@serlo/authorization'
 import { array as A, either as E } from 'fp-ts'
 import * as F from 'fp-ts/lib/function'
 import R from 'ramda'
@@ -31,21 +30,31 @@ import {
   consumeErrorEvent,
   ErrorEvent,
 } from '~/internals/error-event'
-import { Context, Queries, Mutations, TypeResolvers, createMutationNamespace, assertUserIsAuthenticated, assertUserIsAuthorized } from '~/internals/graphql'
-import { DiscriminatorType, UserDecoder } from '~/model/decoder'
+import {
+  Context,
+  Model,
+  Queries,
+  Mutations,
+  TypeResolvers,
+  createNamespace,
+  assertUserIsAuthenticated,
+  assertUserIsAuthorized,
+} from '~/internals/graphql'
+import { DiscriminatorType } from '~/model/decoder'
 import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
 import { resolveScopedRoles } from '~/schema/authorization/utils'
 import { ConnectionPayload } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
+import { resolveEvents } from '~/schema/notification/resolvers'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { User } from '~/types'
-import { isDefined } from '~/utils'
 
 export const resolvers: Queries<
   'activeAuthors' | 'activeReviewers' | 'activeDonors'
 > &
-  TypeResolvers<User> & Mutations<'user'> = {
+  TypeResolvers<User> &
+  Mutations<'user'> = {
   Query: {
     async activeAuthors(_parent, payload, context) {
       return resolveUserConnectionFromIds({
@@ -72,6 +81,12 @@ export const resolvers: Queries<
   User: {
     ...createUuidResolvers(),
     ...createThreadResolvers(),
+    eventsByUser(user, payload, { dataSources }) {
+      return resolveEvents({
+        payload: { ...payload, actorId: user.id },
+        dataSources,
+      })
+    },
     async activeAuthor(user, _args, { dataSources }) {
       return (await dataSources.model.serlo.getActiveAuthorIds()).includes(
         user.id
@@ -97,33 +112,35 @@ export const resolvers: Queries<
       })
     },
   },
-  Mutation:  {
-    user: createMutationNamespace(),
+  Mutation: {
+    user: createNamespace(),
   },
   UserMutation: {
-    async deleteBot(_parent, payload, {dataSources, userId}) {          
+    async deleteBot(_parent, payload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
-        guard: serloAuth.User.deleteBot(Scope.Serlo),
+        guard: serloAuth.User.deleteBot(serloAuth.Scope.Serlo),
         message: 'You are not allowed to delete users',
         dataSources,
       })
-      return {      
-        ... await dataSources.model.serlo.deleteBot({...payload.input}),
+      return {
+        ...(await dataSources.model.serlo.deleteBot({ ...payload.input })),
         success: true,
       }
     },
 
-    async deleteRegularUser(_parent, payload, {dataSources, userId}) {
+    async deleteRegularUser(_parent, payload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
-        guard: serloAuth.User.deleteRegularUser(Scope.Serlo),
+        guard: serloAuth.User.deleteRegularUser(serloAuth.Scope.Serlo),
         message: 'You are not allowed to delete users',
         dataSources,
       })
-      const answer = await dataSources.model.serlo.deleteRegularUser({...payload.input})
+      const answer = await dataSources.model.serlo.deleteRegularUser({
+        ...payload.input,
+      })
       const success = answer !== null
       return {
         usernames: answer.usernames,
@@ -131,8 +148,8 @@ export const resolvers: Queries<
       }
     },
 
-    async setEmail(_parent, payload, {dataSources, userId}) {
-      const scope = Scope.Serlo
+    async setEmail(_parent, payload, { dataSources, userId }) {
+      const scope = serloAuth.Scope.Serlo
 
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
@@ -142,16 +159,18 @@ export const resolvers: Queries<
         dataSources,
       })
       //TODO: Hier erst User laden über getUuid
-      if (payload.__typename == DiscriminatorType.User)
-      const answer = await dataSources.model.serlo.setEmail({...payload.input})
+      //if (payload.__typename == DiscriminatorType.User)
+      const answer = await dataSources.model.serlo.setEmail({
+        ...payload.input,
+      })
       const success = answer !== null
       return {
         usernames: answer.usernames,
         email: answer.email,
         success,
       }
-    }  
-  }
+    },
+  },
 }
 
 async function resolveUserConnectionFromIds({
@@ -164,19 +183,17 @@ async function resolveUserConnectionFromIds({
   context: Context
 }) {
   const uuids = await Promise.all(
-    ids.map(async (id) => {
-      try {
-        return await context.dataSources.model.serlo.getUuidWithCustomDecoder({
-          id,
-          decoder: UserDecoder,
-        })
-      } catch (e) {
-        return null
-      }
-    })
+    ids.map(async (id) => context.dataSources.model.serlo.getUuid({ id }))
   )
+  const users = assertAll({
+    assertion(uuid: Model<'AbstractUuid'> | null): uuid is Model<'User'> {
+      return uuid !== null && uuid.__typename == DiscriminatorType.User
+    },
+    error: new Error('Invalid user found'),
+  })(uuids)
+
   return resolveConnection({
-    nodes: uuids.filter(isDefined),
+    nodes: users,
     payload,
     createCursor(node) {
       return node.id.toString()

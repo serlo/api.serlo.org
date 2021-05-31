@@ -21,8 +21,10 @@
  */
 import { GraphQLResponse } from 'apollo-server-types'
 import { DocumentNode } from 'graphql'
+import R from 'ramda'
 
 import { Client } from './test-client'
+import { Sentry } from '~/internals/sentry'
 
 export async function assertSuccessfulGraphQLQuery({
   query,
@@ -93,16 +95,107 @@ export async function assertFailingGraphQLMutation({
   variables,
   client,
   expectedError,
+  message,
 }: {
   mutation: DocumentNode
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   variables?: Record<string, any>
   client: Client
   expectedError: string
+  message?: string
 }) {
   const response = await client.mutate({
     mutation,
     variables,
   })
   expect(response?.errors?.[0]?.extensions?.code).toEqual(expectedError)
+
+  if (message) expect(response?.errors?.[0]?.message).toEqual(message)
+}
+
+/**
+ * Assertion that a certain error event occured. Since we use Sentry this
+ * function checks that a Sentry event was thrown.
+ *
+ * TODO: This function has not a good error message in case the assertion
+ * fails. I recommend you to investigate `global.sentryEvents` with
+ * `console.log()` or something similar when your tests fail.
+ *
+ * @example
+ * ```ts
+ * // assertion that at least one error occurred
+ * assertErrorEvent()
+ * ```
+ *
+ * @example
+ * ```ts
+ * assertErrorEvent({
+ *   // additional assertion that error message is 'Error XYZ'
+ *   message: 'Error XYZ'
+ * })
+ * ```
+ *
+ * @example
+ * ```ts
+ * assertErrorEvent({
+ *   // additional assertion that the context "error" contains
+ *   // `{ invalidValue: 23 }`. This means that `contexts.error.invalidValue === 23`.
+ *   // See https://docs.sentry.io/platforms/javascript/enriching-events/context/
+ *   // for an introduction about contexts in Sentry
+ *   errorContext: { invalidValue: 23 },
+ * })
+ * ```
+ */
+export async function assertErrorEvent(args?: {
+  message?: string
+  fingerprint?: string[]
+  errorContext?: Record<string, unknown>
+}) {
+  const eventPredicate = (event: Sentry.Event) => {
+    const exception = event.exception?.values?.[0]
+
+    if (
+      args?.message !== undefined &&
+      exception?.value !== args.message &&
+      event.message !== args.message
+    ) {
+      return false
+    }
+
+    if (args?.errorContext !== undefined) {
+      for (const contextName in args.errorContext) {
+        const contextValue = event.contexts?.error?.[contextName]
+        const targetValue = args.errorContext[contextName]
+
+        if (!R.equals(destringifyProperties(contextValue), targetValue))
+          return false
+      }
+    }
+
+    if (args?.fingerprint !== undefined) {
+      if (!R.equals(event.fingerprint, args.fingerprint)) return false
+    }
+
+    return true
+  }
+  const waitForAllSentryEvents = new Promise((resolve) =>
+    setTimeout(resolve, 400)
+  )
+
+  await waitForAllSentryEvents
+  expect(global.sentryEvents.some(eventPredicate)).toBe(true)
+}
+
+function destringifyProperties(value: unknown) {
+  return Array.isArray(value)
+    ? value.map(destringify)
+    : typeof value === 'object' && value !== null
+    ? R.mapObjIndexed(destringify, value)
+    : value === 'null'
+    ? null
+    : value
+}
+
+function destringify(value: unknown) {
+  return typeof value === 'string' ? (JSON.parse(value) as unknown) : value
 }

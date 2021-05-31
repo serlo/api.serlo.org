@@ -19,8 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import R from 'ramda'
+
 export * from './assertions'
+export * from './database'
 export * from './handlers'
 export * from './error-event'
 export * from './services'
 export * from './test-client'
+
+export function getTypenameAndId(value: { __typename: string; id: number }) {
+  return R.pick(['__typename', 'id'], value)
+}

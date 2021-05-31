@@ -19,11 +19,24 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import * as serloAuth from '@serlo/authorization'
+import { UserInputError } from 'apollo-server'
 
-import { InterfaceResolvers } from '~/internals/graphql'
+import {
+  assertUserIsAuthenticated,
+  assertUserIsAuthorized,
+  createNamespace,
+  InterfaceResolvers,
+  Mutations,
+} from '~/internals/graphql'
+import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 
 export const resolvers: InterfaceResolvers<'AbstractEntity'> &
-  InterfaceResolvers<'AbstractEntityRevision'> = {
+  InterfaceResolvers<'AbstractEntityRevision'> &
+  Mutations<'entity'> = {
+  Mutation: {
+    entity: createNamespace(),
+  },
   AbstractEntity: {
     __resolveType(entity) {
       return entity.__typename
@@ -32,6 +45,58 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   AbstractEntityRevision: {
     __resolveType(entityRevision) {
       return entityRevision.__typename
+    },
+  },
+  EntityMutation: {
+    async checkoutRevision(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const scope = await fetchScopeOfUuid({
+        id: input.revisionId,
+        dataSources,
+      })
+      await assertUserIsAuthorized({
+        userId,
+        dataSources,
+        message: 'You are not allowed to check out the provided revision.',
+        guard: serloAuth.Entity.checkoutRevision(scope),
+      })
+
+      const result = await dataSources.model.serlo.checkoutRevision({
+        ...input,
+        userId,
+      })
+
+      if (result.success === false) {
+        throw new UserInputError(result.reason)
+      } else {
+        return { ...result, query: {} }
+      }
+    },
+    async rejectRevision(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const scope = await fetchScopeOfUuid({
+        id: input.revisionId,
+        dataSources,
+      })
+      await assertUserIsAuthorized({
+        userId,
+        dataSources,
+        message: 'You are not allowed to reject the provided revision.',
+        guard: serloAuth.Entity.rejectRevision(scope),
+      })
+
+      const result = await dataSources.model.serlo.rejectRevision({
+        ...input,
+        userId,
+      })
+
+      if (result.success === false) {
+        throw new UserInputError(result.reason)
+      } else {
+        return { ...result, query: {} }
+      }
     },
   },
 }

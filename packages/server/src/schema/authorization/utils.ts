@@ -27,7 +27,11 @@ import {
 import { UserInputError } from 'apollo-server'
 
 import { Context, Model } from '~/internals/graphql'
-import { DiscriminatorType, UserDecoder } from '~/model/decoder'
+import {
+  DiscriminatorType,
+  EntityRevisionDecoder,
+  UserDecoder,
+} from '~/model/decoder'
 import { resolveRolesPayload, RolesPayload } from '~/schema/authorization/roles'
 import { isInstance, isInstanceAware } from '~/schema/instance/utils'
 import { Role } from '~/types'
@@ -51,8 +55,6 @@ export async function fetchAuthorizationPayload({
       id: userId,
       decoder: UserDecoder,
     })
-
-    if (user === null) throw new Error('user cannot be null')
 
     const rolesPayload: RolesPayload = {}
 
@@ -86,6 +88,10 @@ export async function fetchScopeOfUuid({
   // Comments and Threads don't have an instance itself, but their object descendant has
   if (object.__typename === DiscriminatorType.Comment) {
     return await fetchScopeOfUuid({ id: object.parentId, dataSources })
+  }
+
+  if (EntityRevisionDecoder.is(object)) {
+    return await fetchScopeOfUuid({ id: object.repositoryId, dataSources })
   }
 
   return Scope.Serlo

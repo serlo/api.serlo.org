@@ -27,7 +27,7 @@ import { resolveCustomId } from '~/config/alias'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
-  createMutationNamespace,
+  createNamespace,
   InterfaceResolvers,
   Mutations,
   Queries,
@@ -69,7 +69,7 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
     },
   },
   Mutation: {
-    uuid: createMutationNamespace(),
+    uuid: createNamespace(),
   },
   UuidMutation: {
     async setState(_parent, payload, { dataSources, userId }) {
@@ -77,44 +77,40 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
       const ids = id
 
       const guards = await Promise.all(
-        ids.map(
-          async (id): Promise<auth.AuthorizationGuard | null> => {
-            // TODO: this is not optimized since it fetches the object twice and sequentially.
-            // change up fetchScopeOfUuid to return { scope, object } instead
-            const scope = await fetchScopeOfUuid({ id, dataSources })
-            const object = await dataSources.model.serlo.getUuid({ id })
-            if (object === null) {
-              return null
-            } else {
-              return auth.Uuid.setState(getType(object))(scope)
-            }
+        ids.map(async (id): Promise<auth.AuthorizationGuard | null> => {
+          // TODO: this is not optimized since it fetches the object twice and sequentially.
+          // change up fetchScopeOfUuid to return { scope, object } instead
+          const scope = await fetchScopeOfUuid({ id, dataSources })
+          const object = await dataSources.model.serlo.getUuid({ id })
+          if (object === null) {
+            return null
+          } else {
+            return auth.Uuid.setState(getType(object))(scope)
+          }
 
-            function getType(object: Model<'AbstractUuid'>): auth.UuidType {
-              switch (object.__typename) {
-                case DiscriminatorType.Page:
-                  return 'Page'
-                case DiscriminatorType.PageRevision:
-                  return 'PageRevision'
-                case DiscriminatorType.TaxonomyTerm:
-                  return 'TaxonomyTerm'
-                case DiscriminatorType.User:
-                  return 'User'
-                default:
-                  if (E.isRight(EntityTypeDecoder.decode(object.__typename))) {
-                    return 'Entity'
-                  }
-                  if (
-                    E.isRight(
-                      EntityRevisionTypeDecoder.decode(object.__typename)
-                    )
-                  ) {
-                    return 'EntityRevision'
-                  }
-                  return 'unknown'
-              }
+          function getType(object: Model<'AbstractUuid'>): auth.UuidType {
+            switch (object.__typename) {
+              case DiscriminatorType.Page:
+                return 'Page'
+              case DiscriminatorType.PageRevision:
+                return 'PageRevision'
+              case DiscriminatorType.TaxonomyTerm:
+                return 'TaxonomyTerm'
+              case DiscriminatorType.User:
+                return 'User'
+              default:
+                if (E.isRight(EntityTypeDecoder.decode(object.__typename))) {
+                  return 'Entity'
+                }
+                if (
+                  E.isRight(EntityRevisionTypeDecoder.decode(object.__typename))
+                ) {
+                  return 'EntityRevision'
+                }
+                return 'unknown'
             }
           }
-        )
+        })
       )
 
       assertUserIsAuthenticated(userId)
@@ -195,8 +191,6 @@ function checkUuid(payload: QueryUuidArgs, uuid: Model<'AbstractUuid'> | null) {
         return null
       }
     }
-
-    if (uuid.__typename === DiscriminatorType.Comment) return null
   }
 
   return uuid
