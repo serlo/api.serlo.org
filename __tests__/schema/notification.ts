@@ -507,13 +507,14 @@ describe('notificationEvent', () => {
     })
 
     test('by id (w/ thread)', async () => {
+      mockEndpointsForThreads(article, [[comment]])
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query notificationEvent($id: Int!) {
             notificationEvent(id: $id) {
               ... on CreateCommentNotificationEvent {
                 thread {
-                  id
+                  title
                 }
               }
             }
@@ -522,7 +523,7 @@ describe('notificationEvent', () => {
         variables: createCommentNotificationEvent,
         data: {
           notificationEvent: {
-            thread: unsupportedThread,
+            thread: { title: comment.title},
           },
         },
         client,

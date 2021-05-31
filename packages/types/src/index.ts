@@ -758,7 +758,7 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & Instanc
   date: Scalars['DateTime'];
   actor: User;
   objectId: Scalars['Int'];
-  thread: UnsupportedThread;
+  thread: Thread;
   comment: Comment;
 };
 

@@ -83,7 +83,7 @@ export const createCommentNotificationEvent: Model<'CreateCommentNotificationEve
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
     objectId: comment.id,
-    threadId: unsupportedThread.id,
+    threadId: comment.id,
     commentId: comment.id,
   }
 
