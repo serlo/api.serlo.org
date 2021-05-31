@@ -762,7 +762,7 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & Instanc
   date: Scalars['DateTime'];
   actor: User;
   objectId: Scalars['Int'];
-  thread: UnsupportedThread;
+  thread: Thread;
   comment: Comment;
 };
 
@@ -827,7 +827,7 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
   actor: User;
   objectId: Scalars['Int'];
   object: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
-  thread: UnsupportedThread;
+  thread: Thread;
 };
 
 
@@ -1657,7 +1657,7 @@ export type SetThreadStateNotificationEvent = AbstractNotificationEvent & Instan
   date: Scalars['DateTime'];
   actor: User;
   objectId: Scalars['Int'];
-  thread: UnsupportedThread;
+  thread: Thread;
   archived: Scalars['Boolean'];
 };
 
@@ -2010,11 +2010,6 @@ export type ThreadsCursor = {
   __typename?: 'ThreadsCursor';
   cursor: Scalars['String'];
   node: Thread;
-};
-
-export type UnsupportedThread = {
-  __typename?: 'UnsupportedThread';
-  id: Scalars['Int'];
 };
 
 export type User = AbstractUuid & ThreadAware & {
@@ -2444,7 +2439,6 @@ export type ResolversTypes = {
   ThreadSetThreadStateResponse: ResolverTypeWrapper<ModelOf<ThreadSetThreadStateResponse>>;
   ThreadsConnection: ResolverTypeWrapper<ModelOf<ThreadsConnection>>;
   ThreadsCursor: ResolverTypeWrapper<ModelOf<ThreadsCursor>>;
-  UnsupportedThread: ResolverTypeWrapper<ModelOf<UnsupportedThread>>;
   User: ResolverTypeWrapper<ModelOf<User>>;
   UserConnection: ResolverTypeWrapper<ModelOf<UserConnection>>;
   UserEdge: ResolverTypeWrapper<ModelOf<UserEdge>>;
@@ -2591,7 +2585,6 @@ export type ResolversParentTypes = {
   ThreadSetThreadStateResponse: ModelOf<ThreadSetThreadStateResponse>;
   ThreadsConnection: ModelOf<ThreadsConnection>;
   ThreadsCursor: ModelOf<ThreadsCursor>;
-  UnsupportedThread: ModelOf<UnsupportedThread>;
   User: ModelOf<User>;
   UserConnection: ModelOf<UserConnection>;
   UserEdge: ModelOf<UserEdge>;
@@ -2991,7 +2984,7 @@ export type CreateCommentNotificationEventResolvers<ContextType = Context, Paren
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   actor?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   objectId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  thread?: Resolver<ResolversTypes['UnsupportedThread'], ParentType, ContextType>;
+  thread?: Resolver<ResolversTypes['Thread'], ParentType, ContextType>;
   comment?: Resolver<ResolversTypes['Comment'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -3056,7 +3049,7 @@ export type CreateThreadNotificationEventResolvers<ContextType = Context, Parent
   actor?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   objectId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   object?: Resolver<ResolversTypes['AbstractUuid'], ParentType, ContextType>;
-  thread?: Resolver<ResolversTypes['UnsupportedThread'], ParentType, ContextType>;
+  thread?: Resolver<ResolversTypes['Thread'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3504,7 +3497,7 @@ export type SetThreadStateNotificationEventResolvers<ContextType = Context, Pare
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   actor?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   objectId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  thread?: Resolver<ResolversTypes['UnsupportedThread'], ParentType, ContextType>;
+  thread?: Resolver<ResolversTypes['Thread'], ParentType, ContextType>;
   archived?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -3678,11 +3671,6 @@ export type ThreadsConnectionResolvers<ContextType = Context, ParentType extends
 export type ThreadsCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadsCursor'] = ResolversParentTypes['ThreadsCursor']> = {
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<ResolversTypes['Thread'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type UnsupportedThreadResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UnsupportedThread'] = ResolversParentTypes['UnsupportedThread']> = {
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3897,7 +3885,6 @@ export type Resolvers<ContextType = Context> = {
   ThreadSetThreadStateResponse?: ThreadSetThreadStateResponseResolvers<ContextType>;
   ThreadsConnection?: ThreadsConnectionResolvers<ContextType>;
   ThreadsCursor?: ThreadsCursorResolvers<ContextType>;
-  UnsupportedThread?: UnsupportedThreadResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   UserConnection?: UserConnectionResolvers<ContextType>;
   UserEdge?: UserEdgeResolvers<ContextType>;

@@ -29,7 +29,6 @@ import {
   taxonomyTermCurriculumTopic,
   taxonomyTermRoot,
   taxonomyTermSubject,
-  unsupportedThread,
   user,
   comment,
 } from './uuid'
@@ -83,7 +82,7 @@ export const createCommentNotificationEvent: Model<'CreateCommentNotificationEve
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
     objectId: comment.id,
-    threadId: unsupportedThread.id,
+    threadId: comment.id,
     commentId: comment.id,
   }
 
@@ -264,7 +263,7 @@ export const createThreadNotificationEvent: Model<'CreateThreadNotificationEvent
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
     objectId: article.id,
-    threadId: unsupportedThread.id,
+    threadId: comment.id,
   }
 
 export function getCreateThreadNotificationEventDataWithoutSubResolvers(
@@ -297,8 +296,8 @@ export const setThreadStateNotificationEvent: Model<'SetThreadStateNotificationE
     instance: Instance.De,
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
-    objectId: unsupportedThread.id,
-    threadId: unsupportedThread.id,
+    objectId: comment.id,
+    threadId: comment.id,
     archived: true,
   }
 

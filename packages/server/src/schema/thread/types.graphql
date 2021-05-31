@@ -60,10 +60,6 @@ type ThreadsCursor {
   node: Thread!
 }
 
-type UnsupportedThread {
-  id: Int!
-}
-
 type CommentConnection {
   edges: [CommentEdge!]!
   nodes: [Comment!]!
