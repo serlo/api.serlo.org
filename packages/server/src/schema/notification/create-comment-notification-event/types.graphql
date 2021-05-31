@@ -4,6 +4,6 @@ type CreateCommentNotificationEvent implements AbstractNotificationEvent & Insta
   date: DateTime!
   actor: User!
   objectId: Int!
-  thread: UnsupportedThread!
+  thread: Thread!
   comment: Comment!
 }
