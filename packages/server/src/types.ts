@@ -827,7 +827,7 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
   actor: User;
   objectId: Scalars['Int'];
   object: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
-  thread: UnsupportedThread;
+  thread: Thread;
 };
 
 
@@ -3056,7 +3056,7 @@ export type CreateThreadNotificationEventResolvers<ContextType = Context, Parent
   actor?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   objectId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   object?: Resolver<ResolversTypes['AbstractUuid'], ParentType, ContextType>;
-  thread?: Resolver<ResolversTypes['UnsupportedThread'], ParentType, ContextType>;
+  thread?: Resolver<ResolversTypes['Thread'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
