@@ -2008,11 +2008,6 @@ export type ThreadsCursor = {
   node: Thread;
 };
 
-export type UnsupportedThread = {
-  __typename?: 'UnsupportedThread';
-  id: Scalars['Int'];
-};
-
 export type User = AbstractUuid & ThreadAware & {
   __typename?: 'User';
   id: Scalars['Int'];

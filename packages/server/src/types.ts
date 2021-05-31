@@ -2012,11 +2012,6 @@ export type ThreadsCursor = {
   node: Thread;
 };
 
-export type UnsupportedThread = {
-  __typename?: 'UnsupportedThread';
-  id: Scalars['Int'];
-};
-
 export type User = AbstractUuid & ThreadAware & {
   __typename?: 'User';
   id: Scalars['Int'];
@@ -2444,7 +2439,6 @@ export type ResolversTypes = {
   ThreadSetThreadStateResponse: ResolverTypeWrapper<ModelOf<ThreadSetThreadStateResponse>>;
   ThreadsConnection: ResolverTypeWrapper<ModelOf<ThreadsConnection>>;
   ThreadsCursor: ResolverTypeWrapper<ModelOf<ThreadsCursor>>;
-  UnsupportedThread: ResolverTypeWrapper<ModelOf<UnsupportedThread>>;
   User: ResolverTypeWrapper<ModelOf<User>>;
   UserConnection: ResolverTypeWrapper<ModelOf<UserConnection>>;
   UserEdge: ResolverTypeWrapper<ModelOf<UserEdge>>;
@@ -2591,7 +2585,6 @@ export type ResolversParentTypes = {
   ThreadSetThreadStateResponse: ModelOf<ThreadSetThreadStateResponse>;
   ThreadsConnection: ModelOf<ThreadsConnection>;
   ThreadsCursor: ModelOf<ThreadsCursor>;
-  UnsupportedThread: ModelOf<UnsupportedThread>;
   User: ModelOf<User>;
   UserConnection: ModelOf<UserConnection>;
   UserEdge: ModelOf<UserEdge>;
@@ -3681,11 +3674,6 @@ export type ThreadsCursorResolvers<ContextType = Context, ParentType extends Res
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UnsupportedThreadResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UnsupportedThread'] = ResolversParentTypes['UnsupportedThread']> = {
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -3897,7 +3885,6 @@ export type Resolvers<ContextType = Context> = {
   ThreadSetThreadStateResponse?: ThreadSetThreadStateResponseResolvers<ContextType>;
   ThreadsConnection?: ThreadsConnectionResolvers<ContextType>;
   ThreadsCursor?: ThreadsCursorResolvers<ContextType>;
-  UnsupportedThread?: UnsupportedThreadResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   UserConnection?: UserConnectionResolvers<ContextType>;
   UserEdge?: UserEdgeResolvers<ContextType>;
