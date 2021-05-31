@@ -1643,24 +1643,24 @@ export type UserConnection = {
 
 export type UserDeleteBotInput = {
   __typename?: 'UserDeleteBotInput';
-  userId: Array<Scalars['Int']>;
+  userIds: Array<Scalars['Int']>;
 };
 
 export type UserDeleteBotResponse = {
   __typename?: 'UserDeleteBotResponse';
   success: Scalars['Boolean'];
-  username: Scalars['String'];
+  usernames: Array<Scalars['String']>;
 };
 
 export type UserDeleteRegularUserInput = {
   __typename?: 'UserDeleteRegularUserInput';
-  userId: Array<Scalars['Int']>;
+  userIds: Array<Scalars['Int']>;
 };
 
 export type UserDeleteRegularUserResponse = {
   __typename?: 'UserDeleteRegularUserResponse';
   success: Scalars['Boolean'];
-  username: Scalars['String'];
+  usernames: Array<Scalars['String']>;
 };
 
 export type UserEdge = {
@@ -1700,7 +1700,7 @@ export type UserSetEmailInput = {
 export type UserSetEmailResponse = {
   __typename?: 'UserSetEmailResponse';
   success: Scalars['Boolean'];
-  username: Scalars['String'];
+  usernames: Array<Scalars['String']>;
   email: Scalars['String'];
 };
 

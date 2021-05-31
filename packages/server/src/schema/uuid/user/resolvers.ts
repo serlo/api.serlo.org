@@ -32,7 +32,7 @@ import {
   ErrorEvent,
 } from '~/internals/error-event'
 import { Context, Queries, Mutations, TypeResolvers, createMutationNamespace, assertUserIsAuthenticated, assertUserIsAuthorized } from '~/internals/graphql'
-import { UserDecoder } from '~/model/decoder'
+import { DiscriminatorType, UserDecoder } from '~/model/decoder'
 import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
 import { resolveScopedRoles } from '~/schema/authorization/utils'
 import { ConnectionPayload } from '~/schema/connection/types'
@@ -101,38 +101,32 @@ export const resolvers: Queries<
     user: createMutationNamespace(),
   },
   UserMutation: {
-    async deleteBot(_parent, payload, {dataSources, userId}) {
-      const scope = Scope.Serlo
-          
+    async deleteBot(_parent, payload, {dataSources, userId}) {          
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
-        guard: serloAuth.User.deleteBot(scope),
+        guard: serloAuth.User.deleteBot(Scope.Serlo),
         message: 'You are not allowed to delete users',
         dataSources,
       })
-      const answer = await dataSources.model.serlo.deleteBot({...payload.input})
-      const success = answer !== null
       return {      
-        username: answer.username,  
-        success,
+        ... await dataSources.model.serlo.deleteBot({...payload.input}),
+        success: true,
       }
     },
 
     async deleteRegularUser(_parent, payload, {dataSources, userId}) {
-      const scope = Scope.Serlo
-
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
-        guard: serloAuth.User.deleteRegularUser(scope),
+        guard: serloAuth.User.deleteRegularUser(Scope.Serlo),
         message: 'You are not allowed to delete users',
         dataSources,
       })
       const answer = await dataSources.model.serlo.deleteRegularUser({...payload.input})
       const success = answer !== null
       return {
-        username: answer.username,
+        usernames: answer.usernames,
         success,
       }
     },
@@ -147,10 +141,12 @@ export const resolvers: Queries<
         message: 'You are not allowed to change the E-mail address for a user',
         dataSources,
       })
+      //TODO: Hier erst User laden über getUuid
+      if (payload.__typename == DiscriminatorType.User)
       const answer = await dataSources.model.serlo.setEmail({...payload.input})
       const success = answer !== null
       return {
-        username: answer.username,
+        usernames: answer.usernames,
         email: answer.email,
         success,
       }
