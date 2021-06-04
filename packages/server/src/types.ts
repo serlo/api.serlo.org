@@ -2078,7 +2078,6 @@ export type UserConnection = {
 };
 
 export type UserDeleteBotInput = {
-  __typename?: 'UserDeleteBotInput';
   botIds: Array<Scalars['Int']>;
 };
 
@@ -2090,14 +2089,14 @@ export type UserDeleteBotResponse = {
 };
 
 export type UserDeleteRegularUserInput = {
-  __typename?: 'UserDeleteRegularUserInput';
   userIds: Array<Scalars['Int']>;
 };
 
 export type UserDeleteRegularUserResponse = {
   __typename?: 'UserDeleteRegularUserResponse';
   success: Scalars['Boolean'];
-  usernames: Array<Scalars['String']>;
+  username?: Maybe<Scalars['String']>;
+  reason?: Maybe<Scalars['String']>;
 };
 
 export type UserEdge = {
@@ -2109,8 +2108,8 @@ export type UserEdge = {
 export type UserMutation = {
   __typename?: 'UserMutation';
   deleteBot: Array<UserDeleteBotResponse>;
-  deleteRegularUser?: Maybe<UserDeleteRegularUserResponse>;
-  setEmail?: Maybe<UserSetEmailResponse>;
+  deleteRegularUser: Array<UserDeleteRegularUserResponse>;
+  setEmail: UserSetEmailResponse;
 };
 
 
@@ -2129,7 +2128,6 @@ export type UserMutationSetEmailArgs = {
 };
 
 export type UserSetEmailInput = {
-  __typename?: 'UserSetEmailInput';
   userId: Scalars['Int'];
   email: Scalars['String'];
 };
@@ -2137,7 +2135,7 @@ export type UserSetEmailInput = {
 export type UserSetEmailResponse = {
   __typename?: 'UserSetEmailResponse';
   success: Scalars['Boolean'];
-  usernames: Array<Scalars['String']>;
+  username: Scalars['String'];
   email: Scalars['String'];
 };
 
@@ -3774,11 +3772,6 @@ export type UserConnectionResolvers<ContextType = Context, ParentType extends Re
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UserDeleteBotInputResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserDeleteBotInput'] = ResolversParentTypes['UserDeleteBotInput']> = {
-  botIds?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type UserDeleteBotResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserDeleteBotResponse'] = ResolversParentTypes['UserDeleteBotResponse']> = {
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -3786,14 +3779,10 @@ export type UserDeleteBotResponseResolvers<ContextType = Context, ParentType ext
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UserDeleteRegularUserInputResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserDeleteRegularUserInput'] = ResolversParentTypes['UserDeleteRegularUserInput']> = {
-  userIds?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type UserDeleteRegularUserResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserDeleteRegularUserResponse'] = ResolversParentTypes['UserDeleteRegularUserResponse']> = {
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  usernames?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  username?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  reason?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3805,20 +3794,14 @@ export type UserEdgeResolvers<ContextType = Context, ParentType extends Resolver
 
 export type UserMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserMutation'] = ResolversParentTypes['UserMutation']> = {
   deleteBot?: Resolver<Array<ResolversTypes['UserDeleteBotResponse']>, ParentType, ContextType, RequireFields<UserMutationDeleteBotArgs, 'input'>>;
-  deleteRegularUser?: Resolver<Maybe<ResolversTypes['UserDeleteRegularUserResponse']>, ParentType, ContextType, RequireFields<UserMutationDeleteRegularUserArgs, 'input'>>;
-  setEmail?: Resolver<Maybe<ResolversTypes['UserSetEmailResponse']>, ParentType, ContextType, RequireFields<UserMutationSetEmailArgs, 'input'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type UserSetEmailInputResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserSetEmailInput'] = ResolversParentTypes['UserSetEmailInput']> = {
-  userId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  deleteRegularUser?: Resolver<Array<ResolversTypes['UserDeleteRegularUserResponse']>, ParentType, ContextType, RequireFields<UserMutationDeleteRegularUserArgs, 'input'>>;
+  setEmail?: Resolver<ResolversTypes['UserSetEmailResponse'], ParentType, ContextType, RequireFields<UserMutationSetEmailArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserSetEmailResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserSetEmailResponse'] = ResolversParentTypes['UserSetEmailResponse']> = {
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  usernames?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -4004,13 +3987,10 @@ export type Resolvers<ContextType = Context> = {
   ThreadsCursor?: ThreadsCursorResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   UserConnection?: UserConnectionResolvers<ContextType>;
-  UserDeleteBotInput?: UserDeleteBotInputResolvers<ContextType>;
   UserDeleteBotResponse?: UserDeleteBotResponseResolvers<ContextType>;
-  UserDeleteRegularUserInput?: UserDeleteRegularUserInputResolvers<ContextType>;
   UserDeleteRegularUserResponse?: UserDeleteRegularUserResponseResolvers<ContextType>;
   UserEdge?: UserEdgeResolvers<ContextType>;
   UserMutation?: UserMutationResolvers<ContextType>;
-  UserSetEmailInput?: UserSetEmailInputResolvers<ContextType>;
   UserSetEmailResponse?: UserSetEmailResponseResolvers<ContextType>;
   UuidMutation?: UuidMutationResolvers<ContextType>;
   UuidSetStateResponse?: UuidSetStateResponseResolvers<ContextType>;

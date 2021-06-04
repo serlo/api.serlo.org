@@ -49,8 +49,8 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
     permissions: [
       Permission.User_SetEmail,
       Permission.User_DeleteBot,
-      Permission.User_DeleteRegularUser
-    ]
+      Permission.User_DeleteRegularUser,
+    ],
   },
   [Role.Moderator]: {
     permissions: [

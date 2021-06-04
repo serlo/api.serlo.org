@@ -33,7 +33,6 @@ import {
   NotificationDecoder,
   NavigationDecoder,
   NavigationDataDecoder,
-  DiscriminatorType,
   EntityRevisionDecoder,
   EntityDecoder,
 } from './decoder'
@@ -48,13 +47,7 @@ import { isInstance } from '~/schema/instance/utils'
 import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
 import { isSupportedUuidType } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
-import {
-  Instance,
-  ThreadCreateThreadInput,
-  UserDeleteBotInput,
-  UserDeleteRegularUserInput,
-  UserSetEmailInput,
-} from '~/types'
+import { Instance, ThreadCreateThreadInput } from '~/types'
 
 export function createSerloModel({
   environment,
@@ -227,44 +220,33 @@ export function createSerloModel({
   })
 
   const deleteRegularUser = createMutation({
-    decoder: t.type({ usernames: t.array(t.string) }),
-    mutate: (payload: UserDeleteRegularUserInput) => {
+    decoder: t.union([
+      t.type({ success: t.literal(true) }),
+      t.type({ success: t.literal(false), reason: t.string }),
+    ]),
+    mutate: (payload: { userId: number }) => {
       return handleMessage({
         message: { type: 'UserDeleteRegularUserMutation', payload },
         expectedStatusCodes: [200],
       })
     },
-    updateCache: async (payload, value) => {
-      if (value !== null) {
+    async updateCache({ userId }, { success }) {
+      if (success) {
+        await getUuid._querySpec.removeCache({ payload: { id: userId } })
       }
     },
   })
 
   const setEmail = createMutation({
-    decoder: t.type({ usernames: t.array(t.string), email: t.string }),
-    mutate: (payload: UserSetEmailInput) => {
+    decoder: t.union([
+      t.type({ success: t.literal(true), username: t.string }),
+      t.type({ success: t.literal(false), reason: t.string }),
+    ]),
+    mutate: (payload: { userId: number; email: string }) => {
       return handleMessage({
         message: { type: 'UserSetEmailMutation', payload },
         expectedStatusCodes: [200],
       })
-    },
-    updateCache: async (payload, value) => {
-      if (value !== null) {
-        await getUuid._querySpec.setCache({
-          payload: { id: payload.userId },
-          getValue: (current) => {
-            if (current == null) {
-              return
-            } else if (current.__typename !== DiscriminatorType.User) {
-              return
-            } //hier checken ob das ein user ist}
-            else {
-              current.email = payload.email
-              return current
-            }
-          },
-        })
-      }
     },
   })
 
