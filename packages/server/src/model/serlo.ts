@@ -197,14 +197,14 @@ export function createSerloModel({
     environment
   )
 
-  const deleteBot = createMutation({
+  const deleteBots = createMutation({
     decoder: t.union([
       t.type({ success: t.literal(true), deletedUuids: t.array(t.number) }),
       t.type({ success: t.literal(false), reason: t.string }),
     ]),
     mutate(payload: { botId: number }) {
       return handleMessage({
-        message: { type: 'UserDeleteBotMutation', payload },
+        message: { type: 'UserDeleteBotsMutation', payload },
         expectedStatusCodes: [200],
       })
     },
@@ -219,14 +219,14 @@ export function createSerloModel({
     },
   })
 
-  const deleteRegularUser = createMutation({
+  const deleteRegularUsers = createMutation({
     decoder: t.union([
       t.type({ success: t.literal(true) }),
       t.type({ success: t.literal(false), reason: t.string }),
     ]),
     mutate: (payload: { userId: number }) => {
       return handleMessage({
-        message: { type: 'UserDeleteRegularUserMutation', payload },
+        message: { type: 'UserDeleteRegularUsersMutation', payload },
         expectedStatusCodes: [200],
       })
     },
@@ -812,8 +812,8 @@ export function createSerloModel({
     createThread,
     archiveThread,
     createComment,
-    deleteBot,
-    deleteRegularUser,
+    deleteBots,
+    deleteRegularUsers,
     setEmail,
     checkoutRevision,
     getActiveAuthorIds,

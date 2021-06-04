@@ -2073,23 +2073,23 @@ export type UserConnection = {
   pageInfo: PageInfo;
 };
 
-export type UserDeleteBotInput = {
+export type UserDeleteBotsInput = {
   botIds: Array<Scalars['Int']>;
 };
 
-export type UserDeleteBotResponse = {
-  __typename?: 'UserDeleteBotResponse';
+export type UserDeleteBotsResponse = {
+  __typename?: 'UserDeleteBotsResponse';
   success: Scalars['Boolean'];
   username: Scalars['String'];
   reason?: Maybe<Scalars['String']>;
 };
 
-export type UserDeleteRegularUserInput = {
+export type UserDeleteRegularUsersInput = {
   userIds: Array<Scalars['Int']>;
 };
 
-export type UserDeleteRegularUserResponse = {
-  __typename?: 'UserDeleteRegularUserResponse';
+export type UserDeleteRegularUsersResponse = {
+  __typename?: 'UserDeleteRegularUsersResponse';
   success: Scalars['Boolean'];
   username?: Maybe<Scalars['String']>;
   reason?: Maybe<Scalars['String']>;
@@ -2103,19 +2103,19 @@ export type UserEdge = {
 
 export type UserMutation = {
   __typename?: 'UserMutation';
-  deleteBot: Array<UserDeleteBotResponse>;
-  deleteRegularUser: Array<UserDeleteRegularUserResponse>;
+  deleteBots: Array<UserDeleteBotsResponse>;
+  deleteRegularUsers: Array<UserDeleteRegularUsersResponse>;
   setEmail: UserSetEmailResponse;
 };
 
 
-export type UserMutationDeleteBotArgs = {
-  input: UserDeleteBotInput;
+export type UserMutationDeleteBotsArgs = {
+  input: UserDeleteBotsInput;
 };
 
 
-export type UserMutationDeleteRegularUserArgs = {
-  input: UserDeleteRegularUserInput;
+export type UserMutationDeleteRegularUsersArgs = {
+  input: UserDeleteRegularUsersInput;
 };
 
 
