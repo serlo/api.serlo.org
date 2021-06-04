@@ -183,7 +183,7 @@ function getDatabaseLayerUrl({ path }: { path: string }) {
   return `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`
 }
 
-type MessageResolver<Payload = DefaultPayloadType> = RestResolver<
+export type MessageResolver<Payload = DefaultPayloadType> = RestResolver<
   BodyType<Payload>
 >
 type BodyType<Payload = DefaultPayloadType> = Required<MessagePayload<Payload>>
