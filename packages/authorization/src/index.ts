@@ -151,7 +151,7 @@ export const Thread = {
 export const User = {
   deleteBot: createPermissionGuard(Permission.User_DeleteBot),
   deleteRegularUser: createPermissionGuard(Permission.User_DeleteRegularUser),
-  setEmail: createPermissionGuard(Permission.User_SetEmail)
+  setEmail: createPermissionGuard(Permission.User_SetEmail),
 }
 
 export type UuidType =

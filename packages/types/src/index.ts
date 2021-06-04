@@ -2074,7 +2074,6 @@ export type UserConnection = {
 };
 
 export type UserDeleteBotInput = {
-  __typename?: 'UserDeleteBotInput';
   botIds: Array<Scalars['Int']>;
 };
 
@@ -2086,14 +2085,14 @@ export type UserDeleteBotResponse = {
 };
 
 export type UserDeleteRegularUserInput = {
-  __typename?: 'UserDeleteRegularUserInput';
   userIds: Array<Scalars['Int']>;
 };
 
 export type UserDeleteRegularUserResponse = {
   __typename?: 'UserDeleteRegularUserResponse';
   success: Scalars['Boolean'];
-  usernames: Array<Scalars['String']>;
+  username?: Maybe<Scalars['String']>;
+  reason?: Maybe<Scalars['String']>;
 };
 
 export type UserEdge = {
@@ -2105,8 +2104,8 @@ export type UserEdge = {
 export type UserMutation = {
   __typename?: 'UserMutation';
   deleteBot: Array<UserDeleteBotResponse>;
-  deleteRegularUser?: Maybe<UserDeleteRegularUserResponse>;
-  setEmail?: Maybe<UserSetEmailResponse>;
+  deleteRegularUser: Array<UserDeleteRegularUserResponse>;
+  setEmail: UserSetEmailResponse;
 };
 
 
@@ -2125,7 +2124,6 @@ export type UserMutationSetEmailArgs = {
 };
 
 export type UserSetEmailInput = {
-  __typename?: 'UserSetEmailInput';
   userId: Scalars['Int'];
   email: Scalars['String'];
 };
@@ -2133,7 +2131,7 @@ export type UserSetEmailInput = {
 export type UserSetEmailResponse = {
   __typename?: 'UserSetEmailResponse';
   success: Scalars['Boolean'];
-  usernames: Array<Scalars['String']>;
+  username: Scalars['String'];
   email: Scalars['String'];
 };
 

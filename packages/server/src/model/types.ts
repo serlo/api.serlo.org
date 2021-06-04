@@ -90,6 +90,7 @@ export interface Models {
   GroupedExercise: t.TypeOf<typeof GroupedExerciseDecoder>
   GroupedExerciseRevision: t.TypeOf<typeof GroupedExerciseRevisionDecoder>
   Mutation: Record<string, never>
+  UserMutation: Record<string, never>
   Navigation: Payload<'serlo', 'getNavigation'>
   License: Payload<'serlo', 'getLicense'>
   Page: t.TypeOf<typeof PageDecoder>

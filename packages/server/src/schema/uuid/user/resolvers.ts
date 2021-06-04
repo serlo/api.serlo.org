@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as serloAuth from '@serlo/authorization'
+import { UserInputError } from 'apollo-server'
 import { array as A, either as E } from 'fp-ts'
 import * as F from 'fp-ts/lib/function'
 import R from 'ramda'
@@ -113,7 +114,6 @@ export const resolvers: Queries<
     },
   },
   Mutation: {
-    // TODO: Register "Record<string, never" as model type of "UserMutation"
     user: createNamespace(),
   },
   UserMutation: {
@@ -126,6 +126,7 @@ export const resolvers: Queries<
         dataSources,
       })
 
+      // TODO: Do not fail with InternalServerError
       const users = await Promise.all(
         input.botIds.map((botId) =>
           dataSources.model.serlo.getUuidWithCustomDecoder({
@@ -145,7 +146,7 @@ export const resolvers: Queries<
       )
     },
 
-    async deleteRegularUser(_parent, payload, { dataSources, userId }) {
+    async deleteRegularUser(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
@@ -153,36 +154,42 @@ export const resolvers: Queries<
         message: 'You are not allowed to delete users',
         dataSources,
       })
-      const answer = await dataSources.model.serlo.deleteRegularUser({
-        ...payload.input,
-      })
-      const success = answer !== null
-      return {
-        usernames: answer.usernames,
-        success,
-      }
+
+      // TODO: Do not fail with InternalServerError
+      const users = await Promise.all(
+        input.userIds.map((userId) =>
+          dataSources.model.serlo.getUuidWithCustomDecoder({
+            id: userId,
+            decoder: UserDecoder,
+          })
+        )
+      )
+
+      return await Promise.all(
+        users.map(async (user) => {
+          return {
+            ...(await dataSources.model.serlo.deleteRegularUser({ userId })),
+            username: user.username,
+          }
+        })
+      )
     },
 
-    async setEmail(_parent, payload, { dataSources, userId }) {
-      const scope = serloAuth.Scope.Serlo
-
+    async setEmail(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
-        guard: serloAuth.User.setEmail(scope),
+        guard: serloAuth.User.setEmail(serloAuth.Scope.Serlo),
         message: 'You are not allowed to change the E-mail address for a user',
         dataSources,
       })
-      //TODO: Hier erst User laden über getUuid
-      //if (payload.__typename == DiscriminatorType.User)
-      const answer = await dataSources.model.serlo.setEmail({
-        ...payload.input,
-      })
-      const success = answer !== null
-      return {
-        usernames: answer.usernames,
-        email: answer.email,
-        success,
+
+      const result = await dataSources.model.serlo.setEmail(input)
+
+      if (result.success) {
+        return { ...result, email: input.email }
+      } else {
+        throw new UserInputError(result.reason)
       }
     },
   },
