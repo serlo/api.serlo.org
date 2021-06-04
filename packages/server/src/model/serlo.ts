@@ -245,7 +245,7 @@ export function createSerloModel({
     mutate: (payload: { userId: number; email: string }) => {
       return handleMessage({
         message: { type: 'UserSetEmailMutation', payload },
-        expectedStatusCodes: [200],
+        expectedStatusCodes: [200, 400],
       })
     },
   })
