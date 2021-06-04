@@ -117,7 +117,7 @@ export const resolvers: Queries<
     user: createNamespace(),
   },
   UserMutation: {
-    async deleteBot(_parent, { input }, { dataSources, userId }) {
+    async deleteBots(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
@@ -139,14 +139,14 @@ export const resolvers: Queries<
       return await Promise.all(
         users.map(async (user) => {
           return {
-            ...(await dataSources.model.serlo.deleteBot({ botId: user.id })),
+            ...(await dataSources.model.serlo.deleteBots({ botId: user.id })),
             username: user.username,
           }
         })
       )
     },
 
-    async deleteRegularUser(_parent, { input }, { dataSources, userId }) {
+    async deleteRegularUsers(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
@@ -168,7 +168,7 @@ export const resolvers: Queries<
       return await Promise.all(
         users.map(async (user) => {
           return {
-            ...(await dataSources.model.serlo.deleteRegularUser({ userId })),
+            ...(await dataSources.model.serlo.deleteRegularUsers({ userId })),
             username: user.username,
           }
         })
