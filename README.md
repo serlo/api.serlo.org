@@ -62,5 +62,5 @@ We have `~` as an absolute path alias for `./src` in place, e.g. `~/internals` r
 - `yarn license` updates license headers in source files
 - `yarn pacts` runs the contract tests
 - `yarn test` runs the unit tests
-- `yarn regenerate-types` generates TypeScript types from GraphQL schema
+- `yarn codegen` generates TypeScript types from GraphQL schema
 - `yarn start` spins up the development environment
