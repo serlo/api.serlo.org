@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.24.7](https://github.com/serlo/api.serlo.org/compare/v0.24.6..v0.24.7) - June 8, 2021
+
+### Fixed
+
+- role "sysadmin" needs to extend from "admin"
+
 ## [v0.24.6](https://github.com/serlo/api.serlo.org/compare/v0.24.5..v0.24.6) - May 28, 2021
 
 ### Added
