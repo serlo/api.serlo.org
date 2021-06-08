@@ -26,7 +26,7 @@ Run `yarn` to install the dependencies of all packages.
 
 ### Start
 
-Run `yarn start` to start Redis.
+Make sure Docker is running and then run `yarn start` to start Redis.
 
 ### Run tests
 
