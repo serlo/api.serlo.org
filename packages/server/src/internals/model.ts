@@ -43,8 +43,6 @@ export type ModelOf<T> = A.Equals<T, unknown> extends 1
   ? { [P in keyof T]: ModelOf<T[P]> }
   : never
 
-type MutationOrQuery = 'Mutation' | 'Query'
-
 /**
  * Given a GraphQL type it returns the name of the GraphQL type as a string.
  *
@@ -55,7 +53,7 @@ type MutationOrQuery = 'Mutation' | 'Query'
  */
 export type Typename<T> = T extends { __typename?: infer U }
   ? U extends string
-    ? U extends `${infer Prefix}${MutationOrQuery}`
+    ? T extends `${string}${'Mutation' | 'Query'}`
       ? Record<string, never>
       : U
     : never
