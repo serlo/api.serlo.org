@@ -202,8 +202,8 @@ export function createSerloModel({
       t.type({ success: t.literal(true), deletedUuids: t.array(t.number) }),
       t.type({ success: t.literal(false), reason: t.string }),
     ]),
-    mutate(payload: { botId: number }) {
-      return handleMessage({
+    async mutate(payload: { botId: number }) {
+      return await handleMessage({
         message: { type: 'UserDeleteBotsMutation', payload },
         expectedStatusCodes: [200],
       })
