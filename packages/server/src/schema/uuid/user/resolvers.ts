@@ -19,8 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { array as A, either as E } from 'fp-ts'
-import * as F from 'fp-ts/lib/function'
+import * as serloAuth from '@serlo/authorization'
+import { UserInputError } from 'apollo-server'
+import { array as A, either as E, function as F } from 'fp-ts'
+import * as t from 'io-ts'
 import R from 'ramda'
 
 import {
@@ -29,8 +31,17 @@ import {
   consumeErrorEvent,
   ErrorEvent,
 } from '~/internals/error-event'
-import { Context, Model, Queries, TypeResolvers } from '~/internals/graphql'
-import { DiscriminatorType } from '~/model/decoder'
+import {
+  Context,
+  Model,
+  Queries,
+  Mutations,
+  TypeResolvers,
+  createNamespace,
+  assertUserIsAuthenticated,
+  assertUserIsAuthorized,
+} from '~/internals/graphql'
+import { DiscriminatorType, UserDecoder } from '~/model/decoder'
 import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
 import { resolveScopedRoles } from '~/schema/authorization/utils'
 import { ConnectionPayload } from '~/schema/connection/types'
@@ -43,7 +54,8 @@ import { User } from '~/types'
 export const resolvers: Queries<
   'activeAuthors' | 'activeReviewers' | 'activeDonors'
 > &
-  TypeResolvers<User> = {
+  TypeResolvers<User> &
+  Mutations<'user'> = {
   Query: {
     async activeAuthors(_parent, payload, context) {
       return resolveUserConnectionFromIds({
@@ -99,6 +111,86 @@ export const resolvers: Queries<
           return node.scope + node.role
         },
       })
+    },
+  },
+  Mutation: {
+    user: createNamespace(),
+  },
+  UserMutation: {
+    async deleteBots(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+      await assertUserIsAuthorized({
+        userId,
+        guard: serloAuth.User.deleteBot(serloAuth.Scope.Serlo),
+        message: 'You are not allowed to delete bots',
+        dataSources,
+      })
+
+      const users = await Promise.all(
+        input.botIds.map((botId) =>
+          dataSources.model.serlo.getUuid({ id: botId })
+        )
+      )
+
+      if (!t.array(UserDecoder).is(users))
+        throw new UserInputError('not all bots are users')
+
+      return await Promise.all(
+        users.map(async (user) => {
+          return {
+            ...(await dataSources.model.serlo.deleteBots({ botId: user.id })),
+            username: user.username,
+          }
+        })
+      )
+    },
+
+    async deleteRegularUsers(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+      await assertUserIsAuthorized({
+        userId,
+        guard: serloAuth.User.deleteRegularUser(serloAuth.Scope.Serlo),
+        message: 'You are not allowed to delete users',
+        dataSources,
+      })
+
+      const users = await Promise.all(
+        input.userIds.map((userId) =>
+          dataSources.model.serlo.getUuid({ id: userId })
+        )
+      )
+
+      if (!t.array(UserDecoder).is(users))
+        throw new UserInputError('not all bots are users')
+
+      return await Promise.all(
+        users.map(async (user) => {
+          return {
+            ...(await dataSources.model.serlo.deleteRegularUsers({
+              userId: user.id,
+            })),
+            username: user.username,
+          }
+        })
+      )
+    },
+
+    async setEmail(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+      await assertUserIsAuthorized({
+        userId,
+        guard: serloAuth.User.setEmail(serloAuth.Scope.Serlo),
+        message: 'You are not allowed to change the E-mail address for a user',
+        dataSources,
+      })
+
+      const result = await dataSources.model.serlo.setEmail(input)
+
+      if (result.success) {
+        return { ...result, email: input.email }
+      } else {
+        throw new UserInputError(result.reason)
+      }
     },
   },
 }
