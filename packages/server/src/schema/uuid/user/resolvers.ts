@@ -21,8 +21,8 @@
  */
 import * as serloAuth from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
-import { array as A, either as E } from 'fp-ts'
-import * as F from 'fp-ts/lib/function'
+import { array as A, either as E, function as F } from 'fp-ts'
+import * as t from 'io-ts'
 import R from 'ramda'
 
 import {
@@ -126,15 +126,14 @@ export const resolvers: Queries<
         dataSources,
       })
 
-      // TODO: Do not fail with InternalServerError
       const users = await Promise.all(
         input.botIds.map((botId) =>
-          dataSources.model.serlo.getUuidWithCustomDecoder({
-            id: botId,
-            decoder: UserDecoder,
-          })
+          dataSources.model.serlo.getUuid({ id: botId })
         )
       )
+
+      if (!t.array(UserDecoder).is(users))
+        throw new UserInputError('not all bots are users')
 
       return await Promise.all(
         users.map(async (user) => {
