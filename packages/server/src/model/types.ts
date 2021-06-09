@@ -74,13 +74,11 @@ export interface Models {
   AppletRevision: t.TypeOf<typeof AppletRevisionDecoder>
   Article: t.TypeOf<typeof ArticleDecoder>
   ArticleRevision: t.TypeOf<typeof ArticleRevisionDecoder>
-  _cacheMutation: Record<string, never>
   Comment: t.TypeOf<typeof CommentDecoder>
   CoursePage: t.TypeOf<typeof CoursePageDecoder>
   CoursePageRevision: t.TypeOf<typeof CoursePageRevisionDecoder>
   Course: t.TypeOf<typeof CourseDecoder>
   CourseRevision: t.TypeOf<typeof CourseRevisionDecoder>
-  EntityMutation: Record<string, never>
   Event: t.TypeOf<typeof EventDecoder>
   EventRevision: t.TypeOf<typeof EventRevisionDecoder>
   ExerciseGroup: t.TypeOf<typeof ExerciseGroupDecoder>
@@ -89,13 +87,10 @@ export interface Models {
   ExerciseRevision: t.TypeOf<typeof ExerciseRevisionDecoder>
   GroupedExercise: t.TypeOf<typeof GroupedExerciseDecoder>
   GroupedExerciseRevision: t.TypeOf<typeof GroupedExerciseRevisionDecoder>
-  Mutation: Record<string, never>
   Navigation: Payload<'serlo', 'getNavigation'>
   License: Payload<'serlo', 'getLicense'>
   Page: t.TypeOf<typeof PageDecoder>
   PageRevision: t.TypeOf<typeof PageRevisionDecoder>
-  Query: Record<string, never>
-  SubscriptionQuery: Record<string, never>
   Solution: t.TypeOf<typeof SolutionDecoder>
   SolutionRevision: t.TypeOf<typeof SolutionRevisionDecoder>
   TaxonomyTerm: t.TypeOf<typeof TaxonomyTermDecoder>
