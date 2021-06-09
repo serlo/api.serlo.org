@@ -29,13 +29,11 @@ import {
   givenUuidQueryEndpoint,
   hasInternalServerError,
   Client,
-  returnsJson,
   Database,
   returnsUuidsFromDatabase,
   MessageResolver,
   givenSerloEndpoint,
 } from '../../__utils__'
-import { UserDecoder } from '~/model/decoder'
 
 let database: Database
 
@@ -63,6 +61,29 @@ test('runs successfully when mutation could be successfully executed', async () 
       user: {
         deleteBots: [
           { success: true, username: user.username, reason: null },
+          { success: true, username: user.username, reason: null },
+        ],
+      },
+    },
+    client,
+  })
+})
+
+test('runs partially when one of the mutations failed', async () => {
+  givenUserDeleteBotsEndpoint(
+    defaultUserDeleteBotsEndpoint({
+      database,
+      failsForBotIds: [user.id],
+      reason: 'failure!',
+    })
+  )
+
+  await assertSuccessfulGraphQLMutation({
+    ...createDeleteBotsMutation({ botIds: [user.id, user.id + 1] }),
+    data: {
+      user: {
+        deleteBots: [
+          { success: false, username: user.username, reason: 'failure!' },
           { success: true, username: user.username, reason: null },
         ],
       },
@@ -136,17 +157,18 @@ function givenUserDeleteBotsEndpoint(
 
 function defaultUserDeleteBotsEndpoint({
   database,
+  reason,
+  failsForBotIds = [],
 }: {
   database: Database
+  failsForBotIds?: number[]
+  reason?: string
 }): MessageResolver<{ botId: number }> {
   return (req, res, ctx) => {
     const { botId } = req.body.payload
-    const uuid = database.getUuid(botId)
 
-    if (!UserDecoder.is(uuid))
-      return res(
-        ctx.json({ success: false, reason: `uuid ${botId} is not a user` })
-      )
+    if (failsForBotIds.includes(botId))
+      return res(ctx.json({ success: false, reason }))
 
     database.deleteUuid(botId)
 
