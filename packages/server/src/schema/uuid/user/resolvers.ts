@@ -154,20 +154,21 @@ export const resolvers: Queries<
         dataSources,
       })
 
-      // TODO: Do not fail with InternalServerError
       const users = await Promise.all(
         input.userIds.map((userId) =>
-          dataSources.model.serlo.getUuidWithCustomDecoder({
-            id: userId,
-            decoder: UserDecoder,
-          })
+          dataSources.model.serlo.getUuid({ id: userId })
         )
       )
+
+      if (!t.array(UserDecoder).is(users))
+        throw new UserInputError('not all bots are users')
 
       return await Promise.all(
         users.map(async (user) => {
           return {
-            ...(await dataSources.model.serlo.deleteRegularUsers({ userId })),
+            ...(await dataSources.model.serlo.deleteRegularUsers({
+              userId: user.id,
+            })),
             username: user.username,
           }
         })
