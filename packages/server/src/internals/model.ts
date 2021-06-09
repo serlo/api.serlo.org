@@ -25,6 +25,10 @@ import { modelFactories } from '~/model'
 import { Models } from '~/model/types'
 import { Connection } from '~/schema/connection/types'
 
+/**
+ * Given a GraphQL type it computes the model type of the GraphQL type based
+ * on the following rules.
+ */
 export type ModelOf<T> = A.Equals<T, unknown> extends 1
   ? T
   : T extends boolean | string | number | null
@@ -41,6 +45,14 @@ export type ModelOf<T> = A.Equals<T, unknown> extends 1
 
 type MutationOrQuery = 'Mutation' | 'Query'
 
+/**
+ * Given a GraphQL type it returns the name of the GraphQL type as a string.
+ *
+ * @example
+ * import { Article } from '~/types'
+ *
+ * type A = Typename<Article> // A equals "Article"
+ */
 export type Typename<T> = T extends { __typename?: infer U }
   ? U extends string
     ? U extends `${infer Prefix}${MutationOrQuery}`
