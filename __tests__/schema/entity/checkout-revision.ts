@@ -156,7 +156,7 @@ test('fails when database layer returns a 400er response', async () => {
   )
 
   await assertFailingGraphQLMutation({
-    ...createCheckoutRevisionMutation({ revisionId: articleRevision.id }),
+    ...createCheckoutRevisionMutation(),
     client,
     expectedError: 'BAD_USER_INPUT',
     message: 'revision is already checked out',
@@ -173,7 +173,7 @@ test('fails when database layer has an internal error', async () => {
   })
 })
 
-function createCheckoutRevisionMutation(args?: { revisionId: number }) {
+function createCheckoutRevisionMutation() {
   return {
     mutation: gql`
       mutation ($input: CheckoutRevisionInput!) {
@@ -185,10 +185,7 @@ function createCheckoutRevisionMutation(args?: { revisionId: number }) {
       }
     `,
     variables: {
-      input: {
-        revisionId: args?.revisionId ?? unrevisedRevision.id,
-        reason: 'given reason',
-      },
+      input: { revisionId: unrevisedRevision.id, reason: 'given reason' },
     },
   }
 }
