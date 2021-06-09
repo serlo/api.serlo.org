@@ -39,9 +39,13 @@ export type ModelOf<T> = A.Equals<T, unknown> extends 1
   ? { [P in keyof T]: ModelOf<T[P]> }
   : never
 
+type MutationOrQuery = 'Mutation' | 'Query'
+
 export type Typename<T> = T extends { __typename?: infer U }
   ? U extends string
-    ? U
+    ? U extends `${infer Prefix}${MutationOrQuery}`
+      ? Record<string, never>
+      : U
     : never
   : never
 
