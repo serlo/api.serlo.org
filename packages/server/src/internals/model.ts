@@ -35,6 +35,8 @@ export type ModelOf<T> = A.Equals<T, unknown> extends 1
   ? T
   : Typename<T> extends keyof Models
   ? Models[Typename<T>]
+  : Typename<T> extends `${string}${'Mutation' | 'Query'}`
+  ? Record<string, never>
   : T extends { nodes: Array<infer U>; totalCount: number }
   ? Connection<ModelOf<U>>
   : T extends (infer U)[]
@@ -53,9 +55,7 @@ export type ModelOf<T> = A.Equals<T, unknown> extends 1
  */
 export type Typename<T> = T extends { __typename?: infer U }
   ? U extends string
-    ? T extends `${string}${'Mutation' | 'Query'}`
-      ? Record<string, never>
-      : U
+    ? U
     : never
   : never
 
