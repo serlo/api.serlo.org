@@ -21,7 +21,7 @@
  */
 import { gql } from 'apollo-server'
 
-import { user as baseUser } from '../../../__fixtures__'
+import { article, user as baseUser } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
@@ -33,6 +33,7 @@ import {
   returnsUuidsFromDatabase,
   MessageResolver,
   givenSerloEndpoint,
+  assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
 
 let database: Database
@@ -88,6 +89,49 @@ test('runs partially when one of the mutations failed', async () => {
         ],
       },
     },
+    client,
+  })
+})
+
+test('updates the cache', async () => {
+  database.hasUuid(article)
+  givenUserDeleteBotsEndpoint(
+    defaultUserDeleteBotsEndpoint({ database, uuidsToDelete: [article.id] })
+  )
+
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query ($id: Int!) {
+        uuid(id: $id) {
+          id
+        }
+      }
+    `,
+    variables: { id: article.id },
+    data: { uuid: { id: article.id } },
+    client,
+  })
+
+  await assertSuccessfulGraphQLMutation({
+    ...createDeleteBotsMutation({ botIds: [user.id] }),
+    data: {
+      user: {
+        deleteBots: [{ success: true, username: user.username, reason: null }],
+      },
+    },
+    client,
+  })
+
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query ($id: Int!) {
+        uuid(id: $id) {
+          id
+        }
+      }
+    `,
+    variables: { id: article.id },
+    data: { uuid: null },
     client,
   })
 })
@@ -159,10 +203,12 @@ function defaultUserDeleteBotsEndpoint({
   database,
   reason,
   failsForBotIds = [],
+  uuidsToDelete = [],
 }: {
   database: Database
   failsForBotIds?: number[]
   reason?: string
+  uuidsToDelete?: number[]
 }): MessageResolver<{ botId: number }> {
   return (req, res, ctx) => {
     const { botId } = req.body.payload
@@ -170,8 +216,12 @@ function defaultUserDeleteBotsEndpoint({
     if (failsForBotIds.includes(botId))
       return res(ctx.json({ success: false, reason }))
 
-    database.deleteUuid(botId)
+    const deletedUuids = [...uuidsToDelete, botId]
 
-    return res(ctx.json({ success: true, deletedUuids: [botId] }))
+    for (const id of deletedUuids) {
+      database.deleteUuid(id)
+    }
+
+    return res(ctx.json({ success: true, deletedUuids }))
   }
 }
