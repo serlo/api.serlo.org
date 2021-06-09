@@ -33,6 +33,10 @@ export class Database {
     this.uuids[id] = { ...this.uuids[id], ...(update as Model<'AbstractUuid'>) }
   }
 
+  public deleteUuid(id: number) {
+    delete this.uuids[id]
+  }
+
   public hasUuid(uuid: Model<'AbstractUuid'>) {
     // A copy of the uuid is created here so that changes of the uuid object in
     // the `uuids` database does not affect the passed object

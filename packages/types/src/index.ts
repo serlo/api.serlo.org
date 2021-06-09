@@ -1275,6 +1275,7 @@ export type Mutation = {
   notification: NotificationMutation;
   subscription: SubscriptionMutation;
   thread: ThreadMutation;
+  user: UserMutation;
   uuid: UuidMutation;
 };
 
@@ -2072,10 +2073,66 @@ export type UserConnection = {
   pageInfo: PageInfo;
 };
 
+export type UserDeleteBotsInput = {
+  botIds: Array<Scalars['Int']>;
+};
+
+export type UserDeleteBotsResponse = {
+  __typename?: 'UserDeleteBotsResponse';
+  success: Scalars['Boolean'];
+  username: Scalars['String'];
+  reason?: Maybe<Scalars['String']>;
+};
+
+export type UserDeleteRegularUsersInput = {
+  userIds: Array<Scalars['Int']>;
+};
+
+export type UserDeleteRegularUsersResponse = {
+  __typename?: 'UserDeleteRegularUsersResponse';
+  success: Scalars['Boolean'];
+  username?: Maybe<Scalars['String']>;
+  reason?: Maybe<Scalars['String']>;
+};
+
 export type UserEdge = {
   __typename?: 'UserEdge';
   cursor: Scalars['String'];
   node: User;
+};
+
+export type UserMutation = {
+  __typename?: 'UserMutation';
+  deleteBots: Array<UserDeleteBotsResponse>;
+  deleteRegularUsers: Array<UserDeleteRegularUsersResponse>;
+  setEmail: UserSetEmailResponse;
+};
+
+
+export type UserMutationDeleteBotsArgs = {
+  input: UserDeleteBotsInput;
+};
+
+
+export type UserMutationDeleteRegularUsersArgs = {
+  input: UserDeleteRegularUsersInput;
+};
+
+
+export type UserMutationSetEmailArgs = {
+  input: UserSetEmailInput;
+};
+
+export type UserSetEmailInput = {
+  userId: Scalars['Int'];
+  email: Scalars['String'];
+};
+
+export type UserSetEmailResponse = {
+  __typename?: 'UserSetEmailResponse';
+  success: Scalars['Boolean'];
+  username: Scalars['String'];
+  email: Scalars['String'];
 };
 
 export type UuidMutation = {
