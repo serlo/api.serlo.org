@@ -71,12 +71,11 @@ export const resolvers: TypeResolvers<Notification> &
       const { notifications } = await dataSources.model.serlo.getNotifications({
         userId,
       })
+      const filteredNotifications = notifications.filter(
+        (notification) => unread == null || notification.unread === unread
+      )
       return resolveConnection({
-        nodes: notifications
-          .filter(isDefined)
-          .filter(
-            (notification) => unread == null || notification.unread === unread
-          ),
+        nodes: filteredNotifications,
         payload: cursorPayload,
         createCursor(node) {
           return `${node.id}`

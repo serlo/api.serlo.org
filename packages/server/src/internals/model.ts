@@ -56,8 +56,8 @@ export type ModelOf<T> = A.Equals<T, unknown> extends 1
 export type Typename<T> = T extends { __typename?: infer U }
   ? U extends string
     ? U
-    : never
-  : never
+    : '__not_a_graphql_type'
+  : '__not_a_graphql_type'
 
 export type Payload<
   M extends keyof AllPayloads,

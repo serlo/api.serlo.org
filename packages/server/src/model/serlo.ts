@@ -197,6 +197,59 @@ export function createSerloModel({
     environment
   )
 
+  const deleteBots = createMutation({
+    decoder: t.union([
+      t.type({ success: t.literal(true), deletedUuids: t.array(t.number) }),
+      t.type({ success: t.literal(false), reason: t.string }),
+    ]),
+    async mutate(payload: { botId: number }) {
+      return await handleMessage({
+        message: { type: 'UserDeleteBotsMutation', payload },
+        expectedStatusCodes: [200],
+      })
+    },
+    async updateCache({ botId }, serverPayload) {
+      if (!serverPayload.success) return
+
+      await getUuid._querySpec.removeCache({
+        payloads: [botId, ...serverPayload.deletedUuids].map((id) => {
+          return { id }
+        }),
+      })
+    },
+  })
+
+  const deleteRegularUsers = createMutation({
+    decoder: t.union([
+      t.type({ success: t.literal(true) }),
+      t.type({ success: t.literal(false), reason: t.string }),
+    ]),
+    mutate: (payload: { userId: number }) => {
+      return handleMessage({
+        message: { type: 'UserDeleteRegularUsersMutation', payload },
+        expectedStatusCodes: [200],
+      })
+    },
+    async updateCache({ userId }, { success }) {
+      if (success) {
+        await getUuid._querySpec.removeCache({ payload: { id: userId } })
+      }
+    },
+  })
+
+  const setEmail = createMutation({
+    decoder: t.union([
+      t.type({ success: t.literal(true), username: t.string }),
+      t.type({ success: t.literal(false), reason: t.string }),
+    ]),
+    mutate: (payload: { userId: number; email: string }) => {
+      return handleMessage({
+        message: { type: 'UserSetEmailMutation', payload },
+        expectedStatusCodes: [200, 400],
+      })
+    },
+  })
+
   const getNavigationPayload = createQuery(
     {
       decoder: NavigationDecoder,
@@ -759,6 +812,9 @@ export function createSerloModel({
     createThread,
     archiveThread,
     createComment,
+    deleteBots,
+    deleteRegularUsers,
+    setEmail,
     checkoutRevision,
     getActiveAuthorIds,
     getActiveReviewerIds,

@@ -149,7 +149,7 @@ test('fails when database layer returns a 400er response', async () => {
   )
 
   await assertFailingGraphQLMutation({
-    ...createRejectRevisionMutation({ revisionId: articleRevision.id }),
+    ...createRejectRevisionMutation(),
     client,
     expectedError: 'BAD_USER_INPUT',
     message: 'revision cannot be rejected',
@@ -166,7 +166,7 @@ test('fails when database layer has an internal error', async () => {
   })
 })
 
-function createRejectRevisionMutation(args?: { revisionId: number }) {
+function createRejectRevisionMutation() {
   return {
     mutation: gql`
       mutation ($input: RejectRevisionInput!) {
@@ -178,10 +178,7 @@ function createRejectRevisionMutation(args?: { revisionId: number }) {
       }
     `,
     variables: {
-      input: {
-        revisionId: args?.revisionId ?? unrevisedRevision.id,
-        reason: 'given reason',
-      },
+      input: { revisionId: unrevisedRevision.id, reason: 'given reason' },
     },
   }
 }
