@@ -852,6 +852,12 @@ async function exec(): Promise<void> {
       ],
       internal: ['Remove UnsupportedComment'],
     },
+    {
+      tagName: 'v0.24.7',
+      date: '2021-06-08',
+      fixed: ['role "sysadmin" needs to extend from "admin"'],
+      internal: ['Remove UnsupportedThread', 'Update README.md'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
