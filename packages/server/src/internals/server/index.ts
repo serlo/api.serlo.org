@@ -58,9 +58,11 @@ function initializeGraphQLServer({
   const port = 3000
   const host = `http://localhost:${port}`
   app.listen({ port }, () => {
+    /* eslint-disable no-console */
     console.log('🚀 Server ready')
     console.log(`Playground:          ${host}/___graphql`)
     console.log(`GraphQL endpoint:    ${host}${graphqlPath}`)
     console.log(`SWR Queue Dashboard: ${host}${dashboardPath}`)
+    /* eslint-enable no-console */
   })
 }
