@@ -42,5 +42,6 @@ void pact
     consumerVersion,
   })
   .then(function () {
+    // eslint-disable-next-line no-console
     console.log('success')
   })

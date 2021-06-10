@@ -54,6 +54,7 @@ export async function start() {
       })
   })
   app.listen({ port: 3000 }, () => {
+    // eslint-disable-next-line no-console
     console.log('🚀 SWR Queue Worker ready')
   })
 }
