@@ -22,10 +22,7 @@
 import { gql } from 'apollo-server'
 import R from 'ramda'
 
-import {
-  exercise,
-  exerciseRevision
-} from '../../../__fixtures__'
+import { exercise, exerciseRevision } from '../../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
@@ -57,7 +54,10 @@ test('Exercise', async () => {
     `,
     variables: exercise,
     data: {
-      uuid: R.pick(['__typename', 'id', 'trashed', 'instance', 'date'], exercise),
+      uuid: R.pick(
+        ['__typename', 'id', 'trashed', 'instance', 'date'],
+        exercise
+      ),
     },
     client,
   })
@@ -82,7 +82,10 @@ test('ExerciseRevision', async () => {
     `,
     variables: exerciseRevision,
     data: {
-      uuid: R.pick(['__typename', 'id', 'trashed', 'date', 'content', 'changes'], exerciseRevision),
+      uuid: R.pick(
+        ['__typename', 'id', 'trashed', 'date', 'content', 'changes'],
+        exerciseRevision
+      ),
     },
     client,
   })
