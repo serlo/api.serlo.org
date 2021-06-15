@@ -29,7 +29,6 @@ import {
   event,
   exercise,
   exerciseGroup,
-  getTaxonomyTermDataWithoutSubResolvers,
   taxonomyTermSubject,
   video,
 } from '../../../__fixtures__'
@@ -38,6 +37,7 @@ import {
   Client,
   createTestClient,
   createUuidHandler,
+  getTypenameAndId,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { EntityType } from '~/model/decoder'
@@ -74,9 +74,7 @@ test.each(taxonomyTermChildCases)(
       data: {
         uuid: {
           taxonomyTerms: {
-            nodes: [
-              getTaxonomyTermDataWithoutSubResolvers(taxonomyTermSubject),
-            ],
+            nodes: [getTypenameAndId(taxonomyTermSubject)],
             totalCount: 1,
           },
         },
