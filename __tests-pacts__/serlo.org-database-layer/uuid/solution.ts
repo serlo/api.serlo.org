@@ -21,13 +21,9 @@
  */
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
-import {
-  getSolutionDataWithoutSubResolvers,
-  getSolutionRevisionDataWithoutSubResolvers,
-  solution,
-  solutionRevision,
-} from '../../../__fixtures__'
+import { solution, solutionRevision } from '../../../__fixtures__'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
@@ -65,7 +61,10 @@ test('Solution', async () => {
     `,
     variables: solution,
     data: {
-      uuid: getSolutionDataWithoutSubResolvers(solution),
+      uuid: R.pick(
+        ['__typename', 'id', 'trashed', 'instance', 'date'],
+        solution
+      ),
     },
   })
 })
@@ -99,7 +98,10 @@ test('SolutionRevision', async () => {
     `,
     variables: solutionRevision,
     data: {
-      uuid: getSolutionRevisionDataWithoutSubResolvers(solutionRevision),
+      uuid: R.pick(
+        ['__typename', 'id', 'trashed', 'date', 'content', 'changes'],
+        solutionRevision
+      ),
     },
   })
 })

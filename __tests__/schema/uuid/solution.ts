@@ -20,12 +20,11 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
 import {
   solution,
   solutionRevision,
-  getSolutionDataWithoutSubResolvers,
-  getSolutionRevisionDataWithoutSubResolvers,
   getExerciseDataWithoutSubResolvers,
   exercise,
 } from '../../../__fixtures__'
@@ -64,7 +63,10 @@ describe('Solution', () => {
       `,
       variables: solution,
       data: {
-        uuid: getSolutionDataWithoutSubResolvers(solution),
+        uuid: R.pick(
+          ['__typename', 'id', 'trashed', 'instance', 'date'],
+          solution
+        ),
       },
       client,
     })
@@ -118,7 +120,10 @@ test('SolutionRevision', async () => {
     `,
     variables: solutionRevision,
     data: {
-      uuid: getSolutionRevisionDataWithoutSubResolvers(solutionRevision),
+      uuid: R.pick(
+        ['__typename', 'id', 'trashed', 'date', 'content', 'changes'],
+        solutionRevision
+      ),
     },
     client,
   })
