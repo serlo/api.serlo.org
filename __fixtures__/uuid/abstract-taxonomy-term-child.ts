@@ -35,12 +35,6 @@ export function createEntityTaxonomyTermsQuery(
               nodes {
                 __typename
                 id
-                trashed
-                type
-                instance
-                name
-                description
-                weight
               }
               totalCount
             }

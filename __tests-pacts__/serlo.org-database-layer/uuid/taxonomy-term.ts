@@ -21,13 +21,14 @@
  */
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
 import {
-  getTaxonomyTermDataWithoutSubResolvers,
   taxonomyTermCurriculumTopic,
   taxonomyTermRoot,
   taxonomyTermSubject,
 } from '../../../__fixtures__'
+import { getTypenameAndId } from '../../../__tests__/__utils__'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
@@ -76,7 +77,19 @@ test('TaxonomyTerm root', async () => {
     `,
     variables: taxonomyTermRoot,
     data: {
-      uuid: getTaxonomyTermDataWithoutSubResolvers(taxonomyTermRoot),
+      uuid: R.pick(
+        [
+          '__typename',
+          'id',
+          'type',
+          'trashed',
+          'instance',
+          'name',
+          'description',
+          'weight',
+        ],
+        taxonomyTermRoot
+      ),
     },
   })
 })
@@ -90,19 +103,13 @@ test('TaxonomyTerm subject', async () => {
           __typename
           ... on TaxonomyTerm {
             id
-            type
-            trashed
-            instance
-            name
-            description
-            weight
           }
         }
       }
     `,
     variables: taxonomyTermSubject,
     data: {
-      uuid: getTaxonomyTermDataWithoutSubResolvers(taxonomyTermSubject),
+      uuid: getTypenameAndId(taxonomyTermSubject),
     },
   })
 })
@@ -116,19 +123,13 @@ test('TaxonomyTerm curriculumTopic', async () => {
           __typename
           ... on TaxonomyTerm {
             id
-            type
-            trashed
-            instance
-            name
-            description
-            weight
           }
         }
       }
     `,
     variables: taxonomyTermCurriculumTopic,
     data: {
-      uuid: getTaxonomyTermDataWithoutSubResolvers(taxonomyTermCurriculumTopic),
+      uuid: getTypenameAndId(taxonomyTermCurriculumTopic),
     },
   })
 })
