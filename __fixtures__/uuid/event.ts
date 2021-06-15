@@ -19,8 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import * as R from 'ramda'
-
 import { license } from '../license'
 import { Model } from '~/internals/graphql'
 import { EntityRevisionType, EntityType } from '~/model/decoder'
@@ -52,23 +50,4 @@ export const eventRevision: Model<'EventRevision'> = {
   changes: 'changes',
   metaDescription: 'metaDescription',
   metaTitle: 'metaTitle',
-}
-
-export function getEventDataWithoutSubResolvers(event: Model<'Event'>) {
-  return R.omit(
-    [
-      'currentRevisionId',
-      'revisionIds',
-      'licenseId',
-      'taxonomyTermIds',
-      'alias',
-    ],
-    event
-  )
-}
-
-export function getEventRevisionDataWithoutSubResolvers(
-  eventRevision: Model<'EventRevision'>
-) {
-  return R.omit(['authorId', 'repositoryId', 'alias'], eventRevision)
 }
