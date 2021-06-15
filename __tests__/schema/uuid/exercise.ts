@@ -20,12 +20,11 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
 import {
   exercise,
-  exerciseRevision,
-  getExerciseDataWithoutSubResolvers,
-  getExerciseRevisionDataWithoutSubResolvers,
+  exerciseRevision
 } from '../../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
@@ -58,7 +57,7 @@ test('Exercise', async () => {
     `,
     variables: exercise,
     data: {
-      uuid: getExerciseDataWithoutSubResolvers(exercise),
+      uuid: R.pick(['__typename', 'id', 'trashed', 'instance', 'date'], exercise),
     },
     client,
   })
@@ -83,7 +82,7 @@ test('ExerciseRevision', async () => {
     `,
     variables: exerciseRevision,
     data: {
-      uuid: getExerciseRevisionDataWithoutSubResolvers(exerciseRevision),
+      uuid: R.pick(['__typename', 'id', 'trashed', 'date', 'content', 'changes'], exerciseRevision),
     },
     client,
   })
