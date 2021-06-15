@@ -35,6 +35,7 @@ import {
   NavigationDataDecoder,
   EntityRevisionDecoder,
   EntityDecoder,
+  SubscriptionsDecoder,
 } from './decoder'
 import {
   createMutation,
@@ -556,12 +557,7 @@ export function createSerloModel({
 
   const getSubscriptions = createQuery(
     {
-      decoder: t.exact(
-        t.type({
-          subscriptions: t.array(t.type({ id: Uuid })),
-          userId: Uuid,
-        })
-      ),
+      decoder: SubscriptionsDecoder,
       enableSwr: true,
       getCurrentValue: async ({ userId }: { userId: number }) => {
         return await handleMessage({
@@ -601,7 +597,7 @@ export function createSerloModel({
         expectedStatusCodes: [200],
       })
     },
-    async updateCache({ ids, userId, subscribe }) {
+    async updateCache({ ids, sendEmail, userId, subscribe }) {
       await getSubscriptions._querySpec.setCache({
         payload: { userId },
         getValue(current) {
@@ -612,19 +608,19 @@ export function createSerloModel({
             return {
               ...current,
               subscriptions: current.subscriptions.filter(
-                (node) => !ids.includes(node.id)
+                (node) => !ids.includes(node.object)
               ),
             }
           }
 
           //add
           const newIds = ids.filter((id) => {
-            return current.subscriptions.find((sub) => sub.id !== id)
+            return current.subscriptions.find((sub) => sub.object !== id)
           })
           const updated = [
             ...current.subscriptions,
-            ...newIds.map((id) => ({ id })),
-          ].sort((a, b) => a.id - b.id)
+            ...newIds.map((object) => ({ object, sendEmail })),
+          ].sort((a, b) => a.object - b.object)
 
           return {
             ...current,
