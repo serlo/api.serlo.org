@@ -19,8 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import * as R from 'ramda'
-
 import { license } from '../license'
 import { Model } from '~/internals/graphql'
 import { DiscriminatorType } from '~/model/decoder'
@@ -48,23 +46,4 @@ export const pageRevision: Model<'PageRevision'> = {
   date: '2015-02-28T02:06:40Z',
   authorId: 1,
   repositoryId: page.id,
-}
-
-export function getPageDataWithoutSubResolvers(page: Model<'Page'>) {
-  return R.omit(
-    [
-      'currentRevisionId',
-      'revisionIds',
-      'licenseId',
-      'taxonomyTermIds',
-      'alias',
-    ],
-    page
-  )
-}
-
-export function getPageRevisionDataWithoutSubResolvers(
-  pageRevision: Model<'PageRevision'>
-) {
-  return R.omit(['authorId', 'repositoryId', 'alias'], pageRevision)
 }
