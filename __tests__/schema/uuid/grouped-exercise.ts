@@ -20,20 +20,19 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
 import {
   groupedExercise,
   groupedExerciseRevision,
-  getGroupedExerciseDataWithoutSubResolvers,
-  getGroupedExerciseRevisionDataWithoutSubResolvers,
   exerciseGroup,
-  getExerciseGroupDataWithoutSubResolvers,
 } from '../../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
   createTestClient,
   createUuidHandler,
+  getTypenameAndId,
 } from '../../__utils__'
 
 let client: Client
@@ -64,7 +63,7 @@ describe('GroupedExercise', () => {
       `,
       variables: groupedExercise,
       data: {
-        uuid: getGroupedExerciseDataWithoutSubResolvers(groupedExercise),
+        uuid: R.pick(['__typename', 'id', 'trashed', 'instance', 'date'], groupedExercise),
       },
       client,
     })
@@ -80,9 +79,6 @@ describe('GroupedExercise', () => {
               exerciseGroup {
                 __typename
                 id
-                trashed
-                instance
-                date
               }
             }
           }
@@ -91,7 +87,7 @@ describe('GroupedExercise', () => {
       variables: groupedExercise,
       data: {
         uuid: {
-          exerciseGroup: getExerciseGroupDataWithoutSubResolvers(exerciseGroup),
+          exerciseGroup: getTypenameAndId(exerciseGroup),
         },
       },
       client,
@@ -118,7 +114,7 @@ test('GroupedExerciseRevision', async () => {
     `,
     variables: groupedExerciseRevision,
     data: {
-      uuid: getGroupedExerciseRevisionDataWithoutSubResolvers(
+      uuid: R.pick(['__typename', 'id', 'trashed', 'date', 'content', 'changes'],
         groupedExerciseRevision
       ),
     },
