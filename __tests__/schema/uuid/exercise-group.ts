@@ -32,7 +32,7 @@ import {
   Client,
   createTestClient,
   createUuidHandler,
-  getTypenameAndId
+  getTypenameAndId,
 } from '../../__utils__'
 
 let client: Client
@@ -63,7 +63,10 @@ describe('ExerciseGroup', () => {
       `,
       variables: exerciseGroup,
       data: {
-        uuid: R.pick(['__typename', 'id', 'trashed', 'instance', 'date'], exerciseGroup),
+        uuid: R.pick(
+          ['__typename', 'id', 'trashed', 'instance', 'date'],
+          exerciseGroup
+        ),
       },
       client,
     })
@@ -87,9 +90,7 @@ describe('ExerciseGroup', () => {
       variables: exerciseGroup,
       data: {
         uuid: {
-          exercises: [
-            getTypenameAndId(groupedExercise),
-          ],
+          exercises: [getTypenameAndId(groupedExercise)],
         },
       },
       client,
@@ -116,7 +117,8 @@ test('ExerciseGroupRevision', async () => {
     `,
     variables: exerciseGroupRevision,
     data: {
-      uuid: R.pick(['__typename', 'id', 'trashed', 'date', 'content', 'changes'],
+      uuid: R.pick(
+        ['__typename', 'id', 'trashed', 'date', 'content', 'changes'],
         exerciseGroupRevision
       ),
     },

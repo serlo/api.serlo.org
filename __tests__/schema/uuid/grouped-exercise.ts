@@ -63,7 +63,10 @@ describe('GroupedExercise', () => {
       `,
       variables: groupedExercise,
       data: {
-        uuid: R.pick(['__typename', 'id', 'trashed', 'instance', 'date'], groupedExercise),
+        uuid: R.pick(
+          ['__typename', 'id', 'trashed', 'instance', 'date'],
+          groupedExercise
+        ),
       },
       client,
     })
@@ -114,7 +117,8 @@ test('GroupedExerciseRevision', async () => {
     `,
     variables: groupedExerciseRevision,
     data: {
-      uuid: R.pick(['__typename', 'id', 'trashed', 'date', 'content', 'changes'],
+      uuid: R.pick(
+        ['__typename', 'id', 'trashed', 'date', 'content', 'changes'],
         groupedExerciseRevision
       ),
     },
