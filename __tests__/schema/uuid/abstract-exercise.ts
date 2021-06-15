@@ -24,7 +24,6 @@ import * as R from 'ramda'
 import {
   createExerciseSolutionQuery,
   exercise,
-  getSolutionDataWithoutSubResolvers,
   groupedExercise,
   solution,
 } from '../../../__fixtures__'
@@ -33,6 +32,7 @@ import {
   Client,
   createTestClient,
   createUuidHandler,
+  getTypenameAndId,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { EntityType } from '~/model/decoder'
@@ -55,7 +55,7 @@ test.each(exerciseCases)('%s by id (w/ solution)', async (_type, entity) => {
     ...createExerciseSolutionQuery(entity),
     data: {
       uuid: {
-        solution: getSolutionDataWithoutSubResolvers(solution),
+        solution: getTypenameAndId(solution),
       },
     },
     client,
