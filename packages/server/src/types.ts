@@ -1471,7 +1471,7 @@ export type Query = {
   notificationEvent?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
   notifications: NotificationConnection;
   subscription: SubscriptionQuery;
-  subscriptions: AbstractUuidConnection;
+  subscriptions: SubscriptionsConnection;
   uuid?: Maybe<Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision>;
 };
 
@@ -1795,6 +1795,26 @@ export type SubscriptionSetResponse = {
   __typename?: 'SubscriptionSetResponse';
   success: Scalars['Boolean'];
   query: Query;
+};
+
+export type Subscriptions = {
+  __typename?: 'Subscriptions';
+  object: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
+  sendEmail: Scalars['Boolean'];
+};
+
+export type SubscriptionsConnection = {
+  __typename?: 'SubscriptionsConnection';
+  edges: Array<SubscriptionsCursor>;
+  nodes: Array<Subscriptions>;
+  totalCount: Scalars['Int'];
+  pageInfo: PageInfo;
+};
+
+export type SubscriptionsCursor = {
+  __typename?: 'SubscriptionsCursor';
+  cursor: Scalars['String'];
+  node: Subscriptions;
 };
 
 export type TaxonomyTerm = AbstractUuid & AbstractNavigationChild & InstanceAware & ThreadAware & {
@@ -2477,6 +2497,9 @@ export type ResolversTypes = {
   SubscriptionQuery: ResolverTypeWrapper<ModelOf<SubscriptionQuery>>;
   SubscriptionSetInput: ResolverTypeWrapper<ModelOf<SubscriptionSetInput>>;
   SubscriptionSetResponse: ResolverTypeWrapper<ModelOf<SubscriptionSetResponse>>;
+  Subscriptions: ResolverTypeWrapper<ModelOf<Subscriptions>>;
+  SubscriptionsConnection: ResolverTypeWrapper<ModelOf<SubscriptionsConnection>>;
+  SubscriptionsCursor: ResolverTypeWrapper<ModelOf<SubscriptionsCursor>>;
   TaxonomyTerm: ResolverTypeWrapper<ModelOf<TaxonomyTerm>>;
   TaxonomyTermConnection: ResolverTypeWrapper<ModelOf<TaxonomyTermConnection>>;
   TaxonomyTermEdge: ResolverTypeWrapper<ModelOf<TaxonomyTermEdge>>;
@@ -2631,6 +2654,9 @@ export type ResolversParentTypes = {
   SubscriptionQuery: ModelOf<SubscriptionQuery>;
   SubscriptionSetInput: ModelOf<SubscriptionSetInput>;
   SubscriptionSetResponse: ModelOf<SubscriptionSetResponse>;
+  Subscriptions: ModelOf<Subscriptions>;
+  SubscriptionsConnection: ModelOf<SubscriptionsConnection>;
+  SubscriptionsCursor: ModelOf<SubscriptionsCursor>;
   TaxonomyTerm: ModelOf<TaxonomyTerm>;
   TaxonomyTermConnection: ModelOf<TaxonomyTermConnection>;
   TaxonomyTermEdge: ModelOf<TaxonomyTermEdge>;
@@ -3467,7 +3493,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   notificationEvent?: Resolver<Maybe<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType, RequireFields<QueryNotificationEventArgs, 'id'>>;
   notifications?: Resolver<ResolversTypes['NotificationConnection'], ParentType, ContextType, RequireFields<QueryNotificationsArgs, never>>;
   subscription?: Resolver<ResolversTypes['SubscriptionQuery'], ParentType, ContextType>;
-  subscriptions?: Resolver<ResolversTypes['AbstractUuidConnection'], ParentType, ContextType, RequireFields<QuerySubscriptionsArgs, never>>;
+  subscriptions?: Resolver<ResolversTypes['SubscriptionsConnection'], ParentType, ContextType, RequireFields<QuerySubscriptionsArgs, never>>;
   uuid?: Resolver<Maybe<ResolversTypes['AbstractUuid']>, ParentType, ContextType, RequireFields<QueryUuidArgs, never>>;
 };
 
@@ -3641,6 +3667,26 @@ export type SubscriptionQueryResolvers<ContextType = Context, ParentType extends
 export type SubscriptionSetResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionSetResponse'] = ResolversParentTypes['SubscriptionSetResponse']> = {
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SubscriptionsResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Subscriptions'] = ResolversParentTypes['Subscriptions']> = {
+  object?: Resolver<ResolversTypes['AbstractUuid'], ParentType, ContextType>;
+  sendEmail?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SubscriptionsConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionsConnection'] = ResolversParentTypes['SubscriptionsConnection']> = {
+  edges?: Resolver<Array<ResolversTypes['SubscriptionsCursor']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<ResolversTypes['Subscriptions']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SubscriptionsCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionsCursor'] = ResolversParentTypes['SubscriptionsCursor']> = {
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<ResolversTypes['Subscriptions'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3972,6 +4018,9 @@ export type Resolvers<ContextType = Context> = {
   SubscriptionMutation?: SubscriptionMutationResolvers<ContextType>;
   SubscriptionQuery?: SubscriptionQueryResolvers<ContextType>;
   SubscriptionSetResponse?: SubscriptionSetResponseResolvers<ContextType>;
+  Subscriptions?: SubscriptionsResolvers<ContextType>;
+  SubscriptionsConnection?: SubscriptionsConnectionResolvers<ContextType>;
+  SubscriptionsCursor?: SubscriptionsCursorResolvers<ContextType>;
   TaxonomyTerm?: TaxonomyTermResolvers<ContextType>;
   TaxonomyTermConnection?: TaxonomyTermConnectionResolvers<ContextType>;
   TaxonomyTermEdge?: TaxonomyTermEdgeResolvers<ContextType>;

@@ -1467,7 +1467,7 @@ export type Query = {
   notificationEvent?: Maybe<AbstractNotificationEvent>;
   notifications: NotificationConnection;
   subscription: SubscriptionQuery;
-  subscriptions: AbstractUuidConnection;
+  subscriptions: SubscriptionsConnection;
   uuid?: Maybe<AbstractUuid>;
 };
 
@@ -1791,6 +1791,26 @@ export type SubscriptionSetResponse = {
   __typename?: 'SubscriptionSetResponse';
   success: Scalars['Boolean'];
   query: Query;
+};
+
+export type Subscriptions = {
+  __typename?: 'Subscriptions';
+  object: AbstractUuid;
+  sendEmail: Scalars['Boolean'];
+};
+
+export type SubscriptionsConnection = {
+  __typename?: 'SubscriptionsConnection';
+  edges: Array<SubscriptionsCursor>;
+  nodes: Array<Subscriptions>;
+  totalCount: Scalars['Int'];
+  pageInfo: PageInfo;
+};
+
+export type SubscriptionsCursor = {
+  __typename?: 'SubscriptionsCursor';
+  cursor: Scalars['String'];
+  node: Subscriptions;
 };
 
 export type TaxonomyTerm = AbstractUuid & AbstractNavigationChild & InstanceAware & ThreadAware & {
