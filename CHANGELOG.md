@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.24.8](https://github.com/serlo/api.serlo.org/compare/v0.24.7..v0.24.8) - June 16, 2021
+
+### Added
+
+- sysadmin endpoints to delete bots / regular users and to update an email
+
+### Fixed
+
+- update cache for checkoutRevision mutation
+
+- refactor uuid-set-state mutation acording to changed api in the db layer
+
 ## [v0.24.7](https://github.com/serlo/api.serlo.org/compare/v0.24.6..v0.24.7) - June 8, 2021
 
 ### Fixed
