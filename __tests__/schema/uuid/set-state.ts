@@ -74,7 +74,7 @@ beforeEach(() => {
   })
 })
 
-test('authenticated with array of ids', async () => {
+test('returns "{ success: true }" when it succeeds', async () => {
   await assertSuccessfulGraphQLMutation({
     mutation,
     variables: {
@@ -85,7 +85,7 @@ test('authenticated with array of ids', async () => {
   })
 })
 
-test('unauthenticated', async () => {
+test('fails when user is not authenticated', async () => {
   await assertFailingGraphQLMutation({
     mutation,
     variables: { input: { id: 1, trashed: true } },
@@ -94,7 +94,7 @@ test('unauthenticated', async () => {
   })
 })
 
-test('insufficient permissions', async () => {
+test('fails when user does not have sufficient permissions', async () => {
   // Architects are not allowed to set the state of pages.
   database.hasUuid(page)
   await assertFailingGraphQLMutation({
