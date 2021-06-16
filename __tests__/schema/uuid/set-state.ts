@@ -34,6 +34,7 @@ import {
   MessageResolver,
   assertSuccessfulGraphQLQuery,
   hasInternalServerError,
+  returnsJson,
 } from '../../__utils__'
 
 let database: Database
@@ -117,6 +118,22 @@ test('updates the cache when it succeeds', async () => {
     variables: { id: article.id },
     data: { uuid: { trashed: true } },
     client,
+  })
+})
+
+test('fails when database layer returns a BadRequest response', async () => {
+  givenUuidSetStateMutationEndpoint(
+    returnsJson({
+      json: { success: false, reason: 'bad request' },
+      status: 400,
+    })
+  )
+  await assertFailingGraphQLMutation({
+    mutation,
+    variables: { input: { id: articleIds, trashed: true } },
+    client,
+    expectedError: 'BAD_USER_INPUT',
+    message: 'bad request',
   })
 })
 
