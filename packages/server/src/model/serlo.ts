@@ -776,6 +776,15 @@ export function createSerloModel({
           return current
         },
       })
+
+      await getUuid._querySpec.setCache({
+        payload: { id: revisionId },
+        getValue(current) {
+          if (!EntityRevisionDecoder.is(current)) return
+
+          return { ...current, trashed: false }
+        },
+      })
     },
   })
 
@@ -800,9 +809,7 @@ export function createSerloModel({
         getValue(current) {
           if (!EntityRevisionDecoder.is(current)) return
 
-          current.trashed = true
-
-          return current
+          return { ...current, trashed: true }
         },
       })
     },
