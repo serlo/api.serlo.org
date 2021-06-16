@@ -122,15 +122,16 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
         dataSources,
       })
 
-      await dataSources.model.serlo.setUuidState({
+      const result = await dataSources.model.serlo.setUuidState({
         ids,
         userId,
         trashed,
       })
-      return {
-        success: true,
-        query: {},
+
+      if (result !== undefined) {
+        throw new UserInputError(result.reason)
       }
+      return { success: true, query: {} }
     },
   },
 }
