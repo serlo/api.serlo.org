@@ -32,6 +32,8 @@ import {
   returnsUuidsFromDatabase,
   givenSerloEndpoint,
   MessageResolver,
+  assertSuccessfulGraphQLQuery,
+  hasInternalServerError,
 } from '../../__utils__'
 
 let database: Database
@@ -77,10 +79,43 @@ beforeEach(() => {
 test('returns "{ success: true }" when it succeeds', async () => {
   await assertSuccessfulGraphQLMutation({
     mutation,
-    variables: {
-      input: { id: articleIds, trashed: true },
-    },
+    variables: { input: { id: articleIds, trashed: true } },
     data: { uuid: { setState: { success: true } } },
+    client,
+  })
+})
+
+test('updates the cache when it succeeds', async () => {
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query ($id: Int!) {
+        uuid(id: $id) {
+          trashed
+        }
+      }
+    `,
+    variables: { id: article.id },
+    data: { uuid: { trashed: false } },
+    client,
+  })
+
+  await assertSuccessfulGraphQLMutation({
+    mutation,
+    variables: { input: { id: articleIds, trashed: true } },
+    data: { uuid: { setState: { success: true } } },
+    client,
+  })
+
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query ($id: Int!) {
+        uuid(id: $id) {
+          trashed
+        }
+      }
+    `,
+    variables: { id: article.id },
+    data: { uuid: { trashed: true } },
     client,
   })
 })
@@ -88,7 +123,7 @@ test('returns "{ success: true }" when it succeeds', async () => {
 test('fails when user is not authenticated', async () => {
   await assertFailingGraphQLMutation({
     mutation,
-    variables: { input: { id: 1, trashed: true } },
+    variables: { input: { id: articleIds, trashed: true } },
     client: createTestClient({ userId: null }),
     expectedError: 'UNAUTHENTICATED',
   })
@@ -102,6 +137,17 @@ test('fails when user does not have sufficient permissions', async () => {
     variables: { input: { id: page.id, trashed: false } },
     client,
     expectedError: 'FORBIDDEN',
+  })
+})
+
+test('fails when database layer has an internal server error', async () => {
+  givenUuidSetStateMutationEndpoint(hasInternalServerError())
+
+  await assertFailingGraphQLMutation({
+    mutation,
+    variables: { input: { id: articleIds, trashed: true } },
+    client,
+    expectedError: 'INTERNAL_SERVER_ERROR',
   })
 })
 
