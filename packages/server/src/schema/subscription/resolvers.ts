@@ -29,14 +29,24 @@ import {
   Queries,
   TypeResolvers,
 } from '~/internals/graphql'
-import { SubscriptionsDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
-import { SubscriptionQuery } from '~/types'
+import { Subscriptions, SubscriptionQuery } from '~/types'
 
 export const resolvers: TypeResolvers<SubscriptionQuery> &
+  TypeResolvers<Subscriptions> &
   Queries<'subscriptions' | 'subscription'> &
   Mutations<'subscription'> = {
+  Subscriptions: {
+    async object(parent, _args, { dataSources }) {
+      const object = await dataSources.model.serlo.getUuid({
+        id: parent.objectId,
+      })
+      if (object === null) throw new Error('Object cannot be null')
+      return object
+    },
+  },
+
   Query: {
     async subscriptions(_parent, cursorPayload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
@@ -45,10 +55,10 @@ export const resolvers: TypeResolvers<SubscriptionQuery> &
       })
 
       return resolveConnection({
-        nodes: subscriptions,
+        nodes: subscriptions.subscriptions,
         payload: cursorPayload,
         createCursor(node) {
-          return node.object.toString()
+          return node.objectId.toString()
         },
       })
     },
@@ -64,7 +74,7 @@ export const resolvers: TypeResolvers<SubscriptionQuery> &
         userId,
       })
       return subscriptions.subscriptions.some(
-        (subscription) => subscription.object === id
+        (subscription) => subscription.objectId === id
       )
     },
   },
