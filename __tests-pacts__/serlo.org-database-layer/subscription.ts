@@ -42,7 +42,7 @@ test('SubscriptionsQuery', async () => {
     responseBody: {
       userId: user.id,
       subscriptions: Matchers.eachLike({
-        id: Matchers.integer(1),
+        objectId: Matchers.integer(1),
         sendEmail: Matchers.boolean(false),
       }),
     },
@@ -52,7 +52,7 @@ test('SubscriptionsQuery', async () => {
     userId: user.id,
     subscriptions: [
       {
-        id: 1,
+        objectId: 1,
         sendEmail: false,
       },
     ],

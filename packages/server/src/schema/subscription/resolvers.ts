@@ -29,6 +29,7 @@ import {
   Queries,
   TypeResolvers,
 } from '~/internals/graphql'
+import { UuidDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { Subscriptions, SubscriptionQuery } from '~/types'
@@ -39,23 +40,22 @@ export const resolvers: TypeResolvers<SubscriptionQuery> &
   Mutations<'subscription'> = {
   Subscriptions: {
     async object(parent, _args, { dataSources }) {
-      const object = await dataSources.model.serlo.getUuid({
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: parent.objectId,
+        decoder: UuidDecoder,
       })
-      if (object === null) throw new Error('Object cannot be null')
-      return object
     },
   },
 
   Query: {
     async subscriptions(_parent, cursorPayload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
-      const subscriptions = await dataSources.model.serlo.getSubscriptions({
+      const { subscriptions } = await dataSources.model.serlo.getSubscriptions({
         userId,
       })
 
       return resolveConnection({
-        nodes: subscriptions.subscriptions,
+        nodes: subscriptions,
         payload: cursorPayload,
         createCursor(node) {
           return node.objectId.toString()
