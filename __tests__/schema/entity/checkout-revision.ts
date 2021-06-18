@@ -51,7 +51,11 @@ const article = {
   instance: Instance.De,
   currentRevision: articleRevision.id,
 }
-const unrevisedRevision = { ...articleRevision, id: articleRevision.id + 1 }
+const unrevisedRevision = {
+  ...articleRevision,
+  id: articleRevision.id + 1,
+  trashed: true,
+}
 
 beforeEach(() => {
   client = createTestClient({ userId: user.id })
@@ -73,6 +77,7 @@ beforeEach(() => {
     database.changeUuid(revision.repositoryId, {
       currentRevisionId: revisionId,
     })
+    database.changeUuid(revisionId, { trashed: false })
 
     return res(ctx.json({ success: true }))
   })
@@ -123,6 +128,43 @@ test('following queries for entity point to checkout revision when entity is alr
     `,
     variables: { id: article.id },
     data: { uuid: { currentRevision: { id: unrevisedRevision.id } } },
+    client,
+  })
+})
+
+test('checkout revision has trashed == false for following queries', async () => {
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query ($id: Int!) {
+        uuid(id: $id) {
+          ... on ArticleRevision {
+            trashed
+          }
+        }
+      }
+    `,
+    variables: { id: unrevisedRevision.id },
+    data: { uuid: { trashed: true } },
+    client,
+  })
+
+  await assertSuccessfulGraphQLMutation({
+    ...createCheckoutRevisionMutation(),
+    client,
+  })
+
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query ($id: Int!) {
+        uuid(id: $id) {
+          ... on ArticleRevision {
+            trashed
+          }
+        }
+      }
+    `,
+    variables: { id: unrevisedRevision.id },
+    data: { uuid: { trashed: false } },
     client,
   })
 })

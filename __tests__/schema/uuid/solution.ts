@@ -26,7 +26,6 @@ import {
   solutionRevision,
   getSolutionDataWithoutSubResolvers,
   getSolutionRevisionDataWithoutSubResolvers,
-  getExerciseDataWithoutSubResolvers,
   exercise,
 } from '../../../__fixtures__'
 import {
@@ -34,6 +33,7 @@ import {
   Client,
   createTestClient,
   createUuidHandler,
+  getTypenameAndId,
 } from '../../__utils__'
 
 let client: Client
@@ -80,9 +80,6 @@ describe('Solution', () => {
               exercise {
                 __typename
                 id
-                trashed
-                instance
-                date
               }
             }
           }
@@ -91,7 +88,7 @@ describe('Solution', () => {
       variables: solution,
       data: {
         uuid: {
-          exercise: getExerciseDataWithoutSubResolvers(exercise),
+          exercise: getTypenameAndId(exercise),
         },
       },
       client,
