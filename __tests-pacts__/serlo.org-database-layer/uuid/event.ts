@@ -21,13 +21,9 @@
  */
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
-import {
-  event,
-  eventRevision,
-  getEventDataWithoutSubResolvers,
-  getEventRevisionDataWithoutSubResolvers,
-} from '../../../__fixtures__'
+import { event, eventRevision } from '../../../__fixtures__'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
@@ -67,7 +63,7 @@ test('Event', async () => {
         }
       `,
     data: {
-      uuid: getEventDataWithoutSubResolvers(event),
+      uuid: R.pick(['__typename', 'id', 'trashed', 'instance', 'date'], event),
     },
   })
 })
@@ -106,7 +102,20 @@ test('EventRevision', async () => {
         }
       `,
     data: {
-      uuid: getEventRevisionDataWithoutSubResolvers(eventRevision),
+      uuid: R.pick(
+        [
+          '__typename',
+          'id',
+          'trashed',
+          'date',
+          'title',
+          'content',
+          'changes',
+          'metaTitle',
+          'metaDescription',
+        ],
+        eventRevision
+      ),
     },
   })
 })
