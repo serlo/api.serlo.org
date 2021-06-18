@@ -20,20 +20,15 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
-import {
-  course,
-  coursePage,
-  courseRevision,
-  getCourseDataWithoutSubResolvers,
-  getCoursePageDataWithoutSubResolvers,
-  getCourseRevisionDataWithoutSubResolvers,
-} from '../../../__fixtures__'
+import { course, coursePage, courseRevision } from '../../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
   createTestClient,
   createUuidHandler,
+  getTypenameAndId,
 } from '../../__utils__'
 
 let client: Client
@@ -64,7 +59,10 @@ describe('Course', () => {
       `,
       variables: course,
       data: {
-        uuid: getCourseDataWithoutSubResolvers(course),
+        uuid: R.pick(
+          ['__typename', 'id', 'trashed', 'instance', 'date'],
+          course
+        ),
       },
       client,
     })
@@ -80,9 +78,6 @@ describe('Course', () => {
               pages {
                 __typename
                 id
-                trashed
-                instance
-                date
               }
             }
           }
@@ -91,7 +86,7 @@ describe('Course', () => {
       variables: course,
       data: {
         uuid: {
-          pages: [getCoursePageDataWithoutSubResolvers(coursePage)],
+          pages: [getTypenameAndId(coursePage)],
         },
       },
       client,
@@ -258,7 +253,19 @@ test('CourseRevision', async () => {
     `,
     variables: courseRevision,
     data: {
-      uuid: getCourseRevisionDataWithoutSubResolvers(courseRevision),
+      uuid: R.pick(
+        [
+          '__typename',
+          'id',
+          'trashed',
+          'date',
+          'title',
+          'content',
+          'changes',
+          'metaDescription',
+        ],
+        courseRevision
+      ),
     },
     client,
   })
