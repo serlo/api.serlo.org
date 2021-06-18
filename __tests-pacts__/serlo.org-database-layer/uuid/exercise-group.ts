@@ -21,13 +21,9 @@
  */
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
-import {
-  exerciseGroup,
-  exerciseGroupRevision,
-  getExerciseGroupDataWithoutSubResolvers,
-  getExerciseGroupRevisionDataWithoutSubResolvers,
-} from '../../../__fixtures__'
+import { exerciseGroup, exerciseGroupRevision } from '../../../__fixtures__'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
@@ -72,7 +68,10 @@ test('ExerciseGroup', async () => {
     `,
     variables: exerciseGroup,
     data: {
-      uuid: getExerciseGroupDataWithoutSubResolvers(exerciseGroup),
+      uuid: R.pick(
+        ['__typename', 'id', 'trashed', 'instance', 'date'],
+        exerciseGroup
+      ),
     },
   })
 })
@@ -106,7 +105,8 @@ test('ExerciseGroupRevision', async () => {
     `,
     variables: exerciseGroupRevision,
     data: {
-      uuid: getExerciseGroupRevisionDataWithoutSubResolvers(
+      uuid: R.pick(
+        ['__typename', 'id', 'trashed', 'date', 'content', 'changes'],
         exerciseGroupRevision
       ),
     },
