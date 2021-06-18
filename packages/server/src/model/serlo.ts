@@ -125,12 +125,19 @@ export function createSerloModel({
   }
 
   const setUuidState = createMutation({
-    decoder: t.void,
+    decoder: t.union([
+      t.void,
+      t.strict({ success: t.literal(false), reason: t.string }),
+    ]),
     async mutate(payload: { ids: number[]; userId: number; trashed: boolean }) {
-      await handleMessageWithoutResponse({
+      const response = await handleMessageWithoutResponse({
         message: { type: 'UuidSetStateMutation', payload },
-        expectedStatusCodes: [200],
+        expectedStatusCodes: [200, 400],
       })
+
+      if (response.status === 400) {
+        return (await response.json()) as unknown
+      }
     },
     async updateCache({ ids, trashed }) {
       await getUuid._querySpec.setCache({
@@ -776,6 +783,15 @@ export function createSerloModel({
           return current
         },
       })
+
+      await getUuid._querySpec.setCache({
+        payload: { id: revisionId },
+        getValue(current) {
+          if (!EntityRevisionDecoder.is(current)) return
+
+          return { ...current, trashed: false }
+        },
+      })
     },
   })
 
@@ -800,9 +816,7 @@ export function createSerloModel({
         getValue(current) {
           if (!EntityRevisionDecoder.is(current)) return
 
-          current.trashed = true
-
-          return current
+          return { ...current, trashed: true }
         },
       })
     },

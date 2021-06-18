@@ -42,7 +42,6 @@ import {
   getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers,
   getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers,
   getCreateThreadNotificationEventDataWithoutSubResolvers,
-  getExerciseDataWithoutSubResolvers,
   getRejectRevisionNotificationEventDataWithoutSubResolvers,
   getRemoveEntityLinkNotificationEventDataWithoutSubResolvers,
   getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers,
@@ -713,9 +712,6 @@ describe('notificationEvent', () => {
                   __typename
                   ... on Exercise {
                     id
-                    trashed
-                    instance
-                    date
                   }
                 }
               }
@@ -725,7 +721,7 @@ describe('notificationEvent', () => {
         variables: createEntityLinkNotificationEvent,
         data: {
           notificationEvent: {
-            parent: getExerciseDataWithoutSubResolvers(exercise),
+            parent: getTypenameAndId(exercise),
           },
         },
         client,
@@ -834,9 +830,6 @@ describe('notificationEvent', () => {
                   __typename
                   ... on Exercise {
                     id
-                    trashed
-                    instance
-                    date
                   }
                 }
               }
@@ -846,7 +839,7 @@ describe('notificationEvent', () => {
         variables: removeEntityLinkNotificationEvent,
         data: {
           notificationEvent: {
-            parent: getExerciseDataWithoutSubResolvers(exercise),
+            parent: getTypenameAndId(exercise),
           },
         },
         client,
