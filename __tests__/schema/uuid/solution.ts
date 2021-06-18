@@ -22,11 +22,7 @@
 import { gql } from 'apollo-server'
 import R from 'ramda'
 
-import {
-  solution,
-  solutionRevision,
-  exercise,
-} from '../../../__fixtures__'
+import { solution, solutionRevision, exercise } from '../../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
