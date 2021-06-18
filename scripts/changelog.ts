@@ -859,6 +859,17 @@ async function exec(): Promise<void> {
       fixed: ['role "sysadmin" needs to extend from "admin"'],
       internal: ['Remove UnsupportedThread', 'Update README.md'],
     },
+    {
+      tagName: 'v0.24.8',
+      date: '2021-06-16',
+      added: [
+        'sysadmin endpoints to delete bots / regular users and to update an email',
+      ],
+      fixed: [
+        'update cache for checkoutRevision mutation',
+        'refactor uuid-set-state mutation acording to changed api in the db layer',
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

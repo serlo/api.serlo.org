@@ -20,13 +20,9 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
-import {
-  event,
-  eventRevision,
-  getEventDataWithoutSubResolvers,
-  getEventRevisionDataWithoutSubResolvers,
-} from '../../../__fixtures__'
+import { event, eventRevision } from '../../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
@@ -58,7 +54,7 @@ test('Event', async () => {
     `,
     variables: event,
     data: {
-      uuid: getEventDataWithoutSubResolvers(event),
+      uuid: R.pick(['__typename', 'id', 'trashed', 'instance', 'date'], event),
     },
     client,
   })
@@ -86,7 +82,20 @@ test('EventRevision', async () => {
     `,
     variables: eventRevision,
     data: {
-      uuid: getEventRevisionDataWithoutSubResolvers(eventRevision),
+      uuid: R.pick(
+        [
+          '__typename',
+          'id',
+          'trashed',
+          'date',
+          'title',
+          'content',
+          'changes',
+          'metaTitle',
+          'metaDescription',
+        ],
+        eventRevision
+      ),
     },
     client,
   })
