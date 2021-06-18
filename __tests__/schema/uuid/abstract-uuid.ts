@@ -49,9 +49,7 @@ import {
   videoRevision,
 } from '../../../__fixtures__'
 import {
-  assertFailingGraphQLMutation,
   assertFailingGraphQLQuery,
-  assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   Client,
   createMessageHandler,
@@ -336,76 +334,6 @@ describe('uuid', () => {
         uuid: null,
       },
       client,
-    })
-  })
-})
-
-describe('uuid mutation setState', () => {
-  const mutation = gql`
-    mutation uuid($input: UuidSetStateInput!) {
-      uuid {
-        setState(input: $input) {
-          success
-        }
-      }
-    }
-  `
-
-  test('authenticated with array of ids', async () => {
-    const ids = [article.id, article.id + 1, article.id + 2]
-    global.server.use(
-      ...ids.map((id) => createUuidHandler({ ...article, id })),
-      createUuidHandler({
-        ...user,
-        roles: ['de_architect'],
-      })
-    )
-    global.server.use(
-      createMessageHandler({
-        message: {
-          type: 'UuidSetStateMutation',
-          payload: {
-            ids,
-            userId: user.id,
-            trashed: true,
-          },
-        },
-      })
-    )
-    await assertSuccessfulGraphQLMutation({
-      mutation,
-      variables: {
-        input: { id: ids, trashed: true },
-      },
-      data: { uuid: { setState: { success: true } } },
-      client: createTestClient({ userId: user.id }),
-    })
-  })
-
-  test('unauthenticated', async () => {
-    global.server.use(createUuidHandler(user))
-    await assertFailingGraphQLMutation({
-      mutation,
-      variables: { input: { id: 1, trashed: true } },
-      client: createTestClient({ userId: null }),
-      expectedError: 'UNAUTHENTICATED',
-    })
-  })
-
-  test('insufficient permissions', async () => {
-    // Architects are not allowed to set the state of pages.
-    global.server.use(
-      createUuidHandler(page),
-      createUuidHandler({
-        ...user,
-        roles: ['de_architect'],
-      })
-    )
-    await assertFailingGraphQLMutation({
-      mutation,
-      variables: { input: { id: page.id, trashed: false } },
-      client: createTestClient({ userId: user.id }),
-      expectedError: 'FORBIDDEN',
     })
   })
 })
