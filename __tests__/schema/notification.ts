@@ -51,7 +51,6 @@ import {
   getSetThreadStateNotificationEventDataWithoutSubResolvers,
   getSetUuidStateNotificationEventDataWithoutSubResolvers,
   getSolutionDataWithoutSubResolvers,
-  getTaxonomyTermDataWithoutSubResolvers,
   getUserDataWithoutSubResolvers,
   rejectRevisionNotificationEvent,
   removeEntityLinkNotificationEvent,
@@ -1064,12 +1063,6 @@ describe('notificationEvent', () => {
                 taxonomyTerm {
                   __typename
                   id
-                  type
-                  trashed
-                  instance
-                  name
-                  description
-                  weight
                 }
               }
             }
@@ -1078,9 +1071,7 @@ describe('notificationEvent', () => {
         variables: createTaxonomyTermNotificationEvent,
         data: {
           notificationEvent: {
-            taxonomyTerm: getTaxonomyTermDataWithoutSubResolvers(
-              taxonomyTermCurriculumTopic
-            ),
+            taxonomyTerm: getTypenameAndId(taxonomyTermCurriculumTopic),
           },
         },
         client,
@@ -1161,12 +1152,6 @@ describe('notificationEvent', () => {
                 taxonomyTerm {
                   __typename
                   id
-                  type
-                  trashed
-                  instance
-                  name
-                  description
-                  weight
                 }
               }
             }
@@ -1175,9 +1160,7 @@ describe('notificationEvent', () => {
         variables: setTaxonomyTermNotificationEvent,
         data: {
           notificationEvent: {
-            taxonomyTerm: getTaxonomyTermDataWithoutSubResolvers(
-              taxonomyTermCurriculumTopic
-            ),
+            taxonomyTerm: getTypenameAndId(taxonomyTermCurriculumTopic),
           },
         },
         client,
@@ -1258,12 +1241,6 @@ describe('notificationEvent', () => {
                 parent {
                   __typename
                   id
-                  type
-                  trashed
-                  instance
-                  name
-                  description
-                  weight
                 }
               }
             }
@@ -1272,9 +1249,7 @@ describe('notificationEvent', () => {
         variables: createTaxonomyLinkNotificationEvent,
         data: {
           notificationEvent: {
-            parent: getTaxonomyTermDataWithoutSubResolvers(
-              taxonomyTermCurriculumTopic
-            ),
+            parent: getTypenameAndId(taxonomyTermCurriculumTopic),
           },
         },
         client,
@@ -1376,12 +1351,6 @@ describe('notificationEvent', () => {
                 parent {
                   __typename
                   id
-                  type
-                  trashed
-                  instance
-                  name
-                  description
-                  weight
                 }
               }
             }
@@ -1390,9 +1359,7 @@ describe('notificationEvent', () => {
         variables: removeTaxonomyLinkNotificationEvent,
         data: {
           notificationEvent: {
-            parent: getTaxonomyTermDataWithoutSubResolvers(
-              taxonomyTermCurriculumTopic
-            ),
+            parent: getTypenameAndId(taxonomyTermCurriculumTopic),
           },
         },
         client,
@@ -1494,12 +1461,6 @@ describe('notificationEvent', () => {
                 previousParent {
                   __typename
                   id
-                  type
-                  trashed
-                  instance
-                  name
-                  description
-                  weight
                 }
               }
             }
@@ -1508,8 +1469,7 @@ describe('notificationEvent', () => {
         variables: setTaxonomyParentNotificationEvent,
         data: {
           notificationEvent: {
-            previousParent:
-              getTaxonomyTermDataWithoutSubResolvers(taxonomyTermRoot),
+            previousParent: getTypenameAndId(taxonomyTermRoot),
           },
         },
         client,
@@ -1526,12 +1486,6 @@ describe('notificationEvent', () => {
                 parent {
                   __typename
                   id
-                  type
-                  trashed
-                  instance
-                  name
-                  description
-                  weight
                 }
               }
             }
@@ -1540,7 +1494,7 @@ describe('notificationEvent', () => {
         variables: setTaxonomyParentNotificationEvent,
         data: {
           notificationEvent: {
-            parent: getTaxonomyTermDataWithoutSubResolvers(taxonomyTermSubject),
+            parent: getTypenameAndId(taxonomyTermSubject),
           },
         },
         client,
@@ -1557,12 +1511,6 @@ describe('notificationEvent', () => {
                 child {
                   __typename
                   id
-                  type
-                  trashed
-                  instance
-                  name
-                  description
-                  weight
                 }
               }
             }
@@ -1571,9 +1519,7 @@ describe('notificationEvent', () => {
         variables: setTaxonomyParentNotificationEvent,
         data: {
           notificationEvent: {
-            child: getTaxonomyTermDataWithoutSubResolvers(
-              taxonomyTermCurriculumTopic
-            ),
+            child: getTypenameAndId(taxonomyTermCurriculumTopic),
           },
         },
         client,

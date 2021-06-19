@@ -19,8 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import * as R from 'ramda'
-
 import { Model } from '~/internals/graphql'
 import { DiscriminatorType } from '~/model/decoder'
 import { Instance, TaxonomyTermType } from '~/types'
@@ -65,10 +63,4 @@ export const taxonomyTermCurriculumTopic: Model<'TaxonomyTerm'> = {
   weight: 3,
   parentId: taxonomyTermSubject.id,
   childrenIds: [1855],
-}
-
-export function getTaxonomyTermDataWithoutSubResolvers(
-  taxonomyTerm: Model<'TaxonomyTerm'>
-) {
-  return R.omit(['parentId', 'childrenIds', 'alias'], taxonomyTerm)
 }
