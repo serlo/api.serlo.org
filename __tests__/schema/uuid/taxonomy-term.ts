@@ -20,10 +20,10 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
 import {
   article,
-  getTaxonomyTermDataWithoutSubResolvers,
   navigation,
   page,
   taxonomyTermCurriculumTopic,
@@ -70,7 +70,19 @@ describe('TaxonomyTerm root', () => {
       `,
       variables: taxonomyTermRoot,
       data: {
-        uuid: getTaxonomyTermDataWithoutSubResolvers(taxonomyTermRoot),
+        uuid: R.pick(
+          [
+            '__typename',
+            'id',
+            'type',
+            'trashed',
+            'instance',
+            'name',
+            'description',
+            'weight',
+          ],
+          taxonomyTermRoot
+        ),
       },
       client,
     })
@@ -118,12 +130,6 @@ describe('TaxonomyTerm root', () => {
                   __typename
                   ... on TaxonomyTerm {
                     id
-                    type
-                    trashed
-                    instance
-                    name
-                    description
-                    weight
                   }
                 }
                 totalCount
@@ -136,9 +142,7 @@ describe('TaxonomyTerm root', () => {
       data: {
         uuid: {
           children: {
-            nodes: [
-              getTaxonomyTermDataWithoutSubResolvers(taxonomyTermSubject),
-            ],
+            nodes: [getTypenameAndId(taxonomyTermSubject)],
             totalCount: 1,
           },
         },
@@ -192,19 +196,13 @@ describe('TaxonomyTerm subject', () => {
             __typename
             ... on TaxonomyTerm {
               id
-              type
-              trashed
-              instance
-              name
-              description
-              weight
             }
           }
         }
       `,
       variables: taxonomyTermSubject,
       data: {
-        uuid: getTaxonomyTermDataWithoutSubResolvers(taxonomyTermSubject),
+        uuid: getTypenameAndId(taxonomyTermSubject),
       },
       client,
     })
@@ -220,12 +218,6 @@ describe('TaxonomyTerm subject', () => {
               parent {
                 __typename
                 id
-                type
-                trashed
-                instance
-                name
-                description
-                weight
               }
             }
           }
@@ -234,7 +226,7 @@ describe('TaxonomyTerm subject', () => {
       variables: taxonomyTermSubject,
       data: {
         uuid: {
-          parent: getTaxonomyTermDataWithoutSubResolvers(taxonomyTermRoot),
+          parent: getTypenameAndId(taxonomyTermRoot),
         },
       },
       client,
@@ -253,12 +245,6 @@ describe('TaxonomyTerm subject', () => {
                   __typename
                   ... on TaxonomyTerm {
                     id
-                    type
-                    trashed
-                    instance
-                    name
-                    description
-                    weight
                   }
                 }
                 totalCount
@@ -271,11 +257,7 @@ describe('TaxonomyTerm subject', () => {
       data: {
         uuid: {
           children: {
-            nodes: [
-              getTaxonomyTermDataWithoutSubResolvers(
-                taxonomyTermCurriculumTopic
-              ),
-            ],
+            nodes: [getTypenameAndId(taxonomyTermCurriculumTopic)],
             totalCount: 1,
           },
         },
@@ -358,21 +340,13 @@ describe('TaxonomyTerm curriculumTopic', () => {
             __typename
             ... on TaxonomyTerm {
               id
-              type
-              trashed
-              instance
-              name
-              description
-              weight
             }
           }
         }
       `,
       variables: taxonomyTermCurriculumTopic,
       data: {
-        uuid: getTaxonomyTermDataWithoutSubResolvers(
-          taxonomyTermCurriculumTopic
-        ),
+        uuid: getTypenameAndId(taxonomyTermCurriculumTopic),
       },
       client,
     })
@@ -388,12 +362,6 @@ describe('TaxonomyTerm curriculumTopic', () => {
               parent {
                 __typename
                 id
-                type
-                trashed
-                instance
-                name
-                description
-                weight
               }
             }
           }
@@ -402,7 +370,7 @@ describe('TaxonomyTerm curriculumTopic', () => {
       variables: taxonomyTermCurriculumTopic,
       data: {
         uuid: {
-          parent: getTaxonomyTermDataWithoutSubResolvers(taxonomyTermSubject),
+          parent: getTypenameAndId(taxonomyTermSubject),
         },
       },
       client,
