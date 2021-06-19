@@ -20,14 +20,9 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
-import {
-  page,
-  pageRevision,
-  getPageDataWithoutSubResolvers,
-  getPageRevisionDataWithoutSubResolvers,
-  license,
-} from '../../../__fixtures__'
+import { page, pageRevision, license } from '../../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
@@ -64,7 +59,7 @@ describe('Page', () => {
       `,
       variables: page,
       data: {
-        uuid: getPageDataWithoutSubResolvers(page),
+        uuid: R.pick(['__typename', 'id', 'trashed', 'instance', 'date'], page),
       },
       client,
     })
@@ -121,7 +116,10 @@ test('PageRevision', async () => {
     `,
     variables: pageRevision,
     data: {
-      uuid: getPageRevisionDataWithoutSubResolvers(pageRevision),
+      uuid: R.pick(
+        ['__typename', 'id', 'trashed', 'title', 'content', 'date'],
+        pageRevision
+      ),
     },
     client,
   })
