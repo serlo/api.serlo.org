@@ -21,13 +21,9 @@
  */
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
-import {
-  getPageDataWithoutSubResolvers,
-  getPageRevisionDataWithoutSubResolvers,
-  page,
-  pageRevision,
-} from '../../../__fixtures__'
+import { page, pageRevision } from '../../../__fixtures__'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
@@ -64,7 +60,7 @@ test('Page', async () => {
     `,
     variables: page,
     data: {
-      uuid: getPageDataWithoutSubResolvers(page),
+      uuid: R.pick(['__typename', 'id', 'trashed', 'instance', 'date'], page),
     },
   })
 })
@@ -98,7 +94,10 @@ test('PageRevision', async () => {
     `,
     variables: pageRevision,
     data: {
-      uuid: getPageRevisionDataWithoutSubResolvers(pageRevision),
+      uuid: R.pick(
+        ['__typename', 'id', 'trashed', 'title', 'content', 'date'],
+        pageRevision
+      ),
     },
   })
 })
