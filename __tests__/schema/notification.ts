@@ -50,7 +50,6 @@ import {
   getSetTaxonomyTermNotificationEventDataWithoutSubResolvers,
   getSetThreadStateNotificationEventDataWithoutSubResolvers,
   getSetUuidStateNotificationEventDataWithoutSubResolvers,
-  getSolutionDataWithoutSubResolvers,
   getUserDataWithoutSubResolvers,
   rejectRevisionNotificationEvent,
   removeEntityLinkNotificationEvent,
@@ -739,9 +738,6 @@ describe('notificationEvent', () => {
                   __typename
                   ... on Solution {
                     id
-                    trashed
-                    instance
-                    date
                   }
                 }
               }
@@ -751,7 +747,7 @@ describe('notificationEvent', () => {
         variables: createEntityLinkNotificationEvent,
         data: {
           notificationEvent: {
-            child: getSolutionDataWithoutSubResolvers(solution),
+            child: getTypenameAndId(solution),
           },
         },
         client,
@@ -860,9 +856,6 @@ describe('notificationEvent', () => {
                   __typename
                   ... on Solution {
                     id
-                    trashed
-                    instance
-                    date
                   }
                 }
               }
@@ -872,7 +865,7 @@ describe('notificationEvent', () => {
         variables: removeEntityLinkNotificationEvent,
         data: {
           notificationEvent: {
-            child: getSolutionDataWithoutSubResolvers(solution),
+            child: getTypenameAndId(solution),
           },
         },
         client,

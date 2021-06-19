@@ -34,9 +34,6 @@ export function createExerciseSolutionQuery(
             solution {
               __typename
               id
-              trashed
-              instance
-              date
             }
           }
         }
