@@ -19,8 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import * as R from 'ramda'
-
 import { license } from '../license'
 import { exercise } from './exercise'
 import { Model } from '~/internals/graphql'
@@ -57,19 +55,4 @@ export const solutionRevision: Model<'SolutionRevision'> = {
   repositoryId: solution.id,
   content: 'content',
   changes: 'changes',
-}
-
-export function getSolutionDataWithoutSubResolvers(
-  solution: Model<'Solution'>
-) {
-  return R.omit(
-    ['currentRevisionId', 'revisionIds', 'licenseId', 'parentId', 'alias'],
-    solution
-  )
-}
-
-export function getSolutionRevisionDataWithoutSubResolvers(
-  solutionRevision: Model<'SolutionRevision'>
-) {
-  return R.omit(['authorId', 'repositoryId', 'alias'], solutionRevision)
 }
