@@ -32,13 +32,13 @@ import {
 import { UuidDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
-import { Subscriptions, SubscriptionQuery } from '~/types'
+import { SubscriptionInfo, SubscriptionQuery } from '~/types'
 
 export const resolvers: TypeResolvers<SubscriptionQuery> &
-  TypeResolvers<Subscriptions> &
-  Queries<'subscriptions' | 'subscription'> &
+  TypeResolvers<SubscriptionInfo> &
+  Queries<'subscription'> &
   Mutations<'subscription'> = {
-  Subscriptions: {
+  SubscriptionInfo: {
     async object(parent, _args, { dataSources }) {
       return await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: parent.objectId,
@@ -46,22 +46,7 @@ export const resolvers: TypeResolvers<SubscriptionQuery> &
       })
     },
   },
-
   Query: {
-    async subscriptions(_parent, cursorPayload, { dataSources, userId }) {
-      assertUserIsAuthenticated(userId)
-      const { subscriptions } = await dataSources.model.serlo.getSubscriptions({
-        userId,
-      })
-
-      return resolveConnection({
-        nodes: subscriptions,
-        payload: cursorPayload,
-        createCursor(node) {
-          return node.objectId.toString()
-        },
-      })
-    },
     subscription: createNamespace(),
   },
   Mutation: {
@@ -76,6 +61,20 @@ export const resolvers: TypeResolvers<SubscriptionQuery> &
       return subscriptions.subscriptions.some(
         (subscription) => subscription.objectId === id
       )
+    },
+    async getSubscriptions(_parent, cursorPayload, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+      const { subscriptions } = await dataSources.model.serlo.getSubscriptions({
+        userId,
+      })
+
+      return resolveConnection({
+        nodes: subscriptions,
+        payload: cursorPayload,
+        createCursor(node) {
+          return node.objectId.toString()
+        },
+      })
     },
   },
   SubscriptionMutation: {
