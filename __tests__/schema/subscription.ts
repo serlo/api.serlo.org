@@ -50,15 +50,17 @@ describe('subscriptions', () => {
     await assertSuccessfulGraphQLQuery({
       ...createSubscriptionsQuery(),
       data: {
-        subscriptions: {
-          totalCount: 1,
-          nodes: [
-            {
-              __typename: 'Subscriptions',
-              object: { id: 1855 },
-              sendEmail: true,
-            },
-          ],
+        subscription: {
+          getSubscriptions: {
+            totalCount: 1,
+            nodes: [
+              {
+                __typename: 'SubscriptionInfo',
+                object: { id: 1855 },
+                sendEmail: true,
+              },
+            ],
+          },
         },
       },
       client,
@@ -138,15 +140,17 @@ describe('subscription mutation set', () => {
     await assertSuccessfulGraphQLQuery({
       ...createSubscriptionsQuery(),
       data: {
-        subscriptions: {
-          totalCount: 1,
-          nodes: [
-            {
-              __typename: 'Subscriptions',
-              object: { id: article.id },
-              sendEmail: false,
-            },
-          ],
+        subscription: {
+          getSubscriptions: {
+            totalCount: 1,
+            nodes: [
+              {
+                __typename: 'SubscriptionInfo',
+                object: { id: article.id },
+                sendEmail: false,
+              },
+            ],
+          },
         },
       },
       client,
@@ -176,25 +180,27 @@ describe('subscription mutation set', () => {
     await assertSuccessfulGraphQLQuery({
       ...createSubscriptionsQuery(),
       data: {
-        subscriptions: {
-          totalCount: 3,
-          nodes: [
-            {
-              __typename: 'Subscriptions',
-              object: { id: 1555 },
-              sendEmail: false,
-            },
-            {
-              __typename: 'Subscriptions',
-              object: { id: 1565 },
-              sendEmail: false,
-            },
-            {
-              __typename: 'Subscriptions',
-              object: { id: article.id },
-              sendEmail: false,
-            },
-          ],
+        subscription: {
+          getSubscriptions: {
+            totalCount: 3,
+            nodes: [
+              {
+                __typename: 'SubscriptionInfo',
+                object: { id: 1555 },
+                sendEmail: false,
+              },
+              {
+                __typename: 'SubscriptionInfo',
+                object: { id: 1565 },
+                sendEmail: false,
+              },
+              {
+                __typename: 'SubscriptionInfo',
+                object: { id: article.id },
+                sendEmail: false,
+              },
+            ],
+          },
         },
       },
       client,
@@ -233,9 +239,11 @@ describe('subscription mutation set', () => {
     await assertSuccessfulGraphQLQuery({
       ...createSubscriptionsQuery(),
       data: {
-        subscriptions: {
-          totalCount: 0,
-          nodes: [],
+        subscription: {
+          getSubscriptions: {
+            totalCount: 0,
+            nodes: [],
+          },
         },
       },
       client,
@@ -262,15 +270,27 @@ function createSubscriptionsHandler({
 function createSubscriptionsQuery() {
   return {
     query: gql`
-      query subscriptions {
-        subscriptions {
-          totalCount
-          nodes {
-            __typename
-            object {
-              id
+      query getSubscriptions(
+        $after: String
+        $before: String
+        $first: Int
+        $last: Int
+      ) {
+        subscription {
+          getSubscriptions(
+            after: $after
+            before: $before
+            first: $first
+            last: $last
+          ) {
+            totalCount
+            nodes {
+              __typename
+              object {
+                id
+              }
+              sendEmail
             }
-            sendEmail
           }
         }
       }
