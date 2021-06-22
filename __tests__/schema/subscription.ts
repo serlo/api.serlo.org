@@ -39,7 +39,6 @@ describe('subscriptions', () => {
       createSubscriptionsHandler({
         payload: { userId: user.id },
         body: {
-          userId: user.id,
           subscriptions: [{ objectId: article.id, sendEmail: true }],
         },
       })
@@ -137,11 +136,17 @@ describe('subscription mutation set', () => {
 
     // fill cache
     await assertSuccessfulGraphQLQuery({
-      ...createSubscriptionsQueryOnlyId(),
+      ...createSubscriptionsQuery(),
       data: {
         subscriptions: {
           totalCount: 1,
-          nodes: [{ object: { id: article.id }, sendEmail: false }],
+          nodes: [
+            {
+              __typename: 'Subscriptions',
+              object: { id: article.id },
+              sendEmail: false,
+            },
+          ],
         },
       },
       client,
@@ -169,14 +174,26 @@ describe('subscription mutation set', () => {
 
     //check cache
     await assertSuccessfulGraphQLQuery({
-      ...createSubscriptionsQueryOnlyId(),
+      ...createSubscriptionsQuery(),
       data: {
         subscriptions: {
           totalCount: 3,
           nodes: [
-            { object: { id: 1555 }, sendEmail: false },
-            { object: { id: 1565 }, sendEmail: false },
-            { object: { id: article.id }, sendEmail: false },
+            {
+              __typename: 'Subscriptions',
+              object: { id: 1555 },
+              sendEmail: false,
+            },
+            {
+              __typename: 'Subscriptions',
+              object: { id: 1565 },
+              sendEmail: false,
+            },
+            {
+              __typename: 'Subscriptions',
+              object: { id: article.id },
+              sendEmail: false,
+            },
           ],
         },
       },
@@ -214,7 +231,7 @@ describe('subscription mutation set', () => {
 
     //check cache
     await assertSuccessfulGraphQLQuery({
-      ...createSubscriptionsQueryOnlyId(),
+      ...createSubscriptionsQuery(),
       data: {
         subscriptions: {
           totalCount: 0,
@@ -250,24 +267,6 @@ function createSubscriptionsQuery() {
           totalCount
           nodes {
             __typename
-            object {
-              id
-            }
-            sendEmail
-          }
-        }
-      }
-    `,
-  }
-}
-
-function createSubscriptionsQueryOnlyId() {
-  return {
-    query: gql`
-      query subscriptions {
-        subscriptions {
-          totalCount
-          nodes {
             object {
               id
             }
