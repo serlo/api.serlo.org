@@ -104,7 +104,7 @@ export const resolvers: Queries<
       )
     },
     async activityByType(user, _args, { dataSources }) {
-      return await dataSources.model.serlo.getActivityByUser({ id: user.id })
+      return await dataSources.model.serlo.getActivityByType({ id: user.id })
     },
     roles(user, payload) {
       return resolveConnection({

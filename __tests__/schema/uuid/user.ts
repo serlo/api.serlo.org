@@ -27,6 +27,7 @@ import {
   getUserDataWithoutSubResolvers,
   user,
   user2,
+  activityByType
 } from '../../../__fixtures__'
 import {
   assertErrorEvent,
@@ -42,8 +43,10 @@ import {
   returnsMalformedJson,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
+import { Payload } from '~/internals/model'
 import { MajorDimension } from '~/model'
 import { Instance } from '~/types'
+import { AbstractUuid } from '@serlo/api'
 
 let client: Client
 
@@ -222,6 +225,39 @@ describe('User', () => {
               { role: 'moderator', scope: Scope.Serlo_En },
               { role: 'reviewer', scope: Scope.Serlo_De },
             ],
+          },
+        },
+      },
+      variables: { id: user.id },
+      client,
+    })
+  })
+  test('property "activityByType"', async () => {
+    global.server.use(
+      createActivityByTypeHandler({
+        ...activityByType,
+      })
+    )
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query ($id: Int) {
+          uuid(id: $id) {
+            ... on User {
+              activityByType {
+                edits
+                comments
+                reviews
+                taxonomy
+              }
+            }
+          }
+        }
+      `,
+      data: {
+        uuid: {
+          activityByType: {
+            edits: 10, comments: 11, reviews: 0, taxonomy: 3
           },
         },
       },
@@ -518,5 +554,17 @@ function givenActiveDonorsSpreadsheet(values: string[][]) {
     range: 'Tabellenblatt1!A:A',
     majorDimension: MajorDimension.Columns,
     values,
+  })
+}
+
+export function createActivityByTypeHandler(
+  activityByType: Payload<'serlo', 'getActivityByType'>
+) {
+  return createMessageHandler({
+    message: {
+      type: 'ActivityByTypeQuery',
+      payload: { id: user.id },
+    },
+    body: activityByType,
   })
 }
