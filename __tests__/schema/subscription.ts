@@ -31,6 +31,33 @@ import {
   createUuidHandler,
 } from '../__utils__'
 
+const getSubscriptionsQuery = gql`
+  query getSubscriptions(
+    $after: String
+    $before: String
+    $first: Int
+    $last: Int
+  ) {
+    subscription {
+      getSubscriptions(
+        after: $after
+        before: $before
+        first: $first
+        last: $last
+      ) {
+        totalCount
+        nodes {
+          __typename
+          object {
+            id
+          }
+          sendEmail
+        }
+      }
+    }
+  }
+`
+
 describe('subscriptions', () => {
   beforeEach(() => {
     global.server.use(
@@ -48,7 +75,7 @@ describe('subscriptions', () => {
   test('Article', async () => {
     const client = createTestClient({ userId: 1 })
     await assertSuccessfulGraphQLQuery({
-      ...createSubscriptionsQuery(),
+      query: getSubscriptionsQuery,
       data: {
         subscription: {
           getSubscriptions: {
@@ -138,7 +165,7 @@ describe('subscription mutation set', () => {
 
     // fill cache
     await assertSuccessfulGraphQLQuery({
-      ...createSubscriptionsQuery(),
+      query: getSubscriptionsQuery,
       data: {
         subscription: {
           getSubscriptions: {
@@ -178,7 +205,7 @@ describe('subscription mutation set', () => {
 
     //check cache
     await assertSuccessfulGraphQLQuery({
-      ...createSubscriptionsQuery(),
+      query: getSubscriptionsQuery,
       data: {
         subscription: {
           getSubscriptions: {
@@ -237,7 +264,7 @@ describe('subscription mutation set', () => {
 
     //check cache
     await assertSuccessfulGraphQLQuery({
-      ...createSubscriptionsQuery(),
+      query: getSubscriptionsQuery,
       data: {
         subscription: {
           getSubscriptions: {
@@ -265,37 +292,6 @@ function createSubscriptionsHandler({
     },
     body,
   })
-}
-
-function createSubscriptionsQuery() {
-  return {
-    query: gql`
-      query getSubscriptions(
-        $after: String
-        $before: String
-        $first: Int
-        $last: Int
-      ) {
-        subscription {
-          getSubscriptions(
-            after: $after
-            before: $before
-            first: $first
-            last: $last
-          ) {
-            totalCount
-            nodes {
-              __typename
-              object {
-                id
-              }
-              sendEmail
-            }
-          }
-        }
-      }
-    `,
-  }
 }
 
 function createSubscriptionSetMutationHandler(
