@@ -213,24 +213,26 @@ export function createSerloModel({
         taxonomy: t.number,
       }),
       enableSwr: true,
-      getCurrentValue: async ({ id }: { id: number }) => {
+      getCurrentValue: async (payload: { userId: number }) => {
         return handleMessage({
           message: {
             type: 'ActivityByTypeQuery',
-            payload: { id },
+            payload,
           },
           expectedStatusCodes: [200],
         })
       },
-      maxAge: { hour: 1 },
-      getKey: ({ id }) => {
-        return `de.serlo.org/api/user/user-activity/${id}`
-      }, //TODO: determine correct endpoint name
+      maxAge: { minutes: 10 },
+      getKey: ({ userId }) => {
+        return `de.serlo.org/api/user/activity-by-type/${userId}`
+      },
       getPayload: (key) => {
-        if (!key.startsWith('de.serlo.org/api/user/user-activity'))
-          return O.none //TODO: determine correct endpoint name
-        const id = parseInt(key.replace('de.serlo.org/api/user-activity', ''))
-        return O.some({ id })
+        if (!key.startsWith('de.serlo.org/api/user/activity-by-type'))
+          return O.none
+        const userId = parseInt(
+          key.replace('de.serlo.org/api/activity-by-type', '')
+        )
+        return O.some({ userId })
       },
     },
     environment

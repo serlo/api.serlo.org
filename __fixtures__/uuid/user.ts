@@ -50,7 +50,10 @@ export const user2: Model<'User'> = {
 }
 
 export const activityByType: Payload<'serlo', 'getActivityByType'> = {
-  edits: 10, comments: 11, reviews: 0, taxonomy: 3
+  edits: 10,
+  comments: 11,
+  reviews: 0,
+  taxonomy: 3,
 }
 
 export function getUserDataWithoutSubResolvers(user: Model<'User'>) {

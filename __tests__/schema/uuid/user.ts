@@ -27,7 +27,7 @@ import {
   getUserDataWithoutSubResolvers,
   user,
   user2,
-  activityByType
+  activityByType,
 } from '../../../__fixtures__'
 import {
   assertErrorEvent,
@@ -46,7 +46,6 @@ import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model'
 import { MajorDimension } from '~/model'
 import { Instance } from '~/types'
-import { AbstractUuid } from '@serlo/api'
 
 let client: Client
 
@@ -241,8 +240,8 @@ describe('User', () => {
 
     await assertSuccessfulGraphQLQuery({
       query: gql`
-        query ($id: Int) {
-          uuid(id: $id) {
+        query ($userId: Int) {
+          uuid(id: $userId) {
             ... on User {
               activityByType {
                 edits
@@ -257,11 +256,14 @@ describe('User', () => {
       data: {
         uuid: {
           activityByType: {
-            edits: 10, comments: 11, reviews: 0, taxonomy: 3
+            edits: 10,
+            comments: 11,
+            reviews: 0,
+            taxonomy: 3,
           },
         },
       },
-      variables: { id: user.id },
+      variables: { userId: user.id },
       client,
     })
   })
@@ -563,7 +565,7 @@ export function createActivityByTypeHandler(
   return createMessageHandler({
     message: {
       type: 'ActivityByTypeQuery',
-      payload: { id: user.id },
+      payload: { userId: user.id },
     },
     body: activityByType,
   })
