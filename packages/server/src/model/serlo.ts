@@ -204,7 +204,7 @@ export function createSerloModel({
     environment
   )
 
-  const getActivityByUser = createQuery(
+  const getActivityByType = createQuery(
     {
       decoder: t.type({
         edits: t.number,
@@ -216,7 +216,7 @@ export function createSerloModel({
       getCurrentValue: async ({ id }: { id: number }) => {
         return handleMessage({
           message: {
-            type: 'ActivityByUserQuery',
+            type: 'ActivityByTypeQuery',
             payload: { id },
           },
           expectedStatusCodes: [200],
@@ -864,7 +864,7 @@ export function createSerloModel({
     checkoutRevision,
     getActiveAuthorIds,
     getActiveReviewerIds,
-    getActivityByUser,
+    getActivityByType,
     getAlias,
     getLicense,
     getNavigationPayload,
