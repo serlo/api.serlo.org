@@ -18,6 +18,7 @@
     "build:server": "lerna run --stream build:server",
     "build:swr-queue-worker": "lerna run --stream build:swr-queue-worker",
     "changelog": "ts-node scripts/changelog",
+    "check:all": "scripts/run_all_checks.sh",
     "codegen": "lerna run --stream codegen",
     "deploy:image": "lerna run --stream deploy:image",
     "format": "npm-run-all -c format:*",
