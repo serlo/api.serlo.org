@@ -32,19 +32,9 @@ import {
 } from '../__utils__'
 
 const getSubscriptionsQuery = gql`
-  query getSubscriptions(
-    $after: String
-    $before: String
-    $first: Int
-    $last: Int
-  ) {
+  query {
     subscription {
-      getSubscriptions(
-        after: $after
-        before: $before
-        first: $first
-        last: $last
-      ) {
+      getSubscriptions {
         totalCount
         nodes {
           __typename
