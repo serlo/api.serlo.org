@@ -55,15 +55,16 @@ export const resolvers: TypeResolvers<SubscriptionQuery> &
   SubscriptionQuery: {
     async currentUserHasSubscribed(_parent, { id }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
+
       const subscriptions = await dataSources.model.serlo.getSubscriptions({
         userId,
       })
-      return subscriptions.subscriptions.some(
-        (subscription) => subscription.objectId === id
-      )
+
+      return subscriptions.subscriptions.some((sub) => sub.objectId === id)
     },
     async getSubscriptions(_parent, cursorPayload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
+
       const { subscriptions } = await dataSources.model.serlo.getSubscriptions({
         userId,
       })
@@ -71,9 +72,7 @@ export const resolvers: TypeResolvers<SubscriptionQuery> &
       return resolveConnection({
         nodes: subscriptions,
         payload: cursorPayload,
-        createCursor(node) {
-          return node.objectId.toString()
-        },
+        createCursor: (node) => node.objectId.toString(),
       })
     },
   },
@@ -100,10 +99,7 @@ export const resolvers: TypeResolvers<SubscriptionQuery> &
         subscribe,
         sendEmail,
       })
-      return {
-        success: true,
-        query: {},
-      }
+      return { success: true, query: {} }
     },
   },
 }
