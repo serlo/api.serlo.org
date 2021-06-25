@@ -35,7 +35,6 @@ import {
   createTaxonomyTermNotificationEvent,
   createThreadNotificationEvent,
   exercise,
-  getUserDataWithoutSubResolvers,
   rejectRevisionNotificationEvent,
   removeEntityLinkNotificationEvent,
   removeTaxonomyLinkNotificationEvent,
@@ -245,11 +244,6 @@ describe('notificationEvent', () => {
                 actor {
                   __typename
                   id
-                  trashed
-                  username
-                  date
-                  lastLogin
-                  description
                 }
               }
             }
@@ -258,7 +252,7 @@ describe('notificationEvent', () => {
         variables: checkoutRevisionNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolvers(user),
+            actor: getTypenameAndId(user),
           },
         },
         client,
@@ -354,11 +348,6 @@ describe('notificationEvent', () => {
                 actor {
                   __typename
                   id
-                  trashed
-                  username
-                  date
-                  lastLogin
-                  description
                 }
               }
             }
@@ -367,7 +356,7 @@ describe('notificationEvent', () => {
         variables: rejectRevisionNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolvers(user),
+            actor: getTypenameAndId(user),
           },
         },
         client,
@@ -462,11 +451,6 @@ describe('notificationEvent', () => {
                 actor {
                   __typename
                   id
-                  trashed
-                  username
-                  date
-                  lastLogin
-                  description
                 }
               }
             }
@@ -475,7 +459,7 @@ describe('notificationEvent', () => {
         variables: createCommentNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolvers(user),
+            actor: getTypenameAndId(user),
           },
         },
         client,
@@ -575,11 +559,6 @@ describe('notificationEvent', () => {
                 actor {
                   __typename
                   id
-                  trashed
-                  username
-                  date
-                  lastLogin
-                  description
                 }
               }
             }
@@ -588,7 +567,7 @@ describe('notificationEvent', () => {
         variables: createEntityNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolvers(user),
+            actor: getTypenameAndId(user),
           },
         },
         client,
@@ -660,11 +639,6 @@ describe('notificationEvent', () => {
                 actor {
                   __typename
                   id
-                  trashed
-                  username
-                  date
-                  lastLogin
-                  description
                 }
               }
             }
@@ -673,7 +647,7 @@ describe('notificationEvent', () => {
         variables: createEntityLinkNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolvers(user),
+            actor: getTypenameAndId(user),
           },
         },
         client,
@@ -778,11 +752,6 @@ describe('notificationEvent', () => {
                 actor {
                   __typename
                   id
-                  trashed
-                  username
-                  date
-                  lastLogin
-                  description
                 }
               }
             }
@@ -791,7 +760,7 @@ describe('notificationEvent', () => {
         variables: removeEntityLinkNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolvers(user),
+            actor: getTypenameAndId(user),
           },
         },
         client,
@@ -896,11 +865,6 @@ describe('notificationEvent', () => {
                 actor {
                   __typename
                   id
-                  trashed
-                  username
-                  date
-                  lastLogin
-                  description
                 }
               }
             }
@@ -909,7 +873,7 @@ describe('notificationEvent', () => {
         variables: createEntityRevisionNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolvers(user),
+            actor: getTypenameAndId(user),
           },
         },
         client,
@@ -1006,11 +970,6 @@ describe('notificationEvent', () => {
                 actor {
                   __typename
                   id
-                  trashed
-                  username
-                  date
-                  lastLogin
-                  description
                 }
               }
             }
@@ -1019,7 +978,7 @@ describe('notificationEvent', () => {
         variables: createTaxonomyTermNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolvers(user),
+            actor: getTypenameAndId(user),
           },
         },
         client,
@@ -1096,11 +1055,6 @@ describe('notificationEvent', () => {
                 actor {
                   __typename
                   id
-                  trashed
-                  username
-                  date
-                  lastLogin
-                  description
                 }
               }
             }
@@ -1109,7 +1063,7 @@ describe('notificationEvent', () => {
         variables: setTaxonomyTermNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolvers(user),
+            actor: getTypenameAndId(user),
           },
         },
         client,
@@ -1186,11 +1140,6 @@ describe('notificationEvent', () => {
                 actor {
                   __typename
                   id
-                  trashed
-                  username
-                  date
-                  lastLogin
-                  description
                 }
               }
             }
@@ -1199,7 +1148,7 @@ describe('notificationEvent', () => {
         variables: createTaxonomyLinkNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolvers(user),
+            actor: getTypenameAndId(user),
           },
         },
         client,
@@ -1297,11 +1246,6 @@ describe('notificationEvent', () => {
                 actor {
                   __typename
                   id
-                  trashed
-                  username
-                  date
-                  lastLogin
-                  description
                 }
               }
             }
@@ -1310,7 +1254,7 @@ describe('notificationEvent', () => {
         variables: removeTaxonomyLinkNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolvers(user),
+            actor: getTypenameAndId(user),
           },
         },
         client,
@@ -1407,11 +1351,6 @@ describe('notificationEvent', () => {
                 actor {
                   __typename
                   id
-                  trashed
-                  username
-                  date
-                  lastLogin
-                  description
                 }
               }
             }
@@ -1420,7 +1359,7 @@ describe('notificationEvent', () => {
         variables: setTaxonomyParentNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolvers(user),
+            actor: getTypenameAndId(user),
           },
         },
         client,
@@ -1546,11 +1485,6 @@ describe('notificationEvent', () => {
                 actor {
                   __typename
                   id
-                  trashed
-                  username
-                  date
-                  lastLogin
-                  description
                 }
               }
             }
@@ -1559,7 +1493,7 @@ describe('notificationEvent', () => {
         variables: createThreadNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolvers(user),
+            actor: getTypenameAndId(user),
           },
         },
         client,
@@ -1658,11 +1592,6 @@ describe('notificationEvent', () => {
                 actor {
                   __typename
                   id
-                  trashed
-                  username
-                  date
-                  lastLogin
-                  description
                 }
               }
             }
@@ -1671,7 +1600,7 @@ describe('notificationEvent', () => {
         variables: setLicenseNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolvers(user),
+            actor: getTypenameAndId(user),
           },
         },
         client,
@@ -1745,11 +1674,6 @@ describe('notificationEvent', () => {
                 actor {
                   __typename
                   id
-                  trashed
-                  username
-                  date
-                  lastLogin
-                  description
                 }
               }
             }
@@ -1758,7 +1682,7 @@ describe('notificationEvent', () => {
         variables: setThreadStateNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolvers(user),
+            actor: getTypenameAndId(user),
           },
         },
         client,
@@ -1837,11 +1761,6 @@ describe('notificationEvent', () => {
                 actor {
                   __typename
                   id
-                  trashed
-                  username
-                  date
-                  lastLogin
-                  description
                 }
               }
             }
@@ -1850,7 +1769,7 @@ describe('notificationEvent', () => {
         variables: setUuidStateNotificationEvent,
         data: {
           notificationEvent: {
-            actor: getUserDataWithoutSubResolvers(user),
+            actor: getTypenameAndId(user),
           },
         },
         client,

@@ -1467,7 +1467,6 @@ export type Query = {
   notificationEvent?: Maybe<AbstractNotificationEvent>;
   notifications: NotificationConnection;
   subscription: SubscriptionQuery;
-  subscriptions: AbstractUuidConnection;
   uuid?: Maybe<AbstractUuid>;
 };
 
@@ -1523,14 +1522,6 @@ export type QueryNotificationsArgs = {
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
   unread?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type QuerySubscriptionsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
 };
 
 
@@ -1761,6 +1752,26 @@ export type SolutionRevisionCursor = {
   node: SolutionRevision;
 };
 
+export type SubscriptionConnection = {
+  __typename?: 'SubscriptionConnection';
+  edges: Array<SubscriptionCursor>;
+  nodes: Array<SubscriptionInfo>;
+  totalCount: Scalars['Int'];
+  pageInfo: PageInfo;
+};
+
+export type SubscriptionCursor = {
+  __typename?: 'SubscriptionCursor';
+  cursor: Scalars['String'];
+  node: SubscriptionInfo;
+};
+
+export type SubscriptionInfo = {
+  __typename?: 'SubscriptionInfo';
+  object: AbstractUuid;
+  sendEmail: Scalars['Boolean'];
+};
+
 export type SubscriptionMutation = {
   __typename?: 'SubscriptionMutation';
   set?: Maybe<SubscriptionSetResponse>;
@@ -1774,11 +1785,20 @@ export type SubscriptionMutationSetArgs = {
 export type SubscriptionQuery = {
   __typename?: 'SubscriptionQuery';
   currentUserHasSubscribed: Scalars['Boolean'];
+  getSubscriptions: SubscriptionConnection;
 };
 
 
 export type SubscriptionQueryCurrentUserHasSubscribedArgs = {
   id: Scalars['Int'];
+};
+
+
+export type SubscriptionQueryGetSubscriptionsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type SubscriptionSetInput = {
