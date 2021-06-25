@@ -1471,7 +1471,6 @@ export type Query = {
   notificationEvent?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
   notifications: NotificationConnection;
   subscription: SubscriptionQuery;
-  subscriptions: AbstractUuidConnection;
   uuid?: Maybe<Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision>;
 };
 
@@ -1527,14 +1526,6 @@ export type QueryNotificationsArgs = {
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
   unread?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type QuerySubscriptionsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
 };
 
 
@@ -1765,6 +1756,26 @@ export type SolutionRevisionCursor = {
   node: SolutionRevision;
 };
 
+export type SubscriptionConnection = {
+  __typename?: 'SubscriptionConnection';
+  edges: Array<SubscriptionCursor>;
+  nodes: Array<SubscriptionInfo>;
+  totalCount: Scalars['Int'];
+  pageInfo: PageInfo;
+};
+
+export type SubscriptionCursor = {
+  __typename?: 'SubscriptionCursor';
+  cursor: Scalars['String'];
+  node: SubscriptionInfo;
+};
+
+export type SubscriptionInfo = {
+  __typename?: 'SubscriptionInfo';
+  object: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
+  sendEmail: Scalars['Boolean'];
+};
+
 export type SubscriptionMutation = {
   __typename?: 'SubscriptionMutation';
   set?: Maybe<SubscriptionSetResponse>;
@@ -1778,11 +1789,20 @@ export type SubscriptionMutationSetArgs = {
 export type SubscriptionQuery = {
   __typename?: 'SubscriptionQuery';
   currentUserHasSubscribed: Scalars['Boolean'];
+  getSubscriptions: SubscriptionConnection;
 };
 
 
 export type SubscriptionQueryCurrentUserHasSubscribedArgs = {
   id: Scalars['Int'];
+};
+
+
+export type SubscriptionQueryGetSubscriptionsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type SubscriptionSetInput = {
@@ -2473,6 +2493,9 @@ export type ResolversTypes = {
   SolutionRevision: ResolverTypeWrapper<ModelOf<SolutionRevision>>;
   SolutionRevisionConnection: ResolverTypeWrapper<ModelOf<SolutionRevisionConnection>>;
   SolutionRevisionCursor: ResolverTypeWrapper<ModelOf<SolutionRevisionCursor>>;
+  SubscriptionConnection: ResolverTypeWrapper<ModelOf<SubscriptionConnection>>;
+  SubscriptionCursor: ResolverTypeWrapper<ModelOf<SubscriptionCursor>>;
+  SubscriptionInfo: ResolverTypeWrapper<ModelOf<SubscriptionInfo>>;
   SubscriptionMutation: ResolverTypeWrapper<ModelOf<SubscriptionMutation>>;
   SubscriptionQuery: ResolverTypeWrapper<ModelOf<SubscriptionQuery>>;
   SubscriptionSetInput: ResolverTypeWrapper<ModelOf<SubscriptionSetInput>>;
@@ -2627,6 +2650,9 @@ export type ResolversParentTypes = {
   SolutionRevision: ModelOf<SolutionRevision>;
   SolutionRevisionConnection: ModelOf<SolutionRevisionConnection>;
   SolutionRevisionCursor: ModelOf<SolutionRevisionCursor>;
+  SubscriptionConnection: ModelOf<SubscriptionConnection>;
+  SubscriptionCursor: ModelOf<SubscriptionCursor>;
+  SubscriptionInfo: ModelOf<SubscriptionInfo>;
   SubscriptionMutation: ModelOf<SubscriptionMutation>;
   SubscriptionQuery: ModelOf<SubscriptionQuery>;
   SubscriptionSetInput: ModelOf<SubscriptionSetInput>;
@@ -3467,7 +3493,6 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   notificationEvent?: Resolver<Maybe<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType, RequireFields<QueryNotificationEventArgs, 'id'>>;
   notifications?: Resolver<ResolversTypes['NotificationConnection'], ParentType, ContextType, RequireFields<QueryNotificationsArgs, never>>;
   subscription?: Resolver<ResolversTypes['SubscriptionQuery'], ParentType, ContextType>;
-  subscriptions?: Resolver<ResolversTypes['AbstractUuidConnection'], ParentType, ContextType, RequireFields<QuerySubscriptionsArgs, never>>;
   uuid?: Resolver<Maybe<ResolversTypes['AbstractUuid']>, ParentType, ContextType, RequireFields<QueryUuidArgs, never>>;
 };
 
@@ -3628,6 +3653,26 @@ export type SolutionRevisionCursorResolvers<ContextType = Context, ParentType ex
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type SubscriptionConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionConnection'] = ResolversParentTypes['SubscriptionConnection']> = {
+  edges?: Resolver<Array<ResolversTypes['SubscriptionCursor']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<ResolversTypes['SubscriptionInfo']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SubscriptionCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionCursor'] = ResolversParentTypes['SubscriptionCursor']> = {
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<ResolversTypes['SubscriptionInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SubscriptionInfoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionInfo'] = ResolversParentTypes['SubscriptionInfo']> = {
+  object?: Resolver<ResolversTypes['AbstractUuid'], ParentType, ContextType>;
+  sendEmail?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type SubscriptionMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionMutation'] = ResolversParentTypes['SubscriptionMutation']> = {
   set?: Resolver<Maybe<ResolversTypes['SubscriptionSetResponse']>, ParentType, ContextType, RequireFields<SubscriptionMutationSetArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -3635,6 +3680,7 @@ export type SubscriptionMutationResolvers<ContextType = Context, ParentType exte
 
 export type SubscriptionQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionQuery'] = ResolversParentTypes['SubscriptionQuery']> = {
   currentUserHasSubscribed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<SubscriptionQueryCurrentUserHasSubscribedArgs, 'id'>>;
+  getSubscriptions?: Resolver<ResolversTypes['SubscriptionConnection'], ParentType, ContextType, RequireFields<SubscriptionQueryGetSubscriptionsArgs, never>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3969,6 +4015,9 @@ export type Resolvers<ContextType = Context> = {
   SolutionRevision?: SolutionRevisionResolvers<ContextType>;
   SolutionRevisionConnection?: SolutionRevisionConnectionResolvers<ContextType>;
   SolutionRevisionCursor?: SolutionRevisionCursorResolvers<ContextType>;
+  SubscriptionConnection?: SubscriptionConnectionResolvers<ContextType>;
+  SubscriptionCursor?: SubscriptionCursorResolvers<ContextType>;
+  SubscriptionInfo?: SubscriptionInfoResolvers<ContextType>;
   SubscriptionMutation?: SubscriptionMutationResolvers<ContextType>;
   SubscriptionQuery?: SubscriptionQueryResolvers<ContextType>;
   SubscriptionSetResponse?: SubscriptionSetResponseResolvers<ContextType>;
