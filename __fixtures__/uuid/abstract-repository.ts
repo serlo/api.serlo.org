@@ -20,9 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
-import * as R from 'ramda'
 
-import { getUuidDataWithoutSubResolvers } from './abstract-uuid'
 import { Model } from '~/internals/graphql'
 
 export function createRepositoryLicenseQuery(
@@ -48,23 +46,5 @@ export function createRepositoryLicenseQuery(
       }
     `,
     variables,
-  }
-}
-
-export function getRepositoryDataWithoutSubResolvers(
-  repository: Model<'AbstractRepository'>
-) {
-  return {
-    ...getUuidDataWithoutSubResolvers(repository),
-    ...R.pick(['date'], repository),
-  }
-}
-
-export function getRevisionDataWithoutSubResolvers(
-  revision: Model<'AbstractRevision'>
-) {
-  return {
-    ...getUuidDataWithoutSubResolvers(revision),
-    ...R.pick(['date'], revision),
   }
 }

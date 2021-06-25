@@ -38,8 +38,6 @@ import {
   exerciseGroup,
   exerciseGroupRevision,
   exerciseRevision,
-  getRepositoryDataWithoutSubResolvers,
-  getRevisionDataWithoutSubResolvers,
   groupedExercise,
   groupedExerciseRevision,
   license,
@@ -159,7 +157,7 @@ describe('Repository', () => {
       `,
       variables: repository,
       data: {
-        uuid: getRepositoryDataWithoutSubResolvers(repository),
+        uuid: R.pick(['__typename', 'id', 'trashed', 'date'], repository),
       },
       client,
     })
@@ -183,8 +181,6 @@ describe('Repository', () => {
               __typename
               ... on AbstractRepository {
                 id
-                trashed
-                date
               }
             }
           }
@@ -196,7 +192,7 @@ describe('Repository', () => {
           },
         },
         data: {
-          uuid: getRepositoryDataWithoutSubResolvers(repository),
+          uuid: getTypenameAndId(repository),
         },
         client,
       })
@@ -221,8 +217,6 @@ describe('Repository', () => {
               __typename
               ... on AbstractRepository {
                 id
-                trashed
-                date
               }
             }
           }
@@ -234,7 +228,7 @@ describe('Repository', () => {
           },
         },
         data: {
-          uuid: getRepositoryDataWithoutSubResolvers(repository),
+          uuid: getTypenameAndId(repository),
         },
         client,
       })
@@ -266,7 +260,10 @@ describe('Repository', () => {
         variables: repository,
         data: {
           uuid: {
-            currentRevision: getRevisionDataWithoutSubResolvers(revision),
+            currentRevision: R.pick(
+              ['__typename', 'id', 'trashed', 'date'],
+              revision
+            ),
           },
         },
         client,
@@ -326,8 +323,6 @@ describe('Repository', () => {
                   nodes {
                     __typename
                     id
-                    trashed
-                    date
                   }
                 }
               }
@@ -339,9 +334,9 @@ describe('Repository', () => {
             uuid: {
               revisions: {
                 nodes: [
-                  getRevisionDataWithoutSubResolvers(unrevisedRevision),
-                  getRevisionDataWithoutSubResolvers(revision),
-                  getRevisionDataWithoutSubResolvers(revisedRevision),
+                  getTypenameAndId(unrevisedRevision),
+                  getTypenameAndId(revision),
+                  getTypenameAndId(revisedRevision),
                 ],
               },
             },
@@ -361,8 +356,6 @@ describe('Repository', () => {
                       nodes {
                         __typename
                         id
-                        trashed
-                        date
                       }
                     }
                   }
@@ -373,7 +366,7 @@ describe('Repository', () => {
           data: {
             uuid: {
               revisions: {
-                nodes: [getRevisionDataWithoutSubResolvers(unrevisedRevision)],
+                nodes: [getTypenameAndId(unrevisedRevision)],
                 totalCount: 1,
               },
             },
@@ -417,8 +410,6 @@ describe('Repository', () => {
                       nodes {
                         __typename
                         id
-                        trashed
-                        date
                       }
                     }
                   }
@@ -431,8 +422,8 @@ describe('Repository', () => {
               revisions: {
                 totalCount: 2,
                 nodes: [
-                  getRevisionDataWithoutSubResolvers(revision),
-                  getRevisionDataWithoutSubResolvers(revisedRevision),
+                  getTypenameAndId(revision),
+                  getTypenameAndId(revisedRevision),
                 ],
               },
             },
@@ -454,8 +445,6 @@ describe('Repository', () => {
                       nodes {
                         __typename
                         id
-                        trashed
-                        date
                       }
                     }
                   }
@@ -466,7 +455,7 @@ describe('Repository', () => {
           data: {
             uuid: {
               revisions: {
-                nodes: [getRevisionDataWithoutSubResolvers(revision)],
+                nodes: [getTypenameAndId(revision)],
                 totalCount: 1,
               },
             },
@@ -522,8 +511,6 @@ describe('Revision', () => {
                   repository {
                     __typename
                     id
-                    trashed
-                    date
                   }
                 }
               }
@@ -532,7 +519,7 @@ describe('Revision', () => {
         variables: revision,
         data: {
           uuid: {
-            repository: getRepositoryDataWithoutSubResolvers(repository),
+            repository: getTypenameAndId(repository),
           },
         },
         client,
