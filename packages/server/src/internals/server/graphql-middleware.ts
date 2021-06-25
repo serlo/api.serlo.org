@@ -124,7 +124,7 @@ export function getGraphQLOptions(
           sub: string
         }
 
-        if (active) parseInt(sub, 10)
+        if (active) return parseInt(sub, 10)
         throw new ApolloError('Token expired or invalid', 'INVALID_TOKEN')
       })
     },
