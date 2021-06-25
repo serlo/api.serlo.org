@@ -38,7 +38,7 @@ describe('subscriptions', () => {
       createUuidHandler(article),
       createUuidHandler(user),
       createSubscriptionsHandler({
-        payload: { userId: user.id },
+        userId: user.id,
         body: { subscriptions: [{ objectId: article.id, sendEmail: true }] },
       })
     )
@@ -141,7 +141,7 @@ describe('subscription mutation set', () => {
       createUuidHandler({ ...article, id: 1555 }),
       createUuidHandler({ ...article, id: 1565 }),
       createSubscriptionsHandler({
-        payload: { userId: user.id },
+        userId: user.id,
         body: {
           subscriptions: [{ objectId: article.id, sendEmail: false }],
         },
@@ -237,14 +237,14 @@ describe('subscription mutation set', () => {
 })
 
 function createSubscriptionsHandler({
-  payload,
+  userId,
   body,
 }: {
-  payload: { userId: number }
+  userId: number
   body: Record<string, unknown>
 }) {
   return createMessageHandler({
-    message: { type: 'SubscriptionsQuery', payload },
+    message: { type: 'SubscriptionsQuery', payload: { userId } },
     body,
   })
 }
