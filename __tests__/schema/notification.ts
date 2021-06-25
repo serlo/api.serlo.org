@@ -1037,7 +1037,6 @@ describe('notificationEvent', () => {
         data: {
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
-
             setTaxonomyTermNotificationEvent
           ),
         },
@@ -1122,7 +1121,6 @@ describe('notificationEvent', () => {
         data: {
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
-
             createTaxonomyLinkNotificationEvent
           ),
         },
@@ -1228,7 +1226,6 @@ describe('notificationEvent', () => {
         data: {
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
-
             removeTaxonomyLinkNotificationEvent
           ),
         },
@@ -1574,7 +1571,6 @@ describe('notificationEvent', () => {
         data: {
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
-
             setLicenseNotificationEvent
           ),
         },
@@ -1656,7 +1652,6 @@ describe('notificationEvent', () => {
         data: {
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId', 'archived'],
-
             setThreadStateNotificationEvent
           ),
         },
@@ -1743,7 +1738,6 @@ describe('notificationEvent', () => {
         data: {
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId', 'trashed'],
-
             setUuidStateNotificationEvent
           ),
         },

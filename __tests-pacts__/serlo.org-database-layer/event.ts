@@ -191,7 +191,6 @@ describe('EventQuery', () => {
       data: {
         notificationEvent: R.pick(
           ['__typename', 'id', 'instance', 'date', 'objectId'],
-
           createEntityNotificationEvent
         ),
       },
@@ -227,7 +226,6 @@ describe('EventQuery', () => {
       data: {
         notificationEvent: R.pick(
           ['__typename', 'id', 'instance', 'date', 'objectId'],
-
           createEntityLinkNotificationEvent
         ),
       },
@@ -306,7 +304,6 @@ describe('EventQuery', () => {
       data: {
         notificationEvent: R.pick(
           ['__typename', 'id', 'instance', 'date', 'objectId'],
-
           createEntityRevisionNotificationEvent
         ),
       },
@@ -343,7 +340,6 @@ describe('EventQuery', () => {
       data: {
         notificationEvent: R.pick(
           ['__typename', 'id', 'instance', 'date', 'objectId'],
-
           createTaxonomyTermNotificationEvent
         ),
       },
@@ -380,7 +376,6 @@ describe('EventQuery', () => {
       data: {
         notificationEvent: R.pick(
           ['__typename', 'id', 'instance', 'date', 'objectId'],
-
           setTaxonomyTermNotificationEvent
         ),
       },
@@ -416,7 +411,6 @@ describe('EventQuery', () => {
       data: {
         notificationEvent: R.pick(
           ['__typename', 'id', 'instance', 'date', 'objectId'],
-
           createTaxonomyLinkNotificationEvent
         ),
       },
@@ -452,7 +446,6 @@ describe('EventQuery', () => {
       data: {
         notificationEvent: R.pick(
           ['__typename', 'id', 'instance', 'date', 'objectId'],
-
           removeTaxonomyLinkNotificationEvent
         ),
       },
@@ -497,7 +490,6 @@ describe('EventQuery', () => {
       data: {
         notificationEvent: R.pick(
           ['__typename', 'id', 'instance', 'date', 'objectId'],
-
           setTaxonomyParentNotificationEvent
         ),
       },
@@ -532,7 +524,6 @@ describe('EventQuery', () => {
       data: {
         notificationEvent: R.pick(
           ['__typename', 'id', 'instance', 'date', 'objectId'],
-
           createThreadNotificationEvent
         ),
       },
@@ -567,7 +558,6 @@ describe('EventQuery', () => {
       data: {
         notificationEvent: R.pick(
           ['__typename', 'id', 'instance', 'date', 'objectId'],
-
           setLicenseNotificationEvent
         ),
       },
@@ -604,7 +594,6 @@ describe('EventQuery', () => {
       data: {
         notificationEvent: R.pick(
           ['__typename', 'id', 'instance', 'date', 'objectId', 'archived'],
-
           setThreadStateNotificationEvent
         ),
       },
@@ -640,7 +629,6 @@ describe('EventQuery', () => {
       data: {
         notificationEvent: R.pick(
           ['__typename', 'id', 'instance', 'date', 'objectId', 'trashed'],
-
           setUuidStateNotificationEvent
         ),
       },
