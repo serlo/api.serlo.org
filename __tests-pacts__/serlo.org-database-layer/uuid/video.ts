@@ -21,13 +21,9 @@
  */
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
-import {
-  getVideoDataWithoutSubResolvers,
-  getVideoRevisionDataWithoutSubResolvers,
-  video,
-  videoRevision,
-} from '../../../__fixtures__'
+import { video, videoRevision } from '../../../__fixtures__'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
@@ -67,7 +63,7 @@ test('Video', async () => {
         }
       `,
     data: {
-      uuid: getVideoDataWithoutSubResolvers(video),
+      uuid: R.pick(['__typename', 'id', 'trashed', 'instance', 'date'], video),
     },
   })
 })
@@ -104,7 +100,19 @@ test('VideoRevision', async () => {
         }
       `,
     data: {
-      uuid: getVideoRevisionDataWithoutSubResolvers(videoRevision),
+      uuid: R.pick(
+        [
+          '__typename',
+          'id',
+          'trashed',
+          'date',
+          'title',
+          'content',
+          'url',
+          'changes',
+        ],
+        videoRevision
+      ),
     },
   })
 })

@@ -19,8 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import * as R from 'ramda'
-
 import { Model } from '~/internals/graphql'
 import { DiscriminatorType } from '~/model/decoder'
 
@@ -46,8 +44,4 @@ export const user2: Model<'User'> = {
   lastLogin: '2019-03-23T09:20:55Z',
   description: null,
   roles: ['login'],
-}
-
-export function getUserDataWithoutSubResolvers(user: Model<'User'>) {
-  return R.omit(['alias', 'roles'], user)
 }
