@@ -40,19 +40,17 @@ test('SubscriptionsQuery', async () => {
     given: `there exists a subscription for user with id ${user.id}`,
     message,
     responseBody: {
-      userId: user.id,
       subscriptions: Matchers.eachLike({
-        id: Matchers.integer(1),
+        objectId: Matchers.integer(1),
         sendEmail: Matchers.boolean(false),
       }),
     },
   })
   const response = await global.serloModel.getSubscriptions({ userId: user.id })
   expect(response).toEqual({
-    userId: user.id,
     subscriptions: [
       {
-        id: 1,
+        objectId: 1,
         sendEmail: false,
       },
     ],
