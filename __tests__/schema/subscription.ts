@@ -29,24 +29,8 @@ import {
   createMessageHandler,
   createTestClient,
   createUuidHandler,
+  getTypenameAndId,
 } from '../__utils__'
-
-const getSubscriptionsQuery = gql`
-  query {
-    subscription {
-      getSubscriptions {
-        totalCount
-        nodes {
-          __typename
-          object {
-            id
-          }
-          sendEmail
-        }
-      }
-    }
-  }
-`
 
 describe('subscriptions', () => {
   beforeEach(() => {
@@ -65,15 +49,27 @@ describe('subscriptions', () => {
   test('Article', async () => {
     const client = createTestClient({ userId: 1 })
     await assertSuccessfulGraphQLQuery({
-      query: getSubscriptionsQuery,
+      query: gql`
+        query {
+          subscription {
+            getSubscriptions {
+              nodes {
+                object {
+                  __typename
+                  id
+                }
+                sendEmail
+              }
+            }
+          }
+        }
+      `,
       data: {
         subscription: {
           getSubscriptions: {
-            totalCount: 1,
             nodes: [
               {
-                __typename: 'SubscriptionInfo',
-                object: { id: 1855 },
+                object: getTypenameAndId(article),
                 sendEmail: true,
               },
             ],
@@ -135,6 +131,20 @@ describe('subscription mutation set', () => {
       }
     }
   `
+  const getSubscriptionsQuery = gql`
+    query {
+      subscription {
+        getSubscriptions {
+          nodes {
+            object {
+              id
+            }
+            sendEmail
+          }
+        }
+      }
+    }
+  `
   const client = createTestClient({ userId: user.id })
 
   // given a single subscription to article.id
@@ -159,10 +169,8 @@ describe('subscription mutation set', () => {
       data: {
         subscription: {
           getSubscriptions: {
-            totalCount: 1,
             nodes: [
               {
-                __typename: 'SubscriptionInfo',
                 object: { id: article.id },
                 sendEmail: false,
               },
@@ -199,20 +207,16 @@ describe('subscription mutation set', () => {
       data: {
         subscription: {
           getSubscriptions: {
-            totalCount: 3,
             nodes: [
               {
-                __typename: 'SubscriptionInfo',
                 object: { id: 1555 },
                 sendEmail: false,
               },
               {
-                __typename: 'SubscriptionInfo',
                 object: { id: 1565 },
                 sendEmail: false,
               },
               {
-                __typename: 'SubscriptionInfo',
                 object: { id: article.id },
                 sendEmail: false,
               },
@@ -258,7 +262,6 @@ describe('subscription mutation set', () => {
       data: {
         subscription: {
           getSubscriptions: {
-            totalCount: 0,
             nodes: [],
           },
         },
