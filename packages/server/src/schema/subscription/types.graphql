@@ -1,10 +1,4 @@
 extend type Query {
-  subscriptions(
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): AbstractUuidConnection!
   subscription: SubscriptionQuery!
 }
 
@@ -14,6 +8,29 @@ extend type Mutation {
 
 type SubscriptionQuery {
   currentUserHasSubscribed(id: Int!): Boolean!
+  getSubscriptions(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): SubscriptionConnection!
+}
+
+type SubscriptionConnection {
+  edges: [SubscriptionCursor!]!
+  nodes: [SubscriptionInfo!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type SubscriptionCursor {
+  cursor: String!
+  node: SubscriptionInfo!
+}
+
+type SubscriptionInfo {
+  object: AbstractUuid!
+  sendEmail: Boolean!
 }
 
 type SubscriptionMutation {

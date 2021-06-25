@@ -38,7 +38,6 @@ import {
   exerciseGroup,
   exerciseGroupRevision,
   exerciseRevision,
-  getUserDataWithoutSubResolvers,
   groupedExercise,
   groupedExerciseRevision,
   license,
@@ -481,11 +480,6 @@ describe('Revision', () => {
                 author {
                   __typename
                   id
-                  trashed
-                  username
-                  date
-                  lastLogin
-                  description
                 }
               }
             }
@@ -494,7 +488,7 @@ describe('Revision', () => {
         variables: revision,
         data: {
           uuid: {
-            author: getUserDataWithoutSubResolvers(user),
+            author: getTypenameAndId(user),
           },
         },
         client,
