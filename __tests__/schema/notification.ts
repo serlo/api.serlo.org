@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
 import {
   article,
@@ -34,22 +35,6 @@ import {
   createTaxonomyTermNotificationEvent,
   createThreadNotificationEvent,
   exercise,
-  getCheckoutRevisionNotificationEventDataWithoutSubResolvers,
-  getCreateCommentNotificationEventDataWithoutSubResolvers,
-  getCreateEntityLinkNotificationEventDataWithoutSubResolvers,
-  getCreateEntityNotificationEventDataWithoutSubResolvers,
-  getCreateEntityRevisionNotificationEventDataWithoutSubResolvers,
-  getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers,
-  getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers,
-  getCreateThreadNotificationEventDataWithoutSubResolvers,
-  getRejectRevisionNotificationEventDataWithoutSubResolvers,
-  getRemoveEntityLinkNotificationEventDataWithoutSubResolvers,
-  getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers,
-  getSetLicenseNotificationEventDataWithoutSubResolvers,
-  getSetTaxonomyParentNotificationEventDataWithoutSubResolvers,
-  getSetTaxonomyTermNotificationEventDataWithoutSubResolvers,
-  getSetThreadStateNotificationEventDataWithoutSubResolvers,
-  getSetUuidStateNotificationEventDataWithoutSubResolvers,
   getUserDataWithoutSubResolvers,
   rejectRevisionNotificationEvent,
   removeEntityLinkNotificationEvent,
@@ -184,10 +169,10 @@ describe('notifications', () => {
             {
               id: 1,
               unread: false,
-              event:
-                getCheckoutRevisionNotificationEventDataWithoutSubResolvers(
-                  checkoutRevisionNotificationEvent
-                ),
+              event: R.pick(
+                ['__typename', 'id', 'instance', 'date', 'objectId', 'reason'],
+                checkoutRevisionNotificationEvent
+              ),
             },
           ],
         },
@@ -236,20 +221,15 @@ describe('notificationEvent', () => {
               __typename
               ... on CheckoutRevisionNotificationEvent {
                 id
-                instance
-                date
-                objectId
-                reason
               }
             }
           }
         `,
         variables: checkoutRevisionNotificationEvent,
         data: {
-          notificationEvent:
-            getCheckoutRevisionNotificationEventDataWithoutSubResolvers(
-              checkoutRevisionNotificationEvent
-            ),
+          notificationEvent: getTypenameAndId(
+            checkoutRevisionNotificationEvent
+          ),
         },
         client,
       })
@@ -355,10 +335,10 @@ describe('notificationEvent', () => {
         `,
         variables: rejectRevisionNotificationEvent,
         data: {
-          notificationEvent:
-            getRejectRevisionNotificationEventDataWithoutSubResolvers(
-              rejectRevisionNotificationEvent
-            ),
+          notificationEvent: R.pick(
+            ['__typename', 'id', 'instance', 'date', 'reason', 'objectId'],
+            rejectRevisionNotificationEvent
+          ),
         },
         client,
       })
@@ -463,10 +443,10 @@ describe('notificationEvent', () => {
         `,
         variables: createCommentNotificationEvent,
         data: {
-          notificationEvent:
-            getCreateCommentNotificationEventDataWithoutSubResolvers(
-              createCommentNotificationEvent
-            ),
+          notificationEvent: R.pick(
+            ['__typename', 'id', 'instance', 'date', 'objectId'],
+            createCommentNotificationEvent
+          ),
         },
         client,
       })
@@ -576,10 +556,10 @@ describe('notificationEvent', () => {
         `,
         variables: createEntityNotificationEvent,
         data: {
-          notificationEvent:
-            getCreateEntityNotificationEventDataWithoutSubResolvers(
-              createEntityNotificationEvent
-            ),
+          notificationEvent: R.pick(
+            ['__typename', 'id', 'instance', 'date', 'objectId'],
+            createEntityNotificationEvent
+          ),
         },
         client,
       })
@@ -661,10 +641,10 @@ describe('notificationEvent', () => {
         `,
         variables: createEntityLinkNotificationEvent,
         data: {
-          notificationEvent:
-            getCreateEntityLinkNotificationEventDataWithoutSubResolvers(
-              createEntityLinkNotificationEvent
-            ),
+          notificationEvent: R.pick(
+            ['__typename', 'id', 'instance', 'date', 'objectId'],
+            createEntityLinkNotificationEvent
+          ),
         },
         client,
       })
@@ -779,10 +759,10 @@ describe('notificationEvent', () => {
         `,
         variables: removeEntityLinkNotificationEvent,
         data: {
-          notificationEvent:
-            getRemoveEntityLinkNotificationEventDataWithoutSubResolvers(
-              removeEntityLinkNotificationEvent
-            ),
+          notificationEvent: R.pick(
+            ['__typename', 'id', 'instance', 'date', 'objectId'],
+            removeEntityLinkNotificationEvent
+          ),
         },
         client,
       })
@@ -897,10 +877,10 @@ describe('notificationEvent', () => {
         `,
         variables: createEntityRevisionNotificationEvent,
         data: {
-          notificationEvent:
-            getCreateEntityRevisionNotificationEventDataWithoutSubResolvers(
-              createEntityRevisionNotificationEvent
-            ),
+          notificationEvent: R.pick(
+            ['__typename', 'id', 'instance', 'date', 'objectId'],
+            createEntityRevisionNotificationEvent
+          ),
         },
         client,
       })
@@ -1007,10 +987,10 @@ describe('notificationEvent', () => {
         `,
         variables: createTaxonomyTermNotificationEvent,
         data: {
-          notificationEvent:
-            getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers(
-              createTaxonomyTermNotificationEvent
-            ),
+          notificationEvent: R.pick(
+            ['__typename', 'id', 'instance', 'date', 'objectId'],
+            createTaxonomyTermNotificationEvent
+          ),
         },
         client,
       })
@@ -1096,10 +1076,11 @@ describe('notificationEvent', () => {
         `,
         variables: setTaxonomyTermNotificationEvent,
         data: {
-          notificationEvent:
-            getSetTaxonomyTermNotificationEventDataWithoutSubResolvers(
-              setTaxonomyTermNotificationEvent
-            ),
+          notificationEvent: R.pick(
+            ['__typename', 'id', 'instance', 'date', 'objectId'],
+
+            setTaxonomyTermNotificationEvent
+          ),
         },
         client,
       })
@@ -1185,10 +1166,11 @@ describe('notificationEvent', () => {
         `,
         variables: createTaxonomyLinkNotificationEvent,
         data: {
-          notificationEvent:
-            getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers(
-              createTaxonomyLinkNotificationEvent
-            ),
+          notificationEvent: R.pick(
+            ['__typename', 'id', 'instance', 'date', 'objectId'],
+
+            createTaxonomyLinkNotificationEvent
+          ),
         },
         client,
       })
@@ -1295,10 +1277,11 @@ describe('notificationEvent', () => {
         `,
         variables: removeTaxonomyLinkNotificationEvent,
         data: {
-          notificationEvent:
-            getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers(
-              removeTaxonomyLinkNotificationEvent
-            ),
+          notificationEvent: R.pick(
+            ['__typename', 'id', 'instance', 'date', 'objectId'],
+
+            removeTaxonomyLinkNotificationEvent
+          ),
         },
         client,
       })
@@ -1405,10 +1388,10 @@ describe('notificationEvent', () => {
         `,
         variables: setTaxonomyParentNotificationEvent,
         data: {
-          notificationEvent:
-            getSetTaxonomyParentNotificationEventDataWithoutSubResolvers(
-              setTaxonomyParentNotificationEvent
-            ),
+          notificationEvent: R.pick(
+            ['__typename', 'id', 'instance', 'date', 'objectId'],
+            setTaxonomyParentNotificationEvent
+          ),
         },
         client,
       })
@@ -1544,10 +1527,10 @@ describe('notificationEvent', () => {
         `,
         variables: createThreadNotificationEvent,
         data: {
-          notificationEvent:
-            getCreateThreadNotificationEventDataWithoutSubResolvers(
-              createThreadNotificationEvent
-            ),
+          notificationEvent: R.pick(
+            ['__typename', 'id', 'instance', 'date', 'objectId'],
+            createThreadNotificationEvent
+          ),
         },
         client,
       })
@@ -1655,10 +1638,11 @@ describe('notificationEvent', () => {
         `,
         variables: setLicenseNotificationEvent,
         data: {
-          notificationEvent:
-            getSetLicenseNotificationEventDataWithoutSubResolvers(
-              setLicenseNotificationEvent
-            ),
+          notificationEvent: R.pick(
+            ['__typename', 'id', 'instance', 'date', 'objectId'],
+
+            setLicenseNotificationEvent
+          ),
         },
         client,
       })
@@ -1741,10 +1725,11 @@ describe('notificationEvent', () => {
         `,
         variables: setThreadStateNotificationEvent,
         data: {
-          notificationEvent:
-            getSetThreadStateNotificationEventDataWithoutSubResolvers(
-              setThreadStateNotificationEvent
-            ),
+          notificationEvent: R.pick(
+            ['__typename', 'id', 'instance', 'date', 'objectId', 'archived'],
+
+            setThreadStateNotificationEvent
+          ),
         },
         client,
       })
@@ -1832,10 +1817,11 @@ describe('notificationEvent', () => {
         `,
         variables: setUuidStateNotificationEvent,
         data: {
-          notificationEvent:
-            getSetUuidStateNotificationEventDataWithoutSubResolvers(
-              setUuidStateNotificationEvent
-            ),
+          notificationEvent: R.pick(
+            ['__typename', 'id', 'instance', 'date', 'objectId', 'trashed'],
+
+            setUuidStateNotificationEvent
+          ),
         },
         client,
       })

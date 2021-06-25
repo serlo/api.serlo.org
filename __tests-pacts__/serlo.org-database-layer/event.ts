@@ -21,6 +21,7 @@
  */
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
 import {
   checkoutRevisionNotificationEvent,
@@ -31,22 +32,6 @@ import {
   createTaxonomyLinkNotificationEvent,
   createTaxonomyTermNotificationEvent,
   createThreadNotificationEvent,
-  getCheckoutRevisionNotificationEventDataWithoutSubResolvers,
-  getCreateCommentNotificationEventDataWithoutSubResolvers,
-  getCreateEntityLinkNotificationEventDataWithoutSubResolvers,
-  getCreateEntityNotificationEventDataWithoutSubResolvers,
-  getCreateEntityRevisionNotificationEventDataWithoutSubResolvers,
-  getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers,
-  getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers,
-  getCreateThreadNotificationEventDataWithoutSubResolvers,
-  getRejectRevisionNotificationEventDataWithoutSubResolvers,
-  getRemoveEntityLinkNotificationEventDataWithoutSubResolvers,
-  getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers,
-  getSetLicenseNotificationEventDataWithoutSubResolvers,
-  getSetTaxonomyParentNotificationEventDataWithoutSubResolvers,
-  getSetTaxonomyTermNotificationEventDataWithoutSubResolvers,
-  getSetThreadStateNotificationEventDataWithoutSubResolvers,
-  getSetUuidStateNotificationEventDataWithoutSubResolvers,
   rejectRevisionNotificationEvent,
   removeEntityLinkNotificationEvent,
   removeTaxonomyLinkNotificationEvent,
@@ -96,10 +81,10 @@ describe('EventQuery', () => {
       `,
       variables: checkoutRevisionNotificationEvent,
       data: {
-        notificationEvent:
-          getCheckoutRevisionNotificationEventDataWithoutSubResolvers(
-            checkoutRevisionNotificationEvent
-          ),
+        notificationEvent: R.pick(
+          ['__typename', 'id', 'instance', 'date', 'objectId', 'reason'],
+          checkoutRevisionNotificationEvent
+        ),
       },
     })
   })
@@ -135,10 +120,10 @@ describe('EventQuery', () => {
       `,
       variables: rejectRevisionNotificationEvent,
       data: {
-        notificationEvent:
-          getRejectRevisionNotificationEventDataWithoutSubResolvers(
-            rejectRevisionNotificationEvent
-          ),
+        notificationEvent: R.pick(
+          ['__typename', 'id', 'instance', 'date', 'objectId', 'reason'],
+          rejectRevisionNotificationEvent
+        ),
       },
     })
   })
@@ -170,10 +155,10 @@ describe('EventQuery', () => {
       `,
       variables: createCommentNotificationEvent,
       data: {
-        notificationEvent:
-          getCreateCommentNotificationEventDataWithoutSubResolvers(
-            createCommentNotificationEvent
-          ),
+        notificationEvent: R.pick(
+          ['__typename', 'id', 'instance', 'date', 'objectId'],
+          createCommentNotificationEvent
+        ),
       },
     })
   })
@@ -204,10 +189,11 @@ describe('EventQuery', () => {
       `,
       variables: createEntityNotificationEvent,
       data: {
-        notificationEvent:
-          getCreateEntityNotificationEventDataWithoutSubResolvers(
-            createEntityNotificationEvent
-          ),
+        notificationEvent: R.pick(
+          ['__typename', 'id', 'instance', 'date', 'objectId'],
+
+          createEntityNotificationEvent
+        ),
       },
     })
   })
@@ -239,10 +225,11 @@ describe('EventQuery', () => {
       `,
       variables: createEntityLinkNotificationEvent,
       data: {
-        notificationEvent:
-          getCreateEntityLinkNotificationEventDataWithoutSubResolvers(
-            createEntityLinkNotificationEvent
-          ),
+        notificationEvent: R.pick(
+          ['__typename', 'id', 'instance', 'date', 'objectId'],
+
+          createEntityLinkNotificationEvent
+        ),
       },
     })
   })
@@ -274,10 +261,10 @@ describe('EventQuery', () => {
       `,
       variables: removeEntityLinkNotificationEvent,
       data: {
-        notificationEvent:
-          getRemoveEntityLinkNotificationEventDataWithoutSubResolvers(
-            removeEntityLinkNotificationEvent
-          ),
+        notificationEvent: R.pick(
+          ['__typename', 'id', 'instance', 'date', 'objectId'],
+          removeEntityLinkNotificationEvent
+        ),
       },
     })
   })
@@ -317,10 +304,11 @@ describe('EventQuery', () => {
       `,
       variables: createEntityRevisionNotificationEvent,
       data: {
-        notificationEvent:
-          getCreateEntityRevisionNotificationEventDataWithoutSubResolvers(
-            createEntityRevisionNotificationEvent
-          ),
+        notificationEvent: R.pick(
+          ['__typename', 'id', 'instance', 'date', 'objectId'],
+
+          createEntityRevisionNotificationEvent
+        ),
       },
     })
   })
@@ -353,10 +341,11 @@ describe('EventQuery', () => {
       `,
       variables: createTaxonomyTermNotificationEvent,
       data: {
-        notificationEvent:
-          getCreateTaxonomyTermNotificationEventDataWithoutSubResolvers(
-            createTaxonomyTermNotificationEvent
-          ),
+        notificationEvent: R.pick(
+          ['__typename', 'id', 'instance', 'date', 'objectId'],
+
+          createTaxonomyTermNotificationEvent
+        ),
       },
     })
   })
@@ -389,10 +378,11 @@ describe('EventQuery', () => {
       `,
       variables: setTaxonomyTermNotificationEvent,
       data: {
-        notificationEvent:
-          getSetTaxonomyTermNotificationEventDataWithoutSubResolvers(
-            setTaxonomyTermNotificationEvent
-          ),
+        notificationEvent: R.pick(
+          ['__typename', 'id', 'instance', 'date', 'objectId'],
+
+          setTaxonomyTermNotificationEvent
+        ),
       },
     })
   })
@@ -424,10 +414,11 @@ describe('EventQuery', () => {
       `,
       variables: createTaxonomyLinkNotificationEvent,
       data: {
-        notificationEvent:
-          getCreateTaxonomyLinkNotificationEventDataWithoutSubResolvers(
-            createTaxonomyLinkNotificationEvent
-          ),
+        notificationEvent: R.pick(
+          ['__typename', 'id', 'instance', 'date', 'objectId'],
+
+          createTaxonomyLinkNotificationEvent
+        ),
       },
     })
   })
@@ -459,10 +450,11 @@ describe('EventQuery', () => {
       `,
       variables: removeTaxonomyLinkNotificationEvent,
       data: {
-        notificationEvent:
-          getRemoveTaxonomyLinkNotificationEventDataWithoutSubResolvers(
-            removeTaxonomyLinkNotificationEvent
-          ),
+        notificationEvent: R.pick(
+          ['__typename', 'id', 'instance', 'date', 'objectId'],
+
+          removeTaxonomyLinkNotificationEvent
+        ),
       },
     })
   })
@@ -503,10 +495,11 @@ describe('EventQuery', () => {
       `,
       variables: setTaxonomyParentNotificationEvent,
       data: {
-        notificationEvent:
-          getSetTaxonomyParentNotificationEventDataWithoutSubResolvers(
-            setTaxonomyParentNotificationEvent
-          ),
+        notificationEvent: R.pick(
+          ['__typename', 'id', 'instance', 'date', 'objectId'],
+
+          setTaxonomyParentNotificationEvent
+        ),
       },
     })
   })
@@ -537,10 +530,11 @@ describe('EventQuery', () => {
       `,
       variables: createThreadNotificationEvent,
       data: {
-        notificationEvent:
-          getCreateThreadNotificationEventDataWithoutSubResolvers(
-            createThreadNotificationEvent
-          ),
+        notificationEvent: R.pick(
+          ['__typename', 'id', 'instance', 'date', 'objectId'],
+
+          createThreadNotificationEvent
+        ),
       },
     })
   })
@@ -571,10 +565,11 @@ describe('EventQuery', () => {
       `,
       variables: setLicenseNotificationEvent,
       data: {
-        notificationEvent:
-          getSetLicenseNotificationEventDataWithoutSubResolvers(
-            setLicenseNotificationEvent
-          ),
+        notificationEvent: R.pick(
+          ['__typename', 'id', 'instance', 'date', 'objectId'],
+
+          setLicenseNotificationEvent
+        ),
       },
     })
   })
@@ -607,10 +602,11 @@ describe('EventQuery', () => {
       `,
       variables: setThreadStateNotificationEvent,
       data: {
-        notificationEvent:
-          getSetThreadStateNotificationEventDataWithoutSubResolvers(
-            setThreadStateNotificationEvent
-          ),
+        notificationEvent: R.pick(
+          ['__typename', 'id', 'instance', 'date', 'objectId', 'archived'],
+
+          setThreadStateNotificationEvent
+        ),
       },
     })
   })
@@ -642,10 +638,11 @@ describe('EventQuery', () => {
       `,
       variables: setUuidStateNotificationEvent,
       data: {
-        notificationEvent:
-          getSetUuidStateNotificationEventDataWithoutSubResolvers(
-            setUuidStateNotificationEvent
-          ),
+        notificationEvent: R.pick(
+          ['__typename', 'id', 'instance', 'date', 'objectId', 'trashed'],
+
+          setUuidStateNotificationEvent
+        ),
       },
     })
   })
