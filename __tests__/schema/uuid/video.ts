@@ -20,13 +20,9 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
-import {
-  video,
-  videoRevision,
-  getVideoDataWithoutSubResolvers,
-  getVideoRevisionDataWithoutSubResolvers,
-} from '../../../__fixtures__'
+import { video, videoRevision } from '../../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
@@ -58,7 +54,7 @@ test('Video', async () => {
     `,
     variables: video,
     data: {
-      uuid: getVideoDataWithoutSubResolvers(video),
+      uuid: R.pick(['__typename', 'id', 'trashed', 'instance', 'date'], video),
     },
     client,
   })
@@ -85,7 +81,19 @@ test('VideoRevision', async () => {
     `,
     variables: videoRevision,
     data: {
-      uuid: getVideoRevisionDataWithoutSubResolvers(videoRevision),
+      uuid: R.pick(
+        [
+          '__typename',
+          'id',
+          'trashed',
+          'date',
+          'title',
+          'content',
+          'url',
+          'changes',
+        ],
+        videoRevision
+      ),
     },
     client,
   })
