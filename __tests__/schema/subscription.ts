@@ -39,9 +39,7 @@ describe('subscriptions', () => {
       createUuidHandler(user),
       createSubscriptionsHandler({
         payload: { userId: user.id },
-        body: {
-          subscriptions: [{ objectId: article.id, sendEmail: true }],
-        },
+        body: { subscriptions: [{ objectId: article.id, sendEmail: true }] },
       })
     )
   })
@@ -67,12 +65,7 @@ describe('subscriptions', () => {
       data: {
         subscription: {
           getSubscriptions: {
-            nodes: [
-              {
-                object: getTypenameAndId(article),
-                sendEmail: true,
-              },
-            ],
+            nodes: [{ object: getTypenameAndId(article), sendEmail: true }],
           },
         },
       },
@@ -91,11 +84,7 @@ describe('subscriptions', () => {
         }
       `,
       variables: { id: article.id },
-      data: {
-        subscription: {
-          currentUserHasSubscribed: true,
-        },
-      },
+      data: { subscription: { currentUserHasSubscribed: true } },
       client,
     })
   })
@@ -111,11 +100,7 @@ describe('subscriptions', () => {
         }
       `,
       variables: { id: article.id + 1 },
-      data: {
-        subscription: {
-          currentUserHasSubscribed: false,
-        },
-      },
+      data: { subscription: { currentUserHasSubscribed: false } },
       client,
     })
   })
@@ -169,12 +154,7 @@ describe('subscription mutation set', () => {
       data: {
         subscription: {
           getSubscriptions: {
-            nodes: [
-              {
-                object: { id: article.id },
-                sendEmail: false,
-              },
-            ],
+            nodes: [{ object: { id: article.id }, sendEmail: false }],
           },
         },
       },
@@ -208,18 +188,9 @@ describe('subscription mutation set', () => {
         subscription: {
           getSubscriptions: {
             nodes: [
-              {
-                object: { id: 1555 },
-                sendEmail: false,
-              },
-              {
-                object: { id: 1565 },
-                sendEmail: false,
-              },
-              {
-                object: { id: article.id },
-                sendEmail: false,
-              },
+              { object: { id: 1555 }, sendEmail: false },
+              { object: { id: 1565 }, sendEmail: false },
+              { object: { id: article.id }, sendEmail: false },
             ],
           },
         },
@@ -259,13 +230,7 @@ describe('subscription mutation set', () => {
     //check cache
     await assertSuccessfulGraphQLQuery({
       query: getSubscriptionsQuery,
-      data: {
-        subscription: {
-          getSubscriptions: {
-            nodes: [],
-          },
-        },
-      },
+      data: { subscription: { getSubscriptions: { nodes: [] } } },
       client,
     })
   })
@@ -279,10 +244,7 @@ function createSubscriptionsHandler({
   body: Record<string, unknown>
 }) {
   return createMessageHandler({
-    message: {
-      type: 'SubscriptionsQuery',
-      payload,
-    },
+    message: { type: 'SubscriptionsQuery', payload },
     body,
   })
 }
@@ -291,9 +253,6 @@ function createSubscriptionSetMutationHandler(
   payload: Record<string, unknown>
 ) {
   return createMessageHandler({
-    message: {
-      type: 'SubscriptionSetMutation',
-      payload,
-    },
+    message: { type: 'SubscriptionSetMutation', payload },
   })
 }
