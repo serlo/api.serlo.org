@@ -21,8 +21,9 @@
  */
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
-import { getUserDataWithoutSubResolvers, user } from '../../../__fixtures__'
+import { user } from '../../../__fixtures__'
 import {
   addUuidInteraction,
   assertSuccessfulGraphQLQuery,
@@ -59,7 +60,18 @@ test('User', async () => {
     `,
     variables: user,
     data: {
-      uuid: getUserDataWithoutSubResolvers(user),
+      uuid: R.pick(
+        [
+          '__typename',
+          'id',
+          'trashed',
+          'username',
+          'date',
+          'lastLogin',
+          'description',
+        ],
+        user
+      ),
     },
   })
 })
