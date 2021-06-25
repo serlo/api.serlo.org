@@ -40,7 +40,6 @@ import {
   exerciseRevision,
   getRepositoryDataWithoutSubResolvers,
   getRevisionDataWithoutSubResolvers,
-  getUserDataWithoutSubResolvers,
   groupedExercise,
   groupedExerciseRevision,
   license,
@@ -59,6 +58,7 @@ import {
   createLicenseHandler,
   createTestClient,
   createUuidHandler,
+  getTypenameAndId,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import {
@@ -491,11 +491,6 @@ describe('Revision', () => {
                 author {
                   __typename
                   id
-                  trashed
-                  username
-                  date
-                  lastLogin
-                  description
                 }
               }
             }
@@ -504,7 +499,7 @@ describe('Revision', () => {
         variables: revision,
         data: {
           uuid: {
-            author: getUserDataWithoutSubResolvers(user),
+            author: getTypenameAndId(user),
           },
         },
         client,
