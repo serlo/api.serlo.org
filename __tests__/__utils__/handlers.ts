@@ -194,23 +194,3 @@ interface MessagePayload<Payload = DefaultPayloadType> {
 }
 
 type DefaultPayloadType = Record<string, unknown>
-
-export function createSpreadsheetHandler({
-  spreadsheetId,
-  range,
-  majorDimension,
-  apiKey,
-  body = {},
-}: {
-  spreadsheetId: string
-  range: string
-  majorDimension: string
-  apiKey: string
-  body?: Record<string, unknown>
-}) {
-  const url =
-    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}` +
-    `/values/${range}?majorDimension=${majorDimension}&key=${apiKey}`
-
-  return rest.get(url, (_req, res, ctx) => res.once(ctx.json(body)))
-}
