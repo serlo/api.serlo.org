@@ -22,7 +22,6 @@
 import * as R from 'ramda'
 
 import {
-  createExerciseSolutionQuery,
   exercise,
   groupedExercise,
   solution,
@@ -52,7 +51,19 @@ const exerciseCases = R.toPairs(exerciseFixtures)
 test.each(exerciseCases)('%s by id (w/ solution)', async (_type, entity) => {
   global.server.use(createUuidHandler(entity), createUuidHandler(solution))
   await assertSuccessfulGraphQLQuery({
-    ...createExerciseSolutionQuery(entity),
+    query: `
+      query solution($id: Int!) {
+        uuid(id: $id) {
+          ... on AbstractExercise {
+            solution {
+              __typename
+              id
+            }
+          }
+        }
+      }
+    `,
+    variables: {id: entity.id},
     data: {
       uuid: {
         solution: getTypenameAndId(solution),
