@@ -296,8 +296,8 @@ describe('Repository', () => {
               }
             }
           `,
-        variables: {id: repository.id},
-        data: {uuid:{license}},
+        variables: { id: repository.id },
+        data: { uuid: { license } },
         client,
       })
     }
