@@ -870,6 +870,15 @@ async function exec(): Promise<void> {
         'refactor uuid-set-state mutation acording to changed api in the db layer',
       ],
     },
+    {
+      tagName: 'v0.25.0',
+      date: '2021-06-28',
+      breakingChanges: [
+        ['subscriptions', 'Move query into `subscription` namespace.'],
+      ],
+      added: ['add property "sendMail" to subscriptions query'],
+      internal: ['refactoring of tests'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
