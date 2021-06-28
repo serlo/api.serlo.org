@@ -29,7 +29,6 @@ import {
   createTestClient,
 } from '../__utils__'
 
-// Next: change type of decoder => search for getLicense()
 const query = gql`
   query license($id: Int!) {
     license(id: $id) {
