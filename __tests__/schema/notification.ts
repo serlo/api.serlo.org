@@ -205,6 +205,33 @@ describe('notificationEvent', () => {
     client = createTestClient({ userId: null })
   })
 
+  test('notificationEvent returns null when queried with a certain id', async () => {
+    global.server.use(
+      createMessageHandler({
+        message: { type: 'EventQuery', payload: { id: 1234567 } },
+        statusCode: 404,
+        body: null,
+      })
+    )
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query notificationEvent($id: Int!) {
+          notificationEvent(id: $id) {
+            __typename
+            ... on CheckoutRevisionNotificationEvent {
+              id
+            }
+          }
+        }
+      `,
+      variables: { id: 1234567 },
+      data: {
+        notificationEvent: null,
+      },
+      client,
+    })
+  })
+
   describe('CheckoutRevisionNotification', () => {
     beforeEach(() => {
       global.server.use(
