@@ -100,7 +100,7 @@ export const resolvers: Queries<
           (row) =>
             row.length >= 3 && row[1] === user.username && row[2] === 'yes'
         ),
-        O.map((row) => (row.length > 1 ? row[0] : null)),
+        O.chain(A.head),
         O.getOrElse(R.always(null as null | string))
       )
     },
