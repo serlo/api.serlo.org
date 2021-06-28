@@ -21,11 +21,7 @@
  */
 import * as R from 'ramda'
 
-import {
-  exercise,
-  groupedExercise,
-  solution,
-} from '../../../__fixtures__'
+import { exercise, groupedExercise, solution } from '../../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
   Client,
@@ -63,12 +59,8 @@ test.each(exerciseCases)('%s by id (w/ solution)', async (_type, entity) => {
         }
       }
     `,
-    variables: {id: entity.id},
-    data: {
-      uuid: {
-        solution: getTypenameAndId(solution),
-      },
-    },
+    variables: { id: entity.id },
+    data: { uuid: { solution: getTypenameAndId(solution) } },
     client,
   })
 })

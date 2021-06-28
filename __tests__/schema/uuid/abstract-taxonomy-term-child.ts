@@ -84,7 +84,7 @@ test.each(taxonomyTermChildCases)(
             }
           }
       `,
-      variables: {id: entity.id},
+      variables: { id: entity.id },
       data: {
         uuid: {
           taxonomyTerms: {
