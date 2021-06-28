@@ -94,15 +94,14 @@ export const resolvers: Queries<
           spreadsheetId: process.env.GOOGLE_SPREADSHEET_API_MOTIVATION,
           range: 'Formularantworten!B:D',
         }),
-        E.map(
-          A.findLast(
-            (row) =>
-              row.length >= 3 && row[1] === user.username && row[2] === 'yes'
-          )
+        E.mapLeft(addContext({ location: 'motivationSpreadsheet' })),
+        E.getOrElse(consumeErrorEvent([] as string[][])),
+        A.findLast(
+          (row) =>
+            row.length >= 3 && row[1] === user.username && row[2] === 'yes'
         ),
-        E.map(O.getOrElse(R.always([] as string[]))),
-        E.map((row) => (row.length > 1 ? row[0] : null)),
-        E.getOrElse(R.always(null as null | string))
+        O.map((row) => (row.length > 1 ? row[0] : null)),
+        O.getOrElse(R.always(null as null | string))
       )
     },
     async activeAuthor(user, _args, { dataSources }) {

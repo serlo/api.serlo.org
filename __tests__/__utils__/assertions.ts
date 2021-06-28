@@ -149,6 +149,7 @@ export async function assertFailingGraphQLMutation({
 export async function assertErrorEvent(args?: {
   message?: string
   fingerprint?: string[]
+  location?: string
   errorContext?: Record<string, unknown>
 }) {
   const eventPredicate = (event: Sentry.Event) => {
@@ -170,6 +171,10 @@ export async function assertErrorEvent(args?: {
         if (!R.equals(destringifyProperties(contextValue), targetValue))
           return false
       }
+    }
+
+    if (args?.location && event.tags?.location !== args.location) {
+      return false
     }
 
     if (args?.fingerprint !== undefined) {

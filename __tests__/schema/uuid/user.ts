@@ -408,6 +408,28 @@ describe('User', () => {
         client,
       })
     })
+
+    test('returns null when there is an error in the google spreadsheet api', async () => {
+      global.server.use(createUuidHandler({ ...user, username: 'foo' }))
+      givenSpreadheetApi(hasInternalServerError())
+
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query ($id: Int!) {
+            uuid(id: $id) {
+              ... on User {
+                motivation
+              }
+            }
+          }
+        `,
+        variables: { id: user.id },
+        data: { uuid: { motivation: null } },
+        client,
+      })
+
+      await assertErrorEvent({ location: 'motivationSpreadsheet' })
+    })
   })
 })
 
