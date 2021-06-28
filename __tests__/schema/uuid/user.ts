@@ -341,6 +341,36 @@ describe('User', () => {
       })
     })
   })
+
+  describe('property "motivation"', () => {
+    beforeEach(() => {
+      givenMotivationsSpreadsheet([
+        ['Motivation', 'Username', 'Can be published?'],
+        ['Serlo is gre', 'foo', 'yes'],
+        ['Serlo is great!', 'foo', 'yes'],
+        ['Serlo is great!', 'bar', ''],
+      ])
+    })
+
+    test('returns last approved motivation of motivation spreadsheet', async () => {
+      global.server.use(createUuidHandler({ ...user, username: 'foo' }))
+
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query ($id: Int!) {
+            uuid(id: $id) {
+              ... on User {
+                motivation
+              }
+            }
+          }
+        `,
+        variables: { id: user.id },
+        data: { uuid: { motivation: 'Serlo is great!' } },
+        client,
+      })
+    })
+  })
 })
 
 describe('endpoint activeAuthors', () => {
@@ -515,6 +545,15 @@ function givenActiveDonorsSpreadsheet(values: string[][]) {
     spreadsheetId: process.env.GOOGLE_SPREADSHEET_API_ACTIVE_DONORS,
     range: 'Tabellenblatt1!A:A',
     majorDimension: MajorDimension.Columns,
+    values,
+  })
+}
+
+function givenMotivationsSpreadsheet(values: string[][]) {
+  givenSpreadsheet({
+    spreadsheetId: process.env.GOOGLE_SPREADSHEET_API_MOTIVATION,
+    range: "'Formularantworten 1'!B:D",
+    majorDimension: MajorDimension.Rows,
     values,
   })
 }

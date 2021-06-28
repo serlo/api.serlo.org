@@ -21,7 +21,7 @@
  */
 import * as serloAuth from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
-import { array as A, either as E, function as F } from 'fp-ts'
+import { array as A, either as E, function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import R from 'ramda'
 
@@ -87,6 +87,23 @@ export const resolvers: Queries<
         payload: { ...payload, actorId: user.id },
         dataSources,
       })
+    },
+    async motivation(user, _args, { dataSources }) {
+      return F.pipe(
+        await dataSources.model.googleSpreadsheetApi.getValues({
+          spreadsheetId: process.env.GOOGLE_SPREADSHEET_API_MOTIVATION,
+          range: "'Formularantworten 1'!B:D",
+        }),
+        E.map(
+          A.findLast(
+            (row) =>
+              row.length >= 3 && row[1] === user.username && row[2] === 'yes'
+          )
+        ),
+        E.map(O.getOrElse(R.always([] as string[]))),
+        E.map((row) => (row.length > 1 ? row[0] : null)),
+        E.getOrElse(R.always(null as null | string))
+      )
     },
     async activeAuthor(user, _args, { dataSources }) {
       return (await dataSources.model.serlo.getActiveAuthorIds()).includes(
