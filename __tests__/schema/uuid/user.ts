@@ -409,7 +409,31 @@ describe('User', () => {
       })
     })
 
-    test('returns null when there is an error in the google spreadsheet api', async () => {
+    test('report to sentry when query from google spreadsheet api is maleformed', async () => {
+      global.server.use(createUuidHandler({ ...user, username: 'foo' }))
+      givenMotivationsSpreadsheet([['just one row']])
+
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query ($id: Int!) {
+            uuid(id: $id) {
+              ... on User {
+                motivation
+              }
+            }
+          }
+        `,
+        variables: { id: user.id },
+        data: { uuid: { motivation: null } },
+        client,
+      })
+
+      await assertErrorEvent({
+        message: 'invalid row in query of motivationSpreadsheet',
+      })
+    })
+
+    test('returns null when there is an error in the google spreadsheet api + report to sentry', async () => {
       global.server.use(createUuidHandler({ ...user, username: 'foo' }))
       givenSpreadheetApi(hasInternalServerError())
 

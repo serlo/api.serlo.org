@@ -96,10 +96,11 @@ export const resolvers: Queries<
         }),
         E.mapLeft(addContext({ location: 'motivationSpreadsheet' })),
         E.getOrElse(consumeErrorEvent([] as string[][])),
-        A.findLast(
-          (row) =>
-            row.length >= 3 && row[1] === user.username && row[2] === 'yes'
-        ),
+        assertAll({
+          assertion: (row) => row.length === 3,
+          error: new Error('invalid row in query of motivationSpreadsheet'),
+        }),
+        A.findLast((row) => row[1] === user.username && row[2] === 'yes'),
         O.chain(A.head),
         O.getOrElse(R.always(null as null | string))
       )
