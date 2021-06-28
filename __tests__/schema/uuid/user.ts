@@ -348,7 +348,7 @@ describe('User', () => {
         ['Motivation', 'Username', 'Can be published?'],
         ['Serlo is gre', 'foo', 'yes'],
         ['Serlo is great!', 'foo', 'yes'],
-        ['Serlo is great!', 'bar', ''],
+        ['Serlo is awesome!', 'bar', ''],
       ])
     })
 
@@ -367,6 +367,44 @@ describe('User', () => {
         `,
         variables: { id: user.id },
         data: { uuid: { motivation: 'Serlo is great!' } },
+        client,
+      })
+    })
+
+    test('returns null when motivation was not reviewed', async () => {
+      global.server.use(createUuidHandler({ ...user, username: 'bar' }))
+
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query ($id: Int!) {
+            uuid(id: $id) {
+              ... on User {
+                motivation
+              }
+            }
+          }
+        `,
+        variables: { id: user.id },
+        data: { uuid: { motivation: null } },
+        client,
+      })
+    })
+
+    test('returns null when user is not in spreadsheet with motivations', async () => {
+      global.server.use(createUuidHandler({ ...user, username: 'war' }))
+
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query ($id: Int!) {
+            uuid(id: $id) {
+              ... on User {
+                motivation
+              }
+            }
+          }
+        `,
+        variables: { id: user.id },
+        data: { uuid: { motivation: null } },
         client,
       })
     })
