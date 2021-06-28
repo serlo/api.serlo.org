@@ -31,7 +31,6 @@ import {
   coursePage,
   coursePageRevision,
   courseRevision,
-  createRepositoryLicenseQuery,
   event,
   eventRevision,
   exercise,
@@ -279,12 +278,26 @@ describe('Repository', () => {
         createLicenseHandler(license)
       )
       await assertSuccessfulGraphQLQuery({
-        ...createRepositoryLicenseQuery(repository),
-        data: {
-          uuid: {
-            license,
-          },
-        },
+        query: `
+            query license($id: Int!) {
+              uuid(id: $id) {
+                ... on AbstractRepository {
+                  license {
+                    id
+                    instance
+                    default
+                    title
+                    url
+                    content
+                    agreement
+                    iconHref
+                  }
+                }
+              }
+            }
+          `,
+        variables: {id: repository.id},
+        data: {uuid:{license}},
         client,
       })
     }
