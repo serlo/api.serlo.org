@@ -25,31 +25,51 @@ import { license } from '../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
   createLicenseHandler,
+  createMessageHandler,
   createTestClient,
 } from '../__utils__'
 
-beforeEach(() => {
-  global.server.use(createLicenseHandler(license))
-})
+// Next: change type of decoder => search for getLicense()
+const query = gql`
+  query license($id: Int!) {
+    license(id: $id) {
+      id
+      instance
+      default
+      title
+      url
+      content
+      agreement
+      iconHref
+    }
+  }
+`
 
 test('license', async () => {
+  global.server.use(createLicenseHandler(license))
   await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query license($id: Int!) {
-        license(id: $id) {
-          id
-          instance
-          default
-          title
-          url
-          content
-          agreement
-          iconHref
-        }
-      }
-    `,
+    query,
     variables: { id: license.id },
     data: { license },
+    client: createTestClient(),
+  })
+})
+
+test('license returns null when queried with a certain id', async () => {
+  global.server.use(
+    createMessageHandler({
+      message: {
+        type: 'LicenseQuery',
+        payload: { id: 100 },
+      },
+      statusCode: 404,
+      body: null,
+    })
+  )
+  await assertSuccessfulGraphQLQuery({
+    query,
+    variables: { id: 100 },
+    data: { license: null },
     client: createTestClient(),
   })
 })
