@@ -40,7 +40,8 @@ export function defaultSpreadsheetApi(): SpreadsheetApiResolver {
       return res(ctx.status(403))
     }
 
-    const { spreadsheetId, range } = req.params
+    const { spreadsheetId } = req.params
+    const range = decodeURIComponent(req.params.range)
     const majorDimension = searchParams.get('majorDimension') as MajorDimension
 
     const values = spreadsheets[toKey({ spreadsheetId, range, majorDimension })]
