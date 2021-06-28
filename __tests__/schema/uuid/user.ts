@@ -590,7 +590,7 @@ function givenActiveDonorsSpreadsheet(values: string[][]) {
 function givenMotivationsSpreadsheet(values: string[][]) {
   givenSpreadsheet({
     spreadsheetId: process.env.GOOGLE_SPREADSHEET_API_MOTIVATION,
-    range: "'Formularantworten 1'!B:D",
+    range: 'Formularantworten!B:D',
     majorDimension: MajorDimension.Rows,
     values,
   })

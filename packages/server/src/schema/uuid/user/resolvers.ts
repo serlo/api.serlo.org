@@ -92,7 +92,7 @@ export const resolvers: Queries<
       return F.pipe(
         await dataSources.model.googleSpreadsheetApi.getValues({
           spreadsheetId: process.env.GOOGLE_SPREADSHEET_API_MOTIVATION,
-          range: "'Formularantworten 1'!B:D",
+          range: 'Formularantworten!B:D',
         }),
         E.map(
           A.findLast(
