@@ -57,14 +57,12 @@ test('license', async () => {
 test('license returns null when queried with a certain id', async () => {
   global.server.use(
     createMessageHandler({
-      message: {
-        type: 'LicenseQuery',
-        payload: { id: 100 },
-      },
+      message: { type: 'LicenseQuery', payload: { id: 100 } },
       statusCode: 404,
       body: null,
     })
   )
+
   await assertSuccessfulGraphQLQuery({
     query,
     variables: { id: 100 },
