@@ -353,89 +353,50 @@ describe('User', () => {
     })
 
     test('returns last approved motivation of motivation spreadsheet', async () => {
-      global.server.use(createUuidHandler({ ...user, username: 'foo' }))
-
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query ($id: Int!) {
-            uuid(id: $id) {
-              ... on User {
-                motivation
-              }
-            }
-          }
-        `,
-        variables: { id: user.id },
-        data: { uuid: { motivation: 'Serlo is great!' } },
-        client,
+      await assertSuccessfulMotivationQuery({
+        username: 'foo',
+        motivation: 'Serlo is great!',
       })
     })
 
     test('returns null when motivation was not reviewed', async () => {
-      global.server.use(createUuidHandler({ ...user, username: 'bar' }))
-
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query ($id: Int!) {
-            uuid(id: $id) {
-              ... on User {
-                motivation
-              }
-            }
-          }
-        `,
-        variables: { id: user.id },
-        data: { uuid: { motivation: null } },
-        client,
+      await assertSuccessfulMotivationQuery({
+        username: 'bar',
+        motivation: null,
       })
     })
 
     test('returns null when user is not in spreadsheet with motivations', async () => {
-      global.server.use(createUuidHandler({ ...user, username: 'war' }))
-
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query ($id: Int!) {
-            uuid(id: $id) {
-              ... on User {
-                motivation
-              }
-            }
-          }
-        `,
-        variables: { id: user.id },
-        data: { uuid: { motivation: null } },
-        client,
+      await assertSuccessfulMotivationQuery({
+        username: 'war',
+        motivation: null,
       })
     })
 
     test('report to sentry when query from google spreadsheet api is maleformed', async () => {
-      global.server.use(createUuidHandler({ ...user, username: 'foo' }))
       givenMotivationsSpreadsheet([['just one row']])
 
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query ($id: Int!) {
-            uuid(id: $id) {
-              ... on User {
-                motivation
-              }
-            }
-          }
-        `,
-        variables: { id: user.id },
-        data: { uuid: { motivation: null } },
-        client,
-      })
-
+      await assertSuccessfulMotivationQuery({ motivation: null })
       await assertErrorEvent({
         message: 'invalid row in query of motivationSpreadsheet',
       })
     })
 
     test('returns null when there is an error in the google spreadsheet api + report to sentry', async () => {
-      global.server.use(createUuidHandler({ ...user, username: 'foo' }))
       givenSpreadheetApi(hasInternalServerError())
+
+      await assertSuccessfulMotivationQuery({ motivation: null })
+      await assertErrorEvent({ location: 'motivationSpreadsheet' })
+    })
+
+    async function assertSuccessfulMotivationQuery({
+      motivation,
+      username = 'foo',
+    }: {
+      motivation: string | null
+      username?: string
+    }) {
+      global.server.use(createUuidHandler({ ...user, username }))
 
       await assertSuccessfulGraphQLQuery({
         query: gql`
@@ -448,12 +409,10 @@ describe('User', () => {
           }
         `,
         variables: { id: user.id },
-        data: { uuid: { motivation: null } },
+        data: { uuid: { motivation } },
         client,
       })
-
-      await assertErrorEvent({ location: 'motivationSpreadsheet' })
-    })
+    }
   })
 })
 
