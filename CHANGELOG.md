@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.25.0](https://github.com/serlo/api.serlo.org/compare/v0.24.8..v0.25.0) - June 28, 2021
+
+### Breaking Changes
+
+- **subscriptions**. Move query into `subscription` namespace.
+
+### Added
+
+- add property "sendMail" to subscriptions query
+
+### Internal
+
+- refactoring of tests
+
 ## [v0.24.8](https://github.com/serlo/api.serlo.org/compare/v0.24.7..v0.24.8) - June 16, 2021
 
 ### Added
