@@ -70,9 +70,7 @@ export const resolvers: Mutations<'_cache'> = {
         )
       }
       await Promise.all(
-        input.keys.map(async (key) => {
-          await dataSources.model.updateCacheValue({ key })
-        })
+        input.keys.map((key) => dataSources.model.updateCacheValue({ key }))
       )
       return { success: true }
     },
