@@ -19,8 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import * as R from 'ramda'
-
 import { license } from '../license'
 import { exerciseGroup } from './exercise-group'
 import { Model } from '~/internals/graphql'
@@ -58,26 +56,4 @@ export const groupedExerciseRevision: Model<'GroupedExerciseRevision'> = {
   repositoryId: groupedExercise.id,
   content: 'content',
   changes: 'changes',
-}
-
-export function getGroupedExerciseDataWithoutSubResolvers(
-  groupedExercise: Model<'GroupedExercise'>
-) {
-  return R.omit(
-    [
-      'currentRevisionId',
-      'revisionIds',
-      'licenseId',
-      'solutionId',
-      'parentId',
-      'alias',
-    ],
-    groupedExercise
-  )
-}
-
-export function getGroupedExerciseRevisionDataWithoutSubResolvers(
-  groupedExerciseRevision: Model<'GroupedExerciseRevision'>
-) {
-  return R.omit(['authorId', 'repositoryId', 'alias'], groupedExerciseRevision)
 }

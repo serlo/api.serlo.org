@@ -31,16 +31,12 @@ import {
   coursePage,
   coursePageRevision,
   courseRevision,
-  createRepositoryLicenseQuery,
   event,
   eventRevision,
   exercise,
   exerciseGroup,
   exerciseGroupRevision,
   exerciseRevision,
-  getRepositoryDataWithoutSubResolvers,
-  getRevisionDataWithoutSubResolvers,
-  getUserDataWithoutSubResolvers,
   groupedExercise,
   groupedExerciseRevision,
   license,
@@ -59,6 +55,7 @@ import {
   createLicenseHandler,
   createTestClient,
   createUuidHandler,
+  getTypenameAndId,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import {
@@ -159,7 +156,7 @@ describe('Repository', () => {
       `,
       variables: repository,
       data: {
-        uuid: getRepositoryDataWithoutSubResolvers(repository),
+        uuid: R.pick(['__typename', 'id', 'trashed', 'date'], repository),
       },
       client,
     })
@@ -183,8 +180,6 @@ describe('Repository', () => {
               __typename
               ... on AbstractRepository {
                 id
-                trashed
-                date
               }
             }
           }
@@ -196,7 +191,7 @@ describe('Repository', () => {
           },
         },
         data: {
-          uuid: getRepositoryDataWithoutSubResolvers(repository),
+          uuid: getTypenameAndId(repository),
         },
         client,
       })
@@ -221,8 +216,6 @@ describe('Repository', () => {
               __typename
               ... on AbstractRepository {
                 id
-                trashed
-                date
               }
             }
           }
@@ -234,7 +227,7 @@ describe('Repository', () => {
           },
         },
         data: {
-          uuid: getRepositoryDataWithoutSubResolvers(repository),
+          uuid: getTypenameAndId(repository),
         },
         client,
       })
@@ -266,7 +259,10 @@ describe('Repository', () => {
         variables: repository,
         data: {
           uuid: {
-            currentRevision: getRevisionDataWithoutSubResolvers(revision),
+            currentRevision: R.pick(
+              ['__typename', 'id', 'trashed', 'date'],
+              revision
+            ),
           },
         },
         client,
@@ -282,12 +278,26 @@ describe('Repository', () => {
         createLicenseHandler(license)
       )
       await assertSuccessfulGraphQLQuery({
-        ...createRepositoryLicenseQuery(repository),
-        data: {
-          uuid: {
-            license,
-          },
-        },
+        query: `
+            query license($id: Int!) {
+              uuid(id: $id) {
+                ... on AbstractRepository {
+                  license {
+                    id
+                    instance
+                    default
+                    title
+                    url
+                    content
+                    agreement
+                    iconHref
+                  }
+                }
+              }
+            }
+          `,
+        variables: { id: repository.id },
+        data: { uuid: { license } },
         client,
       })
     }
@@ -326,8 +336,6 @@ describe('Repository', () => {
                   nodes {
                     __typename
                     id
-                    trashed
-                    date
                   }
                 }
               }
@@ -339,9 +347,9 @@ describe('Repository', () => {
             uuid: {
               revisions: {
                 nodes: [
-                  getRevisionDataWithoutSubResolvers(unrevisedRevision),
-                  getRevisionDataWithoutSubResolvers(revision),
-                  getRevisionDataWithoutSubResolvers(revisedRevision),
+                  getTypenameAndId(unrevisedRevision),
+                  getTypenameAndId(revision),
+                  getTypenameAndId(revisedRevision),
                 ],
               },
             },
@@ -361,8 +369,6 @@ describe('Repository', () => {
                       nodes {
                         __typename
                         id
-                        trashed
-                        date
                       }
                     }
                   }
@@ -373,7 +379,7 @@ describe('Repository', () => {
           data: {
             uuid: {
               revisions: {
-                nodes: [getRevisionDataWithoutSubResolvers(unrevisedRevision)],
+                nodes: [getTypenameAndId(unrevisedRevision)],
                 totalCount: 1,
               },
             },
@@ -417,8 +423,6 @@ describe('Repository', () => {
                       nodes {
                         __typename
                         id
-                        trashed
-                        date
                       }
                     }
                   }
@@ -431,8 +435,8 @@ describe('Repository', () => {
               revisions: {
                 totalCount: 2,
                 nodes: [
-                  getRevisionDataWithoutSubResolvers(revision),
-                  getRevisionDataWithoutSubResolvers(revisedRevision),
+                  getTypenameAndId(revision),
+                  getTypenameAndId(revisedRevision),
                 ],
               },
             },
@@ -454,8 +458,6 @@ describe('Repository', () => {
                       nodes {
                         __typename
                         id
-                        trashed
-                        date
                       }
                     }
                   }
@@ -466,7 +468,7 @@ describe('Repository', () => {
           data: {
             uuid: {
               revisions: {
-                nodes: [getRevisionDataWithoutSubResolvers(revision)],
+                nodes: [getTypenameAndId(revision)],
                 totalCount: 1,
               },
             },
@@ -491,11 +493,6 @@ describe('Revision', () => {
                 author {
                   __typename
                   id
-                  trashed
-                  username
-                  date
-                  lastLogin
-                  description
                 }
               }
             }
@@ -504,7 +501,7 @@ describe('Revision', () => {
         variables: revision,
         data: {
           uuid: {
-            author: getUserDataWithoutSubResolvers(user),
+            author: getTypenameAndId(user),
           },
         },
         client,
@@ -527,8 +524,6 @@ describe('Revision', () => {
                   repository {
                     __typename
                     id
-                    trashed
-                    date
                   }
                 }
               }
@@ -537,7 +532,7 @@ describe('Revision', () => {
         variables: revision,
         data: {
           uuid: {
-            repository: getRepositoryDataWithoutSubResolvers(repository),
+            repository: getTypenameAndId(repository),
           },
         },
         client,

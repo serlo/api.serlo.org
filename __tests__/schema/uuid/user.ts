@@ -21,6 +21,7 @@
  */
 import { Scope } from '@serlo/authorization'
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
 import {
   article,
@@ -36,6 +37,7 @@ import {
   createMessageHandler,
   createTestClient,
   createUuidHandler,
+  getTypenameAndId,
   givenSpreadheetApi,
   givenSpreadsheet,
   hasInternalServerError,
@@ -80,7 +82,18 @@ describe('User', () => {
         },
       },
       data: {
-        uuid: getUserDataWithoutSubResolvers(user),
+        uuid: R.pick(
+          [
+            '__typename',
+            'id',
+            'trashed',
+            'username',
+            'date',
+            'lastLogin',
+            'description',
+          ],
+          user
+        ),
       },
       client,
     })
@@ -146,11 +159,6 @@ describe('User', () => {
             __typename
             ... on User {
               id
-              trashed
-              username
-              date
-              lastLogin
-              description
             }
           }
         }
@@ -162,7 +170,7 @@ describe('User', () => {
         },
       },
       data: {
-        uuid: getUserDataWithoutSubResolvers(user),
+        uuid: getTypenameAndId(user),
       },
       client,
     })
@@ -176,18 +184,13 @@ describe('User', () => {
             __typename
             ... on User {
               id
-              trashed
-              username
-              date
-              lastLogin
-              description
             }
           }
         }
       `,
       variables: user,
       data: {
-        uuid: getUserDataWithoutSubResolvers(user),
+        uuid: getTypenameAndId(user),
       },
       client,
     })
