@@ -23,13 +23,7 @@ import { Scope } from '@serlo/authorization'
 import { gql } from 'apollo-server'
 import R from 'ramda'
 
-import {
-  article,
-  getUserDataWithoutSubResolvers,
-  user,
-  user2,
-  activityByType,
-} from '../../../__fixtures__'
+import { article, user, user2, activityByType } from '../../../__fixtures__'
 import {
   assertErrorEvent,
   assertSuccessfulGraphQLQuery,
