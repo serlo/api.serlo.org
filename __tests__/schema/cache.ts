@@ -27,10 +27,7 @@ import {
   assertErrorEvent,
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
-  assertSuccessfulGraphQLQuery,
   createTestClient,
-  getTypenameAndId,
-  createUuidHandler,
 } from '../__utils__'
 import { Service } from '~/internals/authentication'
 
