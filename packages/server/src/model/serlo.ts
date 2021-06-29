@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 /**
  * This file is part of Serlo.org API
  *
@@ -619,7 +616,6 @@ export function createSerloModel({
           const currentWithoutNew = current.subscriptions.filter(
             (node) => !ids.includes(node.objectId)
           )
-
           // remove
           if (!subscribe) {
             return {
@@ -627,12 +623,9 @@ export function createSerloModel({
               subscriptions: currentWithoutNew,
             }
           }
-
-          const newEntries = ids.map((objectId) => ({ objectId, sendEmail }))
-
           // merge
+          const newEntries = ids.map((objectId) => ({ objectId, sendEmail }))
           const mergedEntries = newEntries.concat(currentWithoutNew)
-
           return {
             ...current,
             subscriptions: mergedEntries.sort(
