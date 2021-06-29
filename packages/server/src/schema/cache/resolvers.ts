@@ -74,7 +74,7 @@ export const resolvers: Mutations<'_cache'> = {
           await dataSources.model.updateCacheValue({ key })
         })
       )
-      return { success: true, query: {} }
+      return { success: true }
     },
   },
 }
