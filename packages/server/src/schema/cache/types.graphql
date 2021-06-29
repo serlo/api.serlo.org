@@ -33,5 +33,4 @@ input CacheUpdateInput {
 
 type CacheUpdateResponse {
   success: Boolean!
-  query: Query!
 }
