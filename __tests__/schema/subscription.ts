@@ -38,11 +38,8 @@ describe('subscriptions', () => {
       createUuidHandler(article),
       createUuidHandler(user),
       createSubscriptionsHandler({
-        payload: { userId: user.id },
-        body: {
-          userId: user.id,
-          subscriptions: [{ id: article.id, sendEmail: true }],
-        },
+        userId: user.id,
+        body: { subscriptions: [{ objectId: article.id, sendEmail: true }] },
       })
     )
   })
@@ -50,9 +47,27 @@ describe('subscriptions', () => {
   test('Article', async () => {
     const client = createTestClient({ userId: 1 })
     await assertSuccessfulGraphQLQuery({
-      ...createSubscriptionsQuery(),
+      query: gql`
+        query {
+          subscription {
+            getSubscriptions {
+              nodes {
+                object {
+                  __typename
+                  id
+                }
+                sendEmail
+              }
+            }
+          }
+        }
+      `,
       data: {
-        subscriptions: { totalCount: 1, nodes: [getTypenameAndId(article)] },
+        subscription: {
+          getSubscriptions: {
+            nodes: [{ object: getTypenameAndId(article), sendEmail: true }],
+          },
+        },
       },
       client,
     })
@@ -69,11 +84,7 @@ describe('subscriptions', () => {
         }
       `,
       variables: { id: article.id },
-      data: {
-        subscription: {
-          currentUserHasSubscribed: true,
-        },
-      },
+      data: { subscription: { currentUserHasSubscribed: true } },
       client,
     })
   })
@@ -89,11 +100,7 @@ describe('subscriptions', () => {
         }
       `,
       variables: { id: article.id + 1 },
-      data: {
-        subscription: {
-          currentUserHasSubscribed: false,
-        },
-      },
+      data: { subscription: { currentUserHasSubscribed: false } },
       client,
     })
   })
@@ -109,6 +116,20 @@ describe('subscription mutation set', () => {
       }
     }
   `
+  const getSubscriptionsQuery = gql`
+    query {
+      subscription {
+        getSubscriptions {
+          nodes {
+            object {
+              id
+            }
+            sendEmail
+          }
+        }
+      }
+    }
+  `
   const client = createTestClient({ userId: user.id })
 
   // given a single subscription to article.id
@@ -120,21 +141,21 @@ describe('subscription mutation set', () => {
       createUuidHandler({ ...article, id: 1555 }),
       createUuidHandler({ ...article, id: 1565 }),
       createSubscriptionsHandler({
-        payload: { userId: user.id },
+        userId: user.id,
         body: {
-          userId: user.id,
-          subscriptions: [{ id: article.id, sendEmail: false }],
+          subscriptions: [{ objectId: article.id, sendEmail: false }],
         },
       })
     )
 
     // fill cache
     await assertSuccessfulGraphQLQuery({
-      ...createSubscriptionsQueryOnlyId(),
+      query: getSubscriptionsQuery,
       data: {
-        subscriptions: {
-          totalCount: 1,
-          nodes: [{ id: article.id }],
+        subscription: {
+          getSubscriptions: {
+            nodes: [{ object: { id: article.id }, sendEmail: false }],
+          },
         },
       },
       client,
@@ -162,11 +183,16 @@ describe('subscription mutation set', () => {
 
     //check cache
     await assertSuccessfulGraphQLQuery({
-      ...createSubscriptionsQueryOnlyId(),
+      query: getSubscriptionsQuery,
       data: {
-        subscriptions: {
-          totalCount: 3,
-          nodes: [{ id: 1555 }, { id: 1565 }, { id: article.id }],
+        subscription: {
+          getSubscriptions: {
+            nodes: [
+              { object: { id: 1555 }, sendEmail: false },
+              { object: { id: 1565 }, sendEmail: false },
+              { object: { id: article.id }, sendEmail: false },
+            ],
+          },
         },
       },
       client,
@@ -203,72 +229,30 @@ describe('subscription mutation set', () => {
 
     //check cache
     await assertSuccessfulGraphQLQuery({
-      ...createSubscriptionsQueryOnlyId(),
-      data: {
-        subscriptions: {
-          totalCount: 0,
-          nodes: [],
-        },
-      },
+      query: getSubscriptionsQuery,
+      data: { subscription: { getSubscriptions: { nodes: [] } } },
       client,
     })
   })
 })
 
 function createSubscriptionsHandler({
-  payload,
+  userId,
   body,
 }: {
-  payload: { userId: number }
+  userId: number
   body: Record<string, unknown>
 }) {
   return createMessageHandler({
-    message: {
-      type: 'SubscriptionsQuery',
-      payload,
-    },
+    message: { type: 'SubscriptionsQuery', payload: { userId } },
     body,
   })
-}
-
-function createSubscriptionsQuery() {
-  return {
-    query: gql`
-      query subscriptions {
-        subscriptions {
-          totalCount
-          nodes {
-            __typename
-            id
-          }
-        }
-      }
-    `,
-  }
-}
-
-function createSubscriptionsQueryOnlyId() {
-  return {
-    query: gql`
-      query subscriptions {
-        subscriptions {
-          totalCount
-          nodes {
-            id
-          }
-        }
-      }
-    `,
-  }
 }
 
 function createSubscriptionSetMutationHandler(
   payload: Record<string, unknown>
 ) {
   return createMessageHandler({
-    message: {
-      type: 'SubscriptionSetMutation',
-      payload,
-    },
+    message: { type: 'SubscriptionSetMutation', payload },
   })
 }

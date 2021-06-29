@@ -25,7 +25,6 @@ import {
   applet,
   article,
   course,
-  createEntityTaxonomyTermsQuery,
   event,
   exercise,
   exerciseGroup,
@@ -70,7 +69,22 @@ test.each(taxonomyTermChildCases)(
       createUuidHandler(taxonomyTermSubject)
     )
     await assertSuccessfulGraphQLQuery({
-      ...createEntityTaxonomyTermsQuery(entity),
+      query: `
+          query taxonomyTerms($id: Int!) {
+            uuid(id: $id) {
+              ... on AbstractTaxonomyTermChild {
+                taxonomyTerms {
+                  nodes {
+                    __typename
+                    id
+                  }
+                  totalCount
+                }
+              }
+            }
+          }
+      `,
+      variables: { id: entity.id },
       data: {
         uuid: {
           taxonomyTerms: {

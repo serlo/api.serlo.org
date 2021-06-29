@@ -32,33 +32,21 @@ import {
 import { UuidDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
-import { SubscriptionQuery } from '~/types'
+import { SubscriptionInfo, SubscriptionQuery } from '~/types'
 
 export const resolvers: TypeResolvers<SubscriptionQuery> &
-  Queries<'subscriptions' | 'subscription'> &
+  TypeResolvers<SubscriptionInfo> &
+  Queries<'subscription'> &
   Mutations<'subscription'> = {
-  Query: {
-    async subscriptions(_parent, cursorPayload, { dataSources, userId }) {
-      assertUserIsAuthenticated(userId)
-      const subscriptions = await dataSources.model.serlo.getSubscriptions({
-        userId,
-      })
-      const result = await Promise.all(
-        subscriptions.subscriptions.map((id) => {
-          return dataSources.model.serlo.getUuidWithCustomDecoder({
-            id: id.id,
-            decoder: UuidDecoder,
-          })
-        })
-      )
-      return resolveConnection({
-        nodes: result,
-        payload: cursorPayload,
-        createCursor(node) {
-          return node.id.toString()
-        },
+  SubscriptionInfo: {
+    async object(parent, _args, { dataSources }) {
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: parent.objectId,
+        decoder: UuidDecoder,
       })
     },
+  },
+  Query: {
     subscription: createNamespace(),
   },
   Mutation: {
@@ -67,12 +55,25 @@ export const resolvers: TypeResolvers<SubscriptionQuery> &
   SubscriptionQuery: {
     async currentUserHasSubscribed(_parent, { id }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
+
       const subscriptions = await dataSources.model.serlo.getSubscriptions({
         userId,
       })
-      return subscriptions.subscriptions.some(
-        (subscription) => subscription.id === id
-      )
+
+      return subscriptions.subscriptions.some((sub) => sub.objectId === id)
+    },
+    async getSubscriptions(_parent, cursorPayload, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const { subscriptions } = await dataSources.model.serlo.getSubscriptions({
+        userId,
+      })
+
+      return resolveConnection({
+        nodes: subscriptions,
+        payload: cursorPayload,
+        createCursor: (node) => node.objectId.toString(),
+      })
     },
   },
   SubscriptionMutation: {
@@ -98,10 +99,7 @@ export const resolvers: TypeResolvers<SubscriptionQuery> &
         subscribe,
         sendEmail,
       })
-      return {
-        success: true,
-        query: {},
-      }
+      return { success: true, query: {} }
     },
   },
 }

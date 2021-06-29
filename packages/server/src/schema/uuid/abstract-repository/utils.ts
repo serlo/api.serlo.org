@@ -96,7 +96,13 @@ export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
       })
     },
     async license(repository, _args, { dataSources }) {
-      return dataSources.model.serlo.getLicense({ id: repository.licenseId })
+      const license = await dataSources.model.serlo.getLicense({
+        id: repository.licenseId,
+      })
+
+      if (license === null) throw new Error('License cannot be null')
+
+      return license
     },
   }
 }
