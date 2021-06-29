@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /**
  * This file is part of Serlo.org API
  *
@@ -613,28 +616,28 @@ export function createSerloModel({
         getValue(current) {
           if (!current) return
 
+          const currentWithoutNew = current.subscriptions.filter(
+            (node) => !ids.includes(node.objectId)
+          )
+
           // remove
           if (!subscribe) {
             return {
               ...current,
-              subscriptions: current.subscriptions.filter(
-                (node) => !ids.includes(node.objectId)
-              ),
+              subscriptions: currentWithoutNew,
             }
           }
 
-          //add
-          const newIds = ids.filter((id) => {
-            return current.subscriptions.find((sub) => sub.objectId !== id)
-          })
-          const updated = [
-            ...current.subscriptions,
-            ...newIds.map((objectId) => ({ objectId, sendEmail })),
-          ].sort((a, b) => a.objectId - b.objectId)
+          const newEntries = ids.map((objectId) => ({ objectId, sendEmail }))
+
+          // merge
+          const mergedEntries = newEntries.concat(currentWithoutNew)
 
           return {
             ...current,
-            subscriptions: updated,
+            subscriptions: mergedEntries.sort(
+              (a, b) => a.objectId - b.objectId
+            ),
           }
         },
       })

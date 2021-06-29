@@ -234,6 +234,39 @@ describe('subscription mutation set', () => {
       client,
     })
   })
+
+  test('set sendEmail to true on existing subscription', async () => {
+    global.server.use(
+      createSubscriptionSetMutationHandler({
+        ids: [article.id],
+        userId: user.id,
+        subscribe: true,
+        sendEmail: true,
+      })
+    )
+
+    await assertSuccessfulGraphQLMutation({
+      mutation,
+      variables: {
+        input: { id: [article.id], subscribe: true, sendEmail: true },
+      },
+      data: { subscription: { set: { success: true } } },
+      client,
+    })
+
+    //check cache
+    await assertSuccessfulGraphQLQuery({
+      query: getSubscriptionsQuery,
+      data: {
+        subscription: {
+          getSubscriptions: {
+            nodes: [{ object: { id: article.id }, sendEmail: true }],
+          },
+        },
+      },
+      client,
+    })
+  })
 })
 
 function createSubscriptionsHandler({
