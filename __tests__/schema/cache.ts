@@ -166,6 +166,31 @@ describe('remove', () => {
 })
 
 describe('update', () => {
+  test('updates the key when service is cache-worker', async () => {
+    const client = createTestClient({ service: Service.SerloCacheWorker })
+
+    await assertSuccessfulGraphQLMutation({
+      mutation: gql`
+        mutation ($input: CacheUpdateInput!) {
+          _cache {
+            update(input: $input) {
+              success
+            }
+          }
+        }
+      `,
+      variables: {
+        input: {
+          keys: [`de.serlo.org/api/uuid/${user.id}`],
+        },
+      },
+      data: { _cache: { update: { success: true } } },
+      client,
+    })
+
+    // TODO: Test that key is passed on the SWR-Queue
+  })
+
   test('is forbidden when service is not legacy serlo.org', async () => {
     const client = createTestClient({ service: Service.SerloCloudflareWorker })
 

@@ -489,7 +489,6 @@ export type CacheUpdateInput = {
 export type CacheUpdateResponse = {
   __typename?: 'CacheUpdateResponse';
   success: Scalars['Boolean'];
-  query: Query;
 };
 
 export type CheckoutRevisionInput = {
@@ -2935,7 +2934,6 @@ export type CacheSetResponseResolvers<ContextType = Context, ParentType extends 
 
 export type CacheUpdateResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CacheUpdateResponse'] = ResolversParentTypes['CacheUpdateResponse']> = {
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

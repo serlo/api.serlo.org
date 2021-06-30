@@ -99,6 +99,8 @@ function validateServiceToken(token: string): Service {
           return process.env.SERLO_ORG_SECRET
         case Service.SerloCloudflareWorker:
           return process.env.SERVER_SERLO_CLOUDFLARE_WORKER_SECRET
+        case Service.SerloCacheWorker:
+          return process.env.SERVER_SERLO_CACHE_WORKER_SECRET
       }
     }
   }

@@ -20,10 +20,8 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
-/**
- *
- */
 export enum Service {
   Serlo = 'serlo.org',
   SerloCloudflareWorker = 'serlo.org-cloudflare-worker',
+  SerloCacheWorker = 'serlo.org-cache-worker',
 }
