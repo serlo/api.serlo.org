@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.26.0](https://github.com/serlo/api.serlo.org/compare/v0.25.0..v0.26.0) - June 30, 2021
+
+### Breaking Changes
+
+- **authorization**. Throw `INVALID_TOKEN` error when user token is invalid (e.g. expired, malformed).
+
 ## [v0.25.0](https://github.com/serlo/api.serlo.org/compare/v0.24.8..v0.25.0) - June 28, 2021
 
 ### Breaking Changes
