@@ -8,19 +8,19 @@ All notable changes to this project will be documented in this file.
 
 - **authorization**. Throw `INVALID_TOKEN` error when user token is invalid (e.g. expired, malformed).
 
+### Internal
+
+- Add `serlo.org-cache-worker` service.
+
 ## [v0.25.0](https://github.com/serlo/api.serlo.org/compare/v0.24.8..v0.25.0) - June 28, 2021
 
 ### Breaking Changes
 
-- **subscriptions**. Move query into `subscription` namespace.
+- **subscription**. Move query into `subscription` namespace.
 
 ### Added
 
-- add property "sendMail" to subscriptions query
-
-### Internal
-
-- refactoring of tests
+- **subscription**. Add property `sendMail` to `SubscriptionInfo`.
 
 ## [v0.24.8](https://github.com/serlo/api.serlo.org/compare/v0.24.7..v0.24.8) - June 16, 2021
 
@@ -30,39 +30,37 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-- update cache for checkoutRevision mutation
+- Update cache correctly after `entity.checkoutRevision` mutation.
 
-- refactor uuid-set-state mutation acording to changed api in the db layer
+- Fix `uuid.setState`
 
 ## [v0.24.7](https://github.com/serlo/api.serlo.org/compare/v0.24.6..v0.24.7) - June 8, 2021
 
 ### Fixed
 
-- role "sysadmin" needs to extend from "admin"
+- **authentication**. Role `sysadmin` now correctly extends from `admin`.
 
 ### Internal
 
-- Remove UnsupportedThread
-
-- Update README.md
+- Remove `UnsupportedThread`.
 
 ## [v0.24.6](https://github.com/serlo/api.serlo.org/compare/v0.24.5..v0.24.6) - May 28, 2021
 
 ### Added
 
-- mutation for checking out a revision
+- Add `entity.checkoutRevision` mutation.
 
-- mutation for rejecting a revision
+- Add `entity.rejectRevision` mutation.
 
 ### Internal
 
-- Remove UnsupportedComment
+- Remove `UnsupportedComment`
 
 ## [v0.24.5](https://github.com/serlo/api.serlo.org/compare/v0.24.4..v0.24.5) - May 25, 2021
 
 ### Internal
 
-- Fix: Taxonomy term resolver can handle children which are null.
+- Fix: `TaxonomyTerm` resolver now correctly handles `null` children.
 
 ## [v0.24.4](https://github.com/serlo/api.serlo.org/compare/v0.24.3..v0.24.4) - May 24, 2021
 
@@ -75,8 +73,6 @@ All notable changes to this project will be documented in this file.
 ### Internal
 
 - Improve Sentry integration.
-
-- Code refactoring for validating uuids.
 
 ## [v0.24.2](https://github.com/serlo/api.serlo.org/compare/v0.24.1..v0.24.2) - May 19, 2021
 
