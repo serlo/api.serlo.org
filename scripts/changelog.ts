@@ -879,6 +879,16 @@ async function exec(): Promise<void> {
       added: ['add property "sendMail" to subscriptions query'],
       internal: ['refactoring of tests'],
     },
+    {
+      tagName: 'v0.26.0',
+      date: '2021-06-30',
+      breakingChanges: [
+        [
+          'authorization',
+          'Throw `INVALID_TOKEN` error when user token is invalid (e.g. expired, malformed).',
+        ],
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
