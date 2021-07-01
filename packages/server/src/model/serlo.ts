@@ -613,28 +613,21 @@ export function createSerloModel({
         getValue(current) {
           if (!current) return
 
+          const currentWithoutNew = current.subscriptions.filter(
+            ({ objectId }) => !ids.includes(objectId)
+          )
+
           // remove
           if (!subscribe) {
-            return {
-              ...current,
-              subscriptions: current.subscriptions.filter(
-                (node) => !ids.includes(node.objectId)
-              ),
-            }
+            return { subscriptions: currentWithoutNew }
           }
 
-          //add
-          const newIds = ids.filter((id) => {
-            return current.subscriptions.find((sub) => sub.objectId !== id)
-          })
-          const updated = [
-            ...current.subscriptions,
-            ...newIds.map((objectId) => ({ objectId, sendEmail })),
-          ].sort((a, b) => a.objectId - b.objectId)
-
+          // merge
+          const newEntries = ids.map((objectId) => ({ objectId, sendEmail }))
           return {
-            ...current,
-            subscriptions: updated,
+            subscriptions: newEntries
+              .concat(currentWithoutNew)
+              .sort((a, b) => a.objectId - b.objectId),
           }
         },
       })

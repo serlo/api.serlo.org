@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.26.1](https://github.com/serlo/api.serlo.org/compare/v0.26.0..v0.26.1) - July 1, 2021
+
+### Fixed
+
+- Fix update of cache in mutation "setSubscriptions"
+
 ## [v0.26.0](https://github.com/serlo/api.serlo.org/compare/v0.25.0..v0.26.0) - June 30, 2021
 
 ### Breaking Changes
