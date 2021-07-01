@@ -373,7 +373,7 @@ describe('User', () => {
       })
     })
 
-    test('report to sentry when query from google spreadsheet api is maleformed', async () => {
+    test('report to sentry when query from google spreadsheet api is malformed', async () => {
       givenMotivationsSpreadsheet([['just one row']])
 
       await assertSuccessfulMotivationQuery({ motivation: null })
