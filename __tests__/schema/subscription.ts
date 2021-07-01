@@ -143,7 +143,10 @@ describe('subscription mutation set', () => {
       createSubscriptionsHandler({
         userId: user.id,
         body: {
-          subscriptions: [{ objectId: article.id, sendEmail: false }],
+          subscriptions: [
+            { objectId: article.id, sendEmail: false },
+            { objectId: 1555, sendEmail: false },
+          ],
         },
       })
     )
@@ -154,7 +157,10 @@ describe('subscription mutation set', () => {
       data: {
         subscription: {
           getSubscriptions: {
-            nodes: [{ object: { id: article.id }, sendEmail: false }],
+            nodes: [
+              { object: { id: article.id }, sendEmail: false },
+              { object: { id: 1555 }, sendEmail: false },
+            ],
           },
         },
       },
@@ -162,20 +168,20 @@ describe('subscription mutation set', () => {
     })
   })
 
-  test('with array of ids', async () => {
+  test('when subscribe=true', async () => {
     global.server.use(
       createSubscriptionSetMutationHandler({
         ids: [1565, 1555],
         userId: user.id,
         subscribe: true,
-        sendEmail: false,
+        sendEmail: true,
       })
     )
 
     await assertSuccessfulGraphQLMutation({
       mutation,
       variables: {
-        input: { id: [1565, 1555], subscribe: true, sendEmail: false },
+        input: { id: [1565, 1555], subscribe: true, sendEmail: true },
       },
       data: { subscription: { set: { success: true } } },
       client: createTestClient({ userId: user.id }),
@@ -188,8 +194,8 @@ describe('subscription mutation set', () => {
         subscription: {
           getSubscriptions: {
             nodes: [
-              { object: { id: 1555 }, sendEmail: false },
-              { object: { id: 1565 }, sendEmail: false },
+              { object: { id: 1555 }, sendEmail: true },
+              { object: { id: 1565 }, sendEmail: true },
               { object: { id: article.id }, sendEmail: false },
             ],
           },
@@ -199,16 +205,7 @@ describe('subscription mutation set', () => {
     })
   })
 
-  test('unauthenticated', async () => {
-    await assertFailingGraphQLMutation({
-      mutation,
-      variables: { input: { id: 1565, subscribe: true, sendEmail: false } },
-      client: createTestClient({ userId: null }),
-      expectedError: 'UNAUTHENTICATED',
-    })
-  })
-
-  test('remove subscription, check cache mutation', async () => {
+  test('when subscribe=false', async () => {
     global.server.use(
       createSubscriptionSetMutationHandler({
         ids: [article.id],
@@ -230,41 +227,23 @@ describe('subscription mutation set', () => {
     //check cache
     await assertSuccessfulGraphQLQuery({
       query: getSubscriptionsQuery,
-      data: { subscription: { getSubscriptions: { nodes: [] } } },
-      client,
-    })
-  })
-
-  test('set sendEmail to true on existing subscription', async () => {
-    global.server.use(
-      createSubscriptionSetMutationHandler({
-        ids: [article.id],
-        userId: user.id,
-        subscribe: true,
-        sendEmail: true,
-      })
-    )
-
-    await assertSuccessfulGraphQLMutation({
-      mutation,
-      variables: {
-        input: { id: [article.id], subscribe: true, sendEmail: true },
-      },
-      data: { subscription: { set: { success: true } } },
-      client,
-    })
-
-    //check cache
-    await assertSuccessfulGraphQLQuery({
-      query: getSubscriptionsQuery,
       data: {
         subscription: {
           getSubscriptions: {
-            nodes: [{ object: { id: article.id }, sendEmail: true }],
+            nodes: [{ object: { id: 1555 }, sendEmail: false }],
           },
         },
       },
       client,
+    })
+  })
+
+  test('unauthenticated', async () => {
+    await assertFailingGraphQLMutation({
+      mutation,
+      variables: { input: { id: 1565, subscribe: true, sendEmail: false } },
+      client: createTestClient({ userId: null }),
+      expectedError: 'UNAUTHENTICATED',
     })
   })
 })
