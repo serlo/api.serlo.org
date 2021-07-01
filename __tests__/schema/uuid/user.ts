@@ -230,9 +230,7 @@ describe('User', () => {
   })
   test('property "activityByType"', async () => {
     global.server.use(
-      createActivityByTypeHandler({
-        ...activityByType,
-      })
+      createActivityByTypeHandler({ userId: user.id, activityByType })
     )
 
     await assertSuccessfulGraphQLQuery({
@@ -252,12 +250,7 @@ describe('User', () => {
       `,
       data: {
         uuid: {
-          activityByType: {
-            edits: 10,
-            comments: 11,
-            reviews: 0,
-            taxonomy: 3,
-          },
+          activityByType: { edits: 10, comments: 11, reviews: 0, taxonomy: 3 },
         },
       },
       variables: { userId: user.id },
@@ -556,14 +549,15 @@ function givenActiveDonorsSpreadsheet(values: string[][]) {
   })
 }
 
-export function createActivityByTypeHandler(
+export function createActivityByTypeHandler({
+  userId,
+  activityByType,
+}: {
+  userId: number
   activityByType: Payload<'serlo', 'getActivityByType'>
-) {
+}) {
   return createMessageHandler({
-    message: {
-      type: 'ActivityByTypeQuery',
-      payload: { userId: user.id },
-    },
+    message: { type: 'ActivityByTypeQuery', payload: { userId } },
     body: activityByType,
   })
 }
