@@ -25,7 +25,7 @@ type User implements AbstractUuid & ThreadAware {
     instance: Instance
     objectId: Int
   ): AbstractNotificationEventConnection!
-  activityByType: UserActivityByType
+  activityByType: UserActivityByType!
   alias: String
   username: String!
   date: DateTime!
