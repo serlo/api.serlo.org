@@ -216,10 +216,7 @@ export function createSerloModel({
       enableSwr: true,
       getCurrentValue: async (payload: { userId: number }) => {
         return handleMessage({
-          message: {
-            type: 'ActivityByTypeQuery',
-            payload,
-          },
+          message: { type: 'ActivityByTypeQuery', payload },
           expectedStatusCodes: [200],
         })
       },
@@ -228,11 +225,12 @@ export function createSerloModel({
         return `de.serlo.org/api/user/activity-by-type/${userId}`
       },
       getPayload: (key) => {
-        if (!key.startsWith('de.serlo.org/api/user/activity-by-type'))
+        if (!key.startsWith('de.serlo.org/api/user/activity-by-type/'))
           return O.none
         const userId = parseInt(
-          key.replace('de.serlo.org/api/activity-by-type', '')
+          key.replace('de.serlo.org/api/activity-by-type/', '')
         )
+        if (Number.isNaN(userId)) return O.none
         return O.some({ userId })
       },
     },
