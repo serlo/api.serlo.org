@@ -485,7 +485,6 @@ export type CacheUpdateInput = {
 export type CacheUpdateResponse = {
   __typename?: 'CacheUpdateResponse';
   success: Scalars['Boolean'];
-  query: Query;
 };
 
 export type CheckoutRevisionInput = {
