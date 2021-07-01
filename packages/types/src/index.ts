@@ -2036,7 +2036,7 @@ export type User = AbstractUuid & ThreadAware & {
   threads: ThreadsConnection;
   events: AbstractNotificationEventConnection;
   eventsByUser: AbstractNotificationEventConnection;
-  activityByType?: Maybe<UserActivityByType>;
+  activityByType: UserActivityByType;
   alias?: Maybe<Scalars['String']>;
   username: Scalars['String'];
   date: Scalars['DateTime'];
