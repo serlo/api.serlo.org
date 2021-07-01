@@ -19,8 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import R from 'ramda'
-
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model'
 import { DiscriminatorType } from '~/model/decoder'
@@ -54,8 +52,4 @@ export const activityByType: Payload<'serlo', 'getActivityByType'> = {
   comments: 11,
   reviews: 0,
   taxonomy: 3,
-}
-
-export function getUserDataWithoutSubResolvers(user: Model<'User'>) {
-  return R.omit(['alias', 'roles'], user)
 }
