@@ -893,6 +893,11 @@ async function exec(): Promise<void> {
       ],
       internal: ['Add `serlo.org-cache-worker` service.'],
     },
+    {
+      tagName: 'v0.26.1',
+      date: '2021-07-01',
+      fixed: ['Fix update of cache in mutation "setSubscriptions"'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
