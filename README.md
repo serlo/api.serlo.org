@@ -32,6 +32,7 @@ Make sure Docker is running and then run `yarn start` to start Redis.
 
 - `yarn test` runs the unit tests (requires `yarn start` beforehand)
 - `yarn pacts` runs the contract tests (requires `yarn start` beforehand)
+- `yarn check:all` runs all checks (like the linter and tests) to check whether your codebase is ready to be merged into master
 
 ### Use the GraphQL playground
 
@@ -40,6 +41,17 @@ After `yarn start`, you can open the GraphQL playground via [http://localhost:30
 ### Stop
 
 Interrupt the `yarn start` command to stop the dev server and run `yarn stop:redis` to stop Redis.
+
+### Automatically check your codebase before pushing
+
+You can use [git hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) to automatically check the whole codebase before you push to the server. To configure it, run the following commands in the root directory:
+
+```sh
+echo "yarn check:all --no-uncommitted-changes" > .git/hooks/pre-push
+chmod +x .git/hooks/pre-push
+```
+
+With `git push --no-verify` you can bypass the automatic checks.
 
 ### Repository structure
 
