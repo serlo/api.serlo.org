@@ -33,6 +33,9 @@ declare namespace NodeJS {
     LOG_LEVEL: LogLevelDesc | undefined
     REDIS_URL: string
     REDIS_URL_TEST: string | undefined
+    ROCKET_CHAT_API_AUTH_TOKEN: string
+    ROCKET_CHAT_URL: string
+    ROCKET_CHAT_API_USER_ID: string
     SENTRY_DSN: string | undefined
     SENTRY_RELEASE: string | undefined
     SERLO_ORG_DATABASE_LAYER_HOST: string
