@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { UserInputError } from 'apollo-server'
 import * as R from 'ramda'
 
 import { Connection, ConnectionPayload, Cursor } from './types'
@@ -28,12 +29,24 @@ export function resolveConnection<T>({
   nodes,
   payload,
   createCursor,
+  limit = 500,
 }: {
   nodes: T[]
   payload: ConnectionPayload
   createCursor(node: T): string
+  limit?: number
 }): Connection<T> {
-  const { before, after, first, last } = payload
+  const { before, after, last } = payload
+  let { first } = payload
+
+  if (first != null && first > limit) {
+    throw new UserInputError(`first cannot be higher than limit=${limit}`)
+  } else if (last != null && last > limit) {
+    throw new UserInputError(`last cannot be higher than limit=${limit}`)
+  } else if (first == null && last == null) {
+    first = limit
+  }
+
   const allEdges = nodes.map((node) => {
     return {
       cursor: Buffer.from(createCursor(node)).toString('base64'),
