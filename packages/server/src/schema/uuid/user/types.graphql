@@ -27,6 +27,7 @@ type User implements AbstractUuid & ThreadAware {
   ): AbstractNotificationEventConnection!
   alias: String
   username: String!
+  imageUrl: String!
   date: DateTime!
   lastLogin: DateTime
   roles(

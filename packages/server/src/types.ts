@@ -2041,6 +2041,7 @@ export type User = AbstractUuid & ThreadAware & {
   eventsByUser: AbstractNotificationEventConnection;
   alias?: Maybe<Scalars['String']>;
   username: Scalars['String'];
+  imageUrl: Scalars['String'];
   date: Scalars['DateTime'];
   lastLogin?: Maybe<Scalars['DateTime']>;
   roles: ScopedRoleConnection;
@@ -3798,6 +3799,7 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
   eventsByUser?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<UserEventsByUserArgs, never>>;
   alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  imageUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   lastLogin?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   roles?: Resolver<ResolversTypes['ScopedRoleConnection'], ParentType, ContextType, RequireFields<UserRolesArgs, never>>;
