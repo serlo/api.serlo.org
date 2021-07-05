@@ -46,7 +46,6 @@ import {
   createTestClient,
   assertSuccessfulGraphQLQuery,
   createDatabaseLayerHandler,
-  assertFailingGraphQLQuery,
   createUuidHandler,
 } from '../__utils__'
 import { Service } from '~/internals/authentication'
@@ -216,40 +215,6 @@ describe('query endpoint "events"', () => {
       `,
       client,
       data: { events: { nodes: events.slice(0, 100).map(getTypenameAndId) } },
-    })
-  })
-
-  test('throws error when first > 100', async () => {
-    await assertFailingGraphQLQuery({
-      query: gql`
-        query events {
-          events(first: 150) {
-            nodes {
-              __typename
-              id
-            }
-          }
-        }
-      `,
-      client,
-      message: 'first must be smaller or equal 100',
-    })
-  })
-
-  test('throws error when last > 100', async () => {
-    await assertFailingGraphQLQuery({
-      query: gql`
-        query events {
-          events(last: 150) {
-            nodes {
-              __typename
-              id
-            }
-          }
-        }
-      `,
-      client,
-      message: 'last must be smaller or equal 100',
     })
   })
 })
