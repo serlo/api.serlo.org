@@ -205,6 +205,38 @@ export function createSerloModel({
     environment
   )
 
+  const getActivityByType = createQuery(
+    {
+      decoder: t.type({
+        edits: t.number,
+        comments: t.number,
+        reviews: t.number,
+        taxonomy: t.number,
+      }),
+      enableSwr: true,
+      getCurrentValue: async (payload: { userId: number }) => {
+        return handleMessage({
+          message: { type: 'ActivityByTypeQuery', payload },
+          expectedStatusCodes: [200],
+        })
+      },
+      maxAge: { minutes: 10 },
+      getKey: ({ userId }) => {
+        return `de.serlo.org/api/user/activity-by-type/${userId}`
+      },
+      getPayload: (key) => {
+        if (!key.startsWith('de.serlo.org/api/user/activity-by-type/'))
+          return O.none
+        const userId = parseInt(
+          key.replace('de.serlo.org/api/activity-by-type/', '')
+        )
+        if (Number.isNaN(userId)) return O.none
+        return O.some({ userId })
+      },
+    },
+    environment
+  )
+
   const deleteBots = createMutation({
     decoder: t.union([
       t.type({ success: t.literal(true), deletedUuids: t.array(t.number) }),
@@ -824,6 +856,7 @@ export function createSerloModel({
     checkoutRevision,
     getActiveAuthorIds,
     getActiveReviewerIds,
+    getActivityByType,
     getAlias,
     getLicense,
     getNavigationPayload,

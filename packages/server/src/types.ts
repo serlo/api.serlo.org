@@ -2039,6 +2039,7 @@ export type User = AbstractUuid & ThreadAware & {
   threads: ThreadsConnection;
   events: AbstractNotificationEventConnection;
   eventsByUser: AbstractNotificationEventConnection;
+  activityByType: UserActivityByType;
   alias?: Maybe<Scalars['String']>;
   username: Scalars['String'];
   date: Scalars['DateTime'];
@@ -2086,6 +2087,14 @@ export type UserRolesArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+};
+
+export type UserActivityByType = {
+  __typename?: 'UserActivityByType';
+  edits: Scalars['Int'];
+  comments: Scalars['Int'];
+  reviews: Scalars['Int'];
+  taxonomy: Scalars['Int'];
 };
 
 export type UserConnection = {
@@ -2519,6 +2528,7 @@ export type ResolversTypes = {
   ThreadsConnection: ResolverTypeWrapper<ModelOf<ThreadsConnection>>;
   ThreadsCursor: ResolverTypeWrapper<ModelOf<ThreadsCursor>>;
   User: ResolverTypeWrapper<ModelOf<User>>;
+  UserActivityByType: ResolverTypeWrapper<ModelOf<UserActivityByType>>;
   UserConnection: ResolverTypeWrapper<ModelOf<UserConnection>>;
   UserDeleteBotsInput: ResolverTypeWrapper<ModelOf<UserDeleteBotsInput>>;
   UserDeleteBotsResponse: ResolverTypeWrapper<ModelOf<UserDeleteBotsResponse>>;
@@ -2675,6 +2685,7 @@ export type ResolversParentTypes = {
   ThreadsConnection: ModelOf<ThreadsConnection>;
   ThreadsCursor: ModelOf<ThreadsCursor>;
   User: ModelOf<User>;
+  UserActivityByType: ModelOf<UserActivityByType>;
   UserConnection: ModelOf<UserConnection>;
   UserDeleteBotsInput: ModelOf<UserDeleteBotsInput>;
   UserDeleteBotsResponse: ModelOf<UserDeleteBotsResponse>;
@@ -3796,6 +3807,7 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<UserThreadsArgs, never>>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<UserEventsArgs, never>>;
   eventsByUser?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<UserEventsByUserArgs, never>>;
+  activityByType?: Resolver<ResolversTypes['UserActivityByType'], ParentType, ContextType>;
   alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -3805,6 +3817,14 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
   activeAuthor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   activeDonor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   activeReviewer?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type UserActivityByTypeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserActivityByType'] = ResolversParentTypes['UserActivityByType']> = {
+  edits?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  comments?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  reviews?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  taxonomy?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4033,6 +4053,7 @@ export type Resolvers<ContextType = Context> = {
   ThreadsConnection?: ThreadsConnectionResolvers<ContextType>;
   ThreadsCursor?: ThreadsCursorResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
+  UserActivityByType?: UserActivityByTypeResolvers<ContextType>;
   UserConnection?: UserConnectionResolvers<ContextType>;
   UserDeleteBotsResponse?: UserDeleteBotsResponseResolvers<ContextType>;
   UserDeleteRegularUsersResponse?: UserDeleteRegularUsersResponseResolvers<ContextType>;

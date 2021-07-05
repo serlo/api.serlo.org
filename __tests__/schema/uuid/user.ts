@@ -23,7 +23,7 @@ import { Scope } from '@serlo/authorization'
 import { gql } from 'apollo-server'
 import R from 'ramda'
 
-import { article, user, user2 } from '../../../__fixtures__'
+import { article, user, user2, activityByType } from '../../../__fixtures__'
 import {
   assertErrorEvent,
   assertSuccessfulGraphQLQuery,
@@ -39,6 +39,7 @@ import {
   returnsMalformedJson,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
+import { Payload } from '~/internals/model'
 import { MajorDimension } from '~/model'
 import { Instance } from '~/types'
 
@@ -224,6 +225,35 @@ describe('User', () => {
         },
       },
       variables: { id: user.id },
+      client,
+    })
+  })
+  test('property "activityByType"', async () => {
+    global.server.use(
+      createActivityByTypeHandler({ userId: user.id, activityByType })
+    )
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query ($userId: Int) {
+          uuid(id: $userId) {
+            ... on User {
+              activityByType {
+                edits
+                comments
+                reviews
+                taxonomy
+              }
+            }
+          }
+        }
+      `,
+      data: {
+        uuid: {
+          activityByType: { edits: 10, comments: 11, reviews: 0, taxonomy: 3 },
+        },
+      },
+      variables: { userId: user.id },
       client,
     })
   })
@@ -516,5 +546,18 @@ function givenActiveDonorsSpreadsheet(values: string[][]) {
     range: 'Tabellenblatt1!A:A',
     majorDimension: MajorDimension.Columns,
     values,
+  })
+}
+
+export function createActivityByTypeHandler({
+  userId,
+  activityByType,
+}: {
+  userId: number
+  activityByType: Payload<'serlo', 'getActivityByType'>
+}) {
+  return createMessageHandler({
+    message: { type: 'ActivityByTypeQuery', payload: { userId } },
+    body: activityByType,
   })
 }

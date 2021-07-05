@@ -2035,6 +2035,7 @@ export type User = AbstractUuid & ThreadAware & {
   threads: ThreadsConnection;
   events: AbstractNotificationEventConnection;
   eventsByUser: AbstractNotificationEventConnection;
+  activityByType: UserActivityByType;
   alias?: Maybe<Scalars['String']>;
   username: Scalars['String'];
   date: Scalars['DateTime'];
@@ -2082,6 +2083,14 @@ export type UserRolesArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+};
+
+export type UserActivityByType = {
+  __typename?: 'UserActivityByType';
+  edits: Scalars['Int'];
+  comments: Scalars['Int'];
+  reviews: Scalars['Int'];
+  taxonomy: Scalars['Int'];
 };
 
 export type UserConnection = {
