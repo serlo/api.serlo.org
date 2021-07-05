@@ -8,6 +8,9 @@ function init() {
 
   read_arguments "$@"
 
+  print_header "Make sure packages are up to date"
+  yarn install --frozen-lockfile
+
   print_header "Make sure redis is running"
   yarn start:redis
 
@@ -43,7 +46,7 @@ function main() {
 
 function test_no_uncommitted_changes_when_pushing() {
   if [ -n "$(git diff HEAD)" ]; then
-	  error "There are uncommitted changes in your workspace (forgot to commit changes of 'yarn codegen'?!)"
+    error "There are uncommitted changes in your workspace (forgot to commit changes of 'yarn codegen'?!)"
   fi
 }
 
