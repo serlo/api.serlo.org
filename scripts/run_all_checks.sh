@@ -9,6 +9,7 @@ function init() {
   read_arguments "$@"
 
   yarn start:redis
+  yarn codegen
 }
 
 function read_arguments() {
@@ -39,7 +40,7 @@ function main() {
 
 function test_no_uncommitted_changes_when_pushing() {
   if [ -n "$(git diff HEAD)" ]; then
-    error "There are uncommitted changes in your workspace"
+	  error "There are uncommitted changes in your workspace (forgot to commit changes of 'yarn codegen'?!)"
   fi
 }
 
