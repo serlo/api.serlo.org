@@ -2037,6 +2037,7 @@ export type User = AbstractUuid & ThreadAware & {
   eventsByUser: AbstractNotificationEventConnection;
   alias?: Maybe<Scalars['String']>;
   username: Scalars['String'];
+  imageUrl: Scalars['String'];
   date: Scalars['DateTime'];
   lastLogin?: Maybe<Scalars['DateTime']>;
   roles: ScopedRoleConnection;

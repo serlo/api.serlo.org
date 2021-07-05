@@ -103,6 +103,9 @@ export const resolvers: Queries<
         user.id
       )
     },
+    imageUrl(user) {
+      return `https://community.serlo.org/avatar/${user.username}`
+    },
     roles(user, payload) {
       return resolveConnection({
         nodes: resolveScopedRoles(user),
