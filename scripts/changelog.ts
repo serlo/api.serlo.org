@@ -898,6 +898,14 @@ async function exec(): Promise<void> {
       date: '2021-07-01',
       fixed: ['Fix update of cache in mutation "setSubscriptions"'],
     },
+    {
+      tagName: 'v0.26.2',
+      date: '2021-07-07',
+      added: ['Add property User.activityByType', 'config hi.serlo.org/serlo'],
+      breakingChanges: [
+        'Add upper limit of returns for all connections (default value = 500)',
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
