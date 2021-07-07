@@ -151,7 +151,6 @@ export async function resolveEvents({
   return resolveConnection({
     nodes: events,
     payload,
-    limit: 100,
     createCursor(node) {
       return node.id.toString()
     },

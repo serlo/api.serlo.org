@@ -196,9 +196,9 @@ describe('query endpoint "events"', () => {
     })
   })
 
-  test('number of returned events is bounded to 100 when first = last = undefined', async () => {
+  test('number of returned events is bounded to 500 when first = last = undefined', async () => {
     const events = assignSequentialIds(
-      R.range(0, 10).flatMap(R.always(allEvents))
+      R.range(0, 50).flatMap(R.always(allEvents))
     )
     setupEvents(events)
 
@@ -214,7 +214,7 @@ describe('query endpoint "events"', () => {
         }
       `,
       client,
-      data: { events: { nodes: events.slice(0, 100).map(getTypenameAndId) } },
+      data: { events: { nodes: events.slice(0, 500).map(getTypenameAndId) } },
     })
   })
 })
