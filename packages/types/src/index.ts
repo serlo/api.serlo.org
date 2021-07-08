@@ -1670,7 +1670,7 @@ export type Solution = AbstractUuid & AbstractRepository & AbstractEntity & Inst
   date: Scalars['DateTime'];
   license: License;
   currentRevision?: Maybe<SolutionRevision>;
-  revisions?: Maybe<SolutionRevisionConnection>;
+  revisions: SolutionRevisionConnection;
   exercise: AbstractExercise;
 };
 

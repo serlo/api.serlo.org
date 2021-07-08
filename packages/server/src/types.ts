@@ -1674,7 +1674,7 @@ export type Solution = AbstractUuid & AbstractRepository & AbstractEntity & Inst
   date: Scalars['DateTime'];
   license: License;
   currentRevision?: Maybe<SolutionRevision>;
-  revisions?: Maybe<SolutionRevisionConnection>;
+  revisions: SolutionRevisionConnection;
   exercise: Exercise | GroupedExercise;
 };
 
@@ -3629,7 +3629,7 @@ export type SolutionResolvers<ContextType = Context, ParentType extends Resolver
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
   currentRevision?: Resolver<Maybe<ResolversTypes['SolutionRevision']>, ParentType, ContextType>;
-  revisions?: Resolver<Maybe<ResolversTypes['SolutionRevisionConnection']>, ParentType, ContextType, RequireFields<SolutionRevisionsArgs, never>>;
+  revisions?: Resolver<ResolversTypes['SolutionRevisionConnection'], ParentType, ContextType, RequireFields<SolutionRevisionsArgs, never>>;
   exercise?: Resolver<ResolversTypes['AbstractExercise'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
