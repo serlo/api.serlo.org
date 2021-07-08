@@ -906,6 +906,14 @@ async function exec(): Promise<void> {
         'Add upper limit of returns for all connections (default value = 500)',
       ],
     },
+    {
+      tagName: 'v0.26.3',
+      date: '2021-07-08',
+      added: [
+        'Make Solution.revisions not optional',
+        'Increase upper limit of events query to 500',
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

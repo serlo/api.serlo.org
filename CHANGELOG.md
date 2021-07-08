@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.26.3](https://github.com/serlo/api.serlo.org/compare/v0.26.2..v0.26.3) - July 8, 2021
+
+### Added
+
+- Make Solution.revisions not optional
+
+- Increase upper limit of events query to 500
+
 ## [v0.26.2](https://github.com/serlo/api.serlo.org/compare/v0.26.1..v0.26.2) - July 7, 2021
 
 ### Breaking Changes
