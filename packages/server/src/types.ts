@@ -2042,6 +2042,7 @@ export type User = AbstractUuid & ThreadAware & {
   activityByType: UserActivityByType;
   alias?: Maybe<Scalars['String']>;
   username: Scalars['String'];
+  imageUrl: Scalars['String'];
   date: Scalars['DateTime'];
   chatUrl?: Maybe<Scalars['String']>;
   lastLogin?: Maybe<Scalars['DateTime']>;
@@ -3811,6 +3812,7 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
   activityByType?: Resolver<ResolversTypes['UserActivityByType'], ParentType, ContextType>;
   alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  imageUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   chatUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   lastLogin?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;

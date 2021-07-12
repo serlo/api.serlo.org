@@ -2038,6 +2038,7 @@ export type User = AbstractUuid & ThreadAware & {
   activityByType: UserActivityByType;
   alias?: Maybe<Scalars['String']>;
   username: Scalars['String'];
+  imageUrl: Scalars['String'];
   date: Scalars['DateTime'];
   chatUrl?: Maybe<Scalars['String']>;
   lastLogin?: Maybe<Scalars['DateTime']>;
