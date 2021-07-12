@@ -390,6 +390,79 @@ describe('User', () => {
     })
   })
 
+  describe('property "motivation"', () => {
+    beforeEach(() => {
+      givenMotivationsSpreadsheet([
+        ['Motivation', 'Username', 'Can be published?'],
+        ['Serlo is gre', 'foo', 'yes'],
+        ['Serlo is great!', 'foo', 'yes'],
+        ['Serlo is awesome!', 'bar', ''],
+      ])
+    })
+
+    test('returns last approved motivation of motivation spreadsheet', async () => {
+      await assertSuccessfulMotivationQuery({
+        username: 'foo',
+        motivation: 'Serlo is great!',
+      })
+    })
+
+    test('returns null when motivation was not reviewed', async () => {
+      await assertSuccessfulMotivationQuery({
+        username: 'bar',
+        motivation: null,
+      })
+    })
+
+    test('returns null when user is not in spreadsheet with motivations', async () => {
+      await assertSuccessfulMotivationQuery({
+        username: 'war',
+        motivation: null,
+      })
+    })
+
+    test('report to sentry when query from google spreadsheet api is malformed', async () => {
+      givenMotivationsSpreadsheet([['just one row']])
+
+      await assertSuccessfulMotivationQuery({ motivation: null })
+      await assertErrorEvent({
+        message: 'invalid row in query of motivationSpreadsheet',
+      })
+    })
+
+    test('returns null when there is an error in the google spreadsheet api + report to sentry', async () => {
+      givenSpreadheetApi(hasInternalServerError())
+
+      await assertSuccessfulMotivationQuery({ motivation: null })
+      await assertErrorEvent({ location: 'motivationSpreadsheet' })
+    })
+
+    async function assertSuccessfulMotivationQuery({
+      motivation,
+      username = 'foo',
+    }: {
+      motivation: string | null
+      username?: string
+    }) {
+      global.server.use(createUuidHandler({ ...user, username }))
+
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query ($id: Int!) {
+            uuid(id: $id) {
+              ... on User {
+                motivation
+              }
+            }
+          }
+        `,
+        variables: { id: user.id },
+        data: { uuid: { motivation } },
+        client,
+      })
+    }
+  })
+
   describe('property "chatUrl"', () => {
     test('when user is registered at community.serlo.org', async () => {
       global.server.use(
@@ -611,7 +684,16 @@ function givenActiveDonorsSpreadsheet(values: string[][]) {
   })
 }
 
-export function createActivityByTypeHandler({
+function givenMotivationsSpreadsheet(values: string[][]) {
+  givenSpreadsheet({
+    spreadsheetId: process.env.GOOGLE_SPREADSHEET_API_MOTIVATION,
+    range: 'Formularantworten!B:D',
+    majorDimension: MajorDimension.Rows,
+    values,
+  })
+}
+
+function createActivityByTypeHandler({
   userId,
   activityByType,
 }: {

@@ -39,6 +39,7 @@ type User implements AbstractUuid & ThreadAware {
     last: Int
   ): ScopedRoleConnection!
   description: String
+  motivation: String
   activeAuthor: Boolean!
   activeDonor: Boolean!
   activeReviewer: Boolean!
