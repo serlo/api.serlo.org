@@ -105,6 +105,15 @@ export const resolvers: Queries<
         O.getOrElse(R.always(null as null | string))
       )
     },
+    async chatUrl(user, _args, { dataSources }) {
+      const isRegistered = (
+        await dataSources.model.chat.getUsersInfo({ username: user.username })
+      ).success
+
+      return isRegistered
+        ? `https://community.serlo.org/direct/${user.username}`
+        : null
+    },
     async activeAuthor(user, _args, { dataSources }) {
       return (await dataSources.model.serlo.getActiveAuthorIds()).includes(
         user.id
@@ -119,6 +128,9 @@ export const resolvers: Queries<
       return (await dataSources.model.serlo.getActiveReviewerIds()).includes(
         user.id
       )
+    },
+    imageUrl(user) {
+      return `https://community.serlo.org/avatar/${user.username}`
     },
     async activityByType(user, _args, { dataSources }) {
       return await dataSources.model.serlo.getActivityByType({
