@@ -28,6 +28,7 @@ import {
   assertErrorEvent,
   assertSuccessfulGraphQLQuery,
   Client,
+  createChatUsersInfoHandler,
   createMessageHandler,
   createTestClient,
   createUuidHandler,
@@ -367,6 +368,50 @@ describe('User', () => {
         data: {
           uuid: { activeReviewer: false },
         },
+        client,
+      })
+    })
+  })
+
+  describe('property "chatUrl"', () => {
+    test('when user is registered at community.serlo.org', async () => {
+      global.server.use(
+        createChatUsersInfoHandler({ username: user.username, success: true })
+      )
+
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query user($id: Int!) {
+            uuid(id: $id) {
+              ... on User {
+                chatUrl
+              }
+            }
+          }
+        `,
+        variables: user,
+        data: { uuid: { chatUrl: 'https://community.serlo.org/direct/alpha' } },
+        client,
+      })
+    })
+
+    test('when user is registered at community.serlo.org', async () => {
+      global.server.use(
+        createChatUsersInfoHandler({ username: user.username, success: false })
+      )
+
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query user($id: Int!) {
+            uuid(id: $id) {
+              ... on User {
+                chatUrl
+              }
+            }
+          }
+        `,
+        variables: user,
+        data: { uuid: { chatUrl: null } },
         client,
       })
     })
