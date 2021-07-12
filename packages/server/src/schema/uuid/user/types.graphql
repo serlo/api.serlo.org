@@ -25,6 +25,7 @@ type User implements AbstractUuid & ThreadAware {
     instance: Instance
     objectId: Int
   ): AbstractNotificationEventConnection!
+  activityByType: UserActivityByType!
   alias: String
   username: String!
   date: DateTime!
@@ -73,6 +74,13 @@ type UserConnection {
 type UserEdge {
   cursor: String!
   node: User!
+}
+
+type UserActivityByType {
+  edits: Int!
+  comments: Int!
+  reviews: Int!
+  taxonomy: Int!
 }
 
 extend type Mutation {

@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { UserInputError } from 'apollo-server'
 import * as R from 'ramda'
 
 import { ConnectionPayload } from '~/schema/connection/types'
@@ -109,4 +110,37 @@ describe('resolveConnection', () => {
       },
     })
   })
+})
+
+test('throws error when first > limit', () => {
+  expect(() => {
+    resolveConnection({
+      nodes: R.range(1, 2000),
+      payload: { first: 1000 },
+      createCursor: (node) => node.toString(),
+      limit: 500,
+    })
+  }).toThrowError(UserInputError)
+})
+
+test('throws error when last > limit', () => {
+  expect(() => {
+    resolveConnection({
+      nodes: R.range(1, 2000),
+      payload: { last: 1000 },
+      createCursor: (node) => node.toString(),
+      limit: 500,
+    })
+  }).toThrowError(UserInputError)
+})
+
+test('sets "first = limit" when first and limit are not defined', () => {
+  const result = resolveConnection({
+    nodes: R.range(1, 2000),
+    payload: {},
+    createCursor: (node) => node.toString(),
+    limit: 500,
+  })
+
+  expect(result.nodes.length).toBe(500)
 })
