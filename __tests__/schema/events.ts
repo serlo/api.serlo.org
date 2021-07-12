@@ -46,7 +46,6 @@ import {
   createTestClient,
   assertSuccessfulGraphQLQuery,
   createDatabaseLayerHandler,
-  assertFailingGraphQLQuery,
   createUuidHandler,
 } from '../__utils__'
 import { Service } from '~/internals/authentication'
@@ -197,9 +196,9 @@ describe('query endpoint "events"', () => {
     })
   })
 
-  test('number of returned events is bounded to 100 when first = last = undefined', async () => {
+  test('number of returned events is bounded to 500 when first = last = undefined', async () => {
     const events = assignSequentialIds(
-      R.range(0, 10).flatMap(R.always(allEvents))
+      R.range(0, 50).flatMap(R.always(allEvents))
     )
     setupEvents(events)
 
@@ -215,41 +214,7 @@ describe('query endpoint "events"', () => {
         }
       `,
       client,
-      data: { events: { nodes: events.slice(0, 100).map(getTypenameAndId) } },
-    })
-  })
-
-  test('throws error when first > 100', async () => {
-    await assertFailingGraphQLQuery({
-      query: gql`
-        query events {
-          events(first: 150) {
-            nodes {
-              __typename
-              id
-            }
-          }
-        }
-      `,
-      client,
-      message: 'first must be smaller or equal 100',
-    })
-  })
-
-  test('throws error when last > 100', async () => {
-    await assertFailingGraphQLQuery({
-      query: gql`
-        query events {
-          events(last: 150) {
-            nodes {
-              __typename
-              id
-            }
-          }
-        }
-      `,
-      client,
-      message: 'last must be smaller or equal 100',
+      data: { events: { nodes: events.slice(0, 500).map(getTypenameAndId) } },
     })
   })
 })

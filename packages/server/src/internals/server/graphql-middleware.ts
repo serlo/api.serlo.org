@@ -109,7 +109,7 @@ export function getGraphQLOptions(
         if (process.env.SERVER_HYDRA_HOST === undefined) return null
         const params = new URLSearchParams()
         params.append('token', token)
-        const resp = await fetch(
+        const response = await fetch(
           `${process.env.SERVER_HYDRA_HOST}/oauth2/introspect`,
           {
             method: 'post',
@@ -119,11 +119,13 @@ export function getGraphQLOptions(
             },
           }
         )
-        const { active, sub } = (await resp.json()) as {
+        const { active, sub } = (await response.json()) as {
           active: boolean
           sub: string
         }
-        return active ? parseInt(sub, 10) : null
+
+        if (active) return parseInt(sub, 10)
+        throw new ApolloError('Token expired or invalid', 'INVALID_TOKEN')
       })
     },
   }

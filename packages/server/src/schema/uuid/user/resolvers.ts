@@ -120,6 +120,11 @@ export const resolvers: Queries<
         user.id
       )
     },
+    async activityByType(user, _args, { dataSources }) {
+      return await dataSources.model.serlo.getActivityByType({
+        userId: user.id,
+      })
+    },
     roles(user, payload) {
       return resolveConnection({
         nodes: resolveScopedRoles(user),

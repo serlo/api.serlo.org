@@ -63,19 +63,16 @@ export const resolvers: Mutations<'_cache'> = {
       await dataSources.model.removeCacheValue({ key })
       return { success: true, query: {} }
     },
-    async update(_parent, payload, { dataSources, service }) {
-      const { keys } = payload.input
-      if (service !== Service.Serlo) {
+    async update(_parent, { input }, { dataSources, service }) {
+      if (![Service.Serlo, Service.SerloCacheWorker].includes(service)) {
         throw new ForbiddenError(
           'You do not have the permissions to update the cache'
         )
       }
       await Promise.all(
-        keys.map(async (key) => {
-          await dataSources.model.updateCacheValue({ key })
-        })
+        input.keys.map((key) => dataSources.model.updateCacheValue({ key }))
       )
-      return { success: true, query: {} }
+      return { success: true }
     },
   },
 }

@@ -20,8 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as auth from '@serlo/authorization'
-import { ForbiddenError, UserInputError } from 'apollo-server'
-import R from 'ramda'
+import { ForbiddenError } from 'apollo-server'
 
 import {
   assertUserIsAuthenticated,
@@ -137,22 +136,6 @@ export async function resolveEvents({
   payload: QueryEventsArgs
   dataSources: Context['dataSources']
 }) {
-  if (isDefined(payload.first) && payload.first > 100)
-    throw new UserInputError('first must be smaller or equal 100')
-  if (isDefined(payload.last) && payload.last > 100)
-    throw new UserInputError('last must be smaller or equal 100')
-
-  const maxReturn = 100
-  let { first, last } = payload
-
-  if (isDefined(first)) {
-    first = Math.min(maxReturn, first)
-  } else if (isDefined(last)) {
-    last = Math.min(maxReturn, last)
-  } else {
-    first = maxReturn
-  }
-
   const unfilteredEvents = await dataSources.model.serlo.getEvents()
   const events = unfilteredEvents.filter((event) => {
     if (isDefined(payload.actorId) && payload.actorId !== event.actorId)
@@ -167,11 +150,7 @@ export async function resolveEvents({
 
   return resolveConnection({
     nodes: events,
-    payload: {
-      ...payload,
-      first:
-        R.isNil(payload.first) && R.isNil(payload.last) ? 100 : payload.first,
-    },
+    payload,
     createCursor(node) {
       return node.id.toString()
     },

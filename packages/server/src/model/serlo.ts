@@ -205,6 +205,38 @@ export function createSerloModel({
     environment
   )
 
+  const getActivityByType = createQuery(
+    {
+      decoder: t.type({
+        edits: t.number,
+        comments: t.number,
+        reviews: t.number,
+        taxonomy: t.number,
+      }),
+      enableSwr: true,
+      getCurrentValue: async (payload: { userId: number }) => {
+        return handleMessage({
+          message: { type: 'ActivityByTypeQuery', payload },
+          expectedStatusCodes: [200],
+        })
+      },
+      maxAge: { minutes: 10 },
+      getKey: ({ userId }) => {
+        return `de.serlo.org/api/user/activity-by-type/${userId}`
+      },
+      getPayload: (key) => {
+        if (!key.startsWith('de.serlo.org/api/user/activity-by-type/'))
+          return O.none
+        const userId = parseInt(
+          key.replace('de.serlo.org/api/activity-by-type/', '')
+        )
+        if (Number.isNaN(userId)) return O.none
+        return O.some({ userId })
+      },
+    },
+    environment
+  )
+
   const deleteBots = createMutation({
     decoder: t.union([
       t.type({ success: t.literal(true), deletedUuids: t.array(t.number) }),
@@ -402,16 +434,19 @@ export function createSerloModel({
 
   const getLicense = createQuery(
     {
-      decoder: t.type({
-        id: t.number,
-        instance: InstanceDecoder,
-        default: t.boolean,
-        title: t.string,
-        url: t.string,
-        content: t.string,
-        agreement: t.string,
-        iconHref: t.string,
-      }),
+      decoder: t.union([
+        t.type({
+          id: t.number,
+          instance: InstanceDecoder,
+          default: t.boolean,
+          title: t.string,
+          url: t.string,
+          content: t.string,
+          agreement: t.string,
+          iconHref: t.string,
+        }),
+        t.null,
+      ]),
       getCurrentValue: ({ id }: { id: number }) => {
         return handleMessage({
           message: { type: 'LicenseQuery', payload: { id } },
@@ -610,28 +645,21 @@ export function createSerloModel({
         getValue(current) {
           if (!current) return
 
+          const currentWithoutNew = current.subscriptions.filter(
+            ({ objectId }) => !ids.includes(objectId)
+          )
+
           // remove
           if (!subscribe) {
-            return {
-              ...current,
-              subscriptions: current.subscriptions.filter(
-                (node) => !ids.includes(node.objectId)
-              ),
-            }
+            return { subscriptions: currentWithoutNew }
           }
 
-          //add
-          const newIds = ids.filter((id) => {
-            return current.subscriptions.find((sub) => sub.objectId !== id)
-          })
-          const updated = [
-            ...current.subscriptions,
-            ...newIds.map((objectId) => ({ objectId, sendEmail })),
-          ].sort((a, b) => a.objectId - b.objectId)
-
+          // merge
+          const newEntries = ids.map((objectId) => ({ objectId, sendEmail }))
           return {
-            ...current,
-            subscriptions: updated,
+            subscriptions: newEntries
+              .concat(currentWithoutNew)
+              .sort((a, b) => a.objectId - b.objectId),
           }
         },
       })
@@ -828,6 +856,7 @@ export function createSerloModel({
     checkoutRevision,
     getActiveAuthorIds,
     getActiveReviewerIds,
+    getActivityByType,
     getAlias,
     getLicense,
     getNavigationPayload,

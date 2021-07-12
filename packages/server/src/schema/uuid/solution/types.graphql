@@ -28,7 +28,7 @@ type Solution implements AbstractUuid & AbstractRepository & AbstractEntity & In
     first: Int
     last: Int
     unrevised: Boolean
-  ): SolutionRevisionConnection
+  ): SolutionRevisionConnection!
   exercise: AbstractExercise!
 }
 

@@ -485,7 +485,6 @@ export type CacheUpdateInput = {
 export type CacheUpdateResponse = {
   __typename?: 'CacheUpdateResponse';
   success: Scalars['Boolean'];
-  query: Query;
 };
 
 export type CheckoutRevisionInput = {
@@ -1671,7 +1670,7 @@ export type Solution = AbstractUuid & AbstractRepository & AbstractEntity & Inst
   date: Scalars['DateTime'];
   license: License;
   currentRevision?: Maybe<SolutionRevision>;
-  revisions?: Maybe<SolutionRevisionConnection>;
+  revisions: SolutionRevisionConnection;
   exercise: AbstractExercise;
 };
 
@@ -2036,6 +2035,7 @@ export type User = AbstractUuid & ThreadAware & {
   threads: ThreadsConnection;
   events: AbstractNotificationEventConnection;
   eventsByUser: AbstractNotificationEventConnection;
+  activityByType: UserActivityByType;
   alias?: Maybe<Scalars['String']>;
   username: Scalars['String'];
   date: Scalars['DateTime'];
@@ -2084,6 +2084,14 @@ export type UserRolesArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+};
+
+export type UserActivityByType = {
+  __typename?: 'UserActivityByType';
+  edits: Scalars['Int'];
+  comments: Scalars['Int'];
+  reviews: Scalars['Int'];
+  taxonomy: Scalars['Int'];
 };
 
 export type UserConnection = {

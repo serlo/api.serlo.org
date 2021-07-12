@@ -827,10 +827,7 @@ async function exec(): Promise<void> {
     {
       tagName: 'v0.24.3',
       date: '2021-05-21',
-      internal: [
-        'Improve Sentry integration.',
-        'Code refactoring for validating uuids.',
-      ],
+      internal: ['Improve Sentry integration.'],
     },
     {
       tagName: 'v0.24.4',
@@ -841,23 +838,28 @@ async function exec(): Promise<void> {
       tagName: 'v0.24.5',
       date: '2021-05-25',
       internal: [
-        'Fix: Taxonomy term resolver can handle children which are null.',
+        'Fix: `TaxonomyTerm` resolver now correctly handles `null` children.',
       ],
     },
     {
       tagName: 'v0.24.6',
       date: '2021-05-28',
       added: [
-        'mutation for checking out a revision',
-        'mutation for rejecting a revision',
+        'Add `entity.checkoutRevision` mutation.',
+        'Add `entity.rejectRevision` mutation.',
       ],
-      internal: ['Remove UnsupportedComment'],
+      internal: ['Remove `UnsupportedComment`'],
     },
     {
       tagName: 'v0.24.7',
       date: '2021-06-08',
-      fixed: ['role "sysadmin" needs to extend from "admin"'],
-      internal: ['Remove UnsupportedThread', 'Update README.md'],
+      fixed: [
+        [
+          'authentication',
+          'Role `sysadmin` now correctly extends from `admin`.',
+        ],
+      ],
+      internal: ['Remove `UnsupportedThread`.'],
     },
     {
       tagName: 'v0.24.8',
@@ -866,8 +868,50 @@ async function exec(): Promise<void> {
         'sysadmin endpoints to delete bots / regular users and to update an email',
       ],
       fixed: [
-        'update cache for checkoutRevision mutation',
-        'refactor uuid-set-state mutation acording to changed api in the db layer',
+        'Update cache correctly after `entity.checkoutRevision` mutation.',
+        'Fix `uuid.setState`',
+      ],
+    },
+    {
+      tagName: 'v0.25.0',
+      date: '2021-06-28',
+      breakingChanges: [
+        ['subscription', 'Move query into `subscription` namespace.'],
+      ],
+      added: [
+        ['subscription', 'Add property `sendMail` to `SubscriptionInfo`.'],
+      ],
+    },
+    {
+      tagName: 'v0.26.0',
+      date: '2021-06-30',
+      breakingChanges: [
+        [
+          'authorization',
+          'Throw `INVALID_TOKEN` error when user token is invalid (e.g. expired, malformed).',
+        ],
+      ],
+      internal: ['Add `serlo.org-cache-worker` service.'],
+    },
+    {
+      tagName: 'v0.26.1',
+      date: '2021-07-01',
+      fixed: ['Fix update of cache in mutation "setSubscriptions"'],
+    },
+    {
+      tagName: 'v0.26.2',
+      date: '2021-07-07',
+      added: ['Add property User.activityByType', 'config hi.serlo.org/serlo'],
+      breakingChanges: [
+        'Add upper limit of returns for all connections (default value = 500)',
+      ],
+    },
+    {
+      tagName: 'v0.26.3',
+      date: '2021-07-08',
+      added: [
+        'Make Solution.revisions not optional',
+        'Increase upper limit of events query to 500',
       ],
     },
   ])
