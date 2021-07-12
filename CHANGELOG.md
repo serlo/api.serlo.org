@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.26.4](https://github.com/serlo/api.serlo.org/compare/v0.26.3..v0.26.4) - July 12, 2021
+
+### Added
+
+- Add property User.motivation
+
+- Add property User.imageUrl
+
+- Add property User.chatUrl
+
+### Fixed
+
+- Fix SetTaxonomyParentNotificationEventDecoder and allow `null` as parent
+
 ## [v0.26.3](https://github.com/serlo/api.serlo.org/compare/v0.26.2..v0.26.3) - July 8, 2021
 
 ### Added
