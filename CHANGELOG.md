@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.26.3](https://github.com/serlo/api.serlo.org/compare/v0.26.2..v0.26.3) - July 8, 2021
+
+### Added
+
+- Make Solution.revisions not optional
+
+- Increase upper limit of events query to 500
+
+## [v0.26.2](https://github.com/serlo/api.serlo.org/compare/v0.26.1..v0.26.2) - July 7, 2021
+
+### Breaking Changes
+
+- Add upper limit of returns for all connections (default value = 500)
+
+### Added
+
+- Add property User.activityByType
+
+- config hi.serlo.org/serlo
+
 ## [v0.26.1](https://github.com/serlo/api.serlo.org/compare/v0.26.0..v0.26.1) - July 1, 2021
 
 ### Fixed
