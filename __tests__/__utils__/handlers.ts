@@ -194,3 +194,69 @@ interface MessagePayload<Payload = DefaultPayloadType> {
 }
 
 type DefaultPayloadType = Record<string, unknown>
+
+export function createSpreadsheetHandler({
+  spreadsheetId,
+  range,
+  majorDimension,
+  apiKey,
+  status = 200,
+  body = {},
+}: {
+  spreadsheetId: string
+  range: string
+  majorDimension: string
+  apiKey: string
+  status?: number
+  body?: Record<string, unknown>
+}) {
+  const url =
+    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}` +
+    `/values/${range}?majorDimension=${majorDimension}&key=${apiKey}`
+  return rest.get(url, (_req, res, ctx) =>
+    res.once(ctx.status(status), ctx.json(body))
+  )
+}
+
+export function createChatUsersInfoHandler({
+  username,
+  success,
+}: {
+  username: string
+  success: boolean
+}) {
+  return createCommunityChatHandler({
+    endpoint: 'users.info',
+    parameters: { username },
+    body: { success },
+  })
+}
+
+function createCommunityChatHandler({
+  endpoint,
+  parameters,
+  body,
+}: {
+  endpoint: string
+  parameters: Record<string, string>
+  body: Record<string, unknown>
+}) {
+  const url = `${process.env.ROCKET_CHAT_URL}/api/v1/${endpoint}`
+  const handler = rest.get(url, (req, res, ctx) => {
+    if (
+      req.headers.get('X-User-Id') !== process.env.ROCKET_CHAT_API_USER_ID ||
+      req.headers.get('X-Auth-Token') !== process.env.ROCKET_CHAT_API_AUTH_TOKEN
+    )
+      return res(ctx.status(403))
+
+    return res(ctx.json(body))
+  })
+
+  handler.predicate = (req: MockedRequest) => {
+    return R.toPairs(parameters).every(
+      ([name, value]) => req.url.searchParams.get(name) === value
+    )
+  }
+
+  return handler
+}
