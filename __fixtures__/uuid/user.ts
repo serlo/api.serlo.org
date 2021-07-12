@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Model } from '~/internals/graphql'
+import { Payload } from '~/internals/model'
 import { DiscriminatorType } from '~/model/decoder'
 
 export const user: Model<'User'> = {
@@ -44,4 +45,11 @@ export const user2: Model<'User'> = {
   lastLogin: '2019-03-23T09:20:55Z',
   description: null,
   roles: ['login'],
+}
+
+export const activityByType: Payload<'serlo', 'getActivityByType'> = {
+  edits: 10,
+  comments: 11,
+  reviews: 0,
+  taxonomy: 3,
 }

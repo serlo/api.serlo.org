@@ -106,6 +106,11 @@ export const resolvers: Queries<
     imageUrl(user) {
       return `https://community.serlo.org/avatar/${user.username}`
     },
+    async activityByType(user, _args, { dataSources }) {
+      return await dataSources.model.serlo.getActivityByType({
+        userId: user.id,
+      })
+    },
     roles(user, payload) {
       return resolveConnection({
         nodes: resolveScopedRoles(user),
