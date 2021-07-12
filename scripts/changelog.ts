@@ -914,6 +914,18 @@ async function exec(): Promise<void> {
         'Increase upper limit of events query to 500',
       ],
     },
+    {
+      tagName: 'v0.26.4',
+      date: '2021-07-12',
+      added: [
+        'Add property User.motivation',
+        'Add property User.imageUrl',
+        'Add property User.chatUrl',
+      ],
+      fixed: [
+        'Fix SetTaxonomyParentNotificationEventDecoder and allow `null` as parent',
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
