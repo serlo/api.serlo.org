@@ -21,7 +21,7 @@
  */
 import * as serloAuth from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
-import { array as A, either as E, function as F } from 'fp-ts'
+import { array as A, either as E, function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import R from 'ramda'
 
@@ -87,6 +87,23 @@ export const resolvers: Queries<
         payload: { ...payload, actorId: user.id },
         dataSources,
       })
+    },
+    async motivation(user, _args, { dataSources }) {
+      return F.pipe(
+        await dataSources.model.googleSpreadsheetApi.getValues({
+          spreadsheetId: process.env.GOOGLE_SPREADSHEET_API_MOTIVATION,
+          range: 'Formularantworten!B:D',
+        }),
+        E.mapLeft(addContext({ location: 'motivationSpreadsheet' })),
+        E.getOrElse(consumeErrorEvent([] as string[][])),
+        assertAll({
+          assertion: (row) => row.length === 3,
+          error: new Error('invalid row in query of motivationSpreadsheet'),
+        }),
+        A.findLast((row) => row[1] === user.username && row[2] === 'yes'),
+        O.chain(A.head),
+        O.getOrElse(R.always(null as null | string))
+      )
     },
     async chatUrl(user, _args, { dataSources }) {
       const isRegistered = (

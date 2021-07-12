@@ -29,6 +29,7 @@ declare namespace NodeJS {
      */
     ENVIRONMENT: string
     GOOGLE_SPREADSHEET_API_ACTIVE_DONORS: string
+    GOOGLE_SPREADSHEET_API_MOTIVATION: string
     GOOGLE_SPREADSHEET_API_SECRET: string
     LOG_LEVEL: LogLevelDesc | undefined
     REDIS_URL: string
