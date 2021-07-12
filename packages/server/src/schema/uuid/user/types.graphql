@@ -28,6 +28,7 @@ type User implements AbstractUuid & ThreadAware {
   activityByType: UserActivityByType!
   alias: String
   username: String!
+  imageUrl: String!
   date: DateTime!
   chatUrl: String
   lastLogin: DateTime

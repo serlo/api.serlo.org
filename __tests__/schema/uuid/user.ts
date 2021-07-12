@@ -184,8 +184,25 @@ describe('User', () => {
         }
       `,
       variables: user,
+      data: { uuid: getTypenameAndId(user) },
+      client,
+    })
+  })
+
+  test('property "imageUrl"', async () => {
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query user($id: Int!) {
+          uuid(id: $id) {
+            ... on User {
+              imageUrl
+            }
+          }
+        }
+      `,
+      variables: user,
       data: {
-        uuid: getTypenameAndId(user),
+        uuid: { imageUrl: 'https://community.serlo.org/avatar/alpha' },
       },
       client,
     })
