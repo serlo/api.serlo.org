@@ -698,8 +698,8 @@ export const SetTaxonomyParentNotificationEventDecoder = t.exact(
     AbstractNotificationEventDecoder,
     t.type({
       __typename: t.literal(NotificationEventType.SetTaxonomyParent),
-      previousParentId: Uuid,
-      parentId: Uuid,
+      previousParentId: t.union([Uuid, t.null]),
+      parentId: t.union([Uuid, t.null]),
       childId: Uuid,
     }),
   ])
