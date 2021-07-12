@@ -25,17 +25,23 @@ import reporter from 'io-ts-reporters'
 
 import { isQuery } from './data-source-helper'
 import { Environment } from '~/internals/environment'
-import { createGoogleSpreadsheetApiModel, createSerloModel } from '~/model'
+import {
+  createGoogleSpreadsheetApiModel,
+  createSerloModel,
+  createChatModel,
+} from '~/model'
 
 export class ModelDataSource extends RESTDataSource {
   public googleSpreadsheetApi: ReturnType<
     typeof createGoogleSpreadsheetApiModel
   >
   public serlo: ReturnType<typeof createSerloModel>
+  public chat: ReturnType<typeof createChatModel>
 
   constructor(private environment: Environment) {
     super()
 
+    this.chat = createChatModel({ environment })
     this.serlo = createSerloModel({ environment })
     this.googleSpreadsheetApi = createGoogleSpreadsheetApiModel({ environment })
   }

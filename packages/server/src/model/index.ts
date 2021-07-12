@@ -19,13 +19,16 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { createChatModel } from './chat'
 import { createGoogleSpreadsheetApiModel } from './google-spreadsheet-api'
 import { createSerloModel } from './serlo'
 
+export * from './chat'
 export * from './google-spreadsheet-api'
 export * from './serlo'
 
 export const modelFactories = {
+  chat: createChatModel,
   googleSpreadsheetApi: createGoogleSpreadsheetApiModel,
   serlo: createSerloModel,
 }

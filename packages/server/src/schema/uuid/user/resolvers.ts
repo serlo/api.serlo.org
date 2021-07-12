@@ -88,6 +88,15 @@ export const resolvers: Queries<
         dataSources,
       })
     },
+    async chatUrl(user, _args, { dataSources }) {
+      const isRegistered = (
+        await dataSources.model.chat.getUsersInfo({ username: user.username })
+      ).success
+
+      return isRegistered
+        ? `https://community.serlo.org/direct/${user.username}`
+        : null
+    },
     async activeAuthor(user, _args, { dataSources }) {
       return (await dataSources.model.serlo.getActiveAuthorIds()).includes(
         user.id
