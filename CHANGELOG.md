@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.26.5](https://github.com/serlo/api.serlo.org/compare/v0.26.4..v0.26.5) - July 13, 2021
+
+### Added
+
+- Allow all \_cache mutations for sysadmins
+
 ## [v0.26.4](https://github.com/serlo/api.serlo.org/compare/v0.26.3..v0.26.4) - July 12, 2021
 
 ### Added

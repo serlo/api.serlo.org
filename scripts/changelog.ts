@@ -926,6 +926,11 @@ async function exec(): Promise<void> {
         'Fix SetTaxonomyParentNotificationEventDecoder and allow `null` as parent',
       ],
     },
+    {
+      tagName: 'v0.26.5',
+      date: '2021-07-13',
+      added: ['Allow all _cache mutations for sysadmins'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
