@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.26.6](https://github.com/serlo/api.serlo.org/compare/v0.26.5..v0.26.6) - July 13, 2021
+
+### Fixed
+
+- Quickfix that updates of events cache is always saved
+
 ## [v0.26.5](https://github.com/serlo/api.serlo.org/compare/v0.26.4..v0.26.5) - July 13, 2021
 
 ### Added

@@ -520,10 +520,15 @@ export function createSerloModel({
         if (updateEvents.events.length === 0) {
           return current
         } else {
-          return this.getCurrentValue(
-            undefined,
-            current.concat(updateEvents.events)
-          )
+          const newList = current.concat(updateEvents.events)
+
+          await environment.cache.set({
+            key: 'de.serlo.org/events',
+            source: 'events-hack',
+            value: newList,
+          })
+
+          return this.getCurrentValue(undefined, newList)
         }
       },
       getKey() {
