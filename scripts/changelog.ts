@@ -931,6 +931,11 @@ async function exec(): Promise<void> {
       date: '2021-07-13',
       added: ['Allow all _cache mutations for sysadmins'],
     },
+    {
+      tagName: 'v0.26.6',
+      date: '2021-07-13',
+      fixed: ['Quickfix that updates of events cache is always saved'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
