@@ -941,6 +941,11 @@ async function exec(): Promise<void> {
       date: '2021-07-14',
       fixed: ['fix resolving of role StaticPagesBuilder'],
     },
+    {
+      tagName: 'v0.26.8',
+      date: '2021-07-14',
+      fixed: ['fix resolving of role StaticPagesBuilder (now really :-) )'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
