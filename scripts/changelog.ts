@@ -936,6 +936,11 @@ async function exec(): Promise<void> {
       date: '2021-07-13',
       fixed: ['Quickfix that updates of events cache is always saved'],
     },
+    {
+      tagName: 'v0.26.7',
+      date: '2021-07-14',
+      fixed: ['fix resolving of role StaticPagesBuilder'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
