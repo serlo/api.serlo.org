@@ -124,8 +124,10 @@ function legacyRoleToRole(role: string): Model<'ScopedRole'> | null {
     return { scope: Scope.Serlo, role: globalRole }
   }
 
-  const [instance, roleName] = role.split('_', 2)
+  const instance = role.substring(0, 2)
+  const roleName = role.substring(3)
   const instancedRole = legacyRoleToInstancedRole(roleName)
+
   if (isInstance(instance) && instancedRole) {
     return { scope: instanceToScope(instance), role: instancedRole }
   }
