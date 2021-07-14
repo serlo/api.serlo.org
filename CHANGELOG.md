@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.26.8](https://github.com/serlo/api.serlo.org/compare/v0.26.7..v0.26.8) - July 14, 2021
+
+### Fixed
+
+- fix resolving of role StaticPagesBuilder (now really :-) )
+
 ## [v0.26.7](https://github.com/serlo/api.serlo.org/compare/v0.26.6..v0.26.7) - July 14, 2021
 
 ### Fixed
