@@ -24,48 +24,6 @@ import { ForbiddenError } from 'apollo-server'
 import { Service } from '~/internals/authentication'
 import { createNamespace, Mutations } from '~/internals/graphql'
 
-export const resolvers: Mutations<'_cache'> = {
-  Mutation: {
-    _cache: createNamespace(),
-  },
-  _cacheMutation: {
-    async set(_parent, payload, { dataSources, service, userId }) {
-      const { key, value } = payload.input
-      checkPermission(
-        service,
-        userId,
-        'You do not have the permissions to set the cache'
-      )
-      await dataSources.model.setCacheValue({
-        key,
-        value,
-      })
-      return { success: true, query: {} }
-    },
-    async remove(_parent, payload, { dataSources, service, userId }) {
-      const { key } = payload.input
-      checkPermission(
-        service,
-        userId,
-        'You do not have the permissions to remove the cache'
-      )
-      await dataSources.model.removeCacheValue({ key })
-      return { success: true, query: {} }
-    },
-    async update(_parent, { input }, { dataSources, service, userId }) {
-      checkPermission(
-        service,
-        userId,
-        'You do not have the permissions to update the cache'
-      )
-      await Promise.all(
-        input.keys.map((key) => dataSources.model.updateCacheValue({ key }))
-      )
-      return { success: true }
-    },
-  },
-}
-
 const allowedUserIds = [
   26217, // kulla
   15473, // inyono
@@ -74,13 +32,65 @@ const allowedUserIds = [
   178145, // CarolinJaser
 ]
 
-function checkPermission(
-  service: Service,
-  userId: number | null,
-  errorString: string
-) {
-  if ([Service.Serlo, Service.SerloCacheWorker].includes(service)) return
-  if (userId === null || !allowedUserIds.includes(userId)) {
-    throw new ForbiddenError(errorString)
+export const resolvers: Mutations<'_cache'> = {
+  Mutation: {
+    _cache: createNamespace(),
+  },
+  _cacheMutation: {
+    async set(_parent, payload, { dataSources, service, userId }) {
+      const { key, value } = payload.input
+      checkPermission({
+        service,
+        userId,
+        operation: 'set',
+        allowedServices: [Service.Serlo],
+      })
+      await dataSources.model.setCacheValue({ key, value })
+      return { success: true, query: {} }
+    },
+    async remove(_parent, payload, { dataSources, service, userId }) {
+      const { key } = payload.input
+      checkPermission({
+        service,
+        userId,
+        operation: 'remove',
+        allowedServices: [Service.Serlo],
+      })
+      await dataSources.model.removeCacheValue({ key })
+      return { success: true, query: {} }
+    },
+    async update(_parent, { input }, { dataSources, service, userId }) {
+      checkPermission({
+        service,
+        userId,
+        operation: 'update',
+        allowedServices: [Service.Serlo, Service.SerloCacheWorker],
+      })
+      await Promise.all(
+        input.keys.map((key) => dataSources.model.updateCacheValue({ key }))
+      )
+      return { success: true }
+    },
+  },
+}
+
+function checkPermission({
+  service,
+  allowedServices,
+  userId,
+  operation,
+}: {
+  service: Service
+  allowedServices: Service[]
+  userId: number | null
+  operation: string
+}) {
+  if (
+    !allowedServices.includes(service) &&
+    (userId === null || !allowedUserIds.includes(userId))
+  ) {
+    throw new ForbiddenError(
+      `You do not have the permissions to ${operation} the cache`
+    )
   }
 }
