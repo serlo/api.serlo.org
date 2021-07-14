@@ -149,7 +149,7 @@ export async function resolveEvents({
   })
 
   return resolveConnection({
-    nodes: events,
+    nodes: events.sort((a, b) => b.id - a.id), // decending
     payload,
     createCursor(node) {
       return node.id.toString()

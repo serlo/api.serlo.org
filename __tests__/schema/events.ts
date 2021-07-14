@@ -328,5 +328,5 @@ function getTypenameAndId(event: Model<'AbstractNotificationEvent'>) {
 }
 
 function assignSequentialIds(events: Model<'AbstractNotificationEvent'>[]) {
-  return events.map((event, id) => R.assoc('id', id + 1, event))
+  return events.map((event, id) => R.assoc('id', events.length - id, event))
 }
