@@ -105,7 +105,7 @@ describe('query endpoint "events"', () => {
         }
       `,
       client,
-      data: { events: { nodes: allEvents.map(getTypenameAndId) } },
+      data: { events: { nodes: allEvents.map(getTypenameAndId).reverse() } },
     })
   })
 
@@ -132,7 +132,10 @@ describe('query endpoint "events"', () => {
       client,
       data: {
         events: {
-          nodes: events.slice(0, allEvents.length).map(getTypenameAndId),
+          nodes: events
+            .slice(0, allEvents.length)
+            .map(getTypenameAndId)
+            .reverse(),
         },
       },
     })
@@ -161,7 +164,10 @@ describe('query endpoint "events"', () => {
       client,
       data: {
         events: {
-          nodes: events.slice(0, allEvents.length).map(getTypenameAndId),
+          nodes: events
+            .slice(0, allEvents.length)
+            .map(getTypenameAndId)
+            .reverse(),
         },
       },
     })
@@ -190,7 +196,10 @@ describe('query endpoint "events"', () => {
       client,
       data: {
         events: {
-          nodes: events.slice(0, allEvents.length).map(getTypenameAndId),
+          nodes: events
+            .slice(0, allEvents.length)
+            .map(getTypenameAndId)
+            .reverse(),
         },
       },
     })
@@ -214,7 +223,9 @@ describe('query endpoint "events"', () => {
         }
       `,
       client,
-      data: { events: { nodes: events.slice(0, 500).map(getTypenameAndId) } },
+      data: {
+        events: { nodes: events.slice(0, 500).map(getTypenameAndId).reverse() },
+      },
     })
   })
 })
@@ -249,7 +260,10 @@ test('User.eventsByUser returns events of this user', async () => {
     data: {
       uuid: {
         eventsByUser: {
-          nodes: events.slice(0, allEvents.length).map(getTypenameAndId),
+          nodes: events
+            .slice(0, allEvents.length)
+            .map(getTypenameAndId)
+            .reverse(),
         },
       },
     },
@@ -286,7 +300,10 @@ test('AbstractEntity.events returns events for this entity', async () => {
     data: {
       uuid: {
         events: {
-          nodes: events.slice(0, allEvents.length).map(getTypenameAndId),
+          nodes: events
+            .slice(0, allEvents.length)
+            .map(getTypenameAndId)
+            .reverse(),
         },
       },
     },

@@ -149,7 +149,7 @@ export async function resolveEvents({
   })
 
   return resolveConnection({
-    nodes: events,
+    nodes: events.reverse(),
     payload,
     createCursor(node) {
       return node.id.toString()
