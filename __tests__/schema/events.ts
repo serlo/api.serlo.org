@@ -47,6 +47,7 @@ import {
   assertSuccessfulGraphQLQuery,
   createDatabaseLayerHandler,
   createUuidHandler,
+  getTypenameAndId,
 } from '../__utils__'
 import { Service } from '~/internals/authentication'
 import { Model } from '~/internals/graphql'
@@ -330,10 +331,6 @@ function setupEvents(
       },
     })
   )
-}
-
-function getTypenameAndId(event: Model<'AbstractNotificationEvent'>) {
-  return R.pick(['__typename', 'id'], event)
 }
 
 function assignSequentialIds(events: Model<'AbstractNotificationEvent'>[]) {
