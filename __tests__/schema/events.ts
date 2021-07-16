@@ -105,7 +105,7 @@ describe('query endpoint "events"', () => {
         }
       `,
       client,
-      data: { events: { nodes: allEvents.map(getTypenameAndId) } },
+      data: { events: { nodes: R.reverse(allEvents.map(getTypenameAndId)) } },
     })
   })
 
@@ -132,7 +132,9 @@ describe('query endpoint "events"', () => {
       client,
       data: {
         events: {
-          nodes: events.slice(0, allEvents.length).map(getTypenameAndId),
+          nodes: R.reverse(
+            events.slice(0, allEvents.length).map(getTypenameAndId)
+          ),
         },
       },
     })
@@ -161,7 +163,9 @@ describe('query endpoint "events"', () => {
       client,
       data: {
         events: {
-          nodes: events.slice(0, allEvents.length).map(getTypenameAndId),
+          nodes: R.reverse(
+            events.slice(0, allEvents.length).map(getTypenameAndId)
+          ),
         },
       },
     })
@@ -190,7 +194,9 @@ describe('query endpoint "events"', () => {
       client,
       data: {
         events: {
-          nodes: events.slice(0, allEvents.length).map(getTypenameAndId),
+          nodes: R.reverse(
+            events.slice(0, allEvents.length).map(getTypenameAndId)
+          ),
         },
       },
     })
@@ -214,7 +220,11 @@ describe('query endpoint "events"', () => {
         }
       `,
       client,
-      data: { events: { nodes: events.slice(0, 500).map(getTypenameAndId) } },
+      data: {
+        events: {
+          nodes: R.reverse(events).slice(0, 500).map(getTypenameAndId),
+        },
+      },
     })
   })
 })
@@ -249,7 +259,9 @@ test('User.eventsByUser returns events of this user', async () => {
     data: {
       uuid: {
         eventsByUser: {
-          nodes: events.slice(0, allEvents.length).map(getTypenameAndId),
+          nodes: R.reverse(
+            events.slice(0, allEvents.length).map(getTypenameAndId)
+          ),
         },
       },
     },
@@ -286,7 +298,9 @@ test('AbstractEntity.events returns events for this entity', async () => {
     data: {
       uuid: {
         events: {
-          nodes: events.slice(0, allEvents.length).map(getTypenameAndId),
+          nodes: R.reverse(
+            events.slice(0, allEvents.length).map(getTypenameAndId)
+          ),
         },
       },
     },
