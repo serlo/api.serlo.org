@@ -26,6 +26,7 @@ import R from 'ramda'
 import { article, user, user2, activityByType } from '../../../__fixtures__'
 import {
   assertErrorEvent,
+  assertNoErrorEvents,
   assertSuccessfulGraphQLQuery,
   Client,
   createChatUsersInfoHandler,
@@ -396,7 +397,7 @@ describe('User', () => {
         ['Motivation', 'Username', 'Can be published?'],
         ['Serlo is gre', 'foo', 'yes'],
         ['Serlo is great!', 'foo', 'yes'],
-        ['Serlo is awesome!', 'bar', ''],
+        ['Serlo is awesome!', 'bar', 'no'],
       ])
     })
 
@@ -414,19 +415,28 @@ describe('User', () => {
       })
     })
 
+    test('can handle empty cells in a row (which are not returned by the Spreadsheet API)', async () => {
+      // See also https://sentry.io/organizations/serlo/issues/2511560095/events/3f43e678ba524ffa8014811c8e116f78/
+      givenMotivationsSpreadsheet([
+        ['Motivation', 'Username', 'Can be published?'],
+        ['Serlo is awesome!', 'bar', 'no'],
+        ['Serlo is awesome!', 'bar'],
+        ['Serlo is awesome!'],
+        [],
+      ])
+
+      await assertSuccessfulMotivationQuery({
+        username: 'bar',
+        motivation: null,
+      })
+
+      await assertNoErrorEvents()
+    })
+
     test('returns null when user is not in spreadsheet with motivations', async () => {
       await assertSuccessfulMotivationQuery({
         username: 'war',
         motivation: null,
-      })
-    })
-
-    test('report to sentry when query from google spreadsheet api is malformed', async () => {
-      givenMotivationsSpreadsheet([['just one row']])
-
-      await assertSuccessfulMotivationQuery({ motivation: null })
-      await assertErrorEvent({
-        message: 'invalid row in query of motivationSpreadsheet',
       })
     })
 
