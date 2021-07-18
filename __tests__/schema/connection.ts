@@ -112,28 +112,6 @@ describe('resolveConnection', () => {
   })
 })
 
-test('throws error when first > limit', () => {
-  expect(() => {
-    resolveConnection({
-      nodes: R.range(1, 2000),
-      payload: { first: 1000 },
-      createCursor: (node) => node.toString(),
-      limit: 500,
-    })
-  }).toThrowError(UserInputError)
-})
-
-test('throws error when last > limit', () => {
-  expect(() => {
-    resolveConnection({
-      nodes: R.range(1, 2000),
-      payload: { last: 1000 },
-      createCursor: (node) => node.toString(),
-      limit: 500,
-    })
-  }).toThrowError(UserInputError)
-})
-
 test('sets "first = limit" when first and limit are not defined', () => {
   const result = resolveConnection({
     nodes: R.range(1, 2000),
@@ -143,4 +121,28 @@ test('sets "first = limit" when first and limit are not defined', () => {
   })
 
   expect(result.nodes.length).toBe(500)
+})
+
+describe('throws an error', () => {
+  test('when first > limit', () => {
+    expect(() => {
+      resolveConnection({
+        nodes: R.range(1, 2000),
+        payload: { first: 1000 },
+        createCursor: (node) => node.toString(),
+        limit: 500,
+      })
+    }).toThrowError(UserInputError)
+  })
+
+  test('when last > limit', () => {
+    expect(() => {
+      resolveConnection({
+        nodes: R.range(1, 2000),
+        payload: { last: 1000 },
+        createCursor: (node) => node.toString(),
+        limit: 500,
+      })
+    }).toThrowError(UserInputError)
+  })
 })
