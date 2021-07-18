@@ -183,12 +183,21 @@ export async function assertErrorEvent(args?: {
 
     return true
   }
-  const waitForAllSentryEvents = new Promise((resolve) =>
-    setTimeout(resolve, 400)
-  )
 
-  await waitForAllSentryEvents
+  await waitForAllSentryEvents()
   expect(global.sentryEvents.some(eventPredicate)).toBe(true)
+}
+
+/**
+ * Assertation that no error events have been triggert to sentry
+ */
+export async function assertNoErrorEvents() {
+  await waitForAllSentryEvents()
+  expect(global.sentryEvents.length).toBe(0)
+}
+
+function waitForAllSentryEvents() {
+  return new Promise((resolve) => setTimeout(resolve, 400))
 }
 
 function destringifyProperties(value: unknown) {
