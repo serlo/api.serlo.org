@@ -145,4 +145,15 @@ describe('throws an error', () => {
       })
     }).toThrowError(UserInputError)
   })
+
+  test('when first and last is set (because then the behavior is ambiguous)', () => {
+    expect(() => {
+      resolveConnection({
+        nodes: R.range(1, 2000),
+        payload: { last: 10, first: 10 },
+        createCursor: (node) => node.toString(),
+        limit: 500,
+      })
+    }).toThrowError(UserInputError)
+  })
 })

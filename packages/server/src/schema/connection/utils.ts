@@ -45,6 +45,11 @@ export function resolveConnection<T>({
   if (last != null && last > limit) {
     throw new UserInputError(`last cannot be higher than limit=${limit}`)
   }
+  if (first != null && last != null) {
+    throw new UserInputError(
+      '`first` and `last` cannot be set at the same time'
+    )
+  }
   if (first == null && last == null) {
     first = limit
   }
