@@ -25,7 +25,7 @@ import * as t from 'io-ts'
 import reporter from 'io-ts-reporters'
 import * as R from 'ramda'
 
-import { Cache, Priority } from './cache'
+import { Cache, CacheEntry, Priority } from './cache'
 import { isQuery, QuerySpec } from './data-source-helper'
 import { captureErrorEvent } from './error-event'
 import { log } from './log'
@@ -37,7 +37,9 @@ const INVALID_VALUE_RECEIVED =
   'SWR-Queue: Invalid value received from data source.'
 
 export interface SwrQueue {
-  queue(updateJob: UpdateJob): Promise<never>
+  queue(
+    updateJob: UpdateJob & { cacheEntry?: O.Option<CacheEntry<unknown>> }
+  ): Promise<never>
   ready(): Promise<void>
   healthy(): Promise<void>
   quit(): Promise<void>
@@ -95,13 +97,14 @@ export function createSwrQueue({
   return {
     _queue: queue as unknown as never,
     async queue(updateJob) {
-      const { key } = updateJob
+      const { key, cacheEntry } = updateJob
 
       const result = await shouldProcessJob({
         key,
         cache,
         models,
         timer,
+        cacheEntry,
       })
 
       if (E.isLeft(result)) {
@@ -262,11 +265,13 @@ async function shouldProcessJob({
   cache,
   models,
   timer,
+  cacheEntry,
 }: {
   key: string
   cache: Cache
   models: Record<string, unknown>[]
   timer: Timer
+  cacheEntry?: O.Option<CacheEntry<unknown>>
 }): Promise<
   E.Either<string, { spec: QuerySpec<unknown, unknown>; payload: unknown }>
 > {
@@ -281,7 +286,7 @@ async function shouldProcessJob({
     return null
   }
 
-  const cacheEntry = await cache.get<unknown>({ key })
+  cacheEntry = cacheEntry ?? (await cache.get<unknown>({ key }))
   if (O.isNone(cacheEntry)) {
     return E.left('cache empty.')
   }
