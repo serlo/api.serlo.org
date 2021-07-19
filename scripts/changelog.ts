@@ -946,6 +946,19 @@ async function exec(): Promise<void> {
       date: '2021-07-14',
       fixed: ['fix resolving of role StaticPagesBuilder (now really :-) )'],
     },
+    {
+      tagName: 'v0.26.9',
+      date: '2021-07-14',
+      fixed: [
+        'Reverse order of events in the query `events`, `AbstractUuid.events` and `User.eventyByUser`.',
+        'Extend filter of `objectId` in `events`',
+        'No false report to sentry when `User.motivation` is fetched',
+      ],
+      internal: [
+        'Improve performance of `resolveConnection()`',
+        'Cached values are fetched only once per entry per request',
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

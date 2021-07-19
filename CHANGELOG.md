@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.26.9](https://github.com/serlo/api.serlo.org/compare/v0.26.8..v0.26.9) - July 14, 2021
+
+### Fixed
+
+- Reverse order of events in the query `events`, `AbstractUuid.events` and `User.eventyByUser`.
+
+- Extend filter of `objectId` in `events`
+
+- No false report to sentry when `User.motivation` is fetched
+
+### Internal
+
+- Improve performance of `resolveConnection()`
+
+- Cached values are fetched only once per entry per request
+
 ## [v0.26.8](https://github.com/serlo/api.serlo.org/compare/v0.26.7..v0.26.8) - July 14, 2021
 
 ### Fixed
