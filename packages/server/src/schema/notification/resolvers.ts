@@ -21,6 +21,7 @@
  */
 import * as auth from '@serlo/authorization'
 import { ForbiddenError } from 'apollo-server'
+import * as R from 'ramda'
 
 import {
   assertUserIsAuthenticated,
@@ -142,7 +143,12 @@ export async function resolveEvents({
       return false
     if (isDefined(payload.instance) && payload.instance !== event.instance)
       return false
-    if (isDefined(payload.objectId) && payload.objectId !== event.objectId)
+    if (
+      isDefined(payload.objectId) &&
+      payload.objectId !== event.objectId &&
+      (!R.has('entityId', event) || payload.objectId !== event.entityId) &&
+      (!R.has('repositoryId', event) || payload.objectId !== event.repositoryId)
+    )
       return false
 
     return true

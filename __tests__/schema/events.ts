@@ -47,6 +47,7 @@ import {
   assertSuccessfulGraphQLQuery,
   createDatabaseLayerHandler,
   createUuidHandler,
+  getTypenameAndId,
 } from '../__utils__'
 import { Service } from '~/internals/authentication'
 import { Model } from '~/internals/graphql'
@@ -173,10 +174,7 @@ describe('query endpoint "events"', () => {
 
   test('with filter "objectId"', async () => {
     const events = assignSequentialIds(
-      R.concat(
-        allEvents.map(R.assoc('objectId', 42)),
-        allEvents.map(R.assoc('objectId', 23))
-      )
+      R.concat(getEventsForObject(42), getEventsForObject(23))
     )
     setupEvents(events)
 
@@ -195,7 +193,7 @@ describe('query endpoint "events"', () => {
       data: {
         events: {
           nodes: R.reverse(
-            events.slice(0, allEvents.length).map(getTypenameAndId)
+            events.slice(0, events.length / 2).map(getTypenameAndId)
           ),
         },
       },
@@ -269,14 +267,12 @@ test('User.eventsByUser returns events of this user', async () => {
 })
 
 test('AbstractEntity.events returns events for this entity', async () => {
+  const uuid = { ...article, id: 42 }
   const events = assignSequentialIds(
-    R.concat(
-      allEvents.map(R.assoc('objectId', article.id)),
-      allEvents.map(R.assoc('objectId', article.id + 1))
-    )
+    R.concat(getEventsForObject(uuid.id), getEventsForObject(uuid.id + 1))
   )
   setupEvents(events)
-  global.server.use(createUuidHandler(article))
+  global.server.use(createUuidHandler(uuid))
 
   await assertSuccessfulGraphQLQuery({
     query: gql`
@@ -293,13 +289,13 @@ test('AbstractEntity.events returns events for this entity', async () => {
         }
       }
     `,
-    variables: { id: article.id },
+    variables: { id: uuid.id },
     client,
     data: {
       uuid: {
         events: {
           nodes: R.reverse(
-            events.slice(0, allEvents.length).map(getTypenameAndId)
+            events.slice(0, events.length / 2).map(getTypenameAndId)
           ),
         },
       },
@@ -337,10 +333,16 @@ function setupEvents(
   )
 }
 
-function getTypenameAndId(event: Model<'AbstractNotificationEvent'>) {
-  return R.pick(['__typename', 'id'], event)
-}
-
 function assignSequentialIds(events: Model<'AbstractNotificationEvent'>[]) {
   return events.map((event, id) => R.assoc('id', id + 1, event))
+}
+
+function getEventsForObject(objectId: number) {
+  return [
+    ...allEvents.map(R.assoc('objectId', objectId)),
+    ...allEvents.filter(R.has('entityId')).map(R.assoc('entityId', objectId)),
+    ...allEvents
+      .filter(R.has('repositoryId'))
+      .map(R.assoc('repositoryId', objectId)),
+  ]
 }
