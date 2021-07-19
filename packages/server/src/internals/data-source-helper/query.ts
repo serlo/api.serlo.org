@@ -63,7 +63,7 @@ export function createQuery<P, R>(
           spec.swrFrequency === undefined ||
           Math.random() < spec.swrFrequency
         ) {
-          await environment.swrQueue.queue({ key })
+          await environment.swrQueue.queue({ key, cacheEntry: cacheValue })
         }
 
         return decodedCacheValue.right as S
