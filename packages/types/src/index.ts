@@ -457,6 +457,12 @@ export type ArticleRevisionCursor = {
   node: ArticleRevision;
 };
 
+export type CacheFillEventsResponse = {
+  __typename?: 'CacheFillEventsResponse';
+  success: Scalars['Boolean'];
+  query: Query;
+};
+
 export type CacheRemoveInput = {
   key: Scalars['String'];
 };
@@ -2294,6 +2300,7 @@ export type _CacheMutation = {
   set: CacheSetResponse;
   remove: CacheRemoveResponse;
   update: CacheUpdateResponse;
+  fillEventsCache: CacheFillEventsResponse;
 };
 
 
