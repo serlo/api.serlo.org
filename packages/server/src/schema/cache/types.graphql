@@ -6,6 +6,7 @@ type _cacheMutation {
   set(input: CacheSetInput!): CacheSetResponse!
   remove(input: CacheRemoveInput!): CacheRemoveResponse!
   update(input: CacheUpdateInput!): CacheUpdateResponse!
+  fillEventsCache: CacheFillEventsResponse!
 }
 
 input CacheSetInput {
@@ -33,4 +34,9 @@ input CacheUpdateInput {
 
 type CacheUpdateResponse {
   success: Boolean!
+}
+
+type CacheFillEventsResponse {
+  success: Boolean!
+  query: Query!
 }
