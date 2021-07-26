@@ -86,6 +86,7 @@ function checkPermission({
   operation: string
 }) {
   if (
+    process.env.ENVIRONMENT !== 'local' &&
     !allowedServices.includes(service) &&
     (userId === null || !allowedUserIds.includes(userId))
   ) {

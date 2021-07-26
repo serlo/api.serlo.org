@@ -31,6 +31,10 @@ import {
 } from '../__utils__'
 import { Service } from '~/internals/authentication'
 
+beforeEach(() => {
+  process.env.ENVIRONMENT = 'staging'
+})
+
 describe('set', () => {
   const key = 'de.serlo.org/api/uuid/1'
   const mutation = gql`
