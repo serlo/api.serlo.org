@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.26.10](https://github.com/serlo/api.serlo.org/compare/v0.26.9..v0.26.10) - July 26, 2021
+
+### Added
+
+- mutation `fillEventsCache`
+
 ## [v0.26.9](https://github.com/serlo/api.serlo.org/compare/v0.26.8..v0.26.9) - July 14, 2021
 
 ### Fixed
