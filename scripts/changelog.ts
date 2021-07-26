@@ -959,6 +959,11 @@ async function exec(): Promise<void> {
         'Cached values are fetched only once per entry per request',
       ],
     },
+    {
+      tagName: 'v0.26.10',
+      date: '2021-07-26',
+      added: ['mutation `fillEventsCache`'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

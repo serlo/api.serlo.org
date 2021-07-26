@@ -461,6 +461,12 @@ export type ArticleRevisionCursor = {
   node: ArticleRevision;
 };
 
+export type CacheFillEventsResponse = {
+  __typename?: 'CacheFillEventsResponse';
+  success: Scalars['Boolean'];
+  query: Query;
+};
+
 export type CacheRemoveInput = {
   key: Scalars['String'];
 };
@@ -2298,6 +2304,7 @@ export type _CacheMutation = {
   set: CacheSetResponse;
   remove: CacheRemoveResponse;
   update: CacheUpdateResponse;
+  fillEventsCache: CacheFillEventsResponse;
 };
 
 
@@ -2419,6 +2426,7 @@ export type ResolversTypes = {
   ArticleRevision: ResolverTypeWrapper<ModelOf<ArticleRevision>>;
   ArticleRevisionConnection: ResolverTypeWrapper<ModelOf<ArticleRevisionConnection>>;
   ArticleRevisionCursor: ResolverTypeWrapper<ModelOf<ArticleRevisionCursor>>;
+  CacheFillEventsResponse: ResolverTypeWrapper<ModelOf<CacheFillEventsResponse>>;
   CacheRemoveInput: ResolverTypeWrapper<ModelOf<CacheRemoveInput>>;
   CacheRemoveResponse: ResolverTypeWrapper<ModelOf<CacheRemoveResponse>>;
   CacheSetInput: ResolverTypeWrapper<ModelOf<CacheSetInput>>;
@@ -2579,6 +2587,7 @@ export type ResolversParentTypes = {
   ArticleRevision: ModelOf<ArticleRevision>;
   ArticleRevisionConnection: ModelOf<ArticleRevisionConnection>;
   ArticleRevisionCursor: ModelOf<ArticleRevisionCursor>;
+  CacheFillEventsResponse: ModelOf<CacheFillEventsResponse>;
   CacheRemoveInput: ModelOf<CacheRemoveInput>;
   CacheRemoveResponse: ModelOf<CacheRemoveResponse>;
   CacheSetInput: ModelOf<CacheSetInput>;
@@ -2931,6 +2940,12 @@ export type ArticleRevisionConnectionResolvers<ContextType = Context, ParentType
 export type ArticleRevisionCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ArticleRevisionCursor'] = ResolversParentTypes['ArticleRevisionCursor']> = {
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<ResolversTypes['ArticleRevision'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type CacheFillEventsResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CacheFillEventsResponse'] = ResolversParentTypes['CacheFillEventsResponse']> = {
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3936,6 +3951,7 @@ export type _CacheMutationResolvers<ContextType = Context, ParentType extends Re
   set?: Resolver<ResolversTypes['CacheSetResponse'], ParentType, ContextType, RequireFields<_CacheMutationSetArgs, 'input'>>;
   remove?: Resolver<ResolversTypes['CacheRemoveResponse'], ParentType, ContextType, RequireFields<_CacheMutationRemoveArgs, 'input'>>;
   update?: Resolver<ResolversTypes['CacheUpdateResponse'], ParentType, ContextType, RequireFields<_CacheMutationUpdateArgs, 'input'>>;
+  fillEventsCache?: Resolver<ResolversTypes['CacheFillEventsResponse'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3962,6 +3978,7 @@ export type Resolvers<ContextType = Context> = {
   ArticleRevision?: ArticleRevisionResolvers<ContextType>;
   ArticleRevisionConnection?: ArticleRevisionConnectionResolvers<ContextType>;
   ArticleRevisionCursor?: ArticleRevisionCursorResolvers<ContextType>;
+  CacheFillEventsResponse?: CacheFillEventsResponseResolvers<ContextType>;
   CacheRemoveResponse?: CacheRemoveResponseResolvers<ContextType>;
   CacheSetResponse?: CacheSetResponseResolvers<ContextType>;
   CacheUpdateResponse?: CacheUpdateResponseResolvers<ContextType>;
