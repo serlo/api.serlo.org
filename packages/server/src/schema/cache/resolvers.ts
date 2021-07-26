@@ -71,9 +71,9 @@ export const resolvers: Mutations<'_cache'> = {
       )
       return { success: true }
     },
+    // FIXME: This is just a quick way to fill the events query in the API
+    // until we get a better solution
     async fillEventsCache(_parent, _input, { dataSources, service, userId }) {
-      // FIXME: This is just a quick way to fill the events query in the API
-      // until we get a better solution
       checkPermission({
         service,
         userId,
