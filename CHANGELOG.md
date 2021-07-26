@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.26.11](https://github.com/serlo/api.serlo.org/compare/v0.26.10..v0.26.11) - July 26, 2021
+
+### Fixed
+
+- new release to rerun continuous integration due to [this bug](https://github.com/serlo/api.serlo.org/runs/3165334097)
+
 ## [v0.26.10](https://github.com/serlo/api.serlo.org/compare/v0.26.9..v0.26.10) - July 26, 2021
 
 ### Added

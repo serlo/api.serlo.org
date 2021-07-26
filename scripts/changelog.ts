@@ -964,6 +964,13 @@ async function exec(): Promise<void> {
       date: '2021-07-26',
       added: ['mutation `fillEventsCache`'],
     },
+    {
+      tagName: 'v0.26.11',
+      date: '2021-07-26',
+      fixed: [
+        'new release to rerun continuous integration due to [this bug](https://github.com/serlo/api.serlo.org/runs/3165334097)',
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
