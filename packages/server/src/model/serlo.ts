@@ -511,7 +511,7 @@ export function createSerloModel({
   >(
     {
       decoder: t.array(NotificationEventDecoder),
-      async getCurrentValue(_payload, current) {
+      async getCurrentValue(_payload, current, start = Date.now()) {
         current ??= []
         const lastEvent = R.last(current)
         const payload = lastEvent === undefined ? {} : { after: lastEvent.id }
@@ -522,13 +522,9 @@ export function createSerloModel({
         } else {
           const newList = current.concat(updateEvents.events)
 
-          await environment.cache.set({
-            key: 'de.serlo.org/events',
-            source: 'events-hack',
-            value: newList,
-          })
-
-          return this.getCurrentValue(undefined, newList)
+          return Date.now() - start < 30 * 1000
+            ? this.getCurrentValue(undefined, newList)
+            : newList
         }
       },
       getKey() {
