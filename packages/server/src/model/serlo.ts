@@ -511,7 +511,7 @@ export function createSerloModel({
   >(
     {
       decoder: t.array(NotificationEventDecoder),
-      async getCurrentValue(_payload, current, start = Date.now()) {
+      async getCurrentValue(_payload, current) {
         current ??= []
         const lastEvent = R.last(current)
         const payload = lastEvent === undefined ? {} : { after: lastEvent.id }
@@ -522,10 +522,10 @@ export function createSerloModel({
         } else {
           const newList = current.concat(updateEvents.events)
 
-          return (Date.now() - start) / 1000 < 30
-            ? // @ts-expect-error
-              this.getCurrentValue(undefined, newList, start)
-            : newList
+          // FIXME: This is only a quickfix to fill the events cache
+          if (process.env.ENVIRONMENT === 'staging') return newList
+
+          return this.getCurrentValue(undefined, newList)
         }
       },
       getKey() {
