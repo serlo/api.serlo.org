@@ -967,8 +967,15 @@ async function exec(): Promise<void> {
     {
       tagName: 'v0.26.11',
       date: '2021-07-26',
-      fixed: [
+      internal: [
         'new release to rerun continuous integration due to [this bug](https://github.com/serlo/api.serlo.org/runs/3165334097)',
+      ],
+    },
+    {
+      tagName: 'v0.26.12',
+      date: '2021-07-27',
+      internal: [
+        'new release to trigger a new build (see [this bug](https://github.com/serlo/api.serlo.org/runs/3169973634)',
       ],
     },
   ])
