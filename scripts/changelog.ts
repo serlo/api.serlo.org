@@ -978,6 +978,11 @@ async function exec(): Promise<void> {
         'new release to trigger a new build (see [this bug](https://github.com/serlo/api.serlo.org/runs/3169973634)',
       ],
     },
+    {
+      tagName: 'v0.26.13',
+      date: '2021-07-27',
+      internal: ['new release to trigger a new build'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)

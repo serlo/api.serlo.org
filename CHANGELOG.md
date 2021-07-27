@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.26.13](https://github.com/serlo/api.serlo.org/compare/v0.26.12..v0.26.13) - July 27, 2021
+
+### Internal
+
+- new release to trigger a new build
+
 ## [v0.26.12](https://github.com/serlo/api.serlo.org/compare/v0.26.11..v0.26.12) - July 27, 2021
 
 ### Internal
