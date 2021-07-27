@@ -522,8 +522,9 @@ export function createSerloModel({
         } else {
           const newList = current.concat(updateEvents.events)
 
-          return Date.now() - start < 30 * 1000
-            ? this.getCurrentValue(undefined, newList)
+          return (Date.now() - start) / 1000 < 30
+            ? // @ts-expect-error
+              this.getCurrentValue(undefined, newList, start)
             : newList
         }
       },
