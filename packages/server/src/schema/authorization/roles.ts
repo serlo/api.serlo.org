@@ -45,7 +45,13 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
     ],
   },
   [Role.Sysadmin]: {
-    extends: [Role.Guest, Role.Login, Role.Moderator, Role.Admin],
+    extends: [
+      Role.Guest,
+      Role.Login,
+      Role.Moderator,
+      Role.Admin,
+      Role.StaticPagesBuilder,
+    ],
     permissions: [
       Permission.User_SetEmail,
       Permission.User_DeleteBot,
