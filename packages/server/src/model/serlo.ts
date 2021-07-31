@@ -36,6 +36,8 @@ import {
   EntityRevisionDecoder,
   EntityDecoder,
   SubscriptionsDecoder,
+  PageRevisionDecoder,
+  PageDecoder,
 } from './decoder'
 import {
   createMutation,
@@ -778,7 +780,7 @@ export function createSerloModel({
     },
   })
 
-  const checkoutRevision = createMutation({
+  const checkoutEntityRevision = createMutation({
     decoder: t.union([
       t.type({ success: t.literal(true) }),
       t.type({ success: t.literal(false), reason: t.string }),
@@ -821,7 +823,50 @@ export function createSerloModel({
     },
   })
 
-  const rejectRevision = createMutation({
+  const checkoutPageRevision = createMutation({
+    decoder: t.union([
+      t.type({ success: t.literal(true) }),
+      t.type({ success: t.literal(false), reason: t.string }),
+    ]),
+    async mutate(payload: {
+      revisionId: number
+      userId: number
+      reason: string
+    }) {
+      return await handleMessage({
+        message: { type: 'PageCheckoutRevisionMutation', payload },
+        expectedStatusCodes: [200, 400],
+      })
+    },
+    async updateCache({ revisionId }) {
+      const revision = await getUuidWithCustomDecoder({
+        id: revisionId,
+        decoder: PageRevisionDecoder,
+      })
+
+      await getUuid._querySpec.setCache({
+        payload: { id: revision.repositoryId },
+        getValue(current) {
+          if (!PageDecoder.is(current)) return
+
+          current.currentRevisionId = revisionId
+
+          return current
+        },
+      })
+
+      await getUuid._querySpec.setCache({
+        payload: { id: revisionId },
+        getValue(current) {
+          if (!PageRevisionDecoder.is(current)) return
+
+          return { ...current, trashed: false }
+        },
+      })
+    },
+  })
+
+  const rejectEntityRevision = createMutation({
     decoder: t.union([
       t.type({ success: t.literal(true) }),
       t.type({ success: t.literal(false), reason: t.string }),
@@ -848,6 +893,33 @@ export function createSerloModel({
     },
   })
 
+  const rejectPageRevision = createMutation({
+    decoder: t.union([
+      t.type({ success: t.literal(true) }),
+      t.type({ success: t.literal(false), reason: t.string }),
+    ]),
+    async mutate(payload: {
+      revisionId: number
+      userId: number
+      reason: string
+    }) {
+      return await handleMessage({
+        message: { type: 'PageRejectRevisionMutation', payload },
+        expectedStatusCodes: [200, 400],
+      })
+    },
+    async updateCache({ revisionId }) {
+      await getUuid._querySpec.setCache({
+        payload: { id: revisionId },
+        getValue(current) {
+          if (!PageRevisionDecoder.is(current)) return
+
+          return { ...current, trashed: true }
+        },
+      })
+    },
+  })
+
   return {
     createThread,
     archiveThread,
@@ -855,7 +927,8 @@ export function createSerloModel({
     deleteBots,
     deleteRegularUsers,
     setEmail,
-    checkoutRevision,
+    checkoutEntityRevision,
+    checkoutPageRevision,
     getActiveAuthorIds,
     getActiveReviewerIds,
     getActivityByType,
@@ -871,7 +944,8 @@ export function createSerloModel({
     getThreadIds,
     getUuid,
     getUuidWithCustomDecoder,
-    rejectRevision,
+    rejectEntityRevision,
+    rejectPageRevision,
     setUuidState,
     setNotificationState,
   }

@@ -70,3 +70,12 @@ type PageRevisionCursor {
   cursor: String!
   node: PageRevision!
 }
+
+extend type Mutation {
+  page: PageMutation!
+}
+
+type PageMutation {
+  checkoutRevision(input: CheckoutRevisionInput!): CheckoutRevisionResponse!
+  rejectRevision(input: RejectRevisionInput!): RejectRevisionResponse!
+}

@@ -142,6 +142,16 @@ export function givenEntityCheckoutRevisionEndpoint(
   givenSerloEndpoint('EntityCheckoutRevisionMutation', resolver)
 }
 
+export function givenPageCheckoutRevisionEndpoint(
+  resolver: MessageResolver<{
+    revisionId: number
+    reason: string
+    userId: number
+  }>
+) {
+  givenSerloEndpoint('PageCheckoutRevisionMutation', resolver)
+}
+
 export function givenEntityRejectRevisionEndpoint(
   resolver: MessageResolver<{
     revisionId: number
@@ -150,6 +160,16 @@ export function givenEntityRejectRevisionEndpoint(
   }>
 ) {
   givenSerloEndpoint('EntityRejectRevisionMutation', resolver)
+}
+
+export function givenPageRejectRevisionEndpoint(
+  resolver: MessageResolver<{
+    revisionId: number
+    reason: string
+    userId: number
+  }>
+) {
+  givenSerloEndpoint('PageRejectRevisionMutation', resolver)
 }
 
 export function givenSerloEndpoint<Payload = DefaultPayloadType>(

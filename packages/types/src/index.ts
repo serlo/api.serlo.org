@@ -1278,6 +1278,7 @@ export type Mutation = {
   _cache: _CacheMutation;
   entity: EntityMutation;
   notification: NotificationMutation;
+  page: PageMutation;
   subscription: SubscriptionMutation;
   thread: ThreadMutation;
   user: UserMutation;
@@ -1411,6 +1412,22 @@ export type PageInfo = {
   hasPreviousPage: Scalars['Boolean'];
   startCursor?: Maybe<Scalars['String']>;
   endCursor?: Maybe<Scalars['String']>;
+};
+
+export type PageMutation = {
+  __typename?: 'PageMutation';
+  checkoutRevision: CheckoutRevisionResponse;
+  rejectRevision: RejectRevisionResponse;
+};
+
+
+export type PageMutationCheckoutRevisionArgs = {
+  input: CheckoutRevisionInput;
+};
+
+
+export type PageMutationRejectRevisionArgs = {
+  input: RejectRevisionInput;
 };
 
 export type PageRevision = AbstractUuid & AbstractRevision & ThreadAware & {
