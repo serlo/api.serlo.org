@@ -30,6 +30,7 @@ import { Context, Model } from '~/internals/graphql'
 import {
   DiscriminatorType,
   EntityRevisionDecoder,
+  PageRevisionDecoder,
   UserDecoder,
 } from '~/model/decoder'
 import { resolveRolesPayload, RolesPayload } from '~/schema/authorization/roles'
@@ -90,7 +91,7 @@ export async function fetchScopeOfUuid({
     return await fetchScopeOfUuid({ id: object.parentId, dataSources })
   }
 
-  if (EntityRevisionDecoder.is(object)) {
+  if (EntityRevisionDecoder.is(object) || PageRevisionDecoder.is(object)) {
     return await fetchScopeOfUuid({ id: object.repositoryId, dataSources })
   }
 
