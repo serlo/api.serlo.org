@@ -46,7 +46,7 @@ import {
   assertSuccessfulGraphQLMutation,
 } from '../../__utils__'
 
-test('set-UuidSetStateMutation-state', async () => {
+test('UuidSetStateMutation', async () => {
   global.client = createTestClient({ userId: user.id })
   global.server.use(
     createUuidHandler(article),
