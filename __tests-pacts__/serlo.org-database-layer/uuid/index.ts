@@ -20,20 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 /* eslint-disable import/no-unassigned-import */
-import './applet'
-import './article'
-import './course'
-import './course-page'
-import './comment'
-import './event'
-import './exercise'
-import './exercise-group'
-import './grouped-exercise'
-import './page'
-import './solution'
-import './taxonomy-term'
-import './user'
-import './video'
 import { gql } from 'apollo-server'
 
 import { article, user } from '../../../__fixtures__'
@@ -45,6 +31,22 @@ import {
   addMessageInteraction,
   assertSuccessfulGraphQLMutation,
 } from '../../__utils__'
+
+import './applet'
+import './article'
+import './course'
+import './course-page'
+import './comment'
+import './entity'
+import './event'
+import './exercise'
+import './exercise-group'
+import './grouped-exercise'
+import './page'
+import './solution'
+import './taxonomy-term'
+import './user'
+import './video'
 
 test('UuidSetStateMutation', async () => {
   global.client = createTestClient({ userId: user.id })
