@@ -19,15 +19,30 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { TypeResolvers } from '~/internals/graphql'
+import * as serloAuth from '@serlo/authorization'
+import { UserInputError } from 'apollo-server'
+
+import {
+  assertUserIsAuthenticated,
+  assertUserIsAuthorized,
+  createNamespace,
+  Mutations,
+  TypeResolvers,
+} from '~/internals/graphql'
 import { PageDecoder, PageRevisionDecoder } from '~/model/decoder'
+import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
 import { Page, PageRevision } from '~/types'
 
-export const resolvers: TypeResolvers<Page> & TypeResolvers<PageRevision> = {
+export const resolvers: TypeResolvers<Page> &
+  TypeResolvers<PageRevision> &
+  Mutations<'page'> = {
+  Mutation: {
+    page: createNamespace(),
+  },
   Page: {
     ...createRepositoryResolvers({ revisionDecoder: PageRevisionDecoder }),
     navigation(page, _args, { dataSources }) {
@@ -38,4 +53,57 @@ export const resolvers: TypeResolvers<Page> & TypeResolvers<PageRevision> = {
     },
   },
   PageRevision: createRevisionResolvers({ repositoryDecoder: PageDecoder }),
+  PageMutation: {
+    async checkoutRevision(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const scope = await fetchScopeOfUuid({
+        id: input.revisionId,
+        dataSources,
+      })
+
+      await assertUserIsAuthorized({
+        userId,
+        dataSources,
+        message: 'You are not allowed to check out the provided revision.',
+        guard: serloAuth.Page.checkoutRevision(scope),
+      })
+
+      const result = await dataSources.model.serlo.checkoutPageRevision({
+        ...input,
+        userId,
+      })
+
+      if (result.success === false) {
+        throw new UserInputError(result.reason)
+      } else {
+        return { ...result, query: {} }
+      }
+    },
+    async rejectRevision(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const scope = await fetchScopeOfUuid({
+        id: input.revisionId,
+        dataSources,
+      })
+      await assertUserIsAuthorized({
+        userId,
+        dataSources,
+        message: 'You are not allowed to reject the provided revision.',
+        guard: serloAuth.Page.rejectRevision(scope),
+      })
+
+      const result = await dataSources.model.serlo.rejectPageRevision({
+        ...input,
+        userId,
+      })
+
+      if (result.success === false) {
+        throw new UserInputError(result.reason)
+      } else {
+        return { ...result, query: {} }
+      }
+    },
+  },
 }
