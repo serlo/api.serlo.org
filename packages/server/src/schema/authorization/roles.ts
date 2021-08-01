@@ -87,6 +87,8 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
   },
   [Role.StaticPagesBuilder]: {
     permissions: [
+      Permission.Page_CheckoutRevision,
+      Permission.Page_RejectRevision,
       Permission.Page_Set,
       Permission.Uuid_Create_Page,
       Permission.Uuid_Create_PageRevision,

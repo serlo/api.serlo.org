@@ -23,9 +23,15 @@ import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 import R from 'ramda'
 
-import { page, pageRevision } from '../../../__fixtures__'
+import { page, pageRevision, user } from '../../../__fixtures__'
 import {
+  createTestClient,
+  createUuidHandler,
+} from '../../../__tests__/__utils__'
+import {
+  addMessageInteraction,
   addUuidInteraction,
+  assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
@@ -99,5 +105,90 @@ test('PageRevision', async () => {
         pageRevision
       ),
     },
+  })
+})
+
+const unrevisedRevision = {
+  ...pageRevision,
+  id: 33220,
+}
+
+test('PageCheckoutRevisionMutation', async () => {
+  global.client = createTestClient({ userId: user.id })
+  global.server.use(
+    createUuidHandler(page),
+    createUuidHandler(unrevisedRevision),
+    createUuidHandler({ ...user, roles: ['de_static_pages_builder'] })
+  )
+
+  await addMessageInteraction({
+    given: 'there exists an unrevised page revision with id 30672',
+    message: {
+      type: 'PageCheckoutRevisionMutation',
+      payload: {
+        revisionId: unrevisedRevision.id,
+        userId: user.id,
+        reason: 'given reason',
+      },
+    },
+    responseBody: {
+      success: true,
+    },
+  })
+
+  await assertSuccessfulGraphQLMutation({
+    mutation: gql`
+      mutation page($input: CheckoutRevisionInput!) {
+        page {
+          checkoutRevision(input: $input) {
+            success
+          }
+        }
+      }
+    `,
+    variables: {
+      input: { revisionId: unrevisedRevision.id, reason: 'given reason' },
+    },
+    data: { page: { checkoutRevision: { success: true } } },
+  })
+})
+
+test('PageRejectRevisionMutation', async () => {
+  global.client = createTestClient({ userId: user.id })
+  global.server.use(
+    createUuidHandler(page),
+    createUuidHandler(unrevisedRevision),
+    createUuidHandler({ ...user, roles: ['de_static_pages_builder'] })
+  )
+
+  await addMessageInteraction({
+    given: 'there exists an unrevised page revision with id 30672',
+    message: {
+      type: 'PageRejectRevisionMutation',
+      payload: {
+        revisionId: unrevisedRevision.id,
+        userId: user.id,
+        reason: 'given reason',
+      },
+    },
+    responseBody: {
+      success: true,
+    },
+  })
+
+  await assertSuccessfulGraphQLMutation({
+    mutation: gql`
+      mutation page($input: RejectRevisionInput!) {
+        page {
+          rejectRevision(input: $input) {
+            success
+          }
+        }
+      }
+    `,
+    variables: {
+      input: { revisionId: unrevisedRevision.id, reason: 'given reason' },
+    },
+    data: { page: { rejectRevision: { success: true } } },
   })
 })

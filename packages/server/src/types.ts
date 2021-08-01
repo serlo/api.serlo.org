@@ -1282,6 +1282,7 @@ export type Mutation = {
   _cache: _CacheMutation;
   entity: EntityMutation;
   notification: NotificationMutation;
+  page: PageMutation;
   subscription: SubscriptionMutation;
   thread: ThreadMutation;
   user: UserMutation;
@@ -1415,6 +1416,22 @@ export type PageInfo = {
   hasPreviousPage: Scalars['Boolean'];
   startCursor?: Maybe<Scalars['String']>;
   endCursor?: Maybe<Scalars['String']>;
+};
+
+export type PageMutation = {
+  __typename?: 'PageMutation';
+  checkoutRevision: CheckoutRevisionResponse;
+  rejectRevision: RejectRevisionResponse;
+};
+
+
+export type PageMutationCheckoutRevisionArgs = {
+  input: CheckoutRevisionInput;
+};
+
+
+export type PageMutationRejectRevisionArgs = {
+  input: RejectRevisionInput;
 };
 
 export type PageRevision = AbstractUuid & AbstractRevision & ThreadAware & {
@@ -2490,6 +2507,7 @@ export type ResolversTypes = {
   NotificationSetStateResponse: ResolverTypeWrapper<ModelOf<NotificationSetStateResponse>>;
   Page: ResolverTypeWrapper<ModelOf<Page>>;
   PageInfo: ResolverTypeWrapper<ModelOf<PageInfo>>;
+  PageMutation: ResolverTypeWrapper<ModelOf<PageMutation>>;
   PageRevision: ResolverTypeWrapper<ModelOf<PageRevision>>;
   PageRevisionConnection: ResolverTypeWrapper<ModelOf<PageRevisionConnection>>;
   PageRevisionCursor: ResolverTypeWrapper<ModelOf<PageRevisionCursor>>;
@@ -2650,6 +2668,7 @@ export type ResolversParentTypes = {
   NotificationSetStateResponse: ModelOf<NotificationSetStateResponse>;
   Page: ModelOf<Page>;
   PageInfo: ModelOf<PageInfo>;
+  PageMutation: ModelOf<PageMutation>;
   PageRevision: ModelOf<PageRevision>;
   PageRevisionConnection: ModelOf<PageRevisionConnection>;
   PageRevisionCursor: ModelOf<PageRevisionCursor>;
@@ -3394,6 +3413,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   _cache?: Resolver<ResolversTypes['_cacheMutation'], ParentType, ContextType>;
   entity?: Resolver<ResolversTypes['EntityMutation'], ParentType, ContextType>;
   notification?: Resolver<ResolversTypes['NotificationMutation'], ParentType, ContextType>;
+  page?: Resolver<ResolversTypes['PageMutation'], ParentType, ContextType>;
   subscription?: Resolver<ResolversTypes['SubscriptionMutation'], ParentType, ContextType>;
   thread?: Resolver<ResolversTypes['ThreadMutation'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['UserMutation'], ParentType, ContextType>;
@@ -3479,6 +3499,12 @@ export type PageInfoResolvers<ContextType = Context, ParentType extends Resolver
   hasPreviousPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   startCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   endCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type PageMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageMutation'] = ResolversParentTypes['PageMutation']> = {
+  checkoutRevision?: Resolver<ResolversTypes['CheckoutRevisionResponse'], ParentType, ContextType, RequireFields<PageMutationCheckoutRevisionArgs, 'input'>>;
+  rejectRevision?: Resolver<ResolversTypes['RejectRevisionResponse'], ParentType, ContextType, RequireFields<PageMutationRejectRevisionArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4036,6 +4062,7 @@ export type Resolvers<ContextType = Context> = {
   NotificationSetStateResponse?: NotificationSetStateResponseResolvers<ContextType>;
   Page?: PageResolvers<ContextType>;
   PageInfo?: PageInfoResolvers<ContextType>;
+  PageMutation?: PageMutationResolvers<ContextType>;
   PageRevision?: PageRevisionResolvers<ContextType>;
   PageRevisionConnection?: PageRevisionConnectionResolvers<ContextType>;
   PageRevisionCursor?: PageRevisionCursorResolvers<ContextType>;
