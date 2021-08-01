@@ -25,16 +25,16 @@ import R from 'ramda'
 
 import { page, pageRevision, user } from '../../../__fixtures__'
 import {
+  createTestClient,
+  createUuidHandler,
+} from '../../../__tests__/__utils__'
+import {
   addMessageInteraction,
   addUuidInteraction,
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
-import {
-  createTestClient,
-  createUuidHandler,
-} from '../../../__tests__/__utils__'
 
 test('Page', async () => {
   await addUuidInteraction<Model<'Page'>>({
