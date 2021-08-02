@@ -25,17 +25,29 @@ import { checkoutRevisionNotificationEvent } from '../../__fixtures__'
 import { addMessageInteraction } from '../__utils__'
 
 describe('EventsQuery', () => {
-  test('without paramater "after"', async () => {
-    await addEventsContract({})
+  test('with only parameter "first"', async () => {
+    await addEventsContract({ first: 500 })
   })
 
-  test('with paramater "after"', async () => {
-    await addEventsContract({ payload: { after: 100 } })
+  test('with parameter "after"', async () => {
+    await addEventsContract({ first: 500, after: 100 })
+  })
+
+  test('with parameter "objectId"', async () => {
+    await addEventsContract({ first: 500, objectId: 1565 })
+  })
+
+  test('with parameter "actorId"', async () => {
+    await addEventsContract({ first: 500, actorId: 1 })
+  })
+
+  test('with parameter "instance"', async () => {
+    await addEventsContract({ first: 500, instance: 'de' })
   })
 })
 
-async function addEventsContract(arg: { payload?: { after: number } }) {
-  const message = { type: 'EventsQuery', ...arg }
+async function addEventsContract(payload: Record<string, unknown>) {
+  const message = { type: 'EventsQuery', payload }
 
   await addMessageInteraction({
     given: `there exist events`,
