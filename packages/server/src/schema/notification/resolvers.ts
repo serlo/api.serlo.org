@@ -20,8 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as auth from '@serlo/authorization'
-import { ForbiddenError } from 'apollo-server'
-import * as R from 'ramda'
+import { ForbiddenError, UserInputError } from 'apollo-server'
 
 import {
   assertUserIsAuthenticated,
@@ -36,7 +35,6 @@ import {
 import { fetchScopeOfNotificationEvent } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { Notification, QueryEventsArgs } from '~/types'
-import { isDefined } from '~/utils'
 
 export const resolvers: TypeResolvers<Notification> &
   InterfaceResolvers<'AbstractNotificationEvent'> &
@@ -137,28 +135,64 @@ export async function resolveEvents({
   payload: QueryEventsArgs
   dataSources: Context['dataSources']
 }) {
-  const unfilteredEvents = await dataSources.model.serlo.getEvents()
-  const events = unfilteredEvents.filter((event) => {
-    if (isDefined(payload.actorId) && payload.actorId !== event.actorId)
-      return false
-    if (isDefined(payload.instance) && payload.instance !== event.instance)
-      return false
-    if (
-      isDefined(payload.objectId) &&
-      payload.objectId !== event.objectId &&
-      (!R.has('entityId', event) || payload.objectId !== event.entityId) &&
-      (!R.has('repositoryId', event) || payload.objectId !== event.repositoryId)
-    )
-      return false
+  const limit = 500
+  const first = payload.first ?? limit
+  const { after, objectId, actorId, instance } = payload
 
-    return true
+  if (first > limit) throw new UserInputError('first cannot be higher than 500')
+
+  const { events, hasNextPage } = await dataSources.model.serlo.getEvents({
+    first: 2 * limit + 50,
+    objectId: objectId ?? undefined,
+    actorId: actorId ?? undefined,
+    instance: instance ?? undefined,
   })
 
-  return resolveConnection({
-    nodes: events.reverse(),
+  const connection = resolveConnection({
+    nodes: events,
     payload,
-    createCursor(node) {
-      return node.id.toString()
-    },
+    limit,
+    createCursor: (node) => node.id.toString(),
   })
+
+  if (!hasNextPage || connection.nodes.length === first) {
+    const { pageInfo } = connection
+
+    return {
+      ...connection,
+      pageInfo: {
+        ...pageInfo,
+        __typename: 'HasNextPageInfo' as const,
+        hasNextPage: pageInfo.hasNextPage || hasNextPage,
+      },
+    }
+  } else {
+    if (after == null) throw new Error('illegal state')
+
+    const { events, hasNextPage } =
+      await dataSources.model.serlo.getEventsAfter({
+        first,
+        after: parseInt(Buffer.from(after, 'base64').toString('utf-8')),
+        objectId: objectId ?? undefined,
+        actorId: actorId ?? undefined,
+        instance: instance ?? undefined,
+      })
+
+    const connection = resolveConnection({
+      nodes: events,
+      payload,
+      limit,
+      createCursor: (node) => node.id.toString(),
+    })
+    const { pageInfo } = connection
+
+    return {
+      ...connection,
+      pageInfo: {
+        ...pageInfo,
+        hasNextPage,
+        __typename: 'HasNextPageInfo' as const,
+      },
+    }
+  }
 }

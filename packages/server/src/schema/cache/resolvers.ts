@@ -22,7 +22,7 @@
 import { ForbiddenError } from 'apollo-server'
 
 import { Service } from '~/internals/authentication'
-import { createNamespace, Model, Mutations } from '~/internals/graphql'
+import { createNamespace, Mutations } from '~/internals/graphql'
 
 const allowedUserIds = [
   26217, // kulla
@@ -70,28 +70,6 @@ export const resolvers: Mutations<'_cache'> = {
         input.keys.map((key) => dataSources.model.updateCacheValue({ key }))
       )
       return { success: true }
-    },
-    // FIXME: This is just a quick way to fill the events query in the API
-    // until we get a better solution
-    async fillEventsCache(_parent, _input, { dataSources, service, userId }) {
-      checkPermission({
-        service,
-        userId,
-        operation: 'fill_event_cache',
-        allowedServices: [Service.SerloCacheWorker],
-      })
-      await dataSources.model.serlo.getEvents._querySpec.setCache({
-        payload: undefined,
-        async getValue(current) {
-          const result =
-            await dataSources.model.serlo.getEvents._querySpec.getCurrentValue(
-              undefined,
-              current ?? null
-            )
-          return result as Model<'AbstractNotificationEvent'>[]
-        },
-      })
-      return { success: true, query: {} }
     },
   },
 }

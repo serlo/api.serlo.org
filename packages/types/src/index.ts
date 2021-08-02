@@ -113,8 +113,7 @@ export type AbstractNotificationEventConnection = {
   __typename?: 'AbstractNotificationEventConnection';
   edges: Array<AbstractNotificationEventEdge>;
   nodes: Array<AbstractNotificationEvent>;
-  totalCount: Scalars['Int'];
-  pageInfo: PageInfo;
+  pageInfo: HasNextPageInfo;
 };
 
 export type AbstractNotificationEventEdge = {
@@ -455,12 +454,6 @@ export type ArticleRevisionCursor = {
   __typename?: 'ArticleRevisionCursor';
   cursor: Scalars['String'];
   node: ArticleRevision;
-};
-
-export type CacheFillEventsResponse = {
-  __typename?: 'CacheFillEventsResponse';
-  success: Scalars['Boolean'];
-  query: Query;
 };
 
 export type CacheRemoveInput = {
@@ -1244,6 +1237,12 @@ export type GroupedExerciseRevisionCursor = {
   __typename?: 'GroupedExerciseRevisionCursor';
   cursor: Scalars['String'];
   node: GroupedExerciseRevision;
+};
+
+export type HasNextPageInfo = {
+  __typename?: 'HasNextPageInfo';
+  hasNextPage: Scalars['Boolean'];
+  endCursor?: Maybe<Scalars['String']>;
 };
 
 export enum Instance {
@@ -2317,7 +2316,6 @@ export type _CacheMutation = {
   set: CacheSetResponse;
   remove: CacheRemoveResponse;
   update: CacheUpdateResponse;
-  fillEventsCache: CacheFillEventsResponse;
 };
 
 

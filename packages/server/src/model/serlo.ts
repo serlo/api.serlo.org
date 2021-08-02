@@ -497,9 +497,18 @@ export function createSerloModel({
     environment
   )
 
-  const getNewEvents = createRequest({
-    decoder: t.type({ events: t.array(NotificationEventDecoder) }),
-    async getCurrentValue(payload: { after?: number }) {
+  const getEventsAfter = createRequest({
+    decoder: t.type({
+      events: t.array(NotificationEventDecoder),
+      hasNextPage: t.boolean,
+    }),
+    async getCurrentValue(payload: {
+      after: number
+      first: number
+      actorId?: number
+      objectId?: number
+      instance?: Instance
+    }) {
       return await handleMessage({
         message: { type: 'EventsQuery', payload },
         expectedStatusCodes: [200],
@@ -507,34 +516,43 @@ export function createSerloModel({
     },
   })
 
-  const getEvents = createQuery<
-    undefined,
-    Model<'AbstractNotificationEvent'>[]
-  >(
+  const getEvents = createQuery(
     {
-      decoder: t.array(NotificationEventDecoder),
-      async getCurrentValue(_payload, current) {
-        current ??= []
-        const lastEvent = R.last(current)
-        const payload = lastEvent === undefined ? {} : { after: lastEvent.id }
-        const updateEvents = await getNewEvents(payload)
-
-        if (updateEvents.events.length === 0) {
-          return current
-        } else {
-          const newList = current.concat(updateEvents.events)
-
-          // FIXME: This is only a quickfix to fill the events cache
-          if (process.env.ENVIRONMENT === 'staging') return newList
-
-          return this.getCurrentValue(undefined, newList)
-        }
+      decoder: t.type({
+        events: t.array(NotificationEventDecoder),
+        hasNextPage: t.boolean,
+      }),
+      async getCurrentValue(payload: {
+        first: number
+        actorId?: number
+        objectId?: number
+        instance?: Instance
+      }) {
+        return await handleMessage({
+          message: { type: 'EventsQuery', payload },
+          expectedStatusCodes: [200],
+        })
       },
-      getKey() {
-        return 'de.serlo.org/events'
+      getKey(payload) {
+        return 'serlo/events/' + JSON.stringify(payload)
       },
       getPayload(key: string) {
-        return key === 'de.serlo.org/events' ? O.some(undefined) : O.none
+        if (!key.startsWith('serlo/events/')) return O.none
+
+        try {
+          const payload = JSON.parse(
+            key.substring('serlo.org/events/'.length)
+          ) as {
+            first: number
+            actorId?: number
+            objectId?: number
+            instance?: Instance
+          }
+
+          return O.some(payload)
+        } catch (e) {
+          return O.none
+        }
       },
       enableSwr: true,
       maxAge: { minute: 2 },
@@ -938,6 +956,7 @@ export function createSerloModel({
     getNavigation,
     getNotificationEvent,
     getEvents,
+    getEventsAfter,
     getNotifications,
     getSubscriptions,
     setSubscription,

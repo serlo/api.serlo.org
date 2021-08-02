@@ -48,6 +48,7 @@ import {
   createDatabaseLayerHandler,
   createUuidHandler,
   getTypenameAndId,
+  assertFailingGraphQLQuery,
 } from '../__utils__'
 import { Service } from '~/internals/authentication'
 import { Model } from '~/internals/graphql'
@@ -92,7 +93,7 @@ const allEvents = assignSequentialIds(R.values(eventRepository))
 
 describe('query endpoint "events"', () => {
   test('returns event log', async () => {
-    setupEvents(allEvents, { maxReturn: 5 })
+    setupEvents(allEvents)
 
     await assertSuccessfulGraphQLQuery({
       query: gql`
@@ -102,11 +103,19 @@ describe('query endpoint "events"', () => {
               __typename
               id
             }
+            pageInfo {
+              hasNextPage
+            }
           }
         }
       `,
       client,
-      data: { events: { nodes: R.reverse(allEvents.map(getTypenameAndId)) } },
+      data: {
+        events: {
+          nodes: R.reverse(allEvents).map(getTypenameAndId),
+          pageInfo: { hasNextPage: false },
+        },
+      },
     })
   })
 
@@ -174,7 +183,10 @@ describe('query endpoint "events"', () => {
 
   test('with filter "objectId"', async () => {
     const events = assignSequentialIds(
-      R.concat(getEventsForObject(42), getEventsForObject(23))
+      R.concat(
+        allEvents.map(R.assoc('objectId', 42)),
+        allEvents.map(R.assoc('objectId', 23))
+      )
     )
     setupEvents(events)
 
@@ -193,14 +205,69 @@ describe('query endpoint "events"', () => {
       data: {
         events: {
           nodes: R.reverse(
-            events.slice(0, events.length / 2).map(getTypenameAndId)
+            events.slice(0, allEvents.length).map(getTypenameAndId)
           ),
         },
       },
     })
   })
 
-  test('number of returned events is bounded to 500 when first = last = undefined', async () => {
+  test('with filter `after`', async () => {
+    const events = assignSequentialIds(
+      R.range(0, 200).flatMap(R.always(allEvents))
+    )
+    const afterId = R.reverse(events)[1000].id
+    setupEvents(events)
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query events($after: String!) {
+          events(after: $after) {
+            nodes {
+              id
+              __typename
+            }
+            pageInfo {
+              hasNextPage
+            }
+          }
+        }
+      `,
+      client,
+      variables: { after: Buffer.from(afterId.toString()).toString('base64') },
+      data: {
+        events: {
+          nodes: R.reverse(events).slice(1001, 1501).map(getTypenameAndId),
+          pageInfo: { hasNextPage: true },
+        },
+      },
+    })
+  })
+
+  test('`hasNextPage` is always true when database layer responses with hasNextPage == true', async () => {
+    const events = assignSequentialIds(
+      R.range(0, 105).flatMap(R.always(allEvents))
+    )
+    const afterId = R.reverse(events)[1039].id
+    setupEvents(events)
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query events($after: String!) {
+          events(first: 10, after: $after) {
+            pageInfo {
+              hasNextPage
+            }
+          }
+        }
+      `,
+      client,
+      variables: { after: Buffer.from(afterId.toString()).toString('base64') },
+      data: { events: { pageInfo: { hasNextPage: true } } },
+    })
+  })
+
+  test('number of returned events is bounded to 500 when `first` is undefined', async () => {
     const events = assignSequentialIds(
       R.range(0, 50).flatMap(R.always(allEvents))
     )
@@ -214,6 +281,9 @@ describe('query endpoint "events"', () => {
               __typename
               id
             }
+            pageInfo {
+              hasNextPage
+            }
           }
         }
       `,
@@ -221,8 +291,31 @@ describe('query endpoint "events"', () => {
       data: {
         events: {
           nodes: R.reverse(events).slice(0, 500).map(getTypenameAndId),
+          pageInfo: { hasNextPage: true },
         },
       },
+    })
+  })
+
+  test('fails when first > 500', async () => {
+    const events = assignSequentialIds(
+      R.range(0, 50).flatMap(R.always(allEvents))
+    )
+    setupEvents(events)
+
+    await assertFailingGraphQLQuery({
+      query: gql`
+        query events {
+          events(first: 600) {
+            nodes {
+              __typename
+              id
+            }
+          }
+        }
+      `,
+      message: 'first cannot be higher than 500',
+      client,
     })
   })
 })
@@ -269,7 +362,10 @@ test('User.eventsByUser returns events of this user', async () => {
 test('AbstractEntity.events returns events for this entity', async () => {
   const uuid = { ...article, id: 42 }
   const events = assignSequentialIds(
-    R.concat(getEventsForObject(uuid.id), getEventsForObject(uuid.id + 1))
+    R.concat(
+      allEvents.map(R.assoc('objectId', 42)),
+      allEvents.map(R.assoc('objectId', 23))
+    )
   )
   setupEvents(events)
   global.server.use(createUuidHandler(uuid))
@@ -303,31 +399,34 @@ test('AbstractEntity.events returns events for this entity', async () => {
   })
 })
 
-function setupEvents(
-  events: Model<'AbstractNotificationEvent'>[],
-  options?: {
-    maxReturn?: number
-  }
-) {
-  const maxReturn = options?.maxReturn ?? events.length / 2 + 1
-
+function setupEvents(allEvents: Model<'AbstractNotificationEvent'>[]) {
   global.server.use(
-    createDatabaseLayerHandler<{ after?: number }>({
+    createDatabaseLayerHandler<{
+      after?: number
+      objectId?: number
+      actorId?: number
+      instance: Instance
+      first: number
+    }>({
       matchType: 'EventsQuery',
       resolver(req, res, ctx) {
-        const { after } = req.body.payload
+        const { after, objectId, actorId, first, instance } = req.body.payload
 
-        if (after == null) {
-          return res(ctx.json({ events: events.slice(0, maxReturn) }))
-        }
+        const filteredEvents = [...allEvents]
+          .reverse()
+          .filter((event) => actorId == null || event.actorId === actorId)
+          .filter((event) => instance == null || event.instance === instance)
+          // We only filter for objectId here. However the database layer
+          // needs to check whether any event_uuid_paramater is also in the filter
+          .filter((event) => objectId == null || event.objectId === objectId)
+          .filter((event) => after == null || event.id < after)
 
-        const index = events.findIndex((e) => e.id === after)
-
-        if (index < 0) return res(ctx.status(400))
-
-        const updatedEvents = events.slice(index + 1, index + 1 + maxReturn)
-
-        return res(ctx.json({ events: updatedEvents }))
+        return res(
+          ctx.json({
+            events: filteredEvents.slice(0, first),
+            hasNextPage: filteredEvents.length > first,
+          })
+        )
       },
     })
   )
@@ -335,14 +434,4 @@ function setupEvents(
 
 function assignSequentialIds(events: Model<'AbstractNotificationEvent'>[]) {
   return events.map((event, id) => R.assoc('id', id + 1, event))
-}
-
-function getEventsForObject(objectId: number) {
-  return [
-    ...allEvents.map(R.assoc('objectId', objectId)),
-    ...allEvents.filter(R.has('entityId')).map(R.assoc('entityId', objectId)),
-    ...allEvents
-      .filter(R.has('repositoryId'))
-      .map(R.assoc('repositoryId', objectId)),
-  ]
 }
