@@ -1003,6 +1003,13 @@ async function exec(): Promise<void> {
       date: '2021-08-03',
       internal: ['Refactor implementation of `events` query'],
     },
+    {
+      tagName: 'v0.26.18',
+      date: '2021-08-03',
+      fixed: [
+        'CheckoutEntityRevisionEvent supports also events for Page types',
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
