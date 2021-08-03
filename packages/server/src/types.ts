@@ -117,8 +117,7 @@ export type AbstractNotificationEventConnection = {
   __typename?: 'AbstractNotificationEventConnection';
   edges: Array<AbstractNotificationEventEdge>;
   nodes: Array<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
-  totalCount: Scalars['Int'];
-  pageInfo: PageInfo;
+  pageInfo: HasNextPageInfo;
 };
 
 export type AbstractNotificationEventEdge = {
@@ -459,12 +458,6 @@ export type ArticleRevisionCursor = {
   __typename?: 'ArticleRevisionCursor';
   cursor: Scalars['String'];
   node: ArticleRevision;
-};
-
-export type CacheFillEventsResponse = {
-  __typename?: 'CacheFillEventsResponse';
-  success: Scalars['Boolean'];
-  query: Query;
 };
 
 export type CacheRemoveInput = {
@@ -1248,6 +1241,12 @@ export type GroupedExerciseRevisionCursor = {
   __typename?: 'GroupedExerciseRevisionCursor';
   cursor: Scalars['String'];
   node: GroupedExerciseRevision;
+};
+
+export type HasNextPageInfo = {
+  __typename?: 'HasNextPageInfo';
+  hasNextPage: Scalars['Boolean'];
+  endCursor?: Maybe<Scalars['String']>;
 };
 
 export enum Instance {
@@ -2321,7 +2320,6 @@ export type _CacheMutation = {
   set: CacheSetResponse;
   remove: CacheRemoveResponse;
   update: CacheUpdateResponse;
-  fillEventsCache: CacheFillEventsResponse;
 };
 
 
@@ -2443,7 +2441,6 @@ export type ResolversTypes = {
   ArticleRevision: ResolverTypeWrapper<ModelOf<ArticleRevision>>;
   ArticleRevisionConnection: ResolverTypeWrapper<ModelOf<ArticleRevisionConnection>>;
   ArticleRevisionCursor: ResolverTypeWrapper<ModelOf<ArticleRevisionCursor>>;
-  CacheFillEventsResponse: ResolverTypeWrapper<ModelOf<CacheFillEventsResponse>>;
   CacheRemoveInput: ResolverTypeWrapper<ModelOf<CacheRemoveInput>>;
   CacheRemoveResponse: ResolverTypeWrapper<ModelOf<CacheRemoveResponse>>;
   CacheSetInput: ResolverTypeWrapper<ModelOf<CacheSetInput>>;
@@ -2489,6 +2486,7 @@ export type ResolversTypes = {
   GroupedExerciseRevision: ResolverTypeWrapper<ModelOf<GroupedExerciseRevision>>;
   GroupedExerciseRevisionConnection: ResolverTypeWrapper<ModelOf<GroupedExerciseRevisionConnection>>;
   GroupedExerciseRevisionCursor: ResolverTypeWrapper<ModelOf<GroupedExerciseRevisionCursor>>;
+  HasNextPageInfo: ResolverTypeWrapper<ModelOf<HasNextPageInfo>>;
   Instance: ResolverTypeWrapper<ModelOf<Instance>>;
   InstanceAware: ResolversTypes['Applet'] | ResolversTypes['Article'] | ResolversTypes['CheckoutRevisionNotificationEvent'] | ResolversTypes['Course'] | ResolversTypes['CoursePage'] | ResolversTypes['CreateCommentNotificationEvent'] | ResolversTypes['CreateEntityLinkNotificationEvent'] | ResolversTypes['CreateEntityNotificationEvent'] | ResolversTypes['CreateEntityRevisionNotificationEvent'] | ResolversTypes['CreateTaxonomyLinkNotificationEvent'] | ResolversTypes['CreateTaxonomyTermNotificationEvent'] | ResolversTypes['CreateThreadNotificationEvent'] | ResolversTypes['Event'] | ResolversTypes['Exercise'] | ResolversTypes['ExerciseGroup'] | ResolversTypes['GroupedExercise'] | ResolversTypes['Page'] | ResolversTypes['RejectRevisionNotificationEvent'] | ResolversTypes['RemoveEntityLinkNotificationEvent'] | ResolversTypes['RemoveTaxonomyLinkNotificationEvent'] | ResolversTypes['SetLicenseNotificationEvent'] | ResolversTypes['SetTaxonomyParentNotificationEvent'] | ResolversTypes['SetTaxonomyTermNotificationEvent'] | ResolversTypes['SetThreadStateNotificationEvent'] | ResolversTypes['SetUuidStateNotificationEvent'] | ResolversTypes['Solution'] | ResolversTypes['TaxonomyTerm'] | ResolversTypes['Video'];
   JSON: ResolverTypeWrapper<ModelOf<Scalars['JSON']>>;
@@ -2605,7 +2603,6 @@ export type ResolversParentTypes = {
   ArticleRevision: ModelOf<ArticleRevision>;
   ArticleRevisionConnection: ModelOf<ArticleRevisionConnection>;
   ArticleRevisionCursor: ModelOf<ArticleRevisionCursor>;
-  CacheFillEventsResponse: ModelOf<CacheFillEventsResponse>;
   CacheRemoveInput: ModelOf<CacheRemoveInput>;
   CacheRemoveResponse: ModelOf<CacheRemoveResponse>;
   CacheSetInput: ModelOf<CacheSetInput>;
@@ -2651,6 +2648,7 @@ export type ResolversParentTypes = {
   GroupedExerciseRevision: ModelOf<GroupedExerciseRevision>;
   GroupedExerciseRevisionConnection: ModelOf<GroupedExerciseRevisionConnection>;
   GroupedExerciseRevisionCursor: ModelOf<GroupedExerciseRevisionCursor>;
+  HasNextPageInfo: ModelOf<HasNextPageInfo>;
   InstanceAware: ResolversParentTypes['Applet'] | ResolversParentTypes['Article'] | ResolversParentTypes['CheckoutRevisionNotificationEvent'] | ResolversParentTypes['Course'] | ResolversParentTypes['CoursePage'] | ResolversParentTypes['CreateCommentNotificationEvent'] | ResolversParentTypes['CreateEntityLinkNotificationEvent'] | ResolversParentTypes['CreateEntityNotificationEvent'] | ResolversParentTypes['CreateEntityRevisionNotificationEvent'] | ResolversParentTypes['CreateTaxonomyLinkNotificationEvent'] | ResolversParentTypes['CreateTaxonomyTermNotificationEvent'] | ResolversParentTypes['CreateThreadNotificationEvent'] | ResolversParentTypes['Event'] | ResolversParentTypes['Exercise'] | ResolversParentTypes['ExerciseGroup'] | ResolversParentTypes['GroupedExercise'] | ResolversParentTypes['Page'] | ResolversParentTypes['RejectRevisionNotificationEvent'] | ResolversParentTypes['RemoveEntityLinkNotificationEvent'] | ResolversParentTypes['RemoveTaxonomyLinkNotificationEvent'] | ResolversParentTypes['SetLicenseNotificationEvent'] | ResolversParentTypes['SetTaxonomyParentNotificationEvent'] | ResolversParentTypes['SetTaxonomyTermNotificationEvent'] | ResolversParentTypes['SetThreadStateNotificationEvent'] | ResolversParentTypes['SetUuidStateNotificationEvent'] | ResolversParentTypes['Solution'] | ResolversParentTypes['TaxonomyTerm'] | ResolversParentTypes['Video'];
   JSON: ModelOf<Scalars['JSON']>;
   JSONObject: ModelOf<Scalars['JSONObject']>;
@@ -2800,8 +2798,7 @@ export type AbstractNotificationEventResolvers<ContextType = Context, ParentType
 export type AbstractNotificationEventConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractNotificationEventConnection'] = ResolversParentTypes['AbstractNotificationEventConnection']> = {
   edges?: Resolver<Array<ResolversTypes['AbstractNotificationEventEdge']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType>;
-  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['HasNextPageInfo'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2959,12 +2956,6 @@ export type ArticleRevisionConnectionResolvers<ContextType = Context, ParentType
 export type ArticleRevisionCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ArticleRevisionCursor'] = ResolversParentTypes['ArticleRevisionCursor']> = {
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<ResolversTypes['ArticleRevision'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type CacheFillEventsResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CacheFillEventsResponse'] = ResolversParentTypes['CacheFillEventsResponse']> = {
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3381,6 +3372,12 @@ export type GroupedExerciseRevisionConnectionResolvers<ContextType = Context, Pa
 export type GroupedExerciseRevisionCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GroupedExerciseRevisionCursor'] = ResolversParentTypes['GroupedExerciseRevisionCursor']> = {
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<ResolversTypes['GroupedExerciseRevision'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type HasNextPageInfoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['HasNextPageInfo'] = ResolversParentTypes['HasNextPageInfo']> = {
+  hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  endCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3977,7 +3974,6 @@ export type _CacheMutationResolvers<ContextType = Context, ParentType extends Re
   set?: Resolver<ResolversTypes['CacheSetResponse'], ParentType, ContextType, RequireFields<_CacheMutationSetArgs, 'input'>>;
   remove?: Resolver<ResolversTypes['CacheRemoveResponse'], ParentType, ContextType, RequireFields<_CacheMutationRemoveArgs, 'input'>>;
   update?: Resolver<ResolversTypes['CacheUpdateResponse'], ParentType, ContextType, RequireFields<_CacheMutationUpdateArgs, 'input'>>;
-  fillEventsCache?: Resolver<ResolversTypes['CacheFillEventsResponse'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4004,7 +4000,6 @@ export type Resolvers<ContextType = Context> = {
   ArticleRevision?: ArticleRevisionResolvers<ContextType>;
   ArticleRevisionConnection?: ArticleRevisionConnectionResolvers<ContextType>;
   ArticleRevisionCursor?: ArticleRevisionCursorResolvers<ContextType>;
-  CacheFillEventsResponse?: CacheFillEventsResponseResolvers<ContextType>;
   CacheRemoveResponse?: CacheRemoveResponseResolvers<ContextType>;
   CacheSetResponse?: CacheSetResponseResolvers<ContextType>;
   CacheUpdateResponse?: CacheUpdateResponseResolvers<ContextType>;
@@ -4046,6 +4041,7 @@ export type Resolvers<ContextType = Context> = {
   GroupedExerciseRevision?: GroupedExerciseRevisionResolvers<ContextType>;
   GroupedExerciseRevisionConnection?: GroupedExerciseRevisionConnectionResolvers<ContextType>;
   GroupedExerciseRevisionCursor?: GroupedExerciseRevisionCursorResolvers<ContextType>;
+  HasNextPageInfo?: HasNextPageInfoResolvers<ContextType>;
   InstanceAware?: InstanceAwareResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   JSONObject?: GraphQLScalarType;
