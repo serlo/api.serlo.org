@@ -4,6 +4,6 @@ type CreateEntityRevisionNotificationEvent implements AbstractNotificationEvent 
   date: DateTime!
   actor: User!
   objectId: Int!
-  entity: AbstractEntity!
-  entityRevision: AbstractEntityRevision!
+  entity: AbstractRepository!
+  entityRevision: AbstractRevision!
 }

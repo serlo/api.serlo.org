@@ -792,8 +792,8 @@ export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & 
   date: Scalars['DateTime'];
   actor: User;
   objectId: Scalars['Int'];
-  entity: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | GroupedExercise | Solution | Video;
-  entityRevision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | GroupedExerciseRevision | SolutionRevision | VideoRevision;
+  entity: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | GroupedExercise | Page | Solution | Video;
+  entityRevision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | GroupedExerciseRevision | PageRevision | SolutionRevision | VideoRevision;
 };
 
 export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -3150,8 +3150,8 @@ export type CreateEntityRevisionNotificationEventResolvers<ContextType = Context
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   actor?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   objectId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  entity?: Resolver<ResolversTypes['AbstractEntity'], ParentType, ContextType>;
-  entityRevision?: Resolver<ResolversTypes['AbstractEntityRevision'], ParentType, ContextType>;
+  entity?: Resolver<ResolversTypes['AbstractRepository'], ParentType, ContextType>;
+  entityRevision?: Resolver<ResolversTypes['AbstractRevision'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

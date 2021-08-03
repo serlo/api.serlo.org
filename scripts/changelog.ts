@@ -1000,8 +1000,15 @@ async function exec(): Promise<void> {
     },
     {
       tagName: 'v0.26.17',
-      date: '2021-07-27',
+      date: '2021-08-03',
       internal: ['Refactor implementation of `events` query'],
+    },
+    {
+      tagName: 'v0.26.18',
+      date: '2021-08-03',
+      fixed: [
+        'CheckoutEntityRevisionEvent supports also events for Page types',
+      ],
     },
   ])
 
