@@ -65,11 +65,15 @@ type NotificationEdge {
 type AbstractNotificationEventConnection {
   edges: [AbstractNotificationEventEdge!]!
   nodes: [AbstractNotificationEvent!]!
-  totalCount: Int!
-  pageInfo: PageInfo!
+  pageInfo: HasNextPageInfo!
 }
 
 type AbstractNotificationEventEdge {
   cursor: String!
   node: AbstractNotificationEvent!
+}
+
+type HasNextPageInfo {
+  hasNextPage: Boolean!
+  endCursor: String
 }
