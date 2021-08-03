@@ -998,6 +998,11 @@ async function exec(): Promise<void> {
       date: '2021-07-27',
       internal: ['Query `events`: Return after one update request'],
     },
+    {
+      tagName: 'v0.26.17',
+      date: '2021-07-27',
+      internal: ['Refactor implementation of `events` query'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
