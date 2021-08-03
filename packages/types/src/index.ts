@@ -788,8 +788,8 @@ export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & 
   date: Scalars['DateTime'];
   actor: User;
   objectId: Scalars['Int'];
-  entity: AbstractEntity;
-  entityRevision: AbstractEntityRevision;
+  entity: AbstractRepository;
+  entityRevision: AbstractRevision;
 };
 
 export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
