@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.26.17](https://github.com/serlo/api.serlo.org/compare/v0.26.16..v0.26.17) - July 27, 2021
+
+### Internal
+
+- Refactor implementation of `events` query
+
 ## [v0.26.16](https://github.com/serlo/api.serlo.org/compare/v0.26.15..v0.26.16) - July 27, 2021
 
 ### Internal
