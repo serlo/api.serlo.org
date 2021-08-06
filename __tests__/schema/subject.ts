@@ -23,12 +23,13 @@ import { gql } from 'apollo-server'
 
 import { taxonomyTermSubject } from '../../__fixtures__'
 import {
+  assertFailingGraphQLQuery,
   assertSuccessfulGraphQLQuery,
   createMessageHandler,
   createTestClient,
   createUuidHandler,
 } from '../__utils__'
-import { encodeId } from '~/internals/graphql'
+import { encodeId, encodeToBase64 } from '~/internals/graphql'
 import { Instance } from '~/types'
 
 describe('SubjectsQuery', () => {
@@ -63,28 +64,57 @@ describe('SubjectsQuery', () => {
     })
   })
 
-  test('endpoint "subject" returns one subject', async () => {
-    global.server.use(createUuidHandler(taxonomyTermSubject))
+  describe('endpoint "subject"', () => {
+    test('returns one subject', async () => {
+      global.server.use(createUuidHandler(taxonomyTermSubject))
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query ($id: String!) {
-          subject {
-            subject(id: $id) {
-              taxonomyTerm {
-                name
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query ($id: String!) {
+            subject {
+              subject(id: $id) {
+                taxonomyTerm {
+                  name
+                }
               }
             }
           }
-        }
-      `,
-      variables: { id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }) },
-      data: {
-        subject: {
-          subject: { taxonomyTerm: { name: taxonomyTermSubject.name } },
+        `,
+        variables: {
+          id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }),
         },
-      },
-      client: createTestClient(),
+        data: {
+          subject: {
+            subject: { taxonomyTerm: { name: taxonomyTermSubject.name } },
+          },
+        },
+        client: createTestClient(),
+      })
+    })
+
+    describe('fails when id is invalid', () => {
+      test.each([
+        '1',
+        encodeToBase64('sXYZ'),
+        encodeId({ prefix: 'd', id: taxonomyTermSubject.id }),
+      ])('id: %s', async (id) => {
+        await assertFailingGraphQLQuery({
+          query: gql`
+            query ($id: String!) {
+              subject {
+                subject(id: $id) {
+                  taxonomyTerm {
+                    name
+                  }
+                }
+              }
+            }
+          `,
+          variables: { id },
+          expectedError: 'BAD_USER_INPUT',
+          client: createTestClient(),
+        })
+      })
     })
   })
 })
