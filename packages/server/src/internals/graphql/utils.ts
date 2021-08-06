@@ -87,10 +87,12 @@ export function decodeId({
   prefix: string
   textId: string
 }) {
-  try {
-    // TODO: Better fail handling
-    return parseInt(decodeFromBase64(textId).substr(prefix.length))
-  } catch (e) {
+  const decodedId = decodeFromBase64(textId)
+  const id = parseInt(decodedId.substr(prefix.length))
+
+  if (!Number.isNaN(id) && decodedId.substr(0, prefix.length) === prefix) {
+    return id
+  } else {
     throw new UserInputError('id `${textId}` is invalid')
   }
 }
