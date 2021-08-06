@@ -470,23 +470,24 @@ export function createSerloModel({
 
   const getSubjects = createQuery(
     {
-      decoder: t.strict({ subjectTaxonomyTermIds: t.array(t.number) }),
-      getCurrentValue(payload: { instance: Instance }) {
+      decoder: t.strict({
+        subjects: t.array(
+          t.strict({ instance: InstanceDecoder, taxonomyTermId: t.number })
+        ),
+      }),
+      getCurrentValue() {
         return handleMessage({
-          message: { type: 'SubjectsQuery', payload },
+          message: { type: 'SubjectsQuery', payload: {} },
           expectedStatusCodes: [200],
         })
       },
       enableSwr: true,
       maxAge: { day: 1 },
-      getKey({ instance }) {
-        return `de.serlo.org/api/subjects/${instance}`
+      getKey() {
+        return 'serlo.org/subjects'
       },
       getPayload(key) {
-        const prefix = 'de.serlo.org/api/subjects/'
-        return key.startsWith(prefix)
-          ? O.some({ instance: key.replace(prefix, '') as unknown as Instance })
-          : O.none
+        return key === 'serlo.org/subjects' ? O.some(undefined) : O.none
       },
     },
     environment

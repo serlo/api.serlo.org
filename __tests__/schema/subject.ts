@@ -29,16 +29,20 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../__utils__'
-import { encodeId, encodeToBase64 } from '~/internals/graphql'
+import { encodeId, encodeToBase64, Model } from '~/internals/graphql'
 import { Instance } from '~/types'
 
 describe('SubjectsQuery', () => {
   test('endpoint "subjects" returns list of all subjects for an instance', async () => {
     global.server.use(
-      createSubjectsHandler({
-        instance: taxonomyTermSubject.instance,
-        subjectTaxonomyTermIds: [taxonomyTermSubject.id],
-      }),
+      createSubjectsHandler([
+        taxonomyTermSubject,
+        {
+          ...taxonomyTermSubject,
+          instance: Instance.En,
+          id: taxonomyTermSubject.id + 1,
+        },
+      ]),
       createUuidHandler(taxonomyTermSubject)
     )
 
@@ -66,7 +70,10 @@ describe('SubjectsQuery', () => {
 
   describe('endpoint "subject"', () => {
     test('returns one subject', async () => {
-      global.server.use(createUuidHandler(taxonomyTermSubject))
+      global.server.use(
+        createSubjectsHandler([taxonomyTermSubject]),
+        createUuidHandler(taxonomyTermSubject)
+      )
 
       await assertSuccessfulGraphQLQuery({
         query: gql`
@@ -88,6 +95,29 @@ describe('SubjectsQuery', () => {
             subject: { taxonomyTerm: { name: taxonomyTermSubject.name } },
           },
         },
+        client: createTestClient(),
+      })
+    })
+
+    test('returns null when id does not resolve to an subject', async () => {
+      global.server.use(createSubjectsHandler([taxonomyTermSubject]))
+
+      await assertSuccessfulGraphQLQuery({
+        query: gql`
+          query ($id: String!) {
+            subject {
+              subject(id: $id) {
+                taxonomyTerm {
+                  name
+                }
+              }
+            }
+          }
+        `,
+        variables: {
+          id: encodeId({ prefix: 's', id: taxonomyTermSubject.id + 1 }),
+        },
+        data: { subject: { subject: null } },
         client: createTestClient(),
       })
     })
@@ -121,7 +151,10 @@ describe('SubjectsQuery', () => {
 
 describe('Subjects', () => {
   test('property "id" returns encoded id of subject', async () => {
-    global.server.use(createUuidHandler(taxonomyTermSubject))
+    global.server.use(
+      createSubjectsHandler([taxonomyTermSubject]),
+      createUuidHandler(taxonomyTermSubject)
+    )
 
     await assertSuccessfulGraphQLQuery({
       query: gql`
@@ -146,15 +179,16 @@ describe('Subjects', () => {
   })
 })
 
-function createSubjectsHandler({
-  instance,
-  subjectTaxonomyTermIds,
-}: {
-  instance: Instance
-  subjectTaxonomyTermIds: number[]
-}) {
+function createSubjectsHandler(subjects: Model<'TaxonomyTerm'>[]) {
   return createMessageHandler({
-    message: { type: 'SubjectsQuery', payload: { instance } },
-    body: { subjectTaxonomyTermIds },
+    message: { type: 'SubjectsQuery', payload: {} },
+    body: {
+      subjects: subjects.map((taxonomyTerm) => {
+        return {
+          taxonomyTermId: taxonomyTerm.id,
+          instance: taxonomyTerm.instance,
+        }
+      }),
+    },
   })
 }

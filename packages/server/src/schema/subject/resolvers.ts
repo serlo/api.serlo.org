@@ -37,15 +37,17 @@ export const resolvers: TypeResolvers<Subject> &
   },
   SubjectsQuery: {
     async subjects(_parent, { instance }, { dataSources }) {
-      const { subjectTaxonomyTermIds } =
-        await dataSources.model.serlo.getSubjects({ instance })
+      const { subjects } = await dataSources.model.serlo.getSubjects()
 
-      return subjectTaxonomyTermIds.map((taxonomyTermId) => {
-        return { taxonomyTermId }
-      })
+      return subjects.filter((subject) => subject.instance === instance)
     },
-    subject(_parent, { id }) {
-      return { taxonomyTermId: decodeId({ textId: id, prefix: 's' }) }
+    async subject(_parent, { id }, { dataSources }) {
+      const taxonomyTermId = decodeId({ textId: id, prefix: 's' })
+      const { subjects } = await dataSources.model.serlo.getSubjects()
+
+      return subjects.some((s) => s.taxonomyTermId === taxonomyTermId)
+        ? { taxonomyTermId }
+        : null
     },
   },
   Subject: {
