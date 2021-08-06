@@ -44,6 +44,9 @@ test('Solution', async () => {
     revisionIds: Matchers.eachLike(solution.revisionIds[0]),
     licenseId: Matchers.integer(solution.licenseId),
     parentId: Matchers.integer(solution.parentId),
+    canonicalSubjectId: solution.canonicalSubjectId
+      ? Matchers.integer(solution.canonicalSubjectId)
+      : null,
   })
   await assertSuccessfulGraphQLQuery({
     query: gql`

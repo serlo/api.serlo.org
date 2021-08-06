@@ -47,6 +47,9 @@ test('Article', async () => {
       article.taxonomyTermIds.length > 0
         ? Matchers.eachLike(Matchers.like(article.taxonomyTermIds[0]))
         : [],
+    canonicalSubjectId: article.canonicalSubjectId
+      ? Matchers.integer(article.canonicalSubjectId)
+      : null,
   })
 
   await assertSuccessfulGraphQLQuery({

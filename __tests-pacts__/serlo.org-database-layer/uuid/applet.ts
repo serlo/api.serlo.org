@@ -47,6 +47,9 @@ test('Applet', async () => {
       applet.taxonomyTermIds.length > 0
         ? Matchers.eachLike(Matchers.like(applet.taxonomyTermIds[0]))
         : [],
+    canonicalSubjectId: applet.canonicalSubjectId
+      ? Matchers.integer(applet.canonicalSubjectId)
+      : null,
   })
   await assertSuccessfulGraphQLQuery({
     query: gql`

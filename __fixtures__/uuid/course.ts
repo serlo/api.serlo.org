@@ -36,6 +36,7 @@ export const course: Model<'Course'> = {
   licenseId: license.id,
   taxonomyTermIds: [5],
   pageIds: [18521],
+  canonicalSubjectId: 5,
 }
 
 export const courseRevision: Model<'CourseRevision'> = {

@@ -22,6 +22,7 @@ export type AbstractEntity = {
   instance: Instance;
   alias?: Maybe<Scalars['String']>;
   license: License;
+  subject?: Maybe<Subject>;
 };
 
 
@@ -262,6 +263,7 @@ export type Applet = AbstractUuid & AbstractRepository & AbstractEntity & Abstra
   currentRevision?: Maybe<AppletRevision>;
   revisions: AppletRevisionConnection;
   taxonomyTerms: TaxonomyTermConnection;
+  subject?: Maybe<Subject>;
 };
 
 
@@ -366,6 +368,7 @@ export type Article = AbstractUuid & AbstractRepository & AbstractEntity & Abstr
   currentRevision?: Maybe<ArticleRevision>;
   revisions: ArticleRevisionConnection;
   taxonomyTerms: TaxonomyTermConnection;
+  subject?: Maybe<Subject>;
 };
 
 
@@ -561,6 +564,7 @@ export type Course = AbstractUuid & AbstractRepository & AbstractEntity & Abstra
   revisions: CourseRevisionConnection;
   taxonomyTerms: TaxonomyTermConnection;
   pages: Array<CoursePage>;
+  subject?: Maybe<Subject>;
 };
 
 
@@ -619,6 +623,7 @@ export type CoursePage = AbstractUuid & AbstractRepository & AbstractEntity & In
   currentRevision?: Maybe<CoursePageRevision>;
   revisions: CoursePageRevisionConnection;
   course: Course;
+  subject?: Maybe<Subject>;
 };
 
 
@@ -854,6 +859,7 @@ export type Event = AbstractUuid & AbstractRepository & AbstractEntity & Abstrac
   currentRevision?: Maybe<EventRevision>;
   revisions: EventRevisionConnection;
   taxonomyTerms: TaxonomyTermConnection;
+  subject?: Maybe<Subject>;
 };
 
 
@@ -958,6 +964,7 @@ export type Exercise = AbstractUuid & AbstractRepository & AbstractEntity & Abst
   revisions: ExerciseRevisionConnection;
   taxonomyTerms: TaxonomyTermConnection;
   solution?: Maybe<Solution>;
+  subject?: Maybe<Subject>;
 };
 
 
@@ -1011,6 +1018,7 @@ export type ExerciseGroup = AbstractUuid & AbstractRepository & AbstractEntity &
   revisions: ExerciseGroupRevisionConnection;
   taxonomyTerms: TaxonomyTermConnection;
   exercises: Array<GroupedExercise>;
+  subject?: Maybe<Subject>;
 };
 
 
@@ -1160,6 +1168,7 @@ export type GroupedExercise = AbstractUuid & AbstractRepository & AbstractEntity
   revisions: GroupedExerciseRevisionConnection;
   solution?: Maybe<Solution>;
   exerciseGroup: ExerciseGroup;
+  subject?: Maybe<Subject>;
 };
 
 
@@ -1695,6 +1704,7 @@ export type Solution = AbstractUuid & AbstractRepository & AbstractEntity & Inst
   currentRevision?: Maybe<SolutionRevision>;
   revisions: SolutionRevisionConnection;
   exercise: AbstractExercise;
+  subject?: Maybe<Subject>;
 };
 
 
@@ -2245,6 +2255,7 @@ export type Video = AbstractUuid & AbstractRepository & AbstractEntity & Abstrac
   currentRevision?: Maybe<VideoRevision>;
   revisions: VideoRevisionConnection;
   taxonomyTerms: TaxonomyTermConnection;
+  subject?: Maybe<Subject>;
 };
 
 

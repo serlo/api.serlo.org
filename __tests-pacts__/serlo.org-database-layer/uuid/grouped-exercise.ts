@@ -49,6 +49,9 @@ test('GroupedExercise', async () => {
       ? Matchers.integer(groupedExercise.solutionId)
       : null,
     parentId: groupedExercise.parentId,
+    canonicalSubjectId: groupedExercise.canonicalSubjectId
+      ? Matchers.integer(groupedExercise.canonicalSubjectId)
+      : null,
   })
   await assertSuccessfulGraphQLQuery({
     query: gql`

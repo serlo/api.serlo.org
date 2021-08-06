@@ -35,6 +35,7 @@ export const video: Model<'Video'> = {
   revisionIds: [16114],
   licenseId: license.id,
   taxonomyTermIds: [5],
+  canonicalSubjectId: 5,
 }
 
 export const videoRevision: Model<'VideoRevision'> = {

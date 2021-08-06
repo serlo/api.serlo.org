@@ -34,6 +34,7 @@ export const applet: Model<'Applet'> = {
   currentRevisionId: 35597,
   revisionIds: [35597],
   licenseId: license.id,
+  canonicalSubjectId: 23593,
   taxonomyTermIds: [5],
 }
 

@@ -36,6 +36,7 @@ export const exercise: Model<'Exercise'> = {
   licenseId: license.id,
   solutionId: 29648,
   taxonomyTermIds: [5],
+  canonicalSubjectId: 5,
 }
 
 export const exerciseRevision: Model<'ExerciseRevision'> = {
