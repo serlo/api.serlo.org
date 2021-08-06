@@ -1782,11 +1782,17 @@ export type Subject = {
 export type SubjectsQuery = {
   __typename?: 'SubjectsQuery';
   subjects: Array<Subject>;
+  subject?: Maybe<Subject>;
 };
 
 
 export type SubjectsQuerySubjectsArgs = {
   instance: Instance;
+};
+
+
+export type SubjectsQuerySubjectArgs = {
+  id: Scalars['String'];
 };
 
 export type SubscriptionConnection = {

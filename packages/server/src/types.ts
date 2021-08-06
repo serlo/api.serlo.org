@@ -1786,11 +1786,17 @@ export type Subject = {
 export type SubjectsQuery = {
   __typename?: 'SubjectsQuery';
   subjects: Array<Subject>;
+  subject?: Maybe<Subject>;
 };
 
 
 export type SubjectsQuerySubjectsArgs = {
   instance: Instance;
+};
+
+
+export type SubjectsQuerySubjectArgs = {
+  id: Scalars['String'];
 };
 
 export type SubscriptionConnection = {
@@ -3731,6 +3737,7 @@ export type SubjectResolvers<ContextType = Context, ParentType extends Resolvers
 
 export type SubjectsQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubjectsQuery'] = ResolversParentTypes['SubjectsQuery']> = {
   subjects?: Resolver<Array<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<SubjectsQuerySubjectsArgs, 'instance'>>;
+  subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<SubjectsQuerySubjectArgs, 'id'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
