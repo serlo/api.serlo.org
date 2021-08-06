@@ -28,37 +28,69 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../__utils__'
+import { encodeId } from '~/internals/graphql'
 import { Instance } from '~/types'
 
-test('endpoint "subjects" returns list of all subjects for an instance', async () => {
-  global.server.use(
-    createSubjectsHandler({
-      instance: taxonomyTermSubject.instance,
-      subjectTaxonomyTermIds: [taxonomyTermSubject.id],
-    }),
-    createUuidHandler(taxonomyTermSubject)
-  )
+describe('SubjectsQuery', () => {
+  test('endpoint "subjects" returns list of all subjects for an instance', async () => {
+    global.server.use(
+      createSubjectsHandler({
+        instance: taxonomyTermSubject.instance,
+        subjectTaxonomyTermIds: [taxonomyTermSubject.id],
+      }),
+      createUuidHandler(taxonomyTermSubject)
+    )
 
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query ($instance: Instance!) {
-        subject {
-          subjects(instance: $instance) {
-            taxonomyTerm {
-              name
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query ($instance: Instance!) {
+          subject {
+            subjects(instance: $instance) {
+              taxonomyTerm {
+                name
+              }
             }
           }
         }
-      }
-    `,
-    variables: { instance: taxonomyTermSubject.instance },
-    data: {
-      subject: {
-        subjects: [{ taxonomyTerm: { name: taxonomyTermSubject.name } }],
+      `,
+      variables: { instance: taxonomyTermSubject.instance },
+      data: {
+        subject: {
+          subjects: [{ taxonomyTerm: { name: taxonomyTermSubject.name } }],
+        },
       },
-    },
-    client: createTestClient(),
+      client: createTestClient(),
+    })
   })
+
+  test('endpoint "subject" returns one subject', async () => {
+    global.server.use(createUuidHandler(taxonomyTermSubject))
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query ($id: String!) {
+          subject {
+            subject(id: $id) {
+              taxonomyTerm {
+                name
+              }
+            }
+          }
+        }
+      `,
+      variables: { id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }) },
+      data: {
+        subject: {
+          subject: { taxonomyTerm: { name: taxonomyTermSubject.name } },
+        },
+      },
+      client: createTestClient(),
+    })
+  })
+})
+
+describe('Subjects', () => {
+  test('property "id" returns encoded id of subject', async () => {})
 })
 
 function createSubjectsHandler({

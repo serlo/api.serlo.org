@@ -19,7 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { createNamespace, Queries, TypeResolvers } from '~/internals/graphql'
+import {
+  createNamespace,
+  decodeId,
+  Queries,
+  TypeResolvers,
+} from '~/internals/graphql'
 import { TaxonomyTermDecoder } from '~/model/decoder'
 import { Subject, SubjectsQuery } from '~/types'
 
@@ -37,6 +42,9 @@ export const resolvers: TypeResolvers<Subject> &
       return subjectTaxonomyTermIds.map((taxonomyTermId) => {
         return { taxonomyTermId }
       })
+    },
+    subject(_parent, { id }) {
+      return { taxonomyTermId: decodeId({ textId: id, prefix: 's' }) }
     },
   },
   Subject: {

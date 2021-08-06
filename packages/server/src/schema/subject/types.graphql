@@ -4,6 +4,7 @@ extend type Query {
 
 type SubjectsQuery {
   subjects(instance: Instance!): [Subject!]!
+  subject(id: String!): Subject
 }
 
 type Subject {

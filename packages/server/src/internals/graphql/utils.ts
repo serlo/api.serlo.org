@@ -20,7 +20,11 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { AuthorizationGuard } from '@serlo/authorization'
-import { AuthenticationError, ForbiddenError } from 'apollo-server'
+import {
+  AuthenticationError,
+  ForbiddenError,
+  UserInputError,
+} from 'apollo-server'
 import * as R from 'ramda'
 
 import { Context } from '~/internals/graphql/context'
@@ -70,4 +74,31 @@ export function createNamespace() {
   return () => {
     return {}
   }
+}
+
+export function encodeId({ prefix, id }: { prefix: string; id: number }) {
+  return encodeToBase64(`${prefix}${id}`)
+}
+
+export function decodeId({
+  prefix,
+  textId,
+}: {
+  prefix: string
+  textId: string
+}) {
+  try {
+    // TODO: Better fail handling
+    return parseInt(decodeFromBase64(textId).substr(prefix.length))
+  } catch (e) {
+    throw new UserInputError('id `${textId}` is invalid')
+  }
+}
+
+export function encodeToBase64(text: string) {
+  return Buffer.from(text).toString('base64')
+}
+
+export function decodeFromBase64(text: string) {
+  return Buffer.from(text, 'base64').toString('utf8')
 }
