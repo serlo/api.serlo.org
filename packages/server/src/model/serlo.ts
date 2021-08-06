@@ -468,6 +468,30 @@ export function createSerloModel({
     environment
   )
 
+  const getSubjects = createQuery(
+    {
+      decoder: t.strict({ subjectTaxonomyTermIds: t.array(t.number) }),
+      getCurrentValue(payload: { instance: Instance }) {
+        return handleMessage({
+          message: { type: 'SubjectsQuery', payload },
+          expectedStatusCodes: [200],
+        })
+      },
+      enableSwr: true,
+      maxAge: { day: 1 },
+      getKey({ instance }) {
+        return `de.serlo.org/api/subjects/${instance}`
+      },
+      getPayload(key) {
+        const prefix = 'de.serlo.org/api/subjects/'
+        return key.startsWith(prefix)
+          ? O.some({ instance: key.replace(prefix, '') as unknown as Instance })
+          : O.none
+      },
+    },
+    environment
+  )
+
   const getNotificationEvent = createQuery(
     {
       decoder: t.union([NotificationEventDecoder, t.null]),
@@ -958,6 +982,7 @@ export function createSerloModel({
     getEvents,
     getEventsAfter,
     getNotifications,
+    getSubjects,
     getSubscriptions,
     setSubscription,
     getThreadIds,

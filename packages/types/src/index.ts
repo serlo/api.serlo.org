@@ -1487,6 +1487,7 @@ export type Query = {
   license?: Maybe<License>;
   notificationEvent?: Maybe<AbstractNotificationEvent>;
   notifications: NotificationConnection;
+  subject: SubjectsQuery;
   subscription: SubscriptionQuery;
   uuid?: Maybe<AbstractUuid>;
 };
@@ -1771,6 +1772,21 @@ export type SolutionRevisionCursor = {
   __typename?: 'SolutionRevisionCursor';
   cursor: Scalars['String'];
   node: SolutionRevision;
+};
+
+export type Subject = {
+  __typename?: 'Subject';
+  taxonomyTerm: TaxonomyTerm;
+};
+
+export type SubjectsQuery = {
+  __typename?: 'SubjectsQuery';
+  subjects: Array<Subject>;
+};
+
+
+export type SubjectsQuerySubjectsArgs = {
+  instance: Instance;
 };
 
 export type SubscriptionConnection = {
