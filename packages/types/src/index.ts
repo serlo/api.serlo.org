@@ -1776,6 +1776,7 @@ export type SolutionRevisionCursor = {
 
 export type Subject = {
   __typename?: 'Subject';
+  id: Scalars['String'];
   taxonomyTerm: TaxonomyTerm;
 };
 
