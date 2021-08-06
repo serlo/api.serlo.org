@@ -92,6 +92,7 @@ export interface Models {
   License: Payload<'serlo', 'getLicense'>
   Page: t.TypeOf<typeof PageDecoder>
   PageRevision: t.TypeOf<typeof PageRevisionDecoder>
+  Subject: { taxonomyTermId: number }
   SubscriptionInfo: t.TypeOf<
     typeof SubscriptionsDecoder
   >['subscriptions'][number]

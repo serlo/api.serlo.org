@@ -1,0 +1,11 @@
+extend type Query {
+  subject: SubjectsQuery!
+}
+
+type SubjectsQuery {
+  subjects(instance: Instance!): [Subject!]!
+}
+
+type Subject {
+  taxonomyTerm: TaxonomyTerm!
+}
