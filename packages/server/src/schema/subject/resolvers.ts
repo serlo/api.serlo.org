@@ -22,6 +22,7 @@
 import {
   createNamespace,
   decodeId,
+  encodeId,
   Queries,
   TypeResolvers,
 } from '~/internals/graphql'
@@ -48,6 +49,9 @@ export const resolvers: TypeResolvers<Subject> &
     },
   },
   Subject: {
+    id(subject) {
+      return encodeId({ prefix: 's', id: subject.taxonomyTermId })
+    },
     taxonomyTerm(subject, _args, { dataSources }) {
       return dataSources.model.serlo.getUuidWithCustomDecoder({
         id: subject.taxonomyTermId,

@@ -1780,6 +1780,7 @@ export type SolutionRevisionCursor = {
 
 export type Subject = {
   __typename?: 'Subject';
+  id: Scalars['String'];
   taxonomyTerm: TaxonomyTerm;
 };
 
@@ -3731,6 +3732,7 @@ export type SolutionRevisionCursorResolvers<ContextType = Context, ParentType ex
 };
 
 export type SubjectResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Subject'] = ResolversParentTypes['Subject']> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   taxonomyTerm?: Resolver<ResolversTypes['TaxonomyTerm'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

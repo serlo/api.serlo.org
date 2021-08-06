@@ -90,7 +90,30 @@ describe('SubjectsQuery', () => {
 })
 
 describe('Subjects', () => {
-  test('property "id" returns encoded id of subject', async () => {})
+  test('property "id" returns encoded id of subject', async () => {
+    global.server.use(createUuidHandler(taxonomyTermSubject))
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query ($id: String!) {
+          subject {
+            subject(id: $id) {
+              id
+            }
+          }
+        }
+      `,
+      variables: { id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }) },
+      data: {
+        subject: {
+          subject: {
+            id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }),
+          },
+        },
+      },
+      client: createTestClient(),
+    })
+  })
 })
 
 function createSubjectsHandler({
