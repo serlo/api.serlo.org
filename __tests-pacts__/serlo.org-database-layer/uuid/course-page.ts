@@ -44,6 +44,9 @@ test('CoursePage', async () => {
     revisionIds: Matchers.eachLike(coursePage.revisionIds[0]),
     licenseId: Matchers.integer(coursePage.licenseId),
     parentId: Matchers.integer(coursePage.parentId),
+    canonicalSubjectId: coursePage.canonicalSubjectId
+      ? Matchers.integer(coursePage.canonicalSubjectId)
+      : null,
   })
   await assertSuccessfulGraphQLQuery({
     query: gql`

@@ -27,17 +27,15 @@ import {
   CoursePageDecoder,
   CourseRevisionDecoder,
 } from '~/model/decoder'
-import {
-  createRepositoryResolvers,
-  createRevisionResolvers,
-} from '~/schema/uuid/abstract-repository/utils'
+import { createEntityResolvers } from '~/schema/uuid/abstract-entity/utils'
+import { createRevisionResolvers } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
 import { Course, CourseRevision } from '~/types'
 
 export const resolvers: TypeResolvers<Course> & TypeResolvers<CourseRevision> =
   {
     Course: {
-      ...createRepositoryResolvers({ revisionDecoder: CourseRevisionDecoder }),
+      ...createEntityResolvers({ revisionDecoder: CourseRevisionDecoder }),
       ...createTaxonomyTermChildResolvers(),
       async pages(course, { trashed, hasCurrentRevision }, { dataSources }) {
         const pages = await Promise.all(

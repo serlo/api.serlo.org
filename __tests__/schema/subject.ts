@@ -21,7 +21,7 @@
  */
 import { gql } from 'apollo-server'
 
-import { taxonomyTermSubject } from '../../__fixtures__'
+import { article, taxonomyTermSubject } from '../../__fixtures__'
 import {
   assertFailingGraphQLQuery,
   assertSuccessfulGraphQLQuery,
@@ -176,6 +176,38 @@ describe('Subjects', () => {
       },
       client: createTestClient(),
     })
+  })
+})
+
+test('AbstractEntity.subject', async () => {
+  global.server.use(
+    createUuidHandler(article),
+    createUuidHandler(taxonomyTermSubject)
+  )
+
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query ($id: Int!) {
+        uuid(id: $id) {
+          ... on AbstractEntity {
+            subject {
+              taxonomyTerm {
+                name
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables: { id: article.id },
+    data: {
+      uuid: {
+        subject: {
+          taxonomyTerm: { name: taxonomyTermSubject.name },
+        },
+      },
+    },
+    client: createTestClient(),
   })
 })
 

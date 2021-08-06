@@ -16,6 +16,7 @@ interface AbstractEntity {
   instance: Instance!
   alias: String
   license: License!
+  subject: Subject
 }
 
 interface AbstractEntityRevision {

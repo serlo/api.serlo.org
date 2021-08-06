@@ -25,17 +25,15 @@ import {
   ExerciseGroupRevisionDecoder,
   GroupedExerciseDecoder,
 } from '~/model/decoder'
-import {
-  createRepositoryResolvers,
-  createRevisionResolvers,
-} from '~/schema/uuid/abstract-repository/utils'
+import { createEntityResolvers } from '~/schema/uuid/abstract-entity/utils'
+import { createRevisionResolvers } from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
 import { ExerciseGroup, ExerciseGroupRevision } from '~/types'
 
 export const resolvers: TypeResolvers<ExerciseGroup> &
   TypeResolvers<ExerciseGroupRevision> = {
   ExerciseGroup: {
-    ...createRepositoryResolvers({
+    ...createEntityResolvers({
       revisionDecoder: ExerciseGroupRevisionDecoder,
     }),
     ...createTaxonomyTermChildResolvers(),

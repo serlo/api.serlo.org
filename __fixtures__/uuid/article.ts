@@ -35,6 +35,7 @@ export const article: Model<'Article'> = {
   licenseId: license.id,
   taxonomyTermIds: [5],
   revisionIds: [30674],
+  canonicalSubjectId: 5,
 }
 
 export const articleRevision: Model<'ArticleRevision'> = {

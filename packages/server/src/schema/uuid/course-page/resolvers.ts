@@ -25,16 +25,14 @@ import {
   CoursePageDecoder,
   CoursePageRevisionDecoder,
 } from '~/model/decoder'
-import {
-  createRepositoryResolvers,
-  createRevisionResolvers,
-} from '~/schema/uuid/abstract-repository/utils'
+import { createEntityResolvers } from '~/schema/uuid/abstract-entity/utils'
+import { createRevisionResolvers } from '~/schema/uuid/abstract-repository/utils'
 import { CoursePage, CoursePageRevision } from '~/types'
 
 export const resolvers: TypeResolvers<CoursePage> &
   TypeResolvers<CoursePageRevision> = {
   CoursePage: {
-    ...createRepositoryResolvers({
+    ...createEntityResolvers({
       revisionDecoder: CoursePageRevisionDecoder,
     }),
     async course(coursePage, _args, { dataSources }) {
