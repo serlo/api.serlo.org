@@ -10,4 +10,10 @@ type SubjectsQuery {
 type Subject {
   id: String!
   taxonomyTerm: TaxonomyTerm!
+  unrevisedEntities(
+    first: Int
+    last: Int
+    after: String
+    before: String
+  ): AbstractEntityConnection!
 }

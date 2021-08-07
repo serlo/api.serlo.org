@@ -35,6 +35,20 @@ export type AbstractEntityEventsArgs = {
   actorId?: Maybe<Scalars['Int']>;
 };
 
+export type AbstractEntityConnection = {
+  __typename?: 'AbstractEntityConnection';
+  edges: Array<AbstractEntityCursor>;
+  nodes: Array<AbstractEntity>;
+  totalCount: Scalars['Int'];
+  pageInfo: PageInfo;
+};
+
+export type AbstractEntityCursor = {
+  __typename?: 'AbstractEntityCursor';
+  cursor: Scalars['String'];
+  node: AbstractEntity;
+};
+
 export type AbstractEntityRevision = {
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -1788,6 +1802,15 @@ export type Subject = {
   __typename?: 'Subject';
   id: Scalars['String'];
   taxonomyTerm: TaxonomyTerm;
+  unrevisedEntities: AbstractEntityConnection;
+};
+
+
+export type SubjectUnrevisedEntitiesArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
 };
 
 export type SubjectsQuery = {

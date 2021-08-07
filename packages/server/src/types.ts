@@ -39,6 +39,20 @@ export type AbstractEntityEventsArgs = {
   actorId?: Maybe<Scalars['Int']>;
 };
 
+export type AbstractEntityConnection = {
+  __typename?: 'AbstractEntityConnection';
+  edges: Array<AbstractEntityCursor>;
+  nodes: Array<Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | GroupedExercise | Solution | Video>;
+  totalCount: Scalars['Int'];
+  pageInfo: PageInfo;
+};
+
+export type AbstractEntityCursor = {
+  __typename?: 'AbstractEntityCursor';
+  cursor: Scalars['String'];
+  node: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | GroupedExercise | Solution | Video;
+};
+
 export type AbstractEntityRevision = {
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -1792,6 +1806,15 @@ export type Subject = {
   __typename?: 'Subject';
   id: Scalars['String'];
   taxonomyTerm: TaxonomyTerm;
+  unrevisedEntities: AbstractEntityConnection;
+};
+
+
+export type SubjectUnrevisedEntitiesArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
 };
 
 export type SubjectsQuery = {
@@ -2453,6 +2476,8 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<ModelOf<Scalars['Int']>>;
   Boolean: ResolverTypeWrapper<ModelOf<Scalars['Boolean']>>;
   String: ResolverTypeWrapper<ModelOf<Scalars['String']>>;
+  AbstractEntityConnection: ResolverTypeWrapper<ModelOf<AbstractEntityConnection>>;
+  AbstractEntityCursor: ResolverTypeWrapper<ModelOf<AbstractEntityCursor>>;
   AbstractEntityRevision: ResolversTypes['AppletRevision'] | ResolversTypes['ArticleRevision'] | ResolversTypes['CoursePageRevision'] | ResolversTypes['CourseRevision'] | ResolversTypes['EventRevision'] | ResolversTypes['ExerciseGroupRevision'] | ResolversTypes['ExerciseRevision'] | ResolversTypes['GroupedExerciseRevision'] | ResolversTypes['SolutionRevision'] | ResolversTypes['VideoRevision'];
   AbstractExercise: ResolversTypes['Exercise'] | ResolversTypes['GroupedExercise'];
   AbstractExerciseRevision: ResolversTypes['ExerciseRevision'] | ResolversTypes['GroupedExerciseRevision'];
@@ -2617,6 +2642,8 @@ export type ResolversParentTypes = {
   Int: ModelOf<Scalars['Int']>;
   Boolean: ModelOf<Scalars['Boolean']>;
   String: ModelOf<Scalars['String']>;
+  AbstractEntityConnection: ModelOf<AbstractEntityConnection>;
+  AbstractEntityCursor: ModelOf<AbstractEntityCursor>;
   AbstractEntityRevision: ResolversParentTypes['AppletRevision'] | ResolversParentTypes['ArticleRevision'] | ResolversParentTypes['CoursePageRevision'] | ResolversParentTypes['CourseRevision'] | ResolversParentTypes['EventRevision'] | ResolversParentTypes['ExerciseGroupRevision'] | ResolversParentTypes['ExerciseRevision'] | ResolversParentTypes['GroupedExerciseRevision'] | ResolversParentTypes['SolutionRevision'] | ResolversParentTypes['VideoRevision'];
   AbstractExercise: ResolversParentTypes['Exercise'] | ResolversParentTypes['GroupedExercise'];
   AbstractExerciseRevision: ResolversParentTypes['ExerciseRevision'] | ResolversParentTypes['GroupedExerciseRevision'];
@@ -2782,6 +2809,20 @@ export type AbstractEntityResolvers<ContextType = Context, ParentType extends Re
   alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
+};
+
+export type AbstractEntityConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractEntityConnection'] = ResolversParentTypes['AbstractEntityConnection']> = {
+  edges?: Resolver<Array<ResolversTypes['AbstractEntityCursor']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<ResolversTypes['AbstractEntity']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AbstractEntityCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractEntityCursor'] = ResolversParentTypes['AbstractEntityCursor']> = {
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<ResolversTypes['AbstractEntity'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type AbstractEntityRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractEntityRevision'] = ResolversParentTypes['AbstractEntityRevision']> = {
@@ -3755,6 +3796,7 @@ export type SolutionRevisionCursorResolvers<ContextType = Context, ParentType ex
 export type SubjectResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Subject'] = ResolversParentTypes['Subject']> = {
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   taxonomyTerm?: Resolver<ResolversTypes['TaxonomyTerm'], ParentType, ContextType>;
+  unrevisedEntities?: Resolver<ResolversTypes['AbstractEntityConnection'], ParentType, ContextType, RequireFields<SubjectUnrevisedEntitiesArgs, never>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4041,6 +4083,8 @@ export type _CacheMutationResolvers<ContextType = Context, ParentType extends Re
 
 export type Resolvers<ContextType = Context> = {
   AbstractEntity?: AbstractEntityResolvers<ContextType>;
+  AbstractEntityConnection?: AbstractEntityConnectionResolvers<ContextType>;
+  AbstractEntityCursor?: AbstractEntityCursorResolvers<ContextType>;
   AbstractEntityRevision?: AbstractEntityRevisionResolvers<ContextType>;
   AbstractExercise?: AbstractExerciseResolvers<ContextType>;
   AbstractExerciseRevision?: AbstractExerciseRevisionResolvers<ContextType>;

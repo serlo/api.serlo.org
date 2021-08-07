@@ -28,6 +28,7 @@ import {
   createMessageHandler,
   createTestClient,
   createUuidHandler,
+  getTypenameAndId,
 } from '../__utils__'
 import { encodeId, encodeToBase64, Model } from '~/internals/graphql'
 import { Instance } from '~/types'
@@ -177,6 +178,40 @@ describe('Subjects', () => {
       client: createTestClient(),
     })
   })
+
+  test('property "unrevisedEntities" returns list of unrevisedEntities', async () => {
+    global.server.use(
+      createUnrevisedEntitiesHandler([article]),
+      createSubjectsHandler([taxonomyTermSubject]),
+      createUuidHandler(article)
+    )
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query ($id: String!) {
+          subject {
+            subject(id: $id) {
+              unrevisedEntities {
+                nodes {
+                  __typename
+                  id
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: { id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }) },
+      data: {
+        subject: {
+          subject: {
+            unrevisedEntities: { nodes: [getTypenameAndId(article)] },
+          },
+        },
+      },
+      client: createTestClient(),
+    })
+  })
 })
 
 test('AbstractEntity.subject', async () => {
@@ -222,5 +257,12 @@ function createSubjectsHandler(subjects: Model<'TaxonomyTerm'>[]) {
         }
       }),
     },
+  })
+}
+
+function createUnrevisedEntitiesHandler(entities: Model<'AbstractEntity'>[]) {
+  return createMessageHandler({
+    message: { type: 'UnrevisedEntitiesQuery', payload: {} },
+    body: { unrevisedEntityIds: entities.map((entity) => entity.id) },
   })
 }
