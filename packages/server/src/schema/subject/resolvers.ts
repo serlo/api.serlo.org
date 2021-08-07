@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { resolveConnection } from '../connection/utils'
 import {
   createNamespace,
   decodeId,
@@ -26,7 +27,7 @@ import {
   Queries,
   TypeResolvers,
 } from '~/internals/graphql'
-import { TaxonomyTermDecoder } from '~/model/decoder'
+import { EntityDecoder, TaxonomyTermDecoder } from '~/model/decoder'
 import { Subject, SubjectsQuery } from '~/types'
 
 export const resolvers: TypeResolvers<Subject> &
@@ -58,6 +59,26 @@ export const resolvers: TypeResolvers<Subject> &
       return dataSources.model.serlo.getUuidWithCustomDecoder({
         id: subject.taxonomyTermId,
         decoder: TaxonomyTermDecoder,
+      })
+    },
+    async unrevisedEntities(subject, payload, { dataSources }) {
+      const entitiesPerSubject =
+        await dataSources.model.serlo.getUnrevisedEntitiesPerSubject()
+      const entityIds =
+        entitiesPerSubject[subject.taxonomyTermId.toString()] ?? []
+      const entities = await Promise.all(
+        entityIds.map((id) =>
+          dataSources.model.serlo.getUuidWithCustomDecoder({
+            id,
+            decoder: EntityDecoder,
+          })
+        )
+      )
+
+      return resolveConnection({
+        nodes: entities,
+        payload,
+        createCursor: (node) => node.id.toString(),
       })
     },
   },
