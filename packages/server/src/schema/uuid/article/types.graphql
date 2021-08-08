@@ -35,6 +35,7 @@ type Article implements AbstractUuid & AbstractRepository & AbstractEntity & Abs
     first: Int
     last: Int
   ): TaxonomyTermConnection!
+  subject: Subject
 }
 
 type ArticleRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {

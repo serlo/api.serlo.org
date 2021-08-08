@@ -1,0 +1,19 @@
+extend type Query {
+  subject: SubjectsQuery!
+}
+
+type SubjectsQuery {
+  subjects(instance: Instance!): [Subject!]!
+  subject(id: String!): Subject
+}
+
+type Subject {
+  id: String!
+  taxonomyTerm: TaxonomyTerm!
+  unrevisedEntities(
+    first: Int
+    last: Int
+    after: String
+    before: String
+  ): AbstractEntityConnection!
+}

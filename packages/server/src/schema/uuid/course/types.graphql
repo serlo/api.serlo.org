@@ -36,6 +36,7 @@ type Course implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
     last: Int
   ): TaxonomyTermConnection!
   pages(trashed: Boolean, hasCurrentRevision: Boolean): [CoursePage!]!
+  subject: Subject
 }
 
 type CourseRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {

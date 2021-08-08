@@ -50,6 +50,9 @@ test('Exercise', async () => {
       exercise.taxonomyTermIds.length > 0
         ? Matchers.eachLike(Matchers.like(exercise.taxonomyTermIds[0]))
         : [],
+    canonicalSubjectId: exercise.canonicalSubjectId
+      ? Matchers.integer(exercise.canonicalSubjectId)
+      : null,
   })
   await assertSuccessfulGraphQLQuery({
     query: gql`

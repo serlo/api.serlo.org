@@ -47,6 +47,9 @@ test('Event', async () => {
       event.taxonomyTermIds.length > 0
         ? Matchers.eachLike(Matchers.like(event.taxonomyTermIds[0]))
         : [],
+    canonicalSubjectId: event.canonicalSubjectId
+      ? Matchers.integer(event.canonicalSubjectId)
+      : null,
   })
   await assertSuccessfulGraphQLQuery({
     query: gql`

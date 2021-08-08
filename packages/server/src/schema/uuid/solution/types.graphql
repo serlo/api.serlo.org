@@ -30,6 +30,7 @@ type Solution implements AbstractUuid & AbstractRepository & AbstractEntity & In
     unrevised: Boolean
   ): SolutionRevisionConnection!
   exercise: AbstractExercise!
+  subject: Subject
 }
 
 type SolutionRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {

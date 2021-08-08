@@ -16,6 +16,7 @@ interface AbstractEntity {
   instance: Instance!
   alias: String
   license: License!
+  subject: Subject
 }
 
 interface AbstractEntityRevision {
@@ -37,6 +38,18 @@ interface AbstractEntityRevision {
   content: String!
 
   changes: String!
+}
+
+type AbstractEntityConnection {
+  edges: [AbstractEntityCursor!]!
+  nodes: [AbstractEntity!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type AbstractEntityCursor {
+  cursor: String!
+  node: AbstractEntity!
 }
 
 extend type Mutation {

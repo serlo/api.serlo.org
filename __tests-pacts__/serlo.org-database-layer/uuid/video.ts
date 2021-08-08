@@ -47,6 +47,9 @@ test('Video', async () => {
       video.taxonomyTermIds.length > 0
         ? Matchers.eachLike(Matchers.like(video.taxonomyTermIds[0]))
         : [],
+    canonicalSubjectId: video.canonicalSubjectId
+      ? Matchers.integer(video.canonicalSubjectId)
+      : null,
   })
   await assertSuccessfulGraphQLQuery({
     query: gql`

@@ -43,6 +43,7 @@ export const solution: Model<'Solution'> = {
   revisionIds: [29652],
   licenseId: license.id,
   parentId: exercise.id,
+  canonicalSubjectId: 5,
 }
 
 export const solutionRevision: Model<'SolutionRevision'> = {
