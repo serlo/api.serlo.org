@@ -44,6 +44,7 @@ export const groupedExercise: Model<'GroupedExercise'> = {
   licenseId: license.id,
   solutionId: 29648,
   parentId: exerciseGroup.id,
+  canonicalSubjectId: 5,
 }
 
 export const groupedExerciseRevision: Model<'GroupedExerciseRevision'> = {

@@ -31,6 +31,7 @@ type GroupedExercise implements AbstractUuid & AbstractRepository & AbstractEnti
   ): GroupedExerciseRevisionConnection!
   solution: Solution
   exerciseGroup: ExerciseGroup!
+  subject: Subject
 }
 
 type GroupedExerciseRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & AbstractExerciseRevision & ThreadAware {

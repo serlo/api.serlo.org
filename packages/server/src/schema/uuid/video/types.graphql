@@ -35,6 +35,7 @@ type Video implements AbstractUuid & AbstractRepository & AbstractEntity & Abstr
     first: Int
     last: Int
   ): TaxonomyTermConnection!
+  subject: Subject
 }
 
 type VideoRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {

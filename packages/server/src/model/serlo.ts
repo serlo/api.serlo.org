@@ -468,6 +468,73 @@ export function createSerloModel({
     environment
   )
 
+  const getSubjects = createQuery(
+    {
+      decoder: t.strict({
+        subjects: t.array(
+          t.strict({ instance: InstanceDecoder, taxonomyTermId: t.number })
+        ),
+      }),
+      getCurrentValue() {
+        return handleMessage({
+          message: { type: 'SubjectsQuery', payload: {} },
+          expectedStatusCodes: [200],
+        })
+      },
+      enableSwr: true,
+      maxAge: { day: 1 },
+      getKey() {
+        return 'serlo.org/subjects'
+      },
+      getPayload(key) {
+        return key === 'serlo.org/subjects' ? O.some(undefined) : O.none
+      },
+    },
+    environment
+  )
+
+  const getUnrevisedEntities = createRequest({
+    decoder: t.strict({ unrevisedEntityIds: t.array(t.number) }),
+    getCurrentValue(_payload: undefined) {
+      return handleMessage({
+        message: { type: 'UnrevisedEntitiesQuery', payload: {} },
+        expectedStatusCodes: [200],
+      })
+    },
+  })
+
+  const getUnrevisedEntitiesPerSubject = createQuery(
+    {
+      decoder: t.record(t.string, t.union([t.array(t.number), t.null])),
+      async getCurrentValue() {
+        const { unrevisedEntityIds } = await getUnrevisedEntities(undefined)
+        const result = {} as Record<string, number[] | null>
+
+        for (const entityId of unrevisedEntityIds) {
+          const entity = await getUuidWithCustomDecoder({
+            id: entityId,
+            decoder: EntityDecoder,
+          })
+          const key = entity.canonicalSubjectId?.toString() ?? '__no_subject'
+
+          result[key] ??= []
+          result[key]?.push(entity.id)
+        }
+
+        return result
+      },
+      enableSwr: true,
+      maxAge: { minutes: 2 },
+      getKey() {
+        return 'serlo.org/unrevised'
+      },
+      getPayload(key) {
+        return key === 'serlo.org/unrevised' ? O.some(undefined) : O.none
+      },
+    },
+    environment
+  )
+
   const getNotificationEvent = createQuery(
     {
       decoder: t.union([NotificationEventDecoder, t.null]),
@@ -958,9 +1025,11 @@ export function createSerloModel({
     getEvents,
     getEventsAfter,
     getNotifications,
+    getSubjects,
     getSubscriptions,
     setSubscription,
     getThreadIds,
+    getUnrevisedEntitiesPerSubject,
     getUuid,
     getUuidWithCustomDecoder,
     rejectEntityRevision,

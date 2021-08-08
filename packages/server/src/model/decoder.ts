@@ -119,6 +119,7 @@ export const AbstractEntityDecoder = t.intersection([
     licenseId: t.number,
     currentRevisionId: t.union([Uuid, t.null]),
     revisionIds: t.array(Uuid),
+    canonicalSubjectId: t.union([Uuid, t.null]),
   }),
 ])
 

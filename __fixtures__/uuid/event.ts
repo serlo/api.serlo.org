@@ -35,6 +35,7 @@ export const event: Model<'Event'> = {
   revisionIds: [35555],
   licenseId: license.id,
   taxonomyTermIds: [5],
+  canonicalSubjectId: 5,
 }
 
 export const eventRevision: Model<'EventRevision'> = {

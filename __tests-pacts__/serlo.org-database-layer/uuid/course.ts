@@ -51,6 +51,9 @@ test('Course', async () => {
       course.pageIds.length > 0
         ? Matchers.eachLike(Matchers.like(course.pageIds[0]))
         : [],
+    canonicalSubjectId: course.canonicalSubjectId
+      ? Matchers.integer(course.canonicalSubjectId)
+      : null,
   })
   await assertSuccessfulGraphQLQuery({
     query: gql`
