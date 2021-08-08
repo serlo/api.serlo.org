@@ -1010,6 +1010,11 @@ async function exec(): Promise<void> {
         'CheckoutEntityRevisionEvent supports also events for Page types',
       ],
     },
+    {
+      tagName: 'v0.26.19',
+      date: '2021-08-08',
+      added: ['endpoints for subjects and unrevised entities'],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
