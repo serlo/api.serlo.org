@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.26.19](https://github.com/serlo/api.serlo.org/compare/v0.26.18..v0.26.19) - August 8, 2021
+
+### Added
+
+- endpoints for subjects and unrevised entities
+
 ## [v0.26.18](https://github.com/serlo/api.serlo.org/compare/v0.26.17..v0.26.18) - August 3, 2021
 
 ### Fixed
