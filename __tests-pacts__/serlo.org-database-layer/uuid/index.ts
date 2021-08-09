@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 /* eslint-disable import/no-unassigned-import */
+import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
 import { article, user } from '../../../__fixtures__'
@@ -76,4 +77,19 @@ test('UuidSetStateMutation', async () => {
     variables: { input: { id: article.id, trashed: true } },
     data: { uuid: { setState: { success: true } } },
   })
+})
+
+test('UnrevisedEntitiesQuery', async () => {
+  await addMessageInteraction({
+    given: 'entity with id 1855 has unrevised revisions',
+    message: { type: 'UnrevisedEntitiesQuery', payload: {} },
+    responseBody: {
+      unrevisedEntityIds: Matchers.eachLike(1855),
+    },
+  })
+
+  const { unrevisedEntityIds } = await global.serloModel.getUnrevisedEntities(
+    undefined
+  )
+  expect(unrevisedEntityIds).toEqual([1855])
 })
