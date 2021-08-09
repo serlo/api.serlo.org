@@ -88,8 +88,6 @@ test('UnrevisedEntitiesQuery', async () => {
     },
   })
 
-  const { unrevisedEntityIds } = await global.serloModel.getUnrevisedEntities(
-    undefined
-  )
+  const { unrevisedEntityIds } = await global.serloModel.getUnrevisedEntities()
   expect(unrevisedEntityIds).toEqual([1855])
 })
