@@ -1,8 +1,8 @@
 extend type Query {
-  subject: SubjectsQuery!
+  subject: SubjectQuery!
 }
 
-type SubjectsQuery {
+type SubjectQuery {
   subjects(instance: Instance!): [Subject!]!
   subject(id: String!): Subject
 }

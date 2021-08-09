@@ -34,7 +34,7 @@ import {
 import {
   Context,
   Model,
-  Queries,
+  LegacyQueries,
   Mutations,
   TypeResolvers,
   createNamespace,
@@ -51,7 +51,7 @@ import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { User } from '~/types'
 
-export const resolvers: Queries<
+export const resolvers: LegacyQueries<
   'activeAuthors' | 'activeReviewers' | 'activeDonors'
 > &
   TypeResolvers<User> &

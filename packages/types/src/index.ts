@@ -1510,7 +1510,7 @@ export type Query = {
   license?: Maybe<License>;
   notificationEvent?: Maybe<AbstractNotificationEvent>;
   notifications: NotificationConnection;
-  subject: SubjectsQuery;
+  subject: SubjectQuery;
   subscription: SubscriptionQuery;
   uuid?: Maybe<AbstractUuid>;
 };
@@ -1813,19 +1813,19 @@ export type SubjectUnrevisedEntitiesArgs = {
   before?: Maybe<Scalars['String']>;
 };
 
-export type SubjectsQuery = {
-  __typename?: 'SubjectsQuery';
+export type SubjectQuery = {
+  __typename?: 'SubjectQuery';
   subjects: Array<Subject>;
   subject?: Maybe<Subject>;
 };
 
 
-export type SubjectsQuerySubjectsArgs = {
+export type SubjectQuerySubjectsArgs = {
   instance: Instance;
 };
 
 
-export type SubjectsQuerySubjectArgs = {
+export type SubjectQuerySubjectArgs = {
   id: Scalars['String'];
 };
 

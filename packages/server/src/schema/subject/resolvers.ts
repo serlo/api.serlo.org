@@ -28,15 +28,13 @@ import {
   TypeResolvers,
 } from '~/internals/graphql'
 import { EntityDecoder, TaxonomyTermDecoder } from '~/model/decoder'
-import { Subject, SubjectsQuery } from '~/types'
+import { Subject } from '~/types'
 
-export const resolvers: TypeResolvers<Subject> &
-  Queries<'subject'> &
-  TypeResolvers<SubjectsQuery> = {
+export const resolvers: TypeResolvers<Subject> & Queries<'subject'> = {
   Query: {
     subject: createNamespace(),
   },
-  SubjectsQuery: {
+  SubjectQuery: {
     async subjects(_parent, { instance }, { dataSources }) {
       const { subjects } = await dataSources.model.serlo.getSubjects()
 
