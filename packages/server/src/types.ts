@@ -1514,7 +1514,7 @@ export type Query = {
   license?: Maybe<License>;
   notificationEvent?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
   notifications: NotificationConnection;
-  subject: SubjectsQuery;
+  subject: SubjectQuery;
   subscription: SubscriptionQuery;
   uuid?: Maybe<Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision>;
 };
@@ -1817,19 +1817,19 @@ export type SubjectUnrevisedEntitiesArgs = {
   before?: Maybe<Scalars['String']>;
 };
 
-export type SubjectsQuery = {
-  __typename?: 'SubjectsQuery';
+export type SubjectQuery = {
+  __typename?: 'SubjectQuery';
   subjects: Array<Subject>;
   subject?: Maybe<Subject>;
 };
 
 
-export type SubjectsQuerySubjectsArgs = {
+export type SubjectQuerySubjectsArgs = {
   instance: Instance;
 };
 
 
-export type SubjectsQuerySubjectArgs = {
+export type SubjectQuerySubjectArgs = {
   id: Scalars['String'];
 };
 
@@ -2593,7 +2593,7 @@ export type ResolversTypes = {
   SolutionRevisionConnection: ResolverTypeWrapper<ModelOf<SolutionRevisionConnection>>;
   SolutionRevisionCursor: ResolverTypeWrapper<ModelOf<SolutionRevisionCursor>>;
   Subject: ResolverTypeWrapper<ModelOf<Subject>>;
-  SubjectsQuery: ResolverTypeWrapper<ModelOf<SubjectsQuery>>;
+  SubjectQuery: ResolverTypeWrapper<ModelOf<SubjectQuery>>;
   SubscriptionConnection: ResolverTypeWrapper<ModelOf<SubscriptionConnection>>;
   SubscriptionCursor: ResolverTypeWrapper<ModelOf<SubscriptionCursor>>;
   SubscriptionInfo: ResolverTypeWrapper<ModelOf<SubscriptionInfo>>;
@@ -2757,7 +2757,7 @@ export type ResolversParentTypes = {
   SolutionRevisionConnection: ModelOf<SolutionRevisionConnection>;
   SolutionRevisionCursor: ModelOf<SolutionRevisionCursor>;
   Subject: ModelOf<Subject>;
-  SubjectsQuery: ModelOf<SubjectsQuery>;
+  SubjectQuery: ModelOf<SubjectQuery>;
   SubscriptionConnection: ModelOf<SubscriptionConnection>;
   SubscriptionCursor: ModelOf<SubscriptionCursor>;
   SubscriptionInfo: ModelOf<SubscriptionInfo>;
@@ -3635,7 +3635,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   license?: Resolver<Maybe<ResolversTypes['License']>, ParentType, ContextType, RequireFields<QueryLicenseArgs, 'id'>>;
   notificationEvent?: Resolver<Maybe<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType, RequireFields<QueryNotificationEventArgs, 'id'>>;
   notifications?: Resolver<ResolversTypes['NotificationConnection'], ParentType, ContextType, RequireFields<QueryNotificationsArgs, never>>;
-  subject?: Resolver<ResolversTypes['SubjectsQuery'], ParentType, ContextType>;
+  subject?: Resolver<ResolversTypes['SubjectQuery'], ParentType, ContextType>;
   subscription?: Resolver<ResolversTypes['SubscriptionQuery'], ParentType, ContextType>;
   uuid?: Resolver<Maybe<ResolversTypes['AbstractUuid']>, ParentType, ContextType, RequireFields<QueryUuidArgs, never>>;
 };
@@ -3805,9 +3805,9 @@ export type SubjectResolvers<ContextType = Context, ParentType extends Resolvers
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type SubjectsQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubjectsQuery'] = ResolversParentTypes['SubjectsQuery']> = {
-  subjects?: Resolver<Array<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<SubjectsQuerySubjectsArgs, 'instance'>>;
-  subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<SubjectsQuerySubjectArgs, 'id'>>;
+export type SubjectQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubjectQuery'] = ResolversParentTypes['SubjectQuery']> = {
+  subjects?: Resolver<Array<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<SubjectQuerySubjectsArgs, 'instance'>>;
+  subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<SubjectQuerySubjectArgs, 'id'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4191,7 +4191,7 @@ export type Resolvers<ContextType = Context> = {
   SolutionRevisionConnection?: SolutionRevisionConnectionResolvers<ContextType>;
   SolutionRevisionCursor?: SolutionRevisionCursorResolvers<ContextType>;
   Subject?: SubjectResolvers<ContextType>;
-  SubjectsQuery?: SubjectsQueryResolvers<ContextType>;
+  SubjectQuery?: SubjectQueryResolvers<ContextType>;
   SubscriptionConnection?: SubscriptionConnectionResolvers<ContextType>;
   SubscriptionCursor?: SubscriptionCursorResolvers<ContextType>;
   SubscriptionInfo?: SubscriptionInfoResolvers<ContextType>;
