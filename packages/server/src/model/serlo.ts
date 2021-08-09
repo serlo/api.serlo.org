@@ -1029,6 +1029,7 @@ export function createSerloModel({
     getSubscriptions,
     setSubscription,
     getThreadIds,
+    getUnrevisedEntities,
     getUnrevisedEntitiesPerSubject,
     getUuid,
     getUuidWithCustomDecoder,
