@@ -247,6 +247,28 @@ describe('User', () => {
       client,
     })
   })
+
+  test('property "isNewAuthor"', async () => {
+    global.server.use(
+      createActivityByTypeHandler({ userId: user.id, activityByType })
+    )
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query ($userId: Int) {
+          uuid(id: $userId) {
+            ... on User {
+              isNewAuthor
+            }
+          }
+        }
+      `,
+      data: { uuid: { isNewAuthor: false } },
+      variables: { userId: user.id },
+      client,
+    })
+  })
+
   test('property "activityByType"', async () => {
     global.server.use(
       createActivityByTypeHandler({ userId: user.id, activityByType })

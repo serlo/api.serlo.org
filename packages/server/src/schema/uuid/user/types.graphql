@@ -43,6 +43,7 @@ type User implements AbstractUuid & ThreadAware {
   activeAuthor: Boolean!
   activeDonor: Boolean!
   activeReviewer: Boolean!
+  isNewAuthor: Boolean!
 }
 
 extend type Query {
