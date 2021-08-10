@@ -128,6 +128,13 @@ export const resolvers: Queries<
         user.id
       )
     },
+    async isNewAuthor(user, _args, { dataSources }) {
+      const { edits } = await dataSources.model.serlo.getActivityByType({
+        userId: user.id,
+      })
+
+      return edits < 5
+    },
     imageUrl(user) {
       return `https://community.serlo.org/avatar/${user.username}`
     },

@@ -2130,6 +2130,7 @@ export type User = AbstractUuid & ThreadAware & {
   activeAuthor: Scalars['Boolean'];
   activeDonor: Scalars['Boolean'];
   activeReviewer: Scalars['Boolean'];
+  isNewAuthor: Scalars['Boolean'];
 };
 
 
@@ -3969,6 +3970,7 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
   activeAuthor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   activeDonor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   activeReviewer?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  isNewAuthor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

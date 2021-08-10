@@ -2126,6 +2126,7 @@ export type User = AbstractUuid & ThreadAware & {
   activeAuthor: Scalars['Boolean'];
   activeDonor: Scalars['Boolean'];
   activeReviewer: Scalars['Boolean'];
+  isNewAuthor: Scalars['Boolean'];
 };
 
 
