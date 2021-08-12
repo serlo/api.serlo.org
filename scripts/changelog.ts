@@ -1015,6 +1015,16 @@ async function exec(): Promise<void> {
       date: '2021-08-08',
       added: ['endpoints for subjects and unrevised entities'],
     },
+    {
+      tagName: 'v0.26.20',
+      date: '2021-08-12',
+      added: [
+        'property `User.isNewAuthor`',
+        'rename `User.activeAuthor` to `User.isActiveAuthor`',
+        'rename `User.activeDonor` to `User.isActiveDonor`',
+        'rename `User.activeReviewer` to `User.isActiveReviewer`',
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
