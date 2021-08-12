@@ -2127,9 +2127,15 @@ export type User = AbstractUuid & ThreadAware & {
   roles: ScopedRoleConnection;
   description?: Maybe<Scalars['String']>;
   motivation?: Maybe<Scalars['String']>;
+  /** @deprecated Renamed to `isActiveAuthor` */
   activeAuthor: Scalars['Boolean'];
+  /** @deprecated Renamed to `isActiveDonor` */
   activeDonor: Scalars['Boolean'];
+  /** @deprecated Renamed to `isActiveReviewer` */
   activeReviewer: Scalars['Boolean'];
+  isActiveAuthor: Scalars['Boolean'];
+  isActiveDonor: Scalars['Boolean'];
+  isActiveReviewer: Scalars['Boolean'];
   isNewAuthor: Scalars['Boolean'];
 };
 
@@ -3970,6 +3976,9 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
   activeAuthor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   activeDonor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   activeReviewer?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  isActiveAuthor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  isActiveDonor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  isActiveReviewer?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isNewAuthor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

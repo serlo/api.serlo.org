@@ -113,17 +113,53 @@ export const resolvers: Queries<
         ? `https://community.serlo.org/direct/${user.username}`
         : null
     },
-    async activeAuthor(user, _args, { dataSources }) {
+    /**
+     * TODO: Remove when not used any more in the frontend
+     *
+     * @deprecated
+     */
+    activeAuthor(user, _args, context, info) {
+      if (typeof resolvers.User.isActiveAuthor === 'function') {
+        return resolvers.User.isActiveAuthor(user, _args, context, info)
+      } else {
+        throw new Error('Illegal State')
+      }
+    },
+    /**
+     * TODO: Remove when not used any more in the frontend
+     *
+     * @deprecated
+     */
+    activeDonor(user, _args, context, info) {
+      if (typeof resolvers.User.isActiveDonor === 'function') {
+        return resolvers.User.isActiveDonor(user, _args, context, info)
+      } else {
+        throw new Error('Illegal State')
+      }
+    },
+    /**
+     * TODO: Remove when not used any more in the frontend
+     *
+     * @deprecated
+     */
+    activeReviewer(user, _args, context, info) {
+      if (typeof resolvers.User.isActiveReviewer === 'function') {
+        return resolvers.User.isActiveReviewer(user, _args, context, info)
+      } else {
+        throw new Error('Illegal State')
+      }
+    },
+    async isActiveAuthor(user, _args, { dataSources }) {
       return (await dataSources.model.serlo.getActiveAuthorIds()).includes(
         user.id
       )
     },
-    async activeDonor(user, _args, context) {
+    async isActiveDonor(user, _args, context) {
       const ids = await activeDonorIDs(context)
 
       return ids.includes(user.id)
     },
-    async activeReviewer(user, _args, { dataSources }) {
+    async isActiveReviewer(user, _args, { dataSources }) {
       return (await dataSources.model.serlo.getActiveReviewerIds()).includes(
         user.id
       )

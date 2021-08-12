@@ -40,9 +40,12 @@ type User implements AbstractUuid & ThreadAware {
   ): ScopedRoleConnection!
   description: String
   motivation: String
-  activeAuthor: Boolean!
-  activeDonor: Boolean!
-  activeReviewer: Boolean!
+  activeAuthor: Boolean! @deprecated(reason: "Renamed to `isActiveAuthor`")
+  activeDonor: Boolean! @deprecated(reason: "Renamed to `isActiveDonor`")
+  activeReviewer: Boolean! @deprecated(reason: "Renamed to `isActiveReviewer`")
+  isActiveAuthor: Boolean!
+  isActiveDonor: Boolean!
+  isActiveReviewer: Boolean!
   isNewAuthor: Boolean!
 }
 
