@@ -1017,9 +1017,13 @@ async function exec(): Promise<void> {
     },
     {
       tagName: 'v0.26.20',
-      date: '2021-08-12',
+      date: '2021-08-10',
+      added: ['property `User.isNewAuthor`'],
+    },
+    {
+      tagName: 'v0.26.21',
+      date: '2021-08-08',
       added: [
-        'property `User.isNewAuthor`',
         'rename `User.activeAuthor` to `User.isActiveAuthor`',
         'rename `User.activeDonor` to `User.isActiveDonor`',
         'rename `User.activeReviewer` to `User.isActiveReviewer`',
