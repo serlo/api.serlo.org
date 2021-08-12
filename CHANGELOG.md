@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.26.20](https://github.com/serlo/api.serlo.org/compare/v0.26.19..v0.26.20) - August 12, 2021
+
+### Added
+
+- property `User.isNewAuthor`
+
+- rename `User.activeAuthor` to `User.isActiveAuthor`
+
+- rename `User.activeDonor` to `User.isActiveDonor`
+
+- rename `User.activeReviewer` to `User.isActiveReviewer`
+
 ## [v0.26.19](https://github.com/serlo/api.serlo.org/compare/v0.26.18..v0.26.19) - August 8, 2021
 
 ### Added
