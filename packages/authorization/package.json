@@ -1,6 +1,6 @@
 {
   "name": "@serlo/authorization",
-  "version": "0.26.19",
+  "version": "0.26.21",
   "repository": "serlo/api.serlo.org",
   "license": "Apache-2.0",
   "author": "Serlo Education e.V.",
@@ -11,7 +11,7 @@
     "build": "tsdx build --tsconfig tsconfig.prod.json"
   },
   "dependencies": {
-    "@serlo/api": "^0.26.19"
+    "@serlo/api": "^0.26.21"
   },
   "publishConfig": {
     "access": "public"

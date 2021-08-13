@@ -44,9 +44,9 @@ export interface RequestSpec<Payload, Result> {
 /**
  * Type of a request operation in a data source.
  */
-export type Request<Payload, Result> = ((
-  payload: Payload
-) => Promise<Result>) & {
+export type Request<Payload, Result> = (Payload extends undefined
+  ? () => Promise<Result>
+  : (payload: Payload) => Promise<Result>) & {
   _querySpec: RequestSpec<Payload, Result>
 }
 
@@ -74,5 +74,5 @@ export function createRequest<P, R>(spec: RequestSpec<P, R>): Request<P, R> {
 
   query._querySpec = spec
 
-  return query
+  return query as unknown as Request<P, R>
 }
