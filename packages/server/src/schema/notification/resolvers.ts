@@ -29,7 +29,7 @@ import {
   createNamespace,
   InterfaceResolvers,
   Mutations,
-  Queries,
+  LegacyQueries,
   TypeResolvers,
 } from '~/internals/graphql'
 import { fetchScopeOfNotificationEvent } from '~/schema/authorization/utils'
@@ -38,7 +38,7 @@ import { Notification, QueryEventsArgs } from '~/types'
 
 export const resolvers: TypeResolvers<Notification> &
   InterfaceResolvers<'AbstractNotificationEvent'> &
-  Queries<'events' | 'notifications' | 'notificationEvent'> &
+  LegacyQueries<'events' | 'notifications' | 'notificationEvent'> &
   Mutations<'notification'> = {
   AbstractNotificationEvent: {
     __resolveType(notificationEvent) {

@@ -30,7 +30,7 @@ import {
   createNamespace,
   InterfaceResolvers,
   Mutations,
-  Queries,
+  LegacyQueries,
   Context,
   Model,
 } from '~/internals/graphql'
@@ -47,7 +47,7 @@ import { isDefined } from '~/utils'
 
 export const resolvers: InterfaceResolvers<'AbstractUuid'> &
   Mutations<'uuid'> &
-  Queries<'uuid'> = {
+  LegacyQueries<'uuid'> = {
   AbstractUuid: {
     __resolveType(uuid) {
       return uuid.__typename

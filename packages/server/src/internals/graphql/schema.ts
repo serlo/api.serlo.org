@@ -101,6 +101,30 @@ export type Repository<R extends Model<'AbstractRevision'>['__typename']> =
   Model<R extends `${infer U}Revision` ? U : never>
 
 /**
+ * Resolvers type where all queries of the namespace `Namespaces` are
+ * required.
+ *
+ * @example
+ * ```ts
+ *   const resolvers : Queries<"subject"> = {
+ *     Subject: {
+ *       subject: () => { return {} }
+ *     },
+ *     SubjectQuery: {
+ *       ...
+ *     }
+ *   }
+ * ```
+ */
+export type Queries<Namespaces extends keyof QueryResolvers> = {
+  Query: Required<Pick<QueryResolvers, Namespaces>>
+} & {
+  [P in `${Capitalize<Namespaces>}Query`]: P extends keyof Resolvers
+    ? Required<Omit<NonNullable<Resolvers[P]>, '__isTypeOf'>>
+    : never
+}
+
+/**
  * Resolvers type where all mutations of the namespace `Namespaces` are
  * required.
  *
@@ -136,13 +160,17 @@ export type Mutations<Namespaces extends keyof MutationResolvers> = {
  *   }
  * }
  * ```
+ *
+ * TODO: This should not be used any more since all queries shall be moved into
+ * namespaces.
  */
-export type Queries<QueryProperties extends keyof QueryResolvers> = A.Compute<
-  {
-    Query: Required<Pick<QueryResolvers, QueryProperties>>
-  },
-  'deep'
->
+export type LegacyQueries<QueryProperties extends keyof QueryResolvers> =
+  A.Compute<
+    {
+      Query: Required<Pick<QueryResolvers, QueryProperties>>
+    },
+    'deep'
+  >
 
 /**
  * Resolvers type where all Interface resolvers in `I` are required.
