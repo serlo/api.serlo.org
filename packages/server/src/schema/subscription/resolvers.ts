@@ -32,10 +32,9 @@ import {
 import { UuidDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
-import { SubscriptionInfo, SubscriptionQuery } from '~/types'
+import { SubscriptionInfo } from '~/types'
 
-export const resolvers: TypeResolvers<SubscriptionQuery> &
-  TypeResolvers<SubscriptionInfo> &
+export const resolvers: TypeResolvers<SubscriptionInfo> &
   Queries<'subscription'> &
   Mutations<'subscription'> = {
   SubscriptionInfo: {

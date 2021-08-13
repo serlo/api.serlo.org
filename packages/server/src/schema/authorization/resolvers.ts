@@ -20,9 +20,9 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { fetchAuthorizationPayload } from './utils'
-import { Queries } from '~/internals/graphql'
+import { LegacyQueries } from '~/internals/graphql'
 
-export const resolvers: Queries<'authorization'> = {
+export const resolvers: LegacyQueries<'authorization'> = {
   Query: {
     authorization(_parent, _payload, { userId, dataSources }) {
       return fetchAuthorizationPayload({ userId, dataSources })
