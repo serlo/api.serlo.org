@@ -247,6 +247,28 @@ describe('User', () => {
       client,
     })
   })
+
+  test('property "isNewAuthor"', async () => {
+    global.server.use(
+      createActivityByTypeHandler({ userId: user.id, activityByType })
+    )
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query ($userId: Int) {
+          uuid(id: $userId) {
+            ... on User {
+              isNewAuthor
+            }
+          }
+        }
+      `,
+      data: { uuid: { isNewAuthor: false } },
+      variables: { userId: user.id },
+      client,
+    })
+  })
+
   test('property "activityByType"', async () => {
     global.server.use(
       createActivityByTypeHandler({ userId: user.id, activityByType })
@@ -279,10 +301,10 @@ describe('User', () => {
 
   describe('property "activeAuthor"', () => {
     const query = gql`
-      query propertyActiveAuthor($id: Int!) {
+      query ($id: Int!) {
         uuid(id: $id) {
           ... on User {
-            activeAuthor
+            isActiveAuthor
           }
         }
       }
@@ -294,9 +316,7 @@ describe('User', () => {
       await assertSuccessfulGraphQLQuery({
         query,
         variables: { id: user.id },
-        data: {
-          uuid: { activeAuthor: true },
-        },
+        data: { uuid: { isActiveAuthor: true } },
         client,
       })
     })
@@ -307,9 +327,7 @@ describe('User', () => {
       await assertSuccessfulGraphQLQuery({
         query,
         variables: { id: user.id },
-        data: {
-          uuid: { activeAuthor: false },
-        },
+        data: { uuid: { isActiveAuthor: false } },
         client,
       })
     })
@@ -317,10 +335,10 @@ describe('User', () => {
 
   describe('property "activeDonor"', () => {
     const query = gql`
-      query propertyActiveDonor($id: Int!) {
+      query ($id: Int!) {
         uuid(id: $id) {
           ... on User {
-            activeDonor
+            isActiveDonor
           }
         }
       }
@@ -332,9 +350,7 @@ describe('User', () => {
       await assertSuccessfulGraphQLQuery({
         query,
         variables: { id: user.id },
-        data: {
-          uuid: { activeDonor: true },
-        },
+        data: { uuid: { isActiveDonor: true } },
         client,
       })
     })
@@ -345,9 +361,7 @@ describe('User', () => {
       await assertSuccessfulGraphQLQuery({
         query,
         variables: { id: user.id },
-        data: {
-          uuid: { activeDonor: false },
-        },
+        data: { uuid: { isActiveDonor: false } },
         client,
       })
     })
@@ -355,10 +369,10 @@ describe('User', () => {
 
   describe('property "activeReviewer"', () => {
     const query = gql`
-      query propertyActiveReviewer($id: Int!) {
+      query ($id: Int!) {
         uuid(id: $id) {
           ... on User {
-            activeReviewer
+            isActiveReviewer
           }
         }
       }
@@ -370,9 +384,7 @@ describe('User', () => {
       await assertSuccessfulGraphQLQuery({
         query,
         variables: { id: user.id },
-        data: {
-          uuid: { activeReviewer: true },
-        },
+        data: { uuid: { isActiveReviewer: true } },
         client,
       })
     })
@@ -383,9 +395,7 @@ describe('User', () => {
       await assertSuccessfulGraphQLQuery({
         query,
         variables: { id: user.id },
-        data: {
-          uuid: { activeReviewer: false },
-        },
+        data: { uuid: { isActiveReviewer: false } },
         client,
       })
     })

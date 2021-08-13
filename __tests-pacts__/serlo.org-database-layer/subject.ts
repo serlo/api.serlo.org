@@ -19,34 +19,22 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-/* eslint-disable import/no-unassigned-import */
-describe('AliasMessage', () => {
-  require('./alias')
-})
-describe('EventMessage', () => {
-  require('./event')
-})
-describe('LicenseMessage', () => {
-  require('./license')
-})
-describe('NavigationMessage', () => {
-  require('./navigation')
-})
-describe('NotificationMessage', () => {
-  require('./notification')
-})
-describe('SubjectMessage', () => {
-  require('./subject')
-})
-describe('SubscriptionMessage', () => {
-  require('./subscription')
-})
-describe('ThreadMessage', () => {
-  require('./thread')
-})
-describe('UserMessage', () => {
-  require('./user')
-})
-describe('UuidMessage', () => {
-  require('./uuid')
+import { Matchers } from '@pact-foundation/pact'
+
+import { addMessageInteraction } from '../__utils__'
+
+test('SubjectsQuery', async () => {
+  await addMessageInteraction({
+    given: `there is a subject with id 5`,
+    message: { type: 'SubjectsQuery', payload: {} },
+    responseBody: {
+      subjects: Matchers.eachLike({
+        instance: 'de',
+        taxonomyTermId: 5,
+      }),
+    },
+  })
+
+  const { subjects } = await global.serloModel.getSubjects()
+  expect(subjects).toEqual([{ instance: 'de', taxonomyTermId: 5 }])
 })
