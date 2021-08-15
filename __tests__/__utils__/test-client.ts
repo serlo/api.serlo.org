@@ -26,6 +26,7 @@ import {
 } from 'apollo-server-testing'
 
 import { Service } from '~/internals/authentication'
+import { Environment } from '~/internals/environment'
 import { Context } from '~/internals/graphql'
 import { getGraphQLOptions } from '~/internals/server'
 import { emptySwrQueue } from '~/internals/swr-queue'
@@ -36,10 +37,7 @@ export function createTestClient(
   args?: Partial<Pick<Context, 'service' | 'userId'>>
 ): Client {
   const server = new ApolloServer({
-    ...getGraphQLOptions({
-      cache: global.cache,
-      swrQueue: emptySwrQueue,
-    }),
+    ...getGraphQLOptions(createTestEnvironment()),
     context(): Pick<Context, 'service' | 'userId'> {
       return {
         service: args?.service ?? Service.SerloCloudflareWorker,
@@ -48,4 +46,8 @@ export function createTestClient(
     },
   })
   return createApolloTestClient(server)
+}
+
+export function createTestEnvironment(): Environment {
+  return { cache: global.cache, swrQueue: emptySwrQueue }
 }
