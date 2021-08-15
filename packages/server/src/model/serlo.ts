@@ -108,7 +108,7 @@ export function createSerloModel({
           ? uuid
           : null
       },
-      maxAge: { day: 1 },
+      staleAfter: { day: 1 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/uuid/${id}`
       },
@@ -170,7 +170,7 @@ export function createSerloModel({
         })
         return (await response.json()) as number[]
       },
-      maxAge: { hour: 1 },
+      staleAfter: { hour: 1 },
       getKey: () => {
         return 'de.serlo.org/api/user/active-authors'
       },
@@ -195,7 +195,7 @@ export function createSerloModel({
         })
         return (await response.json()) as number[]
       },
-      maxAge: { hour: 1 },
+      staleAfter: { hour: 1 },
       getKey: () => {
         return 'de.serlo.org/api/user/active-reviewers'
       },
@@ -222,7 +222,7 @@ export function createSerloModel({
           expectedStatusCodes: [200],
         })
       },
-      maxAge: { minutes: 10 },
+      staleAfter: { minutes: 10 },
       getKey: ({ userId }) => {
         return `de.serlo.org/api/user/activity-by-type/${userId}`
       },
@@ -307,7 +307,7 @@ export function createSerloModel({
           expectedStatusCodes: [200],
         })
       },
-      maxAge: { hour: 1 },
+      staleAfter: { hour: 1 },
       getKey: ({ instance }) => {
         return `${instance}.serlo.org/api/navigation`
       },
@@ -418,7 +418,7 @@ export function createSerloModel({
         })
       },
       enableSwr: true,
-      maxAge: { day: 1 },
+      staleAfter: { day: 1 },
       getKey: ({ path, instance }) => {
         const cleanPath = encodePath(decodePath(path))
         return `${instance}.serlo.org/api/alias${cleanPath}`
@@ -456,7 +456,7 @@ export function createSerloModel({
         })
       },
       enableSwr: true,
-      maxAge: { day: 1 },
+      staleAfter: { day: 1 },
       getKey: ({ id }) => `de.serlo.org/api/license/${id}`,
       getPayload: (key) => {
         const prefix = 'de.serlo.org/api/license/'
@@ -482,7 +482,7 @@ export function createSerloModel({
         })
       },
       enableSwr: true,
-      maxAge: { day: 1 },
+      staleAfter: { day: 1 },
       getKey() {
         return 'serlo.org/subjects'
       },
@@ -524,7 +524,8 @@ export function createSerloModel({
         return result
       },
       enableSwr: true,
-      maxAge: { minutes: 2 },
+      staleAfter: { minutes: 2 },
+      maxAge: { hour: 1 },
       getKey() {
         return 'serlo.org/unrevised'
       },
@@ -550,7 +551,7 @@ export function createSerloModel({
           ? null
           : notificationEvent
       },
-      maxAge: { day: 1 },
+      staleAfter: { day: 1 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/event/${id}`
       },
@@ -622,7 +623,8 @@ export function createSerloModel({
         }
       },
       enableSwr: true,
-      maxAge: { minute: 2 },
+      staleAfter: { minute: 2 },
+      maxAge: { hour: 1 },
     },
     environment
   )
@@ -647,7 +649,7 @@ export function createSerloModel({
           expectedStatusCodes: [200],
         })
       },
-      maxAge: { hour: 1 },
+      staleAfter: { hour: 1 },
       getKey: ({ userId }) => {
         return `de.serlo.org/api/notifications/${userId}`
       },
@@ -701,7 +703,7 @@ export function createSerloModel({
           expectedStatusCodes: [200],
         })
       },
-      maxAge: { hour: 1 },
+      staleAfter: { hour: 1 },
       getKey: ({ userId }) => {
         return `de.serlo.org/api/subscriptions/${userId}`
       },
@@ -765,7 +767,7 @@ export function createSerloModel({
         })
       },
       enableSwr: true,
-      maxAge: { day: 1 },
+      staleAfter: { day: 1 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/threads/${id}`
       },
