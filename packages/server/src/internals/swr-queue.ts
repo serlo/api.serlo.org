@@ -297,10 +297,12 @@ async function shouldProcessJob({
   if (!spec.enableSwr) {
     return E.left('SWR disabled.')
   }
-  const maxAge =
-    spec.maxAge === undefined ? undefined : timeToMilliseconds(spec.maxAge)
+  const staleAfter =
+    spec.staleAfter === undefined
+      ? undefined
+      : timeToMilliseconds(spec.staleAfter)
   const age = timer.now() - cacheEntry.value.lastModified
-  if (maxAge === undefined || age <= maxAge) {
+  if (staleAfter === undefined || age <= staleAfter) {
     return E.left('cache non-stale.')
   }
   const payload = spec.getPayload(key)
