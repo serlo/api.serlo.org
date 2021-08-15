@@ -108,7 +108,7 @@ export function createSerloModel({
           ? uuid
           : null
       },
-      maxAge: { hour: 1 },
+      maxAge: { day: 1 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/uuid/${id}`
       },
@@ -402,7 +402,6 @@ export function createSerloModel({
         }),
         t.null,
       ]),
-      enableSwr: true,
       getCurrentValue: ({
         path,
         instance,
@@ -418,7 +417,8 @@ export function createSerloModel({
           expectedStatusCodes: [200, 404],
         })
       },
-      maxAge: { hour: 1 },
+      enableSwr: true,
+      maxAge: { day: 1 },
       getKey: ({ path, instance }) => {
         const cleanPath = encodePath(decodePath(path))
         return `${instance}.serlo.org/api/alias${cleanPath}`
@@ -765,7 +765,7 @@ export function createSerloModel({
         })
       },
       enableSwr: true,
-      maxAge: { hour: 1 },
+      maxAge: { day: 1 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/threads/${id}`
       },
