@@ -36,16 +36,12 @@ describe('How to create a mutation in a data source: update the content of an ar
   // contents are indexed by the article's id.
   let contentDatabase: Record<number, string | undefined>
 
-  // This object simulates our dataSources object. It contains the data source
-  // `database` which has the only function `updateContent`. This function is
-  // a mutation which accepts two arguments (the `id` of the article and the
-  // new content `newContent`), makes the mutation and returns an object containing
-  // the success of the operation in the property `success`.
+  // This object simulates our `dataSources` object. It contains the data source
+  // `database` which has the only function `updateContent`.
   let dataSources: {
     database: {
-      // `Mutation<P, R>` is the type a mutation in the data source has. `P`
-      // defines the arguments to the mutation and `R` the result of the
-      // operation.
+      // `Mutation<P, R>` is the type a mutation has. `P` defines the arguments
+      // to the mutation and `R` the result of the operation.
       updateContent: Mutation<
         { id: number; newContent: string },
         { success: boolean }
@@ -96,14 +92,11 @@ describe('How to create a mutation in a data source: update the content of an ar
         updateContent: createMutation({
           // Since the return type shall be `{ success: boolean }` we add
           // an io-ts decoder for this type. This is used during runtime to
-          // check the returned value. So we can notice when the called API
-          // does something weired.
+          // check the returned value.
           decoder: t.strict({ success: t.boolean }),
 
           // Function which does the actual mutation. Since we will need to wait
-          // until the fetch completes we use "async" here + "await" in the
-          // function body. The type `{ id: number, newContent: string }`
-          // defines the arguments for this function.
+          // until the fetch completes we use "async" + "await" here.
           async mutate({ id, newContent }: { id: number; newContent: string }) {
             // Call to the API of the database to update the content of the
             // article. We use "await" to wait until the fetch completes.
@@ -129,8 +122,8 @@ describe('How to create a mutation in a data source: update the content of an ar
     }
   })
 
-  // How the created mutation can be used
-  // ====================================
+  // # How the created mutation can be used
+
   describe('calling the created mutation will execute the mutation', () => {
     test('case when the article exists (mutation was successfull)', async () => {
       // We call the mutation function to update an article (here we use "await"
