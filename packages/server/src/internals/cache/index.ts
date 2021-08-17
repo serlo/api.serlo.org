@@ -28,6 +28,7 @@ import * as util from 'util'
 
 import { log } from '../log'
 import { redisUrl } from '../redis-url'
+import { Time, timeToMilliseconds } from '../swr-queue'
 import { Timer } from '../timer'
 import { createLockManager, LockManager } from './lock-manager'
 import { AsyncOrSync } from '~/utils'
@@ -50,7 +51,7 @@ export interface UpdateFunction<T> {
 export type FunctionOrValue<T> = UpdateFunction<T> | { value: T }
 
 export interface Cache {
-  get<T>({ key }: { key: string }): Promise<O.Option<CacheEntry<T>>>
+  get<T>(args: { key: string; maxAge?: Time }): Promise<O.Option<CacheEntry<T>>>
   set<T>(
     payload: {
       key: string
@@ -58,7 +59,7 @@ export interface Cache {
       priority?: Priority
     } & FunctionOrValue<T>
   ): Promise<void>
-  remove({ key }: { key: string }): Promise<void>
+  remove(args: { key: string }): Promise<void>
   ready(): Promise<void>
   flush(): Promise<void>
   quit(): Promise<void>
@@ -134,8 +135,10 @@ export function createCache({ timer }: { timer: Timer }): Cache {
     this: Cache,
     {
       key,
+      maxAge,
     }: {
       key: string
+      maxAge?: Time
     }
   ): Promise<O.Option<CacheEntry<T>>> {
     const clientGet = util
@@ -148,7 +151,11 @@ export function createCache({ timer }: { timer: Timer }): Cache {
 
     const value = msgpack.decode(packedValue)
 
-    return isCacheEntry<T>(value) ? O.some(value) : O.none
+    if (!isCacheEntry<T>(value)) return O.none
+    if (maxAge && timer.now() - value.lastModified > timeToMilliseconds(maxAge))
+      return O.none
+
+    return O.some(value)
   }
 
   const remove = async ({ key }: { key: string }) => {
