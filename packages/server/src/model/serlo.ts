@@ -608,9 +608,7 @@ export function createSerloModel({
         if (!key.startsWith('serlo/events/')) return O.none
 
         try {
-          const payload = JSON.parse(
-            key.substring('serlo.org/events/'.length)
-          ) as {
+          const payload = JSON.parse(key.substring('serlo/events/'.length)) as {
             first: number
             actorId?: number
             objectId?: number
