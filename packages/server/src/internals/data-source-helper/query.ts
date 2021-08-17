@@ -43,7 +43,10 @@ export function createQuery<P, R>(
     customDecoder?: t.Type<S>
   ): Promise<S> {
     const key = spec.getKey(payload)
-    const cacheValue = await environment.cache.get<R>({ key })
+    const cacheValue = await environment.cache.get<R>({
+      key,
+      maxAge: spec.maxAge,
+    })
 
     const decoder = customDecoder ?? t.unknown
 
@@ -188,7 +191,13 @@ export interface QuerySpec<Payload, Result> {
   /**
    * Age after which a value is considered to be stale in the SWR algorithm.
    */
-  maxAge: Time | undefined
+  staleAfter?: Time
+
+  /**
+   * Time after which the cached value is considered to be so old that it will
+   * be updated directly
+   */
+  maxAge?: Time
 
   /**
    * Function which calculates the cache key based on the passed payload. It is
