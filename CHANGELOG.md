@@ -2,7 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
-## [v0.26.21](https://github.com/serlo/api.serlo.org/compare/v0.26.20..v0.26.21) - August 8, 2021
+## [v0.26.22](https://github.com/serlo/api.serlo.org/compare/v0.26.21..v0.26.22) - August 17, 2021
+
+### Added
+
+- events + unrevised entities: will be updated directly after 1 hour
+
+### Fixed
+
+- update of events via SWR
+
+### Internal
+
+- increase times for various cache entries until they get stale
+
+## [v0.26.21](https://github.com/serlo/api.serlo.org/compare/v0.26.20..v0.26.21) - August 12, 2021
 
 ### Added
 

@@ -1022,11 +1022,22 @@ async function exec(): Promise<void> {
     },
     {
       tagName: 'v0.26.21',
-      date: '2021-08-08',
+      date: '2021-08-12',
       added: [
         'rename `User.activeAuthor` to `User.isActiveAuthor`',
         'rename `User.activeDonor` to `User.isActiveDonor`',
         'rename `User.activeReviewer` to `User.isActiveReviewer`',
+      ],
+    },
+    {
+      tagName: 'v0.26.22',
+      date: '2021-08-17',
+      internal: [
+        'increase times for various cache entries until they get stale',
+      ],
+      fixed: ['update of events via SWR'],
+      added: [
+        'events + unrevised entities: will be updated directly after 1 hour',
       ],
     },
   ])
