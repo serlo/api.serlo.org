@@ -68,6 +68,14 @@ export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
           F.pipe(
             entity.revisionIds,
             A.sort(ord.reverse(N.Ord)),
+            A.filter((revisionId) => {
+              if (R.isNil(cursorPayload.unrevised)) return true
+
+              const isUnrevised =
+                entity.currentRevisionId === null ||
+                revisionId > entity.currentRevisionId
+              return cursorPayload.unrevised ? isUnrevised : !isUnrevised
+            }),
             A.map(async (id) => {
               return await dataSources.model.serlo.getUuidWithCustomDecoder({
                 id,
@@ -76,16 +84,9 @@ export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
             })
           )
         ),
-        A.filter((revision) => {
-          if (R.isNil(cursorPayload.unrevised)) return true
-
-          if (revision.trashed) return false
-
-          const isUnrevised =
-            entity.currentRevisionId === null ||
-            revision.id > entity.currentRevisionId
-          return cursorPayload.unrevised ? isUnrevised : !isUnrevised
-        })
+        A.filter(
+          (revision) => R.isNil(cursorPayload.unrevised) || !revision.trashed
+        )
       )
       return resolveConnection<R>({
         nodes: revisions,
