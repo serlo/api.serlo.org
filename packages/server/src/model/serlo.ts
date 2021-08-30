@@ -979,6 +979,10 @@ export function createSerloModel({
           return { ...current, trashed: true }
         },
       })
+
+      await getUnrevisedEntitiesPerSubject._querySpec.removeCache({
+        payload: undefined,
+      })
     },
   })
 
