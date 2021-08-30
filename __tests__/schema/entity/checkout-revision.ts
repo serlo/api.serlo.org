@@ -26,6 +26,7 @@ import {
   article as baseArticle,
   articleRevision,
   user as baseUser,
+  taxonomyTermSubject,
 } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
@@ -39,8 +40,12 @@ import {
   returnsJson,
   Database,
   returnsUuidsFromDatabase,
+  createSubjectsHandler,
+  createUuidHandler,
+  createUnrevisedEntitiesHandler,
+  getTypenameAndId,
 } from '../../__utils__'
-import { Model } from '~/internals/graphql'
+import { encodeId, Model } from '~/internals/graphql'
 
 let database: Database
 
@@ -166,6 +171,67 @@ test('checkout revision has trashed == false for following queries', async () =>
     variables: { id: unrevisedRevision.id },
     data: { uuid: { trashed: false } },
     client,
+  })
+})
+
+test('after the checkout mutation the cache is cleared for unrevisedEntities', async () => {
+  global.server.use(
+    createUnrevisedEntitiesHandler([article]),
+    createSubjectsHandler([taxonomyTermSubject]),
+    createUuidHandler(article)
+  )
+
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query ($id: String!) {
+        subject {
+          subject(id: $id) {
+            unrevisedEntities {
+              nodes {
+                __typename
+                id
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables: { id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }) },
+    data: {
+      subject: {
+        subject: {
+          unrevisedEntities: { nodes: [getTypenameAndId(article)] },
+        },
+      },
+    },
+    client: createTestClient(),
+  })
+
+  await assertSuccessfulGraphQLMutation({
+    ...createCheckoutRevisionMutation(),
+    client,
+  })
+
+  global.server.use(createUnrevisedEntitiesHandler([]))
+
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query ($id: String!) {
+        subject {
+          subject(id: $id) {
+            unrevisedEntities {
+              nodes {
+                __typename
+                id
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables: { id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }) },
+    data: { subject: { subject: { unrevisedEntities: { nodes: [] } } } },
+    client: createTestClient(),
   })
 })
 
