@@ -34,11 +34,11 @@ function main() {
     test_no_uncommitted_changes_when_pushing
   fi
 
-  print_header "Run all tests"
-  yarn test
-
   print_header "Run linter"
   yarn lint
+
+  print_header "Run all tests"
+  yarn test
 
   print_header "Run pact tests"
   yarn pacts
