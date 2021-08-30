@@ -47,7 +47,7 @@
     "graphql": "^15.0.0"
   },
   "devDependencies": {
-    "@inyono/changelog": "^0.2.0",
+    "@inyono/changelog": "^0.3.0",
     "@inyono/copyright-headers": "^0.1.0",
     "@pact-foundation/pact": "^9.0.0",
     "@pact-foundation/pact-node": "^10.0.0",
