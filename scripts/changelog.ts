@@ -1040,6 +1040,16 @@ async function exec(): Promise<void> {
         'events + unrevised entities: will be updated directly after 1 hour',
       ],
     },
+    {
+      tagName: 'v0.26.23',
+      date: '2021-08-30',
+      fixed: [
+        'after mutation for rejecting / checkout of revisions the cache of unrevised revisions is cleared',
+      ],
+      internal: [
+        'only fetch necessary revisions for `AbstractEntity.revisions` when `unrevised == true`',
+      ],
+    },
   ])
 
   await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
