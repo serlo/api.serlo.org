@@ -25,12 +25,13 @@ import { article, taxonomyTermSubject } from '../../__fixtures__'
 import {
   assertFailingGraphQLQuery,
   assertSuccessfulGraphQLQuery,
-  createMessageHandler,
+  createSubjectsHandler,
   createTestClient,
+  createUnrevisedEntitiesHandler,
   createUuidHandler,
   getTypenameAndId,
 } from '../__utils__'
-import { encodeId, encodeToBase64, Model } from '~/internals/graphql'
+import { encodeId, encodeToBase64 } from '~/internals/graphql'
 import { Instance } from '~/types'
 
 describe('SubjectsQuery', () => {
@@ -245,24 +246,3 @@ test('AbstractEntity.subject', async () => {
     client: createTestClient(),
   })
 })
-
-function createSubjectsHandler(subjects: Model<'TaxonomyTerm'>[]) {
-  return createMessageHandler({
-    message: { type: 'SubjectsQuery', payload: {} },
-    body: {
-      subjects: subjects.map((taxonomyTerm) => {
-        return {
-          taxonomyTermId: taxonomyTerm.id,
-          instance: taxonomyTerm.instance,
-        }
-      }),
-    },
-  })
-}
-
-function createUnrevisedEntitiesHandler(entities: Model<'AbstractEntity'>[]) {
-  return createMessageHandler({
-    message: { type: 'UnrevisedEntitiesQuery', payload: {} },
-    body: { unrevisedEntityIds: entities.map((entity) => entity.id) },
-  })
-}
