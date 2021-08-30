@@ -905,6 +905,10 @@ export function createSerloModel({
           return { ...current, trashed: false }
         },
       })
+
+      await getUnrevisedEntitiesPerSubject._querySpec.removeCache({
+        payload: undefined,
+      })
     },
   })
 
@@ -974,6 +978,10 @@ export function createSerloModel({
 
           return { ...current, trashed: true }
         },
+      })
+
+      await getUnrevisedEntitiesPerSubject._querySpec.removeCache({
+        payload: undefined,
       })
     },
   })

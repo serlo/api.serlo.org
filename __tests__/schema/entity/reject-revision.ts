@@ -25,6 +25,7 @@ import { gql } from 'apollo-server'
 import {
   article as baseArticle,
   articleRevision,
+  taxonomyTermSubject,
   user as baseUser,
 } from '../../../__fixtures__'
 import {
@@ -39,7 +40,12 @@ import {
   returnsJson,
   Database,
   returnsUuidsFromDatabase,
+  createUnrevisedEntitiesHandler,
+  createSubjectsHandler,
+  createUuidHandler,
+  getTypenameAndId,
 } from '../../__utils__'
+import { encodeId } from '~/internals/graphql'
 
 let database: Database
 
@@ -117,6 +123,67 @@ test('following queries for entity point to checkout revision when entity is alr
     variables: { id: unrevisedRevision.id },
     data: { uuid: { trashed: true } },
     client,
+  })
+})
+
+test('after the reject mutation the cache is cleared for unrevisedEntities', async () => {
+  global.server.use(
+    createUnrevisedEntitiesHandler([article]),
+    createSubjectsHandler([taxonomyTermSubject]),
+    createUuidHandler(article)
+  )
+
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query ($id: String!) {
+        subject {
+          subject(id: $id) {
+            unrevisedEntities {
+              nodes {
+                __typename
+                id
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables: { id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }) },
+    data: {
+      subject: {
+        subject: {
+          unrevisedEntities: { nodes: [getTypenameAndId(article)] },
+        },
+      },
+    },
+    client: createTestClient(),
+  })
+
+  await assertSuccessfulGraphQLMutation({
+    ...createRejectRevisionMutation(),
+    client,
+  })
+
+  global.server.use(createUnrevisedEntitiesHandler([]))
+
+  await assertSuccessfulGraphQLQuery({
+    query: gql`
+      query ($id: String!) {
+        subject {
+          subject(id: $id) {
+            unrevisedEntities {
+              nodes {
+                __typename
+                id
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables: { id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }) },
+    data: { subject: { subject: { unrevisedEntities: { nodes: [] } } } },
+    client: createTestClient(),
   })
 })
 
