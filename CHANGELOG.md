@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.26.23](https://github.com/serlo/api.serlo.org/compare/v0.26.22..v0.26.23) - August 30, 2021
+
+### Fixed
+
+- after mutation for rejecting / checkout of revisions the cache of unrevised revisions is cleared
+
+### Internal
+
+- only fetch necessary revisions for `AbstractEntity.revisions` when `unrevised == true`
+
 ## [v0.26.22](https://github.com/serlo/api.serlo.org/compare/v0.26.21..v0.26.22) - August 17, 2021
 
 ### Added
