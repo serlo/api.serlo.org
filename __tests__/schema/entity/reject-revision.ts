@@ -21,7 +21,6 @@
  */
 import { Instance } from '@serlo/api'
 import { gql } from 'apollo-server'
-import { encodeId } from '~/internals/graphql'
 
 import {
   article as baseArticle,
@@ -46,6 +45,7 @@ import {
   createUuidHandler,
   getTypenameAndId,
 } from '../../__utils__'
+import { encodeId } from '~/internals/graphql'
 
 let database: Database
 
