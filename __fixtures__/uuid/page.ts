@@ -21,29 +21,29 @@
  */
 import { license } from '../license'
 import { Model } from '~/internals/graphql'
-import { DiscriminatorType } from '~/model/decoder'
+import { castToUuid, DiscriminatorType } from '~/model/decoder'
 import { Instance } from '~/types'
 
 export const page: Model<'Page'> = {
   __typename: DiscriminatorType.Page,
-  id: 19767,
+  id: castToUuid(19767),
   trashed: false,
   instance: Instance.De,
   alias: '/19767/mathematik-startseite',
   date: '2015-02-28T02:06:40Z',
-  currentRevisionId: 35476,
-  revisionIds: [35476],
+  currentRevisionId: castToUuid(35476),
+  revisionIds: [35476].map(castToUuid),
   licenseId: license.id,
 }
 
 export const pageRevision: Model<'PageRevision'> = {
   __typename: DiscriminatorType.PageRevision,
-  id: 35476,
+  id: castToUuid(35476),
   trashed: false,
   alias: '/35476/mathematik-startseite',
   title: 'title',
   content: 'content',
   date: '2015-02-28T02:06:40Z',
-  authorId: 1,
+  authorId: castToUuid(1),
   repositoryId: page.id,
 }

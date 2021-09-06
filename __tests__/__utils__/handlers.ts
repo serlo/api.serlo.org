@@ -26,6 +26,7 @@ import { Database } from './database'
 import { RestResolver } from './services'
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model'
+import { Uuid } from '~/model/decoder'
 
 export function createAliasHandler(alias: Payload<'serlo', 'getAlias'>) {
   return createMessageHandler({
@@ -157,7 +158,7 @@ export function returnsUuidsFromDatabase(
 
 export function givenEntityCheckoutRevisionEndpoint(
   resolver: MessageResolver<{
-    revisionId: number
+    revisionId: Uuid
     reason: string
     userId: number
   }>
@@ -167,7 +168,7 @@ export function givenEntityCheckoutRevisionEndpoint(
 
 export function givenPageCheckoutRevisionEndpoint(
   resolver: MessageResolver<{
-    revisionId: number
+    revisionId: Uuid
     reason: string
     userId: number
   }>
@@ -177,7 +178,7 @@ export function givenPageCheckoutRevisionEndpoint(
 
 export function givenEntityRejectRevisionEndpoint(
   resolver: MessageResolver<{
-    revisionId: number
+    revisionId: Uuid
     reason: string
     userId: number
   }>
@@ -187,7 +188,7 @@ export function givenEntityRejectRevisionEndpoint(
 
 export function givenPageRejectRevisionEndpoint(
   resolver: MessageResolver<{
-    revisionId: number
+    revisionId: Uuid
     reason: string
     userId: number
   }>

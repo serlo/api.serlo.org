@@ -21,30 +21,30 @@
  */
 import { license } from '../license'
 import { Model } from '~/internals/graphql'
-import { EntityRevisionType, EntityType } from '~/model/decoder'
+import { castToUuid, EntityRevisionType, EntityType } from '~/model/decoder'
 import { Instance } from '~/types'
 
 export const applet: Model<'Applet'> = {
   __typename: EntityType.Applet,
-  id: 35596,
+  id: castToUuid(35596),
   trashed: false,
   instance: Instance.En,
   alias: '/math/35596/example-applet',
   date: '2014-03-01T20:45:56Z',
-  currentRevisionId: 35597,
-  revisionIds: [35597],
+  currentRevisionId: castToUuid(35597),
+  revisionIds: [35597].map(castToUuid),
   licenseId: license.id,
-  canonicalSubjectId: 23593,
-  taxonomyTermIds: [5],
+  canonicalSubjectId: castToUuid(23593),
+  taxonomyTermIds: [5].map(castToUuid),
 }
 
 export const appletRevision: Model<'AppletRevision'> = {
   __typename: EntityRevisionType.AppletRevision,
-  id: 35597,
+  id: castToUuid(35597),
   trashed: false,
   alias: '/math/35597/example-applet',
   date: '2014-09-15T15:28:35Z',
-  authorId: 1,
+  authorId: castToUuid(1),
   repositoryId: applet.id,
   url: 'url',
   title: 'title',

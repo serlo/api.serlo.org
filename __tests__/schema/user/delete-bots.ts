@@ -34,17 +34,20 @@ import {
   MessageResolver,
   givenSerloEndpoint,
   assertSuccessfulGraphQLQuery,
+  nextUuid,
 } from '../../__utils__'
 
 let database: Database
 
 let client: Client
 const user = { ...baseUser, roles: ['sysadmin'] }
+const userIds = [user.id, nextUuid(user.id)]
+const noUserId = nextUuid(nextUuid(user.id))
 
 beforeEach(() => {
   database = new Database()
   database.hasUuids(
-    [user.id, user.id + 1].map((id) => {
+    userIds.map((id) => {
       return { ...user, id }
     })
   )
@@ -57,7 +60,7 @@ beforeEach(() => {
 
 test('runs successfully when mutation could be successfully executed', async () => {
   await assertSuccessfulGraphQLMutation({
-    ...createDeleteBotsMutation({ botIds: [user.id, user.id + 1] }),
+    ...createDeleteBotsMutation({ botIds: userIds }),
     data: {
       user: {
         deleteBots: [
@@ -80,7 +83,7 @@ test('runs partially when one of the mutations failed', async () => {
   )
 
   await assertSuccessfulGraphQLMutation({
-    ...createDeleteBotsMutation({ botIds: [user.id, user.id + 1] }),
+    ...createDeleteBotsMutation({ botIds: userIds }),
     data: {
       user: {
         deleteBots: [
@@ -138,7 +141,7 @@ test('updates the cache', async () => {
 
 test('fails when one of the given bot ids is not a user', async () => {
   await assertFailingGraphQLMutation({
-    ...createDeleteBotsMutation({ botIds: [user.id + 2] }),
+    ...createDeleteBotsMutation({ botIds: [noUserId] }),
     client,
     expectedError: 'BAD_USER_INPUT',
   })

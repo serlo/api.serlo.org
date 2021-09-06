@@ -20,31 +20,32 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { license } from '../license'
+import { user } from './user'
 import { Model } from '~/internals/graphql'
-import { EntityRevisionType, EntityType } from '~/model/decoder'
+import { castToUuid, EntityRevisionType, EntityType } from '~/model/decoder'
 import { Instance } from '~/types'
 
 export const event: Model<'Event'> = {
   __typename: EntityType.Event,
-  id: 35554,
+  id: castToUuid(35554),
   trashed: false,
   instance: Instance.De,
   alias: '/mathe/35554/beispielveranstaltung',
   date: '2014-03-01T20:45:56Z',
-  currentRevisionId: 35555,
-  revisionIds: [35555],
+  currentRevisionId: castToUuid(35555),
+  revisionIds: [35555].map(castToUuid),
   licenseId: license.id,
-  taxonomyTermIds: [5],
-  canonicalSubjectId: 5,
+  taxonomyTermIds: [5].map(castToUuid),
+  canonicalSubjectId: castToUuid(5),
 }
 
 export const eventRevision: Model<'EventRevision'> = {
   __typename: EntityRevisionType.EventRevision,
-  id: 35555,
+  id: castToUuid(35555),
   trashed: false,
   alias: '/mathe/35555/beispielveranstaltung',
   date: '2014-09-15T15:28:35Z',
-  authorId: 1,
+  authorId: user.id,
   repositoryId: event.id,
   title: 'title',
   content: 'content',

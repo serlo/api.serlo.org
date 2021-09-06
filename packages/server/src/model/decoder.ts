@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { UserInputError } from 'apollo-server-express'
 import * as t from 'io-ts'
 
 import { Instance, TaxonomyTermType } from '~/types'
@@ -77,7 +78,28 @@ export enum EntityRevisionType {
 // the app more robust against malformed responses from the database layer.
 const MAX_UUID = 1e7
 
-export const Uuid = t.refinement(t.number, (id) => id < MAX_UUID, 'Uuid')
+export interface Brands {
+  readonly Uuid: unique symbol
+}
+
+export const Uuid = t.brand(
+  t.number,
+  (id): id is t.Branded<number, Brands> => id < MAX_UUID,
+  'Uuid'
+)
+export type Uuid = t.TypeOf<typeof Uuid>
+
+export function castTo<A>(decoder: t.Type<A, unknown>, value: unknown): A {
+  if (decoder.is(value)) {
+    return value
+  } else {
+    throw new UserInputError(`Illegal value ${JSON.stringify(value)} given`)
+  }
+}
+
+export function castToUuid(value: number): Uuid {
+  return castTo(Uuid, value)
+}
 
 const StringWithoutNullCharacter = t.refinement(
   t.string,

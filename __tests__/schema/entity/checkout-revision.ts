@@ -44,6 +44,7 @@ import {
   createUuidHandler,
   createUnrevisedEntitiesHandler,
   getTypenameAndId,
+  nextUuid,
 } from '../../__utils__'
 import { encodeId, Model } from '~/internals/graphql'
 
@@ -58,7 +59,7 @@ const article = {
 }
 const unrevisedRevision = {
   ...articleRevision,
-  id: articleRevision.id + 1,
+  id: nextUuid(articleRevision.id),
   trashed: true,
 }
 

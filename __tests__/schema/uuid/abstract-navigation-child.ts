@@ -32,6 +32,7 @@ import {
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   createTestClient,
+  nextUuid,
 } from '../../__utils__'
 import { Service } from '~/internals/authentication'
 import { Model } from '~/internals/graphql'
@@ -204,7 +205,7 @@ describe('Page', () => {
     })
     const page = {
       ...subjectHomepage,
-      id: subjectHomepage.id + 1,
+      id: nextUuid(subjectHomepage.id),
       alias: '/page',
     }
     await assertSuccessfulGraphQLMutation({

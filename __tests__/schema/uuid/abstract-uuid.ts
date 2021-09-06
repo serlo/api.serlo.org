@@ -63,6 +63,7 @@ import {
   EntityType,
   DiscriminatorType,
   UuidType,
+  castToUuid,
 } from '~/model/decoder'
 import { Instance } from '~/types'
 
@@ -342,7 +343,11 @@ describe('property "alias"', () => {
   describe('returns encoded alias when alias of payloads is a string', () => {
     test.each(abstractUuidRepository)('type = %s', async (_type, payload) => {
       global.server.use(
-        createUuidHandler({ ...payload, alias: '/%%/größe', id: 23 })
+        createUuidHandler({
+          ...payload,
+          alias: '/%%/größe',
+          id: castToUuid(23),
+        })
       )
 
       await assertSuccessfulGraphQLQuery({
@@ -366,7 +371,7 @@ describe('custom aliases', () => {
     global.server.use(
       createUuidHandler({
         ...page,
-        id: 19767,
+        id: castToUuid(19767),
         alias: '/legacy-alias',
       })
     )

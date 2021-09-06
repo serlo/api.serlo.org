@@ -40,7 +40,7 @@ export function createQuery<P, R>(
 ): Query<P, R> {
   async function queryWithDecoder<S extends R>(
     payload: P,
-    customDecoder?: t.Type<S>
+    customDecoder?: t.Type<S, unknown>
   ): Promise<S> {
     const key = spec.getKey(payload)
     const cacheValue = await environment.cache.get<R>({
@@ -164,7 +164,7 @@ export interface QuerySpec<Payload, Result> {
    * value has the right type.
    */
   // TODO: this should probably be required
-  decoder?: t.Type<Result>
+  decoder?: t.Type<Result, unknown>
 
   /**
    * Function which gets the current value. The second parameter `previousValue`
@@ -235,7 +235,7 @@ export interface QuerySpecWithHelpers<Payload, Result>
    */
   queryWithDecoder<S extends Result>(
     payload: Payload,
-    customDecoder: t.Type<S>
+    customDecoder: t.Type<S, unknown>
   ): Promise<S>
 }
 
