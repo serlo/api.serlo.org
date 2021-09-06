@@ -36,7 +36,7 @@ export function createEntityResolvers<
 >({
   revisionDecoder,
 }: {
-  revisionDecoder: t.Type<R>
+  revisionDecoder: t.Type<R, unknown>
 }): PickResolvers<
   'AbstractEntity',
   'alias' | 'threads' | 'license' | 'events' | 'subject'

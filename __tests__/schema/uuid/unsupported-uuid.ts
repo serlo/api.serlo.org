@@ -27,6 +27,7 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
+import { castToUuid } from '~/model/decoder'
 
 let client: Client
 
@@ -37,7 +38,7 @@ beforeEach(() => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error We assume here that we get an invalid type name
       __typename: 'MathPuzzle',
-      id: 146944,
+      id: castToUuid(146944),
       trashed: false,
     })
   )

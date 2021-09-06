@@ -35,6 +35,7 @@ import {
   assertSuccessfulGraphQLQuery,
   hasInternalServerError,
   returnsJson,
+  nextUuid,
 } from '../../__utils__'
 
 let database: Database
@@ -48,7 +49,7 @@ const mutation = gql`
     }
   }
 `
-const articleIds = [article.id, article.id + 1]
+const articleIds = [article.id, nextUuid(article.id)]
 
 beforeEach(() => {
   client = createTestClient({ userId: user.id })

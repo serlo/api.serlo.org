@@ -20,34 +20,41 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { license } from '../license'
+import { user } from './user'
 import { Model } from '~/internals/graphql'
-import { EntityRevisionType, EntityType } from '~/model/decoder'
+import {
+  castToAlias,
+  castToNonEmptyString,
+  castToUuid,
+  EntityRevisionType,
+  EntityType,
+} from '~/model/decoder'
 import { Instance } from '~/types'
 
 export const article: Model<'Article'> = {
   __typename: EntityType.Article,
-  id: 1855,
+  id: castToUuid(1855),
   trashed: false,
   instance: Instance.De,
-  alias: '/mathe/1855/parabel',
+  alias: castToAlias('/mathe/1855/parabel'),
   date: '2014-03-01T20:45:56Z',
-  currentRevisionId: 30674,
+  currentRevisionId: castToUuid(30674),
   licenseId: license.id,
-  taxonomyTermIds: [5],
-  revisionIds: [30674],
-  canonicalSubjectId: 5,
+  taxonomyTermIds: [5].map(castToUuid),
+  revisionIds: [30674].map(castToUuid),
+  canonicalSubjectId: castToUuid(5),
 }
 
 export const articleRevision: Model<'ArticleRevision'> = {
   __typename: EntityRevisionType.ArticleRevision,
-  id: 30674,
+  id: castToUuid(30674),
   trashed: false,
-  alias: '/mathe/30674/parabel',
+  alias: castToAlias('/mathe/30674/parabel'),
   date: '2014-09-15T15:28:35Z',
-  authorId: 1,
+  authorId: user.id,
   repositoryId: article.id,
   title: 'title',
-  content: 'content',
+  content: castToNonEmptyString('content'),
   changes: 'changes',
   metaDescription: 'metaDescription',
   metaTitle: 'metaTitle',

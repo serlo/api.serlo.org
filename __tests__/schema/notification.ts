@@ -54,6 +54,7 @@ import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
+  castToUuid,
   Client,
   createMessageHandler,
   createNotificationEventHandler,
@@ -1799,7 +1800,7 @@ describe('notificationEvent', () => {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-expect-error We assume here that we get an invalid type name
           __typename: 'SomeFancyNotificationEvent',
-          id: 1337,
+          id: castToUuid(1337),
           instance: Instance.De,
           date: '2014-03-01T20:45:56Z',
         })
@@ -1902,17 +1903,17 @@ describe('mutation notification setState', () => {
       createUuidHandler(article),
       createNotificationEventHandler({
         ...createEntityNotificationEvent,
-        id: 1,
+        id: castToUuid(1),
         objectId: article.id,
       }),
       createNotificationEventHandler({
         ...createEntityNotificationEvent,
-        id: 2,
+        id: castToUuid(2),
         objectId: article.id,
       }),
       createNotificationEventHandler({
         ...createEntityNotificationEvent,
-        id: 3,
+        id: castToUuid(3),
         objectId: article.id,
       })
     )
@@ -1971,7 +1972,7 @@ describe('mutation notification setState', () => {
       createUuidHandler(article),
       createNotificationEventHandler({
         ...createEntityNotificationEvent,
-        id: 1,
+        id: castToUuid(1),
         objectId: article.id,
       })
     )
@@ -2021,17 +2022,17 @@ describe('mutation notification setState', () => {
       createUuidHandler(article),
       createNotificationEventHandler({
         ...createEntityNotificationEvent,
-        id: 1,
+        id: castToUuid(1),
         objectId: article.id,
       }),
       createNotificationEventHandler({
         ...createEntityNotificationEvent,
-        id: 2,
+        id: castToUuid(2),
         objectId: article.id,
       }),
       createNotificationEventHandler({
         ...createEntityNotificationEvent,
-        id: 3,
+        id: castToUuid(3),
         objectId: article.id,
       })
     )

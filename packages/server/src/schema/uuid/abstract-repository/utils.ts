@@ -40,7 +40,7 @@ import { VideoRevisionsArgs } from '~/types'
 export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
   revisionDecoder,
 }: {
-  revisionDecoder: t.Type<R>
+  revisionDecoder: t.Type<R, unknown>
 }): PickResolvers<
   'AbstractRepository',
   'alias' | 'threads' | 'license' | 'events'
@@ -111,7 +111,7 @@ export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
 export function createRevisionResolvers<E extends Model<'AbstractRepository'>>({
   repositoryDecoder,
 }: {
-  repositoryDecoder: t.Type<E>
+  repositoryDecoder: t.Type<E, unknown>
 }): PickResolvers<
   'AbstractRevision',
   'alias' | 'threads' | 'author' | 'events'

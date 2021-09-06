@@ -20,47 +20,47 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Model } from '~/internals/graphql'
-import { DiscriminatorType } from '~/model/decoder'
+import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
 import { Instance, TaxonomyTermType } from '~/types'
 
 export const taxonomyTermRoot: Model<'TaxonomyTerm'> = {
   __typename: DiscriminatorType.TaxonomyTerm,
-  id: 3,
+  id: castToUuid(3),
   trashed: false,
-  alias: '/root/3/root',
+  alias: castToAlias('/root/3/root'),
   type: TaxonomyTermType.Root,
   instance: Instance.De,
   name: 'name',
   description: null,
   weight: 1,
   parentId: null,
-  childrenIds: [5],
+  childrenIds: [5].map(castToUuid),
 }
 
 export const taxonomyTermSubject: Model<'TaxonomyTerm'> = {
   __typename: DiscriminatorType.TaxonomyTerm,
-  id: 5,
+  id: castToUuid(5),
   trashed: false,
-  alias: '/mathe/5/mathe',
+  alias: castToAlias('/mathe/5/mathe'),
   type: TaxonomyTermType.Subject,
   instance: Instance.De,
   name: 'name',
   description: null,
   weight: 2,
   parentId: taxonomyTermRoot.id,
-  childrenIds: [16048],
+  childrenIds: [16048].map(castToUuid),
 }
 
 export const taxonomyTermCurriculumTopic: Model<'TaxonomyTerm'> = {
   __typename: DiscriminatorType.TaxonomyTerm,
-  id: 16048,
+  id: castToUuid(16048),
   trashed: false,
-  alias: '/mathe/16048/natürliche-zahlen',
+  alias: castToAlias('/mathe/16048/natürliche-zahlen'),
   type: TaxonomyTermType.CurriculumTopic,
   instance: Instance.De,
   name: 'name',
   description: 'description',
   weight: 3,
   parentId: taxonomyTermSubject.id,
-  childrenIds: [1855],
+  childrenIds: [1855].map(castToUuid),
 }

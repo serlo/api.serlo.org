@@ -123,7 +123,7 @@ export function createSerloModel({
 
   async function getUuidWithCustomDecoder<
     S extends Model<'AbstractUuid'> | null
-  >({ id, decoder }: { id: number; decoder: t.Type<S> }): Promise<S> {
+  >({ id, decoder }: { id: number; decoder: t.Type<S, unknown> }): Promise<S> {
     return getUuid._querySpec.queryWithDecoder({ id }, decoder)
   }
 
@@ -718,7 +718,7 @@ export function createSerloModel({
   const setSubscription = createMutation({
     decoder: t.void,
     async mutate(payload: {
-      ids: number[]
+      ids: Uuid[]
       userId: number
       subscribe: boolean
       sendEmail: boolean
@@ -871,7 +871,7 @@ export function createSerloModel({
       t.type({ success: t.literal(false), reason: t.string }),
     ]),
     async mutate(payload: {
-      revisionId: number
+      revisionId: Uuid
       userId: number
       reason: string
     }) {
@@ -918,7 +918,7 @@ export function createSerloModel({
       t.type({ success: t.literal(false), reason: t.string }),
     ]),
     async mutate(payload: {
-      revisionId: number
+      revisionId: Uuid
       userId: number
       reason: string
     }) {

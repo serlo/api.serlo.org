@@ -23,7 +23,11 @@ import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
 import { article, comment, comment3, user } from '../../__fixtures__'
-import { createTestClient, createUuidHandler } from '../../__tests__/__utils__'
+import {
+  createTestClient,
+  createUuidHandler,
+  nextUuid,
+} from '../../__tests__/__utils__'
 import {
   addMessageInteraction,
   assertSuccessfulGraphQLMutation,
@@ -149,7 +153,7 @@ test('ThreadCreateCommentMutation', async () => {
     },
     responseBody: {
       __typename: DiscriminatorType.Comment,
-      id: Matchers.integer(comment.id + 1),
+      id: Matchers.integer(nextUuid(comment.id)),
       content: 'Hello',
       authorId: Matchers.integer(user.id),
       parentId: comment.id,

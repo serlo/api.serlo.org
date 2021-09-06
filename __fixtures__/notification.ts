@@ -31,13 +31,13 @@ import {
   comment,
 } from './uuid'
 import { Model } from '~/internals/graphql'
-import { NotificationEventType } from '~/model/decoder'
+import { castToUuid, NotificationEventType } from '~/model/decoder'
 import { Instance } from '~/types'
 
 export const checkoutRevisionNotificationEvent: Model<'CheckoutRevisionNotificationEvent'> =
   {
     __typename: NotificationEventType.CheckoutRevision,
-    id: 301,
+    id: castToUuid(301),
     instance: Instance.De,
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
@@ -50,7 +50,7 @@ export const checkoutRevisionNotificationEvent: Model<'CheckoutRevisionNotificat
 export const rejectRevisionNotificationEvent: Model<'RejectRevisionNotificationEvent'> =
   {
     __typename: NotificationEventType.RejectRevision,
-    id: 38035,
+    id: castToUuid(38035),
     instance: Instance.De,
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
@@ -63,7 +63,7 @@ export const rejectRevisionNotificationEvent: Model<'RejectRevisionNotificationE
 export const createCommentNotificationEvent: Model<'CreateCommentNotificationEvent'> =
   {
     __typename: NotificationEventType.CreateComment,
-    id: 37375,
+    id: castToUuid(37375),
     instance: Instance.De,
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
@@ -75,7 +75,7 @@ export const createCommentNotificationEvent: Model<'CreateCommentNotificationEve
 export const createEntityNotificationEvent: Model<'CreateEntityNotificationEvent'> =
   {
     __typename: NotificationEventType.CreateEntity,
-    id: 298,
+    id: castToUuid(298),
     instance: Instance.De,
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
@@ -86,7 +86,7 @@ export const createEntityNotificationEvent: Model<'CreateEntityNotificationEvent
 export const createEntityLinkNotificationEvent: Model<'CreateEntityLinkNotificationEvent'> =
   {
     __typename: NotificationEventType.CreateEntityLink,
-    id: 2115,
+    id: castToUuid(2115),
     instance: Instance.De,
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
@@ -98,7 +98,7 @@ export const createEntityLinkNotificationEvent: Model<'CreateEntityLinkNotificat
 export const removeEntityLinkNotificationEvent: Model<'RemoveEntityLinkNotificationEvent'> =
   {
     __typename: NotificationEventType.RemoveEntityLink,
-    id: 55273,
+    id: castToUuid(55273),
     instance: Instance.De,
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
@@ -110,7 +110,7 @@ export const removeEntityLinkNotificationEvent: Model<'RemoveEntityLinkNotificat
 export const createEntityRevisionNotificationEvent: Model<'CreateEntityRevisionNotificationEvent'> =
   {
     __typename: NotificationEventType.CreateEntityRevision,
-    id: 300,
+    id: castToUuid(300),
     instance: Instance.De,
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
@@ -122,7 +122,7 @@ export const createEntityRevisionNotificationEvent: Model<'CreateEntityRevisionN
 export const createTaxonomyTermNotificationEvent: Model<'CreateTaxonomyTermNotificationEvent'> =
   {
     __typename: NotificationEventType.CreateTaxonomyTerm,
-    id: 90,
+    id: castToUuid(90),
     instance: Instance.De,
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
@@ -133,7 +133,7 @@ export const createTaxonomyTermNotificationEvent: Model<'CreateTaxonomyTermNotif
 export const setTaxonomyTermNotificationEvent: Model<'SetTaxonomyTermNotificationEvent'> =
   {
     __typename: NotificationEventType.SetTaxonomyTerm,
-    id: 38405,
+    id: castToUuid(38405),
     instance: Instance.De,
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
@@ -144,7 +144,7 @@ export const setTaxonomyTermNotificationEvent: Model<'SetTaxonomyTermNotificatio
 export const createTaxonomyLinkNotificationEvent: Model<'CreateTaxonomyLinkNotificationEvent'> =
   {
     __typename: NotificationEventType.CreateTaxonomyLink,
-    id: 674,
+    id: castToUuid(674),
     instance: Instance.De,
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
@@ -156,7 +156,7 @@ export const createTaxonomyLinkNotificationEvent: Model<'CreateTaxonomyLinkNotif
 export const removeTaxonomyLinkNotificationEvent: Model<'RemoveTaxonomyLinkNotificationEvent'> =
   {
     __typename: NotificationEventType.RemoveTaxonomyLink,
-    id: 48077,
+    id: castToUuid(48077),
     instance: Instance.De,
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
@@ -168,7 +168,7 @@ export const removeTaxonomyLinkNotificationEvent: Model<'RemoveTaxonomyLinkNotif
 export const setTaxonomyParentNotificationEvent: Model<'SetTaxonomyParentNotificationEvent'> =
   {
     __typename: NotificationEventType.SetTaxonomyParent,
-    id: 47414,
+    id: castToUuid(47414),
     instance: Instance.De,
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
@@ -181,7 +181,7 @@ export const setTaxonomyParentNotificationEvent: Model<'SetTaxonomyParentNotific
 export const createThreadNotificationEvent: Model<'CreateThreadNotificationEvent'> =
   {
     __typename: NotificationEventType.CreateThread,
-    id: 37374,
+    id: castToUuid(37374),
     instance: Instance.De,
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
@@ -192,7 +192,7 @@ export const createThreadNotificationEvent: Model<'CreateThreadNotificationEvent
 export const setLicenseNotificationEvent: Model<'SetLicenseNotificationEvent'> =
   {
     __typename: NotificationEventType.SetLicense,
-    id: 297,
+    id: castToUuid(297),
     instance: Instance.De,
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
@@ -203,7 +203,7 @@ export const setLicenseNotificationEvent: Model<'SetLicenseNotificationEvent'> =
 export const setThreadStateNotificationEvent: Model<'SetThreadStateNotificationEvent'> =
   {
     __typename: NotificationEventType.SetThreadState,
-    id: 40750,
+    id: castToUuid(40750),
     instance: Instance.De,
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
@@ -215,7 +215,7 @@ export const setThreadStateNotificationEvent: Model<'SetThreadStateNotificationE
 export const setUuidStateNotificationEvent: Model<'SetUuidStateNotificationEvent'> =
   {
     __typename: NotificationEventType.SetUuidState,
-    id: 38513,
+    id: castToUuid(38513),
     instance: Instance.De,
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,

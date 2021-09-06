@@ -94,9 +94,17 @@ export type ModelMapping = {
     : never
 }
 
+/**
+ * Returns the corresponding type of the revision model for the given repository
+ * type.
+ */
 export type Revision<T extends Model<'AbstractRepository'>['__typename']> =
   Model<`${T}Revision`>
 
+/**
+ * Returns the corresponding type of the repository model for the given revision
+ * type.
+ */
 export type Repository<R extends Model<'AbstractRevision'>['__typename']> =
   Model<R extends `${infer U}Revision` ? U : never>
 

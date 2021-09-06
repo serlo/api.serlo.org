@@ -20,35 +20,42 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { license } from '../license'
+import { user } from './user'
 import { Model } from '~/internals/graphql'
-import { EntityRevisionType, EntityType } from '~/model/decoder'
+import {
+  castToAlias,
+  castToNonEmptyString,
+  castToUuid,
+  EntityRevisionType,
+  EntityType,
+} from '~/model/decoder'
 import { Instance } from '~/types'
 
 export const course: Model<'Course'> = {
   __typename: EntityType.Course,
-  id: 18514,
+  id: castToUuid(18514),
   trashed: false,
   instance: Instance.De,
-  alias: '/mathe/18514/überblick-zum-satz-des-pythagoras',
+  alias: castToAlias('/mathe/18514/überblick-zum-satz-des-pythagoras'),
   date: '2014-03-01T20:45:56Z',
-  currentRevisionId: 30713,
-  revisionIds: [30713],
+  currentRevisionId: castToUuid(30713),
+  revisionIds: [30713].map(castToUuid),
   licenseId: license.id,
-  taxonomyTermIds: [5],
-  pageIds: [18521],
-  canonicalSubjectId: 5,
+  taxonomyTermIds: [5].map(castToUuid),
+  pageIds: [18521].map(castToUuid),
+  canonicalSubjectId: castToUuid(5),
 }
 
 export const courseRevision: Model<'CourseRevision'> = {
   __typename: EntityRevisionType.CourseRevision,
-  id: 30713,
+  id: castToUuid(30713),
   trashed: false,
-  alias: '/mathe/30713/überblick-zum-satz-des-pythagoras',
+  alias: castToAlias('/mathe/30713/überblick-zum-satz-des-pythagoras'),
   date: '2014-09-15T15:28:35Z',
-  authorId: 1,
+  authorId: user.id,
   repositoryId: course.id,
   title: 'title',
-  content: 'content',
+  content: castToNonEmptyString('content'),
   changes: 'changes',
   metaDescription: 'metaDescription',
 }

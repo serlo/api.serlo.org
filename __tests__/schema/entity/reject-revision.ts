@@ -44,6 +44,7 @@ import {
   createSubjectsHandler,
   createUuidHandler,
   getTypenameAndId,
+  nextUuid,
 } from '../../__utils__'
 import { encodeId } from '~/internals/graphql'
 
@@ -58,7 +59,7 @@ const article = {
 }
 const unrevisedRevision = {
   ...articleRevision,
-  id: articleRevision.id + 1,
+  id: nextUuid(articleRevision.id),
   trashed: false,
 }
 
@@ -77,9 +78,7 @@ beforeEach(() => {
       return res(ctx.status(500))
     }
 
-    database.changeUuid(revisionId, {
-      trashed: true,
-    })
+    database.changeUuid(revisionId, { trashed: true })
 
     return res(ctx.json({ success: true }))
   })

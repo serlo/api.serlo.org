@@ -20,34 +20,41 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { license } from '../license'
+import { user } from './user'
 import { Model } from '~/internals/graphql'
-import { EntityRevisionType, EntityType } from '~/model/decoder'
+import {
+  castToAlias,
+  castToNonEmptyString,
+  castToUuid,
+  EntityRevisionType,
+  EntityType,
+} from '~/model/decoder'
 import { Instance } from '~/types'
 
 export const video: Model<'Video'> = {
   __typename: EntityType.Video,
-  id: 16078,
+  id: castToUuid(16078),
   trashed: false,
   instance: Instance.De,
-  alias: '/mathe/16078/waagrechte-und-schiefe-asymptote',
+  alias: castToAlias('/mathe/16078/waagrechte-und-schiefe-asymptote'),
   date: '2014-03-01T20:45:56Z',
-  currentRevisionId: 16114,
-  revisionIds: [16114],
+  currentRevisionId: castToUuid(16114),
+  revisionIds: [16114].map(castToUuid),
   licenseId: license.id,
-  taxonomyTermIds: [5],
-  canonicalSubjectId: 5,
+  taxonomyTermIds: [5].map(castToUuid),
+  canonicalSubjectId: castToUuid(5),
 }
 
 export const videoRevision: Model<'VideoRevision'> = {
   __typename: EntityRevisionType.VideoRevision,
-  id: 16114,
+  id: castToUuid(16114),
   trashed: false,
-  alias: '/mathe/16114/waagrechte-und-schiefe-asymptote',
+  alias: castToAlias('/mathe/16114/waagrechte-und-schiefe-asymptote'),
   date: '2014-09-15T15:28:35Z',
-  authorId: 1,
+  authorId: user.id,
   repositoryId: video.id,
   title: 'title',
-  content: 'content',
+  content: castToNonEmptyString('content'),
   url: 'url',
   changes: 'changes',
 }

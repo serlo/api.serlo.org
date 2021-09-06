@@ -55,6 +55,7 @@ import {
   createLicenseHandler,
   createTestClient,
   createUuidHandler,
+  nextUuid,
   getTypenameAndId,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
@@ -64,6 +65,7 @@ import {
   RepositoryType,
   RevisionType,
   DiscriminatorType,
+  castToUuid,
 } from '~/model/decoder'
 
 let client: Client
@@ -306,8 +308,8 @@ describe('Repository', () => {
   describe.each(repositoryCases)(
     '%s by id (w/ revisions)',
     (type, { repository, revision }) => {
-      const revisedRevision = { ...revision, id: revision.id - 10 }
-      const unrevisedRevision = { ...revision, id: revision.id + 1 }
+      const revisedRevision = { ...revision, id: castToUuid(revision.id - 10) }
+      const unrevisedRevision = { ...revision, id: nextUuid(revision.id) }
 
       beforeEach(() => {
         global.server.use(

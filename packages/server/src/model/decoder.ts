@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { UserInputError } from 'apollo-server-express'
 import * as t from 'io-ts'
 
 import { Instance, TaxonomyTermType } from '~/types'
@@ -77,24 +78,57 @@ export enum EntityRevisionType {
 // the app more robust against malformed responses from the database layer.
 const MAX_UUID = 1e7
 
-export const Uuid = t.refinement(t.number, (id) => id < MAX_UUID, 'Uuid')
+export interface Brands {
+  readonly Alias: unique symbol
+  readonly NonEmptyString: unique symbol
+  readonly Uuid: unique symbol
+}
 
-const StringWithoutNullCharacter = t.refinement(
-  t.string,
-  (text) => !text.includes('\0'),
-  'AliasString'
+export const Uuid = t.brand(
+  t.number,
+  (id): id is t.Branded<number, Brands> => id < MAX_UUID,
+  'Uuid'
 )
+export type Uuid = t.TypeOf<typeof Uuid>
 
-const NonEmptyString = t.refinement(
+export function castTo<A>(decoder: t.Type<A, unknown>, value: unknown): A {
+  if (decoder.is(value)) {
+    return value
+  } else {
+    throw new UserInputError(`Illegal value ${JSON.stringify(value)} given`)
+  }
+}
+
+export function castToUuid(value: number): Uuid {
+  return castTo(Uuid, value)
+}
+
+export const Alias = t.brand(
   t.string,
-  (text) => text.length > 0,
+  (text): text is t.Branded<string, Brands> => !text.includes('\0'),
+  'Alias'
+)
+export type Alias = t.TypeOf<typeof Alias>
+
+export function castToAlias(alias: string): Alias {
+  return castTo(Alias, alias)
+}
+
+export const NonEmptyString = t.brand(
+  t.string,
+  (text): text is t.Branded<string, Brands> => text.length > 0,
   'NonEmptyString'
 )
+export type NonEmptyString = t.TypeOf<typeof NonEmptyString>
+
+export function castToNonEmptyString(text: string): NonEmptyString {
+  return castTo(NonEmptyString, text)
+}
 
 export const AbstractUuidDecoder = t.type({
   id: Uuid,
   trashed: t.boolean,
-  alias: StringWithoutNullCharacter,
+  alias: Alias,
 })
 
 export const EntityTypeDecoder = t.union([

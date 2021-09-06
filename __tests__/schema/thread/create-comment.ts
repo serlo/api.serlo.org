@@ -29,6 +29,7 @@ import {
   createMessageHandler,
   createTestClient,
   createUuidHandler,
+  nextUuid,
 } from '../../__utils__'
 import { mockEndpointsForThreads } from './thread'
 import { encodeThreadId } from '~/schema/thread/utils'
@@ -77,9 +78,9 @@ test('comment gets created, cache mutated as expected', async () => {
       },
       body: {
         __typename: 'Comment',
-        id: comment1.id + 1,
+        id: nextUuid(comment1.id),
         trashed: false,
-        alias: `/mathe/${comment1.id + 1}/`,
+        alias: `/mathe/${nextUuid(comment1.id)}/`,
         authorId: user.id,
         title: null,
         date: '2014-03-01T20:45:56Z',
@@ -143,7 +144,11 @@ test('comment gets created, cache mutated as expected', async () => {
       thread: {
         createComment: {
           success: true,
-          record: { archived: false, content: 'Hello', id: comment1.id + 1 },
+          record: {
+            archived: false,
+            content: 'Hello',
+            id: nextUuid(comment1.id),
+          },
         },
       },
     },
