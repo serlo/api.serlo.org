@@ -86,7 +86,7 @@ function validateServiceToken(token: string): Service {
         service,
       }
     } catch (e) {
-      return unauthenticated(e)
+      return unauthenticated(e instanceof JsonWebTokenError ? e : undefined)
     }
 
     function unauthenticated(error?: JsonWebTokenError) {
