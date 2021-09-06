@@ -80,6 +80,7 @@ const MAX_UUID = 1e7
 
 export interface Brands {
   readonly Uuid: unique symbol
+  readonly Alias: unique symbol
 }
 
 export const Uuid = t.brand(
@@ -101,11 +102,16 @@ export function castToUuid(value: number): Uuid {
   return castTo(Uuid, value)
 }
 
-const StringWithoutNullCharacter = t.refinement(
+export const Alias = t.brand(
   t.string,
-  (text) => !text.includes('\0'),
-  'AliasString'
+  (text): text is t.Branded<string, Brands> => !text.includes('\0'),
+  'Alias'
 )
+export type Alias = t.TypeOf<typeof Alias>
+
+export function castToAlias(alias: string): Alias {
+  return castTo(Alias, alias)
+}
 
 const NonEmptyString = t.refinement(
   t.string,
@@ -116,7 +122,7 @@ const NonEmptyString = t.refinement(
 export const AbstractUuidDecoder = t.type({
   id: Uuid,
   trashed: t.boolean,
-  alias: StringWithoutNullCharacter,
+  alias: Alias,
 })
 
 export const EntityTypeDecoder = t.union([

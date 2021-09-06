@@ -31,6 +31,7 @@ import {
 import {
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
+  castToAlias,
   createTestClient,
   nextUuid,
 } from '../../__utils__'
@@ -206,7 +207,7 @@ describe('Page', () => {
     const page = {
       ...subjectHomepage,
       id: nextUuid(subjectHomepage.id),
-      alias: '/page',
+      alias: castToAlias('/page'),
     }
     await assertSuccessfulGraphQLMutation({
       ...createSetPageMutation(page),

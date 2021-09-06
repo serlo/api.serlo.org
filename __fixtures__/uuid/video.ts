@@ -22,7 +22,12 @@
 import { license } from '../license'
 import { user } from './user'
 import { Model } from '~/internals/graphql'
-import { castToUuid, EntityRevisionType, EntityType } from '~/model/decoder'
+import {
+  castToAlias,
+  castToUuid,
+  EntityRevisionType,
+  EntityType,
+} from '~/model/decoder'
 import { Instance } from '~/types'
 
 export const video: Model<'Video'> = {
@@ -30,7 +35,7 @@ export const video: Model<'Video'> = {
   id: castToUuid(16078),
   trashed: false,
   instance: Instance.De,
-  alias: '/mathe/16078/waagrechte-und-schiefe-asymptote',
+  alias: castToAlias('/mathe/16078/waagrechte-und-schiefe-asymptote'),
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: castToUuid(16114),
   revisionIds: [16114].map(castToUuid),
@@ -43,7 +48,7 @@ export const videoRevision: Model<'VideoRevision'> = {
   __typename: EntityRevisionType.VideoRevision,
   id: castToUuid(16114),
   trashed: false,
-  alias: '/mathe/16114/waagrechte-und-schiefe-asymptote',
+  alias: castToAlias('/mathe/16114/waagrechte-und-schiefe-asymptote'),
   date: '2014-09-15T15:28:35Z',
   authorId: user.id,
   repositoryId: video.id,

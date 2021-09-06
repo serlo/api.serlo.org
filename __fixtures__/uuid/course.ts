@@ -22,7 +22,12 @@
 import { license } from '../license'
 import { user } from './user'
 import { Model } from '~/internals/graphql'
-import { castToUuid, EntityRevisionType, EntityType } from '~/model/decoder'
+import {
+  castToAlias,
+  castToUuid,
+  EntityRevisionType,
+  EntityType,
+} from '~/model/decoder'
 import { Instance } from '~/types'
 
 export const course: Model<'Course'> = {
@@ -30,7 +35,7 @@ export const course: Model<'Course'> = {
   id: castToUuid(18514),
   trashed: false,
   instance: Instance.De,
-  alias: '/mathe/18514/überblick-zum-satz-des-pythagoras',
+  alias: castToAlias('/mathe/18514/überblick-zum-satz-des-pythagoras'),
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: castToUuid(30713),
   revisionIds: [30713].map(castToUuid),
@@ -44,7 +49,7 @@ export const courseRevision: Model<'CourseRevision'> = {
   __typename: EntityRevisionType.CourseRevision,
   id: castToUuid(30713),
   trashed: false,
-  alias: '/mathe/30713/überblick-zum-satz-des-pythagoras',
+  alias: castToAlias('/mathe/30713/überblick-zum-satz-des-pythagoras'),
   date: '2014-09-15T15:28:35Z',
   authorId: user.id,
   repositoryId: course.id,

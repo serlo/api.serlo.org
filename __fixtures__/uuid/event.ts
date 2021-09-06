@@ -22,7 +22,12 @@
 import { license } from '../license'
 import { user } from './user'
 import { Model } from '~/internals/graphql'
-import { castToUuid, EntityRevisionType, EntityType } from '~/model/decoder'
+import {
+  castToAlias,
+  castToUuid,
+  EntityRevisionType,
+  EntityType,
+} from '~/model/decoder'
 import { Instance } from '~/types'
 
 export const event: Model<'Event'> = {
@@ -30,7 +35,7 @@ export const event: Model<'Event'> = {
   id: castToUuid(35554),
   trashed: false,
   instance: Instance.De,
-  alias: '/mathe/35554/beispielveranstaltung',
+  alias: castToAlias('/mathe/35554/beispielveranstaltung'),
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: castToUuid(35555),
   revisionIds: [35555].map(castToUuid),
@@ -43,7 +48,7 @@ export const eventRevision: Model<'EventRevision'> = {
   __typename: EntityRevisionType.EventRevision,
   id: castToUuid(35555),
   trashed: false,
-  alias: '/mathe/35555/beispielveranstaltung',
+  alias: castToAlias('/mathe/35555/beispielveranstaltung'),
   date: '2014-09-15T15:28:35Z',
   authorId: user.id,
   repositoryId: event.id,

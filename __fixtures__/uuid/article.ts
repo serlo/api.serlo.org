@@ -22,7 +22,12 @@
 import { license } from '../license'
 import { user } from './user'
 import { Model } from '~/internals/graphql'
-import { castToUuid, EntityRevisionType, EntityType } from '~/model/decoder'
+import {
+  castToAlias,
+  castToUuid,
+  EntityRevisionType,
+  EntityType,
+} from '~/model/decoder'
 import { Instance } from '~/types'
 
 export const article: Model<'Article'> = {
@@ -30,7 +35,7 @@ export const article: Model<'Article'> = {
   id: castToUuid(1855),
   trashed: false,
   instance: Instance.De,
-  alias: '/mathe/1855/parabel',
+  alias: castToAlias('/mathe/1855/parabel'),
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: castToUuid(30674),
   licenseId: license.id,
@@ -43,7 +48,7 @@ export const articleRevision: Model<'ArticleRevision'> = {
   __typename: EntityRevisionType.ArticleRevision,
   id: castToUuid(30674),
   trashed: false,
-  alias: '/mathe/30674/parabel',
+  alias: castToAlias('/mathe/30674/parabel'),
   date: '2014-09-15T15:28:35Z',
   authorId: user.id,
   repositoryId: article.id,

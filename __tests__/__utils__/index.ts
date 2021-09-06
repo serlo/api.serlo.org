@@ -30,7 +30,7 @@ export * from './error-event'
 export * from './services'
 export * from './test-client'
 
-export { castToUuid } from '~/model/decoder'
+export { castToUuid, castToAlias } from '~/model/decoder'
 
 export function getTypenameAndId(value: { __typename: string; id: number }) {
   return R.pick(['__typename', 'id'], value)
