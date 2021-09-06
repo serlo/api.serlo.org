@@ -24,6 +24,7 @@ import { user } from './user'
 import { Model } from '~/internals/graphql'
 import {
   castToAlias,
+  castToNonEmptyString,
   castToUuid,
   EntityRevisionType,
   EntityType,
@@ -54,7 +55,7 @@ export const appletRevision: Model<'AppletRevision'> = {
   repositoryId: applet.id,
   url: 'url',
   title: 'title',
-  content: 'content',
+  content: castToNonEmptyString('content'),
   changes: 'changes',
   metaDescription: 'metaDescription',
   metaTitle: 'metaTitle',

@@ -79,8 +79,9 @@ export enum EntityRevisionType {
 const MAX_UUID = 1e7
 
 export interface Brands {
-  readonly Uuid: unique symbol
   readonly Alias: unique symbol
+  readonly NonEmptyString: unique symbol
+  readonly Uuid: unique symbol
 }
 
 export const Uuid = t.brand(
@@ -113,11 +114,16 @@ export function castToAlias(alias: string): Alias {
   return castTo(Alias, alias)
 }
 
-const NonEmptyString = t.refinement(
+export const NonEmptyString = t.brand(
   t.string,
-  (text) => text.length > 0,
+  (text): text is t.Branded<string, Brands> => text.length > 0,
   'NonEmptyString'
 )
+export type NonEmptyString = t.TypeOf<typeof NonEmptyString>
+
+export function castToNonEmptyString(text: string): NonEmptyString {
+  return castTo(NonEmptyString, text)
+}
 
 export const AbstractUuidDecoder = t.type({
   id: Uuid,

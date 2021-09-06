@@ -24,6 +24,7 @@ import { user } from './user'
 import { Model } from '~/internals/graphql'
 import {
   castToAlias,
+  castToNonEmptyString,
   castToUuid,
   EntityRevisionType,
   EntityType,
@@ -53,6 +54,6 @@ export const exerciseRevision: Model<'ExerciseRevision'> = {
   date: '2014-09-15T15:28:35Z',
   authorId: user.id,
   repositoryId: exercise.id,
-  content: 'content',
+  content: castToNonEmptyString('content'),
   changes: 'changes',
 }

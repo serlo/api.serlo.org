@@ -25,6 +25,7 @@ import { user } from './user'
 import { Model } from '~/internals/graphql'
 import {
   castToAlias,
+  castToNonEmptyString,
   castToUuid,
   EntityRevisionType,
   EntityType,
@@ -54,6 +55,6 @@ export const coursePageRevision: Model<'CoursePageRevision'> = {
   authorId: user.id,
   repositoryId: coursePage.id,
   title: 'title',
-  content: 'content',
+  content: castToNonEmptyString('content'),
   changes: 'changes',
 }
