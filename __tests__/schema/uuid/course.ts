@@ -30,6 +30,7 @@ import {
   createUuidHandler,
   getTypenameAndId,
 } from '../../__utils__'
+import { castToUuid } from '~/model/decoder'
 
 let client: Client
 
@@ -95,13 +96,15 @@ describe('Course', () => {
 
   describe('filter "trashed"', () => {
     const pages = [
-      { ...coursePage, id: 1, trashed: true },
-      { ...coursePage, id: 2, trashed: false },
+      { ...coursePage, id: castToUuid(1), trashed: true },
+      { ...coursePage, id: castToUuid(2), trashed: false },
     ]
 
     beforeEach(() => {
       global.server.use(...pages.map((page) => createUuidHandler(page)))
-      global.server.use(createUuidHandler({ ...course, pageIds: [1, 2] }))
+      global.server.use(
+        createUuidHandler({ ...course, pageIds: [1, 2].map(castToUuid) })
+      )
     })
 
     test('when not set', async () => {
@@ -164,13 +167,15 @@ describe('Course', () => {
 
   describe('filter "hasCurrentRevision"', () => {
     const pages = [
-      { ...coursePage, id: 1 },
-      { ...coursePage, id: 2, currentRevisionId: null },
+      { ...coursePage, id: castToUuid(1) },
+      { ...coursePage, id: castToUuid(2), currentRevisionId: null },
     ]
 
     beforeEach(() => {
       global.server.use(...pages.map((page) => createUuidHandler(page)))
-      global.server.use(createUuidHandler({ ...course, pageIds: [1, 2] }))
+      global.server.use(
+        createUuidHandler({ ...course, pageIds: [1, 2].map(castToUuid) })
+      )
     })
 
     test('when not set', async () => {

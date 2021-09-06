@@ -26,10 +26,12 @@ import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
+  castToUuid,
   createMessageHandler,
   createTestClient,
   createUuidHandler,
   getTypenameAndId,
+  nextUuid,
 } from '../__utils__'
 
 describe('subscriptions', () => {
@@ -99,7 +101,7 @@ describe('subscriptions', () => {
           }
         }
       `,
-      variables: { id: article.id + 1 },
+      variables: { id: nextUuid(article.id) },
       data: { subscription: { currentUserHasSubscribed: false } },
       client,
     })
@@ -138,8 +140,8 @@ describe('subscription mutation set', () => {
     global.server.use(
       createUuidHandler(article),
       createUuidHandler(user),
-      createUuidHandler({ ...article, id: 1555 }),
-      createUuidHandler({ ...article, id: 1565 }),
+      createUuidHandler({ ...article, id: castToUuid(1555) }),
+      createUuidHandler({ ...article, id: castToUuid(1565) }),
       createSubscriptionsHandler({
         userId: user.id,
         body: {

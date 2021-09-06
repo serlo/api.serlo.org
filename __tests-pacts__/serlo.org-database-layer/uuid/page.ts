@@ -25,6 +25,7 @@ import R from 'ramda'
 
 import { page, pageRevision, user } from '../../../__fixtures__'
 import {
+  castToUuid,
   createTestClient,
   createUuidHandler,
 } from '../../../__tests__/__utils__'
@@ -108,10 +109,7 @@ test('PageRevision', async () => {
   })
 })
 
-const unrevisedRevision = {
-  ...pageRevision,
-  id: 33220,
-}
+const unrevisedRevision = { ...pageRevision, id: castToUuid(33220) }
 
 test('PageCheckoutRevisionMutation', async () => {
   global.client = createTestClient({ userId: user.id })

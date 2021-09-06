@@ -21,9 +21,16 @@
  */
 import { license } from '../license'
 import { exerciseGroup } from './exercise-group'
+import { user } from './user'
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model'
-import { EntityRevisionType, EntityType } from '~/model/decoder'
+import {
+  castToAlias,
+  castToNonEmptyString,
+  castToUuid,
+  EntityRevisionType,
+  EntityType,
+} from '~/model/decoder'
 import { Instance } from '~/types'
 
 export const groupedExerciseAlias: Payload<'serlo', 'getAlias'> = {
@@ -34,27 +41,27 @@ export const groupedExerciseAlias: Payload<'serlo', 'getAlias'> = {
 
 export const groupedExercise: Model<'GroupedExercise'> = {
   __typename: EntityType.GroupedExercise,
-  id: 2219,
+  id: castToUuid(2219),
   trashed: false,
   instance: Instance.De,
-  alias: '/mathe/2219/2219',
+  alias: castToAlias('/mathe/2219/2219'),
   date: '2014-03-01T20:45:56Z',
-  currentRevisionId: 2220,
-  revisionIds: [2220],
+  currentRevisionId: castToUuid(2220),
+  revisionIds: [2220].map(castToUuid),
   licenseId: license.id,
-  solutionId: 29648,
+  solutionId: castToUuid(29648),
   parentId: exerciseGroup.id,
-  canonicalSubjectId: 5,
+  canonicalSubjectId: castToUuid(5),
 }
 
 export const groupedExerciseRevision: Model<'GroupedExerciseRevision'> = {
   __typename: EntityRevisionType.GroupedExerciseRevision,
-  id: 2220,
+  id: castToUuid(2220),
   trashed: false,
-  alias: '/mathe/2220/2220',
+  alias: castToAlias('/mathe/2220/2220'),
   date: '2014-09-15T15:28:35Z',
-  authorId: 1,
+  authorId: user.id,
   repositoryId: groupedExercise.id,
-  content: 'content',
+  content: castToNonEmptyString('content'),
   changes: 'changes',
 }

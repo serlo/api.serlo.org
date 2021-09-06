@@ -63,6 +63,9 @@ import {
   EntityType,
   DiscriminatorType,
   UuidType,
+  castToUuid,
+  castToAlias,
+  Alias,
 } from '~/model/decoder'
 import { Instance } from '~/types'
 
@@ -239,7 +242,9 @@ describe('uuid', () => {
   })
 
   test('returns an error when alias contains the null character', async () => {
-    global.server.use(createUuidHandler({ ...article, alias: '\0\0/1/math' }))
+    global.server.use(
+      createUuidHandler({ ...article, alias: '\0\0/1/math' as Alias })
+    )
 
     await assertFailingGraphQLQuery({
       query: gql`
@@ -342,7 +347,11 @@ describe('property "alias"', () => {
   describe('returns encoded alias when alias of payloads is a string', () => {
     test.each(abstractUuidRepository)('type = %s', async (_type, payload) => {
       global.server.use(
-        createUuidHandler({ ...payload, alias: '/%%/größe', id: 23 })
+        createUuidHandler({
+          ...payload,
+          alias: castToAlias('/%%/größe'),
+          id: castToUuid(23),
+        })
       )
 
       await assertSuccessfulGraphQLQuery({
@@ -366,8 +375,8 @@ describe('custom aliases', () => {
     global.server.use(
       createUuidHandler({
         ...page,
-        id: 19767,
-        alias: '/legacy-alias',
+        id: castToUuid(19767),
+        alias: castToAlias('/legacy-alias'),
       })
     )
     await assertSuccessfulGraphQLQuery({

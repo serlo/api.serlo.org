@@ -23,12 +23,12 @@
 import { article } from './article'
 import { user, user2 } from './user'
 import { Model } from '~/internals/graphql'
-import { DiscriminatorType } from '~/model/decoder'
+import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
 
 export const comment: Model<'Comment'> = {
-  id: 27778,
+  id: castToUuid(27778),
   trashed: false,
-  alias: '/mathe/27778/applets-vertauscht',
+  alias: castToAlias('/mathe/27778/applets-vertauscht'),
   __typename: DiscriminatorType.Comment,
   authorId: user.id,
   title: 'Applets vertauscht?',
@@ -41,9 +41,9 @@ export const comment: Model<'Comment'> = {
 }
 
 export const comment1: Model<'Comment'> = {
-  id: 41443,
+  id: castToUuid(41443),
   trashed: false,
-  alias: '/mathe/41443/related-content-ist-chaotisch',
+  alias: castToAlias('/mathe/41443/related-content-ist-chaotisch'),
   __typename: DiscriminatorType.Comment,
   authorId: user.id,
   parentId: article.id,
@@ -52,13 +52,13 @@ export const comment1: Model<'Comment'> = {
   archived: false,
   content:
     'Die Überschriften sind verschoben, der letzte Link führt zu den Aufgaben. Ich würde auch alle verlinkten Artikel aus dem related content schmeißen. Der related content sollte laut Richtlinien nur genutzt werden, wenn ein Artikel in mehrere aufgeteilt wurde bzw. wenn der Nutzer wahrscheinlich ständig zwischen den Artikel springen muss.\r\n\r\nWas denkt ihr?\r\n\r\nLiebe Grüße,\r\nSimon',
-  childrenIds: [49237],
+  childrenIds: [49237].map(castToUuid),
 }
 
 export const comment2: Model<'Comment'> = {
-  id: 49237,
+  id: castToUuid(49237),
   trashed: false,
-  alias: '/mathe/49237/related-content',
+  alias: castToAlias('/mathe/49237/related-content'),
   __typename: DiscriminatorType.Comment,
   authorId: user2.id,
   parentId: comment1.id,
@@ -71,9 +71,9 @@ export const comment2: Model<'Comment'> = {
 }
 
 export const comment3: Model<'Comment'> = {
-  id: 27144,
+  id: castToUuid(27144),
   trashed: false,
-  alias: '/mathe/27144/feedback-zu-dem-artikel-über-das-formular',
+  alias: castToAlias('/mathe/27144/feedback-zu-dem-artikel-über-das-formular'),
   __typename: DiscriminatorType.Comment,
   authorId: 10,
   title: 'Feedback zu dem Artikel über das Formular',
@@ -81,6 +81,6 @@ export const comment3: Model<'Comment'> = {
   archived: false,
   content:
     'Das obere Beispiel ist "ungut". Denn man hat da Kettenrechnungen hintereinander gestellt und mehrere Gleichzeitszeichen in einer Zeile, aber am Anfang ist die Rechnung 1+2 und am Ende ist die Lösung 6. Mathematisch ist das eine falsche Schreibweise, auch wenn man üblicherweise so rechnet. Bei der zweiten Variante ist das besser gelöst, denn da wird diese Nebenrechnung nicht in die Zeile der Endlösung reingeschrieben.',
-  parentId: 1495,
+  parentId: castToUuid(1495),
   childrenIds: [],
 }

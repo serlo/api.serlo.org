@@ -30,6 +30,7 @@ import {
   createUnrevisedEntitiesHandler,
   createUuidHandler,
   getTypenameAndId,
+  nextUuid,
 } from '../__utils__'
 import { encodeId, encodeToBase64 } from '~/internals/graphql'
 import { Instance } from '~/types'
@@ -42,7 +43,7 @@ describe('SubjectsQuery', () => {
         {
           ...taxonomyTermSubject,
           instance: Instance.En,
-          id: taxonomyTermSubject.id + 1,
+          id: nextUuid(taxonomyTermSubject.id),
         },
       ]),
       createUuidHandler(taxonomyTermSubject)
@@ -117,7 +118,7 @@ describe('SubjectsQuery', () => {
           }
         `,
         variables: {
-          id: encodeId({ prefix: 's', id: taxonomyTermSubject.id + 1 }),
+          id: encodeId({ prefix: 's', id: nextUuid(taxonomyTermSubject.id) }),
         },
         data: { subject: { subject: null } },
         client: createTestClient(),
