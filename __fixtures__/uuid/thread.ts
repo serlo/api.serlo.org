@@ -23,12 +23,12 @@
 import { article } from './article'
 import { user, user2 } from './user'
 import { Model } from '~/internals/graphql'
-import { castToUuid, DiscriminatorType } from '~/model/decoder'
+import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
 
 export const comment: Model<'Comment'> = {
   id: castToUuid(27778),
   trashed: false,
-  alias: '/mathe/27778/applets-vertauscht',
+  alias: castToAlias('/mathe/27778/applets-vertauscht'),
   __typename: DiscriminatorType.Comment,
   authorId: user.id,
   title: 'Applets vertauscht?',
@@ -43,7 +43,7 @@ export const comment: Model<'Comment'> = {
 export const comment1: Model<'Comment'> = {
   id: castToUuid(41443),
   trashed: false,
-  alias: '/mathe/41443/related-content-ist-chaotisch',
+  alias: castToAlias('/mathe/41443/related-content-ist-chaotisch'),
   __typename: DiscriminatorType.Comment,
   authorId: user.id,
   parentId: article.id,
@@ -58,7 +58,7 @@ export const comment1: Model<'Comment'> = {
 export const comment2: Model<'Comment'> = {
   id: castToUuid(49237),
   trashed: false,
-  alias: '/mathe/49237/related-content',
+  alias: castToAlias('/mathe/49237/related-content'),
   __typename: DiscriminatorType.Comment,
   authorId: user2.id,
   parentId: comment1.id,
@@ -73,7 +73,7 @@ export const comment2: Model<'Comment'> = {
 export const comment3: Model<'Comment'> = {
   id: castToUuid(27144),
   trashed: false,
-  alias: '/mathe/27144/feedback-zu-dem-artikel-über-das-formular',
+  alias: castToAlias('/mathe/27144/feedback-zu-dem-artikel-über-das-formular'),
   __typename: DiscriminatorType.Comment,
   authorId: 10,
   title: 'Feedback zu dem Artikel über das Formular',

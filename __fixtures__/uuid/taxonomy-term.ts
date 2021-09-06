@@ -20,14 +20,14 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Model } from '~/internals/graphql'
-import { castToUuid, DiscriminatorType } from '~/model/decoder'
+import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
 import { Instance, TaxonomyTermType } from '~/types'
 
 export const taxonomyTermRoot: Model<'TaxonomyTerm'> = {
   __typename: DiscriminatorType.TaxonomyTerm,
   id: castToUuid(3),
   trashed: false,
-  alias: '/root/3/root',
+  alias: castToAlias('/root/3/root'),
   type: TaxonomyTermType.Root,
   instance: Instance.De,
   name: 'name',
@@ -41,7 +41,7 @@ export const taxonomyTermSubject: Model<'TaxonomyTerm'> = {
   __typename: DiscriminatorType.TaxonomyTerm,
   id: castToUuid(5),
   trashed: false,
-  alias: '/mathe/5/mathe',
+  alias: castToAlias('/mathe/5/mathe'),
   type: TaxonomyTermType.Subject,
   instance: Instance.De,
   name: 'name',
@@ -55,7 +55,7 @@ export const taxonomyTermCurriculumTopic: Model<'TaxonomyTerm'> = {
   __typename: DiscriminatorType.TaxonomyTerm,
   id: castToUuid(16048),
   trashed: false,
-  alias: '/mathe/16048/natürliche-zahlen',
+  alias: castToAlias('/mathe/16048/natürliche-zahlen'),
   type: TaxonomyTermType.CurriculumTopic,
   instance: Instance.De,
   name: 'name',

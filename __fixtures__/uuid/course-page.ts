@@ -23,7 +23,12 @@ import { license } from '../license'
 import { course } from './course'
 import { user } from './user'
 import { Model } from '~/internals/graphql'
-import { castToUuid, EntityRevisionType, EntityType } from '~/model/decoder'
+import {
+  castToAlias,
+  castToUuid,
+  EntityRevisionType,
+  EntityType,
+} from '~/model/decoder'
 import { Instance } from '~/types'
 
 export const coursePage: Model<'CoursePage'> = {
@@ -31,7 +36,7 @@ export const coursePage: Model<'CoursePage'> = {
   id: castToUuid(18521),
   trashed: false,
   instance: Instance.De,
-  alias: '/mathe/18521/startseite',
+  alias: castToAlias('/mathe/18521/startseite'),
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: castToUuid(19277),
   revisionIds: [19277].map(castToUuid),
@@ -44,7 +49,7 @@ export const coursePageRevision: Model<'CoursePageRevision'> = {
   __typename: EntityRevisionType.CoursePageRevision,
   id: castToUuid(19277),
   trashed: false,
-  alias: '/mathe/19277/startseite',
+  alias: castToAlias('/mathe/19277/startseite'),
   date: '2014-09-15T15:28:35Z',
   authorId: user.id,
   repositoryId: coursePage.id,
