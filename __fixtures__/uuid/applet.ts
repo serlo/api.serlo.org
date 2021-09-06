@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { license } from '../license'
+import { user } from './user'
 import { Model } from '~/internals/graphql'
 import { castToUuid, EntityRevisionType, EntityType } from '~/model/decoder'
 import { Instance } from '~/types'
@@ -44,7 +45,7 @@ export const appletRevision: Model<'AppletRevision'> = {
   trashed: false,
   alias: '/math/35597/example-applet',
   date: '2014-09-15T15:28:35Z',
-  authorId: castToUuid(1),
+  authorId: user.id,
   repositoryId: applet.id,
   url: 'url',
   title: 'title',

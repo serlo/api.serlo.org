@@ -21,6 +21,7 @@
  */
 import { license } from '../license'
 import { exercise } from './exercise'
+import { user } from './user'
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model'
 import { castToUuid, EntityRevisionType, EntityType } from '~/model/decoder'
@@ -52,7 +53,7 @@ export const solutionRevision: Model<'SolutionRevision'> = {
   trashed: false,
   alias: '/mathe/29652/29652',
   date: '2014-09-15T15:28:35Z',
-  authorId: castToUuid(1),
+  authorId: user.id,
   repositoryId: solution.id,
   content: 'content',
   changes: 'changes',

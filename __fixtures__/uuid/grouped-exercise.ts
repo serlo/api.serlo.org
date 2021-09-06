@@ -21,6 +21,7 @@
  */
 import { license } from '../license'
 import { exerciseGroup } from './exercise-group'
+import { user } from './user'
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model'
 import { castToUuid, EntityRevisionType, EntityType } from '~/model/decoder'
@@ -53,7 +54,7 @@ export const groupedExerciseRevision: Model<'GroupedExerciseRevision'> = {
   trashed: false,
   alias: '/mathe/2220/2220',
   date: '2014-09-15T15:28:35Z',
-  authorId: castToUuid(1),
+  authorId: user.id,
   repositoryId: groupedExercise.id,
   content: 'content',
   changes: 'changes',
