@@ -29,6 +29,7 @@ import {
   InterfaceResolvers,
   Mutations,
 } from '~/internals/graphql'
+import { castToUuid } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 
 export const resolvers: InterfaceResolvers<'AbstractEntity'> &
@@ -63,7 +64,8 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
 
       const result = await dataSources.model.serlo.checkoutEntityRevision({
-        ...input,
+        revisionId: castToUuid(input.revisionId),
+        reason: input.reason,
         userId,
       })
 

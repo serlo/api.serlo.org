@@ -29,7 +29,7 @@ import {
   Mutations,
   TypeResolvers,
 } from '~/internals/graphql'
-import { PageDecoder, PageRevisionDecoder } from '~/model/decoder'
+import { castToUuid, PageDecoder, PageRevisionDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import {
   createRepositoryResolvers,
@@ -70,7 +70,8 @@ export const resolvers: TypeResolvers<Page> &
       })
 
       const result = await dataSources.model.serlo.checkoutPageRevision({
-        ...input,
+        revisionId: castToUuid(input.revisionId),
+        reason: input.reason,
         userId,
       })
 

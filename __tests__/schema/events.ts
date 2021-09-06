@@ -49,10 +49,11 @@ import {
   createUuidHandler,
   getTypenameAndId,
   assertFailingGraphQLQuery,
+  nextUuid,
 } from '../__utils__'
 import { Service } from '~/internals/authentication'
 import { Model } from '~/internals/graphql'
-import { NotificationEventType } from '~/model/decoder'
+import { castToUuid, NotificationEventType } from '~/model/decoder'
 import { Instance } from '~/types'
 
 let client: Client
@@ -324,7 +325,7 @@ test('User.eventsByUser returns events of this user', async () => {
   const events = assignSequentialIds(
     R.concat(
       allEvents.map(R.assoc('actorId', user.id)),
-      allEvents.map(R.assoc('actorId', user.id + 1))
+      allEvents.map(R.assoc('actorId', nextUuid(user.id)))
     )
   )
   setupEvents(events)
@@ -360,7 +361,7 @@ test('User.eventsByUser returns events of this user', async () => {
 })
 
 test('AbstractEntity.events returns events for this entity', async () => {
-  const uuid = { ...article, id: 42 }
+  const uuid = { ...article, id: castToUuid(42) }
   const events = assignSequentialIds(
     R.concat(
       allEvents.map(R.assoc('objectId', 42)),

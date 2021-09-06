@@ -33,7 +33,7 @@ export interface RequestSpec<Payload, Result> {
    * io-ts decoder which is used during runtime to check whether the returned
    * value is of the aspected type.
    */
-  decoder: t.Type<Result>
+  decoder: t.Type<Result, unknown>
 
   /**
    * Function which does the actual query operation.

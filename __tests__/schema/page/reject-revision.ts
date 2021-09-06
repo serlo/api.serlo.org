@@ -39,6 +39,7 @@ import {
   returnsJson,
   Database,
   returnsUuidsFromDatabase,
+  nextUuid,
 } from '../../__utils__'
 
 let database: Database
@@ -52,7 +53,7 @@ const page = {
 }
 const unrevisedRevision = {
   ...pageRevision,
-  id: pageRevision.id + 1,
+  id: nextUuid(pageRevision.id),
   trashed: false,
 }
 

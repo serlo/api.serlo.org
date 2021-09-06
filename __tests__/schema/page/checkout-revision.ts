@@ -37,6 +37,7 @@ import {
   givenPageCheckoutRevisionEndpoint,
   givenUuidQueryEndpoint,
   hasInternalServerError,
+  nextUuid,
   returnsJson,
   returnsUuidsFromDatabase,
 } from '../../__utils__'
@@ -53,7 +54,7 @@ const page = {
 }
 const unrevisedRevision = {
   ...pageRevision,
-  id: pageRevision.id + 1,
+  id: nextUuid(pageRevision.id),
   trashed: true,
 }
 

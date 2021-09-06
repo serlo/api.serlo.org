@@ -20,32 +20,33 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { license } from '../license'
+import { user } from './user'
 import { Model } from '~/internals/graphql'
-import { EntityRevisionType, EntityType } from '~/model/decoder'
+import { castToUuid, EntityRevisionType, EntityType } from '~/model/decoder'
 import { Instance } from '~/types'
 
 export const exerciseGroup: Model<'ExerciseGroup'> = {
   __typename: EntityType.ExerciseGroup,
-  id: 2217,
+  id: castToUuid(2217),
   trashed: false,
   instance: Instance.De,
   alias: '/mathe/2217/2217',
   date: '2014-03-01T20:45:56Z',
-  currentRevisionId: 2218,
-  revisionIds: [2218],
+  currentRevisionId: castToUuid(2218),
+  revisionIds: [2218].map(castToUuid),
   licenseId: license.id,
-  taxonomyTermIds: [5],
-  exerciseIds: [2219],
-  canonicalSubjectId: 5,
+  taxonomyTermIds: [5].map(castToUuid),
+  exerciseIds: [2219].map(castToUuid),
+  canonicalSubjectId: castToUuid(5),
 }
 
 export const exerciseGroupRevision: Model<'ExerciseGroupRevision'> = {
   __typename: EntityRevisionType.ExerciseGroupRevision,
-  id: 2218,
+  id: castToUuid(2218),
   trashed: false,
   alias: '/mathe/2218/2218',
   date: '2014-09-15T15:28:35Z',
-  authorId: 1,
+  authorId: user.id,
   repositoryId: exerciseGroup.id,
   content: 'content',
   changes: 'changes',

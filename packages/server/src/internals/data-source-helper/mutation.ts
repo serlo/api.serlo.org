@@ -63,7 +63,7 @@ export interface MutationSpec<Payload, Result> {
    * mutation during runtime. An error is thrown when the returned value does not
    * match the decoder.
    */
-  decoder: t.Type<Result>
+  decoder: t.Type<Result, unknown>
 
   /**
    * Function which executes the actual mutation.

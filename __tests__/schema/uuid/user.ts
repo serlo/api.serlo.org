@@ -43,6 +43,7 @@ import {
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model'
 import { MajorDimension } from '~/model'
+import { castToUuid } from '~/model/decoder'
 import { Instance } from '~/types'
 
 let client: Client
@@ -638,7 +639,9 @@ function expectUserIds({
   endpoint: 'activeReviewers' | 'activeAuthors' | 'activeDonors'
   ids: number[]
 }) {
-  global.server.use(...ids.map((id) => createUuidHandler({ ...user, id })))
+  global.server.use(
+    ...ids.map(castToUuid).map((id) => createUuidHandler({ ...user, id }))
+  )
 
   return assertSuccessfulGraphQLQuery({
     query: gql`
