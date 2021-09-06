@@ -26,6 +26,7 @@ import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model'
 import {
   castToAlias,
+  castToNonEmptyString,
   castToUuid,
   EntityRevisionType,
   EntityType,
@@ -60,6 +61,6 @@ export const solutionRevision: Model<'SolutionRevision'> = {
   date: '2014-09-15T15:28:35Z',
   authorId: user.id,
   repositoryId: solution.id,
-  content: 'content',
+  content: castToNonEmptyString('content'),
   changes: 'changes',
 }
