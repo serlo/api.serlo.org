@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { license } from '../license'
+import { user } from './user'
 import { Model } from '~/internals/graphql'
 import { castToUuid, EntityRevisionType, EntityType } from '~/model/decoder'
 import { Instance } from '~/types'
@@ -44,7 +45,7 @@ export const videoRevision: Model<'VideoRevision'> = {
   trashed: false,
   alias: '/mathe/16114/waagrechte-und-schiefe-asymptote',
   date: '2014-09-15T15:28:35Z',
-  authorId: castToUuid(1),
+  authorId: user.id,
   repositoryId: video.id,
   title: 'title',
   content: 'content',

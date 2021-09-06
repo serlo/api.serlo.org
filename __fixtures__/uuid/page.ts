@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { license } from '../license'
+import { user } from './user'
 import { Model } from '~/internals/graphql'
 import { castToUuid, DiscriminatorType } from '~/model/decoder'
 import { Instance } from '~/types'
@@ -44,6 +45,6 @@ export const pageRevision: Model<'PageRevision'> = {
   title: 'title',
   content: 'content',
   date: '2015-02-28T02:06:40Z',
-  authorId: castToUuid(1),
+  authorId: user.id,
   repositoryId: page.id,
 }
