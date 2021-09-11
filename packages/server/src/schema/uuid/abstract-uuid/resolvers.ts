@@ -99,12 +99,10 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
               case DiscriminatorType.User:
                 return 'User'
               default:
-                if (E.isRight(EntityTypeDecoder.decode(object.__typename))) {
+                if (EntityTypeDecoder.is(object.__typename)) {
                   return 'Entity'
                 }
-                if (
-                  E.isRight(EntityRevisionTypeDecoder.decode(object.__typename))
-                ) {
+                if (EntityRevisionTypeDecoder.is(object.__typename)) {
                   return 'EntityRevision'
                 }
                 return 'unknown'
@@ -122,15 +120,8 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
         dataSources,
       })
 
-      const result = await dataSources.model.serlo.setUuidState({
-        ids,
-        userId,
-        trashed,
-      })
+      await dataSources.model.serlo.setUuidState({ ids, userId, trashed })
 
-      if (result !== undefined) {
-        throw new UserInputError(result.reason)
-      }
       return { success: true, query: {} }
     },
   },

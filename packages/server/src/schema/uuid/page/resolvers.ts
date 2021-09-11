@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as serloAuth from '@serlo/authorization'
-import { UserInputError } from 'apollo-server'
 
 import {
   assertUserIsAuthenticated,
@@ -69,17 +68,13 @@ export const resolvers: TypeResolvers<Page> &
         guard: serloAuth.Page.checkoutRevision(scope),
       })
 
-      const result = await dataSources.model.serlo.checkoutPageRevision({
+      await dataSources.model.serlo.checkoutPageRevision({
         revisionId: castToUuid(input.revisionId),
         reason: input.reason,
         userId,
       })
 
-      if (result.success === false) {
-        throw new UserInputError(result.reason)
-      } else {
-        return { ...result, query: {} }
-      }
+      return { success: true, query: {} }
     },
     async rejectRevision(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
@@ -95,16 +90,9 @@ export const resolvers: TypeResolvers<Page> &
         guard: serloAuth.Page.rejectRevision(scope),
       })
 
-      const result = await dataSources.model.serlo.rejectPageRevision({
-        ...input,
-        userId,
-      })
+      await dataSources.model.serlo.rejectPageRevision({ ...input, userId })
 
-      if (result.success === false) {
-        throw new UserInputError(result.reason)
-      } else {
-        return { ...result, query: {} }
-      }
+      return { success: true, query: {} }
     },
   },
 }

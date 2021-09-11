@@ -262,11 +262,7 @@ export const resolvers: LegacyQueries<
 
       const result = await dataSources.model.serlo.setEmail(input)
 
-      if (result.success) {
-        return { ...result, email: input.email }
-      } else {
-        throw new UserInputError(result.reason)
-      }
+      return { ...result, email: input.email }
     },
   },
 }
