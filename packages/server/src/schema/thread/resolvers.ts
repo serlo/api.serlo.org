@@ -172,8 +172,8 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       return { success: true, query: {} }
     },
     async setThreadState(_parent, payload, { dataSources, userId }) {
-      const { id, trashed } = payload.input
-      const ids = decodeThreadIds(id)
+      const { trashed } = payload.input
+      const ids = decodeThreadIds(payload.input.id)
 
       const scopes = await Promise.all(
         ids.map((id) => fetchScopeOfUuid({ id, dataSources }))
@@ -188,19 +188,12 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         dataSources,
       })
 
-      await dataSources.model.serlo.setUuidState({
-        ids,
-        userId,
-        trashed,
-      })
-      return {
-        success: true,
-        query: {},
-      }
+      await dataSources.model.serlo.setUuidState({ ids, userId, trashed })
+
+      return { success: true, query: {} }
     },
     async setCommentState(_parent, payload, { dataSources, userId }) {
-      const { id, trashed } = payload.input
-      const ids = id
+      const { id: ids, trashed } = payload.input
 
       const scopes = await Promise.all(
         ids.map((id) => fetchScopeOfUuid({ id, dataSources }))
@@ -215,15 +208,9 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         dataSources,
       })
 
-      await dataSources.model.serlo.setUuidState({
-        ids: ids,
-        trashed,
-        userId,
-      })
-      return {
-        success: true,
-        query: {},
-      }
+      await dataSources.model.serlo.setUuidState({ ids, trashed, userId })
+
+      return { success: true, query: {} }
     },
   },
 }
