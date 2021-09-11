@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { UserInputError } from 'apollo-server-express'
-import { option as O, either as E, function as F } from 'fp-ts'
+import { option as O, function as F } from 'fp-ts'
 import * as t from 'io-ts'
 import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
@@ -81,9 +81,7 @@ export function createSerloModel({
       case 404:
         return response
       case 400:
-        throw new UserInputError(
-          `Bad Request: ${(await parseReason(response)) ?? '<unknown error>'}`
-        )
+        throw new UserInputError((await parseReason(response)) ?? 'Bad Request')
       default:
         throw new Error(`${response.status}: ${JSON.stringify(message)}`)
     }
@@ -93,7 +91,7 @@ export function createSerloModel({
     const responseText = await response.text()
     return F.pipe(
       O.tryCatch(() => JSON.parse(responseText) as unknown),
-      O.fromPredicate(t.type({ reason: t.string }).is),
+      O.chain(O.fromPredicate(t.type({ reason: t.string }).is)),
       O.map((json) => json.reason),
       O.toNullable
     )
@@ -118,7 +116,6 @@ export function createSerloModel({
               id,
             },
           },
-          expectedStatusCodes: [200, 404],
         })) as Model<'AbstractUuid'> | null
         return uuid !== null && isSupportedUuidType(uuid.__typename)
           ? uuid
@@ -144,19 +141,11 @@ export function createSerloModel({
   }
 
   const setUuidState = createMutation({
-    decoder: t.union([
-      t.void,
-      t.strict({ success: t.literal(false), reason: t.string }),
-    ]),
+    decoder: t.void,
     async mutate(payload: { ids: number[]; userId: number; trashed: boolean }) {
-      const response = await handleMessageWithoutResponse({
+      await handleMessageWithoutResponse({
         message: { type: 'UuidSetStateMutation', payload },
-        expectedStatusCodes: [200, 400],
       })
-
-      if (response.status === 400) {
-        return (await response.json()) as unknown
-      }
     },
     async updateCache({ ids, trashed }) {
       await getUuid._querySpec.setCache({
@@ -178,13 +167,7 @@ export function createSerloModel({
       decoder: t.array(t.number),
       enableSwr: true,
       getCurrentValue: async () => {
-        const response = await handleMessageWithoutResponse({
-          message: {
-            type: 'ActiveAuthorsQuery',
-          },
-          expectedStatusCodes: [200],
-        })
-        return (await response.json()) as number[]
+        return await handleMessage({ message: { type: 'ActiveAuthorsQuery' } })
       },
       staleAfter: { hour: 1 },
       getKey: () => {
@@ -207,7 +190,6 @@ export function createSerloModel({
           message: {
             type: 'ActiveReviewersQuery',
           },
-          expectedStatusCodes: [200],
         })
         return (await response.json()) as number[]
       },
@@ -235,7 +217,6 @@ export function createSerloModel({
       getCurrentValue: async (payload: { userId: number }) => {
         return handleMessage({
           message: { type: 'ActivityByTypeQuery', payload },
-          expectedStatusCodes: [200],
         })
       },
       staleAfter: { minutes: 10 },
@@ -263,7 +244,6 @@ export function createSerloModel({
     async mutate(payload: { botId: number }) {
       return await handleMessage({
         message: { type: 'UserDeleteBotsMutation', payload },
-        expectedStatusCodes: [200],
       })
     },
     async updateCache({ botId }, serverPayload) {
@@ -285,7 +265,6 @@ export function createSerloModel({
     mutate: (payload: { userId: number }) => {
       return handleMessage({
         message: { type: 'UserDeleteRegularUsersMutation', payload },
-        expectedStatusCodes: [200],
       })
     },
     async updateCache({ userId }, { success }) {
@@ -296,14 +275,10 @@ export function createSerloModel({
   })
 
   const setEmail = createMutation({
-    decoder: t.union([
-      t.type({ success: t.literal(true), username: t.string }),
-      t.type({ success: t.literal(false), reason: t.string }),
-    ]),
+    decoder: t.type({ success: t.literal(true), username: t.string }),
     mutate: (payload: { userId: number; email: string }) => {
       return handleMessage({
         message: { type: 'UserSetEmailMutation', payload },
-        expectedStatusCodes: [200, 400],
       })
     },
   })
@@ -320,7 +295,6 @@ export function createSerloModel({
               instance,
             },
           },
-          expectedStatusCodes: [200],
         })
       },
       staleAfter: { hour: 1 },
@@ -430,7 +404,6 @@ export function createSerloModel({
             type: 'AliasQuery',
             payload: { instance, path: decodePath(path) },
           },
-          expectedStatusCodes: [200, 404],
         })
       },
       enableSwr: true,
@@ -468,7 +441,6 @@ export function createSerloModel({
       getCurrentValue: ({ id }: { id: number }) => {
         return handleMessage({
           message: { type: 'LicenseQuery', payload: { id } },
-          expectedStatusCodes: [200, 404],
         })
       },
       enableSwr: true,
@@ -494,7 +466,6 @@ export function createSerloModel({
       getCurrentValue() {
         return handleMessage({
           message: { type: 'SubjectsQuery', payload: {} },
-          expectedStatusCodes: [200],
         })
       },
       enableSwr: true,
@@ -514,7 +485,6 @@ export function createSerloModel({
     getCurrentValue(_payload: undefined) {
       return handleMessage({
         message: { type: 'UnrevisedEntitiesQuery', payload: {} },
-        expectedStatusCodes: [200],
       })
     },
   })
@@ -559,7 +529,6 @@ export function createSerloModel({
       getCurrentValue: async ({ id }: { id: number }) => {
         const notificationEvent = (await handleMessage({
           message: { type: 'EventQuery', payload: { id } },
-          expectedStatusCodes: [200, 404],
         })) as Model<'AbstractNotificationEvent'> | null
 
         return notificationEvent === null ||
@@ -595,7 +564,6 @@ export function createSerloModel({
     }) {
       return await handleMessage({
         message: { type: 'EventsQuery', payload },
-        expectedStatusCodes: [200],
       })
     },
   })
@@ -614,7 +582,6 @@ export function createSerloModel({
       }) {
         return await handleMessage({
           message: { type: 'EventsQuery', payload },
-          expectedStatusCodes: [200],
         })
       },
       getKey(payload) {
@@ -660,7 +627,6 @@ export function createSerloModel({
               userId,
             },
           },
-          expectedStatusCodes: [200],
         })
       },
       staleAfter: { hour: 1 },
@@ -682,7 +648,6 @@ export function createSerloModel({
     async mutate(payload: { ids: number[]; userId: number; unread: boolean }) {
       await handleMessageWithoutResponse({
         message: { type: 'NotificationSetStateMutation', payload },
-        expectedStatusCodes: [200],
       })
     },
     async updateCache({ ids, userId, unread }) {
@@ -714,7 +679,6 @@ export function createSerloModel({
               userId,
             },
           },
-          expectedStatusCodes: [200],
         })
       },
       staleAfter: { hour: 1 },
@@ -741,7 +705,6 @@ export function createSerloModel({
     }) {
       await handleMessageWithoutResponse({
         message: { type: 'SubscriptionSetMutation', payload },
-        expectedStatusCodes: [200],
       })
     },
     async updateCache({ ids, sendEmail, userId, subscribe }) {
@@ -777,7 +740,6 @@ export function createSerloModel({
       getCurrentValue: async ({ id }: { id: number }) => {
         return handleMessage({
           message: { type: 'ThreadsQuery', payload: { id } },
-          expectedStatusCodes: [200],
         })
       },
       enableSwr: true,
@@ -800,7 +762,6 @@ export function createSerloModel({
     mutate: (payload: ThreadCreateThreadInput & { userId: number }) => {
       return handleMessage({
         message: { type: 'ThreadCreateThreadMutation', payload },
-        expectedStatusCodes: [200],
       })
     },
     updateCache: async (payload, value) => {
@@ -832,7 +793,6 @@ export function createSerloModel({
     }) => {
       return handleMessage({
         message: { type: 'ThreadCreateCommentMutation', payload },
-        expectedStatusCodes: [200],
       })
     },
     updateCache: async (payload, value) => {
@@ -862,7 +822,6 @@ export function createSerloModel({
     }) {
       await handleMessageWithoutResponse({
         message: { type: 'ThreadSetThreadArchivedMutation', payload },
-        expectedStatusCodes: [200],
       })
     },
     async updateCache({ ids, archived }) {
@@ -882,10 +841,7 @@ export function createSerloModel({
   })
 
   const checkoutEntityRevision = createMutation({
-    decoder: t.union([
-      t.type({ success: t.literal(true) }),
-      t.type({ success: t.literal(false), reason: t.string }),
-    ]),
+    decoder: t.type({ success: t.literal(true) }),
     async mutate(payload: {
       revisionId: Uuid
       userId: number
@@ -893,7 +849,6 @@ export function createSerloModel({
     }) {
       return await handleMessage({
         message: { type: 'EntityCheckoutRevisionMutation', payload },
-        expectedStatusCodes: [200, 400],
       })
     },
     async updateCache({ revisionId }) {
@@ -929,10 +884,7 @@ export function createSerloModel({
   })
 
   const checkoutPageRevision = createMutation({
-    decoder: t.union([
-      t.type({ success: t.literal(true) }),
-      t.type({ success: t.literal(false), reason: t.string }),
-    ]),
+    decoder: t.type({ success: t.literal(true) }),
     async mutate(payload: {
       revisionId: Uuid
       userId: number
@@ -940,7 +892,6 @@ export function createSerloModel({
     }) {
       return await handleMessage({
         message: { type: 'PageCheckoutRevisionMutation', payload },
-        expectedStatusCodes: [200, 400],
       })
     },
     async updateCache({ revisionId }) {
@@ -972,10 +923,7 @@ export function createSerloModel({
   })
 
   const rejectEntityRevision = createMutation({
-    decoder: t.union([
-      t.type({ success: t.literal(true) }),
-      t.type({ success: t.literal(false), reason: t.string }),
-    ]),
+    decoder: t.type({ success: t.literal(true) }),
     async mutate(payload: {
       revisionId: number
       userId: number
@@ -983,7 +931,6 @@ export function createSerloModel({
     }) {
       return await handleMessage({
         message: { type: 'EntityRejectRevisionMutation', payload },
-        expectedStatusCodes: [200, 400],
       })
     },
     async updateCache({ revisionId }) {
@@ -1003,10 +950,7 @@ export function createSerloModel({
   })
 
   const rejectPageRevision = createMutation({
-    decoder: t.union([
-      t.type({ success: t.literal(true) }),
-      t.type({ success: t.literal(false), reason: t.string }),
-    ]),
+    decoder: t.type({ success: t.literal(true) }),
     async mutate(payload: {
       revisionId: number
       userId: number
@@ -1014,7 +958,6 @@ export function createSerloModel({
     }) {
       return await handleMessage({
         message: { type: 'PageRejectRevisionMutation', payload },
-        expectedStatusCodes: [200, 400],
       })
     },
     async updateCache({ revisionId }) {
