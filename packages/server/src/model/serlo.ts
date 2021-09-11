@@ -58,50 +58,6 @@ export function createSerloModel({
 }: {
   environment: Environment
 }) {
-  async function handleMessage(args: MessagePayload) {
-    const response = await handleMessageWithoutResponse(args)
-    return (await response.json()) as unknown
-  }
-
-  async function handleMessageWithoutResponse(
-    message: MessagePayload
-  ): Promise<Response> {
-    const response = await fetch(
-      `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`,
-      {
-        method: 'POST',
-        body: JSON.stringify(message),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    )
-    switch (response.status) {
-      case 200:
-      case 404:
-        return response
-      case 400:
-        throw new UserInputError((await parseReason(response)) ?? 'Bad Request')
-      default:
-        throw new Error(`${response.status}: ${JSON.stringify(message)}`)
-    }
-  }
-
-  async function parseReason(response: Response) {
-    const responseText = await response.text()
-    return F.pipe(
-      O.tryCatch(() => JSON.parse(responseText) as unknown),
-      O.chain(O.fromPredicate(t.type({ reason: t.string }).is)),
-      O.map((json) => json.reason),
-      O.toNullable
-    )
-  }
-
-  interface MessagePayload {
-    type: string
-    payload?: Record<string, unknown>
-  }
-
   const getUuid = createQuery(
     {
       decoder: t.union([UuidDecoder, t.null]),
@@ -951,4 +907,46 @@ function getInstanceFromKey(key: string): Instance | null {
   return key.startsWith(`${instance}.serlo.org`) && isInstance(instance)
     ? instance
     : null
+}
+
+async function handleMessage(args: MessagePayload) {
+  const response = await handleMessageWithoutResponse(args)
+  return (await response.json()) as unknown
+}
+
+async function handleMessageWithoutResponse(
+  message: MessagePayload
+): Promise<Response> {
+  const response = await fetch(
+    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`,
+    {
+      method: 'POST',
+      body: JSON.stringify(message),
+      headers: { 'Content-Type': 'application/json' },
+    }
+  )
+  switch (response.status) {
+    case 200:
+    case 404:
+      return response
+    case 400:
+      throw new UserInputError((await parseReason(response)) ?? 'Bad Request')
+    default:
+      throw new Error(`${response.status}: ${JSON.stringify(message)}`)
+  }
+}
+
+async function parseReason(response: Response) {
+  const responseText = await response.text()
+  return F.pipe(
+    O.tryCatch(() => JSON.parse(responseText) as unknown),
+    O.chain(O.fromPredicate(t.type({ reason: t.string }).is)),
+    O.map((json) => json.reason),
+    O.toNullable
+  )
+}
+
+interface MessagePayload {
+  type: string
+  payload?: Record<string, unknown>
 }
