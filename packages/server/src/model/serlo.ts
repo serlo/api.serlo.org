@@ -19,7 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { option as O } from 'fp-ts'
+import { UserInputError } from 'apollo-server-express'
+import { option as O, either as E, function as F } from 'fp-ts'
 import * as t from 'io-ts'
 import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
@@ -64,7 +65,6 @@ export function createSerloModel({
 
   async function handleMessageWithoutResponse({
     message,
-    expectedStatusCodes,
   }: MessagePayload): Promise<Response> {
     const response = await fetch(
       `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`,
@@ -76,10 +76,27 @@ export function createSerloModel({
         },
       }
     )
-    if (!expectedStatusCodes.includes(response.status)) {
-      throw new Error(`${response.status}: ${JSON.stringify(message)}`)
+    switch (response.status) {
+      case 200:
+      case 404:
+        return response
+      case 400:
+        throw new UserInputError(
+          `Bad Request: ${(await parseReason(response)) ?? '<unknown error>'}`
+        )
+      default:
+        throw new Error(`${response.status}: ${JSON.stringify(message)}`)
     }
-    return response
+  }
+
+  async function parseReason(response: Response) {
+    const responseText = await response.text()
+    return F.pipe(
+      O.tryCatch(() => JSON.parse(responseText) as unknown),
+      O.fromPredicate(t.type({ reason: t.string }).is),
+      O.map((json) => json.reason),
+      O.toNullable
+    )
   }
 
   interface MessagePayload {
@@ -87,7 +104,6 @@ export function createSerloModel({
       type: string
       payload?: Record<string, unknown>
     }
-    expectedStatusCodes: number[]
   }
 
   const getUuid = createQuery(
