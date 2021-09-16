@@ -39,6 +39,6 @@ test('Comment', async () => {
     parentId: Matchers.integer(comment.parentId),
     childrenIds: comment.childrenIds,
   })
-  const response = await global.serloModel.getUuid(comment)
+  const response = await global.serloModel.getUuid({ id: comment.id })
   expect(response).toEqual(comment)
 })
