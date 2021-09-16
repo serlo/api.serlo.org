@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.26.24](https://github.com/serlo/api.serlo.org/compare/v0.26.23..v0.26.24) - September 16, 2021
+
+### Fixed
+
+- Fix cache update of `getActivityByType()` by SWR.
+
 ## [v0.26.23](https://github.com/serlo/api.serlo.org/compare/v0.26.22..v0.26.23) - August 30, 2021
 
 ### Fixed
