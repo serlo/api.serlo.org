@@ -230,7 +230,7 @@ export function createSerloModel({
         if (!key.startsWith('de.serlo.org/api/user/activity-by-type/'))
           return O.none
         const userId = parseInt(
-          key.replace('de.serlo.org/api/activity-by-type/', '')
+          key.replace('de.serlo.org/api/user/activity-by-type/', '')
         )
         if (Number.isNaN(userId)) return O.none
         return O.some({ userId })
