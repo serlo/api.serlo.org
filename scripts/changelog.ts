@@ -1071,6 +1071,11 @@ async function exec(): Promise<void> {
           'only fetch necessary revisions for `AbstractEntity.revisions` when `unrevised == true`',
         ],
       },
+      {
+        tagName: 'v0.26.24',
+        date: '2021-09-16',
+        fixed: ['Fix cache update of `getActivityByType()` by SWR.'],
+      },
     ],
   })
 
