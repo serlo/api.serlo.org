@@ -246,11 +246,9 @@ export type TypeResolvers<T extends { __typename?: keyof Resolvers }> =
       >
     : never
 
-export type RequiredResolvers<T extends object> = PickRequiredResolvers<
-  {
-    [P in Typename<T>]: RequiredResolverFunctions<T>
-  }
->
+export type RequiredResolvers<T extends object> = PickRequiredResolvers<{
+  [P in Typename<T>]: RequiredResolverFunctions<T>
+}>
 
 export type RequiredResolverFunctions<T extends object> =
   Typename<T> extends keyof Resolvers
