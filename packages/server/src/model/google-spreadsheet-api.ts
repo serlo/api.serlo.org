@@ -120,6 +120,11 @@ export function createGoogleSpreadsheetApiModel({
             })
           : O.none
       },
+      examplePayload: {
+        spreadsheetId: 'abc',
+        range: 'Tabellenblatt1!A:F',
+        majorDimension: MajorDimension.Rows,
+      },
     },
     environment
   )

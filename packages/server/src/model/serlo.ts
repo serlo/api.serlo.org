@@ -80,6 +80,7 @@ export function createSerloModel({
         const id = parseInt(key.replace('de.serlo.org/api/uuid/', ''), 10)
         return O.some({ id })
       },
+      examplePayload: { id: 1 },
     },
     environment
   )
@@ -128,6 +129,7 @@ export function createSerloModel({
         if (key !== 'de.serlo.org/api/user/active-authors') return O.none
         return O.some(undefined)
       },
+      examplePayload: undefined,
     },
     environment
   )
@@ -147,6 +149,7 @@ export function createSerloModel({
         if (key !== 'de.serlo.org/api/user/active-reviewers') return O.none
         return O.some(undefined)
       },
+      examplePayload: undefined,
     },
     environment
   )
@@ -176,6 +179,7 @@ export function createSerloModel({
         if (Number.isNaN(userId)) return O.none
         return O.some({ userId })
       },
+      examplePayload: { userId: 1 },
     },
     environment
   )
@@ -238,6 +242,7 @@ export function createSerloModel({
           ? O.some({ instance })
           : O.none
       },
+      examplePayload: { instance: Instance.De },
     },
     environment
   )
@@ -348,6 +353,7 @@ export function createSerloModel({
           ? O.some({ instance, path: key.replace(prefix, '') })
           : O.none
       },
+      examplePayload: { path: '/math', instance: Instance.En },
     },
     environment
   )
@@ -379,6 +385,7 @@ export function createSerloModel({
           ? O.some({ id: parseInt(key.replace(prefix, ''), 10) })
           : O.none
       },
+      examplePayload: { id: 1 },
     },
     environment
   )
@@ -401,6 +408,7 @@ export function createSerloModel({
       getPayload(key) {
         return key === 'serlo.org/subjects' ? O.some(undefined) : O.none
       },
+      examplePayload: undefined,
     },
     environment
   )
@@ -441,6 +449,7 @@ export function createSerloModel({
       getPayload(key) {
         return key === 'serlo.org/unrevised' ? O.some(undefined) : O.none
       },
+      examplePayload: undefined,
     },
     environment
   )
@@ -470,6 +479,7 @@ export function createSerloModel({
           ? O.some({ id: parseInt(key.replace(prefix, ''), 10) })
           : O.none
       },
+      examplePayload: { id: 1 },
     },
     environment
   )
@@ -526,6 +536,7 @@ export function createSerloModel({
       enableSwr: true,
       staleAfter: { minute: 2 },
       maxAge: { hour: 1 },
+      examplePayload: { first: 5 },
     },
     environment
   )
@@ -552,6 +563,7 @@ export function createSerloModel({
           ? O.some({ userId: parseInt(key.replace(prefix, ''), 10) })
           : O.none
       },
+      examplePayload: { userId: 1 },
     },
     environment
   )
@@ -598,6 +610,7 @@ export function createSerloModel({
           ? O.some({ userId: parseInt(key.replace(prefix, ''), 10) })
           : O.none
       },
+      examplePayload: { userId: 1 },
     },
     environment
   )
@@ -659,6 +672,7 @@ export function createSerloModel({
           ? O.some({ id: parseInt(key.replace(prefix, ''), 10) })
           : O.none
       },
+      examplePayload: { id: 1 },
     },
     environment
   )

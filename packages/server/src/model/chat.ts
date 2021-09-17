@@ -48,6 +48,7 @@ export function createChatModel({ environment }: { environment: Environment }) {
         const username = key.replace('community.serlo.org/api/users.info/', '')
         return O.some({ username })
       },
+      examplePayload: { username: 'aeneas' },
     },
     environment
   )
