@@ -127,6 +127,9 @@ describe('How to create a query in a data source: Fetching the content of an art
 
               return Number.isNaN(id) ? O.none : O.some({ id })
             },
+
+            // Add an example payload which is used in tests
+            examplePayload: { id: 1 },
           },
           // In the actual code you will pass the `environment` variable here
           createTestEnvironment()
