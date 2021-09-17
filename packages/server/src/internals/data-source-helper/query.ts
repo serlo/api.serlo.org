@@ -211,6 +211,8 @@ export interface QuerySpec<Payload, Result> {
    * the cache key does not belong to this query.
    */
   getPayload: (key: string) => O.Option<Payload>
+
+  examplePayload: Payload
 }
 
 /**
