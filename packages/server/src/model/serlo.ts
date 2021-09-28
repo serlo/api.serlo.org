@@ -413,32 +413,11 @@ export function createSerloModel({
     environment
   )
 
-  const getUnrevisedEntities = createRequest({
-    decoder: t.strict({ unrevisedEntityIds: t.array(t.number) }),
-    getCurrentValue(_payload: undefined) {
-      return handleMessage({ type: 'UnrevisedEntitiesQuery', payload: {} })
-    },
-  })
-
-  const getUnrevisedEntitiesPerSubject = createQuery(
+  const getUnrevisedEntities = createQuery(
     {
-      decoder: t.record(t.string, t.union([t.array(t.number), t.null])),
-      async getCurrentValue() {
-        const { unrevisedEntityIds } = await getUnrevisedEntities()
-        const result = {} as Record<string, number[] | null>
-
-        for (const entityId of unrevisedEntityIds) {
-          const entity = await getUuidWithCustomDecoder({
-            id: entityId,
-            decoder: EntityDecoder,
-          })
-          const key = entity.canonicalSubjectId?.toString() ?? '__no_subject'
-
-          result[key] ??= []
-          result[key]?.push(entity.id)
-        }
-
-        return result
+      decoder: t.strict({ unrevisedEntityIds: t.array(t.number) }),
+      getCurrentValue(_payload: undefined) {
+        return handleMessage({ type: 'UnrevisedEntitiesQuery', payload: {} })
       },
       enableSwr: true,
       staleAfter: { minutes: 2 },
@@ -453,6 +432,27 @@ export function createSerloModel({
     },
     environment
   )
+
+  const getUnrevisedEntitiesPerSubject = createRequest({
+    decoder: t.record(t.string, t.union([t.array(t.number), t.null])),
+    async getCurrentValue(_payload: undefined) {
+      const { unrevisedEntityIds } = await getUnrevisedEntities()
+      const result = {} as Record<string, number[] | null>
+
+      for (const entityId of unrevisedEntityIds) {
+        const entity = await getUuidWithCustomDecoder({
+          id: entityId,
+          decoder: EntityDecoder,
+        })
+        const key = entity.canonicalSubjectId?.toString() ?? '__no_subject'
+
+        result[key] ??= []
+        result[key]?.push(entity.id)
+      }
+
+      return result
+    },
+  })
 
   const getNotificationEvent = createQuery(
     {
@@ -792,9 +792,7 @@ export function createSerloModel({
         },
       })
 
-      await getUnrevisedEntitiesPerSubject._querySpec.removeCache({
-        payload: undefined,
-      })
+      await getUnrevisedEntities._querySpec.removeCache({ payload: undefined })
     },
   })
 
@@ -854,9 +852,7 @@ export function createSerloModel({
         },
       })
 
-      await getUnrevisedEntitiesPerSubject._querySpec.removeCache({
-        payload: undefined,
-      })
+      await getUnrevisedEntities._querySpec.removeCache({ payload: undefined })
     },
   })
 
