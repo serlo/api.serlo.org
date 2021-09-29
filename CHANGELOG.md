@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.26.25](https://github.com/serlo/api.serlo.org/compare/v0.26.24..v0.26.25) - September 29, 2021
+
+### Added
+
+- Add property `User.unrevisedEntities`
+
+### Internal
+
+- Add tests that getPayload() and getKey() are inverse to each other
+
+- Remove `expectedStatusCodes` from `handleMessage()`
+
 ## [v0.26.24](https://github.com/serlo/api.serlo.org/compare/v0.26.23..v0.26.24) - September 16, 2021
 
 ### Fixed
