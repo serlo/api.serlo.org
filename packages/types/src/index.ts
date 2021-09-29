@@ -2123,12 +2123,6 @@ export type User = AbstractUuid & ThreadAware & {
   roles: ScopedRoleConnection;
   description?: Maybe<Scalars['String']>;
   motivation?: Maybe<Scalars['String']>;
-  /** @deprecated Renamed to `isActiveAuthor` */
-  activeAuthor: Scalars['Boolean'];
-  /** @deprecated Renamed to `isActiveDonor` */
-  activeDonor: Scalars['Boolean'];
-  /** @deprecated Renamed to `isActiveReviewer` */
-  activeReviewer: Scalars['Boolean'];
   isActiveAuthor: Scalars['Boolean'];
   isActiveDonor: Scalars['Boolean'];
   isActiveReviewer: Scalars['Boolean'];
