@@ -2133,6 +2133,7 @@ export type User = AbstractUuid & ThreadAware & {
   isActiveDonor: Scalars['Boolean'];
   isActiveReviewer: Scalars['Boolean'];
   isNewAuthor: Scalars['Boolean'];
+  unrevisedEntities: AbstractEntityConnection;
 };
 
 
@@ -2167,6 +2168,14 @@ export type UserEventsByUserArgs = {
 
 
 export type UserRolesArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+};
+
+
+export type UserUnrevisedEntitiesArgs = {
   after?: Maybe<Scalars['String']>;
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;

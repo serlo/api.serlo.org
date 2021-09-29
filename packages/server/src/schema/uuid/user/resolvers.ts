@@ -41,7 +41,12 @@ import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
 } from '~/internals/graphql'
-import { DiscriminatorType, UserDecoder } from '~/model/decoder'
+import {
+  EntityDecoder,
+  DiscriminatorType,
+  UserDecoder,
+  RevisionDecoder,
+} from '~/model/decoder'
 import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
 import { resolveScopedRoles } from '~/schema/authorization/utils'
 import { ConnectionPayload } from '~/schema/connection/types'
@@ -170,6 +175,47 @@ export const resolvers: LegacyQueries<
       })
 
       return edits < 5
+    },
+    async unrevisedEntities(user, payload, { dataSources }) {
+      const { unrevisedEntityIds } =
+        await dataSources.model.serlo.getUnrevisedEntities()
+      const unrevisedEntitiesAndRevisions = await Promise.all(
+        unrevisedEntityIds.map((id) =>
+          dataSources.model.serlo
+            .getUuidWithCustomDecoder({
+              id,
+              decoder: EntityDecoder,
+            })
+            .then(async (unrevisedEntity) => {
+              const unrevisedRevisionIds = unrevisedEntity.revisionIds.filter(
+                (revisionId) =>
+                  unrevisedEntity.currentRevisionId === null ||
+                  revisionId > unrevisedEntity.currentRevisionId
+              )
+              const unrevisedRevisions = await Promise.all(
+                unrevisedRevisionIds.map((id) =>
+                  dataSources.model.serlo.getUuidWithCustomDecoder({
+                    id,
+                    decoder: RevisionDecoder,
+                  })
+                )
+              )
+
+              return [unrevisedEntity, unrevisedRevisions] as const
+            })
+        )
+      )
+      const unrevisedEntitiesByUser = unrevisedEntitiesAndRevisions
+        .filter(([_, unrevisedRevisions]) =>
+          unrevisedRevisions.some((revision) => revision.authorId === user.id)
+        )
+        .map(([unrevisedEntity, _]) => unrevisedEntity)
+
+      return resolveConnection({
+        nodes: unrevisedEntitiesByUser,
+        payload,
+        createCursor: (node) => node.id.toString(),
+      })
     },
     imageUrl(user) {
       return `https://community.serlo.org/avatar/${user.username}`

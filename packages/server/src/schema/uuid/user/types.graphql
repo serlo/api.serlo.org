@@ -47,6 +47,12 @@ type User implements AbstractUuid & ThreadAware {
   isActiveDonor: Boolean!
   isActiveReviewer: Boolean!
   isNewAuthor: Boolean!
+  unrevisedEntities(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): AbstractEntityConnection!
 }
 
 extend type Query {
