@@ -118,42 +118,6 @@ export const resolvers: LegacyQueries<
         ? `https://community.serlo.org/direct/${user.username}`
         : null
     },
-    /**
-     * TODO: Remove when not used any more in the frontend
-     *
-     * @deprecated
-     */
-    activeAuthor(user, _args, context, info) {
-      if (typeof resolvers.User.isActiveAuthor === 'function') {
-        return resolvers.User.isActiveAuthor(user, _args, context, info)
-      } else {
-        throw new Error('Illegal State')
-      }
-    },
-    /**
-     * TODO: Remove when not used any more in the frontend
-     *
-     * @deprecated
-     */
-    activeDonor(user, _args, context, info) {
-      if (typeof resolvers.User.isActiveDonor === 'function') {
-        return resolvers.User.isActiveDonor(user, _args, context, info)
-      } else {
-        throw new Error('Illegal State')
-      }
-    },
-    /**
-     * TODO: Remove when not used any more in the frontend
-     *
-     * @deprecated
-     */
-    activeReviewer(user, _args, context, info) {
-      if (typeof resolvers.User.isActiveReviewer === 'function') {
-        return resolvers.User.isActiveReviewer(user, _args, context, info)
-      } else {
-        throw new Error('Illegal State')
-      }
-    },
     async isActiveAuthor(user, _args, { dataSources }) {
       return (await dataSources.model.serlo.getActiveAuthorIds()).includes(
         user.id
