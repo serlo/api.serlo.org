@@ -1076,6 +1076,15 @@ async function exec(): Promise<void> {
         date: '2021-09-16',
         fixed: ['Fix cache update of `getActivityByType()` by SWR.'],
       },
+      {
+        tagName: 'v0.26.25',
+        date: '2021-09-29',
+        added: ['Add property `User.unrevisedEntities`'],
+        internal: [
+          'Add tests that getPayload() and getKey() are inverse to each other',
+          'Remove `expectedStatusCodes` from `handleMessage()`',
+        ],
+      },
     ],
   })
 
