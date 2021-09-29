@@ -23,7 +23,13 @@ import { Scope } from '@serlo/authorization'
 import { gql } from 'apollo-server'
 import R from 'ramda'
 
-import { article, user, user2, activityByType } from '../../../__fixtures__'
+import {
+  article,
+  user,
+  user2,
+  activityByType,
+  articleRevision,
+} from '../../../__fixtures__'
 import {
   assertErrorEvent,
   assertNoErrorEvents,
@@ -32,11 +38,13 @@ import {
   createChatUsersInfoHandler,
   createMessageHandler,
   createTestClient,
+  createUnrevisedEntitiesHandler,
   createUuidHandler,
   getTypenameAndId,
   givenSpreadheetApi,
   givenSpreadsheet,
   hasInternalServerError,
+  nextUuid,
   returnsJson,
   returnsMalformedJson,
 } from '../../__utils__'
@@ -525,6 +533,61 @@ describe('User', () => {
         data: { uuid: { chatUrl: null } },
         client,
       })
+    })
+  })
+
+  test('property unrevisedEntities', async () => {
+    const unrevisedRevisionByUser: Model<'ArticleRevision'> = {
+      ...articleRevision,
+      id: nextUuid(article.currentRevisionId!),
+      authorId: user.id,
+    }
+    const unrevisedRevisionByAnotherUser: Model<'ArticleRevision'> = {
+      ...articleRevision,
+      id: nextUuid(unrevisedRevisionByUser.id),
+      authorId: user2.id,
+    }
+    const articleByUser: Model<'Article'> = {
+      ...article,
+      id: nextUuid(article.id),
+      revisionIds: [unrevisedRevisionByUser.id, ...article.revisionIds],
+    }
+    const articleByAnotherUser: Model<'Article'> = {
+      ...article,
+      id: nextUuid(articleByUser.id),
+      revisionIds: [unrevisedRevisionByAnotherUser.id, ...article.revisionIds],
+    }
+
+    global.server.use(
+      createUnrevisedEntitiesHandler([articleByUser, articleByAnotherUser]),
+      createUuidHandler(unrevisedRevisionByUser),
+      createUuidHandler(unrevisedRevisionByAnotherUser),
+      createUuidHandler(articleByAnotherUser),
+      createUuidHandler(articleByUser)
+    )
+
+    await assertSuccessfulGraphQLQuery({
+      query: gql`
+        query user($id: Int!) {
+          uuid(id: $id) {
+            ... on User {
+              unrevisedEntities {
+                nodes {
+                  id
+                  __typename
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: { id: user.id },
+      data: {
+        uuid: {
+          unrevisedEntities: { nodes: [getTypenameAndId(articleByUser)] },
+        },
+      },
+      client,
     })
   })
 })
