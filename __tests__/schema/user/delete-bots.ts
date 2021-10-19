@@ -61,37 +61,7 @@ beforeEach(() => {
 test('runs successfully when mutation could be successfully executed', async () => {
   await assertSuccessfulGraphQLMutation({
     ...createDeleteBotsMutation({ botIds: userIds }),
-    data: {
-      user: {
-        deleteBots: [
-          { success: true, username: user.username, reason: null },
-          { success: true, username: user.username, reason: null },
-        ],
-      },
-    },
-    client,
-  })
-})
-
-test('runs partially when one of the mutations failed', async () => {
-  givenUserDeleteBotsEndpoint(
-    defaultUserDeleteBotsEndpoint({
-      database,
-      failsForBotIds: [user.id],
-      reason: 'failure!',
-    })
-  )
-
-  await assertSuccessfulGraphQLMutation({
-    ...createDeleteBotsMutation({ botIds: userIds }),
-    data: {
-      user: {
-        deleteBots: [
-          { success: false, username: user.username, reason: 'failure!' },
-          { success: true, username: user.username, reason: null },
-        ],
-      },
-    },
+    data: { user: { deleteBots: { success: true } } },
     client,
   })
 })
@@ -114,11 +84,7 @@ test('updates the cache', async () => {
 
   await assertSuccessfulGraphQLMutation({
     ...createDeleteBotsMutation({ botIds: [user.id] }),
-    data: {
-      user: {
-        deleteBots: [{ success: true, username: user.username, reason: null }],
-      },
-    },
+    data: { user: { deleteBots: { success: true } } },
     client,
   })
 
@@ -181,8 +147,6 @@ function createDeleteBotsMutation(args?: { botIds?: number[] }) {
         user {
           deleteBots(input: $input) {
             success
-            username
-            reason
           }
         }
       }
@@ -193,7 +157,7 @@ function createDeleteBotsMutation(args?: { botIds?: number[] }) {
 
 function givenUserDeleteBotsEndpoint(
   resolver: MessageResolver<{
-    botId: number
+    botIds: number[]
   }>
 ) {
   givenSerloEndpoint('UserDeleteBotsMutation', resolver)
@@ -201,20 +165,13 @@ function givenUserDeleteBotsEndpoint(
 
 function defaultUserDeleteBotsEndpoint({
   database,
-  reason,
-  failsForBotIds = [],
 }: {
   database: Database
-  failsForBotIds?: number[]
-  reason?: string
-}): MessageResolver<{ botId: number }> {
+}): MessageResolver<{ botIds: number[] }> {
   return (req, res, ctx) => {
-    const { botId } = req.body.payload
+    const { botIds } = req.body.payload
 
-    if (failsForBotIds.includes(botId))
-      return res(ctx.json({ success: false, reason }))
-
-    for (const id of [botId]) {
+    for (const id of botIds) {
       database.deleteUuid(id)
     }
 
