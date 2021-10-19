@@ -35,6 +35,7 @@ import {
   assertNoErrorEvents,
   assertSuccessfulGraphQLQuery,
   Client,
+  createActivityByTypeHandler,
   createChatUsersInfoHandler,
   createMessageHandler,
   createTestClient,
@@ -49,7 +50,6 @@ import {
   returnsMalformedJson,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
-import { Payload } from '~/internals/model'
 import { MajorDimension } from '~/model'
 import { castToUuid } from '~/model/decoder'
 import { Instance } from '~/types'
@@ -776,18 +776,5 @@ function givenMotivationsSpreadsheet(values: string[][]) {
     range: 'Formularantworten!B:D',
     majorDimension: MajorDimension.Rows,
     values,
-  })
-}
-
-function createActivityByTypeHandler({
-  userId,
-  activityByType,
-}: {
-  userId: number
-  activityByType: Payload<'serlo', 'getActivityByType'>
-}) {
-  return createMessageHandler({
-    message: { type: 'ActivityByTypeQuery', payload: { userId } },
-    body: activityByType,
   })
 }

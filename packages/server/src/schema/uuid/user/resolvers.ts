@@ -220,6 +220,17 @@ export const resolvers: LegacyQueries<
       if (!t.array(UserDecoder).is(users))
         throw new UserInputError('not all bots are users')
 
+      const activities = await Promise.all(
+        botIds.map((userId) =>
+          dataSources.model.serlo.getActivityByType({ userId })
+        )
+      )
+
+      if (activities.some((activity) => activity.edits >= 5))
+        throw new UserInputError(
+          'One user has more than 4 edits. Is it really a spam account? Please inform the dev team.'
+        )
+
       return await dataSources.model.serlo.deleteBots({ botIds })
     },
 

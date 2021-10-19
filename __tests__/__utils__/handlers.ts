@@ -115,6 +115,19 @@ export function createUnrevisedEntitiesHandler(
   })
 }
 
+export function createActivityByTypeHandler({
+  userId,
+  activityByType,
+}: {
+  userId: number
+  activityByType: Payload<'serlo', 'getActivityByType'>
+}) {
+  return createMessageHandler({
+    message: { type: 'ActivityByTypeQuery', payload: { userId } },
+    body: activityByType,
+  })
+}
+
 export function createMessageHandler(
   args: {
     message: MessagePayload
