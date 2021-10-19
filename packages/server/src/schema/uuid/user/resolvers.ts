@@ -212,23 +212,26 @@ export const resolvers: LegacyQueries<
         dataSources,
       })
 
+      const { botIds } = input
       const users = await Promise.all(
-        input.botIds.map((botId) =>
-          dataSources.model.serlo.getUuid({ id: botId })
-        )
+        botIds.map((botId) => dataSources.model.serlo.getUuid({ id: botId }))
       )
 
       if (!t.array(UserDecoder).is(users))
         throw new UserInputError('not all bots are users')
 
-      return await Promise.all(
-        users.map(async (user) => {
-          return {
-            ...(await dataSources.model.serlo.deleteBots({ botId: user.id })),
-            username: user.username,
-          }
-        })
+      const activities = await Promise.all(
+        botIds.map((userId) =>
+          dataSources.model.serlo.getActivityByType({ userId })
+        )
       )
+
+      if (activities.some((activity) => activity.edits >= 5))
+        throw new UserInputError(
+          'One user has more than 4 edits. Is it really a spam account? Please inform the dev team.'
+        )
+
+      return await dataSources.model.serlo.deleteBots({ botIds })
     },
 
     async deleteRegularUsers(_parent, { input }, { dataSources, userId }) {

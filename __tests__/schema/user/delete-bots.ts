@@ -21,7 +21,7 @@
  */
 import { gql } from 'apollo-server'
 
-import { article, user as baseUser } from '../../../__fixtures__'
+import { user as baseUser } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
@@ -35,6 +35,7 @@ import {
   givenSerloEndpoint,
   assertSuccessfulGraphQLQuery,
   nextUuid,
+  createActivityByTypeHandler,
 } from '../../__utils__'
 
 let database: Database
@@ -52,6 +53,20 @@ beforeEach(() => {
     })
   )
 
+  global.server.use(
+    ...userIds.map((userId) =>
+      createActivityByTypeHandler({
+        userId,
+        activityByType: {
+          edits: 1,
+          comments: 0,
+          reviews: 0,
+          taxonomy: 0,
+        },
+      })
+    )
+  )
+
   givenUserDeleteBotsEndpoint(defaultUserDeleteBotsEndpoint({ database }))
   givenUuidQueryEndpoint(returnsUuidsFromDatabase(database))
 
@@ -61,46 +76,13 @@ beforeEach(() => {
 test('runs successfully when mutation could be successfully executed', async () => {
   await assertSuccessfulGraphQLMutation({
     ...createDeleteBotsMutation({ botIds: userIds }),
-    data: {
-      user: {
-        deleteBots: [
-          { success: true, username: user.username, reason: null },
-          { success: true, username: user.username, reason: null },
-        ],
-      },
-    },
-    client,
-  })
-})
-
-test('runs partially when one of the mutations failed', async () => {
-  givenUserDeleteBotsEndpoint(
-    defaultUserDeleteBotsEndpoint({
-      database,
-      failsForBotIds: [user.id],
-      reason: 'failure!',
-    })
-  )
-
-  await assertSuccessfulGraphQLMutation({
-    ...createDeleteBotsMutation({ botIds: userIds }),
-    data: {
-      user: {
-        deleteBots: [
-          { success: false, username: user.username, reason: 'failure!' },
-          { success: true, username: user.username, reason: null },
-        ],
-      },
-    },
+    data: { user: { deleteBots: { success: true } } },
     client,
   })
 })
 
 test('updates the cache', async () => {
-  database.hasUuid(article)
-  givenUserDeleteBotsEndpoint(
-    defaultUserDeleteBotsEndpoint({ database, uuidsToDelete: [article.id] })
-  )
+  givenUserDeleteBotsEndpoint(defaultUserDeleteBotsEndpoint({ database }))
 
   await assertSuccessfulGraphQLQuery({
     query: gql`
@@ -110,18 +92,14 @@ test('updates the cache', async () => {
         }
       }
     `,
-    variables: { id: article.id },
-    data: { uuid: { id: article.id } },
+    variables: { id: user.id },
+    data: { uuid: { id: user.id } },
     client,
   })
 
   await assertSuccessfulGraphQLMutation({
     ...createDeleteBotsMutation({ botIds: [user.id] }),
-    data: {
-      user: {
-        deleteBots: [{ success: true, username: user.username, reason: null }],
-      },
-    },
+    data: { user: { deleteBots: { success: true } } },
     client,
   })
 
@@ -133,7 +111,7 @@ test('updates the cache', async () => {
         }
       }
     `,
-    variables: { id: article.id },
+    variables: { id: user.id },
     data: { uuid: null },
     client,
   })
@@ -142,6 +120,26 @@ test('updates the cache', async () => {
 test('fails when one of the given bot ids is not a user', async () => {
   await assertFailingGraphQLMutation({
     ...createDeleteBotsMutation({ botIds: [noUserId] }),
+    client,
+    expectedError: 'BAD_USER_INPUT',
+  })
+})
+
+test('fails when one given bot id has more than 4 edits', async () => {
+  global.server.use(
+    createActivityByTypeHandler({
+      userId: user.id,
+      activityByType: {
+        edits: 5,
+        comments: 0,
+        reviews: 0,
+        taxonomy: 0,
+      },
+    })
+  )
+
+  await assertFailingGraphQLMutation({
+    ...createDeleteBotsMutation({ botIds: userIds }),
     client,
     expectedError: 'BAD_USER_INPUT',
   })
@@ -184,8 +182,6 @@ function createDeleteBotsMutation(args?: { botIds?: number[] }) {
         user {
           deleteBots(input: $input) {
             success
-            username
-            reason
           }
         }
       }
@@ -196,7 +192,7 @@ function createDeleteBotsMutation(args?: { botIds?: number[] }) {
 
 function givenUserDeleteBotsEndpoint(
   resolver: MessageResolver<{
-    botId: number
+    botIds: number[]
   }>
 ) {
   givenSerloEndpoint('UserDeleteBotsMutation', resolver)
@@ -204,27 +200,16 @@ function givenUserDeleteBotsEndpoint(
 
 function defaultUserDeleteBotsEndpoint({
   database,
-  reason,
-  failsForBotIds = [],
-  uuidsToDelete = [],
 }: {
   database: Database
-  failsForBotIds?: number[]
-  reason?: string
-  uuidsToDelete?: number[]
-}): MessageResolver<{ botId: number }> {
+}): MessageResolver<{ botIds: number[] }> {
   return (req, res, ctx) => {
-    const { botId } = req.body.payload
+    const { botIds } = req.body.payload
 
-    if (failsForBotIds.includes(botId))
-      return res(ctx.json({ success: false, reason }))
-
-    const deletedUuids = [...uuidsToDelete, botId]
-
-    for (const id of deletedUuids) {
+    for (const id of botIds) {
       database.deleteUuid(id)
     }
 
-    return res(ctx.json({ success: true, deletedUuids }))
+    return res(ctx.json({ success: true }))
   }
 }
