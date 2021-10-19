@@ -1085,6 +1085,14 @@ async function exec(): Promise<void> {
           'Remove `expectedStatusCodes` from `handleMessage()`',
         ],
       },
+      {
+        tagName: 'v0.26.26',
+        date: '2021-10-20',
+        breakingChanges: [
+          'Remove legacy properties from `User` (like `User.activeAuthor`)',
+          'Refactor mutation `user.deleteBots`',
+        ],
+      },
     ],
   })
 
