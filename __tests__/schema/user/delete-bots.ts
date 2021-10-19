@@ -35,6 +35,7 @@ import {
   givenSerloEndpoint,
   assertSuccessfulGraphQLQuery,
   nextUuid,
+  createActivityByTypeHandler,
 } from '../../__utils__'
 
 let database: Database
@@ -50,6 +51,20 @@ beforeEach(() => {
     userIds.map((id) => {
       return { ...user, id }
     })
+  )
+
+  global.server.use(
+    ...userIds.map((userId) =>
+      createActivityByTypeHandler({
+        userId,
+        activityByType: {
+          edits: 1,
+          comments: 0,
+          reviews: 0,
+          taxonomy: 0,
+        },
+      })
+    )
   )
 
   givenUserDeleteBotsEndpoint(defaultUserDeleteBotsEndpoint({ database }))
@@ -105,6 +120,26 @@ test('updates the cache', async () => {
 test('fails when one of the given bot ids is not a user', async () => {
   await assertFailingGraphQLMutation({
     ...createDeleteBotsMutation({ botIds: [noUserId] }),
+    client,
+    expectedError: 'BAD_USER_INPUT',
+  })
+})
+
+test('fails when one given bot id has more than 4 edits', async () => {
+  global.server.use(
+    createActivityByTypeHandler({
+      userId: user.id,
+      activityByType: {
+        edits: 5,
+        comments: 0,
+        reviews: 0,
+        taxonomy: 0,
+      },
+    })
+  )
+
+  await assertFailingGraphQLMutation({
+    ...createDeleteBotsMutation({ botIds: userIds }),
     client,
     expectedError: 'BAD_USER_INPUT',
   })
