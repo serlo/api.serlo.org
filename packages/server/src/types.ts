@@ -2203,8 +2203,6 @@ export type UserDeleteBotsInput = {
 export type UserDeleteBotsResponse = {
   __typename?: 'UserDeleteBotsResponse';
   success: Scalars['Boolean'];
-  username: Scalars['String'];
-  reason?: Maybe<Scalars['String']>;
 };
 
 export type UserDeleteRegularUsersInput = {
@@ -2226,7 +2224,7 @@ export type UserEdge = {
 
 export type UserMutation = {
   __typename?: 'UserMutation';
-  deleteBots: Array<UserDeleteBotsResponse>;
+  deleteBots: UserDeleteBotsResponse;
   deleteRegularUsers: Array<UserDeleteRegularUsersResponse>;
   setEmail: UserSetEmailResponse;
 };
@@ -4002,8 +4000,6 @@ export type UserConnectionResolvers<ContextType = Context, ParentType extends Re
 
 export type UserDeleteBotsResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserDeleteBotsResponse'] = ResolversParentTypes['UserDeleteBotsResponse']> = {
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  reason?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4021,7 +4017,7 @@ export type UserEdgeResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 export type UserMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserMutation'] = ResolversParentTypes['UserMutation']> = {
-  deleteBots?: Resolver<Array<ResolversTypes['UserDeleteBotsResponse']>, ParentType, ContextType, RequireFields<UserMutationDeleteBotsArgs, 'input'>>;
+  deleteBots?: Resolver<ResolversTypes['UserDeleteBotsResponse'], ParentType, ContextType, RequireFields<UserMutationDeleteBotsArgs, 'input'>>;
   deleteRegularUsers?: Resolver<Array<ResolversTypes['UserDeleteRegularUsersResponse']>, ParentType, ContextType, RequireFields<UserMutationDeleteRegularUsersArgs, 'input'>>;
   setEmail?: Resolver<ResolversTypes['UserSetEmailResponse'], ParentType, ContextType, RequireFields<UserMutationSetEmailArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

@@ -212,23 +212,15 @@ export const resolvers: LegacyQueries<
         dataSources,
       })
 
+      const { botIds } = input
       const users = await Promise.all(
-        input.botIds.map((botId) =>
-          dataSources.model.serlo.getUuid({ id: botId })
-        )
+        botIds.map((botId) => dataSources.model.serlo.getUuid({ id: botId }))
       )
 
       if (!t.array(UserDecoder).is(users))
         throw new UserInputError('not all bots are users')
 
-      return await Promise.all(
-        users.map(async (user) => {
-          return {
-            ...(await dataSources.model.serlo.deleteBots({ botId: user.id })),
-            username: user.username,
-          }
-        })
-      )
+      return await dataSources.model.serlo.deleteBots({ botIds })
     },
 
     async deleteRegularUsers(_parent, { input }, { dataSources, userId }) {
