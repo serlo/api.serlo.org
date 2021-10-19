@@ -21,7 +21,7 @@
  */
 import { gql } from 'apollo-server'
 
-import { article, user as baseUser } from '../../../__fixtures__'
+import { user as baseUser } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
@@ -97,10 +97,7 @@ test('runs partially when one of the mutations failed', async () => {
 })
 
 test('updates the cache', async () => {
-  database.hasUuid(article)
-  givenUserDeleteBotsEndpoint(
-    defaultUserDeleteBotsEndpoint({ database, uuidsToDelete: [article.id] })
-  )
+  givenUserDeleteBotsEndpoint(defaultUserDeleteBotsEndpoint({ database }))
 
   await assertSuccessfulGraphQLQuery({
     query: gql`
@@ -110,8 +107,8 @@ test('updates the cache', async () => {
         }
       }
     `,
-    variables: { id: article.id },
-    data: { uuid: { id: article.id } },
+    variables: { id: user.id },
+    data: { uuid: { id: user.id } },
     client,
   })
 
@@ -133,7 +130,7 @@ test('updates the cache', async () => {
         }
       }
     `,
-    variables: { id: article.id },
+    variables: { id: user.id },
     data: { uuid: null },
     client,
   })
@@ -206,12 +203,10 @@ function defaultUserDeleteBotsEndpoint({
   database,
   reason,
   failsForBotIds = [],
-  uuidsToDelete = [],
 }: {
   database: Database
   failsForBotIds?: number[]
   reason?: string
-  uuidsToDelete?: number[]
 }): MessageResolver<{ botId: number }> {
   return (req, res, ctx) => {
     const { botId } = req.body.payload
@@ -219,12 +214,10 @@ function defaultUserDeleteBotsEndpoint({
     if (failsForBotIds.includes(botId))
       return res(ctx.json({ success: false, reason }))
 
-    const deletedUuids = [...uuidsToDelete, botId]
-
-    for (const id of deletedUuids) {
+    for (const id of [botId]) {
       database.deleteUuid(id)
     }
 
-    return res(ctx.json({ success: true, deletedUuids }))
+    return res(ctx.json({ success: true }))
   }
 }
