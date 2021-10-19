@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.26.26](https://github.com/serlo/api.serlo.org/compare/v0.26.25..v0.26.26) - October 20, 2021
+
+### Breaking Changes
+
+- Remove legacy properties from `User` (like `User.activeAuthor`)
+
+- Refactor mutation `user.deleteBots`
+
 ## [v0.26.25](https://github.com/serlo/api.serlo.org/compare/v0.26.24..v0.26.25) - September 29, 2021
 
 ### Added
