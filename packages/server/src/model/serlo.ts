@@ -184,6 +184,16 @@ export function createSerloModel({
     environment
   )
 
+  const getPotentialSpamUsers = createRequest({
+    decoder: t.strict({ userIds: t.array(t.number) }),
+    async getCurrentValue(payload: { first: number; after: number | null }) {
+      return await handleMessage({
+        type: 'UserPotentialSpamUsersQuery',
+        payload,
+      })
+    },
+  })
+
   const deleteBots = createMutation({
     decoder: t.strict({ success: t.literal(true) }),
     async mutate(payload: { botIds: number[] }) {
@@ -892,6 +902,7 @@ export function createSerloModel({
     getEvents,
     getEventsAfter,
     getNotifications,
+    getPotentialSpamUsers,
     getSubjects,
     getSubscriptions,
     setSubscription,
