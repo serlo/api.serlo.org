@@ -423,6 +423,7 @@ export const ExerciseGroupRevisionDecoder = t.exact(
     AbstractEntityRevisionDecoder,
     t.type({
       __typename: t.literal(EntityRevisionType.ExerciseGroupRevision),
+      cohesive: t.boolean,
     }),
   ])
 )

@@ -1084,6 +1084,7 @@ export type ExerciseGroupRevision = AbstractUuid & AbstractRevision & AbstractEn
   alias?: Maybe<Scalars['String']>;
   threads: ThreadsConnection;
   events: AbstractNotificationEventConnection;
+  cohesive: Scalars['Boolean'];
   date: Scalars['DateTime'];
   repository: ExerciseGroup;
   content: Scalars['String'];
@@ -3382,6 +3383,7 @@ export type ExerciseGroupRevisionResolvers<ContextType = Context, ParentType ext
   alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, RequireFields<ExerciseGroupRevisionThreadsArgs, never>>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, RequireFields<ExerciseGroupRevisionEventsArgs, never>>;
+  cohesive?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['ExerciseGroup'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
