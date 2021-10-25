@@ -1080,6 +1080,7 @@ export type ExerciseGroupRevision = AbstractUuid & AbstractRevision & AbstractEn
   alias?: Maybe<Scalars['String']>;
   threads: ThreadsConnection;
   events: AbstractNotificationEventConnection;
+  cohesive: Scalars['Boolean'];
   date: Scalars['DateTime'];
   repository: ExerciseGroup;
   content: Scalars['String'];

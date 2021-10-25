@@ -109,6 +109,7 @@ test('ExerciseGroupRevision', async () => {
             id
             trashed
             date
+            cohesive
             content
             changes
           }
@@ -118,7 +119,15 @@ test('ExerciseGroupRevision', async () => {
     variables: exerciseGroupRevision,
     data: {
       uuid: R.pick(
-        ['__typename', 'id', 'trashed', 'date', 'content', 'changes'],
+        [
+          '__typename',
+          'id',
+          'trashed',
+          'date',
+          'cohesive',
+          'content',
+          'changes',
+        ],
         exerciseGroupRevision
       ),
     },
