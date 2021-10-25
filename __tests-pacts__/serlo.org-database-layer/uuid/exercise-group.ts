@@ -88,6 +88,7 @@ test('ExerciseGroupRevision', async () => {
     date: Matchers.iso8601DateTime(exerciseGroupRevision.date),
     authorId: Matchers.integer(exerciseGroupRevision.authorId),
     repositoryId: Matchers.integer(exerciseGroupRevision.repositoryId),
+    cohesive: Matchers.boolean(exerciseGroupRevision.cohesive),
     content: Matchers.string(exerciseGroupRevision.content),
     changes: Matchers.string(exerciseGroupRevision.changes),
   })
@@ -100,6 +101,7 @@ test('ExerciseGroupRevision', async () => {
             id
             trashed
             date
+            cohesive
             content
             changes
           }
@@ -109,7 +111,15 @@ test('ExerciseGroupRevision', async () => {
     variables: exerciseGroupRevision,
     data: {
       uuid: R.pick(
-        ['__typename', 'id', 'trashed', 'date', 'content', 'changes'],
+        [
+          '__typename',
+          'id',
+          'trashed',
+          'date',
+          'cohesive',
+          'content',
+          'changes',
+        ],
         exerciseGroupRevision
       ),
     },
