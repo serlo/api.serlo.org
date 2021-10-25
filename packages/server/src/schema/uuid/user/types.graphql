@@ -71,6 +71,11 @@ extend type Query {
     first: Int
     last: Int
   ): UserConnection!
+  user: UserQuery!
+}
+
+type UserQuery {
+  potentialSpamUsers(first: Int, after: String): UserConnection!
 }
 
 type UserConnection {
