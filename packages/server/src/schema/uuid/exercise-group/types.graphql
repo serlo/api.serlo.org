@@ -60,6 +60,7 @@ type ExerciseGroupRevision implements AbstractUuid & AbstractRevision & Abstract
     instance: Instance
     actorId: Int
   ): AbstractNotificationEventConnection!
+  cohesive: Boolean!
   date: DateTime!
   repository: ExerciseGroup!
   content: String!
