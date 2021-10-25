@@ -40,6 +40,7 @@ import {
   createNamespace,
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
+  Queries,
 } from '~/internals/graphql'
 import {
   EntityDecoder,
@@ -60,6 +61,7 @@ export const resolvers: LegacyQueries<
   'activeAuthors' | 'activeReviewers' | 'activeDonors'
 > &
   TypeResolvers<User> &
+  Queries<'user'> &
   Mutations<'user'> = {
   Query: {
     async activeAuthors(_parent, payload, context) {
@@ -81,6 +83,42 @@ export const resolvers: LegacyQueries<
         ids: await context.dataSources.model.serlo.getActiveReviewerIds(),
         payload,
         context,
+      })
+    },
+    user: createNamespace(),
+  },
+  UserQuery: {
+    async potentialSpamUsers(_parent, payload, { dataSources }) {
+      const first = payload.first ?? 10
+      const after = payload.after
+        ? parseInt(Buffer.from(payload.after, 'base64').toString())
+        : null
+
+      // TODO: test
+      if (Number.isNaN(after))
+        throw new UserInputError('`after` is an illegal id')
+
+      // TODO: test
+      if (first > 500)
+        throw new UserInputError('`first` must be smaller than 500')
+
+      const { userIds } = await dataSources.model.serlo.getPotentialSpamUsers({
+        first: first + 1,
+        after,
+      })
+      const users = await Promise.all(
+        userIds.map((id) =>
+          dataSources.model.serlo.getUuidWithCustomDecoder({
+            id,
+            decoder: UserDecoder,
+          })
+        )
+      )
+
+      return resolveConnection({
+        nodes: users,
+        payload: { first },
+        createCursor: (node) => node.id.toString(),
       })
     },
   },
