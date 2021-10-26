@@ -41,7 +41,7 @@ beforeEach(() => {
 })
 
 describe('endpoint user.potentialSpamUsers', () => {
-  test('without paramater `after`', async () => {
+  test('without parameter `after`', async () => {
     await assertSuccessfulGraphQLQuery({
       query: gql`
         query {
