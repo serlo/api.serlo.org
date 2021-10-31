@@ -34,6 +34,7 @@ export const taxonomyTermRoot: Model<'TaxonomyTerm'> = {
   description: null,
   weight: 1,
   parentId: null,
+  taxonomyId: castToUuid(1),
   childrenIds: [5].map(castToUuid),
 }
 
@@ -48,6 +49,7 @@ export const taxonomyTermSubject: Model<'TaxonomyTerm'> = {
   description: null,
   weight: 2,
   parentId: taxonomyTermRoot.id,
+  taxonomyId: castToUuid(3),
   childrenIds: [16048].map(castToUuid),
 }
 
@@ -61,6 +63,7 @@ export const taxonomyTermCurriculumTopic: Model<'TaxonomyTerm'> = {
   name: 'name',
   description: 'description',
   weight: 3,
+  taxonomyId: castToUuid(11),
   parentId: taxonomyTermSubject.id,
   childrenIds: [1855].map(castToUuid),
 }

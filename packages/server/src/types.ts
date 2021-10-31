@@ -1909,6 +1909,7 @@ export type TaxonomyTerm = AbstractUuid & AbstractNavigationChild & InstanceAwar
   description?: Maybe<Scalars['String']>;
   weight: Scalars['Int'];
   parent?: Maybe<TaxonomyTerm>;
+  taxonomyId: Scalars['Int'];
   children: AbstractUuidConnection;
   navigation?: Maybe<Navigation>;
 };
@@ -3885,6 +3886,7 @@ export type TaxonomyTermResolvers<ContextType = Context, ParentType extends Reso
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   weight?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   parent?: Resolver<Maybe<ResolversTypes['TaxonomyTerm']>, ParentType, ContextType>;
+  taxonomyId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   children?: Resolver<ResolversTypes['AbstractUuidConnection'], ParentType, ContextType, RequireFields<TaxonomyTermChildrenArgs, never>>;
   navigation?: Resolver<Maybe<ResolversTypes['Navigation']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
