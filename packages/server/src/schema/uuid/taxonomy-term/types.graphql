@@ -38,6 +38,7 @@ type TaxonomyTerm implements AbstractUuid & AbstractNavigationChild & InstanceAw
   description: String
   weight: Int!
   parent: TaxonomyTerm
+  taxonomyId: Int!
   children(
     after: String
     before: String
