@@ -20,7 +20,7 @@
     "changelog": "ts-node scripts/changelog",
     "check:all": "scripts/run_all_checks.sh",
     "codegen": "lerna run --stream codegen",
-    "deploy:image": "lerna run --stream deploy:image",
+    "deploy:images": "lerna run --stream deploy:image",
     "format": "npm-run-all -c format:*",
     "format:eslint": "yarn _eslint --fix",
     "format:prettier": "yarn _prettier --write",
