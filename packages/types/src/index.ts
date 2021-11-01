@@ -1513,6 +1513,7 @@ export type Query = {
   notifications: NotificationConnection;
   subject: SubjectQuery;
   subscription: SubscriptionQuery;
+  user: UserQuery;
   uuid?: Maybe<AbstractUuid>;
 };
 
@@ -2240,6 +2241,17 @@ export type UserMutationDeleteRegularUsersArgs = {
 
 export type UserMutationSetEmailArgs = {
   input: UserSetEmailInput;
+};
+
+export type UserQuery = {
+  __typename?: 'UserQuery';
+  potentialSpamUsers: UserConnection;
+};
+
+
+export type UserQueryPotentialSpamUsersArgs = {
+  first?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['String']>;
 };
 
 export type UserSetEmailInput = {
