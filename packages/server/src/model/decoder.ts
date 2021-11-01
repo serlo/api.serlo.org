@@ -277,6 +277,7 @@ export const TaxonomyTermDecoder = t.exact(
       weight: t.number,
       childrenIds: t.array(Uuid),
       parentId: t.union([Uuid, t.null]),
+      taxonomyId: Uuid,
     }),
     t.partial({
       description: t.union([t.string, t.null]),
