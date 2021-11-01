@@ -47,6 +47,7 @@ function addTaxonomyTermInteraction(payload: Model<'TaxonomyTerm'>) {
     description: payload.description
       ? Matchers.string(payload.description)
       : null,
+    taxonomyId: Matchers.integer(payload.taxonomyId),
     weight: Matchers.integer(payload.weight),
     parentId: payload.parentId ? Matchers.integer(payload.parentId) : null,
     childrenIds:

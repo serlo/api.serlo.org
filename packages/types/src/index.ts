@@ -1904,6 +1904,7 @@ export type TaxonomyTerm = AbstractUuid & AbstractNavigationChild & InstanceAwar
   description?: Maybe<Scalars['String']>;
   weight: Scalars['Int'];
   parent?: Maybe<TaxonomyTerm>;
+  taxonomyId: Scalars['Int'];
   children: AbstractUuidConnection;
   navigation?: Maybe<Navigation>;
 };
