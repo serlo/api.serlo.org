@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.26.27](https://github.com/serlo/api.serlo.org/compare/v0.26.26..v0.26.27) - November 1, 2021
+
+### Added
+
+- Add query `user.potentialSpamUser`
+
+- Add property `ExerciseGroup.cohesive`
+
+- Add property `TaxonomyTerm.taxonomyId`
+
+### Internal
+
+- Rename `yarn deploy:image` to `yarn deploy:images`
+
+- Add support for deploying prereleases
+
 ## [v0.26.26](https://github.com/serlo/api.serlo.org/compare/v0.26.25..v0.26.26) - October 20, 2021
 
 ### Breaking Changes
