@@ -94,11 +94,9 @@ export const resolvers: LegacyQueries<
         ? parseInt(Buffer.from(payload.after, 'base64').toString())
         : null
 
-      // TODO: test
       if (Number.isNaN(after))
         throw new UserInputError('`after` is an illegal id')
 
-      // TODO: test
       if (first > 500)
         throw new UserInputError('`first` must be smaller than 500')
 
