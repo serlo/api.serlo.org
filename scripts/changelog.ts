@@ -1093,6 +1093,19 @@ async function exec(): Promise<void> {
           'Refactor mutation `user.deleteBots`',
         ],
       },
+      {
+        tagName: 'v0.26.27',
+        date: '2021-11-01',
+        added: [
+          'Add query `user.potentialSpamUser`',
+          'Add property `ExerciseGroup.cohesive`',
+          'Add property `TaxonomyTerm.taxonomyId`',
+        ],
+        internal: [
+          'Rename `yarn deploy:image` to `yarn deploy:images`',
+          'Add support for deploying prereleases',
+        ],
+      },
     ],
   })
 
