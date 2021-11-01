@@ -1517,6 +1517,7 @@ export type Query = {
   notifications: NotificationConnection;
   subject: SubjectQuery;
   subscription: SubscriptionQuery;
+  user: UserQuery;
   uuid?: Maybe<Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision>;
 };
 
@@ -2246,6 +2247,17 @@ export type UserMutationSetEmailArgs = {
   input: UserSetEmailInput;
 };
 
+export type UserQuery = {
+  __typename?: 'UserQuery';
+  potentialSpamUsers: UserConnection;
+};
+
+
+export type UserQueryPotentialSpamUsersArgs = {
+  first?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['String']>;
+};
+
 export type UserSetEmailInput = {
   userId: Scalars['Int'];
   email: Scalars['String'];
@@ -2639,6 +2651,7 @@ export type ResolversTypes = {
   UserDeleteRegularUsersResponse: ResolverTypeWrapper<ModelOf<UserDeleteRegularUsersResponse>>;
   UserEdge: ResolverTypeWrapper<ModelOf<UserEdge>>;
   UserMutation: ResolverTypeWrapper<ModelOf<UserMutation>>;
+  UserQuery: ResolverTypeWrapper<ModelOf<UserQuery>>;
   UserSetEmailInput: ResolverTypeWrapper<ModelOf<UserSetEmailInput>>;
   UserSetEmailResponse: ResolverTypeWrapper<ModelOf<UserSetEmailResponse>>;
   UuidMutation: ResolverTypeWrapper<ModelOf<UuidMutation>>;
@@ -2802,6 +2815,7 @@ export type ResolversParentTypes = {
   UserDeleteRegularUsersResponse: ModelOf<UserDeleteRegularUsersResponse>;
   UserEdge: ModelOf<UserEdge>;
   UserMutation: ModelOf<UserMutation>;
+  UserQuery: ModelOf<UserQuery>;
   UserSetEmailInput: ModelOf<UserSetEmailInput>;
   UserSetEmailResponse: ModelOf<UserSetEmailResponse>;
   UuidMutation: ModelOf<UuidMutation>;
@@ -3648,6 +3662,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   notifications?: Resolver<ResolversTypes['NotificationConnection'], ParentType, ContextType, RequireFields<QueryNotificationsArgs, never>>;
   subject?: Resolver<ResolversTypes['SubjectQuery'], ParentType, ContextType>;
   subscription?: Resolver<ResolversTypes['SubscriptionQuery'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['UserQuery'], ParentType, ContextType>;
   uuid?: Resolver<Maybe<ResolversTypes['AbstractUuid']>, ParentType, ContextType, RequireFields<QueryUuidArgs, never>>;
 };
 
@@ -4027,6 +4042,11 @@ export type UserMutationResolvers<ContextType = Context, ParentType extends Reso
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type UserQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserQuery'] = ResolversParentTypes['UserQuery']> = {
+  potentialSpamUsers?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, RequireFields<UserQueryPotentialSpamUsersArgs, never>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type UserSetEmailResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserSetEmailResponse'] = ResolversParentTypes['UserSetEmailResponse']> = {
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -4230,6 +4250,7 @@ export type Resolvers<ContextType = Context> = {
   UserDeleteRegularUsersResponse?: UserDeleteRegularUsersResponseResolvers<ContextType>;
   UserEdge?: UserEdgeResolvers<ContextType>;
   UserMutation?: UserMutationResolvers<ContextType>;
+  UserQuery?: UserQueryResolvers<ContextType>;
   UserSetEmailResponse?: UserSetEmailResponseResolvers<ContextType>;
   UuidMutation?: UuidMutationResolvers<ContextType>;
   UuidSetStateResponse?: UuidSetStateResponseResolvers<ContextType>;
