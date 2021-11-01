@@ -63,20 +63,3 @@ test('ActivityByTypeQuery', async () => {
   })
   expect(activity).toEqual(activityByType)
 })
-
-test('UserPotentialSpamUsersQuery', async () => {
-  await addMessageInteraction({
-    given: `user with id ${user.id} is in the list of potential spam users`,
-    message: {
-      type: 'UserPotentialSpamUsersQuery',
-      payload: { first: 10, after: null },
-    },
-    responseBody: { userIds: Matchers.eachLike(1) },
-  })
-
-  const result = await global.serloModel.getPotentialSpamUsers({
-    first: 10,
-    after: null,
-  })
-  expect(result).toEqual({ userIds: [1] })
-})
