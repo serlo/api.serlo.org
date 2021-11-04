@@ -20,8 +20,9 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import { rest } from 'msw'
 
-import { user as baseUser } from '../../../__fixtures__'
+import { article, user, user2 } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
@@ -34,29 +35,28 @@ import {
   MessageResolver,
   givenSerloEndpoint,
   assertSuccessfulGraphQLQuery,
-  nextUuid,
   createActivityByTypeHandler,
+  RestResolver,
+  castToUuid,
+  assertNoErrorEvents,
+  returnsJson,
+  assertErrorEvent,
 } from '../../__utils__'
 
 let database: Database
 
 let client: Client
-const user = { ...baseUser, roles: ['sysadmin'] }
-const userIds = [user.id, nextUuid(user.id)]
-const noUserId = nextUuid(nextUuid(user.id))
+const users = [{ ...user, roles: ['sysadmin'] }, user2]
+let chatUsers: string[]
 
 beforeEach(() => {
   database = new Database()
-  database.hasUuids(
-    userIds.map((id) => {
-      return { ...user, id }
-    })
-  )
+  database.hasUuids(users)
 
   global.server.use(
-    ...userIds.map((userId) =>
+    ...users.map((user) =>
       createActivityByTypeHandler({
-        userId,
+        userId: user.id,
         activityByType: {
           edits: 1,
           comments: 0,
@@ -71,11 +71,33 @@ beforeEach(() => {
   givenUuidQueryEndpoint(returnsUuidsFromDatabase(database))
 
   client = createTestClient({ userId: user.id })
+
+  chatUsers = [user.username]
+
+  givenChatDeleteUserEndpoint((req, res, ctx) => {
+    const { headers, body } = req
+
+    if (
+      headers.get('X-Auth-Token') !== process.env.ROCKET_CHAT_API_AUTH_TOKEN ||
+      headers.get('X-User-Id') !== process.env.ROCKET_CHAT_API_USER_ID
+    )
+      return res(ctx.status(400))
+
+    const { username } = body
+
+    if (chatUsers.includes(username)) {
+      chatUsers = chatUsers.filter((x) => x !== username)
+
+      return res(ctx.json({ success: true }))
+    } else {
+      return res(ctx.json({ success: false, errorType: 'error-invalid-user' }))
+    }
+  })
 })
 
 test('runs successfully when mutation could be successfully executed', async () => {
   await assertSuccessfulGraphQLMutation({
-    ...createDeleteBotsMutation({ botIds: userIds }),
+    ...createDeleteBotsMutation({ botIds: [user.id, user2.id] }),
     data: { user: { deleteBots: { success: true } } },
     client,
   })
@@ -117,9 +139,54 @@ test('updates the cache', async () => {
   })
 })
 
+describe('community chat', () => {
+  beforeEach(() => {
+    process.env.ENVIRONMENT = 'production'
+  })
+
+  test('deletes the user from the community chat in production', async () => {
+    await assertSuccessfulGraphQLMutation({
+      ...createDeleteBotsMutation({ botIds: [user.id] }),
+      data: { user: { deleteBots: { success: true } } },
+      client,
+    })
+
+    expect(chatUsers).toHaveLength(0)
+    await assertNoErrorEvents()
+  })
+
+  test('does not sent a sentry event when the user is not in the community chat', async () => {
+    await assertSuccessfulGraphQLMutation({
+      ...createDeleteBotsMutation({ botIds: [user2.id] }),
+      data: { user: { deleteBots: { success: true } } },
+      client,
+    })
+
+    expect(chatUsers).toHaveLength(1)
+    await assertNoErrorEvents()
+  })
+
+  test('send a sentry event when the user cannot be deleted from the community chat', async () => {
+    givenChatDeleteUserEndpoint(
+      returnsJson({ json: { success: false, errorType: 'unknown' } })
+    )
+
+    await assertSuccessfulGraphQLMutation({
+      ...createDeleteBotsMutation({ botIds: [user2.id] }),
+      data: { user: { deleteBots: { success: true } } },
+      client,
+    })
+
+    await assertErrorEvent({
+      message: 'Cannot delete a user from community.serlo.org',
+      errorContext: { user: user2 },
+    })
+  })
+})
+
 test('fails when one of the given bot ids is not a user', async () => {
   await assertFailingGraphQLMutation({
-    ...createDeleteBotsMutation({ botIds: [noUserId] }),
+    ...createDeleteBotsMutation({ botIds: [castToUuid(article.id)] }),
     client,
     expectedError: 'BAD_USER_INPUT',
   })
@@ -139,7 +206,7 @@ test('fails when one given bot id has more than 4 edits', async () => {
   )
 
   await assertFailingGraphQLMutation({
-    ...createDeleteBotsMutation({ botIds: userIds }),
+    ...createDeleteBotsMutation({ botIds: [user.id] }),
     client,
     expectedError: 'BAD_USER_INPUT',
   })
@@ -212,4 +279,12 @@ function defaultUserDeleteBotsEndpoint({
 
     return res(ctx.json({ success: true }))
   }
+}
+
+function givenChatDeleteUserEndpoint(
+  resolver: RestResolver<{ username: string }>
+) {
+  global.server.use(
+    rest.post(`${process.env.ROCKET_CHAT_URL}api/v1/users.delete`, resolver)
+  )
 }
