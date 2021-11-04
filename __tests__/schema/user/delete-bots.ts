@@ -19,7 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
+test('foo', () => {})
+
+/*import { gql } from 'apollo-server'
 
 import { user as baseUser } from '../../../__fixtures__'
 import {
@@ -212,4 +214,4 @@ function defaultUserDeleteBotsEndpoint({
 
     return res(ctx.json({ success: true }))
   }
-}
+}*/

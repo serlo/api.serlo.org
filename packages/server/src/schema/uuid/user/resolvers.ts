@@ -239,7 +239,7 @@ export const resolvers: LegacyQueries<
     user: createNamespace(),
   },
   UserMutation: {
-    async deleteBots(_parent, { input }, { dataSources, userId }) {
+    /*async deleteBots(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
@@ -268,7 +268,7 @@ export const resolvers: LegacyQueries<
         )
 
       return await dataSources.model.serlo.deleteBots({ botIds })
-    },
+    },*/
 
     async deleteRegularUsers(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)

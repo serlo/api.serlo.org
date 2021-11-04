@@ -2227,14 +2227,8 @@ export type UserEdge = {
 
 export type UserMutation = {
   __typename?: 'UserMutation';
-  deleteBots: UserDeleteBotsResponse;
   deleteRegularUsers: Array<UserDeleteRegularUsersResponse>;
   setEmail: UserSetEmailResponse;
-};
-
-
-export type UserMutationDeleteBotsArgs = {
-  input: UserDeleteBotsInput;
 };
 
 
@@ -4036,7 +4030,6 @@ export type UserEdgeResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 export type UserMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserMutation'] = ResolversParentTypes['UserMutation']> = {
-  deleteBots?: Resolver<ResolversTypes['UserDeleteBotsResponse'], ParentType, ContextType, RequireFields<UserMutationDeleteBotsArgs, 'input'>>;
   deleteRegularUsers?: Resolver<Array<ResolversTypes['UserDeleteRegularUsersResponse']>, ParentType, ContextType, RequireFields<UserMutationDeleteRegularUsersArgs, 'input'>>;
   setEmail?: Resolver<ResolversTypes['UserSetEmailResponse'], ParentType, ContextType, RequireFields<UserMutationSetEmailArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

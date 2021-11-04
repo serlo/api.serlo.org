@@ -2223,14 +2223,8 @@ export type UserEdge = {
 
 export type UserMutation = {
   __typename?: 'UserMutation';
-  deleteBots: UserDeleteBotsResponse;
   deleteRegularUsers: Array<UserDeleteRegularUsersResponse>;
   setEmail: UserSetEmailResponse;
-};
-
-
-export type UserMutationDeleteBotsArgs = {
-  input: UserDeleteBotsInput;
 };
 
 
