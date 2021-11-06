@@ -34,6 +34,8 @@ describe('getPayload() is always inverse to getKey()', () => {
       })
       const queryFunctions = Object.entries(dataSource).filter(isQueryEntry)
 
+      if (queryFunctions.length === 0) return
+
       test.each(queryFunctions)('%s()', (_funcName, queryFunction) => {
         const { getKey, getPayload, examplePayload } = queryFunction._querySpec
 
