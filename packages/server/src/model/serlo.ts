@@ -195,7 +195,10 @@ export function createSerloModel({
   })
 
   const deleteBots = createMutation({
-    decoder: t.strict({ success: t.literal(true) }),
+    decoder: t.strict({
+      success: t.literal(true),
+      emailHashes: t.array(t.string),
+    }),
     async mutate(payload: { botIds: number[] }) {
       return await handleMessage({ type: 'UserDeleteBotsMutation', payload })
     },

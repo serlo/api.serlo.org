@@ -21,6 +21,7 @@
  */
 import { createChatModel } from './chat'
 import { createGoogleSpreadsheetApiModel } from './google-spreadsheet-api'
+import { createMailchimpModel } from './mailchimp'
 import { createSerloModel } from './serlo'
 
 export * from './chat'
@@ -30,5 +31,6 @@ export * from './serlo'
 export const modelFactories = {
   chat: createChatModel,
   googleSpreadsheetApi: createGoogleSpreadsheetApiModel,
+  mailChimp: createMailchimpModel,
   serlo: createSerloModel,
 }

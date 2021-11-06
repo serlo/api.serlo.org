@@ -286,7 +286,29 @@ export const resolvers: LegacyQueries<
         }
       }
 
-      return await dataSources.model.serlo.deleteBots({ botIds })
+      const { success, emailHashes } = await dataSources.model.serlo.deleteBots(
+        { botIds }
+      )
+
+      if (process.env.ENVIRONMENT === 'production') {
+        for (const emailHash of emailHashes) {
+          const result =
+            await dataSources.model.mailchimp.deleteEmailPermanently({
+              emailHash,
+            })
+
+          if (result.success === false) {
+            const { mailchimpResponse } = result
+
+            captureErrorEvent({
+              error: new Error('Cannot delete user from mailchimp'),
+              errorContext: { emailHash, mailchimpResponse },
+            })
+          }
+        }
+      }
+
+      return { success }
     },
 
     async deleteRegularUsers(_parent, { input }, { dataSources, userId }) {
