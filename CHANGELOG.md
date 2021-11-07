@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.26.28](https://github.com/serlo/api.serlo.org/compare/v0.26.27..v0.26.28) - November 7, 2021
+
+### Added
+
+- `user.deleteBots`: Also remove user from community chat and our newsletter
+
 ## [v0.26.27](https://github.com/serlo/api.serlo.org/compare/v0.26.26..v0.26.27) - November 1, 2021
 
 ### Added
