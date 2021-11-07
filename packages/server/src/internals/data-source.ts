@@ -30,6 +30,7 @@ import {
   createSerloModel,
   createChatModel,
 } from '~/model'
+import { createMailchimpModel } from '~/model/mailchimp'
 
 export class ModelDataSource extends RESTDataSource {
   public googleSpreadsheetApi: ReturnType<
@@ -37,6 +38,7 @@ export class ModelDataSource extends RESTDataSource {
   >
   public serlo: ReturnType<typeof createSerloModel>
   public chat: ReturnType<typeof createChatModel>
+  public mailchimp: ReturnType<typeof createMailchimpModel>
 
   constructor(private environment: Environment) {
     super()
@@ -44,6 +46,7 @@ export class ModelDataSource extends RESTDataSource {
     this.chat = createChatModel({ environment })
     this.serlo = createSerloModel({ environment })
     this.googleSpreadsheetApi = createGoogleSpreadsheetApiModel({ environment })
+    this.mailchimp = createMailchimpModel()
   }
 
   public async removeCacheValue({ key }: { key: string }) {

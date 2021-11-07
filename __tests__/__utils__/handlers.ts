@@ -298,7 +298,7 @@ function createCommunityChatHandler({
   parameters: Record<string, string>
   body: Record<string, unknown>
 }) {
-  const url = `${process.env.ROCKET_CHAT_URL}/api/v1/${endpoint}`
+  const url = `${process.env.ROCKET_CHAT_URL}api/v1/${endpoint}`
   const handler = rest.get(url, (req, res, ctx) => {
     if (
       req.headers.get('X-User-Id') !== process.env.ROCKET_CHAT_API_USER_ID ||

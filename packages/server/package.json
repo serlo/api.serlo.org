@@ -1,6 +1,6 @@
 {
   "name": "@serlo/api.serlo.org",
-  "version": "0.26.27",
+  "version": "0.26.28-staging.0",
   "private": true,
   "repository": "serlo/api.serlo.org",
   "license": "Apache-2.0",
@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@sentry/node": "^6.0.0",
-    "@serlo/authorization": "^0.26.27-staging.1",
+    "@serlo/authorization": "^0.26.28-staging.0",
     "apollo-datasource-rest": "^0.13.0",
     "apollo-server": "^2.0.0",
     "apollo-server-caching": "^0.7.0",

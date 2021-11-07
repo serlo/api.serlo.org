@@ -21,10 +21,10 @@
  */
 import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
-import fetch from 'node-fetch'
+import fetch, { RequestInit } from 'node-fetch'
 import { URL } from 'url'
 
-import { createQuery } from '~/internals/data-source-helper'
+import { createMutation, createQuery } from '~/internals/data-source-helper'
 import { Environment } from '~/internals/environment'
 
 export function createChatModel({ environment }: { environment: Environment }) {
@@ -33,10 +33,10 @@ export function createChatModel({ environment }: { environment: Environment }) {
       decoder: t.strict({ success: t.boolean }),
       enableSwr: true,
       staleAfter: { hour: 3 },
-      getCurrentValue: async ({ username }: { username: string }) => {
-        return await fetchChatApi({
+      async getCurrentValue(payload: { username: string }) {
+        return await getChatApi({
           endpoint: 'users.info',
-          parameters: { username },
+          searchParams: payload,
         })
       },
       getKey: ({ username }) => {
@@ -53,29 +53,65 @@ export function createChatModel({ environment }: { environment: Environment }) {
     environment
   )
 
+  const deleteUser = createMutation({
+    decoder: t.union([
+      t.strict({ success: t.literal(true) }),
+      t.strict({ success: t.literal(false), errorType: t.string }),
+    ]),
+    async mutate(payload: { username: string }) {
+      return await postChatApi({ endpoint: 'users.delete', payload })
+    },
+  })
+
   return {
     getUsersInfo,
+    deleteUser,
   }
 }
 
-async function fetchChatApi({
+async function getChatApi({
   endpoint,
-  parameters,
+  searchParams,
 }: {
   endpoint: string
-  parameters: Record<string, string>
+  searchParams?: Record<string, string>
 }) {
-  const url = new URL(`${process.env.ROCKET_CHAT_URL}/api/v1/${endpoint}`)
-  for (const name in parameters) {
-    url.searchParams.append(name, parameters[name])
+  const url = new URL(getChatUrl(endpoint))
+
+  for (const name in searchParams) {
+    url.searchParams.append(name, searchParams[name])
   }
 
+  return await fetchChatApi(url.href)
+}
+
+async function postChatApi({
+  endpoint,
+  payload,
+}: {
+  endpoint: string
+  payload: Record<string, string>
+}) {
+  return await fetchChatApi(getChatUrl(endpoint), {
+    method: 'POST',
+    headers: { 'Content-type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+}
+
+async function fetchChatApi(url: string, init?: RequestInit) {
   const response = await fetch(url, {
+    ...init,
     headers: {
+      ...(init?.headers ?? {}),
       'X-Auth-Token': process.env.ROCKET_CHAT_API_AUTH_TOKEN,
       'X-User-Id': process.env.ROCKET_CHAT_API_USER_ID,
     },
   })
 
   return (await response.json()) as unknown
+}
+
+function getChatUrl(endpoint: string) {
+  return `${process.env.ROCKET_CHAT_URL}api/v1/${endpoint}`
 }
