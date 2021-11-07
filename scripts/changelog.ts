@@ -1106,6 +1106,13 @@ async function exec(): Promise<void> {
           'Add support for deploying prereleases',
         ],
       },
+      {
+        tagName: 'v0.26.28',
+        date: '2021-11-07',
+        added: [
+          '`user.deleteBots`: Also remove user from community chat and our newsletter',
+        ],
+      },
     ],
   })
 
