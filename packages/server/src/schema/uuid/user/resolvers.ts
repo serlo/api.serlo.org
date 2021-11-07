@@ -28,6 +28,7 @@ import R from 'ramda'
 import {
   addContext,
   assertAll,
+  captureErrorEvent,
   consumeErrorEvent,
   ErrorEvent,
 } from '~/internals/error-event'
@@ -267,7 +268,47 @@ export const resolvers: LegacyQueries<
           'One user has more than 4 edits. Is it really a spam account? Please inform the dev team.'
         )
 
-      return await dataSources.model.serlo.deleteBots({ botIds })
+      if (process.env.ENVIRONMENT === 'production') {
+        for (const user of users) {
+          const chatDeleteResult = await dataSources.model.chat.deleteUser({
+            username: user.username,
+          })
+
+          if (
+            chatDeleteResult.success === false &&
+            chatDeleteResult.errorType !== 'error-invalid-user'
+          ) {
+            captureErrorEvent({
+              error: new Error('Cannot delete a user from community.serlo.org'),
+              errorContext: { user, chatDeleteResult },
+            })
+          }
+        }
+      }
+
+      const { success, emailHashes } = await dataSources.model.serlo.deleteBots(
+        { botIds }
+      )
+
+      if (process.env.ENVIRONMENT === 'production') {
+        for (const emailHash of emailHashes) {
+          const result =
+            await dataSources.model.mailchimp.deleteEmailPermanently({
+              emailHash,
+            })
+
+          if (result.success === false) {
+            const { mailchimpResponse } = result
+
+            captureErrorEvent({
+              error: new Error('Cannot delete user from mailchimp'),
+              errorContext: { emailHash, mailchimpResponse },
+            })
+          }
+        }
+      }
+
+      return { success }
     },
 
     async deleteRegularUsers(_parent, { input }, { dataSources, userId }) {

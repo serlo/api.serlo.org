@@ -98,6 +98,8 @@ export async function createBeforeEach() {
   await global.cache.flush()
   global.timer.flush()
   global.sentryEvents = []
+
+  process.env.ENVIRONMENT = 'local'
 }
 
 export function createAfterEach() {

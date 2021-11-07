@@ -45,6 +45,7 @@ declare namespace NodeJS {
     /**
      * Used by server only
      */
+    MAILCHIMP_API_KEY: string
     SERVER_HYDRA_HOST: string
     SERVER_SERLO_CLOUDFLARE_WORKER_SECRET: string
     SERVER_SERLO_CACHE_WORKER_SECRET: string
