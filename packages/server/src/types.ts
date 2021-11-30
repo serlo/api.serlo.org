@@ -1316,6 +1316,7 @@ export type License = {
 export type MetadataQuery = {
   __typename?: 'MetadataQuery';
   entities: EntityMetadataConnection;
+  publisher: Scalars['JSONObject'];
 };
 
 
@@ -3572,6 +3573,7 @@ export type LicenseResolvers<ContextType = Context, ParentType extends Resolvers
 
 export type MetadataQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['MetadataQuery'] = ResolversParentTypes['MetadataQuery']> = {
   entities?: Resolver<ResolversTypes['EntityMetadataConnection'], ParentType, ContextType, RequireFields<MetadataQueryEntitiesArgs, never>>;
+  publisher?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
