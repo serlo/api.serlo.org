@@ -72,8 +72,3 @@ type AbstractNotificationEventEdge {
   cursor: String!
   node: AbstractNotificationEvent!
 }
-
-type HasNextPageInfo {
-  hasNextPage: Boolean!
-  endCursor: String
-}
