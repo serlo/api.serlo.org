@@ -1312,6 +1312,7 @@ export type License = {
 export type MetadataQuery = {
   __typename?: 'MetadataQuery';
   entities: EntityMetadataConnection;
+  publisher: Scalars['JSONObject'];
 };
 
 
