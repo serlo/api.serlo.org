@@ -45,7 +45,7 @@ export const resolvers: Queries<'metadata'> = {
       const connection = resolveConnection({
         nodes: entities,
         payload,
-        createCursor: (node) => node.uuid.toString(),
+        createCursor: (node) => node.identifier.value.toString(),
       })
 
       // TODO: Find better implementation for "HasNextPageInfo"

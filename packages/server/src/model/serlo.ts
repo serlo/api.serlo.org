@@ -886,7 +886,9 @@ export function createSerloModel({
   })
 
   const getEntitiesMetadata = createRequest({
-    decoder: t.strict({ entities: t.array(t.type({ uuid: t.number })) }),
+    decoder: t.strict({
+      entities: t.array(t.type({ identifier: t.type({ value: t.number }) })),
+    }),
     async getCurrentValue(payload: {
       first: number
       after?: number
