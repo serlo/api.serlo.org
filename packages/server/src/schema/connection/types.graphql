@@ -4,3 +4,8 @@ type PageInfo {
   startCursor: String
   endCursor: String
 }
+
+type HasNextPageInfo {
+  hasNextPage: Boolean!
+  endCursor: String
+}

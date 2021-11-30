@@ -885,6 +885,18 @@ export function createSerloModel({
     },
   })
 
+  const getEntitiesMetadata = createRequest({
+    decoder: t.strict({ entities: t.array(t.type({ uuid: t.number })) }),
+    async getCurrentValue(payload: {
+      first: number
+      after?: number
+      instance?: Instance
+      modifiedAfter?: string
+    }) {
+      return handleMessage({ type: 'EntitiesMetadataQuery', payload })
+    },
+  })
+
   return {
     createThread,
     archiveThread,
@@ -899,6 +911,7 @@ export function createSerloModel({
     getActivityByType,
     getAlias,
     getLicense,
+    getEntitiesMetadata,
     getNavigationPayload,
     getNavigation,
     getNotificationEvent,
