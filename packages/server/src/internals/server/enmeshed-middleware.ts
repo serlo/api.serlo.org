@@ -33,6 +33,8 @@ import {
 const RELATIONSHIP_NAME = 'Lenabi Demo'
 
 export function applyEnmeshedMiddleware({ app }: { app: Express }) {
+  if (process.env.ENVIRONMENT === 'production') return null
+
   const basePath = '/enmeshed'
   app.post(`${basePath}/init`, createEnmeshedInitMiddleware())
   app.use(bodyParser.json())
