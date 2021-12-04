@@ -29,6 +29,7 @@ import { createSwrQueue, SwrQueue } from '../swr-queue'
 import { createTimer } from '../timer'
 import { applyGraphQLMiddleware } from './graphql-middleware'
 import { applySwrQueueDashboardMiddleware } from './swr-queue-dashboard-middleware'
+import { applyEnmeshedMiddleware } from '~/internals/server/enmeshed-middleware'
 
 export * from './graphql-middleware'
 export * from './swr-queue-dashboard-middleware'
@@ -41,10 +42,10 @@ export function start() {
   const timer = createTimer()
   const cache = createCache({ timer })
   const swrQueue = createSwrQueue({ cache, timer })
-  initializeGraphQLServer({ cache, swrQueue })
+  initializeServer({ cache, swrQueue })
 }
 
-function initializeGraphQLServer({
+function initializeServer({
   cache,
   swrQueue,
 }: {
@@ -53,9 +54,10 @@ function initializeGraphQLServer({
 }) {
   const app = createApp()
   const dashboardPath = applySwrQueueDashboardMiddleware({ app })
+  const enmeshedPath = applyEnmeshedMiddleware({ app })
   const graphqlPath = applyGraphQLMiddleware({ app, cache, swrQueue })
 
-  const port = 3000
+  const port = 3001
   const host = `http://localhost:${port}`
   app.listen({ port }, () => {
     /* eslint-disable no-console */
@@ -63,6 +65,9 @@ function initializeGraphQLServer({
     console.log(`Playground:          ${host}/___graphql`)
     console.log(`GraphQL endpoint:    ${host}${graphqlPath}`)
     console.log(`SWR Queue Dashboard: ${host}${dashboardPath}`)
+    if (enmeshedPath) {
+      console.log(`Enmeshed endpoint:   ${host}${enmeshedPath}`)
+    }
     /* eslint-enable no-console */
   })
 }

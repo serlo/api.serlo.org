@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.26.29](https://github.com/serlo/api.serlo.org/compare/v0.26.28..v0.26.29) - December 4, 2021
+
+### Added
+
+- Add endpoints for Enmeshed data wallet.
+
 ## [v0.26.28](https://github.com/serlo/api.serlo.org/compare/v0.26.27..v0.26.28) - November 7, 2021
 
 ### Added
