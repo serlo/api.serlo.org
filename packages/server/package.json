@@ -1,6 +1,6 @@
 {
   "name": "@serlo/api.serlo.org",
-  "version": "0.26.29-staging.0",
+  "version": "0.26.30-staging.0",
   "private": true,
   "repository": "serlo/api.serlo.org",
   "license": "Apache-2.0",
@@ -19,6 +19,7 @@
     "start:swr-queue-worker": "tsdx watch --format cjs --target node --entry src/swr-queue-worker.ts --tsconfig tsconfig.prod.json --onSuccess \"node dist\""
   },
   "dependencies": {
+    "@nmshd/connector-sdk": "^1.1.5",
     "@sentry/node": "^6.0.0",
     "@serlo/authorization": "^0.26.29-staging.0",
     "apollo-datasource-rest": "^0.13.0",
@@ -28,6 +29,7 @@
     "apollo-server-types": "^0.8.0",
     "basic-auth": "^2.0.0",
     "bee-queue": "^1.0.0",
+    "body-parser": "^1.19.0",
     "bull-arena": "^3.0.0",
     "dotenv": "^9.0.0",
     "express": "^4.0.0",

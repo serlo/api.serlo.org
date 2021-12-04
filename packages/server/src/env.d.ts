@@ -57,5 +57,12 @@ declare namespace NodeJS {
      */
     SWR_QUEUE_WORKER_CONCURRENCY: string
     SWR_QUEUE_WORKER_DELAY: string | undefined
+
+    /**
+     * Used by enmeshed only
+     */
+    ENMESHED_SERVER_HOST: string
+    ENMESHED_SERVER_SECRET: string
+    ENMESHED_WEBHOOK_SECRET: string
   }
 }

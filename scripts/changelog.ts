@@ -1113,6 +1113,11 @@ async function exec(): Promise<void> {
           '`user.deleteBots`: Also remove user from community chat and our newsletter',
         ],
       },
+      {
+        tagName: 'v0.26.29',
+        date: '2021-12-04',
+        added: ['Add endpoints for Enmeshed data wallet.'],
+      },
     ],
   })
 
