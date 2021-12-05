@@ -36,6 +36,7 @@ export const resolvers: Queries<'metadata'> = {
         id: 'https://serlo.org/',
         type: ['EducationalOrganization', 'NGO'],
         name: 'Serlo Education e.V.',
+        alternateName: 'Serlo',
         url: 'https://de.serlo.org/',
         description:
           'Serlo.org bietet einfache Erklärungen, Kurse, Lernvideos, Übungen und Musterlösungen mit denen Schüler*innen und Studierende nach ihrem eigenen Bedarf und in ihrem eigenen Tempo lernen können. Die Lernplattform ist komplett kostenlos und werbefrei.',
