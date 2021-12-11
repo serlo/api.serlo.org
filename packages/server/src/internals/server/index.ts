@@ -54,7 +54,7 @@ function initializeServer({
 }) {
   const app = createApp()
   const dashboardPath = applySwrQueueDashboardMiddleware({ app })
-  const enmeshedPath = applyEnmeshedMiddleware({ app })
+  const enmeshedPath = applyEnmeshedMiddleware({ app, cache })
   const graphqlPath = applyGraphQLMiddleware({ app, cache, swrQueue })
 
   const port = 3001
