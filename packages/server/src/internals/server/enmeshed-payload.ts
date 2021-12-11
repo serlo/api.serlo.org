@@ -40,6 +40,7 @@ export interface RelationshipTemplate {
   createdAt: string
   content: {
     attributes: { name: string; value: string }[]
+    metadata: { [key: string]: string }
   }
   expiresAt?: string
   maxNumberOfRelationships?: number
