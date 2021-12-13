@@ -9,7 +9,10 @@ export interface EnmeshedWebhookPayload {
 export interface Message {
   id: string
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  content: any
+  content:  {
+    '@type': string
+    attributes: { name: string; value: string }[]
+  }
   createdBy: string
   createdByDevice: string
   recipients: Recipient[]

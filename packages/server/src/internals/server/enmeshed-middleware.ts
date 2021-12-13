@@ -271,9 +271,12 @@ function createEnmeshedWebhookMiddleware(): RequestHandler {
         const attributes = message.content.attributes.map(
           (a: { name: string; value: string }) => `${a.name}=${a.value}`
         )
+        // eslint-disable-next-line no-console
         console.log(`Received attributes: ${attributes.join(', ')}`)
       } else {
+        // eslint-disable-next-line no-console
         console.log('Received message:')
+        // eslint-disable-next-line no-console
         console.log(message.content)
       }
     }
