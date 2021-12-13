@@ -65,7 +65,9 @@ function initializeServer({
     console.log(`Playground:          ${host}/___graphql`)
     console.log(`GraphQL endpoint:    ${host}${graphqlPath}`)
     console.log(`SWR Queue Dashboard: ${host}${dashboardPath}`)
-    console.log(`Enmeshed endpoint:   ${host}${enmeshedPath}`)
+    if (enmeshedPath) {
+      console.log(`Enmeshed endpoint:   ${host}${enmeshedPath}`)
+    }
     /* eslint-enable no-console */
   })
 }

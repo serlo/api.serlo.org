@@ -1113,6 +1113,12 @@ async function exec(): Promise<void> {
           '`user.deleteBots`: Also remove user from community chat and our newsletter',
         ],
       },
+      {
+        tagName: 'v0.27.0',
+        date: '2021-12-04',
+        breakingChanges: ['Move server from port 3000 to port 3001.'],
+        added: ['Add endpoints for Enmeshed data wallet.'],
+      },
     ],
   })
 

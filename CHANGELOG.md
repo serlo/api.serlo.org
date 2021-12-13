@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.27.0](https://github.com/serlo/api.serlo.org/compare/v0.26.28..v0.27.0) - December 4, 2021
+
+### Breaking Changes
+
+- Move server from port 3000 to port 3001.
+
+### Added
+
+- Add endpoints for Enmeshed data wallet.
+
 ## [v0.26.28](https://github.com/serlo/api.serlo.org/compare/v0.26.27..v0.26.28) - November 7, 2021
 
 ### Added
