@@ -1,6 +1,6 @@
 {
   "name": "@serlo/api.serlo.org",
-  "version": "0.26.30-staging.1",
+  "version": "0.27.0",
   "private": true,
   "repository": "serlo/api.serlo.org",
   "license": "Apache-2.0",
@@ -21,7 +21,7 @@
   "dependencies": {
     "@nmshd/connector-sdk": "^1.1.5",
     "@sentry/node": "^6.0.0",
-    "@serlo/authorization": "^0.26.29-staging.0",
+    "@serlo/authorization": "^0.27.0",
     "apollo-datasource-rest": "^0.13.0",
     "apollo-server": "^2.0.0",
     "apollo-server-caching": "^0.7.0",
@@ -59,7 +59,7 @@
     "@graphql-codegen/typescript-resolvers": "^1.0.0",
     "@types/basic-auth": "^1.0.0",
     "@types/bull-arena": "^3.0.0",
-    "@types/graphql-modules": "^0.26.1",
+    "@types/graphql-modules": "^0.27.0",
     "@types/jsonwebtoken": "^8.0.0",
     "@types/node-fetch": "^2.0.0",
     "@types/ramda": "^0.27.37",
