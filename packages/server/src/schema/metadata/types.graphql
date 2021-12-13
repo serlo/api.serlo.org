@@ -1,0 +1,24 @@
+extend type Query {
+  metadata: MetadataQuery!
+}
+
+type MetadataQuery {
+  entities(
+    first: Int
+    after: String
+    instance: Instance
+    modifiedAfter: String
+  ): EntityMetadataConnection!
+  publisher: JSONObject!
+}
+
+type EntityMetadataConnection {
+  edges: [EntityMetadataCursor!]!
+  nodes: [JSONObject!]!
+  pageInfo: HasNextPageInfo!
+}
+
+type EntityMetadataCursor {
+  cursor: String!
+  node: JSONObject!
+}

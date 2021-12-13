@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.27.1](https://github.com/serlo/api.serlo.org/compare/v0.27.0..v0.27.1) - December 13, 2021
+
+### Added
+
+- Add `metadata` query namespace with `publisher` and `entities`
+
 ## [v0.27.0](https://github.com/serlo/api.serlo.org/compare/v0.26.28..v0.27.0) - December 4, 2021
 
 ### Breaking Changes
