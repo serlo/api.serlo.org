@@ -844,6 +844,19 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
 };
 
 
+export type EntityMetadataConnection = {
+  __typename?: 'EntityMetadataConnection';
+  edges: Array<EntityMetadataCursor>;
+  nodes: Array<Scalars['JSONObject']>;
+  pageInfo: HasNextPageInfo;
+};
+
+export type EntityMetadataCursor = {
+  __typename?: 'EntityMetadataCursor';
+  cursor: Scalars['String'];
+  node: Scalars['JSONObject'];
+};
+
 export type EntityMutation = {
   __typename?: 'EntityMutation';
   checkoutRevision: CheckoutRevisionResponse;
@@ -1296,6 +1309,20 @@ export type License = {
   iconHref: Scalars['String'];
 };
 
+export type MetadataQuery = {
+  __typename?: 'MetadataQuery';
+  entities: EntityMetadataConnection;
+  publisher: Scalars['JSONObject'];
+};
+
+
+export type MetadataQueryEntitiesArgs = {
+  first?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['String']>;
+  instance?: Maybe<Instance>;
+  modifiedAfter?: Maybe<Scalars['String']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   _cache: _CacheMutation;
@@ -1509,6 +1536,7 @@ export type Query = {
   authorization: Scalars['JSON'];
   events: AbstractNotificationEventConnection;
   license?: Maybe<License>;
+  metadata: MetadataQuery;
   notificationEvent?: Maybe<AbstractNotificationEvent>;
   notifications: NotificationConnection;
   subject: SubjectQuery;

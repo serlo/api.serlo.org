@@ -1119,6 +1119,13 @@ async function exec(): Promise<void> {
         breakingChanges: ['Move server from port 3000 to port 3001.'],
         added: ['Add endpoints for Enmeshed data wallet.'],
       },
+      {
+        tagName: 'v0.27.1',
+        date: '2021-12-13',
+        added: [
+          'Add `metadata` query namespace with `publisher` and `entities`',
+        ],
+      },
     ],
   })
 
