@@ -38,6 +38,8 @@ export function applyEnmeshedMiddleware({
   app: Express
   cache: Cache
 }) {
+  if (process.env.ENVIRONMENT === 'production') return null
+
   const basePath = '/enmeshed'
   app.post(`${basePath}/init`, createEnmeshedInitMiddleware(cache))
   app.use(bodyParser.json())
