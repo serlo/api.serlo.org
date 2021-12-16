@@ -1126,6 +1126,11 @@ async function exec(): Promise<void> {
           'Add `metadata` query namespace with `publisher` and `entities`',
         ],
       },
+      {
+        tagName: 'v0.27.2',
+        date: '2021-12-16',
+        changed: ['Improve Enmeshed data wallet integration.'],
+      },
     ],
   })
 
