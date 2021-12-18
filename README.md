@@ -1,8 +1,10 @@
-<img src="https://assets.serlo.org/meta/logo.png" alt="Serlo logo" title="Serlo" align="right" height="60" />
+<img src="https://raw.githubusercontent.com/serlo/frontend/staging/public/_assets/img/serlo-logo-gh.svg" alt="Serlo Logo" title="Serlo" align="right" height="75" />
 
-# api.serlo.org
+# serlo.org – API
 
-[![Kanban board](https://img.shields.io/badge/Kanban-board-brightgreen.svg)](https://github.com/orgs/serlo/projects/19)
+Unified GraphQL API for [Serlo](https://serlo.org).
+
+<a href="https://github.com/orgs/serlo/projects/19"><img align="right" src="https://img.shields.io/badge/Kanban-board-brightgreen.svg" alt="Kanban board"></a>
 
 ## Setup
 
