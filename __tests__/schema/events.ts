@@ -23,32 +23,32 @@ import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
 import {
+  article,
   checkoutRevisionNotificationEvent,
-  rejectRevisionNotificationEvent,
   createCommentNotificationEvent,
-  createEntityNotificationEvent,
   createEntityLinkNotificationEvent,
-  removeEntityLinkNotificationEvent,
-  setLicenseNotificationEvent,
-  setUuidStateNotificationEvent,
-  createThreadNotificationEvent,
-  createTaxonomyLinkNotificationEvent,
+  createEntityNotificationEvent,
   createEntityRevisionNotificationEvent,
-  removeTaxonomyLinkNotificationEvent,
+  createTaxonomyLinkNotificationEvent,
   createTaxonomyTermNotificationEvent,
+  createThreadNotificationEvent,
+  rejectRevisionNotificationEvent,
+  removeEntityLinkNotificationEvent,
+  removeTaxonomyLinkNotificationEvent,
+  setLicenseNotificationEvent,
   setTaxonomyTermNotificationEvent,
   setThreadStateNotificationEvent,
+  setUuidStateNotificationEvent,
   user,
-  article,
 } from '../../__fixtures__'
 import {
-  Client,
-  createTestClient,
+  assertFailingGraphQLQuery,
   assertSuccessfulGraphQLQuery,
+  Client,
   createDatabaseLayerHandler,
+  createTestClient,
   createUuidHandler,
   getTypenameAndId,
-  assertFailingGraphQLQuery,
   nextUuid,
 } from '../__utils__'
 import { Service } from '~/internals/authentication'
@@ -123,8 +123,22 @@ describe('query endpoint "events"', () => {
   test('with filter "actorId"', async () => {
     const events = assignSequentialIds(
       R.concat(
-        allEvents.map(R.assoc('actorId', 42)),
-        allEvents.map(R.assoc('actorId', 23))
+        allEvents.map(
+          (event) =>
+            R.assoc(
+              'actorId',
+              castToUuid(42),
+              event
+            ) as Model<'AbstractNotificationEvent'>
+        ),
+        allEvents.map(
+          (event) =>
+            R.assoc(
+              'actorId',
+              castToUuid(23),
+              event
+            ) as Model<'AbstractNotificationEvent'>
+        )
       )
     )
     setupEvents(events)
@@ -154,8 +168,22 @@ describe('query endpoint "events"', () => {
   test('with filter "instance"', async () => {
     const events = assignSequentialIds(
       R.concat(
-        allEvents.map(R.assoc('instance', Instance.En)),
-        allEvents.map(R.assoc('instance', Instance.De))
+        allEvents.map(
+          (event) =>
+            R.assoc(
+              'instance',
+              Instance.En,
+              event
+            ) as Model<'AbstractNotificationEvent'>
+        ),
+        allEvents.map(
+          (event) =>
+            R.assoc(
+              'instance',
+              Instance.De,
+              event
+            ) as Model<'AbstractNotificationEvent'>
+        )
       )
     )
     setupEvents(events)
@@ -185,8 +213,22 @@ describe('query endpoint "events"', () => {
   test('with filter "objectId"', async () => {
     const events = assignSequentialIds(
       R.concat(
-        allEvents.map(R.assoc('objectId', 42)),
-        allEvents.map(R.assoc('objectId', 23))
+        allEvents.map(
+          (event) =>
+            R.assoc(
+              'objectId',
+              castToUuid(42),
+              event
+            ) as Model<'AbstractNotificationEvent'>
+        ),
+        allEvents.map(
+          (event) =>
+            R.assoc(
+              'objectId',
+              castToUuid(23),
+              event
+            ) as Model<'AbstractNotificationEvent'>
+        )
       )
     )
     setupEvents(events)
@@ -324,8 +366,22 @@ describe('query endpoint "events"', () => {
 test('User.eventsByUser returns events of this user', async () => {
   const events = assignSequentialIds(
     R.concat(
-      allEvents.map(R.assoc('actorId', user.id)),
-      allEvents.map(R.assoc('actorId', nextUuid(user.id)))
+      allEvents.map(
+        (event) =>
+          R.assoc(
+            'actorId',
+            castToUuid(user.id),
+            event
+          ) as Model<'AbstractNotificationEvent'>
+      ),
+      allEvents.map(
+        (event) =>
+          R.assoc(
+            'actorId',
+            nextUuid(user.id),
+            event
+          ) as Model<'AbstractNotificationEvent'>
+      )
     )
   )
   setupEvents(events)
@@ -364,8 +420,14 @@ test('AbstractEntity.events returns events for this entity', async () => {
   const uuid = { ...article, id: castToUuid(42) }
   const events = assignSequentialIds(
     R.concat(
-      allEvents.map(R.assoc('objectId', 42)),
-      allEvents.map(R.assoc('objectId', 23))
+      allEvents.map(
+        (event) =>
+          R.assoc('objectId', 42, event) as Model<'AbstractNotificationEvent'>
+      ),
+      allEvents.map(
+        (event) =>
+          R.assoc('objectId', 23, event) as Model<'AbstractNotificationEvent'>
+      )
     )
   )
   setupEvents(events)
@@ -417,8 +479,8 @@ function setupEvents(allEvents: Model<'AbstractNotificationEvent'>[]) {
           .reverse()
           .filter((event) => actorId == null || event.actorId === actorId)
           .filter((event) => instance == null || event.instance === instance)
-          // We only filter for objectId here. However the database layer
-          // needs to check whether any event_uuid_paramater is also in the filter
+          // We only filter for objectId here. However, the database layer
+          // needs to check whether any event_uuid_parameter is also in the filter
           .filter((event) => objectId == null || event.objectId === objectId)
           .filter((event) => after == null || event.id < after)
 
@@ -433,6 +495,15 @@ function setupEvents(allEvents: Model<'AbstractNotificationEvent'>[]) {
   )
 }
 
-function assignSequentialIds(events: Model<'AbstractNotificationEvent'>[]) {
-  return events.map((event, id) => R.assoc('id', id + 1, event))
+function assignSequentialIds(
+  events: Model<'AbstractNotificationEvent'>[]
+): Model<'AbstractNotificationEvent'>[] {
+  return events.map(
+    (event, id) =>
+      R.assoc(
+        'id',
+        castToUuid(id + 1),
+        event
+      ) as Model<'AbstractNotificationEvent'>
+  )
 }
