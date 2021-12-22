@@ -43,7 +43,7 @@ export interface RelationshipTemplate {
   createdAt: string
   content: {
     attributes: { name: string; value: string }[]
-    metadata: { [key: string]: string }
+    metadata: { [key: string]: string | undefined }
   }
   expiresAt?: string
   maxNumberOfRelationships?: number
@@ -55,8 +55,9 @@ export interface RelationshipChange {
     createdBy: string
     createdByDevice: string
     createdAt: string
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    content?: any
+    content?: {
+      attributes?: { name: string; value: string }[]
+    }
   }
   status: 'Pending' | 'Rejected' | 'Revoked' | 'Accepted'
   type:
