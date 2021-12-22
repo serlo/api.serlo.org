@@ -8,6 +8,8 @@ services:
       CUSTOM_CONFIG_LOCATION: "/config.json"
     ports:
       - 8081:80
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./config.json:/config.json:ro
       - ./logs:/usr/app/logs
