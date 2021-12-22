@@ -5,9 +5,21 @@ set -e
 function fetch_init {
   TARGET=$(mktemp --suffix .png)
 
-  curl -X POST http://localhost:3001/enmeshed/init > "$TARGET"
+  if [ -n "$1" ]; then
+    QUERY_STRING="?sessionId=$1&familyName=Musterfrau&givenName=Anna"
+  fi
+
+  curl -X POST "http://localhost:3001/enmeshed/init$QUERY_STRING" > "$TARGET"
 
   open "$TARGET"
+}
+
+function help {
+  echo """USAGE: ./fetch.sh [COMMAND]
+
+prototype        – make call to /enmeshed/init and show QR-Code
+journey-init     – make call to /enmeshed/init with predefined Session ID
+help             – show this help"""
 }
 
 function open {
@@ -20,4 +32,9 @@ function open {
   fi
 }
 
-fetch_init
+case "$1" in
+  help) help;;
+  prototype) fetch_init;;
+  journey-init) fetch_init "$2";;
+  *) help;;
+esac
