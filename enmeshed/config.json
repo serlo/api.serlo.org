@@ -1,0 +1,41 @@
+{
+  "transportLibrary": {
+    "platformClientId": "clientId",
+    "platformClientSecret": "clientSecret"
+  },
+  "database": {
+    "connectionString": "mongodb://root:password@enmeshed-mongodb:27017/?authSource=admin&readPreference=primary&ssl=false",
+    "dbName": "demo"
+  },
+  "infrastructure": {
+    "httpServer": {
+      "enabled": true,
+      "cors": {
+        "origin": false
+      },
+      "apiKey": "apiKey"
+    }
+  },
+  "modules": {
+    "sync": {
+      "enabled": false,
+      "interval": 60
+    },
+    "autoAcceptRelationshipCreationChanges": {
+      "enabled": false,
+      "responseContent": {}
+    },
+    "coreHttpApi": {
+      "enabled": true,
+      "docs": {
+        "enabled": true
+      }
+    },
+    "webhooks": {
+      "enabled": false,
+      "url": "http://example.com/enmeshed/webhook",
+      "headers": {},
+      "publishInterval": 30
+    }
+  }
+}
