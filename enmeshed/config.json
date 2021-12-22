@@ -19,7 +19,7 @@
   "modules": {
     "sync": {
       "enabled": false,
-      "interval": 60
+      "interval": 5
     },
     "autoAcceptRelationshipCreationChanges": {
       "enabled": false,
@@ -32,10 +32,12 @@
       }
     },
     "webhooks": {
-      "enabled": false,
-      "url": "http://example.com/enmeshed/webhook",
-      "headers": {},
-      "publishInterval": 30
+      "enabled": true,
+      "url": "http://localhost:3001/enmeshed/webhook",
+      "headers": {
+        "X-API-KEY": "apiKey"
+      },
+      "publishInterval": 5
     }
   }
 }
