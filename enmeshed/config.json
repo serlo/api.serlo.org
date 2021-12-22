@@ -18,7 +18,7 @@
   },
   "modules": {
     "sync": {
-      "enabled": false,
+      "enabled": true,
       "interval": 5
     },
     "autoAcceptRelationshipCreationChanges": {
