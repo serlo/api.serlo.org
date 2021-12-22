@@ -17,8 +17,7 @@ function fetch_init {
 function help {
   echo """USAGE: ./fetch.sh [COMMAND]
 
-prototype        – make call to /enmeshed/init and show QR-Code
-journey-init     – make call to /enmeshed/init with predefined Session ID
+init [sessionId] – make call to /enmeshed/init and show QR-Code
 help             – show this help"""
 }
 
@@ -34,7 +33,6 @@ function open {
 
 case "$1" in
   help) help;;
-  prototype) fetch_init;;
-  journey-init) fetch_init "$2";;
+  init) fetch_init "$2";;
   *) help;;
 esac
