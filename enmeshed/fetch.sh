@@ -2,16 +2,16 @@
 
 set -e
 
-function set_attribute {
+function set_attribute() {
   curl -X POST \
     "http://localhost:3001/enmeshed/attributes?sessionId=$1&name=$2&value=$3" | jq
 }
 
-function get_attributes {
+function get_attributes() {
   curl "http://localhost:3001/enmeshed/attributes?sessionId=$1" | jq
 }
 
-function init {
+function init() {
   TARGET=$(mktemp --suffix .png)
 
   if [ -n "$1" ]; then
@@ -23,7 +23,7 @@ function init {
   open "$TARGET"
 }
 
-function help {
+function help() {
   echo """USAGE: ./fetch.sh [COMMAND]
 
 init [sessionId]               – make call to /enmeshed/init and show QR-Code
@@ -32,7 +32,7 @@ set <sessionId> <name> <value> – Set attribute <name> of <sessionId> to <value
 help                           – show this help"""
 }
 
-function open {
+function open() {
   if which open; then
     open "$1"
   elif which xdg-open; then
@@ -43,9 +43,9 @@ function open {
 }
 
 case "$1" in
-  help) help;;
-  init) init "$2";;
-  get) get_attributes "$2";;
-  set) set_attribute "$2" "$3" "$4";;
-  *) help;;
+  help) help ;;
+  init) init "$2" ;;
+  get) get_attributes "$2" ;;
+  set) set_attribute "$2" "$3" "$4" ;;
+  *) help ;;
 esac

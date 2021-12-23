@@ -1,15 +1,15 @@
-version: "3.7"
+version: '3.7'
 
 services:
   enmeshed-connector:
     container_name: enmeshed-connector
     image: ghcr.io/nmshd/connector:latest
     environment:
-      CUSTOM_CONFIG_LOCATION: "/config.json"
+      CUSTOM_CONFIG_LOCATION: '/config.json'
     ports:
       - 8081:80
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - 'host.docker.internal:host-gateway'
     volumes:
       - ./config.json:/config.json:ro
       - ./logs:/usr/app/logs
