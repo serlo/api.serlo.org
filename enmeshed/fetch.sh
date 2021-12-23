@@ -2,6 +2,10 @@
 
 set -e
 
+function fetch_get_attributes {
+  curl "http://localhost:3001/enmeshed/attributes?sessionId=$1" | jq
+}
+
 function fetch_init {
   TARGET=$(mktemp --suffix .png)
 
@@ -18,6 +22,7 @@ function help {
   echo """USAGE: ./fetch.sh [COMMAND]
 
 init [sessionId] – make call to /enmeshed/init and show QR-Code
+get <sessionId>  – Get attributes of <sessionId>
 help             – show this help"""
 }
 
@@ -34,5 +39,6 @@ function open {
 case "$1" in
   help) help;;
   init) fetch_init "$2";;
+  get) fetch_get_attributes "$2";;
   *) help;;
 esac

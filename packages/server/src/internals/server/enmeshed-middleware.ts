@@ -52,9 +52,37 @@ export function applyEnmeshedMiddleware({
 
   const basePath = '/enmeshed'
   app.post(`${basePath}/init`, createEnmeshedInitMiddleware(cache))
+  app.get(`${basePath}/attributes`, createGetAttributesHandler(cache))
   app.use(bodyParser.json())
   app.post(`${basePath}/webhook`, createEnmeshedWebhookMiddleware(cache))
   return `${basePath}/init`
+}
+
+function createGetAttributesHandler(cache: Cache): RequestHandler {
+  return async (req, res) => {
+    const sessionId = readQuery(req, 'sessionId')
+    const session = await getSession(cache, sessionId)
+
+    res.setHeader('Content-Type', 'application/json')
+
+    if (session === null) {
+      res.statusCode = 400
+      res.end(
+        JSON.stringify({
+          status: 'error',
+          message: 'you need to create a qr code first',
+        })
+      )
+    } else if (session.attributes === undefined) {
+      res.statusCode = 200
+      res.end(JSON.stringify({ status: 'pending' }))
+    } else {
+      res.statusCode = 200
+      res.end(
+        JSON.stringify({ status: 'succcess', attributes: session.attributes })
+      )
+    }
+  }
 }
 
 /**
@@ -148,8 +176,6 @@ function createEnmeshedWebhookMiddleware(cache: Cache): RequestHandler {
 
       // Accept all pending relationship requests
       for (const change of relationship.changes) {
-        console.log(JSON.stringify(change))
-
         if (
           ['Creation', 'RelationshipRequest'].includes(change.type) &&
           ['Pending', 'Revoked'].includes(change.status)
@@ -164,7 +190,9 @@ function createEnmeshedWebhookMiddleware(cache: Cache): RequestHandler {
             await setSession(cache, sessionId, {
               ...session,
               enmeshedId: relationship.peer,
-              attributes: change.request.content?.attributes ?? [],
+              attributes: Object.values(
+                change.request.content?.attributes ?? {}
+              ),
             })
           }
         }
