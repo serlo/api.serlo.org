@@ -53,6 +53,7 @@ export function applyEnmeshedMiddleware({
   const basePath = '/enmeshed'
   app.post(`${basePath}/init`, createEnmeshedInitMiddleware(cache))
   app.get(`${basePath}/attributes`, createGetAttributesHandler(cache))
+  app.post(`${basePath}/attributes`, createSetAttributesHandler(cache))
   app.use(bodyParser.json())
   app.post(`${basePath}/webhook`, createEnmeshedWebhookMiddleware(cache))
   return `${basePath}/init`
@@ -81,6 +82,84 @@ function createGetAttributesHandler(cache: Cache): RequestHandler {
       res.end(
         JSON.stringify({ status: 'succcess', attributes: session.attributes })
       )
+    }
+  }
+}
+
+function createSetAttributesHandler(cache: Cache): RequestHandler {
+  return async (req, res) => {
+    res.setHeader('Content-Type', 'application/json')
+
+    const sessionId = readQuery(req, 'sessionId')
+    const session = await getSession(cache, sessionId)
+
+    const name = readQuery(req, 'name')
+    const value = readQuery(req, 'value')
+
+    if (name === null || value === null) {
+      res.statusCode = 400
+      res.end(
+        JSON.stringify({
+          status: 'error',
+          message: 'name and value need to be set',
+        })
+      )
+    } else if (session === null) {
+      res.statusCode = 400
+      res.end(
+        JSON.stringify({
+          status: 'error',
+          message: 'you need to create a qr code first',
+        })
+      )
+    } else if (session.enmeshedId === undefined) {
+      res.statusCode = 400
+      res.end(
+        JSON.stringify({
+          status: 'error',
+          message: 'relationship is not accepted yet',
+        })
+      )
+    } else {
+      const client = ConnectorClient.create({
+        baseUrl: `${process.env.ENMESHED_SERVER_HOST}`,
+        apiKey: `${process.env.ENMESHED_SERVER_SECRET}`,
+      })
+
+      // Send message to create/change attribute
+      // See: https://enmeshed.eu/explore/schema#attributeschangerequest
+      const sendMessageResponse = await client.messages.sendMessage({
+        recipients: [session.enmeshedId],
+        content: {
+          '@type': 'RequestMail',
+          to: [session.enmeshedId],
+          cc: [],
+          subject: 'Aktualisierung deines Lernstands',
+          body: 'Hallo!\nBitte speichere deinen aktuellen Lernstand und teile ihn mit uns.\nDein Serlo-Team',
+          requests: [
+            {
+              '@type': 'AttributesChangeRequest',
+              attributes: [{ name, value }],
+              applyTo: session.enmeshedId,
+              reason: 'Lernstand',
+            },
+          ],
+        },
+      })
+      if (sendMessageResponse.isError) {
+        // eslint-disable-next-line no-console
+        console.log(sendMessageResponse)
+        res.statusCode = 400
+        res.end(
+          JSON.stringify({
+            status: 'error',
+            message: sendMessageResponse.error,
+          })
+        )
+      } else {
+        res.statusCode = 200
+        res.end(JSON.stringify({ status: 'succcess' }))
+      }
     }
   }
 }
