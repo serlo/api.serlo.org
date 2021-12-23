@@ -56,7 +56,7 @@ export interface RelationshipChange {
     createdByDevice: string
     createdAt: string
     content?: {
-      attributes?: { name: string; value: string }[]
+      attributes?: { [key: string]: { name: string; value: string } }
     }
   }
   status: 'Pending' | 'Rejected' | 'Revoked' | 'Accepted'
