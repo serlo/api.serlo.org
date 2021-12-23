@@ -21,7 +21,7 @@
  */
 import { ConnectorClient } from '@nmshd/connector-sdk'
 import bodyParser from 'body-parser'
-import { Express, RequestHandler } from 'express'
+import { Express, RequestHandler, Response } from 'express'
 import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
@@ -36,7 +36,7 @@ const Session = t.intersection([
   t.type({ relationshipTemplateId: t.string }),
   t.partial({
     enmeshedId: t.string,
-    attributes: t.array(t.type({ name: t.string, value: t.string })),
+    attributes: t.UnknownRecord,
   }),
 ])
 type Session = t.TypeOf<typeof Session>
@@ -59,109 +59,14 @@ export function applyEnmeshedMiddleware({
   return `${basePath}/init`
 }
 
-function createGetAttributesHandler(cache: Cache): RequestHandler {
-  return async (req, res) => {
-    const sessionId = readQuery(req, 'sessionId')
-    const session = await getSession(cache, sessionId)
-
-    res.setHeader('Content-Type', 'application/json')
-
-    if (session === null) {
-      res.statusCode = 400
-      res.end(
-        JSON.stringify({
-          status: 'error',
-          message: 'you need to create a qr code first',
-        })
-      )
-    } else if (session.attributes === undefined) {
-      res.statusCode = 200
-      res.end(JSON.stringify({ status: 'pending' }))
-    } else {
-      res.statusCode = 200
-      res.end(
-        JSON.stringify({ status: 'succcess', attributes: session.attributes })
-      )
-    }
-  }
-}
-
-function createSetAttributesHandler(cache: Cache): RequestHandler {
-  return async (req, res) => {
-    res.setHeader('Content-Type', 'application/json')
-
-    const sessionId = readQuery(req, 'sessionId')
-    const session = await getSession(cache, sessionId)
-
-    const name = readQuery(req, 'name')
-    const value = readQuery(req, 'value')
-
-    if (name === null || value === null) {
-      res.statusCode = 400
-      res.end(
-        JSON.stringify({
-          status: 'error',
-          message: 'name and value need to be set',
-        })
-      )
-    } else if (session === null) {
-      res.statusCode = 400
-      res.end(
-        JSON.stringify({
-          status: 'error',
-          message: 'you need to create a qr code first',
-        })
-      )
-    } else if (session.enmeshedId === undefined) {
-      res.statusCode = 400
-      res.end(
-        JSON.stringify({
-          status: 'error',
-          message: 'relationship is not accepted yet',
-        })
-      )
-    } else {
-      const client = ConnectorClient.create({
-        baseUrl: `${process.env.ENMESHED_SERVER_HOST}`,
-        apiKey: `${process.env.ENMESHED_SERVER_SECRET}`,
-      })
-
-      // Send message to create/change attribute
-      // See: https://enmeshed.eu/explore/schema#attributeschangerequest
-      const sendMessageResponse = await client.messages.sendMessage({
-        recipients: [session.enmeshedId],
-        content: {
-          '@type': 'RequestMail',
-          to: [session.enmeshedId],
-          cc: [],
-          subject: 'Aktualisierung deines Lernstands',
-          body: 'Hallo!\nBitte speichere deinen aktuellen Lernstand und teile ihn mit uns.\nDein Serlo-Team',
-          requests: [
-            {
-              '@type': 'AttributesChangeRequest',
-              attributes: [{ name, value }],
-              applyTo: session.enmeshedId,
-              reason: 'Lernstand',
-            },
-          ],
-        },
-      })
-      if (sendMessageResponse.isError) {
-        // eslint-disable-next-line no-console
-        console.log(sendMessageResponse)
-        res.statusCode = 400
-        res.end(
-          JSON.stringify({
-            status: 'error',
-            message: sendMessageResponse.error,
-          })
-        )
-      } else {
-        res.statusCode = 200
-        res.end(JSON.stringify({ status: 'succcess' }))
-      }
-    }
-  }
+function validationError(res: Response, message: string) {
+  res.statusCode = 400
+  res.end(
+    JSON.stringify({
+      status: 'error',
+      message,
+    })
+  )
 }
 
 /**
@@ -176,17 +81,19 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
     })
 
     const sessionId = readQuery(req, 'sessionId')
+    // FIXME: Uncomment next line when prototype frontend has been replaced
+    // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
 
     // Try to get Relationship template ID from cache
     const session = await getSession(cache, sessionId)
     let relationshipTemplateId = ''
-    if (session !== null) {
+    if (session) {
       relationshipTemplateId = session.relationshipTemplateId
     } else {
       // Create Relationship template
       const createRelationshipResponse =
         await client.relationshipTemplates.createOwnRelationshipTemplate(
-          sessionId !== null
+          sessionId
             ? createRelationshipTemplateForUserJourney({
                 sessionId,
                 familyName: readQuery(req, 'familyName') ?? 'Musterfrau',
@@ -199,7 +106,7 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
         const error = createRelationshipResponse.error
         res.statusCode = 500
         res.end(
-          `Error occurred creating relationship request: ${error.code} ${error.message}`
+          `Error occurred while creating relationship request: ${error.code} ${error.message}`
         )
         return
       }
@@ -226,6 +133,98 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
   }
 }
 
+function createGetAttributesHandler(cache: Cache): RequestHandler {
+  return async (req, res) => {
+    const sessionId = readQuery(req, 'sessionId')
+    if (!sessionId)
+      return validationError(res, 'Missing required parameter: sessionId.')
+    const session = await getSession(cache, sessionId)
+
+    if (!session)
+      return validationError(
+        res,
+        'Session not found. Please create a QR code first.'
+      )
+    res.setHeader('Content-Type', 'application/json')
+    if (session.attributes) {
+      res.statusCode = 200
+      res.end(
+        JSON.stringify({ status: 'success', attributes: session.attributes })
+      )
+    } else {
+      res.statusCode = 200
+      res.end(JSON.stringify({ status: 'pending' }))
+    }
+  }
+}
+
+function createSetAttributesHandler(cache: Cache): RequestHandler {
+  return async (req, res) => {
+    res.setHeader('Content-Type', 'application/json')
+
+    const sessionId = readQuery(req, 'sessionId')
+    if (!sessionId)
+      return validationError(res, 'Missing required parameter: sessionId.')
+    const session = await getSession(cache, sessionId)
+
+    const name = readQuery(req, 'name')
+    if (!name) return validationError(res, 'Missing required parameter: name.')
+    const value = readQuery(req, 'value')
+    if (!value)
+      return validationError(res, 'Missing required parameter: value.')
+
+    if (!session)
+      return validationError(
+        res,
+        'Session not found. Please create a QR code first.'
+      )
+    if (!session.enmeshedId)
+      return validationError(res, 'Relationship not accepted yet.')
+
+    const client = ConnectorClient.create({
+      baseUrl: `${process.env.ENMESHED_SERVER_HOST}`,
+      apiKey: `${process.env.ENMESHED_SERVER_SECRET}`,
+    })
+
+    // Get own Identity
+    const getIdentityResponse = await client.account.getIdentityInfo()
+    if (getIdentityResponse.isError)
+      return validationError(res, 'Error retrieving connector identity info.')
+    const connectorIdentity = getIdentityResponse.result.address
+
+    // Send message to create/change attribute
+    // See: https://enmeshed.eu/explore/schema#attributeschangerequest
+    const sendMessageResponse = await client.messages.sendMessage({
+      recipients: [session.enmeshedId],
+      content: {
+        '@type': 'RequestMail',
+        to: [session.enmeshedId],
+        cc: [],
+        subject: 'Aktualisierung deines Lernstands',
+        body: 'Hallo!\nBitte speichere deinen aktuellen Lernstand und teile ihn mit uns.\nDein Serlo-Team',
+        requests: [
+          {
+            '@type': 'AttributesChangeRequest',
+            attributes: [{ name, value }],
+            applyTo: session.enmeshedId,
+            reason: 'Lernstand',
+          },
+          {
+            '@type': 'AttributesShareRequest',
+            attributes: [name],
+            recipients: [connectorIdentity],
+            reason: 'Lernstand',
+          },
+        ],
+      },
+    })
+    if (sendMessageResponse.isError)
+      return validationError(res, JSON.stringify(sendMessageResponse.error))
+    res.statusCode = 200
+    res.end(JSON.stringify({ status: 'success' }))
+  }
+}
+
 /**
  * Endpoint for Connector webhook, which receives any changes within relationships and messages
  */
@@ -242,16 +241,13 @@ function createEnmeshedWebhookMiddleware(cache: Cache): RequestHandler {
     for (const relationship of payload.relationships) {
       // Check if relationship name matches
       const sessionId = relationship.template.content.metadata.sessionId ?? null
+      // FIXME: Uncomment next line when prototype frontend has been replaced
+      // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
       const session = await getSession(cache, sessionId)
 
-      if (
-        session === null ||
-        relationship.template.id !== session.relationshipTemplateId
-      ) {
-        // TODO: Proper error handling needed
-        // eslint-disable-next-line no-console
-        console.log('Error: Relationship template ID does not match')
-      }
+      // FIXME: Uncomment next lines when prototype frontend has been replaced
+      // if (!session) return validationError(res, 'Session not found. Please create a QR code first.')
+      // if (relationship.template.id !== session.relationshipTemplateId) return validationError(res, 'Mismatching relationship template ID.')
 
       // Accept all pending relationship requests
       for (const change of relationship.changes) {
@@ -261,18 +257,21 @@ function createEnmeshedWebhookMiddleware(cache: Cache): RequestHandler {
         ) {
           await acceptRelationshipRequest(relationship, change)
 
-          if (session === null) {
-            await sendWelcomeMessage(relationship)
-            await sendAttributesChangeRequest(relationship)
-          } else {
+          if (session) {
             // TODO: Is the place inside the for loop is right place?
             await setSession(cache, sessionId, {
               ...session,
               enmeshedId: relationship.peer,
-              attributes: Object.values(
-                change.request.content?.attributes ?? {}
-              ),
+              attributes: {
+                ...session.attributes,
+                ...getSessionAttributes(
+                  Object.values(change.request.content?.attributes ?? {})
+                ),
+              },
             })
+          } else {
+            await sendWelcomeMessage(relationship)
+            await sendAttributesChangeRequest(relationship)
           }
         }
       }
@@ -281,11 +280,20 @@ function createEnmeshedWebhookMiddleware(cache: Cache): RequestHandler {
     // Process messages
     for (const message of payload.messages) {
       if (message.content['@type'] == 'AttributesChangeRequest') {
-        const attributes = message.content.attributes.map(
-          (a: { name: string; value: string }) => `${a.name}=${a.value}`
-        )
-        // eslint-disable-next-line no-console
-        console.log(`Received attributes: ${attributes.join(', ')}`)
+        const sessionId = await getSessionId(cache, message.createdBy)
+        const session = await getSession(cache, sessionId)
+        if (session) {
+          await setSession(cache, sessionId, {
+            ...session,
+            enmeshedId: message.createdBy,
+            attributes: {
+              ...session.attributes,
+              ...getSessionAttributes(message.content.attributes),
+            },
+          })
+          // eslint-disable-next-line no-console
+          console.log(`Received attributes`)
+        }
       } else {
         // eslint-disable-next-line no-console
         console.log('Received message:')
@@ -646,6 +654,16 @@ async function getSession(
   return null
 }
 
+async function getSessionId(cache: Cache, id: string): Promise<string | null> {
+  const cachedValue = await cache.get({ key: getIdentityKey(id) })
+
+  if (!O.isNone(cachedValue)) {
+    return cachedValue.value.value as string
+  }
+
+  return null
+}
+
 async function setSession(
   cache: Cache,
   sessionId: string | null,
@@ -656,12 +674,29 @@ async function setSession(
     value: session,
     source: 'enmeshed-middleware',
   })
+  if (session.enmeshedId) {
+    await cache.set({
+      key: getIdentityKey(session.enmeshedId),
+      value: sessionId,
+      source: 'enmeshed-middleware',
+    })
+  }
 }
 
 function getSessionKey(sessionId: string | null) {
-  return sessionId !== null
+  return sessionId
     ? `enmeshed:${sessionId}`
     : 'de.serlo.org/api/enmeshed/relationship-template-id'
+}
+
+function getIdentityKey(id: string) {
+  return `enmeshed:${id}`
+}
+
+function getSessionAttributes(
+  attributeList: { name: string; value: string }[]
+) {
+  return attributeList.reduce((al, a) => ({ ...al, [a.name]: a.value }), {})
 }
 
 function readQuery(req: ExpressRequest, key: string): string | null {
