@@ -186,7 +186,7 @@ function createSetAttributesHandler(cache: Cache): RequestHandler {
     const getIdentityResponse = await client.account.getIdentityInfo()
     if (getIdentityResponse.isError)
       return validationError(res, 'Error retrieving connector identity info.')
-    const connectorIdentity = getIdentityResponse.result.address
+    //const connectorIdentity = getIdentityResponse.result.address
 
     // Send message to create/change attribute
     // See: https://enmeshed.eu/explore/schema#attributeschangerequest
@@ -197,20 +197,21 @@ function createSetAttributesHandler(cache: Cache): RequestHandler {
         to: [session.enmeshedId],
         cc: [],
         subject: 'Aktualisierung deines Lernstands',
-        body: 'Hallo!\nBitte speichere deinen aktuellen Lernstand und teile ihn mit uns.\nDein Serlo-Team',
+        body: 'Gratulation!\nDu hast den Kurs zur Bruchaddition erfolgreich absolviert. Bitte speichere den aktualisierten Lernstand.\nDein Serlo-Team',
         requests: [
           {
             '@type': 'AttributesChangeRequest',
             attributes: [{ name, value }],
             applyTo: session.enmeshedId,
-            reason: 'Aktualisierung Lernstand',
+            reason:
+              'Neuer Lernstand nach erfolgreicher Durchführung des Kurses zur Bruchaddition',
           },
-          {
+          /*{
             '@type': 'AttributesShareRequest',
             attributes: [name],
             recipients: [connectorIdentity],
             reason: 'Aktualisierung Lernstand',
-          },
+          },*/
         ],
       },
     })
