@@ -1,3 +1,7 @@
+# Local enmeshed connector
+/enmeshed/logs
+/enmeshed/config.json
+
 # Logs
 logs
 *.log
