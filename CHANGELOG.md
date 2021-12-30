@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.27.3](https://github.com/serlo/api.serlo.org/compare/v0.27.2..v0.27.3) - December 30, 2021
+
+### Added
+
+- Add enmeshed endpoints for user-journey
+
 ## [v0.27.2](https://github.com/serlo/api.serlo.org/compare/v0.27.1..v0.27.2) - December 16, 2021
 
 ### Changed

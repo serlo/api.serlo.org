@@ -1131,6 +1131,11 @@ async function exec(): Promise<void> {
         date: '2021-12-16',
         changed: ['Improve Enmeshed data wallet integration.'],
       },
+      {
+        tagName: 'v0.27.3',
+        date: '2021-12-30',
+        added: ['Add enmeshed endpoints for user-journey'],
+      },
     ],
   })
 
