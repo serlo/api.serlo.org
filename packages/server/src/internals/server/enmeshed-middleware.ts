@@ -59,16 +59,6 @@ export function applyEnmeshedMiddleware({
   return `${basePath}/init`
 }
 
-function validationError(res: Response, message: string) {
-  res.statusCode = 400
-  res.end(
-    JSON.stringify({
-      status: 'error',
-      message,
-    })
-  )
-}
-
 /**
  * Endpoint for enmeshed relationship initialization.
  * Creates relationship template and returns QR for the user to scan.
@@ -207,13 +197,13 @@ function createSetAttributesHandler(cache: Cache): RequestHandler {
             '@type': 'AttributesChangeRequest',
             attributes: [{ name, value }],
             applyTo: session.enmeshedId,
-            reason: 'Lernstand',
+            reason: 'Aktualisierung Lernstand',
           },
           {
             '@type': 'AttributesShareRequest',
             attributes: [name],
             recipients: [connectorIdentity],
-            reason: 'Lernstand',
+            reason: 'Aktualisierung Lernstand',
           },
         ],
       },
@@ -258,7 +248,6 @@ function createEnmeshedWebhookMiddleware(cache: Cache): RequestHandler {
           await acceptRelationshipRequest(relationship, change)
 
           if (session) {
-            // TODO: Is the place inside the for loop is right place?
             await setSession(cache, sessionId, {
               ...session,
               enmeshedId: relationship.peer,
@@ -637,6 +626,16 @@ async function sendAttributesChangeRequest(
     return false
   }
   return true
+}
+
+function validationError(res: Response, message: string) {
+  res.statusCode = 400
+  res.end(
+    JSON.stringify({
+      status: 'error',
+      message,
+    })
+  )
 }
 
 async function getSession(
