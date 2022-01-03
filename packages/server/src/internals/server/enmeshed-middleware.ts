@@ -474,6 +474,7 @@ function createRelationshipTemplateForUserJourney({
         create: [
           { attribute: 'Person.familyName', value: familyName },
           { attribute: 'Person.givenName', value: givenName },
+          { attribute: 'Lernstand-Mathe', value: 'Bruchaddition' },
         ],
         required: [{ attribute: 'Lernstand-Mathe' }],
         authorizations: [
