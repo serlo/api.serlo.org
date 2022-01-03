@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.27.4](https://github.com/serlo/api.serlo.org/compare/v0.27.3..v0.27.4) - January 3, 2022
+
+### Changed
+
+- User-Journey: Set `Lernstand-Mathe` on onboarding
+
 ## [v0.27.3](https://github.com/serlo/api.serlo.org/compare/v0.27.2..v0.27.3) - December 30, 2021
 
 ### Added
