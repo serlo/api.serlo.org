@@ -1136,6 +1136,11 @@ async function exec(): Promise<void> {
         date: '2021-12-30',
         added: ['Add enmeshed endpoints for user-journey'],
       },
+      {
+        tagName: 'v0.27.4',
+        date: '2022-01-03',
+        changed: ['User-Journey: Set `Lernstand-Mathe` on onboarding'],
+      },
     ],
   })
 
