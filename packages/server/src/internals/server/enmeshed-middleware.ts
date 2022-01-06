@@ -537,17 +537,15 @@ async function sendWelcomeMessage(
     baseUrl: `${process.env.ENMESHED_SERVER_HOST}`,
     apiKey: `${process.env.ENMESHED_SERVER_SECRET}`,
   })
-  // Upload test file
-  const testData = {
-    level: 1,
-  }
   const expiresAt = new Date()
   expiresAt.setHours(expiresAt.getHours() + 1)
   const uploadFileResponse = await client.files.uploadOwnFile({
-    title: 'Serlo test file',
+    title: 'Serlo Testdatei',
     description: 'Test file created by Serlo',
-    file: Buffer.from(JSON.stringify(testData)),
-    filename: 'serlo-test-file.json',
+    file: Buffer.from(
+      '<html><head><title>Serlo Testdatei</title></head><body><p>Hello World! – Dies ist eine Testdatei.</p></body></html>'
+    ),
+    filename: 'serlo-test.html',
     expiresAt: expiresAt.toISOString(),
   })
   if (uploadFileResponse.isError) {
