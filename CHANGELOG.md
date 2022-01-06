@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.27.5](https://github.com/serlo/api.serlo.org/compare/v0.27.4..v0.27.5) - January 6, 2022
+
+### Changed
+
+- User-Journey: Remove `Lernstand-Mathe` from onboarding
+
+### Fixed
+
+- Data-Wallet: Fix bug that example cannot be opened
+
 ## [v0.27.4](https://github.com/serlo/api.serlo.org/compare/v0.27.3..v0.27.4) - January 3, 2022
 
 ### Changed
