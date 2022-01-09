@@ -19,7 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { RestRequest, ResponseResolver, rest, restContext } from 'msw'
+import {
+  RestRequest,
+  ResponseResolver,
+  rest,
+  restContext,
+  PathParams,
+} from 'msw'
 
 import { MajorDimension } from '~/model'
 
@@ -79,7 +85,7 @@ export function hasInternalServerError(): RestResolver {
 
 export type RestResolver<
   RequestBodyType = RestRequest['body'],
-  RequestParamsType = RestRequest['params']
+  RequestParamsType extends PathParams = PathParams
 > = ResponseResolver<
   RestRequest<RequestBodyType, RequestParamsType>,
   typeof restContext
@@ -91,7 +97,7 @@ function toKey(query: SpreadsheetQuery) {
 
 type SpreadsheetApiResolver = RestResolver<never, SpreadsheetQueryBasic>
 
-interface SpreadsheetQueryBasic {
+interface SpreadsheetQueryBasic extends PathParams {
   range: string
   spreadsheetId: string
 }

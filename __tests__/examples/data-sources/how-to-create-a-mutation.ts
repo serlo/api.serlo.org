@@ -61,9 +61,9 @@ describe('How to create a mutation in a data source: update the content of an ar
     // be accessed by the PUT operation and the JSON payload is of the form
     // `{ "newContent": "..." }` with the new content of the article. It responds
     // with a JSON of the form `{ "success": boolean }` to determine whether the
-    // response was successfull or not.
+    // response was successful or not.
     global.server.use(
-      rest.put<{ newContent: string }, { success: boolean }, { id: string }>(
+      rest.put<{ newContent: string }, { id: string }, { success: boolean }>(
         'http://database-api.serlo.org/articles/:id',
         (req, res, ctx) => {
           const id = parseInt(req.params.id)

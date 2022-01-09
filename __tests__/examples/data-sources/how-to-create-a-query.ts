@@ -30,7 +30,7 @@ import { createQuery, Query } from '~/internals/data-source-helper/query'
 describe('How to create a query in a data source: Fetching the content of an article', () => {
   // # Prerequisites
 
-  // Lets assume we want to fetch the content of an article. The following
+  // Let us assume we want to fetch the content of an article. The following
   // object simulates a database whereby the article's
   // contents are indexed by the article's id.
   let contentDatabase: Record<number, string | undefined>
@@ -58,7 +58,7 @@ describe('How to create a query in a data source: Fetching the content of an art
     // REST API in front of the database which exposes a GET endpoint
     // /article/:id with which the content of an article can be fetched.
     global.server.use(
-      rest.get<never, { id: number; content: string }, { id: string }>(
+      rest.get<never, { id: string }, { id: number; content: string }>(
         'http://database-api.serlo.org/article/:id',
         (req, res, ctx) => {
           const id = parseInt(req.params.id)
@@ -110,10 +110,10 @@ describe('How to create a query in a data source: Fetching the content of an art
             // We want to enable SWR for this endpoint
             enableSwr: true,
 
-            // After one hour an cached value shall be considered to be stale
+            // After one hour, a cached value shall be considered to be stale
             staleAfter: { hour: 1 },
 
-            // After one day no cached value shall be used
+            // After one day, no cached value shall be used
             maxAge: { day: 1 },
 
             getKey({ id }) {
