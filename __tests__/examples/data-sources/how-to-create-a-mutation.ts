@@ -1,7 +1,7 @@
 /**
  * This file is part of Serlo.org API
  *
- * Copyright (c) 2020-2021 Serlo Education e.V.
+ * Copyright (c) 2020-2022 Serlo Education e.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License
@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @copyright Copyright (c) 2020-2021 Serlo Education e.V.
+ * @copyright Copyright (c) 2020-2022 Serlo Education e.V.
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
@@ -61,9 +61,9 @@ describe('How to create a mutation in a data source: update the content of an ar
     // be accessed by the PUT operation and the JSON payload is of the form
     // `{ "newContent": "..." }` with the new content of the article. It responds
     // with a JSON of the form `{ "success": boolean }` to determine whether the
-    // response was successfull or not.
+    // response was successful or not.
     global.server.use(
-      rest.put<{ newContent: string }, { success: boolean }, { id: string }>(
+      rest.put<{ newContent: string }, { id: string }, { success: boolean }>(
         'http://database-api.serlo.org/articles/:id',
         (req, res, ctx) => {
           const id = parseInt(req.params.id)

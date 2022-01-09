@@ -1,7 +1,7 @@
 /**
  * This file is part of Serlo.org API
  *
- * Copyright (c) 2020-2021 Serlo Education e.V.
+ * Copyright (c) 2020-2022 Serlo Education e.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License
@@ -15,11 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @copyright Copyright (c) 2020-2021 Serlo Education e.V.
+ * @copyright Copyright (c) 2020-2022 Serlo Education e.V.
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import type { ApolloServerPlugin } from 'apollo-server-plugin-base'
+import type {
+  ApolloServerPlugin,
+  GraphQLRequestExecutionListener,
+  GraphQLRequestListener,
+} from 'apollo-server-plugin-base'
 import * as R from 'ramda'
 
 import { InvalidCurrentValueError } from '~/internals/data-source-helper'
@@ -36,11 +40,14 @@ export function createInvalidCurrentValueErrorPlugin({
 }): ApolloServerPlugin {
   const serloModel = createSerloModel({ environment })
   return {
-    requestDidStart() {
+    // eslint-disable-next-line @typescript-eslint/require-await
+    async requestDidStart(): Promise<GraphQLRequestListener> {
       const uuids: number[] = []
       return {
-        executionDidStart() {
+        // eslint-disable-next-line @typescript-eslint/require-await
+        async executionDidStart(): Promise<GraphQLRequestExecutionListener> {
           return {
+            // eslint-disable-next-line @typescript-eslint/require-await
             willResolveField({ source, info }) {
               if (
                 isSupportedUuidType(info.parentType.name) &&
