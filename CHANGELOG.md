@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.28.0](https://github.com/serlo/api.serlo.org/compare/v0.27.5..v0.28.0) - January 9, 2022
+
+### Internal
+
+- Node v16
+
+- Yarn v3
+
 ## [v0.27.5](https://github.com/serlo/api.serlo.org/compare/v0.27.4..v0.27.5) - January 6, 2022
 
 ### Changed
