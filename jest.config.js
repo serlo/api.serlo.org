@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 /* eslint-disable @typescript-eslint/no-var-requires,import/no-commonjs */
-const { pathsToModuleNameMapper } = require('ts-jest/utils')
+const { pathsToModuleNameMapper } = require('ts-jest')
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,import/extensions
 const { compilerOptions } = require('./tsconfig.json')
