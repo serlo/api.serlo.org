@@ -67,7 +67,9 @@ export function createSentryPlugin(): ApolloServerPlugin {
           if (!ctx.operation) return
 
           for (const error of ctx.errors) {
-            if (ignoredErrorCodes.includes(error.extensions?.code)) continue
+            if (ignoredErrorCodes.includes(error.extensions?.code as string)) {
+              continue
+            }
 
             Sentry.captureException(error, (scope) => {
               scope.setTag('kind', ctx.operationName)
