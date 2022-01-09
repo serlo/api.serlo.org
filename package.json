@@ -46,7 +46,7 @@
     "**/typescript": "^4.1.0"
   },
   "dependencies": {
-    "graphql": "^15.0.0"
+    "graphql": "^16.0.0"
   },
   "devDependencies": {
     "@inyono/changelog": "^0.3.0",
