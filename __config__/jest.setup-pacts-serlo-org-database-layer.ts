@@ -74,7 +74,9 @@ beforeEach(async () => {
         const pactRes = await fetch(`http://localhost:${port}${url.pathname}`, {
           method: 'POST',
           body:
-            typeof req.body === 'object' ? JSON.stringify(req.body) : req.body,
+            typeof req.body === 'object'
+              ? JSON.stringify(req.body)
+              : (req.body as string),
           headers: {
             'Content-Type': req.headers.get('Content-Type')!,
           },
