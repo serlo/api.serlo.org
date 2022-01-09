@@ -20,8 +20,10 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as Sentry from '@sentry/node'
-import type { ApolloServerPlugin } from 'apollo-server-plugin-base'
-import { GraphQLRequestListener } from 'apollo-server-plugin-base'
+import type {
+  ApolloServerPlugin,
+  GraphQLRequestListener,
+} from 'apollo-server-plugin-base'
 import R from 'ramda'
 
 import { InvalidValueFromListener } from './data-source'
