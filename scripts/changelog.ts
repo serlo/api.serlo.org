@@ -1152,6 +1152,11 @@ async function exec(): Promise<void> {
         changed: ['User-Journey: Remove `Lernstand-Mathe` from onboarding'],
         fixed: ['Data-Wallet: Fix bug that example cannot be opened'],
       },
+      {
+        tagName: 'v0.28.0',
+        date: '2022-01-09',
+        internal: ['Node v16', 'Yarn v3'],
+      },
     ],
   })
 
