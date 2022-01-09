@@ -120,7 +120,7 @@ declare global {
   namespace NodeJS {
     interface Global {
       pact: import('@pact-foundation/pact').Pact
-      client: import('../__tests__/__utils__').Client
+      client: import('apollo-server').ApolloServer
       serloModel: ReturnType<typeof createSerloModel>
     }
   }
