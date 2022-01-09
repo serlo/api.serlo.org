@@ -1,7 +1,7 @@
 /**
  * This file is part of Serlo.org API
  *
- * Copyright (c) 2020-2021 Serlo Education e.V.
+ * Copyright (c) 2020-2022 Serlo Education e.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License
@@ -15,15 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @copyright Copyright (c) 2020-2021 Serlo Education e.V.
+ * @copyright Copyright (c) 2020-2022 Serlo Education e.V.
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { ApolloServer } from 'apollo-server'
-import {
-  ApolloServerTestClient,
-  createTestClient as createApolloTestClient,
-} from 'apollo-server-testing'
 
 import { Service } from '~/internals/authentication'
 import { Environment } from '~/internals/environment'
@@ -31,12 +27,12 @@ import { Context } from '~/internals/graphql'
 import { getGraphQLOptions } from '~/internals/server'
 import { emptySwrQueue } from '~/internals/swr-queue'
 
-export type Client = ApolloServerTestClient
+export type Client = ApolloServer
 
 export function createTestClient(
   args?: Partial<Pick<Context, 'service' | 'userId'>>
 ): Client {
-  const server = new ApolloServer({
+  return new ApolloServer({
     ...getGraphQLOptions(createTestEnvironment()),
     context(): Pick<Context, 'service' | 'userId'> {
       return {
@@ -45,7 +41,6 @@ export function createTestClient(
       }
     },
   })
-  return createApolloTestClient(server)
 }
 
 export function createTestEnvironment(): Environment {

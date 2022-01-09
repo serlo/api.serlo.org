@@ -12,10 +12,10 @@
     "codegen": "graphql-codegen --config codegen.yml"
   },
   "devDependencies": {
-    "@graphql-codegen/add": "^2.0.0",
-    "@graphql-codegen/cli": "^1.0.0",
-    "@graphql-codegen/typescript": "^1.0.0",
-    "graphql": "^15.0.0"
+    "@graphql-codegen/add": "^3.0.0",
+    "@graphql-codegen/cli": "^2.0.0",
+    "@graphql-codegen/typescript": "^2.0.0",
+    "graphql": "^16.0.0"
   },
   "publishConfig": {
     "access": "public"

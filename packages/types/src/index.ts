@@ -1,4 +1,5 @@
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -15,32 +16,32 @@ export type Scalars = {
 };
 
 export type AbstractEntity = {
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
-  events: AbstractNotificationEventConnection;
-  date: Scalars['DateTime'];
-  instance: Instance;
   alias?: Maybe<Scalars['String']>;
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
+  instance: Instance;
   license: License;
   subject?: Maybe<Subject>;
+  trashed: Scalars['Boolean'];
 };
 
 
 export type AbstractEntityEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type AbstractEntityConnection = {
   __typename?: 'AbstractEntityConnection';
   edges: Array<AbstractEntityCursor>;
   nodes: Array<AbstractEntity>;
-  totalCount: Scalars['Int'];
   pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
 export type AbstractEntityCursor = {
@@ -50,66 +51,66 @@ export type AbstractEntityCursor = {
 };
 
 export type AbstractEntityRevision = {
+  author: User;
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
-  events: AbstractNotificationEventConnection;
-  author: User;
-  date: Scalars['DateTime'];
-  content: Scalars['String'];
-  changes: Scalars['String'];
 };
 
 
 export type AbstractEntityRevisionEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type AbstractExercise = {
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
-  date: Scalars['DateTime'];
-  instance: Instance;
   alias?: Maybe<Scalars['String']>;
-  license: License;
   currentRevision?: Maybe<AbstractExerciseRevision>;
+  date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
+  instance: Instance;
+  license: License;
   solution?: Maybe<Solution>;
+  trashed: Scalars['Boolean'];
 };
 
 
 export type AbstractExerciseEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type AbstractExerciseRevision = {
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
   alias?: Maybe<Scalars['String']>;
   author: User;
+  changes: Scalars['String'];
+  content: Scalars['String'];
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
-  content: Scalars['String'];
-  changes: Scalars['String'];
+  id: Scalars['Int'];
+  trashed: Scalars['Boolean'];
 };
 
 
 export type AbstractExerciseRevisionEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type AbstractNavigationChild = {
@@ -117,10 +118,10 @@ export type AbstractNavigationChild = {
 };
 
 export type AbstractNotificationEvent = {
+  actor: User;
+  date: Scalars['DateTime'];
   id: Scalars['Int'];
   instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
   objectId: Scalars['Int'];
 };
 
@@ -138,119 +139,119 @@ export type AbstractNotificationEventEdge = {
 };
 
 export type AbstractRepository = {
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
   alias?: Maybe<Scalars['String']>;
-  events: AbstractNotificationEventConnection;
-  threads: ThreadsConnection;
   date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
   instance: Instance;
   license: License;
+  threads: ThreadsConnection;
+  trashed: Scalars['Boolean'];
 };
 
 
 export type AbstractRepositoryEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type AbstractRepositoryThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type AbstractRevision = {
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
   alias?: Maybe<Scalars['String']>;
-  events: AbstractNotificationEventConnection;
-  threads: ThreadsConnection;
   author: User;
-  date: Scalars['DateTime'];
   content: Scalars['String'];
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
+  threads: ThreadsConnection;
+  trashed: Scalars['Boolean'];
 };
 
 
 export type AbstractRevisionEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type AbstractRevisionThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type AbstractTaxonomyTermChild = {
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
   alias?: Maybe<Scalars['String']>;
-  events: AbstractNotificationEventConnection;
   date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
   instance: Instance;
   license: License;
   taxonomyTerms: TaxonomyTermConnection;
+  trashed: Scalars['Boolean'];
 };
 
 
 export type AbstractTaxonomyTermChildEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type AbstractTaxonomyTermChildTaxonomyTermsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type AbstractUuid = {
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
   alias?: Maybe<Scalars['String']>;
   events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
+  trashed: Scalars['Boolean'];
 };
 
 
 export type AbstractUuidEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type AbstractUuidConnection = {
   __typename?: 'AbstractUuidConnection';
   edges: Array<AbstractUuidCursor>;
   nodes: Array<AbstractUuid>;
-  totalCount: Scalars['Int'];
   pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
 export type AbstractUuidCursor = {
@@ -264,103 +265,103 @@ export type AliasInput = {
   path: Scalars['String'];
 };
 
-export type Applet = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
+export type Applet = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Applet';
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
-  events: AbstractNotificationEventConnection;
-  threads: ThreadsConnection;
-  instance: Instance;
   alias?: Maybe<Scalars['String']>;
-  date: Scalars['DateTime'];
-  license: License;
   currentRevision?: Maybe<AppletRevision>;
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
+  instance: Instance;
+  license: License;
   revisions: AppletRevisionConnection;
-  taxonomyTerms: TaxonomyTermConnection;
   subject?: Maybe<Subject>;
+  taxonomyTerms: TaxonomyTermConnection;
+  threads: ThreadsConnection;
+  trashed: Scalars['Boolean'];
 };
 
 
 export type AppletEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
-};
-
-
-export type AppletThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type AppletRevisionsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  unrevised?: Maybe<Scalars['Boolean']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  unrevised?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type AppletTaxonomyTermsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
-export type AppletRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware & {
+
+export type AppletThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type AppletRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'AppletRevision';
-  id: Scalars['Int'];
-  author: User;
-  trashed: Scalars['Boolean'];
   alias?: Maybe<Scalars['String']>;
-  events: AbstractNotificationEventConnection;
-  threads: ThreadsConnection;
-  date: Scalars['DateTime'];
-  repository: Applet;
-  url: Scalars['String'];
-  title: Scalars['String'];
-  content: Scalars['String'];
+  author: User;
   changes: Scalars['String'];
-  metaTitle: Scalars['String'];
+  content: Scalars['String'];
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
   metaDescription: Scalars['String'];
+  metaTitle: Scalars['String'];
+  repository: Applet;
+  threads: ThreadsConnection;
+  title: Scalars['String'];
+  trashed: Scalars['Boolean'];
+  url: Scalars['String'];
 };
 
 
 export type AppletRevisionEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type AppletRevisionThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type AppletRevisionConnection = {
   __typename?: 'AppletRevisionConnection';
   edges: Array<AppletRevisionCursor>;
   nodes: Array<AppletRevision>;
-  totalCount: Scalars['Int'];
   pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
 export type AppletRevisionCursor = {
@@ -369,102 +370,102 @@ export type AppletRevisionCursor = {
   node: AppletRevision;
 };
 
-export type Article = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
+export type Article = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Article';
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
-  threads: ThreadsConnection;
-  events: AbstractNotificationEventConnection;
-  instance: Instance;
   alias?: Maybe<Scalars['String']>;
-  date: Scalars['DateTime'];
-  license: License;
   currentRevision?: Maybe<ArticleRevision>;
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
+  instance: Instance;
+  license: License;
   revisions: ArticleRevisionConnection;
-  taxonomyTerms: TaxonomyTermConnection;
   subject?: Maybe<Subject>;
-};
-
-
-export type ArticleThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  taxonomyTerms: TaxonomyTermConnection;
+  threads: ThreadsConnection;
+  trashed: Scalars['Boolean'];
 };
 
 
 export type ArticleEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type ArticleRevisionsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  unrevised?: Maybe<Scalars['Boolean']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  unrevised?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type ArticleTaxonomyTermsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
-export type ArticleRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware & {
+
+export type ArticleThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type ArticleRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'ArticleRevision';
-  id: Scalars['Int'];
-  author: User;
-  trashed: Scalars['Boolean'];
   alias?: Maybe<Scalars['String']>;
-  threads: ThreadsConnection;
-  events: AbstractNotificationEventConnection;
-  date: Scalars['DateTime'];
-  repository: Article;
-  title: Scalars['String'];
-  content: Scalars['String'];
+  author: User;
   changes: Scalars['String'];
-  metaTitle: Scalars['String'];
+  content: Scalars['String'];
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
   metaDescription: Scalars['String'];
-};
-
-
-export type ArticleRevisionThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  metaTitle: Scalars['String'];
+  repository: Article;
+  threads: ThreadsConnection;
+  title: Scalars['String'];
+  trashed: Scalars['Boolean'];
 };
 
 
 export type ArticleRevisionEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type ArticleRevisionThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type ArticleRevisionConnection = {
   __typename?: 'ArticleRevisionConnection';
   edges: Array<ArticleRevisionCursor>;
   nodes: Array<ArticleRevision>;
-  totalCount: Scalars['Int'];
   pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
 export type ArticleRevisionCursor = {
@@ -479,8 +480,8 @@ export type CacheRemoveInput = {
 
 export type CacheRemoveResponse = {
   __typename?: 'CacheRemoveResponse';
-  success: Scalars['Boolean'];
   query: Query;
+  success: Scalars['Boolean'];
 };
 
 export type CacheSetInput = {
@@ -490,8 +491,8 @@ export type CacheSetInput = {
 
 export type CacheSetResponse = {
   __typename?: 'CacheSetResponse';
-  success: Scalars['Boolean'];
   query: Query;
+  success: Scalars['Boolean'];
 };
 
 export type CacheUpdateInput = {
@@ -504,58 +505,58 @@ export type CacheUpdateResponse = {
 };
 
 export type CheckoutRevisionInput = {
-  revisionId: Scalars['Int'];
   reason: Scalars['String'];
+  revisionId: Scalars['Int'];
 };
 
 export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CheckoutRevisionNotificationEvent';
+  actor: User;
+  date: Scalars['DateTime'];
   id: Scalars['Int'];
   instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
   objectId: Scalars['Int'];
+  reason: Scalars['String'];
   repository: AbstractRepository;
   revision: AbstractRevision;
-  reason: Scalars['String'];
 };
 
 export type CheckoutRevisionResponse = {
   __typename?: 'CheckoutRevisionResponse';
-  success: Scalars['Boolean'];
   query: Query;
+  success: Scalars['Boolean'];
 };
 
 export type Comment = AbstractUuid & {
   __typename?: 'Comment';
-  id: Scalars['Int'];
-  title: Scalars['String'];
-  content: Scalars['String'];
   alias: Scalars['String'];
-  events: AbstractNotificationEventConnection;
-  trashed: Scalars['Boolean'];
   archived: Scalars['Boolean'];
-  createdAt: Scalars['DateTime'];
   author: User;
+  content: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
   legacyObject: AbstractUuid;
+  title: Scalars['String'];
+  trashed: Scalars['Boolean'];
 };
 
 
 export type CommentEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type CommentConnection = {
   __typename?: 'CommentConnection';
   edges: Array<CommentEdge>;
   nodes: Array<Comment>;
-  totalCount: Scalars['Int'];
   pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
 export type CommentEdge = {
@@ -564,152 +565,152 @@ export type CommentEdge = {
   node: Comment;
 };
 
-export type Course = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
+export type Course = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Course';
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
-  threads: ThreadsConnection;
-  events: AbstractNotificationEventConnection;
-  instance: Instance;
   alias?: Maybe<Scalars['String']>;
-  date: Scalars['DateTime'];
-  license: License;
   currentRevision?: Maybe<CourseRevision>;
-  revisions: CourseRevisionConnection;
-  taxonomyTerms: TaxonomyTermConnection;
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
+  instance: Instance;
+  license: License;
   pages: Array<CoursePage>;
+  revisions: CourseRevisionConnection;
   subject?: Maybe<Subject>;
-};
-
-
-export type CourseThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  taxonomyTerms: TaxonomyTermConnection;
+  threads: ThreadsConnection;
+  trashed: Scalars['Boolean'];
 };
 
 
 export type CourseEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
-};
-
-
-export type CourseRevisionsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  unrevised?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type CourseTaxonomyTermsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type CoursePagesArgs = {
-  trashed?: Maybe<Scalars['Boolean']>;
-  hasCurrentRevision?: Maybe<Scalars['Boolean']>;
+  hasCurrentRevision?: InputMaybe<Scalars['Boolean']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
 };
 
-export type CoursePage = AbstractUuid & AbstractRepository & AbstractEntity & InstanceAware & ThreadAware & {
+
+export type CourseRevisionsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  unrevised?: InputMaybe<Scalars['Boolean']>;
+};
+
+
+export type CourseTaxonomyTermsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type CourseThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type CoursePage = AbstractEntity & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'CoursePage';
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
-  threads: ThreadsConnection;
-  events: AbstractNotificationEventConnection;
-  instance: Instance;
   alias?: Maybe<Scalars['String']>;
-  date: Scalars['DateTime'];
-  license: License;
-  currentRevision?: Maybe<CoursePageRevision>;
-  revisions: CoursePageRevisionConnection;
   course: Course;
+  currentRevision?: Maybe<CoursePageRevision>;
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
+  instance: Instance;
+  license: License;
+  revisions: CoursePageRevisionConnection;
   subject?: Maybe<Subject>;
-};
-
-
-export type CoursePageThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  threads: ThreadsConnection;
+  trashed: Scalars['Boolean'];
 };
 
 
 export type CoursePageEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type CoursePageRevisionsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  unrevised?: Maybe<Scalars['Boolean']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  unrevised?: InputMaybe<Scalars['Boolean']>;
 };
 
-export type CoursePageRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware & {
+
+export type CoursePageThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type CoursePageRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'CoursePageRevision';
-  id: Scalars['Int'];
-  author: User;
-  trashed: Scalars['Boolean'];
   alias?: Maybe<Scalars['String']>;
-  threads: ThreadsConnection;
-  events: AbstractNotificationEventConnection;
-  date: Scalars['DateTime'];
-  repository: CoursePage;
-  title: Scalars['String'];
-  content: Scalars['String'];
+  author: User;
   changes: Scalars['String'];
-};
-
-
-export type CoursePageRevisionThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  content: Scalars['String'];
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
+  repository: CoursePage;
+  threads: ThreadsConnection;
+  title: Scalars['String'];
+  trashed: Scalars['Boolean'];
 };
 
 
 export type CoursePageRevisionEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type CoursePageRevisionThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type CoursePageRevisionConnection = {
   __typename?: 'CoursePageRevisionConnection';
   edges: Array<CoursePageRevisionCursor>;
   nodes: Array<CoursePageRevision>;
-  totalCount: Scalars['Int'];
   pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
 export type CoursePageRevisionCursor = {
@@ -718,48 +719,48 @@ export type CoursePageRevisionCursor = {
   node: CoursePageRevision;
 };
 
-export type CourseRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware & {
+export type CourseRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'CourseRevision';
-  id: Scalars['Int'];
-  author: User;
-  trashed: Scalars['Boolean'];
   alias?: Maybe<Scalars['String']>;
-  threads: ThreadsConnection;
-  events: AbstractNotificationEventConnection;
-  date: Scalars['DateTime'];
-  repository: Course;
-  title: Scalars['String'];
-  content: Scalars['String'];
+  author: User;
   changes: Scalars['String'];
+  content: Scalars['String'];
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
   metaDescription: Scalars['String'];
-};
-
-
-export type CourseRevisionThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  repository: Course;
+  threads: ThreadsConnection;
+  title: Scalars['String'];
+  trashed: Scalars['Boolean'];
 };
 
 
 export type CourseRevisionEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type CourseRevisionThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type CourseRevisionConnection = {
   __typename?: 'CourseRevisionConnection';
   edges: Array<CourseRevisionCursor>;
   nodes: Array<CourseRevision>;
-  totalCount: Scalars['Int'];
   pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
 export type CourseRevisionCursor = {
@@ -770,79 +771,78 @@ export type CourseRevisionCursor = {
 
 export type CreateCommentNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CreateCommentNotificationEvent';
+  actor: User;
+  comment: Comment;
+  date: Scalars['DateTime'];
   id: Scalars['Int'];
   instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
   objectId: Scalars['Int'];
   thread: Thread;
-  comment: Comment;
 };
 
 export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CreateEntityLinkNotificationEvent';
+  actor: User;
+  child: AbstractEntity;
+  date: Scalars['DateTime'];
   id: Scalars['Int'];
   instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
   objectId: Scalars['Int'];
   parent: AbstractEntity;
-  child: AbstractEntity;
 };
 
 export type CreateEntityNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CreateEntityNotificationEvent';
+  actor: User;
+  date: Scalars['DateTime'];
+  entity: AbstractEntity;
   id: Scalars['Int'];
   instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
   objectId: Scalars['Int'];
-  entity: AbstractEntity;
 };
 
 export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CreateEntityRevisionNotificationEvent';
-  id: Scalars['Int'];
-  instance: Instance;
-  date: Scalars['DateTime'];
   actor: User;
-  objectId: Scalars['Int'];
+  date: Scalars['DateTime'];
   entity: AbstractRepository;
   entityRevision: AbstractRevision;
+  id: Scalars['Int'];
+  instance: Instance;
+  objectId: Scalars['Int'];
 };
 
 export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CreateTaxonomyLinkNotificationEvent';
+  actor: User;
+  child: AbstractUuid;
+  date: Scalars['DateTime'];
   id: Scalars['Int'];
   instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
   objectId: Scalars['Int'];
   parent: TaxonomyTerm;
-  child: AbstractUuid;
 };
 
 export type CreateTaxonomyTermNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CreateTaxonomyTermNotificationEvent';
+  actor: User;
+  date: Scalars['DateTime'];
   id: Scalars['Int'];
   instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
   objectId: Scalars['Int'];
   taxonomyTerm: TaxonomyTerm;
 };
 
 export type CreateThreadNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CreateThreadNotificationEvent';
+  actor: User;
+  date: Scalars['DateTime'];
   id: Scalars['Int'];
   instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
-  objectId: Scalars['Int'];
   object: AbstractUuid;
+  objectId: Scalars['Int'];
   thread: Thread;
 };
-
 
 export type EntityMetadataConnection = {
   __typename?: 'EntityMetadataConnection';
@@ -873,102 +873,102 @@ export type EntityMutationRejectRevisionArgs = {
   input: RejectRevisionInput;
 };
 
-export type Event = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
+export type Event = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Event';
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
-  threads: ThreadsConnection;
-  events: AbstractNotificationEventConnection;
-  instance: Instance;
   alias?: Maybe<Scalars['String']>;
-  date: Scalars['DateTime'];
-  license: License;
   currentRevision?: Maybe<EventRevision>;
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
+  instance: Instance;
+  license: License;
   revisions: EventRevisionConnection;
-  taxonomyTerms: TaxonomyTermConnection;
   subject?: Maybe<Subject>;
-};
-
-
-export type EventThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  taxonomyTerms: TaxonomyTermConnection;
+  threads: ThreadsConnection;
+  trashed: Scalars['Boolean'];
 };
 
 
 export type EventEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type EventRevisionsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  unrevised?: Maybe<Scalars['Boolean']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  unrevised?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type EventTaxonomyTermsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
-export type EventRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware & {
+
+export type EventThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type EventRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'EventRevision';
-  id: Scalars['Int'];
-  author: User;
-  trashed: Scalars['Boolean'];
   alias?: Maybe<Scalars['String']>;
-  threads: ThreadsConnection;
-  events: AbstractNotificationEventConnection;
-  date: Scalars['DateTime'];
-  repository: Event;
-  title: Scalars['String'];
-  content: Scalars['String'];
+  author: User;
   changes: Scalars['String'];
-  metaTitle: Scalars['String'];
+  content: Scalars['String'];
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
   metaDescription: Scalars['String'];
-};
-
-
-export type EventRevisionThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  metaTitle: Scalars['String'];
+  repository: Event;
+  threads: ThreadsConnection;
+  title: Scalars['String'];
+  trashed: Scalars['Boolean'];
 };
 
 
 export type EventRevisionEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type EventRevisionThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type EventRevisionConnection = {
   __typename?: 'EventRevisionConnection';
   edges: Array<EventRevisionCursor>;
   nodes: Array<EventRevision>;
-  totalCount: Scalars['Int'];
   pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
 export type EventRevisionCursor = {
@@ -977,155 +977,155 @@ export type EventRevisionCursor = {
   node: EventRevision;
 };
 
-export type Exercise = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & AbstractExercise & InstanceAware & ThreadAware & {
+export type Exercise = AbstractEntity & AbstractExercise & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Exercise';
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
-  threads: ThreadsConnection;
-  events: AbstractNotificationEventConnection;
-  instance: Instance;
   alias?: Maybe<Scalars['String']>;
-  date: Scalars['DateTime'];
-  license: License;
   currentRevision?: Maybe<ExerciseRevision>;
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
+  instance: Instance;
+  license: License;
   revisions: ExerciseRevisionConnection;
-  taxonomyTerms: TaxonomyTermConnection;
   solution?: Maybe<Solution>;
   subject?: Maybe<Subject>;
-};
-
-
-export type ExerciseThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  taxonomyTerms: TaxonomyTermConnection;
+  threads: ThreadsConnection;
+  trashed: Scalars['Boolean'];
 };
 
 
 export type ExerciseEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type ExerciseRevisionsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  unrevised?: Maybe<Scalars['Boolean']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  unrevised?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type ExerciseTaxonomyTermsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
-export type ExerciseGroup = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
+
+export type ExerciseThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type ExerciseGroup = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'ExerciseGroup';
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
-  threads: ThreadsConnection;
-  events: AbstractNotificationEventConnection;
-  instance: Instance;
   alias?: Maybe<Scalars['String']>;
-  date: Scalars['DateTime'];
-  license: License;
   currentRevision?: Maybe<ExerciseGroupRevision>;
-  revisions: ExerciseGroupRevisionConnection;
-  taxonomyTerms: TaxonomyTermConnection;
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
   exercises: Array<GroupedExercise>;
+  id: Scalars['Int'];
+  instance: Instance;
+  license: License;
+  revisions: ExerciseGroupRevisionConnection;
   subject?: Maybe<Subject>;
-};
-
-
-export type ExerciseGroupThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  taxonomyTerms: TaxonomyTermConnection;
+  threads: ThreadsConnection;
+  trashed: Scalars['Boolean'];
 };
 
 
 export type ExerciseGroupEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type ExerciseGroupRevisionsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  unrevised?: Maybe<Scalars['Boolean']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  unrevised?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type ExerciseGroupTaxonomyTermsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
-export type ExerciseGroupRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware & {
+
+export type ExerciseGroupThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type ExerciseGroupRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'ExerciseGroupRevision';
-  id: Scalars['Int'];
-  author: User;
-  trashed: Scalars['Boolean'];
   alias?: Maybe<Scalars['String']>;
-  threads: ThreadsConnection;
-  events: AbstractNotificationEventConnection;
-  cohesive: Scalars['Boolean'];
-  date: Scalars['DateTime'];
-  repository: ExerciseGroup;
-  content: Scalars['String'];
+  author: User;
   changes: Scalars['String'];
-};
-
-
-export type ExerciseGroupRevisionThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  cohesive: Scalars['Boolean'];
+  content: Scalars['String'];
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
+  repository: ExerciseGroup;
+  threads: ThreadsConnection;
+  trashed: Scalars['Boolean'];
 };
 
 
 export type ExerciseGroupRevisionEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type ExerciseGroupRevisionThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type ExerciseGroupRevisionConnection = {
   __typename?: 'ExerciseGroupRevisionConnection';
   edges: Array<ExerciseGroupRevisionCursor>;
   nodes: Array<ExerciseGroupRevision>;
-  totalCount: Scalars['Int'];
   pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
 export type ExerciseGroupRevisionCursor = {
@@ -1134,46 +1134,46 @@ export type ExerciseGroupRevisionCursor = {
   node: ExerciseGroupRevision;
 };
 
-export type ExerciseRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & AbstractExerciseRevision & ThreadAware & {
+export type ExerciseRevision = AbstractEntityRevision & AbstractExerciseRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'ExerciseRevision';
-  id: Scalars['Int'];
-  author: User;
-  trashed: Scalars['Boolean'];
   alias?: Maybe<Scalars['String']>;
-  threads: ThreadsConnection;
-  events: AbstractNotificationEventConnection;
-  date: Scalars['DateTime'];
-  repository: Exercise;
-  content: Scalars['String'];
+  author: User;
   changes: Scalars['String'];
-};
-
-
-export type ExerciseRevisionThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  content: Scalars['String'];
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
+  repository: Exercise;
+  threads: ThreadsConnection;
+  trashed: Scalars['Boolean'];
 };
 
 
 export type ExerciseRevisionEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type ExerciseRevisionThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type ExerciseRevisionConnection = {
   __typename?: 'ExerciseRevisionConnection';
   edges: Array<ExerciseRevisionCursor>;
   nodes: Array<ExerciseRevision>;
-  totalCount: Scalars['Int'];
   pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
 export type ExerciseRevisionCursor = {
@@ -1182,92 +1182,92 @@ export type ExerciseRevisionCursor = {
   node: ExerciseRevision;
 };
 
-export type GroupedExercise = AbstractUuid & AbstractRepository & AbstractEntity & AbstractExercise & InstanceAware & ThreadAware & {
+export type GroupedExercise = AbstractEntity & AbstractExercise & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'GroupedExercise';
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
-  threads: ThreadsConnection;
-  events: AbstractNotificationEventConnection;
-  instance: Instance;
   alias?: Maybe<Scalars['String']>;
-  date: Scalars['DateTime'];
-  license: License;
   currentRevision?: Maybe<GroupedExerciseRevision>;
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  exerciseGroup: ExerciseGroup;
+  id: Scalars['Int'];
+  instance: Instance;
+  license: License;
   revisions: GroupedExerciseRevisionConnection;
   solution?: Maybe<Solution>;
-  exerciseGroup: ExerciseGroup;
   subject?: Maybe<Subject>;
-};
-
-
-export type GroupedExerciseThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  threads: ThreadsConnection;
+  trashed: Scalars['Boolean'];
 };
 
 
 export type GroupedExerciseEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type GroupedExerciseRevisionsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  unrevised?: Maybe<Scalars['Boolean']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  unrevised?: InputMaybe<Scalars['Boolean']>;
 };
 
-export type GroupedExerciseRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & AbstractExerciseRevision & ThreadAware & {
+
+export type GroupedExerciseThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type GroupedExerciseRevision = AbstractEntityRevision & AbstractExerciseRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'GroupedExerciseRevision';
-  id: Scalars['Int'];
-  author: User;
-  trashed: Scalars['Boolean'];
   alias?: Maybe<Scalars['String']>;
-  threads: ThreadsConnection;
-  events: AbstractNotificationEventConnection;
-  date: Scalars['DateTime'];
-  repository: GroupedExercise;
-  content: Scalars['String'];
+  author: User;
   changes: Scalars['String'];
-};
-
-
-export type GroupedExerciseRevisionThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  content: Scalars['String'];
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
+  repository: GroupedExercise;
+  threads: ThreadsConnection;
+  trashed: Scalars['Boolean'];
 };
 
 
 export type GroupedExerciseRevisionEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type GroupedExerciseRevisionThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type GroupedExerciseRevisionConnection = {
   __typename?: 'GroupedExerciseRevisionConnection';
   edges: Array<GroupedExerciseRevisionCursor>;
   nodes: Array<GroupedExerciseRevision>;
-  totalCount: Scalars['Int'];
   pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
 export type GroupedExerciseRevisionCursor = {
@@ -1278,8 +1278,8 @@ export type GroupedExerciseRevisionCursor = {
 
 export type HasNextPageInfo = {
   __typename?: 'HasNextPageInfo';
-  hasNextPage: Scalars['Boolean'];
   endCursor?: Maybe<Scalars['String']>;
+  hasNextPage: Scalars['Boolean'];
 };
 
 export enum Instance {
@@ -1295,18 +1295,16 @@ export type InstanceAware = {
   instance: Instance;
 };
 
-
-
 export type License = {
   __typename?: 'License';
+  agreement: Scalars['String'];
+  content: Scalars['String'];
+  default: Scalars['Boolean'];
+  iconHref: Scalars['String'];
   id: Scalars['Int'];
   instance: Instance;
-  default: Scalars['Boolean'];
   title: Scalars['String'];
   url: Scalars['String'];
-  content: Scalars['String'];
-  agreement: Scalars['String'];
-  iconHref: Scalars['String'];
 };
 
 export type MetadataQuery = {
@@ -1317,10 +1315,10 @@ export type MetadataQuery = {
 
 
 export type MetadataQueryEntitiesArgs = {
-  first?: Maybe<Scalars['Int']>;
-  after?: Maybe<Scalars['String']>;
-  instance?: Maybe<Instance>;
-  modifiedAfter?: Maybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  modifiedAfter?: InputMaybe<Scalars['String']>;
 };
 
 export type Mutation = {
@@ -1343,25 +1341,25 @@ export type Navigation = {
 
 
 export type NavigationPathArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type NavigationNode = {
   __typename?: 'NavigationNode';
+  id?: Maybe<Scalars['Int']>;
   label: Scalars['String'];
   url?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['Int']>;
 };
 
 export type NavigationNodeConnection = {
   __typename?: 'NavigationNodeConnection';
   edges?: Maybe<Array<Maybe<NavigationNodeEdge>>>;
   nodes: Array<NavigationNode>;
-  totalCount: Scalars['Int'];
   pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
 export type NavigationNodeEdge = {
@@ -1372,17 +1370,17 @@ export type NavigationNodeEdge = {
 
 export type Notification = {
   __typename?: 'Notification';
+  event: AbstractNotificationEvent;
   id: Scalars['Int'];
   unread: Scalars['Boolean'];
-  event: AbstractNotificationEvent;
 };
 
 export type NotificationConnection = {
   __typename?: 'NotificationConnection';
   edges: Array<NotificationEdge>;
   nodes: Array<Notification>;
-  totalCount: Scalars['Int'];
   pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
 export type NotificationEdge = {
@@ -1408,60 +1406,60 @@ export type NotificationSetStateInput = {
 
 export type NotificationSetStateResponse = {
   __typename?: 'NotificationSetStateResponse';
-  success: Scalars['Boolean'];
   query: Query;
+  success: Scalars['Boolean'];
 };
 
-export type Page = AbstractUuid & AbstractRepository & AbstractNavigationChild & InstanceAware & ThreadAware & {
+export type Page = AbstractNavigationChild & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Page';
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
-  threads: ThreadsConnection;
-  events: AbstractNotificationEventConnection;
-  date: Scalars['DateTime'];
-  instance: Instance;
   alias?: Maybe<Scalars['String']>;
-  license: License;
   currentRevision?: Maybe<PageRevision>;
-  revisions: PageRevisionConnection;
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
+  instance: Instance;
+  license: License;
   navigation?: Maybe<Navigation>;
-};
-
-
-export type PageThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  revisions: PageRevisionConnection;
+  threads: ThreadsConnection;
+  trashed: Scalars['Boolean'];
 };
 
 
 export type PageEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type PageRevisionsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  unrevised?: Maybe<Scalars['Boolean']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  unrevised?: InputMaybe<Scalars['Boolean']>;
+};
+
+
+export type PageThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type PageInfo = {
   __typename?: 'PageInfo';
+  endCursor?: Maybe<Scalars['String']>;
   hasNextPage: Scalars['Boolean'];
   hasPreviousPage: Scalars['Boolean'];
   startCursor?: Maybe<Scalars['String']>;
-  endCursor?: Maybe<Scalars['String']>;
 };
 
 export type PageMutation = {
@@ -1480,46 +1478,46 @@ export type PageMutationRejectRevisionArgs = {
   input: RejectRevisionInput;
 };
 
-export type PageRevision = AbstractUuid & AbstractRevision & ThreadAware & {
+export type PageRevision = AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'PageRevision';
-  id: Scalars['Int'];
-  author: User;
-  trashed: Scalars['Boolean'];
   alias?: Maybe<Scalars['String']>;
-  threads: ThreadsConnection;
-  events: AbstractNotificationEventConnection;
-  date: Scalars['DateTime'];
-  title: Scalars['String'];
+  author: User;
   content: Scalars['String'];
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
   repository: Page;
-};
-
-
-export type PageRevisionThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  threads: ThreadsConnection;
+  title: Scalars['String'];
+  trashed: Scalars['Boolean'];
 };
 
 
 export type PageRevisionEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type PageRevisionThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type PageRevisionConnection = {
   __typename?: 'PageRevisionConnection';
   edges: Array<PageRevisionCursor>;
   nodes: Array<PageRevision>;
-  totalCount: Scalars['Int'];
   pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
 export type PageRevisionCursor = {
@@ -1547,37 +1545,37 @@ export type Query = {
 
 
 export type QueryActiveAuthorsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QueryActiveDonorsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QueryActiveReviewersArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type QueryEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  actorId?: Maybe<Scalars['Int']>;
-  objectId?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
+  objectId?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -1592,73 +1590,73 @@ export type QueryNotificationEventArgs = {
 
 
 export type QueryNotificationsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  unread?: Maybe<Scalars['Boolean']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  unread?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type QueryUuidArgs = {
-  alias?: Maybe<AliasInput>;
-  id?: Maybe<Scalars['Int']>;
+  alias?: InputMaybe<AliasInput>;
+  id?: InputMaybe<Scalars['Int']>;
 };
 
 export type RejectRevisionInput = {
-  revisionId: Scalars['Int'];
   reason: Scalars['String'];
+  revisionId: Scalars['Int'];
 };
 
 export type RejectRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'RejectRevisionNotificationEvent';
+  actor: User;
+  date: Scalars['DateTime'];
   id: Scalars['Int'];
   instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
   objectId: Scalars['Int'];
+  reason: Scalars['String'];
   repository: AbstractRepository;
   revision: AbstractRevision;
-  reason: Scalars['String'];
 };
 
 export type RejectRevisionResponse = {
   __typename?: 'RejectRevisionResponse';
-  success: Scalars['Boolean'];
   query: Query;
+  success: Scalars['Boolean'];
 };
 
 export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'RemoveEntityLinkNotificationEvent';
+  actor: User;
+  child: AbstractEntity;
+  date: Scalars['DateTime'];
   id: Scalars['Int'];
   instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
   objectId: Scalars['Int'];
   parent: AbstractEntity;
-  child: AbstractEntity;
 };
 
 export type RemoveTaxonomyLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'RemoveTaxonomyLinkNotificationEvent';
+  actor: User;
+  child: AbstractUuid;
+  date: Scalars['DateTime'];
   id: Scalars['Int'];
   instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
   objectId: Scalars['Int'];
   parent: TaxonomyTerm;
-  child: AbstractUuid;
 };
 
 export enum Role {
+  Admin = 'admin',
+  Architect = 'architect',
   Guest = 'guest',
   Login = 'login',
-  Sysadmin = 'sysadmin',
   Moderator = 'moderator',
   Reviewer = 'reviewer',
-  Architect = 'architect',
   StaticPagesBuilder = 'staticPagesBuilder',
-  Admin = 'admin'
+  Sysadmin = 'sysadmin'
 }
 
 export type ScopedRole = {
@@ -1671,8 +1669,8 @@ export type ScopedRoleConnection = {
   __typename?: 'ScopedRoleConnection';
   edges: Array<ScopedRoleCursor>;
   nodes: Array<ScopedRole>;
-  totalCount: Scalars['Int'];
   pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
 export type ScopedRoleCursor = {
@@ -1683,143 +1681,143 @@ export type ScopedRoleCursor = {
 
 export type SetLicenseNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'SetLicenseNotificationEvent';
+  actor: User;
+  date: Scalars['DateTime'];
   id: Scalars['Int'];
   instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
   objectId: Scalars['Int'];
   repository: AbstractRepository;
 };
 
 export type SetTaxonomyParentNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'SetTaxonomyParentNotificationEvent';
+  actor: User;
+  child: TaxonomyTerm;
+  date: Scalars['DateTime'];
   id: Scalars['Int'];
   instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
   objectId: Scalars['Int'];
-  previousParent?: Maybe<TaxonomyTerm>;
   parent?: Maybe<TaxonomyTerm>;
-  child: TaxonomyTerm;
+  previousParent?: Maybe<TaxonomyTerm>;
 };
 
 export type SetTaxonomyTermNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'SetTaxonomyTermNotificationEvent';
+  actor: User;
+  date: Scalars['DateTime'];
   id: Scalars['Int'];
   instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
   objectId: Scalars['Int'];
   taxonomyTerm: TaxonomyTerm;
 };
 
 export type SetThreadStateNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'SetThreadStateNotificationEvent';
+  actor: User;
+  archived: Scalars['Boolean'];
+  date: Scalars['DateTime'];
   id: Scalars['Int'];
   instance: Instance;
-  date: Scalars['DateTime'];
-  actor: User;
   objectId: Scalars['Int'];
   thread: Thread;
-  archived: Scalars['Boolean'];
 };
 
 export type SetUuidStateNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'SetUuidStateNotificationEvent';
-  id: Scalars['Int'];
-  instance: Instance;
-  date: Scalars['DateTime'];
   actor: User;
-  objectId: Scalars['Int'];
-  object: AbstractUuid;
-  trashed: Scalars['Boolean'];
-};
-
-export type Solution = AbstractUuid & AbstractRepository & AbstractEntity & InstanceAware & ThreadAware & {
-  __typename?: 'Solution';
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
-  threads: ThreadsConnection;
-  events: AbstractNotificationEventConnection;
-  instance: Instance;
-  alias?: Maybe<Scalars['String']>;
   date: Scalars['DateTime'];
-  license: License;
-  currentRevision?: Maybe<SolutionRevision>;
-  revisions: SolutionRevisionConnection;
-  exercise: AbstractExercise;
-  subject?: Maybe<Subject>;
+  id: Scalars['Int'];
+  instance: Instance;
+  object: AbstractUuid;
+  objectId: Scalars['Int'];
+  trashed: Scalars['Boolean'];
 };
 
-
-export type SolutionThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+export type Solution = AbstractEntity & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
+  __typename?: 'Solution';
+  alias?: Maybe<Scalars['String']>;
+  currentRevision?: Maybe<SolutionRevision>;
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  exercise: AbstractExercise;
+  id: Scalars['Int'];
+  instance: Instance;
+  license: License;
+  revisions: SolutionRevisionConnection;
+  subject?: Maybe<Subject>;
+  threads: ThreadsConnection;
+  trashed: Scalars['Boolean'];
 };
 
 
 export type SolutionEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type SolutionRevisionsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  unrevised?: Maybe<Scalars['Boolean']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  unrevised?: InputMaybe<Scalars['Boolean']>;
 };
 
-export type SolutionRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware & {
+
+export type SolutionThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type SolutionRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'SolutionRevision';
-  id: Scalars['Int'];
-  author: User;
-  trashed: Scalars['Boolean'];
   alias?: Maybe<Scalars['String']>;
-  threads: ThreadsConnection;
-  events: AbstractNotificationEventConnection;
-  date: Scalars['DateTime'];
-  repository: Solution;
-  content: Scalars['String'];
+  author: User;
   changes: Scalars['String'];
-};
-
-
-export type SolutionRevisionThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  content: Scalars['String'];
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
+  repository: Solution;
+  threads: ThreadsConnection;
+  trashed: Scalars['Boolean'];
 };
 
 
 export type SolutionRevisionEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type SolutionRevisionThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type SolutionRevisionConnection = {
   __typename?: 'SolutionRevisionConnection';
   edges: Array<SolutionRevisionCursor>;
   nodes: Array<SolutionRevision>;
-  totalCount: Scalars['Int'];
   pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
 export type SolutionRevisionCursor = {
@@ -1837,21 +1835,16 @@ export type Subject = {
 
 
 export type SubjectUnrevisedEntitiesArgs = {
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type SubjectQuery = {
   __typename?: 'SubjectQuery';
-  subjects: Array<Subject>;
   subject?: Maybe<Subject>;
-};
-
-
-export type SubjectQuerySubjectsArgs = {
-  instance: Instance;
+  subjects: Array<Subject>;
 };
 
 
@@ -1859,12 +1852,17 @@ export type SubjectQuerySubjectArgs = {
   id: Scalars['String'];
 };
 
+
+export type SubjectQuerySubjectsArgs = {
+  instance: Instance;
+};
+
 export type SubscriptionConnection = {
   __typename?: 'SubscriptionConnection';
   edges: Array<SubscriptionCursor>;
   nodes: Array<SubscriptionInfo>;
-  totalCount: Scalars['Int'];
   pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
 export type SubscriptionCursor = {
@@ -1902,76 +1900,76 @@ export type SubscriptionQueryCurrentUserHasSubscribedArgs = {
 
 
 export type SubscriptionQueryGetSubscriptionsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type SubscriptionSetInput = {
   id: Array<Scalars['Int']>;
-  subscribe: Scalars['Boolean'];
   sendEmail: Scalars['Boolean'];
+  subscribe: Scalars['Boolean'];
 };
 
 export type SubscriptionSetResponse = {
   __typename?: 'SubscriptionSetResponse';
-  success: Scalars['Boolean'];
   query: Query;
+  success: Scalars['Boolean'];
 };
 
-export type TaxonomyTerm = AbstractUuid & AbstractNavigationChild & InstanceAware & ThreadAware & {
+export type TaxonomyTerm = AbstractNavigationChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'TaxonomyTerm';
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
-  threads: ThreadsConnection;
-  events: AbstractNotificationEventConnection;
-  type: TaxonomyTermType;
-  instance: Instance;
   alias?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
+  children: AbstractUuidConnection;
   description?: Maybe<Scalars['String']>;
-  weight: Scalars['Int'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
+  instance: Instance;
+  name: Scalars['String'];
+  navigation?: Maybe<Navigation>;
   parent?: Maybe<TaxonomyTerm>;
   taxonomyId: Scalars['Int'];
-  children: AbstractUuidConnection;
-  navigation?: Maybe<Navigation>;
-};
-
-
-export type TaxonomyTermThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
-};
-
-
-export type TaxonomyTermEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  threads: ThreadsConnection;
+  trashed: Scalars['Boolean'];
+  type: TaxonomyTermType;
+  weight: Scalars['Int'];
 };
 
 
 export type TaxonomyTermChildrenArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type TaxonomyTermEventsArgs = {
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type TaxonomyTermThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type TaxonomyTermConnection = {
   __typename?: 'TaxonomyTermConnection';
   edges?: Maybe<Array<Maybe<TaxonomyTermEdge>>>;
   nodes: Array<TaxonomyTerm>;
-  totalCount: Scalars['Int'];
   pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
 export type TaxonomyTermEdge = {
@@ -1996,21 +1994,21 @@ export enum TaxonomyTermType {
 
 export type Thread = {
   __typename?: 'Thread';
-  id: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  title?: Maybe<Scalars['String']>;
   archived: Scalars['Boolean'];
-  trashed: Scalars['Boolean'];
-  object: AbstractUuid;
   comments: CommentConnection;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['String'];
+  object: AbstractUuid;
+  title?: Maybe<Scalars['String']>;
+  trashed: Scalars['Boolean'];
 };
 
 
 export type ThreadCommentsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type ThreadAware = {
@@ -2019,50 +2017,55 @@ export type ThreadAware = {
 
 
 export type ThreadAwareThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type ThreadCreateCommentInput = {
   content: Scalars['String'];
-  threadId: Scalars['String'];
-  subscribe: Scalars['Boolean'];
   sendEmail: Scalars['Boolean'];
+  subscribe: Scalars['Boolean'];
+  threadId: Scalars['String'];
 };
 
 export type ThreadCreateCommentResponse = {
   __typename?: 'ThreadCreateCommentResponse';
+  query: Query;
   record?: Maybe<Comment>;
   success: Scalars['Boolean'];
-  query: Query;
 };
 
 export type ThreadCreateThreadInput = {
-  title: Scalars['String'];
   content: Scalars['String'];
   objectId: Scalars['Int'];
-  subscribe: Scalars['Boolean'];
   sendEmail: Scalars['Boolean'];
+  subscribe: Scalars['Boolean'];
+  title: Scalars['String'];
 };
 
 export type ThreadCreateThreadResponse = {
   __typename?: 'ThreadCreateThreadResponse';
+  query: Query;
   record?: Maybe<Thread>;
   success: Scalars['Boolean'];
-  query: Query;
 };
 
 export type ThreadMutation = {
   __typename?: 'ThreadMutation';
-  createThread?: Maybe<ThreadCreateThreadResponse>;
   createComment?: Maybe<ThreadCreateCommentResponse>;
+  createThread?: Maybe<ThreadCreateThreadResponse>;
+  setCommentState?: Maybe<ThreadSetCommentStateResponse>;
   setThreadArchived?: Maybe<ThreadSetThreadArchivedResponse>;
   setThreadState?: Maybe<ThreadSetThreadStateResponse>;
-  setCommentState?: Maybe<ThreadSetCommentStateResponse>;
+};
+
+
+export type ThreadMutationCreateCommentArgs = {
+  input: ThreadCreateCommentInput;
 };
 
 
@@ -2071,8 +2074,8 @@ export type ThreadMutationCreateThreadArgs = {
 };
 
 
-export type ThreadMutationCreateCommentArgs = {
-  input: ThreadCreateCommentInput;
+export type ThreadMutationSetCommentStateArgs = {
+  input: ThreadSetCommentStateInput;
 };
 
 
@@ -2085,11 +2088,6 @@ export type ThreadMutationSetThreadStateArgs = {
   input: ThreadSetThreadStateInput;
 };
 
-
-export type ThreadMutationSetCommentStateArgs = {
-  input: ThreadSetCommentStateInput;
-};
-
 export type ThreadSetCommentStateInput = {
   id: Array<Scalars['Int']>;
   trashed: Scalars['Boolean'];
@@ -2097,19 +2095,19 @@ export type ThreadSetCommentStateInput = {
 
 export type ThreadSetCommentStateResponse = {
   __typename?: 'ThreadSetCommentStateResponse';
-  success: Scalars['Boolean'];
   query: Query;
+  success: Scalars['Boolean'];
 };
 
 export type ThreadSetThreadArchivedInput = {
-  id: Array<Scalars['String']>;
   archived: Scalars['Boolean'];
+  id: Array<Scalars['String']>;
 };
 
 export type ThreadSetThreadArchivedResponse = {
   __typename?: 'ThreadSetThreadArchivedResponse';
-  success: Scalars['Boolean'];
   query: Query;
+  success: Scalars['Boolean'];
 };
 
 export type ThreadSetThreadStateInput = {
@@ -2119,16 +2117,16 @@ export type ThreadSetThreadStateInput = {
 
 export type ThreadSetThreadStateResponse = {
   __typename?: 'ThreadSetThreadStateResponse';
-  success: Scalars['Boolean'];
   query: Query;
+  success: Scalars['Boolean'];
 };
 
 export type ThreadsConnection = {
   __typename?: 'ThreadsConnection';
   edges: Array<ThreadsCursor>;
   nodes: Array<Thread>;
-  totalCount: Scalars['Int'];
   pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
 export type ThreadsCursor = {
@@ -2139,78 +2137,78 @@ export type ThreadsCursor = {
 
 export type User = AbstractUuid & ThreadAware & {
   __typename?: 'User';
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
-  threads: ThreadsConnection;
-  events: AbstractNotificationEventConnection;
-  eventsByUser: AbstractNotificationEventConnection;
   activityByType: UserActivityByType;
   alias?: Maybe<Scalars['String']>;
-  username: Scalars['String'];
-  imageUrl: Scalars['String'];
-  date: Scalars['DateTime'];
   chatUrl?: Maybe<Scalars['String']>;
-  lastLogin?: Maybe<Scalars['DateTime']>;
-  roles: ScopedRoleConnection;
+  date: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
-  motivation?: Maybe<Scalars['String']>;
+  events: AbstractNotificationEventConnection;
+  eventsByUser: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
+  imageUrl: Scalars['String'];
   isActiveAuthor: Scalars['Boolean'];
   isActiveDonor: Scalars['Boolean'];
   isActiveReviewer: Scalars['Boolean'];
   isNewAuthor: Scalars['Boolean'];
+  lastLogin?: Maybe<Scalars['DateTime']>;
+  motivation?: Maybe<Scalars['String']>;
+  roles: ScopedRoleConnection;
+  threads: ThreadsConnection;
+  trashed: Scalars['Boolean'];
   unrevisedEntities: AbstractEntityConnection;
-};
-
-
-export type UserThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  username: Scalars['String'];
 };
 
 
 export type UserEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type UserEventsByUserArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  objectId?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
+  objectId?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type UserRolesArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type UserThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type UserUnrevisedEntitiesArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type UserActivityByType = {
   __typename?: 'UserActivityByType';
-  edits: Scalars['Int'];
   comments: Scalars['Int'];
+  edits: Scalars['Int'];
   reviews: Scalars['Int'];
   taxonomy: Scalars['Int'];
 };
@@ -2219,8 +2217,8 @@ export type UserConnection = {
   __typename?: 'UserConnection';
   edges: Array<UserEdge>;
   nodes: Array<User>;
-  totalCount: Scalars['Int'];
   pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
 export type UserDeleteBotsInput = {
@@ -2238,9 +2236,9 @@ export type UserDeleteRegularUsersInput = {
 
 export type UserDeleteRegularUsersResponse = {
   __typename?: 'UserDeleteRegularUsersResponse';
+  reason?: Maybe<Scalars['String']>;
   success: Scalars['Boolean'];
   username?: Maybe<Scalars['String']>;
-  reason?: Maybe<Scalars['String']>;
 };
 
 export type UserEdge = {
@@ -2278,20 +2276,20 @@ export type UserQuery = {
 
 
 export type UserQueryPotentialSpamUsersArgs = {
-  first?: Maybe<Scalars['Int']>;
-  after?: Maybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
 };
 
 export type UserSetEmailInput = {
-  userId: Scalars['Int'];
   email: Scalars['String'];
+  userId: Scalars['Int'];
 };
 
 export type UserSetEmailResponse = {
   __typename?: 'UserSetEmailResponse';
+  email: Scalars['String'];
   success: Scalars['Boolean'];
   username: Scalars['String'];
-  email: Scalars['String'];
 };
 
 export type UuidMutation = {
@@ -2311,105 +2309,105 @@ export type UuidSetStateInput = {
 
 export type UuidSetStateResponse = {
   __typename?: 'UuidSetStateResponse';
-  success: Scalars['Boolean'];
   query: Query;
+  success: Scalars['Boolean'];
 };
 
-export type Video = AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware & {
+export type Video = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Video';
-  id: Scalars['Int'];
-  trashed: Scalars['Boolean'];
-  threads: ThreadsConnection;
-  events: AbstractNotificationEventConnection;
-  instance: Instance;
   alias?: Maybe<Scalars['String']>;
-  date: Scalars['DateTime'];
-  license: License;
   currentRevision?: Maybe<VideoRevision>;
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
+  instance: Instance;
+  license: License;
   revisions: VideoRevisionConnection;
-  taxonomyTerms: TaxonomyTermConnection;
   subject?: Maybe<Subject>;
-};
-
-
-export type VideoThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  taxonomyTerms: TaxonomyTermConnection;
+  threads: ThreadsConnection;
+  trashed: Scalars['Boolean'];
 };
 
 
 export type VideoEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type VideoRevisionsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  unrevised?: Maybe<Scalars['Boolean']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  unrevised?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type VideoTaxonomyTermsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
-export type VideoRevision = AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware & {
+
+export type VideoThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type VideoRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'VideoRevision';
-  id: Scalars['Int'];
-  author: User;
-  trashed: Scalars['Boolean'];
   alias?: Maybe<Scalars['String']>;
-  threads: ThreadsConnection;
-  events: AbstractNotificationEventConnection;
-  date: Scalars['DateTime'];
-  repository: Video;
-  url: Scalars['String'];
-  title: Scalars['String'];
-  content: Scalars['String'];
+  author: User;
   changes: Scalars['String'];
-};
-
-
-export type VideoRevisionThreadsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  archived?: Maybe<Scalars['Boolean']>;
-  trashed?: Maybe<Scalars['Boolean']>;
+  content: Scalars['String'];
+  date: Scalars['DateTime'];
+  events: AbstractNotificationEventConnection;
+  id: Scalars['Int'];
+  repository: Video;
+  threads: ThreadsConnection;
+  title: Scalars['String'];
+  trashed: Scalars['Boolean'];
+  url: Scalars['String'];
 };
 
 
 export type VideoRevisionEventsArgs = {
-  after?: Maybe<Scalars['String']>;
-  before?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  instance?: Maybe<Instance>;
-  actorId?: Maybe<Scalars['Int']>;
+  actorId?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type VideoRevisionThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  trashed?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type VideoRevisionConnection = {
   __typename?: 'VideoRevisionConnection';
   edges: Array<VideoRevisionCursor>;
   nodes: Array<VideoRevision>;
-  totalCount: Scalars['Int'];
   pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
 };
 
 export type VideoRevisionCursor = {
@@ -2420,19 +2418,19 @@ export type VideoRevisionCursor = {
 
 export type _CacheMutation = {
   __typename?: '_cacheMutation';
-  set: CacheSetResponse;
   remove: CacheRemoveResponse;
+  set: CacheSetResponse;
   update: CacheUpdateResponse;
-};
-
-
-export type _CacheMutationSetArgs = {
-  input: CacheSetInput;
 };
 
 
 export type _CacheMutationRemoveArgs = {
   input: CacheRemoveInput;
+};
+
+
+export type _CacheMutationSetArgs = {
+  input: CacheSetInput;
 };
 
 
