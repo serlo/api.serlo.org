@@ -71,7 +71,7 @@
     "npm-run-all": "^4.0.0",
     "prettier": "^2.0.0",
     "prettier-plugin-packagejson": "^2.0.0",
-    "prettier-plugin-sh": "^0.7.0",
+    "prettier-plugin-sh": "^0.8.0",
     "rimraf": "^3.0.0",
     "ts-jest": "^27.0.0",
     "ts-node": "^9.0.0",
