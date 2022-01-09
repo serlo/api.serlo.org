@@ -53,10 +53,10 @@
     "ts-toolbelt": "^9.0.0"
   },
   "devDependencies": {
-    "@graphql-codegen/add": "^2.0.0",
-    "@graphql-codegen/cli": "^1.0.0",
-    "@graphql-codegen/typescript": "^1.0.0",
-    "@graphql-codegen/typescript-resolvers": "^1.0.0",
+    "@graphql-codegen/add": "^3.0.0",
+    "@graphql-codegen/cli": "^2.0.0",
+    "@graphql-codegen/typescript": "^2.0.0",
+    "@graphql-codegen/typescript-resolvers": "^2.0.0",
     "@types/basic-auth": "^1.0.0",
     "@types/bull-arena": "^3.0.0",
     "@types/graphql-modules": "^0.27.1",
