@@ -9,73 +9,66 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
+          cache: yarn
           node-version: 16.x
-      - run: yarn
-      - run: yarn lerna run build
-      - run: (cd packages/server && yarn build:server)
-      - run: (cd packages/server && yarn build:swr-queue-worker)
+      - run: yarn --immutable --immutable-cache --check-cache
+      - run: yarn build
+      - run: yarn build:server
+      - run: yarn build:swr-queue-worker
   eslint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
+          cache: yarn
           node-version: 16.x
-      - run: yarn
+      - run: yarn --immutable --immutable-cache --check-cache
       - run: yarn lint:eslint
   prettier:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
+          cache: yarn
           node-version: 16.x
-      - run: yarn
+      - run: yarn --immutable --immutable-cache --check-cache
       - run: yarn lint:prettier
   tsc:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
+          cache: yarn
           node-version: 16.x
-      - run: yarn
+      - run: yarn --immutable --immutable-cache --check-cache
       - run: yarn lint:tsc
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
+          cache: yarn
           node-version: 16.x
-      - run: yarn
+      - run: yarn --immutable --immutable-cache --check-cache
       - run: yarn start:redis
       - run: yarn test
-  codegen-api:
+  codegen:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
+          cache: yarn
           node-version: 16.x
-      - run: yarn
-      - run: (cd packages/types && yarn codegen)
+      - run: yarn --immutable --immutable-cache --check-cache
+      - run: yarn codegen
       - id: changes
         uses: UnicornGlobal/has-changes-action@v1.0.12
-      - run: echo "Outdated types. Please run \`yarn codegen\` in \`packages/types\` and commit your changes." && exit 1
-        if: steps.changes.outputs.changed == 1
-  codegen-server:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 16.x
-      - run: yarn
-      - run: (cd packages/server && yarn codegen)
-      - id: changes
-        uses: UnicornGlobal/has-changes-action@v1.0.12
-      - run: echo "Outdated types. Please run \`yarn codegen\` in \`packages/server\` and commit your changes." && exit 1
+      - run: echo "Outdated types. Please run \`yarn codegen\` and commit your changes." && exit 1
         if: steps.changes.outputs.changed == 1

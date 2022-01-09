@@ -21,7 +21,7 @@
     "check:all": "scripts/run_all_checks.sh",
     "codegen": "lerna run --stream codegen",
     "deploy:images": "lerna run --stream deploy:image",
-    "format": "npm-run-all -c format:*",
+    "format": "npm-run-all -c \"format:*\"",
     "format:eslint": "yarn _eslint --fix",
     "format:prettier": "yarn _prettier --write",
     "license": "ts-node scripts/license-headers",
@@ -41,9 +41,6 @@
     "stop:redis": "docker-compose stop",
     "stop:enmeshed": "docker-compose -f enmeshed/docker-compose.yml down",
     "test": "jest --config jest.config.js --runInBand"
-  },
-  "resolutions": {
-    "**/typescript": "^4.1.0"
   },
   "dependencies": {
     "graphql": "^16.0.0"
@@ -80,5 +77,6 @@
   },
   "engines": {
     "node": "^16.0.0"
-  }
+  },
+  "packageManager": "yarn@3.1.1"
 }
