@@ -27,12 +27,9 @@ import { Cache } from '~/internals/cache'
 export {}
 
 declare global {
-  namespace NodeJS {
-    interface Global {
-      cache: Cache
-      server: ReturnType<typeof import('msw/node').setupServer>
-      timer: MockTimer
-      sentryEvents: Event[]
-    }
-  }
+  /* eslint-disable no-var */
+  var cache: Cache
+  var server: ReturnType<typeof import('msw/node').setupServer>
+  var timer: MockTimer
+  var sentryEvents: Event[]
 }

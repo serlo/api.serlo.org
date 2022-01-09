@@ -37,7 +37,12 @@ exec()
   })
 
 async function exec(): Promise<void> {
-  const content = await generateChangelog({
+  const content = generateChangelog({
+    repository: {
+      firstCommit: 'b6e7255d65bd11114c27c3352b99f0ee68307571',
+      owner: 'serlo',
+      repo: 'api.serlo.org',
+    },
     releases: [
       {
         tagName: 'v0.1.0',
