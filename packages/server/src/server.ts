@@ -21,4 +21,4 @@
  */
 import { start } from '~/internals/server'
 
-start()
+void start()

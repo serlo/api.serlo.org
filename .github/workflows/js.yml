@@ -12,7 +12,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 16.x
-      - run: yarn
+      - run: yarn --immutable --immutable-cache --check-cache
       - run: yarn lerna run build
       - run: (cd packages/server && yarn build:server)
       - run: (cd packages/server && yarn build:swr-queue-worker)
@@ -23,7 +23,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 16.x
-      - run: yarn
+      - run: yarn --immutable --immutable-cache --check-cache
       - run: yarn lint:eslint
   prettier:
     runs-on: ubuntu-latest
@@ -32,7 +32,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 16.x
-      - run: yarn
+      - run: yarn --immutable --immutable-cache --check-cache
       - run: yarn lint:prettier
   tsc:
     runs-on: ubuntu-latest
@@ -41,7 +41,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 16.x
-      - run: yarn
+      - run: yarn --immutable --immutable-cache --check-cache
       - run: yarn lint:tsc
   test:
     runs-on: ubuntu-latest
@@ -50,7 +50,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 16.x
-      - run: yarn
+      - run: yarn --immutable --immutable-cache --check-cache
       - run: yarn start:redis
       - run: yarn test
   codegen-api:
@@ -60,7 +60,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 16.x
-      - run: yarn
+      - run: yarn --immutable --immutable-cache --check-cache
       - run: (cd packages/types && yarn codegen)
       - id: changes
         uses: UnicornGlobal/has-changes-action@v1.0.12
@@ -73,7 +73,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 16.x
-      - run: yarn
+      - run: yarn --immutable --immutable-cache --check-cache
       - run: (cd packages/server && yarn codegen)
       - id: changes
         uses: UnicornGlobal/has-changes-action@v1.0.12
