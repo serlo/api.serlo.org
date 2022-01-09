@@ -1,4 +1,4 @@
-FROM node:14 as dev-dependencies
+FROM node:16 as dev-dependencies
 WORKDIR /usr/src/app
 COPY packages/authorization/package.json packages/authorization/package.json
 COPY packages/graphql-modules/package.json packages/graphql-modules/package.json
@@ -8,7 +8,7 @@ COPY package.json .
 COPY yarn.lock .
 RUN yarn --frozen-lockfile --production=false --silent
 
-FROM node:14 as prod-dependencies
+FROM node:16 as prod-dependencies
 WORKDIR /usr/src/app
 ENV NODE_ENV production
 COPY packages/authorization/package.json packages/authorization/package.json

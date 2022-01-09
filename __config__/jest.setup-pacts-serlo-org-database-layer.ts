@@ -115,13 +115,9 @@ afterAll(async () => {
   }
 })
 
-/* eslint-disable @typescript-eslint/no-namespace */
 declare global {
-  namespace NodeJS {
-    interface Global {
-      pact: import('@pact-foundation/pact').Pact
-      client: import('apollo-server').ApolloServer
-      serloModel: ReturnType<typeof createSerloModel>
-    }
-  }
+  /* eslint-disable no-var */
+  var pact: import('@pact-foundation/pact').Pact
+  var client: import('apollo-server').ApolloServer
+  var serloModel: ReturnType<typeof createSerloModel>
 }
