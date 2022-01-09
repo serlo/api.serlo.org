@@ -42,7 +42,7 @@ import { createInvalidCurrentValueErrorPlugin } from '~/internals/server/invalid
 import { SwrQueue } from '~/internals/swr-queue'
 import { schema } from '~/schema'
 
-export function applyGraphQLMiddleware({
+export async function applyGraphQLMiddleware({
   app,
   cache,
   swrQueue,
@@ -53,6 +53,7 @@ export function applyGraphQLMiddleware({
 }) {
   const environment = { cache, swrQueue }
   const server = new ApolloServer(getGraphQLOptions(environment))
+  await server.start()
   const headers =
     process.env.NODE_ENV === 'production'
       ? {}

@@ -1,25 +1,16 @@
-FROM node:16 as dev-dependencies
+FROM node:16 as dependencies
 WORKDIR /usr/src/app
+COPY .yarn .yarn
 COPY packages/authorization/package.json packages/authorization/package.json
 COPY packages/graphql-modules/package.json packages/graphql-modules/package.json
 COPY packages/server/package.json packages/server/package.json
 COPY packages/types/package.json packages/types/package.json
+COPY .yarnrc.yml .
 COPY package.json .
 COPY yarn.lock .
-RUN yarn --frozen-lockfile --production=false --silent
+RUN yarn --immutable --immutable-cache --check-cache --silent
 
-FROM node:16 as prod-dependencies
-WORKDIR /usr/src/app
-ENV NODE_ENV production
-COPY packages/authorization/package.json packages/authorization/package.json
-COPY packages/graphql-modules/package.json packages/graphql-modules/package.json
-COPY packages/server/package.json packages/server/package.json
-COPY packages/types/package.json packages/types/package.json
-COPY package.json .
-COPY yarn.lock .
-RUN yarn --frozen-lockfile --production=true --silent
-
-FROM dev-dependencies as build
+FROM dependencies as build
 COPY packages/authorization packages/authorization
 COPY packages/graphql-modules packages/graphql-modules
 COPY packages/server packages/server
@@ -30,7 +21,7 @@ COPY tsconfig.prod.json .
 RUN yarn lerna run --include-dependencies --scope @serlo/authorization build
 RUN yarn lerna run --scope @serlo/api.serlo.org build:swr-queue-worker
 
-FROM prod-dependencies as release
+FROM dependencies as release
 COPY --from=build /usr/src/app/packages/authorization/dist packages/authorization/dist
 COPY --from=build /usr/src/app/packages/server/dist packages/server/dist
 COPY --from=build /usr/src/app/packages/types/dist packages/types/dist

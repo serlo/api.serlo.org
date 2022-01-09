@@ -9,7 +9,7 @@ function init() {
   read_arguments "$@"
 
   print_header "Make sure packages are up to date"
-  yarn install --frozen-lockfile
+  yarn install --immutable
 
   print_header "Make sure redis is running"
   yarn start:redis
