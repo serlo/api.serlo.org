@@ -1980,7 +1980,7 @@ describe('mutation notification setState', () => {
     const client = createTestClient({ userId: user.id })
 
     //fill notification cache
-    await client.query({
+    await client.executeOperation({
       query: notificationQuery,
       variables: {},
     })
@@ -2040,7 +2040,7 @@ describe('mutation notification setState', () => {
     const client = createTestClient({ userId: user.id })
 
     //fill notification cache
-    await client.query({
+    await client.executeOperation({
       query: notificationQuery,
       variables: {},
     })

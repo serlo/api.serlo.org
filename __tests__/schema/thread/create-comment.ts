@@ -95,7 +95,7 @@ test('comment gets created, cache mutated as expected', async () => {
   mockEndpointsForThreads(article, [[comment1]])
 
   //fill cache
-  await client.query({
+  await client.executeOperation({
     query: gql`
       query ($id: Int) {
         uuid(id: $id) {

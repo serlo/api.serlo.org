@@ -38,7 +38,7 @@ export async function assertSuccessfulGraphQLQuery({
   data: GraphQLResponse['data']
   client: Client
 }) {
-  const response = await client.query({
+  const response = await client.executeOperation({
     query,
     variables,
   })
@@ -60,7 +60,7 @@ export async function assertFailingGraphQLQuery({
   expectedError?: string
   message?: unknown
 }) {
-  const response = await client.query({
+  const response = await client.executeOperation({
     query,
     variables,
   })
@@ -86,8 +86,8 @@ export async function assertSuccessfulGraphQLMutation({
   data?: GraphQLResponse['data']
   client: Client
 }) {
-  const response = await client.mutate({
-    mutation,
+  const response = await client.executeOperation({
+    query: mutation,
     variables,
   })
   expect(response.errors).toBeUndefined()
@@ -108,8 +108,8 @@ export async function assertFailingGraphQLMutation({
   expectedError: string
   message?: string
 }) {
-  const response = await client.mutate({
-    mutation,
+  const response = await client.executeOperation({
+    query: mutation,
     variables,
   })
   expect(response?.errors?.[0]?.extensions?.code).toEqual(expectedError)
@@ -118,7 +118,7 @@ export async function assertFailingGraphQLMutation({
 }
 
 /**
- * Assertion that a certain error event occured. Since we use Sentry this
+ * Assertion that a certain error event occurred. Since we use Sentry this
  * function checks that a Sentry event was thrown.
  *
  * TODO: This function has not a good error message in case the assertion

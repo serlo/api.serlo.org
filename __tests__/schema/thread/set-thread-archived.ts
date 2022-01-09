@@ -127,7 +127,7 @@ describe('archive-comment', () => {
     `
 
     // fill cache
-    await client.query({
+    await client.executeOperation({
       query,
       variables: { id: article.id },
     })
