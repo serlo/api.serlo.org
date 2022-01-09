@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          node-version: 14.x
+          node-version: 16.x
       - run: yarn
       - run: yarn lerna run build
       - run: (cd packages/server && yarn build:server)
@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          node-version: 14.x
+          node-version: 16.x
       - run: yarn
       - run: yarn lint:eslint
   prettier:
@@ -31,7 +31,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          node-version: 14.x
+          node-version: 16.x
       - run: yarn
       - run: yarn lint:prettier
   tsc:
@@ -40,7 +40,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          node-version: 14.x
+          node-version: 16.x
       - run: yarn
       - run: yarn lint:tsc
   test:
@@ -49,7 +49,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          node-version: 14.x
+          node-version: 16.x
       - run: yarn
       - run: yarn start:redis
       - run: yarn test
@@ -59,7 +59,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          node-version: 14.x
+          node-version: 16.x
       - run: yarn
       - run: (cd packages/types && yarn codegen)
       - id: changes
@@ -72,7 +72,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          node-version: 14.x
+          node-version: 16.x
       - run: yarn
       - run: (cd packages/server && yarn codegen)
       - id: changes
