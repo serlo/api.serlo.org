@@ -34,7 +34,7 @@ import { applyEnmeshedMiddleware } from '~/internals/server/enmeshed-middleware'
 export * from './graphql-middleware'
 export * from './swr-queue-dashboard-middleware'
 
-export function start() {
+export async function start() {
   dotenv.config({
     path: path.join(__dirname, '..', '..', '..', '.env'),
   })
@@ -42,10 +42,10 @@ export function start() {
   const timer = createTimer()
   const cache = createCache({ timer })
   const swrQueue = createSwrQueue({ cache, timer })
-  initializeServer({ cache, swrQueue })
+  await initializeServer({ cache, swrQueue })
 }
 
-function initializeServer({
+async function initializeServer({
   cache,
   swrQueue,
 }: {
@@ -55,7 +55,7 @@ function initializeServer({
   const app = createApp()
   const dashboardPath = applySwrQueueDashboardMiddleware({ app })
   const enmeshedPath = applyEnmeshedMiddleware({ app, cache })
-  const graphqlPath = applyGraphQLMiddleware({ app, cache, swrQueue })
+  const graphqlPath = await applyGraphQLMiddleware({ app, cache, swrQueue })
 
   const port = 3001
   const host = `http://localhost:${port}`
