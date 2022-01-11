@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.28.1](https://github.com/serlo/api.serlo.org/compare/v0.28.0..v0.28.1) - January 11, 2022
+
+### Fixed
+
+- Create playground token on each request.
+
 ## [v0.28.0](https://github.com/serlo/api.serlo.org/compare/v0.27.5..v0.28.0) - January 9, 2022
 
 ### Internal

@@ -1157,6 +1157,11 @@ async function exec(): Promise<void> {
         date: '2022-01-09',
         internal: ['Node v16', 'Yarn v3'],
       },
+      {
+        tagName: 'v0.28.1',
+        date: '2022-01-11',
+        fixed: ['Create playground token on each request.'],
+      },
     ],
   })
 
