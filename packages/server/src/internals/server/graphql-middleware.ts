@@ -54,10 +54,6 @@ export async function applyGraphQLMiddleware({
   const environment = { cache, swrQueue }
   const server = new ApolloServer(getGraphQLOptions(environment))
   await server.start()
-  const headers =
-    process.env.NODE_ENV === 'production'
-      ? {}
-      : { headers: { Authorization: `Serlo Service=${getToken()}` } }
 
   app.use(json({ limit: '2mb' }))
   app.use(
@@ -69,6 +65,10 @@ export async function applyGraphQLMiddleware({
     })
   )
   app.get('/___graphql', (...args) => {
+    const headers =
+      process.env.NODE_ENV === 'production'
+        ? {}
+        : { headers: { Authorization: `Serlo Service=${getToken()}` } }
     return createPlayground({ endpoint: '/graphql', ...headers })(...args)
   })
 
