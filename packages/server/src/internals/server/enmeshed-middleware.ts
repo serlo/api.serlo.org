@@ -80,11 +80,11 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
     if (session) {
       relationshipTemplateId = session.relationshipTemplateId
     } else {
-      const name = readQuery(req, 'name') ?? 'Alex Musterfrau'
+      const name = readQuery(req, 'name') ?? 'Alex Janowski'
       const nameParts = name.split(' ')
       const givenName = nameParts.length > 0 ? nameParts[0] : 'Alex'
       const familyName =
-        nameParts.length > 1 ? nameParts[nameParts.length - 1] : 'Musterfrau'
+        nameParts.length > 1 ? nameParts[nameParts.length - 1] : 'Janowski'
 
       // Create Relationship template
       const createRelationshipResponse =
