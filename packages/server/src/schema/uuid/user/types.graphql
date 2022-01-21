@@ -106,6 +106,7 @@ type UserMutation {
   deleteRegularUsers(
     input: UserDeleteRegularUsersInput!
   ): [UserDeleteRegularUsersResponse!]!
+  setDescription(input: UserSetDescriptionInput!): UserSetDescriptionResponse!
   setEmail(input: UserSetEmailInput!): UserSetEmailResponse!
 }
 
@@ -125,6 +126,14 @@ type UserDeleteRegularUsersResponse {
   success: Boolean!
   username: String
   reason: String
+}
+
+input UserSetDescriptionInput {
+  description: String!
+}
+
+type UserSetDescriptionResponse {
+  success: Boolean!
 }
 
 input UserSetEmailInput {

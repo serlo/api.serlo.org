@@ -33,21 +33,21 @@ import {
   ErrorEvent,
 } from '~/internals/error-event'
 import {
-  Context,
-  Model,
-  LegacyQueries,
-  Mutations,
-  TypeResolvers,
-  createNamespace,
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
+  Context,
+  createNamespace,
+  LegacyQueries,
+  Model,
+  Mutations,
   Queries,
+  TypeResolvers,
 } from '~/internals/graphql'
 import {
-  EntityDecoder,
   DiscriminatorType,
-  UserDecoder,
+  EntityDecoder,
   RevisionDecoder,
+  UserDecoder,
 } from '~/model/decoder'
 import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
 import { resolveScopedRoles } from '~/schema/authorization/utils'
@@ -339,6 +339,14 @@ export const resolvers: LegacyQueries<
           }
         })
       )
+    },
+
+    async setDescription(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+      return await dataSources.model.serlo.setDescription({
+        ...input,
+        userId,
+      })
     },
 
     async setEmail(_parent, { input }, { dataSources, userId }) {
