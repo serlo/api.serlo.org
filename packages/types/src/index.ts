@@ -2251,6 +2251,7 @@ export type UserMutation = {
   __typename?: 'UserMutation';
   deleteBots: UserDeleteBotsResponse;
   deleteRegularUsers: Array<UserDeleteRegularUsersResponse>;
+  setDescription: UserSetDescriptionResponse;
   setEmail: UserSetEmailResponse;
 };
 
@@ -2262,6 +2263,11 @@ export type UserMutationDeleteBotsArgs = {
 
 export type UserMutationDeleteRegularUsersArgs = {
   input: UserDeleteRegularUsersInput;
+};
+
+
+export type UserMutationSetDescriptionArgs = {
+  input: UserSetDescriptionInput;
 };
 
 
@@ -2278,6 +2284,15 @@ export type UserQuery = {
 export type UserQueryPotentialSpamUsersArgs = {
   after?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
+};
+
+export type UserSetDescriptionInput = {
+  description: Scalars['String'];
+};
+
+export type UserSetDescriptionResponse = {
+  __typename?: 'UserSetDescriptionResponse';
+  success: Scalars['Boolean'];
 };
 
 export type UserSetEmailInput = {
