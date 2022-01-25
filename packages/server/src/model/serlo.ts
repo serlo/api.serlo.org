@@ -226,6 +226,13 @@ export function createSerloModel({
     },
   })
 
+  const setDescription = createMutation({
+    decoder: t.type({ success: t.literal(true) }),
+    mutate: (payload: { userId: number; description: string }) => {
+      return handleMessage({ type: 'UserSetDescriptionMutation', payload })
+    },
+  })
+
   const setEmail = createMutation({
     decoder: t.type({ success: t.literal(true), username: t.string }),
     mutate: (payload: { userId: number; email: string }) => {
@@ -905,6 +912,7 @@ export function createSerloModel({
     createComment,
     deleteBots,
     deleteRegularUsers,
+    setDescription,
     setEmail,
     checkoutEntityRevision,
     checkoutPageRevision,
