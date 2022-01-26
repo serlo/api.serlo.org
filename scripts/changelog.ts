@@ -1162,6 +1162,12 @@ async function exec(): Promise<void> {
         date: '2022-01-11',
         fixed: ['Create playground token on each request.'],
       },
+      {
+        tagName: 'v0.28.2',
+        date: '2022-01-27',
+        added: ['Add mutation `User.setDescription`'],
+        changed: ['Change default familiy name in user-journey'],
+      },
     ],
   })
 
