@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.28.2](https://github.com/serlo/api.serlo.org/compare/v0.28.1..v0.28.2) - January 27, 2022
+
+### Added
+
+- Add mutation `User.setDescription`
+
+### Changed
+
+- Change default familiy name in user-journey
+
 ## [v0.28.1](https://github.com/serlo/api.serlo.org/compare/v0.28.0..v0.28.1) - January 11, 2022
 
 ### Fixed

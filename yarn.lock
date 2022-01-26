@@ -3909,7 +3909,7 @@ __metadata:
     "@graphql-codegen/typescript-resolvers": ^2.0.0
     "@nmshd/connector-sdk": ^1.1.5
     "@sentry/node": ^6.0.0
-    "@serlo/authorization": ^0.28.0
+    "@serlo/authorization": ^0.28.2
     "@types/basic-auth": ^1.0.0
     "@types/bull-arena": ^3.0.0
     "@types/graphql-modules": ^0.28.0
@@ -3958,7 +3958,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@serlo/api@^0.28.0, @serlo/api@workspace:packages/types":
+"@serlo/api@^0.28.2, @serlo/api@workspace:packages/types":
   version: 0.0.0-use.local
   resolution: "@serlo/api@workspace:packages/types"
   dependencies:
@@ -3969,11 +3969,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@serlo/authorization@^0.28.0, @serlo/authorization@workspace:packages/authorization":
+"@serlo/authorization@^0.28.2, @serlo/authorization@workspace:packages/authorization":
   version: 0.0.0-use.local
   resolution: "@serlo/authorization@workspace:packages/authorization"
   dependencies:
-    "@serlo/api": ^0.28.0
+    "@serlo/api": ^0.28.2
   languageName: unknown
   linkType: soft
 
