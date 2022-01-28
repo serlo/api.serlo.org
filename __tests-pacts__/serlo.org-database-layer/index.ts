@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import R from 'ramda'
-import { Matchers, ResponseOptions } from '@pact-foundation/pact'
+import { Matchers } from '@pact-foundation/pact'
 
 import {
   ResponseType,
@@ -110,9 +110,10 @@ async function addSerloMessageInteraction<M extends Message>({
 }: {
   message: M
   payload: Payload<M>
-  responseStatus: 200 | 404
-  response: ResponseType<M> | null
-}) {
+} & (
+  | { responseStatus: 200; response: ResponseType<M> }
+  | { responseStatus: 404; response: null }
+)) {
   await global.pact.addInteraction({
     uponReceiving: `Message ${message} with payload ${JSON.stringify(
       payload
