@@ -19,10 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import fetch from 'node-fetch'
 import { UserInputError } from 'apollo-server-express'
 import { option as O, function as F } from 'fp-ts'
 import * as t from 'io-ts'
+import fetch from 'node-fetch'
+
 import { InstanceDecoder } from './decoder'
 
 const URL = `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`
@@ -57,27 +58,24 @@ export async function makeRequest<M extends Message>({
     headers: { 'Content-Type': 'application/json' },
   })
 
-  switch (response.status) {
-    case 200:
-      return await response.json()
-    case 404:
-      if (spec[message].canBeNull) {
-        // TODO: Here we can check whether the body is "null" and report it toNullable
-        // Sentry
-        return null
-      }
-    case 400:
-      const responseText = await response.text()
-      const reason = F.pipe(
-        O.tryCatch(() => JSON.parse(responseText) as unknown),
-        O.chain(O.fromPredicate(t.type({ reason: t.string }).is)),
-        O.map((json) => json.reason),
-        O.getOrElse(() => 'Bad Request')
-      )
+  if (response.status === 200) {
+    return (await response.json()) as unknown
+  } else if (response.status === 404 && spec[message].canBeNull) {
+    // TODO: Here we can check whether the body is "null" and report it toNullable
+    // Sentry
+    return null
+  } else if (response.status === 400) {
+    const responseText = await response.text()
+    const reason = F.pipe(
+      O.tryCatch(() => JSON.parse(responseText) as unknown),
+      O.chain(O.fromPredicate(t.type({ reason: t.string }).is)),
+      O.map((json) => json.reason),
+      O.getOrElse(() => 'Bad Request')
+    )
 
-      throw new UserInputError(reason)
-    default:
-      throw new Error(`${response.status}: ${JSON.stringify(message)}`)
+    throw new UserInputError(reason)
+  } else {
+    throw new Error(`${response.status}: ${JSON.stringify(message)}`)
   }
 }
 
