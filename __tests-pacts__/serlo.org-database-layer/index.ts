@@ -85,17 +85,6 @@ describe.each(R.toPairs(pactSpec))('%s', (message, messageSpec) => {
   }
 })
 
-type PactSpec = {
-  [K in DatabaseLayer.Message]: {
-    example: {
-      payload: DatabaseLayer.Payload<K>
-      response: DatabaseLayer.Response<K>
-    }
-  } & (DatabaseLayer.Spec[K]['canBeNull'] extends true
-    ? { examplePayloadForNull: DatabaseLayer.Payload<K> }
-    : unknown)
-}
-
 async function addSerloMessageInteraction<M extends DatabaseLayer.Message>({
   message,
   payload,
@@ -130,4 +119,15 @@ async function addSerloMessageInteraction<M extends DatabaseLayer.Message>({
   const result = await DatabaseLayer.makeRequest({ message, payload })
 
   expect(result).toEqual(response)
+}
+
+type PactSpec = {
+  [M in DatabaseLayer.Message]: {
+    example: {
+      payload: DatabaseLayer.Payload<M>
+      response: DatabaseLayer.Response<M>
+    }
+  } & (DatabaseLayer.Spec[M]['canBeNull'] extends true
+    ? { examplePayloadForNull: DatabaseLayer.Payload<M> }
+    : unknown)
 }
