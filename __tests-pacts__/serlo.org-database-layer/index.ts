@@ -58,14 +58,15 @@ describe('UuidMessage', () => {
 test('create pact for database-layer', async () => {
   for (const [message, messageSpec] of Object.entries(pactSpec)) {
     const { payload, response } = messageSpec.example
+    const body = { type: message, payload }
 
     await global.pact.addInteraction({
-      uponReceiving: `Message ${message}`,
+      uponReceiving: `Message ${JSON.stringify(body)}`,
       state: 'hello',
       withRequest: {
         method: 'POST',
         path: '/',
-        body: { type: message, payload },
+        body,
         headers: { 'Content-Type': 'application/json' },
       },
       willRespondWith: {
