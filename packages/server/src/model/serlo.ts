@@ -22,7 +22,6 @@
 import { UserInputError } from 'apollo-server-express'
 import { option as O, function as F } from 'fp-ts'
 import * as t from 'io-ts'
-import * as S from 'io-ts/Schema'
 import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
 
@@ -53,6 +52,8 @@ import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
 import { isSupportedUuidType } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { Instance, ThreadCreateThreadInput } from '~/types'
+
+import * as DatabaseLayer from './database-layer'
 
 export function createSerloModel({
   environment,
@@ -389,8 +390,8 @@ export function createSerloModel({
         }),
         t.null,
       ]),
-      getCurrentValue: (payload: Payload<'LicenseQuery'>) => {
-        return serloRequest({ message: 'LicenseQuery', payload })
+      getCurrentValue: (payload: DatabaseLayer.Payload<'LicenseQuery'>) => {
+        return DatabaseLayer.makeRequest({ message: 'LicenseQuery', payload })
       },
       enableSwr: true,
       staleAfter: { day: 1 },
@@ -942,66 +943,6 @@ export function createSerloModel({
     rejectPageRevision,
     setUuidState,
     setNotificationState,
-  }
-}
-
-export const spec = {
-  LicenseQuery: {
-    payload: S.make((S) => S.struct({ id: S.number })),
-    response: S.make((S) =>
-      S.struct({
-        id: S.number,
-        // TODO: InstanceDecoder
-        instance: S.string,
-        default: S.boolean,
-        title: S.string,
-        url: S.string,
-        content: S.string,
-        agreement: S.string,
-        iconHref: S.string,
-      })
-    ),
-    canBeNull: true,
-  },
-} as const
-export type DatabaseLayerSpec = typeof spec
-export type Message = keyof DatabaseLayerSpec
-export type Payload<M extends Message> = S.TypeOf<
-  DatabaseLayerSpec[M]['payload']
->
-export type ResponseType<M extends Message> = S.TypeOf<
-  DatabaseLayerSpec[M]['response']
->
-
-export async function serloRequest<M extends Message>({
-  message,
-  payload,
-}: {
-  message: M
-  payload: Payload<M>
-}) {
-  const response = await fetch(
-    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`,
-    {
-      method: 'POST',
-      body: JSON.stringify({ type: message, payload }),
-      headers: { 'Content-Type': 'application/json' },
-    }
-  )
-
-  // TODO: Make switch
-  if (response.status === 200) {
-    // Here we might already check with the decoder
-    return await response.json()
-  } else if (response.status === 404 && spec[message].canBeNull) {
-    // TODO: Here we can check whether the body is "null" and report it toNullable
-    // Sentry
-    return null
-  } else if (response.status === 400) {
-    // TODO: inline parseReason()
-    throw new UserInputError((await parseReason(response)) ?? 'Bad Request')
-  } else {
-    throw new Error(`${response.status}: ${JSON.stringify(message)}`)
   }
 }
 
