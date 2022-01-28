@@ -963,7 +963,7 @@ export const spec = {
     ),
     canBeNull: true,
   },
-}
+} as const
 export type DatabaseLayerSpec = typeof spec
 export type Message = keyof DatabaseLayerSpec
 export type Payload<M extends Message> = S.TypeOf<

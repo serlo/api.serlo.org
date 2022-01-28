@@ -20,9 +20,15 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import R from 'ramda'
-import { Matchers } from '@pact-foundation/pact'
+import { Matchers, ResponseOptions } from '@pact-foundation/pact'
 
-import { ResponseType, Message, Payload, serloRequest } from '~/model'
+import {
+  ResponseType,
+  Message,
+  Payload,
+  serloRequest,
+  DatabaseLayerSpec,
+} from '~/model'
 import { license } from '../../__fixtures__'
 
 /* eslint-disable import/no-unassigned-import */
@@ -57,17 +63,9 @@ describe('UuidMessage', () => {
 test('create pact for database-layer', async () => {
   for (const [message, messageSpec] of R.toPairs(pactSpec)) {
     const { payload, response } = messageSpec.example
-    const body = { type: message, payload }
 
-    await global.pact.addInteraction({
-      uponReceiving: `Message ${JSON.stringify(body)}`,
-      state: undefined,
-      withRequest: {
-        method: 'POST',
-        path: '/',
-        body,
-        headers: { 'Content-Type': 'application/json' },
-      },
+    await addSerloInteraction({
+      body: { type: message, payload },
       willRespondWith: {
         status: 200,
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
@@ -79,9 +77,29 @@ test('create pact for database-layer', async () => {
   }
 })
 
+test('create pact for database-layer (not found)', async () => {
+  for (const [message, messageSpec] of R.toPairs(pactSpec)) {
+    if (messageSpec.examplePayloadForNull != null) {
+      const payload = messageSpec.examplePayloadForNull
+
+      await addSerloInteraction({
+        body: { type: message, payload },
+        willRespondWith: {
+          status: 404,
+          headers: { 'Content-Type': 'application/json; charset=utf-8' },
+          body: JSON.stringify(null),
+        },
+      })
+
+      expect(await serloRequest({ message, payload })).toBeNull()
+    }
+  }
+})
+
 const pactSpec: PactSpec = {
   LicenseQuery: {
     example: { payload: { id: 1 }, response: license },
+    examplePayloadForNull: { id: 100 },
   },
 }
 
@@ -91,5 +109,27 @@ type PactSpec = {
       payload: Payload<K>
       response: ResponseType<K>
     }
-  }
+  } & (DatabaseLayerSpec[K]['canBeNull'] extends true
+    ? { examplePayloadForNull: Payload<K> }
+    : unknown)
+}
+
+async function addSerloInteraction({
+  body,
+  willRespondWith,
+}: {
+  body: unknown
+  willRespondWith: ResponseOptions
+}) {
+  return global.pact.addInteraction({
+    uponReceiving: `Message ${JSON.stringify(body)}`,
+    state: undefined,
+    withRequest: {
+      method: 'POST',
+      path: '/',
+      body,
+      headers: { 'Content-Type': 'application/json' },
+    },
+    willRespondWith,
+  })
 }
