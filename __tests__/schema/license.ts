@@ -24,9 +24,8 @@ import { gql } from 'apollo-server'
 import { license } from '../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
-  createLicenseHandler,
-  createMessageHandler,
   createTestClient,
+  given,
 } from '../__utils__'
 
 const query = gql`
@@ -45,7 +44,8 @@ const query = gql`
 `
 
 test('license', async () => {
-  global.server.use(createLicenseHandler(license))
+  given('LicenseQuery').withPayload({ id: license.id }).returns(license)
+
   await assertSuccessfulGraphQLQuery({
     query,
     variables: { id: license.id },
@@ -55,13 +55,7 @@ test('license', async () => {
 })
 
 test('license returns null when queried with a certain id', async () => {
-  global.server.use(
-    createMessageHandler({
-      message: { type: 'LicenseQuery', payload: { id: 100 } },
-      statusCode: 404,
-      body: null,
-    })
-  )
+  given('LicenseQuery').returnsNotFound()
 
   await assertSuccessfulGraphQLQuery({
     query,

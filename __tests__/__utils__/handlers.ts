@@ -27,6 +27,34 @@ import { RestResolver } from './services'
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model'
 import { Uuid } from '~/model/decoder'
+import { Message, Payload as SerloPayload, ResponseType } from '~/model'
+
+export function given<M extends Message>(message: M) {
+  return {
+    withPayload(payload: SerloPayload<M>) {
+      return {
+        returns(response: ResponseType<M>) {
+          global.server.use(
+            createMessageHandler({
+              message: { type: message, payload },
+              statusCode: 200,
+              body: response,
+            })
+          )
+        },
+      }
+    },
+    returnsNotFound() {
+      global.server.use(
+        createMessageHandler({
+          message: { type: message },
+          statusCode: 404,
+          body: null,
+        })
+      )
+    },
+  }
+}
 
 export function createAliasHandler(alias: Payload<'serlo', 'getAlias'>) {
   return createMessageHandler({
@@ -38,18 +66,6 @@ export function createAliasHandler(alias: Payload<'serlo', 'getAlias'>) {
       },
     },
     body: alias,
-  })
-}
-
-export function createLicenseHandler(license: Model<'License'>) {
-  return createMessageHandler({
-    message: {
-      type: 'LicenseQuery',
-      payload: {
-        id: license.id,
-      },
-    },
-    body: license,
   })
 }
 
