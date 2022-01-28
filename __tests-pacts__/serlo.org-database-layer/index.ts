@@ -60,8 +60,15 @@ describe('UuidMessage', () => {
   require('./uuid')
 })
 
-test('create pact for database-layer', async () => {
-  for (const [message, messageSpec] of R.toPairs(pactSpec)) {
+const pactSpec: PactSpec = {
+  LicenseQuery: {
+    example: { payload: { id: 1 }, response: license },
+    examplePayloadForNull: { id: 100 },
+  },
+}
+
+describe.each(R.toPairs(pactSpec))('%s', (message, messageSpec) => {
+  test('200 response', async () => {
     const { payload, response } = messageSpec.example
 
     await addSerloMessageInteraction({
@@ -70,28 +77,19 @@ test('create pact for database-layer', async () => {
       responseStatus: 200,
       response,
     })
-  }
-})
+  })
 
-test('create pact for database-layer (not found)', async () => {
-  for (const [message, messageSpec] of R.toPairs(pactSpec)) {
-    if (messageSpec.examplePayloadForNull != null) {
+  if (messageSpec.examplePayloadForNull != null) {
+    test('404 response', async () => {
       await addSerloMessageInteraction({
         message,
         payload: messageSpec.examplePayloadForNull,
         responseStatus: 404,
         response: null,
       })
-    }
+    })
   }
 })
-
-const pactSpec: PactSpec = {
-  LicenseQuery: {
-    example: { payload: { id: 1 }, response: license },
-    examplePayloadForNull: { id: 100 },
-  },
-}
 
 type PactSpec = {
   [K in Message]: {
