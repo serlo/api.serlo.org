@@ -19,6 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+
+import { serloRequest } from '~/model'
+import { license } from '../../__fixtures__'
+
 /* eslint-disable import/no-unassigned-import */
 describe('AliasMessage', () => {
   require('./alias')
@@ -50,3 +54,34 @@ describe('UserMessage', () => {
 describe('UuidMessage', () => {
   require('./uuid')
 })
+
+test('create pact for database-layer', async () => {
+  for (const [message, messageSpec] of Object.entries(pactSpec)) {
+    const { payload, response } = messageSpec.example
+
+    await global.pact.addInteraction({
+      uponReceiving: `Message ${message}`,
+      state: 'hello',
+      withRequest: {
+        method: 'POST',
+        path: '/',
+        body: { type: message, payload },
+        headers: { 'Content-Type': 'application/json' },
+      },
+      willRespondWith: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+        body: response,
+      },
+    })
+
+    //@ts-ignore
+    expect(await serloRequest({ message, payload })).toEqual(response)
+  }
+})
+
+const pactSpec = {
+  LicenseQuery: {
+    example: { payload: { id: 1 }, response: license },
+  },
+} as const
