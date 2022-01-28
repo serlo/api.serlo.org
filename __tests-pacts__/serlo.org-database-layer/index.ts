@@ -62,7 +62,7 @@ test('create pact for database-layer', async () => {
 
     await global.pact.addInteraction({
       uponReceiving: `Message ${JSON.stringify(body)}`,
-      state: 'hello',
+      state: undefined,
       withRequest: {
         method: 'POST',
         path: '/',
