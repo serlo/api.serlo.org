@@ -27,6 +27,7 @@ import { createSerloModel } from './serlo'
 export * from './chat'
 export * from './google-spreadsheet-api'
 export * from './serlo'
+export * as DatabaseLayer from './database-layer'
 
 export const modelFactories = {
   chat: createChatModel,

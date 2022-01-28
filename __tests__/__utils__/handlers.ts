@@ -27,13 +27,13 @@ import { RestResolver } from './services'
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model'
 import { Uuid } from '~/model/decoder'
-import { Message, Payload as SerloPayload, ResponseType } from '~/model'
+import { DatabaseLayer } from '~/model'
 
-export function given<M extends Message>(message: M) {
+export function given<M extends DatabaseLayer.Message>(message: M) {
   return {
-    withPayload(payload: SerloPayload<M>) {
+    withPayload(payload: DatabaseLayer.Payload<M>) {
       return {
-        returns(response: ResponseType<M>) {
+        returns(response: DatabaseLayer.Response<M>) {
           global.server.use(
             createMessageHandler({
               message: { type: message, payload },

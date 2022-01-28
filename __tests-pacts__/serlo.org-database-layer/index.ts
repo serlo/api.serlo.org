@@ -22,13 +22,7 @@
 import R from 'ramda'
 import { Matchers } from '@pact-foundation/pact'
 
-import {
-  ResponseType,
-  Message,
-  Payload,
-  serloRequest,
-  DatabaseLayerSpec,
-} from '~/model'
+import { DatabaseLayer } from '~/model'
 import { license } from '../../__fixtures__'
 
 /* eslint-disable import/no-unassigned-import */
@@ -92,26 +86,26 @@ describe.each(R.toPairs(pactSpec))('%s', (message, messageSpec) => {
 })
 
 type PactSpec = {
-  [K in Message]: {
+  [K in DatabaseLayer.Message]: {
     example: {
-      payload: Payload<K>
-      response: ResponseType<K>
+      payload: DatabaseLayer.Payload<K>
+      response: DatabaseLayer.Response<K>
     }
-  } & (DatabaseLayerSpec[K]['canBeNull'] extends true
-    ? { examplePayloadForNull: Payload<K> }
+  } & (DatabaseLayer.Spec[K]['canBeNull'] extends true
+    ? { examplePayloadForNull: DatabaseLayer.Payload<K> }
     : unknown)
 }
 
-async function addSerloMessageInteraction<M extends Message>({
+async function addSerloMessageInteraction<M extends DatabaseLayer.Message>({
   message,
   payload,
   responseStatus,
   response,
 }: {
   message: M
-  payload: Payload<M>
+  payload: DatabaseLayer.Payload<M>
 } & (
-  | { responseStatus: 200; response: ResponseType<M> }
+  | { responseStatus: 200; response: DatabaseLayer.Response<M> }
   | { responseStatus: 404; response: null }
 )) {
   await global.pact.addInteraction({
@@ -133,5 +127,7 @@ async function addSerloMessageInteraction<M extends Message>({
     },
   })
 
-  expect(await serloRequest({ message, payload })).toEqual(response)
+  const result = await DatabaseLayer.makeRequest({ message, payload })
+
+  expect(result).toEqual(response)
 }
