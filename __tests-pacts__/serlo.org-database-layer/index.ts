@@ -22,7 +22,7 @@
 import R from 'ramda'
 import { Matchers } from '@pact-foundation/pact'
 
-import { serloRequest } from '~/model'
+import { ResponseType, Message, Payload, serloRequest } from '~/model'
 import { license } from '../../__fixtures__'
 
 /* eslint-disable import/no-unassigned-import */
@@ -79,8 +79,17 @@ test('create pact for database-layer', async () => {
   }
 })
 
-const pactSpec = {
+const pactSpec: PactSpec = {
   LicenseQuery: {
     example: { payload: { id: 1 }, response: license },
   },
+}
+
+type PactSpec = {
+  [K in Message]: {
+    example: {
+      payload: Payload<K>
+      response: ResponseType<K>
+    }
+  }
 }

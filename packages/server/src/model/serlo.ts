@@ -948,7 +948,7 @@ export function createSerloModel({
 export const spec = {
   LicenseQuery: {
     payload: S.make((S) => S.struct({ id: S.number })),
-    responses: S.make((S) =>
+    response: S.make((S) =>
       S.struct({
         id: S.number,
         // TODO: InstanceDecoder
@@ -964,14 +964,21 @@ export const spec = {
     canBeNull: true,
   },
 }
-type SerloSpec = typeof spec
+export type DatabaseLayerSpec = typeof spec
+export type Message = keyof DatabaseLayerSpec
+export type Payload<M extends Message> = S.TypeOf<
+  DatabaseLayerSpec[M]['payload']
+>
+export type ResponseType<M extends Message> = S.TypeOf<
+  DatabaseLayerSpec[M]['response']
+>
 
-export async function serloRequest<M extends keyof SerloSpec>({
+export async function serloRequest<M extends Message>({
   message,
   payload,
 }: {
   message: M
-  payload: S.TypeOf<SerloSpec[M]['payload']>
+  payload: Payload<M>
 }) {
   const response = await fetch(
     `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`,
