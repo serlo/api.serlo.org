@@ -22,6 +22,7 @@
 import { UserInputError } from 'apollo-server-express'
 import { option as O, function as F } from 'fp-ts'
 import * as t from 'io-ts'
+import * as S from 'io-ts/Schema'
 import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
 
@@ -941,6 +942,59 @@ export function createSerloModel({
     rejectPageRevision,
     setUuidState,
     setNotificationState,
+  }
+}
+
+export const spec = {
+  LicenseQuery: {
+    payload: S.make((S) => S.struct({ id: S.number })),
+    responses: S.make((S) =>
+      S.struct({
+        id: S.number,
+        // TODO: InstanceDecoder
+        instance: S.string,
+        default: S.boolean,
+        title: S.string,
+        url: S.string,
+        content: S.string,
+        agreement: S.string,
+        iconHref: S.string,
+      })
+    ),
+    canBeNull: true,
+  },
+}
+type SerloSpec = typeof spec
+
+export async function serloRequest<M extends keyof SerloSpec>({
+  message,
+  payload,
+}: {
+  message: M
+  payload: S.TypeOf<SerloSpec[M]['payload']>
+}) {
+  const response = await fetch(
+    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`,
+    {
+      method: 'POST',
+      body: JSON.stringify({ type: message, payload }),
+      headers: { 'Content-Type': 'application/json' },
+    }
+  )
+
+  // TODO: Make switch
+  if (response.status === 200) {
+    // Here we might already check with the decoder
+    return await response.json()
+  } else if (response.status === 404 && spec[message].canBeNull) {
+    // TODO: Here we can check whether the body is "null" and report it toNullable
+    // Sentry
+    return null
+  } else if (response.status === 400) {
+    // TODO: inline parseReason()
+    throw new UserInputError((await parseReason(response)) ?? 'Bad Request')
+  } else {
+    throw new Error(`${response.status}: ${JSON.stringify(message)}`)
   }
 }
 
