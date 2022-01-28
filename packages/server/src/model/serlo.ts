@@ -25,6 +25,7 @@ import * as t from 'io-ts'
 import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
 
+import * as DatabaseLayer from './database-layer'
 import {
   CommentDecoder,
   InstanceDecoder,
@@ -52,8 +53,6 @@ import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
 import { isSupportedUuidType } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { Instance, ThreadCreateThreadInput } from '~/types'
-
-import * as DatabaseLayer from './database-layer'
 
 export function createSerloModel({
   environment,

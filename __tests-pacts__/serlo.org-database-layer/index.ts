@@ -19,11 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import R from 'ramda'
 import { Matchers } from '@pact-foundation/pact'
+import R from 'ramda'
 
-import { DatabaseLayer } from '~/model'
 import { license } from '../../__fixtures__'
+import { DatabaseLayer } from '~/model'
 
 /* eslint-disable import/no-unassigned-import */
 describe('AliasMessage', () => {

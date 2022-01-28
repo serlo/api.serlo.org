@@ -26,8 +26,8 @@ import { Database } from './database'
 import { RestResolver } from './services'
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model'
-import { Uuid } from '~/model/decoder'
 import { DatabaseLayer } from '~/model'
+import { Uuid } from '~/model/decoder'
 
 export function given<M extends DatabaseLayer.Message>(message: M) {
   return {
