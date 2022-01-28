@@ -64,34 +64,24 @@ test('create pact for database-layer', async () => {
   for (const [message, messageSpec] of R.toPairs(pactSpec)) {
     const { payload, response } = messageSpec.example
 
-    await addSerloInteraction({
-      body: { type: message, payload },
-      willRespondWith: {
-        status: 200,
-        headers: { 'Content-Type': 'application/json; charset=utf-8' },
-        body: Matchers.like(response),
-      },
+    await addSerloMessageInteraction({
+      message,
+      payload,
+      responseStatus: 200,
+      response,
     })
-
-    expect(await serloRequest({ message, payload })).toEqual(response)
   }
 })
 
 test('create pact for database-layer (not found)', async () => {
   for (const [message, messageSpec] of R.toPairs(pactSpec)) {
     if (messageSpec.examplePayloadForNull != null) {
-      const payload = messageSpec.examplePayloadForNull
-
-      await addSerloInteraction({
-        body: { type: message, payload },
-        willRespondWith: {
-          status: 404,
-          headers: { 'Content-Type': 'application/json; charset=utf-8' },
-          body: JSON.stringify(null),
-        },
+      await addSerloMessageInteraction({
+        message,
+        payload: messageSpec.examplePayloadForNull,
+        responseStatus: 404,
+        response: null,
       })
-
-      expect(await serloRequest({ message, payload })).toBeNull()
     }
   }
 })
@@ -114,22 +104,35 @@ type PactSpec = {
     : unknown)
 }
 
-async function addSerloInteraction({
-  body,
-  willRespondWith,
+async function addSerloMessageInteraction<M extends Message>({
+  message,
+  payload,
+  responseStatus,
+  response,
 }: {
-  body: unknown
-  willRespondWith: ResponseOptions
+  message: M
+  payload: Payload<M>
+  responseStatus: 200 | 404
+  response: ResponseType<M> | null
 }) {
-  return global.pact.addInteraction({
-    uponReceiving: `Message ${JSON.stringify(body)}`,
+  await global.pact.addInteraction({
+    uponReceiving: `Message ${message} with payload ${JSON.stringify(
+      payload
+    )} (case ${responseStatus}-response)`,
     state: undefined,
     withRequest: {
       method: 'POST',
       path: '/',
-      body,
+      body: { type: message, payload },
       headers: { 'Content-Type': 'application/json' },
     },
-    willRespondWith,
+    willRespondWith: {
+      status: responseStatus,
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body:
+        responseStatus === 200 ? Matchers.like(response) : JSON.stringify(null),
+    },
   })
+
+  expect(await serloRequest({ message, payload })).toEqual(response)
 }
