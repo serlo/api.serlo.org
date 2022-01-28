@@ -43,10 +43,6 @@ export const spec = {
     canBeNull: true,
   },
 } as const
-export type Spec = typeof spec
-export type Message = keyof Spec
-export type Payload<M extends Message> = t.TypeOf<Spec[M]['payload']>
-export type Response<M extends Message> = t.TypeOf<Spec[M]['response']>
 
 export async function makeRequest<M extends Message>({
   message,
@@ -84,3 +80,8 @@ export async function makeRequest<M extends Message>({
       throw new Error(`${response.status}: ${JSON.stringify(message)}`)
   }
 }
+
+export type Spec = typeof spec
+export type Message = keyof Spec
+export type Payload<M extends Message> = t.TypeOf<Spec[M]['payload']>
+export type Response<M extends Message> = t.TypeOf<Spec[M]['response']>
