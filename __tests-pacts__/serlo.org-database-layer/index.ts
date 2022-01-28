@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Matchers } from '@pact-foundation/pact'
 
 import { serloRequest } from '~/model'
 import { license } from '../../__fixtures__'
@@ -72,7 +73,7 @@ test('create pact for database-layer', async () => {
       willRespondWith: {
         status: 200,
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
-        body: response,
+        body: Matchers.like(response),
       },
     })
 
