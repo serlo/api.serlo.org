@@ -43,24 +43,26 @@ const query = gql`
   }
 `
 
-test('license', async () => {
-  given('LicenseQuery').withPayload({ id: license.id }).returns(license)
+describe('query "license"', () => {
+  test('returns a license', async () => {
+    given('LicenseQuery').withPayload({ id: license.id }).returns(license)
 
-  await assertSuccessfulGraphQLQuery({
-    query,
-    variables: { id: license.id },
-    data: { license },
-    client: createTestClient(),
+    await assertSuccessfulGraphQLQuery({
+      query,
+      variables: { id: license.id },
+      data: { license },
+      client: createTestClient(),
+    })
   })
-})
 
-test('license returns null when queried with a certain id', async () => {
-  given('LicenseQuery').returnsNotFound()
+  test('returns null when license with given id does not exist', async () => {
+    given('LicenseQuery').returnsNotFound()
 
-  await assertSuccessfulGraphQLQuery({
-    query,
-    variables: { id: 100 },
-    data: { license: null },
-    client: createTestClient(),
+    await assertSuccessfulGraphQLQuery({
+      query,
+      variables: { id: 100 },
+      data: { license: null },
+      client: createTestClient(),
+    })
   })
 })
