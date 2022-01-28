@@ -23,33 +23,30 @@ import fetch from 'node-fetch'
 import { UserInputError } from 'apollo-server-express'
 import { option as O, function as F } from 'fp-ts'
 import * as t from 'io-ts'
-import * as S from 'io-ts/Schema'
+import { InstanceDecoder } from './decoder'
 
 const URL = `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`
 
 export const spec = {
   LicenseQuery: {
-    payload: S.make((S) => S.struct({ id: S.number })),
-    response: S.make((S) =>
-      S.struct({
-        id: S.number,
-        // TODO: InstanceDecoder
-        instance: S.string,
-        default: S.boolean,
-        title: S.string,
-        url: S.string,
-        content: S.string,
-        agreement: S.string,
-        iconHref: S.string,
-      })
-    ),
+    payload: t.type({ id: t.number }),
+    response: t.type({
+      id: t.number,
+      instance: InstanceDecoder,
+      default: t.boolean,
+      title: t.string,
+      url: t.string,
+      content: t.string,
+      agreement: t.string,
+      iconHref: t.string,
+    }),
     canBeNull: true,
   },
 } as const
 export type Spec = typeof spec
 export type Message = keyof Spec
-export type Payload<M extends Message> = S.TypeOf<Spec[M]['payload']>
-export type Response<M extends Message> = S.TypeOf<Spec[M]['response']>
+export type Payload<M extends Message> = t.TypeOf<Spec[M]['payload']>
+export type Response<M extends Message> = t.TypeOf<Spec[M]['response']>
 
 export async function makeRequest<M extends Message>({
   message,
