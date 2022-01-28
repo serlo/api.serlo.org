@@ -389,8 +389,8 @@ export function createSerloModel({
         }),
         t.null,
       ]),
-      getCurrentValue: (payload: { id: number }) => {
-        return handleMessage({ type: 'LicenseQuery', payload })
+      getCurrentValue: (payload: Payload<'LicenseQuery'>) => {
+        return serloRequest({ message: 'LicenseQuery', payload })
       },
       enableSwr: true,
       staleAfter: { day: 1 },
