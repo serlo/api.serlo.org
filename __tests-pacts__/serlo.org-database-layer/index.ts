@@ -31,9 +31,6 @@ describe('AliasMessage', () => {
 describe('EventMessage', () => {
   require('./event')
 })
-describe('LicenseMessage', () => {
-  require('./license')
-})
 describe('NavigationMessage', () => {
   require('./navigation')
 })
