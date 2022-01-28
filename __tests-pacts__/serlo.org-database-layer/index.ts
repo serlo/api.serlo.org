@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import R from 'ramda'
 import { Matchers } from '@pact-foundation/pact'
 
 import { serloRequest } from '~/model'
@@ -54,7 +55,7 @@ describe('UuidMessage', () => {
 })
 
 test('create pact for database-layer', async () => {
-  for (const [message, messageSpec] of Object.entries(pactSpec)) {
+  for (const [message, messageSpec] of R.toPairs(pactSpec)) {
     const { payload, response } = messageSpec.example
     const body = { type: message, payload }
 
@@ -74,7 +75,6 @@ test('create pact for database-layer', async () => {
       },
     })
 
-    //@ts-ignore
     expect(await serloRequest({ message, payload })).toEqual(response)
   }
 })
@@ -83,4 +83,4 @@ const pactSpec = {
   LicenseQuery: {
     example: { payload: { id: 1 }, response: license },
   },
-} as const
+}
