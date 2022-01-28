@@ -65,25 +65,26 @@ export async function makeRequest<M extends Message>({
     }
   )
 
-  // TODO: Make switch
-  if (response.status === 200) {
-    // Here we might already check with the decoder
-    return await response.json()
-  } else if (response.status === 404 && spec[message].canBeNull) {
-    // TODO: Here we can check whether the body is "null" and report it toNullable
-    // Sentry
-    return null
-  } else if (response.status === 400) {
-    const responseText = await response.text()
-    const reason = F.pipe(
-      O.tryCatch(() => JSON.parse(responseText) as unknown),
-      O.chain(O.fromPredicate(t.type({ reason: t.string }).is)),
-      O.map((json) => json.reason),
-      O.getOrElse(() => 'Bad Request')
-    )
+  switch (response.status) {
+    case 200:
+      return await response.json()
+    case 404:
+      if (spec[message].canBeNull) {
+        // TODO: Here we can check whether the body is "null" and report it toNullable
+        // Sentry
+        return null
+      }
+    case 400:
+      const responseText = await response.text()
+      const reason = F.pipe(
+        O.tryCatch(() => JSON.parse(responseText) as unknown),
+        O.chain(O.fromPredicate(t.type({ reason: t.string }).is)),
+        O.map((json) => json.reason),
+        O.getOrElse(() => 'Bad Request')
+      )
 
-    throw new UserInputError(reason)
-  } else {
-    throw new Error(`${response.status}: ${JSON.stringify(message)}`)
+      throw new UserInputError(reason)
+    default:
+      throw new Error(`${response.status}: ${JSON.stringify(message)}`)
   }
 }
