@@ -25,6 +25,8 @@ import { option as O, function as F } from 'fp-ts'
 import * as t from 'io-ts'
 import * as S from 'io-ts/Schema'
 
+const URL = `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`
+
 export const spec = {
   LicenseQuery: {
     payload: S.make((S) => S.struct({ id: S.number })),
@@ -56,14 +58,11 @@ export async function makeRequest<M extends Message>({
   message: M
   payload: Payload<M>
 }) {
-  const response = await fetch(
-    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`,
-    {
-      method: 'POST',
-      body: JSON.stringify({ type: message, payload }),
-      headers: { 'Content-Type': 'application/json' },
-    }
-  )
+  const response = await fetch(URL, {
+    method: 'POST',
+    body: JSON.stringify({ type: message, payload }),
+    headers: { 'Content-Type': 'application/json' },
+  })
 
   switch (response.status) {
     case 200:
