@@ -19,35 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-/* eslint-disable import/no-unassigned-import */
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
-import { article, user } from '../../../__fixtures__'
-import {
-  createTestClient,
-  createUuidHandler,
-} from '../../../__tests__/__utils__'
+import { article, user } from '../../__fixtures__'
+import { createTestClient, createUuidHandler } from '../../__tests__/__utils__'
 import {
   addMessageInteraction,
   assertSuccessfulGraphQLMutation,
-} from '../../__utils__'
-
-import './applet'
-import './article'
-import './course'
-import './course-page'
-import './comment'
-import './entity'
-import './event'
-import './exercise'
-import './exercise-group'
-import './grouped-exercise'
-import './page'
-import './solution'
-import './taxonomy-term'
-import './user'
-import './video'
+} from '../__utils__'
 
 test('UuidSetStateMutation', async () => {
   global.client = createTestClient({ userId: user.id })

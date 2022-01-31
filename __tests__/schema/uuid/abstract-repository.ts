@@ -52,11 +52,11 @@ import {
   assertSuccessfulGraphQLQuery,
   Client,
   createAliasHandler,
-  createLicenseHandler,
   createTestClient,
   createUuidHandler,
   nextUuid,
   getTypenameAndId,
+  given,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import {
@@ -275,10 +275,9 @@ describe('Repository', () => {
   test.each(repositoryCases)(
     '%s by id (w/ license)',
     async (_type, { repository }) => {
-      global.server.use(
-        createUuidHandler(repository),
-        createLicenseHandler(license)
-      )
+      given('LicenseQuery').withPayload({ id: license.id }).returns(license)
+      global.server.use(createUuidHandler(repository))
+
       await assertSuccessfulGraphQLQuery({
         query: `
             query license($id: Int!) {

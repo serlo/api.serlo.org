@@ -22,129 +22,63 @@
 import { gql } from 'apollo-server'
 
 import { user as baseUser } from '../../../__fixtures__'
-import {
-  assertFailingGraphQLMutation,
-  assertSuccessfulGraphQLMutation,
-  createTestClient,
-  givenUuidQueryEndpoint,
-  hasInternalServerError,
-  Client,
-  returnsJson,
-  Database,
-  returnsUuidsFromDatabase,
-  MessageResolver,
-  givenSerloEndpoint,
-} from '../../__utils__'
+import { givenUuid, Query, given, createTestClient } from '../../__utils__'
 
-let database: Database
-
-let client: Client
 const user = { ...baseUser, roles: ['sysadmin'] }
+const query = new Query({
+  query: gql`
+    mutation ($input: UserSetEmailInput!) {
+      user {
+        setEmail(input: $input) {
+          success
+          username
+          email
+        }
+      }
+    }
+  `,
+  variables: { input: { userId: user.id, email: 'user@example.org' } },
+  client: createTestClient({ userId: user.id }),
+})
 
 beforeEach(() => {
-  database = new Database()
-  database.hasUuid(user)
-
-  givenUuidQueryEndpoint(returnsUuidsFromDatabase(database))
-
-  client = createTestClient({ userId: user.id })
+  givenUuid(user)
 })
 
 test('returns "{ success: true }" when mutation could be successfully executed', async () => {
-  givenSetEmailEndpoint((req, res, ctx) => {
-    const { userId, email } = req.body.payload
+  given('UserSetEmailMutation')
+    .withPayload({ userId: user.id, email: 'user@example.org' })
+    .returns({ success: true, username: user.username })
 
-    // TODO: There must be a better implementation to check whether the right
-    // parameters are given as payload
-    if (userId !== user.id || email !== 'user@example.org')
-      return res(ctx.status(500))
-
-    return res(ctx.json({ success: true, username: user.username }))
-  })
-
-  await assertSuccessfulGraphQLMutation({
-    ...createSetEmailMutation(),
-    data: {
-      user: {
-        setEmail: {
-          success: true,
-          username: user.username,
-          email: 'user@example.org',
-        },
+  await query.shouldReturnData({
+    user: {
+      setEmail: {
+        success: true,
+        username: user.username,
+        email: 'user@example.org',
       },
     },
-    client,
   })
 })
 
 test('fails when user is not authenticated', async () => {
-  const client = createTestClient({ userId: null })
-
-  await assertFailingGraphQLMutation({
-    ...createSetEmailMutation(),
-    client,
-    expectedError: 'UNAUTHENTICATED',
-  })
+  await query.withUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
 
 test('fails when user does not have role "sysadmin"', async () => {
-  database.hasUuid({ ...user, roles: ['login', 'de_admin'] })
+  givenUuid({ ...user, roles: ['login', 'de_admin'] })
 
-  await assertFailingGraphQLMutation({
-    ...createSetEmailMutation(),
-    client,
-    expectedError: 'FORBIDDEN',
-  })
+  await query.shouldFailWithError('FORBIDDEN')
 })
 
 test('fails when database layer returns a 400er response', async () => {
-  givenSetEmailEndpoint(
-    returnsJson({
-      status: 400,
-      json: { success: false, reason: 'user with id "2" does not exist' },
-    })
-  )
+  given('UserSetEmailMutation').returnsBadRequest()
 
-  await assertFailingGraphQLMutation({
-    ...createSetEmailMutation(),
-    client,
-    expectedError: 'BAD_USER_INPUT',
-    message: 'user with id "2" does not exist',
-  })
+  await query.shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('fails when database layer has an internal error', async () => {
-  givenSetEmailEndpoint(hasInternalServerError())
+  given('UserSetEmailMutation').hasInternalServerError()
 
-  await assertFailingGraphQLMutation({
-    ...createSetEmailMutation(),
-    client,
-    expectedError: 'INTERNAL_SERVER_ERROR',
-  })
+  await query.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
-
-function createSetEmailMutation() {
-  return {
-    mutation: gql`
-      mutation ($input: UserSetEmailInput!) {
-        user {
-          setEmail(input: $input) {
-            success
-            username
-            email
-          }
-        }
-      }
-    `,
-    variables: { input: { userId: user.id, email: 'user@example.org' } },
-  }
-}
-
-function givenSetEmailEndpoint(
-  resolver: MessageResolver<{
-    userId: number
-    email: string
-  }>
-) {
-  givenSerloEndpoint('UserSetEmailMutation', resolver)
-}
