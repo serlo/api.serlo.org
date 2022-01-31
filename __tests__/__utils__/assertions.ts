@@ -54,9 +54,10 @@ export class Query<V extends Record<string, unknown>> {
 
   async shouldFailWithError(
     expectedError:
-      | 'UNAUTHENTICATED'
       | 'BAD_USER_INPUT'
+      | 'FORBIDDEN'
       | 'INTERNAL_SERVER_ERROR'
+      | 'UNAUTHENTICATED'
   ) {
     const response = await this.execute()
     expect(response?.errors?.[0]?.extensions?.code).toEqual(expectedError)
