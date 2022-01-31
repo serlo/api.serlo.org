@@ -33,22 +33,6 @@ import {
   assertSuccessfulGraphQLMutation,
 } from '../../__utils__'
 
-import './applet'
-import './article'
-import './course'
-import './course-page'
-import './comment'
-import './entity'
-import './event'
-import './exercise'
-import './exercise-group'
-import './grouped-exercise'
-import './page'
-import './solution'
-import './taxonomy-term'
-import './user'
-import './video'
-
 test('UuidSetStateMutation', async () => {
   global.client = createTestClient({ userId: user.id })
   global.server.use(

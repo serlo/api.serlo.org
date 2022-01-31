@@ -22,7 +22,34 @@
 import { Matchers } from '@pact-foundation/pact'
 import R from 'ramda'
 
-import { license } from '../../__fixtures__'
+import {
+  applet,
+  appletRevision,
+  article,
+  articleRevision,
+  comment,
+  course,
+  coursePage,
+  coursePageRevision,
+  courseRevision,
+  event,
+  eventRevision,
+  exercise,
+  exerciseRevision,
+  groupedExercise,
+  groupedExerciseRevision,
+  license,
+  page,
+  pageRevision,
+  solution,
+  solutionRevision,
+  taxonomyTermCurriculumTopic,
+  taxonomyTermRoot,
+  taxonomyTermSubject,
+  user,
+  video,
+  videoRevision,
+} from '../../__fixtures__'
 import { DatabaseLayer } from '~/model'
 
 /* eslint-disable import/no-unassigned-import */
@@ -54,23 +81,50 @@ describe('UuidMessage', () => {
   require('./uuid')
 })
 
+const uuids = [
+  applet,
+  appletRevision,
+  article,
+  articleRevision,
+  comment,
+  course,
+  courseRevision,
+  coursePage,
+  coursePageRevision,
+  event,
+  eventRevision,
+  exercise,
+  exerciseRevision,
+  groupedExercise,
+  groupedExerciseRevision,
+  page,
+  pageRevision,
+  solution,
+  solutionRevision,
+  taxonomyTermRoot,
+  taxonomyTermSubject,
+  taxonomyTermCurriculumTopic,
+  user,
+  video,
+  videoRevision,
+]
 const pactSpec: PactSpec = {
   LicenseQuery: {
-    example: { payload: { id: 1 }, response: license },
+    examples: [[{ id: 1 }, license]],
     examplePayloadForNull: { id: 100 },
   },
+  UuidQuery: {
+    examples: uuids.map((uuid) => [{ id: uuid.id }, uuid]),
+    examplePayloadForNull: { id: 1_000_000 },
+  },
   UserSetDescriptionMutation: {
-    example: {
-      payload: { userId: 1, description: 'Hello World' },
-      response: { success: true },
-    },
+    examples: [[{ userId: 1, description: 'Hello World' }, { success: true }]],
   },
 }
 
 describe.each(R.toPairs(pactSpec))('%s', (message, messageSpec) => {
-  test('200 response', async () => {
-    const { payload, response } = messageSpec.example
-
+  const examples = messageSpec.examples as Example[]
+  test.each(examples)('%s', async (payload, response) => {
     await addSerloMessageInteraction({
       message,
       payload,
@@ -129,11 +183,12 @@ async function addSerloMessageInteraction<M extends DatabaseLayer.Message>({
 
 type PactSpec = {
   [M in DatabaseLayer.Message]: {
-    example: {
-      payload: DatabaseLayer.Payload<M>
-      response: DatabaseLayer.Response<M>
-    }
+    examples: Example<M>[]
   } & (DatabaseLayer.Spec[M]['canBeNull'] extends true
     ? { examplePayloadForNull: DatabaseLayer.Payload<M> }
     : unknown)
 }
+type Example<M extends DatabaseLayer.Message = DatabaseLayer.Message> = [
+  DatabaseLayer.Payload<M>,
+  DatabaseLayer.Response<M>
+]
