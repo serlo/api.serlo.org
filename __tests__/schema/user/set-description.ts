@@ -22,16 +22,7 @@
 import { gql } from 'apollo-server'
 
 import { user } from '../../../__fixtures__'
-import {
-  createTestClient,
-  givenUuidQueryEndpoint,
-  Database,
-  returnsUuidsFromDatabase,
-  given,
-  Query,
-} from '../../__utils__'
-
-let database: Database
+import { createTestClient, given, Query, givenUuid } from '../../__utils__'
 
 const query = new Query({
   query: gql`
@@ -48,10 +39,7 @@ const query = new Query({
 })
 
 beforeEach(() => {
-  database = new Database()
-  database.hasUuid(user)
-
-  givenUuidQueryEndpoint(returnsUuidsFromDatabase(database))
+  givenUuid(user)
 })
 
 test('returns "{ success: true }" when mutation could be successfully executed', async () => {
