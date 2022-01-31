@@ -22,16 +22,16 @@
 /* eslint-disable import/no-unassigned-import */
 import { gql } from 'apollo-server'
 
-import { article, articleRevision, user } from '../../../__fixtures__'
+import { article, articleRevision, user } from '../../__fixtures__'
 import {
   castToUuid,
   createTestClient,
   createUuidHandler,
-} from '../../../__tests__/__utils__'
+} from '../../__tests__/__utils__'
 import {
   addMessageInteraction,
   assertSuccessfulGraphQLMutation,
-} from '../../__utils__'
+} from '../__utils__'
 
 const unrevisedRevision = { ...articleRevision, id: castToUuid(30672) }
 
