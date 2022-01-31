@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-/* eslint-disable import/no-unassigned-import */
 import { gql } from 'apollo-server'
 
 import { article, articleRevision, user } from '../../__fixtures__'
