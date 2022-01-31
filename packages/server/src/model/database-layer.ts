@@ -95,12 +95,12 @@ export function getDecoderFor<M extends Message>(message: M): unknown {
 
 export type Spec = typeof spec
 export type Message = keyof Spec
-export type NullableMessage = Spec[Message]['canBeNull'] extends true
-  ? Message
-  : never
-export type NotNullableMessage = Spec[Message]['canBeNull'] extends false
-  ? Message
-  : never
+export type NullableMessage = {
+  [K in Message]: Spec[K]['canBeNull'] extends true ? K : never
+}[Message]
+export type NotNullableMessage = {
+  [K in Message]: Spec[K]['canBeNull'] extends false ? K : never
+}[Message]
 export type Payload<M extends Message> = t.TypeOf<Spec[M]['payload']>
 export type Response<M extends Message> = t.TypeOf<Spec[M]['response']>
 export type ResponseDecoder<M extends Message> = Spec[M]['response']
