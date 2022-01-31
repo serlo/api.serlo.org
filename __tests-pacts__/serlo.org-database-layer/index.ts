@@ -171,7 +171,7 @@ async function addInteraction<M extends DatabaseLayer.MessageType>({
     },
   })
 
-  const result = await DatabaseLayer.makeRequest({ type, payload })
+  const result = await DatabaseLayer.makeRequest(type, payload)
 
   expect(result).toEqual(response)
 }
