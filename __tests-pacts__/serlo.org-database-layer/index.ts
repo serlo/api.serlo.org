@@ -125,17 +125,12 @@ const pactSpec: PactSpec = {
 describe.each(R.toPairs(pactSpec))('%s', (message, messageSpec) => {
   const examples = messageSpec.examples as Example[]
   test.each(examples)('%s', async (payload, response) => {
-    await addSerloMessageInteraction({
-      message,
-      payload,
-      responseStatus: 200,
-      response,
-    })
+    await addInteraction({ message, payload, responseStatus: 200, response })
   })
 
   if (R.has('examplePayloadForNull', messageSpec)) {
     test('404 response', async () => {
-      await addSerloMessageInteraction({
+      await addInteraction({
         message,
         payload: messageSpec.examplePayloadForNull,
         responseStatus: 404,
@@ -145,7 +140,7 @@ describe.each(R.toPairs(pactSpec))('%s', (message, messageSpec) => {
   }
 })
 
-async function addSerloMessageInteraction<M extends DatabaseLayer.Message>({
+async function addInteraction<M extends DatabaseLayer.Message>({
   message,
   payload,
   responseStatus,
