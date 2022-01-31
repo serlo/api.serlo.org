@@ -182,7 +182,7 @@ async function addInteraction<M extends DatabaseLayer.MessageType>(
       body:
         arg.responseStatus === 200
           ? objMap<unknown, unknown>(toMatcher, arg.response)
-          : JSON.stringify(null),
+          : 'null',
     },
   })
 
