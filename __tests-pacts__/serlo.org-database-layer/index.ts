@@ -113,12 +113,12 @@ const pactSpec: PactSpec = {
     examples: [[{ id: 1 }, license]],
     examplePayloadForNull: { id: 100 },
   },
+  UserSetDescriptionMutation: {
+    examples: [[{ userId: 1, description: 'Hello World' }, { success: true }]],
+  },
   UuidQuery: {
     examples: uuids.map((uuid) => [{ id: uuid.id }, uuid]),
     examplePayloadForNull: { id: 1_000_000 },
-  },
-  UserSetDescriptionMutation: {
-    examples: [[{ userId: 1, description: 'Hello World' }, { success: true }]],
   },
 }
 
