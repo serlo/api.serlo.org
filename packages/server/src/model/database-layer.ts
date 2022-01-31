@@ -43,15 +43,15 @@ export const spec = {
     }),
     canBeNull: true,
   },
-  UuidQuery: {
-    payload: t.type({ id: t.number }),
-    response: UuidDecoder,
-    canBeNull: true,
-  },
   UserSetDescriptionMutation: {
     payload: t.type({ userId: t.number, description: t.string }),
     response: t.type({ success: t.boolean }),
     canBeNull: false,
+  },
+  UuidQuery: {
+    payload: t.type({ id: t.number }),
+    response: UuidDecoder,
+    canBeNull: true,
   },
 } as const
 
