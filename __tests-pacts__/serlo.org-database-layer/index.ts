@@ -19,15 +19,45 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Matchers } from '@pact-foundation/pact'
+import R from 'ramda'
+
+import {
+  applet,
+  appletRevision,
+  article,
+  articleRevision,
+  comment,
+  course,
+  coursePage,
+  coursePageRevision,
+  courseRevision,
+  event,
+  eventRevision,
+  exercise,
+  exerciseRevision,
+  groupedExercise,
+  groupedExerciseRevision,
+  license,
+  page,
+  pageRevision,
+  solution,
+  solutionRevision,
+  taxonomyTermCurriculumTopic,
+  taxonomyTermRoot,
+  taxonomyTermSubject,
+  user,
+  video,
+  videoRevision,
+} from '../../__fixtures__'
+import { DatabaseLayer } from '~/model'
+
 /* eslint-disable import/no-unassigned-import */
 describe('AliasMessage', () => {
   require('./alias')
 })
 describe('EventMessage', () => {
   require('./event')
-})
-describe('LicenseMessage', () => {
-  require('./license')
 })
 describe('NavigationMessage', () => {
   require('./navigation')
@@ -50,3 +80,116 @@ describe('UserMessage', () => {
 describe('UuidMessage', () => {
   require('./uuid')
 })
+
+const uuids = [
+  applet,
+  appletRevision,
+  article,
+  articleRevision,
+  comment,
+  course,
+  courseRevision,
+  coursePage,
+  coursePageRevision,
+  event,
+  eventRevision,
+  exercise,
+  exerciseRevision,
+  groupedExercise,
+  groupedExerciseRevision,
+  page,
+  pageRevision,
+  solution,
+  solutionRevision,
+  taxonomyTermRoot,
+  taxonomyTermSubject,
+  taxonomyTermCurriculumTopic,
+  user,
+  video,
+  videoRevision,
+]
+const pactSpec: PactSpec = {
+  LicenseQuery: {
+    examples: [[{ id: 1 }, license]],
+    examplePayloadForNull: { id: 100 },
+  },
+  UserSetDescriptionMutation: {
+    examples: [[{ userId: 1, description: 'Hello World' }, { success: true }]],
+  },
+  UserSetEmailMutation: {
+    examples: [
+      [
+        { userId: user.id, email: 'test@example.org' },
+        { success: true, username: user.username },
+      ],
+    ],
+  },
+  UuidQuery: {
+    examples: uuids.map((uuid) => [{ id: uuid.id }, uuid]),
+    examplePayloadForNull: { id: 1_000_000 },
+  },
+}
+
+describe.each(R.toPairs(pactSpec))('%s', (type, messageSpec) => {
+  const examples = messageSpec.examples as Example[]
+  test.each(examples)('%s', async (payload, response) => {
+    await addInteraction({ type, payload, responseStatus: 200, response })
+  })
+
+  if (R.has('examplePayloadForNull', messageSpec)) {
+    test('404 response', async () => {
+      await addInteraction({
+        type,
+        payload: messageSpec.examplePayloadForNull,
+        responseStatus: 404,
+        response: null,
+      })
+    })
+  }
+})
+
+async function addInteraction<M extends DatabaseLayer.MessageType>({
+  type,
+  payload,
+  responseStatus,
+  response,
+}: {
+  type: M
+  payload: DatabaseLayer.Payload<M>
+} & (
+  | { responseStatus: 200; response: DatabaseLayer.Response<M> }
+  | { responseStatus: 404; response: null }
+)) {
+  await global.pact.addInteraction({
+    uponReceiving: `Message ${type} with payload ${JSON.stringify(
+      payload
+    )} (case ${responseStatus}-response)`,
+    state: undefined,
+    withRequest: {
+      method: 'POST',
+      path: '/',
+      body: { type, payload },
+      headers: { 'Content-Type': 'application/json' },
+    },
+    willRespondWith: {
+      status: responseStatus,
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body:
+        responseStatus === 200 ? Matchers.like(response) : JSON.stringify(null),
+    },
+  })
+
+  const result = await DatabaseLayer.makeRequest(type, payload)
+
+  expect(result).toEqual(response)
+}
+
+type PactSpec = {
+  [M in DatabaseLayer.MessageType]: {
+    examples: Example<M>[]
+  } & (DatabaseLayer.Spec[M]['canBeNull'] extends true
+    ? { examplePayloadForNull: DatabaseLayer.Payload<M> }
+    : unknown)
+}
+type Example<M extends DatabaseLayer.MessageType = DatabaseLayer.MessageType> =
+  [DatabaseLayer.Payload<M>, DatabaseLayer.Response<M>]

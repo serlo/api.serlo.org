@@ -25,11 +25,11 @@ import * as t from 'io-ts'
 import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
 
+import * as DatabaseLayer from './database-layer'
 import {
   CommentDecoder,
   InstanceDecoder,
   NotificationEventDecoder,
-  UuidDecoder,
   Uuid,
   NotificationDecoder,
   NavigationDecoder,
@@ -60,13 +60,13 @@ export function createSerloModel({
 }) {
   const getUuid = createQuery(
     {
-      decoder: t.union([UuidDecoder, t.null]),
+      decoder: DatabaseLayer.getDecoderFor('UuidQuery'),
       enableSwr: true,
-      getCurrentValue: async (payload: { id: number }) => {
-        const uuid = (await handleMessage({
-          type: 'UuidQuery',
-          payload,
-        })) as Model<'AbstractUuid'> | null
+      getCurrentValue: async (payload: DatabaseLayer.Payload<'UuidQuery'>) => {
+        const uuid = (await DatabaseLayer.makeRequest(
+          'UuidQuery',
+          payload
+        )) as Model<'AbstractUuid'> | null
         return uuid !== null && isSupportedUuidType(uuid.__typename)
           ? uuid
           : null
@@ -227,9 +227,9 @@ export function createSerloModel({
   })
 
   const setDescription = createMutation({
-    decoder: t.type({ success: t.literal(true) }),
-    mutate: (payload: { userId: number; description: string }) => {
-      return handleMessage({ type: 'UserSetDescriptionMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('UserSetDescriptionMutation'),
+    mutate: (payload: DatabaseLayer.Payload<'UserSetDescriptionMutation'>) => {
+      return DatabaseLayer.makeRequest('UserSetDescriptionMutation', payload)
     },
   })
 
@@ -375,21 +375,9 @@ export function createSerloModel({
 
   const getLicense = createQuery(
     {
-      decoder: t.union([
-        t.type({
-          id: t.number,
-          instance: InstanceDecoder,
-          default: t.boolean,
-          title: t.string,
-          url: t.string,
-          content: t.string,
-          agreement: t.string,
-          iconHref: t.string,
-        }),
-        t.null,
-      ]),
-      getCurrentValue: (payload: { id: number }) => {
-        return handleMessage({ type: 'LicenseQuery', payload })
+      decoder: DatabaseLayer.getDecoderFor('LicenseQuery'),
+      getCurrentValue: (payload: DatabaseLayer.Payload<'LicenseQuery'>) => {
+        return DatabaseLayer.makeRequest('LicenseQuery', payload)
       },
       enableSwr: true,
       staleAfter: { day: 1 },

@@ -26,7 +26,49 @@ import { Database } from './database'
 import { RestResolver } from './services'
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model'
+import { DatabaseLayer } from '~/model'
 import { Uuid } from '~/model/decoder'
+
+export function given<M extends DatabaseLayer.MessageType>(type: M) {
+  return {
+    withPayload(payload: DatabaseLayer.Payload<M>) {
+      return {
+        returns(response: DatabaseLayer.Response<M>) {
+          global.server.use(
+            createMessageHandler({
+              message: { type, payload },
+              statusCode: 200,
+              body: response,
+            })
+          )
+        },
+      }
+    },
+    returnsNotFound() {
+      global.server.use(
+        createMessageHandler({ message: { type }, statusCode: 404, body: null })
+      )
+    },
+    hasInternalServerError() {
+      global.server.use(
+        createMessageHandler({ message: { type }, statusCode: 500 })
+      )
+    },
+    returnsBadRequest() {
+      global.server.use(
+        createMessageHandler({
+          message: { type },
+          statusCode: 400,
+          body: { reason: 'bad request' },
+        })
+      )
+    },
+  }
+}
+
+export function givenUuid(uuid: Model<'AbstractUuid'>) {
+  given('UuidQuery').withPayload({ id: uuid.id }).returns(uuid)
+}
 
 export function createAliasHandler(alias: Payload<'serlo', 'getAlias'>) {
   return createMessageHandler({
@@ -38,18 +80,6 @@ export function createAliasHandler(alias: Payload<'serlo', 'getAlias'>) {
       },
     },
     body: alias,
-  })
-}
-
-export function createLicenseHandler(license: Model<'License'>) {
-  return createMessageHandler({
-    message: {
-      type: 'LicenseQuery',
-      payload: {
-        id: license.id,
-      },
-    },
-    body: license,
   })
 }
 
