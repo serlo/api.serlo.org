@@ -79,7 +79,28 @@ export async function makeRequest<M extends Message>({
   }
 }
 
+export function getDecoderFor<M extends NullableMessage>(
+  message: M
+): t.UnionC<[ResponseDecoder<M>, t.NullC]>
+export function getDecoderFor<M extends NotNullableMessage>(
+  message: M
+): ResponseDecoder<M>
+export function getDecoderFor<M extends Message>(message: M): unknown {
+  const messageSpec = spec[message]
+
+  return messageSpec.canBeNull
+    ? t.union([messageSpec.response, t.null])
+    : messageSpec.response
+}
+
 export type Spec = typeof spec
 export type Message = keyof Spec
+export type NullableMessage = Spec[Message]['canBeNull'] extends true
+  ? Message
+  : never
+export type NotNullableMessage = Spec[Message]['canBeNull'] extends false
+  ? Message
+  : never
 export type Payload<M extends Message> = t.TypeOf<Spec[M]['payload']>
 export type Response<M extends Message> = t.TypeOf<Spec[M]['response']>
+export type ResponseDecoder<M extends Message> = Spec[M]['response']
