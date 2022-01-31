@@ -49,8 +49,8 @@ export const spec = {
     canBeNull: true,
   },
   UserSetDescriptionMutation: {
-    payload: t.strict({ userId: t.number, description: t.string }),
-    response: t.strict({ success: t.boolean }),
+    payload: t.type({ userId: t.number, description: t.string }),
+    response: t.type({ success: t.boolean }),
     canBeNull: false,
   },
 } as const
