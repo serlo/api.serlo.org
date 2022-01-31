@@ -23,8 +23,31 @@ import { GraphQLResponse } from 'apollo-server-types'
 import { DocumentNode } from 'graphql'
 import R from 'ramda'
 
-import { Client } from './test-client'
+import { Client, createTestClient } from './test-client'
 import { Sentry } from '~/internals/sentry'
+
+export class Query<V extends Record<string, unknown>> {
+  constructor(
+    private spec: { query: DocumentNode; variables?: V; client?: Client }
+  ) {}
+
+  withVariables(variables: V) {
+    return new Query({ ...this.spec, variables })
+  }
+
+  withClient(client: Client) {
+    return new Query({ ...this.spec, client })
+  }
+
+  execute() {
+    const { client = createTestClient() } = this.spec
+    return client.executeOperation(this.spec)
+  }
+
+  async shouldReturnData(data: unknown) {
+    expect(await this.execute()).toMatchObject({ data })
+  }
+}
 
 export async function assertSuccessfulGraphQLQuery({
   query,
