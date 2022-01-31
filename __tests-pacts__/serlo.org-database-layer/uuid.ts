@@ -23,15 +23,12 @@
 import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
-import { article, user } from '../../../__fixtures__'
-import {
-  createTestClient,
-  createUuidHandler,
-} from '../../../__tests__/__utils__'
+import { article, user } from '../../__fixtures__'
+import { createTestClient, createUuidHandler } from '../../__tests__/__utils__'
 import {
   addMessageInteraction,
   assertSuccessfulGraphQLMutation,
-} from '../../__utils__'
+} from '../__utils__'
 
 test('UuidSetStateMutation', async () => {
   global.client = createTestClient({ userId: user.id })
