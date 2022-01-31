@@ -64,9 +64,10 @@ export async function makeRequest<M extends MessageType>(
   type: M,
   payload: Payload<M>
 ) {
+  const body = JSON.stringify({ type, payload })
   const response = await fetch(URL, {
     method: 'POST',
-    body: JSON.stringify({ type, payload }),
+    body,
     headers: { 'Content-Type': 'application/json' },
   })
 
@@ -87,7 +88,7 @@ export async function makeRequest<M extends MessageType>(
 
     throw new UserInputError(reason)
   } else {
-    throw new Error(`${response.status}: ${JSON.stringify(type)}`)
+    throw new Error(`${response.status}: ${body}`)
   }
 }
 
