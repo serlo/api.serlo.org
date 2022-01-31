@@ -43,6 +43,11 @@ export const spec = {
     }),
     canBeNull: true,
   },
+  UserSetDescriptionMutation: {
+    payload: t.strict({ userId: t.number, description: t.string }),
+    response: t.strict({ success: t.boolean }),
+    canBeNull: false,
+  },
 } as const
 
 export async function makeRequest<M extends Message>({
