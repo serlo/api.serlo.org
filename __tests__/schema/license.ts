@@ -22,47 +22,35 @@
 import { gql } from 'apollo-server'
 
 import { license } from '../../__fixtures__'
-import {
-  assertSuccessfulGraphQLQuery,
-  createTestClient,
-  given,
-} from '../__utils__'
+import { Query, given } from '../__utils__'
 
-const query = gql`
-  query license($id: Int!) {
-    license(id: $id) {
-      id
-      instance
-      default
-      title
-      url
-      content
-      agreement
-      iconHref
+const query = new Query({
+  query: gql`
+    query license($id: Int!) {
+      license(id: $id) {
+        id
+        instance
+        default
+        title
+        url
+        content
+        agreement
+        iconHref
+      }
     }
-  }
-`
+  `,
+})
 
 describe('query "license"', () => {
   test('returns a license', async () => {
     given('LicenseQuery').withPayload({ id: license.id }).returns(license)
 
-    await assertSuccessfulGraphQLQuery({
-      query,
-      variables: { id: license.id },
-      data: { license },
-      client: createTestClient(),
-    })
+    await query.withVariables({ id: license.id }).shouldReturnData({ license })
   })
 
   test('returns null when license with given id does not exist', async () => {
     given('LicenseQuery').returnsNotFound()
 
-    await assertSuccessfulGraphQLQuery({
-      query,
-      variables: { id: 100 },
-      data: { license: null },
-      client: createTestClient(),
-    })
+    await query.withVariables({ id: 100 }).shouldReturnData({ license: null })
   })
 })
