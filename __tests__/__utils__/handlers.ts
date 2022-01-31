@@ -70,6 +70,10 @@ export function given<M extends DatabaseLayer.Message>(message: M) {
   }
 }
 
+export function givenUuid(uuid: Model<'AbstractUuid'>) {
+  given('UuidQuery').withPayload({ id: uuid.id }).returns(uuid)
+}
+
 export function createAliasHandler(alias: Payload<'serlo', 'getAlias'>) {
   return createMessageHandler({
     message: {

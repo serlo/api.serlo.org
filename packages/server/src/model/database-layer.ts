@@ -24,7 +24,7 @@ import { option as O, function as F } from 'fp-ts'
 import * as t from 'io-ts'
 import fetch from 'node-fetch'
 
-import { InstanceDecoder } from './decoder'
+import { InstanceDecoder, UuidDecoder } from './decoder'
 
 const URL = `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`
 
@@ -41,6 +41,11 @@ export const spec = {
       agreement: t.string,
       iconHref: t.string,
     }),
+    canBeNull: true,
+  },
+  UuidQuery: {
+    payload: t.type({ id: t.number }),
+    response: UuidDecoder,
     canBeNull: true,
   },
   UserSetDescriptionMutation: {
