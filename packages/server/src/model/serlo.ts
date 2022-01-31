@@ -30,7 +30,6 @@ import {
   CommentDecoder,
   InstanceDecoder,
   NotificationEventDecoder,
-  UuidDecoder,
   Uuid,
   NotificationDecoder,
   NavigationDecoder,
@@ -61,13 +60,13 @@ export function createSerloModel({
 }) {
   const getUuid = createQuery(
     {
-      decoder: t.union([UuidDecoder, t.null]),
+      decoder: DatabaseLayer.getDecoderFor('UuidQuery'),
       enableSwr: true,
-      getCurrentValue: async (payload: { id: number }) => {
-        const uuid = (await handleMessage({
-          type: 'UuidQuery',
-          payload,
-        })) as Model<'AbstractUuid'> | null
+      getCurrentValue: async (payload: DatabaseLayer.Payload<'UuidQuery'>) => {
+        const uuid = (await DatabaseLayer.makeRequest(
+          'UuidQuery',
+          payload
+        )) as Model<'AbstractUuid'> | null
         return uuid !== null && isSupportedUuidType(uuid.__typename)
           ? uuid
           : null
