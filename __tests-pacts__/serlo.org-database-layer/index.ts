@@ -116,6 +116,14 @@ const pactSpec: PactSpec = {
   UserSetDescriptionMutation: {
     examples: [[{ userId: 1, description: 'Hello World' }, { success: true }]],
   },
+  UserSetEmailMutation: {
+    examples: [
+      [
+        { userId: user.id, email: 'test@example.org' },
+        { success: true, username: user.username },
+      ],
+    ],
+  },
   UuidQuery: {
     examples: uuids.map((uuid) => [{ id: uuid.id }, uuid]),
     examplePayloadForNull: { id: 1_000_000 },
