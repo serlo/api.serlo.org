@@ -148,22 +148,27 @@ describe.each(R.toPairs(pactSpec))('%s', (type, messageSpec) => {
   }
 })
 
-async function addInteraction<M extends DatabaseLayer.MessageType>({
-  type,
-  payload,
-  responseStatus,
-  response,
-}: {
-  type: M
-  payload: DatabaseLayer.Payload<M>
-} & (
-  | { responseStatus: 200; response: DatabaseLayer.Response<M> }
-  | { responseStatus: 404; response: null }
-)) {
+async function addInteraction<M extends DatabaseLayer.MessageType>(
+  arg: {
+    type: M
+    payload: DatabaseLayer.Payload<M>
+  } & (
+    | { responseStatus: 200; response: DatabaseLayer.Response<M> }
+    | { responseStatus: 404; response: null }
+  )
+) {
+  const { type, payload } = arg
+  const responseWithSingletonLists =
+    arg.responseStatus === 200
+      ? objMap<unknown, unknown>(
+          (x) => (Array.isArray(x) ? x.slice(0, 1) : x),
+          arg.response
+        )
+      : null
+  const payloadJson = JSON.stringify(payload)
+
   await global.pact.addInteraction({
-    uponReceiving: `Message ${type} with payload ${JSON.stringify(
-      payload
-    )} (case ${responseStatus}-response)`,
+    uponReceiving: `Message ${arg.type} with payload ${payloadJson} (case ${arg.responseStatus}-response)`,
     state: undefined,
     withRequest: {
       method: 'POST',
@@ -172,16 +177,35 @@ async function addInteraction<M extends DatabaseLayer.MessageType>({
       headers: { 'Content-Type': 'application/json' },
     },
     willRespondWith: {
-      status: responseStatus,
+      status: arg.responseStatus,
       headers: { 'Content-Type': 'application/json; charset=utf-8' },
       body:
-        responseStatus === 200 ? Matchers.like(response) : JSON.stringify(null),
+        arg.responseStatus === 200
+          ? objMap<unknown, unknown>(toMatcher, arg.response)
+          : JSON.stringify(null),
     },
   })
 
   const result = await DatabaseLayer.makeRequest(type, payload)
 
-  expect(result).toEqual(response)
+  expect(result).toEqual(responseWithSingletonLists)
+}
+
+function toMatcher(value: unknown) {
+  if (value == null) {
+    return null
+  } else if (Array.isArray(value) && value.length > 0) {
+    return Matchers.eachLike(value[0])
+  } else {
+    return Matchers.like(value)
+  }
+}
+
+function objMap<A, B>(
+  func: (x: A) => B,
+  value: Record<string, A>
+): Record<string, B> {
+  return R.fromPairs(R.toPairs(value).map(([key, value]) => [key, func(value)]))
 }
 
 type PactSpec = {
