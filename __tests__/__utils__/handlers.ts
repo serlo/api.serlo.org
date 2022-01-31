@@ -29,14 +29,14 @@ import { Payload } from '~/internals/model'
 import { DatabaseLayer } from '~/model'
 import { Uuid } from '~/model/decoder'
 
-export function given<M extends DatabaseLayer.Message>(message: M) {
+export function given<M extends DatabaseLayer.MessageType>(type: M) {
   return {
     withPayload(payload: DatabaseLayer.Payload<M>) {
       return {
         returns(response: DatabaseLayer.Response<M>) {
           global.server.use(
             createMessageHandler({
-              message: { type: message, payload },
+              message: { type, payload },
               statusCode: 200,
               body: response,
             })
@@ -46,22 +46,18 @@ export function given<M extends DatabaseLayer.Message>(message: M) {
     },
     returnsNotFound() {
       global.server.use(
-        createMessageHandler({
-          message: { type: message },
-          statusCode: 404,
-          body: null,
-        })
+        createMessageHandler({ message: { type }, statusCode: 404, body: null })
       )
     },
     hasInternalServerError() {
       global.server.use(
-        createMessageHandler({ message: { type: message }, statusCode: 500 })
+        createMessageHandler({ message: { type }, statusCode: 500 })
       )
     },
     returnsBadRequest() {
       global.server.use(
         createMessageHandler({
-          message: { type: message },
+          message: { type },
           statusCode: 400,
           body: { reason: 'bad request' },
         })
