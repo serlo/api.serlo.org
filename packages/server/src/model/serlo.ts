@@ -376,19 +376,7 @@ export function createSerloModel({
 
   const getLicense = createQuery(
     {
-      decoder: t.union([
-        t.type({
-          id: t.number,
-          instance: InstanceDecoder,
-          default: t.boolean,
-          title: t.string,
-          url: t.string,
-          content: t.string,
-          agreement: t.string,
-          iconHref: t.string,
-        }),
-        t.null,
-      ]),
+      decoder: DatabaseLayer.getDecoderFor('LicenseQuery'),
       getCurrentValue: (payload: DatabaseLayer.Payload<'LicenseQuery'>) => {
         return DatabaseLayer.makeRequest({ message: 'LicenseQuery', payload })
       },
