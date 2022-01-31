@@ -228,9 +228,12 @@ export function createSerloModel({
   })
 
   const setDescription = createMutation({
-    decoder: t.type({ success: t.literal(true) }),
-    mutate: (payload: { userId: number; description: string }) => {
-      return handleMessage({ type: 'UserSetDescriptionMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('UserSetDescriptionMutation'),
+    mutate: (payload: DatabaseLayer.Payload<'UserSetDescriptionMutation'>) => {
+      return DatabaseLayer.makeRequest({
+        message: 'UserSetDescriptionMutation',
+        payload,
+      })
     },
   })
 

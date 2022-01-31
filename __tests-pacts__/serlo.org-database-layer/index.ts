@@ -59,6 +59,12 @@ const pactSpec: PactSpec = {
     example: { payload: { id: 1 }, response: license },
     examplePayloadForNull: { id: 100 },
   },
+  UserSetDescriptionMutation: {
+    example: {
+      payload: { userId: 1, description: 'Hello World' },
+      response: { success: true },
+    },
+  },
 }
 
 describe.each(R.toPairs(pactSpec))('%s', (message, messageSpec) => {
@@ -73,7 +79,7 @@ describe.each(R.toPairs(pactSpec))('%s', (message, messageSpec) => {
     })
   })
 
-  if (messageSpec.examplePayloadForNull != null) {
+  if (R.has('examplePayloadForNull', messageSpec)) {
     test('404 response', async () => {
       await addSerloMessageInteraction({
         message,

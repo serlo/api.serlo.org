@@ -23,111 +23,57 @@ import { gql } from 'apollo-server'
 
 import { user } from '../../../__fixtures__'
 import {
-  assertFailingGraphQLMutation,
-  assertSuccessfulGraphQLMutation,
   createTestClient,
   givenUuidQueryEndpoint,
-  hasInternalServerError,
-  Client,
-  returnsJson,
   Database,
   returnsUuidsFromDatabase,
-  MessageResolver,
-  givenSerloEndpoint,
+  given,
+  Query,
 } from '../../__utils__'
 
 let database: Database
 
-let client: Client
+const query = new Query({
+  query: gql`
+    mutation ($input: UserSetDescriptionInput!) {
+      user {
+        setDescription(input: $input) {
+          success
+        }
+      }
+    }
+  `,
+  variables: { input: { description: 'description' } },
+  client: createTestClient({ userId: user.id }),
+})
 
 beforeEach(() => {
   database = new Database()
   database.hasUuid(user)
 
   givenUuidQueryEndpoint(returnsUuidsFromDatabase(database))
-
-  client = createTestClient({ userId: user.id })
 })
 
 test('returns "{ success: true }" when mutation could be successfully executed', async () => {
-  givenSetDescriptionEndpoint((req, res, ctx) => {
-    const { description } = req.body.payload
+  given('UserSetDescriptionMutation')
+    .withPayload({ userId: user.id, description: 'description' })
+    .returns({ success: true })
 
-    // TODO: There must be a better implementation to check whether the right
-    // parameters are given as payload
-    if (description !== 'description') return res(ctx.status(500))
-
-    return res(ctx.json({ success: true }))
-  })
-
-  await assertSuccessfulGraphQLMutation({
-    ...createSetDescriptionMutation(),
-    data: {
-      user: {
-        setDescription: {
-          success: true,
-        },
-      },
-    },
-    client,
-  })
+  await query.shouldReturnData({ user: { setDescription: { success: true } } })
 })
 
 test('fails when user is not authenticated', async () => {
-  const client = createTestClient({ userId: null })
-
-  await assertFailingGraphQLMutation({
-    ...createSetDescriptionMutation(),
-    client,
-    expectedError: 'UNAUTHENTICATED',
-  })
+  await query.withUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
 
 test('fails when database layer returns a 400er response', async () => {
-  givenSetDescriptionEndpoint(
-    returnsJson({
-      status: 400,
-      json: { success: false, reason: 'user with id "2" does not exist' },
-    })
-  )
+  given('UserSetDescriptionMutation').returnsBadRequest()
 
-  await assertFailingGraphQLMutation({
-    ...createSetDescriptionMutation(),
-    client,
-    expectedError: 'BAD_USER_INPUT',
-    message: 'user with id "2" does not exist',
-  })
+  await query.shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('fails when database layer has an internal error', async () => {
-  givenSetDescriptionEndpoint(hasInternalServerError())
+  given('UserSetDescriptionMutation').hasInternalServerError()
 
-  await assertFailingGraphQLMutation({
-    ...createSetDescriptionMutation(),
-    client,
-    expectedError: 'INTERNAL_SERVER_ERROR',
-  })
+  await query.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
-
-function createSetDescriptionMutation() {
-  return {
-    mutation: gql`
-      mutation ($input: UserSetDescriptionInput!) {
-        user {
-          setDescription(input: $input) {
-            success
-          }
-        }
-      }
-    `,
-    variables: { input: { description: 'description' } },
-  }
-}
-
-function givenSetDescriptionEndpoint(
-  resolver: MessageResolver<{
-    description: string
-  }>
-) {
-  givenSerloEndpoint('UserSetDescriptionMutation', resolver)
-}

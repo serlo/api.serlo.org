@@ -53,6 +53,20 @@ export function given<M extends DatabaseLayer.Message>(message: M) {
         })
       )
     },
+    hasInternalServerError() {
+      global.server.use(
+        createMessageHandler({ message: { type: message }, statusCode: 500 })
+      )
+    },
+    returnsBadRequest() {
+      global.server.use(
+        createMessageHandler({
+          message: { type: message },
+          statusCode: 400,
+          body: { reason: 'bad request' },
+        })
+      )
+    },
   }
 }
 

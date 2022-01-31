@@ -39,6 +39,10 @@ export class Query<V extends Record<string, unknown>> {
     return new Query({ ...this.spec, client })
   }
 
+  withUnauthenticatedUser() {
+    return this.withClient(createTestClient({ userId: null }))
+  }
+
   execute() {
     const { client = createTestClient() } = this.spec
     return client.executeOperation(this.spec)
@@ -46,6 +50,16 @@ export class Query<V extends Record<string, unknown>> {
 
   async shouldReturnData(data: unknown) {
     expect(await this.execute()).toMatchObject({ data })
+  }
+
+  async shouldFailWithError(
+    expectedError:
+      | 'UNAUTHENTICATED'
+      | 'BAD_USER_INPUT'
+      | 'INTERNAL_SERVER_ERROR'
+  ) {
+    const response = await this.execute()
+    expect(response?.errors?.[0]?.extensions?.code).toEqual(expectedError)
   }
 }
 
