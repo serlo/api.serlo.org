@@ -55,22 +55,22 @@ export const spec = {
   },
 } as const
 
-export async function makeRequest<M extends Message>({
-  message,
+export async function makeRequest<M extends MessageType>({
+  type,
   payload,
 }: {
-  message: M
+  type: M
   payload: Payload<M>
 }) {
   const response = await fetch(URL, {
     method: 'POST',
-    body: JSON.stringify({ type: message, payload }),
+    body: JSON.stringify({ type, payload }),
     headers: { 'Content-Type': 'application/json' },
   })
 
   if (response.status === 200) {
     return (await response.json()) as unknown
-  } else if (response.status === 404 && spec[message].canBeNull) {
+  } else if (response.status === 404 && spec[type].canBeNull) {
     // TODO: Here we can check whether the body is "null" and report it toNullable
     // Sentry
     return null
@@ -85,17 +85,17 @@ export async function makeRequest<M extends Message>({
 
     throw new UserInputError(reason)
   } else {
-    throw new Error(`${response.status}: ${JSON.stringify(message)}`)
+    throw new Error(`${response.status}: ${JSON.stringify(type)}`)
   }
 }
 
-export function getDecoderFor<M extends NullableMessage>(
+export function getDecoderFor<M extends NullableMessageType>(
   message: M
 ): t.UnionC<[ResponseDecoder<M>, t.NullC]>
-export function getDecoderFor<M extends NotNullableMessage>(
+export function getDecoderFor<M extends NotNullableMessageType>(
   message: M
 ): ResponseDecoder<M>
-export function getDecoderFor<M extends Message>(message: M): unknown {
+export function getDecoderFor<M extends MessageType>(message: M): t.Mixed {
   const messageSpec = spec[message]
 
   return messageSpec.canBeNull
@@ -104,13 +104,13 @@ export function getDecoderFor<M extends Message>(message: M): unknown {
 }
 
 export type Spec = typeof spec
-export type Message = keyof Spec
-export type NullableMessage = {
-  [K in Message]: Spec[K]['canBeNull'] extends true ? K : never
-}[Message]
-export type NotNullableMessage = {
-  [K in Message]: Spec[K]['canBeNull'] extends false ? K : never
-}[Message]
-export type Payload<M extends Message> = t.TypeOf<Spec[M]['payload']>
-export type Response<M extends Message> = t.TypeOf<Spec[M]['response']>
-export type ResponseDecoder<M extends Message> = Spec[M]['response']
+export type MessageType = keyof Spec
+export type NullableMessageType = {
+  [K in MessageType]: Spec[K]['canBeNull'] extends true ? K : never
+}[MessageType]
+export type NotNullableMessageType = {
+  [K in MessageType]: Spec[K]['canBeNull'] extends false ? K : never
+}[MessageType]
+export type Payload<M extends MessageType> = t.TypeOf<Spec[M]['payload']>
+export type Response<M extends MessageType> = t.TypeOf<Spec[M]['response']>
+export type ResponseDecoder<M extends MessageType> = Spec[M]['response']

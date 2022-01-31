@@ -122,16 +122,16 @@ const pactSpec: PactSpec = {
   },
 }
 
-describe.each(R.toPairs(pactSpec))('%s', (message, messageSpec) => {
+describe.each(R.toPairs(pactSpec))('%s', (type, messageSpec) => {
   const examples = messageSpec.examples as Example[]
   test.each(examples)('%s', async (payload, response) => {
-    await addInteraction({ message, payload, responseStatus: 200, response })
+    await addInteraction({ type, payload, responseStatus: 200, response })
   })
 
   if (R.has('examplePayloadForNull', messageSpec)) {
     test('404 response', async () => {
       await addInteraction({
-        message,
+        type,
         payload: messageSpec.examplePayloadForNull,
         responseStatus: 404,
         response: null,
@@ -140,27 +140,27 @@ describe.each(R.toPairs(pactSpec))('%s', (message, messageSpec) => {
   }
 })
 
-async function addInteraction<M extends DatabaseLayer.Message>({
-  message,
+async function addInteraction<M extends DatabaseLayer.MessageType>({
+  type,
   payload,
   responseStatus,
   response,
 }: {
-  message: M
+  type: M
   payload: DatabaseLayer.Payload<M>
 } & (
   | { responseStatus: 200; response: DatabaseLayer.Response<M> }
   | { responseStatus: 404; response: null }
 )) {
   await global.pact.addInteraction({
-    uponReceiving: `Message ${message} with payload ${JSON.stringify(
+    uponReceiving: `Message ${type} with payload ${JSON.stringify(
       payload
     )} (case ${responseStatus}-response)`,
     state: undefined,
     withRequest: {
       method: 'POST',
       path: '/',
-      body: { type: message, payload },
+      body: { type, payload },
       headers: { 'Content-Type': 'application/json' },
     },
     willRespondWith: {
@@ -171,19 +171,17 @@ async function addInteraction<M extends DatabaseLayer.Message>({
     },
   })
 
-  const result = await DatabaseLayer.makeRequest({ message, payload })
+  const result = await DatabaseLayer.makeRequest({ type, payload })
 
   expect(result).toEqual(response)
 }
 
 type PactSpec = {
-  [M in DatabaseLayer.Message]: {
+  [M in DatabaseLayer.MessageType]: {
     examples: Example<M>[]
   } & (DatabaseLayer.Spec[M]['canBeNull'] extends true
     ? { examplePayloadForNull: DatabaseLayer.Payload<M> }
     : unknown)
 }
-type Example<M extends DatabaseLayer.Message = DatabaseLayer.Message> = [
-  DatabaseLayer.Payload<M>,
-  DatabaseLayer.Response<M>
-]
+type Example<M extends DatabaseLayer.MessageType = DatabaseLayer.MessageType> =
+  [DatabaseLayer.Payload<M>, DatabaseLayer.Response<M>]
