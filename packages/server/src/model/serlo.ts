@@ -230,10 +230,7 @@ export function createSerloModel({
   const setDescription = createMutation({
     decoder: DatabaseLayer.getDecoderFor('UserSetDescriptionMutation'),
     mutate: (payload: DatabaseLayer.Payload<'UserSetDescriptionMutation'>) => {
-      return DatabaseLayer.makeRequest({
-        type: 'UserSetDescriptionMutation',
-        payload,
-      })
+      return DatabaseLayer.makeRequest('UserSetDescriptionMutation', payload)
     },
   })
 
@@ -381,7 +378,7 @@ export function createSerloModel({
     {
       decoder: DatabaseLayer.getDecoderFor('LicenseQuery'),
       getCurrentValue: (payload: DatabaseLayer.Payload<'LicenseQuery'>) => {
-        return DatabaseLayer.makeRequest({ type: 'LicenseQuery', payload })
+        return DatabaseLayer.makeRequest('LicenseQuery', payload)
       },
       enableSwr: true,
       staleAfter: { day: 1 },

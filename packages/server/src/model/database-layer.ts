@@ -55,13 +55,10 @@ export const spec = {
   },
 } as const
 
-export async function makeRequest<M extends MessageType>({
-  type,
-  payload,
-}: {
-  type: M
+export async function makeRequest<M extends MessageType>(
+  type: M,
   payload: Payload<M>
-}) {
+) {
   const response = await fetch(URL, {
     method: 'POST',
     body: JSON.stringify({ type, payload }),
