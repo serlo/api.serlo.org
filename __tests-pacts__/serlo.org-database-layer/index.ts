@@ -133,7 +133,16 @@ const pactSpec: PactSpec = {
 describe.each(R.toPairs(pactSpec))('%s', (type, messageSpec) => {
   const examples = messageSpec.examples as Example[]
   test.each(examples)('%s', async (payload, response) => {
-    await addInteraction({ type, payload, responseStatus: 200, response })
+    const toSingletonList = (x: unknown) =>
+      Array.isArray(x) ? x.slice(0, 1) : x
+    await addInteraction({
+      type,
+      payload,
+      responseStatus: 200,
+      responseHeaders: { 'Content-Type': 'application/json; charset=utf-8' },
+      responseBody: objMap(toMatcher, response),
+      expectedResponse: objMap(toSingletonList, response),
+    })
   })
 
   if (R.has('examplePayloadForNull', messageSpec)) {
@@ -142,29 +151,21 @@ describe.each(R.toPairs(pactSpec))('%s', (type, messageSpec) => {
         type,
         payload: messageSpec.examplePayloadForNull,
         responseStatus: 404,
-        response: null,
+        expectedResponse: null,
       })
     })
   }
 })
 
-async function addInteraction<M extends DatabaseLayer.MessageType>(
-  arg: {
-    type: M
-    payload: DatabaseLayer.Payload<M>
-  } & (
-    | { responseStatus: 200; response: DatabaseLayer.Response<M> }
-    | { responseStatus: 404; response: null }
-  )
-) {
+async function addInteraction<M extends DatabaseLayer.MessageType>(arg: {
+  type: M
+  payload: DatabaseLayer.Payload<M>
+  responseStatus: number
+  expectedResponse: unknown
+  responseHeaders?: Record<string, string>
+  responseBody?: unknown
+}) {
   const { type, payload } = arg
-  const responseWithSingletonLists =
-    arg.responseStatus === 200
-      ? objMap<unknown, unknown>(
-          (x) => (Array.isArray(x) ? x.slice(0, 1) : x),
-          arg.response
-        )
-      : null
   const payloadJson = JSON.stringify(payload)
 
   await global.pact.addInteraction({
@@ -178,20 +179,14 @@ async function addInteraction<M extends DatabaseLayer.MessageType>(
     },
     willRespondWith: {
       status: arg.responseStatus,
-      headers:
-        arg.responseStatus === 200
-          ? { 'Content-Type': 'application/json; charset=utf-8' }
-          : {},
-      body:
-        arg.responseStatus === 200
-          ? objMap<unknown, unknown>(toMatcher, arg.response)
-          : undefined,
+      headers: arg.responseHeaders ?? {},
+      body: arg.responseBody,
     },
   })
 
   const result = await DatabaseLayer.makeRequest(type, payload)
 
-  expect(result).toEqual(responseWithSingletonLists)
+  expect(result).toEqual(arg.expectedResponse)
 }
 
 function toMatcher(value: unknown) {
@@ -204,10 +199,10 @@ function toMatcher(value: unknown) {
   }
 }
 
-function objMap<A, B>(
-  func: (x: A) => B,
-  value: Record<string, A>
-): Record<string, B> {
+function objMap(
+  func: (x: unknown) => unknown,
+  value: Record<string, unknown>
+): Record<string, unknown> {
   return R.fromPairs(R.toPairs(value).map(([key, value]) => [key, func(value)]))
 }
 
