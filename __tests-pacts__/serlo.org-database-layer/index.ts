@@ -178,11 +178,14 @@ async function addInteraction<M extends DatabaseLayer.MessageType>(
     },
     willRespondWith: {
       status: arg.responseStatus,
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      headers:
+        arg.responseStatus === 200
+          ? { 'Content-Type': 'application/json; charset=utf-8' }
+          : {},
       body:
         arg.responseStatus === 200
           ? objMap<unknown, unknown>(toMatcher, arg.response)
-          : 'null',
+          : undefined,
     },
   })
 
