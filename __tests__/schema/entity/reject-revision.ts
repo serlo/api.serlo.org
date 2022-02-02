@@ -33,7 +33,7 @@ import {
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   createTestClient,
-  givenUuidQueryEndpoint,
+  given,
   givenEntityRejectRevisionEndpoint,
   hasInternalServerError,
   Client,
@@ -69,7 +69,7 @@ beforeEach(() => {
   database = new Database()
   database.hasUuids([user, article, articleRevision, unrevisedRevision])
 
-  givenUuidQueryEndpoint(returnsUuidsFromDatabase(database))
+  given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
   givenEntityRejectRevisionEndpoint((req, res, ctx) => {
     const { revisionId, reason, userId } = req.body.payload
 

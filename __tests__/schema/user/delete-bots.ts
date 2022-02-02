@@ -27,7 +27,7 @@ import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   createTestClient,
-  givenUuidQueryEndpoint,
+  given,
   hasInternalServerError,
   Client,
   Database,
@@ -73,7 +73,7 @@ beforeEach(() => {
   givenUserDeleteBotsEndpoint(
     defaultUserDeleteBotsEndpoint({ database, emailHashes })
   )
-  givenUuidQueryEndpoint(returnsUuidsFromDatabase(database))
+  given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
 
   client = createTestClient({ userId: user.id })
 

@@ -188,12 +188,6 @@ export function createMessageHandler(
   })
 }
 
-export function givenUuidQueryEndpoint(
-  resolver: MessageResolver<string, { id: number }>
-) {
-  givenSerloEndpoint('UuidQuery', resolver)
-}
-
 export function returnsUuidsFromDatabase(
   database: Database
 ): RestResolver<BodyType<string, { id: number }>> {
