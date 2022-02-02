@@ -29,6 +29,16 @@ import { InstanceDecoder, UuidDecoder } from './decoder'
 const URL = `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`
 
 export const spec = {
+  ActivityByTypeQuery: {
+    payload: t.type({ userId: t.number }),
+    response: t.type({
+      edits: t.number,
+      comments: t.number,
+      reviews: t.number,
+      taxonomy: t.number,
+    }),
+    canBeNull: false,
+  },
   LicenseQuery: {
     payload: t.type({ id: t.number }),
     response: t.type({

@@ -153,15 +153,12 @@ export function createSerloModel({
 
   const getActivityByType = createQuery(
     {
-      decoder: t.type({
-        edits: t.number,
-        comments: t.number,
-        reviews: t.number,
-        taxonomy: t.number,
-      }),
+      decoder: DatabaseLayer.getDecoderFor('ActivityByTypeQuery'),
       enableSwr: true,
-      getCurrentValue: (payload: { userId: number }) => {
-        return handleMessage({ type: 'ActivityByTypeQuery', payload })
+      getCurrentValue: (
+        payload: DatabaseLayer.Payload<'ActivityByTypeQuery'>
+      ) => {
+        return DatabaseLayer.makeRequest('ActivityByTypeQuery', payload)
       },
       staleAfter: { minutes: 10 },
       getKey: ({ userId }) => {
