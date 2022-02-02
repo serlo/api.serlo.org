@@ -48,20 +48,19 @@ export class Client {
     })
   }
 
-  prepareQuery<
-    V extends Record<string, unknown> = Record<string, unknown>
-  >(query: { query: DocumentNode; variables?: V }) {
+  prepareQuery<V extends Variables = Variables>(query: {
+    query: DocumentNode
+    variables?: V
+  }) {
     return new Query(this, query)
   }
 
-  execute(query: { query: DocumentNode; variables?: Record<string, unknown> }) {
+  execute(query: { query: DocumentNode; variables?: Variables }) {
     return this.apolloServer.executeOperation(query)
   }
 }
 
-export class Query<
-  V extends Record<string, unknown> = Record<string, unknown>
-> {
+export class Query<V extends Variables = Variables> {
   constructor(
     private client: Client,
     private query: { query: DocumentNode; variables?: V }
@@ -98,6 +97,8 @@ export class Query<
     expect(response?.errors?.[0]?.extensions?.code).toEqual(expectedError)
   }
 }
+
+type Variables = Record<string, unknown>
 
 export async function assertSuccessfulGraphQLQuery({
   query,
