@@ -35,7 +35,7 @@ import {
   createTestClient,
   Database,
   givenPageCheckoutRevisionEndpoint,
-  givenUuidQueryEndpoint,
+  given,
   hasInternalServerError,
   nextUuid,
   returnsJson,
@@ -64,7 +64,7 @@ beforeEach(() => {
   database = new Database()
   database.hasUuids([user, page, pageRevision, unrevisedRevision])
 
-  givenUuidQueryEndpoint(returnsUuidsFromDatabase(database))
+  given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
   givenPageCheckoutRevisionEndpoint((req, res, ctx) => {
     const { revisionId, reason, userId } = req.body.payload
 

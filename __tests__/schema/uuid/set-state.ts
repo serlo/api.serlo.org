@@ -29,7 +29,6 @@ import {
   nextUuid,
   Query,
   given,
-  givenUuidQueryEndpoint,
 } from '../../__utils__'
 
 let database: Database
@@ -57,7 +56,7 @@ beforeEach(() => {
     database.hasUuid({ ...article, id: articleId })
   }
 
-  givenUuidQueryEndpoint(returnsUuidsFromDatabase(database))
+  given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
   given('UuidSetStateMutation').isDefinedBy((req, res, ctx) => {
     const { ids, trashed, userId } = req.body.payload
 
