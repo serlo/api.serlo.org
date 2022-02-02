@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ApolloServer } from 'apollo-server'
+import { ApolloServer, gql } from 'apollo-server'
 import { GraphQLResponse } from 'apollo-server-types'
 import { DocumentNode } from 'graphql'
 import R from 'ramda'
@@ -33,6 +33,19 @@ export class Client {
 
   constructor(context?: Partial<Pick<Context, 'service' | 'userId'>>) {
     this.apolloServer = createTestClient(context)
+  }
+
+  prepareUuidQuery(id: number) {
+    return this.prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            id
+          }
+        }
+      `,
+      variables: { id },
+    })
   }
 
   prepareQuery<
