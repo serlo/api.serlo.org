@@ -113,6 +113,9 @@ const pactSpec: PactSpec = {
     examples: [[{ id: 1 }, license]],
     examplePayloadForNull: { id: 100 },
   },
+  UserDeleteBotsMutation: {
+    examples: [],
+  },
   UserSetDescriptionMutation: {
     examples: [[{ userId: 1, description: 'Hello World' }, { success: true }]],
   },
@@ -137,6 +140,9 @@ const pactSpec: PactSpec = {
 
 describe.each(R.toPairs(pactSpec))('%s', (type, messageSpec) => {
   const examples = messageSpec.examples as Example[]
+
+  if (examples.length === 0) return
+
   test.each(examples)('%s', async (payload, response) => {
     if (response === undefined) {
       await addInteraction({
