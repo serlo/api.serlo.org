@@ -43,6 +43,14 @@ export const spec = {
     }),
     canBeNull: true,
   },
+  UserDeleteBotsMutation: {
+    payload: t.type({ botIds: t.array(t.number) }),
+    response: t.strict({
+      success: t.literal(true),
+      emailHashes: t.array(t.string),
+    }),
+    canBeNull: false,
+  },
   UserSetDescriptionMutation: {
     payload: t.type({ userId: t.number, description: t.string }),
     response: t.type({ success: t.boolean }),

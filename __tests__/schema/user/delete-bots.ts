@@ -24,17 +24,12 @@ import { rest } from 'msw'
 
 import { article, user, user2 } from '../../../__fixtures__'
 import {
-  assertFailingGraphQLMutation,
-  assertSuccessfulGraphQLMutation,
-  createTestClient,
   given,
-  hasInternalServerError,
-  LegacyClient,
+  Client,
+  Query,
   Database,
   returnsUuidsFromDatabase,
   MessageResolver,
-  givenSerloEndpoint,
-  assertSuccessfulGraphQLQuery,
   createActivityByTypeHandler,
   RestResolver,
   castToUuid,
@@ -45,12 +40,27 @@ import {
 
 let database: Database
 
-let client: LegacyClient
+let client: Client
 const users = [{ ...user, roles: ['sysadmin'] }, user2]
 let chatUsers: string[]
 let emailHashes: string[]
+let mutation: Query
 
 beforeEach(() => {
+  client = new Client({ userId: user.id })
+  mutation = client.prepareQuery({
+    query: gql`
+      mutation ($input: UserDeleteBotsInput!) {
+        user {
+          deleteBots(input: $input) {
+            success
+          }
+        }
+      }
+    `,
+    variables: { input: { botIds: [user.id] } },
+  })
+
   emailHashes = ['foo']
 
   database = new Database()
@@ -70,12 +80,10 @@ beforeEach(() => {
     )
   )
 
-  givenUserDeleteBotsEndpoint(
+  given('UserDeleteBotsMutation').isDefinedBy(
     defaultUserDeleteBotsEndpoint({ database, emailHashes })
   )
   given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
-
-  client = createTestClient({ userId: user.id })
 
   chatUsers = [user.username]
 
@@ -120,15 +128,13 @@ beforeEach(() => {
 })
 
 test('runs successfully when mutation could be successfully executed', async () => {
-  await assertSuccessfulGraphQLMutation({
-    ...createDeleteBotsMutation({ botIds: [user.id, user2.id] }),
-    data: { user: { deleteBots: { success: true } } },
-    client,
-  })
+  await mutation
+    .withVariables({ input: { botIds: [user.id, user2.id] } })
+    .shouldReturnData({ user: { deleteBots: { success: true } } })
 })
 
 test('updates the cache', async () => {
-  await assertSuccessfulGraphQLQuery({
+  const uuidQuery = client.prepareQuery({
     query: gql`
       query ($id: Int!) {
         uuid(id: $id) {
@@ -137,28 +143,12 @@ test('updates the cache', async () => {
       }
     `,
     variables: { id: user.id },
-    data: { uuid: { id: user.id } },
-    client,
   })
 
-  await assertSuccessfulGraphQLMutation({
-    ...createDeleteBotsMutation({ botIds: [user.id] }),
-    data: { user: { deleteBots: { success: true } } },
-    client,
-  })
+  await uuidQuery.execute()
+  await mutation.execute()
 
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          id
-        }
-      }
-    `,
-    variables: { id: user.id },
-    data: { uuid: null },
-    client,
-  })
+  await uuidQuery.shouldReturnData({ uuid: null })
 })
 
 describe('community chat', () => {
@@ -167,22 +157,14 @@ describe('community chat', () => {
   })
 
   test('deletes the user from the community chat in production', async () => {
-    await assertSuccessfulGraphQLMutation({
-      ...createDeleteBotsMutation({ botIds: [user.id] }),
-      data: { user: { deleteBots: { success: true } } },
-      client,
-    })
+    await mutation.execute()
 
     expect(chatUsers).toHaveLength(0)
     await assertNoErrorEvents()
   })
 
   test('does not sent a sentry event when the user is not in the community chat', async () => {
-    await assertSuccessfulGraphQLMutation({
-      ...createDeleteBotsMutation({ botIds: [user2.id] }),
-      data: { user: { deleteBots: { success: true } } },
-      client,
-    })
+    await mutation.withVariables({ input: { botIds: [user2.id] } }).execute()
 
     expect(chatUsers).toHaveLength(1)
     await assertNoErrorEvents()
@@ -193,11 +175,7 @@ describe('community chat', () => {
       returnsJson({ json: { success: false, errorType: 'unknown' } })
     )
 
-    await assertSuccessfulGraphQLMutation({
-      ...createDeleteBotsMutation({ botIds: [user2.id] }),
-      data: { user: { deleteBots: { success: true } } },
-      client,
-    })
+    await mutation.withVariables({ input: { botIds: [user2.id] } }).execute()
 
     await assertErrorEvent({
       message: 'Cannot delete a user from community.serlo.org',
@@ -212,44 +190,33 @@ describe('mailchimp', () => {
   })
 
   test('deletes the user from the mailchimp newsletter in production', async () => {
-    await assertSuccessfulGraphQLMutation({
-      ...createDeleteBotsMutation({ botIds: [user.id] }),
-      data: { user: { deleteBots: { success: true } } },
-      client,
-    })
+    await mutation.execute()
 
     expect(emailHashes).toHaveLength(0)
     await assertNoErrorEvents()
   })
 
   test('does not sent a sentry event when the user is not in the community chat', async () => {
-    givenUserDeleteBotsEndpoint(
+    given('UserDeleteBotsMutation').isDefinedBy(
       defaultUserDeleteBotsEndpoint({ database, emailHashes: ['bar'] })
     )
 
-    await assertSuccessfulGraphQLMutation({
-      ...createDeleteBotsMutation({ botIds: [user2.id] }),
-      data: { user: { deleteBots: { success: true } } },
-      client,
-    })
+    await mutation.withVariables({ input: { botIds: [user2.id] } }).execute()
 
     expect(emailHashes).toHaveLength(1)
     await assertNoErrorEvents()
   })
 
   test('send a sentry event when the user cannot be deleted', async () => {
-    givenUserDeleteBotsEndpoint(
+    given('UserDeleteBotsMutation').isDefinedBy(
       defaultUserDeleteBotsEndpoint({ database, emailHashes: ['bar'] })
     )
+
     givenMailchimpDeleteEmailEndpoint(
       returnsJson({ status: 405, json: { errorType: 'unknown' } })
     )
 
-    await assertSuccessfulGraphQLMutation({
-      ...createDeleteBotsMutation({ botIds: [user2.id] }),
-      data: { user: { deleteBots: { success: true } } },
-      client,
-    })
+    await mutation.withVariables({ input: { botIds: [user2.id] } }).execute()
 
     await assertErrorEvent({
       message: 'Cannot delete user from mailchimp',
@@ -259,11 +226,9 @@ describe('mailchimp', () => {
 })
 
 test('fails when one of the given bot ids is not a user', async () => {
-  await assertFailingGraphQLMutation({
-    ...createDeleteBotsMutation({ botIds: [castToUuid(article.id)] }),
-    client,
-    expectedError: 'BAD_USER_INPUT',
-  })
+  await mutation
+    .withVariables({ input: { botIds: [castToUuid(article.id)] } })
+    .shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('fails when one given bot id has more than 4 edits', async () => {
@@ -279,68 +244,24 @@ test('fails when one given bot id has more than 4 edits', async () => {
     })
   )
 
-  await assertFailingGraphQLMutation({
-    ...createDeleteBotsMutation({ botIds: [user.id] }),
-    client,
-    expectedError: 'BAD_USER_INPUT',
-  })
+  await mutation.shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('fails when user is not authenticated', async () => {
-  const client = createTestClient({ userId: null })
-
-  await assertFailingGraphQLMutation({
-    ...createDeleteBotsMutation(),
-    client,
-    expectedError: 'UNAUTHENTICATED',
-  })
+  await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
 
 test('fails when user does not have role "sysadmin"', async () => {
   database.hasUuid({ ...user, roles: ['login', 'de_admin'] })
 
-  await assertFailingGraphQLMutation({
-    ...createDeleteBotsMutation(),
-    client,
-    expectedError: 'FORBIDDEN',
-  })
+  await mutation.shouldFailWithError('FORBIDDEN')
 })
 
 test('fails when database layer has an internal error', async () => {
-  givenUserDeleteBotsEndpoint(hasInternalServerError())
+  given('UserDeleteBotsMutation').hasInternalServerError()
 
-  await assertFailingGraphQLMutation({
-    ...createDeleteBotsMutation(),
-    client,
-    expectedError: 'INTERNAL_SERVER_ERROR',
-  })
+  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
-
-function createDeleteBotsMutation(args?: { botIds?: number[] }) {
-  return {
-    mutation: gql`
-      mutation ($input: UserDeleteBotsInput!) {
-        user {
-          deleteBots(input: $input) {
-            success
-          }
-        }
-      }
-    `,
-    variables: { input: { botIds: args?.botIds ?? [user.id] } },
-  }
-}
-
-function givenUserDeleteBotsEndpoint(
-  resolver: MessageResolver<
-    string,
-    {
-      botIds: number[]
-    }
-  >
-) {
-  givenSerloEndpoint('UserDeleteBotsMutation', resolver)
-}
 
 function defaultUserDeleteBotsEndpoint({
   database,
