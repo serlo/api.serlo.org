@@ -21,7 +21,6 @@
  */
 import { Matchers } from '@pact-foundation/pact'
 
-import { activityByType, user } from '../../__fixtures__'
 import { addMessageInteraction } from '../__utils__'
 
 test('ActiveAuthorsQuery', async () => {
@@ -44,22 +43,4 @@ test('ActiveReviewersQuery', async () => {
 
   const userIds = await global.serloModel.getActiveReviewerIds()
   expect(userIds).toEqual([1])
-})
-
-test('ActivityByTypeQuery', async () => {
-  await addMessageInteraction({
-    given: `user has 0 or more activity and a user with id ${user.id} exists`,
-    message: { type: 'ActivityByTypeQuery', payload: { userId: user.id } },
-    responseBody: {
-      edits: Matchers.integer(10),
-      comments: Matchers.integer(11),
-      reviews: Matchers.integer(0),
-      taxonomy: Matchers.integer(3),
-    },
-  })
-
-  const activity = await global.serloModel.getActivityByType({
-    userId: user.id,
-  })
-  expect(activity).toEqual(activityByType)
 })

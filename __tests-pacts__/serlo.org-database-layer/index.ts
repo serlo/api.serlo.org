@@ -109,6 +109,14 @@ const uuids = [
   videoRevision,
 ]
 const pactSpec: PactSpec = {
+  ActivityByTypeQuery: {
+    examples: [
+      [
+        { userId: user.id },
+        { edits: 10, comments: 11, reviews: 0, taxonomy: 3 },
+      ],
+    ],
+  },
   LicenseQuery: {
     examples: [[{ id: 1 }, license]],
     examplePayloadForNull: { id: 100 },

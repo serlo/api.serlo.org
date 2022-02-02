@@ -27,15 +27,14 @@ import {
   article,
   user,
   user2,
-  activityByType,
   articleRevision,
+  activityByType,
 } from '../../../__fixtures__'
 import {
   assertErrorEvent,
   assertNoErrorEvents,
   assertSuccessfulGraphQLQuery,
   LegacyClient,
-  createActivityByTypeHandler,
   createChatUsersInfoHandler,
   createMessageHandler,
   createTestClient,
@@ -48,18 +47,21 @@ import {
   nextUuid,
   returnsJson,
   returnsMalformedJson,
+  given,
+  Client,
+  givenUuid,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { MajorDimension } from '~/model'
 import { castToUuid } from '~/model/decoder'
 import { Instance } from '~/types'
 
-let client: LegacyClient
+let legacyClient: LegacyClient
 
 beforeEach(() => {
-  client = createTestClient()
+  legacyClient = createTestClient()
 
-  global.server.use(createUuidHandler(user))
+  givenUuid(user)
 })
 
 describe('User', () => {
@@ -100,7 +102,7 @@ describe('User', () => {
           user
         ),
       },
-      client,
+      client: legacyClient,
     })
   })
 
@@ -130,7 +132,7 @@ describe('User', () => {
         },
       },
       data: { uuid: null },
-      client,
+      client: legacyClient,
     })
   })
 
@@ -152,7 +154,7 @@ describe('User', () => {
         },
       },
       data: { uuid: null },
-      client,
+      client: legacyClient,
     })
   })
 
@@ -177,7 +179,7 @@ describe('User', () => {
       data: {
         uuid: getTypenameAndId(user),
       },
-      client,
+      client: legacyClient,
     })
   })
 
@@ -195,7 +197,7 @@ describe('User', () => {
       `,
       variables: user,
       data: { uuid: getTypenameAndId(user) },
-      client,
+      client: legacyClient,
     })
   })
 
@@ -214,7 +216,7 @@ describe('User', () => {
       data: {
         uuid: { imageUrl: 'https://community.serlo.org/avatar/alpha' },
       },
-      client,
+      client: legacyClient,
     })
   })
 
@@ -253,59 +255,55 @@ describe('User', () => {
         },
       },
       variables: { id: user.id },
-      client,
+      client: legacyClient,
     })
   })
 
   test('property "isNewAuthor"', async () => {
-    global.server.use(
-      createActivityByTypeHandler({ userId: user.id, activityByType })
-    )
+    given('ActivityByTypeQuery')
+      .withPayload({ userId: user.id })
+      .returns(activityByType)
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query ($userId: Int) {
-          uuid(id: $userId) {
-            ... on User {
-              isNewAuthor
-            }
-          }
-        }
-      `,
-      data: { uuid: { isNewAuthor: false } },
-      variables: { userId: user.id },
-      client,
-    })
-  })
-
-  test('property "activityByType"', async () => {
-    global.server.use(
-      createActivityByTypeHandler({ userId: user.id, activityByType })
-    )
-
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query ($userId: Int) {
-          uuid(id: $userId) {
-            ... on User {
-              activityByType {
-                edits
-                comments
-                reviews
-                taxonomy
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query ($userId: Int) {
+            uuid(id: $userId) {
+              ... on User {
+                isNewAuthor
               }
             }
           }
-        }
-      `,
-      data: {
-        uuid: {
-          activityByType: { edits: 10, comments: 11, reviews: 0, taxonomy: 3 },
-        },
-      },
-      variables: { userId: user.id },
-      client,
-    })
+        `,
+        variables: { userId: user.id },
+      })
+      .shouldReturnData({ uuid: { isNewAuthor: false } })
+  })
+
+  test('property "activityByType"', async () => {
+    given('ActivityByTypeQuery')
+      .withPayload({ userId: user.id })
+      .returns(activityByType)
+
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query ($userId: Int) {
+            uuid(id: $userId) {
+              ... on User {
+                activityByType {
+                  edits
+                  comments
+                  reviews
+                  taxonomy
+                }
+              }
+            }
+          }
+        `,
+        variables: { userId: user.id },
+      })
+      .shouldReturnData({ uuid: { activityByType } })
   })
 
   describe('property "activeAuthor"', () => {
@@ -326,7 +324,7 @@ describe('User', () => {
         query,
         variables: { id: user.id },
         data: { uuid: { isActiveAuthor: true } },
-        client,
+        client: legacyClient,
       })
     })
 
@@ -337,7 +335,7 @@ describe('User', () => {
         query,
         variables: { id: user.id },
         data: { uuid: { isActiveAuthor: false } },
-        client,
+        client: legacyClient,
       })
     })
   })
@@ -360,7 +358,7 @@ describe('User', () => {
         query,
         variables: { id: user.id },
         data: { uuid: { isActiveDonor: true } },
-        client,
+        client: legacyClient,
       })
     })
 
@@ -371,7 +369,7 @@ describe('User', () => {
         query,
         variables: { id: user.id },
         data: { uuid: { isActiveDonor: false } },
-        client,
+        client: legacyClient,
       })
     })
   })
@@ -394,7 +392,7 @@ describe('User', () => {
         query,
         variables: { id: user.id },
         data: { uuid: { isActiveReviewer: true } },
-        client,
+        client: legacyClient,
       })
     })
 
@@ -405,7 +403,7 @@ describe('User', () => {
         query,
         variables: { id: user.id },
         data: { uuid: { isActiveReviewer: false } },
-        client,
+        client: legacyClient,
       })
     })
   })
@@ -487,7 +485,7 @@ describe('User', () => {
         `,
         variables: { id: user.id },
         data: { uuid: { motivation } },
-        client,
+        client: legacyClient,
       })
     }
   })
@@ -510,7 +508,7 @@ describe('User', () => {
         `,
         variables: user,
         data: { uuid: { chatUrl: 'https://community.serlo.org/direct/alpha' } },
-        client,
+        client: legacyClient,
       })
     })
 
@@ -531,7 +529,7 @@ describe('User', () => {
         `,
         variables: user,
         data: { uuid: { chatUrl: null } },
-        client,
+        client: legacyClient,
       })
     })
   })
@@ -587,7 +585,7 @@ describe('User', () => {
           unrevisedEntities: { nodes: [getTypenameAndId(articleByUser)] },
         },
       },
-      client,
+      client: legacyClient,
     })
   })
 })
@@ -724,7 +722,7 @@ function expectUserIds({
         }),
       },
     },
-    client,
+    client: legacyClient,
   })
 }
 
