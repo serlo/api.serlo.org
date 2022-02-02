@@ -80,6 +80,14 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
   }
 }
 
+export function givenUuids(
+  ...uuids: (Model<'AbstractUuid'> | Model<'AbstractUuid'>[])[]
+) {
+  for (const uuid of uuids.flatMap((x) => (Array.isArray(x) ? x : [x]))) {
+    givenUuid(uuid)
+  }
+}
+
 export function givenUuid(uuid: Model<'AbstractUuid'>) {
   given('UuidQuery').withPayload({ id: uuid.id }).returns(uuid)
 }

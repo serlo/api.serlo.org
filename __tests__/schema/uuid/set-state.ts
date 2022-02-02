@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
-import { Model } from '~/internals/graphql'
 
 import { article, page, user as baseUser } from '../../../__fixtures__'
 import {
@@ -29,6 +28,7 @@ import {
   Query,
   given,
   givenUuid,
+  givenUuids,
 } from '../../__utils__'
 
 const user = { ...baseUser, roles: ['de_architect'] }
@@ -49,16 +49,11 @@ const mutation = new Query({
 })
 
 beforeEach(() => {
-  givenUuid(user)
-
   const articles = articleIds.map((id) => {
     return { ...article, id }
   })
 
-  for (const article of articles) {
-    givenUuid(article)
-  }
-
+  givenUuids(user, articles)
   given('UuidSetStateMutation')
     .withPayload({ userId: user.id, trashed: true })
     .isDefinedBy((req, res, ctx) => {
