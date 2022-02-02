@@ -35,7 +35,7 @@ import {
   given,
   givenPageRejectRevisionEndpoint,
   hasInternalServerError,
-  Client,
+  LegacyClient,
   returnsJson,
   Database,
   returnsUuidsFromDatabase,
@@ -44,7 +44,7 @@ import {
 
 let database: Database
 
-let client: Client
+let client: LegacyClient
 const user = { ...baseUser, roles: ['de_static_pages_builder'] }
 const page = {
   ...basePage,

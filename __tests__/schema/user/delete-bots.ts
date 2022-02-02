@@ -29,7 +29,7 @@ import {
   createTestClient,
   given,
   hasInternalServerError,
-  Client,
+  LegacyClient,
   Database,
   returnsUuidsFromDatabase,
   MessageResolver,
@@ -45,7 +45,7 @@ import {
 
 let database: Database
 
-let client: Client
+let client: LegacyClient
 const users = [{ ...user, roles: ['sysadmin'] }, user2]
 let chatUsers: string[]
 let emailHashes: string[]

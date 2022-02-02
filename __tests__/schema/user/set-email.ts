@@ -22,10 +22,10 @@
 import { gql } from 'apollo-server'
 
 import { user as baseUser } from '../../../__fixtures__'
-import { givenUuid, Query, given, createTestClient } from '../../__utils__'
+import { givenUuid, Client, given } from '../../__utils__'
 
 const user = { ...baseUser, roles: ['sysadmin'] }
-const query = new Query({
+const query = new Client({ userId: user.id }).prepareQuery({
   query: gql`
     mutation ($input: UserSetEmailInput!) {
       user {
@@ -38,7 +38,6 @@ const query = new Query({
     }
   `,
   variables: { input: { userId: user.id, email: 'user@example.org' } },
-  client: createTestClient({ userId: user.id }),
 })
 
 beforeEach(() => {

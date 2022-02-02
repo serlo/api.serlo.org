@@ -32,7 +32,7 @@ import {
 } from '../../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
-  Client,
+  LegacyClient,
   createMessageHandler,
   createTestClient,
   createUuidHandler,
@@ -40,7 +40,7 @@ import {
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 
-let client: Client
+let client: LegacyClient
 
 beforeEach(() => {
   client = createTestClient({ userId: user.id })

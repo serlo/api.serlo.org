@@ -31,7 +31,7 @@ import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
-  Client,
+  LegacyClient,
   createTestClient,
   Database,
   givenPageCheckoutRevisionEndpoint,
@@ -45,7 +45,7 @@ import { Model } from '~/internals/graphql'
 
 let database: Database
 
-let client: Client
+let client: LegacyClient
 const user = { ...baseUser, roles: ['de_static_pages_builder'] }
 const page = {
   ...basePage,

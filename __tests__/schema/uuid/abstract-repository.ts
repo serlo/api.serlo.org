@@ -50,7 +50,7 @@ import {
 } from '../../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
-  Client,
+  LegacyClient,
   createAliasHandler,
   createTestClient,
   createUuidHandler,
@@ -68,7 +68,7 @@ import {
   castToUuid,
 } from '~/model/decoder'
 
-let client: Client
+let client: LegacyClient
 
 beforeEach(() => {
   client = createTestClient()
