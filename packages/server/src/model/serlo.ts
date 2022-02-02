@@ -133,10 +133,10 @@ export function createSerloModel({
 
   const getActiveReviewerIds = createQuery(
     {
-      decoder: t.array(t.number),
+      decoder: DatabaseLayer.getDecoderFor('ActiveReviewersQuery'),
       enableSwr: true,
-      getCurrentValue: () => {
-        return handleMessage({ type: 'ActiveReviewersQuery' })
+      getCurrentValue() {
+        return DatabaseLayer.makeRequest('ActiveReviewersQuery', undefined)
       },
       staleAfter: { hour: 1 },
       getKey: () => {

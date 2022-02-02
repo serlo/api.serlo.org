@@ -34,6 +34,11 @@ export const spec = {
     response: t.array(t.number),
     canBeNull: false,
   },
+  ActiveReviewersQuery: {
+    payload: t.undefined,
+    response: t.array(t.number),
+    canBeNull: false,
+  },
   ActivityByTypeQuery: {
     payload: t.type({ userId: t.number }),
     response: t.type({
