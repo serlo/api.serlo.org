@@ -20,18 +20,18 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import { Model } from '~/internals/graphql'
 
-import { article, page, user } from '../../../__fixtures__'
+import { article, page, user as baseUser } from '../../../__fixtures__'
 import {
   createTestClient,
-  Database,
-  returnsUuidsFromDatabase,
   nextUuid,
   Query,
   given,
+  givenUuid,
 } from '../../__utils__'
 
-let database: Database
+const user = { ...baseUser, roles: ['de_architect'] }
 const client = createTestClient({ userId: user.id })
 const articleIds = [article.id, nextUuid(article.id)]
 const mutation = new Query({
@@ -49,21 +49,29 @@ const mutation = new Query({
 })
 
 beforeEach(() => {
-  database = new Database()
-  database.hasUuid({ ...user, roles: ['de_architect'] })
+  givenUuid(user)
 
-  for (const articleId of articleIds) {
-    database.hasUuid({ ...article, id: articleId })
+  const articles = articleIds.map((id) => {
+    return { ...article, id }
+  })
+
+  for (const article of articles) {
+    givenUuid(article)
   }
 
-  given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
   given('UuidSetStateMutation')
     .withPayload({ userId: user.id, trashed: true })
     .isDefinedBy((req, res, ctx) => {
       const { ids, trashed } = req.body.payload
 
       for (const id of ids) {
-        database.changeUuid(id, { trashed })
+        const article = articles.find((x) => x.id === id)
+
+        if (article != null) {
+          article.trashed = trashed
+        } else {
+          return res(ctx.status(500))
+        }
       }
 
       return res(ctx.status(200))
@@ -107,7 +115,7 @@ test('fails when user is not authenticated', async () => {
 
 test('fails when user does not have sufficient permissions', async () => {
   // Architects are not allowed to set the state of pages.
-  database.hasUuid(page)
+  givenUuid(page)
 
   await mutation
     .withVariables({ input: { id: [page.id], trashed: false } })
