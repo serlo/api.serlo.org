@@ -95,9 +95,7 @@ test('fails when database layer returns a BadRequest response', async () => {
 })
 
 test('fails when user is not authenticated', async () => {
-  await mutation
-    .withUnauthenticatedUser()
-    .shouldFailWithError('UNAUTHENTICATED')
+  await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
 
 test('fails when user does not have sufficient permissions', async () => {

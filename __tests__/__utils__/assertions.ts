@@ -58,12 +58,12 @@ export class Query<
     return new Query(this.client, { ...this.query, variables })
   }
 
-  withClient(client: Client) {
+  forClient(client: Client) {
     return new Query(client, this.query)
   }
 
-  withUnauthenticatedUser() {
-    return this.withClient(new Client({ userId: null }))
+  forUnauthenticatedUser() {
+    return this.forClient(new Client({ userId: null }))
   }
 
   execute() {
