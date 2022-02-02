@@ -58,6 +58,15 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
         createDatabaseLayerHandler({ matchType: type, resolver })
       )
     },
+    returns(response: DatabaseLayer.Response<M>) {
+      global.server.use(
+        createMessageHandler({
+          message: { type },
+          statusCode: 200,
+          body: response,
+        })
+      )
+    },
     returnsNotFound() {
       global.server.use(
         createMessageHandler({ message: { type }, statusCode: 404, body: null })

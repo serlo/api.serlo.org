@@ -113,10 +113,10 @@ export function createSerloModel({
 
   const getActiveAuthorIds = createQuery(
     {
-      decoder: t.array(t.number),
+      decoder: DatabaseLayer.getDecoderFor('ActiveAuthorsQuery'),
       enableSwr: true,
-      getCurrentValue: async () => {
-        return await handleMessage({ type: 'ActiveAuthorsQuery' })
+      getCurrentValue() {
+        return DatabaseLayer.makeRequest('ActiveAuthorsQuery', undefined)
       },
       staleAfter: { hour: 1 },
       getKey: () => {

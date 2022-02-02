@@ -109,6 +109,9 @@ const uuids = [
   videoRevision,
 ]
 const pactSpec: PactSpec = {
+  ActiveAuthorsQuery: {
+    examples: [[undefined, [user.id]]],
+  },
   ActivityByTypeQuery: {
     examples: [
       [
@@ -167,8 +170,8 @@ describe.each(R.toPairs(pactSpec))('%s', (type, messageSpec) => {
         payload,
         responseStatus: 200,
         responseHeaders: { 'Content-Type': 'application/json; charset=utf-8' },
-        responseBody: objMap(toMatcher, response),
-        expectedResponse: objMap(toSingletonList, response),
+        responseBody: generalMap(toMatcher, response),
+        expectedResponse: generalMap(toSingletonList, response),
       })
     }
   })
@@ -227,11 +230,13 @@ function toMatcher(value: unknown) {
   }
 }
 
-function objMap(
+function generalMap(
   func: (x: unknown) => unknown,
-  value: Record<string, unknown>
-): Record<string, unknown> {
-  return R.fromPairs(R.toPairs(value).map(([key, value]) => [key, func(value)]))
+  value: Record<string, unknown> | Array<unknown>
+): unknown {
+  return Array.isArray(value)
+    ? func(value)
+    : R.fromPairs(R.toPairs(value).map(([key, value]) => [key, func(value)]))
 }
 
 type PactSpec = {

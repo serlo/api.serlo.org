@@ -307,36 +307,29 @@ describe('User', () => {
   })
 
   describe('property "activeAuthor"', () => {
-    const query = gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          ... on User {
-            isActiveAuthor
+    const query = new Client().prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on User {
+              isActiveAuthor
+            }
           }
         }
-      }
-    `
+      `,
+      variables: { id: user.id },
+    })
 
     test('by id (w/ activeAuthor when user is an active author)', async () => {
-      global.server.use(createActiveAuthorsHandler([user]))
+      given('ActiveAuthorsQuery').returns([user.id])
 
-      await assertSuccessfulGraphQLQuery({
-        query,
-        variables: { id: user.id },
-        data: { uuid: { isActiveAuthor: true } },
-        client: legacyClient,
-      })
+      await query.shouldReturnData({ uuid: { isActiveAuthor: true } })
     })
 
     test('by id (w/ activeAuthor when user is not an active author', async () => {
-      global.server.use(createActiveAuthorsHandler([]))
+      given('ActiveAuthorsQuery').returns([])
 
-      await assertSuccessfulGraphQLQuery({
-        query,
-        variables: { id: user.id },
-        data: { uuid: { isActiveAuthor: false } },
-        client: legacyClient,
-      })
+      await query.shouldReturnData({ uuid: { isActiveAuthor: false } })
     })
   })
 
@@ -592,16 +585,14 @@ describe('User', () => {
 
 describe('endpoint activeAuthors', () => {
   test('returns list of active authors', async () => {
-    global.server.use(createActiveAuthorsHandler([user, user2]))
+    given('ActiveAuthorsQuery').returns([user.id, user2.id])
 
     await expectUserIds({ endpoint: 'activeAuthors', ids: [user.id, user2.id] })
   })
 
   test('returns only users', async () => {
-    global.server.use(
-      createActiveAuthorsHandler([user, article]),
-      createUuidHandler(article)
-    )
+    given('ActiveAuthorsQuery').returns([user.id, article.id])
+    givenUuid(article)
 
     await expectUserIds({ endpoint: 'activeAuthors', ids: [user.id] })
     await assertErrorEvent({ errorContext: { invalidElements: [article] } })
@@ -693,19 +684,21 @@ describe('endpoint activeDonors', () => {
   })
 })
 
-function expectUserIds({
+async function expectUserIds({
   endpoint,
   ids,
 }: {
   endpoint: 'activeReviewers' | 'activeAuthors' | 'activeDonors'
   ids: number[]
 }) {
-  global.server.use(
-    ...ids.map(castToUuid).map((id) => createUuidHandler({ ...user, id }))
-  )
+  ids.map(castToUuid).forEach((id) => givenUuid({ ...user, id }))
+  const nodes = ids.map((id) => {
+    return { __typename: 'User', id }
+  })
 
-  return assertSuccessfulGraphQLQuery({
-    query: gql`
+  await new Client()
+    .prepareQuery({
+      query: gql`
       query {
         ${endpoint} {
           nodes {
@@ -715,28 +708,8 @@ function expectUserIds({
         }
       }
     `,
-    data: {
-      [endpoint]: {
-        nodes: ids.map((id) => {
-          return { __typename: 'User', id }
-        }),
-      },
-    },
-    client: legacyClient,
-  })
-}
-
-function createActiveAuthorsHandler(users: Model<'AbstractUuid'>[]) {
-  return createActiveAuthorsResponseHandler(users.map((user) => user.id))
-}
-
-function createActiveAuthorsResponseHandler(body: unknown) {
-  return createMessageHandler({
-    message: {
-      type: 'ActiveAuthorsQuery',
-    },
-    body,
-  })
+    })
+    .shouldReturnData({ [endpoint]: { nodes } })
 }
 
 function createActiveReviewersHandler(users: Model<'AbstractUuid'>[]) {

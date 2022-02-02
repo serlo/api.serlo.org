@@ -23,17 +23,6 @@ import { Matchers } from '@pact-foundation/pact'
 
 import { addMessageInteraction } from '../__utils__'
 
-test('ActiveAuthorsQuery', async () => {
-  await addMessageInteraction({
-    given: 'users with ids 1 and 10 are active authors',
-    message: { type: 'ActiveAuthorsQuery' },
-    responseBody: Matchers.eachLike(1),
-  })
-
-  const userIds = await global.serloModel.getActiveAuthorIds()
-  expect(userIds).toEqual([1])
-})
-
 test('ActiveReviewersQuery', async () => {
   await addMessageInteraction({
     given: 'users with ids 1 and 10 are active authors',
