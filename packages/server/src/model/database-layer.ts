@@ -53,6 +53,15 @@ export const spec = {
     response: t.type({ success: t.boolean, username: t.string }),
     canBeNull: false,
   },
+  UuidSetStateMutation: {
+    payload: t.type({
+      ids: t.array(t.number),
+      userId: t.number,
+      trashed: t.boolean,
+    }),
+    response: t.void,
+    canBeNull: false,
+  },
   UuidQuery: {
     payload: t.type({ id: t.number }),
     response: UuidDecoder,
@@ -72,6 +81,8 @@ export async function makeRequest<M extends MessageType>(
   })
 
   if (response.status === 200) {
+    if (spec[type].response._tag === 'VoidType') return
+
     return (await response.json()) as unknown
   } else if (response.status === 404 && spec[type].canBeNull) {
     // TODO: Here we can check whether the body is "null" and report it toNullable

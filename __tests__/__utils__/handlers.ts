@@ -44,6 +44,11 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
         },
       }
     },
+    isDefinedBy(resolver: MessageResolver<M, DatabaseLayer.Payload<M>>) {
+      global.server.use(
+        createDatabaseLayerHandler({ matchType: type, resolver })
+      )
+    },
     returnsNotFound() {
       global.server.use(
         createMessageHandler({ message: { type }, statusCode: 404, body: null })
@@ -184,14 +189,14 @@ export function createMessageHandler(
 }
 
 export function givenUuidQueryEndpoint(
-  resolver: MessageResolver<{ id: number }>
+  resolver: MessageResolver<string, { id: number }>
 ) {
   givenSerloEndpoint('UuidQuery', resolver)
 }
 
 export function returnsUuidsFromDatabase(
   database: Database
-): RestResolver<BodyType<{ id: number }>> {
+): RestResolver<BodyType<string, { id: number }>> {
   return (req, res, ctx) => {
     const uuid = database.getUuid(req.body.payload.id)
 
@@ -200,65 +205,80 @@ export function returnsUuidsFromDatabase(
 }
 
 export function givenEntityCheckoutRevisionEndpoint(
-  resolver: MessageResolver<{
-    revisionId: Uuid
-    reason: string
-    userId: number
-  }>
+  resolver: MessageResolver<
+    string,
+    {
+      revisionId: Uuid
+      reason: string
+      userId: number
+    }
+  >
 ) {
   givenSerloEndpoint('EntityCheckoutRevisionMutation', resolver)
 }
 
 export function givenPageCheckoutRevisionEndpoint(
-  resolver: MessageResolver<{
-    revisionId: Uuid
-    reason: string
-    userId: number
-  }>
+  resolver: MessageResolver<
+    string,
+    {
+      revisionId: Uuid
+      reason: string
+      userId: number
+    }
+  >
 ) {
   givenSerloEndpoint('PageCheckoutRevisionMutation', resolver)
 }
 
 export function givenEntityRejectRevisionEndpoint(
-  resolver: MessageResolver<{
-    revisionId: Uuid
-    reason: string
-    userId: number
-  }>
+  resolver: MessageResolver<
+    string,
+    {
+      revisionId: Uuid
+      reason: string
+      userId: number
+    }
+  >
 ) {
   givenSerloEndpoint('EntityRejectRevisionMutation', resolver)
 }
 
 export function givenPageRejectRevisionEndpoint(
-  resolver: MessageResolver<{
-    revisionId: Uuid
-    reason: string
-    userId: number
-  }>
+  resolver: MessageResolver<
+    string,
+    {
+      revisionId: Uuid
+      reason: string
+      userId: number
+    }
+  >
 ) {
   givenSerloEndpoint('PageRejectRevisionMutation', resolver)
 }
 
 export function givenSerloEndpoint<Payload = DefaultPayloadType>(
   matchType: string,
-  resolver: MessageResolver<Payload>
+  resolver: MessageResolver<string, Payload>
 ) {
   global.server.use(
-    createDatabaseLayerHandler<Payload>({ matchType, resolver })
+    createDatabaseLayerHandler<string, Payload>({ matchType, resolver })
   )
 }
 
-export function createDatabaseLayerHandler<Payload = DefaultPayloadType>(args: {
-  matchType: string
+export function createDatabaseLayerHandler<
+  MessageType extends string = string,
+  Payload = DefaultPayloadType
+>(args: {
+  matchType: MessageType
   matchPayloads?: Payload[]
-  resolver: MessageResolver<Payload>
+  resolver: MessageResolver<MessageType, Payload>
 }) {
   const { matchType, matchPayloads, resolver } = args
 
   const handler = rest.post(getDatabaseLayerUrl({ path: '/' }), resolver)
 
   // Only use this handler if message matches
-  handler.predicate = (req: MockedRequest<BodyType<Payload>>) =>
+  handler.predicate = (req: MockedRequest<BodyType<MessageType, Payload>>) =>
     req?.body?.type === matchType &&
     (matchPayloads === undefined ||
       matchPayloads.some((payload) => R.equals(req.body.payload, payload)))
@@ -270,13 +290,20 @@ function getDatabaseLayerUrl({ path }: { path: string }) {
   return `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`
 }
 
-export type MessageResolver<Payload = DefaultPayloadType> = RestResolver<
-  BodyType<Payload>
->
-type BodyType<Payload = DefaultPayloadType> = Required<MessagePayload<Payload>>
+export type MessageResolver<
+  MessageType extends string = string,
+  Payload = DefaultPayloadType
+> = RestResolver<BodyType<MessageType, Payload>>
+type BodyType<
+  MessageType extends string = string,
+  Payload = DefaultPayloadType
+> = Required<MessagePayload<MessageType, Payload>>
 
-interface MessagePayload<Payload = DefaultPayloadType> {
-  type: string
+interface MessagePayload<
+  MessageType extends string = string,
+  Payload = DefaultPayloadType
+> {
+  type: MessageType
   payload?: Payload
 }
 

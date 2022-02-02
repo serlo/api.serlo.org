@@ -464,13 +464,16 @@ test('AbstractEntity.events returns events for this entity', async () => {
 
 function setupEvents(allEvents: Model<'AbstractNotificationEvent'>[]) {
   global.server.use(
-    createDatabaseLayerHandler<{
-      after?: number
-      objectId?: number
-      actorId?: number
-      instance: Instance
-      first: number
-    }>({
+    createDatabaseLayerHandler<
+      string,
+      {
+        after?: number
+        objectId?: number
+        actorId?: number
+        instance: Instance
+        first: number
+      }
+    >({
       matchType: 'EventsQuery',
       resolver(req, res, ctx) {
         const { after, objectId, actorId, first, instance } = req.body.payload
