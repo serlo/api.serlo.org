@@ -135,7 +135,16 @@ test('runs successfully when mutation could be successfully executed', async () 
 })
 
 test('updates the cache', async () => {
-  const uuidQuery = client.prepareUuidQuery(user.id)
+  const uuidQuery = client.prepareQuery({
+    query: gql`
+      query ($id: Int!) {
+        uuid(id: $id) {
+          id
+        }
+      }
+    `,
+    variables: { id: user.id },
+  })
 
   await uuidQuery.execute()
   await mutation.execute()

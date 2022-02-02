@@ -70,7 +70,16 @@ test('returns "{ success: true }" when it succeeds', async () => {
 })
 
 test('updates the cache when it succeeds', async () => {
-  const uuidQuery = client.prepareUuidQuery(article.id)
+  const uuidQuery = client.prepareQuery({
+    query: gql`
+      query ($id: Int!) {
+        uuid(id: $id) {
+          trashed
+        }
+      }
+    `,
+    variables: { id: article.id },
+  })
   await uuidQuery.shouldReturnData({ uuid: { trashed: false } })
   await mutation.execute()
 
