@@ -35,7 +35,7 @@ import {
   createTestClient,
   givenEntityCheckoutRevisionEndpoint,
   hasInternalServerError,
-  Client,
+  LegacyClient,
   returnsJson,
   Database,
   returnsUuidsFromDatabase,
@@ -50,7 +50,7 @@ import { encodeId, Model } from '~/internals/graphql'
 
 let database: Database
 
-let client: Client
+let client: LegacyClient
 const user = { ...baseUser, roles: ['de_reviewer'] }
 const article = {
   ...baseArticle,

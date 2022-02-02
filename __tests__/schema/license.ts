@@ -22,9 +22,9 @@
 import { gql } from 'apollo-server'
 
 import { license } from '../../__fixtures__'
-import { Query, given } from '../__utils__'
+import { Client, given } from '../__utils__'
 
-const query = new Query({
+const query = new Client().prepareQuery({
   query: gql`
     query license($id: Int!) {
       license(id: $id) {

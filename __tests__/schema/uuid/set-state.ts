@@ -22,19 +22,12 @@
 import { gql } from 'apollo-server'
 
 import { article, page, user as baseUser } from '../../../__fixtures__'
-import {
-  createTestClient,
-  nextUuid,
-  Query,
-  given,
-  givenUuid,
-  givenUuids,
-} from '../../__utils__'
+import { nextUuid, Client, given, givenUuid, givenUuids } from '../../__utils__'
 
 const user = { ...baseUser, roles: ['de_architect'] }
-const client = createTestClient({ userId: user.id })
 const articleIds = [article.id, nextUuid(article.id)]
-const mutation = new Query({
+const client = new Client({ userId: user.id })
+const mutation = client.prepareQuery({
   query: gql`
     mutation uuid($input: UuidSetStateInput!) {
       uuid {
@@ -45,7 +38,6 @@ const mutation = new Query({
     }
   `,
   variables: { input: { id: articleIds, trashed: true } },
-  client,
 })
 
 beforeEach(() => {
@@ -78,7 +70,7 @@ test('returns "{ success: true }" when it succeeds', async () => {
 })
 
 test('updates the cache when it succeeds', async () => {
-  const uuidQuery = new Query({
+  const uuidQuery = client.prepareQuery({
     query: gql`
       query ($id: Int!) {
         uuid(id: $id) {
@@ -87,8 +79,8 @@ test('updates the cache when it succeeds', async () => {
       }
     `,
     variables: { id: article.id },
-    client,
   })
+
   await uuidQuery.shouldReturnData({ uuid: { trashed: false } })
 
   await mutation.execute()

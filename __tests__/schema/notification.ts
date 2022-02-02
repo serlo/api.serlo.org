@@ -55,7 +55,7 @@ import {
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   castToUuid,
-  Client,
+  LegacyClient,
   createMessageHandler,
   createNotificationEventHandler,
   createTestClient,
@@ -67,7 +67,7 @@ import { Payload } from '~/internals/model'
 import { Instance } from '~/types'
 
 describe('notifications', () => {
-  let client: Client
+  let client: LegacyClient
 
   beforeEach(() => {
     client = createTestClient({ userId: user.id })
@@ -200,7 +200,7 @@ describe('notifications', () => {
 })
 
 describe('notificationEvent', () => {
-  let client: Client
+  let client: LegacyClient
 
   beforeEach(() => {
     client = createTestClient({ userId: null })

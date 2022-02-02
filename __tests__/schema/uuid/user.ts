@@ -34,7 +34,7 @@ import {
   assertErrorEvent,
   assertNoErrorEvents,
   assertSuccessfulGraphQLQuery,
-  Client,
+  LegacyClient,
   createActivityByTypeHandler,
   createChatUsersInfoHandler,
   createMessageHandler,
@@ -54,7 +54,7 @@ import { MajorDimension } from '~/model'
 import { castToUuid } from '~/model/decoder'
 import { Instance } from '~/types'
 
-let client: Client
+let client: LegacyClient
 
 beforeEach(() => {
   client = createTestClient()

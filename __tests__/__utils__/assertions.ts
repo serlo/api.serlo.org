@@ -19,33 +19,55 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { ApolloServer } from 'apollo-server'
 import { GraphQLResponse } from 'apollo-server-types'
 import { DocumentNode } from 'graphql'
 import R from 'ramda'
 
-import { Client, createTestClient } from './test-client'
+import { LegacyClient, createTestClient } from './test-client'
+import { Context } from '~/internals/graphql'
 import { Sentry } from '~/internals/sentry'
 
-export class Query<V extends Record<string, unknown>> {
+export class Client {
+  private apolloServer: ApolloServer
+
+  constructor(context?: Partial<Pick<Context, 'service' | 'userId'>>) {
+    this.apolloServer = createTestClient(context)
+  }
+
+  prepareQuery<
+    V extends Record<string, unknown> = Record<string, unknown>
+  >(query: { query: DocumentNode; variables?: V }) {
+    return new Query(this, query)
+  }
+
+  execute(query: { query: DocumentNode; variables?: Record<string, unknown> }) {
+    return this.apolloServer.executeOperation(query)
+  }
+}
+
+export class Query<
+  V extends Record<string, unknown> = Record<string, unknown>
+> {
   constructor(
-    private spec: { query: DocumentNode; variables?: V; client?: Client }
+    private client: Client,
+    private query: { query: DocumentNode; variables?: V }
   ) {}
 
   withVariables(variables: V) {
-    return new Query({ ...this.spec, variables })
+    return new Query(this.client, { ...this.query, variables })
   }
 
   withClient(client: Client) {
-    return new Query({ ...this.spec, client })
+    return new Query(client, this.query)
   }
 
   withUnauthenticatedUser() {
-    return this.withClient(createTestClient({ userId: null }))
+    return this.withClient(new Client({ userId: null }))
   }
 
   execute() {
-    const { client = createTestClient() } = this.spec
-    return client.executeOperation(this.spec)
+    return this.client.execute(this.query)
   }
 
   async shouldReturnData(data: unknown) {
@@ -74,7 +96,7 @@ export async function assertSuccessfulGraphQLQuery({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   variables?: Record<string, any>
   data: GraphQLResponse['data']
-  client: Client
+  client: LegacyClient
 }) {
   const response = await client.executeOperation({
     query,
@@ -94,7 +116,7 @@ export async function assertFailingGraphQLQuery({
   query: string | DocumentNode
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   variables?: Record<string, any>
-  client: Client
+  client: LegacyClient
   expectedError?: string
   message?: unknown
 }) {
@@ -122,7 +144,7 @@ export async function assertSuccessfulGraphQLMutation({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   variables?: Record<string, any>
   data?: GraphQLResponse['data']
-  client: Client
+  client: LegacyClient
 }) {
   const response = await client.executeOperation({
     query: mutation,
@@ -142,7 +164,7 @@ export async function assertFailingGraphQLMutation({
   mutation: DocumentNode
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   variables?: Record<string, any>
-  client: Client
+  client: LegacyClient
   expectedError: string
   message?: string
 }) {

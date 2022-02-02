@@ -44,7 +44,7 @@ import {
 import {
   assertFailingGraphQLQuery,
   assertSuccessfulGraphQLQuery,
-  Client,
+  LegacyClient,
   createDatabaseLayerHandler,
   createTestClient,
   createUuidHandler,
@@ -56,7 +56,7 @@ import { Model } from '~/internals/graphql'
 import { castToUuid, NotificationEventType } from '~/model/decoder'
 import { Instance } from '~/types'
 
-let client: Client
+let client: LegacyClient
 
 beforeEach(() => {
   client = createTestClient({

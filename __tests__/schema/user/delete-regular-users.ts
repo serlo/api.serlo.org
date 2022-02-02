@@ -28,7 +28,7 @@ import {
   createTestClient,
   given,
   hasInternalServerError,
-  Client,
+  LegacyClient,
   Database,
   returnsUuidsFromDatabase,
   MessageResolver,
@@ -39,7 +39,7 @@ import {
 
 let database: Database
 
-let client: Client
+let client: LegacyClient
 const user = { ...baseUser, roles: ['sysadmin'] }
 const userIds = [user.id, nextUuid(user.id)]
 const noUserId = nextUuid(nextUuid(user.id))
