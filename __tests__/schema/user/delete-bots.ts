@@ -21,6 +21,7 @@
  */
 import { gql } from 'apollo-server'
 import { rest } from 'msw'
+import { Model } from '~/internals/graphql'
 
 import { article, user, user2 } from '../../../__fixtures__'
 import {
@@ -29,7 +30,6 @@ import {
   Query,
   Database,
   returnsUuidsFromDatabase,
-  MessageResolver,
   createActivityByTypeHandler,
   RestResolver,
   castToUuid,
@@ -43,7 +43,7 @@ let database: Database
 let client: Client
 const users = [{ ...user, roles: ['sysadmin'] }, user2]
 let chatUsers: string[]
-let emailHashes: string[]
+let mailchimpEmails: string[]
 let mutation: Query
 
 beforeEach(() => {
@@ -61,7 +61,7 @@ beforeEach(() => {
     variables: { input: { botIds: [user.id] } },
   })
 
-  emailHashes = ['foo']
+  mailchimpEmails = [emailHash(user)]
 
   database = new Database()
   database.hasUuids(users)
@@ -80,10 +80,21 @@ beforeEach(() => {
     )
   )
 
-  given('UserDeleteBotsMutation').isDefinedBy(
-    defaultUserDeleteBotsEndpoint({ database, emailHashes })
-  )
   given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
+  given('UserDeleteBotsMutation').isDefinedBy((req, res, ctx) => {
+    const { botIds } = req.body.payload
+
+    for (const id of botIds) {
+      database.deleteUuid(id)
+    }
+
+    return res(
+      ctx.json({
+        success: true,
+        emailHashes: botIds.map((id) => emailHash({ id })),
+      })
+    )
+  })
 
   chatUsers = [user.username]
 
@@ -117,8 +128,8 @@ beforeEach(() => {
 
     const { emailHash } = req.params
 
-    if (emailHashes.includes(emailHash)) {
-      emailHashes = emailHashes.filter((x) => x !== emailHash)
+    if (mailchimpEmails.includes(emailHash)) {
+      mailchimpEmails = mailchimpEmails.filter((x) => x !== emailHash)
 
       return res(ctx.status(204))
     } else {
@@ -192,35 +203,27 @@ describe('mailchimp', () => {
   test('deletes the user from the mailchimp newsletter in production', async () => {
     await mutation.execute()
 
-    expect(emailHashes).toHaveLength(0)
+    expect(mailchimpEmails).toHaveLength(0)
     await assertNoErrorEvents()
   })
 
-  test('does not sent a sentry event when the user is not in the community chat', async () => {
-    given('UserDeleteBotsMutation').isDefinedBy(
-      defaultUserDeleteBotsEndpoint({ database, emailHashes: ['bar'] })
-    )
-
+  test('does not sent a sentry event when the user is not in the newsletter', async () => {
     await mutation.withVariables({ input: { botIds: [user2.id] } }).execute()
 
-    expect(emailHashes).toHaveLength(1)
+    expect(mailchimpEmails).toHaveLength(1)
     await assertNoErrorEvents()
   })
 
   test('send a sentry event when the user cannot be deleted', async () => {
-    given('UserDeleteBotsMutation').isDefinedBy(
-      defaultUserDeleteBotsEndpoint({ database, emailHashes: ['bar'] })
-    )
-
     givenMailchimpDeleteEmailEndpoint(
       returnsJson({ status: 405, json: { errorType: 'unknown' } })
     )
 
-    await mutation.withVariables({ input: { botIds: [user2.id] } }).execute()
+    await mutation.execute()
 
     await assertErrorEvent({
       message: 'Cannot delete user from mailchimp',
-      errorContext: { emailHash: 'bar' },
+      errorContext: { emailHash: emailHash(user) },
     })
   })
 })
@@ -263,24 +266,6 @@ test('fails when database layer has an internal error', async () => {
   await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
 
-function defaultUserDeleteBotsEndpoint({
-  database,
-  emailHashes,
-}: {
-  database: Database
-  emailHashes: string[]
-}): MessageResolver<string, { botIds: number[] }> {
-  return (req, res, ctx) => {
-    const { botIds } = req.body.payload
-
-    for (const id of botIds) {
-      database.deleteUuid(id)
-    }
-
-    return res(ctx.json({ success: true, emailHashes }))
-  }
-}
-
 function givenChatDeleteUserEndpoint(
   resolver: RestResolver<{ username: string }>
 ) {
@@ -297,4 +282,8 @@ function givenMailchimpDeleteEmailEndpoint(
     `lists/a7bb2bbc4f/members/:emailHash/actions/delete-permanent`
 
   global.server.use(rest.post(url, resolver))
+}
+
+function emailHash(user: { id: number }) {
+  return `${user.id}@example.org`
 }
