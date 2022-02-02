@@ -109,7 +109,7 @@ beforeEach(() => {
 
   givenMailchimpDeleteEmailEndpoint((req, res, ctx) => {
     const authHeader = req.headers.get('Authorization') ?? ''
-    const key = Buffer.from(authHeader.substr('Basic '.length), 'base64')
+    const key = Buffer.from(authHeader.slice('Basic '.length), 'base64')
       .toString()
       .split(':')[1]
 
