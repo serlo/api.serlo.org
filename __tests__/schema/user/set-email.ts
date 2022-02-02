@@ -61,7 +61,7 @@ test('returns "{ success: true }" when mutation could be successfully executed',
 })
 
 test('fails when user is not authenticated', async () => {
-  await query.withUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
+  await query.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
 
 test('fails when user does not have role "sysadmin"', async () => {
