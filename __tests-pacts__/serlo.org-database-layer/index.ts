@@ -74,9 +74,6 @@ describe('SubscriptionMessage', () => {
 describe('ThreadMessage', () => {
   require('./thread')
 })
-describe('UserMessage', () => {
-  require('./user')
-})
 describe('UuidMessage', () => {
   require('./uuid')
 })
@@ -110,6 +107,9 @@ const uuids = [
 ]
 const pactSpec: PactSpec = {
   ActiveAuthorsQuery: {
+    examples: [[undefined, [user.id]]],
+  },
+  ActiveReviewersQuery: {
     examples: [[undefined, [user.id]]],
   },
   ActivityByTypeQuery: {
