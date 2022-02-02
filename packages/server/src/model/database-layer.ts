@@ -71,6 +71,11 @@ export const spec = {
     }),
     canBeNull: false,
   },
+  UserPotentialSpamUsersQuery: {
+    payload: t.type({ first: t.number, after: t.union([t.number, t.null]) }),
+    response: t.type({ userIds: t.array(t.number) }),
+    canBeNull: false,
+  },
   UserSetDescriptionMutation: {
     payload: t.type({ userId: t.number, description: t.string }),
     response: t.type({ success: t.boolean }),

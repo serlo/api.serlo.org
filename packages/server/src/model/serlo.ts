@@ -179,12 +179,11 @@ export function createSerloModel({
   )
 
   const getPotentialSpamUsers = createRequest({
-    decoder: t.strict({ userIds: t.array(t.number) }),
-    async getCurrentValue(payload: { first: number; after: number | null }) {
-      return await handleMessage({
-        type: 'UserPotentialSpamUsersQuery',
-        payload,
-      })
+    decoder: DatabaseLayer.getDecoderFor('UserPotentialSpamUsersQuery'),
+    getCurrentValue(
+      payload: DatabaseLayer.Payload<'UserPotentialSpamUsersQuery'>
+    ) {
+      return DatabaseLayer.makeRequest('UserPotentialSpamUsersQuery', payload)
     },
   })
 
