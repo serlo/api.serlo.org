@@ -29,7 +29,6 @@ import {
   Query,
   Database,
   returnsUuidsFromDatabase,
-  createActivityByTypeHandler,
   RestResolver,
   castToUuid,
   assertNoErrorEvents,
@@ -65,19 +64,11 @@ beforeEach(() => {
   database = new Database()
   database.hasUuids(users)
 
-  global.server.use(
-    ...users.map((user) =>
-      createActivityByTypeHandler({
-        userId: user.id,
-        activityByType: {
-          edits: 1,
-          comments: 0,
-          reviews: 0,
-          taxonomy: 0,
-        },
-      })
-    )
-  )
+  for (const user of users) {
+    given('ActivityByTypeQuery')
+      .withPayload({ userId: user.id })
+      .returns({ edits: 1, comments: 0, reviews: 0, taxonomy: 0 })
+  }
 
   given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
   given('UserDeleteBotsMutation').isDefinedBy((req, res, ctx) => {
@@ -225,17 +216,9 @@ test('fails when one of the given bot ids is not a user', async () => {
 })
 
 test('fails when one given bot id has more than 4 edits', async () => {
-  global.server.use(
-    createActivityByTypeHandler({
-      userId: user.id,
-      activityByType: {
-        edits: 5,
-        comments: 0,
-        reviews: 0,
-        taxonomy: 0,
-      },
-    })
-  )
+  given('ActivityByTypeQuery')
+    .withPayload({ userId: user.id })
+    .returns({ edits: 5, comments: 0, reviews: 0, taxonomy: 0 })
 
   await mutation.shouldFailWithError('BAD_USER_INPUT')
 })
