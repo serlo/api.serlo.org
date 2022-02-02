@@ -29,6 +29,11 @@ import { InstanceDecoder, UuidDecoder } from './decoder'
 const URL = `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`
 
 export const spec = {
+  ActiveAuthorsQuery: {
+    payload: t.undefined,
+    response: t.array(t.number),
+    canBeNull: false,
+  },
   ActivityByTypeQuery: {
     payload: t.type({ userId: t.number }),
     response: t.type({
@@ -91,7 +96,10 @@ export async function makeRequest<M extends MessageType>(
   type: M,
   payload: Payload<M>
 ) {
-  const body = JSON.stringify({ type, payload })
+  const body = JSON.stringify({
+    type,
+    ...(payload === undefined ? {} : { payload }),
+  })
   const response = await fetch(URL, {
     method: 'POST',
     body,
