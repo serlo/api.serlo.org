@@ -57,20 +57,17 @@ beforeEach(() => {
   }
 
   given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
-  given('UuidSetStateMutation').isDefinedBy((req, res, ctx) => {
-    const { ids, trashed, userId } = req.body.payload
+  given('UuidSetStateMutation')
+    .withPayload({ userId: user.id, trashed: true })
+    .isDefinedBy((req, res, ctx) => {
+      const { ids, trashed } = req.body.payload
 
-    // In order to test whether these parameters are passed properly
-    if (userId !== user.id || trashed != true) {
-      return res(ctx.status(500))
-    }
+      for (const id of ids) {
+        database.changeUuid(id, { trashed })
+      }
 
-    for (const id of ids) {
-      database.changeUuid(id, { trashed })
-    }
-
-    return res(ctx.status(200))
-  })
+      return res(ctx.status(200))
+    })
 })
 
 test('returns "{ success: true }" when it succeeds', async () => {
