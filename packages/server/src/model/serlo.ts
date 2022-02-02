@@ -92,12 +92,9 @@ export function createSerloModel({
   }
 
   const setUuidState = createMutation({
-    decoder: t.void,
-    async mutate(payload: { ids: number[]; userId: number; trashed: boolean }) {
-      await handleMessageWithoutResponse({
-        type: 'UuidSetStateMutation',
-        payload,
-      })
+    decoder: DatabaseLayer.getDecoderFor('UuidSetStateMutation'),
+    mutate(payload: DatabaseLayer.Payload<'UuidSetStateMutation'>) {
+      return DatabaseLayer.makeRequest('UuidSetStateMutation', payload)
     },
     async updateCache({ ids, trashed }) {
       await getUuid._querySpec.setCache({

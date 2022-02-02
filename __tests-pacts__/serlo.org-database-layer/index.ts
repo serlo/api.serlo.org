@@ -124,6 +124,11 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  UuidSetStateMutation: {
+    examples: [
+      [{ ids: [article.id], userId: user.id, trashed: true }, undefined],
+    ],
+  },
   UuidQuery: {
     examples: uuids.map((uuid) => [{ id: uuid.id }, uuid]),
     examplePayloadForNull: { id: 1_000_000 },
@@ -133,16 +138,25 @@ const pactSpec: PactSpec = {
 describe.each(R.toPairs(pactSpec))('%s', (type, messageSpec) => {
   const examples = messageSpec.examples as Example[]
   test.each(examples)('%s', async (payload, response) => {
-    const toSingletonList = (x: unknown) =>
-      Array.isArray(x) ? x.slice(0, 1) : x
-    await addInteraction({
-      type,
-      payload,
-      responseStatus: 200,
-      responseHeaders: { 'Content-Type': 'application/json; charset=utf-8' },
-      responseBody: objMap(toMatcher, response),
-      expectedResponse: objMap(toSingletonList, response),
-    })
+    if (response === undefined) {
+      await addInteraction({
+        type,
+        payload,
+        responseStatus: 200,
+        expectedResponse: undefined,
+      })
+    } else {
+      const toSingletonList = (x: unknown) =>
+        Array.isArray(x) ? x.slice(0, 1) : x
+      await addInteraction({
+        type,
+        payload,
+        responseStatus: 200,
+        responseHeaders: { 'Content-Type': 'application/json; charset=utf-8' },
+        responseBody: objMap(toMatcher, response),
+        expectedResponse: objMap(toSingletonList, response),
+      })
+    }
   })
 
   if (R.has('examplePayloadForNull', messageSpec)) {

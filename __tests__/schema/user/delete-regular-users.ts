@@ -194,9 +194,12 @@ function createDeleteRegularUsersMutation(args?: { userIds?: number[] }) {
 }
 
 function givenUserDeleteRegularUsersEndpoint(
-  resolver: MessageResolver<{
-    userId: number
-  }>
+  resolver: MessageResolver<
+    string,
+    {
+      userId: number
+    }
+  >
 ) {
   givenSerloEndpoint('UserDeleteRegularUsersMutation', resolver)
 }
@@ -209,7 +212,7 @@ function defaultUserDeleteRegularUsersEndpoint({
   database: Database
   failsForUserIds?: number[]
   reason?: string
-}): MessageResolver<{ userId: number }> {
+}): MessageResolver<string, { userId: number }> {
   return (req, res, ctx) => {
     const { userId } = req.body.payload
 

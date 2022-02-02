@@ -486,7 +486,7 @@ export function mockEndpointsForThreads(
       })
       .concat([{ id: uuidPayload.id }])
 
-    return createDatabaseLayerHandler<{ id: number }>({
+    return createDatabaseLayerHandler<string, { id: number }>({
       matchType: 'UuidQuery',
       matchPayloads,
       resolver(req, res, ctx) {

@@ -332,9 +332,12 @@ function createDeleteBotsMutation(args?: { botIds?: number[] }) {
 }
 
 function givenUserDeleteBotsEndpoint(
-  resolver: MessageResolver<{
-    botIds: number[]
-  }>
+  resolver: MessageResolver<
+    string,
+    {
+      botIds: number[]
+    }
+  >
 ) {
   givenSerloEndpoint('UserDeleteBotsMutation', resolver)
 }
@@ -345,7 +348,7 @@ function defaultUserDeleteBotsEndpoint({
 }: {
   database: Database
   emailHashes: string[]
-}): MessageResolver<{ botIds: number[] }> {
+}): MessageResolver<string, { botIds: number[] }> {
   return (req, res, ctx) => {
     const { botIds } = req.body.payload
 
