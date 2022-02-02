@@ -31,7 +31,7 @@ import { Uuid } from '~/model/decoder'
 
 export function given<M extends DatabaseLayer.MessageType>(type: M) {
   return {
-    withPayload(payload: DatabaseLayer.Payload<M>) {
+    withPayload(payload: Partial<DatabaseLayer.Payload<M>>) {
       return {
         returns(response: DatabaseLayer.Response<M>) {
           global.server.use(
@@ -39,6 +39,15 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
               message: { type, payload },
               statusCode: 200,
               body: response,
+            })
+          )
+        },
+        isDefinedBy(resolver: MessageResolver<M, DatabaseLayer.Payload<M>>) {
+          global.server.use(
+            createDatabaseLayerHandler({
+              matchType: type,
+              matchPayloads: [payload],
+              resolver,
             })
           )
         },
@@ -264,7 +273,7 @@ export function createDatabaseLayerHandler<
   Payload = DefaultPayloadType
 >(args: {
   matchType: MessageType
-  matchPayloads?: Payload[]
+  matchPayloads?: Partial<Payload>[]
   resolver: MessageResolver<MessageType, Payload>
 }) {
   const { matchType, matchPayloads, resolver } = args
@@ -275,7 +284,9 @@ export function createDatabaseLayerHandler<
   handler.predicate = (req: MockedRequest<BodyType<MessageType, Payload>>) =>
     req?.body?.type === matchType &&
     (matchPayloads === undefined ||
-      matchPayloads.some((payload) => R.equals(req.body.payload, payload)))
+      matchPayloads.some((payload) =>
+        R.equals({ ...req.body.payload, ...payload }, req.body.payload)
+      ))
 
   return handler
 }
