@@ -49,6 +49,15 @@ export const spec = {
     }),
     canBeNull: false,
   },
+  AliasQuery: {
+    payload: t.type({ path: t.string, instance: InstanceDecoder }),
+    response: t.type({
+      id: t.number,
+      instance: InstanceDecoder,
+      path: t.string,
+    }),
+    canBeNull: true,
+  },
   LicenseQuery: {
     payload: t.type({ id: t.number }),
     response: t.type({
