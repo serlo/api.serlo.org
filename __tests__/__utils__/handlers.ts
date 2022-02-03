@@ -101,19 +101,6 @@ export function givenUuid(uuid: Model<'AbstractUuid'>) {
   given('UuidQuery').withPayload({ id: uuid.id }).returns(uuid)
 }
 
-export function createAliasHandler(alias: Payload<'serlo', 'getAlias'>) {
-  return createMessageHandler({
-    message: {
-      type: 'AliasQuery',
-      payload: {
-        instance: alias.instance,
-        path: alias.path,
-      },
-    },
-    body: alias,
-  })
-}
-
 export function createNavigationHandler(
   navigation: Payload<'serlo', 'getNavigationPayload'>
 ) {

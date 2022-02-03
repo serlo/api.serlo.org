@@ -51,12 +51,12 @@ import {
 import {
   assertSuccessfulGraphQLQuery,
   LegacyClient,
-  createAliasHandler,
   createTestClient,
   createUuidHandler,
   nextUuid,
   getTypenameAndId,
   given,
+  givenUuid,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import {
@@ -167,14 +167,15 @@ describe('Repository', () => {
   test.each(repositoryCases)(
     '%s by alias (url-encoded)',
     async (_type, { repository }) => {
-      global.server.use(
-        createUuidHandler(repository),
-        createAliasHandler({
+      givenUuid(repository)
+      given('AliasQuery')
+        .withPayload({ instance: repository.instance, path: '/ü' })
+        .returns({
           id: repository.id,
           instance: repository.instance,
           path: '/ü',
         })
-      )
+
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query repository($alias: AliasInput!) {
@@ -203,14 +204,14 @@ describe('Repository', () => {
   test.each(repositoryCases)(
     '%s by alias (/:id)',
     async (_type, { repository }) => {
-      global.server.use(
-        createUuidHandler(repository),
-        createAliasHandler({
+      givenUuid(repository)
+      given('AliasQuery')
+        .withPayload({ instance: repository.instance, path: '/path' })
+        .returns({
           id: repository.id,
           instance: repository.instance,
           path: '/path',
         })
-      )
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query repository($alias: AliasInput!) {
