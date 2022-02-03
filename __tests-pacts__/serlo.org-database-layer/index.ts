@@ -51,11 +51,9 @@ import {
   videoRevision,
 } from '../../__fixtures__'
 import { DatabaseLayer } from '~/model'
+import { Instance } from '~/types'
 
 /* eslint-disable import/no-unassigned-import */
-describe('AliasMessage', () => {
-  require('./alias')
-})
 describe('EventMessage', () => {
   require('./event')
 })
@@ -105,6 +103,11 @@ const uuids = [
   video,
   videoRevision,
 ]
+const aliase = [
+  { id: 19767, instance: Instance.De, path: '/mathe' },
+  { id: 1, instance: Instance.De, path: '/user/1/admin' },
+]
+
 const pactSpec: PactSpec = {
   ActiveAuthorsQuery: {
     examples: [[undefined, [user.id]]],
@@ -119,6 +122,13 @@ const pactSpec: PactSpec = {
         { edits: 10, comments: 11, reviews: 0, taxonomy: 3 },
       ],
     ],
+  },
+  AliasQuery: {
+    examples: aliase.map((alias) => [
+      R.pick(['instance', 'path'], alias),
+      alias,
+    ]),
+    examplePayloadForNull: { instance: Instance.En, path: '/not-existing' },
   },
   LicenseQuery: {
     examples: [[{ id: 1 }, license]],

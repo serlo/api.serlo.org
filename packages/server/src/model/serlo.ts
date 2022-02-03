@@ -325,24 +325,14 @@ export function createSerloModel({
 
   const getAlias = createQuery(
     {
-      decoder: t.union([
-        t.type({
-          id: t.number,
-          instance: InstanceDecoder,
-          path: t.string,
-        }),
-        t.null,
-      ]),
+      decoder: DatabaseLayer.getDecoderFor('AliasQuery'),
       getCurrentValue: ({
         path,
         instance,
-      }: {
-        path: string
-        instance: Instance
-      }) => {
-        return handleMessage({
-          type: 'AliasQuery',
-          payload: { instance, path: decodePath(path) },
+      }: DatabaseLayer.Payload<'AliasQuery'>) => {
+        return DatabaseLayer.makeRequest('AliasQuery', {
+          instance,
+          path: decodePath(path),
         })
       },
       enableSwr: true,
