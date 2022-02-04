@@ -23,13 +23,13 @@ import { gql } from 'apollo-server'
 
 import {
   assertSuccessfulGraphQLQuery,
-  Client,
+  LegacyClient,
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
 import { castToUuid } from '~/model/decoder'
 
-let client: Client
+let client: LegacyClient
 
 beforeEach(() => {
   client = createTestClient()

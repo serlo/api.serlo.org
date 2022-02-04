@@ -27,11 +27,11 @@ import { Context } from '~/internals/graphql'
 import { getGraphQLOptions } from '~/internals/server'
 import { emptySwrQueue } from '~/internals/swr-queue'
 
-export type Client = ApolloServer
+export type LegacyClient = ApolloServer
 
 export function createTestClient(
   args?: Partial<Pick<Context, 'service' | 'userId'>>
-): Client {
+): LegacyClient {
   return new ApolloServer({
     ...getGraphQLOptions(createTestEnvironment()),
     context(): Pick<Context, 'service' | 'userId'> {

@@ -31,11 +31,11 @@ import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
-  Client,
+  LegacyClient,
   createTestClient,
   Database,
   givenPageCheckoutRevisionEndpoint,
-  givenUuidQueryEndpoint,
+  given,
   hasInternalServerError,
   nextUuid,
   returnsJson,
@@ -45,7 +45,7 @@ import { Model } from '~/internals/graphql'
 
 let database: Database
 
-let client: Client
+let client: LegacyClient
 const user = { ...baseUser, roles: ['de_static_pages_builder'] }
 const page = {
   ...basePage,
@@ -64,7 +64,7 @@ beforeEach(() => {
   database = new Database()
   database.hasUuids([user, page, pageRevision, unrevisedRevision])
 
-  givenUuidQueryEndpoint(returnsUuidsFromDatabase(database))
+  given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
   givenPageCheckoutRevisionEndpoint((req, res, ctx) => {
     const { revisionId, reason, userId } = req.body.payload
 

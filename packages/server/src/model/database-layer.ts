@@ -29,6 +29,35 @@ import { InstanceDecoder, UuidDecoder } from './decoder'
 const URL = `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`
 
 export const spec = {
+  ActiveAuthorsQuery: {
+    payload: t.undefined,
+    response: t.array(t.number),
+    canBeNull: false,
+  },
+  ActiveReviewersQuery: {
+    payload: t.undefined,
+    response: t.array(t.number),
+    canBeNull: false,
+  },
+  ActivityByTypeQuery: {
+    payload: t.type({ userId: t.number }),
+    response: t.type({
+      edits: t.number,
+      comments: t.number,
+      reviews: t.number,
+      taxonomy: t.number,
+    }),
+    canBeNull: false,
+  },
+  AliasQuery: {
+    payload: t.type({ path: t.string, instance: InstanceDecoder }),
+    response: t.type({
+      id: t.number,
+      instance: InstanceDecoder,
+      path: t.string,
+    }),
+    canBeNull: true,
+  },
   LicenseQuery: {
     payload: t.type({ id: t.number }),
     response: t.type({
@@ -43,6 +72,19 @@ export const spec = {
     }),
     canBeNull: true,
   },
+  UserDeleteBotsMutation: {
+    payload: t.type({ botIds: t.array(t.number) }),
+    response: t.strict({
+      success: t.literal(true),
+      emailHashes: t.array(t.string),
+    }),
+    canBeNull: false,
+  },
+  UserPotentialSpamUsersQuery: {
+    payload: t.type({ first: t.number, after: t.union([t.number, t.null]) }),
+    response: t.type({ userIds: t.array(t.number) }),
+    canBeNull: false,
+  },
   UserSetDescriptionMutation: {
     payload: t.type({ userId: t.number, description: t.string }),
     response: t.type({ success: t.boolean }),
@@ -51,6 +93,15 @@ export const spec = {
   UserSetEmailMutation: {
     payload: t.type({ userId: t.number, email: t.string }),
     response: t.type({ success: t.boolean, username: t.string }),
+    canBeNull: false,
+  },
+  UuidSetStateMutation: {
+    payload: t.type({
+      ids: t.array(t.number),
+      userId: t.number,
+      trashed: t.boolean,
+    }),
+    response: t.void,
     canBeNull: false,
   },
   UuidQuery: {
@@ -64,7 +115,10 @@ export async function makeRequest<M extends MessageType>(
   type: M,
   payload: Payload<M>
 ) {
-  const body = JSON.stringify({ type, payload })
+  const body = JSON.stringify({
+    type,
+    ...(payload === undefined ? {} : { payload }),
+  })
   const response = await fetch(URL, {
     method: 'POST',
     body,
@@ -72,6 +126,8 @@ export async function makeRequest<M extends MessageType>(
   })
 
   if (response.status === 200) {
+    if (spec[type].response._tag === 'VoidType') return
+
     return (await response.json()) as unknown
   } else if (response.status === 404 && spec[type].canBeNull) {
     // TODO: Here we can check whether the body is "null" and report it toNullable

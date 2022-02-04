@@ -22,123 +22,60 @@
 import { gql } from 'apollo-server'
 
 import { user, user2 } from '../../../__fixtures__'
-import {
-  createTestClient,
-  assertSuccessfulGraphQLQuery,
-  createMessageHandler,
-  createUuidHandler,
-  getTypenameAndId,
-  assertFailingGraphQLQuery,
-} from '../../__utils__'
+import { getTypenameAndId, givenUuids, given, Client } from '../../__utils__'
+
+const query = new Client().prepareQuery({
+  query: gql`
+    query ($first: Int, $after: String) {
+      user {
+        potentialSpamUsers(first: $first, after: $after) {
+          nodes {
+            id
+            __typename
+          }
+        }
+      }
+    }
+  `,
+  variables: { first: 100, after: null as string | null },
+})
 
 beforeEach(() => {
-  global.server.use(
-    createUuidHandler(user),
-    createUuidHandler(user2),
-    createPotentialSpamUsersEndpoint({ userIds: [user.id, user2.id] }),
-    createPotentialSpamUsersEndpoint({ after: user.id, userIds: [user2.id] })
-  )
+  givenUuids(user, user2)
+  given('UserPotentialSpamUsersQuery')
+    .withPayload({ first: 101, after: null })
+    .returns({ userIds: [user.id, user2.id] })
+  given('UserPotentialSpamUsersQuery')
+    .withPayload({ first: 101, after: user.id })
+    .returns({ userIds: [user2.id] })
 })
 
 describe('endpoint user.potentialSpamUsers', () => {
   test('without parameter `after`', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query {
-          user {
-            potentialSpamUsers(first: 100) {
-              nodes {
-                id
-                __typename
-              }
-            }
-          }
-        }
-      `,
-      data: {
-        user: {
-          potentialSpamUsers: {
-            nodes: [getTypenameAndId(user), getTypenameAndId(user2)],
-          },
-        },
-      },
-      client: createTestClient(),
-    })
+    const nodes = [getTypenameAndId(user), getTypenameAndId(user2)]
+    await query.shouldReturnData({ user: { potentialSpamUsers: { nodes } } })
   })
 
   test('with paramater `after`', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query ($after: String!) {
-          user {
-            potentialSpamUsers(first: 100, after: $after) {
-              nodes {
-                id
-                __typename
-              }
-            }
-          }
-        }
-      `,
-      variables: { after: Buffer.from(user.id.toString()).toString('base64') },
-      data: {
+    await query
+      .withVariables({
+        first: 100,
+        after: Buffer.from(user.id.toString()).toString('base64'),
+      })
+      .shouldReturnData({
         user: { potentialSpamUsers: { nodes: [getTypenameAndId(user2)] } },
-      },
-      client: createTestClient(),
-    })
+      })
   })
 
   test('fails when `first` is bigger then 500', async () => {
-    await assertFailingGraphQLQuery({
-      query: gql`
-        query {
-          user {
-            potentialSpamUsers(first: 501) {
-              nodes {
-                id
-                __typename
-              }
-            }
-          }
-        }
-      `,
-      expectedError: 'BAD_USER_INPUT',
-      client: createTestClient(),
-    })
+    await query
+      .withVariables({ first: 501, after: null })
+      .shouldFailWithError('BAD_USER_INPUT')
   })
 
   test('fails when `after` is not a valid id', async () => {
-    await assertFailingGraphQLQuery({
-      query: gql`
-        query {
-          user {
-            potentialSpamUsers(after: "foo") {
-              nodes {
-                id
-                __typename
-              }
-            }
-          }
-        }
-      `,
-      expectedError: 'BAD_USER_INPUT',
-      client: createTestClient(),
-    })
+    await query
+      .withVariables({ first: 100, after: 'foo' })
+      .shouldFailWithError('BAD_USER_INPUT')
   })
 })
-
-function createPotentialSpamUsersEndpoint({
-  userIds,
-  after = null,
-}: {
-  userIds: number[]
-  after?: number | null
-}) {
-  return createMessageHandler({
-    message: {
-      type: 'UserPotentialSpamUsersQuery',
-      payload: { first: 101, after },
-    },
-    body: { userIds },
-  })
-}

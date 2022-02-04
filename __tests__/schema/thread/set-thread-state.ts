@@ -25,14 +25,14 @@ import { article, comment, user } from '../../../__fixtures__'
 import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
-  Client,
+  LegacyClient,
   createMessageHandler,
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
 import { encodeThreadId } from '~/schema/thread/utils'
 
-let client: Client
+let client: LegacyClient
 
 beforeEach(() => {
   client = createTestClient({ userId: user.id })

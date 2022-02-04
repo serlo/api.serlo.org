@@ -21,74 +21,56 @@
  */
 import { gql } from 'apollo-server'
 
-import { article, page, user } from '../../../__fixtures__'
-import {
-  assertFailingGraphQLMutation,
-  assertSuccessfulGraphQLMutation,
-  createTestClient,
-  givenUuidQueryEndpoint,
-  Client,
-  Database,
-  returnsUuidsFromDatabase,
-  givenSerloEndpoint,
-  MessageResolver,
-  assertSuccessfulGraphQLQuery,
-  hasInternalServerError,
-  returnsJson,
-  nextUuid,
-} from '../../__utils__'
+import { article, page, user as baseUser } from '../../../__fixtures__'
+import { nextUuid, Client, given, givenUuid, givenUuids } from '../../__utils__'
 
-let database: Database
-let client: Client
-const mutation = gql`
-  mutation uuid($input: UuidSetStateInput!) {
-    uuid {
-      setState(input: $input) {
-        success
+const user = { ...baseUser, roles: ['de_architect'] }
+const articleIds = [article.id, nextUuid(article.id)]
+const client = new Client({ userId: user.id })
+const mutation = client.prepareQuery({
+  query: gql`
+    mutation uuid($input: UuidSetStateInput!) {
+      uuid {
+        setState(input: $input) {
+          success
+        }
       }
     }
-  }
-`
-const articleIds = [article.id, nextUuid(article.id)]
+  `,
+  variables: { input: { id: articleIds, trashed: true } },
+})
 
 beforeEach(() => {
-  client = createTestClient({ userId: user.id })
-
-  database = new Database()
-  database.hasUuids([{ ...user, roles: ['de_architect'] }])
-
-  for (const articleId of articleIds) {
-    database.hasUuid({ ...article, id: articleId })
-  }
-
-  givenUuidQueryEndpoint(returnsUuidsFromDatabase(database))
-  givenUuidSetStateMutationEndpoint((req, res, ctx) => {
-    const { ids, trashed, userId } = req.body.payload
-
-    // In order to test whether these parameters are passed properly
-    if (userId !== user.id || trashed != true) {
-      return res(ctx.status(500))
-    }
-
-    for (const id of ids) {
-      database.changeUuid(id, { trashed })
-    }
-
-    return res(ctx.status(200))
+  const articles = articleIds.map((id) => {
+    return { ...article, id }
   })
+
+  givenUuids(user, articles)
+  given('UuidSetStateMutation')
+    .withPayload({ userId: user.id, trashed: true })
+    .isDefinedBy((req, res, ctx) => {
+      const { ids, trashed } = req.body.payload
+
+      for (const id of ids) {
+        const article = articles.find((x) => x.id === id)
+
+        if (article != null) {
+          article.trashed = trashed
+        } else {
+          return res(ctx.status(500))
+        }
+      }
+
+      return res(ctx.status(200))
+    })
 })
 
 test('returns "{ success: true }" when it succeeds', async () => {
-  await assertSuccessfulGraphQLMutation({
-    mutation,
-    variables: { input: { id: articleIds, trashed: true } },
-    data: { uuid: { setState: { success: true } } },
-    client,
-  })
+  await mutation.shouldReturnData({ uuid: { setState: { success: true } } })
 })
 
 test('updates the cache when it succeeds', async () => {
-  await assertSuccessfulGraphQLQuery({
+  const uuidQuery = client.prepareQuery({
     query: gql`
       query ($id: Int!) {
         uuid(id: $id) {
@@ -97,84 +79,34 @@ test('updates the cache when it succeeds', async () => {
       }
     `,
     variables: { id: article.id },
-    data: { uuid: { trashed: false } },
-    client,
   })
+  await uuidQuery.shouldReturnData({ uuid: { trashed: false } })
+  await mutation.execute()
 
-  await assertSuccessfulGraphQLMutation({
-    mutation,
-    variables: { input: { id: articleIds, trashed: true } },
-    data: { uuid: { setState: { success: true } } },
-    client,
-  })
-
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          trashed
-        }
-      }
-    `,
-    variables: { id: article.id },
-    data: { uuid: { trashed: true } },
-    client,
-  })
+  await uuidQuery.shouldReturnData({ uuid: { trashed: true } })
 })
 
 test('fails when database layer returns a BadRequest response', async () => {
-  givenUuidSetStateMutationEndpoint(
-    returnsJson({
-      json: { success: false, reason: 'bad request' },
-      status: 400,
-    })
-  )
-  await assertFailingGraphQLMutation({
-    mutation,
-    variables: { input: { id: articleIds, trashed: true } },
-    client,
-    expectedError: 'BAD_USER_INPUT',
-    message: 'bad request',
-  })
+  given('UuidSetStateMutation').returnsBadRequest()
+
+  await mutation.shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('fails when user is not authenticated', async () => {
-  await assertFailingGraphQLMutation({
-    mutation,
-    variables: { input: { id: articleIds, trashed: true } },
-    client: createTestClient({ userId: null }),
-    expectedError: 'UNAUTHENTICATED',
-  })
+  await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
 
 test('fails when user does not have sufficient permissions', async () => {
   // Architects are not allowed to set the state of pages.
-  database.hasUuid(page)
-  await assertFailingGraphQLMutation({
-    mutation,
-    variables: { input: { id: page.id, trashed: false } },
-    client,
-    expectedError: 'FORBIDDEN',
-  })
+  givenUuid(page)
+
+  await mutation
+    .withVariables({ input: { id: [page.id], trashed: false } })
+    .shouldFailWithError('FORBIDDEN')
 })
 
 test('fails when database layer has an internal server error', async () => {
-  givenUuidSetStateMutationEndpoint(hasInternalServerError())
+  given('UuidSetStateMutation').hasInternalServerError()
 
-  await assertFailingGraphQLMutation({
-    mutation,
-    variables: { input: { id: articleIds, trashed: true } },
-    client,
-    expectedError: 'INTERNAL_SERVER_ERROR',
-  })
+  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
-
-function givenUuidSetStateMutationEndpoint(
-  resolver: MessageResolver<{
-    ids: number[]
-    userId: number
-    trashed: boolean
-  }>
-) {
-  givenSerloEndpoint('UuidSetStateMutation', resolver)
-}

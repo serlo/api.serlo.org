@@ -25,13 +25,13 @@ import R from 'ramda'
 import { solution, solutionRevision, exercise } from '../../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
-  Client,
+  LegacyClient,
   createTestClient,
   createUuidHandler,
   getTypenameAndId,
 } from '../../__utils__'
 
-let client: Client
+let client: LegacyClient
 
 beforeEach(() => {
   client = createTestClient()

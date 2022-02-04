@@ -27,15 +27,14 @@ import {
   article,
   user,
   user2,
-  activityByType,
   articleRevision,
+  activityByType,
 } from '../../../__fixtures__'
 import {
   assertErrorEvent,
   assertNoErrorEvents,
   assertSuccessfulGraphQLQuery,
-  Client,
-  createActivityByTypeHandler,
+  LegacyClient,
   createChatUsersInfoHandler,
   createMessageHandler,
   createTestClient,
@@ -48,18 +47,21 @@ import {
   nextUuid,
   returnsJson,
   returnsMalformedJson,
+  given,
+  Client,
+  givenUuid,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { MajorDimension } from '~/model'
 import { castToUuid } from '~/model/decoder'
 import { Instance } from '~/types'
 
-let client: Client
+let legacyClient: LegacyClient
 
 beforeEach(() => {
-  client = createTestClient()
+  legacyClient = createTestClient()
 
-  global.server.use(createUuidHandler(user))
+  givenUuid(user)
 })
 
 describe('User', () => {
@@ -100,7 +102,7 @@ describe('User', () => {
           user
         ),
       },
-      client,
+      client: legacyClient,
     })
   })
 
@@ -130,7 +132,7 @@ describe('User', () => {
         },
       },
       data: { uuid: null },
-      client,
+      client: legacyClient,
     })
   })
 
@@ -152,7 +154,7 @@ describe('User', () => {
         },
       },
       data: { uuid: null },
-      client,
+      client: legacyClient,
     })
   })
 
@@ -177,7 +179,7 @@ describe('User', () => {
       data: {
         uuid: getTypenameAndId(user),
       },
-      client,
+      client: legacyClient,
     })
   })
 
@@ -195,7 +197,7 @@ describe('User', () => {
       `,
       variables: user,
       data: { uuid: getTypenameAndId(user) },
-      client,
+      client: legacyClient,
     })
   })
 
@@ -214,7 +216,7 @@ describe('User', () => {
       data: {
         uuid: { imageUrl: 'https://community.serlo.org/avatar/alpha' },
       },
-      client,
+      client: legacyClient,
     })
   })
 
@@ -253,92 +255,81 @@ describe('User', () => {
         },
       },
       variables: { id: user.id },
-      client,
+      client: legacyClient,
     })
   })
 
   test('property "isNewAuthor"', async () => {
-    global.server.use(
-      createActivityByTypeHandler({ userId: user.id, activityByType })
-    )
+    given('ActivityByTypeQuery')
+      .withPayload({ userId: user.id })
+      .returns(activityByType)
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query ($userId: Int) {
-          uuid(id: $userId) {
-            ... on User {
-              isNewAuthor
-            }
-          }
-        }
-      `,
-      data: { uuid: { isNewAuthor: false } },
-      variables: { userId: user.id },
-      client,
-    })
-  })
-
-  test('property "activityByType"', async () => {
-    global.server.use(
-      createActivityByTypeHandler({ userId: user.id, activityByType })
-    )
-
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query ($userId: Int) {
-          uuid(id: $userId) {
-            ... on User {
-              activityByType {
-                edits
-                comments
-                reviews
-                taxonomy
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query ($userId: Int) {
+            uuid(id: $userId) {
+              ... on User {
+                isNewAuthor
               }
             }
           }
-        }
-      `,
-      data: {
-        uuid: {
-          activityByType: { edits: 10, comments: 11, reviews: 0, taxonomy: 3 },
-        },
-      },
-      variables: { userId: user.id },
-      client,
-    })
+        `,
+        variables: { userId: user.id },
+      })
+      .shouldReturnData({ uuid: { isNewAuthor: false } })
+  })
+
+  test('property "activityByType"', async () => {
+    given('ActivityByTypeQuery')
+      .withPayload({ userId: user.id })
+      .returns(activityByType)
+
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query ($userId: Int) {
+            uuid(id: $userId) {
+              ... on User {
+                activityByType {
+                  edits
+                  comments
+                  reviews
+                  taxonomy
+                }
+              }
+            }
+          }
+        `,
+        variables: { userId: user.id },
+      })
+      .shouldReturnData({ uuid: { activityByType } })
   })
 
   describe('property "activeAuthor"', () => {
-    const query = gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          ... on User {
-            isActiveAuthor
+    const query = new Client().prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on User {
+              isActiveAuthor
+            }
           }
         }
-      }
-    `
+      `,
+      variables: { id: user.id },
+    })
 
     test('by id (w/ activeAuthor when user is an active author)', async () => {
-      global.server.use(createActiveAuthorsHandler([user]))
+      given('ActiveAuthorsQuery').returns([user.id])
 
-      await assertSuccessfulGraphQLQuery({
-        query,
-        variables: { id: user.id },
-        data: { uuid: { isActiveAuthor: true } },
-        client,
-      })
+      await query.shouldReturnData({ uuid: { isActiveAuthor: true } })
     })
 
     test('by id (w/ activeAuthor when user is not an active author', async () => {
-      global.server.use(createActiveAuthorsHandler([]))
+      given('ActiveAuthorsQuery').returns([])
 
-      await assertSuccessfulGraphQLQuery({
-        query,
-        variables: { id: user.id },
-        data: { uuid: { isActiveAuthor: false } },
-        client,
-      })
+      await query.shouldReturnData({ uuid: { isActiveAuthor: false } })
     })
   })
 
@@ -360,7 +351,7 @@ describe('User', () => {
         query,
         variables: { id: user.id },
         data: { uuid: { isActiveDonor: true } },
-        client,
+        client: legacyClient,
       })
     })
 
@@ -371,42 +362,35 @@ describe('User', () => {
         query,
         variables: { id: user.id },
         data: { uuid: { isActiveDonor: false } },
-        client,
+        client: legacyClient,
       })
     })
   })
 
   describe('property "activeReviewer"', () => {
-    const query = gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          ... on User {
-            isActiveReviewer
+    const query = new Client().prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on User {
+              isActiveReviewer
+            }
           }
         }
-      }
-    `
+      `,
+      variables: { id: user.id },
+    })
 
     test('by id (w/ activeReviewer when user is an active reviewer)', async () => {
-      global.server.use(createActiveReviewersHandler([user]))
+      given('ActiveReviewersQuery').returns([user.id])
 
-      await assertSuccessfulGraphQLQuery({
-        query,
-        variables: { id: user.id },
-        data: { uuid: { isActiveReviewer: true } },
-        client,
-      })
+      await query.shouldReturnData({ uuid: { isActiveReviewer: true } })
     })
 
     test('by id (w/ activeReviewer when user is not an active reviewer', async () => {
-      global.server.use(createActiveReviewersHandler([]))
+      given('ActiveReviewersQuery').returns([])
 
-      await assertSuccessfulGraphQLQuery({
-        query,
-        variables: { id: user.id },
-        data: { uuid: { isActiveReviewer: false } },
-        client,
-      })
+      await query.shouldReturnData({ uuid: { isActiveReviewer: false } })
     })
   })
 
@@ -487,7 +471,7 @@ describe('User', () => {
         `,
         variables: { id: user.id },
         data: { uuid: { motivation } },
-        client,
+        client: legacyClient,
       })
     }
   })
@@ -510,7 +494,7 @@ describe('User', () => {
         `,
         variables: user,
         data: { uuid: { chatUrl: 'https://community.serlo.org/direct/alpha' } },
-        client,
+        client: legacyClient,
       })
     })
 
@@ -531,7 +515,7 @@ describe('User', () => {
         `,
         variables: user,
         data: { uuid: { chatUrl: null } },
-        client,
+        client: legacyClient,
       })
     })
   })
@@ -587,23 +571,21 @@ describe('User', () => {
           unrevisedEntities: { nodes: [getTypenameAndId(articleByUser)] },
         },
       },
-      client,
+      client: legacyClient,
     })
   })
 })
 
 describe('endpoint activeAuthors', () => {
   test('returns list of active authors', async () => {
-    global.server.use(createActiveAuthorsHandler([user, user2]))
+    given('ActiveAuthorsQuery').returns([user.id, user2.id])
 
     await expectUserIds({ endpoint: 'activeAuthors', ids: [user.id, user2.id] })
   })
 
   test('returns only users', async () => {
-    global.server.use(
-      createActiveAuthorsHandler([user, article]),
-      createUuidHandler(article)
-    )
+    given('ActiveAuthorsQuery').returns([user.id, article.id])
+    givenUuid(article)
 
     await expectUserIds({ endpoint: 'activeAuthors', ids: [user.id] })
     await assertErrorEvent({ errorContext: { invalidElements: [article] } })
@@ -612,7 +594,7 @@ describe('endpoint activeAuthors', () => {
 
 describe('endpoint activeReviewers', () => {
   test('returns list of active reviewers', async () => {
-    global.server.use(createActiveReviewersHandler([user, user2]))
+    given('ActiveReviewersQuery').returns([user.id, user2.id])
 
     await expectUserIds({
       endpoint: 'activeReviewers',
@@ -621,10 +603,8 @@ describe('endpoint activeReviewers', () => {
   })
 
   test('returns only users', async () => {
-    global.server.use(
-      createActiveReviewersHandler([user, article]),
-      createUuidHandler(article)
-    )
+    given('ActiveReviewersQuery').returns([user.id, article.id])
+    givenUuid(article)
 
     await expectUserIds({ endpoint: 'activeReviewers', ids: [user.id] })
     await assertErrorEvent({ errorContext: { invalidElements: [article] } })
@@ -695,19 +675,21 @@ describe('endpoint activeDonors', () => {
   })
 })
 
-function expectUserIds({
+async function expectUserIds({
   endpoint,
   ids,
 }: {
   endpoint: 'activeReviewers' | 'activeAuthors' | 'activeDonors'
   ids: number[]
 }) {
-  global.server.use(
-    ...ids.map(castToUuid).map((id) => createUuidHandler({ ...user, id }))
-  )
+  ids.map(castToUuid).forEach((id) => givenUuid({ ...user, id }))
+  const nodes = ids.map((id) => {
+    return { __typename: 'User', id }
+  })
 
-  return assertSuccessfulGraphQLQuery({
-    query: gql`
+  await new Client()
+    .prepareQuery({
+      query: gql`
       query {
         ${endpoint} {
           nodes {
@@ -717,43 +699,8 @@ function expectUserIds({
         }
       }
     `,
-    data: {
-      [endpoint]: {
-        nodes: ids.map((id) => {
-          return { __typename: 'User', id }
-        }),
-      },
-    },
-    client,
-  })
-}
-
-function createActiveAuthorsHandler(users: Model<'AbstractUuid'>[]) {
-  return createActiveAuthorsResponseHandler(users.map((user) => user.id))
-}
-
-function createActiveAuthorsResponseHandler(body: unknown) {
-  return createMessageHandler({
-    message: {
-      type: 'ActiveAuthorsQuery',
-    },
-    body,
-  })
-}
-
-function createActiveReviewersHandler(users: Model<'AbstractUuid'>[]) {
-  return createActiveReviewersHandlersResponseHandler(
-    users.map((user) => user.id)
-  )
-}
-
-function createActiveReviewersHandlersResponseHandler(body: unknown) {
-  return createMessageHandler({
-    message: {
-      type: 'ActiveReviewersQuery',
-    },
-    body,
-  })
+    })
+    .shouldReturnData({ [endpoint]: { nodes } })
 }
 
 function givenActiveDonors(users: Model<'AbstractUuid'>[]) {

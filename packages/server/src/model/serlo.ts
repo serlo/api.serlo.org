@@ -92,12 +92,9 @@ export function createSerloModel({
   }
 
   const setUuidState = createMutation({
-    decoder: t.void,
-    async mutate(payload: { ids: number[]; userId: number; trashed: boolean }) {
-      await handleMessageWithoutResponse({
-        type: 'UuidSetStateMutation',
-        payload,
-      })
+    decoder: DatabaseLayer.getDecoderFor('UuidSetStateMutation'),
+    mutate(payload: DatabaseLayer.Payload<'UuidSetStateMutation'>) {
+      return DatabaseLayer.makeRequest('UuidSetStateMutation', payload)
     },
     async updateCache({ ids, trashed }) {
       await getUuid._querySpec.setCache({
@@ -116,10 +113,10 @@ export function createSerloModel({
 
   const getActiveAuthorIds = createQuery(
     {
-      decoder: t.array(t.number),
+      decoder: DatabaseLayer.getDecoderFor('ActiveAuthorsQuery'),
       enableSwr: true,
-      getCurrentValue: async () => {
-        return await handleMessage({ type: 'ActiveAuthorsQuery' })
+      getCurrentValue() {
+        return DatabaseLayer.makeRequest('ActiveAuthorsQuery', undefined)
       },
       staleAfter: { hour: 1 },
       getKey: () => {
@@ -136,10 +133,10 @@ export function createSerloModel({
 
   const getActiveReviewerIds = createQuery(
     {
-      decoder: t.array(t.number),
+      decoder: DatabaseLayer.getDecoderFor('ActiveReviewersQuery'),
       enableSwr: true,
-      getCurrentValue: () => {
-        return handleMessage({ type: 'ActiveReviewersQuery' })
+      getCurrentValue() {
+        return DatabaseLayer.makeRequest('ActiveReviewersQuery', undefined)
       },
       staleAfter: { hour: 1 },
       getKey: () => {
@@ -156,15 +153,12 @@ export function createSerloModel({
 
   const getActivityByType = createQuery(
     {
-      decoder: t.type({
-        edits: t.number,
-        comments: t.number,
-        reviews: t.number,
-        taxonomy: t.number,
-      }),
+      decoder: DatabaseLayer.getDecoderFor('ActivityByTypeQuery'),
       enableSwr: true,
-      getCurrentValue: (payload: { userId: number }) => {
-        return handleMessage({ type: 'ActivityByTypeQuery', payload })
+      getCurrentValue: (
+        payload: DatabaseLayer.Payload<'ActivityByTypeQuery'>
+      ) => {
+        return DatabaseLayer.makeRequest('ActivityByTypeQuery', payload)
       },
       staleAfter: { minutes: 10 },
       getKey: ({ userId }) => {
@@ -185,22 +179,18 @@ export function createSerloModel({
   )
 
   const getPotentialSpamUsers = createRequest({
-    decoder: t.strict({ userIds: t.array(t.number) }),
-    async getCurrentValue(payload: { first: number; after: number | null }) {
-      return await handleMessage({
-        type: 'UserPotentialSpamUsersQuery',
-        payload,
-      })
+    decoder: DatabaseLayer.getDecoderFor('UserPotentialSpamUsersQuery'),
+    getCurrentValue(
+      payload: DatabaseLayer.Payload<'UserPotentialSpamUsersQuery'>
+    ) {
+      return DatabaseLayer.makeRequest('UserPotentialSpamUsersQuery', payload)
     },
   })
 
   const deleteBots = createMutation({
-    decoder: t.strict({
-      success: t.literal(true),
-      emailHashes: t.array(t.string),
-    }),
-    async mutate(payload: { botIds: number[] }) {
-      return await handleMessage({ type: 'UserDeleteBotsMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('UserDeleteBotsMutation'),
+    mutate(payload: DatabaseLayer.Payload<'UserDeleteBotsMutation'>) {
+      return DatabaseLayer.makeRequest('UserDeleteBotsMutation', payload)
     },
     async updateCache({ botIds }) {
       await getUuid._querySpec.removeCache({
@@ -335,24 +325,14 @@ export function createSerloModel({
 
   const getAlias = createQuery(
     {
-      decoder: t.union([
-        t.type({
-          id: t.number,
-          instance: InstanceDecoder,
-          path: t.string,
-        }),
-        t.null,
-      ]),
+      decoder: DatabaseLayer.getDecoderFor('AliasQuery'),
       getCurrentValue: ({
         path,
         instance,
-      }: {
-        path: string
-        instance: Instance
-      }) => {
-        return handleMessage({
-          type: 'AliasQuery',
-          payload: { instance, path: decodePath(path) },
+      }: DatabaseLayer.Payload<'AliasQuery'>) => {
+        return DatabaseLayer.makeRequest('AliasQuery', {
+          instance,
+          path: decodePath(path),
         })
       },
       enableSwr: true,
