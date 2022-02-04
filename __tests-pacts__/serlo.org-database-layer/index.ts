@@ -51,11 +51,9 @@ import {
   videoRevision,
 } from '../../__fixtures__'
 import { DatabaseLayer } from '~/model'
+import { Instance } from '~/types'
 
 /* eslint-disable import/no-unassigned-import */
-describe('AliasMessage', () => {
-  require('./alias')
-})
 describe('EventMessage', () => {
   require('./event')
 })
@@ -73,9 +71,6 @@ describe('SubscriptionMessage', () => {
 })
 describe('ThreadMessage', () => {
   require('./thread')
-})
-describe('UserMessage', () => {
-  require('./user')
 })
 describe('UuidMessage', () => {
   require('./uuid')
@@ -108,10 +103,45 @@ const uuids = [
   video,
   videoRevision,
 ]
+const aliase = [
+  { id: 19767, instance: Instance.De, path: '/mathe' },
+  { id: 1, instance: Instance.De, path: '/user/1/admin' },
+]
+
 const pactSpec: PactSpec = {
+  ActiveAuthorsQuery: {
+    examples: [[undefined, [user.id]]],
+  },
+  ActiveReviewersQuery: {
+    examples: [[undefined, [user.id]]],
+  },
+  ActivityByTypeQuery: {
+    examples: [
+      [
+        { userId: user.id },
+        { edits: 10, comments: 11, reviews: 0, taxonomy: 3 },
+      ],
+    ],
+  },
+  AliasQuery: {
+    examples: aliase.map((alias) => [
+      R.pick(['instance', 'path'], alias),
+      alias,
+    ]),
+    examplePayloadForNull: { instance: Instance.En, path: '/not-existing' },
+  },
   LicenseQuery: {
     examples: [[{ id: 1 }, license]],
     examplePayloadForNull: { id: 100 },
+  },
+  UserPotentialSpamUsersQuery: {
+    examples: [
+      [{ first: 10, after: null }, { userIds: [user.id] }],
+      [{ first: 10, after: 100 }, { userIds: [user.id] }],
+    ],
+  },
+  UserDeleteBotsMutation: {
+    examples: [],
   },
   UserSetDescriptionMutation: {
     examples: [[{ userId: 1, description: 'Hello World' }, { success: true }]],
@@ -124,6 +154,11 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  UuidSetStateMutation: {
+    examples: [
+      [{ ids: [article.id], userId: user.id, trashed: true }, undefined],
+    ],
+  },
   UuidQuery: {
     examples: uuids.map((uuid) => [{ id: uuid.id }, uuid]),
     examplePayloadForNull: { id: 1_000_000 },
@@ -132,17 +167,29 @@ const pactSpec: PactSpec = {
 
 describe.each(R.toPairs(pactSpec))('%s', (type, messageSpec) => {
   const examples = messageSpec.examples as Example[]
+
+  if (examples.length === 0) return
+
   test.each(examples)('%s', async (payload, response) => {
-    const toSingletonList = (x: unknown) =>
-      Array.isArray(x) ? x.slice(0, 1) : x
-    await addInteraction({
-      type,
-      payload,
-      responseStatus: 200,
-      responseHeaders: { 'Content-Type': 'application/json; charset=utf-8' },
-      responseBody: objMap(toMatcher, response),
-      expectedResponse: objMap(toSingletonList, response),
-    })
+    if (response === undefined) {
+      await addInteraction({
+        type,
+        payload,
+        responseStatus: 200,
+        expectedResponse: undefined,
+      })
+    } else {
+      const toSingletonList = (x: unknown) =>
+        Array.isArray(x) ? x.slice(0, 1) : x
+      await addInteraction({
+        type,
+        payload,
+        responseStatus: 200,
+        responseHeaders: { 'Content-Type': 'application/json; charset=utf-8' },
+        responseBody: generalMap(toMatcher, response),
+        expectedResponse: generalMap(toSingletonList, response),
+      })
+    }
   })
 
   if (R.has('examplePayloadForNull', messageSpec)) {
@@ -199,11 +246,13 @@ function toMatcher(value: unknown) {
   }
 }
 
-function objMap(
+function generalMap(
   func: (x: unknown) => unknown,
-  value: Record<string, unknown>
-): Record<string, unknown> {
-  return R.fromPairs(R.toPairs(value).map(([key, value]) => [key, func(value)]))
+  value: Record<string, unknown> | Array<unknown>
+): unknown {
+  return Array.isArray(value)
+    ? func(value)
+    : R.fromPairs(R.toPairs(value).map(([key, value]) => [key, func(value)]))
 }
 
 type PactSpec = {

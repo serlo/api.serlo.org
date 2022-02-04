@@ -24,18 +24,11 @@ import { rest } from 'msw'
 
 import { article, user, user2 } from '../../../__fixtures__'
 import {
-  assertFailingGraphQLMutation,
-  assertSuccessfulGraphQLMutation,
-  createTestClient,
-  givenUuidQueryEndpoint,
-  hasInternalServerError,
+  given,
   Client,
+  Query,
   Database,
   returnsUuidsFromDatabase,
-  MessageResolver,
-  givenSerloEndpoint,
-  assertSuccessfulGraphQLQuery,
-  createActivityByTypeHandler,
   RestResolver,
   castToUuid,
   assertNoErrorEvents,
@@ -48,34 +41,50 @@ let database: Database
 let client: Client
 const users = [{ ...user, roles: ['sysadmin'] }, user2]
 let chatUsers: string[]
-let emailHashes: string[]
+let mailchimpEmails: string[]
+let mutation: Query
 
 beforeEach(() => {
-  emailHashes = ['foo']
+  client = new Client({ userId: user.id })
+  mutation = client.prepareQuery({
+    query: gql`
+      mutation ($input: UserDeleteBotsInput!) {
+        user {
+          deleteBots(input: $input) {
+            success
+          }
+        }
+      }
+    `,
+    variables: { input: { botIds: [user.id] } },
+  })
+
+  mailchimpEmails = [emailHash(user)]
 
   database = new Database()
   database.hasUuids(users)
 
-  global.server.use(
-    ...users.map((user) =>
-      createActivityByTypeHandler({
-        userId: user.id,
-        activityByType: {
-          edits: 1,
-          comments: 0,
-          reviews: 0,
-          taxonomy: 0,
-        },
+  for (const user of users) {
+    given('ActivityByTypeQuery')
+      .withPayload({ userId: user.id })
+      .returns({ edits: 1, comments: 0, reviews: 0, taxonomy: 0 })
+  }
+
+  given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
+  given('UserDeleteBotsMutation').isDefinedBy((req, res, ctx) => {
+    const { botIds } = req.body.payload
+
+    for (const id of botIds) {
+      database.deleteUuid(id)
+    }
+
+    return res(
+      ctx.json({
+        success: true,
+        emailHashes: botIds.map((id) => emailHash({ id })),
       })
     )
-  )
-
-  givenUserDeleteBotsEndpoint(
-    defaultUserDeleteBotsEndpoint({ database, emailHashes })
-  )
-  givenUuidQueryEndpoint(returnsUuidsFromDatabase(database))
-
-  client = createTestClient({ userId: user.id })
+  })
 
   chatUsers = [user.username]
 
@@ -101,7 +110,7 @@ beforeEach(() => {
 
   givenMailchimpDeleteEmailEndpoint((req, res, ctx) => {
     const authHeader = req.headers.get('Authorization') ?? ''
-    const key = Buffer.from(authHeader.substr('Basic '.length), 'base64')
+    const key = Buffer.from(authHeader.slice('Basic '.length), 'base64')
       .toString()
       .split(':')[1]
 
@@ -109,8 +118,8 @@ beforeEach(() => {
 
     const { emailHash } = req.params
 
-    if (emailHashes.includes(emailHash)) {
-      emailHashes = emailHashes.filter((x) => x !== emailHash)
+    if (mailchimpEmails.includes(emailHash)) {
+      mailchimpEmails = mailchimpEmails.filter((x) => x !== emailHash)
 
       return res(ctx.status(204))
     } else {
@@ -120,15 +129,13 @@ beforeEach(() => {
 })
 
 test('runs successfully when mutation could be successfully executed', async () => {
-  await assertSuccessfulGraphQLMutation({
-    ...createDeleteBotsMutation({ botIds: [user.id, user2.id] }),
-    data: { user: { deleteBots: { success: true } } },
-    client,
-  })
+  await mutation
+    .withVariables({ input: { botIds: [user.id, user2.id] } })
+    .shouldReturnData({ user: { deleteBots: { success: true } } })
 })
 
 test('updates the cache', async () => {
-  await assertSuccessfulGraphQLQuery({
+  const uuidQuery = client.prepareQuery({
     query: gql`
       query ($id: Int!) {
         uuid(id: $id) {
@@ -137,28 +144,12 @@ test('updates the cache', async () => {
       }
     `,
     variables: { id: user.id },
-    data: { uuid: { id: user.id } },
-    client,
   })
 
-  await assertSuccessfulGraphQLMutation({
-    ...createDeleteBotsMutation({ botIds: [user.id] }),
-    data: { user: { deleteBots: { success: true } } },
-    client,
-  })
+  await uuidQuery.execute()
+  await mutation.execute()
 
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          id
-        }
-      }
-    `,
-    variables: { id: user.id },
-    data: { uuid: null },
-    client,
-  })
+  await uuidQuery.shouldReturnData({ uuid: null })
 })
 
 describe('community chat', () => {
@@ -167,22 +158,14 @@ describe('community chat', () => {
   })
 
   test('deletes the user from the community chat in production', async () => {
-    await assertSuccessfulGraphQLMutation({
-      ...createDeleteBotsMutation({ botIds: [user.id] }),
-      data: { user: { deleteBots: { success: true } } },
-      client,
-    })
+    await mutation.execute()
 
     expect(chatUsers).toHaveLength(0)
     await assertNoErrorEvents()
   })
 
   test('does not sent a sentry event when the user is not in the community chat', async () => {
-    await assertSuccessfulGraphQLMutation({
-      ...createDeleteBotsMutation({ botIds: [user2.id] }),
-      data: { user: { deleteBots: { success: true } } },
-      client,
-    })
+    await mutation.withVariables({ input: { botIds: [user2.id] } }).execute()
 
     expect(chatUsers).toHaveLength(1)
     await assertNoErrorEvents()
@@ -193,11 +176,7 @@ describe('community chat', () => {
       returnsJson({ json: { success: false, errorType: 'unknown' } })
     )
 
-    await assertSuccessfulGraphQLMutation({
-      ...createDeleteBotsMutation({ botIds: [user2.id] }),
-      data: { user: { deleteBots: { success: true } } },
-      client,
-    })
+    await mutation.withVariables({ input: { botIds: [user2.id] } }).execute()
 
     await assertErrorEvent({
       message: 'Cannot delete a user from community.serlo.org',
@@ -212,150 +191,62 @@ describe('mailchimp', () => {
   })
 
   test('deletes the user from the mailchimp newsletter in production', async () => {
-    await assertSuccessfulGraphQLMutation({
-      ...createDeleteBotsMutation({ botIds: [user.id] }),
-      data: { user: { deleteBots: { success: true } } },
-      client,
-    })
+    await mutation.execute()
 
-    expect(emailHashes).toHaveLength(0)
+    expect(mailchimpEmails).toHaveLength(0)
     await assertNoErrorEvents()
   })
 
-  test('does not sent a sentry event when the user is not in the community chat', async () => {
-    givenUserDeleteBotsEndpoint(
-      defaultUserDeleteBotsEndpoint({ database, emailHashes: ['bar'] })
-    )
+  test('does not sent a sentry event when the user is not in the newsletter', async () => {
+    await mutation.withVariables({ input: { botIds: [user2.id] } }).execute()
 
-    await assertSuccessfulGraphQLMutation({
-      ...createDeleteBotsMutation({ botIds: [user2.id] }),
-      data: { user: { deleteBots: { success: true } } },
-      client,
-    })
-
-    expect(emailHashes).toHaveLength(1)
+    expect(mailchimpEmails).toHaveLength(1)
     await assertNoErrorEvents()
   })
 
   test('send a sentry event when the user cannot be deleted', async () => {
-    givenUserDeleteBotsEndpoint(
-      defaultUserDeleteBotsEndpoint({ database, emailHashes: ['bar'] })
-    )
     givenMailchimpDeleteEmailEndpoint(
       returnsJson({ status: 405, json: { errorType: 'unknown' } })
     )
 
-    await assertSuccessfulGraphQLMutation({
-      ...createDeleteBotsMutation({ botIds: [user2.id] }),
-      data: { user: { deleteBots: { success: true } } },
-      client,
-    })
+    await mutation.execute()
 
     await assertErrorEvent({
       message: 'Cannot delete user from mailchimp',
-      errorContext: { emailHash: 'bar' },
+      errorContext: { emailHash: emailHash(user) },
     })
   })
 })
 
 test('fails when one of the given bot ids is not a user', async () => {
-  await assertFailingGraphQLMutation({
-    ...createDeleteBotsMutation({ botIds: [castToUuid(article.id)] }),
-    client,
-    expectedError: 'BAD_USER_INPUT',
-  })
+  await mutation
+    .withVariables({ input: { botIds: [castToUuid(article.id)] } })
+    .shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('fails when one given bot id has more than 4 edits', async () => {
-  global.server.use(
-    createActivityByTypeHandler({
-      userId: user.id,
-      activityByType: {
-        edits: 5,
-        comments: 0,
-        reviews: 0,
-        taxonomy: 0,
-      },
-    })
-  )
+  given('ActivityByTypeQuery')
+    .withPayload({ userId: user.id })
+    .returns({ edits: 5, comments: 0, reviews: 0, taxonomy: 0 })
 
-  await assertFailingGraphQLMutation({
-    ...createDeleteBotsMutation({ botIds: [user.id] }),
-    client,
-    expectedError: 'BAD_USER_INPUT',
-  })
+  await mutation.shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('fails when user is not authenticated', async () => {
-  const client = createTestClient({ userId: null })
-
-  await assertFailingGraphQLMutation({
-    ...createDeleteBotsMutation(),
-    client,
-    expectedError: 'UNAUTHENTICATED',
-  })
+  await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
 
 test('fails when user does not have role "sysadmin"', async () => {
   database.hasUuid({ ...user, roles: ['login', 'de_admin'] })
 
-  await assertFailingGraphQLMutation({
-    ...createDeleteBotsMutation(),
-    client,
-    expectedError: 'FORBIDDEN',
-  })
+  await mutation.shouldFailWithError('FORBIDDEN')
 })
 
 test('fails when database layer has an internal error', async () => {
-  givenUserDeleteBotsEndpoint(hasInternalServerError())
+  given('UserDeleteBotsMutation').hasInternalServerError()
 
-  await assertFailingGraphQLMutation({
-    ...createDeleteBotsMutation(),
-    client,
-    expectedError: 'INTERNAL_SERVER_ERROR',
-  })
+  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
-
-function createDeleteBotsMutation(args?: { botIds?: number[] }) {
-  return {
-    mutation: gql`
-      mutation ($input: UserDeleteBotsInput!) {
-        user {
-          deleteBots(input: $input) {
-            success
-          }
-        }
-      }
-    `,
-    variables: { input: { botIds: args?.botIds ?? [user.id] } },
-  }
-}
-
-function givenUserDeleteBotsEndpoint(
-  resolver: MessageResolver<{
-    botIds: number[]
-  }>
-) {
-  givenSerloEndpoint('UserDeleteBotsMutation', resolver)
-}
-
-function defaultUserDeleteBotsEndpoint({
-  database,
-  emailHashes,
-}: {
-  database: Database
-  emailHashes: string[]
-}): MessageResolver<{ botIds: number[] }> {
-  return (req, res, ctx) => {
-    const { botIds } = req.body.payload
-
-    for (const id of botIds) {
-      database.deleteUuid(id)
-    }
-
-    return res(ctx.json({ success: true, emailHashes }))
-  }
-}
 
 function givenChatDeleteUserEndpoint(
   resolver: RestResolver<{ username: string }>
@@ -373,4 +264,8 @@ function givenMailchimpDeleteEmailEndpoint(
     `lists/a7bb2bbc4f/members/:emailHash/actions/delete-permanent`
 
   global.server.use(rest.post(url, resolver))
+}
+
+function emailHash(user: { id: number }) {
+  return `${user.id}@example.org`
 }

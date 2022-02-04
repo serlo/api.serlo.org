@@ -32,7 +32,7 @@ import {
 } from '../../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
-  Client,
+  LegacyClient,
   createMessageHandler,
   createTestClient,
   createUuidHandler,
@@ -40,7 +40,7 @@ import {
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 
-let client: Client
+let client: LegacyClient
 
 beforeEach(() => {
   client = createTestClient({ userId: user.id })
@@ -486,7 +486,7 @@ export function mockEndpointsForThreads(
       })
       .concat([{ id: uuidPayload.id }])
 
-    return createDatabaseLayerHandler<{ id: number }>({
+    return createDatabaseLayerHandler<string, { id: number }>({
       matchType: 'UuidQuery',
       matchPayloads,
       resolver(req, res, ctx) {

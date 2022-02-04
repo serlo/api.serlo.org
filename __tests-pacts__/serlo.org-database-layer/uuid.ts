@@ -20,44 +20,8 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Matchers } from '@pact-foundation/pact'
-import { gql } from 'apollo-server'
 
-import { article, user } from '../../__fixtures__'
-import { createTestClient, createUuidHandler } from '../../__tests__/__utils__'
-import {
-  addMessageInteraction,
-  assertSuccessfulGraphQLMutation,
-} from '../__utils__'
-
-test('UuidSetStateMutation', async () => {
-  global.client = createTestClient({ userId: user.id })
-  global.server.use(
-    createUuidHandler(article),
-    createUuidHandler({ ...user, roles: ['de_architect'] })
-  )
-
-  await addMessageInteraction({
-    given: 'there exists a uuid with id 1855 that is not trashed',
-    message: {
-      type: 'UuidSetStateMutation',
-      payload: { ids: [article.id], userId: user.id, trashed: true },
-    },
-  })
-
-  await assertSuccessfulGraphQLMutation({
-    mutation: gql`
-      mutation uuid($input: UuidSetStateInput!) {
-        uuid {
-          setState(input: $input) {
-            success
-          }
-        }
-      }
-    `,
-    variables: { input: { id: article.id, trashed: true } },
-    data: { uuid: { setState: { success: true } } },
-  })
-})
+import { addMessageInteraction } from '../__utils__'
 
 test('UnrevisedEntitiesQuery', async () => {
   await addMessageInteraction({

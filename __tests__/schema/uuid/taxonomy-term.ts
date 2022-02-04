@@ -32,14 +32,14 @@ import {
 } from '../../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
-  Client,
+  LegacyClient,
   createNavigationHandler,
   createTestClient,
   createUuidHandler,
   getTypenameAndId,
 } from '../../__utils__'
 
-let client: Client
+let client: LegacyClient
 
 beforeEach(() => {
   client = createTestClient()

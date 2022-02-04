@@ -26,9 +26,9 @@ import {
   assertFailingGraphQLMutation,
   assertSuccessfulGraphQLMutation,
   createTestClient,
-  givenUuidQueryEndpoint,
+  given,
   hasInternalServerError,
-  Client,
+  LegacyClient,
   Database,
   returnsUuidsFromDatabase,
   MessageResolver,
@@ -39,7 +39,7 @@ import {
 
 let database: Database
 
-let client: Client
+let client: LegacyClient
 const user = { ...baseUser, roles: ['sysadmin'] }
 const userIds = [user.id, nextUuid(user.id)]
 const noUserId = nextUuid(nextUuid(user.id))
@@ -55,7 +55,7 @@ beforeEach(() => {
   givenUserDeleteRegularUsersEndpoint(
     defaultUserDeleteRegularUsersEndpoint({ database })
   )
-  givenUuidQueryEndpoint(returnsUuidsFromDatabase(database))
+  given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
 
   client = createTestClient({ userId: user.id })
 })
@@ -194,9 +194,12 @@ function createDeleteRegularUsersMutation(args?: { userIds?: number[] }) {
 }
 
 function givenUserDeleteRegularUsersEndpoint(
-  resolver: MessageResolver<{
-    userId: number
-  }>
+  resolver: MessageResolver<
+    string,
+    {
+      userId: number
+    }
+  >
 ) {
   givenSerloEndpoint('UserDeleteRegularUsersMutation', resolver)
 }
@@ -209,7 +212,7 @@ function defaultUserDeleteRegularUsersEndpoint({
   database: Database
   failsForUserIds?: number[]
   reason?: string
-}): MessageResolver<{ userId: number }> {
+}): MessageResolver<string, { userId: number }> {
   return (req, res, ctx) => {
     const { userId } = req.body.payload
 

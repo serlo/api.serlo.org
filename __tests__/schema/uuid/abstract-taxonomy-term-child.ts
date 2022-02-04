@@ -33,7 +33,7 @@ import {
 } from '../../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
-  Client,
+  LegacyClient,
   createTestClient,
   createUuidHandler,
   getTypenameAndId,
@@ -41,7 +41,7 @@ import {
 import { Model } from '~/internals/graphql'
 import { EntityType } from '~/model/decoder'
 
-let client: Client
+let client: LegacyClient
 
 beforeEach(() => {
   client = createTestClient()

@@ -22,9 +22,9 @@
 import { gql } from 'apollo-server'
 
 import { user } from '../../../__fixtures__'
-import { createTestClient, given, Query, givenUuid } from '../../__utils__'
+import { given, Client, givenUuid } from '../../__utils__'
 
-const query = new Query({
+const query = new Client({ userId: user.id }).prepareQuery({
   query: gql`
     mutation ($input: UserSetDescriptionInput!) {
       user {
@@ -35,7 +35,6 @@ const query = new Query({
     }
   `,
   variables: { input: { description: 'description' } },
-  client: createTestClient({ userId: user.id }),
 })
 
 beforeEach(() => {
@@ -51,7 +50,7 @@ test('returns "{ success: true }" when mutation could be successfully executed',
 })
 
 test('fails when user is not authenticated', async () => {
-  await query.withUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
+  await query.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
 
 test('fails when database layer returns a 400er response', async () => {

@@ -24,13 +24,13 @@ import { gql } from 'apollo-server'
 import { article, articleRevision } from '../../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
-  Client,
+  LegacyClient,
   createTestClient,
   createUuidHandler,
   getTypenameAndId,
 } from '../../__utils__'
 
-let client: Client
+let client: LegacyClient
 
 beforeEach(() => {
   client = createTestClient()
