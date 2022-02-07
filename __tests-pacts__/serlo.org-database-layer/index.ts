@@ -135,10 +135,7 @@ const pactSpec: PactSpec = {
     examplePayloadForNull: { id: 100 },
   },
   UserPotentialSpamUsersQuery: {
-    examples: [
-      [{ first: 10, after: null }, { userIds: [user.id] }],
-      [{ first: 10, after: 100 }, { userIds: [user.id] }],
-    ],
+    examples: [],
   },
   UserDeleteBotsMutation: {
     examples: [],
