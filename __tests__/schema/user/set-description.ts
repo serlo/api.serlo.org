@@ -46,7 +46,9 @@ test('returns "{ success: true }" when mutation could be successfully executed',
     .withPayload({ userId: user.id, description: 'description' })
     .returns({ success: true })
 
-  await mutation.shouldReturnData({ user: { setDescription: { success: true } } })
+  await mutation.shouldReturnData({
+    user: { setDescription: { success: true } },
+  })
 })
 
 test('fails when user is not authenticated', async () => {
@@ -80,6 +82,10 @@ test('updates the cache', async () => {
   })
 
   await query.shouldReturnData({ uuid: { description: null } })
+
+  given('UserSetDescriptionMutation')
+    .withPayload({ userId: user.id, description: 'description' })
+    .returns({ success: true })
 
   await mutation.execute()
 
