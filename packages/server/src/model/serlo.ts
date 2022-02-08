@@ -861,16 +861,11 @@ export function createSerloModel({
   })
 
   const getEntitiesMetadata = createRequest({
-    decoder: t.strict({
-      entities: t.array(t.type({ identifier: t.type({ value: t.number }) })),
-    }),
-    async getCurrentValue(payload: {
-      first: number
-      after?: number
-      instance?: Instance
-      modifiedAfter?: string
-    }) {
-      return handleMessage({ type: 'EntitiesMetadataQuery', payload })
+    decoder: DatabaseLayer.getDecoderFor('EntitiesMetadataQuery'),
+    async getCurrentValue(
+      payload: DatabaseLayer.Payload<'EntitiesMetadataQuery'>
+    ) {
+      return DatabaseLayer.makeRequest('EntitiesMetadataQuery', payload)
     },
   })
 
