@@ -24,7 +24,7 @@ import { gql } from 'apollo-server'
 import { user } from '../../../__fixtures__'
 import { given, Client, givenUuid } from '../../__utils__'
 
-const query = new Client({ userId: user.id }).prepareQuery({
+const mutation = new Client({ userId: user.id }).prepareQuery({
   query: gql`
     mutation ($input: UserSetDescriptionInput!) {
       user {
@@ -46,21 +46,42 @@ test('returns "{ success: true }" when mutation could be successfully executed',
     .withPayload({ userId: user.id, description: 'description' })
     .returns({ success: true })
 
-  await query.shouldReturnData({ user: { setDescription: { success: true } } })
+  await mutation.shouldReturnData({ user: { setDescription: { success: true } } })
 })
 
 test('fails when user is not authenticated', async () => {
-  await query.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
+  await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
 
 test('fails when database layer returns a 400er response', async () => {
   given('UserSetDescriptionMutation').returnsBadRequest()
 
-  await query.shouldFailWithError('BAD_USER_INPUT')
+  await mutation.shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('fails when database layer has an internal error', async () => {
   given('UserSetDescriptionMutation').hasInternalServerError()
 
-  await query.shouldFailWithError('INTERNAL_SERVER_ERROR')
+  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
+})
+
+test('updates the cache', async () => {
+  const query = new Client({ userId: user.id }).prepareQuery({
+    query: gql`
+      query ($id: Int!) {
+        uuid(id: $id) {
+          ... on User {
+            description
+          }
+        }
+      }
+    `,
+    variables: { id: user.id },
+  })
+
+  await query.shouldReturnData({ uuid: { description: null } })
+
+  await mutation.execute()
+
+  await query.shouldReturnData({ uuid: { description: 'description' } })
 })

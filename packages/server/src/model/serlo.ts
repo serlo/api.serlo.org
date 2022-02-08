@@ -221,6 +221,18 @@ export function createSerloModel({
     mutate: (payload: DatabaseLayer.Payload<'UserSetDescriptionMutation'>) => {
       return DatabaseLayer.makeRequest('UserSetDescriptionMutation', payload)
     },
+    updateCache: async({ userId, description }, { success }) => {
+      if (success) {
+        await getUuid._querySpec.setCache({
+          payload: { id: userId },
+          getValue(current) {
+            if (!current) return
+
+            return { ...current, description: description }
+          },
+        })
+      }
+    },
   })
 
   const setEmail = createMutation({
