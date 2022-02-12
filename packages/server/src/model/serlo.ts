@@ -28,7 +28,6 @@ import * as R from 'ramda'
 import * as DatabaseLayer from './database-layer'
 import {
   CommentDecoder,
-  InstanceDecoder,
   NotificationEventDecoder,
   Uuid,
   NotificationDecoder,
@@ -389,20 +388,14 @@ export function createSerloModel({
 
   const getSubjects = createQuery(
     {
-      decoder: t.strict({
-        subjects: t.array(
-          t.strict({ instance: InstanceDecoder, taxonomyTermId: t.number })
-        ),
-      }),
-      getCurrentValue() {
-        return handleMessage({ type: 'SubjectsQuery', payload: {} })
+      decoder: DatabaseLayer.getDecoderFor('SubjectsQuery'),
+      getCurrentValue: () => {
+        return DatabaseLayer.makeRequest('SubjectsQuery', {})
       },
       enableSwr: true,
       staleAfter: { day: 1 },
-      getKey() {
-        return 'serlo.org/subjects'
-      },
-      getPayload(key) {
+      getKey: () => 'serlo.org/subjects',
+      getPayload: (key) => {
         return key === 'serlo.org/subjects' ? O.some(undefined) : O.none
       },
       examplePayload: undefined,

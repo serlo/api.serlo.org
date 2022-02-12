@@ -134,6 +134,9 @@ const pactSpec: PactSpec = {
     examples: [[{ id: 1 }, license]],
     examplePayloadForNull: { id: 100 },
   },
+  SubjectsQuery: {
+    examples: [], // TODO
+  },
   UserPotentialSpamUsersQuery: {
     examples: [],
   },
