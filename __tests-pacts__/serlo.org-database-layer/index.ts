@@ -140,6 +140,9 @@ const pactSpec: PactSpec = {
   UserDeleteBotsMutation: {
     examples: [],
   },
+  UserDeleteRegularUsersMutation: {
+    examples: [[{ userId: user.id }, { success: true }]],
+  },
   UserSetDescriptionMutation: {
     examples: [[{ userId: 1, description: 'Hello World' }, { success: true }]],
   },
