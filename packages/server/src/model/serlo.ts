@@ -202,12 +202,14 @@ export function createSerloModel({
   })
 
   const deleteRegularUsers = createMutation({
-    decoder: t.union([
-      t.type({ success: t.literal(true) }),
-      t.type({ success: t.literal(false), reason: t.string }),
-    ]),
-    mutate: (payload: { userId: number }) => {
-      return handleMessage({ type: 'UserDeleteRegularUsersMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('UserDeleteRegularUsersMutation'),
+    mutate: (
+      payload: DatabaseLayer.Payload<'UserDeleteRegularUsersMutation'>
+    ) => {
+      return DatabaseLayer.makeRequest(
+        'UserDeleteRegularUsersMutation',
+        payload
+      )
     },
     async updateCache({ userId }, { success }) {
       if (success) {
