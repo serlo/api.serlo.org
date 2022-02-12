@@ -72,6 +72,15 @@ export const spec = {
     }),
     canBeNull: true,
   },
+  SubjectsQuery: {
+    payload: t.type({}),
+    response: t.strict({
+      subjects: t.array(
+        t.strict({ instance: InstanceDecoder, taxonomyTermId: t.number })
+      ),
+    }),
+    canBeNull: false,
+  },
   UserDeleteBotsMutation: {
     payload: t.type({ botIds: t.array(t.number) }),
     response: t.strict({
