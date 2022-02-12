@@ -32,8 +32,8 @@ Make sure Docker is running and then run `yarn start` to start Redis.
 
 ### Run tests
 
-- `yarn test` runs the unit tests (requires `yarn start` beforehand)
-- `yarn pacts` runs the contract tests (requires `yarn start` beforehand)
+- `yarn test` runs the unit tests (requires `yarn start:redis` beforehand)
+- `yarn pacts` runs the contract tests (requires `yarn start:redis` beforehand)
 - `yarn check:all` runs all checks (like the linter and tests) to check whether your codebase is ready to be merged into main
 
 ### Use the GraphQL playground
