@@ -81,6 +81,11 @@ export const spec = {
     }),
     canBeNull: false,
   },
+  UnrevisedEntitiesQuery: {
+    payload: t.type({}),
+    response: t.strict({ unrevisedEntityIds: t.array(t.number) }),
+    canBeNull: false,
+  },
   UserDeleteBotsMutation: {
     payload: t.type({ botIds: t.array(t.number) }),
     response: t.strict({
