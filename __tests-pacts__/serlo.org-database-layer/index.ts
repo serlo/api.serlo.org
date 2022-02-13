@@ -137,6 +137,9 @@ const pactSpec: PactSpec = {
   SubjectsQuery: {
     examples: [], // TODO
   },
+  UnrevisedEntitiesQuery: {
+    examples: [], // TODO
+  },
   UserPotentialSpamUsersQuery: {
     examples: [],
   },

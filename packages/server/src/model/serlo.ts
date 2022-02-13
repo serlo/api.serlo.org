@@ -405,17 +405,15 @@ export function createSerloModel({
 
   const getUnrevisedEntities = createQuery(
     {
-      decoder: t.strict({ unrevisedEntityIds: t.array(t.number) }),
-      getCurrentValue(_payload: undefined) {
-        return handleMessage({ type: 'UnrevisedEntitiesQuery', payload: {} })
+      decoder: DatabaseLayer.getDecoderFor('UnrevisedEntitiesQuery'),
+      getCurrentValue: () => {
+        return DatabaseLayer.makeRequest('UnrevisedEntitiesQuery', {})
       },
       enableSwr: true,
       staleAfter: { minutes: 2 },
       maxAge: { hour: 1 },
-      getKey() {
-        return 'serlo.org/unrevised'
-      },
-      getPayload(key) {
+      getKey: () => 'serlo.org/unrevised',
+      getPayload: (key) => {
         return key === 'serlo.org/unrevised' ? O.some(undefined) : O.none
       },
       examplePayload: undefined,
