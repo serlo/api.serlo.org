@@ -35,7 +35,6 @@ import {
   NavigationDataDecoder,
   EntityRevisionDecoder,
   EntityDecoder,
-  SubscriptionsDecoder,
   PageRevisionDecoder,
   PageDecoder,
 } from './decoder'
@@ -583,10 +582,10 @@ export function createSerloModel({
 
   const getSubscriptions = createQuery(
     {
-      decoder: SubscriptionsDecoder,
+      decoder: DatabaseLayer.getDecoderFor('SubscriptionsQuery'),
       enableSwr: true,
-      getCurrentValue: (payload: { userId: number }) => {
-        return handleMessage({ type: 'SubscriptionsQuery', payload })
+      getCurrentValue: (payload: DatabaseLayer.Payload<'SubscriptionsQuery'>) => {
+        return DatabaseLayer.makeRequest('SubscriptionsQuery', payload)
       },
       staleAfter: { hour: 1 },
       getKey: ({ userId }) => {

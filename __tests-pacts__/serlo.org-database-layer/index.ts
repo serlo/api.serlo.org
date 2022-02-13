@@ -137,6 +137,9 @@ const pactSpec: PactSpec = {
   SubjectsQuery: {
     examples: [], // TODO
   },
+  SubscriptionsQuery: {
+    examples: [[ { userId: user.id}, { subscriptions: [{ objectId: article.id, sendEmail: true }]} ]]
+  },
   UnrevisedEntitiesQuery: {
     examples: [], // TODO
   },
