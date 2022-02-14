@@ -146,7 +146,17 @@ const pactSpec: PactSpec = {
     ],
   },
   SubscriptionSetMutation: {
-    examples: [], // TODO
+    examples: [
+      [
+        {
+      ids: [article.id],
+      userId: user.id,
+      subscribe: false,
+      sendEmail: false,
+        },
+        undefined,
+      ],
+    ],
   },
   UnrevisedEntitiesQuery: {
     examples: [], // TODO
