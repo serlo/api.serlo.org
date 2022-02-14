@@ -24,7 +24,12 @@ import { option as O, function as F } from 'fp-ts'
 import * as t from 'io-ts'
 import fetch from 'node-fetch'
 
-import { InstanceDecoder, SubscriptionsDecoder, UuidDecoder } from './decoder'
+import {
+  InstanceDecoder,
+  SubscriptionsDecoder,
+  Uuid,
+  UuidDecoder,
+} from './decoder'
 
 const URL = `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`
 
@@ -84,7 +89,17 @@ export const spec = {
   SubscriptionsQuery: {
     payload: t.type({ userId: t.number }),
     response: SubscriptionsDecoder,
-    canBeNull: false
+    canBeNull: false,
+  },
+  SubscriptionSetMutation: {
+    payload: t.type({
+      ids: t.array(Uuid),
+      userId: t.number,
+      subscribe: t.boolean,
+      sendEmail: t.boolean,
+    }),
+    response: t.void,
+    canBeNull: false,
   },
   UnrevisedEntitiesQuery: {
     payload: t.type({}),
