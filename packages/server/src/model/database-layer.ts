@@ -63,6 +63,27 @@ export const spec = {
     }),
     canBeNull: true,
   },
+  EntitiesMetadataQuery: {
+    payload: t.intersection([
+      t.type({
+        first: t.number,
+      }),
+      t.partial({
+        after: t.number,
+        instance: InstanceDecoder,
+        modifiedAfter: t.string,
+      }),
+    ]),
+    response: t.type({
+      entities: t.array(
+        t.intersection([
+          t.type({ identifier: t.type({ value: t.number }) }),
+          t.UnknownRecord,
+        ])
+      ),
+    }),
+    canBeNull: false,
+  },
   LicenseQuery: {
     payload: t.type({ id: t.number }),
     response: t.type({
