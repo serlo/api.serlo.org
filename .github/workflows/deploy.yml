@@ -32,7 +32,7 @@ jobs:
           version: '274.0.0'
           service_account_key: ${{ secrets.GCP_KEY_CONTAINER_REGISTRY }}
       - run: gcloud auth configure-docker
-      - run: yarn --immutable --immutable-cache --check-cache
+      - run: yarn --immutable --immutable-cache
       - run: yarn deploy:images
   npm-package:
     runs-on: ubuntu-latest
@@ -45,7 +45,7 @@ jobs:
           cache: yarn
           node-version: 16.x
           registry-url: 'https://registry.npmjs.org'
-      - run: yarn --immutable --immutable-cache --check-cache
+      - run: yarn --immutable --immutable-cache
       - run: yarn build
       - run: echo //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN} > .npmrc
         env:
