@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.28.3](https://github.com/serlo/api.serlo.org/compare/v0.28.2..v0.28.3) - February 11, 2022
+
+### Fixed
+
+- Update cache after successful UserSetDescriptionMutation
+
 ## [v0.28.2](https://github.com/serlo/api.serlo.org/compare/v0.28.1..v0.28.2) - January 27, 2022
 
 ### Added

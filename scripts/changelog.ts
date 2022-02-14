@@ -1168,6 +1168,11 @@ async function exec(): Promise<void> {
         added: ['Add mutation `User.setDescription`'],
         changed: ['Change default familiy name in user-journey'],
       },
+      {
+        tagName: 'v0.28.3',
+        date: '2022-02-11',
+        fixed: ['Update cache after successful UserSetDescriptionMutation'],
+      },
     ],
   })
 

@@ -8,7 +8,7 @@ COPY packages/types/package.json packages/types/package.json
 COPY .yarnrc.yml .
 COPY package.json .
 COPY yarn.lock .
-RUN yarn --immutable --immutable-cache --check-cache --silent
+RUN yarn --immutable --immutable-cache --silent
 
 FROM dependencies as build
 COPY packages/authorization packages/authorization
