@@ -10,6 +10,6 @@ jobs:
         with:
           cache: yarn
           node-version: 16.x
-      - run: yarn --immutable --immutable-cache --check-cache
+      - run: yarn --immutable --immutable-cache
       - run: yarn start:redis
       - run: yarn pacts

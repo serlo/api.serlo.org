@@ -130,6 +130,9 @@ const pactSpec: PactSpec = {
     ]),
     examplePayloadForNull: { instance: Instance.En, path: '/not-existing' },
   },
+  EntitiesMetadataQuery: {
+    examples: [],
+  },
   LicenseQuery: {
     examples: [[{ id: 1 }, license]],
     examplePayloadForNull: { id: 100 },
