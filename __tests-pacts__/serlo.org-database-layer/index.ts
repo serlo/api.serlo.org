@@ -133,6 +133,9 @@ const pactSpec: PactSpec = {
   EntitiesMetadataQuery: {
     examples: [],
   },
+  EntityAddRevision: {
+    examples: [], // TODO
+  },
   LicenseQuery: {
     examples: [[{ id: 1 }, license]],
     examplePayloadForNull: { id: 100 },
