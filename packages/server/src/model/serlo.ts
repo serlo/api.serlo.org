@@ -584,7 +584,9 @@ export function createSerloModel({
     {
       decoder: DatabaseLayer.getDecoderFor('SubscriptionsQuery'),
       enableSwr: true,
-      getCurrentValue: (payload: DatabaseLayer.Payload<'SubscriptionsQuery'>) => {
+      getCurrentValue: (
+        payload: DatabaseLayer.Payload<'SubscriptionsQuery'>
+      ) => {
         return DatabaseLayer.makeRequest('SubscriptionsQuery', payload)
       },
       staleAfter: { hour: 1 },
@@ -603,19 +605,11 @@ export function createSerloModel({
   )
 
   const setSubscription = createMutation({
-    decoder: t.void,
-    async mutate(payload: {
-      ids: Uuid[]
-      userId: number
-      subscribe: boolean
-      sendEmail: boolean
-    }) {
-      await handleMessageWithoutResponse({
-        type: 'SubscriptionSetMutation',
-        payload,
-      })
+    decoder: DatabaseLayer.getDecoderFor('SubscriptionSetMutation'),
+    async mutate(payload: DatabaseLayer.Payload<'SubscriptionSetMutation'>) {
+      await DatabaseLayer.makeRequest('SubscriptionSetMutation', payload)
     },
-    async updateCache({ ids, sendEmail, userId, subscribe }) {
+    updateCache: async ({ ids, sendEmail, userId, subscribe }) => {
       await getSubscriptions._querySpec.setCache({
         payload: { userId },
         getValue(current) {

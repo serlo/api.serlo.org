@@ -138,7 +138,15 @@ const pactSpec: PactSpec = {
     examples: [], // TODO
   },
   SubscriptionsQuery: {
-    examples: [[ { userId: user.id}, { subscriptions: [{ objectId: article.id, sendEmail: true }]} ]]
+    examples: [
+      [
+        { userId: user.id },
+        { subscriptions: [{ objectId: article.id, sendEmail: true }] },
+      ],
+    ],
+  },
+  SubscriptionSetMutation: {
+    examples: [], // TODO
   },
   UnrevisedEntitiesQuery: {
     examples: [], // TODO
