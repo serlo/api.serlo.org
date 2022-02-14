@@ -48,6 +48,48 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     },
   },
   EntityMutation: {
+    async addRevision(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const {
+        changes,
+        content,
+        entityId,
+        needsReview,
+        subscribeThisByEmail,
+        subscribeThis,
+        title,
+        metaDescription,
+        metaTitle,
+      } = input
+
+      const scope = await fetchScopeOfUuid({
+        id: entityId,
+        dataSources,
+      })
+      await assertUserIsAuthorized({
+        userId,
+        dataSources,
+        message: 'You are not allowed to add revision to this entity.',
+        guard: serloAuth.Entity.addRevision(scope),
+      })
+
+      await dataSources.model.serlo.addEntityRevision({
+        changes,
+        content,
+        entityId,
+        needsReview,
+        subscribeThisByEmail,
+        subscribeThis,
+        title,
+        userId,
+        metaDescription: metaDescription ?? undefined, // TODO: Better way?
+        metaTitle: metaTitle ?? undefined,
+      })
+
+      return { success: true }
+    },
+
     async checkoutRevision(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 

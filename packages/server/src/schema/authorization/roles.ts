@@ -34,6 +34,7 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
   [Role.Login]: {
     permissions: [
       Permission.Entity_AddChild,
+      Permission.Entity_AddRevision,
       Permission.File_Create,
       Permission.Notification_SetState,
       Permission.Subscription_Set,

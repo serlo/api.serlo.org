@@ -738,6 +738,14 @@ export function createSerloModel({
     },
   })
 
+  const addEntityRevision = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('EntityAddRevision'),
+    mutate: (payload: DatabaseLayer.Payload<'EntityAddRevision'>) => {
+      return DatabaseLayer.makeRequest('EntityAddRevision', payload)
+    },
+    updateCache: () => {}, // TODO
+  })
+
   const checkoutEntityRevision = createMutation({
     decoder: t.type({ success: t.literal(true) }),
     async mutate(payload: {
@@ -875,6 +883,7 @@ export function createSerloModel({
     deleteRegularUsers,
     setDescription,
     setEmail,
+    addEntityRevision,
     checkoutEntityRevision,
     checkoutPageRevision,
     getActiveAuthorIds,

@@ -84,6 +84,26 @@ export const spec = {
     }),
     canBeNull: false,
   },
+  EntityAddRevision: {
+    payload: t.intersection([
+      t.type({
+        changes: t.string,
+        content: t.string,
+        entityId: t.number,
+        needsReview: t.boolean,
+        subscribeThisByEmail: t.boolean,
+        subscribeThis: t.boolean,
+        title: t.string,
+        userId: t.number,
+      }),
+      t.partial({
+        metaDescription: t.string,
+        metaTitle: t.string,
+      }),
+    ]),
+    response: t.type({ success: t.boolean }),
+    canBeNull: false,
+  },
   LicenseQuery: {
     payload: t.type({ id: t.number }),
     response: t.type({

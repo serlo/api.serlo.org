@@ -57,13 +57,30 @@ extend type Mutation {
 }
 
 type EntityMutation {
+  addRevision(input: AddRevisionInput!): AddRevisionResponse!
   checkoutRevision(input: CheckoutRevisionInput!): CheckoutRevisionResponse!
   rejectRevision(input: RejectRevisionInput!): RejectRevisionResponse!
+}
+
+input AddRevisionInput {
+  changes: String!
+  content: String!
+  entityId: Int!
+  needsReview: Boolean!
+  subscribeThisByEmail: Boolean!
+  subscribeThis: Boolean!
+  title: String!
+  metaDescription: String
+  metaTitle: String
 }
 
 input CheckoutRevisionInput {
   revisionId: Int!
   reason: String!
+}
+
+type AddRevisionResponse {
+  success: Boolean!
 }
 
 type CheckoutRevisionResponse {

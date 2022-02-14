@@ -260,6 +260,23 @@ export type AbstractUuidCursor = {
   node: AbstractUuid;
 };
 
+export type AddRevisionInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  entityId: Scalars['Int'];
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
+  needsReview: Scalars['Boolean'];
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
+};
+
+export type AddRevisionResponse = {
+  __typename?: 'AddRevisionResponse';
+  success: Scalars['Boolean'];
+};
+
 export type AliasInput = {
   instance: Instance;
   path: Scalars['String'];
@@ -859,8 +876,14 @@ export type EntityMetadataCursor = {
 
 export type EntityMutation = {
   __typename?: 'EntityMutation';
+  addRevision: AddRevisionResponse;
   checkoutRevision: CheckoutRevisionResponse;
   rejectRevision: RejectRevisionResponse;
+};
+
+
+export type EntityMutationAddRevisionArgs = {
+  input: AddRevisionInput;
 };
 
 
