@@ -103,15 +103,17 @@ describe('subscriptions', () => {
 })
 
 describe('subscription mutation set', () => {
-  const mutation = gql`
-    mutation set($input: SubscriptionSetInput!) {
-      subscription {
-        set(input: $input) {
-          success
+  const mutation = new Client({ userId: user.id }).prepareQuery({
+    query: gql`
+      mutation set($input: SubscriptionSetInput!) {
+        subscription {
+          set(input: $input) {
+            success
+          }
         }
       }
-    }
-  `
+    `,
+  })
 
   const getSubscriptionsQuery = new Client({ userId: user.id }).prepareQuery({
     query: gql`
@@ -162,12 +164,9 @@ describe('subscription mutation set', () => {
       })
       .returns()
 
-    await new Client({ userId: user.id })
-      .prepareQuery({
-        query: mutation,
-        variables: {
-          input: { id: [1565, 1555], subscribe: true, sendEmail: true },
-        },
+    await mutation
+      .withVariables({
+        input: { id: [1565, 1555], subscribe: true, sendEmail: true },
       })
       .shouldReturnData({ subscription: { set: { success: true } } })
 
@@ -195,12 +194,9 @@ describe('subscription mutation set', () => {
       })
       .returns()
 
-    await new Client({ userId: user.id })
-      .prepareQuery({
-        query: mutation,
-        variables: {
-          input: { id: [article.id], subscribe: false, sendEmail: false },
-        },
+    await mutation
+      .withVariables({
+        input: { id: [article.id], subscribe: false, sendEmail: false },
       })
       .shouldReturnData({ subscription: { set: { success: true } } })
 
@@ -215,10 +211,10 @@ describe('subscription mutation set', () => {
   })
 
   test('unauthenticated', async () => {
-    await new Client({ userId: null })
-      .prepareQuery({
-        query: mutation,
-        variables: { input: { id: 1565, subscribe: true, sendEmail: false } },
+    await mutation
+      .forUnauthenticatedUser()
+      .withVariables({
+        input: { id: 1565, subscribe: true, sendEmail: false },
       })
       .shouldFailWithError('UNAUTHENTICATED')
   })
