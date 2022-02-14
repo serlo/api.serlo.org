@@ -135,7 +135,19 @@ const pactSpec: PactSpec = {
     examplePayloadForNull: { id: 100 },
   },
   SubjectsQuery: {
-    examples: [], // TODO
+    examples: [
+      [
+        {},
+        {
+          subjects: [
+            {
+              instance: taxonomyTermSubject.instance,
+              taxonomyTermId: taxonomyTermSubject.id,
+            },
+          ],
+        },
+      ],
+    ],
   },
   SubscriptionsQuery: {
     examples: [
@@ -149,17 +161,24 @@ const pactSpec: PactSpec = {
     examples: [
       [
         {
-      ids: [article.id],
-      userId: user.id,
-      subscribe: false,
-      sendEmail: false,
+          ids: [article.id],
+          userId: user.id,
+          subscribe: false,
+          sendEmail: false,
         },
         undefined,
       ],
     ],
   },
   UnrevisedEntitiesQuery: {
-    examples: [], // TODO
+    examples: [
+      [
+        {},
+        {
+          unrevisedEntityIds: [article.id],
+        },
+      ],
+    ],
   },
   UserPotentialSpamUsersQuery: {
     examples: [],
