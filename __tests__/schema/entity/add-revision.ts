@@ -24,18 +24,6 @@ import { gql } from 'apollo-server'
 import { article, user } from '../../../__fixtures__'
 import { given, givenUuids, Client, givenUuid, nextUuid } from '../../__utils__'
 
-const mutation = new Client({ userId: user.id }).prepareQuery({
-  query: gql`
-    mutation set($input: AddRevisionInput!) {
-      entity {
-        addRevision(input: $input) {
-          success
-        }
-      }
-    }
-  `,
-})
-
 const input = {
   changes: 'changes',
   content: 'content',
@@ -45,6 +33,20 @@ const input = {
   subscribeThisByEmail: false,
   title: 'title',
 }
+
+const mutation = new Client({ userId: user.id })
+  .prepareQuery({
+    query: gql`
+      mutation set($input: AddRevisionInput!) {
+        entity {
+          addRevision(input: $input) {
+            success
+          }
+        }
+      }
+    `,
+  })
+  .withVariables({ input })
 
 beforeEach(() => {
   givenUuids(user, article)
@@ -58,9 +60,9 @@ test('returns "{ success: true }" when mutation could be successfully executed',
     })
     .returns({ success: true })
 
-  await mutation
-    .withVariables({ input })
-    .shouldReturnData({ entity: { addRevision: { success: true } } })
+  await mutation.shouldReturnData({
+    entity: { addRevision: { success: true } },
+  })
 })
 
 test('updates the cache', async () => {
@@ -68,10 +70,7 @@ test('updates the cache', async () => {
 })
 
 test('fails when user is not authenticated', async () => {
-  await mutation
-    .withVariables({ input })
-    .forUnauthenticatedUser()
-    .shouldFailWithError('UNAUTHENTICATED')
+  await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
 
 test('fails when user does not have role "login"', async () => {
@@ -91,20 +90,17 @@ test('fails when user does not have role "login"', async () => {
         }
       `,
     })
-    .withVariables({ input })
     .shouldFailWithError('FORBIDDEN')
 })
 
 test('fails when database layer returns a 400er response', async () => {
   given('EntityAddRevision').returnsBadRequest()
 
-  await mutation.withVariables({ input }).shouldFailWithError('BAD_USER_INPUT')
+  await mutation.shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('fails when database layer has an internal error', async () => {
   given('EntityAddRevision').hasInternalServerError()
 
-  await mutation
-    .withVariables({ input })
-    .shouldFailWithError('INTERNAL_SERVER_ERROR')
+  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
