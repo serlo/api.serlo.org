@@ -103,6 +103,7 @@ export const spec = {
         t.partial({
           cohesive: t.union([t.boolean, t.null, t.undefined]),
           content: t.union([t.string, t.null, t.undefined]),
+          description: t.union([t.string, t.null, t.undefined]),
           metaDescription: t.union([t.string, t.null, t.undefined]),
           metaTitle: t.union([t.string, t.null, t.undefined]),
           title: t.union([t.string, t.null, t.undefined]),
