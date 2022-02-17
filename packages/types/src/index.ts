@@ -958,7 +958,9 @@ export type EntityMutation = {
   addCourseRevision: AddRevisionResponse;
   addEventRevision: AddRevisionResponse;
   addExerciseGroupRevision: AddRevisionResponse;
-  addGenericRevision: AddRevisionResponse;
+  addExerciseRevision: AddRevisionResponse;
+  addGroupedExerciseRevision: AddRevisionResponse;
+  addSolutionRevision: AddRevisionResponse;
   addVideoRevision: AddRevisionResponse;
   checkoutRevision: CheckoutRevisionResponse;
   rejectRevision: RejectRevisionResponse;
@@ -995,7 +997,17 @@ export type EntityMutationAddExerciseGroupRevisionArgs = {
 };
 
 
-export type EntityMutationAddGenericRevisionArgs = {
+export type EntityMutationAddExerciseRevisionArgs = {
+  input: AddGenericRevisionInput;
+};
+
+
+export type EntityMutationAddGroupedExerciseRevisionArgs = {
+  input: AddGenericRevisionInput;
+};
+
+
+export type EntityMutationAddSolutionRevisionArgs = {
   input: AddGenericRevisionInput;
 };
 

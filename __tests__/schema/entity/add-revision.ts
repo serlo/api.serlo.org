@@ -27,12 +27,17 @@ import {
   course,
   coursePage,
   event,
+  exercise,
   exerciseGroup,
+  groupedExercise,
+  solution,
   user,
   video,
 } from '../../../__fixtures__'
 import { given, givenUuids, Client, givenUuid, nextUuid } from '../../__utils__'
 import { EntityRevisionType } from '~/model/decoder'
+
+// we may find a way of dynamically testing them all
 
 describe('addAppletRevision', () => {
   const input = {
@@ -477,6 +482,92 @@ describe('addEventRevision', () => {
   })
 })
 
+describe('addExerciseRevision', () => {
+  const input = {
+    changes: 'changes',
+    entityId: exercise.id,
+    needsReview: true,
+    subscribeThis: false,
+    subscribeThisByEmail: false,
+    content: 'content',
+  }
+
+  const mutation = new Client({ userId: user.id })
+    .prepareQuery({
+      query: gql`
+        mutation set($input: AddGenericRevisionInput!) {
+          entity {
+            addExerciseRevision(input: $input) {
+              success
+            }
+          }
+        }
+      `,
+    })
+    .withVariables({ input })
+
+  beforeEach(() => {
+    givenUuids(user, exercise)
+  })
+
+  test('returns "{ success: true }" when mutation could be successfully executed', async () => {
+    given('EntityAddRevision')
+      .withPayload({
+        input,
+        userId: user.id,
+        revisionType: EntityRevisionType.ExerciseRevision,
+      })
+      .returns({ success: true })
+
+    await mutation.shouldReturnData({
+      entity: { addExerciseRevision: { success: true } },
+    })
+  })
+
+  test('updates the cache', async () => {
+    // TODO
+  })
+
+  test('fails when user is not authenticated', async () => {
+    await mutation
+      .forUnauthenticatedUser()
+      .shouldFailWithError('UNAUTHENTICATED')
+  })
+
+  test('fails when user does not have role "login"', async () => {
+    const guestUser = { ...user, id: nextUuid(user.id), roles: ['guest'] }
+
+    givenUuid(guestUser)
+
+    await new Client({ userId: guestUser.id })
+      .prepareQuery({
+        query: gql`
+          mutation set($input: AddGenericRevisionInput!) {
+            entity {
+              addExerciseRevision(input: $input) {
+                success
+              }
+            }
+          }
+        `,
+      })
+      .withVariables({ input })
+      .shouldFailWithError('FORBIDDEN')
+  })
+
+  test('fails when database layer returns a 400er response', async () => {
+    given('EntityAddRevision').returnsBadRequest()
+
+    await mutation.shouldFailWithError('BAD_USER_INPUT')
+  })
+
+  test('fails when database layer has an internal error', async () => {
+    given('EntityAddRevision').hasInternalServerError()
+
+    await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
+  })
+})
+
 describe('addExerciseGroupRevision', () => {
   const input = {
     changes: 'changes',
@@ -541,6 +632,178 @@ describe('addExerciseGroupRevision', () => {
           mutation set($input: AddExerciseGroupRevisionInput!) {
             entity {
               addExerciseGroupRevision(input: $input) {
+                success
+              }
+            }
+          }
+        `,
+      })
+      .withVariables({ input })
+      .shouldFailWithError('FORBIDDEN')
+  })
+
+  test('fails when database layer returns a 400er response', async () => {
+    given('EntityAddRevision').returnsBadRequest()
+
+    await mutation.shouldFailWithError('BAD_USER_INPUT')
+  })
+
+  test('fails when database layer has an internal error', async () => {
+    given('EntityAddRevision').hasInternalServerError()
+
+    await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
+  })
+})
+
+describe('addGroupedExerciseRevision', () => {
+  const input = {
+    changes: 'changes',
+    entityId: groupedExercise.id,
+    needsReview: true,
+    subscribeThis: false,
+    subscribeThisByEmail: false,
+    content: 'content',
+  }
+
+  const mutation = new Client({ userId: user.id })
+    .prepareQuery({
+      query: gql`
+        mutation set($input: AddGenericRevisionInput!) {
+          entity {
+            addGroupedExerciseRevision(input: $input) {
+              success
+            }
+          }
+        }
+      `,
+    })
+    .withVariables({ input })
+
+  beforeEach(() => {
+    givenUuids(user, groupedExercise)
+  })
+
+  test('returns "{ success: true }" when mutation could be successfully executed', async () => {
+    given('EntityAddRevision')
+      .withPayload({
+        input,
+        userId: user.id,
+        revisionType: EntityRevisionType.GroupedExerciseRevision,
+      })
+      .returns({ success: true })
+
+    await mutation.shouldReturnData({
+      entity: { addGroupedExerciseRevision: { success: true } },
+    })
+  })
+
+  test('updates the cache', async () => {
+    // TODO
+  })
+
+  test('fails when user is not authenticated', async () => {
+    await mutation
+      .forUnauthenticatedUser()
+      .shouldFailWithError('UNAUTHENTICATED')
+  })
+
+  test('fails when user does not have role "login"', async () => {
+    const guestUser = { ...user, id: nextUuid(user.id), roles: ['guest'] }
+
+    givenUuid(guestUser)
+
+    await new Client({ userId: guestUser.id })
+      .prepareQuery({
+        query: gql`
+          mutation set($input: AddGenericRevisionInput!) {
+            entity {
+              addGroupedExerciseRevision(input: $input) {
+                success
+              }
+            }
+          }
+        `,
+      })
+      .withVariables({ input })
+      .shouldFailWithError('FORBIDDEN')
+  })
+
+  test('fails when database layer returns a 400er response', async () => {
+    given('EntityAddRevision').returnsBadRequest()
+
+    await mutation.shouldFailWithError('BAD_USER_INPUT')
+  })
+
+  test('fails when database layer has an internal error', async () => {
+    given('EntityAddRevision').hasInternalServerError()
+
+    await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
+  })
+})
+
+describe('addSolutionRevision', () => {
+  const input = {
+    changes: 'changes',
+    entityId: solution.id,
+    needsReview: true,
+    subscribeThis: false,
+    subscribeThisByEmail: false,
+    content: 'content',
+  }
+
+  const mutation = new Client({ userId: user.id })
+    .prepareQuery({
+      query: gql`
+        mutation set($input: AddGenericRevisionInput!) {
+          entity {
+            addSolutionRevision(input: $input) {
+              success
+            }
+          }
+        }
+      `,
+    })
+    .withVariables({ input })
+
+  beforeEach(() => {
+    givenUuids(user, solution)
+  })
+
+  test('returns "{ success: true }" when mutation could be successfully executed', async () => {
+    given('EntityAddRevision')
+      .withPayload({
+        input,
+        userId: user.id,
+        revisionType: EntityRevisionType.SolutionRevision,
+      })
+      .returns({ success: true })
+
+    await mutation.shouldReturnData({
+      entity: { addSolutionRevision: { success: true } },
+    })
+  })
+
+  test('updates the cache', async () => {
+    // TODO
+  })
+
+  test('fails when user is not authenticated', async () => {
+    await mutation
+      .forUnauthenticatedUser()
+      .shouldFailWithError('UNAUTHENTICATED')
+  })
+
+  test('fails when user does not have role "login"', async () => {
+    const guestUser = { ...user, id: nextUuid(user.id), roles: ['guest'] }
+
+    givenUuid(guestUser)
+
+    await new Client({ userId: guestUser.id })
+      .prepareQuery({
+        query: gql`
+          mutation set($input: AddGenericRevisionInput!) {
+            entity {
+              addSolutionRevision(input: $input) {
                 success
               }
             }
@@ -629,92 +892,6 @@ describe('addVideoRevision', () => {
           mutation set($input: AddVideoRevisionInput!) {
             entity {
               addVideoRevision(input: $input) {
-                success
-              }
-            }
-          }
-        `,
-      })
-      .withVariables({ input })
-      .shouldFailWithError('FORBIDDEN')
-  })
-
-  test('fails when database layer returns a 400er response', async () => {
-    given('EntityAddRevision').returnsBadRequest()
-
-    await mutation.shouldFailWithError('BAD_USER_INPUT')
-  })
-
-  test('fails when database layer has an internal error', async () => {
-    given('EntityAddRevision').hasInternalServerError()
-
-    await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
-  })
-})
-
-describe('addGenericRevision', () => {
-  const input = {
-    changes: 'changes',
-    entityId: article.id,
-    needsReview: true,
-    subscribeThis: false,
-    subscribeThisByEmail: false,
-    content: 'content',
-  }
-
-  const mutation = new Client({ userId: user.id })
-    .prepareQuery({
-      query: gql`
-        mutation set($input: AddGenericRevisionInput!) {
-          entity {
-            addGenericRevision(input: $input) {
-              success
-            }
-          }
-        }
-      `,
-    })
-    .withVariables({ input })
-
-  beforeEach(() => {
-    givenUuids(user, article)
-  })
-
-  test('returns "{ success: true }" when mutation could be successfully executed', async () => {
-    given('EntityAddRevision')
-      .withPayload({
-        input,
-        userId: user.id,
-        revisionType: 'GenericRevision',
-      })
-      .returns({ success: true })
-
-    await mutation.shouldReturnData({
-      entity: { addGenericRevision: { success: true } },
-    })
-  })
-
-  test('updates the cache', async () => {
-    // TODO
-  })
-
-  test('fails when user is not authenticated', async () => {
-    await mutation
-      .forUnauthenticatedUser()
-      .shouldFailWithError('UNAUTHENTICATED')
-  })
-
-  test('fails when user does not have role "login"', async () => {
-    const guestUser = { ...user, id: nextUuid(user.id), roles: ['guest'] }
-
-    givenUuid(guestUser)
-
-    await new Client({ userId: guestUser.id })
-      .prepareQuery({
-        query: gql`
-          mutation set($input: AddGenericRevisionInput!) {
-            entity {
-              addGenericRevision(input: $input) {
                 success
               }
             }

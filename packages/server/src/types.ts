@@ -962,7 +962,9 @@ export type EntityMutation = {
   addCourseRevision: AddRevisionResponse;
   addEventRevision: AddRevisionResponse;
   addExerciseGroupRevision: AddRevisionResponse;
-  addGenericRevision: AddRevisionResponse;
+  addExerciseRevision: AddRevisionResponse;
+  addGroupedExerciseRevision: AddRevisionResponse;
+  addSolutionRevision: AddRevisionResponse;
   addVideoRevision: AddRevisionResponse;
   checkoutRevision: CheckoutRevisionResponse;
   rejectRevision: RejectRevisionResponse;
@@ -999,7 +1001,17 @@ export type EntityMutationAddExerciseGroupRevisionArgs = {
 };
 
 
-export type EntityMutationAddGenericRevisionArgs = {
+export type EntityMutationAddExerciseRevisionArgs = {
+  input: AddGenericRevisionInput;
+};
+
+
+export type EntityMutationAddGroupedExerciseRevisionArgs = {
+  input: AddGenericRevisionInput;
+};
+
+
+export type EntityMutationAddSolutionRevisionArgs = {
   input: AddGenericRevisionInput;
 };
 
@@ -3525,7 +3537,9 @@ export type EntityMutationResolvers<ContextType = Context, ParentType extends Re
   addCourseRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddCourseRevisionArgs, 'input'>>;
   addEventRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddEventRevisionArgs, 'input'>>;
   addExerciseGroupRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddExerciseGroupRevisionArgs, 'input'>>;
-  addGenericRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddGenericRevisionArgs, 'input'>>;
+  addExerciseRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddExerciseRevisionArgs, 'input'>>;
+  addGroupedExerciseRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddGroupedExerciseRevisionArgs, 'input'>>;
+  addSolutionRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddSolutionRevisionArgs, 'input'>>;
   addVideoRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddVideoRevisionArgs, 'input'>>;
   checkoutRevision?: Resolver<ResolversTypes['CheckoutRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationCheckoutRevisionArgs, 'input'>>;
   rejectRevision?: Resolver<ResolversTypes['RejectRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationRejectRevisionArgs, 'input'>>;
