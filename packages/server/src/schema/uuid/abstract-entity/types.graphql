@@ -64,11 +64,15 @@ type EntityMutation {
     input: AddCoursePageRevisionInput!
   ): AddRevisionResponse!
   addEventRevision(input: AddEventRevisionInput!): AddRevisionResponse!
+  addExerciseRevision(input: AddGenericRevisionInput!): AddRevisionResponse!
   addExerciseGroupRevision(
     input: AddExerciseGroupRevisionInput!
   ): AddRevisionResponse!
+  addGroupedExerciseRevision(
+    input: AddGenericRevisionInput!
+  ): AddRevisionResponse!
+  addSolutionRevision(input: AddGenericRevisionInput!): AddRevisionResponse!
   addVideoRevision(input: AddVideoRevisionInput!): AddRevisionResponse!
-  addGenericRevision(input: AddGenericRevisionInput!): AddRevisionResponse!
   checkoutRevision(input: CheckoutRevisionInput!): CheckoutRevisionResponse!
   rejectRevision(input: RejectRevisionInput!): RejectRevisionResponse!
 }

@@ -159,7 +159,7 @@ const pactSpec: PactSpec = {
           input: {
             changes: 'changes',
             entityId: video.id,
-            needsReview: true,
+            needsReview: false,
             subscribeThis: true,
             subscribeThisByEmail: true,
             title: 'title',

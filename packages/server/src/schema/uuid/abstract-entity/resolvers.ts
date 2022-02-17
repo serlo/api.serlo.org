@@ -90,6 +90,14 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         userId,
       })
     },
+    async addExerciseRevision(_parent, { input }, { dataSources, userId }) {
+      return await addRevision({
+        revisionType: EntityRevisionType.ExerciseRevision,
+        input,
+        dataSources,
+        userId,
+      })
+    },
     async addExerciseGroupRevision(
       _parent,
       { input },
@@ -102,17 +110,29 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         userId,
       })
     },
-    async addVideoRevision(_parent, { input }, { dataSources, userId }) {
+    async addGroupedExerciseRevision(
+      _parent,
+      { input },
+      { dataSources, userId }
+    ) {
       return await addRevision({
-        revisionType: EntityRevisionType.VideoRevision,
+        revisionType: EntityRevisionType.GroupedExerciseRevision,
         input,
         dataSources,
         userId,
       })
     },
-    async addGenericRevision(_parent, { input }, { dataSources, userId }) {
+    async addSolutionRevision(_parent, { input }, { dataSources, userId }) {
       return await addRevision({
-        revisionType: 'GenericRevision',
+        revisionType: EntityRevisionType.SolutionRevision,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async addVideoRevision(_parent, { input }, { dataSources, userId }) {
+      return await addRevision({
+        revisionType: EntityRevisionType.VideoRevision,
         input,
         dataSources,
         userId,
