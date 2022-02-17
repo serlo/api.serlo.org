@@ -260,21 +260,97 @@ export type AbstractUuidCursor = {
   node: AbstractUuid;
 };
 
-export type AddRevisionInput = {
+export type AddAppletRevisionInput = {
   changes: Scalars['String'];
   content: Scalars['String'];
   entityId: Scalars['Int'];
-  metaDescription?: InputMaybe<Scalars['String']>;
-  metaTitle?: InputMaybe<Scalars['String']>;
+  metaDescription: Scalars['String'];
+  metaTitle: Scalars['String'];
+  needsReview: Scalars['Boolean'];
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
+  url: Scalars['String'];
+};
+
+export type AddArticleRevisionInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  entityId: Scalars['Int'];
+  metaDescription: Scalars['String'];
+  metaTitle: Scalars['String'];
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
   title: Scalars['String'];
 };
 
+export type AddCoursePageRevisionInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  entityId: Scalars['Int'];
+  needsReview: Scalars['Boolean'];
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
+};
+
+export type AddCourseRevisionInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  entityId: Scalars['Int'];
+  metaDescription: Scalars['String'];
+  needsReview: Scalars['Boolean'];
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
+};
+
+export type AddEventRevisionInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  entityId: Scalars['Int'];
+  metaDescription: Scalars['String'];
+  metaTitle: Scalars['String'];
+  needsReview: Scalars['Boolean'];
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
+};
+
+export type AddExerciseGroupRevisionInput = {
+  changes: Scalars['String'];
+  cohesive: Scalars['Boolean'];
+  content: Scalars['String'];
+  entityId: Scalars['Int'];
+  needsReview: Scalars['Boolean'];
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+};
+
+export type AddGenericRevisionInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  entityId: Scalars['Int'];
+  needsReview: Scalars['Boolean'];
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+};
+
 export type AddRevisionResponse = {
   __typename?: 'AddRevisionResponse';
   success: Scalars['Boolean'];
+};
+
+export type AddVideoRevisionInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  description: Scalars['String'];
+  entityId: Scalars['Int'];
+  needsReview: Scalars['Boolean'];
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
 };
 
 export type AliasInput = {
@@ -876,14 +952,56 @@ export type EntityMetadataCursor = {
 
 export type EntityMutation = {
   __typename?: 'EntityMutation';
-  addRevision: AddRevisionResponse;
+  addAppletRevision: AddRevisionResponse;
+  addArticleRevision: AddRevisionResponse;
+  addCoursePageRevision: AddRevisionResponse;
+  addCourseRevision: AddRevisionResponse;
+  addEventRevision: AddRevisionResponse;
+  addExerciseGroupRevision: AddRevisionResponse;
+  addGenericRevision: AddRevisionResponse;
+  addVideoRevision: AddRevisionResponse;
   checkoutRevision: CheckoutRevisionResponse;
   rejectRevision: RejectRevisionResponse;
 };
 
 
-export type EntityMutationAddRevisionArgs = {
-  input: AddRevisionInput;
+export type EntityMutationAddAppletRevisionArgs = {
+  input: AddAppletRevisionInput;
+};
+
+
+export type EntityMutationAddArticleRevisionArgs = {
+  input: AddArticleRevisionInput;
+};
+
+
+export type EntityMutationAddCoursePageRevisionArgs = {
+  input: AddCoursePageRevisionInput;
+};
+
+
+export type EntityMutationAddCourseRevisionArgs = {
+  input: AddCourseRevisionInput;
+};
+
+
+export type EntityMutationAddEventRevisionArgs = {
+  input: AddEventRevisionInput;
+};
+
+
+export type EntityMutationAddExerciseGroupRevisionArgs = {
+  input: AddExerciseGroupRevisionInput;
+};
+
+
+export type EntityMutationAddGenericRevisionArgs = {
+  input: AddGenericRevisionInput;
+};
+
+
+export type EntityMutationAddVideoRevisionArgs = {
+  input: AddVideoRevisionInput;
 };
 
 
