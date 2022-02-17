@@ -51,8 +51,8 @@ import {
   videoRevision,
 } from '../../__fixtures__'
 import { DatabaseLayer } from '~/model'
-import { Instance } from '~/types'
 import { EntityRevisionType } from '~/model/decoder'
+import { Instance } from '~/types'
 
 /* eslint-disable import/no-unassigned-import */
 describe('EventMessage', () => {
@@ -164,7 +164,7 @@ const pactSpec: PactSpec = {
             subscribeThisByEmail: true,
             title: 'title',
             content: 'content',
-            description: 'metaDescription',
+            description: 'description',
           },
           userId: user.id,
           revisionType: EntityRevisionType.VideoRevision,
