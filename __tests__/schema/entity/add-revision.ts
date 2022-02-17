@@ -600,7 +600,7 @@ describe('addExerciseGroupRevision', () => {
   test('returns "{ success: true }" when mutation could be successfully executed', async () => {
     given('EntityAddRevision')
       .withPayload({
-        input,
+        input: { ...input, cohesive: 'false' },
         userId: user.id,
         revisionType: EntityRevisionType.ExerciseGroupRevision,
       })

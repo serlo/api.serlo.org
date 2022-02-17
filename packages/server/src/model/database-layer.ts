@@ -98,7 +98,12 @@ export const spec = {
           subscribeThisByEmail: t.boolean,
         }),
         t.partial({
-          cohesive: t.union([t.boolean, t.null, t.undefined]),
+          cohesive: t.union([
+            t.literal('true'),
+            t.literal('false'),
+            t.null,
+            t.undefined,
+          ]),
           content: t.union([t.string, t.null, t.undefined]),
           description: t.union([t.string, t.null, t.undefined]),
           metaDescription: t.union([t.string, t.null, t.undefined]),
