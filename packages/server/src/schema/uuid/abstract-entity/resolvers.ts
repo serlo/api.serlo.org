@@ -103,9 +103,14 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       { input },
       { dataSources, userId }
     ) {
+      const cohesive = input.cohesive === true ? 'true' : 'false'
+      const transformedInput: Omit<typeof input, 'cohesive'> & {
+        cohesive: 'true' | 'false'
+      } = { ...input, cohesive }
+
       return await addRevision({
         revisionType: EntityRevisionType.ExerciseGroupRevision,
-        input,
+        input: transformedInput,
         dataSources,
         userId,
       })
