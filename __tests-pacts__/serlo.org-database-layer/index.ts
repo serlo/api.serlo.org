@@ -52,6 +52,7 @@ import {
 } from '../../__fixtures__'
 import { DatabaseLayer } from '~/model'
 import { Instance } from '~/types'
+import { EntityRevisionType } from '~/model/decoder'
 
 /* eslint-disable import/no-unassigned-import */
 describe('EventMessage', () => {
@@ -134,7 +135,43 @@ const pactSpec: PactSpec = {
     examples: [],
   },
   EntityAddRevision: {
-    examples: [], // TODO
+    examples: [
+      [
+        {
+          input: {
+            changes: 'changes',
+            entityId: article.id,
+            needsReview: true,
+            subscribeThis: false,
+            subscribeThisByEmail: false,
+            title: 'title',
+            content: 'content',
+            metaTitle: 'metaTitle',
+            metaDescription: 'metaDescription',
+          },
+          userId: user.id,
+          revisionType: EntityRevisionType.ArticleRevision,
+        },
+        { success: true },
+      ],
+      [
+        {
+          input: {
+            changes: 'changes',
+            entityId: video.id,
+            needsReview: true,
+            subscribeThis: true,
+            subscribeThisByEmail: true,
+            title: 'title',
+            content: 'content',
+            description: 'metaDescription',
+          },
+          userId: user.id,
+          revisionType: EntityRevisionType.VideoRevision,
+        },
+        { success: true },
+      ],
+    ],
   },
   LicenseQuery: {
     examples: [[{ id: 1 }, license]],
