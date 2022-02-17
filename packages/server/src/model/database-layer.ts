@@ -25,6 +25,7 @@ import * as t from 'io-ts'
 import fetch from 'node-fetch'
 
 import {
+  EntityRevisionTypeDecoder,
   InstanceDecoder,
   SubscriptionsDecoder,
   Uuid,
@@ -85,22 +86,30 @@ export const spec = {
     canBeNull: false,
   },
   EntityAddRevision: {
-    payload: t.intersection([
-      t.type({
-        changes: t.string,
-        content: t.string,
-        entityId: t.number,
-        needsReview: t.boolean,
-        subscribeThisByEmail: t.boolean,
-        subscribeThis: t.boolean,
-        title: t.string,
-        userId: t.number,
-      }),
-      t.partial({
-        metaDescription: t.string,
-        metaTitle: t.string,
-      }),
-    ]),
+    payload: t.type({
+      userId: t.union([t.number, t.null]),
+      revisionType: t.union([
+        EntityRevisionTypeDecoder,
+        t.literal('GenericRevision'),
+      ]),
+      input: t.intersection([
+        t.type({
+          changes: t.string,
+          entityId: t.number,
+          needsReview: t.boolean,
+          subscribeThis: t.boolean,
+          subscribeThisByEmail: t.boolean,
+        }),
+        t.partial({
+          cohesive: t.union([t.boolean, t.null, t.undefined]),
+          content: t.union([t.string, t.null, t.undefined]),
+          metaDescription: t.union([t.string, t.null, t.undefined]),
+          metaTitle: t.union([t.string, t.null, t.undefined]),
+          title: t.union([t.string, t.null, t.undefined]),
+          url: t.union([t.string, t.null, t.undefined]),
+        }),
+      ]),
+    }),
     response: t.type({ success: t.boolean }),
     canBeNull: false,
   },

@@ -57,21 +57,124 @@ extend type Mutation {
 }
 
 type EntityMutation {
-  addRevision(input: AddRevisionInput!): AddRevisionResponse!
+  addAppletRevision(input: AddAppletRevisionInput!): AddRevisionResponse!
+  addArticleRevision(input: AddArticleRevisionInput!): AddRevisionResponse!
+  addCourseRevision(input: AddCourseRevisionInput!): AddRevisionResponse!
+  addCoursePageRevision(
+    input: AddCoursePageRevisionInput!
+  ): AddRevisionResponse!
+  addEventRevision(input: AddEventRevisionInput!): AddRevisionResponse!
+  addExerciseGroupRevision(
+    input: AddExerciseGroupRevisionInput!
+  ): AddRevisionResponse!
+  addVideoRevision(input: AddVideoRevisionInput!): AddRevisionResponse!
+  addGenericRevision(input: AddGenericRevisionInput!): AddRevisionResponse!
   checkoutRevision(input: CheckoutRevisionInput!): CheckoutRevisionResponse!
   rejectRevision(input: RejectRevisionInput!): RejectRevisionResponse!
 }
 
-input AddRevisionInput {
+input AddAppletRevisionInput {
+  # extends a virtual AddAbstractRevisionInput
   changes: String!
-  content: String!
   entityId: Int!
   needsReview: Boolean!
-  subscribeThisByEmail: Boolean!
   subscribeThis: Boolean!
+  subscribeThisByEmail: Boolean!
+
+  content: String!
+  metaDescription: String!
+  metaTitle: String!
   title: String!
-  metaDescription: String
-  metaTitle: String
+  url: String!
+}
+
+input AddArticleRevisionInput {
+  # extends a virtual AddAbstractRevisionInput
+  changes: String!
+  entityId: Int!
+  needsReview: Boolean!
+  subscribeThis: Boolean!
+  subscribeThisByEmail: Boolean!
+
+  content: String!
+  metaDescription: String!
+  metaTitle: String!
+  title: String!
+}
+
+input AddCourseRevisionInput {
+  # extends a virtual AddAbstractRevisionInput
+  changes: String!
+  entityId: Int!
+  needsReview: Boolean!
+  subscribeThis: Boolean!
+  subscribeThisByEmail: Boolean!
+
+  content: String!
+  metaDescription: String!
+  title: String!
+}
+
+input AddCoursePageRevisionInput {
+  # extends a virtual AddAbstractRevisionInput
+  changes: String!
+  entityId: Int!
+  needsReview: Boolean!
+  subscribeThis: Boolean!
+  subscribeThisByEmail: Boolean!
+
+  content: String!
+  title: String!
+}
+
+input AddEventRevisionInput {
+  # extends a virtual AddAbstractRevisionInput
+  changes: String!
+  entityId: Int!
+  needsReview: Boolean!
+  subscribeThis: Boolean!
+  subscribeThisByEmail: Boolean!
+
+  content: String!
+  metaDescription: String!
+  metaTitle: String!
+  title: String!
+}
+
+input AddExerciseGroupRevisionInput {
+  # extends a virtual AddAbstractRevisionInput
+  changes: String!
+  entityId: Int!
+  needsReview: Boolean!
+  subscribeThis: Boolean!
+  subscribeThisByEmail: Boolean!
+
+  cohesive: Boolean!
+  content: String!
+}
+
+input AddGenericRevisionInput {
+  # extends a virtual AddAbstractRevisionInput
+  changes: String!
+  entityId: Int!
+  needsReview: Boolean!
+  subscribeThis: Boolean!
+  subscribeThisByEmail: Boolean!
+
+  content: String!
+}
+
+input AddVideoRevisionInput {
+  # extends a virtual AddAbstractRevisionInput
+  changes: String!
+  entityId: Int!
+  needsReview: Boolean!
+  subscribeThis: Boolean!
+  subscribeThisByEmail: Boolean!
+
+  content: String!
+  description: String!
+  title: String!
 }
 
 input CheckoutRevisionInput {
