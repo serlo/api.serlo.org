@@ -87,7 +87,7 @@ export const spec = {
   },
   EntityAddRevision: {
     payload: t.type({
-      userId: t.union([t.number, t.null]),
+      userId: t.number,
       revisionType: EntityRevisionTypeDecoder,
       input: t.intersection([
         t.type({

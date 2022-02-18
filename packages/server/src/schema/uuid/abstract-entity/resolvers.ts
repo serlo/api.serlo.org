@@ -191,10 +191,13 @@ async function addRevision({
   input,
   dataSources,
   userId,
-}: DatabaseLayer.Payload<'EntityAddRevision'> & {
+}: Omit<DatabaseLayer.Payload<'EntityAddRevision'>, 'userId'> & {
   dataSources: { model: ModelDataSource }
+  userId: number | null
 }) {
   assertUserIsAuthenticated(userId)
+
+  const authenticatedUserId = userId
 
   const { entityId } = input
 
@@ -203,7 +206,7 @@ async function addRevision({
     dataSources,
   })
   await assertUserIsAuthorized({
-    userId,
+    userId: authenticatedUserId,
     dataSources,
     message: 'You are not allowed to add revision to this entity.',
     guard: serloAuth.Entity.addRevision(scope),
@@ -211,7 +214,7 @@ async function addRevision({
 
   await dataSources.model.serlo.addEntityRevision({
     revisionType,
-    userId,
+    userId: authenticatedUserId,
     input,
   })
 
