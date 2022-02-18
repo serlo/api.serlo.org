@@ -28,7 +28,6 @@ import * as R from 'ramda'
 import * as DatabaseLayer from './database-layer'
 import {
   CommentDecoder,
-  InstanceDecoder,
   NotificationEventDecoder,
   Uuid,
   NotificationDecoder,
@@ -36,7 +35,6 @@ import {
   NavigationDataDecoder,
   EntityRevisionDecoder,
   EntityDecoder,
-  SubscriptionsDecoder,
   PageRevisionDecoder,
   PageDecoder,
 } from './decoder'
@@ -202,12 +200,14 @@ export function createSerloModel({
   })
 
   const deleteRegularUsers = createMutation({
-    decoder: t.union([
-      t.type({ success: t.literal(true) }),
-      t.type({ success: t.literal(false), reason: t.string }),
-    ]),
-    mutate: (payload: { userId: number }) => {
-      return handleMessage({ type: 'UserDeleteRegularUsersMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('UserDeleteRegularUsersMutation'),
+    mutate: (
+      payload: DatabaseLayer.Payload<'UserDeleteRegularUsersMutation'>
+    ) => {
+      return DatabaseLayer.makeRequest(
+        'UserDeleteRegularUsersMutation',
+        payload
+      )
     },
     async updateCache({ userId }, { success }) {
       if (success) {
@@ -387,20 +387,14 @@ export function createSerloModel({
 
   const getSubjects = createQuery(
     {
-      decoder: t.strict({
-        subjects: t.array(
-          t.strict({ instance: InstanceDecoder, taxonomyTermId: t.number })
-        ),
-      }),
-      getCurrentValue() {
-        return handleMessage({ type: 'SubjectsQuery', payload: {} })
+      decoder: DatabaseLayer.getDecoderFor('SubjectsQuery'),
+      getCurrentValue: () => {
+        return DatabaseLayer.makeRequest('SubjectsQuery', {})
       },
       enableSwr: true,
       staleAfter: { day: 1 },
-      getKey() {
-        return 'serlo.org/subjects'
-      },
-      getPayload(key) {
+      getKey: () => 'serlo.org/subjects',
+      getPayload: (key) => {
         return key === 'serlo.org/subjects' ? O.some(undefined) : O.none
       },
       examplePayload: undefined,
@@ -410,17 +404,15 @@ export function createSerloModel({
 
   const getUnrevisedEntities = createQuery(
     {
-      decoder: t.strict({ unrevisedEntityIds: t.array(t.number) }),
-      getCurrentValue(_payload: undefined) {
-        return handleMessage({ type: 'UnrevisedEntitiesQuery', payload: {} })
+      decoder: DatabaseLayer.getDecoderFor('UnrevisedEntitiesQuery'),
+      getCurrentValue: () => {
+        return DatabaseLayer.makeRequest('UnrevisedEntitiesQuery', {})
       },
       enableSwr: true,
       staleAfter: { minutes: 2 },
       maxAge: { hour: 1 },
-      getKey() {
-        return 'serlo.org/unrevised'
-      },
-      getPayload(key) {
+      getKey: () => 'serlo.org/unrevised',
+      getPayload: (key) => {
         return key === 'serlo.org/unrevised' ? O.some(undefined) : O.none
       },
       examplePayload: undefined,
@@ -590,10 +582,12 @@ export function createSerloModel({
 
   const getSubscriptions = createQuery(
     {
-      decoder: SubscriptionsDecoder,
+      decoder: DatabaseLayer.getDecoderFor('SubscriptionsQuery'),
       enableSwr: true,
-      getCurrentValue: (payload: { userId: number }) => {
-        return handleMessage({ type: 'SubscriptionsQuery', payload })
+      getCurrentValue: (
+        payload: DatabaseLayer.Payload<'SubscriptionsQuery'>
+      ) => {
+        return DatabaseLayer.makeRequest('SubscriptionsQuery', payload)
       },
       staleAfter: { hour: 1 },
       getKey: ({ userId }) => {
@@ -611,19 +605,11 @@ export function createSerloModel({
   )
 
   const setSubscription = createMutation({
-    decoder: t.void,
-    async mutate(payload: {
-      ids: Uuid[]
-      userId: number
-      subscribe: boolean
-      sendEmail: boolean
-    }) {
-      await handleMessageWithoutResponse({
-        type: 'SubscriptionSetMutation',
-        payload,
-      })
+    decoder: DatabaseLayer.getDecoderFor('SubscriptionSetMutation'),
+    async mutate(payload: DatabaseLayer.Payload<'SubscriptionSetMutation'>) {
+      await DatabaseLayer.makeRequest('SubscriptionSetMutation', payload)
     },
-    async updateCache({ ids, sendEmail, userId, subscribe }) {
+    updateCache: async ({ ids, sendEmail, userId, subscribe }) => {
       await getSubscriptions._querySpec.setCache({
         payload: { userId },
         getValue(current) {

@@ -137,11 +137,60 @@ const pactSpec: PactSpec = {
     examples: [[{ id: 1 }, license]],
     examplePayloadForNull: { id: 100 },
   },
+  SubjectsQuery: {
+    examples: [
+      [
+        {},
+        {
+          subjects: [
+            {
+              instance: taxonomyTermSubject.instance,
+              taxonomyTermId: taxonomyTermSubject.id,
+            },
+          ],
+        },
+      ],
+    ],
+  },
+  SubscriptionsQuery: {
+    examples: [
+      [
+        { userId: user.id },
+        { subscriptions: [{ objectId: article.id, sendEmail: true }] },
+      ],
+    ],
+  },
+  SubscriptionSetMutation: {
+    examples: [
+      [
+        {
+          ids: [article.id],
+          userId: user.id,
+          subscribe: false,
+          sendEmail: false,
+        },
+        undefined,
+      ],
+    ],
+  },
+  UnrevisedEntitiesQuery: {
+    examples: [
+      [
+        {},
+        {
+          unrevisedEntityIds: [article.id],
+        },
+      ],
+    ],
+  },
   UserPotentialSpamUsersQuery: {
     examples: [],
   },
   UserDeleteBotsMutation: {
     examples: [],
+  },
+  UserDeleteRegularUsersMutation: {
+    examples: [[{ userId: user.id }, { success: true }]],
   },
   UserSetDescriptionMutation: {
     examples: [[{ userId: 1, description: 'Hello World' }, { success: true }]],

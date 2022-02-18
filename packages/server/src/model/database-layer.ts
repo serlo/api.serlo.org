@@ -24,7 +24,12 @@ import { option as O, function as F } from 'fp-ts'
 import * as t from 'io-ts'
 import fetch from 'node-fetch'
 
-import { InstanceDecoder, UuidDecoder } from './decoder'
+import {
+  InstanceDecoder,
+  SubscriptionsDecoder,
+  Uuid,
+  UuidDecoder,
+} from './decoder'
 
 const URL = `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`
 
@@ -93,12 +98,49 @@ export const spec = {
     }),
     canBeNull: true,
   },
+  SubjectsQuery: {
+    payload: t.type({}),
+    response: t.strict({
+      subjects: t.array(
+        t.strict({ instance: InstanceDecoder, taxonomyTermId: t.number })
+      ),
+    }),
+    canBeNull: false,
+  },
+  SubscriptionsQuery: {
+    payload: t.type({ userId: t.number }),
+    response: SubscriptionsDecoder,
+    canBeNull: false,
+  },
+  SubscriptionSetMutation: {
+    payload: t.type({
+      ids: t.array(Uuid),
+      userId: t.number,
+      subscribe: t.boolean,
+      sendEmail: t.boolean,
+    }),
+    response: t.void,
+    canBeNull: false,
+  },
+  UnrevisedEntitiesQuery: {
+    payload: t.type({}),
+    response: t.strict({ unrevisedEntityIds: t.array(t.number) }),
+    canBeNull: false,
+  },
   UserDeleteBotsMutation: {
     payload: t.type({ botIds: t.array(t.number) }),
     response: t.strict({
       success: t.literal(true),
       emailHashes: t.array(t.string),
     }),
+    canBeNull: false,
+  },
+  UserDeleteRegularUsersMutation: {
+    payload: t.type({ userId: t.number }),
+    response: t.union([
+      t.type({ success: t.literal(true) }),
+      t.type({ success: t.literal(false), reason: t.string }),
+    ]),
     canBeNull: false,
   },
   UserPotentialSpamUsersQuery: {
