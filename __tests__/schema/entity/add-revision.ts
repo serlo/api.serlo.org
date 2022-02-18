@@ -31,10 +31,21 @@ import {
   exerciseGroup,
   groupedExercise,
   solution,
+  solutionRevision,
   user,
   video,
 } from '../../../__fixtures__'
-import { given, givenUuids, Client, givenUuid, nextUuid } from '../../__utils__'
+import {
+  given,
+  givenUuids,
+  Client,
+  getTypenameAndId,
+  givenUuid,
+  nextUuid,
+  Database,
+  returnsUuidsFromDatabase,
+} from '../../__utils__'
+import { Model } from '~/internals/graphql'
 import { EntityRevisionType } from '~/model/decoder'
 
 // we may find a way of dynamically testing them all
@@ -83,10 +94,6 @@ describe('addAppletRevision', () => {
     await mutation.shouldReturnData({
       entity: { addAppletRevision: { success: true } },
     })
-  })
-
-  test('updates the cache', async () => {
-    // TODO
   })
 
   test('fails when user is not authenticated', async () => {
@@ -174,10 +181,6 @@ describe('addArticleRevision', () => {
     })
   })
 
-  test('updates the cache', async () => {
-    // TODO
-  })
-
   test('fails when user is not authenticated', async () => {
     await mutation
       .forUnauthenticatedUser()
@@ -262,10 +265,6 @@ describe('addCourseRevision', () => {
     })
   })
 
-  test('updates the cache', async () => {
-    // TODO
-  })
-
   test('fails when user is not authenticated', async () => {
     await mutation
       .forUnauthenticatedUser()
@@ -347,10 +346,6 @@ describe('addCoursePageRevision', () => {
     await mutation.shouldReturnData({
       entity: { addCoursePageRevision: { success: true } },
     })
-  })
-
-  test('updates the cache', async () => {
-    // TODO
   })
 
   test('fails when user is not authenticated', async () => {
@@ -438,10 +433,6 @@ describe('addEventRevision', () => {
     })
   })
 
-  test('updates the cache', async () => {
-    // TODO
-  })
-
   test('fails when user is not authenticated', async () => {
     await mutation
       .forUnauthenticatedUser()
@@ -522,10 +513,6 @@ describe('addExerciseRevision', () => {
     await mutation.shouldReturnData({
       entity: { addExerciseRevision: { success: true } },
     })
-  })
-
-  test('updates the cache', async () => {
-    // TODO
   })
 
   test('fails when user is not authenticated', async () => {
@@ -611,10 +598,6 @@ describe('addExerciseGroupRevision', () => {
     })
   })
 
-  test('updates the cache', async () => {
-    // TODO
-  })
-
   test('fails when user is not authenticated', async () => {
     await mutation
       .forUnauthenticatedUser()
@@ -697,10 +680,6 @@ describe('addGroupedExerciseRevision', () => {
     })
   })
 
-  test('updates the cache', async () => {
-    // TODO
-  })
-
   test('fails when user is not authenticated', async () => {
     await mutation
       .forUnauthenticatedUser()
@@ -781,10 +760,6 @@ describe('addSolutionRevision', () => {
     await mutation.shouldReturnData({
       entity: { addSolutionRevision: { success: true } },
     })
-  })
-
-  test('updates the cache', async () => {
-    // TODO
   })
 
   test('fails when user is not authenticated', async () => {
@@ -871,10 +846,6 @@ describe('addVideoRevision', () => {
     })
   })
 
-  test('updates the cache', async () => {
-    // TODO
-  })
-
   test('fails when user is not authenticated', async () => {
     await mutation
       .forUnauthenticatedUser()
@@ -912,5 +883,142 @@ describe('addVideoRevision', () => {
     given('EntityAddRevision').hasInternalServerError()
 
     await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
+  })
+})
+
+describe('Cache after EntityAddRevision call', () => {
+  const input = {
+    changes: 'changes',
+    entityId: solution.id,
+    needsReview: false,
+    subscribeThis: true,
+    subscribeThisByEmail: true,
+    content: 'content',
+  }
+
+  const mutation = new Client({ userId: user.id })
+    .prepareQuery({
+      query: gql`
+        mutation set($input: AddGenericRevisionInput!) {
+          entity {
+            addSolutionRevision(input: $input) {
+              success
+            }
+          }
+        }
+      `,
+    })
+    .withVariables({ input })
+
+  let newSolutionRevision: Model<'SolutionRevision'>
+
+  beforeEach(() => {
+    const database = new Database()
+    database.hasUuids([user, solution, solutionRevision, article])
+    given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
+
+    given('EntityAddRevision')
+      .withPayload({
+        input,
+        userId: user.id,
+        revisionType: EntityRevisionType.SolutionRevision,
+      })
+      .isDefinedBy((req, res, ctx) => {
+        const { input } = req.body.payload
+
+        newSolutionRevision = {
+          ...solutionRevision,
+          id: nextUuid(solutionRevision.id),
+        }
+        database.hasUuid(newSolutionRevision)
+
+        if (!input.needsReview) {
+          database.changeUuid(solution.id, {
+            currentRevisionId: newSolutionRevision.id,
+          })
+        }
+        return res(ctx.json({ success: true }))
+      })
+  })
+
+  test('updates the checked out revision when needsReview=false', async () => {
+    const uuidQuery = new Client({ userId: user.id })
+      .prepareQuery({
+        query: gql`
+          query ($id: Int!) {
+            uuid(id: $id) {
+              ... on Solution {
+                currentRevision {
+                  id
+                }
+              }
+            }
+          }
+        `,
+      })
+      .withVariables({ id: solution.id })
+
+    await uuidQuery.shouldReturnData({
+      uuid: { currentRevision: { id: solution.currentRevisionId } },
+    })
+
+    await mutation.withVariables({ ...input, needsReview: true }).execute()
+
+    await uuidQuery.shouldReturnData({
+      uuid: { currentRevision: { id: solution.currentRevisionId } },
+    })
+
+    await mutation.execute()
+
+    await uuidQuery.shouldReturnData({
+      uuid: { currentRevision: { id: newSolutionRevision.id } },
+    })
+  })
+
+  test('updates the subscriptions', async () => {
+    given('SubscriptionsQuery')
+      .withPayload({ userId: user.id })
+      .returns({
+        subscriptions: [{ objectId: article.id, sendEmail: true }],
+      })
+
+    const subscritionsQuery = new Client({ userId: user.id }).prepareQuery({
+      query: gql`
+        query {
+          subscription {
+            getSubscriptions {
+              nodes {
+                object {
+                  __typename
+                  id
+                }
+                sendEmail
+              }
+            }
+          }
+        }
+      `,
+    })
+
+    await subscritionsQuery.shouldReturnData({
+      subscription: {
+        getSubscriptions: {
+          nodes: [{ object: getTypenameAndId(article), sendEmail: true }],
+        },
+      },
+    })
+
+    await mutation.execute()
+
+    await subscritionsQuery.shouldReturnData({
+      subscription: {
+        getSubscriptions: {
+          nodes: [
+            { object: getTypenameAndId(article), sendEmail: true },
+            { object: getTypenameAndId(solution), sendEmail: true },
+          ],
+        },
+      },
+    })
   })
 })
