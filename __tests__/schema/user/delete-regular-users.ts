@@ -23,28 +23,26 @@ import { gql } from 'apollo-server'
 
 import { user as baseUser } from '../../../__fixtures__'
 import {
-  assertFailingGraphQLMutation,
-  assertSuccessfulGraphQLMutation,
-  createTestClient,
+  Client,
   given,
-  hasInternalServerError,
-  LegacyClient,
   Database,
   returnsUuidsFromDatabase,
-  MessageResolver,
-  givenSerloEndpoint,
-  assertSuccessfulGraphQLQuery,
   nextUuid,
+  Query,
 } from '../../__utils__'
 
 let database: Database
 
-let client: LegacyClient
+let client: Client
+let mutation: Query
+
 const user = { ...baseUser, roles: ['sysadmin'] }
 const userIds = [user.id, nextUuid(user.id)]
 const noUserId = nextUuid(nextUuid(user.id))
 
 beforeEach(() => {
+  client = new Client({ userId: user.id })
+
   database = new Database()
   database.hasUuids(
     userIds.map((id) => {
@@ -52,133 +50,8 @@ beforeEach(() => {
     })
   )
 
-  givenUserDeleteRegularUsersEndpoint(
-    defaultUserDeleteRegularUsersEndpoint({ database })
-  )
-  given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
-
-  client = createTestClient({ userId: user.id })
-})
-
-test('runs successfully when mutation could be successfully executed', async () => {
-  await assertSuccessfulGraphQLMutation({
-    ...createDeleteRegularUsersMutation({ userIds }),
-    data: {
-      user: {
-        deleteRegularUsers: [
-          { success: true, username: user.username, reason: null },
-          { success: true, username: user.username, reason: null },
-        ],
-      },
-    },
-    client,
-  })
-})
-
-test('runs partially when one of the mutations failed', async () => {
-  givenUserDeleteRegularUsersEndpoint(
-    defaultUserDeleteRegularUsersEndpoint({
-      database,
-      failsForUserIds: [user.id],
-      reason: 'failure!',
-    })
-  )
-
-  await assertSuccessfulGraphQLMutation({
-    ...createDeleteRegularUsersMutation({ userIds }),
-    data: {
-      user: {
-        deleteRegularUsers: [
-          { success: false, username: user.username, reason: 'failure!' },
-          { success: true, username: user.username, reason: null },
-        ],
-      },
-    },
-    client,
-  })
-})
-
-test('updates the cache', async () => {
-  await assertSuccessfulGraphQLQuery({
+  mutation = client.prepareQuery({
     query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          id
-        }
-      }
-    `,
-    variables: { id: user.id },
-    data: { uuid: { id: user.id } },
-    client,
-  })
-
-  await assertSuccessfulGraphQLMutation({
-    ...createDeleteRegularUsersMutation({ userIds: [user.id] }),
-    data: {
-      user: {
-        deleteRegularUsers: [
-          { success: true, username: user.username, reason: null },
-        ],
-      },
-    },
-    client,
-  })
-
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          id
-        }
-      }
-    `,
-    variables: { id: user.id },
-    data: { uuid: null },
-    client,
-  })
-})
-
-test('fails when one of the given bot ids is not a user', async () => {
-  await assertFailingGraphQLMutation({
-    ...createDeleteRegularUsersMutation({ userIds: [noUserId] }),
-    client,
-    expectedError: 'BAD_USER_INPUT',
-  })
-})
-
-test('fails when user is not authenticated', async () => {
-  const client = createTestClient({ userId: null })
-
-  await assertFailingGraphQLMutation({
-    ...createDeleteRegularUsersMutation(),
-    client,
-    expectedError: 'UNAUTHENTICATED',
-  })
-})
-
-test('fails when user does not have role "sysadmin"', async () => {
-  database.hasUuid({ ...user, roles: ['login', 'de_admin'] })
-
-  await assertFailingGraphQLMutation({
-    ...createDeleteRegularUsersMutation(),
-    client,
-    expectedError: 'FORBIDDEN',
-  })
-})
-
-test('fails when database layer has an internal error', async () => {
-  givenUserDeleteRegularUsersEndpoint(hasInternalServerError())
-
-  await assertFailingGraphQLMutation({
-    ...createDeleteRegularUsersMutation(),
-    client,
-    expectedError: 'INTERNAL_SERVER_ERROR',
-  })
-})
-
-function createDeleteRegularUsersMutation(args?: { userIds?: number[] }) {
-  return {
-    mutation: gql`
       mutation ($input: UserDeleteRegularUsersInput!) {
         user {
           deleteRegularUsers(input: $input) {
@@ -189,38 +62,94 @@ function createDeleteRegularUsersMutation(args?: { userIds?: number[] }) {
         }
       }
     `,
-    variables: { input: { userIds: args?.userIds ?? [user.id] } },
-  }
-}
+    variables: { input: { userIds: userIds } },
+  })
 
-function givenUserDeleteRegularUsersEndpoint(
-  resolver: MessageResolver<
-    string,
-    {
-      userId: number
-    }
-  >
-) {
-  givenSerloEndpoint('UserDeleteRegularUsersMutation', resolver)
-}
-
-function defaultUserDeleteRegularUsersEndpoint({
-  database,
-  reason,
-  failsForUserIds = [],
-}: {
-  database: Database
-  failsForUserIds?: number[]
-  reason?: string
-}): MessageResolver<string, { userId: number }> {
-  return (req, res, ctx) => {
+  given('UserDeleteRegularUsersMutation').isDefinedBy((req, res, ctx) => {
     const { userId } = req.body.payload
-
-    if (failsForUserIds.includes(userId))
-      return res(ctx.json({ success: false, reason }))
 
     database.deleteUuid(userId)
 
     return res(ctx.json({ success: true }))
-  }
-}
+  })
+
+  given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
+})
+
+test('runs successfully when mutation could be successfully executed', async () => {
+  await mutation
+    .withVariables({ input: { userIds: [user.id, userIds[1]] } })
+    .shouldReturnData({
+      user: {
+        deleteRegularUsers: [
+          { success: true, username: user.username, reason: null },
+          { success: true, username: user.username, reason: null },
+        ],
+      },
+    })
+})
+
+test('runs partially when one of the mutations failed', async () => {
+  given('UserDeleteRegularUsersMutation').isDefinedBy((req, res, ctx) => {
+    const { userId } = req.body.payload
+
+    if (userId === user.id)
+      return res(ctx.json({ success: false, reason: 'failure!' }))
+
+    database.deleteUuid(userId)
+
+    return res(ctx.json({ success: true }))
+  })
+
+  await mutation
+    .withVariables({ input: { userIds: [user.id, userIds[1]] } })
+    .shouldReturnData({
+      user: {
+        deleteRegularUsers: [
+          { success: false, username: user.username, reason: 'failure!' },
+          { success: true, username: user.username, reason: null },
+        ],
+      },
+    })
+})
+
+test('updates the cache', async () => {
+  const uuidQuery = client.prepareQuery({
+    query: gql`
+      query ($id: Int!) {
+        uuid(id: $id) {
+          id
+        }
+      }
+    `,
+    variables: { id: user.id },
+  })
+
+  await uuidQuery.shouldReturnData({ uuid: { id: user.id } })
+
+  await mutation.execute()
+
+  await uuidQuery.shouldReturnData({ uuid: null })
+})
+
+test('fails when one of the given bot ids is not a user', async () => {
+  await mutation
+    .withVariables({ input: { userIds: [noUserId] } })
+    .shouldFailWithError('BAD_USER_INPUT')
+})
+
+test('fails when user is not authenticated', async () => {
+  await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
+})
+
+test('fails when user does not have role "sysadmin"', async () => {
+  database.hasUuid({ ...user, roles: ['login', 'de_admin'] })
+
+  await mutation.shouldFailWithError('FORBIDDEN')
+})
+
+test('fails when database layer has an internal error', async () => {
+  given('UserDeleteRegularUsersMutation').hasInternalServerError()
+
+  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
+})

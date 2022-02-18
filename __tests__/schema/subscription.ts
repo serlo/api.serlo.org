@@ -23,250 +23,199 @@ import { gql } from 'apollo-server'
 
 import { article, user } from '../../__fixtures__'
 import {
-  assertFailingGraphQLMutation,
-  assertSuccessfulGraphQLMutation,
-  assertSuccessfulGraphQLQuery,
   castToUuid,
-  createMessageHandler,
-  createTestClient,
-  createUuidHandler,
+  Client,
   getTypenameAndId,
+  given,
+  givenUuid,
+  givenUuids,
   nextUuid,
 } from '../__utils__'
 
 describe('subscriptions', () => {
   beforeEach(() => {
-    global.server.use(
-      createUuidHandler(article),
-      createUuidHandler(user),
-      createSubscriptionsHandler({
-        userId: user.id,
-        body: { subscriptions: [{ objectId: article.id, sendEmail: true }] },
+    givenUuid(article)
+    givenUuid(user)
+    given('SubscriptionsQuery')
+      .withPayload({ userId: user.id })
+      .returns({
+        subscriptions: [{ objectId: article.id, sendEmail: true }],
       })
-    )
   })
 
   test('Article', async () => {
-    const client = createTestClient({ userId: 1 })
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query {
-          subscription {
-            getSubscriptions {
-              nodes {
-                object {
-                  __typename
-                  id
+    await new Client({ userId: 1 })
+      .prepareQuery({
+        query: gql`
+          query {
+            subscription {
+              getSubscriptions {
+                nodes {
+                  object {
+                    __typename
+                    id
+                  }
+                  sendEmail
                 }
-                sendEmail
               }
             }
           }
-        }
-      `,
-      data: {
+        `,
+      })
+      .shouldReturnData({
         subscription: {
           getSubscriptions: {
             nodes: [{ object: getTypenameAndId(article), sendEmail: true }],
           },
         },
-      },
-      client,
-    })
+      })
   })
 
   test('currentUserHasSubscribed (true case)', async () => {
-    const client = createTestClient({ userId: user.id })
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query subscription($id: Int!) {
-          subscription {
-            currentUserHasSubscribed(id: $id)
+    await new Client({ userId: user.id })
+      .prepareQuery({
+        query: gql`
+          query subscription($id: Int!) {
+            subscription {
+              currentUserHasSubscribed(id: $id)
+            }
           }
-        }
-      `,
-      variables: { id: article.id },
-      data: { subscription: { currentUserHasSubscribed: true } },
-      client,
-    })
+        `,
+        variables: { id: article.id },
+      })
+      .shouldReturnData({ subscription: { currentUserHasSubscribed: true } })
   })
 
   test('currentUserHasSubscribed (false case)', async () => {
-    const client = createTestClient({ userId: user.id })
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query subscription($id: Int!) {
-          subscription {
-            currentUserHasSubscribed(id: $id)
+    await new Client({ userId: user.id })
+      .prepareQuery({
+        query: gql`
+          query subscription($id: Int!) {
+            subscription {
+              currentUserHasSubscribed(id: $id)
+            }
           }
-        }
-      `,
-      variables: { id: nextUuid(article.id) },
-      data: { subscription: { currentUserHasSubscribed: false } },
-      client,
-    })
+        `,
+        variables: { id: nextUuid(article.id) },
+      })
+      .shouldReturnData({ subscription: { currentUserHasSubscribed: false } })
   })
 })
 
 describe('subscription mutation set', () => {
-  const mutation = gql`
-    mutation set($input: SubscriptionSetInput!) {
-      subscription {
-        set(input: $input) {
-          success
-        }
-      }
-    }
-  `
-  const getSubscriptionsQuery = gql`
-    query {
-      subscription {
-        getSubscriptions {
-          nodes {
-            object {
-              id
-            }
-            sendEmail
+  const mutation = new Client({ userId: user.id }).prepareQuery({
+    query: gql`
+      mutation set($input: SubscriptionSetInput!) {
+        subscription {
+          set(input: $input) {
+            success
           }
         }
       }
-    }
-  `
-  const client = createTestClient({ userId: user.id })
+    `,
+  })
+
+  const getSubscriptionsQuery = new Client({ userId: user.id }).prepareQuery({
+    query: gql`
+      query {
+        subscription {
+          getSubscriptions {
+            nodes {
+              object {
+                id
+              }
+              sendEmail
+            }
+          }
+        }
+      }
+    `,
+  })
 
   // given a single subscription to article.id
   beforeEach(async () => {
     // mock subscriptions handlers
-    global.server.use(
-      createUuidHandler(article),
-      createUuidHandler(user),
-      createUuidHandler({ ...article, id: castToUuid(1555) }),
-      createUuidHandler({ ...article, id: castToUuid(1565) }),
-      createSubscriptionsHandler({
-        userId: user.id,
-        body: {
-          subscriptions: [
-            { objectId: article.id, sendEmail: false },
-            { objectId: 1555, sendEmail: false },
-          ],
-        },
-      })
+    givenUuids(
+      user,
+      article,
+      { ...article, id: castToUuid(1555) },
+      { ...article, id: castToUuid(1565) }
     )
+    given('SubscriptionsQuery')
+      .withPayload({ userId: user.id })
+      .returns({
+        subscriptions: [
+          { objectId: article.id, sendEmail: false },
+          { objectId: castToUuid(1555), sendEmail: false },
+        ],
+      })
 
     // fill cache
-    await assertSuccessfulGraphQLQuery({
-      query: getSubscriptionsQuery,
-      data: {
-        subscription: {
-          getSubscriptions: {
-            nodes: [
-              { object: { id: article.id }, sendEmail: false },
-              { object: { id: 1555 }, sendEmail: false },
-            ],
-          },
-        },
-      },
-      client,
-    })
+    await getSubscriptionsQuery.execute()
   })
 
   test('when subscribe=true', async () => {
-    global.server.use(
-      createSubscriptionSetMutationHandler({
-        ids: [1565, 1555],
+    given('SubscriptionSetMutation')
+      .withPayload({
+        ids: [castToUuid(1565), castToUuid(1555)],
         userId: user.id,
         subscribe: true,
         sendEmail: true,
       })
-    )
+      .returns()
 
-    await assertSuccessfulGraphQLMutation({
-      mutation,
-      variables: {
+    await mutation
+      .withVariables({
         input: { id: [1565, 1555], subscribe: true, sendEmail: true },
-      },
-      data: { subscription: { set: { success: true } } },
-      client: createTestClient({ userId: user.id }),
-    })
+      })
+      .shouldReturnData({ subscription: { set: { success: true } } })
 
     //check cache
-    await assertSuccessfulGraphQLQuery({
-      query: getSubscriptionsQuery,
-      data: {
-        subscription: {
-          getSubscriptions: {
-            nodes: [
-              { object: { id: 1555 }, sendEmail: true },
-              { object: { id: 1565 }, sendEmail: true },
-              { object: { id: article.id }, sendEmail: false },
-            ],
-          },
+    await getSubscriptionsQuery.shouldReturnData({
+      subscription: {
+        getSubscriptions: {
+          nodes: [
+            { object: { id: 1555 }, sendEmail: true },
+            { object: { id: 1565 }, sendEmail: true },
+            { object: { id: article.id }, sendEmail: false },
+          ],
         },
       },
-      client,
     })
   })
 
   test('when subscribe=false', async () => {
-    global.server.use(
-      createSubscriptionSetMutationHandler({
+    given('SubscriptionSetMutation')
+      .withPayload({
         ids: [article.id],
         userId: user.id,
         subscribe: false,
         sendEmail: false,
       })
-    )
+      .returns()
 
-    await assertSuccessfulGraphQLMutation({
-      mutation,
-      variables: {
+    await mutation
+      .withVariables({
         input: { id: [article.id], subscribe: false, sendEmail: false },
-      },
-      data: { subscription: { set: { success: true } } },
-      client,
-    })
+      })
+      .shouldReturnData({ subscription: { set: { success: true } } })
 
     //check cache
-    await assertSuccessfulGraphQLQuery({
-      query: getSubscriptionsQuery,
-      data: {
-        subscription: {
-          getSubscriptions: {
-            nodes: [{ object: { id: 1555 }, sendEmail: false }],
-          },
+    await getSubscriptionsQuery.shouldReturnData({
+      subscription: {
+        getSubscriptions: {
+          nodes: [{ object: { id: 1555 }, sendEmail: false }],
         },
       },
-      client,
     })
   })
 
   test('unauthenticated', async () => {
-    await assertFailingGraphQLMutation({
-      mutation,
-      variables: { input: { id: 1565, subscribe: true, sendEmail: false } },
-      client: createTestClient({ userId: null }),
-      expectedError: 'UNAUTHENTICATED',
-    })
+    await mutation
+      .forUnauthenticatedUser()
+      .withVariables({
+        input: { id: 1565, subscribe: true, sendEmail: false },
+      })
+      .shouldFailWithError('UNAUTHENTICATED')
   })
 })
-
-function createSubscriptionsHandler({
-  userId,
-  body,
-}: {
-  userId: number
-  body: Record<string, unknown>
-}) {
-  return createMessageHandler({
-    message: { type: 'SubscriptionsQuery', payload: { userId } },
-    body,
-  })
-}
-
-function createSubscriptionSetMutationHandler(
-  payload: Record<string, unknown>
-) {
-  return createMessageHandler({
-    message: { type: 'SubscriptionSetMutation', payload },
-  })
-}
