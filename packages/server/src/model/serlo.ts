@@ -37,6 +37,7 @@ import {
   EntityDecoder,
   PageRevisionDecoder,
   PageDecoder,
+  castToUuid,
 } from './decoder'
 import {
   createMutation,
@@ -743,7 +744,43 @@ export function createSerloModel({
     mutate: (payload: DatabaseLayer.Payload<'EntityAddRevision'>) => {
       return DatabaseLayer.makeRequest('EntityAddRevision', payload)
     },
-    updateCache: () => {}, // TODO
+    updateCache: async ({ input, userId }, { success }) => {
+      if (success) {
+        if (!input.needsReview) {
+          await getUuid._querySpec.removeCache({
+            payload: { id: input.entityId },
+          })
+        } else {
+          await getUnrevisedEntities._querySpec.removeCache({
+            payload: undefined,
+          })
+        }
+
+        if (input.subscribeThis) {
+          await getSubscriptions._querySpec.setCache({
+            payload: { userId },
+            getValue(current) {
+              if (!current) return
+
+              const currentWithoutNew = current.subscriptions.filter(
+                ({ objectId }) => input.entityId !== objectId
+              )
+
+              const newEntry = {
+                objectId: castToUuid(input.entityId),
+                sendEmail: input.subscribeThisByEmail,
+              }
+
+              return {
+                subscriptions: [...currentWithoutNew, newEntry].sort(
+                  (a, b) => a.objectId - b.objectId
+                ),
+              }
+            },
+          })
+        }
+      }
+    },
   })
 
   const checkoutEntityRevision = createMutation({
