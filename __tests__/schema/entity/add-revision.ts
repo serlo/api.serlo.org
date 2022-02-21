@@ -51,17 +51,20 @@ import { EntityRevisionType } from '~/model/decoder'
 // we may find a way of dynamically testing them all
 
 describe('addAppletRevision', () => {
+  const fields = {
+    title: 'title',
+    content: 'content',
+    metaTitle: 'metaTitle',
+    metaDescription: 'metaDescription',
+    url: 'https://url.org',
+  }
   const input = {
     changes: 'changes',
     entityId: applet.id,
     needsReview: true,
     subscribeThis: false,
     subscribeThisByEmail: false,
-    title: 'title',
-    content: 'content',
-    metaTitle: 'metaTitle',
-    metaDescription: 'metaDescription',
-    url: 'https://url.org',
+    ...fields,
   }
 
   const mutation = new Client({ userId: user.id })
@@ -83,9 +86,23 @@ describe('addAppletRevision', () => {
   })
 
   test('returns "{ success: true }" when mutation could be successfully executed', async () => {
+    const {
+      changes,
+      entityId,
+      needsReview,
+      subscribeThis,
+      subscribeThisByEmail,
+    } = input
     given('EntityAddRevision')
       .withPayload({
-        input,
+        input: {
+          changes,
+          entityId,
+          needsReview,
+          subscribeThis,
+          subscribeThisByEmail,
+          fields,
+        },
         userId: user.id,
         revisionType: EntityRevisionType.AppletRevision,
       })
@@ -137,16 +154,20 @@ describe('addAppletRevision', () => {
 })
 
 describe('addArticleRevision', () => {
+  const fields = {
+    title: 'title',
+    content: 'content',
+    metaTitle: 'metaTitle',
+    metaDescription: 'metaDescription',
+  }
+
   const input = {
     changes: 'changes',
     entityId: article.id,
     needsReview: true,
     subscribeThis: false,
     subscribeThisByEmail: false,
-    title: 'title',
-    content: 'content',
-    metaTitle: 'metaTitle',
-    metaDescription: 'metaDescription',
+    ...fields,
   }
 
   const mutation = new Client({ userId: user.id })
@@ -168,9 +189,23 @@ describe('addArticleRevision', () => {
   })
 
   test('returns "{ success: true }" when mutation could be successfully executed', async () => {
+    const {
+      changes,
+      entityId,
+      needsReview,
+      subscribeThis,
+      subscribeThisByEmail,
+    } = input
     given('EntityAddRevision')
       .withPayload({
-        input,
+        input: {
+          changes,
+          entityId,
+          needsReview,
+          subscribeThis,
+          subscribeThisByEmail,
+          fields,
+        },
         userId: user.id,
         revisionType: EntityRevisionType.ArticleRevision,
       })
@@ -222,15 +257,18 @@ describe('addArticleRevision', () => {
 })
 
 describe('addCourseRevision', () => {
+  const fields = {
+    title: 'title',
+    content: 'content',
+    metaDescription: 'metaDescription',
+  }
   const input = {
     changes: 'changes',
     entityId: course.id,
     needsReview: true,
     subscribeThis: false,
     subscribeThisByEmail: false,
-    title: 'title',
-    content: 'content',
-    metaDescription: 'metaDescription',
+    ...fields,
   }
 
   const mutation = new Client({ userId: user.id })
@@ -252,9 +290,23 @@ describe('addCourseRevision', () => {
   })
 
   test('returns "{ success: true }" when mutation could be successfully executed', async () => {
+    const {
+      changes,
+      entityId,
+      needsReview,
+      subscribeThis,
+      subscribeThisByEmail,
+    } = input
     given('EntityAddRevision')
       .withPayload({
-        input,
+        input: {
+          changes,
+          entityId,
+          needsReview,
+          subscribeThis,
+          subscribeThisByEmail,
+          fields,
+        },
         userId: user.id,
         revisionType: EntityRevisionType.CourseRevision,
       })
@@ -306,14 +358,18 @@ describe('addCourseRevision', () => {
 })
 
 describe('addCoursePageRevision', () => {
+  const fields = {
+    title: 'title',
+    content: 'content',
+  }
+
   const input = {
     changes: 'changes',
     entityId: coursePage.id,
     needsReview: true,
     subscribeThis: false,
     subscribeThisByEmail: false,
-    title: 'title',
-    content: 'content',
+    ...fields,
   }
 
   const mutation = new Client({ userId: user.id })
@@ -335,9 +391,23 @@ describe('addCoursePageRevision', () => {
   })
 
   test('returns "{ success: true }" when mutation could be successfully executed', async () => {
+    const {
+      changes,
+      entityId,
+      needsReview,
+      subscribeThis,
+      subscribeThisByEmail,
+    } = input
     given('EntityAddRevision')
       .withPayload({
-        input,
+        input: {
+          changes,
+          entityId,
+          needsReview,
+          subscribeThis,
+          subscribeThisByEmail,
+          fields,
+        },
         userId: user.id,
         revisionType: EntityRevisionType.CoursePageRevision,
       })
@@ -389,16 +459,20 @@ describe('addCoursePageRevision', () => {
 })
 
 describe('addEventRevision', () => {
+  const fields = {
+    title: 'title',
+    content: 'content',
+    metaTitle: 'metaTitle',
+    metaDescription: 'metaDescription',
+  }
+
   const input = {
     changes: 'changes',
     entityId: event.id,
     needsReview: true,
     subscribeThis: false,
     subscribeThisByEmail: false,
-    title: 'title',
-    content: 'content',
-    metaTitle: 'metaTitle',
-    metaDescription: 'metaDescription',
+    ...fields,
   }
 
   const mutation = new Client({ userId: user.id })
@@ -420,9 +494,23 @@ describe('addEventRevision', () => {
   })
 
   test('returns "{ success: true }" when mutation could be successfully executed', async () => {
+    const {
+      changes,
+      entityId,
+      needsReview,
+      subscribeThis,
+      subscribeThisByEmail,
+    } = input
     given('EntityAddRevision')
       .withPayload({
-        input,
+        input: {
+          changes,
+          entityId,
+          needsReview,
+          subscribeThis,
+          subscribeThisByEmail,
+          fields,
+        },
         userId: user.id,
         revisionType: EntityRevisionType.EventRevision,
       })
@@ -474,13 +562,17 @@ describe('addEventRevision', () => {
 })
 
 describe('addExerciseRevision', () => {
+  const fields = {
+    content: 'content',
+  }
+
   const input = {
     changes: 'changes',
     entityId: exercise.id,
     needsReview: true,
     subscribeThis: false,
     subscribeThisByEmail: false,
-    content: 'content',
+    ...fields,
   }
 
   const mutation = new Client({ userId: user.id })
@@ -502,9 +594,23 @@ describe('addExerciseRevision', () => {
   })
 
   test('returns "{ success: true }" when mutation could be successfully executed', async () => {
+    const {
+      changes,
+      entityId,
+      needsReview,
+      subscribeThis,
+      subscribeThisByEmail,
+    } = input
     given('EntityAddRevision')
       .withPayload({
-        input,
+        input: {
+          changes,
+          entityId,
+          needsReview,
+          subscribeThis,
+          subscribeThisByEmail,
+          fields,
+        },
         userId: user.id,
         revisionType: EntityRevisionType.ExerciseRevision,
       })
@@ -556,14 +662,17 @@ describe('addExerciseRevision', () => {
 })
 
 describe('addExerciseGroupRevision', () => {
+  const fields = {
+    cohesive: false,
+    content: 'content',
+  }
   const input = {
     changes: 'changes',
     entityId: exerciseGroup.id,
     needsReview: true,
     subscribeThis: false,
     subscribeThisByEmail: false,
-    cohesive: false,
-    content: 'content',
+    ...fields,
   }
 
   const mutation = new Client({ userId: user.id })
@@ -585,9 +694,23 @@ describe('addExerciseGroupRevision', () => {
   })
 
   test('returns "{ success: true }" when mutation could be successfully executed', async () => {
+    const {
+      changes,
+      entityId,
+      needsReview,
+      subscribeThis,
+      subscribeThisByEmail,
+    } = input
     given('EntityAddRevision')
       .withPayload({
-        input: { ...input, cohesive: 'false' },
+        input: {
+          changes,
+          entityId,
+          needsReview,
+          subscribeThis,
+          subscribeThisByEmail,
+          fields: { ...fields, cohesive: 'false' },
+        },
         userId: user.id,
         revisionType: EntityRevisionType.ExerciseGroupRevision,
       })
@@ -639,13 +762,17 @@ describe('addExerciseGroupRevision', () => {
 })
 
 describe('addGroupedExerciseRevision', () => {
+  const fields = {
+    content: 'content',
+  }
+
   const input = {
     changes: 'changes',
     entityId: groupedExercise.id,
     needsReview: true,
     subscribeThis: false,
     subscribeThisByEmail: false,
-    content: 'content',
+    ...fields,
   }
 
   const mutation = new Client({ userId: user.id })
@@ -667,9 +794,23 @@ describe('addGroupedExerciseRevision', () => {
   })
 
   test('returns "{ success: true }" when mutation could be successfully executed', async () => {
+    const {
+      changes,
+      entityId,
+      needsReview,
+      subscribeThis,
+      subscribeThisByEmail,
+    } = input
     given('EntityAddRevision')
       .withPayload({
-        input,
+        input: {
+          changes,
+          entityId,
+          needsReview,
+          subscribeThis,
+          subscribeThisByEmail,
+          fields,
+        },
         userId: user.id,
         revisionType: EntityRevisionType.GroupedExerciseRevision,
       })
@@ -721,13 +862,17 @@ describe('addGroupedExerciseRevision', () => {
 })
 
 describe('addSolutionRevision', () => {
+  const fields = {
+    content: 'content',
+  }
+
   const input = {
     changes: 'changes',
     entityId: solution.id,
     needsReview: true,
     subscribeThis: false,
     subscribeThisByEmail: false,
-    content: 'content',
+    ...fields,
   }
 
   const mutation = new Client({ userId: user.id })
@@ -749,9 +894,23 @@ describe('addSolutionRevision', () => {
   })
 
   test('returns "{ success: true }" when mutation could be successfully executed', async () => {
+    const {
+      changes,
+      entityId,
+      needsReview,
+      subscribeThis,
+      subscribeThisByEmail,
+    } = input
     given('EntityAddRevision')
       .withPayload({
-        input,
+        input: {
+          changes,
+          entityId,
+          needsReview,
+          subscribeThis,
+          subscribeThisByEmail,
+          fields,
+        },
         userId: user.id,
         revisionType: EntityRevisionType.SolutionRevision,
       })
@@ -803,15 +962,19 @@ describe('addSolutionRevision', () => {
 })
 
 describe('addVideoRevision', () => {
+  const fields = {
+    title: 'title',
+    content: 'content',
+    description: 'description',
+  }
+
   const input = {
     changes: 'changes',
     entityId: video.id,
     needsReview: true,
     subscribeThis: false,
     subscribeThisByEmail: false,
-    title: 'title',
-    content: 'content',
-    description: 'description',
+    ...fields,
   }
 
   const mutation = new Client({ userId: user.id })
@@ -833,9 +996,23 @@ describe('addVideoRevision', () => {
   })
 
   test('returns "{ success: true }" when mutation could be successfully executed', async () => {
+    const {
+      changes,
+      entityId,
+      needsReview,
+      subscribeThis,
+      subscribeThisByEmail,
+    } = input
     given('EntityAddRevision')
       .withPayload({
-        input,
+        input: {
+          changes,
+          entityId,
+          needsReview,
+          subscribeThis,
+          subscribeThisByEmail,
+          fields,
+        },
         userId: user.id,
         revisionType: EntityRevisionType.VideoRevision,
       })
@@ -887,13 +1064,17 @@ describe('addVideoRevision', () => {
 })
 
 describe('Cache after EntityAddRevision call', () => {
+  const fields = {
+    content: 'content',
+  }
+
   const input = {
     changes: 'changes',
     entityId: solution.id,
     needsReview: false,
     subscribeThis: true,
     subscribeThisByEmail: true,
-    content: 'content',
+    ...fields,
   }
 
   const mutation = new Client({ userId: user.id })
@@ -917,9 +1098,23 @@ describe('Cache after EntityAddRevision call', () => {
     database.hasUuids([user, solution, solutionRevision, article])
     given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
 
+    const {
+      changes,
+      entityId,
+      needsReview,
+      subscribeThis,
+      subscribeThisByEmail,
+    } = input
     given('EntityAddRevision')
       .withPayload({
-        input,
+        input: {
+          changes,
+          entityId,
+          needsReview,
+          subscribeThis,
+          subscribeThisByEmail,
+          fields,
+        },
         userId: user.id,
         revisionType: EntityRevisionType.SolutionRevision,
       })

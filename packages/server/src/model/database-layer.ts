@@ -89,29 +89,14 @@ export const spec = {
     payload: t.type({
       userId: t.number,
       revisionType: EntityRevisionTypeDecoder,
-      input: t.intersection([
-        t.type({
-          changes: t.string,
-          entityId: t.number,
-          needsReview: t.boolean,
-          subscribeThis: t.boolean,
-          subscribeThisByEmail: t.boolean,
-        }),
-        t.partial({
-          cohesive: t.union([
-            t.literal('true'),
-            t.literal('false'),
-            t.null,
-            t.undefined,
-          ]),
-          content: t.union([t.string, t.null, t.undefined]),
-          description: t.union([t.string, t.null, t.undefined]),
-          metaDescription: t.union([t.string, t.null, t.undefined]),
-          metaTitle: t.union([t.string, t.null, t.undefined]),
-          title: t.union([t.string, t.null, t.undefined]),
-          url: t.union([t.string, t.null, t.undefined]),
-        }),
-      ]),
+      input: t.type({
+        changes: t.string,
+        entityId: t.number,
+        needsReview: t.boolean,
+        subscribeThis: t.boolean,
+        subscribeThisByEmail: t.boolean,
+        fields: t.record(t.string, t.string),
+      }),
     }),
     response: t.type({ success: t.boolean }),
     canBeNull: false,

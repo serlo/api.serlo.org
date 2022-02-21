@@ -29,7 +29,6 @@ import {
   InterfaceResolvers,
   Mutations,
 } from '~/internals/graphql'
-import { DatabaseLayer } from '~/model'
 import { castToUuid, EntityRevisionType } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 
@@ -186,15 +185,32 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   },
 }
 
+interface AbstractEntityAddRevisionPayload {
+  revisionType: EntityRevisionType
+  input: {
+    changes: string
+    entityId: number
+    needsReview: boolean
+    subscribeThis: boolean
+    subscribeThisByEmail: boolean
+    cohesive?: 'true' | 'false'
+    content?: string
+    description?: string
+    metaDescription?: string
+    metaTitle?: string
+    title?: string
+    url?: string
+  }
+  dataSources: { model: ModelDataSource }
+  userId: number | null
+}
+
 async function addRevision({
   revisionType,
   input,
   dataSources,
   userId,
-}: Omit<DatabaseLayer.Payload<'EntityAddRevision'>, 'userId'> & {
-  dataSources: { model: ModelDataSource }
-  userId: number | null
-}) {
+}: AbstractEntityAddRevisionPayload) {
   assertUserIsAuthenticated(userId)
 
   const authenticatedUserId = userId
@@ -212,10 +228,51 @@ async function addRevision({
     guard: serloAuth.Entity.addRevision(scope),
   })
 
+  const {
+    cohesive,
+    content,
+    description,
+    metaDescription,
+    metaTitle,
+    title,
+    url,
+  } = input
+
+  const inputFields: {
+    [key: string]: string | undefined
+  } = {
+    cohesive,
+    content,
+    description,
+    metaDescription,
+    metaTitle,
+    title,
+    url,
+  }
+
+  const fields: {
+    [key: string]: string
+  } = {}
+
+  for (const [key, value] of Object.entries(inputFields)) {
+    if (value) {
+      fields[key] = value
+    }
+  }
+
+  const { changes, needsReview, subscribeThis, subscribeThisByEmail } = input
+  const inputPayload = {
+    changes,
+    entityId,
+    needsReview,
+    subscribeThis,
+    subscribeThisByEmail,
+    fields,
+  }
   await dataSources.model.serlo.addEntityRevision({
     revisionType,
     userId: authenticatedUserId,
-    input,
+    input: inputPayload,
   })
 
   return { success: true }
