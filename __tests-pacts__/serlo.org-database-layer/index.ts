@@ -230,7 +230,9 @@ const pactSpec: PactSpec = {
     examples: [],
   },
   UserDeleteRegularUsersMutation: {
-    examples: [[{ userId: user.id }, { success: true }]],
+    examples: [],
+    // TODO: uncomment when Database Layer handles UserDeleteRegularUsersMutation
+    // examples: [[{ userId: user.id }, { success: true }]],
   },
   UserSetDescriptionMutation: {
     examples: [[{ userId: 1, description: 'Hello World' }, { success: true }]],
