@@ -85,7 +85,7 @@ export const spec = {
     }),
     canBeNull: false,
   },
-  EntityAddRevision: {
+  EntityAddRevisionMutation: {
     payload: t.type({
       userId: t.number,
       revisionType: EntityRevisionTypeDecoder,
