@@ -93,7 +93,7 @@ describe('addAppletRevision', () => {
       subscribeThis,
       subscribeThisByEmail,
     } = input
-    given('EntityAddRevision')
+    given('EntityAddRevisionMutation')
       .withPayload({
         input: {
           changes,
@@ -141,13 +141,13 @@ describe('addAppletRevision', () => {
   })
 
   test('fails when database layer returns a 400er response', async () => {
-    given('EntityAddRevision').returnsBadRequest()
+    given('EntityAddRevisionMutation').returnsBadRequest()
 
     await mutation.shouldFailWithError('BAD_USER_INPUT')
   })
 
   test('fails when database layer has an internal error', async () => {
-    given('EntityAddRevision').hasInternalServerError()
+    given('EntityAddRevisionMutation').hasInternalServerError()
 
     await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
   })
@@ -196,7 +196,7 @@ describe('addArticleRevision', () => {
       subscribeThis,
       subscribeThisByEmail,
     } = input
-    given('EntityAddRevision')
+    given('EntityAddRevisionMutation')
       .withPayload({
         input: {
           changes,
@@ -244,13 +244,13 @@ describe('addArticleRevision', () => {
   })
 
   test('fails when database layer returns a 400er response', async () => {
-    given('EntityAddRevision').returnsBadRequest()
+    given('EntityAddRevisionMutation').returnsBadRequest()
 
     await mutation.shouldFailWithError('BAD_USER_INPUT')
   })
 
   test('fails when database layer has an internal error', async () => {
-    given('EntityAddRevision').hasInternalServerError()
+    given('EntityAddRevisionMutation').hasInternalServerError()
 
     await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
   })
@@ -297,7 +297,7 @@ describe('addCourseRevision', () => {
       subscribeThis,
       subscribeThisByEmail,
     } = input
-    given('EntityAddRevision')
+    given('EntityAddRevisionMutation')
       .withPayload({
         input: {
           changes,
@@ -345,13 +345,13 @@ describe('addCourseRevision', () => {
   })
 
   test('fails when database layer returns a 400er response', async () => {
-    given('EntityAddRevision').returnsBadRequest()
+    given('EntityAddRevisionMutation').returnsBadRequest()
 
     await mutation.shouldFailWithError('BAD_USER_INPUT')
   })
 
   test('fails when database layer has an internal error', async () => {
-    given('EntityAddRevision').hasInternalServerError()
+    given('EntityAddRevisionMutation').hasInternalServerError()
 
     await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
   })
@@ -398,7 +398,7 @@ describe('addCoursePageRevision', () => {
       subscribeThis,
       subscribeThisByEmail,
     } = input
-    given('EntityAddRevision')
+    given('EntityAddRevisionMutation')
       .withPayload({
         input: {
           changes,
@@ -446,13 +446,13 @@ describe('addCoursePageRevision', () => {
   })
 
   test('fails when database layer returns a 400er response', async () => {
-    given('EntityAddRevision').returnsBadRequest()
+    given('EntityAddRevisionMutation').returnsBadRequest()
 
     await mutation.shouldFailWithError('BAD_USER_INPUT')
   })
 
   test('fails when database layer has an internal error', async () => {
-    given('EntityAddRevision').hasInternalServerError()
+    given('EntityAddRevisionMutation').hasInternalServerError()
 
     await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
   })
@@ -501,7 +501,7 @@ describe('addEventRevision', () => {
       subscribeThis,
       subscribeThisByEmail,
     } = input
-    given('EntityAddRevision')
+    given('EntityAddRevisionMutation')
       .withPayload({
         input: {
           changes,
@@ -549,13 +549,13 @@ describe('addEventRevision', () => {
   })
 
   test('fails when database layer returns a 400er response', async () => {
-    given('EntityAddRevision').returnsBadRequest()
+    given('EntityAddRevisionMutation').returnsBadRequest()
 
     await mutation.shouldFailWithError('BAD_USER_INPUT')
   })
 
   test('fails when database layer has an internal error', async () => {
-    given('EntityAddRevision').hasInternalServerError()
+    given('EntityAddRevisionMutation').hasInternalServerError()
 
     await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
   })
@@ -601,7 +601,7 @@ describe('addExerciseRevision', () => {
       subscribeThis,
       subscribeThisByEmail,
     } = input
-    given('EntityAddRevision')
+    given('EntityAddRevisionMutation')
       .withPayload({
         input: {
           changes,
@@ -649,13 +649,13 @@ describe('addExerciseRevision', () => {
   })
 
   test('fails when database layer returns a 400er response', async () => {
-    given('EntityAddRevision').returnsBadRequest()
+    given('EntityAddRevisionMutation').returnsBadRequest()
 
     await mutation.shouldFailWithError('BAD_USER_INPUT')
   })
 
   test('fails when database layer has an internal error', async () => {
-    given('EntityAddRevision').hasInternalServerError()
+    given('EntityAddRevisionMutation').hasInternalServerError()
 
     await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
   })
@@ -701,7 +701,7 @@ describe('addExerciseGroupRevision', () => {
       subscribeThis,
       subscribeThisByEmail,
     } = input
-    given('EntityAddRevision')
+    given('EntityAddRevisionMutation')
       .withPayload({
         input: {
           changes,
@@ -749,13 +749,13 @@ describe('addExerciseGroupRevision', () => {
   })
 
   test('fails when database layer returns a 400er response', async () => {
-    given('EntityAddRevision').returnsBadRequest()
+    given('EntityAddRevisionMutation').returnsBadRequest()
 
     await mutation.shouldFailWithError('BAD_USER_INPUT')
   })
 
   test('fails when database layer has an internal error', async () => {
-    given('EntityAddRevision').hasInternalServerError()
+    given('EntityAddRevisionMutation').hasInternalServerError()
 
     await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
   })
@@ -801,7 +801,7 @@ describe('addGroupedExerciseRevision', () => {
       subscribeThis,
       subscribeThisByEmail,
     } = input
-    given('EntityAddRevision')
+    given('EntityAddRevisionMutation')
       .withPayload({
         input: {
           changes,
@@ -849,13 +849,13 @@ describe('addGroupedExerciseRevision', () => {
   })
 
   test('fails when database layer returns a 400er response', async () => {
-    given('EntityAddRevision').returnsBadRequest()
+    given('EntityAddRevisionMutation').returnsBadRequest()
 
     await mutation.shouldFailWithError('BAD_USER_INPUT')
   })
 
   test('fails when database layer has an internal error', async () => {
-    given('EntityAddRevision').hasInternalServerError()
+    given('EntityAddRevisionMutation').hasInternalServerError()
 
     await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
   })
@@ -901,7 +901,7 @@ describe('addSolutionRevision', () => {
       subscribeThis,
       subscribeThisByEmail,
     } = input
-    given('EntityAddRevision')
+    given('EntityAddRevisionMutation')
       .withPayload({
         input: {
           changes,
@@ -949,13 +949,13 @@ describe('addSolutionRevision', () => {
   })
 
   test('fails when database layer returns a 400er response', async () => {
-    given('EntityAddRevision').returnsBadRequest()
+    given('EntityAddRevisionMutation').returnsBadRequest()
 
     await mutation.shouldFailWithError('BAD_USER_INPUT')
   })
 
   test('fails when database layer has an internal error', async () => {
-    given('EntityAddRevision').hasInternalServerError()
+    given('EntityAddRevisionMutation').hasInternalServerError()
 
     await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
   })
@@ -1003,7 +1003,7 @@ describe('addVideoRevision', () => {
       subscribeThis,
       subscribeThisByEmail,
     } = input
-    given('EntityAddRevision')
+    given('EntityAddRevisionMutation')
       .withPayload({
         input: {
           changes,
@@ -1051,19 +1051,19 @@ describe('addVideoRevision', () => {
   })
 
   test('fails when database layer returns a 400er response', async () => {
-    given('EntityAddRevision').returnsBadRequest()
+    given('EntityAddRevisionMutation').returnsBadRequest()
 
     await mutation.shouldFailWithError('BAD_USER_INPUT')
   })
 
   test('fails when database layer has an internal error', async () => {
-    given('EntityAddRevision').hasInternalServerError()
+    given('EntityAddRevisionMutation').hasInternalServerError()
 
     await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
   })
 })
 
-describe('Cache after EntityAddRevision call', () => {
+describe('Cache after EntityAddRevisionMutation call', () => {
   const fields = {
     content: 'content',
   }
@@ -1105,7 +1105,7 @@ describe('Cache after EntityAddRevision call', () => {
       subscribeThis,
       subscribeThisByEmail,
     } = input
-    given('EntityAddRevision')
+    given('EntityAddRevisionMutation')
       .withPayload({
         input: {
           changes,

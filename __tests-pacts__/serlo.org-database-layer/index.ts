@@ -134,7 +134,7 @@ const pactSpec: PactSpec = {
   EntitiesMetadataQuery: {
     examples: [],
   },
-  EntityAddRevision: {
+  EntityAddRevisionMutation: {
     examples: [
       [
         {
