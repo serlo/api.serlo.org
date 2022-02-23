@@ -115,6 +115,16 @@ export const spec = {
     }),
     canBeNull: true,
   },
+  PageAddRevisionMutation: {
+    payload: t.type({
+      content: t.string,
+      pageId: t.number,
+      title: t.string,
+      userId: t.number,
+    }),
+    response: t.type({ success: t.boolean }),
+    canBeNull: false,
+  },
   SubjectsQuery: {
     payload: t.type({}),
     response: t.strict({
