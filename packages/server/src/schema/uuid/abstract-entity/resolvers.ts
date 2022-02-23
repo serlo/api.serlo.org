@@ -213,8 +213,6 @@ async function addRevision({
 }: AbstractEntityAddRevisionPayload) {
   assertUserIsAuthenticated(userId)
 
-  const authenticatedUserId = userId
-
   const { entityId } = input
 
   const scope = await fetchScopeOfUuid({
@@ -222,10 +220,10 @@ async function addRevision({
     dataSources,
   })
   await assertUserIsAuthorized({
-    userId: authenticatedUserId,
+    userId,
     dataSources,
     message: 'You are not allowed to add revision to this entity.',
-    guard: serloAuth.Entity.addRevision(scope),
+    guard: serloAuth.Uuid.create('EntityRevision')(scope),
   })
 
   const {
@@ -271,7 +269,7 @@ async function addRevision({
   }
   await dataSources.model.serlo.addEntityRevision({
     revisionType,
-    userId: authenticatedUserId,
+    userId,
     input: inputPayload,
   })
 
