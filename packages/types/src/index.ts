@@ -1607,6 +1607,12 @@ export type PageThreadsArgs = {
   trashed?: InputMaybe<Scalars['Boolean']>;
 };
 
+export type PageAddRevisionInput = {
+  content: Scalars['String'];
+  pageId: Scalars['Int'];
+  title: Scalars['String'];
+};
+
 export type PageInfo = {
   __typename?: 'PageInfo';
   endCursor?: Maybe<Scalars['String']>;
@@ -1617,8 +1623,14 @@ export type PageInfo = {
 
 export type PageMutation = {
   __typename?: 'PageMutation';
+  addRevision: AddRevisionResponse;
   checkoutRevision: CheckoutRevisionResponse;
   rejectRevision: RejectRevisionResponse;
+};
+
+
+export type PageMutationAddRevisionArgs = {
+  input: PageAddRevisionInput;
 };
 
 

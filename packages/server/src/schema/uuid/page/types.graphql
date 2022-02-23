@@ -76,6 +76,13 @@ extend type Mutation {
 }
 
 type PageMutation {
+  addRevision(input: PageAddRevisionInput!): AddRevisionResponse!
   checkoutRevision(input: CheckoutRevisionInput!): CheckoutRevisionResponse!
   rejectRevision(input: RejectRevisionInput!): RejectRevisionResponse!
+}
+
+input PageAddRevisionInput {
+  content: String!
+  pageId: Int!
+  title: String!
 }
