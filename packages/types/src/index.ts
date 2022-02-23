@@ -345,12 +345,12 @@ export type AddRevisionResponse = {
 export type AddVideoRevisionInput = {
   changes: Scalars['String'];
   content: Scalars['String'];
-  description: Scalars['String'];
   entityId: Scalars['Int'];
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
   title: Scalars['String'];
+  url: Scalars['String'];
 };
 
 export type AliasInput = {

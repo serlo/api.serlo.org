@@ -305,7 +305,11 @@ describe('addCourseRevision', () => {
           needsReview,
           subscribeThis,
           subscribeThisByEmail,
-          fields,
+          fields: {
+            description: fields.content,
+            title: fields.title,
+            metaDescription: fields.metaDescription,
+          },
         },
         userId: user.id,
         revisionType: EntityRevisionType.CourseRevision,
@@ -963,9 +967,9 @@ describe('addSolutionRevision', () => {
 
 describe('addVideoRevision', () => {
   const fields = {
-    title: 'title',
     content: 'content',
-    description: 'description',
+    title: 'title',
+    url: 'url',
   }
 
   const input = {
@@ -1011,7 +1015,11 @@ describe('addVideoRevision', () => {
           needsReview,
           subscribeThis,
           subscribeThisByEmail,
-          fields,
+          fields: {
+            content: fields.url,
+            title: fields.title,
+            description: fields.content,
+          },
         },
         userId: user.id,
         revisionType: EntityRevisionType.VideoRevision,

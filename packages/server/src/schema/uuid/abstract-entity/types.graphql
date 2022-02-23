@@ -177,8 +177,8 @@ input AddVideoRevisionInput {
   subscribeThisByEmail: Boolean!
 
   content: String!
-  description: String!
   title: String!
+  url: String!
 }
 
 input CheckoutRevisionInput {
