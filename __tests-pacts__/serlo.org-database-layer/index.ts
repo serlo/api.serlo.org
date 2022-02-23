@@ -51,6 +51,7 @@ import {
   videoRevision,
 } from '../../__fixtures__'
 import { DatabaseLayer } from '~/model'
+import { EntityRevisionType } from '~/model/decoder'
 import { Instance } from '~/types'
 
 /* eslint-disable import/no-unassigned-import */
@@ -132,6 +133,49 @@ const pactSpec: PactSpec = {
   },
   EntitiesMetadataQuery: {
     examples: [],
+  },
+  EntityAddRevisionMutation: {
+    examples: [
+      [
+        {
+          input: {
+            changes: 'changes',
+            entityId: article.id,
+            needsReview: true,
+            subscribeThis: false,
+            subscribeThisByEmail: false,
+            fields: {
+              title: 'title',
+              content: 'content',
+              metaTitle: 'metaTitle',
+              metaDescription: 'metaDescription',
+            },
+          },
+          userId: user.id,
+          revisionType: EntityRevisionType.ArticleRevision,
+        },
+        { success: true },
+      ],
+      [
+        {
+          input: {
+            changes: 'changes',
+            entityId: video.id,
+            needsReview: false,
+            subscribeThis: true,
+            subscribeThisByEmail: true,
+            fields: {
+              title: 'title',
+              content: 'content',
+              description: 'description',
+            },
+          },
+          userId: user.id,
+          revisionType: EntityRevisionType.VideoRevision,
+        },
+        { success: true },
+      ],
+    ],
   },
   LicenseQuery: {
     examples: [[{ id: 1 }, license]],

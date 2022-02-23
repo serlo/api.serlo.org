@@ -25,6 +25,7 @@ import * as t from 'io-ts'
 import fetch from 'node-fetch'
 
 import {
+  EntityRevisionTypeDecoder,
   InstanceDecoder,
   SubscriptionsDecoder,
   Uuid,
@@ -82,6 +83,22 @@ export const spec = {
         ])
       ),
     }),
+    canBeNull: false,
+  },
+  EntityAddRevisionMutation: {
+    payload: t.type({
+      userId: t.number,
+      revisionType: EntityRevisionTypeDecoder,
+      input: t.type({
+        changes: t.string,
+        entityId: t.number,
+        needsReview: t.boolean,
+        subscribeThis: t.boolean,
+        subscribeThisByEmail: t.boolean,
+        fields: t.record(t.string, t.string),
+      }),
+    }),
+    response: t.type({ success: t.boolean }),
     canBeNull: false,
   },
   LicenseQuery: {

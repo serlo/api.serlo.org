@@ -36,6 +36,7 @@ export function instanceToScope(instance: Instance | null): Scope {
 }
 
 export enum Permission {
+  Entity_AddRevision = 'entity:addRevision',
   Entity_CheckoutRevision = 'entity:checkoutRevision',
   Entity_RejectRevision = 'entity:rejectRevision',
   Entity_SetLicense = 'entity:setLicense',
@@ -102,6 +103,7 @@ function createPermissionGuard(
 }
 
 export const Entity = {
+  addRevision: createPermissionGuard(Permission.Entity_AddRevision),
   checkoutRevision: createPermissionGuard(Permission.Entity_CheckoutRevision),
   rejectRevision: createPermissionGuard(Permission.Entity_RejectRevision),
   setLicense: createPermissionGuard(Permission.Entity_SetLicense),

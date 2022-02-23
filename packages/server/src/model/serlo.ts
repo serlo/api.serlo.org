@@ -37,6 +37,7 @@ import {
   EntityDecoder,
   PageRevisionDecoder,
   PageDecoder,
+  castToUuid,
 } from './decoder'
 import {
   createMutation,
@@ -738,6 +739,50 @@ export function createSerloModel({
     },
   })
 
+  const addEntityRevision = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('EntityAddRevisionMutation'),
+    mutate: (payload: DatabaseLayer.Payload<'EntityAddRevisionMutation'>) => {
+      return DatabaseLayer.makeRequest('EntityAddRevisionMutation', payload)
+    },
+    updateCache: async ({ input, userId }, { success }) => {
+      if (success) {
+        if (!input.needsReview) {
+          await getUuid._querySpec.removeCache({
+            payload: { id: input.entityId },
+          })
+        } else {
+          await getUnrevisedEntities._querySpec.removeCache({
+            payload: undefined,
+          })
+        }
+
+        if (input.subscribeThis) {
+          await getSubscriptions._querySpec.setCache({
+            payload: { userId },
+            getValue(current) {
+              if (!current) return
+
+              const currentWithoutNew = current.subscriptions.filter(
+                ({ objectId }) => input.entityId !== objectId
+              )
+
+              const newEntry = {
+                objectId: castToUuid(input.entityId),
+                sendEmail: input.subscribeThisByEmail,
+              }
+
+              return {
+                subscriptions: [...currentWithoutNew, newEntry].sort(
+                  (a, b) => a.objectId - b.objectId
+                ),
+              }
+            },
+          })
+        }
+      }
+    },
+  })
+
   const checkoutEntityRevision = createMutation({
     decoder: t.type({ success: t.literal(true) }),
     async mutate(payload: {
@@ -875,6 +920,7 @@ export function createSerloModel({
     deleteRegularUsers,
     setDescription,
     setEmail,
+    addEntityRevision,
     checkoutEntityRevision,
     checkoutPageRevision,
     getActiveAuthorIds,
