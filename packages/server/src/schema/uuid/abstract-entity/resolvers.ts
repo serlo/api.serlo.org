@@ -21,6 +21,7 @@
  */
 import * as serloAuth from '@serlo/authorization'
 
+import { ModelDataSource } from '~/internals/data-source'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
@@ -28,7 +29,7 @@ import {
   InterfaceResolvers,
   Mutations,
 } from '~/internals/graphql'
-import { castToUuid } from '~/model/decoder'
+import { castToUuid, EntityRevisionType } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 
 export const resolvers: InterfaceResolvers<'AbstractEntity'> &
@@ -48,6 +49,99 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     },
   },
   EntityMutation: {
+    async addAppletRevision(_parent, { input }, { dataSources, userId }) {
+      return await addRevision({
+        revisionType: EntityRevisionType.AppletRevision,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async addArticleRevision(_parent, { input }, { dataSources, userId }) {
+      return await addRevision({
+        revisionType: EntityRevisionType.ArticleRevision,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async addCourseRevision(_parent, { input }, { dataSources, userId }) {
+      return await addRevision({
+        revisionType: EntityRevisionType.CourseRevision,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async addCoursePageRevision(_parent, { input }, { dataSources, userId }) {
+      return await addRevision({
+        revisionType: EntityRevisionType.CoursePageRevision,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async addEventRevision(_parent, { input }, { dataSources, userId }) {
+      return await addRevision({
+        revisionType: EntityRevisionType.EventRevision,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async addExerciseRevision(_parent, { input }, { dataSources, userId }) {
+      return await addRevision({
+        revisionType: EntityRevisionType.ExerciseRevision,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async addExerciseGroupRevision(
+      _parent,
+      { input },
+      { dataSources, userId }
+    ) {
+      const cohesive = input.cohesive === true ? 'true' : 'false'
+      const transformedInput: Omit<typeof input, 'cohesive'> & {
+        cohesive: 'true' | 'false'
+      } = { ...input, cohesive }
+
+      return await addRevision({
+        revisionType: EntityRevisionType.ExerciseGroupRevision,
+        input: transformedInput,
+        dataSources,
+        userId,
+      })
+    },
+    async addGroupedExerciseRevision(
+      _parent,
+      { input },
+      { dataSources, userId }
+    ) {
+      return await addRevision({
+        revisionType: EntityRevisionType.GroupedExerciseRevision,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async addSolutionRevision(_parent, { input }, { dataSources, userId }) {
+      return await addRevision({
+        revisionType: EntityRevisionType.SolutionRevision,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async addVideoRevision(_parent, { input }, { dataSources, userId }) {
+      return await addRevision({
+        revisionType: EntityRevisionType.VideoRevision,
+        input,
+        dataSources,
+        userId,
+      })
+    },
     async checkoutRevision(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
@@ -89,4 +183,97 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       return { success: true, query: {} }
     },
   },
+}
+
+interface AbstractEntityAddRevisionPayload {
+  revisionType: EntityRevisionType
+  input: {
+    changes: string
+    entityId: number
+    needsReview: boolean
+    subscribeThis: boolean
+    subscribeThisByEmail: boolean
+    cohesive?: 'true' | 'false'
+    content?: string
+    description?: string
+    metaDescription?: string
+    metaTitle?: string
+    title?: string
+    url?: string
+  }
+  dataSources: { model: ModelDataSource }
+  userId: number | null
+}
+
+async function addRevision({
+  revisionType,
+  input,
+  dataSources,
+  userId,
+}: AbstractEntityAddRevisionPayload) {
+  assertUserIsAuthenticated(userId)
+
+  const authenticatedUserId = userId
+
+  const { entityId } = input
+
+  const scope = await fetchScopeOfUuid({
+    id: entityId,
+    dataSources,
+  })
+  await assertUserIsAuthorized({
+    userId: authenticatedUserId,
+    dataSources,
+    message: 'You are not allowed to add revision to this entity.',
+    guard: serloAuth.Entity.addRevision(scope),
+  })
+
+  const {
+    cohesive,
+    content,
+    description,
+    metaDescription,
+    metaTitle,
+    title,
+    url,
+  } = input
+
+  const inputFields: {
+    [key: string]: string | undefined
+  } = {
+    cohesive,
+    content,
+    description,
+    metaDescription,
+    metaTitle,
+    title,
+    url,
+  }
+
+  const fields: {
+    [key: string]: string
+  } = {}
+
+  for (const [key, value] of Object.entries(inputFields)) {
+    if (value) {
+      fields[key] = value
+    }
+  }
+
+  const { changes, needsReview, subscribeThis, subscribeThisByEmail } = input
+  const inputPayload = {
+    changes,
+    entityId,
+    needsReview,
+    subscribeThis,
+    subscribeThisByEmail,
+    fields,
+  }
+  await dataSources.model.serlo.addEntityRevision({
+    revisionType,
+    userId: authenticatedUserId,
+    input: inputPayload,
+  })
+
+  return { success: true }
 }
