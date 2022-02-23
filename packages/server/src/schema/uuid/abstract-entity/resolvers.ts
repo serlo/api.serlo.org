@@ -66,9 +66,16 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addCourseRevision(_parent, { input }, { dataSources, userId }) {
+      // TODO: the logic of this and others transformedInput's should go to DB Layer
+      const transformedInput = {
+        ...input,
+        description: input.content,
+        content: undefined,
+      }
+
       return await addRevision({
         revisionType: EntityRevisionType.CourseRevision,
-        input,
+        input: transformedInput,
         dataSources,
         userId,
       })
@@ -135,9 +142,16 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addVideoRevision(_parent, { input }, { dataSources, userId }) {
+      const transformedInput = {
+        ...input,
+        content: input.url,
+        description: input.content,
+        url: undefined,
+      }
+
       return await addRevision({
         revisionType: EntityRevisionType.VideoRevision,
-        input,
+        input: transformedInput,
         dataSources,
         userId,
       })
