@@ -22,6 +22,7 @@
 import * as serloAuth from '@serlo/authorization'
 
 import {
+  assertStringIsNotEmpty,
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   createNamespace,
@@ -56,7 +57,9 @@ export const resolvers: TypeResolvers<Page> &
     async addRevision(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
-      const { pageId } = input
+      const { pageId, content, title } = input
+
+      assertStringIsNotEmpty(content, title)
 
       const scope = await fetchScopeOfUuid({
         id: pageId,

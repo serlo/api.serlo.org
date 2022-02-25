@@ -89,6 +89,28 @@ describe('PageAddRevisionMutation', () => {
       .shouldFailWithError('FORBIDDEN')
   })
 
+  test('fails when `title` or `content` is empty', async () => {
+    await mutation
+      .withVariables({
+        input: {
+          content: '',
+          title: 'title',
+          pageId: page.id,
+        },
+      })
+      .shouldFailWithError('BAD_USER_INPUT')
+
+    await mutation
+      .withVariables({
+        input: {
+          content: 'content',
+          title: '',
+          pageId: page.id,
+        },
+      })
+      .shouldFailWithError('BAD_USER_INPUT')
+  })
+
   test('fails when database layer returns a 400er response', async () => {
     given('PageAddRevisionMutation').returnsBadRequest()
 
