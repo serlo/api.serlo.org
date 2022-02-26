@@ -181,6 +181,19 @@ const pactSpec: PactSpec = {
     examples: [[{ id: 1 }, license]],
     examplePayloadForNull: { id: 100 },
   },
+  PageAddRevisionMutation: {
+    examples: [
+      [
+        {
+          content: 'content',
+          title: 'title',
+          pageId: page.id,
+          userId: user.id,
+        },
+        { success: true },
+      ],
+    ],
+  },
   SubjectsQuery: {
     examples: [
       [
