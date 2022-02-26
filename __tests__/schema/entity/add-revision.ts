@@ -48,36 +48,35 @@ import {
 import { Model } from '~/internals/graphql'
 import { EntityType, EntityRevisionType } from '~/model/decoder'
 
-const allPossibleFields: {
-  title: string
-  cohesive: boolean
-  content: string
-  description: string
-  metaTitle: string
-  metaDescription: string
-  url: string
-} = {
-  title: 'title',
-  cohesive: false,
-  content: 'content',
-  description: 'description',
-  metaTitle: 'metaTitle',
-  metaDescription: 'metaDescription',
-  url: 'https://url.org',
-}
-
-class SystemUnderTest {
+class EntityAddRevisionWrapper {
+  static ALL_POSSIBLE_FIELDS: {
+    title: string
+    cohesive: boolean
+    content: string
+    description: string
+    metaTitle: string
+    metaDescription: string
+    url: string
+  } = {
+    title: 'title',
+    cohesive: false,
+    content: 'content',
+    description: 'description',
+    metaTitle: 'metaTitle',
+    metaDescription: 'metaDescription',
+    url: 'https://url.org',
+  }
   public entity: Model<EntityType>
   public revisionType: EntityRevisionType
   public mutationName: string
   public inputName: string
-  public fields: Partial<typeof allPossibleFields>
+  public fields: Partial<typeof EntityAddRevisionWrapper.ALL_POSSIBLE_FIELDS>
   public fieldsForDBLayer: { [key: string]: string }
 
   constructor(
     revisionType: EntityRevisionType,
     entity: Model<EntityType>,
-    fieldsAtApi: (keyof typeof allPossibleFields)[]
+    fieldsAtApi: (keyof typeof EntityAddRevisionWrapper.ALL_POSSIBLE_FIELDS)[]
   ) {
     this.revisionType = revisionType
     this.entity = entity
@@ -100,10 +99,12 @@ class SystemUnderTest {
     return `Add${this.revisionType}Input`
   }
 
-  setFields(fields: (keyof typeof allPossibleFields)[]) {
+  setFields(
+    fields: (keyof typeof EntityAddRevisionWrapper.ALL_POSSIBLE_FIELDS)[]
+  ) {
     const filteredFields: { [key: string]: string | boolean } = {}
     for (const key of fields) {
-      filteredFields[key] = allPossibleFields[key]
+      filteredFields[key] = EntityAddRevisionWrapper.ALL_POSSIBLE_FIELDS[key]
     }
     return filteredFields
   }
@@ -135,76 +136,76 @@ class SystemUnderTest {
   }
 }
 
-const suts = [
-  new SystemUnderTest(EntityRevisionType.AppletRevision, applet, [
+const entityAddRevisionTypes = [
+  new EntityAddRevisionWrapper(EntityRevisionType.AppletRevision, applet, [
     'title',
     'content',
     'metaTitle',
     'metaDescription',
     'url',
   ]),
-  new SystemUnderTest(EntityRevisionType.ArticleRevision, article, [
+  new EntityAddRevisionWrapper(EntityRevisionType.ArticleRevision, article, [
     'title',
     'content',
     'metaTitle',
     'metaDescription',
   ]),
-  new SystemUnderTest(EntityRevisionType.CourseRevision, course, [
+  new EntityAddRevisionWrapper(EntityRevisionType.CourseRevision, course, [
     'title',
     'content',
     'metaDescription',
   ]),
-  new SystemUnderTest(EntityRevisionType.CoursePageRevision, coursePage, [
-    'title',
-    'content',
-  ]),
-  new SystemUnderTest(EntityRevisionType.EventRevision, event, [
+  new EntityAddRevisionWrapper(
+    EntityRevisionType.CoursePageRevision,
+    coursePage,
+    ['title', 'content']
+  ),
+  new EntityAddRevisionWrapper(EntityRevisionType.EventRevision, event, [
     'title',
     'content',
     'metaTitle',
     'metaDescription',
   ]),
-  new SystemUnderTest(EntityRevisionType.ExerciseRevision, exercise, [
+  new EntityAddRevisionWrapper(EntityRevisionType.ExerciseRevision, exercise, [
     'content',
   ]),
-  new SystemUnderTest(EntityRevisionType.ExerciseGroupRevision, exerciseGroup, [
-    'cohesive',
-    'content',
-  ]),
-  new SystemUnderTest(
+  new EntityAddRevisionWrapper(
+    EntityRevisionType.ExerciseGroupRevision,
+    exerciseGroup,
+    ['cohesive', 'content']
+  ),
+  new EntityAddRevisionWrapper(
     EntityRevisionType.GroupedExerciseRevision,
     groupedExercise,
     ['content']
   ),
-  new SystemUnderTest(EntityRevisionType.SolutionRevision, solution, [
+  new EntityAddRevisionWrapper(EntityRevisionType.SolutionRevision, solution, [
     'content',
   ]),
-  new SystemUnderTest(EntityRevisionType.VideoRevision, video, [
+  new EntityAddRevisionWrapper(EntityRevisionType.VideoRevision, video, [
     'title',
     'content',
     'url',
   ]),
 ]
 
-suts.forEach((sut) => {
-  describe(sut.mutationName, () => {
-    const fields = sut.fields
-
+entityAddRevisionTypes.forEach((entityAddRevisionType) => {
+  describe(entityAddRevisionType.mutationName, () => {
     const input = {
       changes: 'changes',
-      entityId: sut.entity.id,
+      entityId: entityAddRevisionType.entity.id,
       needsReview: true,
       subscribeThis: false,
       subscribeThisByEmail: false,
-      ...fields,
+      ...entityAddRevisionType.fields,
     }
 
     const mutation = new Client({ userId: user.id })
       .prepareQuery({
         query: gql`
-          mutation set($input: ${sut.inputName}!) {
+          mutation set($input: ${entityAddRevisionType.inputName}!) {
             entity {
-              ${sut.mutationName}(input: $input) {
+              ${entityAddRevisionType.mutationName}(input: $input) {
                 success
               }
             }
@@ -214,7 +215,7 @@ suts.forEach((sut) => {
       .withVariables({ input })
 
     beforeEach(() => {
-      givenUuids(user, sut.entity)
+      givenUuids(user, entityAddRevisionType.entity)
     })
 
     test('returns "{ success: true }" when mutation could be successfully executed', async () => {
@@ -234,15 +235,15 @@ suts.forEach((sut) => {
             needsReview,
             subscribeThis,
             subscribeThisByEmail,
-            fields: sut.fieldsForDBLayer,
+            fields: entityAddRevisionType.fieldsForDBLayer,
           },
           userId: user.id,
-          revisionType: sut.revisionType,
+          revisionType: entityAddRevisionType.revisionType,
         })
         .returns({ success: true })
 
       await mutation.shouldReturnData({
-        entity: { [sut.mutationName]: { success: true } },
+        entity: { [entityAddRevisionType.mutationName]: { success: true } },
       })
     })
 
@@ -260,9 +261,9 @@ suts.forEach((sut) => {
       await new Client({ userId: guestUser.id })
         .prepareQuery({
           query: gql`
-            mutation set($input: ${sut.inputName}!) {
+            mutation set($input: ${entityAddRevisionType.inputName}!) {
               entity {
-                ${sut.mutationName}(input: $input) {
+                ${entityAddRevisionType.mutationName}(input: $input) {
                   success
                 }
               }
@@ -271,6 +272,17 @@ suts.forEach((sut) => {
         })
         .withVariables({ input })
         .shouldFailWithError('FORBIDDEN')
+    })
+
+    test('fails when a field is empty', async () => {
+      await mutation
+        .withVariables({
+          input: {
+            ...input,
+            content: '',
+          },
+        })
+        .shouldFailWithError('BAD_USER_INPUT')
     })
 
     test('fails when database layer returns a 400er response', async () => {
