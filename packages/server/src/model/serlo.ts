@@ -822,6 +822,20 @@ export function createSerloModel({
     },
   })
 
+  const addPageRevision = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('PageAddRevisionMutation'),
+    mutate: (payload: DatabaseLayer.Payload<'PageAddRevisionMutation'>) => {
+      return DatabaseLayer.makeRequest('PageAddRevisionMutation', payload)
+    },
+    updateCache: async (_, { success }) => {
+      if (success) {
+        await getUnrevisedEntities._querySpec.removeCache({
+          payload: undefined,
+        })
+      }
+    },
+  })
+
   const checkoutPageRevision = createMutation({
     decoder: t.type({ success: t.literal(true) }),
     async mutate(payload: {
@@ -921,6 +935,7 @@ export function createSerloModel({
     setDescription,
     setEmail,
     addEntityRevision,
+    addPageRevision,
     checkoutEntityRevision,
     checkoutPageRevision,
     getActiveAuthorIds,
