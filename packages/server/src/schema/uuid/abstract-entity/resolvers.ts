@@ -23,6 +23,7 @@ import * as serloAuth from '@serlo/authorization'
 
 import { ModelDataSource } from '~/internals/data-source'
 import {
+  assertStringIsNotEmpty,
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   createNamespace,
@@ -50,6 +51,17 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   },
   EntityMutation: {
     async addAppletRevision(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title, url, metaDescription, metaTitle } = input
+
+      assertStringIsNotEmpty(
+        changes,
+        content,
+        title,
+        url,
+        metaDescription,
+        metaTitle
+      )
+
       return await addRevision({
         revisionType: EntityRevisionType.AppletRevision,
         input,
@@ -58,6 +70,16 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addArticleRevision(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title, metaDescription, metaTitle } = input
+
+      assertStringIsNotEmpty(
+        changes,
+        content,
+        title,
+        metaDescription,
+        metaTitle
+      )
+
       return await addRevision({
         revisionType: EntityRevisionType.ArticleRevision,
         input,
@@ -66,6 +88,10 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addCourseRevision(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title, metaDescription } = input
+
+      assertStringIsNotEmpty(changes, content, title, metaDescription)
+
       // TODO: the logic of this and others transformedInput's should go to DB Layer
       const transformedInput = {
         ...input,
@@ -81,6 +107,10 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addCoursePageRevision(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title } = input
+
+      assertStringIsNotEmpty(changes, content, title)
+
       return await addRevision({
         revisionType: EntityRevisionType.CoursePageRevision,
         input,
@@ -89,6 +119,16 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addEventRevision(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title, metaDescription, metaTitle } = input
+
+      assertStringIsNotEmpty(
+        changes,
+        content,
+        title,
+        metaDescription,
+        metaTitle
+      )
+
       return await addRevision({
         revisionType: EntityRevisionType.EventRevision,
         input,
@@ -97,6 +137,10 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addExerciseRevision(_parent, { input }, { dataSources, userId }) {
+      const { changes, content } = input
+
+      assertStringIsNotEmpty(changes, content)
+
       return await addRevision({
         revisionType: EntityRevisionType.ExerciseRevision,
         input,
@@ -109,6 +153,10 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       { input },
       { dataSources, userId }
     ) {
+      const { changes, content } = input
+
+      assertStringIsNotEmpty(changes, content)
+
       const cohesive = input.cohesive === true ? 'true' : 'false'
       const transformedInput: Omit<typeof input, 'cohesive'> & {
         cohesive: 'true' | 'false'
@@ -126,6 +174,10 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       { input },
       { dataSources, userId }
     ) {
+      const { changes, content } = input
+
+      assertStringIsNotEmpty(changes, content)
+
       return await addRevision({
         revisionType: EntityRevisionType.GroupedExerciseRevision,
         input,
@@ -134,6 +186,10 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addSolutionRevision(_parent, { input }, { dataSources, userId }) {
+      const { changes, content } = input
+
+      assertStringIsNotEmpty(changes, content)
+
       return await addRevision({
         revisionType: EntityRevisionType.SolutionRevision,
         input,
@@ -142,6 +198,10 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addVideoRevision(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title, url } = input
+
+      assertStringIsNotEmpty(changes, content, title, url)
+
       const transformedInput = {
         ...input,
         content: input.url,
