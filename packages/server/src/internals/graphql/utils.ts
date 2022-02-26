@@ -104,3 +104,9 @@ export function encodeToBase64(text: string) {
 export function decodeFromBase64(text: string) {
   return Buffer.from(text, 'base64').toString('utf8')
 }
+
+export function assertStringIsNotEmpty(...strings: string[]) {
+  strings.forEach((str) => {
+    if (!str) throw new UserInputError(`Argument ${str} may not be empty`)
+  })
+}

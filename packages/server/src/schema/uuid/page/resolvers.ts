@@ -22,6 +22,7 @@
 import * as serloAuth from '@serlo/authorization'
 
 import {
+  assertStringIsNotEmpty,
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   createNamespace,
@@ -53,6 +54,31 @@ export const resolvers: TypeResolvers<Page> &
   },
   PageRevision: createRevisionResolvers({ repositoryDecoder: PageDecoder }),
   PageMutation: {
+    async addRevision(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const { pageId, content, title } = input
+
+      assertStringIsNotEmpty(content, title)
+
+      const scope = await fetchScopeOfUuid({
+        id: pageId,
+        dataSources,
+      })
+      await assertUserIsAuthorized({
+        userId,
+        dataSources,
+        message: 'You are not allowed to add revision to this page.',
+        guard: serloAuth.Uuid.create('PageRevision')(scope),
+      })
+
+      await dataSources.model.serlo.addPageRevision({
+        userId,
+        ...input,
+      })
+
+      return { success: true }
+    },
     async checkoutRevision(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
