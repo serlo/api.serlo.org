@@ -1611,6 +1611,12 @@ export type PageThreadsArgs = {
   trashed?: InputMaybe<Scalars['Boolean']>;
 };
 
+export type PageAddRevisionInput = {
+  content: Scalars['String'];
+  pageId: Scalars['Int'];
+  title: Scalars['String'];
+};
+
 export type PageInfo = {
   __typename?: 'PageInfo';
   endCursor?: Maybe<Scalars['String']>;
@@ -1621,8 +1627,14 @@ export type PageInfo = {
 
 export type PageMutation = {
   __typename?: 'PageMutation';
+  addRevision: AddRevisionResponse;
   checkoutRevision: CheckoutRevisionResponse;
   rejectRevision: RejectRevisionResponse;
+};
+
+
+export type PageMutationAddRevisionArgs = {
+  input: PageAddRevisionInput;
 };
 
 
@@ -2781,6 +2793,7 @@ export type ResolversTypes = {
   NotificationSetStateInput: ResolverTypeWrapper<ModelOf<NotificationSetStateInput>>;
   NotificationSetStateResponse: ResolverTypeWrapper<ModelOf<NotificationSetStateResponse>>;
   Page: ResolverTypeWrapper<ModelOf<Page>>;
+  PageAddRevisionInput: ResolverTypeWrapper<ModelOf<PageAddRevisionInput>>;
   PageInfo: ResolverTypeWrapper<ModelOf<PageInfo>>;
   PageMutation: ResolverTypeWrapper<ModelOf<PageMutation>>;
   PageRevision: ResolverTypeWrapper<ModelOf<PageRevision>>;
@@ -2961,6 +2974,7 @@ export type ResolversParentTypes = {
   NotificationSetStateInput: ModelOf<NotificationSetStateInput>;
   NotificationSetStateResponse: ModelOf<NotificationSetStateResponse>;
   Page: ModelOf<Page>;
+  PageAddRevisionInput: ModelOf<PageAddRevisionInput>;
   PageInfo: ModelOf<PageInfo>;
   PageMutation: ModelOf<PageMutation>;
   PageRevision: ModelOf<PageRevision>;
@@ -3860,6 +3874,7 @@ export type PageInfoResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 export type PageMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageMutation'] = ResolversParentTypes['PageMutation']> = {
+  addRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<PageMutationAddRevisionArgs, 'input'>>;
   checkoutRevision?: Resolver<ResolversTypes['CheckoutRevisionResponse'], ParentType, ContextType, RequireFields<PageMutationCheckoutRevisionArgs, 'input'>>;
   rejectRevision?: Resolver<ResolversTypes['RejectRevisionResponse'], ParentType, ContextType, RequireFields<PageMutationRejectRevisionArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
