@@ -21,8 +21,10 @@
  */
 import { gql } from 'apollo-server'
 
-import { page, user } from '../../../__fixtures__'
+import { page, user as baseUser } from '../../../__fixtures__'
 import { given, givenUuids, Client, givenUuid, nextUuid } from '../../__utils__'
+
+const user = { ...baseUser, roles: ['de_static_pages_builder'] }
 
 describe('PageAddRevisionMutation', () => {
   const input = {
