@@ -1617,6 +1617,8 @@ export type PageAddRevisionInput = {
 
 export type PageAddRevisionResponse = {
   __typename?: 'PageAddRevisionResponse';
+  pageRevisionId?: Maybe<Scalars['Int']>;
+  query: Query;
   success: Scalars['Boolean'];
 };
 

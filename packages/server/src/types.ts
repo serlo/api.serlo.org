@@ -1621,6 +1621,8 @@ export type PageAddRevisionInput = {
 
 export type PageAddRevisionResponse = {
   __typename?: 'PageAddRevisionResponse';
+  pageRevisionId?: Maybe<Scalars['Int']>;
+  query: Query;
   success: Scalars['Boolean'];
 };
 
@@ -3877,6 +3879,8 @@ export type PageResolvers<ContextType = Context, ParentType extends ResolversPar
 };
 
 export type PageAddRevisionResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageAddRevisionResponse'] = ResolversParentTypes['PageAddRevisionResponse']> = {
+  pageRevisionId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
