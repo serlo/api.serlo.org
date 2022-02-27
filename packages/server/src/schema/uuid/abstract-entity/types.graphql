@@ -57,22 +57,28 @@ extend type Mutation {
 }
 
 type EntityMutation {
-  addAppletRevision(input: AddAppletRevisionInput!): AddRevisionResponse!
-  addArticleRevision(input: AddArticleRevisionInput!): AddRevisionResponse!
-  addCourseRevision(input: AddCourseRevisionInput!): AddRevisionResponse!
+  addAppletRevision(input: AddAppletRevisionInput!): EntityAddRevisionResponse!
+  addArticleRevision(
+    input: AddArticleRevisionInput!
+  ): EntityAddRevisionResponse!
+  addCourseRevision(input: AddCourseRevisionInput!): EntityAddRevisionResponse!
   addCoursePageRevision(
     input: AddCoursePageRevisionInput!
-  ): AddRevisionResponse!
-  addEventRevision(input: AddEventRevisionInput!): AddRevisionResponse!
-  addExerciseRevision(input: AddGenericRevisionInput!): AddRevisionResponse!
+  ): EntityAddRevisionResponse!
+  addEventRevision(input: AddEventRevisionInput!): EntityAddRevisionResponse!
+  addExerciseRevision(
+    input: AddGenericRevisionInput!
+  ): EntityAddRevisionResponse!
   addExerciseGroupRevision(
     input: AddExerciseGroupRevisionInput!
-  ): AddRevisionResponse!
+  ): EntityAddRevisionResponse!
   addGroupedExerciseRevision(
     input: AddGenericRevisionInput!
-  ): AddRevisionResponse!
-  addSolutionRevision(input: AddGenericRevisionInput!): AddRevisionResponse!
-  addVideoRevision(input: AddVideoRevisionInput!): AddRevisionResponse!
+  ): EntityAddRevisionResponse!
+  addSolutionRevision(
+    input: AddGenericRevisionInput!
+  ): EntityAddRevisionResponse!
+  addVideoRevision(input: AddVideoRevisionInput!): EntityAddRevisionResponse!
   checkoutRevision(input: CheckoutRevisionInput!): CheckoutRevisionResponse!
   rejectRevision(input: RejectRevisionInput!): RejectRevisionResponse!
 }
@@ -186,8 +192,10 @@ input CheckoutRevisionInput {
   reason: String!
 }
 
-type AddRevisionResponse {
+type EntityAddRevisionResponse {
   success: Boolean!
+  query: Query!
+  revisionId: Int
 }
 
 type CheckoutRevisionResponse {

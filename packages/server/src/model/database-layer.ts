@@ -98,7 +98,10 @@ export const spec = {
         fields: t.record(t.string, t.string),
       }),
     }),
-    response: t.type({ success: t.boolean }),
+    response: t.type({
+      success: t.boolean,
+      revisionId: t.union([t.number, t.null]),
+    }),
     canBeNull: false,
   },
   LicenseQuery: {
