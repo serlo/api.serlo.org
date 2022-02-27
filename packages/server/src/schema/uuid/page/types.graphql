@@ -89,4 +89,6 @@ input PageAddRevisionInput {
 
 type PageAddRevisionResponse {
   success: Boolean!
+  query: Query!
+  pageRevisionId: Int
 }

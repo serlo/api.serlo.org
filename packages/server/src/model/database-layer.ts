@@ -125,7 +125,10 @@ export const spec = {
       title: t.string,
       userId: t.number,
     }),
-    response: t.type({ success: t.boolean }),
+    response: t.type({
+      success: t.boolean,
+      pageRevisionId: t.union([t.number, t.null]),
+    }),
     canBeNull: false,
   },
   SubjectsQuery: {

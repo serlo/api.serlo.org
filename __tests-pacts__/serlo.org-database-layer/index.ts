@@ -190,7 +190,7 @@ const pactSpec: PactSpec = {
           pageId: page.id,
           userId: user.id,
         },
-        { success: true },
+        { success: true, pageRevisionId: 456 },
       ],
     ],
   },
