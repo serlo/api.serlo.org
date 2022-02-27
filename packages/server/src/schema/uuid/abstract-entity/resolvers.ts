@@ -287,7 +287,14 @@ async function addRevision({
 }: AbstractEntityAddRevisionPayload) {
   assertUserIsAuthenticated(userId)
 
-  const { entityId } = input
+  const {
+    entityId,
+    changes,
+    needsReview,
+    subscribeThis,
+    subscribeThisByEmail,
+    ...inputFields
+  } = input
 
   const scope = await fetchScopeOfUuid({
     id: entityId,
@@ -300,39 +307,18 @@ async function addRevision({
     guard: serloAuth.Uuid.create('EntityRevision')(scope),
   })
 
-  const {
-    cohesive,
-    content,
-    description,
-    metaDescription,
-    metaTitle,
-    title,
-    url,
-  } = input
-
-  const inputFields: {
-    [key: string]: string | undefined
-  } = {
-    cohesive,
-    content,
-    description,
-    metaDescription,
-    metaTitle,
-    title,
-    url,
-  }
-
   const fields: {
     [key: string]: string
   } = {}
 
-  for (const [key, value] of Object.entries(inputFields)) {
+  for (const [key, value] of Object.entries(
+    inputFields as { [key: string]: string | undefined }
+  )) {
     if (value) {
       fields[key] = value
     }
   }
 
-  const { changes, needsReview, subscribeThis, subscribeThisByEmail } = input
   const inputPayload = {
     changes,
     entityId,
@@ -341,11 +327,16 @@ async function addRevision({
     subscribeThisByEmail,
     fields,
   }
-  await dataSources.model.serlo.addEntityRevision({
-    revisionType,
-    userId,
-    input: inputPayload,
-  })
+  const { success, revisionId } =
+    await dataSources.model.serlo.addEntityRevision({
+      revisionType,
+      userId,
+      input: inputPayload,
+    })
 
-  return { success: true }
+  return {
+    revisionId,
+    success,
+    query: {},
+  }
 }

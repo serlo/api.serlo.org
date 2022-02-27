@@ -337,11 +337,6 @@ export type AddGenericRevisionInput = {
   subscribeThisByEmail: Scalars['Boolean'];
 };
 
-export type AddRevisionResponse = {
-  __typename?: 'AddRevisionResponse';
-  success: Scalars['Boolean'];
-};
-
 export type AddVideoRevisionInput = {
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -937,6 +932,13 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
   thread: Thread;
 };
 
+export type EntityAddRevisionResponse = {
+  __typename?: 'EntityAddRevisionResponse';
+  query: Query;
+  revisionId?: Maybe<Scalars['Int']>;
+  success: Scalars['Boolean'];
+};
+
 export type EntityMetadataConnection = {
   __typename?: 'EntityMetadataConnection';
   edges: Array<EntityMetadataCursor>;
@@ -952,16 +954,16 @@ export type EntityMetadataCursor = {
 
 export type EntityMutation = {
   __typename?: 'EntityMutation';
-  addAppletRevision: AddRevisionResponse;
-  addArticleRevision: AddRevisionResponse;
-  addCoursePageRevision: AddRevisionResponse;
-  addCourseRevision: AddRevisionResponse;
-  addEventRevision: AddRevisionResponse;
-  addExerciseGroupRevision: AddRevisionResponse;
-  addExerciseRevision: AddRevisionResponse;
-  addGroupedExerciseRevision: AddRevisionResponse;
-  addSolutionRevision: AddRevisionResponse;
-  addVideoRevision: AddRevisionResponse;
+  addAppletRevision: EntityAddRevisionResponse;
+  addArticleRevision: EntityAddRevisionResponse;
+  addCoursePageRevision: EntityAddRevisionResponse;
+  addCourseRevision: EntityAddRevisionResponse;
+  addEventRevision: EntityAddRevisionResponse;
+  addExerciseGroupRevision: EntityAddRevisionResponse;
+  addExerciseRevision: EntityAddRevisionResponse;
+  addGroupedExerciseRevision: EntityAddRevisionResponse;
+  addSolutionRevision: EntityAddRevisionResponse;
+  addVideoRevision: EntityAddRevisionResponse;
   checkoutRevision: CheckoutRevisionResponse;
   rejectRevision: RejectRevisionResponse;
 };
@@ -1613,6 +1615,11 @@ export type PageAddRevisionInput = {
   title: Scalars['String'];
 };
 
+export type PageAddRevisionResponse = {
+  __typename?: 'PageAddRevisionResponse';
+  success: Scalars['Boolean'];
+};
+
 export type PageInfo = {
   __typename?: 'PageInfo';
   endCursor?: Maybe<Scalars['String']>;
@@ -1623,7 +1630,7 @@ export type PageInfo = {
 
 export type PageMutation = {
   __typename?: 'PageMutation';
-  addRevision: AddRevisionResponse;
+  addRevision: PageAddRevisionResponse;
   checkoutRevision: CheckoutRevisionResponse;
   rejectRevision: RejectRevisionResponse;
 };

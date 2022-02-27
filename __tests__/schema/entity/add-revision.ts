@@ -207,6 +207,7 @@ entityAddRevisionTypes.forEach((entityAddRevisionType) => {
             entity {
               ${entityAddRevisionType.mutationName}(input: $input) {
                 success
+                revisionId
               }
             }
           }
@@ -240,10 +241,15 @@ entityAddRevisionTypes.forEach((entityAddRevisionType) => {
           userId: user.id,
           revisionType: entityAddRevisionType.revisionType,
         })
-        .returns({ success: true })
+        .returns({ success: true, revisionId: 123 })
 
       await mutation.shouldReturnData({
-        entity: { [entityAddRevisionType.mutationName]: { success: true } },
+        entity: {
+          [entityAddRevisionType.mutationName]: {
+            success: true,
+            revisionId: 123,
+          },
+        },
       })
     })
 
@@ -368,7 +374,9 @@ describe('Cache after EntityAddRevisionMutation call', () => {
             currentRevisionId: newSolutionRevision.id,
           })
         }
-        return res(ctx.json({ success: true }))
+        return res(
+          ctx.json({ success: true, revisionId: newSolutionRevision.id })
+        )
       })
   })
 

@@ -154,7 +154,7 @@ const pactSpec: PactSpec = {
           userId: user.id,
           revisionType: EntityRevisionType.ArticleRevision,
         },
-        { success: true },
+        { success: true, revisionId: 123 },
       ],
       [
         {
@@ -173,7 +173,7 @@ const pactSpec: PactSpec = {
           userId: user.id,
           revisionType: EntityRevisionType.VideoRevision,
         },
-        { success: true },
+        { success: true, revisionId: 456 },
       ],
     ],
   },
