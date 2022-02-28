@@ -40,7 +40,7 @@ describe('PageAddRevisionMutation', () => {
           page {
             addRevision(input: $input) {
               success
-              pageRevisionId
+              revisionId
             }
           }
         }
@@ -58,10 +58,10 @@ describe('PageAddRevisionMutation', () => {
         ...input,
         userId: user.id,
       })
-      .returns({ success: true, pageRevisionId: 123 })
+      .returns({ success: true, revisionId: 123 })
 
     await mutation.shouldReturnData({
-      page: { addRevision: { success: true, pageRevisionId: 123 } },
+      page: { addRevision: { success: true, revisionId: 123 } },
     })
   })
 

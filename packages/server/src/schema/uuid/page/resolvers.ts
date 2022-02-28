@@ -72,13 +72,13 @@ export const resolvers: TypeResolvers<Page> &
         guard: serloAuth.Uuid.create('PageRevision')(scope),
       })
 
-      const { success, pageRevisionId } =
+      const { success, revisionId } =
         await dataSources.model.serlo.addPageRevision({
           userId,
           ...input,
         })
 
-      return { success, pageRevisionId, query: {} }
+      return { success, revisionId, query: {} }
     },
     async checkoutRevision(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)

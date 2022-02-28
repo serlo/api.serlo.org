@@ -341,6 +341,13 @@ export type AddGenericRevisionInput = {
   subscribeThisByEmail: Scalars['Boolean'];
 };
 
+export type AddRevisionResponse = {
+  __typename?: 'AddRevisionResponse';
+  query: Query;
+  revisionId?: Maybe<Scalars['Int']>;
+  success: Scalars['Boolean'];
+};
+
 export type AddVideoRevisionInput = {
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -936,13 +943,6 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
   thread: Thread;
 };
 
-export type EntityAddRevisionResponse = {
-  __typename?: 'EntityAddRevisionResponse';
-  query: Query;
-  revisionId?: Maybe<Scalars['Int']>;
-  success: Scalars['Boolean'];
-};
-
 export type EntityMetadataConnection = {
   __typename?: 'EntityMetadataConnection';
   edges: Array<EntityMetadataCursor>;
@@ -958,16 +958,16 @@ export type EntityMetadataCursor = {
 
 export type EntityMutation = {
   __typename?: 'EntityMutation';
-  addAppletRevision: EntityAddRevisionResponse;
-  addArticleRevision: EntityAddRevisionResponse;
-  addCoursePageRevision: EntityAddRevisionResponse;
-  addCourseRevision: EntityAddRevisionResponse;
-  addEventRevision: EntityAddRevisionResponse;
-  addExerciseGroupRevision: EntityAddRevisionResponse;
-  addExerciseRevision: EntityAddRevisionResponse;
-  addGroupedExerciseRevision: EntityAddRevisionResponse;
-  addSolutionRevision: EntityAddRevisionResponse;
-  addVideoRevision: EntityAddRevisionResponse;
+  addAppletRevision: AddRevisionResponse;
+  addArticleRevision: AddRevisionResponse;
+  addCoursePageRevision: AddRevisionResponse;
+  addCourseRevision: AddRevisionResponse;
+  addEventRevision: AddRevisionResponse;
+  addExerciseGroupRevision: AddRevisionResponse;
+  addExerciseRevision: AddRevisionResponse;
+  addGroupedExerciseRevision: AddRevisionResponse;
+  addSolutionRevision: AddRevisionResponse;
+  addVideoRevision: AddRevisionResponse;
   checkoutRevision: CheckoutRevisionResponse;
   rejectRevision: RejectRevisionResponse;
 };
@@ -1619,13 +1619,6 @@ export type PageAddRevisionInput = {
   title: Scalars['String'];
 };
 
-export type PageAddRevisionResponse = {
-  __typename?: 'PageAddRevisionResponse';
-  pageRevisionId?: Maybe<Scalars['Int']>;
-  query: Query;
-  success: Scalars['Boolean'];
-};
-
 export type PageInfo = {
   __typename?: 'PageInfo';
   endCursor?: Maybe<Scalars['String']>;
@@ -1636,7 +1629,7 @@ export type PageInfo = {
 
 export type PageMutation = {
   __typename?: 'PageMutation';
-  addRevision: PageAddRevisionResponse;
+  addRevision: AddRevisionResponse;
   checkoutRevision: CheckoutRevisionResponse;
   rejectRevision: RejectRevisionResponse;
 };
@@ -2723,6 +2716,7 @@ export type ResolversTypes = {
   AddEventRevisionInput: ResolverTypeWrapper<ModelOf<AddEventRevisionInput>>;
   AddExerciseGroupRevisionInput: ResolverTypeWrapper<ModelOf<AddExerciseGroupRevisionInput>>;
   AddGenericRevisionInput: ResolverTypeWrapper<ModelOf<AddGenericRevisionInput>>;
+  AddRevisionResponse: ResolverTypeWrapper<ModelOf<AddRevisionResponse>>;
   AddVideoRevisionInput: ResolverTypeWrapper<ModelOf<AddVideoRevisionInput>>;
   AliasInput: ResolverTypeWrapper<ModelOf<AliasInput>>;
   Applet: ResolverTypeWrapper<ModelOf<Applet>>;
@@ -2762,7 +2756,6 @@ export type ResolversTypes = {
   CreateTaxonomyTermNotificationEvent: ResolverTypeWrapper<ModelOf<CreateTaxonomyTermNotificationEvent>>;
   CreateThreadNotificationEvent: ResolverTypeWrapper<ModelOf<CreateThreadNotificationEvent>>;
   DateTime: ResolverTypeWrapper<ModelOf<Scalars['DateTime']>>;
-  EntityAddRevisionResponse: ResolverTypeWrapper<ModelOf<EntityAddRevisionResponse>>;
   EntityMetadataConnection: ResolverTypeWrapper<ModelOf<EntityMetadataConnection>>;
   EntityMetadataCursor: ResolverTypeWrapper<ModelOf<EntityMetadataCursor>>;
   EntityMutation: ResolverTypeWrapper<ModelOf<EntityMutation>>;
@@ -2803,7 +2796,6 @@ export type ResolversTypes = {
   NotificationSetStateResponse: ResolverTypeWrapper<ModelOf<NotificationSetStateResponse>>;
   Page: ResolverTypeWrapper<ModelOf<Page>>;
   PageAddRevisionInput: ResolverTypeWrapper<ModelOf<PageAddRevisionInput>>;
-  PageAddRevisionResponse: ResolverTypeWrapper<ModelOf<PageAddRevisionResponse>>;
   PageInfo: ResolverTypeWrapper<ModelOf<PageInfo>>;
   PageMutation: ResolverTypeWrapper<ModelOf<PageMutation>>;
   PageRevision: ResolverTypeWrapper<ModelOf<PageRevision>>;
@@ -2906,6 +2898,7 @@ export type ResolversParentTypes = {
   AddEventRevisionInput: ModelOf<AddEventRevisionInput>;
   AddExerciseGroupRevisionInput: ModelOf<AddExerciseGroupRevisionInput>;
   AddGenericRevisionInput: ModelOf<AddGenericRevisionInput>;
+  AddRevisionResponse: ModelOf<AddRevisionResponse>;
   AddVideoRevisionInput: ModelOf<AddVideoRevisionInput>;
   AliasInput: ModelOf<AliasInput>;
   Applet: ModelOf<Applet>;
@@ -2945,7 +2938,6 @@ export type ResolversParentTypes = {
   CreateTaxonomyTermNotificationEvent: ModelOf<CreateTaxonomyTermNotificationEvent>;
   CreateThreadNotificationEvent: ModelOf<CreateThreadNotificationEvent>;
   DateTime: ModelOf<Scalars['DateTime']>;
-  EntityAddRevisionResponse: ModelOf<EntityAddRevisionResponse>;
   EntityMetadataConnection: ModelOf<EntityMetadataConnection>;
   EntityMetadataCursor: ModelOf<EntityMetadataCursor>;
   EntityMutation: ModelOf<EntityMutation>;
@@ -2985,7 +2977,6 @@ export type ResolversParentTypes = {
   NotificationSetStateResponse: ModelOf<NotificationSetStateResponse>;
   Page: ModelOf<Page>;
   PageAddRevisionInput: ModelOf<PageAddRevisionInput>;
-  PageAddRevisionResponse: ModelOf<PageAddRevisionResponse>;
   PageInfo: ModelOf<PageInfo>;
   PageMutation: ModelOf<PageMutation>;
   PageRevision: ModelOf<PageRevision>;
@@ -3205,6 +3196,13 @@ export type AbstractUuidConnectionResolvers<ContextType = Context, ParentType ex
 export type AbstractUuidCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractUuidCursor'] = ResolversParentTypes['AbstractUuidCursor']> = {
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<ResolversTypes['AbstractUuid'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AddRevisionResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AddRevisionResponse'] = ResolversParentTypes['AddRevisionResponse']> = {
+  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
+  revisionId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3537,13 +3535,6 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
   name: 'DateTime';
 }
 
-export type EntityAddRevisionResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityAddRevisionResponse'] = ResolversParentTypes['EntityAddRevisionResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  revisionId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type EntityMetadataConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityMetadataConnection'] = ResolversParentTypes['EntityMetadataConnection']> = {
   edges?: Resolver<Array<ResolversTypes['EntityMetadataCursor']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['JSONObject']>, ParentType, ContextType>;
@@ -3558,16 +3549,16 @@ export type EntityMetadataCursorResolvers<ContextType = Context, ParentType exte
 };
 
 export type EntityMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityMutation'] = ResolversParentTypes['EntityMutation']> = {
-  addAppletRevision?: Resolver<ResolversTypes['EntityAddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddAppletRevisionArgs, 'input'>>;
-  addArticleRevision?: Resolver<ResolversTypes['EntityAddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddArticleRevisionArgs, 'input'>>;
-  addCoursePageRevision?: Resolver<ResolversTypes['EntityAddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddCoursePageRevisionArgs, 'input'>>;
-  addCourseRevision?: Resolver<ResolversTypes['EntityAddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddCourseRevisionArgs, 'input'>>;
-  addEventRevision?: Resolver<ResolversTypes['EntityAddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddEventRevisionArgs, 'input'>>;
-  addExerciseGroupRevision?: Resolver<ResolversTypes['EntityAddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddExerciseGroupRevisionArgs, 'input'>>;
-  addExerciseRevision?: Resolver<ResolversTypes['EntityAddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddExerciseRevisionArgs, 'input'>>;
-  addGroupedExerciseRevision?: Resolver<ResolversTypes['EntityAddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddGroupedExerciseRevisionArgs, 'input'>>;
-  addSolutionRevision?: Resolver<ResolversTypes['EntityAddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddSolutionRevisionArgs, 'input'>>;
-  addVideoRevision?: Resolver<ResolversTypes['EntityAddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddVideoRevisionArgs, 'input'>>;
+  addAppletRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddAppletRevisionArgs, 'input'>>;
+  addArticleRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddArticleRevisionArgs, 'input'>>;
+  addCoursePageRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddCoursePageRevisionArgs, 'input'>>;
+  addCourseRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddCourseRevisionArgs, 'input'>>;
+  addEventRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddEventRevisionArgs, 'input'>>;
+  addExerciseGroupRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddExerciseGroupRevisionArgs, 'input'>>;
+  addExerciseRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddExerciseRevisionArgs, 'input'>>;
+  addGroupedExerciseRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddGroupedExerciseRevisionArgs, 'input'>>;
+  addSolutionRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddSolutionRevisionArgs, 'input'>>;
+  addVideoRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationAddVideoRevisionArgs, 'input'>>;
   checkoutRevision?: Resolver<ResolversTypes['CheckoutRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationCheckoutRevisionArgs, 'input'>>;
   rejectRevision?: Resolver<ResolversTypes['RejectRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationRejectRevisionArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -3878,13 +3869,6 @@ export type PageResolvers<ContextType = Context, ParentType extends ResolversPar
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type PageAddRevisionResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageAddRevisionResponse'] = ResolversParentTypes['PageAddRevisionResponse']> = {
-  pageRevisionId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type PageInfoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = {
   endCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -3894,7 +3878,7 @@ export type PageInfoResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 export type PageMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageMutation'] = ResolversParentTypes['PageMutation']> = {
-  addRevision?: Resolver<ResolversTypes['PageAddRevisionResponse'], ParentType, ContextType, RequireFields<PageMutationAddRevisionArgs, 'input'>>;
+  addRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<PageMutationAddRevisionArgs, 'input'>>;
   checkoutRevision?: Resolver<ResolversTypes['CheckoutRevisionResponse'], ParentType, ContextType, RequireFields<PageMutationCheckoutRevisionArgs, 'input'>>;
   rejectRevision?: Resolver<ResolversTypes['RejectRevisionResponse'], ParentType, ContextType, RequireFields<PageMutationRejectRevisionArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -4419,6 +4403,7 @@ export type Resolvers<ContextType = Context> = {
   AbstractUuid?: AbstractUuidResolvers<ContextType>;
   AbstractUuidConnection?: AbstractUuidConnectionResolvers<ContextType>;
   AbstractUuidCursor?: AbstractUuidCursorResolvers<ContextType>;
+  AddRevisionResponse?: AddRevisionResponseResolvers<ContextType>;
   Applet?: AppletResolvers<ContextType>;
   AppletRevision?: AppletRevisionResolvers<ContextType>;
   AppletRevisionConnection?: AppletRevisionConnectionResolvers<ContextType>;
@@ -4451,7 +4436,6 @@ export type Resolvers<ContextType = Context> = {
   CreateTaxonomyTermNotificationEvent?: CreateTaxonomyTermNotificationEventResolvers<ContextType>;
   CreateThreadNotificationEvent?: CreateThreadNotificationEventResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
-  EntityAddRevisionResponse?: EntityAddRevisionResponseResolvers<ContextType>;
   EntityMetadataConnection?: EntityMetadataConnectionResolvers<ContextType>;
   EntityMetadataCursor?: EntityMetadataCursorResolvers<ContextType>;
   EntityMutation?: EntityMutationResolvers<ContextType>;
@@ -4488,7 +4472,6 @@ export type Resolvers<ContextType = Context> = {
   NotificationMutation?: NotificationMutationResolvers<ContextType>;
   NotificationSetStateResponse?: NotificationSetStateResponseResolvers<ContextType>;
   Page?: PageResolvers<ContextType>;
-  PageAddRevisionResponse?: PageAddRevisionResponseResolvers<ContextType>;
   PageInfo?: PageInfoResolvers<ContextType>;
   PageMutation?: PageMutationResolvers<ContextType>;
   PageRevision?: PageRevisionResolvers<ContextType>;

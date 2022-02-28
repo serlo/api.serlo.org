@@ -127,7 +127,7 @@ export const spec = {
     }),
     response: t.type({
       success: t.boolean,
-      pageRevisionId: t.union([t.number, t.null]),
+      revisionId: t.union([t.number, t.null]),
     }),
     canBeNull: false,
   },
