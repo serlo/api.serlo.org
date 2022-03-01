@@ -78,6 +78,7 @@ extend type Mutation {
 type PageMutation {
   addRevision(input: PageAddRevisionInput!): AddRevisionResponse!
   checkoutRevision(input: CheckoutRevisionInput!): CheckoutRevisionResponse!
+  create(input: CreatePageInput!): PageCreateResponse!
   rejectRevision(input: RejectRevisionInput!): RejectRevisionResponse!
 }
 
@@ -85,4 +86,19 @@ input PageAddRevisionInput {
   content: String!
   pageId: Int!
   title: String!
+}
+
+input CreatePageInput {
+  content: String!
+  discussionsEnabled: Boolean!
+  instance: Instance!
+  licenseId: Int!
+  title: String!
+  forumId: Int
+}
+
+type PageCreateResponse {
+  record: Page
+  success: Boolean!
+  query: Query!
 }
