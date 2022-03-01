@@ -911,6 +911,15 @@ export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & 
   objectId: Scalars['Int'];
 };
 
+export type CreatePageInput = {
+  content: Scalars['String'];
+  discussionsEnabled: Scalars['Boolean'];
+  forumId?: InputMaybe<Scalars['Int']>;
+  instance: Instance;
+  licenseId: Scalars['Int'];
+  title: Scalars['String'];
+};
+
 export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CreateTaxonomyLinkNotificationEvent';
   actor: User;
@@ -1619,6 +1628,13 @@ export type PageAddRevisionInput = {
   title: Scalars['String'];
 };
 
+export type PageCreateResponse = {
+  __typename?: 'PageCreateResponse';
+  query: Query;
+  record?: Maybe<Page>;
+  success: Scalars['Boolean'];
+};
+
 export type PageInfo = {
   __typename?: 'PageInfo';
   endCursor?: Maybe<Scalars['String']>;
@@ -1631,6 +1647,7 @@ export type PageMutation = {
   __typename?: 'PageMutation';
   addRevision: AddRevisionResponse;
   checkoutRevision: CheckoutRevisionResponse;
+  create: PageCreateResponse;
   rejectRevision: RejectRevisionResponse;
 };
 
@@ -1642,6 +1659,11 @@ export type PageMutationAddRevisionArgs = {
 
 export type PageMutationCheckoutRevisionArgs = {
   input: CheckoutRevisionInput;
+};
+
+
+export type PageMutationCreateArgs = {
+  input: CreatePageInput;
 };
 
 
@@ -2752,6 +2774,7 @@ export type ResolversTypes = {
   CreateEntityLinkNotificationEvent: ResolverTypeWrapper<ModelOf<CreateEntityLinkNotificationEvent>>;
   CreateEntityNotificationEvent: ResolverTypeWrapper<ModelOf<CreateEntityNotificationEvent>>;
   CreateEntityRevisionNotificationEvent: ResolverTypeWrapper<ModelOf<CreateEntityRevisionNotificationEvent>>;
+  CreatePageInput: ResolverTypeWrapper<ModelOf<CreatePageInput>>;
   CreateTaxonomyLinkNotificationEvent: ResolverTypeWrapper<ModelOf<CreateTaxonomyLinkNotificationEvent>>;
   CreateTaxonomyTermNotificationEvent: ResolverTypeWrapper<ModelOf<CreateTaxonomyTermNotificationEvent>>;
   CreateThreadNotificationEvent: ResolverTypeWrapper<ModelOf<CreateThreadNotificationEvent>>;
@@ -2796,6 +2819,7 @@ export type ResolversTypes = {
   NotificationSetStateResponse: ResolverTypeWrapper<ModelOf<NotificationSetStateResponse>>;
   Page: ResolverTypeWrapper<ModelOf<Page>>;
   PageAddRevisionInput: ResolverTypeWrapper<ModelOf<PageAddRevisionInput>>;
+  PageCreateResponse: ResolverTypeWrapper<ModelOf<PageCreateResponse>>;
   PageInfo: ResolverTypeWrapper<ModelOf<PageInfo>>;
   PageMutation: ResolverTypeWrapper<ModelOf<PageMutation>>;
   PageRevision: ResolverTypeWrapper<ModelOf<PageRevision>>;
@@ -2934,6 +2958,7 @@ export type ResolversParentTypes = {
   CreateEntityLinkNotificationEvent: ModelOf<CreateEntityLinkNotificationEvent>;
   CreateEntityNotificationEvent: ModelOf<CreateEntityNotificationEvent>;
   CreateEntityRevisionNotificationEvent: ModelOf<CreateEntityRevisionNotificationEvent>;
+  CreatePageInput: ModelOf<CreatePageInput>;
   CreateTaxonomyLinkNotificationEvent: ModelOf<CreateTaxonomyLinkNotificationEvent>;
   CreateTaxonomyTermNotificationEvent: ModelOf<CreateTaxonomyTermNotificationEvent>;
   CreateThreadNotificationEvent: ModelOf<CreateThreadNotificationEvent>;
@@ -2977,6 +3002,7 @@ export type ResolversParentTypes = {
   NotificationSetStateResponse: ModelOf<NotificationSetStateResponse>;
   Page: ModelOf<Page>;
   PageAddRevisionInput: ModelOf<PageAddRevisionInput>;
+  PageCreateResponse: ModelOf<PageCreateResponse>;
   PageInfo: ModelOf<PageInfo>;
   PageMutation: ModelOf<PageMutation>;
   PageRevision: ModelOf<PageRevision>;
@@ -3869,6 +3895,13 @@ export type PageResolvers<ContextType = Context, ParentType extends ResolversPar
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type PageCreateResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageCreateResponse'] = ResolversParentTypes['PageCreateResponse']> = {
+  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
+  record?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type PageInfoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = {
   endCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -3880,6 +3913,7 @@ export type PageInfoResolvers<ContextType = Context, ParentType extends Resolver
 export type PageMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageMutation'] = ResolversParentTypes['PageMutation']> = {
   addRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<PageMutationAddRevisionArgs, 'input'>>;
   checkoutRevision?: Resolver<ResolversTypes['CheckoutRevisionResponse'], ParentType, ContextType, RequireFields<PageMutationCheckoutRevisionArgs, 'input'>>;
+  create?: Resolver<ResolversTypes['PageCreateResponse'], ParentType, ContextType, RequireFields<PageMutationCreateArgs, 'input'>>;
   rejectRevision?: Resolver<ResolversTypes['RejectRevisionResponse'], ParentType, ContextType, RequireFields<PageMutationRejectRevisionArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -4472,6 +4506,7 @@ export type Resolvers<ContextType = Context> = {
   NotificationMutation?: NotificationMutationResolvers<ContextType>;
   NotificationSetStateResponse?: NotificationSetStateResponseResolvers<ContextType>;
   Page?: PageResolvers<ContextType>;
+  PageCreateResponse?: PageCreateResponseResolvers<ContextType>;
   PageInfo?: PageInfoResolvers<ContextType>;
   PageMutation?: PageMutationResolvers<ContextType>;
   PageRevision?: PageRevisionResolvers<ContextType>;
