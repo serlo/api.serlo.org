@@ -30,7 +30,7 @@ import {
   InterfaceResolvers,
   Mutations,
 } from '~/internals/graphql'
-import { castToUuid, EntityRevisionType } from '~/model/decoder'
+import { castToUuid, EntityRevisionType, EntityDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 
 export const resolvers: InterfaceResolvers<'AbstractEntity'> &
@@ -307,22 +307,22 @@ async function addRevision({
     guard: serloAuth.Uuid.create('EntityRevision')(scope),
   })
 
-  const fields: {
-    [key: string]: string
-  } = {}
+  const needsReviewVerified = await verifySkipReview({
+    entityId,
+    userId,
+    scope,
+    dataSources,
+    needsReview,
+  })
 
-  for (const [key, value] of Object.entries(
+  const fields = removeUndefinedFields(
     inputFields as { [key: string]: string | undefined }
-  )) {
-    if (value) {
-      fields[key] = value
-    }
-  }
+  )
 
   const inputPayload = {
     changes,
     entityId,
-    needsReview,
+    needsReview: needsReviewVerified,
     subscribeThis,
     subscribeThisByEmail,
     fields,
@@ -339,4 +339,60 @@ async function addRevision({
     success,
     query: {},
   }
+}
+
+async function verifySkipReview({
+  entityId,
+  userId,
+  dataSources,
+  scope,
+  needsReview,
+}: {
+  entityId: number
+  userId: number
+  dataSources: { model: ModelDataSource }
+  scope: serloAuth.Scope
+  needsReview: boolean
+}): Promise<boolean> {
+  const entity = await dataSources.model.serlo.getUuid({ id: entityId })
+
+  if (entity === null) {
+    throw 'Nothing found for the provided entityId'
+  } else if (!EntityDecoder.is(entity)) {
+    throw 'No entity found for the provided entityId'
+  } else if (
+    entity.canonicalSubjectId &&
+    // 106082 = sandkasten. TODO: make it configurable
+    [106082].includes(entity.canonicalSubjectId)
+  ) {
+    return false
+  }
+
+  if (!needsReview) {
+    await assertUserIsAuthorized({
+      userId,
+      dataSources,
+      message: 'You are not allowed to skip the reviewing process.',
+      guard: serloAuth.Entity.checkoutRevision(scope),
+    })
+    return false
+  }
+
+  return needsReview
+}
+
+function removeUndefinedFields(inputFields: {
+  [key: string]: string | undefined
+}) {
+  const fields: {
+    [key: string]: string
+  } = {}
+
+  for (const [key, value] of Object.entries(inputFields)) {
+    if (value) {
+      fields[key] = value
+    }
+  }
+
+  return fields
 }

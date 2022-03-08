@@ -51,7 +51,6 @@ declare namespace NodeJS {
     SERVER_SERLO_CACHE_WORKER_SECRET: string
     SERVER_SWR_QUEUE_DASHBOARD_PASSWORD: string
     SERVER_SWR_QUEUE_DASHBOARD_USERNAME: string
-
     /**
      * Used by swr-queue-worker only
      */
