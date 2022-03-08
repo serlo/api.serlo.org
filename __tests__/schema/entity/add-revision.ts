@@ -33,6 +33,7 @@ import {
   solution,
   solutionRevision,
   user,
+  user2,
   video,
 } from '../../../__fixtures__'
 import {
@@ -278,6 +279,54 @@ entityAddRevisionTypes.forEach((entityAddRevisionType) => {
         })
         .withVariables({ input })
         .shouldFailWithError('FORBIDDEN')
+    })
+
+    test('fails automatic revision checkout when user does not have role "reviewer"', async () => {
+      const inputWithAutomaticCheckout = { ...input, needsReview: false }
+
+      givenUuid(user2)
+
+      await mutation
+        .forClient(new Client({ userId: user2.id }))
+        .withVariables({ input: inputWithAutomaticCheckout })
+        .shouldFailWithError('FORBIDDEN')
+
+      // TODO: why setting to reviewer doesn't work?
+      // const reviewer = { ...user2, id: nextUuid(user2.id), roles: ['de_reviewer'] }
+
+      const {
+        changes,
+        entityId,
+        needsReview,
+        subscribeThis,
+        subscribeThisByEmail,
+      } = inputWithAutomaticCheckout
+
+      given('EntityAddRevisionMutation')
+        .withPayload({
+          input: {
+            changes,
+            entityId,
+            needsReview,
+            subscribeThis,
+            subscribeThisByEmail,
+            fields: entityAddRevisionType.fieldsForDBLayer,
+          },
+          userId: user.id,
+          revisionType: entityAddRevisionType.revisionType,
+        })
+        .returns({ success: true, revisionId: 123 })
+
+      await mutation
+        .withVariables({ input: inputWithAutomaticCheckout })
+        .shouldReturnData({
+          entity: {
+            [entityAddRevisionType.mutationName]: {
+              success: true,
+              revisionId: 123,
+            },
+          },
+        })
     })
 
     test('fails when a field is empty', async () => {
