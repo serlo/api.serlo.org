@@ -51,7 +51,7 @@ import {
   videoRevision,
 } from '../../__fixtures__'
 import { DatabaseLayer } from '~/model'
-import { EntityRevisionType } from '~/model/decoder'
+import { EntityType, EntityRevisionType } from '~/model/decoder'
 import { Instance } from '~/types'
 
 /* eslint-disable import/no-unassigned-import */
@@ -174,6 +174,50 @@ const pactSpec: PactSpec = {
           revisionType: EntityRevisionType.VideoRevision,
         },
         { success: true, revisionId: 456 },
+      ],
+    ],
+  },
+  EntityCreateMutation: {
+    examples: [
+      [
+        {
+          entityType: EntityType.Article,
+          userId: user.id,
+          input: {
+            changes: 'changes',
+            instance: Instance.De,
+            licenseId: 1,
+            subscribeThis: false,
+            subscribeThisByEmail: false,
+            fields: {
+              title: 'title',
+              content: 'content',
+              metaTitle: 'metaTitle',
+              metaDescription: 'metaDescription',
+              url: 'https://url.org',
+            },
+          },
+        },
+        article,
+      ],
+      [
+        {
+          entityType: EntityType.Video,
+          userId: user.id,
+          input: {
+            changes: 'changes',
+            instance: Instance.De,
+            licenseId: 1,
+            subscribeThis: false,
+            subscribeThisByEmail: false,
+            fields: {
+              title: 'title',
+              content: 'content',
+              description: 'description',
+            },
+          },
+        },
+        video,
       ],
     ],
   },
