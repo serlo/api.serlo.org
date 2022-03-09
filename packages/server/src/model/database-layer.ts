@@ -25,7 +25,9 @@ import * as t from 'io-ts'
 import fetch from 'node-fetch'
 
 import {
+  EntityDecoder,
   EntityRevisionTypeDecoder,
+  EntityTypeDecoder,
   InstanceDecoder,
   PageDecoder,
   SubscriptionsDecoder,
@@ -103,6 +105,27 @@ export const spec = {
       success: t.boolean,
       revisionId: t.union([t.number, t.null]),
     }),
+    canBeNull: false,
+  },
+  EntityCreateMutation: {
+    payload: t.type({
+      userId: t.number,
+      entityType: EntityTypeDecoder,
+      input: t.intersection([
+        t.type({
+          changes: t.string,
+          instance: InstanceDecoder,
+          licenseId: t.number,
+          subscribeThis: t.boolean,
+          subscribeThisByEmail: t.boolean,
+          fields: t.record(t.string, t.string),
+        }),
+        t.partial({
+          parentId: t.number,
+        }),
+      ]),
+    }),
+    response: t.union([EntityDecoder, t.undefined]),
     canBeNull: false,
   },
   LicenseQuery: {

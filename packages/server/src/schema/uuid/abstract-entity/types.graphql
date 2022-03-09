@@ -57,6 +57,18 @@ extend type Mutation {
 }
 
 type EntityMutation {
+  createApplet(input: CreateAppletInput!): CreateEntityResponse!
+  createArticle(input: CreateArticleInput!): CreateEntityResponse!
+  createCourse(input: CreateCourseInput!): CreateEntityResponse!
+  createCoursePage(input: CreateCoursePageInput!): CreateEntityResponse!
+  createEvent(input: CreateEventInput!): CreateEntityResponse!
+  createExercise(input: CreateExerciseInput!): CreateEntityResponse!
+  createExerciseGroup(input: CreateExerciseGroupInput!): CreateEntityResponse!
+  createGroupedExercise(
+    input: CreateGroupedExerciseInput!
+  ): CreateEntityResponse!
+  createSolution(input: CreateSolutionInput!): CreateEntityResponse!
+  createVideo(input: CreateVideoInput!): CreateEntityResponse!
   addAppletRevision(input: AddAppletRevisionInput!): AddRevisionResponse!
   addArticleRevision(input: AddArticleRevisionInput!): AddRevisionResponse!
   addCourseRevision(input: AddCourseRevisionInput!): AddRevisionResponse!
@@ -75,6 +87,144 @@ type EntityMutation {
   addVideoRevision(input: AddVideoRevisionInput!): AddRevisionResponse!
   checkoutRevision(input: CheckoutRevisionInput!): CheckoutRevisionResponse!
   rejectRevision(input: RejectRevisionInput!): RejectRevisionResponse!
+}
+
+input CreateAppletInput {
+  # extends a virtual CreateAbstractEntityInput
+  changes: String!
+  subscribeThis: Boolean!
+  subscribeThisByEmail: Boolean!
+  instance: Instance!
+  licenseId: Int!
+
+  content: String!
+  metaDescription: String!
+  metaTitle: String!
+  title: String!
+  url: String!
+}
+
+input CreateArticleInput {
+  # extends a virtual CreateAbstractEntityInput
+  changes: String!
+  subscribeThis: Boolean!
+  subscribeThisByEmail: Boolean!
+  instance: Instance!
+  licenseId: Int!
+
+  content: String!
+  metaDescription: String!
+  metaTitle: String!
+  title: String!
+}
+
+input CreateCourseInput {
+  # extends a virtual CreateAbstractEntityInput
+  changes: String!
+  subscribeThis: Boolean!
+  subscribeThisByEmail: Boolean!
+  instance: Instance!
+  licenseId: Int!
+
+  content: String!
+  metaDescription: String!
+  title: String!
+}
+
+input CreateCoursePageInput {
+  # extends a virtual CreateAbstractEntityInput
+  changes: String!
+  subscribeThis: Boolean!
+  subscribeThisByEmail: Boolean!
+  instance: Instance!
+  licenseId: Int!
+
+  parentId: Int!
+
+  content: String!
+  title: String!
+}
+
+input CreateEventInput {
+  # extends a virtual CreateAbstractEntityInput
+  changes: String!
+  subscribeThis: Boolean!
+  subscribeThisByEmail: Boolean!
+  instance: Instance!
+  licenseId: Int!
+
+  content: String!
+  metaDescription: String!
+  metaTitle: String!
+  title: String!
+}
+
+input CreateExerciseInput {
+  # extends a virtual CreateAbstractEntityInput
+  changes: String!
+  subscribeThis: Boolean!
+  subscribeThisByEmail: Boolean!
+  instance: Instance!
+  licenseId: Int!
+
+  content: String!
+}
+
+input CreateExerciseGroupInput {
+  # extends a virtual CreateAbstractEntityInput
+  changes: String!
+  subscribeThis: Boolean!
+  subscribeThisByEmail: Boolean!
+  instance: Instance!
+  licenseId: Int!
+
+  cohesive: Boolean!
+  content: String!
+}
+
+input CreateGroupedExerciseInput {
+  # extends a virtual CreateAbstractEntityInput
+  changes: String!
+  subscribeThis: Boolean!
+  subscribeThisByEmail: Boolean!
+  instance: Instance!
+  licenseId: Int!
+
+  parentId: Int!
+
+  content: String!
+}
+
+input CreateSolutionInput {
+  # extends a virtual CreateAbstractEntityInput
+  changes: String!
+  subscribeThis: Boolean!
+  subscribeThisByEmail: Boolean!
+  instance: Instance!
+  licenseId: Int!
+
+  parentId: Int!
+
+  content: String!
+}
+
+input CreateVideoInput {
+  # extends a virtual CreateAbstractEntityInput
+  changes: String!
+  subscribeThis: Boolean!
+  subscribeThisByEmail: Boolean!
+  instance: Instance!
+  licenseId: Int!
+
+  content: String!
+  title: String!
+  url: String!
+}
+
+type CreateEntityResponse {
+  record: AbstractEntity
+  success: Boolean!
+  query: Query!
 }
 
 input AddAppletRevisionInput {

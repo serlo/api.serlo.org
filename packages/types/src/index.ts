@@ -864,6 +864,31 @@ export type CourseRevisionCursor = {
   node: CourseRevision;
 };
 
+export type CreateAppletInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  instance: Instance;
+  licenseId: Scalars['Int'];
+  metaDescription: Scalars['String'];
+  metaTitle: Scalars['String'];
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
+  url: Scalars['String'];
+};
+
+export type CreateArticleInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  instance: Instance;
+  licenseId: Scalars['Int'];
+  metaDescription: Scalars['String'];
+  metaTitle: Scalars['String'];
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
+};
+
 export type CreateCommentNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CreateCommentNotificationEvent';
   actor: User;
@@ -873,6 +898,28 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & Instanc
   instance: Instance;
   objectId: Scalars['Int'];
   thread: Thread;
+};
+
+export type CreateCourseInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  instance: Instance;
+  licenseId: Scalars['Int'];
+  metaDescription: Scalars['String'];
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
+};
+
+export type CreateCoursePageInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  instance: Instance;
+  licenseId: Scalars['Int'];
+  parentId: Scalars['Int'];
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
 };
 
 export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -896,6 +943,13 @@ export type CreateEntityNotificationEvent = AbstractNotificationEvent & Instance
   objectId: Scalars['Int'];
 };
 
+export type CreateEntityResponse = {
+  __typename?: 'CreateEntityResponse';
+  query: Query;
+  record?: Maybe<AbstractEntity>;
+  success: Scalars['Boolean'];
+};
+
 export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CreateEntityRevisionNotificationEvent';
   actor: User;
@@ -907,6 +961,47 @@ export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & 
   objectId: Scalars['Int'];
 };
 
+export type CreateEventInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  instance: Instance;
+  licenseId: Scalars['Int'];
+  metaDescription: Scalars['String'];
+  metaTitle: Scalars['String'];
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
+};
+
+export type CreateExerciseGroupInput = {
+  changes: Scalars['String'];
+  cohesive: Scalars['Boolean'];
+  content: Scalars['String'];
+  instance: Instance;
+  licenseId: Scalars['Int'];
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+};
+
+export type CreateExerciseInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  instance: Instance;
+  licenseId: Scalars['Int'];
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+};
+
+export type CreateGroupedExerciseInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  instance: Instance;
+  licenseId: Scalars['Int'];
+  parentId: Scalars['Int'];
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+};
+
 export type CreatePageInput = {
   content: Scalars['String'];
   discussionsEnabled: Scalars['Boolean'];
@@ -914,6 +1009,16 @@ export type CreatePageInput = {
   instance: Instance;
   licenseId: Scalars['Int'];
   title: Scalars['String'];
+};
+
+export type CreateSolutionInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  instance: Instance;
+  licenseId: Scalars['Int'];
+  parentId: Scalars['Int'];
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
 };
 
 export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -948,6 +1053,17 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
   thread: Thread;
 };
 
+export type CreateVideoInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  instance: Instance;
+  licenseId: Scalars['Int'];
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
+  url: Scalars['String'];
+};
+
 export type EntityMetadataConnection = {
   __typename?: 'EntityMetadataConnection';
   edges: Array<EntityMetadataCursor>;
@@ -974,6 +1090,16 @@ export type EntityMutation = {
   addSolutionRevision: AddRevisionResponse;
   addVideoRevision: AddRevisionResponse;
   checkoutRevision: CheckoutRevisionResponse;
+  createApplet: CreateEntityResponse;
+  createArticle: CreateEntityResponse;
+  createCourse: CreateEntityResponse;
+  createCoursePage: CreateEntityResponse;
+  createEvent: CreateEntityResponse;
+  createExercise: CreateEntityResponse;
+  createExerciseGroup: CreateEntityResponse;
+  createGroupedExercise: CreateEntityResponse;
+  createSolution: CreateEntityResponse;
+  createVideo: CreateEntityResponse;
   rejectRevision: RejectRevisionResponse;
 };
 
@@ -1030,6 +1156,56 @@ export type EntityMutationAddVideoRevisionArgs = {
 
 export type EntityMutationCheckoutRevisionArgs = {
   input: CheckoutRevisionInput;
+};
+
+
+export type EntityMutationCreateAppletArgs = {
+  input: CreateAppletInput;
+};
+
+
+export type EntityMutationCreateArticleArgs = {
+  input: CreateArticleInput;
+};
+
+
+export type EntityMutationCreateCourseArgs = {
+  input: CreateCourseInput;
+};
+
+
+export type EntityMutationCreateCoursePageArgs = {
+  input: CreateCoursePageInput;
+};
+
+
+export type EntityMutationCreateEventArgs = {
+  input: CreateEventInput;
+};
+
+
+export type EntityMutationCreateExerciseArgs = {
+  input: CreateExerciseInput;
+};
+
+
+export type EntityMutationCreateExerciseGroupArgs = {
+  input: CreateExerciseGroupInput;
+};
+
+
+export type EntityMutationCreateGroupedExerciseArgs = {
+  input: CreateGroupedExerciseInput;
+};
+
+
+export type EntityMutationCreateSolutionArgs = {
+  input: CreateSolutionInput;
+};
+
+
+export type EntityMutationCreateVideoArgs = {
+  input: CreateVideoInput;
 };
 
 

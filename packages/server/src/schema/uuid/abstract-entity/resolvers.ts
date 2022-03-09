@@ -30,8 +30,14 @@ import {
   InterfaceResolvers,
   Mutations,
 } from '~/internals/graphql'
-import { castToUuid, EntityRevisionType, EntityDecoder } from '~/model/decoder'
+import {
+  castToUuid,
+  EntityRevisionType,
+  EntityDecoder,
+  EntityType,
+} from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
+import { Instance } from '~/types'
 
 export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   InterfaceResolvers<'AbstractEntityRevision'> &
@@ -50,6 +56,172 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     },
   },
   EntityMutation: {
+    async createApplet(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title, url, metaDescription, metaTitle } = input
+
+      assertStringIsNotEmpty(
+        changes,
+        content,
+        title,
+        url,
+        metaDescription,
+        metaTitle
+      )
+
+      return await createEntity({
+        entityType: EntityType.Applet,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async createArticle(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title, metaDescription, metaTitle } = input
+
+      assertStringIsNotEmpty(
+        changes,
+        content,
+        title,
+        metaDescription,
+        metaTitle
+      )
+
+      return await createEntity({
+        entityType: EntityType.Article,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async createCourse(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title, metaDescription } = input
+
+      assertStringIsNotEmpty(changes, content, title, metaDescription)
+
+      // TODO: the logic of this and others transformedInput's should go to DB Layer
+      const transformedInput = {
+        ...input,
+        description: input.content,
+        content: undefined,
+      }
+
+      return await createEntity({
+        entityType: EntityType.Course,
+        input: transformedInput,
+        dataSources,
+        userId,
+      })
+    },
+    async createCoursePage(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title } = input
+
+      assertStringIsNotEmpty(changes, content, title)
+
+      // Verify parentId exists
+
+      return await createEntity({
+        entityType: EntityType.CoursePage,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async createEvent(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title, metaDescription, metaTitle } = input
+
+      assertStringIsNotEmpty(
+        changes,
+        content,
+        title,
+        metaDescription,
+        metaTitle
+      )
+
+      return await createEntity({
+        entityType: EntityType.Event,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async createExercise(_parent, { input }, { dataSources, userId }) {
+      const { changes, content } = input
+
+      assertStringIsNotEmpty(changes, content)
+
+      return await createEntity({
+        entityType: EntityType.Exercise,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async createExerciseGroup(_parent, { input }, { dataSources, userId }) {
+      const { changes, content } = input
+
+      assertStringIsNotEmpty(changes, content)
+
+      // TODO: this logic should go to DBLayer
+      const cohesive = input.cohesive === true ? 'true' : 'false'
+      const transformedInput: Omit<typeof input, 'cohesive'> & {
+        cohesive: 'true' | 'false'
+      } = { ...input, cohesive }
+
+      return await createEntity({
+        entityType: EntityType.ExerciseGroup,
+        input: transformedInput,
+        dataSources,
+        userId,
+      })
+    },
+    async createGroupedExercise(_parent, { input }, { dataSources, userId }) {
+      const { changes, content } = input
+
+      assertStringIsNotEmpty(changes, content)
+
+      //verify parentId exists
+
+      return await createEntity({
+        entityType: EntityType.GroupedExercise,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async createSolution(_parent, { input }, { dataSources, userId }) {
+      const { changes, content } = input
+
+      assertStringIsNotEmpty(changes, content)
+
+      //verify parentId exists
+
+      return await createEntity({
+        entityType: EntityType.Solution,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async createVideo(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title, url } = input
+
+      assertStringIsNotEmpty(changes, content, title, url)
+
+      // TODO: logic should go to DBLayer
+      const transformedInput = {
+        ...input,
+        content: input.url,
+        description: input.content,
+        url: undefined,
+      }
+
+      return await createEntity({
+        entityType: EntityType.Video,
+        input: transformedInput,
+        dataSources,
+        userId,
+      })
+    },
     async addAppletRevision(_parent, { input }, { dataSources, userId }) {
       const { changes, content, title, url, metaDescription, metaTitle } = input
 
@@ -259,6 +431,27 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   },
 }
 
+export interface AbstractEntityCreatePayload {
+  entityType: EntityType
+  input: {
+    changes: string
+    subscribeThis: boolean
+    subscribeThisByEmail: boolean
+    instance: Instance
+    licenseId: number
+    parentId?: number
+    cohesive?: 'true' | 'false'
+    content?: string
+    description?: string
+    metaDescription?: string
+    metaTitle?: string
+    title?: string
+    url?: string
+  }
+  dataSources: { model: ModelDataSource }
+  userId: number | null
+}
+
 interface AbstractEntityAddRevisionPayload {
   revisionType: EntityRevisionType
   input: {
@@ -277,6 +470,57 @@ interface AbstractEntityAddRevisionPayload {
   }
   dataSources: { model: ModelDataSource }
   userId: number | null
+}
+
+async function createEntity({
+  entityType,
+  dataSources,
+  input,
+  userId,
+}: AbstractEntityCreatePayload) {
+  assertUserIsAuthenticated(userId)
+
+  const {
+    instance,
+    licenseId,
+    parentId,
+    changes,
+    subscribeThis,
+    subscribeThisByEmail,
+    ...inputFields
+  } = input
+
+  await assertUserIsAuthorized({
+    userId,
+    dataSources,
+    message: 'You are not allowed to add revision to this entity.',
+    guard: serloAuth.Uuid.create('Entity')(serloAuth.instanceToScope(instance)),
+  })
+
+  const fields = removeUndefinedFields(
+    inputFields as { [key: string]: string | undefined }
+  )
+
+  const inputPayload = {
+    changes,
+    instance,
+    licenseId,
+    parentId,
+    subscribeThis,
+    subscribeThisByEmail,
+    fields,
+  }
+  const entity = await dataSources.model.serlo.createEntity({
+    entityType,
+    userId,
+    input: inputPayload,
+  })
+
+  return {
+    record: entity,
+    success: entity != null,
+    query: {},
+  }
 }
 
 async function addRevision({

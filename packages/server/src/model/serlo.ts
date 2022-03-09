@@ -739,6 +739,14 @@ export function createSerloModel({
     },
   })
 
+  const createEntity = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('EntityCreateMutation'),
+    mutate: (payload: DatabaseLayer.Payload<'EntityCreateMutation'>) => {
+      return DatabaseLayer.makeRequest('EntityCreateMutation', payload)
+    },
+    // TODO: does it make sense to implement updateCache?
+  })
+
   const addEntityRevision = createMutation({
     decoder: DatabaseLayer.getDecoderFor('EntityAddRevisionMutation'),
     mutate: (payload: DatabaseLayer.Payload<'EntityAddRevisionMutation'>) => {
@@ -941,6 +949,7 @@ export function createSerloModel({
     checkoutEntityRevision,
     checkoutPageRevision,
     createComment,
+    createEntity,
     createPage,
     createThread,
     deleteBots,
