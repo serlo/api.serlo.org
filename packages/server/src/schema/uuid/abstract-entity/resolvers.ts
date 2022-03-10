@@ -439,6 +439,7 @@ export interface AbstractEntityCreatePayload {
     subscribeThisByEmail: boolean
     instance: Instance
     licenseId: number
+    needsReview: boolean
     parentId?: number
     cohesive?: 'true' | 'false'
     content?: string
@@ -485,6 +486,7 @@ async function createEntity({
     licenseId,
     parentId,
     changes,
+    needsReview,
     subscribeThis,
     subscribeThisByEmail,
     ...inputFields
@@ -505,6 +507,7 @@ async function createEntity({
     changes,
     instance,
     licenseId,
+    needsReview,
     parentId,
     subscribeThis,
     subscribeThisByEmail,

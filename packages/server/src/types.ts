@@ -875,6 +875,7 @@ export type CreateAppletInput = {
   licenseId: Scalars['Int'];
   metaDescription: Scalars['String'];
   metaTitle: Scalars['String'];
+  needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
   title: Scalars['String'];
@@ -888,6 +889,7 @@ export type CreateArticleInput = {
   licenseId: Scalars['Int'];
   metaDescription: Scalars['String'];
   metaTitle: Scalars['String'];
+  needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
   title: Scalars['String'];
@@ -910,6 +912,7 @@ export type CreateCourseInput = {
   instance: Instance;
   licenseId: Scalars['Int'];
   metaDescription: Scalars['String'];
+  needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
   title: Scalars['String'];
@@ -920,6 +923,7 @@ export type CreateCoursePageInput = {
   content: Scalars['String'];
   instance: Instance;
   licenseId: Scalars['Int'];
+  needsReview: Scalars['Boolean'];
   parentId: Scalars['Int'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
@@ -972,6 +976,7 @@ export type CreateEventInput = {
   licenseId: Scalars['Int'];
   metaDescription: Scalars['String'];
   metaTitle: Scalars['String'];
+  needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
   title: Scalars['String'];
@@ -983,6 +988,7 @@ export type CreateExerciseGroupInput = {
   content: Scalars['String'];
   instance: Instance;
   licenseId: Scalars['Int'];
+  needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
 };
@@ -992,6 +998,7 @@ export type CreateExerciseInput = {
   content: Scalars['String'];
   instance: Instance;
   licenseId: Scalars['Int'];
+  needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
 };
@@ -1001,6 +1008,7 @@ export type CreateGroupedExerciseInput = {
   content: Scalars['String'];
   instance: Instance;
   licenseId: Scalars['Int'];
+  needsReview: Scalars['Boolean'];
   parentId: Scalars['Int'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
@@ -1020,6 +1028,7 @@ export type CreateSolutionInput = {
   content: Scalars['String'];
   instance: Instance;
   licenseId: Scalars['Int'];
+  needsReview: Scalars['Boolean'];
   parentId: Scalars['Int'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
@@ -1062,6 +1071,7 @@ export type CreateVideoInput = {
   content: Scalars['String'];
   instance: Instance;
   licenseId: Scalars['Int'];
+  needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
   title: Scalars['String'];
