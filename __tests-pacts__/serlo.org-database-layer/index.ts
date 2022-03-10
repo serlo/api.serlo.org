@@ -189,6 +189,7 @@ const pactSpec: PactSpec = {
             licenseId: 1,
             subscribeThis: false,
             subscribeThisByEmail: false,
+            needsReview: true,
             fields: {
               title: 'title',
               content: 'content',
@@ -210,6 +211,7 @@ const pactSpec: PactSpec = {
             licenseId: 1,
             subscribeThis: false,
             subscribeThisByEmail: false,
+            needsReview: true,
             fields: {
               title: 'title',
               content: 'content',

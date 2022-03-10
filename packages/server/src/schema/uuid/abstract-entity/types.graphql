@@ -96,6 +96,7 @@ input CreateAppletInput {
   subscribeThisByEmail: Boolean!
   instance: Instance!
   licenseId: Int!
+  needsReview: Boolean!
 
   content: String!
   metaDescription: String!
@@ -111,6 +112,7 @@ input CreateArticleInput {
   subscribeThisByEmail: Boolean!
   instance: Instance!
   licenseId: Int!
+  needsReview: Boolean!
 
   content: String!
   metaDescription: String!
@@ -125,6 +127,7 @@ input CreateCourseInput {
   subscribeThisByEmail: Boolean!
   instance: Instance!
   licenseId: Int!
+  needsReview: Boolean!
 
   content: String!
   metaDescription: String!
@@ -138,6 +141,7 @@ input CreateCoursePageInput {
   subscribeThisByEmail: Boolean!
   instance: Instance!
   licenseId: Int!
+  needsReview: Boolean!
 
   parentId: Int!
 
@@ -152,6 +156,7 @@ input CreateEventInput {
   subscribeThisByEmail: Boolean!
   instance: Instance!
   licenseId: Int!
+  needsReview: Boolean!
 
   content: String!
   metaDescription: String!
@@ -166,6 +171,7 @@ input CreateExerciseInput {
   subscribeThisByEmail: Boolean!
   instance: Instance!
   licenseId: Int!
+  needsReview: Boolean!
 
   content: String!
 }
@@ -177,6 +183,7 @@ input CreateExerciseGroupInput {
   subscribeThisByEmail: Boolean!
   instance: Instance!
   licenseId: Int!
+  needsReview: Boolean!
 
   cohesive: Boolean!
   content: String!
@@ -189,6 +196,7 @@ input CreateGroupedExerciseInput {
   subscribeThisByEmail: Boolean!
   instance: Instance!
   licenseId: Int!
+  needsReview: Boolean!
 
   parentId: Int!
 
@@ -202,6 +210,7 @@ input CreateSolutionInput {
   subscribeThisByEmail: Boolean!
   instance: Instance!
   licenseId: Int!
+  needsReview: Boolean!
 
   parentId: Int!
 
@@ -215,6 +224,7 @@ input CreateVideoInput {
   subscribeThisByEmail: Boolean!
   instance: Instance!
   licenseId: Int!
+  needsReview: Boolean!
 
   content: String!
   title: String!

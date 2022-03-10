@@ -172,6 +172,7 @@ entityCreateTypes.forEach((entityCreateType) => {
       changes: string
       instance: Instance
       licenseId: number
+      needsReview: boolean
       subscribeThis: boolean
       subscribeThisByEmail: boolean
       parentId?: number
@@ -185,6 +186,7 @@ entityCreateTypes.forEach((entityCreateType) => {
     } = {
       changes: 'changes',
       instance: Instance.De,
+      needsReview: true,
       licenseId: 1,
       subscribeThis: false,
       subscribeThisByEmail: false,
@@ -219,6 +221,7 @@ entityCreateTypes.forEach((entityCreateType) => {
         instance,
         licenseId,
         parentId,
+        needsReview,
         subscribeThis,
         subscribeThisByEmail,
       } = input
@@ -229,6 +232,7 @@ entityCreateTypes.forEach((entityCreateType) => {
             input: {
               changes,
               instance,
+              needsReview,
               licenseId,
               parentId,
               subscribeThis,
@@ -245,6 +249,7 @@ entityCreateTypes.forEach((entityCreateType) => {
             input: {
               changes,
               instance,
+              needsReview,
               licenseId,
               subscribeThis,
               subscribeThisByEmail,

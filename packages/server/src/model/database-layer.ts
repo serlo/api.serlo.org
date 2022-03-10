@@ -116,6 +116,7 @@ export const spec = {
           changes: t.string,
           instance: InstanceDecoder,
           licenseId: t.number,
+          needsReview: t.boolean,
           subscribeThis: t.boolean,
           subscribeThisByEmail: t.boolean,
           fields: t.record(t.string, t.string),
