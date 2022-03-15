@@ -194,6 +194,22 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  PageCreateMutation: {
+    examples: [
+      [
+        {
+          content: 'content',
+          discussionsEnabled: false,
+          instance: Instance.De,
+          licenseId: 1,
+          title: 'title',
+          forumId: 123,
+          userId: user.id,
+        },
+        { ...page },
+      ],
+    ],
+  },
   SubjectsQuery: {
     examples: [
       [

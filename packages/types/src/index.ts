@@ -907,6 +907,15 @@ export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & 
   objectId: Scalars['Int'];
 };
 
+export type CreatePageInput = {
+  content: Scalars['String'];
+  discussionsEnabled: Scalars['Boolean'];
+  forumId?: InputMaybe<Scalars['Int']>;
+  instance: Instance;
+  licenseId: Scalars['Int'];
+  title: Scalars['String'];
+};
+
 export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CreateTaxonomyLinkNotificationEvent';
   actor: User;
@@ -1615,6 +1624,13 @@ export type PageAddRevisionInput = {
   title: Scalars['String'];
 };
 
+export type PageCreateResponse = {
+  __typename?: 'PageCreateResponse';
+  query: Query;
+  record?: Maybe<Page>;
+  success: Scalars['Boolean'];
+};
+
 export type PageInfo = {
   __typename?: 'PageInfo';
   endCursor?: Maybe<Scalars['String']>;
@@ -1627,6 +1643,7 @@ export type PageMutation = {
   __typename?: 'PageMutation';
   addRevision: AddRevisionResponse;
   checkoutRevision: CheckoutRevisionResponse;
+  create: PageCreateResponse;
   rejectRevision: RejectRevisionResponse;
 };
 
@@ -1638,6 +1655,11 @@ export type PageMutationAddRevisionArgs = {
 
 export type PageMutationCheckoutRevisionArgs = {
   input: CheckoutRevisionInput;
+};
+
+
+export type PageMutationCreateArgs = {
+  input: CreatePageInput;
 };
 
 
