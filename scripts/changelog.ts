@@ -1173,6 +1173,15 @@ async function exec(): Promise<void> {
         date: '2022-02-11',
         fixed: ['Update cache after successful UserSetDescriptionMutation'],
       },
+      {
+        tagName: 'v0.29.0',
+        date: '2022-03-16',
+        added: [
+          'Add mutation `Page.create`',
+          'Add mutation `Page.addRevision`',
+          'Add mutations `Entity.add*Revision` (v.g. `addAppletRevision`, `addArticleRevision`)',
+        ],
+      },
     ],
   })
 
