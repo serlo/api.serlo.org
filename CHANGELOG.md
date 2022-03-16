@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.29.0](https://github.com/serlo/api.serlo.org/compare/v0.28.3..v0.29.0) - March 16, 2022
+
+### Added
+
+- Add mutation `Page.create`
+
+- Add mutation `Page.addRevision`
+
+- Add mutations `Entity.add*Revision` (v.g. `addAppletRevision`, `addArticleRevision`)
+
 ## [v0.28.3](https://github.com/serlo/api.serlo.org/compare/v0.28.2..v0.28.3) - February 11, 2022
 
 ### Fixed
