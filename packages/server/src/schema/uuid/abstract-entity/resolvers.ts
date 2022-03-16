@@ -23,6 +23,7 @@ import * as serloAuth from '@serlo/authorization'
 
 import { ModelDataSource } from '~/internals/data-source'
 import {
+  assertStringIsNotEmpty,
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   createNamespace,
@@ -50,6 +51,17 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   },
   EntityMutation: {
     async addAppletRevision(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title, url, metaDescription, metaTitle } = input
+
+      assertStringIsNotEmpty(
+        changes,
+        content,
+        title,
+        url,
+        metaDescription,
+        metaTitle
+      )
+
       return await addRevision({
         revisionType: EntityRevisionType.AppletRevision,
         input,
@@ -58,6 +70,16 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addArticleRevision(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title, metaDescription, metaTitle } = input
+
+      assertStringIsNotEmpty(
+        changes,
+        content,
+        title,
+        metaDescription,
+        metaTitle
+      )
+
       return await addRevision({
         revisionType: EntityRevisionType.ArticleRevision,
         input,
@@ -66,14 +88,29 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addCourseRevision(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title, metaDescription } = input
+
+      assertStringIsNotEmpty(changes, content, title, metaDescription)
+
+      // TODO: the logic of this and others transformedInput's should go to DB Layer
+      const transformedInput = {
+        ...input,
+        description: input.content,
+        content: undefined,
+      }
+
       return await addRevision({
         revisionType: EntityRevisionType.CourseRevision,
-        input,
+        input: transformedInput,
         dataSources,
         userId,
       })
     },
     async addCoursePageRevision(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title } = input
+
+      assertStringIsNotEmpty(changes, content, title)
+
       return await addRevision({
         revisionType: EntityRevisionType.CoursePageRevision,
         input,
@@ -82,6 +119,16 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addEventRevision(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title, metaDescription, metaTitle } = input
+
+      assertStringIsNotEmpty(
+        changes,
+        content,
+        title,
+        metaDescription,
+        metaTitle
+      )
+
       return await addRevision({
         revisionType: EntityRevisionType.EventRevision,
         input,
@@ -90,6 +137,10 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addExerciseRevision(_parent, { input }, { dataSources, userId }) {
+      const { changes, content } = input
+
+      assertStringIsNotEmpty(changes, content)
+
       return await addRevision({
         revisionType: EntityRevisionType.ExerciseRevision,
         input,
@@ -102,6 +153,10 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       { input },
       { dataSources, userId }
     ) {
+      const { changes, content } = input
+
+      assertStringIsNotEmpty(changes, content)
+
       const cohesive = input.cohesive === true ? 'true' : 'false'
       const transformedInput: Omit<typeof input, 'cohesive'> & {
         cohesive: 'true' | 'false'
@@ -119,6 +174,10 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       { input },
       { dataSources, userId }
     ) {
+      const { changes, content } = input
+
+      assertStringIsNotEmpty(changes, content)
+
       return await addRevision({
         revisionType: EntityRevisionType.GroupedExerciseRevision,
         input,
@@ -127,6 +186,10 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addSolutionRevision(_parent, { input }, { dataSources, userId }) {
+      const { changes, content } = input
+
+      assertStringIsNotEmpty(changes, content)
+
       return await addRevision({
         revisionType: EntityRevisionType.SolutionRevision,
         input,
@@ -135,9 +198,20 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addVideoRevision(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title, url } = input
+
+      assertStringIsNotEmpty(changes, content, title, url)
+
+      const transformedInput = {
+        ...input,
+        content: input.url,
+        description: input.content,
+        url: undefined,
+      }
+
       return await addRevision({
         revisionType: EntityRevisionType.VideoRevision,
-        input,
+        input: transformedInput,
         dataSources,
         userId,
       })
@@ -213,43 +287,55 @@ async function addRevision({
 }: AbstractEntityAddRevisionPayload) {
   assertUserIsAuthenticated(userId)
 
-  const authenticatedUserId = userId
-
-  const { entityId } = input
+  const {
+    entityId,
+    changes,
+    needsReview,
+    subscribeThis,
+    subscribeThisByEmail,
+    ...inputFields
+  } = input
 
   const scope = await fetchScopeOfUuid({
     id: entityId,
     dataSources,
   })
   await assertUserIsAuthorized({
-    userId: authenticatedUserId,
+    userId,
     dataSources,
     message: 'You are not allowed to add revision to this entity.',
-    guard: serloAuth.Entity.addRevision(scope),
+    guard: serloAuth.Uuid.create('EntityRevision')(scope),
   })
 
-  const {
-    cohesive,
-    content,
-    description,
-    metaDescription,
-    metaTitle,
-    title,
-    url,
-  } = input
+  const fields = removeUndefinedFields(
+    inputFields as { [key: string]: string | undefined }
+  )
 
-  const inputFields: {
-    [key: string]: string | undefined
-  } = {
-    cohesive,
-    content,
-    description,
-    metaDescription,
-    metaTitle,
-    title,
-    url,
+  const inputPayload = {
+    changes,
+    entityId,
+    needsReview,
+    subscribeThis,
+    subscribeThisByEmail,
+    fields,
   }
+  const { success, revisionId } =
+    await dataSources.model.serlo.addEntityRevision({
+      revisionType,
+      userId,
+      input: inputPayload,
+    })
 
+  return {
+    revisionId,
+    success,
+    query: {},
+  }
+}
+
+function removeUndefinedFields(inputFields: {
+  [key: string]: string | undefined
+}) {
   const fields: {
     [key: string]: string
   } = {}
@@ -260,20 +346,5 @@ async function addRevision({
     }
   }
 
-  const { changes, needsReview, subscribeThis, subscribeThisByEmail } = input
-  const inputPayload = {
-    changes,
-    entityId,
-    needsReview,
-    subscribeThis,
-    subscribeThisByEmail,
-    fields,
-  }
-  await dataSources.model.serlo.addEntityRevision({
-    revisionType,
-    userId: authenticatedUserId,
-    input: inputPayload,
-  })
-
-  return { success: true }
+  return fields
 }

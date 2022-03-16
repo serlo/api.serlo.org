@@ -21,26 +21,37 @@
  */
 import { gql } from 'apollo-server'
 
-import { page, user as baseUser } from '../../../__fixtures__'
+import { user as baseUser } from '../../../__fixtures__'
 import { given, givenUuids, Client, givenUuid, nextUuid } from '../../__utils__'
+import { Model } from '~/internals/graphql'
+import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
+import { Instance } from '~/types'
 
 const user = { ...baseUser, roles: ['de_static_pages_builder'] }
 
-describe('PageAddRevisionMutation', () => {
+describe('PageCreateMutation', () => {
   const input = {
     content: 'content',
+    discussionsEnabled: false,
+    instance: Instance.De,
+    licenseId: 1,
     title: 'title',
-    pageId: page.id,
+    forumId: 123,
   }
 
   const mutation = new Client({ userId: user.id })
     .prepareQuery({
       query: gql`
-        mutation set($input: PageAddRevisionInput!) {
+        mutation set($input: CreatePageInput!) {
           page {
-            addRevision(input: $input) {
+            create(input: $input) {
+              record {
+                currentRevision {
+                  title
+                  content
+                }
+              }
               success
-              revisionId
             }
           }
         }
@@ -49,19 +60,51 @@ describe('PageAddRevisionMutation', () => {
     .withVariables({ input })
 
   beforeEach(() => {
-    givenUuids(user, page)
+    givenUuid(user)
+
+    given('PageCreateMutation').isDefinedBy((req, res, ctx) => {
+      const { content, instance, licenseId, title, userId } = req.body.payload
+
+      const newPageRevisionId = castToUuid(19769)
+
+      const newPage: Model<'Page'> = {
+        __typename: DiscriminatorType.Page,
+        id: castToUuid(19768),
+        trashed: false,
+        instance,
+        alias: castToAlias(`/19768/${title}`),
+        date: new Date().toISOString(),
+        currentRevisionId: newPageRevisionId,
+        revisionIds: [newPageRevisionId],
+        licenseId,
+      }
+
+      const newPageRevision: Model<'PageRevision'> = {
+        __typename: DiscriminatorType.PageRevision,
+        id: newPageRevisionId,
+        trashed: false,
+        alias: castToAlias(`/${newPageRevisionId}/${title}`),
+        title,
+        content,
+        date: new Date().toISOString(),
+        authorId: castToUuid(userId),
+        repositoryId: newPage.id,
+      }
+
+      givenUuids(newPage, newPageRevision)
+
+      return res(ctx.json({ ...newPage }))
+    })
   })
 
-  test('returns "{ success: true }" when mutation could be successfully executed', async () => {
-    given('PageAddRevisionMutation')
-      .withPayload({
-        ...input,
-        userId: user.id,
-      })
-      .returns({ success: true, revisionId: 123 })
-
+  test('returns success and record  when mutation is successfully executed', async () => {
     await mutation.shouldReturnData({
-      page: { addRevision: { success: true, revisionId: 123 } },
+      page: {
+        create: {
+          success: true,
+          record: { currentRevision: { title: 'title', content: 'content' } },
+        },
+      },
     })
   })
 
@@ -76,19 +119,8 @@ describe('PageAddRevisionMutation', () => {
 
     givenUuid(regularUser)
 
-    await new Client({ userId: regularUser.id })
-      .prepareQuery({
-        query: gql`
-          mutation set($input: PageAddRevisionInput!) {
-            page {
-              addRevision(input: $input) {
-                success
-              }
-            }
-          }
-        `,
-      })
-      .withVariables({ input })
+    await mutation
+      .forClient(new Client({ userId: regularUser.id }))
       .shouldFailWithError('FORBIDDEN')
   })
 
@@ -96,9 +128,8 @@ describe('PageAddRevisionMutation', () => {
     await mutation
       .withVariables({
         input: {
+          ...input,
           content: '',
-          title: 'title',
-          pageId: page.id,
         },
       })
       .shouldFailWithError('BAD_USER_INPUT')
@@ -106,22 +137,22 @@ describe('PageAddRevisionMutation', () => {
     await mutation
       .withVariables({
         input: {
+          ...input,
           content: 'content',
           title: '',
-          pageId: page.id,
         },
       })
       .shouldFailWithError('BAD_USER_INPUT')
   })
 
   test('fails when database layer returns a 400er response', async () => {
-    given('PageAddRevisionMutation').returnsBadRequest()
+    given('PageCreateMutation').returnsBadRequest()
 
     await mutation.shouldFailWithError('BAD_USER_INPUT')
   })
 
   test('fails when database layer has an internal error', async () => {
-    given('PageAddRevisionMutation').hasInternalServerError()
+    given('PageCreateMutation').hasInternalServerError()
 
     await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
   })

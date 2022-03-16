@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as serloAuth from '@serlo/authorization'
+import { instanceToScope } from '@serlo/authorization'
 
 import {
   assertStringIsNotEmpty,
@@ -72,12 +73,13 @@ export const resolvers: TypeResolvers<Page> &
         guard: serloAuth.Uuid.create('PageRevision')(scope),
       })
 
-      await dataSources.model.serlo.addPageRevision({
-        userId,
-        ...input,
-      })
+      const { success, revisionId } =
+        await dataSources.model.serlo.addPageRevision({
+          userId,
+          ...input,
+        })
 
-      return { success: true }
+      return { success, revisionId, query: {} }
     },
     async checkoutRevision(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
@@ -101,6 +103,31 @@ export const resolvers: TypeResolvers<Page> &
       })
 
       return { success: true, query: {} }
+    },
+    async create(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const { content, title, instance } = input
+
+      assertStringIsNotEmpty(content, title)
+
+      await assertUserIsAuthorized({
+        userId,
+        dataSources,
+        message: 'You are not allowed to create pages.',
+        guard: serloAuth.Uuid.create('Page')(instanceToScope(instance)),
+      })
+
+      const pagePayload = await dataSources.model.serlo.createPage({
+        ...input,
+        userId,
+      })
+
+      return {
+        record: pagePayload,
+        success: pagePayload !== null,
+        query: {},
+      }
     },
     async rejectRevision(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)

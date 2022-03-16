@@ -27,6 +27,7 @@ import fetch from 'node-fetch'
 import {
   EntityRevisionTypeDecoder,
   InstanceDecoder,
+  PageDecoder,
   SubscriptionsDecoder,
   Uuid,
   UuidDecoder,
@@ -98,7 +99,10 @@ export const spec = {
         fields: t.record(t.string, t.string),
       }),
     }),
-    response: t.type({ success: t.boolean }),
+    response: t.type({
+      success: t.boolean,
+      revisionId: t.union([t.number, t.null]),
+    }),
     canBeNull: false,
   },
   LicenseQuery: {
@@ -122,7 +126,27 @@ export const spec = {
       title: t.string,
       userId: t.number,
     }),
-    response: t.type({ success: t.boolean }),
+    response: t.type({
+      success: t.boolean,
+      revisionId: t.union([t.number, t.null]),
+    }),
+    canBeNull: false,
+  },
+  PageCreateMutation: {
+    payload: t.intersection([
+      t.type({
+        content: t.string,
+        discussionsEnabled: t.boolean,
+        instance: InstanceDecoder,
+        licenseId: t.number,
+        title: t.string,
+        userId: t.number,
+      }),
+      t.partial({
+        forumId: t.union([t.number, t.null, t.undefined]),
+      }),
+    ]),
+    response: t.union([PageDecoder, t.undefined]),
     canBeNull: false,
   },
   SubjectsQuery: {
