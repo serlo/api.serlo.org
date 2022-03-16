@@ -822,6 +822,14 @@ export function createSerloModel({
     },
   })
 
+  const createPage = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('PageCreateMutation'),
+    mutate: (payload: DatabaseLayer.Payload<'PageCreateMutation'>) => {
+      return DatabaseLayer.makeRequest('PageCreateMutation', payload)
+    },
+    // TODO: makes sense to implement updateCache()?
+  })
+
   const addPageRevision = createMutation({
     decoder: DatabaseLayer.getDecoderFor('PageAddRevisionMutation'),
     mutate: (payload: DatabaseLayer.Payload<'PageAddRevisionMutation'>) => {
@@ -927,33 +935,31 @@ export function createSerloModel({
   })
 
   return {
-    createThread,
-    archiveThread,
-    createComment,
-    deleteBots,
-    deleteRegularUsers,
-    setDescription,
-    setEmail,
     addEntityRevision,
     addPageRevision,
+    archiveThread,
     checkoutEntityRevision,
     checkoutPageRevision,
+    createComment,
+    createPage,
+    createThread,
+    deleteBots,
+    deleteRegularUsers,
     getActiveAuthorIds,
     getActiveReviewerIds,
     getActivityByType,
     getAlias,
-    getLicense,
     getEntitiesMetadata,
-    getNavigationPayload,
-    getNavigation,
-    getNotificationEvent,
     getEvents,
     getEventsAfter,
+    getLicense,
+    getNavigation,
+    getNavigationPayload,
+    getNotificationEvent,
     getNotifications,
     getPotentialSpamUsers,
     getSubjects,
     getSubscriptions,
-    setSubscription,
     getThreadIds,
     getUnrevisedEntities,
     getUnrevisedEntitiesPerSubject,
@@ -961,8 +967,11 @@ export function createSerloModel({
     getUuidWithCustomDecoder,
     rejectEntityRevision,
     rejectPageRevision,
-    setUuidState,
+    setDescription,
+    setEmail,
     setNotificationState,
+    setSubscription,
+    setUuidState,
   }
 }
 

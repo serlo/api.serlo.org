@@ -339,18 +339,20 @@ export type AddGenericRevisionInput = {
 
 export type AddRevisionResponse = {
   __typename?: 'AddRevisionResponse';
+  query: Query;
+  revisionId?: Maybe<Scalars['Int']>;
   success: Scalars['Boolean'];
 };
 
 export type AddVideoRevisionInput = {
   changes: Scalars['String'];
   content: Scalars['String'];
-  description: Scalars['String'];
   entityId: Scalars['Int'];
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
   title: Scalars['String'];
+  url: Scalars['String'];
 };
 
 export type AliasInput = {
@@ -903,6 +905,15 @@ export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & 
   id: Scalars['Int'];
   instance: Instance;
   objectId: Scalars['Int'];
+};
+
+export type CreatePageInput = {
+  content: Scalars['String'];
+  discussionsEnabled: Scalars['Boolean'];
+  forumId?: InputMaybe<Scalars['Int']>;
+  instance: Instance;
+  licenseId: Scalars['Int'];
+  title: Scalars['String'];
 };
 
 export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -1613,6 +1624,13 @@ export type PageAddRevisionInput = {
   title: Scalars['String'];
 };
 
+export type PageCreateResponse = {
+  __typename?: 'PageCreateResponse';
+  query: Query;
+  record?: Maybe<Page>;
+  success: Scalars['Boolean'];
+};
+
 export type PageInfo = {
   __typename?: 'PageInfo';
   endCursor?: Maybe<Scalars['String']>;
@@ -1625,6 +1643,7 @@ export type PageMutation = {
   __typename?: 'PageMutation';
   addRevision: AddRevisionResponse;
   checkoutRevision: CheckoutRevisionResponse;
+  create: PageCreateResponse;
   rejectRevision: RejectRevisionResponse;
 };
 
@@ -1636,6 +1655,11 @@ export type PageMutationAddRevisionArgs = {
 
 export type PageMutationCheckoutRevisionArgs = {
   input: CheckoutRevisionInput;
+};
+
+
+export type PageMutationCreateArgs = {
+  input: CreatePageInput;
 };
 
 

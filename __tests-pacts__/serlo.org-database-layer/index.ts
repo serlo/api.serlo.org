@@ -154,7 +154,7 @@ const pactSpec: PactSpec = {
           userId: user.id,
           revisionType: EntityRevisionType.ArticleRevision,
         },
-        { success: true },
+        { success: true, revisionId: 123 },
       ],
       [
         {
@@ -173,7 +173,7 @@ const pactSpec: PactSpec = {
           userId: user.id,
           revisionType: EntityRevisionType.VideoRevision,
         },
-        { success: true },
+        { success: true, revisionId: 456 },
       ],
     ],
   },
@@ -190,7 +190,23 @@ const pactSpec: PactSpec = {
           pageId: page.id,
           userId: user.id,
         },
-        { success: true },
+        { success: true, revisionId: 456 },
+      ],
+    ],
+  },
+  PageCreateMutation: {
+    examples: [
+      [
+        {
+          content: 'content',
+          discussionsEnabled: false,
+          instance: Instance.De,
+          licenseId: 1,
+          title: 'title',
+          forumId: 123,
+          userId: user.id,
+        },
+        { ...page },
       ],
     ],
   },
