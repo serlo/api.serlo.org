@@ -34,8 +34,9 @@ import {
   user,
   video,
 } from '../../../__fixtures__'
-import { given, givenUuids, Client, givenUuid, nextUuid } from '../../__utils__'
+import { given, Client, givenUuid, nextUuid } from '../../__utils__'
 import { Model } from '~/internals/graphql'
+import { DatabaseLayer } from '~/model'
 import { EntityType } from '~/model/decoder'
 import { Instance } from '~/types'
 
@@ -61,9 +62,10 @@ class EntityCreateWrapper {
   public entityType: EntityType
   public mutationName: string
   public inputName: string
-  public parentId?: number
   public fields: Partial<typeof EntityCreateWrapper.ALL_POSSIBLE_FIELDS>
   public fieldsForDBLayer: { [key: string]: string }
+  public parentId?: number
+  public parent?: Model<'AbstractEntity'>
 
   constructor(
     entityType: EntityType,
@@ -74,18 +76,17 @@ class EntityCreateWrapper {
     this.entity = entity
     this.mutationName = `create${this.entityType}`
     this.inputName = `Create${this.entityType}Input`
-    this.parentId = this.setParentId()
     this.fields = this.setFields(fieldsAtApi)
     this.fieldsForDBLayer = this.setFieldsForDBlayer()
+    this.parent = this.setParent()
   }
 
-  setParentId() {
-    if (this.entityType === EntityType.CoursePage) return course.id as number
+  setParent() {
+    if (this.entityType === EntityType.CoursePage) return course
 
-    if (this.entityType === EntityType.GroupedExercise)
-      return exerciseGroup.id as number
+    if (this.entityType === EntityType.GroupedExercise) return exerciseGroup
 
-    if (this.entityType === EntityType.Solution) return exercise.id as number
+    if (this.entityType === EntityType.Solution) return exercise
 
     return undefined
   }
@@ -193,8 +194,8 @@ entityCreateTypes.forEach((entityCreateType) => {
       ...entityCreateType.fields,
     }
 
-    if (entityCreateType.parentId) {
-      input = { ...input, parentId: entityCreateType.parentId }
+    if (entityCreateType.parent) {
+      input = { ...input, parentId: entityCreateType.parent.id }
     }
 
     const mutation = new Client({ userId: user.id })
@@ -215,7 +216,8 @@ entityCreateTypes.forEach((entityCreateType) => {
       .withVariables({ input })
 
     beforeEach(() => {
-      givenUuids(user)
+      givenUuid(user)
+
       const {
         changes,
         instance,
@@ -226,40 +228,28 @@ entityCreateTypes.forEach((entityCreateType) => {
         subscribeThisByEmail,
       } = input
 
-      if (entityCreateType.parentId) {
-        given('EntityCreateMutation')
-          .withPayload({
-            input: {
-              changes,
-              instance,
-              needsReview,
-              licenseId,
-              parentId,
-              subscribeThis,
-              subscribeThisByEmail,
-              fields: entityCreateType.fieldsForDBLayer,
-            },
-            userId: user.id,
-            entityType: entityCreateType.entityType,
-          })
-          .returns(entityCreateType.entity)
-      } else {
-        given('EntityCreateMutation')
-          .withPayload({
-            input: {
-              changes,
-              instance,
-              needsReview,
-              licenseId,
-              subscribeThis,
-              subscribeThisByEmail,
-              fields: entityCreateType.fieldsForDBLayer,
-            },
-            userId: user.id,
-            entityType: entityCreateType.entityType,
-          })
-          .returns(entityCreateType.entity)
+      let payload: DatabaseLayer.Payload<'EntityCreateMutation'> = {
+        input: {
+          changes,
+          instance,
+          needsReview,
+          licenseId,
+          subscribeThis,
+          subscribeThisByEmail,
+          fields: entityCreateType.fieldsForDBLayer,
+        },
+        userId: user.id,
+        entityType: entityCreateType.entityType,
       }
+
+      if (entityCreateType.parent) {
+        givenUuid(entityCreateType.parent)
+        payload = { ...payload, input: { ...payload.input, parentId } }
+      }
+
+      given('EntityCreateMutation')
+        .withPayload(payload)
+        .returns(entityCreateType.entity)
     })
 
     test('returns { success, record } when mutation could be successfully executed', async () => {
@@ -322,5 +312,15 @@ entityCreateTypes.forEach((entityCreateType) => {
 
       await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
     })
+
+    if (entityCreateType.parent) {
+      test('fails when parent does not exists', async () => {
+        given('UuidQuery')
+          .withPayload({ id: entityCreateType.parent!.id })
+          .returnsNull()
+
+        await mutation.shouldFailWithError('BAD_USER_INPUT')
+      })
+    }
   })
 })

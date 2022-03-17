@@ -20,6 +20,8 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as serloAuth from '@serlo/authorization'
+import { UserInputError } from 'apollo-server'
+import * as t from 'io-ts'
 
 import { ModelDataSource } from '~/internals/data-source'
 import {
@@ -32,8 +34,8 @@ import {
 } from '~/internals/graphql'
 import {
   castToUuid,
-  EntityRevisionType,
   EntityDecoder,
+  EntityRevisionType,
   EntityType,
 } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
@@ -113,11 +115,11 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async createCoursePage(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title } = input
+      const { changes, content, title, parentId } = input
 
       assertStringIsNotEmpty(changes, content, title)
 
-      // Verify parentId exists
+      await verifyParentExists(parentId, dataSources)
 
       return await createEntity({
         entityType: EntityType.CoursePage,
@@ -175,11 +177,11 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async createGroupedExercise(_parent, { input }, { dataSources, userId }) {
-      const { changes, content } = input
+      const { changes, content, parentId } = input
 
       assertStringIsNotEmpty(changes, content)
 
-      //verify parentId exists
+      await verifyParentExists(parentId, dataSources)
 
       return await createEntity({
         entityType: EntityType.GroupedExercise,
@@ -189,11 +191,11 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async createSolution(_parent, { input }, { dataSources, userId }) {
-      const { changes, content } = input
+      const { changes, content, parentId } = input
 
       assertStringIsNotEmpty(changes, content)
 
-      //verify parentId exists
+      await verifyParentExists(parentId, dataSources)
 
       return await createEntity({
         entityType: EntityType.Solution,
@@ -594,4 +596,20 @@ function removeUndefinedFields(inputFields: {
   }
 
   return fields
+}
+
+async function verifyParentExists(
+  parentId: number,
+  dataSources: { model: ModelDataSource }
+) {
+  const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
+    id: parentId,
+    decoder: t.union([EntityDecoder, t.null]),
+  })
+
+  if (!parent) {
+    throw new UserInputError(
+      `No entity found for the provided parentId ${parentId}`
+    )
+  }
 }
