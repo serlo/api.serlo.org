@@ -203,7 +203,7 @@ const pactSpec: PactSpec = {
           instance: Instance.De,
           licenseId: 1,
           title: 'title',
-          forumId: 123,
+          forumId: null,
           userId: user.id,
         },
         { ...page },
