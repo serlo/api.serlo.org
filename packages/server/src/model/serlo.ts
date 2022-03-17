@@ -827,7 +827,6 @@ export function createSerloModel({
     mutate: (payload: DatabaseLayer.Payload<'PageCreateMutation'>) => {
       return DatabaseLayer.makeRequest('PageCreateMutation', payload)
     },
-    // TODO: makes sense to implement updateCache()?
   })
 
   const addPageRevision = createMutation({
