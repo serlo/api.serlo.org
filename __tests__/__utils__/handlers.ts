@@ -42,6 +42,15 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
             })
           )
         },
+        returnsNull() {
+          global.server.use(
+            createMessageHandler({
+              message: { type },
+              statusCode: 200,
+              body: null,
+            })
+          )
+        },
         isDefinedBy(resolver: MessageResolver<M, DatabaseLayer.Payload<M>>) {
           global.server.use(
             createDatabaseLayerHandler({
