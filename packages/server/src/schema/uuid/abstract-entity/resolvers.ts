@@ -30,13 +30,26 @@ import {
   assertUserIsAuthorized,
   createNamespace,
   InterfaceResolvers,
+  Model,
   Mutations,
 } from '~/internals/graphql'
 import {
+  castTo,
   castToUuid,
-  EntityDecoder,
   EntityRevisionType,
+  EntityDecoder,
+  TaxonomyTermDecoder,
   EntityType,
+  AppletDecoder,
+  ArticleDecoder,
+  CourseDecoder,
+  CoursePageDecoder,
+  EventDecoder,
+  ExerciseDecoder,
+  ExerciseGroupDecoder,
+  GroupedExerciseDecoder,
+  SolutionDecoder,
+  VideoDecoder,
 } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { Instance } from '~/types'
@@ -225,7 +238,15 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addAppletRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, url, metaDescription, metaTitle } = input
+      const {
+        entityId,
+        changes,
+        content,
+        title,
+        url,
+        metaDescription,
+        metaTitle,
+      } = input
 
       assertStringIsNotEmpty(
         changes,
@@ -236,15 +257,28 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         metaTitle
       )
 
+      const entity = await verifyEntity(
+        entityId,
+        dataSources,
+        EntityType.Applet
+      )
+
+      const isAutoreviewEntity = await verifyAutoreviewEntity(
+        castTo(AppletDecoder, entity),
+        dataSources
+      )
+
       return await addRevision({
         revisionType: EntityRevisionType.AppletRevision,
         input,
         dataSources,
         userId,
+        isAutoreviewEntity,
       })
     },
     async addArticleRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, metaDescription, metaTitle } = input
+      const { entityId, changes, content, title, metaDescription, metaTitle } =
+        input
 
       assertStringIsNotEmpty(
         changes,
@@ -254,17 +288,40 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         metaTitle
       )
 
+      const entity = await verifyEntity(
+        entityId,
+        dataSources,
+        EntityType.Article
+      )
+
+      const isAutoreviewEntity = await verifyAutoreviewEntity(
+        castTo(ArticleDecoder, entity),
+        dataSources
+      )
+
       return await addRevision({
         revisionType: EntityRevisionType.ArticleRevision,
         input,
         dataSources,
         userId,
+        isAutoreviewEntity,
       })
     },
     async addCourseRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, metaDescription } = input
+      const { entityId, changes, content, title, metaDescription } = input
 
       assertStringIsNotEmpty(changes, content, title, metaDescription)
+
+      const entity = await verifyEntity(
+        entityId,
+        dataSources,
+        EntityType.Course
+      )
+
+      const isAutoreviewEntity = await verifyAutoreviewEntity(
+        castTo(CourseDecoder, entity),
+        dataSources
+      )
 
       // TODO: the logic of this and others transformedInput's should go to DB Layer
       const transformedInput = {
@@ -278,22 +335,41 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         input: transformedInput,
         dataSources,
         userId,
+        isAutoreviewEntity,
       })
     },
     async addCoursePageRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title } = input
+      const { entityId, changes, content, title } = input
 
       assertStringIsNotEmpty(changes, content, title)
+
+      const entity = await verifyEntity(
+        entityId,
+        dataSources,
+        EntityType.CoursePage
+      )
+
+      const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: castTo(CoursePageDecoder, entity).parentId,
+        decoder: CourseDecoder,
+      })
+
+      const isAutoreviewEntity = await verifyAutoreviewEntity(
+        parent,
+        dataSources
+      )
 
       return await addRevision({
         revisionType: EntityRevisionType.CoursePageRevision,
         input,
         dataSources,
         userId,
+        isAutoreviewEntity,
       })
     },
     async addEventRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, metaDescription, metaTitle } = input
+      const { entityId, changes, content, title, metaDescription, metaTitle } =
+        input
 
       assertStringIsNotEmpty(
         changes,
@@ -303,23 +379,42 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         metaTitle
       )
 
+      const entity = await verifyEntity(entityId, dataSources, EntityType.Event)
+
+      const isAutoreviewEntity = await verifyAutoreviewEntity(
+        castTo(EventDecoder, entity),
+        dataSources
+      )
       return await addRevision({
         revisionType: EntityRevisionType.EventRevision,
         input,
         dataSources,
         userId,
+        isAutoreviewEntity,
       })
     },
     async addExerciseRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content } = input
+      const { entityId, changes, content } = input
 
       assertStringIsNotEmpty(changes, content)
+
+      const entity = await verifyEntity(
+        entityId,
+        dataSources,
+        EntityType.Exercise
+      )
+
+      const isAutoreviewEntity = await verifyAutoreviewEntity(
+        castTo(ExerciseDecoder, entity),
+        dataSources
+      )
 
       return await addRevision({
         revisionType: EntityRevisionType.ExerciseRevision,
         input,
         dataSources,
         userId,
+        isAutoreviewEntity,
       })
     },
     async addExerciseGroupRevision(
@@ -327,9 +422,20 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       { input },
       { dataSources, userId }
     ) {
-      const { changes, content } = input
+      const { entityId, changes, content } = input
 
       assertStringIsNotEmpty(changes, content)
+
+      const entity = await verifyEntity(
+        entityId,
+        dataSources,
+        EntityType.ExerciseGroup
+      )
+
+      const isAutoreviewEntity = await verifyAutoreviewEntity(
+        castTo(ExerciseGroupDecoder, entity),
+        dataSources
+      )
 
       const cohesive = input.cohesive === true ? 'true' : 'false'
       const transformedInput: Omit<typeof input, 'cohesive'> & {
@@ -341,6 +447,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         input: transformedInput,
         dataSources,
         userId,
+        isAutoreviewEntity,
       })
     },
     async addGroupedExerciseRevision(
@@ -348,33 +455,76 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       { input },
       { dataSources, userId }
     ) {
-      const { changes, content } = input
+      const { entityId, changes, content } = input
 
       assertStringIsNotEmpty(changes, content)
+
+      const entity = await verifyEntity(
+        entityId,
+        dataSources,
+        EntityType.GroupedExercise
+      )
+
+      const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: castTo(GroupedExerciseDecoder, entity).parentId,
+        decoder: ExerciseGroupDecoder,
+      })
+
+      const isAutoreviewEntity = await verifyAutoreviewEntity(
+        parent,
+        dataSources
+      )
+
+      // TODO: What about solutionId?
 
       return await addRevision({
         revisionType: EntityRevisionType.GroupedExerciseRevision,
         input,
         dataSources,
         userId,
+        isAutoreviewEntity,
       })
     },
     async addSolutionRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content } = input
+      const { entityId, changes, content } = input
 
       assertStringIsNotEmpty(changes, content)
+
+      const entity = await verifyEntity(
+        entityId,
+        dataSources,
+        EntityType.Solution
+      )
+
+      const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: castTo(SolutionDecoder, entity).parentId,
+        decoder: ExerciseDecoder,
+      })
+
+      const isAutoreviewEntity = await verifyAutoreviewEntity(
+        parent,
+        dataSources
+      )
 
       return await addRevision({
         revisionType: EntityRevisionType.SolutionRevision,
         input,
         dataSources,
         userId,
+        isAutoreviewEntity,
       })
     },
     async addVideoRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, url } = input
+      const { entityId, changes, content, title, url } = input
 
       assertStringIsNotEmpty(changes, content, title, url)
+
+      const entity = await verifyEntity(entityId, dataSources, EntityType.Video)
+
+      const isAutoreviewEntity = await verifyAutoreviewEntity(
+        castTo(VideoDecoder, entity),
+        dataSources
+      )
 
       const transformedInput = {
         ...input,
@@ -388,6 +538,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         input: transformedInput,
         dataSources,
         userId,
+        isAutoreviewEntity,
       })
     },
     async checkoutRevision(_parent, { input }, { dataSources, userId }) {
@@ -473,6 +624,7 @@ interface AbstractEntityAddRevisionPayload {
   }
   dataSources: { model: ModelDataSource }
   userId: number | null
+  isAutoreviewEntity: boolean
 }
 
 async function createEntity({
@@ -533,6 +685,7 @@ async function addRevision({
   input,
   dataSources,
   userId,
+  isAutoreviewEntity,
 }: AbstractEntityAddRevisionPayload) {
   assertUserIsAuthenticated(userId)
 
@@ -556,6 +709,15 @@ async function addRevision({
     guard: serloAuth.Uuid.create('EntityRevision')(scope),
   })
 
+  if (!isAutoreviewEntity && !needsReview) {
+    await assertUserIsAuthorized({
+      userId,
+      dataSources,
+      message: 'You are not allowed to skip the reviewing process.',
+      guard: serloAuth.Entity.checkoutRevision(scope),
+    })
+  }
+
   const fields = removeUndefinedFields(
     inputFields as { [key: string]: string | undefined }
   )
@@ -563,7 +725,7 @@ async function addRevision({
   const inputPayload = {
     changes,
     entityId,
-    needsReview,
+    needsReview: isAutoreviewEntity ? false : needsReview,
     subscribeThis,
     subscribeThisByEmail,
     fields,
@@ -580,6 +742,60 @@ async function addRevision({
     success,
     query: {},
   }
+}
+
+async function verifyEntity(
+  entityId: number,
+  dataSources: { model: ModelDataSource },
+  entityType: EntityType
+) {
+  const entity = await dataSources.model.serlo.getUuid({ id: entityId })
+
+  if (entity === null) {
+    throw 'Nothing found for the provided entityId'
+  }
+
+  if (!EntityDecoder.is(entity)) {
+    throw 'No entity found for the provided entityId'
+  }
+
+  if (entity.__typename !== entityType) {
+    throw `The entity of type ${entity.__typename} cannot have revision of another type`
+  }
+
+  return entity
+}
+
+async function verifyAutoreviewEntity(
+  entity:
+    | Model<'Applet'>
+    | Model<'Article'>
+    // | Model<'CoursePage'>
+    | Model<'Course'>
+    | Model<'Event'>
+    | Model<'ExerciseGroup'>
+    | Model<'Exercise'>
+    // | Model<'GroupedExercise'>
+    // | Model<'Solution'>
+    | Model<'Video'>,
+  dataSources: { model: ModelDataSource }
+): Promise<boolean> {
+  const taxonomyTermIds = entity.taxonomyTermIds as number[]
+
+  for (const id of taxonomyTermIds) {
+    // 106082 = sandkasten. TODO: make it configurable
+    if ([106082].includes(id)) return true
+
+    const taxonomyTerm = await dataSources.model.serlo.getUuidWithCustomDecoder(
+      { id, decoder: TaxonomyTermDecoder }
+    )
+
+    const parentId = taxonomyTerm.parentId
+
+    if (parentId && [106082].includes(parentId)) return true
+  }
+
+  return false
 }
 
 function removeUndefinedFields(inputFields: {
