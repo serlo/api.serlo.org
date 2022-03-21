@@ -22,7 +22,7 @@
 import { gql } from 'apollo-server'
 
 import { user } from '../../../__fixtures__'
-import { given, Client, givenUuid } from '../../__utils__'
+import { given, Client } from '../../__utils__'
 
 const mutation = new Client({ userId: user.id }).prepareQuery({
   query: gql`
@@ -38,7 +38,7 @@ const mutation = new Client({ userId: user.id }).prepareQuery({
 })
 
 beforeEach(() => {
-  givenUuid(user)
+  given('UuidQuery').for(user)
 })
 
 test('returns "{ success: true }" when mutation could be successfully executed', async () => {
