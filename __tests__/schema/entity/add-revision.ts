@@ -285,7 +285,7 @@ entityAddRevisionTypes.forEach((entityAddRevisionType) => {
         .withVariables({
           input: {
             ...input,
-            content: '',
+            changes: '',
           },
         })
         .shouldFailWithError('BAD_USER_INPUT')
