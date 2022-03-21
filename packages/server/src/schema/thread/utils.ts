@@ -113,7 +113,7 @@ export function encodeThreadId(firstCommentId: number) {
 
 export function decodeThreadId(threadId: string): number {
   const result = parseInt(
-    Buffer.from(threadId, 'base64').toString('utf-8').substr(1)
+    Buffer.from(threadId, 'base64').toString('utf-8').substring(1)
   )
   if (Number.isNaN(result) || result <= 0) {
     throw new UserInputError('you need to provide a valid thread id (string)')
