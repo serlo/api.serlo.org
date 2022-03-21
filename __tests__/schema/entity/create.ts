@@ -31,6 +31,7 @@ import {
   exerciseGroup,
   groupedExercise,
   solution,
+  taxonomyTermSubject,
   user,
   video,
 } from '../../../__fixtures__'
@@ -64,8 +65,8 @@ class EntityCreateWrapper {
   public inputName: string
   public fields: Partial<typeof EntityCreateWrapper.ALL_POSSIBLE_FIELDS>
   public fieldsForDBLayer: { [key: string]: string }
-  public parentId?: number
   public parent?: Model<'AbstractEntity'>
+  public taxonomyTerm?: Model<'TaxonomyTerm'>
 
   constructor(
     entityType: EntityType,
@@ -79,6 +80,7 @@ class EntityCreateWrapper {
     this.fields = this.setFields(fieldsAtApi)
     this.fieldsForDBLayer = this.setFieldsForDBlayer()
     this.parent = this.setParent()
+    this.taxonomyTerm = this.setTaxonomyTerm()
   }
 
   setParent() {
@@ -89,6 +91,16 @@ class EntityCreateWrapper {
     if (this.entityType === EntityType.Solution) return exercise
 
     return undefined
+  }
+
+  setTaxonomyTerm() {
+    if (
+      this.entityType === EntityType.CoursePage ||
+      this.entityType === EntityType.GroupedExercise ||
+      this.entityType === EntityType.Solution
+    )
+      return undefined
+    return taxonomyTermSubject
   }
 
   setFields(fields: (keyof typeof EntityCreateWrapper.ALL_POSSIBLE_FIELDS)[]) {
@@ -177,6 +189,7 @@ entityCreateTypes.forEach((entityCreateType) => {
       subscribeThis: boolean
       subscribeThisByEmail: boolean
       parentId?: number
+      taxonomyTermId?: number
       cohesive?: boolean
       content?: string
       description?: string
@@ -196,6 +209,10 @@ entityCreateTypes.forEach((entityCreateType) => {
 
     if (entityCreateType.parent) {
       input = { ...input, parentId: entityCreateType.parent.id }
+    }
+
+    if (entityCreateType.taxonomyTerm) {
+      input = { ...input, taxonomyTermId: entityCreateType.taxonomyTerm.id }
     }
 
     const mutation = new Client({ userId: user.id })
@@ -223,6 +240,7 @@ entityCreateTypes.forEach((entityCreateType) => {
         instance,
         licenseId,
         parentId,
+        taxonomyTermId,
         needsReview,
         subscribeThis,
         subscribeThisByEmail,
@@ -245,6 +263,11 @@ entityCreateTypes.forEach((entityCreateType) => {
       if (entityCreateType.parent) {
         givenUuid(entityCreateType.parent)
         payload = { ...payload, input: { ...payload.input, parentId } }
+      }
+
+      if (entityCreateType.taxonomyTerm) {
+        givenUuid(entityCreateType.taxonomyTerm)
+        payload = { ...payload, input: { ...payload.input, taxonomyTermId } }
       }
 
       given('EntityCreateMutation')
