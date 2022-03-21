@@ -22,19 +22,13 @@
 import { gql } from 'apollo-server'
 
 import { article, taxonomyTermSubject } from '../../__fixtures__'
-import {
-  Client,
-  given,
-  givenUuid,
-  getTypenameAndId,
-  nextUuid,
-} from '../__utils__'
+import { Client, given, getTypenameAndId, nextUuid } from '../__utils__'
 import { encodeId, encodeToBase64 } from '~/internals/graphql'
 import { Instance } from '~/types'
 
 describe('SubjectsQuery', () => {
   test('endpoint "subjects" returns list of all subjects for an instance', async () => {
-    givenUuid(taxonomyTermSubject)
+    given('UuidQuery').for(taxonomyTermSubject)
 
     given('SubjectsQuery')
       .withPayload({})
@@ -75,7 +69,7 @@ describe('SubjectsQuery', () => {
 
   describe('endpoint "subject"', () => {
     test('returns one subject', async () => {
-      givenUuid(taxonomyTermSubject)
+      given('UuidQuery').for(taxonomyTermSubject)
 
       given('SubjectsQuery')
         .withPayload({})
@@ -173,7 +167,7 @@ describe('SubjectsQuery', () => {
 
 describe('Subjects', () => {
   test('property "id" returns encoded id of subject', async () => {
-    givenUuid(taxonomyTermSubject)
+    given('UuidQuery').for(taxonomyTermSubject)
 
     given('SubjectsQuery')
       .withPayload({})
@@ -211,7 +205,7 @@ describe('Subjects', () => {
   })
 
   test('property "unrevisedEntities" returns list of unrevisedEntities', async () => {
-    givenUuid(article)
+    given('UuidQuery').for(article)
     given('SubjectsQuery')
       .withPayload({})
       .returns({
@@ -259,8 +253,7 @@ describe('Subjects', () => {
 })
 
 test('AbstractEntity.subject', async () => {
-  givenUuid(article)
-  givenUuid(taxonomyTermSubject)
+  given('UuidQuery').for(article, taxonomyTermSubject)
 
   await new Client()
     .prepareQuery({
