@@ -105,8 +105,11 @@ export function decodeFromBase64(text: string) {
   return Buffer.from(text, 'base64').toString('utf8')
 }
 
-export function assertStringIsNotEmpty(...strings: string[]) {
-  strings.forEach((str) => {
-    if (!str) throw new UserInputError(`Argument ${str} may not be empty`)
-  })
+export function assertArgumentIsNotEmpty(args: { [key: string]: unknown }) {
+  for (const [key, value] of Object.entries(args)) {
+    if (!value) {
+      // possible improvement: collect all empty values and put in message their corresponding keys
+      throw new UserInputError(`Argument ${key} may not be empty`)
+    }
+  }
 }
