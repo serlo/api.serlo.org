@@ -878,6 +878,7 @@ export type CreateAppletInput = {
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
+  taxonomyTermId: Scalars['Int'];
   title: Scalars['String'];
   url: Scalars['String'];
 };
@@ -892,6 +893,7 @@ export type CreateArticleInput = {
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
+  taxonomyTermId: Scalars['Int'];
   title: Scalars['String'];
 };
 
@@ -915,6 +917,7 @@ export type CreateCourseInput = {
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
+  taxonomyTermId: Scalars['Int'];
   title: Scalars['String'];
 };
 
@@ -979,6 +982,7 @@ export type CreateEventInput = {
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
+  taxonomyTermId: Scalars['Int'];
   title: Scalars['String'];
 };
 
@@ -991,6 +995,7 @@ export type CreateExerciseGroupInput = {
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
+  taxonomyTermId: Scalars['Int'];
 };
 
 export type CreateExerciseInput = {
@@ -1001,6 +1006,7 @@ export type CreateExerciseInput = {
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
+  taxonomyTermId: Scalars['Int'];
 };
 
 export type CreateGroupedExerciseInput = {
@@ -1074,6 +1080,7 @@ export type CreateVideoInput = {
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
+  taxonomyTermId: Scalars['Int'];
   title: Scalars['String'];
   url: Scalars['String'];
 };

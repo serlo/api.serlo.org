@@ -98,6 +98,8 @@ input CreateAppletInput {
   licenseId: Int!
   needsReview: Boolean!
 
+  taxonomyTermId: Int!
+
   content: String!
   metaDescription: String!
   metaTitle: String!
@@ -114,6 +116,8 @@ input CreateArticleInput {
   licenseId: Int!
   needsReview: Boolean!
 
+  taxonomyTermId: Int!
+
   content: String!
   metaDescription: String!
   metaTitle: String!
@@ -128,6 +132,8 @@ input CreateCourseInput {
   instance: Instance!
   licenseId: Int!
   needsReview: Boolean!
+
+  taxonomyTermId: Int!
 
   content: String!
   metaDescription: String!
@@ -158,6 +164,8 @@ input CreateEventInput {
   licenseId: Int!
   needsReview: Boolean!
 
+  taxonomyTermId: Int!
+
   content: String!
   metaDescription: String!
   metaTitle: String!
@@ -173,6 +181,8 @@ input CreateExerciseInput {
   licenseId: Int!
   needsReview: Boolean!
 
+  taxonomyTermId: Int!
+
   content: String!
 }
 
@@ -184,6 +194,8 @@ input CreateExerciseGroupInput {
   instance: Instance!
   licenseId: Int!
   needsReview: Boolean!
+
+  taxonomyTermId: Int!
 
   cohesive: Boolean!
   content: String!
@@ -225,6 +237,8 @@ input CreateVideoInput {
   instance: Instance!
   licenseId: Int!
   needsReview: Boolean!
+
+  taxonomyTermId: Int!
 
   content: String!
   title: String!

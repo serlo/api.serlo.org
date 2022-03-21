@@ -123,6 +123,7 @@ export const spec = {
         }),
         t.partial({
           parentId: t.number,
+          taxonomyTermId: t.number,
         }),
       ]),
     }),

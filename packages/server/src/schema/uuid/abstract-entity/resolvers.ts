@@ -443,6 +443,7 @@ export interface AbstractEntityCreatePayload {
     licenseId: number
     needsReview: boolean
     parentId?: number
+    taxonomyTermId?: number
     cohesive?: 'true' | 'false'
     content?: string
     description?: string
@@ -484,13 +485,14 @@ async function createEntity({
   assertUserIsAuthenticated(userId)
 
   const {
+    changes,
     instance,
     licenseId,
-    parentId,
-    changes,
     needsReview,
+    parentId,
     subscribeThis,
     subscribeThisByEmail,
+    taxonomyTermId,
     ...inputFields
   } = input
 
@@ -513,6 +515,7 @@ async function createEntity({
     parentId,
     subscribeThis,
     subscribeThisByEmail,
+    taxonomyTermId,
     fields,
   }
   const entity = await dataSources.model.serlo.createEntity({

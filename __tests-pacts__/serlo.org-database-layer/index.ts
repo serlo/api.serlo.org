@@ -190,6 +190,7 @@ const pactSpec: PactSpec = {
             subscribeThis: false,
             subscribeThisByEmail: false,
             needsReview: true,
+            taxonomyTermId: 5,
             fields: {
               title: 'title',
               content: 'content',
@@ -203,7 +204,7 @@ const pactSpec: PactSpec = {
       ],
       [
         {
-          entityType: EntityType.Video,
+          entityType: EntityType.CoursePage,
           userId: user.id,
           input: {
             changes: 'changes',
@@ -212,14 +213,14 @@ const pactSpec: PactSpec = {
             subscribeThis: false,
             subscribeThisByEmail: false,
             needsReview: true,
+            parentId: course.id,
             fields: {
               title: 'title',
               content: 'content',
-              description: 'description',
             },
           },
         },
-        video,
+        coursePage,
       ],
     ],
   },
