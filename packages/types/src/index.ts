@@ -264,8 +264,8 @@ export type AddAppletRevisionInput = {
   changes: Scalars['String'];
   content: Scalars['String'];
   entityId: Scalars['Int'];
-  metaDescription: Scalars['String'];
-  metaTitle: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
@@ -277,8 +277,8 @@ export type AddArticleRevisionInput = {
   changes: Scalars['String'];
   content: Scalars['String'];
   entityId: Scalars['Int'];
-  metaDescription: Scalars['String'];
-  metaTitle: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
@@ -297,9 +297,9 @@ export type AddCoursePageRevisionInput = {
 
 export type AddCourseRevisionInput = {
   changes: Scalars['String'];
-  content: Scalars['String'];
+  content?: InputMaybe<Scalars['String']>;
   entityId: Scalars['Int'];
-  metaDescription: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
@@ -310,8 +310,8 @@ export type AddEventRevisionInput = {
   changes: Scalars['String'];
   content: Scalars['String'];
   entityId: Scalars['Int'];
-  metaDescription: Scalars['String'];
-  metaTitle: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
@@ -869,8 +869,8 @@ export type CreateAppletInput = {
   content: Scalars['String'];
   instance: Instance;
   licenseId: Scalars['Int'];
-  metaDescription: Scalars['String'];
-  metaTitle: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
@@ -884,8 +884,8 @@ export type CreateArticleInput = {
   content: Scalars['String'];
   instance: Instance;
   licenseId: Scalars['Int'];
-  metaDescription: Scalars['String'];
-  metaTitle: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
@@ -906,10 +906,10 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & Instanc
 
 export type CreateCourseInput = {
   changes: Scalars['String'];
-  content: Scalars['String'];
+  content?: InputMaybe<Scalars['String']>;
   instance: Instance;
   licenseId: Scalars['Int'];
-  metaDescription: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
@@ -973,8 +973,8 @@ export type CreateEventInput = {
   content: Scalars['String'];
   instance: Instance;
   licenseId: Scalars['Int'];
-  metaDescription: Scalars['String'];
-  metaTitle: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];

@@ -2,7 +2,7 @@ import type { ModelOf } from '~/internals/model'
 import type { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import type { Context } from '~/internals/graphql/context';
 export type Maybe<T> = T | null;
-export type InputMaybe<T> = Maybe<T>;
+export type InputMaybe<T> = undefined | T;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -268,8 +268,8 @@ export type AddAppletRevisionInput = {
   changes: Scalars['String'];
   content: Scalars['String'];
   entityId: Scalars['Int'];
-  metaDescription: Scalars['String'];
-  metaTitle: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
@@ -281,8 +281,8 @@ export type AddArticleRevisionInput = {
   changes: Scalars['String'];
   content: Scalars['String'];
   entityId: Scalars['Int'];
-  metaDescription: Scalars['String'];
-  metaTitle: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
@@ -301,9 +301,9 @@ export type AddCoursePageRevisionInput = {
 
 export type AddCourseRevisionInput = {
   changes: Scalars['String'];
-  content: Scalars['String'];
+  content?: InputMaybe<Scalars['String']>;
   entityId: Scalars['Int'];
-  metaDescription: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
@@ -314,8 +314,8 @@ export type AddEventRevisionInput = {
   changes: Scalars['String'];
   content: Scalars['String'];
   entityId: Scalars['Int'];
-  metaDescription: Scalars['String'];
-  metaTitle: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
@@ -873,8 +873,8 @@ export type CreateAppletInput = {
   content: Scalars['String'];
   instance: Instance;
   licenseId: Scalars['Int'];
-  metaDescription: Scalars['String'];
-  metaTitle: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
@@ -888,8 +888,8 @@ export type CreateArticleInput = {
   content: Scalars['String'];
   instance: Instance;
   licenseId: Scalars['Int'];
-  metaDescription: Scalars['String'];
-  metaTitle: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
@@ -910,10 +910,10 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & Instanc
 
 export type CreateCourseInput = {
   changes: Scalars['String'];
-  content: Scalars['String'];
+  content?: InputMaybe<Scalars['String']>;
   instance: Instance;
   licenseId: Scalars['Int'];
-  metaDescription: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
@@ -977,8 +977,8 @@ export type CreateEventInput = {
   content: Scalars['String'];
   instance: Instance;
   licenseId: Scalars['Int'];
-  metaDescription: Scalars['String'];
-  metaTitle: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];

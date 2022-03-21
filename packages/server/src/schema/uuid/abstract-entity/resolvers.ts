@@ -60,23 +60,13 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   },
   EntityMutation: {
     async createApplet(_parent, { input }, { dataSources, userId }) {
-      const {
-        changes,
-        content,
-        title,
-        url,
-        metaDescription,
-        metaTitle,
-        taxonomyTermId,
-      } = input
+      const { changes, content, title, url, taxonomyTermId } = input
 
       assertArgumentIsNotEmpty({
         changes,
         content,
         title,
         url,
-        metaDescription,
-        metaTitle,
       })
 
       await assertTaxonomyTermExists(taxonomyTermId, dataSources)
@@ -89,21 +79,12 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async createArticle(_parent, { input }, { dataSources, userId }) {
-      const {
-        changes,
-        content,
-        title,
-        metaDescription,
-        metaTitle,
-        taxonomyTermId,
-      } = input
+      const { changes, content, title, taxonomyTermId } = input
 
       assertArgumentIsNotEmpty({
         changes,
         content,
         title,
-        metaDescription,
-        metaTitle,
       })
 
       await assertTaxonomyTermExists(taxonomyTermId, dataSources)
@@ -116,16 +97,16 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async createCourse(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, metaDescription, taxonomyTermId } = input
+      const { changes, title, content, taxonomyTermId } = input
 
-      assertArgumentIsNotEmpty({ changes, content, title, metaDescription })
+      assertArgumentIsNotEmpty({ changes, title })
 
       await assertTaxonomyTermExists(taxonomyTermId, dataSources)
 
       // TODO: the logic of this and others transformedInput's should go to DB Layer
       const transformedInput = {
         ...input,
-        description: input.content,
+        description: content,
         content: undefined,
       }
 
@@ -151,21 +132,12 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async createEvent(_parent, { input }, { dataSources, userId }) {
-      const {
-        changes,
-        content,
-        title,
-        metaDescription,
-        metaTitle,
-        taxonomyTermId,
-      } = input
+      const { changes, content, title, taxonomyTermId } = input
 
       assertArgumentIsNotEmpty({
         changes,
         content,
         title,
-        metaDescription,
-        metaTitle,
       })
 
       await assertTaxonomyTermExists(taxonomyTermId, dataSources)
@@ -262,15 +234,13 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addAppletRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, url, metaDescription, metaTitle } = input
+      const { changes, content, title, url } = input
 
       assertArgumentIsNotEmpty({
         changes,
         content,
         title,
         url,
-        metaDescription,
-        metaTitle,
       })
 
       return await addRevision({
@@ -281,14 +251,12 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addArticleRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, metaDescription, metaTitle } = input
+      const { changes, content, title } = input
 
       assertArgumentIsNotEmpty({
         changes,
         content,
         title,
-        metaDescription,
-        metaTitle,
       })
 
       return await addRevision({
@@ -299,14 +267,14 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addCourseRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, metaDescription } = input
+      const { changes, content, title } = input
 
-      assertArgumentIsNotEmpty({ changes, content, title, metaDescription })
+      assertArgumentIsNotEmpty({ changes, title })
 
       // TODO: the logic of this and others transformedInput's should go to DB Layer
       const transformedInput = {
         ...input,
-        description: input.content,
+        description: content,
         content: undefined,
       }
 
@@ -330,14 +298,12 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addEventRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, metaDescription, metaTitle } = input
+      const { changes, content, title } = input
 
       assertArgumentIsNotEmpty({
         changes,
         content,
         title,
-        metaDescription,
-        metaTitle,
       })
 
       return await addRevision({
