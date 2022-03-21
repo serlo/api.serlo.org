@@ -37,6 +37,7 @@ import {
   EntityDecoder,
   EntityRevisionType,
   EntityType,
+  TaxonomyTermDecoder,
 } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { Instance } from '~/types'
@@ -59,7 +60,15 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   },
   EntityMutation: {
     async createApplet(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, url, metaDescription, metaTitle } = input
+      const {
+        changes,
+        content,
+        title,
+        url,
+        metaDescription,
+        metaTitle,
+        taxonomyTermId,
+      } = input
 
       assertStringIsNotEmpty(
         changes,
@@ -70,6 +79,8 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         metaTitle
       )
 
+      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
+
       return await createEntity({
         entityType: EntityType.Applet,
         input,
@@ -78,7 +89,14 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async createArticle(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, metaDescription, metaTitle } = input
+      const {
+        changes,
+        content,
+        title,
+        metaDescription,
+        metaTitle,
+        taxonomyTermId,
+      } = input
 
       assertStringIsNotEmpty(
         changes,
@@ -88,6 +106,8 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         metaTitle
       )
 
+      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
+
       return await createEntity({
         entityType: EntityType.Article,
         input,
@@ -96,9 +116,11 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async createCourse(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, metaDescription } = input
+      const { changes, content, title, metaDescription, taxonomyTermId } = input
 
       assertStringIsNotEmpty(changes, content, title, metaDescription)
+
+      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
 
       // TODO: the logic of this and others transformedInput's should go to DB Layer
       const transformedInput = {
@@ -119,7 +141,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
 
       assertStringIsNotEmpty(changes, content, title)
 
-      await verifyParentExists(parentId, dataSources)
+      await assertParentExists(parentId, dataSources)
 
       return await createEntity({
         entityType: EntityType.CoursePage,
@@ -129,7 +151,14 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async createEvent(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, metaDescription, metaTitle } = input
+      const {
+        changes,
+        content,
+        title,
+        metaDescription,
+        metaTitle,
+        taxonomyTermId,
+      } = input
 
       assertStringIsNotEmpty(
         changes,
@@ -139,6 +168,8 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         metaTitle
       )
 
+      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
+
       return await createEntity({
         entityType: EntityType.Event,
         input,
@@ -147,9 +178,11 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async createExercise(_parent, { input }, { dataSources, userId }) {
-      const { changes, content } = input
+      const { changes, content, taxonomyTermId } = input
 
       assertStringIsNotEmpty(changes, content)
+
+      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
 
       return await createEntity({
         entityType: EntityType.Exercise,
@@ -159,9 +192,11 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async createExerciseGroup(_parent, { input }, { dataSources, userId }) {
-      const { changes, content } = input
+      const { changes, content, taxonomyTermId } = input
 
       assertStringIsNotEmpty(changes, content)
+
+      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
 
       // TODO: this logic should go to DBLayer
       const cohesive = input.cohesive === true ? 'true' : 'false'
@@ -181,7 +216,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
 
       assertStringIsNotEmpty(changes, content)
 
-      await verifyParentExists(parentId, dataSources)
+      await assertParentExists(parentId, dataSources)
 
       return await createEntity({
         entityType: EntityType.GroupedExercise,
@@ -195,7 +230,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
 
       assertStringIsNotEmpty(changes, content)
 
-      await verifyParentExists(parentId, dataSources)
+      await assertParentExists(parentId, dataSources)
 
       return await createEntity({
         entityType: EntityType.Solution,
@@ -205,9 +240,11 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async createVideo(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, url } = input
+      const { changes, content, title, url, taxonomyTermId } = input
 
       assertStringIsNotEmpty(changes, content, title, url)
+
+      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
 
       // TODO: logic should go to DBLayer
       const transformedInput = {
@@ -601,7 +638,7 @@ function removeUndefinedFields(inputFields: {
   return fields
 }
 
-async function verifyParentExists(
+async function assertParentExists(
   parentId: number,
   dataSources: { model: ModelDataSource }
 ) {
@@ -613,6 +650,22 @@ async function verifyParentExists(
   if (!parent) {
     throw new UserInputError(
       `No entity found for the provided parentId ${parentId}`
+    )
+  }
+}
+
+async function assertTaxonomyTermExists(
+  taxonomyTermId: number,
+  dataSources: { model: ModelDataSource }
+) {
+  const taxonomyTerm = await dataSources.model.serlo.getUuidWithCustomDecoder({
+    id: taxonomyTermId,
+    decoder: t.union([TaxonomyTermDecoder, t.null]),
+  })
+
+  if (!taxonomyTerm) {
+    throw new UserInputError(
+      `No taxonomy term found for the provided parentId ${taxonomyTermId}`
     )
   }
 }
