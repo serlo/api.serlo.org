@@ -22,7 +22,7 @@
 import { gql } from 'apollo-server'
 
 import { user, user2 } from '../../../__fixtures__'
-import { getTypenameAndId, givenUuids, given, Client } from '../../__utils__'
+import { getTypenameAndId, given, Client } from '../../__utils__'
 
 const query = new Client().prepareQuery({
   query: gql`
@@ -41,7 +41,7 @@ const query = new Client().prepareQuery({
 })
 
 beforeEach(() => {
-  givenUuids(user, user2)
+  given('UuidQuery').for(user, user2)
   given('UserPotentialSpamUsersQuery')
     .withPayload({ first: 101, after: null })
     .returns({ userIds: [user.id, user2.id] })
