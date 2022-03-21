@@ -345,5 +345,15 @@ entityCreateTypes.forEach((entityCreateType) => {
         await mutation.shouldFailWithError('BAD_USER_INPUT')
       })
     }
+
+    if (entityCreateType.taxonomyTerm) {
+      test('fails when taxonomy term does not exists', async () => {
+        given('UuidQuery')
+          .withPayload({ id: entityCreateType.taxonomyTerm!.id })
+          .returnsNull()
+
+        await mutation.shouldFailWithError('BAD_USER_INPUT')
+      })
+    }
   })
 })

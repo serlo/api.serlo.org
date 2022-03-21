@@ -744,7 +744,22 @@ export function createSerloModel({
     mutate: (payload: DatabaseLayer.Payload<'EntityCreateMutation'>) => {
       return DatabaseLayer.makeRequest('EntityCreateMutation', payload)
     },
-    // TODO: does it make sense to implement updateCache?
+    async updateCache({ input }, newEntity) {
+      if (newEntity) {
+        const { parentId, taxonomyTermId } = input
+        if (parentId) {
+          await getUuid._querySpec.removeCache({ payload: { id: parentId } })
+        }
+        if (taxonomyTermId) {
+          await getUuid._querySpec.removeCache({
+            payload: { id: taxonomyTermId },
+          })
+        }
+        await getUnrevisedEntities._querySpec.removeCache({
+          payload: undefined,
+        })
+      }
+    },
   })
 
   const addEntityRevision = createMutation({
