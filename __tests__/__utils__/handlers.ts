@@ -30,6 +30,9 @@ import { DatabaseLayer } from '~/model'
 import { Uuid } from '~/model/decoder'
 
 export function given<M extends DatabaseLayer.MessageType>(type: M) {
+  type IdResponse = DatabaseLayer.Response<M> &
+    DatabaseLayer.Payload<M> & { id: number }
+
   return {
     withPayload(payload: Partial<DatabaseLayer.Payload<M>>) {
       return {
@@ -67,6 +70,15 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
         createDatabaseLayerHandler({ matchType: type, resolver })
       )
     },
+    for(...args: (IdResponse | IdResponse[])[]) {
+      const responses = args.flatMap((x) => (Array.isArray(x) ? x : [x]))
+      for (const response of responses) {
+        // FIXME: Better type declarations
+        this.withPayload({
+          id: response.id,
+        } as unknown as DatabaseLayer.Payload<M>).returns(response)
+      }
+    },
     returns(response: DatabaseLayer.Response<M>) {
       global.server.use(
         createMessageHandler({
@@ -96,18 +108,6 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
       )
     },
   }
-}
-
-export function givenUuids(
-  ...uuids: (Model<'AbstractUuid'> | Model<'AbstractUuid'>[])[]
-) {
-  for (const uuid of uuids.flatMap((x) => (Array.isArray(x) ? x : [x]))) {
-    givenUuid(uuid)
-  }
-}
-
-export function givenUuid(uuid: Model<'AbstractUuid'>) {
-  given('UuidQuery').withPayload({ id: uuid.id }).returns(uuid)
 }
 
 export function createNavigationHandler(

@@ -27,15 +27,12 @@ import {
   Client,
   getTypenameAndId,
   given,
-  givenUuid,
-  givenUuids,
   nextUuid,
 } from '../__utils__'
 
 describe('subscriptions', () => {
   beforeEach(() => {
-    givenUuid(article)
-    givenUuid(user)
+    given('UuidQuery').for(article, user)
     given('SubscriptionsQuery')
       .withPayload({ userId: user.id })
       .returns({
@@ -135,7 +132,7 @@ describe('subscription mutation set', () => {
   // given a single subscription to article.id
   beforeEach(async () => {
     // mock subscriptions handlers
-    givenUuids(
+    given('UuidQuery').for(
       user,
       article,
       { ...article, id: castToUuid(1555) },

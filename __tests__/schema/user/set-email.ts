@@ -22,7 +22,7 @@
 import { gql } from 'apollo-server'
 
 import { user as baseUser } from '../../../__fixtures__'
-import { givenUuid, Client, given } from '../../__utils__'
+import { Client, given } from '../../__utils__'
 
 const user = { ...baseUser, roles: ['sysadmin'] }
 const query = new Client({ userId: user.id }).prepareQuery({
@@ -41,7 +41,7 @@ const query = new Client({ userId: user.id }).prepareQuery({
 })
 
 beforeEach(() => {
-  givenUuid(user)
+  given('UuidQuery').for(user)
 })
 
 test('returns "{ success: true }" when mutation could be successfully executed', async () => {
@@ -65,7 +65,7 @@ test('fails when user is not authenticated', async () => {
 })
 
 test('fails when user does not have role "sysadmin"', async () => {
-  givenUuid({ ...user, roles: ['login', 'de_admin'] })
+  given('UuidQuery').for({ ...user, roles: ['login', 'de_admin'] })
 
   await query.shouldFailWithError('FORBIDDEN')
 })
