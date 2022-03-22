@@ -35,7 +35,7 @@ import {
   user,
   video,
 } from '../../../__fixtures__'
-import { given, Client, givenUuid, nextUuid } from '../../__utils__'
+import { given, Client, nextUuid } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
 import { EntityType } from '~/model/decoder'
@@ -233,7 +233,7 @@ entityCreateTypes.forEach((entityCreateType) => {
       .withVariables({ input })
 
     beforeEach(() => {
-      givenUuid(user)
+      given('UuidQuery').for(user)
 
       const {
         changes,
@@ -261,12 +261,12 @@ entityCreateTypes.forEach((entityCreateType) => {
       }
 
       if (entityCreateType.parent) {
-        givenUuid(entityCreateType.parent)
+        given('UuidQuery').for(entityCreateType.parent)
         payload = { ...payload, input: { ...payload.input, parentId } }
       }
 
       if (entityCreateType.taxonomyTerm) {
-        givenUuid(entityCreateType.taxonomyTerm)
+        given('UuidQuery').for(entityCreateType.taxonomyTerm)
         payload = { ...payload, input: { ...payload.input, taxonomyTermId } }
       }
 
@@ -295,7 +295,7 @@ entityCreateTypes.forEach((entityCreateType) => {
     test('fails when user does not have role "login"', async () => {
       const guestUser = { ...user, id: nextUuid(user.id), roles: ['guest'] }
 
-      givenUuid(guestUser)
+      given('UuidQuery').for(guestUser)
 
       await new Client({ userId: guestUser.id })
         .prepareQuery({
