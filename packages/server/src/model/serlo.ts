@@ -769,11 +769,11 @@ export function createSerloModel({
     },
     updateCache: async ({ input, userId }, { success }) => {
       if (success) {
-        if (!input.needsReview) {
-          await getUuid._querySpec.removeCache({
-            payload: { id: input.entityId },
-          })
-        } else {
+        await getUuid._querySpec.removeCache({
+          payload: { id: input.entityId },
+        })
+
+        if (input.needsReview) {
           await getUnrevisedEntities._querySpec.removeCache({
             payload: undefined,
           })
