@@ -49,7 +49,6 @@ import {
   returnsMalformedJson,
   given,
   Client,
-  givenUuid,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { MajorDimension } from '~/model'
@@ -61,7 +60,7 @@ let legacyClient: LegacyClient
 beforeEach(() => {
   legacyClient = createTestClient()
 
-  givenUuid(user)
+  given('UuidQuery').for(user)
 })
 
 describe('User', () => {
@@ -585,7 +584,7 @@ describe('endpoint activeAuthors', () => {
 
   test('returns only users', async () => {
     given('ActiveAuthorsQuery').returns([user.id, article.id])
-    givenUuid(article)
+    given('UuidQuery').for(article)
 
     await expectUserIds({ endpoint: 'activeAuthors', ids: [user.id] })
     await assertErrorEvent({ errorContext: { invalidElements: [article] } })
@@ -604,7 +603,7 @@ describe('endpoint activeReviewers', () => {
 
   test('returns only users', async () => {
     given('ActiveReviewersQuery').returns([user.id, article.id])
-    givenUuid(article)
+    given('UuidQuery').for(article)
 
     await expectUserIds({ endpoint: 'activeReviewers', ids: [user.id] })
     await assertErrorEvent({ errorContext: { invalidElements: [article] } })
@@ -682,7 +681,7 @@ async function expectUserIds({
   endpoint: 'activeReviewers' | 'activeAuthors' | 'activeDonors'
   ids: number[]
 }) {
-  ids.map(castToUuid).forEach((id) => givenUuid({ ...user, id }))
+  ids.map(castToUuid).forEach((id) => given('UuidQuery').for({ ...user, id }))
   const nodes = ids.map((id) => {
     return { __typename: 'User', id }
   })

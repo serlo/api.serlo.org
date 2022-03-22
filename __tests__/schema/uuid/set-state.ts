@@ -22,7 +22,7 @@
 import { gql } from 'apollo-server'
 
 import { article, page, user as baseUser } from '../../../__fixtures__'
-import { nextUuid, Client, given, givenUuid, givenUuids } from '../../__utils__'
+import { nextUuid, Client, given } from '../../__utils__'
 
 const user = { ...baseUser, roles: ['de_architect'] }
 const articleIds = [article.id, nextUuid(article.id)]
@@ -45,7 +45,7 @@ beforeEach(() => {
     return { ...article, id }
   })
 
-  givenUuids(user, articles)
+  given('UuidQuery').for(user, articles)
   given('UuidSetStateMutation')
     .withPayload({ userId: user.id, trashed: true })
     .isDefinedBy((req, res, ctx) => {
@@ -98,7 +98,7 @@ test('fails when user is not authenticated', async () => {
 
 test('fails when user does not have sufficient permissions', async () => {
   // Architects are not allowed to set the state of pages.
-  givenUuid(page)
+  given('UuidQuery').for(page)
 
   await mutation
     .withVariables({ input: { id: [page.id], trashed: false } })
