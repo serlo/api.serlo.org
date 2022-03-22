@@ -106,10 +106,18 @@ export function decodeFromBase64(text: string) {
 }
 
 export function assertArgumentIsNotEmpty(args: { [key: string]: unknown }) {
+  const emptyArgs: string[] = []
+
   for (const [key, value] of Object.entries(args)) {
     if (!value) {
-      // possible improvement: collect all empty values and put in message their corresponding keys
-      throw new UserInputError(`Argument ${key} may not be empty`)
+      emptyArgs.push(key)
     }
+  }
+  if (emptyArgs.length) {
+    throw new UserInputError(
+      `Argument${emptyArgs.length > 1 ? 's' : ''} ${emptyArgs.join(
+        ', '
+      )} may not be empty`
+    )
   }
 }
