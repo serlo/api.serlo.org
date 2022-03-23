@@ -340,7 +340,7 @@ entityCreateTypes.forEach((entityCreateType) => {
       test('fails when parent does not exists', async () => {
         given('UuidQuery')
           .withPayload({ id: entityCreateType.parent!.id })
-          .returnsNull()
+          .returnsNotFound()
 
         await mutation.shouldFailWithError('BAD_USER_INPUT')
       })
@@ -350,7 +350,7 @@ entityCreateTypes.forEach((entityCreateType) => {
       test('fails when taxonomy term does not exists', async () => {
         given('UuidQuery')
           .withPayload({ id: entityCreateType.taxonomyTerm!.id })
-          .returnsNull()
+          .returnsNotFound()
 
         await mutation.shouldFailWithError('BAD_USER_INPUT')
       })
