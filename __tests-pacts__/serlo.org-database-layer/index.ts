@@ -293,6 +293,31 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  TaxonomyTermSetNameAndDescriptionMutation: {
+    examples: [
+      [
+        {
+          id: taxonomyTermSubject.id,
+          name: 'name',
+          description: 'description',
+          userId: user.id,
+        },
+        {
+          success: true,
+        },
+      ],
+      [
+        {
+          id: taxonomyTermCurriculumTopic.id,
+          name: 'no description',
+          userId: user.id,
+        },
+        {
+          success: true,
+        },
+      ],
+    ],
+  },
   UnrevisedEntitiesQuery: {
     examples: [
       [
