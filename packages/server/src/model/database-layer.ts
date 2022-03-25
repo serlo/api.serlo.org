@@ -168,10 +168,24 @@ export const spec = {
         userId: t.number,
       }),
       t.partial({
-        forumId: t.union([t.number, t.null, t.undefined]),
+        forumId: t.union([t.number, t.null]),
       }),
     ]),
     response: t.union([PageDecoder, t.undefined]),
+    canBeNull: false,
+  },
+  TaxonomyTermSetNameAndDescriptionMutation: {
+    payload: t.intersection([
+      t.type({
+        name: t.string,
+        id: t.number,
+        userId: t.number,
+      }),
+      t.partial({
+        description: t.union([t.string, t.null]),
+      }),
+    ]),
+    response: t.type({ success: t.boolean }),
     canBeNull: false,
   },
   SubjectsQuery: {
