@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
 import {
   applet,
@@ -41,16 +42,18 @@ import { DatabaseLayer } from '~/model'
 import { EntityType } from '~/model/decoder'
 import { Instance } from '~/types'
 
+interface EntityFields {
+  title: string
+  cohesive: boolean
+  content: string
+  description: string
+  metaTitle: string
+  metaDescription: string
+  url: string
+}
+
 class EntityCreateWrapper {
-  static ALL_POSSIBLE_FIELDS: {
-    title: string
-    cohesive: boolean
-    content: string
-    description: string
-    metaTitle: string
-    metaDescription: string
-    url: string
-  } = {
+  static ALL_POSSIBLE_FIELDS: EntityFields = {
     title: 'title',
     cohesive: false,
     content: 'content',
@@ -59,19 +62,15 @@ class EntityCreateWrapper {
     metaDescription: 'metaDescription',
     url: 'https://url.org',
   }
-  public entity: Model<EntityType>
-  public entityType: EntityType
   public mutationName: string
   public inputName: string
-  public fields: Partial<typeof EntityCreateWrapper.ALL_POSSIBLE_FIELDS>
+  public fields: Partial<EntityFields>
   public fieldsForDBLayer: { [key: string]: string }
-  public parent?: Model<'AbstractEntity'>
-  public taxonomyTerm?: Model<'TaxonomyTerm'>
 
   constructor(
-    entityType: EntityType,
-    entity: Model<EntityType>,
-    fieldsAtApi: (keyof typeof EntityCreateWrapper.ALL_POSSIBLE_FIELDS)[]
+    public entityType: EntityType,
+    public entity: Model<EntityType>,
+    private fieldsAtApi: (keyof EntityFields)[]
   ) {
     this.entityType = entityType
     this.entity = entity
@@ -79,36 +78,34 @@ class EntityCreateWrapper {
     this.inputName = `Create${this.entityType}Input`
     this.fields = this.setFields(fieldsAtApi)
     this.fieldsForDBLayer = this.setFieldsForDBlayer()
-    this.parent = this.setParent()
-    this.taxonomyTerm = this.setTaxonomyTerm()
   }
 
-  setParent() {
-    if (this.entityType === EntityType.CoursePage) return course
-
-    if (this.entityType === EntityType.GroupedExercise) return exerciseGroup
-
-    if (this.entityType === EntityType.Solution) return exercise
-
-    return undefined
-  }
-
-  setTaxonomyTerm() {
-    if (
-      this.entityType === EntityType.CoursePage ||
-      this.entityType === EntityType.GroupedExercise ||
-      this.entityType === EntityType.Solution
-    )
-      return undefined
-    return taxonomyTermSubject
-  }
-
-  setFields(fields: (keyof typeof EntityCreateWrapper.ALL_POSSIBLE_FIELDS)[]) {
-    const filteredFields: { [key: string]: string | boolean } = {}
-    for (const key of fields) {
-      filteredFields[key] = EntityCreateWrapper.ALL_POSSIBLE_FIELDS[key]
+  get parent(): Model<'AbstractEntity'> | undefined {
+    switch (this.entityType) {
+      case EntityType.CoursePage:
+        return course
+      case EntityType.GroupedExercise:
+        return exerciseGroup
+      case EntityType.Solution:
+        return exercise
+      default:
+        return undefined
     }
-    return filteredFields
+  }
+
+  get taxonomyTerm(): Model<'TaxonomyTerm'> | undefined {
+    switch (this.entityType) {
+      case EntityType.CoursePage:
+      case EntityType.GroupedExercise:
+      case EntityType.Solution:
+        return undefined
+      default:
+        return taxonomyTermSubject
+    }
+  }
+
+  setFields(fields: (keyof EntityFields)[]) {
+    return R.pick(fields, EntityCreateWrapper.ALL_POSSIBLE_FIELDS)
   }
 
   setFieldsForDBlayer() {
@@ -297,18 +294,8 @@ entityCreateTypes.forEach((entityCreateType) => {
 
       given('UuidQuery').for(guestUser)
 
-      await new Client({ userId: guestUser.id })
-        .prepareQuery({
-          query: gql`
-            mutation set($input: ${entityCreateType.inputName}!) {
-              entity {
-                ${entityCreateType.mutationName}(input: $input) {
-                  success
-                }
-              }
-            }
-          `,
-        })
+      await mutation
+        .forClient(new Client({ userId: guestUser.id }))
         .withVariables({ input })
         .shouldFailWithError('FORBIDDEN')
     })
