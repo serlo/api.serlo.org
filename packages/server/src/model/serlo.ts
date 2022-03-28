@@ -739,6 +739,29 @@ export function createSerloModel({
     },
   })
 
+  const createEntity = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('EntityCreateMutation'),
+    mutate: (payload: DatabaseLayer.Payload<'EntityCreateMutation'>) => {
+      return DatabaseLayer.makeRequest('EntityCreateMutation', payload)
+    },
+    async updateCache({ input }, newEntity) {
+      if (newEntity) {
+        const { parentId, taxonomyTermId } = input
+        if (parentId) {
+          await getUuid._querySpec.removeCache({ payload: { id: parentId } })
+        }
+        if (taxonomyTermId) {
+          await getUuid._querySpec.removeCache({
+            payload: { id: taxonomyTermId },
+          })
+        }
+        await getUnrevisedEntities._querySpec.removeCache({
+          payload: undefined,
+        })
+      }
+    },
+  })
+
   const addEntityRevision = createMutation({
     decoder: DatabaseLayer.getDecoderFor('EntityAddRevisionMutation'),
     mutate: (payload: DatabaseLayer.Payload<'EntityAddRevisionMutation'>) => {
@@ -746,11 +769,11 @@ export function createSerloModel({
     },
     updateCache: async ({ input, userId }, { success }) => {
       if (success) {
-        if (!input.needsReview) {
-          await getUuid._querySpec.removeCache({
-            payload: { id: input.entityId },
-          })
-        } else {
+        await getUuid._querySpec.removeCache({
+          payload: { id: input.entityId },
+        })
+
+        if (input.needsReview) {
           await getUnrevisedEntities._querySpec.removeCache({
             payload: undefined,
           })
@@ -940,6 +963,7 @@ export function createSerloModel({
     checkoutEntityRevision,
     checkoutPageRevision,
     createComment,
+    createEntity,
     createPage,
     createThread,
     deleteBots,
