@@ -45,6 +45,15 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
             })
           )
         },
+        returnsNotFound() {
+          global.server.use(
+            createMessageHandler({
+              message: { type },
+              statusCode: 404,
+              body: null,
+            })
+          )
+        },
         isDefinedBy(resolver: MessageResolver<M, DatabaseLayer.Payload<M>>) {
           global.server.use(
             createDatabaseLayerHandler({

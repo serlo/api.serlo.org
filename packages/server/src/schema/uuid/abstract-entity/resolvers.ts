@@ -20,18 +20,27 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as serloAuth from '@serlo/authorization'
+import { UserInputError } from 'apollo-server'
+import * as t from 'io-ts'
 
 import { ModelDataSource } from '~/internals/data-source'
 import {
-  assertStringIsNotEmpty,
+  assertArgumentIsNotEmpty,
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   createNamespace,
   InterfaceResolvers,
   Mutations,
 } from '~/internals/graphql'
-import { castToUuid, EntityRevisionType } from '~/model/decoder'
+import {
+  castToUuid,
+  EntityDecoder,
+  EntityRevisionType,
+  EntityType,
+  TaxonomyTermDecoder,
+} from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
+import { Instance } from '~/types'
 
 export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   InterfaceResolvers<'AbstractEntityRevision'> &
@@ -50,17 +59,189 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     },
   },
   EntityMutation: {
-    async addAppletRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, url, metaDescription, metaTitle } = input
+    async createApplet(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title, url, taxonomyTermId } = input
 
-      assertStringIsNotEmpty(
+      assertArgumentIsNotEmpty({
         changes,
         content,
         title,
         url,
-        metaDescription,
-        metaTitle
-      )
+      })
+
+      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
+
+      return await createEntity({
+        entityType: EntityType.Applet,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async createArticle(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title, taxonomyTermId } = input
+
+      assertArgumentIsNotEmpty({
+        changes,
+        content,
+        title,
+      })
+
+      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
+
+      return await createEntity({
+        entityType: EntityType.Article,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async createCourse(_parent, { input }, { dataSources, userId }) {
+      const { changes, title, content, taxonomyTermId } = input
+
+      assertArgumentIsNotEmpty({ changes, title })
+
+      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
+
+      // TODO: the logic of this and others transformedInput's should go to DB Layer
+      const transformedInput = {
+        ...input,
+        description: content,
+        content: undefined,
+      }
+
+      return await createEntity({
+        entityType: EntityType.Course,
+        input: transformedInput,
+        dataSources,
+        userId,
+      })
+    },
+    async createCoursePage(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title, parentId } = input
+
+      assertArgumentIsNotEmpty({ changes, content, title })
+
+      await assertParentExists(parentId, dataSources)
+
+      return await createEntity({
+        entityType: EntityType.CoursePage,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async createEvent(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title, taxonomyTermId } = input
+
+      assertArgumentIsNotEmpty({
+        changes,
+        content,
+        title,
+      })
+
+      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
+
+      return await createEntity({
+        entityType: EntityType.Event,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async createExercise(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, taxonomyTermId } = input
+
+      assertArgumentIsNotEmpty({ changes, content })
+
+      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
+
+      return await createEntity({
+        entityType: EntityType.Exercise,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async createExerciseGroup(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, taxonomyTermId } = input
+
+      assertArgumentIsNotEmpty({ changes, content })
+
+      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
+
+      // TODO: this logic should go to DBLayer
+      const cohesive = input.cohesive === true ? 'true' : 'false'
+      const transformedInput: Omit<typeof input, 'cohesive'> & {
+        cohesive: 'true' | 'false'
+      } = { ...input, cohesive }
+
+      return await createEntity({
+        entityType: EntityType.ExerciseGroup,
+        input: transformedInput,
+        dataSources,
+        userId,
+      })
+    },
+    async createGroupedExercise(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, parentId } = input
+
+      assertArgumentIsNotEmpty({ changes, content })
+
+      await assertParentExists(parentId, dataSources)
+
+      return await createEntity({
+        entityType: EntityType.GroupedExercise,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async createSolution(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, parentId } = input
+
+      assertArgumentIsNotEmpty({ changes, content })
+
+      await assertParentExists(parentId, dataSources)
+
+      return await createEntity({
+        entityType: EntityType.Solution,
+        input,
+        dataSources,
+        userId,
+      })
+    },
+    async createVideo(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title, url, taxonomyTermId } = input
+
+      assertArgumentIsNotEmpty({ changes, content, title, url })
+
+      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
+
+      // TODO: logic should go to DBLayer
+      const transformedInput = {
+        ...input,
+        content: input.url,
+        description: input.content,
+        url: undefined,
+      }
+
+      return await createEntity({
+        entityType: EntityType.Video,
+        input: transformedInput,
+        dataSources,
+        userId,
+      })
+    },
+    async addAppletRevision(_parent, { input }, { dataSources, userId }) {
+      const { changes, content, title, url } = input
+
+      assertArgumentIsNotEmpty({
+        changes,
+        content,
+        title,
+        url,
+      })
 
       return await addRevision({
         revisionType: EntityRevisionType.AppletRevision,
@@ -70,15 +251,13 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addArticleRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, metaDescription, metaTitle } = input
+      const { changes, content, title } = input
 
-      assertStringIsNotEmpty(
+      assertArgumentIsNotEmpty({
         changes,
         content,
         title,
-        metaDescription,
-        metaTitle
-      )
+      })
 
       return await addRevision({
         revisionType: EntityRevisionType.ArticleRevision,
@@ -88,14 +267,14 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addCourseRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, metaDescription } = input
+      const { changes, content, title } = input
 
-      assertStringIsNotEmpty(changes, content, title, metaDescription)
+      assertArgumentIsNotEmpty({ changes, title })
 
       // TODO: the logic of this and others transformedInput's should go to DB Layer
       const transformedInput = {
         ...input,
-        description: input.content,
+        description: content,
         content: undefined,
       }
 
@@ -109,7 +288,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     async addCoursePageRevision(_parent, { input }, { dataSources, userId }) {
       const { changes, content, title } = input
 
-      assertStringIsNotEmpty(changes, content, title)
+      assertArgumentIsNotEmpty({ changes, content, title })
 
       return await addRevision({
         revisionType: EntityRevisionType.CoursePageRevision,
@@ -119,15 +298,13 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
     },
     async addEventRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, metaDescription, metaTitle } = input
+      const { changes, content, title } = input
 
-      assertStringIsNotEmpty(
+      assertArgumentIsNotEmpty({
         changes,
         content,
         title,
-        metaDescription,
-        metaTitle
-      )
+      })
 
       return await addRevision({
         revisionType: EntityRevisionType.EventRevision,
@@ -139,7 +316,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     async addExerciseRevision(_parent, { input }, { dataSources, userId }) {
       const { changes, content } = input
 
-      assertStringIsNotEmpty(changes, content)
+      assertArgumentIsNotEmpty({ changes, content })
 
       return await addRevision({
         revisionType: EntityRevisionType.ExerciseRevision,
@@ -155,7 +332,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     ) {
       const { changes, content } = input
 
-      assertStringIsNotEmpty(changes, content)
+      assertArgumentIsNotEmpty({ changes, content })
 
       const cohesive = input.cohesive === true ? 'true' : 'false'
       const transformedInput: Omit<typeof input, 'cohesive'> & {
@@ -176,7 +353,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     ) {
       const { changes, content } = input
 
-      assertStringIsNotEmpty(changes, content)
+      assertArgumentIsNotEmpty({ changes, content })
 
       return await addRevision({
         revisionType: EntityRevisionType.GroupedExerciseRevision,
@@ -188,7 +365,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     async addSolutionRevision(_parent, { input }, { dataSources, userId }) {
       const { changes, content } = input
 
-      assertStringIsNotEmpty(changes, content)
+      assertArgumentIsNotEmpty({ changes, content })
 
       return await addRevision({
         revisionType: EntityRevisionType.SolutionRevision,
@@ -200,7 +377,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     async addVideoRevision(_parent, { input }, { dataSources, userId }) {
       const { changes, content, title, url } = input
 
-      assertStringIsNotEmpty(changes, content, title, url)
+      assertArgumentIsNotEmpty({ changes, content, title, url })
 
       const transformedInput = {
         ...input,
@@ -259,6 +436,29 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   },
 }
 
+export interface AbstractEntityCreatePayload {
+  entityType: EntityType
+  input: {
+    changes: string
+    subscribeThis: boolean
+    subscribeThisByEmail: boolean
+    instance: Instance
+    licenseId: number
+    needsReview: boolean
+    parentId?: number
+    taxonomyTermId?: number
+    cohesive?: 'true' | 'false'
+    content?: string
+    description?: string
+    metaDescription?: string
+    metaTitle?: string
+    title?: string
+    url?: string
+  }
+  dataSources: { model: ModelDataSource }
+  userId: number | null
+}
+
 interface AbstractEntityAddRevisionPayload {
   revisionType: EntityRevisionType
   input: {
@@ -277,6 +477,61 @@ interface AbstractEntityAddRevisionPayload {
   }
   dataSources: { model: ModelDataSource }
   userId: number | null
+}
+
+async function createEntity({
+  entityType,
+  dataSources,
+  input,
+  userId,
+}: AbstractEntityCreatePayload) {
+  assertUserIsAuthenticated(userId)
+
+  const {
+    changes,
+    instance,
+    licenseId,
+    needsReview,
+    parentId,
+    subscribeThis,
+    subscribeThisByEmail,
+    taxonomyTermId,
+    ...inputFields
+  } = input
+
+  await assertUserIsAuthorized({
+    userId,
+    dataSources,
+    message: 'You are not allowed to add revision to this entity.',
+    guard: serloAuth.Uuid.create('Entity')(serloAuth.instanceToScope(instance)),
+  })
+
+  const fields = removeUndefinedFields(
+    inputFields as { [key: string]: string | undefined }
+  )
+
+  const inputPayload = {
+    changes,
+    instance,
+    licenseId,
+    needsReview,
+    parentId,
+    subscribeThis,
+    subscribeThisByEmail,
+    taxonomyTermId,
+    fields,
+  }
+  const entity = await dataSources.model.serlo.createEntity({
+    entityType,
+    userId,
+    input: inputPayload,
+  })
+
+  return {
+    record: entity,
+    success: entity != null,
+    query: {},
+  }
 }
 
 async function addRevision({
@@ -347,4 +602,36 @@ function removeUndefinedFields(inputFields: {
   }
 
   return fields
+}
+
+async function assertParentExists(
+  parentId: number,
+  dataSources: { model: ModelDataSource }
+) {
+  const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
+    id: parentId,
+    decoder: t.union([EntityDecoder, t.null]),
+  })
+
+  if (!parent) {
+    throw new UserInputError(
+      `No entity found for the provided parentId ${parentId}`
+    )
+  }
+}
+
+async function assertTaxonomyTermExists(
+  taxonomyTermId: number,
+  dataSources: { model: ModelDataSource }
+) {
+  const taxonomyTerm = await dataSources.model.serlo.getUuidWithCustomDecoder({
+    id: taxonomyTermId,
+    decoder: t.union([TaxonomyTermDecoder, t.null]),
+  })
+
+  if (!taxonomyTerm) {
+    throw new UserInputError(
+      `No taxonomy term found for the provided parentId ${taxonomyTermId}`
+    )
+  }
 }

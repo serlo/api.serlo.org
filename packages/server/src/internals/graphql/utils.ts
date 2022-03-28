@@ -105,8 +105,14 @@ export function decodeFromBase64(text: string) {
   return Buffer.from(text, 'base64').toString('utf8')
 }
 
-export function assertStringIsNotEmpty(...strings: string[]) {
-  strings.forEach((str) => {
-    if (!str) throw new UserInputError(`Argument ${str} may not be empty`)
-  })
+export function assertArgumentIsNotEmpty(args: { [key: string]: unknown }) {
+  const emptyArgs: string[] = Object.entries(args)
+    .filter(([_, value]) => !value)
+    .map(([key]) => key)
+
+  if (emptyArgs.length > 0) {
+    throw new UserInputError(
+      `Arguments ${emptyArgs.join(', ')} may not be empty`
+    )
+  }
 }
