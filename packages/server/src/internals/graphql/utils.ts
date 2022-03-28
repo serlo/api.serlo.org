@@ -106,13 +106,13 @@ export function decodeFromBase64(text: string) {
 }
 
 export function assertArgumentIsNotEmpty(args: { [key: string]: unknown }) {
-  const emptyArgs: string[] = Object.keys(R.pickBy((value) => !value, args))
+  const emptyArgs: string[] = Object.entries(args)
+    .filter(([_, value]) => !value)
+    .map(([key]) => key)
 
   if (emptyArgs.length > 0) {
     throw new UserInputError(
-      `Argument${emptyArgs.length > 1 ? 's' : ''} ${emptyArgs.join(
-        ', '
-      )} may not be empty`
+      `Arguments ${emptyArgs.join(', ')} may not be empty`
     )
   }
 }
