@@ -121,6 +121,7 @@ export const spec = {
           subscribeThisByEmail: t.boolean,
           fields: t.record(t.string, t.string),
         }),
+        // TODO: prefer union
         t.partial({
           parentId: t.number,
           taxonomyTermId: t.number,
