@@ -102,8 +102,8 @@ export const spec = {
       }),
     }),
     response: t.type({
-      success: t.boolean,
-      revisionId: t.union([t.number, t.null]),
+      success: t.literal(true),
+      revisionId: t.number,
     }),
     canBeNull: false,
   },
@@ -127,8 +127,8 @@ export const spec = {
         }),
       ]),
     }),
-    response: t.union([EntityDecoder, t.undefined]),
-    canBeNull: false,
+    response: EntityDecoder,
+    canBeNull: true,
   },
   LicenseQuery: {
     payload: t.type({ id: t.number }),
