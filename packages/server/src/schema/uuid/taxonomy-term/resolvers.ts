@@ -118,7 +118,8 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
       await assertUserIsAuthorized({
         userId,
         dataSources,
-        message: 'You are not allowed to add revision to this entity.',
+        message:
+          'You are not allowed to set name or description of this taxonomy term.',
         guard: serloAuth.TaxonomyTerm.set(scope),
       })
 
