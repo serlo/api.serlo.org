@@ -541,7 +541,8 @@ export function createSerloModel({
       getCurrentValue: (payload: { userId: number }) => {
         return handleMessage({ type: 'NotificationsQuery', payload })
       },
-      staleAfter: { hour: 1 },
+      staleAfter: { minutes: 5 },
+      maxAge: { minutes: 30 },
       getKey: ({ userId }) => {
         return `de.serlo.org/api/notifications/${userId}`
       },
