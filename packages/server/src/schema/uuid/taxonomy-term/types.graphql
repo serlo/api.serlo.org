@@ -47,3 +47,24 @@ type TaxonomyTerm implements AbstractUuid & AbstractNavigationChild & InstanceAw
   ): AbstractUuidConnection!
   navigation: Navigation
 }
+
+extend type Mutation {
+  taxonomyTerm: TaxonomyTermMutation!
+}
+
+type TaxonomyTermMutation {
+  setNameAndDescription(
+    input: TaxonomyTermSetNameAndDescriptionInput!
+  ): TaxonomyTermSetNameAndDescriptionResponse
+}
+
+input TaxonomyTermSetNameAndDescriptionInput {
+  id: Int!
+  name: String!
+  description: String
+}
+
+type TaxonomyTermSetNameAndDescriptionResponse {
+  success: Boolean!
+  query: Query!
+}

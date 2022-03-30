@@ -22,7 +22,7 @@
 import { gql } from 'apollo-server'
 
 import { page, user as baseUser } from '../../../__fixtures__'
-import { given, givenUuids, Client, givenUuid, nextUuid } from '../../__utils__'
+import { given, Client, nextUuid } from '../../__utils__'
 
 const user = { ...baseUser, roles: ['de_static_pages_builder'] }
 
@@ -49,7 +49,7 @@ describe('PageAddRevisionMutation', () => {
     .withVariables({ input })
 
   beforeEach(() => {
-    givenUuids(user, page)
+    given('UuidQuery').for(user, page)
   })
 
   test('returns "{ success: true }" when mutation could be successfully executed', async () => {
@@ -74,7 +74,7 @@ describe('PageAddRevisionMutation', () => {
   test('fails when user does not have role "staticPagesBuilder"', async () => {
     const regularUser = { ...user, id: nextUuid(user.id), roles: ['login'] }
 
-    givenUuid(regularUser)
+    given('UuidQuery').for(regularUser)
 
     await new Client({ userId: regularUser.id })
       .prepareQuery({

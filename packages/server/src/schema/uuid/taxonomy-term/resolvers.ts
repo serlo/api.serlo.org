@@ -19,17 +19,32 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import * as serloAuth from '@serlo/authorization'
 import * as t from 'io-ts'
 
-import { TypeResolvers, Context, Model } from '~/internals/graphql'
+import {
+  TypeResolvers,
+  Context,
+  Model,
+  Mutations,
+  createNamespace,
+  assertUserIsAuthenticated,
+  assertUserIsAuthorized,
+  assertArgumentIsNotEmpty,
+} from '~/internals/graphql'
 import { TaxonomyTermDecoder } from '~/model/decoder'
+import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { TaxonomyTerm } from '~/types'
 import { isDefined } from '~/utils'
 
-export const resolvers: TypeResolvers<TaxonomyTerm> = {
+export const resolvers: TypeResolvers<TaxonomyTerm> &
+  Mutations<'taxonomyTerm'> = {
+  Mutation: {
+    taxonomyTerm: createNamespace(),
+  },
   TaxonomyTerm: {
     ...createUuidResolvers(),
     ...createThreadResolvers(),
@@ -85,6 +100,36 @@ export const resolvers: TypeResolvers<TaxonomyTerm> = {
         }
       }
       return null
+    },
+  },
+  TaxonomyTermMutation: {
+    async setNameAndDescription(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const { id, name } = input
+
+      assertArgumentIsNotEmpty({ name })
+
+      const scope = await fetchScopeOfUuid({
+        id,
+        dataSources,
+      })
+
+      await assertUserIsAuthorized({
+        userId,
+        dataSources,
+        message:
+          'You are not allowed to set name or description of this taxonomy term.',
+        guard: serloAuth.TaxonomyTerm.set(scope),
+      })
+
+      const { success } =
+        await dataSources.model.serlo.setTaxonomyTermNameAndDescription({
+          ...input,
+          userId,
+        })
+
+      return { success, query: {} }
     },
   },
 }

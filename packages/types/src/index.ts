@@ -264,8 +264,8 @@ export type AddAppletRevisionInput = {
   changes: Scalars['String'];
   content: Scalars['String'];
   entityId: Scalars['Int'];
-  metaDescription: Scalars['String'];
-  metaTitle: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
@@ -277,8 +277,8 @@ export type AddArticleRevisionInput = {
   changes: Scalars['String'];
   content: Scalars['String'];
   entityId: Scalars['Int'];
-  metaDescription: Scalars['String'];
-  metaTitle: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
@@ -297,9 +297,9 @@ export type AddCoursePageRevisionInput = {
 
 export type AddCourseRevisionInput = {
   changes: Scalars['String'];
-  content: Scalars['String'];
+  content?: InputMaybe<Scalars['String']>;
   entityId: Scalars['Int'];
-  metaDescription: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
@@ -310,8 +310,8 @@ export type AddEventRevisionInput = {
   changes: Scalars['String'];
   content: Scalars['String'];
   entityId: Scalars['Int'];
-  metaDescription: Scalars['String'];
-  metaTitle: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
@@ -869,11 +869,12 @@ export type CreateAppletInput = {
   content: Scalars['String'];
   instance: Instance;
   licenseId: Scalars['Int'];
-  metaDescription: Scalars['String'];
-  metaTitle: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
+  taxonomyTermId: Scalars['Int'];
   title: Scalars['String'];
   url: Scalars['String'];
 };
@@ -883,11 +884,12 @@ export type CreateArticleInput = {
   content: Scalars['String'];
   instance: Instance;
   licenseId: Scalars['Int'];
-  metaDescription: Scalars['String'];
-  metaTitle: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
+  taxonomyTermId: Scalars['Int'];
   title: Scalars['String'];
 };
 
@@ -904,13 +906,14 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & Instanc
 
 export type CreateCourseInput = {
   changes: Scalars['String'];
-  content: Scalars['String'];
+  content?: InputMaybe<Scalars['String']>;
   instance: Instance;
   licenseId: Scalars['Int'];
-  metaDescription: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
+  taxonomyTermId: Scalars['Int'];
   title: Scalars['String'];
 };
 
@@ -970,11 +973,12 @@ export type CreateEventInput = {
   content: Scalars['String'];
   instance: Instance;
   licenseId: Scalars['Int'];
-  metaDescription: Scalars['String'];
-  metaTitle: Scalars['String'];
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
+  taxonomyTermId: Scalars['Int'];
   title: Scalars['String'];
 };
 
@@ -987,6 +991,7 @@ export type CreateExerciseGroupInput = {
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
+  taxonomyTermId: Scalars['Int'];
 };
 
 export type CreateExerciseInput = {
@@ -997,6 +1002,7 @@ export type CreateExerciseInput = {
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
+  taxonomyTermId: Scalars['Int'];
 };
 
 export type CreateGroupedExerciseInput = {
@@ -1070,6 +1076,7 @@ export type CreateVideoInput = {
   needsReview: Scalars['Boolean'];
   subscribeThis: Scalars['Boolean'];
   subscribeThisByEmail: Scalars['Boolean'];
+  taxonomyTermId: Scalars['Int'];
   title: Scalars['String'];
   url: Scalars['String'];
 };
@@ -1678,6 +1685,7 @@ export type Mutation = {
   notification: NotificationMutation;
   page: PageMutation;
   subscription: SubscriptionMutation;
+  taxonomyTerm: TaxonomyTermMutation;
   thread: ThreadMutation;
   user: UserMutation;
   uuid: UuidMutation;
@@ -2351,6 +2359,28 @@ export type TaxonomyTermEdge = {
   __typename?: 'TaxonomyTermEdge';
   cursor: Scalars['String'];
   node: TaxonomyTerm;
+};
+
+export type TaxonomyTermMutation = {
+  __typename?: 'TaxonomyTermMutation';
+  setNameAndDescription?: Maybe<TaxonomyTermSetNameAndDescriptionResponse>;
+};
+
+
+export type TaxonomyTermMutationSetNameAndDescriptionArgs = {
+  input: TaxonomyTermSetNameAndDescriptionInput;
+};
+
+export type TaxonomyTermSetNameAndDescriptionInput = {
+  description?: InputMaybe<Scalars['String']>;
+  id: Scalars['Int'];
+  name: Scalars['String'];
+};
+
+export type TaxonomyTermSetNameAndDescriptionResponse = {
+  __typename?: 'TaxonomyTermSetNameAndDescriptionResponse';
+  query: Query;
+  success: Scalars['Boolean'];
 };
 
 export enum TaxonomyTermType {
