@@ -22,7 +22,7 @@
 import { gql } from 'apollo-server'
 
 import { user as baseUser } from '../../../__fixtures__'
-import { given, givenUuids, Client, givenUuid, nextUuid } from '../../__utils__'
+import { given, Client, nextUuid } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
 import { Instance } from '~/types'
@@ -60,7 +60,7 @@ describe('PageCreateMutation', () => {
     .withVariables({ input })
 
   beforeEach(() => {
-    givenUuid(user)
+    given('UuidQuery').for(user)
 
     given('PageCreateMutation').isDefinedBy((req, res, ctx) => {
       const { content, instance, licenseId, title, userId } = req.body.payload
@@ -91,7 +91,7 @@ describe('PageCreateMutation', () => {
         repositoryId: newPage.id,
       }
 
-      givenUuids(newPage, newPageRevision)
+      given('UuidQuery').for(newPage, newPageRevision)
 
       return res(ctx.json({ ...newPage }))
     })
@@ -117,7 +117,7 @@ describe('PageCreateMutation', () => {
   test('fails when user does not have role "staticPagesBuilder"', async () => {
     const regularUser = { ...user, id: nextUuid(user.id), roles: ['login'] }
 
-    givenUuid(regularUser)
+    given('UuidQuery').for(regularUser)
 
     await mutation
       .forClient(new Client({ userId: regularUser.id }))

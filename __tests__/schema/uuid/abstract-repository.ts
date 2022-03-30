@@ -56,7 +56,6 @@ import {
   nextUuid,
   getTypenameAndId,
   given,
-  givenUuid,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import {
@@ -167,7 +166,7 @@ describe('Repository', () => {
   test.each(repositoryCases)(
     '%s by alias (url-encoded)',
     async (_type, { repository }) => {
-      givenUuid(repository)
+      given('UuidQuery').for(repository)
       given('AliasQuery')
         .withPayload({ instance: repository.instance, path: '/ü' })
         .returns({
@@ -204,7 +203,7 @@ describe('Repository', () => {
   test.each(repositoryCases)(
     '%s by alias (/:id)',
     async (_type, { repository }) => {
-      givenUuid(repository)
+      given('UuidQuery').for(repository)
       given('AliasQuery')
         .withPayload({ instance: repository.instance, path: '/path' })
         .returns({

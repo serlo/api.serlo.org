@@ -1182,6 +1182,11 @@ async function exec(): Promise<void> {
           'Add mutations `Entity.add*Revision` (v.g. `addAppletRevision`, `addArticleRevision`)',
         ],
       },
+      {
+        tagName: 'v0.29.1',
+        date: '2022-03-21',
+        internal: ['Publish types from v0.29.0'],
+      },
     ],
   })
 

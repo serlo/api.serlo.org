@@ -16,3 +16,4 @@ generates:
         JSONObject: 'Record<string, unknown>'
       useImplementingTypes: true
       useTypeImports: true
+      inputMaybeValue: undefined | T

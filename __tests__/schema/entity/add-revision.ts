@@ -37,10 +37,8 @@ import {
 } from '../../../__fixtures__'
 import {
   given,
-  givenUuids,
   Client,
   getTypenameAndId,
-  givenUuid,
   nextUuid,
   Database,
   returnsUuidsFromDatabase,
@@ -216,7 +214,7 @@ entityAddRevisionTypes.forEach((entityAddRevisionType) => {
       .withVariables({ input })
 
     beforeEach(() => {
-      givenUuids(user, entityAddRevisionType.entity)
+      given('UuidQuery').for(user, entityAddRevisionType.entity)
     })
 
     test('returns "{ success: true }" when mutation could be successfully executed', async () => {
@@ -262,7 +260,7 @@ entityAddRevisionTypes.forEach((entityAddRevisionType) => {
     test('fails when user does not have role "login"', async () => {
       const guestUser = { ...user, id: nextUuid(user.id), roles: ['guest'] }
 
-      givenUuid(guestUser)
+      given('UuidQuery').for(guestUser)
 
       await new Client({ userId: guestUser.id })
         .prepareQuery({
@@ -285,7 +283,7 @@ entityAddRevisionTypes.forEach((entityAddRevisionType) => {
         .withVariables({
           input: {
             ...input,
-            content: '',
+            changes: '',
           },
         })
         .shouldFailWithError('BAD_USER_INPUT')

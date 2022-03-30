@@ -98,11 +98,13 @@ input CreateAppletInput {
   licenseId: Int!
   needsReview: Boolean!
 
+  taxonomyTermId: Int!
+
   content: String!
-  metaDescription: String!
-  metaTitle: String!
   title: String!
   url: String!
+  metaDescription: String
+  metaTitle: String
 }
 
 input CreateArticleInput {
@@ -114,10 +116,12 @@ input CreateArticleInput {
   licenseId: Int!
   needsReview: Boolean!
 
+  taxonomyTermId: Int!
+
   content: String!
-  metaDescription: String!
-  metaTitle: String!
   title: String!
+  metaDescription: String
+  metaTitle: String
 }
 
 input CreateCourseInput {
@@ -129,9 +133,11 @@ input CreateCourseInput {
   licenseId: Int!
   needsReview: Boolean!
 
-  content: String!
-  metaDescription: String!
+  taxonomyTermId: Int!
+
   title: String!
+  content: String
+  metaDescription: String
 }
 
 input CreateCoursePageInput {
@@ -158,10 +164,12 @@ input CreateEventInput {
   licenseId: Int!
   needsReview: Boolean!
 
+  taxonomyTermId: Int!
+
   content: String!
-  metaDescription: String!
-  metaTitle: String!
   title: String!
+  metaDescription: String
+  metaTitle: String
 }
 
 input CreateExerciseInput {
@@ -172,6 +180,8 @@ input CreateExerciseInput {
   instance: Instance!
   licenseId: Int!
   needsReview: Boolean!
+
+  taxonomyTermId: Int!
 
   content: String!
 }
@@ -184,6 +194,8 @@ input CreateExerciseGroupInput {
   instance: Instance!
   licenseId: Int!
   needsReview: Boolean!
+
+  taxonomyTermId: Int!
 
   cohesive: Boolean!
   content: String!
@@ -226,6 +238,8 @@ input CreateVideoInput {
   licenseId: Int!
   needsReview: Boolean!
 
+  taxonomyTermId: Int!
+
   content: String!
   title: String!
   url: String!
@@ -246,10 +260,10 @@ input AddAppletRevisionInput {
   subscribeThisByEmail: Boolean!
 
   content: String!
-  metaDescription: String!
-  metaTitle: String!
   title: String!
   url: String!
+  metaDescription: String
+  metaTitle: String
 }
 
 input AddArticleRevisionInput {
@@ -261,9 +275,9 @@ input AddArticleRevisionInput {
   subscribeThisByEmail: Boolean!
 
   content: String!
-  metaDescription: String!
-  metaTitle: String!
   title: String!
+  metaDescription: String
+  metaTitle: String
 }
 
 input AddCourseRevisionInput {
@@ -274,9 +288,9 @@ input AddCourseRevisionInput {
   subscribeThis: Boolean!
   subscribeThisByEmail: Boolean!
 
-  content: String!
-  metaDescription: String!
   title: String!
+  content: String
+  metaDescription: String
 }
 
 input AddCoursePageRevisionInput {
@@ -300,9 +314,9 @@ input AddEventRevisionInput {
   subscribeThisByEmail: Boolean!
 
   content: String!
-  metaDescription: String!
-  metaTitle: String!
   title: String!
+  metaDescription: String
+  metaTitle: String
 }
 
 input AddExerciseGroupRevisionInput {

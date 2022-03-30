@@ -88,9 +88,9 @@ export function decodeId({
   textId: string
 }) {
   const decodedId = decodeFromBase64(textId)
-  const id = parseInt(decodedId.substr(prefix.length))
+  const id = parseInt(decodedId.substring(prefix.length))
 
-  if (!Number.isNaN(id) && decodedId.substr(0, prefix.length) === prefix) {
+  if (!Number.isNaN(id) && decodedId.substring(0, prefix.length) === prefix) {
     return id
   } else {
     throw new UserInputError('id `${textId}` is invalid')
@@ -105,8 +105,14 @@ export function decodeFromBase64(text: string) {
   return Buffer.from(text, 'base64').toString('utf8')
 }
 
-export function assertStringIsNotEmpty(...strings: string[]) {
-  strings.forEach((str) => {
-    if (!str) throw new UserInputError(`Argument ${str} may not be empty`)
-  })
+export function assertArgumentIsNotEmpty(args: { [key: string]: unknown }) {
+  const emptyArgs: string[] = Object.keys(R.pickBy((value) => !value, args))
+
+  if (emptyArgs.length > 0) {
+    throw new UserInputError(
+      `Argument${emptyArgs.length > 1 ? 's' : ''} ${emptyArgs.join(
+        ', '
+      )} may not be empty`
+    )
+  }
 }

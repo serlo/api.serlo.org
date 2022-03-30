@@ -31,10 +31,11 @@ import {
   exerciseGroup,
   groupedExercise,
   solution,
+  taxonomyTermSubject,
   user,
   video,
 } from '../../../__fixtures__'
-import { given, Client, givenUuid, nextUuid } from '../../__utils__'
+import { given, Client, nextUuid } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
 import { EntityType } from '~/model/decoder'
@@ -64,8 +65,8 @@ class EntityCreateWrapper {
   public inputName: string
   public fields: Partial<typeof EntityCreateWrapper.ALL_POSSIBLE_FIELDS>
   public fieldsForDBLayer: { [key: string]: string }
-  public parentId?: number
   public parent?: Model<'AbstractEntity'>
+  public taxonomyTerm?: Model<'TaxonomyTerm'>
 
   constructor(
     entityType: EntityType,
@@ -79,6 +80,7 @@ class EntityCreateWrapper {
     this.fields = this.setFields(fieldsAtApi)
     this.fieldsForDBLayer = this.setFieldsForDBlayer()
     this.parent = this.setParent()
+    this.taxonomyTerm = this.setTaxonomyTerm()
   }
 
   setParent() {
@@ -89,6 +91,16 @@ class EntityCreateWrapper {
     if (this.entityType === EntityType.Solution) return exercise
 
     return undefined
+  }
+
+  setTaxonomyTerm() {
+    if (
+      this.entityType === EntityType.CoursePage ||
+      this.entityType === EntityType.GroupedExercise ||
+      this.entityType === EntityType.Solution
+    )
+      return undefined
+    return taxonomyTermSubject
   }
 
   setFields(fields: (keyof typeof EntityCreateWrapper.ALL_POSSIBLE_FIELDS)[]) {
@@ -177,6 +189,7 @@ entityCreateTypes.forEach((entityCreateType) => {
       subscribeThis: boolean
       subscribeThisByEmail: boolean
       parentId?: number
+      taxonomyTermId?: number
       cohesive?: boolean
       content?: string
       description?: string
@@ -198,6 +211,10 @@ entityCreateTypes.forEach((entityCreateType) => {
       input = { ...input, parentId: entityCreateType.parent.id }
     }
 
+    if (entityCreateType.taxonomyTerm) {
+      input = { ...input, taxonomyTermId: entityCreateType.taxonomyTerm.id }
+    }
+
     const mutation = new Client({ userId: user.id })
       .prepareQuery({
         query: gql`
@@ -216,13 +233,14 @@ entityCreateTypes.forEach((entityCreateType) => {
       .withVariables({ input })
 
     beforeEach(() => {
-      givenUuid(user)
+      given('UuidQuery').for(user)
 
       const {
         changes,
         instance,
         licenseId,
         parentId,
+        taxonomyTermId,
         needsReview,
         subscribeThis,
         subscribeThisByEmail,
@@ -243,8 +261,13 @@ entityCreateTypes.forEach((entityCreateType) => {
       }
 
       if (entityCreateType.parent) {
-        givenUuid(entityCreateType.parent)
+        given('UuidQuery').for(entityCreateType.parent)
         payload = { ...payload, input: { ...payload.input, parentId } }
+      }
+
+      if (entityCreateType.taxonomyTerm) {
+        given('UuidQuery').for(entityCreateType.taxonomyTerm)
+        payload = { ...payload, input: { ...payload.input, taxonomyTermId } }
       }
 
       given('EntityCreateMutation')
@@ -272,7 +295,7 @@ entityCreateTypes.forEach((entityCreateType) => {
     test('fails when user does not have role "login"', async () => {
       const guestUser = { ...user, id: nextUuid(user.id), roles: ['guest'] }
 
-      givenUuid(guestUser)
+      given('UuidQuery').for(guestUser)
 
       await new Client({ userId: guestUser.id })
         .prepareQuery({
@@ -295,7 +318,7 @@ entityCreateTypes.forEach((entityCreateType) => {
         .withVariables({
           input: {
             ...input,
-            content: '',
+            changes: '',
           },
         })
         .shouldFailWithError('BAD_USER_INPUT')
@@ -317,7 +340,17 @@ entityCreateTypes.forEach((entityCreateType) => {
       test('fails when parent does not exists', async () => {
         given('UuidQuery')
           .withPayload({ id: entityCreateType.parent!.id })
-          .returnsNull()
+          .returnsNotFound()
+
+        await mutation.shouldFailWithError('BAD_USER_INPUT')
+      })
+    }
+
+    if (entityCreateType.taxonomyTerm) {
+      test('fails when taxonomy term does not exists', async () => {
+        given('UuidQuery')
+          .withPayload({ id: entityCreateType.taxonomyTerm!.id })
+          .returnsNotFound()
 
         await mutation.shouldFailWithError('BAD_USER_INPUT')
       })

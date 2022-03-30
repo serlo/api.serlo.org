@@ -190,6 +190,7 @@ const pactSpec: PactSpec = {
             subscribeThis: false,
             subscribeThisByEmail: false,
             needsReview: true,
+            taxonomyTermId: 5,
             fields: {
               title: 'title',
               content: 'content',
@@ -203,7 +204,7 @@ const pactSpec: PactSpec = {
       ],
       [
         {
-          entityType: EntityType.Video,
+          entityType: EntityType.CoursePage,
           userId: user.id,
           input: {
             changes: 'changes',
@@ -212,16 +213,33 @@ const pactSpec: PactSpec = {
             subscribeThis: false,
             subscribeThisByEmail: false,
             needsReview: true,
+            parentId: course.id,
             fields: {
               title: 'title',
               content: 'content',
-              description: 'description',
             },
           },
         },
-        video,
+        coursePage,
       ],
     ],
+    examplePayloadForNull: {
+      entityType: EntityType.CoursePage,
+      userId: user.id,
+      input: {
+        changes: 'changes',
+        instance: Instance.De,
+        licenseId: 1,
+        subscribeThis: false,
+        subscribeThisByEmail: false,
+        needsReview: true,
+        parentId: 1,
+        fields: {
+          title: 'title',
+          content: 'content',
+        },
+      },
+    },
   },
   LicenseQuery: {
     examples: [[{ id: 1 }, license]],
@@ -289,6 +307,31 @@ const pactSpec: PactSpec = {
           sendEmail: false,
         },
         undefined,
+      ],
+    ],
+  },
+  TaxonomyTermSetNameAndDescriptionMutation: {
+    examples: [
+      [
+        {
+          id: taxonomyTermSubject.id,
+          name: 'name',
+          description: 'description',
+          userId: user.id,
+        },
+        {
+          success: true,
+        },
+      ],
+      [
+        {
+          id: taxonomyTermCurriculumTopic.id,
+          name: 'no description',
+          userId: user.id,
+        },
+        {
+          success: true,
+        },
       ],
     ],
   },
