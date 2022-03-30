@@ -223,6 +223,23 @@ const pactSpec: PactSpec = {
         coursePage,
       ],
     ],
+    examplePayloadForNull: {
+      entityType: EntityType.CoursePage,
+      userId: user.id,
+      input: {
+        changes: 'changes',
+        instance: Instance.De,
+        licenseId: 1,
+        subscribeThis: false,
+        subscribeThisByEmail: false,
+        needsReview: true,
+        parentId: 1,
+        fields: {
+          title: 'title',
+          content: 'content',
+        },
+      },
+    },
   },
   LicenseQuery: {
     examples: [[{ id: 1 }, license]],
