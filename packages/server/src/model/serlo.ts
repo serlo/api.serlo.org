@@ -31,7 +31,6 @@ import {
   NotificationEventDecoder,
   Uuid,
   NotificationDecoder,
-  NavigationDecoder,
   NavigationDataDecoder,
   EntityRevisionDecoder,
   EntityDecoder,
