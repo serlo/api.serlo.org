@@ -34,7 +34,6 @@ import {
   assertSuccessfulGraphQLQuery,
   LegacyClient,
   createTestClient,
-  createUuidHandler,
   getTypenameAndId,
   given,
 } from '../../__utils__'
@@ -48,7 +47,7 @@ beforeEach(() => {
 
 describe('TaxonomyTerm root', () => {
   beforeEach(() => {
-    global.server.use(createUuidHandler(taxonomyTermRoot))
+    given('UuidQuery').for(taxonomyTermRoot)
   })
 
   test('by id', async () => {
@@ -120,7 +119,7 @@ describe('TaxonomyTerm root', () => {
   })
 
   test('by id (w/ children)', async () => {
-    global.server.use(createUuidHandler(taxonomyTermSubject))
+    given('UuidQuery').for(taxonomyTermSubject)
     await assertSuccessfulGraphQLQuery({
       query: gql`
         query taxonomyTerm($id: Int!) {
@@ -188,7 +187,7 @@ describe('TaxonomyTerm root', () => {
 
 describe('TaxonomyTerm subject', () => {
   beforeEach(() => {
-    global.server.use(createUuidHandler(taxonomyTermSubject))
+    given('UuidQuery').for(taxonomyTermSubject)
   })
 
   test('by id', async () => {
@@ -212,7 +211,7 @@ describe('TaxonomyTerm subject', () => {
   })
 
   test('by id (w/ parent)', async () => {
-    global.server.use(createUuidHandler(taxonomyTermRoot))
+    given('UuidQuery').for(taxonomyTermRoot)
     await assertSuccessfulGraphQLQuery({
       query: gql`
         query taxonomyTerm($id: Int!) {
@@ -237,7 +236,7 @@ describe('TaxonomyTerm subject', () => {
   })
 
   test('by id (w/ children)', async () => {
-    global.server.use(createUuidHandler(taxonomyTermCurriculumTopic))
+    given('UuidQuery').for(taxonomyTermCurriculumTopic)
     await assertSuccessfulGraphQLQuery({
       query: gql`
         query taxonomyTerm($id: Int!) {
@@ -332,7 +331,7 @@ describe('TaxonomyTerm subject', () => {
 
 describe('TaxonomyTerm curriculumTopic', () => {
   beforeEach(() => {
-    global.server.use(createUuidHandler(taxonomyTermCurriculumTopic))
+    given('UuidQuery').for(taxonomyTermCurriculumTopic)
   })
 
   test('by id', async () => {
@@ -356,7 +355,7 @@ describe('TaxonomyTerm curriculumTopic', () => {
   })
 
   test('by id (w/ parent)', async () => {
-    global.server.use(createUuidHandler(taxonomyTermSubject))
+    given('UuidQuery').for(taxonomyTermSubject)
     await assertSuccessfulGraphQLQuery({
       query: gql`
         query taxonomyTerm($id: Int!) {
@@ -381,7 +380,7 @@ describe('TaxonomyTerm curriculumTopic', () => {
   })
 
   test('by id (w/ children)', async () => {
-    global.server.use(createUuidHandler(article))
+    given('UuidQuery').for(article)
     await assertSuccessfulGraphQLQuery({
       query: gql`
         query taxonomyTerm($id: Int!) {
