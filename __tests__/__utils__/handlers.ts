@@ -25,7 +25,6 @@ import * as R from 'ramda'
 import { Database } from './database'
 import { RestResolver } from './services'
 import { Model } from '~/internals/graphql'
-import { Payload } from '~/internals/model'
 import { DatabaseLayer } from '~/model'
 import { Uuid } from '~/model/decoder'
 
