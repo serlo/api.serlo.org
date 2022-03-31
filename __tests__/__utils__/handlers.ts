@@ -110,18 +110,6 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
   }
 }
 
-export function createNavigationHandler(
-  navigation: Payload<'serlo', 'getNavigationPayload'>
-) {
-  return createMessageHandler({
-    message: {
-      type: 'NavigationQuery',
-      payload: { instance: navigation.instance },
-    },
-    body: navigation,
-  })
-}
-
 export function createNotificationEventHandler(
   notificationEvent: Model<'AbstractNotificationEvent'>
 ) {

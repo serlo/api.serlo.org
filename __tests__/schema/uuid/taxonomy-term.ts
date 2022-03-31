@@ -33,11 +33,12 @@ import {
 import {
   assertSuccessfulGraphQLQuery,
   LegacyClient,
-  createNavigationHandler,
   createTestClient,
   createUuidHandler,
   getTypenameAndId,
+  given,
 } from '../../__utils__'
+import { Instance } from '~/types'
 
 let client: LegacyClient
 
@@ -152,7 +153,9 @@ describe('TaxonomyTerm root', () => {
   })
 
   test('by id (w/ navigation)', async () => {
-    global.server.use(createNavigationHandler(navigation))
+    given('NavigationQuery')
+      .withPayload({ instance: Instance.De })
+      .returns(navigation)
     await assertSuccessfulGraphQLQuery({
       query: gql`
         query taxonomyTerm($id: Int!) {
@@ -267,11 +270,11 @@ describe('TaxonomyTerm subject', () => {
   })
 
   test('by id (w/ navigation)', async () => {
-    global.server.use(
-      createNavigationHandler(navigation),
-      createUuidHandler(taxonomyTermRoot),
-      createUuidHandler(page)
-    )
+    given('UuidQuery').for(taxonomyTermRoot, page)
+    given('NavigationQuery')
+      .withPayload({ instance: Instance.De })
+      .returns(navigation)
+
     await assertSuccessfulGraphQLQuery({
       query: gql`
         query taxonomyTerm($id: Int!) {
@@ -405,12 +408,11 @@ describe('TaxonomyTerm curriculumTopic', () => {
   })
 
   test('by id (w/ navigation)', async () => {
-    global.server.use(
-      createNavigationHandler(navigation),
-      createUuidHandler(taxonomyTermRoot),
-      createUuidHandler(taxonomyTermSubject),
-      createUuidHandler(page)
-    )
+    given('UuidQuery').for(taxonomyTermRoot, taxonomyTermSubject, page)
+    given('NavigationQuery')
+      .withPayload({ instance: Instance.De })
+      .returns(navigation)
+
     await assertSuccessfulGraphQLQuery({
       query: gql`
         query taxonomyTerm($id: Int!) {
