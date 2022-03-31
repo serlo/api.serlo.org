@@ -31,7 +31,6 @@ import {
   NotificationEventDecoder,
   Uuid,
   NotificationDecoder,
-  NavigationDecoder,
   NavigationDataDecoder,
   EntityRevisionDecoder,
   EntityDecoder,
@@ -245,11 +244,11 @@ export function createSerloModel({
 
   const getNavigationPayload = createQuery(
     {
-      decoder: NavigationDecoder,
-      enableSwr: true,
-      getCurrentValue: (payload: { instance: Instance }) => {
-        return handleMessage({ type: 'NavigationQuery', payload })
+      decoder: DatabaseLayer.getDecoderFor('NavigationQuery'),
+      getCurrentValue: (payload: DatabaseLayer.Payload<'NavigationQuery'>) => {
+        return DatabaseLayer.makeRequest('NavigationQuery', payload)
       },
+      enableSwr: true,
       staleAfter: { hour: 1 },
       getKey: ({ instance }) => {
         return `${instance}.serlo.org/api/navigation`
