@@ -29,6 +29,7 @@ import {
   EntityRevisionTypeDecoder,
   EntityTypeDecoder,
   InstanceDecoder,
+  NavigationDecoder,
   PageDecoder,
   SubscriptionsDecoder,
   Uuid,
@@ -144,6 +145,11 @@ export const spec = {
       iconHref: t.string,
     }),
     canBeNull: true,
+  },
+  NavigationQuery: {
+    payload: t.type({ instance: InstanceDecoder }),
+    response: NavigationDecoder,
+    canBeNull: false,
   },
   PageAddRevisionMutation: {
     payload: t.type({
