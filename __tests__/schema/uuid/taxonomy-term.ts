@@ -30,20 +30,10 @@ import {
   taxonomyTermRoot,
   taxonomyTermSubject,
 } from '../../../__fixtures__'
-import {
-  assertSuccessfulGraphQLQuery,
-  LegacyClient,
-  createTestClient,
-  getTypenameAndId,
-  given,
-} from '../../__utils__'
+import { Client, getTypenameAndId, given } from '../../__utils__'
 import { Instance } from '~/types'
 
-let client: LegacyClient
-
-beforeEach(() => {
-  client = createTestClient()
-})
+const client = new Client()
 
 describe('TaxonomyTerm root', () => {
   beforeEach(() => {
@@ -51,25 +41,27 @@ describe('TaxonomyTerm root', () => {
   })
 
   test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query taxonomyTerm($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on TaxonomyTerm {
-              id
-              type
-              trashed
-              instance
-              name
-              description
-              weight
+    await client
+      .prepareQuery({
+        query: gql`
+          query taxonomyTerm($id: Int!) {
+            uuid(id: $id) {
+              __typename
+              ... on TaxonomyTerm {
+                id
+                type
+                trashed
+                instance
+                name
+                description
+                weight
+              }
             }
           }
-        }
-      `,
-      variables: taxonomyTermRoot,
-      data: {
+        `,
+      })
+      .withVariables({ id: taxonomyTermRoot.id })
+      .shouldReturnData({
         uuid: R.pick(
           [
             '__typename',
@@ -83,105 +75,97 @@ describe('TaxonomyTerm root', () => {
           ],
           taxonomyTermRoot
         ),
-      },
-      client,
-    })
+      })
   })
 
   test('by id (w/ parent)', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query taxonomyTerm($id: Int!) {
-          uuid(id: $id) {
-            ... on TaxonomyTerm {
-              parent {
-                __typename
-                id
-                type
-                trashed
-                instance
-                name
-                description
-                weight
+    await client
+      .prepareQuery({
+        query: gql`
+          query taxonomyTerm($id: Int!) {
+            uuid(id: $id) {
+              ... on TaxonomyTerm {
+                parent {
+                  __typename
+                  id
+                  type
+                  trashed
+                  instance
+                  name
+                  description
+                  weight
+                }
               }
             }
           }
-        }
-      `,
-      variables: taxonomyTermRoot,
-      data: {
-        uuid: {
-          parent: null,
-        },
-      },
-      client,
-    })
+        `,
+      })
+      .withVariables({ id: taxonomyTermRoot.id })
+      .shouldReturnData({ uuid: { parent: null } })
   })
 
   test('by id (w/ children)', async () => {
     given('UuidQuery').for(taxonomyTermSubject)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query taxonomyTerm($id: Int!) {
-          uuid(id: $id) {
-            ... on TaxonomyTerm {
-              children {
-                nodes {
-                  __typename
-                  ... on TaxonomyTerm {
-                    id
+
+    await client
+      .prepareQuery({
+        query: gql`
+          query taxonomyTerm($id: Int!) {
+            uuid(id: $id) {
+              ... on TaxonomyTerm {
+                children {
+                  nodes {
+                    __typename
+                    ... on TaxonomyTerm {
+                      id
+                    }
                   }
+                  totalCount
                 }
-                totalCount
               }
             }
           }
-        }
-      `,
-      variables: taxonomyTermRoot,
-      data: {
+        `,
+      })
+      .withVariables({ id: taxonomyTermRoot.id })
+      .shouldReturnData({
         uuid: {
           children: {
             nodes: [getTypenameAndId(taxonomyTermSubject)],
             totalCount: 1,
           },
         },
-      },
-      client,
-    })
+      })
   })
 
   test('by id (w/ navigation)', async () => {
     given('NavigationQuery')
       .withPayload({ instance: Instance.De })
       .returns(navigation)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query taxonomyTerm($id: Int!) {
-          uuid(id: $id) {
-            ... on TaxonomyTerm {
-              navigation {
-                data
-                path {
-                  nodes {
-                    id
-                    label
-                    url
+
+    await client
+      .prepareQuery({
+        query: gql`
+          query taxonomyTerm($id: Int!) {
+            uuid(id: $id) {
+              ... on TaxonomyTerm {
+                navigation {
+                  data
+                  path {
+                    nodes {
+                      id
+                      label
+                      url
+                    }
                   }
                 }
               }
             }
           }
-        }
-      `,
-      variables: taxonomyTermRoot,
-      data: {
-        uuid: {
-          navigation: null,
-        },
-      },
-      client,
-    })
+        `,
+      })
+      .withVariables({ id: taxonomyTermRoot.id })
+      .shouldReturnData({ uuid: { navigation: null } })
   })
 })
 
@@ -191,81 +175,79 @@ describe('TaxonomyTerm subject', () => {
   })
 
   test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query taxonomyTerm($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on TaxonomyTerm {
-              id
-            }
-          }
-        }
-      `,
-      variables: taxonomyTermSubject,
-      data: {
-        uuid: getTypenameAndId(taxonomyTermSubject),
-      },
-      client,
-    })
-  })
-
-  test('by id (w/ parent)', async () => {
-    given('UuidQuery').for(taxonomyTermRoot)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query taxonomyTerm($id: Int!) {
-          uuid(id: $id) {
-            ... on TaxonomyTerm {
-              parent {
-                __typename
+    await client
+      .prepareQuery({
+        query: gql`
+          query taxonomyTerm($id: Int!) {
+            uuid(id: $id) {
+              __typename
+              ... on TaxonomyTerm {
                 id
               }
             }
           }
-        }
-      `,
-      variables: taxonomyTermSubject,
-      data: {
-        uuid: {
-          parent: getTypenameAndId(taxonomyTermRoot),
-        },
-      },
-      client,
-    })
+        `,
+      })
+      .withVariables({ id: taxonomyTermSubject.id })
+      .shouldReturnData({ uuid: getTypenameAndId(taxonomyTermSubject) })
+  })
+
+  test('by id (w/ parent)', async () => {
+    given('UuidQuery').for(taxonomyTermRoot)
+
+    await client
+      .prepareQuery({
+        query: gql`
+          query taxonomyTerm($id: Int!) {
+            uuid(id: $id) {
+              ... on TaxonomyTerm {
+                parent {
+                  __typename
+                  id
+                }
+              }
+            }
+          }
+        `,
+      })
+      .withVariables({ id: taxonomyTermSubject.id })
+      .shouldReturnData({
+        uuid: { parent: getTypenameAndId(taxonomyTermRoot) },
+      })
   })
 
   test('by id (w/ children)', async () => {
     given('UuidQuery').for(taxonomyTermCurriculumTopic)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query taxonomyTerm($id: Int!) {
-          uuid(id: $id) {
-            ... on TaxonomyTerm {
-              children {
-                nodes {
-                  __typename
-                  ... on TaxonomyTerm {
-                    id
+
+    await client
+      .prepareQuery({
+        query: gql`
+          query taxonomyTerm($id: Int!) {
+            uuid(id: $id) {
+              ... on TaxonomyTerm {
+                children {
+                  nodes {
+                    __typename
+                    ... on TaxonomyTerm {
+                      id
+                    }
                   }
+                  totalCount
                 }
-                totalCount
               }
             }
           }
-        }
-      `,
-      variables: taxonomyTermSubject,
-      data: {
+        `,
+      })
+      .withVariables({ id: taxonomyTermSubject.id })
+      .shouldReturnData({
         uuid: {
           children: {
             nodes: [getTypenameAndId(taxonomyTermCurriculumTopic)],
             totalCount: 1,
           },
         },
-      },
-      client,
-    })
+      })
   })
 
   test('by id (w/ navigation)', async () => {
@@ -274,27 +256,29 @@ describe('TaxonomyTerm subject', () => {
       .withPayload({ instance: Instance.De })
       .returns(navigation)
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query taxonomyTerm($id: Int!) {
-          uuid(id: $id) {
-            ... on TaxonomyTerm {
-              navigation {
-                data
-                path {
-                  nodes {
-                    id
-                    label
-                    url
+    await client
+      .prepareQuery({
+        query: gql`
+          query taxonomyTerm($id: Int!) {
+            uuid(id: $id) {
+              ... on TaxonomyTerm {
+                navigation {
+                  data
+                  path {
+                    nodes {
+                      id
+                      label
+                      url
+                    }
                   }
                 }
               }
             }
           }
-        }
-      `,
-      variables: taxonomyTermSubject,
-      data: {
+        `,
+      })
+      .withVariables({ id: taxonomyTermSubject.id })
+      .shouldReturnData({
         uuid: {
           navigation: {
             data: {
@@ -323,9 +307,7 @@ describe('TaxonomyTerm subject', () => {
             },
           },
         },
-      },
-      client,
-    })
+      })
   })
 })
 
@@ -335,75 +317,71 @@ describe('TaxonomyTerm curriculumTopic', () => {
   })
 
   test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query taxonomyTerm($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on TaxonomyTerm {
-              id
-            }
-          }
-        }
-      `,
-      variables: taxonomyTermCurriculumTopic,
-      data: {
-        uuid: getTypenameAndId(taxonomyTermCurriculumTopic),
-      },
-      client,
-    })
-  })
-
-  test('by id (w/ parent)', async () => {
-    given('UuidQuery').for(taxonomyTermSubject)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query taxonomyTerm($id: Int!) {
-          uuid(id: $id) {
-            ... on TaxonomyTerm {
-              parent {
-                __typename
+    await client
+      .prepareQuery({
+        query: gql`
+          query taxonomyTerm($id: Int!) {
+            uuid(id: $id) {
+              __typename
+              ... on TaxonomyTerm {
                 id
               }
             }
           }
-        }
-      `,
-      variables: taxonomyTermCurriculumTopic,
-      data: {
-        uuid: {
-          parent: getTypenameAndId(taxonomyTermSubject),
-        },
-      },
-      client,
-    })
+        `,
+      })
+      .withVariables({ id: taxonomyTermCurriculumTopic.id })
+      .shouldReturnData({ uuid: getTypenameAndId(taxonomyTermCurriculumTopic) })
   })
 
-  test('by id (w/ children)', async () => {
-    given('UuidQuery').for(article)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query taxonomyTerm($id: Int!) {
-          uuid(id: $id) {
-            ... on TaxonomyTerm {
-              children {
-                nodes {
+  test('by id (w/ parent)', async () => {
+    given('UuidQuery').for(taxonomyTermSubject)
+
+    await client
+      .prepareQuery({
+        query: gql`
+          query taxonomyTerm($id: Int!) {
+            uuid(id: $id) {
+              ... on TaxonomyTerm {
+                parent {
                   __typename
                   id
                 }
               }
             }
           }
-        }
-      `,
-      variables: taxonomyTermCurriculumTopic,
-      data: {
-        uuid: {
-          children: { nodes: [getTypenameAndId(article)] },
-        },
-      },
-      client,
-    })
+        `,
+      })
+      .withVariables({ id: taxonomyTermCurriculumTopic.id })
+      .shouldReturnData({
+        uuid: { parent: getTypenameAndId(taxonomyTermSubject) },
+      })
+  })
+
+  test('by id (w/ children)', async () => {
+    given('UuidQuery').for(article)
+
+    await client
+      .prepareQuery({
+        query: gql`
+          query taxonomyTerm($id: Int!) {
+            uuid(id: $id) {
+              ... on TaxonomyTerm {
+                children {
+                  nodes {
+                    __typename
+                    id
+                  }
+                }
+              }
+            }
+          }
+        `,
+      })
+      .withVariables({ id: taxonomyTermCurriculumTopic.id })
+      .shouldReturnData({
+        uuid: { children: { nodes: [getTypenameAndId(article)] } },
+      })
   })
 
   test('by id (w/ navigation)', async () => {
@@ -412,27 +390,29 @@ describe('TaxonomyTerm curriculumTopic', () => {
       .withPayload({ instance: Instance.De })
       .returns(navigation)
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query taxonomyTerm($id: Int!) {
-          uuid(id: $id) {
-            ... on TaxonomyTerm {
-              navigation {
-                data
-                path {
-                  nodes {
-                    id
-                    label
-                    url
+    await client
+      .prepareQuery({
+        query: gql`
+          query taxonomyTerm($id: Int!) {
+            uuid(id: $id) {
+              ... on TaxonomyTerm {
+                navigation {
+                  data
+                  path {
+                    nodes {
+                      id
+                      label
+                      url
+                    }
                   }
                 }
               }
             }
           }
-        }
-      `,
-      variables: taxonomyTermCurriculumTopic,
-      data: {
+        `,
+      })
+      .withVariables({ id: taxonomyTermCurriculumTopic.id })
+      .shouldReturnData({
         uuid: {
           navigation: {
             data: {
@@ -466,8 +446,6 @@ describe('TaxonomyTerm curriculumTopic', () => {
             },
           },
         },
-      },
-      client,
-    })
+      })
   })
 })
