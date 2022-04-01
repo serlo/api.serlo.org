@@ -41,8 +41,6 @@ import {
   Database,
   returnsUuidsFromDatabase,
   createUnrevisedEntitiesHandler,
-  createSubjectsHandler,
-  createUuidHandler,
   getTypenameAndId,
   nextUuid,
 } from '../../__utils__'
@@ -126,11 +124,19 @@ test('following queries for entity point to checkout revision when entity is alr
 })
 
 test('after the reject mutation the cache is cleared for unrevisedEntities', async () => {
-  global.server.use(
-    createUnrevisedEntitiesHandler([article]),
-    createSubjectsHandler([taxonomyTermSubject]),
-    createUuidHandler(article)
-  )
+  given('UuidQuery').for(article)
+  given('SubjectsQuery')
+    .withPayload({})
+    .returns({
+      subjects: [
+        {
+          taxonomyTermId: taxonomyTermSubject.id,
+          instance: taxonomyTermSubject.instance,
+        },
+      ],
+    })
+
+  global.server.use(createUnrevisedEntitiesHandler([article]))
 
   await assertSuccessfulGraphQLQuery({
     query: gql`

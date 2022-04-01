@@ -39,8 +39,6 @@ import {
   returnsJson,
   Database,
   returnsUuidsFromDatabase,
-  createSubjectsHandler,
-  createUuidHandler,
   createUnrevisedEntitiesHandler,
   getTypenameAndId,
   nextUuid,
@@ -176,11 +174,19 @@ test('checkout revision has trashed == false for following queries', async () =>
 })
 
 test('after the checkout mutation the cache is cleared for unrevisedEntities', async () => {
-  global.server.use(
-    createUnrevisedEntitiesHandler([article]),
-    createSubjectsHandler([taxonomyTermSubject]),
-    createUuidHandler(article)
-  )
+  given('SubjectsQuery')
+    .withPayload({})
+    .returns({
+      subjects: [
+        {
+          taxonomyTermId: taxonomyTermSubject.id,
+          instance: taxonomyTermSubject.instance,
+        },
+      ],
+    })
+  given('UuidQuery').for(article)
+
+  global.server.use(createUnrevisedEntitiesHandler([article]))
 
   await assertSuccessfulGraphQLQuery({
     query: gql`
