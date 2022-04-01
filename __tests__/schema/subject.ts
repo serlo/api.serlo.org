@@ -68,6 +68,20 @@ describe('SubjectsQuery', () => {
   })
 
   describe('endpoint "subject"', () => {
+    const query = new Client().prepareQuery({
+      query: gql`
+        query ($id: String!) {
+          subject {
+            subject(id: $id) {
+              taxonomyTerm {
+                name
+              }
+            }
+          }
+        }
+      `,
+    })
+
     test('returns one subject', async () => {
       given('UuidQuery').for(taxonomyTermSubject)
 
@@ -82,22 +96,9 @@ describe('SubjectsQuery', () => {
           ],
         })
 
-      await new Client()
-        .prepareQuery({
-          query: gql`
-            query ($id: String!) {
-              subject {
-                subject(id: $id) {
-                  taxonomyTerm {
-                    name
-                  }
-                }
-              }
-            }
-          `,
-          variables: {
-            id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }),
-          },
+      await query
+        .withVariables({
+          id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }),
         })
         .shouldReturnData({
           subject: {
@@ -118,22 +119,9 @@ describe('SubjectsQuery', () => {
           ],
         })
 
-      await new Client()
-        .prepareQuery({
-          query: gql`
-            query ($id: String!) {
-              subject {
-                subject(id: $id) {
-                  taxonomyTerm {
-                    name
-                  }
-                }
-              }
-            }
-          `,
-          variables: {
-            id: encodeId({ prefix: 's', id: nextUuid(taxonomyTermSubject.id) }),
-          },
+      await query
+        .withVariables({
+          id: encodeId({ prefix: 's', id: nextUuid(taxonomyTermSubject.id) }),
         })
         .shouldReturnData({ subject: { subject: null } })
     })
@@ -144,22 +132,7 @@ describe('SubjectsQuery', () => {
         encodeToBase64('sXYZ'),
         encodeId({ prefix: 'd', id: taxonomyTermSubject.id }),
       ])('id: %s', async (id) => {
-        await new Client()
-          .prepareQuery({
-            query: gql`
-              query ($id: String!) {
-                subject {
-                  subject(id: $id) {
-                    taxonomyTerm {
-                      name
-                    }
-                  }
-                }
-              }
-            `,
-            variables: { id },
-          })
-          .shouldFailWithError('BAD_USER_INPUT')
+        await query.withVariables({ id }).shouldFailWithError('BAD_USER_INPUT')
       })
     })
   })
@@ -238,9 +211,9 @@ describe('Subjects', () => {
             }
           }
         `,
-        variables: {
-          id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }),
-        },
+      })
+      .withVariables({
+        id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }),
       })
       .shouldReturnData({
         subject: {
@@ -270,13 +243,9 @@ test('AbstractEntity.subject', async () => {
           }
         }
       `,
-      variables: { id: article.id },
     })
+    .withVariables({ id: article.id })
     .shouldReturnData({
-      uuid: {
-        subject: {
-          taxonomyTerm: { name: taxonomyTermSubject.name },
-        },
-      },
+      uuid: { subject: { taxonomyTerm: { name: taxonomyTermSubject.name } } },
     })
 })
