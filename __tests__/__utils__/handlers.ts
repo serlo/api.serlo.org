@@ -136,20 +136,6 @@ export function createUuidHandler(uuid: Model<'AbstractUuid'>, once?: boolean) {
   )
 }
 
-export function createSubjectsHandler(subjects: Model<'TaxonomyTerm'>[]) {
-  return createMessageHandler({
-    message: { type: 'SubjectsQuery', payload: {} },
-    body: {
-      subjects: subjects.map((taxonomyTerm) => {
-        return {
-          taxonomyTermId: taxonomyTerm.id,
-          instance: taxonomyTerm.instance,
-        }
-      }),
-    },
-  })
-}
-
 export function createUnrevisedEntitiesHandler(
   entities: Model<'AbstractEntity'>[]
 ) {
