@@ -339,7 +339,8 @@ const pactSpec: PactSpec = {
       [
         {
           id: taxonomyTermCurriculumTopic.id,
-          name: 'no description',
+          name: 'description null',
+          description: null,
           userId: user.id,
         },
         {
