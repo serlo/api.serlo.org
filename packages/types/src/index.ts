@@ -1685,6 +1685,7 @@ export type Mutation = {
   notification: NotificationMutation;
   page: PageMutation;
   subscription: SubscriptionMutation;
+  taxonomyTerm: TaxonomyTermMutation;
   thread: ThreadMutation;
   user: UserMutation;
   uuid: UuidMutation;
@@ -2358,6 +2359,28 @@ export type TaxonomyTermEdge = {
   __typename?: 'TaxonomyTermEdge';
   cursor: Scalars['String'];
   node: TaxonomyTerm;
+};
+
+export type TaxonomyTermMutation = {
+  __typename?: 'TaxonomyTermMutation';
+  setNameAndDescription?: Maybe<TaxonomyTermSetNameAndDescriptionResponse>;
+};
+
+
+export type TaxonomyTermMutationSetNameAndDescriptionArgs = {
+  input: TaxonomyTermSetNameAndDescriptionInput;
+};
+
+export type TaxonomyTermSetNameAndDescriptionInput = {
+  description?: InputMaybe<Scalars['String']>;
+  id: Scalars['Int'];
+  name: Scalars['String'];
+};
+
+export type TaxonomyTermSetNameAndDescriptionResponse = {
+  __typename?: 'TaxonomyTermSetNameAndDescriptionResponse';
+  query: Query;
+  success: Scalars['Boolean'];
 };
 
 export enum TaxonomyTermType {

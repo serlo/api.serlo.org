@@ -103,8 +103,8 @@ export const spec = {
       }),
     }),
     response: t.type({
-      success: t.boolean,
-      revisionId: t.union([t.number, t.null]),
+      success: t.literal(true),
+      revisionId: t.number,
     }),
     canBeNull: false,
   },
@@ -129,8 +129,8 @@ export const spec = {
         }),
       ]),
     }),
-    response: t.union([EntityDecoder, t.undefined]),
-    canBeNull: false,
+    response: EntityDecoder,
+    canBeNull: true,
   },
   LicenseQuery: {
     payload: t.type({ id: t.number }),
@@ -175,10 +175,20 @@ export const spec = {
         userId: t.number,
       }),
       t.partial({
-        forumId: t.union([t.number, t.null, t.undefined]),
+        forumId: t.union([t.number, t.null]),
       }),
     ]),
     response: t.union([PageDecoder, t.undefined]),
+    canBeNull: false,
+  },
+  TaxonomyTermSetNameAndDescriptionMutation: {
+    payload: t.type({
+      name: t.string,
+      id: t.number,
+      userId: t.number,
+      description: t.union([t.string, t.null, t.undefined]),
+    }),
+    response: t.type({ success: t.boolean }),
     canBeNull: false,
   },
   SubjectsQuery: {
