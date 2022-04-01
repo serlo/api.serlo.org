@@ -77,7 +77,6 @@ describe('TaxonomyTermSetNameAndDescriptionMutation', () => {
 
     await mutation
       .forClient(new Client({ userId: loginUser.id }))
-      .withVariables({ input })
       .shouldFailWithError('FORBIDDEN')
   })
 
