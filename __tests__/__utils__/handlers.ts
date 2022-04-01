@@ -43,6 +43,11 @@ const ForDefinitions = {
         }),
       })
   },
+  UnrevisedEntitiesQuery(entities: Model<'AbstractEntity'>[]) {
+    given('UnrevisedEntitiesQuery')
+      .withPayload({})
+      .returns({ unrevisedEntityIds: entities.map((entity) => entity.id) })
+  },
 }
 type ForDefinitions = typeof ForDefinitions
 type ForArg<M> = M extends keyof ForDefinitions
@@ -152,15 +157,6 @@ export function createUuidHandler(uuid: Model<'AbstractUuid'>, once?: boolean) {
     },
     once
   )
-}
-
-export function createUnrevisedEntitiesHandler(
-  entities: Model<'AbstractEntity'>[]
-) {
-  return createMessageHandler({
-    message: { type: 'UnrevisedEntitiesQuery', payload: {} },
-    body: { unrevisedEntityIds: entities.map((entity) => entity.id) },
-  })
 }
 
 export function createMessageHandler(

@@ -141,11 +141,7 @@ describe('Subjects', () => {
   test('property "unrevisedEntities" returns list of unrevisedEntities', async () => {
     given('UuidQuery').for(article)
     given('SubjectsQuery').for(taxonomyTermSubject)
-    given('UnrevisedEntitiesQuery')
-      .withPayload({})
-      .returns({
-        unrevisedEntityIds: [article.id],
-      })
+    given('UnrevisedEntitiesQuery').for(article)
 
     await new Client()
       .prepareQuery({

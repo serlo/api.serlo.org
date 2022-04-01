@@ -40,7 +40,6 @@ import {
   returnsJson,
   Database,
   returnsUuidsFromDatabase,
-  createUnrevisedEntitiesHandler,
   getTypenameAndId,
   nextUuid,
 } from '../../__utils__'
@@ -126,8 +125,7 @@ test('following queries for entity point to checkout revision when entity is alr
 test('after the reject mutation the cache is cleared for unrevisedEntities', async () => {
   given('UuidQuery').for(article)
   given('SubjectsQuery').for(taxonomyTermSubject)
-
-  global.server.use(createUnrevisedEntitiesHandler([article]))
+  given('UnrevisedEntitiesQuery').for([article])
 
   await assertSuccessfulGraphQLQuery({
     query: gql`
@@ -160,7 +158,7 @@ test('after the reject mutation the cache is cleared for unrevisedEntities', asy
     client,
   })
 
-  global.server.use(createUnrevisedEntitiesHandler([]))
+  given('UnrevisedEntitiesQuery').for([])
 
   await assertSuccessfulGraphQLQuery({
     query: gql`
