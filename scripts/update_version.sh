@@ -20,6 +20,7 @@ sed -i "s/@serlo\/api.*$/@serlo\/api\": \"^$VERSION\"/g" packages/authorization/
 sed -i "s/version.*$/version\": \"$VERSION\",/g" packages/graphql-modules/package.json
 sed -i "s/version.*$/version\": \"$VERSION\",/g" packages/server/package.json
 sed -i "s/serlo\/authorization.*$/serlo\/authorization\": \"$VERSION\",/g" packages/server/package.json
+sed -i "s/types\/graphql-modules.*$/types\/graphql-modules\": \"^$VERSION\",/g" packages/server/package.json
 sed -i "s/version.*$/version\": \"$VERSION\",/g" packages/types/package.json
 
 print_header "Updating lock file"

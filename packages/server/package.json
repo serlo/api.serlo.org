@@ -61,7 +61,7 @@
     "@graphql-codegen/typescript-resolvers": "^2.0.0",
     "@types/basic-auth": "^1.0.0",
     "@types/bull-arena": "^3.0.0",
-    "@types/graphql-modules": "^0.29.1",
+    "@types/graphql-modules": "^0.30.0",
     "@types/jsonwebtoken": "^8.0.0",
     "@types/node-fetch": "^2.0.0",
     "@types/ramda": "^0.27.37",
