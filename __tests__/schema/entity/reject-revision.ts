@@ -125,16 +125,7 @@ test('following queries for entity point to checkout revision when entity is alr
 
 test('after the reject mutation the cache is cleared for unrevisedEntities', async () => {
   given('UuidQuery').for(article)
-  given('SubjectsQuery')
-    .withPayload({})
-    .returns({
-      subjects: [
-        {
-          taxonomyTermId: taxonomyTermSubject.id,
-          instance: taxonomyTermSubject.instance,
-        },
-      ],
-    })
+  given('SubjectsQuery').for(taxonomyTermSubject)
 
   global.server.use(createUnrevisedEntitiesHandler([article]))
 
