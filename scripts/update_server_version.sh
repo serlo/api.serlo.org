@@ -23,7 +23,7 @@ sed -i "s/serlo\/authorization.*$/serlo\/authorization\": \"$VERSION\",/g" packa
 sed -i "s/version.*$/version\": \"$VERSION\",/g" packages/types/package.json
 
 print_header "Updating lock file"
-yarn 
+yarn
 
 print_header "Formatting"
 yarn format
