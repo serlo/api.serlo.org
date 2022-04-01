@@ -41,7 +41,7 @@
     "stop:redis": "docker-compose stop",
     "stop:enmeshed": "docker-compose -f enmeshed/docker-compose.yml down",
     "test": "jest --config jest.config.js --runInBand --forceExit",
-    "version": "./scripts/update_server_version.sh"
+    "update-version": "./scripts/update_version.sh"
   },
   "dependencies": {
     "graphql": "^16.0.0"

@@ -14,14 +14,7 @@ VERSION=$(cat scripts/changelog.ts \
   | awk -F: '{ print $2 }' \
   | sed "s/[v,', ]//g")
 
-sed -i "s/version.*$/version\": \"$VERSION\"/g" lerna.json
-sed -i "s/version.*$/version\": \"$VERSION\",/g" packages/authorization/package.json
-sed -i "s/@serlo\/api.*$/@serlo\/api\": \"^$VERSION\"/g" packages/authorization/package.json
-sed -i "s/version.*$/version\": \"$VERSION\",/g" packages/graphql-modules/package.json
-sed -i "s/version.*$/version\": \"$VERSION\",/g" packages/server/package.json
-sed -i "s/serlo\/authorization.*$/serlo\/authorization\": \"$VERSION\",/g" packages/server/package.json
-sed -i "s/types\/graphql-modules.*$/types\/graphql-modules\": \"^$VERSION\",/g" packages/server/package.json
-sed -i "s/version.*$/version\": \"$VERSION\",/g" packages/types/package.json
+yarn prepare-release $VERSION -y
 
 print_header "Updating lock file"
 yarn
