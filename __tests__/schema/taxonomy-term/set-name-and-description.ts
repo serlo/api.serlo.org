@@ -56,10 +56,7 @@ describe('TaxonomyTermSetNameAndDescriptionMutation', () => {
 
   test('returns "{ success: true }" when mutation could be successfully executed', async () => {
     given('TaxonomyTermSetNameAndDescriptionMutation')
-      .withPayload({
-        ...input,
-        userId: user.id,
-      })
+      .withPayload({ ...input, userId: user.id })
       .returns({ success: true })
 
     await mutation.shouldReturnData({
@@ -86,12 +83,7 @@ describe('TaxonomyTermSetNameAndDescriptionMutation', () => {
 
   test('fails when `name` is empty', async () => {
     await mutation
-      .withVariables({
-        input: {
-          ...input,
-          name: '',
-        },
-      })
+      .withVariables({ input: { ...input, name: '' } })
       .shouldFailWithError('BAD_USER_INPUT')
   })
 
@@ -148,8 +140,6 @@ describe('TaxonomyTermSetNameAndDescriptionMutation', () => {
     await mutation.shouldReturnData({
       taxonomyTerm: { setNameAndDescription: { success: true } },
     })
-
-    await mutation.execute()
 
     await query.shouldReturnData({
       uuid: { name: 'a name', description: 'a description' },
