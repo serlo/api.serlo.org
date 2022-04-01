@@ -1689,6 +1689,7 @@ export type Mutation = {
   notification: NotificationMutation;
   page: PageMutation;
   subscription: SubscriptionMutation;
+  taxonomyTerm: TaxonomyTermMutation;
   thread: ThreadMutation;
   user: UserMutation;
   uuid: UuidMutation;
@@ -2362,6 +2363,28 @@ export type TaxonomyTermEdge = {
   __typename?: 'TaxonomyTermEdge';
   cursor: Scalars['String'];
   node: TaxonomyTerm;
+};
+
+export type TaxonomyTermMutation = {
+  __typename?: 'TaxonomyTermMutation';
+  setNameAndDescription?: Maybe<TaxonomyTermSetNameAndDescriptionResponse>;
+};
+
+
+export type TaxonomyTermMutationSetNameAndDescriptionArgs = {
+  input: TaxonomyTermSetNameAndDescriptionInput;
+};
+
+export type TaxonomyTermSetNameAndDescriptionInput = {
+  description?: InputMaybe<Scalars['String']>;
+  id: Scalars['Int'];
+  name: Scalars['String'];
+};
+
+export type TaxonomyTermSetNameAndDescriptionResponse = {
+  __typename?: 'TaxonomyTermSetNameAndDescriptionResponse';
+  query: Query;
+  success: Scalars['Boolean'];
 };
 
 export enum TaxonomyTermType {
@@ -3061,6 +3084,9 @@ export type ResolversTypes = {
   TaxonomyTerm: ResolverTypeWrapper<ModelOf<TaxonomyTerm>>;
   TaxonomyTermConnection: ResolverTypeWrapper<ModelOf<TaxonomyTermConnection>>;
   TaxonomyTermEdge: ResolverTypeWrapper<ModelOf<TaxonomyTermEdge>>;
+  TaxonomyTermMutation: ResolverTypeWrapper<ModelOf<TaxonomyTermMutation>>;
+  TaxonomyTermSetNameAndDescriptionInput: ResolverTypeWrapper<ModelOf<TaxonomyTermSetNameAndDescriptionInput>>;
+  TaxonomyTermSetNameAndDescriptionResponse: ResolverTypeWrapper<ModelOf<TaxonomyTermSetNameAndDescriptionResponse>>;
   TaxonomyTermType: ResolverTypeWrapper<ModelOf<TaxonomyTermType>>;
   Thread: ResolverTypeWrapper<ModelOf<Thread>>;
   ThreadAware: ResolversTypes['Applet'] | ResolversTypes['AppletRevision'] | ResolversTypes['Article'] | ResolversTypes['ArticleRevision'] | ResolversTypes['Course'] | ResolversTypes['CoursePage'] | ResolversTypes['CoursePageRevision'] | ResolversTypes['CourseRevision'] | ResolversTypes['Event'] | ResolversTypes['EventRevision'] | ResolversTypes['Exercise'] | ResolversTypes['ExerciseGroup'] | ResolversTypes['ExerciseGroupRevision'] | ResolversTypes['ExerciseRevision'] | ResolversTypes['GroupedExercise'] | ResolversTypes['GroupedExerciseRevision'] | ResolversTypes['Page'] | ResolversTypes['PageRevision'] | ResolversTypes['Solution'] | ResolversTypes['SolutionRevision'] | ResolversTypes['TaxonomyTerm'] | ResolversTypes['User'] | ResolversTypes['Video'] | ResolversTypes['VideoRevision'];
@@ -3254,6 +3280,9 @@ export type ResolversParentTypes = {
   TaxonomyTerm: ModelOf<TaxonomyTerm>;
   TaxonomyTermConnection: ModelOf<TaxonomyTermConnection>;
   TaxonomyTermEdge: ModelOf<TaxonomyTermEdge>;
+  TaxonomyTermMutation: ModelOf<TaxonomyTermMutation>;
+  TaxonomyTermSetNameAndDescriptionInput: ModelOf<TaxonomyTermSetNameAndDescriptionInput>;
+  TaxonomyTermSetNameAndDescriptionResponse: ModelOf<TaxonomyTermSetNameAndDescriptionResponse>;
   Thread: ModelOf<Thread>;
   ThreadAware: ResolversParentTypes['Applet'] | ResolversParentTypes['AppletRevision'] | ResolversParentTypes['Article'] | ResolversParentTypes['ArticleRevision'] | ResolversParentTypes['Course'] | ResolversParentTypes['CoursePage'] | ResolversParentTypes['CoursePageRevision'] | ResolversParentTypes['CourseRevision'] | ResolversParentTypes['Event'] | ResolversParentTypes['EventRevision'] | ResolversParentTypes['Exercise'] | ResolversParentTypes['ExerciseGroup'] | ResolversParentTypes['ExerciseGroupRevision'] | ResolversParentTypes['ExerciseRevision'] | ResolversParentTypes['GroupedExercise'] | ResolversParentTypes['GroupedExerciseRevision'] | ResolversParentTypes['Page'] | ResolversParentTypes['PageRevision'] | ResolversParentTypes['Solution'] | ResolversParentTypes['SolutionRevision'] | ResolversParentTypes['TaxonomyTerm'] | ResolversParentTypes['User'] | ResolversParentTypes['Video'] | ResolversParentTypes['VideoRevision'];
   ThreadCreateCommentInput: ModelOf<ThreadCreateCommentInput>;
@@ -4048,6 +4077,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   notification?: Resolver<ResolversTypes['NotificationMutation'], ParentType, ContextType>;
   page?: Resolver<ResolversTypes['PageMutation'], ParentType, ContextType>;
   subscription?: Resolver<ResolversTypes['SubscriptionMutation'], ParentType, ContextType>;
+  taxonomyTerm?: Resolver<ResolversTypes['TaxonomyTermMutation'], ParentType, ContextType>;
   thread?: Resolver<ResolversTypes['ThreadMutation'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['UserMutation'], ParentType, ContextType>;
   uuid?: Resolver<ResolversTypes['UuidMutation'], ParentType, ContextType>;
@@ -4434,6 +4464,17 @@ export type TaxonomyTermEdgeResolvers<ContextType = Context, ParentType extends 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type TaxonomyTermMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermMutation'] = ResolversParentTypes['TaxonomyTermMutation']> = {
+  setNameAndDescription?: Resolver<Maybe<ResolversTypes['TaxonomyTermSetNameAndDescriptionResponse']>, ParentType, ContextType, RequireFields<TaxonomyTermMutationSetNameAndDescriptionArgs, 'input'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type TaxonomyTermSetNameAndDescriptionResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermSetNameAndDescriptionResponse'] = ResolversParentTypes['TaxonomyTermSetNameAndDescriptionResponse']> = {
+  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ThreadResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Thread'] = ResolversParentTypes['Thread']> = {
   archived?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   comments?: Resolver<ResolversTypes['CommentConnection'], ParentType, ContextType, RequireFields<ThreadCommentsArgs, never>>;
@@ -4773,6 +4814,8 @@ export type Resolvers<ContextType = Context> = {
   TaxonomyTerm?: TaxonomyTermResolvers<ContextType>;
   TaxonomyTermConnection?: TaxonomyTermConnectionResolvers<ContextType>;
   TaxonomyTermEdge?: TaxonomyTermEdgeResolvers<ContextType>;
+  TaxonomyTermMutation?: TaxonomyTermMutationResolvers<ContextType>;
+  TaxonomyTermSetNameAndDescriptionResponse?: TaxonomyTermSetNameAndDescriptionResponseResolvers<ContextType>;
   Thread?: ThreadResolvers<ContextType>;
   ThreadAware?: ThreadAwareResolvers<ContextType>;
   ThreadCreateCommentResponse?: ThreadCreateCommentResponseResolvers<ContextType>;

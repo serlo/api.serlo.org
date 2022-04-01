@@ -220,6 +220,23 @@ const pactSpec: PactSpec = {
         coursePage,
       ],
     ],
+    examplePayloadForNull: {
+      entityType: EntityType.CoursePage,
+      userId: user.id,
+      input: {
+        changes: 'changes',
+        instance: Instance.De,
+        licenseId: 1,
+        subscribeThis: false,
+        subscribeThisByEmail: false,
+        needsReview: true,
+        parentId: 1,
+        fields: {
+          title: 'title',
+          content: 'content',
+        },
+      },
+    },
   },
   LicenseQuery: {
     examples: [[{ id: 1 }, license]],
@@ -303,6 +320,32 @@ const pactSpec: PactSpec = {
           sendEmail: false,
         },
         undefined,
+      ],
+    ],
+  },
+  TaxonomyTermSetNameAndDescriptionMutation: {
+    examples: [
+      [
+        {
+          id: taxonomyTermSubject.id,
+          name: 'name',
+          description: 'description',
+          userId: user.id,
+        },
+        {
+          success: true,
+        },
+      ],
+      [
+        {
+          id: taxonomyTermCurriculumTopic.id,
+          name: 'description null',
+          description: null,
+          userId: user.id,
+        },
+        {
+          success: true,
+        },
       ],
     ],
   },

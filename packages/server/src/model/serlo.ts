@@ -956,6 +956,32 @@ export function createSerloModel({
     },
   })
 
+  const setTaxonomyTermNameAndDescription = createMutation({
+    decoder: DatabaseLayer.getDecoderFor(
+      'TaxonomyTermSetNameAndDescriptionMutation'
+    ),
+    mutate: (
+      payload: DatabaseLayer.Payload<'TaxonomyTermSetNameAndDescriptionMutation'>
+    ) => {
+      return DatabaseLayer.makeRequest(
+        'TaxonomyTermSetNameAndDescriptionMutation',
+        payload
+      )
+    },
+    async updateCache({ id, name, description }, { success }) {
+      if (success) {
+        await getUuid._querySpec.setCache({
+          payload: { id },
+          getValue(current) {
+            if (!current) return
+
+            return { ...current, name, description }
+          },
+        })
+      }
+    },
+  })
+
   return {
     addEntityRevision,
     addPageRevision,
@@ -994,6 +1020,7 @@ export function createSerloModel({
     setEmail,
     setNotificationState,
     setSubscription,
+    setTaxonomyTermNameAndDescription,
     setUuidState,
   }
 }
