@@ -29,21 +29,11 @@ import { Instance } from '~/types'
 describe('SubjectsQuery', () => {
   test('endpoint "subjects" returns list of all subjects for an instance', async () => {
     given('UuidQuery').for(taxonomyTermSubject)
-
-    given('SubjectsQuery')
-      .withPayload({})
-      .returns({
-        subjects: [
-          {
-            instance: taxonomyTermSubject.instance,
-            taxonomyTermId: taxonomyTermSubject.id,
-          },
-          {
-            instance: Instance.En,
-            taxonomyTermId: nextUuid(taxonomyTermSubject.id),
-          },
-        ],
-      })
+    given('SubjectsQuery').for(taxonomyTermSubject, {
+      ...taxonomyTermSubject,
+      instance: Instance.En,
+      id: nextUuid(taxonomyTermSubject.id),
+    })
 
     await new Client()
       .prepareQuery({
@@ -84,17 +74,7 @@ describe('SubjectsQuery', () => {
 
     test('returns one subject', async () => {
       given('UuidQuery').for(taxonomyTermSubject)
-
-      given('SubjectsQuery')
-        .withPayload({})
-        .returns({
-          subjects: [
-            {
-              instance: taxonomyTermSubject.instance,
-              taxonomyTermId: taxonomyTermSubject.id,
-            },
-          ],
-        })
+      given('SubjectsQuery').for(taxonomyTermSubject)
 
       await query
         .withVariables({
@@ -108,16 +88,7 @@ describe('SubjectsQuery', () => {
     })
 
     test('returns null when id does not resolve to an subject', async () => {
-      given('SubjectsQuery')
-        .withPayload({})
-        .returns({
-          subjects: [
-            {
-              instance: taxonomyTermSubject.instance,
-              taxonomyTermId: taxonomyTermSubject.id,
-            },
-          ],
-        })
+      given('SubjectsQuery').for(taxonomyTermSubject)
 
       await query
         .withVariables({
@@ -141,17 +112,7 @@ describe('SubjectsQuery', () => {
 describe('Subjects', () => {
   test('property "id" returns encoded id of subject', async () => {
     given('UuidQuery').for(taxonomyTermSubject)
-
-    given('SubjectsQuery')
-      .withPayload({})
-      .returns({
-        subjects: [
-          {
-            instance: taxonomyTermSubject.instance,
-            taxonomyTermId: taxonomyTermSubject.id,
-          },
-        ],
-      })
+    given('SubjectsQuery').for(taxonomyTermSubject)
 
     await new Client()
       .prepareQuery({
@@ -179,16 +140,7 @@ describe('Subjects', () => {
 
   test('property "unrevisedEntities" returns list of unrevisedEntities', async () => {
     given('UuidQuery').for(article)
-    given('SubjectsQuery')
-      .withPayload({})
-      .returns({
-        subjects: [
-          {
-            instance: taxonomyTermSubject.instance,
-            taxonomyTermId: taxonomyTermSubject.id,
-          },
-        ],
-      })
+    given('SubjectsQuery').for(taxonomyTermSubject)
     given('UnrevisedEntitiesQuery')
       .withPayload({})
       .returns({

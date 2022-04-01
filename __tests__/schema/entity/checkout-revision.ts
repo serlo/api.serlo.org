@@ -174,16 +174,7 @@ test('checkout revision has trashed == false for following queries', async () =>
 })
 
 test('after the checkout mutation the cache is cleared for unrevisedEntities', async () => {
-  given('SubjectsQuery')
-    .withPayload({})
-    .returns({
-      subjects: [
-        {
-          taxonomyTermId: taxonomyTermSubject.id,
-          instance: taxonomyTermSubject.instance,
-        },
-      ],
-    })
+  given('SubjectsQuery').for(taxonomyTermSubject)
   given('UuidQuery').for(article)
 
   global.server.use(createUnrevisedEntitiesHandler([article]))
