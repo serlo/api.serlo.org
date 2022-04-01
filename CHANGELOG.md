@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.30.0](https://github.com/serlo/api.serlo.org/compare/v0.29.1..v0.30.0) - April 1, 2022
+
+### Added
+
+- Add mutation `Entity.create`
+
+- Add mutation `TaxonomyTerm.setNameAndDescription`
+
+### Fixed
+
+- Reduced the cache time for get.Notifications
+
+- Reduced the cache time for chat.getUserInfo
+
+## [v0.29.1](https://github.com/serlo/api.serlo.org/compare/v0.29.0..v0.29.1) - March 21, 2022
+
+### Internal
+
+- Publish types from v0.29.0
+
 ## [v0.29.0](https://github.com/serlo/api.serlo.org/compare/v0.28.3..v0.29.0) - March 16, 2022
 
 ### Added
