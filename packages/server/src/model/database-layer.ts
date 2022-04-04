@@ -130,7 +130,7 @@ export const spec = {
       ]),
     }),
     response: EntityDecoder,
-    canBeNull: true,
+    canBeNull: false,
   },
   LicenseQuery: {
     payload: t.type({ id: t.number }),
