@@ -1,10 +1,9 @@
 #!/bin/bash
 
+source scripts/utils.sh
+
 function init() {
   set -e
-
-  BOLD=$(tput bold)
-  NORMAL=$(tput sgr0)
 
   read_arguments "$@"
 
@@ -48,20 +47,6 @@ function test_no_uncommitted_changes_when_pushing() {
   if [ -n "$(git diff HEAD)" ]; then
     error "There are uncommitted changes in your workspace (forgot to commit changes of 'yarn codegen'?!)"
   fi
-}
-
-function error() {
-  log "Error: $@"
-  exit 1
-}
-
-function print_header() {
-  echo
-  log "=== $@ ==="
-}
-
-function log() {
-  echo "${BOLD}$@${NORMAL}"
 }
 
 init "$@"
