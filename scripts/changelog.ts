@@ -1187,6 +1187,18 @@ async function exec(): Promise<void> {
         date: '2022-03-21',
         internal: ['Publish types from v0.29.0'],
       },
+      {
+        tagName: 'v0.30.0',
+        date: '2022-04-01',
+        added: [
+          'Add mutation `Entity.create`',
+          'Add mutation `TaxonomyTerm.setNameAndDescription`',
+        ],
+        fixed: [
+          'Reduced the cache time for get.Notifications',
+          'Reduced the cache time for chat.getUserInfo',
+        ],
+      },
     ],
   })
 
