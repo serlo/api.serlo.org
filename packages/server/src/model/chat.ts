@@ -32,7 +32,8 @@ export function createChatModel({ environment }: { environment: Environment }) {
     {
       decoder: t.strict({ success: t.boolean }),
       enableSwr: true,
-      staleAfter: { hour: 3 },
+      staleAfter: { minutes: 30 },
+      maxAge: { hours: 24 },
       async getCurrentValue(payload: { username: string }) {
         return await getChatApi({
           endpoint: 'users.info',

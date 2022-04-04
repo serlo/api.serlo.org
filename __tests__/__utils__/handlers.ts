@@ -25,7 +25,6 @@ import * as R from 'ramda'
 import { Database } from './database'
 import { RestResolver } from './services'
 import { Model } from '~/internals/graphql'
-import { Payload } from '~/internals/model'
 import { DatabaseLayer } from '~/model'
 import { Uuid } from '~/model/decoder'
 
@@ -108,18 +107,6 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
       )
     },
   }
-}
-
-export function createNavigationHandler(
-  navigation: Payload<'serlo', 'getNavigationPayload'>
-) {
-  return createMessageHandler({
-    message: {
-      type: 'NavigationQuery',
-      payload: { instance: navigation.instance },
-    },
-    body: navigation,
-  })
 }
 
 export function createNotificationEventHandler(

@@ -106,7 +106,7 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
     async setNameAndDescription(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
-      const { id, name } = input
+      const { id, name, description = null } = input
 
       assertArgumentIsNotEmpty({ name })
 
@@ -125,7 +125,9 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
 
       const { success } =
         await dataSources.model.serlo.setTaxonomyTermNameAndDescription({
-          ...input,
+          id,
+          name,
+          description,
           userId,
         })
 

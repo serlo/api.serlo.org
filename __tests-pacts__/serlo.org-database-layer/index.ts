@@ -58,9 +58,6 @@ import { Instance } from '~/types'
 describe('EventMessage', () => {
   require('./event')
 })
-describe('NavigationMessage', () => {
-  require('./navigation')
-})
 describe('NotificationMessage', () => {
   require('./notification')
 })
@@ -245,6 +242,22 @@ const pactSpec: PactSpec = {
     examples: [[{ id: 1 }, license]],
     examplePayloadForNull: { id: 100 },
   },
+  NavigationQuery: {
+    examples: [
+      [
+        { instance: Instance.De },
+        {
+          instance: Instance.De,
+          data: [
+            {
+              label: 'Mathematik',
+              children: [{ label: 'Alle Themen' }],
+            },
+          ],
+        },
+      ],
+    ],
+  },
   PageAddRevisionMutation: {
     examples: [
       [
@@ -326,7 +339,8 @@ const pactSpec: PactSpec = {
       [
         {
           id: taxonomyTermCurriculumTopic.id,
-          name: 'no description',
+          name: 'description null',
+          description: null,
           userId: user.id,
         },
         {
@@ -449,11 +463,17 @@ async function addInteraction<M extends DatabaseLayer.MessageType>(arg: {
   expect(result).toEqual(arg.expectedResponse)
 }
 
-function toMatcher(value: unknown) {
+function toMatcher(value: unknown): unknown {
   if (value == null) {
     return null
-  } else if (Array.isArray(value) && value.length > 0) {
-    return Matchers.eachLike(value[0])
+  } else if (Array.isArray(value)) {
+    return value.length > 0
+      ? Matchers.eachLike(
+          typeof value[0] === 'object' ? toMatcher(value[0]) : value[0]
+        )
+      : []
+  } else if (typeof value === 'object') {
+    return R.mapObjIndexed(toMatcher, value)
   } else {
     return Matchers.like(value)
   }

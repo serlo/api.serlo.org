@@ -29,6 +29,7 @@ import {
   EntityRevisionTypeDecoder,
   EntityTypeDecoder,
   InstanceDecoder,
+  NavigationDecoder,
   PageDecoder,
   SubscriptionsDecoder,
   Uuid,
@@ -121,6 +122,7 @@ export const spec = {
           subscribeThisByEmail: t.boolean,
           fields: t.record(t.string, t.string),
         }),
+        // TODO: prefer union
         t.partial({
           parentId: t.number,
           taxonomyTermId: t.number,
@@ -143,6 +145,11 @@ export const spec = {
       iconHref: t.string,
     }),
     canBeNull: true,
+  },
+  NavigationQuery: {
+    payload: t.type({ instance: InstanceDecoder }),
+    response: NavigationDecoder,
+    canBeNull: false,
   },
   PageAddRevisionMutation: {
     payload: t.type({
@@ -175,16 +182,12 @@ export const spec = {
     canBeNull: false,
   },
   TaxonomyTermSetNameAndDescriptionMutation: {
-    payload: t.intersection([
-      t.type({
-        name: t.string,
-        id: t.number,
-        userId: t.number,
-      }),
-      t.partial({
-        description: t.union([t.string, t.null]),
-      }),
-    ]),
+    payload: t.type({
+      name: t.string,
+      id: t.number,
+      userId: t.number,
+      description: t.union([t.string, t.null, t.undefined]),
+    }),
     response: t.type({ success: t.boolean }),
     canBeNull: false,
   },
