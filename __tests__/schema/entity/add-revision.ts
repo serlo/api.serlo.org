@@ -32,6 +32,8 @@ import {
   groupedExercise,
   solution,
   solutionRevision,
+  taxonomyTermRoot,
+  taxonomyTermSubject,
   user,
   video,
 } from '../../../__fixtures__'
@@ -214,7 +216,21 @@ entityAddRevisionTypes.forEach((entityAddRevisionType) => {
       .withVariables({ input })
 
     beforeEach(() => {
-      given('UuidQuery').for(user, entityAddRevisionType.entity)
+      given('UuidQuery').for(
+        user,
+        applet,
+        article,
+        course,
+        coursePage,
+        event,
+        exercise,
+        exerciseGroup,
+        groupedExercise,
+        solution,
+        video,
+        taxonomyTermSubject,
+        taxonomyTermRoot
+      )
     })
 
     test('returns "{ success: true }" when mutation could be successfully executed', async () => {
@@ -335,7 +351,15 @@ describe('Cache after EntityAddRevisionMutation call', () => {
 
   beforeEach(() => {
     const database = new Database()
-    database.hasUuids([user, solution, solutionRevision, article])
+    database.hasUuids([
+      user,
+      solution,
+      solutionRevision,
+      article,
+      exercise,
+      taxonomyTermSubject,
+      taxonomyTermRoot,
+    ])
     given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
 
     const {
