@@ -34,7 +34,6 @@ import {
   Mutations,
 } from '~/internals/graphql'
 import {
-  castTo,
   castToUuid,
   EntityRevisionType,
   EntityDecoder,
@@ -255,14 +254,10 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         url,
       })
 
-      const entity = await verifyEntity(
-        entityId,
-        dataSources,
-        EntityType.Applet
-      )
+      const entity = await getEntity(entityId, dataSources, AppletDecoder)
 
       const isAutoreviewEntity = await verifyAutoreviewEntity(
-        castTo(AppletDecoder, entity),
+        entity,
         dataSources
       )
 
@@ -283,14 +278,10 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         title,
       })
 
-      const entity = await verifyEntity(
-        entityId,
-        dataSources,
-        EntityType.Article
-      )
+      const entity = await getEntity(entityId, dataSources, ArticleDecoder)
 
       const isAutoreviewEntity = await verifyAutoreviewEntity(
-        castTo(ArticleDecoder, entity),
+        entity,
         dataSources
       )
 
@@ -307,14 +298,10 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
 
       assertArgumentIsNotEmpty({ changes, title })
 
-      const entity = await verifyEntity(
-        entityId,
-        dataSources,
-        EntityType.Course
-      )
+      const entity = await getEntity(entityId, dataSources, CourseDecoder)
 
       const isAutoreviewEntity = await verifyAutoreviewEntity(
-        castTo(CourseDecoder, entity),
+        entity,
         dataSources
       )
 
@@ -338,14 +325,10 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
 
       assertArgumentIsNotEmpty({ changes, content, title })
 
-      const entity = await verifyEntity(
-        entityId,
-        dataSources,
-        EntityType.CoursePage
-      )
+      const entity = await getEntity(entityId, dataSources, CoursePageDecoder)
 
       const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: castTo(CoursePageDecoder, entity).parentId,
+        id: entity.parentId,
         decoder: CourseDecoder,
       })
 
@@ -371,10 +354,10 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         title,
       })
 
-      const entity = await verifyEntity(entityId, dataSources, EntityType.Event)
+      const entity = await getEntity(entityId, dataSources, EventDecoder)
 
       const isAutoreviewEntity = await verifyAutoreviewEntity(
-        castTo(EventDecoder, entity),
+        entity,
         dataSources
       )
       return await addRevision({
@@ -390,14 +373,10 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
 
       assertArgumentIsNotEmpty({ changes, content })
 
-      const entity = await verifyEntity(
-        entityId,
-        dataSources,
-        EntityType.Exercise
-      )
+      const entity = await getEntity(entityId, dataSources, ExerciseDecoder)
 
       const isAutoreviewEntity = await verifyAutoreviewEntity(
-        castTo(ExerciseDecoder, entity),
+        entity,
         dataSources
       )
 
@@ -418,14 +397,14 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
 
       assertArgumentIsNotEmpty({ changes, content })
 
-      const entity = await verifyEntity(
+      const entity = await getEntity(
         entityId,
         dataSources,
-        EntityType.ExerciseGroup
+        ExerciseGroupDecoder
       )
 
       const isAutoreviewEntity = await verifyAutoreviewEntity(
-        castTo(ExerciseGroupDecoder, entity),
+        entity,
         dataSources
       )
 
@@ -451,14 +430,14 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
 
       assertArgumentIsNotEmpty({ changes, content })
 
-      const entity = await verifyEntity(
+      const entity = await getEntity(
         entityId,
         dataSources,
-        EntityType.GroupedExercise
+        GroupedExerciseDecoder
       )
 
       const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: castTo(GroupedExerciseDecoder, entity).parentId,
+        id: entity.parentId,
         decoder: ExerciseGroupDecoder,
       })
 
@@ -466,8 +445,6 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         parent,
         dataSources
       )
-
-      // TODO: What about solutionId?
 
       return await addRevision({
         revisionType: EntityRevisionType.GroupedExerciseRevision,
@@ -482,14 +459,10 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
 
       assertArgumentIsNotEmpty({ changes, content })
 
-      const entity = await verifyEntity(
-        entityId,
-        dataSources,
-        EntityType.Solution
-      )
+      const entity = await getEntity(entityId, dataSources, SolutionDecoder)
 
       const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: castTo(SolutionDecoder, entity).parentId,
+        id: entity.parentId,
         decoder: ExerciseDecoder,
       })
 
@@ -511,10 +484,10 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
 
       assertArgumentIsNotEmpty({ changes, content, title, url })
 
-      const entity = await verifyEntity(entityId, dataSources, EntityType.Video)
+      const entity = await getEntity(entityId, dataSources, VideoDecoder)
 
       const isAutoreviewEntity = await verifyAutoreviewEntity(
-        castTo(VideoDecoder, entity),
+        entity,
         dataSources
       )
 
@@ -739,23 +712,18 @@ async function addRevision({
   }
 }
 
-async function verifyEntity(
+async function getEntity<S extends Model<'AbstractEntity'> | null>(
   entityId: number,
   dataSources: { model: ModelDataSource },
-  entityType: EntityType
+  decoder: t.Type<S, unknown>
 ) {
-  const entity = await dataSources.model.serlo.getUuid({ id: entityId })
+  const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
+    id: entityId,
+    decoder,
+  })
 
   if (entity === null) {
     throw 'Nothing found for the provided entityId'
-  }
-
-  if (!EntityDecoder.is(entity)) {
-    throw 'No entity found for the provided entityId'
-  }
-
-  if (entity.__typename !== entityType) {
-    throw `The entity of type ${entity.__typename} cannot have revision of another type`
   }
 
   return entity
@@ -765,13 +733,10 @@ async function verifyAutoreviewEntity(
   entity:
     | Model<'Applet'>
     | Model<'Article'>
-    // | Model<'CoursePage'>
     | Model<'Course'>
     | Model<'Event'>
     | Model<'ExerciseGroup'>
     | Model<'Exercise'>
-    // | Model<'GroupedExercise'>
-    // | Model<'Solution'>
     | Model<'Video'>,
   dataSources: { model: ModelDataSource }
 ): Promise<boolean> {

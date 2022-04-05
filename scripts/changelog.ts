@@ -1200,8 +1200,8 @@ async function exec(): Promise<void> {
           'Handles correctly the parameter needsReview when adding revision',
         ],
         changed: [
-          'Made some fields at Entity.add___Revision mutations optional'
-        ]
+          'Made some fields at Entity.add___Revision mutations optional',
+        ],
       },
     ],
   })
