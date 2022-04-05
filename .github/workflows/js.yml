@@ -65,7 +65,8 @@ jobs:
           node-version: 16.x
       - run: yarn --immutable --immutable-cache
       - run: yarn start:redis
-      - run: yarn test
+      # FIXME: See https://github.com/facebook/jest/issues/6814#issuecomment-701323249 (Workaround for #553)
+      - run: find ./__tests__ -type f -name \*.ts | sort -R | xargs -L 5 yarn test --runInBand
   codegen:
     runs-on: ubuntu-latest
     steps:
