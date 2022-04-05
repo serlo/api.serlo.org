@@ -29,21 +29,11 @@ import { Instance } from '~/types'
 describe('SubjectsQuery', () => {
   test('endpoint "subjects" returns list of all subjects for an instance', async () => {
     given('UuidQuery').for(taxonomyTermSubject)
-
-    given('SubjectsQuery')
-      .withPayload({})
-      .returns({
-        subjects: [
-          {
-            instance: taxonomyTermSubject.instance,
-            taxonomyTermId: taxonomyTermSubject.id,
-          },
-          {
-            instance: Instance.En,
-            taxonomyTermId: nextUuid(taxonomyTermSubject.id),
-          },
-        ],
-      })
+    given('SubjectsQuery').for(taxonomyTermSubject, {
+      ...taxonomyTermSubject,
+      instance: Instance.En,
+      id: nextUuid(taxonomyTermSubject.id),
+    })
 
     await new Client()
       .prepareQuery({
@@ -68,36 +58,27 @@ describe('SubjectsQuery', () => {
   })
 
   describe('endpoint "subject"', () => {
-    test('returns one subject', async () => {
-      given('UuidQuery').for(taxonomyTermSubject)
-
-      given('SubjectsQuery')
-        .withPayload({})
-        .returns({
-          subjects: [
-            {
-              instance: taxonomyTermSubject.instance,
-              taxonomyTermId: taxonomyTermSubject.id,
-            },
-          ],
-        })
-
-      await new Client()
-        .prepareQuery({
-          query: gql`
-            query ($id: String!) {
-              subject {
-                subject(id: $id) {
-                  taxonomyTerm {
-                    name
-                  }
-                }
+    const query = new Client().prepareQuery({
+      query: gql`
+        query ($id: String!) {
+          subject {
+            subject(id: $id) {
+              taxonomyTerm {
+                name
               }
             }
-          `,
-          variables: {
-            id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }),
-          },
+          }
+        }
+      `,
+    })
+
+    test('returns one subject', async () => {
+      given('UuidQuery').for(taxonomyTermSubject)
+      given('SubjectsQuery').for(taxonomyTermSubject)
+
+      await query
+        .withVariables({
+          id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }),
         })
         .shouldReturnData({
           subject: {
@@ -107,33 +88,11 @@ describe('SubjectsQuery', () => {
     })
 
     test('returns null when id does not resolve to an subject', async () => {
-      given('SubjectsQuery')
-        .withPayload({})
-        .returns({
-          subjects: [
-            {
-              instance: taxonomyTermSubject.instance,
-              taxonomyTermId: taxonomyTermSubject.id,
-            },
-          ],
-        })
+      given('SubjectsQuery').for(taxonomyTermSubject)
 
-      await new Client()
-        .prepareQuery({
-          query: gql`
-            query ($id: String!) {
-              subject {
-                subject(id: $id) {
-                  taxonomyTerm {
-                    name
-                  }
-                }
-              }
-            }
-          `,
-          variables: {
-            id: encodeId({ prefix: 's', id: nextUuid(taxonomyTermSubject.id) }),
-          },
+      await query
+        .withVariables({
+          id: encodeId({ prefix: 's', id: nextUuid(taxonomyTermSubject.id) }),
         })
         .shouldReturnData({ subject: { subject: null } })
     })
@@ -144,22 +103,7 @@ describe('SubjectsQuery', () => {
         encodeToBase64('sXYZ'),
         encodeId({ prefix: 'd', id: taxonomyTermSubject.id }),
       ])('id: %s', async (id) => {
-        await new Client()
-          .prepareQuery({
-            query: gql`
-              query ($id: String!) {
-                subject {
-                  subject(id: $id) {
-                    taxonomyTerm {
-                      name
-                    }
-                  }
-                }
-              }
-            `,
-            variables: { id },
-          })
-          .shouldFailWithError('BAD_USER_INPUT')
+        await query.withVariables({ id }).shouldFailWithError('BAD_USER_INPUT')
       })
     })
   })
@@ -168,17 +112,7 @@ describe('SubjectsQuery', () => {
 describe('Subjects', () => {
   test('property "id" returns encoded id of subject', async () => {
     given('UuidQuery').for(taxonomyTermSubject)
-
-    given('SubjectsQuery')
-      .withPayload({})
-      .returns({
-        subjects: [
-          {
-            instance: taxonomyTermSubject.instance,
-            taxonomyTermId: taxonomyTermSubject.id,
-          },
-        ],
-      })
+    given('SubjectsQuery').for(taxonomyTermSubject)
 
     await new Client()
       .prepareQuery({
@@ -206,21 +140,8 @@ describe('Subjects', () => {
 
   test('property "unrevisedEntities" returns list of unrevisedEntities', async () => {
     given('UuidQuery').for(article)
-    given('SubjectsQuery')
-      .withPayload({})
-      .returns({
-        subjects: [
-          {
-            instance: taxonomyTermSubject.instance,
-            taxonomyTermId: taxonomyTermSubject.id,
-          },
-        ],
-      })
-    given('UnrevisedEntitiesQuery')
-      .withPayload({})
-      .returns({
-        unrevisedEntityIds: [article.id],
-      })
+    given('SubjectsQuery').for(taxonomyTermSubject)
+    given('UnrevisedEntitiesQuery').for(article)
 
     await new Client()
       .prepareQuery({
@@ -238,9 +159,9 @@ describe('Subjects', () => {
             }
           }
         `,
-        variables: {
-          id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }),
-        },
+      })
+      .withVariables({
+        id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }),
       })
       .shouldReturnData({
         subject: {
@@ -270,13 +191,9 @@ test('AbstractEntity.subject', async () => {
           }
         }
       `,
-      variables: { id: article.id },
     })
+    .withVariables({ id: article.id })
     .shouldReturnData({
-      uuid: {
-        subject: {
-          taxonomyTerm: { name: taxonomyTermSubject.name },
-        },
-      },
+      uuid: { subject: { taxonomyTerm: { name: taxonomyTermSubject.name } } },
     })
 })
