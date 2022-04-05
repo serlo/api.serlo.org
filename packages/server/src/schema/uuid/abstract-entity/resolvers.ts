@@ -743,19 +743,32 @@ async function verifyAutoreviewEntity(
   const taxonomyTermIds = entity.taxonomyTermIds as number[]
 
   for (const id of taxonomyTermIds) {
-    // 106082 = sandkasten. TODO: make it configurable
-    if ([106082].includes(id)) return true
-
-    const taxonomyTerm = await dataSources.model.serlo.getUuidWithCustomDecoder(
-      { id, decoder: TaxonomyTermDecoder }
-    )
-
-    const parentId = taxonomyTerm.parentId
-
-    if (parentId && [106082].includes(parentId)) return true
+    const isParentAutoreview = await checkAnyParentAutoreview(id, dataSources)
+    if (!isParentAutoreview) return false
   }
 
-  return false
+  return true
+}
+
+async function checkAnyParentAutoreview(
+  childId: number,
+  dataSources: { model: ModelDataSource }
+): Promise<boolean> {
+  // 106082 = sandkasten. TODO: make it configurable
+  if (childId === 106082) return true
+
+  const taxonomyTerm = await dataSources.model.serlo.getUuidWithCustomDecoder({
+    id: childId,
+    decoder: TaxonomyTermDecoder,
+  })
+
+  const parentId = taxonomyTerm.parentId
+
+  if (parentId === null) return false
+
+  if (parentId === 106082) return true
+
+  return await checkAnyParentAutoreview(parentId, dataSources)
 }
 
 function removeUndefinedFields(inputFields: {
