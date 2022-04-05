@@ -3939,7 +3939,7 @@ __metadata:
     "@types/graphql-modules": ^0.30.0
     "@types/jsonwebtoken": ^8.5.8
     "@types/node-fetch": ^2.6.1
-    "@types/ramda": ^0.27.66
+    "@types/ramda": ^0.28.7
     "@types/redis": ^2.8.32
     "@types/redlock": ^3.0.7
     "@types/semver": ^7.3.9
@@ -3973,7 +3973,7 @@ __metadata:
     msgpack5: ^5.3.2
     newtype-ts: ^0.3.5
     node-fetch: ^2.6.7
-    ramda: ^0.27.2
+    ramda: ^0.28.0
     redis: ^3.1.2
     redlock: ^3.1.2
     semver: ^7.3.5
@@ -4576,12 +4576,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ramda@npm:^0.27.66":
-  version: 0.27.66
-  resolution: "@types/ramda@npm:0.27.66"
+"@types/ramda@npm:^0.28.7":
+  version: 0.28.7
+  resolution: "@types/ramda@npm:0.28.7"
   dependencies:
     ts-toolbelt: ^6.15.1
-  checksum: eea577e4a0934849b4103c1452a7c8ddbc9bbf0e2aafb908467212654555145f846a16fe737563b582e8fb5bd6698481ebec1237537e5e662587c47f626e4c92
+  checksum: 0ee50cbd964d45ae75fdfc904113859d0abd7ceabd193ffaceeda3c80669a18fadc4680ea9f06f8ae2d3aa988513535dbff26fc6ee0a5b803c2106b1de8d0c4c
   languageName: node
   linkType: hard
 
@@ -15687,13 +15687,6 @@ __metadata:
   version: 4.0.1
   resolution: "quick-lru@npm:4.0.1"
   checksum: bea46e1abfaa07023e047d3cf1716a06172c4947886c053ede5c50321893711577cb6119360f810cc3ffcd70c4d7db4069c3cee876b358ceff8596e062bd1154
-  languageName: node
-  linkType: hard
-
-"ramda@npm:^0.27.2":
-  version: 0.27.2
-  resolution: "ramda@npm:0.27.2"
-  checksum: 28d6735dd1eea1a796c56cf6111f3673c6105bbd736e521cdd7826c46a18eeff337c2dba4668f6eed990d539b9961fd6db19aa46ccc1530ba67a396c0a9f580d
   languageName: node
   linkType: hard
 
