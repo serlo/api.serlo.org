@@ -78,4 +78,4 @@ We have `~` as an absolute path alias for `./src` in place, e.g. `~/internals` r
 - `yarn test` runs the unit tests
 - `yarn codegen` generates TypeScript types from GraphQL schema
 - `yarn start` spins up the development environment
-- `yarn update-version` starts the process for adding a new version
+- `yarn update-version` starts the process for adding a new version (only needed for deployment)
