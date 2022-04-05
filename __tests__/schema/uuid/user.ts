@@ -38,7 +38,6 @@ import {
   createChatUsersInfoHandler,
   createMessageHandler,
   createTestClient,
-  createUnrevisedEntitiesHandler,
   createUuidHandler,
   getTypenameAndId,
   givenSpreadheetApi,
@@ -541,13 +540,13 @@ describe('User', () => {
       revisionIds: [unrevisedRevisionByAnotherUser.id, ...article.revisionIds],
     }
 
-    global.server.use(
-      createUnrevisedEntitiesHandler([articleByUser, articleByAnotherUser]),
-      createUuidHandler(unrevisedRevisionByUser),
-      createUuidHandler(unrevisedRevisionByAnotherUser),
-      createUuidHandler(articleByAnotherUser),
-      createUuidHandler(articleByUser)
+    given('UuidQuery').for(
+      unrevisedRevisionByUser,
+      unrevisedRevisionByAnotherUser,
+      articleByAnotherUser,
+      articleByUser
     )
+    given('UnrevisedEntitiesQuery').for(articleByUser, articleByAnotherUser)
 
     await assertSuccessfulGraphQLQuery({
       query: gql`
