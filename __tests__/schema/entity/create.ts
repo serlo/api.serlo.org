@@ -36,8 +36,10 @@ import {
   user,
   video,
 } from '../../../__fixtures__'
-import { given, Client, nextUuid } from '../../__utils__'
 import {
+  given,
+  Client,
+  nextUuid,
   ALL_POSSIBLE_FIELDS,
   appletFields,
   articleFields,
@@ -48,7 +50,7 @@ import {
   exerciseGroupFields,
   genericFields,
   videoFields,
-} from './utils'
+} from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
 import { EntityType } from '~/model/decoder'

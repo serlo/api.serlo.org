@@ -45,8 +45,6 @@ import {
   nextUuid,
   Database,
   returnsUuidsFromDatabase,
-} from '../../__utils__'
-import {
   EntityFields,
   ALL_POSSIBLE_FIELDS,
   appletFields,
@@ -57,7 +55,7 @@ import {
   genericFields,
   exerciseGroupFields,
   videoFields,
-} from './utils'
+} from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { EntityType, EntityRevisionType, castToUuid } from '~/model/decoder'
 
