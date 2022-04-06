@@ -530,13 +530,7 @@ describe('Autoreview entities', () => {
 
     given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
 
-    const {
-      changes,
-      entityId,
-      needsReview,
-      subscribeThis,
-      subscribeThisByEmail,
-    } = input
+    const { changes, entityId, subscribeThis, subscribeThisByEmail } = input
 
     given('EntityAddRevisionMutation')
       .withPayload({
