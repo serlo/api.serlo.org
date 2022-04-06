@@ -69,9 +69,7 @@ class EntityAddRevisionWrapper {
   public entity: Model<EntityType>
   public revisionType: EntityRevisionType
   public mutationName: string
-  public inputName: string
   public fields: Partial<typeof EntityAddRevisionWrapper.ALL_POSSIBLE_FIELDS>
-  public fieldsForDBLayer: { [key: string]: string }
 
   constructor(
     revisionType: EntityRevisionType,
@@ -81,12 +79,10 @@ class EntityAddRevisionWrapper {
     this.revisionType = revisionType
     this.entity = entity
     this.mutationName = `add${this.revisionType}`
-    this.inputName = this.setInputName()
     this.fields = this.setFields(fieldsAtApi)
-    this.fieldsForDBLayer = this.setFieldsForDBlayer()
   }
 
-  setInputName() {
+  get inputName() {
     if (
       [
         EntityRevisionType.ExerciseRevision,
@@ -109,7 +105,7 @@ class EntityAddRevisionWrapper {
     return filteredFields
   }
 
-  setFieldsForDBlayer() {
+  get fieldsForDBLayer(): { [key: string]: string } {
     if (this.revisionType === EntityRevisionType.ExerciseGroupRevision) {
       return {
         cohesive: this.fields.cohesive!.toString(),
@@ -512,11 +508,29 @@ describe('Autoreview entities', () => {
     })
     .withVariables({ input })
 
+  const uuidQuery = new Client({ userId: user.id })
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on Solution {
+              currentRevision {
+                id
+              }
+            }
+          }
+        }
+      `,
+    })
+    .withVariables({ id: solution.id })
+
   let newSolutionRevision: Model<'SolutionRevision'>
 
-  beforeEach(() => {
-    const database = new Database()
+  const database = new Database()
 
+  const { changes, entityId, subscribeThis, subscribeThisByEmail } = input
+
+  beforeEach(() => {
     database.hasUuids([
       user,
       solution,
@@ -529,8 +543,6 @@ describe('Autoreview entities', () => {
     ])
 
     given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
-
-    const { changes, entityId, subscribeThis, subscribeThisByEmail } = input
 
     given('EntityAddRevisionMutation')
       .withPayload({
@@ -566,23 +578,7 @@ describe('Autoreview entities', () => {
       })
   })
 
-  test('check out revision without need of review', async () => {
-    const uuidQuery = new Client({ userId: user.id })
-      .prepareQuery({
-        query: gql`
-          query ($id: Int!) {
-            uuid(id: $id) {
-              ... on Solution {
-                currentRevision {
-                  id
-                }
-              }
-            }
-          }
-        `,
-      })
-      .withVariables({ id: solution.id })
-
+  test('check out revision without need of review, even if needsReview initially true', async () => {
     await uuidQuery.shouldReturnData({
       uuid: { currentRevision: { id: solution.currentRevisionId } },
     })
@@ -591,6 +587,66 @@ describe('Autoreview entities', () => {
 
     await uuidQuery.shouldReturnData({
       uuid: { currentRevision: { id: newSolutionRevision.id } },
+    })
+  })
+
+  test('do not check out revision automatically if entity is also in a no-autoreview taxonomy term', async () => {
+    database.hasUuids([
+      user,
+      solution,
+      solutionRevision,
+      article,
+      // 106082 = sandkasten, it should become configurable
+      {
+        ...exercise,
+        taxonomyTermIds: [106082, ...exercise.taxonomyTermIds].map(castToUuid),
+      },
+      taxonomyTermSubject,
+      { ...taxonomyTermSubject, id: castToUuid(106082) },
+      taxonomyTermRoot,
+    ])
+
+    given('EntityAddRevisionMutation')
+      .withPayload({
+        input: {
+          changes,
+          entityId,
+          needsReview: true,
+          subscribeThis,
+          subscribeThisByEmail,
+          fields,
+        },
+        userId: user.id,
+        revisionType: EntityRevisionType.SolutionRevision,
+      })
+      .isDefinedBy((req, res, ctx) => {
+        const { input } = req.body.payload
+
+        newSolutionRevision = {
+          ...solutionRevision,
+          id: nextUuid(solutionRevision.id),
+        }
+        database.hasUuid(newSolutionRevision)
+
+        if (!input.needsReview) {
+          database.changeUuid(solution.id, {
+            currentRevisionId: newSolutionRevision.id,
+          })
+        }
+
+        return res(
+          ctx.json({ success: true, revisionId: newSolutionRevision.id })
+        )
+      })
+
+    await uuidQuery.shouldReturnData({
+      uuid: { currentRevision: { id: solution.currentRevisionId } },
+    })
+
+    await mutation.execute()
+
+    await uuidQuery.shouldReturnData({
+      uuid: { currentRevision: { id: solution.currentRevisionId } },
     })
   })
 })
