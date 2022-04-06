@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
 import {
   applet,
@@ -45,41 +46,38 @@ import {
   Database,
   returnsUuidsFromDatabase,
 } from '../../__utils__'
+import {
+  EntityFields,
+  ALL_POSSIBLE_FIELDS,
+  appletFields,
+  articleFields,
+  courseFields,
+  coursePageFields,
+  eventFields,
+  genericFields,
+  exerciseGroupFields,
+  videoFields,
+} from './utils'
 import { Model } from '~/internals/graphql'
 import { EntityType, EntityRevisionType, castToUuid } from '~/model/decoder'
 
 class EntityAddRevisionWrapper {
-  static ALL_POSSIBLE_FIELDS: {
-    title: string
-    cohesive: boolean
-    content: string
-    description: string
-    metaTitle: string
-    metaDescription: string
-    url: string
-  } = {
-    title: 'title',
-    cohesive: false,
-    content: 'content',
-    description: 'description',
-    metaTitle: 'metaTitle',
-    metaDescription: 'metaDescription',
-    url: 'https://url.org',
-  }
   public entity: Model<EntityType>
   public revisionType: EntityRevisionType
-  public mutationName: string
-  public fields: Partial<typeof EntityAddRevisionWrapper.ALL_POSSIBLE_FIELDS>
+  public fields: Partial<EntityFields>
 
   constructor(
     revisionType: EntityRevisionType,
     entity: Model<EntityType>,
-    fieldsAtApi: (keyof typeof EntityAddRevisionWrapper.ALL_POSSIBLE_FIELDS)[]
+    fieldsAtApi: (keyof EntityFields)[]
   ) {
     this.revisionType = revisionType
     this.entity = entity
-    this.mutationName = `add${this.revisionType}`
-    this.fields = this.setFields(fieldsAtApi)
+    this.fields = R.pick(fieldsAtApi, ALL_POSSIBLE_FIELDS)
+  }
+
+  get mutationName() {
+    return `add${this.revisionType}`
   }
 
   get inputName() {
@@ -93,16 +91,6 @@ class EntityAddRevisionWrapper {
       return 'AddGenericRevisionInput'
     }
     return `Add${this.revisionType}Input`
-  }
-
-  setFields(
-    fields: (keyof typeof EntityAddRevisionWrapper.ALL_POSSIBLE_FIELDS)[]
-  ) {
-    const filteredFields: { [key: string]: string | boolean } = {}
-    for (const key of fields) {
-      filteredFields[key] = EntityAddRevisionWrapper.ALL_POSSIBLE_FIELDS[key]
-    }
-    return filteredFields
   }
 
   get fieldsForDBLayer(): { [key: string]: string } {
@@ -124,7 +112,6 @@ class EntityAddRevisionWrapper {
         title: this.fields.title!,
       }
     }
-    delete this.fields.cohesive
     const fieldsWithoutCohesive: Omit<typeof this.fields, 'cohesive'> =
       this.fields
 
@@ -133,56 +120,56 @@ class EntityAddRevisionWrapper {
 }
 
 const entityAddRevisionTypes = [
-  new EntityAddRevisionWrapper(EntityRevisionType.AppletRevision, applet, [
-    'title',
-    'content',
-    'metaTitle',
-    'metaDescription',
-    'url',
-  ]),
-  new EntityAddRevisionWrapper(EntityRevisionType.ArticleRevision, article, [
-    'title',
-    'content',
-    'metaTitle',
-    'metaDescription',
-  ]),
-  new EntityAddRevisionWrapper(EntityRevisionType.CourseRevision, course, [
-    'title',
-    'content',
-    'metaDescription',
-  ]),
+  new EntityAddRevisionWrapper(
+    EntityRevisionType.AppletRevision,
+    applet,
+    appletFields
+  ),
+  new EntityAddRevisionWrapper(
+    EntityRevisionType.ArticleRevision,
+    article,
+    articleFields
+  ),
+  new EntityAddRevisionWrapper(
+    EntityRevisionType.CourseRevision,
+    course,
+    courseFields
+  ),
   new EntityAddRevisionWrapper(
     EntityRevisionType.CoursePageRevision,
     coursePage,
-    ['title', 'content']
+    coursePageFields
   ),
-  new EntityAddRevisionWrapper(EntityRevisionType.EventRevision, event, [
-    'title',
-    'content',
-    'metaTitle',
-    'metaDescription',
-  ]),
-  new EntityAddRevisionWrapper(EntityRevisionType.ExerciseRevision, exercise, [
-    'content',
-  ]),
+  new EntityAddRevisionWrapper(
+    EntityRevisionType.EventRevision,
+    event,
+    eventFields
+  ),
+  new EntityAddRevisionWrapper(
+    EntityRevisionType.ExerciseRevision,
+    exercise,
+    genericFields
+  ),
   new EntityAddRevisionWrapper(
     EntityRevisionType.ExerciseGroupRevision,
     exerciseGroup,
-    ['cohesive', 'content']
+    exerciseGroupFields
   ),
   new EntityAddRevisionWrapper(
     EntityRevisionType.GroupedExerciseRevision,
     groupedExercise,
-    ['content']
+    genericFields
   ),
-  new EntityAddRevisionWrapper(EntityRevisionType.SolutionRevision, solution, [
-    'content',
-  ]),
-  new EntityAddRevisionWrapper(EntityRevisionType.VideoRevision, video, [
-    'title',
-    'content',
-    'url',
-  ]),
+  new EntityAddRevisionWrapper(
+    EntityRevisionType.SolutionRevision,
+    solution,
+    genericFields
+  ),
+  new EntityAddRevisionWrapper(
+    EntityRevisionType.VideoRevision,
+    video,
+    videoFields
+  ),
 ]
 
 entityAddRevisionTypes.forEach((entityAddRevisionType) => {
