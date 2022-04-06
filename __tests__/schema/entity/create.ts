@@ -37,35 +37,28 @@ import {
   video,
 } from '../../../__fixtures__'
 import { given, Client, nextUuid } from '../../__utils__'
+import {
+  ALL_POSSIBLE_FIELDS,
+  appletFields,
+  articleFields,
+  courseFields,
+  coursePageFields,
+  EntityFields,
+  eventFields,
+  exerciseGroupFields,
+  genericFields,
+  videoFields,
+} from './utils'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
 import { EntityType } from '~/model/decoder'
+import { AbstractEntityCreatePayload } from '~/schema/uuid/abstract-entity/resolvers'
 import { Instance } from '~/types'
 
-interface EntityFields {
-  title: string
-  cohesive: boolean
-  content: string
-  description: string
-  metaTitle: string
-  metaDescription: string
-  url: string
-}
-
 class EntityCreateWrapper {
-  static ALL_POSSIBLE_FIELDS: EntityFields = {
-    title: 'title',
-    cohesive: false,
-    content: 'content',
-    description: 'description',
-    metaTitle: 'metaTitle',
-    metaDescription: 'metaDescription',
-    url: 'https://url.org',
-  }
   public mutationName: string
   public inputName: string
   public fields: Partial<EntityFields>
-  public fieldsForDBLayer: { [key: string]: string }
 
   constructor(
     public entityType: EntityType,
@@ -76,8 +69,7 @@ class EntityCreateWrapper {
     this.entity = entity
     this.mutationName = `create${this.entityType}`
     this.inputName = `Create${this.entityType}Input`
-    this.fields = this.setFields(fieldsAtApi)
-    this.fieldsForDBLayer = this.setFieldsForDBlayer()
+    this.fields = R.pick(fieldsAtApi, ALL_POSSIBLE_FIELDS)
   }
 
   get parent(): Model<'AbstractEntity'> | undefined {
@@ -104,11 +96,7 @@ class EntityCreateWrapper {
     }
   }
 
-  setFields(fields: (keyof EntityFields)[]) {
-    return R.pick(fields, EntityCreateWrapper.ALL_POSSIBLE_FIELDS)
-  }
-
-  setFieldsForDBlayer() {
+  get fieldsForDBLayer() {
     if (this.entityType === EntityType.ExerciseGroup) {
       return {
         cohesive: this.fields.cohesive!.toString(),
@@ -127,7 +115,6 @@ class EntityCreateWrapper {
         title: this.fields.title!,
       }
     }
-    delete this.fields.cohesive
     const fieldsWithoutCohesive: Omit<typeof this.fields, 'cohesive'> =
       this.fields
 
@@ -136,65 +123,33 @@ class EntityCreateWrapper {
 }
 
 const entityCreateTypes = [
-  new EntityCreateWrapper(EntityType.Applet, applet, [
-    'title',
-    'content',
-    'metaTitle',
-    'metaDescription',
-    'url',
-  ]),
-  new EntityCreateWrapper(EntityType.Article, article, [
-    'title',
-    'content',
-    'metaTitle',
-    'metaDescription',
-  ]),
-  new EntityCreateWrapper(EntityType.Course, course, [
-    'title',
-    'content',
-    'metaDescription',
-  ]),
-  new EntityCreateWrapper(EntityType.CoursePage, coursePage, [
-    'title',
-    'content',
-  ]),
-  new EntityCreateWrapper(EntityType.Event, event, [
-    'title',
-    'content',
-    'metaTitle',
-    'metaDescription',
-  ]),
-  new EntityCreateWrapper(EntityType.Exercise, exercise, ['content']),
-  new EntityCreateWrapper(EntityType.ExerciseGroup, exerciseGroup, [
-    'cohesive',
-    'content',
-  ]),
-  new EntityCreateWrapper(EntityType.GroupedExercise, groupedExercise, [
-    'content',
-  ]),
-  new EntityCreateWrapper(EntityType.Solution, solution, ['content']),
-  new EntityCreateWrapper(EntityType.Video, video, ['title', 'content', 'url']),
+  new EntityCreateWrapper(EntityType.Applet, applet, appletFields),
+  new EntityCreateWrapper(EntityType.Article, article, articleFields),
+  new EntityCreateWrapper(EntityType.Course, course, courseFields),
+  new EntityCreateWrapper(EntityType.CoursePage, coursePage, coursePageFields),
+  new EntityCreateWrapper(EntityType.Event, event, eventFields),
+  new EntityCreateWrapper(EntityType.Exercise, exercise, genericFields),
+  new EntityCreateWrapper(
+    EntityType.ExerciseGroup,
+    exerciseGroup,
+    exerciseGroupFields
+  ),
+  new EntityCreateWrapper(
+    EntityType.GroupedExercise,
+    groupedExercise,
+    genericFields
+  ),
+  new EntityCreateWrapper(EntityType.Solution, solution, genericFields),
+  new EntityCreateWrapper(EntityType.Video, video, videoFields),
 ]
+
+type InputFromApi = Omit<AbstractEntityCreatePayload['input'], 'cohesive'> & {
+  cohesive?: boolean
+}
 
 entityCreateTypes.forEach((entityCreateType) => {
   describe(entityCreateType.mutationName, () => {
-    let input: {
-      changes: string
-      instance: Instance
-      licenseId: number
-      needsReview: boolean
-      subscribeThis: boolean
-      subscribeThisByEmail: boolean
-      parentId?: number
-      taxonomyTermId?: number
-      cohesive?: boolean
-      content?: string
-      description?: string
-      metaDescription?: string
-      metaTitle?: string
-      title?: string
-      url?: string
-    } = {
+    let input: InputFromApi = {
       changes: 'changes',
       instance: Instance.De,
       needsReview: true,
