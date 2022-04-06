@@ -46,7 +46,7 @@ import {
   returnsUuidsFromDatabase,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
-import { EntityType, EntityRevisionType } from '~/model/decoder'
+import { EntityType, EntityRevisionType, castToUuid } from '~/model/decoder'
 
 class EntityAddRevisionWrapper {
   static ALL_POSSIBLE_FIELDS: {
@@ -480,6 +480,123 @@ describe('Cache after EntityAddRevisionMutation call', () => {
           ],
         },
       },
+    })
+  })
+})
+
+describe('Autoreview entities', () => {
+  const fields = {
+    content: 'content',
+  }
+
+  const input = {
+    changes: 'changes',
+    entityId: solution.id,
+    needsReview: true,
+    subscribeThis: false,
+    subscribeThisByEmail: false,
+    ...fields,
+  }
+
+  const mutation = new Client({ userId: user.id })
+    .prepareQuery({
+      query: gql`
+        mutation set($input: AddGenericRevisionInput!) {
+          entity {
+            addSolutionRevision(input: $input) {
+              success
+            }
+          }
+        }
+      `,
+    })
+    .withVariables({ input })
+
+  let newSolutionRevision: Model<'SolutionRevision'>
+
+  beforeEach(() => {
+    const database = new Database()
+
+    database.hasUuids([
+      user,
+      solution,
+      solutionRevision,
+      article,
+      // 106082 = sandkasten, it should become configurable
+      { ...exercise, taxonomyTermIds: [106082].map(castToUuid) },
+      { ...taxonomyTermSubject, id: castToUuid(106082) },
+      taxonomyTermRoot,
+    ])
+
+    given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
+
+    const {
+      changes,
+      entityId,
+      needsReview,
+      subscribeThis,
+      subscribeThisByEmail,
+    } = input
+
+    given('EntityAddRevisionMutation')
+      .withPayload({
+        input: {
+          changes,
+          entityId,
+          needsReview: false,
+          subscribeThis,
+          subscribeThisByEmail,
+          fields,
+        },
+        userId: user.id,
+        revisionType: EntityRevisionType.SolutionRevision,
+      })
+      .isDefinedBy((req, res, ctx) => {
+        const { input } = req.body.payload
+
+        newSolutionRevision = {
+          ...solutionRevision,
+          id: nextUuid(solutionRevision.id),
+        }
+        database.hasUuid(newSolutionRevision)
+
+        if (!input.needsReview) {
+          database.changeUuid(solution.id, {
+            currentRevisionId: newSolutionRevision.id,
+          })
+        }
+
+        return res(
+          ctx.json({ success: true, revisionId: newSolutionRevision.id })
+        )
+      })
+  })
+
+  test('check out revision without need of review', async () => {
+    const uuidQuery = new Client({ userId: user.id })
+      .prepareQuery({
+        query: gql`
+          query ($id: Int!) {
+            uuid(id: $id) {
+              ... on Solution {
+                currentRevision {
+                  id
+                }
+              }
+            }
+          }
+        `,
+      })
+      .withVariables({ id: solution.id })
+
+    await uuidQuery.shouldReturnData({
+      uuid: { currentRevision: { id: solution.currentRevisionId } },
+    })
+
+    await mutation.execute()
+
+    await uuidQuery.shouldReturnData({
+      uuid: { currentRevision: { id: newSolutionRevision.id } },
     })
   })
 })
