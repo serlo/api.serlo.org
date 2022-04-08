@@ -637,6 +637,13 @@ export function createSerloModel({
     },
   })
 
+  const getAllThreads = createRequest({
+    decoder: DatabaseLayer.getDecoderFor('AllThreadsQuery'),
+    async getCurrentValue(payload: DatabaseLayer.Payload<'AllThreadsQuery'>) {
+      return DatabaseLayer.makeRequest('AllThreadsQuery', payload)
+    },
+  })
+
   const getThreadIds = createQuery(
     {
       decoder: t.type({ firstCommentIds: t.array(t.number) }),
@@ -998,6 +1005,7 @@ export function createSerloModel({
     getActiveReviewerIds,
     getActivityByType,
     getAlias,
+    getAllThreads,
     getEntitiesMetadata,
     getEvents,
     getEventsAfter,

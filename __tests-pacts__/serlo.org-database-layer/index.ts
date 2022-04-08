@@ -128,6 +128,8 @@ const pactSpec: PactSpec = {
     ]),
     examplePayloadForNull: { instance: Instance.En, path: '/not-existing' },
   },
+  // TODO: Add contract tests
+  AllThreadsQuery: { examples: [] },
   EntitiesMetadataQuery: {
     examples: [],
   },
