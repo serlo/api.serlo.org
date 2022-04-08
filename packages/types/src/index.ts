@@ -2372,7 +2372,7 @@ export type TaxonomyTermEdge = {
 
 export type TaxonomyTermMutation = {
   __typename?: 'TaxonomyTermMutation';
-  setNameAndDescription?: Maybe<TaxonomyTermSetNameAndDescriptionResponse>;
+  setNameAndDescription: TaxonomyTermSetNameAndDescriptionResponse;
 };
 
 

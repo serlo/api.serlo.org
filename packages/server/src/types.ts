@@ -2376,7 +2376,7 @@ export type TaxonomyTermEdge = {
 
 export type TaxonomyTermMutation = {
   __typename?: 'TaxonomyTermMutation';
-  setNameAndDescription?: Maybe<TaxonomyTermSetNameAndDescriptionResponse>;
+  setNameAndDescription: TaxonomyTermSetNameAndDescriptionResponse;
 };
 
 
@@ -4498,7 +4498,7 @@ export type TaxonomyTermEdgeResolvers<ContextType = Context, ParentType extends 
 };
 
 export type TaxonomyTermMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermMutation'] = ResolversParentTypes['TaxonomyTermMutation']> = {
-  setNameAndDescription?: Resolver<Maybe<ResolversTypes['TaxonomyTermSetNameAndDescriptionResponse']>, ParentType, ContextType, RequireFields<TaxonomyTermMutationSetNameAndDescriptionArgs, 'input'>>;
+  setNameAndDescription?: Resolver<ResolversTypes['TaxonomyTermSetNameAndDescriptionResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationSetNameAndDescriptionArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
