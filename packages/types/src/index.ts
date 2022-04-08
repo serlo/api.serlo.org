@@ -360,6 +360,14 @@ export type AliasInput = {
   path: Scalars['String'];
 };
 
+export type AllThreadsConnection = {
+  __typename?: 'AllThreadsConnection';
+  edges: Array<ThreadsCursor>;
+  nodes: Array<Thread>;
+  pageInfo: HasNextPageInfo;
+  totalCount: Scalars['Int'];
+};
+
 export type Applet = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Applet';
   alias?: Maybe<Scalars['String']>;
@@ -1922,6 +1930,7 @@ export type Query = {
   notifications: NotificationConnection;
   subject: SubjectQuery;
   subscription: SubscriptionQuery;
+  thread: ThreadQuery;
   user: UserQuery;
   uuid?: Maybe<AbstractUuid>;
 };
@@ -2491,6 +2500,17 @@ export type ThreadMutationSetThreadArchivedArgs = {
 
 export type ThreadMutationSetThreadStateArgs = {
   input: ThreadSetThreadStateInput;
+};
+
+export type ThreadQuery = {
+  __typename?: 'ThreadQuery';
+  allThreads: AllThreadsConnection;
+};
+
+
+export type ThreadQueryAllThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
 };
 
 export type ThreadSetCommentStateInput = {

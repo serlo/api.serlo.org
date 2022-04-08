@@ -35,7 +35,7 @@ export function createThreadResolvers(): PickResolvers<'ThreadAware'> {
       return resolveConnection({
         nodes: await resolveThreads({
           ...payload,
-          firstCommentIds,
+          firstCommentIds: firstCommentIds.sort((a, b) => b - a),
           dataSources,
         }),
         payload: payload,
@@ -58,10 +58,7 @@ export async function resolveThreads({
   trashed?: boolean
   dataSources: Context['dataSources']
 }): Promise<Model<'Thread'>[]> {
-  const firstComments = await resolveComments(
-    dataSources,
-    firstCommentIds.sort((a, b) => b - a)
-  )
+  const firstComments = await resolveComments(dataSources, firstCommentIds)
 
   const filteredFirstComments = firstComments.filter((comment) => {
     if (archived !== undefined && archived !== comment.archived) {
@@ -80,11 +77,9 @@ export async function resolveThreads({
         dataSources,
         firstComment.childrenIds
       )
-      const filteredComments = remainingComments.filter((comment) => {
-        if (trashed !== undefined && trashed !== comment.trashed) return false
-
-        return true
-      })
+      const filteredComments = remainingComments.filter(
+        (comment) => trashed === undefined || trashed === comment.trashed
+      )
       return {
         __typename: 'Thread' as const,
         commentPayloads: [firstComment, ...filteredComments],
