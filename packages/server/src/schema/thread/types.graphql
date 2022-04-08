@@ -72,6 +72,21 @@ type CommentEdge {
   node: Comment!
 }
 
+extend type Query {
+  thread: ThreadQuery!
+}
+
+type ThreadQuery {
+  allThreads(after: String, first: Int): AllThreadsConnection!
+}
+
+type AllThreadsConnection {
+  edges: [ThreadsCursor!]!
+  nodes: [Thread!]!
+  totalCount: Int!
+  pageInfo: HasNextPageInfo!
+}
+
 extend type Mutation {
   thread: ThreadMutation!
 }

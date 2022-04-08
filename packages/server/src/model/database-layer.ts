@@ -68,6 +68,14 @@ export const spec = {
     }),
     canBeNull: true,
   },
+  AllThreadsQuery: {
+    payload: t.intersection([
+      t.type({ first: t.number }),
+      t.partial({ after: t.number }),
+    ]),
+    response: t.type({ firstCommentIds: t.array(t.number) }),
+    canBeNull: false,
+  },
   EntitiesMetadataQuery: {
     payload: t.intersection([
       t.type({

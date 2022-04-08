@@ -32,52 +32,12 @@ export function createThreadResolvers(): PickResolvers<'ThreadAware'> {
         id: parent.id,
       })
 
-      const firstComments = await resolveComments(
-        dataSources,
-        firstCommentIds.sort((a, b) => b - a)
-      )
-
-      const filteredFirstComments = firstComments.filter((comment) => {
-        if (
-          payload.archived !== undefined &&
-          payload.archived !== comment.archived
-        ) {
-          return false
-        }
-        if (
-          payload.trashed !== undefined &&
-          payload.trashed !== comment.trashed
-        ) {
-          return false
-        }
-
-        return true
-      })
-
-      const threads = await Promise.all(
-        filteredFirstComments.map(async (firstComment) => {
-          const remainingComments = await resolveComments(
-            dataSources,
-            firstComment.childrenIds
-          )
-          const filteredComments = remainingComments.filter((comment) => {
-            if (
-              payload.trashed !== undefined &&
-              payload.trashed !== comment.trashed
-            )
-              return false
-
-            return true
-          })
-          return {
-            __typename: 'Thread' as const,
-            commentPayloads: [firstComment, ...filteredComments],
-          }
-        })
-      )
-
       return resolveConnection({
-        nodes: threads,
+        nodes: await resolveThreads({
+          ...payload,
+          firstCommentIds: firstCommentIds.sort((a, b) => b - a),
+          dataSources,
+        }),
         payload: payload,
         createCursor(node) {
           return node.commentPayloads[0].id.toString()
@@ -85,6 +45,47 @@ export function createThreadResolvers(): PickResolvers<'ThreadAware'> {
       })
     },
   }
+}
+
+export async function resolveThreads({
+  firstCommentIds,
+  archived,
+  trashed,
+  dataSources,
+}: {
+  firstCommentIds: number[]
+  archived?: boolean
+  trashed?: boolean
+  dataSources: Context['dataSources']
+}): Promise<Model<'Thread'>[]> {
+  const firstComments = await resolveComments(dataSources, firstCommentIds)
+
+  const filteredFirstComments = firstComments.filter((comment) => {
+    if (archived !== undefined && archived !== comment.archived) {
+      return false
+    }
+    if (trashed !== undefined && trashed !== comment.trashed) {
+      return false
+    }
+
+    return true
+  })
+
+  return await Promise.all(
+    filteredFirstComments.map(async (firstComment) => {
+      const remainingComments = await resolveComments(
+        dataSources,
+        firstComment.childrenIds
+      )
+      const filteredComments = remainingComments.filter(
+        (comment) => trashed === undefined || trashed === comment.trashed
+      )
+      return {
+        __typename: 'Thread' as const,
+        commentPayloads: [firstComment, ...filteredComments],
+      }
+    })
+  )
 }
 
 export async function resolveThread(
