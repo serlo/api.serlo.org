@@ -1199,6 +1199,11 @@ async function exec(): Promise<void> {
           'Reduced the cache time for chat.getUserInfo',
         ],
       },
+      {
+        tagName: 'v0.30.1',
+        date: '2022-04-08',
+        added: ['Add query endpoint `thread.allThreads`'],
+      },
     ],
   })
 
