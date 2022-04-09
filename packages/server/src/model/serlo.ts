@@ -646,9 +646,9 @@ export function createSerloModel({
 
   const getThreadIds = createQuery(
     {
-      decoder: t.type({ firstCommentIds: t.array(t.number) }),
-      getCurrentValue: async (payload: { id: number }) => {
-        return handleMessage({ type: 'ThreadsQuery', payload })
+      decoder: DatabaseLayer.getDecoderFor('ThreadsQuery'),
+      async getCurrentValue(payload: DatabaseLayer.Payload<'ThreadsQuery'>) {
+        return DatabaseLayer.makeRequest('ThreadsQuery', payload)
       },
       enableSwr: true,
       staleAfter: { day: 1 },
