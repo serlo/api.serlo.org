@@ -334,6 +334,9 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  ThreadsQuery: {
+    examples: [[{ id: article.id }, { firstCommentIds: [1] }]],
+  },
   UnrevisedEntitiesQuery: {
     examples: [
       [

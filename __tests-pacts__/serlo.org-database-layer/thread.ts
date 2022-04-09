@@ -35,21 +35,6 @@ import {
 import { DiscriminatorType } from '~/model/decoder'
 import { encodeThreadId } from '~/schema/thread/utils'
 
-test('ThreadsQuery', async () => {
-  await addMessageInteraction({
-    given: `article ${article.id} has threads`,
-    message: {
-      type: 'ThreadsQuery',
-      payload: { id: article.id },
-    },
-    responseBody: {
-      firstCommentIds: Matchers.eachLike(Matchers.integer(1)),
-    },
-  })
-  const response = await global.serloModel.getThreadIds({ id: article.id })
-  expect(response).toEqual({ firstCommentIds: [1] })
-})
-
 test('ThreadCreateThreadMutation', async () => {
   global.client = createTestClient({ userId: user.id })
   global.server.use(createUuidHandler(article), createUuidHandler(user))
