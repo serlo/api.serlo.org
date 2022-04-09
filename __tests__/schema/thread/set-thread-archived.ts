@@ -30,7 +30,7 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
-import { mockEndpointsForThreads } from './thread'
+import { givenThreads } from './thread'
 import { encodeThreadId } from '~/schema/thread/utils'
 
 describe('archive-comment', () => {
@@ -98,7 +98,7 @@ describe('archive-comment', () => {
       createUuidHandler(user)
     )
 
-    mockEndpointsForThreads(article, [[{ ...comment1, archived: true }]])
+    givenThreads(article, [[{ ...comment1, archived: true }]])
     global.server.use(
       createMessageHandler({
         message: {
