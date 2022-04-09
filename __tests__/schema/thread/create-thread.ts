@@ -30,10 +30,10 @@ import {
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
-import { mockEndpointsForThreads } from './thread'
+import { givenThreads } from './thread'
 
 test('unauthenticated user gets error', async () => {
-  mockEndpointsForThreads(article, [[comment]])
+  givenThreads({ uuid: article, threads: [[comment]] })
 
   await assertFailingGraphQLMutation({
     mutation: gql`
@@ -63,7 +63,7 @@ test('thread gets created, cache mutated as expected', async () => {
   const client = createTestClient({ userId: user.id })
   global.server.use(createUuidHandler(user))
 
-  mockEndpointsForThreads(article, [[comment]])
+  givenThreads({ uuid: article, threads: [[comment]] })
 
   // Fill cache
   await client.executeOperation({

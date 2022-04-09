@@ -31,11 +31,11 @@ import {
   createUuidHandler,
   nextUuid,
 } from '../../__utils__'
-import { mockEndpointsForThreads } from './thread'
+import { givenThreads } from './thread'
 import { encodeThreadId } from '~/schema/thread/utils'
 
 test('unauthenticated user gets error', async () => {
-  mockEndpointsForThreads(article, [[comment1]])
+  givenThreads(article, [[comment1]])
 
   await assertFailingGraphQLMutation({
     mutation: gql`
@@ -92,7 +92,7 @@ test('comment gets created, cache mutated as expected', async () => {
     })
   )
 
-  mockEndpointsForThreads(article, [[comment1]])
+  givenThreads(article, [[comment1]])
 
   //fill cache
   await client.executeOperation({
