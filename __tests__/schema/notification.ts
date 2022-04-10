@@ -61,8 +61,8 @@ import {
   createTestClient,
   createUuidHandler,
   getTypenameAndId,
+  givenThreads,
 } from '../__utils__'
-import { givenThreads } from './thread/thread'
 import { Payload } from '~/internals/model'
 import { Instance } from '~/types'
 
@@ -468,7 +468,7 @@ describe('notificationEvent', () => {
     })
 
     test('by id (w/ thread)', async () => {
-      givenThreads(article, [[comment]])
+      givenThreads({ uuid: article, threads: [[comment]] })
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query notificationEvent($id: Int!) {
@@ -1520,7 +1520,7 @@ describe('notificationEvent', () => {
     })
 
     test('by id (w/ thread)', async () => {
-      givenThreads(article, [[comment]])
+      givenThreads({ uuid: article, threads: [[comment]] })
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query notificationEvent($id: Int!) {
@@ -1686,7 +1686,7 @@ describe('notificationEvent', () => {
     })
 
     test('by id (w/ thread)', async () => {
-      givenThreads(article, [[comment]])
+      givenThreads({ uuid: article, threads: [[comment]] })
       await assertSuccessfulGraphQLQuery({
         query: gql`
           query notificationEvent($id: Int!) {
