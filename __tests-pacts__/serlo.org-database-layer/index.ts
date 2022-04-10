@@ -51,7 +51,13 @@ import {
   videoRevision,
 } from '../../__fixtures__'
 import { DatabaseLayer } from '~/model'
-import { EntityType, EntityRevisionType } from '~/model/decoder'
+import {
+  EntityType,
+  EntityRevisionType,
+  DiscriminatorType,
+  castToUuid,
+  castToAlias,
+} from '~/model/decoder'
 import { Instance } from '~/types'
 
 /* eslint-disable import/no-unassigned-import */
@@ -334,6 +340,33 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  ThreadCreateThreadMutation: {
+    examples: [
+      [
+        {
+          title: 'My new thread',
+          content: '🔥 brand new!',
+          objectId: article.id,
+          userId: user.id,
+          subscribe: true,
+          sendEmail: false,
+        },
+        {
+          __typename: DiscriminatorType.Comment,
+          id: castToUuid(1000),
+          title: 'My new thread',
+          trashed: false,
+          alias: castToAlias('/mathe/1000/first'),
+          authorId: user.id,
+          date: article.date,
+          archived: false,
+          content: '🔥 brand new!',
+          parentId: article.id,
+          childrenIds: [],
+        },
+      ],
+    ],
+  },
   ThreadsQuery: {
     examples: [[{ id: article.id }, { firstCommentIds: [1] }]],
   },
@@ -386,12 +419,12 @@ describe.each(R.toPairs(pactSpec))('%s', (type, messageSpec) => {
   if (examples.length === 0) return
 
   test.each(examples)('%s', async (payload, response) => {
-    if (response === undefined) {
+    if (response == null) {
       await addInteraction({
         type,
         payload,
         responseStatus: 200,
-        expectedResponse: undefined,
+        expectedResponse: response,
       })
     } else {
       const toSingletonList = (x: unknown) =>
