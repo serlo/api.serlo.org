@@ -30,7 +30,7 @@ import {
   comment3,
   user,
 } from '../../../__fixtures__'
-import { given, Client } from '../../__utils__'
+import { given, Client, givenThreads } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 
 describe('uuid["threads"]', () => {
@@ -413,29 +413,3 @@ describe('uuid["threads"]', () => {
       })
   })
 })
-
-export function givenThreads({
-  uuid,
-  threads,
-}: {
-  uuid: Model<'AbstractUuid'>
-  threads: Model<'Comment'>[][]
-}) {
-  const firstCommentIds = threads.map((thread) => thread[0].id)
-  const firstComments = threads.map((thread) => {
-    const childrenIds = thread.slice(1).map(R.prop('id'))
-
-    return { ...thread[0], parentId: uuid.id, childrenIds }
-  })
-  const otherComments = threads.flatMap((thread) =>
-    thread.slice(1).map((comment) => {
-      return { ...comment, parentId: thread[0].id, childrenIds: [] }
-    })
-  )
-
-  given('ThreadsQuery')
-    .withPayload({ id: uuid.id })
-    .returns({ firstCommentIds })
-
-  given('UuidQuery').for(uuid, firstComments, otherComments)
-}
