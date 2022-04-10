@@ -868,13 +868,9 @@ export function createSerloModel({
   })
 
   const checkoutPageRevision = createMutation({
-    decoder: t.type({ success: t.literal(true) }),
-    async mutate(payload: {
-      revisionId: Uuid
-      userId: number
-      reason: string
-    }) {
-      return handleMessage({ type: 'PageCheckoutRevisionMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('PageCheckoutRevisionMutation'),
+    mutate(payload: DatabaseLayer.Payload<'PageCheckoutRevisionMutation'>) {
+      return DatabaseLayer.makeRequest('PageCheckoutRevisionMutation', payload)
     },
     async updateCache({ revisionId }) {
       const revision = await getUuidWithCustomDecoder({

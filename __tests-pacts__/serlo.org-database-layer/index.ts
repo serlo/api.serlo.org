@@ -262,6 +262,8 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  // TODO: Add pact test
+  PageCheckoutRevisionMutation: { examples: [] },
   PageCreateMutation: {
     examples: [
       [
