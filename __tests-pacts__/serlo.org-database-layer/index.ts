@@ -27,6 +27,7 @@ import {
   appletRevision,
   article,
   articleRevision,
+  checkoutRevisionNotificationEvent,
   comment,
   comment3,
   course,
@@ -51,6 +52,7 @@ import {
   video,
   videoRevision,
 } from '../../__fixtures__'
+import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
 import {
   EntityType,
@@ -62,20 +64,8 @@ import {
 import { Instance } from '~/types'
 
 /* eslint-disable import/no-unassigned-import */
-describe('EventMessage', () => {
-  require('./event')
-})
 describe('NotificationMessage', () => {
   require('./notification')
-})
-describe('SubjectMessage', () => {
-  require('./subject')
-})
-describe('SubscriptionMessage', () => {
-  require('./subscription')
-})
-describe('UuidMessage', () => {
-  require('./uuid')
 })
 
 const uuids = [
@@ -109,14 +99,14 @@ const aliase = [
   { id: 19767, instance: Instance.De, path: '/mathe' },
   { id: 1, instance: Instance.De, path: '/user/1/admin' },
 ]
+const abstractEvent = R.pick(
+  ['__typename', 'id', 'instance', 'date', 'actorId', 'objectId'],
+  checkoutRevisionNotificationEvent
+) as Model<'AbstractNotificationEvent'>
 
 const pactSpec: PactSpec = {
-  ActiveAuthorsQuery: {
-    examples: [[undefined, [user.id]]],
-  },
-  ActiveReviewersQuery: {
-    examples: [[undefined, [user.id]]],
-  },
+  ActiveAuthorsQuery: { examples: [[undefined, [user.id]]] },
+  ActiveReviewersQuery: { examples: [[undefined, [user.id]]] },
   ActivityByTypeQuery: {
     examples: [
       [
@@ -134,9 +124,7 @@ const pactSpec: PactSpec = {
   },
   // TODO: Add contract tests
   AllThreadsQuery: { examples: [] },
-  EntitiesMetadataQuery: {
-    examples: [],
-  },
+  EntitiesMetadataQuery: { examples: [] },
   EntityAddRevisionMutation: {
     examples: [
       [
@@ -180,6 +168,9 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  // TODO: Add pact tests for the following two mutations
+  EntityCheckoutRevisionMutation: { examples: [] },
+  EntityRejectRevisionMutation: { examples: [] },
   EntityCreateMutation: {
     examples: [
       [
@@ -227,6 +218,27 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  EventsQuery: {
+    examples: [
+      [{ first: 500 }, { events: [abstractEvent], hasNextPage: true }],
+      [
+        { first: 500, after: 100 },
+        { events: [abstractEvent], hasNextPage: true },
+      ],
+      [
+        { first: 500, objectId: 1565 },
+        { events: [abstractEvent], hasNextPage: true },
+      ],
+      [
+        { first: 500, actorId: 1 },
+        { events: [abstractEvent], hasNextPage: true },
+      ],
+      [
+        { first: 500, instance: Instance.De },
+        { events: [abstractEvent], hasNextPage: true },
+      ],
+    ],
+  },
   LicenseQuery: {
     examples: [[{ id: 1 }, license]],
     examplePayloadForNull: { id: 100 },
@@ -237,12 +249,7 @@ const pactSpec: PactSpec = {
         { instance: Instance.De },
         {
           instance: Instance.De,
-          data: [
-            {
-              label: 'Mathematik',
-              children: [{ label: 'Alle Themen' }],
-            },
-          ],
+          data: [{ label: 'Mathematik', children: [{ label: 'Alle Themen' }] }],
         },
       ],
     ],
@@ -260,6 +267,9 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  // TODO: Add pact tests for the following two mutations
+  PageCheckoutRevisionMutation: { examples: [] },
+  PageRejectRevisionMutation: { examples: [] },
   PageCreateMutation: {
     examples: [
       [
@@ -278,17 +288,7 @@ const pactSpec: PactSpec = {
   },
   SubjectsQuery: {
     examples: [
-      [
-        {},
-        {
-          subjects: [
-            {
-              instance: taxonomyTermSubject.instance,
-              taxonomyTermId: taxonomyTermSubject.id,
-            },
-          ],
-        },
-      ],
+      [{}, { subjects: [{ instance: Instance.De, taxonomyTermId: 5 }] }],
     ],
   },
   SubscriptionsQuery: {
@@ -321,9 +321,7 @@ const pactSpec: PactSpec = {
           description: 'description',
           userId: user.id,
         },
-        {
-          success: true,
-        },
+        { success: true },
       ],
       [
         {
@@ -332,9 +330,7 @@ const pactSpec: PactSpec = {
           description: null,
           userId: user.id,
         },
-        {
-          success: true,
-        },
+        { success: true },
       ],
     ],
   },
@@ -400,21 +396,10 @@ const pactSpec: PactSpec = {
     examples: [[{ id: article.id }, { firstCommentIds: [1] }]],
   },
   UnrevisedEntitiesQuery: {
-    examples: [
-      [
-        {},
-        {
-          unrevisedEntityIds: [article.id],
-        },
-      ],
-    ],
+    examples: [[{}, { unrevisedEntityIds: [article.id] }]],
   },
-  UserPotentialSpamUsersQuery: {
-    examples: [],
-  },
-  UserDeleteBotsMutation: {
-    examples: [],
-  },
+  UserPotentialSpamUsersQuery: { examples: [] },
+  UserDeleteBotsMutation: { examples: [] },
   UserDeleteRegularUsersMutation: {
     examples: [],
     // TODO: uncomment when Database Layer handles UserDeleteRegularUsersMutation

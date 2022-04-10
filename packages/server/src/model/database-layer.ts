@@ -31,6 +31,7 @@ import {
   EntityTypeDecoder,
   InstanceDecoder,
   NavigationDecoder,
+  NotificationEventDecoder,
   PageDecoder,
   SubscriptionsDecoder,
   Uuid,
@@ -117,6 +118,24 @@ export const spec = {
     }),
     canBeNull: false,
   },
+  EntityCheckoutRevisionMutation: {
+    payload: t.type({
+      revisionId: Uuid,
+      userId: t.number,
+      reason: t.string,
+    }),
+    response: t.type({ success: t.literal(true) }),
+    canBeNull: false,
+  },
+  EntityRejectRevisionMutation: {
+    payload: t.type({
+      revisionId: t.number,
+      userId: t.number,
+      reason: t.string,
+    }),
+    response: t.type({ success: t.literal(true) }),
+    canBeNull: false,
+  },
   EntityCreateMutation: {
     payload: t.type({
       userId: t.number,
@@ -139,6 +158,22 @@ export const spec = {
       ]),
     }),
     response: EntityDecoder,
+    canBeNull: false,
+  },
+  EventsQuery: {
+    payload: t.intersection([
+      t.type({ first: t.number }),
+      t.partial({
+        after: t.number,
+        actorId: t.number,
+        objectId: t.number,
+        instance: InstanceDecoder,
+      }),
+    ]),
+    response: t.type({
+      events: t.array(NotificationEventDecoder),
+      hasNextPage: t.boolean,
+    }),
     canBeNull: false,
   },
   LicenseQuery: {
@@ -171,6 +206,24 @@ export const spec = {
       success: t.boolean,
       revisionId: t.union([t.number, t.null]),
     }),
+    canBeNull: false,
+  },
+  PageCheckoutRevisionMutation: {
+    payload: t.type({
+      revisionId: Uuid,
+      userId: t.number,
+      reason: t.string,
+    }),
+    response: t.type({ success: t.literal(true) }),
+    canBeNull: false,
+  },
+  PageRejectRevisionMutation: {
+    payload: t.type({
+      revisionId: t.number,
+      userId: t.number,
+      reason: t.string,
+    }),
+    response: t.type({ success: t.literal(true) }),
     canBeNull: false,
   },
   PageCreateMutation: {
