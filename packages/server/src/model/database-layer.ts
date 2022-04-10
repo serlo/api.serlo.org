@@ -224,6 +224,17 @@ export const spec = {
     response: t.void,
     canBeNull: false,
   },
+  ThreadCreateCommentMutation: {
+    payload: t.type({
+      content: t.string,
+      threadId: t.number,
+      userId: t.number,
+      subscribe: t.boolean,
+      sendEmail: t.boolean,
+    }),
+    response: t.union([CommentDecoder, t.null]),
+    canBeNull: false,
+  },
   ThreadCreateThreadMutation: {
     payload: t.type({
       content: t.string,

@@ -23,80 +23,12 @@ import { Matchers } from '@pact-foundation/pact'
 import { gql } from 'apollo-server'
 
 import { article, comment, comment3, user } from '../../__fixtures__'
-import {
-  createTestClient,
-  createUuidHandler,
-  nextUuid,
-} from '../../__tests__/__utils__'
+import { createTestClient, createUuidHandler } from '../../__tests__/__utils__'
 import {
   addMessageInteraction,
   assertSuccessfulGraphQLMutation,
 } from '../__utils__'
-import { DiscriminatorType } from '~/model/decoder'
 import { encodeThreadId } from '~/schema/thread/utils'
-
-test('ThreadCreateCommentMutation', async () => {
-  global.client = createTestClient({ userId: user.id })
-  global.server.use(
-    createUuidHandler(article),
-    createUuidHandler(comment),
-    createUuidHandler(user)
-  )
-
-  await addMessageInteraction({
-    given: `there exists a thread with a first comment with an id of ${comment.id} and ${user.id} is authenticated`,
-    message: {
-      type: 'ThreadCreateCommentMutation',
-      payload: {
-        content: 'Hello',
-        threadId: comment.id,
-        userId: user.id,
-        subscribe: true,
-        sendEmail: false,
-      },
-    },
-    responseBody: {
-      __typename: DiscriminatorType.Comment,
-      id: Matchers.integer(nextUuid(comment.id)),
-      content: 'Hello',
-      authorId: Matchers.integer(user.id),
-      parentId: comment.id,
-      trashed: false,
-      alias: Matchers.string('/mathe/101/mathe'),
-      date: Matchers.iso8601DateTime(comment.date),
-      title: null,
-      archived: false,
-      childrenIds: [],
-    },
-  })
-
-  await assertSuccessfulGraphQLMutation({
-    mutation: gql`
-      mutation createComment($input: ThreadCreateCommentInput!) {
-        thread {
-          createComment(input: $input) {
-            success
-          }
-        }
-      }
-    `,
-    variables: {
-      input: {
-        content: 'Hello',
-        threadId: encodeThreadId(comment.id),
-        subscribe: true,
-        sendEmail: false,
-      },
-    },
-    data: {
-      thread: {
-        createComment: {
-          success: true,
-        },
-      },
-    },
-  })
-})
 
 test('ThreadSetThreadArchivedMutation', async () => {
   global.client = createTestClient({ userId: user.id })

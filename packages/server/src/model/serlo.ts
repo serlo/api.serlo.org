@@ -690,17 +690,13 @@ export function createSerloModel({
   })
 
   const createComment = createMutation({
-    decoder: t.union([CommentDecoder, t.null]),
-    mutate: (payload: {
-      content: string
-      threadId: number
-      userId: number
-      subscribe: boolean
-      sendEmail: boolean
-    }) => {
-      return handleMessage({ type: 'ThreadCreateCommentMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('ThreadCreateCommentMutation'),
+    async mutate(
+      payload: DatabaseLayer.Payload<'ThreadCreateCommentMutation'>
+    ) {
+      return DatabaseLayer.makeRequest('ThreadCreateCommentMutation', payload)
     },
-    updateCache: async (payload, value) => {
+    async updateCache(payload, value) {
       if (value !== null) {
         await getUuid._querySpec.setCache({
           payload: { id: value.id },

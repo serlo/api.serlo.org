@@ -340,6 +340,32 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  ThreadCreateCommentMutation: {
+    examples: [
+      [
+        {
+          content: 'Hello',
+          threadId: comment.id,
+          userId: user.id,
+          subscribe: true,
+          sendEmail: false,
+        },
+        {
+          __typename: DiscriminatorType.Comment,
+          id: comment.id,
+          content: 'Hello',
+          authorId: user.id,
+          parentId: comment.id,
+          trashed: false,
+          alias: castToAlias('/mathe/101/mathe'),
+          date: comment.date,
+          title: null,
+          archived: false,
+          childrenIds: [],
+        },
+      ],
+    ],
+  },
   ThreadCreateThreadMutation: {
     examples: [
       [
