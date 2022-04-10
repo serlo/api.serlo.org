@@ -128,7 +128,7 @@ export const spec = {
   },
   EntityRejectRevisionMutation: {
     payload: t.type({
-      revisionId: Uuid,
+      revisionId: t.number,
       userId: t.number,
       reason: t.string,
     }),
@@ -202,7 +202,7 @@ export const spec = {
   },
   PageRejectRevisionMutation: {
     payload: t.type({
-      revisionId: Uuid,
+      revisionId: t.number,
       userId: t.number,
       reason: t.string,
     }),
