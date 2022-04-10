@@ -108,12 +108,8 @@ const aliase = [
 ]
 
 const pactSpec: PactSpec = {
-  ActiveAuthorsQuery: {
-    examples: [[undefined, [user.id]]],
-  },
-  ActiveReviewersQuery: {
-    examples: [[undefined, [user.id]]],
-  },
+  ActiveAuthorsQuery: { examples: [[undefined, [user.id]]] },
+  ActiveReviewersQuery: { examples: [[undefined, [user.id]]] },
   ActivityByTypeQuery: {
     examples: [
       [
@@ -131,9 +127,7 @@ const pactSpec: PactSpec = {
   },
   // TODO: Add contract tests
   AllThreadsQuery: { examples: [] },
-  EntitiesMetadataQuery: {
-    examples: [],
-  },
+  EntitiesMetadataQuery: { examples: [] },
   EntityAddRevisionMutation: {
     examples: [
       [
@@ -237,12 +231,7 @@ const pactSpec: PactSpec = {
         { instance: Instance.De },
         {
           instance: Instance.De,
-          data: [
-            {
-              label: 'Mathematik',
-              children: [{ label: 'Alle Themen' }],
-            },
-          ],
+          data: [{ label: 'Mathematik', children: [{ label: 'Alle Themen' }] }],
         },
       ],
     ],
@@ -281,17 +270,7 @@ const pactSpec: PactSpec = {
   },
   SubjectsQuery: {
     examples: [
-      [
-        {},
-        {
-          subjects: [
-            {
-              instance: taxonomyTermSubject.instance,
-              taxonomyTermId: taxonomyTermSubject.id,
-            },
-          ],
-        },
-      ],
+      [{}, { subjects: [{ instance: Instance.De, taxonomyTermId: 5 }] }],
     ],
   },
   SubscriptionsQuery: {
@@ -324,9 +303,7 @@ const pactSpec: PactSpec = {
           description: 'description',
           userId: user.id,
         },
-        {
-          success: true,
-        },
+        { success: true },
       ],
       [
         {
@@ -335,9 +312,7 @@ const pactSpec: PactSpec = {
           description: null,
           userId: user.id,
         },
-        {
-          success: true,
-        },
+        { success: true },
       ],
     ],
   },
@@ -403,21 +378,10 @@ const pactSpec: PactSpec = {
     examples: [[{ id: article.id }, { firstCommentIds: [1] }]],
   },
   UnrevisedEntitiesQuery: {
-    examples: [
-      [
-        {},
-        {
-          unrevisedEntityIds: [article.id],
-        },
-      ],
-    ],
+    examples: [[{}, { unrevisedEntityIds: [article.id] }]],
   },
-  UserPotentialSpamUsersQuery: {
-    examples: [],
-  },
-  UserDeleteBotsMutation: {
-    examples: [],
-  },
+  UserPotentialSpamUsersQuery: { examples: [] },
+  UserDeleteBotsMutation: { examples: [] },
   UserDeleteRegularUsersMutation: {
     examples: [],
     // TODO: uncomment when Database Layer handles UserDeleteRegularUsersMutation
