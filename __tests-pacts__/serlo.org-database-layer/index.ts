@@ -28,6 +28,7 @@ import {
   article,
   articleRevision,
   comment,
+  comment3,
   course,
   coursePage,
   coursePageRevision,
@@ -72,9 +73,6 @@ describe('SubjectMessage', () => {
 })
 describe('SubscriptionMessage', () => {
   require('./subscription')
-})
-describe('ThreadMessage', () => {
-  require('./thread')
 })
 describe('UuidMessage', () => {
   require('./uuid')
@@ -391,6 +389,11 @@ const pactSpec: PactSpec = {
           childrenIds: [],
         },
       ],
+    ],
+  },
+  ThreadSetThreadArchivedMutation: {
+    examples: [
+      [{ ids: [comment3.id], userId: user.id, archived: true }, undefined],
     ],
   },
   ThreadsQuery: {

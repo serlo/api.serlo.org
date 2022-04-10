@@ -248,6 +248,15 @@ export const spec = {
     response: t.union([CommentDecoder, t.null]),
     canBeNull: false,
   },
+  ThreadSetThreadArchivedMutation: {
+    payload: t.type({
+      ids: t.array(t.number),
+      archived: t.boolean,
+      userId: t.number,
+    }),
+    response: t.void,
+    canBeNull: false,
+  },
   ThreadsQuery: {
     payload: t.type({ id: t.number }),
     response: t.type({ firstCommentIds: t.array(t.number) }),

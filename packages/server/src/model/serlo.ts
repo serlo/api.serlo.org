@@ -27,7 +27,6 @@ import * as R from 'ramda'
 
 import * as DatabaseLayer from './database-layer'
 import {
-  CommentDecoder,
   NotificationEventDecoder,
   Uuid,
   NotificationDecoder,
@@ -49,7 +48,7 @@ import { isInstance } from '~/schema/instance/utils'
 import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
 import { isSupportedUuidType } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
-import { Instance, ThreadCreateThreadInput } from '~/types'
+import { Instance } from '~/types'
 
 export function createSerloModel({
   environment,
@@ -715,16 +714,14 @@ export function createSerloModel({
   })
 
   const archiveThread = createMutation({
-    decoder: t.void,
-    async mutate(payload: {
-      ids: number[]
-      archived: boolean
-      userId: number
-    }) {
-      await handleMessageWithoutResponse({
-        type: 'ThreadSetThreadArchivedMutation',
-        payload,
-      })
+    decoder: DatabaseLayer.getDecoderFor('ThreadSetThreadArchivedMutation'),
+    async mutate(
+      payload: DatabaseLayer.Payload<'ThreadSetThreadArchivedMutation'>
+    ) {
+      return DatabaseLayer.makeRequest(
+        'ThreadSetThreadArchivedMutation',
+        payload
+      )
     },
     async updateCache({ ids, archived }) {
       await getUuid._querySpec.setCache({
