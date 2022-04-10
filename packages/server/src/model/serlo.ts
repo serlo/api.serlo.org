@@ -901,13 +901,9 @@ export function createSerloModel({
   })
 
   const rejectEntityRevision = createMutation({
-    decoder: t.type({ success: t.literal(true) }),
-    async mutate(payload: {
-      revisionId: number
-      userId: number
-      reason: string
-    }) {
-      return handleMessage({ type: 'EntityRejectRevisionMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('EntityRejectRevisionMutation'),
+    mutate(payload: DatabaseLayer.Payload<'EntityRejectRevisionMutation'>) {
+      return DatabaseLayer.makeRequest('EntityRejectRevisionMutation', payload)
     },
     async updateCache({ revisionId }) {
       await getUuid._querySpec.setCache({
