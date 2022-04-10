@@ -235,9 +235,9 @@ export function createSerloModel({
   })
 
   const setEmail = createMutation({
-    decoder: t.type({ success: t.literal(true), username: t.string }),
-    mutate: (payload: { userId: number; email: string }) => {
-      return handleMessage({ type: 'UserSetEmailMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('UserSetEmailMutation'),
+    mutate(payload: DatabaseLayer.Payload<'UserSetEmailMutation'>) {
+      return DatabaseLayer.makeRequest('UserSetEmailMutation', payload)
     },
   })
 
