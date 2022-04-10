@@ -68,9 +68,6 @@ describe('EventMessage', () => {
 describe('NotificationMessage', () => {
   require('./notification')
 })
-describe('SubjectMessage', () => {
-  require('./subject')
-})
 describe('SubscriptionMessage', () => {
   require('./subscription')
 })
