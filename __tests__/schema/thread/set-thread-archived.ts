@@ -22,19 +22,13 @@
 import { gql } from 'apollo-server'
 
 import { article, comment, comment1, user } from '../../../__fixtures__'
-import {
-  assertFailingGraphQLMutation,
-  assertSuccessfulGraphQLMutation,
-  assertSuccessfulGraphQLQuery,
-  createMessageHandler,
-  createTestClient,
-  createUuidHandler,
-} from '../../__utils__'
-import { givenThreads } from './thread'
+import { Client, given, givenThreads } from '../../__utils__'
 import { encodeThreadId } from '~/schema/thread/utils'
 
-describe('archive-comment', () => {
-  const mutation = gql`
+const mutation = new Client({ userId: user.id }).prepareQuery<{
+  input: { id: string | string[]; archived: boolean }
+}>({
+  query: gql`
     mutation setThreadArchived($input: ThreadSetThreadArchivedInput!) {
       thread {
         setThreadArchived(input: $input) {
@@ -42,77 +36,41 @@ describe('archive-comment', () => {
         }
       }
     }
-  `
+  `,
+  variables: { input: { id: encodeThreadId(comment1.id), archived: true } },
+})
 
-  test('unauthenticated user gets error', async () => {
-    global.server.use(createUuidHandler(article), createUuidHandler(comment))
-    const client = createTestClient({ userId: null })
-    await assertFailingGraphQLMutation({
-      mutation,
-      variables: { input: { id: encodeThreadId(comment.id), archived: true } },
-      client,
-      expectedError: 'UNAUTHENTICATED',
+beforeEach(() => {
+  givenThreads({ uuid: article, threads: [[{ ...comment1, archived: false }]] })
+  given('UuidQuery').for(comment, user)
+})
+
+test('setting multiple ids', async () => {
+  given('ThreadSetThreadArchivedMutation')
+    .withPayload({
+      userId: user.id,
+      ids: [comment1.id, comment.id],
+      archived: true,
     })
-  })
+    .returns(undefined)
 
-  test('setting multiple ids', async () => {
-    global.server.use(
-      createUuidHandler(article),
-      createUuidHandler(comment),
-      createUuidHandler(comment1),
-      createUuidHandler(user)
-    )
-    const client = createTestClient({ userId: user.id })
-
-    global.server.use(
-      createMessageHandler({
-        message: {
-          type: 'ThreadSetThreadArchivedMutation',
-          payload: {
-            userId: user.id,
-            ids: [comment1.id, comment.id],
-            archived: true,
-          },
-        },
-      })
-    )
-
-    await assertSuccessfulGraphQLMutation({
-      mutation,
-      client,
-      variables: {
-        input: {
-          id: [encodeThreadId(comment1.id), encodeThreadId(comment.id)],
-          archived: true,
-        },
+  await mutation
+    .withVariables({
+      input: {
+        id: [encodeThreadId(comment1.id), encodeThreadId(comment.id)],
+        archived: true,
       },
-      data: { thread: { setThreadArchived: { success: true } } },
     })
-  })
+    .shouldReturnData({ thread: { setThreadArchived: { success: true } } })
+})
 
-  test('cache gets updated as expected', async () => {
-    const client = createTestClient({ userId: user.id })
-    global.server.use(
-      createUuidHandler(article),
-      createUuidHandler(comment1),
-      createUuidHandler(user)
-    )
+test('cache gets updated as expected', async () => {
+  given('ThreadSetThreadArchivedMutation')
+    .withPayload({ userId: user.id, ids: [comment1.id], archived: true })
+    .returns(undefined)
 
-    givenThreads(article, [[{ ...comment1, archived: true }]])
-    global.server.use(
-      createMessageHandler({
-        message: {
-          type: 'ThreadSetThreadArchivedMutation',
-          payload: {
-            userId: user.id,
-            ids: [comment1.id],
-            archived: false,
-          },
-        },
-      })
-    )
-
-    const query = gql`
+  const comment_query = new Client().prepareQuery({
+    query: gql`
       query ($id: Int) {
         uuid(id: $id) {
           ... on ThreadAware {
@@ -124,28 +82,23 @@ describe('archive-comment', () => {
           }
         }
       }
-    `
-
-    // fill cache
-    await client.executeOperation({
-      query,
-      variables: { id: article.id },
-    })
-
-    await assertSuccessfulGraphQLMutation({
-      mutation,
-      client,
-      variables: {
-        input: { id: encodeThreadId(comment1.id), archived: false },
-      },
-      data: { thread: { setThreadArchived: { success: true } } },
-    })
-
-    await assertSuccessfulGraphQLQuery({
-      query,
-      client,
-      variables: { id: article.id },
-      data: { uuid: { threads: { nodes: [{ archived: false }] } } },
-    })
+    `,
+    variables: { id: article.id },
   })
+
+  await comment_query.shouldReturnData({
+    uuid: { threads: { nodes: [{ archived: false }] } },
+  })
+
+  await mutation.shouldReturnData({
+    thread: { setThreadArchived: { success: true } },
+  })
+
+  await comment_query.shouldReturnData({
+    uuid: { threads: { nodes: [{ archived: true }] } },
+  })
+})
+
+test('unauthenticated user gets error', async () => {
+  await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
