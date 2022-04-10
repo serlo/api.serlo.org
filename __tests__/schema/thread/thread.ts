@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
-import R from 'ramda'
 
 import {
   article,
@@ -31,7 +30,6 @@ import {
   user,
 } from '../../../__fixtures__'
 import { given, Client, givenThreads } from '../../__utils__'
-import { Model } from '~/internals/graphql'
 
 describe('uuid["threads"]', () => {
   describe('returns comment threads', () => {
