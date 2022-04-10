@@ -27,6 +27,7 @@ import {
   appletRevision,
   article,
   articleRevision,
+  checkoutRevisionNotificationEvent,
   comment,
   comment3,
   course,
@@ -51,6 +52,7 @@ import {
   video,
   videoRevision,
 } from '../../__fixtures__'
+import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
 import {
   EntityType,
@@ -62,9 +64,6 @@ import {
 import { Instance } from '~/types'
 
 /* eslint-disable import/no-unassigned-import */
-describe('EventMessage', () => {
-  require('./event')
-})
 describe('NotificationMessage', () => {
   require('./notification')
 })
@@ -100,6 +99,10 @@ const aliase = [
   { id: 19767, instance: Instance.De, path: '/mathe' },
   { id: 1, instance: Instance.De, path: '/user/1/admin' },
 ]
+const abstractEvent = R.pick(
+  ['__typename', 'id', 'instance', 'date', 'actorId', 'objectId'],
+  checkoutRevisionNotificationEvent
+) as Model<'AbstractNotificationEvent'>
 
 const pactSpec: PactSpec = {
   ActiveAuthorsQuery: { examples: [[undefined, [user.id]]] },
@@ -212,6 +215,27 @@ const pactSpec: PactSpec = {
           },
         },
         { ...coursePage, currentRevisionId: null },
+      ],
+    ],
+  },
+  EventsQuery: {
+    examples: [
+      [{ first: 500 }, { events: [abstractEvent], hasNextPage: true }],
+      [
+        { first: 500, after: 100 },
+        { events: [abstractEvent], hasNextPage: true },
+      ],
+      [
+        { first: 500, objectId: 1565 },
+        { events: [abstractEvent], hasNextPage: true },
+      ],
+      [
+        { first: 500, actorId: 1 },
+        { events: [abstractEvent], hasNextPage: true },
+      ],
+      [
+        { first: 500, instance: Instance.De },
+        { events: [abstractEvent], hasNextPage: true },
       ],
     ],
   },
