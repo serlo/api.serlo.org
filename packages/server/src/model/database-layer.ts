@@ -25,6 +25,7 @@ import * as t from 'io-ts'
 import fetch from 'node-fetch'
 
 import {
+  CommentDecoder,
   EntityDecoder,
   EntityRevisionTypeDecoder,
   EntityTypeDecoder,
@@ -221,6 +222,19 @@ export const spec = {
       sendEmail: t.boolean,
     }),
     response: t.void,
+    canBeNull: false,
+  },
+  ThreadCreateThreadMutation: {
+    payload: t.type({
+      content: t.string,
+      objectId: t.number,
+      sendEmail: t.boolean,
+      subscribe: t.boolean,
+      title: t.string,
+      userId: t.number,
+    }),
+    // TODO: See whether it can be just CommentDecoder
+    response: t.union([CommentDecoder, t.null]),
     canBeNull: false,
   },
   ThreadsQuery: {

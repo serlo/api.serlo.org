@@ -667,9 +667,9 @@ export function createSerloModel({
   )
 
   const createThread = createMutation({
-    decoder: t.union([CommentDecoder, t.null]),
-    mutate: (payload: ThreadCreateThreadInput & { userId: number }) => {
-      return handleMessage({ type: 'ThreadCreateThreadMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('ThreadCreateThreadMutation'),
+    async mutate(payload: DatabaseLayer.Payload<'ThreadCreateThreadMutation'>) {
+      return DatabaseLayer.makeRequest('ThreadCreateThreadMutation', payload)
     },
     updateCache: async (payload, value) => {
       if (value !== null) {
