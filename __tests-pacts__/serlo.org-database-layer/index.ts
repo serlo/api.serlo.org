@@ -68,9 +68,6 @@ describe('EventMessage', () => {
 describe('NotificationMessage', () => {
   require('./notification')
 })
-describe('SubscriptionMessage', () => {
-  require('./subscription')
-})
 
 const uuids = [
   applet,
