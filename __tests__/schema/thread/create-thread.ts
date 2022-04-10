@@ -22,8 +22,7 @@
 import { gql } from 'apollo-server'
 
 import { article, comment, comment1, user } from '../../../__fixtures__'
-import { Client, given } from '../../__utils__'
-import { givenThreads } from './thread'
+import { Client, given, givenThreads } from '../../__utils__'
 import { castToAlias, DiscriminatorType } from '~/model/decoder'
 
 const mutation = new Client({ userId: user.id }).prepareQuery({
