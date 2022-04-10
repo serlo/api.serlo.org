@@ -117,6 +117,15 @@ export const spec = {
     }),
     canBeNull: false,
   },
+  EntityCheckoutRevisionMutation: {
+    payload: t.type({
+      revisionId: Uuid,
+      userId: t.number,
+      reason: t.string,
+    }),
+    response: t.type({ success: t.literal(true) }),
+    canBeNull: false,
+  },
   EntityCreateMutation: {
     payload: t.type({
       userId: t.number,
