@@ -22,51 +22,47 @@
 import { gql } from 'apollo-server'
 
 import { article, comment, comment1, user } from '../../../__fixtures__'
-import {
-  assertFailingGraphQLMutation,
-  assertSuccessfulGraphQLMutation,
-  assertSuccessfulGraphQLQuery,
-  createMessageHandler,
-  createTestClient,
-  createUuidHandler,
-} from '../../__utils__'
+import { Client, given } from '../../__utils__'
 import { givenThreads } from './thread'
+import { castToAlias, DiscriminatorType } from '~/model/decoder'
 
-test('unauthenticated user gets error', async () => {
-  givenThreads({ uuid: article, threads: [[comment]] })
-
-  await assertFailingGraphQLMutation({
-    mutation: gql`
-      mutation ($input: ThreadCreateThreadInput!) {
-        thread {
-          createThread(input: $input) {
-            success
+const mutation = new Client({ userId: user.id }).prepareQuery({
+  query: gql`
+    mutation createThread($input: ThreadCreateThreadInput!) {
+      thread {
+        createThread(input: $input) {
+          success
+          record {
+            archived
+            comments {
+              nodes {
+                content
+                title
+              }
+            }
           }
         }
       }
-    `,
-    variables: {
-      input: {
-        content: 'Hello',
-        title: 'Hello',
-        objectId: article.id,
-        subscribe: true,
-        sendEmail: false,
-      },
+    }
+  `,
+  variables: {
+    input: {
+      title: 'My new thread',
+      content: '🔥 brand new!',
+      objectId: article.id,
+      subscribe: true,
+      sendEmail: false,
     },
-    client: createTestClient({ userId: null }),
-    expectedError: 'UNAUTHENTICATED',
-  })
+  },
+})
+
+beforeEach(() => {
+  given('UuidQuery').for(user)
+  givenThreads({ uuid: article, threads: [[comment]] })
 })
 
 test('thread gets created, cache mutated as expected', async () => {
-  const client = createTestClient({ userId: user.id })
-  global.server.use(createUuidHandler(user))
-
-  givenThreads({ uuid: article, threads: [[comment]] })
-
-  // Fill cache
-  await client.executeOperation({
+  const query_comments = new Client().prepareQuery({
     query: gql`
       query ($id: Int) {
         uuid(id: $id) {
@@ -75,6 +71,7 @@ test('thread gets created, cache mutated as expected', async () => {
               nodes {
                 comments {
                   nodes {
+                    title
                     content
                   }
                 }
@@ -87,122 +84,65 @@ test('thread gets created, cache mutated as expected', async () => {
     variables: { id: article.id },
   })
 
-  global.server.use(
-    createMessageHandler({
-      message: {
-        type: 'ThreadCreateThreadMutation',
-        payload: {
-          title: 'My new thread',
-          content: '🔥 brand new!',
-          objectId: article.id,
-          subscribe: true,
-          sendEmail: false,
-          userId: user.id,
-        },
-      },
-      body: {
-        __typename: 'Comment',
-        id: comment1.id,
-        trashed: false,
-        alias: `/mathe/${comment1.id}/`,
-        authorId: user.id,
-        title: 'My new thread',
-        date: '2014-08-25T12:51:02+02:00',
-        archived: false,
-        content: '🔥 brand new!',
-        parentId: article.id,
-        childrenIds: [],
-      },
-    })
-  )
+  await query_comments.execute()
 
-  await assertSuccessfulGraphQLMutation({
-    mutation: gql`
-      mutation createThread($input: ThreadCreateThreadInput!) {
-        thread {
-          createThread(input: $input) {
-            success
-            record {
-              archived
-              comments {
-                nodes {
-                  content
-                  title
-                }
-              }
-            }
-          }
-        }
-      }
-    `,
-    client,
-    variables: {
-      input: {
-        title: 'My new thread',
-        content: '🔥 brand new!',
-        objectId: article.id,
-        subscribe: true,
-        sendEmail: false,
-      },
-    },
-    data: {
-      thread: {
-        createThread: {
-          success: true,
-          record: {
-            archived: false,
-            comments: {
-              nodes: [
-                {
-                  title: 'My new thread',
-                  content: '🔥 brand new!',
-                },
-              ],
-            },
+  given('ThreadCreateThreadMutation')
+    .withPayload({
+      title: 'My new thread',
+      content: '🔥 brand new!',
+      objectId: article.id,
+      subscribe: true,
+      sendEmail: false,
+      userId: user.id,
+    })
+    .returns({
+      __typename: DiscriminatorType.Comment,
+      id: comment1.id,
+      trashed: false,
+      alias: castToAlias(`/mathe/${comment1.id}/`),
+      authorId: user.id,
+      title: 'My new thread',
+      date: '2014-08-25T12:51:02+02:00',
+      archived: false,
+      content: '🔥 brand new!',
+      parentId: article.id,
+      childrenIds: [],
+    })
+
+  await mutation.shouldReturnData({
+    thread: {
+      createThread: {
+        success: true,
+        record: {
+          archived: false,
+          comments: {
+            nodes: [{ title: 'My new thread', content: '🔥 brand new!' }],
           },
         },
       },
     },
   })
 
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query ($id: Int) {
-        uuid(id: $id) {
-          ... on ThreadAware {
-            threads {
-              nodes {
-                comments {
-                  nodes {
-                    content
-                    title
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: article.id },
-    client,
-    data: {
-      uuid: {
-        threads: {
-          nodes: [
-            {
-              comments: {
-                nodes: [{ title: 'My new thread', content: '🔥 brand new!' }],
-              },
+  await query_comments.shouldReturnData({
+    uuid: {
+      threads: {
+        nodes: [
+          {
+            comments: {
+              nodes: [{ title: 'My new thread', content: '🔥 brand new!' }],
             },
-            {
-              comments: {
-                nodes: [{ title: comment.title, content: comment.content }],
-              },
+          },
+          {
+            comments: {
+              nodes: [{ title: comment.title, content: comment.content }],
             },
-          ],
-        },
+          },
+        ],
       },
     },
   })
+})
+
+test('unauthenticated user gets error', async () => {
+  await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
