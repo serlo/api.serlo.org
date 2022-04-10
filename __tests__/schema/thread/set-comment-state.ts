@@ -22,23 +22,10 @@
 import { gql } from 'apollo-server'
 
 import { article, comment, user } from '../../../__fixtures__'
-import {
-  assertFailingGraphQLMutation,
-  assertSuccessfulGraphQLMutation,
-  LegacyClient,
-  createMessageHandler,
-  createTestClient,
-  createUuidHandler,
-} from '../../__utils__'
+import { Client, given } from '../../__utils__'
 
-let client: LegacyClient
-
-beforeEach(() => {
-  client = createTestClient({ userId: user.id })
-})
-
-describe('setCommentState', () => {
-  const mutation = gql`
+const mutation = new Client({ userId: user.id }).prepareQuery({
+  query: gql`
     mutation setCommentState($input: ThreadSetCommentStateInput!) {
       thread {
         setCommentState(input: $input) {
@@ -46,43 +33,25 @@ describe('setCommentState', () => {
         }
       }
     }
-  `
+  `,
+  variables: { input: { id: comment.id, trashed: true } },
+})
 
-  test('unauthenticated user gets error', async () => {
-    global.server.use(createUuidHandler(article), createUuidHandler(comment))
-    await assertFailingGraphQLMutation({
-      mutation,
-      variables: { input: { id: comment.id, trashed: true } },
-      client: createTestClient({ userId: null }),
-      expectedError: 'UNAUTHENTICATED',
-    })
+beforeEach(() => {
+  given('UuidQuery').for(article, comment, user)
+})
+
+// TODO: this is actually wrong since the provided comment is a thread
+test('trashing comment returns success', async () => {
+  given('UuidSetStateMutation')
+    .withPayload({ ids: [comment.id], userId: user.id, trashed: true })
+    .returns(undefined)
+
+  await mutation.shouldReturnData({
+    thread: { setCommentState: { success: true } },
   })
+})
 
-  // TODO: this is actually wrong since the provided comment is a thread
-  test('trashing comment returns success', async () => {
-    global.server.use(
-      createUuidHandler(article),
-      createUuidHandler(comment),
-      createUuidHandler(user)
-    )
-
-    global.server.use(
-      createMessageHandler({
-        message: {
-          type: 'UuidSetStateMutation',
-          payload: {
-            ids: [comment.id],
-            userId: user.id,
-            trashed: true,
-          },
-        },
-      })
-    )
-    await assertSuccessfulGraphQLMutation({
-      mutation,
-      client,
-      variables: { input: { id: comment.id, trashed: true } },
-      data: { thread: { setCommentState: { success: true } } },
-    })
-  })
+test('unauthenticated user gets error', async () => {
+  await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
