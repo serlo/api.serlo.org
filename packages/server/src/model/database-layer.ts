@@ -182,6 +182,15 @@ export const spec = {
     }),
     canBeNull: false,
   },
+  PageCheckoutRevisionMutation: {
+    payload: t.type({
+      revisionId: Uuid,
+      userId: t.number,
+      reason: t.string,
+    }),
+    response: t.type({ success: t.literal(true) }),
+    canBeNull: false,
+  },
   PageCreateMutation: {
     payload: t.intersection([
       t.type({
