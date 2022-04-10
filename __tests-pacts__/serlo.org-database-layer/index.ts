@@ -263,8 +263,9 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
-  // TODO: Add pact test
+  // TODO: Add pact tests for the following two mutations
   PageCheckoutRevisionMutation: { examples: [] },
+  PageRejectRevisionMutation: { examples: [] },
   PageCreateMutation: {
     examples: [
       [
