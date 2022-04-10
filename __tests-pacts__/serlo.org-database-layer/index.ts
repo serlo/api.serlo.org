@@ -71,9 +71,6 @@ describe('NotificationMessage', () => {
 describe('SubscriptionMessage', () => {
   require('./subscription')
 })
-describe('UuidMessage', () => {
-  require('./uuid')
-})
 
 const uuids = [
   applet,
