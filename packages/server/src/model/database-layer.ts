@@ -31,6 +31,7 @@ import {
   EntityTypeDecoder,
   InstanceDecoder,
   NavigationDecoder,
+  NotificationEventDecoder,
   PageDecoder,
   SubscriptionsDecoder,
   Uuid,
@@ -157,6 +158,22 @@ export const spec = {
       ]),
     }),
     response: EntityDecoder,
+    canBeNull: false,
+  },
+  EventsQuery: {
+    payload: t.intersection([
+      t.type({ first: t.number }),
+      t.partial({
+        after: t.number,
+        actorId: t.number,
+        objectId: t.number,
+        instance: InstanceDecoder,
+      }),
+    ]),
+    response: t.type({
+      events: t.array(NotificationEventDecoder),
+      hasNextPage: t.boolean,
+    }),
     canBeNull: false,
   },
   LicenseQuery: {

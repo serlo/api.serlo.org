@@ -471,34 +471,19 @@ export function createSerloModel({
   )
 
   const getEventsAfter = createRequest({
-    decoder: t.type({
-      events: t.array(NotificationEventDecoder),
-      hasNextPage: t.boolean,
-    }),
-    async getCurrentValue(payload: {
-      after: number
-      first: number
-      actorId?: number
-      objectId?: number
-      instance?: Instance
-    }) {
-      return await handleMessage({ type: 'EventsQuery', payload })
+    decoder: DatabaseLayer.getDecoderFor('EventsQuery'),
+    async getCurrentValue(
+      payload: DatabaseLayer.Payload<'EventsQuery'> & { after: number }
+    ) {
+      return DatabaseLayer.makeRequest('EventsQuery', payload)
     },
   })
 
   const getEvents = createQuery(
     {
-      decoder: t.type({
-        events: t.array(NotificationEventDecoder),
-        hasNextPage: t.boolean,
-      }),
-      async getCurrentValue(payload: {
-        first: number
-        actorId?: number
-        objectId?: number
-        instance?: Instance
-      }) {
-        return await handleMessage({ type: 'EventsQuery', payload })
+      decoder: DatabaseLayer.getDecoderFor('EventsQuery'),
+      async getCurrentValue(payload: DatabaseLayer.Payload<'EventsQuery'>) {
+        return DatabaseLayer.makeRequest('EventsQuery', payload)
       },
       getKey(payload) {
         return 'serlo/events/' + JSON.stringify(payload)
