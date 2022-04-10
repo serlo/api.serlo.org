@@ -807,13 +807,14 @@ export function createSerloModel({
   })
 
   const checkoutEntityRevision = createMutation({
-    decoder: t.type({ success: t.literal(true) }),
-    async mutate(payload: {
-      revisionId: Uuid
-      userId: number
-      reason: string
-    }) {
-      return handleMessage({ type: 'EntityCheckoutRevisionMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('EntityCheckoutRevisionMutation'),
+    async mutate(
+      payload: DatabaseLayer.Payload<'EntityCheckoutRevisionMutation'>
+    ) {
+      return DatabaseLayer.makeRequest(
+        'EntityCheckoutRevisionMutation',
+        payload
+      )
     },
     async updateCache({ revisionId }) {
       const revision = await getUuidWithCustomDecoder({

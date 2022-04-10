@@ -180,6 +180,8 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  // TODO: Add pact test
+  EntityCheckoutRevisionMutation: { examples: [] },
   EntityCreateMutation: {
     examples: [
       [
