@@ -27,69 +27,55 @@ import {
   pageRevision,
   user as baseUser,
 } from '../../../__fixtures__'
-import {
-  assertFailingGraphQLMutation,
-  assertSuccessfulGraphQLMutation,
-  assertSuccessfulGraphQLQuery,
-  createTestClient,
-  given,
-  givenPageRejectRevisionEndpoint,
-  hasInternalServerError,
-  LegacyClient,
-  returnsJson,
-  Database,
-  returnsUuidsFromDatabase,
-  nextUuid,
-} from '../../__utils__'
+import { given, nextUuid, Client } from '../../__utils__'
 
-let database: Database
-
-let client: LegacyClient
 const user = { ...baseUser, roles: ['de_static_pages_builder'] }
 const page = {
   ...basePage,
   instance: Instance.De,
   currentRevision: pageRevision.id,
 }
-const unrevisedRevision = {
+const currentRevision = {
   ...pageRevision,
   id: nextUuid(pageRevision.id),
   trashed: false,
 }
+const mutation = new Client({ userId: user.id }).prepareQuery({
+  query: gql`
+    mutation ($input: RejectRevisionInput!) {
+      page {
+        rejectRevision(input: $input) {
+          success
+        }
+      }
+    }
+  `,
+  variables: { input: { revisionId: currentRevision.id, reason: 'reason' } },
+})
 
 beforeEach(() => {
-  client = createTestClient({ userId: user.id })
-
-  database = new Database()
-  database.hasUuids([user, page, pageRevision, unrevisedRevision])
-
-  given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
-  givenPageRejectRevisionEndpoint((req, res, ctx) => {
-    const { revisionId, reason, userId } = req.body.payload
-
-    // In order to test whether these parameters are passed properly
-    if (userId !== user.id || reason !== 'given reason') {
-      return res(ctx.status(500))
-    }
-
-    database.changeUuid(revisionId, {
-      trashed: true,
+  given('UuidQuery').for(user, page, pageRevision, currentRevision)
+  given('PageRejectRevisionMutation')
+    .withPayload({
+      userId: user.id,
+      reason: 'reason',
+      revisionId: currentRevision.id,
     })
+    .isDefinedBy((_req, res, ctx) => {
+      given('UuidQuery').for({ ...currentRevision, trashed: true })
 
-    return res(ctx.json({ success: true }))
-  })
+      return res(ctx.json({ success: true }))
+    })
 })
 
 test('returns "{ success: true }" when mutation could be successfully executed', async () => {
-  await assertSuccessfulGraphQLMutation({
-    ...createRejectRevisionMutation(),
-    data: { page: { rejectRevision: { success: true } } },
-    client,
+  await mutation.shouldReturnData({
+    page: { rejectRevision: { success: true } },
   })
 })
 
 test('following queries for page point to checkout revision when page is already in the cache', async () => {
-  await assertSuccessfulGraphQLQuery({
+  const revisionQuery = new Client().prepareQuery({
     query: gql`
       query ($id: Int!) {
         uuid(id: $id) {
@@ -97,89 +83,36 @@ test('following queries for page point to checkout revision when page is already
         }
       }
     `,
-    variables: { id: unrevisedRevision.id },
-    data: { uuid: { trashed: false } },
-    client,
+    variables: { id: currentRevision.id },
   })
 
-  await assertSuccessfulGraphQLMutation({
-    ...createRejectRevisionMutation(),
-    client,
+  await revisionQuery.shouldReturnData({ uuid: { trashed: false } })
+
+  await mutation.shouldReturnData({
+    page: { rejectRevision: { success: true } },
   })
 
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          trashed
-        }
-      }
-    `,
-    variables: { id: unrevisedRevision.id },
-    data: { uuid: { trashed: true } },
-    client,
-  })
+  await revisionQuery.shouldReturnData({ uuid: { trashed: true } })
 })
 
 test('fails when user is not authenticated', async () => {
-  const client = createTestClient({ userId: null })
-
-  await assertFailingGraphQLMutation({
-    ...createRejectRevisionMutation(),
-    client,
-    expectedError: 'UNAUTHENTICATED',
-  })
+  await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
 
 test('fails when user does not have role "static_pages_builder"', async () => {
-  database.hasUuid({ ...user, roles: ['login', 'de_moderator'] })
+  given('UuidQuery').for({ ...user, roles: ['login', 'de_moderator'] })
 
-  await assertFailingGraphQLMutation({
-    ...createRejectRevisionMutation(),
-    client,
-    expectedError: 'FORBIDDEN',
-  })
+  await mutation.shouldFailWithError('FORBIDDEN')
 })
 
 test('fails when database layer returns a 400er response', async () => {
-  givenPageRejectRevisionEndpoint(
-    returnsJson({
-      status: 400,
-      json: { success: false, reason: 'revision cannot be rejected' },
-    })
-  )
+  given('PageRejectRevisionMutation').returnsBadRequest()
 
-  await assertFailingGraphQLMutation({
-    ...createRejectRevisionMutation(),
-    client,
-    expectedError: 'BAD_USER_INPUT',
-    message: 'revision cannot be rejected',
-  })
+  await mutation.shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('fails when database layer has an internal error', async () => {
-  givenPageRejectRevisionEndpoint(hasInternalServerError())
+  given('PageRejectRevisionMutation').hasInternalServerError()
 
-  await assertFailingGraphQLMutation({
-    ...createRejectRevisionMutation(),
-    client,
-    expectedError: 'INTERNAL_SERVER_ERROR',
-  })
+  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
-
-function createRejectRevisionMutation() {
-  return {
-    mutation: gql`
-      mutation ($input: RejectRevisionInput!) {
-        page {
-          rejectRevision(input: $input) {
-            success
-          }
-        }
-      }
-    `,
-    variables: {
-      input: { revisionId: unrevisedRevision.id, reason: 'given reason' },
-    },
-  }
-}
