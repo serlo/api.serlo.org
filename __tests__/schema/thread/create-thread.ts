@@ -61,7 +61,7 @@ beforeEach(() => {
 })
 
 test('thread gets created, cache mutated as expected', async () => {
-  const query_comments = new Client().prepareQuery({
+  const queryComments = new Client().prepareQuery({
     query: gql`
       query ($id: Int) {
         uuid(id: $id) {
@@ -83,7 +83,19 @@ test('thread gets created, cache mutated as expected', async () => {
     variables: { id: article.id },
   })
 
-  await query_comments.execute()
+  await queryComments.shouldReturnData({
+    uuid: {
+      threads: {
+        nodes: [
+          {
+            comments: {
+              nodes: [{ title: comment.title, content: comment.content }],
+            },
+          },
+        ],
+      },
+    },
+  })
 
   given('ThreadCreateThreadMutation')
     .withPayload({
@@ -122,7 +134,7 @@ test('thread gets created, cache mutated as expected', async () => {
     },
   })
 
-  await query_comments.shouldReturnData({
+  await queryComments.shouldReturnData({
     uuid: {
       threads: {
         nodes: [
