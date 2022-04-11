@@ -28,69 +28,60 @@ import {
   taxonomyTermSubject,
   user as baseUser,
 } from '../../../__fixtures__'
-import {
-  assertFailingGraphQLMutation,
-  assertSuccessfulGraphQLMutation,
-  assertSuccessfulGraphQLQuery,
-  createTestClient,
-  given,
-  givenEntityRejectRevisionEndpoint,
-  hasInternalServerError,
-  LegacyClient,
-  returnsJson,
-  Database,
-  returnsUuidsFromDatabase,
-  getTypenameAndId,
-  nextUuid,
-} from '../../__utils__'
+import { given, getTypenameAndId, nextUuid, Client } from '../../__utils__'
 import { encodeId } from '~/internals/graphql'
 
-let database: Database
-
-let client: LegacyClient
 const user = { ...baseUser, roles: ['de_reviewer'] }
 const article = {
   ...baseArticle,
   instance: Instance.De,
   currentRevision: articleRevision.id,
 }
-const unrevisedRevision = {
+const currentRevision = {
   ...articleRevision,
   id: nextUuid(articleRevision.id),
   trashed: false,
 }
+const mutation = new Client({ userId: user.id }).prepareQuery({
+  query: gql`
+    mutation ($input: RejectRevisionInput!) {
+      entity {
+        rejectRevision(input: $input) {
+          success
+        }
+      }
+    }
+  `,
+  variables: { input: { revisionId: currentRevision.id, reason: 'reason' } },
+})
 
 beforeEach(() => {
-  client = createTestClient({ userId: user.id })
+  given('UuidQuery').for(user, article, articleRevision, currentRevision)
+  given('SubjectsQuery').for(taxonomyTermSubject)
+  given('UnrevisedEntitiesQuery').for([article])
 
-  database = new Database()
-  database.hasUuids([user, article, articleRevision, unrevisedRevision])
+  given('EntityRejectRevisionMutation')
+    .withPayload({
+      userId: user.id,
+      reason: 'reason',
+      revisionId: currentRevision.id,
+    })
+    .isDefinedBy((_req, res, ctx) => {
+      given('UuidQuery').for({ ...currentRevision, trashed: true })
+      given('UnrevisedEntitiesQuery').for([])
 
-  given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
-  givenEntityRejectRevisionEndpoint((req, res, ctx) => {
-    const { revisionId, reason, userId } = req.body.payload
-
-    // In order to test whether these parameters are passed properly
-    if (userId !== user.id || reason !== 'given reason') {
-      return res(ctx.status(500))
-    }
-
-    database.changeUuid(revisionId, { trashed: true })
-
-    return res(ctx.json({ success: true }))
-  })
+      return res(ctx.json({ success: true }))
+    })
 })
 
 test('returns "{ success: true }" when mutation could be successfully executed', async () => {
-  await assertSuccessfulGraphQLMutation({
-    ...createRejectRevisionMutation(),
-    data: { entity: { rejectRevision: { success: true } } },
-    client,
+  await mutation.shouldReturnData({
+    entity: { rejectRevision: { success: true } },
   })
 })
 
 test('following queries for entity point to checkout revision when entity is already in the cache', async () => {
-  await assertSuccessfulGraphQLQuery({
+  const revisionQuery = new Client().prepareQuery({
     query: gql`
       query ($id: Int!) {
         uuid(id: $id) {
@@ -98,36 +89,20 @@ test('following queries for entity point to checkout revision when entity is alr
         }
       }
     `,
-    variables: { id: unrevisedRevision.id },
-    data: { uuid: { trashed: false } },
-    client,
+    variables: { id: currentRevision.id },
   })
 
-  await assertSuccessfulGraphQLMutation({
-    ...createRejectRevisionMutation(),
-    client,
+  await revisionQuery.shouldReturnData({ uuid: { trashed: false } })
+
+  await mutation.shouldReturnData({
+    entity: { rejectRevision: { success: true } },
   })
 
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          trashed
-        }
-      }
-    `,
-    variables: { id: unrevisedRevision.id },
-    data: { uuid: { trashed: true } },
-    client,
-  })
+  await revisionQuery.shouldReturnData({ uuid: { trashed: true } })
 })
 
 test('after the reject mutation the cache is cleared for unrevisedEntities', async () => {
-  given('UuidQuery').for(article)
-  given('SubjectsQuery').for(taxonomyTermSubject)
-  given('UnrevisedEntitiesQuery').for([article])
-
-  await assertSuccessfulGraphQLQuery({
+  const unrevisedEntitiesQuery = new Client().prepareQuery({
     query: gql`
       query ($id: String!) {
         subject {
@@ -143,103 +118,41 @@ test('after the reject mutation the cache is cleared for unrevisedEntities', asy
       }
     `,
     variables: { id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }) },
-    data: {
-      subject: {
-        subject: {
-          unrevisedEntities: { nodes: [getTypenameAndId(article)] },
-        },
-      },
+  })
+
+  await unrevisedEntitiesQuery.shouldReturnData({
+    subject: {
+      subject: { unrevisedEntities: { nodes: [getTypenameAndId(article)] } },
     },
-    client: createTestClient(),
   })
 
-  await assertSuccessfulGraphQLMutation({
-    ...createRejectRevisionMutation(),
-    client,
+  await mutation.shouldReturnData({
+    entity: { rejectRevision: { success: true } },
   })
 
-  given('UnrevisedEntitiesQuery').for([])
-
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query ($id: String!) {
-        subject {
-          subject(id: $id) {
-            unrevisedEntities {
-              nodes {
-                __typename
-                id
-              }
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }) },
-    data: { subject: { subject: { unrevisedEntities: { nodes: [] } } } },
-    client: createTestClient(),
+  await unrevisedEntitiesQuery.shouldReturnData({
+    subject: { subject: { unrevisedEntities: { nodes: [] } } },
   })
 })
 
 test('fails when user is not authenticated', async () => {
-  const client = createTestClient({ userId: null })
-
-  await assertFailingGraphQLMutation({
-    ...createRejectRevisionMutation(),
-    client,
-    expectedError: 'UNAUTHENTICATED',
-  })
+  await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
 
 test('fails when user does not have role "reviewer"', async () => {
-  database.hasUuid({ ...user, roles: ['login', 'de_moderator'] })
+  given('UuidQuery').for({ ...user, roles: ['login', 'de_moderator'] })
 
-  await assertFailingGraphQLMutation({
-    ...createRejectRevisionMutation(),
-    client,
-    expectedError: 'FORBIDDEN',
-  })
+  await mutation.shouldFailWithError('FORBIDDEN')
 })
 
 test('fails when database layer returns a 400er response', async () => {
-  givenEntityRejectRevisionEndpoint(
-    returnsJson({
-      status: 400,
-      json: { success: false, reason: 'revision cannot be rejected' },
-    })
-  )
+  given('EntityRejectRevisionMutation').returnsBadRequest()
 
-  await assertFailingGraphQLMutation({
-    ...createRejectRevisionMutation(),
-    client,
-    expectedError: 'BAD_USER_INPUT',
-    message: 'revision cannot be rejected',
-  })
+  await mutation.shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('fails when database layer has an internal error', async () => {
-  givenEntityRejectRevisionEndpoint(hasInternalServerError())
+  given('EntityRejectRevisionMutation').hasInternalServerError()
 
-  await assertFailingGraphQLMutation({
-    ...createRejectRevisionMutation(),
-    client,
-    expectedError: 'INTERNAL_SERVER_ERROR',
-  })
+  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
-
-function createRejectRevisionMutation() {
-  return {
-    mutation: gql`
-      mutation ($input: RejectRevisionInput!) {
-        entity {
-          rejectRevision(input: $input) {
-            success
-          }
-        }
-      }
-    `,
-    variables: {
-      input: { revisionId: unrevisedRevision.id, reason: 'given reason' },
-    },
-  }
-}
