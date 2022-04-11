@@ -69,7 +69,7 @@ test('cache gets updated as expected', async () => {
     .withPayload({ userId: user.id, ids: [comment1.id], archived: true })
     .returns(undefined)
 
-  const comment_query = new Client().prepareQuery({
+  const commentQuery = new Client().prepareQuery({
     query: gql`
       query ($id: Int) {
         uuid(id: $id) {
@@ -86,7 +86,7 @@ test('cache gets updated as expected', async () => {
     variables: { id: article.id },
   })
 
-  await comment_query.shouldReturnData({
+  await commentQuery.shouldReturnData({
     uuid: { threads: { nodes: [{ archived: false }] } },
   })
 
@@ -94,7 +94,7 @@ test('cache gets updated as expected', async () => {
     thread: { setThreadArchived: { success: true } },
   })
 
-  await comment_query.shouldReturnData({
+  await commentQuery.shouldReturnData({
     uuid: { threads: { nodes: [{ archived: true }] } },
   })
 })
