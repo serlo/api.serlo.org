@@ -332,6 +332,20 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  TaxonomyTermMoveMutation: {
+    examples: [
+      [
+        {
+          childrenIds: [1, 2],
+          destination: 3,
+          userId: user.id,
+        },
+        {
+          success: true,
+        },
+      ]
+    ],
+  },
   UnrevisedEntitiesQuery: {
     examples: [
       [

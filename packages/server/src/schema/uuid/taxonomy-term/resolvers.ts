@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as serloAuth from '@serlo/authorization'
+import { UserInputError } from 'apollo-server'
 import * as t from 'io-ts'
 
 import {
@@ -130,6 +131,39 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
           description,
           userId,
         })
+
+      return { success, query: {} }
+    },
+
+    async move(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const { childrenIds, destination } = input
+
+      const scope = await fetchScopeOfUuid({
+        id: destination,
+        dataSources,
+      })
+
+      for (const id of childrenIds) {
+        const object = await dataSources.model.serlo.getUuid({
+          id,
+        })
+        if (object === null) throw new UserInputError('UUID does not exist.')
+      }
+
+      await assertUserIsAuthorized({
+        userId,
+        dataSources,
+        message: 'You are not allowed to move this taxonomy term.',
+        guard: serloAuth.TaxonomyTerm.addChild(scope),
+      })
+
+      const { success } = await dataSources.model.serlo.moveTaxonomyTerm({
+        childrenIds,
+        destination,
+        userId,
+      })
 
       return { success, query: {} }
     },
