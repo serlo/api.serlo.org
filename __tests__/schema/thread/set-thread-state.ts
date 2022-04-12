@@ -22,24 +22,11 @@
 import { gql } from 'apollo-server'
 
 import { article, comment, user } from '../../../__fixtures__'
-import {
-  assertFailingGraphQLMutation,
-  assertSuccessfulGraphQLMutation,
-  LegacyClient,
-  createMessageHandler,
-  createTestClient,
-  createUuidHandler,
-} from '../../__utils__'
+import { given, Client } from '../../__utils__'
 import { encodeThreadId } from '~/schema/thread/utils'
 
-let client: LegacyClient
-
-beforeEach(() => {
-  client = createTestClient({ userId: user.id })
-})
-
-describe('setThreadState', () => {
-  const mutation = gql`
+const mutation = new Client({ userId: user.id }).prepareQuery({
+  query: gql`
     mutation setThreadState($input: ThreadSetThreadStateInput!) {
       thread {
         setThreadState(input: $input) {
@@ -47,48 +34,26 @@ describe('setThreadState', () => {
         }
       }
     }
-  `
+  `,
+  variables: {
+    input: { id: encodeThreadId(comment.id), trashed: true },
+  },
+})
 
-  test('unauthenticated user gets error', async () => {
-    global.server.use(createUuidHandler(article), createUuidHandler(comment))
-    const client = createTestClient({ userId: null })
-    await assertFailingGraphQLMutation({
-      mutation,
-      variables: {
-        input: { id: encodeThreadId(comment.id), trashed: true },
-      },
-      client,
-      expectedError: 'UNAUTHENTICATED',
-    })
-  })
+beforeEach(() => {
+  given('UuidQuery').for(article, comment, user)
+})
 
-  test('trashing thread returns success', async () => {
-    global.server.use(
-      createUuidHandler(article),
-      createUuidHandler(comment),
-      createUuidHandler(user)
-    )
-    global.server.use(
-      createMessageHandler({
-        message: {
-          type: 'UuidSetStateMutation',
-          payload: {
-            ids: [comment.id],
-            userId: user.id,
-            trashed: true,
-          },
-        },
-      })
-    )
-    await assertSuccessfulGraphQLMutation({
-      mutation,
-      client,
-      variables: {
-        input: { id: encodeThreadId(comment.id), trashed: true },
-      },
-      data: {
-        thread: { setThreadState: { success: true } },
-      },
-    })
+test('unauthenticated user gets error', async () => {
+  await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
+})
+
+test('trashing thread returns success', async () => {
+  given('UuidSetStateMutation')
+    .withPayload({ ids: [comment.id], userId: user.id, trashed: true })
+    .returns(undefined)
+
+  await mutation.shouldReturnData({
+    thread: { setThreadState: { success: true } },
   })
 })

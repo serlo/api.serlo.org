@@ -364,6 +364,14 @@ export type AliasInput = {
   path: Scalars['String'];
 };
 
+export type AllThreadsConnection = {
+  __typename?: 'AllThreadsConnection';
+  edges: Array<ThreadsCursor>;
+  nodes: Array<Thread>;
+  pageInfo: HasNextPageInfo;
+  totalCount: Scalars['Int'];
+};
+
 export type Applet = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Applet';
   alias?: Maybe<Scalars['String']>;
@@ -1926,6 +1934,7 @@ export type Query = {
   notifications: NotificationConnection;
   subject: SubjectQuery;
   subscription: SubscriptionQuery;
+  thread: ThreadQuery;
   user: UserQuery;
   uuid?: Maybe<Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision>;
 };
@@ -2379,7 +2388,7 @@ export type TaxonomyTermMoveResponse = {
 export type TaxonomyTermMutation = {
   __typename?: 'TaxonomyTermMutation';
   move: TaxonomyTermMoveResponse;
-  setNameAndDescription?: Maybe<TaxonomyTermSetNameAndDescriptionResponse>;
+  setNameAndDescription: TaxonomyTermSetNameAndDescriptionResponse;
 };
 
 
@@ -2512,6 +2521,17 @@ export type ThreadMutationSetThreadArchivedArgs = {
 
 export type ThreadMutationSetThreadStateArgs = {
   input: ThreadSetThreadStateInput;
+};
+
+export type ThreadQuery = {
+  __typename?: 'ThreadQuery';
+  allThreads: AllThreadsConnection;
+};
+
+
+export type ThreadQueryAllThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
 };
 
 export type ThreadSetCommentStateInput = {
@@ -2974,6 +2994,7 @@ export type ResolversTypes = {
   AddRevisionResponse: ResolverTypeWrapper<ModelOf<AddRevisionResponse>>;
   AddVideoRevisionInput: ResolverTypeWrapper<ModelOf<AddVideoRevisionInput>>;
   AliasInput: ResolverTypeWrapper<ModelOf<AliasInput>>;
+  AllThreadsConnection: ResolverTypeWrapper<ModelOf<AllThreadsConnection>>;
   Applet: ResolverTypeWrapper<ModelOf<Applet>>;
   AppletRevision: ResolverTypeWrapper<ModelOf<AppletRevision>>;
   AppletRevisionConnection: ResolverTypeWrapper<ModelOf<AppletRevisionConnection>>;
@@ -3114,6 +3135,7 @@ export type ResolversTypes = {
   ThreadCreateThreadInput: ResolverTypeWrapper<ModelOf<ThreadCreateThreadInput>>;
   ThreadCreateThreadResponse: ResolverTypeWrapper<ModelOf<ThreadCreateThreadResponse>>;
   ThreadMutation: ResolverTypeWrapper<ModelOf<ThreadMutation>>;
+  ThreadQuery: ResolverTypeWrapper<ModelOf<ThreadQuery>>;
   ThreadSetCommentStateInput: ResolverTypeWrapper<ModelOf<ThreadSetCommentStateInput>>;
   ThreadSetCommentStateResponse: ResolverTypeWrapper<ModelOf<ThreadSetCommentStateResponse>>;
   ThreadSetThreadArchivedInput: ResolverTypeWrapper<ModelOf<ThreadSetThreadArchivedInput>>;
@@ -3174,6 +3196,7 @@ export type ResolversParentTypes = {
   AddRevisionResponse: ModelOf<AddRevisionResponse>;
   AddVideoRevisionInput: ModelOf<AddVideoRevisionInput>;
   AliasInput: ModelOf<AliasInput>;
+  AllThreadsConnection: ModelOf<AllThreadsConnection>;
   Applet: ModelOf<Applet>;
   AppletRevision: ModelOf<AppletRevision>;
   AppletRevisionConnection: ModelOf<AppletRevisionConnection>;
@@ -3311,6 +3334,7 @@ export type ResolversParentTypes = {
   ThreadCreateThreadInput: ModelOf<ThreadCreateThreadInput>;
   ThreadCreateThreadResponse: ModelOf<ThreadCreateThreadResponse>;
   ThreadMutation: ModelOf<ThreadMutation>;
+  ThreadQuery: ModelOf<ThreadQuery>;
   ThreadSetCommentStateInput: ModelOf<ThreadSetCommentStateInput>;
   ThreadSetCommentStateResponse: ModelOf<ThreadSetCommentStateResponse>;
   ThreadSetThreadArchivedInput: ModelOf<ThreadSetThreadArchivedInput>;
@@ -3494,6 +3518,14 @@ export type AddRevisionResponseResolvers<ContextType = Context, ParentType exten
   query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
   revisionId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AllThreadsConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AllThreadsConnection'] = ResolversParentTypes['AllThreadsConnection']> = {
+  edges?: Resolver<Array<ResolversTypes['ThreadsCursor']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<ResolversTypes['Thread']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['HasNextPageInfo'], ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4241,6 +4273,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   notifications?: Resolver<ResolversTypes['NotificationConnection'], ParentType, ContextType, Partial<QueryNotificationsArgs>>;
   subject?: Resolver<ResolversTypes['SubjectQuery'], ParentType, ContextType>;
   subscription?: Resolver<ResolversTypes['SubscriptionQuery'], ParentType, ContextType>;
+  thread?: Resolver<ResolversTypes['ThreadQuery'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['UserQuery'], ParentType, ContextType>;
   uuid?: Resolver<Maybe<ResolversTypes['AbstractUuid']>, ParentType, ContextType, Partial<QueryUuidArgs>>;
 };
@@ -4493,7 +4526,7 @@ export type TaxonomyTermMoveResponseResolvers<ContextType = Context, ParentType 
 
 export type TaxonomyTermMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermMutation'] = ResolversParentTypes['TaxonomyTermMutation']> = {
   move?: Resolver<ResolversTypes['TaxonomyTermMoveResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationMoveArgs, 'input'>>;
-  setNameAndDescription?: Resolver<Maybe<ResolversTypes['TaxonomyTermSetNameAndDescriptionResponse']>, ParentType, ContextType, RequireFields<TaxonomyTermMutationSetNameAndDescriptionArgs, 'input'>>;
+  setNameAndDescription?: Resolver<ResolversTypes['TaxonomyTermSetNameAndDescriptionResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationSetNameAndDescriptionArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4539,6 +4572,11 @@ export type ThreadMutationResolvers<ContextType = Context, ParentType extends Re
   setCommentState?: Resolver<Maybe<ResolversTypes['ThreadSetCommentStateResponse']>, ParentType, ContextType, RequireFields<ThreadMutationSetCommentStateArgs, 'input'>>;
   setThreadArchived?: Resolver<Maybe<ResolversTypes['ThreadSetThreadArchivedResponse']>, ParentType, ContextType, RequireFields<ThreadMutationSetThreadArchivedArgs, 'input'>>;
   setThreadState?: Resolver<Maybe<ResolversTypes['ThreadSetThreadStateResponse']>, ParentType, ContextType, RequireFields<ThreadMutationSetThreadStateArgs, 'input'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ThreadQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadQuery'] = ResolversParentTypes['ThreadQuery']> = {
+  allThreads?: Resolver<ResolversTypes['AllThreadsConnection'], ParentType, ContextType, Partial<ThreadQueryAllThreadsArgs>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4739,6 +4777,7 @@ export type Resolvers<ContextType = Context> = {
   AbstractUuidConnection?: AbstractUuidConnectionResolvers<ContextType>;
   AbstractUuidCursor?: AbstractUuidCursorResolvers<ContextType>;
   AddRevisionResponse?: AddRevisionResponseResolvers<ContextType>;
+  AllThreadsConnection?: AllThreadsConnectionResolvers<ContextType>;
   Applet?: AppletResolvers<ContextType>;
   AppletRevision?: AppletRevisionResolvers<ContextType>;
   AppletRevisionConnection?: AppletRevisionConnectionResolvers<ContextType>;
@@ -4850,6 +4889,7 @@ export type Resolvers<ContextType = Context> = {
   ThreadCreateCommentResponse?: ThreadCreateCommentResponseResolvers<ContextType>;
   ThreadCreateThreadResponse?: ThreadCreateThreadResponseResolvers<ContextType>;
   ThreadMutation?: ThreadMutationResolvers<ContextType>;
+  ThreadQuery?: ThreadQueryResolvers<ContextType>;
   ThreadSetCommentStateResponse?: ThreadSetCommentStateResponseResolvers<ContextType>;
   ThreadSetThreadArchivedResponse?: ThreadSetThreadArchivedResponseResolvers<ContextType>;
   ThreadSetThreadStateResponse?: ThreadSetThreadStateResponseResolvers<ContextType>;

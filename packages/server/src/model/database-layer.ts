@@ -25,11 +25,13 @@ import * as t from 'io-ts'
 import fetch from 'node-fetch'
 
 import {
+  CommentDecoder,
   EntityDecoder,
   EntityRevisionTypeDecoder,
   EntityTypeDecoder,
   InstanceDecoder,
   NavigationDecoder,
+  NotificationEventDecoder,
   PageDecoder,
   SubscriptionsDecoder,
   Uuid,
@@ -67,6 +69,14 @@ export const spec = {
       path: t.string,
     }),
     canBeNull: true,
+  },
+  AllThreadsQuery: {
+    payload: t.intersection([
+      t.type({ first: t.number }),
+      t.partial({ after: t.number }),
+    ]),
+    response: t.type({ firstCommentIds: t.array(t.number) }),
+    canBeNull: false,
   },
   EntitiesMetadataQuery: {
     payload: t.intersection([
@@ -108,6 +118,24 @@ export const spec = {
     }),
     canBeNull: false,
   },
+  EntityCheckoutRevisionMutation: {
+    payload: t.type({
+      revisionId: Uuid,
+      userId: t.number,
+      reason: t.string,
+    }),
+    response: t.type({ success: t.literal(true) }),
+    canBeNull: false,
+  },
+  EntityRejectRevisionMutation: {
+    payload: t.type({
+      revisionId: t.number,
+      userId: t.number,
+      reason: t.string,
+    }),
+    response: t.type({ success: t.literal(true) }),
+    canBeNull: false,
+  },
   EntityCreateMutation: {
     payload: t.type({
       userId: t.number,
@@ -130,6 +158,22 @@ export const spec = {
       ]),
     }),
     response: EntityDecoder,
+    canBeNull: false,
+  },
+  EventsQuery: {
+    payload: t.intersection([
+      t.type({ first: t.number }),
+      t.partial({
+        after: t.number,
+        actorId: t.number,
+        objectId: t.number,
+        instance: InstanceDecoder,
+      }),
+    ]),
+    response: t.type({
+      events: t.array(NotificationEventDecoder),
+      hasNextPage: t.boolean,
+    }),
     canBeNull: false,
   },
   LicenseQuery: {
@@ -162,6 +206,24 @@ export const spec = {
       success: t.boolean,
       revisionId: t.union([t.number, t.null]),
     }),
+    canBeNull: false,
+  },
+  PageCheckoutRevisionMutation: {
+    payload: t.type({
+      revisionId: Uuid,
+      userId: t.number,
+      reason: t.string,
+    }),
+    response: t.type({ success: t.literal(true) }),
+    canBeNull: false,
+  },
+  PageRejectRevisionMutation: {
+    payload: t.type({
+      revisionId: t.number,
+      userId: t.number,
+      reason: t.string,
+    }),
+    response: t.type({ success: t.literal(true) }),
     canBeNull: false,
   },
   PageCreateMutation: {
@@ -222,6 +284,44 @@ export const spec = {
       sendEmail: t.boolean,
     }),
     response: t.void,
+    canBeNull: false,
+  },
+  ThreadCreateCommentMutation: {
+    payload: t.type({
+      content: t.string,
+      threadId: t.number,
+      userId: t.number,
+      subscribe: t.boolean,
+      sendEmail: t.boolean,
+    }),
+    response: t.union([CommentDecoder, t.null]),
+    canBeNull: false,
+  },
+  ThreadCreateThreadMutation: {
+    payload: t.type({
+      content: t.string,
+      objectId: t.number,
+      sendEmail: t.boolean,
+      subscribe: t.boolean,
+      title: t.string,
+      userId: t.number,
+    }),
+    // TODO: See whether it can be just CommentDecoder
+    response: t.union([CommentDecoder, t.null]),
+    canBeNull: false,
+  },
+  ThreadSetThreadArchivedMutation: {
+    payload: t.type({
+      ids: t.array(t.number),
+      archived: t.boolean,
+      userId: t.number,
+    }),
+    response: t.void,
+    canBeNull: false,
+  },
+  ThreadsQuery: {
+    payload: t.type({ id: t.number }),
+    response: t.type({ firstCommentIds: t.array(t.number) }),
     canBeNull: false,
   },
   UnrevisedEntitiesQuery: {
