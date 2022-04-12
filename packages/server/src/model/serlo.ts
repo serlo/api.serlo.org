@@ -991,18 +991,20 @@ export function createSerloModel({
     async updateCache({ childrenIds, destination }) {
       const children = await Promise.all(
         childrenIds.map((childId) =>
-          dataSources.model.serlo.getUuidWithCustomDecoder({
+          getUuidWithCustomDecoder({
             id: childId,
             decoder: TaxonomyTermDecoder,
           })
         )
       )
       const oldParentIds = children.map((child) => child.parentId)
+
+      const idArray = [...childrenIds, ...oldParentIds, destination].filter((id) => {
+        return id !== null
+      }) as number[]
       
       await getUuid._querySpec.removeCache({
-        payloads: [...childrenIds, ...oldParentIds, destination].map((id) => {
-          return { id }
-        }),
+        payloads: idArray.map((id) => {return {id}})
       })
     },
   })
