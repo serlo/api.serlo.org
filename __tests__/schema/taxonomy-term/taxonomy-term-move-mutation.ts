@@ -90,17 +90,6 @@ describe('TaxonomyTermMoveMutation', () => {
       .shouldFailWithError('FORBIDDEN')
   })
 
-  test('fails when `childrenIds` is empty', async () => {
-    await mutation
-      .withVariables({ input: { ...input, childrenIds: '' } })
-      .shouldFailWithError('BAD_USER_INPUT')
-  })
-
-  test('fails when `destination` is empty', async () => {
-    await mutation
-      .withVariables({ input: { ...input, destination: '' } })
-      .shouldFailWithError('BAD_USER_INPUT')
-  })
 
   test('fails when database layer returns a 400er response', async () => {
     given('TaxonomyTermMoveMutation').returnsBadRequest()
