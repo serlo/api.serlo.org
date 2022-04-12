@@ -345,7 +345,7 @@ const pactSpec: PactSpec = {
         {
           success: true,
         },
-      ]
+      ],
     ],
   },
   ThreadCreateCommentMutation: {
