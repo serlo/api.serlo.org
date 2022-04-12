@@ -90,7 +90,6 @@ describe('TaxonomyTermMoveMutation', () => {
       .shouldFailWithError('FORBIDDEN')
   })
 
-
   test('fails when database layer returns a 400er response', async () => {
     given('TaxonomyTermMoveMutation').returnsBadRequest()
 
@@ -154,7 +153,6 @@ describe('TaxonomyTermMoveMutation', () => {
     given('TaxonomyTermMoveMutation')
       .withPayload({ ...input, userId: user.id })
       .returns({ success: true })
-
 
     await query2.shouldReturnData({ taxonomyTerm: { move: { success: true } } })
 

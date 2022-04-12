@@ -257,7 +257,7 @@ export const spec = {
     payload: t.type({
       childrenIds: t.array(t.number),
       destination: t.number,
-      userId: t.number
+      userId: t.number,
     }),
     response: t.type({ success: t.boolean }),
     canBeNull: false,
