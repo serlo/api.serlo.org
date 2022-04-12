@@ -191,6 +191,15 @@ export const spec = {
     response: t.type({ success: t.boolean }),
     canBeNull: false,
   },
+  TaxonomyTermMoveMutation: {
+    payload: t.type({
+      childrenIds: t.array(t.number),
+      destination: t.number,
+      userId: t.number
+    }),
+    response: t.type({ success: t.boolean }),
+    canBeNull: false,
+  },
   SubjectsQuery: {
     payload: t.type({}),
     response: t.strict({
