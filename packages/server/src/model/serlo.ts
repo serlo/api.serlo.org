@@ -37,6 +37,7 @@ import {
   PageRevisionDecoder,
   PageDecoder,
   castToUuid,
+  TaxonomyTermDecoder,
 } from './decoder'
 import {
   createMutation,
@@ -988,8 +989,18 @@ export function createSerloModel({
       return DatabaseLayer.makeRequest('TaxonomyTermMoveMutation', payload)
     },
     async updateCache({ childrenIds, destination }) {
+      const children = await Promise.all(
+        childrenIds.map((childId) =>
+          dataSources.model.serlo.getUuidWithCustomDecoder({
+            id: childId,
+            decoder: TaxonomyTermDecoder,
+          })
+        )
+      )
+      const oldParentIds = children.map((child) => child.parentId)
+      
       await getUuid._querySpec.removeCache({
-        payloads: [...childrenIds, destination].map((id) => {
+        payloads: [...childrenIds, ...oldParentIds, destination].map((id) => {
           return { id }
         }),
       })

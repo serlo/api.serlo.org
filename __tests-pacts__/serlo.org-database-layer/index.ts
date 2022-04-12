@@ -336,8 +336,8 @@ const pactSpec: PactSpec = {
     examples: [
       [
         {
-          childrenIds: [1, 2],
-          destination: 3,
+          childrenIds: [taxonomyTermSubject.id],
+          destination: taxonomyTermCurriculumTopic.id,
           userId: user.id,
         },
         {
