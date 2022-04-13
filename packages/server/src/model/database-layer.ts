@@ -195,6 +195,15 @@ export const spec = {
     response: NavigationDecoder,
     canBeNull: false,
   },
+  NotificationSetStateMutation: {
+    payload: t.type({
+      ids: t.array(t.number),
+      userId: t.number,
+      unread: t.boolean,
+    }),
+    response: t.void,
+    canBeNull: false,
+  },
   PageAddRevisionMutation: {
     payload: t.type({
       content: t.string,

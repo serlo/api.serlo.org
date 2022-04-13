@@ -254,6 +254,9 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  NotificationSetStateMutation: {
+    examples: [[{ ids: [9], userId: user.id, unread: true }, undefined]],
+  },
   PageAddRevisionMutation: {
     examples: [
       [
