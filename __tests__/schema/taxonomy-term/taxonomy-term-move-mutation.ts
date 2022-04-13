@@ -103,7 +103,25 @@ describe('TaxonomyTermMoveMutation', () => {
   })
 
   test('updates the cache', async () => {
-    given('UuidQuery').for(user, taxonomyTermSubject, taxonomyTermRoot)
+    given('UuidQuery').for(
+      { ...user, roles: ['login'] },
+      taxonomyTermSubject,
+      taxonomyTermRoot
+    )
+
+    given('TaxonomyTermMoveMutation')
+      .withPayload({
+        childrenIds: [taxonomyTermSubject.id],
+        destination: taxonomyTermCurriculumTopic.id,
+        userId: user.id,
+      }).isDefinedBy((_req, res, ctx) => {
+        given('UuidQuery').for({
+          ...taxonomyTermSubject,
+          parentId: taxonomyTermCurriculumTopic.id,
+        })
+
+        return res(ctx.json({ success: true }))
+      })
 
     const query = new Client({ userId: user.id })
       .prepareQuery({
@@ -121,22 +139,6 @@ describe('TaxonomyTermMoveMutation', () => {
       })
       .withVariables({ id: taxonomyTermSubject.id })
 
-    await query.shouldReturnData({
-      uuid: {
-        parent: { id: taxonomyTermSubject.parentId },
-      },
-    })
-
-    given('UuidQuery').for(
-      { ...user, roles: ['login'] },
-      taxonomyTermSubject,
-      taxonomyTermCurriculumTopic
-    )
-
-    await query.execute()
-
-    input.childrenIds = [taxonomyTermSubject.id]
-
     const moveMutation = new Client({ userId: user.id })
       .prepareQuery({
         query: gql`
@@ -149,23 +151,22 @@ describe('TaxonomyTermMoveMutation', () => {
           }
         `,
       })
-      .withVariables({ input })
+      .withVariables({
+        input: {
+          childrenIds: [taxonomyTermSubject.id],
+          destination: taxonomyTermCurriculumTopic.id
+        },
+      })
 
-    given('TaxonomyTermMoveMutation')
-      .withPayload({ ...input, userId: user.id })
-      .returns({ success: true })
+    await query.shouldReturnData({
+      uuid: {
+        parent: { id: taxonomyTermRoot.id },
+      },
+    })
 
     await moveMutation.shouldReturnData({
       taxonomyTerm: { move: { success: true } },
     })
-
-    global.server.resetHandlers()
-    given('UuidQuery').for(
-      user,
-      { ...taxonomyTermSubject, parentId: taxonomyTermCurriculumTopic.id },
-      taxonomyTermSubject2,
-      taxonomyTermCurriculumTopic
-    )
 
     await query.shouldReturnData({
       uuid: {
