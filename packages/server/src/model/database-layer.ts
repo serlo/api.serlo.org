@@ -441,6 +441,12 @@ export function getDecoderFor<M extends MessageType>(message: M): t.Mixed {
     : messageSpec.response
 }
 
+export function getPayloadDecoderFor<M extends MessageType>(
+  message: M
+): PayloadDecoder<M> {
+  return spec[message]['payload']
+}
+
 export type Spec = typeof spec
 export type MessageType = keyof Spec
 export type NullableMessageType = {
@@ -451,4 +457,5 @@ export type NotNullableMessageType = {
 }[MessageType]
 export type Payload<M extends MessageType> = t.TypeOf<Spec[M]['payload']>
 export type Response<M extends MessageType> = t.TypeOf<Spec[M]['response']>
+export type PayloadDecoder<M extends MessageType> = Spec[M]['payload']
 export type ResponseDecoder<M extends MessageType> = Spec[M]['response']

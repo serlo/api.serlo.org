@@ -40,8 +40,8 @@ import {
 import { Environment } from '~/internals/environment'
 import { Model } from '~/internals/graphql'
 import { isInstance } from '~/schema/instance/utils'
-import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
-import { isSupportedUuidType } from '~/schema/uuid/abstract-uuid/utils'
+import { isSupportedNotificationEvent } from '~/schema/notification/utils'
+import { isSupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { Instance } from '~/types'
 
@@ -55,13 +55,8 @@ export function createSerloModel({
       decoder: DatabaseLayer.getDecoderFor('UuidQuery'),
       enableSwr: true,
       getCurrentValue: async (payload: DatabaseLayer.Payload<'UuidQuery'>) => {
-        const uuid = (await DatabaseLayer.makeRequest(
-          'UuidQuery',
-          payload
-        )) as Model<'AbstractUuid'> | null
-        return uuid !== null && isSupportedUuidType(uuid.__typename)
-          ? uuid
-          : null
+        const uuid = await DatabaseLayer.makeRequest('UuidQuery', payload)
+        return isSupportedUuid(uuid) ? uuid : null
       },
       staleAfter: { day: 1 },
       getKey: ({ id }) => {
@@ -418,7 +413,7 @@ export function createSerloModel({
     decoder: t.record(t.string, t.union([t.array(t.number), t.null])),
     async getCurrentValue(_payload: undefined) {
       const { unrevisedEntityIds } = await getUnrevisedEntities()
-      const result = {} as Record<string, number[] | null>
+      const result: Record<string, number[] | null> = {}
 
       for (const entityId of unrevisedEntityIds) {
         const entity = await getUuidWithCustomDecoder({
@@ -441,9 +436,7 @@ export function createSerloModel({
       async getCurrentValue(payload: DatabaseLayer.Payload<'EventQuery'>) {
         const event = await DatabaseLayer.makeRequest('EventQuery', payload)
 
-        return event === null || isUnsupportedNotificationEvent(event)
-          ? null
-          : event
+        return isSupportedNotificationEvent(event) ? event : null
       },
       enableSwr: true,
       staleAfter: { day: 1 },
@@ -483,14 +476,12 @@ export function createSerloModel({
         if (!key.startsWith('serlo/events/')) return O.none
 
         try {
-          const payload = JSON.parse(key.substring('serlo/events/'.length)) as {
-            first: number
-            actorId?: number
-            objectId?: number
-            instance?: Instance
-          }
+          const payloadJson = key.substring('serlo/events/'.length)
+          const payload = JSON.parse(payloadJson) as unknown
 
-          return O.some(payload)
+          return DatabaseLayer.getPayloadDecoderFor('EventsQuery').is(payload)
+            ? O.some(payload)
+            : O.none
         } catch (e) {
           return O.none
         }
