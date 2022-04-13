@@ -23,6 +23,21 @@ import { Matchers } from '@pact-foundation/pact'
 import R from 'ramda'
 
 import {
+  createCommentNotificationEvent,
+  createEntityLinkNotificationEvent,
+  createEntityNotificationEvent,
+  createEntityRevisionNotificationEvent,
+  createTaxonomyLinkNotificationEvent,
+  createTaxonomyTermNotificationEvent,
+  createThreadNotificationEvent,
+  rejectRevisionNotificationEvent,
+  removeEntityLinkNotificationEvent,
+  removeTaxonomyLinkNotificationEvent,
+  setLicenseNotificationEvent,
+  setTaxonomyParentNotificationEvent,
+  setTaxonomyTermNotificationEvent,
+  setThreadStateNotificationEvent,
+  setUuidStateNotificationEvent,
   applet,
   appletRevision,
   article,
@@ -51,7 +66,7 @@ import {
   user,
   video,
   videoRevision,
-} from '../../__fixtures__'
+} from '../__fixtures__'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
 import {
@@ -63,11 +78,24 @@ import {
 } from '~/model/decoder'
 import { Instance } from '~/types'
 
-/* eslint-disable import/no-unassigned-import */
-describe('NotificationMessage', () => {
-  require('./notification')
-})
-
+const events = [
+  checkoutRevisionNotificationEvent,
+  createCommentNotificationEvent,
+  createEntityLinkNotificationEvent,
+  createEntityNotificationEvent,
+  createEntityRevisionNotificationEvent,
+  createTaxonomyLinkNotificationEvent,
+  createTaxonomyTermNotificationEvent,
+  createThreadNotificationEvent,
+  rejectRevisionNotificationEvent,
+  removeEntityLinkNotificationEvent,
+  removeTaxonomyLinkNotificationEvent,
+  setLicenseNotificationEvent,
+  setTaxonomyParentNotificationEvent,
+  setTaxonomyTermNotificationEvent,
+  setThreadStateNotificationEvent,
+  setUuidStateNotificationEvent,
+]
 const uuids = [
   applet,
   appletRevision,
@@ -218,6 +246,10 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  EventQuery: {
+    examples: events.map((event) => [{ id: event.id }, event]),
+    examplePayloadForNull: { id: 1_000_000 },
+  },
   EventsQuery: {
     examples: [
       [{ first: 500 }, { events: [abstractEvent], hasNextPage: true }],
@@ -253,6 +285,20 @@ const pactSpec: PactSpec = {
         },
       ],
     ],
+  },
+  NotificationsQuery: {
+    examples: [
+      [
+        { userId: user.id },
+        {
+          userId: user.id,
+          notifications: [{ id: 1, unread: true, eventId: castToUuid(301) }],
+        },
+      ],
+    ],
+  },
+  NotificationSetStateMutation: {
+    examples: [[{ ids: [9], userId: user.id, unread: true }, undefined]],
   },
   PageAddRevisionMutation: {
     examples: [
@@ -509,6 +555,8 @@ function toMatcher(value: unknown): unknown {
       : []
   } else if (typeof value === 'object') {
     return R.mapObjIndexed(toMatcher, value)
+  } else if (typeof value === 'string' && isDateString(value)) {
+    return Matchers.iso8601DateTime(value)
   } else {
     return Matchers.like(value)
   }
@@ -521,6 +569,10 @@ function generalMap(
   return Array.isArray(value)
     ? func(value)
     : R.fromPairs(R.toPairs(value).map(([key, value]) => [key, func(value)]))
+}
+
+function isDateString(text: string) {
+  return !isNaN(new Date(text).getDate())
 }
 
 type PactSpec = {

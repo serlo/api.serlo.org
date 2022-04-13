@@ -19,17 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { UserInputError } from 'apollo-server-express'
-import { option as O, function as F } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
-import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
 
 import * as DatabaseLayer from './database-layer'
 import {
-  NotificationEventDecoder,
-  Uuid,
-  NotificationDecoder,
   NavigationDataDecoder,
   EntityRevisionDecoder,
   EntityDecoder,
@@ -45,8 +40,8 @@ import {
 import { Environment } from '~/internals/environment'
 import { Model } from '~/internals/graphql'
 import { isInstance } from '~/schema/instance/utils'
-import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
-import { isSupportedUuidType } from '~/schema/uuid/abstract-uuid/utils'
+import { isSupportedNotificationEvent } from '~/schema/notification/utils'
+import { isSupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { Instance } from '~/types'
 
@@ -60,13 +55,8 @@ export function createSerloModel({
       decoder: DatabaseLayer.getDecoderFor('UuidQuery'),
       enableSwr: true,
       getCurrentValue: async (payload: DatabaseLayer.Payload<'UuidQuery'>) => {
-        const uuid = (await DatabaseLayer.makeRequest(
-          'UuidQuery',
-          payload
-        )) as Model<'AbstractUuid'> | null
-        return uuid !== null && isSupportedUuidType(uuid.__typename)
-          ? uuid
-          : null
+        const uuid = await DatabaseLayer.makeRequest('UuidQuery', payload)
+        return isSupportedUuid(uuid) ? uuid : null
       },
       staleAfter: { day: 1 },
       getKey: ({ id }) => {
@@ -423,7 +413,7 @@ export function createSerloModel({
     decoder: t.record(t.string, t.union([t.array(t.number), t.null])),
     async getCurrentValue(_payload: undefined) {
       const { unrevisedEntityIds } = await getUnrevisedEntities()
-      const result = {} as Record<string, number[] | null>
+      const result: Record<string, number[] | null> = {}
 
       for (const entityId of unrevisedEntityIds) {
         const entity = await getUuidWithCustomDecoder({
@@ -442,19 +432,13 @@ export function createSerloModel({
 
   const getNotificationEvent = createQuery(
     {
-      decoder: t.union([NotificationEventDecoder, t.null]),
-      enableSwr: true,
-      getCurrentValue: async (payload: { id: number }) => {
-        const notificationEvent = (await handleMessage({
-          type: 'EventQuery',
-          payload,
-        })) as Model<'AbstractNotificationEvent'> | null
+      decoder: DatabaseLayer.getDecoderFor('EventQuery'),
+      async getCurrentValue(payload: DatabaseLayer.Payload<'EventQuery'>) {
+        const event = await DatabaseLayer.makeRequest('EventQuery', payload)
 
-        return notificationEvent === null ||
-          isUnsupportedNotificationEvent(notificationEvent)
-          ? null
-          : notificationEvent
+        return isSupportedNotificationEvent(event) ? event : null
       },
+      enableSwr: true,
       staleAfter: { day: 1 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/event/${id}`
@@ -492,14 +476,12 @@ export function createSerloModel({
         if (!key.startsWith('serlo/events/')) return O.none
 
         try {
-          const payload = JSON.parse(key.substring('serlo/events/'.length)) as {
-            first: number
-            actorId?: number
-            objectId?: number
-            instance?: Instance
-          }
+          const payloadJson = key.substring('serlo/events/'.length)
+          const payload = JSON.parse(payloadJson) as unknown
 
-          return O.some(payload)
+          return DatabaseLayer.getPayloadDecoderFor('EventsQuery').is(payload)
+            ? O.some(payload)
+            : O.none
         } catch (e) {
           return O.none
         }
@@ -514,16 +496,11 @@ export function createSerloModel({
 
   const getNotifications = createQuery(
     {
-      decoder: t.exact(
-        t.type({
-          notifications: t.array(NotificationDecoder),
-          userId: Uuid,
-        })
-      ),
-      enableSwr: true,
-      getCurrentValue: (payload: { userId: number }) => {
-        return handleMessage({ type: 'NotificationsQuery', payload })
+      decoder: DatabaseLayer.getDecoderFor('NotificationsQuery'),
+      getCurrentValue(payload: DatabaseLayer.Payload<'NotificationsQuery'>) {
+        return DatabaseLayer.makeRequest('NotificationsQuery', payload)
       },
+      enableSwr: true,
       staleAfter: { minutes: 5 },
       maxAge: { minutes: 30 },
       getKey: ({ userId }) => {
@@ -541,12 +518,9 @@ export function createSerloModel({
   )
 
   const setNotificationState = createMutation({
-    decoder: t.void,
-    async mutate(payload: { ids: number[]; userId: number; unread: boolean }) {
-      await handleMessageWithoutResponse({
-        type: 'NotificationSetStateMutation',
-        payload,
-      })
+    decoder: DatabaseLayer.getDecoderFor('NotificationSetStateMutation'),
+    mutate(payload: DatabaseLayer.Payload<'NotificationSetStateMutation'>) {
+      return DatabaseLayer.makeRequest('NotificationSetStateMutation', payload)
     },
     async updateCache({ ids, userId, unread }) {
       await getNotifications._querySpec.setCache({
@@ -1005,46 +979,4 @@ function getInstanceFromKey(key: string): Instance | null {
   return key.startsWith(`${instance}.serlo.org`) && isInstance(instance)
     ? instance
     : null
-}
-
-async function handleMessage(args: MessagePayload) {
-  const response = await handleMessageWithoutResponse(args)
-  return (await response.json()) as unknown
-}
-
-async function handleMessageWithoutResponse(
-  message: MessagePayload
-): Promise<Response> {
-  const response = await fetch(
-    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`,
-    {
-      method: 'POST',
-      body: JSON.stringify(message),
-      headers: { 'Content-Type': 'application/json' },
-    }
-  )
-  switch (response.status) {
-    case 200:
-    case 404:
-      return response
-    case 400:
-      throw new UserInputError((await parseReason(response)) ?? 'Bad Request')
-    default:
-      throw new Error(`${response.status}: ${JSON.stringify(message)}`)
-  }
-}
-
-async function parseReason(response: Response) {
-  const responseText = await response.text()
-  return F.pipe(
-    O.tryCatch(() => JSON.parse(responseText) as unknown),
-    O.chain(O.fromPredicate(t.type({ reason: t.string }).is)),
-    O.map((json) => json.reason),
-    O.toNullable
-  )
-}
-
-interface MessagePayload {
-  type: string
-  payload?: Record<string, unknown>
 }

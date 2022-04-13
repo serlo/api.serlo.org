@@ -31,6 +31,7 @@ import {
   EntityTypeDecoder,
   InstanceDecoder,
   NavigationDecoder,
+  NotificationDecoder,
   NotificationEventDecoder,
   PageDecoder,
   SubscriptionsDecoder,
@@ -160,6 +161,11 @@ export const spec = {
     response: EntityDecoder,
     canBeNull: false,
   },
+  EventQuery: {
+    payload: t.type({ id: t.number }),
+    response: NotificationEventDecoder,
+    canBeNull: true,
+  },
   EventsQuery: {
     payload: t.intersection([
       t.type({ first: t.number }),
@@ -193,6 +199,23 @@ export const spec = {
   NavigationQuery: {
     payload: t.type({ instance: InstanceDecoder }),
     response: NavigationDecoder,
+    canBeNull: false,
+  },
+  NotificationSetStateMutation: {
+    payload: t.type({
+      ids: t.array(t.number),
+      userId: t.number,
+      unread: t.boolean,
+    }),
+    response: t.void,
+    canBeNull: false,
+  },
+  NotificationsQuery: {
+    payload: t.type({ userId: t.number }),
+    response: t.strict({
+      notifications: t.array(NotificationDecoder),
+      userId: Uuid,
+    }),
     canBeNull: false,
   },
   PageAddRevisionMutation: {
@@ -418,6 +441,12 @@ export function getDecoderFor<M extends MessageType>(message: M): t.Mixed {
     : messageSpec.response
 }
 
+export function getPayloadDecoderFor<M extends MessageType>(
+  message: M
+): PayloadDecoder<M> {
+  return spec[message]['payload']
+}
+
 export type Spec = typeof spec
 export type MessageType = keyof Spec
 export type NullableMessageType = {
@@ -428,4 +457,5 @@ export type NotNullableMessageType = {
 }[MessageType]
 export type Payload<M extends MessageType> = t.TypeOf<Spec[M]['payload']>
 export type Response<M extends MessageType> = t.TypeOf<Spec[M]['response']>
+export type PayloadDecoder<M extends MessageType> = Spec[M]['payload']
 export type ResponseDecoder<M extends MessageType> = Spec[M]['response']
