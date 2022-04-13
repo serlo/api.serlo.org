@@ -130,13 +130,17 @@ describe('TaxonomyTermMoveMutation', () => {
     given('UuidQuery').for(
       { ...user, roles: ['login'] },
       taxonomyTermSubject,
-      taxonomyTermSubject2,
       taxonomyTermCurriculumTopic
     )
 
     await query.execute()
 
-    const query2 = new Client({ userId: user.id })
+    const mutationInput = {
+      childrenIds: [taxonomyTermSubject.id],
+      destination: taxonomyTermCurriculumTopic.id,
+    }
+
+    const moveMutation = new Client({ userId: user.id })
       .prepareQuery({
         query: gql`
           mutation set($input: TaxonomyTermMoveInput!) {
@@ -148,13 +152,13 @@ describe('TaxonomyTermMoveMutation', () => {
           }
         `,
       })
-      .withVariables({ input })
+      .withVariables({ mutationInput })
 
     given('TaxonomyTermMoveMutation')
       .withPayload({ ...input, userId: user.id })
       .returns({ success: true })
 
-    await query2.shouldReturnData({ taxonomyTerm: { move: { success: true } } })
+    await moveMutation.shouldReturnData({ taxonomyTerm: { move: { success: true } } })
 
     global.server.resetHandlers()
     given('UuidQuery').for(

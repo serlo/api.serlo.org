@@ -50,6 +50,7 @@ import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
 import { isSupportedUuidType } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { Instance } from '~/types'
+import { isDefined } from '~/utils'
 
 export function createSerloModel({
   environment,
@@ -973,7 +974,7 @@ export function createSerloModel({
       )
       const oldParentIds = children.map((child) => child.parentId)
 
-      const idArray = [...childrenIds, ...oldParentIds, destination].filter(isDefined)
+      const idArray = R.uniq([...childrenIds, ...oldParentIds, destination]).filter(isDefined)
 
       await getUuid._querySpec.removeCache({
         payloads: idArray.map((id) => {
