@@ -23,11 +23,13 @@ import * as serloAuth from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
 import * as t from 'io-ts'
 
+import { autoreviewTaxonomyIds } from '~/config/autoreview-taxonomies'
 import { ModelDataSource } from '~/internals/data-source'
 import {
   assertArgumentIsNotEmpty,
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
+  Context,
   createNamespace,
   InterfaceResolvers,
   Model,
@@ -712,63 +714,45 @@ async function addRevision({
   }
 }
 
-async function getEntity<S extends Model<'AbstractEntity'> | null>(
+async function getEntity<S extends Model<'AbstractEntity'>>(
   entityId: number,
   dataSources: { model: ModelDataSource },
   decoder: t.Type<S, unknown>
 ) {
-  const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
+  return await dataSources.model.serlo.getUuidWithCustomDecoder({
     id: entityId,
     decoder,
   })
-
-  if (entity === null) {
-    throw 'Nothing found for the provided entityId'
-  }
-
-  return entity
 }
 
 async function verifyAutoreviewEntity(
-  entity:
-    | Model<'Applet'>
-    | Model<'Article'>
-    | Model<'Course'>
-    | Model<'Event'>
-    | Model<'ExerciseGroup'>
-    | Model<'Exercise'>
-    | Model<'Video'>,
-  dataSources: { model: ModelDataSource }
+  entity: { taxonomyTermIds: number[] },
+  dataSources: Context['dataSources']
 ): Promise<boolean> {
-  const taxonomyTermIds = entity.taxonomyTermIds as number[]
+  const taxonomyTermIds = entity.taxonomyTermIds
 
-  for (const id of taxonomyTermIds) {
-    const isParentAutoreview = await checkAnyParentAutoreview(id, dataSources)
-    if (!isParentAutoreview) return false
-  }
-
-  return true
+  return (
+    await Promise.all(
+      taxonomyTermIds.map((id) => checkAnyParentAutoreview(id, dataSources))
+    )
+  ).every((x) => x)
 }
 
 async function checkAnyParentAutoreview(
-  childId: number,
-  dataSources: { model: ModelDataSource }
+  taxonomyTermId: number,
+  dataSources: Context['dataSources']
 ): Promise<boolean> {
-  // 106082 = sandkasten. TODO: make it configurable
-  if (childId === 106082) return true
+  if (autoreviewTaxonomyIds.includes(taxonomyTermId)) return true
 
   const taxonomyTerm = await dataSources.model.serlo.getUuidWithCustomDecoder({
-    id: childId,
+    id: taxonomyTermId,
     decoder: TaxonomyTermDecoder,
   })
 
-  const parentId = taxonomyTerm.parentId
-
-  if (parentId === null) return false
-
-  if (parentId === 106082) return true
-
-  return await checkAnyParentAutoreview(parentId, dataSources)
+  return (
+    taxonomyTerm.parentId !== null &&
+    (await checkAnyParentAutoreview(taxonomyTerm.parentId, dataSources))
+  )
 }
 
 function removeUndefinedFields(inputFields: {
@@ -789,7 +773,7 @@ function removeUndefinedFields(inputFields: {
 
 async function assertParentExists(
   parentId: number,
-  dataSources: { model: ModelDataSource }
+  dataSources: Context['dataSources']
 ) {
   const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
     id: parentId,
@@ -805,7 +789,7 @@ async function assertParentExists(
 
 async function assertTaxonomyTermExists(
   taxonomyTermId: number,
-  dataSources: { model: ModelDataSource }
+  dataSources: Context['dataSources']
 ) {
   const taxonomyTerm = await dataSources.model.serlo.getUuidWithCustomDecoder({
     id: taxonomyTermId,
