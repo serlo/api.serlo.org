@@ -413,7 +413,7 @@ export function createSerloModel({
     decoder: t.record(t.string, t.union([t.array(t.number), t.null])),
     async getCurrentValue(_payload: undefined) {
       const { unrevisedEntityIds } = await getUnrevisedEntities()
-      const result = {} as Record<string, number[] | null>
+      const result: Record<string, number[] | null> = {}
 
       for (const entityId of unrevisedEntityIds) {
         const entity = await getUuidWithCustomDecoder({
