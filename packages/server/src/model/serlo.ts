@@ -541,12 +541,9 @@ export function createSerloModel({
   )
 
   const setNotificationState = createMutation({
-    decoder: t.void,
-    async mutate(payload: { ids: number[]; userId: number; unread: boolean }) {
-      await handleMessageWithoutResponse({
-        type: 'NotificationSetStateMutation',
-        payload,
-      })
+    decoder: DatabaseLayer.getDecoderFor('NotificationSetStateMutation'),
+    mutate(payload: DatabaseLayer.Payload<'NotificationSetStateMutation'>) {
+      return DatabaseLayer.makeRequest('NotificationSetStateMutation', payload)
     },
     async updateCache({ ids, userId, unread }) {
       await getNotifications._querySpec.setCache({
