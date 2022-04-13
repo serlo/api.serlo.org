@@ -40,7 +40,7 @@ import {
 import { Environment } from '~/internals/environment'
 import { Model } from '~/internals/graphql'
 import { isInstance } from '~/schema/instance/utils'
-import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
+import { isSupportedNotificationEvent } from '~/schema/notification/utils'
 import { isSupportedUuidType } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { Instance } from '~/types'
@@ -441,9 +441,7 @@ export function createSerloModel({
       async getCurrentValue(payload: DatabaseLayer.Payload<'EventQuery'>) {
         const event = await DatabaseLayer.makeRequest('EventQuery', payload)
 
-        return event === null || isUnsupportedNotificationEvent(event)
-          ? null
-          : event
+        return isSupportedNotificationEvent(event) ? event : null
       },
       enableSwr: true,
       staleAfter: { day: 1 },
