@@ -31,6 +31,7 @@ import {
   EntityTypeDecoder,
   InstanceDecoder,
   NavigationDecoder,
+  NotificationDecoder,
   NotificationEventDecoder,
   PageDecoder,
   SubscriptionsDecoder,
@@ -202,6 +203,14 @@ export const spec = {
       unread: t.boolean,
     }),
     response: t.void,
+    canBeNull: false,
+  },
+  NotificationsQuery: {
+    payload: t.type({ userId: t.number }),
+    response: t.strict({
+      notifications: t.array(NotificationDecoder),
+      userId: Uuid,
+    }),
     canBeNull: false,
   },
   PageAddRevisionMutation: {
