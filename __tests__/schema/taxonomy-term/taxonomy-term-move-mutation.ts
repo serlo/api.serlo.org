@@ -135,10 +135,7 @@ describe('TaxonomyTermMoveMutation', () => {
 
     await query.execute()
 
-    const mutationInput = {
-      childrenIds: [taxonomyTermSubject.id],
-      destination: taxonomyTermCurriculumTopic.id,
-    }
+    input.childrenIds = [taxonomyTermSubject.id]
 
     const moveMutation = new Client({ userId: user.id })
       .prepareQuery({
@@ -152,13 +149,15 @@ describe('TaxonomyTermMoveMutation', () => {
           }
         `,
       })
-      .withVariables({ mutationInput })
+      .withVariables({ input })
 
     given('TaxonomyTermMoveMutation')
       .withPayload({ ...input, userId: user.id })
       .returns({ success: true })
 
-    await moveMutation.shouldReturnData({ taxonomyTerm: { move: { success: true } } })
+    await moveMutation.shouldReturnData({
+      taxonomyTerm: { move: { success: true } },
+    })
 
     global.server.resetHandlers()
     given('UuidQuery').for(
@@ -173,6 +172,5 @@ describe('TaxonomyTermMoveMutation', () => {
         parent: { id: taxonomyTermCurriculumTopic.id },
       },
     })
-
   })
 })
