@@ -26,9 +26,9 @@ import { NotificationEventType, UserDecoder } from '~/model/decoder'
 
 const validTypes = Object.values(NotificationEventType)
 
-export function isUnsupportedNotificationEvent(payload: unknown) {
+export function isSupportedNotificationEvent(payload: unknown) {
   return (
-    !R.has('__typename', payload) || !R.includes(payload.__typename, validTypes)
+    R.has('__typename', payload) && R.includes(payload.__typename, validTypes)
   )
 }
 
