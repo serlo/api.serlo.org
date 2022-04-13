@@ -170,28 +170,5 @@ describe('TaxonomyTermMoveMutation', () => {
       },
     })
 
-    // given('TaxonomyTermMoveMutation')
-    //   .withPayload({
-    //     ...input,
-    //     userId: user.id,
-    //   })
-    //   .isDefinedBy((req, res, ctx) => {
-    //     const { childrenIds, destination } = req.body.payload
-
-    //     given('UuidQuery').for({
-    //       ...taxonomyTermCurriculumTopic,
-    //       childrenIds,
-    //       destination,
-    //     })
-
-    //     return res(ctx.json({ success: true }))
-    //   })
-    // await mutation.shouldReturnData({
-    //   taxonomyTerm: { move: { success: true } },
-    // })
-
-    // await query.shouldReturnData({
-    //   uuid: { name: 'a name', description: 'a description' },
-    // })
   })
 })
