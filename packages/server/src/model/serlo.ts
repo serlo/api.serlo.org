@@ -27,7 +27,6 @@ import * as R from 'ramda'
 
 import * as DatabaseLayer from './database-layer'
 import {
-  CommentDecoder,
   NotificationEventDecoder,
   Uuid,
   NotificationDecoder,
@@ -49,7 +48,7 @@ import { isInstance } from '~/schema/instance/utils'
 import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
 import { isSupportedUuidType } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
-import { Instance, ThreadCreateThreadInput } from '~/types'
+import { Instance } from '~/types'
 
 export function createSerloModel({
   environment,
@@ -236,9 +235,9 @@ export function createSerloModel({
   })
 
   const setEmail = createMutation({
-    decoder: t.type({ success: t.literal(true), username: t.string }),
-    mutate: (payload: { userId: number; email: string }) => {
-      return handleMessage({ type: 'UserSetEmailMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('UserSetEmailMutation'),
+    mutate(payload: DatabaseLayer.Payload<'UserSetEmailMutation'>) {
+      return DatabaseLayer.makeRequest('UserSetEmailMutation', payload)
     },
   })
 
@@ -472,34 +471,19 @@ export function createSerloModel({
   )
 
   const getEventsAfter = createRequest({
-    decoder: t.type({
-      events: t.array(NotificationEventDecoder),
-      hasNextPage: t.boolean,
-    }),
-    async getCurrentValue(payload: {
-      after: number
-      first: number
-      actorId?: number
-      objectId?: number
-      instance?: Instance
-    }) {
-      return await handleMessage({ type: 'EventsQuery', payload })
+    decoder: DatabaseLayer.getDecoderFor('EventsQuery'),
+    async getCurrentValue(
+      payload: DatabaseLayer.Payload<'EventsQuery'> & { after: number }
+    ) {
+      return DatabaseLayer.makeRequest('EventsQuery', payload)
     },
   })
 
   const getEvents = createQuery(
     {
-      decoder: t.type({
-        events: t.array(NotificationEventDecoder),
-        hasNextPage: t.boolean,
-      }),
-      async getCurrentValue(payload: {
-        first: number
-        actorId?: number
-        objectId?: number
-        instance?: Instance
-      }) {
-        return await handleMessage({ type: 'EventsQuery', payload })
+      decoder: DatabaseLayer.getDecoderFor('EventsQuery'),
+      async getCurrentValue(payload: DatabaseLayer.Payload<'EventsQuery'>) {
+        return DatabaseLayer.makeRequest('EventsQuery', payload)
       },
       getKey(payload) {
         return 'serlo/events/' + JSON.stringify(payload)
@@ -637,11 +621,18 @@ export function createSerloModel({
     },
   })
 
+  const getAllThreads = createRequest({
+    decoder: DatabaseLayer.getDecoderFor('AllThreadsQuery'),
+    async getCurrentValue(payload: DatabaseLayer.Payload<'AllThreadsQuery'>) {
+      return DatabaseLayer.makeRequest('AllThreadsQuery', payload)
+    },
+  })
+
   const getThreadIds = createQuery(
     {
-      decoder: t.type({ firstCommentIds: t.array(t.number) }),
-      getCurrentValue: async (payload: { id: number }) => {
-        return handleMessage({ type: 'ThreadsQuery', payload })
+      decoder: DatabaseLayer.getDecoderFor('ThreadsQuery'),
+      async getCurrentValue(payload: DatabaseLayer.Payload<'ThreadsQuery'>) {
+        return DatabaseLayer.makeRequest('ThreadsQuery', payload)
       },
       enableSwr: true,
       staleAfter: { day: 1 },
@@ -660,9 +651,9 @@ export function createSerloModel({
   )
 
   const createThread = createMutation({
-    decoder: t.union([CommentDecoder, t.null]),
-    mutate: (payload: ThreadCreateThreadInput & { userId: number }) => {
-      return handleMessage({ type: 'ThreadCreateThreadMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('ThreadCreateThreadMutation'),
+    async mutate(payload: DatabaseLayer.Payload<'ThreadCreateThreadMutation'>) {
+      return DatabaseLayer.makeRequest('ThreadCreateThreadMutation', payload)
     },
     updateCache: async (payload, value) => {
       if (value !== null) {
@@ -683,17 +674,13 @@ export function createSerloModel({
   })
 
   const createComment = createMutation({
-    decoder: t.union([CommentDecoder, t.null]),
-    mutate: (payload: {
-      content: string
-      threadId: number
-      userId: number
-      subscribe: boolean
-      sendEmail: boolean
-    }) => {
-      return handleMessage({ type: 'ThreadCreateCommentMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('ThreadCreateCommentMutation'),
+    async mutate(
+      payload: DatabaseLayer.Payload<'ThreadCreateCommentMutation'>
+    ) {
+      return DatabaseLayer.makeRequest('ThreadCreateCommentMutation', payload)
     },
-    updateCache: async (payload, value) => {
+    async updateCache(payload, value) {
       if (value !== null) {
         await getUuid._querySpec.setCache({
           payload: { id: value.id },
@@ -712,16 +699,14 @@ export function createSerloModel({
   })
 
   const archiveThread = createMutation({
-    decoder: t.void,
-    async mutate(payload: {
-      ids: number[]
-      archived: boolean
-      userId: number
-    }) {
-      await handleMessageWithoutResponse({
-        type: 'ThreadSetThreadArchivedMutation',
-        payload,
-      })
+    decoder: DatabaseLayer.getDecoderFor('ThreadSetThreadArchivedMutation'),
+    async mutate(
+      payload: DatabaseLayer.Payload<'ThreadSetThreadArchivedMutation'>
+    ) {
+      return DatabaseLayer.makeRequest(
+        'ThreadSetThreadArchivedMutation',
+        payload
+      )
     },
     async updateCache({ ids, archived }) {
       await getUuid._querySpec.setCache({
@@ -807,13 +792,14 @@ export function createSerloModel({
   })
 
   const checkoutEntityRevision = createMutation({
-    decoder: t.type({ success: t.literal(true) }),
-    async mutate(payload: {
-      revisionId: Uuid
-      userId: number
-      reason: string
-    }) {
-      return handleMessage({ type: 'EntityCheckoutRevisionMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('EntityCheckoutRevisionMutation'),
+    async mutate(
+      payload: DatabaseLayer.Payload<'EntityCheckoutRevisionMutation'>
+    ) {
+      return DatabaseLayer.makeRequest(
+        'EntityCheckoutRevisionMutation',
+        payload
+      )
     },
     async updateCache({ revisionId }) {
       const revision = await getUuidWithCustomDecoder({
@@ -867,13 +853,9 @@ export function createSerloModel({
   })
 
   const checkoutPageRevision = createMutation({
-    decoder: t.type({ success: t.literal(true) }),
-    async mutate(payload: {
-      revisionId: Uuid
-      userId: number
-      reason: string
-    }) {
-      return handleMessage({ type: 'PageCheckoutRevisionMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('PageCheckoutRevisionMutation'),
+    mutate(payload: DatabaseLayer.Payload<'PageCheckoutRevisionMutation'>) {
+      return DatabaseLayer.makeRequest('PageCheckoutRevisionMutation', payload)
     },
     async updateCache({ revisionId }) {
       const revision = await getUuidWithCustomDecoder({
@@ -904,13 +886,9 @@ export function createSerloModel({
   })
 
   const rejectEntityRevision = createMutation({
-    decoder: t.type({ success: t.literal(true) }),
-    async mutate(payload: {
-      revisionId: number
-      userId: number
-      reason: string
-    }) {
-      return handleMessage({ type: 'EntityRejectRevisionMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('EntityRejectRevisionMutation'),
+    mutate(payload: DatabaseLayer.Payload<'EntityRejectRevisionMutation'>) {
+      return DatabaseLayer.makeRequest('EntityRejectRevisionMutation', payload)
     },
     async updateCache({ revisionId }) {
       await getUuid._querySpec.setCache({
@@ -927,13 +905,9 @@ export function createSerloModel({
   })
 
   const rejectPageRevision = createMutation({
-    decoder: t.type({ success: t.literal(true) }),
-    async mutate(payload: {
-      revisionId: number
-      userId: number
-      reason: string
-    }) {
-      return handleMessage({ type: 'PageRejectRevisionMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('PageRejectRevisionMutation'),
+    mutate(payload: DatabaseLayer.Payload<'PageRejectRevisionMutation'>) {
+      return DatabaseLayer.makeRequest('PageRejectRevisionMutation', payload)
     },
     async updateCache({ revisionId }) {
       await getUuid._querySpec.setCache({
@@ -998,6 +972,7 @@ export function createSerloModel({
     getActiveReviewerIds,
     getActivityByType,
     getAlias,
+    getAllThreads,
     getEntitiesMetadata,
     getEvents,
     getEventsAfter,
