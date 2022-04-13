@@ -555,6 +555,8 @@ function toMatcher(value: unknown): unknown {
       : []
   } else if (typeof value === 'object') {
     return R.mapObjIndexed(toMatcher, value)
+  } else if (typeof value === 'string' && isDateString(value)) {
+    return Matchers.iso8601DateTime(value)
   } else {
     return Matchers.like(value)
   }
@@ -567,6 +569,10 @@ function generalMap(
   return Array.isArray(value)
     ? func(value)
     : R.fromPairs(R.toPairs(value).map(([key, value]) => [key, func(value)]))
+}
+
+function isDateString(text: string) {
+  return !isNaN(new Date(text).getDate())
 }
 
 type PactSpec = {
