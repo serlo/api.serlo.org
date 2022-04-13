@@ -24,7 +24,6 @@ import { UserInputError } from 'apollo-server'
 import * as t from 'io-ts'
 
 import { autoreviewTaxonomyIds } from '~/config/autoreview-taxonomies'
-import { ModelDataSource } from '~/internals/data-source'
 import {
   assertArgumentIsNotEmpty,
   assertUserIsAuthenticated,
@@ -570,7 +569,7 @@ export interface AbstractEntityCreatePayload {
     title?: string
     url?: string
   }
-  dataSources: { model: ModelDataSource }
+  dataSources: Context['dataSources']
   userId: number | null
 }
 
@@ -590,7 +589,7 @@ interface AbstractEntityAddRevisionPayload {
     title?: string
     url?: string
   }
-  dataSources: { model: ModelDataSource }
+  dataSources: Context['dataSources']
   userId: number | null
   isAutoreviewEntity: boolean
 }
@@ -716,7 +715,7 @@ async function addRevision({
 
 async function getEntity<S extends Model<'AbstractEntity'>>(
   entityId: number,
-  dataSources: { model: ModelDataSource },
+  dataSources: Context['dataSources'],
   decoder: t.Type<S, unknown>
 ) {
   return await dataSources.model.serlo.getUuidWithCustomDecoder({
