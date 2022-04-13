@@ -114,7 +114,8 @@ describe('TaxonomyTermMoveMutation', () => {
         childrenIds: [taxonomyTermSubject.id],
         destination: taxonomyTermCurriculumTopic.id,
         userId: user.id,
-      }).isDefinedBy((_req, res, ctx) => {
+      })
+      .isDefinedBy((_req, res, ctx) => {
         given('UuidQuery').for({
           ...taxonomyTermSubject,
           parentId: taxonomyTermCurriculumTopic.id,
@@ -154,7 +155,7 @@ describe('TaxonomyTermMoveMutation', () => {
       .withVariables({
         input: {
           childrenIds: [taxonomyTermSubject.id],
-          destination: taxonomyTermCurriculumTopic.id
+          destination: taxonomyTermCurriculumTopic.id,
         },
       })
 
