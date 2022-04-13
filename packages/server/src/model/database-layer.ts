@@ -161,6 +161,11 @@ export const spec = {
     response: EntityDecoder,
     canBeNull: false,
   },
+  EventQuery: {
+    payload: t.type({ id: t.number }),
+    response: NotificationEventDecoder,
+    canBeNull: true,
+  },
   EventsQuery: {
     payload: t.intersection([
       t.type({ first: t.number }),

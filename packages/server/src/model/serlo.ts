@@ -442,19 +442,15 @@ export function createSerloModel({
 
   const getNotificationEvent = createQuery(
     {
-      decoder: t.union([NotificationEventDecoder, t.null]),
-      enableSwr: true,
-      getCurrentValue: async (payload: { id: number }) => {
-        const notificationEvent = (await handleMessage({
-          type: 'EventQuery',
-          payload,
-        })) as Model<'AbstractNotificationEvent'> | null
+      decoder: DatabaseLayer.getDecoderFor('EventQuery'),
+      async getCurrentValue(payload: DatabaseLayer.Payload<'EventQuery'>) {
+        const event = await DatabaseLayer.makeRequest('EventQuery', payload)
 
-        return notificationEvent === null ||
-          isUnsupportedNotificationEvent(notificationEvent)
+        return event === null || isUnsupportedNotificationEvent(event)
           ? null
-          : notificationEvent
+          : event
       },
+      enableSwr: true,
       staleAfter: { day: 1 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/event/${id}`
