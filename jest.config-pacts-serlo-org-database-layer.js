@@ -40,7 +40,7 @@ module.exports = {
     '<rootDir>/__config__/jest.setup-pacts-serlo-org-database-layer.ts',
   ],
   testEnvironment: 'node',
-  testRegex: '/__tests-pacts__/serlo\\.org-database-layer/index\\.ts',
+  testRegex: '/__tests-pacts__/index\\.ts',
   transform: {
     '^.+\\.graphql$': 'jest-transform-graphql',
   },
