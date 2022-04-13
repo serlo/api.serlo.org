@@ -973,11 +973,7 @@ export function createSerloModel({
       )
       const oldParentIds = children.map((child) => child.parentId)
 
-      const idArray = [...childrenIds, ...oldParentIds, destination].filter(
-        (id) => {
-          return id !== null
-        }
-      ) as number[]
+      const idArray = [...childrenIds, ...oldParentIds, destination].filter(isDefined)
 
       await getUuid._querySpec.removeCache({
         payloads: idArray.map((id) => {
