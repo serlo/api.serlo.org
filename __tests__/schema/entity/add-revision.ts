@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
 import {
   applet,
@@ -32,6 +33,8 @@ import {
   groupedExercise,
   solution,
   solutionRevision,
+  taxonomyTermRoot,
+  taxonomyTermSubject,
   user,
   video,
 } from '../../../__fixtures__'
@@ -42,49 +45,40 @@ import {
   nextUuid,
   Database,
   returnsUuidsFromDatabase,
+  EntityFields,
+  ALL_POSSIBLE_FIELDS,
+  appletFields,
+  articleFields,
+  courseFields,
+  coursePageFields,
+  eventFields,
+  genericFields,
+  exerciseGroupFields,
+  videoFields,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
-import { EntityType, EntityRevisionType } from '~/model/decoder'
+import { EntityType, EntityRevisionType, castToUuid } from '~/model/decoder'
 
 class EntityAddRevisionWrapper {
-  static ALL_POSSIBLE_FIELDS: {
-    title: string
-    cohesive: boolean
-    content: string
-    description: string
-    metaTitle: string
-    metaDescription: string
-    url: string
-  } = {
-    title: 'title',
-    cohesive: false,
-    content: 'content',
-    description: 'description',
-    metaTitle: 'metaTitle',
-    metaDescription: 'metaDescription',
-    url: 'https://url.org',
-  }
   public entity: Model<EntityType>
   public revisionType: EntityRevisionType
-  public mutationName: string
-  public inputName: string
-  public fields: Partial<typeof EntityAddRevisionWrapper.ALL_POSSIBLE_FIELDS>
-  public fieldsForDBLayer: { [key: string]: string }
+  public fields: Partial<EntityFields>
 
   constructor(
     revisionType: EntityRevisionType,
     entity: Model<EntityType>,
-    fieldsAtApi: (keyof typeof EntityAddRevisionWrapper.ALL_POSSIBLE_FIELDS)[]
+    fieldsAtApi: (keyof EntityFields)[]
   ) {
     this.revisionType = revisionType
     this.entity = entity
-    this.mutationName = `add${this.revisionType}`
-    this.inputName = this.setInputName()
-    this.fields = this.setFields(fieldsAtApi)
-    this.fieldsForDBLayer = this.setFieldsForDBlayer()
+    this.fields = R.pick(fieldsAtApi, ALL_POSSIBLE_FIELDS)
   }
 
-  setInputName() {
+  get mutationName() {
+    return `add${this.revisionType}`
+  }
+
+  get inputName() {
     if (
       [
         EntityRevisionType.ExerciseRevision,
@@ -97,17 +91,7 @@ class EntityAddRevisionWrapper {
     return `Add${this.revisionType}Input`
   }
 
-  setFields(
-    fields: (keyof typeof EntityAddRevisionWrapper.ALL_POSSIBLE_FIELDS)[]
-  ) {
-    const filteredFields: { [key: string]: string | boolean } = {}
-    for (const key of fields) {
-      filteredFields[key] = EntityAddRevisionWrapper.ALL_POSSIBLE_FIELDS[key]
-    }
-    return filteredFields
-  }
-
-  setFieldsForDBlayer() {
+  get fieldsForDBLayer(): { [key: string]: string } {
     if (this.revisionType === EntityRevisionType.ExerciseGroupRevision) {
       return {
         cohesive: this.fields.cohesive!.toString(),
@@ -126,7 +110,6 @@ class EntityAddRevisionWrapper {
         title: this.fields.title!,
       }
     }
-    delete this.fields.cohesive
     const fieldsWithoutCohesive: Omit<typeof this.fields, 'cohesive'> =
       this.fields
 
@@ -135,56 +118,56 @@ class EntityAddRevisionWrapper {
 }
 
 const entityAddRevisionTypes = [
-  new EntityAddRevisionWrapper(EntityRevisionType.AppletRevision, applet, [
-    'title',
-    'content',
-    'metaTitle',
-    'metaDescription',
-    'url',
-  ]),
-  new EntityAddRevisionWrapper(EntityRevisionType.ArticleRevision, article, [
-    'title',
-    'content',
-    'metaTitle',
-    'metaDescription',
-  ]),
-  new EntityAddRevisionWrapper(EntityRevisionType.CourseRevision, course, [
-    'title',
-    'content',
-    'metaDescription',
-  ]),
+  new EntityAddRevisionWrapper(
+    EntityRevisionType.AppletRevision,
+    applet,
+    appletFields
+  ),
+  new EntityAddRevisionWrapper(
+    EntityRevisionType.ArticleRevision,
+    article,
+    articleFields
+  ),
+  new EntityAddRevisionWrapper(
+    EntityRevisionType.CourseRevision,
+    course,
+    courseFields
+  ),
   new EntityAddRevisionWrapper(
     EntityRevisionType.CoursePageRevision,
     coursePage,
-    ['title', 'content']
+    coursePageFields
   ),
-  new EntityAddRevisionWrapper(EntityRevisionType.EventRevision, event, [
-    'title',
-    'content',
-    'metaTitle',
-    'metaDescription',
-  ]),
-  new EntityAddRevisionWrapper(EntityRevisionType.ExerciseRevision, exercise, [
-    'content',
-  ]),
+  new EntityAddRevisionWrapper(
+    EntityRevisionType.EventRevision,
+    event,
+    eventFields
+  ),
+  new EntityAddRevisionWrapper(
+    EntityRevisionType.ExerciseRevision,
+    exercise,
+    genericFields
+  ),
   new EntityAddRevisionWrapper(
     EntityRevisionType.ExerciseGroupRevision,
     exerciseGroup,
-    ['cohesive', 'content']
+    exerciseGroupFields
   ),
   new EntityAddRevisionWrapper(
     EntityRevisionType.GroupedExerciseRevision,
     groupedExercise,
-    ['content']
+    genericFields
   ),
-  new EntityAddRevisionWrapper(EntityRevisionType.SolutionRevision, solution, [
-    'content',
-  ]),
-  new EntityAddRevisionWrapper(EntityRevisionType.VideoRevision, video, [
-    'title',
-    'content',
-    'url',
-  ]),
+  new EntityAddRevisionWrapper(
+    EntityRevisionType.SolutionRevision,
+    solution,
+    genericFields
+  ),
+  new EntityAddRevisionWrapper(
+    EntityRevisionType.VideoRevision,
+    video,
+    videoFields
+  ),
 ]
 
 entityAddRevisionTypes.forEach((entityAddRevisionType) => {
@@ -214,7 +197,21 @@ entityAddRevisionTypes.forEach((entityAddRevisionType) => {
       .withVariables({ input })
 
     beforeEach(() => {
-      given('UuidQuery').for(user, entityAddRevisionType.entity)
+      given('UuidQuery').for(
+        user,
+        applet,
+        article,
+        course,
+        coursePage,
+        event,
+        exercise,
+        exerciseGroup,
+        groupedExercise,
+        solution,
+        video,
+        taxonomyTermSubject,
+        taxonomyTermRoot
+      )
     })
 
     test('returns "{ success: true }" when mutation could be successfully executed', async () => {
@@ -335,7 +332,15 @@ describe('Cache after EntityAddRevisionMutation call', () => {
 
   beforeEach(() => {
     const database = new Database()
-    database.hasUuids([user, solution, solutionRevision, article])
+    database.hasUuids([
+      user,
+      solution,
+      solutionRevision,
+      article,
+      exercise,
+      taxonomyTermSubject,
+      taxonomyTermRoot,
+    ])
     given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
 
     const {
@@ -456,6 +461,177 @@ describe('Cache after EntityAddRevisionMutation call', () => {
           ],
         },
       },
+    })
+  })
+})
+
+describe('Autoreview entities', () => {
+  const fields = {
+    content: 'content',
+  }
+
+  const input = {
+    changes: 'changes',
+    entityId: solution.id,
+    needsReview: true,
+    subscribeThis: false,
+    subscribeThisByEmail: false,
+    ...fields,
+  }
+
+  const mutation = new Client({ userId: user.id })
+    .prepareQuery({
+      query: gql`
+        mutation set($input: AddGenericRevisionInput!) {
+          entity {
+            addSolutionRevision(input: $input) {
+              success
+            }
+          }
+        }
+      `,
+    })
+    .withVariables({ input })
+
+  const uuidQuery = new Client({ userId: user.id })
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on Solution {
+              currentRevision {
+                id
+              }
+            }
+          }
+        }
+      `,
+    })
+    .withVariables({ id: solution.id })
+
+  let newSolutionRevision: Model<'SolutionRevision'>
+
+  const database = new Database()
+
+  const { changes, entityId, subscribeThis, subscribeThisByEmail } = input
+
+  beforeEach(() => {
+    database.hasUuids([
+      user,
+      solution,
+      solutionRevision,
+      article,
+      // 106082 = sandkasten, it should become configurable
+      { ...exercise, taxonomyTermIds: [106082].map(castToUuid) },
+      { ...taxonomyTermSubject, id: castToUuid(106082) },
+      taxonomyTermRoot,
+    ])
+
+    given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
+
+    given('EntityAddRevisionMutation')
+      .withPayload({
+        input: {
+          changes,
+          entityId,
+          needsReview: false,
+          subscribeThis,
+          subscribeThisByEmail,
+          fields,
+        },
+        userId: user.id,
+        revisionType: EntityRevisionType.SolutionRevision,
+      })
+      .isDefinedBy((req, res, ctx) => {
+        const { input } = req.body.payload
+
+        newSolutionRevision = {
+          ...solutionRevision,
+          id: nextUuid(solutionRevision.id),
+        }
+        database.hasUuid(newSolutionRevision)
+
+        if (!input.needsReview) {
+          database.changeUuid(solution.id, {
+            currentRevisionId: newSolutionRevision.id,
+          })
+        }
+
+        return res(
+          ctx.json({ success: true, revisionId: newSolutionRevision.id })
+        )
+      })
+  })
+
+  test('check out revision without need of review, even if needsReview initially true', async () => {
+    await uuidQuery.shouldReturnData({
+      uuid: { currentRevision: { id: solution.currentRevisionId } },
+    })
+
+    await mutation.execute()
+
+    await uuidQuery.shouldReturnData({
+      uuid: { currentRevision: { id: newSolutionRevision.id } },
+    })
+  })
+
+  test('do not check out revision automatically if entity is also in a no-autoreview taxonomy term', async () => {
+    database.hasUuids([
+      user,
+      solution,
+      solutionRevision,
+      article,
+      // 106082 = sandkasten, it should become configurable
+      {
+        ...exercise,
+        taxonomyTermIds: [106082, ...exercise.taxonomyTermIds].map(castToUuid),
+      },
+      taxonomyTermSubject,
+      { ...taxonomyTermSubject, id: castToUuid(106082) },
+      taxonomyTermRoot,
+    ])
+
+    given('EntityAddRevisionMutation')
+      .withPayload({
+        input: {
+          changes,
+          entityId,
+          needsReview: true,
+          subscribeThis,
+          subscribeThisByEmail,
+          fields,
+        },
+        userId: user.id,
+        revisionType: EntityRevisionType.SolutionRevision,
+      })
+      .isDefinedBy((req, res, ctx) => {
+        const { input } = req.body.payload
+
+        newSolutionRevision = {
+          ...solutionRevision,
+          id: nextUuid(solutionRevision.id),
+        }
+        database.hasUuid(newSolutionRevision)
+
+        if (!input.needsReview) {
+          database.changeUuid(solution.id, {
+            currentRevisionId: newSolutionRevision.id,
+          })
+        }
+
+        return res(
+          ctx.json({ success: true, revisionId: newSolutionRevision.id })
+        )
+      })
+
+    await uuidQuery.shouldReturnData({
+      uuid: { currentRevision: { id: solution.currentRevisionId } },
+    })
+
+    await mutation.execute()
+
+    await uuidQuery.shouldReturnData({
+      uuid: { currentRevision: { id: solution.currentRevisionId } },
     })
   })
 })

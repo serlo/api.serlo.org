@@ -1195,8 +1195,12 @@ async function exec(): Promise<void> {
           'Add mutation `TaxonomyTerm.setNameAndDescription`',
         ],
         fixed: [
-          'Reduced the cache time for get.Notifications',
+          'Reduced the cache time for getNotifications',
           'Reduced the cache time for chat.getUserInfo',
+          'Handles correctly the parameter needsReview when adding revision',
+        ],
+        changed: [
+          'Made some fields at Entity.add___Revision mutations optional',
         ],
       },
       {

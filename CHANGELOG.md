@@ -10,11 +10,17 @@ All notable changes to this project will be documented in this file.
 
 - Add mutation `TaxonomyTerm.setNameAndDescription`
 
+### Changed
+
+- Made some fields at Entity.add\_\_\_Revision mutations optional
+
 ### Fixed
 
-- Reduced the cache time for get.Notifications
+- Reduced the cache time for getNotifications
 
 - Reduced the cache time for chat.getUserInfo
+
+- Handles correctly the parameter needsReview when adding revision
 
 ## [v0.29.1](https://github.com/serlo/api.serlo.org/compare/v0.29.0..v0.29.1) - March 21, 2022
 
