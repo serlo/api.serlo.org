@@ -66,7 +66,7 @@ import {
   user,
   video,
   videoRevision,
-} from '../../__fixtures__'
+} from '../__fixtures__'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
 import {
