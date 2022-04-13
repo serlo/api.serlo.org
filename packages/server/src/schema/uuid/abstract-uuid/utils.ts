@@ -40,8 +40,12 @@ export function isSupportedUuid(value: unknown) {
   return (
     R.has('__typename', value) &&
     typeof value.__typename === 'string' &&
-    R.includes(value.__typename, validTypes)
+    isSupportedUuidType(value.__typename)
   )
+}
+
+export function isSupportedUuidType(name: string) {
+  return R.includes(name, validTypes)
 }
 
 export function createUuidResolvers(): PickResolvers<
