@@ -23,6 +23,21 @@ import { Matchers } from '@pact-foundation/pact'
 import R from 'ramda'
 
 import {
+  createCommentNotificationEvent,
+  createEntityLinkNotificationEvent,
+  createEntityNotificationEvent,
+  createEntityRevisionNotificationEvent,
+  createTaxonomyLinkNotificationEvent,
+  createTaxonomyTermNotificationEvent,
+  createThreadNotificationEvent,
+  rejectRevisionNotificationEvent,
+  removeEntityLinkNotificationEvent,
+  removeTaxonomyLinkNotificationEvent,
+  setLicenseNotificationEvent,
+  setTaxonomyParentNotificationEvent,
+  setTaxonomyTermNotificationEvent,
+  setThreadStateNotificationEvent,
+  setUuidStateNotificationEvent,
   applet,
   appletRevision,
   article,
@@ -63,6 +78,24 @@ import {
 } from '~/model/decoder'
 import { Instance } from '~/types'
 
+const events = [
+  checkoutRevisionNotificationEvent,
+  createCommentNotificationEvent,
+  createEntityLinkNotificationEvent,
+  createEntityNotificationEvent,
+  createEntityRevisionNotificationEvent,
+  createTaxonomyLinkNotificationEvent,
+  createTaxonomyTermNotificationEvent,
+  createThreadNotificationEvent,
+  rejectRevisionNotificationEvent,
+  removeEntityLinkNotificationEvent,
+  removeTaxonomyLinkNotificationEvent,
+  setLicenseNotificationEvent,
+  setTaxonomyParentNotificationEvent,
+  setTaxonomyTermNotificationEvent,
+  setThreadStateNotificationEvent,
+  setUuidStateNotificationEvent,
+]
 const uuids = [
   applet,
   appletRevision,
@@ -212,6 +245,10 @@ const pactSpec: PactSpec = {
         { ...coursePage, currentRevisionId: null },
       ],
     ],
+  },
+  EventQuery: {
+    examples: events.map((event) => [{ id: event.id }, event]),
+    examplePayloadForNull: { id: 1_000_000 },
   },
   EventsQuery: {
     examples: [
