@@ -1203,6 +1203,11 @@ async function exec(): Promise<void> {
           'Made some fields at Entity.add___Revision mutations optional',
         ],
       },
+      {
+        tagName: 'v0.30.1',
+        date: '2022-04-08',
+        added: ['Add query endpoint `thread.allThreads`'],
+      },
     ],
   })
 
