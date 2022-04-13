@@ -63,11 +63,6 @@ import {
 } from '~/model/decoder'
 import { Instance } from '~/types'
 
-/* eslint-disable import/no-unassigned-import */
-describe('NotificationMessage', () => {
-  require('./notification')
-})
-
 const uuids = [
   applet,
   appletRevision,
@@ -250,6 +245,17 @@ const pactSpec: PactSpec = {
         {
           instance: Instance.De,
           data: [{ label: 'Mathematik', children: [{ label: 'Alle Themen' }] }],
+        },
+      ],
+    ],
+  },
+  NotificationsQuery: {
+    examples: [
+      [
+        { userId: user.id },
+        {
+          userId: user.id,
+          notifications: [{ id: 1, unread: true, eventId: castToUuid(301) }],
         },
       ],
     ],

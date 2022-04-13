@@ -514,16 +514,11 @@ export function createSerloModel({
 
   const getNotifications = createQuery(
     {
-      decoder: t.exact(
-        t.type({
-          notifications: t.array(NotificationDecoder),
-          userId: Uuid,
-        })
-      ),
-      enableSwr: true,
-      getCurrentValue: (payload: { userId: number }) => {
-        return handleMessage({ type: 'NotificationsQuery', payload })
+      decoder: DatabaseLayer.getDecoderFor('NotificationsQuery'),
+      getCurrentValue(payload: DatabaseLayer.Payload<'NotificationsQuery'>) {
+        return DatabaseLayer.makeRequest('NotificationsQuery', payload)
       },
+      enableSwr: true,
       staleAfter: { minutes: 5 },
       maxAge: { minutes: 30 },
       getKey: ({ userId }) => {
