@@ -476,14 +476,12 @@ export function createSerloModel({
         if (!key.startsWith('serlo/events/')) return O.none
 
         try {
-          const payload = JSON.parse(key.substring('serlo/events/'.length)) as {
-            first: number
-            actorId?: number
-            objectId?: number
-            instance?: Instance
-          }
+          const payloadJson = key.substring('serlo/events/'.length)
+          const payload = JSON.parse(payloadJson) as unknown
 
-          return O.some(payload)
+          return DatabaseLayer.getPayloadDecoderFor('EventsQuery').is(payload)
+            ? O.some(payload)
+            : O.none
         } catch (e) {
           return O.none
         }
