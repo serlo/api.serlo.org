@@ -36,6 +36,14 @@ const validTypes = [
   ...Object.values(EntityRevisionType),
 ]
 
+export function isSupportedUuid(value: unknown) {
+  return (
+    R.has('__typename', value) &&
+    typeof value.__typename === 'string' &&
+    isSupportedUuidType(value.__typename)
+  )
+}
+
 export function isSupportedUuidType(name: string) {
   return R.includes(name, validTypes)
 }
