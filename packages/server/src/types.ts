@@ -2368,6 +2368,20 @@ export type TaxonomyTermConnection = {
   totalCount: Scalars['Int'];
 };
 
+export type TaxonomyTermCreateInput = {
+  description?: InputMaybe<Scalars['String']>;
+  instance: Instance;
+  name: Scalars['String'];
+  parentId?: InputMaybe<Scalars['Int']>;
+};
+
+export type TaxonomyTermCreateResponse = {
+  __typename?: 'TaxonomyTermCreateResponse';
+  query: Query;
+  record?: Maybe<TaxonomyTerm>;
+  success: Scalars['Boolean'];
+};
+
 export type TaxonomyTermEdge = {
   __typename?: 'TaxonomyTermEdge';
   cursor: Scalars['String'];
@@ -2387,8 +2401,14 @@ export type TaxonomyTermMoveResponse = {
 
 export type TaxonomyTermMutation = {
   __typename?: 'TaxonomyTermMutation';
+  create: TaxonomyTermCreateResponse;
   move: TaxonomyTermMoveResponse;
   setNameAndDescription: TaxonomyTermSetNameAndDescriptionResponse;
+};
+
+
+export type TaxonomyTermMutationCreateArgs = {
+  input: TaxonomyTermCreateInput;
 };
 
 
@@ -3121,6 +3141,8 @@ export type ResolversTypes = {
   SubscriptionSetResponse: ResolverTypeWrapper<ModelOf<SubscriptionSetResponse>>;
   TaxonomyTerm: ResolverTypeWrapper<ModelOf<TaxonomyTerm>>;
   TaxonomyTermConnection: ResolverTypeWrapper<ModelOf<TaxonomyTermConnection>>;
+  TaxonomyTermCreateInput: ResolverTypeWrapper<ModelOf<TaxonomyTermCreateInput>>;
+  TaxonomyTermCreateResponse: ResolverTypeWrapper<ModelOf<TaxonomyTermCreateResponse>>;
   TaxonomyTermEdge: ResolverTypeWrapper<ModelOf<TaxonomyTermEdge>>;
   TaxonomyTermMoveInput: ResolverTypeWrapper<ModelOf<TaxonomyTermMoveInput>>;
   TaxonomyTermMoveResponse: ResolverTypeWrapper<ModelOf<TaxonomyTermMoveResponse>>;
@@ -3321,6 +3343,8 @@ export type ResolversParentTypes = {
   SubscriptionSetResponse: ModelOf<SubscriptionSetResponse>;
   TaxonomyTerm: ModelOf<TaxonomyTerm>;
   TaxonomyTermConnection: ModelOf<TaxonomyTermConnection>;
+  TaxonomyTermCreateInput: ModelOf<TaxonomyTermCreateInput>;
+  TaxonomyTermCreateResponse: ModelOf<TaxonomyTermCreateResponse>;
   TaxonomyTermEdge: ModelOf<TaxonomyTermEdge>;
   TaxonomyTermMoveInput: ModelOf<TaxonomyTermMoveInput>;
   TaxonomyTermMoveResponse: ModelOf<TaxonomyTermMoveResponse>;
@@ -4512,6 +4536,13 @@ export type TaxonomyTermConnectionResolvers<ContextType = Context, ParentType ex
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type TaxonomyTermCreateResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermCreateResponse'] = ResolversParentTypes['TaxonomyTermCreateResponse']> = {
+  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
+  record?: Resolver<Maybe<ResolversTypes['TaxonomyTerm']>, ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type TaxonomyTermEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermEdge'] = ResolversParentTypes['TaxonomyTermEdge']> = {
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<ResolversTypes['TaxonomyTerm'], ParentType, ContextType>;
@@ -4525,6 +4556,7 @@ export type TaxonomyTermMoveResponseResolvers<ContextType = Context, ParentType 
 };
 
 export type TaxonomyTermMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermMutation'] = ResolversParentTypes['TaxonomyTermMutation']> = {
+  create?: Resolver<ResolversTypes['TaxonomyTermCreateResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationCreateArgs, 'input'>>;
   move?: Resolver<ResolversTypes['TaxonomyTermMoveResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationMoveArgs, 'input'>>;
   setNameAndDescription?: Resolver<ResolversTypes['TaxonomyTermSetNameAndDescriptionResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationSetNameAndDescriptionArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -4880,6 +4912,7 @@ export type Resolvers<ContextType = Context> = {
   SubscriptionSetResponse?: SubscriptionSetResponseResolvers<ContextType>;
   TaxonomyTerm?: TaxonomyTermResolvers<ContextType>;
   TaxonomyTermConnection?: TaxonomyTermConnectionResolvers<ContextType>;
+  TaxonomyTermCreateResponse?: TaxonomyTermCreateResponseResolvers<ContextType>;
   TaxonomyTermEdge?: TaxonomyTermEdgeResolvers<ContextType>;
   TaxonomyTermMoveResponse?: TaxonomyTermMoveResponseResolvers<ContextType>;
   TaxonomyTermMutation?: TaxonomyTermMutationResolvers<ContextType>;

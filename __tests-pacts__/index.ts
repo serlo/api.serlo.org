@@ -76,7 +76,7 @@ import {
   castToUuid,
   castToAlias,
 } from '~/model/decoder'
-import { Instance } from '~/types'
+import { Instance, TaxonomyTermType } from '~/types'
 
 const events = [
   checkoutRevisionNotificationEvent,
@@ -363,13 +363,24 @@ const pactSpec: PactSpec = {
       [
         {
           userId: 1,
-          taxonomyType: "topic",
+          taxonomyType: TaxonomyTermType.CurriculumTopic,
           parentId: 1288,
-          instance: "de",
+          instance: Instance.De,
           name: "a name ",
           description: "a description",
         },
         taxonomyTermCurriculumTopic
+      ],
+      [
+        {
+          userId: 1,
+          taxonomyType: TaxonomyTermType.Root,
+          instance: Instance.En,
+          name: "root",
+          parentId: null,
+          description: null,
+        },
+        taxonomyTermRoot
       ],
     ],
   },

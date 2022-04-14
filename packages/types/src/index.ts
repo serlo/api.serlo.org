@@ -2364,6 +2364,20 @@ export type TaxonomyTermConnection = {
   totalCount: Scalars['Int'];
 };
 
+export type TaxonomyTermCreateInput = {
+  description?: InputMaybe<Scalars['String']>;
+  instance: Instance;
+  name: Scalars['String'];
+  parentId?: InputMaybe<Scalars['Int']>;
+};
+
+export type TaxonomyTermCreateResponse = {
+  __typename?: 'TaxonomyTermCreateResponse';
+  query: Query;
+  record?: Maybe<TaxonomyTerm>;
+  success: Scalars['Boolean'];
+};
+
 export type TaxonomyTermEdge = {
   __typename?: 'TaxonomyTermEdge';
   cursor: Scalars['String'];
@@ -2383,8 +2397,14 @@ export type TaxonomyTermMoveResponse = {
 
 export type TaxonomyTermMutation = {
   __typename?: 'TaxonomyTermMutation';
+  create: TaxonomyTermCreateResponse;
   move: TaxonomyTermMoveResponse;
   setNameAndDescription: TaxonomyTermSetNameAndDescriptionResponse;
+};
+
+
+export type TaxonomyTermMutationCreateArgs = {
+  input: TaxonomyTermCreateInput;
 };
 
 
