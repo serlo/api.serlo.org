@@ -38,7 +38,7 @@ import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
-import { TaxonomyTerm } from '~/types'
+import { TaxonomyTerm, TaxonomyTermType } from '~/types'
 import { isDefined } from '~/utils'
 
 export const resolvers: TypeResolvers<TaxonomyTerm> &
@@ -104,6 +104,55 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
     },
   },
   TaxonomyTermMutation: {
+    async create(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const { parentId, name, description = null } = input
+
+      assertArgumentIsNotEmpty({ name })
+
+      let { instance = null } = input
+
+      if (parentId) {
+        const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
+          id: parentId,
+          decoder: TaxonomyTermDecoder,
+        })
+
+        instance = parent.instance
+      }
+
+      if (!instance) {
+        throw new UserInputError(
+          'Either parentId or instance has to be provided.'
+        )
+      }
+
+      await assertUserIsAuthorized({
+        userId,
+        dataSources,
+        message: 'You are not allowed to move this taxonomy term.',
+        guard: serloAuth.Uuid.create('TaxonomyTerm')(
+          serloAuth.instanceToScope(instance)
+        ),
+      })
+
+      const taxonomyTerm = await dataSources.model.serlo.createTaxonomyTerm({
+        taxonomyType: TaxonomyTermType.CurriculumTopic, // TODO
+        parentId,
+        name,
+        description,
+        instance,
+        userId,
+      })
+
+      return {
+        success: taxonomyTerm ? true : false,
+        record: taxonomyTerm,
+        query: {},
+      }
+    },
+
     async move(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
@@ -136,7 +185,7 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
 
       return { success, query: {} }
     },
-    
+
     async setNameAndDescription(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
