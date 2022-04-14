@@ -53,10 +53,20 @@ extend type Mutation {
 }
 
 type TaxonomyTermMutation {
+  move(input: TaxonomyTermMoveInput!): TaxonomyTermMoveResponse!
   setNameAndDescription(
     input: TaxonomyTermSetNameAndDescriptionInput!
   ): TaxonomyTermSetNameAndDescriptionResponse!
-  move(input: TaxonomyTermMoveInput!): TaxonomyTermMoveResponse!
+}
+
+input TaxonomyTermMoveInput {
+  childrenIds: [Int!]!
+  destination: Int!
+}
+
+type TaxonomyTermMoveResponse {
+  success: Boolean!
+  query: Query!
 }
 
 input TaxonomyTermSetNameAndDescriptionInput {
@@ -66,16 +76,6 @@ input TaxonomyTermSetNameAndDescriptionInput {
 }
 
 type TaxonomyTermSetNameAndDescriptionResponse {
-  success: Boolean!
-  query: Query!
-}
-
-input TaxonomyTermMoveInput {
-  childrenIds: [Int!]!
-  destination: Int!
-}
-
-type TaxonomyTermMoveResponse {
   success: Boolean!
   query: Query!
 }
