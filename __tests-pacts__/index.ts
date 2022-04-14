@@ -358,6 +358,21 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  TaxonomyTermCreateMutation: {
+    examples: [
+      [
+        {
+          userId: 1,
+          taxonomyType: "topic",
+          parentId: 1288,
+          instance: "de",
+          name: "a name ",
+          description: "a description",
+        },
+        taxonomyTermCurriculumTopic
+      ],
+    ],
+  },
   TaxonomyTermSetNameAndDescriptionMutation: {
     examples: [
       [

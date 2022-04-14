@@ -104,37 +104,6 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
     },
   },
   TaxonomyTermMutation: {
-    async setNameAndDescription(_parent, { input }, { dataSources, userId }) {
-      assertUserIsAuthenticated(userId)
-
-      const { id, name, description = null } = input
-
-      assertArgumentIsNotEmpty({ name })
-
-      const scope = await fetchScopeOfUuid({
-        id,
-        dataSources,
-      })
-
-      await assertUserIsAuthorized({
-        userId,
-        dataSources,
-        message:
-          'You are not allowed to set name or description of this taxonomy term.',
-        guard: serloAuth.TaxonomyTerm.set(scope),
-      })
-
-      const { success } =
-        await dataSources.model.serlo.setTaxonomyTermNameAndDescription({
-          id,
-          name,
-          description,
-          userId,
-        })
-
-      return { success, query: {} }
-    },
-
     async move(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
@@ -164,6 +133,37 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
         destination,
         userId,
       })
+
+      return { success, query: {} }
+    },
+    
+    async setNameAndDescription(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const { id, name, description = null } = input
+
+      assertArgumentIsNotEmpty({ name })
+
+      const scope = await fetchScopeOfUuid({
+        id,
+        dataSources,
+      })
+
+      await assertUserIsAuthorized({
+        userId,
+        dataSources,
+        message:
+          'You are not allowed to set name or description of this taxonomy term.',
+        guard: serloAuth.TaxonomyTerm.set(scope),
+      })
+
+      const { success } =
+        await dataSources.model.serlo.setTaxonomyTermNameAndDescription({
+          id,
+          name,
+          description,
+          userId,
+        })
 
       return { success, query: {} }
     },
