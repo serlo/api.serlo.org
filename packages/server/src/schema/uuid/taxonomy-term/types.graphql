@@ -61,10 +61,10 @@ type TaxonomyTermMutation {
 }
 
 input TaxonomyTermCreateInput {
-  name: String!,
-  description: String,
-  instance: Instance,
-  parentId: Int,
+  name: String!
+  description: String
+  instance: Instance
+  parentId: Int
 }
 
 type TaxonomyTermCreateResponse {

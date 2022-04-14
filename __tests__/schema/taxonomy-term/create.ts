@@ -21,7 +21,11 @@
  */
 import { gql } from 'apollo-server'
 
-import { taxonomyTermSubject, taxonomyTermCurriculumTopic, user } from '../../../__fixtures__'
+import {
+  taxonomyTermSubject,
+  taxonomyTermCurriculumTopic,
+  user,
+} from '../../../__fixtures__'
 import { Client, given, nextUuid } from '../../__utils__'
 import { Instance, TaxonomyTermType } from '~/types'
 
