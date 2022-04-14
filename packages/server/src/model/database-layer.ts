@@ -35,6 +35,8 @@ import {
   NotificationEventDecoder,
   PageDecoder,
   SubscriptionsDecoder,
+  TaxonomyTermDecoder,
+  TaxonomyTermTypeDecoder,
   Uuid,
   UuidDecoder,
 } from './decoder'
@@ -288,6 +290,18 @@ export const spec = {
       sendEmail: t.boolean,
     }),
     response: t.void,
+    canBeNull: false,
+  },
+  TaxonomyTermCreateMutation: {
+    payload: t.type({
+      instance: InstanceDecoder,
+      taxonomyType: TaxonomyTermTypeDecoder,
+      name: t.string,
+      userId: t.number,
+      description: t.union([t.string, t.null, t.undefined]),
+      parentId: t.union([t.number, t.null, t.undefined]),
+    }),
+    response: TaxonomyTermDecoder,
     canBeNull: false,
   },
   TaxonomyTermMoveMutation: {
