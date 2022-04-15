@@ -127,7 +127,7 @@ describe('subscription mutation set', () => {
         }
       }
     `,
-  })
+  }).fillCache()
 
   // given a single subscription to article.id
   beforeEach(async () => {
@@ -146,9 +146,6 @@ describe('subscription mutation set', () => {
           { objectId: castToUuid(1555), sendEmail: false },
         ],
       })
-
-    // fill cache
-    await getSubscriptionsQuery.execute()
   })
 
   test('when subscribe=true', async () => {
