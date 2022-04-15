@@ -63,6 +63,11 @@ export class Query<V extends Variables = Variables> {
     return this.client.execute(this.query)
   }
 
+  fillCache() {
+    void this.execute()
+    return this
+  }
+
   async shouldReturnData(data: unknown) {
     expect(await this.execute()).toMatchObject({ data })
   }
