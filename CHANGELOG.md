@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.30.1](https://github.com/serlo/api.serlo.org/compare/v0.30.0..v0.30.1) - April 8, 2022
+
+### Added
+
+- Add query endpoint `thread.allThreads`
+
 ## [v0.30.0](https://github.com/serlo/api.serlo.org/compare/v0.29.1..v0.30.0) - April 1, 2022
 
 ### Added
