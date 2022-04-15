@@ -1,7 +1,12 @@
 {
   "extends": "./tsconfig.prod.json",
+  "ts-node": {
+    "moduleTypes": {
+      "scripts/changelog.ts": "esm",
+      "scripts/license-headers.ts": "esm"
+    }
+  },
   "compilerOptions": {
-    "module": "commonjs",
     "importHelpers": false,
     "baseUrl": "./packages",
     "target": "es2019",
