@@ -129,9 +129,7 @@ describe('subscription mutation set', () => {
     `,
   })
 
-  // given a single subscription to article.id
   beforeEach(async () => {
-    // mock subscriptions handlers
     given('UuidQuery').for(
       user,
       article,
@@ -147,8 +145,16 @@ describe('subscription mutation set', () => {
         ],
       })
 
-    // fill cache
-    await getSubscriptionsQuery.execute()
+    await getSubscriptionsQuery.shouldReturnData({
+      subscription: {
+        getSubscriptions: {
+          nodes: [
+            { object: { id: article.id }, sendEmail: false },
+            { object: { id: 1555 }, sendEmail: false },
+          ],
+        },
+      },
+    })
   })
 
   test('when subscribe=true', async () => {
@@ -167,7 +173,6 @@ describe('subscription mutation set', () => {
       })
       .shouldReturnData({ subscription: { set: { success: true } } })
 
-    //check cache
     await getSubscriptionsQuery.shouldReturnData({
       subscription: {
         getSubscriptions: {
@@ -197,7 +202,6 @@ describe('subscription mutation set', () => {
       })
       .shouldReturnData({ subscription: { set: { success: true } } })
 
-    //check cache
     await getSubscriptionsQuery.shouldReturnData({
       subscription: {
         getSubscriptions: {
