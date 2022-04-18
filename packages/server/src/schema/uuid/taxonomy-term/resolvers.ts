@@ -38,7 +38,11 @@ import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
-import { TaxonomyTerm, TaxonomyTermType } from '~/types'
+import {
+  TaxonomyTerm,
+  TaxonomyTermType,
+  TaxonomyTypeCreateOptions,
+} from '~/types'
 import { isDefined } from '~/utils'
 
 export const resolvers: TypeResolvers<TaxonomyTerm> &
@@ -107,10 +111,9 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
     async create(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
-      const { parentId, name, description = null } = input
+      const { parentId, name, taxonomyType, description = null } = input
 
       assertArgumentIsNotEmpty({ name })
-
 
       const scope = await fetchScopeOfUuid({
         id: parentId,
@@ -120,13 +123,28 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
       await assertUserIsAuthorized({
         userId,
         dataSources,
-        message: 'You are not allowed to move this taxonomy term.',
+        message: 'You are not allowed create taxonomy terms.',
         guard: serloAuth.Uuid.create('TaxonomyTerm')(scope),
       })
 
+      const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: parentId,
+        decoder: t.union([TaxonomyTermDecoder, t.null]),
+      })
+
+      if (!parent)
+        throw new UserInputError(
+          'No taxonomy term found for the provided parentId'
+        )
+
+      verifyTaxonomyType(taxonomyType, parent.type)
+
       const taxonomyTerm = await dataSources.model.serlo.createTaxonomyTerm({
-        taxonomyType: TaxonomyTermType.CurriculumTopic, // TODO
         parentId,
+        taxonomyType:
+          taxonomyType === TaxonomyTypeCreateOptions.Topic
+            ? TaxonomyTermType.Topic
+            : TaxonomyTermType.TopicFolder,
         name,
         description,
         userId,
@@ -203,6 +221,35 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
       return { success, query: {} }
     },
   },
+}
+
+function verifyTaxonomyType(
+  type: TaxonomyTypeCreateOptions,
+  parentType: TaxonomyTermType
+) {
+  // based on https://github.com/serlo/serlo.org-database-layer/blob/2a3db9d106bf0b6140c4e8eba12ac5adaec51112/server/src/vocabulary/model.rs#L272-L276
+  const childType = {
+    topic: {
+      allowedParentTaxonomyTypes: [
+        TaxonomyTermType.Subject,
+        TaxonomyTermType.Topic,
+        TaxonomyTermType.Curriculum,
+        TaxonomyTermType.CurriculumTopic,
+      ],
+    },
+    topicFolder: {
+      allowedParentTaxonomyTypes: [
+        TaxonomyTermType.Topic,
+        TaxonomyTermType.CurriculumTopic,
+      ],
+    },
+  }
+
+  if (!childType[type].allowedParentTaxonomyTypes.includes(parentType)) {
+    throw new UserInputError(
+      `Child of type ${type} cannot have parent of type ${parentType}`
+    )
+  }
 }
 
 async function resolveTaxonomyTermPath(

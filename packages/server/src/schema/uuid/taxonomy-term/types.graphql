@@ -60,10 +60,16 @@ type TaxonomyTermMutation {
   ): TaxonomyTermSetNameAndDescriptionResponse!
 }
 
+enum TaxonomyTypeCreateOptions {
+  topic
+  topicFolder
+}
+
 input TaxonomyTermCreateInput {
+  parentId: Int!
+  taxonomyType: TaxonomyTypeCreateOptions!
   name: String!
   description: String
-  parentId: Int!
 }
 
 type TaxonomyTermCreateResponse {

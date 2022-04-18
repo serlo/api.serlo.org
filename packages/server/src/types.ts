@@ -2372,6 +2372,7 @@ export type TaxonomyTermCreateInput = {
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   parentId: Scalars['Int'];
+  taxonomyType: TaxonomyTypeCreateOptions;
 };
 
 export type TaxonomyTermCreateResponse = {
@@ -2442,6 +2443,11 @@ export enum TaxonomyTermType {
   Locale = 'locale',
   Root = 'root',
   Subject = 'subject',
+  Topic = 'topic',
+  TopicFolder = 'topicFolder'
+}
+
+export enum TaxonomyTypeCreateOptions {
   Topic = 'topic',
   TopicFolder = 'topicFolder'
 }
@@ -3149,6 +3155,7 @@ export type ResolversTypes = {
   TaxonomyTermSetNameAndDescriptionInput: ResolverTypeWrapper<ModelOf<TaxonomyTermSetNameAndDescriptionInput>>;
   TaxonomyTermSetNameAndDescriptionResponse: ResolverTypeWrapper<ModelOf<TaxonomyTermSetNameAndDescriptionResponse>>;
   TaxonomyTermType: ResolverTypeWrapper<ModelOf<TaxonomyTermType>>;
+  TaxonomyTypeCreateOptions: ResolverTypeWrapper<ModelOf<TaxonomyTypeCreateOptions>>;
   Thread: ResolverTypeWrapper<ModelOf<Thread>>;
   ThreadAware: ResolversTypes['Applet'] | ResolversTypes['AppletRevision'] | ResolversTypes['Article'] | ResolversTypes['ArticleRevision'] | ResolversTypes['Course'] | ResolversTypes['CoursePage'] | ResolversTypes['CoursePageRevision'] | ResolversTypes['CourseRevision'] | ResolversTypes['Event'] | ResolversTypes['EventRevision'] | ResolversTypes['Exercise'] | ResolversTypes['ExerciseGroup'] | ResolversTypes['ExerciseGroupRevision'] | ResolversTypes['ExerciseRevision'] | ResolversTypes['GroupedExercise'] | ResolversTypes['GroupedExerciseRevision'] | ResolversTypes['Page'] | ResolversTypes['PageRevision'] | ResolversTypes['Solution'] | ResolversTypes['SolutionRevision'] | ResolversTypes['TaxonomyTerm'] | ResolversTypes['User'] | ResolversTypes['Video'] | ResolversTypes['VideoRevision'];
   ThreadCreateCommentInput: ResolverTypeWrapper<ModelOf<ThreadCreateCommentInput>>;
