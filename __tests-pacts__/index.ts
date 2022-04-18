@@ -363,24 +363,12 @@ const pactSpec: PactSpec = {
       [
         {
           userId: 1,
-          taxonomyType: TaxonomyTermType.CurriculumTopic,
+          taxonomyType: TaxonomyTermType.Topic,
           parentId: 1288,
-          instance: Instance.De,
           name: 'a name ',
           description: 'a description',
         },
         taxonomyTermCurriculumTopic,
-      ],
-      [
-        {
-          userId: 1,
-          taxonomyType: TaxonomyTermType.Root,
-          instance: Instance.En,
-          name: 'root',
-          parentId: null,
-          description: null,
-        },
-        taxonomyTermRoot,
       ],
     ],
   },

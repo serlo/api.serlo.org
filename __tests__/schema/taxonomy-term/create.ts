@@ -27,12 +27,11 @@ import {
   user,
 } from '../../../__fixtures__'
 import { Client, given, nextUuid } from '../../__utils__'
-import { Instance, TaxonomyTermType } from '~/types'
+import { TaxonomyTermType } from '~/types'
 
 describe('TaxonomyTermCreateMutation', () => {
   const input = {
     parentId: taxonomyTermSubject.id,
-    instance: Instance.De,
     name: 'a name ',
     description: 'a description',
   }

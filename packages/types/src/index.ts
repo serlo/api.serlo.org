@@ -2366,9 +2366,8 @@ export type TaxonomyTermConnection = {
 
 export type TaxonomyTermCreateInput = {
   description?: InputMaybe<Scalars['String']>;
-  instance?: InputMaybe<Instance>;
   name: Scalars['String'];
-  parentId?: InputMaybe<Scalars['Int']>;
+  parentId: Scalars['Int'];
 };
 
 export type TaxonomyTermCreateResponse = {

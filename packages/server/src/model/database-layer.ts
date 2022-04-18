@@ -294,12 +294,11 @@ export const spec = {
   },
   TaxonomyTermCreateMutation: {
     payload: t.type({
-      instance: InstanceDecoder,
       taxonomyType: TaxonomyTermTypeDecoder,
       name: t.string,
       userId: t.number,
       description: t.union([t.string, t.null, t.undefined]),
-      parentId: t.union([t.number, t.null, t.undefined]),
+      parentId: t.number,
     }),
     response: TaxonomyTermDecoder,
     canBeNull: false,
