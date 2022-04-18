@@ -21,8 +21,11 @@
  */
 import { updateCopyrightHeader } from '@inyono/copyright-headers'
 import glob from 'glob'
-import * as path from 'path'
-import * as util from 'util'
+import * as path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import * as util from 'node:util'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const g = util.promisify(glob)
 

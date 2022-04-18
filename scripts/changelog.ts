@@ -20,11 +20,11 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { generateChangelog } from '@inyono/changelog'
-import * as fs from 'fs'
-import * as path from 'path'
-import * as util from 'util'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const writeFile = util.promisify(fs.writeFile)
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 exec()
   .then(() => {
@@ -1211,5 +1211,8 @@ async function exec(): Promise<void> {
     ],
   })
 
-  await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
+  await fs.promises.writeFile(
+    path.join(__dirname, '..', 'CHANGELOG.md'),
+    content
+  )
 }
