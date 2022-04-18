@@ -24,16 +24,20 @@ import { gql } from 'apollo-server'
 import {
   taxonomyTermSubject,
   taxonomyTermCurriculumTopic,
-  user,
+  user as baseUser,
+  taxonomyTermRoot,
 } from '../../../__fixtures__'
 import { Client, given, nextUuid } from '../../__utils__'
-import { TaxonomyTermType } from '~/types'
+import { TaxonomyTermType, TaxonomyTypeCreateOptions } from '~/types'
 
 describe('TaxonomyTermCreateMutation', () => {
+  const user = { ...baseUser, roles: ['de_architect'] }
+
   const input = {
     parentId: taxonomyTermSubject.id,
     name: 'a name ',
     description: 'a description',
+    taxonomyType: TaxonomyTypeCreateOptions.Topic,
   }
 
   const mutation = new Client({ userId: user.id })
@@ -59,8 +63,8 @@ describe('TaxonomyTermCreateMutation', () => {
     given('TaxonomyTermCreateMutation')
       .withPayload({
         ...input,
+        taxonomyType: TaxonomyTermType.Topic,
         userId: user.id,
-        taxonomyType: TaxonomyTermType.CurriculumTopic,
       })
       .returns(taxonomyTermCurriculumTopic)
   })
@@ -76,19 +80,27 @@ describe('TaxonomyTermCreateMutation', () => {
     })
   })
 
+  test('fails when parent does not accept topic of topicFolder', async () => {
+    given('UuidQuery').for(taxonomyTermRoot)
+
+    await mutation
+      .withVariables({ ...input, parentId: taxonomyTermRoot.id })
+      .shouldFailWithError('BAD_USER_INPUT')
+  })
+
   test('fails when user is not authenticated', async () => {
     await mutation
       .forUnauthenticatedUser()
       .shouldFailWithError('UNAUTHENTICATED')
   })
 
-  test('fails when user does not have role "login"', async () => {
-    const guestUser = { ...user, id: nextUuid(user.id), roles: ['guest'] }
+  test('fails when user does not have role "architect"', async () => {
+    const loginUser = { ...user, id: nextUuid(user.id), roles: ['login'] }
 
-    given('UuidQuery').for(guestUser)
+    given('UuidQuery').for(loginUser)
 
     await mutation
-      .forClient(new Client({ userId: guestUser.id }))
+      .forClient(new Client({ userId: loginUser.id }))
       .withVariables({ input })
       .shouldFailWithError('FORBIDDEN')
   })

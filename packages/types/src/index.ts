@@ -2368,6 +2368,7 @@ export type TaxonomyTermCreateInput = {
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   parentId: Scalars['Int'];
+  taxonomyType: TaxonomyTypeCreateOptions;
 };
 
 export type TaxonomyTermCreateResponse = {
@@ -2438,6 +2439,11 @@ export enum TaxonomyTermType {
   Locale = 'locale',
   Root = 'root',
   Subject = 'subject',
+  Topic = 'topic',
+  TopicFolder = 'topicFolder'
+}
+
+export enum TaxonomyTypeCreateOptions {
   Topic = 'topic',
   TopicFolder = 'topicFolder'
 }
