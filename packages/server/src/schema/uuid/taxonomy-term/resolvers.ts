@@ -111,30 +111,17 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
 
       assertArgumentIsNotEmpty({ name })
 
-      let { instance = null } = input
 
-      if (parentId) {
-        const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
-          id: parentId,
-          decoder: TaxonomyTermDecoder,
-        })
-
-        instance = parent.instance
-      }
-
-      if (!instance) {
-        throw new UserInputError(
-          'Either parentId or instance has to be provided.'
-        )
-      }
+      const scope = await fetchScopeOfUuid({
+        id: parentId,
+        dataSources,
+      })
 
       await assertUserIsAuthorized({
         userId,
         dataSources,
         message: 'You are not allowed to move this taxonomy term.',
-        guard: serloAuth.Uuid.create('TaxonomyTerm')(
-          serloAuth.instanceToScope(instance)
-        ),
+        guard: serloAuth.Uuid.create('TaxonomyTerm')(scope),
       })
 
       const taxonomyTerm = await dataSources.model.serlo.createTaxonomyTerm({
@@ -142,7 +129,6 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
         parentId,
         name,
         description,
-        instance,
         userId,
       })
 
