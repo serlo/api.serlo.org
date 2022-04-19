@@ -155,9 +155,11 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
 
       const { childrenIds, destination } = input
 
-      for (const id of [...childrenIds, destination]) {
-        await assertIsTaxonomyTerm(id, dataSources)
-      }
+      await Promise.all(
+        [...childrenIds, destination].map(async (id) => {
+          await assertIsTaxonomyTerm(id, dataSources)
+        })
+      )
 
       const scope = await fetchScopeOfUuid({
         id: destination,
