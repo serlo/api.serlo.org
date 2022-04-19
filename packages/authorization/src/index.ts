@@ -52,7 +52,7 @@ export enum Permission {
   Page_RejectRevision = 'page:rejectRevision',
   Page_Set = 'page:set',
   Subscription_Set = 'subscription:set',
-  TaxonomyTerm_AddChild = 'taxonomyTerm:addChild',
+  TaxonomyTerm_MoveChild = 'taxonomyTerm:moveChild',
   TaxonomyTerm_RemoveChild = 'taxonomyTerm:removeChild',
   TaxonomyTerm_OrderChildren = 'taxonomyTerm:orderChildren',
   TaxonomyTerm_Set = 'taxonomyTerm:set',
@@ -136,7 +136,7 @@ export const Subscription = {
 }
 
 export const TaxonomyTerm = {
-  addChild: createPermissionGuard(Permission.TaxonomyTerm_AddChild),
+  moveChild: createPermissionGuard(Permission.TaxonomyTerm_MoveChild),
   removeChild: createPermissionGuard(Permission.TaxonomyTerm_RemoveChild),
   orderChildren: createPermissionGuard(Permission.TaxonomyTerm_OrderChildren),
   set: createPermissionGuard(Permission.TaxonomyTerm_Set),
