@@ -66,6 +66,7 @@ import {
   user,
   video,
   videoRevision,
+  taxonomyTermTopic,
 } from '../__fixtures__'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
@@ -368,7 +369,7 @@ const pactSpec: PactSpec = {
           name: 'a name ',
           description: 'a description',
         },
-        taxonomyTermCurriculumTopic,
+        taxonomyTermTopic,
       ],
     ],
   },
