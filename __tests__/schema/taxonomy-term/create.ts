@@ -22,10 +22,10 @@
 import { gql } from 'apollo-server'
 
 import {
-  taxonomyTermSubject,
-  taxonomyTermCurriculumTopic,
-  user as baseUser,
   taxonomyTermRoot,
+  taxonomyTermSubject,
+  taxonomyTermTopic,
+  user as baseUser,
 } from '../../../__fixtures__'
 import { Client, given, nextUuid } from '../../__utils__'
 import { TaxonomyTermType, TaxonomyTypeCreateOptions } from '~/types'
@@ -66,7 +66,7 @@ describe('TaxonomyTermCreateMutation', () => {
         taxonomyType: TaxonomyTermType.Topic,
         userId: user.id,
       })
-      .returns(taxonomyTermCurriculumTopic)
+      .returns(taxonomyTermTopic)
   })
 
   test('returns { success, record } when mutation could be successfully executed', async () => {
@@ -74,13 +74,13 @@ describe('TaxonomyTermCreateMutation', () => {
       taxonomyTerm: {
         create: {
           success: true,
-          record: { id: taxonomyTermCurriculumTopic.id },
+          record: { id: taxonomyTermTopic.id },
         },
       },
     })
   })
 
-  test('fails when parent does not accept topic of topicFolder', async () => {
+  test('fails when parent does not accept topic or topicFolder', async () => {
     given('UuidQuery').for(taxonomyTermRoot)
 
     await mutation
