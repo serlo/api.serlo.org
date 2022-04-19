@@ -37,7 +37,6 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
       Permission.File_Create,
       Permission.Notification_SetState,
       Permission.Subscription_Set,
-      Permission.TaxonomyTerm_AddChild,
       Permission.Thread_CreateThread,
       Permission.Thread_CreateComment,
       Permission.Uuid_Create_Entity,
@@ -77,6 +76,7 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
   [Role.Architect]: {
     permissions: [
       Permission.Entity_RemoveChild,
+      Permission.TaxonomyTerm_MoveChild,
       Permission.TaxonomyTerm_OrderChildren,
       Permission.TaxonomyTerm_RemoveChild,
       Permission.TaxonomyTerm_Set,

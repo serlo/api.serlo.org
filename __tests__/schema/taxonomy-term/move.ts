@@ -31,7 +31,7 @@ import {
 import { Client, given, nextUuid } from '../../__utils__'
 
 describe('TaxonomyTermMoveMutation', () => {
-  const user = { ...baseUser, roles: ['login'] }
+  const user = { ...baseUser, roles: ['de_architect'] }
 
   const taxonomyTermSubject2 = {
     ...taxonomyTermSubject,
@@ -103,8 +103,8 @@ describe('TaxonomyTermMoveMutation', () => {
       .shouldFailWithError('UNAUTHENTICATED')
   })
 
-  test('fails when user does not have permission "TaxonomyTerm_AddChild"', async () => {
-    const loginUser = { ...user, id: nextUuid(user.id), roles: ['architect'] }
+  test('fails when user does not have role "architect"', async () => {
+    const loginUser = { ...user, id: nextUuid(user.id), roles: ['login'] }
 
     given('UuidQuery').for(loginUser)
 
@@ -126,11 +126,7 @@ describe('TaxonomyTermMoveMutation', () => {
   })
 
   test('updates the cache', async () => {
-    given('UuidQuery').for(
-      { ...user, roles: ['login'] },
-      taxonomyTermSubject,
-      taxonomyTermRoot
-    )
+    given('UuidQuery').for(user, taxonomyTermSubject, taxonomyTermRoot)
 
     given('TaxonomyTermMoveMutation')
       .withPayload({

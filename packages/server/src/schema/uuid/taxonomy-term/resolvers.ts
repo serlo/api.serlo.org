@@ -167,8 +167,8 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
       await assertUserIsAuthorized({
         userId,
         dataSources,
-        message: 'You are not allowed to move this taxonomy term.',
-        guard: serloAuth.TaxonomyTerm.addChild(scope),
+        message: 'You are not allowed to move terms to this taxonomy term.',
+        guard: serloAuth.TaxonomyTerm.moveChild(scope),
       })
 
       const { success } = await dataSources.model.serlo.moveTaxonomyTerm({
