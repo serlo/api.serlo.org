@@ -26,6 +26,7 @@ import {
   taxonomyTermSubject,
   taxonomyTermRoot,
   user as baseUser,
+  article,
 } from '../../../__fixtures__'
 import { Client, given, nextUuid } from '../../__utils__'
 
@@ -72,6 +73,28 @@ describe('TaxonomyTermMoveMutation', () => {
     await mutation.shouldReturnData({
       taxonomyTerm: { move: { success: true } },
     })
+  })
+
+  test('fails when parent or at least one of the children is not a taxonomy term', async () => {
+    given('UuidQuery').for(article)
+
+    const inputWithWrongChild = {
+      childrenIds: [taxonomyTermSubject.id, article.id],
+      destination: taxonomyTermCurriculumTopic.id,
+    }
+
+    await mutation
+      .withVariables({ input: inputWithWrongChild })
+      .shouldFailWithError('BAD_USER_INPUT')
+
+    const inputWithWrongParent = {
+      childrenIds: [taxonomyTermSubject.id, taxonomyTermSubject2.id],
+      destination: article.id,
+    }
+
+    await mutation
+      .withVariables({ input: inputWithWrongParent })
+      .shouldFailWithError('BAD_USER_INPUT')
   })
 
   test('fails when user is not authenticated', async () => {
