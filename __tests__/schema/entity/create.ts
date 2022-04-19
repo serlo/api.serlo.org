@@ -54,7 +54,7 @@ import {
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
 import { EntityType } from '~/model/decoder'
-import { AbstractEntityCreatePayload } from '~/schema/uuid/abstract-entity/resolvers'
+import { AbstractEntityCreatePayload } from '~/schema/uuid/abstract-entity/utils'
 import { Instance } from '~/types'
 
 class EntityCreateWrapper {
