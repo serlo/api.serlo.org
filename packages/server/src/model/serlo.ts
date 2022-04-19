@@ -924,9 +924,8 @@ export function createSerloModel({
       return DatabaseLayer.makeRequest('TaxonomyTermMoveMutation', payload)
     },
 
-    // After the mutation is done and the childrenIds are shifted to the new destination the cache is emptied
-    // For this, all childrenIds, their former parentIDs, and the destination are deleted
     async updateCache({ childrenIds, destination }) {
+      // the cached children still have their old parent id
       const children = await Promise.all(
         childrenIds.map((childId) =>
           getUuidWithCustomDecoder({
@@ -937,14 +936,14 @@ export function createSerloModel({
       )
       const oldParentIds = children.map((child) => child.parentId)
 
-      const idArray = R.uniq([
+      const allAffectedTaxonomyIds = R.uniq([
         ...childrenIds,
         ...oldParentIds,
         destination,
       ]).filter(isDefined)
 
       await getUuid._querySpec.removeCache({
-        payloads: idArray.map((id) => {
+        payloads: allAffectedTaxonomyIds.map((id) => {
           return { id }
         }),
       })
