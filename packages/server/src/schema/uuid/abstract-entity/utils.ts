@@ -23,8 +23,10 @@ import * as serloAuth from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
 import * as t from 'io-ts'
 
+import { assertIsTaxonomyTerm } from '../taxonomy-term/utils'
 import { autoreviewTaxonomyIds } from '~/config/autoreview-taxonomies'
 import {
+  assertArgumentIsNotEmpty,
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   Context,
@@ -33,7 +35,12 @@ import {
   Repository,
   ResolverFunction,
 } from '~/internals/graphql'
-import { EntityDecoder, EntityRevisionType, EntityType, TaxonomyTermDecoder } from '~/model/decoder'
+import {
+  EntityDecoder,
+  EntityRevisionType,
+  EntityType,
+  TaxonomyTermDecoder,
+} from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { Connection } from '~/schema/connection/types'
 import { createRepositoryResolvers } from '~/schema/uuid/abstract-repository/utils'
@@ -68,70 +75,56 @@ export function createEntityResolvers<
   }
 }
 
-
-export interface AbstractEntityCreatePayload {
+export interface AbstractEntityCreateInput {
+  changes: string
+  subscribeThis: boolean
+  subscribeThisByEmail: boolean
+  instance: Instance
+  licenseId: number
+  needsReview: boolean
+  parentId?: number
+  taxonomyTermId?: number
+  cohesive?: 'true' | 'false'
+  content?: string
+  description?: string
+  metaDescription?: string
+  metaTitle?: string
+  title?: string
+  url?: string
+}
+interface createEntityMutationArgs {
   entityType: EntityType
-  input: {
-    changes: string
-    subscribeThis: boolean
-    subscribeThisByEmail: boolean
-    instance: Instance
-    licenseId: number
-    needsReview: boolean
-    parentId?: number
-    taxonomyTermId?: number
-    cohesive?: 'true' | 'false'
-    content?: string
-    description?: string
-    metaDescription?: string
-    metaTitle?: string
-    title?: string
-    url?: string
-  }
-  dataSources: Context['dataSources']
-  userId: number | null
+  input: AbstractEntityCreateInput
+  mandatoryFields: { [key: string]: string | boolean }
 }
 
-interface AbstractEntityAddRevisionPayload {
-  revisionType: EntityRevisionType
-  input: {
-    changes: string
-    entityId: number
-    needsReview: boolean
-    subscribeThis: boolean
-    subscribeThisByEmail: boolean
-    cohesive?: 'true' | 'false'
-    content?: string
-    description?: string
-    metaDescription?: string
-    metaTitle?: string
-    title?: string
-    url?: string
-  }
-  dataSources: Context['dataSources']
-  userId: number | null
-  isAutoreviewEntity: boolean
-}
-
-export async function createEntity({
-  entityType,
-  dataSources,
-  input,
-  userId,
-}: AbstractEntityCreatePayload) {
+export async function buildCreateEntityResolver(
+  args: createEntityMutationArgs,
+  { dataSources, userId }: Context
+) {
   assertUserIsAuthenticated(userId)
+
+  const { mandatoryFields, input, entityType } = args
+
+  assertArgumentIsNotEmpty(mandatoryFields)
 
   const {
     changes,
     instance,
     licenseId,
     needsReview,
-    parentId,
     subscribeThis,
     subscribeThisByEmail,
+    parentId,
     taxonomyTermId,
     ...inputFields
   } = input
+
+  if (taxonomyTermId) await assertIsTaxonomyTerm(taxonomyTermId, dataSources)
+
+  if (parentId) await assertParentExists(parentId, dataSources)
+
+  // TODO: get the instance from taxonomyTerm or parent
 
   await assertUserIsAuthorized({
     userId,
@@ -166,6 +159,27 @@ export async function createEntity({
     success: entity != null,
     query: {},
   }
+}
+
+interface AbstractEntityAddRevisionPayload {
+  revisionType: EntityRevisionType
+  input: {
+    changes: string
+    entityId: number
+    needsReview: boolean
+    subscribeThis: boolean
+    subscribeThisByEmail: boolean
+    cohesive?: 'true' | 'false'
+    content?: string
+    description?: string
+    metaDescription?: string
+    metaTitle?: string
+    title?: string
+    url?: string
+  }
+  dataSources: Context['dataSources']
+  userId: number | null
+  isAutoreviewEntity: boolean
 }
 
 export async function addRevision({
@@ -289,7 +303,7 @@ function removeUndefinedFields(inputFields: {
   return fields
 }
 
-export async function assertParentExists(
+async function assertParentExists(
   parentId: number,
   dataSources: Context['dataSources']
 ) {
