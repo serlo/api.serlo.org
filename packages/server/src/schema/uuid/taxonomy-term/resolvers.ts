@@ -20,13 +20,14 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as serloAuth from '@serlo/authorization'
-import { UserInputError } from 'apollo-server'
-import * as t from 'io-ts'
 
 import {
+  assertIsTaxonomyTerm,
+  resolveTaxonomyTermPath,
+  verifyTaxonomyType,
+} from './utils'
+import {
   TypeResolvers,
-  Context,
-  Model,
   Mutations,
   createNamespace,
   assertUserIsAuthenticated,
@@ -127,15 +128,7 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
         guard: serloAuth.Uuid.create('TaxonomyTerm')(scope),
       })
 
-      const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: parentId,
-        decoder: t.union([TaxonomyTermDecoder, t.null]),
-      })
-
-      if (!parent)
-        throw new UserInputError(
-          'No taxonomy term found for the provided parentId'
-        )
+      const parent = await assertIsTaxonomyTerm(parentId, dataSources)
 
       verifyTaxonomyType(taxonomyType, parent.type)
 
@@ -162,17 +155,14 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
 
       const { childrenIds, destination } = input
 
+      for (const id of [...childrenIds, destination]) {
+        await assertIsTaxonomyTerm(id, dataSources)
+      }
+
       const scope = await fetchScopeOfUuid({
         id: destination,
         dataSources,
       })
-
-      for (const id of childrenIds) {
-        const object = await dataSources.model.serlo.getUuid({
-          id,
-        })
-        if (object === null) throw new UserInputError('UUID does not exist.')
-      }
 
       await assertUserIsAuthorized({
         userId,
@@ -221,53 +211,4 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
       return { success, query: {} }
     },
   },
-}
-
-function verifyTaxonomyType(
-  type: TaxonomyTypeCreateOptions,
-  parentType: TaxonomyTermType
-) {
-  // based on https://github.com/serlo/serlo.org-database-layer/blob/2a3db9d106bf0b6140c4e8eba12ac5adaec51112/server/src/vocabulary/model.rs#L272-L276
-  const childType = {
-    topic: {
-      allowedParentTaxonomyTypes: [
-        TaxonomyTermType.Subject,
-        TaxonomyTermType.Topic,
-        TaxonomyTermType.Curriculum,
-        TaxonomyTermType.CurriculumTopic,
-      ],
-    },
-    topicFolder: {
-      allowedParentTaxonomyTypes: [
-        TaxonomyTermType.Topic,
-        TaxonomyTermType.CurriculumTopic,
-      ],
-    },
-  }
-
-  if (!childType[type].allowedParentTaxonomyTypes.includes(parentType)) {
-    throw new UserInputError(
-      `Child of type ${type} cannot have parent of type ${parentType}`
-    )
-  }
-}
-
-async function resolveTaxonomyTermPath(
-  parent: Model<'TaxonomyTerm'>,
-  { dataSources }: Context
-) {
-  const path = [parent]
-  let current = parent
-
-  while (current.parentId !== null) {
-    const next = await dataSources.model.serlo.getUuidWithCustomDecoder({
-      id: current.parentId,
-      decoder: t.union([TaxonomyTermDecoder, t.null]),
-    })
-    if (next === null) break
-    path.unshift(next)
-    current = next
-  }
-
-  return path
 }
