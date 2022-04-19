@@ -21,13 +21,11 @@
  */
 import * as serloAuth from '@serlo/authorization'
 
-import { assertIsTaxonomyTerm } from '../taxonomy-term/utils'
 import {
-  createEntity,
   addRevision,
-  assertParentExists,
   verifyAutoreviewEntity,
   getEntity,
+  buildCreateEntityResolver,
 } from './utils'
 import {
   assertArgumentIsNotEmpty,
@@ -71,49 +69,32 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     },
   },
   EntityMutation: {
-    async createApplet(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, url, taxonomyTermId } = input
+    async createApplet(_parent, { input }, context) {
+      const { changes, content, title, url } = input
 
-      assertArgumentIsNotEmpty({
-        changes,
-        content,
-        title,
-        url,
-      })
-
-      await assertIsTaxonomyTerm(taxonomyTermId, dataSources)
-
-      return await createEntity({
-        entityType: EntityType.Applet,
-        input,
-        dataSources,
-        userId,
-      })
+      return await buildCreateEntityResolver(
+        {
+          entityType: EntityType.Applet,
+          input,
+          mandatoryFields: { changes, content, title, url },
+        },
+        context
+      )
     },
-    async createArticle(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, taxonomyTermId } = input
+    async createArticle(_parent, { input }, context) {
+      const { changes, content, title } = input
 
-      assertArgumentIsNotEmpty({
-        changes,
-        content,
-        title,
-      })
-
-      await assertIsTaxonomyTerm(taxonomyTermId, dataSources)
-
-      return await createEntity({
-        entityType: EntityType.Article,
-        input,
-        dataSources,
-        userId,
-      })
+      return await buildCreateEntityResolver(
+        {
+          entityType: EntityType.Article,
+          input,
+          mandatoryFields: { changes, content, title },
+        },
+        context
+      )
     },
-    async createCourse(_parent, { input }, { dataSources, userId }) {
-      const { changes, title, content, taxonomyTermId } = input
-
-      assertArgumentIsNotEmpty({ changes, title })
-
-      await assertIsTaxonomyTerm(taxonomyTermId, dataSources)
+    async createCourse(_parent, { input }, context) {
+      const { changes, title, content } = input
 
       // TODO: the logic of this and others transformedInput's should go to DB Layer
       const transformedInput = {
@@ -122,65 +103,57 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         content: undefined,
       }
 
-      return await createEntity({
-        entityType: EntityType.Course,
-        input: transformedInput,
-        dataSources,
-        userId,
-      })
+      return await buildCreateEntityResolver(
+        {
+          entityType: EntityType.Course,
+          input: transformedInput,
+          mandatoryFields: { changes, title },
+        },
+        context
+      )
     },
-    async createCoursePage(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, parentId } = input
+    async createCoursePage(_parent, { input }, context) {
+      const { changes, content, title } = input
 
-      assertArgumentIsNotEmpty({ changes, content, title })
-
-      await assertParentExists(parentId, dataSources)
-
-      return await createEntity({
-        entityType: EntityType.CoursePage,
-        input,
-        dataSources,
-        userId,
-      })
+      return await buildCreateEntityResolver(
+        {
+          entityType: EntityType.CoursePage,
+          mandatoryFields: { changes, content, title },
+          input,
+        },
+        context
+      )
     },
-    async createEvent(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, taxonomyTermId } = input
+    async createEvent(_parent, { input }, context) {
+      const { changes, content, title } = input
 
-      assertArgumentIsNotEmpty({
-        changes,
-        content,
-        title,
-      })
-
-      await assertIsTaxonomyTerm(taxonomyTermId, dataSources)
-
-      return await createEntity({
-        entityType: EntityType.Event,
-        input,
-        dataSources,
-        userId,
-      })
+      return await buildCreateEntityResolver(
+        {
+          entityType: EntityType.Event,
+          input,
+          mandatoryFields: {
+            changes,
+            content,
+            title,
+          },
+        },
+        context
+      )
     },
-    async createExercise(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, taxonomyTermId } = input
+    async createExercise(_parent, { input }, context) {
+      const { changes, content } = input
 
-      assertArgumentIsNotEmpty({ changes, content })
-
-      await assertIsTaxonomyTerm(taxonomyTermId, dataSources)
-
-      return await createEntity({
-        entityType: EntityType.Exercise,
-        input,
-        dataSources,
-        userId,
-      })
+      return await buildCreateEntityResolver(
+        {
+          entityType: EntityType.Exercise,
+          input,
+          mandatoryFields: { changes, content },
+        },
+        context
+      )
     },
-    async createExerciseGroup(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, taxonomyTermId } = input
-
-      assertArgumentIsNotEmpty({ changes, content })
-
-      await assertIsTaxonomyTerm(taxonomyTermId, dataSources)
+    async createExerciseGroup(_parent, { input }, context) {
+      const { changes, content } = input
 
       // TODO: this logic should go to DBLayer
       const cohesive = input.cohesive === true ? 'true' : 'false'
@@ -188,47 +161,41 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         cohesive: 'true' | 'false'
       } = { ...input, cohesive }
 
-      return await createEntity({
-        entityType: EntityType.ExerciseGroup,
-        input: transformedInput,
-        dataSources,
-        userId,
-      })
+      return await buildCreateEntityResolver(
+        {
+          entityType: EntityType.ExerciseGroup,
+          input: transformedInput,
+          mandatoryFields: { changes, content },
+        },
+        context
+      )
     },
-    async createGroupedExercise(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, parentId } = input
+    async createGroupedExercise(_parent, { input }, context) {
+      const { changes, content } = input
 
-      assertArgumentIsNotEmpty({ changes, content })
-
-      await assertParentExists(parentId, dataSources)
-
-      return await createEntity({
-        entityType: EntityType.GroupedExercise,
-        input,
-        dataSources,
-        userId,
-      })
+      return await buildCreateEntityResolver(
+        {
+          entityType: EntityType.GroupedExercise,
+          input,
+          mandatoryFields: { changes, content },
+        },
+        context
+      )
     },
-    async createSolution(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, parentId } = input
+    async createSolution(_parent, { input }, context) {
+      const { changes, content } = input
 
-      assertArgumentIsNotEmpty({ changes, content })
-
-      await assertParentExists(parentId, dataSources)
-
-      return await createEntity({
-        entityType: EntityType.Solution,
-        input,
-        dataSources,
-        userId,
-      })
+      return await buildCreateEntityResolver(
+        {
+          entityType: EntityType.Solution,
+          input,
+          mandatoryFields: { changes, content },
+        },
+        context
+      )
     },
-    async createVideo(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, url, taxonomyTermId } = input
-
-      assertArgumentIsNotEmpty({ changes, content, title, url })
-
-      await assertIsTaxonomyTerm(taxonomyTermId, dataSources)
+    async createVideo(_parent, { input }, context) {
+      const { changes, content, title, url } = input
 
       // TODO: logic should go to DBLayer
       const transformedInput = {
@@ -237,13 +204,14 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         description: input.content,
         url: undefined,
       }
-
-      return await createEntity({
-        entityType: EntityType.Video,
-        input: transformedInput,
-        dataSources,
-        userId,
-      })
+      return await buildCreateEntityResolver(
+        {
+          entityType: EntityType.Video,
+          input: transformedInput,
+          mandatoryFields: { changes, content, title, url },
+        },
+        context
+      )
     },
     async addAppletRevision(_parent, { input }, { dataSources, userId }) {
       const { changes, content, title, url, entityId } = input
