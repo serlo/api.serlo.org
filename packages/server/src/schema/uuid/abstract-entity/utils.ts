@@ -161,35 +161,49 @@ export async function buildCreateEntityResolver(
   }
 }
 
-interface AbstractEntityAddRevisionPayload {
-  revisionType: EntityRevisionType
-  input: {
-    changes: string
-    entityId: number
-    needsReview: boolean
-    subscribeThis: boolean
-    subscribeThisByEmail: boolean
-    cohesive?: 'true' | 'false'
-    content?: string
-    description?: string
-    metaDescription?: string
-    metaTitle?: string
-    title?: string
-    url?: string
-  }
-  dataSources: Context['dataSources']
-  userId: number | null
-  isAutoreviewEntity: boolean
+interface AbstractEntityAddRevisionInput {
+  changes: string
+  entityId: number
+  needsReview: boolean
+  subscribeThis: boolean
+  subscribeThisByEmail: boolean
+  cohesive?: 'true' | 'false'
+  content?: string
+  description?: string
+  metaDescription?: string
+  metaTitle?: string
+  title?: string
+  url?: string
 }
 
-export async function addRevision({
-  revisionType,
-  input,
-  dataSources,
-  userId,
-  isAutoreviewEntity,
-}: AbstractEntityAddRevisionPayload) {
+interface addEntityRevisionMutationArgs {
+  revisionType: EntityRevisionType
+  input: AbstractEntityAddRevisionInput
+  mandatoryFields: { [key: string]: string | boolean }
+}
+
+export async function buildAddRevisionResolver<
+  C extends Model<'AbstractEntity'> & {
+    taxonomyTermIds?: number[]
+    parentId?: number
+  },
+  P extends Model<'AbstractEntity'> & {
+    taxonomyTermIds?: number[]
+    parentId?: number
+  }
+>(
+  args: addEntityRevisionMutationArgs,
+  { dataSources, userId }: Context,
+  {
+    childDecoder,
+    parentDecoder,
+  }: { childDecoder: t.Type<C, unknown>; parentDecoder?: t.Type<P, unknown> }
+) {
   assertUserIsAuthenticated(userId)
+
+  const { input, mandatoryFields, revisionType } = args
+
+  assertArgumentIsNotEmpty(mandatoryFields)
 
   const {
     entityId,
@@ -204,12 +218,41 @@ export async function addRevision({
     id: entityId,
     dataSources,
   })
+
   await assertUserIsAuthorized({
     userId,
     dataSources,
     message: 'You are not allowed to add revision to this entity.',
     guard: serloAuth.Uuid.create('EntityRevision')(scope),
   })
+
+  const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
+    id: entityId,
+    decoder: childDecoder,
+  })
+
+  let isAutoreviewEntity = false
+
+  if (entity.taxonomyTermIds) {
+    isAutoreviewEntity = await verifyAutoreviewEntity(
+      entity.taxonomyTermIds,
+      dataSources
+    )
+  }
+
+  if (entity.parentId && parentDecoder) {
+    const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
+      id: entity.parentId,
+      decoder: parentDecoder,
+    })
+
+    if (parent.taxonomyTermIds) {
+      isAutoreviewEntity = await verifyAutoreviewEntity(
+        parent.taxonomyTermIds,
+        dataSources
+      )
+    }
+  }
 
   if (!isAutoreviewEntity && !needsReview) {
     await assertUserIsAuthorized({
@@ -258,11 +301,9 @@ export async function getEntity<S extends Model<'AbstractEntity'>>(
 }
 
 export async function verifyAutoreviewEntity(
-  entity: { taxonomyTermIds: number[] },
+  taxonomyTermIds: number[],
   dataSources: Context['dataSources']
 ): Promise<boolean> {
-  const taxonomyTermIds = entity.taxonomyTermIds
-
   return (
     await Promise.all(
       taxonomyTermIds.map((id) => checkAnyParentAutoreview(id, dataSources))
