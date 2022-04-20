@@ -21,12 +21,7 @@
  */
 import * as serloAuth from '@serlo/authorization'
 
-import {
-  addRevision,
-  verifyAutoreviewEntity,
-  getEntity,
-  buildCreateEntityResolver,
-} from './utils'
+import { buildCreateEntityResolver, buildAddRevisionResolver } from './utils'
 import {
   assertArgumentIsNotEmpty,
   assertUserIsAuthenticated,
@@ -213,66 +208,45 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         context
       )
     },
-    async addAppletRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, url, entityId } = input
+    async addAppletRevision(_parent, { input }, context) {
+      const { changes, content, title, url } = input
 
-      assertArgumentIsNotEmpty({
-        changes,
-        content,
-        title,
-        url,
-      })
-
-      const entity = await getEntity(entityId, dataSources, AppletDecoder)
-
-      const isAutoreviewEntity = await verifyAutoreviewEntity(
-        entity,
-        dataSources
+      return await buildAddRevisionResolver(
+        {
+          revisionType: EntityRevisionType.AppletRevision,
+          input,
+          mandatoryFields: {
+            changes,
+            content,
+            title,
+            url,
+          },
+        },
+        context,
+        { childDecoder: AppletDecoder }
       )
-
-      return await addRevision({
-        revisionType: EntityRevisionType.AppletRevision,
-        input,
-        dataSources,
-        userId,
-        isAutoreviewEntity,
-      })
     },
-    async addArticleRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, entityId } = input
+    async addArticleRevision(_parent, { input }, context) {
+      const { changes, content, title } = input
 
-      assertArgumentIsNotEmpty({
-        changes,
-        content,
-        title,
-      })
-
-      const entity = await getEntity(entityId, dataSources, ArticleDecoder)
-
-      const isAutoreviewEntity = await verifyAutoreviewEntity(
-        entity,
-        dataSources
+      return await buildAddRevisionResolver(
+        {
+          revisionType: EntityRevisionType.ArticleRevision,
+          input,
+          mandatoryFields: {
+            changes,
+            content,
+            title,
+          },
+        },
+        context,
+        { childDecoder: ArticleDecoder }
       )
-
-      return await addRevision({
-        revisionType: EntityRevisionType.ArticleRevision,
-        input,
-        dataSources,
-        userId,
-        isAutoreviewEntity,
-      })
     },
-    async addCourseRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, entityId } = input
+    async addCourseRevision(_parent, { input }, context) {
+      const { changes, content, title } = input
 
       assertArgumentIsNotEmpty({ changes, title })
-
-      const entity = await getEntity(entityId, dataSources, CourseDecoder)
-
-      const isAutoreviewEntity = await verifyAutoreviewEntity(
-        entity,
-        dataSources
-      )
 
       // TODO: the logic of this and others transformedInput's should go to DB Layer
       const transformedInput = {
@@ -281,184 +255,104 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         content: undefined,
       }
 
-      return await addRevision({
-        revisionType: EntityRevisionType.CourseRevision,
-        input: transformedInput,
-        dataSources,
-        userId,
-        isAutoreviewEntity,
-      })
+      return await buildAddRevisionResolver(
+        {
+          revisionType: EntityRevisionType.CourseRevision,
+          input: transformedInput,
+          mandatoryFields: { changes, title },
+        },
+        context,
+        { childDecoder: CourseDecoder }
+      )
     },
-    async addCoursePageRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, entityId } = input
+    async addCoursePageRevision(_parent, { input }, context) {
+      const { changes, content, title } = input
 
-      assertArgumentIsNotEmpty({ changes, content, title })
-
-      const entity = await getEntity(entityId, dataSources, CoursePageDecoder)
-
-      const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: entity.parentId,
-        decoder: CourseDecoder,
-      })
-
-      const isAutoreviewEntity = await verifyAutoreviewEntity(
-        parent,
-        dataSources
+      return await buildAddRevisionResolver(
+        {
+          revisionType: EntityRevisionType.CoursePageRevision,
+          input,
+          mandatoryFields: { changes, content, title },
+        },
+        context,
+        { childDecoder: CoursePageDecoder, parentDecoder: CourseDecoder }
       )
-
-      return await addRevision({
-        revisionType: EntityRevisionType.CoursePageRevision,
-        input,
-        dataSources,
-        userId,
-        isAutoreviewEntity,
-      })
     },
-    async addEventRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, entityId } = input
+    async addEventRevision(_parent, { input }, context) {
+      const { changes, content, title } = input
 
-      assertArgumentIsNotEmpty({
-        changes,
-        content,
-        title,
-      })
-
-      const entity = await getEntity(entityId, dataSources, EventDecoder)
-
-      const isAutoreviewEntity = await verifyAutoreviewEntity(
-        entity,
-        dataSources
+      return await buildAddRevisionResolver(
+        {
+          revisionType: EntityRevisionType.EventRevision,
+          input,
+          mandatoryFields: { changes, content, title },
+        },
+        context,
+        { childDecoder: EventDecoder }
       )
-      return await addRevision({
-        revisionType: EntityRevisionType.EventRevision,
-        input,
-        dataSources,
-        userId,
-        isAutoreviewEntity,
-      })
     },
-    async addExerciseRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, entityId } = input
+    async addExerciseRevision(_parent, { input }, context) {
+      const { changes, content } = input
 
-      assertArgumentIsNotEmpty({ changes, content })
-
-      const entity = await getEntity(entityId, dataSources, ExerciseDecoder)
-
-      const isAutoreviewEntity = await verifyAutoreviewEntity(
-        entity,
-        dataSources
+      return await buildAddRevisionResolver(
+        {
+          revisionType: EntityRevisionType.ExerciseRevision,
+          input,
+          mandatoryFields: { changes, content },
+        },
+        context,
+        { childDecoder: ExerciseDecoder }
       )
-
-      return await addRevision({
-        revisionType: EntityRevisionType.ExerciseRevision,
-        input,
-        dataSources,
-        userId,
-        isAutoreviewEntity,
-      })
     },
-    async addExerciseGroupRevision(
-      _parent,
-      { input },
-      { dataSources, userId }
-    ) {
-      const { entityId, changes, content } = input
-
-      assertArgumentIsNotEmpty({ changes, content })
-
-      const entity = await getEntity(
-        entityId,
-        dataSources,
-        ExerciseGroupDecoder
-      )
-
-      const isAutoreviewEntity = await verifyAutoreviewEntity(
-        entity,
-        dataSources
-      )
+    async addExerciseGroupRevision(_parent, { input }, context) {
+      const { changes, content } = input
 
       const cohesive = input.cohesive === true ? 'true' : 'false'
       const transformedInput: Omit<typeof input, 'cohesive'> & {
         cohesive: 'true' | 'false'
       } = { ...input, cohesive }
 
-      return await addRevision({
-        revisionType: EntityRevisionType.ExerciseGroupRevision,
-        input: transformedInput,
-        dataSources,
-        userId,
-        isAutoreviewEntity,
-      })
+      return await buildAddRevisionResolver(
+        {
+          revisionType: EntityRevisionType.ExerciseGroupRevision,
+          input: transformedInput,
+          mandatoryFields: { changes, content },
+        },
+        context,
+        { childDecoder: ExerciseGroupDecoder }
+      )
     },
-    async addGroupedExerciseRevision(
-      _parent,
-      { input },
-      { dataSources, userId }
-    ) {
-      const { entityId, changes, content } = input
+    async addGroupedExerciseRevision(_parent, { input }, context) {
+      const { changes, content } = input
 
-      assertArgumentIsNotEmpty({ changes, content })
-
-      const entity = await getEntity(
-        entityId,
-        dataSources,
-        GroupedExerciseDecoder
+      return await buildAddRevisionResolver(
+        {
+          revisionType: EntityRevisionType.GroupedExerciseRevision,
+          input,
+          mandatoryFields: { changes, content },
+        },
+        context,
+        {
+          childDecoder: GroupedExerciseDecoder,
+          parentDecoder: ExerciseGroupDecoder,
+        }
       )
-
-      const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: entity.parentId,
-        decoder: ExerciseGroupDecoder,
-      })
-
-      const isAutoreviewEntity = await verifyAutoreviewEntity(
-        parent,
-        dataSources
-      )
-
-      return await addRevision({
-        revisionType: EntityRevisionType.GroupedExerciseRevision,
-        input,
-        dataSources,
-        userId,
-        isAutoreviewEntity,
-      })
     },
-    async addSolutionRevision(_parent, { input }, { dataSources, userId }) {
-      const { entityId, changes, content } = input
+    async addSolutionRevision(_parent, { input }, context) {
+      const { changes, content } = input
 
-      assertArgumentIsNotEmpty({ changes, content })
-
-      const entity = await getEntity(entityId, dataSources, SolutionDecoder)
-
-      const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: entity.parentId,
-        decoder: ExerciseDecoder,
-      })
-
-      const isAutoreviewEntity = await verifyAutoreviewEntity(
-        parent,
-        dataSources
+      return await buildAddRevisionResolver(
+        {
+          revisionType: EntityRevisionType.SolutionRevision,
+          input,
+          mandatoryFields: { changes, content },
+        },
+        context,
+        { childDecoder: SolutionDecoder, parentDecoder: ExerciseDecoder }
       )
-
-      return await addRevision({
-        revisionType: EntityRevisionType.SolutionRevision,
-        input,
-        dataSources,
-        userId,
-        isAutoreviewEntity,
-      })
     },
-    async addVideoRevision(_parent, { input }, { dataSources, userId }) {
-      const { entityId, changes, content, title, url } = input
-
-      assertArgumentIsNotEmpty({ changes, content, title, url })
-
-      const entity = await getEntity(entityId, dataSources, VideoDecoder)
-
-      const isAutoreviewEntity = await verifyAutoreviewEntity(
-        entity,
-        dataSources
-      )
+    async addVideoRevision(_parent, { input }, context) {
+      const { changes, content, title, url } = input
 
       const transformedInput = {
         ...input,
@@ -467,13 +361,15 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         url: undefined,
       }
 
-      return await addRevision({
-        revisionType: EntityRevisionType.VideoRevision,
-        input: transformedInput,
-        dataSources,
-        userId,
-        isAutoreviewEntity,
-      })
+      return await buildAddRevisionResolver(
+        {
+          revisionType: EntityRevisionType.VideoRevision,
+          input: transformedInput,
+          mandatoryFields: { changes, content, title, url },
+        },
+        context,
+        { childDecoder: VideoDecoder }
+      )
     },
     async checkoutRevision(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
