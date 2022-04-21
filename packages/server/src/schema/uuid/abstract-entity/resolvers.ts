@@ -23,7 +23,6 @@ import * as serloAuth from '@serlo/authorization'
 
 import { buildCreateEntityResolver, buildAddRevisionResolver } from './utils'
 import {
-  assertArgumentIsNotEmpty,
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   createNamespace,
