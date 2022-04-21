@@ -246,8 +246,6 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     async addCourseRevision(_parent, { input }, context) {
       const { changes, content, title } = input
 
-      assertArgumentIsNotEmpty({ changes, title })
-
       // TODO: the logic of this and others transformedInput's should go to DB Layer
       const transformedInput = {
         ...input,
