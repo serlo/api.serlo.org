@@ -23,6 +23,7 @@ import * as serloAuth from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
 import * as t from 'io-ts'
 
+import { assertIsTaxonomyTerm } from '../taxonomy-term/utils'
 import { autoreviewTaxonomyIds } from '~/config/autoreview-taxonomies'
 import {
   assertArgumentIsNotEmpty,
@@ -81,7 +82,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         url,
       })
 
-      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
+      await assertIsTaxonomyTerm(taxonomyTermId, dataSources)
 
       return await createEntity({
         entityType: EntityType.Applet,
@@ -99,7 +100,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         title,
       })
 
-      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
+      await assertIsTaxonomyTerm(taxonomyTermId, dataSources)
 
       return await createEntity({
         entityType: EntityType.Article,
@@ -113,7 +114,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
 
       assertArgumentIsNotEmpty({ changes, title })
 
-      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
+      await assertIsTaxonomyTerm(taxonomyTermId, dataSources)
 
       // TODO: the logic of this and others transformedInput's should go to DB Layer
       const transformedInput = {
@@ -152,7 +153,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         title,
       })
 
-      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
+      await assertIsTaxonomyTerm(taxonomyTermId, dataSources)
 
       return await createEntity({
         entityType: EntityType.Event,
@@ -166,7 +167,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
 
       assertArgumentIsNotEmpty({ changes, content })
 
-      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
+      await assertIsTaxonomyTerm(taxonomyTermId, dataSources)
 
       return await createEntity({
         entityType: EntityType.Exercise,
@@ -180,7 +181,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
 
       assertArgumentIsNotEmpty({ changes, content })
 
-      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
+      await assertIsTaxonomyTerm(taxonomyTermId, dataSources)
 
       // TODO: this logic should go to DBLayer
       const cohesive = input.cohesive === true ? 'true' : 'false'
@@ -228,7 +229,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
 
       assertArgumentIsNotEmpty({ changes, content, title, url })
 
-      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
+      await assertIsTaxonomyTerm(taxonomyTermId, dataSources)
 
       // TODO: logic should go to DBLayer
       const transformedInput = {
@@ -782,22 +783,6 @@ async function assertParentExists(
   if (!parent) {
     throw new UserInputError(
       `No entity found for the provided parentId ${parentId}`
-    )
-  }
-}
-
-async function assertTaxonomyTermExists(
-  taxonomyTermId: number,
-  dataSources: Context['dataSources']
-) {
-  const taxonomyTerm = await dataSources.model.serlo.getUuidWithCustomDecoder({
-    id: taxonomyTermId,
-    decoder: t.union([TaxonomyTermDecoder, t.null]),
-  })
-
-  if (!taxonomyTerm) {
-    throw new UserInputError(
-      `No taxonomy term found for the provided parentId ${taxonomyTermId}`
     )
   }
 }
