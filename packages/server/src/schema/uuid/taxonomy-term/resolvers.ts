@@ -23,6 +23,7 @@ import * as serloAuth from '@serlo/authorization'
 
 import {
   assertIsTaxonomyTerm,
+  getTaxonomyTerm,
   resolveTaxonomyTermPath,
   verifyTaxonomyType,
 } from './utils'
@@ -128,7 +129,7 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
         guard: serloAuth.Uuid.create('TaxonomyTerm')(scope),
       })
 
-      const parent = await assertIsTaxonomyTerm(parentId, dataSources)
+      const parent = await getTaxonomyTerm(parentId, dataSources)
 
       verifyTaxonomyType(taxonomyType, parent.type)
 
@@ -170,7 +171,7 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
         userId,
         dataSources,
         message: 'You are not allowed to move terms to this taxonomy term.',
-        guard: serloAuth.TaxonomyTerm.moveChild(scope),
+        guard: serloAuth.TaxonomyTerm.change(scope),
       })
 
       const { success } = await dataSources.model.serlo.moveTaxonomyTerm({

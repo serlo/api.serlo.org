@@ -77,13 +77,24 @@ export async function resolveTaxonomyTermPath(
   return path
 }
 
+export async function getTaxonomyTerm(
+  id: number,
+  dataSources: Context['dataSources']
+) {
+  await assertIsTaxonomyTerm(id, dataSources)
+
+  return await dataSources.model.serlo.getUuidWithCustomDecoder({
+    id,
+    decoder: TaxonomyTermDecoder,
+  })
+}
+
 export async function assertIsTaxonomyTerm(
   id: number,
   dataSources: Context['dataSources']
-): Promise<Model<'TaxonomyTerm'>> {
-  let taxonomyTerm: Model<'TaxonomyTerm'>
+) {
   try {
-    taxonomyTerm = await dataSources.model.serlo.getUuidWithCustomDecoder({
+    await dataSources.model.serlo.getUuidWithCustomDecoder({
       id,
       decoder: TaxonomyTermDecoder,
     })
@@ -96,5 +107,4 @@ export async function assertIsTaxonomyTerm(
       throw error
     }
   }
-  return taxonomyTerm
 }

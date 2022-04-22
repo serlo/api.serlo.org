@@ -22,12 +22,13 @@
 import { gql } from 'apollo-server'
 
 import {
+  taxonomyTermCurriculumTopic,
   taxonomyTermRoot,
   taxonomyTermSubject,
   taxonomyTermTopic,
   user as baseUser,
 } from '../../../__fixtures__'
-import { Client, given, nextUuid } from '../../__utils__'
+import { Client, given } from '../../__utils__'
 import { TaxonomyTermType, TaxonomyTypeCreateOptions } from '~/types'
 
 describe('TaxonomyTermCreateMutation', () => {
@@ -57,15 +58,17 @@ describe('TaxonomyTermCreateMutation', () => {
     })
     .withVariables({ input })
 
+  const payload = {
+    ...input,
+    taxonomyType: TaxonomyTermType.Topic,
+    userId: user.id,
+  }
+
   beforeEach(() => {
     given('UuidQuery').for(user, taxonomyTermSubject)
 
     given('TaxonomyTermCreateMutation')
-      .withPayload({
-        ...input,
-        taxonomyType: TaxonomyTermType.Topic,
-        userId: user.id,
-      })
+      .withPayload(payload)
       .returns(taxonomyTermTopic)
   })
 
@@ -75,6 +78,81 @@ describe('TaxonomyTermCreateMutation', () => {
         create: {
           success: true,
           record: { id: taxonomyTermTopic.id },
+        },
+      },
+    })
+  })
+
+  test('updates the cache', async () => {
+    given('UuidQuery').for(taxonomyTermCurriculumTopic)
+
+    given('TaxonomyTermCreateMutation')
+      .withPayload(payload)
+      .isDefinedBy((_req, res, ctx) => {
+        given('UuidQuery').for(taxonomyTermTopic)
+
+        const updatedParent = {
+          ...taxonomyTermSubject,
+          childrenIds: [
+            ...taxonomyTermSubject.childrenIds,
+            taxonomyTermTopic.id,
+          ],
+        }
+        given('UuidQuery').for(updatedParent)
+        return res(ctx.json(taxonomyTermTopic))
+      })
+
+    const query = new Client({ userId: user.id }).prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on TaxonomyTerm {
+              name
+              children {
+                nodes {
+                  ... on TaxonomyTerm {
+                    id
+                    name
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: { id: taxonomyTermSubject.id },
+    })
+
+    await query.shouldReturnData({
+      uuid: {
+        name: taxonomyTermSubject.name,
+        children: {
+          nodes: [
+            {
+              id: taxonomyTermSubject.childrenIds[0],
+              name: taxonomyTermCurriculumTopic.name,
+            },
+          ],
+        },
+      },
+    })
+
+    await mutation.execute()
+
+    await query.shouldReturnData({
+      uuid: {
+        name: taxonomyTermSubject.name,
+        children: {
+          nodes: [
+            {
+              id: taxonomyTermSubject.childrenIds[0],
+              name: taxonomyTermCurriculumTopic.name,
+            },
+            {
+              id: taxonomyTermTopic.id,
+              name: taxonomyTermTopic.name,
+            },
+          ],
         },
       },
     })
@@ -95,14 +173,7 @@ describe('TaxonomyTermCreateMutation', () => {
   })
 
   test('fails when user does not have role "architect"', async () => {
-    const loginUser = { ...user, id: nextUuid(user.id), roles: ['login'] }
-
-    given('UuidQuery').for(loginUser)
-
-    await mutation
-      .forClient(new Client({ userId: loginUser.id }))
-      .withVariables({ input })
-      .shouldFailWithError('FORBIDDEN')
+    await mutation.forLoginUser().shouldFailWithError('FORBIDDEN')
   })
 
   test('fails when database layer returns a 400er response', async () => {
