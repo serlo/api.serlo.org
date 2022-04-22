@@ -25,7 +25,7 @@ import {
   taxonomyTermCurriculumTopic,
   user as baseUser,
 } from '../../../__fixtures__'
-import { Client, given, nextUuid } from '../../__utils__'
+import { Client, given } from '../../__utils__'
 
 describe('TaxonomyTermSetNameAndDescriptionMutation', () => {
   const user = { ...baseUser, roles: ['de_architect'] }
@@ -71,13 +71,7 @@ describe('TaxonomyTermSetNameAndDescriptionMutation', () => {
   })
 
   test('fails when user does not have role "architect"', async () => {
-    const loginUser = { ...user, id: nextUuid(user.id), roles: ['login'] }
-
-    given('UuidQuery').for(loginUser)
-
-    await mutation
-      .forClient(new Client({ userId: loginUser.id }))
-      .shouldFailWithError('FORBIDDEN')
+    await mutation.forLoginUser().shouldFailWithError('FORBIDDEN')
   })
 
   test('fails when `name` is empty', async () => {

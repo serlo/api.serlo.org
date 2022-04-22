@@ -237,9 +237,7 @@ test('fails when user is not authenticated', async () => {
 })
 
 test('fails when user does not have role "sysadmin"', async () => {
-  database.hasUuid({ ...user, roles: ['login', 'de_admin'] })
-
-  await mutation.shouldFailWithError('FORBIDDEN')
+  await mutation.forLoginUser('de_admin').shouldFailWithError('FORBIDDEN')
 })
 
 test('fails when database layer has an internal error', async () => {
