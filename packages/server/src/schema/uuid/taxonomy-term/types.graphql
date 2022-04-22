@@ -53,9 +53,39 @@ extend type Mutation {
 }
 
 type TaxonomyTermMutation {
+  create(input: TaxonomyTermCreateInput!): TaxonomyTermCreateResponse!
+  move(input: TaxonomyTermMoveInput!): TaxonomyTermMoveResponse!
   setNameAndDescription(
     input: TaxonomyTermSetNameAndDescriptionInput!
   ): TaxonomyTermSetNameAndDescriptionResponse!
+}
+
+enum TaxonomyTypeCreateOptions {
+  topic
+  topicFolder
+}
+
+input TaxonomyTermCreateInput {
+  parentId: Int!
+  taxonomyType: TaxonomyTypeCreateOptions!
+  name: String!
+  description: String
+}
+
+type TaxonomyTermCreateResponse {
+  record: TaxonomyTerm
+  success: Boolean!
+  query: Query!
+}
+
+input TaxonomyTermMoveInput {
+  childrenIds: [Int!]!
+  destination: Int!
+}
+
+type TaxonomyTermMoveResponse {
+  success: Boolean!
+  query: Query!
 }
 
 input TaxonomyTermSetNameAndDescriptionInput {

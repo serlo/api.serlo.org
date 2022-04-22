@@ -66,6 +66,7 @@ import {
   user,
   video,
   videoRevision,
+  taxonomyTermTopic,
 } from '../__fixtures__'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
@@ -76,7 +77,7 @@ import {
   castToUuid,
   castToAlias,
 } from '~/model/decoder'
-import { Instance } from '~/types'
+import { Instance, TaxonomyTermType } from '~/types'
 
 const events = [
   checkoutRevisionNotificationEvent,
@@ -358,6 +359,20 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  TaxonomyTermCreateMutation: {
+    examples: [
+      [
+        {
+          userId: 1,
+          taxonomyType: TaxonomyTermType.Topic,
+          parentId: 1288,
+          name: 'a name ',
+          description: 'a description',
+        },
+        taxonomyTermTopic,
+      ],
+    ],
+  },
   TaxonomyTermSetNameAndDescriptionMutation: {
     examples: [
       [
@@ -377,6 +392,20 @@ const pactSpec: PactSpec = {
           userId: user.id,
         },
         { success: true },
+      ],
+    ],
+  },
+  TaxonomyTermMoveMutation: {
+    examples: [
+      [
+        {
+          childrenIds: [taxonomyTermSubject.id],
+          destination: taxonomyTermCurriculumTopic.id,
+          userId: user.id,
+        },
+        {
+          success: true,
+        },
       ],
     ],
   },

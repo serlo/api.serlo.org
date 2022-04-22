@@ -2364,15 +2364,52 @@ export type TaxonomyTermConnection = {
   totalCount: Scalars['Int'];
 };
 
+export type TaxonomyTermCreateInput = {
+  description?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  parentId: Scalars['Int'];
+  taxonomyType: TaxonomyTypeCreateOptions;
+};
+
+export type TaxonomyTermCreateResponse = {
+  __typename?: 'TaxonomyTermCreateResponse';
+  query: Query;
+  record?: Maybe<TaxonomyTerm>;
+  success: Scalars['Boolean'];
+};
+
 export type TaxonomyTermEdge = {
   __typename?: 'TaxonomyTermEdge';
   cursor: Scalars['String'];
   node: TaxonomyTerm;
 };
 
+export type TaxonomyTermMoveInput = {
+  childrenIds: Array<Scalars['Int']>;
+  destination: Scalars['Int'];
+};
+
+export type TaxonomyTermMoveResponse = {
+  __typename?: 'TaxonomyTermMoveResponse';
+  query: Query;
+  success: Scalars['Boolean'];
+};
+
 export type TaxonomyTermMutation = {
   __typename?: 'TaxonomyTermMutation';
+  create: TaxonomyTermCreateResponse;
+  move: TaxonomyTermMoveResponse;
   setNameAndDescription: TaxonomyTermSetNameAndDescriptionResponse;
+};
+
+
+export type TaxonomyTermMutationCreateArgs = {
+  input: TaxonomyTermCreateInput;
+};
+
+
+export type TaxonomyTermMutationMoveArgs = {
+  input: TaxonomyTermMoveInput;
 };
 
 
@@ -2402,6 +2439,11 @@ export enum TaxonomyTermType {
   Locale = 'locale',
   Root = 'root',
   Subject = 'subject',
+  Topic = 'topic',
+  TopicFolder = 'topicFolder'
+}
+
+export enum TaxonomyTypeCreateOptions {
   Topic = 'topic',
   TopicFolder = 'topicFolder'
 }
