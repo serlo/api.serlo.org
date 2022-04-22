@@ -3,7 +3,8 @@
   "ts-node": {
     "moduleTypes": {
       "scripts/changelog.ts": "esm",
-      "scripts/license-headers.ts": "esm"
+      "scripts/license-headers.ts": "esm",
+      "scripts/publish-pacts.ts": "esm"
     }
   },
   "compilerOptions": {
