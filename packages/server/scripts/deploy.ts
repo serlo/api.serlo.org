@@ -19,12 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { spawnSync } from 'child_process'
-import * as fs from 'fs'
-import * as path from 'path'
+import { spawnSync } from 'node:child_process'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import * as util from 'node:util'
 import * as R from 'ramda'
-import * as semver from 'semver'
-import * as util from 'util'
+import semver from 'semver'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const root = path.join(__dirname, '..')
 const packageJsonPath = path.join(root, 'package.json')
