@@ -27,7 +27,7 @@ import {
   taxonomyTermTopic,
   user as baseUser,
 } from '../../../__fixtures__'
-import { Client, given, nextUuid } from '../../__utils__'
+import { Client, given } from '../../__utils__'
 import { TaxonomyTermType, TaxonomyTypeCreateOptions } from '~/types'
 
 describe('TaxonomyTermCreateMutation', () => {
@@ -95,14 +95,7 @@ describe('TaxonomyTermCreateMutation', () => {
   })
 
   test('fails when user does not have role "architect"', async () => {
-    const loginUser = { ...user, id: nextUuid(user.id), roles: ['login'] }
-
-    given('UuidQuery').for(loginUser)
-
-    await mutation
-      .forClient(new Client({ userId: loginUser.id }))
-      .withVariables({ input })
-      .shouldFailWithError('FORBIDDEN')
+    await mutation.forLoginUser().shouldFailWithError('FORBIDDEN')
   })
 
   test('fails when database layer returns a 400er response', async () => {

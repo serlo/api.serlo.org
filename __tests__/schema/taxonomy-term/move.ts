@@ -104,13 +104,7 @@ describe('TaxonomyTermMoveMutation', () => {
   })
 
   test('fails when user does not have role "architect"', async () => {
-    const loginUser = { ...user, id: nextUuid(user.id), roles: ['login'] }
-
-    given('UuidQuery').for(loginUser)
-
-    await mutation
-      .forClient(new Client({ userId: loginUser.id }))
-      .shouldFailWithError('FORBIDDEN')
+    await mutation.forLoginUser().shouldFailWithError('FORBIDDEN')
   })
 
   test('fails when database layer returns a 400er response', async () => {
