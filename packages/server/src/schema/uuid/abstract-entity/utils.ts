@@ -22,6 +22,7 @@
 import * as serloAuth from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
 import * as t from 'io-ts'
+import R from 'ramda'
 
 import { assertIsTaxonomyTerm } from '../taxonomy-term/utils'
 import { autoreviewTaxonomyIds } from '~/config/autoreview-taxonomies'
@@ -137,21 +138,20 @@ export async function buildCreateEntityResolver(
     inputFields as { [key: string]: string | undefined }
   )
 
-  const inputPayload = {
-    changes,
-    instance,
-    licenseId,
-    needsReview,
-    parentId,
-    subscribeThis,
-    subscribeThisByEmail,
-    taxonomyTermId,
-    fields,
-  }
   const entity = await dataSources.model.serlo.createEntity({
     entityType,
     userId,
-    input: inputPayload,
+    input: {
+      changes,
+      instance,
+      licenseId,
+      needsReview,
+      parentId,
+      subscribeThis,
+      subscribeThisByEmail,
+      taxonomyTermId,
+      fields,
+    },
   })
 
   return {
@@ -267,19 +267,18 @@ export async function buildAddRevisionResolver<
     inputFields as { [key: string]: string | undefined }
   )
 
-  const inputPayload = {
-    changes,
-    entityId,
-    needsReview: isAutoreviewEntity ? false : needsReview,
-    subscribeThis,
-    subscribeThisByEmail,
-    fields,
-  }
   const { success, revisionId } =
     await dataSources.model.serlo.addEntityRevision({
       revisionType,
       userId,
-      input: inputPayload,
+      input: {
+        changes,
+        entityId,
+        needsReview: isAutoreviewEntity ? false : needsReview,
+        subscribeThis,
+        subscribeThisByEmail,
+        fields,
+      },
     })
 
   return {
@@ -287,17 +286,6 @@ export async function buildAddRevisionResolver<
     success,
     query: {},
   }
-}
-
-export async function getEntity<S extends Model<'AbstractEntity'>>(
-  entityId: number,
-  dataSources: Context['dataSources'],
-  decoder: t.Type<S, unknown>
-) {
-  return await dataSources.model.serlo.getUuidWithCustomDecoder({
-    id: entityId,
-    decoder,
-  })
 }
 
 export async function verifyAutoreviewEntity(
@@ -331,17 +319,9 @@ async function checkAnyParentAutoreview(
 function removeUndefinedFields(inputFields: {
   [key: string]: string | undefined
 }) {
-  const fields: {
+  return R.filter((value) => value != undefined, inputFields) as {
     [key: string]: string
-  } = {}
-
-  for (const [key, value] of Object.entries(inputFields)) {
-    if (value) {
-      fields[key] = value
-    }
   }
-
-  return fields
 }
 
 async function assertParentExists(
