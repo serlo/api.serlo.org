@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.30.2](https://github.com/serlo/api.serlo.org/compare/v0.30.1..v0.30.2) - April 22, 2022
+
+### Added
+
+- Add endpoint `taxonomy.move` #566
+
+- Add endpoint `taxonomy.create` #583
+
+### Fixed
+
+- Support autoreview in sandbox in add revisions #538
+
+### Internal
+
+- Refactor requests to DB layer #569
+
 ## [v0.30.1](https://github.com/serlo/api.serlo.org/compare/v0.30.0..v0.30.1) - April 8, 2022
 
 ### Added
