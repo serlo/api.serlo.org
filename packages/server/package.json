@@ -13,7 +13,7 @@
     "build:server": "yarn _build --format cjs --target node --entry src/server.ts",
     "build:swr-queue-worker": "yarn _build --format cjs --target node --entry src/swr-queue-worker.ts",
     "codegen": "graphql-codegen --config codegen.yml",
-    "deploy:image": "ts-node scripts/deploy",
+    "deploy:image": "ts-node-esm scripts/deploy",
     "prestart": "lerna run build",
     "start": "tsdx watch --format cjs --target node --entry src/server.ts --tsconfig tsconfig.prod.json --onSuccess \"node dist\"",
     "start:swr-queue-worker": "tsdx watch --format cjs --target node --entry src/swr-queue-worker.ts --tsconfig tsconfig.prod.json --onSuccess \"node dist\""
