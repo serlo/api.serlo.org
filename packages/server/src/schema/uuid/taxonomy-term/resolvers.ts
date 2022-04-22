@@ -20,13 +20,15 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as serloAuth from '@serlo/authorization'
-import { UserInputError } from 'apollo-server'
-import * as t from 'io-ts'
 
 import {
+  assertIsTaxonomyTerm,
+  getTaxonomyTerm,
+  resolveTaxonomyTermPath,
+  verifyTaxonomyType,
+} from './utils'
+import {
   TypeResolvers,
-  Context,
-  Model,
   Mutations,
   createNamespace,
   assertUserIsAuthenticated,
@@ -38,7 +40,11 @@ import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
-import { TaxonomyTerm } from '~/types'
+import {
+  TaxonomyTerm,
+  TaxonomyTermType,
+  TaxonomyTypeCreateOptions,
+} from '~/types'
 import { isDefined } from '~/utils'
 
 export const resolvers: TypeResolvers<TaxonomyTerm> &
@@ -104,6 +110,79 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
     },
   },
   TaxonomyTermMutation: {
+    async create(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const { parentId, name, taxonomyType, description = null } = input
+
+      assertArgumentIsNotEmpty({ name })
+
+      const scope = await fetchScopeOfUuid({
+        id: parentId,
+        dataSources,
+      })
+
+      await assertUserIsAuthorized({
+        userId,
+        dataSources,
+        message: 'You are not allowed create taxonomy terms.',
+        guard: serloAuth.Uuid.create('TaxonomyTerm')(scope),
+      })
+
+      const parent = await getTaxonomyTerm(parentId, dataSources)
+
+      verifyTaxonomyType(taxonomyType, parent.type)
+
+      const taxonomyTerm = await dataSources.model.serlo.createTaxonomyTerm({
+        parentId,
+        taxonomyType:
+          taxonomyType === TaxonomyTypeCreateOptions.Topic
+            ? TaxonomyTermType.Topic
+            : TaxonomyTermType.TopicFolder,
+        name,
+        description,
+        userId,
+      })
+
+      return {
+        success: taxonomyTerm ? true : false,
+        record: taxonomyTerm,
+        query: {},
+      }
+    },
+
+    async move(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const { childrenIds, destination } = input
+
+      await Promise.all(
+        [...childrenIds, destination].map(async (id) => {
+          await assertIsTaxonomyTerm(id, dataSources)
+        })
+      )
+
+      const scope = await fetchScopeOfUuid({
+        id: destination,
+        dataSources,
+      })
+
+      await assertUserIsAuthorized({
+        userId,
+        dataSources,
+        message: 'You are not allowed to move terms to this taxonomy term.',
+        guard: serloAuth.TaxonomyTerm.change(scope),
+      })
+
+      const { success } = await dataSources.model.serlo.moveTaxonomyTerm({
+        childrenIds,
+        destination,
+        userId,
+      })
+
+      return { success, query: {} }
+    },
+
     async setNameAndDescription(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
@@ -134,58 +213,5 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
 
       return { success, query: {} }
     },
-
-    async move(_parent, { input }, { dataSources, userId }) {
-      assertUserIsAuthenticated(userId)
-
-      const { childrenIds, destination } = input
-
-      const scope = await fetchScopeOfUuid({
-        id: destination,
-        dataSources,
-      })
-
-      for (const id of childrenIds) {
-        const object = await dataSources.model.serlo.getUuid({
-          id,
-        })
-        if (object === null) throw new UserInputError('UUID does not exist.')
-      }
-
-      await assertUserIsAuthorized({
-        userId,
-        dataSources,
-        message: 'You are not allowed to move this taxonomy term.',
-        guard: serloAuth.TaxonomyTerm.addChild(scope),
-      })
-
-      const { success } = await dataSources.model.serlo.moveTaxonomyTerm({
-        childrenIds,
-        destination,
-        userId,
-      })
-
-      return { success, query: {} }
-    },
   },
-}
-
-async function resolveTaxonomyTermPath(
-  parent: Model<'TaxonomyTerm'>,
-  { dataSources }: Context
-) {
-  const path = [parent]
-  let current = parent
-
-  while (current.parentId !== null) {
-    const next = await dataSources.model.serlo.getUuidWithCustomDecoder({
-      id: current.parentId,
-      decoder: t.union([TaxonomyTermDecoder, t.null]),
-    })
-    if (next === null) break
-    path.unshift(next)
-    current = next
-  }
-
-  return path
 }

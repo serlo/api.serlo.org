@@ -26,11 +26,12 @@ import {
   taxonomyTermSubject,
   taxonomyTermRoot,
   user as baseUser,
+  article,
 } from '../../../__fixtures__'
 import { Client, given, nextUuid } from '../../__utils__'
 
 describe('TaxonomyTermMoveMutation', () => {
-  const user = { ...baseUser, roles: ['login'] }
+  const user = { ...baseUser, roles: ['de_architect'] }
 
   const taxonomyTermSubject2 = {
     ...taxonomyTermSubject,
@@ -74,20 +75,36 @@ describe('TaxonomyTermMoveMutation', () => {
     })
   })
 
+  test('fails when parent or at least one of the children is not a taxonomy term', async () => {
+    given('UuidQuery').for(article)
+
+    const inputWithWrongChild = {
+      childrenIds: [taxonomyTermSubject.id, article.id],
+      destination: taxonomyTermCurriculumTopic.id,
+    }
+
+    await mutation
+      .withVariables({ input: inputWithWrongChild })
+      .shouldFailWithError('BAD_USER_INPUT')
+
+    const inputWithWrongParent = {
+      childrenIds: [taxonomyTermSubject.id, taxonomyTermSubject2.id],
+      destination: article.id,
+    }
+
+    await mutation
+      .withVariables({ input: inputWithWrongParent })
+      .shouldFailWithError('BAD_USER_INPUT')
+  })
+
   test('fails when user is not authenticated', async () => {
     await mutation
       .forUnauthenticatedUser()
       .shouldFailWithError('UNAUTHENTICATED')
   })
 
-  test('fails when user does not have permission "TaxonomyTerm_AddChild"', async () => {
-    const loginUser = { ...user, id: nextUuid(user.id), roles: ['architect'] }
-
-    given('UuidQuery').for(loginUser)
-
-    await mutation
-      .forClient(new Client({ userId: loginUser.id }))
-      .shouldFailWithError('FORBIDDEN')
+  test('fails when user does not have role "architect"', async () => {
+    await mutation.forLoginUser().shouldFailWithError('FORBIDDEN')
   })
 
   test('fails when database layer returns a 400er response', async () => {
@@ -104,9 +121,11 @@ describe('TaxonomyTermMoveMutation', () => {
 
   test('updates the cache', async () => {
     given('UuidQuery').for(
-      { ...user, roles: ['login'] },
+      user,
       taxonomyTermSubject,
-      taxonomyTermRoot
+      taxonomyTermRoot,
+      taxonomyTermCurriculumTopic,
+      article
     )
 
     given('TaxonomyTermMoveMutation')
@@ -121,26 +140,65 @@ describe('TaxonomyTermMoveMutation', () => {
           parentId: taxonomyTermCurriculumTopic.id,
         })
 
+        given('UuidQuery').for({
+          ...taxonomyTermRoot,
+          childrenIds: [],
+        })
+
+        given('UuidQuery').for({
+          ...taxonomyTermCurriculumTopic,
+          childrenIds: [
+            ...taxonomyTermCurriculumTopic.childrenIds,
+            taxonomyTermSubject.id,
+          ],
+        })
+
         return res(ctx.json({ success: true }))
       })
 
-    const query = new Client({ userId: user.id })
-      .prepareQuery({
-        query: gql`
-          query ($id: Int!) {
-            uuid(id: $id) {
-              ... on TaxonomyTerm {
-                parent {
+    const query = new Client({ userId: user.id }).prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on TaxonomyTerm {
+              parent {
+                id
+              }
+              children {
+                nodes {
                   id
                 }
               }
             }
           }
-        `,
-      })
-      .withVariables({ id: taxonomyTermSubject.id })
+        }
+      `,
+    })
 
-    const moveMutation = new Client({ userId: user.id })
+    await query.withVariables({ id: taxonomyTermSubject.id }).shouldReturnData({
+      uuid: {
+        parent: { id: taxonomyTermRoot.id },
+      },
+    })
+
+    await query.withVariables({ id: taxonomyTermRoot.id }).shouldReturnData({
+      uuid: {
+        parent: null,
+        children: { nodes: [{ id: taxonomyTermSubject.id }] },
+      },
+    })
+
+    await query
+      .withVariables({ id: taxonomyTermCurriculumTopic.id })
+      .shouldReturnData({
+        uuid: {
+          children: {
+            nodes: [{ id: taxonomyTermCurriculumTopic.childrenIds[0] }],
+          },
+        },
+      })
+
+    await new Client({ userId: user.id })
       .prepareQuery({
         query: gql`
           mutation set($input: TaxonomyTermMoveInput!) {
@@ -158,21 +216,33 @@ describe('TaxonomyTermMoveMutation', () => {
           destination: taxonomyTermCurriculumTopic.id,
         },
       })
+      .shouldReturnData({
+        taxonomyTerm: { move: { success: true } },
+      })
 
-    await query.shouldReturnData({
-      uuid: {
-        parent: { id: taxonomyTermRoot.id },
-      },
-    })
-
-    await moveMutation.shouldReturnData({
-      taxonomyTerm: { move: { success: true } },
-    })
-
-    await query.shouldReturnData({
+    await query.withVariables({ id: taxonomyTermSubject.id }).shouldReturnData({
       uuid: {
         parent: { id: taxonomyTermCurriculumTopic.id },
       },
     })
+
+    await query.withVariables({ id: taxonomyTermRoot.id }).shouldReturnData({
+      uuid: {
+        children: { nodes: [] },
+      },
+    })
+
+    await query
+      .withVariables({ id: taxonomyTermCurriculumTopic.id })
+      .shouldReturnData({
+        uuid: {
+          children: {
+            nodes: [
+              { id: taxonomyTermCurriculumTopic.childrenIds[0] },
+              { id: taxonomyTermSubject.id },
+            ],
+          },
+        },
+      })
   })
 })

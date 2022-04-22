@@ -67,3 +67,35 @@ export const taxonomyTermCurriculumTopic: Model<'TaxonomyTerm'> = {
   parentId: taxonomyTermSubject.id,
   childrenIds: [1855].map(castToUuid),
 }
+
+export const taxonomyTermTopic: Model<'TaxonomyTerm'> = {
+  __typename: DiscriminatorType.TaxonomyTerm,
+  id: castToUuid(1288),
+  trashed: false,
+  alias: castToAlias('/mathe/1288/geometrie'),
+  type: TaxonomyTermType.Topic,
+  instance: Instance.De,
+  name: 'Geometrie',
+  description: null,
+  weight: 6,
+  taxonomyId: castToUuid(4),
+  parentId: castToUuid(5),
+  childrenIds: [
+    23453, 1454, 1394, 24518, 1380, 24410, 24422, 1381, 1383, 1300, 1413,
+  ].map(castToUuid),
+}
+
+export const taxonomyTermTopicFolder: Model<'TaxonomyTerm'> = {
+  __typename: DiscriminatorType.TaxonomyTerm,
+  id: castToUuid(23662),
+  trashed: false,
+  alias: castToAlias('/mathe/23662/aufgaben-zu-einfachen-potenzen'),
+  type: TaxonomyTermType.TopicFolder,
+  instance: Instance.De,
+  name: 'Aufgaben zu einfachen Potenzen',
+  description: '',
+  weight: 1,
+  taxonomyId: castToUuid(9),
+  parentId: castToUuid(1420),
+  childrenIds: [10385, 6925, 6921, 6933, 6917, 7085].map(castToUuid),
+}
