@@ -906,6 +906,50 @@ export function createSerloModel({
     },
   })
 
+  const createTaxonomyTerm = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('TaxonomyTermCreateMutation'),
+    mutate: (payload: DatabaseLayer.Payload<'TaxonomyTermCreateMutation'>) => {
+      return DatabaseLayer.makeRequest('TaxonomyTermCreateMutation', payload)
+    },
+    async updateCache({ parentId }) {
+      if (parentId) {
+        await getUuid._querySpec.removeCache({ payload: { id: parentId } })
+      }
+    },
+  })
+
+  const moveTaxonomyTerm = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('TaxonomyTermMoveMutation'),
+    mutate: (payload: DatabaseLayer.Payload<'TaxonomyTermMoveMutation'>) => {
+      return DatabaseLayer.makeRequest('TaxonomyTermMoveMutation', payload)
+    },
+
+    async updateCache({ childrenIds, destination }) {
+      // the cached children still have their old parent id
+      const children = await Promise.all(
+        childrenIds.map((childId) =>
+          getUuidWithCustomDecoder({
+            id: childId,
+            decoder: TaxonomyTermDecoder,
+          })
+        )
+      )
+      const oldParentIds = children.map((child) => child.parentId)
+
+      const allAffectedTaxonomyIds = R.uniq([
+        ...childrenIds,
+        ...oldParentIds,
+        destination,
+      ]).filter(isDefined)
+
+      await getUuid._querySpec.removeCache({
+        payloads: allAffectedTaxonomyIds.map((id) => {
+          return { id }
+        }),
+      })
+    },
+  })
+
   const setTaxonomyTermNameAndDescription = createMutation({
     decoder: DatabaseLayer.getDecoderFor(
       'TaxonomyTermSetNameAndDescriptionMutation'
@@ -932,39 +976,6 @@ export function createSerloModel({
     },
   })
 
-  const moveTaxonomyTerm = createMutation({
-    decoder: DatabaseLayer.getDecoderFor('TaxonomyTermMoveMutation'),
-    mutate: (payload: DatabaseLayer.Payload<'TaxonomyTermMoveMutation'>) => {
-      return DatabaseLayer.makeRequest('TaxonomyTermMoveMutation', payload)
-    },
-
-    // After the mutation is done and the childrenIds are shifted to the new destination the cache is emptied
-    // For this, all childrenIds, their former parentIDs, and the destination are deleted
-    async updateCache({ childrenIds, destination }) {
-      const children = await Promise.all(
-        childrenIds.map((childId) =>
-          getUuidWithCustomDecoder({
-            id: childId,
-            decoder: TaxonomyTermDecoder,
-          })
-        )
-      )
-      const oldParentIds = children.map((child) => child.parentId)
-
-      const idArray = R.uniq([
-        ...childrenIds,
-        ...oldParentIds,
-        destination,
-      ]).filter(isDefined)
-
-      await getUuid._querySpec.removeCache({
-        payloads: idArray.map((id) => {
-          return { id }
-        }),
-      })
-    },
-  })
-
   return {
     addEntityRevision,
     addPageRevision,
@@ -974,6 +985,7 @@ export function createSerloModel({
     createComment,
     createEntity,
     createPage,
+    createTaxonomyTerm,
     createThread,
     deleteBots,
     deleteRegularUsers,

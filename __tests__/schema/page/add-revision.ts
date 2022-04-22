@@ -22,7 +22,7 @@
 import { gql } from 'apollo-server'
 
 import { page, user as baseUser } from '../../../__fixtures__'
-import { given, Client, nextUuid } from '../../__utils__'
+import { given, Client } from '../../__utils__'
 
 const user = { ...baseUser, roles: ['de_static_pages_builder'] }
 
@@ -71,25 +71,8 @@ describe('PageAddRevisionMutation', () => {
       .shouldFailWithError('UNAUTHENTICATED')
   })
 
-  test('fails when user does not have role "staticPagesBuilder"', async () => {
-    const regularUser = { ...user, id: nextUuid(user.id), roles: ['login'] }
-
-    given('UuidQuery').for(regularUser)
-
-    await new Client({ userId: regularUser.id })
-      .prepareQuery({
-        query: gql`
-          mutation set($input: PageAddRevisionInput!) {
-            page {
-              addRevision(input: $input) {
-                success
-              }
-            }
-          }
-        `,
-      })
-      .withVariables({ input })
-      .shouldFailWithError('FORBIDDEN')
+  test('fails when user does not have role "static_pages_builder"', async () => {
+    await mutation.forLoginUser().shouldFailWithError('FORBIDDEN')
   })
 
   test('fails when `title` or `content` is empty', async () => {
