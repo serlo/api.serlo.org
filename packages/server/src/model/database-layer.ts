@@ -35,6 +35,8 @@ import {
   NotificationEventDecoder,
   PageDecoder,
   SubscriptionsDecoder,
+  TaxonomyTermDecoder,
+  TaxonomyTermTypeDecoder,
   Uuid,
   UuidDecoder,
 } from './decoder'
@@ -266,16 +268,6 @@ export const spec = {
     response: t.union([PageDecoder, t.undefined]),
     canBeNull: false,
   },
-  TaxonomyTermSetNameAndDescriptionMutation: {
-    payload: t.type({
-      name: t.string,
-      id: t.number,
-      userId: t.number,
-      description: t.union([t.string, t.null, t.undefined]),
-    }),
-    response: t.type({ success: t.boolean }),
-    canBeNull: false,
-  },
   SubjectsQuery: {
     payload: t.type({}),
     response: t.strict({
@@ -298,6 +290,36 @@ export const spec = {
       sendEmail: t.boolean,
     }),
     response: t.void,
+    canBeNull: false,
+  },
+  TaxonomyTermCreateMutation: {
+    payload: t.type({
+      taxonomyType: TaxonomyTermTypeDecoder,
+      name: t.string,
+      userId: t.number,
+      description: t.union([t.string, t.null, t.undefined]),
+      parentId: t.number,
+    }),
+    response: TaxonomyTermDecoder,
+    canBeNull: false,
+  },
+  TaxonomyTermMoveMutation: {
+    payload: t.type({
+      childrenIds: t.array(t.number),
+      destination: t.number,
+      userId: t.number,
+    }),
+    response: t.type({ success: t.boolean }),
+    canBeNull: false,
+  },
+  TaxonomyTermSetNameAndDescriptionMutation: {
+    payload: t.type({
+      name: t.string,
+      id: t.number,
+      userId: t.number,
+      description: t.union([t.string, t.null, t.undefined]),
+    }),
+    response: t.type({ success: t.boolean }),
     canBeNull: false,
   },
   ThreadCreateCommentMutation: {
