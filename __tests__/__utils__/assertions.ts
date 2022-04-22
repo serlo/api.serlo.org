@@ -24,6 +24,8 @@ import { GraphQLResponse } from 'apollo-server-types'
 import { DocumentNode } from 'graphql'
 import R from 'ramda'
 
+import { given, nextUuid } from '.'
+import { user } from '../../__fixtures__'
 import { LegacyClient, createTestClient } from './test-client'
 import { Context } from '~/internals/graphql'
 import { Sentry } from '~/internals/sentry'
@@ -53,6 +55,18 @@ export class Query<V extends Variables = Variables> {
 
   forClient(client: Client) {
     return new Query(client, this.query)
+  }
+
+  forLoginUser(...additionalRoles: string[]) {
+    const loginUser = {
+      ...user,
+      id: nextUuid(user.id),
+      roles: [...additionalRoles, 'login'],
+    }
+
+    given('UuidQuery').for(loginUser)
+
+    return this.forClient(new Client({ userId: loginUser.id }))
   }
 
   forUnauthenticatedUser() {
