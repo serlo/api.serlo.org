@@ -108,4 +108,3 @@ type PageCreateResponse {
   success: Boolean!
   query: Query!
 }
-
