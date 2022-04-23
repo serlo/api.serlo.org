@@ -115,12 +115,18 @@ export async function buildSetEntityResolver<
     parentDecoder,
   }: { childDecoder: t.Type<C, unknown>; parentDecoder?: t.Type<P, unknown> }
 ) {
+  const { userId, dataSources } = context
+  assertUserIsAuthenticated(userId)
+
   const { entityType, input, mandatoryFields } = args
+
+  assertArgumentIsNotEmpty(mandatoryFields)
+
   const { entityId, parentId } = input
 
   if (userWantsToCreateNewEntity(entityId, parentId)) {
     const parentTypename = (
-      await context.dataSources.model.serlo.getUuid({ id: parentId })
+      await dataSources.model.serlo.getUuid({ id: parentId })
     )?.__typename
 
     const newInput = {
@@ -134,7 +140,7 @@ export async function buildSetEntityResolver<
         input: newInput,
         mandatoryFields,
       },
-      context
+      { userId, dataSources }
     )
   } else {
     return await buildAddRevisionResolver(
@@ -143,11 +149,11 @@ export async function buildSetEntityResolver<
         input: {
           ...input,
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          entityId: input.entityId!,
+          entityId: entityId!,
         },
         mandatoryFields,
       },
-      context,
+      { userId, dataSources },
       { childDecoder, parentDecoder }
     )
   }
@@ -189,13 +195,12 @@ interface createEntityMutationArgs {
 
 export async function buildCreateEntityResolver(
   args: createEntityMutationArgs,
-  { dataSources, userId }: Context
+  {
+    dataSources,
+    userId,
+  }: { dataSources: Context['dataSources']; userId: number }
 ) {
-  assertUserIsAuthenticated(userId)
-
-  const { mandatoryFields, input, entityType } = args
-
-  assertArgumentIsNotEmpty(mandatoryFields)
+  const { entityType, input } = args
 
   const {
     changes,
@@ -285,17 +290,16 @@ export async function buildAddRevisionResolver<
   }
 >(
   args: addEntityRevisionMutationArgs,
-  { dataSources, userId }: Context,
+  {
+    dataSources,
+    userId,
+  }: { dataSources: Context['dataSources']; userId: number },
   {
     childDecoder,
     parentDecoder,
   }: { childDecoder: t.Type<C, unknown>; parentDecoder?: t.Type<P, unknown> }
 ) {
-  assertUserIsAuthenticated(userId)
-
-  const { input, mandatoryFields, revisionType } = args
-
-  assertArgumentIsNotEmpty(mandatoryFields)
+  const { input, revisionType } = args
 
   const {
     entityId,
