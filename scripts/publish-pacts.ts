@@ -20,11 +20,15 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import pact from '@pact-foundation/pact-node'
-import { spawnSync } from 'child_process'
-import * as path from 'path'
+import { spawnSync } from 'node:child_process'
+import { readFile } from 'node:fs/promises'
+import * as path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires,import/extensions,import/no-commonjs
-const { version } = require('../lerna.json') as { version: string }
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const { version } = JSON.parse(
+  (await readFile(new URL('../lerna.json', import.meta.url))).toString()
+) as { version: string }
 
 const result = spawnSync('git', ['rev-parse', '--short', 'HEAD'], {
   stdio: 'pipe',

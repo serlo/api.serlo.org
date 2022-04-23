@@ -1208,6 +1208,16 @@ async function exec(): Promise<void> {
         date: '2022-04-08',
         added: ['Add query endpoint `thread.allThreads`'],
       },
+      {
+        tagName: 'v0.30.2',
+        date: '2022-04-22',
+        added: [
+          'Add endpoint `taxonomy.move` #566',
+          'Add endpoint `taxonomy.create` #583',
+        ],
+        fixed: ['Support autoreview in sandbox in add revisions #538'],
+        internal: ['Refactor requests to DB layer #569'],
+      },
     ],
   })
 
