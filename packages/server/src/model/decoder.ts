@@ -22,7 +22,7 @@
 import { UserInputError } from 'apollo-server-express'
 import * as t from 'io-ts'
 
-import { Instance, TaxonomyTermType } from '~/types'
+import { Instance, TaxonomyTermType, TaxonomyTypeCreateOptions } from '~/types'
 
 export const InstanceDecoder: t.Type<Instance> = t.union([
   t.literal(Instance.De),
@@ -264,6 +264,11 @@ export const TaxonomyTermTypeDecoder = t.union([
   t.literal(TaxonomyTermType.Subject),
   t.literal(TaxonomyTermType.Topic),
   t.literal(TaxonomyTermType.TopicFolder),
+])
+
+export const TaxonomyTypeCreateOptionsDecoder = t.union([
+  t.literal(TaxonomyTypeCreateOptions.Topic),
+  t.literal(TaxonomyTypeCreateOptions.TopicFolder),
 ])
 
 export const TaxonomyTermDecoder = t.exact(

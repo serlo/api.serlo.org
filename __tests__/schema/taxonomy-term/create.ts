@@ -29,7 +29,7 @@ import {
   user as baseUser,
 } from '../../../__fixtures__'
 import { Client, given } from '../../__utils__'
-import { TaxonomyTermType, TaxonomyTypeCreateOptions } from '~/types'
+import { TaxonomyTypeCreateOptions } from '~/types'
 
 describe('TaxonomyTermCreateMutation', () => {
   const user = { ...baseUser, roles: ['de_architect'] }
@@ -60,7 +60,7 @@ describe('TaxonomyTermCreateMutation', () => {
 
   const payload = {
     ...input,
-    taxonomyType: TaxonomyTermType.Topic,
+    taxonomyType: TaxonomyTypeCreateOptions.Topic,
     userId: user.id,
   }
 
