@@ -3933,7 +3933,7 @@ __metadata:
     "@graphql-codegen/typescript-resolvers": ^2.6.1
     "@nmshd/connector-sdk": ^1.1.5
     "@sentry/node": ^6.19.4
-    "@serlo/authorization": ^0.30.1
+    "@serlo/authorization": ^0.30.2
     "@types/basic-auth": ^1.1.3
     "@types/bull-arena": ^3.0.5
     "@types/graphql-modules": ^0.30.0
@@ -3976,13 +3976,13 @@ __metadata:
     ramda: ^0.28.0
     redis: ^3.1.2
     redlock: ^3.1.2
-    semver: ^7.3.5
+    semver: ^7.3.7
     ts-toolbelt: ^9.6.0
     ttypescript: ^1.5.13
   languageName: unknown
   linkType: soft
 
-"@serlo/api@^0.30.1, @serlo/api@workspace:packages/types":
+"@serlo/api@^0.30.2, @serlo/api@workspace:packages/types":
   version: 0.0.0-use.local
   resolution: "@serlo/api@workspace:packages/types"
   dependencies:
@@ -3993,11 +3993,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@serlo/authorization@^0.30.1, @serlo/authorization@workspace:packages/authorization":
+"@serlo/authorization@^0.30.2, @serlo/authorization@workspace:packages/authorization":
   version: 0.0.0-use.local
   resolution: "@serlo/authorization@workspace:packages/authorization"
   dependencies:
-    "@serlo/api": ^0.30.1
+    "@serlo/api": ^0.30.2
   languageName: unknown
   linkType: soft
 
@@ -16834,6 +16834,17 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 5eafe6102bea2a7439897c1856362e31cc348ccf96efd455c8b5bc2c61e6f7e7b8250dc26b8828c1d76a56f818a7ee907a36ae9fb37a599d3d24609207001d60
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.3.7":
+  version: 7.3.7
+  resolution: "semver@npm:7.3.7"
+  dependencies:
+    lru-cache: ^6.0.0
+  bin:
+    semver: bin/semver.js
+  checksum: 2fa3e877568cd6ce769c75c211beaed1f9fce80b28338cadd9d0b6c40f2e2862bafd62c19a6cff42f3d54292b7c623277bcab8816a2b5521cf15210d43e75232
   languageName: node
   linkType: hard
 
