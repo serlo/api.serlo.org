@@ -77,19 +77,3 @@ export const exerciseGroupFields = [
 ] as (keyof EntityFields)[]
 
 export const videoFields = ['title', 'content', 'url'] as (keyof EntityFields)[]
-
-export interface AbstractEntitySetInput {
-  changes: string
-  subscribeThis: boolean
-  subscribeThisByEmail: boolean
-  needsReview: boolean
-  entityId?: number
-  parentId?: number
-  cohesive?: 'true' | 'false'
-  content?: string
-  description?: string
-  metaDescription?: string
-  metaTitle?: string
-  title?: string
-  url?: string
-}

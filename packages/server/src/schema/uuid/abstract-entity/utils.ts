@@ -23,8 +23,9 @@ import * as serloAuth from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
 import * as t from 'io-ts'
 
-import { assertIsTaxonomyTerm } from '../taxonomy-term/utils'
+import { getTaxonomyTerm } from '../taxonomy-term/utils'
 import { autoreviewTaxonomyIds } from '~/config/autoreview-taxonomies'
+import { InvalidCurrentValueError } from '~/internals/data-source-helper'
 import {
   assertArgumentIsNotEmpty,
   assertUserIsAuthenticated,
@@ -44,7 +45,7 @@ import {
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { Connection } from '~/schema/connection/types'
 import { createRepositoryResolvers } from '~/schema/uuid/abstract-repository/utils'
-import { Instance, VideoRevisionsArgs } from '~/types'
+import { VideoRevisionsArgs } from '~/types'
 
 export function createEntityResolvers<
   R extends Model<'AbstractEntityRevision'>
@@ -75,12 +76,100 @@ export function createEntityResolvers<
   }
 }
 
-export interface AbstractEntityCreateInput {
+export interface AbstractEntitySetInput {
   changes: string
   subscribeThis: boolean
   subscribeThisByEmail: boolean
-  instance: Instance
-  licenseId: number
+  needsReview: boolean
+  entityId?: number
+  parentId?: number
+  cohesive?: 'true' | 'false'
+  content?: string
+  description?: string
+  metaDescription?: string
+  metaTitle?: string
+  title?: string
+  url?: string
+}
+
+interface setEntityMutationArgs {
+  entityType: EntityType
+  input: AbstractEntitySetInput
+  mandatoryFields: { [key: string]: string | boolean }
+}
+
+export async function buildSetEntityResolver<
+  C extends Model<'AbstractEntity'> & {
+    taxonomyTermIds?: number[]
+    parentId?: number
+  },
+  P extends Model<'AbstractEntity'> & {
+    taxonomyTermIds?: number[]
+    parentId?: number
+  }
+>(
+  args: setEntityMutationArgs,
+  context: Context,
+  {
+    childDecoder,
+    parentDecoder,
+  }: { childDecoder: t.Type<C, unknown>; parentDecoder?: t.Type<P, unknown> }
+) {
+  const { entityType, input, mandatoryFields } = args
+  const { entityId, parentId } = input
+
+  if (userWantsToCreateNewEntity(entityId, parentId)) {
+    const parentTypename = (
+      await context.dataSources.model.serlo.getUuid({ id: parentId })
+    )?.__typename
+
+    const newInput = {
+      ...input,
+      taxonomyTermId: parentTypename === 'TaxonomyTerm' ? parentId : undefined,
+      parentId: parentTypename === 'TaxonomyTerm' ? undefined : parentId,
+    }
+    return await buildCreateEntityResolver(
+      {
+        entityType,
+        input: newInput,
+        mandatoryFields,
+      },
+      context
+    )
+  } else {
+    return await buildAddRevisionResolver(
+      {
+        revisionType: fromEntityTypeToEntityRevisionType(entityType),
+        input: {
+          ...input,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          entityId: input.entityId!,
+        },
+        mandatoryFields,
+      },
+      context,
+      { childDecoder, parentDecoder }
+    )
+  }
+}
+
+function userWantsToCreateNewEntity(
+  entityId?: number | undefined,
+  parentId?: number
+): parentId is number {
+  if (!entityId && !parentId)
+    throw new UserInputError('Either entityId or parentId has to be provided')
+
+  if (entityId) {
+    return false
+  }
+  return true
+}
+
+interface AbstractEntityCreateInput {
+  changes: string
+  subscribeThis: boolean
+  subscribeThisByEmail: boolean
   needsReview: boolean
   parentId?: number
   taxonomyTermId?: number
@@ -110,8 +199,6 @@ export async function buildCreateEntityResolver(
 
   const {
     changes,
-    instance,
-    licenseId,
     needsReview,
     subscribeThis,
     subscribeThisByEmail,
@@ -120,38 +207,43 @@ export async function buildCreateEntityResolver(
     ...inputFields
   } = input
 
-  if (taxonomyTermId) await assertIsTaxonomyTerm(taxonomyTermId, dataSources)
+  let parent: Model<'AbstractEntity' | 'TaxonomyTerm'>
 
-  if (parentId) await assertParentExists(parentId, dataSources)
-
-  // TODO: get the instance from taxonomyTerm or parent
+  if (taxonomyTermId) {
+    parent = await getTaxonomyTerm(taxonomyTermId, dataSources)
+  } else if (parentId) {
+    parent = await getEntity(parentId, dataSources)
+  } else {
+    throw new Error('parentId or taxonomyTermId has to be provided')
+  }
 
   await assertUserIsAuthorized({
     userId,
     dataSources,
     message: 'You are not allowed to add revision to this entity.',
-    guard: serloAuth.Uuid.create('Entity')(serloAuth.instanceToScope(instance)),
+    guard: serloAuth.Uuid.create('Entity')(
+      serloAuth.instanceToScope(parent.instance)
+    ),
   })
 
   const fields = removeUndefinedFields(
     inputFields as { [key: string]: string | undefined }
   )
 
-  const inputPayload = {
-    changes,
-    instance,
-    licenseId,
-    needsReview,
-    parentId,
-    subscribeThis,
-    subscribeThisByEmail,
-    taxonomyTermId,
-    fields,
-  }
   const entity = await dataSources.model.serlo.createEntity({
     entityType,
     userId,
-    input: inputPayload,
+    input: {
+      changes,
+      instance: parent.instance,
+      licenseId: 1,
+      needsReview,
+      parentId,
+      subscribeThis,
+      subscribeThisByEmail,
+      taxonomyTermId,
+      fields,
+    },
   })
 
   return {
@@ -289,17 +381,6 @@ export async function buildAddRevisionResolver<
   }
 }
 
-export async function getEntity<S extends Model<'AbstractEntity'>>(
-  entityId: number,
-  dataSources: Context['dataSources'],
-  decoder: t.Type<S, unknown>
-) {
-  return await dataSources.model.serlo.getUuidWithCustomDecoder({
-    id: entityId,
-    decoder,
-  })
-}
-
 export async function verifyAutoreviewEntity(
   taxonomyTermIds: number[],
   dataSources: Context['dataSources']
@@ -344,14 +425,32 @@ function removeUndefinedFields(inputFields: {
   return fields
 }
 
-async function assertParentExists(
-  parentId: number,
+async function getEntity(
+  entityId: number,
   dataSources: Context['dataSources']
 ) {
-  const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
-    id: parentId,
-    decoder: t.union([EntityDecoder, t.null]),
+  await assertIsEntity(entityId, dataSources)
+
+  return await dataSources.model.serlo.getUuidWithCustomDecoder({
+    id: entityId,
+    decoder: EntityDecoder,
   })
+}
+
+async function assertIsEntity(id: number, dataSources: Context['dataSources']) {
+  try {
+    await dataSources.model.serlo.getUuidWithCustomDecoder({
+      id,
+      decoder: EntityDecoder,
+    })
+  } catch (error) {
+    if (error instanceof InvalidCurrentValueError) {
+      throw new UserInputError(`No entity found for the provided id ${id}`)
+    } else {
+      throw error
+    }
+  }
+}
 
 export function fromEntityTypeToEntityRevisionType(
   entityType: EntityType

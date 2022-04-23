@@ -51,12 +51,14 @@ import {
   exerciseGroupFields,
   genericFields,
   videoFields,
-  AbstractEntitySetInput,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
 import { EntityType } from '~/model/decoder'
-import { fromEntityTypeToEntityRevisionType } from '~/schema/uuid/abstract-entity/utils'
+import {
+  AbstractEntitySetInput,
+  fromEntityTypeToEntityRevisionType,
+} from '~/schema/uuid/abstract-entity/utils'
 
 class EntitySetWrapper {
   public mutationName: string
