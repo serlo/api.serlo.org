@@ -353,9 +353,29 @@ async function assertParentExists(
     decoder: t.union([EntityDecoder, t.null]),
   })
 
-  if (!parent) {
-    throw new UserInputError(
-      `No entity found for the provided parentId ${parentId}`
-    )
+export function fromEntityTypeToEntityRevisionType(
+  entityType: EntityType
+): EntityRevisionType {
+  switch (entityType) {
+    case EntityType.Applet:
+      return EntityRevisionType.AppletRevision
+    case EntityType.Article:
+      return EntityRevisionType.ArticleRevision
+    case EntityType.Course:
+      return EntityRevisionType.CourseRevision
+    case EntityType.CoursePage:
+      return EntityRevisionType.CoursePageRevision
+    case EntityType.Event:
+      return EntityRevisionType.EventRevision
+    case EntityType.Exercise:
+      return EntityRevisionType.ExerciseRevision
+    case EntityType.ExerciseGroup:
+      return EntityRevisionType.ExerciseGroupRevision
+    case EntityType.GroupedExercise:
+      return EntityRevisionType.GroupedExerciseRevision
+    case EntityType.Solution:
+      return EntityRevisionType.SolutionRevision
+    case EntityType.Video:
+      return EntityRevisionType.VideoRevision
   }
 }
