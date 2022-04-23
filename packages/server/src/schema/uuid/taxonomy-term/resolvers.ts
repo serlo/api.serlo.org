@@ -40,11 +40,7 @@ import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
-import {
-  TaxonomyTerm,
-  TaxonomyTermType,
-  TaxonomyTypeCreateOptions,
-} from '~/types'
+import { TaxonomyTerm } from '~/types'
 import { isDefined } from '~/utils'
 
 export const resolvers: TypeResolvers<TaxonomyTerm> &
@@ -135,10 +131,7 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
 
       const taxonomyTerm = await dataSources.model.serlo.createTaxonomyTerm({
         parentId,
-        taxonomyType:
-          taxonomyType === TaxonomyTypeCreateOptions.Topic
-            ? TaxonomyTermType.Topic
-            : TaxonomyTermType.TopicFolder,
+        taxonomyType,
         name,
         description,
         userId,
