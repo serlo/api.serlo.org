@@ -36,6 +36,16 @@ import {
   taxonomyTermRoot,
   user,
   video,
+  appletRevision,
+  articleRevision,
+  courseRevision,
+  coursePageRevision,
+  eventRevision,
+  exerciseRevision,
+  exerciseGroupRevision,
+  groupedExerciseRevision,
+  solutionRevision,
+  videoRevision,
 } from '../../../__fixtures__'
 import {
   given,
@@ -49,12 +59,13 @@ import {
   EntityFields,
   eventFields,
   exerciseGroupFields,
+  getTypenameAndId,
   genericFields,
   videoFields,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
-import { EntityType } from '~/model/decoder'
+import { castToUuid, EntityType } from '~/model/decoder'
 import {
   AbstractEntitySetInput,
   fromEntityTypeToEntityRevisionType,
@@ -148,6 +159,31 @@ class EntitySetWrapper {
 
     return fieldsWithoutCohesive
   }
+
+  get revision() {
+    switch (this.entityType) {
+      case EntityType.Applet:
+        return appletRevision
+      case EntityType.Article:
+        return articleRevision
+      case EntityType.Course:
+        return courseRevision
+      case EntityType.CoursePage:
+        return coursePageRevision
+      case EntityType.Event:
+        return eventRevision
+      case EntityType.Exercise:
+        return exerciseRevision
+      case EntityType.ExerciseGroup:
+        return exerciseGroupRevision
+      case EntityType.GroupedExercise:
+        return groupedExerciseRevision
+      case EntityType.Solution:
+        return solutionRevision
+      case EntityType.Video:
+        return videoRevision
+    }
+  }
 }
 
 const entitySetTypes = [
@@ -177,6 +213,23 @@ entitySetTypes.forEach((entitySetType) => {
       ...entitySetType.fields,
     }
 
+    const mutationWithParentId = new Client({ userId: user.id })
+      .prepareQuery({
+        query: gql`
+          mutation set($input: ${entitySetType.inputName}!) {
+            entity {
+              ${entitySetType.mutationName}(input: $input) {
+                success
+                record {
+                  id
+                }
+              }
+            }
+          }
+        `,
+      })
+      .withVariables({ input: { ...input, parentId: entitySetType.parent.id } })
+
     const inputWithEntityId = { ...input, entityId: entitySetType.entity.id }
 
     const mutationWithEntityId = new Client({ userId: user.id })
@@ -196,22 +249,57 @@ entitySetTypes.forEach((entitySetType) => {
       })
       .withVariables({ input: inputWithEntityId })
 
-    const mutationWithParentId = new Client({ userId: user.id })
-      .prepareQuery({
-        query: gql`
-          mutation set($input: ${entitySetType.inputName}!) {
-            entity {
-              ${entitySetType.mutationName}(input: $input) {
-                success
-                record {
-                  id
-                }
-              }
-            }
-          }
-        `,
-      })
-      .withVariables({ input: { ...input, parentId: entitySetType.parent.id } })
+    const { changes, needsReview, subscribeThis, subscribeThisByEmail } = input
+
+    let entityCreatePayload: DatabaseLayer.Payload<'EntityCreateMutation'> = {
+      input: {
+        changes,
+        instance: entitySetType.parent.instance,
+        needsReview,
+        licenseId: 1,
+        subscribeThis,
+        subscribeThisByEmail,
+        fields: entitySetType.fieldsToDBLayer,
+      },
+      userId: user.id,
+      entityType: entitySetType.entityType,
+    }
+
+    if (entitySetType.parent.__typename == 'TaxonomyTerm') {
+      entityCreatePayload = {
+        ...entityCreatePayload,
+        input: {
+          ...entityCreatePayload.input,
+          taxonomyTermId: entitySetType.parent.id,
+        },
+      }
+    } else {
+      entityCreatePayload = {
+        ...entityCreatePayload,
+        input: {
+          ...entityCreatePayload.input,
+          parentId: entitySetType.parent.id,
+        },
+      }
+    }
+
+    const { entityId } = inputWithEntityId
+
+    const entityAddRevisionPayload: DatabaseLayer.Payload<'EntityAddRevisionMutation'> =
+      {
+        input: {
+          changes,
+          entityId,
+          needsReview,
+          subscribeThis,
+          subscribeThisByEmail,
+          fields: entitySetType.fieldsToDBLayer,
+        },
+        userId: user.id,
+        revisionType: fromEntityTypeToEntityRevisionType(
+          entitySetType.entityType
+        ),
+      }
 
     beforeEach(() => {
       given('UuidQuery').for(
@@ -223,37 +311,8 @@ entitySetTypes.forEach((entitySetType) => {
     })
 
     test('creates an entity when parentId is provided', async () => {
-      const { changes, needsReview, subscribeThis, subscribeThisByEmail } =
-        input
-
-      let payload: DatabaseLayer.Payload<'EntityCreateMutation'> = {
-        input: {
-          changes,
-          instance: entitySetType.parent.instance,
-          needsReview,
-          licenseId: 1,
-          subscribeThis,
-          subscribeThisByEmail,
-          fields: entitySetType.fieldsToDBLayer,
-        },
-        userId: user.id,
-        entityType: entitySetType.entityType,
-      }
-
-      if (entitySetType.parent.__typename == 'TaxonomyTerm') {
-        payload = {
-          ...payload,
-          input: { ...payload.input, taxonomyTermId: entitySetType.parent.id },
-        }
-      } else {
-        payload = {
-          ...payload,
-          input: { ...payload.input, parentId: entitySetType.parent.id },
-        }
-      }
-
       given('EntityCreateMutation')
-        .withPayload(payload)
+        .withPayload(entityCreatePayload)
         .returns(entitySetType.entity)
 
       await mutationWithParentId.shouldReturnData({
@@ -269,31 +328,8 @@ entitySetTypes.forEach((entitySetType) => {
     test('adds new entity revision when entityId is provided', async () => {
       given('UuidQuery').for(entitySetType.entity)
 
-      const {
-        changes,
-        needsReview,
-        subscribeThis,
-        subscribeThisByEmail,
-        entityId,
-      } = inputWithEntityId
-
-      const payload: DatabaseLayer.Payload<'EntityAddRevisionMutation'> = {
-        input: {
-          changes,
-          entityId,
-          needsReview,
-          subscribeThis,
-          subscribeThisByEmail,
-          fields: entitySetType.fieldsToDBLayer,
-        },
-        userId: user.id,
-        revisionType: fromEntityTypeToEntityRevisionType(
-          entitySetType.entityType
-        ),
-      }
-
       given('EntityAddRevisionMutation')
-        .withPayload(payload)
+        .withPayload(entityAddRevisionPayload)
         .returns({ success: true, revisionId: 123 })
 
       await mutationWithEntityId.shouldReturnData({
@@ -369,6 +405,101 @@ entitySetTypes.forEach((entitySetType) => {
         .returnsNotFound()
 
       await mutationWithParentId.shouldFailWithError('BAD_USER_INPUT')
+    })
+
+    describe(`Cache after ${entitySetType.mutationName} call`, () => {
+      const newRevision = {
+        ...entitySetType.revision,
+        id: castToUuid(123),
+      }
+
+      const anotherEntity = {
+        ...entitySetType.entity,
+        id: castToUuid(456),
+      }
+
+      beforeEach(() => {
+        given('UuidQuery').for(
+          entitySetType.entity,
+          entitySetType.revision,
+          anotherEntity,
+          taxonomyTermSubject,
+          taxonomyTermRoot,
+          user
+        )
+
+        given('EntityAddRevisionMutation')
+          .withPayload(entityAddRevisionPayload)
+          .returns({ success: true, revisionId: newRevision.id })
+
+        given('EntityAddRevisionMutation')
+          .withPayload({
+            ...entityAddRevisionPayload,
+            input: { ...entityAddRevisionPayload.input, needsReview: false },
+          })
+          .isDefinedBy((req, res, ctx) => {
+            given('UuidQuery').for(
+              { ...entitySetType.entity, currentRevisionId: newRevision.id },
+              newRevision
+            )
+
+            return res(ctx.json({ success: true, revisionId: newRevision.id }))
+          })
+
+        given('SubscriptionsQuery')
+          .withPayload({ userId: user.id })
+          .returns({
+            subscriptions: [{ objectId: anotherEntity.id, sendEmail: true }],
+          })
+      })
+
+      test('updates the checked out revision when needsReview=false', async () => {
+        const uuidQuery = new Client({ userId: user.id })
+          .prepareQuery({
+            query: gql`
+              query ($id: Int!) {
+                uuid(id: $id) {
+                  id
+                  __typename
+                  ... on ${entitySetType.entityType} {
+                    currentRevision {
+                      id
+                    }
+                  }
+                }
+              }
+            `,
+          })
+          .withVariables({ id: entitySetType.entity.id })
+
+        await uuidQuery.shouldReturnData({
+          uuid: {
+            id: entitySetType.entity.id,
+            __typename: entitySetType.entity.__typename,
+            currentRevision: { id: entitySetType.entity.currentRevisionId },
+          },
+        })
+
+        await mutationWithEntityId.execute()
+
+        await uuidQuery.shouldReturnData({
+          uuid: {
+            currentRevision: { id: entitySetType.entity.currentRevisionId },
+          },
+        })
+
+        await mutationWithEntityId
+          .withVariables({
+            input: { ...inputWithEntityId, needsReview: false },
+          })
+          .execute()
+
+        await uuidQuery.shouldReturnData({
+          uuid: { currentRevision: { id: newRevision.id } },
+        })
+      })
+
+
     })
   })
 })
