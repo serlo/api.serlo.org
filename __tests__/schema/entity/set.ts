@@ -63,9 +63,10 @@ import {
   genericFields,
   videoFields,
 } from '../../__utils__'
+import { autoreviewTaxonomyIds } from '~/config/autoreview-taxonomies'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
-import { castToUuid, EntityType } from '~/model/decoder'
+import { castToUuid, EntityRevisionType, EntityType } from '~/model/decoder'
 import {
   AbstractEntitySetInput,
   fromEntityTypeToEntityRevisionType,
@@ -563,6 +564,147 @@ entitySetTypes.forEach((entitySetType) => {
           },
         })
       })
+    })
+  })
+})
+
+describe('Autoreview entities', () => {
+  const fields = {
+    content: 'content',
+  }
+
+  const input = {
+    changes: 'changes',
+    entityId: solution.id,
+    needsReview: false,
+    subscribeThis: false,
+    subscribeThisByEmail: false,
+    ...fields,
+  }
+
+  const mutation = new Client({ userId: user.id })
+    .prepareQuery({
+      query: gql`
+        mutation set($input: SetGenericEntityInput!) {
+          entity {
+            setSolution(input: $input) {
+              success
+            }
+          }
+        }
+      `,
+    })
+    .withVariables({ input })
+
+  const uuidQuery = new Client({ userId: user.id })
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on Solution {
+              currentRevision {
+                id
+              }
+            }
+          }
+        }
+      `,
+    })
+    .withVariables({ id: solution.id })
+
+  let newSolutionRevision: Model<'SolutionRevision'>
+
+  const {
+    changes,
+    entityId,
+    needsReview,
+    subscribeThis,
+    subscribeThisByEmail,
+  } = input
+
+  const payload = {
+    input: {
+      changes,
+      entityId,
+      needsReview,
+      subscribeThis,
+      subscribeThisByEmail,
+      fields,
+    },
+    userId: user.id,
+    revisionType: EntityRevisionType.SolutionRevision,
+  }
+
+  beforeEach(() => {
+    given('UuidQuery').for(
+      user,
+      solution,
+      solutionRevision,
+      article,
+      { ...exercise, taxonomyTermIds: [106082].map(castToUuid) },
+      { ...taxonomyTermSubject, id: castToUuid(106082) },
+      taxonomyTermRoot
+    )
+
+    given('EntityAddRevisionMutation')
+      .withPayload(payload)
+      .returns({ success: true, revisionId: castToUuid(789) })
+
+    given('EntityAddRevisionMutation')
+      .withPayload({
+        ...payload,
+        input: { ...payload.input, needsReview: false },
+      })
+      .isDefinedBy((_, res, ctx) => {
+        newSolutionRevision = {
+          ...solutionRevision,
+          id: castToUuid(789),
+        }
+        given('UuidQuery').for(newSolutionRevision, {
+          ...solution,
+          currentRevisionId: newSolutionRevision.id,
+        })
+
+        return res(
+          ctx.json({ success: true, revisionId: newSolutionRevision.id })
+        )
+      })
+  })
+
+  test('checks out revision without need of review, even if needsReview initially true', async () => {
+    await uuidQuery.shouldReturnData({
+      uuid: { currentRevision: { id: solution.currentRevisionId } },
+    })
+
+    await mutation
+      .withVariables({ input: { ...input, needsReview: true } })
+      .execute()
+
+    await uuidQuery.shouldReturnData({
+      uuid: { currentRevision: { id: newSolutionRevision.id } },
+    })
+  })
+
+  test('does not check out revision automatically if entity is also in a no-autoreview taxonomy term', async () => {
+    given('UuidQuery').for([
+      {
+        ...exercise,
+        taxonomyTermIds: [
+          ...autoreviewTaxonomyIds,
+          ...exercise.taxonomyTermIds,
+        ].map(castToUuid),
+      },
+      { ...taxonomyTermSubject, id: castToUuid(106082) },
+    ])
+
+    await uuidQuery.shouldReturnData({
+      uuid: { currentRevision: { id: solution.currentRevisionId } },
+    })
+
+    await mutation.execute()
+
+    await uuidQuery.shouldReturnData({
+      uuid: { currentRevision: { id: solution.currentRevisionId } },
     })
   })
 })
