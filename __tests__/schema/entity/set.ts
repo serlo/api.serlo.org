@@ -435,9 +435,20 @@ entitySetTypes.forEach((entitySetType) => {
         given('EntityAddRevisionMutation')
           .withPayload({
             ...entityAddRevisionPayload,
+            input: {
+              ...entityAddRevisionPayload.input,
+              subscribeThis: true,
+              subscribeThisByEmail: true,
+            },
+          })
+          .returns({ success: true, revisionId: newRevision.id })
+
+        given('EntityAddRevisionMutation')
+          .withPayload({
+            ...entityAddRevisionPayload,
             input: { ...entityAddRevisionPayload.input, needsReview: false },
           })
-          .isDefinedBy((req, res, ctx) => {
+          .isDefinedBy((_, res, ctx) => {
             given('UuidQuery').for(
               { ...entitySetType.entity, currentRevisionId: newRevision.id },
               newRevision
@@ -499,7 +510,59 @@ entitySetTypes.forEach((entitySetType) => {
         })
       })
 
+      test('updates the subscriptions', async () => {
+        const subscritionsQuery = new Client({ userId: user.id }).prepareQuery({
+          query: gql`
+            query {
+              subscription {
+                getSubscriptions {
+                  nodes {
+                    object {
+                      __typename
+                      id
+                    }
+                    sendEmail
+                  }
+                }
+              }
+            }
+          `,
+        })
 
+        await subscritionsQuery.shouldReturnData({
+          subscription: {
+            getSubscriptions: {
+              nodes: [
+                { object: getTypenameAndId(anotherEntity), sendEmail: true },
+              ],
+            },
+          },
+        })
+
+        await mutationWithEntityId
+          .withVariables({
+            input: {
+              ...inputWithEntityId,
+              subscribeThis: true,
+              subscribeThisByEmail: true,
+            },
+          })
+          .execute()
+
+        await subscritionsQuery.shouldReturnData({
+          subscription: {
+            getSubscriptions: {
+              nodes: [
+                { object: getTypenameAndId(anotherEntity), sendEmail: true },
+                {
+                  object: getTypenameAndId(entitySetType.entity),
+                  sendEmail: true,
+                },
+              ],
+            },
+          },
+        })
+      })
     })
   })
 })
