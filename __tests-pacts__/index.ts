@@ -369,7 +369,7 @@ const pactSpec: PactSpec = {
           name: 'a name ',
           description: 'a description',
         },
-        taxonomyTermTopic,
+        { ...taxonomyTermTopic, description: 'a description', childrenIds: [] },
       ],
     ],
   },
