@@ -68,7 +68,7 @@ import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
 import { castToUuid, EntityRevisionType, EntityType } from '~/model/decoder'
 import {
-  AbstractEntitySetInput,
+  SetAbstractEntityInput,
   fromEntityTypeToEntityRevisionType,
 } from '~/schema/uuid/abstract-entity/utils'
 
@@ -200,7 +200,7 @@ const entitySetTypes = [
   new EntitySetWrapper(EntityType.Video, videoFields),
 ]
 
-type InputFromApi = Omit<AbstractEntitySetInput, 'cohesive'> & {
+type InputFromApi = Omit<SetAbstractEntityInput, 'cohesive'> & {
   cohesive?: boolean
 }
 
