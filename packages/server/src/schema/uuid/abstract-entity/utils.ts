@@ -22,6 +22,7 @@
 import * as serloAuth from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
 import * as t from 'io-ts'
+import R from 'ramda'
 
 import { getTaxonomyTerm } from '../taxonomy-term/utils'
 import { autoreviewTaxonomyIds } from '~/config/autoreview-taxonomies'
@@ -331,19 +332,18 @@ async function buildAddRevisionResolver<
     inputFields as { [key: string]: string | undefined }
   )
 
-  const inputPayload = {
-    changes,
-    entityId,
-    needsReview: isAutoreviewEntity ? false : needsReview,
-    subscribeThis,
-    subscribeThisByEmail,
-    fields,
-  }
   const { success, revisionId } =
     await dataSources.model.serlo.addEntityRevision({
       revisionType,
       userId,
-      input: inputPayload,
+      input: {
+        changes,
+        entityId,
+        needsReview: isAutoreviewEntity ? false : needsReview,
+        subscribeThis,
+        subscribeThisByEmail,
+        fields,
+      },
     })
 
   return {
@@ -384,17 +384,9 @@ async function checkAnyParentAutoreview(
 function removeUndefinedFields(inputFields: {
   [key: string]: string | undefined
 }) {
-  const fields: {
+  return R.filter((value) => value != undefined, inputFields) as {
     [key: string]: string
-  } = {}
-
-  for (const [key, value] of Object.entries(inputFields)) {
-    if (value) {
-      fields[key] = value
-    }
   }
-
-  return fields
 }
 
 async function getEntity(
