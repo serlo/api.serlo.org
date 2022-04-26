@@ -40,16 +40,11 @@ import {
   Repository,
   ResolverFunction,
 } from '~/internals/graphql'
-import {
-  EntityRevisionType,
-  EntityType,
-  TaxonomyTermDecoder,
-} from '~/model/decoder'
+import { EntityType, TaxonomyTermDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { Connection } from '~/schema/connection/types'
 import { createRepositoryResolvers } from '~/schema/uuid/abstract-repository/utils'
 import { VideoRevisionsArgs } from '~/types'
-import { WithRequired } from '~/utils'
 
 export function createEntityResolvers<
   R extends Model<'AbstractEntityRevision'>
@@ -119,10 +114,6 @@ export async function handleEntitySet<
     parentDecoder,
   }: { childDecoder: t.Type<C, unknown>; parentDecoder?: t.Type<P, unknown> }
 ) {
-  const { userId, dataSources } = context
-
-  assertUserIsAuthenticated(userId)
-
   const { entityType, input, mandatoryFields } = args
 
   assertArgumentIsNotEmpty(mandatoryFields)
@@ -130,35 +121,220 @@ export async function handleEntitySet<
   const { entityId, parentId } = input
 
   if (userWantsToCreateNewEntity(entityId, parentId)) {
+    return await new EntitySetResolver({
+      auth: {
+        typeToBeCreated: 'Entity',
+        message: 'You are not allowed to create entities.',
+      },
+      input,
+      context,
+      entityType,
+      decoders: {
+        childDecoder,
+        parentDecoder,
+      },
+    }).execute()
+  }
+
+  return await new EntitySetResolver({
+    auth: {
+      typeToBeCreated: 'EntityRevision',
+      message: 'You are not allowed to add revision to this entity',
+    },
+    context,
+    input,
+    entityType,
+    decoders: {
+      childDecoder,
+      parentDecoder,
+    },
+  }).execute()
+}
+
+class EntitySetResolver<
+  C extends Model<'AbstractEntity'> & {
+    taxonomyTermIds?: number[]
+    parentId?: number
+  },
+  P extends Model<'AbstractEntity'> & {
+    taxonomyTermIds?: number[]
+    parentId?: number
+  }
+> {
+  auth: {
+    typeToBeCreated: 'Entity' | 'EntityRevision'
+    message: string
+  }
+  input: SetAbstractEntityInput
+  context: Context
+  entityType: EntityType
+  decoders: {
+    childDecoder: t.Type<C, unknown>
+    parentDecoder?: t.Type<P, unknown>
+  }
+
+  constructor({
+    auth,
+    input,
+    context,
+    entityType,
+    decoders,
+  }: {
+    auth: {
+      typeToBeCreated: 'Entity' | 'EntityRevision'
+      message: string
+    }
+    input: SetAbstractEntityInput
+    context: Context
+    entityType: EntityType
+    decoders: {
+      childDecoder: t.Type<C, unknown>
+      parentDecoder?: t.Type<P, unknown>
+    }
+  }) {
+    this.auth = auth
+    this.context = context
+    this.entityType = entityType
+    this.input = input
+    this.decoders = decoders
+  }
+
+  async execute() {
+    const {
+      changes,
+      needsReview,
+      subscribeThis,
+      subscribeThisByEmail,
+      parentId,
+      entityId,
+      ...inputFields
+    } = this.input
+
+    const { dataSources, userId } = this.context
+
+    assertUserIsAuthenticated(userId)
+
+    const scope = entityId
+      ? await fetchScopeOfUuid({
+          id: entityId,
+          dataSources,
+        })
+      : await fetchScopeOfUuid({
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          id: parentId!,
+          dataSources,
+        })
+
+    await assertUserIsAuthorized({
+      userId,
+      dataSources,
+      message: this.auth.message,
+      guard: serloAuth.Uuid.create(this.auth.typeToBeCreated)(scope),
+    })
+
+    const fields = removeUndefinedFields(
+      inputFields as { [key: string]: string | undefined }
+    )
+
+    if (entityId) {
+      const { childDecoder, parentDecoder } = this.decoders
+      let isAutoreviewEntity = false
+
+      const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: entityId,
+        decoder: childDecoder,
+      })
+
+      if (entity.taxonomyTermIds) {
+        isAutoreviewEntity = await verifyAutoreviewEntity(
+          entity.taxonomyTermIds,
+          dataSources
+        )
+      }
+
+      if (entity.parentId && parentDecoder) {
+        const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
+          id: entity.parentId,
+          decoder: parentDecoder,
+        })
+
+        if (parent.taxonomyTermIds) {
+          isAutoreviewEntity = await verifyAutoreviewEntity(
+            parent.taxonomyTermIds,
+            dataSources
+          )
+        }
+      }
+
+      if (!isAutoreviewEntity && !needsReview) {
+        await assertUserIsAuthorized({
+          userId,
+          dataSources,
+          message: 'You are not allowed to skip the reviewing process.',
+          guard: serloAuth.Entity.checkoutRevision(scope),
+        })
+      }
+
+      const { success, revisionId } =
+        await dataSources.model.serlo.addEntityRevision({
+          revisionType: fromEntityTypeToEntityRevisionType(this.entityType),
+          userId,
+          input: {
+            changes,
+            entityId,
+            needsReview: isAutoreviewEntity ? false : needsReview,
+            subscribeThis,
+            subscribeThisByEmail,
+            fields,
+          },
+        })
+
+      return {
+        revisionId,
+        success,
+        query: {},
+      }
+    }
+
+    const entity = await dataSources.model.serlo.createEntity({
+      entityType: this.entityType,
+      userId,
+      input: {
+        changes,
+        licenseId: 1,
+        needsReview,
+        subscribeThis,
+        subscribeThisByEmail,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        ...(await this.prepareCreateArgs(parentId!)),
+        fields,
+      },
+    })
+    return {
+      record: entity,
+      success: entity != null,
+      query: {},
+    }
+  }
+
+  async prepareCreateArgs(parentId: number) {
+    const { dataSources } = this.context
+
     const parentTypename = (
       await dataSources.model.serlo.getUuid({ id: parentId })
     )?.__typename
 
-    const newInput = {
-      ...input,
-      taxonomyTermId: parentTypename === 'TaxonomyTerm' ? parentId : undefined,
-      parentId: parentTypename === 'TaxonomyTerm' ? undefined : parentId,
+    if (parentTypename === 'TaxonomyTerm') {
+      return {
+        taxonomyTermId: parentId,
+        instance: (await getTaxonomyTerm(parentId, dataSources)).instance,
+      }
     }
-    return await buildCreateEntityResolver(
-      {
-        entityType,
-        input: newInput,
-      },
-      { userId, dataSources }
-    )
-  } else {
-    return await buildAddRevisionResolver(
-      {
-        revisionType: fromEntityTypeToEntityRevisionType(entityType),
-        input: {
-          ...input,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          entityId: entityId!,
-        },
-      },
-      { userId, dataSources },
-      { childDecoder, parentDecoder }
-    )
+
+    return {
+      parentId,
+      instance: (await getEntity(parentId, dataSources)).instance,
+    }
   }
 }
 
@@ -173,186 +349,6 @@ function userWantsToCreateNewEntity(
     return false
   }
   return true
-}
-
-async function buildCreateEntityResolver(
-  {
-    entityType,
-    input,
-  }: {
-    entityType: EntityType
-    input: Omit<SetAbstractEntityInput, 'entityId'> & {
-      taxonomyTermId?: number
-    }
-  },
-  {
-    dataSources,
-    userId,
-  }: { dataSources: Context['dataSources']; userId: number }
-) {
-  const {
-    changes,
-    needsReview,
-    subscribeThis,
-    subscribeThisByEmail,
-    parentId,
-    taxonomyTermId,
-    ...inputFields
-  } = input
-
-  let parent: Model<'AbstractEntity' | 'TaxonomyTerm'>
-
-  if (taxonomyTermId) {
-    parent = await getTaxonomyTerm(taxonomyTermId, dataSources)
-  } else if (parentId) {
-    parent = await getEntity(parentId, dataSources)
-  } else {
-    throw new Error('parentId or taxonomyTermId has to be provided')
-  }
-
-  await assertUserIsAuthorized({
-    userId,
-    dataSources,
-    message: 'You are not allowed to add revision to this entity.',
-    guard: serloAuth.Uuid.create('Entity')(
-      serloAuth.instanceToScope(parent.instance)
-    ),
-  })
-
-  const fields = removeUndefinedFields(
-    inputFields as { [key: string]: string | undefined }
-  )
-
-  const entity = await dataSources.model.serlo.createEntity({
-    entityType,
-    userId,
-    input: {
-      changes,
-      instance: parent.instance,
-      licenseId: 1,
-      needsReview,
-      parentId,
-      subscribeThis,
-      subscribeThisByEmail,
-      taxonomyTermId,
-      fields,
-    },
-  })
-
-  return {
-    record: entity,
-    success: entity != null,
-    query: {},
-  }
-}
-
-async function buildAddRevisionResolver<
-  C extends Model<'AbstractEntity'> & {
-    taxonomyTermIds?: number[]
-    parentId?: number
-  },
-  P extends Model<'AbstractEntity'> & {
-    taxonomyTermIds?: number[]
-    parentId?: number
-  }
->(
-  {
-    input,
-    revisionType,
-  }: {
-    revisionType: EntityRevisionType
-    input: WithRequired<Omit<SetAbstractEntityInput, 'parentId'>, 'entityId'>
-  },
-  {
-    dataSources,
-    userId,
-  }: { dataSources: Context['dataSources']; userId: number },
-  {
-    childDecoder,
-    parentDecoder,
-  }: { childDecoder: t.Type<C, unknown>; parentDecoder?: t.Type<P, unknown> }
-) {
-  const {
-    entityId,
-    changes,
-    needsReview,
-    subscribeThis,
-    subscribeThisByEmail,
-    ...inputFields
-  } = input
-
-  const scope = await fetchScopeOfUuid({
-    id: entityId,
-    dataSources,
-  })
-
-  await assertUserIsAuthorized({
-    userId,
-    dataSources,
-    message: 'You are not allowed to add revision to this entity.',
-    guard: serloAuth.Uuid.create('EntityRevision')(scope),
-  })
-
-  let isAutoreviewEntity = false
-
-  const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
-    id: entityId,
-    decoder: childDecoder,
-  })
-
-  if (entity.taxonomyTermIds) {
-    isAutoreviewEntity = await verifyAutoreviewEntity(
-      entity.taxonomyTermIds,
-      dataSources
-    )
-  }
-
-  if (entity.parentId && parentDecoder) {
-    const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
-      id: entity.parentId,
-      decoder: parentDecoder,
-    })
-
-    if (parent.taxonomyTermIds) {
-      isAutoreviewEntity = await verifyAutoreviewEntity(
-        parent.taxonomyTermIds,
-        dataSources
-      )
-    }
-  }
-
-  if (!isAutoreviewEntity && !needsReview) {
-    await assertUserIsAuthorized({
-      userId,
-      dataSources,
-      message: 'You are not allowed to skip the reviewing process.',
-      guard: serloAuth.Entity.checkoutRevision(scope),
-    })
-  }
-
-  const fields = removeUndefinedFields(
-    inputFields as { [key: string]: string | undefined }
-  )
-
-  const { success, revisionId } =
-    await dataSources.model.serlo.addEntityRevision({
-      revisionType,
-      userId,
-      input: {
-        changes,
-        entityId,
-        needsReview: isAutoreviewEntity ? false : needsReview,
-        subscribeThis,
-        subscribeThisByEmail,
-        fields,
-      },
-    })
-
-  return {
-    revisionId,
-    success,
-    query: {},
-  }
 }
 
 export async function verifyAutoreviewEntity(
