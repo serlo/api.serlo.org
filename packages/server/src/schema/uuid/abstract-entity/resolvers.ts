@@ -21,7 +21,7 @@
  */
 import * as serloAuth from '@serlo/authorization'
 
-import { buildSetEntityResolver } from './utils'
+import { handleEntitySet } from './entity-set-handler'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
@@ -65,7 +65,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     async setApplet(_parent, { input }, context) {
       const { changes, content, title, url } = input
 
-      return await buildSetEntityResolver(
+      return await handleEntitySet(
         {
           entityType: EntityType.Applet,
           input,
@@ -83,7 +83,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     async setArticle(_parent, { input }, context) {
       const { changes, content, title } = input
 
-      return await buildSetEntityResolver(
+      return await handleEntitySet(
         {
           entityType: EntityType.Article,
           input,
@@ -107,7 +107,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         content: undefined,
       }
 
-      return await buildSetEntityResolver(
+      return await handleEntitySet(
         {
           entityType: EntityType.Course,
           input: transformedInput,
@@ -120,7 +120,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     async setCoursePage(_parent, { input }, context) {
       const { changes, content, title } = input
 
-      return await buildSetEntityResolver(
+      return await handleEntitySet(
         {
           entityType: EntityType.CoursePage,
           input,
@@ -133,7 +133,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     async setEvent(_parent, { input }, context) {
       const { changes, content, title } = input
 
-      return await buildSetEntityResolver(
+      return await handleEntitySet(
         {
           entityType: EntityType.Event,
           input,
@@ -146,7 +146,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     async setExercise(_parent, { input }, context) {
       const { changes, content } = input
 
-      return await buildSetEntityResolver(
+      return await handleEntitySet(
         {
           entityType: EntityType.Exercise,
           input,
@@ -165,7 +165,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         cohesive: 'true' | 'false'
       } = { ...input, cohesive }
 
-      return await buildSetEntityResolver(
+      return await handleEntitySet(
         {
           entityType: EntityType.ExerciseGroup,
 
@@ -179,7 +179,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     async setGroupedExercise(_parent, { input }, context) {
       const { changes, content } = input
 
-      return await buildSetEntityResolver(
+      return await handleEntitySet(
         {
           entityType: EntityType.GroupedExercise,
           input,
@@ -195,7 +195,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     async setSolution(_parent, { input }, context) {
       const { changes, content } = input
 
-      return await buildSetEntityResolver(
+      return await handleEntitySet(
         {
           entityType: EntityType.Solution,
           input,
@@ -215,7 +215,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         url: undefined,
       }
 
-      return await buildSetEntityResolver(
+      return await handleEntitySet(
         {
           entityType: EntityType.Video,
           input: transformedInput,
