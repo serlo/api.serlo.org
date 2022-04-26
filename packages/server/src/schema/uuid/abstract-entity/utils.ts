@@ -46,6 +46,7 @@ import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { Connection } from '~/schema/connection/types'
 import { createRepositoryResolvers } from '~/schema/uuid/abstract-repository/utils'
 import { VideoRevisionsArgs } from '~/types'
+import { WithRequired } from '~/utils'
 
 export function createEntityResolvers<
   R extends Model<'AbstractEntityRevision'>
@@ -76,7 +77,7 @@ export function createEntityResolvers<
   }
 }
 
-export interface AbstractEntitySetInput {
+export interface SetAbstractEntityInput {
   changes: string
   subscribeThis: boolean
   subscribeThisByEmail: boolean
@@ -94,7 +95,7 @@ export interface AbstractEntitySetInput {
 
 interface setEntityMutationArgs {
   entityType: EntityType
-  input: AbstractEntitySetInput
+  input: SetAbstractEntityInput
   mandatoryFields: { [key: string]: string | boolean }
 }
 
@@ -116,6 +117,7 @@ export async function buildSetEntityResolver<
   }: { childDecoder: t.Type<C, unknown>; parentDecoder?: t.Type<P, unknown> }
 ) {
   const { userId, dataSources } = context
+
   assertUserIsAuthenticated(userId)
 
   const { entityType, input, mandatoryFields } = args
@@ -138,7 +140,6 @@ export async function buildSetEntityResolver<
       {
         entityType,
         input: newInput,
-        mandatoryFields,
       },
       { userId, dataSources }
     )
@@ -151,7 +152,6 @@ export async function buildSetEntityResolver<
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           entityId: entityId!,
         },
-        mandatoryFields,
       },
       { userId, dataSources },
       { childDecoder, parentDecoder }
@@ -160,10 +160,10 @@ export async function buildSetEntityResolver<
 }
 
 function userWantsToCreateNewEntity(
-  entityId?: number | undefined,
+  entityId?: number,
   parentId?: number
 ): parentId is number {
-  if (!entityId && !parentId)
+  if ((!entityId && !parentId) || (entityId && parentId))
     throw new UserInputError('Either entityId or parentId has to be provided')
 
   if (entityId) {
@@ -172,36 +172,21 @@ function userWantsToCreateNewEntity(
   return true
 }
 
-interface AbstractEntityCreateInput {
-  changes: string
-  subscribeThis: boolean
-  subscribeThisByEmail: boolean
-  needsReview: boolean
-  parentId?: number
-  taxonomyTermId?: number
-  cohesive?: 'true' | 'false'
-  content?: string
-  description?: string
-  metaDescription?: string
-  metaTitle?: string
-  title?: string
-  url?: string
-}
-interface createEntityMutationArgs {
-  entityType: EntityType
-  input: AbstractEntityCreateInput
-  mandatoryFields: { [key: string]: string | boolean }
-}
-
-export async function buildCreateEntityResolver(
-  args: createEntityMutationArgs,
+async function buildCreateEntityResolver(
+  {
+    entityType,
+    input,
+  }: {
+    entityType: EntityType
+    input: Omit<SetAbstractEntityInput, 'entityId'> & {
+      taxonomyTermId?: number
+    }
+  },
   {
     dataSources,
     userId,
   }: { dataSources: Context['dataSources']; userId: number }
 ) {
-  const { entityType, input } = args
-
   const {
     changes,
     needsReview,
@@ -258,28 +243,7 @@ export async function buildCreateEntityResolver(
   }
 }
 
-interface AbstractEntityAddRevisionInput {
-  changes: string
-  entityId: number
-  needsReview: boolean
-  subscribeThis: boolean
-  subscribeThisByEmail: boolean
-  cohesive?: 'true' | 'false'
-  content?: string
-  description?: string
-  metaDescription?: string
-  metaTitle?: string
-  title?: string
-  url?: string
-}
-
-interface addEntityRevisionMutationArgs {
-  revisionType: EntityRevisionType
-  input: AbstractEntityAddRevisionInput
-  mandatoryFields: { [key: string]: string | boolean }
-}
-
-export async function buildAddRevisionResolver<
+async function buildAddRevisionResolver<
   C extends Model<'AbstractEntity'> & {
     taxonomyTermIds?: number[]
     parentId?: number
@@ -289,7 +253,13 @@ export async function buildAddRevisionResolver<
     parentId?: number
   }
 >(
-  args: addEntityRevisionMutationArgs,
+  {
+    input,
+    revisionType,
+  }: {
+    revisionType: EntityRevisionType
+    input: WithRequired<Omit<SetAbstractEntityInput, 'parentId'>, 'entityId'>
+  },
   {
     dataSources,
     userId,
@@ -299,8 +269,6 @@ export async function buildAddRevisionResolver<
     parentDecoder,
   }: { childDecoder: t.Type<C, unknown>; parentDecoder?: t.Type<P, unknown> }
 ) {
-  const { input, revisionType } = args
-
   const {
     entityId,
     changes,

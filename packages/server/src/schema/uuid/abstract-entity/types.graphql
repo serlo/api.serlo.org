@@ -72,7 +72,6 @@ type EntityMutation {
 }
 
 input SetAppletInput {
-  # extends a virtual SetAbstractEntityInput
   changes: String!
   subscribeThis: Boolean!
   subscribeThisByEmail: Boolean!
@@ -88,7 +87,6 @@ input SetAppletInput {
 }
 
 input SetArticleInput {
-  # extends a virtual SetAbstractEntityInput
   changes: String!
   subscribeThis: Boolean!
   subscribeThisByEmail: Boolean!
@@ -103,7 +101,6 @@ input SetArticleInput {
 }
 
 input SetCourseInput {
-  # extends a virtual SetAbstractEntityInput
   changes: String!
   subscribeThis: Boolean!
   subscribeThisByEmail: Boolean!
@@ -117,7 +114,6 @@ input SetCourseInput {
 }
 
 input SetCoursePageInput {
-  # extends a virtual SetAbstractEntityInput
   changes: String!
   subscribeThis: Boolean!
   subscribeThisByEmail: Boolean!
@@ -130,7 +126,6 @@ input SetCoursePageInput {
 }
 
 input SetEventInput {
-  # extends a virtual SetAbstractEntityInput
   changes: String!
   subscribeThis: Boolean!
   subscribeThisByEmail: Boolean!
@@ -145,7 +140,6 @@ input SetEventInput {
 }
 
 input SetExerciseGroupInput {
-  # extends a virtual SetAbstractEntityInput
   changes: String!
   subscribeThis: Boolean!
   subscribeThisByEmail: Boolean!
@@ -158,7 +152,6 @@ input SetExerciseGroupInput {
 }
 
 input SetGenericEntityInput {
-  # extends a virtual SetAbstractEntityInput
   changes: String!
   subscribeThis: Boolean!
   subscribeThisByEmail: Boolean!
@@ -170,7 +163,6 @@ input SetGenericEntityInput {
 }
 
 input SetVideoInput {
-  # extends a virtual SetAbstractEntityInput
   changes: String!
   subscribeThis: Boolean!
   subscribeThisByEmail: Boolean!
