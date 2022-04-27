@@ -1218,6 +1218,11 @@ async function exec(): Promise<void> {
         fixed: ['Support autoreview in sandbox in add revisions #538'],
         internal: ['Refactor requests to DB layer #569'],
       },
+      {
+        tagName: 'v0.31.0',
+        date: '2022-04-27',
+        changed: ['Merge entity.create & entity.addRevision = entity.set #594'],
+      },
     ],
   })
 
