@@ -57,48 +57,27 @@ extend type Mutation {
 }
 
 type EntityMutation {
-  createApplet(input: CreateAppletInput!): CreateEntityResponse!
-  createArticle(input: CreateArticleInput!): CreateEntityResponse!
-  createCourse(input: CreateCourseInput!): CreateEntityResponse!
-  createCoursePage(input: CreateCoursePageInput!): CreateEntityResponse!
-  createEvent(input: CreateEventInput!): CreateEntityResponse!
-  createExercise(input: CreateExerciseInput!): CreateEntityResponse!
-  createExerciseGroup(input: CreateExerciseGroupInput!): CreateEntityResponse!
-  createGroupedExercise(
-    input: CreateGroupedExerciseInput!
-  ): CreateEntityResponse!
-  createSolution(input: CreateSolutionInput!): CreateEntityResponse!
-  createVideo(input: CreateVideoInput!): CreateEntityResponse!
-  addAppletRevision(input: AddAppletRevisionInput!): AddRevisionResponse!
-  addArticleRevision(input: AddArticleRevisionInput!): AddRevisionResponse!
-  addCourseRevision(input: AddCourseRevisionInput!): AddRevisionResponse!
-  addCoursePageRevision(
-    input: AddCoursePageRevisionInput!
-  ): AddRevisionResponse!
-  addEventRevision(input: AddEventRevisionInput!): AddRevisionResponse!
-  addExerciseRevision(input: AddGenericRevisionInput!): AddRevisionResponse!
-  addExerciseGroupRevision(
-    input: AddExerciseGroupRevisionInput!
-  ): AddRevisionResponse!
-  addGroupedExerciseRevision(
-    input: AddGenericRevisionInput!
-  ): AddRevisionResponse!
-  addSolutionRevision(input: AddGenericRevisionInput!): AddRevisionResponse!
-  addVideoRevision(input: AddVideoRevisionInput!): AddRevisionResponse!
+  setApplet(input: SetAppletInput!): SetEntityResponse!
+  setArticle(input: SetArticleInput!): SetEntityResponse!
+  setCourse(input: SetCourseInput!): SetEntityResponse!
+  setCoursePage(input: SetCoursePageInput!): SetEntityResponse!
+  setEvent(input: SetEventInput!): SetEntityResponse!
+  setExercise(input: SetGenericEntityInput!): SetEntityResponse!
+  setExerciseGroup(input: SetExerciseGroupInput!): SetEntityResponse!
+  setGroupedExercise(input: SetGenericEntityInput!): SetEntityResponse!
+  setSolution(input: SetGenericEntityInput!): SetEntityResponse!
+  setVideo(input: SetVideoInput!): SetEntityResponse!
   checkoutRevision(input: CheckoutRevisionInput!): CheckoutRevisionResponse!
   rejectRevision(input: RejectRevisionInput!): RejectRevisionResponse!
 }
 
-input CreateAppletInput {
-  # extends a virtual CreateAbstractEntityInput
+input SetAppletInput {
   changes: String!
   subscribeThis: Boolean!
   subscribeThisByEmail: Boolean!
-  instance: Instance!
-  licenseId: Int!
   needsReview: Boolean!
-
-  taxonomyTermId: Int!
+  entityId: Int
+  parentId: Int
 
   content: String!
   title: String!
@@ -107,16 +86,13 @@ input CreateAppletInput {
   metaTitle: String
 }
 
-input CreateArticleInput {
-  # extends a virtual CreateAbstractEntityInput
+input SetArticleInput {
   changes: String!
   subscribeThis: Boolean!
   subscribeThisByEmail: Boolean!
-  instance: Instance!
-  licenseId: Int!
   needsReview: Boolean!
-
-  taxonomyTermId: Int!
+  entityId: Int
+  parentId: Int
 
   content: String!
   title: String!
@@ -124,47 +100,38 @@ input CreateArticleInput {
   metaTitle: String
 }
 
-input CreateCourseInput {
-  # extends a virtual CreateAbstractEntityInput
+input SetCourseInput {
   changes: String!
   subscribeThis: Boolean!
   subscribeThisByEmail: Boolean!
-  instance: Instance!
-  licenseId: Int!
   needsReview: Boolean!
-
-  taxonomyTermId: Int!
+  entityId: Int
+  parentId: Int
 
   title: String!
   content: String
   metaDescription: String
 }
 
-input CreateCoursePageInput {
-  # extends a virtual CreateAbstractEntityInput
+input SetCoursePageInput {
   changes: String!
   subscribeThis: Boolean!
   subscribeThisByEmail: Boolean!
-  instance: Instance!
-  licenseId: Int!
   needsReview: Boolean!
-
-  parentId: Int!
+  entityId: Int
+  parentId: Int
 
   content: String!
   title: String!
 }
 
-input CreateEventInput {
-  # extends a virtual CreateAbstractEntityInput
+input SetEventInput {
   changes: String!
   subscribeThis: Boolean!
   subscribeThisByEmail: Boolean!
-  instance: Instance!
-  licenseId: Int!
   needsReview: Boolean!
-
-  taxonomyTermId: Int!
+  entityId: Int
+  parentId: Int
 
   content: String!
   title: String!
@@ -172,198 +139,51 @@ input CreateEventInput {
   metaTitle: String
 }
 
-input CreateExerciseInput {
-  # extends a virtual CreateAbstractEntityInput
+input SetExerciseGroupInput {
   changes: String!
   subscribeThis: Boolean!
   subscribeThisByEmail: Boolean!
-  instance: Instance!
-  licenseId: Int!
   needsReview: Boolean!
-
-  taxonomyTermId: Int!
-
-  content: String!
-}
-
-input CreateExerciseGroupInput {
-  # extends a virtual CreateAbstractEntityInput
-  changes: String!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-  instance: Instance!
-  licenseId: Int!
-  needsReview: Boolean!
-
-  taxonomyTermId: Int!
+  entityId: Int
+  parentId: Int
 
   cohesive: Boolean!
   content: String!
 }
 
-input CreateGroupedExerciseInput {
-  # extends a virtual CreateAbstractEntityInput
+input SetGenericEntityInput {
   changes: String!
   subscribeThis: Boolean!
   subscribeThisByEmail: Boolean!
-  instance: Instance!
-  licenseId: Int!
   needsReview: Boolean!
-
-  parentId: Int!
+  entityId: Int
+  parentId: Int
 
   content: String!
 }
 
-input CreateSolutionInput {
-  # extends a virtual CreateAbstractEntityInput
+input SetVideoInput {
   changes: String!
   subscribeThis: Boolean!
   subscribeThisByEmail: Boolean!
-  instance: Instance!
-  licenseId: Int!
   needsReview: Boolean!
-
-  parentId: Int!
-
-  content: String!
-}
-
-input CreateVideoInput {
-  # extends a virtual CreateAbstractEntityInput
-  changes: String!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-  instance: Instance!
-  licenseId: Int!
-  needsReview: Boolean!
-
-  taxonomyTermId: Int!
+  entityId: Int
+  parentId: Int
 
   content: String!
   title: String!
   url: String!
 }
 
-type CreateEntityResponse {
+type SetEntityResponse {
   record: AbstractEntity
   success: Boolean!
   query: Query!
 }
 
-input AddAppletRevisionInput {
-  # extends a virtual AddAbstractRevisionInput
-  changes: String!
-  entityId: Int!
-  needsReview: Boolean!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-
-  content: String!
-  title: String!
-  url: String!
-  metaDescription: String
-  metaTitle: String
-}
-
-input AddArticleRevisionInput {
-  # extends a virtual AddAbstractRevisionInput
-  changes: String!
-  entityId: Int!
-  needsReview: Boolean!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-
-  content: String!
-  title: String!
-  metaDescription: String
-  metaTitle: String
-}
-
-input AddCourseRevisionInput {
-  # extends a virtual AddAbstractRevisionInput
-  changes: String!
-  entityId: Int!
-  needsReview: Boolean!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-
-  title: String!
-  content: String
-  metaDescription: String
-}
-
-input AddCoursePageRevisionInput {
-  # extends a virtual AddAbstractRevisionInput
-  changes: String!
-  entityId: Int!
-  needsReview: Boolean!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-
-  content: String!
-  title: String!
-}
-
-input AddEventRevisionInput {
-  # extends a virtual AddAbstractRevisionInput
-  changes: String!
-  entityId: Int!
-  needsReview: Boolean!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-
-  content: String!
-  title: String!
-  metaDescription: String
-  metaTitle: String
-}
-
-input AddExerciseGroupRevisionInput {
-  # extends a virtual AddAbstractRevisionInput
-  changes: String!
-  entityId: Int!
-  needsReview: Boolean!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-
-  cohesive: Boolean!
-  content: String!
-}
-
-input AddGenericRevisionInput {
-  # extends a virtual AddAbstractRevisionInput
-  changes: String!
-  entityId: Int!
-  needsReview: Boolean!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-
-  content: String!
-}
-
-input AddVideoRevisionInput {
-  # extends a virtual AddAbstractRevisionInput
-  changes: String!
-  entityId: Int!
-  needsReview: Boolean!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-
-  content: String!
-  title: String!
-  url: String!
-}
-
 input CheckoutRevisionInput {
   revisionId: Int!
   reason: String!
-}
-
-type AddRevisionResponse {
-  success: Boolean!
-  query: Query!
-  revisionId: Int
 }
 
 type CheckoutRevisionResponse {
