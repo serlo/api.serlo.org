@@ -2222,6 +2222,7 @@ export type TaxonomyTermMutation = {
   create: TaxonomyTermCreateResponse;
   move: TaxonomyTermMoveResponse;
   setNameAndDescription: TaxonomyTermSetNameAndDescriptionResponse;
+  sort: TaxonomyTermSortResponse;
 };
 
 
@@ -2239,6 +2240,11 @@ export type TaxonomyTermMutationSetNameAndDescriptionArgs = {
   input: TaxonomyTermSetNameAndDescriptionInput;
 };
 
+
+export type TaxonomyTermMutationSortArgs = {
+  input: TaxonomyTermSortInput;
+};
+
 export type TaxonomyTermSetNameAndDescriptionInput = {
   description?: InputMaybe<Scalars['String']>;
   id: Scalars['Int'];
@@ -2247,6 +2253,17 @@ export type TaxonomyTermSetNameAndDescriptionInput = {
 
 export type TaxonomyTermSetNameAndDescriptionResponse = {
   __typename?: 'TaxonomyTermSetNameAndDescriptionResponse';
+  query: Query;
+  success: Scalars['Boolean'];
+};
+
+export type TaxonomyTermSortInput = {
+  childrenIds: Array<Scalars['Int']>;
+  taxonomyTermId: Scalars['Int'];
+};
+
+export type TaxonomyTermSortResponse = {
+  __typename?: 'TaxonomyTermSortResponse';
   query: Query;
   success: Scalars['Boolean'];
 };

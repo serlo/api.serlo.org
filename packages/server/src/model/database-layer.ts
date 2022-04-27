@@ -312,6 +312,15 @@ export const spec = {
     response: t.type({ success: t.boolean }),
     canBeNull: false,
   },
+  TaxonomyTermSortMutation: {
+    payload: t.type({
+      childrenIds: t.array(t.number),
+      taxonomyTermId: t.number,
+      userId: t.number,
+    }),
+    response: t.type({ success: t.boolean }),
+    canBeNull: false,
+  },
   TaxonomyTermSetNameAndDescriptionMutation: {
     payload: t.type({
       name: t.string,

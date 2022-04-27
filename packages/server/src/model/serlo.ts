@@ -948,6 +948,25 @@ export function createSerloModel({
     },
   })
 
+  const sortTaxonomyTerm = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('TaxonomyTermSortMutation'),
+    mutate: (payload: DatabaseLayer.Payload<'TaxonomyTermSortMutation'>) => {
+      return DatabaseLayer.makeRequest('TaxonomyTermSortMutation', payload)
+    },
+
+    // async updateCache({ childrenIds, destination }) {
+    //   // the cached children still have their old parent id
+    //   const children = await Promise.all(
+    //     childrenIds.map((childId) =>
+    //       getUuidWithCustomDecoder({
+    //         id: childId,
+    //         decoder: TaxonomyTermDecoder,
+    //       })
+    //     )
+    //   )
+    // },
+  })
+
   const setTaxonomyTermNameAndDescription = createMutation({
     decoder: DatabaseLayer.getDecoderFor(
       'TaxonomyTermSetNameAndDescriptionMutation'
@@ -1016,6 +1035,7 @@ export function createSerloModel({
     setSubscription,
     setTaxonomyTermNameAndDescription,
     moveTaxonomyTerm,
+    sortTaxonomyTerm,
     setUuidState,
   }
 }
