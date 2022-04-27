@@ -36,44 +36,9 @@ import {
   assertUserIsAuthorized,
   Context,
   Model,
-  PickResolvers,
-  Repository,
-  ResolverFunction,
 } from '~/internals/graphql'
 import { EntityType, TaxonomyTermDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
-import { Connection } from '~/schema/connection/types'
-import { createRepositoryResolvers } from '~/schema/uuid/abstract-repository/utils'
-import { VideoRevisionsArgs } from '~/types'
-
-export function createEntityResolvers<
-  R extends Model<'AbstractEntityRevision'>
->({
-  revisionDecoder,
-}: {
-  revisionDecoder: t.Type<R, unknown>
-}): PickResolvers<
-  'AbstractEntity',
-  'alias' | 'threads' | 'license' | 'events' | 'subject'
-> &
-  // TODO: Add threads to "AbstractEntity"
-  PickResolvers<'AbstractRepository', 'threads'> & {
-    currentRevision: ResolverFunction<R | null, Repository<R['__typename']>>
-    revisions: ResolverFunction<
-      Connection<R>,
-      Repository<R['__typename']>,
-      VideoRevisionsArgs
-    >
-  } {
-  return {
-    ...createRepositoryResolvers({ revisionDecoder }),
-    subject(entity) {
-      return entity.canonicalSubjectId
-        ? { taxonomyTermId: entity.canonicalSubjectId }
-        : null
-    },
-  }
-}
 
 export interface SetAbstractEntityInput {
   changes: string
@@ -91,7 +56,7 @@ export interface SetAbstractEntityInput {
   url?: string
 }
 
-interface setEntityMutationArgs {
+interface SetEntityMutationArgs {
   entityType: EntityType
   input: SetAbstractEntityInput
   mandatoryFields: { [key: string]: string | boolean }
@@ -107,7 +72,7 @@ export async function handleEntitySet<
     parentId?: number
   }
 >(
-  args: setEntityMutationArgs,
+  args: SetEntityMutationArgs,
   context: Context,
   {
     childDecoder,
@@ -345,10 +310,7 @@ function userWantsToCreateNewEntity(
   if ((!entityId && !parentId) || (entityId && parentId))
     throw new UserInputError('Either entityId or parentId has to be provided')
 
-  if (entityId) {
-    return false
-  }
-  return true
+  return entityId == null
 }
 
 export async function verifyAutoreviewEntity(
