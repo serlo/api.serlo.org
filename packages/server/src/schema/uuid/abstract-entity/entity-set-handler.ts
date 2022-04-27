@@ -52,12 +52,6 @@ export interface SetAbstractEntityInput {
   url?: string
 }
 
-interface SetEntityMutationArgs {
-  entityType: EntityType
-  input: SetAbstractEntityInput
-  mandatoryFields: { [key: string]: string | boolean }
-}
-
 export async function handleEntitySet<
   C extends Model<'AbstractEntity'> & {
     taxonomyTermIds?: number[]
@@ -68,7 +62,11 @@ export async function handleEntitySet<
     parentId?: number
   }
 >(
-  args: SetEntityMutationArgs,
+  args: {
+    entityType: EntityType
+    input: SetAbstractEntityInput
+    mandatoryFields: { [key: string]: string | boolean }
+  },
   context: Context,
   {
     childDecoder,
