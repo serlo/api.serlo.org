@@ -73,26 +73,6 @@ export function removeUndefinedFields(inputFields: {
   }
 }
 
-export async function getEntity(
-  entityId: number,
-  dataSources: Context['dataSources']
-) {
-  try {
-    return await dataSources.model.serlo.getUuidWithCustomDecoder({
-      id: entityId,
-      decoder: EntityDecoder,
-    })
-  } catch (error) {
-    if (error instanceof InvalidCurrentValueError) {
-      throw new UserInputError(
-        `No entity found for the provided id ${entityId}`
-      )
-    } else {
-      throw error
-    }
-  }
-}
-
 export function fromEntityTypeToEntityRevisionType(
   entityType: EntityType
 ): EntityRevisionType {

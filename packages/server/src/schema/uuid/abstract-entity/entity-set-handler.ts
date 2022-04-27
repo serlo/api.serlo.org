@@ -23,9 +23,7 @@ import * as serloAuth from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
 import * as t from 'io-ts'
 
-import { getTaxonomyTerm } from '../taxonomy-term/utils'
 import {
-  getEntity,
   fromEntityTypeToEntityRevisionType,
   removeUndefinedFields,
 } from './utils'
@@ -37,7 +35,7 @@ import {
   Context,
   Model,
 } from '~/internals/graphql'
-import { EntityType, TaxonomyTermDecoder } from '~/model/decoder'
+import { EntityDecoder, EntityType, TaxonomyTermDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 
 export interface SetAbstractEntityInput {
@@ -285,20 +283,22 @@ class EntitySetResolver<
   async prepareCreateArgs(parentId: number) {
     const { dataSources } = this.context
 
-    const parentTypename = (
-      await dataSources.model.serlo.getUuid({ id: parentId })
-    )?.__typename
+    const parent = await dataSources.model.serlo.getUuid({ id: parentId })
 
-    if (parentTypename === 'TaxonomyTerm') {
+    if (TaxonomyTermDecoder.is(parent)) {
       return {
         taxonomyTermId: parentId,
-        instance: (await getTaxonomyTerm(parentId, dataSources)).instance,
+        instance: parent.instance,
       }
-    }
-
-    return {
-      parentId,
-      instance: (await getEntity(parentId, dataSources)).instance,
+    } else if (EntityDecoder.is(parent)) {
+      return {
+        parentId,
+        instance: parent.instance,
+      }
+    } else {
+      throw new UserInputError(
+        `No entity or taxonomy term found for the provided id ${parentId}`
+      )
     }
   }
 }
