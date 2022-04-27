@@ -24,5 +24,3 @@ export type AsyncOrSync<T> = Promise<T> | T
 export function isDefined<A>(value?: A | null): value is A {
   return value !== null && value !== undefined
 }
-
-export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
