@@ -19,19 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { UserInputError } from 'apollo-server'
 import * as t from 'io-ts'
-import R from 'ramda'
 
-import { InvalidCurrentValueError } from '~/internals/data-source-helper'
 import {
-  Context,
   Model,
   PickResolvers,
   Repository,
   ResolverFunction,
 } from '~/internals/graphql'
-import { EntityDecoder, EntityRevisionType, EntityType } from '~/model/decoder'
+import { EntityRevisionType, EntityType } from '~/model/decoder'
 import { Connection } from '~/schema/connection/types'
 import { createRepositoryResolvers } from '~/schema/uuid/abstract-repository/utils'
 import { VideoRevisionsArgs } from '~/types'
@@ -62,14 +58,6 @@ export function createEntityResolvers<
         ? { taxonomyTermId: entity.canonicalSubjectId }
         : null
     },
-  }
-}
-
-export function removeUndefinedFields(inputFields: {
-  [key: string]: string | undefined
-}) {
-  return R.filter((value) => value != undefined, inputFields) as {
-    [key: string]: string
   }
 }
 

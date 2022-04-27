@@ -22,11 +22,9 @@
 import * as serloAuth from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
 import * as t from 'io-ts'
+import * as R from 'ramda'
 
-import {
-  fromEntityTypeToEntityRevisionType,
-  removeUndefinedFields,
-} from './utils'
+import { fromEntityTypeToEntityRevisionType } from './utils'
 import { autoreviewTaxonomyIds } from '~/config/autoreview-taxonomies'
 import {
   assertArgumentIsNotEmpty,
@@ -195,8 +193,9 @@ class EntitySetResolver<
       guard: serloAuth.Uuid.create(this.auth.typeToBeCreated)(scope),
     })
 
-    const fields = removeUndefinedFields(
-      inputFields as { [key: string]: string | undefined }
+    const fields = R.filter(
+      (value) => value != undefined,
+      inputFields as { [key in string]: string }
     )
 
     if (entityId) {
