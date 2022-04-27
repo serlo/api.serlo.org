@@ -88,6 +88,12 @@ input PageAddRevisionInput {
   title: String!
 }
 
+type AddRevisionResponse {
+  success: Boolean!
+  query: Query!
+  revisionId: Int
+}
+
 input CreatePageInput {
   content: String!
   discussionsEnabled: Boolean!
