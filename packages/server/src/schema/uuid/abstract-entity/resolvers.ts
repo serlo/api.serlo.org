@@ -21,7 +21,7 @@
  */
 import * as serloAuth from '@serlo/authorization'
 
-import { buildCreateEntityResolver, buildAddRevisionResolver } from './utils'
+import { handleEntitySet } from './entity-set-handler'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
@@ -31,7 +31,6 @@ import {
 } from '~/internals/graphql'
 import {
   castToUuid,
-  EntityRevisionType,
   EntityType,
   AppletDecoder,
   ArticleDecoder,
@@ -63,156 +62,12 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     },
   },
   EntityMutation: {
-    async createApplet(_parent, { input }, context) {
+    async setApplet(_parent, { input }, context) {
       const { changes, content, title, url } = input
 
-      return await buildCreateEntityResolver(
+      return await handleEntitySet(
         {
           entityType: EntityType.Applet,
-          input,
-          mandatoryFields: { changes, content, title, url },
-        },
-        context
-      )
-    },
-    async createArticle(_parent, { input }, context) {
-      const { changes, content, title } = input
-
-      return await buildCreateEntityResolver(
-        {
-          entityType: EntityType.Article,
-          input,
-          mandatoryFields: { changes, content, title },
-        },
-        context
-      )
-    },
-    async createCourse(_parent, { input }, context) {
-      const { changes, title, content } = input
-
-      // TODO: the logic of this and others transformedInput's should go to DB Layer
-      const transformedInput = {
-        ...input,
-        description: content,
-        content: undefined,
-      }
-
-      return await buildCreateEntityResolver(
-        {
-          entityType: EntityType.Course,
-          input: transformedInput,
-          mandatoryFields: { changes, title },
-        },
-        context
-      )
-    },
-    async createCoursePage(_parent, { input }, context) {
-      const { changes, content, title } = input
-
-      return await buildCreateEntityResolver(
-        {
-          entityType: EntityType.CoursePage,
-          mandatoryFields: { changes, content, title },
-          input,
-        },
-        context
-      )
-    },
-    async createEvent(_parent, { input }, context) {
-      const { changes, content, title } = input
-
-      return await buildCreateEntityResolver(
-        {
-          entityType: EntityType.Event,
-          input,
-          mandatoryFields: {
-            changes,
-            content,
-            title,
-          },
-        },
-        context
-      )
-    },
-    async createExercise(_parent, { input }, context) {
-      const { changes, content } = input
-
-      return await buildCreateEntityResolver(
-        {
-          entityType: EntityType.Exercise,
-          input,
-          mandatoryFields: { changes, content },
-        },
-        context
-      )
-    },
-    async createExerciseGroup(_parent, { input }, context) {
-      const { changes, content } = input
-
-      // TODO: this logic should go to DBLayer
-      const cohesive = input.cohesive === true ? 'true' : 'false'
-      const transformedInput: Omit<typeof input, 'cohesive'> & {
-        cohesive: 'true' | 'false'
-      } = { ...input, cohesive }
-
-      return await buildCreateEntityResolver(
-        {
-          entityType: EntityType.ExerciseGroup,
-          input: transformedInput,
-          mandatoryFields: { changes, content },
-        },
-        context
-      )
-    },
-    async createGroupedExercise(_parent, { input }, context) {
-      const { changes, content } = input
-
-      return await buildCreateEntityResolver(
-        {
-          entityType: EntityType.GroupedExercise,
-          input,
-          mandatoryFields: { changes, content },
-        },
-        context
-      )
-    },
-    async createSolution(_parent, { input }, context) {
-      const { changes, content } = input
-
-      return await buildCreateEntityResolver(
-        {
-          entityType: EntityType.Solution,
-          input,
-          mandatoryFields: { changes, content },
-        },
-        context
-      )
-    },
-    async createVideo(_parent, { input }, context) {
-      const { changes, content, title, url } = input
-
-      // TODO: logic should go to DBLayer
-      const transformedInput = {
-        ...input,
-        content: input.url,
-        description: input.content,
-        url: undefined,
-      }
-      return await buildCreateEntityResolver(
-        {
-          entityType: EntityType.Video,
-          input: transformedInput,
-          mandatoryFields: { changes, content, title, url },
-        },
-        context
-      )
-    },
-    async addAppletRevision(_parent, { input }, context) {
-      const { changes, content, title, url } = input
-
-      return await buildAddRevisionResolver(
-        {
-          revisionType: EntityRevisionType.AppletRevision,
           input,
           mandatoryFields: {
             changes,
@@ -225,12 +80,12 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         { childDecoder: AppletDecoder }
       )
     },
-    async addArticleRevision(_parent, { input }, context) {
+    async setArticle(_parent, { input }, context) {
       const { changes, content, title } = input
 
-      return await buildAddRevisionResolver(
+      return await handleEntitySet(
         {
-          revisionType: EntityRevisionType.ArticleRevision,
+          entityType: EntityType.Article,
           input,
           mandatoryFields: {
             changes,
@@ -242,8 +97,8 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         { childDecoder: ArticleDecoder }
       )
     },
-    async addCourseRevision(_parent, { input }, context) {
-      const { changes, content, title } = input
+    async setCourse(_parent, { input }, context) {
+      const { changes, title, content } = input
 
       // TODO: the logic of this and others transformedInput's should go to DB Layer
       const transformedInput = {
@@ -252,9 +107,9 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         content: undefined,
       }
 
-      return await buildAddRevisionResolver(
+      return await handleEntitySet(
         {
-          revisionType: EntityRevisionType.CourseRevision,
+          entityType: EntityType.Course,
           input: transformedInput,
           mandatoryFields: { changes, title },
         },
@@ -262,12 +117,12 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         { childDecoder: CourseDecoder }
       )
     },
-    async addCoursePageRevision(_parent, { input }, context) {
+    async setCoursePage(_parent, { input }, context) {
       const { changes, content, title } = input
 
-      return await buildAddRevisionResolver(
+      return await handleEntitySet(
         {
-          revisionType: EntityRevisionType.CoursePageRevision,
+          entityType: EntityType.CoursePage,
           input,
           mandatoryFields: { changes, content, title },
         },
@@ -275,12 +130,12 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         { childDecoder: CoursePageDecoder, parentDecoder: CourseDecoder }
       )
     },
-    async addEventRevision(_parent, { input }, context) {
+    async setEvent(_parent, { input }, context) {
       const { changes, content, title } = input
 
-      return await buildAddRevisionResolver(
+      return await handleEntitySet(
         {
-          revisionType: EntityRevisionType.EventRevision,
+          entityType: EntityType.Event,
           input,
           mandatoryFields: { changes, content, title },
         },
@@ -288,12 +143,12 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         { childDecoder: EventDecoder }
       )
     },
-    async addExerciseRevision(_parent, { input }, context) {
+    async setExercise(_parent, { input }, context) {
       const { changes, content } = input
 
-      return await buildAddRevisionResolver(
+      return await handleEntitySet(
         {
-          revisionType: EntityRevisionType.ExerciseRevision,
+          entityType: EntityType.Exercise,
           input,
           mandatoryFields: { changes, content },
         },
@@ -301,17 +156,19 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         { childDecoder: ExerciseDecoder }
       )
     },
-    async addExerciseGroupRevision(_parent, { input }, context) {
+    async setExerciseGroup(_parent, { input }, context) {
       const { changes, content } = input
 
+      // TODO: this logic should go to DBLayer
       const cohesive = input.cohesive === true ? 'true' : 'false'
       const transformedInput: Omit<typeof input, 'cohesive'> & {
         cohesive: 'true' | 'false'
       } = { ...input, cohesive }
 
-      return await buildAddRevisionResolver(
+      return await handleEntitySet(
         {
-          revisionType: EntityRevisionType.ExerciseGroupRevision,
+          entityType: EntityType.ExerciseGroup,
+
           input: transformedInput,
           mandatoryFields: { changes, content },
         },
@@ -319,12 +176,12 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         { childDecoder: ExerciseGroupDecoder }
       )
     },
-    async addGroupedExerciseRevision(_parent, { input }, context) {
+    async setGroupedExercise(_parent, { input }, context) {
       const { changes, content } = input
 
-      return await buildAddRevisionResolver(
+      return await handleEntitySet(
         {
-          revisionType: EntityRevisionType.GroupedExerciseRevision,
+          entityType: EntityType.GroupedExercise,
           input,
           mandatoryFields: { changes, content },
         },
@@ -335,12 +192,12 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         }
       )
     },
-    async addSolutionRevision(_parent, { input }, context) {
+    async setSolution(_parent, { input }, context) {
       const { changes, content } = input
 
-      return await buildAddRevisionResolver(
+      return await handleEntitySet(
         {
-          revisionType: EntityRevisionType.SolutionRevision,
+          entityType: EntityType.Solution,
           input,
           mandatoryFields: { changes, content },
         },
@@ -348,9 +205,9 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         { childDecoder: SolutionDecoder, parentDecoder: ExerciseDecoder }
       )
     },
-    async addVideoRevision(_parent, { input }, context) {
+    async setVideo(_parent, { input }, context) {
       const { changes, content, title, url } = input
-
+      // TODO: logic should go to DBLayer
       const transformedInput = {
         ...input,
         content: input.url,
@@ -358,9 +215,9 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         url: undefined,
       }
 
-      return await buildAddRevisionResolver(
+      return await handleEntitySet(
         {
-          revisionType: EntityRevisionType.VideoRevision,
+          entityType: EntityType.Video,
           input: transformedInput,
           mandatoryFields: { changes, content, title, url },
         },

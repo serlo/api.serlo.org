@@ -734,11 +734,9 @@ export function createSerloModel({
           payload: { id: input.entityId },
         })
 
-        if (input.needsReview) {
-          await getUnrevisedEntities._querySpec.removeCache({
-            payload: undefined,
-          })
-        }
+        await getUnrevisedEntities._querySpec.removeCache({
+          payload: undefined,
+        })
 
         if (input.subscribeThis) {
           await getSubscriptions._querySpec.setCache({

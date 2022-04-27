@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.31.0](https://github.com/serlo/api.serlo.org/compare/v0.30.2..v0.31.0) - April 27, 2022
+
+### Changed
+
+- Merge entity.create & entity.addRevision = entity.set #594
+
 ## [v0.30.2](https://github.com/serlo/api.serlo.org/compare/v0.30.1..v0.30.2) - April 22, 2022
 
 ### Added
