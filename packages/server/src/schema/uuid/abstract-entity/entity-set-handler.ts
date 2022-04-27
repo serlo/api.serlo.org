@@ -256,26 +256,26 @@ class EntitySetResolver<
         success,
         query: {},
       }
-    }
-
-    const entity = await dataSources.model.serlo.createEntity({
-      entityType: this.entityType,
-      userId,
-      input: {
-        changes,
-        licenseId: 1,
-        needsReview,
-        subscribeThis,
-        subscribeThisByEmail,
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        ...(await this.prepareCreateArgs(parentId!)),
-        fields,
-      },
-    })
-    return {
-      record: entity,
-      success: entity != null,
-      query: {},
+    } else {
+      const entity = await dataSources.model.serlo.createEntity({
+        entityType: this.entityType,
+        userId,
+        input: {
+          changes,
+          licenseId: 1,
+          needsReview,
+          subscribeThis,
+          subscribeThisByEmail,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          ...(await this.prepareCreateArgs(parentId!)),
+          fields,
+        },
+      })
+      return {
+        record: entity,
+        success: entity != null,
+        query: {},
+      }
     }
   }
 
