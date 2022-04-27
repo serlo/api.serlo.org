@@ -77,26 +77,16 @@ export async function getEntity(
   entityId: number,
   dataSources: Context['dataSources']
 ) {
-  await assertIsEntity(entityId, dataSources)
-
-  return await dataSources.model.serlo.getUuidWithCustomDecoder({
-    id: entityId,
-    decoder: EntityDecoder,
-  })
-}
-
-export async function assertIsEntity(
-  id: number,
-  dataSources: Context['dataSources']
-) {
   try {
-    await dataSources.model.serlo.getUuidWithCustomDecoder({
-      id,
+    return await dataSources.model.serlo.getUuidWithCustomDecoder({
+      id: entityId,
       decoder: EntityDecoder,
     })
   } catch (error) {
     if (error instanceof InvalidCurrentValueError) {
-      throw new UserInputError(`No entity found for the provided id ${id}`)
+      throw new UserInputError(
+        `No entity found for the provided id ${entityId}`
+      )
     } else {
       throw error
     }
