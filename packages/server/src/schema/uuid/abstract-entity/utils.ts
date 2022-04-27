@@ -19,14 +19,19 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { UserInputError } from 'apollo-server'
 import * as t from 'io-ts'
+import R from 'ramda'
 
+import { InvalidCurrentValueError } from '~/internals/data-source-helper'
 import {
+  Context,
   Model,
   PickResolvers,
   Repository,
   ResolverFunction,
 } from '~/internals/graphql'
+import { EntityDecoder, EntityRevisionType, EntityType } from '~/model/decoder'
 import { Connection } from '~/schema/connection/types'
 import { createRepositoryResolvers } from '~/schema/uuid/abstract-repository/utils'
 import { VideoRevisionsArgs } from '~/types'
@@ -57,5 +62,70 @@ export function createEntityResolvers<
         ? { taxonomyTermId: entity.canonicalSubjectId }
         : null
     },
+  }
+}
+
+export function removeUndefinedFields(inputFields: {
+  [key: string]: string | undefined
+}) {
+  return R.filter((value) => value != undefined, inputFields) as {
+    [key: string]: string
+  }
+}
+
+export async function getEntity(
+  entityId: number,
+  dataSources: Context['dataSources']
+) {
+  await assertIsEntity(entityId, dataSources)
+
+  return await dataSources.model.serlo.getUuidWithCustomDecoder({
+    id: entityId,
+    decoder: EntityDecoder,
+  })
+}
+
+export async function assertIsEntity(
+  id: number,
+  dataSources: Context['dataSources']
+) {
+  try {
+    await dataSources.model.serlo.getUuidWithCustomDecoder({
+      id,
+      decoder: EntityDecoder,
+    })
+  } catch (error) {
+    if (error instanceof InvalidCurrentValueError) {
+      throw new UserInputError(`No entity found for the provided id ${id}`)
+    } else {
+      throw error
+    }
+  }
+}
+
+export function fromEntityTypeToEntityRevisionType(
+  entityType: EntityType
+): EntityRevisionType {
+  switch (entityType) {
+    case EntityType.Applet:
+      return EntityRevisionType.AppletRevision
+    case EntityType.Article:
+      return EntityRevisionType.ArticleRevision
+    case EntityType.Course:
+      return EntityRevisionType.CourseRevision
+    case EntityType.CoursePage:
+      return EntityRevisionType.CoursePageRevision
+    case EntityType.Event:
+      return EntityRevisionType.EventRevision
+    case EntityType.Exercise:
+      return EntityRevisionType.ExerciseRevision
+    case EntityType.ExerciseGroup:
+      return EntityRevisionType.ExerciseGroupRevision
+    case EntityType.GroupedExercise:
+      return EntityRevisionType.GroupedExerciseRevision
+    case EntityType.Solution:
+      return EntityRevisionType.SolutionRevision
+    case EntityType.Video:
+      return EntityRevisionType.VideoRevision
   }
 }

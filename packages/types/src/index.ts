@@ -260,99 +260,11 @@ export type AbstractUuidCursor = {
   node: AbstractUuid;
 };
 
-export type AddAppletRevisionInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  entityId: Scalars['Int'];
-  metaDescription?: InputMaybe<Scalars['String']>;
-  metaTitle?: InputMaybe<Scalars['String']>;
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  title: Scalars['String'];
-  url: Scalars['String'];
-};
-
-export type AddArticleRevisionInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  entityId: Scalars['Int'];
-  metaDescription?: InputMaybe<Scalars['String']>;
-  metaTitle?: InputMaybe<Scalars['String']>;
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  title: Scalars['String'];
-};
-
-export type AddCoursePageRevisionInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  entityId: Scalars['Int'];
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  title: Scalars['String'];
-};
-
-export type AddCourseRevisionInput = {
-  changes: Scalars['String'];
-  content?: InputMaybe<Scalars['String']>;
-  entityId: Scalars['Int'];
-  metaDescription?: InputMaybe<Scalars['String']>;
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  title: Scalars['String'];
-};
-
-export type AddEventRevisionInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  entityId: Scalars['Int'];
-  metaDescription?: InputMaybe<Scalars['String']>;
-  metaTitle?: InputMaybe<Scalars['String']>;
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  title: Scalars['String'];
-};
-
-export type AddExerciseGroupRevisionInput = {
-  changes: Scalars['String'];
-  cohesive: Scalars['Boolean'];
-  content: Scalars['String'];
-  entityId: Scalars['Int'];
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-};
-
-export type AddGenericRevisionInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  entityId: Scalars['Int'];
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-};
-
 export type AddRevisionResponse = {
   __typename?: 'AddRevisionResponse';
   query: Query;
   revisionId?: Maybe<Scalars['Int']>;
   success: Scalars['Boolean'];
-};
-
-export type AddVideoRevisionInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  entityId: Scalars['Int'];
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  title: Scalars['String'];
-  url: Scalars['String'];
 };
 
 export type AliasInput = {
@@ -872,35 +784,6 @@ export type CourseRevisionCursor = {
   node: CourseRevision;
 };
 
-export type CreateAppletInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  instance: Instance;
-  licenseId: Scalars['Int'];
-  metaDescription?: InputMaybe<Scalars['String']>;
-  metaTitle?: InputMaybe<Scalars['String']>;
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  taxonomyTermId: Scalars['Int'];
-  title: Scalars['String'];
-  url: Scalars['String'];
-};
-
-export type CreateArticleInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  instance: Instance;
-  licenseId: Scalars['Int'];
-  metaDescription?: InputMaybe<Scalars['String']>;
-  metaTitle?: InputMaybe<Scalars['String']>;
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  taxonomyTermId: Scalars['Int'];
-  title: Scalars['String'];
-};
-
 export type CreateCommentNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CreateCommentNotificationEvent';
   actor: User;
@@ -910,31 +793,6 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & Instanc
   instance: Instance;
   objectId: Scalars['Int'];
   thread: Thread;
-};
-
-export type CreateCourseInput = {
-  changes: Scalars['String'];
-  content?: InputMaybe<Scalars['String']>;
-  instance: Instance;
-  licenseId: Scalars['Int'];
-  metaDescription?: InputMaybe<Scalars['String']>;
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  taxonomyTermId: Scalars['Int'];
-  title: Scalars['String'];
-};
-
-export type CreateCoursePageInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  instance: Instance;
-  licenseId: Scalars['Int'];
-  needsReview: Scalars['Boolean'];
-  parentId: Scalars['Int'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  title: Scalars['String'];
 };
 
 export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -958,13 +816,6 @@ export type CreateEntityNotificationEvent = AbstractNotificationEvent & Instance
   objectId: Scalars['Int'];
 };
 
-export type CreateEntityResponse = {
-  __typename?: 'CreateEntityResponse';
-  query: Query;
-  record?: Maybe<AbstractEntity>;
-  success: Scalars['Boolean'];
-};
-
 export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CreateEntityRevisionNotificationEvent';
   actor: User;
@@ -976,54 +827,6 @@ export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & 
   objectId: Scalars['Int'];
 };
 
-export type CreateEventInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  instance: Instance;
-  licenseId: Scalars['Int'];
-  metaDescription?: InputMaybe<Scalars['String']>;
-  metaTitle?: InputMaybe<Scalars['String']>;
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  taxonomyTermId: Scalars['Int'];
-  title: Scalars['String'];
-};
-
-export type CreateExerciseGroupInput = {
-  changes: Scalars['String'];
-  cohesive: Scalars['Boolean'];
-  content: Scalars['String'];
-  instance: Instance;
-  licenseId: Scalars['Int'];
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  taxonomyTermId: Scalars['Int'];
-};
-
-export type CreateExerciseInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  instance: Instance;
-  licenseId: Scalars['Int'];
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  taxonomyTermId: Scalars['Int'];
-};
-
-export type CreateGroupedExerciseInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  instance: Instance;
-  licenseId: Scalars['Int'];
-  needsReview: Scalars['Boolean'];
-  parentId: Scalars['Int'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-};
-
 export type CreatePageInput = {
   content: Scalars['String'];
   discussionsEnabled: Scalars['Boolean'];
@@ -1031,17 +834,6 @@ export type CreatePageInput = {
   instance: Instance;
   licenseId: Scalars['Int'];
   title: Scalars['String'];
-};
-
-export type CreateSolutionInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  instance: Instance;
-  licenseId: Scalars['Int'];
-  needsReview: Scalars['Boolean'];
-  parentId: Scalars['Int'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
 };
 
 export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -1076,19 +868,6 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
   thread: Thread;
 };
 
-export type CreateVideoInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  instance: Instance;
-  licenseId: Scalars['Int'];
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  taxonomyTermId: Scalars['Int'];
-  title: Scalars['String'];
-  url: Scalars['String'];
-};
-
 export type EntityMetadataConnection = {
   __typename?: 'EntityMetadataConnection';
   edges: Array<EntityMetadataCursor>;
@@ -1104,78 +883,18 @@ export type EntityMetadataCursor = {
 
 export type EntityMutation = {
   __typename?: 'EntityMutation';
-  addAppletRevision: AddRevisionResponse;
-  addArticleRevision: AddRevisionResponse;
-  addCoursePageRevision: AddRevisionResponse;
-  addCourseRevision: AddRevisionResponse;
-  addEventRevision: AddRevisionResponse;
-  addExerciseGroupRevision: AddRevisionResponse;
-  addExerciseRevision: AddRevisionResponse;
-  addGroupedExerciseRevision: AddRevisionResponse;
-  addSolutionRevision: AddRevisionResponse;
-  addVideoRevision: AddRevisionResponse;
   checkoutRevision: CheckoutRevisionResponse;
-  createApplet: CreateEntityResponse;
-  createArticle: CreateEntityResponse;
-  createCourse: CreateEntityResponse;
-  createCoursePage: CreateEntityResponse;
-  createEvent: CreateEntityResponse;
-  createExercise: CreateEntityResponse;
-  createExerciseGroup: CreateEntityResponse;
-  createGroupedExercise: CreateEntityResponse;
-  createSolution: CreateEntityResponse;
-  createVideo: CreateEntityResponse;
   rejectRevision: RejectRevisionResponse;
-};
-
-
-export type EntityMutationAddAppletRevisionArgs = {
-  input: AddAppletRevisionInput;
-};
-
-
-export type EntityMutationAddArticleRevisionArgs = {
-  input: AddArticleRevisionInput;
-};
-
-
-export type EntityMutationAddCoursePageRevisionArgs = {
-  input: AddCoursePageRevisionInput;
-};
-
-
-export type EntityMutationAddCourseRevisionArgs = {
-  input: AddCourseRevisionInput;
-};
-
-
-export type EntityMutationAddEventRevisionArgs = {
-  input: AddEventRevisionInput;
-};
-
-
-export type EntityMutationAddExerciseGroupRevisionArgs = {
-  input: AddExerciseGroupRevisionInput;
-};
-
-
-export type EntityMutationAddExerciseRevisionArgs = {
-  input: AddGenericRevisionInput;
-};
-
-
-export type EntityMutationAddGroupedExerciseRevisionArgs = {
-  input: AddGenericRevisionInput;
-};
-
-
-export type EntityMutationAddSolutionRevisionArgs = {
-  input: AddGenericRevisionInput;
-};
-
-
-export type EntityMutationAddVideoRevisionArgs = {
-  input: AddVideoRevisionInput;
+  setApplet: SetEntityResponse;
+  setArticle: SetEntityResponse;
+  setCourse: SetEntityResponse;
+  setCoursePage: SetEntityResponse;
+  setEvent: SetEntityResponse;
+  setExercise: SetEntityResponse;
+  setExerciseGroup: SetEntityResponse;
+  setGroupedExercise: SetEntityResponse;
+  setSolution: SetEntityResponse;
+  setVideo: SetEntityResponse;
 };
 
 
@@ -1184,58 +903,58 @@ export type EntityMutationCheckoutRevisionArgs = {
 };
 
 
-export type EntityMutationCreateAppletArgs = {
-  input: CreateAppletInput;
-};
-
-
-export type EntityMutationCreateArticleArgs = {
-  input: CreateArticleInput;
-};
-
-
-export type EntityMutationCreateCourseArgs = {
-  input: CreateCourseInput;
-};
-
-
-export type EntityMutationCreateCoursePageArgs = {
-  input: CreateCoursePageInput;
-};
-
-
-export type EntityMutationCreateEventArgs = {
-  input: CreateEventInput;
-};
-
-
-export type EntityMutationCreateExerciseArgs = {
-  input: CreateExerciseInput;
-};
-
-
-export type EntityMutationCreateExerciseGroupArgs = {
-  input: CreateExerciseGroupInput;
-};
-
-
-export type EntityMutationCreateGroupedExerciseArgs = {
-  input: CreateGroupedExerciseInput;
-};
-
-
-export type EntityMutationCreateSolutionArgs = {
-  input: CreateSolutionInput;
-};
-
-
-export type EntityMutationCreateVideoArgs = {
-  input: CreateVideoInput;
-};
-
-
 export type EntityMutationRejectRevisionArgs = {
   input: RejectRevisionInput;
+};
+
+
+export type EntityMutationSetAppletArgs = {
+  input: SetAppletInput;
+};
+
+
+export type EntityMutationSetArticleArgs = {
+  input: SetArticleInput;
+};
+
+
+export type EntityMutationSetCourseArgs = {
+  input: SetCourseInput;
+};
+
+
+export type EntityMutationSetCoursePageArgs = {
+  input: SetCoursePageInput;
+};
+
+
+export type EntityMutationSetEventArgs = {
+  input: SetEventInput;
+};
+
+
+export type EntityMutationSetExerciseArgs = {
+  input: SetGenericEntityInput;
+};
+
+
+export type EntityMutationSetExerciseGroupArgs = {
+  input: SetExerciseGroupInput;
+};
+
+
+export type EntityMutationSetGroupedExerciseArgs = {
+  input: SetGenericEntityInput;
+};
+
+
+export type EntityMutationSetSolutionArgs = {
+  input: SetGenericEntityInput;
+};
+
+
+export type EntityMutationSetVideoArgs = {
+  input: SetVideoInput;
 };
 
 export type Event = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
@@ -2071,6 +1790,97 @@ export type ScopedRoleCursor = {
   node: ScopedRole;
 };
 
+export type SetAppletInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  entityId?: InputMaybe<Scalars['Int']>;
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
+  needsReview: Scalars['Boolean'];
+  parentId?: InputMaybe<Scalars['Int']>;
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
+  url: Scalars['String'];
+};
+
+export type SetArticleInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  entityId?: InputMaybe<Scalars['Int']>;
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
+  needsReview: Scalars['Boolean'];
+  parentId?: InputMaybe<Scalars['Int']>;
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
+};
+
+export type SetCourseInput = {
+  changes: Scalars['String'];
+  content?: InputMaybe<Scalars['String']>;
+  entityId?: InputMaybe<Scalars['Int']>;
+  metaDescription?: InputMaybe<Scalars['String']>;
+  needsReview: Scalars['Boolean'];
+  parentId?: InputMaybe<Scalars['Int']>;
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
+};
+
+export type SetCoursePageInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  entityId?: InputMaybe<Scalars['Int']>;
+  needsReview: Scalars['Boolean'];
+  parentId?: InputMaybe<Scalars['Int']>;
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
+};
+
+export type SetEntityResponse = {
+  __typename?: 'SetEntityResponse';
+  query: Query;
+  record?: Maybe<AbstractEntity>;
+  success: Scalars['Boolean'];
+};
+
+export type SetEventInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  entityId?: InputMaybe<Scalars['Int']>;
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
+  needsReview: Scalars['Boolean'];
+  parentId?: InputMaybe<Scalars['Int']>;
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
+};
+
+export type SetExerciseGroupInput = {
+  changes: Scalars['String'];
+  cohesive: Scalars['Boolean'];
+  content: Scalars['String'];
+  entityId?: InputMaybe<Scalars['Int']>;
+  needsReview: Scalars['Boolean'];
+  parentId?: InputMaybe<Scalars['Int']>;
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+};
+
+export type SetGenericEntityInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  entityId?: InputMaybe<Scalars['Int']>;
+  needsReview: Scalars['Boolean'];
+  parentId?: InputMaybe<Scalars['Int']>;
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+};
+
 export type SetLicenseNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'SetLicenseNotificationEvent';
   actor: User;
@@ -2123,6 +1933,18 @@ export type SetUuidStateNotificationEvent = AbstractNotificationEvent & Instance
   object: AbstractUuid;
   objectId: Scalars['Int'];
   trashed: Scalars['Boolean'];
+};
+
+export type SetVideoInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  entityId?: InputMaybe<Scalars['Int']>;
+  needsReview: Scalars['Boolean'];
+  parentId?: InputMaybe<Scalars['Int']>;
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
+  url: Scalars['String'];
 };
 
 export type Solution = AbstractEntity & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
