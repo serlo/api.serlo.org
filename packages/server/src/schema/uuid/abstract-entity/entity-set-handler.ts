@@ -43,7 +43,7 @@ export interface SetAbstractEntityInput {
   needsReview: boolean
   entityId?: number
   parentId?: number
-  cohesive?: 'true' | 'false'
+  cohesive?: boolean
   content?: string
   description?: string
   metaDescription?: string
@@ -52,7 +52,7 @@ export interface SetAbstractEntityInput {
   url?: string
 }
 
-export async function handleEntitySet<
+export function createSetEntityResolver<
   C extends Model<'AbstractEntity'> & {
     taxonomyTermIds?: number[]
     parentId?: number
@@ -61,136 +61,148 @@ export async function handleEntitySet<
     taxonomyTermIds?: number[]
     parentId?: number
   }
->(
-  args: {
-    entityType: EntityType
-    input: SetAbstractEntityInput
-    mandatoryFields: { [key: string]: string | boolean }
-  },
-  context: Context,
-  {
-    childDecoder,
-    parentDecoder,
-  }: { childDecoder: t.Type<C, unknown>; parentDecoder?: t.Type<P, unknown> }
-) {
-  const { entityType, input, mandatoryFields } = args
+>({
+  entityType,
+  childDecoder,
+  parentDecoder,
+  mandatoryFieldKeys,
+  transformedInput,
+}: {
+  entityType: EntityType
+  mandatoryFieldKeys: (keyof SetAbstractEntityInput)[]
+  childDecoder: t.Type<C, unknown>
+  parentDecoder?: t.Type<P, unknown>
+  // TODO: the logic of this and others transformedInput's should go to DB Layer
+  transformedInput?: (x: SetAbstractEntityInput) => SetAbstractEntityInput
+}) {
+  return async (
+    _parent: unknown,
+    { input }: { input: SetAbstractEntityInput },
+    { dataSources, userId }: Context
+  ) => {
+    assertArgumentIsNotEmpty(R.pick(mandatoryFieldKeys, input))
 
-  assertArgumentIsNotEmpty(mandatoryFields)
+    if (transformedInput != null) input = transformedInput(input)
 
-  const { needsReview } = input
-  const forwardArgs = R.pick(
-    ['changes', 'subscribeThis', 'subscribeThisByEmail'],
-    input
-  )
-  const fieldKeys = [
-    'cohesive',
-    'content',
-    'description',
-    'metaDescription',
-    'metaTitle',
-    'title',
-    'url',
-  ] as const
-  const fields = R.filter((val) => val != null, R.pick(fieldKeys, input))
+    const { needsReview } = input
+    const forwardArgs = R.pick(
+      ['changes', 'subscribeThis', 'subscribeThisByEmail'],
+      input
+    )
+    const fieldKeys = [
+      'cohesive',
+      'content',
+      'description',
+      'metaDescription',
+      'metaTitle',
+      'title',
+      'url',
+    ] as const
+    const fields = R.mapObjIndexed(
+      (val: string | boolean) =>
+        typeof val !== 'string' ? val.toString() : val,
+      R.filter((val) => val != null, R.pick(fieldKeys, input))
+    )
 
-  if (!checkInput(input))
-    throw new UserInputError('Either entityId or parentId must be provided')
+    if (!checkInput(input))
+      throw new UserInputError('Either entityId or parentId must be provided')
 
-  const { dataSources, userId } = context
+    assertUserIsAuthenticated(userId)
 
-  assertUserIsAuthenticated(userId)
-
-  const scope = await fetchScopeOfUuid({
-    id: input.entityId != null ? input.entityId : input.parentId,
-    dataSources,
-  })
-
-  await assertUserIsAuthorized({
-    userId,
-    dataSources,
-    message: `You are not allowed to create ${
-      input.entityId == null ? 'entities' : 'revisions'
-    }`,
-    guard: serloAuth.Uuid.create(
-      input.entityId == null ? 'Entity' : 'EntityRevision'
-    )(scope),
-  })
-
-  if (input.entityId != null) {
-    let isAutoreviewEntity = false
-
-    const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
-      id: input.entityId,
-      decoder: childDecoder,
+    const scope = await fetchScopeOfUuid({
+      id: input.entityId != null ? input.entityId : input.parentId,
+      dataSources,
     })
 
-    if (entity.taxonomyTermIds) {
-      isAutoreviewEntity = await verifyAutoreviewEntity(
-        entity.taxonomyTermIds,
-        dataSources
-      )
-    }
+    await assertUserIsAuthorized({
+      userId,
+      dataSources,
+      message: `You are not allowed to create ${
+        input.entityId == null ? 'entities' : 'revisions'
+      }`,
+      guard: serloAuth.Uuid.create(
+        input.entityId == null ? 'Entity' : 'EntityRevision'
+      )(scope),
+    })
 
-    if (entity.parentId && parentDecoder) {
-      const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: entity.parentId,
-        decoder: parentDecoder,
+    if (input.entityId != null) {
+      let isAutoreviewEntity = false
+
+      const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: input.entityId,
+        decoder: childDecoder,
       })
 
-      if (parent.taxonomyTermIds) {
+      if (entity.taxonomyTermIds) {
         isAutoreviewEntity = await verifyAutoreviewEntity(
-          parent.taxonomyTermIds,
+          entity.taxonomyTermIds,
           dataSources
         )
       }
-    }
 
-    if (!isAutoreviewEntity && !needsReview) {
-      await assertUserIsAuthorized({
-        userId,
-        dataSources,
-        message: 'You are not allowed to skip the reviewing process.',
-        guard: serloAuth.Entity.checkoutRevision(scope),
+      if (entity.parentId && parentDecoder) {
+        const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
+          id: entity.parentId,
+          decoder: parentDecoder,
+        })
+
+        if (parent.taxonomyTermIds) {
+          isAutoreviewEntity = await verifyAutoreviewEntity(
+            parent.taxonomyTermIds,
+            dataSources
+          )
+        }
+      }
+
+      if (!isAutoreviewEntity && !needsReview) {
+        await assertUserIsAuthorized({
+          userId,
+          dataSources,
+          message: 'You are not allowed to skip the reviewing process.',
+          guard: serloAuth.Entity.checkoutRevision(scope),
+        })
+      }
+
+      const { success, revisionId } =
+        await dataSources.model.serlo.addEntityRevision({
+          revisionType: fromEntityTypeToEntityRevisionType(entityType),
+          userId,
+          input: {
+            ...forwardArgs,
+            entityId: input.entityId,
+            needsReview: isAutoreviewEntity ? false : needsReview,
+            fields,
+          },
+        })
+
+      return { revisionId, success, query: {} }
+    } else {
+      const parent = await dataSources.model.serlo.getUuid({
+        id: input.parentId,
       })
-    }
+      const isParentTaxonomyTerm = TaxonomyTermDecoder.is(parent)
+      const isParentEntity = EntityDecoder.is(parent)
 
-    const { success, revisionId } =
-      await dataSources.model.serlo.addEntityRevision({
-        revisionType: fromEntityTypeToEntityRevisionType(entityType),
+      if (!isParentTaxonomyTerm && !isParentEntity)
+        throw new UserInputError(
+          `No entity or taxonomy term found for the provided id ${input.parentId}`
+        )
+
+      const entity = await dataSources.model.serlo.createEntity({
+        entityType,
         userId,
         input: {
           ...forwardArgs,
-          entityId: input.entityId,
-          needsReview: isAutoreviewEntity ? false : needsReview,
+          licenseId: 1,
+          needsReview,
+          instance: parent.instance,
+          ...(isParentTaxonomyTerm ? { taxonomyTermId: input.parentId } : {}),
+          ...(isParentEntity ? { parentId: input.parentId } : {}),
           fields,
         },
       })
-
-    return { revisionId, success, query: {} }
-  } else {
-    const parent = await dataSources.model.serlo.getUuid({ id: input.parentId })
-    const isParentTaxonomyTerm = TaxonomyTermDecoder.is(parent)
-    const isParentEntity = EntityDecoder.is(parent)
-
-    if (!isParentTaxonomyTerm && !isParentEntity)
-      throw new UserInputError(
-        `No entity or taxonomy term found for the provided id ${input.parentId}`
-      )
-
-    const entity = await dataSources.model.serlo.createEntity({
-      entityType,
-      userId,
-      input: {
-        ...forwardArgs,
-        licenseId: 1,
-        needsReview,
-        instance: parent.instance,
-        ...(isParentTaxonomyTerm ? { taxonomyTermId: input.parentId } : {}),
-        ...(isParentEntity ? { parentId: input.parentId } : {}),
-        fields,
-      },
-    })
-    return { record: entity, success: entity != null, query: {} }
+      return { record: entity, success: entity != null, query: {} }
+    }
   }
 }
 
