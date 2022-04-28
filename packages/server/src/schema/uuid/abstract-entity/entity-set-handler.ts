@@ -77,7 +77,11 @@ export async function handleEntitySet<
 
   assertArgumentIsNotEmpty(mandatoryFields)
 
-  const { changes, needsReview, subscribeThis, subscribeThisByEmail } = input
+  const { needsReview } = input
+  const forwardArgs = R.pick(
+    ['changes', 'subscribeThis', 'subscribeThisByEmail'],
+    input
+  )
   const fieldKeys = [
     'cohesive',
     'content',
@@ -155,11 +159,9 @@ export async function handleEntitySet<
         revisionType: fromEntityTypeToEntityRevisionType(entityType),
         userId,
         input: {
-          changes,
+          ...forwardArgs,
           entityId: input.entityId,
           needsReview: isAutoreviewEntity ? false : needsReview,
-          subscribeThis,
-          subscribeThisByEmail,
           fields,
         },
       })
@@ -179,11 +181,9 @@ export async function handleEntitySet<
       entityType,
       userId,
       input: {
-        changes,
+        ...forwardArgs,
         licenseId: 1,
         needsReview,
-        subscribeThis,
-        subscribeThisByEmail,
         instance: parent.instance,
         ...(isParentTaxonomyTerm ? { taxonomyTermId: input.parentId } : {}),
         ...(isParentEntity ? { parentId: input.parentId } : {}),
