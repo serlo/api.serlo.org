@@ -78,18 +78,16 @@ export async function handleEntitySet<
   assertArgumentIsNotEmpty(mandatoryFields)
 
   const { changes, needsReview, subscribeThis, subscribeThisByEmail } = input
-  const inputFields = R.pick(
-    [
-      'cohesive',
-      'content',
-      'description',
-      'metaDescription',
-      'metaTitle',
-      'title',
-      'url',
-    ],
-    input
-  )
+  const fieldKeys = [
+    'cohesive',
+    'content',
+    'description',
+    'metaDescription',
+    'metaTitle',
+    'title',
+    'url',
+  ] as const
+  const fields = R.filter((val) => val != null, R.pick(fieldKeys, input))
 
   if (!checkInput(input))
     throw new UserInputError('Either entityId or parentId must be provided')
@@ -113,11 +111,6 @@ export async function handleEntitySet<
       input.entityId == null ? 'Entity' : 'EntityRevision'
     )(scope),
   })
-
-  const fields = R.filter(
-    (value) => value != undefined,
-    inputFields as { [key in string]: string }
-  )
 
   if (input.entityId != null) {
     let isAutoreviewEntity = false
