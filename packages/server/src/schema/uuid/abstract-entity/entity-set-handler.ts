@@ -77,42 +77,40 @@ export async function handleEntitySet<
 
   assertArgumentIsNotEmpty(mandatoryFields)
 
-  const {
-    changes,
-    needsReview,
-    subscribeThis,
-    subscribeThisByEmail,
-    parentId,
-    entityId,
-    ...inputFields
-  } = input
+  const { changes, needsReview, subscribeThis, subscribeThisByEmail } = input
+  const inputFields = R.pick(
+    [
+      'cohesive',
+      'content',
+      'description',
+      'metaDescription',
+      'metaTitle',
+      'title',
+      'url',
+    ],
+    input
+  )
 
-  if ((!entityId && !parentId) || (entityId && parentId))
-    throw new UserInputError('Either entityId or parentId has to be provided')
+  if (!checkInput(input))
+    throw new UserInputError('Either entityId or parentId must be provided')
 
   const { dataSources, userId } = context
 
   assertUserIsAuthenticated(userId)
 
-  const scope = entityId
-    ? await fetchScopeOfUuid({
-        id: entityId,
-        dataSources,
-      })
-    : await fetchScopeOfUuid({
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        id: parentId!,
-        dataSources,
-      })
+  const scope = await fetchScopeOfUuid({
+    id: input.entityId != null ? input.entityId : input.parentId,
+    dataSources,
+  })
 
   await assertUserIsAuthorized({
     userId,
     dataSources,
     message: `You are not allowed to create ${
-      entityId == null ? 'entities' : 'revisions'
+      input.entityId == null ? 'entities' : 'revisions'
     }`,
     guard: serloAuth.Uuid.create(
-      entityId == null ? 'Entity' : 'EntityRevision'
+      input.entityId == null ? 'Entity' : 'EntityRevision'
     )(scope),
   })
 
@@ -141,11 +139,11 @@ export async function handleEntitySet<
     }
   }
 
-  if (entityId != null) {
+  if (input.entityId != null) {
     let isAutoreviewEntity = false
 
     const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
-      id: entityId,
+      id: input.entityId,
       decoder: childDecoder,
     })
 
@@ -185,7 +183,7 @@ export async function handleEntitySet<
         userId,
         input: {
           changes,
-          entityId,
+          entityId: input.entityId,
           needsReview: isAutoreviewEntity ? false : needsReview,
           subscribeThis,
           subscribeThisByEmail,
@@ -204,13 +202,24 @@ export async function handleEntitySet<
         needsReview,
         subscribeThis,
         subscribeThisByEmail,
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        ...(await prepareCreateArgs(parentId!)),
+        ...(await prepareCreateArgs(input.parentId)),
         fields,
       },
     })
     return { record: entity, success: entity != null, query: {} }
   }
+}
+
+function checkInput(input: {
+  parentId?: number
+  entityId?: number
+}): input is
+  | { parentId: number; entityId: undefined }
+  | { parentId: undefined; entityId: number } {
+  return (
+    (input.entityId != null && input.parentId == null) ||
+    (input.entityId == null && input.parentId != null)
+  )
 }
 
 export async function verifyAutoreviewEntity(
