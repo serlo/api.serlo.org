@@ -198,13 +198,9 @@ const entitySetTypes = [
   new EntitySetWrapper(EntityType.Video, videoFields),
 ]
 
-type InputFromApi = Omit<SetAbstractEntityInput, 'cohesive'> & {
-  cohesive?: boolean
-}
-
 entitySetTypes.forEach((entitySetType) => {
   describe(entitySetType.mutationName, () => {
-    const input: InputFromApi = {
+    const input: SetAbstractEntityInput = {
       changes: 'changes',
       needsReview: true,
       subscribeThis: false,
