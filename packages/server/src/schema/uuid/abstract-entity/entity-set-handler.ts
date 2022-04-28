@@ -119,26 +119,6 @@ export async function handleEntitySet<
     inputFields as { [key in string]: string }
   )
 
-  async function prepareCreateArgs(parentId: number) {
-    const parent = await dataSources.model.serlo.getUuid({ id: parentId })
-
-    if (TaxonomyTermDecoder.is(parent)) {
-      return {
-        taxonomyTermId: parentId,
-        instance: parent.instance,
-      }
-    } else if (EntityDecoder.is(parent)) {
-      return {
-        parentId,
-        instance: parent.instance,
-      }
-    } else {
-      throw new UserInputError(
-        `No entity or taxonomy term found for the provided id ${parentId}`
-      )
-    }
-  }
-
   if (input.entityId != null) {
     let isAutoreviewEntity = false
 
@@ -193,6 +173,15 @@ export async function handleEntitySet<
 
     return { revisionId, success, query: {} }
   } else {
+    const parent = await dataSources.model.serlo.getUuid({ id: input.parentId })
+    const isParentTaxonomyTerm = TaxonomyTermDecoder.is(parent)
+    const isParentEntity = EntityDecoder.is(parent)
+
+    if (!isParentTaxonomyTerm && !isParentEntity)
+      throw new UserInputError(
+        `No entity or taxonomy term found for the provided id ${input.parentId}`
+      )
+
     const entity = await dataSources.model.serlo.createEntity({
       entityType,
       userId,
@@ -202,7 +191,9 @@ export async function handleEntitySet<
         needsReview,
         subscribeThis,
         subscribeThisByEmail,
-        ...(await prepareCreateArgs(input.parentId)),
+        instance: parent.instance,
+        ...(isParentTaxonomyTerm ? { taxonomyTermId: input.parentId } : {}),
+        ...(isParentEntity ? { parentId: input.parentId } : {}),
         fields,
       },
     })
