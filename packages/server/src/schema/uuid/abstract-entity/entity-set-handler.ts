@@ -222,7 +222,7 @@ function checkInput(input: {
   )
 }
 
-export async function verifyAutoreviewEntity(
+async function verifyAutoreviewEntity(
   taxonomyTermIds: number[],
   dataSources: Context['dataSources']
 ): Promise<boolean> {
