@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.31.1](https://github.com/serlo/api.serlo.org/compare/v0.31.0..v0.31.1) - April 29, 2022
+
+### Fixed
+
+- Fix entity.setSolution `InvalidCachedValue` #597
+
+- mail for LENABI user journey
+
 ## [v0.31.0](https://github.com/serlo/api.serlo.org/compare/v0.30.2..v0.31.0) - April 27, 2022
 
 ### Changed
