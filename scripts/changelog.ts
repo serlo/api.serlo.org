@@ -1226,7 +1226,10 @@ async function exec(): Promise<void> {
       {
         tagName: 'v0.31.1',
         date: '2022-04-29',
-        fixed: ['Fix entity.setSolution `InvalidCachedValue` #597'],
+        fixed: [
+          'Fix entity.setSolution `InvalidCachedValue` #597',
+          'mail for LENABI user journey',
+        ],
       },
     ],
   })
