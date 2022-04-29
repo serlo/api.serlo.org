@@ -1223,6 +1223,11 @@ async function exec(): Promise<void> {
         date: '2022-04-27',
         changed: ['Merge entity.create & entity.addRevision = entity.set #594'],
       },
+      {
+        tagName: 'v0.31.1',
+        date: '2022-04-29',
+        fixed: ['Fix entity.setSolution `InvalidCachedValue` #597'],
+      },
     ],
   })
 
