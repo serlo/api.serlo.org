@@ -42,6 +42,7 @@ import {
   GroupedExerciseDecoder,
   SolutionDecoder,
   VideoDecoder,
+  AbstractExerciseDecoder,
 } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 
@@ -202,7 +203,10 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
           mandatoryFields: { changes, content },
         },
         context,
-        { childDecoder: SolutionDecoder, parentDecoder: ExerciseDecoder }
+        {
+          childDecoder: SolutionDecoder,
+          parentDecoder: AbstractExerciseDecoder,
+        }
       )
     },
     async setVideo(_parent, { input }, context) {
