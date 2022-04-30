@@ -55,8 +55,9 @@ extend type Mutation {
 type TaxonomyTermMutation {
   create(input: TaxonomyTermCreateInput!): TaxonomyTermCreateResponse!
   createEntityLink(
-    input: TaxonomyCreateEntityLinkInput!
-  ): TaxonomyCreateEntityLinkResponse!
+    input: TaxonomyEntityLinkInput!
+  ): TaxonomyEntityLinkResponse!
+  deleteEntityLink(input: TaxonomyEntityLinkInput!): TaxonomyEntityLinkResponse!
   move(input: TaxonomyTermMoveInput!): TaxonomyTermMoveResponse!
   setNameAndDescription(
     input: TaxonomyTermSetNameAndDescriptionInput!
@@ -81,12 +82,12 @@ type TaxonomyTermCreateResponse {
   query: Query!
 }
 
-input TaxonomyCreateEntityLinkInput {
+input TaxonomyEntityLinkInput {
   entityIds: [Int!]!
   taxonomyTermId: Int!
 }
 
-type TaxonomyCreateEntityLinkResponse {
+type TaxonomyEntityLinkResponse {
   success: Boolean!
   query: Query!
 }
