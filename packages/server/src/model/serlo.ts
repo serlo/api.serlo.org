@@ -904,7 +904,7 @@ export function createSerloModel({
     },
   })
 
-  const linkEntityToTaxonomy = createMutation({
+  const linkEntitiesToTaxonomy = createMutation({
     decoder: DatabaseLayer.getDecoderFor('TaxonomyCreateEntityLinkMutation'),
     mutate: (
       payload: DatabaseLayer.Payload<'TaxonomyCreateEntityLinkMutation'>
@@ -1028,7 +1028,7 @@ export function createSerloModel({
     getUnrevisedEntitiesPerSubject,
     getUuid,
     getUuidWithCustomDecoder,
-    linkEntityToTaxonomy,
+    linkEntitiesToTaxonomy,
     rejectEntityRevision,
     rejectPageRevision,
     setDescription,

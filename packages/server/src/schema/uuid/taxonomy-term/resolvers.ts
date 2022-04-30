@@ -160,7 +160,7 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
         guard: serloAuth.TaxonomyTerm.change(scope),
       })
 
-      const { success } = await dataSources.model.serlo.linkEntityToTaxonomy({
+      const { success } = await dataSources.model.serlo.linkEntitiesToTaxonomy({
         entityIds,
         taxonomyTermId,
         userId,
