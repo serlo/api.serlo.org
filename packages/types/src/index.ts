@@ -2132,13 +2132,13 @@ export type SubscriptionSetResponse = {
   success: Scalars['Boolean'];
 };
 
-export type TaxonomyCreateEntityLinkInput = {
+export type TaxonomyEntityLinkInput = {
   entityIds: Array<Scalars['Int']>;
   taxonomyTermId: Scalars['Int'];
 };
 
-export type TaxonomyCreateEntityLinkResponse = {
-  __typename?: 'TaxonomyCreateEntityLinkResponse';
+export type TaxonomyEntityLinkResponse = {
+  __typename?: 'TaxonomyEntityLinkResponse';
   query: Query;
   success: Scalars['Boolean'];
 };
@@ -2231,7 +2231,8 @@ export type TaxonomyTermMoveResponse = {
 export type TaxonomyTermMutation = {
   __typename?: 'TaxonomyTermMutation';
   create: TaxonomyTermCreateResponse;
-  createEntityLink: TaxonomyCreateEntityLinkResponse;
+  createEntityLink: TaxonomyEntityLinkResponse;
+  deleteEntityLink: TaxonomyEntityLinkResponse;
   move: TaxonomyTermMoveResponse;
   setNameAndDescription: TaxonomyTermSetNameAndDescriptionResponse;
 };
@@ -2243,7 +2244,12 @@ export type TaxonomyTermMutationCreateArgs = {
 
 
 export type TaxonomyTermMutationCreateEntityLinkArgs = {
-  input: TaxonomyCreateEntityLinkInput;
+  input: TaxonomyEntityLinkInput;
+};
+
+
+export type TaxonomyTermMutationDeleteEntityLinkArgs = {
+  input: TaxonomyEntityLinkInput;
 };
 
 

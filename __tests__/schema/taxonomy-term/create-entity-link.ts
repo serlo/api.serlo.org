@@ -42,7 +42,7 @@ describe('TaxonomyCreateEntityLinkMutation', () => {
   const mutation = new Client({ userId: user.id })
     .prepareQuery({
       query: gql`
-        mutation set($input: TaxonomyCreateEntityLinkInput!) {
+        mutation set($input: TaxonomyEntityLinkInput!) {
           taxonomyTerm {
             createEntityLink(input: $input) {
               success
