@@ -292,6 +292,15 @@ export const spec = {
     response: t.void,
     canBeNull: false,
   },
+  TaxonomyCreateEntityLinkMutation: {
+    payload: t.type({
+      entityIds: t.array(t.number),
+      taxonomyTermId: t.number,
+      userId: t.number,
+    }),
+    response: t.strict({ success: t.literal(true) }),
+    canBeNull: false,
+  },
   TaxonomyTermCreateMutation: {
     payload: t.type({
       taxonomyType: TaxonomyTypeCreateOptionsDecoder,

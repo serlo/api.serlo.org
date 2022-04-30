@@ -904,6 +904,26 @@ export function createSerloModel({
     },
   })
 
+  const linkEntityToTaxonomy = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('TaxonomyCreateEntityLinkMutation'),
+    mutate: (
+      payload: DatabaseLayer.Payload<'TaxonomyCreateEntityLinkMutation'>
+    ) => {
+      return DatabaseLayer.makeRequest(
+        'TaxonomyCreateEntityLinkMutation',
+        payload
+      )
+    },
+    updateCache({ taxonomyTermId, entityIds }, { success }) {
+      if (success) {
+        [...entityIds, taxonomyTermId].map(
+          async (id) =>
+            await getUuid._querySpec.removeCache({ payload: { id } })
+        )
+      }
+    },
+  })
+
   const createTaxonomyTerm = createMutation({
     decoder: DatabaseLayer.getDecoderFor('TaxonomyTermCreateMutation'),
     mutate: (payload: DatabaseLayer.Payload<'TaxonomyTermCreateMutation'>) => {
@@ -1008,6 +1028,7 @@ export function createSerloModel({
     getUnrevisedEntitiesPerSubject,
     getUuid,
     getUuidWithCustomDecoder,
+    linkEntityToTaxonomy,
     rejectEntityRevision,
     rejectPageRevision,
     setDescription,

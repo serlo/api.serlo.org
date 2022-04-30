@@ -2136,6 +2136,17 @@ export type SubscriptionSetResponse = {
   success: Scalars['Boolean'];
 };
 
+export type TaxonomyCreateEntityLinkInput = {
+  entityIds: Array<Scalars['Int']>;
+  taxonomyTermId: Scalars['Int'];
+};
+
+export type TaxonomyCreateEntityLinkResponse = {
+  __typename?: 'TaxonomyCreateEntityLinkResponse';
+  query: Query;
+  success: Scalars['Boolean'];
+};
+
 export type TaxonomyTerm = AbstractNavigationChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'TaxonomyTerm';
   alias?: Maybe<Scalars['String']>;
@@ -2224,6 +2235,7 @@ export type TaxonomyTermMoveResponse = {
 export type TaxonomyTermMutation = {
   __typename?: 'TaxonomyTermMutation';
   create: TaxonomyTermCreateResponse;
+  createEntityLink: TaxonomyCreateEntityLinkResponse;
   move: TaxonomyTermMoveResponse;
   setNameAndDescription: TaxonomyTermSetNameAndDescriptionResponse;
 };
@@ -2231,6 +2243,11 @@ export type TaxonomyTermMutation = {
 
 export type TaxonomyTermMutationCreateArgs = {
   input: TaxonomyTermCreateInput;
+};
+
+
+export type TaxonomyTermMutationCreateEntityLinkArgs = {
+  input: TaxonomyCreateEntityLinkInput;
 };
 
 
@@ -2956,6 +2973,8 @@ export type ResolversTypes = {
   SubscriptionQuery: ResolverTypeWrapper<ModelOf<SubscriptionQuery>>;
   SubscriptionSetInput: ResolverTypeWrapper<ModelOf<SubscriptionSetInput>>;
   SubscriptionSetResponse: ResolverTypeWrapper<ModelOf<SubscriptionSetResponse>>;
+  TaxonomyCreateEntityLinkInput: ResolverTypeWrapper<ModelOf<TaxonomyCreateEntityLinkInput>>;
+  TaxonomyCreateEntityLinkResponse: ResolverTypeWrapper<ModelOf<TaxonomyCreateEntityLinkResponse>>;
   TaxonomyTerm: ResolverTypeWrapper<ModelOf<TaxonomyTerm>>;
   TaxonomyTermConnection: ResolverTypeWrapper<ModelOf<TaxonomyTermConnection>>;
   TaxonomyTermCreateInput: ResolverTypeWrapper<ModelOf<TaxonomyTermCreateInput>>;
@@ -3149,6 +3168,8 @@ export type ResolversParentTypes = {
   SubscriptionQuery: ModelOf<SubscriptionQuery>;
   SubscriptionSetInput: ModelOf<SubscriptionSetInput>;
   SubscriptionSetResponse: ModelOf<SubscriptionSetResponse>;
+  TaxonomyCreateEntityLinkInput: ModelOf<TaxonomyCreateEntityLinkInput>;
+  TaxonomyCreateEntityLinkResponse: ModelOf<TaxonomyCreateEntityLinkResponse>;
   TaxonomyTerm: ModelOf<TaxonomyTerm>;
   TaxonomyTermConnection: ModelOf<TaxonomyTermConnection>;
   TaxonomyTermCreateInput: ModelOf<TaxonomyTermCreateInput>;
@@ -4308,6 +4329,12 @@ export type SubscriptionSetResponseResolvers<ContextType = Context, ParentType e
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type TaxonomyCreateEntityLinkResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyCreateEntityLinkResponse'] = ResolversParentTypes['TaxonomyCreateEntityLinkResponse']> = {
+  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type TaxonomyTermResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTerm'] = ResolversParentTypes['TaxonomyTerm']> = {
   alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   children?: Resolver<ResolversTypes['AbstractUuidConnection'], ParentType, ContextType, Partial<TaxonomyTermChildrenArgs>>;
@@ -4355,6 +4382,7 @@ export type TaxonomyTermMoveResponseResolvers<ContextType = Context, ParentType 
 
 export type TaxonomyTermMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermMutation'] = ResolversParentTypes['TaxonomyTermMutation']> = {
   create?: Resolver<ResolversTypes['TaxonomyTermCreateResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationCreateArgs, 'input'>>;
+  createEntityLink?: Resolver<ResolversTypes['TaxonomyCreateEntityLinkResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationCreateEntityLinkArgs, 'input'>>;
   move?: Resolver<ResolversTypes['TaxonomyTermMoveResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationMoveArgs, 'input'>>;
   setNameAndDescription?: Resolver<ResolversTypes['TaxonomyTermSetNameAndDescriptionResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationSetNameAndDescriptionArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -4708,6 +4736,7 @@ export type Resolvers<ContextType = Context> = {
   SubscriptionMutation?: SubscriptionMutationResolvers<ContextType>;
   SubscriptionQuery?: SubscriptionQueryResolvers<ContextType>;
   SubscriptionSetResponse?: SubscriptionSetResponseResolvers<ContextType>;
+  TaxonomyCreateEntityLinkResponse?: TaxonomyCreateEntityLinkResponseResolvers<ContextType>;
   TaxonomyTerm?: TaxonomyTermResolvers<ContextType>;
   TaxonomyTermConnection?: TaxonomyTermConnectionResolvers<ContextType>;
   TaxonomyTermCreateResponse?: TaxonomyTermCreateResponseResolvers<ContextType>;
