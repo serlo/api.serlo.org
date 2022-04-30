@@ -916,7 +916,7 @@ export function createSerloModel({
     },
     updateCache({ taxonomyTermId, entityIds }, { success }) {
       if (success) {
-        [...entityIds, taxonomyTermId].map(
+        ;[...entityIds, taxonomyTermId].map(
           async (id) =>
             await getUuid._querySpec.removeCache({ payload: { id } })
         )
