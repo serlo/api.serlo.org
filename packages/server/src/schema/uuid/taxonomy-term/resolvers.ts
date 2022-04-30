@@ -143,7 +143,31 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
         query: {},
       }
     },
+    async createEntityLink(parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
 
+      const { entityIds, taxonomyTermId } = input
+
+      const scope = await fetchScopeOfUuid({
+        id: taxonomyTermId,
+        dataSources,
+      })
+
+      await assertUserIsAuthorized({
+        userId,
+        dataSources,
+        message: 'You are not allowed to link entities to this taxonomy term.',
+        guard: serloAuth.TaxonomyTerm.change(scope),
+      })
+
+      const { success } = await dataSources.model.serlo.linkEntityToTaxonomy({
+        entityIds,
+        taxonomyTermId,
+        userId,
+      })
+
+      return { success, query: {} }
+    },
     async move(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
