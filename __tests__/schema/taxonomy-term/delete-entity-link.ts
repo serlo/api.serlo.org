@@ -23,19 +23,16 @@ import { gql } from 'apollo-server'
 
 import {
   article,
-  exercise,
   user as baseUser,
   taxonomyTermCurriculumTopic,
-  taxonomyTermSubject,
-  video,
 } from '../../../__fixtures__'
 import { Client, given } from '../../__utils__'
 
-describe('TaxonomyCreateEntityLinkMutation', () => {
+describe('TaxonomyDeleteEntityLinkMutation', () => {
   const user = { ...baseUser, roles: ['de_architect'] }
 
   const input = {
-    entityIds: [video.id, exercise.id],
+    entityIds: [article.id],
     taxonomyTermId: taxonomyTermCurriculumTopic.id,
   }
 
@@ -44,7 +41,7 @@ describe('TaxonomyCreateEntityLinkMutation', () => {
       query: gql`
         mutation set($input: TaxonomyEntityLinkInput!) {
           taxonomyTerm {
-            createEntityLink(input: $input) {
+            deleteEntityLink(input: $input) {
               success
             }
           }
@@ -55,38 +52,21 @@ describe('TaxonomyCreateEntityLinkMutation', () => {
 
   beforeEach(() => {
     given('UuidQuery').for(
-      article,
-      exercise,
-      video,
-      taxonomyTermSubject,
+      { ...article, taxonomyTermIds: [taxonomyTermCurriculumTopic.id] },
       taxonomyTermCurriculumTopic,
       user
     )
 
-    given('TaxonomyCreateEntityLinkMutation')
+    given('TaxonomyDeleteEntityLinkMutation')
       .withPayload({ ...input, userId: user.id })
       .isDefinedBy((_req, res, ctx) => {
         given('UuidQuery').for({
-          ...video,
-          taxonomyTermIds: [
-            ...video.taxonomyTermIds,
-            taxonomyTermCurriculumTopic.id,
-          ],
-        })
-        given('UuidQuery').for({
-          ...exercise,
-          taxonomyTermIds: [
-            ...exercise.taxonomyTermIds,
-            taxonomyTermCurriculumTopic.id,
-          ],
+          ...article,
+          taxonomyTermIds: [],
         })
         given('UuidQuery').for({
           ...taxonomyTermCurriculumTopic,
-          childrenIds: [
-            ...taxonomyTermCurriculumTopic.childrenIds,
-            video.id,
-            exercise.id,
-          ],
+          childrenIds: [],
         })
         return res(ctx.json({ success: true }))
       })
@@ -95,7 +75,7 @@ describe('TaxonomyCreateEntityLinkMutation', () => {
   test('returns { success, record } when mutation could be successfully executed', async () => {
     await mutation.shouldReturnData({
       taxonomyTerm: {
-        createEntityLink: {
+        deleteEntityLink: {
           success: true,
         },
       },
@@ -103,11 +83,11 @@ describe('TaxonomyCreateEntityLinkMutation', () => {
   })
 
   test('updates the cache', async () => {
-    const exerciseQuery = new Client({ userId: user.id }).prepareQuery({
+    const childQuery = new Client({ userId: user.id }).prepareQuery({
       query: gql`
         query ($id: Int!) {
           uuid(id: $id) {
-            ... on Exercise {
+            ... on Article {
               taxonomyTerms {
                 nodes {
                   id
@@ -117,43 +97,14 @@ describe('TaxonomyCreateEntityLinkMutation', () => {
           }
         }
       `,
-      variables: { id: exercise.id },
+      variables: { id: article.id },
     })
-    await exerciseQuery.shouldReturnData({
+    await childQuery.shouldReturnData({
       uuid: {
         taxonomyTerms: {
           nodes: [
             {
-              id: exercise.taxonomyTermIds[0],
-            },
-          ],
-        },
-      },
-    })
-
-    const videoQuery = new Client({ userId: user.id }).prepareQuery({
-      query: gql`
-        query ($id: Int!) {
-          uuid(id: $id) {
-            ... on Video {
-              taxonomyTerms {
-                nodes {
-                  id
-                }
-              }
-            }
-          }
-        }
-      `,
-      variables: { id: video.id },
-    })
-
-    await videoQuery.shouldReturnData({
-      uuid: {
-        taxonomyTerms: {
-          nodes: [
-            {
-              id: video.taxonomyTermIds[0],
+              id: taxonomyTermCurriculumTopic.id,
             },
           ],
         },
@@ -184,7 +135,7 @@ describe('TaxonomyCreateEntityLinkMutation', () => {
         children: {
           nodes: [
             {
-              id: taxonomyTermCurriculumTopic.childrenIds[0],
+              id: article.id,
             },
           ],
         },
@@ -197,47 +148,14 @@ describe('TaxonomyCreateEntityLinkMutation', () => {
       uuid: {
         name: taxonomyTermCurriculumTopic.name,
         children: {
-          nodes: [
-            {
-              id: taxonomyTermCurriculumTopic.childrenIds[0],
-            },
-
-            {
-              id: video.id,
-            },
-            {
-              id: exercise.id,
-            },
-          ],
+          nodes: [],
         },
       },
     })
-    await exerciseQuery.shouldReturnData({
+    await childQuery.shouldReturnData({
       uuid: {
         taxonomyTerms: {
-          nodes: [
-            {
-              id: exercise.taxonomyTermIds[0],
-            },
-            {
-              id: taxonomyTermCurriculumTopic.id,
-            },
-          ],
-        },
-      },
-    })
-
-    await videoQuery.shouldReturnData({
-      uuid: {
-        taxonomyTerms: {
-          nodes: [
-            {
-              id: video.taxonomyTermIds[0],
-            },
-            {
-              id: taxonomyTermCurriculumTopic.id,
-            },
-          ],
+          nodes: [],
         },
       },
     })
@@ -254,13 +172,13 @@ describe('TaxonomyCreateEntityLinkMutation', () => {
   })
 
   test('fails when database layer returns a 400er response', async () => {
-    given('TaxonomyCreateEntityLinkMutation').returnsBadRequest()
+    given('TaxonomyDeleteEntityLinkMutation').returnsBadRequest()
 
     await mutation.shouldFailWithError('BAD_USER_INPUT')
   })
 
   test('fails when database layer has an internal error', async () => {
-    given('TaxonomyCreateEntityLinkMutation').hasInternalServerError()
+    given('TaxonomyDeleteEntityLinkMutation').hasInternalServerError()
 
     await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
   })

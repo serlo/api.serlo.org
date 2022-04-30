@@ -363,7 +363,19 @@ const pactSpec: PactSpec = {
     examples: [
       [
         {
-          entityIds: [article.id, exercise.id],
+          entityIds: [video.id, exercise.id],
+          taxonomyTermId: taxonomyTermTopic.id,
+          userId: user.id,
+        },
+        { success: true },
+      ],
+    ],
+  },
+  TaxonomyDeleteEntityLinkMutation: {
+    examples: [
+      [
+        {
+          entityIds: [article.id],
           taxonomyTermId: taxonomyTermTopic.id,
           userId: user.id,
         },
