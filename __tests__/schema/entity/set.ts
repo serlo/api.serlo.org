@@ -563,17 +563,13 @@ entitySetTypes.forEach((entitySetType) => {
 })
 
 describe('Autoreview entities', () => {
-  const fields = {
-    content: 'content',
-  }
-
   const input = {
     changes: 'changes',
     entityId: solution.id,
-    needsReview: false,
+    needsReview: true,
     subscribeThis: false,
     subscribeThisByEmail: false,
-    ...fields,
+    content: 'content',
   }
 
   const mutation = new Client({ userId: user.id })
@@ -639,9 +635,7 @@ describe('Autoreview entities', () => {
       uuid: { currentRevision: { id: solution.currentRevisionId } },
     })
 
-    await mutation
-      .withVariables({ input: { ...input, needsReview: true } })
-      .execute()
+    await mutation.withVariables({ input }).execute()
 
     await uuidQuery.shouldReturnData({
       uuid: { currentRevision: { id: newSolutionRevision.id } },
@@ -649,22 +643,20 @@ describe('Autoreview entities', () => {
   })
 
   test('autoreview is ignored when entity is also in non-autoreview taxonomy term', async () => {
-    given('UuidQuery').for([
-      {
-        ...exercise,
-        taxonomyTermIds: [taxonomyTermRoot.id].map(castToUuid),
-      },
+    const taxonomyTermIds = [autoreviewTaxonomyIds[0], taxonomyTermRoot.id].map(
+      castToUuid
+    )
+    given('UuidQuery').for(
+      { ...exercise, taxonomyTermIds },
       { ...taxonomyTermSubject, id: castToUuid(autoreviewTaxonomyIds[0]) },
-      taxonomyTermRoot,
-    ])
+      taxonomyTermRoot
+    )
 
     await uuidQuery.shouldReturnData({
       uuid: { currentRevision: { id: solution.currentRevisionId } },
     })
 
-    await mutation
-      .withVariables({ input: { ...input, needsReview: true } })
-      .execute()
+    await mutation.withVariables({ input }).execute()
 
     await uuidQuery.shouldReturnData({
       uuid: { currentRevision: { id: solution.currentRevisionId } },
