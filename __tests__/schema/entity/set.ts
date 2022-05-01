@@ -160,11 +160,9 @@ class EntitySetTestCase {
         description: this.fields.content!,
         title: this.fields.title!,
       }
+    } else {
+      return this.fields as Record<string, string>
     }
-    const fieldsWithoutCohesive: Omit<typeof this.fields, 'cohesive'> =
-      this.fields
-
-    return fieldsWithoutCohesive
   }
 
   get revision() {
