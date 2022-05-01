@@ -55,7 +55,7 @@ import { castToUuid, EntityType } from '~/model/decoder'
 import { SetAbstractEntityInput } from '~/schema/uuid/abstract-entity/entity-set-handler'
 import { fromEntityTypeToEntityRevisionType } from '~/schema/uuid/abstract-entity/utils'
 
-export interface EntityFields {
+interface EntityFields {
   title: string
   cohesive: boolean
   content: string
@@ -93,39 +93,30 @@ const fieldKeys: Record<EntityType, (keyof EntityFields)[]> = {
   [EntityType.Solution]: ['content'],
   [EntityType.Video]: ['title', 'content', 'url'],
 }
+const entities = [
+  applet,
+  article,
+  course,
+  coursePage,
+  event,
+  exercise,
+  exerciseGroup,
+  groupedExercise,
+  solution,
+  video,
+]
 
-class EntitySetWrapper {
+class EntitySetTestCase {
   public mutationName: string
   public fields: Partial<EntityFields>
 
-  constructor(public entityType: EntityType) {
+  constructor(public entity: Model<'AbstractEntity'>) {
     this.mutationName = `set${this.entityType}`
-    this.fields = R.pick(fieldKeys[entityType], ALL_POSSIBLE_FIELDS)
+    this.fields = R.pick(fieldKeys[this.entityType], ALL_POSSIBLE_FIELDS)
   }
 
-  get entity() {
-    switch (this.entityType) {
-      case EntityType.Applet:
-        return applet
-      case EntityType.Article:
-        return article
-      case EntityType.Course:
-        return course
-      case EntityType.CoursePage:
-        return coursePage
-      case EntityType.Event:
-        return event
-      case EntityType.Exercise:
-        return exercise
-      case EntityType.ExerciseGroup:
-        return exerciseGroup
-      case EntityType.GroupedExercise:
-        return groupedExercise
-      case EntityType.Solution:
-        return solution
-      case EntityType.Video:
-        return video
-    }
+  get entityType() {
+    return this.entity.__typename
   }
 
   get inputName() {
@@ -202,26 +193,24 @@ class EntitySetWrapper {
   }
 }
 
-const entitySetTypes = Object.values(EntityType).map(
-  (entityType) => new EntitySetWrapper(entityType)
-)
+const testCases = entities.map((entity) => new EntitySetTestCase(entity))
 
-entitySetTypes.forEach((entitySetType) => {
-  describe(entitySetType.mutationName, () => {
+testCases.forEach((testCase) => {
+  describe(testCase.mutationName, () => {
     const input: SetAbstractEntityInput = {
       changes: 'changes',
       needsReview: true,
       subscribeThis: false,
       subscribeThisByEmail: false,
-      ...entitySetType.fields,
+      ...testCase.fields,
     }
 
     const mutationWithParentId = new Client({ userId: user.id })
       .prepareQuery({
         query: gql`
-          mutation set($input: ${entitySetType.inputName}!) {
+          mutation set($input: ${testCase.inputName}!) {
             entity {
-              ${entitySetType.mutationName}(input: $input) {
+              ${testCase.mutationName}(input: $input) {
                 success
                 record {
                   id
@@ -231,16 +220,16 @@ entitySetTypes.forEach((entitySetType) => {
           }
         `,
       })
-      .withVariables({ input: { ...input, parentId: entitySetType.parent.id } })
+      .withVariables({ input: { ...input, parentId: testCase.parent.id } })
 
-    const inputWithEntityId = { ...input, entityId: entitySetType.entity.id }
+    const inputWithEntityId = { ...input, entityId: testCase.entity.id }
 
     const mutationWithEntityId = new Client({ userId: user.id })
       .prepareQuery({
         query: gql`
-          mutation set($input: ${entitySetType.inputName}!) {
+          mutation set($input: ${testCase.inputName}!) {
             entity {
-              ${entitySetType.mutationName}(input: $input) {
+              ${testCase.mutationName}(input: $input) {
                 success
                 record {
                   id
@@ -257,23 +246,23 @@ entitySetTypes.forEach((entitySetType) => {
     let entityCreatePayload: DatabaseLayer.Payload<'EntityCreateMutation'> = {
       input: {
         changes,
-        instance: entitySetType.parent.instance,
+        instance: testCase.parent.instance,
         needsReview,
         licenseId: 1,
         subscribeThis,
         subscribeThisByEmail,
-        fields: entitySetType.fieldsToDBLayer,
+        fields: testCase.fieldsToDBLayer,
       },
       userId: user.id,
-      entityType: entitySetType.entityType,
+      entityType: testCase.entityType,
     }
 
-    if (entitySetType.parent.__typename == 'TaxonomyTerm') {
+    if (testCase.parent.__typename == 'TaxonomyTerm') {
       entityCreatePayload = {
         ...entityCreatePayload,
         input: {
           ...entityCreatePayload.input,
-          taxonomyTermId: entitySetType.parent.id,
+          taxonomyTermId: testCase.parent.id,
         },
       }
     } else {
@@ -281,7 +270,7 @@ entitySetTypes.forEach((entitySetType) => {
         ...entityCreatePayload,
         input: {
           ...entityCreatePayload.input,
-          parentId: entitySetType.parent.id,
+          parentId: testCase.parent.id,
         },
       }
     }
@@ -296,17 +285,15 @@ entitySetTypes.forEach((entitySetType) => {
           needsReview,
           subscribeThis,
           subscribeThisByEmail,
-          fields: entitySetType.fieldsToDBLayer,
+          fields: testCase.fieldsToDBLayer,
         },
         userId: user.id,
-        revisionType: fromEntityTypeToEntityRevisionType(
-          entitySetType.entityType
-        ),
+        revisionType: fromEntityTypeToEntityRevisionType(testCase.entityType),
       }
 
     beforeEach(() => {
       given('UuidQuery').for(
-        entitySetType.parent,
+        testCase.parent,
         taxonomyTermSubject,
         taxonomyTermRoot,
         user
@@ -316,20 +303,20 @@ entitySetTypes.forEach((entitySetType) => {
     test('creates an entity when parentId is provided', async () => {
       given('EntityCreateMutation')
         .withPayload(entityCreatePayload)
-        .returns(entitySetType.entity)
+        .returns(testCase.entity)
 
       await mutationWithParentId.shouldReturnData({
         entity: {
-          [entitySetType.mutationName]: {
+          [testCase.mutationName]: {
             success: true,
-            record: { id: entitySetType.entity.id },
+            record: { id: testCase.entity.id },
           },
         },
       })
     })
 
     test('adds new entity revision when entityId is provided', async () => {
-      given('UuidQuery').for(entitySetType.entity)
+      given('UuidQuery').for(testCase.entity)
 
       given('EntityAddRevisionMutation')
         .withPayload(entityAddRevisionPayload)
@@ -337,7 +324,7 @@ entitySetTypes.forEach((entitySetType) => {
 
       await mutationWithEntityId.shouldReturnData({
         entity: {
-          [entitySetType.mutationName]: {
+          [testCase.mutationName]: {
             success: true,
           },
         },
@@ -351,7 +338,7 @@ entitySetTypes.forEach((entitySetType) => {
     })
 
     test('fails when user does not have role "login"', async () => {
-      given('UuidQuery').for(entitySetType.entity)
+      given('UuidQuery').for(testCase.entity)
 
       const guestUser = { ...user, id: nextUuid(user.id), roles: ['guest'] }
 
@@ -388,7 +375,7 @@ entitySetTypes.forEach((entitySetType) => {
 
       await mutationWithParentId.shouldFailWithError('BAD_USER_INPUT')
 
-      given('UuidQuery').for(entitySetType.entity)
+      given('UuidQuery').for(testCase.entity)
       await mutationWithEntityId.shouldFailWithError('BAD_USER_INPUT')
     })
 
@@ -398,33 +385,33 @@ entitySetTypes.forEach((entitySetType) => {
 
       await mutationWithParentId.shouldFailWithError('INTERNAL_SERVER_ERROR')
 
-      given('UuidQuery').for(entitySetType.entity)
+      given('UuidQuery').for(testCase.entity)
       await mutationWithEntityId.shouldFailWithError('INTERNAL_SERVER_ERROR')
     })
 
     test('fails when parent does not exists', async () => {
       given('UuidQuery')
-        .withPayload({ id: entitySetType.parent.id })
+        .withPayload({ id: testCase.parent.id })
         .returnsNotFound()
 
       await mutationWithParentId.shouldFailWithError('BAD_USER_INPUT')
     })
 
-    describe(`Cache after ${entitySetType.mutationName} call`, () => {
+    describe(`Cache after ${testCase.mutationName} call`, () => {
       const newRevision = {
-        ...entitySetType.revision,
+        ...testCase.revision,
         id: castToUuid(123),
       }
 
       const anotherEntity = {
-        ...entitySetType.entity,
+        ...testCase.entity,
         id: castToUuid(456),
       }
 
       beforeEach(() => {
         given('UuidQuery').for(
-          entitySetType.entity,
-          entitySetType.revision,
+          testCase.entity,
+          testCase.revision,
           anotherEntity,
           taxonomyTermSubject,
           taxonomyTermRoot,
@@ -453,7 +440,7 @@ entitySetTypes.forEach((entitySetType) => {
           })
           .isDefinedBy((_, res, ctx) => {
             given('UuidQuery').for(
-              { ...entitySetType.entity, currentRevisionId: newRevision.id },
+              { ...testCase.entity, currentRevisionId: newRevision.id },
               newRevision
             )
 
@@ -475,7 +462,7 @@ entitySetTypes.forEach((entitySetType) => {
                 uuid(id: $id) {
                   id
                   __typename
-                  ... on ${entitySetType.entityType} {
+                  ... on ${testCase.entityType} {
                     currentRevision {
                       id
                     }
@@ -484,13 +471,13 @@ entitySetTypes.forEach((entitySetType) => {
               }
             `,
           })
-          .withVariables({ id: entitySetType.entity.id })
+          .withVariables({ id: testCase.entity.id })
 
         await uuidQuery.shouldReturnData({
           uuid: {
-            id: entitySetType.entity.id,
-            __typename: entitySetType.entity.__typename,
-            currentRevision: { id: entitySetType.entity.currentRevisionId },
+            id: testCase.entity.id,
+            __typename: testCase.entity.__typename,
+            currentRevision: { id: testCase.entity.currentRevisionId },
           },
         })
 
@@ -498,7 +485,7 @@ entitySetTypes.forEach((entitySetType) => {
 
         await uuidQuery.shouldReturnData({
           uuid: {
-            currentRevision: { id: entitySetType.entity.currentRevisionId },
+            currentRevision: { id: testCase.entity.currentRevisionId },
           },
         })
 
@@ -514,7 +501,9 @@ entitySetTypes.forEach((entitySetType) => {
       })
 
       test('updates the subscriptions', async () => {
-        const subscritionsQuery = new Client({ userId: user.id }).prepareQuery({
+        const subscritionsQuery = new Client({
+          userId: user.id,
+        }).prepareQuery({
           query: gql`
             query {
               subscription {
@@ -558,7 +547,7 @@ entitySetTypes.forEach((entitySetType) => {
               nodes: [
                 { object: getTypenameAndId(anotherEntity), sendEmail: true },
                 {
-                  object: getTypenameAndId(entitySetType.entity),
+                  object: getTypenameAndId(testCase.entity),
                   sendEmail: true,
                 },
               ],
