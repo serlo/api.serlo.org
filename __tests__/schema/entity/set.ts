@@ -47,22 +47,7 @@ import {
   solutionRevision,
   videoRevision,
 } from '../../../__fixtures__'
-import {
-  given,
-  Client,
-  nextUuid,
-  ALL_POSSIBLE_FIELDS,
-  appletFields,
-  articleFields,
-  courseFields,
-  coursePageFields,
-  EntityFields,
-  eventFields,
-  exerciseGroupFields,
-  getTypenameAndId,
-  genericFields,
-  videoFields,
-} from '../../__utils__'
+import { given, Client, nextUuid, getTypenameAndId } from '../../__utils__'
 import { autoreviewTaxonomyIds } from '~/config/autoreview-taxonomies'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
@@ -70,16 +55,52 @@ import { castToUuid, EntityType } from '~/model/decoder'
 import { SetAbstractEntityInput } from '~/schema/uuid/abstract-entity/entity-set-handler'
 import { fromEntityTypeToEntityRevisionType } from '~/schema/uuid/abstract-entity/utils'
 
+export interface EntityFields {
+  title: string
+  cohesive: boolean
+  content: string
+  description: string
+  metaTitle: string
+  metaDescription: string
+  url: string
+}
+
+const ALL_POSSIBLE_FIELDS: EntityFields = {
+  title: 'title',
+  cohesive: false,
+  content: 'content',
+  description: 'description',
+  metaTitle: 'metaTitle',
+  metaDescription: 'metaDescription',
+  url: 'https://url.org',
+}
+
+const fieldKeys: Record<EntityType, (keyof EntityFields)[]> = {
+  [EntityType.Applet]: [
+    'title',
+    'content',
+    'metaTitle',
+    'metaDescription',
+    'url',
+  ],
+  [EntityType.Article]: ['title', 'content', 'metaTitle', 'metaDescription'],
+  [EntityType.Course]: ['title', 'content', 'metaDescription'],
+  [EntityType.CoursePage]: ['title', 'content'],
+  [EntityType.Event]: ['title', 'content', 'metaTitle', 'metaDescription'],
+  [EntityType.Exercise]: ['content'],
+  [EntityType.ExerciseGroup]: ['cohesive', 'content'],
+  [EntityType.GroupedExercise]: ['content'],
+  [EntityType.Solution]: ['content'],
+  [EntityType.Video]: ['title', 'content', 'url'],
+}
+
 class EntitySetWrapper {
   public mutationName: string
   public fields: Partial<EntityFields>
 
-  constructor(
-    public entityType: EntityType,
-    fieldsFromApi: (keyof EntityFields)[]
-  ) {
+  constructor(public entityType: EntityType) {
     this.mutationName = `set${this.entityType}`
-    this.fields = R.pick(fieldsFromApi, ALL_POSSIBLE_FIELDS)
+    this.fields = R.pick(fieldKeys[entityType], ALL_POSSIBLE_FIELDS)
   }
 
   get entity() {
@@ -182,16 +203,16 @@ class EntitySetWrapper {
 }
 
 const entitySetTypes = [
-  new EntitySetWrapper(EntityType.Applet, appletFields),
-  new EntitySetWrapper(EntityType.Article, articleFields),
-  new EntitySetWrapper(EntityType.Course, courseFields),
-  new EntitySetWrapper(EntityType.CoursePage, coursePageFields),
-  new EntitySetWrapper(EntityType.Event, eventFields),
-  new EntitySetWrapper(EntityType.Exercise, genericFields),
-  new EntitySetWrapper(EntityType.ExerciseGroup, exerciseGroupFields),
-  new EntitySetWrapper(EntityType.GroupedExercise, genericFields),
-  new EntitySetWrapper(EntityType.Solution, genericFields),
-  new EntitySetWrapper(EntityType.Video, videoFields),
+  new EntitySetWrapper(EntityType.Applet),
+  new EntitySetWrapper(EntityType.Article),
+  new EntitySetWrapper(EntityType.Course),
+  new EntitySetWrapper(EntityType.CoursePage),
+  new EntitySetWrapper(EntityType.Event),
+  new EntitySetWrapper(EntityType.Exercise),
+  new EntitySetWrapper(EntityType.ExerciseGroup),
+  new EntitySetWrapper(EntityType.GroupedExercise),
+  new EntitySetWrapper(EntityType.Solution),
+  new EntitySetWrapper(EntityType.Video),
 ]
 
 entitySetTypes.forEach((entitySetType) => {
