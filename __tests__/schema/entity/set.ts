@@ -245,7 +245,7 @@ testCases.forEach((testCase) => {
 
     const { changes, needsReview, subscribeThis, subscribeThisByEmail } = input
 
-    let entityCreatePayload: DatabaseLayer.Payload<'EntityCreateMutation'> = {
+    const entityCreatePayload: DatabaseLayer.Payload<'EntityCreateMutation'> = {
       input: {
         changes,
         instance: testCase.parent.instance,
@@ -254,27 +254,15 @@ testCases.forEach((testCase) => {
         subscribeThis,
         subscribeThisByEmail,
         fields: testCase.fieldsToDBLayer,
+        ...(testCase.parent.__typename == 'TaxonomyTerm'
+          ? { taxonomyTermId: testCase.parent.id }
+          : {}),
+        ...(testCase.parent.__typename != 'TaxonomyTerm'
+          ? { parentId: testCase.parent.id }
+          : {}),
       },
       userId: user.id,
       entityType: testCase.entityType,
-    }
-
-    if (testCase.parent.__typename == 'TaxonomyTerm') {
-      entityCreatePayload = {
-        ...entityCreatePayload,
-        input: {
-          ...entityCreatePayload.input,
-          taxonomyTermId: testCase.parent.id,
-        },
-      }
-    } else {
-      entityCreatePayload = {
-        ...entityCreatePayload,
-        input: {
-          ...entityCreatePayload.input,
-          parentId: testCase.parent.id,
-        },
-      }
     }
 
     const { entityId } = inputWithEntityId
