@@ -140,6 +140,7 @@ export function createSetEntityResolver<
         )
       }
 
+      // TODO: Autoreview of solution in exercise groups
       if (entity.parentId && parentDecoder) {
         const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
           id: entity.parentId,
@@ -241,7 +242,7 @@ async function checkAnyParentAutoreview(
   })
 
   return (
-    taxonomyTerm.parentId !== null &&
+    taxonomyTerm.parentId != null &&
     (await checkAnyParentAutoreview(taxonomyTerm.parentId, dataSources))
   )
 }

@@ -606,28 +606,7 @@ describe('Autoreview entities', () => {
     })
     .withVariables({ id: solution.id })
 
-  let newSolutionRevision: Model<'SolutionRevision'>
-
-  const {
-    changes,
-    entityId,
-    needsReview,
-    subscribeThis,
-    subscribeThisByEmail,
-  } = input
-
-  const payload = {
-    input: {
-      changes,
-      entityId,
-      needsReview,
-      subscribeThis,
-      subscribeThisByEmail,
-      fields,
-    },
-    userId: user.id,
-    revisionType: EntityRevisionType.SolutionRevision,
-  }
+  const newSolutionRevision = { ...solutionRevision, id: castToUuid(789) }
 
   beforeEach(() => {
     given('UuidQuery').for(
@@ -640,29 +619,19 @@ describe('Autoreview entities', () => {
       taxonomyTermRoot
     )
 
-    given('EntityAddRevisionMutation')
-      .withPayload(payload)
-      .returns({ success: true, revisionId: castToUuid(789) })
+    given('EntityAddRevisionMutation').isDefinedBy((req, res, ctx) => {
+      given('UuidQuery').for(newSolutionRevision)
 
-    given('EntityAddRevisionMutation')
-      .withPayload({
-        ...payload,
-        input: { ...payload.input, needsReview: false },
-      })
-      .isDefinedBy((_, res, ctx) => {
-        newSolutionRevision = {
-          ...solutionRevision,
-          id: castToUuid(789),
-        }
-        given('UuidQuery').for(newSolutionRevision, {
+      if (!req.body.payload.input.needsReview)
+        given('UuidQuery').for({
           ...solution,
           currentRevisionId: newSolutionRevision.id,
         })
 
-        return res(
-          ctx.json({ success: true, revisionId: newSolutionRevision.id })
-        )
-      })
+      return res(
+        ctx.json({ success: true, revisionId: newSolutionRevision.id })
+      )
+    })
   })
 
   test('checks out revision without need of review, even if needsReview initially true', async () => {
@@ -679,23 +648,23 @@ describe('Autoreview entities', () => {
     })
   })
 
-  test('does not check out revision automatically if entity is also in a no-autoreview taxonomy term', async () => {
+  test('autoreview is ignored when entity is also in non-autoreview taxonomy term', async () => {
     given('UuidQuery').for([
       {
         ...exercise,
-        taxonomyTermIds: [
-          ...autoreviewTaxonomyIds,
-          ...exercise.taxonomyTermIds,
-        ].map(castToUuid),
+        taxonomyTermIds: [taxonomyTermRoot.id].map(castToUuid),
       },
-      { ...taxonomyTermSubject, id: castToUuid(106082) },
+      { ...taxonomyTermSubject, id: castToUuid(autoreviewTaxonomyIds[0]) },
+      taxonomyTermRoot,
     ])
 
     await uuidQuery.shouldReturnData({
       uuid: { currentRevision: { id: solution.currentRevisionId } },
     })
 
-    await mutation.execute()
+    await mutation
+      .withVariables({ input: { ...input, needsReview: true } })
+      .execute()
 
     await uuidQuery.shouldReturnData({
       uuid: { currentRevision: { id: solution.currentRevisionId } },
