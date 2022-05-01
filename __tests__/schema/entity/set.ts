@@ -202,18 +202,9 @@ class EntitySetWrapper {
   }
 }
 
-const entitySetTypes = [
-  new EntitySetWrapper(EntityType.Applet),
-  new EntitySetWrapper(EntityType.Article),
-  new EntitySetWrapper(EntityType.Course),
-  new EntitySetWrapper(EntityType.CoursePage),
-  new EntitySetWrapper(EntityType.Event),
-  new EntitySetWrapper(EntityType.Exercise),
-  new EntitySetWrapper(EntityType.ExerciseGroup),
-  new EntitySetWrapper(EntityType.GroupedExercise),
-  new EntitySetWrapper(EntityType.Solution),
-  new EntitySetWrapper(EntityType.Video),
-]
+const entitySetTypes = Object.values(EntityType).map(
+  (entityType) => new EntitySetWrapper(entityType)
+)
 
 entitySetTypes.forEach((entitySetType) => {
   describe(entitySetType.mutationName, () => {
