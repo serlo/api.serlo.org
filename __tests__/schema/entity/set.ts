@@ -78,7 +78,6 @@ class EntitySetWrapper {
     public entityType: EntityType,
     fieldsFromApi: (keyof EntityFields)[]
   ) {
-    this.entityType = entityType
     this.mutationName = `set${this.entityType}`
     this.fields = R.pick(fieldsFromApi, ALL_POSSIBLE_FIELDS)
   }
@@ -109,16 +108,13 @@ class EntitySetWrapper {
   }
 
   get inputName() {
-    if (
-      [
-        EntityType.Exercise,
-        EntityType.GroupedExercise,
-        EntityType.Solution,
-      ].includes(this.entityType)
-    ) {
-      return 'SetGenericEntityInput'
-    }
-    return `Set${this.entityType}Input`
+    return [
+      EntityType.Exercise,
+      EntityType.GroupedExercise,
+      EntityType.Solution,
+    ].includes(this.entityType)
+      ? 'SetGenericEntityInput'
+      : `Set${this.entityType}Input`
   }
 
   get parent(): Model<'AbstractEntity' | 'TaxonomyTerm'> {
