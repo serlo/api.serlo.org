@@ -66,7 +66,7 @@ import {
 import { autoreviewTaxonomyIds } from '~/config/autoreview-taxonomies'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
-import { castToUuid, EntityRevisionType, EntityType } from '~/model/decoder'
+import { castToUuid, EntityType } from '~/model/decoder'
 import { SetAbstractEntityInput } from '~/schema/uuid/abstract-entity/entity-set-handler'
 import { fromEntityTypeToEntityRevisionType } from '~/schema/uuid/abstract-entity/utils'
 
@@ -76,7 +76,7 @@ class EntitySetWrapper {
 
   constructor(
     public entityType: EntityType,
-    private fieldsFromApi: (keyof EntityFields)[]
+    fieldsFromApi: (keyof EntityFields)[]
   ) {
     this.entityType = entityType
     this.mutationName = `set${this.entityType}`
