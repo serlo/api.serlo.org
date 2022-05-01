@@ -193,6 +193,10 @@ class EntitySetTestCase {
 
 const testCases = entities.map((entity) => new EntitySetTestCase(entity))
 
+beforeEach(() => {
+  given('UuidQuery').for(user, taxonomyTermRoot)
+})
+
 testCases.forEach((testCase) => {
   describe(testCase.mutationName, () => {
     const input: SetAbstractEntityInput = {
@@ -290,12 +294,7 @@ testCases.forEach((testCase) => {
       }
 
     beforeEach(() => {
-      given('UuidQuery').for(
-        testCase.parent,
-        taxonomyTermSubject,
-        taxonomyTermRoot,
-        user
-      )
+      given('UuidQuery').for(testCase.parent, taxonomyTermSubject)
     })
 
     test('creates an entity when parentId is provided', async () => {
@@ -601,13 +600,11 @@ describe('Autoreview entities', () => {
 
   beforeEach(() => {
     given('UuidQuery').for(
-      user,
       solution,
       solutionRevision,
       article,
       { ...exercise, taxonomyTermIds: [106082].map(castToUuid) },
-      { ...taxonomyTermSubject, id: castToUuid(106082) },
-      taxonomyTermRoot
+      { ...taxonomyTermSubject, id: castToUuid(106082) }
     )
 
     given('EntityAddRevisionMutation').isDefinedBy((req, res, ctx) => {
