@@ -28,6 +28,7 @@ import {
   createNamespace,
   InterfaceResolvers,
   Mutations,
+  Queries,
 } from '~/internals/graphql'
 import {
   castToUuid,
@@ -43,12 +44,18 @@ import {
   SolutionDecoder,
   VideoDecoder,
   AbstractExerciseDecoder,
+  EntityDecoder,
 } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
+import { resolveConnection } from '~/schema/connection/utils'
 
 export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   InterfaceResolvers<'AbstractEntityRevision'> &
+  Queries<'entity'> &
   Mutations<'entity'> = {
+  Query: {
+    entity: createNamespace(),
+  },
   Mutation: {
     entity: createNamespace(),
   },
@@ -60,6 +67,47 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   AbstractEntityRevision: {
     __resolveType(entityRevision) {
       return entityRevision.__typename
+    },
+  },
+  EntityQuery: {
+    async deletedEntities(_parent, payload, { dataSources }) {
+      const { first = 100, after, instance } = payload
+
+      const { deletedEntities } =
+        await dataSources.model.serlo.getDeletedEntities({
+          first,
+          after,
+          instance,
+        })
+
+      const nodes = await Promise.all(
+        deletedEntities.map(async (element) => {
+          return {
+            entity: await dataSources.model.serlo.getUuidWithCustomDecoder({
+              id: element.id,
+              decoder: EntityDecoder,
+            }),
+            dateOfDeletion: element.dateOfDeletion,
+          }
+        })
+      )
+
+      const connection = resolveConnection({
+        nodes,
+        payload,
+        createCursor: (node) => {
+          const { entity, dateOfDeletion } = node
+          return JSON.stringify({ id: entity.id, dateOfDeletion })
+        },
+      })
+
+      return {
+        ...connection,
+        pageInfo: {
+          ...connection.pageInfo,
+          __typename: 'PageInfo',
+        },
+      }
     },
   },
   EntityMutation: {

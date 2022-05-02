@@ -153,6 +153,14 @@ const pactSpec: PactSpec = {
   },
   // TODO: Add contract tests
   AllThreadsQuery: { examples: [] },
+  DeletedEntitiesQuery: {
+    examples: [
+      [
+        { first: 1, after: undefined, instance: Instance.De },
+        { deletedEntities: [{ id: 70, dateOfDeletion: '2022-4-30' }] },
+      ],
+    ],
+  },
   EntitiesMetadataQuery: { examples: [] },
   EntityAddRevisionMutation: {
     examples: [
