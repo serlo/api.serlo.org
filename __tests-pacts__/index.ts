@@ -212,7 +212,7 @@ const pactSpec: PactSpec = {
             licenseId: 1,
             subscribeThis: false,
             subscribeThisByEmail: false,
-            needsReview: true,
+            needsReview: false,
             taxonomyTermId: 5,
             fields: {
               title: 'title',

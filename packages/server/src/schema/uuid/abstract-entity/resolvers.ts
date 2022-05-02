@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as serloAuth from '@serlo/authorization'
-import * as t from 'io-ts'
 
 import { createSetEntityResolver } from './entity-set-handler'
 import {
@@ -43,6 +42,7 @@ import {
   GroupedExerciseDecoder,
   SolutionDecoder,
   VideoDecoder,
+  AbstractExerciseDecoder,
 } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 
@@ -114,7 +114,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     }),
     setSolution: createSetEntityResolver({
       childDecoder: SolutionDecoder,
-      parentDecoder: t.union([GroupedExerciseDecoder, ExerciseDecoder]),
+      parentDecoder: AbstractExerciseDecoder,
       entityType: EntityType.Solution,
       mandatoryFieldKeys: ['changes', 'content'],
     }),
