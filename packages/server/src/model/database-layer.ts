@@ -128,7 +128,7 @@ export const spec = {
         needsReview: t.boolean,
         subscribeThis: t.boolean,
         subscribeThisByEmail: t.boolean,
-        fields: t.record(t.string, t.string),
+        fields: t.record(t.string, t.union([t.string, t.undefined])),
       }),
     }),
     response: t.type({
