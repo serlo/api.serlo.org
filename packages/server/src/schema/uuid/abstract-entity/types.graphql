@@ -52,6 +52,35 @@ type AbstractEntityCursor {
   node: AbstractEntity!
 }
 
+extend type Query {
+  entity: EntityQuery
+}
+
+type EntityQuery {
+  deletedEntities(
+    first: Int
+    after: String
+    instance: Instance
+  ): DeletedEntitiesConnection!
+}
+
+type DeletedEntity {
+  dateOfDeletion: String
+  entity: AbstractEntity
+}
+
+type DeletedEntityCursor {
+  cursor: String!
+  node: DeletedEntity!
+}
+
+type DeletedEntitiesConnection {
+  edges: [DeletedEntityCursor!]!
+  nodes: [DeletedEntity!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
 extend type Mutation {
   entity: EntityMutation!
 }

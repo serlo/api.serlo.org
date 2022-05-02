@@ -872,6 +872,26 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
   thread: Thread;
 };
 
+export type DeletedEntitiesConnection = {
+  __typename?: 'DeletedEntitiesConnection';
+  edges: Array<DeletedEntityCursor>;
+  nodes: Array<DeletedEntity>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type DeletedEntity = {
+  __typename?: 'DeletedEntity';
+  dateOfDeletion?: Maybe<Scalars['String']>;
+  entity?: Maybe<Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | GroupedExercise | Solution | Video>;
+};
+
+export type DeletedEntityCursor = {
+  __typename?: 'DeletedEntityCursor';
+  cursor: Scalars['String'];
+  node: DeletedEntity;
+};
+
 export type EntityMetadataConnection = {
   __typename?: 'EntityMetadataConnection';
   edges: Array<EntityMetadataCursor>;
@@ -959,6 +979,18 @@ export type EntityMutationSetSolutionArgs = {
 
 export type EntityMutationSetVideoArgs = {
   input: SetVideoInput;
+};
+
+export type EntityQuery = {
+  __typename?: 'EntityQuery';
+  deletedEntities: DeletedEntitiesConnection;
+};
+
+
+export type EntityQueryDeletedEntitiesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
 };
 
 export type Event = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
@@ -1646,6 +1678,7 @@ export type Query = {
   activeDonors: UserConnection;
   activeReviewers: UserConnection;
   authorization: Scalars['JSON'];
+  entity?: Maybe<EntityQuery>;
   events: AbstractNotificationEventConnection;
   license?: Maybe<License>;
   metadata: MetadataQuery;
@@ -2872,9 +2905,13 @@ export type ResolversTypes = {
   CreateTaxonomyTermNotificationEvent: ResolverTypeWrapper<ModelOf<CreateTaxonomyTermNotificationEvent>>;
   CreateThreadNotificationEvent: ResolverTypeWrapper<ModelOf<CreateThreadNotificationEvent>>;
   DateTime: ResolverTypeWrapper<ModelOf<Scalars['DateTime']>>;
+  DeletedEntitiesConnection: ResolverTypeWrapper<ModelOf<DeletedEntitiesConnection>>;
+  DeletedEntity: ResolverTypeWrapper<ModelOf<DeletedEntity>>;
+  DeletedEntityCursor: ResolverTypeWrapper<ModelOf<DeletedEntityCursor>>;
   EntityMetadataConnection: ResolverTypeWrapper<ModelOf<EntityMetadataConnection>>;
   EntityMetadataCursor: ResolverTypeWrapper<ModelOf<EntityMetadataCursor>>;
   EntityMutation: ResolverTypeWrapper<ModelOf<EntityMutation>>;
+  EntityQuery: ResolverTypeWrapper<ModelOf<EntityQuery>>;
   Event: ResolverTypeWrapper<ModelOf<Event>>;
   EventRevision: ResolverTypeWrapper<ModelOf<EventRevision>>;
   EventRevisionConnection: ResolverTypeWrapper<ModelOf<EventRevisionConnection>>;
@@ -3067,9 +3104,13 @@ export type ResolversParentTypes = {
   CreateTaxonomyTermNotificationEvent: ModelOf<CreateTaxonomyTermNotificationEvent>;
   CreateThreadNotificationEvent: ModelOf<CreateThreadNotificationEvent>;
   DateTime: ModelOf<Scalars['DateTime']>;
+  DeletedEntitiesConnection: ModelOf<DeletedEntitiesConnection>;
+  DeletedEntity: ModelOf<DeletedEntity>;
+  DeletedEntityCursor: ModelOf<DeletedEntityCursor>;
   EntityMetadataConnection: ModelOf<EntityMetadataConnection>;
   EntityMetadataCursor: ModelOf<EntityMetadataCursor>;
   EntityMutation: ModelOf<EntityMutation>;
+  EntityQuery: ModelOf<EntityQuery>;
   Event: ModelOf<Event>;
   EventRevision: ModelOf<EventRevision>;
   EventRevisionConnection: ModelOf<EventRevisionConnection>;
@@ -3690,6 +3731,26 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
   name: 'DateTime';
 }
 
+export type DeletedEntitiesConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletedEntitiesConnection'] = ResolversParentTypes['DeletedEntitiesConnection']> = {
+  edges?: Resolver<Array<ResolversTypes['DeletedEntityCursor']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<ResolversTypes['DeletedEntity']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type DeletedEntityResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletedEntity'] = ResolversParentTypes['DeletedEntity']> = {
+  dateOfDeletion?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  entity?: Resolver<Maybe<ResolversTypes['AbstractEntity']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type DeletedEntityCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletedEntityCursor'] = ResolversParentTypes['DeletedEntityCursor']> = {
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<ResolversTypes['DeletedEntity'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type EntityMetadataConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityMetadataConnection'] = ResolversParentTypes['EntityMetadataConnection']> = {
   edges?: Resolver<Array<ResolversTypes['EntityMetadataCursor']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['JSONObject']>, ParentType, ContextType>;
@@ -3716,6 +3777,11 @@ export type EntityMutationResolvers<ContextType = Context, ParentType extends Re
   setGroupedExercise?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetGroupedExerciseArgs, 'input'>>;
   setSolution?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetSolutionArgs, 'input'>>;
   setVideo?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetVideoArgs, 'input'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type EntityQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityQuery'] = ResolversParentTypes['EntityQuery']> = {
+  deletedEntities?: Resolver<ResolversTypes['DeletedEntitiesConnection'], ParentType, ContextType, Partial<EntityQueryDeletedEntitiesArgs>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4081,6 +4147,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   activeDonors?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, Partial<QueryActiveDonorsArgs>>;
   activeReviewers?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, Partial<QueryActiveReviewersArgs>>;
   authorization?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
+  entity?: Resolver<Maybe<ResolversTypes['EntityQuery']>, ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<QueryEventsArgs>>;
   license?: Resolver<Maybe<ResolversTypes['License']>, ParentType, ContextType, RequireFields<QueryLicenseArgs, 'id'>>;
   metadata?: Resolver<ResolversTypes['MetadataQuery'], ParentType, ContextType>;
@@ -4640,9 +4707,13 @@ export type Resolvers<ContextType = Context> = {
   CreateTaxonomyTermNotificationEvent?: CreateTaxonomyTermNotificationEventResolvers<ContextType>;
   CreateThreadNotificationEvent?: CreateThreadNotificationEventResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
+  DeletedEntitiesConnection?: DeletedEntitiesConnectionResolvers<ContextType>;
+  DeletedEntity?: DeletedEntityResolvers<ContextType>;
+  DeletedEntityCursor?: DeletedEntityCursorResolvers<ContextType>;
   EntityMetadataConnection?: EntityMetadataConnectionResolvers<ContextType>;
   EntityMetadataCursor?: EntityMetadataCursorResolvers<ContextType>;
   EntityMutation?: EntityMutationResolvers<ContextType>;
+  EntityQuery?: EntityQueryResolvers<ContextType>;
   Event?: EventResolvers<ContextType>;
   EventRevision?: EventRevisionResolvers<ContextType>;
   EventRevisionConnection?: EventRevisionConnectionResolvers<ContextType>;

@@ -48,6 +48,21 @@ const ForDefinitions = {
       .withPayload({})
       .returns({ unrevisedEntityIds: entities.map((entity) => entity.id) })
   },
+  DeletedEntitiesQuery(entities: Model<'AbstractEntity'>[]) {
+    given('UuidQuery').for(
+      entities.map((entity) => {
+        return { ...entity, trashed: true }
+      })
+    )
+    given('DeletedEntitiesQuery').returns({
+      deletedEntities: entities.map((entity) => {
+        return {
+          id: entity.id,
+          dateOfDeletion: new Date().toISOString(),
+        }
+      }),
+    })
+  },
 }
 type ForDefinitions = typeof ForDefinitions
 type ForArg<M> = M extends keyof ForDefinitions
