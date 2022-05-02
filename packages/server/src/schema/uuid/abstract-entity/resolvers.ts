@@ -21,7 +21,7 @@
  */
 import * as serloAuth from '@serlo/authorization'
 
-import { handleEntitySet } from './entity-set-handler'
+import { createSetEntityResolver } from './entity-set-handler'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
@@ -111,172 +111,75 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     },
   },
   EntityMutation: {
-    async setApplet(_parent, { input }, context) {
-      const { changes, content, title, url } = input
-
-      return await handleEntitySet(
-        {
-          entityType: EntityType.Applet,
-          input,
-          mandatoryFields: {
-            changes,
-            content,
-            title,
-            url,
-          },
-        },
-        context,
-        { childDecoder: AppletDecoder }
-      )
-    },
-    async setArticle(_parent, { input }, context) {
-      const { changes, content, title } = input
-
-      return await handleEntitySet(
-        {
-          entityType: EntityType.Article,
-          input,
-          mandatoryFields: {
-            changes,
-            content,
-            title,
-          },
-        },
-        context,
-        { childDecoder: ArticleDecoder }
-      )
-    },
-    async setCourse(_parent, { input }, context) {
-      const { changes, title, content } = input
-
-      // TODO: the logic of this and others transformedInput's should go to DB Layer
-      const transformedInput = {
-        ...input,
-        description: content,
-        content: undefined,
-      }
-
-      return await handleEntitySet(
-        {
-          entityType: EntityType.Course,
-          input: transformedInput,
-          mandatoryFields: { changes, title },
-        },
-        context,
-        { childDecoder: CourseDecoder }
-      )
-    },
-    async setCoursePage(_parent, { input }, context) {
-      const { changes, content, title } = input
-
-      return await handleEntitySet(
-        {
-          entityType: EntityType.CoursePage,
-          input,
-          mandatoryFields: { changes, content, title },
-        },
-        context,
-        { childDecoder: CoursePageDecoder, parentDecoder: CourseDecoder }
-      )
-    },
-    async setEvent(_parent, { input }, context) {
-      const { changes, content, title } = input
-
-      return await handleEntitySet(
-        {
-          entityType: EntityType.Event,
-          input,
-          mandatoryFields: { changes, content, title },
-        },
-        context,
-        { childDecoder: EventDecoder }
-      )
-    },
-    async setExercise(_parent, { input }, context) {
-      const { changes, content } = input
-
-      return await handleEntitySet(
-        {
-          entityType: EntityType.Exercise,
-          input,
-          mandatoryFields: { changes, content },
-        },
-        context,
-        { childDecoder: ExerciseDecoder }
-      )
-    },
-    async setExerciseGroup(_parent, { input }, context) {
-      const { changes, content } = input
-
-      // TODO: this logic should go to DBLayer
-      const cohesive = input.cohesive === true ? 'true' : 'false'
-      const transformedInput: Omit<typeof input, 'cohesive'> & {
-        cohesive: 'true' | 'false'
-      } = { ...input, cohesive }
-
-      return await handleEntitySet(
-        {
-          entityType: EntityType.ExerciseGroup,
-
-          input: transformedInput,
-          mandatoryFields: { changes, content },
-        },
-        context,
-        { childDecoder: ExerciseGroupDecoder }
-      )
-    },
-    async setGroupedExercise(_parent, { input }, context) {
-      const { changes, content } = input
-
-      return await handleEntitySet(
-        {
-          entityType: EntityType.GroupedExercise,
-          input,
-          mandatoryFields: { changes, content },
-        },
-        context,
-        {
-          childDecoder: GroupedExerciseDecoder,
-          parentDecoder: ExerciseGroupDecoder,
+    setApplet: createSetEntityResolver({
+      childDecoder: AppletDecoder,
+      entityType: EntityType.Applet,
+      mandatoryFieldKeys: ['changes', 'content', 'title', 'url'],
+    }),
+    setArticle: createSetEntityResolver({
+      childDecoder: ArticleDecoder,
+      entityType: EntityType.Article,
+      mandatoryFieldKeys: ['changes', 'content', 'title'],
+    }),
+    setCourse: createSetEntityResolver({
+      childDecoder: CourseDecoder,
+      entityType: EntityType.Course,
+      mandatoryFieldKeys: ['changes', 'title'],
+      transformedInput: (input) => {
+        return {
+          ...input,
+          description: input.content,
+          content: undefined,
         }
-      )
-    },
-    async setSolution(_parent, { input }, context) {
-      const { changes, content } = input
-
-      return await handleEntitySet(
-        {
-          entityType: EntityType.Solution,
-          input,
-          mandatoryFields: { changes, content },
-        },
-        context,
-        {
-          childDecoder: SolutionDecoder,
-          parentDecoder: AbstractExerciseDecoder,
+      },
+    }),
+    setCoursePage: createSetEntityResolver({
+      childDecoder: CoursePageDecoder,
+      parentDecoder: CourseDecoder,
+      entityType: EntityType.CoursePage,
+      mandatoryFieldKeys: ['changes', 'content', 'title'],
+    }),
+    setEvent: createSetEntityResolver({
+      childDecoder: EventDecoder,
+      entityType: EntityType.Event,
+      mandatoryFieldKeys: ['changes', 'content', 'title'],
+    }),
+    setExercise: createSetEntityResolver({
+      childDecoder: ExerciseDecoder,
+      entityType: EntityType.Exercise,
+      mandatoryFieldKeys: ['changes', 'content'],
+    }),
+    setExerciseGroup: createSetEntityResolver({
+      childDecoder: ExerciseGroupDecoder,
+      entityType: EntityType.ExerciseGroup,
+      mandatoryFieldKeys: ['changes', 'content'],
+    }),
+    setGroupedExercise: createSetEntityResolver({
+      childDecoder: GroupedExerciseDecoder,
+      parentDecoder: ExerciseGroupDecoder,
+      entityType: EntityType.GroupedExercise,
+      mandatoryFieldKeys: ['changes', 'content'],
+    }),
+    setSolution: createSetEntityResolver({
+      childDecoder: SolutionDecoder,
+      parentDecoder: AbstractExerciseDecoder,
+      entityType: EntityType.Solution,
+      mandatoryFieldKeys: ['changes', 'content'],
+    }),
+    setVideo: createSetEntityResolver({
+      childDecoder: VideoDecoder,
+      entityType: EntityType.Video,
+      mandatoryFieldKeys: ['changes', 'title', 'url', 'title'],
+      transformedInput: (input) => {
+        return {
+          ...input,
+          description: input.content,
+          content: input.url,
+          url: undefined,
         }
-      )
-    },
-    async setVideo(_parent, { input }, context) {
-      const { changes, content, title, url } = input
-      // TODO: logic should go to DBLayer
-      const transformedInput = {
-        ...input,
-        content: input.url,
-        description: input.content,
-        url: undefined,
-      }
+      },
+    }),
 
-      return await handleEntitySet(
-        {
-          entityType: EntityType.Video,
-          input: transformedInput,
-          mandatoryFields: { changes, content, title, url },
-        },
-        context,
-        { childDecoder: VideoDecoder }
-      )
-    },
     async checkoutRevision(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
