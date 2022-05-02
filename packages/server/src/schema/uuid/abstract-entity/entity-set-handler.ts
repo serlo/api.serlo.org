@@ -22,13 +22,9 @@
 import * as serloAuth from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
 import * as t from 'io-ts'
+import * as R from 'ramda'
 
-import { getTaxonomyTerm } from '../taxonomy-term/utils'
-import {
-  getEntity,
-  fromEntityTypeToEntityRevisionType,
-  removeUndefinedFields,
-} from './utils'
+import { fromEntityTypeToEntityRevisionType } from './utils'
 import { autoreviewTaxonomyIds } from '~/config/autoreview-taxonomies'
 import {
   assertArgumentIsNotEmpty,
@@ -37,7 +33,7 @@ import {
   Context,
   Model,
 } from '~/internals/graphql'
-import { EntityType, TaxonomyTermDecoder } from '~/model/decoder'
+import { EntityDecoder, EntityType, TaxonomyTermDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 
 export interface SetAbstractEntityInput {
@@ -47,7 +43,7 @@ export interface SetAbstractEntityInput {
   needsReview: boolean
   entityId?: number
   parentId?: number
-  cohesive?: 'true' | 'false'
+  cohesive?: boolean
   content?: string
   description?: string
   metaDescription?: string
@@ -56,13 +52,7 @@ export interface SetAbstractEntityInput {
   url?: string
 }
 
-interface SetEntityMutationArgs {
-  entityType: EntityType
-  input: SetAbstractEntityInput
-  mandatoryFields: { [key: string]: string | boolean }
-}
-
-export async function handleEntitySet<
+export function createSetEntityResolver<
   C extends Model<'AbstractEntity'> & {
     taxonomyTermIds?: number[]
     parentId?: number
@@ -71,142 +61,75 @@ export async function handleEntitySet<
     taxonomyTermIds?: number[]
     parentId?: number
   }
->(
-  args: SetEntityMutationArgs,
-  context: Context,
-  {
-    childDecoder,
-    parentDecoder,
-  }: { childDecoder: t.Type<C, unknown>; parentDecoder?: t.Type<P, unknown> }
-) {
-  const { entityType, input, mandatoryFields } = args
-
-  assertArgumentIsNotEmpty(mandatoryFields)
-
-  const { entityId, parentId } = input
-
-  if (userWantsToCreateNewEntity(entityId, parentId)) {
-    return await new EntitySetResolver({
-      auth: {
-        typeToBeCreated: 'Entity',
-        message: 'You are not allowed to create entities.',
-      },
-      input,
-      context,
-      entityType,
-      decoders: {
-        childDecoder,
-        parentDecoder,
-      },
-    }).execute()
-  }
-
-  return await new EntitySetResolver({
-    auth: {
-      typeToBeCreated: 'EntityRevision',
-      message: 'You are not allowed to add revision to this entity',
-    },
-    context,
-    input,
-    entityType,
-    decoders: {
-      childDecoder,
-      parentDecoder,
-    },
-  }).execute()
-}
-
-class EntitySetResolver<
-  C extends Model<'AbstractEntity'> & {
-    taxonomyTermIds?: number[]
-    parentId?: number
-  },
-  P extends Model<'AbstractEntity'> & {
-    taxonomyTermIds?: number[]
-    parentId?: number
-  }
-> {
-  auth: {
-    typeToBeCreated: 'Entity' | 'EntityRevision'
-    message: string
-  }
-  input: SetAbstractEntityInput
-  context: Context
+>({
+  entityType,
+  childDecoder,
+  parentDecoder,
+  mandatoryFieldKeys,
+  transformedInput,
+}: {
   entityType: EntityType
-  decoders: {
-    childDecoder: t.Type<C, unknown>
-    parentDecoder?: t.Type<P, unknown>
-  }
+  mandatoryFieldKeys: (keyof SetAbstractEntityInput)[]
+  childDecoder: t.Type<C, unknown>
+  parentDecoder?: t.Type<P, unknown>
+  // TODO: the logic of this and others transformedInput's should go to DB Layer
+  transformedInput?: (x: SetAbstractEntityInput) => SetAbstractEntityInput
+}) {
+  return async (
+    _parent: unknown,
+    { input }: { input: SetAbstractEntityInput },
+    { dataSources, userId }: Context
+  ) => {
+    assertArgumentIsNotEmpty(R.pick(mandatoryFieldKeys, input))
 
-  constructor({
-    auth,
-    input,
-    context,
-    entityType,
-    decoders,
-  }: {
-    auth: {
-      typeToBeCreated: 'Entity' | 'EntityRevision'
-      message: string
-    }
-    input: SetAbstractEntityInput
-    context: Context
-    entityType: EntityType
-    decoders: {
-      childDecoder: t.Type<C, unknown>
-      parentDecoder?: t.Type<P, unknown>
-    }
-  }) {
-    this.auth = auth
-    this.context = context
-    this.entityType = entityType
-    this.input = input
-    this.decoders = decoders
-  }
+    if (transformedInput != null) input = transformedInput(input)
 
-  async execute() {
-    const {
-      changes,
-      needsReview,
-      subscribeThis,
-      subscribeThisByEmail,
-      parentId,
-      entityId,
-      ...inputFields
-    } = this.input
+    const { needsReview } = input
+    const forwardArgs = R.pick(
+      ['changes', 'subscribeThis', 'subscribeThisByEmail'],
+      input
+    )
+    const fieldKeys = [
+      'cohesive',
+      'content',
+      'description',
+      'metaDescription',
+      'metaTitle',
+      'title',
+      'url',
+    ] as const
+    const fields = R.mapObjIndexed(
+      (val: string | boolean) =>
+        typeof val !== 'string' ? val.toString() : val,
+      R.filter((val) => val != null, R.pick(fieldKeys, input))
+    )
 
-    const { dataSources, userId } = this.context
+    if (!checkInput(input))
+      throw new UserInputError('Either entityId or parentId must be provided')
 
     assertUserIsAuthenticated(userId)
 
-    const scope = entityId
-      ? await fetchScopeOfUuid({
-          id: entityId,
-          dataSources,
-        })
-      : await fetchScopeOfUuid({
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          id: parentId!,
-          dataSources,
-        })
+    const scope = await fetchScopeOfUuid({
+      id: input.entityId != null ? input.entityId : input.parentId,
+      dataSources,
+    })
 
     await assertUserIsAuthorized({
       userId,
       dataSources,
-      message: this.auth.message,
-      guard: serloAuth.Uuid.create(this.auth.typeToBeCreated)(scope),
+      message: `You are not allowed to create ${
+        input.entityId == null ? 'entities' : 'revisions'
+      }`,
+      guard: serloAuth.Uuid.create(
+        input.entityId == null ? 'Entity' : 'EntityRevision'
+      )(scope),
     })
 
-    const fields = removeUndefinedFields(
-      inputFields as { [key: string]: string | undefined }
-    )
-
-    if (entityId) {
-      const { childDecoder, parentDecoder } = this.decoders
+    if (input.entityId != null) {
       let isAutoreviewEntity = false
 
       const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: entityId,
+        id: input.entityId,
         decoder: childDecoder,
       })
 
@@ -217,6 +140,7 @@ class EntitySetResolver<
         )
       }
 
+      // TODO: Autoreview of solution in exercise groups
       if (entity.parentId && parentDecoder) {
         const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
           id: entity.parentId,
@@ -242,78 +166,60 @@ class EntitySetResolver<
 
       const { success, revisionId } =
         await dataSources.model.serlo.addEntityRevision({
-          revisionType: fromEntityTypeToEntityRevisionType(this.entityType),
+          revisionType: fromEntityTypeToEntityRevisionType(entityType),
           userId,
           input: {
-            changes,
-            entityId,
+            ...forwardArgs,
+            entityId: input.entityId,
             needsReview: isAutoreviewEntity ? false : needsReview,
-            subscribeThis,
-            subscribeThisByEmail,
             fields,
           },
         })
 
-      return {
-        revisionId,
-        success,
-        query: {},
-      }
-    }
+      return { revisionId, success, query: {} }
+    } else {
+      const parent = await dataSources.model.serlo.getUuid({
+        id: input.parentId,
+      })
+      const isParentTaxonomyTerm = TaxonomyTermDecoder.is(parent)
+      const isParentEntity = EntityDecoder.is(parent)
 
-    const entity = await dataSources.model.serlo.createEntity({
-      entityType: this.entityType,
-      userId,
-      input: {
-        changes,
-        licenseId: 1,
-        needsReview,
-        subscribeThis,
-        subscribeThisByEmail,
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        ...(await this.prepareCreateArgs(parentId!)),
-        fields,
-      },
-    })
-    return {
-      record: entity,
-      success: entity != null,
-      query: {},
-    }
-  }
+      if (!isParentTaxonomyTerm && !isParentEntity)
+        throw new UserInputError(
+          `No entity or taxonomy term found for the provided id ${input.parentId}`
+        )
 
-  async prepareCreateArgs(parentId: number) {
-    const { dataSources } = this.context
-
-    const parentTypename = (
-      await dataSources.model.serlo.getUuid({ id: parentId })
-    )?.__typename
-
-    if (parentTypename === 'TaxonomyTerm') {
-      return {
-        taxonomyTermId: parentId,
-        instance: (await getTaxonomyTerm(parentId, dataSources)).instance,
-      }
-    }
-
-    return {
-      parentId,
-      instance: (await getEntity(parentId, dataSources)).instance,
+      const entity = await dataSources.model.serlo.createEntity({
+        entityType,
+        userId,
+        input: {
+          ...forwardArgs,
+          licenseId: 1,
+          needsReview,
+          instance: parent.instance,
+          ...(isParentTaxonomyTerm ? { taxonomyTermId: input.parentId } : {}),
+          ...(isParentEntity ? { parentId: input.parentId } : {}),
+          fields,
+        },
+      })
+      return { record: entity, success: entity != null, query: {} }
     }
   }
 }
 
-function userWantsToCreateNewEntity(
-  entityId?: number,
+function checkInput(input: {
   parentId?: number
-): parentId is number {
-  if ((!entityId && !parentId) || (entityId && parentId))
-    throw new UserInputError('Either entityId or parentId has to be provided')
-
-  return entityId == null
+  entityId?: number
+}): input is
+  | { parentId: number; entityId: undefined }
+  | { parentId: undefined; entityId: number } {
+  return (
+    (input.entityId != null && input.parentId == null) ||
+    (input.entityId == null && input.parentId != null)
+  )
 }
 
-export async function verifyAutoreviewEntity(
+async function verifyAutoreviewEntity(
   taxonomyTermIds: number[],
   dataSources: Context['dataSources']
 ): Promise<boolean> {
@@ -336,7 +242,7 @@ async function checkAnyParentAutoreview(
   })
 
   return (
-    taxonomyTerm.parentId !== null &&
+    taxonomyTerm.parentId != null &&
     (await checkAnyParentAutoreview(taxonomyTerm.parentId, dataSources))
   )
 }

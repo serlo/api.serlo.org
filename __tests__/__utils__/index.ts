@@ -29,7 +29,6 @@ export * from './handlers'
 export * from './error-event'
 export * from './services'
 export * from './test-client'
-export * from './entity-utils'
 
 export { castToUuid, castToAlias } from '~/model/decoder'
 
