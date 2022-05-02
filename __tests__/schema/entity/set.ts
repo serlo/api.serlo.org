@@ -265,13 +265,11 @@ testCases.forEach((testCase) => {
       entityType: testCase.entityType,
     }
 
-    const { entityId } = inputWithEntityId
-
     const entityAddRevisionPayload: DatabaseLayer.Payload<'EntityAddRevisionMutation'> =
       {
         input: {
           changes,
-          entityId,
+          entityId: inputWithEntityId.entityId,
           needsReview,
           subscribeThis,
           subscribeThisByEmail,
@@ -308,11 +306,7 @@ testCases.forEach((testCase) => {
         .returns({ success: true, revisionId: 123 })
 
       await mutationWithEntityId.shouldReturnData({
-        entity: {
-          [testCase.mutationName]: {
-            success: true,
-          },
-        },
+        entity: { [testCase.mutationName]: { success: true } },
       })
     })
 
@@ -336,21 +330,11 @@ testCases.forEach((testCase) => {
 
     test('fails when a field is empty', async () => {
       await mutationWithEntityId
-        .withVariables({
-          input: {
-            ...input,
-            changes: '',
-          },
-        })
+        .withVariables({ input: { ...input, changes: '' } })
         .shouldFailWithError('BAD_USER_INPUT')
 
       await mutationWithParentId
-        .withVariables({
-          input: {
-            ...input,
-            changes: '',
-          },
-        })
+        .withVariables({ input: { ...input, changes: '' } })
         .shouldFailWithError('BAD_USER_INPUT')
     })
 
@@ -383,24 +367,15 @@ testCases.forEach((testCase) => {
     })
 
     describe(`Cache after ${testCase.mutationName} call`, () => {
-      const newRevision = {
-        ...testCase.revision,
-        id: castToUuid(123),
-      }
-
-      const anotherEntity = {
-        ...testCase.entity,
-        id: castToUuid(456),
-      }
+      const newRevision = { ...testCase.revision, id: castToUuid(123) }
+      const anotherEntity = { ...testCase.entity, id: castToUuid(456) }
 
       beforeEach(() => {
         given('UuidQuery').for(
           testCase.entity,
           testCase.revision,
           anotherEntity,
-          taxonomyTermSubject,
-          taxonomyTermRoot,
-          user
+          taxonomyTermSubject
         )
 
         given('EntityAddRevisionMutation')
@@ -469,9 +444,7 @@ testCases.forEach((testCase) => {
         await mutationWithEntityId.execute()
 
         await uuidQuery.shouldReturnData({
-          uuid: {
-            currentRevision: { id: testCase.entity.currentRevisionId },
-          },
+          uuid: { currentRevision: { id: testCase.entity.currentRevisionId } },
         })
 
         await mutationWithEntityId
