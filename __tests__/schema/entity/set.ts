@@ -561,10 +561,11 @@ describe('Autoreview entities', () => {
 
   beforeEach(() => {
     given('UuidQuery').for(
-      solution,
+      { ...solution, parentId: groupedExercise.id },
+      groupedExercise,
       solutionRevision,
       article,
-      { ...exercise, taxonomyTermIds: [106082].map(castToUuid) },
+      { ...exerciseGroup, taxonomyTermIds: [106082].map(castToUuid) },
       { ...taxonomyTermSubject, id: castToUuid(106082) }
     )
 
@@ -600,7 +601,7 @@ describe('Autoreview entities', () => {
       castToUuid
     )
     given('UuidQuery').for(
-      { ...exercise, taxonomyTermIds },
+      { ...exerciseGroup, taxonomyTermIds },
       { ...taxonomyTermSubject, id: castToUuid(autoreviewTaxonomyIds[0]) },
       taxonomyTermRoot
     )

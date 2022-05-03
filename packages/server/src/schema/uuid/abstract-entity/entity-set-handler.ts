@@ -31,7 +31,6 @@ import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   Context,
-  Model,
 } from '~/internals/graphql'
 import { EntityDecoder, EntityType, TaxonomyTermDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
@@ -52,26 +51,13 @@ export interface SetAbstractEntityInput {
   url?: string
 }
 
-export function createSetEntityResolver<
-  C extends Model<'AbstractEntity'> & {
-    taxonomyTermIds?: number[]
-    parentId?: number
-  },
-  P extends Model<'AbstractEntity'> & {
-    taxonomyTermIds?: number[]
-    parentId?: number
-  }
->({
+export function createSetEntityResolver({
   entityType,
-  childDecoder,
-  parentDecoder,
   mandatoryFieldKeys,
   transformedInput,
 }: {
   entityType: EntityType
   mandatoryFieldKeys: (keyof SetAbstractEntityInput)[]
-  childDecoder: t.Type<C, unknown>
-  parentDecoder?: t.Type<P, unknown>
   // TODO: the logic of this and others transformedInput's should go to DB Layer
   transformedInput?: (x: SetAbstractEntityInput) => SetAbstractEntityInput
 }) {
@@ -126,36 +112,9 @@ export function createSetEntityResolver<
     })
 
     if (input.entityId != null) {
-      let isAutoreviewEntity = false
+      const isAutoreview = await isAutoreviewEntity(input.entityId, dataSources)
 
-      const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: input.entityId,
-        decoder: childDecoder,
-      })
-
-      if (entity.taxonomyTermIds) {
-        isAutoreviewEntity = await verifyAutoreviewEntity(
-          entity.taxonomyTermIds,
-          dataSources
-        )
-      }
-
-      // TODO: Autoreview of solution in exercise groups
-      if (entity.parentId && parentDecoder) {
-        const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
-          id: entity.parentId,
-          decoder: parentDecoder,
-        })
-
-        if (parent.taxonomyTermIds) {
-          isAutoreviewEntity = await verifyAutoreviewEntity(
-            parent.taxonomyTermIds,
-            dataSources
-          )
-        }
-      }
-
-      if (!isAutoreviewEntity && !needsReview) {
+      if (!isAutoreview && !needsReview) {
         await assertUserIsAuthorized({
           userId,
           dataSources,
@@ -171,7 +130,7 @@ export function createSetEntityResolver<
           input: {
             ...forwardArgs,
             entityId: input.entityId,
-            needsReview: isAutoreviewEntity ? false : needsReview,
+            needsReview: isAutoreview ? false : needsReview,
             fields,
           },
         })
@@ -219,30 +178,26 @@ function checkInput(input: {
   )
 }
 
-async function verifyAutoreviewEntity(
-  taxonomyTermIds: number[],
+async function isAutoreviewEntity(
+  id: number,
   dataSources: Context['dataSources']
 ): Promise<boolean> {
-  return (
-    await Promise.all(
-      taxonomyTermIds.map((id) => checkAnyParentAutoreview(id, dataSources))
+  if (autoreviewTaxonomyIds.includes(id)) return true
+
+  const uuid = await dataSources.model.serlo.getUuid({ id })
+
+  if (t.type({ parentId: t.number }).is(uuid)) {
+    return (
+      uuid.parentId != null &&
+      (await isAutoreviewEntity(uuid.parentId, dataSources))
     )
-  ).every((x) => x)
-}
-
-async function checkAnyParentAutoreview(
-  taxonomyTermId: number,
-  dataSources: Context['dataSources']
-): Promise<boolean> {
-  if (autoreviewTaxonomyIds.includes(taxonomyTermId)) return true
-
-  const taxonomyTerm = await dataSources.model.serlo.getUuidWithCustomDecoder({
-    id: taxonomyTermId,
-    decoder: TaxonomyTermDecoder,
-  })
-
-  return (
-    taxonomyTerm.parentId != null &&
-    (await checkAnyParentAutoreview(taxonomyTerm.parentId, dataSources))
-  )
+  } else if (t.type({ taxonomyTermIds: t.array(t.number) }).is(uuid)) {
+    return (
+      await Promise.all(
+        uuid.taxonomyTermIds.map((id) => isAutoreviewEntity(id, dataSources))
+      )
+    ).every((x) => x)
+  } else {
+    return false
+  }
 }
