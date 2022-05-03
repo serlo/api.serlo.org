@@ -166,18 +166,6 @@ export function createSetEntityResolver({
   }
 }
 
-function checkInput(input: {
-  parentId?: number
-  entityId?: number
-}): input is
-  | { parentId: number; entityId: undefined }
-  | { parentId: undefined; entityId: number } {
-  return (
-    (input.entityId != null && input.parentId == null) ||
-    (input.entityId == null && input.parentId != null)
-  )
-}
-
 async function isAutoreviewEntity(
   id: number,
   dataSources: Context['dataSources']
@@ -200,4 +188,16 @@ async function isAutoreviewEntity(
   } else {
     return false
   }
+}
+
+function checkInput(input: {
+  parentId?: number
+  entityId?: number
+}): input is
+  | { parentId: number; entityId: undefined }
+  | { parentId: undefined; entityId: number } {
+  return (
+    (input.entityId != null && input.parentId == null) ||
+    (input.entityId == null && input.parentId != null)
+  )
 }
