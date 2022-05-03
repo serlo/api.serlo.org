@@ -157,7 +157,11 @@ const pactSpec: PactSpec = {
     examples: [
       [
         { first: 1, after: undefined, instance: Instance.De },
-        { deletedEntities: [{ id: 70, dateOfDeletion: '2022-05-02T21:07:04.164Z' }] },
+        {
+          deletedEntities: [
+            { id: 2167, dateOfDeletion: '2022-05-02T21:07:04.164Z' },
+          ],
+        },
       ],
     ],
   },
