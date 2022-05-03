@@ -78,6 +78,7 @@ import {
   castToAlias,
 } from '~/model/decoder'
 import { Instance, TaxonomyTypeCreateOptions } from '~/types'
+import { isDateString } from '~/utils'
 
 const events = [
   checkoutRevisionNotificationEvent,
@@ -610,10 +611,6 @@ function generalMap(
   return Array.isArray(value)
     ? func(value)
     : R.fromPairs(R.toPairs(value).map(([key, value]) => [key, func(value)]))
-}
-
-function isDateString(text: string) {
-  return !isNaN(new Date(text).getDate())
 }
 
 type PactSpec = {

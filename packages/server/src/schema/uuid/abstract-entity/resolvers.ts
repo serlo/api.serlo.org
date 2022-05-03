@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as serloAuth from '@serlo/authorization'
+import { UserInputError } from 'apollo-server'
 
 import { createSetEntityResolver } from './entity-set-handler'
 import {
@@ -33,6 +34,7 @@ import {
 import { castToUuid, EntityDecoder, EntityType } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
+import { isDateString } from '~/utils'
 
 export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   InterfaceResolvers<'AbstractEntityRevision'> &
@@ -56,12 +58,29 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   },
   EntityQuery: {
     async deletedEntities(_parent, payload, { dataSources }) {
+      const LIMIT = 1000
       const { first = 100, after, instance } = payload
+
+      if (first > LIMIT)
+        throw new UserInputError(`'first' may not be higher than ${LIMIT}`)
+
+      const deletedAfter = after
+        ? (
+            JSON.parse(Buffer.from(after, 'base64').toString()) as {
+              dateOfDeletion: string
+            }
+          ).dateOfDeletion
+        : undefined
+
+      if (deletedAfter && !isDateString(deletedAfter))
+        throw new UserInputError(
+          'the encoded dateOfDeletion  in `after` should be a date'
+        )
 
       const { deletedEntities } =
         await dataSources.model.serlo.getDeletedEntities({
           first,
-          after,
+          after: deletedAfter,
           instance,
         })
 
