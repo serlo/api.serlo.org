@@ -159,7 +159,7 @@ const pactSpec: PactSpec = {
         { first: 1, after: undefined, instance: Instance.De },
         {
           deletedEntities: [
-            { id: 2167, dateOfDeletion: '2022-05-02T21:07:04.164Z' },
+            { id: 2167, dateOfDeletion: '2014-03-01T20:46:58+01:00' },
           ],
         },
       ],
