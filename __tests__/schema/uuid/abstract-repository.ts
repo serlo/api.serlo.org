@@ -275,7 +275,6 @@ describe('Repository', () => {
   test.each(repositoryCases)(
     '%s by id (w/ license)',
     async (_type, { repository }) => {
-      given('LicenseQuery').withPayload({ id: license.id }).returns(license)
       global.server.use(createUuidHandler(repository))
 
       await assertSuccessfulGraphQLQuery({

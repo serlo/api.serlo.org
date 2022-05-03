@@ -22,7 +22,7 @@
 import { gql } from 'apollo-server'
 
 import { license } from '../../__fixtures__'
-import { Client, given } from '../__utils__'
+import { Client } from '../__utils__'
 
 const query = new Client().prepareQuery({
   query: gql`
@@ -43,14 +43,10 @@ const query = new Client().prepareQuery({
 
 describe('query "license"', () => {
   test('returns a license', async () => {
-    given('LicenseQuery').withPayload({ id: license.id }).returns(license)
-
     await query.withVariables({ id: license.id }).shouldReturnData({ license })
   })
 
   test('returns null when license with given id does not exist', async () => {
-    given('LicenseQuery').returnsNotFound()
-
     await query.withVariables({ id: 100 }).shouldReturnData({ license: null })
   })
 })
