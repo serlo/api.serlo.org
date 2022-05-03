@@ -32,12 +32,7 @@ import {
   assertUserIsAuthorized,
   Context,
 } from '~/internals/graphql'
-import {
-  AbstractEntityDecoder,
-  EntityDecoder,
-  EntityType,
-  TaxonomyTermDecoder,
-} from '~/model/decoder'
+import { EntityDecoder, EntityType, TaxonomyTermDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 
 export interface SetAbstractEntityInput {
