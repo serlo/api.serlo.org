@@ -306,7 +306,12 @@ testCases.forEach((testCase) => {
         .returns({ success: true, revisionId: 123 })
 
       await mutationWithEntityId.shouldReturnData({
-        entity: { [testCase.mutationName]: { success: true } },
+        entity: {
+          [testCase.mutationName]: {
+            success: true,
+            record: { id: testCase.entity.id },
+          },
+        },
       })
     })
 
@@ -520,78 +525,92 @@ testCases.forEach((testCase) => {
 describe('Autoreview entities', () => {
   const input = {
     changes: 'changes',
-    entityId: solution.id,
     needsReview: true,
     subscribeThis: false,
     subscribeThisByEmail: false,
     content: 'content',
   }
 
-  const mutation = new Client({ userId: user.id })
-    .prepareQuery({
-      query: gql`
-        mutation set($input: SetGenericEntityInput!) {
-          entity {
-            setSolution(input: $input) {
-              success
-            }
-          }
-        }
-      `,
-    })
-    .withVariables({ input })
-
-  const uuidQuery = new Client({ userId: user.id })
-    .prepareQuery({
-      query: gql`
-        query ($id: Int!) {
-          uuid(id: $id) {
-            ... on Solution {
-              currentRevision {
-                id
+  const mutation = new Client({ userId: user.id }).prepareQuery({
+    query: gql`
+      mutation set($input: SetGenericEntityInput!) {
+        entity {
+          setSolution(input: $input) {
+            record {
+              ... on Solution {
+                currentRevision {
+                  id
+                }
               }
             }
           }
         }
-      `,
-    })
-    .withVariables({ id: solution.id })
+      }
+    `,
+  })
 
-  const newSolutionRevision = { ...solutionRevision, id: castToUuid(789) }
+  const oldRevisionId = solution.currentRevisionId
+  const newRevisionId = castToUuid(789)
+
+  const entity = {
+    ...solution,
+    parentId: groupedExercise.id,
+    currentRevisionId: oldRevisionId,
+  }
+  const newRevision = { ...solutionRevision, id: newRevisionId }
 
   beforeEach(() => {
     given('UuidQuery').for(
-      solution,
+      entity,
+      groupedExercise,
       solutionRevision,
       article,
-      { ...exercise, taxonomyTermIds: [106082].map(castToUuid) },
+      { ...exerciseGroup, taxonomyTermIds: [106082].map(castToUuid) },
       { ...taxonomyTermSubject, id: castToUuid(106082) }
     )
 
     given('EntityAddRevisionMutation').isDefinedBy((req, res, ctx) => {
-      given('UuidQuery').for(newSolutionRevision)
+      given('UuidQuery').for(newRevision)
 
       if (!req.body.payload.input.needsReview)
-        given('UuidQuery').for({
-          ...solution,
-          currentRevisionId: newSolutionRevision.id,
-        })
+        given('UuidQuery').for({ ...entity, currentRevisionId: newRevisionId })
+
+      return res(ctx.json({ success: true, revisionId: newRevisionId }))
+    })
+
+    given('EntityCreateMutation').isDefinedBy((req, res, ctx) => {
+      given('UuidQuery').for(newRevision)
 
       return res(
-        ctx.json({ success: true, revisionId: newSolutionRevision.id })
+        ctx.json({
+          ...entity,
+          currentRevisionId: req.body.payload.input.needsReview
+            ? oldRevisionId
+            : newRevisionId,
+        })
       )
     })
   })
 
-  test('checks out revision without need of review, even if needsReview initially true', async () => {
-    await uuidQuery.shouldReturnData({
-      uuid: { currentRevision: { id: solution.currentRevisionId } },
+  describe('checks out revision without need of review, even if needsReview initially true', () => {
+    test('when a new revision is added', async () => {
+      await mutation
+        .withInput({ ...input, entityId: entity.id })
+        .shouldReturnData({
+          entity: {
+            setSolution: { record: { currentRevision: { id: newRevisionId } } },
+          },
+        })
     })
 
-    await mutation.withVariables({ input }).execute()
-
-    await uuidQuery.shouldReturnData({
-      uuid: { currentRevision: { id: newSolutionRevision.id } },
+    test('when a new entity is created', async () => {
+      await mutation
+        .withInput({ ...input, parentId: groupedExercise.id })
+        .shouldReturnData({
+          entity: {
+            setSolution: { record: { currentRevision: { id: newRevisionId } } },
+          },
+        })
     })
   })
 
@@ -600,19 +619,17 @@ describe('Autoreview entities', () => {
       castToUuid
     )
     given('UuidQuery').for(
-      { ...exercise, taxonomyTermIds },
+      { ...exerciseGroup, taxonomyTermIds },
       { ...taxonomyTermSubject, id: castToUuid(autoreviewTaxonomyIds[0]) },
       taxonomyTermRoot
     )
 
-    await uuidQuery.shouldReturnData({
-      uuid: { currentRevision: { id: solution.currentRevisionId } },
-    })
-
-    await mutation.withVariables({ input }).execute()
-
-    await uuidQuery.shouldReturnData({
-      uuid: { currentRevision: { id: solution.currentRevisionId } },
-    })
+    await mutation
+      .withInput({ ...input, entityId: entity.id })
+      .shouldReturnData({
+        entity: {
+          setSolution: { record: { currentRevision: { id: oldRevisionId } } },
+        },
+      })
   })
 })
