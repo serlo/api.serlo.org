@@ -32,7 +32,12 @@ import {
   assertUserIsAuthorized,
   Context,
 } from '~/internals/graphql'
-import { EntityDecoder, EntityType, TaxonomyTermDecoder } from '~/model/decoder'
+import {
+  AbstractEntityDecoder,
+  EntityDecoder,
+  EntityType,
+  TaxonomyTermDecoder,
+} from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 
 export interface SetAbstractEntityInput {
@@ -128,19 +133,27 @@ export function createSetEntityResolver({
     const needsReviewForDBLayer = isAutoreview ? false : needsReview
 
     if (input.entityId != null) {
-      const { success, revisionId } =
-        await dataSources.model.serlo.addEntityRevision({
-          revisionType: fromEntityTypeToEntityRevisionType(entityType),
-          userId,
-          input: {
-            ...forwardArgs,
-            entityId: input.entityId,
-            needsReview: needsReviewForDBLayer,
-            fields,
-          },
-        })
+      const { success } = await dataSources.model.serlo.addEntityRevision({
+        revisionType: fromEntityTypeToEntityRevisionType(entityType),
+        userId,
+        input: {
+          ...forwardArgs,
+          entityId: input.entityId,
+          needsReview: needsReviewForDBLayer,
+          fields,
+        },
+      })
 
-      return { revisionId, success, query: {} }
+      return {
+        record: success
+          ? await dataSources.model.serlo.getUuidWithCustomDecoder({
+              id: input.entityId,
+              decoder: EntityDecoder,
+            })
+          : null,
+        success,
+        query: {},
+      }
     } else {
       const parent = await dataSources.model.serlo.getUuid({
         id: input.parentId,
