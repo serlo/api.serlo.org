@@ -111,18 +111,23 @@ export function createSetEntityResolver({
       )(scope),
     })
 
+    const isAutoreview = await isAutoreviewEntity(
+      input.entityId != null ? input.entityId : input.parentId,
+      dataSources
+    )
+
+    if (!isAutoreview && !needsReview) {
+      await assertUserIsAuthorized({
+        userId,
+        dataSources,
+        message: 'You are not allowed to skip the reviewing process.',
+        guard: serloAuth.Entity.checkoutRevision(scope),
+      })
+    }
+
+    const needsReviewForDBLayer = isAutoreview ? false : needsReview
+
     if (input.entityId != null) {
-      const isAutoreview = await isAutoreviewEntity(input.entityId, dataSources)
-
-      if (!isAutoreview && !needsReview) {
-        await assertUserIsAuthorized({
-          userId,
-          dataSources,
-          message: 'You are not allowed to skip the reviewing process.',
-          guard: serloAuth.Entity.checkoutRevision(scope),
-        })
-      }
-
       const { success, revisionId } =
         await dataSources.model.serlo.addEntityRevision({
           revisionType: fromEntityTypeToEntityRevisionType(entityType),
@@ -130,7 +135,7 @@ export function createSetEntityResolver({
           input: {
             ...forwardArgs,
             entityId: input.entityId,
-            needsReview: isAutoreview ? false : needsReview,
+            needsReview: needsReviewForDBLayer,
             fields,
           },
         })
@@ -154,13 +159,14 @@ export function createSetEntityResolver({
         input: {
           ...forwardArgs,
           licenseId: 1,
-          needsReview,
+          needsReview: needsReviewForDBLayer,
           instance: parent.instance,
           ...(isParentTaxonomyTerm ? { taxonomyTermId: input.parentId } : {}),
           ...(isParentEntity ? { parentId: input.parentId } : {}),
           fields,
         },
       })
+
       return { record: entity, success: entity != null, query: {} }
     }
   }
