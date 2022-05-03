@@ -58,7 +58,7 @@ const ForDefinitions = {
       deletedEntities: entities.map((entity) => {
         return {
           id: entity.id,
-          dateOfDeletion: new Date().toISOString(),
+          dateOfDeletion: entity.date,
         }
       }),
     })
