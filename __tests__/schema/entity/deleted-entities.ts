@@ -24,23 +24,21 @@ import { gql } from 'apollo-server'
 import { article, coursePage, solution } from '../../../__fixtures__'
 import { given, Client } from '../../__utils__'
 
-const query = new Client()
-  .prepareQuery({
-    query: gql`
-      query ($first: Int, $after: String, $instance: Instance) {
-        entity {
-          deletedEntities(first: $first, after: $after, instance: $instance) {
-            nodes {
-              entity {
-                id
-              }
+const query = new Client().prepareQuery({
+  query: gql`
+    query ($first: Int, $after: String, $instance: Instance) {
+      entity {
+        deletedEntities(first: $first, after: $after, instance: $instance) {
+          nodes {
+            entity {
+              id
             }
           }
         }
       }
-    `,
-  })
-  .withVariables({ first: 5 })
+    }
+  `,
+})
 
 beforeEach(() => {
   given('DeletedEntitiesQuery').for(article, coursePage, solution)
@@ -58,6 +56,33 @@ test('returns deleted entities', async () => {
       },
     },
   })
+
+  await query.withVariables({ first: 1 }).shouldReturnData({
+    entity: {
+      deletedEntities: {
+        nodes: [{ entity: { id: article.id } }],
+      },
+    },
+  })
+})
+
+test('`after` parameter using entity id and dateOfDeletion', async () => {
+  await query
+    .withVariables({
+      after: Buffer.from(
+        JSON.stringify({
+          id: coursePage.id,
+          dateOfDeletion: coursePage.date,
+        })
+      ).toString('base64'),
+    })
+    .shouldReturnData({
+      entity: {
+        deletedEntities: {
+          nodes: [{ entity: { id: solution.id } }],
+        },
+      },
+    })
 })
 
 test('fails when database layer returns a 400er response', async () => {
