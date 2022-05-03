@@ -49,6 +49,10 @@ export class Client {
 export class Query<V extends Variables = Variables> {
   constructor(private client: Client, private query: QuerySpec<V>) {}
 
+  withInput(input: 'input' extends keyof V ? V['input'] : never) {
+    return new Query(this.client, { ...this.query, variables: { input } })
+  }
+
   withVariables(variables: V) {
     return new Query(this.client, { ...this.query, variables })
   }
@@ -93,7 +97,7 @@ export class Query<V extends Variables = Variables> {
   }
 }
 
-type Variables = Record<string, unknown>
+type Variables = Record<string, unknown> & { input?: Record<string, unknown> }
 interface QuerySpec<V> {
   query: DocumentNode
   variables?: V
