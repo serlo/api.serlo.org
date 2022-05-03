@@ -25,7 +25,7 @@ import * as t from 'io-ts'
 import * as R from 'ramda'
 
 import { fromEntityTypeToEntityRevisionType } from './utils'
-import { autoreviewTaxonomyIds } from '~/config/autoreview-taxonomies'
+import { autoreviewTaxonomyIds } from '~/config'
 import {
   assertArgumentIsNotEmpty,
   assertUserIsAuthenticated,
