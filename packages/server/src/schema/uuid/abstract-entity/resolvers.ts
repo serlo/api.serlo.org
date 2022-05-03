@@ -29,21 +29,7 @@ import {
   InterfaceResolvers,
   Mutations,
 } from '~/internals/graphql'
-import {
-  castToUuid,
-  EntityType,
-  AppletDecoder,
-  ArticleDecoder,
-  CourseDecoder,
-  CoursePageDecoder,
-  EventDecoder,
-  ExerciseDecoder,
-  ExerciseGroupDecoder,
-  GroupedExerciseDecoder,
-  SolutionDecoder,
-  VideoDecoder,
-  AbstractExerciseDecoder,
-} from '~/model/decoder'
+import { castToUuid, EntityType } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 
 export const resolvers: InterfaceResolvers<'AbstractEntity'> &
@@ -64,17 +50,14 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   },
   EntityMutation: {
     setApplet: createSetEntityResolver({
-      childDecoder: AppletDecoder,
       entityType: EntityType.Applet,
       mandatoryFieldKeys: ['changes', 'content', 'title', 'url'],
     }),
     setArticle: createSetEntityResolver({
-      childDecoder: ArticleDecoder,
       entityType: EntityType.Article,
       mandatoryFieldKeys: ['changes', 'content', 'title'],
     }),
     setCourse: createSetEntityResolver({
-      childDecoder: CourseDecoder,
       entityType: EntityType.Course,
       mandatoryFieldKeys: ['changes', 'title'],
       transformedInput: (input) => {
@@ -86,40 +69,30 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       },
     }),
     setCoursePage: createSetEntityResolver({
-      childDecoder: CoursePageDecoder,
-      parentDecoder: CourseDecoder,
       entityType: EntityType.CoursePage,
       mandatoryFieldKeys: ['changes', 'content', 'title'],
     }),
     setEvent: createSetEntityResolver({
-      childDecoder: EventDecoder,
       entityType: EntityType.Event,
       mandatoryFieldKeys: ['changes', 'content', 'title'],
     }),
     setExercise: createSetEntityResolver({
-      childDecoder: ExerciseDecoder,
       entityType: EntityType.Exercise,
       mandatoryFieldKeys: ['changes', 'content'],
     }),
     setExerciseGroup: createSetEntityResolver({
-      childDecoder: ExerciseGroupDecoder,
       entityType: EntityType.ExerciseGroup,
       mandatoryFieldKeys: ['changes', 'content'],
     }),
     setGroupedExercise: createSetEntityResolver({
-      childDecoder: GroupedExerciseDecoder,
-      parentDecoder: ExerciseGroupDecoder,
       entityType: EntityType.GroupedExercise,
       mandatoryFieldKeys: ['changes', 'content'],
     }),
     setSolution: createSetEntityResolver({
-      childDecoder: SolutionDecoder,
-      parentDecoder: AbstractExerciseDecoder,
       entityType: EntityType.Solution,
       mandatoryFieldKeys: ['changes', 'content'],
     }),
     setVideo: createSetEntityResolver({
-      childDecoder: VideoDecoder,
       entityType: EntityType.Video,
       mandatoryFieldKeys: ['changes', 'title', 'url', 'title'],
       transformedInput: (input) => {
