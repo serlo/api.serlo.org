@@ -306,7 +306,12 @@ testCases.forEach((testCase) => {
         .returns({ success: true, revisionId: 123 })
 
       await mutationWithEntityId.shouldReturnData({
-        entity: { [testCase.mutationName]: { success: true } },
+        entity: {
+          [testCase.mutationName]: {
+            success: true,
+            record: { id: testCase.entity.id },
+          },
+        },
       })
     })
 
