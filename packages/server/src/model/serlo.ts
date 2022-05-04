@@ -934,17 +934,18 @@ export function createSerloModel({
       return DatabaseLayer.makeRequest('TaxonomyTermSortMutation', payload)
     },
 
-    // async updateCache({ childrenIds, destination }) {
-    //   // the cached children still have their old parent id
-    //   const children = await Promise.all(
-    //     childrenIds.map((childId) =>
-    //       getUuidWithCustomDecoder({
-    //         id: childId,
-    //         decoder: TaxonomyTermDecoder,
-    //       })
-    //     )
-    //   )
-    // },
+    async updateCache({ childrenIds, taxonomyTermId }, { success }) {
+      if (success) {
+        await getUuid._querySpec.setCache({
+          payload: { id: taxonomyTermId },
+          getValue(current) {
+            if (!current) return
+
+            return { ...current, childrenIds: childrenIds.map(castToUuid) }
+          },
+        })
+      }
+    },
   })
 
   const setTaxonomyTermNameAndDescription = createMutation({
