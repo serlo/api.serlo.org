@@ -21,13 +21,7 @@
  */
 import { gql } from 'apollo-server'
 
-import {
-  taxonomyTermCurriculumTopic,
-  taxonomyTermSubject,
-  taxonomyTermRoot,
-  user as baseUser,
-  article,
-} from '../../../__fixtures__'
+import { taxonomyTermSubject, user as baseUser } from '../../../__fixtures__'
 import { castToUuid, Client, given } from '../../__utils__'
 
 const user = { ...baseUser, roles: ['de_architect'] }
@@ -56,12 +50,7 @@ const mutation = new Client({ userId: user.id })
   .withVariables({ input })
 
 beforeEach(() => {
-  given('UuidQuery').for(
-    user,
-    // taxonomyTermSubject,
-    // taxonomyTermSubject2,
-    // taxonomyTermCurriculumTopic
-  )
+  given('UuidQuery').for(user, taxonomyTerm)
 })
 
 test('returns "{ success: true }" when mutation could be successfully executed', async () => {
@@ -96,25 +85,25 @@ test('returns "{ success: true }" when mutation could be successfully executed',
 //     .shouldFailWithError('BAD_USER_INPUT')
 // })
 
-// test('fails when user is not authenticated', async () => {
-//   await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
-// })
+test('fails when user is not authenticated', async () => {
+  await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
+})
 
-// test('fails when user does not have role "architect"', async () => {
-//   await mutation.forLoginUser().shouldFailWithError('FORBIDDEN')
-// })
+test('fails when user does not have role "architect"', async () => {
+  await mutation.forLoginUser().shouldFailWithError('FORBIDDEN')
+})
 
-// test('fails when database layer returns a 400er response', async () => {
-//   given('TaxonomyTermMoveMutation').returnsBadRequest()
+test('fails when database layer returns a 400er response', async () => {
+  given('TaxonomyTermSortMutation').returnsBadRequest()
 
-//   await mutation.shouldFailWithError('BAD_USER_INPUT')
-// })
+  await mutation.shouldFailWithError('BAD_USER_INPUT')
+})
 
-// test('fails when database layer has an internal error', async () => {
-//   given('TaxonomyTermMoveMutation').hasInternalServerError()
+test('fails when database layer has an internal error', async () => {
+  given('TaxonomyTermMoveMutation').hasInternalServerError()
 
-//   await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
-// })
+  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
+})
 
 // test('updates the cache', async () => {
 //   given('UuidQuery').for(
