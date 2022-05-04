@@ -55,7 +55,6 @@ import {
   exerciseRevision,
   groupedExercise,
   groupedExerciseRevision,
-  license,
   page,
   pageRevision,
   solution,
@@ -212,7 +211,7 @@ const pactSpec: PactSpec = {
             licenseId: 1,
             subscribeThis: false,
             subscribeThisByEmail: false,
-            needsReview: true,
+            needsReview: false,
             taxonomyTermId: 5,
             fields: {
               title: 'title',
@@ -271,10 +270,6 @@ const pactSpec: PactSpec = {
         { events: [abstractEvent], hasNextPage: true },
       ],
     ],
-  },
-  LicenseQuery: {
-    examples: [[{ id: 1 }, license]],
-    examplePayloadForNull: { id: 100 },
   },
   NavigationQuery: {
     examples: [
