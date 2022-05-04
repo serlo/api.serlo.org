@@ -404,6 +404,21 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  // TODO: Find valid example case
+  TaxonomyTermSortMutation: {
+    examples: [
+      [
+        {
+          taxonomyTermId: taxonomyTermSubject.id,
+          childrenIds: [1394, 23453, 1454].map(castToUuid),
+          userId: user.id,
+        },
+        {
+          success: true,
+        },
+      ],
+    ],
+  },
   ThreadCreateCommentMutation: {
     examples: [
       [
