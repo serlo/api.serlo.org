@@ -37,17 +37,26 @@ export class Client {
     this.apolloServer = createTestClient(context)
   }
 
-  prepareQuery<V extends Variables = Variables>(query: QuerySpec<V>) {
+  prepareQuery<I extends Input = Input, V extends Variables<I> = Variables<I>>(
+    query: QuerySpec<V>
+  ) {
     return new Query(this, query)
   }
 
-  execute(query: QuerySpec<Variables>) {
+  execute(query: QuerySpec<Variables<Input>>) {
     return this.apolloServer.executeOperation(query)
   }
 }
 
-export class Query<V extends Variables = Variables> {
+export class Query<
+  I extends Input = Input,
+  V extends Variables<I> = Variables<I>
+> {
   constructor(private client: Client, private query: QuerySpec<V>) {}
+
+  withInput(input: I) {
+    return new Query(this.client, { ...this.query, variables: { input } })
+  }
 
   withVariables(variables: V) {
     return new Query(this.client, { ...this.query, variables })
@@ -93,7 +102,8 @@ export class Query<V extends Variables = Variables> {
   }
 }
 
-type Variables = Record<string, unknown>
+type Variables<I> = { input: I } | Record<string, unknown>
+type Input = Record<string, unknown>
 interface QuerySpec<V> {
   query: DocumentNode
   variables?: V

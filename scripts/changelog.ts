@@ -1223,6 +1223,23 @@ async function exec(): Promise<void> {
         date: '2022-04-27',
         changed: ['Merge entity.create & entity.addRevision = entity.set #594'],
       },
+      {
+        tagName: 'v0.31.1',
+        date: '2022-04-29',
+        fixed: [
+          'Fix entity.setSolution `InvalidCachedValue` #597',
+          'mail for LENABI user journey',
+        ],
+      },
+      {
+        tagName: 'v0.31.2',
+        date: '2022-05-03',
+        fixed: [
+          '`entity.set` also returns records when revision is added #612',
+          'Add autoreview feature for `entity.set` also when entity is created #606',
+        ],
+        internal: ['refactor `entity.set` #600'],
+      },
     ],
   })
 

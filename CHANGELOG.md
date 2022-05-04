@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.31.2](https://github.com/serlo/api.serlo.org/compare/v0.31.1..v0.31.2) - May 3, 2022
+
+### Fixed
+
+- `entity.set` also returns records when revision is added #612
+
+- Add autoreview feature for `entity.set` also when entity is created #606
+
+### Internal
+
+- refactor `entity.set` #600
+
+## [v0.31.1](https://github.com/serlo/api.serlo.org/compare/v0.31.0..v0.31.1) - April 29, 2022
+
+### Fixed
+
+- Fix entity.setSolution `InvalidCachedValue` #597
+
+- mail for LENABI user journey
+
 ## [v0.31.0](https://github.com/serlo/api.serlo.org/compare/v0.30.2..v0.31.0) - April 27, 2022
 
 ### Changed
