@@ -41,8 +41,6 @@ import {
   UuidDecoder,
 } from './decoder'
 
-const URL = `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`
-
 export const spec = {
   ActiveAuthorsQuery: {
     payload: t.undefined,
@@ -402,11 +400,12 @@ export async function makeRequest<M extends MessageType>(
   type: M,
   payload: Payload<M>
 ) {
+  const databaseLayerUrl = `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`
   const body = JSON.stringify({
     type,
     ...(payload === undefined ? {} : { payload }),
   })
-  const response = await fetch(URL, {
+  const response = await fetch(databaseLayerUrl, {
     method: 'POST',
     body,
     headers: { 'Content-Type': 'application/json' },
