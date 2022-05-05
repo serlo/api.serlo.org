@@ -38,7 +38,7 @@ const input = {
 const mutation = new Client({ userId: user.id })
   .prepareQuery({
     query: gql`
-      mutation set($input: TaxonomyEntityLinkInput!) {
+      mutation ($input: TaxonomyEntityLinkInput!) {
         taxonomyTerm {
           deleteEntityLink(input: $input) {
             success
