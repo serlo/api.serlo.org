@@ -278,7 +278,7 @@ export const spec = {
     response: t.void,
     canBeNull: false,
   },
-  TaxonomyCreateEntityLinkMutation: {
+  TaxonomyCreateEntityLinksMutation: {
     payload: t.type({
       entityIds: t.array(t.number),
       taxonomyTermId: t.number,
