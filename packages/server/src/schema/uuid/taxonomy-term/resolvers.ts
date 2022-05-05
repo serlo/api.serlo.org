@@ -143,7 +143,7 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
         query: {},
       }
     },
-    async createEntityLink(_parent, { input }, { dataSources, userId }) {
+    async createEntityLinks(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
       const { entityIds, taxonomyTermId } = input
@@ -168,7 +168,7 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
 
       return { success, query: {} }
     },
-    async deleteEntityLink(_parent, { input }, { dataSources, userId }) {
+    async deleteEntityLinks(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
       const { entityIds, taxonomyTermId } = input
@@ -181,7 +181,8 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
       await assertUserIsAuthorized({
         userId,
         dataSources,
-        message: 'You are not allowed to link entities to this taxonomy term.',
+        message:
+          'You are not allowed to unlink entities from this taxonomy term.',
         guard: serloAuth.TaxonomyTerm.change(scope),
       })
 

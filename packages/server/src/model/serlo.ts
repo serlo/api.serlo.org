@@ -885,12 +885,12 @@ export function createSerloModel({
   })
 
   const linkEntitiesToTaxonomy = createMutation({
-    decoder: DatabaseLayer.getDecoderFor('TaxonomyCreateEntityLinkMutation'),
+    decoder: DatabaseLayer.getDecoderFor('TaxonomyCreateEntityLinksMutation'),
     mutate: (
-      payload: DatabaseLayer.Payload<'TaxonomyCreateEntityLinkMutation'>
+      payload: DatabaseLayer.Payload<'TaxonomyCreateEntityLinksMutation'>
     ) => {
       return DatabaseLayer.makeRequest(
-        'TaxonomyCreateEntityLinkMutation',
+        'TaxonomyCreateEntityLinksMutation',
         payload
       )
     },
