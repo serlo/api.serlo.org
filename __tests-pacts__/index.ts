@@ -55,7 +55,6 @@ import {
   exerciseRevision,
   groupedExercise,
   groupedExerciseRevision,
-  license,
   page,
   pageRevision,
   solution,
@@ -272,10 +271,6 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
-  LicenseQuery: {
-    examples: [[{ id: 1 }, license]],
-    examplePayloadForNull: { id: 100 },
-  },
   NavigationQuery: {
     examples: [
       [
@@ -363,7 +358,19 @@ const pactSpec: PactSpec = {
     examples: [
       [
         {
-          entityIds: [article.id, exercise.id],
+          entityIds: [video.id, exercise.id],
+          taxonomyTermId: taxonomyTermTopic.id,
+          userId: user.id,
+        },
+        { success: true },
+      ],
+    ],
+  },
+  TaxonomyDeleteEntityLinkMutation: {
+    examples: [
+      [
+        {
+          entityIds: [article.id],
           taxonomyTermId: taxonomyTermTopic.id,
           userId: user.id,
         },

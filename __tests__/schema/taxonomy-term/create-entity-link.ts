@@ -42,7 +42,7 @@ describe('TaxonomyCreateEntityLinkMutation', () => {
   const mutation = new Client({ userId: user.id })
     .prepareQuery({
       query: gql`
-        mutation set($input: TaxonomyCreateEntityLinkInput!) {
+        mutation set($input: TaxonomyEntityLinkInput!) {
           taxonomyTerm {
             createEntityLink(input: $input) {
               success
@@ -65,7 +65,7 @@ describe('TaxonomyCreateEntityLinkMutation', () => {
 
     given('TaxonomyCreateEntityLinkMutation')
       .withPayload({ ...input, userId: user.id })
-      .isDefinedBy((req, res, ctx) => {
+      .isDefinedBy((_req, res, ctx) => {
         given('UuidQuery').for({
           ...video,
           taxonomyTermIds: [

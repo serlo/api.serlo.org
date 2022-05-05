@@ -20,16 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
-import { Model } from '~/internals/graphql'
-import { Instance } from '~/types'
+import { licenses } from '~/config'
 
-export const license: Model<'License'> = {
-  id: 1,
-  instance: Instance.De,
-  default: true,
-  title: 'title',
-  url: 'url',
-  content: 'content',
-  agreement: 'agreement',
-  iconHref: 'iconHref',
-}
+export const license = licenses[0]

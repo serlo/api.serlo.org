@@ -112,7 +112,7 @@ export const spec = {
         needsReview: t.boolean,
         subscribeThis: t.boolean,
         subscribeThisByEmail: t.boolean,
-        fields: t.record(t.string, t.string),
+        fields: t.record(t.string, t.union([t.string, t.undefined])),
       }),
     }),
     response: t.type({
@@ -183,20 +183,6 @@ export const spec = {
       hasNextPage: t.boolean,
     }),
     canBeNull: false,
-  },
-  LicenseQuery: {
-    payload: t.type({ id: t.number }),
-    response: t.type({
-      id: t.number,
-      instance: InstanceDecoder,
-      default: t.boolean,
-      title: t.string,
-      url: t.string,
-      content: t.string,
-      agreement: t.string,
-      iconHref: t.string,
-    }),
-    canBeNull: true,
   },
   NavigationQuery: {
     payload: t.type({ instance: InstanceDecoder }),
@@ -293,6 +279,15 @@ export const spec = {
     canBeNull: false,
   },
   TaxonomyCreateEntityLinkMutation: {
+    payload: t.type({
+      entityIds: t.array(t.number),
+      taxonomyTermId: t.number,
+      userId: t.number,
+    }),
+    response: t.strict({ success: t.literal(true) }),
+    canBeNull: false,
+  },
+  TaxonomyDeleteEntityLinkMutation: {
     payload: t.type({
       entityIds: t.array(t.number),
       taxonomyTermId: t.number,
