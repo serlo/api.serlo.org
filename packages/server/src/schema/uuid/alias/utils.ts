@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { lookupCustomAlias } from '~/config/alias'
+import { lookupCustomAlias } from '~/config'
 import { PickResolvers } from '~/internals/graphql'
 import { isInstanceAware } from '~/schema/instance/utils'
 

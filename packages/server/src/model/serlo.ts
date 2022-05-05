@@ -356,26 +356,6 @@ export function createSerloModel({
     environment
   )
 
-  const getLicense = createQuery(
-    {
-      decoder: DatabaseLayer.getDecoderFor('LicenseQuery'),
-      getCurrentValue: (payload: DatabaseLayer.Payload<'LicenseQuery'>) => {
-        return DatabaseLayer.makeRequest('LicenseQuery', payload)
-      },
-      enableSwr: true,
-      staleAfter: { day: 1 },
-      getKey: ({ id }) => `de.serlo.org/api/license/${id}`,
-      getPayload: (key) => {
-        const prefix = 'de.serlo.org/api/license/'
-        return key.startsWith(prefix)
-          ? O.some({ id: parseInt(key.replace(prefix, ''), 10) })
-          : O.none
-      },
-      examplePayload: { id: 1 },
-    },
-    environment
-  )
-
   const getSubjects = createQuery(
     {
       decoder: DatabaseLayer.getDecoderFor('SubjectsQuery'),
@@ -924,6 +904,28 @@ export function createSerloModel({
     },
   })
 
+  const unlinkEntitiesFromTaxonomy = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('TaxonomyDeleteEntityLinkMutation'),
+    mutate: (
+      payload: DatabaseLayer.Payload<'TaxonomyDeleteEntityLinkMutation'>
+    ) => {
+      return DatabaseLayer.makeRequest(
+        'TaxonomyDeleteEntityLinkMutation',
+        payload
+      )
+    },
+    async updateCache({ taxonomyTermId, entityIds }, { success }) {
+      if (success) {
+        await Promise.all(
+          [...entityIds, taxonomyTermId].map(
+            async (id) =>
+              await getUuid._querySpec.removeCache({ payload: { id } })
+          )
+        )
+      }
+    },
+  })
+
   const createTaxonomyTerm = createMutation({
     decoder: DatabaseLayer.getDecoderFor('TaxonomyTermCreateMutation'),
     mutate: (payload: DatabaseLayer.Payload<'TaxonomyTermCreateMutation'>) => {
@@ -1015,7 +1017,6 @@ export function createSerloModel({
     getEntitiesMetadata,
     getEvents,
     getEventsAfter,
-    getLicense,
     getNavigation,
     getNavigationPayload,
     getNotificationEvent,
@@ -1038,6 +1039,7 @@ export function createSerloModel({
     setTaxonomyTermNameAndDescription,
     moveTaxonomyTerm,
     setUuidState,
+    unlinkEntitiesFromTaxonomy,
   }
 }
 

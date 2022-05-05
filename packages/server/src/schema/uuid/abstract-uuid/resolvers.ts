@@ -23,7 +23,7 @@ import * as auth from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
 import { either as E } from 'fp-ts'
 
-import { resolveCustomId } from '~/config/alias'
+import { resolveCustomId } from '~/config'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,

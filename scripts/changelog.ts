@@ -1231,6 +1231,15 @@ async function exec(): Promise<void> {
           'mail for LENABI user journey',
         ],
       },
+      {
+        tagName: 'v0.31.2',
+        date: '2022-05-03',
+        fixed: [
+          '`entity.set` also returns records when revision is added #612',
+          'Add autoreview feature for `entity.set` also when entity is created #606',
+        ],
+        internal: ['refactor `entity.set` #600'],
+      },
     ],
   })
 
