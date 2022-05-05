@@ -31,237 +31,156 @@ import {
 } from '../../../__fixtures__'
 import { Client, given } from '../../__utils__'
 
-describe('TaxonomyCreateEntityLinkMutation', () => {
-  const user = { ...baseUser, roles: ['de_architect'] }
+const user = { ...baseUser, roles: ['de_architect'] }
 
-  const input = {
-    entityIds: [video.id, exercise.id],
-    taxonomyTermId: taxonomyTermCurriculumTopic.id,
-  }
+const input = {
+  entityIds: [video.id, exercise.id],
+  taxonomyTermId: taxonomyTermCurriculumTopic.id,
+}
 
-  const mutation = new Client({ userId: user.id })
-    .prepareQuery({
-      query: gql`
-        mutation set($input: TaxonomyEntityLinkInput!) {
-          taxonomyTerm {
-            createEntityLink(input: $input) {
-              success
-            }
+const mutation = new Client({ userId: user.id })
+  .prepareQuery({
+    query: gql`
+      mutation ($input: TaxonomyEntityLinkInput!) {
+        taxonomyTerm {
+          createEntityLink(input: $input) {
+            success
           }
         }
-      `,
-    })
-    .withVariables({ input })
+      }
+    `,
+  })
+  .withInput(input)
 
-  beforeEach(() => {
-    given('UuidQuery').for(
-      article,
-      exercise,
-      video,
-      taxonomyTermSubject,
-      taxonomyTermCurriculumTopic,
-      user
-    )
+beforeEach(() => {
+  given('UuidQuery').for(
+    article,
+    exercise,
+    video,
+    taxonomyTermSubject,
+    taxonomyTermCurriculumTopic,
+    user
+  )
 
-    given('TaxonomyCreateEntityLinkMutation')
-      .withPayload({ ...input, userId: user.id })
-      .isDefinedBy((_req, res, ctx) => {
-        given('UuidQuery').for({
-          ...video,
-          taxonomyTermIds: [
-            ...video.taxonomyTermIds,
-            taxonomyTermCurriculumTopic.id,
-          ],
-        })
-        given('UuidQuery').for({
-          ...exercise,
-          taxonomyTermIds: [
-            ...exercise.taxonomyTermIds,
-            taxonomyTermCurriculumTopic.id,
-          ],
-        })
-        given('UuidQuery').for({
-          ...taxonomyTermCurriculumTopic,
-          childrenIds: [
-            ...taxonomyTermCurriculumTopic.childrenIds,
-            video.id,
-            exercise.id,
-          ],
-        })
-        return res(ctx.json({ success: true }))
+  given('TaxonomyCreateEntityLinkMutation')
+    .withPayload({ ...input, userId: user.id })
+    .isDefinedBy((_req, res, ctx) => {
+      given('UuidQuery').for({
+        ...exercise,
+        taxonomyTermIds: [
+          ...exercise.taxonomyTermIds,
+          taxonomyTermCurriculumTopic.id,
+        ],
       })
-  })
-
-  test('returns { success, record } when mutation could be successfully executed', async () => {
-    await mutation.shouldReturnData({
-      taxonomyTerm: {
-        createEntityLink: {
-          success: true,
-        },
-      },
+      given('UuidQuery').for({
+        ...taxonomyTermCurriculumTopic,
+        childrenIds: [...taxonomyTermCurriculumTopic.childrenIds, exercise.id],
+      })
+      return res(ctx.json({ success: true }))
     })
-  })
+})
 
-  test('updates the cache', async () => {
-    const exerciseQuery = new Client({ userId: user.id }).prepareQuery({
-      query: gql`
-        query ($id: Int!) {
-          uuid(id: $id) {
-            ... on Exercise {
-              taxonomyTerms {
-                nodes {
-                  id
-                }
+test('returns { success, record } when mutation could be successfully executed', async () => {
+  await mutation.shouldReturnData({
+    taxonomyTerm: {
+      createEntityLink: {
+        success: true,
+      },
+    },
+  })
+})
+
+test('updates the cache', async () => {
+  const childQuery = new Client({ userId: user.id }).prepareQuery({
+    query: gql`
+      query ($id: Int!) {
+        uuid(id: $id) {
+          ... on Exercise {
+            taxonomyTerms {
+              nodes {
+                id
               }
             }
           }
         }
-      `,
-      variables: { id: exercise.id },
-    })
-    await exerciseQuery.shouldReturnData({
-      uuid: {
-        taxonomyTerms: {
-          nodes: [
-            {
-              id: exercise.taxonomyTermIds[0],
-            },
-          ],
-        },
+      }
+    `,
+    variables: { id: exercise.id },
+  })
+  await childQuery.shouldReturnData({
+    uuid: {
+      taxonomyTerms: {
+        nodes: [{ id: exercise.taxonomyTermIds[0] }],
       },
-    })
+    },
+  })
 
-    const videoQuery = new Client({ userId: user.id }).prepareQuery({
-      query: gql`
-        query ($id: Int!) {
-          uuid(id: $id) {
-            ... on Video {
-              taxonomyTerms {
-                nodes {
-                  id
-                }
+  const parentQuery = new Client({ userId: user.id }).prepareQuery({
+    query: gql`
+      query ($id: Int!) {
+        uuid(id: $id) {
+          ... on TaxonomyTerm {
+            children {
+              nodes {
+                id
               }
             }
           }
         }
-      `,
-      variables: { id: video.id },
-    })
-
-    await videoQuery.shouldReturnData({
-      uuid: {
-        taxonomyTerms: {
-          nodes: [
-            {
-              id: video.taxonomyTermIds[0],
-            },
-          ],
-        },
-      },
-    })
-
-    const parentQuery = new Client({ userId: user.id }).prepareQuery({
-      query: gql`
-        query ($id: Int!) {
-          uuid(id: $id) {
-            ... on TaxonomyTerm {
-              name
-              children {
-                nodes {
-                  id
-                }
-              }
-            }
-          }
-        }
-      `,
-      variables: { id: taxonomyTermCurriculumTopic.id },
-    })
-
-    await parentQuery.shouldReturnData({
-      uuid: {
-        name: taxonomyTermCurriculumTopic.name,
-        children: {
-          nodes: [
-            {
-              id: taxonomyTermCurriculumTopic.childrenIds[0],
-            },
-          ],
-        },
-      },
-    })
-
-    await mutation.execute()
-
-    await parentQuery.shouldReturnData({
-      uuid: {
-        name: taxonomyTermCurriculumTopic.name,
-        children: {
-          nodes: [
-            {
-              id: taxonomyTermCurriculumTopic.childrenIds[0],
-            },
-
-            {
-              id: video.id,
-            },
-            {
-              id: exercise.id,
-            },
-          ],
-        },
-      },
-    })
-    await exerciseQuery.shouldReturnData({
-      uuid: {
-        taxonomyTerms: {
-          nodes: [
-            {
-              id: exercise.taxonomyTermIds[0],
-            },
-            {
-              id: taxonomyTermCurriculumTopic.id,
-            },
-          ],
-        },
-      },
-    })
-
-    await videoQuery.shouldReturnData({
-      uuid: {
-        taxonomyTerms: {
-          nodes: [
-            {
-              id: video.taxonomyTermIds[0],
-            },
-            {
-              id: taxonomyTermCurriculumTopic.id,
-            },
-          ],
-        },
-      },
-    })
+      }
+    `,
+    variables: { id: taxonomyTermCurriculumTopic.id },
   })
 
-  test('fails when user is not authenticated', async () => {
-    await mutation
-      .forUnauthenticatedUser()
-      .shouldFailWithError('UNAUTHENTICATED')
+  await parentQuery.shouldReturnData({
+    uuid: {
+      children: {
+        nodes: [{ id: taxonomyTermCurriculumTopic.childrenIds[0] }],
+      },
+    },
   })
 
-  test('fails when user does not have role "architect"', async () => {
-    await mutation.forLoginUser().shouldFailWithError('FORBIDDEN')
+  await mutation.execute()
+
+  await childQuery.shouldReturnData({
+    uuid: {
+      taxonomyTerms: {
+        nodes: [
+          { id: exercise.taxonomyTermIds[0] },
+          { id: taxonomyTermCurriculumTopic.id },
+        ],
+      },
+    },
   })
 
-  test('fails when database layer returns a 400er response', async () => {
-    given('TaxonomyCreateEntityLinkMutation').returnsBadRequest()
-
-    await mutation.shouldFailWithError('BAD_USER_INPUT')
+  await parentQuery.shouldReturnData({
+    uuid: {
+      children: {
+        nodes: [
+          { id: taxonomyTermCurriculumTopic.childrenIds[0] },
+          { id: exercise.id },
+        ],
+      },
+    },
   })
+})
 
-  test('fails when database layer has an internal error', async () => {
-    given('TaxonomyCreateEntityLinkMutation').hasInternalServerError()
+test('fails when user is not authenticated', async () => {
+  await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
+})
 
-    await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
-  })
+test('fails when user does not have role "architect"', async () => {
+  await mutation.forLoginUser().shouldFailWithError('FORBIDDEN')
+})
+
+test('fails when database layer returns a 400er response', async () => {
+  given('TaxonomyCreateEntityLinkMutation').returnsBadRequest()
+
+  await mutation.shouldFailWithError('BAD_USER_INPUT')
+})
+
+test('fails when database layer has an internal error', async () => {
+  given('TaxonomyCreateEntityLinkMutation').hasInternalServerError()
+
+  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
