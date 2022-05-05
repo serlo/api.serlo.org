@@ -11,8 +11,8 @@ assignees: ''
 ### Graphql
 
 ```graphql
-```
 
+```
 
 ## Necessary checks / errors to avoid
 
