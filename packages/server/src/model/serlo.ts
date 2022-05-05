@@ -914,11 +914,13 @@ export function createSerloModel({
         payload
       )
     },
-    updateCache({ taxonomyTermId, entityIds }, { success }) {
+    async updateCache({ taxonomyTermId, entityIds }, { success }) {
       if (success) {
-        ;[...entityIds, taxonomyTermId].map(
-          async (id) =>
-            await getUuid._querySpec.removeCache({ payload: { id } })
+        await Promise.all(
+          [...entityIds, taxonomyTermId].map(
+            async (id) =>
+              await getUuid._querySpec.removeCache({ payload: { id } })
+          )
         )
       }
     },
