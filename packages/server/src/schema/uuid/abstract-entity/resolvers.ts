@@ -19,8 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+
 import * as serloAuth from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
+import * as t from 'io-ts'
 
 import { createSetEntityResolver } from './entity-set-handler'
 import {
@@ -64,13 +66,14 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       if (first > LIMIT)
         throw new UserInputError(`'first' may not be higher than ${LIMIT}`)
 
-      const deletedAfter = after
-        ? (
-            JSON.parse(Buffer.from(after, 'base64').toString()) as {
-              dateOfDeletion: string
-            }
-          ).dateOfDeletion
-        : undefined
+      const afterParsed = JSON.parse(
+        Buffer.from(after || '', 'base64').toString()
+      ) as unknown
+
+      const deletedAfter =
+        after && t.type({ dateOfDeletion: t.string }).is(afterParsed)
+          ? afterParsed.dateOfDeletion
+          : undefined
 
       if (deletedAfter && !isDateString(deletedAfter))
         throw new UserInputError(
@@ -79,7 +82,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
 
       const { deletedEntities } =
         await dataSources.model.serlo.getDeletedEntities({
-          first,
+          first: first + 1,
           after: deletedAfter,
           instance,
         })
@@ -96,7 +99,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         })
       )
 
-      const connection = resolveConnection({
+      return resolveConnection({
         nodes,
         payload,
         createCursor: (node) => {
@@ -104,14 +107,6 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
           return JSON.stringify({ id: entity.id, dateOfDeletion })
         },
       })
-
-      return {
-        ...connection,
-        pageInfo: {
-          ...connection.pageInfo,
-          __typename: 'PageInfo',
-        },
-      }
     },
   },
   EntityMutation: {

@@ -40,7 +40,7 @@ export type AbstractEntityConnection = {
   __typename?: 'AbstractEntityConnection';
   edges: Array<AbstractEntityCursor>;
   nodes: Array<AbstractEntity>;
-  pageInfo: PageInfo;
+  pageInfo: HasNextPageInfo;
   totalCount: Scalars['Int'];
 };
 

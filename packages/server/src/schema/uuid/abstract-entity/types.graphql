@@ -44,7 +44,7 @@ type AbstractEntityConnection {
   edges: [AbstractEntityCursor!]!
   nodes: [AbstractEntity!]!
   totalCount: Int!
-  pageInfo: PageInfo!
+  pageInfo: HasNextPageInfo!
 }
 
 type AbstractEntityCursor {
