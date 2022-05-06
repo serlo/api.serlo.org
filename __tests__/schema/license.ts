@@ -88,9 +88,9 @@ describe('endpoint "licenses"', () => {
     await licensesQuery.shouldReturnData({ license: { licenses } })
   })
 
-  test('returns undefined when instance does not exist', async () => {
+  test('fails when instance does not exist', async () => {
     await licensesQuery
       .withVariables({ instance: 'xx' })
-      .shouldReturnData(undefined)
+      .shouldFailWithError('BAD_USER_INPUT')
   })
 })
