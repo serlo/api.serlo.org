@@ -352,6 +352,30 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  TaxonomyCreateEntityLinksMutation: {
+    examples: [
+      [
+        {
+          entityIds: [video.id, exercise.id],
+          taxonomyTermId: taxonomyTermTopic.id,
+          userId: user.id,
+        },
+        { success: true },
+      ],
+    ],
+  },
+  TaxonomyDeleteEntityLinksMutation: {
+    examples: [
+      [
+        {
+          entityIds: [article.id],
+          taxonomyTermId: taxonomyTermTopic.id,
+          userId: user.id,
+        },
+        { success: true },
+      ],
+    ],
+  },
   TaxonomyTermCreateMutation: {
     examples: [
       [
