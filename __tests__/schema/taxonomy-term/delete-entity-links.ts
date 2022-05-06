@@ -56,7 +56,7 @@ beforeEach(() => {
     user
   )
 
-  given('TaxonomyDeleteEntityLinkMutation')
+  given('TaxonomyDeleteEntityLinksMutation')
     .withPayload({ ...input, userId: user.id })
     .isDefinedBy((_req, res, ctx) => {
       given('UuidQuery').for({
@@ -137,13 +137,13 @@ test('fails when user does not have role "architect"', async () => {
 })
 
 test('fails when database layer returns a 400er response', async () => {
-  given('TaxonomyDeleteEntityLinkMutation').returnsBadRequest()
+  given('TaxonomyDeleteEntityLinksMutation').returnsBadRequest()
 
   await mutation.shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('fails when database layer has an internal error', async () => {
-  given('TaxonomyDeleteEntityLinkMutation').hasInternalServerError()
+  given('TaxonomyDeleteEntityLinksMutation').hasInternalServerError()
 
   await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })

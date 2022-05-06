@@ -907,12 +907,12 @@ export function createSerloModel({
   })
 
   const unlinkEntitiesFromTaxonomy = createMutation({
-    decoder: DatabaseLayer.getDecoderFor('TaxonomyDeleteEntityLinkMutation'),
+    decoder: DatabaseLayer.getDecoderFor('TaxonomyDeleteEntityLinksMutation'),
     mutate: (
-      payload: DatabaseLayer.Payload<'TaxonomyDeleteEntityLinkMutation'>
+      payload: DatabaseLayer.Payload<'TaxonomyDeleteEntityLinksMutation'>
     ) => {
       return DatabaseLayer.makeRequest(
-        'TaxonomyDeleteEntityLinkMutation',
+        'TaxonomyDeleteEntityLinksMutation',
         payload
       )
     },
