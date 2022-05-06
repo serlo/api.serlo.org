@@ -144,7 +144,6 @@ export const spec = {
       input: t.intersection([
         t.type({
           changes: t.string,
-          instance: InstanceDecoder,
           licenseId: t.number,
           needsReview: t.boolean,
           subscribeThis: t.boolean,
