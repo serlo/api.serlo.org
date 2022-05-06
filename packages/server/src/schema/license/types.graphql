@@ -10,5 +10,10 @@ type License {
 }
 
 extend type Query {
+  license: LicenseQuery!
+}
+
+type LicenseQuery {
   license(id: Int!): License
+  licenses(instance: Instance): [License!]!
 }

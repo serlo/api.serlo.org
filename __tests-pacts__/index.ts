@@ -220,7 +220,6 @@ const pactSpec: PactSpec = {
           userId: user.id,
           input: {
             changes: 'changes',
-            instance: Instance.De,
             licenseId: 1,
             subscribeThis: false,
             subscribeThisByEmail: false,
@@ -243,7 +242,6 @@ const pactSpec: PactSpec = {
           userId: user.id,
           input: {
             changes: 'changes',
-            instance: Instance.De,
             licenseId: 1,
             subscribeThis: false,
             subscribeThisByEmail: false,
@@ -364,6 +362,30 @@ const pactSpec: PactSpec = {
           sendEmail: false,
         },
         undefined,
+      ],
+    ],
+  },
+  TaxonomyCreateEntityLinksMutation: {
+    examples: [
+      [
+        {
+          entityIds: [video.id, exercise.id],
+          taxonomyTermId: taxonomyTermTopic.id,
+          userId: user.id,
+        },
+        { success: true },
+      ],
+    ],
+  },
+  TaxonomyDeleteEntityLinksMutation: {
+    examples: [
+      [
+        {
+          entityIds: [1949],
+          taxonomyTermId: 24370,
+          userId: user.id,
+        },
+        { success: true },
       ],
     ],
   },
