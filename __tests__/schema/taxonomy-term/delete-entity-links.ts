@@ -73,11 +73,7 @@ beforeEach(() => {
 
 test('returns { success, record } when mutation could be successfully executed', async () => {
   await mutation.shouldReturnData({
-    taxonomyTerm: {
-      deleteEntityLinks: {
-        success: true,
-      },
-    },
+    taxonomyTerm: { deleteEntityLinks: { success: true } },
   })
 })
 
@@ -98,15 +94,10 @@ test('updates the cache', async () => {
     `,
     variables: { id: article.id },
   })
+
   await childQuery.shouldReturnData({
     uuid: {
-      taxonomyTerms: {
-        nodes: [
-          {
-            id: taxonomyTermCurriculumTopic.id,
-          },
-        ],
-      },
+      taxonomyTerms: { nodes: [{ id: taxonomyTermCurriculumTopic.id }] },
     },
   })
 
@@ -128,33 +119,13 @@ test('updates the cache', async () => {
   })
 
   await parentQuery.shouldReturnData({
-    uuid: {
-      children: {
-        nodes: [
-          {
-            id: article.id,
-          },
-        ],
-      },
-    },
+    uuid: { children: { nodes: [{ id: article.id }] } },
   })
 
   await mutation.execute()
 
-  await parentQuery.shouldReturnData({
-    uuid: {
-      children: {
-        nodes: [],
-      },
-    },
-  })
-  await childQuery.shouldReturnData({
-    uuid: {
-      taxonomyTerms: {
-        nodes: [],
-      },
-    },
-  })
+  await parentQuery.shouldReturnData({ uuid: { children: { nodes: [] } } })
+  await childQuery.shouldReturnData({ uuid: { taxonomyTerms: { nodes: [] } } })
 })
 
 test('fails when user is not authenticated', async () => {
