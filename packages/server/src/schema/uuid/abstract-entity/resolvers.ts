@@ -66,19 +66,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       if (first > LIMIT)
         throw new UserInputError(`'first' may not be higher than ${LIMIT}`)
 
-      const afterParsed = JSON.parse(
-        Buffer.from(after || '', 'base64').toString()
-      ) as unknown
-
-      const deletedAfter =
-        after && t.type({ dateOfDeletion: t.string }).is(afterParsed)
-          ? afterParsed.dateOfDeletion
-          : undefined
-
-      if (deletedAfter && !isDateString(deletedAfter))
-        throw new UserInputError(
-          'the encoded dateOfDeletion  in `after` should be a date'
-        )
+      const deletedAfter = getDateOfDeletion(after)
 
       const { deletedEntities } =
         await dataSources.model.serlo.getDeletedEntities({
@@ -207,4 +195,24 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       return { success: true, query: {} }
     },
   },
+}
+function getDateOfDeletion(after: string | undefined) {
+  if (after == undefined) return undefined
+
+  const afterParsed = JSON.parse(
+    Buffer.from(after, 'base64').toString()
+  ) as unknown
+
+  const deletedAfter = t.type({ dateOfDeletion: t.string }).is(afterParsed)
+    ? afterParsed.dateOfDeletion
+    : undefined
+
+  if (!deletedAfter) return undefined
+
+  if (!isDateString(deletedAfter))
+    throw new UserInputError(
+      'the encoded dateOfDeletion in `after` should be a date'
+    )
+
+  return new Date(deletedAfter).toISOString()
 }
