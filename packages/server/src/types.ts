@@ -1395,6 +1395,22 @@ export type License = {
   url: Scalars['String'];
 };
 
+export type LicenseQuery = {
+  __typename?: 'LicenseQuery';
+  license?: Maybe<License>;
+  licenses: Array<License>;
+};
+
+
+export type LicenseQueryLicenseArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type LicenseQueryLicensesArgs = {
+  instance?: InputMaybe<Instance>;
+};
+
 export type MetadataQuery = {
   __typename?: 'MetadataQuery';
   entities: EntityMetadataConnection;
@@ -1647,7 +1663,7 @@ export type Query = {
   activeReviewers: UserConnection;
   authorization: Scalars['JSON'];
   events: AbstractNotificationEventConnection;
-  license?: Maybe<License>;
+  license: LicenseQuery;
   metadata: MetadataQuery;
   notificationEvent?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
   notifications: NotificationConnection;
@@ -1691,11 +1707,6 @@ export type QueryEventsArgs = {
   instance?: InputMaybe<Instance>;
   last?: InputMaybe<Scalars['Int']>;
   objectId?: InputMaybe<Scalars['Int']>;
-};
-
-
-export type QueryLicenseArgs = {
-  id: Scalars['Int'];
 };
 
 
@@ -2898,6 +2909,7 @@ export type ResolversTypes = {
   JSON: ResolverTypeWrapper<ModelOf<Scalars['JSON']>>;
   JSONObject: ResolverTypeWrapper<ModelOf<Scalars['JSONObject']>>;
   License: ResolverTypeWrapper<ModelOf<License>>;
+  LicenseQuery: ResolverTypeWrapper<ModelOf<LicenseQuery>>;
   MetadataQuery: ResolverTypeWrapper<ModelOf<MetadataQuery>>;
   Mutation: ResolverTypeWrapper<{}>;
   Navigation: ResolverTypeWrapper<ModelOf<Navigation>>;
@@ -3092,6 +3104,7 @@ export type ResolversParentTypes = {
   JSON: ModelOf<Scalars['JSON']>;
   JSONObject: ModelOf<Scalars['JSONObject']>;
   License: ModelOf<License>;
+  LicenseQuery: ModelOf<LicenseQuery>;
   MetadataQuery: ModelOf<MetadataQuery>;
   Mutation: {};
   Navigation: ModelOf<Navigation>;
@@ -3933,6 +3946,12 @@ export type LicenseResolvers<ContextType = Context, ParentType extends Resolvers
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type LicenseQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['LicenseQuery'] = ResolversParentTypes['LicenseQuery']> = {
+  license?: Resolver<Maybe<ResolversTypes['License']>, ParentType, ContextType, RequireFields<LicenseQueryLicenseArgs, 'id'>>;
+  licenses?: Resolver<Array<ResolversTypes['License']>, ParentType, ContextType, Partial<LicenseQueryLicensesArgs>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MetadataQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['MetadataQuery'] = ResolversParentTypes['MetadataQuery']> = {
   entities?: Resolver<ResolversTypes['EntityMetadataConnection'], ParentType, ContextType, Partial<MetadataQueryEntitiesArgs>>;
   publisher?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
@@ -4082,7 +4101,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   activeReviewers?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, Partial<QueryActiveReviewersArgs>>;
   authorization?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<QueryEventsArgs>>;
-  license?: Resolver<Maybe<ResolversTypes['License']>, ParentType, ContextType, RequireFields<QueryLicenseArgs, 'id'>>;
+  license?: Resolver<ResolversTypes['LicenseQuery'], ParentType, ContextType>;
   metadata?: Resolver<ResolversTypes['MetadataQuery'], ParentType, ContextType>;
   notificationEvent?: Resolver<Maybe<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType, RequireFields<QueryNotificationEventArgs, 'id'>>;
   notifications?: Resolver<ResolversTypes['NotificationConnection'], ParentType, ContextType, Partial<QueryNotificationsArgs>>;
@@ -4664,6 +4683,7 @@ export type Resolvers<ContextType = Context> = {
   JSON?: GraphQLScalarType;
   JSONObject?: GraphQLScalarType;
   License?: LicenseResolvers<ContextType>;
+  LicenseQuery?: LicenseQueryResolvers<ContextType>;
   MetadataQuery?: MetadataQueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Navigation?: NavigationResolvers<ContextType>;
