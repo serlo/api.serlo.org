@@ -22,6 +22,18 @@
 
 import { Instance, License } from '~/types'
 
+const defaultLicense: License = {
+  id: 9,
+  instance: Instance.En,
+  default: true,
+  title: 'This content is licensed under cc-by-sa-4.0',
+  url: 'http://creativecommons.org/licenses/by/4.0/',
+  content: '[[{"col":24,"content":"siehe de.serlo"}]]',
+  agreement:
+    'By saving this page, you confirm that your contribution (including any edits you have made) is your own work, and that it does not infringe on the rights of third parties. You consent to publishing your contribution under the <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution/Share-Alike License 4.0</a> (http://creativecommons.org/licenses/by-sa/4.0/) and/or under an equivalent license chosen by the Serlo Education e.V. in accordance with the regulations laid out in the <a href="https://en.serlo.org/terms">terms of use</a> (https://en.serlo.org/terms). Should the contribution not be your own work, it must be available in accordance with the <a href="https://en.serlo.org/terms">terms of use</a> (https://en.serlo.org/terms), and you must agree to comply with any necessary license requests.',
+  iconHref: 'http://i.creativecommons.org/l/by-sa/4.0/88x31.png',
+}
+
 export const licenses = <License[]>[
   {
     id: 1,
@@ -120,17 +132,7 @@ export const licenses = <License[]>[
       'Mit dem Speichern dieser Seite versicherst du, dass du die Veränderung des Beitrags von MNWeG selbst verfasst hast bzw. dass er keine fremden Rechte verletzt. Du willigst ein, deinen Beitrag unter der <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.de">Creative Commons Attribution/Share-Alike Lizenz 4.0</a> (https://creativecommons.org/licenses/by-sa/4.0/deed.de) und/oder unter einer gleichwertigen Lizenz zu veröffentlichen, welche der Serlo Education e. V. entsprechend der Regelungen in den <a href="/21654">Nutzungsbedingungen</a> (http://de.serlo.org/21654) festlegen darf. Der Beitrag von MNWeG muss unter den <a href="/21654">Nutzungsbedingungen</a> (http://de.serlo.org/21654) verfügbar sein und du stimmst zu, notwendigen Lizenzanforderungen zu folgen.',
     iconHref: '',
   },
-  {
-    id: 9,
-    instance: Instance.En,
-    default: true,
-    title: 'This content is licensed under cc-by-sa-4.0',
-    url: 'http://creativecommons.org/licenses/by/4.0/',
-    content: '[[{"col":24,"content":"siehe de.serlo"}]]',
-    agreement:
-      'By saving this page, you confirm that your contribution (including any edits you have made) is your own work, and that it does not infringe on the rights of third parties. You consent to publishing your contribution under the <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution/Share-Alike License 4.0</a> (http://creativecommons.org/licenses/by-sa/4.0/) and/or under an equivalent license chosen by the Serlo Education e.V. in accordance with the regulations laid out in the <a href="https://en.serlo.org/terms">terms of use</a> (https://en.serlo.org/terms). Should the contribution not be your own work, it must be available in accordance with the <a href="https://en.serlo.org/terms">terms of use</a> (https://en.serlo.org/terms), and you must agree to comply with any necessary license requests.',
-    iconHref: 'http://i.creativecommons.org/l/by-sa/4.0/88x31.png',
-  },
+  defaultLicense,
   {
     id: 14,
     instance: Instance.Es,
@@ -214,12 +216,9 @@ export const licenses = <License[]>[
 ]
 
 export function getDefaultLicense(instance: Instance): License {
-  const license = licenses.find(
-    (license) => license.default && license.instance == instance
+  return (
+    licenses.find(
+      (license) => license.default && license.instance == instance
+    ) ?? defaultLicense
   )
-
-  if (license == null)
-    throw new Error(`no default license for ${instance} found`)
-
-  return license
 }
