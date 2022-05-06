@@ -25,7 +25,7 @@ import * as t from 'io-ts'
 import * as R from 'ramda'
 
 import { fromEntityTypeToEntityRevisionType } from './utils'
-import { autoreviewTaxonomyIds } from '~/config'
+import { autoreviewTaxonomyIds, getDefaultLicense } from '~/config'
 import {
   assertArgumentIsNotEmpty,
   assertUserIsAuthenticated,
@@ -166,9 +166,8 @@ export function createSetEntityResolver({
         userId,
         input: {
           ...forwardArgs,
-          licenseId: 1,
+          licenseId: getDefaultLicense(parent.instance).id,
           needsReview: needsReviewForDBLayer,
-          instance: parent.instance,
           ...(isParentTaxonomyTerm ? { taxonomyTermId: input.parentId } : {}),
           ...(isParentEntity ? { parentId: input.parentId } : {}),
           fields,
