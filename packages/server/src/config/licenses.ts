@@ -25,7 +25,7 @@ import { Instance, License } from '~/types'
 export const licenses = <License[]>[
   {
     id: 1,
-    instance: 'de',
+    instance: Instance.De,
     default: true,
     title: 'Dieses Werk steht unter der freien Lizenz CC BY-SA 4.0.',
     url: 'https://creativecommons.org/licenses/by-sa/4.0/deed.de',
@@ -37,7 +37,7 @@ export const licenses = <License[]>[
   },
   {
     id: 4,
-    instance: 'de',
+    instance: Instance.De,
     default: false,
     title:
       'Dieses Werk steht unter der freien Lizenz CC BY-SA 4.0 mit Namensnennung von Herrn Rudolf Brinkmann',
@@ -50,7 +50,7 @@ export const licenses = <License[]>[
   },
   {
     id: 6,
-    instance: 'de',
+    instance: Instance.De,
     default: false,
     title:
       'Dieses Werk steht unter der freien Lizenz CC BY-SA 4.0 mit Namensnennung von Herrn Franz Strobl. ',
@@ -63,7 +63,7 @@ export const licenses = <License[]>[
   },
   {
     id: 7,
-    instance: 'de',
+    instance: Instance.De,
     default: false,
     title:
       'Dieses Werk steht unter der freien Lizenz CC BY-SA 4.0 mit Namensnennung von Herrn Günther Rasch',
@@ -76,7 +76,7 @@ export const licenses = <License[]>[
   },
   {
     id: 10,
-    instance: 'de',
+    instance: Instance.De,
     default: false,
     title: 'Standard-YouTube-Lizenz',
     url: 'https://www.youtube.com/static?gl=DE&template=terms',
@@ -86,7 +86,7 @@ export const licenses = <License[]>[
   },
   {
     id: 16,
-    instance: 'de',
+    instance: Instance.De,
     default: false,
     title: 'Dieses Werk steht unter der Lizenz CC BY-ND 4.0',
     url: 'https://creativecommons.org/licenses/by-nd/4.0/',
@@ -98,7 +98,7 @@ export const licenses = <License[]>[
   },
   {
     id: 19,
-    instance: 'de',
+    instance: Instance.De,
     default: false,
     title: 'CC BY 4.0 - Landesbildungsserver Baden-Württemberg',
     url: 'https://www.schule-bw.de/',
@@ -109,7 +109,7 @@ export const licenses = <License[]>[
   },
   {
     id: 24,
-    instance: 'de',
+    instance: Instance.De,
     default: false,
     title:
       'Dieses Werk steht unter der freien Lizenz CC BY-SA 4.0 mit Namensnennung von MNWeG',
@@ -122,7 +122,7 @@ export const licenses = <License[]>[
   },
   {
     id: 9,
-    instance: 'en',
+    instance: Instance.En,
     default: true,
     title: 'This content is licensed under cc-by-sa-4.0',
     url: 'http://creativecommons.org/licenses/by/4.0/',
@@ -133,7 +133,7 @@ export const licenses = <License[]>[
   },
   {
     id: 14,
-    instance: 'es',
+    instance: Instance.Es,
     default: true,
     title: 'Este contenido está licenciado bajo cc-by-sa-4.0',
     url: 'https://creativecommons.org/licenses/by-sa/4.0/deed.es',
@@ -154,7 +154,7 @@ export const licenses = <License[]>[
   },
   {
     id: 22,
-    instance: 'es',
+    instance: Instance.Es,
     default: false,
     title:
       'Esta obra está bajo la licencia libre CC BY-SA 4.0 de la iniciativa colectiva África en la Escuela',
@@ -166,7 +166,7 @@ export const licenses = <License[]>[
   },
   {
     id: 23,
-    instance: 'es',
+    instance: Instance.Es,
     default: false,
     title:
       ' Este ejercicio/tarea está bajo la licencia libre CC BY-SA 4.0 del señor Franz Strobl.',
@@ -179,7 +179,7 @@ export const licenses = <License[]>[
   },
   {
     id: 13,
-    instance: 'hi',
+    instance: Instance.Hi,
     default: true,
     title: 'This content is licensed under cc-by-sa-4.0',
     url: 'https://creativecommons.org/licenses/by/4.0/',
@@ -190,7 +190,7 @@ export const licenses = <License[]>[
   },
   {
     id: 17,
-    instance: 'ta',
+    instance: Instance.Ta,
     default: true,
     title: 'This content is licensed under cc-by-sa-4.0',
     url: 'http://creativecommons.org/licenses/by/4.0/',
@@ -201,7 +201,7 @@ export const licenses = <License[]>[
   },
   {
     id: 18,
-    instance: 'fr',
+    instance: Instance.Fr,
     default: true,
     title: ' Ce contenu est sous licence cc-by-sa-4.0',
     url: 'http://creativecommons.org/licenses/by/4.0/',
