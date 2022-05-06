@@ -368,8 +368,8 @@ const pactSpec: PactSpec = {
     examples: [
       [
         {
-          entityIds: [article.id],
-          taxonomyTermId: taxonomyTermTopic.id,
+          entityIds: [1949],
+          taxonomyTermId: 1307,
           userId: user.id,
         },
         { success: true },
