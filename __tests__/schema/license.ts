@@ -23,30 +23,76 @@ import { gql } from 'apollo-server'
 
 import { license } from '../../__fixtures__'
 import { Client } from '../__utils__'
+import { licenses } from '~/config'
 
-const query = new Client().prepareQuery({
+const licenseQuery = new Client().prepareQuery({
   query: gql`
     query license($id: Int!) {
-      license(id: $id) {
-        id
-        instance
-        default
-        title
-        url
-        content
-        agreement
-        iconHref
+      license {
+        license(id: $id) {
+          id
+          instance
+          default
+          title
+          url
+          content
+          agreement
+          iconHref
+        }
       }
     }
   `,
 })
 
-describe('query "license"', () => {
-  test('returns a license', async () => {
-    await query.withVariables({ id: license.id }).shouldReturnData({ license })
+const licensesQuery = new Client().prepareQuery({
+  query: gql`
+    query licenses($instance: Instance) {
+      license {
+        licenses(instance: $instance) {
+          id
+          instance
+          default
+          title
+          url
+          content
+          agreement
+          iconHref
+        }
+      }
+    }
+  `,
+})
+
+describe('LicenseQuery', () => {
+  describe('endpoint "license"', () => {
+    test('returns one license', async () => {
+      await licenseQuery
+        .withVariables({ id: license.id })
+        .shouldReturnData({ license: { license } })
+    })
+
+    test('returns null when license with given id does not exist', async () => {
+      await licenseQuery
+        .withVariables({ id: 100 })
+        .shouldReturnData({ license: { license: null } })
+    })
   })
 
-  test('returns null when license with given id does not exist', async () => {
-    await query.withVariables({ id: 100 }).shouldReturnData({ license: null })
+  describe('endpoint "licenses"', () => {
+    test('returns array of licenses filtered by instance', async () => {
+      await licensesQuery
+        .withVariables({ instance: 'en' })
+        .shouldReturnData({ license: { licenses: [licenses[8]] } })
+    })
+
+    test('returns all licenses when used without filter', async () => {
+      await licensesQuery.shouldReturnData({ license: { licenses } })
+    })
+
+    test('returns undefined when instance does not exist', async () => {
+      await licensesQuery
+        .withVariables({ instance: 'xx' })
+        .shouldReturnData(undefined)
+    })
   })
 })
