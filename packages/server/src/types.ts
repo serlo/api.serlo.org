@@ -1427,6 +1427,22 @@ export type License = {
   url: Scalars['String'];
 };
 
+export type LicenseQuery = {
+  __typename?: 'LicenseQuery';
+  license?: Maybe<License>;
+  licenses: Array<License>;
+};
+
+
+export type LicenseQueryLicenseArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type LicenseQueryLicensesArgs = {
+  instance?: InputMaybe<Instance>;
+};
+
 export type MetadataQuery = {
   __typename?: 'MetadataQuery';
   entities: EntityMetadataConnection;
@@ -1680,7 +1696,7 @@ export type Query = {
   authorization: Scalars['JSON'];
   entity?: Maybe<EntityQuery>;
   events: AbstractNotificationEventConnection;
-  license?: Maybe<License>;
+  license: LicenseQuery;
   metadata: MetadataQuery;
   notificationEvent?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
   notifications: NotificationConnection;
@@ -1724,11 +1740,6 @@ export type QueryEventsArgs = {
   instance?: InputMaybe<Instance>;
   last?: InputMaybe<Scalars['Int']>;
   objectId?: InputMaybe<Scalars['Int']>;
-};
-
-
-export type QueryLicenseArgs = {
-  id: Scalars['Int'];
 };
 
 
@@ -2169,6 +2180,17 @@ export type SubscriptionSetResponse = {
   success: Scalars['Boolean'];
 };
 
+export type TaxonomyEntityLinksInput = {
+  entityIds: Array<Scalars['Int']>;
+  taxonomyTermId: Scalars['Int'];
+};
+
+export type TaxonomyEntityLinksResponse = {
+  __typename?: 'TaxonomyEntityLinksResponse';
+  query: Query;
+  success: Scalars['Boolean'];
+};
+
 export type TaxonomyTerm = AbstractNavigationChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'TaxonomyTerm';
   alias?: Maybe<Scalars['String']>;
@@ -2257,6 +2279,8 @@ export type TaxonomyTermMoveResponse = {
 export type TaxonomyTermMutation = {
   __typename?: 'TaxonomyTermMutation';
   create: TaxonomyTermCreateResponse;
+  createEntityLinks: TaxonomyEntityLinksResponse;
+  deleteEntityLinks: TaxonomyEntityLinksResponse;
   move: TaxonomyTermMoveResponse;
   setNameAndDescription: TaxonomyTermSetNameAndDescriptionResponse;
 };
@@ -2264,6 +2288,16 @@ export type TaxonomyTermMutation = {
 
 export type TaxonomyTermMutationCreateArgs = {
   input: TaxonomyTermCreateInput;
+};
+
+
+export type TaxonomyTermMutationCreateEntityLinksArgs = {
+  input: TaxonomyEntityLinksInput;
+};
+
+
+export type TaxonomyTermMutationDeleteEntityLinksArgs = {
+  input: TaxonomyEntityLinksInput;
 };
 
 
@@ -2935,6 +2969,7 @@ export type ResolversTypes = {
   JSON: ResolverTypeWrapper<ModelOf<Scalars['JSON']>>;
   JSONObject: ResolverTypeWrapper<ModelOf<Scalars['JSONObject']>>;
   License: ResolverTypeWrapper<ModelOf<License>>;
+  LicenseQuery: ResolverTypeWrapper<ModelOf<LicenseQuery>>;
   MetadataQuery: ResolverTypeWrapper<ModelOf<MetadataQuery>>;
   Mutation: ResolverTypeWrapper<{}>;
   Navigation: ResolverTypeWrapper<ModelOf<Navigation>>;
@@ -2993,6 +3028,8 @@ export type ResolversTypes = {
   SubscriptionQuery: ResolverTypeWrapper<ModelOf<SubscriptionQuery>>;
   SubscriptionSetInput: ResolverTypeWrapper<ModelOf<SubscriptionSetInput>>;
   SubscriptionSetResponse: ResolverTypeWrapper<ModelOf<SubscriptionSetResponse>>;
+  TaxonomyEntityLinksInput: ResolverTypeWrapper<ModelOf<TaxonomyEntityLinksInput>>;
+  TaxonomyEntityLinksResponse: ResolverTypeWrapper<ModelOf<TaxonomyEntityLinksResponse>>;
   TaxonomyTerm: ResolverTypeWrapper<ModelOf<TaxonomyTerm>>;
   TaxonomyTermConnection: ResolverTypeWrapper<ModelOf<TaxonomyTermConnection>>;
   TaxonomyTermCreateInput: ResolverTypeWrapper<ModelOf<TaxonomyTermCreateInput>>;
@@ -3133,6 +3170,7 @@ export type ResolversParentTypes = {
   JSON: ModelOf<Scalars['JSON']>;
   JSONObject: ModelOf<Scalars['JSONObject']>;
   License: ModelOf<License>;
+  LicenseQuery: ModelOf<LicenseQuery>;
   MetadataQuery: ModelOf<MetadataQuery>;
   Mutation: {};
   Navigation: ModelOf<Navigation>;
@@ -3190,6 +3228,8 @@ export type ResolversParentTypes = {
   SubscriptionQuery: ModelOf<SubscriptionQuery>;
   SubscriptionSetInput: ModelOf<SubscriptionSetInput>;
   SubscriptionSetResponse: ModelOf<SubscriptionSetResponse>;
+  TaxonomyEntityLinksInput: ModelOf<TaxonomyEntityLinksInput>;
+  TaxonomyEntityLinksResponse: ModelOf<TaxonomyEntityLinksResponse>;
   TaxonomyTerm: ModelOf<TaxonomyTerm>;
   TaxonomyTermConnection: ModelOf<TaxonomyTermConnection>;
   TaxonomyTermCreateInput: ModelOf<TaxonomyTermCreateInput>;
@@ -3999,6 +4039,12 @@ export type LicenseResolvers<ContextType = Context, ParentType extends Resolvers
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type LicenseQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['LicenseQuery'] = ResolversParentTypes['LicenseQuery']> = {
+  license?: Resolver<Maybe<ResolversTypes['License']>, ParentType, ContextType, RequireFields<LicenseQueryLicenseArgs, 'id'>>;
+  licenses?: Resolver<Array<ResolversTypes['License']>, ParentType, ContextType, Partial<LicenseQueryLicensesArgs>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MetadataQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['MetadataQuery'] = ResolversParentTypes['MetadataQuery']> = {
   entities?: Resolver<ResolversTypes['EntityMetadataConnection'], ParentType, ContextType, Partial<MetadataQueryEntitiesArgs>>;
   publisher?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
@@ -4149,7 +4195,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   authorization?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
   entity?: Resolver<Maybe<ResolversTypes['EntityQuery']>, ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<QueryEventsArgs>>;
-  license?: Resolver<Maybe<ResolversTypes['License']>, ParentType, ContextType, RequireFields<QueryLicenseArgs, 'id'>>;
+  license?: Resolver<ResolversTypes['LicenseQuery'], ParentType, ContextType>;
   metadata?: Resolver<ResolversTypes['MetadataQuery'], ParentType, ContextType>;
   notificationEvent?: Resolver<Maybe<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType, RequireFields<QueryNotificationEventArgs, 'id'>>;
   notifications?: Resolver<ResolversTypes['NotificationConnection'], ParentType, ContextType, Partial<QueryNotificationsArgs>>;
@@ -4375,6 +4421,12 @@ export type SubscriptionSetResponseResolvers<ContextType = Context, ParentType e
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type TaxonomyEntityLinksResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyEntityLinksResponse'] = ResolversParentTypes['TaxonomyEntityLinksResponse']> = {
+  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type TaxonomyTermResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTerm'] = ResolversParentTypes['TaxonomyTerm']> = {
   alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   children?: Resolver<ResolversTypes['AbstractUuidConnection'], ParentType, ContextType, Partial<TaxonomyTermChildrenArgs>>;
@@ -4422,6 +4474,8 @@ export type TaxonomyTermMoveResponseResolvers<ContextType = Context, ParentType 
 
 export type TaxonomyTermMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermMutation'] = ResolversParentTypes['TaxonomyTermMutation']> = {
   create?: Resolver<ResolversTypes['TaxonomyTermCreateResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationCreateArgs, 'input'>>;
+  createEntityLinks?: Resolver<ResolversTypes['TaxonomyEntityLinksResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationCreateEntityLinksArgs, 'input'>>;
+  deleteEntityLinks?: Resolver<ResolversTypes['TaxonomyEntityLinksResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationDeleteEntityLinksArgs, 'input'>>;
   move?: Resolver<ResolversTypes['TaxonomyTermMoveResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationMoveArgs, 'input'>>;
   setNameAndDescription?: Resolver<ResolversTypes['TaxonomyTermSetNameAndDescriptionResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationSetNameAndDescriptionArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -4735,6 +4789,7 @@ export type Resolvers<ContextType = Context> = {
   JSON?: GraphQLScalarType;
   JSONObject?: GraphQLScalarType;
   License?: LicenseResolvers<ContextType>;
+  LicenseQuery?: LicenseQueryResolvers<ContextType>;
   MetadataQuery?: MetadataQueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Navigation?: NavigationResolvers<ContextType>;
@@ -4779,6 +4834,7 @@ export type Resolvers<ContextType = Context> = {
   SubscriptionMutation?: SubscriptionMutationResolvers<ContextType>;
   SubscriptionQuery?: SubscriptionQueryResolvers<ContextType>;
   SubscriptionSetResponse?: SubscriptionSetResponseResolvers<ContextType>;
+  TaxonomyEntityLinksResponse?: TaxonomyEntityLinksResponseResolvers<ContextType>;
   TaxonomyTerm?: TaxonomyTermResolvers<ContextType>;
   TaxonomyTermConnection?: TaxonomyTermConnectionResolvers<ContextType>;
   TaxonomyTermCreateResponse?: TaxonomyTermCreateResponseResolvers<ContextType>;
