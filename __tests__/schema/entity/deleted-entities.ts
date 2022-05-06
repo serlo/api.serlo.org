@@ -21,8 +21,13 @@
  */
 import { gql } from 'apollo-server'
 
-import { article, coursePage, solution } from '../../../__fixtures__'
+import {
+  article as baseArticle,
+  coursePage as baseCoursePage,
+  solution as baseSolution,
+} from '../../../__fixtures__'
 import { given, Client } from '../../__utils__'
+import { Instance } from '~/types'
 
 const query = new Client().prepareQuery({
   query: gql`
@@ -30,6 +35,7 @@ const query = new Client().prepareQuery({
       entity {
         deletedEntities(first: $first, after: $after, instance: $instance) {
           nodes {
+            dateOfDeletion
             entity {
               id
             }
@@ -40,6 +46,10 @@ const query = new Client().prepareQuery({
   `,
 })
 
+const coursePage = { ...baseCoursePage, instance: Instance.En }
+const article = { ...baseArticle, date: '2015-03-01T20:45:56Z' }
+const solution = { ...baseSolution, date: '2016-03-01T20:45:56Z' }
+
 beforeEach(() => {
   given('DeletedEntitiesQuery').for(article, coursePage, solution)
 })
@@ -49,9 +59,18 @@ test('returns deleted entities', async () => {
     entity: {
       deletedEntities: {
         nodes: [
-          { entity: { id: article.id } },
-          { entity: { id: coursePage.id } },
-          { entity: { id: solution.id } },
+          {
+            dateOfDeletion: article.date,
+            entity: { id: article.id },
+          },
+          {
+            dateOfDeletion: coursePage.date,
+            entity: { id: coursePage.id },
+          },
+          {
+            dateOfDeletion: solution.date,
+            entity: { id: solution.id },
+          },
         ],
       },
     },
@@ -60,7 +79,12 @@ test('returns deleted entities', async () => {
   await query.withVariables({ first: 1 }).shouldReturnData({
     entity: {
       deletedEntities: {
-        nodes: [{ entity: { id: article.id } }],
+        nodes: [
+          {
+            dateOfDeletion: article.date,
+            entity: { id: article.id },
+          },
+        ],
       },
     },
   })
@@ -71,18 +95,56 @@ test('`after` parameter, using entity id and dateOfDeletion, paginates', async (
     .withVariables({
       after: Buffer.from(
         JSON.stringify({
-          id: coursePage.id,
-          dateOfDeletion: coursePage.date,
+          id: article.id,
+          dateOfDeletion: article.date,
         })
       ).toString('base64'),
     })
     .shouldReturnData({
       entity: {
         deletedEntities: {
-          nodes: [{ entity: { id: solution.id } }],
+          nodes: [
+            {
+              dateOfDeletion: solution.date,
+              entity: { id: solution.id },
+            },
+          ],
         },
       },
     })
+})
+
+test('filters by instance', async () => {
+  await query
+    .withVariables({
+      instance: Instance.En,
+    })
+    .shouldReturnData({
+      entity: {
+        deletedEntities: {
+          nodes: [{ entity: { id: coursePage.id } }],
+        },
+      },
+    })
+})
+
+test('fails when `first` is too high', async () => {
+  await query
+    .withVariables({ first: 10_001 })
+    .shouldFailWithError('BAD_USER_INPUT')
+})
+
+test('fails when `after` is malformed', async () => {
+  await query
+    .withVariables({
+      after: Buffer.from(
+        JSON.stringify({
+          id: article.id,
+          dateOfDeletion: 'foo',
+        })
+      ).toString('base64'),
+    })
+    .shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('fails when database layer returns a 400er response', async () => {
