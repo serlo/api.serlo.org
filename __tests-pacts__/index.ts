@@ -207,7 +207,6 @@ const pactSpec: PactSpec = {
           userId: user.id,
           input: {
             changes: 'changes',
-            instance: Instance.De,
             licenseId: 1,
             subscribeThis: false,
             subscribeThisByEmail: false,
@@ -230,7 +229,6 @@ const pactSpec: PactSpec = {
           userId: user.id,
           input: {
             changes: 'changes',
-            instance: Instance.De,
             licenseId: 1,
             subscribeThis: false,
             subscribeThisByEmail: false,
