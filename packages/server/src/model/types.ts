@@ -89,7 +89,6 @@ export interface Models {
   GroupedExercise: t.TypeOf<typeof GroupedExerciseDecoder>
   GroupedExerciseRevision: t.TypeOf<typeof GroupedExerciseRevisionDecoder>
   Navigation: Payload<'serlo', 'getNavigation'>
-  License: Payload<'serlo', 'getLicense'>
   Page: t.TypeOf<typeof PageDecoder>
   PageRevision: t.TypeOf<typeof PageRevisionDecoder>
   Subject: { taxonomyTermId: number }

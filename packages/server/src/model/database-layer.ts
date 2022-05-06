@@ -200,20 +200,6 @@ export const spec = {
     }),
     canBeNull: false,
   },
-  LicenseQuery: {
-    payload: t.type({ id: t.number }),
-    response: t.type({
-      id: t.number,
-      instance: InstanceDecoder,
-      default: t.boolean,
-      title: t.string,
-      url: t.string,
-      content: t.string,
-      agreement: t.string,
-      iconHref: t.string,
-    }),
-    canBeNull: true,
-  },
   NavigationQuery: {
     payload: t.type({ instance: InstanceDecoder }),
     response: NavigationDecoder,

@@ -55,7 +55,6 @@ import {
   exerciseRevision,
   groupedExercise,
   groupedExerciseRevision,
-  license,
   page,
   pageRevision,
   solution,
@@ -284,10 +283,6 @@ const pactSpec: PactSpec = {
         { events: [abstractEvent], hasNextPage: true },
       ],
     ],
-  },
-  LicenseQuery: {
-    examples: [[{ id: 1 }, license]],
-    examplePayloadForNull: { id: 100 },
   },
   NavigationQuery: {
     examples: [
