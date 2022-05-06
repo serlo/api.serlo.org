@@ -369,7 +369,7 @@ const pactSpec: PactSpec = {
       [
         {
           entityIds: [1949],
-          taxonomyTermId: 1307,
+          taxonomyTermId: 24370,
           userId: user.id,
         },
         { success: true },
