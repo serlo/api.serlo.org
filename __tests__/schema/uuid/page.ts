@@ -26,7 +26,6 @@ import { page, pageRevision, license } from '../../../__fixtures__'
 import {
   assertSuccessfulGraphQLQuery,
   LegacyClient,
-  given,
   createTestClient,
   createUuidHandler,
 } from '../../__utils__'
@@ -66,7 +65,6 @@ describe('Page', () => {
   })
 
   test('by id (w/ license)', async () => {
-    given('LicenseQuery').withPayload({ id: license.id }).returns(license)
     await assertSuccessfulGraphQLQuery({
       query: gql`
         query page($id: Int!) {

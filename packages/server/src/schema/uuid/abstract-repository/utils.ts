@@ -23,6 +23,7 @@ import { array as A, function as F, number as N, ord } from 'fp-ts'
 import * as t from 'io-ts'
 import R from 'ramda'
 
+import { licenses } from '~/config'
 import {
   Model,
   PickResolvers,
@@ -96,10 +97,9 @@ export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
         },
       })
     },
-    async license(repository, _args, { dataSources }) {
-      const license = await dataSources.model.serlo.getLicense({
-        id: repository.licenseId,
-      })
+    license(repository, _args) {
+      const license =
+        licenses.find((license) => license.id === repository.licenseId) ?? null
 
       if (license === null) throw new Error('License cannot be null')
 
