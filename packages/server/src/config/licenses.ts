@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
-import { License } from '~/types'
+import { Instance, License } from '~/types'
 
 export const licenses = <License[]>[
   {
@@ -212,3 +212,14 @@ export const licenses = <License[]>[
     iconHref: 'http://i.creativecommons.org/l/by-sa/4.0/88x31.png',
   },
 ]
+
+export function getDefaultLicense(instance: Instance): License {
+  const license = licenses.find(
+    (license) => license.default && license.instance == instance
+  )
+
+  if (license == null)
+    throw new Error(`no default license for ${instance} found`)
+
+  return license
+}

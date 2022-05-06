@@ -54,6 +54,7 @@ import { DatabaseLayer } from '~/model'
 import { castToUuid, EntityType } from '~/model/decoder'
 import { SetAbstractEntityInput } from '~/schema/uuid/abstract-entity/entity-set-handler'
 import { fromEntityTypeToEntityRevisionType } from '~/schema/uuid/abstract-entity/utils'
+import { Instance } from '~/types'
 
 interface EntityFields {
   title: string
@@ -519,6 +520,51 @@ testCases.forEach((testCase) => {
       })
     })
   })
+})
+
+test('uses default license of the instance', async () => {
+  const exerciseEn = { ...exercise, instance: Instance.En }
+
+  given('UuidQuery').for(exerciseEn, taxonomyTermSubject, taxonomyTermRoot)
+  given('EntityCreateMutation')
+    .withPayload({
+      userId: 1,
+      entityType: EntityType.Solution,
+      input: {
+        changes: 'changes',
+        licenseId: 9,
+        needsReview: true,
+        subscribeThis: true,
+        subscribeThisByEmail: true,
+        fields: { content: 'Hello World' },
+        parentId: exerciseEn.id,
+      },
+    })
+    .returns(solution)
+
+  await new Client({ userId: user.id })
+    .prepareQuery({
+      query: gql`
+        mutation ($input: SetGenericEntityInput!) {
+          entity {
+            setSolution(input: $input) {
+              success
+            }
+          }
+        }
+      `,
+      variables: {
+        input: {
+          changes: 'changes',
+          subscribeThis: true,
+          subscribeThisByEmail: true,
+          needsReview: true,
+          parentId: exerciseEn.id,
+          content: 'Hello World',
+        },
+      },
+    })
+    .shouldReturnData({ entity: { setSolution: { success: true } } })
 })
 
 describe('Autoreview entities', () => {
