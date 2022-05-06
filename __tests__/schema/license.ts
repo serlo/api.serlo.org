@@ -63,36 +63,34 @@ const licensesQuery = new Client().prepareQuery({
   `,
 })
 
-describe('LicenseQuery', () => {
-  describe('endpoint "license"', () => {
-    test('returns one license', async () => {
-      await licenseQuery
-        .withVariables({ id: license.id })
-        .shouldReturnData({ license: { license } })
-    })
-
-    test('returns null when license with given id does not exist', async () => {
-      await licenseQuery
-        .withVariables({ id: 100 })
-        .shouldReturnData({ license: { license: null } })
-    })
+describe('endpoint "license"', () => {
+  test('returns one license', async () => {
+    await licenseQuery
+      .withVariables({ id: license.id })
+      .shouldReturnData({ license: { license } })
   })
 
-  describe('endpoint "licenses"', () => {
-    test('returns array of licenses filtered by instance', async () => {
-      await licensesQuery
-        .withVariables({ instance: 'en' })
-        .shouldReturnData({ license: { licenses: [licenses[8]] } })
-    })
+  test('returns null when license with given id does not exist', async () => {
+    await licenseQuery
+      .withVariables({ id: 100 })
+      .shouldReturnData({ license: { license: null } })
+  })
+})
 
-    test('returns all licenses when used without filter', async () => {
-      await licensesQuery.shouldReturnData({ license: { licenses } })
-    })
+describe('endpoint "licenses"', () => {
+  test('returns array of licenses filtered by instance', async () => {
+    await licensesQuery
+      .withVariables({ instance: 'en' })
+      .shouldReturnData({ license: { licenses: [licenses[8]] } })
+  })
 
-    test('returns undefined when instance does not exist', async () => {
-      await licensesQuery
-        .withVariables({ instance: 'xx' })
-        .shouldReturnData(undefined)
-    })
+  test('returns all licenses when used without filter', async () => {
+    await licensesQuery.shouldReturnData({ license: { licenses } })
+  })
+
+  test('returns undefined when instance does not exist', async () => {
+    await licensesQuery
+      .withVariables({ instance: 'xx' })
+      .shouldReturnData(undefined)
   })
 })
