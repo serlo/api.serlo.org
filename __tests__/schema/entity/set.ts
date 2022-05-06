@@ -248,7 +248,6 @@ testCases.forEach((testCase) => {
     const entityCreatePayload: DatabaseLayer.Payload<'EntityCreateMutation'> = {
       input: {
         changes,
-        instance: testCase.parent.instance,
         needsReview,
         licenseId: 1,
         subscribeThis,

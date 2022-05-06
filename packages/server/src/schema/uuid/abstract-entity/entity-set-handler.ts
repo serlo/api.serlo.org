@@ -168,7 +168,6 @@ export function createSetEntityResolver({
           ...forwardArgs,
           licenseId: 1,
           needsReview: needsReviewForDBLayer,
-          instance: parent.instance,
           ...(isParentTaxonomyTerm ? { taxonomyTermId: input.parentId } : {}),
           ...(isParentEntity ? { parentId: input.parentId } : {}),
           fields,
