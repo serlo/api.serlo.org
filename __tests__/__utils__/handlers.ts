@@ -54,13 +54,28 @@ const ForDefinitions = {
         return { ...entity, trashed: true }
       })
     )
-    given('DeletedEntitiesQuery').returns({
-      deletedEntities: entities.map((entity) => {
+    given('DeletedEntitiesQuery').isDefinedBy((req, res, ctx) => {
+      const { first, after, instance } = req.body.payload
+
+      const entitiesByInstance = instance
+        ? entities.filter((entity) => entity.instance === instance)
+        : entities
+
+      const entitiesByAfter = after
+        ? entitiesByInstance.filter(
+            (entity) => new Date(entity.date) > new Date(after)
+          )
+        : entitiesByInstance
+
+      const entitiesByFirst = entitiesByAfter.slice(0, first)
+
+      const deletedEntities = entitiesByFirst.map((entity) => {
         return {
           id: entity.id,
           dateOfDeletion: entity.date,
         }
-      }),
+      })
+      return res(ctx.json({ deletedEntities }))
     })
   },
 }
