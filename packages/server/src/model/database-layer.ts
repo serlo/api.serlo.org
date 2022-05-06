@@ -287,7 +287,7 @@ export const spec = {
     response: t.strict({ success: t.literal(true) }),
     canBeNull: false,
   },
-  TaxonomyDeleteEntityLinkMutation: {
+  TaxonomyDeleteEntityLinksMutation: {
     payload: t.type({
       entityIds: t.array(t.number),
       taxonomyTermId: t.number,

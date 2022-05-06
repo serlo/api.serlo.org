@@ -366,7 +366,7 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
-  TaxonomyDeleteEntityLinkMutation: {
+  TaxonomyDeleteEntityLinksMutation: {
     examples: [
       [
         {
