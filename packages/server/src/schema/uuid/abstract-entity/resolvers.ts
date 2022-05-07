@@ -66,7 +66,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       if (first > LIMIT)
         throw new UserInputError(`'first' may not be higher than ${LIMIT}`)
 
-      const deletedAfter = after ? getDateOfDeletion(after) : undefined
+      const deletedAfter = after ? decodeDateOfDeletion(after) : undefined
 
       const { deletedEntities } =
         await dataSources.model.serlo.getDeletedEntities({
@@ -197,7 +197,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   },
 }
 
-function getDateOfDeletion(after: string) {
+function decodeDateOfDeletion(after: string) {
   const afterParsed = JSON.parse(
     Buffer.from(after, 'base64').toString()
   ) as unknown
