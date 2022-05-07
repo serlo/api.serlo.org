@@ -66,7 +66,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       if (first > LIMIT)
         throw new UserInputError(`'first' may not be higher than ${LIMIT}`)
 
-      const deletedAfter = getDateOfDeletion(after)
+      const deletedAfter = after ? getDateOfDeletion(after) : undefined
 
       const { deletedEntities } =
         await dataSources.model.serlo.getDeletedEntities({
@@ -76,13 +76,13 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         })
 
       const nodes = await Promise.all(
-        deletedEntities.map(async (element) => {
+        deletedEntities.map(async (node) => {
           return {
             entity: await dataSources.model.serlo.getUuidWithCustomDecoder({
-              id: element.id,
+              id: node.id,
               decoder: EntityDecoder,
             }),
-            dateOfDeletion: element.dateOfDeletion,
+            dateOfDeletion: node.dateOfDeletion,
           }
         })
       )
@@ -196,23 +196,25 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     },
   },
 }
-function getDateOfDeletion(after: string | undefined) {
-  if (after == undefined) return undefined
 
+function getDateOfDeletion(after: string) {
   const afterParsed = JSON.parse(
     Buffer.from(after, 'base64').toString()
   ) as unknown
 
-  const deletedAfter = t.type({ dateOfDeletion: t.string }).is(afterParsed)
+  const dateOfDeletion = t.type({ dateOfDeletion: t.string }).is(afterParsed)
     ? afterParsed.dateOfDeletion
     : undefined
 
-  if (!deletedAfter) return undefined
-
-  if (!isDateString(deletedAfter))
+  if (!dateOfDeletion)
     throw new UserInputError(
-      'the encoded dateOfDeletion in `after` should be a date'
+      'Field `dateOfDeletion` as string is missing in `after`'
     )
 
-  return new Date(deletedAfter).toISOString()
+  if (!isDateString(dateOfDeletion))
+    throw new UserInputError(
+      'The encoded dateOfDeletion in `after` should be a string in date format'
+    )
+
+  return new Date(dateOfDeletion).toISOString()
 }
