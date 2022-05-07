@@ -90,7 +90,7 @@ test('returns deleted entities', async () => {
   })
 })
 
-test('`after` parameter, using entity id and dateOfDeletion, paginates', async () => {
+test('paginates with `after` parameter { entityId, dateOfDeletion}, ', async () => {
   await query
     .withVariables({
       after: Buffer.from(
