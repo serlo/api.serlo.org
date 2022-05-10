@@ -79,6 +79,22 @@ export const spec = {
     response: t.type({ firstCommentIds: t.array(t.number) }),
     canBeNull: false,
   },
+  DeletedEntitiesQuery: {
+    payload: t.type({
+      first: t.number,
+      after: t.union([t.string, t.undefined]),
+      instance: t.union([InstanceDecoder, t.undefined]),
+    }),
+    response: t.type({
+      deletedEntities: t.array(
+        t.type({
+          id: t.number,
+          dateOfDeletion: t.string,
+        })
+      ),
+    }),
+    canBeNull: false,
+  },
   EntitiesMetadataQuery: {
     payload: t.intersection([
       t.type({
