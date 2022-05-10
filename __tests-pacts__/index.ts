@@ -77,6 +77,7 @@ import {
   castToAlias,
 } from '~/model/decoder'
 import { Instance, TaxonomyTypeCreateOptions } from '~/types'
+import { isDateString } from '~/utils'
 
 const events = [
   checkoutRevisionNotificationEvent,
@@ -152,6 +153,18 @@ const pactSpec: PactSpec = {
   },
   // TODO: Add contract tests
   AllThreadsQuery: { examples: [] },
+  DeletedEntitiesQuery: {
+    examples: [
+      [
+        { first: 1, after: undefined, instance: Instance.De },
+        {
+          deletedEntities: [
+            { id: 2167, dateOfDeletion: '2014-03-01T20:46:58+01:00' },
+          ],
+        },
+      ],
+    ],
+  },
   EntitiesMetadataQuery: { examples: [] },
   EntityAddRevisionMutation: {
     examples: [
@@ -615,10 +628,6 @@ function generalMap(
   return Array.isArray(value)
     ? func(value)
     : R.fromPairs(R.toPairs(value).map(([key, value]) => [key, func(value)]))
-}
-
-function isDateString(text: string) {
-  return !isNaN(new Date(text).getDate())
 }
 
 type PactSpec = {

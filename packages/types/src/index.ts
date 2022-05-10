@@ -40,7 +40,7 @@ export type AbstractEntityConnection = {
   __typename?: 'AbstractEntityConnection';
   edges: Array<AbstractEntityCursor>;
   nodes: Array<AbstractEntity>;
-  pageInfo: PageInfo;
+  pageInfo: HasNextPageInfo;
   totalCount: Scalars['Int'];
 };
 
@@ -868,6 +868,26 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
   thread: Thread;
 };
 
+export type DeletedEntitiesConnection = {
+  __typename?: 'DeletedEntitiesConnection';
+  edges: Array<DeletedEntityCursor>;
+  nodes: Array<DeletedEntity>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type DeletedEntity = {
+  __typename?: 'DeletedEntity';
+  dateOfDeletion?: Maybe<Scalars['String']>;
+  entity?: Maybe<AbstractEntity>;
+};
+
+export type DeletedEntityCursor = {
+  __typename?: 'DeletedEntityCursor';
+  cursor: Scalars['String'];
+  node: DeletedEntity;
+};
+
 export type EntityMetadataConnection = {
   __typename?: 'EntityMetadataConnection';
   edges: Array<EntityMetadataCursor>;
@@ -955,6 +975,18 @@ export type EntityMutationSetSolutionArgs = {
 
 export type EntityMutationSetVideoArgs = {
   input: SetVideoInput;
+};
+
+export type EntityQuery = {
+  __typename?: 'EntityQuery';
+  deletedEntities: DeletedEntitiesConnection;
+};
+
+
+export type EntityQueryDeletedEntitiesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
 };
 
 export type Event = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
@@ -1658,6 +1690,7 @@ export type Query = {
   activeDonors: UserConnection;
   activeReviewers: UserConnection;
   authorization: Scalars['JSON'];
+  entity?: Maybe<EntityQuery>;
   events: AbstractNotificationEventConnection;
   license: LicenseQuery;
   metadata: MetadataQuery;
