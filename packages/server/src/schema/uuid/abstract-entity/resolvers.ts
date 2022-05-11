@@ -29,8 +29,10 @@ import {
   InterfaceResolvers,
   Mutations,
 } from '~/internals/graphql'
-import { castToUuid, EntityType } from '~/model/decoder'
+import {castToUuid, EntityDecoder, EntityType} from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
+import { licenses } from "~/config";
+import {UserInputError} from "apollo-server-express";
 
 export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   InterfaceResolvers<'AbstractEntityRevision'> &
@@ -104,6 +106,45 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         }
       },
     }),
+
+    async setLicense(_parent, { input }, { dataSources, userId })  {
+      assertUserIsAuthenticated(userId)
+
+      const scope = await fetchScopeOfUuid({
+        id: input.entityId,
+        dataSources,
+      })
+      await assertUserIsAuthorized({
+        userId,
+        dataSources,
+        message: 'You are not allowed to set the license for this entity.',
+        guard: serloAuth.Entity.setLicense(scope),
+      })
+
+      const newLicense = await licenses.find((license) => {
+        return license.id === input.licenseId
+      })
+
+      if (!newLicense) {
+        throw new UserInputError('License with id `${licenseId}` does not exist.')
+      }
+
+      const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: input.entityId,
+        decoder: EntityDecoder,
+      })
+      if (entity.instance != newLicense.instance) {
+        throw new UserInputError('The instance of the entity does not match the instance of the license.')
+      }
+
+      await dataSources.model.serlo.setEntityLicense({
+        entityId: castToUuid(input.entityId),
+        licenseId: input.licenseId,
+        userId,
+      })
+
+      return { success: true, query: {} }
+    },
 
     async checkoutRevision(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
