@@ -67,6 +67,7 @@ type EntityMutation {
   setGroupedExercise(input: SetGenericEntityInput!): SetEntityResponse!
   setSolution(input: SetGenericEntityInput!): SetEntityResponse!
   setVideo(input: SetVideoInput!): SetEntityResponse!
+  setLicense(input: EntitySetLicenseInput!): EntitySetLicenseResponse!
   checkoutRevision(input: CheckoutRevisionInput!): CheckoutRevisionResponse!
   rejectRevision(input: RejectRevisionInput!): RejectRevisionResponse!
 }
@@ -177,6 +178,16 @@ input SetVideoInput {
 
 type SetEntityResponse {
   record: AbstractEntity
+  success: Boolean!
+  query: Query!
+}
+
+input EntitySetLicenseInput {
+  entityId: Int!
+  licenseId: Int!
+}
+
+type EntitySetLicenseResponse {
   success: Boolean!
   query: Query!
 }

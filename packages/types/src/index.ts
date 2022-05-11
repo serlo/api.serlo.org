@@ -893,6 +893,7 @@ export type EntityMutation = {
   setExercise: SetEntityResponse;
   setExerciseGroup: SetEntityResponse;
   setGroupedExercise: SetEntityResponse;
+  setLicense: EntitySetLicenseResponse;
   setSolution: SetEntityResponse;
   setVideo: SetEntityResponse;
 };
@@ -948,6 +949,11 @@ export type EntityMutationSetGroupedExerciseArgs = {
 };
 
 
+export type EntityMutationSetLicenseArgs = {
+  input: EntitySetLicenseInput;
+};
+
+
 export type EntityMutationSetSolutionArgs = {
   input: SetGenericEntityInput;
 };
@@ -955,6 +961,17 @@ export type EntityMutationSetSolutionArgs = {
 
 export type EntityMutationSetVideoArgs = {
   input: SetVideoInput;
+};
+
+export type EntitySetLicenseInput = {
+  entityId: Scalars['Int'];
+  licenseId: Scalars['Int'];
+};
+
+export type EntitySetLicenseResponse = {
+  __typename?: 'EntitySetLicenseResponse';
+  query: Query;
+  success: Scalars['Boolean'];
 };
 
 export type Event = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {

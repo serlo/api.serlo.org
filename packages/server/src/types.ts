@@ -897,6 +897,7 @@ export type EntityMutation = {
   setExercise: SetEntityResponse;
   setExerciseGroup: SetEntityResponse;
   setGroupedExercise: SetEntityResponse;
+  setLicense: EntitySetLicenseResponse;
   setSolution: SetEntityResponse;
   setVideo: SetEntityResponse;
 };
@@ -952,6 +953,11 @@ export type EntityMutationSetGroupedExerciseArgs = {
 };
 
 
+export type EntityMutationSetLicenseArgs = {
+  input: EntitySetLicenseInput;
+};
+
+
 export type EntityMutationSetSolutionArgs = {
   input: SetGenericEntityInput;
 };
@@ -959,6 +965,17 @@ export type EntityMutationSetSolutionArgs = {
 
 export type EntityMutationSetVideoArgs = {
   input: SetVideoInput;
+};
+
+export type EntitySetLicenseInput = {
+  entityId: Scalars['Int'];
+  licenseId: Scalars['Int'];
+};
+
+export type EntitySetLicenseResponse = {
+  __typename?: 'EntitySetLicenseResponse';
+  query: Query;
+  success: Scalars['Boolean'];
 };
 
 export type Event = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
@@ -2909,6 +2926,8 @@ export type ResolversTypes = {
   EntityMetadataConnection: ResolverTypeWrapper<ModelOf<EntityMetadataConnection>>;
   EntityMetadataCursor: ResolverTypeWrapper<ModelOf<EntityMetadataCursor>>;
   EntityMutation: ResolverTypeWrapper<ModelOf<EntityMutation>>;
+  EntitySetLicenseInput: ResolverTypeWrapper<ModelOf<EntitySetLicenseInput>>;
+  EntitySetLicenseResponse: ResolverTypeWrapper<ModelOf<EntitySetLicenseResponse>>;
   Event: ResolverTypeWrapper<ModelOf<Event>>;
   EventRevision: ResolverTypeWrapper<ModelOf<EventRevision>>;
   EventRevisionConnection: ResolverTypeWrapper<ModelOf<EventRevisionConnection>>;
@@ -3107,6 +3126,8 @@ export type ResolversParentTypes = {
   EntityMetadataConnection: ModelOf<EntityMetadataConnection>;
   EntityMetadataCursor: ModelOf<EntityMetadataCursor>;
   EntityMutation: ModelOf<EntityMutation>;
+  EntitySetLicenseInput: ModelOf<EntitySetLicenseInput>;
+  EntitySetLicenseResponse: ModelOf<EntitySetLicenseResponse>;
   Event: ModelOf<Event>;
   EventRevision: ModelOf<EventRevision>;
   EventRevisionConnection: ModelOf<EventRevisionConnection>;
@@ -3754,8 +3775,15 @@ export type EntityMutationResolvers<ContextType = Context, ParentType extends Re
   setExercise?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetExerciseArgs, 'input'>>;
   setExerciseGroup?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetExerciseGroupArgs, 'input'>>;
   setGroupedExercise?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetGroupedExerciseArgs, 'input'>>;
+  setLicense?: Resolver<ResolversTypes['EntitySetLicenseResponse'], ParentType, ContextType, RequireFields<EntityMutationSetLicenseArgs, 'input'>>;
   setSolution?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetSolutionArgs, 'input'>>;
   setVideo?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetVideoArgs, 'input'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type EntitySetLicenseResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntitySetLicenseResponse'] = ResolversParentTypes['EntitySetLicenseResponse']> = {
+  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4697,6 +4725,7 @@ export type Resolvers<ContextType = Context> = {
   EntityMetadataConnection?: EntityMetadataConnectionResolvers<ContextType>;
   EntityMetadataCursor?: EntityMetadataCursorResolvers<ContextType>;
   EntityMutation?: EntityMutationResolvers<ContextType>;
+  EntitySetLicenseResponse?: EntitySetLicenseResponseResolvers<ContextType>;
   Event?: EventResolvers<ContextType>;
   EventRevision?: EventRevisionResolvers<ContextType>;
   EventRevisionConnection?: EventRevisionConnectionResolvers<ContextType>;
