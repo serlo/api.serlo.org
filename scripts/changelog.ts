@@ -1254,6 +1254,11 @@ async function exec(): Promise<void> {
         fixed: ['Fix local runs #617'],
         internal: ['Store licenses in ~/config #615'],
       },
+      {
+        tagName: 'v0.33.0',
+        date: '2022-05-06',
+        added: ['Add `entity.deletedEntities` query #605'],
+      },
     ],
   })
 
