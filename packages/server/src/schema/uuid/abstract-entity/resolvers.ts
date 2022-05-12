@@ -133,7 +133,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         id: input.entityId,
         decoder: EntityDecoder,
       })
-      if (entity.instance != newLicense.instance) {
+      if (entity.instance !== newLicense.instance) {
         throw new UserInputError('The instance of the entity does not match the instance of the license.')
       }
 
