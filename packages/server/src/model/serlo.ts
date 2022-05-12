@@ -875,6 +875,15 @@ export function createSerloModel({
     },
   })
 
+  const getDeletedEntities = createRequest({
+    decoder: DatabaseLayer.getDecoderFor('DeletedEntitiesQuery'),
+    async getCurrentValue(
+      payload: DatabaseLayer.Payload<'DeletedEntitiesQuery'>
+    ) {
+      return DatabaseLayer.makeRequest('DeletedEntitiesQuery', payload)
+    },
+  })
+
   const getEntitiesMetadata = createRequest({
     decoder: DatabaseLayer.getDecoderFor('EntitiesMetadataQuery'),
     async getCurrentValue(
@@ -1048,6 +1057,7 @@ export function createSerloModel({
     getActivityByType,
     getAlias,
     getAllThreads,
+    getDeletedEntities,
     getEntitiesMetadata,
     getEvents,
     getEventsAfter,

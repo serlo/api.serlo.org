@@ -20,6 +20,8 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as serloAuth from '@serlo/authorization'
+import { UserInputError } from 'apollo-server'
+import * as t from 'io-ts'
 
 import { createSetEntityResolver } from './entity-set-handler'
 import {
@@ -28,15 +30,21 @@ import {
   createNamespace,
   InterfaceResolvers,
   Mutations,
+  Queries,
 } from '~/internals/graphql'
-import {castToUuid, EntityDecoder, EntityType} from '~/model/decoder'
+import { castToUuid, EntityDecoder, EntityType } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
+import { resolveConnection } from '~/schema/connection/utils'
+import { isDateString } from '~/utils'
 import { licenses } from "~/config";
-import {UserInputError} from "apollo-server-express";
 
 export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   InterfaceResolvers<'AbstractEntityRevision'> &
+  Queries<'entity'> &
   Mutations<'entity'> = {
+  Query: {
+    entity: createNamespace(),
+  },
   Mutation: {
     entity: createNamespace(),
   },
@@ -48,6 +56,45 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   AbstractEntityRevision: {
     __resolveType(entityRevision) {
       return entityRevision.__typename
+    },
+  },
+  EntityQuery: {
+    async deletedEntities(_parent, payload, { dataSources }) {
+      const LIMIT = 1000
+      const { first = 100, after, instance } = payload
+
+      if (first > LIMIT)
+        throw new UserInputError(`'first' may not be higher than ${LIMIT}`)
+
+      const deletedAfter = after ? decodeDateOfDeletion(after) : undefined
+
+      const { deletedEntities } =
+        await dataSources.model.serlo.getDeletedEntities({
+          first: first + 1,
+          after: deletedAfter,
+          instance,
+        })
+
+      const nodes = await Promise.all(
+        deletedEntities.map(async (node) => {
+          return {
+            entity: await dataSources.model.serlo.getUuidWithCustomDecoder({
+              id: node.id,
+              decoder: EntityDecoder,
+            }),
+            dateOfDeletion: node.dateOfDeletion,
+          }
+        })
+      )
+
+      return resolveConnection({
+        nodes,
+        payload,
+        createCursor: (node) => {
+          const { entity, dateOfDeletion } = node
+          return JSON.stringify({ id: entity.id, dateOfDeletion })
+        },
+      })
     },
   },
   EntityMutation: {
@@ -187,4 +234,26 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       return { success: true, query: {} }
     },
   },
+}
+
+function decodeDateOfDeletion(after: string) {
+  const afterParsed = JSON.parse(
+    Buffer.from(after, 'base64').toString()
+  ) as unknown
+
+  const dateOfDeletion = t.type({ dateOfDeletion: t.string }).is(afterParsed)
+    ? afterParsed.dateOfDeletion
+    : undefined
+
+  if (!dateOfDeletion)
+    throw new UserInputError(
+      'Field `dateOfDeletion` as string is missing in `after`'
+    )
+
+  if (!isDateString(dateOfDeletion))
+    throw new UserInputError(
+      'The encoded dateOfDeletion in `after` should be a string in date format'
+    )
+
+  return new Date(dateOfDeletion).toISOString()
 }
