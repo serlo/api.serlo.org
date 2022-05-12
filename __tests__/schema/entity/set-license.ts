@@ -19,18 +19,14 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Instance } from '@serlo/api'
+
 import { gql } from 'apollo-server'
 
 import {
   article,
-  articleRevision,
   user,
-  taxonomyTermSubject,
 } from '../../../__fixtures__'
-import { getTypenameAndId, nextUuid, given, Client } from '../../__utils__'
-import { encodeId } from '~/internals/graphql'
-import * as R from "ramda";
+import { given, Client } from '../../__utils__'
 
 
 const mutation = new Client({ userId: user.id }).prepareQuery({
@@ -47,7 +43,7 @@ const mutation = new Client({ userId: user.id }).prepareQuery({
 })
 
 beforeEach(() => {
-  given('UuidQuery').for(user, article, articleRevision)
+  given('UuidQuery').for(user, article,)
 
   given('EntitySetLicenseMutation')
     .withPayload({
@@ -64,41 +60,35 @@ beforeEach(() => {
 
 test('returns "{ success: true }" when mutation could be successfully executed', async () => {
   await mutation.shouldReturnData({
-    entity: { setLicense: { success: true } },
+    entity: {setLicense: {success: true}},
   })
+
+  await new Client().prepareQuery({
+    query: gql`
+      query ($id: Int!) {
+        uuid(id: $id) {
+          ... on Article {
+            license {
+              id
+            }
+          }                                 
+        }
+      }
+    `,
+    variables: {id: article.id},
+  })
+    .shouldReturnData({uuid: {license: {id: 4}}})
 })
 
 test('throws UserInputError when license does not exist', async () => {
-  await new Client({ userId: user.id })
-    .prepareQuery({
-      query: gql`
-        mutation ($input: EntitySetLicenseInput!) {
-          entity {
-            setLicense(input: $input) {
-              success
-            }
-          }
-        }
-      `,
-      variables: { input: { entityId: article.id, licenseId:  420} },
-    })
+  await mutation
+    .withInput({entityId: article.id, licenseId:  420})
     .shouldFailWithError('BAD_USER_INPUT')
 })
 
-test('throws UserInputError when license does not exist', async () => {
-  await new Client({ userId: user.id })
-    .prepareQuery({
-      query: gql`
-        mutation ($input: EntitySetLicenseInput!) {
-          entity {
-            setLicense(input: $input) {
-              success
-            }
-          }
-        }
-      `,
-      variables: { input: { entityId: article.id, licenseId:  4} },
-    })
+test('throws UserInputError when instances do not match', async () => {
+  await mutation
+    .withInput( { entityId: article.id, licenseId:  9})
     .shouldFailWithError('BAD_USER_INPUT')
 })
 
