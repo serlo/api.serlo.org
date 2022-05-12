@@ -24,6 +24,7 @@ import { UserInputError } from 'apollo-server'
 import * as t from 'io-ts'
 
 import { createSetEntityResolver } from './entity-set-handler'
+import { licenses } from '~/config'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
@@ -36,7 +37,6 @@ import { castToUuid, EntityDecoder, EntityType } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { isDateString } from '~/utils'
-import { licenses } from "~/config";
 
 export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   InterfaceResolvers<'AbstractEntityRevision'> &
@@ -154,7 +154,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       },
     }),
 
-    async setLicense(_parent, { input }, { dataSources, userId })  {
+    async setLicense(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
       const scope = await fetchScopeOfUuid({
@@ -168,12 +168,14 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         guard: serloAuth.Entity.setLicense(scope),
       })
 
-      const newLicense = await licenses.find((license) => {
+      const newLicense = licenses.find((license) => {
         return license.id === input.licenseId
       })
 
       if (!newLicense) {
-        throw new UserInputError('License with id `${licenseId}` does not exist.')
+        throw new UserInputError(
+          'License with id `${licenseId}` does not exist.'
+        )
       }
 
       const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
@@ -181,7 +183,9 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         decoder: EntityDecoder,
       })
       if (entity.instance !== newLicense.instance) {
-        throw new UserInputError('The instance of the entity does not match the instance of the license.')
+        throw new UserInputError(
+          'The instance of the entity does not match the instance of the license.'
+        )
       }
 
       await dataSources.model.serlo.setEntityLicense({

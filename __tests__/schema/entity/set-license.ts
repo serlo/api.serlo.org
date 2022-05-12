@@ -22,12 +22,8 @@
 
 import { gql } from 'apollo-server'
 
-import {
-  article,
-  user,
-} from '../../../__fixtures__'
+import { article, user } from '../../../__fixtures__'
 import { given, Client } from '../../__utils__'
-
 
 const mutation = new Client({ userId: user.id }).prepareQuery({
   query: gql`
@@ -39,17 +35,17 @@ const mutation = new Client({ userId: user.id }).prepareQuery({
       }
     }
   `,
-  variables: { input: { entityId: article.id, licenseId:  4} },
+  variables: { input: { entityId: article.id, licenseId: 4 } },
 })
 
 beforeEach(() => {
-  given('UuidQuery').for(user, article,)
+  given('UuidQuery').for(user, article)
 
   given('EntitySetLicenseMutation')
     .withPayload({
       userId: user.id,
       entityId: article.id,
-      licenseId: 4
+      licenseId: 4,
     })
     .isDefinedBy((_req, res, ctx) => {
       given('UuidQuery').for({ ...article, licenseId: 4 })
@@ -60,35 +56,36 @@ beforeEach(() => {
 
 test('returns "{ success: true }" when mutation could be successfully executed', async () => {
   await mutation.shouldReturnData({
-    entity: {setLicense: {success: true}},
+    entity: { setLicense: { success: true } },
   })
 
-  await new Client().prepareQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          ... on Article {
-            license {
-              id
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on Article {
+              license {
+                id
+              }
             }
-          }                                 
+          }
         }
-      }
-    `,
-    variables: {id: article.id},
-  })
-    .shouldReturnData({uuid: {license: {id: 4}}})
+      `,
+      variables: { id: article.id },
+    })
+    .shouldReturnData({ uuid: { license: { id: 4 } } })
 })
 
 test('throws UserInputError when license does not exist', async () => {
   await mutation
-    .withInput({entityId: article.id, licenseId:  420})
+    .withInput({ entityId: article.id, licenseId: 420 })
     .shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('throws UserInputError when instances do not match', async () => {
   await mutation
-    .withInput( { entityId: article.id, licenseId:  9})
+    .withInput({ entityId: article.id, licenseId: 9 })
     .shouldFailWithError('BAD_USER_INPUT')
 })
 
@@ -111,114 +108,3 @@ test('fails when database layer has an internal error', async () => {
 
   await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
-/*
-test('following queries for entity point to checkout revision when entity is already in the cache', async () => {
-  const articleQuery = new Client().prepareQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          ... on Article {
-            currentRevision {
-              id
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: article.id },
-  })
-
-  await articleQuery.shouldReturnData({
-    uuid: { currentRevision: { id: articleRevision.id } },
-  })
-
-  await mutation.shouldReturnData({
-    entity: { checkoutRevision: { success: true } },
-  })
-
-  await articleQuery.shouldReturnData({
-    uuid: { currentRevision: { id: unrevisedRevision.id } },
-  })
-})
-
-test('checkout revision has trashed == false for following queries', async () => {
-  const revisionQuery = new Client().prepareQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          ... on ArticleRevision {
-            trashed
-          }
-        }
-      }
-    `,
-    variables: { id: unrevisedRevision.id },
-  })
-
-  await revisionQuery.shouldReturnData({ uuid: { trashed: true } })
-
-  await mutation.shouldReturnData({
-    entity: { checkoutRevision: { success: true } },
-  })
-
-  await revisionQuery.shouldReturnData({ uuid: { trashed: false } })
-})
-
-test('after the checkout mutation the cache is cleared for unrevisedEntities', async () => {
-  given('SubjectsQuery').for(taxonomyTermSubject)
-  given('UuidQuery').for(article)
-
-  const unrevisedEntitiesQuery = new Client().prepareQuery({
-    query: gql`
-      query ($id: String!) {
-        subject {
-          subject(id: $id) {
-            unrevisedEntities {
-              nodes {
-                __typename
-                id
-              }
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }) },
-  })
-
-  await unrevisedEntitiesQuery.shouldReturnData({
-    subject: {
-      subject: { unrevisedEntities: { nodes: [getTypenameAndId(article)] } },
-    },
-  })
-
-  await mutation.shouldReturnData({
-    entity: { checkoutRevision: { success: true } },
-  })
-
-  await unrevisedEntitiesQuery.shouldReturnData({
-    subject: { subject: { unrevisedEntities: { nodes: [] } } },
-  })
-})
-
-test('fails when user is not authenticated', async () => {
-  await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
-})
-
-test('fails when user does not have role "reviewer"', async () => {
-  await mutation.forLoginUser('de_moderator').shouldFailWithError('FORBIDDEN')
-})
-
-test('fails when database layer returns a 400er response', async () => {
-  given('EntityCheckoutRevisionMutation').returnsBadRequest()
-
-  await mutation.shouldFailWithError('BAD_USER_INPUT')
-})
-
-test('fails when database layer has an internal error', async () => {
-  given('EntityCheckoutRevisionMutation').hasInternalServerError()
-
-  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
-})
-
- */
