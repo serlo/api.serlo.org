@@ -875,12 +875,65 @@ export function createSerloModel({
     },
   })
 
+  const getDeletedEntities = createRequest({
+    decoder: DatabaseLayer.getDecoderFor('DeletedEntitiesQuery'),
+    async getCurrentValue(
+      payload: DatabaseLayer.Payload<'DeletedEntitiesQuery'>
+    ) {
+      return DatabaseLayer.makeRequest('DeletedEntitiesQuery', payload)
+    },
+  })
+
   const getEntitiesMetadata = createRequest({
     decoder: DatabaseLayer.getDecoderFor('EntitiesMetadataQuery'),
     async getCurrentValue(
       payload: DatabaseLayer.Payload<'EntitiesMetadataQuery'>
     ) {
       return DatabaseLayer.makeRequest('EntitiesMetadataQuery', payload)
+    },
+  })
+
+  const linkEntitiesToTaxonomy = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('TaxonomyCreateEntityLinksMutation'),
+    mutate: (
+      payload: DatabaseLayer.Payload<'TaxonomyCreateEntityLinksMutation'>
+    ) => {
+      return DatabaseLayer.makeRequest(
+        'TaxonomyCreateEntityLinksMutation',
+        payload
+      )
+    },
+    async updateCache({ taxonomyTermId, entityIds }, { success }) {
+      if (success) {
+        await Promise.all(
+          [...entityIds, taxonomyTermId].map(
+            async (id) =>
+              await getUuid._querySpec.removeCache({ payload: { id } })
+          )
+        )
+      }
+    },
+  })
+
+  const unlinkEntitiesFromTaxonomy = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('TaxonomyDeleteEntityLinksMutation'),
+    mutate: (
+      payload: DatabaseLayer.Payload<'TaxonomyDeleteEntityLinksMutation'>
+    ) => {
+      return DatabaseLayer.makeRequest(
+        'TaxonomyDeleteEntityLinksMutation',
+        payload
+      )
+    },
+    async updateCache({ taxonomyTermId, entityIds }, { success }) {
+      if (success) {
+        await Promise.all(
+          [...entityIds, taxonomyTermId].map(
+            async (id) =>
+              await getUuid._querySpec.removeCache({ payload: { id } })
+          )
+        )
+      }
     },
   })
 
@@ -992,6 +1045,7 @@ export function createSerloModel({
     getActivityByType,
     getAlias,
     getAllThreads,
+    getDeletedEntities,
     getEntitiesMetadata,
     getEvents,
     getEventsAfter,
@@ -1007,6 +1061,7 @@ export function createSerloModel({
     getUnrevisedEntitiesPerSubject,
     getUuid,
     getUuidWithCustomDecoder,
+    linkEntitiesToTaxonomy,
     rejectEntityRevision,
     rejectPageRevision,
     setDescription,
@@ -1017,6 +1072,7 @@ export function createSerloModel({
     moveTaxonomyTerm,
     sortTaxonomyTerm,
     setUuidState,
+    unlinkEntitiesFromTaxonomy,
   }
 }
 

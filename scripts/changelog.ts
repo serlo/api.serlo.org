@@ -1240,6 +1240,25 @@ async function exec(): Promise<void> {
         ],
         internal: ['refactor `entity.set` #600'],
       },
+      {
+        tagName: 'v0.32.0',
+        date: '2022-05-06',
+        breakingChanges: [
+          'remove query `license` and replace it with the `license` namespace #616',
+        ],
+        added: [
+          'Add `license` namespace and `license.licenses` #616',
+          'Add `taxonomyTerm.createEntityLinks` #612',
+          'Add `taxonomyTerm.deleteEntityLinks` #599',
+        ],
+        fixed: ['Fix local runs #617'],
+        internal: ['Store licenses in ~/config #615'],
+      },
+      {
+        tagName: 'v0.33.0',
+        date: '2022-05-06',
+        added: ['Add `entity.deletedEntities` query #605'],
+      },
     ],
   })
 

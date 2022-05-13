@@ -77,6 +77,7 @@ import {
   castToAlias,
 } from '~/model/decoder'
 import { Instance, TaxonomyTypeCreateOptions } from '~/types'
+import { isDateString } from '~/utils'
 
 const events = [
   checkoutRevisionNotificationEvent,
@@ -152,6 +153,18 @@ const pactSpec: PactSpec = {
   },
   // TODO: Add contract tests
   AllThreadsQuery: { examples: [] },
+  DeletedEntitiesQuery: {
+    examples: [
+      [
+        { first: 1, after: undefined, instance: Instance.De },
+        {
+          deletedEntities: [
+            { id: 2167, dateOfDeletion: '2014-03-01T20:46:58+01:00' },
+          ],
+        },
+      ],
+    ],
+  },
   EntitiesMetadataQuery: { examples: [] },
   EntityAddRevisionMutation: {
     examples: [
@@ -207,7 +220,6 @@ const pactSpec: PactSpec = {
           userId: user.id,
           input: {
             changes: 'changes',
-            instance: Instance.De,
             licenseId: 1,
             subscribeThis: false,
             subscribeThisByEmail: false,
@@ -230,7 +242,6 @@ const pactSpec: PactSpec = {
           userId: user.id,
           input: {
             changes: 'changes',
-            instance: Instance.De,
             licenseId: 1,
             subscribeThis: false,
             subscribeThisByEmail: false,
@@ -351,6 +362,30 @@ const pactSpec: PactSpec = {
           sendEmail: false,
         },
         undefined,
+      ],
+    ],
+  },
+  TaxonomyCreateEntityLinksMutation: {
+    examples: [
+      [
+        {
+          entityIds: [video.id, exercise.id],
+          taxonomyTermId: taxonomyTermTopic.id,
+          userId: user.id,
+        },
+        { success: true },
+      ],
+    ],
+  },
+  TaxonomyDeleteEntityLinksMutation: {
+    examples: [
+      [
+        {
+          entityIds: [1949],
+          taxonomyTermId: 24370,
+          userId: user.id,
+        },
+        { success: true },
       ],
     ],
   },
@@ -608,10 +643,6 @@ function generalMap(
   return Array.isArray(value)
     ? func(value)
     : R.fromPairs(R.toPairs(value).map(([key, value]) => [key, func(value)]))
-}
-
-function isDateString(text: string) {
-  return !isNaN(new Date(text).getDate())
 }
 
 type PactSpec = {
