@@ -44,7 +44,7 @@ export type AbstractEntityConnection = {
   __typename?: 'AbstractEntityConnection';
   edges: Array<AbstractEntityCursor>;
   nodes: Array<Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | GroupedExercise | Solution | Video>;
-  pageInfo: PageInfo;
+  pageInfo: HasNextPageInfo;
   totalCount: Scalars['Int'];
 };
 
@@ -872,6 +872,26 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
   thread: Thread;
 };
 
+export type DeletedEntitiesConnection = {
+  __typename?: 'DeletedEntitiesConnection';
+  edges: Array<DeletedEntityCursor>;
+  nodes: Array<DeletedEntity>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type DeletedEntity = {
+  __typename?: 'DeletedEntity';
+  dateOfDeletion?: Maybe<Scalars['String']>;
+  entity?: Maybe<Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | GroupedExercise | Solution | Video>;
+};
+
+export type DeletedEntityCursor = {
+  __typename?: 'DeletedEntityCursor';
+  cursor: Scalars['String'];
+  node: DeletedEntity;
+};
+
 export type EntityMetadataConnection = {
   __typename?: 'EntityMetadataConnection';
   edges: Array<EntityMetadataCursor>;
@@ -959,6 +979,18 @@ export type EntityMutationSetSolutionArgs = {
 
 export type EntityMutationSetVideoArgs = {
   input: SetVideoInput;
+};
+
+export type EntityQuery = {
+  __typename?: 'EntityQuery';
+  deletedEntities: DeletedEntitiesConnection;
+};
+
+
+export type EntityQueryDeletedEntitiesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
 };
 
 export type Event = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
@@ -1395,6 +1427,22 @@ export type License = {
   url: Scalars['String'];
 };
 
+export type LicenseQuery = {
+  __typename?: 'LicenseQuery';
+  license?: Maybe<License>;
+  licenses: Array<License>;
+};
+
+
+export type LicenseQueryLicenseArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type LicenseQueryLicensesArgs = {
+  instance?: InputMaybe<Instance>;
+};
+
 export type MetadataQuery = {
   __typename?: 'MetadataQuery';
   entities: EntityMetadataConnection;
@@ -1646,8 +1694,9 @@ export type Query = {
   activeDonors: UserConnection;
   activeReviewers: UserConnection;
   authorization: Scalars['JSON'];
+  entity?: Maybe<EntityQuery>;
   events: AbstractNotificationEventConnection;
-  license?: Maybe<License>;
+  license: LicenseQuery;
   metadata: MetadataQuery;
   notificationEvent?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
   notifications: NotificationConnection;
@@ -1691,11 +1740,6 @@ export type QueryEventsArgs = {
   instance?: InputMaybe<Instance>;
   last?: InputMaybe<Scalars['Int']>;
   objectId?: InputMaybe<Scalars['Int']>;
-};
-
-
-export type QueryLicenseArgs = {
-  id: Scalars['Int'];
 };
 
 
@@ -2136,6 +2180,17 @@ export type SubscriptionSetResponse = {
   success: Scalars['Boolean'];
 };
 
+export type TaxonomyEntityLinksInput = {
+  entityIds: Array<Scalars['Int']>;
+  taxonomyTermId: Scalars['Int'];
+};
+
+export type TaxonomyEntityLinksResponse = {
+  __typename?: 'TaxonomyEntityLinksResponse';
+  query: Query;
+  success: Scalars['Boolean'];
+};
+
 export type TaxonomyTerm = AbstractNavigationChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'TaxonomyTerm';
   alias?: Maybe<Scalars['String']>;
@@ -2224,6 +2279,8 @@ export type TaxonomyTermMoveResponse = {
 export type TaxonomyTermMutation = {
   __typename?: 'TaxonomyTermMutation';
   create: TaxonomyTermCreateResponse;
+  createEntityLinks: TaxonomyEntityLinksResponse;
+  deleteEntityLinks: TaxonomyEntityLinksResponse;
   move: TaxonomyTermMoveResponse;
   setNameAndDescription: TaxonomyTermSetNameAndDescriptionResponse;
   sort: TaxonomyTermSortResponse;
@@ -2232,6 +2289,16 @@ export type TaxonomyTermMutation = {
 
 export type TaxonomyTermMutationCreateArgs = {
   input: TaxonomyTermCreateInput;
+};
+
+
+export type TaxonomyTermMutationCreateEntityLinksArgs = {
+  input: TaxonomyEntityLinksInput;
+};
+
+
+export type TaxonomyTermMutationDeleteEntityLinksArgs = {
+  input: TaxonomyEntityLinksInput;
 };
 
 
@@ -2889,9 +2956,13 @@ export type ResolversTypes = {
   CreateTaxonomyTermNotificationEvent: ResolverTypeWrapper<ModelOf<CreateTaxonomyTermNotificationEvent>>;
   CreateThreadNotificationEvent: ResolverTypeWrapper<ModelOf<CreateThreadNotificationEvent>>;
   DateTime: ResolverTypeWrapper<ModelOf<Scalars['DateTime']>>;
+  DeletedEntitiesConnection: ResolverTypeWrapper<ModelOf<DeletedEntitiesConnection>>;
+  DeletedEntity: ResolverTypeWrapper<ModelOf<DeletedEntity>>;
+  DeletedEntityCursor: ResolverTypeWrapper<ModelOf<DeletedEntityCursor>>;
   EntityMetadataConnection: ResolverTypeWrapper<ModelOf<EntityMetadataConnection>>;
   EntityMetadataCursor: ResolverTypeWrapper<ModelOf<EntityMetadataCursor>>;
   EntityMutation: ResolverTypeWrapper<ModelOf<EntityMutation>>;
+  EntityQuery: ResolverTypeWrapper<ModelOf<EntityQuery>>;
   Event: ResolverTypeWrapper<ModelOf<Event>>;
   EventRevision: ResolverTypeWrapper<ModelOf<EventRevision>>;
   EventRevisionConnection: ResolverTypeWrapper<ModelOf<EventRevisionConnection>>;
@@ -2915,6 +2986,7 @@ export type ResolversTypes = {
   JSON: ResolverTypeWrapper<ModelOf<Scalars['JSON']>>;
   JSONObject: ResolverTypeWrapper<ModelOf<Scalars['JSONObject']>>;
   License: ResolverTypeWrapper<ModelOf<License>>;
+  LicenseQuery: ResolverTypeWrapper<ModelOf<LicenseQuery>>;
   MetadataQuery: ResolverTypeWrapper<ModelOf<MetadataQuery>>;
   Mutation: ResolverTypeWrapper<{}>;
   Navigation: ResolverTypeWrapper<ModelOf<Navigation>>;
@@ -2973,6 +3045,8 @@ export type ResolversTypes = {
   SubscriptionQuery: ResolverTypeWrapper<ModelOf<SubscriptionQuery>>;
   SubscriptionSetInput: ResolverTypeWrapper<ModelOf<SubscriptionSetInput>>;
   SubscriptionSetResponse: ResolverTypeWrapper<ModelOf<SubscriptionSetResponse>>;
+  TaxonomyEntityLinksInput: ResolverTypeWrapper<ModelOf<TaxonomyEntityLinksInput>>;
+  TaxonomyEntityLinksResponse: ResolverTypeWrapper<ModelOf<TaxonomyEntityLinksResponse>>;
   TaxonomyTerm: ResolverTypeWrapper<ModelOf<TaxonomyTerm>>;
   TaxonomyTermConnection: ResolverTypeWrapper<ModelOf<TaxonomyTermConnection>>;
   TaxonomyTermCreateInput: ResolverTypeWrapper<ModelOf<TaxonomyTermCreateInput>>;
@@ -3086,9 +3160,13 @@ export type ResolversParentTypes = {
   CreateTaxonomyTermNotificationEvent: ModelOf<CreateTaxonomyTermNotificationEvent>;
   CreateThreadNotificationEvent: ModelOf<CreateThreadNotificationEvent>;
   DateTime: ModelOf<Scalars['DateTime']>;
+  DeletedEntitiesConnection: ModelOf<DeletedEntitiesConnection>;
+  DeletedEntity: ModelOf<DeletedEntity>;
+  DeletedEntityCursor: ModelOf<DeletedEntityCursor>;
   EntityMetadataConnection: ModelOf<EntityMetadataConnection>;
   EntityMetadataCursor: ModelOf<EntityMetadataCursor>;
   EntityMutation: ModelOf<EntityMutation>;
+  EntityQuery: ModelOf<EntityQuery>;
   Event: ModelOf<Event>;
   EventRevision: ModelOf<EventRevision>;
   EventRevisionConnection: ModelOf<EventRevisionConnection>;
@@ -3111,6 +3189,7 @@ export type ResolversParentTypes = {
   JSON: ModelOf<Scalars['JSON']>;
   JSONObject: ModelOf<Scalars['JSONObject']>;
   License: ModelOf<License>;
+  LicenseQuery: ModelOf<LicenseQuery>;
   MetadataQuery: ModelOf<MetadataQuery>;
   Mutation: {};
   Navigation: ModelOf<Navigation>;
@@ -3168,6 +3247,8 @@ export type ResolversParentTypes = {
   SubscriptionQuery: ModelOf<SubscriptionQuery>;
   SubscriptionSetInput: ModelOf<SubscriptionSetInput>;
   SubscriptionSetResponse: ModelOf<SubscriptionSetResponse>;
+  TaxonomyEntityLinksInput: ModelOf<TaxonomyEntityLinksInput>;
+  TaxonomyEntityLinksResponse: ModelOf<TaxonomyEntityLinksResponse>;
   TaxonomyTerm: ModelOf<TaxonomyTerm>;
   TaxonomyTermConnection: ModelOf<TaxonomyTermConnection>;
   TaxonomyTermCreateInput: ModelOf<TaxonomyTermCreateInput>;
@@ -3235,7 +3316,7 @@ export type AbstractEntityResolvers<ContextType = Context, ParentType extends Re
 export type AbstractEntityConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractEntityConnection'] = ResolversParentTypes['AbstractEntityConnection']> = {
   edges?: Resolver<Array<ResolversTypes['AbstractEntityCursor']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['AbstractEntity']>, ParentType, ContextType>;
-  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['HasNextPageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -3711,6 +3792,26 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
   name: 'DateTime';
 }
 
+export type DeletedEntitiesConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletedEntitiesConnection'] = ResolversParentTypes['DeletedEntitiesConnection']> = {
+  edges?: Resolver<Array<ResolversTypes['DeletedEntityCursor']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<ResolversTypes['DeletedEntity']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type DeletedEntityResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletedEntity'] = ResolversParentTypes['DeletedEntity']> = {
+  dateOfDeletion?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  entity?: Resolver<Maybe<ResolversTypes['AbstractEntity']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type DeletedEntityCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletedEntityCursor'] = ResolversParentTypes['DeletedEntityCursor']> = {
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<ResolversTypes['DeletedEntity'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type EntityMetadataConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityMetadataConnection'] = ResolversParentTypes['EntityMetadataConnection']> = {
   edges?: Resolver<Array<ResolversTypes['EntityMetadataCursor']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['JSONObject']>, ParentType, ContextType>;
@@ -3737,6 +3838,11 @@ export type EntityMutationResolvers<ContextType = Context, ParentType extends Re
   setGroupedExercise?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetGroupedExerciseArgs, 'input'>>;
   setSolution?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetSolutionArgs, 'input'>>;
   setVideo?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetVideoArgs, 'input'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type EntityQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityQuery'] = ResolversParentTypes['EntityQuery']> = {
+  deletedEntities?: Resolver<ResolversTypes['DeletedEntitiesConnection'], ParentType, ContextType, Partial<EntityQueryDeletedEntitiesArgs>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3954,6 +4060,12 @@ export type LicenseResolvers<ContextType = Context, ParentType extends Resolvers
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type LicenseQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['LicenseQuery'] = ResolversParentTypes['LicenseQuery']> = {
+  license?: Resolver<Maybe<ResolversTypes['License']>, ParentType, ContextType, RequireFields<LicenseQueryLicenseArgs, 'id'>>;
+  licenses?: Resolver<Array<ResolversTypes['License']>, ParentType, ContextType, Partial<LicenseQueryLicensesArgs>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MetadataQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['MetadataQuery'] = ResolversParentTypes['MetadataQuery']> = {
   entities?: Resolver<ResolversTypes['EntityMetadataConnection'], ParentType, ContextType, Partial<MetadataQueryEntitiesArgs>>;
   publisher?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
@@ -4102,8 +4214,9 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   activeDonors?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, Partial<QueryActiveDonorsArgs>>;
   activeReviewers?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, Partial<QueryActiveReviewersArgs>>;
   authorization?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
+  entity?: Resolver<Maybe<ResolversTypes['EntityQuery']>, ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<QueryEventsArgs>>;
-  license?: Resolver<Maybe<ResolversTypes['License']>, ParentType, ContextType, RequireFields<QueryLicenseArgs, 'id'>>;
+  license?: Resolver<ResolversTypes['LicenseQuery'], ParentType, ContextType>;
   metadata?: Resolver<ResolversTypes['MetadataQuery'], ParentType, ContextType>;
   notificationEvent?: Resolver<Maybe<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType, RequireFields<QueryNotificationEventArgs, 'id'>>;
   notifications?: Resolver<ResolversTypes['NotificationConnection'], ParentType, ContextType, Partial<QueryNotificationsArgs>>;
@@ -4329,6 +4442,12 @@ export type SubscriptionSetResponseResolvers<ContextType = Context, ParentType e
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type TaxonomyEntityLinksResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyEntityLinksResponse'] = ResolversParentTypes['TaxonomyEntityLinksResponse']> = {
+  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type TaxonomyTermResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTerm'] = ResolversParentTypes['TaxonomyTerm']> = {
   alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   children?: Resolver<ResolversTypes['AbstractUuidConnection'], ParentType, ContextType, Partial<TaxonomyTermChildrenArgs>>;
@@ -4376,6 +4495,8 @@ export type TaxonomyTermMoveResponseResolvers<ContextType = Context, ParentType 
 
 export type TaxonomyTermMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermMutation'] = ResolversParentTypes['TaxonomyTermMutation']> = {
   create?: Resolver<ResolversTypes['TaxonomyTermCreateResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationCreateArgs, 'input'>>;
+  createEntityLinks?: Resolver<ResolversTypes['TaxonomyEntityLinksResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationCreateEntityLinksArgs, 'input'>>;
+  deleteEntityLinks?: Resolver<ResolversTypes['TaxonomyEntityLinksResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationDeleteEntityLinksArgs, 'input'>>;
   move?: Resolver<ResolversTypes['TaxonomyTermMoveResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationMoveArgs, 'input'>>;
   setNameAndDescription?: Resolver<ResolversTypes['TaxonomyTermSetNameAndDescriptionResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationSetNameAndDescriptionArgs, 'input'>>;
   sort?: Resolver<ResolversTypes['TaxonomyTermSortResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationSortArgs, 'input'>>;
@@ -4668,9 +4789,13 @@ export type Resolvers<ContextType = Context> = {
   CreateTaxonomyTermNotificationEvent?: CreateTaxonomyTermNotificationEventResolvers<ContextType>;
   CreateThreadNotificationEvent?: CreateThreadNotificationEventResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
+  DeletedEntitiesConnection?: DeletedEntitiesConnectionResolvers<ContextType>;
+  DeletedEntity?: DeletedEntityResolvers<ContextType>;
+  DeletedEntityCursor?: DeletedEntityCursorResolvers<ContextType>;
   EntityMetadataConnection?: EntityMetadataConnectionResolvers<ContextType>;
   EntityMetadataCursor?: EntityMetadataCursorResolvers<ContextType>;
   EntityMutation?: EntityMutationResolvers<ContextType>;
+  EntityQuery?: EntityQueryResolvers<ContextType>;
   Event?: EventResolvers<ContextType>;
   EventRevision?: EventRevisionResolvers<ContextType>;
   EventRevisionConnection?: EventRevisionConnectionResolvers<ContextType>;
@@ -4692,6 +4817,7 @@ export type Resolvers<ContextType = Context> = {
   JSON?: GraphQLScalarType;
   JSONObject?: GraphQLScalarType;
   License?: LicenseResolvers<ContextType>;
+  LicenseQuery?: LicenseQueryResolvers<ContextType>;
   MetadataQuery?: MetadataQueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Navigation?: NavigationResolvers<ContextType>;
@@ -4736,6 +4862,7 @@ export type Resolvers<ContextType = Context> = {
   SubscriptionMutation?: SubscriptionMutationResolvers<ContextType>;
   SubscriptionQuery?: SubscriptionQueryResolvers<ContextType>;
   SubscriptionSetResponse?: SubscriptionSetResponseResolvers<ContextType>;
+  TaxonomyEntityLinksResponse?: TaxonomyEntityLinksResponseResolvers<ContextType>;
   TaxonomyTerm?: TaxonomyTermResolvers<ContextType>;
   TaxonomyTermConnection?: TaxonomyTermConnectionResolvers<ContextType>;
   TaxonomyTermCreateResponse?: TaxonomyTermCreateResponseResolvers<ContextType>;

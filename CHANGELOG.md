@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.33.0](https://github.com/serlo/api.serlo.org/compare/v0.32.0..v0.33.0) - May 6, 2022
+
+### Added
+
+- Add `entity.deletedEntities` query #605
+
+## [v0.32.0](https://github.com/serlo/api.serlo.org/compare/v0.31.2..v0.32.0) - May 6, 2022
+
+### Breaking Changes
+
+- remove query `license` and replace it with the `license` namespace #616
+
+### Added
+
+- Add `license` namespace and `license.licenses` #616
+
+- Add `taxonomyTerm.createEntityLinks` #612
+
+- Add `taxonomyTerm.deleteEntityLinks` #599
+
+### Fixed
+
+- Fix local runs #617
+
+### Internal
+
+- Store licenses in ~/config #615
+
 ## [v0.31.2](https://github.com/serlo/api.serlo.org/compare/v0.31.1..v0.31.2) - May 3, 2022
 
 ### Fixed

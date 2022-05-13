@@ -41,8 +41,6 @@ import {
   UuidDecoder,
 } from './decoder'
 
-const URL = `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`
-
 export const spec = {
   ActiveAuthorsQuery: {
     payload: t.undefined,
@@ -79,6 +77,22 @@ export const spec = {
       t.partial({ after: t.number }),
     ]),
     response: t.type({ firstCommentIds: t.array(t.number) }),
+    canBeNull: false,
+  },
+  DeletedEntitiesQuery: {
+    payload: t.type({
+      first: t.number,
+      after: t.union([t.string, t.undefined]),
+      instance: t.union([InstanceDecoder, t.undefined]),
+    }),
+    response: t.type({
+      deletedEntities: t.array(
+        t.type({
+          id: t.number,
+          dateOfDeletion: t.string,
+        })
+      ),
+    }),
     canBeNull: false,
   },
   EntitiesMetadataQuery: {
@@ -146,7 +160,6 @@ export const spec = {
       input: t.intersection([
         t.type({
           changes: t.string,
-          instance: InstanceDecoder,
           licenseId: t.number,
           needsReview: t.boolean,
           subscribeThis: t.boolean,
@@ -276,6 +289,24 @@ export const spec = {
       sendEmail: t.boolean,
     }),
     response: t.void,
+    canBeNull: false,
+  },
+  TaxonomyCreateEntityLinksMutation: {
+    payload: t.type({
+      entityIds: t.array(t.number),
+      taxonomyTermId: t.number,
+      userId: t.number,
+    }),
+    response: t.strict({ success: t.literal(true) }),
+    canBeNull: false,
+  },
+  TaxonomyDeleteEntityLinksMutation: {
+    payload: t.type({
+      entityIds: t.array(t.number),
+      taxonomyTermId: t.number,
+      userId: t.number,
+    }),
+    response: t.strict({ success: t.literal(true) }),
     canBeNull: false,
   },
   TaxonomyTermCreateMutation: {
@@ -411,11 +442,12 @@ export async function makeRequest<M extends MessageType>(
   type: M,
   payload: Payload<M>
 ) {
+  const databaseLayerUrl = `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`
   const body = JSON.stringify({
     type,
     ...(payload === undefined ? {} : { payload }),
   })
-  const response = await fetch(URL, {
+  const response = await fetch(databaseLayerUrl, {
     method: 'POST',
     body,
     headers: { 'Content-Type': 'application/json' },

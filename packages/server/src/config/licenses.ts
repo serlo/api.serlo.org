@@ -20,12 +20,24 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
-import { License } from '~/types'
+import { Instance, License } from '~/types'
+
+const defaultLicense: License = {
+  id: 9,
+  instance: Instance.En,
+  default: true,
+  title: 'This content is licensed under cc-by-sa-4.0',
+  url: 'http://creativecommons.org/licenses/by/4.0/',
+  content: '[[{"col":24,"content":"siehe de.serlo"}]]',
+  agreement:
+    'By saving this page, you confirm that your contribution (including any edits you have made) is your own work, and that it does not infringe on the rights of third parties. You consent to publishing your contribution under the <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution/Share-Alike License 4.0</a> (http://creativecommons.org/licenses/by-sa/4.0/) and/or under an equivalent license chosen by the Serlo Education e.V. in accordance with the regulations laid out in the <a href="https://en.serlo.org/terms">terms of use</a> (https://en.serlo.org/terms). Should the contribution not be your own work, it must be available in accordance with the <a href="https://en.serlo.org/terms">terms of use</a> (https://en.serlo.org/terms), and you must agree to comply with any necessary license requests.',
+  iconHref: 'http://i.creativecommons.org/l/by-sa/4.0/88x31.png',
+}
 
 export const licenses = <License[]>[
   {
     id: 1,
-    instance: 'de',
+    instance: Instance.De,
     default: true,
     title: 'Dieses Werk steht unter der freien Lizenz CC BY-SA 4.0.',
     url: 'https://creativecommons.org/licenses/by-sa/4.0/deed.de',
@@ -37,7 +49,7 @@ export const licenses = <License[]>[
   },
   {
     id: 4,
-    instance: 'de',
+    instance: Instance.De,
     default: false,
     title:
       'Dieses Werk steht unter der freien Lizenz CC BY-SA 4.0 mit Namensnennung von Herrn Rudolf Brinkmann',
@@ -50,7 +62,7 @@ export const licenses = <License[]>[
   },
   {
     id: 6,
-    instance: 'de',
+    instance: Instance.De,
     default: false,
     title:
       'Dieses Werk steht unter der freien Lizenz CC BY-SA 4.0 mit Namensnennung von Herrn Franz Strobl. ',
@@ -63,7 +75,7 @@ export const licenses = <License[]>[
   },
   {
     id: 7,
-    instance: 'de',
+    instance: Instance.De,
     default: false,
     title:
       'Dieses Werk steht unter der freien Lizenz CC BY-SA 4.0 mit Namensnennung von Herrn Günther Rasch',
@@ -76,7 +88,7 @@ export const licenses = <License[]>[
   },
   {
     id: 10,
-    instance: 'de',
+    instance: Instance.De,
     default: false,
     title: 'Standard-YouTube-Lizenz',
     url: 'https://www.youtube.com/static?gl=DE&template=terms',
@@ -86,7 +98,7 @@ export const licenses = <License[]>[
   },
   {
     id: 16,
-    instance: 'de',
+    instance: Instance.De,
     default: false,
     title: 'Dieses Werk steht unter der Lizenz CC BY-ND 4.0',
     url: 'https://creativecommons.org/licenses/by-nd/4.0/',
@@ -98,7 +110,7 @@ export const licenses = <License[]>[
   },
   {
     id: 19,
-    instance: 'de',
+    instance: Instance.De,
     default: false,
     title: 'CC BY 4.0 - Landesbildungsserver Baden-Württemberg',
     url: 'https://www.schule-bw.de/',
@@ -109,7 +121,7 @@ export const licenses = <License[]>[
   },
   {
     id: 24,
-    instance: 'de',
+    instance: Instance.De,
     default: false,
     title:
       'Dieses Werk steht unter der freien Lizenz CC BY-SA 4.0 mit Namensnennung von MNWeG',
@@ -120,20 +132,10 @@ export const licenses = <License[]>[
       'Mit dem Speichern dieser Seite versicherst du, dass du die Veränderung des Beitrags von MNWeG selbst verfasst hast bzw. dass er keine fremden Rechte verletzt. Du willigst ein, deinen Beitrag unter der <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.de">Creative Commons Attribution/Share-Alike Lizenz 4.0</a> (https://creativecommons.org/licenses/by-sa/4.0/deed.de) und/oder unter einer gleichwertigen Lizenz zu veröffentlichen, welche der Serlo Education e. V. entsprechend der Regelungen in den <a href="/21654">Nutzungsbedingungen</a> (http://de.serlo.org/21654) festlegen darf. Der Beitrag von MNWeG muss unter den <a href="/21654">Nutzungsbedingungen</a> (http://de.serlo.org/21654) verfügbar sein und du stimmst zu, notwendigen Lizenzanforderungen zu folgen.',
     iconHref: '',
   },
-  {
-    id: 9,
-    instance: 'en',
-    default: true,
-    title: 'This content is licensed under cc-by-sa-4.0',
-    url: 'http://creativecommons.org/licenses/by/4.0/',
-    content: '[[{"col":24,"content":"siehe de.serlo"}]]',
-    agreement:
-      'By saving this page, you confirm that your contribution (including any edits you have made) is your own work, and that it does not infringe on the rights of third parties. You consent to publishing your contribution under the <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution/Share-Alike License 4.0</a> (http://creativecommons.org/licenses/by-sa/4.0/) and/or under an equivalent license chosen by the Serlo Education e.V. in accordance with the regulations laid out in the <a href="https://en.serlo.org/terms">terms of use</a> (https://en.serlo.org/terms). Should the contribution not be your own work, it must be available in accordance with the <a href="https://en.serlo.org/terms">terms of use</a> (https://en.serlo.org/terms), and you must agree to comply with any necessary license requests.',
-    iconHref: 'http://i.creativecommons.org/l/by-sa/4.0/88x31.png',
-  },
+  defaultLicense,
   {
     id: 14,
-    instance: 'es',
+    instance: Instance.Es,
     default: true,
     title: 'Este contenido está licenciado bajo cc-by-sa-4.0',
     url: 'https://creativecommons.org/licenses/by-sa/4.0/deed.es',
@@ -154,7 +156,7 @@ export const licenses = <License[]>[
   },
   {
     id: 22,
-    instance: 'es',
+    instance: Instance.Es,
     default: false,
     title:
       'Esta obra está bajo la licencia libre CC BY-SA 4.0 de la iniciativa colectiva África en la Escuela',
@@ -166,7 +168,7 @@ export const licenses = <License[]>[
   },
   {
     id: 23,
-    instance: 'es',
+    instance: Instance.Es,
     default: false,
     title:
       ' Este ejercicio/tarea está bajo la licencia libre CC BY-SA 4.0 del señor Franz Strobl.',
@@ -179,7 +181,7 @@ export const licenses = <License[]>[
   },
   {
     id: 13,
-    instance: 'hi',
+    instance: Instance.Hi,
     default: true,
     title: 'This content is licensed under cc-by-sa-4.0',
     url: 'https://creativecommons.org/licenses/by/4.0/',
@@ -190,7 +192,7 @@ export const licenses = <License[]>[
   },
   {
     id: 17,
-    instance: 'ta',
+    instance: Instance.Ta,
     default: true,
     title: 'This content is licensed under cc-by-sa-4.0',
     url: 'http://creativecommons.org/licenses/by/4.0/',
@@ -201,7 +203,7 @@ export const licenses = <License[]>[
   },
   {
     id: 18,
-    instance: 'fr',
+    instance: Instance.Fr,
     default: true,
     title: ' Ce contenu est sous licence cc-by-sa-4.0',
     url: 'http://creativecommons.org/licenses/by/4.0/',
@@ -212,3 +214,11 @@ export const licenses = <License[]>[
     iconHref: 'http://i.creativecommons.org/l/by-sa/4.0/88x31.png',
   },
 ]
+
+export function getDefaultLicense(instance: Instance): License {
+  return (
+    licenses.find(
+      (license) => license.default && license.instance == instance
+    ) ?? defaultLicense
+  )
+}
