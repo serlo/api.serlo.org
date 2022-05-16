@@ -40,7 +40,7 @@ import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
-import { TaxonomyTerm } from '~/types'
+import { TaxonomyTerm, TaxonomyTypeCreateOptions } from '~/types'
 import { isDefined } from '~/utils'
 
 export const resolvers: TypeResolvers<TaxonomyTerm> &
@@ -109,7 +109,7 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
     async create(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
-      const { parentId, name, taxonomyType, description = null } = input
+      const { parentId, name, taxonomyType, description = undefined } = input
 
       assertArgumentIsNotEmpty({ name })
 
@@ -131,7 +131,10 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
 
       const taxonomyTerm = await dataSources.model.serlo.createTaxonomyTerm({
         parentId,
-        taxonomyType,
+        taxonomyType:
+          taxonomyType === TaxonomyTypeCreateOptions.TopicFolder
+            ? 'topic-folder'
+            : 'topic',
         name,
         description,
         userId,
