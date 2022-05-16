@@ -60,7 +60,7 @@ describe('TaxonomyTermCreateMutation', () => {
 
   const payload = {
     ...input,
-    taxonomyType: TaxonomyTypeCreateOptions.Topic,
+    taxonomyType: 'topic' as const,
     userId: user.id,
   }
 
