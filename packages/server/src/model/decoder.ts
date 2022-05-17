@@ -266,11 +266,6 @@ export const TaxonomyTermTypeDecoder = t.union([
   t.literal(TaxonomyTermType.TopicFolder),
 ])
 
-export const TaxonomyTypeCreateOptionsDecoder = t.union([
-  t.literal('topic'),
-  t.literal('topic-folder'),
-])
-
 export const TaxonomyTermDecoder = t.exact(
   t.intersection([
     AbstractUuidDecoder,
