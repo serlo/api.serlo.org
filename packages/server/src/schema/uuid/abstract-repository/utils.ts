@@ -23,7 +23,8 @@ import { array as A, function as F, number as N, ord } from 'fp-ts'
 import * as t from 'io-ts'
 import R from 'ramda'
 
-import { licenses } from '~/config'
+import { getDefaultLicense, licenses } from '~/config'
+import { captureErrorEvent } from '~/internals/error-event'
 import {
   Model,
   PickResolvers,
@@ -101,7 +102,13 @@ export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
       const license =
         licenses.find((license) => license.id === repository.licenseId) ?? null
 
-      if (license === null) throw new Error('License cannot be null')
+      if (license === null) {
+        captureErrorEvent({
+          error: new Error('Could not find license, using default'),
+          errorContext: { licenseId: repository.licenseId, repository },
+        })
+        return getDefaultLicense(repository.instance)
+      }
 
       return license
     },
