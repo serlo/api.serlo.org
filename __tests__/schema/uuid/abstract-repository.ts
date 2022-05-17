@@ -58,6 +58,7 @@ import {
   given,
   Client,
 } from '../../__utils__'
+import { getDefaultLicense } from '~/config/licenses'
 import { Model } from '~/internals/graphql'
 import {
   EntityRevisionType,
@@ -67,7 +68,6 @@ import {
   DiscriminatorType,
   castToUuid,
 } from '~/model/decoder'
-import { getDefaultLicense } from '~/config/licenses'
 
 let client: LegacyClient
 
