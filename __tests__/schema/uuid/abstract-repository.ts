@@ -56,6 +56,7 @@ import {
   nextUuid,
   getTypenameAndId,
   given,
+  Client,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import {
@@ -66,6 +67,7 @@ import {
   DiscriminatorType,
   castToUuid,
 } from '~/model/decoder'
+import { getDefaultLicense } from '~/config/licenses'
 
 let client: LegacyClient
 
@@ -300,6 +302,36 @@ describe('Repository', () => {
         data: { uuid: { license } },
         client,
       })
+    }
+  )
+
+  test.each(repositoryCases)(
+    '%s uses default license if licenseId is not supported',
+    async (_type, { repository }) => {
+      given('UuidQuery').for({ ...repository, licenseId: 42 })
+
+      await new Client({ userId: user.id })
+        .prepareQuery({
+          query: gql`
+            query license($id: Int!) {
+              uuid(id: $id) {
+                ... on AbstractRepository {
+                  license {
+                    id
+                  }
+                }
+              }
+            }
+          `,
+          variables: { id: repository.id },
+        })
+        .shouldReturnData({
+          uuid: {
+            license: {
+              id: getDefaultLicense(repository.instance).id,
+            },
+          },
+        })
     }
   )
 
