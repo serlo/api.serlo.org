@@ -36,7 +36,6 @@ import {
   PageDecoder,
   SubscriptionsDecoder,
   TaxonomyTermDecoder,
-  TaxonomyTypeCreateOptionsDecoder,
   Uuid,
   UuidDecoder,
 } from './decoder'
@@ -311,7 +310,7 @@ export const spec = {
   },
   TaxonomyTermCreateMutation: {
     payload: t.type({
-      taxonomyType: TaxonomyTypeCreateOptionsDecoder,
+      taxonomyType: t.union([t.literal('topic'), t.literal('topic-folder')]),
       name: t.string,
       userId: t.number,
       description: t.union([t.string, t.null, t.undefined]),
