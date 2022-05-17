@@ -797,8 +797,9 @@ export function createSerloModel({
     mutate: (payload: DatabaseLayer.Payload<'PageAddRevisionMutation'>) => {
       return DatabaseLayer.makeRequest('PageAddRevisionMutation', payload)
     },
-    updateCache: async (_, { success }) => {
+    updateCache: async ({ pageId }, { success }) => {
       if (success) {
+        await getUuid._querySpec.removeCache({ payload: { id: pageId } })
         await getUnrevisedEntities._querySpec.removeCache({
           payload: undefined,
         })
