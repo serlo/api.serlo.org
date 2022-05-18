@@ -21,6 +21,7 @@
  */
 
 import { gql } from 'apollo-server'
+import { Instance } from '~/types'
 
 import { article, user } from '../../../__fixtures__'
 import { given, Client } from '../../__utils__'
@@ -38,6 +39,8 @@ const mutation = new Client({ userId: user.id }).prepareQuery({
   variables: { input: { entityId: article.id, licenseId: 4 } },
 })
 
+const newLicenseId = 4
+
 beforeEach(() => {
   given('UuidQuery').for(user, article)
 
@@ -48,7 +51,7 @@ beforeEach(() => {
       licenseId: 4,
     })
     .isDefinedBy((_req, res, ctx) => {
-      given('UuidQuery').for({ ...article, licenseId: 4 })
+      given('UuidQuery').for({ ...article, licenseId: newLicenseId })
 
       return res(ctx.json({ success: true }))
     })
@@ -74,7 +77,7 @@ test('returns "{ success: true }" when mutation could be successfully executed',
       `,
       variables: { id: article.id },
     })
-    .shouldReturnData({ uuid: { license: { id: 4 } } })
+    .shouldReturnData({ uuid: { license: { id: newLicenseId } } })
 })
 
 test('throws UserInputError when license does not exist', async () => {
@@ -84,8 +87,10 @@ test('throws UserInputError when license does not exist', async () => {
 })
 
 test('throws UserInputError when instances do not match', async () => {
+  given('UuidQuery').for({ ...article, instance: Instance.Es })
+
   await mutation
-    .withInput({ entityId: article.id, licenseId: 9 })
+    .withInput({ entityId: article.id, licenseId: newLicenseId })
     .shouldFailWithError('BAD_USER_INPUT')
 })
 
