@@ -33,7 +33,7 @@ import { Sentry } from '~/internals/sentry'
 export class Client {
   private apolloServer: ApolloServer
 
-  constructor(context?: Partial<Pick<Context, 'service' | 'userId'>>) {
+  constructor(context?: ClientContext) {
     this.apolloServer = createTestClient(context)
   }
 
@@ -62,8 +62,8 @@ export class Query<
     return new Query(this.client, { ...this.query, variables })
   }
 
-  forClient(client: Client) {
-    return new Query(client, this.query)
+  withContext(context: ClientContext) {
+    return new Query(new Client(context), this.query)
   }
 
   forLoginUser(...additionalRoles: string[]) {
@@ -75,11 +75,11 @@ export class Query<
 
     given('UuidQuery').for(loginUser)
 
-    return this.forClient(new Client({ userId: loginUser.id }))
+    return this.withContext({ userId: loginUser.id })
   }
 
   forUnauthenticatedUser() {
-    return this.forClient(new Client({ userId: null }))
+    return this.withContext({ userId: null })
   }
 
   execute() {
@@ -102,6 +102,7 @@ export class Query<
   }
 }
 
+type ClientContext = Partial<Pick<Context, 'service' | 'userId'>>
 type Variables<I> = { input: I } | Record<string, unknown>
 type Input = Record<string, unknown>
 interface QuerySpec<V> {
