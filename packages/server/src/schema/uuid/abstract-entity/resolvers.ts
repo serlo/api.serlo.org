@@ -19,12 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-
 import * as serloAuth from '@serlo/authorization'
+import { instanceToScope } from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
 import * as t from 'io-ts'
 
 import { createSetEntityResolver } from './entity-set-handler'
+import { licenses } from '~/config'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
@@ -153,6 +154,46 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         }
       },
     }),
+
+    async setLicense(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const { licenseId, entityId } = input
+
+      const newLicense = licenses.find((license) => {
+        return license.id === licenseId
+      })
+
+      if (!newLicense) {
+        throw new UserInputError(`License with id ${licenseId} does not exist.`)
+      }
+
+      const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: entityId,
+        decoder: EntityDecoder,
+      })
+
+      await assertUserIsAuthorized({
+        userId,
+        dataSources,
+        message: 'You are not allowed to set the license for this entity.',
+        guard: serloAuth.Entity.setLicense(instanceToScope(entity.instance)),
+      })
+
+      if (entity.instance !== newLicense.instance) {
+        throw new UserInputError(
+          'The instance of the entity does not match the instance of the license.'
+        )
+      }
+
+      await dataSources.model.serlo.setEntityLicense({
+        entityId,
+        licenseId,
+        userId,
+      })
+
+      return { success: true, query: {} }
+    },
 
     async checkoutRevision(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
