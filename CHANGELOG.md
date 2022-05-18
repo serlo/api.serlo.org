@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.34.0](https://github.com/serlo/api.serlo.org/compare/v0.33.1..v0.34.0) - May 18, 2022
+
+### Added
+
+- Add entity.setLicense mutation #626
+
 ## [v0.33.1](https://github.com/serlo/api.serlo.org/compare/v0.33.0..v0.33.1) - May 17, 2022
 
 ### Fixed

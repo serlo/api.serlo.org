@@ -982,6 +982,24 @@ export function createSerloModel({
     },
   })
 
+  const setEntityLicense = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('EntitySetLicenseMutation'),
+    mutate: (payload: DatabaseLayer.Payload<'EntitySetLicenseMutation'>) => {
+      return DatabaseLayer.makeRequest('EntitySetLicenseMutation', payload)
+    },
+    async updateCache({ entityId, licenseId }, { success }) {
+      if (success) {
+        await getUuid._querySpec.setCache({
+          payload: { id: entityId },
+          getValue(current) {
+            if (!current) return
+            return { ...current, licenseId }
+          },
+        })
+      }
+    },
+  })
+
   const setTaxonomyTermNameAndDescription = createMutation({
     decoder: DatabaseLayer.getDecoderFor(
       'TaxonomyTermSetNameAndDescriptionMutation'
@@ -1047,6 +1065,7 @@ export function createSerloModel({
     rejectPageRevision,
     setDescription,
     setEmail,
+    setEntityLicense,
     setNotificationState,
     setSubscription,
     setTaxonomyTermNameAndDescription,

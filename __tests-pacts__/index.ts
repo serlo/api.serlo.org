@@ -258,6 +258,20 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  EntitySetLicenseMutation: {
+    examples: [
+      [
+        {
+          userId: user.id,
+          licenseId: 4,
+          entityId: article.id,
+        },
+        {
+          success: true,
+        },
+      ],
+    ],
+  },
   EventQuery: {
     examples: events.map((event) => [{ id: event.id }, event]),
     examplePayloadForNull: { id: 1_000_000 },
