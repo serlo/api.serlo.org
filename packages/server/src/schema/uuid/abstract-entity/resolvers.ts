@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as serloAuth from '@serlo/authorization'
+import { instanceToScope } from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
 import * as t from 'io-ts'
 
@@ -157,31 +158,28 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     async setLicense(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
-      const scope = await fetchScopeOfUuid({
-        id: input.entityId,
-        dataSources,
+      const { licenseId, entityId } = input
+
+      const newLicense = licenses.find((license) => {
+        return license.id === licenseId
       })
+
+      if (!newLicense) {
+        throw new UserInputError(`License with id ${licenseId} does not exist.`)
+      }
+
+      const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: entityId,
+        decoder: EntityDecoder,
+      })
+
       await assertUserIsAuthorized({
         userId,
         dataSources,
         message: 'You are not allowed to set the license for this entity.',
-        guard: serloAuth.Entity.setLicense(scope),
+        guard: serloAuth.Entity.setLicense(instanceToScope(entity.instance)),
       })
 
-      const newLicense = licenses.find((license) => {
-        return license.id === input.licenseId
-      })
-
-      if (!newLicense) {
-        throw new UserInputError(
-          'License with id `${licenseId}` does not exist.'
-        )
-      }
-
-      const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: input.entityId,
-        decoder: EntityDecoder,
-      })
       if (entity.instance !== newLicense.instance) {
         throw new UserInputError(
           'The instance of the entity does not match the instance of the license.'
@@ -189,8 +187,8 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       }
 
       await dataSources.model.serlo.setEntityLicense({
-        entityId: castToUuid(input.entityId),
-        licenseId: input.licenseId,
+        entityId,
+        licenseId,
         userId,
       })
 
