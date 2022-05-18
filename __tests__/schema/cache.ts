@@ -61,7 +61,7 @@ describe('set', () => {
 
   test('is forbidden when service is not legacy serlo.org', async () => {
     await mutation
-      .forClient(new Client({ service: Service.SerloCloudflareWorker }))
+      .withContext({ service: Service.SerloCloudflareWorker })
       .shouldFailWithError('FORBIDDEN')
   })
 
@@ -109,12 +109,7 @@ describe('remove', () => {
 
   test('removes a cache value (authenticated as CarolinJaser)', async () => {
     await mutation
-      .forClient(
-        new Client({
-          service: Service.SerloCloudflareWorker,
-          userId: 178145,
-        })
-      )
+      .withContext({ service: Service.SerloCloudflareWorker, userId: 178145 })
       .shouldReturnData({ _cache: { remove: { success: true } } })
 
     const cachedValue = await global.cache.get({ key })
@@ -123,17 +118,13 @@ describe('remove', () => {
 
   test('is forbidden when user is not logged in', async () => {
     await mutation
-      .forClient(
-        new Client({ service: Service.SerloCloudflareWorker, userId: null })
-      )
+      .withContext({ service: Service.SerloCloudflareWorker, userId: null })
       .shouldFailWithError('FORBIDDEN')
   })
 
   test('is forbidden when user is not developer', async () => {
     await mutation
-      .forClient(
-        new Client({ service: Service.SerloCloudflareWorker, userId: user.id })
-      )
+      .withContext({ service: Service.SerloCloudflareWorker, userId: user.id })
       .shouldFailWithError('FORBIDDEN')
   })
 })
@@ -161,7 +152,7 @@ describe('update', () => {
 
   test('is forbidden when service is not legacy serlo.org', async () => {
     await mutation
-      .forClient(new Client({ service: Service.SerloCloudflareWorker }))
+      .withContext({ service: Service.SerloCloudflareWorker })
       .shouldFailWithError('FORBIDDEN')
   })
 })
