@@ -66,6 +66,7 @@ import {
   video,
   videoRevision,
   taxonomyTermTopic,
+  taxonomyTermTopicFolder,
 } from '../__fixtures__'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
@@ -76,7 +77,7 @@ import {
   castToUuid,
   castToAlias,
 } from '~/model/decoder'
-import { Instance, TaxonomyTypeCreateOptions } from '~/types'
+import { Instance } from '~/types'
 import { isDateString } from '~/utils'
 
 const events = [
@@ -257,6 +258,20 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  EntitySetLicenseMutation: {
+    examples: [
+      [
+        {
+          userId: user.id,
+          licenseId: 4,
+          entityId: article.id,
+        },
+        {
+          success: true,
+        },
+      ],
+    ],
+  },
   EventQuery: {
     examples: events.map((event) => [{ id: event.id }, event]),
     examplePayloadForNull: { id: 1_000_000 },
@@ -394,12 +409,26 @@ const pactSpec: PactSpec = {
       [
         {
           userId: 1,
-          taxonomyType: TaxonomyTypeCreateOptions.Topic,
+          taxonomyType: 'topic',
           parentId: 1288,
-          name: 'a name ',
+          name: 'a topic',
           description: 'a description',
         },
         { ...taxonomyTermTopic, description: 'a description', childrenIds: [] },
+      ],
+      [
+        {
+          userId: 1,
+          taxonomyType: 'topic-folder',
+          parentId: 1420,
+          name: 'a topic folder',
+          description: 'a description',
+        },
+        {
+          ...taxonomyTermTopicFolder,
+          description: 'a description',
+          childrenIds: [],
+        },
       ],
     ],
   },

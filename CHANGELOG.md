@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.34.0](https://github.com/serlo/api.serlo.org/compare/v0.33.1..v0.34.0) - May 18, 2022
+
+### Added
+
+- Add entity.setLicense mutation #626
+
+## [v0.33.1](https://github.com/serlo/api.serlo.org/compare/v0.33.0..v0.33.1) - May 17, 2022
+
+### Fixed
+
+- Fixed taxonomy term creation of topic folder #629
+
+- Fixed cache update of page.addRevision
+
+- Use default license when repository license is not supported #632
+
 ## [v0.33.0](https://github.com/serlo/api.serlo.org/compare/v0.32.0..v0.33.0) - May 6, 2022
 
 ### Added
