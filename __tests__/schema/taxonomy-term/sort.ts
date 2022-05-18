@@ -54,40 +54,22 @@ const mutation = new Client({ userId: user.id })
   .withVariables({ input })
 
 beforeEach(() => {
+  given('TaxonomyTermSortMutation').isDefinedBy((req, res, ctx) => {
+    given('UuidQuery').for({
+      ...taxonomyTerm,
+      childrenIds: req.body.payload.childrenIds.map(castToUuid),
+    })
+
+    return res(ctx.json({ success: true }))
+  })
   given('UuidQuery').for(user, taxonomyTerm)
 })
 
 test('returns "{ success: true }" when mutation could be successfully executed', async () => {
-  given('TaxonomyTermSortMutation')
-    .withPayload({ ...input, userId: user.id })
-    .returns({ success: true })
-
   await mutation.shouldReturnData({
     taxonomyTerm: { sort: { success: true } },
   })
 })
-
-// test('fails when parent or at least one of the children is not a taxonomy term', async () => {
-//   given('UuidQuery').for(article)
-
-//   const inputWithWrongChild = {
-//     childrenIds: [taxonomyTermSubject.id, article.id],
-//     destination: taxonomyTermCurriculumTopic.id,
-//   }
-
-//   await mutation
-//     .withVariables({ input: inputWithWrongChild })
-//     .shouldFailWithError('BAD_USER_INPUT')
-
-//   const inputWithWrongParent = {
-//     childrenIds: [taxonomyTermSubject.id, taxonomyTermSubject2.id],
-//     destination: article.id,
-//   }
-
-//   await mutation
-//     .withVariables({ input: inputWithWrongParent })
-//     .shouldFailWithError('BAD_USER_INPUT')
-// })
 
 test('fails when user is not authenticated', async () => {
   await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
@@ -104,7 +86,7 @@ test('fails when database layer returns a 400er response', async () => {
 })
 
 test('fails when database layer has an internal error', async () => {
-  given('TaxonomyTermMoveMutation').hasInternalServerError()
+  given('TaxonomyTermSortMutation').hasInternalServerError()
 
   await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
@@ -118,50 +100,25 @@ test('updates the cache', async () => {
     { ...article, id: castToUuid(1454) }
   )
 
-  given('TaxonomyTermSortMutation')
-    .withPayload({
-      childrenIds: [1394, 23453, 1454],
-      taxonomyTermId: taxonomyTerm.id,
-      userId: user.id,
-    })
-    .isDefinedBy((req, res, ctx) => {
-      given('UuidQuery').for({
-        ...taxonomyTerm,
-        childrenIds: req.body.payload.childrenIds.map(castToUuid),
-      })
-
-      //     given('UuidQuery').for({
-      //       ...taxonomyTermRoot,
-      //       childrenIds: [],
-      //     })
-      //       given('UuidQuery').for({
-      //         ...taxonomyTermCurriculumTopic,
-      //         childrenIds: [
-      //           ...taxonomyTermCurriculumTopic.childrenIds,
-      //           taxonomyTermSubject.id,
-      //         ],
-      //       })
-
-      return res(ctx.json({ success: true }))
-    })
-
-  const query = new Client({ userId: user.id }).prepareQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          ... on TaxonomyTerm {
-            children {
-              nodes {
-                id
+  const query = new Client({ userId: user.id })
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on TaxonomyTerm {
+              children {
+                nodes {
+                  id
+                }
               }
             }
           }
         }
-      }
-    `,
-  })
+      `,
+    })
+    .withVariables({ id: taxonomyTerm.id })
 
-  await query.withVariables({ id: taxonomyTerm.id }).shouldReturnData({
+  await query.shouldReturnData({
     uuid: {
       children: {
         nodes: [{ id: 23453 }, { id: 1454 }, { id: 1394 }],
@@ -169,59 +126,13 @@ test('updates the cache', async () => {
     },
   })
 
-  await new Client({ userId: user.id })
-    .prepareQuery({
-      query: gql`
-        mutation ($input: TaxonomyTermSortInput!) {
-          taxonomyTerm {
-            sort(input: $input) {
-              success
-            }
-          }
-        }
-      `,
-    })
-    .withVariables({
-      input: {
-        childrenIds: [1394, 23453, 1454],
-        taxonomyTermId: taxonomyTerm.id,
-      },
-    })
-    .shouldReturnData({
-      taxonomyTerm: { sort: { success: true } },
-    })
+  await mutation.execute()
 
-  await query.withVariables({ id: taxonomyTerm.id }).shouldReturnData({
+  await query.shouldReturnData({
     uuid: {
       children: {
         nodes: [{ id: 1394 }, { id: 23453 }, { id: 1454 }],
       },
     },
   })
-
-  //   await query.withVariables({ id: taxonomyTermSubject.id }).shouldReturnData({
-  //     uuid: {
-  //       parent: { id: taxonomyTermCurriculumTopic.id },
-  //     },
-  //   })
-
-  //   await query.withVariables({ id: taxonomyTermRoot.id }).shouldReturnData({
-  //     uuid: {
-  //       children: { nodes: [] },
-  //     },
-  //   })
-
-  //   await query
-  //     .withVariables({ id: taxonomyTermCurriculumTopic.id })
-  //     .shouldReturnData({
-  //       uuid: {
-  //         children: {
-  //           nodes: [
-  //             { id: taxonomyTermCurriculumTopic.childrenIds[0] },
-  //             { id: taxonomyTermSubject.id },
-  //           ],
-  //         },
-  //       },
-  //     })
-  // })
 })
