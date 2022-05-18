@@ -468,13 +468,12 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
-  // TODO: Find valid example case
   TaxonomyTermSortMutation: {
     examples: [
       [
         {
-          taxonomyTermId: taxonomyTermSubject.id,
-          childrenIds: [1394, 23453, 1454].map(castToUuid),
+          taxonomyTermId: 77625,
+          childrenIds: [71649, 77992, 77989, 133567, 133613],
           userId: user.id,
         },
         {

@@ -235,12 +235,6 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
 
       const { childrenIds, taxonomyTermId } = input
 
-      // await Promise.all(
-      //   [...childrenIds, destination].map(async (id) => {
-      //     await assertIsTaxonomyTerm(id, dataSources)
-      //   })
-      // )
-
       const scope = await fetchScopeOfUuid({
         id: taxonomyTermId,
         dataSources,
@@ -249,14 +243,14 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
       await assertUserIsAuthorized({
         userId,
         dataSources,
-        message: 'You are not allowed to move terms to this taxonomy term.',
+        message: 'You are not allowed to sort terms of this taxonomy term.',
         guard: serloAuth.TaxonomyTerm.change(scope),
       })
 
       const { success } = await dataSources.model.serlo.sortTaxonomyTerm({
         childrenIds,
         taxonomyTermId,
-        userId: userId,
+        userId,
       })
 
       return { success, query: {} }
