@@ -1259,6 +1259,20 @@ async function exec(): Promise<void> {
         date: '2022-05-06',
         added: ['Add `entity.deletedEntities` query #605'],
       },
+      {
+        tagName: 'v0.33.1',
+        date: '2022-05-17',
+        fixed: [
+          'Fixed taxonomy term creation of topic folder #629',
+          'Fixed cache update of page.addRevision',
+          'Use default license when repository license is not supported #632',
+        ],
+      },
+      {
+        tagName: 'v0.34.0',
+        date: '2022-05-18',
+        added: ['Add entity.setLicense mutation #626'],
+      },
     ],
   })
 

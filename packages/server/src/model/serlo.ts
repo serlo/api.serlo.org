@@ -797,8 +797,9 @@ export function createSerloModel({
     mutate: (payload: DatabaseLayer.Payload<'PageAddRevisionMutation'>) => {
       return DatabaseLayer.makeRequest('PageAddRevisionMutation', payload)
     },
-    updateCache: async (_, { success }) => {
+    updateCache: async ({ pageId }, { success }) => {
       if (success) {
+        await getUuid._querySpec.removeCache({ payload: { id: pageId } })
         await getUnrevisedEntities._querySpec.removeCache({
           payload: undefined,
         })
@@ -1001,6 +1002,24 @@ export function createSerloModel({
     },
   })
 
+  const setEntityLicense = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('EntitySetLicenseMutation'),
+    mutate: (payload: DatabaseLayer.Payload<'EntitySetLicenseMutation'>) => {
+      return DatabaseLayer.makeRequest('EntitySetLicenseMutation', payload)
+    },
+    async updateCache({ entityId, licenseId }, { success }) {
+      if (success) {
+        await getUuid._querySpec.setCache({
+          payload: { id: entityId },
+          getValue(current) {
+            if (!current) return
+            return { ...current, licenseId }
+          },
+        })
+      }
+    },
+  })
+
   const setTaxonomyTermNameAndDescription = createMutation({
     decoder: DatabaseLayer.getDecoderFor(
       'TaxonomyTermSetNameAndDescriptionMutation'
@@ -1066,6 +1085,7 @@ export function createSerloModel({
     rejectPageRevision,
     setDescription,
     setEmail,
+    setEntityLicense,
     setNotificationState,
     setSubscription,
     setTaxonomyTermNameAndDescription,

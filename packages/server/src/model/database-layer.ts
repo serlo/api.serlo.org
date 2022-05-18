@@ -36,7 +36,6 @@ import {
   PageDecoder,
   SubscriptionsDecoder,
   TaxonomyTermDecoder,
-  TaxonomyTypeCreateOptionsDecoder,
   Uuid,
   UuidDecoder,
 } from './decoder'
@@ -267,6 +266,15 @@ export const spec = {
     response: t.union([PageDecoder, t.undefined]),
     canBeNull: false,
   },
+  EntitySetLicenseMutation: {
+    payload: t.type({
+      entityId: t.number,
+      licenseId: t.number,
+      userId: t.number,
+    }),
+    response: t.type({ success: t.literal(true) }),
+    canBeNull: false,
+  },
   SubjectsQuery: {
     payload: t.type({}),
     response: t.strict({
@@ -311,7 +319,7 @@ export const spec = {
   },
   TaxonomyTermCreateMutation: {
     payload: t.type({
-      taxonomyType: TaxonomyTypeCreateOptionsDecoder,
+      taxonomyType: t.union([t.literal('topic'), t.literal('topic-folder')]),
       name: t.string,
       userId: t.number,
       description: t.union([t.string, t.null, t.undefined]),
