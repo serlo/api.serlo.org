@@ -1268,6 +1268,11 @@ async function exec(): Promise<void> {
           'Use default license when repository license is not supported #632',
         ],
       },
+      {
+        tagName: 'v0.34.0',
+        date: '2022-05-18',
+        added: ['Add entity.setLicense mutation #626'],
+      },
     ],
   })
 
