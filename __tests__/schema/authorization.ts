@@ -23,89 +23,74 @@ import { Scope, Thread } from '@serlo/authorization'
 import { gql } from 'apollo-server'
 
 import { user } from '../../__fixtures__'
-import {
-  assertSuccessfulGraphQLQuery,
-  createTestClient,
-  createUuidHandler,
-} from '../__utils__'
+import { given, Client } from '../__utils__'
 import { resolveRolesPayload, RolesPayload } from '~/schema/authorization/roles'
 import { Role } from '~/types'
 
 describe('authorization', () => {
   test('Guests', async () => {
-    const client = createTestClient()
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          authorization
-        }
-      `,
-      data: {
-        authorization: resolveRolesPayload({
-          [Scope.Serlo]: [Role.Guest],
-        }),
-      },
-      client,
-    })
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          {
+            authorization
+          }
+        `,
+      })
+      .shouldReturnData({
+        authorization: resolveRolesPayload({ [Scope.Serlo]: [Role.Guest] }),
+      })
   })
 
   test('Authenticated Users (no special roles)', async () => {
-    global.server.use(createUuidHandler({ ...user, roles: ['login'] }))
-    const client = createTestClient({ userId: user.id })
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          authorization
-        }
-      `,
-      data: {
-        authorization: resolveRolesPayload({
-          [Scope.Serlo]: [Role.Login],
-        }),
-      },
-      client,
-    })
+    given('UuidQuery').for({ ...user, roles: ['login'] })
+
+    await new Client({ userId: user.id })
+      .prepareQuery({
+        query: gql`
+          {
+            authorization
+          }
+        `,
+      })
+      .shouldReturnData({
+        authorization: resolveRolesPayload({ [Scope.Serlo]: [Role.Login] }),
+      })
   })
 
   test('Authenticated Users (filter old legacy roles)', async () => {
-    global.server.use(
-      createUuidHandler({ ...user, roles: ['login', 'german_moderator'] })
-    )
-    const client = createTestClient({ userId: user.id })
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          authorization
-        }
-      `,
-      data: {
-        authorization: resolveRolesPayload({
-          [Scope.Serlo]: [Role.Login],
-        }),
-      },
-      client,
-    })
+    given('UuidQuery').for({ ...user, roles: ['login', 'german_moderator'] })
+
+    await new Client({ userId: user.id })
+      .prepareQuery({
+        query: gql`
+          {
+            authorization
+          }
+        `,
+      })
+      .shouldReturnData({
+        authorization: resolveRolesPayload({ [Scope.Serlo]: [Role.Login] }),
+      })
   })
 
   test('Authenticated Users (map new legacy roles)', async () => {
-    global.server.use(
-      createUuidHandler({ ...user, roles: ['login', 'de_moderator'] })
-    )
-    const client = createTestClient({ userId: user.id })
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          authorization
-        }
-      `,
-      data: {
+    given('UuidQuery').for({ ...user, roles: ['login', 'de_moderator'] })
+
+    await new Client({ userId: user.id })
+      .prepareQuery({
+        query: gql`
+          {
+            authorization
+          }
+        `,
+      })
+      .shouldReturnData({
         authorization: resolveRolesPayload({
           [Scope.Serlo]: [Role.Login],
           [Scope.Serlo_De]: [Role.Moderator],
         }),
-      },
-      client,
-    })
+      })
   })
 })
 
