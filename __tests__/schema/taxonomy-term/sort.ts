@@ -42,7 +42,7 @@ const input = {
 const mutation = new Client({ userId: user.id })
   .prepareQuery({
     query: gql`
-      mutation ($input: TaxonomyTermSortInput!) {
+      mutation ($input: TaxonomySortInput!) {
         taxonomyTerm {
           sort(input: $input) {
             success
@@ -54,7 +54,7 @@ const mutation = new Client({ userId: user.id })
   .withVariables({ input })
 
 beforeEach(() => {
-  given('TaxonomyTermSortMutation').isDefinedBy((req, res, ctx) => {
+  given('TaxonomySortMutation').isDefinedBy((req, res, ctx) => {
     given('UuidQuery').for({
       ...taxonomyTerm,
       childrenIds: req.body.payload.childrenIds.map(castToUuid),
@@ -80,13 +80,13 @@ test('fails when user does not have role "architect"', async () => {
 })
 
 test('fails when database layer returns a 400er response', async () => {
-  given('TaxonomyTermSortMutation').returnsBadRequest()
+  given('TaxonomySortMutation').returnsBadRequest()
 
   await mutation.shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('fails when database layer has an internal error', async () => {
-  given('TaxonomyTermSortMutation').hasInternalServerError()
+  given('TaxonomySortMutation').hasInternalServerError()
 
   await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })

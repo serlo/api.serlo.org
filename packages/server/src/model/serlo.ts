@@ -983,9 +983,9 @@ export function createSerloModel({
   })
 
   const sortTaxonomyTerm = createMutation({
-    decoder: DatabaseLayer.getDecoderFor('TaxonomyTermSortMutation'),
-    mutate: (payload: DatabaseLayer.Payload<'TaxonomyTermSortMutation'>) => {
-      return DatabaseLayer.makeRequest('TaxonomyTermSortMutation', payload)
+    decoder: DatabaseLayer.getDecoderFor('TaxonomySortMutation'),
+    mutate: (payload: DatabaseLayer.Payload<'TaxonomySortMutation'>) => {
+      return DatabaseLayer.makeRequest('TaxonomySortMutation', payload)
     },
 
     async updateCache({ childrenIds, taxonomyTermId }, { success }) {
