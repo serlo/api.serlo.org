@@ -329,7 +329,7 @@ testCases.forEach((testCase) => {
       given('UuidQuery').for(guestUser)
 
       await mutationWithEntityId
-        .forClient(new Client({ userId: guestUser.id }))
+        .withContext({ userId: guestUser.id })
         .shouldFailWithError('FORBIDDEN')
     })
 
