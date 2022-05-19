@@ -337,7 +337,7 @@ export const spec = {
     response: t.type({ success: t.boolean }),
     canBeNull: false,
   },
-  TaxonomyTermSortMutation: {
+  TaxonomySortMutation: {
     payload: t.type({
       childrenIds: t.array(t.number),
       taxonomyTermId: t.number,

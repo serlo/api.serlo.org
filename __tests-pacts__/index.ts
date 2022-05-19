@@ -468,7 +468,7 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
-  TaxonomyTermSortMutation: {
+  TaxonomySortMutation: {
     examples: [
       [
         {
