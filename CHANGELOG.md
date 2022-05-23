@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.35.0](https://github.com/serlo/api.serlo.org/compare/v0.34.0..v0.35.0) - May 19, 2022
+
+### Added
+
+- Add taxonomyTerm.sort mutation #596
+
 ## [v0.34.0](https://github.com/serlo/api.serlo.org/compare/v0.33.1..v0.34.0) - May 18, 2022
 
 ### Added

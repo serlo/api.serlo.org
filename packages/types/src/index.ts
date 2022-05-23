@@ -2204,6 +2204,17 @@ export type TaxonomyEntityLinksResponse = {
   success: Scalars['Boolean'];
 };
 
+export type TaxonomySortInput = {
+  childrenIds: Array<Scalars['Int']>;
+  taxonomyTermId: Scalars['Int'];
+};
+
+export type TaxonomySortResponse = {
+  __typename?: 'TaxonomySortResponse';
+  query: Query;
+  success: Scalars['Boolean'];
+};
+
 export type TaxonomyTerm = AbstractNavigationChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'TaxonomyTerm';
   alias?: Maybe<Scalars['String']>;
@@ -2296,6 +2307,7 @@ export type TaxonomyTermMutation = {
   deleteEntityLinks: TaxonomyEntityLinksResponse;
   move: TaxonomyTermMoveResponse;
   setNameAndDescription: TaxonomyTermSetNameAndDescriptionResponse;
+  sort: TaxonomySortResponse;
 };
 
 
@@ -2321,6 +2333,11 @@ export type TaxonomyTermMutationMoveArgs = {
 
 export type TaxonomyTermMutationSetNameAndDescriptionArgs = {
   input: TaxonomyTermSetNameAndDescriptionInput;
+};
+
+
+export type TaxonomyTermMutationSortArgs = {
+  input: TaxonomySortInput;
 };
 
 export type TaxonomyTermSetNameAndDescriptionInput = {
