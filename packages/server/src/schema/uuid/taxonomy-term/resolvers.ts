@@ -230,6 +230,32 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
       return { success, query: {} }
     },
 
+    async sort(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const { childrenIds, taxonomyTermId } = input
+
+      const scope = await fetchScopeOfUuid({
+        id: taxonomyTermId,
+        dataSources,
+      })
+
+      await assertUserIsAuthorized({
+        userId,
+        dataSources,
+        message: 'You are not allowed to sort terms of this taxonomy term.',
+        guard: serloAuth.TaxonomyTerm.change(scope),
+      })
+
+      const { success } = await dataSources.model.serlo.sortTaxonomyTerm({
+        childrenIds,
+        taxonomyTermId,
+        userId,
+      })
+
+      return { success, query: {} }
+    },
+
     async setNameAndDescription(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 

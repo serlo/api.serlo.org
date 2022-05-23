@@ -468,6 +468,20 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  TaxonomySortMutation: {
+    examples: [
+      [
+        {
+          taxonomyTermId: 77625,
+          childrenIds: [71649, 77992, 77989, 133567, 133613],
+          userId: user.id,
+        },
+        {
+          success: true,
+        },
+      ],
+    ],
+  },
   ThreadCreateCommentMutation: {
     examples: [
       [
