@@ -1659,11 +1659,11 @@ export type PageMutationRejectRevisionArgs = {
 
 export type PageQuery = {
   __typename?: 'PageQuery';
-  getPages: PagesResponse;
+  pages: PagesResponse;
 };
 
 
-export type PageQueryGetPagesArgs = {
+export type PageQueryPagesArgs = {
   input: PagesInput;
 };
 
@@ -4217,7 +4217,7 @@ export type PageMutationResolvers<ContextType = Context, ParentType extends Reso
 };
 
 export type PageQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageQuery'] = ResolversParentTypes['PageQuery']> = {
-  getPages?: Resolver<ResolversTypes['PagesResponse'], ParentType, ContextType, RequireFields<PageQueryGetPagesArgs, 'input'>>;
+  pages?: Resolver<ResolversTypes['PagesResponse'], ParentType, ContextType, RequireFields<PageQueryPagesArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
