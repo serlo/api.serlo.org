@@ -28,9 +28,9 @@ import { Instance } from '~/types'
 
 const mutation = new Client({ userId: user.id }).prepareQuery({
   query: gql`
-    mutation ($input: EntitySetLicenseInput!) {
+    mutation ($input: EntityUpdateLicenseInput!) {
       entity {
-        setLicense(input: $input) {
+        updateLicense(input: $input) {
           success
         }
       }
@@ -59,7 +59,7 @@ beforeEach(() => {
 
 test('returns "{ success: true }" when mutation could be successfully executed', async () => {
   await mutation.shouldReturnData({
-    entity: { setLicense: { success: true } },
+    entity: { updateLicense: { success: true } },
   })
 
   await new Client()
