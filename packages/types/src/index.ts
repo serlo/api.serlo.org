@@ -1653,6 +1653,16 @@ export type PageMutationRejectRevisionArgs = {
   input: RejectRevisionInput;
 };
 
+export type PageQuery = {
+  __typename?: 'PageQuery';
+  getPages: PagesResponse;
+};
+
+
+export type PageQueryGetPagesArgs = {
+  input: PagesInput;
+};
+
 export type PageRevision = AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'PageRevision';
   alias?: Maybe<Scalars['String']>;
@@ -1701,6 +1711,17 @@ export type PageRevisionCursor = {
   node: PageRevision;
 };
 
+export type PagesInput = {
+  instance?: InputMaybe<Instance>;
+};
+
+export type PagesResponse = {
+  __typename?: 'PagesResponse';
+  pages: Array<Maybe<Page>>;
+  query: Query;
+  success: Scalars['Boolean'];
+};
+
 export type Query = {
   __typename?: 'Query';
   activeAuthors: UserConnection;
@@ -1713,6 +1734,7 @@ export type Query = {
   metadata: MetadataQuery;
   notificationEvent?: Maybe<AbstractNotificationEvent>;
   notifications: NotificationConnection;
+  page?: Maybe<PageQuery>;
   subject: SubjectQuery;
   subscription: SubscriptionQuery;
   thread: ThreadQuery;

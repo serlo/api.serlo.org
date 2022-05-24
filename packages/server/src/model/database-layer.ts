@@ -266,6 +266,20 @@ export const spec = {
     response: t.union([PageDecoder, t.undefined]),
     canBeNull: false,
   },
+  PageQuery: {
+    payload: t.type({
+      instance: t.union([InstanceDecoder, t.null])
+    }),
+    response: t.type({
+      pages: t.array(
+        t.type({
+          id: t.number,
+        })
+      ),
+      success: t.literal(true)
+    }),
+    canBeNull: false,
+  },
   EntitySetLicenseMutation: {
     payload: t.type({
       entityId: t.number,
