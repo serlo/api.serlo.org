@@ -1273,6 +1273,11 @@ async function exec(): Promise<void> {
         date: '2022-05-18',
         added: ['Add entity.setLicense mutation #626'],
       },
+      {
+        tagName: 'v0.35.0',
+        date: '2022-05-19',
+        added: ['Add taxonomyTerm.sort mutation #596'],
+      },
     ],
   })
 

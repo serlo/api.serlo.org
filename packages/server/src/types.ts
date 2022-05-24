@@ -2230,6 +2230,17 @@ export type TaxonomyEntityLinksResponse = {
   success: Scalars['Boolean'];
 };
 
+export type TaxonomySortInput = {
+  childrenIds: Array<Scalars['Int']>;
+  taxonomyTermId: Scalars['Int'];
+};
+
+export type TaxonomySortResponse = {
+  __typename?: 'TaxonomySortResponse';
+  query: Query;
+  success: Scalars['Boolean'];
+};
+
 export type TaxonomyTerm = AbstractNavigationChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'TaxonomyTerm';
   alias?: Maybe<Scalars['String']>;
@@ -2322,6 +2333,7 @@ export type TaxonomyTermMutation = {
   deleteEntityLinks: TaxonomyEntityLinksResponse;
   move: TaxonomyTermMoveResponse;
   setNameAndDescription: TaxonomyTermSetNameAndDescriptionResponse;
+  sort: TaxonomySortResponse;
 };
 
 
@@ -2347,6 +2359,11 @@ export type TaxonomyTermMutationMoveArgs = {
 
 export type TaxonomyTermMutationSetNameAndDescriptionArgs = {
   input: TaxonomyTermSetNameAndDescriptionInput;
+};
+
+
+export type TaxonomyTermMutationSortArgs = {
+  input: TaxonomySortInput;
 };
 
 export type TaxonomyTermSetNameAndDescriptionInput = {
@@ -3074,6 +3091,8 @@ export type ResolversTypes = {
   SubscriptionSetResponse: ResolverTypeWrapper<ModelOf<SubscriptionSetResponse>>;
   TaxonomyEntityLinksInput: ResolverTypeWrapper<ModelOf<TaxonomyEntityLinksInput>>;
   TaxonomyEntityLinksResponse: ResolverTypeWrapper<ModelOf<TaxonomyEntityLinksResponse>>;
+  TaxonomySortInput: ResolverTypeWrapper<ModelOf<TaxonomySortInput>>;
+  TaxonomySortResponse: ResolverTypeWrapper<ModelOf<TaxonomySortResponse>>;
   TaxonomyTerm: ResolverTypeWrapper<ModelOf<TaxonomyTerm>>;
   TaxonomyTermConnection: ResolverTypeWrapper<ModelOf<TaxonomyTermConnection>>;
   TaxonomyTermCreateInput: ResolverTypeWrapper<ModelOf<TaxonomyTermCreateInput>>;
@@ -3279,6 +3298,8 @@ export type ResolversParentTypes = {
   SubscriptionSetResponse: ModelOf<SubscriptionSetResponse>;
   TaxonomyEntityLinksInput: ModelOf<TaxonomyEntityLinksInput>;
   TaxonomyEntityLinksResponse: ModelOf<TaxonomyEntityLinksResponse>;
+  TaxonomySortInput: ModelOf<TaxonomySortInput>;
+  TaxonomySortResponse: ModelOf<TaxonomySortResponse>;
   TaxonomyTerm: ModelOf<TaxonomyTerm>;
   TaxonomyTermConnection: ModelOf<TaxonomyTermConnection>;
   TaxonomyTermCreateInput: ModelOf<TaxonomyTermCreateInput>;
@@ -4496,6 +4517,12 @@ export type TaxonomyEntityLinksResponseResolvers<ContextType = Context, ParentTy
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type TaxonomySortResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomySortResponse'] = ResolversParentTypes['TaxonomySortResponse']> = {
+  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type TaxonomyTermResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTerm'] = ResolversParentTypes['TaxonomyTerm']> = {
   alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   children?: Resolver<ResolversTypes['AbstractUuidConnection'], ParentType, ContextType, Partial<TaxonomyTermChildrenArgs>>;
@@ -4547,6 +4574,7 @@ export type TaxonomyTermMutationResolvers<ContextType = Context, ParentType exte
   deleteEntityLinks?: Resolver<ResolversTypes['TaxonomyEntityLinksResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationDeleteEntityLinksArgs, 'input'>>;
   move?: Resolver<ResolversTypes['TaxonomyTermMoveResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationMoveArgs, 'input'>>;
   setNameAndDescription?: Resolver<ResolversTypes['TaxonomyTermSetNameAndDescriptionResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationSetNameAndDescriptionArgs, 'input'>>;
+  sort?: Resolver<ResolversTypes['TaxonomySortResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationSortArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4907,6 +4935,7 @@ export type Resolvers<ContextType = Context> = {
   SubscriptionQuery?: SubscriptionQueryResolvers<ContextType>;
   SubscriptionSetResponse?: SubscriptionSetResponseResolvers<ContextType>;
   TaxonomyEntityLinksResponse?: TaxonomyEntityLinksResponseResolvers<ContextType>;
+  TaxonomySortResponse?: TaxonomySortResponseResolvers<ContextType>;
   TaxonomyTerm?: TaxonomyTermResolvers<ContextType>;
   TaxonomyTermConnection?: TaxonomyTermConnectionResolvers<ContextType>;
   TaxonomyTermCreateResponse?: TaxonomyTermCreateResponseResolvers<ContextType>;
