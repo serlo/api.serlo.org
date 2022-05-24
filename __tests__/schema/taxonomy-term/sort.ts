@@ -42,7 +42,7 @@ const input = {
 const mutation = new Client({ userId: user.id })
   .prepareQuery({
     query: gql`
-      mutation ($input: TaxonomySortInput!) {
+      mutation ($input: TaxonomyTermSortInput!) {
         taxonomyTerm {
           sort(input: $input) {
             success

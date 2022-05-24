@@ -61,7 +61,7 @@ type TaxonomyTermMutation {
     input: TaxonomyEntityLinksInput!
   ): TaxonomyEntityLinksResponse!
   move(input: TaxonomyTermMoveInput!): TaxonomyTermMoveResponse!
-  sort(input: TaxonomySortInput!): TaxonomySortResponse!
+  sort(input: TaxonomyTermSortInput!): TaxonomyTermSortResponse!
   setNameAndDescription(
     input: TaxonomyTermSetNameAndDescriptionInput!
   ): TaxonomyTermSetNameAndDescriptionResponse!
@@ -105,12 +105,12 @@ type TaxonomyTermMoveResponse {
   query: Query!
 }
 
-input TaxonomySortInput {
+input TaxonomyTermSortInput {
   childrenIds: [Int!]!
   taxonomyTermId: Int!
 }
 
-type TaxonomySortResponse {
+type TaxonomyTermSortResponse {
   success: Boolean!
   query: Query!
 }
