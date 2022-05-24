@@ -27,7 +27,7 @@ import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   createNamespace,
-  Mutations,
+  Mutations, Queries,
   TypeResolvers,
 } from '~/internals/graphql'
 import { castToUuid, PageDecoder, PageRevisionDecoder } from '~/model/decoder'
@@ -36,11 +36,15 @@ import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
-import { Page, PageRevision } from '~/types'
+import {Instance, Page, PageRevision} from '~/types'
 
 export const resolvers: TypeResolvers<Page> &
   TypeResolvers<PageRevision> &
+  Queries<'page'> &
   Mutations<'page'> = {
+  Query: {
+    page: createNamespace(),
+  },
   Mutation: {
     page: createNamespace(),
   },
@@ -148,4 +152,24 @@ export const resolvers: TypeResolvers<Page> &
       return { success: true, query: {} }
     },
   },
+  PageQuery: {
+    async getPages(_parent, payload, { dataSources }) {
+
+      const { input } = payload
+      const { pages } =
+        await dataSources.model.serlo.getPages({
+          input.instance,
+        })
+      const nodes = await Promise.all(
+        pages.map(async (node) => {
+          return {
+            page: await dataSources.model.serlo.getUuidWithCustomDecoder({
+              id: node.id,
+              decoder: PageDecoder,
+            })
+          }
+        })
+      )
+    }
+  }
 }

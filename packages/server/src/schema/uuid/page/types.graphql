@@ -82,6 +82,14 @@ type PageMutation {
   rejectRevision(input: RejectRevisionInput!): RejectRevisionResponse!
 }
 
+extend type Query {
+  page: PageQuery
+}
+
+type PageQuery {
+  getPages(input: PagesInput!): PagesResponse!
+}
+
 input PageAddRevisionInput {
   content: String!
   pageId: Int!
@@ -105,6 +113,16 @@ input CreatePageInput {
 
 type PageCreateResponse {
   record: Page
+  success: Boolean!
+  query: Query!
+}
+
+input PagesInput {
+  instance: Instance
+}
+
+type PagesResponse {
+  pages: [Page]!
   success: Boolean!
   query: Query!
 }
