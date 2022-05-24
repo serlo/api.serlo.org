@@ -235,20 +235,28 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
 
       const { childrenIds, taxonomyTermId } = input
 
-      const scope = await fetchScopeOfUuid({
-        id: taxonomyTermId,
-        dataSources,
-      })
+      const taxonomyTerm =
+        await dataSources.model.serlo.getUuidWithCustomDecoder({
+          id: taxonomyTermId,
+          decoder: TaxonomyTermDecoder,
+        })
 
       await assertUserIsAuthorized({
         userId,
         dataSources,
         message: 'You are not allowed to sort terms of this taxonomy term.',
-        guard: serloAuth.TaxonomyTerm.change(scope),
+        guard: serloAuth.TaxonomyTerm.change(
+          serloAuth.instanceToScope(taxonomyTerm.instance)
+        ),
       })
 
+      // Maybe provisory solution, See #643
+      const allChildrenIds = [
+        ...new Set(childrenIds.concat(taxonomyTerm.childrenIds)),
+      ]
+
       const { success } = await dataSources.model.serlo.sortTaxonomyTerm({
-        childrenIds,
+        childrenIds: allChildrenIds,
         taxonomyTermId,
         userId,
       })
