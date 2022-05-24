@@ -913,9 +913,9 @@ export type EntityMutation = {
   setExercise: SetEntityResponse;
   setExerciseGroup: SetEntityResponse;
   setGroupedExercise: SetEntityResponse;
-  setLicense: EntitySetLicenseResponse;
   setSolution: SetEntityResponse;
   setVideo: SetEntityResponse;
+  updateLicense: EntityUpdateLicenseResponse;
 };
 
 
@@ -969,11 +969,6 @@ export type EntityMutationSetGroupedExerciseArgs = {
 };
 
 
-export type EntityMutationSetLicenseArgs = {
-  input: EntitySetLicenseInput;
-};
-
-
 export type EntityMutationSetSolutionArgs = {
   input: SetGenericEntityInput;
 };
@@ -981,6 +976,11 @@ export type EntityMutationSetSolutionArgs = {
 
 export type EntityMutationSetVideoArgs = {
   input: SetVideoInput;
+};
+
+
+export type EntityMutationUpdateLicenseArgs = {
+  input: EntityUpdateLicenseInput;
 };
 
 export type EntityQuery = {
@@ -995,13 +995,13 @@ export type EntityQueryDeletedEntitiesArgs = {
   instance?: InputMaybe<Instance>;
 };
 
-export type EntitySetLicenseInput = {
+export type EntityUpdateLicenseInput = {
   entityId: Scalars['Int'];
   licenseId: Scalars['Int'];
 };
 
-export type EntitySetLicenseResponse = {
-  __typename?: 'EntitySetLicenseResponse';
+export type EntityUpdateLicenseResponse = {
+  __typename?: 'EntityUpdateLicenseResponse';
   query: Query;
   success: Scalars['Boolean'];
 };
