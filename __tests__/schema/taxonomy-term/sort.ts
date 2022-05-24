@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
+import { gql, UserInputError } from 'apollo-server'
 
 import {
   article,
@@ -51,24 +51,43 @@ const mutation = new Client({ userId: user.id })
       }
     `,
   })
-  .withVariables({ input })
+  .withInput(input)
 
 beforeEach(() => {
+  given('UuidQuery').for(user, taxonomyTerm)
+
   given('TaxonomySortMutation').isDefinedBy((req, res, ctx) => {
+    const { childrenIds } = req.body.payload
+    if (
+      [...childrenIds].sort().join(',') !==
+      [...taxonomyTerm.childrenIds].sort().join(',')
+    ) {
+      throw new UserInputError(
+        'children_ids have to match the current entities ids linked to the taxonomy_term_id'
+      )
+    }
+
     given('UuidQuery').for({
       ...taxonomyTerm,
-      childrenIds: req.body.payload.childrenIds.map(castToUuid),
+      childrenIds: childrenIds.map(castToUuid),
     })
 
     return res(ctx.json({ success: true }))
   })
-  given('UuidQuery').for(user, taxonomyTerm)
 })
 
 test('returns "{ success: true }" when mutation could be successfully executed', async () => {
   await mutation.shouldReturnData({
     taxonomyTerm: { sort: { success: true } },
   })
+})
+
+test('is successful even though user have not sent all children ids', async () => {
+  await mutation
+    .withInput({ ...input, childrenIds: [1394, 23453].map(castToUuid) })
+    .shouldReturnData({
+      taxonomyTerm: { sort: { success: true } },
+    })
 })
 
 test('fails when user is not authenticated', async () => {
@@ -93,8 +112,6 @@ test('fails when database layer has an internal error', async () => {
 
 test('updates the cache', async () => {
   given('UuidQuery').for(
-    user,
-    taxonomyTerm,
     { ...article, id: castToUuid(1394) },
     { ...taxonomyTermSubject, id: castToUuid(23453) },
     { ...article, id: castToUuid(1454) }
