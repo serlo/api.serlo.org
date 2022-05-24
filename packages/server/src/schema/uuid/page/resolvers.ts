@@ -36,7 +36,7 @@ import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
-import {Instance, Page, PageRevision} from '~/types'
+import {Page, PageRevision} from '~/types'
 
 export const resolvers: TypeResolvers<Page> &
   TypeResolvers<PageRevision> &
@@ -153,23 +153,22 @@ export const resolvers: TypeResolvers<Page> &
     },
   },
   PageQuery: {
-    async getPages(_parent, payload, { dataSources }) {
+    async pages(_parent, payload, { dataSources }) {
 
-      const { input } = payload
       const { pages } =
         await dataSources.model.serlo.getPages({
-          input.instance,
+          instance: payload.input.instance,
         })
-      const nodes = await Promise.all(
-        pages.map(async (node) => {
-          return {
-            page: await dataSources.model.serlo.getUuidWithCustomDecoder({
-              id: node.id,
-              decoder: PageDecoder,
-            })
-          }
+      const response = await Promise.all(
+        pages.map(async (id: number ) => {
+          return await dataSources.model.serlo.getUuidWithCustomDecoder({
+            id: id,
+            decoder: PageDecoder,
+          })
         })
       )
+
+      return { success: true, pages: response, query: {}}
     }
   }
 }

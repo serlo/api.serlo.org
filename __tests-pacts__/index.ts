@@ -356,7 +356,6 @@ const pactSpec: PactSpec = {
   },
   PageQuery: {
     examples: [
-      /*
       [
         {
           instance: Instance.En
@@ -375,12 +374,9 @@ const pactSpec: PactSpec = {
             27469,
             32840,
             32966
-
           ]
         },
       ]
-
-       */
     ]
   },
   SubjectsQuery: {

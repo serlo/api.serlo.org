@@ -1655,11 +1655,11 @@ export type PageMutationRejectRevisionArgs = {
 
 export type PageQuery = {
   __typename?: 'PageQuery';
-  getPages: PagesResponse;
+  pages: PagesResponse;
 };
 
 
-export type PageQueryGetPagesArgs = {
+export type PageQueryPagesArgs = {
   input: PagesInput;
 };
 

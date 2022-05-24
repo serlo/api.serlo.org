@@ -87,7 +87,7 @@ extend type Query {
 }
 
 type PageQuery {
-  getPages(input: PagesInput!): PagesResponse!
+  pages(input: PagesInput!): PagesResponse!
 }
 
 input PageAddRevisionInput {
