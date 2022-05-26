@@ -472,8 +472,8 @@ const pactSpec: PactSpec = {
     examples: [
       [
         {
-          taxonomyTermId: 77625,
-          childrenIds: [71649, 77992, 77989, 133567, 133613],
+          taxonomyTermId: 1338,
+          childrenIds: [1557, 1553, 2107, 24398, 30560],
           userId: user.id,
         },
         {
