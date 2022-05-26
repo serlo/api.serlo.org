@@ -473,7 +473,7 @@ const pactSpec: PactSpec = {
       [
         {
           taxonomyTermId: 1338,
-          childrenIds: [1553, 2107, 30560, 24398, 1557],
+          childrenIds: [1557, 1553, 2107, 24398, 30560],
           userId: user.id,
         },
         {
