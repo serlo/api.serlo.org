@@ -913,9 +913,9 @@ export type EntityMutation = {
   setExercise: SetEntityResponse;
   setExerciseGroup: SetEntityResponse;
   setGroupedExercise: SetEntityResponse;
-  setLicense: EntitySetLicenseResponse;
   setSolution: SetEntityResponse;
   setVideo: SetEntityResponse;
+  updateLicense: EntityUpdateLicenseResponse;
 };
 
 
@@ -969,11 +969,6 @@ export type EntityMutationSetGroupedExerciseArgs = {
 };
 
 
-export type EntityMutationSetLicenseArgs = {
-  input: EntitySetLicenseInput;
-};
-
-
 export type EntityMutationSetSolutionArgs = {
   input: SetGenericEntityInput;
 };
@@ -981,6 +976,11 @@ export type EntityMutationSetSolutionArgs = {
 
 export type EntityMutationSetVideoArgs = {
   input: SetVideoInput;
+};
+
+
+export type EntityMutationUpdateLicenseArgs = {
+  input: EntityUpdateLicenseInput;
 };
 
 export type EntityQuery = {
@@ -995,13 +995,13 @@ export type EntityQueryDeletedEntitiesArgs = {
   instance?: InputMaybe<Instance>;
 };
 
-export type EntitySetLicenseInput = {
+export type EntityUpdateLicenseInput = {
   entityId: Scalars['Int'];
   licenseId: Scalars['Int'];
 };
 
-export type EntitySetLicenseResponse = {
-  __typename?: 'EntitySetLicenseResponse';
+export type EntityUpdateLicenseResponse = {
+  __typename?: 'EntityUpdateLicenseResponse';
   query: Query;
   success: Scalars['Boolean'];
 };
@@ -2204,17 +2204,6 @@ export type TaxonomyEntityLinksResponse = {
   success: Scalars['Boolean'];
 };
 
-export type TaxonomySortInput = {
-  childrenIds: Array<Scalars['Int']>;
-  taxonomyTermId: Scalars['Int'];
-};
-
-export type TaxonomySortResponse = {
-  __typename?: 'TaxonomySortResponse';
-  query: Query;
-  success: Scalars['Boolean'];
-};
-
 export type TaxonomyTerm = AbstractNavigationChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'TaxonomyTerm';
   alias?: Maybe<Scalars['String']>;
@@ -2307,7 +2296,7 @@ export type TaxonomyTermMutation = {
   deleteEntityLinks: TaxonomyEntityLinksResponse;
   move: TaxonomyTermMoveResponse;
   setNameAndDescription: TaxonomyTermSetNameAndDescriptionResponse;
-  sort: TaxonomySortResponse;
+  sort: TaxonomyTermSortResponse;
 };
 
 
@@ -2337,7 +2326,7 @@ export type TaxonomyTermMutationSetNameAndDescriptionArgs = {
 
 
 export type TaxonomyTermMutationSortArgs = {
-  input: TaxonomySortInput;
+  input: TaxonomyTermSortInput;
 };
 
 export type TaxonomyTermSetNameAndDescriptionInput = {
@@ -2348,6 +2337,17 @@ export type TaxonomyTermSetNameAndDescriptionInput = {
 
 export type TaxonomyTermSetNameAndDescriptionResponse = {
   __typename?: 'TaxonomyTermSetNameAndDescriptionResponse';
+  query: Query;
+  success: Scalars['Boolean'];
+};
+
+export type TaxonomyTermSortInput = {
+  childrenIds: Array<Scalars['Int']>;
+  taxonomyTermId: Scalars['Int'];
+};
+
+export type TaxonomyTermSortResponse = {
+  __typename?: 'TaxonomyTermSortResponse';
   query: Query;
   success: Scalars['Boolean'];
 };
