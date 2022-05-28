@@ -21,12 +21,7 @@
  */
 import * as serloAuth from '@serlo/authorization'
 
-import {
-  assertIsTaxonomyTerm,
-  getTaxonomyTerm,
-  resolveTaxonomyTermPath,
-  verifyTaxonomyType,
-} from './utils'
+import { assertIsTaxonomyTerm, resolveTaxonomyTermPath } from './utils'
 import {
   TypeResolvers,
   Mutations,
@@ -124,10 +119,6 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
         message: 'You are not allowed create taxonomy terms.',
         guard: serloAuth.Uuid.create('TaxonomyTerm')(scope),
       })
-
-      const parent = await getTaxonomyTerm(parentId, dataSources)
-
-      verifyTaxonomyType(taxonomyType, parent.type)
 
       const taxonomyTerm = await dataSources.model.serlo.createTaxonomyTerm({
         parentId,
