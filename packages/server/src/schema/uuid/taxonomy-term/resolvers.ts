@@ -21,12 +21,7 @@
  */
 import * as serloAuth from '@serlo/authorization'
 
-import {
-  assertIsTaxonomyTerm,
-  getTaxonomyTerm,
-  resolveTaxonomyTermPath,
-  verifyTaxonomyType,
-} from './utils'
+import { assertIsTaxonomyTerm, resolveTaxonomyTermPath } from './utils'
 import {
   TypeResolvers,
   Mutations,
@@ -124,10 +119,6 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
         message: 'You are not allowed create taxonomy terms.',
         guard: serloAuth.Uuid.create('TaxonomyTerm')(scope),
       })
-
-      const parent = await getTaxonomyTerm(parentId, dataSources)
-
-      verifyTaxonomyType(taxonomyType, parent.type)
 
       const taxonomyTerm = await dataSources.model.serlo.createTaxonomyTerm({
         parentId,
@@ -235,20 +226,28 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
 
       const { childrenIds, taxonomyTermId } = input
 
-      const scope = await fetchScopeOfUuid({
-        id: taxonomyTermId,
-        dataSources,
-      })
+      const taxonomyTerm =
+        await dataSources.model.serlo.getUuidWithCustomDecoder({
+          id: taxonomyTermId,
+          decoder: TaxonomyTermDecoder,
+        })
 
       await assertUserIsAuthorized({
         userId,
         dataSources,
         message: 'You are not allowed to sort terms of this taxonomy term.',
-        guard: serloAuth.TaxonomyTerm.change(scope),
+        guard: serloAuth.TaxonomyTerm.change(
+          serloAuth.instanceToScope(taxonomyTerm.instance)
+        ),
       })
 
+      // Maybe provisory solution, See #643
+      const allChildrenIds = [
+        ...new Set(childrenIds.concat(taxonomyTerm.childrenIds)),
+      ]
+
       const { success } = await dataSources.model.serlo.sortTaxonomyTerm({
-        childrenIds,
+        childrenIds: allChildrenIds,
         taxonomyTermId,
         userId,
       })
