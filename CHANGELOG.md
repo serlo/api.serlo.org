@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.36.0](https://github.com/serlo/api.serlo.org/compare/v0.35.1..v0.36.0) - May 30, 2022
+
+### Changed
+
+- Rename autorization Entity.SetLicense to Entity.UpdateLicense #639
+
 ## [v0.35.1](https://github.com/serlo/api.serlo.org/compare/v0.35.0..v0.35.1) - May 28, 2022
 
 ### Changed
