@@ -1288,6 +1288,13 @@ async function exec(): Promise<void> {
           'Rename TaxomonySortInput to TaxonomyTermSortInput #641',
         ],
       },
+      {
+        tagName: 'v0.36.0',
+        date: '2022-05-30',
+        changed: [
+          'Rename autorization Entity.SetLicense to Entity.UpdateLicense #639',
+        ],
+      },
     ],
   })
 
