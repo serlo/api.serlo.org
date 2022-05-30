@@ -177,7 +177,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         userId,
         dataSources,
         message: 'You are not allowed to set the license for this entity.',
-        guard: serloAuth.Entity.setLicense(instanceToScope(entity.instance)),
+        guard: serloAuth.Entity.updateLicense(instanceToScope(entity.instance)),
       })
 
       if (entity.instance !== newLicense.instance) {
