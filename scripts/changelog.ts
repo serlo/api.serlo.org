@@ -1278,6 +1278,23 @@ async function exec(): Promise<void> {
         date: '2022-05-19',
         added: ['Add taxonomyTerm.sort mutation #596'],
       },
+      {
+        tagName: 'v0.35.1',
+        date: '2022-05-28',
+        changed: [
+          'Allow taxonomyTerm.create link to any parent #642',
+          'Allow taxonomyTerm.sort to send not all children ids #643',
+          'Rename entity.setLicense to entity.updateLicense #639',
+          'Rename TaxomonySortInput to TaxonomyTermSortInput #641',
+        ],
+      },
+      {
+        tagName: 'v0.36.0',
+        date: '2022-05-30',
+        changed: [
+          'Rename autorization Entity.SetLicense to Entity.UpdateLicense #639',
+        ],
+      },
     ],
   })
 

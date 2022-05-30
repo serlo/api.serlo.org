@@ -38,7 +38,7 @@ export function instanceToScope(instance: Instance | null): Scope {
 export enum Permission {
   Entity_CheckoutRevision = 'entity:checkoutRevision',
   Entity_RejectRevision = 'entity:rejectRevision',
-  Entity_SetLicense = 'entity:setLicense',
+  Entity_UpdateLicense = 'entity:updateLicense',
   Entity_AddChild = 'entity:addChild',
   Entity_RemoveChild = 'entity:removeChild',
   Entity_OrderChildren = 'entity:orderChildren',
@@ -104,7 +104,7 @@ function createPermissionGuard(
 export const Entity = {
   checkoutRevision: createPermissionGuard(Permission.Entity_CheckoutRevision),
   rejectRevision: createPermissionGuard(Permission.Entity_RejectRevision),
-  setLicense: createPermissionGuard(Permission.Entity_SetLicense),
+  updateLicense: createPermissionGuard(Permission.Entity_UpdateLicense),
   addChild: createPermissionGuard(Permission.Entity_AddChild),
   removeChild: createPermissionGuard(Permission.Entity_RemoveChild),
   orderChildren: createPermissionGuard(Permission.Entity_OrderChildren),

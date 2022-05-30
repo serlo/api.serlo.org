@@ -26,36 +26,6 @@ import * as t from 'io-ts'
 import { InvalidCurrentValueError } from '~/internals/data-source-helper'
 import { Context, Model } from '~/internals/graphql'
 import { TaxonomyTermDecoder } from '~/model/decoder'
-import { TaxonomyTermType, TaxonomyTypeCreateOptions } from '~/types'
-
-export function verifyTaxonomyType(
-  type: TaxonomyTypeCreateOptions,
-  parentType: TaxonomyTermType
-) {
-  // based on https://github.com/serlo/serlo.org-database-layer/blob/2a3db9d106bf0b6140c4e8eba12ac5adaec51112/server/src/vocabulary/model.rs#L272-L276
-  const childType = {
-    topic: {
-      allowedParentTaxonomyTypes: [
-        TaxonomyTermType.Subject,
-        TaxonomyTermType.Topic,
-        TaxonomyTermType.Curriculum,
-        TaxonomyTermType.CurriculumTopic,
-      ],
-    },
-    topicFolder: {
-      allowedParentTaxonomyTypes: [
-        TaxonomyTermType.Topic,
-        TaxonomyTermType.CurriculumTopic,
-      ],
-    },
-  }
-
-  if (!childType[type].allowedParentTaxonomyTypes.includes(parentType)) {
-    throw new UserInputError(
-      `Child of type ${type} cannot have parent of type ${parentType}`
-    )
-  }
-}
 
 export async function resolveTaxonomyTermPath(
   parent: Model<'TaxonomyTerm'>,
@@ -75,18 +45,6 @@ export async function resolveTaxonomyTermPath(
   }
 
   return path
-}
-
-export async function getTaxonomyTerm(
-  id: number,
-  dataSources: Context['dataSources']
-) {
-  await assertIsTaxonomyTerm(id, dataSources)
-
-  return await dataSources.model.serlo.getUuidWithCustomDecoder({
-    id,
-    decoder: TaxonomyTermDecoder,
-  })
 }
 
 export async function assertIsTaxonomyTerm(

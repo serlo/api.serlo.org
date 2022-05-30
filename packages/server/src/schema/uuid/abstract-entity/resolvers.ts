@@ -144,7 +144,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     }),
     setVideo: createSetEntityResolver({
       entityType: EntityType.Video,
-      mandatoryFieldKeys: ['changes', 'title', 'url', 'title'],
+      mandatoryFieldKeys: ['changes', 'title', 'url'],
       transformedInput: (input) => {
         return {
           ...input,
@@ -155,7 +155,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       },
     }),
 
-    async setLicense(_parent, { input }, { dataSources, userId }) {
+    async updateLicense(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
       const { licenseId, entityId } = input
@@ -177,7 +177,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         userId,
         dataSources,
         message: 'You are not allowed to set the license for this entity.',
-        guard: serloAuth.Entity.setLicense(instanceToScope(entity.instance)),
+        guard: serloAuth.Entity.updateLicense(instanceToScope(entity.instance)),
       })
 
       if (entity.instance !== newLicense.instance) {

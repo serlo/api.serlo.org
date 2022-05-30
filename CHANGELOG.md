@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.36.0](https://github.com/serlo/api.serlo.org/compare/v0.35.1..v0.36.0) - May 30, 2022
+
+### Changed
+
+- Rename autorization Entity.SetLicense to Entity.UpdateLicense #639
+
+## [v0.35.1](https://github.com/serlo/api.serlo.org/compare/v0.35.0..v0.35.1) - May 28, 2022
+
+### Changed
+
+- Allow taxonomyTerm.create link to any parent #642
+
+- Allow taxonomyTerm.sort to send not all children ids #643
+
+- Rename entity.setLicense to entity.updateLicense #639
+
+- Rename TaxomonySortInput to TaxonomyTermSortInput #641
+
 ## [v0.35.0](https://github.com/serlo/api.serlo.org/compare/v0.34.0..v0.35.0) - May 19, 2022
 
 ### Added

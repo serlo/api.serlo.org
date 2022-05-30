@@ -99,7 +99,7 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
   [Role.Admin]: {
     extends: [Role.Moderator, Role.Reviewer, Role.Architect],
     permissions: [
-      Permission.Entity_SetLicense,
+      Permission.Entity_UpdateLicense,
       Permission.File_Delete,
       Permission.License_Create,
       Permission.License_Delete,
