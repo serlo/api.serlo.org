@@ -488,8 +488,8 @@ const pactSpec: PactSpec = {
     examples: [
       [
         {
-          taxonomyTermId: 77625,
-          childrenIds: [71649, 77992, 77989, 133567, 133613],
+          taxonomyTermId: 1338,
+          childrenIds: [1557, 1553, 2107, 24398, 30560],
           userId: user.id,
         },
         {
@@ -566,7 +566,7 @@ const pactSpec: PactSpec = {
   UserDeleteBotsMutation: { examples: [] },
   UserDeleteRegularUsersMutation: {
     examples: [],
-    // TODO: uncomment when Database Layer handles UserDeleteRegularUsersMutation
+    // TODO: here it is named userId, in DB layer just id, adjust
     // examples: [[{ userId: user.id }, { success: true }]],
   },
   UserSetDescriptionMutation: {
