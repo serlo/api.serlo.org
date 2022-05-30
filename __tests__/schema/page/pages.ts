@@ -21,17 +21,16 @@
  */
 
 import { gql } from 'apollo-server'
-import { page as basePage } from "../../../__fixtures__";
-import {given, Client, Query, nextUuid} from '../../__utils__'
+
+import { page as basePage } from '../../../__fixtures__'
+import { given, Client, Query, nextUuid } from '../../__utils__'
 import { Instance } from '~/types'
 
 let client: Client
 let query: Query
 
-
-
-const page = { ...basePage, instance: Instance.En}
-const page2 = { ...basePage, id: nextUuid(page.id)}
+const page = { ...basePage, instance: Instance.En }
+const page2 = { ...basePage, id: nextUuid(page.id) }
 
 beforeEach(() => {
   client = new Client()
@@ -42,47 +41,51 @@ beforeEach(() => {
         page {
           pages(input: $input) {
             success
-              pages {
-                id
-              }
+            pages {
+              id
+            }
           }
         }
       }
     `,
-    variables: { input: {}}
+    variables: { input: {} },
   })
 
   given('UuidQuery').for(page, page2)
   given('PageQuery').isDefinedBy((req, res, ctx) => {
     const { instance } = req.body.payload
 
-    if (instance === Instance.En){
-      return res(ctx.json({success: true, pages: [page]}))
+    if (instance === Instance.En) {
+      return res(ctx.json({ success: true, pages: [page] }))
     }
-    return res(ctx.json({success: true, pages: [page, page2] }))
+    return res(ctx.json({ success: true, pages: [page, page2] }))
   })
 })
 
 test('returns all pages', async () => {
-  await query.withVariables({input: {instance: Instance.En}}).shouldReturnData({
-    page: {
-      pages: {
-        success: true,
-        pages: [page, page2]
-      }
-    },
-  })
+  await query
+    .withVariables({ input: { instance: Instance.En } })
+    .shouldReturnData({
+      page: {
+        pages: {
+          success: true,
+          pages: [page, page2],
+        },
+      },
+    })
 })
 
 test('returns english pages', async () => {
-  await query.withVariables({input: {instance: Instance.En}}).shouldReturnData({
-    page: {
-      pages: {
-        success: true,
-        pages: [page]
-      }
-    },
-  })
+  await query
+    .withVariables({ input: { instance: Instance.En } })
+    .shouldReturnData({
+      page: {
+        pages: {
+          success: true,
+          pages: [page],
+        },
+      },
+    })
 })
 
 test('fails when database layer has an internal error', async () => {
