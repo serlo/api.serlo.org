@@ -63,7 +63,7 @@ beforeEach(() => {
   })
 })
 
-test('returns pages', async () => {
+test('returns all pages', async () => {
   await query.withVariables({input: {instance: Instance.En}}).shouldReturnData({
     page: {
       pages: {
@@ -83,4 +83,10 @@ test('returns english pages', async () => {
       }
     },
   })
+})
+
+test('fails when database layer has an internal error', async () => {
+  given('PageQuery').hasInternalServerError()
+
+  await query.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
