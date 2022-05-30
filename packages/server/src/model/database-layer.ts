@@ -268,13 +268,11 @@ export const spec = {
   },
   PageQuery: {
     payload: t.type({
-      instance: t.union([InstanceDecoder, t.undefined])
+      instance: t.union([InstanceDecoder, t.undefined]),
     }),
     response: t.type({
-      pages: t.array(
-          t.number,
-      ),
-      success: t.literal(true)
+      pages: t.array(t.number),
+      success: t.literal(true),
     }),
     canBeNull: false,
   },

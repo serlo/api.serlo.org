@@ -1024,7 +1024,7 @@ export function createSerloModel({
     decoder: DatabaseLayer.getDecoderFor('PageQuery'),
     async getCurrentValue(payload: DatabaseLayer.Payload<'PageQuery'>) {
       return DatabaseLayer.makeRequest('PageQuery', payload)
-    }
+    },
   })
 
   const setTaxonomyTermNameAndDescription = createMutation({
