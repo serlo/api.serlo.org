@@ -358,26 +358,17 @@ const pactSpec: PactSpec = {
     examples: [
       [
         {
-          instance: Instance.En
+          instance: Instance.En,
         },
         {
           success: true,
           pages: [
-            23579,
-            23580,
-            23591,
-            23711,
-            23720,
-            23727,
-            25079,
-            25082,
-            27469,
-            32840,
-            32966
-          ]
+            23579, 23580, 23591, 23711, 23720, 23727, 25079, 25082, 27469,
+            32840, 32966,
+          ],
         },
-      ]
-    ]
+      ],
+    ],
   },
   SubjectsQuery: {
     examples: [
