@@ -87,7 +87,10 @@ export class Query<
   }
 
   async shouldReturnData(data: unknown) {
-    expect(await this.execute()).toMatchObject({ data })
+    const result = await this.execute()
+
+    expect(result['errors']).toBeUndefined()
+    expect(result).toMatchObject({ data })
   }
 
   async shouldFailWithError(
