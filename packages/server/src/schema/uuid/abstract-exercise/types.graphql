@@ -4,7 +4,7 @@ interface AbstractExercise {
   trashed: Boolean!
   date: DateTime!
   instance: Instance!
-  alias: String
+  alias: String!
   license: License!
   currentRevision: AbstractExerciseRevision
   events(
@@ -22,7 +22,7 @@ interface AbstractExerciseRevision {
   # extends AbstractEntityRevision
   id: Int!
   trashed: Boolean!
-  alias: String
+  alias: String!
   author: User!
   date: DateTime!
   events(
