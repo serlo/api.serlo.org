@@ -19,6 +19,7 @@ type Event implements AbstractUuid & AbstractRepository & AbstractEntity & Abstr
   ): AbstractNotificationEventConnection!
   instance: Instance!
   alias: String!
+  title: String!
   date: DateTime!
   license: License!
   currentRevision: EventRevision

@@ -19,6 +19,7 @@ type Applet implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
   ): ThreadsConnection!
   instance: Instance!
   alias: String!
+  title: String!
   date: DateTime!
   license: License!
   currentRevision: AppletRevision

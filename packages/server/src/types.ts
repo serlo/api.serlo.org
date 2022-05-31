@@ -27,6 +27,7 @@ export type AbstractEntity = {
   instance: Instance;
   license: License;
   subject?: Maybe<Subject>;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -61,6 +62,7 @@ export type AbstractEntityRevision = {
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -83,6 +85,7 @@ export type AbstractExercise = {
   instance: Instance;
   license: License;
   solution?: Maybe<Solution>;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -104,6 +107,7 @@ export type AbstractExerciseRevision = {
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -150,6 +154,7 @@ export type AbstractRepository = {
   instance: Instance;
   license: License;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -181,6 +186,7 @@ export type AbstractRevision = {
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -212,6 +218,7 @@ export type AbstractTaxonomyTermChild = {
   instance: Instance;
   license: License;
   taxonomyTerms: TaxonomyTermConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -237,6 +244,7 @@ export type AbstractUuid = {
   alias: Scalars['String'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -297,6 +305,7 @@ export type Applet = AbstractEntity & AbstractRepository & AbstractTaxonomyTermC
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -402,6 +411,7 @@ export type Article = AbstractEntity & AbstractRepository & AbstractTaxonomyTerm
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -598,6 +608,7 @@ export type Course = AbstractEntity & AbstractRepository & AbstractTaxonomyTermC
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -657,6 +668,7 @@ export type CoursePage = AbstractEntity & AbstractRepository & AbstractUuid & In
   revisions: CoursePageRevisionConnection;
   subject?: Maybe<Subject>;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1023,6 +1035,7 @@ export type Event = AbstractEntity & AbstractRepository & AbstractTaxonomyTermCh
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1128,6 +1141,7 @@ export type Exercise = AbstractEntity & AbstractExercise & AbstractRepository & 
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1182,6 +1196,7 @@ export type ExerciseGroup = AbstractEntity & AbstractRepository & AbstractTaxono
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1234,6 +1249,7 @@ export type ExerciseGroupRevision = AbstractEntityRevision & AbstractRevision & 
   id: Scalars['Int'];
   repository: ExerciseGroup;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1282,6 +1298,7 @@ export type ExerciseRevision = AbstractEntityRevision & AbstractExerciseRevision
   id: Scalars['Int'];
   repository: Exercise;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1333,6 +1350,7 @@ export type GroupedExercise = AbstractEntity & AbstractExercise & AbstractReposi
   solution?: Maybe<Solution>;
   subject?: Maybe<Subject>;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1376,6 +1394,7 @@ export type GroupedExerciseRevision = AbstractEntityRevision & AbstractExerciseR
   id: Scalars['Int'];
   repository: GroupedExercise;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1576,6 +1595,7 @@ export type Page = AbstractNavigationChild & AbstractRepository & AbstractUuid &
   navigation?: Maybe<Navigation>;
   revisions: PageRevisionConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -2025,6 +2045,7 @@ export type Solution = AbstractEntity & AbstractRepository & AbstractUuid & Inst
   revisions: SolutionRevisionConnection;
   subject?: Maybe<Subject>;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -2068,6 +2089,7 @@ export type SolutionRevision = AbstractEntityRevision & AbstractRevision & Abstr
   id: Scalars['Int'];
   repository: Solution;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -2221,6 +2243,7 @@ export type TaxonomyTerm = AbstractNavigationChild & AbstractUuid & InstanceAwar
   parent?: Maybe<TaxonomyTerm>;
   taxonomyId: Scalars['Int'];
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
   type: TaxonomyTermType;
   weight: Scalars['Int'];
@@ -2548,6 +2571,7 @@ export type User = AbstractUuid & ThreadAware & {
   motivation?: Maybe<Scalars['String']>;
   roles: ScopedRoleConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
   unrevisedEntities: AbstractEntityConnection;
   username: Scalars['String'];
@@ -2735,6 +2759,7 @@ export type Video = AbstractEntity & AbstractRepository & AbstractTaxonomyTermCh
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -3331,6 +3356,7 @@ export type AbstractEntityResolvers<ContextType = Context, ParentType extends Re
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 };
 
@@ -3356,6 +3382,7 @@ export type AbstractEntityRevisionResolvers<ContextType = Context, ParentType ex
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AbstractEntityRevisionEventsArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 };
 
@@ -3369,6 +3396,7 @@ export type AbstractExerciseResolvers<ContextType = Context, ParentType extends 
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
   solution?: Resolver<Maybe<ResolversTypes['Solution']>, ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 };
 
@@ -3381,6 +3409,7 @@ export type AbstractExerciseRevisionResolvers<ContextType = Context, ParentType 
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AbstractExerciseRevisionEventsArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 };
 
@@ -3420,6 +3449,7 @@ export type AbstractRepositoryResolvers<ContextType = Context, ParentType extend
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<AbstractRepositoryThreadsArgs>>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 };
 
@@ -3432,6 +3462,7 @@ export type AbstractRevisionResolvers<ContextType = Context, ParentType extends 
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AbstractRevisionEventsArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<AbstractRevisionThreadsArgs>>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 };
 
@@ -3444,6 +3475,7 @@ export type AbstractTaxonomyTermChildResolvers<ContextType = Context, ParentType
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
   taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<AbstractTaxonomyTermChildTaxonomyTermsArgs>>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 };
 
@@ -3452,6 +3484,7 @@ export type AbstractUuidResolvers<ContextType = Context, ParentType extends Reso
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AbstractUuidEventsArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 };
 
@@ -3496,6 +3529,7 @@ export type AppletResolvers<ContextType = Context, ParentType extends ResolversP
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<AppletTaxonomyTermsArgs>>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<AppletThreadsArgs>>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -3544,6 +3578,7 @@ export type ArticleResolvers<ContextType = Context, ParentType extends Resolvers
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<ArticleTaxonomyTermsArgs>>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<ArticleThreadsArgs>>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -3655,6 +3690,7 @@ export type CourseResolvers<ContextType = Context, ParentType extends ResolversP
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<CourseTaxonomyTermsArgs>>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<CourseThreadsArgs>>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -3671,6 +3707,7 @@ export type CoursePageResolvers<ContextType = Context, ParentType extends Resolv
   revisions?: Resolver<ResolversTypes['CoursePageRevisionConnection'], ParentType, ContextType, Partial<CoursePageRevisionsArgs>>;
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<CoursePageThreadsArgs>>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -3886,6 +3923,7 @@ export type EventResolvers<ContextType = Context, ParentType extends ResolversPa
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<EventTaxonomyTermsArgs>>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<EventThreadsArgs>>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -3934,6 +3972,7 @@ export type ExerciseResolvers<ContextType = Context, ParentType extends Resolver
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<ExerciseTaxonomyTermsArgs>>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<ExerciseThreadsArgs>>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -3951,6 +3990,7 @@ export type ExerciseGroupResolvers<ContextType = Context, ParentType extends Res
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<ExerciseGroupTaxonomyTermsArgs>>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<ExerciseGroupThreadsArgs>>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -3966,6 +4006,7 @@ export type ExerciseGroupRevisionResolvers<ContextType = Context, ParentType ext
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['ExerciseGroup'], ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<ExerciseGroupRevisionThreadsArgs>>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -3994,6 +4035,7 @@ export type ExerciseRevisionResolvers<ContextType = Context, ParentType extends 
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['Exercise'], ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<ExerciseRevisionThreadsArgs>>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -4025,6 +4067,7 @@ export type GroupedExerciseResolvers<ContextType = Context, ParentType extends R
   solution?: Resolver<Maybe<ResolversTypes['Solution']>, ParentType, ContextType>;
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<GroupedExerciseThreadsArgs>>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -4039,6 +4082,7 @@ export type GroupedExerciseRevisionResolvers<ContextType = Context, ParentType e
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['GroupedExercise'], ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<GroupedExerciseRevisionThreadsArgs>>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -4182,6 +4226,7 @@ export type PageResolvers<ContextType = Context, ParentType extends ResolversPar
   navigation?: Resolver<Maybe<ResolversTypes['Navigation']>, ParentType, ContextType>;
   revisions?: Resolver<ResolversTypes['PageRevisionConnection'], ParentType, ContextType, Partial<PageRevisionsArgs>>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<PageThreadsArgs>>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -4388,6 +4433,7 @@ export type SolutionResolvers<ContextType = Context, ParentType extends Resolver
   revisions?: Resolver<ResolversTypes['SolutionRevisionConnection'], ParentType, ContextType, Partial<SolutionRevisionsArgs>>;
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<SolutionThreadsArgs>>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -4402,6 +4448,7 @@ export type SolutionRevisionResolvers<ContextType = Context, ParentType extends 
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['Solution'], ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<SolutionRevisionThreadsArgs>>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -4488,6 +4535,7 @@ export type TaxonomyTermResolvers<ContextType = Context, ParentType extends Reso
   parent?: Resolver<Maybe<ResolversTypes['TaxonomyTerm']>, ParentType, ContextType>;
   taxonomyId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<TaxonomyTermThreadsArgs>>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   type?: Resolver<ResolversTypes['TaxonomyTermType'], ParentType, ContextType>;
   weight?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -4637,6 +4685,7 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
   motivation?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   roles?: Resolver<ResolversTypes['ScopedRoleConnection'], ParentType, ContextType, Partial<UserRolesArgs>>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<UserThreadsArgs>>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   unrevisedEntities?: Resolver<ResolversTypes['AbstractEntityConnection'], ParentType, ContextType, Partial<UserUnrevisedEntitiesArgs>>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -4725,6 +4774,7 @@ export type VideoResolvers<ContextType = Context, ParentType extends ResolversPa
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<VideoTaxonomyTermsArgs>>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<VideoThreadsArgs>>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
