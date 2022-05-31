@@ -1021,9 +1021,9 @@ export function createSerloModel({
   })
 
   const getPages = createRequest({
-    decoder: DatabaseLayer.getDecoderFor('PageQuery'),
-    async getCurrentValue(payload: DatabaseLayer.Payload<'PageQuery'>) {
-      return DatabaseLayer.makeRequest('PageQuery', payload)
+    decoder: DatabaseLayer.getDecoderFor('PagesQuery'),
+    async getCurrentValue(payload: DatabaseLayer.Payload<'PagesQuery'>) {
+      return DatabaseLayer.makeRequest('PagesQuery', payload)
     },
   })
 

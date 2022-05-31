@@ -354,7 +354,7 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
-  PageQuery: {
+  PagesQuery: {
     examples: [
       [
         {
