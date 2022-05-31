@@ -266,7 +266,7 @@ export const spec = {
     response: t.union([PageDecoder, t.undefined]),
     canBeNull: false,
   },
-  PageQuery: {
+  PagesQuery: {
     payload: t.type({
       instance: t.union([InstanceDecoder, t.undefined]),
     }),

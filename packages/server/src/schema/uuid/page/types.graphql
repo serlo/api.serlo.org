@@ -83,11 +83,11 @@ type PageMutation {
 }
 
 extend type Query {
-  page: PageQuery
+  page: PageQuery!
 }
 
 type PageQuery {
-  pages(input: PagesInput!): PagesResponse!
+  pages(instance: Instance): PagesResponse!
 }
 
 input PageAddRevisionInput {
@@ -115,10 +115,6 @@ type PageCreateResponse {
   record: Page
   success: Boolean!
   query: Query!
-}
-
-input PagesInput {
-  instance: Instance
 }
 
 type PagesResponse {

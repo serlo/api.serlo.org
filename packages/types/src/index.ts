@@ -1660,7 +1660,7 @@ export type PageQuery = {
 
 
 export type PageQueryPagesArgs = {
-  input: PagesInput;
+  instance?: InputMaybe<Instance>;
 };
 
 export type PageRevision = AbstractRevision & AbstractUuid & ThreadAware & {
@@ -1711,10 +1711,6 @@ export type PageRevisionCursor = {
   node: PageRevision;
 };
 
-export type PagesInput = {
-  instance?: InputMaybe<Instance>;
-};
-
 export type PagesResponse = {
   __typename?: 'PagesResponse';
   pages: Array<Maybe<Page>>;
@@ -1734,7 +1730,7 @@ export type Query = {
   metadata: MetadataQuery;
   notificationEvent?: Maybe<AbstractNotificationEvent>;
   notifications: NotificationConnection;
-  page?: Maybe<PageQuery>;
+  page: PageQuery;
   subject: SubjectQuery;
   subscription: SubscriptionQuery;
   thread: ThreadQuery;

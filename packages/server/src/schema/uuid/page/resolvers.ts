@@ -156,7 +156,7 @@ export const resolvers: TypeResolvers<Page> &
   PageQuery: {
     async pages(_parent, payload, { dataSources }) {
       const { pages } = await dataSources.model.serlo.getPages({
-        instance: payload.input.instance,
+        instance: payload.instance,
       })
       const response = await Promise.all(
         pages.map(async (id: number) => {
