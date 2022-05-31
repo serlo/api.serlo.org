@@ -20,7 +20,7 @@ export type Scalars = {
 };
 
 export type AbstractEntity = {
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
@@ -75,7 +75,7 @@ export type AbstractEntityRevisionEventsArgs = {
 };
 
 export type AbstractExercise = {
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<ExerciseRevision | GroupedExerciseRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -97,7 +97,7 @@ export type AbstractExerciseEventsArgs = {
 };
 
 export type AbstractExerciseRevision = {
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -143,7 +143,7 @@ export type AbstractNotificationEventEdge = {
 };
 
 export type AbstractRepository = {
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
@@ -174,7 +174,7 @@ export type AbstractRepositoryThreadsArgs = {
 };
 
 export type AbstractRevision = {
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   content: Scalars['String'];
   date: Scalars['DateTime'];
@@ -205,7 +205,7 @@ export type AbstractRevisionThreadsArgs = {
 };
 
 export type AbstractTaxonomyTermChild = {
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
@@ -234,7 +234,7 @@ export type AbstractTaxonomyTermChildTaxonomyTermsArgs = {
 };
 
 export type AbstractUuid = {
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -286,7 +286,7 @@ export type AllThreadsConnection = {
 
 export type Applet = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Applet';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<AppletRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -339,7 +339,7 @@ export type AppletThreadsArgs = {
 
 export type AppletRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'AppletRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -391,7 +391,7 @@ export type AppletRevisionCursor = {
 
 export type Article = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Article';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<ArticleRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -444,7 +444,7 @@ export type ArticleThreadsArgs = {
 
 export type ArticleRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'ArticleRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -586,7 +586,7 @@ export type CommentEdge = {
 
 export type Course = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Course';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<CourseRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -646,7 +646,7 @@ export type CourseThreadsArgs = {
 
 export type CoursePage = AbstractEntity & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'CoursePage';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   course: Course;
   currentRevision?: Maybe<CoursePageRevision>;
   date: Scalars['DateTime'];
@@ -691,7 +691,7 @@ export type CoursePageThreadsArgs = {
 
 export type CoursePageRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'CoursePageRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -740,7 +740,7 @@ export type CoursePageRevisionCursor = {
 
 export type CourseRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'CourseRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -1012,7 +1012,7 @@ export type EntityUpdateLicenseResponse = {
 
 export type Event = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Event';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<EventRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -1065,7 +1065,7 @@ export type EventThreadsArgs = {
 
 export type EventRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'EventRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -1116,7 +1116,7 @@ export type EventRevisionCursor = {
 
 export type Exercise = AbstractEntity & AbstractExercise & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Exercise';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<ExerciseRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -1170,7 +1170,7 @@ export type ExerciseThreadsArgs = {
 
 export type ExerciseGroup = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'ExerciseGroup';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<ExerciseGroupRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -1224,7 +1224,7 @@ export type ExerciseGroupThreadsArgs = {
 
 export type ExerciseGroupRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'ExerciseGroupRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   cohesive: Scalars['Boolean'];
@@ -1273,7 +1273,7 @@ export type ExerciseGroupRevisionCursor = {
 
 export type ExerciseRevision = AbstractEntityRevision & AbstractExerciseRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'ExerciseRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -1321,7 +1321,7 @@ export type ExerciseRevisionCursor = {
 
 export type GroupedExercise = AbstractEntity & AbstractExercise & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'GroupedExercise';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<GroupedExerciseRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -1367,7 +1367,7 @@ export type GroupedExerciseThreadsArgs = {
 
 export type GroupedExerciseRevision = AbstractEntityRevision & AbstractExerciseRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'GroupedExerciseRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -1566,7 +1566,7 @@ export type NotificationSetStateResponse = {
 
 export type Page = AbstractNavigationChild & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Page';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<PageRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -1669,7 +1669,7 @@ export type PageQueryPagesArgs = {
 
 export type PageRevision = AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'PageRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   content: Scalars['String'];
   date: Scalars['DateTime'];
@@ -2032,7 +2032,7 @@ export type SetVideoInput = {
 
 export type Solution = AbstractEntity & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Solution';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<SolutionRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -2077,7 +2077,7 @@ export type SolutionThreadsArgs = {
 
 export type SolutionRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'SolutionRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -2228,7 +2228,7 @@ export type TaxonomyEntityLinksResponse = {
 
 export type TaxonomyTerm = AbstractNavigationChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'TaxonomyTerm';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   children: AbstractUuidConnection;
   description?: Maybe<Scalars['String']>;
   events: AbstractNotificationEventConnection;
@@ -2550,7 +2550,7 @@ export type ThreadsCursor = {
 export type User = AbstractUuid & ThreadAware & {
   __typename?: 'User';
   activityByType: UserActivityByType;
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   chatUrl?: Maybe<Scalars['String']>;
   date: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
@@ -2742,7 +2742,7 @@ export type UuidSetStateResponse = {
 
 export type Video = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Video';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<VideoRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -2795,7 +2795,7 @@ export type VideoThreadsArgs = {
 
 export type VideoRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'VideoRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -3346,7 +3346,7 @@ export type ResolversParentTypes = {
 
 export type AbstractEntityResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractEntity'] = ResolversParentTypes['AbstractEntity']> = {
   __resolveType: TypeResolveFn<'Applet' | 'Article' | 'Course' | 'CoursePage' | 'Event' | 'Exercise' | 'ExerciseGroup' | 'GroupedExercise' | 'Solution' | 'Video', ParentType, ContextType>;
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AbstractEntityEventsArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -3383,7 +3383,7 @@ export type AbstractEntityRevisionResolvers<ContextType = Context, ParentType ex
 
 export type AbstractExerciseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractExercise'] = ResolversParentTypes['AbstractExercise']> = {
   __resolveType: TypeResolveFn<'Exercise' | 'GroupedExercise', ParentType, ContextType>;
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   currentRevision?: Resolver<Maybe<ResolversTypes['AbstractExerciseRevision']>, ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AbstractExerciseEventsArgs>>;
@@ -3396,7 +3396,7 @@ export type AbstractExerciseResolvers<ContextType = Context, ParentType extends 
 
 export type AbstractExerciseRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractExerciseRevision'] = ResolversParentTypes['AbstractExerciseRevision']> = {
   __resolveType: TypeResolveFn<'ExerciseRevision' | 'GroupedExerciseRevision', ParentType, ContextType>;
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -3435,7 +3435,7 @@ export type AbstractNotificationEventEdgeResolvers<ContextType = Context, Parent
 
 export type AbstractRepositoryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractRepository'] = ResolversParentTypes['AbstractRepository']> = {
   __resolveType: TypeResolveFn<'Applet' | 'Article' | 'Course' | 'CoursePage' | 'Event' | 'Exercise' | 'ExerciseGroup' | 'GroupedExercise' | 'Page' | 'Solution' | 'Video', ParentType, ContextType>;
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AbstractRepositoryEventsArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -3447,7 +3447,7 @@ export type AbstractRepositoryResolvers<ContextType = Context, ParentType extend
 
 export type AbstractRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractRevision'] = ResolversParentTypes['AbstractRevision']> = {
   __resolveType: TypeResolveFn<'AppletRevision' | 'ArticleRevision' | 'CoursePageRevision' | 'CourseRevision' | 'EventRevision' | 'ExerciseGroupRevision' | 'ExerciseRevision' | 'GroupedExerciseRevision' | 'PageRevision' | 'SolutionRevision' | 'VideoRevision', ParentType, ContextType>;
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -3459,7 +3459,7 @@ export type AbstractRevisionResolvers<ContextType = Context, ParentType extends 
 
 export type AbstractTaxonomyTermChildResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractTaxonomyTermChild'] = ResolversParentTypes['AbstractTaxonomyTermChild']> = {
   __resolveType: TypeResolveFn<'Applet' | 'Article' | 'Course' | 'Event' | 'Exercise' | 'ExerciseGroup' | 'Video', ParentType, ContextType>;
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AbstractTaxonomyTermChildEventsArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -3471,7 +3471,7 @@ export type AbstractTaxonomyTermChildResolvers<ContextType = Context, ParentType
 
 export type AbstractUuidResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractUuid'] = ResolversParentTypes['AbstractUuid']> = {
   __resolveType: TypeResolveFn<'Applet' | 'AppletRevision' | 'Article' | 'ArticleRevision' | 'Comment' | 'Course' | 'CoursePage' | 'CoursePageRevision' | 'CourseRevision' | 'Event' | 'EventRevision' | 'Exercise' | 'ExerciseGroup' | 'ExerciseGroupRevision' | 'ExerciseRevision' | 'GroupedExercise' | 'GroupedExerciseRevision' | 'Page' | 'PageRevision' | 'Solution' | 'SolutionRevision' | 'TaxonomyTerm' | 'User' | 'Video' | 'VideoRevision', ParentType, ContextType>;
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AbstractUuidEventsArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -3507,7 +3507,7 @@ export type AllThreadsConnectionResolvers<ContextType = Context, ParentType exte
 };
 
 export type AppletResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Applet'] = ResolversParentTypes['Applet']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   currentRevision?: Resolver<Maybe<ResolversTypes['AppletRevision']>, ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AppletEventsArgs>>;
@@ -3523,7 +3523,7 @@ export type AppletResolvers<ContextType = Context, ParentType extends ResolversP
 };
 
 export type AppletRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AppletRevision'] = ResolversParentTypes['AppletRevision']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -3555,7 +3555,7 @@ export type AppletRevisionCursorResolvers<ContextType = Context, ParentType exte
 };
 
 export type ArticleResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Article'] = ResolversParentTypes['Article']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   currentRevision?: Resolver<Maybe<ResolversTypes['ArticleRevision']>, ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<ArticleEventsArgs>>;
@@ -3571,7 +3571,7 @@ export type ArticleResolvers<ContextType = Context, ParentType extends Resolvers
 };
 
 export type ArticleRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ArticleRevision'] = ResolversParentTypes['ArticleRevision']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -3665,7 +3665,7 @@ export type CommentEdgeResolvers<ContextType = Context, ParentType extends Resol
 };
 
 export type CourseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Course'] = ResolversParentTypes['Course']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   currentRevision?: Resolver<Maybe<ResolversTypes['CourseRevision']>, ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<CourseEventsArgs>>;
@@ -3682,7 +3682,7 @@ export type CourseResolvers<ContextType = Context, ParentType extends ResolversP
 };
 
 export type CoursePageResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CoursePage'] = ResolversParentTypes['CoursePage']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   course?: Resolver<ResolversTypes['Course'], ParentType, ContextType>;
   currentRevision?: Resolver<Maybe<ResolversTypes['CoursePageRevision']>, ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -3698,7 +3698,7 @@ export type CoursePageResolvers<ContextType = Context, ParentType extends Resolv
 };
 
 export type CoursePageRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CoursePageRevision'] = ResolversParentTypes['CoursePageRevision']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -3727,7 +3727,7 @@ export type CoursePageRevisionCursorResolvers<ContextType = Context, ParentType 
 };
 
 export type CourseRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CourseRevision'] = ResolversParentTypes['CourseRevision']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -3897,7 +3897,7 @@ export type EntityUpdateLicenseResponseResolvers<ContextType = Context, ParentTy
 };
 
 export type EventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   currentRevision?: Resolver<Maybe<ResolversTypes['EventRevision']>, ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<EventEventsArgs>>;
@@ -3913,7 +3913,7 @@ export type EventResolvers<ContextType = Context, ParentType extends ResolversPa
 };
 
 export type EventRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EventRevision'] = ResolversParentTypes['EventRevision']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -3944,7 +3944,7 @@ export type EventRevisionCursorResolvers<ContextType = Context, ParentType exten
 };
 
 export type ExerciseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Exercise'] = ResolversParentTypes['Exercise']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   currentRevision?: Resolver<Maybe<ResolversTypes['ExerciseRevision']>, ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<ExerciseEventsArgs>>;
@@ -3961,7 +3961,7 @@ export type ExerciseResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 export type ExerciseGroupResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExerciseGroup'] = ResolversParentTypes['ExerciseGroup']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   currentRevision?: Resolver<Maybe<ResolversTypes['ExerciseGroupRevision']>, ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<ExerciseGroupEventsArgs>>;
@@ -3978,7 +3978,7 @@ export type ExerciseGroupResolvers<ContextType = Context, ParentType extends Res
 };
 
 export type ExerciseGroupRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExerciseGroupRevision'] = ResolversParentTypes['ExerciseGroupRevision']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   cohesive?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -4007,7 +4007,7 @@ export type ExerciseGroupRevisionCursorResolvers<ContextType = Context, ParentTy
 };
 
 export type ExerciseRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExerciseRevision'] = ResolversParentTypes['ExerciseRevision']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -4035,7 +4035,7 @@ export type ExerciseRevisionCursorResolvers<ContextType = Context, ParentType ex
 };
 
 export type GroupedExerciseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GroupedExercise'] = ResolversParentTypes['GroupedExercise']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   currentRevision?: Resolver<Maybe<ResolversTypes['GroupedExerciseRevision']>, ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<GroupedExerciseEventsArgs>>;
@@ -4052,7 +4052,7 @@ export type GroupedExerciseResolvers<ContextType = Context, ParentType extends R
 };
 
 export type GroupedExerciseRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GroupedExerciseRevision'] = ResolversParentTypes['GroupedExerciseRevision']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -4194,7 +4194,7 @@ export type NotificationSetStateResponseResolvers<ContextType = Context, ParentT
 };
 
 export type PageResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Page'] = ResolversParentTypes['Page']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   currentRevision?: Resolver<Maybe<ResolversTypes['PageRevision']>, ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<PageEventsArgs>>;
@@ -4237,7 +4237,7 @@ export type PageQueryResolvers<ContextType = Context, ParentType extends Resolve
 };
 
 export type PageRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageRevision'] = ResolversParentTypes['PageRevision']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -4412,7 +4412,7 @@ export type SetUuidStateNotificationEventResolvers<ContextType = Context, Parent
 };
 
 export type SolutionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Solution'] = ResolversParentTypes['Solution']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   currentRevision?: Resolver<Maybe<ResolversTypes['SolutionRevision']>, ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<SolutionEventsArgs>>;
@@ -4428,7 +4428,7 @@ export type SolutionResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 export type SolutionRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SolutionRevision'] = ResolversParentTypes['SolutionRevision']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -4512,7 +4512,7 @@ export type TaxonomyEntityLinksResponseResolvers<ContextType = Context, ParentTy
 };
 
 export type TaxonomyTermResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTerm'] = ResolversParentTypes['TaxonomyTerm']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   children?: Resolver<ResolversTypes['AbstractUuidConnection'], ParentType, ContextType, Partial<TaxonomyTermChildrenArgs>>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<TaxonomyTermEventsArgs>>;
@@ -4656,7 +4656,7 @@ export type ThreadsCursorResolvers<ContextType = Context, ParentType extends Res
 
 export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   activityByType?: Resolver<ResolversTypes['UserActivityByType'], ParentType, ContextType>;
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   chatUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -4749,7 +4749,7 @@ export type UuidSetStateResponseResolvers<ContextType = Context, ParentType exte
 };
 
 export type VideoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Video'] = ResolversParentTypes['Video']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   currentRevision?: Resolver<Maybe<ResolversTypes['VideoRevision']>, ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<VideoEventsArgs>>;
@@ -4765,7 +4765,7 @@ export type VideoResolvers<ContextType = Context, ParentType extends ResolversPa
 };
 
 export type VideoRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['VideoRevision'] = ResolversParentTypes['VideoRevision']> = {
-  alias?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

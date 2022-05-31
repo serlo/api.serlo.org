@@ -19,7 +19,7 @@ type Page implements AbstractUuid & AbstractRepository & AbstractNavigationChild
   ): AbstractNotificationEventConnection!
   date: DateTime!
   instance: Instance!
-  alias: String
+  alias: String!
   license: License!
   currentRevision: PageRevision
   revisions(
@@ -36,7 +36,7 @@ type PageRevision implements AbstractUuid & AbstractRevision & ThreadAware {
   id: Int!
   author: User!
   trashed: Boolean!
-  alias: String
+  alias: String!
   threads(
     after: String
     before: String

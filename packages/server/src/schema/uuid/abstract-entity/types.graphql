@@ -14,7 +14,7 @@ interface AbstractEntity {
   # extends AbstractRepository
   date: DateTime!
   instance: Instance!
-  alias: String
+  alias: String!
   license: License!
   subject: Subject
 }
