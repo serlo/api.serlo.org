@@ -53,6 +53,9 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
         decoder: TaxonomyTermDecoder,
       })
     },
+    title(taxonomyTerm) {
+      return taxonomyTerm.name
+    },
     async children(taxonomyTerm, cursorPayload, { dataSources }) {
       const children = await Promise.all(
         taxonomyTerm.childrenIds.map((id) => {

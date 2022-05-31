@@ -2,6 +2,7 @@ interface AbstractUuid {
   id: Int!
   trashed: Boolean!
   alias: String!
+  title: String!
   events(
     after: String
     before: String

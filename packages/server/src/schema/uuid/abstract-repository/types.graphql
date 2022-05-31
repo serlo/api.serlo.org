@@ -3,6 +3,7 @@ interface AbstractRepository {
   id: Int!
   trashed: Boolean!
   alias: String!
+  title: String!
   events(
     after: String
     before: String
@@ -34,6 +35,7 @@ interface AbstractRevision {
   id: Int!
   trashed: Boolean!
   alias: String!
+  title: String!
   events(
     after: String
     before: String

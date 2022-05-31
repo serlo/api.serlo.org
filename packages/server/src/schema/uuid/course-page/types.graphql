@@ -19,6 +19,7 @@ type CoursePage implements AbstractUuid & AbstractRepository & AbstractEntity & 
   ): AbstractNotificationEventConnection!
   instance: Instance!
   alias: String!
+  title: String!
   date: DateTime!
   license: License!
   currentRevision: CoursePageRevision
