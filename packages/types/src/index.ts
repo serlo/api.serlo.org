@@ -16,7 +16,7 @@ export type Scalars = {
 };
 
 export type AbstractEntity = {
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
@@ -71,7 +71,7 @@ export type AbstractEntityRevisionEventsArgs = {
 };
 
 export type AbstractExercise = {
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<AbstractExerciseRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -93,7 +93,7 @@ export type AbstractExerciseEventsArgs = {
 };
 
 export type AbstractExerciseRevision = {
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -139,7 +139,7 @@ export type AbstractNotificationEventEdge = {
 };
 
 export type AbstractRepository = {
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
@@ -170,7 +170,7 @@ export type AbstractRepositoryThreadsArgs = {
 };
 
 export type AbstractRevision = {
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   content: Scalars['String'];
   date: Scalars['DateTime'];
@@ -201,7 +201,7 @@ export type AbstractRevisionThreadsArgs = {
 };
 
 export type AbstractTaxonomyTermChild = {
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
@@ -230,7 +230,7 @@ export type AbstractTaxonomyTermChildTaxonomyTermsArgs = {
 };
 
 export type AbstractUuid = {
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
   trashed: Scalars['Boolean'];
@@ -282,7 +282,7 @@ export type AllThreadsConnection = {
 
 export type Applet = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Applet';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<AppletRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -335,7 +335,7 @@ export type AppletThreadsArgs = {
 
 export type AppletRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'AppletRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -387,7 +387,7 @@ export type AppletRevisionCursor = {
 
 export type Article = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Article';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<ArticleRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -440,7 +440,7 @@ export type ArticleThreadsArgs = {
 
 export type ArticleRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'ArticleRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -582,7 +582,7 @@ export type CommentEdge = {
 
 export type Course = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Course';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<CourseRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -642,7 +642,7 @@ export type CourseThreadsArgs = {
 
 export type CoursePage = AbstractEntity & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'CoursePage';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   course: Course;
   currentRevision?: Maybe<CoursePageRevision>;
   date: Scalars['DateTime'];
@@ -687,7 +687,7 @@ export type CoursePageThreadsArgs = {
 
 export type CoursePageRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'CoursePageRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -736,7 +736,7 @@ export type CoursePageRevisionCursor = {
 
 export type CourseRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'CourseRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -1008,7 +1008,7 @@ export type EntityUpdateLicenseResponse = {
 
 export type Event = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Event';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<EventRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -1061,7 +1061,7 @@ export type EventThreadsArgs = {
 
 export type EventRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'EventRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -1112,7 +1112,7 @@ export type EventRevisionCursor = {
 
 export type Exercise = AbstractEntity & AbstractExercise & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Exercise';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<ExerciseRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -1166,7 +1166,7 @@ export type ExerciseThreadsArgs = {
 
 export type ExerciseGroup = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'ExerciseGroup';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<ExerciseGroupRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -1220,7 +1220,7 @@ export type ExerciseGroupThreadsArgs = {
 
 export type ExerciseGroupRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'ExerciseGroupRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   cohesive: Scalars['Boolean'];
@@ -1269,7 +1269,7 @@ export type ExerciseGroupRevisionCursor = {
 
 export type ExerciseRevision = AbstractEntityRevision & AbstractExerciseRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'ExerciseRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -1317,7 +1317,7 @@ export type ExerciseRevisionCursor = {
 
 export type GroupedExercise = AbstractEntity & AbstractExercise & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'GroupedExercise';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<GroupedExerciseRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -1363,7 +1363,7 @@ export type GroupedExerciseThreadsArgs = {
 
 export type GroupedExerciseRevision = AbstractEntityRevision & AbstractExerciseRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'GroupedExerciseRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -1562,7 +1562,7 @@ export type NotificationSetStateResponse = {
 
 export type Page = AbstractNavigationChild & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Page';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<PageRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -1655,7 +1655,7 @@ export type PageMutationRejectRevisionArgs = {
 
 export type PageRevision = AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'PageRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   content: Scalars['String'];
   date: Scalars['DateTime'];
@@ -2010,7 +2010,7 @@ export type SetVideoInput = {
 
 export type Solution = AbstractEntity & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Solution';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<SolutionRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -2055,7 +2055,7 @@ export type SolutionThreadsArgs = {
 
 export type SolutionRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'SolutionRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -2206,7 +2206,7 @@ export type TaxonomyEntityLinksResponse = {
 
 export type TaxonomyTerm = AbstractNavigationChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'TaxonomyTerm';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   children: AbstractUuidConnection;
   description?: Maybe<Scalars['String']>;
   events: AbstractNotificationEventConnection;
@@ -2528,7 +2528,7 @@ export type ThreadsCursor = {
 export type User = AbstractUuid & ThreadAware & {
   __typename?: 'User';
   activityByType: UserActivityByType;
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   chatUrl?: Maybe<Scalars['String']>;
   date: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
@@ -2720,7 +2720,7 @@ export type UuidSetStateResponse = {
 
 export type Video = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Video';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<VideoRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -2773,7 +2773,7 @@ export type VideoThreadsArgs = {
 
 export type VideoRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'VideoRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
