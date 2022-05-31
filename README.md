@@ -24,7 +24,8 @@ $ cd api.serlo.org
 
 ### Install dependencies
 
-Run `yarn` to install the dependencies of all packages.
+Run `yarn` to install the dependencies of all packages and
+run `yarn build` to build also the packages 'authorization' and 'types'.
 
 ### Start
 
@@ -83,6 +84,7 @@ We have `~` as an absolute path alias for `./src` in place, e.g. `~/internals` r
 
 ### Other commands
 
+- `yarn build` builds all packages. Run it when package `authorization` changed.
 - `yarn build:server` builds the server (only needed for deployment)
 - `yarn changelog` generates the changelog (only needed for deployment)
 - `yarn deploy:images` deploys the docker images to our Container Registry (only needed for deployment)
