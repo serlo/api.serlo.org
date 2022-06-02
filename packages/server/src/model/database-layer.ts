@@ -272,7 +272,6 @@ export const spec = {
     }),
     response: t.type({
       pages: t.array(t.number),
-      success: t.literal(true),
     }),
     canBeNull: false,
   },
