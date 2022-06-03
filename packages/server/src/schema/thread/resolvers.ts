@@ -123,6 +123,9 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
     createdAt(comment) {
       return comment.date
     },
+    title(comment) {
+      return comment.title ?? ''
+    },
     async author(comment, _args, { dataSources }) {
       return await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: comment.authorId,

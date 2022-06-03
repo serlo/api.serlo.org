@@ -27,6 +27,8 @@ import {
   appletRevision,
   article,
   articleRevision,
+  comment,
+  comment1,
   course,
   coursePage,
   coursePageRevision,
@@ -59,6 +61,7 @@ import {
   getTypenameAndId,
   given,
   Client,
+  givenThreads,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import {
@@ -478,5 +481,45 @@ describe('property "title"', () => {
         variables: { id: uuids[0].id },
       })
       .shouldReturnData({ uuid: { title } })
+  })
+
+  test('"title" for comments', async () => {
+    givenThreads({
+      uuid: article,
+      threads: [[comment, { ...comment1, title: null }]],
+    })
+
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query propertyCreatedAt($id: Int!) {
+            uuid(id: $id) {
+              ... on ThreadAware {
+                threads {
+                  nodes {
+                    comments {
+                      nodes {
+                        title
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `,
+        variables: { id: article.id },
+      })
+      .shouldReturnData({
+        uuid: {
+          threads: {
+            nodes: [
+              {
+                comments: { nodes: [{ title: comment.title }, { title: '' }] },
+              },
+            ],
+          },
+        },
+      })
   })
 })
