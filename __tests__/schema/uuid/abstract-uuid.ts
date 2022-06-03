@@ -44,6 +44,7 @@ import {
   solution,
   solutionRevision,
   taxonomyTermRoot,
+  taxonomyTermSubject,
   user,
   video,
   videoRevision,
@@ -409,40 +410,61 @@ describe('property "title"', () => {
   const testCases = [
     [
       'article with current revision',
-      { ...article, revisionIds: [castToUuid(123), article.currentRevisionId] },
+      [
+        {
+          ...article,
+          revisionIds: [castToUuid(123), article.currentRevisionId],
+        },
+        articleRevision,
+      ],
       articleRevision.title,
     ],
     [
       'article without current revision',
-      {
-        ...article,
-        currentRevisionId: null,
-        revisionIds: [article.currentRevisionId, castToUuid(123)],
-      },
+      [
+        {
+          ...article,
+          currentRevisionId: null,
+          revisionIds: [article.currentRevisionId, castToUuid(123)],
+        },
+        articleRevision,
+      ],
       articleRevision.title,
     ],
     [
       'article without revisions',
-      {
-        ...article,
-        currentRevisionId: null,
-        revisionIds: [],
-        id: castToUuid(123),
-      },
+      [
+        {
+          ...article,
+          currentRevisionId: null,
+          revisionIds: [],
+          id: castToUuid(123),
+        },
+      ],
       'Article 123',
     ],
-    ['solution', { ...solution, id: castToUuid(1) }, 'Solution 1'],
+    [
+      'solution',
+      [{ ...solution, id: castToUuid(1) }, solutionRevision],
+      'Solution 1',
+    ],
     [
       'solution revision',
-      { ...solutionRevision, id: castToUuid(1) },
+      [{ ...solutionRevision, id: castToUuid(1) }],
       'SolutionRevision 1',
     ],
-    ['user', user, user.username],
-    ['taxonomy term', taxonomyTermRoot, taxonomyTermRoot.name],
-  ] as [string, Model<'AbstractUuid'>, string][]
+    ['exercise', [exercise, taxonomyTermSubject], taxonomyTermSubject.name],
+    [
+      'exercise group',
+      [exerciseGroup, taxonomyTermSubject],
+      taxonomyTermSubject.name,
+    ],
+    ['user', [user], user.username],
+    ['taxonomy term', [taxonomyTermRoot], taxonomyTermRoot.name],
+  ] as [string, Model<'AbstractUuid'>[], string][]
 
-  test.each(testCases)('%s', async (_, uuid, title) => {
-    given('UuidQuery').for(uuid, articleRevision, solutionRevision)
+  test.each(testCases)('%s', async (_, uuids, title) => {
+    given('UuidQuery').for(uuids)
 
     await new Client()
       .prepareQuery({
@@ -453,7 +475,7 @@ describe('property "title"', () => {
             }
           }
         `,
-        variables: { id: uuid.id },
+        variables: { id: uuids[0].id },
       })
       .shouldReturnData({ uuid: { title } })
   })

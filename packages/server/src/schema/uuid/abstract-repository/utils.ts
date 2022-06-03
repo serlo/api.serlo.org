@@ -32,7 +32,7 @@ import {
   ResolverFunction,
   Revision,
 } from '~/internals/graphql'
-import { UserDecoder } from '~/model/decoder'
+import { TaxonomyTermDecoder, UserDecoder } from '~/model/decoder'
 import { Connection } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
@@ -99,6 +99,20 @@ export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
       })
     },
     async title(repository, _args, { dataSources }) {
+      if (
+        (repository.__typename === 'Exercise' ||
+          repository.__typename === 'ExerciseGroup') &&
+        repository.taxonomyTermIds.length > 0
+      ) {
+        const taxonomyTerm =
+          await dataSources.model.serlo.getUuidWithCustomDecoder({
+            id: repository.taxonomyTermIds[0],
+            decoder: TaxonomyTermDecoder,
+          })
+
+        return taxonomyTerm.name
+      }
+
       const revisionId =
         repository.currentRevisionId ?? R.head(repository.revisionIds)
 
