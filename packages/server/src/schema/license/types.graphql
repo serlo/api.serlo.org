@@ -3,10 +3,10 @@ type License {
   instance: Instance!
   default: Boolean!
   title: String!
+  shortTitle: String!
   url: String!
   content: String!
   agreement: String!
-  iconHref: String!
 }
 
 extend type Query {

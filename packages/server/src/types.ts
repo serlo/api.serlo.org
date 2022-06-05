@@ -1437,9 +1437,9 @@ export type License = {
   agreement: Scalars['String'];
   content: Scalars['String'];
   default: Scalars['Boolean'];
-  iconHref: Scalars['String'];
   id: Scalars['Int'];
   instance: Instance;
+  shortTitle: Scalars['String'];
   title: Scalars['String'];
   url: Scalars['String'];
 };
@@ -4080,9 +4080,9 @@ export type LicenseResolvers<ContextType = Context, ParentType extends Resolvers
   agreement?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   default?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  iconHref?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
+  shortTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
