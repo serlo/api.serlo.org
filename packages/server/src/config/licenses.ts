@@ -139,6 +139,7 @@ export const licenses = <License[]>[
     instance: Instance.Es,
     default: true,
     title: 'Este contenido está licenciado bajo CC BY-SA 4.0',
+    shortTitle: 'CC BY-SA 4.0',
     url: 'https://creativecommons.org/licenses/by-sa/4.0/deed.es',
     content: '',
     agreement:
