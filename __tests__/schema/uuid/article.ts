@@ -22,50 +22,44 @@
 import { gql } from 'apollo-server'
 
 import { article, articleRevision } from '../../../__fixtures__'
-import {
-  assertSuccessfulGraphQLQuery,
-  LegacyClient,
-  createTestClient,
-  createUuidHandler,
-  getTypenameAndId,
-} from '../../__utils__'
-
-let client: LegacyClient
-
-beforeEach(() => {
-  client = createTestClient()
-})
+import { getTypenameAndId, given, Client } from '../../__utils__'
 
 test('Article', async () => {
-  global.server.use(createUuidHandler(article))
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query article($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          id
+  given('UuidQuery').for(article)
+
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query article($id: Int!) {
+          uuid(id: $id) {
+            __typename
+            id
+          }
         }
-      }
-    `,
-    variables: article,
-    data: { uuid: getTypenameAndId(article) },
-    client,
-  })
+      `,
+      variables: { id: article.id },
+    })
+    .shouldReturnData({
+      uuid: getTypenameAndId(article),
+    })
 })
 
 test('ArticleRevision', async () => {
-  global.server.use(createUuidHandler(articleRevision))
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query articleRevision($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          id
+  given('UuidQuery').for(articleRevision)
+
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query articleRevision($id: Int!) {
+          uuid(id: $id) {
+            __typename
+            id
+          }
         }
-      }
-    `,
-    variables: articleRevision,
-    data: { uuid: getTypenameAndId(articleRevision) },
-    client,
-  })
+      `,
+      variables: { id: articleRevision.id },
+    })
+    .shouldReturnData({
+      uuid: getTypenameAndId(articleRevision),
+    })
 })
