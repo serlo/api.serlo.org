@@ -289,10 +289,10 @@ describe('Repository', () => {
                     instance
                     default
                     title
+                    shortTitle
                     url
                     content
                     agreement
-                    iconHref
                   }
                 }
               }
