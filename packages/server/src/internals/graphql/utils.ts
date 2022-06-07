@@ -107,7 +107,9 @@ export function decodeFromBase64(text: string) {
 
 export function assertArgumentIsNotEmpty(args: { [key: string]: unknown }) {
   const emptyArgs: string[] = Object.entries(args)
-    .filter(([_, value]) => !value)
+    .filter(
+      ([_, value]) => typeof value === 'string' && value.trim().length === 0
+    )
     .map(([key]) => key)
 
   if (emptyArgs.length > 0) {
