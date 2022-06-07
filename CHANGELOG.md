@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.37.0](https://github.com/serlo/api.serlo.org/compare/v0.36.0..v0.37.0) - June 7, 2022
+
+### Added
+
+- licenses: removed iconHref, added shortTitle #657
+
+- licenses: removed extra urls #650
+
+### Changed
+
+- alias is now nonnullable #640
+
 ## [v0.36.0](https://github.com/serlo/api.serlo.org/compare/v0.35.1..v0.36.0) - May 30, 2022
 
 ### Changed
