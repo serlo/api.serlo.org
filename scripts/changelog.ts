@@ -1295,6 +1295,15 @@ async function exec(): Promise<void> {
           'Rename autorization Entity.SetLicense to Entity.UpdateLicense #639',
         ],
       },
+      {
+        tagName: 'v0.37.0',
+        date: '2022-06-07',
+        added: [
+          'licenses: removed iconHref, added shortTitle #657',
+          'licenses: removed extra urls #650',
+        ],
+        changed: ['alias is now nonnullable #640'],
+      },
     ],
   })
 
