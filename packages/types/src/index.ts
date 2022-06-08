@@ -1655,7 +1655,7 @@ export type PageMutationRejectRevisionArgs = {
 
 export type PageQuery = {
   __typename?: 'PageQuery';
-  pages: PagesResponse;
+  pages: Array<Page>;
 };
 
 
@@ -1709,13 +1709,6 @@ export type PageRevisionCursor = {
   __typename?: 'PageRevisionCursor';
   cursor: Scalars['String'];
   node: PageRevision;
-};
-
-export type PagesResponse = {
-  __typename?: 'PagesResponse';
-  pages: Array<Maybe<Page>>;
-  query: Query;
-  success: Scalars['Boolean'];
 };
 
 export type Query = {

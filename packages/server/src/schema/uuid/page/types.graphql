@@ -87,7 +87,7 @@ extend type Query {
 }
 
 type PageQuery {
-  pages(instance: Instance): PagesResponse!
+  pages(instance: Instance): [Page!]!
 }
 
 input PageAddRevisionInput {
@@ -113,12 +113,6 @@ input CreatePageInput {
 
 type PageCreateResponse {
   record: Page
-  success: Boolean!
-  query: Query!
-}
-
-type PagesResponse {
-  pages: [Page]!
   success: Boolean!
   query: Query!
 }
