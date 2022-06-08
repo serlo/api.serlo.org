@@ -49,7 +49,7 @@ export function createAliasResolvers(): PickResolvers<'AbstractUuid', 'alias'> {
         if (customAlias) return encodePath(customAlias)
       }
 
-      return entity.alias ? encodePath(entity.alias) : null
+      return encodePath(entity.alias)
     },
   }
 }
