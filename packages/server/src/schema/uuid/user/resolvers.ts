@@ -130,9 +130,6 @@ export const resolvers: LegacyQueries<
         dataSources,
       })
     },
-    title(user) {
-      return user.username
-    },
     async motivation(user, _args, { dataSources }) {
       return F.pipe(
         await dataSources.model.googleSpreadsheetApi.getValues({
