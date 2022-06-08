@@ -2289,23 +2289,11 @@ export type TaxonomyTermEdge = {
   node: TaxonomyTerm;
 };
 
-export type TaxonomyTermMoveInput = {
-  childrenIds: Array<Scalars['Int']>;
-  destination: Scalars['Int'];
-};
-
-export type TaxonomyTermMoveResponse = {
-  __typename?: 'TaxonomyTermMoveResponse';
-  query: Query;
-  success: Scalars['Boolean'];
-};
-
 export type TaxonomyTermMutation = {
   __typename?: 'TaxonomyTermMutation';
   create: TaxonomyTermCreateResponse;
   createEntityLinks: TaxonomyEntityLinksResponse;
   deleteEntityLinks: TaxonomyEntityLinksResponse;
-  move: TaxonomyTermMoveResponse;
   setNameAndDescription: TaxonomyTermSetNameAndDescriptionResponse;
   sort: TaxonomyTermSortResponse;
 };
@@ -2323,11 +2311,6 @@ export type TaxonomyTermMutationCreateEntityLinksArgs = {
 
 export type TaxonomyTermMutationDeleteEntityLinksArgs = {
   input: TaxonomyEntityLinksInput;
-};
-
-
-export type TaxonomyTermMutationMoveArgs = {
-  input: TaxonomyTermMoveInput;
 };
 
 
