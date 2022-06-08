@@ -1304,6 +1304,12 @@ async function exec(): Promise<void> {
         ],
         changed: ['alias is now nonnullable #640'],
       },
+      {
+        tagName: 'v0.38.0',
+        date: '2022-06-08',
+        added: ['Add Page.pages query #623'],
+        changed: ['Remove TaxonomyTerm.move #662'],
+      },
     ],
   })
 
