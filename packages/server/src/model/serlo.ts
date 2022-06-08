@@ -986,6 +986,13 @@ export function createSerloModel({
     },
   })
 
+  const getPages = createRequest({
+    decoder: DatabaseLayer.getDecoderFor('PagesQuery'),
+    async getCurrentValue(payload: DatabaseLayer.Payload<'PagesQuery'>) {
+      return DatabaseLayer.makeRequest('PagesQuery', payload)
+    },
+  })
+
   const setTaxonomyTermNameAndDescription = createMutation({
     decoder: DatabaseLayer.getDecoderFor(
       'TaxonomyTermSetNameAndDescriptionMutation'
@@ -1047,6 +1054,7 @@ export function createSerloModel({
     getUuid,
     getUuidWithCustomDecoder,
     linkEntitiesToTaxonomy,
+    getPages,
     rejectEntityRevision,
     rejectPageRevision,
     setDescription,
