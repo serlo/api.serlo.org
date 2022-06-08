@@ -354,6 +354,21 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  PagesQuery: {
+    examples: [
+      [
+        {
+          instance: Instance.En,
+        },
+        {
+          pages: [
+            23579, 23580, 23591, 23711, 23720, 23727, 25079, 25082, 27469,
+            32840, 32966,
+          ],
+        },
+      ],
+    ],
+  },
   SubjectsQuery: {
     examples: [
       [{}, { subjects: [{ instance: Instance.De, taxonomyTermId: 5 }] }],

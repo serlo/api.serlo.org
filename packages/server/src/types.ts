@@ -1657,6 +1657,16 @@ export type PageMutationRejectRevisionArgs = {
   input: RejectRevisionInput;
 };
 
+export type PageQuery = {
+  __typename?: 'PageQuery';
+  pages: Array<Page>;
+};
+
+
+export type PageQueryPagesArgs = {
+  instance?: InputMaybe<Instance>;
+};
+
 export type PageRevision = AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'PageRevision';
   alias: Scalars['String'];
@@ -1717,6 +1727,7 @@ export type Query = {
   metadata: MetadataQuery;
   notificationEvent?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
   notifications: NotificationConnection;
+  page: PageQuery;
   subject: SubjectQuery;
   subscription: SubscriptionQuery;
   thread: ThreadQuery;
@@ -3006,6 +3017,7 @@ export type ResolversTypes = {
   PageCreateResponse: ResolverTypeWrapper<ModelOf<PageCreateResponse>>;
   PageInfo: ResolverTypeWrapper<ModelOf<PageInfo>>;
   PageMutation: ResolverTypeWrapper<ModelOf<PageMutation>>;
+  PageQuery: ResolverTypeWrapper<ModelOf<PageQuery>>;
   PageRevision: ResolverTypeWrapper<ModelOf<PageRevision>>;
   PageRevisionConnection: ResolverTypeWrapper<ModelOf<PageRevisionConnection>>;
   PageRevisionCursor: ResolverTypeWrapper<ModelOf<PageRevisionCursor>>;
@@ -3209,6 +3221,7 @@ export type ResolversParentTypes = {
   PageCreateResponse: ModelOf<PageCreateResponse>;
   PageInfo: ModelOf<PageInfo>;
   PageMutation: ModelOf<PageMutation>;
+  PageQuery: ModelOf<PageQuery>;
   PageRevision: ModelOf<PageRevision>;
   PageRevisionConnection: ModelOf<PageRevisionConnection>;
   PageRevisionCursor: ModelOf<PageRevisionCursor>;
@@ -4188,6 +4201,11 @@ export type PageMutationResolvers<ContextType = Context, ParentType extends Reso
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type PageQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageQuery'] = ResolversParentTypes['PageQuery']> = {
+  pages?: Resolver<Array<ResolversTypes['Page']>, ParentType, ContextType, Partial<PageQueryPagesArgs>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type PageRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageRevision'] = ResolversParentTypes['PageRevision']> = {
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
@@ -4227,6 +4245,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   metadata?: Resolver<ResolversTypes['MetadataQuery'], ParentType, ContextType>;
   notificationEvent?: Resolver<Maybe<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType, RequireFields<QueryNotificationEventArgs, 'id'>>;
   notifications?: Resolver<ResolversTypes['NotificationConnection'], ParentType, ContextType, Partial<QueryNotificationsArgs>>;
+  page?: Resolver<ResolversTypes['PageQuery'], ParentType, ContextType>;
   subject?: Resolver<ResolversTypes['SubjectQuery'], ParentType, ContextType>;
   subscription?: Resolver<ResolversTypes['SubscriptionQuery'], ParentType, ContextType>;
   thread?: Resolver<ResolversTypes['ThreadQuery'], ParentType, ContextType>;
@@ -4834,6 +4853,7 @@ export type Resolvers<ContextType = Context> = {
   PageCreateResponse?: PageCreateResponseResolvers<ContextType>;
   PageInfo?: PageInfoResolvers<ContextType>;
   PageMutation?: PageMutationResolvers<ContextType>;
+  PageQuery?: PageQueryResolvers<ContextType>;
   PageRevision?: PageRevisionResolvers<ContextType>;
   PageRevisionConnection?: PageRevisionConnectionResolvers<ContextType>;
   PageRevisionCursor?: PageRevisionCursorResolvers<ContextType>;

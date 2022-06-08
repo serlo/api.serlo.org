@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 source scripts/utils.sh
 
 $(git config core.editor) scripts/changelog.ts
