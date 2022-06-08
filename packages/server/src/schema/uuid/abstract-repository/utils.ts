@@ -126,7 +126,7 @@ export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
         }
       }
 
-      return `${repository.__typename} ${repository.id}`
+      return repository.id.toString()
     },
     license(repository, _args) {
       const license =
@@ -173,7 +173,7 @@ export function createRevisionResolvers<E extends Model<'AbstractRepository'>>({
     title(revision) {
       return t.type({ title: t.string }).is(revision)
         ? revision.title
-        : `${revision.__typename} ${revision.id}`
+        : revision.id.toString()
     },
   }
 }

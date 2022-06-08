@@ -444,18 +444,10 @@ describe('property "title"', () => {
           id: castToUuid(123),
         },
       ],
-      'Article 123',
+      '123',
     ],
-    [
-      'solution',
-      [{ ...solution, id: castToUuid(1) }, solutionRevision],
-      'Solution 1',
-    ],
-    [
-      'solution revision',
-      [{ ...solutionRevision, id: castToUuid(1) }],
-      'SolutionRevision 1',
-    ],
+    ['solution', [{ ...solution, id: castToUuid(1) }, solutionRevision], '1'],
+    ['solution revision', [{ ...solutionRevision, id: castToUuid(1) }], '1'],
     ['exercise', [exercise, taxonomyTermSubject], taxonomyTermSubject.name],
     [
       'exercise group',
