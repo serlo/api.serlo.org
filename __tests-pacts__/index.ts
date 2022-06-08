@@ -454,20 +454,6 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
-  TaxonomyTermMoveMutation: {
-    examples: [
-      [
-        {
-          childrenIds: [taxonomyTermSubject.id],
-          destination: taxonomyTermCurriculumTopic.id,
-          userId: user.id,
-        },
-        {
-          success: true,
-        },
-      ],
-    ],
-  },
   TaxonomySortMutation: {
     examples: [
       [

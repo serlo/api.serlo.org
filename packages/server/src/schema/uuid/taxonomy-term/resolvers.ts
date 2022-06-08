@@ -21,7 +21,7 @@
  */
 import * as serloAuth from '@serlo/authorization'
 
-import { assertIsTaxonomyTerm, resolveTaxonomyTermPath } from './utils'
+import { resolveTaxonomyTermPath } from './utils'
 import {
   TypeResolvers,
   Mutations,
@@ -186,37 +186,6 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
           taxonomyTermId,
           userId,
         })
-
-      return { success, query: {} }
-    },
-    async move(_parent, { input }, { dataSources, userId }) {
-      assertUserIsAuthenticated(userId)
-
-      const { childrenIds, destination } = input
-
-      await Promise.all(
-        [...childrenIds, destination].map(async (id) => {
-          await assertIsTaxonomyTerm(id, dataSources)
-        })
-      )
-
-      const scope = await fetchScopeOfUuid({
-        id: destination,
-        dataSources,
-      })
-
-      await assertUserIsAuthorized({
-        userId,
-        dataSources,
-        message: 'You are not allowed to move terms to this taxonomy term.',
-        guard: serloAuth.TaxonomyTerm.change(scope),
-      })
-
-      const { success } = await dataSources.model.serlo.moveTaxonomyTerm({
-        childrenIds,
-        destination,
-        userId,
-      })
 
       return { success, query: {} }
     },
