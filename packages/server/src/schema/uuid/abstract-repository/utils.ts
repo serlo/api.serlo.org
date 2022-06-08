@@ -98,36 +98,6 @@ export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
         },
       })
     },
-    async title(repository, _args, { dataSources }) {
-      if (
-        (repository.__typename === 'Exercise' ||
-          repository.__typename === 'ExerciseGroup') &&
-        repository.taxonomyTermIds.length > 0
-      ) {
-        const taxonomyTerm =
-          await dataSources.model.serlo.getUuidWithCustomDecoder({
-            id: repository.taxonomyTermIds[0],
-            decoder: TaxonomyTermDecoder,
-          })
-
-        return taxonomyTerm.name
-      }
-
-      const revisionId =
-        repository.currentRevisionId ?? R.head(repository.revisionIds)
-
-      if (revisionId) {
-        const revision = await dataSources.model.serlo.getUuidWithCustomDecoder(
-          { id: revisionId, decoder: revisionDecoder }
-        )
-
-        if (t.type({ title: t.string }).is(revision)) {
-          return revision.title
-        }
-      }
-
-      return repository.id.toString()
-    },
     license(repository, _args) {
       const license =
         licenses.find((license) => license.id === repository.licenseId) ?? null
@@ -169,11 +139,6 @@ export function createRevisionResolvers<E extends Model<'AbstractRepository'>>({
         id: entityRevision.repositoryId,
         decoder: repositoryDecoder,
       })
-    },
-    title(revision) {
-      return t.type({ title: t.string }).is(revision)
-        ? revision.title
-        : revision.id.toString()
     },
   }
 }
