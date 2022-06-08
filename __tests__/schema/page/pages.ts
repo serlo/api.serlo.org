@@ -40,10 +40,7 @@ beforeEach(() => {
       query ($instance: Instance) {
         page {
           pages(instance: $instance) {
-            success
-            pages {
-              id
-            }
+            id
           }
         }
       }
@@ -64,10 +61,7 @@ beforeEach(() => {
 test('returns all pages', async () => {
   await query.shouldReturnData({
     page: {
-      pages: {
-        success: true,
-        pages: [{ id: page.id }, { id: page2.id }],
-      },
+      pages: [{ id: page.id }, { id: page2.id }],
     },
   })
 })
@@ -75,10 +69,7 @@ test('returns all pages', async () => {
 test('returns english pages', async () => {
   await query.withVariables({ instance: Instance.En }).shouldReturnData({
     page: {
-      pages: {
-        success: true,
-        pages: [{ id: page.id }],
-      },
+      pages: [{ id: page.id }],
     },
   })
 })

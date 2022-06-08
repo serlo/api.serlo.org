@@ -158,7 +158,7 @@ export const resolvers: TypeResolvers<Page> &
       const { pages } = await dataSources.model.serlo.getPages({
         instance: payload.instance,
       })
-      const response = await Promise.all(
+      return await Promise.all(
         pages.map(async (id: number) => {
           return await dataSources.model.serlo.getUuidWithCustomDecoder({
             id: id,
@@ -166,8 +166,6 @@ export const resolvers: TypeResolvers<Page> &
           })
         })
       )
-
-      return { success: true, pages: response, query: {} }
     },
   },
 }

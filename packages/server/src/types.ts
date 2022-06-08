@@ -1659,7 +1659,7 @@ export type PageMutationRejectRevisionArgs = {
 
 export type PageQuery = {
   __typename?: 'PageQuery';
-  pages: PagesResponse;
+  pages: Array<Page>;
 };
 
 
@@ -1713,13 +1713,6 @@ export type PageRevisionCursor = {
   __typename?: 'PageRevisionCursor';
   cursor: Scalars['String'];
   node: PageRevision;
-};
-
-export type PagesResponse = {
-  __typename?: 'PagesResponse';
-  pages: Array<Maybe<Page>>;
-  query: Query;
-  success: Scalars['Boolean'];
 };
 
 export type Query = {
@@ -3045,7 +3038,6 @@ export type ResolversTypes = {
   PageRevision: ResolverTypeWrapper<ModelOf<PageRevision>>;
   PageRevisionConnection: ResolverTypeWrapper<ModelOf<PageRevisionConnection>>;
   PageRevisionCursor: ResolverTypeWrapper<ModelOf<PageRevisionCursor>>;
-  PagesResponse: ResolverTypeWrapper<ModelOf<PagesResponse>>;
   Query: ResolverTypeWrapper<{}>;
   RejectRevisionInput: ResolverTypeWrapper<ModelOf<RejectRevisionInput>>;
   RejectRevisionNotificationEvent: ResolverTypeWrapper<ModelOf<RejectRevisionNotificationEvent>>;
@@ -3252,7 +3244,6 @@ export type ResolversParentTypes = {
   PageRevision: ModelOf<PageRevision>;
   PageRevisionConnection: ModelOf<PageRevisionConnection>;
   PageRevisionCursor: ModelOf<PageRevisionCursor>;
-  PagesResponse: ModelOf<PagesResponse>;
   Query: {};
   RejectRevisionInput: ModelOf<RejectRevisionInput>;
   RejectRevisionNotificationEvent: ModelOf<RejectRevisionNotificationEvent>;
@@ -4232,7 +4223,7 @@ export type PageMutationResolvers<ContextType = Context, ParentType extends Reso
 };
 
 export type PageQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageQuery'] = ResolversParentTypes['PageQuery']> = {
-  pages?: Resolver<ResolversTypes['PagesResponse'], ParentType, ContextType, Partial<PageQueryPagesArgs>>;
+  pages?: Resolver<Array<ResolversTypes['Page']>, ParentType, ContextType, Partial<PageQueryPagesArgs>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4261,13 +4252,6 @@ export type PageRevisionConnectionResolvers<ContextType = Context, ParentType ex
 export type PageRevisionCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageRevisionCursor'] = ResolversParentTypes['PageRevisionCursor']> = {
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<ResolversTypes['PageRevision'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type PagesResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PagesResponse'] = ResolversParentTypes['PagesResponse']> = {
-  pages?: Resolver<Array<Maybe<ResolversTypes['Page']>>, ParentType, ContextType>;
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4901,7 +4885,6 @@ export type Resolvers<ContextType = Context> = {
   PageRevision?: PageRevisionResolvers<ContextType>;
   PageRevisionConnection?: PageRevisionConnectionResolvers<ContextType>;
   PageRevisionCursor?: PageRevisionCursorResolvers<ContextType>;
-  PagesResponse?: PagesResponseResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RejectRevisionNotificationEvent?: RejectRevisionNotificationEventResolvers<ContextType>;
   RejectRevisionResponse?: RejectRevisionResponseResolvers<ContextType>;
