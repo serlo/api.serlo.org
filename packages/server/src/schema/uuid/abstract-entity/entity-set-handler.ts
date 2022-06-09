@@ -27,7 +27,7 @@ import * as R from 'ramda'
 import { fromEntityTypeToEntityRevisionType } from './utils'
 import { autoreviewTaxonomyIds, getDefaultLicense } from '~/config'
 import {
-  assertArgumentIsNotEmpty,
+  assertStringIsNotEmpty,
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   Context,
@@ -66,7 +66,7 @@ export function createSetEntityResolver({
     { input }: { input: SetAbstractEntityInput },
     { dataSources, userId }: Context
   ) => {
-    assertArgumentIsNotEmpty(R.pick(mandatoryFieldKeys, input))
+    assertStringIsNotEmpty(R.pick(mandatoryFieldKeys, input))
 
     if (transformedInput != null) input = transformedInput(input)
 

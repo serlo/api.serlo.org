@@ -23,7 +23,7 @@ import * as serloAuth from '@serlo/authorization'
 import { instanceToScope } from '@serlo/authorization'
 
 import {
-  assertArgumentIsNotEmpty,
+  assertStringIsNotEmpty,
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   createNamespace,
@@ -60,7 +60,7 @@ export const resolvers: TypeResolvers<Page> &
 
       const { pageId, content, title } = input
 
-      assertArgumentIsNotEmpty({ content, title })
+      assertStringIsNotEmpty({ content, title })
 
       const scope = await fetchScopeOfUuid({
         id: pageId,
@@ -109,7 +109,7 @@ export const resolvers: TypeResolvers<Page> &
 
       const { content, title, instance } = input
 
-      assertArgumentIsNotEmpty({ content, title })
+      assertStringIsNotEmpty({ content, title })
 
       await assertUserIsAuthorized({
         userId,
