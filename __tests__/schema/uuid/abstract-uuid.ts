@@ -475,7 +475,7 @@ describe('property "title"', () => {
       .shouldReturnData({ uuid: { title } })
   })
 
-  test('"title" for comments', async () => {
+  test('"title" for comments with title of thread', async () => {
     givenThreads({
       uuid: article,
       threads: [[comment, { ...comment1, title: null }]],
@@ -507,7 +507,60 @@ describe('property "title"', () => {
           threads: {
             nodes: [
               {
-                comments: { nodes: [{ title: comment.title }, { title: '' }] },
+                comments: {
+                  nodes: [{ title: comment.title }, { title: comment.title }],
+                },
+              },
+            ],
+          },
+        },
+      })
+  })
+
+  test('"title" for comments without title in thread', async () => {
+    givenThreads({
+      uuid: article,
+      threads: [
+        [
+          { ...comment, title: null },
+          { ...comment1, title: null },
+        ],
+      ],
+    })
+    given('UuidQuery').for(articleRevision)
+
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query propertyCreatedAt($id: Int!) {
+            uuid(id: $id) {
+              ... on ThreadAware {
+                threads {
+                  nodes {
+                    comments {
+                      nodes {
+                        title
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `,
+        variables: { id: article.id },
+      })
+      .shouldReturnData({
+        uuid: {
+          threads: {
+            nodes: [
+              {
+                comments: {
+                  nodes: [
+                    { title: articleRevision.title },
+                    { title: articleRevision.title },
+                  ],
+                },
               },
             ],
           },

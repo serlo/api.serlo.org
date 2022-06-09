@@ -28,6 +28,7 @@ import {
   EntityRevisionType,
   EntityType,
   TaxonomyTermDecoder,
+  UuidDecoder,
 } from '~/model/decoder'
 import { resolveEvents } from '~/schema/notification/resolvers'
 import { createAliasResolvers } from '~/schema/uuid/alias/utils'
@@ -71,10 +72,20 @@ export function createUuidResolvers(): PickResolvers<
 async function getTitle(
   uuid: Model<'AbstractUuid'>,
   dataSources: Context['dataSources']
-) {
+): Promise<string> {
   if (uuid.__typename === 'User') return uuid.username
   if (uuid.__typename === 'TaxonomyTerm') return uuid.name
-  if (uuid.__typename === 'Comment') return uuid.title ?? ''
+  if (uuid.__typename === 'Comment')
+    return (
+      uuid.title ??
+      (await getTitle(
+        await dataSources.model.serlo.getUuidWithCustomDecoder({
+          id: uuid.parentId,
+          decoder: UuidDecoder,
+        }),
+        dataSources
+      ))
+    )
   if (t.type({ title: t.string }).is(uuid)) return uuid.title
   if (
     (uuid.__typename === 'Exercise' || uuid.__typename === 'ExerciseGroup') &&
