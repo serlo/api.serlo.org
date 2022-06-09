@@ -5,6 +5,7 @@ interface AbstractExercise {
   date: DateTime!
   instance: Instance!
   alias: String!
+  title: String!
   license: License!
   currentRevision: AbstractExerciseRevision
   events(
@@ -23,6 +24,7 @@ interface AbstractExerciseRevision {
   id: Int!
   trashed: Boolean!
   alias: String!
+  title: String!
   author: User!
   date: DateTime!
   events(

@@ -58,6 +58,13 @@ export class Query<
     return new Query(this.client, { ...this.query, variables: { input } })
   }
 
+  changeInput(input: Partial<I>) {
+    return new Query(
+      this.client,
+      R.mergeDeepRight(this.query, { variables: { input } })
+    )
+  }
+
   withVariables(variables: V) {
     return new Query(this.client, { ...this.query, variables })
   }
@@ -87,7 +94,10 @@ export class Query<
   }
 
   async shouldReturnData(data: unknown) {
-    expect(await this.execute()).toMatchObject({ data })
+    const result = await this.execute()
+
+    expect(result['errors']).toBeUndefined()
+    expect(result).toMatchObject({ data })
   }
 
   async shouldFailWithError(
