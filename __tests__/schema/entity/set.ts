@@ -333,14 +333,19 @@ testCases.forEach((testCase) => {
         .shouldFailWithError('FORBIDDEN')
     })
 
-    test('fails when a field is empty', async () => {
-      await mutationWithEntityId
-        .withVariables({ input: { ...input, changes: '' } })
-        .shouldFailWithError('BAD_USER_INPUT')
+    describe('fails when a field is empty', () => {
+      test.each([
+        ['empty string', ''],
+        ['string with just spaces', '   '],
+      ])('%s', async (_, changes) => {
+        await mutationWithEntityId
+          .changeInput({ changes })
+          .shouldFailWithError('BAD_USER_INPUT')
 
-      await mutationWithParentId
-        .withVariables({ input: { ...input, changes: '' } })
-        .shouldFailWithError('BAD_USER_INPUT')
+        await mutationWithParentId
+          .changeInput({ changes })
+          .shouldFailWithError('BAD_USER_INPUT')
+      })
     })
 
     test('fails when database layer returns a 400er response', async () => {
