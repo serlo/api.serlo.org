@@ -1673,6 +1673,16 @@ export type PageMutationRejectRevisionArgs = {
   input: RejectRevisionInput;
 };
 
+export type PageQuery = {
+  __typename?: 'PageQuery';
+  pages: Array<Page>;
+};
+
+
+export type PageQueryPagesArgs = {
+  instance?: InputMaybe<Instance>;
+};
+
 export type PageRevision = AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'PageRevision';
   alias: Scalars['String'];
@@ -1733,6 +1743,7 @@ export type Query = {
   metadata: MetadataQuery;
   notificationEvent?: Maybe<AbstractNotificationEvent>;
   notifications: NotificationConnection;
+  page: PageQuery;
   subject: SubjectQuery;
   subscription: SubscriptionQuery;
   thread: ThreadQuery;
@@ -2301,23 +2312,11 @@ export type TaxonomyTermEdge = {
   node: TaxonomyTerm;
 };
 
-export type TaxonomyTermMoveInput = {
-  childrenIds: Array<Scalars['Int']>;
-  destination: Scalars['Int'];
-};
-
-export type TaxonomyTermMoveResponse = {
-  __typename?: 'TaxonomyTermMoveResponse';
-  query: Query;
-  success: Scalars['Boolean'];
-};
-
 export type TaxonomyTermMutation = {
   __typename?: 'TaxonomyTermMutation';
   create: TaxonomyTermCreateResponse;
   createEntityLinks: TaxonomyEntityLinksResponse;
   deleteEntityLinks: TaxonomyEntityLinksResponse;
-  move: TaxonomyTermMoveResponse;
   setNameAndDescription: TaxonomyTermSetNameAndDescriptionResponse;
   sort: TaxonomyTermSortResponse;
 };
@@ -2335,11 +2334,6 @@ export type TaxonomyTermMutationCreateEntityLinksArgs = {
 
 export type TaxonomyTermMutationDeleteEntityLinksArgs = {
   input: TaxonomyEntityLinksInput;
-};
-
-
-export type TaxonomyTermMutationMoveArgs = {
-  input: TaxonomyTermMoveInput;
 };
 
 
