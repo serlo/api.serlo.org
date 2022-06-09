@@ -120,5 +120,22 @@ async function getTitle(
     }
   }
 
+  const parentId = getParentId(uuid)
+
+  if (parentId) {
+    const parentUuid = await dataSources.model.serlo.getUuidWithCustomDecoder({
+      id: parentId,
+      decoder: UuidDecoder,
+    })
+    return getTitle(parentUuid, dataSources)
+  }
+
   return uuid.id.toString()
+}
+
+function getParentId(uuid: Model<'AbstractUuid'>) {
+  if (t.type({ parentId: t.number }).is(uuid)) return uuid.parentId
+  if (t.type({ repositoryId: t.number }).is(uuid)) return uuid.repositoryId
+
+  return null
 }
