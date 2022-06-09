@@ -28,7 +28,7 @@ import {
   createNamespace,
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
-  assertArgumentIsNotEmpty,
+  assertStringIsNotEmpty,
 } from '~/internals/graphql'
 import { TaxonomyTermDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
@@ -106,7 +106,7 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
 
       const { parentId, name, taxonomyType, description = undefined } = input
 
-      assertArgumentIsNotEmpty({ name })
+      assertStringIsNotEmpty({ name })
 
       const scope = await fetchScopeOfUuid({
         id: parentId,
@@ -260,7 +260,7 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
 
       const { id, name, description = null } = input
 
-      assertArgumentIsNotEmpty({ name })
+      assertStringIsNotEmpty({ name })
 
       const scope = await fetchScopeOfUuid({
         id,
