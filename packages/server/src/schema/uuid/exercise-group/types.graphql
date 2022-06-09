@@ -19,6 +19,7 @@ type ExerciseGroup implements AbstractUuid & AbstractRepository & AbstractEntity
   ): AbstractNotificationEventConnection!
   instance: Instance!
   alias: String!
+  title: String!
   date: DateTime!
   license: License!
   currentRevision: ExerciseGroupRevision
@@ -44,6 +45,7 @@ type ExerciseGroupRevision implements AbstractUuid & AbstractRevision & Abstract
   author: User!
   trashed: Boolean!
   alias: String!
+  title: String!
   threads(
     after: String
     before: String

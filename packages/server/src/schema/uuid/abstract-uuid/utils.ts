@@ -19,13 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import * as t from 'io-ts'
 import * as R from 'ramda'
 
-import { PickResolvers } from '~/internals/graphql'
+import { Context, Model, PickResolvers } from '~/internals/graphql'
 import {
   DiscriminatorType,
   EntityRevisionType,
   EntityType,
+  UuidDecoder,
 } from '~/model/decoder'
 import { resolveEvents } from '~/schema/notification/resolvers'
 import { createAliasResolvers } from '~/schema/uuid/alias/utils'
@@ -50,10 +52,13 @@ export function isSupportedUuidType(name: string) {
 
 export function createUuidResolvers(): PickResolvers<
   'AbstractUuid',
-  'alias' | 'events'
+  'alias' | 'events' | 'title'
 > {
   return {
     ...createAliasResolvers(),
+    title(uuid, _, { dataSources }) {
+      return getTitle(uuid, dataSources)
+    },
     events(uuid, payload, { dataSources }) {
       return resolveEvents({
         payload: { ...payload, objectId: uuid.id },
@@ -61,4 +66,56 @@ export function createUuidResolvers(): PickResolvers<
       })
     },
   }
+}
+
+async function getTitle(
+  uuid: Model<'AbstractUuid'>,
+  dataSources: Context['dataSources']
+): Promise<string> {
+  if (uuid.__typename === 'User') return uuid.username
+  if (uuid.__typename === 'TaxonomyTerm') return uuid.name
+  if (t.type({ title: t.string }).is(uuid)) return uuid.title
+  if (
+    uuid.__typename === 'Applet' ||
+    uuid.__typename === 'Article' ||
+    uuid.__typename === 'Course' ||
+    uuid.__typename === 'CoursePage' ||
+    uuid.__typename === 'Event' ||
+    uuid.__typename === 'Page' ||
+    uuid.__typename === 'Video'
+  ) {
+    const revisionId = uuid.currentRevisionId ?? R.head(uuid.revisionIds)
+
+    if (revisionId) {
+      const revision = await dataSources.model.serlo.getUuid({ id: revisionId })
+
+      if (t.type({ title: t.string }).is(revision)) {
+        return revision.title
+      }
+    }
+  }
+
+  const parentId = getParentId(uuid)
+
+  if (parentId) {
+    const parentUuid = await dataSources.model.serlo.getUuidWithCustomDecoder({
+      id: parentId,
+      decoder: UuidDecoder,
+    })
+    return getTitle(parentUuid, dataSources)
+  }
+
+  return uuid.id.toString()
+}
+
+function getParentId(uuid: Model<'AbstractUuid'>) {
+  if (t.type({ parentId: t.number }).is(uuid)) return uuid.parentId
+  if (t.type({ repositoryId: t.number }).is(uuid)) return uuid.repositoryId
+  if (
+    (uuid.__typename === 'Exercise' || uuid.__typename === 'ExerciseGroup') &&
+    uuid.taxonomyTermIds.length > 0
+  )
+    return uuid.taxonomyTermIds[0]
+
+  return null
 }

@@ -19,6 +19,7 @@ type GroupedExercise implements AbstractUuid & AbstractRepository & AbstractEnti
   ): AbstractNotificationEventConnection!
   instance: Instance!
   alias: String!
+  title: String!
   date: DateTime!
   license: License!
   currentRevision: GroupedExerciseRevision
@@ -39,6 +40,7 @@ type GroupedExerciseRevision implements AbstractUuid & AbstractRevision & Abstra
   author: User!
   trashed: Boolean!
   alias: String!
+  title: String!
   threads(
     after: String
     before: String

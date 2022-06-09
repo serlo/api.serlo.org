@@ -19,6 +19,7 @@ type Solution implements AbstractUuid & AbstractRepository & AbstractEntity & In
   ): AbstractNotificationEventConnection!
   instance: Instance!
   alias: String!
+  title: String!
   date: DateTime!
   license: License!
   currentRevision: SolutionRevision
@@ -38,6 +39,7 @@ type SolutionRevision implements AbstractUuid & AbstractRevision & AbstractEntit
   author: User!
   trashed: Boolean!
   alias: String!
+  title: String!
   threads(
     after: String
     before: String

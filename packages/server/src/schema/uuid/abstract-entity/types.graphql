@@ -15,6 +15,7 @@ interface AbstractEntity {
   date: DateTime!
   instance: Instance!
   alias: String!
+  title: String!
   license: License!
   subject: Subject
 }
@@ -36,6 +37,7 @@ interface AbstractEntityRevision {
   author: User!
   date: DateTime!
   content: String!
+  title: String!
 
   changes: String!
 }

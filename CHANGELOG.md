@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.39.0](https://github.com/serlo/api.serlo.org/compare/v0.38.0..v0.39.0) - June 9, 2022
+
+### Added
+
+- Add AbstractUuid.title #627
+
+- Entity.set: be sure to not accept mandatory fields with only spaces #656
+
 ## [v0.38.0](https://github.com/serlo/api.serlo.org/compare/v0.37.0..v0.38.0) - June 8, 2022
 
 ### Added
