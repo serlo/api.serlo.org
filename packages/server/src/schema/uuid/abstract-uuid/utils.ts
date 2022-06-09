@@ -75,31 +75,7 @@ async function getTitle(
 ): Promise<string> {
   if (uuid.__typename === 'User') return uuid.username
   if (uuid.__typename === 'TaxonomyTerm') return uuid.name
-  if (uuid.__typename === 'Comment')
-    return (
-      uuid.title ??
-      (await getTitle(
-        await dataSources.model.serlo.getUuidWithCustomDecoder({
-          id: uuid.parentId,
-          decoder: UuidDecoder,
-        }),
-        dataSources
-      ))
-    )
   if (t.type({ title: t.string }).is(uuid)) return uuid.title
-  if (
-    (uuid.__typename === 'Exercise' || uuid.__typename === 'ExerciseGroup') &&
-    uuid.taxonomyTermIds.length > 0
-  ) {
-    const taxonomyTerm = await dataSources.model.serlo.getUuidWithCustomDecoder(
-      {
-        id: uuid.taxonomyTermIds[0],
-        decoder: TaxonomyTermDecoder,
-      }
-    )
-
-    return taxonomyTerm.name
-  }
   if (
     uuid.__typename === 'Applet' ||
     uuid.__typename === 'Article' ||
@@ -136,6 +112,11 @@ async function getTitle(
 function getParentId(uuid: Model<'AbstractUuid'>) {
   if (t.type({ parentId: t.number }).is(uuid)) return uuid.parentId
   if (t.type({ repositoryId: t.number }).is(uuid)) return uuid.repositoryId
+  if (
+    (uuid.__typename === 'Exercise' || uuid.__typename === 'ExerciseGroup') &&
+    uuid.taxonomyTermIds.length > 0
+  )
+    return uuid.taxonomyTermIds[0]
 
   return null
 }
