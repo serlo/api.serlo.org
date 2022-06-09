@@ -61,7 +61,6 @@ type TaxonomyTermMutation {
   deleteEntityLinks(
     input: TaxonomyEntityLinksInput!
   ): TaxonomyEntityLinksResponse!
-  move(input: TaxonomyTermMoveInput!): TaxonomyTermMoveResponse!
   sort(input: TaxonomyTermSortInput!): TaxonomyTermSortResponse!
   setNameAndDescription(
     input: TaxonomyTermSetNameAndDescriptionInput!
@@ -92,16 +91,6 @@ input TaxonomyEntityLinksInput {
 }
 
 type TaxonomyEntityLinksResponse {
-  success: Boolean!
-  query: Query!
-}
-
-input TaxonomyTermMoveInput {
-  childrenIds: [Int!]!
-  destination: Int!
-}
-
-type TaxonomyTermMoveResponse {
   success: Boolean!
   query: Query!
 }

@@ -83,6 +83,14 @@ type PageMutation {
   rejectRevision(input: RejectRevisionInput!): RejectRevisionResponse!
 }
 
+extend type Query {
+  page: PageQuery!
+}
+
+type PageQuery {
+  pages(instance: Instance): [Page!]!
+}
+
 input PageAddRevisionInput {
   content: String!
   pageId: Int!

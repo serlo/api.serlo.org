@@ -266,6 +266,15 @@ export const spec = {
     response: t.union([PageDecoder, t.undefined]),
     canBeNull: false,
   },
+  PagesQuery: {
+    payload: t.type({
+      instance: t.union([InstanceDecoder, t.undefined]),
+    }),
+    response: t.type({
+      pages: t.array(t.number),
+    }),
+    canBeNull: false,
+  },
   EntitySetLicenseMutation: {
     payload: t.type({
       entityId: t.number,
@@ -326,15 +335,6 @@ export const spec = {
       parentId: t.number,
     }),
     response: TaxonomyTermDecoder,
-    canBeNull: false,
-  },
-  TaxonomyTermMoveMutation: {
-    payload: t.type({
-      childrenIds: t.array(t.number),
-      destination: t.number,
-      userId: t.number,
-    }),
-    response: t.type({ success: t.boolean }),
     canBeNull: false,
   },
   TaxonomySortMutation: {
