@@ -58,6 +58,13 @@ export class Query<
     return new Query(this.client, { ...this.query, variables: { input } })
   }
 
+  changeInput(input: Partial<I>) {
+    return new Query(
+      this.client,
+      R.mergeDeepRight(this.query, { variables: { input } })
+    )
+  }
+
   withVariables(variables: V) {
     return new Query(this.client, { ...this.query, variables })
   }
