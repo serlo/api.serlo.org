@@ -27,7 +27,6 @@ import {
   DiscriminatorType,
   EntityRevisionType,
   EntityType,
-  TaxonomyTermDecoder,
   UuidDecoder,
 } from '~/model/decoder'
 import { resolveEvents } from '~/schema/notification/resolvers'

@@ -32,7 +32,7 @@ import {
   ResolverFunction,
   Revision,
 } from '~/internals/graphql'
-import { TaxonomyTermDecoder, UserDecoder } from '~/model/decoder'
+import { UserDecoder } from '~/model/decoder'
 import { Connection } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
