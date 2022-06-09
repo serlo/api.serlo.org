@@ -1310,6 +1310,14 @@ async function exec(): Promise<void> {
         added: ['Add Page.pages query #623'],
         changed: ['Remove TaxonomyTerm.move #662'],
       },
+      {
+        tagName: 'v0.39.0',
+        date: '2022-06-09',
+        added: [
+          'Add AbstractUuid.title #627',
+          'Entity.set: be sure to not accept mandatory fields with only spaces #656',
+        ],
+      },
     ],
   })
 
