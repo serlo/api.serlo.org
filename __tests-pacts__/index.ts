@@ -399,7 +399,7 @@ const pactSpec: PactSpec = {
     examples: [
       [
         {
-          entityIds: [video.id, exercise.id],
+          entityIds: [video.id, article.id],
           taxonomyTermId: taxonomyTermTopic.id,
           userId: user.id,
         },
