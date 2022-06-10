@@ -931,6 +931,7 @@ export type EntityMutation = {
   setGroupedExercise: SetEntityResponse;
   setSolution: SetEntityResponse;
   setVideo: SetEntityResponse;
+  sort: EntitySortResponse;
   updateLicense: EntityUpdateLicenseResponse;
 };
 
@@ -995,6 +996,11 @@ export type EntityMutationSetVideoArgs = {
 };
 
 
+export type EntityMutationSortArgs = {
+  input: EntitySortInput;
+};
+
+
 export type EntityMutationUpdateLicenseArgs = {
   input: EntityUpdateLicenseInput;
 };
@@ -1009,6 +1015,17 @@ export type EntityQueryDeletedEntitiesArgs = {
   after?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   instance?: InputMaybe<Instance>;
+};
+
+export type EntitySortInput = {
+  childrenIds: Array<Scalars['Int']>;
+  entityId: Scalars['Int'];
+};
+
+export type EntitySortResponse = {
+  __typename?: 'EntitySortResponse';
+  query: Query;
+  success: Scalars['Boolean'];
 };
 
 export type EntityUpdateLicenseInput = {
@@ -2999,6 +3016,8 @@ export type ResolversTypes = {
   EntityMetadataCursor: ResolverTypeWrapper<ModelOf<EntityMetadataCursor>>;
   EntityMutation: ResolverTypeWrapper<ModelOf<EntityMutation>>;
   EntityQuery: ResolverTypeWrapper<ModelOf<EntityQuery>>;
+  EntitySortInput: ResolverTypeWrapper<ModelOf<EntitySortInput>>;
+  EntitySortResponse: ResolverTypeWrapper<ModelOf<EntitySortResponse>>;
   EntityUpdateLicenseInput: ResolverTypeWrapper<ModelOf<EntityUpdateLicenseInput>>;
   EntityUpdateLicenseResponse: ResolverTypeWrapper<ModelOf<EntityUpdateLicenseResponse>>;
   Event: ResolverTypeWrapper<ModelOf<Event>>;
@@ -3204,6 +3223,8 @@ export type ResolversParentTypes = {
   EntityMetadataCursor: ModelOf<EntityMetadataCursor>;
   EntityMutation: ModelOf<EntityMutation>;
   EntityQuery: ModelOf<EntityQuery>;
+  EntitySortInput: ModelOf<EntitySortInput>;
+  EntitySortResponse: ModelOf<EntitySortResponse>;
   EntityUpdateLicenseInput: ModelOf<EntityUpdateLicenseInput>;
   EntityUpdateLicenseResponse: ModelOf<EntityUpdateLicenseResponse>;
   Event: ModelOf<Event>;
@@ -3888,12 +3909,19 @@ export type EntityMutationResolvers<ContextType = Context, ParentType extends Re
   setGroupedExercise?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetGroupedExerciseArgs, 'input'>>;
   setSolution?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetSolutionArgs, 'input'>>;
   setVideo?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetVideoArgs, 'input'>>;
+  sort?: Resolver<ResolversTypes['EntitySortResponse'], ParentType, ContextType, RequireFields<EntityMutationSortArgs, 'input'>>;
   updateLicense?: Resolver<ResolversTypes['EntityUpdateLicenseResponse'], ParentType, ContextType, RequireFields<EntityMutationUpdateLicenseArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type EntityQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityQuery'] = ResolversParentTypes['EntityQuery']> = {
   deletedEntities?: Resolver<ResolversTypes['DeletedEntitiesConnection'], ParentType, ContextType, Partial<EntityQueryDeletedEntitiesArgs>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type EntitySortResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntitySortResponse'] = ResolversParentTypes['EntitySortResponse']> = {
+  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4865,6 +4893,7 @@ export type Resolvers<ContextType = Context> = {
   EntityMetadataCursor?: EntityMetadataCursorResolvers<ContextType>;
   EntityMutation?: EntityMutationResolvers<ContextType>;
   EntityQuery?: EntityQueryResolvers<ContextType>;
+  EntitySortResponse?: EntitySortResponseResolvers<ContextType>;
   EntityUpdateLicenseResponse?: EntityUpdateLicenseResponseResolvers<ContextType>;
   Event?: EventResolvers<ContextType>;
   EventRevision?: EventRevisionResolvers<ContextType>;

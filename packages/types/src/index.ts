@@ -927,6 +927,7 @@ export type EntityMutation = {
   setGroupedExercise: SetEntityResponse;
   setSolution: SetEntityResponse;
   setVideo: SetEntityResponse;
+  sort: EntitySortResponse;
   updateLicense: EntityUpdateLicenseResponse;
 };
 
@@ -991,6 +992,11 @@ export type EntityMutationSetVideoArgs = {
 };
 
 
+export type EntityMutationSortArgs = {
+  input: EntitySortInput;
+};
+
+
 export type EntityMutationUpdateLicenseArgs = {
   input: EntityUpdateLicenseInput;
 };
@@ -1005,6 +1011,17 @@ export type EntityQueryDeletedEntitiesArgs = {
   after?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   instance?: InputMaybe<Instance>;
+};
+
+export type EntitySortInput = {
+  childrenIds: Array<Scalars['Int']>;
+  entityId: Scalars['Int'];
+};
+
+export type EntitySortResponse = {
+  __typename?: 'EntitySortResponse';
+  query: Query;
+  success: Scalars['Boolean'];
 };
 
 export type EntityUpdateLicenseInput = {
