@@ -155,6 +155,14 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       },
     }),
 
+    async sort(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const { success } = await dataSources.model.serlo.sortEntity(input)
+
+      return { success, query: {} }
+    },
+
     async updateLicense(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
