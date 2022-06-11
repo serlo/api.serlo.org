@@ -167,3 +167,21 @@ describe('endpoint "entities"', () => {
     await query.shouldFailWithError('INTERNAL_SERVER_ERROR')
   })
 })
+
+test('endpoint `version` returns string that could be semver', async () => {
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query {
+          metadata {
+            version
+          }
+        }
+      `,
+    })
+    .shouldReturnData({
+      metadata: {
+        version: expect.stringMatching(/^\d+\.\d+\.\d+/) as unknown,
+      },
+    })
+})
