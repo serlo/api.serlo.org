@@ -29,6 +29,8 @@ import {
   taxonomyTermCurriculumTopic,
   taxonomyTermRoot,
   taxonomyTermSubject,
+  taxonomyTermTopic,
+  taxonomyTermTopicFolder,
 } from '../../../__fixtures__'
 import { Client, getTypenameAndId, given } from '../../__utils__'
 import { Instance } from '~/types'
@@ -446,6 +448,32 @@ describe('TaxonomyTerm curriculumTopic', () => {
             },
           },
         },
+      })
+  })
+})
+
+describe('TaxonomyTerm topicFolder', () => {
+  beforeEach(() => {
+    given('UuidQuery').for(taxonomyTermTopicFolder)
+    given('UuidQuery').for(taxonomyTermTopic)
+  })
+
+  test('by id (check changed type)', async () => {
+    await client
+      .prepareQuery({
+        query: gql`
+          query taxonomyTerm($id: Int!) {
+            uuid(id: $id) {
+              ... on TaxonomyTerm {
+                type
+              }
+            }
+          }
+        `,
+      })
+      .withVariables({ id: taxonomyTermTopicFolder.id })
+      .shouldReturnData({
+        uuid: { type: 'exerciseFolder' },
       })
   })
 })

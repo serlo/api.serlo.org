@@ -96,6 +96,6 @@ export const taxonomyTermTopicFolder: Model<'TaxonomyTerm'> = {
   description: '',
   weight: 1,
   taxonomyId: castToUuid(9),
-  parentId: castToUuid(1420),
+  parentId: castToUuid(1288),
   childrenIds: [10385, 6925, 6921, 6933, 6917, 7085].map(castToUuid),
 }
