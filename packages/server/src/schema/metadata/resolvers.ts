@@ -84,5 +84,8 @@ export const resolvers: Queries<'metadata'> = {
         },
       }
     },
+    version() {
+      return process.env.npm_package_version as string
+    },
   },
 }
