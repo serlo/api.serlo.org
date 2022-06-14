@@ -152,7 +152,7 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
       const taxonomyTerm = await dataSources.model.serlo.createTaxonomyTerm({
         parentId,
         taxonomyType:
-          taxonomyType === TaxonomyTypeCreateOptions.TopicFolder
+          taxonomyType === TaxonomyTypeCreateOptions.ExerciseFolder
             ? 'topic-folder'
             : 'topic',
         name,

@@ -62,7 +62,7 @@ type TaxonomyTermMutation {
 
 enum TaxonomyTypeCreateOptions {
   topic
-  topicFolder
+  exerciseFolder
 }
 
 input TaxonomyTermCreateInput {
