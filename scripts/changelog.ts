@@ -1318,6 +1318,14 @@ async function exec(): Promise<void> {
           'Entity.set: be sure to not accept mandatory fields with only spaces #656',
         ],
       },
+      {
+        tagName: 'v0.40.0',
+        date: '2022-06-14',
+        added: [
+          'Add metadata.version #670',
+          'Add entity.sort mutation for sorting exercises #668',
+        ],
+      },
     ],
   })
 
