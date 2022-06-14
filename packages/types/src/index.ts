@@ -2511,6 +2511,7 @@ export type ThreadQuery = {
 export type ThreadQueryAllThreadsArgs = {
   after?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
 };
 
 export type ThreadSetCommentStateInput = {

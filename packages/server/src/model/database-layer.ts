@@ -74,6 +74,7 @@ export const spec = {
     payload: t.intersection([
       t.type({ first: t.number }),
       t.partial({ after: t.number }),
+      t.partial({ instance: InstanceDecoder }),
     ]),
     response: t.type({ firstCommentIds: t.array(t.number) }),
     canBeNull: false,
