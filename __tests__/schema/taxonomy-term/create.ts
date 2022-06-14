@@ -34,6 +34,8 @@ import { TaxonomyTypeCreateOptions } from '~/types'
 describe('TaxonomyTermCreateMutation', () => {
   const user = { ...baseUser, roles: ['de_architect'] }
 
+  // TODO: Write test for TaxonomyTypeCreateOptions.ExerciseFolder
+
   const input = {
     parentId: taxonomyTermSubject.id,
     name: 'a name ',
@@ -158,7 +160,7 @@ describe('TaxonomyTermCreateMutation', () => {
     })
   })
 
-  test('fails when parent does not accept topic or topicFolder', async () => {
+  test('fails when parent does not accept topic or exerciseFolder', async () => {
     given('UuidQuery').for(taxonomyTermRoot)
 
     await mutation

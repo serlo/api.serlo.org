@@ -452,7 +452,7 @@ describe('TaxonomyTerm curriculumTopic', () => {
   })
 })
 
-describe('TaxonomyTerm topicFolder', () => {
+describe('TaxonomyTerm exerciseFolder', () => {
   beforeEach(() => {
     given('UuidQuery').for(taxonomyTermTopicFolder)
     given('UuidQuery').for(taxonomyTermTopic)

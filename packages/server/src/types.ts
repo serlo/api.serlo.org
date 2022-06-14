@@ -2381,8 +2381,8 @@ export enum TaxonomyTermType {
 }
 
 export enum TaxonomyTypeCreateOptions {
-  Topic = 'topic',
-  TopicFolder = 'topicFolder'
+  ExerciseFolder = 'exerciseFolder',
+  Topic = 'topic'
 }
 
 export type Thread = {
