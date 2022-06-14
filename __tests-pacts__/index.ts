@@ -272,6 +272,14 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  EntitySortMutation: {
+    examples: [
+      [
+        { entityId: 2223, childrenIds: [9911, 2233, 5075, 9907] },
+        { success: true },
+      ],
+    ],
+  },
   EventQuery: {
     examples: events.map((event) => [{ id: event.id }, event]),
     examplePayloadForNull: { id: 1_000_000 },
