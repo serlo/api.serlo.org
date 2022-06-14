@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.40.0](https://github.com/serlo/api.serlo.org/compare/v0.39.0..v0.40.0) - June 14, 2022
+
+### Added
+
+- Add metadata.version #670
+
+- Add entity.sort mutation for sorting exercises #668
+
 ## [v0.39.0](https://github.com/serlo/api.serlo.org/compare/v0.38.0..v0.39.0) - June 9, 2022
 
 ### Added
