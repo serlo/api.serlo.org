@@ -694,17 +694,27 @@ export function createSerloModel({
             payload: { id: taxonomyTermId },
           })
         }
+
+        let removeCache = false;
         await getUnrevisedEntities._querySpec.setCache({
           payload: undefined,
           getValue(current) {
             if (!current) return
-
-            if (current.unrevisedEntityIds.includes(newEntity.id)) return
-            else current.unrevisedEntityIds.push(newEntity.id)
+            if (!input.needsReview && current.unrevisedEntityIds.includes(newEntity.id)) {
+              removeCache = true
+            }
+            if (input.needsReview && !current.unrevisedEntityIds.includes(newEntity.id)) {
+              current.unrevisedEntityIds.push(newEntity.id)
+            }
 
             return current
           },
         })
+        if (removeCache) {
+          await getUnrevisedEntities._querySpec.removeCache({
+            payload: undefined
+          })
+        }
       }
     },
   })
@@ -720,17 +730,28 @@ export function createSerloModel({
           payload: { id: input.entityId },
         })
 
+        let removeCache = false;
+
         await getUnrevisedEntities._querySpec.setCache({
           payload: undefined,
           getValue(current) {
             if (!current) return
-
-            if (current.unrevisedEntityIds.includes(input.entityId)) return
-            else current.unrevisedEntityIds.push(input.entityId)
+            if (!input.needsReview && current.unrevisedEntityIds.includes(input.entityId)) {
+              removeCache = true
+            }
+            if (input.needsReview && !current.unrevisedEntityIds.includes(input.entityId)) {
+              current.unrevisedEntityIds.push(input.entityId)
+            }
 
             return current
           },
         })
+
+        if (removeCache) {
+          await getUnrevisedEntities._querySpec.removeCache({
+            payload: undefined
+          })
+        }
 
         if (input.subscribeThis) {
           await getSubscriptions._querySpec.setCache({
@@ -814,17 +835,6 @@ export function createSerloModel({
     updateCache: async ({ pageId }, { success }) => {
       if (success) {
         await getUuid._querySpec.removeCache({ payload: { id: pageId } })
-        await getUnrevisedEntities._querySpec.setCache({
-          payload: undefined,
-          getValue(current) {
-            if (!current) return
-
-            if (current.unrevisedEntityIds.includes(pageId)) return
-            else current.unrevisedEntityIds.push(pageId)
-
-            return current
-          },
-        })
       }
     },
   })
@@ -895,8 +905,6 @@ export function createSerloModel({
           return { ...current, trashed: true }
         },
       })
-
-      await getUnrevisedEntities._querySpec.removeCache({ payload: undefined })
     },
   })
 
