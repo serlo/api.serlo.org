@@ -169,19 +169,24 @@ describe('endpoint "entities"', () => {
 })
 
 test('endpoint `version` returns string that could be semver', async () => {
-  await new Client()
-    .prepareQuery({
-      query: gql`
-        query {
-          metadata {
-            version
-          }
+  const versionQuery = new Client().prepareQuery({
+    query: gql`
+      query {
+        metadata {
+          version
         }
-      `,
-    })
-    .shouldReturnData({
-      metadata: {
-        version: expect.stringMatching(/^\d+\.\d+\.\d+/) as unknown,
-      },
-    })
+      }
+    `,
+  })
+  await versionQuery.shouldReturnData({
+    metadata: {
+      version: expect.not.stringContaining('0.0.0') as unknown,
+    },
+  })
+
+  await versionQuery.shouldReturnData({
+    metadata: {
+      version: expect.stringMatching(/^\d+\.\d+\.\d+/) as unknown,
+    },
+  })
 })
