@@ -232,13 +232,14 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
       await assertUserIsAuthorized({
         userId,
         dataSources,
-        message: 'You are not allowed to sort terms of this taxonomy term.',
+        message:
+          'You are not allowed to sort children of taxonomy terms in this instance.',
         guard: serloAuth.TaxonomyTerm.change(
           serloAuth.instanceToScope(taxonomyTerm.instance)
         ),
       })
 
-      // Maybe provisory solution, See #643
+      // Provisory solution, See https://github.com/serlo/serlo.org-database-layer/issues/303
       const allChildrenIds = [
         ...new Set(childrenIds.concat(taxonomyTerm.childrenIds)),
       ]
