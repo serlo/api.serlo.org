@@ -35,8 +35,28 @@ import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
-import { TaxonomyTerm, TaxonomyTypeCreateOptions } from '~/types'
+import {
+  TaxonomyTerm,
+  TaxonomyTermType,
+  TaxonomyTypeCreateOptions,
+} from '~/types'
 import { isDefined } from '~/utils'
+
+const typesMap = {
+  root: TaxonomyTermType.Root,
+  subject: TaxonomyTermType.Subject,
+  topicFolder: TaxonomyTermType.ExerciseFolder,
+  curriculumTopicFolder: TaxonomyTermType.ExerciseFolder,
+  exerciseFolder: TaxonomyTermType.ExerciseFolder,
+  topic: TaxonomyTermType.Topic,
+  // fallbacks
+  blog: TaxonomyTermType.Topic,
+  curriculum: TaxonomyTermType.Topic,
+  curriculumTopic: TaxonomyTermType.Topic,
+  forum: TaxonomyTermType.Topic,
+  forumCategory: TaxonomyTermType.Topic,
+  locale: TaxonomyTermType.Topic,
+}
 
 export const resolvers: TypeResolvers<TaxonomyTerm> &
   Mutations<'taxonomyTerm'> = {
@@ -46,6 +66,15 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
   TaxonomyTerm: {
     ...createUuidResolvers(),
     ...createThreadResolvers(),
+    async type(taxonomyTerm, _args, { dataSources }) {
+      if (!taxonomyTerm.parentId) return TaxonomyTermType.Root
+      const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: taxonomyTerm.parentId,
+        decoder: TaxonomyTermDecoder,
+      })
+      if (!parent.parentId) return TaxonomyTermType.Subject
+      return typesMap[taxonomyTerm.type]
+    },
     parent(taxonomyTerm, _args, { dataSources }) {
       if (!taxonomyTerm.parentId) return null
       return dataSources.model.serlo.getUuidWithCustomDecoder({
@@ -123,7 +152,7 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
       const taxonomyTerm = await dataSources.model.serlo.createTaxonomyTerm({
         parentId,
         taxonomyType:
-          taxonomyType === TaxonomyTypeCreateOptions.TopicFolder
+          taxonomyType === TaxonomyTypeCreateOptions.ExerciseFolder
             ? 'topic-folder'
             : 'topic',
         name,
@@ -189,7 +218,6 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
 
       return { success, query: {} }
     },
-
     async sort(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
@@ -224,7 +252,6 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
 
       return { success, query: {} }
     },
-
     async setNameAndDescription(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
