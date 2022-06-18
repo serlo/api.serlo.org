@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.41.0](https://github.com/serlo/api.serlo.org/compare/v0.40.0..v0.41.0) - June 18, 2022
+
+### Added
+
+- Thread.allThreads: add optional `instance` filter #676
+
+- Entity.sort: support also sorting of coursePages #679
+
+### Changed
+
+- Rename TaxonomyTerm.type folder to exerciseFolder #671
+
+- Simplify TaxonomyTerm.type to topic, exerciseFolder, subject, root #672
+
+### Fixed
+
+- Fix metadata.version #678
+
 ## [v0.40.0](https://github.com/serlo/api.serlo.org/compare/v0.39.0..v0.40.0) - June 14, 2022
 
 ### Added
