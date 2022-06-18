@@ -1326,6 +1326,19 @@ async function exec(): Promise<void> {
           'Add entity.sort mutation for sorting exercises #668',
         ],
       },
+      {
+        tagName: 'v0.41.0',
+        date: '2022-06-18',
+        added: [
+          'Thread.allThreads: add optional `instance` filter #676',
+          'Entity.sort: support also sorting of coursePages #679',
+        ],
+        changed: [
+          'Rename TaxonomyTerm.type folder to exerciseFolder #671',
+          'Simplify TaxonomyTerm.type to topic, exerciseFolder, subject, root #672',
+        ],
+        fixed: ['Fix metadata.version #678'],
+      },
     ],
   })
 
