@@ -25,6 +25,7 @@ import * as R from 'ramda'
 import { comment, comment1, comment2, comment3 } from '../../../__fixtures__'
 import { Client, given } from '../../__utils__'
 import { Model } from '~/internals/graphql'
+import { Instance } from '~/types'
 
 describe('allThreads', () => {
   beforeEach(() => {
@@ -33,9 +34,9 @@ describe('allThreads', () => {
 
   const query = new Client().prepareQuery({
     query: gql`
-      query ($first: Int, $after: String) {
+      query ($first: Int, $after: String, $instance: Instance) {
         thread {
-          allThreads(first: $first, after: $after) {
+          allThreads(first: $first, after: $after, instance: $instance) {
             nodes {
               __typename
               createdAt
@@ -83,6 +84,20 @@ describe('allThreads', () => {
       })
       .shouldReturnData({
         thread: { allThreads: { nodes: [comment3].map(getThreadData) } },
+      })
+  })
+
+  test('parameter "instance"', async () => {
+    given('AllThreadsQuery')
+      .withPayload({ first: 11, instance: Instance.En })
+      .returns({ firstCommentIds: [comment2].map(R.prop('id')) })
+
+    await query
+      .withVariables({
+        instance: Instance.En,
+      })
+      .shouldReturnData({
+        thread: { allThreads: { nodes: [comment2].map(getThreadData) } },
       })
   })
 

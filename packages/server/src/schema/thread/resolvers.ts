@@ -61,7 +61,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
   ThreadQuery: {
     async allThreads(_parent, input, { dataSources }) {
       const limit = 50
-      const { first = 10 } = input
+      const { first = 10, instance } = input
       // TODO: Better solution
       const after = input.after
         ? parseInt(Buffer.from(input.after, 'base64').toString())
@@ -73,6 +73,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       const { firstCommentIds } = await dataSources.model.serlo.getAllThreads({
         first: first + 1,
         after,
+        instance,
       })
 
       const threads = await resolveThreads({ firstCommentIds, dataSources })
