@@ -1,15 +1,8 @@
 enum TaxonomyTermType {
-  blog
-  curriculum
-  curriculumTopic
-  curriculumTopicFolder
-  forum
-  forumCategory
-  locale
   root
   subject
   topic
-  topicFolder
+  exerciseFolder
 }
 
 type TaxonomyTerm implements AbstractUuid & AbstractNavigationChild & InstanceAware & ThreadAware {
@@ -69,7 +62,7 @@ type TaxonomyTermMutation {
 
 enum TaxonomyTypeCreateOptions {
   topic
-  topicFolder
+  exerciseFolder
 }
 
 input TaxonomyTermCreateInput {

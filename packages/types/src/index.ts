@@ -2388,22 +2388,15 @@ export type TaxonomyTermSortResponse = {
 };
 
 export enum TaxonomyTermType {
-  Blog = 'blog',
-  Curriculum = 'curriculum',
-  CurriculumTopic = 'curriculumTopic',
-  CurriculumTopicFolder = 'curriculumTopicFolder',
-  Forum = 'forum',
-  ForumCategory = 'forumCategory',
-  Locale = 'locale',
+  ExerciseFolder = 'exerciseFolder',
   Root = 'root',
   Subject = 'subject',
-  Topic = 'topic',
-  TopicFolder = 'topicFolder'
+  Topic = 'topic'
 }
 
 export enum TaxonomyTypeCreateOptions {
-  Topic = 'topic',
-  TopicFolder = 'topicFolder'
+  ExerciseFolder = 'exerciseFolder',
+  Topic = 'topic'
 }
 
 export type Thread = {
