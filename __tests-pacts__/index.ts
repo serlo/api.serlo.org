@@ -152,8 +152,14 @@ const pactSpec: PactSpec = {
     ]),
     examplePayloadForNull: { instance: Instance.En, path: '/not-existing' },
   },
-  // TODO: Add contract tests
-  AllThreadsQuery: { examples: [] },
+  AllThreadsQuery: {
+    examples: [
+      [
+        { first: 1, after: undefined, instance: Instance.De },
+        { firstCommentIds: [35435] },
+      ],
+    ],
+  },
   DeletedEntitiesQuery: {
     examples: [
       [
@@ -269,6 +275,14 @@ const pactSpec: PactSpec = {
         {
           success: true,
         },
+      ],
+    ],
+  },
+  EntitySortMutation: {
+    examples: [
+      [
+        { entityId: 2223, childrenIds: [9911, 2233, 5075, 9907] },
+        { success: true },
       ],
     ],
   },
