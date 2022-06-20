@@ -695,15 +695,21 @@ export function createSerloModel({
           })
         }
 
-        let removeCache = false;
+        let removeCache = false
         await getUnrevisedEntities._querySpec.setCache({
           payload: undefined,
           getValue(current) {
             if (!current) return
-            if (!input.needsReview && current.unrevisedEntityIds.includes(newEntity.id)) {
+            if (
+              !input.needsReview &&
+              current.unrevisedEntityIds.includes(newEntity.id)
+            ) {
               removeCache = true
             }
-            if (input.needsReview && !current.unrevisedEntityIds.includes(newEntity.id)) {
+            if (
+              input.needsReview &&
+              !current.unrevisedEntityIds.includes(newEntity.id)
+            ) {
               current.unrevisedEntityIds.push(newEntity.id)
             }
 
@@ -712,7 +718,7 @@ export function createSerloModel({
         })
         if (removeCache) {
           await getUnrevisedEntities._querySpec.removeCache({
-            payload: undefined
+            payload: undefined,
           })
         }
       }
@@ -730,16 +736,22 @@ export function createSerloModel({
           payload: { id: input.entityId },
         })
 
-        let removeCache = false;
+        let removeCache = false
 
         await getUnrevisedEntities._querySpec.setCache({
           payload: undefined,
           getValue(current) {
             if (!current) return
-            if (!input.needsReview && current.unrevisedEntityIds.includes(input.entityId)) {
+            if (
+              !input.needsReview &&
+              current.unrevisedEntityIds.includes(input.entityId)
+            ) {
               removeCache = true
             }
-            if (input.needsReview && !current.unrevisedEntityIds.includes(input.entityId)) {
+            if (
+              input.needsReview &&
+              !current.unrevisedEntityIds.includes(input.entityId)
+            ) {
               current.unrevisedEntityIds.push(input.entityId)
             }
 
@@ -749,7 +761,7 @@ export function createSerloModel({
 
         if (removeCache) {
           await getUnrevisedEntities._querySpec.removeCache({
-            payload: undefined
+            payload: undefined,
           })
         }
 
