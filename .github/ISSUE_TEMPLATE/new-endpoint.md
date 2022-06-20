@@ -18,3 +18,8 @@ assignees: ''
 
 - [ ]
 - [ ]
+
+<!-- Checklist
+- Does the user have to be authenticated?
+- If authenticated, who is authorized?
+-->

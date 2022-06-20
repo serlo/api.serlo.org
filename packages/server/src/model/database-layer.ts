@@ -74,6 +74,7 @@ export const spec = {
     payload: t.intersection([
       t.type({ first: t.number }),
       t.partial({ after: t.number }),
+      t.partial({ instance: InstanceDecoder }),
     ]),
     response: t.type({ firstCommentIds: t.array(t.number) }),
     canBeNull: false,
@@ -173,6 +174,11 @@ export const spec = {
       ]),
     }),
     response: EntityDecoder,
+    canBeNull: false,
+  },
+  EntitySortMutation: {
+    payload: t.type({ childrenIds: t.array(t.number), entityId: t.number }),
+    response: t.type({ success: t.boolean }),
     canBeNull: false,
   },
   EventQuery: {

@@ -85,7 +85,9 @@ export const resolvers: Queries<'metadata'> = {
       }
     },
     version() {
-      return process.env.npm_package_version as string
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
+      const { version } = require('../../../package')
+      return version as string
     },
   },
 }
