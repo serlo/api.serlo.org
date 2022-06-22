@@ -1032,9 +1032,38 @@ export function createSerloModel({
     },
   })
 
+  const addRole = createMutation({
+    decoder: DatabaseLayer.getDecoderFor(
+      'UserAddRoleMutation',
+    ),
+    mutate: (
+      payload: DatabaseLayer.Payload<'UserAddRoleMutation'>
+    ) => {
+      return DatabaseLayer.makeRequest(
+        'UserAddRoleMutation',
+        payload
+      )
+    }
+  })
+
+  const removeRole = createMutation({
+    decoder: DatabaseLayer.getDecoderFor(
+      'UserRemoveRoleMutation'
+    ),
+    mutate: (
+      payload: DatabaseLayer.Payload<'UserRemoveRoleMutation'>
+    ) => {
+      return DatabaseLayer.makeRequest(
+        'UserRemoveRoleMutation',
+        payload
+      )
+    }
+  })
+
   return {
     addEntityRevision,
     addPageRevision,
+    addRole,
     archiveThread,
     checkoutEntityRevision,
     checkoutPageRevision,
@@ -1070,6 +1099,7 @@ export function createSerloModel({
     getPages,
     rejectEntityRevision,
     rejectPageRevision,
+    removeRole,
     setDescription,
     setEmail,
     setEntityLicense,

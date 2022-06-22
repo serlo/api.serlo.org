@@ -2669,10 +2669,17 @@ export type UserEdge = {
 
 export type UserMutation = {
   __typename?: 'UserMutation';
+  addRole: UserRoleResponse;
   deleteBots: UserDeleteBotsResponse;
   deleteRegularUsers: Array<UserDeleteRegularUsersResponse>;
+  removeRole: UserRoleResponse;
   setDescription: UserSetDescriptionResponse;
   setEmail: UserSetEmailResponse;
+};
+
+
+export type UserMutationAddRoleArgs = {
+  input: UserRoleInput;
 };
 
 
@@ -2683,6 +2690,11 @@ export type UserMutationDeleteBotsArgs = {
 
 export type UserMutationDeleteRegularUsersArgs = {
   input: UserDeleteRegularUsersInput;
+};
+
+
+export type UserMutationRemoveRoleArgs = {
+  input: UserRoleInput;
 };
 
 
@@ -2704,6 +2716,17 @@ export type UserQuery = {
 export type UserQueryPotentialSpamUsersArgs = {
   after?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
+};
+
+export type UserRoleInput = {
+  instance?: InputMaybe<Instance>;
+  role: Role;
+  userName: Scalars['String'];
+};
+
+export type UserRoleResponse = {
+  __typename?: 'UserRoleResponse';
+  success: Scalars['Boolean'];
 };
 
 export type UserSetDescriptionInput = {
