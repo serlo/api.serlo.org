@@ -163,6 +163,7 @@ export function createSwrQueueWorker({
   timer: Timer
   concurrency: number
 }): {
+  checkStalledJobs(timeout: number): Promise<void>
   ready(): Promise<void>
   healthy(): Promise<void>
   quit(): Promise<void>
@@ -248,6 +249,9 @@ export function createSwrQueueWorker({
 
   return {
     _queue: queue as unknown as never,
+    async checkStalledJobs(timeout: number) {
+      await queue.checkStalledJobs(timeout)
+    },
     async ready() {
       await queue.ready()
     },
