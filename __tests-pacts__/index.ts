@@ -77,7 +77,7 @@ import {
   castToUuid,
   castToAlias,
 } from '~/model/decoder'
-import { Instance } from '~/types'
+import {Instance, Role} from '~/types'
 import { isDateString } from '~/utils'
 
 const events = [
@@ -561,6 +561,16 @@ const pactSpec: PactSpec = {
   UnrevisedEntitiesQuery: {
     examples: [[{}, { unrevisedEntityIds: [article.id] }]],
   },
+  UserAddRoleMutation: {
+    examples: [[{
+      userName: '1229f9c7',
+      role: Role.Reviewer,
+      instance: Instance.De,
+    },
+      {
+        success: true
+      }]]
+  },
   UserPotentialSpamUsersQuery: { examples: [] },
   UserDeleteBotsMutation: { examples: [] },
   UserDeleteRegularUsersMutation: {
@@ -570,6 +580,16 @@ const pactSpec: PactSpec = {
   },
   UserSetDescriptionMutation: {
     examples: [[{ userId: 1, description: 'Hello World' }, { success: true }]],
+  },
+  UserRemoveRoleMutation: {
+    examples: [[{
+      userName: 'admin',
+      role: Role.Sysadmin,
+      instance: Instance.De,
+    },
+      {
+        success: true
+      }]]
   },
   UserSetEmailMutation: {
     examples: [

@@ -240,6 +240,16 @@ export const resolvers: LegacyQueries<
     user: createNamespace(),
   },
   UserMutation: {
+    async addRole(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+      await assertUserIsAuthorized({
+        userId,
+        guard: serloAuth.User.addRole(serloAuth.Scope.Serlo),
+        message: 'You are not allowed to add roles.',
+        dataSources,
+      })
+    },
+
     async deleteBots(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
@@ -339,6 +349,16 @@ export const resolvers: LegacyQueries<
           }
         })
       )
+    },
+
+    async removeRole(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+      await assertUserIsAuthorized({
+        userId,
+        guard: serloAuth.User.removeRole(serloAuth.Scope.Serlo),
+        message: 'You are not allowed to remove roles.',
+        dataSources,
+      })
     },
 
     async setDescription(_parent, { input }, { dataSources, userId }) {
