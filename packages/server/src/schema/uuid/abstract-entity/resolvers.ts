@@ -34,7 +34,13 @@ import {
   Mutations,
   Queries,
 } from '~/internals/graphql'
-import { castToUuid, EntityDecoder, EntityType } from '~/model/decoder'
+import {
+  castToUuid,
+  CourseDecoder,
+  EntityDecoder,
+  EntityType,
+  ExerciseGroupDecoder,
+} from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { isDateString } from '~/utils'
@@ -154,6 +160,39 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         }
       },
     }),
+
+    async sort(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const { entityId, childrenIds } = input
+
+      const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: entityId,
+        decoder: t.union([ExerciseGroupDecoder, CourseDecoder]),
+      })
+
+      await assertUserIsAuthorized({
+        userId,
+        dataSources,
+        message:
+          'You are not allowed to sort children of entities in this instance.',
+        guard: serloAuth.Entity.orderChildren(
+          serloAuth.instanceToScope(entity.instance)
+        ),
+      })
+
+      // Provisory solution, See https://github.com/serlo/serlo.org-database-layer/issues/303
+      const allChildrenIds = ExerciseGroupDecoder.is(entity)
+        ? [...new Set(childrenIds.concat(entity.exerciseIds))]
+        : [...new Set(childrenIds.concat(entity.pageIds))]
+
+      const { success } = await dataSources.model.serlo.sortEntity({
+        entityId,
+        childrenIds: allChildrenIds,
+      })
+
+      return { success, query: {} }
+    },
 
     async updateLicense(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
