@@ -695,7 +695,6 @@ export function createSerloModel({
           })
         }
 
-        let removeCache = false
         await getUnrevisedEntities._querySpec.setCache({
           payload: undefined,
           getValue(current) {
@@ -704,7 +703,7 @@ export function createSerloModel({
               !input.needsReview &&
               current.unrevisedEntityIds.includes(newEntity.id)
             ) {
-              removeCache = true
+              current.unrevisedEntityIds = current.unrevisedEntityIds.filter(id => id !== newEntity.id)
             }
             if (
               input.needsReview &&
@@ -716,11 +715,6 @@ export function createSerloModel({
             return current
           },
         })
-        if (removeCache) {
-          await getUnrevisedEntities._querySpec.removeCache({
-            payload: undefined,
-          })
-        }
       }
     },
   })
@@ -736,8 +730,6 @@ export function createSerloModel({
           payload: { id: input.entityId },
         })
 
-        let removeCache = false
-
         await getUnrevisedEntities._querySpec.setCache({
           payload: undefined,
           getValue(current) {
@@ -746,7 +738,7 @@ export function createSerloModel({
               !input.needsReview &&
               current.unrevisedEntityIds.includes(input.entityId)
             ) {
-              removeCache = true
+              current.unrevisedEntityIds = current.unrevisedEntityIds.filter(id => id !== input.entityId)
             }
             if (
               input.needsReview &&
@@ -758,12 +750,6 @@ export function createSerloModel({
             return current
           },
         })
-
-        if (removeCache) {
-          await getUnrevisedEntities._querySpec.removeCache({
-            payload: undefined,
-          })
-        }
 
         if (input.subscribeThis) {
           await getSubscriptions._querySpec.setCache({
