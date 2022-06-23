@@ -703,7 +703,9 @@ export function createSerloModel({
               !input.needsReview &&
               current.unrevisedEntityIds.includes(newEntity.id)
             ) {
-              current.unrevisedEntityIds = current.unrevisedEntityIds.filter(id => id !== newEntity.id)
+              current.unrevisedEntityIds = current.unrevisedEntityIds.filter(
+                (id) => id !== newEntity.id
+              )
             }
             if (
               input.needsReview &&
@@ -738,7 +740,9 @@ export function createSerloModel({
               !input.needsReview &&
               current.unrevisedEntityIds.includes(input.entityId)
             ) {
-              current.unrevisedEntityIds = current.unrevisedEntityIds.filter(id => id !== input.entityId)
+              current.unrevisedEntityIds = current.unrevisedEntityIds.filter(
+                (id) => id !== input.entityId
+              )
             }
             if (
               input.needsReview &&
