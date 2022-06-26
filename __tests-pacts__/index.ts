@@ -152,8 +152,14 @@ const pactSpec: PactSpec = {
     ]),
     examplePayloadForNull: { instance: Instance.En, path: '/not-existing' },
   },
-  // TODO: Add contract tests
-  AllThreadsQuery: { examples: [] },
+  AllThreadsQuery: {
+    examples: [
+      [
+        { first: 1, after: undefined, instance: Instance.De },
+        { firstCommentIds: [35435] },
+      ],
+    ],
+  },
   DeletedEntitiesQuery: {
     examples: [
       [
@@ -272,6 +278,14 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  EntitySortMutation: {
+    examples: [
+      [
+        { entityId: 2223, childrenIds: [9911, 2233, 5075, 9907] },
+        { success: true },
+      ],
+    ],
+  },
   EventQuery: {
     examples: events.map((event) => [{ id: event.id }, event]),
     examplePayloadForNull: { id: 1_000_000 },
@@ -354,6 +368,21 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  PagesQuery: {
+    examples: [
+      [
+        {
+          instance: Instance.En,
+        },
+        {
+          pages: [
+            23579, 23580, 23591, 23711, 23720, 23727, 25079, 25082, 27469,
+            32840, 32966,
+          ],
+        },
+      ],
+    ],
+  },
   SubjectsQuery: {
     examples: [
       [{}, { subjects: [{ instance: Instance.De, taxonomyTermId: 5 }] }],
@@ -384,7 +413,7 @@ const pactSpec: PactSpec = {
     examples: [
       [
         {
-          entityIds: [video.id, exercise.id],
+          entityIds: [video.id, article.id],
           taxonomyTermId: taxonomyTermTopic.id,
           userId: user.id,
         },
@@ -451,20 +480,6 @@ const pactSpec: PactSpec = {
           userId: user.id,
         },
         { success: true },
-      ],
-    ],
-  },
-  TaxonomyTermMoveMutation: {
-    examples: [
-      [
-        {
-          childrenIds: [taxonomyTermSubject.id],
-          destination: taxonomyTermCurriculumTopic.id,
-          userId: user.id,
-        },
-        {
-          success: true,
-        },
       ],
     ],
   },

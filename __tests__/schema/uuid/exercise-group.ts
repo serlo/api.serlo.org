@@ -34,7 +34,6 @@ import {
   given,
 } from '../../__utils__'
 
-
 describe('ExerciseGroup', () => {
   beforeEach(() => {
     global.server.use(createUuidHandler(exerciseGroup))

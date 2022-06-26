@@ -15,6 +15,7 @@ interface AbstractEntity {
   date: DateTime!
   instance: Instance!
   alias: String!
+  title: String!
   license: License!
   subject: Subject
 }
@@ -36,6 +37,7 @@ interface AbstractEntityRevision {
   author: User!
   date: DateTime!
   content: String!
+  title: String!
 
   changes: String!
 }
@@ -99,6 +101,7 @@ type EntityMutation {
   updateLicense(input: EntityUpdateLicenseInput!): EntityUpdateLicenseResponse!
   checkoutRevision(input: CheckoutRevisionInput!): CheckoutRevisionResponse!
   rejectRevision(input: RejectRevisionInput!): RejectRevisionResponse!
+  sort(input: EntitySortInput!): EntitySortResponse!
 }
 
 input SetAppletInput {
@@ -237,6 +240,16 @@ input RejectRevisionInput {
 }
 
 type RejectRevisionResponse {
+  success: Boolean!
+  query: Query!
+}
+
+input EntitySortInput {
+  entityId: Int!
+  childrenIds: [Int!]!
+}
+
+type EntitySortResponse {
   success: Boolean!
   query: Query!
 }

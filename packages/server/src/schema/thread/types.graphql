@@ -77,7 +77,11 @@ extend type Query {
 }
 
 type ThreadQuery {
-  allThreads(after: String, first: Int): AllThreadsConnection!
+  allThreads(
+    after: String
+    first: Int
+    instance: Instance
+  ): AllThreadsConnection!
 }
 
 type AllThreadsConnection {

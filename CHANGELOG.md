@@ -2,6 +2,62 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.41.0](https://github.com/serlo/api.serlo.org/compare/v0.40.0..v0.41.0) - June 18, 2022
+
+### Added
+
+- Thread.allThreads: add optional `instance` filter #676
+
+- Entity.sort: support also sorting of coursePages #679
+
+### Changed
+
+- Rename TaxonomyTerm.type folder to exerciseFolder #671
+
+- Simplify TaxonomyTerm.type to topic, exerciseFolder, subject, root #672
+
+### Fixed
+
+- Fix metadata.version #678
+
+## [v0.40.0](https://github.com/serlo/api.serlo.org/compare/v0.39.0..v0.40.0) - June 14, 2022
+
+### Added
+
+- Add metadata.version #670
+
+- Add entity.sort mutation for sorting exercises #668
+
+## [v0.39.0](https://github.com/serlo/api.serlo.org/compare/v0.38.0..v0.39.0) - June 9, 2022
+
+### Added
+
+- Add AbstractUuid.title #627
+
+- Entity.set: be sure to not accept mandatory fields with only spaces #656
+
+## [v0.38.0](https://github.com/serlo/api.serlo.org/compare/v0.37.0..v0.38.0) - June 8, 2022
+
+### Added
+
+- Add Page.pages query #623
+
+### Changed
+
+- Remove TaxonomyTerm.move #662
+
+## [v0.37.0](https://github.com/serlo/api.serlo.org/compare/v0.36.0..v0.37.0) - June 7, 2022
+
+### Added
+
+- licenses: removed iconHref, added shortTitle #657
+
+- licenses: removed extra urls #650
+
+### Changed
+
+- alias is now nonnullable #640
+
 ## [v0.36.0](https://github.com/serlo/api.serlo.org/compare/v0.35.1..v0.36.0) - May 30, 2022
 
 ### Changed
