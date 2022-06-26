@@ -28,18 +28,11 @@ import {
   exerciseGroup,
 } from '../../../__fixtures__'
 import {
-  assertSuccessfulGraphQLQuery,
-  LegacyClient,
-  createTestClient,
   createUuidHandler,
   getTypenameAndId,
+  given,
+  Client,
 } from '../../__utils__'
-
-let client: LegacyClient
-
-beforeEach(() => {
-  client = createTestClient()
-})
 
 describe('GroupedExercise', () => {
   beforeEach(() => {
@@ -47,81 +40,85 @@ describe('GroupedExercise', () => {
   })
 
   test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query groupedExercise($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on GroupedExercise {
-              id
-              trashed
-              instance
-              date
+    given('UuidQuery').for(groupedExercise)
+
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query groupedExercise($id: Int!) {
+            uuid(id: $id) {
+              __typename
+              ... on GroupedExercise {
+                id
+                trashed
+                instance
+                date
+              }
             }
           }
-        }
-      `,
-      variables: groupedExercise,
-      data: {
+        `,
+        variables: groupedExercise,
+      })
+      .shouldReturnData({
         uuid: R.pick(
           ['__typename', 'id', 'trashed', 'instance', 'date'],
           groupedExercise
         ),
-      },
-      client,
-    })
+      })
   })
 
   test('by id (w/ exerciseGroup)', async () => {
-    global.server.use(createUuidHandler(exerciseGroup))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query groupedExercise($id: Int!) {
-          uuid(id: $id) {
-            ... on GroupedExercise {
-              exerciseGroup {
-                __typename
-                id
+    given('UuidQuery').for(exerciseGroup)
+
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query groupedExercise($id: Int!) {
+            uuid(id: $id) {
+              ... on GroupedExercise {
+                exerciseGroup {
+                  __typename
+                  id
+                }
               }
             }
           }
-        }
-      `,
-      variables: groupedExercise,
-      data: {
+        `,
+        variables: groupedExercise,
+      })
+      .shouldReturnData({
         uuid: {
           exerciseGroup: getTypenameAndId(exerciseGroup),
         },
-      },
-      client,
-    })
+      })
   })
 })
 
 test('GroupedExerciseRevision', async () => {
-  global.server.use(createUuidHandler(groupedExerciseRevision))
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query groupedExerciseRevision($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          ... on GroupedExerciseRevision {
-            id
-            trashed
-            date
-            content
-            changes
+  given('UuidQuery').for(groupedExerciseRevision)
+
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query groupedExerciseRevision($id: Int!) {
+          uuid(id: $id) {
+            __typename
+            ... on GroupedExerciseRevision {
+              id
+              trashed
+              date
+              content
+              changes
+            }
           }
         }
-      }
-    `,
-    variables: groupedExerciseRevision,
-    data: {
+      `,
+      variables: groupedExerciseRevision,
+    })
+    .shouldReturnData({
       uuid: R.pick(
         ['__typename', 'id', 'trashed', 'date', 'content', 'changes'],
         groupedExerciseRevision
       ),
-    },
-    client,
-  })
+    })
 })
