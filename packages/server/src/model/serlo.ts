@@ -31,7 +31,6 @@ import {
   PageRevisionDecoder,
   PageDecoder,
   castToUuid,
-  TaxonomyTermDecoder,
 } from './decoder'
 import {
   createMutation,
@@ -45,7 +44,6 @@ import { isSupportedNotificationEvent } from '~/schema/notification/utils'
 import { isSupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { Instance } from '~/types'
-import { isDefined } from '~/utils'
 
 export function createSerloModel({
   environment,
@@ -696,8 +694,28 @@ export function createSerloModel({
             payload: { id: taxonomyTermId },
           })
         }
-        await getUnrevisedEntities._querySpec.removeCache({
+
+        await getUnrevisedEntities._querySpec.setCache({
           payload: undefined,
+          getValue(current) {
+            if (!current) return
+            if (
+              !input.needsReview &&
+              current.unrevisedEntityIds.includes(newEntity.id)
+            ) {
+              current.unrevisedEntityIds = current.unrevisedEntityIds.filter(
+                (id) => id !== newEntity.id
+              )
+            }
+            if (
+              input.needsReview &&
+              !current.unrevisedEntityIds.includes(newEntity.id)
+            ) {
+              current.unrevisedEntityIds.push(newEntity.id)
+            }
+
+            return current
+          },
         })
       }
     },
@@ -714,8 +732,27 @@ export function createSerloModel({
           payload: { id: input.entityId },
         })
 
-        await getUnrevisedEntities._querySpec.removeCache({
+        await getUnrevisedEntities._querySpec.setCache({
           payload: undefined,
+          getValue(current) {
+            if (!current) return
+            if (
+              !input.needsReview &&
+              current.unrevisedEntityIds.includes(input.entityId)
+            ) {
+              current.unrevisedEntityIds = current.unrevisedEntityIds.filter(
+                (id) => id !== input.entityId
+              )
+            }
+            if (
+              input.needsReview &&
+              !current.unrevisedEntityIds.includes(input.entityId)
+            ) {
+              current.unrevisedEntityIds.push(input.entityId)
+            }
+
+            return current
+          },
         })
 
         if (input.subscribeThis) {
@@ -800,9 +837,6 @@ export function createSerloModel({
     updateCache: async ({ pageId }, { success }) => {
       if (success) {
         await getUuid._querySpec.removeCache({ payload: { id: pageId } })
-        await getUnrevisedEntities._querySpec.removeCache({
-          payload: undefined,
-        })
       }
     },
   })
@@ -950,35 +984,16 @@ export function createSerloModel({
     },
   })
 
-  const moveTaxonomyTerm = createMutation({
-    decoder: DatabaseLayer.getDecoderFor('TaxonomyTermMoveMutation'),
-    mutate: (payload: DatabaseLayer.Payload<'TaxonomyTermMoveMutation'>) => {
-      return DatabaseLayer.makeRequest('TaxonomyTermMoveMutation', payload)
+  const sortEntity = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('EntitySortMutation'),
+    mutate: (payload: DatabaseLayer.Payload<'EntitySortMutation'>) => {
+      return DatabaseLayer.makeRequest('EntitySortMutation', payload)
     },
 
-    async updateCache({ childrenIds, destination }) {
-      // the cached children still have their old parent id
-      const children = await Promise.all(
-        childrenIds.map((childId) =>
-          getUuidWithCustomDecoder({
-            id: childId,
-            decoder: TaxonomyTermDecoder,
-          })
-        )
-      )
-      const oldParentIds = children.map((child) => child.parentId)
-
-      const allAffectedTaxonomyIds = R.uniq([
-        ...childrenIds,
-        ...oldParentIds,
-        destination,
-      ]).filter(isDefined)
-
-      await getUuid._querySpec.removeCache({
-        payloads: allAffectedTaxonomyIds.map((id) => {
-          return { id }
-        }),
-      })
+    async updateCache({ entityId }, { success }) {
+      if (success) {
+        await getUuid._querySpec.removeCache({ payload: { id: entityId } })
+      }
     },
   })
 
@@ -1017,6 +1032,13 @@ export function createSerloModel({
           },
         })
       }
+    },
+  })
+
+  const getPages = createRequest({
+    decoder: DatabaseLayer.getDecoderFor('PagesQuery'),
+    async getCurrentValue(payload: DatabaseLayer.Payload<'PagesQuery'>) {
+      return DatabaseLayer.makeRequest('PagesQuery', payload)
     },
   })
 
@@ -1081,6 +1103,7 @@ export function createSerloModel({
     getUuid,
     getUuidWithCustomDecoder,
     linkEntitiesToTaxonomy,
+    getPages,
     rejectEntityRevision,
     rejectPageRevision,
     setDescription,
@@ -1089,7 +1112,7 @@ export function createSerloModel({
     setNotificationState,
     setSubscription,
     setTaxonomyTermNameAndDescription,
-    moveTaxonomyTerm,
+    sortEntity,
     sortTaxonomyTerm,
     setUuidState,
     unlinkEntitiesFromTaxonomy,

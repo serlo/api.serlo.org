@@ -34,10 +34,10 @@ const licenseQuery = new Client().prepareQuery({
           instance
           default
           title
+          shortTitle
           url
           content
           agreement
-          iconHref
         }
       }
     }
@@ -53,10 +53,10 @@ const licensesQuery = new Client().prepareQuery({
           instance
           default
           title
+          shortTitle
           url
           content
           agreement
-          iconHref
         }
       }
     }

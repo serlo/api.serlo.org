@@ -253,17 +253,18 @@ export const PageRevisionDecoder = t.exact(
 )
 
 export const TaxonomyTermTypeDecoder = t.union([
-  t.literal(TaxonomyTermType.Blog),
-  t.literal(TaxonomyTermType.Curriculum),
-  t.literal(TaxonomyTermType.CurriculumTopic),
-  t.literal(TaxonomyTermType.CurriculumTopicFolder),
-  t.literal(TaxonomyTermType.Forum),
-  t.literal(TaxonomyTermType.ForumCategory),
-  t.literal(TaxonomyTermType.Locale),
+  t.literal('blog'),
+  t.literal('curriculum'),
+  t.literal('curriculumTopic'),
+  t.literal('curriculumTopicFolder'),
+  t.literal('forum'),
+  t.literal('forumCategory'),
+  t.literal('locale'),
+  t.literal('topicFolder'),
   t.literal(TaxonomyTermType.Root),
   t.literal(TaxonomyTermType.Subject),
   t.literal(TaxonomyTermType.Topic),
-  t.literal(TaxonomyTermType.TopicFolder),
+  t.literal(TaxonomyTermType.ExerciseFolder),
 ])
 
 export const TaxonomyTermDecoder = t.exact(

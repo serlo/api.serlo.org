@@ -10,6 +10,7 @@ type MetadataQuery {
     modifiedAfter: String
   ): EntityMetadataConnection!
   publisher: JSONObject!
+  version: String!
 }
 
 type EntityMetadataConnection {

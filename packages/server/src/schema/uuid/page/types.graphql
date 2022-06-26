@@ -20,6 +20,7 @@ type Page implements AbstractUuid & AbstractRepository & AbstractNavigationChild
   date: DateTime!
   instance: Instance!
   alias: String!
+  title: String!
   license: License!
   currentRevision: PageRevision
   revisions(
@@ -80,6 +81,14 @@ type PageMutation {
   checkoutRevision(input: CheckoutRevisionInput!): CheckoutRevisionResponse!
   create(input: CreatePageInput!): PageCreateResponse!
   rejectRevision(input: RejectRevisionInput!): RejectRevisionResponse!
+}
+
+extend type Query {
+  page: PageQuery!
+}
+
+type PageQuery {
+  pages(instance: Instance): [Page!]!
 }
 
 input PageAddRevisionInput {

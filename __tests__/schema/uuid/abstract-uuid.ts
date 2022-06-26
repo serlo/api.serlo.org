@@ -27,6 +27,8 @@ import {
   appletRevision,
   article,
   articleRevision,
+  comment,
+  comment1,
   course,
   coursePage,
   coursePageRevision,
@@ -44,6 +46,7 @@ import {
   solution,
   solutionRevision,
   taxonomyTermRoot,
+  taxonomyTermSubject,
   user,
   video,
   videoRevision,
@@ -56,6 +59,9 @@ import {
   createTestClient,
   createUuidHandler,
   getTypenameAndId,
+  given,
+  Client,
+  givenThreads,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import {
@@ -75,9 +81,11 @@ beforeEach(() => {
   client = createTestClient()
 })
 
+// Endpoint uuid() returns null for comments
+type AccessibleUuidTypes = Exclude<UuidType, DiscriminatorType.Comment>
+
 const abstractUuidFixtures: Record<
-  // Endpoint uuid() returns null for comments
-  Exclude<UuidType, DiscriminatorType.Comment>,
+  AccessibleUuidTypes,
   Model<'AbstractUuid'>
 > = {
   [DiscriminatorType.Page]: page,
@@ -398,5 +406,168 @@ describe('custom aliases', () => {
       },
       client,
     })
+  })
+})
+
+describe('property "title"', () => {
+  const testCases = [
+    [
+      'article with current revision',
+      [
+        {
+          ...article,
+          revisionIds: [castToUuid(123), article.currentRevisionId],
+        },
+        articleRevision,
+      ],
+      articleRevision.title,
+    ],
+    [
+      'article without current revision',
+      [
+        {
+          ...article,
+          currentRevisionId: null,
+          revisionIds: [article.currentRevisionId, castToUuid(123)],
+        },
+        articleRevision,
+      ],
+      articleRevision.title,
+    ],
+    [
+      'article without revisions',
+      [
+        {
+          ...article,
+          currentRevisionId: null,
+          revisionIds: [],
+          id: castToUuid(123),
+        },
+      ],
+      '123',
+    ],
+    [
+      'solution revision',
+      [solutionRevision, solution, exercise, taxonomyTermSubject],
+      taxonomyTermSubject.name,
+    ],
+    ['exercise', [exercise, taxonomyTermSubject], taxonomyTermSubject.name],
+    [
+      'exercise group',
+      [exerciseGroup, taxonomyTermSubject],
+      taxonomyTermSubject.name,
+    ],
+    ['user', [user], user.username],
+    ['taxonomy term', [taxonomyTermRoot], taxonomyTermRoot.name],
+  ] as [string, Model<'AbstractUuid'>[], string][]
+
+  test.each(testCases)('%s', async (_, uuids, title) => {
+    given('UuidQuery').for(uuids)
+
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query ($id: Int!) {
+            uuid(id: $id) {
+              title
+            }
+          }
+        `,
+        variables: { id: uuids[0].id },
+      })
+      .shouldReturnData({ uuid: { title } })
+  })
+
+  test('"title" for comments with title of thread', async () => {
+    givenThreads({
+      uuid: article,
+      threads: [[comment, { ...comment1, title: null }]],
+    })
+
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query propertyCreatedAt($id: Int!) {
+            uuid(id: $id) {
+              ... on ThreadAware {
+                threads {
+                  nodes {
+                    comments {
+                      nodes {
+                        title
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `,
+        variables: { id: article.id },
+      })
+      .shouldReturnData({
+        uuid: {
+          threads: {
+            nodes: [
+              {
+                comments: {
+                  nodes: [{ title: comment.title }, { title: comment.title }],
+                },
+              },
+            ],
+          },
+        },
+      })
+  })
+
+  test('"title" for comments without title in thread', async () => {
+    givenThreads({
+      uuid: article,
+      threads: [
+        [
+          { ...comment, title: null },
+          { ...comment1, title: null },
+        ],
+      ],
+    })
+    given('UuidQuery').for(articleRevision)
+
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query propertyCreatedAt($id: Int!) {
+            uuid(id: $id) {
+              ... on ThreadAware {
+                threads {
+                  nodes {
+                    comments {
+                      nodes {
+                        title
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `,
+        variables: { id: article.id },
+      })
+      .shouldReturnData({
+        uuid: {
+          threads: {
+            nodes: [
+              {
+                comments: {
+                  nodes: [
+                    { title: articleRevision.title },
+                    { title: articleRevision.title },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      })
   })
 })

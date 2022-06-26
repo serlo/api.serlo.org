@@ -23,6 +23,7 @@ export type AbstractEntity = {
   instance: Instance;
   license: License;
   subject?: Maybe<Subject>;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -57,6 +58,7 @@ export type AbstractEntityRevision = {
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -79,6 +81,7 @@ export type AbstractExercise = {
   instance: Instance;
   license: License;
   solution?: Maybe<Solution>;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -100,6 +103,7 @@ export type AbstractExerciseRevision = {
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -146,6 +150,7 @@ export type AbstractRepository = {
   instance: Instance;
   license: License;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -177,6 +182,7 @@ export type AbstractRevision = {
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -208,6 +214,7 @@ export type AbstractTaxonomyTermChild = {
   instance: Instance;
   license: License;
   taxonomyTerms: TaxonomyTermConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -233,6 +240,7 @@ export type AbstractUuid = {
   alias: Scalars['String'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -293,6 +301,7 @@ export type Applet = AbstractEntity & AbstractRepository & AbstractTaxonomyTermC
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -398,6 +407,7 @@ export type Article = AbstractEntity & AbstractRepository & AbstractTaxonomyTerm
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -594,6 +604,7 @@ export type Course = AbstractEntity & AbstractRepository & AbstractTaxonomyTermC
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -653,6 +664,7 @@ export type CoursePage = AbstractEntity & AbstractRepository & AbstractUuid & In
   revisions: CoursePageRevisionConnection;
   subject?: Maybe<Subject>;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -915,6 +927,7 @@ export type EntityMutation = {
   setGroupedExercise: SetEntityResponse;
   setSolution: SetEntityResponse;
   setVideo: SetEntityResponse;
+  sort: EntitySortResponse;
   updateLicense: EntityUpdateLicenseResponse;
 };
 
@@ -979,6 +992,11 @@ export type EntityMutationSetVideoArgs = {
 };
 
 
+export type EntityMutationSortArgs = {
+  input: EntitySortInput;
+};
+
+
 export type EntityMutationUpdateLicenseArgs = {
   input: EntityUpdateLicenseInput;
 };
@@ -993,6 +1011,17 @@ export type EntityQueryDeletedEntitiesArgs = {
   after?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   instance?: InputMaybe<Instance>;
+};
+
+export type EntitySortInput = {
+  childrenIds: Array<Scalars['Int']>;
+  entityId: Scalars['Int'];
+};
+
+export type EntitySortResponse = {
+  __typename?: 'EntitySortResponse';
+  query: Query;
+  success: Scalars['Boolean'];
 };
 
 export type EntityUpdateLicenseInput = {
@@ -1019,6 +1048,7 @@ export type Event = AbstractEntity & AbstractRepository & AbstractTaxonomyTermCh
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1124,6 +1154,7 @@ export type Exercise = AbstractEntity & AbstractExercise & AbstractRepository & 
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1178,6 +1209,7 @@ export type ExerciseGroup = AbstractEntity & AbstractRepository & AbstractTaxono
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1230,6 +1262,7 @@ export type ExerciseGroupRevision = AbstractEntityRevision & AbstractRevision & 
   id: Scalars['Int'];
   repository: ExerciseGroup;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1278,6 +1311,7 @@ export type ExerciseRevision = AbstractEntityRevision & AbstractExerciseRevision
   id: Scalars['Int'];
   repository: Exercise;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1329,6 +1363,7 @@ export type GroupedExercise = AbstractEntity & AbstractExercise & AbstractReposi
   solution?: Maybe<Solution>;
   subject?: Maybe<Subject>;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1372,6 +1407,7 @@ export type GroupedExerciseRevision = AbstractEntityRevision & AbstractExerciseR
   id: Scalars['Int'];
   repository: GroupedExercise;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1433,9 +1469,9 @@ export type License = {
   agreement: Scalars['String'];
   content: Scalars['String'];
   default: Scalars['Boolean'];
-  iconHref: Scalars['String'];
   id: Scalars['Int'];
   instance: Instance;
+  shortTitle: Scalars['String'];
   title: Scalars['String'];
   url: Scalars['String'];
 };
@@ -1460,6 +1496,7 @@ export type MetadataQuery = {
   __typename?: 'MetadataQuery';
   entities: EntityMetadataConnection;
   publisher: Scalars['JSONObject'];
+  version: Scalars['String'];
 };
 
 
@@ -1572,6 +1609,7 @@ export type Page = AbstractNavigationChild & AbstractRepository & AbstractUuid &
   navigation?: Maybe<Navigation>;
   revisions: PageRevisionConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1653,6 +1691,16 @@ export type PageMutationRejectRevisionArgs = {
   input: RejectRevisionInput;
 };
 
+export type PageQuery = {
+  __typename?: 'PageQuery';
+  pages: Array<Page>;
+};
+
+
+export type PageQueryPagesArgs = {
+  instance?: InputMaybe<Instance>;
+};
+
 export type PageRevision = AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'PageRevision';
   alias: Scalars['String'];
@@ -1713,6 +1761,7 @@ export type Query = {
   metadata: MetadataQuery;
   notificationEvent?: Maybe<AbstractNotificationEvent>;
   notifications: NotificationConnection;
+  page: PageQuery;
   subject: SubjectQuery;
   subscription: SubscriptionQuery;
   thread: ThreadQuery;
@@ -2021,6 +2070,7 @@ export type Solution = AbstractEntity & AbstractRepository & AbstractUuid & Inst
   revisions: SolutionRevisionConnection;
   subject?: Maybe<Subject>;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -2064,6 +2114,7 @@ export type SolutionRevision = AbstractEntityRevision & AbstractRevision & Abstr
   id: Scalars['Int'];
   repository: Solution;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -2217,6 +2268,7 @@ export type TaxonomyTerm = AbstractNavigationChild & AbstractUuid & InstanceAwar
   parent?: Maybe<TaxonomyTerm>;
   taxonomyId: Scalars['Int'];
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
   type: TaxonomyTermType;
   weight: Scalars['Int'];
@@ -2278,23 +2330,11 @@ export type TaxonomyTermEdge = {
   node: TaxonomyTerm;
 };
 
-export type TaxonomyTermMoveInput = {
-  childrenIds: Array<Scalars['Int']>;
-  destination: Scalars['Int'];
-};
-
-export type TaxonomyTermMoveResponse = {
-  __typename?: 'TaxonomyTermMoveResponse';
-  query: Query;
-  success: Scalars['Boolean'];
-};
-
 export type TaxonomyTermMutation = {
   __typename?: 'TaxonomyTermMutation';
   create: TaxonomyTermCreateResponse;
   createEntityLinks: TaxonomyEntityLinksResponse;
   deleteEntityLinks: TaxonomyEntityLinksResponse;
-  move: TaxonomyTermMoveResponse;
   setNameAndDescription: TaxonomyTermSetNameAndDescriptionResponse;
   sort: TaxonomyTermSortResponse;
 };
@@ -2312,11 +2352,6 @@ export type TaxonomyTermMutationCreateEntityLinksArgs = {
 
 export type TaxonomyTermMutationDeleteEntityLinksArgs = {
   input: TaxonomyEntityLinksInput;
-};
-
-
-export type TaxonomyTermMutationMoveArgs = {
-  input: TaxonomyTermMoveInput;
 };
 
 
@@ -2353,22 +2388,15 @@ export type TaxonomyTermSortResponse = {
 };
 
 export enum TaxonomyTermType {
-  Blog = 'blog',
-  Curriculum = 'curriculum',
-  CurriculumTopic = 'curriculumTopic',
-  CurriculumTopicFolder = 'curriculumTopicFolder',
-  Forum = 'forum',
-  ForumCategory = 'forumCategory',
-  Locale = 'locale',
+  ExerciseFolder = 'exerciseFolder',
   Root = 'root',
   Subject = 'subject',
-  Topic = 'topic',
-  TopicFolder = 'topicFolder'
+  Topic = 'topic'
 }
 
 export enum TaxonomyTypeCreateOptions {
-  Topic = 'topic',
-  TopicFolder = 'topicFolder'
+  ExerciseFolder = 'exerciseFolder',
+  Topic = 'topic'
 }
 
 export type Thread = {
@@ -2476,6 +2504,7 @@ export type ThreadQuery = {
 export type ThreadQueryAllThreadsArgs = {
   after?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
 };
 
 export type ThreadSetCommentStateInput = {
@@ -2544,6 +2573,7 @@ export type User = AbstractUuid & ThreadAware & {
   motivation?: Maybe<Scalars['String']>;
   roles: ScopedRoleConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
   unrevisedEntities: AbstractEntityConnection;
   username: Scalars['String'];
@@ -2731,6 +2761,7 @@ export type Video = AbstractEntity & AbstractRepository & AbstractTaxonomyTermCh
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 

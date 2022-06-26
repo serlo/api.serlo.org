@@ -1,6 +1,10 @@
 #!/bin/bash
 
+set -e
+
 source scripts/utils.sh
+
+git stash --include-untracked
 
 $(git config core.editor) scripts/changelog.ts
 
@@ -25,3 +29,5 @@ yarn format
 print_header "Time to commit 🚀️"
 git add -p
 git commit
+
+git stash pop
