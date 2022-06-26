@@ -24,18 +24,11 @@ import R from 'ramda'
 
 import { course, coursePage, coursePageRevision } from '../../../__fixtures__'
 import {
-  assertSuccessfulGraphQLQuery,
-  LegacyClient,
-  createTestClient,
   createUuidHandler,
   getTypenameAndId,
+  given,
+  Client,
 } from '../../__utils__'
-
-let client: LegacyClient
-
-beforeEach(() => {
-  client = createTestClient()
-})
 
 describe('CoursePage', () => {
   beforeEach(() => {
@@ -43,82 +36,94 @@ describe('CoursePage', () => {
   })
 
   test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query coursePage($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on CoursePage {
-              id
-              trashed
-              instance
-              date
+    given('UuidQuery').for(coursePage)
+
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query coursePage($id: Int!) {
+            uuid(id: $id) {
+              __typename
+              ... on CoursePage {
+                id
+                trashed
+                instance
+                date
+              }
             }
           }
-        }
-      `,
-      variables: coursePage,
-      data: {
+        `,
+        variables: { id: coursePage.id },
+      })
+      .shouldReturnData({
         uuid: R.pick(
           ['__typename', 'id', 'trashed', 'instance', 'date'],
           coursePage
         ),
-      },
-      client,
-    })
+      })
   })
 
   test('by id (w/ course)', async () => {
-    global.server.use(createUuidHandler(course))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query coursePage($id: Int!) {
-          uuid(id: $id) {
-            ... on CoursePage {
-              course {
-                __typename
-                id
+    given('UuidQuery').for(course)
+
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query coursePage($id: Int!) {
+            uuid(id: $id) {
+              ... on CoursePage {
+                course {
+                  __typename
+                  id
+                }
               }
             }
           }
-        }
-      `,
-      variables: coursePage,
-      data: {
+        `,
+        variables: { id: coursePage.id },
+      })
+      .shouldReturnData({
         uuid: {
           course: getTypenameAndId(course),
         },
-      },
-      client,
-    })
+      })
   })
-})
 
-test('CoursePageRevision', async () => {
-  global.server.use(createUuidHandler(coursePageRevision))
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query coursePageRevision($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          ... on CoursePageRevision {
-            id
-            trashed
-            date
-            title
-            content
-            changes
+  test('CoursePageRevision', async () => {
+    given('UuidQuery').for(coursePageRevision)
+
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query coursePageRevision($id: Int!) {
+            uuid(id: $id) {
+              __typename
+              ... on CoursePageRevision {
+                id
+                trashed
+                date
+                title
+                content
+                changes
+              }
+            }
           }
-        }
-      }
-    `,
-    variables: coursePageRevision,
-    data: {
-      uuid: R.pick(
-        ['__typename', 'id', 'trashed', 'date', 'title', 'content', 'changes'],
-        coursePageRevision
-      ),
-    },
-    client,
+        `,
+        variables: { id: coursePageRevision.id },
+      })
+      .shouldReturnData({
+        uuid: R.pick(
+          [
+            '__typename',
+            'id',
+            'trashed',
+            'date',
+            'title',
+            'content',
+            'changes',
+          ],
+          coursePageRevision
+        ),
+      })
   })
 })

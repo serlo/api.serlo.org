@@ -24,19 +24,21 @@ import { gql } from 'apollo-server'
 import { article, articleRevision } from '../../../__fixtures__'
 import { getTypenameAndId, given, Client } from '../../__utils__'
 
+const query = gql`
+  query articleRevision($id: Int!) {
+    uuid(id: $id) {
+      __typename
+      id
+    }
+  }
+`
+
 test('Article', async () => {
   given('UuidQuery').for(article)
 
   await new Client()
     .prepareQuery({
-      query: gql`
-        query article($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            id
-          }
-        }
-      `,
+      query: query,
       variables: { id: article.id },
     })
     .shouldReturnData({
@@ -49,14 +51,7 @@ test('ArticleRevision', async () => {
 
   await new Client()
     .prepareQuery({
-      query: gql`
-        query articleRevision($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            id
-          }
-        }
-      `,
+      query: query,
       variables: { id: articleRevision.id },
     })
     .shouldReturnData({

@@ -28,18 +28,12 @@ import {
   groupedExercise,
 } from '../../../__fixtures__'
 import {
-  assertSuccessfulGraphQLQuery,
-  LegacyClient,
-  createTestClient,
   createUuidHandler,
   getTypenameAndId,
+  Client,
+  given,
 } from '../../__utils__'
 
-let client: LegacyClient
-
-beforeEach(() => {
-  client = createTestClient()
-})
 
 describe('ExerciseGroup', () => {
   beforeEach(() => {
@@ -47,90 +41,94 @@ describe('ExerciseGroup', () => {
   })
 
   test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query exerciseGroup($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on ExerciseGroup {
-              id
-              trashed
-              instance
-              date
+    given('UuidQuery').for(exerciseGroup)
+
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query exerciseGroup($id: Int!) {
+            uuid(id: $id) {
+              __typename
+              ... on ExerciseGroup {
+                id
+                trashed
+                instance
+                date
+              }
             }
           }
-        }
-      `,
-      variables: exerciseGroup,
-      data: {
+        `,
+        variables: { id: exerciseGroup.id },
+      })
+      .shouldReturnData({
         uuid: R.pick(
           ['__typename', 'id', 'trashed', 'instance', 'date'],
           exerciseGroup
         ),
-      },
-      client,
-    })
+      })
   })
 
   test('by id (w/ exercises)', async () => {
-    global.server.use(createUuidHandler(groupedExercise))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query exerciseGroup($id: Int!) {
-          uuid(id: $id) {
-            ... on ExerciseGroup {
-              exercises {
-                __typename
-                id
+    given('UuidQuery').for(groupedExercise)
+
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query exerciseGroup($id: Int!) {
+            uuid(id: $id) {
+              ... on ExerciseGroup {
+                exercises {
+                  __typename
+                  id
+                }
               }
             }
           }
-        }
-      `,
-      variables: exerciseGroup,
-      data: {
+        `,
+        variables: { id: exerciseGroup.id },
+      })
+      .shouldReturnData({
         uuid: {
           exercises: [getTypenameAndId(groupedExercise)],
         },
-      },
-      client,
-    })
+      })
   })
-})
 
-test('ExerciseGroupRevision', async () => {
-  global.server.use(createUuidHandler(exerciseGroupRevision))
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query exerciseGroupRevision($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          ... on ExerciseGroupRevision {
-            id
-            trashed
-            date
-            cohesive
-            content
-            changes
+  test('ExerciseGroupRevision', async () => {
+    given('UuidQuery').for(exerciseGroupRevision)
+
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query exerciseGroupRevision($id: Int!) {
+            uuid(id: $id) {
+              __typename
+              ... on ExerciseGroupRevision {
+                id
+                trashed
+                date
+                cohesive
+                content
+                changes
+              }
+            }
           }
-        }
-      }
-    `,
-    variables: exerciseGroupRevision,
-    data: {
-      uuid: R.pick(
-        [
-          '__typename',
-          'id',
-          'trashed',
-          'date',
-          'cohesive',
-          'content',
-          'changes',
-        ],
-        exerciseGroupRevision
-      ),
-    },
-    client,
+        `,
+        variables: { id: exerciseGroupRevision.id },
+      })
+      .shouldReturnData({
+        uuid: R.pick(
+          [
+            '__typename',
+            'id',
+            'trashed',
+            'date',
+            'cohesive',
+            'content',
+            'changes',
+          ],
+          exerciseGroupRevision
+        ),
+      })
   })
 })
