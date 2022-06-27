@@ -30,6 +30,7 @@ import { createTimer } from '../timer'
 import { applyGraphQLMiddleware } from './graphql-middleware'
 import { applySwrQueueDashboardMiddleware } from './swr-queue-dashboard-middleware'
 import { applyEnmeshedMiddleware } from '~/internals/server/enmeshed-middleware'
+import { applyKratosMiddleware } from '~/internals/server/kratos-middleware'
 
 export * from './graphql-middleware'
 export * from './swr-queue-dashboard-middleware'
@@ -56,6 +57,7 @@ async function initializeServer({
   const dashboardPath = applySwrQueueDashboardMiddleware({ app })
   const enmeshedPath = applyEnmeshedMiddleware({ app, cache })
   const graphqlPath = await applyGraphQLMiddleware({ app, cache, swrQueue })
+  const kratosPath = applyKratosMiddleware({ app })
 
   const port = 3001
   const host = `http://localhost:${port}`
@@ -68,6 +70,7 @@ async function initializeServer({
     if (enmeshedPath) {
       console.log(`Enmeshed endpoint:   ${host}${enmeshedPath}`)
     }
+    console.log(`Kratos endpoint:     ${host}${kratosPath}`)
     /* eslint-enable no-console */
   })
 }
