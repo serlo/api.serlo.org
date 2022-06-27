@@ -405,6 +405,18 @@ export const spec = {
     response: t.strict({ unrevisedEntityIds: t.array(t.number) }),
     canBeNull: false,
   },
+  UserCreateMutation: {
+    payload: t.type({
+      username: t.string,
+      password: t.string,
+      email: t.string,
+    }),
+    response: t.strict({
+      success: t.literal(true),
+      userId: t.number,
+    }),
+    canBeNull: false,
+  },
   UserDeleteBotsMutation: {
     payload: t.type({ botIds: t.array(t.number) }),
     response: t.strict({
