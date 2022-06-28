@@ -38,6 +38,10 @@ const kratos = new V0alpha2Api(
 )
 
 function createKratosRegisterEndpoint(): RequestHandler {
+  let kratosUser: { data: { id: string } }
+
+  let legacyUserId: number
+
   return async (req, res) => {
     try {
       const { username, password, email } = req.body as {
@@ -60,25 +64,26 @@ function createKratosRegisterEndpoint(): RequestHandler {
           },
         },
       }
-      const user = (await kratos.adminCreateIdentity(newUser)) as {
+
+      kratosUser = (await kratos.adminCreateIdentity(newUser)) as {
         data: { id: string }
       }
 
       const payload = {
         username,
-        password: user.data.id,
+        password: kratosUser.data.id,
         email,
       }
-      const userId = (
+      legacyUserId = (
         (await DatabaseLayer.makeRequest('UserCreateMutation', payload)) as {
           userId: number
         }
       ).userId
 
-      await kratos.adminUpdateIdentity(user.data.id, {
+      await kratos.adminUpdateIdentity(kratosUser.data.id, {
         schema_id: 'default',
         metadata_public: {
-          legacy_id: userId,
+          legacy_id: legacyUserId,
         },
         traits: {
           username,
@@ -93,7 +98,16 @@ function createKratosRegisterEndpoint(): RequestHandler {
         })
       )
     } catch (error: unknown) {
-      // TODO: delete user im kratos and db layer
+      if (kratosUser?.data?.id) {
+        kratos.adminDeleteIdentity(kratosUser.data.id)
+      }
+
+      if (legacyUserId) {
+        await DatabaseLayer.makeRequest('UserDeleteBotsMutation', {
+          botIds: [legacyUserId],
+        })
+      }
+
       res.statusCode = 400
       res.end(JSON.stringify(error))
     }
