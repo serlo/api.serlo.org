@@ -317,10 +317,7 @@ export function createSerloModel({
         path.push(node)
       }
 
-      return {
-        data: data[treeIndex],
-        path,
-      }
+      return { path }
     },
   })
 
