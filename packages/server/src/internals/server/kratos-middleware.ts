@@ -46,6 +46,18 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
   let legacyUserId: number
 
   return async (req, res) => {
+    let referrer = req.headers.referrer || req.headers.referer
+    // remove instance if it has (de.serlo.org -> serlo.org)
+    referrer =
+      referrer === 'serlo.org'
+        ? 'serlo.org'
+        : referrer?.slice(referrer.indexOf('.') + 1)
+
+    if (process.env.ENVIRONMENT === 'production' && referrer !== 'serlo.org') {
+      res.statusCode = 403
+      res.end('Bots will not pass')
+    }
+
     try {
       const { username, password, email } = req.body as {
         username: string
