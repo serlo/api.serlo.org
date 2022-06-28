@@ -27,17 +27,20 @@ import { DatabaseLayer } from '~/model'
 const basePath = '/kratos'
 
 export function applyKratosMiddleware({ app }: { app: Express }) {
-  app.post(`${basePath}/register`, createKratosRegisterEndpoint())
+  if (!process.env.SERVER_KRATOS_HOST)
+    throw new Error('Kratos Host is not defined')
+
+  const kratos = new V0alpha2Api(
+    new Configuration({
+      basePath: process.env.SERVER_KRATOS_HOST,
+    })
+  )
+
+  app.post(`${basePath}/register`, createKratosRegisterHandler(kratos))
   return basePath
 }
 
-const kratos = new V0alpha2Api(
-  new Configuration({
-    basePath: `http://127.0.0.1:4434`,
-  })
-)
-
-function createKratosRegisterEndpoint(): RequestHandler {
+function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
   let kratosUser: { data: { id: string } }
 
   let legacyUserId: number
