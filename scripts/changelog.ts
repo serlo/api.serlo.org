@@ -1339,6 +1339,16 @@ async function exec(): Promise<void> {
         ],
         fixed: ['Fix metadata.version #678'],
       },
+      {
+        tagName: 'v0.42.0',
+        date: '2022-06-29',
+        breakingChanges: ['Delete `Navigation.data` #684 '],
+        changed: ['better cache update when adding revisions #674'],
+        fixed: [
+          'Fix metadata.version (for real...maybe...) #682',
+          'Fix bug of missing user motivation text #683',
+        ],
+      },
     ],
   })
 
