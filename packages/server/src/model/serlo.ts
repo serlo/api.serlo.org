@@ -318,10 +318,7 @@ export function createSerloModel({
         path.push(node)
       }
 
-      return {
-        data: data[treeIndex],
-        path,
-      }
+      return { path }
     },
   })
 
@@ -695,8 +692,28 @@ export function createSerloModel({
             payload: { id: taxonomyTermId },
           })
         }
-        await getUnrevisedEntities._querySpec.removeCache({
+
+        await getUnrevisedEntities._querySpec.setCache({
           payload: undefined,
+          getValue(current) {
+            if (!current) return
+            if (
+              !input.needsReview &&
+              current.unrevisedEntityIds.includes(newEntity.id)
+            ) {
+              current.unrevisedEntityIds = current.unrevisedEntityIds.filter(
+                (id) => id !== newEntity.id
+              )
+            }
+            if (
+              input.needsReview &&
+              !current.unrevisedEntityIds.includes(newEntity.id)
+            ) {
+              current.unrevisedEntityIds.push(newEntity.id)
+            }
+
+            return current
+          },
         })
       }
     },
@@ -713,8 +730,27 @@ export function createSerloModel({
           payload: { id: input.entityId },
         })
 
-        await getUnrevisedEntities._querySpec.removeCache({
+        await getUnrevisedEntities._querySpec.setCache({
           payload: undefined,
+          getValue(current) {
+            if (!current) return
+            if (
+              !input.needsReview &&
+              current.unrevisedEntityIds.includes(input.entityId)
+            ) {
+              current.unrevisedEntityIds = current.unrevisedEntityIds.filter(
+                (id) => id !== input.entityId
+              )
+            }
+            if (
+              input.needsReview &&
+              !current.unrevisedEntityIds.includes(input.entityId)
+            ) {
+              current.unrevisedEntityIds.push(input.entityId)
+            }
+
+            return current
+          },
         })
 
         if (input.subscribeThis) {
@@ -799,9 +835,6 @@ export function createSerloModel({
     updateCache: async ({ pageId }, { success }) => {
       if (success) {
         await getUuid._querySpec.removeCache({ payload: { id: pageId } })
-        await getUnrevisedEntities._querySpec.removeCache({
-          payload: undefined,
-        })
       }
     },
   })
