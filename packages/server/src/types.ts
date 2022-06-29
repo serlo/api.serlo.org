@@ -1526,7 +1526,6 @@ export type Mutation = {
 
 export type Navigation = {
   __typename?: 'Navigation';
-  data: Scalars['JSON'];
   path: NavigationNodeConnection;
 };
 
@@ -4200,7 +4199,6 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 export type NavigationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Navigation'] = ResolversParentTypes['Navigation']> = {
-  data?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
   path?: Resolver<ResolversTypes['NavigationNodeConnection'], ParentType, ContextType, Partial<NavigationPathArgs>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

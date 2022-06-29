@@ -1522,7 +1522,6 @@ export type Mutation = {
 
 export type Navigation = {
   __typename?: 'Navigation';
-  data: Scalars['JSON'];
   path: NavigationNodeConnection;
 };
 
