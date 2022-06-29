@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Configuration, IdentityState, V0alpha2Api } from '@ory/kratos-client'
+import cors from 'cors'
 import { Express, RequestHandler } from 'express'
 
 import { DatabaseLayer } from '~/model'
@@ -27,6 +28,9 @@ import { DatabaseLayer } from '~/model'
 const basePath = '/kratos'
 
 export function applyKratosMiddleware({ app }: { app: Express }) {
+  // that will be unnecessary if we do it server-side in frontend
+  app.use(cors())
+
   if (!process.env.SERVER_KRATOS_HOST)
     throw new Error('Kratos Host is not defined')
 
@@ -47,7 +51,7 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
 
   return async (req, res) => {
     let referrer = req.headers.referrer || req.headers.referer
-    // remove instance if it has (de.serlo.org -> serlo.org)
+    // remove instance if it has, so that v.g. de.serlo.org becomes serlo.org
     referrer =
       referrer === 'serlo.org'
         ? 'serlo.org'
