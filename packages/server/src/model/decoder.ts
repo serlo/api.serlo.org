@@ -22,7 +22,7 @@
 import { UserInputError } from 'apollo-server-express'
 import * as t from 'io-ts'
 
-import {Instance, Role, TaxonomyTermType} from '~/types'
+import { Instance, Role, TaxonomyTermType } from '~/types'
 
 export const InstanceDecoder: t.Type<Instance> = t.union([
   t.literal(Instance.De),

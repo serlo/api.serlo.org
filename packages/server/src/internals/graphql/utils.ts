@@ -29,6 +29,8 @@ import * as R from 'ramda'
 
 import { Context } from '~/internals/graphql/context'
 import { fetchAuthorizationPayload } from '~/schema/authorization/utils'
+import { isInstance } from '~/schema/instance/utils'
+import { Instance, Role } from '~/types'
 
 export function assertUserIsAuthenticated(
   userId: number | null
@@ -116,5 +118,20 @@ export function assertStringIsNotEmpty(args: { [key: string]: unknown }) {
     throw new UserInputError(
       `Arguments ${emptyArgs.join(', ')} may not be empty`
     )
+  }
+}
+
+export function check_role_instance_compatibility(
+  role: Role,
+  instance: Instance | null
+) {
+  if ([Role.Guest, Role.Login, Role.Sysadmin].includes(role)) {
+    if (isInstance(instance)) {
+      throw new UserInputError('This role cannot be scoped.')
+    }
+  } else {
+    if (!isInstance(instance)) {
+      throw new UserInputError("This role can't have a global scope.")
+    }
   }
 }

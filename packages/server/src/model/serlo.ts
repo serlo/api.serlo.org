@@ -25,12 +25,13 @@ import * as R from 'ramda'
 
 import * as DatabaseLayer from './database-layer'
 import {
-  NavigationDataDecoder,
-  EntityRevisionDecoder,
-  EntityDecoder,
-  PageRevisionDecoder,
-  PageDecoder,
   castToUuid,
+  EntityDecoder,
+  EntityRevisionDecoder,
+  NavigationDataDecoder,
+  PageDecoder,
+  PageRevisionDecoder,
+  UserDecoder,
 } from './decoder'
 import {
   createMutation,
@@ -1033,31 +1034,61 @@ export function createSerloModel({
   })
 
   const addRole = createMutation({
-    decoder: DatabaseLayer.getDecoderFor(
-      'UserAddRoleMutation',
-    ),
-    mutate: (
-      payload: DatabaseLayer.Payload<'UserAddRoleMutation'>
-    ) => {
-      return DatabaseLayer.makeRequest(
-        'UserAddRoleMutation',
-        payload
-      )
-    }
+    decoder: DatabaseLayer.getDecoderFor('UserAddRoleMutation'),
+    mutate: (payload: DatabaseLayer.Payload<'UserAddRoleMutation'>) => {
+      return DatabaseLayer.makeRequest('UserAddRoleMutation', payload)
+    },
+    async updateCache({ username, role }, { success }) {
+      if (success) {
+        const alias = (await DatabaseLayer.makeRequest('AliasQuery', {
+          instance: Instance.De,
+          path: `user/profile/${username}`,
+        })) as { id: number }
+
+        await getUuid._querySpec.setCache({
+          payload: { id: alias.id },
+          getValue(current) {
+            if (!current) return
+            if (!UserDecoder.is(current)) return
+
+            if (current.roles.includes(role)) return current
+
+            current.roles.push(role)
+
+            return current
+          },
+        })
+      }
+    },
   })
 
   const removeRole = createMutation({
-    decoder: DatabaseLayer.getDecoderFor(
-      'UserRemoveRoleMutation'
-    ),
-    mutate: (
-      payload: DatabaseLayer.Payload<'UserRemoveRoleMutation'>
-    ) => {
-      return DatabaseLayer.makeRequest(
-        'UserRemoveRoleMutation',
-        payload
-      )
-    }
+    decoder: DatabaseLayer.getDecoderFor('UserRemoveRoleMutation'),
+    mutate: (payload: DatabaseLayer.Payload<'UserRemoveRoleMutation'>) => {
+      return DatabaseLayer.makeRequest('UserRemoveRoleMutation', payload)
+    },
+    async updateCache({ username, role }, { success }) {
+      if (success) {
+        const alias = (await DatabaseLayer.makeRequest('AliasQuery', {
+          instance: Instance.De,
+          path: `user/profile/${username}`,
+        })) as { id: number }
+
+        await getUuid._querySpec.setCache({
+          payload: { id: alias.id },
+          getValue(current) {
+            if (!current) return
+            if (!UserDecoder.is(current)) return
+
+            if (!current.roles.includes(role)) return current
+            current.roles = current.roles.filter(
+              (currentRole) => currentRole !== role
+            )
+            return current
+          },
+        })
+      }
+    },
   })
 
   return {

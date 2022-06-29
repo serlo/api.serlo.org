@@ -35,6 +35,10 @@ export function instanceToScope(instance: Instance | null): Scope {
   return instance === null ? Scope.Serlo : (`serlo.org:${instance}` as Scope)
 }
 
+export function scopeToInstance(scope: Scope): Instance | null {
+  return scope === Scope.Serlo ? null : (scope.split(':')[1] as Instance)
+}
+
 export enum Permission {
   Entity_CheckoutRevision = 'entity:checkoutRevision',
   Entity_RejectRevision = 'entity:rejectRevision',

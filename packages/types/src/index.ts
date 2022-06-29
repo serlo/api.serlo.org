@@ -2719,9 +2719,9 @@ export type UserQueryPotentialSpamUsersArgs = {
 };
 
 export type UserRoleInput = {
-  instance?: InputMaybe<Instance>;
   role: Role;
-  userName: Scalars['String'];
+  scope: Scalars['String'];
+  username: Scalars['String'];
 };
 
 export type UserRoleResponse = {

@@ -19,10 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import {AuthorizationPayload, Permission, Scope} from '@serlo/authorization'
+import { AuthorizationPayload, Permission, Scope } from '@serlo/authorization'
 import * as R from 'ramda'
 
-import {Role} from '~/types'
+import { Role } from '~/types'
 
 interface RoleDefinition {
   extends?: Role[]
