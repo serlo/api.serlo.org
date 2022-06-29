@@ -132,9 +132,9 @@ type UserDeleteRegularUsersResponse {
 }
 
 input UserRoleInput {
-  userName: String!
+  username: String!
   role: Role!
-  instance: Instance
+  scope: String!
 }
 
 type UserRoleResponse {

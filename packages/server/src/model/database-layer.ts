@@ -33,7 +33,7 @@ import {
   NavigationDecoder,
   NotificationDecoder,
   NotificationEventDecoder,
-  PageDecoder, RoleDecoder,
+  PageDecoder,
   SubscriptionsDecoder,
   TaxonomyTermDecoder,
   Uuid,
@@ -406,7 +406,7 @@ export const spec = {
     canBeNull: false,
   },
   UserAddRoleMutation: {
-    payload: t.type({ userName: t.string, role: RoleDecoder, instance: t.union([InstanceDecoder, t.undefined]) }),
+    payload: t.type({ username: t.string, role: t.string }),
     response: t.strict({
       success: t.literal(true),
     }),
@@ -434,7 +434,7 @@ export const spec = {
     canBeNull: false,
   },
   UserRemoveRoleMutation: {
-    payload: t.type({ userName: t.string, role: RoleDecoder, instance: t.union([InstanceDecoder, t.undefined]) }),
+    payload: t.type({ username: t.string, role: t.string }),
     response: t.strict({
       success: t.literal(true),
     }),
