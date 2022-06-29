@@ -210,7 +210,6 @@ export const NavigationDecoder = t.type({
 })
 
 export const NavigationDataDecoder = t.type({
-  data: NavigationNodeDecoder,
   path: t.array(
     t.intersection([
       t.type({

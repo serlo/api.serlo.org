@@ -109,12 +109,9 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
         })
 
         if (navigation !== null) {
-          const { data, path } = navigation
-
           return {
-            data,
             path: [
-              ...path,
+              ...navigation.path,
               ...taxonomyPath.slice(currentIndex + 1).map((term) => {
                 return {
                   label: term.name,
