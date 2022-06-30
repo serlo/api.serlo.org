@@ -152,7 +152,6 @@ describe('TaxonomyTerm root', () => {
             uuid(id: $id) {
               ... on TaxonomyTerm {
                 navigation {
-                  data
                   path {
                     nodes {
                       id
@@ -265,7 +264,6 @@ describe('TaxonomyTerm subject', () => {
             uuid(id: $id) {
               ... on TaxonomyTerm {
                 navigation {
-                  data
                   path {
                     nodes {
                       id
@@ -283,16 +281,6 @@ describe('TaxonomyTerm subject', () => {
       .shouldReturnData({
         uuid: {
           navigation: {
-            data: {
-              id: page.id,
-              label: navigation.data[0].label,
-              children: [
-                {
-                  id: taxonomyTermSubject.id,
-                  label: navigation.data[0].children?.[0].label,
-                },
-              ],
-            },
             path: {
               nodes: [
                 {
@@ -399,7 +387,6 @@ describe('TaxonomyTerm curriculumTopic', () => {
             uuid(id: $id) {
               ... on TaxonomyTerm {
                 navigation {
-                  data
                   path {
                     nodes {
                       id
@@ -417,16 +404,6 @@ describe('TaxonomyTerm curriculumTopic', () => {
       .shouldReturnData({
         uuid: {
           navigation: {
-            data: {
-              id: page.id,
-              label: navigation.data[0].label,
-              children: [
-                {
-                  id: taxonomyTermSubject.id,
-                  label: navigation.data[0].children?.[0].label,
-                },
-              ],
-            },
             path: {
               nodes: [
                 {
