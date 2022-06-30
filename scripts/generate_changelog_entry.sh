@@ -10,7 +10,7 @@ PRS_BODY_MESSAGES="$MERGED_PRS_BODY_MESSAGES"$'\n'"$CURRENT_PR_TITLE"
 
 ADDED=$(echo $PRS_BODY_MESSAGES | grep 'feat' | awk -F: '{ print $2 }' | sed '$!s/$/,/')
 FIXED=$(echo $PRS_BODY_MESSAGES | grep 'fix' | awk -F: '{ print $2 }' | sed '$!s/$/,/')
-BREAKING_CHANGES=$(echo $PRS_BODY_MESSAGES| grep '!' | awk -F: '{ print $2 }' | sed '$!s/$/,/')
+BREAKING_CHANGES=$(echo $PRS_BODY_MESSAGES | grep '!' | awk -F: '{ print $2 }' | sed '$!s/$/,/')
 
 echo "Upgrading version..."
 LAST_VERSION=$(cat scripts/changelog.ts \
@@ -19,18 +19,15 @@ LAST_VERSION=$(cat scripts/changelog.ts \
   | awk -F: '{ print $2 }' \
   | sed "s/[v,', ]//g")
 
-IFS=. read MAJOR MINOR PATCH <<<$LAST_VERSION
+IFS=. read MAJOR MINOR PATCH <<< $LAST_VERSION
 
-if [ -n "$BREAKING_CHANGES" ]
- then 
-  NEW_VERSION="$(($MAJOR+1)).$MINOR.$PATCH"
- elif [ -n "$ADDED" ]
-  then
-   NEW_VERSION="$MAJOR.$(($MINOR+1)).$PATCH"
- elif [ -n "$FIXED" ]
-  then
-   NEW_VERSION="$MAJOR.$MINOR.$(($PATCH))"
- else
+if [ -n "$BREAKING_CHANGES" ]; then
+  NEW_VERSION="$(($MAJOR + 1)).$MINOR.$PATCH"
+elif [ -n "$ADDED" ]; then
+  NEW_VERSION="$MAJOR.$(($MINOR + 1)).$PATCH"
+elif [ -n "$FIXED" ]; then
+  NEW_VERSION="$MAJOR.$MINOR.$(($PATCH))"
+else
   echo "Aborted!"
   echo "There were no additions, no fixes and no breaking changes since last version."
   echo "If you still want to upgrade this package, do it manually. I can't help you."
