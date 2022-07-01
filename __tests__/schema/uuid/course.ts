@@ -23,12 +23,7 @@ import { gql } from 'apollo-server'
 import R from 'ramda'
 
 import { course, coursePage, courseRevision } from '../../../__fixtures__'
-import {
-  createUuidHandler,
-  getTypenameAndId,
-  given,
-  Client,
-} from '../../__utils__'
+import { getTypenameAndId, given, Client } from '../../__utils__'
 import { castToUuid } from '~/model/decoder'
 
 describe('Course', () => {
@@ -81,11 +76,7 @@ describe('Course', () => {
         `,
         variables: course,
       })
-      .shouldReturnData({
-        uuid: {
-          pages: [getTypenameAndId(coursePage)],
-        },
-      })
+      .shouldReturnData({ uuid: { pages: [getTypenameAndId(coursePage)] } })
   })
 
   describe('filter "trashed"', () => {
@@ -93,13 +84,10 @@ describe('Course', () => {
       { ...coursePage, id: castToUuid(1), trashed: true },
       { ...coursePage, id: castToUuid(2), trashed: false },
     ]
+    const courseWithTwoPages = { ...course, pageIds: [1, 2].map(castToUuid) }
 
     beforeEach(() => {
-      given('UuidQuery').for(course)
-      global.server.use(...pages.map((page) => createUuidHandler(page)))
-      global.server.use(
-        createUuidHandler({ ...course, pageIds: [1, 2].map(castToUuid) })
-      )
+      given('UuidQuery').for(pages, courseWithTwoPages)
     })
 
     test('when not set', async () => {
@@ -116,11 +104,9 @@ describe('Course', () => {
               }
             }
           `,
-          variables: { id: course.id },
+          variables: { id: courseWithTwoPages.id },
         })
-        .shouldReturnData({
-          uuid: { pages: [{ id: 1 }, { id: 2 }] },
-        })
+        .shouldReturnData({ uuid: { pages: [{ id: 1 }, { id: 2 }] } })
     })
 
     test('when set to true', async () => {
@@ -137,11 +123,9 @@ describe('Course', () => {
               }
             }
           `,
-          variables: { id: course.id },
+          variables: { id: courseWithTwoPages.id },
         })
-        .shouldReturnData({
-          uuid: { pages: [{ id: 1 }] },
-        })
+        .shouldReturnData({ uuid: { pages: [{ id: 1 }] } })
     })
 
     test('when set to false', async () => {
@@ -158,11 +142,9 @@ describe('Course', () => {
               }
             }
           `,
-          variables: { id: course.id },
+          variables: { id: courseWithTwoPages.id },
         })
-        .shouldReturnData({
-          uuid: { pages: [{ id: 2 }] },
-        })
+        .shouldReturnData({ uuid: { pages: [{ id: 2 }] } })
     })
   })
 
@@ -171,13 +153,10 @@ describe('Course', () => {
       { ...coursePage, id: castToUuid(1) },
       { ...coursePage, id: castToUuid(2), currentRevisionId: null },
     ]
+    const courseWithTwoPages = { ...course, pageIds: [1, 2].map(castToUuid) }
 
     beforeEach(() => {
-      given('UuidQuery').for(course)
-      global.server.use(...pages.map((page) => createUuidHandler(page)))
-      global.server.use(
-        createUuidHandler({ ...course, pageIds: [1, 2].map(castToUuid) })
-      )
+      given('UuidQuery').for(pages, courseWithTwoPages)
     })
 
     test('when not set', async () => {
@@ -196,9 +175,7 @@ describe('Course', () => {
           `,
           variables: { id: course.id },
         })
-        .shouldReturnData({
-          uuid: { pages: [{ id: 1 }, { id: 2 }] },
-        })
+        .shouldReturnData({ uuid: { pages: [{ id: 1 }, { id: 2 }] } })
     })
 
     test('when set to true', async () => {
@@ -217,9 +194,7 @@ describe('Course', () => {
           `,
           variables: { id: course.id },
         })
-        .shouldReturnData({
-          uuid: { pages: [{ id: 1 }] },
-        })
+        .shouldReturnData({ uuid: { pages: [{ id: 1 }] } })
     })
 
     test('when set to false', async () => {
@@ -238,9 +213,7 @@ describe('Course', () => {
           `,
           variables: { id: course.id },
         })
-        .shouldReturnData({
-          uuid: { pages: [{ id: 2 }] },
-        })
+        .shouldReturnData({ uuid: { pages: [{ id: 2 }] } })
     })
   })
 })
