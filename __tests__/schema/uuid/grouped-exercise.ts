@@ -27,16 +27,11 @@ import {
   groupedExerciseRevision,
   exerciseGroup,
 } from '../../../__fixtures__'
-import {
-  createUuidHandler,
-  getTypenameAndId,
-  given,
-  Client,
-} from '../../__utils__'
+import { getTypenameAndId, given, Client } from '../../__utils__'
 
 describe('GroupedExercise', () => {
   beforeEach(() => {
-    global.server.use(createUuidHandler(groupedExercise))
+    given('UuidQuery').for(groupedExercise)
   })
 
   test('by id', async () => {
@@ -87,9 +82,7 @@ describe('GroupedExercise', () => {
         variables: groupedExercise,
       })
       .shouldReturnData({
-        uuid: {
-          exerciseGroup: getTypenameAndId(exerciseGroup),
-        },
+        uuid: { exerciseGroup: getTypenameAndId(exerciseGroup) },
       })
   })
 })
