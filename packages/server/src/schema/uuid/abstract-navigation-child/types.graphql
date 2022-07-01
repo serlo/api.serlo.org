@@ -3,7 +3,6 @@ interface AbstractNavigationChild {
 }
 
 type Navigation {
-  data: JSON!
   path(
     after: String
     before: String
