@@ -23,16 +23,11 @@ import { gql } from 'apollo-server'
 import R from 'ramda'
 
 import { course, coursePage, coursePageRevision } from '../../../__fixtures__'
-import {
-  createUuidHandler,
-  getTypenameAndId,
-  given,
-  Client,
-} from '../../__utils__'
+import { getTypenameAndId, given, Client } from '../../__utils__'
 
 describe('CoursePage', () => {
   beforeEach(() => {
-    global.server.use(createUuidHandler(coursePage))
+    given('UuidQuery').for(coursePage)
   })
 
   test('by id', async () => {
@@ -82,11 +77,7 @@ describe('CoursePage', () => {
         `,
         variables: { id: coursePage.id },
       })
-      .shouldReturnData({
-        uuid: {
-          course: getTypenameAndId(course),
-        },
-      })
+      .shouldReturnData({ uuid: { course: getTypenameAndId(course) } })
   })
 
   test('CoursePageRevision', async () => {
