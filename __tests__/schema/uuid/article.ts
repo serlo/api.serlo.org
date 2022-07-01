@@ -20,29 +20,37 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
 import { article, articleRevision } from '../../../__fixtures__'
-import { getTypenameAndId, given, Client } from '../../__utils__'
-
-const query = gql`
-  query articleRevision($id: Int!) {
-    uuid(id: $id) {
-      __typename
-      id
-    }
-  }
-`
+import { given, Client } from '../../__utils__'
 
 test('Article', async () => {
   given('UuidQuery').for(article)
 
   await new Client()
     .prepareQuery({
-      query: query,
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on Article {
+              __typename
+              id
+              instance
+              alias
+              trashed
+              date
+            }
+          }
+        }
+      `,
       variables: { id: article.id },
     })
     .shouldReturnData({
-      uuid: getTypenameAndId(article),
+      uuid: R.pick(
+        ['id', '__typename', 'instance', 'alias', 'trashed', 'date'],
+        article
+      ),
     })
 })
 
@@ -51,10 +59,39 @@ test('ArticleRevision', async () => {
 
   await new Client()
     .prepareQuery({
-      query: query,
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on ArticleRevision {
+              __typename
+              id
+              trashed
+              alias
+              title
+              content
+              changes
+              metaTitle
+              metaDescription
+            }
+          }
+        }
+      `,
       variables: { id: articleRevision.id },
     })
     .shouldReturnData({
-      uuid: getTypenameAndId(articleRevision),
+      uuid: R.pick(
+        [
+          'id',
+          '__typename',
+          'trashed',
+          'alias',
+          'title',
+          'content',
+          'changes',
+          'metaTitle',
+          'metaDescription',
+        ],
+        articleRevision
+      ),
     })
 })
