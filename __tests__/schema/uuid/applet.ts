@@ -31,7 +31,7 @@ test('Applet', async () => {
   await new Client()
     .prepareQuery({
       query: gql`
-        query applet($id: Int!) {
+        query ($id: Int!) {
           uuid(id: $id) {
             __typename
             ... on Applet {
@@ -56,7 +56,7 @@ test('AppletRevision', async () => {
   await new Client()
     .prepareQuery({
       query: gql`
-        query appletRevision($id: Int!) {
+        query ($id: Int!) {
           uuid(id: $id) {
             __typename
             ... on AppletRevision {
