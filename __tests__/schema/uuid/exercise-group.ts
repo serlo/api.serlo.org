@@ -27,21 +27,14 @@ import {
   exerciseGroupRevision,
   groupedExercise,
 } from '../../../__fixtures__'
-import {
-  createUuidHandler,
-  getTypenameAndId,
-  Client,
-  given,
-} from '../../__utils__'
+import { getTypenameAndId, Client, given } from '../../__utils__'
 
 describe('ExerciseGroup', () => {
   beforeEach(() => {
-    global.server.use(createUuidHandler(exerciseGroup))
+    given('UuidQuery').for(exerciseGroup)
   })
 
   test('by id', async () => {
-    given('UuidQuery').for(exerciseGroup)
-
     await new Client()
       .prepareQuery({
         query: gql`
@@ -87,9 +80,7 @@ describe('ExerciseGroup', () => {
         variables: { id: exerciseGroup.id },
       })
       .shouldReturnData({
-        uuid: {
-          exercises: [getTypenameAndId(groupedExercise)],
-        },
+        uuid: { exercises: [getTypenameAndId(groupedExercise)] },
       })
   })
 
