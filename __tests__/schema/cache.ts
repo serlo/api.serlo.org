@@ -94,7 +94,7 @@ describe('remove', () => {
         }
       `,
     })
-    .withInput({ key })
+    .withInput({ keys: [key] })
 
   beforeEach(async () => {
     await global.cache.set({ key, source: '', value: user })
@@ -102,6 +102,15 @@ describe('remove', () => {
 
   test('removes a cache value (authenticated via Serlo Service)', async () => {
     await mutation.shouldReturnData({ _cache: { remove: { success: true } } })
+
+    const cachedValue = await global.cache.get({ key })
+    expect(option.isNone(cachedValue)).toBe(true)
+  })
+
+  test('removes a cache value (authenticated via Serlo Service)', async () => {
+    await mutation
+      .withInput({ key })
+      .shouldReturnData({ _cache: { remove: { success: true } } })
 
     const cachedValue = await global.cache.get({ key })
     expect(option.isNone(cachedValue)).toBe(true)
