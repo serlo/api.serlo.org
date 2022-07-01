@@ -67,8 +67,8 @@ describe('Page', () => {
                   title
                   url
                   content
+                  shortTitle
                   agreement
-                  iconHref
                 }
               }
             }
@@ -76,11 +76,7 @@ describe('Page', () => {
         `,
         variables: page,
       })
-      .shouldReturnData({
-        uuid: {
-          license,
-        },
-      })
+      .shouldReturnData({ uuid: { license } })
   })
 })
 
