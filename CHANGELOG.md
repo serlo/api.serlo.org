@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.42.0](https://github.com/serlo/api.serlo.org/compare/v0.41.0..v0.42.0) - June 29, 2022
+
+### Breaking Changes
+
+- Delete `Navigation.data` #684
+
+### Changed
+
+- better cache update when adding revisions #674
+
+### Fixed
+
+- Fix metadata.version (for real...maybe...) #682
+
+- Fix bug of missing user motivation text #683
+
 ## [v0.41.0](https://github.com/serlo/api.serlo.org/compare/v0.40.0..v0.41.0) - June 18, 2022
 
 ### Added
