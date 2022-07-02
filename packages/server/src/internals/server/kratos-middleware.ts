@@ -28,7 +28,7 @@ import { DatabaseLayer } from '~/model'
 const basePath = '/kratos'
 
 export function applyKratosMiddleware({ app }: { app: Express }) {
-  // that will be unnecessary if we do it server-side in frontend
+  // allow cors will be unnecessary if we do it server-side in frontend
   app.use(cors())
 
   if (!process.env.SERVER_KRATOS_HOST)
@@ -45,8 +45,6 @@ export function applyKratosMiddleware({ app }: { app: Express }) {
 }
 
 function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
-  let kratosUser: { data: { id: string } }
-
   let legacyUserId: number
 
   return async (req, res) => {
@@ -61,36 +59,16 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
       res.statusCode = 403
       res.end('Bots will not pass')
     }
-
+    const { userId } = req.body as { userId: string }
     try {
-      const { username, password, email } = req.body as {
+      const kratosUser = (await kratos.adminGetIdentity(userId)).data
+      const { username, email } = kratosUser.traits as {
         username: string
-        password: string
         email: string
       }
-
-      const newUser = {
-        schema_id: 'default',
-        traits: {
-          username,
-          email,
-        },
-        credentials: {
-          password: {
-            config: {
-              password,
-            },
-          },
-        },
-      }
-
-      kratosUser = (await kratos.adminCreateIdentity(newUser)) as {
-        data: { id: string }
-      }
-
       const payload = {
         username,
-        password: kratosUser.data.id,
+        password: kratosUser.id,
         email,
       }
       legacyUserId = (
@@ -99,7 +77,7 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
         }
       ).userId
 
-      await kratos.adminUpdateIdentity(kratosUser.data.id, {
+      await kratos.adminUpdateIdentity(kratosUser.id, {
         schema_id: 'default',
         metadata_public: {
           legacy_id: legacyUserId,
@@ -117,9 +95,7 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
         })
       )
     } catch (error: unknown) {
-      if (kratosUser?.data?.id) {
-        kratos.adminDeleteIdentity(kratosUser.data.id)
-      }
+      await kratos.adminDeleteIdentity(userId)
 
       if (legacyUserId) {
         await DatabaseLayer.makeRequest('UserDeleteBotsMutation', {
