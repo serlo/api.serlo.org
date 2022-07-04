@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as serloAuth from '@serlo/authorization'
-import { Scope, scopeToInstance } from '@serlo/authorization'
+import { formatScope, Scope, scopeToInstance } from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
 import { array as A, either as E, function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
@@ -246,9 +246,7 @@ export const resolvers: LegacyQueries<
     async addRole(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
-      if (!Object.values(Scope).includes(input.scope as Scope))
-        throw new UserInputError('Invalid Scope')
-      const scope: Scope = input.scope as Scope
+      const scope: Scope = formatScope(input.scope)
       const instance = scopeToInstance(scope)
 
       check_role_instance_compatibility(input.role, instance)
@@ -380,10 +378,7 @@ export const resolvers: LegacyQueries<
     async removeRole(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
-      if (!Object.values(Scope).includes(input.scope as Scope))
-        throw new UserInputError('Invalid Scope')
-
-      const scope: Scope = input.scope as Scope
+      const scope: Scope = formatScope(input.scope)
       const instance = scopeToInstance(scope)
       check_role_instance_compatibility(input.role, instance)
 

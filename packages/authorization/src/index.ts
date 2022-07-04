@@ -31,6 +31,12 @@ export enum Scope {
   Serlo_Ta = 'serlo.org:ta',
 }
 
+export function formatScope(scope: string): Scope {
+  if (scope === 'Serlo') return Scope.Serlo
+  const scopeIdentifier = scope.split('_')[1].toLowerCase()
+  return `serlo.org:${scopeIdentifier}` as Scope
+}
+
 export function instanceToScope(instance: Instance | null): Scope {
   return instance === null ? Scope.Serlo : (`serlo.org:${instance}` as Scope)
 }

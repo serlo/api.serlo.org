@@ -40,8 +40,8 @@ let uuidQuery: Query
 
 const globalRole = Role.Sysadmin
 const scopedRole = Role.Reviewer
-const globalScope = Scope.Serlo
-const localScope = Scope.Serlo_De
+const globalScope = 'Serlo'
+const localScope = 'Serlo_De'
 
 beforeEach(() => {
   client = new Client({ userId: user.id })
@@ -154,7 +154,7 @@ test('updates the cache', async () => {
   await uuidQuery.execute()
   await mutation.execute()
   await uuidQuery.shouldReturnData({
-    uuid: { roles: { nodes: [{ role: Role.Login, scope: globalScope }] } },
+    uuid: { roles: { nodes: [{ role: Role.Login, scope: Scope.Serlo }] } },
   })
 })
 
