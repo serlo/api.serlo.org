@@ -45,39 +45,43 @@ const localScope = 'Serlo_De'
 
 beforeEach(() => {
   client = new Client({ userId: user.id })
-  mutation = client.prepareQuery({
-    query: gql`
-      mutation ($input: UserRoleInput!) {
-        user {
-          addRole(input: $input) {
-            success
+  mutation = client
+    .prepareQuery({
+      query: gql`
+        mutation ($input: UserRoleInput!) {
+          user {
+            addRole(input: $input) {
+              success
+            }
           }
         }
-      }
-    `,
-    variables: {
-      input: { username: user2.username, role: globalRole, scope: globalScope },
-    },
-  })
+      `,
+    })
+    .withInput({
+      username: user2.username,
+      role: globalRole,
+      scope: globalScope,
+    })
 
-  uuidQuery = client.prepareQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          ... on User {
-            roles {
-              nodes {
-                role
-                scope
+  uuidQuery = client
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            __typename
+            ... on User {
+              roles {
+                nodes {
+                  role
+                  scope
+                }
               }
             }
           }
         }
-      }
-    `,
-    variables: { id: user2.id },
-  })
+      `,
+    })
+    .withVariables({ id: user2.id })
 
   database = new Database()
   database.hasUuids([user, user2])
