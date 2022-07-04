@@ -1482,8 +1482,14 @@ export type License = {
 
 export type LicenseQuery = {
   __typename?: 'LicenseQuery';
+  defaultLicense: License;
   license?: Maybe<License>;
   licenses: Array<License>;
+};
+
+
+export type LicenseQueryDefaultLicenseArgs = {
+  instance: Instance;
 };
 
 
@@ -4147,6 +4153,7 @@ export type LicenseResolvers<ContextType = Context, ParentType extends Resolvers
 };
 
 export type LicenseQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['LicenseQuery'] = ResolversParentTypes['LicenseQuery']> = {
+  defaultLicense?: Resolver<ResolversTypes['License'], ParentType, ContextType, RequireFields<LicenseQueryDefaultLicenseArgs, 'instance'>>;
   license?: Resolver<Maybe<ResolversTypes['License']>, ParentType, ContextType, RequireFields<LicenseQueryLicenseArgs, 'id'>>;
   licenses?: Resolver<Array<ResolversTypes['License']>, ParentType, ContextType, Partial<LicenseQueryLicensesArgs>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
