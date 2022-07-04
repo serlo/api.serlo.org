@@ -1879,6 +1879,16 @@ export enum Role {
   Sysadmin = 'sysadmin'
 }
 
+export enum Scope {
+  Serlo = 'Serlo',
+  SerloDe = 'Serlo_De',
+  SerloEn = 'Serlo_En',
+  SerloEs = 'Serlo_Es',
+  SerloFr = 'Serlo_Fr',
+  SerloHi = 'Serlo_Hi',
+  SerloTa = 'Serlo_Ta'
+}
+
 export type ScopedRole = {
   __typename?: 'ScopedRole';
   role: Role;
@@ -2719,7 +2729,7 @@ export type UserQueryPotentialSpamUsersArgs = {
 
 export type UserRoleInput = {
   role: Role;
-  scope: Scalars['String'];
+  scope: Scope;
   username: Scalars['String'];
 };
 

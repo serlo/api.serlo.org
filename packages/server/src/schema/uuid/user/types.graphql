@@ -134,7 +134,7 @@ type UserDeleteRegularUsersResponse {
 input UserRoleInput {
   username: String!
   role: Role!
-  scope: String!
+  scope: Scope!
 }
 
 type UserRoleResponse {
