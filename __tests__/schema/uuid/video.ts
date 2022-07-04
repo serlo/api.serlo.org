@@ -23,64 +23,57 @@ import { gql } from 'apollo-server'
 import R from 'ramda'
 
 import { video, videoRevision } from '../../../__fixtures__'
-import {
-  assertSuccessfulGraphQLQuery,
-  LegacyClient,
-  createTestClient,
-  createUuidHandler,
-} from '../../__utils__'
-
-let client: LegacyClient
-
-beforeEach(() => {
-  client = createTestClient()
-})
+import { given, Client } from '../../__utils__'
 
 test('Video', async () => {
-  global.server.use(createUuidHandler(video))
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query video($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          ... on Video {
-            id
-            trashed
-            instance
-            date
+  given('UuidQuery').for(video)
+
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query video($id: Int!) {
+          uuid(id: $id) {
+            __typename
+            ... on Video {
+              id
+              trashed
+              instance
+              date
+            }
           }
         }
-      }
-    `,
-    variables: video,
-    data: {
+      `,
+      variables: { id: video.id },
+    })
+    .shouldReturnData({
       uuid: R.pick(['__typename', 'id', 'trashed', 'instance', 'date'], video),
-    },
-    client,
-  })
+    })
 })
 
 test('VideoRevision', async () => {
-  global.server.use(createUuidHandler(videoRevision))
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query videoRevision($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          ... on VideoRevision {
-            id
-            trashed
-            date
-            title
-            content
-            url
-            changes
+  given('UuidQuery').for(videoRevision)
+
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query videoRevision($id: Int!) {
+          uuid(id: $id) {
+            __typename
+            ... on VideoRevision {
+              id
+              trashed
+              date
+              title
+              content
+              url
+              changes
+            }
           }
         }
-      }
-    `,
-    variables: videoRevision,
-    data: {
+      `,
+      variables: { id: videoRevision.id },
+    })
+    .shouldReturnData({
       uuid: R.pick(
         [
           '__typename',
@@ -94,7 +87,5 @@ test('VideoRevision', async () => {
         ],
         videoRevision
       ),
-    },
-    client,
-  })
+    })
 })
