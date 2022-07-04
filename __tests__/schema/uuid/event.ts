@@ -23,65 +23,58 @@ import { gql } from 'apollo-server'
 import R from 'ramda'
 
 import { event, eventRevision } from '../../../__fixtures__'
-import {
-  assertSuccessfulGraphQLQuery,
-  LegacyClient,
-  createTestClient,
-  createUuidHandler,
-} from '../../__utils__'
-
-let client: LegacyClient
-
-beforeEach(() => {
-  client = createTestClient()
-})
+import { given, Client } from '../../__utils__'
 
 test('Event', async () => {
-  global.server.use(createUuidHandler(event))
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query event($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          ... on Event {
-            id
-            trashed
-            instance
-            date
+  given('UuidQuery').for(event)
+
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query event($id: Int!) {
+          uuid(id: $id) {
+            __typename
+            ... on Event {
+              id
+              trashed
+              instance
+              date
+            }
           }
         }
-      }
-    `,
-    variables: event,
-    data: {
+      `,
+      variables: { id: event.id },
+    })
+    .shouldReturnData({
       uuid: R.pick(['__typename', 'id', 'trashed', 'instance', 'date'], event),
-    },
-    client,
-  })
+    })
 })
 
 test('EventRevision', async () => {
-  global.server.use(createUuidHandler(eventRevision))
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query eventRevision($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          ... on EventRevision {
-            id
-            trashed
-            date
-            title
-            content
-            changes
-            metaTitle
-            metaDescription
+  given('UuidQuery').for(eventRevision)
+
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query eventRevision($id: Int!) {
+          uuid(id: $id) {
+            __typename
+            ... on EventRevision {
+              id
+              trashed
+              date
+              title
+              content
+              changes
+              metaTitle
+              metaDescription
+            }
           }
         }
-      }
-    `,
-    variables: eventRevision,
-    data: {
+      `,
+      variables: { id: eventRevision.id },
+    })
+    .shouldReturnData({
       uuid: R.pick(
         [
           '__typename',
@@ -96,7 +89,5 @@ test('EventRevision', async () => {
         ],
         eventRevision
       ),
-    },
-    client,
-  })
+    })
 })
