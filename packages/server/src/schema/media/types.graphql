@@ -1,0 +1,19 @@
+extend type Query {
+  media: MediaQuery!
+}
+
+type MediaQuery {
+  upload(mediaType: MediaType!): MediaUpload!
+}
+
+type MediaUpload {
+  url: String!
+}
+
+enum MediaType {
+  IMAGE_GIF
+  IMAGE_JPEG
+  IMAGE_PNG
+  IMAGE_SVG_XML
+  IMAGE_WEBP
+}
