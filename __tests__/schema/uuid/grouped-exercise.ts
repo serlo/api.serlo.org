@@ -52,8 +52,8 @@ describe('GroupedExercise', () => {
             }
           }
         `,
-        variables: groupedExercise,
       })
+      .withVariables(groupedExercise)
       .shouldReturnData({
         uuid: R.pick(
           ['__typename', 'id', 'trashed', 'instance', 'date'],
@@ -79,8 +79,8 @@ describe('GroupedExercise', () => {
             }
           }
         `,
-        variables: groupedExercise,
       })
+      .withVariables(groupedExercise)
       .shouldReturnData({
         uuid: { exerciseGroup: getTypenameAndId(exerciseGroup) },
       })
@@ -106,8 +106,8 @@ test('GroupedExerciseRevision', async () => {
           }
         }
       `,
-      variables: groupedExerciseRevision,
     })
+    .withVariables(groupedExerciseRevision)
     .shouldReturnData({
       uuid: R.pick(
         ['__typename', 'id', 'trashed', 'date', 'content', 'changes'],

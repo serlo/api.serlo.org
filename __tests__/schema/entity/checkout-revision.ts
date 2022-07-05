@@ -42,18 +42,21 @@ const unrevisedRevision = {
   id: nextUuid(articleRevision.id),
   trashed: true,
 }
-const mutation = new Client({ userId: user.id }).prepareQuery({
-  query: gql`
-    mutation ($input: CheckoutRevisionInput!) {
-      entity {
-        checkoutRevision(input: $input) {
-          success
+const mutation = new Client({ userId: user.id })
+  .prepareQuery({
+    query: gql`
+      mutation ($input: CheckoutRevisionInput!) {
+        entity {
+          checkoutRevision(input: $input) {
+            success
+          }
         }
       }
-    }
-  `,
-  variables: { input: { revisionId: unrevisedRevision.id, reason: 'reason' } },
-})
+    `,
+  })
+  .withVariables({
+    input: { revisionId: unrevisedRevision.id, reason: 'reason' },
+  })
 
 beforeEach(() => {
   given('UuidQuery').for(user, article, articleRevision, unrevisedRevision)
@@ -84,20 +87,21 @@ test('returns "{ success: true }" when mutation could be successfully executed',
 })
 
 test('following queries for entity point to checkout revision when entity is already in the cache', async () => {
-  const articleQuery = new Client().prepareQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          ... on Article {
-            currentRevision {
-              id
+  const articleQuery = new Client()
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on Article {
+              currentRevision {
+                id
+              }
             }
           }
         }
-      }
-    `,
-    variables: { id: article.id },
-  })
+      `,
+    })
+    .withVariables({ id: article.id })
 
   await articleQuery.shouldReturnData({
     uuid: { currentRevision: { id: articleRevision.id } },
@@ -113,18 +117,19 @@ test('following queries for entity point to checkout revision when entity is alr
 })
 
 test('checkout revision has trashed == false for following queries', async () => {
-  const revisionQuery = new Client().prepareQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          ... on ArticleRevision {
-            trashed
+  const revisionQuery = new Client()
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on ArticleRevision {
+              trashed
+            }
           }
         }
-      }
-    `,
-    variables: { id: unrevisedRevision.id },
-  })
+      `,
+    })
+    .withVariables({ id: unrevisedRevision.id })
 
   await revisionQuery.shouldReturnData({ uuid: { trashed: true } })
 
@@ -139,23 +144,26 @@ test('after the checkout mutation the cache is cleared for unrevisedEntities', a
   given('SubjectsQuery').for(taxonomyTermSubject)
   given('UuidQuery').for(article)
 
-  const unrevisedEntitiesQuery = new Client().prepareQuery({
-    query: gql`
-      query ($id: String!) {
-        subject {
-          subject(id: $id) {
-            unrevisedEntities {
-              nodes {
-                __typename
-                id
+  const unrevisedEntitiesQuery = new Client()
+    .prepareQuery({
+      query: gql`
+        query ($id: String!) {
+          subject {
+            subject(id: $id) {
+              unrevisedEntities {
+                nodes {
+                  __typename
+                  id
+                }
               }
             }
           }
         }
-      }
-    `,
-    variables: { id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }) },
-  })
+      `,
+    })
+    .withVariables({
+      id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }),
+    })
 
   await unrevisedEntitiesQuery.shouldReturnData({
     subject: {

@@ -25,20 +25,19 @@ import { article, comment, user } from '../../../__fixtures__'
 import { given, Client } from '../../__utils__'
 import { encodeThreadId } from '~/schema/thread/utils'
 
-const mutation = new Client({ userId: user.id }).prepareQuery({
-  query: gql`
-    mutation setThreadState($input: ThreadSetThreadStateInput!) {
-      thread {
-        setThreadState(input: $input) {
-          success
+const mutation = new Client({ userId: user.id })
+  .prepareQuery({
+    query: gql`
+      mutation setThreadState($input: ThreadSetThreadStateInput!) {
+        thread {
+          setThreadState(input: $input) {
+            success
+          }
         }
       }
-    }
-  `,
-  variables: {
-    input: { id: encodeThreadId(comment.id), trashed: true },
-  },
-})
+    `,
+  })
+  .withInput({ id: encodeThreadId(comment.id), trashed: true })
 
 beforeEach(() => {
   given('UuidQuery').for(article, comment, user)
