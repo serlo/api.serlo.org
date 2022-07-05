@@ -311,6 +311,12 @@ export const resolvers: LegacyQueries<
       return { success }
     },
 
+    async deleteOwnAccount(_parent, {}, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      return await dataSources.model.serlo.deleteRegularUsers({ userId })
+    },
+
     async deleteRegularUsers(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({

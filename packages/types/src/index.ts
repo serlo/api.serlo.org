@@ -2649,6 +2649,11 @@ export type UserDeleteBotsResponse = {
   success: Scalars['Boolean'];
 };
 
+export type UserDeleteOwnAccountResponse = {
+  __typename?: 'UserDeleteOwnAccountResponse';
+  success: Scalars['Boolean'];
+};
+
 export type UserDeleteRegularUsersInput = {
   userIds: Array<Scalars['Int']>;
 };
@@ -2669,6 +2674,7 @@ export type UserEdge = {
 export type UserMutation = {
   __typename?: 'UserMutation';
   deleteBots: UserDeleteBotsResponse;
+  deleteOwnAccount: UserDeleteOwnAccountResponse;
   deleteRegularUsers: Array<UserDeleteRegularUsersResponse>;
   setDescription: UserSetDescriptionResponse;
   setEmail: UserSetEmailResponse;

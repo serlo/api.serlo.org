@@ -2653,6 +2653,11 @@ export type UserDeleteBotsResponse = {
   success: Scalars['Boolean'];
 };
 
+export type UserDeleteOwnAccountResponse = {
+  __typename?: 'UserDeleteOwnAccountResponse';
+  success: Scalars['Boolean'];
+};
+
 export type UserDeleteRegularUsersInput = {
   userIds: Array<Scalars['Int']>;
 };
@@ -2673,6 +2678,7 @@ export type UserEdge = {
 export type UserMutation = {
   __typename?: 'UserMutation';
   deleteBots: UserDeleteBotsResponse;
+  deleteOwnAccount: UserDeleteOwnAccountResponse;
   deleteRegularUsers: Array<UserDeleteRegularUsersResponse>;
   setDescription: UserSetDescriptionResponse;
   setEmail: UserSetEmailResponse;
@@ -3132,6 +3138,7 @@ export type ResolversTypes = {
   UserConnection: ResolverTypeWrapper<ModelOf<UserConnection>>;
   UserDeleteBotsInput: ResolverTypeWrapper<ModelOf<UserDeleteBotsInput>>;
   UserDeleteBotsResponse: ResolverTypeWrapper<ModelOf<UserDeleteBotsResponse>>;
+  UserDeleteOwnAccountResponse: ResolverTypeWrapper<ModelOf<UserDeleteOwnAccountResponse>>;
   UserDeleteRegularUsersInput: ResolverTypeWrapper<ModelOf<UserDeleteRegularUsersInput>>;
   UserDeleteRegularUsersResponse: ResolverTypeWrapper<ModelOf<UserDeleteRegularUsersResponse>>;
   UserEdge: ResolverTypeWrapper<ModelOf<UserEdge>>;
@@ -3335,6 +3342,7 @@ export type ResolversParentTypes = {
   UserConnection: ModelOf<UserConnection>;
   UserDeleteBotsInput: ModelOf<UserDeleteBotsInput>;
   UserDeleteBotsResponse: ModelOf<UserDeleteBotsResponse>;
+  UserDeleteOwnAccountResponse: ModelOf<UserDeleteOwnAccountResponse>;
   UserDeleteRegularUsersInput: ModelOf<UserDeleteRegularUsersInput>;
   UserDeleteRegularUsersResponse: ModelOf<UserDeleteRegularUsersResponse>;
   UserEdge: ModelOf<UserEdge>;
@@ -4726,6 +4734,11 @@ export type UserDeleteBotsResponseResolvers<ContextType = Context, ParentType ex
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type UserDeleteOwnAccountResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserDeleteOwnAccountResponse'] = ResolversParentTypes['UserDeleteOwnAccountResponse']> = {
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type UserDeleteRegularUsersResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserDeleteRegularUsersResponse'] = ResolversParentTypes['UserDeleteRegularUsersResponse']> = {
   reason?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -4741,6 +4754,7 @@ export type UserEdgeResolvers<ContextType = Context, ParentType extends Resolver
 
 export type UserMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserMutation'] = ResolversParentTypes['UserMutation']> = {
   deleteBots?: Resolver<ResolversTypes['UserDeleteBotsResponse'], ParentType, ContextType, RequireFields<UserMutationDeleteBotsArgs, 'input'>>;
+  deleteOwnAccount?: Resolver<ResolversTypes['UserDeleteOwnAccountResponse'], ParentType, ContextType>;
   deleteRegularUsers?: Resolver<Array<ResolversTypes['UserDeleteRegularUsersResponse']>, ParentType, ContextType, RequireFields<UserMutationDeleteRegularUsersArgs, 'input'>>;
   setDescription?: Resolver<ResolversTypes['UserSetDescriptionResponse'], ParentType, ContextType, RequireFields<UserMutationSetDescriptionArgs, 'input'>>;
   setEmail?: Resolver<ResolversTypes['UserSetEmailResponse'], ParentType, ContextType, RequireFields<UserMutationSetEmailArgs, 'input'>>;
@@ -4979,6 +4993,7 @@ export type Resolvers<ContextType = Context> = {
   UserActivityByType?: UserActivityByTypeResolvers<ContextType>;
   UserConnection?: UserConnectionResolvers<ContextType>;
   UserDeleteBotsResponse?: UserDeleteBotsResponseResolvers<ContextType>;
+  UserDeleteOwnAccountResponse?: UserDeleteOwnAccountResponseResolvers<ContextType>;
   UserDeleteRegularUsersResponse?: UserDeleteRegularUsersResponseResolvers<ContextType>;
   UserEdge?: UserEdgeResolvers<ContextType>;
   UserMutation?: UserMutationResolvers<ContextType>;
