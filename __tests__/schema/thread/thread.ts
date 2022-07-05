@@ -33,30 +33,31 @@ import { given, Client, givenThreads } from '../../__utils__'
 
 describe('uuid["threads"]', () => {
   describe('returns comment threads', () => {
-    const query = new Client().prepareQuery<{
-      id: number
-      archived?: boolean
-      trashed?: boolean
-    }>({
-      query: gql`
-        query threads($id: Int!, $archived: Boolean, $trashed: Boolean) {
-          uuid(id: $id) {
-            ... on ThreadAware {
-              threads(archived: $archived, trashed: $trashed) {
-                nodes {
-                  comments {
-                    nodes {
-                      id
+    const query = new Client()
+      .prepareQuery<{
+        id: number
+        archived?: boolean
+        trashed?: boolean
+      }>({
+        query: gql`
+          query threads($id: Int!, $archived: Boolean, $trashed: Boolean) {
+            uuid(id: $id) {
+              ... on ThreadAware {
+                threads(archived: $archived, trashed: $trashed) {
+                  nodes {
+                    comments {
+                      nodes {
+                        id
+                      }
                     }
                   }
                 }
               }
             }
           }
-        }
-      `,
-      variables: { id: article.id },
-    })
+        `,
+      })
+      .withVariables({ id: article.id })
 
     test('Threads with 3 Comments (with some comments trashed / archived)', async () => {
       givenThreads({
@@ -165,30 +166,31 @@ describe('uuid["threads"]', () => {
             }
           }
         `,
-        variables: { id: article.id },
       })
+      .withVariables({ id: article.id })
       .shouldReturnData({
         uuid: { threads: { nodes: [{ createdAt: comment1.date }] } },
       })
   })
 
   describe('property "title"', () => {
-    const query = new Client().prepareQuery({
-      query: gql`
-        query propertyTitle($id: Int!) {
-          uuid(id: $id) {
-            ... on ThreadAware {
-              threads {
-                nodes {
-                  title
+    const query = new Client()
+      .prepareQuery({
+        query: gql`
+          query propertyTitle($id: Int!) {
+            uuid(id: $id) {
+              ... on ThreadAware {
+                threads {
+                  nodes {
+                    title
+                  }
                 }
               }
             }
           }
-        }
-      `,
-      variables: { id: article.id },
-    })
+        `,
+      })
+      .withVariables({ id: article.id })
 
     test('returns the "title" of a thread', async () => {
       givenThreads({ uuid: article, threads: [[comment1, comment2]] })
@@ -225,8 +227,8 @@ describe('uuid["threads"]', () => {
             }
           }
         `,
-        variables: { id: article.id },
       })
+      .withVariables({ id: article.id })
       .shouldReturnData({
         uuid: { threads: { nodes: [{ id: expect.any(String) as string }] } },
       })
@@ -250,8 +252,8 @@ describe('uuid["threads"]', () => {
             }
           }
         `,
-        variables: { id: article.id },
       })
+      .withVariables({ id: article.id })
       .shouldReturnData({ uuid: { threads: { nodes: [{ archived: false }] } } })
   })
 
@@ -273,8 +275,8 @@ describe('uuid["threads"]', () => {
             }
           }
         `,
-        variables: { id: article.id },
       })
+      .withVariables({ id: article.id })
       .shouldReturnData({ uuid: { threads: { nodes: [{ trashed: false }] } } })
   })
 
@@ -298,8 +300,8 @@ describe('uuid["threads"]', () => {
             }
           }
         `,
-        variables: { id: article.id },
       })
+      .withVariables({ id: article.id })
       .shouldReturnData({
         uuid: { threads: { nodes: [{ object: { id: article.id } }] } },
       })
@@ -360,8 +362,8 @@ describe('uuid["threads"]', () => {
             }
           }
         `,
-        variables: { id: article.id },
       })
+      .withVariables({ id: article.id })
       .shouldReturnData({
         uuid: {
           threads: {
@@ -396,8 +398,8 @@ describe('uuid["threads"]', () => {
             }
           }
         `,
-        variables: { id: article.id },
       })
+      .withVariables({ id: article.id })
       .shouldReturnData({
         uuid: {
           threads: {

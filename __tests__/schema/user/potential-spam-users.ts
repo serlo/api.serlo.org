@@ -24,21 +24,22 @@ import { gql } from 'apollo-server'
 import { user, user2 } from '../../../__fixtures__'
 import { getTypenameAndId, given, Client } from '../../__utils__'
 
-const query = new Client().prepareQuery({
-  query: gql`
-    query ($first: Int, $after: String) {
-      user {
-        potentialSpamUsers(first: $first, after: $after) {
-          nodes {
-            id
-            __typename
+const query = new Client()
+  .prepareQuery({
+    query: gql`
+      query ($first: Int, $after: String) {
+        user {
+          potentialSpamUsers(first: $first, after: $after) {
+            nodes {
+              id
+              __typename
+            }
           }
         }
       }
-    }
-  `,
-  variables: { first: 100, after: null as string | null },
-})
+    `,
+  })
+  .withVariables({ first: 100, after: null as string | null })
 
 beforeEach(() => {
   given('UuidQuery').for(user, user2)
