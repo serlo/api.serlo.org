@@ -54,8 +54,9 @@ const mutation = new Client({ userId: user.id })
       }
     `,
   })
-  .withVariables({
-    input: { revisionId: unrevisedRevision.id, reason: 'reason' },
+  .withInput({
+    revisionId: unrevisedRevision.id,
+    reason: 'reason',
   })
 
 beforeEach(() => {
