@@ -36,7 +36,7 @@ import {
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
-  check_role_instance_compatibility,
+  checkRoleInstanceCompatibility,
   Context,
   createNamespace,
   LegacyQueries,
@@ -249,7 +249,7 @@ export const resolvers: LegacyQueries<
       const scope: Scope = formatScope(input.scope)
       const instance = scopeToInstance(scope)
 
-      check_role_instance_compatibility(input.role, instance)
+      checkRoleInstanceCompatibility(input.role, instance)
 
       await assertUserIsAuthorized({
         userId,
@@ -380,7 +380,7 @@ export const resolvers: LegacyQueries<
 
       const scope: Scope = formatScope(input.scope)
       const instance = scopeToInstance(scope)
-      check_role_instance_compatibility(input.role, instance)
+      checkRoleInstanceCompatibility(input.role, instance)
 
       await assertUserIsAuthorized({
         userId,

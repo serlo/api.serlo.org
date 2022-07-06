@@ -121,7 +121,7 @@ export function assertStringIsNotEmpty(args: { [key: string]: unknown }) {
   }
 }
 
-export function check_role_instance_compatibility(
+export function checkRoleInstanceCompatibility(
   role: Role,
   instance: Instance | null
 ) {
