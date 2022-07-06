@@ -43,8 +43,8 @@ test('Applet', async () => {
           }
         }
       `,
-      variables: { id: applet.id },
     })
+    .withVariables({ id: applet.id })
     .shouldReturnData({
       uuid: R.pick(['__typename', 'id', 'trashed', 'instance', 'date'], applet),
     })
@@ -73,8 +73,8 @@ test('AppletRevision', async () => {
           }
         }
       `,
-      variables: appletRevision,
     })
+    .withVariables(appletRevision)
     .shouldReturnData({
       uuid: R.pick(
         [

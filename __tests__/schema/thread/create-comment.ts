@@ -32,30 +32,29 @@ import {
 import { DiscriminatorType } from '~/model/decoder'
 import { encodeThreadId } from '~/schema/thread/utils'
 
-const mutation = new Client({ userId: user.id }).prepareQuery({
-  query: gql`
-    mutation ($input: ThreadCreateCommentInput!) {
-      thread {
-        createComment(input: $input) {
-          success
-          record {
-            archived
-            content
-            id
+const mutation = new Client({ userId: user.id })
+  .prepareQuery({
+    query: gql`
+      mutation ($input: ThreadCreateCommentInput!) {
+        thread {
+          createComment(input: $input) {
+            success
+            record {
+              archived
+              content
+              id
+            }
           }
         }
       }
-    }
-  `,
-  variables: {
-    input: {
-      content: 'Hello',
-      threadId: encodeThreadId(comment1.id),
-      subscribe: true,
-      sendEmail: false,
-    },
-  },
-})
+    `,
+  })
+  .withInput({
+    content: 'Hello',
+    threadId: encodeThreadId(comment1.id),
+    subscribe: true,
+    sendEmail: false,
+  })
 
 beforeEach(() => {
   givenThreads({ uuid: article, threads: [[comment1]] })
@@ -85,26 +84,28 @@ test('comment gets created, cache mutated as expected', async () => {
       childrenIds: [],
     })
 
-  const queryComments = new Client().prepareQuery({
-    query: gql`
-      query ($id: Int) {
-        uuid(id: $id) {
-          ... on ThreadAware {
-            threads {
-              nodes {
-                comments {
-                  nodes {
-                    content
+  const queryComments = new Client()
+    .prepareQuery({
+      query: gql`
+        query ($id: Int) {
+          uuid(id: $id) {
+            ... on ThreadAware {
+              threads {
+                nodes {
+                  comments {
+                    nodes {
+                      content
+                    }
                   }
                 }
               }
             }
           }
         }
-      }
-    `,
-    variables: { id: article.id },
-  })
+      `,
+    })
+    .withVariables({ id: article.id })
+
   await queryComments.shouldReturnData({
     uuid: {
       threads: {

@@ -43,8 +43,8 @@ test('Video', async () => {
           }
         }
       `,
-      variables: { id: video.id },
     })
+    .withVariables({ id: video.id })
     .shouldReturnData({
       uuid: R.pick(['__typename', 'id', 'trashed', 'instance', 'date'], video),
     })
@@ -71,8 +71,8 @@ test('VideoRevision', async () => {
           }
         }
       `,
-      variables: { id: videoRevision.id },
     })
+    .withVariables({ id: videoRevision.id })
     .shouldReturnData({
       uuid: R.pick(
         [
