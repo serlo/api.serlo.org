@@ -44,7 +44,7 @@ beforeEach(() => {
   })
 
   given('UserDeleteRegularUsersMutation')
-    .withPayload({ userId: user.id })
+    .withPayload({ id: user.id })
     .returns({ success: true })
 })
 

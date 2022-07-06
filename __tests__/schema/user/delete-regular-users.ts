@@ -66,9 +66,9 @@ beforeEach(() => {
   })
 
   given('UserDeleteRegularUsersMutation').isDefinedBy((req, res, ctx) => {
-    const { userId } = req.body.payload
+    const { id } = req.body.payload
 
-    database.deleteUuid(userId)
+    database.deleteUuid(id)
 
     return res(ctx.json({ success: true }))
   })
@@ -91,12 +91,12 @@ test('runs successfully when mutation could be successfully executed', async () 
 
 test('runs partially when one of the mutations failed', async () => {
   given('UserDeleteRegularUsersMutation').isDefinedBy((req, res, ctx) => {
-    const { userId } = req.body.payload
+    const { id } = req.body.payload
 
-    if (userId === user.id)
+    if (id === user.id)
       return res(ctx.json({ success: false, reason: 'failure!' }))
 
-    database.deleteUuid(userId)
+    database.deleteUuid(id)
 
     return res(ctx.json({ success: true }))
   })

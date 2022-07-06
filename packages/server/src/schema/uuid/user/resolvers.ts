@@ -313,8 +313,7 @@ export const resolvers: LegacyQueries<
 
     async deleteOwnAccount(_parent, _context, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
-
-      return await dataSources.model.serlo.deleteRegularUsers({ userId })
+      return await dataSources.model.serlo.deleteRegularUsers({ id: userId })
     },
 
     async deleteRegularUsers(_parent, { input }, { dataSources, userId }) {
@@ -339,7 +338,7 @@ export const resolvers: LegacyQueries<
         users.map(async (user) => {
           return {
             ...(await dataSources.model.serlo.deleteRegularUsers({
-              userId: user.id,
+              id: user.id,
             })),
             username: user.username,
           }

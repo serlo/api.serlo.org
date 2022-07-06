@@ -198,9 +198,9 @@ export function createSerloModel({
         payload
       )
     },
-    async updateCache({ userId }, { success }) {
+    async updateCache({ id }, { success }) {
       if (success) {
-        await getUuid._querySpec.removeCache({ payload: { id: userId } })
+        await getUuid._querySpec.removeCache({ payload: { id } })
       }
     },
   })

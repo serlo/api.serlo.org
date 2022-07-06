@@ -414,7 +414,7 @@ export const spec = {
     canBeNull: false,
   },
   UserDeleteRegularUsersMutation: {
-    payload: t.type({ userId: t.number }),
+    payload: t.type({ id: t.number }),
     response: t.union([
       t.type({ success: t.literal(true) }),
       t.type({ success: t.literal(false), reason: t.string }),
@@ -477,6 +477,7 @@ export async function makeRequest<M extends MessageType>(
     return null
   } else if (response.status === 400) {
     const responseText = await response.text()
+    console.log(responseText + " responsetext")
     const reason = F.pipe(
       O.tryCatch(() => JSON.parse(responseText) as unknown),
       O.chain(O.fromPredicate(t.type({ reason: t.string }).is)),

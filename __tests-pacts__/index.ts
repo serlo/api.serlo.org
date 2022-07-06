@@ -564,9 +564,7 @@ const pactSpec: PactSpec = {
   UserPotentialSpamUsersQuery: { examples: [] },
   UserDeleteBotsMutation: { examples: [] },
   UserDeleteRegularUsersMutation: {
-    examples: [],
-    // TODO: here it is named userId, in DB layer just id, adjust
-    // examples: [[{ userId: user.id }, { success: true }]],
+    examples: [[{ id: user.id }, { success: true }]],
   },
   UserSetDescriptionMutation: {
     examples: [[{ userId: 1, description: 'Hello World' }, { success: true }]],
