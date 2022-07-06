@@ -19,7 +19,8 @@ type CacheSetResponse {
 }
 
 input CacheRemoveInput {
-  key: String!
+  key: String
+  keys: [String!]
 }
 
 type CacheRemoveResponse {
