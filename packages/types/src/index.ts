@@ -1479,8 +1479,14 @@ export type License = {
 
 export type LicenseQuery = {
   __typename?: 'LicenseQuery';
+  defaultLicense: License;
   license?: Maybe<License>;
   licenses: Array<License>;
+};
+
+
+export type LicenseQueryDefaultLicenseArgs = {
+  instance: Instance;
 };
 
 
