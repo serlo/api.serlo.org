@@ -562,6 +562,18 @@ const pactSpec: PactSpec = {
     examples: [[{}, { unrevisedEntityIds: [article.id] }]],
   },
   UserPotentialSpamUsersQuery: { examples: [] },
+  UserCreateMutation: {
+    examples: [
+      [
+        {
+          username: 'testUser',
+          password: '123456',
+          email: 'testUser@example.org',
+        },
+        { success: true, userId: 63216 },
+      ],
+    ],
+  },
   UserDeleteBotsMutation: { examples: [] },
   UserDeleteRegularUsersMutation: {
     examples: [],
