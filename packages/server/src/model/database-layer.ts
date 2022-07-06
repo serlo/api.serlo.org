@@ -477,7 +477,6 @@ export async function makeRequest<M extends MessageType>(
     return null
   } else if (response.status === 400) {
     const responseText = await response.text()
-    console.log(responseText + " responsetext")
     const reason = F.pipe(
       O.tryCatch(() => JSON.parse(responseText) as unknown),
       O.chain(O.fromPredicate(t.type({ reason: t.string }).is)),
