@@ -40,18 +40,19 @@ const currentRevision = {
   id: nextUuid(pageRevision.id),
   trashed: false,
 }
-const mutation = new Client({ userId: user.id }).prepareQuery({
-  query: gql`
-    mutation ($input: RejectRevisionInput!) {
-      page {
-        rejectRevision(input: $input) {
-          success
+const mutation = new Client({ userId: user.id })
+  .prepareQuery({
+    query: gql`
+      mutation ($input: RejectRevisionInput!) {
+        page {
+          rejectRevision(input: $input) {
+            success
+          }
         }
       }
-    }
-  `,
-  variables: { input: { revisionId: currentRevision.id, reason: 'reason' } },
-})
+    `,
+  })
+  .withInput({ revisionId: currentRevision.id, reason: 'reason' })
 
 beforeEach(() => {
   given('UuidQuery').for(user, page, pageRevision, currentRevision)
@@ -75,16 +76,17 @@ test('returns "{ success: true }" when mutation could be successfully executed',
 })
 
 test('following queries for page point to checkout revision when page is already in the cache', async () => {
-  const revisionQuery = new Client().prepareQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          trashed
+  const revisionQuery = new Client()
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            trashed
+          }
         }
-      }
-    `,
-    variables: { id: currentRevision.id },
-  })
+      `,
+    })
+    .withVariables({ id: currentRevision.id })
 
   await revisionQuery.shouldReturnData({ uuid: { trashed: false } })
 
