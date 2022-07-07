@@ -504,8 +504,7 @@ export type ArticleRevisionCursor = {
 };
 
 export type CacheRemoveInput = {
-  key?: InputMaybe<Scalars['String']>;
-  keys?: InputMaybe<Array<Scalars['String']>>;
+  keys: Array<Scalars['String']>;
 };
 
 export type CacheRemoveResponse = {
