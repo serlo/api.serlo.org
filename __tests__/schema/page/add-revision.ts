@@ -77,22 +77,23 @@ describe('PageAddRevisionMutation', () => {
   })
 
   test('updates the cache', async () => {
-    const query = new Client({ userId: user.id }).prepareQuery({
-      query: gql`
-        query ($id: Int!) {
-          uuid(id: $id) {
-            ... on Page {
-              currentRevision {
-                id
-                content
-                title
+    const query = new Client({ userId: user.id })
+      .prepareQuery({
+        query: gql`
+          query ($id: Int!) {
+            uuid(id: $id) {
+              ... on Page {
+                currentRevision {
+                  id
+                  content
+                  title
+                }
               }
             }
           }
-        }
-      `,
-      variables: { id: page.id },
-    })
+        `,
+      })
+      .withVariables({ id: page.id })
 
     await query.shouldReturnData({
       uuid: {
@@ -129,22 +130,18 @@ describe('PageAddRevisionMutation', () => {
 
   test('fails when `title` or `content` is empty', async () => {
     await mutation
-      .withVariables({
-        input: {
-          content: '',
-          title: 'title',
-          pageId: page.id,
-        },
+      .withInput({
+        content: '',
+        title: 'title',
+        pageId: page.id,
       })
       .shouldFailWithError('BAD_USER_INPUT')
 
     await mutation
-      .withVariables({
-        input: {
-          content: 'content',
-          title: '',
-          pageId: page.id,
-        },
+      .withInput({
+        content: 'content',
+        title: '',
+        pageId: page.id,
       })
       .shouldFailWithError('BAD_USER_INPUT')
   })

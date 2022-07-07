@@ -273,8 +273,8 @@ describe('User', () => {
             }
           }
         `,
-        variables: { userId: user.id },
       })
+      .withVariables({ userId: user.id })
       .shouldReturnData({ uuid: { isNewAuthor: false } })
   })
 
@@ -299,24 +299,25 @@ describe('User', () => {
             }
           }
         `,
-        variables: { userId: user.id },
       })
+      .withVariables({ userId: user.id })
       .shouldReturnData({ uuid: { activityByType } })
   })
 
   describe('property "activeAuthor"', () => {
-    const query = new Client().prepareQuery({
-      query: gql`
-        query ($id: Int!) {
-          uuid(id: $id) {
-            ... on User {
-              isActiveAuthor
+    const query = new Client()
+      .prepareQuery({
+        query: gql`
+          query ($id: Int!) {
+            uuid(id: $id) {
+              ... on User {
+                isActiveAuthor
+              }
             }
           }
-        }
-      `,
-      variables: { id: user.id },
-    })
+        `,
+      })
+      .withVariables({ id: user.id })
 
     test('by id (w/ activeAuthor when user is an active author)', async () => {
       given('ActiveAuthorsQuery').returns([user.id])
@@ -366,18 +367,19 @@ describe('User', () => {
   })
 
   describe('property "activeReviewer"', () => {
-    const query = new Client().prepareQuery({
-      query: gql`
-        query ($id: Int!) {
-          uuid(id: $id) {
-            ... on User {
-              isActiveReviewer
+    const query = new Client()
+      .prepareQuery({
+        query: gql`
+          query ($id: Int!) {
+            uuid(id: $id) {
+              ... on User {
+                isActiveReviewer
+              }
             }
           }
-        }
-      `,
-      variables: { id: user.id },
-    })
+        `,
+      })
+      .withVariables({ id: user.id })
 
     test('by id (w/ activeReviewer when user is an active reviewer)', async () => {
       given('ActiveReviewersQuery').returns([user.id])
