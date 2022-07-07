@@ -34,7 +34,7 @@ export const resolvers: Queries<'media'> = {
       const fileName = `${uuidv4()}.${getFileExtension(mediaType)}`
       const storage = new Storage()
       const [url] = await storage
-        .bucket('')
+        .bucket('assets.serlo.org')
         .file(fileName)
         .getSignedUrl({
           version: 'v4',
