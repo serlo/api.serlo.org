@@ -4,6 +4,10 @@ set -e
 
 source scripts/utils.sh
 
+if [ -n "$(git diff HEAD)" ]; then
+  error "There are uncommitted changes in your workspace"
+fi
+
 $(git config core.editor) scripts/changelog.ts
 
 print_header "Generating CHANGELOG"
