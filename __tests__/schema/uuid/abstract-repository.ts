@@ -323,8 +323,8 @@ describe('Repository', () => {
               }
             }
           `,
-          variables: { id: repository.id },
         })
+        .withVariables({ id: repository.id })
         .shouldReturnData({
           uuid: { license: { id: getDefaultLicense(repository.instance).id } },
         })

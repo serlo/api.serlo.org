@@ -500,7 +500,8 @@ export type ArticleRevisionCursor = {
 };
 
 export type CacheRemoveInput = {
-  key: Scalars['String'];
+  key?: InputMaybe<Scalars['String']>;
+  keys?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type CacheRemoveResponse = {
@@ -1478,8 +1479,14 @@ export type License = {
 
 export type LicenseQuery = {
   __typename?: 'LicenseQuery';
+  defaultLicense: License;
   license?: Maybe<License>;
   licenses: Array<License>;
+};
+
+
+export type LicenseQueryDefaultLicenseArgs = {
+  instance: Instance;
 };
 
 

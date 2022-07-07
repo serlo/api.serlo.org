@@ -26,18 +26,19 @@ import { article, user } from '../../../__fixtures__'
 import { given, Client } from '../../__utils__'
 import { Instance } from '~/types'
 
-const mutation = new Client({ userId: user.id }).prepareQuery({
-  query: gql`
-    mutation ($input: EntityUpdateLicenseInput!) {
-      entity {
-        updateLicense(input: $input) {
-          success
+const mutation = new Client({ userId: user.id })
+  .prepareQuery({
+    query: gql`
+      mutation ($input: EntityUpdateLicenseInput!) {
+        entity {
+          updateLicense(input: $input) {
+            success
+          }
         }
       }
-    }
-  `,
-  variables: { input: { entityId: article.id, licenseId: 4 } },
-})
+    `,
+  })
+  .withInput({ entityId: article.id, licenseId: 4 })
 
 const newLicenseId = 4
 
@@ -75,8 +76,8 @@ test('returns "{ success: true }" when mutation could be successfully executed',
           }
         }
       `,
-      variables: { id: article.id },
     })
+    .withVariables({ id: article.id })
     .shouldReturnData({ uuid: { license: { id: newLicenseId } } })
 })
 

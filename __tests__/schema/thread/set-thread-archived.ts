@@ -25,20 +25,21 @@ import { article, comment, comment1, user } from '../../../__fixtures__'
 import { Client, given, givenThreads } from '../../__utils__'
 import { encodeThreadId } from '~/schema/thread/utils'
 
-const mutation = new Client({ userId: user.id }).prepareQuery<{
-  input: { id: string | string[]; archived: boolean }
-}>({
-  query: gql`
-    mutation setThreadArchived($input: ThreadSetThreadArchivedInput!) {
-      thread {
-        setThreadArchived(input: $input) {
-          success
+const mutation = new Client({ userId: user.id })
+  .prepareQuery<{
+    input: { id: string | string[]; archived: boolean }
+  }>({
+    query: gql`
+      mutation setThreadArchived($input: ThreadSetThreadArchivedInput!) {
+        thread {
+          setThreadArchived(input: $input) {
+            success
+          }
         }
       }
-    }
-  `,
-  variables: { input: { id: encodeThreadId(comment1.id), archived: true } },
-})
+    `,
+  })
+  .withInput({ id: encodeThreadId(comment1.id), archived: true })
 
 beforeEach(() => {
   givenThreads({ uuid: article, threads: [[{ ...comment1, archived: false }]] })
@@ -55,11 +56,9 @@ test('setting multiple ids', async () => {
     .returns(undefined)
 
   await mutation
-    .withVariables({
-      input: {
-        id: [encodeThreadId(comment1.id), encodeThreadId(comment.id)],
-        archived: true,
-      },
+    .withInput({
+      id: [encodeThreadId(comment1.id), encodeThreadId(comment.id)],
+      archived: true,
     })
     .shouldReturnData({ thread: { setThreadArchived: { success: true } } })
 })
@@ -69,22 +68,23 @@ test('cache gets updated as expected', async () => {
     .withPayload({ userId: user.id, ids: [comment1.id], archived: true })
     .returns(undefined)
 
-  const commentQuery = new Client().prepareQuery({
-    query: gql`
-      query ($id: Int) {
-        uuid(id: $id) {
-          ... on ThreadAware {
-            threads {
-              nodes {
-                archived
+  const commentQuery = new Client()
+    .prepareQuery({
+      query: gql`
+        query ($id: Int) {
+          uuid(id: $id) {
+            ... on ThreadAware {
+              threads {
+                nodes {
+                  archived
+                }
               }
             }
           }
         }
-      }
-    `,
-    variables: { id: article.id },
-  })
+      `,
+    })
+    .withVariables({ id: article.id })
 
   await commentQuery.shouldReturnData({
     uuid: { threads: { nodes: [{ archived: false }] } },
