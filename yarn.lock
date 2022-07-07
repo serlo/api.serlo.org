@@ -4149,10 +4149,10 @@ __metadata:
     "@types/graphql-modules": ^0.42.0
     "@types/jsonwebtoken": ^8.5.8
     "@types/node-fetch": ^2.6.1
-    "@types/ramda": ^0.28.12
+    "@types/ramda": ^0.28.14
     "@types/redis": ^2.8.32
     "@types/redlock": ^3.0.7
-    "@types/semver": ^7.3.9
+    "@types/semver": ^7.3.10
     "@zerollup/ts-transform-paths": ^1.7.18
     apollo-datasource-rest: ^3.6.1
     apollo-server: ^3.9.0
@@ -4786,12 +4786,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ramda@npm:^0.28.12":
-  version: 0.28.12
-  resolution: "@types/ramda@npm:0.28.12"
+"@types/ramda@npm:^0.28.14":
+  version: 0.28.14
+  resolution: "@types/ramda@npm:0.28.14"
   dependencies:
     ts-toolbelt: ^6.15.1
-  checksum: 58146449c6bc7d63773bed263a6843fa3fa48e01ffd8e7109bcc60370d0084477dac4ca88c90229fc218129b68471c2f243b4b8077ca7faa8e795883a586142d
+  checksum: b962383ba6615a68670e1a24958df25835070d72433b95761c9d3e554bc999cb30c99acd63cbc056537b6e002355a407061c33a407e9cc574b2cde3dabbd31b8
   languageName: node
   linkType: hard
 
@@ -4850,10 +4850,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/semver@npm:^7.3.9":
-  version: 7.3.9
-  resolution: "@types/semver@npm:7.3.9"
-  checksum: 60bfcfdfa7f937be2c6f4b37ddb6714fb0f27b05fe4cbdfdd596a97d35ed95d13ee410efdd88e72a66449d0384220bf20055ab7d6b5df10de4990fbd20e5cbe0
+"@types/semver@npm:^7.3.10":
+  version: 7.3.10
+  resolution: "@types/semver@npm:7.3.10"
+  checksum: 7047c2822b1759b2b950f39cfcf261f2b9dca47b4b55bdebba0905a8553631f1531eb0f59264ffe4834d1198c8331c8e0010a4cd742f4e0b60abbf399d134364
   languageName: node
   linkType: hard
 
