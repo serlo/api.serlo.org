@@ -1071,7 +1071,7 @@ export function createSerloModel({
     mutate: (payload: DatabaseLayer.Payload<'UserAddRoleMutation'>) => {
       return DatabaseLayer.makeRequest('UserAddRoleMutation', payload)
     },
-    async updateCache({ username, role }, { success }) {
+    async updateCache({ username, roleName }, { success }) {
       if (success) {
         const alias = (await DatabaseLayer.makeRequest('AliasQuery', {
           instance: Instance.De,
@@ -1084,9 +1084,9 @@ export function createSerloModel({
             if (!current) return
             if (!UserDecoder.is(current)) return
 
-            if (current.roles.includes(role)) return current
+            if (current.roles.includes(roleName)) return current
 
-            current.roles.push(role)
+            current.roles.push(roleName)
 
             return current
           },
@@ -1100,7 +1100,7 @@ export function createSerloModel({
     mutate: (payload: DatabaseLayer.Payload<'UserRemoveRoleMutation'>) => {
       return DatabaseLayer.makeRequest('UserRemoveRoleMutation', payload)
     },
-    async updateCache({ username, role }, { success }) {
+    async updateCache({ username, roleName }, { success }) {
       if (success) {
         const alias = (await DatabaseLayer.makeRequest('AliasQuery', {
           instance: Instance.De,
@@ -1113,9 +1113,9 @@ export function createSerloModel({
             if (!current) return
             if (!UserDecoder.is(current)) return
 
-            if (!current.roles.includes(role)) return current
+            if (!current.roles.includes(roleName)) return current
             current.roles = current.roles.filter(
-              (currentRole) => currentRole !== role
+              (currentRole) => currentRole !== roleName
             )
             return current
           },
