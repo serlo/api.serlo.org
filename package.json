@@ -49,8 +49,8 @@
   "devDependencies": {
     "@inyono/changelog": "^0.5.2",
     "@inyono/copyright-headers": "^0.2.0",
-    "@pact-foundation/pact": "^9.17.3",
-    "@pact-foundation/pact-node": "^10.17.2",
+    "@pact-foundation/pact": "^9.18.1",
+    "@pact-foundation/pact-node": "^10.17.6",
     "@sentry/node": "^6.19.7",
     "@types/jest": "^27.5.0",
     "@types/node": "^16.11.34",
