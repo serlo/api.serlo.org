@@ -566,7 +566,7 @@ const pactSpec: PactSpec = {
       [
         {
           username: '1229f9c7',
-          role: Role.Reviewer,
+          roleName: Role.Reviewer,
         },
         {
           success: true,
@@ -589,7 +589,7 @@ const pactSpec: PactSpec = {
       [
         {
           username: 'admin',
-          role: Role.Sysadmin,
+          roleName: Role.Sysadmin,
         },
         {
           success: true,

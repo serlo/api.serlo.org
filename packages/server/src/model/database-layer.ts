@@ -406,7 +406,7 @@ export const spec = {
     canBeNull: false,
   },
   UserAddRoleMutation: {
-    payload: t.type({ username: t.string, role: t.string }),
+    payload: t.type({ username: t.string, roleName: t.string }),
     response: t.strict({
       success: t.literal(true),
     }),
@@ -434,7 +434,7 @@ export const spec = {
     canBeNull: false,
   },
   UserRemoveRoleMutation: {
-    payload: t.type({ username: t.string, role: t.string }),
+    payload: t.type({ username: t.string, roleName: t.string }),
     response: t.strict({
       success: t.literal(true),
     }),

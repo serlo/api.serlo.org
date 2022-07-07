@@ -257,17 +257,16 @@ export const resolvers: LegacyQueries<
         message: 'You are not allowed to add roles.',
         dataSources,
       })
-
       if (isInstance(instance)) {
         const scopedRole = `${instance}_${input.role}`
         await dataSources.model.serlo.addRole({
           username: input.username,
-          role: scopedRole,
+          roleName: scopedRole,
         })
       } else {
         await dataSources.model.serlo.addRole({
           username: input.username,
-          role: input.role,
+          roleName: input.role,
         })
       }
 
@@ -392,12 +391,12 @@ export const resolvers: LegacyQueries<
       if (isInstance(instance)) {
         await dataSources.model.serlo.removeRole({
           username: input.username,
-          role: `${instance}_${input.role}`,
+          roleName: `${instance}_${input.role}`,
         })
       } else {
         await dataSources.model.serlo.removeRole({
           username: input.username,
-          role: input.role,
+          roleName: input.role,
         })
       }
 
