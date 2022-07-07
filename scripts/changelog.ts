@@ -1349,6 +1349,14 @@ async function exec(): Promise<void> {
           'Fix bug of missing user motivation text #683',
         ],
       },
+      {
+        tagName: 'v0.42.1',
+        date: '2022-07-06',
+        added: [
+          'Add `license.defaultLicense` #691',
+          'Add possibility to remove multiple cache keys #687',
+        ],
+      },
     ],
   })
 
