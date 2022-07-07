@@ -91,22 +91,24 @@ test('returns { success, record } when mutation could be successfully executed',
 })
 
 test('updates the cache', async () => {
-  const childQuery = new Client({ userId: user.id }).prepareQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          ... on Exercise {
-            taxonomyTerms {
-              nodes {
-                id
+  const childQuery = new Client({ userId: user.id })
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on Exercise {
+              taxonomyTerms {
+                nodes {
+                  id
+                }
               }
             }
           }
         }
-      }
-    `,
-    variables: { id: exercise.id },
-  })
+      `,
+    })
+    .withVariables({ id: exercise.id })
+
   await childQuery.shouldReturnData({
     uuid: {
       taxonomyTerms: {
@@ -115,22 +117,23 @@ test('updates the cache', async () => {
     },
   })
 
-  const parentQuery = new Client({ userId: user.id }).prepareQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          ... on TaxonomyTerm {
-            children {
-              nodes {
-                id
+  const parentQuery = new Client({ userId: user.id })
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on TaxonomyTerm {
+              children {
+                nodes {
+                  id
+                }
               }
             }
           }
         }
-      }
-    `,
-    variables: { id: taxonomyTermCurriculumTopic.id },
-  })
+      `,
+    })
+    .withVariables({ id: taxonomyTermCurriculumTopic.id })
 
   await parentQuery.shouldReturnData({
     uuid: {

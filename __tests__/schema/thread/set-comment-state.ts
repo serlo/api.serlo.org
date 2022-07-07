@@ -24,18 +24,19 @@ import { gql } from 'apollo-server'
 import { article, comment, user } from '../../../__fixtures__'
 import { Client, given } from '../../__utils__'
 
-const mutation = new Client({ userId: user.id }).prepareQuery({
-  query: gql`
-    mutation setCommentState($input: ThreadSetCommentStateInput!) {
-      thread {
-        setCommentState(input: $input) {
-          success
+const mutation = new Client({ userId: user.id })
+  .prepareQuery({
+    query: gql`
+      mutation setCommentState($input: ThreadSetCommentStateInput!) {
+        thread {
+          setCommentState(input: $input) {
+            success
+          }
         }
       }
-    }
-  `,
-  variables: { input: { id: comment.id, trashed: true } },
-})
+    `,
+  })
+  .withInput({ id: comment.id, trashed: true })
 
 beforeEach(() => {
   given('UuidQuery').for(article, comment, user)

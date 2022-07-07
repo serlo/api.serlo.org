@@ -40,18 +40,19 @@ const unrevisedRevision = {
   id: nextUuid(pageRevision.id),
   trashed: true,
 }
-const mutation = new Client({ userId: user.id }).prepareQuery({
-  query: gql`
-    mutation ($input: CheckoutRevisionInput!) {
-      page {
-        checkoutRevision(input: $input) {
-          success
+const mutation = new Client({ userId: user.id })
+  .prepareQuery({
+    query: gql`
+      mutation ($input: CheckoutRevisionInput!) {
+        page {
+          checkoutRevision(input: $input) {
+            success
+          }
         }
       }
-    }
-  `,
-  variables: { input: { revisionId: unrevisedRevision.id, reason: 'reason' } },
-})
+    `,
+  })
+  .withInput({ revisionId: unrevisedRevision.id, reason: 'reason' })
 
 beforeEach(() => {
   given('UuidQuery').for(user, page, pageRevision, unrevisedRevision)
@@ -79,20 +80,21 @@ test('returns "{ success: true }" when mutation could be successfully executed',
 })
 
 test('following queries for page point to checkout revision when page is already in the cache', async () => {
-  const pageQuery = new Client().prepareQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          ... on Page {
-            currentRevision {
-              id
+  const pageQuery = new Client()
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on Page {
+              currentRevision {
+                id
+              }
             }
           }
         }
-      }
-    `,
-    variables: { id: page.id },
-  })
+      `,
+    })
+    .withVariables({ id: page.id })
 
   await pageQuery.shouldReturnData({
     uuid: { currentRevision: { id: pageRevision.id } },
@@ -108,18 +110,19 @@ test('following queries for page point to checkout revision when page is already
 })
 
 test('checkout revision has trashed == false for following queries', async () => {
-  const revisionQuery = new Client().prepareQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          ... on PageRevision {
-            trashed
+  const revisionQuery = new Client()
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on PageRevision {
+              trashed
+            }
           }
         }
-      }
-    `,
-    variables: { id: unrevisedRevision.id },
-  })
+      `,
+    })
+    .withVariables({ id: unrevisedRevision.id })
 
   await revisionQuery.shouldReturnData({ uuid: { trashed: true } })
 

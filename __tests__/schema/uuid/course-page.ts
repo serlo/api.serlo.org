@@ -48,8 +48,8 @@ describe('CoursePage', () => {
             }
           }
         `,
-        variables: { id: coursePage.id },
       })
+      .withVariables({ id: coursePage.id })
       .shouldReturnData({
         uuid: R.pick(
           ['__typename', 'id', 'trashed', 'instance', 'date'],
@@ -75,8 +75,8 @@ describe('CoursePage', () => {
             }
           }
         `,
-        variables: { id: coursePage.id },
       })
+      .withVariables({ id: coursePage.id })
       .shouldReturnData({ uuid: { course: getTypenameAndId(course) } })
   })
 
@@ -100,8 +100,8 @@ describe('CoursePage', () => {
             }
           }
         `,
-        variables: { id: coursePageRevision.id },
       })
+      .withVariables({ id: coursePageRevision.id })
       .shouldReturnData({
         uuid: R.pick(
           [
