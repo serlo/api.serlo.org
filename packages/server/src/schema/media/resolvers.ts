@@ -43,14 +43,6 @@ export const resolvers: Queries<'media'> = {
           contentType: getMimeType(mediaType),
         })
 
-      console.log('Generated PUT signed URL:')
-      console.log(url)
-      console.log('You can use this URL with any user agent, for example:')
-      console.log(
-        `curl -X PUT -H 'Content-Type: ${getMimeType(mediaType)}' ` +
-          `--upload-file my-file '${url}'`
-      )
-
       return { url }
     },
   },
