@@ -36,8 +36,14 @@ const query = new Client({ userId: user.id }).prepareQuery({
   `,
 })
 
-test('media.upload', async () => {
-  await query.shouldReturnData({
-    media: { upload: { url: 'http://google.com/upload' } },
+describe('media.upload', () => {
+  test('returns url for uploading media file', async () => {
+    await query.shouldReturnData({
+      media: { upload: { url: 'http://google.com/upload' } },
+    })
+  })
+
+  test('fails for unauthenticated user', async () => {
+    await query.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
   })
 })

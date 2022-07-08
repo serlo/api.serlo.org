@@ -22,7 +22,11 @@
 import { Storage } from '@google-cloud/storage'
 import { v4 as uuidv4 } from 'uuid'
 
-import { createNamespace, Queries } from '~/internals/graphql'
+import {
+  assertUserIsAuthenticated,
+  createNamespace,
+  Queries,
+} from '~/internals/graphql'
 import { MediaType } from '~/types'
 
 export const resolvers: Queries<'media'> = {
@@ -30,7 +34,9 @@ export const resolvers: Queries<'media'> = {
     media: createNamespace(),
   },
   MediaQuery: {
-    async upload(_parent, { mediaType }) {
+    async upload(_parent, { mediaType }, { userId }) {
+      assertUserIsAuthenticated(userId)
+
       const fileName = `${uuidv4()}.${getFileExtension(mediaType)}`
       const storage = new Storage()
       const [url] = await storage
