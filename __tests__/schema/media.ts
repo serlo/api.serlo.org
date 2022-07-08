@@ -29,7 +29,8 @@ const query = new Client({ userId: user.id }).prepareQuery({
     query {
       media {
         upload(mediaType: IMAGE_PNG) {
-          url
+          uploadUrl
+          urlAfterUpload
         }
       }
     }
@@ -39,7 +40,14 @@ const query = new Client({ userId: user.id }).prepareQuery({
 describe('media.upload', () => {
   test('returns url for uploading media file', async () => {
     await query.shouldReturnData({
-      media: { upload: { url: 'http://google.com/upload' } },
+      media: {
+        upload: {
+          uploadUrl: 'http://google.com/upload',
+          urlAfterUpload: expect.stringMatching(
+            /https:\/\/assets.serlo.org\/[\d\-a-f]+\.png/
+          ) as unknown,
+        },
+      },
     })
   })
 

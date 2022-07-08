@@ -1492,6 +1492,30 @@ export type LicenseQueryLicensesArgs = {
   instance?: InputMaybe<Instance>;
 };
 
+export type MediaQuery = {
+  __typename?: 'MediaQuery';
+  upload: MediaUpload;
+};
+
+
+export type MediaQueryUploadArgs = {
+  mediaType: MediaType;
+};
+
+export enum MediaType {
+  ImageGif = 'IMAGE_GIF',
+  ImageJpeg = 'IMAGE_JPEG',
+  ImagePng = 'IMAGE_PNG',
+  ImageSvgXml = 'IMAGE_SVG_XML',
+  ImageWebp = 'IMAGE_WEBP'
+}
+
+export type MediaUpload = {
+  __typename?: 'MediaUpload';
+  uploadUrl: Scalars['String'];
+  urlAfterUpload: Scalars['String'];
+};
+
 export type MetadataQuery = {
   __typename?: 'MetadataQuery';
   entities: EntityMetadataConnection;
@@ -1757,6 +1781,7 @@ export type Query = {
   entity?: Maybe<EntityQuery>;
   events: AbstractNotificationEventConnection;
   license: LicenseQuery;
+  media: MediaQuery;
   metadata: MetadataQuery;
   notificationEvent?: Maybe<AbstractNotificationEvent>;
   notifications: NotificationConnection;
