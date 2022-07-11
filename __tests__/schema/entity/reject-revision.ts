@@ -42,18 +42,19 @@ const currentRevision = {
   id: nextUuid(articleRevision.id),
   trashed: false,
 }
-const mutation = new Client({ userId: user.id }).prepareQuery({
-  query: gql`
-    mutation ($input: RejectRevisionInput!) {
-      entity {
-        rejectRevision(input: $input) {
-          success
+const mutation = new Client({ userId: user.id })
+  .prepareQuery({
+    query: gql`
+      mutation ($input: RejectRevisionInput!) {
+        entity {
+          rejectRevision(input: $input) {
+            success
+          }
         }
       }
-    }
-  `,
-  variables: { input: { revisionId: currentRevision.id, reason: 'reason' } },
-})
+    `,
+  })
+  .withInput({ revisionId: currentRevision.id, reason: 'reason' })
 
 beforeEach(() => {
   given('UuidQuery').for(user, article, articleRevision, currentRevision)
@@ -81,16 +82,17 @@ test('returns "{ success: true }" when mutation could be successfully executed',
 })
 
 test('following queries for entity point to checkout revision when entity is already in the cache', async () => {
-  const revisionQuery = new Client().prepareQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          trashed
+  const revisionQuery = new Client()
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            trashed
+          }
         }
-      }
-    `,
-    variables: { id: currentRevision.id },
-  })
+      `,
+    })
+    .withVariables({ id: currentRevision.id })
 
   await revisionQuery.shouldReturnData({ uuid: { trashed: false } })
 
@@ -102,23 +104,26 @@ test('following queries for entity point to checkout revision when entity is alr
 })
 
 test('after the reject mutation the cache is cleared for unrevisedEntities', async () => {
-  const unrevisedEntitiesQuery = new Client().prepareQuery({
-    query: gql`
-      query ($id: String!) {
-        subject {
-          subject(id: $id) {
-            unrevisedEntities {
-              nodes {
-                __typename
-                id
+  const unrevisedEntitiesQuery = new Client()
+    .prepareQuery({
+      query: gql`
+        query ($id: String!) {
+          subject {
+            subject(id: $id) {
+              unrevisedEntities {
+                nodes {
+                  __typename
+                  id
+                }
               }
             }
           }
         }
-      }
-    `,
-    variables: { id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }) },
-  })
+      `,
+    })
+    .withVariables({
+      id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }),
+    })
 
   await unrevisedEntitiesQuery.shouldReturnData({
     subject: {

@@ -24,18 +24,19 @@ import { gql } from 'apollo-server'
 import { user } from '../../../__fixtures__'
 import { given, Client } from '../../__utils__'
 
-const mutation = new Client({ userId: user.id }).prepareQuery({
-  query: gql`
-    mutation ($input: UserSetDescriptionInput!) {
-      user {
-        setDescription(input: $input) {
-          success
+const mutation = new Client({ userId: user.id })
+  .prepareQuery({
+    query: gql`
+      mutation ($input: UserSetDescriptionInput!) {
+        user {
+          setDescription(input: $input) {
+            success
+          }
         }
       }
-    }
-  `,
-  variables: { input: { description: 'description' } },
-})
+    `,
+  })
+  .withInput({ description: 'description' })
 
 beforeEach(() => {
   given('UuidQuery').for(user)
@@ -68,18 +69,19 @@ test('fails when database layer has an internal error', async () => {
 })
 
 test('updates the cache', async () => {
-  const query = new Client({ userId: user.id }).prepareQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          ... on User {
-            description
+  const query = new Client({ userId: user.id })
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on User {
+              description
+            }
           }
         }
-      }
-    `,
-    variables: { id: user.id },
-  })
+      `,
+    })
+    .withVariables({ id: user.id })
 
   await query.shouldReturnData({ uuid: { description: null } })
 

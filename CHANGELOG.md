@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.42.1](https://github.com/serlo/api.serlo.org/compare/v0.42.0..v0.42.1) - July 6, 2022
+
+### Added
+
+- Add `license.defaultLicense` #691
+
+- Add possibility to remove multiple cache keys #687
+
 ## [v0.42.0](https://github.com/serlo/api.serlo.org/compare/v0.41.0..v0.42.0) - June 29, 2022
 
 ### Breaking Changes
