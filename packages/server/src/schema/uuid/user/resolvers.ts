@@ -258,7 +258,9 @@ export const resolvers: LegacyQueries<
         dataSources,
       })
 
-      const roleName = isInstance(instance) ? `${instance}_${input.role}` : input.role
+      const roleName = isInstance(instance)
+        ? `${instance}_${input.role}`
+        : input.role
       await dataSources.model.serlo.addRole({
         username: input.username,
         roleName,
@@ -382,10 +384,12 @@ export const resolvers: LegacyQueries<
         dataSources,
       })
 
-      const roleName = isInstance(instance) ? `${instance}_${input.role}` : input.role
+      const roleName = isInstance(instance)
+        ? `${instance}_${input.role}`
+        : input.role
       await dataSources.model.serlo.removeRole({
         username: input.username,
-        roleName
+        roleName,
       })
 
       return { success: true }

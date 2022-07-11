@@ -178,9 +178,7 @@ test('updates the cache', async () => {
   await uuidQuery.shouldReturnData({
     uuid: {
       roles: {
-        nodes: [
-          { role: Role.Login, scope: Scope.Serlo },
-        ],
+        nodes: [{ role: Role.Login, scope: Scope.Serlo }],
       },
     },
   })
