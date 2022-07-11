@@ -46,8 +46,8 @@ describe('Solution', () => {
             }
           }
         `,
-        variables: solution,
       })
+      .withVariables(solution)
       .shouldReturnData({
         uuid: R.pick(
           ['__typename', 'id', 'trashed', 'instance', 'date'],
@@ -73,8 +73,8 @@ describe('Solution', () => {
             }
           }
         `,
-        variables: solution,
       })
+      .withVariables(solution)
       .shouldReturnData({
         uuid: {
           exercise: getTypenameAndId(exercise),
@@ -102,8 +102,8 @@ test('SolutionRevision', async () => {
           }
         }
       `,
-      variables: solutionRevision,
     })
+    .withVariables(solutionRevision)
     .shouldReturnData({
       uuid: R.pick(
         ['__typename', 'id', 'trashed', 'date', 'content', 'changes'],

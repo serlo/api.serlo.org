@@ -103,26 +103,27 @@ describe('TaxonomyTermCreateMutation', () => {
           return res(ctx.json(taxonomyTermTopic))
         })
 
-      const query = new Client({ userId: user.id }).prepareQuery({
-        query: gql`
-          query ($id: Int!) {
-            uuid(id: $id) {
-              ... on TaxonomyTerm {
-                name
-                children {
-                  nodes {
-                    ... on TaxonomyTerm {
-                      id
-                      name
+      const query = new Client({ userId: user.id })
+        .prepareQuery({
+          query: gql`
+            query ($id: Int!) {
+              uuid(id: $id) {
+                ... on TaxonomyTerm {
+                  name
+                  children {
+                    nodes {
+                      ... on TaxonomyTerm {
+                        id
+                        name
+                      }
                     }
                   }
                 }
               }
             }
-          }
-        `,
-        variables: { id: taxonomyTermSubject.id },
-      })
+          `,
+        })
+        .withVariables({ id: taxonomyTermSubject.id })
 
       await query.shouldReturnData({
         uuid: {
