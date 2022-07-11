@@ -23,11 +23,7 @@ import { Scope } from '@serlo/authorization'
 import { gql } from 'apollo-server'
 
 import { user, user2 } from '../../../__fixtures__'
-import {
-  Client,
-  given,
-  Query,
-} from '../../__utils__'
+import { Client, given, Query } from '../../__utils__'
 import { Instance, Role } from '~/types'
 
 let client: Client
@@ -171,9 +167,7 @@ test('updates the cache', async () => {
   await uuidQuery.shouldReturnData({
     uuid: {
       roles: {
-        nodes: [
-          { role: Role.Login, scope: Scope.Serlo },
-        ],
+        nodes: [{ role: Role.Login, scope: Scope.Serlo }],
       },
     },
   })
