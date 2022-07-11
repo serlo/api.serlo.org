@@ -39,7 +39,7 @@ let mutation: Query
 let uuidQuery: Query
 
 const globalRole = Role.Sysadmin
-const scopedRole = Role.Reviewer
+const localRole = Role.Reviewer
 const globalScope = 'Serlo'
 const localScope = 'Serlo_De'
 
@@ -128,7 +128,7 @@ describe('add scoped role', () => {
       .withVariables({
         input: {
           username: user2.username,
-          role: scopedRole,
+          role: localRole,
           scope: localScope,
         },
       })
@@ -141,7 +141,7 @@ describe('add scoped role', () => {
       .withVariables({
         input: {
           username: user2.username,
-          role: scopedRole,
+          role: localRole,
           scope: localScope,
         },
       })
@@ -153,7 +153,7 @@ describe('add scoped role', () => {
       .withVariables({
         input: {
           username: user2.username,
-          role: scopedRole,
+          role: localRole,
           scope: localScope,
         },
       })
@@ -166,8 +166,8 @@ describe('add scoped role', () => {
       .withVariables({
         input: {
           username: user2.username,
-          role: scopedRole,
-          scope: globalRole,
+          role: localRole,
+          scope: globalScope,
         },
       })
       .shouldFailWithError('BAD_USER_INPUT')
@@ -175,7 +175,15 @@ describe('add scoped role', () => {
 })
 
 test('updates the cache', async () => {
-  await uuidQuery.execute()
+  await uuidQuery.shouldReturnData({
+    uuid: {
+      roles: {
+        nodes: [
+          { role: Role.Login, scope: Scope.Serlo },
+        ],
+      },
+    },
+  })
   await mutation.execute()
   await uuidQuery.shouldReturnData({
     uuid: {

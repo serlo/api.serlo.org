@@ -39,7 +39,7 @@ let mutation: Query
 let uuidQuery: Query
 
 const globalRole = Role.Sysadmin
-const scopedRole = Role.Reviewer
+const localRole = Role.Reviewer
 const globalScope = 'Serlo'
 const localScope = 'Serlo_De'
 
@@ -122,7 +122,7 @@ describe('remove scoped role', () => {
   test('removes a role successfully', async () => {
     await mutation
       .withVariables({
-        input: { username: user.username, role: scopedRole, scope: localScope },
+        input: { username: user.username, role: localRole, scope: localScope },
       })
       .shouldReturnData({ user: { removeRole: { success: true } } })
   })
@@ -131,7 +131,7 @@ describe('remove scoped role', () => {
     await mutation
       .forLoginUser('de_admin')
       .withVariables({
-        input: { username: user.username, role: scopedRole, scope: localScope },
+        input: { username: user.username, role: localRole, scope: localScope },
       })
       .shouldReturnData({ user: { removeRole: { success: true } } })
   })
@@ -139,7 +139,7 @@ describe('remove scoped role', () => {
   test('fails when admin in wrong scope', async () => {
     await mutation
       .withVariables({
-        input: { username: user.username, role: scopedRole, scope: localScope },
+        input: { username: user.username, role: localRole, scope: localScope },
       })
       .forLoginUser('en_admin')
       .shouldFailWithError('FORBIDDEN')
@@ -148,14 +148,24 @@ describe('remove scoped role', () => {
   test('fails when given global scope', async () => {
     await mutation
       .withVariables({
-        input: { username: user.username, role: scopedRole, scope: globalRole },
+        input: { username: user.username, role: localRole, scope: globalScope },
       })
       .shouldFailWithError('BAD_USER_INPUT')
   })
 })
 
 test('updates the cache', async () => {
-  await uuidQuery.execute()
+  await uuidQuery.shouldReturnData({
+    uuid: {
+      roles: {
+        nodes: [{
+          role: Role.Login, scope: Scope.Serlo
+        },{
+          role: globalRole, scope: Scope.Serlo
+        }]
+      }
+    },
+  })
   await mutation.execute()
   await uuidQuery.shouldReturnData({
     uuid: { roles: { nodes: [{ role: Role.Login, scope: Scope.Serlo }] } },
