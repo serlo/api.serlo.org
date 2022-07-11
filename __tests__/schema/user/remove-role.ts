@@ -22,17 +22,13 @@
 import { Scope } from '@serlo/authorization'
 import { gql } from 'apollo-server'
 
-import { user } from '../../../__fixtures__'
+import {user, user2} from '../../../__fixtures__'
 import {
   Client,
-  Database,
   given,
   Query,
-  returnsUuidsFromDatabase,
 } from '../../__utils__'
 import { Instance, Role } from '~/types'
-
-let database: Database
 
 let client: Client
 let mutation: Query
@@ -83,10 +79,7 @@ beforeEach(() => {
     })
     .withVariables({ id: user.id })
 
-  database = new Database()
-  database.hasUuids([user])
-
-  given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
+  given('UuidQuery').for(user, user2)
   given('UserRemoveRoleMutation').returns({ success: true })
   given('AliasQuery')
     .withPayload({

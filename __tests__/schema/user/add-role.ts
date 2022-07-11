@@ -25,14 +25,10 @@ import { gql } from 'apollo-server'
 import { user, user2 } from '../../../__fixtures__'
 import {
   Client,
-  Database,
   given,
   Query,
-  returnsUuidsFromDatabase,
 } from '../../__utils__'
 import { Instance, Role } from '~/types'
-
-let database: Database
 
 let client: Client
 let mutation: Query
@@ -83,10 +79,7 @@ beforeEach(() => {
     })
     .withVariables({ id: user2.id })
 
-  database = new Database()
-  database.hasUuids([user, user2])
-
-  given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
+  given('UuidQuery').for(user, user2)
   given('UserAddRoleMutation').returns({ success: true })
   given('AliasQuery')
     .withPayload({
@@ -178,7 +171,9 @@ test('updates the cache', async () => {
   await uuidQuery.shouldReturnData({
     uuid: {
       roles: {
-        nodes: [{ role: Role.Login, scope: Scope.Serlo }],
+        nodes: [
+          { role: Role.Login, scope: Scope.Serlo },
+        ],
       },
     },
   })
