@@ -125,10 +125,16 @@ export function checkRoleInstanceCompatibility(
   role: Role,
   instance: Instance | null
 ) {
-  if ([Role.Guest, Role.Login, Role.Sysadmin].includes(role) && isInstance(instance)) {
+  if (
+    [Role.Guest, Role.Login, Role.Sysadmin].includes(role) &&
+    isInstance(instance)
+  ) {
     throw new UserInputError('This role cannot be scoped.')
   }
-  if (![Role.Guest, Role.Login, Role.Sysadmin].includes(role)  && !isInstance(instance)) {
+  if (
+    ![Role.Guest, Role.Login, Role.Sysadmin].includes(role) &&
+    !isInstance(instance)
+  ) {
     throw new UserInputError("This role can't have a global scope.")
   }
 }
