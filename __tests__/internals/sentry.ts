@@ -41,8 +41,8 @@ test('invalid values from data sources are reported', async () => {
           }
         }
       `,
-      variables: { id: 42 },
     })
+    .withVariables({ id: 42 })
     .shouldFailWithError('INTERNAL_SERVER_ERROR')
 
   await assertErrorEvent({
@@ -73,8 +73,8 @@ describe('reports invalid cache values', () => {
             }
           }
         `,
-        variables: { id: user.id },
       })
+      .withVariables({ id: user.id })
       .shouldReturnData({ uuid: getTypenameAndId(user) })
 
     await assertErrorEvent({
@@ -111,8 +111,8 @@ describe('reports invalid cache values', () => {
             }
           }
         `,
-        variables: { id: article.id },
       })
+      .withVariables({ id: article.id })
       .shouldReturnData({
         uuid: { currentRevision: getTypenameAndId(articleRevision) },
       })

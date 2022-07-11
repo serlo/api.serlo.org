@@ -49,8 +49,10 @@ export class ModelDataSource extends RESTDataSource {
     this.mailchimp = createMailchimpModel()
   }
 
-  public async removeCacheValue({ key }: { key: string }) {
-    await this.environment.cache.remove({ key })
+  public async removeCacheValue({ keys }: { keys: string[] }) {
+    for (const key of keys) {
+      await this.environment.cache.remove({ key })
+    }
   }
 
   public async setCacheValue({ key, value }: { key: string; value: unknown }) {

@@ -78,8 +78,8 @@ describe('subscriptions', () => {
             }
           }
         `,
-        variables: { id: article.id },
       })
+      .withVariables({ id: article.id })
       .shouldReturnData({ subscription: { currentUserHasSubscribed: true } })
   })
 
@@ -93,8 +93,8 @@ describe('subscriptions', () => {
             }
           }
         `,
-        variables: { id: nextUuid(article.id) },
       })
+      .withVariables({ id: nextUuid(article.id) })
       .shouldReturnData({ subscription: { currentUserHasSubscribed: false } })
   })
 })
@@ -168,9 +168,7 @@ describe('subscription mutation set', () => {
       .returns()
 
     await mutation
-      .withVariables({
-        input: { id: [1565, 1555], subscribe: true, sendEmail: true },
-      })
+      .withInput({ id: [1565, 1555], subscribe: true, sendEmail: true })
       .shouldReturnData({ subscription: { set: { success: true } } })
 
     await getSubscriptionsQuery.shouldReturnData({
@@ -197,9 +195,7 @@ describe('subscription mutation set', () => {
       .returns()
 
     await mutation
-      .withVariables({
-        input: { id: [article.id], subscribe: false, sendEmail: false },
-      })
+      .withInput({ id: [article.id], subscribe: false, sendEmail: false })
       .shouldReturnData({ subscription: { set: { success: true } } })
 
     await getSubscriptionsQuery.shouldReturnData({
@@ -214,8 +210,10 @@ describe('subscription mutation set', () => {
   test('unauthenticated', async () => {
     await mutation
       .forUnauthenticatedUser()
-      .withVariables({
-        input: { id: 1565, subscribe: true, sendEmail: false },
+      .withInput({
+        id: 1565,
+        subscribe: true,
+        sendEmail: false,
       })
       .shouldFailWithError('UNAUTHENTICATED')
   })
