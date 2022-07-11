@@ -77,6 +77,30 @@ describe('endpoint "license"', () => {
   })
 })
 
+test('endpoint "defaultLicense" returns the default license of an instance', async () => {
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query ($instance: Instance!) {
+          license {
+            defaultLicense(instance: $instance) {
+              id
+              instance
+              default
+              title
+              shortTitle
+              url
+              content
+              agreement
+            }
+          }
+        }
+      `,
+      variables: { instance: 'de' },
+    })
+    .shouldReturnData({ license: { defaultLicense: license } })
+})
+
 describe('endpoint "licenses"', () => {
   test('returns array of licenses filtered by instance', async () => {
     await licensesQuery

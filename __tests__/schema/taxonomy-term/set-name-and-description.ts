@@ -76,7 +76,7 @@ describe('TaxonomyTermSetNameAndDescriptionMutation', () => {
 
   test('fails when `name` is empty', async () => {
     await mutation
-      .withVariables({ input: { ...input, name: '' } })
+      .withInput({ ...input, name: '' })
       .shouldFailWithError('BAD_USER_INPUT')
   })
 
@@ -93,19 +93,20 @@ describe('TaxonomyTermSetNameAndDescriptionMutation', () => {
   })
 
   test('updates the cache', async () => {
-    const query = new Client({ userId: user.id }).prepareQuery({
-      query: gql`
-        query ($id: Int!) {
-          uuid(id: $id) {
-            ... on TaxonomyTerm {
-              name
-              description
+    const query = new Client({ userId: user.id })
+      .prepareQuery({
+        query: gql`
+          query ($id: Int!) {
+            uuid(id: $id) {
+              ... on TaxonomyTerm {
+                name
+                description
+              }
             }
           }
-        }
-      `,
-      variables: { id: taxonomyTermCurriculumTopic.id },
-    })
+        `,
+      })
+      .withVariables({ id: taxonomyTermCurriculumTopic.id })
 
     await query.shouldReturnData({
       uuid: {

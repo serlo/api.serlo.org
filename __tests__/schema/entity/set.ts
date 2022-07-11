@@ -223,7 +223,7 @@ testCases.forEach((testCase) => {
           }
         `,
       })
-      .withVariables({ input: { ...input, parentId: testCase.parent.id } })
+      .withInput({ ...input, parentId: testCase.parent.id })
 
     const inputWithEntityId = { ...input, entityId: testCase.entity.id }
 
@@ -242,7 +242,7 @@ testCases.forEach((testCase) => {
           }
         `,
       })
-      .withVariables({ input: inputWithEntityId })
+      .withInput(inputWithEntityId)
 
     const { changes, needsReview, subscribeThis, subscribeThisByEmail } = input
 
@@ -458,9 +458,7 @@ testCases.forEach((testCase) => {
         })
 
         await mutationWithEntityId
-          .withVariables({
-            input: { ...inputWithEntityId, needsReview: false },
-          })
+          .withInput({ ...inputWithEntityId, needsReview: false })
           .execute()
 
         await uuidQuery.shouldReturnData({
@@ -500,12 +498,10 @@ testCases.forEach((testCase) => {
         })
 
         await mutationWithEntityId
-          .withVariables({
-            input: {
-              ...inputWithEntityId,
-              subscribeThis: true,
-              subscribeThisByEmail: true,
-            },
+          .withInput({
+            ...inputWithEntityId,
+            subscribeThis: true,
+            subscribeThisByEmail: true,
           })
           .execute()
 
@@ -558,16 +554,14 @@ test('uses default license of the instance', async () => {
           }
         }
       `,
-      variables: {
-        input: {
-          changes: 'changes',
-          subscribeThis: true,
-          subscribeThisByEmail: true,
-          needsReview: true,
-          parentId: exerciseEn.id,
-          content: 'Hello World',
-        },
-      },
+    })
+    .withInput({
+      changes: 'changes',
+      subscribeThis: true,
+      subscribeThisByEmail: true,
+      needsReview: true,
+      parentId: exerciseEn.id,
+      content: 'Hello World',
     })
     .shouldReturnData({ entity: { setSolution: { success: true } } })
 })

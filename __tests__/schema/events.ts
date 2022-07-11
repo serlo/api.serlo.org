@@ -228,9 +228,9 @@ describe('query endpoint "events"', () => {
             }
           }
         `,
-        variables: {
-          after: Buffer.from(afterId.toString()).toString('base64'),
-        },
+      })
+      .withVariables({
+        after: Buffer.from(afterId.toString()).toString('base64'),
       })
       .shouldReturnData({
         events: {
@@ -258,9 +258,9 @@ describe('query endpoint "events"', () => {
             }
           }
         `,
-        variables: {
-          after: Buffer.from(afterId.toString()).toString('base64'),
-        },
+      })
+      .withVariables({
+        after: Buffer.from(afterId.toString()).toString('base64'),
       })
       .shouldReturnData({
         events: { pageInfo: { hasNextPage: true } },
@@ -345,8 +345,8 @@ test('User.eventsByUser returns events of this user', async () => {
           }
         }
       `,
-      variables: { id: user.id },
     })
+    .withVariables({ id: user.id })
     .shouldReturnData({
       uuid: {
         eventsByUser: {
@@ -388,8 +388,8 @@ test('AbstractEntity.events returns events for this entity', async () => {
           }
         }
       `,
-      variables: { id: article.id },
     })
+    .withVariables({ id: article.id })
     .shouldReturnData({
       uuid: {
         events: {
