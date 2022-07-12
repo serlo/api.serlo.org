@@ -77,7 +77,7 @@ import {
   castToUuid,
   castToAlias,
 } from '~/model/decoder'
-import { Instance, Role } from '~/types'
+import { Instance } from '~/types'
 import { isDateString } from '~/utils'
 
 const events = [
@@ -566,7 +566,7 @@ const pactSpec: PactSpec = {
       [
         {
           username: '1229f9c7',
-          roleName: Role.Reviewer,
+          roleName: 'de_reviewer',
         },
         {
           success: true,
@@ -589,7 +589,7 @@ const pactSpec: PactSpec = {
       [
         {
           username: 'admin',
-          roleName: Role.Sysadmin,
+          roleName: 'sysadmin',
         },
         {
           success: true,
