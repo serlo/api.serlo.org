@@ -417,6 +417,13 @@ export const spec = {
     }),
     canBeNull: false,
   },
+  UserAddRoleMutation: {
+    payload: t.type({ username: t.string, roleName: t.string }),
+    response: t.strict({
+      success: t.literal(true),
+    }),
+    canBeNull: false,
+  },
   UserDeleteBotsMutation: {
     payload: t.type({ botIds: t.array(t.number) }),
     response: t.strict({
@@ -436,6 +443,13 @@ export const spec = {
   UserPotentialSpamUsersQuery: {
     payload: t.type({ first: t.number, after: t.union([t.number, t.null]) }),
     response: t.type({ userIds: t.array(t.number) }),
+    canBeNull: false,
+  },
+  UserRemoveRoleMutation: {
+    payload: t.type({ username: t.string, roleName: t.string }),
+    response: t.strict({
+      success: t.literal(true),
+    }),
     canBeNull: false,
   },
   UserSetDescriptionMutation: {

@@ -1357,6 +1357,14 @@ async function exec(): Promise<void> {
           'Add possibility to remove multiple cache keys #687',
         ],
       },
+      {
+        tagName: 'v0.43.0',
+        date: '2022-07-12',
+        added: [
+          'Add `user.addRole` mutation #663',
+          'Add `user.removeRole` mutation #663',
+        ],
+      },
     ],
   })
 
