@@ -55,11 +55,8 @@ export const resolvers: Mutations<'_cache'> = {
         operation: 'remove',
         allowedServices: [Service.Serlo],
       })
-      const keys = input.keys ?? []
 
-      if (input.key != null) keys.push(input.key)
-
-      await dataSources.model.removeCacheValue({ keys })
+      await dataSources.model.removeCacheValue({ keys: input.keys })
       return { success: true, query: {} }
     },
     async update(_parent, { input }, { dataSources, service, userId }) {

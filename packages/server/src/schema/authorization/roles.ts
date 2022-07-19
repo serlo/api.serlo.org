@@ -106,6 +106,8 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
       Permission.License_Set,
       Permission.Thread_DeleteThread,
       Permission.Thread_DeleteComment,
+      Permission.User_AddRole,
+      Permission.User_RemoveRole,
       Permission.Uuid_Delete_Entity,
       Permission.Uuid_Create_EntityRevision,
       Permission.Uuid_Delete_Page,
