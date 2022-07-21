@@ -27,6 +27,24 @@ import {
   setup,
 } from './setup'
 
+jest.mock('@google-cloud/storage', () => {
+  return {
+    Storage: jest.fn().mockImplementation(() => ({
+      bucket() {
+        return {
+          file() {
+            return {
+              getSignedUrl() {
+                return ['http://google.com/upload']
+              },
+            }
+          },
+        }
+      },
+    })),
+  }
+})
+
 setup()
 
 beforeAll(async () => {
