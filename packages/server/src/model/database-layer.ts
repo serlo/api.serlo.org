@@ -413,7 +413,11 @@ export const spec = {
     canBeNull: false,
   },
   UsersByRoleQuery: {
-    payload: t.type({roleName: t.string, first: t.number, after: t.union([t.number, t.undefined])}),
+    payload: t.type({
+      roleName: t.string,
+      first: t.number,
+      after: t.union([t.number, t.undefined]),
+    }),
     response: t.strict({
       usersByRole: t.array(t.number),
     }),
@@ -498,7 +502,6 @@ export async function makeRequest<M extends MessageType>(
     return null
   } else if (response.status === 400) {
     const responseText = await response.text()
-    console.log("text: " + responseText)
     const reason = F.pipe(
       O.tryCatch(() => JSON.parse(responseText) as unknown),
       O.chain(O.fromPredicate(t.type({ reason: t.string }).is)),

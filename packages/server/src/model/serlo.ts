@@ -1127,7 +1127,6 @@ export function createSerloModel({
   const getUsersByRole = createRequest({
     decoder: DatabaseLayer.getDecoderFor('UsersByRoleQuery'),
     async getCurrentValue(payload: DatabaseLayer.Payload<'UsersByRoleQuery'>) {
-      console.log("payload: " + payload.first)
       return DatabaseLayer.makeRequest('UsersByRoleQuery', payload)
     },
   })

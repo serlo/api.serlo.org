@@ -20,10 +20,11 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 
-import {castToUuid, Client, given, Query} from '../../__utils__'
-import {Role, Scope} from "~/types"
 import { gql } from 'apollo-server'
-import {user as sysadmin, user2 as reviewer} from "../../../__fixtures__"
+
+import { user as sysadmin, user2 as reviewer } from '../../../__fixtures__'
+import { castToUuid, Client, given, Query } from '../../__utils__'
+import { Role, Scope } from '~/types'
 
 let client: Client
 let query: Query
@@ -34,45 +35,50 @@ const localRole = Role.Reviewer
 const localScope = Scope.SerloDe
 
 beforeEach(() => {
-  client = new Client({userId: sysadmin.id})
+  client = new Client({ userId: sysadmin.id })
   query = client
-  .prepareQuery({
+    .prepareQuery({
       query: gql`
-          query ($role: Role!, $scope: Scope!, $first: Int, $after: String) {
-              user {
-                  usersByRole(after: $after, role: $role, scope: $scope, first: $first) {
-                      nodes {
-                          id
-                      }
-                  }
+        query ($role: Role!, $scope: Scope!, $first: Int, $after: String) {
+          user {
+            usersByRole(
+              after: $after
+              role: $role
+              scope: $scope
+              first: $first
+            ) {
+              nodes {
+                id
               }
+            }
           }
+        }
       `,
-  })
-  .withVariables({
-    role: globalRole,
-    scope: globalScope,
-    first: 3,
-    after: 'MQ=='
-  })
+    })
+    .withVariables({
+      role: globalRole,
+      scope: globalScope,
+      first: 3,
+      after: 'MQ==',
+    })
 
-  const sysadmin2 = { ...sysadmin, id: castToUuid(2)}
-  const sysadmin3 = { ...sysadmin, id: castToUuid(6)}
-  const sysadmin4 = { ...sysadmin, id: castToUuid(10)}
-  const sysadmin5 = { ...sysadmin, id: castToUuid(396)}
+  const sysadmin2 = { ...sysadmin, id: castToUuid(2) }
+  const sysadmin3 = { ...sysadmin, id: castToUuid(6) }
+  const sysadmin4 = { ...sysadmin, id: castToUuid(10) }
+  const sysadmin5 = { ...sysadmin, id: castToUuid(396) }
 
-
-  given('UsersByRoleQuery').withPayload({roleName: globalRole,
-    first: 4,
-    after: 1})
-    .returns({usersByRole: [2, 6, 10, 396]})
+  given('UsersByRoleQuery')
+    .withPayload({ roleName: globalRole, first: 4, after: 1 })
+    .returns({ usersByRole: [2, 6, 10, 396] })
 
   given('UuidQuery').for(sysadmin, sysadmin2, sysadmin3, sysadmin4, sysadmin5)
 })
 
 describe('get users by globalRole', () => {
   test('get sysadmins', async () => {
-    await query.shouldReturnData({ user: { usersByRole: { nodes: [{ id: 2}, {id: 6 }, {id: 10 }]}}})
+    await query.shouldReturnData({
+      user: { usersByRole: { nodes: [{ id: 2 }, { id: 6 }, { id: 10 }] } },
+    })
   })
 
   test('fails when given invalid scope', async () => {
@@ -80,7 +86,7 @@ describe('get users by globalRole', () => {
       .withVariables({
         role: globalRole,
         scope: localScope,
-        first: 5
+        first: 5,
       })
       .shouldFailWithError('BAD_USER_INPUT')
   })
@@ -92,11 +98,11 @@ describe('get users by globalRole', () => {
 
 describe('get users by localRole', () => {
   beforeEach(() => {
-
-    const reviewer2 = { ...reviewer, id: castToUuid(11)}
-    const reviewer3 = { ...reviewer, id: castToUuid(30)}
-    given('UsersByRoleQuery').withPayload({roleName: 'de_reviewer', first: 3})
-      .returns({usersByRole: [11, 23, 30]})
+    const reviewer2 = { ...reviewer, id: castToUuid(11) }
+    const reviewer3 = { ...reviewer, id: castToUuid(30) }
+    given('UsersByRoleQuery')
+      .withPayload({ roleName: 'de_reviewer', first: 3 })
+      .returns({ usersByRole: [11, 23, 30] })
     given('UuidQuery').for(reviewer, reviewer2, reviewer3)
   })
   test('get german reviewers', async () => {
@@ -104,9 +110,11 @@ describe('get users by localRole', () => {
       .withVariables({
         role: localRole,
         scope: localScope,
-        first: 2
+        first: 2,
       })
-      .shouldReturnData({ user: { usersByRole: { nodes: [{ id: 11}, {id: 23 }]}}})
+      .shouldReturnData({
+        user: { usersByRole: { nodes: [{ id: 11 }, { id: 23 }] } },
+      })
   })
 
   test('get users when scoped admin', async () => {
@@ -115,9 +123,11 @@ describe('get users by localRole', () => {
       .withVariables({
         role: localRole,
         scope: localScope,
-        first: 2
+        first: 2,
       })
-      .shouldReturnData({ user: { usersByRole: { nodes: [{ id: 11}, {id: 23 }]}} })
+      .shouldReturnData({
+        user: { usersByRole: { nodes: [{ id: 11 }, { id: 23 }] } },
+      })
   })
 
   test('fails when admin in wrong scope', async () => {
@@ -125,7 +135,7 @@ describe('get users by localRole', () => {
       .withVariables({
         role: localRole,
         scope: localScope,
-        first: 2
+        first: 2,
       })
       .forLoginUser('en_admin')
       .shouldFailWithError('FORBIDDEN')
@@ -136,7 +146,7 @@ describe('get users by localRole', () => {
       .withVariables({
         role: localRole,
         scope: globalScope,
-        first: 2
+        first: 2,
       })
       .shouldFailWithError('BAD_USER_INPUT')
   })

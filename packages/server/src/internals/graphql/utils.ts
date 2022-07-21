@@ -139,9 +139,6 @@ export function checkRoleInstanceCompatibility(
   }
 }
 
-export function generateRole(
-  role: Role,
-  instance: Instance | null
-) {
+export function generateRole(role: Role, instance: Instance | null) {
   return isInstance(instance) ? `${instance}_${role}` : role
 }
