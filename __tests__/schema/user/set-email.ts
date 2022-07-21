@@ -25,20 +25,21 @@ import { user as baseUser } from '../../../__fixtures__'
 import { Client, given } from '../../__utils__'
 
 const user = { ...baseUser, roles: ['sysadmin'] }
-const query = new Client({ userId: user.id }).prepareQuery({
-  query: gql`
-    mutation ($input: UserSetEmailInput!) {
-      user {
-        setEmail(input: $input) {
-          success
-          username
-          email
+const query = new Client({ userId: user.id })
+  .prepareQuery({
+    query: gql`
+      mutation ($input: UserSetEmailInput!) {
+        user {
+          setEmail(input: $input) {
+            success
+            username
+            email
+          }
         }
       }
-    }
-  `,
-  variables: { input: { userId: user.id, email: 'user@example.org' } },
-})
+    `,
+  })
+  .withInput({ userId: user.id, email: 'user@example.org' })
 
 beforeEach(() => {
   given('UuidQuery').for(user)

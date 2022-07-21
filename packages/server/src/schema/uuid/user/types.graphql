@@ -103,10 +103,12 @@ extend type Mutation {
 }
 
 type UserMutation {
+  addRole(input: UserRoleInput!): UserRoleResponse!
   deleteBots(input: UserDeleteBotsInput!): UserDeleteBotsResponse!
   deleteRegularUsers(
     input: UserDeleteRegularUsersInput!
   ): [UserDeleteRegularUsersResponse!]!
+  removeRole(input: UserRoleInput!): UserRoleResponse!
   setDescription(input: UserSetDescriptionInput!): UserSetDescriptionResponse!
   setEmail(input: UserSetEmailInput!): UserSetEmailResponse!
 }
@@ -127,6 +129,16 @@ type UserDeleteRegularUsersResponse {
   success: Boolean!
   username: String
   reason: String
+}
+
+input UserRoleInput {
+  username: String!
+  role: Role!
+  scope: Scope!
+}
+
+type UserRoleResponse {
+  success: Boolean!
 }
 
 input UserSetDescriptionInput {

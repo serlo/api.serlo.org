@@ -25,54 +25,19 @@ import { article, comment, comment1, user } from '../../../__fixtures__'
 import { Client, given, givenThreads } from '../../__utils__'
 import { castToAlias, DiscriminatorType } from '~/model/decoder'
 
-const mutation = new Client({ userId: user.id }).prepareQuery({
-  query: gql`
-    mutation createThread($input: ThreadCreateThreadInput!) {
-      thread {
-        createThread(input: $input) {
-          success
-          record {
-            archived
-            comments {
-              nodes {
-                content
-                title
-              }
-            }
-          }
-        }
-      }
-    }
-  `,
-  variables: {
-    input: {
-      title: 'My new thread',
-      content: '🔥 brand new!',
-      objectId: article.id,
-      subscribe: true,
-      sendEmail: false,
-    },
-  },
-})
-
-beforeEach(() => {
-  given('UuidQuery').for(user)
-  givenThreads({ uuid: article, threads: [[comment]] })
-})
-
-test('thread gets created, cache mutated as expected', async () => {
-  const queryComments = new Client().prepareQuery({
+const mutation = new Client({ userId: user.id })
+  .prepareQuery({
     query: gql`
-      query ($id: Int) {
-        uuid(id: $id) {
-          ... on ThreadAware {
-            threads {
-              nodes {
-                comments {
-                  nodes {
-                    title
-                    content
-                  }
+      mutation createThread($input: ThreadCreateThreadInput!) {
+        thread {
+          createThread(input: $input) {
+            success
+            record {
+              archived
+              comments {
+                nodes {
+                  content
+                  title
                 }
               }
             }
@@ -80,8 +45,43 @@ test('thread gets created, cache mutated as expected', async () => {
         }
       }
     `,
-    variables: { id: article.id },
   })
+  .withInput({
+    title: 'My new thread',
+    content: '🔥 brand new!',
+    objectId: article.id,
+    subscribe: true,
+    sendEmail: false,
+  })
+
+beforeEach(() => {
+  given('UuidQuery').for(user)
+  givenThreads({ uuid: article, threads: [[comment]] })
+})
+
+test('thread gets created, cache mutated as expected', async () => {
+  const queryComments = new Client()
+    .prepareQuery({
+      query: gql`
+        query ($id: Int) {
+          uuid(id: $id) {
+            ... on ThreadAware {
+              threads {
+                nodes {
+                  comments {
+                    nodes {
+                      title
+                      content
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+    })
+    .withVariables({ id: article.id })
 
   await queryComments.shouldReturnData({
     uuid: {

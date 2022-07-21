@@ -47,8 +47,8 @@ describe('Course', () => {
             }
           }
         `,
-        variables: course,
       })
+      .withVariables(course)
       .shouldReturnData({
         uuid: R.pick(
           ['__typename', 'id', 'trashed', 'instance', 'date'],
@@ -74,8 +74,8 @@ describe('Course', () => {
             }
           }
         `,
-        variables: course,
       })
+      .withVariables(course)
       .shouldReturnData({ uuid: { pages: [getTypenameAndId(coursePage)] } })
   })
 
@@ -104,8 +104,8 @@ describe('Course', () => {
               }
             }
           `,
-          variables: { id: courseWithTwoPages.id },
         })
+        .withVariables({ id: courseWithTwoPages.id })
         .shouldReturnData({ uuid: { pages: [{ id: 1 }, { id: 2 }] } })
     })
 
@@ -123,8 +123,8 @@ describe('Course', () => {
               }
             }
           `,
-          variables: { id: courseWithTwoPages.id },
         })
+        .withVariables({ id: courseWithTwoPages.id })
         .shouldReturnData({ uuid: { pages: [{ id: 1 }] } })
     })
 
@@ -142,8 +142,8 @@ describe('Course', () => {
               }
             }
           `,
-          variables: { id: courseWithTwoPages.id },
         })
+        .withVariables({ id: courseWithTwoPages.id })
         .shouldReturnData({ uuid: { pages: [{ id: 2 }] } })
     })
   })
@@ -173,8 +173,8 @@ describe('Course', () => {
               }
             }
           `,
-          variables: { id: course.id },
         })
+        .withVariables({ id: course.id })
         .shouldReturnData({ uuid: { pages: [{ id: 1 }, { id: 2 }] } })
     })
 
@@ -192,8 +192,8 @@ describe('Course', () => {
               }
             }
           `,
-          variables: { id: course.id },
         })
+        .withVariables({ id: course.id })
         .shouldReturnData({ uuid: { pages: [{ id: 1 }] } })
     })
 
@@ -211,8 +211,8 @@ describe('Course', () => {
               }
             }
           `,
-          variables: { id: course.id },
         })
+        .withVariables({ id: course.id })
         .shouldReturnData({ uuid: { pages: [{ id: 2 }] } })
     })
   })
@@ -239,8 +239,8 @@ test('CourseRevision', async () => {
           }
         }
       `,
-      variables: courseRevision,
     })
+    .withVariables(courseRevision)
     .shouldReturnData({
       uuid: R.pick(
         [

@@ -500,7 +500,7 @@ export type ArticleRevisionCursor = {
 };
 
 export type CacheRemoveInput = {
-  key: Scalars['String'];
+  keys: Array<Scalars['String']>;
 };
 
 export type CacheRemoveResponse = {
@@ -1478,8 +1478,14 @@ export type License = {
 
 export type LicenseQuery = {
   __typename?: 'LicenseQuery';
+  defaultLicense: License;
   license?: Maybe<License>;
   licenses: Array<License>;
+};
+
+
+export type LicenseQueryDefaultLicenseArgs = {
+  instance: Instance;
 };
 
 
@@ -1902,6 +1908,16 @@ export enum Role {
   Reviewer = 'reviewer',
   StaticPagesBuilder = 'staticPagesBuilder',
   Sysadmin = 'sysadmin'
+}
+
+export enum Scope {
+  Serlo = 'Serlo',
+  SerloDe = 'Serlo_De',
+  SerloEn = 'Serlo_En',
+  SerloEs = 'Serlo_Es',
+  SerloFr = 'Serlo_Fr',
+  SerloHi = 'Serlo_Hi',
+  SerloTa = 'Serlo_Ta'
 }
 
 export type ScopedRole = {
@@ -2693,10 +2709,17 @@ export type UserEdge = {
 
 export type UserMutation = {
   __typename?: 'UserMutation';
+  addRole: UserRoleResponse;
   deleteBots: UserDeleteBotsResponse;
   deleteRegularUsers: Array<UserDeleteRegularUsersResponse>;
+  removeRole: UserRoleResponse;
   setDescription: UserSetDescriptionResponse;
   setEmail: UserSetEmailResponse;
+};
+
+
+export type UserMutationAddRoleArgs = {
+  input: UserRoleInput;
 };
 
 
@@ -2707,6 +2730,11 @@ export type UserMutationDeleteBotsArgs = {
 
 export type UserMutationDeleteRegularUsersArgs = {
   input: UserDeleteRegularUsersInput;
+};
+
+
+export type UserMutationRemoveRoleArgs = {
+  input: UserRoleInput;
 };
 
 
@@ -2728,6 +2756,17 @@ export type UserQuery = {
 export type UserQueryPotentialSpamUsersArgs = {
   after?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
+};
+
+export type UserRoleInput = {
+  role: Role;
+  scope: Scope;
+  username: Scalars['String'];
+};
+
+export type UserRoleResponse = {
+  __typename?: 'UserRoleResponse';
+  success: Scalars['Boolean'];
 };
 
 export type UserSetDescriptionInput = {
