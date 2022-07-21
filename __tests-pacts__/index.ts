@@ -566,7 +566,7 @@ const pactSpec: PactSpec = {
       [
         {
           username: '1229f9c7',
-          roleName: 'reviewer',
+          roleName: 'german_reviewer',
         },
         {
           success: true,
