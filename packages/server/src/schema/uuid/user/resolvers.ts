@@ -148,8 +148,6 @@ export const resolvers: LegacyQueries<
         throw new UserInputError('`after` is an illegal id')
 
       const roleName = generateRole(payload.role, instance)
-
-      console.log("before datasources: " + roleName)
       const { usersByRole } = await dataSources.model.serlo.getUsersByRole({
         roleName,
         first: first + 1,
@@ -163,13 +161,12 @@ export const resolvers: LegacyQueries<
           })
         )
       )
-      console.log("before resolve")
       return resolveConnection({
         nodes: users,
         payload: { first },
         createCursor: (node) => node.id.toString(),
       })
-    }
+    },
   },
   User: {
     ...createUuidResolvers(),

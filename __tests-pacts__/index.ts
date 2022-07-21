@@ -582,7 +582,9 @@ const pactSpec: PactSpec = {
     // examples: [[{ userId: user.id }, { success: true }]],
   },
   UsersByRoleQuery: {
-    examples: [[{roleName: 'sysadmin', first: 2, after: 1}, {usersByRole: [2, 6]}]]
+    examples: [
+      [{ roleName: 'sysadmin', first: 2, after: 1 }, { usersByRole: [2, 6] }],
+    ],
   },
   UserSetDescriptionMutation: {
     examples: [[{ userId: 1, description: 'Hello World' }, { success: true }]],
