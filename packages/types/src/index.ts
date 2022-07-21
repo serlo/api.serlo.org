@@ -2725,12 +2725,21 @@ export type UserMutationSetEmailArgs = {
 export type UserQuery = {
   __typename?: 'UserQuery';
   potentialSpamUsers: UserConnection;
+  usersByRole: UserConnection;
 };
 
 
 export type UserQueryPotentialSpamUsersArgs = {
   after?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type UserQueryUsersByRoleArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  role: Role;
+  scope: Scope;
 };
 
 export type UserRoleInput = {

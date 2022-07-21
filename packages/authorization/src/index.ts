@@ -73,6 +73,7 @@ export enum Permission {
   User_AddRole = 'user:addRole',
   User_DeleteBot = 'user:deleteBot',
   User_DeleteRegularUser = 'user:deleteRegularUser',
+  User_GetUsersByRole = 'user:getUsersByRole',
   User_RemoveRole = 'user:removeRole',
   User_SetEmail = 'user:setEmail',
   Thread_SetThreadArchived = 'thread:setThreadArchived',
@@ -168,6 +169,7 @@ export const User = {
   addRole: createPermissionGuard(Permission.User_AddRole),
   deleteBot: createPermissionGuard(Permission.User_DeleteBot),
   deleteRegularUser: createPermissionGuard(Permission.User_DeleteRegularUser),
+  getUsersByRole: createPermissionGuard(Permission.User_GetUsersByRole),
   removeRole: createPermissionGuard(Permission.User_RemoveRole),
   setEmail: createPermissionGuard(Permission.User_SetEmail),
 }
