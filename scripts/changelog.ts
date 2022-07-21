@@ -1365,6 +1365,11 @@ async function exec(): Promise<void> {
           'Add `user.removeRole` mutation #663',
         ],
       },
+      {
+        tagName: 'v0.43.1',
+        date: '2022-07-21',
+        added: ['Add `media.upload` mutation #700'],
+      },
     ],
   })
 

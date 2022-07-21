@@ -1,6 +1,6 @@
 {
   "name": "@serlo/api.serlo.org",
-  "version": "0.43.0",
+  "version": "0.43.1",
   "private": true,
   "repository": "serlo/api.serlo.org",
   "license": "Apache-2.0",
@@ -19,9 +19,10 @@
     "start:swr-queue-worker": "tsdx watch --format cjs --target node --entry src/swr-queue-worker.ts --tsconfig tsconfig.prod.json --onSuccess \"node dist\""
   },
   "dependencies": {
+    "@google-cloud/storage": "^6.2.2",
     "@nmshd/connector-sdk": "^1.1.5",
     "@sentry/node": "^6.19.7",
-    "@serlo/authorization": "^0.43.0",
+    "@serlo/authorization": "^0.43.1",
     "apollo-datasource-rest": "^3.6.1",
     "apollo-server": "^3.9.0",
     "apollo-server-caching": "^3.3.0",
@@ -52,7 +53,8 @@
     "ramda": "^0.28.0",
     "redis": "^3.1.2",
     "redlock": "^3.1.2",
-    "ts-toolbelt": "^9.6.0"
+    "ts-toolbelt": "^9.6.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@graphql-codegen/add": "^3.1.1",
@@ -68,6 +70,7 @@
     "@types/redis": "^2.8.32",
     "@types/redlock": "^3.0.7",
     "@types/semver": "^7.3.9",
+    "@types/uuid": "^8.3.4",
     "@zerollup/ts-transform-paths": "^1.7.18",
     "babel-plugin-import-graphql": "^2.8.1",
     "babel-plugin-module-resolver": "^4.1.0",

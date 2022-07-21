@@ -1502,6 +1502,30 @@ export type LicenseQueryLicensesArgs = {
   instance?: InputMaybe<Instance>;
 };
 
+export type MediaQuery = {
+  __typename?: 'MediaQuery';
+  upload: MediaUpload;
+};
+
+
+export type MediaQueryUploadArgs = {
+  mediaType: MediaType;
+};
+
+export enum MediaType {
+  ImageGif = 'IMAGE_GIF',
+  ImageJpeg = 'IMAGE_JPEG',
+  ImagePng = 'IMAGE_PNG',
+  ImageSvgXml = 'IMAGE_SVG_XML',
+  ImageWebp = 'IMAGE_WEBP'
+}
+
+export type MediaUpload = {
+  __typename?: 'MediaUpload';
+  uploadUrl: Scalars['String'];
+  urlAfterUpload: Scalars['String'];
+};
+
 export type MetadataQuery = {
   __typename?: 'MetadataQuery';
   entities: EntityMetadataConnection;
@@ -1767,6 +1791,7 @@ export type Query = {
   entity?: Maybe<EntityQuery>;
   events: AbstractNotificationEventConnection;
   license: LicenseQuery;
+  media: MediaQuery;
   metadata: MetadataQuery;
   notificationEvent?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
   notifications: NotificationConnection;
@@ -3086,6 +3111,9 @@ export type ResolversTypes = {
   JSONObject: ResolverTypeWrapper<ModelOf<Scalars['JSONObject']>>;
   License: ResolverTypeWrapper<ModelOf<License>>;
   LicenseQuery: ResolverTypeWrapper<ModelOf<LicenseQuery>>;
+  MediaQuery: ResolverTypeWrapper<ModelOf<MediaQuery>>;
+  MediaType: ResolverTypeWrapper<ModelOf<MediaType>>;
+  MediaUpload: ResolverTypeWrapper<ModelOf<MediaUpload>>;
   MetadataQuery: ResolverTypeWrapper<ModelOf<MetadataQuery>>;
   Mutation: ResolverTypeWrapper<{}>;
   Navigation: ResolverTypeWrapper<ModelOf<Navigation>>;
@@ -3295,6 +3323,8 @@ export type ResolversParentTypes = {
   JSONObject: ModelOf<Scalars['JSONObject']>;
   License: ModelOf<License>;
   LicenseQuery: ModelOf<LicenseQuery>;
+  MediaQuery: ModelOf<MediaQuery>;
+  MediaUpload: ModelOf<MediaUpload>;
   MetadataQuery: ModelOf<MetadataQuery>;
   Mutation: {};
   Navigation: ModelOf<Navigation>;
@@ -4206,6 +4236,17 @@ export type LicenseQueryResolvers<ContextType = Context, ParentType extends Reso
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type MediaQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['MediaQuery'] = ResolversParentTypes['MediaQuery']> = {
+  upload?: Resolver<ResolversTypes['MediaUpload'], ParentType, ContextType, RequireFields<MediaQueryUploadArgs, 'mediaType'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type MediaUploadResolvers<ContextType = Context, ParentType extends ResolversParentTypes['MediaUpload'] = ResolversParentTypes['MediaUpload']> = {
+  uploadUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  urlAfterUpload?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MetadataQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['MetadataQuery'] = ResolversParentTypes['MetadataQuery']> = {
   entities?: Resolver<ResolversTypes['EntityMetadataConnection'], ParentType, ContextType, Partial<MetadataQueryEntitiesArgs>>;
   publisher?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
@@ -4363,6 +4404,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   entity?: Resolver<Maybe<ResolversTypes['EntityQuery']>, ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<QueryEventsArgs>>;
   license?: Resolver<ResolversTypes['LicenseQuery'], ParentType, ContextType>;
+  media?: Resolver<ResolversTypes['MediaQuery'], ParentType, ContextType>;
   metadata?: Resolver<ResolversTypes['MetadataQuery'], ParentType, ContextType>;
   notificationEvent?: Resolver<Maybe<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType, RequireFields<QueryNotificationEventArgs, 'id'>>;
   notifications?: Resolver<ResolversTypes['NotificationConnection'], ParentType, ContextType, Partial<QueryNotificationsArgs>>;
@@ -4973,6 +5015,8 @@ export type Resolvers<ContextType = Context> = {
   JSONObject?: GraphQLScalarType;
   License?: LicenseResolvers<ContextType>;
   LicenseQuery?: LicenseQueryResolvers<ContextType>;
+  MediaQuery?: MediaQueryResolvers<ContextType>;
+  MediaUpload?: MediaUploadResolvers<ContextType>;
   MetadataQuery?: MetadataQueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Navigation?: NavigationResolvers<ContextType>;
