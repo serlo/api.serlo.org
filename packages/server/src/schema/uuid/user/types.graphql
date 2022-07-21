@@ -77,6 +77,7 @@ extend type Query {
 
 type UserQuery {
   potentialSpamUsers(first: Int, after: String): UserConnection!
+  usersByRole(role: Role!, scope: Scope!, first: Int, after: String): UserConnection!
 }
 
 type UserConnection {
