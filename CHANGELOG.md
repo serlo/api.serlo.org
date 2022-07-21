@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.43.1](https://github.com/serlo/api.serlo.org/compare/v0.43.0..v0.43.1) - July 21, 2022
+
+### Added
+
+- Add `media.upload` mutation #700
+
 ## [v0.43.0](https://github.com/serlo/api.serlo.org/compare/v0.42.1..v0.43.0) - July 12, 2022
 
 ### Added
