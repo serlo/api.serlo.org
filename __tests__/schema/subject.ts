@@ -48,8 +48,8 @@ describe('SubjectsQuery', () => {
             }
           }
         `,
-        variables: { instance: taxonomyTermSubject.instance },
       })
+      .withVariables({ instance: taxonomyTermSubject.instance })
       .shouldReturnData({
         subject: {
           subjects: [{ taxonomyTerm: { name: taxonomyTermSubject.name } }],
@@ -125,9 +125,9 @@ describe('Subjects', () => {
             }
           }
         `,
-        variables: {
-          id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }),
-        },
+      })
+      .withVariables({
+        id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }),
       })
       .shouldReturnData({
         subject: {

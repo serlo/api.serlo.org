@@ -31,8 +31,18 @@ export enum Scope {
   Serlo_Ta = 'serlo.org:ta',
 }
 
+export function formatScope(scope: string): Scope {
+  if (scope === 'Serlo') return Scope.Serlo
+  const scopeIdentifier = scope.split('_')[1].toLowerCase()
+  return `serlo.org:${scopeIdentifier}` as Scope
+}
+
 export function instanceToScope(instance: Instance | null): Scope {
   return instance === null ? Scope.Serlo : (`serlo.org:${instance}` as Scope)
+}
+
+export function scopeToInstance(scope: Scope): Instance | null {
+  return scope === Scope.Serlo ? null : (scope.split(':')[1] as Instance)
 }
 
 export enum Permission {
@@ -60,8 +70,10 @@ export enum Permission {
   Thread_CreateComment = 'thread:createComment',
   Thread_DeleteThread = 'thread:deleteThread',
   Thread_DeleteComment = 'thread:deleteComment',
+  User_AddRole = 'user:addRole',
   User_DeleteBot = 'user:deleteBot',
   User_DeleteRegularUser = 'user:deleteRegularUser',
+  User_RemoveRole = 'user:removeRole',
   User_SetEmail = 'user:setEmail',
   Thread_SetThreadArchived = 'thread:setThreadArchived',
   Thread_SetThreadState = 'thread:setThreadState',
@@ -153,8 +165,10 @@ export const Thread = {
 }
 
 export const User = {
+  addRole: createPermissionGuard(Permission.User_AddRole),
   deleteBot: createPermissionGuard(Permission.User_DeleteBot),
   deleteRegularUser: createPermissionGuard(Permission.User_DeleteRegularUser),
+  removeRole: createPermissionGuard(Permission.User_RemoveRole),
   setEmail: createPermissionGuard(Permission.User_SetEmail),
 }
 

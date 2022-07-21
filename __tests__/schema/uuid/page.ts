@@ -46,8 +46,8 @@ describe('Page', () => {
             }
           }
         `,
-        variables: page,
       })
+      .withVariables(page)
       .shouldReturnData({
         uuid: R.pick(['__typename', 'id', 'trashed', 'instance', 'date'], page),
       })
@@ -74,8 +74,8 @@ describe('Page', () => {
             }
           }
         `,
-        variables: page,
       })
+      .withVariables(page)
       .shouldReturnData({ uuid: { license } })
   })
 })
@@ -99,8 +99,8 @@ test('PageRevision', async () => {
           }
         }
       `,
-      variables: pageRevision,
     })
+    .withVariables(pageRevision)
     .shouldReturnData({
       uuid: R.pick(
         ['__typename', 'id', 'trashed', 'title', 'content', 'date'],

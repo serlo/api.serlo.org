@@ -43,8 +43,8 @@ test('Event', async () => {
           }
         }
       `,
-      variables: { id: event.id },
     })
+    .withVariables({ id: event.id })
     .shouldReturnData({
       uuid: R.pick(['__typename', 'id', 'trashed', 'instance', 'date'], event),
     })
@@ -72,8 +72,8 @@ test('EventRevision', async () => {
           }
         }
       `,
-      variables: { id: eventRevision.id },
     })
+    .withVariables({ id: eventRevision.id })
     .shouldReturnData({
       uuid: R.pick(
         [

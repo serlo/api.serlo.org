@@ -473,8 +473,8 @@ describe('property "title"', () => {
             }
           }
         `,
-        variables: { id: uuids[0].id },
       })
+      .withVariables({ id: uuids[0].id })
       .shouldReturnData({ uuid: { title } })
   })
 
@@ -503,8 +503,8 @@ describe('property "title"', () => {
             }
           }
         `,
-        variables: { id: article.id },
       })
+      .withVariables({ id: article.id })
       .shouldReturnData({
         uuid: {
           threads: {
@@ -551,8 +551,8 @@ describe('property "title"', () => {
             }
           }
         `,
-        variables: { id: article.id },
       })
+      .withVariables({ id: article.id })
       .shouldReturnData({
         uuid: {
           threads: {

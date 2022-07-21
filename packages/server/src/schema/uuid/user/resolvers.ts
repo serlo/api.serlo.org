@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as serloAuth from '@serlo/authorization'
+import { formatScope, Scope, scopeToInstance } from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
 import { array as A, either as E, function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
@@ -35,6 +36,7 @@ import {
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
+  checkRoleInstanceCompatibility,
   Context,
   createNamespace,
   LegacyQueries,
@@ -53,6 +55,7 @@ import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
 import { resolveScopedRoles } from '~/schema/authorization/utils'
 import { ConnectionPayload } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
+import { isInstance } from '~/schema/instance/utils'
 import { resolveEvents } from '~/schema/notification/resolvers'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
@@ -240,6 +243,32 @@ export const resolvers: LegacyQueries<
     user: createNamespace(),
   },
   UserMutation: {
+    async addRole(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const scope: Scope = formatScope(input.scope)
+      const instance = scopeToInstance(scope)
+
+      checkRoleInstanceCompatibility(input.role, instance)
+
+      await assertUserIsAuthorized({
+        userId,
+        guard: serloAuth.User.addRole(scope),
+        message: 'You are not allowed to add roles.',
+        dataSources,
+      })
+
+      const roleName = isInstance(instance)
+        ? `${instance}_${input.role}`
+        : input.role
+      await dataSources.model.serlo.addRole({
+        username: input.username,
+        roleName,
+      })
+
+      return { success: true }
+    },
+
     async deleteBots(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
@@ -339,6 +368,31 @@ export const resolvers: LegacyQueries<
           }
         })
       )
+    },
+
+    async removeRole(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const scope: Scope = formatScope(input.scope)
+      const instance = scopeToInstance(scope)
+      checkRoleInstanceCompatibility(input.role, instance)
+
+      await assertUserIsAuthorized({
+        userId,
+        guard: serloAuth.User.removeRole(scope),
+        message: 'You are not allowed to remove roles.',
+        dataSources,
+      })
+
+      const roleName = isInstance(instance)
+        ? `${instance}_${input.role}`
+        : input.role
+      await dataSources.model.serlo.removeRole({
+        username: input.username,
+        roleName,
+      })
+
+      return { success: true }
     },
 
     async setDescription(_parent, { input }, { dataSources, userId }) {

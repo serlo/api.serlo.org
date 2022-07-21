@@ -94,7 +94,7 @@ describe('remove', () => {
         }
       `,
     })
-    .withInput({ key })
+    .withInput({ keys: [key] })
 
   beforeEach(async () => {
     await global.cache.set({ key, source: '', value: user })
