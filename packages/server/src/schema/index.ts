@@ -26,6 +26,7 @@ import { dateTimeSchema } from './date-time'
 import { instanceSchema } from './instance'
 import { jsonSchema } from './json'
 import { licenseSchema } from './license'
+import { mediaSchema } from './media'
 import { metadataSchema } from './metadata'
 import { notificationSchema } from './notification'
 import { rolesSchema } from './roles'
@@ -43,6 +44,7 @@ export const schema = mergeSchemas(
   instanceSchema,
   jsonSchema,
   licenseSchema,
+  mediaSchema,
   metadataSchema,
   notificationSchema,
   rolesSchema,
