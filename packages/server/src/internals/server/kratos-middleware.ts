@@ -32,7 +32,7 @@ export function applyKratosMiddleware({ app }: { app: Express }) {
   app.use(cors())
 
   if (!process.env.SERVER_KRATOS_HOST)
-    throw new Error('Kratos Host is not defined')
+    console.error('Kratos Host is not defined')
 
   const kratos = new V0alpha2Api(
     new Configuration({
