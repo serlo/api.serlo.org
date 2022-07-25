@@ -38,7 +38,7 @@ export const resolvers: Queries<'media'> = {
       assertUserIsAuthenticated(userId)
 
       const fileExtension = getFileExtension(mediaType)
-      const fileNameWithoutExtension = uuidv4()
+      const fileNameWithoutExtension = `${Date.now()}-${uuidv4()}`
       const fileName = `${fileNameWithoutExtension}.${fileExtension}`
       const storage = new Storage()
       const [uploadUrl] = await storage
