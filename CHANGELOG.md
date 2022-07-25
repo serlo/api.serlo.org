@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.45.0](https://github.com/serlo/api.serlo.org/compare/v0.44.0..v0.45.0) - July 25, 2022
+
+### Breaking Changes
+
+- Refactor `media.upload` to `media.newUpload` #709
+
 ## [v0.44.0](https://github.com/serlo/api.serlo.org/compare/v0.43.1..v0.44.0) - July 25, 2022
 
 ### Added
