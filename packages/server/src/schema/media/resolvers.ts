@@ -38,7 +38,8 @@ export const resolvers: Queries<'media'> = {
       assertUserIsAuthenticated(userId)
 
       const fileExtension = getFileExtension(mediaType)
-      const fileName = `${uuidv4()}.${fileExtension}`
+      const fileNameWithoutExtension = uuidv4()
+      const fileName = `${fileNameWithoutExtension}.${fileExtension}`
       const storage = new Storage()
       const [uploadUrl] = await storage
         .bucket('assets.serlo.org')
@@ -52,6 +53,7 @@ export const resolvers: Queries<'media'> = {
 
       return {
         fileExtension,
+        fileNameWithoutExtension,
         uploadUrl,
         urlAfterUpload: `https://assets.serlo.org/${fileName}`,
       }
