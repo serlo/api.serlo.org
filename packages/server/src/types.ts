@@ -1522,6 +1522,7 @@ export enum MediaType {
 
 export type MediaUpload = {
   __typename?: 'MediaUpload';
+  fileExtension: Scalars['String'];
   uploadUrl: Scalars['String'];
   urlAfterUpload: Scalars['String'];
 };
@@ -4242,6 +4243,7 @@ export type MediaQueryResolvers<ContextType = Context, ParentType extends Resolv
 };
 
 export type MediaUploadResolvers<ContextType = Context, ParentType extends ResolversParentTypes['MediaUpload'] = ResolversParentTypes['MediaUpload']> = {
+  fileExtension?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   uploadUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   urlAfterUpload?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
