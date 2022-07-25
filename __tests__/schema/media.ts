@@ -30,6 +30,7 @@ const query = new Client({ userId: user.id }).prepareQuery({
       media {
         newUpload(mediaType: IMAGE_PNG) {
           fileExtension
+          fileNameWithoutExtension
           uploadUrl
           urlAfterUpload
         }
@@ -48,6 +49,9 @@ describe('media.upload', () => {
             /https:\/\/assets.serlo.org\/[\d\-a-f]+\.png/
           ) as unknown,
           fileExtension: 'png',
+          fileNameWithoutExtension: expect.stringMatching(
+            /[\d\-a-f]+/
+          ) as unknown,
         },
       },
     })
