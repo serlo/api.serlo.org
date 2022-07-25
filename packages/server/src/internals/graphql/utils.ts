@@ -138,3 +138,7 @@ export function checkRoleInstanceCompatibility(
     throw new UserInputError("This role can't have a global scope.")
   }
 }
+
+export function generateRole(role: Role, instance: Instance | null) {
+  return isInstance(instance) ? `${instance}_${role}` : role
+}

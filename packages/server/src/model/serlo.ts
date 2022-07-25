@@ -1124,6 +1124,13 @@ export function createSerloModel({
     },
   })
 
+  const getUsersByRole = createRequest({
+    decoder: DatabaseLayer.getDecoderFor('UsersByRoleQuery'),
+    async getCurrentValue(payload: DatabaseLayer.Payload<'UsersByRoleQuery'>) {
+      return DatabaseLayer.makeRequest('UsersByRoleQuery', payload)
+    },
+  })
+
   return {
     addEntityRevision,
     addPageRevision,
@@ -1157,6 +1164,7 @@ export function createSerloModel({
     getThreadIds,
     getUnrevisedEntities,
     getUnrevisedEntitiesPerSubject,
+    getUsersByRole,
     getUuid,
     getUuidWithCustomDecoder,
     linkEntitiesToTaxonomy,
