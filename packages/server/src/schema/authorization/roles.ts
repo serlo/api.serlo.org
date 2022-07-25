@@ -101,6 +101,7 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
     permissions: [
       Permission.Entity_UpdateLicense,
       Permission.File_Delete,
+      Permission.User_GetUsersByRole,
       Permission.License_Create,
       Permission.License_Delete,
       Permission.License_Set,

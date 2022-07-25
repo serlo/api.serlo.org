@@ -39,6 +39,7 @@ import {
   checkRoleInstanceCompatibility,
   Context,
   createNamespace,
+  generateRole,
   LegacyQueries,
   Model,
   Mutations,
@@ -117,6 +118,49 @@ export const resolvers: LegacyQueries<
         )
       )
 
+      return resolveConnection({
+        nodes: users,
+        payload: { first },
+        createCursor: (node) => node.id.toString(),
+      })
+    },
+    async usersByRole(_parent, payload, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const scope: Scope = formatScope(payload.scope)
+      const instance = scopeToInstance(scope)
+
+      checkRoleInstanceCompatibility(payload.role, instance)
+
+      await assertUserIsAuthorized({
+        userId,
+        guard: serloAuth.User.getUsersByRole(scope),
+        message: 'You are not allowed to search roles.',
+        dataSources,
+      })
+
+      const first = payload.first ?? 100
+      const after = payload.after
+        ? parseInt(Buffer.from(payload.after, 'base64').toString())
+        : undefined
+
+      if (Number.isNaN(after))
+        throw new UserInputError('`after` is an illegal id')
+
+      const roleName = generateRole(payload.role, instance)
+      const { usersByRole } = await dataSources.model.serlo.getUsersByRole({
+        roleName,
+        first: first + 1,
+        after,
+      })
+      const users = await Promise.all(
+        usersByRole.map((id: number) =>
+          dataSources.model.serlo.getUuidWithCustomDecoder({
+            id,
+            decoder: UserDecoder,
+          })
+        )
+      )
       return resolveConnection({
         nodes: users,
         payload: { first },

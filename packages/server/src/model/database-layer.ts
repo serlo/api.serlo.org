@@ -412,6 +412,17 @@ export const spec = {
     }),
     canBeNull: false,
   },
+  UsersByRoleQuery: {
+    payload: t.type({
+      roleName: t.string,
+      first: t.number,
+      after: t.union([t.number, t.undefined]),
+    }),
+    response: t.strict({
+      usersByRole: t.array(t.number),
+    }),
+    canBeNull: false,
+  },
   UserDeleteBotsMutation: {
     payload: t.type({ botIds: t.array(t.number) }),
     response: t.strict({
