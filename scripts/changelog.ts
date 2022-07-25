@@ -1375,6 +1375,11 @@ async function exec(): Promise<void> {
         date: '2022-07-25',
         added: ['Add user.usersByRole query #702'],
       },
+      {
+        tagName: 'v0.45.0',
+        date: '2022-07-25',
+        breakingChanges: ['Refactor `media.upload` to `media.newUpload` #709'],
+      },
     ],
   })
 
