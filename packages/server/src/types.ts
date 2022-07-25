@@ -1504,11 +1504,11 @@ export type LicenseQueryLicensesArgs = {
 
 export type MediaQuery = {
   __typename?: 'MediaQuery';
-  upload: MediaUpload;
+  newUpload: MediaUpload;
 };
 
 
-export type MediaQueryUploadArgs = {
+export type MediaQueryNewUploadArgs = {
   mediaType: MediaType;
 };
 
@@ -4237,7 +4237,7 @@ export type LicenseQueryResolvers<ContextType = Context, ParentType extends Reso
 };
 
 export type MediaQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['MediaQuery'] = ResolversParentTypes['MediaQuery']> = {
-  upload?: Resolver<ResolversTypes['MediaUpload'], ParentType, ContextType, RequireFields<MediaQueryUploadArgs, 'mediaType'>>;
+  newUpload?: Resolver<ResolversTypes['MediaUpload'], ParentType, ContextType, RequireFields<MediaQueryNewUploadArgs, 'mediaType'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

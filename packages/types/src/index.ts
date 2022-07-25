@@ -1500,11 +1500,11 @@ export type LicenseQueryLicensesArgs = {
 
 export type MediaQuery = {
   __typename?: 'MediaQuery';
-  upload: MediaUpload;
+  newUpload: MediaUpload;
 };
 
 
-export type MediaQueryUploadArgs = {
+export type MediaQueryNewUploadArgs = {
   mediaType: MediaType;
 };
 
