@@ -3,7 +3,7 @@ extend type Query {
 }
 
 type MediaQuery {
-  upload(mediaType: MediaType!): MediaUpload!
+  newUpload(mediaType: MediaType!): MediaUpload!
 }
 
 type MediaUpload {

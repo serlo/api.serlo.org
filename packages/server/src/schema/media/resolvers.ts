@@ -34,7 +34,7 @@ export const resolvers: Queries<'media'> = {
     media: createNamespace(),
   },
   MediaQuery: {
-    async upload(_parent, { mediaType }, { userId }) {
+    async newUpload(_parent, { mediaType }, { userId }) {
       assertUserIsAuthenticated(userId)
 
       const fileName = `${uuidv4()}.${getFileExtension(mediaType)}`
