@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as serloAuth from '@serlo/authorization'
-import { formatScope, Scope, scopeToInstance } from '@serlo/authorization'
+import { instanceToScope, Scope } from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
 import { array as A, either as E, function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
@@ -60,7 +60,7 @@ import { isInstance } from '~/schema/instance/utils'
 import { resolveEvents } from '~/schema/notification/resolvers'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
-import { User } from '~/types'
+import { Instance, User } from '~/types'
 
 export const resolvers: LegacyQueries<
   'activeAuthors' | 'activeReviewers' | 'activeDonors'
@@ -127,10 +127,12 @@ export const resolvers: LegacyQueries<
     async usersByRole(_parent, payload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
-      const scope: Scope = formatScope(payload.scope)
-      const instance = scopeToInstance(scope)
+      const scope: Scope = instanceToScope(payload.instance ?? null)
 
-      checkRoleInstanceCompatibility(payload.role, instance)
+      checkRoleInstanceCompatibility(
+        payload.role,
+        payload.instance as Instance | null
+      )
 
       await assertUserIsAuthorized({
         userId,
@@ -147,7 +149,7 @@ export const resolvers: LegacyQueries<
       if (Number.isNaN(after))
         throw new UserInputError('`after` is an illegal id')
 
-      const roleName = generateRole(payload.role, instance)
+      const roleName = generateRole(payload.role, payload.instance ?? null)
       const { usersByRole } = await dataSources.model.serlo.getUsersByRole({
         roleName,
         first: first + 1,
@@ -290,10 +292,9 @@ export const resolvers: LegacyQueries<
     async addRole(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
-      const scope: Scope = formatScope(input.scope)
-      const instance = scopeToInstance(scope)
+      const scope: Scope = instanceToScope(input.instance ?? null)
 
-      checkRoleInstanceCompatibility(input.role, instance)
+      checkRoleInstanceCompatibility(input.role, input.instance ?? null)
 
       await assertUserIsAuthorized({
         userId,
@@ -302,8 +303,8 @@ export const resolvers: LegacyQueries<
         dataSources,
       })
 
-      const roleName = isInstance(instance)
-        ? `${instance}_${input.role}`
+      const roleName = isInstance(input.instance)
+        ? `${input.instance}_${input.role}`
         : input.role
       await dataSources.model.serlo.addRole({
         username: input.username,
@@ -417,9 +418,8 @@ export const resolvers: LegacyQueries<
     async removeRole(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
-      const scope: Scope = formatScope(input.scope)
-      const instance = scopeToInstance(scope)
-      checkRoleInstanceCompatibility(input.role, instance)
+      const scope: Scope = instanceToScope(input.instance ?? null)
+      checkRoleInstanceCompatibility(input.role, input.instance ?? null)
 
       await assertUserIsAuthorized({
         userId,
@@ -428,8 +428,8 @@ export const resolvers: LegacyQueries<
         dataSources,
       })
 
-      const roleName = isInstance(instance)
-        ? `${instance}_${input.role}`
+      const roleName = isInstance(input.instance)
+        ? `${input.instance}_${input.role}`
         : input.role
       await dataSources.model.serlo.removeRole({
         username: input.username,
