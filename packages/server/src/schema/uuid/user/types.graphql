@@ -79,7 +79,7 @@ type UserQuery {
   potentialSpamUsers(first: Int, after: String): UserConnection!
   usersByRole(
     role: Role!
-    scope: Scope!
+    instance: Instance
     first: Int
     after: String
   ): UserConnection!
@@ -140,7 +140,7 @@ type UserDeleteRegularUsersResponse {
 input UserRoleInput {
   username: String!
   role: Role!
-  scope: Scope!
+  instance: Instance
 }
 
 type UserRoleResponse {

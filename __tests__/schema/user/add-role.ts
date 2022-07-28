@@ -32,8 +32,7 @@ let uuidQuery: Query
 
 const globalRole = Role.Sysadmin
 const localRole = Role.Reviewer
-const globalScope = 'Serlo'
-const localScope = 'Serlo_De'
+const instance = Instance.De
 
 beforeEach(() => {
   client = new Client({ userId: user.id })
@@ -52,7 +51,6 @@ beforeEach(() => {
     .withInput({
       username: user2.username,
       role: globalRole,
-      scope: globalScope,
     })
 
   uuidQuery = client
@@ -94,13 +92,13 @@ describe('add global role', () => {
     await mutation.shouldReturnData({ user: { addRole: { success: true } } })
   })
 
-  test('fails when given invalid scope', async () => {
+  test('fails when given an instance', async () => {
     await mutation
       .withVariables({
         input: {
           username: user2.username,
           role: globalRole,
-          scope: localScope,
+          instance: instance,
         },
       })
       .shouldFailWithError('BAD_USER_INPUT')
@@ -118,7 +116,7 @@ describe('add scoped role', () => {
         input: {
           username: user2.username,
           role: localRole,
-          scope: localScope,
+          instance,
         },
       })
       .shouldReturnData({ user: { addRole: { success: true } } })
@@ -131,7 +129,7 @@ describe('add scoped role', () => {
         input: {
           username: user2.username,
           role: localRole,
-          scope: localScope,
+          instance,
         },
       })
       .shouldReturnData({ user: { addRole: { success: true } } })
@@ -143,20 +141,19 @@ describe('add scoped role', () => {
         input: {
           username: user2.username,
           role: localRole,
-          scope: localScope,
+          instance,
         },
       })
       .forLoginUser('en_admin')
       .shouldFailWithError('FORBIDDEN')
   })
 
-  test('fails when given global scope', async () => {
+  test('fails when not given an instance', async () => {
     await mutation
       .withVariables({
         input: {
           username: user2.username,
           role: localRole,
-          scope: globalScope,
         },
       })
       .shouldFailWithError('BAD_USER_INPUT')

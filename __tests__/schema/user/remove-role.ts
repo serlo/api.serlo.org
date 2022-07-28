@@ -32,8 +32,7 @@ let uuidQuery: Query
 
 const globalRole = Role.Sysadmin
 const localRole = Role.Reviewer
-const globalScope = 'Serlo'
-const localScope = 'Serlo_De'
+const instance = Instance.De
 
 beforeEach(() => {
   client = new Client({ userId: user.id })
@@ -52,7 +51,6 @@ beforeEach(() => {
     .withInput({
       username: user.username,
       role: globalRole,
-      scope: globalScope,
     })
 
   uuidQuery = client
@@ -94,10 +92,10 @@ describe('remove global role', () => {
     await mutation.shouldReturnData({ user: { removeRole: { success: true } } })
   })
 
-  test('fails when given invalid scope', async () => {
+  test('fails when given an instance', async () => {
     await mutation
       .withVariables({
-        input: { username: user.username, role: globalRole, scope: localScope },
+        input: { username: user.username, role: globalRole, instance },
       })
       .shouldFailWithError('BAD_USER_INPUT')
   })
@@ -111,7 +109,7 @@ describe('remove scoped role', () => {
   test('removes a role successfully', async () => {
     await mutation
       .withVariables({
-        input: { username: user.username, role: localRole, scope: localScope },
+        input: { username: user.username, role: localRole, instance },
       })
       .shouldReturnData({ user: { removeRole: { success: true } } })
   })
@@ -120,7 +118,7 @@ describe('remove scoped role', () => {
     await mutation
       .forLoginUser('de_admin')
       .withVariables({
-        input: { username: user.username, role: localRole, scope: localScope },
+        input: { username: user.username, role: localRole, instance },
       })
       .shouldReturnData({ user: { removeRole: { success: true } } })
   })
@@ -128,16 +126,16 @@ describe('remove scoped role', () => {
   test('fails when admin in wrong scope', async () => {
     await mutation
       .withVariables({
-        input: { username: user.username, role: localRole, scope: localScope },
+        input: { username: user.username, role: localRole, instance },
       })
       .forLoginUser('en_admin')
       .shouldFailWithError('FORBIDDEN')
   })
 
-  test('fails when given global scope', async () => {
+  test('fails when not given an instance', async () => {
     await mutation
       .withVariables({
-        input: { username: user.username, role: localRole, scope: globalScope },
+        input: { username: user.username, role: localRole },
       })
       .shouldFailWithError('BAD_USER_INPUT')
   })
