@@ -98,7 +98,7 @@ describe('add global role', () => {
         input: {
           username: user2.username,
           role: globalRole,
-          instance: instance,
+          instance,
         },
       })
       .shouldFailWithError('BAD_USER_INPUT')
