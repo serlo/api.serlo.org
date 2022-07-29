@@ -37,7 +37,7 @@ export const resolvers: Queries<'media'> = {
     async newUpload(_parent, { mediaType }, { userId }) {
       assertUserIsAuthenticated(userId)
 
-      const fileExtension = getFileExtension(mediaType)
+      const [fileExtension, mimeType] = getFileExtensionAndMimeType(mediaType)
       const fileNameWithoutExtension = uuidv1()
       const fileName = `${fileNameWithoutExtension}.${fileExtension}`
       const storage = new Storage()
@@ -48,7 +48,7 @@ export const resolvers: Queries<'media'> = {
           version: 'v4',
           action: 'write',
           expires: Date.now() + 15 * 60 * 1000,
-          contentType: getMimeType(mediaType),
+          contentType: mimeType,
         })
 
       return {
@@ -59,32 +59,18 @@ export const resolvers: Queries<'media'> = {
   },
 }
 
-function getFileExtension(mediaType: MediaType) {
+function getFileExtensionAndMimeType(mediaType: MediaType) {
   switch (mediaType) {
     case MediaType.ImageGif:
-      return 'gif'
+      return ['gif','image/gif']
     case MediaType.ImageJpeg:
-      return 'jpg'
+      return ['jpg','image/jpeg']
     case MediaType.ImagePng:
-      return 'png'
+      return ['png','image/png']
     case MediaType.ImageSvgXml:
-      return 'svg'
+      return ['svg','image/svg+xml']
     case MediaType.ImageWebp:
-      return 'webp'
+      return ['webp','image/webp']
   }
 }
 
-function getMimeType(mediaType: MediaType) {
-  switch (mediaType) {
-    case MediaType.ImageGif:
-      return 'image/gif'
-    case MediaType.ImageJpeg:
-      return 'image/jpeg'
-    case MediaType.ImagePng:
-      return 'image/png'
-    case MediaType.ImageSvgXml:
-      return 'image/svg+xml'
-    case MediaType.ImageWebp:
-      return 'image/webp'
-  }
-}
