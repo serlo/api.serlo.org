@@ -52,8 +52,6 @@ export const resolvers: Queries<'media'> = {
         })
 
       return {
-        fileExtension,
-        fileNameWithoutExtension,
         uploadUrl,
         urlAfterUpload: `https://assets.serlo.org/${fileName}`,
       }
