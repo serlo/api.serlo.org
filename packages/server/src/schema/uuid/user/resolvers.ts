@@ -60,7 +60,7 @@ import { isInstance } from '~/schema/instance/utils'
 import { resolveEvents } from '~/schema/notification/resolvers'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
-import { Instance, User } from '~/types'
+import { User } from '~/types'
 
 export const resolvers: LegacyQueries<
   'activeAuthors' | 'activeReviewers' | 'activeDonors'
@@ -129,10 +129,7 @@ export const resolvers: LegacyQueries<
 
       const scope: Scope = instanceToScope(payload.instance ?? null)
 
-      checkRoleInstanceCompatibility(
-        payload.role,
-        payload.instance as Instance | null
-      )
+      checkRoleInstanceCompatibility(payload.role, payload.instance ?? null)
 
       await assertUserIsAuthorized({
         userId,
