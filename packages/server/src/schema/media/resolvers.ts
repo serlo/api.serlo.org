@@ -38,12 +38,14 @@ export const resolvers: Queries<'media'> = {
       assertUserIsAuthenticated(userId)
 
       const [fileExtension, mimeType] = getFileExtensionAndMimeType(mediaType)
-      const fileNameWithoutExtension = uuidv1()
-      const fileName = `${fileNameWithoutExtension}.${fileExtension}`
+      const fileHash = uuidv1()
+      const bucketUrl = `${fileHash}.${fileExtension}`
+      const userUrl = `https://assets.serlo.org/${fileHash}/image.${fileExtension}`
+
       const storage = new Storage()
       const [uploadUrl] = await storage
         .bucket('assets.serlo.org')
-        .file(fileName)
+        .file(bucketUrl)
         .getSignedUrl({
           version: 'v4',
           action: 'write',
@@ -53,7 +55,7 @@ export const resolvers: Queries<'media'> = {
 
       return {
         uploadUrl,
-        urlAfterUpload: `https://assets.serlo.org/${fileName}`,
+        urlAfterUpload: userUrl,
       }
     },
   },
@@ -62,15 +64,14 @@ export const resolvers: Queries<'media'> = {
 function getFileExtensionAndMimeType(mediaType: MediaType) {
   switch (mediaType) {
     case MediaType.ImageGif:
-      return ['gif','image/gif']
+      return ['gif', 'image/gif']
     case MediaType.ImageJpeg:
-      return ['jpg','image/jpeg']
+      return ['jpg', 'image/jpeg']
     case MediaType.ImagePng:
-      return ['png','image/png']
+      return ['png', 'image/png']
     case MediaType.ImageSvgXml:
-      return ['svg','image/svg+xml']
+      return ['svg', 'image/svg+xml']
     case MediaType.ImageWebp:
-      return ['webp','image/webp']
+      return ['webp', 'image/webp']
   }
 }
-
