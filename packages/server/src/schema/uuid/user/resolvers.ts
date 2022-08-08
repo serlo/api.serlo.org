@@ -56,7 +56,6 @@ import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
 import { resolveScopedRoles } from '~/schema/authorization/utils'
 import { ConnectionPayload } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
-import { isInstance } from '~/schema/instance/utils'
 import { resolveEvents } from '~/schema/notification/resolvers'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
@@ -300,7 +299,7 @@ export const resolvers: LegacyQueries<
         dataSources,
       })
 
-      const roleName = isInstance(input.instance)
+      const roleName = input.instance
         ? `${input.instance}_${input.role}`
         : input.role
       await dataSources.model.serlo.addRole({
@@ -425,7 +424,7 @@ export const resolvers: LegacyQueries<
         dataSources,
       })
 
-      const roleName = isInstance(input.instance)
+      const roleName = input.instance
         ? `${input.instance}_${input.role}`
         : input.role
       await dataSources.model.serlo.removeRole({
