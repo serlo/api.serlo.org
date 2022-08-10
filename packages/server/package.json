@@ -21,8 +21,8 @@
   "dependencies": {
     "@google-cloud/storage": "^6.2.2",
     "@nmshd/connector-sdk": "^1.1.5",
+    "@ory/client": "0.2.0-alpha.4",
     "@ory/integrations": "^0.2.6",
-    "@ory/kratos-client": "^0.10.1",
     "@sentry/node": "^6.19.7",
     "@serlo/authorization": "0.46.0-staging.0",
     "apollo-datasource-rest": "^3.6.1",
