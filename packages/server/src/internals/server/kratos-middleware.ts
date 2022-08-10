@@ -102,16 +102,10 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
         })
       )
     } catch (error: unknown) {
-      await kratos.adminDeleteIdentity(userId)
-
-      if (legacyUserId) {
-        await DatabaseLayer.makeRequest('UserDeleteBotsMutation', {
-          botIds: [legacyUserId],
-        })
-      }
+      // eslint-disable-next-line no-console
+      console.error(error)
 
       res.statusCode = 400
-      res.end(JSON.stringify(error))
     }
   }
 }
