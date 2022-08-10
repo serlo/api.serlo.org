@@ -75,6 +75,8 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
       }
       const payload = {
         username,
+        // we just need to store something, since the password in legacy DB is not going to be used anymore
+        // storing the kratos id is just a good way of easily seeing this value in case we need it
         password: kratosUser.id,
         email,
       }
