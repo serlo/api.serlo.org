@@ -3796,6 +3796,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ory/client@npm:0.2.0-alpha.4":
+  version: 0.2.0-alpha.4
+  resolution: "@ory/client@npm:0.2.0-alpha.4"
+  dependencies:
+    axios: ^0.21.4
+  checksum: c7cae2309ae929372b8c1f5b31511e3a91eda2c4333df63790bb5b9f0172e751c14fbf8f7408f30e3cc5f96de41fd06d192358ef3ed4494058dfad3775f00d34
+  languageName: node
+  linkType: hard
+
 "@ory/client@npm:>=0.0.1-alpha.49":
   version: 0.0.1-alpha.189
   resolution: "@ory/client@npm:0.0.1-alpha.189"
@@ -3823,15 +3832,6 @@ __metadata:
     "@ory/client": ">=0.0.1-alpha.49"
     next: ">=12.0.10"
   checksum: ccff2730636c3cbd499bc858b0a36265ce86d42bf0bfd35cf0d3c4933985a66e3d26fe1fef07971d3b9d8b3e56178461291f377f648a8d27207a667e61d69a35
-  languageName: node
-  linkType: hard
-
-"@ory/kratos-client@npm:^0.10.1":
-  version: 0.10.1
-  resolution: "@ory/kratos-client@npm:0.10.1"
-  dependencies:
-    axios: ^0.21.4
-  checksum: 1c2283629904be0a8ab91a9b7e6c91c277e10f892bbe47a39eb9cbf6940b344477473f16dc93f7b12b265727b8fa033fd8a64bfd1f560179497c4b6ea1146b8d
   languageName: node
   linkType: hard
 
@@ -4209,8 +4209,8 @@ __metadata:
     "@graphql-codegen/typescript": ^2.4.11
     "@graphql-codegen/typescript-resolvers": ^2.6.4
     "@nmshd/connector-sdk": ^1.1.5
+    "@ory/client": 0.2.0-alpha.4
     "@ory/integrations": ^0.2.6
-    "@ory/kratos-client": ^0.10.1
     "@sentry/node": ^6.19.7
     "@serlo/authorization": 0.46.0-staging.0
     "@types/basic-auth": ^1.1.3
