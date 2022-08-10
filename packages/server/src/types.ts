@@ -1504,11 +1504,11 @@ export type LicenseQueryLicensesArgs = {
 
 export type MediaQuery = {
   __typename?: 'MediaQuery';
-  upload: MediaUpload;
+  newUpload: MediaUpload;
 };
 
 
-export type MediaQueryUploadArgs = {
+export type MediaQueryNewUploadArgs = {
   mediaType: MediaType;
 };
 
@@ -1522,6 +1522,8 @@ export enum MediaType {
 
 export type MediaUpload = {
   __typename?: 'MediaUpload';
+  fileExtension: Scalars['String'];
+  fileNameWithoutExtension: Scalars['String'];
   uploadUrl: Scalars['String'];
   urlAfterUpload: Scalars['String'];
 };
@@ -2754,12 +2756,21 @@ export type UserMutationSetEmailArgs = {
 export type UserQuery = {
   __typename?: 'UserQuery';
   potentialSpamUsers: UserConnection;
+  usersByRole: UserConnection;
 };
 
 
 export type UserQueryPotentialSpamUsersArgs = {
   after?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type UserQueryUsersByRoleArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  role: Role;
+  scope: Scope;
 };
 
 export type UserRoleInput = {
@@ -4228,11 +4239,13 @@ export type LicenseQueryResolvers<ContextType = Context, ParentType extends Reso
 };
 
 export type MediaQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['MediaQuery'] = ResolversParentTypes['MediaQuery']> = {
-  upload?: Resolver<ResolversTypes['MediaUpload'], ParentType, ContextType, RequireFields<MediaQueryUploadArgs, 'mediaType'>>;
+  newUpload?: Resolver<ResolversTypes['MediaUpload'], ParentType, ContextType, RequireFields<MediaQueryNewUploadArgs, 'mediaType'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type MediaUploadResolvers<ContextType = Context, ParentType extends ResolversParentTypes['MediaUpload'] = ResolversParentTypes['MediaUpload']> = {
+  fileExtension?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  fileNameWithoutExtension?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   uploadUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   urlAfterUpload?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -4838,6 +4851,7 @@ export type UserMutationResolvers<ContextType = Context, ParentType extends Reso
 
 export type UserQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserQuery'] = ResolversParentTypes['UserQuery']> = {
   potentialSpamUsers?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, Partial<UserQueryPotentialSpamUsersArgs>>;
+  usersByRole?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, RequireFields<UserQueryUsersByRoleArgs, 'role' | 'scope'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

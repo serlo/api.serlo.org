@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Storage } from '@google-cloud/storage'
-import { v4 as uuidv4 } from 'uuid'
+import { v1 as uuidv1 } from 'uuid'
 
 import {
   assertUserIsAuthenticated,
@@ -34,10 +34,12 @@ export const resolvers: Queries<'media'> = {
     media: createNamespace(),
   },
   MediaQuery: {
-    async upload(_parent, { mediaType }, { userId }) {
+    async newUpload(_parent, { mediaType }, { userId }) {
       assertUserIsAuthenticated(userId)
 
-      const fileName = `${uuidv4()}.${getFileExtension(mediaType)}`
+      const fileExtension = getFileExtension(mediaType)
+      const fileNameWithoutExtension = uuidv1()
+      const fileName = `${fileNameWithoutExtension}.${fileExtension}`
       const storage = new Storage()
       const [uploadUrl] = await storage
         .bucket('assets.serlo.org')
@@ -50,6 +52,8 @@ export const resolvers: Queries<'media'> = {
         })
 
       return {
+        fileExtension,
+        fileNameWithoutExtension,
         uploadUrl,
         urlAfterUpload: `https://assets.serlo.org/${fileName}`,
       }
