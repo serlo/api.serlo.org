@@ -593,6 +593,11 @@ const pactSpec: PactSpec = {
     // TODO: here it is named userId, in DB layer just id, adjust
     // examples: [[{ userId: user.id }, { success: true }]],
   },
+  UsersByRoleQuery: {
+    examples: [
+      [{ roleName: 'sysadmin', first: 2, after: 1 }, { usersByRole: [2, 6] }],
+    ],
+  },
   UserSetDescriptionMutation: {
     examples: [[{ userId: 1, description: 'Hello World' }, { success: true }]],
   },

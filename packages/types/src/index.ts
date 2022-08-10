@@ -1500,11 +1500,11 @@ export type LicenseQueryLicensesArgs = {
 
 export type MediaQuery = {
   __typename?: 'MediaQuery';
-  upload: MediaUpload;
+  newUpload: MediaUpload;
 };
 
 
-export type MediaQueryUploadArgs = {
+export type MediaQueryNewUploadArgs = {
   mediaType: MediaType;
 };
 
@@ -1518,6 +1518,8 @@ export enum MediaType {
 
 export type MediaUpload = {
   __typename?: 'MediaUpload';
+  fileExtension: Scalars['String'];
+  fileNameWithoutExtension: Scalars['String'];
   uploadUrl: Scalars['String'];
   urlAfterUpload: Scalars['String'];
 };
@@ -2750,12 +2752,21 @@ export type UserMutationSetEmailArgs = {
 export type UserQuery = {
   __typename?: 'UserQuery';
   potentialSpamUsers: UserConnection;
+  usersByRole: UserConnection;
 };
 
 
 export type UserQueryPotentialSpamUsersArgs = {
   after?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type UserQueryUsersByRoleArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  role: Role;
+  scope: Scope;
 };
 
 export type UserRoleInput = {
