@@ -138,5 +138,7 @@ export function isGlobalRole(role: Role): boolean {
 }
 
 export function generateRole(role: Role, instance: Instance | null) {
-  return isInstance(instance) ? `${instance}_${role}` : role
+  if (isGlobalRole(role)) return role
+  if (isInstance(instance)) return `${instance}_${role}`
+  else throw new UserInputError('This role needs an instance')
 }
