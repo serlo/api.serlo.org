@@ -92,12 +92,12 @@ describe('remove global role', () => {
     await mutation.shouldReturnData({ user: { removeRole: { success: true } } })
   })
 
-  test('fails when given an instance', async () => {
+  test('ignores instance when given one', async () => {
     await mutation
       .withVariables({
         input: { username: user.username, role: globalRole, instance },
       })
-      .shouldFailWithError('BAD_USER_INPUT')
+      .shouldReturnData({ user: { removeRole: { success: true } } })
   })
 
   test('fails when only scoped admin', async () => {

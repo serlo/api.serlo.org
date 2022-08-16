@@ -79,14 +79,17 @@ describe('get users by globalRole', () => {
     })
   })
 
-  test('fails when given an instance', async () => {
+  test('ignores instance when given one', async () => {
     await query
       .withVariables({
         role: globalRole,
         instance,
-        first: 5,
+        first: 3,
+        after: 'MQ==',
       })
-      .shouldFailWithError('BAD_USER_INPUT')
+      .shouldReturnData({
+        user: { usersByRole: { nodes: [{ id: 2 }, { id: 6 }, { id: 10 }] } },
+      })
   })
 
   test('fails when only scoped admin', async () => {

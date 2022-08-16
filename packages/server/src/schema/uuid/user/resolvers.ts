@@ -40,6 +40,7 @@ import {
   Context,
   createNamespace,
   generateRole,
+  isGlobalRole,
   LegacyQueries,
   Model,
   Mutations,
@@ -126,9 +127,12 @@ export const resolvers: LegacyQueries<
     async usersByRole(_parent, payload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
-      const scope: Scope = instanceToScope(payload.instance ?? null)
+      if (!isGlobalRole(payload.role))
+        checkRoleInstanceCompatibility(payload.role, payload.instance ?? null)
 
-      checkRoleInstanceCompatibility(payload.role, payload.instance ?? null)
+      const scope: Scope = isGlobalRole(payload.role)
+        ? Scope.Serlo
+        : instanceToScope(payload.instance ?? null)
 
       await assertUserIsAuthorized({
         userId,
@@ -288,9 +292,12 @@ export const resolvers: LegacyQueries<
     async addRole(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
-      const scope: Scope = instanceToScope(input.instance ?? null)
+      if (!isGlobalRole(input.role))
+        checkRoleInstanceCompatibility(input.role, input.instance ?? null)
 
-      checkRoleInstanceCompatibility(input.role, input.instance ?? null)
+      const scope: Scope = isGlobalRole(input.role)
+        ? Scope.Serlo
+        : instanceToScope(input.instance ?? null)
 
       await assertUserIsAuthorized({
         userId,
@@ -414,8 +421,12 @@ export const resolvers: LegacyQueries<
     async removeRole(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
-      const scope: Scope = instanceToScope(input.instance ?? null)
-      checkRoleInstanceCompatibility(input.role, input.instance ?? null)
+      if (!isGlobalRole(input.role))
+        checkRoleInstanceCompatibility(input.role, input.instance ?? null)
+
+      const scope: Scope = isGlobalRole(input.role)
+        ? Scope.Serlo
+        : instanceToScope(input.instance ?? null)
 
       await assertUserIsAuthorized({
         userId,
