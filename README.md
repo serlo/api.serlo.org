@@ -42,17 +42,9 @@ Make sure Docker is running and then run `yarn start` to start Redis.
 After `yarn start`, you can open the GraphQL playground via [http://localhost:3000/\_\_\_graphql](http://localhost:3000/___graphql).  
 Note that most queries will need a running [serlo/serlo.org-database-layer](https://github.com/serlo/serlo.org-database-layer) dev environment.
 
-If you need to run requests that need authentication/authorization, replace the closure `context` at the function `getGraphQLOptions` in `packages/server/src/internals/server/graphql-middleware.ts` by the following piece of code
+If you need to run requests authenticated/authorized, use `yarn auth` to be authenticated as user with id 1 or `yarn auth <id>` to chose an specific user.
 
-```ts
-    context(): Promise<Pick<Context, 'service' | 'userId'>> {
-      return Promise.resolve({
-        service: Service.SerloCloudflareWorker,
-        // put here the id of the user you want to test
-        userId: 1,
-      })
-    },
-```
+````
 
 Happy coding!
 
@@ -67,7 +59,7 @@ You can use [git hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks
 ```sh
 echo "yarn check:all --no-uncommitted-changes" > .git/hooks/pre-push
 chmod +x .git/hooks/pre-push
-```
+````
 
 With `git push --no-verify` you can bypass the automatic checks.
 
