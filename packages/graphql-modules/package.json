@@ -1,6 +1,6 @@
 {
   "name": "@types/graphql-modules",
-  "version": "0.46.0-staging.0",
+  "version": "0.46.1",
   "private": true,
   "repository": "serlo/api.serlo.org",
   "license": "Apache-2.0",

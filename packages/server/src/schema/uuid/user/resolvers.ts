@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as serloAuth from '@serlo/authorization'
-import { formatScope, Scope, scopeToInstance } from '@serlo/authorization'
+import { instanceToScope, Scope } from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
 import { array as A, either as E, function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
@@ -36,10 +36,10 @@ import {
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
-  checkRoleInstanceCompatibility,
   Context,
   createNamespace,
   generateRole,
+  isGlobalRole,
   LegacyQueries,
   Model,
   Mutations,
@@ -56,11 +56,10 @@ import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
 import { resolveScopedRoles } from '~/schema/authorization/utils'
 import { ConnectionPayload } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
-import { isInstance } from '~/schema/instance/utils'
 import { resolveEvents } from '~/schema/notification/resolvers'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
-import { User } from '~/types'
+import { Instance, User } from '~/types'
 
 export const resolvers: LegacyQueries<
   'activeAuthors' | 'activeReviewers' | 'activeDonors'
@@ -127,10 +126,14 @@ export const resolvers: LegacyQueries<
     async usersByRole(_parent, payload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
-      const scope: Scope = formatScope(payload.scope)
-      const instance = scopeToInstance(scope)
+      const { instance = null, role } = payload
 
-      checkRoleInstanceCompatibility(payload.role, instance)
+      let scope: Scope = Scope.Serlo
+
+      if (!isGlobalRole(role)) {
+        assertInstanceIsSet(instance)
+        scope = instanceToScope(instance)
+      }
 
       await assertUserIsAuthorized({
         userId,
@@ -147,12 +150,12 @@ export const resolvers: LegacyQueries<
       if (Number.isNaN(after))
         throw new UserInputError('`after` is an illegal id')
 
-      const roleName = generateRole(payload.role, instance)
       const { usersByRole } = await dataSources.model.serlo.getUsersByRole({
-        roleName,
+        roleName: generateRole(role, instance),
         first: first + 1,
         after,
       })
+
       const users = await Promise.all(
         usersByRole.map((id: number) =>
           dataSources.model.serlo.getUuidWithCustomDecoder({
@@ -290,10 +293,14 @@ export const resolvers: LegacyQueries<
     async addRole(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
-      const scope: Scope = formatScope(input.scope)
-      const instance = scopeToInstance(scope)
+      const { role, instance = null, username } = input
 
-      checkRoleInstanceCompatibility(input.role, instance)
+      let scope: Scope = Scope.Serlo
+
+      if (!isGlobalRole(role)) {
+        assertInstanceIsSet(instance)
+        scope = instanceToScope(instance)
+      }
 
       await assertUserIsAuthorized({
         userId,
@@ -302,12 +309,9 @@ export const resolvers: LegacyQueries<
         dataSources,
       })
 
-      const roleName = isInstance(instance)
-        ? `${instance}_${input.role}`
-        : input.role
       await dataSources.model.serlo.addRole({
-        username: input.username,
-        roleName,
+        username,
+        roleName: generateRole(role, instance),
       })
 
       return { success: true }
@@ -417,9 +421,14 @@ export const resolvers: LegacyQueries<
     async removeRole(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
-      const scope: Scope = formatScope(input.scope)
-      const instance = scopeToInstance(scope)
-      checkRoleInstanceCompatibility(input.role, instance)
+      const { role, instance = null, username } = input
+
+      let scope: Scope = Scope.Serlo
+
+      if (!isGlobalRole(role)) {
+        assertInstanceIsSet(instance)
+        scope = instanceToScope(instance)
+      }
 
       await assertUserIsAuthorized({
         userId,
@@ -428,12 +437,9 @@ export const resolvers: LegacyQueries<
         dataSources,
       })
 
-      const roleName = isInstance(instance)
-        ? `${instance}_${input.role}`
-        : input.role
       await dataSources.model.serlo.removeRole({
-        username: input.username,
-        roleName,
+        username,
+        roleName: generateRole(role, instance),
       })
 
       return { success: true }
@@ -524,4 +530,12 @@ function extractIDsFromFirstColumn(
     E.mapLeft(addContext({ location: 'activeDonorSpreadsheet' })),
     E.getOrElse(consumeErrorEvent([] as number[]))
   )
+}
+
+function assertInstanceIsSet(instance: Instance | null) {
+  if (!instance) {
+    throw new UserInputError(
+      "This role can't have a global scope: `instance` has to be declared."
+    )
+  }
 }

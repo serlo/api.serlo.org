@@ -9,8 +9,6 @@ type MediaQuery {
 type MediaUpload {
   uploadUrl: String!
   urlAfterUpload: String!
-  fileExtension: String!
-  fileNameWithoutExtension: String!
 }
 
 enum MediaType {

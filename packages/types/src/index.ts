@@ -1518,8 +1518,6 @@ export enum MediaType {
 
 export type MediaUpload = {
   __typename?: 'MediaUpload';
-  fileExtension: Scalars['String'];
-  fileNameWithoutExtension: Scalars['String'];
   uploadUrl: Scalars['String'];
   urlAfterUpload: Scalars['String'];
 };
@@ -2765,13 +2763,13 @@ export type UserQueryPotentialSpamUsersArgs = {
 export type UserQueryUsersByRoleArgs = {
   after?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
   role: Role;
-  scope: Scope;
 };
 
 export type UserRoleInput = {
+  instance?: InputMaybe<Instance>;
   role: Role;
-  scope: Scope;
   username: Scalars['String'];
 };
 
