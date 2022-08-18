@@ -165,6 +165,8 @@ describe('add scoped role', () => {
 })
 
 test('updates the cache', async () => {
+  given('UserAddRoleMutation').returns({ success: true })
+
   await uuidQuery.shouldReturnData({
     uuid: {
       roles: {
