@@ -1380,6 +1380,13 @@ async function exec(): Promise<void> {
         date: '2022-07-25',
         breakingChanges: ['Refactor `media.upload` to `media.newUpload` #709'],
       },
+      {
+        tagName: 'v0.46.0',
+        date: '2022-08-18',
+        breakingChanges: [
+          'Delete `fileExtension` and `fileNameWithoutExtension` from `media.newUpload` #713',
+        ],
+      },
     ],
   })
 
