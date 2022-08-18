@@ -121,18 +121,6 @@ export function assertStringIsNotEmpty(args: { [key: string]: unknown }) {
   }
 }
 
-export function checkRoleInstanceCompatibility(
-  role: Role,
-  instance: Instance | null
-) {
-  if (isGlobalRole(role) && isInstance(instance)) {
-    throw new UserInputError('This role cannot be scoped.')
-  }
-  if (!isGlobalRole(role) && !isInstance(instance)) {
-    throw new UserInputError("This role can't have a global scope.")
-  }
-}
-
 export function isGlobalRole(role: Role): boolean {
   return [Role.Guest, Role.Login, Role.Sysadmin].includes(role)
 }
