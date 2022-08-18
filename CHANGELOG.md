@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.46.1](https://github.com/serlo/api.serlo.org/compare/v0.46.0..v0.46.1) - August 18, 2022
+
+### Breaking Changes
+
+- Change input of `addRole`, `removeRole` and `usersByRole` from `scope` to `instance` #711
+
+### Changed
+
+- User Role endpoints: do not throw error if role is global but instance is sent\` #712
+
 ## [v0.46.0](https://github.com/serlo/api.serlo.org/compare/v0.45.0..v0.46.0) - August 18, 2022
 
 ### Breaking Changes

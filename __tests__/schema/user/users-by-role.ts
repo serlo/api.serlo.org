@@ -24,27 +24,26 @@ import { gql } from 'apollo-server'
 
 import { user as sysadmin, user2 as reviewer } from '../../../__fixtures__'
 import { castToUuid, Client, given, Query } from '../../__utils__'
-import { Role, Scope } from '~/types'
+import { Instance, Role } from '~/types'
 
 let client: Client
 let query: Query
 
 const globalRole = Role.Sysadmin
-const globalScope = Scope.Serlo
 const localRole = Role.Reviewer
-const localScope = Scope.SerloDe
+const instance = Instance.De
 
 beforeEach(() => {
   client = new Client({ userId: sysadmin.id })
   query = client
     .prepareQuery({
       query: gql`
-        query ($role: Role!, $scope: Scope!, $first: Int, $after: String) {
+        query ($role: Role!, $instance: Instance, $first: Int, $after: String) {
           user {
             usersByRole(
               after: $after
               role: $role
-              scope: $scope
+              instance: $instance
               first: $first
             ) {
               nodes {
@@ -57,7 +56,6 @@ beforeEach(() => {
     })
     .withVariables({
       role: globalRole,
-      scope: globalScope,
       first: 3,
       after: 'MQ==',
     })
@@ -81,14 +79,17 @@ describe('get users by globalRole', () => {
     })
   })
 
-  test('fails when given invalid scope', async () => {
+  test('ignores instance when given one', async () => {
     await query
       .withVariables({
         role: globalRole,
-        scope: localScope,
-        first: 5,
+        instance,
+        first: 3,
+        after: 'MQ==',
       })
-      .shouldFailWithError('BAD_USER_INPUT')
+      .shouldReturnData({
+        user: { usersByRole: { nodes: [{ id: 2 }, { id: 6 }, { id: 10 }] } },
+      })
   })
 
   test('fails when only scoped admin', async () => {
@@ -109,7 +110,7 @@ describe('get users by localRole', () => {
     await query
       .withVariables({
         role: localRole,
-        scope: localScope,
+        instance,
         first: 2,
       })
       .shouldReturnData({
@@ -122,7 +123,7 @@ describe('get users by localRole', () => {
       .forLoginUser('de_admin')
       .withVariables({
         role: localRole,
-        scope: localScope,
+        instance,
         first: 2,
       })
       .shouldReturnData({
@@ -134,7 +135,7 @@ describe('get users by localRole', () => {
     await query
       .withVariables({
         role: localRole,
-        scope: localScope,
+        instance,
         first: 2,
       })
       .forLoginUser('en_admin')
@@ -145,7 +146,6 @@ describe('get users by localRole', () => {
     await query
       .withVariables({
         role: localRole,
-        scope: globalScope,
         first: 2,
       })
       .shouldFailWithError('BAD_USER_INPUT')
