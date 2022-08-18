@@ -22,7 +22,7 @@
 import { Scope } from '@serlo/authorization'
 import { gql } from 'apollo-server'
 
-import { user as admin, user2 as regularUser } from '../../../__fixtures__'
+import { user as admin } from '../../../__fixtures__'
 import { Client, given, Query } from '../../__utils__'
 import { Instance, Role } from '~/types'
 
@@ -73,8 +73,7 @@ beforeEach(() => {
     })
     .withVariables({ id: admin.id })
 
-  given('UuidQuery').for(admin, regularUser)
-  given('UserRemoveRoleMutation').returns({ success: true })
+  given('UuidQuery').for(admin)
   given('AliasQuery')
     .withPayload({
       instance: Instance.De,
@@ -88,6 +87,12 @@ beforeEach(() => {
 })
 
 describe('remove global role', () => {
+  beforeEach(() => {
+    given('UserRemoveRoleMutation')
+      .withPayload({ roleName: globalRole, username: admin.username })
+      .returns({ success: true })
+  })
+
   test('removes a role successfully', async () => {
     await mutation.shouldReturnData({ user: { removeRole: { success: true } } })
   })
@@ -104,6 +109,15 @@ describe('remove global role', () => {
 })
 
 describe('remove scoped role', () => {
+  beforeEach(() => {
+    given('UserRemoveRoleMutation')
+      .withPayload({
+        roleName: `${instance}_${scopedRole}`,
+        username: admin.username,
+      })
+      .returns({ success: true })
+  })
+
   test('removes a role successfully', async () => {
     await mutation
       .withInput({ username: admin.username, role: scopedRole, instance })
@@ -132,6 +146,8 @@ describe('remove scoped role', () => {
 })
 
 test('updates the cache', async () => {
+  given('UserRemoveRoleMutation').returns({ success: true })
+
   await uuidQuery.shouldReturnData({
     uuid: {
       roles: {
