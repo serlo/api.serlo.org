@@ -109,7 +109,7 @@ function getToken() {
 " > packages/server/src/internals/server/graphql-middleware.ts
 
 print_header "Authenticated as user with id $user_id"
-echo "The file packages/server/src/internals/server/graphql-middleware.ts was changed in order to allow authentication."
+echo "The file 'packages/server/src/internals/server/graphql-middleware.ts' was changed in order to allow authentication."
 echo "Important: Do not commit this file!"
 echo "If you are editing this file, do not use this script!"
 echo "Exit: ctrl+C"
@@ -117,7 +117,8 @@ echo "Exit: ctrl+C"
 trap restore_graphql_middleware SIGINT
 
 restore_graphql_middleware() {
-  echo "Restoring packages/server/src/internals/server/graphql-middleware.ts to original state"
+  echo
+  echo "Restoring 'packages/server/src/internals/server/graphql-middleware.ts' to original state"
   git restore packages/server/src/internals/server/graphql-middleware.ts
 }
 

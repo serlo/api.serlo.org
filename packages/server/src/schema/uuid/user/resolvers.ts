@@ -292,12 +292,14 @@ export const resolvers: LegacyQueries<
     async addRole(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
-      if (!isGlobalRole(input.role))
-        checkRoleInstanceCompatibility(input.role, input.instance ?? null)
+      const { role, instance, username } = input
 
-      const scope: Scope = isGlobalRole(input.role)
-        ? Scope.Serlo
-        : instanceToScope(input.instance ?? null)
+      let scope: Scope = Scope.Serlo
+
+      if (!isGlobalRole(role)) {
+        checkRoleInstanceCompatibility(role, instance ?? null)
+        scope = instanceToScope(instance ?? null)
+      }
 
       await assertUserIsAuthorized({
         userId,
@@ -306,12 +308,9 @@ export const resolvers: LegacyQueries<
         dataSources,
       })
 
-      const roleName = input.instance
-        ? `${input.instance}_${input.role}`
-        : input.role
       await dataSources.model.serlo.addRole({
-        username: input.username,
-        roleName,
+        username,
+        roleName: generateRole(role, instance ?? null),
       })
 
       return { success: true }
@@ -421,12 +420,14 @@ export const resolvers: LegacyQueries<
     async removeRole(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
-      if (!isGlobalRole(input.role))
-        checkRoleInstanceCompatibility(input.role, input.instance ?? null)
+      const { role, instance, username } = input
 
-      const scope: Scope = isGlobalRole(input.role)
-        ? Scope.Serlo
-        : instanceToScope(input.instance ?? null)
+      let scope: Scope = Scope.Serlo
+
+      if (!isGlobalRole(role)) {
+        checkRoleInstanceCompatibility(role, instance ?? null)
+        scope = instanceToScope(instance ?? null)
+      }
 
       await assertUserIsAuthorized({
         userId,
@@ -435,12 +436,9 @@ export const resolvers: LegacyQueries<
         dataSources,
       })
 
-      const roleName = input.instance
-        ? `${input.instance}_${input.role}`
-        : input.role
       await dataSources.model.serlo.removeRole({
-        username: input.username,
-        roleName,
+        username,
+        roleName: generateRole(role, instance ?? null),
       })
 
       return { success: true }
