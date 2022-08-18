@@ -44,8 +44,6 @@ Note that most queries will need a running [serlo/serlo.org-database-layer](http
 
 If you need to run requests authenticated/authorized, use `yarn auth` to be authenticated as user with id 1 or `yarn auth <id>` to choose a specific user.
 
-````
-
 Happy coding!
 
 ### Stop
@@ -59,7 +57,7 @@ You can use [git hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks
 ```sh
 echo "yarn check:all --no-uncommitted-changes" > .git/hooks/pre-push
 chmod +x .git/hooks/pre-push
-````
+```
 
 With `git push --no-verify` you can bypass the automatic checks.
 
