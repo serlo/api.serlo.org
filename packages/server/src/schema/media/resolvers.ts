@@ -39,13 +39,11 @@ export const resolvers: Queries<'media'> = {
 
       const [fileExtension, mimeType] = getFileExtensionAndMimeType(mediaType)
       const fileHash = uuidv1()
-      const bucketUrl = `${fileHash}.${fileExtension}`
-      const userUrl = `https://assets.serlo.org/${fileHash}/image.${fileExtension}`
 
       const storage = new Storage()
       const [uploadUrl] = await storage
         .bucket('assets.serlo.org')
-        .file(bucketUrl)
+        .file(`${fileHash}.${fileExtension}`)
         .getSignedUrl({
           version: 'v4',
           action: 'write',
@@ -55,7 +53,7 @@ export const resolvers: Queries<'media'> = {
 
       return {
         uploadUrl,
-        urlAfterUpload: userUrl,
+        urlAfterUpload: `https://assets.serlo.org/${fileHash}/image.${fileExtension}`,
       }
     },
   },
