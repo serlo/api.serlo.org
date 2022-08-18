@@ -74,7 +74,6 @@ beforeEach(() => {
     .withVariables({ id: regularUser.id })
 
   given('UuidQuery').for(admin, regularUser)
-  given('UserAddRoleMutation').returns({ success: true })
   given('AliasQuery')
     .withPayload({
       instance: Instance.De,
@@ -88,6 +87,12 @@ beforeEach(() => {
 })
 
 describe('add global role', () => {
+  beforeEach(() => {
+    given('UserAddRoleMutation')
+      .withPayload({ roleName: globalRole, username: regularUser.username })
+      .returns({ success: true })
+  })
+
   test('adds a role successfully', async () => {
     await mutation.shouldReturnData({ user: { addRole: { success: true } } })
   })
@@ -108,6 +113,15 @@ describe('add global role', () => {
 })
 
 describe('add scoped role', () => {
+  beforeEach(() => {
+    given('UserAddRoleMutation')
+      .withPayload({
+        roleName: `${instance}_${scopedRole}`,
+        username: regularUser.username,
+      })
+      .returns({ success: true })
+  })
+
   test('adds a role successfully', async () => {
     await mutation
       .withInput({
