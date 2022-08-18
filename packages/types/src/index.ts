@@ -1518,8 +1518,6 @@ export enum MediaType {
 
 export type MediaUpload = {
   __typename?: 'MediaUpload';
-  fileExtension: Scalars['String'];
-  fileNameWithoutExtension: Scalars['String'];
   uploadUrl: Scalars['String'];
   urlAfterUpload: Scalars['String'];
 };
