@@ -22,7 +22,7 @@
 import { Scope } from '@serlo/authorization'
 import { gql } from 'apollo-server'
 
-import { user, user2 } from '../../../__fixtures__'
+import { user as admin } from '../../../__fixtures__'
 import { Client, given, Query } from '../../__utils__'
 import { Instance, Role } from '~/types'
 
@@ -31,12 +31,11 @@ let mutation: Query
 let uuidQuery: Query
 
 const globalRole = Role.Sysadmin
-const localRole = Role.Reviewer
-const globalScope = 'Serlo'
-const localScope = 'Serlo_De'
+const scopedRole = Role.Reviewer
+const instance = Instance.De
 
 beforeEach(() => {
-  client = new Client({ userId: user.id })
+  client = new Client({ userId: admin.id })
   mutation = client
     .prepareQuery({
       query: gql`
@@ -50,9 +49,8 @@ beforeEach(() => {
       `,
     })
     .withInput({
-      username: user.username,
+      username: admin.username,
       role: globalRole,
-      scope: globalScope,
     })
 
   uuidQuery = client
@@ -73,33 +71,36 @@ beforeEach(() => {
         }
       `,
     })
-    .withVariables({ id: user.id })
+    .withVariables({ id: admin.id })
 
-  given('UuidQuery').for(user, user2)
-  given('UserRemoveRoleMutation').returns({ success: true })
+  given('UuidQuery').for(admin)
   given('AliasQuery')
     .withPayload({
       instance: Instance.De,
-      path: `user/profile/${user.username}`,
+      path: `user/profile/${admin.username}`,
     })
     .returns({
-      id: user.id,
+      id: admin.id,
       instance: Instance.De,
-      path: `/user/${user.id}/${user.username}`,
+      path: `/user/${admin.id}/${admin.username}`,
     })
 })
 
 describe('remove global role', () => {
+  beforeEach(() => {
+    given('UserRemoveRoleMutation')
+      .withPayload({ roleName: globalRole, username: admin.username })
+      .returns({ success: true })
+  })
+
   test('removes a role successfully', async () => {
     await mutation.shouldReturnData({ user: { removeRole: { success: true } } })
   })
 
-  test('fails when given invalid scope', async () => {
+  test('ignores instance when given one', async () => {
     await mutation
-      .withVariables({
-        input: { username: user.username, role: globalRole, scope: localScope },
-      })
-      .shouldFailWithError('BAD_USER_INPUT')
+      .withInput({ username: admin.username, role: globalRole, instance })
+      .shouldReturnData({ user: { removeRole: { success: true } } })
   })
 
   test('fails when only scoped admin', async () => {
@@ -108,42 +109,45 @@ describe('remove global role', () => {
 })
 
 describe('remove scoped role', () => {
+  beforeEach(() => {
+    given('UserRemoveRoleMutation')
+      .withPayload({
+        roleName: `${instance}_${scopedRole}`,
+        username: admin.username,
+      })
+      .returns({ success: true })
+  })
+
   test('removes a role successfully', async () => {
     await mutation
-      .withVariables({
-        input: { username: user.username, role: localRole, scope: localScope },
-      })
+      .withInput({ username: admin.username, role: scopedRole, instance })
       .shouldReturnData({ user: { removeRole: { success: true } } })
   })
 
   test('removes a role successfully when scoped admin', async () => {
     await mutation
       .forLoginUser('de_admin')
-      .withVariables({
-        input: { username: user.username, role: localRole, scope: localScope },
-      })
+      .withInput({ username: admin.username, role: scopedRole, instance })
       .shouldReturnData({ user: { removeRole: { success: true } } })
   })
 
   test('fails when admin in wrong scope', async () => {
     await mutation
-      .withVariables({
-        input: { username: user.username, role: localRole, scope: localScope },
-      })
+      .withInput({ username: admin.username, role: scopedRole, instance })
       .forLoginUser('en_admin')
       .shouldFailWithError('FORBIDDEN')
   })
 
-  test('fails when given global scope', async () => {
+  test('fails when not given an instance', async () => {
     await mutation
-      .withVariables({
-        input: { username: user.username, role: localRole, scope: globalScope },
-      })
+      .withInput({ username: admin.username, role: scopedRole })
       .shouldFailWithError('BAD_USER_INPUT')
   })
 })
 
 test('updates the cache', async () => {
+  given('UserRemoveRoleMutation').returns({ success: true })
+
   await uuidQuery.shouldReturnData({
     uuid: {
       roles: {
