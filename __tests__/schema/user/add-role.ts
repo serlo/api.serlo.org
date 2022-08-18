@@ -22,7 +22,7 @@
 import { Scope } from '@serlo/authorization'
 import { gql } from 'apollo-server'
 
-import { user, user2 } from '../../../__fixtures__'
+import { user as admin, user2 as regularUser } from '../../../__fixtures__'
 import { Client, given, Query } from '../../__utils__'
 import { Instance, Role } from '~/types'
 
@@ -31,12 +31,11 @@ let mutation: Query
 let uuidQuery: Query
 
 const globalRole = Role.Sysadmin
-const localRole = Role.Reviewer
-const globalScope = 'Serlo'
-const localScope = 'Serlo_De'
+const scopedRole = Role.Reviewer
+const instance = Instance.De
 
 beforeEach(() => {
-  client = new Client({ userId: user.id })
+  client = new Client({ userId: admin.id })
   mutation = client
     .prepareQuery({
       query: gql`
@@ -50,9 +49,8 @@ beforeEach(() => {
       `,
     })
     .withInput({
-      username: user2.username,
+      username: regularUser.username,
       role: globalRole,
-      scope: globalScope,
     })
 
   uuidQuery = client
@@ -73,37 +71,40 @@ beforeEach(() => {
         }
       `,
     })
-    .withVariables({ id: user2.id })
+    .withVariables({ id: regularUser.id })
 
-  given('UuidQuery').for(user, user2)
-  given('UserAddRoleMutation').returns({ success: true })
+  given('UuidQuery').for(admin, regularUser)
   given('AliasQuery')
     .withPayload({
       instance: Instance.De,
-      path: `user/profile/${user2.username}`,
+      path: `user/profile/${regularUser.username}`,
     })
     .returns({
-      id: user2.id,
+      id: regularUser.id,
       instance: Instance.De,
-      path: `/user/${user2.id}/${user2.username}`,
+      path: `/user/${regularUser.id}/${regularUser.username}`,
     })
 })
 
 describe('add global role', () => {
+  beforeEach(() => {
+    given('UserAddRoleMutation')
+      .withPayload({ roleName: globalRole, username: regularUser.username })
+      .returns({ success: true })
+  })
+
   test('adds a role successfully', async () => {
     await mutation.shouldReturnData({ user: { addRole: { success: true } } })
   })
 
-  test('fails when given invalid scope', async () => {
+  test('ignores instance when given one', async () => {
     await mutation
-      .withVariables({
-        input: {
-          username: user2.username,
-          role: globalRole,
-          scope: localScope,
-        },
+      .withInput({
+        username: regularUser.username,
+        role: globalRole,
+        instance,
       })
-      .shouldFailWithError('BAD_USER_INPUT')
+      .shouldReturnData({ user: { addRole: { success: true } } })
   })
 
   test('fails when only scoped admin', async () => {
@@ -112,14 +113,21 @@ describe('add global role', () => {
 })
 
 describe('add scoped role', () => {
+  beforeEach(() => {
+    given('UserAddRoleMutation')
+      .withPayload({
+        roleName: `${instance}_${scopedRole}`,
+        username: regularUser.username,
+      })
+      .returns({ success: true })
+  })
+
   test('adds a role successfully', async () => {
     await mutation
-      .withVariables({
-        input: {
-          username: user2.username,
-          role: localRole,
-          scope: localScope,
-        },
+      .withInput({
+        username: regularUser.username,
+        role: scopedRole,
+        instance,
       })
       .shouldReturnData({ user: { addRole: { success: true } } })
   })
@@ -127,43 +135,38 @@ describe('add scoped role', () => {
   test('adds a role successfully when scoped admin', async () => {
     await mutation
       .forLoginUser('de_admin')
-      .withVariables({
-        input: {
-          username: user2.username,
-          role: localRole,
-          scope: localScope,
-        },
+      .withInput({
+        username: regularUser.username,
+        role: scopedRole,
+        instance,
       })
       .shouldReturnData({ user: { addRole: { success: true } } })
   })
 
   test('fails when admin in wrong scope', async () => {
     await mutation
-      .withVariables({
-        input: {
-          username: user2.username,
-          role: localRole,
-          scope: localScope,
-        },
+      .withInput({
+        username: regularUser.username,
+        role: scopedRole,
+        instance,
       })
       .forLoginUser('en_admin')
       .shouldFailWithError('FORBIDDEN')
   })
 
-  test('fails when given global scope', async () => {
+  test('fails when not given an instance', async () => {
     await mutation
-      .withVariables({
-        input: {
-          username: user2.username,
-          role: localRole,
-          scope: globalScope,
-        },
+      .withInput({
+        username: regularUser.username,
+        role: scopedRole,
       })
       .shouldFailWithError('BAD_USER_INPUT')
   })
 })
 
 test('updates the cache', async () => {
+  given('UserAddRoleMutation').returns({ success: true })
+
   await uuidQuery.shouldReturnData({
     uuid: {
       roles: {

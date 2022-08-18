@@ -1387,6 +1387,16 @@ async function exec(): Promise<void> {
           'Delete `fileExtension` and `fileNameWithoutExtension` from `media.newUpload` #713',
         ],
       },
+      {
+        tagName: 'v0.46.1',
+        date: '2022-08-18',
+        breakingChanges: [
+          'Change input of `addRole`, `removeRole` and `usersByRole` from `scope` to `instance` #711',
+        ],
+        changed: [
+          'User Role endpoints: do not throw error if role is global but instance is sent` #712',
+        ],
+      },
     ],
   })
 
