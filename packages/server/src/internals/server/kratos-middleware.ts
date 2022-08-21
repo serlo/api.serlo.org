@@ -58,6 +58,7 @@ export function applyKratosMiddleware({ app }: { app: Express }) {
   app.post(`${basePath}/register`, createKratosRegisterHandler(kratos))
   app.get(`${basePath}/hydra-login`, createHydraLoginHandler(kratos, hydra))
   app.get(`${basePath}/hydra-consent`, createHydraConsentHandler(kratos, hydra))
+  app.get(`${basePath}/hydra-logout`, createHydraLogoutHandler(kratos, hydra))
   return basePath
 }
 
@@ -231,5 +232,37 @@ function createHydraConsentHandler(
           res.send(error)
         })
     }
+  }
+}
+
+function createHydraLogoutHandler(
+  kratos: V0alpha2Api,
+  hydra: AdminApi
+): RequestHandler {
+  return (req, res) => {
+    const query = req.query
+    const challenge = String(query.logout_challenge)
+    if (!challenge) {
+      res.status(400)
+      res.send('Expected a logout challenge to be set but received none.')
+      return
+    }
+    hydra
+      .getLogoutRequest(challenge)
+      .then(async () => {
+        return await hydra
+          .acceptLogoutRequest(challenge)
+          .then(({ data: body }) => {
+            res.redirect(body.redirect_to)
+          })
+          .catch((error) => {
+            res.status(500)
+            res.send(error)
+          })
+      })
+      .catch((error) => {
+        res.status(500)
+        res.send(error)
+      })
   }
 }
