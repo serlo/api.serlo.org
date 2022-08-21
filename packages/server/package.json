@@ -22,6 +22,7 @@
     "@google-cloud/storage": "^6.2.2",
     "@nmshd/connector-sdk": "^1.1.5",
     "@ory/client": "0.2.0-alpha.4",
+    "@ory/hydra-client": "^1.11.8",
     "@ory/integrations": "^0.2.6",
     "@sentry/node": "^6.19.7",
     "@serlo/authorization": "^0.46.1",
