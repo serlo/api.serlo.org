@@ -58,6 +58,7 @@ async function initializeServer({
   const enmeshedPath = applyEnmeshedMiddleware({ app, cache })
   const graphqlPath = await applyGraphQLMiddleware({ app, cache, swrQueue })
   const kratosPath = applyKratosMiddleware({ app })
+  const hydraPath = applyKratosMiddleware({ app })
 
   const port = 3001
   const host = `http://localhost:${port}`
@@ -71,6 +72,7 @@ async function initializeServer({
       console.log(`Enmeshed endpoint:   ${host}${enmeshedPath}`)
     }
     console.log(`Kratos endpoint:     ${host}${kratosPath}`)
+    console.log(`Hydra endpoint:      ${host}${hydraPath}`)
     /* eslint-enable no-console */
   })
 }
