@@ -30,6 +30,7 @@ import { createTimer } from '../timer'
 import { applyGraphQLMiddleware } from './graphql-middleware'
 import { applySwrQueueDashboardMiddleware } from './swr-queue-dashboard-middleware'
 import { applyEnmeshedMiddleware } from '~/internals/server/enmeshed-middleware'
+import { applyHydraMiddleware } from '~/internals/server/hydra-middleware'
 import { applyKratosMiddleware } from '~/internals/server/kratos-middleware'
 
 export * from './graphql-middleware'
@@ -58,7 +59,7 @@ async function initializeServer({
   const enmeshedPath = applyEnmeshedMiddleware({ app, cache })
   const graphqlPath = await applyGraphQLMiddleware({ app, cache, swrQueue })
   const kratosPath = applyKratosMiddleware({ app })
-  const hydraPath = applyKratosMiddleware({ app })
+  const hydraPath = applyHydraMiddleware({ app })
 
   const port = 3001
   const host = `http://localhost:${port}`
