@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Configuration, IdentityState, V0alpha2Api } from '@ory/client'
-import { AdminApi, Configuration as HydraConfig } from '@ory/hydra-client'
 import { Express, RequestHandler } from 'express'
 
 import { DatabaseLayer } from '~/model'
