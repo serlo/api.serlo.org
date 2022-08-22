@@ -21,7 +21,6 @@
  */
 import { Configuration, IdentityState, V0alpha2Api } from '@ory/client'
 import { AdminApi, Configuration as HydraConfig } from '@ory/hydra-client'
-import cors from 'cors'
 import { Express, RequestHandler } from 'express'
 
 import { DatabaseLayer } from '~/model'
@@ -29,9 +28,6 @@ import { DatabaseLayer } from '~/model'
 const basePath = '/kratos'
 
 export function applyKratosMiddleware({ app }: { app: Express }) {
-  // allow cors will be unnecessary if we do it server-side in frontend
-  app.use(cors())
-
   if (!process.env.SERVER_KRATOS_HOST)
     // eslint-disable-next-line no-console
     console.error('Kratos Host is not defined')
