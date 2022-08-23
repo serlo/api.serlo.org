@@ -38,17 +38,12 @@ export function applyHydraMiddleware({ app }: { app: Express }) {
   const hydra = new AdminApi(
     new HydraConfig({
       basePath: process.env.SERVER_HYDRA_HOST,
-      ...(process.env.MOCK_TLS_TERMINATION
-        ? {
-            baseOptions: {
-              headers: process.env.MOCK_TLS_TERMINATION
-                ? 'X-Forwarded-Proto'
-                : 'https',
-            },
-          }
-        : {}),
+      baseOptions: {
+        headers: { 'X-Forwarded-Proto': 'https' },
+      },
     })
   )
+
   app.get(`${basePath}/login`, createHydraLoginHandler(kratos, hydra))
   app.get(`${basePath}/consent`, createHydraConsentHandler(kratos, hydra))
   app.get(`${basePath}/logout`, createHydraLogoutHandler(kratos, hydra))
