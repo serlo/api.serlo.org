@@ -26,13 +26,13 @@ import { Express, RequestHandler } from 'express'
 const basePath = '/hydra'
 
 export function applyHydraMiddleware({ app }: { app: Express }) {
-  if (!process.env.SERVER_KRATOS_HOST)
+  if (!process.env.SERVER_KRATOS_PUBLIC_HOST)
     // eslint-disable-next-line no-console
-    console.error('Kratos Host is not defined')
+    console.error('Kratos Public Host is not defined')
 
-  const kratos = new V0alpha2Api(
+  const publicKratos = new V0alpha2Api(
     new KratosConfig({
-      basePath: process.env.SERVER_KRATOS_HOST,
+      basePath: process.env.SERVER_KRATOS_PUBLIC_HOST,
     })
   )
   const hydra = new AdminApi(
@@ -44,18 +44,18 @@ export function applyHydraMiddleware({ app }: { app: Express }) {
     })
   )
 
-  app.get(`${basePath}/login`, createHydraLoginHandler(kratos, hydra))
-  app.get(`${basePath}/consent`, createHydraConsentHandler(kratos, hydra))
-  app.get(`${basePath}/logout`, createHydraLogoutHandler(kratos, hydra))
+  app.get(`${basePath}/login`, createHydraLoginHandler(publicKratos, hydra))
+  app.get(`${basePath}/consent`, createHydraConsentHandler(publicKratos, hydra))
+  app.get(`${basePath}/logout`, createHydraLogoutHandler(hydra))
   return basePath
 }
 
 function createHydraLoginHandler(
-  kratos: V0alpha2Api,
+  publicKratos: V0alpha2Api,
   hydra: AdminApi
 ): RequestHandler {
   return async (req, res) => {
-    const session = await kratos
+    const session = await publicKratos
       .toSession(undefined, String(req.header('cookie')))
       .then(({ data }) => data)
       .catch((error) => {
@@ -100,7 +100,7 @@ function createHydraLoginHandler(
 }
 
 function createHydraConsentHandler(
-  kratos: V0alpha2Api,
+  publicKratos: V0alpha2Api,
   hydra: AdminApi
 ): RequestHandler {
   return async (req, res) => {
@@ -112,7 +112,7 @@ function createHydraConsentHandler(
       res.send('Expected a consent challenge to be set but received none.')
       return
     }
-    const session = await kratos
+    const session = await publicKratos
       .toSession(undefined, String(req.headers.cookie))
       .then(({ data }) => data)
       .catch((error) => {
@@ -120,6 +120,7 @@ function createHydraConsentHandler(
         res.send(error)
       })
     if (session) {
+      // when the time comes, change to session.identity.id
       const userId = (session.identity.metadata_public as { legacy_id: number })
         .legacy_id
       const username = (session.identity.traits as { username: string })
@@ -158,10 +159,7 @@ function createHydraConsentHandler(
   }
 }
 
-function createHydraLogoutHandler(
-  kratos: V0alpha2Api,
-  hydra: AdminApi
-): RequestHandler {
+function createHydraLogoutHandler(hydra: AdminApi): RequestHandler {
   return (req, res) => {
     const query = req.query
     const challenge = String(query.logout_challenge)
