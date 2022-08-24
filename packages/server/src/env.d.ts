@@ -47,7 +47,8 @@ declare namespace NodeJS {
      */
     MAILCHIMP_API_KEY: string
     SERVER_HYDRA_HOST: string
-    SERVER_KRATOS_HOST: string
+    SERVER_KRATOS_PUBLIC_HOST: string
+    SERVER_KRATOS_ADMIN_HOST: string
     SERVER_KRATOS_SECRET: string
     SERVER_SERLO_CLOUDFLARE_WORKER_SECRET: string
     SERVER_SERLO_CACHE_WORKER_SECRET: string

@@ -27,13 +27,13 @@ import { DatabaseLayer } from '~/model'
 const basePath = '/kratos'
 
 export function applyKratosMiddleware({ app }: { app: Express }) {
-  if (!process.env.SERVER_KRATOS_HOST)
+  if (!process.env.SERVER_KRATOS_ADMIN_HOST)
     // eslint-disable-next-line no-console
-    console.error('Kratos Host is not defined')
+    console.error('Kratos Admin Host is not defined')
 
   const kratos = new V0alpha2Api(
     new Configuration({
-      basePath: process.env.SERVER_KRATOS_HOST,
+      basePath: process.env.SERVER_KRATOS_ADMIN_HOST,
     })
   )
   app.post(`${basePath}/register`, createKratosRegisterHandler(kratos))
