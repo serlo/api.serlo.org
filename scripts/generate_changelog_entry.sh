@@ -13,23 +13,25 @@ PRS_BODY_MESSAGES="$MERGED_PRS_BODY_MESSAGES"$'\n'"$CURRENT_PR_TITLE"
 # TODO: put quotes around each entry
 ADDED=$(echo $PRS_BODY_MESSAGES | grep 'feat' | awk -F: '{ print $2 }' | sed '$!s/$/,/')
 FIXED=$(echo $PRS_BODY_MESSAGES | grep 'fix' | awk -F: '{ print $2 }' | sed '$!s/$/,/')
+# TODO: ignore break changes in fixed and added and put them only here
 BREAKING_CHANGES=$(echo $PRS_BODY_MESSAGES | grep '!' | awk -F: '{ print $2 }' | sed '$!s/$/,/')
 
-echo "Upgrading version..."
+echo "Finding new version..."
 LAST_VERSION=$(cat scripts/changelog.ts \
   | grep 'tagName:' \
   | tail -1 \
   | awk -F: '{ print $2 }' \
   | sed "s/[v,', ]//g")
 
-IFS=. read MAJOR MINOR PATCH <<< $LAST_VERSION
+IFS=.
+read MAJOR MINOR PATCH <<< $LAST_VERSION
 
 if [ -n "$BREAKING_CHANGES" ]; then
   NEW_VERSION="$(($MAJOR + 1)).0.0"
 elif [ -n "$ADDED" ]; then
   NEW_VERSION="$MAJOR.$(($MINOR + 1)).0"
 elif [ -n "$FIXED" ]; then
-  NEW_VERSION="$MAJOR.$MINOR.$(($PATCH))"
+  NEW_VERSION="$MAJOR.$MINOR.$(($PATCH + 1))"
 else
   echo "Aborted!"
   echo "There were no additions, no fixes and no breaking changes since last version."
@@ -40,22 +42,33 @@ fi
 
 DATE=$(date +%F)
 
+if [ -n "$ADDED" ]; then
+  ADDED_ENTRIES="added: [
+  '$ADDED'
+  ]"
+fi
+
+if [ -n "$FIXED" ]; then
+  FIXED_ENTRIES="fixed: [
+  '$FIXED'
+  ]"
+fi
 print_header "Changelog entry suggestion"
-echo "Based on:"
-git log $(git describe --tags --abbrev=0)..HEAD --oneline
+echo "BASED ON"
+echo "++++++++"
 echo
-echo "We suggest the following changelog entry"
+git log "$(git describe --tags --abbrev=0)"..HEAD --oneline
+if [ -n "$CURRENT_PR_TITLE" ]; then
+  echo "PR title: $CURRENT_PR_TITLE"
+fi
+echo
+echo "WE SUGGEST THE FOLLOWING CHANGELOG ENTRY"
 echo "++++++++++++++++++++++++++++++++++++++++"
 echo """
 {
   tagName: 'v$NEW_VERSION',
   date: '$DATE',
-  added: [
-    '$ADDED'
-  ],
-  fixed: [
-    '$FIXED'
-  ]
-},
-
+  $(if [ -n "$ADDED_ENTRIES" ]; then echo "$ADDED_ENTRIES,"; fi)
+  $FIXED_ENTRIES
+}
 """
