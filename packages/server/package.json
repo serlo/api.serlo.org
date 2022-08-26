@@ -1,6 +1,6 @@
 {
   "name": "@serlo/api.serlo.org",
-  "version": "0.46.1",
+  "version": "0.46.2",
   "private": true,
   "repository": "serlo/api.serlo.org",
   "license": "Apache-2.0",
@@ -25,7 +25,7 @@
     "@ory/hydra-client": "^1.11.8",
     "@ory/integrations": "^0.2.6",
     "@sentry/node": "^6.19.7",
-    "@serlo/authorization": "^0.46.1",
+    "@serlo/authorization": "^0.46.2",
     "apollo-datasource-rest": "^3.6.1",
     "apollo-server": "^3.9.0",
     "apollo-server-caching": "^3.3.0",

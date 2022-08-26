@@ -10,7 +10,7 @@ enum Role {
   moderator
   reviewer
   architect
-  staticPagesBuilder
+  static_pages_builder
   admin
 }
 
