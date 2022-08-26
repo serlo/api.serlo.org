@@ -1906,7 +1906,7 @@ export enum Role {
   Login = 'login',
   Moderator = 'moderator',
   Reviewer = 'reviewer',
-  StaticPagesBuilder = 'staticPagesBuilder',
+  StaticPagesBuilder = 'static_pages_builder',
   Sysadmin = 'sysadmin'
 }
 
