@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.46.2](https://github.com/serlo/api.serlo.org/compare/v0.46.1..v0.46.2) - August 26, 2022
+
+### Fixed
+
+- static_pages_builder can be added, removed and searched for #717
+
 ## [v0.46.1](https://github.com/serlo/api.serlo.org/compare/v0.46.0..v0.46.1) - August 18, 2022
 
 ### Breaking Changes
