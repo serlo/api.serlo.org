@@ -1397,6 +1397,13 @@ async function exec(): Promise<void> {
           'User Role endpoints: do not throw error if role is global but instance is sent` #712',
         ],
       },
+      {
+        tagName: 'v0.46.2',
+        date: '2022-08-26',
+        fixed: [
+          'static_pages_builder can be added, removed and searched for #717',
+        ],
+      },
     ],
   })
 
