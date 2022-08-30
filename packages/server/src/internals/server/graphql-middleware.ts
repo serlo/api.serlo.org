@@ -19,6 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import {
+  Configuration as KratosConfig,
+  Session,
+  V0alpha2Api,
+} from '@ory/client'
 import { ApolloServerPluginLandingPageDisabled } from 'apollo-server-core'
 import {
   ApolloError,
@@ -58,6 +63,10 @@ export async function applyGraphQLMiddleware({
   app.use(json({ limit: '2mb' }))
   app.use(
     server.getMiddleware({
+      cors: {
+        origin: ['http://localhost:3000'],
+        credentials: true,
+      },
       path: '/graphql',
       onHealthCheck: async () => {
         await swrQueue.healthy()
@@ -107,27 +116,23 @@ export function getGraphQLOptions(
           userId: null,
         })
       }
-      return handleAuthentication(authorizationHeader, async (token) => {
-        if (process.env.SERVER_HYDRA_HOST === undefined) return null
-        const params = new URLSearchParams()
-        params.append('token', token)
-        const response = await fetch(
-          `${process.env.SERVER_HYDRA_HOST}/oauth2/introspect`,
-          {
-            method: 'post',
-            body: params,
-            headers: {
-              'X-Forwarded-Proto': 'https',
-            },
-          }
+      return handleAuthentication(authorizationHeader, async () => {
+        const publicKratos = new V0alpha2Api(
+          new KratosConfig({
+            basePath: process.env.SERVER_KRATOS_PUBLIC_HOST,
+          })
         )
-        const { active, sub } = (await response.json()) as {
-          active: boolean
-          sub: string
-        }
 
-        if (active) return parseInt(sub, 10)
-        throw new ApolloError('Token expired or invalid', 'INVALID_TOKEN')
+        const session = await publicKratos
+          .toSession(undefined, req.header('cookie'))
+          .then(({ data }) => data)
+          .catch(() => {})
+
+        const legacyId = (
+          session?.identity?.metadata_public as { legacy_id: number }
+        )?.legacy_id
+
+        return legacyId ?? null
       })
     },
   }
