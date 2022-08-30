@@ -116,6 +116,7 @@ export function getGraphQLOptions(
           .then(({ data }) => data)
           .catch(() => {})
 
+        // When the time comes change it to session.identity.id
         const legacyId = (
           session?.identity?.metadata_public as { legacy_id: number }
         )?.legacy_id

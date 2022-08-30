@@ -27,7 +27,7 @@ import { Context } from '~/internals/graphql'
 
 export async function handleAuthentication(
   authorizationHeader: string,
-  userTokenValidator: (token: string) => Promise<number | null>
+  userAuthenticator: () => Promise<number | null>
 ): Promise<Pick<Context, 'service' | 'userId'>> {
   const parts = authorizationHeader.split(' ')
   if (parts.length !== 2 || parts[0] !== 'Serlo') {
@@ -40,7 +40,7 @@ export async function handleAuthentication(
     return { service, userId: null }
   } else if (tokenParts.length === 2) {
     const service = validateServiceToken(tokenParts[0])
-    const userId = await validateUserToken(tokenParts[1], userTokenValidator)
+    const userId = await userAuthenticator()
     return { service, userId }
   } else {
     throw invalid()
@@ -104,16 +104,4 @@ function validateServiceToken(token: string): Service {
       }
     }
   }
-}
-
-async function validateUserToken(
-  token: string,
-  validateToken: (token: string) => Promise<number | null>
-): Promise<number | null> {
-  const userTokenParts = token.split('=')
-  if (userTokenParts.length !== 2 || userTokenParts[0] !== 'User') {
-    throw new AuthenticationError('Invalid authorization header')
-  }
-  const userToken = userTokenParts[1]
-  return await validateToken(userToken)
 }
