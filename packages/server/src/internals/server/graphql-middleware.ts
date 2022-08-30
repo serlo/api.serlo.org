@@ -58,8 +58,7 @@ export async function applyGraphQLMiddleware({
   app.use(
     server.getMiddleware({
       cors: {
-        // TODO
-        origin: ['http://localhost:3000'],
+        origin: getCorsOrigins(),
         credentials: true,
       },
       path: '/graphql',
@@ -133,4 +132,10 @@ function getToken() {
     audience: 'api.serlo.org',
     issuer: Service.SerloCloudflareWorker,
   })
+}
+
+function getCorsOrigins() {
+  return process.env.ENVIRONMENT === 'production'
+    ? ['https://*.serlo.org']
+    : ['https://*.serlo-staging.dev', 'http://localhost:3000']
 }
