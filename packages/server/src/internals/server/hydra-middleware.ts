@@ -19,18 +19,15 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Configuration as KratosConfig, V0alpha2Api } from '@ory/client'
+import { V0alpha2Api } from '@ory/client'
 import { AdminApi, Configuration as HydraConfig } from '@ory/hydra-client'
 import { Express, RequestHandler } from 'express'
+
+import { publicKratos } from '~/internals/kratos'
 
 const basePath = '/hydra'
 
 export function applyHydraMiddleware({ app }: { app: Express }) {
-  const publicKratos = new V0alpha2Api(
-    new KratosConfig({
-      basePath: process.env.SERVER_KRATOS_PUBLIC_HOST,
-    })
-  )
   const hydra = new AdminApi(
     new HydraConfig({
       basePath: process.env.SERVER_HYDRA_HOST,
