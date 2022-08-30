@@ -19,11 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import {
-  Configuration as KratosConfig,
-  Session,
-  V0alpha2Api,
-} from '@ory/client'
 import { ApolloServerPluginLandingPageDisabled } from 'apollo-server-core'
 import {
   ApolloError,
@@ -33,15 +28,14 @@ import {
 import { Express, json } from 'express'
 import createPlayground from 'graphql-playground-middleware-express'
 import jwt from 'jsonwebtoken'
-import fetch from 'node-fetch'
 import * as R from 'ramda'
-import { URLSearchParams } from 'url'
 
 import { handleAuthentication, Service } from '~/internals/authentication'
 import { Cache } from '~/internals/cache'
 import { ModelDataSource } from '~/internals/data-source'
 import { Environment } from '~/internals/environment'
 import { Context } from '~/internals/graphql'
+import { publicKratos } from '~/internals/kratos'
 import { createSentryPlugin } from '~/internals/sentry'
 import { createInvalidCurrentValueErrorPlugin } from '~/internals/server/invalid-current-value-error-plugin'
 import { SwrQueue } from '~/internals/swr-queue'
@@ -64,6 +58,7 @@ export async function applyGraphQLMiddleware({
   app.use(
     server.getMiddleware({
       cors: {
+        // TODO
         origin: ['http://localhost:3000'],
         credentials: true,
       },
@@ -117,12 +112,6 @@ export function getGraphQLOptions(
         })
       }
       return handleAuthentication(authorizationHeader, async () => {
-        const publicKratos = new V0alpha2Api(
-          new KratosConfig({
-            basePath: process.env.SERVER_KRATOS_PUBLIC_HOST,
-          })
-        )
-
         const session = await publicKratos
           .toSession(undefined, req.header('cookie'))
           .then(({ data }) => data)

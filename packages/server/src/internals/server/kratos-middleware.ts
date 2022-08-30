@@ -19,20 +19,16 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Configuration, IdentityState, V0alpha2Api } from '@ory/client'
+import { IdentityState, V0alpha2Api } from '@ory/client'
 import { Express, RequestHandler } from 'express'
 
+import { kratosAdmin } from '~/internals/kratos'
 import { DatabaseLayer } from '~/model'
 
 const basePath = '/kratos'
 
 export function applyKratosMiddleware({ app }: { app: Express }) {
-  const kratos = new V0alpha2Api(
-    new Configuration({
-      basePath: process.env.SERVER_KRATOS_ADMIN_HOST,
-    })
-  )
-  app.post(`${basePath}/register`, createKratosRegisterHandler(kratos))
+  app.post(`${basePath}/register`, createKratosRegisterHandler(kratosAdmin))
   return basePath
 }
 
