@@ -26,5 +26,5 @@ import { SwrQueue } from './swr-queue'
 export interface Environment {
   cache: Cache
   swrQueue: SwrQueue
-  kratos: Kratos | undefined
+  kratos: Kratos
 }

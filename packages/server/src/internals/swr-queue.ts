@@ -28,6 +28,7 @@ import * as R from 'ramda'
 import { Cache, CacheEntry, Priority } from './cache'
 import { isQuery, QuerySpec } from './data-source-helper'
 import { captureErrorEvent } from './error-event'
+import { createKratos } from './kratos'
 import { log } from './log'
 import { redisUrl } from './redis-url'
 import { Timer } from './timer'
@@ -79,6 +80,7 @@ export function createSwrQueue({
     environment: {
       cache,
       swrQueue: emptySwrQueue,
+      kratos: createKratos(),
     },
   }
   const models = R.values(modelFactories).map((createModel) =>
@@ -173,6 +175,7 @@ export function createSwrQueueWorker({
     environment: {
       cache,
       swrQueue: emptySwrQueue,
+      kratos: createKratos(),
     },
   }
   const models = R.values(modelFactories).map((createModel) =>
