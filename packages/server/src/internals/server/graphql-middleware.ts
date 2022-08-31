@@ -138,5 +138,9 @@ function getToken() {
 function getCorsOrigins() {
   return process.env.ENVIRONMENT === 'production'
     ? ['https://*.serlo.org']
-    : ['https://*.serlo-staging.dev', 'http://localhost:3000']
+    : [
+        'https://*.serlo-staging.dev',
+        'https://*-serlo.vercel.app',
+        'http://localhost:3000',
+      ]
 }
