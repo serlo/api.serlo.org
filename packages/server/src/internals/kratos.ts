@@ -20,20 +20,24 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Configuration, V0alpha2Api } from '@ory/client'
-import dotenv from 'dotenv'
-import path from 'path'
 
-dotenv.config({
-  path: path.join(__dirname, '..', '..', '..', '.env'),
-})
+export interface Kratos {
+  public: V0alpha2Api
+  admin: V0alpha2Api
+}
 
-export const publicKratos = new V0alpha2Api(
-  new Configuration({
-    basePath: process.env.SERVER_KRATOS_PUBLIC_HOST,
-  })
-)
-export const kratosAdmin = new V0alpha2Api(
-  new Configuration({
-    basePath: process.env.SERVER_KRATOS_ADMIN_HOST,
-  })
-)
+export function createKratos(): Kratos {
+  return {
+    public: new V0alpha2Api(
+      new Configuration({
+        basePath: process.env.SERVER_KRATOS_PUBLIC_HOST,
+      })
+    ),
+
+    admin: new V0alpha2Api(
+      new Configuration({
+        basePath: process.env.SERVER_KRATOS_ADMIN_HOST,
+      })
+    ),
+  }
+}

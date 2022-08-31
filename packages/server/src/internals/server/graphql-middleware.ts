@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Session } from '@ory/client'
 import { ApolloServerPluginLandingPageDisabled } from 'apollo-server-core'
 import {
   ApolloError,
@@ -35,7 +36,7 @@ import { Cache } from '~/internals/cache'
 import { ModelDataSource } from '~/internals/data-source'
 import { Environment } from '~/internals/environment'
 import { Context } from '~/internals/graphql'
-import { publicKratos } from '~/internals/kratos'
+import { Kratos } from '~/internals/kratos'
 import { createSentryPlugin } from '~/internals/sentry'
 import { createInvalidCurrentValueErrorPlugin } from '~/internals/server/invalid-current-value-error-plugin'
 import { SwrQueue } from '~/internals/swr-queue'
@@ -45,12 +46,14 @@ export async function applyGraphQLMiddleware({
   app,
   cache,
   swrQueue,
+  kratos,
 }: {
   app: Express
   cache: Cache
   swrQueue: SwrQueue
+  kratos: Kratos
 }) {
-  const environment = { cache, swrQueue }
+  const environment = { cache, swrQueue, kratos }
   const server = new ApolloServer(getGraphQLOptions(environment))
   await server.start()
 
@@ -111,10 +114,16 @@ export function getGraphQLOptions(
         })
       }
       return handleAuthentication(authorizationHeader, async () => {
-        const session = await publicKratos
-          .toSession(undefined, req.header('cookie'))
-          .then(({ data }) => data)
-          .catch(() => {})
+        let session: Session | undefined
+
+        try {
+          session = await environment.kratos.public
+            .toSession(undefined, req.header('cookie'))
+            .then(({ data }) => data)
+        } catch {
+          // the user is probably unauthenticated
+          return null
+        }
 
         // When the time comes change it to session.identity.id
         const legacyId = (
