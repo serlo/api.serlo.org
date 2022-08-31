@@ -120,7 +120,6 @@ export function getGraphQLOptions(
         const legacyId = (
           session?.identity?.metadata_public as { legacy_id: number }
         )?.legacy_id
-
         return legacyId ?? null
       })
     },
