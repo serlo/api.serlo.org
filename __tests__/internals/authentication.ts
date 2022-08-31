@@ -114,6 +114,24 @@ describe('Service token only', () => {
       expect(err.message).toEqual('Invalid authorization header')
     }
   })
+
+  test('no longer supported authentication type', async () => {
+    const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
+      audience: 'api.serlo.org',
+      issuer: Service.Serlo,
+    })
+    const userToken =
+      'Us-VibWgRSlR5sKXeRZ92-QAK3j2MOd3Dht_zBUms7g.o2O8e8VI2ZMSXTt5M_rOiGdoVipNGPrCINTVkv9rPZE'
+    const header = `Serlo Service=${token};User=${userToken}`
+
+    try {
+      await handleAuthentication(header, fakeUserAuthenticator)
+      throw new Error('Expected error')
+    } catch (e) {
+      const err = e as Error
+      expect(err.message).toEqual('Invalid authorization header')
+    }
+  })
 })
 
 describe('Service & User token', () => {
@@ -125,8 +143,7 @@ describe('Service & User token', () => {
     requestHeaderCookie =
       'ory_kratos_session=MTY2MTg4OTA4MXxtekxPS2dhV09Ha09fdDN4RDcxNmx0Y0s2REhvWVVuUEJydmQtWWNzTWtULXNPRnBseHZHblQ5SERNWmkxcmQ1aWU1ZHU4MGZEODNFTXdnTnBXZGN1ZWhiWEdhUi01cnRRNC1aMEYyTWFUQ0IySEg1djBqaVlzRi00NE1Nd1R6NHd6OXo4dmR3blE9PXwYVBtzxUcVJgEjP2wtw0U4PrmZoYE7yfo5XPKWC6UDTg=='
 
-    // TODO: user token is from now on irrelevant and will be removed in cloudflare worker in the future
-    const header = `Serlo Service=${serviceToken};User=`
+    const header = `Serlo Service=${serviceToken}`
     expect(await handleAuthentication(header, fakeUserAuthenticator)).toEqual({
       service: Service.Serlo,
       userId: 1,
@@ -141,7 +158,7 @@ describe('Service & User token', () => {
 
     requestHeaderCookie = 'ory_kratos_session=foobar'
 
-    const header = `Serlo Service=${serviceToken};User=`
+    const header = `Serlo Service=${serviceToken}`
     expect(await handleAuthentication(header, fakeUserAuthenticator)).toEqual({
       service: Service.Serlo,
       userId: null,
@@ -151,7 +168,7 @@ describe('Service & User token', () => {
   test('invalid service token', async () => {
     const serviceToken = 'invalid'
 
-    const header = `Serlo Service=${serviceToken};User=`
+    const header = `Serlo Service=${serviceToken}`
 
     try {
       await handleAuthentication(header, fakeUserAuthenticator)

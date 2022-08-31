@@ -35,10 +35,7 @@ export async function handleAuthentication(
   }
 
   const tokenParts = parts[1].split(';')
-  if (tokenParts.length === 1) {
-    const service = validateServiceToken(tokenParts[0])
-    return { service, userId: null }
-  } else if (tokenParts.length === 2) {
+  if (tokenParts.length < 2) {
     const service = validateServiceToken(tokenParts[0])
     const userId = await userAuthenticator()
     return { service, userId }
