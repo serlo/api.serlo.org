@@ -19,18 +19,21 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Configuration as KratosConfig, V0alpha2Api } from '@ory/client'
+import { V0alpha2Api } from '@ory/client'
 import { AdminApi, Configuration as HydraConfig } from '@ory/hydra-client'
 import { Express, RequestHandler } from 'express'
 
+import { Kratos } from '../kratos'
+
 const basePath = '/hydra'
 
-export function applyHydraMiddleware({ app }: { app: Express }) {
-  const publicKratos = new V0alpha2Api(
-    new KratosConfig({
-      basePath: process.env.SERVER_KRATOS_PUBLIC_HOST,
-    })
-  )
+export function applyHydraMiddleware({
+  app,
+  kratos,
+}: {
+  app: Express
+  kratos: Kratos
+}) {
   const hydra = new AdminApi(
     new HydraConfig({
       basePath: process.env.SERVER_HYDRA_HOST,
@@ -40,10 +43,13 @@ export function applyHydraMiddleware({ app }: { app: Express }) {
     })
   )
 
-  app.get(`${basePath}/login`, createHydraLoginHandler({ publicKratos, hydra }))
+  app.get(
+    `${basePath}/login`,
+    createHydraLoginHandler({ publicKratos: kratos.public, hydra })
+  )
   app.get(
     `${basePath}/consent`,
-    createHydraConsentHandler({ publicKratos, hydra })
+    createHydraConsentHandler({ publicKratos: kratos.public, hydra })
   )
   app.get(`${basePath}/logout`, createHydraLogoutHandler(hydra))
   return basePath

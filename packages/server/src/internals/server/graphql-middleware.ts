@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { Session } from '@ory/client'
 import { ApolloServerPluginLandingPageDisabled } from 'apollo-server-core'
 import {
   ApolloError,
@@ -28,15 +29,14 @@ import {
 import { Express, json } from 'express'
 import createPlayground from 'graphql-playground-middleware-express'
 import jwt from 'jsonwebtoken'
-import fetch from 'node-fetch'
 import * as R from 'ramda'
-import { URLSearchParams } from 'url'
 
 import { handleAuthentication, Service } from '~/internals/authentication'
 import { Cache } from '~/internals/cache'
 import { ModelDataSource } from '~/internals/data-source'
 import { Environment } from '~/internals/environment'
 import { Context } from '~/internals/graphql'
+import { Kratos } from '~/internals/kratos'
 import { createSentryPlugin } from '~/internals/sentry'
 import { createInvalidCurrentValueErrorPlugin } from '~/internals/server/invalid-current-value-error-plugin'
 import { SwrQueue } from '~/internals/swr-queue'
@@ -46,18 +46,24 @@ export async function applyGraphQLMiddleware({
   app,
   cache,
   swrQueue,
+  kratos,
 }: {
   app: Express
   cache: Cache
   swrQueue: SwrQueue
+  kratos: Kratos
 }) {
-  const environment = { cache, swrQueue }
+  const environment = { cache, swrQueue, kratos }
   const server = new ApolloServer(getGraphQLOptions(environment))
   await server.start()
 
   app.use(json({ limit: '2mb' }))
   app.use(
     server.getMiddleware({
+      cors: {
+        origin: getCorsOrigins(),
+        credentials: true,
+      },
       path: '/graphql',
       onHealthCheck: async () => {
         await swrQueue.healthy()
@@ -107,27 +113,23 @@ export function getGraphQLOptions(
           userId: null,
         })
       }
-      return handleAuthentication(authorizationHeader, async (token) => {
-        if (process.env.SERVER_HYDRA_HOST === undefined) return null
-        const params = new URLSearchParams()
-        params.append('token', token)
-        const response = await fetch(
-          `${process.env.SERVER_HYDRA_HOST}/oauth2/introspect`,
-          {
-            method: 'post',
-            body: params,
-            headers: {
-              'X-Forwarded-Proto': 'https',
-            },
-          }
-        )
-        const { active, sub } = (await response.json()) as {
-          active: boolean
-          sub: string
+      return handleAuthentication(authorizationHeader, async () => {
+        let session: Session | undefined
+
+        try {
+          session = await environment.kratos.public
+            .toSession(undefined, req.header('cookie'))
+            .then(({ data }) => data)
+        } catch {
+          // the user is probably unauthenticated
+          return null
         }
 
-        if (active) return parseInt(sub, 10)
-        throw new ApolloError('Token expired or invalid', 'INVALID_TOKEN')
+        // When the time comes change it to session.identity.id
+        const legacyId = (
+          session?.identity?.metadata_public as { legacy_id: number }
+        )?.legacy_id
+        return legacyId ?? null
       })
     },
   }
@@ -139,4 +141,14 @@ function getToken() {
     audience: 'api.serlo.org',
     issuer: Service.SerloCloudflareWorker,
   })
+}
+
+function getCorsOrigins() {
+  return process.env.ENVIRONMENT === 'production'
+    ? ['https://*.serlo.org']
+    : [
+        'https://*.serlo-staging.dev',
+        'https://*-serlo.vercel.app',
+        'http://localhost:3000',
+      ]
 }

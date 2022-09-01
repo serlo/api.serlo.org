@@ -19,12 +19,25 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Cache } from './cache'
-import { Kratos } from './kratos'
-import { SwrQueue } from './swr-queue'
+import { Configuration, V0alpha2Api } from '@ory/client'
 
-export interface Environment {
-  cache: Cache
-  swrQueue: SwrQueue
-  kratos: Kratos
+export interface Kratos {
+  public: V0alpha2Api
+  admin: V0alpha2Api
+}
+
+export function createKratos(): Kratos {
+  return {
+    public: new V0alpha2Api(
+      new Configuration({
+        basePath: process.env.SERVER_KRATOS_PUBLIC_HOST,
+      })
+    ),
+
+    admin: new V0alpha2Api(
+      new Configuration({
+        basePath: process.env.SERVER_KRATOS_ADMIN_HOST,
+      })
+    ),
+  }
 }
