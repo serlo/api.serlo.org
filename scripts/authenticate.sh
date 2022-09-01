@@ -10,7 +10,9 @@ fi
 
 auth_file=packages/server/src/internals/server/graphql-middleware.ts
 
-sed -i -e '103,132d' $auth_file
+body_of_context_method='109,134d'
+
+sed -i -e $body_of_context_method $auth_file
 sed -i "s/context({ req }): Promise<Pick<Context, 'service' | 'userId'>> {/context(): Promise<Pick<Context, 'service' | 'userId'>> {return Promise.resolve({ service: Service.SerloCloudflareWorker,userId: $user_id,}) }/" $auth_file
 
 print_header "Authenticated as user with id $user_id"

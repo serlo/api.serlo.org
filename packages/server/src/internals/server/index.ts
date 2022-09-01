@@ -24,6 +24,7 @@ import createApp from 'express'
 import path from 'path'
 
 import { Cache, createCache } from '../cache'
+import { createKratos, Kratos } from '../kratos'
 import { initializeSentry } from '../sentry'
 import { createSwrQueue, SwrQueue } from '../swr-queue'
 import { createTimer } from '../timer'
@@ -44,22 +45,30 @@ export async function start() {
   const timer = createTimer()
   const cache = createCache({ timer })
   const swrQueue = createSwrQueue({ cache, timer })
-  await initializeServer({ cache, swrQueue })
+  const kratos = createKratos()
+  await initializeServer({ cache, swrQueue, kratos })
 }
 
 async function initializeServer({
   cache,
   swrQueue,
+  kratos,
 }: {
   cache: Cache
   swrQueue: SwrQueue
+  kratos: Kratos
 }) {
   const app = createApp()
   const dashboardPath = applySwrQueueDashboardMiddleware({ app })
   const enmeshedPath = applyEnmeshedMiddleware({ app, cache })
-  const graphqlPath = await applyGraphQLMiddleware({ app, cache, swrQueue })
-  const kratosPath = applyKratosMiddleware({ app })
-  const hydraPath = applyHydraMiddleware({ app })
+  const graphqlPath = await applyGraphQLMiddleware({
+    app,
+    cache,
+    swrQueue,
+    kratos,
+  })
+  const kratosPath = applyKratosMiddleware({ app, kratos })
+  const hydraPath = applyHydraMiddleware({ app, kratos })
 
   const port = 3001
   const host = `http://localhost:${port}`

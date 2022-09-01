@@ -33,6 +33,7 @@ import {
   setup,
 } from './setup'
 import { Service } from '~/internals/authentication'
+import { createKratos } from '~/internals/kratos'
 import { emptySwrQueue } from '~/internals/swr-queue'
 import { createSerloModel } from '~/model'
 
@@ -95,6 +96,7 @@ beforeEach(async () => {
     environment: {
       cache: global.cache,
       swrQueue: emptySwrQueue,
+      kratos: createKratos(),
     },
   })
 })
