@@ -30,6 +30,7 @@ const allowedUserIds = [
   131536, // dal
   32543, // botho
   178145, // CarolinJaser
+  178807, // HugoBT
 ]
 
 export const resolvers: Mutations<'_cache'> = {
