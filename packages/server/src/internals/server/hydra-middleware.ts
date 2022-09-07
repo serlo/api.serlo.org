@@ -63,20 +63,25 @@ function createHydraLoginHandler({
   hydra: AdminApi
 }): RequestHandler {
   return async (req, res) => {
-    const session = await publicKratos
-      .toSession(undefined, String(req.header('cookie')))
-      .then(({ data }) => data)
-      .catch((error) => {
-        res.status(500)
-        res.send(error)
-      })
     const query = req.query
     const challenge = String(query.login_challenge)
+
     if (!challenge) {
       res.status(400)
       res.send('Expected a login challenge to be set but received none.')
       return
     }
+
+    const session = await publicKratos
+      .toSession(undefined, String(req.header('cookie')))
+      .then(({ data }) => data)
+      .catch(() => {
+        // user is most likely just not logged in, redirect to login page
+        res.redirect(
+          // TODO: remove hardcode
+          `http://localhost:3000/auth/login?return_to=http://localhost:3001/hydra/login?login_challenge=${challenge}`
+        )
+      })
 
     if (session) {
       const userId = (session.identity.metadata_public as { legacy_id: number })
@@ -142,6 +147,8 @@ function createHydraConsentHandler({
       hydra
         .getConsentRequest(challenge)
         .then(async ({ data: body }) => {
+          const scopes = body.requested_scope
+
           return await hydra
             .acceptConsentRequest(challenge, {
               grant_scope: body.requested_scope,
@@ -152,7 +159,12 @@ function createHydraConsentHandler({
                 id_token: {
                   id: userId,
                   username,
-                  email,
+                  ...(scopes?.includes('email')
+                    ? {
+                        email,
+                        email_verified: true,
+                      }
+                    : {}),
                 },
               },
             })
