@@ -29,6 +29,7 @@ import { licenseSchema } from './license'
 import { mediaSchema } from './media'
 import { metadataSchema } from './metadata'
 import { notificationSchema } from './notification'
+import { oauthSchema } from './oauth'
 import { rolesSchema } from './roles'
 import { subjectsSchema } from './subject'
 import { subscriptionSchema } from './subscription'
@@ -47,6 +48,7 @@ export const schema = mergeSchemas(
   mediaSchema,
   metadataSchema,
   notificationSchema,
+  oauthSchema,
   rolesSchema,
   subjectsSchema,
   subscriptionSchema,

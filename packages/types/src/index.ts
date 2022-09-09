@@ -268,6 +268,12 @@ export type AbstractUuidCursor = {
   node: AbstractUuid;
 };
 
+export type AcceptResponse = {
+  __typename?: 'AcceptResponse';
+  redirectUri: Scalars['String'];
+  success: Scalars['Boolean'];
+};
+
 export type AddRevisionResponse = {
   __typename?: 'AddRevisionResponse';
   query: Query;
@@ -1542,6 +1548,7 @@ export type Mutation = {
   _cache: _CacheMutation;
   entity: EntityMutation;
   notification: NotificationMutation;
+  oauth: OauthMutation;
   page: PageMutation;
   subscription: SubscriptionMutation;
   taxonomyTerm: TaxonomyTermMutation;
@@ -1624,6 +1631,33 @@ export type NotificationSetStateResponse = {
   __typename?: 'NotificationSetStateResponse';
   query: Query;
   success: Scalars['Boolean'];
+};
+
+export type OauthAcceptInput = {
+  challenge: Scalars['String'];
+  session: Scalars['JSON'];
+};
+
+export type OauthMutation = {
+  __typename?: 'OauthMutation';
+  acceptConsent: AcceptResponse;
+  acceptLogin: AcceptResponse;
+  acceptLogout: AcceptResponse;
+};
+
+
+export type OauthMutationAcceptConsentArgs = {
+  input: OauthAcceptInput;
+};
+
+
+export type OauthMutationAcceptLoginArgs = {
+  input: OauthAcceptInput;
+};
+
+
+export type OauthMutationAcceptLogoutArgs = {
+  challenge: Scalars['String'];
 };
 
 export type Page = AbstractNavigationChild & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
