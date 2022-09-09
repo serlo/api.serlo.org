@@ -31,12 +31,15 @@ import createPlayground from 'graphql-playground-middleware-express'
 import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
 
-import { handleAuthentication, Service } from '~/internals/authentication'
+import {
+  AuthServices,
+  handleAuthentication,
+  Service,
+} from '~/internals/authentication'
 import { Cache } from '~/internals/cache'
 import { ModelDataSource } from '~/internals/data-source'
 import { Environment } from '~/internals/environment'
 import { Context } from '~/internals/graphql'
-import { Kratos } from '~/internals/kratos'
 import { createSentryPlugin } from '~/internals/sentry'
 import { createInvalidCurrentValueErrorPlugin } from '~/internals/server/invalid-current-value-error-plugin'
 import { SwrQueue } from '~/internals/swr-queue'
@@ -46,14 +49,14 @@ export async function applyGraphQLMiddleware({
   app,
   cache,
   swrQueue,
-  kratos,
+  authServices,
 }: {
   app: Express
   cache: Cache
   swrQueue: SwrQueue
-  kratos: Kratos
+  authServices: AuthServices
 }) {
-  const environment = { cache, swrQueue, kratos }
+  const environment = { cache, swrQueue, authServices }
   const server = new ApolloServer(getGraphQLOptions(environment))
   await server.start()
 
@@ -117,7 +120,7 @@ export function getGraphQLOptions(
         let session: Session | undefined
 
         try {
-          session = await environment.kratos.public
+          session = await environment.authServices.kratos.public
             .toSession(undefined, req.header('cookie'))
             .then(({ data }) => data)
         } catch {

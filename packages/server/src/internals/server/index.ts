@@ -23,8 +23,8 @@ import dotenv from 'dotenv'
 import createApp from 'express'
 import path from 'path'
 
+import { initiateAuthSdks, AuthServices } from '../authentication'
 import { Cache, createCache } from '../cache'
-import { createKratos, Kratos } from '../kratos'
 import { initializeSentry } from '../sentry'
 import { createSwrQueue, SwrQueue } from '../swr-queue'
 import { createTimer } from '../timer'
@@ -45,18 +45,18 @@ export async function start() {
   const timer = createTimer()
   const cache = createCache({ timer })
   const swrQueue = createSwrQueue({ cache, timer })
-  const kratos = createKratos()
-  await initializeServer({ cache, swrQueue, kratos })
+  const authServices = initiateAuthSdks()
+  await initializeServer({ cache, swrQueue, authServices })
 }
 
 async function initializeServer({
   cache,
   swrQueue,
-  kratos,
+  authServices,
 }: {
   cache: Cache
   swrQueue: SwrQueue
-  kratos: Kratos
+  authServices: AuthServices
 }) {
   const app = createApp()
   const dashboardPath = applySwrQueueDashboardMiddleware({ app })
@@ -65,10 +65,13 @@ async function initializeServer({
     app,
     cache,
     swrQueue,
-    kratos,
+    authServices,
   })
-  const kratosPath = applyKratosMiddleware({ app, kratos })
-  const hydraPath = applyHydraMiddleware({ app, kratos })
+  const kratosPath = applyKratosMiddleware({
+    app,
+    kratosAdmin: authServices.kratos.admin,
+  })
+  const hydraPath = applyHydraMiddleware({ app, authServices })
 
   const port = 3001
   const host = `http://localhost:${port}`

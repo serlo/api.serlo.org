@@ -23,16 +23,16 @@ import { V0alpha2Api } from '@ory/client'
 import { AdminApi, Configuration as HydraConfig } from '@ory/hydra-client'
 import { Express, RequestHandler } from 'express'
 
-import { Kratos } from '../kratos'
+import { AuthServices } from '../authentication'
 
 const basePath = '/hydra'
 
 export function applyHydraMiddleware({
   app,
-  kratos,
+  authServices,
 }: {
   app: Express
-  kratos: Kratos
+  authServices: AuthServices
 }) {
   const hydra = new AdminApi(
     new HydraConfig({
@@ -45,11 +45,14 @@ export function applyHydraMiddleware({
 
   app.get(
     `${basePath}/login`,
-    createHydraLoginHandler({ publicKratos: kratos.public, hydra })
+    createHydraLoginHandler({ publicKratos: authServices.kratos.public, hydra })
   )
   app.get(
     `${basePath}/consent`,
-    createHydraConsentHandler({ publicKratos: kratos.public, hydra })
+    createHydraConsentHandler({
+      publicKratos: authServices.kratos.public,
+      hydra,
+    })
   )
   app.get(`${basePath}/logout`, createHydraLogoutHandler(hydra))
   return basePath
