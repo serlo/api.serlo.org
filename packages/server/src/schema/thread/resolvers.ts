@@ -20,8 +20,14 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as auth from '@serlo/authorization'
+import { UserInputError } from 'apollo-server-core'
 
-import { decodeThreadId, decodeThreadIds, encodeThreadId } from './utils'
+import {
+  decodeThreadId,
+  decodeThreadIds,
+  encodeThreadId,
+  resolveThreads,
+} from './utils'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
@@ -31,6 +37,7 @@ import {
   TypeResolvers,
   Model,
   Context,
+  Queries,
 } from '~/internals/graphql'
 import { DiscriminatorType, UserDecoder, UuidDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
@@ -41,10 +48,43 @@ import { Comment, Thread } from '~/types'
 export const resolvers: InterfaceResolvers<'ThreadAware'> &
   Mutations<'thread'> &
   TypeResolvers<Thread> &
-  TypeResolvers<Comment> = {
+  TypeResolvers<Comment> &
+  Queries<'thread'> = {
   ThreadAware: {
     __resolveType(parent) {
       return parent.__typename
+    },
+  },
+  Query: {
+    thread: createNamespace(),
+  },
+  ThreadQuery: {
+    async allThreads(_parent, input, { dataSources }) {
+      const limit = 50
+      const { first = 10, instance } = input
+      // TODO: Better solution
+      const after = input.after
+        ? parseInt(Buffer.from(input.after, 'base64').toString())
+        : undefined
+
+      if (first && first > limit)
+        throw new UserInputError(`"first" cannot be larger than ${limit}`)
+
+      const { firstCommentIds } = await dataSources.model.serlo.getAllThreads({
+        first: first + 1,
+        after,
+        instance,
+      })
+
+      const threads = await resolveThreads({ firstCommentIds, dataSources })
+
+      // TODO: The types do not match
+      // TODO: Support for resolving small changes
+      return resolveConnection({
+        nodes: threads,
+        payload: { ...input, first },
+        createCursor: (node) => node.commentPayloads[0].id.toString(),
+      })
     },
   },
   Thread: {

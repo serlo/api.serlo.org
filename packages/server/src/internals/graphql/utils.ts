@@ -29,6 +29,8 @@ import * as R from 'ramda'
 
 import { Context } from '~/internals/graphql/context'
 import { fetchAuthorizationPayload } from '~/schema/authorization/utils'
+import { isInstance } from '~/schema/instance/utils'
+import { Instance, Role } from '~/types'
 
 export function assertUserIsAuthenticated(
   userId: number | null
@@ -105,9 +107,11 @@ export function decodeFromBase64(text: string) {
   return Buffer.from(text, 'base64').toString('utf8')
 }
 
-export function assertArgumentIsNotEmpty(args: { [key: string]: unknown }) {
+export function assertStringIsNotEmpty(args: { [key: string]: unknown }) {
   const emptyArgs: string[] = Object.entries(args)
-    .filter(([_, value]) => !value)
+    .filter(
+      ([_, value]) => typeof value === 'string' && value.trim().length === 0
+    )
     .map(([key]) => key)
 
   if (emptyArgs.length > 0) {
@@ -115,4 +119,14 @@ export function assertArgumentIsNotEmpty(args: { [key: string]: unknown }) {
       `Arguments ${emptyArgs.join(', ')} may not be empty`
     )
   }
+}
+
+export function isGlobalRole(role: Role): boolean {
+  return [Role.Guest, Role.Login, Role.Sysadmin].includes(role)
+}
+
+export function generateRole(role: Role, instance: Instance | null) {
+  if (isGlobalRole(role)) return role
+  if (isInstance(instance)) return `${instance}_${role}`
+  else throw new UserInputError('This role needs an instance')
 }

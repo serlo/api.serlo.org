@@ -18,7 +18,8 @@ type Article implements AbstractUuid & AbstractRepository & AbstractEntity & Abs
     actorId: Int
   ): AbstractNotificationEventConnection!
   instance: Instance!
-  alias: String
+  alias: String!
+  title: String!
   date: DateTime!
   license: License!
   currentRevision: ArticleRevision
@@ -42,7 +43,7 @@ type ArticleRevision implements AbstractUuid & AbstractRevision & AbstractEntity
   id: Int!
   author: User!
   trashed: Boolean!
-  alias: String
+  alias: String!
   threads(
     after: String
     before: String

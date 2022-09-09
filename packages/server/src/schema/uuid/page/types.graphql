@@ -19,7 +19,8 @@ type Page implements AbstractUuid & AbstractRepository & AbstractNavigationChild
   ): AbstractNotificationEventConnection!
   date: DateTime!
   instance: Instance!
-  alias: String
+  alias: String!
+  title: String!
   license: License!
   currentRevision: PageRevision
   revisions(
@@ -36,7 +37,7 @@ type PageRevision implements AbstractUuid & AbstractRevision & ThreadAware {
   id: Int!
   author: User!
   trashed: Boolean!
-  alias: String
+  alias: String!
   threads(
     after: String
     before: String
@@ -82,10 +83,24 @@ type PageMutation {
   rejectRevision(input: RejectRevisionInput!): RejectRevisionResponse!
 }
 
+extend type Query {
+  page: PageQuery!
+}
+
+type PageQuery {
+  pages(instance: Instance): [Page!]!
+}
+
 input PageAddRevisionInput {
   content: String!
   pageId: Int!
   title: String!
+}
+
+type AddRevisionResponse {
+  success: Boolean!
+  query: Query!
+  revisionId: Int
 }
 
 input CreatePageInput {

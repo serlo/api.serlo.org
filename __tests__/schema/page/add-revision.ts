@@ -20,16 +20,17 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import * as R from 'ramda'
 
-import { page, user as baseUser } from '../../../__fixtures__'
+import { page, pageRevision, user as baseUser } from '../../../__fixtures__'
 import { given, Client, nextUuid } from '../../__utils__'
 
 const user = { ...baseUser, roles: ['de_static_pages_builder'] }
 
 describe('PageAddRevisionMutation', () => {
   const input = {
-    content: 'content',
-    title: 'title',
+    content: 'new content',
+    title: 'new title',
     pageId: page.id,
   }
 
@@ -48,20 +49,72 @@ describe('PageAddRevisionMutation', () => {
     })
     .withVariables({ input })
 
+  const newRevisionId = nextUuid(pageRevision.id)
+
   beforeEach(() => {
-    given('UuidQuery').for(user, page)
+    given('UuidQuery').for(user, page, pageRevision)
+    given('PageAddRevisionMutation').isDefinedBy((req, res, ctx) => {
+      // const { title, content } = req.body.payload
+      const newRevision = {
+        ...pageRevision,
+        ...R.pick(['title', 'content'], req.body.payload),
+        id: newRevisionId,
+      }
+      given('UuidQuery').for(newRevision)
+      given('UuidQuery').for({
+        ...page,
+        revisionIds: [newRevision.id, ...page.revisionIds],
+        currentRevisionId: newRevision.id,
+      })
+      return res(ctx.json({ success: true, revisionId: newRevision.id }))
+    })
   })
 
   test('returns "{ success: true }" when mutation could be successfully executed', async () => {
-    given('PageAddRevisionMutation')
-      .withPayload({
-        ...input,
-        userId: user.id,
-      })
-      .returns({ success: true, revisionId: 123 })
-
     await mutation.shouldReturnData({
-      page: { addRevision: { success: true, revisionId: 123 } },
+      page: { addRevision: { success: true, revisionId: newRevisionId } },
+    })
+  })
+
+  test('updates the cache', async () => {
+    const query = new Client({ userId: user.id })
+      .prepareQuery({
+        query: gql`
+          query ($id: Int!) {
+            uuid(id: $id) {
+              ... on Page {
+                currentRevision {
+                  id
+                  content
+                  title
+                }
+              }
+            }
+          }
+        `,
+      })
+      .withVariables({ id: page.id })
+
+    await query.shouldReturnData({
+      uuid: {
+        currentRevision: {
+          id: pageRevision.id,
+          content: pageRevision.content,
+          title: pageRevision.title,
+        },
+      },
+    })
+
+    await mutation.execute()
+
+    await query.shouldReturnData({
+      uuid: {
+        currentRevision: {
+          id: newRevisionId,
+          content: input.content,
+          title: input.title,
+        },
+      },
     })
   })
 
@@ -71,45 +124,24 @@ describe('PageAddRevisionMutation', () => {
       .shouldFailWithError('UNAUTHENTICATED')
   })
 
-  test('fails when user does not have role "staticPagesBuilder"', async () => {
-    const regularUser = { ...user, id: nextUuid(user.id), roles: ['login'] }
-
-    given('UuidQuery').for(regularUser)
-
-    await new Client({ userId: regularUser.id })
-      .prepareQuery({
-        query: gql`
-          mutation set($input: PageAddRevisionInput!) {
-            page {
-              addRevision(input: $input) {
-                success
-              }
-            }
-          }
-        `,
-      })
-      .withVariables({ input })
-      .shouldFailWithError('FORBIDDEN')
+  test('fails when user does not have role "static_pages_builder"', async () => {
+    await mutation.forLoginUser().shouldFailWithError('FORBIDDEN')
   })
 
   test('fails when `title` or `content` is empty', async () => {
     await mutation
-      .withVariables({
-        input: {
-          content: '',
-          title: 'title',
-          pageId: page.id,
-        },
+      .withInput({
+        content: '',
+        title: 'title',
+        pageId: page.id,
       })
       .shouldFailWithError('BAD_USER_INPUT')
 
     await mutation
-      .withVariables({
-        input: {
-          content: 'content',
-          title: '',
-          pageId: page.id,
-        },
+      .withInput({
+        content: 'content',
+        title: '',
+        pageId: page.id,
       })
       .shouldFailWithError('BAD_USER_INPUT')
   })

@@ -30,6 +30,7 @@ const allowedUserIds = [
   131536, // dal
   32543, // botho
   178145, // CarolinJaser
+  178807, // HugoBT
 ]
 
 export const resolvers: Mutations<'_cache'> = {
@@ -48,15 +49,15 @@ export const resolvers: Mutations<'_cache'> = {
       await dataSources.model.setCacheValue({ key, value })
       return { success: true, query: {} }
     },
-    async remove(_parent, payload, { dataSources, service, userId }) {
-      const { key } = payload.input
+    async remove(_parent, { input }, { dataSources, service, userId }) {
       checkPermission({
         service,
         userId,
         operation: 'remove',
         allowedServices: [Service.Serlo],
       })
-      await dataSources.model.removeCacheValue({ key })
+
+      await dataSources.model.removeCacheValue({ keys: input.keys })
       return { success: true, query: {} }
     },
     async update(_parent, { input }, { dataSources, service, userId }) {

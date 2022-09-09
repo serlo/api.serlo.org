@@ -24,6 +24,8 @@ import { GraphQLResponse } from 'apollo-server-types'
 import { DocumentNode } from 'graphql'
 import R from 'ramda'
 
+import { given, nextUuid } from '.'
+import { user } from '../../__fixtures__'
 import { LegacyClient, createTestClient } from './test-client'
 import { Context } from '~/internals/graphql'
 import { Sentry } from '~/internals/sentry'
@@ -31,32 +33,60 @@ import { Sentry } from '~/internals/sentry'
 export class Client {
   private apolloServer: ApolloServer
 
-  constructor(context?: Partial<Pick<Context, 'service' | 'userId'>>) {
+  constructor(context?: ClientContext) {
     this.apolloServer = createTestClient(context)
   }
 
-  prepareQuery<V extends Variables = Variables>(query: QuerySpec<V>) {
+  prepareQuery<I extends Input = Input, V extends Variables<I> = Variables<I>>(
+    query: QuerySpec<V>
+  ) {
     return new Query(this, query)
   }
 
-  execute(query: QuerySpec<Variables>) {
+  execute(query: QuerySpec<Variables<Input>>) {
     return this.apolloServer.executeOperation(query)
   }
 }
 
-export class Query<V extends Variables = Variables> {
+export class Query<
+  I extends Input = Input,
+  V extends Variables<I> = Variables<I>
+> {
   constructor(private client: Client, private query: QuerySpec<V>) {}
+
+  withInput(input: I) {
+    return new Query(this.client, { ...this.query, variables: { input } })
+  }
+
+  changeInput(input: Partial<I>) {
+    return new Query(
+      this.client,
+      R.mergeDeepRight(this.query, { variables: { input } })
+    )
+  }
 
   withVariables(variables: V) {
     return new Query(this.client, { ...this.query, variables })
   }
 
-  forClient(client: Client) {
-    return new Query(client, this.query)
+  withContext(context: ClientContext) {
+    return new Query(new Client(context), this.query)
+  }
+
+  forLoginUser(...additionalRoles: string[]) {
+    const loginUser = {
+      ...user,
+      id: nextUuid(user.id),
+      roles: [...additionalRoles, 'login'],
+    }
+
+    given('UuidQuery').for(loginUser)
+
+    return this.withContext({ userId: loginUser.id })
   }
 
   forUnauthenticatedUser() {
-    return this.forClient(new Client({ userId: null }))
+    return this.withContext({ userId: null })
   }
 
   execute() {
@@ -64,7 +94,10 @@ export class Query<V extends Variables = Variables> {
   }
 
   async shouldReturnData(data: unknown) {
-    expect(await this.execute()).toMatchObject({ data })
+    const result = await this.execute()
+
+    expect(result['errors']).toBeUndefined()
+    expect(result).toMatchObject({ data })
   }
 
   async shouldFailWithError(
@@ -79,7 +112,9 @@ export class Query<V extends Variables = Variables> {
   }
 }
 
-type Variables = Record<string, unknown>
+type ClientContext = Partial<Pick<Context, 'service' | 'userId'>>
+type Variables<I> = { input: I } | Record<string, unknown>
+type Input = Record<string, unknown>
 interface QuerySpec<V> {
   query: DocumentNode
   variables?: V

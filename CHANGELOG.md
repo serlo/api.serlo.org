@@ -2,6 +2,250 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.46.2](https://github.com/serlo/api.serlo.org/compare/v0.46.1..v0.46.2) - August 26, 2022
+
+### Fixed
+
+- static_pages_builder can be added, removed and searched for #717
+
+## [v0.46.1](https://github.com/serlo/api.serlo.org/compare/v0.46.0..v0.46.1) - August 18, 2022
+
+### Breaking Changes
+
+- Change input of `addRole`, `removeRole` and `usersByRole` from `scope` to `instance` #711
+
+### Changed
+
+- User Role endpoints: do not throw error if role is global but instance is sent\` #712
+
+## [v0.46.0](https://github.com/serlo/api.serlo.org/compare/v0.45.0..v0.46.0) - August 18, 2022
+
+### Breaking Changes
+
+- Delete `fileExtension` and `fileNameWithoutExtension` from `media.newUpload` #713
+
+## [v0.45.0](https://github.com/serlo/api.serlo.org/compare/v0.44.0..v0.45.0) - July 25, 2022
+
+### Breaking Changes
+
+- Refactor `media.upload` to `media.newUpload` #709
+
+## [v0.44.0](https://github.com/serlo/api.serlo.org/compare/v0.43.1..v0.44.0) - July 25, 2022
+
+### Added
+
+- Add user.usersByRole query #702
+
+## [v0.43.1](https://github.com/serlo/api.serlo.org/compare/v0.43.0..v0.43.1) - July 21, 2022
+
+### Added
+
+- Add `media.upload` mutation #700
+
+## [v0.43.0](https://github.com/serlo/api.serlo.org/compare/v0.42.1..v0.43.0) - July 12, 2022
+
+### Added
+
+- Add `user.addRole` mutation #663
+
+- Add `user.removeRole` mutation #663
+
+## [v0.42.1](https://github.com/serlo/api.serlo.org/compare/v0.42.0..v0.42.1) - July 6, 2022
+
+### Added
+
+- Add `license.defaultLicense` #691
+
+- Add possibility to remove multiple cache keys #687
+
+## [v0.42.0](https://github.com/serlo/api.serlo.org/compare/v0.41.0..v0.42.0) - June 29, 2022
+
+### Breaking Changes
+
+- Delete `Navigation.data` #684
+
+### Changed
+
+- better cache update when adding revisions #674
+
+### Fixed
+
+- Fix metadata.version (for real...maybe...) #682
+
+- Fix bug of missing user motivation text #683
+
+## [v0.41.0](https://github.com/serlo/api.serlo.org/compare/v0.40.0..v0.41.0) - June 18, 2022
+
+### Added
+
+- Thread.allThreads: add optional `instance` filter #676
+
+- Entity.sort: support also sorting of coursePages #679
+
+### Changed
+
+- Rename TaxonomyTerm.type folder to exerciseFolder #671
+
+- Simplify TaxonomyTerm.type to topic, exerciseFolder, subject, root #672
+
+### Fixed
+
+- Fix metadata.version #678
+
+## [v0.40.0](https://github.com/serlo/api.serlo.org/compare/v0.39.0..v0.40.0) - June 14, 2022
+
+### Added
+
+- Add metadata.version #670
+
+- Add entity.sort mutation for sorting exercises #668
+
+## [v0.39.0](https://github.com/serlo/api.serlo.org/compare/v0.38.0..v0.39.0) - June 9, 2022
+
+### Added
+
+- Add AbstractUuid.title #627
+
+- Entity.set: be sure to not accept mandatory fields with only spaces #656
+
+## [v0.38.0](https://github.com/serlo/api.serlo.org/compare/v0.37.0..v0.38.0) - June 8, 2022
+
+### Added
+
+- Add Page.pages query #623
+
+### Changed
+
+- Remove TaxonomyTerm.move #662
+
+## [v0.37.0](https://github.com/serlo/api.serlo.org/compare/v0.36.0..v0.37.0) - June 7, 2022
+
+### Added
+
+- licenses: removed iconHref, added shortTitle #657
+
+- licenses: removed extra urls #650
+
+### Changed
+
+- alias is now nonnullable #640
+
+## [v0.36.0](https://github.com/serlo/api.serlo.org/compare/v0.35.1..v0.36.0) - May 30, 2022
+
+### Changed
+
+- Rename autorization Entity.SetLicense to Entity.UpdateLicense #639
+
+## [v0.35.1](https://github.com/serlo/api.serlo.org/compare/v0.35.0..v0.35.1) - May 28, 2022
+
+### Changed
+
+- Allow taxonomyTerm.create link to any parent #642
+
+- Allow taxonomyTerm.sort to send not all children ids #643
+
+- Rename entity.setLicense to entity.updateLicense #639
+
+- Rename TaxomonySortInput to TaxonomyTermSortInput #641
+
+## [v0.35.0](https://github.com/serlo/api.serlo.org/compare/v0.34.0..v0.35.0) - May 19, 2022
+
+### Added
+
+- Add taxonomyTerm.sort mutation #596
+
+## [v0.34.0](https://github.com/serlo/api.serlo.org/compare/v0.33.1..v0.34.0) - May 18, 2022
+
+### Added
+
+- Add entity.setLicense mutation #626
+
+## [v0.33.1](https://github.com/serlo/api.serlo.org/compare/v0.33.0..v0.33.1) - May 17, 2022
+
+### Fixed
+
+- Fixed taxonomy term creation of topic folder #629
+
+- Fixed cache update of page.addRevision
+
+- Use default license when repository license is not supported #632
+
+## [v0.33.0](https://github.com/serlo/api.serlo.org/compare/v0.32.0..v0.33.0) - May 6, 2022
+
+### Added
+
+- Add `entity.deletedEntities` query #605
+
+## [v0.32.0](https://github.com/serlo/api.serlo.org/compare/v0.31.2..v0.32.0) - May 6, 2022
+
+### Breaking Changes
+
+- remove query `license` and replace it with the `license` namespace #616
+
+### Added
+
+- Add `license` namespace and `license.licenses` #616
+
+- Add `taxonomyTerm.createEntityLinks` #612
+
+- Add `taxonomyTerm.deleteEntityLinks` #599
+
+### Fixed
+
+- Fix local runs #617
+
+### Internal
+
+- Store licenses in ~/config #615
+
+## [v0.31.2](https://github.com/serlo/api.serlo.org/compare/v0.31.1..v0.31.2) - May 3, 2022
+
+### Fixed
+
+- `entity.set` also returns records when revision is added #612
+
+- Add autoreview feature for `entity.set` also when entity is created #606
+
+### Internal
+
+- refactor `entity.set` #600
+
+## [v0.31.1](https://github.com/serlo/api.serlo.org/compare/v0.31.0..v0.31.1) - April 29, 2022
+
+### Fixed
+
+- Fix entity.setSolution `InvalidCachedValue` #597
+
+- mail for LENABI user journey
+
+## [v0.31.0](https://github.com/serlo/api.serlo.org/compare/v0.30.2..v0.31.0) - April 27, 2022
+
+### Changed
+
+- Merge entity.create & entity.addRevision = entity.set #594
+
+## [v0.30.2](https://github.com/serlo/api.serlo.org/compare/v0.30.1..v0.30.2) - April 22, 2022
+
+### Added
+
+- Add endpoint `taxonomy.move` #566
+
+- Add endpoint `taxonomy.create` #583
+
+### Fixed
+
+- Support autoreview in sandbox in add revisions #538
+
+### Internal
+
+- Refactor requests to DB layer #569
+
+## [v0.30.1](https://github.com/serlo/api.serlo.org/compare/v0.30.0..v0.30.1) - April 8, 2022
+
+### Added
+
+- Add query endpoint `thread.allThreads`
+
 ## [v0.30.0](https://github.com/serlo/api.serlo.org/compare/v0.29.1..v0.30.0) - April 1, 2022
 
 ### Added
@@ -10,11 +254,17 @@ All notable changes to this project will be documented in this file.
 
 - Add mutation `TaxonomyTerm.setNameAndDescription`
 
+### Changed
+
+- Made some fields at Entity.add\_\_\_Revision mutations optional
+
 ### Fixed
 
-- Reduced the cache time for get.Notifications
+- Reduced the cache time for getNotifications
 
 - Reduced the cache time for chat.getUserInfo
+
+- Handles correctly the parameter needsReview when adding revision
 
 ## [v0.29.1](https://github.com/serlo/api.serlo.org/compare/v0.29.0..v0.29.1) - March 21, 2022
 

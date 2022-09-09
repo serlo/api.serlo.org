@@ -48,6 +48,36 @@ const ForDefinitions = {
       .withPayload({})
       .returns({ unrevisedEntityIds: entities.map((entity) => entity.id) })
   },
+  DeletedEntitiesQuery(entities: Model<'AbstractEntity'>[]) {
+    given('UuidQuery').for(
+      entities.map((entity) => {
+        return { ...entity, trashed: true }
+      })
+    )
+    given('DeletedEntitiesQuery').isDefinedBy((req, res, ctx) => {
+      const { first, after, instance } = req.body.payload
+
+      const entitiesByInstance = instance
+        ? entities.filter((entity) => entity.instance === instance)
+        : entities
+
+      const entitiesByAfter = after
+        ? entitiesByInstance.filter(
+            (entity) => new Date(entity.date) > new Date(after)
+          )
+        : entitiesByInstance
+
+      const entitiesByFirst = entitiesByAfter.slice(0, first)
+
+      const deletedEntities = entitiesByFirst.map((entity) => {
+        return {
+          id: entity.id,
+          dateOfDeletion: entity.date,
+        }
+      })
+      return res(ctx.json({ deletedEntities }))
+    })
+  },
 }
 type ForDefinitions = typeof ForDefinitions
 type ForArg<M> = M extends keyof ForDefinitions
@@ -130,6 +160,32 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
       )
     },
   }
+}
+
+export function givenThreads({
+  uuid,
+  threads,
+}: {
+  uuid: Model<'AbstractUuid'>
+  threads: Model<'Comment'>[][]
+}) {
+  const firstCommentIds = threads.map((thread) => thread[0].id)
+  const firstComments = threads.map((thread) => {
+    const childrenIds = thread.slice(1).map(R.prop('id'))
+
+    return { ...thread[0], parentId: uuid.id, childrenIds }
+  })
+  const otherComments = threads.flatMap((thread) =>
+    thread.slice(1).map((comment) => {
+      return { ...comment, parentId: thread[0].id, childrenIds: [] }
+    })
+  )
+
+  given('ThreadsQuery')
+    .withPayload({ id: uuid.id })
+    .returns({ firstCommentIds })
+
+  given('UuidQuery').for(uuid, firstComments, otherComments)
 }
 
 export function createNotificationEventHandler(

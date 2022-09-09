@@ -23,101 +23,18 @@ import { gql } from 'apollo-server'
 
 import { article, comment1, user } from '../../../__fixtures__'
 import {
-  assertFailingGraphQLMutation,
-  assertSuccessfulGraphQLMutation,
-  assertSuccessfulGraphQLQuery,
-  createMessageHandler,
-  createTestClient,
-  createUuidHandler,
   nextUuid,
+  givenThreads,
+  Client,
+  given,
+  castToAlias,
 } from '../../__utils__'
-import { mockEndpointsForThreads } from './thread'
+import { DiscriminatorType } from '~/model/decoder'
 import { encodeThreadId } from '~/schema/thread/utils'
 
-test('unauthenticated user gets error', async () => {
-  mockEndpointsForThreads(article, [[comment1]])
-
-  await assertFailingGraphQLMutation({
-    mutation: gql`
-      mutation ($input: ThreadCreateCommentInput!) {
-        thread {
-          createComment(input: $input) {
-            success
-          }
-        }
-      }
-    `,
-    variables: {
-      input: {
-        content: 'Hello',
-        threadId: encodeThreadId(comment1.id),
-        subscribe: true,
-        sendEmail: false,
-      },
-    },
-    client: createTestClient({ userId: null }),
-    expectedError: 'UNAUTHENTICATED',
-  })
-})
-
-test('comment gets created, cache mutated as expected', async () => {
-  const client = createTestClient({ userId: user.id })
-  global.server.use(createUuidHandler(user))
-
-  global.server.use(
-    createMessageHandler({
-      message: {
-        type: 'ThreadCreateCommentMutation',
-        payload: {
-          userId: user.id,
-          content: 'Hello',
-          threadId: comment1.id,
-          subscribe: true,
-          sendEmail: false,
-        },
-      },
-      body: {
-        __typename: 'Comment',
-        id: nextUuid(comment1.id),
-        trashed: false,
-        alias: `/mathe/${nextUuid(comment1.id)}/`,
-        authorId: user.id,
-        title: null,
-        date: '2014-03-01T20:45:56Z',
-        archived: false,
-        content: 'Hello',
-        parentId: comment1.id,
-        childrenIds: [],
-      },
-    })
-  )
-
-  mockEndpointsForThreads(article, [[comment1]])
-
-  //fill cache
-  await client.executeOperation({
+const mutation = new Client({ userId: user.id })
+  .prepareQuery({
     query: gql`
-      query ($id: Int) {
-        uuid(id: $id) {
-          ... on ThreadAware {
-            threads {
-              nodes {
-                comments {
-                  nodes {
-                    content
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: article.id },
-  })
-
-  await assertSuccessfulGraphQLMutation({
-    mutation: gql`
       mutation ($input: ThreadCreateCommentInput!) {
         thread {
           createComment(input: $input) {
@@ -131,61 +48,100 @@ test('comment gets created, cache mutated as expected', async () => {
         }
       }
     `,
-    variables: {
-      input: {
-        content: 'Hello',
-        threadId: encodeThreadId(comment1.id),
-        subscribe: true,
-        sendEmail: false,
-      },
-    },
-    client,
-    data: {
-      thread: {
-        createComment: {
-          success: true,
-          record: {
-            archived: false,
-            content: 'Hello',
-            id: nextUuid(comment1.id),
-          },
-        },
-      },
-    },
+  })
+  .withInput({
+    content: 'Hello',
+    threadId: encodeThreadId(comment1.id),
+    subscribe: true,
+    sendEmail: false,
   })
 
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query ($id: Int) {
-        uuid(id: $id) {
-          ... on ThreadAware {
-            threads {
-              nodes {
-                comments {
-                  nodes {
-                    content
+beforeEach(() => {
+  givenThreads({ uuid: article, threads: [[comment1]] })
+})
+
+test('comment gets created, cache mutated as expected', async () => {
+  given('UuidQuery').for(user)
+  given('ThreadCreateCommentMutation')
+    .withPayload({
+      userId: user.id,
+      content: 'Hello',
+      threadId: comment1.id,
+      subscribe: true,
+      sendEmail: false,
+    })
+    .returns({
+      __typename: DiscriminatorType.Comment,
+      id: nextUuid(comment1.id),
+      trashed: false,
+      alias: castToAlias(`/mathe/${nextUuid(comment1.id)}/`),
+      authorId: user.id,
+      title: null,
+      date: '2014-03-01T20:45:56Z',
+      archived: false,
+      content: 'Hello',
+      parentId: comment1.id,
+      childrenIds: [],
+    })
+
+  const queryComments = new Client()
+    .prepareQuery({
+      query: gql`
+        query ($id: Int) {
+          uuid(id: $id) {
+            ... on ThreadAware {
+              threads {
+                nodes {
+                  comments {
+                    nodes {
+                      content
+                    }
                   }
                 }
               }
             }
           }
         }
-      }
-    `,
-    variables: { id: article.id },
-    client,
-    data: {
-      uuid: {
-        threads: {
-          nodes: [
-            {
-              comments: {
-                nodes: [{ content: comment1.content }, { content: 'Hello' }],
-              },
-            },
-          ],
+      `,
+    })
+    .withVariables({ id: article.id })
+
+  await queryComments.shouldReturnData({
+    uuid: {
+      threads: {
+        nodes: [{ comments: { nodes: [{ content: comment1.content }] } }],
+      },
+    },
+  })
+
+  await mutation.shouldReturnData({
+    thread: {
+      createComment: {
+        success: true,
+        record: {
+          archived: false,
+          content: 'Hello',
+          id: nextUuid(comment1.id),
         },
       },
     },
   })
+
+  await queryComments.shouldReturnData({
+    uuid: {
+      threads: {
+        nodes: [
+          {
+            comments: {
+              nodes: [{ content: comment1.content }, { content: 'Hello' }],
+            },
+          },
+        ],
+      },
+    },
+  })
+})
+
+test('unauthenticated user gets error', async () => {
+  await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })

@@ -23,104 +23,88 @@ import { gql } from 'apollo-server'
 import R from 'ramda'
 
 import { page, pageRevision, license } from '../../../__fixtures__'
-import {
-  assertSuccessfulGraphQLQuery,
-  LegacyClient,
-  given,
-  createTestClient,
-  createUuidHandler,
-} from '../../__utils__'
-
-let client: LegacyClient
-
-beforeEach(() => {
-  client = createTestClient()
-})
+import { given, Client } from '../../__utils__'
 
 describe('Page', () => {
   beforeEach(() => {
-    global.server.use(createUuidHandler(page))
+    given('UuidQuery').for(page)
   })
 
   test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query page($id: Int!) {
+            uuid(id: $id) {
+              __typename
+              ... on Page {
+                id
+                trashed
+                instance
+                date
+              }
+            }
+          }
+        `,
+      })
+      .withVariables(page)
+      .shouldReturnData({
+        uuid: R.pick(['__typename', 'id', 'trashed', 'instance', 'date'], page),
+      })
+  })
+
+  test('by id (w/ license)', async () => {
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query page($id: Int!) {
+            uuid(id: $id) {
+              ... on Page {
+                license {
+                  id
+                  instance
+                  default
+                  title
+                  url
+                  content
+                  shortTitle
+                  agreement
+                }
+              }
+            }
+          }
+        `,
+      })
+      .withVariables(page)
+      .shouldReturnData({ uuid: { license } })
+  })
+})
+
+test('PageRevision', async () => {
+  given('UuidQuery').for(pageRevision)
+
+  await new Client()
+    .prepareQuery({
       query: gql`
-        query page($id: Int!) {
+        query pageRevision($id: Int!) {
           uuid(id: $id) {
             __typename
-            ... on Page {
+            ... on PageRevision {
               id
               trashed
-              instance
+              title
+              content
               date
             }
           }
         }
       `,
-      variables: page,
-      data: {
-        uuid: R.pick(['__typename', 'id', 'trashed', 'instance', 'date'], page),
-      },
-      client,
     })
-  })
-
-  test('by id (w/ license)', async () => {
-    given('LicenseQuery').withPayload({ id: license.id }).returns(license)
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query page($id: Int!) {
-          uuid(id: $id) {
-            ... on Page {
-              license {
-                id
-                instance
-                default
-                title
-                url
-                content
-                agreement
-                iconHref
-              }
-            }
-          }
-        }
-      `,
-      variables: page,
-      data: {
-        uuid: {
-          license,
-        },
-      },
-      client,
-    })
-  })
-})
-
-test('PageRevision', async () => {
-  global.server.use(createUuidHandler(pageRevision))
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query pageRevision($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          ... on PageRevision {
-            id
-            trashed
-            title
-            content
-            date
-          }
-        }
-      }
-    `,
-    variables: pageRevision,
-    data: {
+    .withVariables(pageRevision)
+    .shouldReturnData({
       uuid: R.pick(
         ['__typename', 'id', 'trashed', 'title', 'content', 'date'],
         pageRevision
       ),
-    },
-    client,
-  })
+    })
 })

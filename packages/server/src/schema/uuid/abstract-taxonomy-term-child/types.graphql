@@ -2,7 +2,8 @@ interface AbstractTaxonomyTermChild {
   # extends AbstractEntity
   id: Int!
   trashed: Boolean!
-  alias: String
+  alias: String!
+  title: String!
   events(
     after: String
     before: String

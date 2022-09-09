@@ -41,29 +41,10 @@ import {
   setUuidStateNotificationEvent,
   user,
 } from '../../__fixtures__'
-import {
-  assertFailingGraphQLQuery,
-  assertSuccessfulGraphQLQuery,
-  LegacyClient,
-  createDatabaseLayerHandler,
-  createTestClient,
-  createUuidHandler,
-  getTypenameAndId,
-  nextUuid,
-} from '../__utils__'
-import { Service } from '~/internals/authentication'
+import { getTypenameAndId, given, Client } from '../__utils__'
 import { Model } from '~/internals/graphql'
 import { castToUuid, NotificationEventType } from '~/model/decoder'
 import { Instance } from '~/types'
-
-let client: LegacyClient
-
-beforeEach(() => {
-  client = createTestClient({
-    service: Service.SerloCloudflareWorker,
-    userId: user.id,
-  })
-})
 
 const eventRepository: Record<
   NotificationEventType,
@@ -96,163 +77,133 @@ describe('query endpoint "events"', () => {
   test('returns event log', async () => {
     setupEvents(allEvents)
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query events {
-          events {
-            nodes {
-              __typename
-              id
-            }
-            pageInfo {
-              hasNextPage
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query events {
+            events {
+              nodes {
+                __typename
+                id
+              }
+              pageInfo {
+                hasNextPage
+              }
             }
           }
-        }
-      `,
-      client,
-      data: {
+        `,
+      })
+      .shouldReturnData({
         events: {
           nodes: R.reverse(allEvents).map(getTypenameAndId),
           pageInfo: { hasNextPage: false },
         },
-      },
-    })
+      })
   })
 
   test('with filter "actorId"', async () => {
     const events = assignSequentialIds(
       R.concat(
-        allEvents.map(
-          (event) =>
-            R.assoc(
-              'actorId',
-              castToUuid(42),
-              event
-            ) as Model<'AbstractNotificationEvent'>
-        ),
-        allEvents.map(
-          (event) =>
-            R.assoc(
-              'actorId',
-              castToUuid(23),
-              event
-            ) as Model<'AbstractNotificationEvent'>
-        )
+        allEvents.map((event) => {
+          return { ...event, actorId: castToUuid(42) }
+        }),
+        allEvents.map((event) => {
+          return { ...event, actorId: castToUuid(23) }
+        })
       )
     )
     setupEvents(events)
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query events {
-          events(actorId: 42) {
-            nodes {
-              __typename
-              id
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query events {
+            events(actorId: 42) {
+              nodes {
+                __typename
+                id
+              }
             }
           }
-        }
-      `,
-      client,
-      data: {
+        `,
+      })
+      .shouldReturnData({
         events: {
           nodes: R.reverse(
             events.slice(0, allEvents.length).map(getTypenameAndId)
           ),
         },
-      },
-    })
+      })
   })
 
   test('with filter "instance"', async () => {
     const events = assignSequentialIds(
       R.concat(
-        allEvents.map(
-          (event) =>
-            R.assoc(
-              'instance',
-              Instance.En,
-              event
-            ) as Model<'AbstractNotificationEvent'>
-        ),
-        allEvents.map(
-          (event) =>
-            R.assoc(
-              'instance',
-              Instance.De,
-              event
-            ) as Model<'AbstractNotificationEvent'>
-        )
+        allEvents.map((event) => {
+          return { ...event, instance: Instance.En }
+        }),
+        allEvents.map((event) => {
+          return { ...event, instance: Instance.De }
+        })
       )
     )
     setupEvents(events)
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query events {
-          events(instance: en) {
-            nodes {
-              __typename
-              id
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query events {
+            events(instance: en) {
+              nodes {
+                __typename
+                id
+              }
             }
           }
-        }
-      `,
-      client,
-      data: {
+        `,
+      })
+      .shouldReturnData({
         events: {
           nodes: R.reverse(
             events.slice(0, allEvents.length).map(getTypenameAndId)
           ),
         },
-      },
-    })
+      })
   })
 
   test('with filter "objectId"', async () => {
     const events = assignSequentialIds(
       R.concat(
-        allEvents.map(
-          (event) =>
-            R.assoc(
-              'objectId',
-              castToUuid(42),
-              event
-            ) as Model<'AbstractNotificationEvent'>
-        ),
-        allEvents.map(
-          (event) =>
-            R.assoc(
-              'objectId',
-              castToUuid(23),
-              event
-            ) as Model<'AbstractNotificationEvent'>
-        )
+        allEvents.map((event) => {
+          return { ...event, objectId: castToUuid(42) }
+        }),
+        allEvents.map((event) => {
+          return { ...event, objectId: castToUuid(23) }
+        })
       )
     )
     setupEvents(events)
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query events {
-          events(objectId: 42) {
-            nodes {
-              __typename
-              id
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query events {
+            events(objectId: 42) {
+              nodes {
+                __typename
+                id
+              }
             }
           }
-        }
-      `,
-      client,
-      data: {
+        `,
+      })
+      .shouldReturnData({
         events: {
           nodes: R.reverse(
             events.slice(0, allEvents.length).map(getTypenameAndId)
           ),
         },
-      },
-    })
+      })
   })
 
   test('with filter `after`', async () => {
@@ -262,29 +213,31 @@ describe('query endpoint "events"', () => {
     const afterId = R.reverse(events)[1000].id
     setupEvents(events)
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query events($after: String!) {
-          events(after: $after) {
-            nodes {
-              id
-              __typename
-            }
-            pageInfo {
-              hasNextPage
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query events($after: String!) {
+            events(after: $after) {
+              nodes {
+                id
+                __typename
+              }
+              pageInfo {
+                hasNextPage
+              }
             }
           }
-        }
-      `,
-      client,
-      variables: { after: Buffer.from(afterId.toString()).toString('base64') },
-      data: {
+        `,
+      })
+      .withVariables({
+        after: Buffer.from(afterId.toString()).toString('base64'),
+      })
+      .shouldReturnData({
         events: {
           nodes: R.reverse(events).slice(1001, 1501).map(getTypenameAndId),
           pageInfo: { hasNextPage: true },
         },
-      },
-    })
+      })
   })
 
   test('`hasNextPage` is always true when database layer responses with hasNextPage == true', async () => {
@@ -294,20 +247,24 @@ describe('query endpoint "events"', () => {
     const afterId = R.reverse(events)[1039].id
     setupEvents(events)
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query events($after: String!) {
-          events(first: 10, after: $after) {
-            pageInfo {
-              hasNextPage
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query events($after: String!) {
+            events(first: 10, after: $after) {
+              pageInfo {
+                hasNextPage
+              }
             }
           }
-        }
-      `,
-      client,
-      variables: { after: Buffer.from(afterId.toString()).toString('base64') },
-      data: { events: { pageInfo: { hasNextPage: true } } },
-    })
+        `,
+      })
+      .withVariables({
+        after: Buffer.from(afterId.toString()).toString('base64'),
+      })
+      .shouldReturnData({
+        events: { pageInfo: { hasNextPage: true } },
+      })
   })
 
   test('number of returned events is bounded to 500 when `first` is undefined', async () => {
@@ -316,95 +273,81 @@ describe('query endpoint "events"', () => {
     )
     setupEvents(events)
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query events {
-          events {
-            nodes {
-              __typename
-              id
-            }
-            pageInfo {
-              hasNextPage
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query events {
+            events {
+              nodes {
+                __typename
+                id
+              }
+              pageInfo {
+                hasNextPage
+              }
             }
           }
-        }
-      `,
-      client,
-      data: {
+        `,
+      })
+      .shouldReturnData({
         events: {
           nodes: R.reverse(events).slice(0, 500).map(getTypenameAndId),
           pageInfo: { hasNextPage: true },
         },
-      },
-    })
+      })
   })
 
   test('fails when first > 500', async () => {
-    const events = assignSequentialIds(
-      R.range(0, 50).flatMap(R.always(allEvents))
-    )
-    setupEvents(events)
-
-    await assertFailingGraphQLQuery({
-      query: gql`
-        query events {
-          events(first: 600) {
-            nodes {
-              __typename
-              id
-            }
-          }
-        }
-      `,
-      message: 'first cannot be higher than 500',
-      client,
-    })
-  })
-})
-
-test('User.eventsByUser returns events of this user', async () => {
-  const events = assignSequentialIds(
-    R.concat(
-      allEvents.map(
-        (event) =>
-          R.assoc(
-            'actorId',
-            castToUuid(user.id),
-            event
-          ) as Model<'AbstractNotificationEvent'>
-      ),
-      allEvents.map(
-        (event) =>
-          R.assoc(
-            'actorId',
-            nextUuid(user.id),
-            event
-          ) as Model<'AbstractNotificationEvent'>
-      )
-    )
-  )
-  setupEvents(events)
-  global.server.use(createUuidHandler(user))
-
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query userEvents($id: Int) {
-        uuid(id: $id) {
-          ... on User {
-            eventsByUser {
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query events {
+            events(first: 600) {
               nodes {
                 __typename
                 id
               }
             }
           }
+        `,
+      })
+      .shouldFailWithError('BAD_USER_INPUT')
+  })
+})
+
+test('User.eventsByUser returns events of this user', async () => {
+  const events = assignSequentialIds(
+    R.concat(
+      allEvents.map((event) => {
+        return { ...event, actorId: user.id }
+      }),
+      allEvents.map((event) => {
+        return { ...event, actorId: castToUuid(23) }
+      })
+    )
+  )
+  setupEvents(events)
+  given('UuidQuery').for(user)
+
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query userEvents($id: Int) {
+          uuid(id: $id) {
+            ... on User {
+              eventsByUser {
+                nodes {
+                  __typename
+                  id
+                }
+              }
+            }
+          }
         }
-      }
-    `,
-    variables: { id: user.id },
-    client,
-    data: {
+      `,
+    })
+    .withVariables({ id: user.id })
+    .shouldReturnData({
       uuid: {
         eventsByUser: {
           nodes: R.reverse(
@@ -412,45 +355,42 @@ test('User.eventsByUser returns events of this user', async () => {
           ),
         },
       },
-    },
-  })
+    })
 })
 
 test('AbstractEntity.events returns events for this entity', async () => {
-  const uuid = { ...article, id: castToUuid(42) }
   const events = assignSequentialIds(
     R.concat(
-      allEvents.map(
-        (event) =>
-          R.assoc('objectId', 42, event) as Model<'AbstractNotificationEvent'>
-      ),
-      allEvents.map(
-        (event) =>
-          R.assoc('objectId', 23, event) as Model<'AbstractNotificationEvent'>
-      )
+      allEvents.map((event) => {
+        return { ...event, objectId: article.id }
+      }),
+      allEvents.map((event) => {
+        return { ...event, objectId: castToUuid(23) }
+      })
     )
   )
   setupEvents(events)
-  global.server.use(createUuidHandler(uuid))
+  given('UuidQuery').for(article)
 
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query articleEvents($id: Int) {
-        uuid(id: $id) {
-          ... on Article {
-            events {
-              nodes {
-                __typename
-                id
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query articleEvents($id: Int) {
+          uuid(id: $id) {
+            ... on Article {
+              events {
+                nodes {
+                  __typename
+                  id
+                }
               }
             }
           }
         }
-      }
-    `,
-    variables: { id: uuid.id },
-    client,
-    data: {
+      `,
+    })
+    .withVariables({ id: article.id })
+    .shouldReturnData({
       uuid: {
         events: {
           nodes: R.reverse(
@@ -458,55 +398,35 @@ test('AbstractEntity.events returns events for this entity', async () => {
           ),
         },
       },
-    },
-  })
+    })
 })
 
 function setupEvents(allEvents: Model<'AbstractNotificationEvent'>[]) {
-  global.server.use(
-    createDatabaseLayerHandler<
-      string,
-      {
-        after?: number
-        objectId?: number
-        actorId?: number
-        instance: Instance
-        first: number
-      }
-    >({
-      matchType: 'EventsQuery',
-      resolver(req, res, ctx) {
-        const { after, objectId, actorId, first, instance } = req.body.payload
+  given('EventsQuery').isDefinedBy((req, res, ctx) => {
+    const { after, objectId, actorId, first, instance } = req.body.payload
 
-        const filteredEvents = [...allEvents]
-          .reverse()
-          .filter((event) => actorId == null || event.actorId === actorId)
-          .filter((event) => instance == null || event.instance === instance)
-          // We only filter for objectId here. However, the database layer
-          // needs to check whether any event_uuid_parameter is also in the filter
-          .filter((event) => objectId == null || event.objectId === objectId)
-          .filter((event) => after == null || event.id < after)
+    const filteredEvents = [...allEvents]
+      .reverse()
+      .filter((event) => actorId == null || event.actorId === actorId)
+      .filter((event) => instance == null || event.instance === instance)
+      // We only filter for objectId here. However, the database layer
+      // needs to check whether any event_uuid_parameter is also in the filter
+      .filter((event) => objectId == null || event.objectId === objectId)
+      .filter((event) => after == null || event.id < after)
 
-        return res(
-          ctx.json({
-            events: filteredEvents.slice(0, first),
-            hasNextPage: filteredEvents.length > first,
-          })
-        )
-      },
-    })
-  )
+    return res(
+      ctx.json({
+        events: filteredEvents.slice(0, first),
+        hasNextPage: filteredEvents.length > first,
+      })
+    )
+  })
 }
 
 function assignSequentialIds(
   events: Model<'AbstractNotificationEvent'>[]
 ): Model<'AbstractNotificationEvent'>[] {
-  return events.map(
-    (event, id) =>
-      R.assoc(
-        'id',
-        castToUuid(id + 1),
-        event
-      ) as Model<'AbstractNotificationEvent'>
-  )
+  return events.map((event, id) => {
+    return { ...event, id: castToUuid(id + 1) }
+  })
 }

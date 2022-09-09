@@ -25,20 +25,21 @@ import { user as baseUser } from '../../../__fixtures__'
 import { Client, given } from '../../__utils__'
 
 const user = { ...baseUser, roles: ['sysadmin'] }
-const query = new Client({ userId: user.id }).prepareQuery({
-  query: gql`
-    mutation ($input: UserSetEmailInput!) {
-      user {
-        setEmail(input: $input) {
-          success
-          username
-          email
+const query = new Client({ userId: user.id })
+  .prepareQuery({
+    query: gql`
+      mutation ($input: UserSetEmailInput!) {
+        user {
+          setEmail(input: $input) {
+            success
+            username
+            email
+          }
         }
       }
-    }
-  `,
-  variables: { input: { userId: user.id, email: 'user@example.org' } },
-})
+    `,
+  })
+  .withInput({ userId: user.id, email: 'user@example.org' })
 
 beforeEach(() => {
   given('UuidQuery').for(user)
@@ -65,9 +66,7 @@ test('fails when user is not authenticated', async () => {
 })
 
 test('fails when user does not have role "sysadmin"', async () => {
-  given('UuidQuery').for({ ...user, roles: ['login', 'de_admin'] })
-
-  await query.shouldFailWithError('FORBIDDEN')
+  await query.forLoginUser('de_admin').shouldFailWithError('FORBIDDEN')
 })
 
 test('fails when database layer returns a 400er response', async () => {

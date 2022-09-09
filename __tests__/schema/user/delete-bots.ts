@@ -46,18 +46,19 @@ let mutation: Query
 
 beforeEach(() => {
   client = new Client({ userId: user.id })
-  mutation = client.prepareQuery({
-    query: gql`
-      mutation ($input: UserDeleteBotsInput!) {
-        user {
-          deleteBots(input: $input) {
-            success
+  mutation = client
+    .prepareQuery({
+      query: gql`
+        mutation ($input: UserDeleteBotsInput!) {
+          user {
+            deleteBots(input: $input) {
+              success
+            }
           }
         }
-      }
-    `,
-    variables: { input: { botIds: [user.id] } },
-  })
+      `,
+    })
+    .withInput({ botIds: [user.id] })
 
   mailchimpEmails = [emailHash(user)]
 
@@ -130,21 +131,22 @@ beforeEach(() => {
 
 test('runs successfully when mutation could be successfully executed', async () => {
   await mutation
-    .withVariables({ input: { botIds: [user.id, user2.id] } })
+    .withInput({ botIds: [user.id, user2.id] })
     .shouldReturnData({ user: { deleteBots: { success: true } } })
 })
 
 test('updates the cache', async () => {
-  const uuidQuery = client.prepareQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          id
+  const uuidQuery = client
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            id
+          }
         }
-      }
-    `,
-    variables: { id: user.id },
-  })
+      `,
+    })
+    .withVariables({ id: user.id })
 
   await uuidQuery.execute()
   await mutation.execute()
@@ -165,7 +167,7 @@ describe('community chat', () => {
   })
 
   test('does not sent a sentry event when the user is not in the community chat', async () => {
-    await mutation.withVariables({ input: { botIds: [user2.id] } }).execute()
+    await mutation.withInput({ botIds: [user2.id] }).execute()
 
     expect(chatUsers).toHaveLength(1)
     await assertNoErrorEvents()
@@ -176,7 +178,7 @@ describe('community chat', () => {
       returnsJson({ json: { success: false, errorType: 'unknown' } })
     )
 
-    await mutation.withVariables({ input: { botIds: [user2.id] } }).execute()
+    await mutation.withInput({ botIds: [user2.id] }).execute()
 
     await assertErrorEvent({
       message: 'Cannot delete a user from community.serlo.org',
@@ -198,7 +200,7 @@ describe('mailchimp', () => {
   })
 
   test('does not sent a sentry event when the user is not in the newsletter', async () => {
-    await mutation.withVariables({ input: { botIds: [user2.id] } }).execute()
+    await mutation.withInput({ botIds: [user2.id] }).execute()
 
     expect(mailchimpEmails).toHaveLength(1)
     await assertNoErrorEvents()
@@ -220,7 +222,7 @@ describe('mailchimp', () => {
 
 test('fails when one of the given bot ids is not a user', async () => {
   await mutation
-    .withVariables({ input: { botIds: [castToUuid(article.id)] } })
+    .withInput({ botIds: [castToUuid(article.id)] })
     .shouldFailWithError('BAD_USER_INPUT')
 })
 
@@ -237,9 +239,7 @@ test('fails when user is not authenticated', async () => {
 })
 
 test('fails when user does not have role "sysadmin"', async () => {
-  database.hasUuid({ ...user, roles: ['login', 'de_admin'] })
-
-  await mutation.shouldFailWithError('FORBIDDEN')
+  await mutation.forLoginUser('de_admin').shouldFailWithError('FORBIDDEN')
 })
 
 test('fails when database layer has an internal error', async () => {

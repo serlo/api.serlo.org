@@ -27,6 +27,7 @@ import {
   Repository,
   ResolverFunction,
 } from '~/internals/graphql'
+import { EntityRevisionType, EntityType } from '~/model/decoder'
 import { Connection } from '~/schema/connection/types'
 import { createRepositoryResolvers } from '~/schema/uuid/abstract-repository/utils'
 import { VideoRevisionsArgs } from '~/types'
@@ -39,7 +40,7 @@ export function createEntityResolvers<
   revisionDecoder: t.Type<R, unknown>
 }): PickResolvers<
   'AbstractEntity',
-  'alias' | 'threads' | 'license' | 'events' | 'subject'
+  'alias' | 'threads' | 'license' | 'events' | 'subject' | 'title'
 > &
   // TODO: Add threads to "AbstractEntity"
   PickResolvers<'AbstractRepository', 'threads'> & {
@@ -57,5 +58,32 @@ export function createEntityResolvers<
         ? { taxonomyTermId: entity.canonicalSubjectId }
         : null
     },
+  }
+}
+
+export function fromEntityTypeToEntityRevisionType(
+  entityType: EntityType
+): EntityRevisionType {
+  switch (entityType) {
+    case EntityType.Applet:
+      return EntityRevisionType.AppletRevision
+    case EntityType.Article:
+      return EntityRevisionType.ArticleRevision
+    case EntityType.Course:
+      return EntityRevisionType.CourseRevision
+    case EntityType.CoursePage:
+      return EntityRevisionType.CoursePageRevision
+    case EntityType.Event:
+      return EntityRevisionType.EventRevision
+    case EntityType.Exercise:
+      return EntityRevisionType.ExerciseRevision
+    case EntityType.ExerciseGroup:
+      return EntityRevisionType.ExerciseGroupRevision
+    case EntityType.GroupedExercise:
+      return EntityRevisionType.GroupedExerciseRevision
+    case EntityType.Solution:
+      return EntityRevisionType.SolutionRevision
+    case EntityType.Video:
+      return EntityRevisionType.VideoRevision
   }
 }

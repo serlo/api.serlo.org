@@ -20,52 +20,78 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import R from 'ramda'
 
 import { article, articleRevision } from '../../../__fixtures__'
-import {
-  assertSuccessfulGraphQLQuery,
-  LegacyClient,
-  createTestClient,
-  createUuidHandler,
-  getTypenameAndId,
-} from '../../__utils__'
-
-let client: LegacyClient
-
-beforeEach(() => {
-  client = createTestClient()
-})
+import { given, Client } from '../../__utils__'
 
 test('Article', async () => {
-  global.server.use(createUuidHandler(article))
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query article($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          id
+  given('UuidQuery').for(article)
+
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on Article {
+              __typename
+              id
+              instance
+              alias
+              trashed
+              date
+            }
+          }
         }
-      }
-    `,
-    variables: article,
-    data: { uuid: getTypenameAndId(article) },
-    client,
-  })
+      `,
+    })
+    .withVariables({ id: article.id })
+    .shouldReturnData({
+      uuid: R.pick(
+        ['id', '__typename', 'instance', 'alias', 'trashed', 'date'],
+        article
+      ),
+    })
 })
 
 test('ArticleRevision', async () => {
-  global.server.use(createUuidHandler(articleRevision))
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query articleRevision($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          id
+  given('UuidQuery').for(articleRevision)
+
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on ArticleRevision {
+              __typename
+              id
+              trashed
+              alias
+              title
+              content
+              changes
+              metaTitle
+              metaDescription
+            }
+          }
         }
-      }
-    `,
-    variables: articleRevision,
-    data: { uuid: getTypenameAndId(articleRevision) },
-    client,
-  })
+      `,
+    })
+    .withVariables({ id: articleRevision.id })
+    .shouldReturnData({
+      uuid: R.pick(
+        [
+          'id',
+          '__typename',
+          'trashed',
+          'alias',
+          'title',
+          'content',
+          'changes',
+          'metaTitle',
+          'metaDescription',
+        ],
+        articleRevision
+      ),
+    })
 })

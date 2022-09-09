@@ -25,18 +25,20 @@ import * as t from 'io-ts'
 import fetch from 'node-fetch'
 
 import {
+  CommentDecoder,
   EntityDecoder,
   EntityRevisionTypeDecoder,
   EntityTypeDecoder,
   InstanceDecoder,
   NavigationDecoder,
+  NotificationDecoder,
+  NotificationEventDecoder,
   PageDecoder,
   SubscriptionsDecoder,
+  TaxonomyTermDecoder,
   Uuid,
   UuidDecoder,
 } from './decoder'
-
-const URL = `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`
 
 export const spec = {
   ActiveAuthorsQuery: {
@@ -67,6 +69,31 @@ export const spec = {
       path: t.string,
     }),
     canBeNull: true,
+  },
+  AllThreadsQuery: {
+    payload: t.intersection([
+      t.type({ first: t.number }),
+      t.partial({ after: t.number }),
+      t.partial({ instance: InstanceDecoder }),
+    ]),
+    response: t.type({ firstCommentIds: t.array(t.number) }),
+    canBeNull: false,
+  },
+  DeletedEntitiesQuery: {
+    payload: t.type({
+      first: t.number,
+      after: t.union([t.string, t.undefined]),
+      instance: t.union([InstanceDecoder, t.undefined]),
+    }),
+    response: t.type({
+      deletedEntities: t.array(
+        t.type({
+          id: t.number,
+          dateOfDeletion: t.string,
+        })
+      ),
+    }),
+    canBeNull: false,
   },
   EntitiesMetadataQuery: {
     payload: t.intersection([
@@ -99,13 +126,31 @@ export const spec = {
         needsReview: t.boolean,
         subscribeThis: t.boolean,
         subscribeThisByEmail: t.boolean,
-        fields: t.record(t.string, t.string),
+        fields: t.record(t.string, t.union([t.string, t.undefined])),
       }),
     }),
     response: t.type({
       success: t.literal(true),
       revisionId: t.number,
     }),
+    canBeNull: false,
+  },
+  EntityCheckoutRevisionMutation: {
+    payload: t.type({
+      revisionId: Uuid,
+      userId: t.number,
+      reason: t.string,
+    }),
+    response: t.type({ success: t.literal(true) }),
+    canBeNull: false,
+  },
+  EntityRejectRevisionMutation: {
+    payload: t.type({
+      revisionId: t.number,
+      userId: t.number,
+      reason: t.string,
+    }),
+    response: t.type({ success: t.literal(true) }),
     canBeNull: false,
   },
   EntityCreateMutation: {
@@ -115,7 +160,6 @@ export const spec = {
       input: t.intersection([
         t.type({
           changes: t.string,
-          instance: InstanceDecoder,
           licenseId: t.number,
           needsReview: t.boolean,
           subscribeThis: t.boolean,
@@ -132,23 +176,52 @@ export const spec = {
     response: EntityDecoder,
     canBeNull: false,
   },
-  LicenseQuery: {
+  EntitySortMutation: {
+    payload: t.type({ childrenIds: t.array(t.number), entityId: t.number }),
+    response: t.type({ success: t.boolean }),
+    canBeNull: false,
+  },
+  EventQuery: {
     payload: t.type({ id: t.number }),
-    response: t.type({
-      id: t.number,
-      instance: InstanceDecoder,
-      default: t.boolean,
-      title: t.string,
-      url: t.string,
-      content: t.string,
-      agreement: t.string,
-      iconHref: t.string,
-    }),
+    response: NotificationEventDecoder,
     canBeNull: true,
+  },
+  EventsQuery: {
+    payload: t.intersection([
+      t.type({ first: t.number }),
+      t.partial({
+        after: t.number,
+        actorId: t.number,
+        objectId: t.number,
+        instance: InstanceDecoder,
+      }),
+    ]),
+    response: t.type({
+      events: t.array(NotificationEventDecoder),
+      hasNextPage: t.boolean,
+    }),
+    canBeNull: false,
   },
   NavigationQuery: {
     payload: t.type({ instance: InstanceDecoder }),
     response: NavigationDecoder,
+    canBeNull: false,
+  },
+  NotificationSetStateMutation: {
+    payload: t.type({
+      ids: t.array(t.number),
+      userId: t.number,
+      unread: t.boolean,
+    }),
+    response: t.void,
+    canBeNull: false,
+  },
+  NotificationsQuery: {
+    payload: t.type({ userId: t.number }),
+    response: t.strict({
+      notifications: t.array(NotificationDecoder),
+      userId: Uuid,
+    }),
     canBeNull: false,
   },
   PageAddRevisionMutation: {
@@ -162,6 +235,24 @@ export const spec = {
       success: t.boolean,
       revisionId: t.union([t.number, t.null]),
     }),
+    canBeNull: false,
+  },
+  PageCheckoutRevisionMutation: {
+    payload: t.type({
+      revisionId: Uuid,
+      userId: t.number,
+      reason: t.string,
+    }),
+    response: t.type({ success: t.literal(true) }),
+    canBeNull: false,
+  },
+  PageRejectRevisionMutation: {
+    payload: t.type({
+      revisionId: t.number,
+      userId: t.number,
+      reason: t.string,
+    }),
+    response: t.type({ success: t.literal(true) }),
     canBeNull: false,
   },
   PageCreateMutation: {
@@ -181,14 +272,22 @@ export const spec = {
     response: t.union([PageDecoder, t.undefined]),
     canBeNull: false,
   },
-  TaxonomyTermSetNameAndDescriptionMutation: {
+  PagesQuery: {
     payload: t.type({
-      name: t.string,
-      id: t.number,
-      userId: t.number,
-      description: t.union([t.string, t.null, t.undefined]),
+      instance: t.union([InstanceDecoder, t.undefined]),
     }),
-    response: t.type({ success: t.boolean }),
+    response: t.type({
+      pages: t.array(t.number),
+    }),
+    canBeNull: false,
+  },
+  EntitySetLicenseMutation: {
+    payload: t.type({
+      entityId: t.number,
+      licenseId: t.number,
+      userId: t.number,
+    }),
+    response: t.type({ success: t.literal(true) }),
     canBeNull: false,
   },
   SubjectsQuery: {
@@ -215,9 +314,113 @@ export const spec = {
     response: t.void,
     canBeNull: false,
   },
+  TaxonomyCreateEntityLinksMutation: {
+    payload: t.type({
+      entityIds: t.array(t.number),
+      taxonomyTermId: t.number,
+      userId: t.number,
+    }),
+    response: t.strict({ success: t.literal(true) }),
+    canBeNull: false,
+  },
+  TaxonomyDeleteEntityLinksMutation: {
+    payload: t.type({
+      entityIds: t.array(t.number),
+      taxonomyTermId: t.number,
+      userId: t.number,
+    }),
+    response: t.strict({ success: t.literal(true) }),
+    canBeNull: false,
+  },
+  TaxonomyTermCreateMutation: {
+    payload: t.type({
+      taxonomyType: t.union([t.literal('topic'), t.literal('topic-folder')]),
+      name: t.string,
+      userId: t.number,
+      description: t.union([t.string, t.null, t.undefined]),
+      parentId: t.number,
+    }),
+    response: TaxonomyTermDecoder,
+    canBeNull: false,
+  },
+  TaxonomySortMutation: {
+    payload: t.type({
+      childrenIds: t.array(t.number),
+      taxonomyTermId: t.number,
+      userId: t.number,
+    }),
+    response: t.type({ success: t.boolean }),
+    canBeNull: false,
+  },
+  TaxonomyTermSetNameAndDescriptionMutation: {
+    payload: t.type({
+      name: t.string,
+      id: t.number,
+      userId: t.number,
+      description: t.union([t.string, t.null, t.undefined]),
+    }),
+    response: t.type({ success: t.boolean }),
+    canBeNull: false,
+  },
+  ThreadCreateCommentMutation: {
+    payload: t.type({
+      content: t.string,
+      threadId: t.number,
+      userId: t.number,
+      subscribe: t.boolean,
+      sendEmail: t.boolean,
+    }),
+    response: t.union([CommentDecoder, t.null]),
+    canBeNull: false,
+  },
+  ThreadCreateThreadMutation: {
+    payload: t.type({
+      content: t.string,
+      objectId: t.number,
+      sendEmail: t.boolean,
+      subscribe: t.boolean,
+      title: t.string,
+      userId: t.number,
+    }),
+    // TODO: See whether it can be just CommentDecoder
+    response: t.union([CommentDecoder, t.null]),
+    canBeNull: false,
+  },
+  ThreadSetThreadArchivedMutation: {
+    payload: t.type({
+      ids: t.array(t.number),
+      archived: t.boolean,
+      userId: t.number,
+    }),
+    response: t.void,
+    canBeNull: false,
+  },
+  ThreadsQuery: {
+    payload: t.type({ id: t.number }),
+    response: t.type({ firstCommentIds: t.array(t.number) }),
+    canBeNull: false,
+  },
   UnrevisedEntitiesQuery: {
     payload: t.type({}),
     response: t.strict({ unrevisedEntityIds: t.array(t.number) }),
+    canBeNull: false,
+  },
+  UserAddRoleMutation: {
+    payload: t.type({ username: t.string, roleName: t.string }),
+    response: t.strict({
+      success: t.literal(true),
+    }),
+    canBeNull: false,
+  },
+  UsersByRoleQuery: {
+    payload: t.type({
+      roleName: t.string,
+      first: t.number,
+      after: t.union([t.number, t.undefined]),
+    }),
+    response: t.strict({
+      usersByRole: t.array(t.number),
+    }),
     canBeNull: false,
   },
   UserDeleteBotsMutation: {
@@ -239,6 +442,13 @@ export const spec = {
   UserPotentialSpamUsersQuery: {
     payload: t.type({ first: t.number, after: t.union([t.number, t.null]) }),
     response: t.type({ userIds: t.array(t.number) }),
+    canBeNull: false,
+  },
+  UserRemoveRoleMutation: {
+    payload: t.type({ username: t.string, roleName: t.string }),
+    response: t.strict({
+      success: t.literal(true),
+    }),
     canBeNull: false,
   },
   UserSetDescriptionMutation: {
@@ -271,11 +481,12 @@ export async function makeRequest<M extends MessageType>(
   type: M,
   payload: Payload<M>
 ) {
+  const databaseLayerUrl = `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`
   const body = JSON.stringify({
     type,
     ...(payload === undefined ? {} : { payload }),
   })
-  const response = await fetch(URL, {
+  const response = await fetch(databaseLayerUrl, {
     method: 'POST',
     body,
     headers: { 'Content-Type': 'application/json' },
@@ -318,6 +529,12 @@ export function getDecoderFor<M extends MessageType>(message: M): t.Mixed {
     : messageSpec.response
 }
 
+export function getPayloadDecoderFor<M extends MessageType>(
+  message: M
+): PayloadDecoder<M> {
+  return spec[message]['payload']
+}
+
 export type Spec = typeof spec
 export type MessageType = keyof Spec
 export type NullableMessageType = {
@@ -328,4 +545,5 @@ export type NotNullableMessageType = {
 }[MessageType]
 export type Payload<M extends MessageType> = t.TypeOf<Spec[M]['payload']>
 export type Response<M extends MessageType> = t.TypeOf<Spec[M]['response']>
+export type PayloadDecoder<M extends MessageType> = Spec[M]['payload']
 export type ResponseDecoder<M extends MessageType> = Spec[M]['response']

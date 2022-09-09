@@ -23,70 +23,61 @@ import { gql } from 'apollo-server'
 import R from 'ramda'
 
 import { exercise, exerciseRevision } from '../../../__fixtures__'
-import {
-  assertSuccessfulGraphQLQuery,
-  LegacyClient,
-  createTestClient,
-  createUuidHandler,
-} from '../../__utils__'
-
-let client: LegacyClient
-
-beforeEach(() => {
-  client = createTestClient()
-})
+import { given, Client } from '../../__utils__'
 
 test('Exercise', async () => {
-  global.server.use(createUuidHandler(exercise))
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query exercise($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          ... on Exercise {
-            id
-            trashed
-            instance
-            date
+  given('UuidQuery').for(exercise)
+
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query exercise($id: Int!) {
+          uuid(id: $id) {
+            __typename
+            ... on Exercise {
+              id
+              trashed
+              instance
+              date
+            }
           }
         }
-      }
-    `,
-    variables: exercise,
-    data: {
+      `,
+    })
+    .withVariables({ id: exercise.id })
+    .shouldReturnData({
       uuid: R.pick(
         ['__typename', 'id', 'trashed', 'instance', 'date'],
         exercise
       ),
-    },
-    client,
-  })
+    })
 })
 
 test('ExerciseRevision', async () => {
-  global.server.use(createUuidHandler(exerciseRevision))
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query exerciseRevision($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          ... on ExerciseRevision {
-            id
-            trashed
-            date
-            content
-            changes
+  given('UuidQuery').for(exerciseRevision)
+
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query exerciseRevision($id: Int!) {
+          uuid(id: $id) {
+            __typename
+            ... on ExerciseRevision {
+              id
+              trashed
+              date
+              content
+              changes
+            }
           }
         }
-      }
-    `,
-    variables: exerciseRevision,
-    data: {
+      `,
+    })
+    .withVariables({ id: exerciseRevision.id })
+    .shouldReturnData({
       uuid: R.pick(
         ['__typename', 'id', 'trashed', 'date', 'content', 'changes'],
         exerciseRevision
       ),
-    },
-    client,
-  })
+    })
 })

@@ -22,7 +22,7 @@
 import { UserInputError } from 'apollo-server-express'
 import * as t from 'io-ts'
 
-import { Instance, TaxonomyTermType } from '~/types'
+import { Instance, Role, TaxonomyTermType } from '~/types'
 
 export const InstanceDecoder: t.Type<Instance> = t.union([
   t.literal(Instance.De),
@@ -31,6 +31,17 @@ export const InstanceDecoder: t.Type<Instance> = t.union([
   t.literal(Instance.Fr),
   t.literal(Instance.Hi),
   t.literal(Instance.Ta),
+])
+
+export const RoleDecoder: t.Type<Role> = t.union([
+  t.literal(Role.Admin),
+  t.literal(Role.Architect),
+  t.literal(Role.Guest),
+  t.literal(Role.Login),
+  t.literal(Role.Moderator),
+  t.literal(Role.Reviewer),
+  t.literal(Role.StaticPagesBuilder),
+  t.literal(Role.Sysadmin),
 ])
 
 export enum DiscriminatorType {
@@ -210,7 +221,6 @@ export const NavigationDecoder = t.type({
 })
 
 export const NavigationDataDecoder = t.type({
-  data: NavigationNodeDecoder,
   path: t.array(
     t.intersection([
       t.type({
@@ -253,17 +263,18 @@ export const PageRevisionDecoder = t.exact(
 )
 
 export const TaxonomyTermTypeDecoder = t.union([
-  t.literal(TaxonomyTermType.Blog),
-  t.literal(TaxonomyTermType.Curriculum),
-  t.literal(TaxonomyTermType.CurriculumTopic),
-  t.literal(TaxonomyTermType.CurriculumTopicFolder),
-  t.literal(TaxonomyTermType.Forum),
-  t.literal(TaxonomyTermType.ForumCategory),
-  t.literal(TaxonomyTermType.Locale),
+  t.literal('blog'),
+  t.literal('curriculum'),
+  t.literal('curriculumTopic'),
+  t.literal('curriculumTopicFolder'),
+  t.literal('forum'),
+  t.literal('forumCategory'),
+  t.literal('locale'),
+  t.literal('topicFolder'),
   t.literal(TaxonomyTermType.Root),
   t.literal(TaxonomyTermType.Subject),
   t.literal(TaxonomyTermType.Topic),
-  t.literal(TaxonomyTermType.TopicFolder),
+  t.literal(TaxonomyTermType.ExerciseFolder),
 ])
 
 export const TaxonomyTermDecoder = t.exact(

@@ -27,18 +27,19 @@ import { nextUuid, Client, given } from '../../__utils__'
 const user = { ...baseUser, roles: ['de_architect'] }
 const articleIds = [article.id, nextUuid(article.id)]
 const client = new Client({ userId: user.id })
-const mutation = client.prepareQuery({
-  query: gql`
-    mutation uuid($input: UuidSetStateInput!) {
-      uuid {
-        setState(input: $input) {
-          success
+const mutation = client
+  .prepareQuery({
+    query: gql`
+      mutation uuid($input: UuidSetStateInput!) {
+        uuid {
+          setState(input: $input) {
+            success
+          }
         }
       }
-    }
-  `,
-  variables: { input: { id: articleIds, trashed: true } },
-})
+    `,
+  })
+  .withInput({ id: articleIds, trashed: true })
 
 beforeEach(() => {
   const articles = articleIds.map((id) => {
@@ -70,16 +71,18 @@ test('returns "{ success: true }" when it succeeds', async () => {
 })
 
 test('updates the cache when it succeeds', async () => {
-  const uuidQuery = client.prepareQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          trashed
+  const uuidQuery = client
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            trashed
+          }
         }
-      }
-    `,
-    variables: { id: article.id },
-  })
+      `,
+    })
+    .withVariables({ id: article.id })
+
   await uuidQuery.shouldReturnData({ uuid: { trashed: false } })
   await mutation.execute()
 
@@ -101,7 +104,7 @@ test('fails when user does not have sufficient permissions', async () => {
   given('UuidQuery').for(page)
 
   await mutation
-    .withVariables({ input: { id: [page.id], trashed: false } })
+    .withInput({ id: [page.id], trashed: false })
     .shouldFailWithError('FORBIDDEN')
 })
 
