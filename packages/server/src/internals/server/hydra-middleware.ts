@@ -75,12 +75,9 @@ function createHydraLoginHandler({
     const session = await publicKratos
       .toSession(undefined, String(req.header('cookie')))
       .then(({ data }) => data)
-      .catch(() => {
-        // user is most likely just not logged in, redirect to login page
-        res.redirect(
-          // TODO: remove hardcode
-          `http://localhost:3000/auth/login?return_to=http://localhost:3001/hydra/login?login_challenge=${challenge}`
-        )
+      .catch((error) => {
+        res.status(500)
+        res.send(error)
       })
 
     if (session) {
