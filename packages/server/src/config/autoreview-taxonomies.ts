@@ -19,19 +19,5 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Matchers } from '@pact-foundation/pact'
 
-import { addMessageInteraction } from '../__utils__'
-
-test('UnrevisedEntitiesQuery', async () => {
-  await addMessageInteraction({
-    given: 'entity with id 1855 has unrevised revisions',
-    message: { type: 'UnrevisedEntitiesQuery', payload: {} },
-    responseBody: {
-      unrevisedEntityIds: Matchers.eachLike(1855),
-    },
-  })
-
-  const { unrevisedEntityIds } = await global.serloModel.getUnrevisedEntities()
-  expect(unrevisedEntityIds).toEqual([1855])
-})
+export const autoreviewTaxonomyIds = [106082]

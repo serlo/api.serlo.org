@@ -2,7 +2,8 @@ interface AbstractRepository {
   # extends AbstractUuid
   id: Int!
   trashed: Boolean!
-  alias: String
+  alias: String!
+  title: String!
   events(
     after: String
     before: String
@@ -33,7 +34,8 @@ interface AbstractRevision {
   # extends AbstractUuid
   id: Int!
   trashed: Boolean!
-  alias: String
+  alias: String!
+  title: String!
   events(
     after: String
     before: String

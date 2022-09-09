@@ -22,39 +22,28 @@
 import { gql } from 'apollo-server'
 
 import { article, articleRevision, user } from '../../__fixtures__'
-import {
-  assertErrorEvent,
-  assertFailingGraphQLQuery,
-  assertSuccessfulGraphQLQuery,
-  createMessageHandler,
-  createTestClient,
-  createUuidHandler,
-  getTypenameAndId,
-} from '../__utils__'
+import { assertErrorEvent, Client, getTypenameAndId, given } from '../__utils__'
+import { Model } from '~/internals/graphql'
 
 const invalidValue = { __typename: 'Article', invalid: 'this in invalid' }
 
 test('invalid values from data sources are reported', async () => {
-  const client = createTestClient()
+  given('UuidQuery')
+    .withPayload({ id: 42 })
+    .returns(invalidValue as unknown as Model<'Article'>)
 
-  global.server.use(
-    createMessageHandler({
-      message: { type: 'UuidQuery', payload: { id: 42 } },
-      body: invalidValue,
-    })
-  )
-
-  await assertFailingGraphQLQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          __typename
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            __typename
+          }
         }
-      }
-    `,
-    variables: { id: 42 },
-    client,
-  })
+      `,
+    })
+    .withVariables({ id: 42 })
+    .shouldFailWithError('INTERNAL_SERVER_ERROR')
 
   await assertErrorEvent({
     message: 'Invalid value received from data source.',
@@ -68,24 +57,25 @@ test('invalid values from data sources are reported', async () => {
 
 describe('reports invalid cache values', () => {
   test('when cache value has invalid properties', async () => {
+    given('UuidQuery').for(user)
+
     const key = `de.serlo.org/api/uuid/${user.id}`
-    global.server.use(createUuidHandler(user))
     global.timer.setCurrentTime(1000)
     await global.cache.set({ key, value: invalidValue, source: 'unit-test' })
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query ($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            id
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query ($id: Int!) {
+            uuid(id: $id) {
+              __typename
+              id
+            }
           }
-        }
-      `,
-      variables: { id: user.id },
-      data: { uuid: getTypenameAndId(user) },
-      client: createTestClient(),
-    })
+        `,
+      })
+      .withVariables({ id: user.id })
+      .shouldReturnData({ uuid: getTypenameAndId(user) })
 
     await assertErrorEvent({
       message:
@@ -102,30 +92,30 @@ describe('reports invalid cache values', () => {
   })
 
   test('when cache value is null but shall not be null', async () => {
+    given('UuidQuery').for(article, articleRevision)
+
     const key = `de.serlo.org/api/uuid/${article.currentRevisionId ?? ''}`
-    global.server.use(
-      createUuidHandler(article),
-      createUuidHandler(articleRevision)
-    )
     await global.cache.set({ key, value: null, source: 'unit-test' })
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query ($id: Int!) {
-          uuid(id: $id) {
-            ... on Article {
-              currentRevision {
-                __typename
-                id
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query ($id: Int!) {
+            uuid(id: $id) {
+              ... on Article {
+                currentRevision {
+                  __typename
+                  id
+                }
               }
             }
           }
-        }
-      `,
-      variables: { id: article.id },
-      data: { uuid: { currentRevision: getTypenameAndId(articleRevision) } },
-      client: createTestClient(),
-    })
+        `,
+      })
+      .withVariables({ id: article.id })
+      .shouldReturnData({
+        uuid: { currentRevision: getTypenameAndId(articleRevision) },
+      })
 
     await assertErrorEvent({
       message:

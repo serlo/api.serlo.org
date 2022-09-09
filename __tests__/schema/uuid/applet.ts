@@ -23,66 +23,59 @@ import { gql } from 'apollo-server'
 import R from 'ramda'
 
 import { applet, appletRevision } from '../../../__fixtures__'
-import {
-  assertSuccessfulGraphQLQuery,
-  LegacyClient,
-  createTestClient,
-  createUuidHandler,
-} from '../../__utils__'
-
-let client: LegacyClient
-
-beforeEach(() => {
-  client = createTestClient()
-})
+import { given, Client } from '../../__utils__'
 
 test('Applet', async () => {
-  global.server.use(createUuidHandler(applet))
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query applet($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          ... on Applet {
-            id
-            trashed
-            instance
-            date
+  given('UuidQuery').for(applet)
+
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            __typename
+            ... on Applet {
+              id
+              trashed
+              instance
+              date
+            }
           }
         }
-      }
-    `,
-    variables: applet,
-    data: {
+      `,
+    })
+    .withVariables({ id: applet.id })
+    .shouldReturnData({
       uuid: R.pick(['__typename', 'id', 'trashed', 'instance', 'date'], applet),
-    },
-    client,
-  })
+    })
 })
 
 test('AppletRevision', async () => {
-  global.server.use(createUuidHandler(appletRevision))
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query appletRevision($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          ... on AppletRevision {
-            id
-            trashed
-            date
-            url
-            title
-            content
-            changes
-            metaTitle
-            metaDescription
+  given('UuidQuery').for(appletRevision)
+
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            __typename
+            ... on AppletRevision {
+              id
+              trashed
+              date
+              url
+              title
+              content
+              changes
+              metaTitle
+              metaDescription
+            }
           }
         }
-      }
-    `,
-    variables: appletRevision,
-    data: {
+      `,
+    })
+    .withVariables(appletRevision)
+    .shouldReturnData({
       uuid: R.pick(
         [
           '__typename',
@@ -98,7 +91,5 @@ test('AppletRevision', async () => {
         ],
         appletRevision
       ),
-    },
-    client,
-  })
+    })
 })

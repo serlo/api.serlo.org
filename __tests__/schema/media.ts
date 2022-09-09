@@ -19,22 +19,39 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Matchers } from '@pact-foundation/pact'
+import { gql } from 'apollo-server'
 
-import { addMessageInteraction } from '../__utils__'
+import { user } from '../../__fixtures__'
+import { Client } from '../__utils__'
 
-test('SubjectsQuery', async () => {
-  await addMessageInteraction({
-    given: `there is a subject with id 5`,
-    message: { type: 'SubjectsQuery', payload: {} },
-    responseBody: {
-      subjects: Matchers.eachLike({
-        instance: 'de',
-        taxonomyTermId: 5,
-      }),
-    },
+const query = new Client({ userId: user.id }).prepareQuery({
+  query: gql`
+    query {
+      media {
+        newUpload(mediaType: IMAGE_PNG) {
+          uploadUrl
+          urlAfterUpload
+        }
+      }
+    }
+  `,
+})
+
+describe('media.upload', () => {
+  test('returns url for uploading media file', async () => {
+    await query.shouldReturnData({
+      media: {
+        newUpload: {
+          uploadUrl: 'http://google.com/upload',
+          urlAfterUpload: expect.stringMatching(
+            /https:\/\/assets.serlo.org\/[\d\-a-f]+\/image.png/
+          ) as unknown,
+        },
+      },
+    })
   })
 
-  const { subjects } = await global.serloModel.getSubjects()
-  expect(subjects).toEqual([{ instance: 'de', taxonomyTermId: 5 }])
+  test('fails for unauthenticated user', async () => {
+    await query.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
+  })
 })

@@ -20,11 +20,11 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { generateChangelog } from '@inyono/changelog'
-import * as fs from 'fs'
-import * as path from 'path'
-import * as util from 'util'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const writeFile = util.promisify(fs.writeFile)
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 exec()
   .then(() => {
@@ -1195,12 +1195,220 @@ async function exec(): Promise<void> {
           'Add mutation `TaxonomyTerm.setNameAndDescription`',
         ],
         fixed: [
-          'Reduced the cache time for get.Notifications',
+          'Reduced the cache time for getNotifications',
           'Reduced the cache time for chat.getUserInfo',
+          'Handles correctly the parameter needsReview when adding revision',
+        ],
+        changed: [
+          'Made some fields at Entity.add___Revision mutations optional',
+        ],
+      },
+      {
+        tagName: 'v0.30.1',
+        date: '2022-04-08',
+        added: ['Add query endpoint `thread.allThreads`'],
+      },
+      {
+        tagName: 'v0.30.2',
+        date: '2022-04-22',
+        added: [
+          'Add endpoint `taxonomy.move` #566',
+          'Add endpoint `taxonomy.create` #583',
+        ],
+        fixed: ['Support autoreview in sandbox in add revisions #538'],
+        internal: ['Refactor requests to DB layer #569'],
+      },
+      {
+        tagName: 'v0.31.0',
+        date: '2022-04-27',
+        changed: ['Merge entity.create & entity.addRevision = entity.set #594'],
+      },
+      {
+        tagName: 'v0.31.1',
+        date: '2022-04-29',
+        fixed: [
+          'Fix entity.setSolution `InvalidCachedValue` #597',
+          'mail for LENABI user journey',
+        ],
+      },
+      {
+        tagName: 'v0.31.2',
+        date: '2022-05-03',
+        fixed: [
+          '`entity.set` also returns records when revision is added #612',
+          'Add autoreview feature for `entity.set` also when entity is created #606',
+        ],
+        internal: ['refactor `entity.set` #600'],
+      },
+      {
+        tagName: 'v0.32.0',
+        date: '2022-05-06',
+        breakingChanges: [
+          'remove query `license` and replace it with the `license` namespace #616',
+        ],
+        added: [
+          'Add `license` namespace and `license.licenses` #616',
+          'Add `taxonomyTerm.createEntityLinks` #612',
+          'Add `taxonomyTerm.deleteEntityLinks` #599',
+        ],
+        fixed: ['Fix local runs #617'],
+        internal: ['Store licenses in ~/config #615'],
+      },
+      {
+        tagName: 'v0.33.0',
+        date: '2022-05-06',
+        added: ['Add `entity.deletedEntities` query #605'],
+      },
+      {
+        tagName: 'v0.33.1',
+        date: '2022-05-17',
+        fixed: [
+          'Fixed taxonomy term creation of topic folder #629',
+          'Fixed cache update of page.addRevision',
+          'Use default license when repository license is not supported #632',
+        ],
+      },
+      {
+        tagName: 'v0.34.0',
+        date: '2022-05-18',
+        added: ['Add entity.setLicense mutation #626'],
+      },
+      {
+        tagName: 'v0.35.0',
+        date: '2022-05-19',
+        added: ['Add taxonomyTerm.sort mutation #596'],
+      },
+      {
+        tagName: 'v0.35.1',
+        date: '2022-05-28',
+        changed: [
+          'Allow taxonomyTerm.create link to any parent #642',
+          'Allow taxonomyTerm.sort to send not all children ids #643',
+          'Rename entity.setLicense to entity.updateLicense #639',
+          'Rename TaxomonySortInput to TaxonomyTermSortInput #641',
+        ],
+      },
+      {
+        tagName: 'v0.36.0',
+        date: '2022-05-30',
+        changed: [
+          'Rename autorization Entity.SetLicense to Entity.UpdateLicense #639',
+        ],
+      },
+      {
+        tagName: 'v0.37.0',
+        date: '2022-06-07',
+        added: [
+          'licenses: removed iconHref, added shortTitle #657',
+          'licenses: removed extra urls #650',
+        ],
+        changed: ['alias is now nonnullable #640'],
+      },
+      {
+        tagName: 'v0.38.0',
+        date: '2022-06-08',
+        added: ['Add Page.pages query #623'],
+        changed: ['Remove TaxonomyTerm.move #662'],
+      },
+      {
+        tagName: 'v0.39.0',
+        date: '2022-06-09',
+        added: [
+          'Add AbstractUuid.title #627',
+          'Entity.set: be sure to not accept mandatory fields with only spaces #656',
+        ],
+      },
+      {
+        tagName: 'v0.40.0',
+        date: '2022-06-14',
+        added: [
+          'Add metadata.version #670',
+          'Add entity.sort mutation for sorting exercises #668',
+        ],
+      },
+      {
+        tagName: 'v0.41.0',
+        date: '2022-06-18',
+        added: [
+          'Thread.allThreads: add optional `instance` filter #676',
+          'Entity.sort: support also sorting of coursePages #679',
+        ],
+        changed: [
+          'Rename TaxonomyTerm.type folder to exerciseFolder #671',
+          'Simplify TaxonomyTerm.type to topic, exerciseFolder, subject, root #672',
+        ],
+        fixed: ['Fix metadata.version #678'],
+      },
+      {
+        tagName: 'v0.42.0',
+        date: '2022-06-29',
+        breakingChanges: ['Delete `Navigation.data` #684 '],
+        changed: ['better cache update when adding revisions #674'],
+        fixed: [
+          'Fix metadata.version (for real...maybe...) #682',
+          'Fix bug of missing user motivation text #683',
+        ],
+      },
+      {
+        tagName: 'v0.42.1',
+        date: '2022-07-06',
+        added: [
+          'Add `license.defaultLicense` #691',
+          'Add possibility to remove multiple cache keys #687',
+        ],
+      },
+      {
+        tagName: 'v0.43.0',
+        date: '2022-07-12',
+        added: [
+          'Add `user.addRole` mutation #663',
+          'Add `user.removeRole` mutation #663',
+        ],
+      },
+      {
+        tagName: 'v0.43.1',
+        date: '2022-07-21',
+        added: ['Add `media.upload` mutation #700'],
+      },
+      {
+        tagName: 'v0.44.0',
+        date: '2022-07-25',
+        added: ['Add user.usersByRole query #702'],
+      },
+      {
+        tagName: 'v0.45.0',
+        date: '2022-07-25',
+        breakingChanges: ['Refactor `media.upload` to `media.newUpload` #709'],
+      },
+      {
+        tagName: 'v0.46.0',
+        date: '2022-08-18',
+        breakingChanges: [
+          'Delete `fileExtension` and `fileNameWithoutExtension` from `media.newUpload` #713',
+        ],
+      },
+      {
+        tagName: 'v0.46.1',
+        date: '2022-08-18',
+        breakingChanges: [
+          'Change input of `addRole`, `removeRole` and `usersByRole` from `scope` to `instance` #711',
+        ],
+        changed: [
+          'User Role endpoints: do not throw error if role is global but instance is sent` #712',
+        ],
+      },
+      {
+        tagName: 'v0.46.2',
+        date: '2022-08-26',
+        fixed: [
+          'static_pages_builder can be added, removed and searched for #717',
         ],
       },
     ],
   })
 
-  await writeFile(path.join(__dirname, '..', 'CHANGELOG.md'), content)
+  await fs.promises.writeFile(
+    path.join(__dirname, '..', 'CHANGELOG.md'),
+    content
+  )
 }

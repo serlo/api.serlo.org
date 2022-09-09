@@ -50,20 +50,21 @@ beforeEach(() => {
     })
   )
 
-  mutation = client.prepareQuery({
-    query: gql`
-      mutation ($input: UserDeleteRegularUsersInput!) {
-        user {
-          deleteRegularUsers(input: $input) {
-            success
-            username
-            reason
+  mutation = client
+    .prepareQuery({
+      query: gql`
+        mutation ($input: UserDeleteRegularUsersInput!) {
+          user {
+            deleteRegularUsers(input: $input) {
+              success
+              username
+              reason
+            }
           }
         }
-      }
-    `,
-    variables: { input: { userIds: userIds } },
-  })
+      `,
+    })
+    .withInput({ userIds: userIds })
 
   given('UserDeleteRegularUsersMutation').isDefinedBy((req, res, ctx) => {
     const { userId } = req.body.payload
@@ -78,7 +79,7 @@ beforeEach(() => {
 
 test('runs successfully when mutation could be successfully executed', async () => {
   await mutation
-    .withVariables({ input: { userIds: [user.id, userIds[1]] } })
+    .withInput({ userIds: [user.id, userIds[1]] })
     .shouldReturnData({
       user: {
         deleteRegularUsers: [
@@ -102,7 +103,7 @@ test('runs partially when one of the mutations failed', async () => {
   })
 
   await mutation
-    .withVariables({ input: { userIds: [user.id, userIds[1]] } })
+    .withInput({ userIds: [user.id, userIds[1]] })
     .shouldReturnData({
       user: {
         deleteRegularUsers: [
@@ -114,16 +115,17 @@ test('runs partially when one of the mutations failed', async () => {
 })
 
 test('updates the cache', async () => {
-  const uuidQuery = client.prepareQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          id
+  const uuidQuery = client
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            id
+          }
         }
-      }
-    `,
-    variables: { id: user.id },
-  })
+      `,
+    })
+    .withVariables({ id: user.id })
 
   await uuidQuery.shouldReturnData({ uuid: { id: user.id } })
 
@@ -134,7 +136,7 @@ test('updates the cache', async () => {
 
 test('fails when one of the given bot ids is not a user', async () => {
   await mutation
-    .withVariables({ input: { userIds: [noUserId] } })
+    .withInput({ userIds: [noUserId] })
     .shouldFailWithError('BAD_USER_INPUT')
 })
 
@@ -143,9 +145,7 @@ test('fails when user is not authenticated', async () => {
 })
 
 test('fails when user does not have role "sysadmin"', async () => {
-  database.hasUuid({ ...user, roles: ['login', 'de_admin'] })
-
-  await mutation.shouldFailWithError('FORBIDDEN')
+  await mutation.forLoginUser('de_admin').shouldFailWithError('FORBIDDEN')
 })
 
 test('fails when database layer has an internal error', async () => {

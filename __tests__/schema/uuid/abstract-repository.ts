@@ -56,7 +56,9 @@ import {
   nextUuid,
   getTypenameAndId,
   given,
+  Client,
 } from '../../__utils__'
+import { getDefaultLicense } from '~/config/licenses'
 import { Model } from '~/internals/graphql'
 import {
   EntityRevisionType,
@@ -275,7 +277,6 @@ describe('Repository', () => {
   test.each(repositoryCases)(
     '%s by id (w/ license)',
     async (_type, { repository }) => {
-      given('LicenseQuery').withPayload({ id: license.id }).returns(license)
       global.server.use(createUuidHandler(repository))
 
       await assertSuccessfulGraphQLQuery({
@@ -288,10 +289,10 @@ describe('Repository', () => {
                     instance
                     default
                     title
+                    shortTitle
                     url
                     content
                     agreement
-                    iconHref
                   }
                 }
               }
@@ -301,6 +302,32 @@ describe('Repository', () => {
         data: { uuid: { license } },
         client,
       })
+    }
+  )
+
+  test.each(repositoryCases)(
+    '%s uses default license if licenseId is not supported',
+    async (_type, { repository }) => {
+      given('UuidQuery').for({ ...repository, licenseId: 42 })
+
+      await new Client({ userId: user.id })
+        .prepareQuery({
+          query: gql`
+            query license($id: Int!) {
+              uuid(id: $id) {
+                ... on AbstractRepository {
+                  license {
+                    id
+                  }
+                }
+              }
+            }
+          `,
+        })
+        .withVariables({ id: repository.id })
+        .shouldReturnData({
+          uuid: { license: { id: getDefaultLicense(repository.instance).id } },
+        })
     }
   )
 

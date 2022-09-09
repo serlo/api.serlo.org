@@ -23,75 +23,60 @@ import { gql } from 'apollo-server'
 import R from 'ramda'
 
 import { course, coursePage, courseRevision } from '../../../__fixtures__'
-import {
-  assertSuccessfulGraphQLQuery,
-  LegacyClient,
-  createTestClient,
-  createUuidHandler,
-  getTypenameAndId,
-} from '../../__utils__'
+import { getTypenameAndId, given, Client } from '../../__utils__'
 import { castToUuid } from '~/model/decoder'
-
-let client: LegacyClient
-
-beforeEach(() => {
-  client = createTestClient()
-})
 
 describe('Course', () => {
   beforeEach(() => {
-    global.server.use(createUuidHandler(course))
+    given('UuidQuery').for(course)
   })
 
   test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query course($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on Course {
-              id
-              trashed
-              instance
-              date
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query course($id: Int!) {
+            uuid(id: $id) {
+              __typename
+              ... on Course {
+                id
+                trashed
+                instance
+                date
+              }
             }
           }
-        }
-      `,
-      variables: course,
-      data: {
+        `,
+      })
+      .withVariables(course)
+      .shouldReturnData({
         uuid: R.pick(
           ['__typename', 'id', 'trashed', 'instance', 'date'],
           course
         ),
-      },
-      client,
-    })
+      })
   })
 
   test('by id (w/ pages)', async () => {
-    global.server.use(createUuidHandler(coursePage))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query course($id: Int!) {
-          uuid(id: $id) {
-            ... on Course {
-              pages {
-                __typename
-                id
+    given('UuidQuery').for(coursePage)
+
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query course($id: Int!) {
+            uuid(id: $id) {
+              ... on Course {
+                pages {
+                  __typename
+                  id
+                }
               }
             }
           }
-        }
-      `,
-      variables: course,
-      data: {
-        uuid: {
-          pages: [getTypenameAndId(coursePage)],
-        },
-      },
-      client,
-    })
+        `,
+      })
+      .withVariables(course)
+      .shouldReturnData({ uuid: { pages: [getTypenameAndId(coursePage)] } })
   })
 
   describe('filter "trashed"', () => {
@@ -99,69 +84,67 @@ describe('Course', () => {
       { ...coursePage, id: castToUuid(1), trashed: true },
       { ...coursePage, id: castToUuid(2), trashed: false },
     ]
+    const courseWithTwoPages = { ...course, pageIds: [1, 2].map(castToUuid) }
 
     beforeEach(() => {
-      global.server.use(...pages.map((page) => createUuidHandler(page)))
-      global.server.use(
-        createUuidHandler({ ...course, pageIds: [1, 2].map(castToUuid) })
-      )
+      given('UuidQuery').for(pages, courseWithTwoPages)
     })
 
     test('when not set', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query ($id: Int!) {
-            uuid(id: $id) {
-              ... on Course {
-                pages {
-                  id
+      await new Client()
+        .prepareQuery({
+          query: gql`
+            query ($id: Int!) {
+              uuid(id: $id) {
+                ... on Course {
+                  pages {
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: { id: course.id },
-        client,
-        data: { uuid: { pages: [{ id: 1 }, { id: 2 }] } },
-      })
+          `,
+        })
+        .withVariables({ id: courseWithTwoPages.id })
+        .shouldReturnData({ uuid: { pages: [{ id: 1 }, { id: 2 }] } })
     })
 
     test('when set to true', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query ($id: Int!) {
-            uuid(id: $id) {
-              ... on Course {
-                pages(trashed: true) {
-                  id
+      await new Client()
+        .prepareQuery({
+          query: gql`
+            query ($id: Int!) {
+              uuid(id: $id) {
+                ... on Course {
+                  pages(trashed: true) {
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: { id: course.id },
-        client,
-        data: { uuid: { pages: [{ id: 1 }] } },
-      })
+          `,
+        })
+        .withVariables({ id: courseWithTwoPages.id })
+        .shouldReturnData({ uuid: { pages: [{ id: 1 }] } })
     })
 
     test('when set to false', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query ($id: Int!) {
-            uuid(id: $id) {
-              ... on Course {
-                pages(trashed: false) {
-                  id
+      await new Client()
+        .prepareQuery({
+          query: gql`
+            query ($id: Int!) {
+              uuid(id: $id) {
+                ... on Course {
+                  pages(trashed: false) {
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: { id: course.id },
-        client,
-        data: { uuid: { pages: [{ id: 2 }] } },
-      })
+          `,
+        })
+        .withVariables({ id: courseWithTwoPages.id })
+        .shouldReturnData({ uuid: { pages: [{ id: 2 }] } })
     })
   })
 
@@ -170,94 +153,95 @@ describe('Course', () => {
       { ...coursePage, id: castToUuid(1) },
       { ...coursePage, id: castToUuid(2), currentRevisionId: null },
     ]
+    const courseWithTwoPages = { ...course, pageIds: [1, 2].map(castToUuid) }
 
     beforeEach(() => {
-      global.server.use(...pages.map((page) => createUuidHandler(page)))
-      global.server.use(
-        createUuidHandler({ ...course, pageIds: [1, 2].map(castToUuid) })
-      )
+      given('UuidQuery').for(pages, courseWithTwoPages)
     })
 
     test('when not set', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query ($id: Int!) {
-            uuid(id: $id) {
-              ... on Course {
-                pages {
-                  id
+      await new Client()
+        .prepareQuery({
+          query: gql`
+            query ($id: Int!) {
+              uuid(id: $id) {
+                ... on Course {
+                  pages {
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: { id: course.id },
-        client,
-        data: { uuid: { pages: [{ id: 1 }, { id: 2 }] } },
-      })
+          `,
+        })
+        .withVariables({ id: course.id })
+        .shouldReturnData({ uuid: { pages: [{ id: 1 }, { id: 2 }] } })
     })
 
     test('when set to true', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query ($id: Int!) {
-            uuid(id: $id) {
-              ... on Course {
-                pages(hasCurrentRevision: true) {
-                  id
+      await new Client()
+        .prepareQuery({
+          query: gql`
+            query ($id: Int!) {
+              uuid(id: $id) {
+                ... on Course {
+                  pages(hasCurrentRevision: true) {
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: { id: course.id },
-        client,
-        data: { uuid: { pages: [{ id: 1 }] } },
-      })
+          `,
+        })
+        .withVariables({ id: course.id })
+        .shouldReturnData({ uuid: { pages: [{ id: 1 }] } })
     })
 
     test('when set to false', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query ($id: Int!) {
-            uuid(id: $id) {
-              ... on Course {
-                pages(hasCurrentRevision: false) {
-                  id
+      await new Client()
+        .prepareQuery({
+          query: gql`
+            query ($id: Int!) {
+              uuid(id: $id) {
+                ... on Course {
+                  pages(hasCurrentRevision: false) {
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: { id: course.id },
-        client,
-        data: { uuid: { pages: [{ id: 2 }] } },
-      })
+          `,
+        })
+        .withVariables({ id: course.id })
+        .shouldReturnData({ uuid: { pages: [{ id: 2 }] } })
     })
   })
 })
 
 test('CourseRevision', async () => {
-  global.server.use(createUuidHandler(courseRevision))
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query courseRevision($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          ... on CourseRevision {
-            id
-            trashed
-            date
-            title
-            content
-            changes
-            metaDescription
+  given('UuidQuery').for(courseRevision)
+
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query courseRevision($id: Int!) {
+          uuid(id: $id) {
+            __typename
+            ... on CourseRevision {
+              id
+              trashed
+              date
+              title
+              content
+              changes
+              metaDescription
+            }
           }
         }
-      }
-    `,
-    variables: courseRevision,
-    data: {
+      `,
+    })
+    .withVariables(courseRevision)
+    .shouldReturnData({
       uuid: R.pick(
         [
           '__typename',
@@ -271,7 +255,5 @@ test('CourseRevision', async () => {
         ],
         courseRevision
       ),
-    },
-    client,
-  })
+    })
 })

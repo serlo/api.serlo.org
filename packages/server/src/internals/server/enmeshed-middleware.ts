@@ -197,14 +197,14 @@ function createSetAttributesHandler(cache: Cache): RequestHandler {
         to: [session.enmeshedId],
         cc: [],
         subject: 'Aktualisierung deines Lernstands',
-        body: 'Gratulation!\nDu hast den Kurs zur Bruchaddition erfolgreich absolviert. Bitte speichere den aktualisierten Lernstand.\nDein Serlo-Team',
+        body: 'Gratulation!\nDu hast den Kurs zum logistischen Wachstum erfolgreich absolviert. Bitte speichere den aktualisierten Lernstand.\nDein Serlo-Team',
         requests: [
           {
             '@type': 'AttributesChangeRequest',
             attributes: [{ name, value }],
             applyTo: session.enmeshedId,
             reason:
-              'Neuer Lernstand nach erfolgreicher Durchführung des Kurses zur Bruchaddition',
+              'Neuer Lernstand nach erfolgreicher Durchführung des Kurses zum logistischen Wachstum',
           },
           /*{
             '@type': 'AttributesShareRequest',

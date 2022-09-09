@@ -51,9 +51,14 @@ declare namespace NodeJS {
     SERVER_SERLO_CACHE_WORKER_SECRET: string
     SERVER_SWR_QUEUE_DASHBOARD_PASSWORD: string
     SERVER_SWR_QUEUE_DASHBOARD_USERNAME: string
+    // Path to Google service account credentials (for @google-cloud/storage)
+    // see https://cloud.google.com/docs/authentication/getting-started
+    GOOGLE_APPLICATION_CREDENTIALS: string
+
     /**
      * Used by swr-queue-worker only
      */
+    CHECK_STALLED_JOBS_DELAY: string
     SWR_QUEUE_WORKER_CONCURRENCY: string
     SWR_QUEUE_WORKER_DELAY: string | undefined
 

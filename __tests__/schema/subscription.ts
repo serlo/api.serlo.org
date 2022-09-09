@@ -78,8 +78,8 @@ describe('subscriptions', () => {
             }
           }
         `,
-        variables: { id: article.id },
       })
+      .withVariables({ id: article.id })
       .shouldReturnData({ subscription: { currentUserHasSubscribed: true } })
   })
 
@@ -93,8 +93,8 @@ describe('subscriptions', () => {
             }
           }
         `,
-        variables: { id: nextUuid(article.id) },
       })
+      .withVariables({ id: nextUuid(article.id) })
       .shouldReturnData({ subscription: { currentUserHasSubscribed: false } })
   })
 })
@@ -129,9 +129,7 @@ describe('subscription mutation set', () => {
     `,
   })
 
-  // given a single subscription to article.id
   beforeEach(async () => {
-    // mock subscriptions handlers
     given('UuidQuery').for(
       user,
       article,
@@ -147,8 +145,16 @@ describe('subscription mutation set', () => {
         ],
       })
 
-    // fill cache
-    await getSubscriptionsQuery.execute()
+    await getSubscriptionsQuery.shouldReturnData({
+      subscription: {
+        getSubscriptions: {
+          nodes: [
+            { object: { id: article.id }, sendEmail: false },
+            { object: { id: 1555 }, sendEmail: false },
+          ],
+        },
+      },
+    })
   })
 
   test('when subscribe=true', async () => {
@@ -162,12 +168,9 @@ describe('subscription mutation set', () => {
       .returns()
 
     await mutation
-      .withVariables({
-        input: { id: [1565, 1555], subscribe: true, sendEmail: true },
-      })
+      .withInput({ id: [1565, 1555], subscribe: true, sendEmail: true })
       .shouldReturnData({ subscription: { set: { success: true } } })
 
-    //check cache
     await getSubscriptionsQuery.shouldReturnData({
       subscription: {
         getSubscriptions: {
@@ -192,12 +195,9 @@ describe('subscription mutation set', () => {
       .returns()
 
     await mutation
-      .withVariables({
-        input: { id: [article.id], subscribe: false, sendEmail: false },
-      })
+      .withInput({ id: [article.id], subscribe: false, sendEmail: false })
       .shouldReturnData({ subscription: { set: { success: true } } })
 
-    //check cache
     await getSubscriptionsQuery.shouldReturnData({
       subscription: {
         getSubscriptions: {
@@ -210,8 +210,10 @@ describe('subscription mutation set', () => {
   test('unauthenticated', async () => {
     await mutation
       .forUnauthenticatedUser()
-      .withVariables({
-        input: { id: 1565, subscribe: true, sendEmail: false },
+      .withInput({
+        id: 1565,
+        subscribe: true,
+        sendEmail: false,
       })
       .shouldFailWithError('UNAUTHENTICATED')
   })

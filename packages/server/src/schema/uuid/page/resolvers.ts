@@ -23,11 +23,12 @@ import * as serloAuth from '@serlo/authorization'
 import { instanceToScope } from '@serlo/authorization'
 
 import {
-  assertArgumentIsNotEmpty,
+  assertStringIsNotEmpty,
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   createNamespace,
   Mutations,
+  Queries,
   TypeResolvers,
 } from '~/internals/graphql'
 import { castToUuid, PageDecoder, PageRevisionDecoder } from '~/model/decoder'
@@ -40,7 +41,11 @@ import { Page, PageRevision } from '~/types'
 
 export const resolvers: TypeResolvers<Page> &
   TypeResolvers<PageRevision> &
+  Queries<'page'> &
   Mutations<'page'> = {
+  Query: {
+    page: createNamespace(),
+  },
   Mutation: {
     page: createNamespace(),
   },
@@ -60,7 +65,7 @@ export const resolvers: TypeResolvers<Page> &
 
       const { pageId, content, title } = input
 
-      assertArgumentIsNotEmpty({ content, title })
+      assertStringIsNotEmpty({ content, title })
 
       const scope = await fetchScopeOfUuid({
         id: pageId,
@@ -109,7 +114,7 @@ export const resolvers: TypeResolvers<Page> &
 
       const { content, title, instance } = input
 
-      assertArgumentIsNotEmpty({ content, title })
+      assertStringIsNotEmpty({ content, title })
 
       await assertUserIsAuthorized({
         userId,
@@ -146,6 +151,21 @@ export const resolvers: TypeResolvers<Page> &
       await dataSources.model.serlo.rejectPageRevision({ ...input, userId })
 
       return { success: true, query: {} }
+    },
+  },
+  PageQuery: {
+    async pages(_parent, payload, { dataSources }) {
+      const { pages } = await dataSources.model.serlo.getPages({
+        instance: payload.instance,
+      })
+      return await Promise.all(
+        pages.map(async (id: number) => {
+          return await dataSources.model.serlo.getUuidWithCustomDecoder({
+            id: id,
+            decoder: PageDecoder,
+          })
+        })
+      )
     },
   },
 }

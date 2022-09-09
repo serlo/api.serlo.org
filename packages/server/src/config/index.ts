@@ -19,28 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import * as assertions from '../../__tests__/__utils__'
-
-export async function assertSuccessfulGraphQLQuery(
-  args: Omit<
-    Parameters<typeof assertions.assertSuccessfulGraphQLQuery>[0],
-    'client'
-  >
-) {
-  return assertions.assertSuccessfulGraphQLQuery({
-    ...args,
-    client: global.client,
-  })
-}
-
-export async function assertSuccessfulGraphQLMutation(
-  args: Omit<
-    Parameters<typeof assertions.assertSuccessfulGraphQLMutation>[0],
-    'client'
-  >
-) {
-  return assertions.assertSuccessfulGraphQLMutation({
-    ...args,
-    client: global.client,
-  })
-}
+export * from './alias'
+export * from './autoreview-taxonomies'
+export * from './licenses'

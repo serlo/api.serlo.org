@@ -23,101 +23,91 @@ import { gql } from 'apollo-server'
 import R from 'ramda'
 
 import { solution, solutionRevision, exercise } from '../../../__fixtures__'
-import {
-  assertSuccessfulGraphQLQuery,
-  LegacyClient,
-  createTestClient,
-  createUuidHandler,
-  getTypenameAndId,
-} from '../../__utils__'
-
-let client: LegacyClient
-
-beforeEach(() => {
-  client = createTestClient()
-})
+import { getTypenameAndId, given, Client } from '../../__utils__'
 
 describe('Solution', () => {
   beforeEach(() => {
-    global.server.use(createUuidHandler(solution))
+    given('UuidQuery').for(solution)
   })
 
   test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query solution($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on Solution {
-              id
-              trashed
-              instance
-              date
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query solution($id: Int!) {
+            uuid(id: $id) {
+              __typename
+              ... on Solution {
+                id
+                trashed
+                instance
+                date
+              }
             }
           }
-        }
-      `,
-      variables: solution,
-      data: {
+        `,
+      })
+      .withVariables(solution)
+      .shouldReturnData({
         uuid: R.pick(
           ['__typename', 'id', 'trashed', 'instance', 'date'],
           solution
         ),
-      },
-      client,
-    })
+      })
   })
 
   test('by id (w/ exercise)', async () => {
-    global.server.use(createUuidHandler(exercise))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query solution($id: Int!) {
-          uuid(id: $id) {
-            ... on Solution {
-              exercise {
-                __typename
-                id
+    given('UuidQuery').for(exercise)
+
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query solution($id: Int!) {
+            uuid(id: $id) {
+              ... on Solution {
+                exercise {
+                  __typename
+                  id
+                }
               }
             }
           }
-        }
-      `,
-      variables: solution,
-      data: {
+        `,
+      })
+      .withVariables(solution)
+      .shouldReturnData({
         uuid: {
           exercise: getTypenameAndId(exercise),
         },
-      },
-      client,
-    })
+      })
   })
 })
 
 test('SolutionRevision', async () => {
-  global.server.use(createUuidHandler(solutionRevision))
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query solutionRevision($id: Int!) {
-        uuid(id: $id) {
-          __typename
-          ... on SolutionRevision {
-            id
-            trashed
-            date
-            content
-            changes
+  given('UuidQuery').for(solutionRevision)
+
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query solutionRevision($id: Int!) {
+          uuid(id: $id) {
+            __typename
+            ... on SolutionRevision {
+              id
+              trashed
+              date
+              content
+              changes
+            }
           }
         }
-      }
-    `,
-    variables: solutionRevision,
-    data: {
+      `,
+    })
+    .withVariables(solutionRevision)
+    .shouldReturnData({
       uuid: R.pick(
         ['__typename', 'id', 'trashed', 'date', 'content', 'changes'],
         solutionRevision
       ),
-    },
-    client,
-  })
+    })
 })

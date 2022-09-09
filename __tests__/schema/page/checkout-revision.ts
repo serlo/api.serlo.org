@@ -27,25 +27,8 @@ import {
   pageRevision,
   user as baseUser,
 } from '../../../__fixtures__'
-import {
-  assertFailingGraphQLMutation,
-  assertSuccessfulGraphQLMutation,
-  assertSuccessfulGraphQLQuery,
-  LegacyClient,
-  createTestClient,
-  Database,
-  givenPageCheckoutRevisionEndpoint,
-  given,
-  hasInternalServerError,
-  nextUuid,
-  returnsJson,
-  returnsUuidsFromDatabase,
-} from '../../__utils__'
-import { Model } from '~/internals/graphql'
+import { given, nextUuid, Client } from '../../__utils__'
 
-let database: Database
-
-let client: LegacyClient
 const user = { ...baseUser, roles: ['de_static_pages_builder'] }
 const page = {
   ...basePage,
@@ -57,168 +40,9 @@ const unrevisedRevision = {
   id: nextUuid(pageRevision.id),
   trashed: true,
 }
-
-beforeEach(() => {
-  client = createTestClient({ userId: user.id })
-
-  database = new Database()
-  database.hasUuids([user, page, pageRevision, unrevisedRevision])
-
-  given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
-  givenPageCheckoutRevisionEndpoint((req, res, ctx) => {
-    const { revisionId, reason, userId } = req.body.payload
-
-    // In order to test whether these parameters are passed properly
-    if (userId !== user.id || reason !== 'given reason') {
-      return res(ctx.status(500))
-    }
-
-    const revision = database.getUuid(revisionId) as Model<'PageRevision'>
-
-    database.changeUuid(revision.repositoryId, {
-      currentRevisionId: revisionId,
-    })
-    database.changeUuid(revisionId, { trashed: false })
-
-    return res(ctx.json({ success: true }))
-  })
-})
-
-test('returns "{ success: true }" when mutation could be successfully executed', async () => {
-  await assertSuccessfulGraphQLMutation({
-    ...createCheckoutRevisionMutation(),
-    data: { page: { checkoutRevision: { success: true } } },
-    client,
-  })
-})
-
-test('following queries for page point to checkout revision when page is already in the cache', async () => {
-  await assertSuccessfulGraphQLQuery({
+const mutation = new Client({ userId: user.id })
+  .prepareQuery({
     query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          ... on Page {
-            currentRevision {
-              id
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: page.id },
-    data: { uuid: { currentRevision: { id: pageRevision.id } } },
-    client,
-  })
-
-  await assertSuccessfulGraphQLMutation({
-    ...createCheckoutRevisionMutation(),
-    client,
-  })
-
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          ... on Page {
-            currentRevision {
-              id
-            }
-          }
-        }
-      }
-    `,
-    variables: { id: page.id },
-    data: { uuid: { currentRevision: { id: unrevisedRevision.id } } },
-    client,
-  })
-})
-
-test('checkout revision has trashed == false for following queries', async () => {
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          ... on PageRevision {
-            trashed
-          }
-        }
-      }
-    `,
-    variables: { id: unrevisedRevision.id },
-    data: { uuid: { trashed: true } },
-    client,
-  })
-
-  await assertSuccessfulGraphQLMutation({
-    ...createCheckoutRevisionMutation(),
-    client,
-  })
-
-  await assertSuccessfulGraphQLQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          ... on PageRevision {
-            trashed
-          }
-        }
-      }
-    `,
-    variables: { id: unrevisedRevision.id },
-    data: { uuid: { trashed: false } },
-    client,
-  })
-})
-
-test('fails when user is not authenticated', async () => {
-  const client = createTestClient({ userId: null })
-
-  await assertFailingGraphQLMutation({
-    ...createCheckoutRevisionMutation(),
-    client,
-    expectedError: 'UNAUTHENTICATED',
-  })
-})
-
-test('fails when user does not have role "static_pages_builder"', async () => {
-  database.hasUuid({ ...user, roles: ['login', 'de_moderator'] })
-
-  await assertFailingGraphQLMutation({
-    ...createCheckoutRevisionMutation(),
-    client,
-    expectedError: 'FORBIDDEN',
-  })
-})
-
-test('fails when database layer returns a 400er response', async () => {
-  givenPageCheckoutRevisionEndpoint(
-    returnsJson({
-      status: 400,
-      json: { success: false, reason: 'revision is already checked out' },
-    })
-  )
-
-  await assertFailingGraphQLMutation({
-    ...createCheckoutRevisionMutation(),
-    client,
-    expectedError: 'BAD_USER_INPUT',
-    message: 'revision is already checked out',
-  })
-})
-
-test('fails when database layer has an internal error', async () => {
-  givenPageCheckoutRevisionEndpoint(hasInternalServerError())
-
-  await assertFailingGraphQLMutation({
-    ...createCheckoutRevisionMutation(),
-    client,
-    expectedError: 'INTERNAL_SERVER_ERROR',
-  })
-})
-
-function createCheckoutRevisionMutation() {
-  return {
-    mutation: gql`
       mutation ($input: CheckoutRevisionInput!) {
         page {
           checkoutRevision(input: $input) {
@@ -227,8 +51,104 @@ function createCheckoutRevisionMutation() {
         }
       }
     `,
-    variables: {
-      input: { revisionId: unrevisedRevision.id, reason: 'given reason' },
-    },
-  }
-}
+  })
+  .withInput({ revisionId: unrevisedRevision.id, reason: 'reason' })
+
+beforeEach(() => {
+  given('UuidQuery').for(user, page, pageRevision, unrevisedRevision)
+  given('PageCheckoutRevisionMutation')
+    .withPayload({
+      userId: user.id,
+      reason: 'reason',
+      revisionId: unrevisedRevision.id,
+    })
+    .isDefinedBy((_req, res, ctx) => {
+      given('UuidQuery').for({
+        ...page,
+        currentRevisionId: unrevisedRevision.id,
+      })
+      given('UuidQuery').for({ ...unrevisedRevision, trashed: false })
+
+      return res(ctx.json({ success: true }))
+    })
+})
+
+test('returns "{ success: true }" when mutation could be successfully executed', async () => {
+  await mutation.shouldReturnData({
+    page: { checkoutRevision: { success: true } },
+  })
+})
+
+test('following queries for page point to checkout revision when page is already in the cache', async () => {
+  const pageQuery = new Client()
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on Page {
+              currentRevision {
+                id
+              }
+            }
+          }
+        }
+      `,
+    })
+    .withVariables({ id: page.id })
+
+  await pageQuery.shouldReturnData({
+    uuid: { currentRevision: { id: pageRevision.id } },
+  })
+
+  await mutation.shouldReturnData({
+    page: { checkoutRevision: { success: true } },
+  })
+
+  await pageQuery.shouldReturnData({
+    uuid: { currentRevision: { id: unrevisedRevision.id } },
+  })
+})
+
+test('checkout revision has trashed == false for following queries', async () => {
+  const revisionQuery = new Client()
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on PageRevision {
+              trashed
+            }
+          }
+        }
+      `,
+    })
+    .withVariables({ id: unrevisedRevision.id })
+
+  await revisionQuery.shouldReturnData({ uuid: { trashed: true } })
+
+  await mutation.shouldReturnData({
+    page: { checkoutRevision: { success: true } },
+  })
+
+  await revisionQuery.shouldReturnData({ uuid: { trashed: false } })
+})
+
+test('fails when user is not authenticated', async () => {
+  await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
+})
+
+test('fails when user does not have role "static_pages_builder"', async () => {
+  await mutation.forLoginUser('de_moderator').shouldFailWithError('FORBIDDEN')
+})
+
+test('fails when database layer returns a 400er response', async () => {
+  given('PageCheckoutRevisionMutation').returnsBadRequest()
+
+  await mutation.shouldFailWithError('BAD_USER_INPUT')
+})
+
+test('fails when database layer has an internal error', async () => {
+  given('PageCheckoutRevisionMutation').hasInternalServerError()
+
+  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
+})

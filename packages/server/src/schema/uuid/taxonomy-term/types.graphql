@@ -1,15 +1,8 @@
 enum TaxonomyTermType {
-  blog
-  curriculum
-  curriculumTopic
-  curriculumTopicFolder
-  forum
-  forumCategory
-  locale
   root
   subject
   topic
-  topicFolder
+  exerciseFolder
 }
 
 type TaxonomyTerm implements AbstractUuid & AbstractNavigationChild & InstanceAware & ThreadAware {
@@ -33,7 +26,8 @@ type TaxonomyTerm implements AbstractUuid & AbstractNavigationChild & InstanceAw
   ): AbstractNotificationEventConnection!
   type: TaxonomyTermType!
   instance: Instance!
-  alias: String
+  alias: String!
+  title: String!
   name: String!
   description: String
   weight: Int!
@@ -53,9 +47,55 @@ extend type Mutation {
 }
 
 type TaxonomyTermMutation {
+  create(input: TaxonomyTermCreateInput!): TaxonomyTermCreateResponse!
+  createEntityLinks(
+    input: TaxonomyEntityLinksInput!
+  ): TaxonomyEntityLinksResponse!
+  deleteEntityLinks(
+    input: TaxonomyEntityLinksInput!
+  ): TaxonomyEntityLinksResponse!
+  sort(input: TaxonomyTermSortInput!): TaxonomyTermSortResponse!
   setNameAndDescription(
     input: TaxonomyTermSetNameAndDescriptionInput!
-  ): TaxonomyTermSetNameAndDescriptionResponse
+  ): TaxonomyTermSetNameAndDescriptionResponse!
+}
+
+enum TaxonomyTypeCreateOptions {
+  topic
+  exerciseFolder
+}
+
+input TaxonomyTermCreateInput {
+  parentId: Int!
+  taxonomyType: TaxonomyTypeCreateOptions!
+  name: String!
+  description: String
+}
+
+type TaxonomyTermCreateResponse {
+  record: TaxonomyTerm
+  success: Boolean!
+  query: Query!
+}
+
+input TaxonomyEntityLinksInput {
+  entityIds: [Int!]!
+  taxonomyTermId: Int!
+}
+
+type TaxonomyEntityLinksResponse {
+  success: Boolean!
+  query: Query!
+}
+
+input TaxonomyTermSortInput {
+  childrenIds: [Int!]!
+  taxonomyTermId: Int!
+}
+
+type TaxonomyTermSortResponse {
+  success: Boolean!
+  query: Query!
 }
 
 input TaxonomyTermSetNameAndDescriptionInput {

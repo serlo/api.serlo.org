@@ -16,13 +16,14 @@ export type Scalars = {
 };
 
 export type AbstractEntity = {
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
   instance: Instance;
   license: License;
   subject?: Maybe<Subject>;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -40,7 +41,7 @@ export type AbstractEntityConnection = {
   __typename?: 'AbstractEntityConnection';
   edges: Array<AbstractEntityCursor>;
   nodes: Array<AbstractEntity>;
-  pageInfo: PageInfo;
+  pageInfo: HasNextPageInfo;
   totalCount: Scalars['Int'];
 };
 
@@ -57,6 +58,7 @@ export type AbstractEntityRevision = {
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -71,7 +73,7 @@ export type AbstractEntityRevisionEventsArgs = {
 };
 
 export type AbstractExercise = {
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<AbstractExerciseRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -79,6 +81,7 @@ export type AbstractExercise = {
   instance: Instance;
   license: License;
   solution?: Maybe<Solution>;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -93,13 +96,14 @@ export type AbstractExerciseEventsArgs = {
 };
 
 export type AbstractExerciseRevision = {
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -139,13 +143,14 @@ export type AbstractNotificationEventEdge = {
 };
 
 export type AbstractRepository = {
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
   instance: Instance;
   license: License;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -170,13 +175,14 @@ export type AbstractRepositoryThreadsArgs = {
 };
 
 export type AbstractRevision = {
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   content: Scalars['String'];
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -201,13 +207,14 @@ export type AbstractRevisionThreadsArgs = {
 };
 
 export type AbstractTaxonomyTermChild = {
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
   instance: Instance;
   license: License;
   taxonomyTerms: TaxonomyTermConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -230,9 +237,10 @@ export type AbstractTaxonomyTermChildTaxonomyTermsArgs = {
 };
 
 export type AbstractUuid = {
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int'];
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -260,83 +268,6 @@ export type AbstractUuidCursor = {
   node: AbstractUuid;
 };
 
-export type AddAppletRevisionInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  entityId: Scalars['Int'];
-  metaDescription?: InputMaybe<Scalars['String']>;
-  metaTitle?: InputMaybe<Scalars['String']>;
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  title: Scalars['String'];
-  url: Scalars['String'];
-};
-
-export type AddArticleRevisionInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  entityId: Scalars['Int'];
-  metaDescription?: InputMaybe<Scalars['String']>;
-  metaTitle?: InputMaybe<Scalars['String']>;
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  title: Scalars['String'];
-};
-
-export type AddCoursePageRevisionInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  entityId: Scalars['Int'];
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  title: Scalars['String'];
-};
-
-export type AddCourseRevisionInput = {
-  changes: Scalars['String'];
-  content?: InputMaybe<Scalars['String']>;
-  entityId: Scalars['Int'];
-  metaDescription?: InputMaybe<Scalars['String']>;
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  title: Scalars['String'];
-};
-
-export type AddEventRevisionInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  entityId: Scalars['Int'];
-  metaDescription?: InputMaybe<Scalars['String']>;
-  metaTitle?: InputMaybe<Scalars['String']>;
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  title: Scalars['String'];
-};
-
-export type AddExerciseGroupRevisionInput = {
-  changes: Scalars['String'];
-  cohesive: Scalars['Boolean'];
-  content: Scalars['String'];
-  entityId: Scalars['Int'];
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-};
-
-export type AddGenericRevisionInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  entityId: Scalars['Int'];
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-};
-
 export type AddRevisionResponse = {
   __typename?: 'AddRevisionResponse';
   query: Query;
@@ -344,25 +275,22 @@ export type AddRevisionResponse = {
   success: Scalars['Boolean'];
 };
 
-export type AddVideoRevisionInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  entityId: Scalars['Int'];
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  title: Scalars['String'];
-  url: Scalars['String'];
-};
-
 export type AliasInput = {
   instance: Instance;
   path: Scalars['String'];
 };
 
+export type AllThreadsConnection = {
+  __typename?: 'AllThreadsConnection';
+  edges: Array<ThreadsCursor>;
+  nodes: Array<Thread>;
+  pageInfo: HasNextPageInfo;
+  totalCount: Scalars['Int'];
+};
+
 export type Applet = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Applet';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<AppletRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -373,6 +301,7 @@ export type Applet = AbstractEntity & AbstractRepository & AbstractTaxonomyTermC
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -415,7 +344,7 @@ export type AppletThreadsArgs = {
 
 export type AppletRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'AppletRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -467,7 +396,7 @@ export type AppletRevisionCursor = {
 
 export type Article = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Article';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<ArticleRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -478,6 +407,7 @@ export type Article = AbstractEntity & AbstractRepository & AbstractTaxonomyTerm
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -520,7 +450,7 @@ export type ArticleThreadsArgs = {
 
 export type ArticleRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'ArticleRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -570,7 +500,7 @@ export type ArticleRevisionCursor = {
 };
 
 export type CacheRemoveInput = {
-  key: Scalars['String'];
+  keys: Array<Scalars['String']>;
 };
 
 export type CacheRemoveResponse = {
@@ -662,7 +592,7 @@ export type CommentEdge = {
 
 export type Course = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Course';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<CourseRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -674,6 +604,7 @@ export type Course = AbstractEntity & AbstractRepository & AbstractTaxonomyTermC
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -722,7 +653,7 @@ export type CourseThreadsArgs = {
 
 export type CoursePage = AbstractEntity & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'CoursePage';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   course: Course;
   currentRevision?: Maybe<CoursePageRevision>;
   date: Scalars['DateTime'];
@@ -733,6 +664,7 @@ export type CoursePage = AbstractEntity & AbstractRepository & AbstractUuid & In
   revisions: CoursePageRevisionConnection;
   subject?: Maybe<Subject>;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -767,7 +699,7 @@ export type CoursePageThreadsArgs = {
 
 export type CoursePageRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'CoursePageRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -816,7 +748,7 @@ export type CoursePageRevisionCursor = {
 
 export type CourseRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'CourseRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -864,35 +796,6 @@ export type CourseRevisionCursor = {
   node: CourseRevision;
 };
 
-export type CreateAppletInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  instance: Instance;
-  licenseId: Scalars['Int'];
-  metaDescription?: InputMaybe<Scalars['String']>;
-  metaTitle?: InputMaybe<Scalars['String']>;
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  taxonomyTermId: Scalars['Int'];
-  title: Scalars['String'];
-  url: Scalars['String'];
-};
-
-export type CreateArticleInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  instance: Instance;
-  licenseId: Scalars['Int'];
-  metaDescription?: InputMaybe<Scalars['String']>;
-  metaTitle?: InputMaybe<Scalars['String']>;
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  taxonomyTermId: Scalars['Int'];
-  title: Scalars['String'];
-};
-
 export type CreateCommentNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CreateCommentNotificationEvent';
   actor: User;
@@ -902,31 +805,6 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & Instanc
   instance: Instance;
   objectId: Scalars['Int'];
   thread: Thread;
-};
-
-export type CreateCourseInput = {
-  changes: Scalars['String'];
-  content?: InputMaybe<Scalars['String']>;
-  instance: Instance;
-  licenseId: Scalars['Int'];
-  metaDescription?: InputMaybe<Scalars['String']>;
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  taxonomyTermId: Scalars['Int'];
-  title: Scalars['String'];
-};
-
-export type CreateCoursePageInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  instance: Instance;
-  licenseId: Scalars['Int'];
-  needsReview: Scalars['Boolean'];
-  parentId: Scalars['Int'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  title: Scalars['String'];
 };
 
 export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -950,13 +828,6 @@ export type CreateEntityNotificationEvent = AbstractNotificationEvent & Instance
   objectId: Scalars['Int'];
 };
 
-export type CreateEntityResponse = {
-  __typename?: 'CreateEntityResponse';
-  query: Query;
-  record?: Maybe<AbstractEntity>;
-  success: Scalars['Boolean'];
-};
-
 export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CreateEntityRevisionNotificationEvent';
   actor: User;
@@ -968,54 +839,6 @@ export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & 
   objectId: Scalars['Int'];
 };
 
-export type CreateEventInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  instance: Instance;
-  licenseId: Scalars['Int'];
-  metaDescription?: InputMaybe<Scalars['String']>;
-  metaTitle?: InputMaybe<Scalars['String']>;
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  taxonomyTermId: Scalars['Int'];
-  title: Scalars['String'];
-};
-
-export type CreateExerciseGroupInput = {
-  changes: Scalars['String'];
-  cohesive: Scalars['Boolean'];
-  content: Scalars['String'];
-  instance: Instance;
-  licenseId: Scalars['Int'];
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  taxonomyTermId: Scalars['Int'];
-};
-
-export type CreateExerciseInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  instance: Instance;
-  licenseId: Scalars['Int'];
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  taxonomyTermId: Scalars['Int'];
-};
-
-export type CreateGroupedExerciseInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  instance: Instance;
-  licenseId: Scalars['Int'];
-  needsReview: Scalars['Boolean'];
-  parentId: Scalars['Int'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-};
-
 export type CreatePageInput = {
   content: Scalars['String'];
   discussionsEnabled: Scalars['Boolean'];
@@ -1023,17 +846,6 @@ export type CreatePageInput = {
   instance: Instance;
   licenseId: Scalars['Int'];
   title: Scalars['String'];
-};
-
-export type CreateSolutionInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  instance: Instance;
-  licenseId: Scalars['Int'];
-  needsReview: Scalars['Boolean'];
-  parentId: Scalars['Int'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
 };
 
 export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -1068,17 +880,24 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
   thread: Thread;
 };
 
-export type CreateVideoInput = {
-  changes: Scalars['String'];
-  content: Scalars['String'];
-  instance: Instance;
-  licenseId: Scalars['Int'];
-  needsReview: Scalars['Boolean'];
-  subscribeThis: Scalars['Boolean'];
-  subscribeThisByEmail: Scalars['Boolean'];
-  taxonomyTermId: Scalars['Int'];
-  title: Scalars['String'];
-  url: Scalars['String'];
+export type DeletedEntitiesConnection = {
+  __typename?: 'DeletedEntitiesConnection';
+  edges: Array<DeletedEntityCursor>;
+  nodes: Array<DeletedEntity>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type DeletedEntity = {
+  __typename?: 'DeletedEntity';
+  dateOfDeletion?: Maybe<Scalars['String']>;
+  entity?: Maybe<AbstractEntity>;
+};
+
+export type DeletedEntityCursor = {
+  __typename?: 'DeletedEntityCursor';
+  cursor: Scalars['String'];
+  node: DeletedEntity;
 };
 
 export type EntityMetadataConnection = {
@@ -1096,78 +915,20 @@ export type EntityMetadataCursor = {
 
 export type EntityMutation = {
   __typename?: 'EntityMutation';
-  addAppletRevision: AddRevisionResponse;
-  addArticleRevision: AddRevisionResponse;
-  addCoursePageRevision: AddRevisionResponse;
-  addCourseRevision: AddRevisionResponse;
-  addEventRevision: AddRevisionResponse;
-  addExerciseGroupRevision: AddRevisionResponse;
-  addExerciseRevision: AddRevisionResponse;
-  addGroupedExerciseRevision: AddRevisionResponse;
-  addSolutionRevision: AddRevisionResponse;
-  addVideoRevision: AddRevisionResponse;
   checkoutRevision: CheckoutRevisionResponse;
-  createApplet: CreateEntityResponse;
-  createArticle: CreateEntityResponse;
-  createCourse: CreateEntityResponse;
-  createCoursePage: CreateEntityResponse;
-  createEvent: CreateEntityResponse;
-  createExercise: CreateEntityResponse;
-  createExerciseGroup: CreateEntityResponse;
-  createGroupedExercise: CreateEntityResponse;
-  createSolution: CreateEntityResponse;
-  createVideo: CreateEntityResponse;
   rejectRevision: RejectRevisionResponse;
-};
-
-
-export type EntityMutationAddAppletRevisionArgs = {
-  input: AddAppletRevisionInput;
-};
-
-
-export type EntityMutationAddArticleRevisionArgs = {
-  input: AddArticleRevisionInput;
-};
-
-
-export type EntityMutationAddCoursePageRevisionArgs = {
-  input: AddCoursePageRevisionInput;
-};
-
-
-export type EntityMutationAddCourseRevisionArgs = {
-  input: AddCourseRevisionInput;
-};
-
-
-export type EntityMutationAddEventRevisionArgs = {
-  input: AddEventRevisionInput;
-};
-
-
-export type EntityMutationAddExerciseGroupRevisionArgs = {
-  input: AddExerciseGroupRevisionInput;
-};
-
-
-export type EntityMutationAddExerciseRevisionArgs = {
-  input: AddGenericRevisionInput;
-};
-
-
-export type EntityMutationAddGroupedExerciseRevisionArgs = {
-  input: AddGenericRevisionInput;
-};
-
-
-export type EntityMutationAddSolutionRevisionArgs = {
-  input: AddGenericRevisionInput;
-};
-
-
-export type EntityMutationAddVideoRevisionArgs = {
-  input: AddVideoRevisionInput;
+  setApplet: SetEntityResponse;
+  setArticle: SetEntityResponse;
+  setCourse: SetEntityResponse;
+  setCoursePage: SetEntityResponse;
+  setEvent: SetEntityResponse;
+  setExercise: SetEntityResponse;
+  setExerciseGroup: SetEntityResponse;
+  setGroupedExercise: SetEntityResponse;
+  setSolution: SetEntityResponse;
+  setVideo: SetEntityResponse;
+  sort: EntitySortResponse;
+  updateLicense: EntityUpdateLicenseResponse;
 };
 
 
@@ -1176,63 +937,107 @@ export type EntityMutationCheckoutRevisionArgs = {
 };
 
 
-export type EntityMutationCreateAppletArgs = {
-  input: CreateAppletInput;
-};
-
-
-export type EntityMutationCreateArticleArgs = {
-  input: CreateArticleInput;
-};
-
-
-export type EntityMutationCreateCourseArgs = {
-  input: CreateCourseInput;
-};
-
-
-export type EntityMutationCreateCoursePageArgs = {
-  input: CreateCoursePageInput;
-};
-
-
-export type EntityMutationCreateEventArgs = {
-  input: CreateEventInput;
-};
-
-
-export type EntityMutationCreateExerciseArgs = {
-  input: CreateExerciseInput;
-};
-
-
-export type EntityMutationCreateExerciseGroupArgs = {
-  input: CreateExerciseGroupInput;
-};
-
-
-export type EntityMutationCreateGroupedExerciseArgs = {
-  input: CreateGroupedExerciseInput;
-};
-
-
-export type EntityMutationCreateSolutionArgs = {
-  input: CreateSolutionInput;
-};
-
-
-export type EntityMutationCreateVideoArgs = {
-  input: CreateVideoInput;
-};
-
-
 export type EntityMutationRejectRevisionArgs = {
   input: RejectRevisionInput;
 };
 
+
+export type EntityMutationSetAppletArgs = {
+  input: SetAppletInput;
+};
+
+
+export type EntityMutationSetArticleArgs = {
+  input: SetArticleInput;
+};
+
+
+export type EntityMutationSetCourseArgs = {
+  input: SetCourseInput;
+};
+
+
+export type EntityMutationSetCoursePageArgs = {
+  input: SetCoursePageInput;
+};
+
+
+export type EntityMutationSetEventArgs = {
+  input: SetEventInput;
+};
+
+
+export type EntityMutationSetExerciseArgs = {
+  input: SetGenericEntityInput;
+};
+
+
+export type EntityMutationSetExerciseGroupArgs = {
+  input: SetExerciseGroupInput;
+};
+
+
+export type EntityMutationSetGroupedExerciseArgs = {
+  input: SetGenericEntityInput;
+};
+
+
+export type EntityMutationSetSolutionArgs = {
+  input: SetGenericEntityInput;
+};
+
+
+export type EntityMutationSetVideoArgs = {
+  input: SetVideoInput;
+};
+
+
+export type EntityMutationSortArgs = {
+  input: EntitySortInput;
+};
+
+
+export type EntityMutationUpdateLicenseArgs = {
+  input: EntityUpdateLicenseInput;
+};
+
+export type EntityQuery = {
+  __typename?: 'EntityQuery';
+  deletedEntities: DeletedEntitiesConnection;
+};
+
+
+export type EntityQueryDeletedEntitiesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+};
+
+export type EntitySortInput = {
+  childrenIds: Array<Scalars['Int']>;
+  entityId: Scalars['Int'];
+};
+
+export type EntitySortResponse = {
+  __typename?: 'EntitySortResponse';
+  query: Query;
+  success: Scalars['Boolean'];
+};
+
+export type EntityUpdateLicenseInput = {
+  entityId: Scalars['Int'];
+  licenseId: Scalars['Int'];
+};
+
+export type EntityUpdateLicenseResponse = {
+  __typename?: 'EntityUpdateLicenseResponse';
+  query: Query;
+  success: Scalars['Boolean'];
+};
+
 export type Event = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Event';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<EventRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -1243,6 +1048,7 @@ export type Event = AbstractEntity & AbstractRepository & AbstractTaxonomyTermCh
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1285,7 +1091,7 @@ export type EventThreadsArgs = {
 
 export type EventRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'EventRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -1336,7 +1142,7 @@ export type EventRevisionCursor = {
 
 export type Exercise = AbstractEntity & AbstractExercise & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Exercise';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<ExerciseRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -1348,6 +1154,7 @@ export type Exercise = AbstractEntity & AbstractExercise & AbstractRepository & 
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1390,7 +1197,7 @@ export type ExerciseThreadsArgs = {
 
 export type ExerciseGroup = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'ExerciseGroup';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<ExerciseGroupRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -1402,6 +1209,7 @@ export type ExerciseGroup = AbstractEntity & AbstractRepository & AbstractTaxono
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1444,7 +1252,7 @@ export type ExerciseGroupThreadsArgs = {
 
 export type ExerciseGroupRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'ExerciseGroupRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   cohesive: Scalars['Boolean'];
@@ -1454,6 +1262,7 @@ export type ExerciseGroupRevision = AbstractEntityRevision & AbstractRevision & 
   id: Scalars['Int'];
   repository: ExerciseGroup;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1493,7 +1302,7 @@ export type ExerciseGroupRevisionCursor = {
 
 export type ExerciseRevision = AbstractEntityRevision & AbstractExerciseRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'ExerciseRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -1502,6 +1311,7 @@ export type ExerciseRevision = AbstractEntityRevision & AbstractExerciseRevision
   id: Scalars['Int'];
   repository: Exercise;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1541,7 +1351,7 @@ export type ExerciseRevisionCursor = {
 
 export type GroupedExercise = AbstractEntity & AbstractExercise & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'GroupedExercise';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<GroupedExerciseRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -1553,6 +1363,7 @@ export type GroupedExercise = AbstractEntity & AbstractExercise & AbstractReposi
   solution?: Maybe<Solution>;
   subject?: Maybe<Subject>;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1587,7 +1398,7 @@ export type GroupedExerciseThreadsArgs = {
 
 export type GroupedExerciseRevision = AbstractEntityRevision & AbstractExerciseRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'GroupedExerciseRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -1596,6 +1407,7 @@ export type GroupedExerciseRevision = AbstractEntityRevision & AbstractExerciseR
   id: Scalars['Int'];
   repository: GroupedExercise;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1657,17 +1469,64 @@ export type License = {
   agreement: Scalars['String'];
   content: Scalars['String'];
   default: Scalars['Boolean'];
-  iconHref: Scalars['String'];
   id: Scalars['Int'];
   instance: Instance;
+  shortTitle: Scalars['String'];
   title: Scalars['String'];
   url: Scalars['String'];
+};
+
+export type LicenseQuery = {
+  __typename?: 'LicenseQuery';
+  defaultLicense: License;
+  license?: Maybe<License>;
+  licenses: Array<License>;
+};
+
+
+export type LicenseQueryDefaultLicenseArgs = {
+  instance: Instance;
+};
+
+
+export type LicenseQueryLicenseArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type LicenseQueryLicensesArgs = {
+  instance?: InputMaybe<Instance>;
+};
+
+export type MediaQuery = {
+  __typename?: 'MediaQuery';
+  newUpload: MediaUpload;
+};
+
+
+export type MediaQueryNewUploadArgs = {
+  mediaType: MediaType;
+};
+
+export enum MediaType {
+  ImageGif = 'IMAGE_GIF',
+  ImageJpeg = 'IMAGE_JPEG',
+  ImagePng = 'IMAGE_PNG',
+  ImageSvgXml = 'IMAGE_SVG_XML',
+  ImageWebp = 'IMAGE_WEBP'
+}
+
+export type MediaUpload = {
+  __typename?: 'MediaUpload';
+  uploadUrl: Scalars['String'];
+  urlAfterUpload: Scalars['String'];
 };
 
 export type MetadataQuery = {
   __typename?: 'MetadataQuery';
   entities: EntityMetadataConnection;
   publisher: Scalars['JSONObject'];
+  version: Scalars['String'];
 };
 
 
@@ -1693,7 +1552,6 @@ export type Mutation = {
 
 export type Navigation = {
   __typename?: 'Navigation';
-  data: Scalars['JSON'];
   path: NavigationNodeConnection;
 };
 
@@ -1770,7 +1628,7 @@ export type NotificationSetStateResponse = {
 
 export type Page = AbstractNavigationChild & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Page';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<PageRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -1780,6 +1638,7 @@ export type Page = AbstractNavigationChild & AbstractRepository & AbstractUuid &
   navigation?: Maybe<Navigation>;
   revisions: PageRevisionConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -1861,9 +1720,19 @@ export type PageMutationRejectRevisionArgs = {
   input: RejectRevisionInput;
 };
 
+export type PageQuery = {
+  __typename?: 'PageQuery';
+  pages: Array<Page>;
+};
+
+
+export type PageQueryPagesArgs = {
+  instance?: InputMaybe<Instance>;
+};
+
 export type PageRevision = AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'PageRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   content: Scalars['String'];
   date: Scalars['DateTime'];
@@ -1915,13 +1784,17 @@ export type Query = {
   activeDonors: UserConnection;
   activeReviewers: UserConnection;
   authorization: Scalars['JSON'];
+  entity?: Maybe<EntityQuery>;
   events: AbstractNotificationEventConnection;
-  license?: Maybe<License>;
+  license: LicenseQuery;
+  media: MediaQuery;
   metadata: MetadataQuery;
   notificationEvent?: Maybe<AbstractNotificationEvent>;
   notifications: NotificationConnection;
+  page: PageQuery;
   subject: SubjectQuery;
   subscription: SubscriptionQuery;
+  thread: ThreadQuery;
   user: UserQuery;
   uuid?: Maybe<AbstractUuid>;
 };
@@ -1959,11 +1832,6 @@ export type QueryEventsArgs = {
   instance?: InputMaybe<Instance>;
   last?: InputMaybe<Scalars['Int']>;
   objectId?: InputMaybe<Scalars['Int']>;
-};
-
-
-export type QueryLicenseArgs = {
-  id: Scalars['Int'];
 };
 
 
@@ -2038,8 +1906,18 @@ export enum Role {
   Login = 'login',
   Moderator = 'moderator',
   Reviewer = 'reviewer',
-  StaticPagesBuilder = 'staticPagesBuilder',
+  StaticPagesBuilder = 'static_pages_builder',
   Sysadmin = 'sysadmin'
+}
+
+export enum Scope {
+  Serlo = 'Serlo',
+  SerloDe = 'Serlo_De',
+  SerloEn = 'Serlo_En',
+  SerloEs = 'Serlo_Es',
+  SerloFr = 'Serlo_Fr',
+  SerloHi = 'Serlo_Hi',
+  SerloTa = 'Serlo_Ta'
 }
 
 export type ScopedRole = {
@@ -2060,6 +1938,97 @@ export type ScopedRoleCursor = {
   __typename?: 'ScopedRoleCursor';
   cursor: Scalars['String'];
   node: ScopedRole;
+};
+
+export type SetAppletInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  entityId?: InputMaybe<Scalars['Int']>;
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
+  needsReview: Scalars['Boolean'];
+  parentId?: InputMaybe<Scalars['Int']>;
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
+  url: Scalars['String'];
+};
+
+export type SetArticleInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  entityId?: InputMaybe<Scalars['Int']>;
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
+  needsReview: Scalars['Boolean'];
+  parentId?: InputMaybe<Scalars['Int']>;
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
+};
+
+export type SetCourseInput = {
+  changes: Scalars['String'];
+  content?: InputMaybe<Scalars['String']>;
+  entityId?: InputMaybe<Scalars['Int']>;
+  metaDescription?: InputMaybe<Scalars['String']>;
+  needsReview: Scalars['Boolean'];
+  parentId?: InputMaybe<Scalars['Int']>;
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
+};
+
+export type SetCoursePageInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  entityId?: InputMaybe<Scalars['Int']>;
+  needsReview: Scalars['Boolean'];
+  parentId?: InputMaybe<Scalars['Int']>;
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
+};
+
+export type SetEntityResponse = {
+  __typename?: 'SetEntityResponse';
+  query: Query;
+  record?: Maybe<AbstractEntity>;
+  success: Scalars['Boolean'];
+};
+
+export type SetEventInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  entityId?: InputMaybe<Scalars['Int']>;
+  metaDescription?: InputMaybe<Scalars['String']>;
+  metaTitle?: InputMaybe<Scalars['String']>;
+  needsReview: Scalars['Boolean'];
+  parentId?: InputMaybe<Scalars['Int']>;
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
+};
+
+export type SetExerciseGroupInput = {
+  changes: Scalars['String'];
+  cohesive: Scalars['Boolean'];
+  content: Scalars['String'];
+  entityId?: InputMaybe<Scalars['Int']>;
+  needsReview: Scalars['Boolean'];
+  parentId?: InputMaybe<Scalars['Int']>;
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+};
+
+export type SetGenericEntityInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  entityId?: InputMaybe<Scalars['Int']>;
+  needsReview: Scalars['Boolean'];
+  parentId?: InputMaybe<Scalars['Int']>;
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
 };
 
 export type SetLicenseNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -2116,9 +2085,21 @@ export type SetUuidStateNotificationEvent = AbstractNotificationEvent & Instance
   trashed: Scalars['Boolean'];
 };
 
+export type SetVideoInput = {
+  changes: Scalars['String'];
+  content: Scalars['String'];
+  entityId?: InputMaybe<Scalars['Int']>;
+  needsReview: Scalars['Boolean'];
+  parentId?: InputMaybe<Scalars['Int']>;
+  subscribeThis: Scalars['Boolean'];
+  subscribeThisByEmail: Scalars['Boolean'];
+  title: Scalars['String'];
+  url: Scalars['String'];
+};
+
 export type Solution = AbstractEntity & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Solution';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<SolutionRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -2129,6 +2110,7 @@ export type Solution = AbstractEntity & AbstractRepository & AbstractUuid & Inst
   revisions: SolutionRevisionConnection;
   subject?: Maybe<Subject>;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -2163,7 +2145,7 @@ export type SolutionThreadsArgs = {
 
 export type SolutionRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'SolutionRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];
@@ -2172,6 +2154,7 @@ export type SolutionRevision = AbstractEntityRevision & AbstractRevision & Abstr
   id: Scalars['Int'];
   repository: Solution;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -2301,9 +2284,20 @@ export type SubscriptionSetResponse = {
   success: Scalars['Boolean'];
 };
 
+export type TaxonomyEntityLinksInput = {
+  entityIds: Array<Scalars['Int']>;
+  taxonomyTermId: Scalars['Int'];
+};
+
+export type TaxonomyEntityLinksResponse = {
+  __typename?: 'TaxonomyEntityLinksResponse';
+  query: Query;
+  success: Scalars['Boolean'];
+};
+
 export type TaxonomyTerm = AbstractNavigationChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'TaxonomyTerm';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   children: AbstractUuidConnection;
   description?: Maybe<Scalars['String']>;
   events: AbstractNotificationEventConnection;
@@ -2314,6 +2308,7 @@ export type TaxonomyTerm = AbstractNavigationChild & AbstractUuid & InstanceAwar
   parent?: Maybe<TaxonomyTerm>;
   taxonomyId: Scalars['Int'];
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
   type: TaxonomyTermType;
   weight: Scalars['Int'];
@@ -2355,6 +2350,20 @@ export type TaxonomyTermConnection = {
   totalCount: Scalars['Int'];
 };
 
+export type TaxonomyTermCreateInput = {
+  description?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  parentId: Scalars['Int'];
+  taxonomyType: TaxonomyTypeCreateOptions;
+};
+
+export type TaxonomyTermCreateResponse = {
+  __typename?: 'TaxonomyTermCreateResponse';
+  query: Query;
+  record?: Maybe<TaxonomyTerm>;
+  success: Scalars['Boolean'];
+};
+
 export type TaxonomyTermEdge = {
   __typename?: 'TaxonomyTermEdge';
   cursor: Scalars['String'];
@@ -2363,12 +2372,36 @@ export type TaxonomyTermEdge = {
 
 export type TaxonomyTermMutation = {
   __typename?: 'TaxonomyTermMutation';
-  setNameAndDescription?: Maybe<TaxonomyTermSetNameAndDescriptionResponse>;
+  create: TaxonomyTermCreateResponse;
+  createEntityLinks: TaxonomyEntityLinksResponse;
+  deleteEntityLinks: TaxonomyEntityLinksResponse;
+  setNameAndDescription: TaxonomyTermSetNameAndDescriptionResponse;
+  sort: TaxonomyTermSortResponse;
+};
+
+
+export type TaxonomyTermMutationCreateArgs = {
+  input: TaxonomyTermCreateInput;
+};
+
+
+export type TaxonomyTermMutationCreateEntityLinksArgs = {
+  input: TaxonomyEntityLinksInput;
+};
+
+
+export type TaxonomyTermMutationDeleteEntityLinksArgs = {
+  input: TaxonomyEntityLinksInput;
 };
 
 
 export type TaxonomyTermMutationSetNameAndDescriptionArgs = {
   input: TaxonomyTermSetNameAndDescriptionInput;
+};
+
+
+export type TaxonomyTermMutationSortArgs = {
+  input: TaxonomyTermSortInput;
 };
 
 export type TaxonomyTermSetNameAndDescriptionInput = {
@@ -2383,18 +2416,27 @@ export type TaxonomyTermSetNameAndDescriptionResponse = {
   success: Scalars['Boolean'];
 };
 
+export type TaxonomyTermSortInput = {
+  childrenIds: Array<Scalars['Int']>;
+  taxonomyTermId: Scalars['Int'];
+};
+
+export type TaxonomyTermSortResponse = {
+  __typename?: 'TaxonomyTermSortResponse';
+  query: Query;
+  success: Scalars['Boolean'];
+};
+
 export enum TaxonomyTermType {
-  Blog = 'blog',
-  Curriculum = 'curriculum',
-  CurriculumTopic = 'curriculumTopic',
-  CurriculumTopicFolder = 'curriculumTopicFolder',
-  Forum = 'forum',
-  ForumCategory = 'forumCategory',
-  Locale = 'locale',
+  ExerciseFolder = 'exerciseFolder',
   Root = 'root',
   Subject = 'subject',
-  Topic = 'topic',
-  TopicFolder = 'topicFolder'
+  Topic = 'topic'
+}
+
+export enum TaxonomyTypeCreateOptions {
+  ExerciseFolder = 'exerciseFolder',
+  Topic = 'topic'
 }
 
 export type Thread = {
@@ -2493,6 +2535,18 @@ export type ThreadMutationSetThreadStateArgs = {
   input: ThreadSetThreadStateInput;
 };
 
+export type ThreadQuery = {
+  __typename?: 'ThreadQuery';
+  allThreads: AllThreadsConnection;
+};
+
+
+export type ThreadQueryAllThreadsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+};
+
 export type ThreadSetCommentStateInput = {
   id: Array<Scalars['Int']>;
   trashed: Scalars['Boolean'];
@@ -2543,7 +2597,7 @@ export type ThreadsCursor = {
 export type User = AbstractUuid & ThreadAware & {
   __typename?: 'User';
   activityByType: UserActivityByType;
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   chatUrl?: Maybe<Scalars['String']>;
   date: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
@@ -2559,6 +2613,7 @@ export type User = AbstractUuid & ThreadAware & {
   motivation?: Maybe<Scalars['String']>;
   roles: ScopedRoleConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
   unrevisedEntities: AbstractEntityConnection;
   username: Scalars['String'];
@@ -2654,10 +2709,17 @@ export type UserEdge = {
 
 export type UserMutation = {
   __typename?: 'UserMutation';
+  addRole: UserRoleResponse;
   deleteBots: UserDeleteBotsResponse;
   deleteRegularUsers: Array<UserDeleteRegularUsersResponse>;
+  removeRole: UserRoleResponse;
   setDescription: UserSetDescriptionResponse;
   setEmail: UserSetEmailResponse;
+};
+
+
+export type UserMutationAddRoleArgs = {
+  input: UserRoleInput;
 };
 
 
@@ -2668,6 +2730,11 @@ export type UserMutationDeleteBotsArgs = {
 
 export type UserMutationDeleteRegularUsersArgs = {
   input: UserDeleteRegularUsersInput;
+};
+
+
+export type UserMutationRemoveRoleArgs = {
+  input: UserRoleInput;
 };
 
 
@@ -2683,12 +2750,32 @@ export type UserMutationSetEmailArgs = {
 export type UserQuery = {
   __typename?: 'UserQuery';
   potentialSpamUsers: UserConnection;
+  usersByRole: UserConnection;
 };
 
 
 export type UserQueryPotentialSpamUsersArgs = {
   after?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type UserQueryUsersByRoleArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  role: Role;
+};
+
+export type UserRoleInput = {
+  instance?: InputMaybe<Instance>;
+  role: Role;
+  username: Scalars['String'];
+};
+
+export type UserRoleResponse = {
+  __typename?: 'UserRoleResponse';
+  success: Scalars['Boolean'];
 };
 
 export type UserSetDescriptionInput = {
@@ -2735,7 +2822,7 @@ export type UuidSetStateResponse = {
 
 export type Video = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Video';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   currentRevision?: Maybe<VideoRevision>;
   date: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
@@ -2746,6 +2833,7 @@ export type Video = AbstractEntity & AbstractRepository & AbstractTaxonomyTermCh
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
   threads: ThreadsConnection;
+  title: Scalars['String'];
   trashed: Scalars['Boolean'];
 };
 
@@ -2788,7 +2876,7 @@ export type VideoThreadsArgs = {
 
 export type VideoRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'VideoRevision';
-  alias?: Maybe<Scalars['String']>;
+  alias: Scalars['String'];
   author: User;
   changes: Scalars['String'];
   content: Scalars['String'];

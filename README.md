@@ -24,7 +24,8 @@ $ cd api.serlo.org
 
 ### Install dependencies
 
-Run `yarn` to install the dependencies of all packages.
+Run `yarn` to install the dependencies of all packages and
+run `yarn build` to build also the packages 'authorization' and 'types'.
 
 ### Start
 
@@ -38,7 +39,12 @@ Make sure Docker is running and then run `yarn start` to start Redis.
 
 ### Use the GraphQL playground
 
-After `yarn start`, you can open the GraphQL playground via [http://localhost:3000/\_\_\_graphql](http://localhost:3000/___graphql). Note that most queries will need a running [serlo/serlo.org-database-layer](https://github.com/serlo/serlo.org-database-layer) dev environment. Happy coding!
+After `yarn start`, you can open the GraphQL playground via [http://localhost:3000/\_\_\_graphql](http://localhost:3000/___graphql).  
+Note that most queries will need a running [serlo/serlo.org-database-layer](https://github.com/serlo/serlo.org-database-layer) dev environment.
+
+If you need to run requests authenticated/authorized, use `yarn auth` to be authenticated as user with id 1 or `yarn auth <id>` to choose a specific user.
+
+Happy coding!
 
 ### Stop
 
@@ -68,6 +74,7 @@ We have `~` as an absolute path alias for `./src` in place, e.g. `~/internals` r
 
 ### Other commands
 
+- `yarn build` builds all packages. Run it when package `authorization` changed.
 - `yarn build:server` builds the server (only needed for deployment)
 - `yarn changelog` generates the changelog (only needed for deployment)
 - `yarn deploy:images` deploys the docker images to our Container Registry (only needed for deployment)
@@ -78,4 +85,4 @@ We have `~` as an absolute path alias for `./src` in place, e.g. `~/internals` r
 - `yarn test` runs the unit tests
 - `yarn codegen` generates TypeScript types from GraphQL schema
 - `yarn start` spins up the development environment
-- `yarn update-version` starts the process for adding a new version
+- `yarn update-version` starts the process for adding a new version (only needed for deployment)

@@ -20,31 +20,38 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as serloAuth from '@serlo/authorization'
+import { instanceToScope } from '@serlo/authorization'
 import { UserInputError } from 'apollo-server'
 import * as t from 'io-ts'
 
-import { ModelDataSource } from '~/internals/data-source'
+import { createSetEntityResolver } from './entity-set-handler'
+import { licenses } from '~/config'
 import {
-  assertArgumentIsNotEmpty,
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   createNamespace,
   InterfaceResolvers,
   Mutations,
+  Queries,
 } from '~/internals/graphql'
 import {
   castToUuid,
+  CourseDecoder,
   EntityDecoder,
-  EntityRevisionType,
   EntityType,
-  TaxonomyTermDecoder,
+  ExerciseGroupDecoder,
 } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
-import { Instance } from '~/types'
+import { resolveConnection } from '~/schema/connection/utils'
+import { isDateString } from '~/utils'
 
 export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   InterfaceResolvers<'AbstractEntityRevision'> &
+  Queries<'entity'> &
   Mutations<'entity'> = {
+  Query: {
+    entity: createNamespace(),
+  },
   Mutation: {
     entity: createNamespace(),
   },
@@ -58,341 +65,175 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       return entityRevision.__typename
     },
   },
+  EntityQuery: {
+    async deletedEntities(_parent, payload, { dataSources }) {
+      const LIMIT = 1000
+      const { first = 100, after, instance } = payload
+
+      if (first > LIMIT)
+        throw new UserInputError(`'first' may not be higher than ${LIMIT}`)
+
+      const deletedAfter = after ? decodeDateOfDeletion(after) : undefined
+
+      const { deletedEntities } =
+        await dataSources.model.serlo.getDeletedEntities({
+          first: first + 1,
+          after: deletedAfter,
+          instance,
+        })
+
+      const nodes = await Promise.all(
+        deletedEntities.map(async (node) => {
+          return {
+            entity: await dataSources.model.serlo.getUuidWithCustomDecoder({
+              id: node.id,
+              decoder: EntityDecoder,
+            }),
+            dateOfDeletion: node.dateOfDeletion,
+          }
+        })
+      )
+
+      return resolveConnection({
+        nodes,
+        payload,
+        createCursor: (node) => {
+          const { entity, dateOfDeletion } = node
+          return JSON.stringify({ id: entity.id, dateOfDeletion })
+        },
+      })
+    },
+  },
   EntityMutation: {
-    async createApplet(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, url, taxonomyTermId } = input
+    setApplet: createSetEntityResolver({
+      entityType: EntityType.Applet,
+      mandatoryFieldKeys: ['changes', 'content', 'title', 'url'],
+    }),
+    setArticle: createSetEntityResolver({
+      entityType: EntityType.Article,
+      mandatoryFieldKeys: ['changes', 'content', 'title'],
+    }),
+    setCourse: createSetEntityResolver({
+      entityType: EntityType.Course,
+      mandatoryFieldKeys: ['changes', 'title'],
+      transformedInput: (input) => {
+        return {
+          ...input,
+          description: input.content,
+          content: undefined,
+        }
+      },
+    }),
+    setCoursePage: createSetEntityResolver({
+      entityType: EntityType.CoursePage,
+      mandatoryFieldKeys: ['changes', 'content', 'title'],
+    }),
+    setEvent: createSetEntityResolver({
+      entityType: EntityType.Event,
+      mandatoryFieldKeys: ['changes', 'content', 'title'],
+    }),
+    setExercise: createSetEntityResolver({
+      entityType: EntityType.Exercise,
+      mandatoryFieldKeys: ['changes', 'content'],
+    }),
+    setExerciseGroup: createSetEntityResolver({
+      entityType: EntityType.ExerciseGroup,
+      mandatoryFieldKeys: ['changes', 'content'],
+    }),
+    setGroupedExercise: createSetEntityResolver({
+      entityType: EntityType.GroupedExercise,
+      mandatoryFieldKeys: ['changes', 'content'],
+    }),
+    setSolution: createSetEntityResolver({
+      entityType: EntityType.Solution,
+      mandatoryFieldKeys: ['changes', 'content'],
+    }),
+    setVideo: createSetEntityResolver({
+      entityType: EntityType.Video,
+      mandatoryFieldKeys: ['changes', 'title', 'url'],
+      transformedInput: (input) => {
+        return {
+          ...input,
+          description: input.content,
+          content: input.url,
+          url: undefined,
+        }
+      },
+    }),
 
-      assertArgumentIsNotEmpty({
-        changes,
-        content,
-        title,
-        url,
+    async sort(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const { entityId, childrenIds } = input
+
+      const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: entityId,
+        decoder: t.union([ExerciseGroupDecoder, CourseDecoder]),
       })
 
-      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
-
-      return await createEntity({
-        entityType: EntityType.Applet,
-        input,
-        dataSources,
+      await assertUserIsAuthorized({
         userId,
-      })
-    },
-    async createArticle(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, taxonomyTermId } = input
-
-      assertArgumentIsNotEmpty({
-        changes,
-        content,
-        title,
-      })
-
-      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
-
-      return await createEntity({
-        entityType: EntityType.Article,
-        input,
         dataSources,
-        userId,
+        message:
+          'You are not allowed to sort children of entities in this instance.',
+        guard: serloAuth.Entity.orderChildren(
+          serloAuth.instanceToScope(entity.instance)
+        ),
       })
+
+      // Provisory solution, See https://github.com/serlo/serlo.org-database-layer/issues/303
+      const allChildrenIds = ExerciseGroupDecoder.is(entity)
+        ? [...new Set(childrenIds.concat(entity.exerciseIds))]
+        : [...new Set(childrenIds.concat(entity.pageIds))]
+
+      const { success } = await dataSources.model.serlo.sortEntity({
+        entityId,
+        childrenIds: allChildrenIds,
+      })
+
+      return { success, query: {} }
     },
-    async createCourse(_parent, { input }, { dataSources, userId }) {
-      const { changes, title, content, taxonomyTermId } = input
 
-      assertArgumentIsNotEmpty({ changes, title })
+    async updateLicense(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
 
-      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
+      const { licenseId, entityId } = input
 
-      // TODO: the logic of this and others transformedInput's should go to DB Layer
-      const transformedInput = {
-        ...input,
-        description: content,
-        content: undefined,
+      const newLicense = licenses.find((license) => {
+        return license.id === licenseId
+      })
+
+      if (!newLicense) {
+        throw new UserInputError(`License with id ${licenseId} does not exist.`)
       }
 
-      return await createEntity({
-        entityType: EntityType.Course,
-        input: transformedInput,
-        dataSources,
+      const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: entityId,
+        decoder: EntityDecoder,
+      })
+
+      await assertUserIsAuthorized({
         userId,
-      })
-    },
-    async createCoursePage(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, parentId } = input
-
-      assertArgumentIsNotEmpty({ changes, content, title })
-
-      await assertParentExists(parentId, dataSources)
-
-      return await createEntity({
-        entityType: EntityType.CoursePage,
-        input,
         dataSources,
-        userId,
-      })
-    },
-    async createEvent(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, taxonomyTermId } = input
-
-      assertArgumentIsNotEmpty({
-        changes,
-        content,
-        title,
+        message: 'You are not allowed to set the license for this entity.',
+        guard: serloAuth.Entity.updateLicense(instanceToScope(entity.instance)),
       })
 
-      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
-
-      return await createEntity({
-        entityType: EntityType.Event,
-        input,
-        dataSources,
-        userId,
-      })
-    },
-    async createExercise(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, taxonomyTermId } = input
-
-      assertArgumentIsNotEmpty({ changes, content })
-
-      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
-
-      return await createEntity({
-        entityType: EntityType.Exercise,
-        input,
-        dataSources,
-        userId,
-      })
-    },
-    async createExerciseGroup(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, taxonomyTermId } = input
-
-      assertArgumentIsNotEmpty({ changes, content })
-
-      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
-
-      // TODO: this logic should go to DBLayer
-      const cohesive = input.cohesive === true ? 'true' : 'false'
-      const transformedInput: Omit<typeof input, 'cohesive'> & {
-        cohesive: 'true' | 'false'
-      } = { ...input, cohesive }
-
-      return await createEntity({
-        entityType: EntityType.ExerciseGroup,
-        input: transformedInput,
-        dataSources,
-        userId,
-      })
-    },
-    async createGroupedExercise(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, parentId } = input
-
-      assertArgumentIsNotEmpty({ changes, content })
-
-      await assertParentExists(parentId, dataSources)
-
-      return await createEntity({
-        entityType: EntityType.GroupedExercise,
-        input,
-        dataSources,
-        userId,
-      })
-    },
-    async createSolution(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, parentId } = input
-
-      assertArgumentIsNotEmpty({ changes, content })
-
-      await assertParentExists(parentId, dataSources)
-
-      return await createEntity({
-        entityType: EntityType.Solution,
-        input,
-        dataSources,
-        userId,
-      })
-    },
-    async createVideo(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, url, taxonomyTermId } = input
-
-      assertArgumentIsNotEmpty({ changes, content, title, url })
-
-      await assertTaxonomyTermExists(taxonomyTermId, dataSources)
-
-      // TODO: logic should go to DBLayer
-      const transformedInput = {
-        ...input,
-        content: input.url,
-        description: input.content,
-        url: undefined,
+      if (entity.instance !== newLicense.instance) {
+        throw new UserInputError(
+          'The instance of the entity does not match the instance of the license.'
+        )
       }
 
-      return await createEntity({
-        entityType: EntityType.Video,
-        input: transformedInput,
-        dataSources,
+      await dataSources.model.serlo.setEntityLicense({
+        entityId,
+        licenseId,
         userId,
       })
+
+      return { success: true, query: {} }
     },
-    async addAppletRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, url } = input
 
-      assertArgumentIsNotEmpty({
-        changes,
-        content,
-        title,
-        url,
-      })
-
-      return await addRevision({
-        revisionType: EntityRevisionType.AppletRevision,
-        input,
-        dataSources,
-        userId,
-      })
-    },
-    async addArticleRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title } = input
-
-      assertArgumentIsNotEmpty({
-        changes,
-        content,
-        title,
-      })
-
-      return await addRevision({
-        revisionType: EntityRevisionType.ArticleRevision,
-        input,
-        dataSources,
-        userId,
-      })
-    },
-    async addCourseRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title } = input
-
-      assertArgumentIsNotEmpty({ changes, title })
-
-      // TODO: the logic of this and others transformedInput's should go to DB Layer
-      const transformedInput = {
-        ...input,
-        description: content,
-        content: undefined,
-      }
-
-      return await addRevision({
-        revisionType: EntityRevisionType.CourseRevision,
-        input: transformedInput,
-        dataSources,
-        userId,
-      })
-    },
-    async addCoursePageRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title } = input
-
-      assertArgumentIsNotEmpty({ changes, content, title })
-
-      return await addRevision({
-        revisionType: EntityRevisionType.CoursePageRevision,
-        input,
-        dataSources,
-        userId,
-      })
-    },
-    async addEventRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title } = input
-
-      assertArgumentIsNotEmpty({
-        changes,
-        content,
-        title,
-      })
-
-      return await addRevision({
-        revisionType: EntityRevisionType.EventRevision,
-        input,
-        dataSources,
-        userId,
-      })
-    },
-    async addExerciseRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content } = input
-
-      assertArgumentIsNotEmpty({ changes, content })
-
-      return await addRevision({
-        revisionType: EntityRevisionType.ExerciseRevision,
-        input,
-        dataSources,
-        userId,
-      })
-    },
-    async addExerciseGroupRevision(
-      _parent,
-      { input },
-      { dataSources, userId }
-    ) {
-      const { changes, content } = input
-
-      assertArgumentIsNotEmpty({ changes, content })
-
-      const cohesive = input.cohesive === true ? 'true' : 'false'
-      const transformedInput: Omit<typeof input, 'cohesive'> & {
-        cohesive: 'true' | 'false'
-      } = { ...input, cohesive }
-
-      return await addRevision({
-        revisionType: EntityRevisionType.ExerciseGroupRevision,
-        input: transformedInput,
-        dataSources,
-        userId,
-      })
-    },
-    async addGroupedExerciseRevision(
-      _parent,
-      { input },
-      { dataSources, userId }
-    ) {
-      const { changes, content } = input
-
-      assertArgumentIsNotEmpty({ changes, content })
-
-      return await addRevision({
-        revisionType: EntityRevisionType.GroupedExerciseRevision,
-        input,
-        dataSources,
-        userId,
-      })
-    },
-    async addSolutionRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content } = input
-
-      assertArgumentIsNotEmpty({ changes, content })
-
-      return await addRevision({
-        revisionType: EntityRevisionType.SolutionRevision,
-        input,
-        dataSources,
-        userId,
-      })
-    },
-    async addVideoRevision(_parent, { input }, { dataSources, userId }) {
-      const { changes, content, title, url } = input
-
-      assertArgumentIsNotEmpty({ changes, content, title, url })
-
-      const transformedInput = {
-        ...input,
-        content: input.url,
-        description: input.content,
-        url: undefined,
-      }
-
-      return await addRevision({
-        revisionType: EntityRevisionType.VideoRevision,
-        input: transformedInput,
-        dataSources,
-        userId,
-      })
-    },
     async checkoutRevision(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
@@ -436,202 +277,24 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   },
 }
 
-export interface AbstractEntityCreatePayload {
-  entityType: EntityType
-  input: {
-    changes: string
-    subscribeThis: boolean
-    subscribeThisByEmail: boolean
-    instance: Instance
-    licenseId: number
-    needsReview: boolean
-    parentId?: number
-    taxonomyTermId?: number
-    cohesive?: 'true' | 'false'
-    content?: string
-    description?: string
-    metaDescription?: string
-    metaTitle?: string
-    title?: string
-    url?: string
-  }
-  dataSources: { model: ModelDataSource }
-  userId: number | null
-}
+function decodeDateOfDeletion(after: string) {
+  const afterParsed = JSON.parse(
+    Buffer.from(after, 'base64').toString()
+  ) as unknown
 
-interface AbstractEntityAddRevisionPayload {
-  revisionType: EntityRevisionType
-  input: {
-    changes: string
-    entityId: number
-    needsReview: boolean
-    subscribeThis: boolean
-    subscribeThisByEmail: boolean
-    cohesive?: 'true' | 'false'
-    content?: string
-    description?: string
-    metaDescription?: string
-    metaTitle?: string
-    title?: string
-    url?: string
-  }
-  dataSources: { model: ModelDataSource }
-  userId: number | null
-}
+  const dateOfDeletion = t.type({ dateOfDeletion: t.string }).is(afterParsed)
+    ? afterParsed.dateOfDeletion
+    : undefined
 
-async function createEntity({
-  entityType,
-  dataSources,
-  input,
-  userId,
-}: AbstractEntityCreatePayload) {
-  assertUserIsAuthenticated(userId)
-
-  const {
-    changes,
-    instance,
-    licenseId,
-    needsReview,
-    parentId,
-    subscribeThis,
-    subscribeThisByEmail,
-    taxonomyTermId,
-    ...inputFields
-  } = input
-
-  await assertUserIsAuthorized({
-    userId,
-    dataSources,
-    message: 'You are not allowed to add revision to this entity.',
-    guard: serloAuth.Uuid.create('Entity')(serloAuth.instanceToScope(instance)),
-  })
-
-  const fields = removeUndefinedFields(
-    inputFields as { [key: string]: string | undefined }
-  )
-
-  const inputPayload = {
-    changes,
-    instance,
-    licenseId,
-    needsReview,
-    parentId,
-    subscribeThis,
-    subscribeThisByEmail,
-    taxonomyTermId,
-    fields,
-  }
-  const entity = await dataSources.model.serlo.createEntity({
-    entityType,
-    userId,
-    input: inputPayload,
-  })
-
-  return {
-    record: entity,
-    success: entity != null,
-    query: {},
-  }
-}
-
-async function addRevision({
-  revisionType,
-  input,
-  dataSources,
-  userId,
-}: AbstractEntityAddRevisionPayload) {
-  assertUserIsAuthenticated(userId)
-
-  const {
-    entityId,
-    changes,
-    needsReview,
-    subscribeThis,
-    subscribeThisByEmail,
-    ...inputFields
-  } = input
-
-  const scope = await fetchScopeOfUuid({
-    id: entityId,
-    dataSources,
-  })
-  await assertUserIsAuthorized({
-    userId,
-    dataSources,
-    message: 'You are not allowed to add revision to this entity.',
-    guard: serloAuth.Uuid.create('EntityRevision')(scope),
-  })
-
-  const fields = removeUndefinedFields(
-    inputFields as { [key: string]: string | undefined }
-  )
-
-  const inputPayload = {
-    changes,
-    entityId,
-    needsReview,
-    subscribeThis,
-    subscribeThisByEmail,
-    fields,
-  }
-  const { success, revisionId } =
-    await dataSources.model.serlo.addEntityRevision({
-      revisionType,
-      userId,
-      input: inputPayload,
-    })
-
-  return {
-    revisionId,
-    success,
-    query: {},
-  }
-}
-
-function removeUndefinedFields(inputFields: {
-  [key: string]: string | undefined
-}) {
-  const fields: {
-    [key: string]: string
-  } = {}
-
-  for (const [key, value] of Object.entries(inputFields)) {
-    if (value) {
-      fields[key] = value
-    }
-  }
-
-  return fields
-}
-
-async function assertParentExists(
-  parentId: number,
-  dataSources: { model: ModelDataSource }
-) {
-  const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
-    id: parentId,
-    decoder: t.union([EntityDecoder, t.null]),
-  })
-
-  if (!parent) {
+  if (!dateOfDeletion)
     throw new UserInputError(
-      `No entity found for the provided parentId ${parentId}`
+      'Field `dateOfDeletion` as string is missing in `after`'
     )
-  }
-}
 
-async function assertTaxonomyTermExists(
-  taxonomyTermId: number,
-  dataSources: { model: ModelDataSource }
-) {
-  const taxonomyTerm = await dataSources.model.serlo.getUuidWithCustomDecoder({
-    id: taxonomyTermId,
-    decoder: t.union([TaxonomyTermDecoder, t.null]),
-  })
-
-  if (!taxonomyTerm) {
+  if (!isDateString(dateOfDeletion))
     throw new UserInputError(
-      `No taxonomy term found for the provided parentId ${taxonomyTermId}`
+      'The encoded dateOfDeletion in `after` should be a string in date format'
     )
-  }
+
+  return new Date(dateOfDeletion).toISOString()
 }

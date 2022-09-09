@@ -31,14 +31,24 @@ export enum Scope {
   Serlo_Ta = 'serlo.org:ta',
 }
 
+export function formatScope(scope: string): Scope {
+  if (scope === 'Serlo') return Scope.Serlo
+  const scopeIdentifier = scope.split('_')[1].toLowerCase()
+  return `serlo.org:${scopeIdentifier}` as Scope
+}
+
 export function instanceToScope(instance: Instance | null): Scope {
   return instance === null ? Scope.Serlo : (`serlo.org:${instance}` as Scope)
+}
+
+export function scopeToInstance(scope: Scope): Instance | null {
+  return scope === Scope.Serlo ? null : (scope.split(':')[1] as Instance)
 }
 
 export enum Permission {
   Entity_CheckoutRevision = 'entity:checkoutRevision',
   Entity_RejectRevision = 'entity:rejectRevision',
-  Entity_SetLicense = 'entity:setLicense',
+  Entity_UpdateLicense = 'entity:updateLicense',
   Entity_AddChild = 'entity:addChild',
   Entity_RemoveChild = 'entity:removeChild',
   Entity_OrderChildren = 'entity:orderChildren',
@@ -52,7 +62,7 @@ export enum Permission {
   Page_RejectRevision = 'page:rejectRevision',
   Page_Set = 'page:set',
   Subscription_Set = 'subscription:set',
-  TaxonomyTerm_AddChild = 'taxonomyTerm:addChild',
+  TaxonomyTerm_Change = 'taxonomyTerm:change',
   TaxonomyTerm_RemoveChild = 'taxonomyTerm:removeChild',
   TaxonomyTerm_OrderChildren = 'taxonomyTerm:orderChildren',
   TaxonomyTerm_Set = 'taxonomyTerm:set',
@@ -60,8 +70,11 @@ export enum Permission {
   Thread_CreateComment = 'thread:createComment',
   Thread_DeleteThread = 'thread:deleteThread',
   Thread_DeleteComment = 'thread:deleteComment',
+  User_AddRole = 'user:addRole',
   User_DeleteBot = 'user:deleteBot',
   User_DeleteRegularUser = 'user:deleteRegularUser',
+  User_GetUsersByRole = 'user:getUsersByRole',
+  User_RemoveRole = 'user:removeRole',
   User_SetEmail = 'user:setEmail',
   Thread_SetThreadArchived = 'thread:setThreadArchived',
   Thread_SetThreadState = 'thread:setThreadState',
@@ -104,7 +117,7 @@ function createPermissionGuard(
 export const Entity = {
   checkoutRevision: createPermissionGuard(Permission.Entity_CheckoutRevision),
   rejectRevision: createPermissionGuard(Permission.Entity_RejectRevision),
-  setLicense: createPermissionGuard(Permission.Entity_SetLicense),
+  updateLicense: createPermissionGuard(Permission.Entity_UpdateLicense),
   addChild: createPermissionGuard(Permission.Entity_AddChild),
   removeChild: createPermissionGuard(Permission.Entity_RemoveChild),
   orderChildren: createPermissionGuard(Permission.Entity_OrderChildren),
@@ -136,7 +149,7 @@ export const Subscription = {
 }
 
 export const TaxonomyTerm = {
-  addChild: createPermissionGuard(Permission.TaxonomyTerm_AddChild),
+  change: createPermissionGuard(Permission.TaxonomyTerm_Change),
   removeChild: createPermissionGuard(Permission.TaxonomyTerm_RemoveChild),
   orderChildren: createPermissionGuard(Permission.TaxonomyTerm_OrderChildren),
   set: createPermissionGuard(Permission.TaxonomyTerm_Set),
@@ -153,8 +166,11 @@ export const Thread = {
 }
 
 export const User = {
+  addRole: createPermissionGuard(Permission.User_AddRole),
   deleteBot: createPermissionGuard(Permission.User_DeleteBot),
   deleteRegularUser: createPermissionGuard(Permission.User_DeleteRegularUser),
+  getUsersByRole: createPermissionGuard(Permission.User_GetUsersByRole),
+  removeRole: createPermissionGuard(Permission.User_RemoveRole),
   setEmail: createPermissionGuard(Permission.User_SetEmail),
 }
 

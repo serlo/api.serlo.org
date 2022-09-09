@@ -18,7 +18,8 @@ type Event implements AbstractUuid & AbstractRepository & AbstractEntity & Abstr
     actorId: Int
   ): AbstractNotificationEventConnection!
   instance: Instance!
-  alias: String
+  alias: String!
+  title: String!
   date: DateTime!
   license: License!
   currentRevision: EventRevision
@@ -42,7 +43,7 @@ type EventRevision implements AbstractUuid & AbstractRevision & AbstractEntityRe
   id: Int!
   author: User!
   trashed: Boolean!
-  alias: String
+  alias: String!
   threads(
     after: String
     before: String

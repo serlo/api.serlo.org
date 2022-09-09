@@ -18,7 +18,8 @@ type Course implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
     actorId: Int
   ): AbstractNotificationEventConnection!
   instance: Instance!
-  alias: String
+  alias: String!
+  title: String!
   date: DateTime!
   license: License!
   currentRevision: CourseRevision
@@ -43,7 +44,7 @@ type CourseRevision implements AbstractUuid & AbstractRevision & AbstractEntityR
   id: Int!
   author: User!
   trashed: Boolean!
-  alias: String
+  alias: String!
   threads(
     after: String
     before: String

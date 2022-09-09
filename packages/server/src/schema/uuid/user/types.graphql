@@ -26,7 +26,8 @@ type User implements AbstractUuid & ThreadAware {
     objectId: Int
   ): AbstractNotificationEventConnection!
   activityByType: UserActivityByType!
-  alias: String
+  alias: String!
+  title: String!
   username: String!
   imageUrl: String!
   date: DateTime!
@@ -76,6 +77,12 @@ extend type Query {
 
 type UserQuery {
   potentialSpamUsers(first: Int, after: String): UserConnection!
+  usersByRole(
+    role: Role!
+    instance: Instance
+    first: Int
+    after: String
+  ): UserConnection!
 }
 
 type UserConnection {
@@ -102,10 +109,12 @@ extend type Mutation {
 }
 
 type UserMutation {
+  addRole(input: UserRoleInput!): UserRoleResponse!
   deleteBots(input: UserDeleteBotsInput!): UserDeleteBotsResponse!
   deleteRegularUsers(
     input: UserDeleteRegularUsersInput!
   ): [UserDeleteRegularUsersResponse!]!
+  removeRole(input: UserRoleInput!): UserRoleResponse!
   setDescription(input: UserSetDescriptionInput!): UserSetDescriptionResponse!
   setEmail(input: UserSetEmailInput!): UserSetEmailResponse!
 }
@@ -126,6 +135,16 @@ type UserDeleteRegularUsersResponse {
   success: Boolean!
   username: String
   reason: String
+}
+
+input UserRoleInput {
+  username: String!
+  role: Role!
+  instance: Instance
+}
+
+type UserRoleResponse {
+  success: Boolean!
 }
 
 input UserSetDescriptionInput {

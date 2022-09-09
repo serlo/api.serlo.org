@@ -25,7 +25,7 @@ import {
   taxonomyTermCurriculumTopic,
   user as baseUser,
 } from '../../../__fixtures__'
-import { Client, given, nextUuid } from '../../__utils__'
+import { Client, given } from '../../__utils__'
 
 describe('TaxonomyTermSetNameAndDescriptionMutation', () => {
   const user = { ...baseUser, roles: ['de_architect'] }
@@ -71,18 +71,12 @@ describe('TaxonomyTermSetNameAndDescriptionMutation', () => {
   })
 
   test('fails when user does not have role "architect"', async () => {
-    const loginUser = { ...user, id: nextUuid(user.id), roles: ['login'] }
-
-    given('UuidQuery').for(loginUser)
-
-    await mutation
-      .forClient(new Client({ userId: loginUser.id }))
-      .shouldFailWithError('FORBIDDEN')
+    await mutation.forLoginUser().shouldFailWithError('FORBIDDEN')
   })
 
   test('fails when `name` is empty', async () => {
     await mutation
-      .withVariables({ input: { ...input, name: '' } })
+      .withInput({ ...input, name: '' })
       .shouldFailWithError('BAD_USER_INPUT')
   })
 
@@ -99,19 +93,20 @@ describe('TaxonomyTermSetNameAndDescriptionMutation', () => {
   })
 
   test('updates the cache', async () => {
-    const query = new Client({ userId: user.id }).prepareQuery({
-      query: gql`
-        query ($id: Int!) {
-          uuid(id: $id) {
-            ... on TaxonomyTerm {
-              name
-              description
+    const query = new Client({ userId: user.id })
+      .prepareQuery({
+        query: gql`
+          query ($id: Int!) {
+            uuid(id: $id) {
+              ... on TaxonomyTerm {
+                name
+                description
+              }
             }
           }
-        }
-      `,
-      variables: { id: taxonomyTermCurriculumTopic.id },
-    })
+        `,
+      })
+      .withVariables({ id: taxonomyTermCurriculumTopic.id })
 
     await query.shouldReturnData({
       uuid: {

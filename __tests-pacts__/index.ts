@@ -23,11 +23,28 @@ import { Matchers } from '@pact-foundation/pact'
 import R from 'ramda'
 
 import {
+  createCommentNotificationEvent,
+  createEntityLinkNotificationEvent,
+  createEntityNotificationEvent,
+  createEntityRevisionNotificationEvent,
+  createTaxonomyLinkNotificationEvent,
+  createTaxonomyTermNotificationEvent,
+  createThreadNotificationEvent,
+  rejectRevisionNotificationEvent,
+  removeEntityLinkNotificationEvent,
+  removeTaxonomyLinkNotificationEvent,
+  setLicenseNotificationEvent,
+  setTaxonomyParentNotificationEvent,
+  setTaxonomyTermNotificationEvent,
+  setThreadStateNotificationEvent,
+  setUuidStateNotificationEvent,
   applet,
   appletRevision,
   article,
   articleRevision,
+  checkoutRevisionNotificationEvent,
   comment,
+  comment3,
   course,
   coursePage,
   coursePageRevision,
@@ -38,7 +55,6 @@ import {
   exerciseRevision,
   groupedExercise,
   groupedExerciseRevision,
-  license,
   page,
   pageRevision,
   solution,
@@ -49,31 +65,39 @@ import {
   user,
   video,
   videoRevision,
-} from '../../__fixtures__'
+  taxonomyTermTopic,
+  taxonomyTermTopicFolder,
+} from '../__fixtures__'
+import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
-import { EntityType, EntityRevisionType } from '~/model/decoder'
+import {
+  EntityType,
+  EntityRevisionType,
+  DiscriminatorType,
+  castToUuid,
+  castToAlias,
+} from '~/model/decoder'
 import { Instance } from '~/types'
+import { isDateString } from '~/utils'
 
-/* eslint-disable import/no-unassigned-import */
-describe('EventMessage', () => {
-  require('./event')
-})
-describe('NotificationMessage', () => {
-  require('./notification')
-})
-describe('SubjectMessage', () => {
-  require('./subject')
-})
-describe('SubscriptionMessage', () => {
-  require('./subscription')
-})
-describe('ThreadMessage', () => {
-  require('./thread')
-})
-describe('UuidMessage', () => {
-  require('./uuid')
-})
-
+const events = [
+  checkoutRevisionNotificationEvent,
+  createCommentNotificationEvent,
+  createEntityLinkNotificationEvent,
+  createEntityNotificationEvent,
+  createEntityRevisionNotificationEvent,
+  createTaxonomyLinkNotificationEvent,
+  createTaxonomyTermNotificationEvent,
+  createThreadNotificationEvent,
+  rejectRevisionNotificationEvent,
+  removeEntityLinkNotificationEvent,
+  removeTaxonomyLinkNotificationEvent,
+  setLicenseNotificationEvent,
+  setTaxonomyParentNotificationEvent,
+  setTaxonomyTermNotificationEvent,
+  setThreadStateNotificationEvent,
+  setUuidStateNotificationEvent,
+]
 const uuids = [
   applet,
   appletRevision,
@@ -105,14 +129,14 @@ const aliase = [
   { id: 19767, instance: Instance.De, path: '/mathe' },
   { id: 1, instance: Instance.De, path: '/user/1/admin' },
 ]
+const abstractEvent = R.pick(
+  ['__typename', 'id', 'instance', 'date', 'actorId', 'objectId'],
+  checkoutRevisionNotificationEvent
+) as Model<'AbstractNotificationEvent'>
 
 const pactSpec: PactSpec = {
-  ActiveAuthorsQuery: {
-    examples: [[undefined, [user.id]]],
-  },
-  ActiveReviewersQuery: {
-    examples: [[undefined, [user.id]]],
-  },
+  ActiveAuthorsQuery: { examples: [[undefined, [user.id]]] },
+  ActiveReviewersQuery: { examples: [[undefined, [user.id]]] },
   ActivityByTypeQuery: {
     examples: [
       [
@@ -128,9 +152,27 @@ const pactSpec: PactSpec = {
     ]),
     examplePayloadForNull: { instance: Instance.En, path: '/not-existing' },
   },
-  EntitiesMetadataQuery: {
-    examples: [],
+  AllThreadsQuery: {
+    examples: [
+      [
+        { first: 1, after: undefined, instance: Instance.De },
+        { firstCommentIds: [35435] },
+      ],
+    ],
   },
+  DeletedEntitiesQuery: {
+    examples: [
+      [
+        { first: 1, after: undefined, instance: Instance.De },
+        {
+          deletedEntities: [
+            { id: 2167, dateOfDeletion: '2014-03-01T20:46:58+01:00' },
+          ],
+        },
+      ],
+    ],
+  },
+  EntitiesMetadataQuery: { examples: [] },
   EntityAddRevisionMutation: {
     examples: [
       [
@@ -174,6 +216,9 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  // TODO: Add pact tests for the following two mutations
+  EntityCheckoutRevisionMutation: { examples: [] },
+  EntityRejectRevisionMutation: { examples: [] },
   EntityCreateMutation: {
     examples: [
       [
@@ -182,11 +227,10 @@ const pactSpec: PactSpec = {
           userId: user.id,
           input: {
             changes: 'changes',
-            instance: Instance.De,
             licenseId: 1,
             subscribeThis: false,
             subscribeThisByEmail: false,
-            needsReview: true,
+            needsReview: false,
             taxonomyTermId: 5,
             fields: {
               title: 'title',
@@ -205,7 +249,6 @@ const pactSpec: PactSpec = {
           userId: user.id,
           input: {
             changes: 'changes',
-            instance: Instance.De,
             licenseId: 1,
             subscribeThis: false,
             subscribeThisByEmail: false,
@@ -221,9 +264,52 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
-  LicenseQuery: {
-    examples: [[{ id: 1 }, license]],
-    examplePayloadForNull: { id: 100 },
+  EntitySetLicenseMutation: {
+    examples: [
+      [
+        {
+          userId: user.id,
+          licenseId: 4,
+          entityId: article.id,
+        },
+        {
+          success: true,
+        },
+      ],
+    ],
+  },
+  EntitySortMutation: {
+    examples: [
+      [
+        { entityId: 2223, childrenIds: [9911, 2233, 5075, 9907] },
+        { success: true },
+      ],
+    ],
+  },
+  EventQuery: {
+    examples: events.map((event) => [{ id: event.id }, event]),
+    examplePayloadForNull: { id: 1_000_000 },
+  },
+  EventsQuery: {
+    examples: [
+      [{ first: 500 }, { events: [abstractEvent], hasNextPage: true }],
+      [
+        { first: 500, after: 100 },
+        { events: [abstractEvent], hasNextPage: true },
+      ],
+      [
+        { first: 500, objectId: 1565 },
+        { events: [abstractEvent], hasNextPage: true },
+      ],
+      [
+        { first: 500, actorId: 1 },
+        { events: [abstractEvent], hasNextPage: true },
+      ],
+      [
+        { first: 500, instance: Instance.De },
+        { events: [abstractEvent], hasNextPage: true },
+      ],
+    ],
   },
   NavigationQuery: {
     examples: [
@@ -231,15 +317,24 @@ const pactSpec: PactSpec = {
         { instance: Instance.De },
         {
           instance: Instance.De,
-          data: [
-            {
-              label: 'Mathematik',
-              children: [{ label: 'Alle Themen' }],
-            },
-          ],
+          data: [{ label: 'Mathematik', children: [{ label: 'Alle Themen' }] }],
         },
       ],
     ],
+  },
+  NotificationsQuery: {
+    examples: [
+      [
+        { userId: user.id },
+        {
+          userId: user.id,
+          notifications: [{ id: 1, unread: true, eventId: castToUuid(301) }],
+        },
+      ],
+    ],
+  },
+  NotificationSetStateMutation: {
+    examples: [[{ ids: [9], userId: user.id, unread: true }, undefined]],
   },
   PageAddRevisionMutation: {
     examples: [
@@ -254,6 +349,9 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  // TODO: Add pact tests for the following two mutations
+  PageCheckoutRevisionMutation: { examples: [] },
+  PageRejectRevisionMutation: { examples: [] },
   PageCreateMutation: {
     examples: [
       [
@@ -270,19 +368,24 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
-  SubjectsQuery: {
+  PagesQuery: {
     examples: [
       [
-        {},
         {
-          subjects: [
-            {
-              instance: taxonomyTermSubject.instance,
-              taxonomyTermId: taxonomyTermSubject.id,
-            },
+          instance: Instance.En,
+        },
+        {
+          pages: [
+            23579, 23580, 23591, 23711, 23720, 23727, 25079, 25082, 27469,
+            32840, 32966,
           ],
         },
       ],
+    ],
+  },
+  SubjectsQuery: {
+    examples: [
+      [{}, { subjects: [{ instance: Instance.De, taxonomyTermId: 5 }] }],
     ],
   },
   SubscriptionsQuery: {
@@ -306,6 +409,58 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  TaxonomyCreateEntityLinksMutation: {
+    examples: [
+      [
+        {
+          entityIds: [video.id, article.id],
+          taxonomyTermId: taxonomyTermTopic.id,
+          userId: user.id,
+        },
+        { success: true },
+      ],
+    ],
+  },
+  TaxonomyDeleteEntityLinksMutation: {
+    examples: [
+      [
+        {
+          entityIds: [1949],
+          taxonomyTermId: 24370,
+          userId: user.id,
+        },
+        { success: true },
+      ],
+    ],
+  },
+  TaxonomyTermCreateMutation: {
+    examples: [
+      [
+        {
+          userId: 1,
+          taxonomyType: 'topic',
+          parentId: 1288,
+          name: 'a topic',
+          description: 'a description',
+        },
+        { ...taxonomyTermTopic, description: 'a description', childrenIds: [] },
+      ],
+      [
+        {
+          userId: 1,
+          taxonomyType: 'topic-folder',
+          parentId: 1420,
+          name: 'a topic folder',
+          description: 'a description',
+        },
+        {
+          ...taxonomyTermTopicFolder,
+          description: 'a description',
+          childrenIds: [],
+        },
+      ],
+    ],
+  },
   TaxonomyTermSetNameAndDescriptionMutation: {
     examples: [
       [
@@ -315,9 +470,7 @@ const pactSpec: PactSpec = {
           description: 'description',
           userId: user.id,
         },
-        {
-          success: true,
-        },
+        { success: true },
       ],
       [
         {
@@ -326,35 +479,128 @@ const pactSpec: PactSpec = {
           description: null,
           userId: user.id,
         },
+        { success: true },
+      ],
+    ],
+  },
+  TaxonomySortMutation: {
+    examples: [
+      [
+        {
+          taxonomyTermId: 1338,
+          childrenIds: [1557, 1553, 2107, 24398, 30560],
+          userId: user.id,
+        },
         {
           success: true,
         },
       ],
     ],
   },
-  UnrevisedEntitiesQuery: {
+  ThreadCreateCommentMutation: {
     examples: [
       [
-        {},
         {
-          unrevisedEntityIds: [article.id],
+          content: 'Hello',
+          threadId: comment.id,
+          userId: user.id,
+          subscribe: true,
+          sendEmail: false,
+        },
+        {
+          __typename: DiscriminatorType.Comment,
+          id: comment.id,
+          content: 'Hello',
+          authorId: user.id,
+          parentId: comment.id,
+          trashed: false,
+          alias: castToAlias('/mathe/101/mathe'),
+          date: comment.date,
+          title: null,
+          archived: false,
+          childrenIds: [],
         },
       ],
     ],
   },
-  UserPotentialSpamUsersQuery: {
-    examples: [],
+  ThreadCreateThreadMutation: {
+    examples: [
+      [
+        {
+          title: 'My new thread',
+          content: '🔥 brand new!',
+          objectId: article.id,
+          userId: user.id,
+          subscribe: true,
+          sendEmail: false,
+        },
+        {
+          __typename: DiscriminatorType.Comment,
+          id: castToUuid(1000),
+          title: 'My new thread',
+          trashed: false,
+          alias: castToAlias('/mathe/1000/first'),
+          authorId: user.id,
+          date: article.date,
+          archived: false,
+          content: '🔥 brand new!',
+          parentId: article.id,
+          childrenIds: [],
+        },
+      ],
+    ],
   },
-  UserDeleteBotsMutation: {
-    examples: [],
+  ThreadSetThreadArchivedMutation: {
+    examples: [
+      [{ ids: [comment3.id], userId: user.id, archived: true }, undefined],
+    ],
   },
+  ThreadsQuery: {
+    examples: [[{ id: article.id }, { firstCommentIds: [1] }]],
+  },
+  UnrevisedEntitiesQuery: {
+    examples: [[{}, { unrevisedEntityIds: [article.id] }]],
+  },
+  UserAddRoleMutation: {
+    examples: [
+      [
+        {
+          username: '1229f9c7',
+          roleName: 'german_reviewer',
+        },
+        {
+          success: true,
+        },
+      ],
+    ],
+  },
+  UserPotentialSpamUsersQuery: { examples: [] },
+  UserDeleteBotsMutation: { examples: [] },
   UserDeleteRegularUsersMutation: {
     examples: [],
-    // TODO: uncomment when Database Layer handles UserDeleteRegularUsersMutation
+    // TODO: here it is named userId, in DB layer just id, adjust
     // examples: [[{ userId: user.id }, { success: true }]],
+  },
+  UsersByRoleQuery: {
+    examples: [
+      [{ roleName: 'sysadmin', first: 2, after: 1 }, { usersByRole: [2, 6] }],
+    ],
   },
   UserSetDescriptionMutation: {
     examples: [[{ userId: 1, description: 'Hello World' }, { success: true }]],
+  },
+  UserRemoveRoleMutation: {
+    examples: [
+      [
+        {
+          username: 'admin',
+          roleName: 'sysadmin',
+        },
+        {
+          success: true,
+        },
+      ],
+    ],
   },
   UserSetEmailMutation: {
     examples: [
@@ -381,12 +627,12 @@ describe.each(R.toPairs(pactSpec))('%s', (type, messageSpec) => {
   if (examples.length === 0) return
 
   test.each(examples)('%s', async (payload, response) => {
-    if (response === undefined) {
+    if (response == null) {
       await addInteraction({
         type,
         payload,
         responseStatus: 200,
-        expectedResponse: undefined,
+        expectedResponse: response,
       })
     } else {
       const toSingletonList = (x: unknown) =>
@@ -457,6 +703,8 @@ function toMatcher(value: unknown): unknown {
       : []
   } else if (typeof value === 'object') {
     return R.mapObjIndexed(toMatcher, value)
+  } else if (typeof value === 'string' && isDateString(value)) {
+    return Matchers.iso8601DateTime(value)
   } else {
     return Matchers.like(value)
   }

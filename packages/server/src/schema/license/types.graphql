@@ -3,12 +3,18 @@ type License {
   instance: Instance!
   default: Boolean!
   title: String!
+  shortTitle: String!
   url: String!
   content: String!
   agreement: String!
-  iconHref: String!
 }
 
 extend type Query {
+  license: LicenseQuery!
+}
+
+type LicenseQuery {
   license(id: Int!): License
+  licenses(instance: Instance): [License!]!
+  defaultLicense(instance: Instance!): License!
 }

@@ -22,7 +22,7 @@
 import { gql } from 'apollo-server'
 
 import { user as baseUser } from '../../../__fixtures__'
-import { given, Client, nextUuid } from '../../__utils__'
+import { given, Client } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
 import { Instance } from '~/types'
@@ -114,33 +114,23 @@ describe('PageCreateMutation', () => {
       .shouldFailWithError('UNAUTHENTICATED')
   })
 
-  test('fails when user does not have role "staticPagesBuilder"', async () => {
-    const regularUser = { ...user, id: nextUuid(user.id), roles: ['login'] }
-
-    given('UuidQuery').for(regularUser)
-
-    await mutation
-      .forClient(new Client({ userId: regularUser.id }))
-      .shouldFailWithError('FORBIDDEN')
+  test('fails when user does not have role "static_pages_builder"', async () => {
+    await mutation.forLoginUser().shouldFailWithError('FORBIDDEN')
   })
 
   test('fails when `title` or `content` is empty', async () => {
     await mutation
-      .withVariables({
-        input: {
-          ...input,
-          content: '',
-        },
+      .withInput({
+        ...input,
+        content: '',
       })
       .shouldFailWithError('BAD_USER_INPUT')
 
     await mutation
-      .withVariables({
-        input: {
-          ...input,
-          content: 'content',
-          title: '',
-        },
+      .withInput({
+        ...input,
+        content: 'content',
+        title: '',
       })
       .shouldFailWithError('BAD_USER_INPUT')
   })

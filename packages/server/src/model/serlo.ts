@@ -19,24 +19,19 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { UserInputError } from 'apollo-server-express'
-import { option as O, function as F } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
-import fetch, { Response } from 'node-fetch'
 import * as R from 'ramda'
 
 import * as DatabaseLayer from './database-layer'
 import {
-  CommentDecoder,
-  NotificationEventDecoder,
-  Uuid,
-  NotificationDecoder,
-  NavigationDataDecoder,
-  EntityRevisionDecoder,
-  EntityDecoder,
-  PageRevisionDecoder,
-  PageDecoder,
   castToUuid,
+  EntityDecoder,
+  EntityRevisionDecoder,
+  NavigationDataDecoder,
+  PageDecoder,
+  PageRevisionDecoder,
+  UserDecoder,
 } from './decoder'
 import {
   createMutation,
@@ -46,10 +41,10 @@ import {
 import { Environment } from '~/internals/environment'
 import { Model } from '~/internals/graphql'
 import { isInstance } from '~/schema/instance/utils'
-import { isUnsupportedNotificationEvent } from '~/schema/notification/utils'
-import { isSupportedUuidType } from '~/schema/uuid/abstract-uuid/utils'
+import { isSupportedNotificationEvent } from '~/schema/notification/utils'
+import { isSupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
-import { Instance, ThreadCreateThreadInput } from '~/types'
+import { Instance } from '~/types'
 
 export function createSerloModel({
   environment,
@@ -61,13 +56,8 @@ export function createSerloModel({
       decoder: DatabaseLayer.getDecoderFor('UuidQuery'),
       enableSwr: true,
       getCurrentValue: async (payload: DatabaseLayer.Payload<'UuidQuery'>) => {
-        const uuid = (await DatabaseLayer.makeRequest(
-          'UuidQuery',
-          payload
-        )) as Model<'AbstractUuid'> | null
-        return uuid !== null && isSupportedUuidType(uuid.__typename)
-          ? uuid
-          : null
+        const uuid = await DatabaseLayer.makeRequest('UuidQuery', payload)
+        return isSupportedUuid(uuid) ? uuid : null
       },
       staleAfter: { day: 1 },
       getKey: ({ id }) => {
@@ -236,9 +226,9 @@ export function createSerloModel({
   })
 
   const setEmail = createMutation({
-    decoder: t.type({ success: t.literal(true), username: t.string }),
-    mutate: (payload: { userId: number; email: string }) => {
-      return handleMessage({ type: 'UserSetEmailMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('UserSetEmailMutation'),
+    mutate(payload: DatabaseLayer.Payload<'UserSetEmailMutation'>) {
+      return DatabaseLayer.makeRequest('UserSetEmailMutation', payload)
     },
   })
 
@@ -328,10 +318,7 @@ export function createSerloModel({
         path.push(node)
       }
 
-      return {
-        data: data[treeIndex],
-        path,
-      }
+      return { path }
     },
   })
 
@@ -361,26 +348,6 @@ export function createSerloModel({
           : O.none
       },
       examplePayload: { path: '/math', instance: Instance.En },
-    },
-    environment
-  )
-
-  const getLicense = createQuery(
-    {
-      decoder: DatabaseLayer.getDecoderFor('LicenseQuery'),
-      getCurrentValue: (payload: DatabaseLayer.Payload<'LicenseQuery'>) => {
-        return DatabaseLayer.makeRequest('LicenseQuery', payload)
-      },
-      enableSwr: true,
-      staleAfter: { day: 1 },
-      getKey: ({ id }) => `de.serlo.org/api/license/${id}`,
-      getPayload: (key) => {
-        const prefix = 'de.serlo.org/api/license/'
-        return key.startsWith(prefix)
-          ? O.some({ id: parseInt(key.replace(prefix, ''), 10) })
-          : O.none
-      },
-      examplePayload: { id: 1 },
     },
     environment
   )
@@ -424,7 +391,7 @@ export function createSerloModel({
     decoder: t.record(t.string, t.union([t.array(t.number), t.null])),
     async getCurrentValue(_payload: undefined) {
       const { unrevisedEntityIds } = await getUnrevisedEntities()
-      const result = {} as Record<string, number[] | null>
+      const result: Record<string, number[] | null> = {}
 
       for (const entityId of unrevisedEntityIds) {
         const entity = await getUuidWithCustomDecoder({
@@ -443,19 +410,13 @@ export function createSerloModel({
 
   const getNotificationEvent = createQuery(
     {
-      decoder: t.union([NotificationEventDecoder, t.null]),
-      enableSwr: true,
-      getCurrentValue: async (payload: { id: number }) => {
-        const notificationEvent = (await handleMessage({
-          type: 'EventQuery',
-          payload,
-        })) as Model<'AbstractNotificationEvent'> | null
+      decoder: DatabaseLayer.getDecoderFor('EventQuery'),
+      async getCurrentValue(payload: DatabaseLayer.Payload<'EventQuery'>) {
+        const event = await DatabaseLayer.makeRequest('EventQuery', payload)
 
-        return notificationEvent === null ||
-          isUnsupportedNotificationEvent(notificationEvent)
-          ? null
-          : notificationEvent
+        return isSupportedNotificationEvent(event) ? event : null
       },
+      enableSwr: true,
       staleAfter: { day: 1 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/event/${id}`
@@ -472,34 +433,19 @@ export function createSerloModel({
   )
 
   const getEventsAfter = createRequest({
-    decoder: t.type({
-      events: t.array(NotificationEventDecoder),
-      hasNextPage: t.boolean,
-    }),
-    async getCurrentValue(payload: {
-      after: number
-      first: number
-      actorId?: number
-      objectId?: number
-      instance?: Instance
-    }) {
-      return await handleMessage({ type: 'EventsQuery', payload })
+    decoder: DatabaseLayer.getDecoderFor('EventsQuery'),
+    async getCurrentValue(
+      payload: DatabaseLayer.Payload<'EventsQuery'> & { after: number }
+    ) {
+      return DatabaseLayer.makeRequest('EventsQuery', payload)
     },
   })
 
   const getEvents = createQuery(
     {
-      decoder: t.type({
-        events: t.array(NotificationEventDecoder),
-        hasNextPage: t.boolean,
-      }),
-      async getCurrentValue(payload: {
-        first: number
-        actorId?: number
-        objectId?: number
-        instance?: Instance
-      }) {
-        return await handleMessage({ type: 'EventsQuery', payload })
+      decoder: DatabaseLayer.getDecoderFor('EventsQuery'),
+      async getCurrentValue(payload: DatabaseLayer.Payload<'EventsQuery'>) {
+        return DatabaseLayer.makeRequest('EventsQuery', payload)
       },
       getKey(payload) {
         return 'serlo/events/' + JSON.stringify(payload)
@@ -508,14 +454,12 @@ export function createSerloModel({
         if (!key.startsWith('serlo/events/')) return O.none
 
         try {
-          const payload = JSON.parse(key.substring('serlo/events/'.length)) as {
-            first: number
-            actorId?: number
-            objectId?: number
-            instance?: Instance
-          }
+          const payloadJson = key.substring('serlo/events/'.length)
+          const payload = JSON.parse(payloadJson) as unknown
 
-          return O.some(payload)
+          return DatabaseLayer.getPayloadDecoderFor('EventsQuery').is(payload)
+            ? O.some(payload)
+            : O.none
         } catch (e) {
           return O.none
         }
@@ -530,16 +474,11 @@ export function createSerloModel({
 
   const getNotifications = createQuery(
     {
-      decoder: t.exact(
-        t.type({
-          notifications: t.array(NotificationDecoder),
-          userId: Uuid,
-        })
-      ),
-      enableSwr: true,
-      getCurrentValue: (payload: { userId: number }) => {
-        return handleMessage({ type: 'NotificationsQuery', payload })
+      decoder: DatabaseLayer.getDecoderFor('NotificationsQuery'),
+      getCurrentValue(payload: DatabaseLayer.Payload<'NotificationsQuery'>) {
+        return DatabaseLayer.makeRequest('NotificationsQuery', payload)
       },
+      enableSwr: true,
       staleAfter: { minutes: 5 },
       maxAge: { minutes: 30 },
       getKey: ({ userId }) => {
@@ -557,12 +496,9 @@ export function createSerloModel({
   )
 
   const setNotificationState = createMutation({
-    decoder: t.void,
-    async mutate(payload: { ids: number[]; userId: number; unread: boolean }) {
-      await handleMessageWithoutResponse({
-        type: 'NotificationSetStateMutation',
-        payload,
-      })
+    decoder: DatabaseLayer.getDecoderFor('NotificationSetStateMutation'),
+    mutate(payload: DatabaseLayer.Payload<'NotificationSetStateMutation'>) {
+      return DatabaseLayer.makeRequest('NotificationSetStateMutation', payload)
     },
     async updateCache({ ids, userId, unread }) {
       await getNotifications._querySpec.setCache({
@@ -637,11 +573,18 @@ export function createSerloModel({
     },
   })
 
+  const getAllThreads = createRequest({
+    decoder: DatabaseLayer.getDecoderFor('AllThreadsQuery'),
+    async getCurrentValue(payload: DatabaseLayer.Payload<'AllThreadsQuery'>) {
+      return DatabaseLayer.makeRequest('AllThreadsQuery', payload)
+    },
+  })
+
   const getThreadIds = createQuery(
     {
-      decoder: t.type({ firstCommentIds: t.array(t.number) }),
-      getCurrentValue: async (payload: { id: number }) => {
-        return handleMessage({ type: 'ThreadsQuery', payload })
+      decoder: DatabaseLayer.getDecoderFor('ThreadsQuery'),
+      async getCurrentValue(payload: DatabaseLayer.Payload<'ThreadsQuery'>) {
+        return DatabaseLayer.makeRequest('ThreadsQuery', payload)
       },
       enableSwr: true,
       staleAfter: { day: 1 },
@@ -660,9 +603,9 @@ export function createSerloModel({
   )
 
   const createThread = createMutation({
-    decoder: t.union([CommentDecoder, t.null]),
-    mutate: (payload: ThreadCreateThreadInput & { userId: number }) => {
-      return handleMessage({ type: 'ThreadCreateThreadMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('ThreadCreateThreadMutation'),
+    async mutate(payload: DatabaseLayer.Payload<'ThreadCreateThreadMutation'>) {
+      return DatabaseLayer.makeRequest('ThreadCreateThreadMutation', payload)
     },
     updateCache: async (payload, value) => {
       if (value !== null) {
@@ -683,17 +626,13 @@ export function createSerloModel({
   })
 
   const createComment = createMutation({
-    decoder: t.union([CommentDecoder, t.null]),
-    mutate: (payload: {
-      content: string
-      threadId: number
-      userId: number
-      subscribe: boolean
-      sendEmail: boolean
-    }) => {
-      return handleMessage({ type: 'ThreadCreateCommentMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('ThreadCreateCommentMutation'),
+    async mutate(
+      payload: DatabaseLayer.Payload<'ThreadCreateCommentMutation'>
+    ) {
+      return DatabaseLayer.makeRequest('ThreadCreateCommentMutation', payload)
     },
-    updateCache: async (payload, value) => {
+    async updateCache(payload, value) {
       if (value !== null) {
         await getUuid._querySpec.setCache({
           payload: { id: value.id },
@@ -712,16 +651,14 @@ export function createSerloModel({
   })
 
   const archiveThread = createMutation({
-    decoder: t.void,
-    async mutate(payload: {
-      ids: number[]
-      archived: boolean
-      userId: number
-    }) {
-      await handleMessageWithoutResponse({
-        type: 'ThreadSetThreadArchivedMutation',
-        payload,
-      })
+    decoder: DatabaseLayer.getDecoderFor('ThreadSetThreadArchivedMutation'),
+    async mutate(
+      payload: DatabaseLayer.Payload<'ThreadSetThreadArchivedMutation'>
+    ) {
+      return DatabaseLayer.makeRequest(
+        'ThreadSetThreadArchivedMutation',
+        payload
+      )
     },
     async updateCache({ ids, archived }) {
       await getUuid._querySpec.setCache({
@@ -755,8 +692,28 @@ export function createSerloModel({
             payload: { id: taxonomyTermId },
           })
         }
-        await getUnrevisedEntities._querySpec.removeCache({
+
+        await getUnrevisedEntities._querySpec.setCache({
           payload: undefined,
+          getValue(current) {
+            if (!current) return
+            if (
+              !input.needsReview &&
+              current.unrevisedEntityIds.includes(newEntity.id)
+            ) {
+              current.unrevisedEntityIds = current.unrevisedEntityIds.filter(
+                (id) => id !== newEntity.id
+              )
+            }
+            if (
+              input.needsReview &&
+              !current.unrevisedEntityIds.includes(newEntity.id)
+            ) {
+              current.unrevisedEntityIds.push(newEntity.id)
+            }
+
+            return current
+          },
         })
       }
     },
@@ -773,11 +730,28 @@ export function createSerloModel({
           payload: { id: input.entityId },
         })
 
-        if (input.needsReview) {
-          await getUnrevisedEntities._querySpec.removeCache({
-            payload: undefined,
-          })
-        }
+        await getUnrevisedEntities._querySpec.setCache({
+          payload: undefined,
+          getValue(current) {
+            if (!current) return
+            if (
+              !input.needsReview &&
+              current.unrevisedEntityIds.includes(input.entityId)
+            ) {
+              current.unrevisedEntityIds = current.unrevisedEntityIds.filter(
+                (id) => id !== input.entityId
+              )
+            }
+            if (
+              input.needsReview &&
+              !current.unrevisedEntityIds.includes(input.entityId)
+            ) {
+              current.unrevisedEntityIds.push(input.entityId)
+            }
+
+            return current
+          },
+        })
 
         if (input.subscribeThis) {
           await getSubscriptions._querySpec.setCache({
@@ -807,13 +781,14 @@ export function createSerloModel({
   })
 
   const checkoutEntityRevision = createMutation({
-    decoder: t.type({ success: t.literal(true) }),
-    async mutate(payload: {
-      revisionId: Uuid
-      userId: number
-      reason: string
-    }) {
-      return handleMessage({ type: 'EntityCheckoutRevisionMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('EntityCheckoutRevisionMutation'),
+    async mutate(
+      payload: DatabaseLayer.Payload<'EntityCheckoutRevisionMutation'>
+    ) {
+      return DatabaseLayer.makeRequest(
+        'EntityCheckoutRevisionMutation',
+        payload
+      )
     },
     async updateCache({ revisionId }) {
       const revision = await getUuidWithCustomDecoder({
@@ -857,23 +832,17 @@ export function createSerloModel({
     mutate: (payload: DatabaseLayer.Payload<'PageAddRevisionMutation'>) => {
       return DatabaseLayer.makeRequest('PageAddRevisionMutation', payload)
     },
-    updateCache: async (_, { success }) => {
+    updateCache: async ({ pageId }, { success }) => {
       if (success) {
-        await getUnrevisedEntities._querySpec.removeCache({
-          payload: undefined,
-        })
+        await getUuid._querySpec.removeCache({ payload: { id: pageId } })
       }
     },
   })
 
   const checkoutPageRevision = createMutation({
-    decoder: t.type({ success: t.literal(true) }),
-    async mutate(payload: {
-      revisionId: Uuid
-      userId: number
-      reason: string
-    }) {
-      return handleMessage({ type: 'PageCheckoutRevisionMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('PageCheckoutRevisionMutation'),
+    mutate(payload: DatabaseLayer.Payload<'PageCheckoutRevisionMutation'>) {
+      return DatabaseLayer.makeRequest('PageCheckoutRevisionMutation', payload)
     },
     async updateCache({ revisionId }) {
       const revision = await getUuidWithCustomDecoder({
@@ -904,13 +873,9 @@ export function createSerloModel({
   })
 
   const rejectEntityRevision = createMutation({
-    decoder: t.type({ success: t.literal(true) }),
-    async mutate(payload: {
-      revisionId: number
-      userId: number
-      reason: string
-    }) {
-      return handleMessage({ type: 'EntityRejectRevisionMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('EntityRejectRevisionMutation'),
+    mutate(payload: DatabaseLayer.Payload<'EntityRejectRevisionMutation'>) {
+      return DatabaseLayer.makeRequest('EntityRejectRevisionMutation', payload)
     },
     async updateCache({ revisionId }) {
       await getUuid._querySpec.setCache({
@@ -927,13 +892,9 @@ export function createSerloModel({
   })
 
   const rejectPageRevision = createMutation({
-    decoder: t.type({ success: t.literal(true) }),
-    async mutate(payload: {
-      revisionId: number
-      userId: number
-      reason: string
-    }) {
-      return handleMessage({ type: 'PageRejectRevisionMutation', payload })
+    decoder: DatabaseLayer.getDecoderFor('PageRejectRevisionMutation'),
+    mutate(payload: DatabaseLayer.Payload<'PageRejectRevisionMutation'>) {
+      return DatabaseLayer.makeRequest('PageRejectRevisionMutation', payload)
     },
     async updateCache({ revisionId }) {
       await getUuid._querySpec.setCache({
@@ -947,12 +908,135 @@ export function createSerloModel({
     },
   })
 
+  const getDeletedEntities = createRequest({
+    decoder: DatabaseLayer.getDecoderFor('DeletedEntitiesQuery'),
+    async getCurrentValue(
+      payload: DatabaseLayer.Payload<'DeletedEntitiesQuery'>
+    ) {
+      return DatabaseLayer.makeRequest('DeletedEntitiesQuery', payload)
+    },
+  })
+
   const getEntitiesMetadata = createRequest({
     decoder: DatabaseLayer.getDecoderFor('EntitiesMetadataQuery'),
     async getCurrentValue(
       payload: DatabaseLayer.Payload<'EntitiesMetadataQuery'>
     ) {
       return DatabaseLayer.makeRequest('EntitiesMetadataQuery', payload)
+    },
+  })
+
+  const linkEntitiesToTaxonomy = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('TaxonomyCreateEntityLinksMutation'),
+    mutate: (
+      payload: DatabaseLayer.Payload<'TaxonomyCreateEntityLinksMutation'>
+    ) => {
+      return DatabaseLayer.makeRequest(
+        'TaxonomyCreateEntityLinksMutation',
+        payload
+      )
+    },
+    async updateCache({ taxonomyTermId, entityIds }, { success }) {
+      if (success) {
+        await Promise.all(
+          [...entityIds, taxonomyTermId].map(
+            async (id) =>
+              await getUuid._querySpec.removeCache({ payload: { id } })
+          )
+        )
+      }
+    },
+  })
+
+  const unlinkEntitiesFromTaxonomy = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('TaxonomyDeleteEntityLinksMutation'),
+    mutate: (
+      payload: DatabaseLayer.Payload<'TaxonomyDeleteEntityLinksMutation'>
+    ) => {
+      return DatabaseLayer.makeRequest(
+        'TaxonomyDeleteEntityLinksMutation',
+        payload
+      )
+    },
+    async updateCache({ taxonomyTermId, entityIds }, { success }) {
+      if (success) {
+        await Promise.all(
+          [...entityIds, taxonomyTermId].map(
+            async (id) =>
+              await getUuid._querySpec.removeCache({ payload: { id } })
+          )
+        )
+      }
+    },
+  })
+
+  const createTaxonomyTerm = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('TaxonomyTermCreateMutation'),
+    mutate: (payload: DatabaseLayer.Payload<'TaxonomyTermCreateMutation'>) => {
+      return DatabaseLayer.makeRequest('TaxonomyTermCreateMutation', payload)
+    },
+    async updateCache({ parentId }) {
+      if (parentId) {
+        await getUuid._querySpec.removeCache({ payload: { id: parentId } })
+      }
+    },
+  })
+
+  const sortEntity = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('EntitySortMutation'),
+    mutate: (payload: DatabaseLayer.Payload<'EntitySortMutation'>) => {
+      return DatabaseLayer.makeRequest('EntitySortMutation', payload)
+    },
+
+    async updateCache({ entityId }, { success }) {
+      if (success) {
+        await getUuid._querySpec.removeCache({ payload: { id: entityId } })
+      }
+    },
+  })
+
+  const sortTaxonomyTerm = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('TaxonomySortMutation'),
+    mutate: (payload: DatabaseLayer.Payload<'TaxonomySortMutation'>) => {
+      return DatabaseLayer.makeRequest('TaxonomySortMutation', payload)
+    },
+
+    async updateCache({ childrenIds, taxonomyTermId }, { success }) {
+      if (success) {
+        await getUuid._querySpec.setCache({
+          payload: { id: taxonomyTermId },
+          getValue(current) {
+            if (!current) return
+
+            return { ...current, childrenIds: childrenIds.map(castToUuid) }
+          },
+        })
+      }
+    },
+  })
+
+  const setEntityLicense = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('EntitySetLicenseMutation'),
+    mutate: (payload: DatabaseLayer.Payload<'EntitySetLicenseMutation'>) => {
+      return DatabaseLayer.makeRequest('EntitySetLicenseMutation', payload)
+    },
+    async updateCache({ entityId, licenseId }, { success }) {
+      if (success) {
+        await getUuid._querySpec.setCache({
+          payload: { id: entityId },
+          getValue(current) {
+            if (!current) return
+            return { ...current, licenseId }
+          },
+        })
+      }
+    },
+  })
+
+  const getPages = createRequest({
+    decoder: DatabaseLayer.getDecoderFor('PagesQuery'),
+    async getCurrentValue(payload: DatabaseLayer.Payload<'PagesQuery'>) {
+      return DatabaseLayer.makeRequest('PagesQuery', payload)
     },
   })
 
@@ -982,15 +1066,82 @@ export function createSerloModel({
     },
   })
 
+  const addRole = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('UserAddRoleMutation'),
+    mutate: (payload: DatabaseLayer.Payload<'UserAddRoleMutation'>) => {
+      return DatabaseLayer.makeRequest('UserAddRoleMutation', payload)
+    },
+    async updateCache({ username, roleName }, { success }) {
+      if (success) {
+        const alias = (await DatabaseLayer.makeRequest('AliasQuery', {
+          instance: Instance.De,
+          path: `user/profile/${username}`,
+        })) as { id: number }
+
+        await getUuid._querySpec.setCache({
+          payload: { id: alias.id },
+          getValue(current) {
+            if (!current) return
+            if (!UserDecoder.is(current)) return
+
+            if (current.roles.includes(roleName)) return current
+
+            current.roles.push(roleName)
+
+            return current
+          },
+        })
+      }
+    },
+  })
+
+  const removeRole = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('UserRemoveRoleMutation'),
+    mutate: (payload: DatabaseLayer.Payload<'UserRemoveRoleMutation'>) => {
+      return DatabaseLayer.makeRequest('UserRemoveRoleMutation', payload)
+    },
+    async updateCache({ username, roleName }, { success }) {
+      if (success) {
+        const alias = (await DatabaseLayer.makeRequest('AliasQuery', {
+          instance: Instance.De,
+          path: `user/profile/${username}`,
+        })) as { id: number }
+
+        await getUuid._querySpec.setCache({
+          payload: { id: alias.id },
+          getValue(current) {
+            if (!current) return
+            if (!UserDecoder.is(current)) return
+
+            if (!current.roles.includes(roleName)) return current
+            current.roles = current.roles.filter(
+              (currentRole) => currentRole !== roleName
+            )
+            return current
+          },
+        })
+      }
+    },
+  })
+
+  const getUsersByRole = createRequest({
+    decoder: DatabaseLayer.getDecoderFor('UsersByRoleQuery'),
+    async getCurrentValue(payload: DatabaseLayer.Payload<'UsersByRoleQuery'>) {
+      return DatabaseLayer.makeRequest('UsersByRoleQuery', payload)
+    },
+  })
+
   return {
     addEntityRevision,
     addPageRevision,
+    addRole,
     archiveThread,
     checkoutEntityRevision,
     checkoutPageRevision,
     createComment,
     createEntity,
     createPage,
+    createTaxonomyTerm,
     createThread,
     deleteBots,
     deleteRegularUsers,
@@ -998,10 +1149,11 @@ export function createSerloModel({
     getActiveReviewerIds,
     getActivityByType,
     getAlias,
+    getAllThreads,
+    getDeletedEntities,
     getEntitiesMetadata,
     getEvents,
     getEventsAfter,
-    getLicense,
     getNavigation,
     getNavigationPayload,
     getNotificationEvent,
@@ -1012,16 +1164,24 @@ export function createSerloModel({
     getThreadIds,
     getUnrevisedEntities,
     getUnrevisedEntitiesPerSubject,
+    getUsersByRole,
     getUuid,
     getUuidWithCustomDecoder,
+    linkEntitiesToTaxonomy,
+    getPages,
     rejectEntityRevision,
     rejectPageRevision,
+    removeRole,
     setDescription,
     setEmail,
+    setEntityLicense,
     setNotificationState,
     setSubscription,
     setTaxonomyTermNameAndDescription,
+    sortEntity,
+    sortTaxonomyTerm,
     setUuidState,
+    unlinkEntitiesFromTaxonomy,
   }
 }
 
@@ -1030,46 +1190,4 @@ function getInstanceFromKey(key: string): Instance | null {
   return key.startsWith(`${instance}.serlo.org`) && isInstance(instance)
     ? instance
     : null
-}
-
-async function handleMessage(args: MessagePayload) {
-  const response = await handleMessageWithoutResponse(args)
-  return (await response.json()) as unknown
-}
-
-async function handleMessageWithoutResponse(
-  message: MessagePayload
-): Promise<Response> {
-  const response = await fetch(
-    `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`,
-    {
-      method: 'POST',
-      body: JSON.stringify(message),
-      headers: { 'Content-Type': 'application/json' },
-    }
-  )
-  switch (response.status) {
-    case 200:
-    case 404:
-      return response
-    case 400:
-      throw new UserInputError((await parseReason(response)) ?? 'Bad Request')
-    default:
-      throw new Error(`${response.status}: ${JSON.stringify(message)}`)
-  }
-}
-
-async function parseReason(response: Response) {
-  const responseText = await response.text()
-  return F.pipe(
-    O.tryCatch(() => JSON.parse(responseText) as unknown),
-    O.chain(O.fromPredicate(t.type({ reason: t.string }).is)),
-    O.map((json) => json.reason),
-    O.toNullable
-  )
-}
-
-interface MessagePayload {
-  type: string
-  payload?: Record<string, unknown>
 }

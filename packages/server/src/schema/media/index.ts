@@ -19,5 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-export * from './assertions'
-export * from './interactions'
+import { resolvers } from './resolvers'
+import typeDefs from './types.graphql'
+import { Schema } from '~/internals/graphql'
+
+export const mediaSchema: Schema = { resolvers, typeDefs: [typeDefs] }
