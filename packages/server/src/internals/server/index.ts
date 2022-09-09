@@ -31,7 +31,6 @@ import { createTimer } from '../timer'
 import { applyGraphQLMiddleware } from './graphql-middleware'
 import { applySwrQueueDashboardMiddleware } from './swr-queue-dashboard-middleware'
 import { applyEnmeshedMiddleware } from '~/internals/server/enmeshed-middleware'
-import { applyHydraMiddleware } from '~/internals/server/hydra-middleware'
 import { applyKratosMiddleware } from '~/internals/server/kratos-middleware'
 
 export * from './graphql-middleware'
@@ -71,7 +70,6 @@ async function initializeServer({
     app,
     kratosAdmin: authServices.kratos.admin,
   })
-  const hydraPath = applyHydraMiddleware({ app, authServices })
 
   const port = 3001
   const host = `http://localhost:${port}`
@@ -85,7 +83,6 @@ async function initializeServer({
       console.log(`Enmeshed endpoint:   ${host}${enmeshedPath}`)
     }
     console.log(`Kratos endpoint:     ${host}${kratosPath}`)
-    console.log(`Hydra endpoint:      ${host}${hydraPath}`)
     /* eslint-enable no-console */
   })
 }

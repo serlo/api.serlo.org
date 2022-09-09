@@ -272,6 +272,12 @@ export type AbstractUuidCursor = {
   node: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
 };
 
+export type AcceptResponse = {
+  __typename?: 'AcceptResponse';
+  redirectUri: Scalars['String'];
+  success: Scalars['Boolean'];
+};
+
 export type AddRevisionResponse = {
   __typename?: 'AddRevisionResponse';
   query: Query;
@@ -1546,6 +1552,7 @@ export type Mutation = {
   _cache: _CacheMutation;
   entity: EntityMutation;
   notification: NotificationMutation;
+  oauth: OauthMutation;
   page: PageMutation;
   subscription: SubscriptionMutation;
   taxonomyTerm: TaxonomyTermMutation;
@@ -1628,6 +1635,33 @@ export type NotificationSetStateResponse = {
   __typename?: 'NotificationSetStateResponse';
   query: Query;
   success: Scalars['Boolean'];
+};
+
+export type OauthAcceptInput = {
+  challenge: Scalars['String'];
+  session: Scalars['JSON'];
+};
+
+export type OauthMutation = {
+  __typename?: 'OauthMutation';
+  acceptConsent: AcceptResponse;
+  acceptLogin: AcceptResponse;
+  acceptLogout: AcceptResponse;
+};
+
+
+export type OauthMutationAcceptConsentArgs = {
+  input: OauthAcceptInput;
+};
+
+
+export type OauthMutationAcceptLoginArgs = {
+  input: OauthAcceptInput;
+};
+
+
+export type OauthMutationAcceptLogoutArgs = {
+  challenge: Scalars['String'];
 };
 
 export type Page = AbstractNavigationChild & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
@@ -3035,6 +3069,7 @@ export type ResolversTypes = {
   AbstractUuid: ResolversTypes['Applet'] | ResolversTypes['AppletRevision'] | ResolversTypes['Article'] | ResolversTypes['ArticleRevision'] | ResolversTypes['Comment'] | ResolversTypes['Course'] | ResolversTypes['CoursePage'] | ResolversTypes['CoursePageRevision'] | ResolversTypes['CourseRevision'] | ResolversTypes['Event'] | ResolversTypes['EventRevision'] | ResolversTypes['Exercise'] | ResolversTypes['ExerciseGroup'] | ResolversTypes['ExerciseGroupRevision'] | ResolversTypes['ExerciseRevision'] | ResolversTypes['GroupedExercise'] | ResolversTypes['GroupedExerciseRevision'] | ResolversTypes['Page'] | ResolversTypes['PageRevision'] | ResolversTypes['Solution'] | ResolversTypes['SolutionRevision'] | ResolversTypes['TaxonomyTerm'] | ResolversTypes['User'] | ResolversTypes['Video'] | ResolversTypes['VideoRevision'];
   AbstractUuidConnection: ResolverTypeWrapper<ModelOf<AbstractUuidConnection>>;
   AbstractUuidCursor: ResolverTypeWrapper<ModelOf<AbstractUuidCursor>>;
+  AcceptResponse: ResolverTypeWrapper<ModelOf<AcceptResponse>>;
   AddRevisionResponse: ResolverTypeWrapper<ModelOf<AddRevisionResponse>>;
   AliasInput: ResolverTypeWrapper<ModelOf<AliasInput>>;
   AllThreadsConnection: ResolverTypeWrapper<ModelOf<AllThreadsConnection>>;
@@ -3126,6 +3161,8 @@ export type ResolversTypes = {
   NotificationMutation: ResolverTypeWrapper<ModelOf<NotificationMutation>>;
   NotificationSetStateInput: ResolverTypeWrapper<ModelOf<NotificationSetStateInput>>;
   NotificationSetStateResponse: ResolverTypeWrapper<ModelOf<NotificationSetStateResponse>>;
+  OauthAcceptInput: ResolverTypeWrapper<ModelOf<OauthAcceptInput>>;
+  OauthMutation: ResolverTypeWrapper<ModelOf<OauthMutation>>;
   Page: ResolverTypeWrapper<ModelOf<Page>>;
   PageAddRevisionInput: ResolverTypeWrapper<ModelOf<PageAddRevisionInput>>;
   PageCreateResponse: ResolverTypeWrapper<ModelOf<PageCreateResponse>>;
@@ -3248,6 +3285,7 @@ export type ResolversParentTypes = {
   AbstractUuid: ResolversParentTypes['Applet'] | ResolversParentTypes['AppletRevision'] | ResolversParentTypes['Article'] | ResolversParentTypes['ArticleRevision'] | ResolversParentTypes['Comment'] | ResolversParentTypes['Course'] | ResolversParentTypes['CoursePage'] | ResolversParentTypes['CoursePageRevision'] | ResolversParentTypes['CourseRevision'] | ResolversParentTypes['Event'] | ResolversParentTypes['EventRevision'] | ResolversParentTypes['Exercise'] | ResolversParentTypes['ExerciseGroup'] | ResolversParentTypes['ExerciseGroupRevision'] | ResolversParentTypes['ExerciseRevision'] | ResolversParentTypes['GroupedExercise'] | ResolversParentTypes['GroupedExerciseRevision'] | ResolversParentTypes['Page'] | ResolversParentTypes['PageRevision'] | ResolversParentTypes['Solution'] | ResolversParentTypes['SolutionRevision'] | ResolversParentTypes['TaxonomyTerm'] | ResolversParentTypes['User'] | ResolversParentTypes['Video'] | ResolversParentTypes['VideoRevision'];
   AbstractUuidConnection: ModelOf<AbstractUuidConnection>;
   AbstractUuidCursor: ModelOf<AbstractUuidCursor>;
+  AcceptResponse: ModelOf<AcceptResponse>;
   AddRevisionResponse: ModelOf<AddRevisionResponse>;
   AliasInput: ModelOf<AliasInput>;
   AllThreadsConnection: ModelOf<AllThreadsConnection>;
@@ -3337,6 +3375,8 @@ export type ResolversParentTypes = {
   NotificationMutation: ModelOf<NotificationMutation>;
   NotificationSetStateInput: ModelOf<NotificationSetStateInput>;
   NotificationSetStateResponse: ModelOf<NotificationSetStateResponse>;
+  OauthAcceptInput: ModelOf<OauthAcceptInput>;
+  OauthMutation: ModelOf<OauthMutation>;
   Page: ModelOf<Page>;
   PageAddRevisionInput: ModelOf<PageAddRevisionInput>;
   PageCreateResponse: ModelOf<PageCreateResponse>;
@@ -3589,6 +3629,12 @@ export type AbstractUuidConnectionResolvers<ContextType = Context, ParentType ex
 export type AbstractUuidCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractUuidCursor'] = ResolversParentTypes['AbstractUuidCursor']> = {
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<ResolversTypes['AbstractUuid'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AcceptResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AcceptResponse'] = ResolversParentTypes['AcceptResponse']> = {
+  redirectUri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4258,6 +4304,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   _cache?: Resolver<ResolversTypes['_cacheMutation'], ParentType, ContextType>;
   entity?: Resolver<ResolversTypes['EntityMutation'], ParentType, ContextType>;
   notification?: Resolver<ResolversTypes['NotificationMutation'], ParentType, ContextType>;
+  oauth?: Resolver<ResolversTypes['OauthMutation'], ParentType, ContextType>;
   page?: Resolver<ResolversTypes['PageMutation'], ParentType, ContextType>;
   subscription?: Resolver<ResolversTypes['SubscriptionMutation'], ParentType, ContextType>;
   taxonomyTerm?: Resolver<ResolversTypes['TaxonomyTermMutation'], ParentType, ContextType>;
@@ -4321,6 +4368,13 @@ export type NotificationMutationResolvers<ContextType = Context, ParentType exte
 export type NotificationSetStateResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['NotificationSetStateResponse'] = ResolversParentTypes['NotificationSetStateResponse']> = {
   query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type OauthMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['OauthMutation'] = ResolversParentTypes['OauthMutation']> = {
+  acceptConsent?: Resolver<ResolversTypes['AcceptResponse'], ParentType, ContextType, RequireFields<OauthMutationAcceptConsentArgs, 'input'>>;
+  acceptLogin?: Resolver<ResolversTypes['AcceptResponse'], ParentType, ContextType, RequireFields<OauthMutationAcceptLoginArgs, 'input'>>;
+  acceptLogout?: Resolver<ResolversTypes['AcceptResponse'], ParentType, ContextType, RequireFields<OauthMutationAcceptLogoutArgs, 'challenge'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4950,6 +5004,7 @@ export type Resolvers<ContextType = Context> = {
   AbstractUuid?: AbstractUuidResolvers<ContextType>;
   AbstractUuidConnection?: AbstractUuidConnectionResolvers<ContextType>;
   AbstractUuidCursor?: AbstractUuidCursorResolvers<ContextType>;
+  AcceptResponse?: AcceptResponseResolvers<ContextType>;
   AddRevisionResponse?: AddRevisionResponseResolvers<ContextType>;
   AllThreadsConnection?: AllThreadsConnectionResolvers<ContextType>;
   Applet?: AppletResolvers<ContextType>;
@@ -5028,6 +5083,7 @@ export type Resolvers<ContextType = Context> = {
   NotificationEdge?: NotificationEdgeResolvers<ContextType>;
   NotificationMutation?: NotificationMutationResolvers<ContextType>;
   NotificationSetStateResponse?: NotificationSetStateResponseResolvers<ContextType>;
+  OauthMutation?: OauthMutationResolvers<ContextType>;
   Page?: PageResolvers<ContextType>;
   PageCreateResponse?: PageCreateResponseResolvers<ContextType>;
   PageInfo?: PageInfoResolvers<ContextType>;
