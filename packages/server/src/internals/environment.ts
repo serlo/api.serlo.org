@@ -19,12 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { AuthServices } from './authentication'
 import { Cache } from './cache'
-import { Kratos } from './kratos'
 import { SwrQueue } from './swr-queue'
 
 export interface Environment {
   cache: Cache
   swrQueue: SwrQueue
-  kratos: Kratos
+  authServices: AuthServices
 }

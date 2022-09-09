@@ -19,24 +19,38 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Configuration, V0alpha2Api } from '@ory/client'
+import { Configuration as KratosConfig, V0alpha2Api } from '@ory/client'
+import { AdminApi, Configuration as HydraConfig } from '@ory/hydra-client'
 
-export interface Kratos {
-  public: V0alpha2Api
-  admin: V0alpha2Api
+export interface AuthServices {
+  kratos: {
+    public: V0alpha2Api
+    admin: V0alpha2Api
+  }
+  hydra: AdminApi
 }
 
-export function createKratos(): Kratos {
+export function initiateAuthSdks(): AuthServices {
   return {
-    public: new V0alpha2Api(
-      new Configuration({
-        basePath: process.env.SERVER_KRATOS_PUBLIC_HOST,
-      })
-    ),
+    kratos: {
+      public: new V0alpha2Api(
+        new KratosConfig({
+          basePath: process.env.SERVER_KRATOS_PUBLIC_HOST,
+        })
+      ),
 
-    admin: new V0alpha2Api(
-      new Configuration({
-        basePath: process.env.SERVER_KRATOS_ADMIN_HOST,
+      admin: new V0alpha2Api(
+        new KratosConfig({
+          basePath: process.env.SERVER_KRATOS_ADMIN_HOST,
+        })
+      ),
+    },
+    hydra: new AdminApi(
+      new HydraConfig({
+        basePath: process.env.SERVER_HYDRA_HOST,
+        baseOptions: {
+          headers: { 'X-Forwarded-Proto': 'https' },
+        },
       })
     ),
   }

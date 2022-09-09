@@ -22,19 +22,18 @@
 import { IdentityState, V0alpha2Api } from '@ory/client'
 import { Express, RequestHandler } from 'express'
 
-import { Kratos } from '~/internals/kratos'
 import { DatabaseLayer } from '~/model'
 
 const basePath = '/kratos'
 
 export function applyKratosMiddleware({
   app,
-  kratos,
+  kratosAdmin,
 }: {
   app: Express
-  kratos: Kratos
+  kratosAdmin: V0alpha2Api
 }) {
-  app.post(`${basePath}/register`, createKratosRegisterHandler(kratos.admin))
+  app.post(`${basePath}/register`, createKratosRegisterHandler(kratosAdmin))
   return basePath
 }
 
