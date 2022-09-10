@@ -80,7 +80,7 @@ export function createSwrQueue({
     environment: {
       cache,
       swrQueue: emptySwrQueue,
-      kratos: initiateAuthSdks(),
+      authServices: initiateAuthSdks(),
     },
   }
   const models = R.values(modelFactories).map((createModel) =>
@@ -175,7 +175,7 @@ export function createSwrQueueWorker({
     environment: {
       cache,
       swrQueue: emptySwrQueue,
-      kratos: initiateAuthSdks(),
+      authServices: initiateAuthSdks(),
     },
   }
   const models = R.values(modelFactories).map((createModel) =>
