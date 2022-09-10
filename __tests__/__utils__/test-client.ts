@@ -21,10 +21,9 @@
  */
 import { ApolloServer } from 'apollo-server'
 
-import { Service } from '~/internals/authentication'
+import { initiateAuthSdks, Service } from '~/internals/authentication'
 import { Environment } from '~/internals/environment'
 import { Context } from '~/internals/graphql'
-import { createKratos } from '~/internals/kratos'
 import { getGraphQLOptions } from '~/internals/server'
 import { emptySwrQueue } from '~/internals/swr-queue'
 
@@ -48,6 +47,6 @@ export function createTestEnvironment(): Environment {
   return {
     cache: global.cache,
     swrQueue: emptySwrQueue,
-    kratos: createKratos(),
+    authServices: initiateAuthSdks(),
   }
 }
