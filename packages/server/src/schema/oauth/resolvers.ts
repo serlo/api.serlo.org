@@ -23,29 +23,26 @@
 import { Session } from '@ory/client'
 
 import { captureErrorEvent } from '~/internals/error-event'
-import {
-  Mutations,
-  createNamespace,
-  assertUserIsAuthenticated,
-} from '~/internals/graphql'
+import { Mutations, createNamespace } from '~/internals/graphql'
 
 export const resolvers: Mutations<'oauth'> = {
   Mutation: {
     oauth: createNamespace(),
   },
   OauthMutation: {
-    async acceptLogin(_parent, { input }, { userId, dataSources }) {
+    async acceptLogin(_parent, { input }, { dataSources }) {
       const { challenge, session } = input
       const { hydra } = dataSources.model.authServices
-
-      assertUserIsAuthenticated(userId)
+      const legacyId = (
+        session as { identity: { metadata_public: { legacy_id: number } } }
+      ).identity.metadata_public.legacy_id
 
       return await hydra
         .getLoginRequest(challenge)
         .then(async () => {
           return await hydra
             .acceptLoginRequest(challenge, {
-              subject: String(userId),
+              subject: String(legacyId),
               context: session as Session,
               remember: true,
               remember_for: 60 * 60,
@@ -73,7 +70,7 @@ export const resolvers: Mutations<'oauth'> = {
           )
         })
     },
-    async acceptConsent(_parent, { input }, { userId, dataSources }) {
+    async acceptConsent(_parent, { input }, { dataSources }) {
       const { challenge, session } = input as {
         challenge: string
         session: Session
@@ -84,7 +81,9 @@ export const resolvers: Mutations<'oauth'> = {
       }
       const { hydra } = dataSources.model.authServices
 
-      assertUserIsAuthenticated(userId)
+      const legacyId = (
+        session as { identity: { metadata_public: { legacy_id: number } } }
+      ).identity.metadata_public.legacy_id
 
       return hydra
         .getConsentRequest(challenge)
@@ -99,7 +98,7 @@ export const resolvers: Mutations<'oauth'> = {
 
               session: {
                 id_token: {
-                  id: userId,
+                  id: legacyId,
                   username,
                   ...(scopes?.includes('email')
                     ? {
