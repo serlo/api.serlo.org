@@ -268,12 +268,6 @@ export type AbstractUuidCursor = {
   node: AbstractUuid;
 };
 
-export type AcceptResponse = {
-  __typename?: 'AcceptResponse';
-  redirectUri: Scalars['String'];
-  success: Scalars['Boolean'];
-};
-
 export type AddRevisionResponse = {
   __typename?: 'AddRevisionResponse';
   query: Query;
@@ -1638,11 +1632,17 @@ export type OauthAcceptInput = {
   session: Scalars['JSON'];
 };
 
+export type OauthAcceptResponse = {
+  __typename?: 'OauthAcceptResponse';
+  redirectUri: Scalars['String'];
+  success: Scalars['Boolean'];
+};
+
 export type OauthMutation = {
   __typename?: 'OauthMutation';
-  acceptConsent: AcceptResponse;
-  acceptLogin: AcceptResponse;
-  acceptLogout: AcceptResponse;
+  acceptConsent: OauthAcceptResponse;
+  acceptLogin: OauthAcceptResponse;
+  acceptLogout: OauthAcceptResponse;
 };
 
 
