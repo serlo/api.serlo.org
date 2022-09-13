@@ -167,7 +167,7 @@ function getCorsOrigins() {
         'https://fr.serlo-staging.dev',
         'https://hi.serlo-staging.dev',
         'https://ta.serlo-staging.dev',
-        'https://kratos-serlo.vercel.app',
+        'https://kratos-vercel.serlo-staging.dev/',
         'http://localhost:3000',
       ]
 }
