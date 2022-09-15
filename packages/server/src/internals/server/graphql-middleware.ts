@@ -64,7 +64,9 @@ export async function applyGraphQLMiddleware({
   app.use(
     server.getMiddleware({
       cors: {
-        origin: getCorsOrigins(),
+        origin: (origin, callback) => {
+          callback(null, origin)
+        },
         credentials: true,
       },
       path: '/graphql',
@@ -144,30 +146,4 @@ function getToken() {
     audience: 'api.serlo.org',
     issuer: Service.SerloCloudflareWorker,
   })
-}
-
-// TODO: set cors dynamically, BLOCKER!
-function getCorsOrigins() {
-  return process.env.ENVIRONMENT === 'production'
-    ? [
-        'https://serlo.org',
-        'https://frontend.serlo.org',
-        'https://de.serlo.org',
-        'https://en.serlo.org',
-        'https://es.serlo.org',
-        'https://fr.serlo.org',
-        'https://hi.serlo.org',
-        'https://ta.serlo.org',
-      ]
-    : [
-        'https://serlo-staging.dev',
-        'https://de.serlo-staging.dev',
-        'https://en.serlo-staging.dev',
-        'https://es.serlo-staging.dev',
-        'https://fr.serlo-staging.dev',
-        'https://hi.serlo-staging.dev',
-        'https://ta.serlo-staging.dev',
-        'https://kratos-vercel.serlo-staging.dev',
-        'http://localhost:3000',
-      ]
 }
