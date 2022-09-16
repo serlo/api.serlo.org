@@ -78,6 +78,11 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
         }
       ).userId
 
+      await DatabaseLayer.makeRequest('UserAddRoleMutation', {
+        roleName: 'login',
+        username,
+      })
+
       await kratos.adminUpdateIdentity(kratosUser.id, {
         schema_id: 'default',
         metadata_public: {
