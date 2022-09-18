@@ -43,6 +43,7 @@
     "io-ts": "^2.2.18",
     "io-ts-reporters": "^2.0.1",
     "io-ts-types": "^0.5.16",
+    "ioredis": "^5.2.3",
     "jsonwebtoken": "^8.5.1",
     "loglevel": "^1.8.0",
     "monocle-ts": "^2.3.13",
@@ -50,8 +51,7 @@
     "newtype-ts": "^0.3.5",
     "node-fetch": "^2.6.7",
     "ramda": "^0.28.0",
-    "redis": "^3.1.2",
-    "redlock": "^3.1.2",
+    "redlock": "^5.0.0-beta.2",
     "ts-toolbelt": "^9.6.0"
   },
   "devDependencies": {
