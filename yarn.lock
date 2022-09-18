@@ -4208,12 +4208,12 @@ __metadata:
     bull-arena: ^3.29.3
     dotenv: ^16.0.1
     express: ^4.18.1
-    fp-ts: ^2.12.1
+    fp-ts: ^2.12.3
     graphql: ^16.5.0
     graphql-playground-middleware-express: ^1.7.23
     graphql-tag: ^2.12.6
     graphql-type-json: ^0.3.2
-    io-ts: ^2.2.16
+    io-ts: ^2.2.18
     io-ts-reporters: ^2.0.1
     io-ts-types: ^0.5.16
     jsonwebtoken: ^8.5.1
@@ -9711,10 +9711,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fp-ts@npm:^2.12.1":
-  version: 2.12.1
-  resolution: "fp-ts@npm:2.12.1"
-  checksum: 1e20e6b468191640a5f83cd52ccbfb361d27a6afbc47230870e63094b569cd9ae8763d0b9dee50eaed568bce8dd72e32ad1d695161bda8ec73e0296a02359832
+"fp-ts@npm:^2.12.3":
+  version: 2.12.3
+  resolution: "fp-ts@npm:2.12.3"
+  checksum: 398acad3d8c5fbd4b0ee420bbb57a45cd98f54e22d6240fc3ee88a7c9967536cba9285c858d37251f9dea137d767a0ff2354203046ba9a149c064fd8de9fe0e3
   languageName: node
   linkType: hard
 
@@ -10862,12 +10862,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"io-ts@npm:^2.2.16":
-  version: 2.2.16
-  resolution: "io-ts@npm:2.2.16"
+"io-ts@npm:^2.2.18":
+  version: 2.2.18
+  resolution: "io-ts@npm:2.2.18"
   peerDependencies:
     fp-ts: ^2.5.0
-  checksum: 1b5855682e413cc92cfb5c51d0bdb24c99e407ab4e67821a53078f5d8dedbc387840c5b240cb19dd5d542bbdd2e2317ece17674a674f3de561ca0f00ae765bba
+  checksum: 8b5a22b0ccc0dd24a2520d9dc27095e144b86426c7cc5ce7a406d1f9cbbde2aa450632e6f3fb435817b6b56ecebea434b049feb2c6752fce0b810787295bf15f
   languageName: node
   linkType: hard
 
