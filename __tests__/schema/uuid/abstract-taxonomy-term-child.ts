@@ -19,6 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
 import {
@@ -32,20 +33,12 @@ import {
   video,
 } from '../../../__fixtures__'
 import {
-  assertSuccessfulGraphQLQuery,
-  LegacyClient,
-  createTestClient,
-  createUuidHandler,
   getTypenameAndId,
+  given,
+  Client,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { EntityType } from '~/model/decoder'
-
-let client: LegacyClient
-
-beforeEach(() => {
-  client = createTestClient()
-})
 
 const taxonomyTermChildFixtures: Record<
   Model<'AbstractTaxonomyTermChild'>['__typename'],
@@ -64,12 +57,11 @@ const taxonomyTermChildCases = R.toPairs(taxonomyTermChildFixtures)
 test.each(taxonomyTermChildCases)(
   '%s by id (w/ taxonomyTerms)',
   async (_type, entity) => {
-    global.server.use(
-      createUuidHandler(entity),
-      createUuidHandler(taxonomyTermSubject)
-    )
-    await assertSuccessfulGraphQLQuery({
-      query: `
+    given('UuidQuery').for(entity, taxonomyTermSubject)
+
+    await new Client()
+      .prepareQuery({
+        query: gql`
           query taxonomyTerms($id: Int!) {
             uuid(id: $id) {
               ... on AbstractTaxonomyTermChild {
@@ -83,17 +75,16 @@ test.each(taxonomyTermChildCases)(
               }
             }
           }
-      `,
-      variables: { id: entity.id },
-      data: {
+        `,
+      })
+      .withVariables({ id: entity.id })
+      .shouldReturnData({
         uuid: {
           taxonomyTerms: {
             nodes: [getTypenameAndId(taxonomyTermSubject)],
             totalCount: 1,
           },
         },
-      },
-      client,
-    })
+      })
   }
 )

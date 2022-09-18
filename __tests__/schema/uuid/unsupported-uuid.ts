@@ -21,18 +21,10 @@
  */
 import { gql } from 'apollo-server'
 
-import {
-  assertSuccessfulGraphQLQuery,
-  LegacyClient,
-  createTestClient,
-  createUuidHandler,
-} from '../../__utils__'
+import { createUuidHandler, Client } from '../../__utils__'
 import { castToUuid } from '~/model/decoder'
 
-let client: LegacyClient
-
 beforeEach(() => {
-  client = createTestClient()
   global.server.use(
     createUuidHandler({
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -46,21 +38,19 @@ beforeEach(() => {
 
 describe('Unsupported UUID', () => {
   test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query unsupported($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            id
-            trashed
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query unsupported($id: Int!) {
+            uuid(id: $id) {
+              __typename
+              id
+              trashed
+            }
           }
-        }
-      `,
-      variables: { id: 146944 },
-      data: {
-        uuid: null,
-      },
-      client,
-    })
+        `,
+      })
+      .withVariables({ id: 146944 })
+      .shouldReturnData({ uuid: null })
   })
 })
