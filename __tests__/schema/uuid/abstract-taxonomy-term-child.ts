@@ -32,11 +32,7 @@ import {
   taxonomyTermSubject,
   video,
 } from '../../../__fixtures__'
-import {
-  getTypenameAndId,
-  given,
-  Client,
-} from '../../__utils__'
+import { getTypenameAndId, given, Client } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { EntityType } from '~/model/decoder'
 
