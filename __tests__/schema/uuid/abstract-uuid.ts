@@ -379,14 +379,13 @@ describe('property "alias"', () => {
 })
 
 describe('custom aliases', () => {
-  test('de.serlo.org/mathe resolves to uuid 19767', async () => {
-    global.server.use(
-      createUuidHandler({
-        ...page,
-        id: castToUuid(19767),
-        alias: castToAlias('/legacy-alias'),
-      })
-    )
+  test('de.serlo.org/community resolves to uuid 19882', async () => {
+    given('UuidQuery').for({
+      ...page,
+      id: castToUuid(19882),
+      alias: castToAlias('/legacy-alias'),
+    })
+
     await assertSuccessfulGraphQLQuery({
       query: gql`
         query uuid($alias: AliasInput!) {
@@ -398,12 +397,8 @@ describe('custom aliases', () => {
           }
         }
       `,
-      variables: {
-        alias: { instance: Instance.De, path: '/mathe' },
-      },
-      data: {
-        uuid: { id: 19767, alias: '/mathe' },
-      },
+      variables: { alias: { instance: Instance.De, path: '/community' } },
+      data: { uuid: { id: 19882, alias: '/community' } },
       client,
     })
   })
