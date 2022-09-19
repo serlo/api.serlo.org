@@ -107,15 +107,6 @@ describe('remove', () => {
     expect(option.isNone(cachedValue)).toBe(true)
   })
 
-  test('removes a cache value (authenticated via Serlo Service)', async () => {
-    await mutation
-      .withInput({ key })
-      .shouldReturnData({ _cache: { remove: { success: true } } })
-
-    const cachedValue = await global.cache.get({ key })
-    expect(option.isNone(cachedValue)).toBe(true)
-  })
-
   test('removes a cache value (authenticated as CarolinJaser)', async () => {
     await mutation
       .withContext({ service: Service.SerloCloudflareWorker, userId: 178145 })

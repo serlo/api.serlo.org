@@ -561,6 +561,19 @@ const pactSpec: PactSpec = {
   UnrevisedEntitiesQuery: {
     examples: [[{}, { unrevisedEntityIds: [article.id] }]],
   },
+  UserAddRoleMutation: {
+    examples: [
+      [
+        {
+          username: '1229f9c7',
+          roleName: 'german_reviewer',
+        },
+        {
+          success: true,
+        },
+      ],
+    ],
+  },
   UserPotentialSpamUsersQuery: { examples: [] },
   UserDeleteBotsMutation: { examples: [] },
   UserDeleteRegularUsersMutation: {
@@ -568,8 +581,26 @@ const pactSpec: PactSpec = {
     // TODO: here it is named userId, in DB layer just id, adjust
     // examples: [[{ userId: user.id }, { success: true }]],
   },
+  UsersByRoleQuery: {
+    examples: [
+      [{ roleName: 'sysadmin', first: 2, after: 1 }, { usersByRole: [2, 6] }],
+    ],
+  },
   UserSetDescriptionMutation: {
     examples: [[{ userId: 1, description: 'Hello World' }, { success: true }]],
+  },
+  UserRemoveRoleMutation: {
+    examples: [
+      [
+        {
+          username: 'admin',
+          roleName: 'sysadmin',
+        },
+        {
+          success: true,
+        },
+      ],
+    ],
   },
   UserSetEmailMutation: {
     examples: [

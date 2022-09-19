@@ -500,8 +500,7 @@ export type ArticleRevisionCursor = {
 };
 
 export type CacheRemoveInput = {
-  key?: InputMaybe<Scalars['String']>;
-  keys?: InputMaybe<Array<Scalars['String']>>;
+  keys: Array<Scalars['String']>;
 };
 
 export type CacheRemoveResponse = {
@@ -1499,6 +1498,30 @@ export type LicenseQueryLicensesArgs = {
   instance?: InputMaybe<Instance>;
 };
 
+export type MediaQuery = {
+  __typename?: 'MediaQuery';
+  newUpload: MediaUpload;
+};
+
+
+export type MediaQueryNewUploadArgs = {
+  mediaType: MediaType;
+};
+
+export enum MediaType {
+  ImageGif = 'IMAGE_GIF',
+  ImageJpeg = 'IMAGE_JPEG',
+  ImagePng = 'IMAGE_PNG',
+  ImageSvgXml = 'IMAGE_SVG_XML',
+  ImageWebp = 'IMAGE_WEBP'
+}
+
+export type MediaUpload = {
+  __typename?: 'MediaUpload';
+  uploadUrl: Scalars['String'];
+  urlAfterUpload: Scalars['String'];
+};
+
 export type MetadataQuery = {
   __typename?: 'MetadataQuery';
   entities: EntityMetadataConnection;
@@ -1764,6 +1787,7 @@ export type Query = {
   entity?: Maybe<EntityQuery>;
   events: AbstractNotificationEventConnection;
   license: LicenseQuery;
+  media: MediaQuery;
   metadata: MetadataQuery;
   notificationEvent?: Maybe<AbstractNotificationEvent>;
   notifications: NotificationConnection;
@@ -1882,8 +1906,18 @@ export enum Role {
   Login = 'login',
   Moderator = 'moderator',
   Reviewer = 'reviewer',
-  StaticPagesBuilder = 'staticPagesBuilder',
+  StaticPagesBuilder = 'static_pages_builder',
   Sysadmin = 'sysadmin'
+}
+
+export enum Scope {
+  Serlo = 'Serlo',
+  SerloDe = 'Serlo_De',
+  SerloEn = 'Serlo_En',
+  SerloEs = 'Serlo_Es',
+  SerloFr = 'Serlo_Fr',
+  SerloHi = 'Serlo_Hi',
+  SerloTa = 'Serlo_Ta'
 }
 
 export type ScopedRole = {
@@ -2675,10 +2709,17 @@ export type UserEdge = {
 
 export type UserMutation = {
   __typename?: 'UserMutation';
+  addRole: UserRoleResponse;
   deleteBots: UserDeleteBotsResponse;
   deleteRegularUsers: Array<UserDeleteRegularUsersResponse>;
+  removeRole: UserRoleResponse;
   setDescription: UserSetDescriptionResponse;
   setEmail: UserSetEmailResponse;
+};
+
+
+export type UserMutationAddRoleArgs = {
+  input: UserRoleInput;
 };
 
 
@@ -2689,6 +2730,11 @@ export type UserMutationDeleteBotsArgs = {
 
 export type UserMutationDeleteRegularUsersArgs = {
   input: UserDeleteRegularUsersInput;
+};
+
+
+export type UserMutationRemoveRoleArgs = {
+  input: UserRoleInput;
 };
 
 
@@ -2704,12 +2750,32 @@ export type UserMutationSetEmailArgs = {
 export type UserQuery = {
   __typename?: 'UserQuery';
   potentialSpamUsers: UserConnection;
+  usersByRole: UserConnection;
 };
 
 
 export type UserQueryPotentialSpamUsersArgs = {
   after?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type UserQueryUsersByRoleArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  role: Role;
+};
+
+export type UserRoleInput = {
+  instance?: InputMaybe<Instance>;
+  role: Role;
+  username: Scalars['String'];
+};
+
+export type UserRoleResponse = {
+  __typename?: 'UserRoleResponse';
+  success: Scalars['Boolean'];
 };
 
 export type UserSetDescriptionInput = {

@@ -14,6 +14,7 @@
   "scripts": {
     "_eslint": "eslint \"{{__fixtures__,__tests-pacts__,__tests__,scripts,packages/*/src}/**/*,*}.{js,jsx,ts,tsx}\"",
     "_prettier": "prettier .",
+    "auth": "scripts/authenticate.sh",
     "build": "lerna run --stream build",
     "build:server": "lerna run --stream build:server",
     "build:swr-queue-worker": "lerna run --stream build:swr-queue-worker",

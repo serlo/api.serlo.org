@@ -22,7 +22,7 @@
 import { UserInputError } from 'apollo-server-express'
 import * as t from 'io-ts'
 
-import { Instance, TaxonomyTermType } from '~/types'
+import { Instance, Role, TaxonomyTermType } from '~/types'
 
 export const InstanceDecoder: t.Type<Instance> = t.union([
   t.literal(Instance.De),
@@ -31,6 +31,17 @@ export const InstanceDecoder: t.Type<Instance> = t.union([
   t.literal(Instance.Fr),
   t.literal(Instance.Hi),
   t.literal(Instance.Ta),
+])
+
+export const RoleDecoder: t.Type<Role> = t.union([
+  t.literal(Role.Admin),
+  t.literal(Role.Architect),
+  t.literal(Role.Guest),
+  t.literal(Role.Login),
+  t.literal(Role.Moderator),
+  t.literal(Role.Reviewer),
+  t.literal(Role.StaticPagesBuilder),
+  t.literal(Role.Sysadmin),
 ])
 
 export enum DiscriminatorType {

@@ -30,6 +30,7 @@ const allowedUserIds = [
   131536, // dal
   32543, // botho
   178145, // CarolinJaser
+  178807, // HugoBT
 ]
 
 export const resolvers: Mutations<'_cache'> = {
@@ -55,11 +56,8 @@ export const resolvers: Mutations<'_cache'> = {
         operation: 'remove',
         allowedServices: [Service.Serlo],
       })
-      const keys = input.keys ?? []
 
-      if (input.key != null) keys.push(input.key)
-
-      await dataSources.model.removeCacheValue({ keys })
+      await dataSources.model.removeCacheValue({ keys: input.keys })
       return { success: true, query: {} }
     },
     async update(_parent, { input }, { dataSources, service, userId }) {

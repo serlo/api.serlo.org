@@ -504,8 +504,7 @@ export type ArticleRevisionCursor = {
 };
 
 export type CacheRemoveInput = {
-  key?: InputMaybe<Scalars['String']>;
-  keys?: InputMaybe<Array<Scalars['String']>>;
+  keys: Array<Scalars['String']>;
 };
 
 export type CacheRemoveResponse = {
@@ -1503,6 +1502,30 @@ export type LicenseQueryLicensesArgs = {
   instance?: InputMaybe<Instance>;
 };
 
+export type MediaQuery = {
+  __typename?: 'MediaQuery';
+  newUpload: MediaUpload;
+};
+
+
+export type MediaQueryNewUploadArgs = {
+  mediaType: MediaType;
+};
+
+export enum MediaType {
+  ImageGif = 'IMAGE_GIF',
+  ImageJpeg = 'IMAGE_JPEG',
+  ImagePng = 'IMAGE_PNG',
+  ImageSvgXml = 'IMAGE_SVG_XML',
+  ImageWebp = 'IMAGE_WEBP'
+}
+
+export type MediaUpload = {
+  __typename?: 'MediaUpload';
+  uploadUrl: Scalars['String'];
+  urlAfterUpload: Scalars['String'];
+};
+
 export type MetadataQuery = {
   __typename?: 'MetadataQuery';
   entities: EntityMetadataConnection;
@@ -1768,6 +1791,7 @@ export type Query = {
   entity?: Maybe<EntityQuery>;
   events: AbstractNotificationEventConnection;
   license: LicenseQuery;
+  media: MediaQuery;
   metadata: MetadataQuery;
   notificationEvent?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
   notifications: NotificationConnection;
@@ -1886,8 +1910,18 @@ export enum Role {
   Login = 'login',
   Moderator = 'moderator',
   Reviewer = 'reviewer',
-  StaticPagesBuilder = 'staticPagesBuilder',
+  StaticPagesBuilder = 'static_pages_builder',
   Sysadmin = 'sysadmin'
+}
+
+export enum Scope {
+  Serlo = 'Serlo',
+  SerloDe = 'Serlo_De',
+  SerloEn = 'Serlo_En',
+  SerloEs = 'Serlo_Es',
+  SerloFr = 'Serlo_Fr',
+  SerloHi = 'Serlo_Hi',
+  SerloTa = 'Serlo_Ta'
 }
 
 export type ScopedRole = {
@@ -2679,10 +2713,17 @@ export type UserEdge = {
 
 export type UserMutation = {
   __typename?: 'UserMutation';
+  addRole: UserRoleResponse;
   deleteBots: UserDeleteBotsResponse;
   deleteRegularUsers: Array<UserDeleteRegularUsersResponse>;
+  removeRole: UserRoleResponse;
   setDescription: UserSetDescriptionResponse;
   setEmail: UserSetEmailResponse;
+};
+
+
+export type UserMutationAddRoleArgs = {
+  input: UserRoleInput;
 };
 
 
@@ -2693,6 +2734,11 @@ export type UserMutationDeleteBotsArgs = {
 
 export type UserMutationDeleteRegularUsersArgs = {
   input: UserDeleteRegularUsersInput;
+};
+
+
+export type UserMutationRemoveRoleArgs = {
+  input: UserRoleInput;
 };
 
 
@@ -2708,12 +2754,32 @@ export type UserMutationSetEmailArgs = {
 export type UserQuery = {
   __typename?: 'UserQuery';
   potentialSpamUsers: UserConnection;
+  usersByRole: UserConnection;
 };
 
 
 export type UserQueryPotentialSpamUsersArgs = {
   after?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type UserQueryUsersByRoleArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  role: Role;
+};
+
+export type UserRoleInput = {
+  instance?: InputMaybe<Instance>;
+  role: Role;
+  username: Scalars['String'];
+};
+
+export type UserRoleResponse = {
+  __typename?: 'UserRoleResponse';
+  success: Scalars['Boolean'];
 };
 
 export type UserSetDescriptionInput = {
@@ -3045,6 +3111,9 @@ export type ResolversTypes = {
   JSONObject: ResolverTypeWrapper<ModelOf<Scalars['JSONObject']>>;
   License: ResolverTypeWrapper<ModelOf<License>>;
   LicenseQuery: ResolverTypeWrapper<ModelOf<LicenseQuery>>;
+  MediaQuery: ResolverTypeWrapper<ModelOf<MediaQuery>>;
+  MediaType: ResolverTypeWrapper<ModelOf<MediaType>>;
+  MediaUpload: ResolverTypeWrapper<ModelOf<MediaUpload>>;
   MetadataQuery: ResolverTypeWrapper<ModelOf<MetadataQuery>>;
   Mutation: ResolverTypeWrapper<{}>;
   Navigation: ResolverTypeWrapper<ModelOf<Navigation>>;
@@ -3073,6 +3142,7 @@ export type ResolversTypes = {
   RemoveEntityLinkNotificationEvent: ResolverTypeWrapper<ModelOf<RemoveEntityLinkNotificationEvent>>;
   RemoveTaxonomyLinkNotificationEvent: ResolverTypeWrapper<ModelOf<RemoveTaxonomyLinkNotificationEvent>>;
   Role: ResolverTypeWrapper<ModelOf<Role>>;
+  Scope: ResolverTypeWrapper<ModelOf<Scope>>;
   ScopedRole: ResolverTypeWrapper<ModelOf<ScopedRole>>;
   ScopedRoleConnection: ResolverTypeWrapper<ModelOf<ScopedRoleConnection>>;
   ScopedRoleCursor: ResolverTypeWrapper<ModelOf<ScopedRoleCursor>>;
@@ -3144,6 +3214,8 @@ export type ResolversTypes = {
   UserEdge: ResolverTypeWrapper<ModelOf<UserEdge>>;
   UserMutation: ResolverTypeWrapper<ModelOf<UserMutation>>;
   UserQuery: ResolverTypeWrapper<ModelOf<UserQuery>>;
+  UserRoleInput: ResolverTypeWrapper<ModelOf<UserRoleInput>>;
+  UserRoleResponse: ResolverTypeWrapper<ModelOf<UserRoleResponse>>;
   UserSetDescriptionInput: ResolverTypeWrapper<ModelOf<UserSetDescriptionInput>>;
   UserSetDescriptionResponse: ResolverTypeWrapper<ModelOf<UserSetDescriptionResponse>>;
   UserSetEmailInput: ResolverTypeWrapper<ModelOf<UserSetEmailInput>>;
@@ -3251,6 +3323,8 @@ export type ResolversParentTypes = {
   JSONObject: ModelOf<Scalars['JSONObject']>;
   License: ModelOf<License>;
   LicenseQuery: ModelOf<LicenseQuery>;
+  MediaQuery: ModelOf<MediaQuery>;
+  MediaUpload: ModelOf<MediaUpload>;
   MetadataQuery: ModelOf<MetadataQuery>;
   Mutation: {};
   Navigation: ModelOf<Navigation>;
@@ -3347,6 +3421,8 @@ export type ResolversParentTypes = {
   UserEdge: ModelOf<UserEdge>;
   UserMutation: ModelOf<UserMutation>;
   UserQuery: ModelOf<UserQuery>;
+  UserRoleInput: ModelOf<UserRoleInput>;
+  UserRoleResponse: ModelOf<UserRoleResponse>;
   UserSetDescriptionInput: ModelOf<UserSetDescriptionInput>;
   UserSetDescriptionResponse: ModelOf<UserSetDescriptionResponse>;
   UserSetEmailInput: ModelOf<UserSetEmailInput>;
@@ -4160,6 +4236,17 @@ export type LicenseQueryResolvers<ContextType = Context, ParentType extends Reso
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type MediaQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['MediaQuery'] = ResolversParentTypes['MediaQuery']> = {
+  newUpload?: Resolver<ResolversTypes['MediaUpload'], ParentType, ContextType, RequireFields<MediaQueryNewUploadArgs, 'mediaType'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type MediaUploadResolvers<ContextType = Context, ParentType extends ResolversParentTypes['MediaUpload'] = ResolversParentTypes['MediaUpload']> = {
+  uploadUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  urlAfterUpload?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MetadataQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['MetadataQuery'] = ResolversParentTypes['MetadataQuery']> = {
   entities?: Resolver<ResolversTypes['EntityMetadataConnection'], ParentType, ContextType, Partial<MetadataQueryEntitiesArgs>>;
   publisher?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
@@ -4317,6 +4404,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   entity?: Resolver<Maybe<ResolversTypes['EntityQuery']>, ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<QueryEventsArgs>>;
   license?: Resolver<ResolversTypes['LicenseQuery'], ParentType, ContextType>;
+  media?: Resolver<ResolversTypes['MediaQuery'], ParentType, ContextType>;
   metadata?: Resolver<ResolversTypes['MetadataQuery'], ParentType, ContextType>;
   notificationEvent?: Resolver<Maybe<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType, RequireFields<QueryNotificationEventArgs, 'id'>>;
   notifications?: Resolver<ResolversTypes['NotificationConnection'], ParentType, ContextType, Partial<QueryNotificationsArgs>>;
@@ -4748,8 +4836,10 @@ export type UserEdgeResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 export type UserMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserMutation'] = ResolversParentTypes['UserMutation']> = {
+  addRole?: Resolver<ResolversTypes['UserRoleResponse'], ParentType, ContextType, RequireFields<UserMutationAddRoleArgs, 'input'>>;
   deleteBots?: Resolver<ResolversTypes['UserDeleteBotsResponse'], ParentType, ContextType, RequireFields<UserMutationDeleteBotsArgs, 'input'>>;
   deleteRegularUsers?: Resolver<Array<ResolversTypes['UserDeleteRegularUsersResponse']>, ParentType, ContextType, RequireFields<UserMutationDeleteRegularUsersArgs, 'input'>>;
+  removeRole?: Resolver<ResolversTypes['UserRoleResponse'], ParentType, ContextType, RequireFields<UserMutationRemoveRoleArgs, 'input'>>;
   setDescription?: Resolver<ResolversTypes['UserSetDescriptionResponse'], ParentType, ContextType, RequireFields<UserMutationSetDescriptionArgs, 'input'>>;
   setEmail?: Resolver<ResolversTypes['UserSetEmailResponse'], ParentType, ContextType, RequireFields<UserMutationSetEmailArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -4757,6 +4847,12 @@ export type UserMutationResolvers<ContextType = Context, ParentType extends Reso
 
 export type UserQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserQuery'] = ResolversParentTypes['UserQuery']> = {
   potentialSpamUsers?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, Partial<UserQueryPotentialSpamUsersArgs>>;
+  usersByRole?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, RequireFields<UserQueryUsersByRoleArgs, 'role'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type UserRoleResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserRoleResponse'] = ResolversParentTypes['UserRoleResponse']> = {
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4919,6 +5015,8 @@ export type Resolvers<ContextType = Context> = {
   JSONObject?: GraphQLScalarType;
   License?: LicenseResolvers<ContextType>;
   LicenseQuery?: LicenseQueryResolvers<ContextType>;
+  MediaQuery?: MediaQueryResolvers<ContextType>;
+  MediaUpload?: MediaUploadResolvers<ContextType>;
   MetadataQuery?: MetadataQueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Navigation?: NavigationResolvers<ContextType>;
@@ -4991,6 +5089,7 @@ export type Resolvers<ContextType = Context> = {
   UserEdge?: UserEdgeResolvers<ContextType>;
   UserMutation?: UserMutationResolvers<ContextType>;
   UserQuery?: UserQueryResolvers<ContextType>;
+  UserRoleResponse?: UserRoleResponseResolvers<ContextType>;
   UserSetDescriptionResponse?: UserSetDescriptionResponseResolvers<ContextType>;
   UserSetEmailResponse?: UserSetEmailResponseResolvers<ContextType>;
   UuidMutation?: UuidMutationResolvers<ContextType>;

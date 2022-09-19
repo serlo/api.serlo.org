@@ -42,17 +42,7 @@ Make sure Docker is running and then run `yarn start` to start Redis.
 After `yarn start`, you can open the GraphQL playground via [http://localhost:3000/\_\_\_graphql](http://localhost:3000/___graphql).  
 Note that most queries will need a running [serlo/serlo.org-database-layer](https://github.com/serlo/serlo.org-database-layer) dev environment.
 
-If you need to run requests that need authentication/authorization, replace the closure `context` at the function `getGraphQLOptions` in `packages/server/src/internals/server/graphql-middleware.ts` by the following piece of code
-
-```ts
-    context(): Promise<Pick<Context, 'service' | 'userId'>> {
-      return Promise.resolve({
-        service: Service.SerloCloudflareWorker,
-        // put here the id of the user you want to test
-        userId: 1,
-      })
-    },
-```
+If you need to run requests authenticated/authorized, use `yarn auth` to be authenticated as user with id 1 or `yarn auth <id>` to choose a specific user.
 
 Happy coding!
 
