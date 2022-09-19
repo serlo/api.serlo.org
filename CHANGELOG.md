@@ -2,6 +2,54 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.46.2](https://github.com/serlo/api.serlo.org/compare/v0.46.1..v0.46.2) - August 26, 2022
+
+### Fixed
+
+- static_pages_builder can be added, removed and searched for #717
+
+## [v0.46.1](https://github.com/serlo/api.serlo.org/compare/v0.46.0..v0.46.1) - August 18, 2022
+
+### Breaking Changes
+
+- Change input of `addRole`, `removeRole` and `usersByRole` from `scope` to `instance` #711
+
+### Changed
+
+- User Role endpoints: do not throw error if role is global but instance is sent\` #712
+
+## [v0.46.0](https://github.com/serlo/api.serlo.org/compare/v0.45.0..v0.46.0) - August 18, 2022
+
+### Breaking Changes
+
+- Delete `fileExtension` and `fileNameWithoutExtension` from `media.newUpload` #713
+
+## [v0.45.0](https://github.com/serlo/api.serlo.org/compare/v0.44.0..v0.45.0) - July 25, 2022
+
+### Breaking Changes
+
+- Refactor `media.upload` to `media.newUpload` #709
+
+## [v0.44.0](https://github.com/serlo/api.serlo.org/compare/v0.43.1..v0.44.0) - July 25, 2022
+
+### Added
+
+- Add user.usersByRole query #702
+
+## [v0.43.1](https://github.com/serlo/api.serlo.org/compare/v0.43.0..v0.43.1) - July 21, 2022
+
+### Added
+
+- Add `media.upload` mutation #700
+
+## [v0.43.0](https://github.com/serlo/api.serlo.org/compare/v0.42.1..v0.43.0) - July 12, 2022
+
+### Added
+
+- Add `user.addRole` mutation #663
+
+- Add `user.removeRole` mutation #663
+
 ## [v0.42.1](https://github.com/serlo/api.serlo.org/compare/v0.42.0..v0.42.1) - July 6, 2022
 
 ### Added

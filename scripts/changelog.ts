@@ -1357,6 +1357,53 @@ async function exec(): Promise<void> {
           'Add possibility to remove multiple cache keys #687',
         ],
       },
+      {
+        tagName: 'v0.43.0',
+        date: '2022-07-12',
+        added: [
+          'Add `user.addRole` mutation #663',
+          'Add `user.removeRole` mutation #663',
+        ],
+      },
+      {
+        tagName: 'v0.43.1',
+        date: '2022-07-21',
+        added: ['Add `media.upload` mutation #700'],
+      },
+      {
+        tagName: 'v0.44.0',
+        date: '2022-07-25',
+        added: ['Add user.usersByRole query #702'],
+      },
+      {
+        tagName: 'v0.45.0',
+        date: '2022-07-25',
+        breakingChanges: ['Refactor `media.upload` to `media.newUpload` #709'],
+      },
+      {
+        tagName: 'v0.46.0',
+        date: '2022-08-18',
+        breakingChanges: [
+          'Delete `fileExtension` and `fileNameWithoutExtension` from `media.newUpload` #713',
+        ],
+      },
+      {
+        tagName: 'v0.46.1',
+        date: '2022-08-18',
+        breakingChanges: [
+          'Change input of `addRole`, `removeRole` and `usersByRole` from `scope` to `instance` #711',
+        ],
+        changed: [
+          'User Role endpoints: do not throw error if role is global but instance is sent` #712',
+        ],
+      },
+      {
+        tagName: 'v0.46.2',
+        date: '2022-08-26',
+        fixed: [
+          'static_pages_builder can be added, removed and searched for #717',
+        ],
+      },
     ],
   })
 
