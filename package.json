@@ -45,7 +45,7 @@
     "update-version": "./scripts/update_version.sh"
   },
   "dependencies": {
-    "graphql": "^16.5.0"
+    "graphql": "^16.6.0"
   },
   "devDependencies": {
     "@inyono/changelog": "^0.5.2",
