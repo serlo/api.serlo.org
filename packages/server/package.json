@@ -19,7 +19,7 @@
     "start:swr-queue-worker": "tsdx watch --format cjs --target node --entry src/swr-queue-worker.ts --tsconfig tsconfig.prod.json --onSuccess \"node dist\""
   },
   "dependencies": {
-    "@google-cloud/storage": "^6.2.2",
+    "@google-cloud/storage": "^6.5.0",
     "@nmshd/connector-sdk": "^1.1.5",
     "@sentry/node": "^6.19.7",
     "@serlo/authorization": "^0.46.2",
