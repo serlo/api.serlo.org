@@ -61,7 +61,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-react": "^7.29.4",
-    "glob": "^7.2.3",
+    "glob": "^8.0.3",
     "graphql-tag": "^2.12.6",
     "jest": "^27.5.1",
     "jest-transform-graphql": "^2.1.0",
