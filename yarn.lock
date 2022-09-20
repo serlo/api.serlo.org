@@ -4274,7 +4274,7 @@ __metadata:
     "@types/node-fetch": ^2.6.1
     "@types/ramda": ^0.28.14
     "@types/redis": ^2.8.32
-    "@types/redlock": ^3.0.7
+    "@types/redlock": ^4.0.3
     "@types/semver": ^7.3.10
     "@types/uuid": ^8.3.4
     "@zerollup/ts-transform-paths": ^1.7.18
@@ -4945,12 +4945,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/redlock@npm:^3.0.7":
-  version: 3.0.7
-  resolution: "@types/redlock@npm:3.0.7"
+"@types/redlock@npm:^4.0.3":
+  version: 4.0.3
+  resolution: "@types/redlock@npm:4.0.3"
   dependencies:
     "@types/bluebird": "*"
-  checksum: 87800e1e075886530a44f6885a2578eb31e20365e62218c6338c5fe5e19dcac93ffc3a3fd19191b06a8b38faa54dd9dbe231246639daddb656f749844c667001
+    "@types/redis": ^2.8.0
+  checksum: f2fab630e2cc949505213f248034f6bbc1854c09209042318f2d787bf1e93952efa11fd7a8883c6c1cbeb0de1d7b81121a01369952d97a9f2bcf4d105d2cc4a4
   languageName: node
   linkType: hard
 
