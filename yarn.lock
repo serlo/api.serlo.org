@@ -4273,7 +4273,6 @@ __metadata:
     "@types/jsonwebtoken": ^8.5.8
     "@types/node-fetch": ^2.6.1
     "@types/ramda": ^0.28.14
-    "@types/redis": ^2.8.32
     "@types/redlock": ^4.0.3
     "@types/semver": ^7.3.10
     "@types/uuid": ^8.3.4
@@ -4936,7 +4935,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/redis@npm:^2.8.0, @types/redis@npm:^2.8.32":
+"@types/redis@npm:^2.8.0":
   version: 2.8.32
   resolution: "@types/redis@npm:2.8.32"
   dependencies:
