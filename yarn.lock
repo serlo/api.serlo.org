@@ -1757,9 +1757,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@google-cloud/storage@npm:^6.2.2":
-  version: 6.2.2
-  resolution: "@google-cloud/storage@npm:6.2.2"
+"@google-cloud/storage@npm:^6.5.0":
+  version: 6.5.0
+  resolution: "@google-cloud/storage@npm:6.5.0"
   dependencies:
     "@google-cloud/paginator": ^3.0.7
     "@google-cloud/projectify": ^3.0.0
@@ -1776,12 +1776,10 @@ __metadata:
     mime: ^3.0.0
     mime-types: ^2.0.8
     p-limit: ^3.0.1
-    pumpify: ^2.0.0
     retry-request: ^5.0.0
-    stream-events: ^1.0.4
     teeny-request: ^8.0.0
     uuid: ^8.0.0
-  checksum: 16c38c9a09adc4754d762b7a1b95f831b376530d380af17659d999ce874858bc5564ed5e3d7147e81f3f6808cd2ec317283b1998ab3674e63d60735ae4ec08d8
+  checksum: b97dc19814e4154ef0920202e79feaf14c3d7de2ea9aa295bc2e2784b3b0ba4e7feabdd4b499d0f2e996accc4fa965b974174bdb60d5f51408967a268bdc5b9f
   languageName: node
   linkType: hard
 
@@ -4334,7 +4332,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@serlo/api.serlo.org@workspace:packages/server"
   dependencies:
-    "@google-cloud/storage": ^6.2.2
+    "@google-cloud/storage": ^6.5.0
     "@graphql-codegen/add": ^3.2.1
     "@graphql-codegen/cli": ^2.12.1
     "@graphql-codegen/typescript": ^2.7.3
@@ -8284,7 +8282,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"duplexify@npm:^4.0.0, duplexify@npm:^4.1.1":
+"duplexify@npm:^4.0.0":
   version: 4.1.2
   resolution: "duplexify@npm:4.1.2"
   dependencies:
@@ -16005,17 +16003,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pumpify@npm:^2.0.0":
-  version: 2.0.1
-  resolution: "pumpify@npm:2.0.1"
-  dependencies:
-    duplexify: ^4.1.1
-    inherits: ^2.0.3
-    pump: ^3.0.0
-  checksum: cfc96f5307ee828ef8e6eca9fe9e1ae1de0a23ca55688bfe71ea376bc126418073dab870f02b433617f421c4545726b39e31295fce9a99b78bda5f0e527a7c11
-  languageName: node
-  linkType: hard
-
 "punycode@npm:^2.1.0, punycode@npm:^2.1.1":
   version: 2.1.1
   resolution: "punycode@npm:2.1.1"
@@ -17843,7 +17830,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stream-events@npm:^1.0.4, stream-events@npm:^1.0.5":
+"stream-events@npm:^1.0.5":
   version: 1.0.5
   resolution: "stream-events@npm:1.0.5"
   dependencies:
