@@ -370,10 +370,10 @@ describe('property "alias"', () => {
 })
 
 describe('custom aliases', () => {
-  test('de.serlo.org/mathe resolves to uuid 19767', async () => {
+  test('de.serlo.org/community resolves to uuid 19767', async () => {
     given('UuidQuery').for({
       ...page,
-      id: castToUuid(19767),
+      id: castToUuid(19882),
       alias: castToAlias('/legacy-alias'),
     })
 
@@ -391,10 +391,10 @@ describe('custom aliases', () => {
         `,
       })
       .withVariables({
-        alias: { instance: Instance.De, path: '/mathe' },
+        alias: { instance: Instance.De, path: '/community' },
       })
       .shouldReturnData({
-        uuid: { id: 19767, alias: '/mathe' },
+        uuid: { id: 19882, alias: '/community' },
       })
   })
 })

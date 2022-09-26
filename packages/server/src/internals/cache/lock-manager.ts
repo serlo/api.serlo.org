@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import redis from 'redis'
+import Redis from 'ioredis'
 import Redlock from 'redlock'
 
 import { log } from '../log'
@@ -39,9 +39,7 @@ export function createLockManager({
 }: {
   retryCount: number
 }): LockManager {
-  const client = redis.createClient({
-    url: redisUrl,
-  })
+  const client = new Redis(redisUrl)
   const redlock = new Redlock([client], { retryCount })
 
   redlock.on('clientError', function (err) {
@@ -51,20 +49,16 @@ export function createLockManager({
   return {
     async lock(key: string) {
       log.debug('Locking key', key)
-      const lock = await redlock.lock(`locks:${key}`, 10000)
+      const lock = await redlock.acquire([`locks:${key}`], 10000)
       return {
         async unlock() {
           log.debug('Unlocking key', key)
-          await lock.unlock()
+          await lock.release()
         },
       }
     },
     async quit() {
-      await new Promise<void>((resolve) => {
-        client.quit(() => {
-          resolve()
-        })
-      })
+      await client.quit()
     },
   }
 }
