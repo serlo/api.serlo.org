@@ -30,16 +30,11 @@ export type AliasConfig = {
 // Custom aliases that take precedence over any alias defined in serlo.org
 export const aliases: AliasConfig = {
   [Instance.De]: {
-    '/biologie': 23950,
-    '/chemie': 24706,
     '/community': 19882,
     '/englisch': 25985,
     '/features': 81862,
     '/jobs': 21563,
-    '/lerntipps': 182154,
-    '/mathe': 19767,
     '/mitmachen': 19869,
-    '/nachhaltigkeit': 58771,
     '/partner': 21456,
     '/physik': 41108,
     '/politik': 79157,
