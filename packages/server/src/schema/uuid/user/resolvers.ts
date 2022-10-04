@@ -60,6 +60,7 @@ import { resolveEvents } from '~/schema/notification/resolvers'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Instance, User } from '~/types'
+import { isDefined } from '~/utils'
 
 export const resolvers: LegacyQueries<
   'activeAuthors' | 'activeReviewers' | 'activeDonors'
@@ -398,21 +399,28 @@ export const resolvers: LegacyQueries<
       })
 
       const users = await Promise.all(
-        input.userIds.map((userId) =>
-          dataSources.model.serlo.getUuid({ id: userId })
-        )
+        input.users.map(async ({ id, username }) => {
+          const user = await dataSources.model.serlo.getUuid({ id })
+
+          if (!UserDecoder.is(user)) return null
+          if (user.username !== username) return null
+
+          return user
+        })
       )
 
       if (!t.array(UserDecoder).is(users))
-        throw new UserInputError('not all bots are users')
+        throw new UserInputError(
+          'Either one id does not belong to a user or one username / id combination is wrong'
+        )
 
       return await Promise.all(
-        users.map(async (user) => {
+        users.map(async ({ id, username }) => {
           return {
             ...(await dataSources.model.serlo.deleteRegularUsers({
-              userId: user.id,
+              userId: id,
             })),
-            username: user.username,
+            username: username,
           }
         })
       )
