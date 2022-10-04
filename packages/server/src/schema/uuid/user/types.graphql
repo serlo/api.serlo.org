@@ -128,7 +128,12 @@ type UserDeleteBotsResponse {
 }
 
 input UserDeleteRegularUsersInput {
-  userIds: [Int!]!
+  users: [UserDescriptionInput!]!
+}
+
+input UserDescriptionInput {
+  id: Int!
+  username: String!
 }
 
 type UserDeleteRegularUsersResponse {
