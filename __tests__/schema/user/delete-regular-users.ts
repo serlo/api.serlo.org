@@ -39,7 +39,6 @@ let mutation: Query
 
 const user = { ...baseUser, roles: ['sysadmin'] }
 const users = [user, { ...user, username: 'foo', id: nextUuid(user.id) }]
-const userIds = [user.id, nextUuid(user.id)]
 const noUserId = nextUuid(nextUuid(user.id))
 
 beforeEach(() => {
