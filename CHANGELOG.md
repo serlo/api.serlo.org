@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.47.0](https://github.com/serlo/api.serlo.org/compare/v0.46.2..v0.47.0) - October 5, 2022
+
+### Breaking Changes
+
+- Update input for `user.deleteRegularUsers` #730
+
+- Remove enmeshed #726
+
+### Fixed
+
+- Catch error when threads got deleted #546
+
+- Update config for subject landing pages #551
+
 ## [v0.46.2](https://github.com/serlo/api.serlo.org/compare/v0.46.1..v0.46.2) - August 26, 2022
 
 ### Fixed
