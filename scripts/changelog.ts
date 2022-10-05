@@ -1404,6 +1404,18 @@ async function exec(): Promise<void> {
           'static_pages_builder can be added, removed and searched for #717',
         ],
       },
+      {
+        tagName: 'v0.47.0',
+        date: '2022-10-05',
+        breakingChanges: [
+          'Update input for `user.deleteRegularUsers` #730',
+          'Remove enmeshed #726',
+        ],
+        fixed: [
+          'Catch error when threads got deleted #546',
+          'Update config for subject landing pages #551',
+        ],
+      },
     ],
   })
 
