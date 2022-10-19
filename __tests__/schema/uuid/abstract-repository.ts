@@ -244,19 +244,19 @@ describe('Repository', () => {
       await client
         .prepareQuery({
           query: gql`
-          query repository($id: Int!) {
-            uuid(id: $id) {
-              ... on ${type} {
-                currentRevision {
-                  __typename
-                  id
-                  trashed
-                  date
+            query repository($id: Int!) {
+              uuid(id: $id) {
+                ... on ${type} {
+                  currentRevision {
+                    __typename
+                    id
+                    trashed
+                    date
+                  }
                 }
               }
             }
-          }
-        `,
+          `,
         })
         .withVariables(repository)
         .shouldReturnData({
@@ -354,19 +354,19 @@ describe('Repository', () => {
         await client
           .prepareQuery({
             query: gql`
-        query revisionsOfRepository($id: Int!) {
-          uuid(id: $id) {
-            ... on ${type} {
-              revisions {
-                nodes {
-                  __typename
-                  id
+              query revisionsOfRepository($id: Int!) {
+                uuid(id: $id) {
+                  ... on ${type} {
+                    revisions {
+                      nodes {
+                        __typename
+                        id
+                      }
+                    }
+                  }
                 }
               }
-            }
-          }
-        }
-      `,
+            `,
           })
           .withVariables({ id: repository.id })
           .shouldReturnData({
@@ -386,20 +386,20 @@ describe('Repository', () => {
         await client
           .prepareQuery({
             query: gql`
-        query unrevisedRevisionsOfRepository($id: Int!) {
-          uuid(id: $id) {
-            ... on ${type} {
-              revisions (unrevised: true) {
-                totalCount
-                nodes {
-                  __typename
-                  id
+              query unrevisedRevisionsOfRepository($id: Int!) {
+                uuid(id: $id) {
+                  ... on ${type} {
+                    revisions (unrevised: true) {
+                      totalCount
+                      nodes {
+                        __typename
+                        id
+                      }
+                    }
+                  }
                 }
               }
-            }
-          }
-        }
-      `,
+            `,
           })
           .withVariables({ id: repository.id })
           .shouldReturnData({
@@ -418,19 +418,19 @@ describe('Repository', () => {
         await client
           .prepareQuery({
             query: gql`
-        query unrevisedRevisionsOfRepository($id: Int!) {
-          uuid(id: $id) {
-            ... on ${type} {
-              revisions (unrevised: true) {
-                totalCount
-                nodes {
-                  __typename
+              query unrevisedRevisionsOfRepository($id: Int!) {
+                uuid(id: $id) {
+                  ... on ${type} {
+                    revisions (unrevised: true) {
+                      totalCount
+                      nodes {
+                        __typename
+                      }
+                    }
+                  }
                 }
               }
-            }
-          }
-        }
-      `,
+            `,
           })
           .withVariables({ id: repository.id })
           .shouldReturnData({
@@ -442,20 +442,20 @@ describe('Repository', () => {
         await client
           .prepareQuery({
             query: gql`
-        query unrevisedRevisionsOfRepository($id: Int!) {
-          uuid(id: $id) {
-            ... on ${type} {
-              revisions (unrevised: false) {
-                totalCount
-                nodes {
-                  __typename
-                  id
+              query unrevisedRevisionsOfRepository($id: Int!) {
+                uuid(id: $id) {
+                  ... on ${type} {
+                    revisions (unrevised: false) {
+                      totalCount
+                      nodes {
+                        __typename
+                        id
+                      }
+                    }
+                  }
                 }
               }
-            }
-          }
-        }
-      `,
+            `,
           })
           .withVariables({ id: repository.id })
           .shouldReturnData({
@@ -477,20 +477,20 @@ describe('Repository', () => {
         await client
           .prepareQuery({
             query: gql`
-        query unrevisedRevisionsOfRepository($id: Int!) {
-          uuid(id: $id) {
-            ... on ${type} {
-              revisions (unrevised: false) {
-                totalCount
-                nodes {
-                  __typename
-                  id
+              query unrevisedRevisionsOfRepository($id: Int!) {
+                uuid(id: $id) {
+                  ... on ${type} {
+                    revisions (unrevised: false) {
+                      totalCount
+                      nodes {
+                        __typename
+                        id
+                      }
+                    }
+                  }
                 }
               }
-            }
-          }
-        }
-      `,
+            `,
           })
           .withVariables({ id: repository.id })
           .shouldReturnData({
@@ -546,17 +546,17 @@ describe('Revision', () => {
       await client
         .prepareQuery({
           query: gql`
-      query revision($id: Int!) {
-        uuid(id: $id) {
-          ... on ${revisionType} {
-            repository {
-              __typename
-              id
+            query revision($id: Int!) {
+              uuid(id: $id) {
+                ... on ${revisionType} {
+                  repository {
+                    __typename
+                    id
+                  }
+                }
+              }
             }
-          }
-        }
-      }
-    `,
+          `,
         })
         .withVariables(revision)
         .shouldReturnData({
