@@ -38,6 +38,7 @@
     "start:redis": "docker-compose up --detach",
     "start:server": "lerna run --stream --scope @serlo/api.serlo.org start",
     "start:swr-queue-worker": "lerna run --stream --scope @serlo/api.serlo.org start:swr-queue-worker",
+    "redis:empty": "docker-compose exec redis redis-cli FLUSHDB",
     "stop:redis": "docker-compose stop",
     "test": "jest --config jest.config.js --runInBand --forceExit",
     "update-version": "./scripts/update_version.sh"
