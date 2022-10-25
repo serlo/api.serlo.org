@@ -83,8 +83,9 @@ pacts/
 # Transpiled code
 dist/
 
-# WebStorm
+# IDEs
 .idea
+.vscode
 
 # Yarn
 .yarn/*
