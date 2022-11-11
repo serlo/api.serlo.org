@@ -62,16 +62,30 @@ export const resolvers: TypeResolvers<Notification> &
     },
     async notifications(
       _parent,
-      { unread, ...cursorPayload },
-      { dataSources, userId }
+      { userId: requestedUserId, unread, emailSent, ...cursorPayload },
+      { dataSources, userId: authUserId }
     ) {
-      assertUserIsAuthenticated(userId)
+      const userId = requestedUserId ?? authUserId
+
+      if (!userId) {
+        throw new UserInputError(
+          'userId has to be set or the user has to be authenticated'
+        )
+      }
+
       const { notifications } = await dataSources.model.serlo.getNotifications({
         userId,
       })
-      const filteredNotifications = notifications.filter(
-        (notification) => unread == null || notification.unread === unread
-      )
+
+      const filteredNotifications = notifications
+        .filter(
+          (notification) => unread == null || notification.unread === unread
+        )
+        .filter(
+          (notification) =>
+            emailSent == null || notification.emailSent === emailSent
+        )
+
       return resolveConnection({
         nodes: filteredNotifications,
         payload: cursorPayload,

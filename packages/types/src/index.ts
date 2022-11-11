@@ -1877,9 +1877,11 @@ export type QueryNotificationEventArgs = {
 export type QueryNotificationsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
+  emailSent?: InputMaybe<Scalars['Boolean']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   unread?: InputMaybe<Scalars['Boolean']>;
+  userId?: InputMaybe<Scalars['Int']>;
 };
 
 

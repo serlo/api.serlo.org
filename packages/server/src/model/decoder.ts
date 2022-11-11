@@ -807,6 +807,7 @@ export const NotificationDecoder = t.exact(
   t.type({
     id: t.number,
     unread: t.boolean,
+    emailSent: t.boolean,
     eventId: t.number,
   })
 )
