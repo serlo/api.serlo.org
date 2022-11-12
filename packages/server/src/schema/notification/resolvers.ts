@@ -62,7 +62,13 @@ export const resolvers: TypeResolvers<Notification> &
     },
     async notifications(
       _parent,
-      { userId: requestedUserId, unread, emailSent, ...cursorPayload },
+      {
+        userId: requestedUserId,
+        unread,
+        emailSent,
+        emailSubscribed,
+        ...cursorPayload
+      },
       { dataSources, userId: authUserId }
     ) {
       const userId = requestedUserId ?? authUserId
@@ -80,6 +86,10 @@ export const resolvers: TypeResolvers<Notification> &
       const filteredNotifications = notifications
         .filter(
           (notification) => unread == null || notification.unread === unread
+        )
+        .filter(
+          (notification) =>
+            emailSubscribed == null || notification.email === emailSubscribed
         )
         .filter(
           (notification) =>
