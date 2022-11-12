@@ -28,6 +28,7 @@ extend type Query {
     first: Int
     last: Int
     emailSent: Boolean
+    emailSubscribed: Boolean
     unread: Boolean
     userId: Int
   ): NotificationConnection!
