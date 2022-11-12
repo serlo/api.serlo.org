@@ -1848,6 +1848,7 @@ export type QueryNotificationsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
   emailSent?: InputMaybe<Scalars['Boolean']>;
+  emailSubscribed?: InputMaybe<Scalars['Boolean']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   unread?: InputMaybe<Scalars['Boolean']>;
