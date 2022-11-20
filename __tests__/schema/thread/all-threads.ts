@@ -75,12 +75,12 @@ describe('allThreads', () => {
 
   test('parameter "after"', async () => {
     given('AllThreadsQuery')
-      .withPayload({ first: 11, after: comment1.id })
+      .withPayload({ first: 11, after: comment1.date })
       .returns({ firstCommentIds: [comment3].map(R.prop('id')) })
 
     await query
       .withVariables({
-        after: Buffer.from(comment1.id.toString()).toString('base64'),
+        after: Buffer.from(comment1.date).toString('base64'),
       })
       .shouldReturnData({
         thread: { allThreads: { nodes: [comment3].map(getThreadData) } },
