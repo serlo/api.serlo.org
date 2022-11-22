@@ -2725,7 +2725,7 @@ export type UserDeleteBotsResponse = {
 };
 
 export type UserDeleteRegularUsersInput = {
-  userIds: Array<Scalars['Int']>;
+  users: Array<UserDescriptionInput>;
 };
 
 export type UserDeleteRegularUsersResponse = {
@@ -2733,6 +2733,11 @@ export type UserDeleteRegularUsersResponse = {
   reason?: Maybe<Scalars['String']>;
   success: Scalars['Boolean'];
   username?: Maybe<Scalars['String']>;
+};
+
+export type UserDescriptionInput = {
+  id: Scalars['Int'];
+  username: Scalars['String'];
 };
 
 export type UserEdge = {

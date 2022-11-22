@@ -125,10 +125,6 @@ const uuids = [
   video,
   videoRevision,
 ]
-const aliase = [
-  { id: 19767, instance: Instance.De, path: '/mathe' },
-  { id: 1, instance: Instance.De, path: '/user/1/admin' },
-]
 const abstractEvent = R.pick(
   ['__typename', 'id', 'instance', 'date', 'actorId', 'objectId'],
   checkoutRevisionNotificationEvent
@@ -146,10 +142,10 @@ const pactSpec: PactSpec = {
     ],
   },
   AliasQuery: {
-    examples: aliase.map((alias) => [
-      R.pick(['instance', 'path'], alias),
-      alias,
-    ]),
+    examples: [
+      { id: 19767, instance: Instance.De, path: '/mathe' },
+      { id: 1, instance: Instance.De, path: '/user/1/admin' },
+    ].map((alias) => [R.pick(['instance', 'path'], alias), alias]),
     examplePayloadForNull: { instance: Instance.En, path: '/not-existing' },
   },
   AllThreadsQuery: {

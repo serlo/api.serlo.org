@@ -2729,7 +2729,7 @@ export type UserDeleteBotsResponse = {
 };
 
 export type UserDeleteRegularUsersInput = {
-  userIds: Array<Scalars['Int']>;
+  users: Array<UserDescriptionInput>;
 };
 
 export type UserDeleteRegularUsersResponse = {
@@ -2737,6 +2737,11 @@ export type UserDeleteRegularUsersResponse = {
   reason?: Maybe<Scalars['String']>;
   success: Scalars['Boolean'];
   username?: Maybe<Scalars['String']>;
+};
+
+export type UserDescriptionInput = {
+  id: Scalars['Int'];
+  username: Scalars['String'];
 };
 
 export type UserEdge = {
@@ -3248,6 +3253,7 @@ export type ResolversTypes = {
   UserDeleteBotsResponse: ResolverTypeWrapper<ModelOf<UserDeleteBotsResponse>>;
   UserDeleteRegularUsersInput: ResolverTypeWrapper<ModelOf<UserDeleteRegularUsersInput>>;
   UserDeleteRegularUsersResponse: ResolverTypeWrapper<ModelOf<UserDeleteRegularUsersResponse>>;
+  UserDescriptionInput: ResolverTypeWrapper<ModelOf<UserDescriptionInput>>;
   UserEdge: ResolverTypeWrapper<ModelOf<UserEdge>>;
   UserMutation: ResolverTypeWrapper<ModelOf<UserMutation>>;
   UserQuery: ResolverTypeWrapper<ModelOf<UserQuery>>;
@@ -3458,6 +3464,7 @@ export type ResolversParentTypes = {
   UserDeleteBotsResponse: ModelOf<UserDeleteBotsResponse>;
   UserDeleteRegularUsersInput: ModelOf<UserDeleteRegularUsersInput>;
   UserDeleteRegularUsersResponse: ModelOf<UserDeleteRegularUsersResponse>;
+  UserDescriptionInput: ModelOf<UserDescriptionInput>;
   UserEdge: ModelOf<UserEdge>;
   UserMutation: ModelOf<UserMutation>;
   UserQuery: ModelOf<UserQuery>;

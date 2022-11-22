@@ -20,11 +20,10 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { option as O, function as F } from 'fp-ts'
+import Redis from 'ioredis'
 // @ts-expect-error Missing types
 import createMsgpack from 'msgpack5'
 import * as R from 'ramda'
-import redis from 'redis'
-import * as util from 'util'
 
 import { log } from '../log'
 import { redisUrl } from '../redis-url'
@@ -66,10 +65,7 @@ export interface Cache {
 }
 
 export function createCache({ timer }: { timer: Timer }): Cache {
-  const client = redis.createClient({
-    url: redisUrl,
-    return_buffers: true,
-  })
+  const client = new Redis(redisUrl)
   const lockManagers: Record<Priority, LockManager> = {
     [Priority.Low]: createLockManager({
       retryCount: 0,
@@ -89,12 +85,6 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       priority?: Priority
     } & FunctionOrValue<T>
   ) {
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    const clientSet = util.promisify(client.set).bind(client) as unknown as (
-      key: string,
-      value: Buffer
-    ) => Promise<void>
-
     const { key, priority = Priority.High, source } = payload
     const lockManager = lockManagers[priority]
 
@@ -122,7 +112,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
         lastModified: timer.now(),
       }
       const packedValue = msgpack.encode(valueWithTimestamp)
-      await clientSet(key, packedValue)
+      await client.set(key, packedValue)
     } catch (e) {
       log.error(`Failed to set key "${key}":`, e)
       throw e
@@ -141,12 +131,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       maxAge?: Time
     }
   ): Promise<O.Option<CacheEntry<T>>> {
-    const clientGet = util
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      .promisify(client.get)
-      .bind(client) as unknown as (key: string) => Promise<Buffer | null>
-
-    const packedValue = await clientGet(key)
+    const packedValue = await client.getBuffer(key)
     if (packedValue === null) return O.none
 
     const value = msgpack.decode(packedValue)
@@ -156,14 +141,6 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       return O.none
 
     return O.some(value)
-  }
-
-  const remove = async ({ key }: { key: string }) => {
-    const clientRemove = util.promisify(client.del).bind(client) as unknown as (
-      key: string
-    ) => Promise<void>
-
-    await clientRemove(key)
   }
 
   const ready = async () => {
@@ -176,34 +153,19 @@ export function createCache({ timer }: { timer: Timer }): Cache {
     })
   }
 
-  const flush = async () => {
-    const clientFlush = util
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      .promisify(client.flushdb)
-      .bind(client) as unknown as () => Promise<void>
-
-    await clientFlush()
-  }
-
-  const quit = async () => {
-    const clientQuit = util
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      .promisify(client.quit)
-      .bind(client) as unknown as () => Promise<void>
-
-    await Promise.all([
-      clientQuit(),
-      ...Object.values(lockManagers).map((lockManager) => lockManager.quit()),
-    ])
-  }
-
   return {
     get,
     set,
-    remove,
+    async remove({ key }: { key: string }) {
+      await client.del(key)
+    },
     ready,
-    flush,
-    quit,
+    async flush() {
+      await client.flushdb()
+    },
+    async quit() {
+      await client.quit()
+    },
   }
 }
 
