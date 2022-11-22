@@ -64,7 +64,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       const { first = 10, instance } = input
       // TODO: Better solution
       const after = input.after
-        ? parseInt(Buffer.from(input.after, 'base64').toString())
+        ? Buffer.from(input.after, 'base64').toString()
         : undefined
 
       if (first && first > limit)
@@ -82,8 +82,8 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       // TODO: Support for resolving small changes
       return resolveConnection({
         nodes: threads,
-        payload: { ...input, first },
-        createCursor: (node) => node.commentPayloads[0].id.toString(),
+        payload: { ...input, first, after },
+        createCursor: (node) => node.commentPayloads[0].date,
       })
     },
   },
