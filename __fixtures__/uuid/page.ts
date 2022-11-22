@@ -41,7 +41,7 @@ export const pageRevision: Model<'PageRevision'> = {
   __typename: DiscriminatorType.PageRevision,
   id: castToUuid(35476),
   trashed: false,
-  alias: castToAlias('/35476/mathematik-startseite'),
+  alias: castToAlias('/entity/repository/compare/0/35476'),
   title: 'title',
   content: 'content',
   date: '2015-02-28T02:06:40Z',
