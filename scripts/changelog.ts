@@ -1416,6 +1416,12 @@ async function exec(): Promise<void> {
           'Update config for subject landing pages #551',
         ],
       },
+      {
+        tagName: 'v0.47.1',
+        date: '2022-11-22',
+
+        fixed: ['Fix sorting in `allThreads` query by last reacted #739'],
+      },
     ],
   })
 
