@@ -88,10 +88,8 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
         metadata_public: {
           legacy_id: legacyUserId,
         },
-        traits: {
-          username,
-          email,
-        },
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        traits: kratosUser.traits,
         state: IdentityState.Active,
       })
       res.statusCode = 200
