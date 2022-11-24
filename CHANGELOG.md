@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.47.1](https://github.com/serlo/api.serlo.org/compare/v0.47.0..v0.47.1) - November 22, 2022
+
+### Fixed
+
+- Fix sorting in `allThreads` query by last reacted #73 (depends on DB Layer v0.3.57 or higher)
+
 ## [v0.47.0](https://github.com/serlo/api.serlo.org/compare/v0.46.2..v0.47.0) - October 5, 2022
 
 ### Breaking Changes
