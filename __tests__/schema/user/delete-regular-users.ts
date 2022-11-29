@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
+import * as R from 'ramda'
 
 import { user as baseUser } from '../../../__fixtures__'
 import {
@@ -37,18 +38,14 @@ let client: Client
 let mutation: Query
 
 const user = { ...baseUser, roles: ['sysadmin'] }
-const userIds = [user.id, nextUuid(user.id)]
+const users = [user, { ...user, username: 'foo', id: nextUuid(user.id) }]
 const noUserId = nextUuid(nextUuid(user.id))
 
 beforeEach(() => {
   client = new Client({ userId: user.id })
 
   database = new Database()
-  database.hasUuids(
-    userIds.map((id) => {
-      return { ...user, id }
-    })
-  )
+  database.hasUuids(users)
 
   mutation = client
     .prepareQuery({
@@ -64,7 +61,7 @@ beforeEach(() => {
         }
       `,
     })
-    .withInput({ userIds: userIds })
+    .withInput({ users: users.map(R.pick(['id', 'username'])) })
 
   given('UserDeleteRegularUsersMutation').isDefinedBy((req, res, ctx) => {
     const { userId } = req.body.payload
@@ -78,16 +75,14 @@ beforeEach(() => {
 })
 
 test('runs successfully when mutation could be successfully executed', async () => {
-  await mutation
-    .withInput({ userIds: [user.id, userIds[1]] })
-    .shouldReturnData({
-      user: {
-        deleteRegularUsers: [
-          { success: true, username: user.username, reason: null },
-          { success: true, username: user.username, reason: null },
-        ],
-      },
-    })
+  await mutation.shouldReturnData({
+    user: {
+      deleteRegularUsers: [
+        { success: true, username: user.username, reason: null },
+        { success: true, username: 'foo', reason: null },
+      ],
+    },
+  })
 })
 
 test('runs partially when one of the mutations failed', async () => {
@@ -102,16 +97,20 @@ test('runs partially when one of the mutations failed', async () => {
     return res(ctx.json({ success: true }))
   })
 
+  await mutation.shouldReturnData({
+    user: {
+      deleteRegularUsers: [
+        { success: false, username: user.username, reason: 'failure!' },
+        { success: true, username: 'foo', reason: null },
+      ],
+    },
+  })
+})
+
+test('fails when username does not match user', async () => {
   await mutation
-    .withInput({ userIds: [user.id, userIds[1]] })
-    .shouldReturnData({
-      user: {
-        deleteRegularUsers: [
-          { success: false, username: user.username, reason: 'failure!' },
-          { success: true, username: user.username, reason: null },
-        ],
-      },
-    })
+    .withInput({ users: [{ id: user.id, username: 'something' }] })
+    .shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('updates the cache', async () => {
