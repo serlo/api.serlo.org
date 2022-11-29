@@ -323,226 +323,218 @@ describe('Page', () => {
         },
       })
   })
+})
 
-  describe('Taxonomy Term', () => {
-    // Der Test hier wirft den Fehler:
-    // console.error
-    // Found an unhandled request for message {"type":"UuidQuery","payload":{"id":5}}
+describe('Taxonomy Term', () => {
 
-    test('Without navigation', async () => {
-      const client = new Client({ service: Service.Serlo })
+  test('Without navigation', async () => {
+    const client = new Client({ service: Service.Serlo })
 
-      await client
-        .prepareQuery(createSetTaxonomyTermMutation(taxonomyTermRoot).mutation)
-        .withVariables(
-          createSetTaxonomyTermMutation(taxonomyTermRoot).variables
-        )
-        .execute()
+    await client
+      .prepareQuery(createSetTaxonomyTermMutation(taxonomyTermRoot).mutation)
+      .withVariables(createSetTaxonomyTermMutation(taxonomyTermRoot).variables)
+      .execute()
+    
+    await client
+      .prepareQuery(createSetTaxonomyTermMutation(taxonomyTermSubject).mutation)
+      .withVariables(createSetTaxonomyTermMutation(taxonomyTermSubject).variables)
+      .execute()
 
-      await client
-        .prepareQuery(
-          createSetNavigationMutation({
-            instance: Instance.De,
-            data: [],
-          }).mutation
-        )
-        .withVariables(
-          createSetNavigationMutation({
-            instance: Instance.De,
-            data: [],
-          }).variables
-        )
-        .execute()
+    await client
+      .prepareQuery(
+        createSetNavigationMutation({
+          instance: Instance.De,
+          data: [],
+        }).mutation
+      )
+      .withVariables(
+        createSetNavigationMutation({
+          instance: Instance.De,
+          data: [],
+        }).variables
+      )
+      .execute()
 
-      await client
-        .prepareQuery({
-          query: gql`
-            query uuid($id: Int!) {
-              uuid(id: $id) {
-                ... on TaxonomyTerm {
-                  navigation {
-                    path {
-                      nodes {
-                        label
-                        url
-                        id
-                      }
-                      totalCount
+    await client
+      .prepareQuery({
+        query: gql`
+          query uuid($id: Int!) {
+            uuid(id: $id) {
+              ... on TaxonomyTerm {
+                navigation {
+                  path {
+                    nodes {
+                      label
+                      url
+                      id
                     }
+                    totalCount
                   }
                 }
               }
             }
-          `,
-        })
-        .withVariables({ id: taxonomyTermSubject.id })
-        .shouldReturnData({
-          uuid: {
-            navigation: null,
-          },
-        })
-    })
+          }
+        `,
+      })
+      .withVariables({ id: taxonomyTermSubject.id })
+      .shouldReturnData({
+        uuid: {
+          navigation: null,
+        },
+      })
+  })
 
-    test('Subject', async () => {
-      const client = new Client({ service: Service.Serlo })
+  test('Subject', async () => {
+    const client = new Client({ service: Service.Serlo })
 
-      await client
-        .prepareQuery(createSetPageMutation(subjectHomepage).mutation)
-        .withVariables(createSetPageMutation(subjectHomepage).variables)
-        .execute()
+    await client
+      .prepareQuery(createSetPageMutation(subjectHomepage).mutation)
+      .withVariables(createSetPageMutation(subjectHomepage).variables)
+      .execute()
 
-      await client
-        .prepareQuery(createSetTaxonomyTermMutation(taxonomyTermRoot).mutation)
-        .withVariables(
-          createSetTaxonomyTermMutation(taxonomyTermRoot).variables
-        )
-        .execute()
+    await client
+      .prepareQuery(createSetTaxonomyTermMutation(taxonomyTermRoot).mutation)
+      .withVariables(createSetTaxonomyTermMutation(taxonomyTermRoot).variables)
+      .execute()
 
-      await client
-        .prepareQuery(
-          createSetTaxonomyTermMutation(taxonomyTermSubject).mutation
-        )
-        .withVariables(
-          createSetTaxonomyTermMutation(taxonomyTermSubject).variables
-        )
-        .execute()
+    await client
+      .prepareQuery(createSetTaxonomyTermMutation(taxonomyTermSubject).mutation)
+      .withVariables(
+        createSetTaxonomyTermMutation(taxonomyTermSubject).variables
+      )
+      .execute()
 
-      await client
-        .prepareQuery(createSetNavigationMutation(navigation).mutation)
-        .withVariables(createSetNavigationMutation(navigation).variables)
-        .execute()
+    await client
+      .prepareQuery(createSetNavigationMutation(navigation).mutation)
+      .withVariables(createSetNavigationMutation(navigation).variables)
+      .execute()
 
-      await client
-        .prepareQuery({
-          query: gql`
-            query uuid($id: Int!) {
-              uuid(id: $id) {
-                ... on TaxonomyTerm {
-                  navigation {
-                    path {
-                      nodes {
-                        label
-                        url
-                        id
-                      }
-                      totalCount
+    await client
+      .prepareQuery({
+        query: gql`
+          query uuid($id: Int!) {
+            uuid(id: $id) {
+              ... on TaxonomyTerm {
+                navigation {
+                  path {
+                    nodes {
+                      label
+                      url
+                      id
                     }
+                    totalCount
                   }
                 }
               }
             }
-          `,
-        })
-        .withVariables({ id: taxonomyTermSubject.id })
-        .shouldReturnData({
-          uuid: {
-            navigation: {
-              path: {
-                nodes: [
-                  {
-                    label: 'Mathematik',
-                    url: subjectHomepage.alias,
-                    id: subjectHomepage.id,
-                  },
-                  {
-                    label: 'Alle Themen',
-                    url: taxonomyTermSubject.alias,
-                    id: taxonomyTermSubject.id,
-                  },
-                ],
-                totalCount: 2,
-              },
+          }
+        `,
+      })
+      .withVariables({ id: taxonomyTermSubject.id })
+      .shouldReturnData({
+        uuid: {
+          navigation: {
+            path: {
+              nodes: [
+                {
+                  label: 'Mathematik',
+                  url: subjectHomepage.alias,
+                  id: subjectHomepage.id,
+                },
+                {
+                  label: 'Alle Themen',
+                  url: taxonomyTermSubject.alias,
+                  id: taxonomyTermSubject.id,
+                },
+              ],
+              totalCount: 2,
             },
           },
-        })
-    })
+        },
+      })
+  })
 
-    test('Curriculum Topic', async () => {
-      const client = new Client({ service: Service.Serlo })
+  test('Curriculum Topic', async () => {
+    const client = new Client({ service: Service.Serlo })
 
-      await client
-        .prepareQuery(createSetPageMutation(subjectHomepage).mutation)
-        .withVariables(createSetPageMutation(subjectHomepage).variables)
-        .execute()
+    await client
+      .prepareQuery(createSetPageMutation(subjectHomepage).mutation)
+      .withVariables(createSetPageMutation(subjectHomepage).variables)
+      .execute()
 
-      await client
-        .prepareQuery(createSetTaxonomyTermMutation(taxonomyTermRoot).mutation)
-        .withVariables(
-          createSetTaxonomyTermMutation(taxonomyTermRoot).variables
-        )
-        .execute()
+    await client
+      .prepareQuery(createSetTaxonomyTermMutation(taxonomyTermRoot).mutation)
+      .withVariables(createSetTaxonomyTermMutation(taxonomyTermRoot).variables)
+      .execute()
 
-      await client
-        .prepareQuery(
-          createSetTaxonomyTermMutation(taxonomyTermSubject).mutation
-        )
-        .withVariables(
-          createSetTaxonomyTermMutation(taxonomyTermSubject).variables
-        )
-        .execute()
+    await client
+      .prepareQuery(createSetTaxonomyTermMutation(taxonomyTermSubject).mutation)
+      .withVariables(
+        createSetTaxonomyTermMutation(taxonomyTermSubject).variables
+      )
+      .execute()
 
-      await client
-        .prepareQuery(
-          createSetTaxonomyTermMutation(taxonomyTermCurriculumTopic).mutation
-        )
-        .withVariables(
-          createSetTaxonomyTermMutation(taxonomyTermCurriculumTopic).variables
-        )
-        .execute()
+    await client
+      .prepareQuery(
+        createSetTaxonomyTermMutation(taxonomyTermCurriculumTopic).mutation
+      )
+      .withVariables(
+        createSetTaxonomyTermMutation(taxonomyTermCurriculumTopic).variables
+      )
+      .execute()
 
-      await client
-        .prepareQuery(createSetNavigationMutation(navigation).mutation)
-        .withVariables(createSetNavigationMutation(navigation).variables)
-        .execute()
+    await client
+      .prepareQuery(createSetNavigationMutation(navigation).mutation)
+      .withVariables(createSetNavigationMutation(navigation).variables)
+      .execute()
 
-      await client
-        .prepareQuery({
-          query: gql`
-            query uuid($id: Int!) {
-              uuid(id: $id) {
-                ... on TaxonomyTerm {
-                  navigation {
-                    path {
-                      nodes {
-                        label
-                        url
-                        id
-                      }
-                      totalCount
+    await client
+      .prepareQuery({
+        query: gql`
+          query uuid($id: Int!) {
+            uuid(id: $id) {
+              ... on TaxonomyTerm {
+                navigation {
+                  path {
+                    nodes {
+                      label
+                      url
+                      id
                     }
+                    totalCount
                   }
                 }
               }
             }
-          `,
-        })
-        .withVariables({ id: taxonomyTermCurriculumTopic.id })
-        .shouldReturnData({
-          uuid: {
-            navigation: {
-              path: {
-                nodes: [
-                  {
-                    label: 'Mathematik',
-                    url: subjectHomepage.alias,
-                    id: subjectHomepage.id,
-                  },
-                  {
-                    label: 'Alle Themen',
-                    url: taxonomyTermSubject.alias,
-                    id: taxonomyTermSubject.id,
-                  },
-                  {
-                    label: taxonomyTermCurriculumTopic.name,
-                    url: taxonomyTermCurriculumTopic.alias,
-                    id: taxonomyTermCurriculumTopic.id,
-                  },
-                ],
-                totalCount: 3,
-              },
+          }
+        `,
+      })
+      .withVariables({ id: taxonomyTermCurriculumTopic.id })
+      .shouldReturnData({
+        uuid: {
+          navigation: {
+            path: {
+              nodes: [
+                {
+                  label: 'Mathematik',
+                  url: subjectHomepage.alias,
+                  id: subjectHomepage.id,
+                },
+                {
+                  label: 'Alle Themen',
+                  url: taxonomyTermSubject.alias,
+                  id: taxonomyTermSubject.id,
+                },
+                {
+                  label: taxonomyTermCurriculumTopic.name,
+                  url: taxonomyTermCurriculumTopic.alias,
+                  id: taxonomyTermCurriculumTopic.id,
+                },
+              ],
+              totalCount: 3,
             },
           },
-        })
-    })
+        },
+      })
   })
 })
