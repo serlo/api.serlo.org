@@ -146,6 +146,24 @@ describe('uuid["threads"]', () => {
         }
       )
     })
+
+    test('Deleted threads are ignored (for example threads created by a deleted spam account)', async () => {
+      givenThreads({
+        uuid: article,
+        threads: [
+          [comment1, { ...comment2, trashed: true }],
+          [{ ...comment3, archived: true }],
+        ],
+      })
+      // Simulates that `comment1` was deleted in the database
+      given('UuidQuery').withPayload({ id: comment1.id }).returnsNotFound()
+
+      await query.shouldReturnData({
+        uuid: {
+          threads: { nodes: [{ comments: { nodes: [{ id: comment3.id }] } }] },
+        },
+      })
+    })
   })
 
   test('property "createdAt" of Thread', async () => {

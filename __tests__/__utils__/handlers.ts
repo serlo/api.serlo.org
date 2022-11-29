@@ -100,7 +100,7 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
         returnsNotFound() {
           global.server.use(
             createMessageHandler({
-              message: { type },
+              message: { type, payload },
               statusCode: 404,
               body: null,
             })

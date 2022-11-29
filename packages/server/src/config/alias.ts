@@ -21,6 +21,7 @@
  */
 import * as R from 'ramda'
 
+import { autoreviewTaxonomyIds } from './autoreview-taxonomies'
 import { Instance, QueryUuidArgs } from '~/types'
 
 export type AliasConfig = {
@@ -31,6 +32,9 @@ export type AliasConfig = {
 export const aliases: AliasConfig = {
   [Instance.De]: {
     '/community': 19882,
+    // TODO: Legacy alias. It would be better to redirect it to /community/testbereich
+    '/community/sandkasten': autoreviewTaxonomyIds[0],
+    '/community/testbereich': autoreviewTaxonomyIds[0],
     '/englisch': 25985,
     '/features': 81862,
     '/jobs': 21563,

@@ -4325,10 +4325,10 @@ __metadata:
     "@graphql-codegen/typescript": ^2.7.3
     "@graphql-codegen/typescript-resolvers": ^2.7.3
     "@sentry/node": ^6.19.7
-    "@serlo/authorization": ^0.46.2
+    "@serlo/authorization": ^0.47.0
     "@types/basic-auth": ^1.1.3
     "@types/bull-arena": ^3.0.5
-    "@types/graphql-modules": ^0.46.1
+    "@types/graphql-modules": ^0.47.0
     "@types/jsonwebtoken": ^8.5.9
     "@types/node-fetch": ^2.6.1
     "@types/ramda": ^0.28.15
@@ -4375,7 +4375,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@serlo/api@^0.46.2, @serlo/api@workspace:packages/types":
+"@serlo/api@^0.47.0, @serlo/api@workspace:packages/types":
   version: 0.0.0-use.local
   resolution: "@serlo/api@workspace:packages/types"
   dependencies:
@@ -4386,11 +4386,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@serlo/authorization@^0.46.2, @serlo/authorization@workspace:packages/authorization":
+"@serlo/authorization@^0.47.0, @serlo/authorization@workspace:packages/authorization":
   version: 0.0.0-use.local
   resolution: "@serlo/authorization@workspace:packages/authorization"
   dependencies:
-    "@serlo/api": ^0.46.2
+    "@serlo/api": ^0.47.0
   languageName: unknown
   linkType: soft
 
@@ -4654,7 +4654,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/graphql-modules@^0.46.1, @types/graphql-modules@workspace:packages/graphql-modules":
+"@types/graphql-modules@^0.47.0, @types/graphql-modules@workspace:packages/graphql-modules":
   version: 0.0.0-use.local
   resolution: "@types/graphql-modules@workspace:packages/graphql-modules"
   languageName: unknown
@@ -5314,9 +5314,9 @@ __metadata:
   linkType: hard
 
 "@xmldom/xmldom@npm:^0.7.2":
-  version: 0.7.5
-  resolution: "@xmldom/xmldom@npm:0.7.5"
-  checksum: 8d7ec35c1ef6183b4f621df08e01d7e61f244fb964a4719025e65fe6ac06fac418919be64fb40fe5908e69158ef728f2d936daa082db326fe04603012b5f2a84
+  version: 0.7.8
+  resolution: "@xmldom/xmldom@npm:0.7.8"
+  checksum: 3bae232f9e6e8218a2c4ab4baa0e2afd5d15d070236cd14b36a59261e5bc9ab26ddf919671fd3ed7474552c7528cf659f14993fdb12f26418f568121f8f4385f
   languageName: node
   linkType: hard
 
@@ -14340,9 +14340,9 @@ __metadata:
   linkType: hard
 
 "moment@npm:^2.29.1":
-  version: 2.29.1
-  resolution: "moment@npm:2.29.1"
-  checksum: 1e14d5f422a2687996be11dd2d50c8de3bd577c4a4ca79ba5d02c397242a933e5b941655de6c8cb90ac18f01cc4127e55b4a12ae3c527a6c0a274e455979345e
+  version: 2.29.4
+  resolution: "moment@npm:2.29.4"
+  checksum: 0ec3f9c2bcba38dc2451b1daed5daded747f17610b92427bebe1d08d48d8b7bdd8d9197500b072d14e326dd0ccf3e326b9e3d07c5895d3d49e39b6803b76e80e
   languageName: node
   linkType: hard
 
@@ -18328,15 +18328,15 @@ __metadata:
   linkType: hard
 
 "terser@npm:^4.6.2":
-  version: 4.8.0
-  resolution: "terser@npm:4.8.0"
+  version: 4.8.1
+  resolution: "terser@npm:4.8.1"
   dependencies:
     commander: ^2.20.0
     source-map: ~0.6.1
     source-map-support: ~0.5.12
   bin:
     terser: bin/terser
-  checksum: f980789097d4f856c1ef4b9a7ada37beb0bb022fb8aa3057968862b5864ad7c244253b3e269c9eb0ab7d0caf97b9521273f2d1cf1e0e942ff0016e0583859c71
+  checksum: b342819bf7e82283059aaa3f22bb74deb1862d07573ba5a8947882190ad525fd9b44a15074986be083fd379c58b9a879457a330b66dcdb77b485c44267f9a55a
   languageName: node
   linkType: hard
 

@@ -35,12 +35,11 @@
     "pacts:publish": "ts-node-esm scripts/publish-pacts",
     "prepare-release": "yarn lerna version --no-git-tag-version --no-push",
     "start": "npm-run-all start:redis start:server",
-    "start:enmeshed": "docker-compose -f enmeshed/docker-compose.yml up -d",
     "start:redis": "docker-compose up --detach",
     "start:server": "lerna run --stream --scope @serlo/api.serlo.org start",
     "start:swr-queue-worker": "lerna run --stream --scope @serlo/api.serlo.org start:swr-queue-worker",
+    "redis:empty": "docker-compose exec redis redis-cli FLUSHDB",
     "stop:redis": "docker-compose stop",
-    "stop:enmeshed": "docker-compose -f enmeshed/docker-compose.yml down",
     "test": "jest --config jest.config.js --runInBand --forceExit",
     "update-version": "./scripts/update_version.sh"
   },
