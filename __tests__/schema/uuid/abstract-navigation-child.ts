@@ -326,7 +326,6 @@ describe('Page', () => {
 })
 
 describe('Taxonomy Term', () => {
-
   test('Without navigation', async () => {
     const client = new Client({ service: Service.Serlo })
 
@@ -334,10 +333,12 @@ describe('Taxonomy Term', () => {
       .prepareQuery(createSetTaxonomyTermMutation(taxonomyTermRoot).mutation)
       .withVariables(createSetTaxonomyTermMutation(taxonomyTermRoot).variables)
       .execute()
-    
+
     await client
       .prepareQuery(createSetTaxonomyTermMutation(taxonomyTermSubject).mutation)
-      .withVariables(createSetTaxonomyTermMutation(taxonomyTermSubject).variables)
+      .withVariables(
+        createSetTaxonomyTermMutation(taxonomyTermSubject).variables
+      )
       .execute()
 
     await client
