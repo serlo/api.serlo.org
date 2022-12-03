@@ -34,8 +34,6 @@ import {
   assertErrorEvent,
   assertNoErrorEvents,
   createChatUsersInfoHandler,
-  createMessageHandler,
-  createUuidHandler,
   getTypenameAndId,
   givenSpreadheetApi,
   givenSpreadsheet,
@@ -100,15 +98,7 @@ describe('User', () => {
   })
 
   test('by alias /user/profile/:id returns null when user does not exist', async () => {
-    global.server.use(
-      createMessageHandler({
-        message: {
-          type: 'UuidQuery',
-          payload: { id: user.id },
-        },
-        body: null,
-      })
-    )
+    given('UuidQuery').withPayload({ id: user.id }).returnsNotFound()
 
     await client
       .prepareQuery({
@@ -130,7 +120,7 @@ describe('User', () => {
   })
 
   test('by alias /user/profile/:id returns null when uuid :id is no user', async () => {
-    global.server.use(createUuidHandler(article))
+    given('UuidQuery').for(article)
 
     await client
       .prepareQuery({
@@ -214,12 +204,10 @@ describe('User', () => {
   })
 
   test('property "roles"', async () => {
-    global.server.use(
-      createUuidHandler({
-        ...user,
-        roles: ['login', 'en_moderator', 'de_reviewer'],
-      })
-    )
+    given('UuidQuery').for({
+      ...user,
+      roles: ['login', 'en_moderator', 'de_reviewer'],
+    })
 
     await client
       .prepareQuery({
@@ -448,7 +436,7 @@ describe('User', () => {
       motivation: string | null
       username?: string
     }) {
-      global.server.use(createUuidHandler({ ...user, username }))
+      given('UuidQuery').for({ ...user, username })
 
       await client
         .prepareQuery({
@@ -607,14 +595,14 @@ describe('endpoint activeReviewers', () => {
 describe('endpoint activeDonors', () => {
   test('returns list of users', async () => {
     givenActiveDonors([user, user2])
-    global.server.use(createUuidHandler(user2))
+    given('UuidQuery').for(user2)
 
     await expectUserIds({ endpoint: 'activeDonors', ids: [user.id, user2.id] })
   })
 
   test('returned list only contains user', async () => {
     givenActiveDonors([user, article])
-    global.server.use(createUuidHandler(article))
+    given('UuidQuery').for(article)
 
     await expectUserIds({ endpoint: 'activeDonors', ids: [user.id] })
     await assertErrorEvent({ errorContext: { invalidElements: [article] } })
