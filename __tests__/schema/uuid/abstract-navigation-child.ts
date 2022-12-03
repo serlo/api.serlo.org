@@ -28,157 +28,78 @@ import {
   taxonomyTermRoot,
   taxonomyTermSubject,
 } from '../../../__fixtures__'
-import {
-  assertSuccessfulGraphQLMutation,
-  assertSuccessfulGraphQLQuery,
-  castToAlias,
-  createTestClient,
-  nextUuid,
-} from '../../__utils__'
+import { castToAlias, Client, nextUuid } from '../../__utils__'
 import { Service } from '~/internals/authentication'
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model'
 import { Instance } from '~/types'
 
-function createSetNavigationMutation(
-  navigation: Payload<'serlo', 'getNavigationPayload'>
-) {
-  return {
-    mutation: gql`
-      mutation setCache($input: CacheSetInput!) {
-        _cache {
-          set(input: $input) {
-            success
-          }
-        }
-      }
-    `,
-    variables: {
-      input: {
-        key: `${navigation.instance}.serlo.org/api/navigation`,
-        value: navigation,
-      },
-    },
-  }
-}
+let client: Client
 
-function createSetPageMutation(page: Model<'Page'>) {
-  return {
-    mutation: gql`
-      mutation setCache($input: CacheSetInput!) {
-        _cache {
-          set(input: $input) {
-            success
-          }
-        }
-      }
-    `,
-    variables: {
-      input: {
-        key: `de.serlo.org/api/uuid/${page.id}`,
-        value: page,
-      },
-    },
-  }
-}
-
-function createSetTaxonomyTermMutation(taxonomyTerm: Model<'TaxonomyTerm'>) {
-  return {
-    mutation: gql`
-      mutation setCache($input: CacheSetInput!) {
-        _cache {
-          set(input: $input) {
-            success
-          }
-        }
-      }
-    `,
-    variables: {
-      input: {
-        key: `de.serlo.org/api/uuid/${taxonomyTerm.id}`,
-        value: taxonomyTerm,
-      },
-    },
-  }
-}
+beforeEach(() => {
+  client = new Client({ service: Service.Serlo })
+})
 
 describe('Page', () => {
   test('Without navigation', async () => {
-    const client = createTestClient({
-      service: Service.Serlo,
-      userId: null,
-    })
-    await assertSuccessfulGraphQLMutation({
-      ...createSetPageMutation(subjectHomepage),
-      client,
-    })
-    await assertSuccessfulGraphQLMutation({
-      ...createSetNavigationMutation({
-        instance: Instance.De,
-        data: [],
-      }),
-      client,
-    })
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query uuid($id: Int!) {
-          uuid(id: $id) {
-            ... on Page {
-              navigation {
-                path {
-                  nodes {
-                    label
-                    url
-                    id
+    await createSetPageMutation(subjectHomepage).execute()
+    await createSetNavigationMutation({
+      instance: Instance.De,
+      data: [],
+    }).execute()
+
+    await client
+      .prepareQuery({
+        query: gql`
+          query uuid($id: Int!) {
+            uuid(id: $id) {
+              ... on Page {
+                navigation {
+                  path {
+                    nodes {
+                      label
+                      url
+                      id
+                    }
+                    totalCount
                   }
-                  totalCount
                 }
               }
             }
           }
-        }
-      `,
-      variables: { id: subjectHomepage.id },
-      data: {
-        uuid: {
-          navigation: null,
-        },
-      },
-      client,
-    })
+        `,
+      })
+      .withVariables({ id: subjectHomepage.id })
+      .shouldReturnData({ uuid: { navigation: null } })
   })
 
   test('Subject Homepage', async () => {
-    const client = createTestClient({ service: Service.Serlo, userId: null })
-    await assertSuccessfulGraphQLMutation({
-      ...createSetPageMutation(subjectHomepage),
-      client,
-    })
-    await assertSuccessfulGraphQLMutation({
-      ...createSetNavigationMutation(navigation),
-      client,
-    })
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query uuid($id: Int!) {
-          uuid(id: $id) {
-            ... on Page {
-              navigation {
-                path {
-                  nodes {
-                    label
-                    url
-                    id
+    await createSetPageMutation(subjectHomepage).execute()
+    await createSetNavigationMutation(navigation).execute()
+
+    await client
+      .prepareQuery({
+        query: gql`
+          query uuid($id: Int!) {
+            uuid(id: $id) {
+              ... on Page {
+                navigation {
+                  path {
+                    nodes {
+                      label
+                      url
+                      id
+                    }
+                    totalCount
                   }
-                  totalCount
                 }
               }
             }
           }
-        }
-      `,
-      variables: { id: subjectHomepage.id },
-      data: {
+        `,
+      })
+      .withVariables({ id: subjectHomepage.id })
+      .shouldReturnData({
         uuid: {
           navigation: {
             path: {
@@ -193,70 +114,62 @@ describe('Page', () => {
             },
           },
         },
-      },
-      client,
-    })
+      })
   })
 
   test('Dropdown', async () => {
-    const client = createTestClient({ service: Service.Serlo, userId: null })
-    await assertSuccessfulGraphQLMutation({
-      ...createSetPageMutation(subjectHomepage),
-      client,
-    })
     const page = {
       ...subjectHomepage,
       id: nextUuid(subjectHomepage.id),
       alias: castToAlias('/page'),
     }
-    await assertSuccessfulGraphQLMutation({
-      ...createSetPageMutation(page),
-      client,
-    })
-    await assertSuccessfulGraphQLMutation({
-      ...createSetNavigationMutation({
-        instance: Instance.De,
-        data: [
-          {
-            label: 'Mathematik',
-            id: subjectHomepage.id,
-            children: [
-              {
-                label: 'Dropdown',
-                children: [
-                  {
-                    label: 'Page',
-                    id: page.id,
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      }),
-      client,
-    })
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query uuid($id: Int!) {
-          uuid(id: $id) {
-            ... on Page {
-              navigation {
-                path {
-                  nodes {
-                    label
-                    url
-                    id
+
+    await createSetPageMutation(subjectHomepage).execute()
+    await createSetPageMutation(page).execute()
+    await createSetNavigationMutation({
+      instance: Instance.De,
+      data: [
+        {
+          label: 'Mathematik',
+          id: subjectHomepage.id,
+          children: [
+            {
+              label: 'Dropdown',
+              children: [
+                {
+                  label: 'Page',
+                  id: page.id,
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    }).execute()
+
+    await client
+      .prepareQuery({
+        query: gql`
+          query uuid($id: Int!) {
+            uuid(id: $id) {
+              ... on Page {
+                navigation {
+                  path {
+                    nodes {
+                      label
+                      url
+                      id
+                    }
+                    totalCount
                   }
-                  totalCount
                 }
               }
             }
           }
-        }
-      `,
-      variables: { id: page.id },
-      data: {
+        `,
+      })
+      .withVariables({ id: page.id })
+      .shouldReturnData({
         uuid: {
           navigation: {
             path: {
@@ -281,104 +194,74 @@ describe('Page', () => {
             },
           },
         },
-      },
-      client,
-    })
+      })
   })
 })
 
 describe('Taxonomy Term', () => {
   test('Without navigation', async () => {
-    const client = createTestClient({
-      service: Service.Serlo,
-      userId: null,
-    })
-    await assertSuccessfulGraphQLMutation({
-      ...createSetTaxonomyTermMutation(taxonomyTermRoot),
-      client,
-    })
-    await assertSuccessfulGraphQLMutation({
-      ...createSetTaxonomyTermMutation(taxonomyTermSubject),
-      client,
-    })
-    await assertSuccessfulGraphQLMutation({
-      ...createSetNavigationMutation({
-        instance: Instance.De,
-        data: [],
-      }),
-      client,
-    })
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query uuid($id: Int!) {
-          uuid(id: $id) {
-            ... on TaxonomyTerm {
-              navigation {
-                path {
-                  nodes {
-                    label
-                    url
-                    id
+    await createSetTaxonomyTermMutation(taxonomyTermRoot).execute()
+    await createSetTaxonomyTermMutation(taxonomyTermSubject).execute()
+
+    await createSetNavigationMutation({
+      instance: Instance.De,
+      data: [],
+    }).execute()
+
+    await client
+      .prepareQuery({
+        query: gql`
+          query uuid($id: Int!) {
+            uuid(id: $id) {
+              ... on TaxonomyTerm {
+                navigation {
+                  path {
+                    nodes {
+                      label
+                      url
+                      id
+                    }
+                    totalCount
                   }
-                  totalCount
                 }
               }
             }
           }
-        }
-      `,
-      variables: { id: taxonomyTermSubject.id },
-      data: {
-        uuid: {
-          navigation: null,
-        },
-      },
-      client,
-    })
+        `,
+      })
+      .withVariables({ id: taxonomyTermSubject.id })
+      .shouldReturnData({ uuid: { navigation: null } })
   })
 
   test('Subject', async () => {
-    const client = createTestClient({
-      service: Service.Serlo,
-      userId: null,
-    })
-    await assertSuccessfulGraphQLMutation({
-      ...createSetPageMutation(subjectHomepage),
-      client,
-    })
-    await assertSuccessfulGraphQLMutation({
-      ...createSetTaxonomyTermMutation(taxonomyTermRoot),
-      client,
-    })
-    await assertSuccessfulGraphQLMutation({
-      ...createSetTaxonomyTermMutation(taxonomyTermSubject),
-      client,
-    })
-    await assertSuccessfulGraphQLMutation({
-      ...createSetNavigationMutation(navigation),
-      client,
-    })
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query uuid($id: Int!) {
-          uuid(id: $id) {
-            ... on TaxonomyTerm {
-              navigation {
-                path {
-                  nodes {
-                    label
-                    url
-                    id
+    await createSetPageMutation(subjectHomepage).execute()
+    await createSetTaxonomyTermMutation(taxonomyTermRoot).execute()
+    await createSetTaxonomyTermMutation(taxonomyTermSubject).execute()
+    await createSetNavigationMutation(navigation).execute()
+
+    await client
+      .prepareQuery({
+        query: gql`
+          query uuid($id: Int!) {
+            uuid(id: $id) {
+              ... on TaxonomyTerm {
+                navigation {
+                  path {
+                    nodes {
+                      label
+                      url
+                      id
+                    }
+                    totalCount
                   }
-                  totalCount
                 }
               }
             }
           }
-        }
-      `,
-      variables: { id: taxonomyTermSubject.id },
-      data: {
+        `,
+      })
+      .withVariables({ id: taxonomyTermSubject.id })
+      .shouldReturnData({
         uuid: {
           navigation: {
             path: {
@@ -398,57 +281,39 @@ describe('Taxonomy Term', () => {
             },
           },
         },
-      },
-      client,
-    })
+      })
   })
 
   test('Curriculum Topic', async () => {
-    const client = createTestClient({
-      service: Service.Serlo,
-      userId: null,
-    })
-    await assertSuccessfulGraphQLMutation({
-      ...createSetPageMutation(subjectHomepage),
-      client,
-    })
-    await assertSuccessfulGraphQLMutation({
-      ...createSetTaxonomyTermMutation(taxonomyTermRoot),
-      client,
-    })
-    await assertSuccessfulGraphQLMutation({
-      ...createSetTaxonomyTermMutation(taxonomyTermSubject),
-      client,
-    })
-    await assertSuccessfulGraphQLMutation({
-      ...createSetTaxonomyTermMutation(taxonomyTermCurriculumTopic),
-      client,
-    })
-    await assertSuccessfulGraphQLMutation({
-      ...createSetNavigationMutation(navigation),
-      client,
-    })
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query uuid($id: Int!) {
-          uuid(id: $id) {
-            ... on TaxonomyTerm {
-              navigation {
-                path {
-                  nodes {
-                    label
-                    url
-                    id
+    await createSetPageMutation(subjectHomepage).execute()
+    await createSetTaxonomyTermMutation(taxonomyTermRoot).execute()
+    await createSetTaxonomyTermMutation(taxonomyTermSubject).execute()
+    await createSetTaxonomyTermMutation(taxonomyTermCurriculumTopic).execute()
+    await createSetNavigationMutation(navigation).execute()
+
+    await client
+      .prepareQuery({
+        query: gql`
+          query uuid($id: Int!) {
+            uuid(id: $id) {
+              ... on TaxonomyTerm {
+                navigation {
+                  path {
+                    nodes {
+                      label
+                      url
+                      id
+                    }
+                    totalCount
                   }
-                  totalCount
                 }
               }
             }
           }
-        }
-      `,
-      variables: { id: taxonomyTermCurriculumTopic.id },
-      data: {
+        `,
+      })
+      .withVariables({ id: taxonomyTermCurriculumTopic.id })
+      .shouldReturnData({
         uuid: {
           navigation: {
             path: {
@@ -473,8 +338,65 @@ describe('Taxonomy Term', () => {
             },
           },
         },
-      },
-      client,
-    })
+      })
   })
 })
+
+function createSetNavigationMutation(
+  navigation: Payload<'serlo', 'getNavigationPayload'>
+) {
+  return client
+    .prepareQuery({
+      query: gql`
+        mutation setCache($input: CacheSetInput!) {
+          _cache {
+            set(input: $input) {
+              success
+            }
+          }
+        }
+      `,
+    })
+    .withInput({
+      key: `${navigation.instance}.serlo.org/api/navigation`,
+      value: navigation,
+    })
+}
+
+function createSetPageMutation(page: Model<'Page'>) {
+  return client
+    .prepareQuery({
+      query: gql`
+        mutation setCache($input: CacheSetInput!) {
+          _cache {
+            set(input: $input) {
+              success
+            }
+          }
+        }
+      `,
+    })
+    .withInput({
+      key: `de.serlo.org/api/uuid/${page.id}`,
+      value: page,
+    })
+}
+
+function createSetTaxonomyTermMutation(taxonomyTerm: Model<'TaxonomyTerm'>) {
+  return client
+    .prepareQuery({
+      query: gql`
+        mutation setCache($input: CacheSetInput!) {
+          _cache {
+            set(input: $input) {
+              success
+            }
+          }
+        }
+      `,
+    })
+    .withInput({
+      key: `de.serlo.org/api/uuid/${taxonomyTerm.id}`,
+      value: taxonomyTerm,
+    })
+}

@@ -106,6 +106,15 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
             })
           )
         },
+        hasInternalServerError() {
+          global.server.use(
+            createMessageHandler({
+              message: { type, payload },
+              statusCode: 500,
+              body: null,
+            })
+          )
+        },
         isDefinedBy(resolver: MessageResolver<M, DatabaseLayer.Payload<M>>) {
           global.server.use(
             createDatabaseLayerHandler({
