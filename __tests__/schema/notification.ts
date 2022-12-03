@@ -62,48 +62,67 @@ import {
   createUuidHandler,
   getTypenameAndId,
   givenThreads,
+  Client,
+  given,
 } from '../__utils__'
 import { Payload } from '~/internals/model'
 import { Instance } from '~/types'
+import { Service } from '~/internals/authentication'
+import { isErrored } from 'stream'
 
+let client: Client
 describe('notifications', () => {
-  let client: LegacyClient
+  
+
+  const notificationsQuery = {
+    query: gql`
+      query notifications($unread: Boolean) {
+        notifications(unread: $unread) {
+          totalCount
+          nodes {
+            id
+            unread
+          }
+        }
+      }
+    `,
+  }
 
   beforeEach(() => {
-    client = createTestClient({ userId: user.id })
-    global.server.use(
-      createNotificationsHandler({
+    client = new Client({ userId: user.id, service: Service.Serlo })
+
+    given('NotificationsQuery')
+      .withPayload({
         userId: user.id,
+      })
+      .returns({
         notifications: [
           { id: 3, unread: true, eventId: 3 },
           { id: 2, unread: false, eventId: 2 },
           { id: 1, unread: false, eventId: 1 },
         ],
+        userId: user.id,
       })
-    )
   })
 
   test('notifications without filter', async () => {
-    await assertSuccessfulGraphQLQuery({
-      ...createNotificationsQuery(),
-      data: {
-        notifications: {
-          totalCount: 3,
-          nodes: [
-            { id: 3, unread: true },
-            { id: 2, unread: false },
-            { id: 1, unread: false },
-          ],
-        },
+    await client.prepareQuery(notificationsQuery).shouldReturnData({
+      notifications: {
+        totalCount: 3,
+        nodes: [
+          { id: 3, unread: true },
+          { id: 2, unread: false },
+          { id: 1, unread: false },
+        ],
       },
-      client,
     })
   })
 
   test('notifications (only unread)', async () => {
-    await assertSuccessfulGraphQLQuery({
-      ...createNotificationsQuery(false),
-      data: {
+    await client
+      .prepareQuery(notificationsQuery)
+      .withVariables({ unread: false })
+      .shouldReturnData({
         notifications: {
           totalCount: 2,
           nodes: [
@@ -111,25 +130,24 @@ describe('notifications', () => {
             { id: 1, unread: false },
           ],
         },
-      },
-      client,
-    })
+      })
   })
 
   test('notifications (only read)', async () => {
-    await assertSuccessfulGraphQLQuery({
-      ...createNotificationsQuery(true),
-      data: {
+    await client
+      .prepareQuery(notificationsQuery)
+      .withVariables({ unread: true })
+      .shouldReturnData({
         notifications: { totalCount: 1, nodes: [{ id: 3, unread: true }] },
-      },
-      client,
-    })
+      })
   })
 
   test('notifications (w/ event)', async () => {
-    global.server.use(
-      createNotificationsHandler({
+    given('NotificationsQuery')
+      .withPayload({
         userId: user.id,
+      })
+      .returns({
         notifications: [
           {
             id: 1,
@@ -137,32 +155,37 @@ describe('notifications', () => {
             eventId: checkoutRevisionNotificationEvent.id,
           },
         ],
-      }),
-      createNotificationEventHandler(checkoutRevisionNotificationEvent)
-    )
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        {
-          notifications {
-            totalCount
-            nodes {
-              id
-              unread
-              event {
-                __typename
-                ... on CheckoutRevisionNotificationEvent {
-                  id
-                  instance
-                  date
-                  objectId
-                  reason
+        userId: user.id,
+      })
+    given('EventQuery')
+      .withPayload({ id: checkoutRevisionNotificationEvent.id })
+      .returns(checkoutRevisionNotificationEvent)
+
+    await client
+      .prepareQuery({
+        query: gql`
+          {
+            notifications {
+              totalCount
+              nodes {
+                id
+                unread
+                event {
+                  __typename
+                  ... on CheckoutRevisionNotificationEvent {
+                    id
+                    instance
+                    date
+                    objectId
+                    reason
+                  }
                 }
               }
             }
           }
-        }
-      `,
-      data: {
+        `,
+      })
+      .shouldReturnData({
         notifications: {
           totalCount: 1,
           nodes: [
@@ -176,1620 +199,1662 @@ describe('notifications', () => {
             },
           ],
         },
-      },
-      client,
-    })
+      })
   })
-
-  function createNotificationsQuery(unread?: boolean) {
-    return {
-      query: gql`
-        query notifications($unread: Boolean) {
-          notifications(unread: $unread) {
-            totalCount
-            nodes {
-              id
-              unread
-            }
-          }
-        }
-      `,
-      variables: { unread },
-    }
-  }
 })
 
 describe('notificationEvent', () => {
-  let client: LegacyClient
+  let client: Client
 
   beforeEach(() => {
-    client = createTestClient({ userId: null })
+    client = new Client({ userId: null })
   })
 
   describe('CheckoutRevisionNotification', () => {
     beforeEach(() => {
-      global.server.use(
-        createNotificationEventHandler(checkoutRevisionNotificationEvent)
-      )
+      given('EventQuery')
+        .withPayload({ id: checkoutRevisionNotificationEvent.id })
+        .returns(checkoutRevisionNotificationEvent)
     })
 
     test('by id', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              __typename
-              ... on CheckoutRevisionNotificationEvent {
-                id
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                __typename
+                ... on CheckoutRevisionNotificationEvent {
+                  id
+                }
               }
             }
-          }
-        `,
-        variables: checkoutRevisionNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(checkoutRevisionNotificationEvent)
+        .shouldReturnData({
           notificationEvent: getTypenameAndId(
             checkoutRevisionNotificationEvent
           ),
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ actor)', async () => {
-      global.server.use(createUuidHandler(user))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CheckoutRevisionNotificationEvent {
-                actor {
-                  __typename
-                  id
+      given('UuidQuery').for(user)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on CheckoutRevisionNotificationEvent {
+                  actor {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: checkoutRevisionNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(checkoutRevisionNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             actor: getTypenameAndId(user),
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ repository)', async () => {
-      global.server.use(createUuidHandler(article))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CheckoutRevisionNotificationEvent {
-                repository {
-                  __typename
-                  id
+      given('UuidQuery').for(article)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on CheckoutRevisionNotificationEvent {
+                  repository {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: checkoutRevisionNotificationEvent,
-        data: { notificationEvent: { repository: getTypenameAndId(article) } },
-        client,
-      })
+          `,
+        })
+        .withVariables(checkoutRevisionNotificationEvent)
+        .shouldReturnData({
+          notificationEvent: { repository: getTypenameAndId(article) },
+        })
     })
 
     test('by id (w/ revision)', async () => {
-      global.server.use(createUuidHandler(articleRevision))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CheckoutRevisionNotificationEvent {
-                revision {
-                  __typename
-                  id
+      given('UuidQuery').for(articleRevision)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on CheckoutRevisionNotificationEvent {
+                  revision {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: checkoutRevisionNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(checkoutRevisionNotificationEvent)
+        .shouldReturnData({
           notificationEvent: { revision: getTypenameAndId(articleRevision) },
-        },
-        client,
-      })
+        })
     })
   })
 
   describe('RejectRevisionNotification', () => {
     beforeEach(() => {
-      global.server.use(
-        createNotificationEventHandler(rejectRevisionNotificationEvent)
-      )
+      given('EventQuery')
+        .withPayload({ id: rejectRevisionNotificationEvent.id })
+        .returns(rejectRevisionNotificationEvent)
     })
 
     test('by id', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              __typename
-              ... on RejectRevisionNotificationEvent {
-                id
-                instance
-                date
-                reason
-                objectId
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                __typename
+                ... on RejectRevisionNotificationEvent {
+                  id
+                  instance
+                  date
+                  reason
+                  objectId
+                }
               }
             }
-          }
-        `,
-        variables: rejectRevisionNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(rejectRevisionNotificationEvent)
+        .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'reason', 'objectId'],
             rejectRevisionNotificationEvent
           ),
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ actor)', async () => {
-      global.server.use(createUuidHandler(user))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on RejectRevisionNotificationEvent {
-                actor {
-                  __typename
-                  id
+      given('UuidQuery').for(user)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on RejectRevisionNotificationEvent {
+                  actor {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: rejectRevisionNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(rejectRevisionNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             actor: getTypenameAndId(user),
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ repository)', async () => {
-      global.server.use(createUuidHandler(article))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on RejectRevisionNotificationEvent {
-                repository {
-                  __typename
-                  id
+      given('UuidQuery').for(article)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on RejectRevisionNotificationEvent {
+                  repository {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: rejectRevisionNotificationEvent,
-        data: { notificationEvent: { repository: getTypenameAndId(article) } },
-        client,
-      })
+          `,
+        })
+        .withVariables(rejectRevisionNotificationEvent)
+        .shouldReturnData({
+          notificationEvent: { repository: getTypenameAndId(article) },
+        })
     })
 
     test('by id (w/ revision)', async () => {
-      global.server.use(createUuidHandler(articleRevision))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on RejectRevisionNotificationEvent {
-                revision {
-                  __typename
-                  id
+      given('UuidQuery').for(articleRevision)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on RejectRevisionNotificationEvent {
+                  revision {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: rejectRevisionNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(rejectRevisionNotificationEvent)
+        .shouldReturnData({
           notificationEvent: { revision: getTypenameAndId(articleRevision) },
-        },
-        client,
-      })
+        })
     })
   })
 
   describe('CreateCommentNotificationEvent', () => {
     beforeEach(() => {
-      global.server.use(
-        createNotificationEventHandler(createCommentNotificationEvent)
-      )
+      given('EventQuery')
+        .withPayload({ id: createCommentNotificationEvent.id })
+        .returns(createCommentNotificationEvent)
     })
 
     test('by id', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              __typename
-              ... on CreateCommentNotificationEvent {
-                id
-                instance
-                date
-                objectId
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                __typename
+                ... on CreateCommentNotificationEvent {
+                  id
+                  instance
+                  date
+                  objectId
+                }
               }
             }
-          }
-        `,
-        variables: createCommentNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(createCommentNotificationEvent)
+        .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
             createCommentNotificationEvent
           ),
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ actor)', async () => {
-      global.server.use(createUuidHandler(user))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CreateCommentNotificationEvent {
-                actor {
-                  __typename
-                  id
+      given('UuidQuery').for(user)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on CreateCommentNotificationEvent {
+                  actor {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: createCommentNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(createCommentNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             actor: getTypenameAndId(user),
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ thread)', async () => {
       givenThreads({ uuid: article, threads: [[comment]] })
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CreateCommentNotificationEvent {
-                thread {
-                  title
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on CreateCommentNotificationEvent {
+                  thread {
+                    title
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: createCommentNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(createCommentNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             thread: { title: comment.title },
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ comment)', async () => {
-      global.server.use(createUuidHandler(comment))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CreateCommentNotificationEvent {
-                comment {
-                  id
-                  __typename
+      given('UuidQuery').for(comment)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on CreateCommentNotificationEvent {
+                  comment {
+                    id
+                    __typename
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: createCommentNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(createCommentNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             comment: getTypenameAndId(comment),
           },
-        },
-        client,
-      })
+        })
     })
   })
 
   describe('CreateEntityNotificationEvent', () => {
     beforeEach(() => {
-      global.server.use(
-        createNotificationEventHandler(createEntityNotificationEvent)
-      )
+      given('EventQuery')
+        .withPayload({ id: createEntityNotificationEvent.id })
+        .returns(createEntityNotificationEvent)
     })
 
     test('by id', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              __typename
-              ... on CreateEntityNotificationEvent {
-                id
-                instance
-                date
-                objectId
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                __typename
+                ... on CreateEntityNotificationEvent {
+                  id
+                  instance
+                  date
+                  objectId
+                }
               }
             }
-          }
-        `,
-        variables: createEntityNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(createEntityNotificationEvent)
+        .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
             createEntityNotificationEvent
           ),
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ actor)', async () => {
-      global.server.use(createUuidHandler(user))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CreateEntityNotificationEvent {
-                actor {
-                  __typename
-                  id
+      given('UuidQuery').for(user)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on CreateEntityNotificationEvent {
+                  actor {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: createEntityNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(createEntityNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             actor: getTypenameAndId(user),
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ entity)', async () => {
-      global.server.use(createUuidHandler(article))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CreateEntityNotificationEvent {
-                entity {
-                  __typename
-                  id
+      given('UuidQuery').for(article)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on CreateEntityNotificationEvent {
+                  entity {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: createEntityNotificationEvent,
-        data: { notificationEvent: { entity: getTypenameAndId(article) } },
-        client,
-      })
+          `,
+        })
+        .withVariables(createEntityNotificationEvent)
+        .shouldReturnData({
+          notificationEvent: { entity: getTypenameAndId(article) },
+        })
     })
   })
 
   describe('CreateEntityLinkNotificationEvent', () => {
     beforeEach(() => {
-      global.server.use(
-        createNotificationEventHandler(createEntityLinkNotificationEvent)
-      )
+      given('EventQuery')
+        .withPayload({ id: createEntityLinkNotificationEvent.id })
+        .returns(createEntityLinkNotificationEvent)
     })
 
     test('by id', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              __typename
-              ... on CreateEntityLinkNotificationEvent {
-                id
-                instance
-                date
-                objectId
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                __typename
+                ... on CreateEntityLinkNotificationEvent {
+                  id
+                  instance
+                  date
+                  objectId
+                }
               }
             }
-          }
-        `,
-        variables: createEntityLinkNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(createEntityLinkNotificationEvent)
+        .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
             createEntityLinkNotificationEvent
           ),
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ actor)', async () => {
-      global.server.use(createUuidHandler(user))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CreateEntityLinkNotificationEvent {
-                actor {
-                  __typename
-                  id
+      given('UuidQuery').for(user)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on CreateEntityLinkNotificationEvent {
+                  actor {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: createEntityLinkNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(createEntityLinkNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             actor: getTypenameAndId(user),
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ parent)', async () => {
-      global.server.use(createUuidHandler(exercise))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CreateEntityLinkNotificationEvent {
-                parent {
-                  __typename
-                  ... on Exercise {
-                    id
+      given('UuidQuery').for(exercise)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on CreateEntityLinkNotificationEvent {
+                  parent {
+                    __typename
+                    ... on Exercise {
+                      id
+                    }
                   }
                 }
               }
             }
-          }
-        `,
-        variables: createEntityLinkNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(createEntityLinkNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             parent: getTypenameAndId(exercise),
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ child)', async () => {
-      global.server.use(createUuidHandler(solution))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CreateEntityLinkNotificationEvent {
-                child {
-                  __typename
-                  ... on Solution {
-                    id
+      given('UuidQuery').for(solution)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on CreateEntityLinkNotificationEvent {
+                  child {
+                    __typename
+                    ... on Solution {
+                      id
+                    }
                   }
                 }
               }
             }
-          }
-        `,
-        variables: createEntityLinkNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(createEntityLinkNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             child: getTypenameAndId(solution),
           },
-        },
-        client,
-      })
+        })
     })
   })
 
   describe('RemoveEntityLinkNotificationEvent', () => {
     beforeEach(() => {
-      global.server.use(
-        createNotificationEventHandler(removeEntityLinkNotificationEvent)
-      )
+      given('EventQuery')
+        .withPayload({ id: removeEntityLinkNotificationEvent.id })
+        .returns(removeEntityLinkNotificationEvent)
     })
 
     test('by id', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              __typename
-              ... on RemoveEntityLinkNotificationEvent {
-                id
-                instance
-                date
-                objectId
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                __typename
+                ... on RemoveEntityLinkNotificationEvent {
+                  id
+                  instance
+                  date
+                  objectId
+                }
               }
             }
-          }
-        `,
-        variables: removeEntityLinkNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(removeEntityLinkNotificationEvent)
+        .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
             removeEntityLinkNotificationEvent
           ),
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ actor)', async () => {
-      global.server.use(createUuidHandler(user))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on RemoveEntityLinkNotificationEvent {
-                actor {
-                  __typename
-                  id
+      given('UuidQuery').for(user)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on RemoveEntityLinkNotificationEvent {
+                  actor {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: removeEntityLinkNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(removeEntityLinkNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             actor: getTypenameAndId(user),
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ parent)', async () => {
-      global.server.use(createUuidHandler(exercise))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on RemoveEntityLinkNotificationEvent {
-                parent {
-                  __typename
-                  ... on Exercise {
-                    id
+      given('UuidQuery').for(exercise)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on RemoveEntityLinkNotificationEvent {
+                  parent {
+                    __typename
+                    ... on Exercise {
+                      id
+                    }
                   }
                 }
               }
             }
-          }
-        `,
-        variables: removeEntityLinkNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(removeEntityLinkNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             parent: getTypenameAndId(exercise),
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ child)', async () => {
-      global.server.use(createUuidHandler(solution))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on RemoveEntityLinkNotificationEvent {
-                child {
-                  __typename
-                  ... on Solution {
-                    id
+      given('UuidQuery').for(solution)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on RemoveEntityLinkNotificationEvent {
+                  child {
+                    __typename
+                    ... on Solution {
+                      id
+                    }
                   }
                 }
               }
             }
-          }
-        `,
-        variables: removeEntityLinkNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(removeEntityLinkNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             child: getTypenameAndId(solution),
           },
-        },
-        client,
-      })
+        })
     })
   })
 
   describe('CreateEntityRevisionNotificationEvent', () => {
     beforeEach(() => {
-      global.server.use(
-        createNotificationEventHandler(createEntityRevisionNotificationEvent)
-      )
+      given('EventQuery')
+        .withPayload({ id: createEntityRevisionNotificationEvent.id })
+        .returns(createEntityRevisionNotificationEvent)
     })
 
     test('by id', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              __typename
-              ... on CreateEntityRevisionNotificationEvent {
-                id
-                instance
-                date
-                objectId
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                __typename
+                ... on CreateEntityRevisionNotificationEvent {
+                  id
+                  instance
+                  date
+                  objectId
+                }
               }
             }
-          }
-        `,
-        variables: createEntityRevisionNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(createEntityRevisionNotificationEvent)
+        .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
             createEntityRevisionNotificationEvent
           ),
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ actor)', async () => {
-      global.server.use(createUuidHandler(user))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CreateEntityRevisionNotificationEvent {
-                actor {
-                  __typename
-                  id
+      given('UuidQuery').for(user)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on CreateEntityRevisionNotificationEvent {
+                  actor {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: createEntityRevisionNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(createEntityRevisionNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             actor: getTypenameAndId(user),
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ entity)', async () => {
-      global.server.use(createUuidHandler(article))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CreateEntityRevisionNotificationEvent {
-                entity {
-                  __typename
-                  id
+      given('UuidQuery').for(article)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on CreateEntityRevisionNotificationEvent {
+                  entity {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: createEntityRevisionNotificationEvent,
-        data: { notificationEvent: { entity: getTypenameAndId(article) } },
-        client,
-      })
+          `,
+        })
+        .withVariables(createEntityRevisionNotificationEvent)
+        .shouldReturnData({
+          notificationEvent: { entity: getTypenameAndId(article) },
+        })
     })
 
     test('by id (w/ entityRevision)', async () => {
-      global.server.use(createUuidHandler(articleRevision))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CreateEntityRevisionNotificationEvent {
-                entityRevision {
-                  __typename
-                  id
+      given('UuidQuery').for(articleRevision)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on CreateEntityRevisionNotificationEvent {
+                  entityRevision {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: createEntityRevisionNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(createEntityRevisionNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             entityRevision: getTypenameAndId(articleRevision),
           },
-        },
-        client,
-      })
+        })
     })
   })
 
   describe('CreateTaxonomyTermNotificationEvent', () => {
     beforeEach(() => {
-      global.server.use(
-        createNotificationEventHandler(createTaxonomyTermNotificationEvent)
-      )
+      given('EventQuery')
+        .withPayload({ id: createTaxonomyTermNotificationEvent.id })
+        .returns(createTaxonomyTermNotificationEvent)
     })
 
     test('by id', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              __typename
-              ... on CreateTaxonomyTermNotificationEvent {
-                id
-                instance
-                date
-                objectId
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                __typename
+                ... on CreateTaxonomyTermNotificationEvent {
+                  id
+                  instance
+                  date
+                  objectId
+                }
               }
             }
-          }
-        `,
-        variables: createTaxonomyTermNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(createTaxonomyTermNotificationEvent)
+        .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
             createTaxonomyTermNotificationEvent
           ),
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ actor)', async () => {
-      global.server.use(createUuidHandler(user))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CreateTaxonomyTermNotificationEvent {
-                actor {
-                  __typename
-                  id
+      given('UuidQuery').for(user)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on CreateTaxonomyTermNotificationEvent {
+                  actor {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: createTaxonomyTermNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(createTaxonomyTermNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             actor: getTypenameAndId(user),
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ taxonomyTerm)', async () => {
-      global.server.use(createUuidHandler(taxonomyTermCurriculumTopic))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CreateTaxonomyTermNotificationEvent {
-                taxonomyTerm {
-                  __typename
-                  id
+      given('UuidQuery').for(taxonomyTermCurriculumTopic)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on CreateTaxonomyTermNotificationEvent {
+                  taxonomyTerm {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: createTaxonomyTermNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(createTaxonomyTermNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             taxonomyTerm: getTypenameAndId(taxonomyTermCurriculumTopic),
           },
-        },
-        client,
-      })
+        })
     })
   })
 
   describe('SetTaxonomyTermNotificationEvent', () => {
     beforeEach(() => {
-      global.server.use(
-        createNotificationEventHandler(setTaxonomyTermNotificationEvent)
-      )
+      given('EventQuery')
+        .withPayload({ id: setTaxonomyTermNotificationEvent.id })
+        .returns(setTaxonomyTermNotificationEvent)
     })
 
     test('by id', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              __typename
-              ... on SetTaxonomyTermNotificationEvent {
-                id
-                instance
-                date
-                objectId
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                __typename
+                ... on SetTaxonomyTermNotificationEvent {
+                  id
+                  instance
+                  date
+                  objectId
+                }
               }
             }
-          }
-        `,
-        variables: setTaxonomyTermNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(setTaxonomyTermNotificationEvent)
+        .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
             setTaxonomyTermNotificationEvent
           ),
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ actor)', async () => {
-      global.server.use(createUuidHandler(user))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on SetTaxonomyTermNotificationEvent {
-                actor {
-                  __typename
-                  id
+      given('UuidQuery').for(user)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on SetTaxonomyTermNotificationEvent {
+                  actor {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: setTaxonomyTermNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(setTaxonomyTermNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             actor: getTypenameAndId(user),
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ taxonomyTerm)', async () => {
-      global.server.use(createUuidHandler(taxonomyTermCurriculumTopic))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on SetTaxonomyTermNotificationEvent {
-                taxonomyTerm {
-                  __typename
-                  id
+      given('UuidQuery').for(taxonomyTermCurriculumTopic)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on SetTaxonomyTermNotificationEvent {
+                  taxonomyTerm {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: setTaxonomyTermNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(setTaxonomyTermNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             taxonomyTerm: getTypenameAndId(taxonomyTermCurriculumTopic),
           },
-        },
-        client,
-      })
+        })
     })
   })
 
   describe('CreateTaxonomyLinkNotificationEvent', () => {
     beforeEach(() => {
-      global.server.use(
-        createNotificationEventHandler(createTaxonomyLinkNotificationEvent)
-      )
+      given('EventQuery')
+        .withPayload({ id: createTaxonomyLinkNotificationEvent.id })
+        .returns(createTaxonomyLinkNotificationEvent)
     })
 
     test('by id', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              __typename
-              ... on CreateTaxonomyLinkNotificationEvent {
-                id
-                instance
-                date
-                objectId
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                __typename
+                ... on CreateTaxonomyLinkNotificationEvent {
+                  id
+                  instance
+                  date
+                  objectId
+                }
               }
             }
-          }
-        `,
-        variables: createTaxonomyLinkNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(createTaxonomyLinkNotificationEvent)
+        .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
             createTaxonomyLinkNotificationEvent
           ),
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ actor)', async () => {
-      global.server.use(createUuidHandler(user))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CreateTaxonomyLinkNotificationEvent {
-                actor {
-                  __typename
-                  id
+      given('UuidQuery').for(user)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on CreateTaxonomyLinkNotificationEvent {
+                  actor {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: createTaxonomyLinkNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(createTaxonomyLinkNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             actor: getTypenameAndId(user),
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ parent)', async () => {
-      global.server.use(createUuidHandler(taxonomyTermCurriculumTopic))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CreateTaxonomyLinkNotificationEvent {
-                parent {
-                  __typename
-                  id
+      given('UuidQuery').for(taxonomyTermCurriculumTopic)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on CreateTaxonomyLinkNotificationEvent {
+                  parent {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: createTaxonomyLinkNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(createTaxonomyLinkNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             parent: getTypenameAndId(taxonomyTermCurriculumTopic),
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ child)', async () => {
-      global.server.use(createUuidHandler(article))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CreateTaxonomyLinkNotificationEvent {
-                child {
-                  __typename
-                  id
+      given('UuidQuery').for(article)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on CreateTaxonomyLinkNotificationEvent {
+                  child {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: createTaxonomyLinkNotificationEvent,
-        data: { notificationEvent: { child: getTypenameAndId(article) } },
-        client,
-      })
+          `,
+        })
+        .withVariables(createTaxonomyLinkNotificationEvent)
+        .shouldReturnData({
+          notificationEvent: { child: getTypenameAndId(article) },
+        })
     })
   })
 
   describe('RemoveTaxonomyLinkNotificationEvent', () => {
     beforeEach(() => {
-      global.server.use(
-        createNotificationEventHandler(removeTaxonomyLinkNotificationEvent)
-      )
+      given('EventQuery')
+        .withPayload({ id: removeTaxonomyLinkNotificationEvent.id })
+        .returns(removeTaxonomyLinkNotificationEvent)
     })
 
     test('by id', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              __typename
-              ... on RemoveTaxonomyLinkNotificationEvent {
-                id
-                instance
-                objectId
-                date
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                __typename
+                ... on RemoveTaxonomyLinkNotificationEvent {
+                  id
+                  instance
+                  objectId
+                  date
+                }
               }
             }
-          }
-        `,
-        variables: removeTaxonomyLinkNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(removeTaxonomyLinkNotificationEvent)
+        .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
             removeTaxonomyLinkNotificationEvent
           ),
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ actor)', async () => {
-      global.server.use(createUuidHandler(user))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on RemoveTaxonomyLinkNotificationEvent {
-                actor {
-                  __typename
-                  id
+      given('UuidQuery').for(user)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on RemoveTaxonomyLinkNotificationEvent {
+                  actor {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: removeTaxonomyLinkNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(removeTaxonomyLinkNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             actor: getTypenameAndId(user),
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ parent)', async () => {
-      global.server.use(createUuidHandler(taxonomyTermCurriculumTopic))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on RemoveTaxonomyLinkNotificationEvent {
-                parent {
-                  __typename
-                  id
+      given('UuidQuery').for(taxonomyTermCurriculumTopic)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on RemoveTaxonomyLinkNotificationEvent {
+                  parent {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: removeTaxonomyLinkNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(removeTaxonomyLinkNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             parent: getTypenameAndId(taxonomyTermCurriculumTopic),
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ child)', async () => {
-      global.server.use(createUuidHandler(article))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on RemoveTaxonomyLinkNotificationEvent {
-                child {
-                  __typename
-                  id
+      given('UuidQuery').for(article)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on RemoveTaxonomyLinkNotificationEvent {
+                  child {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: removeTaxonomyLinkNotificationEvent,
-        data: { notificationEvent: { child: getTypenameAndId(article) } },
-        client,
-      })
+          `,
+        })
+        .withVariables(removeTaxonomyLinkNotificationEvent)
+        .shouldReturnData({
+          notificationEvent: { child: getTypenameAndId(article) },
+        })
     })
   })
 
   describe('SetTaxonomyParentNotificationEvent', () => {
     beforeEach(() => {
-      global.server.use(
-        createNotificationEventHandler(setTaxonomyParentNotificationEvent)
-      )
+      given('EventQuery')
+        .withPayload({ id: setTaxonomyParentNotificationEvent.id })
+        .returns(setTaxonomyParentNotificationEvent)
     })
 
     test('by id', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              __typename
-              ... on SetTaxonomyParentNotificationEvent {
-                id
-                instance
-                objectId
-                date
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                __typename
+                ... on SetTaxonomyParentNotificationEvent {
+                  id
+                  instance
+                  objectId
+                  date
+                }
               }
             }
-          }
-        `,
-        variables: setTaxonomyParentNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(setTaxonomyParentNotificationEvent)
+        .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
             setTaxonomyParentNotificationEvent
           ),
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ actor)', async () => {
-      global.server.use(createUuidHandler(user))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on SetTaxonomyParentNotificationEvent {
-                actor {
-                  __typename
-                  id
+      given('UuidQuery').for(user)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on SetTaxonomyParentNotificationEvent {
+                  actor {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: setTaxonomyParentNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(setTaxonomyParentNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             actor: getTypenameAndId(user),
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ previousParent)', async () => {
-      global.server.use(createUuidHandler(taxonomyTermRoot))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on SetTaxonomyParentNotificationEvent {
-                previousParent {
-                  __typename
-                  id
+      given('UuidQuery').for(taxonomyTermRoot)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on SetTaxonomyParentNotificationEvent {
+                  previousParent {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: setTaxonomyParentNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(setTaxonomyParentNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             previousParent: getTypenameAndId(taxonomyTermRoot),
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ parent)', async () => {
-      global.server.use(createUuidHandler(taxonomyTermSubject))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on SetTaxonomyParentNotificationEvent {
-                parent {
-                  __typename
-                  id
+      given('UuidQuery').for(taxonomyTermSubject)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on SetTaxonomyParentNotificationEvent {
+                  parent {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: setTaxonomyParentNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(setTaxonomyParentNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             parent: getTypenameAndId(taxonomyTermSubject),
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ child)', async () => {
-      global.server.use(createUuidHandler(taxonomyTermCurriculumTopic))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on SetTaxonomyParentNotificationEvent {
-                child {
-                  __typename
-                  id
+      given('UuidQuery').for(taxonomyTermCurriculumTopic)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on SetTaxonomyParentNotificationEvent {
+                  child {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: setTaxonomyParentNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(setTaxonomyParentNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             child: getTypenameAndId(taxonomyTermCurriculumTopic),
           },
-        },
-        client,
-      })
+        })
     })
   })
 
   describe('CreateThreadNotificationEvent', () => {
     beforeEach(() => {
-      global.server.use(
-        createNotificationEventHandler(createThreadNotificationEvent)
-      )
+      given('EventQuery')
+        .withPayload({ id: createThreadNotificationEvent.id })
+        .returns(createThreadNotificationEvent)
     })
 
     test('by id', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              __typename
-              ... on CreateThreadNotificationEvent {
-                id
-                instance
-                date
-                objectId
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                __typename
+                ... on CreateThreadNotificationEvent {
+                  id
+                  instance
+                  date
+                  objectId
+                }
               }
             }
-          }
-        `,
-        variables: createThreadNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(createThreadNotificationEvent)
+        .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
             createThreadNotificationEvent
           ),
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ actor)', async () => {
-      global.server.use(createUuidHandler(user))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CreateThreadNotificationEvent {
-                actor {
-                  __typename
-                  id
+      given('UuidQuery').for(user)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on CreateThreadNotificationEvent {
+                  actor {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: createThreadNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(createThreadNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             actor: getTypenameAndId(user),
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ object)', async () => {
-      global.server.use(createUuidHandler(article))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CreateThreadNotificationEvent {
-                object {
-                  __typename
-                  id
+      given('UuidQuery').for(article)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on CreateThreadNotificationEvent {
+                  object {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: createThreadNotificationEvent,
-        data: { notificationEvent: { object: getTypenameAndId(article) } },
-        client,
-      })
+          `,
+        })
+        .withVariables(createThreadNotificationEvent)
+        .shouldReturnData({
+          notificationEvent: { object: getTypenameAndId(article) },
+        })
     })
 
     test('by id (w/ thread)', async () => {
       givenThreads({ uuid: article, threads: [[comment]] })
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on CreateThreadNotificationEvent {
-                thread {
-                  title
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on CreateThreadNotificationEvent {
+                  thread {
+                    title
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: createThreadNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(createThreadNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             thread: {
               title: comment.title,
             },
           },
-        },
-        client,
-      })
+        })
     })
   })
 
   describe('SetLicenseNotification', () => {
     beforeEach(() => {
-      global.server.use(
-        createNotificationEventHandler(setLicenseNotificationEvent)
-      )
+      given('EventQuery')
+        .withPayload({ id: setLicenseNotificationEvent.id })
+        .returns(setLicenseNotificationEvent)
     })
 
     test('by id', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              __typename
-              ... on SetLicenseNotificationEvent {
-                id
-                instance
-                objectId
-                date
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                __typename
+                ... on SetLicenseNotificationEvent {
+                  id
+                  instance
+                  objectId
+                  date
+                }
               }
             }
-          }
-        `,
-        variables: setLicenseNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(setLicenseNotificationEvent)
+        .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
             setLicenseNotificationEvent
           ),
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ actor)', async () => {
-      global.server.use(createUuidHandler(user))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on SetLicenseNotificationEvent {
-                actor {
-                  __typename
-                  id
+      given('UuidQuery').for(user)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on SetLicenseNotificationEvent {
+                  actor {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: setLicenseNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(setLicenseNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             actor: getTypenameAndId(user),
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ repository)', async () => {
-      global.server.use(createUuidHandler(article))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on SetLicenseNotificationEvent {
-                repository {
-                  __typename
-                  id
+      given('UuidQuery').for(article)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on SetLicenseNotificationEvent {
+                  repository {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: setLicenseNotificationEvent,
-        data: { notificationEvent: { repository: getTypenameAndId(article) } },
-        client,
-      })
+          `,
+        })
+        .withVariables(setLicenseNotificationEvent)
+        .shouldReturnData({
+          notificationEvent: { repository: getTypenameAndId(article) },
+        })
     })
   })
 
   describe('SetThreadStateNotificationEvent', () => {
     beforeEach(() => {
-      global.server.use(
-        createNotificationEventHandler(setThreadStateNotificationEvent)
-      )
+      given('EventQuery')
+        .withPayload({ id: setThreadStateNotificationEvent.id })
+        .returns(setThreadStateNotificationEvent)
     })
 
     test('by id', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              __typename
-              ... on SetThreadStateNotificationEvent {
-                id
-                instance
-                date
-                objectId
-                archived
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                __typename
+                ... on SetThreadStateNotificationEvent {
+                  id
+                  instance
+                  date
+                  objectId
+                  archived
+                }
               }
             }
-          }
-        `,
-        variables: setThreadStateNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(setThreadStateNotificationEvent)
+        .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId', 'archived'],
             setThreadStateNotificationEvent
           ),
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ actor)', async () => {
-      global.server.use(createUuidHandler(user))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on SetThreadStateNotificationEvent {
-                actor {
-                  __typename
-                  id
+      given('UuidQuery').for(user)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on SetThreadStateNotificationEvent {
+                  actor {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: setThreadStateNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(setThreadStateNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             actor: getTypenameAndId(user),
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ thread)', async () => {
       givenThreads({ uuid: article, threads: [[comment]] })
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on SetThreadStateNotificationEvent {
-                thread {
-                  title
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on SetThreadStateNotificationEvent {
+                  thread {
+                    title
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: setThreadStateNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(setThreadStateNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             thread: {
               title: comment.title,
             },
           },
-        },
-        client,
-      })
+        })
     })
   })
 
   describe('SetUuidStateNotificationEvent', () => {
     beforeEach(() => {
-      global.server.use(
-        createNotificationEventHandler(setUuidStateNotificationEvent)
-      )
+      given('EventQuery')
+        .withPayload({ id: setUuidStateNotificationEvent.id })
+        .returns(setUuidStateNotificationEvent)
     })
 
     test('by id', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              __typename
-              ... on SetUuidStateNotificationEvent {
-                id
-                instance
-                date
-                objectId
-                trashed
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                __typename
+                ... on SetUuidStateNotificationEvent {
+                  id
+                  instance
+                  date
+                  objectId
+                  trashed
+                }
               }
             }
-          }
-        `,
-        variables: setUuidStateNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(setUuidStateNotificationEvent)
+        .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId', 'trashed'],
             setUuidStateNotificationEvent
           ),
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ actor)', async () => {
-      global.server.use(createUuidHandler(user))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on SetUuidStateNotificationEvent {
-                actor {
-                  __typename
-                  id
+      given('UuidQuery').for(user)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on SetUuidStateNotificationEvent {
+                  actor {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: setUuidStateNotificationEvent,
-        data: {
+          `,
+        })
+        .withVariables(setUuidStateNotificationEvent)
+        .shouldReturnData({
           notificationEvent: {
             actor: getTypenameAndId(user),
           },
-        },
-        client,
-      })
+        })
     })
 
     test('by id (w/ object)', async () => {
-      global.server.use(createUuidHandler(article))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              ... on SetUuidStateNotificationEvent {
-                object {
-                  __typename
-                  id
+      given('UuidQuery').for(article)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                ... on SetUuidStateNotificationEvent {
+                  object {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: setUuidStateNotificationEvent,
-        data: { notificationEvent: { object: getTypenameAndId(article) } },
-        client,
-      })
+          `,
+        })
+        .withVariables(setUuidStateNotificationEvent)
+        .shouldReturnData({
+          notificationEvent: { object: getTypenameAndId(article) },
+        })
     })
   })
 
@@ -1808,8 +1873,7 @@ describe('notificationEvent', () => {
     })
 
     test('by id', async () => {
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
+      await client.prepareQuery({query: gql`
           query notificationEvent($id: Int!) {
             notificationEvent(id: $id) {
               __typename
@@ -1818,13 +1882,11 @@ describe('notificationEvent', () => {
               date
             }
           }
-        `,
-        variables: { id: 1337 },
-        data: {
+        `})
+        .withVariables({ id: 1337 })
+        .shouldReturnData({
           notificationEvent: null,
-        },
-        client,
-      })
+        })
     })
   })
 
@@ -1837,8 +1899,7 @@ describe('notificationEvent', () => {
       })
     )
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
+    await client.prepareQuery({query: gql`
         query notificationEvent($id: Int!) {
           notificationEvent(id: $id) {
             ... on CheckoutRevisionNotificationEvent {
@@ -1847,11 +1908,9 @@ describe('notificationEvent', () => {
             }
           }
         }
-      `,
-      variables: { id: 1234567 },
-      data: { notificationEvent: null },
-      client,
-    })
+      `})
+      .withVariables({ id: 1234567 })
+      .shouldReturnData({ notificationEvent: null })
   })
 })
 
