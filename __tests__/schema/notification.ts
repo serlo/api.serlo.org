@@ -21,7 +21,6 @@
  */
 import { gql } from 'apollo-server'
 import R from 'ramda'
-import { isErrored } from 'stream'
 
 import {
   article,
@@ -56,7 +55,6 @@ import {
   assertSuccessfulGraphQLMutation,
   assertSuccessfulGraphQLQuery,
   castToUuid,
-  LegacyClient,
   createMessageHandler,
   createNotificationEventHandler,
   createTestClient,
