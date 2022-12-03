@@ -51,13 +51,7 @@ import {
   video,
   videoRevision,
 } from '../../../__fixtures__'
-import {
-  createMessageHandler,
-  getTypenameAndId,
-  given,
-  Client,
-  givenThreads,
-} from '../../__utils__'
+import { getTypenameAndId, given, Client, givenThreads } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import {
   EntityRevisionType,
@@ -107,31 +101,26 @@ const abstractUuidFixtures: Record<
 const abstractUuidRepository = R.toPairs(abstractUuidFixtures)
 
 describe('uuid', () => {
-  test('returns null when alias cannot be found', async () => {
-    global.server.use(
-      createMessageHandler({
-        message: {
-          type: 'AliasQuery',
-          payload: {
-            instance: Instance.De,
-            path: '/not-existing',
-          },
-        },
-        statusCode: 404,
-        body: null,
-      })
-    )
+  const uuidQuery = client.prepareQuery({
+    query: gql`
+      query ($id: Int, $alias: String) {
+        uuid(id: $id, alias: $alias) {
+          id
+          __typename
+        }
+      }
+    `,
+  })
 
-    await client
-      .prepareQuery({
-        query: gql`
-          query notExistingUuid($alias: AliasInput) {
-            uuid(alias: $alias) {
-              __typename
-            }
-          }
-        `,
+  test('returns null when alias cannot be found', async () => {
+    given('AliasQuery')
+      .withPayload({
+        instance: Instance.De,
+        path: '/not-existing',
       })
+      .returnsNotFound()
+
+    await uuidQuery
       .withVariables({
         alias: { instance: Instance.De, path: '/not-existing' },
       })
@@ -141,17 +130,7 @@ describe('uuid', () => {
   test('returns uuid when alias is /entity/view/:id', async () => {
     given('UuidQuery').for(article)
 
-    await client
-      .prepareQuery({
-        query: gql`
-          query uuid($alias: AliasInput!) {
-            uuid(alias: $alias) {
-              id
-              __typename
-            }
-          }
-        `,
-      })
+    await uuidQuery
       .withVariables({
         alias: { instance: Instance.De, path: `/entity/view/${article.id}` },
       })
@@ -161,17 +140,7 @@ describe('uuid', () => {
   test('returns uuid when alias is /:subject/:id/:alias (as hotfix for the current bug in the database layer)', async () => {
     given('UuidQuery').for(article)
 
-    await client
-      .prepareQuery({
-        query: gql`
-          query uuid($alias: AliasInput!) {
-            uuid(alias: $alias) {
-              __typename
-              id
-            }
-          }
-        `,
-      })
+    await uuidQuery
       .withVariables({
         alias: {
           instance: Instance.De,
@@ -184,16 +153,7 @@ describe('uuid', () => {
   test('returns revision when alias is /entity/repository/compare/:entityId/:revisionId', async () => {
     given('UuidQuery').for(articleRevision)
 
-    await client
-      .prepareQuery({
-        query: gql`
-          query uuid($alias: AliasInput!) {
-            uuid(alias: $alias) {
-              id
-            }
-          }
-        `,
-      })
+    await uuidQuery
       .withVariables({
         alias: {
           instance: Instance.De,
@@ -204,43 +164,13 @@ describe('uuid', () => {
   })
 
   test('returns null when uuid does not exist', async () => {
-    global.server.use(
-      createMessageHandler({
-        message: {
-          type: 'UuidQuery',
-          payload: { id: 666 },
-        },
-        body: null,
-      })
-    )
+    given('UuidQuery').withPayload({ id: 666 }).returnsNotFound()
 
-    await client
-      .prepareQuery({
-        query: gql`
-          query requestNonExistingUuid($id: Int!) {
-            uuid(id: $id) {
-              __typename
-            }
-          }
-        `,
-      })
-      .withVariables({ id: 666 })
-      .shouldReturnData({
-        uuid: null,
-      })
+    await uuidQuery.withVariables({ id: 666 }).shouldReturnData({ uuid: null })
   })
 
   test('returns null when requested id is too high to be an uuid', async () => {
-    await client
-      .prepareQuery({
-        query: gql`
-          query ($path: String!) {
-            uuid(alias: { instance: de, path: $path }) {
-              __typename
-            }
-          }
-        `,
-      })
+    await uuidQuery
       .withVariables({ path: '/100000000000000' })
       .shouldReturnData({ uuid: null })
   })
@@ -248,99 +178,35 @@ describe('uuid', () => {
   test('returns an error when alias contains the null character', async () => {
     given('UuidQuery').for({ ...article, alias: '\0\0/1/math' as Alias })
 
-    await client
-      .prepareQuery({
-        query: gql`
-          query ($id: Int!) {
-            uuid(id: $id) {
-              __typename
-            }
-          }
-        `,
-      })
+    await uuidQuery
       .withVariables({ id: article.id })
       .shouldFailWithError('INTERNAL_SERVER_ERROR')
   })
 
   test('returns an error when no arguments are given', async () => {
-    await client
-      .prepareQuery({
-        query: gql`
-          query emptyUuidRequest {
-            uuid {
-              __typename
-            }
-          }
-        `,
-      })
-      .shouldFailWithError('BAD_USER_INPUT')
+    await uuidQuery.shouldFailWithError('BAD_USER_INPUT')
   })
 
   test("returns an error when the path does not start with '/'", async () => {
-    await client
-      .prepareQuery({
-        query: gql`
-          query emptyUuidRequest {
-            uuid(alias: { instance: de, path: "mathe" }) {
-              __typename
-            }
-          }
-        `,
-      })
+    await uuidQuery
+      .withVariables({ alias: { instance: 'de', path: 'math' } })
       .shouldFailWithError('BAD_USER_INPUT')
   })
 
   test('returns an error when request fails (500)', async () => {
-    global.server.use(
-      createMessageHandler({
-        message: {
-          type: 'UuidQuery',
-          payload: { id: user.id },
-        },
-        statusCode: 500,
-      })
-    )
+    given('UuidQuery').withPayload({ id: user.id }).hasInternalServerError()
 
-    await client
-      .prepareQuery({
-        query: gql`
-          query user($id: Int!) {
-            uuid(id: $id) {
-              __typename
-            }
-          }
-        `,
-      })
-      .withVariables(user)
+    await uuidQuery
+      .withVariables({ id: user.id })
       .shouldFailWithError('INTERNAL_SERVER_ERROR')
   })
 
   test('succeeds on 404', async () => {
-    global.server.use(
-      createMessageHandler({
-        message: {
-          type: 'UuidQuery',
-          payload: { id: user.id },
-        },
-        body: null,
-        statusCode: 404,
-      })
-    )
+    given('UuidQuery').withPayload({ id: user.id }).returnsNotFound()
 
-    await client
-      .prepareQuery({
-        query: gql`
-          query user($id: Int!) {
-            uuid(id: $id) {
-              __typename
-            }
-          }
-        `,
-      })
-      .withVariables(user)
-      .shouldReturnData({
-        uuid: null,
-      })
+    await uuidQuery
+      .withVariables({ id: user.id })
+      .shouldReturnData({ uuid: null })
   })
 })
 
@@ -390,12 +256,8 @@ describe('custom aliases', () => {
           }
         `,
       })
-      .withVariables({
-        alias: { instance: Instance.De, path: '/community' },
-      })
-      .shouldReturnData({
-        uuid: { id: 19882, alias: '/community' },
-      })
+      .withVariables({ alias: { instance: Instance.De, path: '/community' } })
+      .shouldReturnData({ uuid: { id: 19882, alias: '/community' } })
   })
 })
 
