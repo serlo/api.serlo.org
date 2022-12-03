@@ -103,7 +103,7 @@ const abstractUuidRepository = R.toPairs(abstractUuidFixtures)
 describe('uuid', () => {
   const uuidQuery = client.prepareQuery({
     query: gql`
-      query ($id: Int, $alias: String) {
+      query ($id: Int, $alias: AliasInput) {
         uuid(id: $id, alias: $alias) {
           id
           __typename
@@ -171,7 +171,7 @@ describe('uuid', () => {
 
   test('returns null when requested id is too high to be an uuid', async () => {
     await uuidQuery
-      .withVariables({ path: '/100000000000000' })
+      .withVariables({ alias: { path: '/100000000000000', instance: 'de' } })
       .shouldReturnData({ uuid: null })
   })
 
@@ -208,6 +208,30 @@ describe('uuid', () => {
       .withVariables({ id: user.id })
       .shouldReturnData({ uuid: null })
   })
+})
+
+test('`uuid` returns null on unsupported uuid type', async () => {
+  given('UuidQuery').for({
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error We assume here that we get an invalid type name
+    __typename: 'MathPuzzle',
+    id: castToUuid(146944),
+    trashed: false,
+  })
+
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query unsupported($id: Int!) {
+          uuid(id: $id) {
+            __typename
+            id
+          }
+        }
+      `,
+    })
+    .withVariables({ id: 146944 })
+    .shouldReturnData({ uuid: null })
 })
 
 describe('property "alias"', () => {
