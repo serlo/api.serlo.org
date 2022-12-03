@@ -48,13 +48,7 @@ import {
   video,
   videoRevision,
 } from '../../../__fixtures__'
-import {
-  createUuidHandler,
-  nextUuid,
-  getTypenameAndId,
-  given,
-  Client,
-} from '../../__utils__'
+import { nextUuid, getTypenameAndId, given, Client } from '../../__utils__'
 import { getDefaultLicense } from '~/config/licenses'
 import { Model } from '~/internals/graphql'
 import {
@@ -135,6 +129,19 @@ const repositoryFixtures: Record<
 const repositoryCases = R.toPairs(repositoryFixtures)
 
 describe('Repository', () => {
+  const aliasQuery = client.prepareQuery({
+    query: gql`
+      query repository($alias: AliasInput!) {
+        uuid(alias: $alias) {
+          __typename
+          ... on AbstractRepository {
+            id
+          }
+        }
+      }
+    `,
+  })
+
   test.each(repositoryCases)('%s by id', async (_type, { repository }) => {
     given('UuidQuery').for(repository)
 
@@ -171,28 +178,11 @@ describe('Repository', () => {
           path: '/ü',
         })
 
-      await client
-        .prepareQuery({
-          query: gql`
-            query repository($alias: AliasInput!) {
-              uuid(alias: $alias) {
-                __typename
-                ... on AbstractRepository {
-                  id
-                }
-              }
-            }
-          `,
-        })
+      await aliasQuery
         .withVariables({
-          alias: {
-            instance: repository.instance,
-            path: '/%C3%BC',
-          },
+          alias: { instance: repository.instance, path: '/%C3%BC' },
         })
-        .shouldReturnData({
-          uuid: getTypenameAndId(repository),
-        })
+        .shouldReturnData({ uuid: getTypenameAndId(repository) })
     }
   )
 
@@ -208,38 +198,18 @@ describe('Repository', () => {
           path: '/path',
         })
 
-      await client
-        .prepareQuery({
-          query: gql`
-            query repository($alias: AliasInput!) {
-              uuid(alias: $alias) {
-                __typename
-                ... on AbstractRepository {
-                  id
-                }
-              }
-            }
-          `,
-        })
+      await aliasQuery
         .withVariables({
-          alias: {
-            instance: repository.instance,
-            path: `/${repository.id}`,
-          },
+          alias: { instance: repository.instance, path: `/${repository.id}` },
         })
-        .shouldReturnData({
-          uuid: getTypenameAndId(repository),
-        })
+        .shouldReturnData({ uuid: getTypenameAndId(repository) })
     }
   )
 
   test.each(repositoryCases)(
     '%s by id (w/ currentRevision)',
     async (type, { repository, revision }) => {
-      global.server.use(
-        createUuidHandler(repository),
-        createUuidHandler(revision)
-      )
+      given('UuidQuery').for(repository, revision)
 
       await client
         .prepareQuery({
@@ -332,32 +302,13 @@ describe('Repository', () => {
     (type, { repository, revision }) => {
       const revisedRevision = { ...revision, id: castToUuid(revision.id - 10) }
       const unrevisedRevision = { ...revision, id: nextUuid(revision.id) }
-
-      beforeEach(() => {
-        global.server.use(
-          createUuidHandler({
-            ...repository,
-            revisionIds: [
-              unrevisedRevision.id,
-              revisedRevision.id,
-              revision.id,
-            ],
-          }),
-
-          createUuidHandler(unrevisedRevision),
-          createUuidHandler(revision),
-          createUuidHandler(revisedRevision)
-        )
-      })
-
-      test('returns all revisions when no arguments are given', async () => {
-        await client
-          .prepareQuery({
-            query: gql`
-              query revisionsOfRepository($id: Int!) {
+      const revisionsQuery = client.prepareQuery({
+        query: gql`
+              query unrevisedRevisionsOfRepository($id: Int!, $unrevised: Boolean) {
                 uuid(id: $id) {
                   ... on ${type} {
-                    revisions {
+                    revisions (unrevised: $unrevised) {
+                      totalCount
                       nodes {
                         __typename
                         id
@@ -367,7 +318,26 @@ describe('Repository', () => {
                 }
               }
             `,
-          })
+      })
+
+      beforeEach(() => {
+        given('UuidQuery').for(
+          {
+            ...repository,
+            revisionIds: [
+              unrevisedRevision.id,
+              revisedRevision.id,
+              revision.id,
+            ],
+          },
+          unrevisedRevision,
+          revision,
+          revisedRevision
+        )
+      })
+
+      test('returns all revisions when no arguments are given', async () => {
+        await revisionsQuery
           .withVariables({ id: repository.id })
           .shouldReturnData({
             uuid: {
@@ -383,25 +353,8 @@ describe('Repository', () => {
       })
 
       test('returns all unrevised revisions when unrevised=true', async () => {
-        await client
-          .prepareQuery({
-            query: gql`
-              query unrevisedRevisionsOfRepository($id: Int!) {
-                uuid(id: $id) {
-                  ... on ${type} {
-                    revisions (unrevised: true) {
-                      totalCount
-                      nodes {
-                        __typename
-                        id
-                      }
-                    }
-                  }
-                }
-              }
-            `,
-          })
-          .withVariables({ id: repository.id })
+        await revisionsQuery
+          .withVariables({ id: repository.id, unrevised: true })
           .shouldReturnData({
             uuid: {
               revisions: {
@@ -413,51 +366,18 @@ describe('Repository', () => {
       })
 
       test('when unrevised=true trashed revisions are not included', async () => {
-        given('UuidQuery').for(trashed(unrevisedRevision))
+        given('UuidQuery').for({ ...unrevisedRevision, trashed: true })
 
-        await client
-          .prepareQuery({
-            query: gql`
-              query unrevisedRevisionsOfRepository($id: Int!) {
-                uuid(id: $id) {
-                  ... on ${type} {
-                    revisions (unrevised: true) {
-                      totalCount
-                      nodes {
-                        __typename
-                      }
-                    }
-                  }
-                }
-              }
-            `,
-          })
-          .withVariables({ id: repository.id })
+        await revisionsQuery
+          .withVariables({ id: repository.id, unrevised: true })
           .shouldReturnData({
             uuid: { revisions: { nodes: [], totalCount: 0 } },
           })
       })
 
       test('returns all revised revisions when unrevised=false', async () => {
-        await client
-          .prepareQuery({
-            query: gql`
-              query unrevisedRevisionsOfRepository($id: Int!) {
-                uuid(id: $id) {
-                  ... on ${type} {
-                    revisions (unrevised: false) {
-                      totalCount
-                      nodes {
-                        __typename
-                        id
-                      }
-                    }
-                  }
-                }
-              }
-            `,
-          })
-          .withVariables({ id: repository.id })
+        await revisionsQuery
+          .withVariables({ id: repository.id, unrevised: false })
           .shouldReturnData({
             uuid: {
               revisions: {
@@ -472,27 +392,10 @@ describe('Repository', () => {
       })
 
       test('when unrevised=true trashed revisions are not included', async () => {
-        given('UuidQuery').for(trashed(revisedRevision))
+        given('UuidQuery').for({ ...revisedRevision, trashed: true })
 
-        await client
-          .prepareQuery({
-            query: gql`
-              query unrevisedRevisionsOfRepository($id: Int!) {
-                uuid(id: $id) {
-                  ... on ${type} {
-                    revisions (unrevised: false) {
-                      totalCount
-                      nodes {
-                        __typename
-                        id
-                      }
-                    }
-                  }
-                }
-              }
-            `,
-          })
-          .withVariables({ id: repository.id })
+        await revisionsQuery
+          .withVariables({ id: repository.id, unrevised: false })
           .shouldReturnData({
             uuid: {
               revisions: {
@@ -510,8 +413,7 @@ describe('Revision', () => {
   test.each(repositoryCases)(
     '%s by id (w/ author)',
     async (_type, { revision }) => {
-      given('UuidQuery').for(revision)
-      given('UuidQuery').for(user)
+      given('UuidQuery').for(revision, user)
 
       await client
         .prepareQuery({
@@ -529,19 +431,14 @@ describe('Revision', () => {
           `,
         })
         .withVariables(revision)
-        .shouldReturnData({
-          uuid: {
-            author: getTypenameAndId(user),
-          },
-        })
+        .shouldReturnData({ uuid: { author: getTypenameAndId(user) } })
     }
   )
 
   test.each(repositoryCases)(
     '%s by id (w/ repository)',
     async (_type, { repository, revision, revisionType }) => {
-      given('UuidQuery').for(repository)
-      given('UuidQuery').for(revision)
+      given('UuidQuery').for(repository, revision)
 
       await client
         .prepareQuery({
@@ -560,14 +457,8 @@ describe('Revision', () => {
         })
         .withVariables(revision)
         .shouldReturnData({
-          uuid: {
-            repository: getTypenameAndId(repository),
-          },
+          uuid: { repository: getTypenameAndId(repository) },
         })
     }
   )
 })
-
-function trashed(revision: Model<'AbstractRevision'>) {
-  return { ...revision, trashed: true }
-}
