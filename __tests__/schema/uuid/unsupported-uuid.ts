@@ -21,19 +21,17 @@
  */
 import { gql } from 'apollo-server'
 
-import { createUuidHandler, Client } from '../../__utils__'
+import { given, Client } from '../../__utils__'
 import { castToUuid } from '~/model/decoder'
 
 beforeEach(() => {
-  global.server.use(
-    createUuidHandler({
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error We assume here that we get an invalid type name
-      __typename: 'MathPuzzle',
-      id: castToUuid(146944),
-      trashed: false,
-    })
-  )
+  given('UuidQuery').for({
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error We assume here that we get an invalid type name
+    __typename: 'MathPuzzle',
+    id: castToUuid(146944),
+    trashed: false,
+  })
 })
 
 describe('Unsupported UUID', () => {
@@ -45,7 +43,6 @@ describe('Unsupported UUID', () => {
             uuid(id: $id) {
               __typename
               id
-              trashed
             }
           }
         `,
