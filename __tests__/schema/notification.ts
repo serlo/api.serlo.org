@@ -21,6 +21,7 @@
  */
 import { gql } from 'apollo-server'
 import R from 'ramda'
+import { isErrored } from 'stream'
 
 import {
   article,
@@ -65,15 +66,12 @@ import {
   Client,
   given,
 } from '../__utils__'
+import { Service } from '~/internals/authentication'
 import { Payload } from '~/internals/model'
 import { Instance } from '~/types'
-import { Service } from '~/internals/authentication'
-import { isErrored } from 'stream'
 
 let client: Client
 describe('notifications', () => {
-  
-
   const notificationsQuery = {
     query: gql`
       query notifications($unread: Boolean) {
@@ -1873,16 +1871,19 @@ describe('notificationEvent', () => {
     })
 
     test('by id', async () => {
-      await client.prepareQuery({query: gql`
-          query notificationEvent($id: Int!) {
-            notificationEvent(id: $id) {
-              __typename
-              id
-              instance
-              date
+      await client
+        .prepareQuery({
+          query: gql`
+            query notificationEvent($id: Int!) {
+              notificationEvent(id: $id) {
+                __typename
+                id
+                instance
+                date
+              }
             }
-          }
-        `})
+          `,
+        })
         .withVariables({ id: 1337 })
         .shouldReturnData({
           notificationEvent: null,
@@ -1899,16 +1900,19 @@ describe('notificationEvent', () => {
       })
     )
 
-    await client.prepareQuery({query: gql`
-        query notificationEvent($id: Int!) {
-          notificationEvent(id: $id) {
-            ... on CheckoutRevisionNotificationEvent {
-              __typename
-              id
+    await client
+      .prepareQuery({
+        query: gql`
+          query notificationEvent($id: Int!) {
+            notificationEvent(id: $id) {
+              ... on CheckoutRevisionNotificationEvent {
+                __typename
+                id
+              }
             }
           }
-        }
-      `})
+        `,
+      })
       .withVariables({ id: 1234567 })
       .shouldReturnData({ notificationEvent: null })
   })
