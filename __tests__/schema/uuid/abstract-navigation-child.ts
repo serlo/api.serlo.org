@@ -34,97 +34,19 @@ import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model'
 import { Instance } from '~/types'
 
-function createSetNavigationMutation(
-  navigation: Payload<'serlo', 'getNavigationPayload'>
-) {
-  return {
-    mutation: {
-      query: gql`
-        mutation setCache($input: CacheSetInput!) {
-          _cache {
-            set(input: $input) {
-              success
-            }
-          }
-        }
-      `,
-    },
-    variables: {
-      input: {
-        key: `${navigation.instance}.serlo.org/api/navigation`,
-        value: navigation,
-      },
-    },
-  }
-}
+let client: Client
 
-function createSetPageMutation(page: Model<'Page'>) {
-  return {
-    mutation: {
-      query: gql`
-        mutation setCache($input: CacheSetInput!) {
-          _cache {
-            set(input: $input) {
-              success
-            }
-          }
-        }
-      `,
-    },
-    variables: {
-      input: {
-        key: `de.serlo.org/api/uuid/${page.id}`,
-        value: page,
-      },
-    },
-  }
-}
-
-function createSetTaxonomyTermMutation(taxonomyTerm: Model<'TaxonomyTerm'>) {
-  return {
-    mutation: {
-      query: gql`
-        mutation setCache($input: CacheSetInput!) {
-          _cache {
-            set(input: $input) {
-              success
-            }
-          }
-        }
-      `,
-    },
-    variables: {
-      input: {
-        key: `de.serlo.org/api/uuid/${taxonomyTerm.id}`,
-        value: taxonomyTerm,
-      },
-    },
-  }
-}
+beforeEach(() => {
+  client = new Client({ service: Service.Serlo })
+})
 
 describe('Page', () => {
   test('Without navigation', async () => {
-    const client = new Client({ service: Service.Serlo })
-
-    await client
-      .prepareQuery(createSetPageMutation(subjectHomepage).mutation)
-      .withVariables(createSetPageMutation(subjectHomepage).variables)
-      .execute()
-
-    await client
-      .prepareQuery(
-        createSetNavigationMutation({
-          instance: Instance.De,
-          data: [],
-        }).mutation
-      )
-      .withVariables(
-        createSetNavigationMutation({
-          instance: Instance.De,
-          data: [],
-        }).variables
-      )
-      .execute()
+    await createSetPageMutation(subjectHomepage).execute()
+    await createSetNavigationMutation({
+      instance: Instance.De,
+      data: [],
+    }).execute()
 
     await client
       .prepareQuery({
@@ -148,25 +70,12 @@ describe('Page', () => {
         `,
       })
       .withVariables({ id: subjectHomepage.id })
-      .shouldReturnData({
-        uuid: {
-          navigation: null,
-        },
-      })
+      .shouldReturnData({ uuid: { navigation: null } })
   })
 
   test('Subject Homepage', async () => {
-    const client = new Client({ service: Service.Serlo })
-
-    await client
-      .prepareQuery(createSetPageMutation(subjectHomepage).mutation)
-      .withVariables(createSetPageMutation(subjectHomepage).variables)
-      .execute()
-
-    await client
-      .prepareQuery(createSetNavigationMutation(navigation).mutation)
-      .withVariables(createSetNavigationMutation(navigation).variables)
-      .execute()
+    await createSetPageMutation(subjectHomepage).execute()
+    await createSetNavigationMutation(navigation).execute()
 
     await client
       .prepareQuery({
@@ -209,70 +118,34 @@ describe('Page', () => {
   })
 
   test('Dropdown', async () => {
-    const client = new Client({ service: Service.Serlo })
-
     const page = {
       ...subjectHomepage,
       id: nextUuid(subjectHomepage.id),
       alias: castToAlias('/page'),
     }
 
-    await client
-      .prepareQuery(createSetPageMutation(subjectHomepage).mutation)
-      .withVariables(createSetPageMutation(subjectHomepage).variables)
-      .execute()
-
-    await client
-      .prepareQuery(createSetPageMutation(page).mutation)
-      .withVariables(createSetPageMutation(page).variables)
-      .execute()
-
-    await client
-      .prepareQuery(
-        createSetNavigationMutation({
-          instance: Instance.De,
-          data: [
+    await createSetPageMutation(subjectHomepage).execute()
+    await createSetPageMutation(page).execute()
+    await createSetNavigationMutation({
+      instance: Instance.De,
+      data: [
+        {
+          label: 'Mathematik',
+          id: subjectHomepage.id,
+          children: [
             {
-              label: 'Mathematik',
-              id: subjectHomepage.id,
+              label: 'Dropdown',
               children: [
                 {
-                  label: 'Dropdown',
-                  children: [
-                    {
-                      label: 'Page',
-                      id: page.id,
-                    },
-                  ],
+                  label: 'Page',
+                  id: page.id,
                 },
               ],
             },
           ],
-        }).mutation
-      )
-      .withVariables(
-        createSetNavigationMutation({
-          instance: Instance.De,
-          data: [
-            {
-              label: 'Mathematik',
-              id: subjectHomepage.id,
-              children: [
-                {
-                  label: 'Dropdown',
-                  children: [
-                    {
-                      label: 'Page',
-                      id: page.id,
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        }).variables
-      )
-      .execute()
+        },
+      ],
+    }).execute()
 
     await client
       .prepareQuery({
@@ -327,34 +200,13 @@ describe('Page', () => {
 
 describe('Taxonomy Term', () => {
   test('Without navigation', async () => {
-    const client = new Client({ service: Service.Serlo })
+    await createSetTaxonomyTermMutation(taxonomyTermRoot).execute()
+    await createSetTaxonomyTermMutation(taxonomyTermSubject).execute()
 
-    await client
-      .prepareQuery(createSetTaxonomyTermMutation(taxonomyTermRoot).mutation)
-      .withVariables(createSetTaxonomyTermMutation(taxonomyTermRoot).variables)
-      .execute()
-
-    await client
-      .prepareQuery(createSetTaxonomyTermMutation(taxonomyTermSubject).mutation)
-      .withVariables(
-        createSetTaxonomyTermMutation(taxonomyTermSubject).variables
-      )
-      .execute()
-
-    await client
-      .prepareQuery(
-        createSetNavigationMutation({
-          instance: Instance.De,
-          data: [],
-        }).mutation
-      )
-      .withVariables(
-        createSetNavigationMutation({
-          instance: Instance.De,
-          data: [],
-        }).variables
-      )
-      .execute()
+    await createSetNavigationMutation({
+      instance: Instance.De,
+      data: [],
+    }).execute()
 
     await client
       .prepareQuery({
@@ -378,37 +230,14 @@ describe('Taxonomy Term', () => {
         `,
       })
       .withVariables({ id: taxonomyTermSubject.id })
-      .shouldReturnData({
-        uuid: {
-          navigation: null,
-        },
-      })
+      .shouldReturnData({ uuid: { navigation: null } })
   })
 
   test('Subject', async () => {
-    const client = new Client({ service: Service.Serlo })
-
-    await client
-      .prepareQuery(createSetPageMutation(subjectHomepage).mutation)
-      .withVariables(createSetPageMutation(subjectHomepage).variables)
-      .execute()
-
-    await client
-      .prepareQuery(createSetTaxonomyTermMutation(taxonomyTermRoot).mutation)
-      .withVariables(createSetTaxonomyTermMutation(taxonomyTermRoot).variables)
-      .execute()
-
-    await client
-      .prepareQuery(createSetTaxonomyTermMutation(taxonomyTermSubject).mutation)
-      .withVariables(
-        createSetTaxonomyTermMutation(taxonomyTermSubject).variables
-      )
-      .execute()
-
-    await client
-      .prepareQuery(createSetNavigationMutation(navigation).mutation)
-      .withVariables(createSetNavigationMutation(navigation).variables)
-      .execute()
+    await createSetPageMutation(subjectHomepage).execute()
+    await createSetTaxonomyTermMutation(taxonomyTermRoot).execute()
+    await createSetTaxonomyTermMutation(taxonomyTermSubject).execute()
+    await createSetNavigationMutation(navigation).execute()
 
     await client
       .prepareQuery({
@@ -456,38 +285,11 @@ describe('Taxonomy Term', () => {
   })
 
   test('Curriculum Topic', async () => {
-    const client = new Client({ service: Service.Serlo })
-
-    await client
-      .prepareQuery(createSetPageMutation(subjectHomepage).mutation)
-      .withVariables(createSetPageMutation(subjectHomepage).variables)
-      .execute()
-
-    await client
-      .prepareQuery(createSetTaxonomyTermMutation(taxonomyTermRoot).mutation)
-      .withVariables(createSetTaxonomyTermMutation(taxonomyTermRoot).variables)
-      .execute()
-
-    await client
-      .prepareQuery(createSetTaxonomyTermMutation(taxonomyTermSubject).mutation)
-      .withVariables(
-        createSetTaxonomyTermMutation(taxonomyTermSubject).variables
-      )
-      .execute()
-
-    await client
-      .prepareQuery(
-        createSetTaxonomyTermMutation(taxonomyTermCurriculumTopic).mutation
-      )
-      .withVariables(
-        createSetTaxonomyTermMutation(taxonomyTermCurriculumTopic).variables
-      )
-      .execute()
-
-    await client
-      .prepareQuery(createSetNavigationMutation(navigation).mutation)
-      .withVariables(createSetNavigationMutation(navigation).variables)
-      .execute()
+    await createSetPageMutation(subjectHomepage).execute()
+    await createSetTaxonomyTermMutation(taxonomyTermRoot).execute()
+    await createSetTaxonomyTermMutation(taxonomyTermSubject).execute()
+    await createSetTaxonomyTermMutation(taxonomyTermCurriculumTopic).execute()
+    await createSetNavigationMutation(navigation).execute()
 
     await client
       .prepareQuery({
@@ -539,3 +341,62 @@ describe('Taxonomy Term', () => {
       })
   })
 })
+
+function createSetNavigationMutation(
+  navigation: Payload<'serlo', 'getNavigationPayload'>
+) {
+  return client
+    .prepareQuery({
+      query: gql`
+        mutation setCache($input: CacheSetInput!) {
+          _cache {
+            set(input: $input) {
+              success
+            }
+          }
+        }
+      `,
+    })
+    .withInput({
+      key: `${navigation.instance}.serlo.org/api/navigation`,
+      value: navigation,
+    })
+}
+
+function createSetPageMutation(page: Model<'Page'>) {
+  return client
+    .prepareQuery({
+      query: gql`
+        mutation setCache($input: CacheSetInput!) {
+          _cache {
+            set(input: $input) {
+              success
+            }
+          }
+        }
+      `,
+    })
+    .withInput({
+      key: `de.serlo.org/api/uuid/${page.id}`,
+      value: page,
+    })
+}
+
+function createSetTaxonomyTermMutation(taxonomyTerm: Model<'TaxonomyTerm'>) {
+  return client
+    .prepareQuery({
+      query: gql`
+        mutation setCache($input: CacheSetInput!) {
+          _cache {
+            set(input: $input) {
+              success
+            }
+          }
+        }
+      `,
+    })
+    .withInput({
+      key: `de.serlo.org/api/uuid/${taxonomyTerm.id}`,
+      value: taxonomyTerm,
+    })
+}
