@@ -63,12 +63,6 @@ export async function applyGraphQLMiddleware({
   app.use(json({ limit: '2mb' }))
   app.use(
     server.getMiddleware({
-      cors: {
-        origin: (origin, callback) => {
-          callback(null, origin)
-        },
-        credentials: true,
-      },
       path: '/graphql',
       onHealthCheck: async () => {
         await swrQueue.healthy()
