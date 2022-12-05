@@ -21,21 +21,36 @@
  */
 
 import { Session } from '@ory/client'
+import { ForbiddenError } from 'apollo-server'
 
 import { captureErrorEvent } from '~/internals/error-event'
-import { Mutations, createNamespace } from '~/internals/graphql'
+import {
+  Mutations,
+  createNamespace,
+  assertUserIsAuthenticated,
+} from '~/internals/graphql'
 
 export const resolvers: Mutations<'oauth'> = {
   Mutation: {
     oauth: createNamespace(),
   },
   OauthMutation: {
-    async acceptLogin(_parent, { input }, { dataSources }) {
+    async acceptLogin(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
       const { challenge, session } = input
-      const { hydra } = dataSources.model.authServices
+
       const legacyId = (
         session as { identity: { metadata_public: { legacy_id: number } } }
       ).identity.metadata_public.legacy_id
+
+      if (legacyId !== userId) {
+        throw new ForbiddenError(
+          'OAuth: You can only accept login for yourself'
+        )
+      }
+
+      const { hydra } = dataSources.model.authServices
 
       return await hydra
         .getLoginRequest(challenge)
@@ -70,20 +85,29 @@ export const resolvers: Mutations<'oauth'> = {
           )
         })
     },
-    async acceptConsent(_parent, { input }, { dataSources }) {
+    async acceptConsent(_parent, { input }, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
       const { challenge, session } = input as {
         challenge: string
         session: Session
       }
+
+      const legacyId = (
+        session as { identity: { metadata_public: { legacy_id: number } } }
+      ).identity.metadata_public.legacy_id
+
+      if (legacyId !== userId) {
+        throw new ForbiddenError(
+          'OAuth: You can only accept consent for yourself'
+        )
+      }
+
       const { username, email } = session.identity.traits as {
         username: string
         email: string
       }
       const { hydra } = dataSources.model.authServices
-
-      const legacyId = (
-        session as { identity: { metadata_public: { legacy_id: number } } }
-      ).identity.metadata_public.legacy_id
 
       return hydra
         .getConsentRequest(challenge)
