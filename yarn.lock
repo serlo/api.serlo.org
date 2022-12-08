@@ -4420,8 +4420,8 @@ __metadata:
     lerna: ^4.0.0
     msw: ^0.36.8
     npm-run-all: ^4.1.5
-    prettier: ^2.7.1
-    prettier-plugin-packagejson: ^2.2.18
+    prettier: ^2.8.1
+    prettier-plugin-packagejson: ^2.3.0
     prettier-plugin-sh: ^0.12.8
     rimraf: ^3.0.2
     ts-jest: ^27.1.5
@@ -16077,14 +16077,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier-plugin-packagejson@npm:^2.2.18":
-  version: 2.2.18
-  resolution: "prettier-plugin-packagejson@npm:2.2.18"
+"prettier-plugin-packagejson@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "prettier-plugin-packagejson@npm:2.3.0"
   dependencies:
     sort-package-json: 1.57.0
   peerDependencies:
     prettier: ">= 1.16.0"
-  checksum: aee11632b4a75d357cad0e25e537491580e0d4bd9ee54a1ad68f3363e0e4e0204450fcd405368737ce92edfde568e5ac80108ab5e6a4e415bebc6af816fcf06b
+  peerDependenciesMeta:
+    prettier:
+      optional: true
+  checksum: fbcf81cedcfd030440c106d502f121deb9acff2d50c2173ec202eccea66c7de03618eafe3d2a4011b73d76d7d41355edcb2fc11b3030e02a1f2ade91220f4a8a
   languageName: node
   linkType: hard
 
@@ -16119,12 +16122,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2.7.1":
-  version: 2.7.1
-  resolution: "prettier@npm:2.7.1"
+"prettier@npm:^2.8.1":
+  version: 2.8.1
+  resolution: "prettier@npm:2.8.1"
   bin:
     prettier: bin-prettier.js
-  checksum: 55a4409182260866ab31284d929b3cb961e5fdb91fe0d2e099dac92eaecec890f36e524b4c19e6ceae839c99c6d7195817579cdffc8e2c80da0cb794463a748b
+  checksum: 4f21a0f1269f76fb36f54e9a8a1ea4c11e27478958bf860661fb4b6d7ac69aac1581f8724fa98ea3585e56d42a2ea317a17ff6e3324f40cb11ff9e20b73785cc
   languageName: node
   linkType: hard
 
