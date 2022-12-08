@@ -83,7 +83,12 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       return resolveConnection({
         nodes: threads,
         payload: { ...input, first, after },
-        createCursor: (node) => node.commentPayloads[0].date,
+        createCursor: (node) => {
+          const comments = node.commentPayloads
+          const latestComment = comments[comments.length - 1]
+
+          return latestComment.date
+        },
       })
     },
   },
