@@ -1422,6 +1422,12 @@ async function exec(): Promise<void> {
 
         fixed: ['Fix sorting in `allThreads` query by last reacted #739'],
       },
+      {
+        tagName: 'v0.47.2',
+        date: '2022-12-07',
+
+        fixed: ['Fix pagination in `allThreads`'],
+      },
     ],
   })
 
