@@ -44,8 +44,6 @@ export const resolvers: Mutations<'oauth'> = {
             .acceptLoginRequest(challenge, {
               subject: String(legacyId),
               context: session as Session,
-              remember: true,
-              remember_for: 60 * 60,
             })
             .then(({ data: body }) => {
               return { success: true, redirectUri: body.redirect_to }
