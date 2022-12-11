@@ -19,24 +19,13 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
 import { exercise, groupedExercise, solution } from '../../../__fixtures__'
-import {
-  assertSuccessfulGraphQLQuery,
-  LegacyClient,
-  createTestClient,
-  createUuidHandler,
-  getTypenameAndId,
-} from '../../__utils__'
+import { getTypenameAndId, given, Client } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { EntityType } from '~/model/decoder'
-
-let client: LegacyClient
-
-beforeEach(() => {
-  client = createTestClient()
-})
 
 const exerciseFixtures: Record<string, Model<'AbstractExercise'>> = {
   [EntityType.Exercise]: exercise,
@@ -45,22 +34,23 @@ const exerciseFixtures: Record<string, Model<'AbstractExercise'>> = {
 const exerciseCases = R.toPairs(exerciseFixtures)
 
 test.each(exerciseCases)('%s by id (w/ solution)', async (_type, entity) => {
-  global.server.use(createUuidHandler(entity), createUuidHandler(solution))
-  await assertSuccessfulGraphQLQuery({
-    query: `
-      query solution($id: Int!) {
-        uuid(id: $id) {
-          ... on AbstractExercise {
-            solution {
-              __typename
-              id
+  given('UuidQuery').for(entity, solution)
+
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query solution($id: Int!) {
+          uuid(id: $id) {
+            ... on AbstractExercise {
+              solution {
+                __typename
+                id
+              }
             }
           }
         }
-      }
-    `,
-    variables: { id: entity.id },
-    data: { uuid: { solution: getTypenameAndId(solution) } },
-    client,
-  })
+      `,
+    })
+    .withVariables({ id: entity.id })
+    .shouldReturnData({ uuid: { solution: getTypenameAndId(solution) } })
 })
