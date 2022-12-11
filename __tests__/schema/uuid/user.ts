@@ -33,12 +33,7 @@ import {
 import {
   assertErrorEvent,
   assertNoErrorEvents,
-  assertSuccessfulGraphQLQuery,
-  LegacyClient,
   createChatUsersInfoHandler,
-  createMessageHandler,
-  createTestClient,
-  createUuidHandler,
   getTypenameAndId,
   givenSpreadheetApi,
   givenSpreadsheet,
@@ -54,39 +49,39 @@ import { MajorDimension } from '~/model'
 import { castToUuid } from '~/model/decoder'
 import { Instance } from '~/types'
 
-let legacyClient: LegacyClient
+const client = new Client()
 
 beforeEach(() => {
-  legacyClient = createTestClient()
-
   given('UuidQuery').for(user)
 })
 
 describe('User', () => {
   test('by alias (/user/profile/:id)', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query user($alias: AliasInput!) {
-          uuid(alias: $alias) {
-            __typename
-            ... on User {
-              id
-              trashed
-              username
-              date
-              lastLogin
-              description
+    await client
+      .prepareQuery({
+        query: gql`
+          query user($alias: AliasInput!) {
+            uuid(alias: $alias) {
+              __typename
+              ... on User {
+                id
+                trashed
+                username
+                date
+                lastLogin
+                description
+              }
             }
           }
-        }
-      `,
-      variables: {
+        `,
+      })
+      .withVariables({
         alias: {
           instance: Instance.De,
           path: `/user/profile/${user.id}`,
         },
-      },
-      data: {
+      })
+      .shouldReturnData({
         uuid: R.pick(
           [
             '__typename',
@@ -99,149 +94,140 @@ describe('User', () => {
           ],
           user
         ),
-      },
-      client: legacyClient,
-    })
+      })
   })
 
   test('by alias /user/profile/:id returns null when user does not exist', async () => {
-    global.server.use(
-      createMessageHandler({
-        message: {
-          type: 'UuidQuery',
-          payload: { id: user.id },
-        },
-        body: null,
-      })
-    )
+    given('UuidQuery').withPayload({ id: user.id }).returnsNotFound()
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query user($alias: AliasInput!) {
-          uuid(alias: $alias) {
-            __typename
+    await client
+      .prepareQuery({
+        query: gql`
+          query user($alias: AliasInput!) {
+            uuid(alias: $alias) {
+              __typename
+            }
           }
-        }
-      `,
-      variables: {
+        `,
+      })
+      .withVariables({
         alias: {
           instance: Instance.De,
           path: `/user/profile/${user.id}`,
         },
-      },
-      data: { uuid: null },
-      client: legacyClient,
-    })
+      })
+      .shouldReturnData({ uuid: null })
   })
 
   test('by alias /user/profile/:id returns null when uuid :id is no user', async () => {
-    global.server.use(createUuidHandler(article))
+    given('UuidQuery').for(article)
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query user($alias: AliasInput!) {
-          uuid(alias: $alias) {
-            __typename
+    await client
+      .prepareQuery({
+        query: gql`
+          query user($alias: AliasInput!) {
+            uuid(alias: $alias) {
+              __typename
+            }
           }
-        }
-      `,
-      variables: {
+        `,
+      })
+      .withVariables({
         alias: {
           instance: Instance.De,
           path: `/user/profile/${article.id}`,
         },
-      },
-      data: { uuid: null },
-      client: legacyClient,
-    })
+      })
+      .shouldReturnData({ uuid: null })
   })
 
   test('by alias (/:id)', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query user($alias: AliasInput!) {
-          uuid(alias: $alias) {
-            __typename
-            ... on User {
-              id
+    await client
+      .prepareQuery({
+        query: gql`
+          query user($alias: AliasInput!) {
+            uuid(alias: $alias) {
+              __typename
+              ... on User {
+                id
+              }
             }
           }
-        }
-      `,
-      variables: {
+        `,
+      })
+      .withVariables({
         alias: {
           instance: Instance.De,
           path: `/${user.id}`,
         },
-      },
-      data: {
+      })
+      .shouldReturnData({
         uuid: getTypenameAndId(user),
-      },
-      client: legacyClient,
-    })
+      })
   })
 
   test('by id', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query user($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on User {
-              id
+    await client
+      .prepareQuery({
+        query: gql`
+          query user($id: Int!) {
+            uuid(id: $id) {
+              __typename
+              ... on User {
+                id
+              }
             }
           }
-        }
-      `,
-      variables: user,
-      data: { uuid: getTypenameAndId(user) },
-      client: legacyClient,
-    })
+        `,
+      })
+      .withVariables(user)
+      .shouldReturnData({ uuid: getTypenameAndId(user) })
   })
 
   test('property "imageUrl"', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query user($id: Int!) {
-          uuid(id: $id) {
-            ... on User {
-              imageUrl
+    await client
+      .prepareQuery({
+        query: gql`
+          query user($id: Int!) {
+            uuid(id: $id) {
+              ... on User {
+                imageUrl
+              }
             }
           }
-        }
-      `,
-      variables: user,
-      data: {
+        `,
+      })
+      .withVariables(user)
+      .shouldReturnData({
         uuid: { imageUrl: 'https://community.serlo.org/avatar/alpha' },
-      },
-      client: legacyClient,
-    })
+      })
   })
 
   test('property "roles"', async () => {
-    global.server.use(
-      createUuidHandler({
-        ...user,
-        roles: ['login', 'en_moderator', 'de_reviewer'],
-      })
-    )
+    given('UuidQuery').for({
+      ...user,
+      roles: ['login', 'en_moderator', 'de_reviewer'],
+    })
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query ($id: Int) {
-          uuid(id: $id) {
-            ... on User {
-              roles {
-                nodes {
-                  role
-                  scope
+    await client
+      .prepareQuery({
+        query: gql`
+          query ($id: Int) {
+            uuid(id: $id) {
+              ... on User {
+                roles {
+                  nodes {
+                    role
+                    scope
+                  }
                 }
               }
             }
           }
-        }
-      `,
-      data: {
+        `,
+      })
+      .withVariables({ id: user.id })
+      .shouldReturnData({
         uuid: {
           roles: {
             nodes: [
@@ -251,10 +237,7 @@ describe('User', () => {
             ],
           },
         },
-      },
-      variables: { id: user.id },
-      client: legacyClient,
-    })
+      })
   })
 
   test('property "isNewAuthor"', async () => {
@@ -346,23 +329,19 @@ describe('User', () => {
     test('by id (w/ activeDonor when user is an active donor)', async () => {
       givenActiveDonors([user])
 
-      await assertSuccessfulGraphQLQuery({
-        query,
-        variables: { id: user.id },
-        data: { uuid: { isActiveDonor: true } },
-        client: legacyClient,
-      })
+      await client
+        .prepareQuery({ query })
+        .withVariables({ id: user.id })
+        .shouldReturnData({ uuid: { isActiveDonor: true } })
     })
 
     test('by id (w/ activeDonor when user is not an active donor', async () => {
       givenActiveDonors([])
 
-      await assertSuccessfulGraphQLQuery({
-        query,
-        variables: { id: user.id },
-        data: { uuid: { isActiveDonor: false } },
-        client: legacyClient,
-      })
+      await client
+        .prepareQuery({ query })
+        .withVariables({ id: user.id })
+        .shouldReturnData({ uuid: { isActiveDonor: false } })
     })
   })
 
@@ -457,22 +436,22 @@ describe('User', () => {
       motivation: string | null
       username?: string
     }) {
-      global.server.use(createUuidHandler({ ...user, username }))
+      given('UuidQuery').for({ ...user, username })
 
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query ($id: Int!) {
-            uuid(id: $id) {
-              ... on User {
-                motivation
+      await client
+        .prepareQuery({
+          query: gql`
+            query ($id: Int!) {
+              uuid(id: $id) {
+                ... on User {
+                  motivation
+                }
               }
             }
-          }
-        `,
-        variables: { id: user.id },
-        data: { uuid: { motivation } },
-        client: legacyClient,
-      })
+          `,
+        })
+        .withVariables({ id: user.id })
+        .shouldReturnData({ uuid: { motivation } })
     }
   })
 
@@ -482,20 +461,22 @@ describe('User', () => {
         createChatUsersInfoHandler({ username: user.username, success: true })
       )
 
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query user($id: Int!) {
-            uuid(id: $id) {
-              ... on User {
-                chatUrl
+      await client
+        .prepareQuery({
+          query: gql`
+            query user($id: Int!) {
+              uuid(id: $id) {
+                ... on User {
+                  chatUrl
+                }
               }
             }
-          }
-        `,
-        variables: user,
-        data: { uuid: { chatUrl: 'https://community.serlo.org/direct/alpha' } },
-        client: legacyClient,
-      })
+          `,
+        })
+        .withVariables(user)
+        .shouldReturnData({
+          uuid: { chatUrl: 'https://community.serlo.org/direct/alpha' },
+        })
     })
 
     test('when user is registered at community.serlo.org', async () => {
@@ -503,20 +484,20 @@ describe('User', () => {
         createChatUsersInfoHandler({ username: user.username, success: false })
       )
 
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query user($id: Int!) {
-            uuid(id: $id) {
-              ... on User {
-                chatUrl
+      await client
+        .prepareQuery({
+          query: gql`
+            query user($id: Int!) {
+              uuid(id: $id) {
+                ... on User {
+                  chatUrl
+                }
               }
             }
-          }
-        `,
-        variables: user,
-        data: { uuid: { chatUrl: null } },
-        client: legacyClient,
-      })
+          `,
+        })
+        .withVariables(user)
+        .shouldReturnData({ uuid: { chatUrl: null } })
     })
   })
 
@@ -550,29 +531,29 @@ describe('User', () => {
     )
     given('UnrevisedEntitiesQuery').for(articleByUser, articleByAnotherUser)
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query user($id: Int!) {
-          uuid(id: $id) {
-            ... on User {
-              unrevisedEntities {
-                nodes {
-                  id
-                  __typename
+    await client
+      .prepareQuery({
+        query: gql`
+          query user($id: Int!) {
+            uuid(id: $id) {
+              ... on User {
+                unrevisedEntities {
+                  nodes {
+                    id
+                    __typename
+                  }
                 }
               }
             }
           }
-        }
-      `,
-      variables: { id: user.id },
-      data: {
+        `,
+      })
+      .withVariables({ id: user.id })
+      .shouldReturnData({
         uuid: {
           unrevisedEntities: { nodes: [getTypenameAndId(articleByUser)] },
         },
-      },
-      client: legacyClient,
-    })
+      })
   })
 })
 
@@ -614,14 +595,14 @@ describe('endpoint activeReviewers', () => {
 describe('endpoint activeDonors', () => {
   test('returns list of users', async () => {
     givenActiveDonors([user, user2])
-    global.server.use(createUuidHandler(user2))
+    given('UuidQuery').for(user2)
 
     await expectUserIds({ endpoint: 'activeDonors', ids: [user.id, user2.id] })
   })
 
   test('returned list only contains user', async () => {
     givenActiveDonors([user, article])
-    global.server.use(createUuidHandler(article))
+    given('UuidQuery').for(article)
 
     await expectUserIds({ endpoint: 'activeDonors', ids: [user.id] })
     await assertErrorEvent({ errorContext: { invalidElements: [article] } })
