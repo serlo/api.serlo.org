@@ -1428,6 +1428,10 @@ async function exec(): Promise<void> {
 
         fixed: ['Fix pagination in `allThreads`'],
       },
+      {
+        tagName: 'v0.48.0-stable.0',
+        date: '2022-12-11',
+      },
     ],
   })
 
