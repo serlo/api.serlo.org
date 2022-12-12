@@ -40,7 +40,7 @@ export function applyKratosMiddleware({
 function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
   let legacyUserId: number
 
-  return async (req, res) => {
+  return (async (req, res) => {
     let referrer = req.headers.referrer || req.headers.referer
     // remove instance if it has, so that v.g. de.serlo.org becomes serlo.org
     referrer =
@@ -104,5 +104,5 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
 
       res.statusCode = 400
     }
-  }
+  }) as RequestHandler
 }
