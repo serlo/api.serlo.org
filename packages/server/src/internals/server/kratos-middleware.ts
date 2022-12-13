@@ -50,12 +50,12 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
 
     if (process.env.ENVIRONMENT === 'production' && referrer !== 'serlo.org') {
       res.statusCode = 403
-      res.end('Bots will not pass')
+      return res.end('Bots will not pass')
     }
 
     if (req.headers['x-kratos-key'] !== process.env.SERVER_KRATOS_SECRET) {
       res.statusCode = 401
-      res.end('Kratos secret mismatch')
+      return res.end('Kratos secret mismatch')
     }
 
     const { userId } = req.body as { userId: string }
