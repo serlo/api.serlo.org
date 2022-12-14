@@ -22,6 +22,7 @@
 import { IdentityState, V0alpha2Api } from '@ory/client'
 import { Express, RequestHandler } from 'express'
 
+import { captureErrorEvent } from '../error-event'
 import { DatabaseLayer } from '~/model'
 
 const basePath = '/kratos'
@@ -105,10 +106,13 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
         })
       )
     } catch (error: unknown) {
-      // eslint-disable-next-line no-console
-      console.error(error)
+      captureErrorEvent({
+        error: new Error('Could not synchronize user registration'),
+        errorContext: { userId, error },
+      })
 
-      res.statusCode = 400
+      res.statusCode = 500
+      return res.end('Internal error in after hook')
     }
   }) as RequestHandler
 }
