@@ -59,6 +59,12 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
     }
 
     const { userId } = req.body as { userId: string }
+
+    if (!userId) {
+      res.statusCode = 400
+      return res.end('Identity id has to be provided')
+    }
+
     try {
       const kratosUser = (await kratos.adminGetIdentity(userId)).data
       const { username, email } = kratosUser.traits as {
