@@ -25,6 +25,7 @@
     "format": "npm-run-all -c \"format:*\"",
     "format:eslint": "yarn _eslint --fix",
     "format:prettier": "yarn _prettier --write",
+    "format:prettier:staged": "prettier --write $(git diff --name-only --cached)",
     "license": "ts-node-esm scripts/license-headers",
     "lint": "npm-run-all --parallel lint:prettier lint:tsc lint:eslint",
     "lint:eslint": "yarn _eslint",
