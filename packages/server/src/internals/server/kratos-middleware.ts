@@ -47,7 +47,7 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
       return
     }
 
-    if (!assertBodyContainsUserId(request.body)) {
+    if (!t.type({ userId: t.string }).is(request.body)) {
       response.statusCode = 400
       response.end('Valid identity id has to be provided')
       return
@@ -105,11 +105,4 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
       return response.end('Internal error in after hook')
     }
   }) as RequestHandler
-
-  function assertBodyContainsUserId(body: unknown): body is { userId: string } {
-    if (t.type({ userId: t.string }).is(body)) {
-      return true
-    }
-    return false
-  }
 }
