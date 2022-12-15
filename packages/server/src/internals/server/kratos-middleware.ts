@@ -42,18 +42,6 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
   let legacyUserId: number
 
   return (async (req, res) => {
-    let referrer = req.headers.referrer || req.headers.referer
-    // remove instance if it has, so that v.g. de.serlo.org becomes serlo.org
-    referrer =
-      referrer === 'serlo.org'
-        ? 'serlo.org'
-        : referrer?.slice(referrer.indexOf('.') + 1)
-
-    if (process.env.ENVIRONMENT === 'production' && referrer !== 'serlo.org') {
-      res.statusCode = 403
-      return res.end('Bots will not pass')
-    }
-
     if (req.headers['x-kratos-key'] !== process.env.SERVER_KRATOS_SECRET) {
       res.statusCode = 401
       return res.end('Kratos secret mismatch')
