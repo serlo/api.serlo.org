@@ -1436,6 +1436,10 @@ async function exec(): Promise<void> {
         tagName: 'v0.48.0-stable.1',
         date: '2022-12-11',
       },
+      {
+        tagName: 'v0.48.0-stable.2',
+        date: '2022-12-13',
+      },
     ],
   })
 

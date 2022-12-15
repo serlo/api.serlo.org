@@ -21,7 +21,9 @@
  */
 import { IdentityState, V0alpha2Api } from '@ory/client'
 import { Express, RequestHandler } from 'express'
+import * as t from 'io-ts'
 
+import { captureErrorEvent } from '../error-event'
 import { DatabaseLayer } from '~/model'
 
 const basePath = '/kratos'
@@ -38,29 +40,24 @@ export function applyKratosMiddleware({
 }
 
 function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
-  let legacyUserId: number
-
-  return (async (req, res) => {
-    let referrer = req.headers.referrer || req.headers.referer
-    // remove instance if it has, so that v.g. de.serlo.org becomes serlo.org
-    referrer =
-      referrer === 'serlo.org'
-        ? 'serlo.org'
-        : referrer?.slice(referrer.indexOf('.') + 1)
-
-    if (process.env.ENVIRONMENT === 'production' && referrer !== 'serlo.org') {
-      res.statusCode = 403
-      res.end('Bots will not pass')
+  return (async (request, response) => {
+    if (request.headers['x-kratos-key'] !== process.env.SERVER_KRATOS_SECRET) {
+      response.statusCode = 401
+      response.end('Kratos secret mismatch')
+      return
     }
 
-    if (req.headers['x-kratos-key'] !== process.env.SERVER_KRATOS_SECRET) {
-      res.statusCode = 401
-      res.end('Kratos secret mismatch')
+    if (!t.type({ userId: t.string }).is(request.body)) {
+      response.statusCode = 400
+      response.end('Valid identity id has to be provided')
+      return
     }
 
-    const { userId } = req.body as { userId: string }
+    const { userId } = request.body
+
     try {
       const kratosUser = (await kratos.adminGetIdentity(userId)).data
+
       const { username, email } = kratosUser.traits as {
         username: string
         email: string
@@ -72,7 +69,7 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
         password: kratosUser.id,
         email,
       }
-      legacyUserId = (
+      const legacyUserId = (
         (await DatabaseLayer.makeRequest('UserCreateMutation', payload)) as {
           userId: number
         }
@@ -92,17 +89,20 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
         traits: kratosUser.traits,
         state: IdentityState.Active,
       })
-      res.statusCode = 200
-      res.end(
+      response.statusCode = 200
+      response.end(
         JSON.stringify({
           status: 'success',
         })
       )
     } catch (error: unknown) {
-      // eslint-disable-next-line no-console
-      console.error(error)
+      captureErrorEvent({
+        error: new Error('Could not synchronize user registration'),
+        errorContext: { userId, error },
+      })
 
-      res.statusCode = 400
+      response.statusCode = 500
+      return response.end('Internal error in after hook')
     }
   }) as RequestHandler
 }
