@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as serloAuth from '@serlo/authorization'
+import { UserInputError } from 'apollo-server'
 
 import { resolveTaxonomyTermPath } from './utils'
 import {
@@ -29,12 +30,14 @@ import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   assertStringIsNotEmpty,
+  Queries,
 } from '~/internals/graphql'
 import { TaxonomyTermDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
+import { decodeDateOfDeletion } from '~/schema/uuid/utils'
 import {
   TaxonomyTerm,
   TaxonomyTermType,
@@ -59,7 +62,11 @@ const typesMap = {
 }
 
 export const resolvers: TypeResolvers<TaxonomyTerm> &
+  Queries<'taxonomyTerm'> &
   Mutations<'taxonomyTerm'> = {
+  Query: {
+    taxonomyTerm: createNamespace(),
+  },
   Mutation: {
     taxonomyTerm: createNamespace(),
   },
@@ -124,6 +131,44 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
         }
       }
       return null
+    },
+  },
+  TaxonomyTermQuery: {
+    async deletedTaxonomies(_parent, payload, { dataSources }) {
+      const LIMIT = 500
+      const { first = 100, after, instance } = payload
+
+      if (first > LIMIT)
+        throw new UserInputError(`'first' may not be higher than ${LIMIT}`)
+
+      const deletedAfter = after ? decodeDateOfDeletion(after) : undefined
+
+      const { deletedTaxonomies } =
+        await dataSources.model.serlo.getDeletedTaxonomies({
+          first: first + 1,
+          after: deletedAfter,
+          instance,
+        })
+
+      const nodes = await Promise.all(
+        deletedTaxonomies.map(async (node) => {
+          return {
+            taxonomy: await dataSources.model.serlo.getUuidWithCustomDecoder({
+              id: node.id,
+              decoder: TaxonomyTermDecoder,
+            }),
+            dateOfDeletion: node.dateOfDeletion,
+          }
+        })
+      )
+      return resolveConnection({
+        nodes,
+        payload,
+        createCursor: (node) => {
+          const { taxonomy, dateOfDeletion } = node
+          return JSON.stringify({ id: taxonomy.id, dateOfDeletion })
+        },
+      })
     },
   },
   TaxonomyTermMutation: {

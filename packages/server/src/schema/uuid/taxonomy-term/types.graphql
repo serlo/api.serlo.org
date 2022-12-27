@@ -42,6 +42,35 @@ type TaxonomyTerm implements AbstractUuid & AbstractNavigationChild & InstanceAw
   navigation: Navigation
 }
 
+extend type Query {
+  taxonomyTerm: TaxonomyTermQuery
+}
+
+type TaxonomyTermQuery {
+  deletedTaxonomies(
+    first: Int
+    after: String
+    instance: Instance
+  ): DeletedTaxonomiesConnection!
+}
+
+type DeletedTaxonomy {
+  dateOfDeletion: String
+  taxonomy: TaxonomyTerm
+}
+
+type DeletedTaxonomyCursor {
+  cursor: String!
+  node: DeletedTaxonomy!
+}
+
+type DeletedTaxonomiesConnection {
+  edges: [DeletedTaxonomyCursor!]!
+  nodes: [DeletedTaxonomy!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
 extend type Mutation {
   taxonomyTerm: TaxonomyTermMutation!
 }

@@ -900,6 +900,26 @@ export type DeletedEntityCursor = {
   node: DeletedEntity;
 };
 
+export type DeletedTaxonomiesConnection = {
+  __typename?: 'DeletedTaxonomiesConnection';
+  edges: Array<DeletedTaxonomyCursor>;
+  nodes: Array<DeletedTaxonomy>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type DeletedTaxonomy = {
+  __typename?: 'DeletedTaxonomy';
+  dateOfDeletion?: Maybe<Scalars['String']>;
+  taxonomy?: Maybe<TaxonomyTerm>;
+};
+
+export type DeletedTaxonomyCursor = {
+  __typename?: 'DeletedTaxonomyCursor';
+  cursor: Scalars['String'];
+  node: DeletedTaxonomy;
+};
+
 export type EntityMetadataConnection = {
   __typename?: 'EntityMetadataConnection';
   edges: Array<EntityMetadataCursor>;
@@ -1794,6 +1814,7 @@ export type Query = {
   page: PageQuery;
   subject: SubjectQuery;
   subscription: SubscriptionQuery;
+  taxonomyTerm?: Maybe<TaxonomyTermQuery>;
   thread: ThreadQuery;
   user: UserQuery;
   uuid?: Maybe<AbstractUuid>;
@@ -2402,6 +2423,18 @@ export type TaxonomyTermMutationSetNameAndDescriptionArgs = {
 
 export type TaxonomyTermMutationSortArgs = {
   input: TaxonomyTermSortInput;
+};
+
+export type TaxonomyTermQuery = {
+  __typename?: 'TaxonomyTermQuery';
+  deletedTaxonomies: DeletedTaxonomiesConnection;
+};
+
+
+export type TaxonomyTermQueryDeletedTaxonomiesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
 };
 
 export type TaxonomyTermSetNameAndDescriptionInput = {

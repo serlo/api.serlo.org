@@ -168,6 +168,18 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  DeletedTaxonomiesQuery: {
+    examples: [
+      [
+        { first: 1, after: undefined, instance: Instance.De },
+        {
+          deletedTaxonomies: [
+            { id: 34248, dateOfDeletion: '2015-02-20T10:35:33+01:00' },
+          ],
+        },
+      ],
+    ],
+  },
   EntitiesMetadataQuery: { examples: [] },
   EntityAddRevisionMutation: {
     examples: [

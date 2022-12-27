@@ -43,7 +43,7 @@ import {
 } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
-import { isDateString } from '~/utils'
+import { decodeDateOfDeletion } from '~/schema/uuid/utils'
 
 export const resolvers: InterfaceResolvers<'AbstractEntity'> &
   InterfaceResolvers<'AbstractEntityRevision'> &
@@ -275,26 +275,4 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       return { success: true, query: {} }
     },
   },
-}
-
-function decodeDateOfDeletion(after: string) {
-  const afterParsed = JSON.parse(
-    Buffer.from(after, 'base64').toString()
-  ) as unknown
-
-  const dateOfDeletion = t.type({ dateOfDeletion: t.string }).is(afterParsed)
-    ? afterParsed.dateOfDeletion
-    : undefined
-
-  if (!dateOfDeletion)
-    throw new UserInputError(
-      'Field `dateOfDeletion` as string is missing in `after`'
-    )
-
-  if (!isDateString(dateOfDeletion))
-    throw new UserInputError(
-      'The encoded dateOfDeletion in `after` should be a string in date format'
-    )
-
-  return new Date(dateOfDeletion).toISOString()
 }

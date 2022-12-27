@@ -314,6 +314,22 @@ export const spec = {
     response: t.void,
     canBeNull: false,
   },
+  DeletedTaxonomiesQuery: {
+    payload: t.type({
+      first: t.number,
+      after: t.union([t.string, t.undefined]),
+      instance: t.union([InstanceDecoder, t.undefined]),
+    }),
+    response: t.type({
+      deletedTaxonomies: t.array(
+        t.type({
+          id: t.number,
+          dateOfDeletion: t.string,
+        })
+      ),
+    }),
+    canBeNull: false,
+  },
   TaxonomyCreateEntityLinksMutation: {
     payload: t.type({
       entityIds: t.array(t.number),

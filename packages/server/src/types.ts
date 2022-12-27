@@ -904,6 +904,26 @@ export type DeletedEntityCursor = {
   node: DeletedEntity;
 };
 
+export type DeletedTaxonomiesConnection = {
+  __typename?: 'DeletedTaxonomiesConnection';
+  edges: Array<DeletedTaxonomyCursor>;
+  nodes: Array<DeletedTaxonomy>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type DeletedTaxonomy = {
+  __typename?: 'DeletedTaxonomy';
+  dateOfDeletion?: Maybe<Scalars['String']>;
+  taxonomy?: Maybe<TaxonomyTerm>;
+};
+
+export type DeletedTaxonomyCursor = {
+  __typename?: 'DeletedTaxonomyCursor';
+  cursor: Scalars['String'];
+  node: DeletedTaxonomy;
+};
+
 export type EntityMetadataConnection = {
   __typename?: 'EntityMetadataConnection';
   edges: Array<EntityMetadataCursor>;
@@ -1798,6 +1818,7 @@ export type Query = {
   page: PageQuery;
   subject: SubjectQuery;
   subscription: SubscriptionQuery;
+  taxonomyTerm?: Maybe<TaxonomyTermQuery>;
   thread: ThreadQuery;
   user: UserQuery;
   uuid?: Maybe<Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision>;
@@ -2406,6 +2427,18 @@ export type TaxonomyTermMutationSetNameAndDescriptionArgs = {
 
 export type TaxonomyTermMutationSortArgs = {
   input: TaxonomyTermSortInput;
+};
+
+export type TaxonomyTermQuery = {
+  __typename?: 'TaxonomyTermQuery';
+  deletedTaxonomies: DeletedTaxonomiesConnection;
+};
+
+
+export type TaxonomyTermQueryDeletedTaxonomiesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
 };
 
 export type TaxonomyTermSetNameAndDescriptionInput = {
@@ -3084,6 +3117,9 @@ export type ResolversTypes = {
   DeletedEntitiesConnection: ResolverTypeWrapper<ModelOf<DeletedEntitiesConnection>>;
   DeletedEntity: ResolverTypeWrapper<ModelOf<DeletedEntity>>;
   DeletedEntityCursor: ResolverTypeWrapper<ModelOf<DeletedEntityCursor>>;
+  DeletedTaxonomiesConnection: ResolverTypeWrapper<ModelOf<DeletedTaxonomiesConnection>>;
+  DeletedTaxonomy: ResolverTypeWrapper<ModelOf<DeletedTaxonomy>>;
+  DeletedTaxonomyCursor: ResolverTypeWrapper<ModelOf<DeletedTaxonomyCursor>>;
   EntityMetadataConnection: ResolverTypeWrapper<ModelOf<EntityMetadataConnection>>;
   EntityMetadataCursor: ResolverTypeWrapper<ModelOf<EntityMetadataCursor>>;
   EntityMutation: ResolverTypeWrapper<ModelOf<EntityMutation>>;
@@ -3187,6 +3223,7 @@ export type ResolversTypes = {
   TaxonomyTermCreateResponse: ResolverTypeWrapper<ModelOf<TaxonomyTermCreateResponse>>;
   TaxonomyTermEdge: ResolverTypeWrapper<ModelOf<TaxonomyTermEdge>>;
   TaxonomyTermMutation: ResolverTypeWrapper<ModelOf<TaxonomyTermMutation>>;
+  TaxonomyTermQuery: ResolverTypeWrapper<ModelOf<TaxonomyTermQuery>>;
   TaxonomyTermSetNameAndDescriptionInput: ResolverTypeWrapper<ModelOf<TaxonomyTermSetNameAndDescriptionInput>>;
   TaxonomyTermSetNameAndDescriptionResponse: ResolverTypeWrapper<ModelOf<TaxonomyTermSetNameAndDescriptionResponse>>;
   TaxonomyTermSortInput: ResolverTypeWrapper<ModelOf<TaxonomyTermSortInput>>;
@@ -3298,6 +3335,9 @@ export type ResolversParentTypes = {
   DeletedEntitiesConnection: ModelOf<DeletedEntitiesConnection>;
   DeletedEntity: ModelOf<DeletedEntity>;
   DeletedEntityCursor: ModelOf<DeletedEntityCursor>;
+  DeletedTaxonomiesConnection: ModelOf<DeletedTaxonomiesConnection>;
+  DeletedTaxonomy: ModelOf<DeletedTaxonomy>;
+  DeletedTaxonomyCursor: ModelOf<DeletedTaxonomyCursor>;
   EntityMetadataConnection: ModelOf<EntityMetadataConnection>;
   EntityMetadataCursor: ModelOf<EntityMetadataCursor>;
   EntityMutation: ModelOf<EntityMutation>;
@@ -3397,6 +3437,7 @@ export type ResolversParentTypes = {
   TaxonomyTermCreateResponse: ModelOf<TaxonomyTermCreateResponse>;
   TaxonomyTermEdge: ModelOf<TaxonomyTermEdge>;
   TaxonomyTermMutation: ModelOf<TaxonomyTermMutation>;
+  TaxonomyTermQuery: ModelOf<TaxonomyTermQuery>;
   TaxonomyTermSetNameAndDescriptionInput: ModelOf<TaxonomyTermSetNameAndDescriptionInput>;
   TaxonomyTermSetNameAndDescriptionResponse: ModelOf<TaxonomyTermSetNameAndDescriptionResponse>;
   TaxonomyTermSortInput: ModelOf<TaxonomyTermSortInput>;
@@ -3967,6 +4008,26 @@ export type DeletedEntityCursorResolvers<ContextType = Context, ParentType exten
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type DeletedTaxonomiesConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletedTaxonomiesConnection'] = ResolversParentTypes['DeletedTaxonomiesConnection']> = {
+  edges?: Resolver<Array<ResolversTypes['DeletedTaxonomyCursor']>, ParentType, ContextType>;
+  nodes?: Resolver<Array<ResolversTypes['DeletedTaxonomy']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type DeletedTaxonomyResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletedTaxonomy'] = ResolversParentTypes['DeletedTaxonomy']> = {
+  dateOfDeletion?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  taxonomy?: Resolver<Maybe<ResolversTypes['TaxonomyTerm']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type DeletedTaxonomyCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletedTaxonomyCursor'] = ResolversParentTypes['DeletedTaxonomyCursor']> = {
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  node?: Resolver<ResolversTypes['DeletedTaxonomy'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type EntityMetadataConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityMetadataConnection'] = ResolversParentTypes['EntityMetadataConnection']> = {
   edges?: Resolver<Array<ResolversTypes['EntityMetadataCursor']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['JSONObject']>, ParentType, ContextType>;
@@ -4418,6 +4479,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   page?: Resolver<ResolversTypes['PageQuery'], ParentType, ContextType>;
   subject?: Resolver<ResolversTypes['SubjectQuery'], ParentType, ContextType>;
   subscription?: Resolver<ResolversTypes['SubscriptionQuery'], ParentType, ContextType>;
+  taxonomyTerm?: Resolver<Maybe<ResolversTypes['TaxonomyTermQuery']>, ParentType, ContextType>;
   thread?: Resolver<ResolversTypes['ThreadQuery'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['UserQuery'], ParentType, ContextType>;
   uuid?: Resolver<Maybe<ResolversTypes['AbstractUuid']>, ParentType, ContextType, Partial<QueryUuidArgs>>;
@@ -4692,6 +4754,11 @@ export type TaxonomyTermMutationResolvers<ContextType = Context, ParentType exte
   deleteEntityLinks?: Resolver<ResolversTypes['TaxonomyEntityLinksResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationDeleteEntityLinksArgs, 'input'>>;
   setNameAndDescription?: Resolver<ResolversTypes['TaxonomyTermSetNameAndDescriptionResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationSetNameAndDescriptionArgs, 'input'>>;
   sort?: Resolver<ResolversTypes['TaxonomyTermSortResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationSortArgs, 'input'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type TaxonomyTermQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermQuery'] = ResolversParentTypes['TaxonomyTermQuery']> = {
+  deletedTaxonomies?: Resolver<ResolversTypes['DeletedTaxonomiesConnection'], ParentType, ContextType, Partial<TaxonomyTermQueryDeletedTaxonomiesArgs>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4994,6 +5061,9 @@ export type Resolvers<ContextType = Context> = {
   DeletedEntitiesConnection?: DeletedEntitiesConnectionResolvers<ContextType>;
   DeletedEntity?: DeletedEntityResolvers<ContextType>;
   DeletedEntityCursor?: DeletedEntityCursorResolvers<ContextType>;
+  DeletedTaxonomiesConnection?: DeletedTaxonomiesConnectionResolvers<ContextType>;
+  DeletedTaxonomy?: DeletedTaxonomyResolvers<ContextType>;
+  DeletedTaxonomyCursor?: DeletedTaxonomyCursorResolvers<ContextType>;
   EntityMetadataConnection?: EntityMetadataConnectionResolvers<ContextType>;
   EntityMetadataCursor?: EntityMetadataCursorResolvers<ContextType>;
   EntityMutation?: EntityMutationResolvers<ContextType>;
@@ -5075,6 +5145,7 @@ export type Resolvers<ContextType = Context> = {
   TaxonomyTermCreateResponse?: TaxonomyTermCreateResponseResolvers<ContextType>;
   TaxonomyTermEdge?: TaxonomyTermEdgeResolvers<ContextType>;
   TaxonomyTermMutation?: TaxonomyTermMutationResolvers<ContextType>;
+  TaxonomyTermQuery?: TaxonomyTermQueryResolvers<ContextType>;
   TaxonomyTermSetNameAndDescriptionResponse?: TaxonomyTermSetNameAndDescriptionResponseResolvers<ContextType>;
   TaxonomyTermSortResponse?: TaxonomyTermSortResponseResolvers<ContextType>;
   Thread?: ThreadResolvers<ContextType>;
