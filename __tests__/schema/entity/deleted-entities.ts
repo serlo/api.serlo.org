@@ -46,12 +46,46 @@ const query = new Client().prepareQuery({
   `,
 })
 
-const coursePage = { ...baseCoursePage, instance: Instance.En }
-const article = { ...baseArticle, date: '2015-03-01T20:45:56Z' }
-const solution = { ...baseSolution, date: '2016-03-01T20:45:56Z' }
+const coursePage = {
+  ...baseCoursePage,
+  instance: Instance.En,
+  dateOfDeletion: baseCoursePage.date,
+}
+const article = { ...baseArticle, dateOfDeletion: '2015-03-01T20:45:56Z' }
+const solution = { ...baseSolution, dateOfDeletion: '2016-03-01T20:45:56Z' }
 
 beforeEach(() => {
-  given('DeletedEntitiesQuery').for(article, coursePage, solution)
+  const entities = [article, coursePage, solution]
+
+  given('UuidQuery').for(
+    entities.map((entity) => {
+      return { ...entity, trashed: true }
+    })
+  )
+
+  given('DeletedEntitiesQuery').isDefinedBy((req, res, ctx) => {
+    const { first, after, instance } = req.body.payload
+
+    const entitiesByInstance = instance
+      ? entities.filter((entity) => entity.instance === instance)
+      : entities
+
+    const entitiesByAfter = after
+      ? entitiesByInstance.filter(
+          (entity) => new Date(entity.dateOfDeletion) > new Date(after)
+        )
+      : entitiesByInstance
+
+    const entitiesByFirst = entitiesByAfter.slice(0, first)
+
+    const deletedEntities = entitiesByFirst.map((entity) => {
+      return {
+        id: entity.id,
+        dateOfDeletion: entity.dateOfDeletion,
+      }
+    })
+    return res(ctx.json({ deletedEntities }))
+  })
 })
 
 test('returns deleted entities', async () => {
@@ -60,15 +94,15 @@ test('returns deleted entities', async () => {
       deletedEntities: {
         nodes: [
           {
-            dateOfDeletion: article.date,
+            dateOfDeletion: article.dateOfDeletion,
             entity: { id: article.id },
           },
           {
-            dateOfDeletion: coursePage.date,
+            dateOfDeletion: coursePage.dateOfDeletion,
             entity: { id: coursePage.id },
           },
           {
-            dateOfDeletion: solution.date,
+            dateOfDeletion: solution.dateOfDeletion,
             entity: { id: solution.id },
           },
         ],
@@ -81,7 +115,7 @@ test('returns deleted entities', async () => {
       deletedEntities: {
         nodes: [
           {
-            dateOfDeletion: article.date,
+            dateOfDeletion: article.dateOfDeletion,
             entity: { id: article.id },
           },
         ],
@@ -96,7 +130,7 @@ test('paginates with `after` parameter { entityId, dateOfDeletion}, ', async () 
       after: Buffer.from(
         JSON.stringify({
           id: article.id,
-          dateOfDeletion: article.date,
+          dateOfDeletion: article.dateOfDeletion,
         })
       ).toString('base64'),
     })
@@ -105,7 +139,7 @@ test('paginates with `after` parameter { entityId, dateOfDeletion}, ', async () 
         deletedEntities: {
           nodes: [
             {
-              dateOfDeletion: solution.date,
+              dateOfDeletion: solution.dateOfDeletion,
               entity: { id: solution.id },
             },
           ],
