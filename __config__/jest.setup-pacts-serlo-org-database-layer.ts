@@ -32,7 +32,7 @@ import {
   createBeforeEach,
   setup,
 } from './setup'
-import { Service, initiateAuthSdks } from '~/internals/authentication'
+import { Service, createAuthServices } from '~/internals/authentication'
 import { emptySwrQueue } from '~/internals/swr-queue'
 import { createSerloModel } from '~/model'
 
@@ -95,7 +95,7 @@ beforeEach(async () => {
     environment: {
       cache: global.cache,
       swrQueue: emptySwrQueue,
-      authServices: initiateAuthSdks(),
+      authServices: createAuthServices(),
     },
   })
 })

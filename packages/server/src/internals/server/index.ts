@@ -23,7 +23,7 @@ import dotenv from 'dotenv'
 import createApp from 'express'
 import path from 'path'
 
-import { initiateAuthSdks, AuthServices } from '../authentication'
+import { createAuthServices, AuthServices } from '../authentication'
 import { Cache, createCache } from '../cache'
 import { initializeSentry } from '../sentry'
 import { createSwrQueue, SwrQueue } from '../swr-queue'
@@ -43,7 +43,7 @@ export async function start() {
   const timer = createTimer()
   const cache = createCache({ timer })
   const swrQueue = createSwrQueue({ cache, timer })
-  const authServices = initiateAuthSdks()
+  const authServices = createAuthServices()
   await initializeServer({ cache, swrQueue, authServices })
 }
 
